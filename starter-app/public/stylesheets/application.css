@@ -1,0 +1,209 @@
+body {
+  color:#333333;
+  font-family:Tahoma,"Lucida Grande",Verdana,Sans-serif;
+  font-size:76%;
+  font-size-adjust:none;
+  font-style:normal;
+  font-variant:normal;
+  font-weight:normal;
+  line-height:1.6em;
+  text-align:center;
+}
+
+#main {
+  background:#FFFFFF none repeat scroll 0%;
+  margin:20pt auto;
+  position:relative;
+  text-align:left;
+  width:780px;
+}
+
+#main-table {
+	width:780px;
+	border-collapse: collapse;
+  border:1px solid;
+}
+
+#main-content {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+
+#shop-by-col {
+  width: 140px;
+}
+
+.even {
+  background-color: #EFEFEF;  
+}
+
+a {
+  text-decoration: none;
+  color: #0000ff;	
+}
+
+a:visited {
+  color: #0000ff;	
+}
+
+a:hover {
+  text-decoration:underline;
+}
+
+img {
+  border: 0px;
+}
+/* =============== begin: pagination stuff ===============  */
+
+/*Credits: Dynamic Drive CSS Library */
+/*URL: http://www.dynamicdrive.com/style/ */
+
+.pagination{
+padding-top: 10px;
+}
+
+.pagination ul{
+margin: 0;
+padding: 0;
+text-align: left; /*Set to "right" to right align pagination interface*/
+font-size: 16px;
+}
+
+.pagination li{
+list-style-type: none;
+display: inline;
+padding-bottom: 1px;
+}
+
+.pagination a, .pagination a:visited{
+padding: 0 5px;
+border: 1px solid #9aafe5;
+text-decoration: none; 
+color: #2e6ab1;
+}
+
+.pagination a:hover, .pagination a:active{
+border: 1px solid #2b66a5;
+color: #000;
+background-color: lightyellow;
+}
+
+.pagination li.currentpage{
+font-weight: bold;
+padding: 0 5px;
+border: 1px solid navy;
+background-color: #2e6ab1;
+color: #FFF;
+}
+
+.pagination li.disablepage{
+padding: 0 5px;
+border: 1px solid #929292;
+color: #929292;
+}
+
+.pagination li.nextpage{
+font-weight: bold;
+}
+
+* html .pagination li.currentpage, * html .pagination li.disablepage{ /*IE 6 and below. Adjust non linked LIs slightly to account for bugs*/
+margin-right: 5px;
+padding-right: 0;
+}
+/* =============== end: pagination stuff ===============  */
+
+.formError, .errorExplanation {
+  color: #FF0000;
+}
+
+/* ================ begin: flash ================  */
+#flash-errors, #errorExplanation {
+  margin: 0 auto;
+  background: #EF1D61;/*#F69A91;*/
+  padding: 10px;
+  color: #FFFFFF;
+  text-align: center;
+}
+#flash-notice {
+  background: #CAEFA5;
+  padding: 10px;
+  color: #051;
+  text-align: center;
+}
+/* ================ end: flash ================  */
+
+/* ================ begin: order-summary ================  */
+#order-num {
+  font-size: 16px;
+  font-weight: normal;
+  border-bottom: none;
+}
+.order-summary {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 545px;
+}
+
+.order-summary th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
+}
+
+.order-summary td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* ================ end: order-summary ================  */
+
+/* ================ begin: header-menu ================ */
+#store-nav {
+  font-family:Arial,Arial,Helvetica,sans-serif;
+  font-size:12px;
+  float: right;
+}
+
+#store-nav li {
+  list-style-image:none;
+  list-style-position:outside;
+  list-style-type:none;	
+  float: right;
+  padding: 5px;
+}
+
+/* ================ end: header-menu ================ */
+
+/* ================ begin: product preview ================ */
+#product-listing a {
+  border: 0px;	
+}
+/* ================ end: product preview ================ */
+
+/* ================ begin: product-name ================ */
+.product-name, .product-price, .product-variations {
+  font-weight: bold;
+}
+/* ================ end: product-name ================ */
+
+#variations ul {
+	list-style: none;
+	margin-left: 0px;
+	padding-left: 1em;
+	text-indent: -1em;
+}
+
+
+/* ================ begin: product-listing ================ */
+#product-listing {
+	
+}
+/* ================ end: product-listing ================ */

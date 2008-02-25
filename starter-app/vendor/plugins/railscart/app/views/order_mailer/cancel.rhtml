@@ -1,0 +1,15 @@
+Dear <%= @order.bill_address.full_name%>,
+
+Your order has been CANCELED.  Please retain this cancellation information for your records.    
+
+============================================================
+Order Summary [CANCELED]
+============================================================
+<% for item in @order.line_items -%>
+<%=item.product.sku if item.product.sku-%> <%=item.product.name-%> <%= variation_options(item.variation) if item.variation -%> (<%=item.quantity-%>) @ $ <%= sprintf("%0.2f", item.price) %> = $ <%= sprintf("%0.2f", item.price * item.quantity) %>
+<% end -%>      
+============================================================
+Subtotal: <%= number_to_currency @order.item_total %>
+Tax: <%= number_to_currency @order.tax_amount %>
+Shipping: <%= number_to_currency @order.ship_amount %>
+Order Total: <%= number_to_currency @order.total %>

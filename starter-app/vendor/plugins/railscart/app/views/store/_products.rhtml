@@ -1,0 +1,10 @@
+<h1>Products</h1>
+<ul>
+	<% for product in @products %>  
+		<% content_tag_for (:li, product, :class => 'preview') do %>
+			<%= link_to image_tag ('products/' + product.filename, :size => '100x100'), store_path(product.id) %>
+		 	<%= link_to product.name, store_path(product.id) %>
+	        <b>$<%=product.price%></b>
+		<% end %>
+	<% end %>
+</ul>

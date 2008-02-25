@@ -1,0 +1,7 @@
+<% content_for :action_nav do %>
+  <ul id="act-nav">
+    <li><%= link_to "Products", :controller => :products, :action => :index %></li>
+		<li><%= link_to "Categories", :controller => :categories, :action => :index %></li>
+    <li><%= link_to "Option Types", :controller => :option_types , :action => :index %></li>
+  </ul>
+<% end %>

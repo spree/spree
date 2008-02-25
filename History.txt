@@ -1,0 +1,20 @@
+== 0.0.4 2008-02-12
+
+* Cookie sessions (no more db sessions)
+* Streamlined migration stuff
+* Removed database.master.yml configuration stuff (no longer really necessary)
+* Improved data model for images
+* Fixed --edge option to point to new railscart SVN location
+
+== 0.0.3 2008-02-07
+
+* Added --edge option to railscart command (which gets latest version of all plugins from SVN.)
+* Refactored the product optioning stuff.
+
+== 0.0.2 2008-01-29
+
+* Additional gem release testing.
+
+== 0.0.1 2008-01-29
+
+* Initial release.  Test of gem release mechanism.

@@ -1,0 +1,32 @@
+<% for i in 1..30 do%>
+li_<%= i %>:
+  id: <%= i %>
+  order_id: <%= i %>
+  product_id: 1
+  quantity: 1
+  price: 8.99
+  created_at: <%= 3.days.ago.to_s :db %>
+  updated_at: <%= 3.days.ago.to_s :db %>
+<% end %>
+
+<% for i in 1..30 do%>
+li_<%= i + 30 %>:
+  id: <%= i + 30 %>
+  order_id: <%= i %>
+  product_id: 2
+  quantity: 1
+  price: 8.99
+  created_at: <%= 3.days.ago.to_s :db %>
+  updated_at: <%= 3.days.ago.to_s :db %>
+<% end %>
+
+<% for i in 1..30 do%>
+li_<%= i + 60 %>:
+  id: <%= i + 60 %>
+  order_id: <%= i %>
+  product_id: 3
+  quantity: 1
+  price: 8.99
+  created_at: <%= 3.days.ago.to_s :db %>
+  updated_at: <%= 3.days.ago.to_s :db %>
+<% end %>

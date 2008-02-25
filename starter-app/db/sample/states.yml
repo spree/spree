@@ -1,0 +1,154 @@
+alabama:
+  name: Alabama
+  abbr: AL
+alaska:
+  name: Alaska
+  abbr: AK
+arizona:
+  name: Arizona
+  abbr: AZ
+arkansas:
+  name: Arkansas
+  abbr: AR
+california:
+  name: California
+  abbr: CA
+colorado:
+  name: Colorado
+  abbr: CO
+connecticut:
+  name: Connecticut
+  abbr: CT
+deleware:
+  name: Delaware
+  abbr: DE
+dc:
+  name: District of Columbia
+  abbr: DC
+florida:
+  name: Florida
+  abbr: FL
+georgia:
+  name: Georgia
+  abbr: GA
+hawaii:
+  name: Hawaii
+  abbr: HI
+idaho:
+  name: Idaho
+  abbr: ID
+illinois:
+  name: Illinois
+  abbr: IL
+indiana:
+  name: Indiana
+  abbr: IN
+iowa:
+  name: Iowa
+  abbr: IA
+kansas:
+  name: Kansas
+  abbr: KS
+kentucky:
+  name: Kentucky
+  abbr: KY
+louisiana:
+  name: Louisiana
+  abbr: LA
+maine: 
+  name: Maine
+  abbr: ME
+maryland:
+  name: Maryland
+  abbr: MD
+massachusetts:
+  name: Massachusetts
+  abbr: MA
+michigan:
+  name: Michigan
+  abbr: MI
+minnesota:
+  name: Minnesota
+  abbr: MN
+mississippi:
+  name: Mississippi
+  abbr: MS
+missouri:
+  name: Missouri
+  abbr: MO
+montana:
+  name: Montana
+  abbr: MT
+nebraska:
+  name: Nebraska
+  abbr: NE
+nevada:
+  name: Nevada
+  abbr: NV
+new_hampshire:
+  name: New Hampshire
+  abbr: NH
+new_jersey:
+  name: New Jersey
+  abbr: NJ
+new_mexico:
+  name: New Mexico
+  abbr: NM
+new_york:
+  name: New York
+  abbr: NY
+north_carolina:
+  name: North Carolina
+  abbr: NC
+north_dakota:
+  name: North Dakota
+  abbr: ND
+ohio: 
+  name: Ohio
+  abbr: OH
+oklahoma: 
+  name: Oklahoma
+  abbr: OK
+oregon:
+  name: Oregon
+  abbr: OR
+pennsylvania:
+  name: Pennsylvania
+  abbr: PA
+rhode_island:
+  name: Rhode Island
+  abbr: RI
+south_carolina:
+  name: South Carolina
+  abbr: SC
+south_dakota:
+  name: South Dakota
+  abbr: SD
+tennesse:
+  name: Tennesse
+  abbr: TN
+texas:
+  name: Texas
+  abbr: TX
+utah: 
+  name: Utah
+  abbr: UT
+vermont:
+  name: Vermont
+  abbr: VT
+virginia:
+  name: Virginia
+  abbr: VA
+washington:
+  id: 48
+  name: Washington
+  abbr: WA
+west_virginia:
+  name: West Virginia
+  abbr: WV
+wisconsin:
+  name: Wisconsin
+  abbr: WI
+wyoming:
+  name: Wyoming
+  abbr: WY

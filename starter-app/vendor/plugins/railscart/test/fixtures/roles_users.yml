@@ -1,0 +1,3 @@
+admin_is_admin:
+  user_id: 101 # admin
+  role_id: 1 # admin role

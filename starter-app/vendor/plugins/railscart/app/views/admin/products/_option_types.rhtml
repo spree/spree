@@ -1,0 +1,42 @@
+<h2>Selected Option Types</h2>
+<table class="option-types">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Display</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @product.selected_options.each do |so| %>
+			<tr>
+				<td><%=so.option_type.name%></td>
+				<td><%=so.option_type.display%></td>
+				<td>
+				  <%= link_to_remote "Remove",
+				                     :url => {:action => 'remove_option_type', :id=> @product, :product_option_type_id => so},
+				                     :before => "Element.hide('select-link');Element.show('busy_indicator')", 
+				                     :complete => "Element.hide('busy_indicator')",
+				                     :update => 'option-type-listing' %>
+				</td>
+			</tr>
+		<% end %>
+		<% if @product.selected_options.empty? %>
+			<tr>
+				<td colspan="3">None Selected.</td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+<% unless @product.new_record? %>
+  <span id="select-link">
+	  <%= link_to_remote "Select Option Type",
+	                     :url => {:controller => 'option_types', :action => 'select', :id=> @product},
+	                     :before => "Element.hide('select-link');Element.show('busy_indicator')", 
+	                     :complete => "Element.hide('busy_indicator');",
+	                     :update => 'new-option-type' %>
+  </span>
+	<%= image_tag "spinner.gif", :plugin=>"railscart", :style => "display:none", :id => 'busy_indicator' %>
+<% end %>
+<br/>
+<div id="new-option-type"></div>

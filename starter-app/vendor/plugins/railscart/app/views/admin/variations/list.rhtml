@@ -1,0 +1,23 @@
+<h1>Listing attributes</h1>
+<table>
+  <tr>
+    <td><b>Name</b></td>
+    <td/>
+  </tr>
+<% for attribute in @product.attributes %>
+  <tr>
+    <td valign="top"><%= attribute.name -%></td>
+    <td valign="top">
+		<%= link_to "Show", :action => 'show', :id => attribute -%>
+      <%= link_to "Edit", :action => 'edit', :id => attribute -%>
+      <%= link_to "Delete", 
+                     {:action => 'destroy', :id => attribute}, 
+                     {:confirm => "Are you sure you want to delete this option?"} -%>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Option', :action => 'new' -%>

@@ -1,0 +1,35 @@
+s:
+  name: Small
+  presentation: S
+  position: 1
+  option_type: size
+m:
+  name: Medium
+  presentation: M
+  position: 2
+  option_type: size
+l:
+  name: Large
+  presentation: L
+  position: 3
+  option_type: size
+xl:
+  name: Extra Large
+  presentation: XL
+  position: 4
+  option_type: size
+red:
+  name: Red
+  presentation: Red
+  position: 1
+  option_type: color
+green:
+  name: Green
+  presentation: Green
+  position: 2
+  option_type: color
+blue:
+  name: Blue
+  presentation: Blue
+  position: 3
+  option_type: color

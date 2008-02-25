@@ -1,0 +1,24 @@
+frank_address:
+  firstname: Frank
+  lastname: Foo
+  address1: 123 Foo St.
+  address2: Apt. F
+  city: Fooville
+  state: new_york
+  zipcode: 16804
+  country: usa
+  phone: 614-555-1212
+
+foo_street:
+  id: 101
+  firstname: joe
+  lastname: blow
+  address1: 123 Foo St.
+  city: Fooville
+  state: maryland
+  zipcode: 14456
+  country: usa
+  phone: 555-555-1212
+  created_at: <%= 3.days.ago.to_s :db %>
+  updated_at: <%= 3.days.ago.to_s :db %>
+  

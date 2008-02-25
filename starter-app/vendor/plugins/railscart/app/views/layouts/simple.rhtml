@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />   
+    <title>Railscart: <%= controller.controller_name %> Admin</title>
+    <%= stylesheet_link_tag 'fullscreen', :plugin=>"railscart" %>
+    <%= javascript_include_tag 'prototype', 'effects', 'lowpro', 'application' %>
+    <script type="text/javascript">Railscart.root = '<%= ActionController::AbstractRequest.relative_url_root %>';</script>
+  </head>
+  <body id="body-<%= controller.controller_name %>">
+  
+      <!-- div.header -->
+      <div id="header">
+        <h1><%= link_to "TODO name? &mdash; Admin", { :controller => '/admin/overview' }, :title => "TODO site name admin" %></h1>
+      </div>
+      <!-- /div.header -->
+        
+    <div id="container">    
+      
+      <!-- div.content -->
+      <div id="fullscreen">
+        <div id="flash-errors" style="display: none;"><%= flash[:error] %></div>
+        <div id="flash-notice" style="display:none"><%= flash[:notice] %></div>
+        
+        <!-- div.left -->
+        <div id="main">
+          <%= yield %>
+        </div>
+        <!-- /div.left -->
+
+      </div>
+      <!-- /div.content -->
+      
+    </div>
+  </body>
+</html>

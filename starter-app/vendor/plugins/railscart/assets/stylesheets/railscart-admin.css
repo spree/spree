@@ -1,0 +1,348 @@
+* {
+  margin:0pt;
+  padding:0pt;
+}
+
+body {
+  font-family:Tahoma,"Lucida Grande",Verdana,Sans-serif;
+  font-size:76%;
+  font-size-adjust:none;
+  font-style:normal;
+  font-variant:normal;
+  font-weight:normal;
+  line-height:1.6em;
+  text-align:center;
+}
+
+a:hover, a:active {
+  color:#333333;
+}
+
+a:link, a:visited {
+  color:#265E15;
+}
+
+img {
+  border: 0;
+}
+
+#main {
+  background:#FFFFFF none repeat scroll 0%;
+  margin:0pt auto;
+  position:relative;
+  text-align:left;
+  width:780px;
+}
+
+#header {
+	height:110px;
+}
+
+#header h1 {
+	height:45px;
+	font:250% Trebuchet MS;
+	padding:30px 20px 10px 20px;
+}
+
+/* ================ begin: tags ================  */
+
+#tags_update { 
+  font-size: 75%; 
+  font-weight: normal; 
+  color: white; 
+  margin: 0px; 
+  padding: 0px; 
+  border:1px solid black; 
+  background-color: #B36B00; 
+}
+
+#tags_update li:hover { 
+  text-decoration: underline; 
+}
+/* ================ end: tags ================  */
+
+/* ================ begin: admin-report ================  */
+
+.admin-report {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 545px;
+}
+
+.admin-report th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
+}
+
+.admin-report td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* ================ end: admin-report ================  */
+
+/* ================ begin: admin-search ================  */
+
+.admin-search {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 200px;
+}
+
+.admin-search th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
+}
+
+.admin-search td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* ================ end: admin-search ================  */
+
+
+.even {
+  background-color: #EFEFEF;  
+}
+
+/* ================ begin: flash ================  */
+#flash-errors, #errorExplanation {
+  margin: 0 auto;
+  background: #EF1D61;/*#F69A91;*/
+  padding: 10px;
+  color: #FFFFFF;
+  text-align: center;
+}
+#flash-notice {
+  background: #CAEFA5;
+  padding: 10px;
+  color: #051;
+  text-align: center;
+}
+/* ================ end: flash ================  */
+
+/* ================ begin: detail-grid ================  */
+.detail-grid {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.detail-grid th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
+}
+
+.detail-grid td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+/* ================ end: detail-grid ================  */
+
+/* =============== begin: pagination stuff ===============  */
+
+/*Credits: Dynamic Drive CSS Library */
+/*URL: http://www.dynamicdrive.com/style/ */
+
+.pagination{
+padding-top: 10px;
+}
+
+.pagination ul{
+margin: 0;
+padding: 0;
+text-align: left; /*Set to "right" to right align pagination interface*/
+font-size: 16px;
+}
+
+.pagination li{
+list-style-type: none;
+display: inline;
+padding-bottom: 1px;
+}
+
+.pagination a, .pagination a:visited{
+padding: 0 5px;
+border: 1px solid #9aafe5;
+text-decoration: none; 
+color: #2e6ab1;
+}
+
+.pagination a:hover, .pagination a:active{
+border: 1px solid #2b66a5;
+color: #000;
+background-color: #8FC2FF;
+}
+
+.pagination li.currentpage{
+font-weight: bold;
+padding: 0 5px;
+border: 1px solid navy;
+background-color: #2e6ab1;
+color: #FFF;
+}
+
+.pagination li.disablepage{
+padding: 0 5px;
+border: 1px solid #929292;
+color: #929292;
+}
+
+.pagination li.nextpage{
+font-weight: bold;
+}
+
+* html .pagination li.currentpage, * html .pagination li.disablepage{ /*IE 6 and below. Adjust non linked LIs slightly to account for bugs*/
+margin-right: 5px;
+padding-right: 0;
+}
+/* =============== end: pagination stuff ===============  */
+
+.formError, .errorExplanation {
+  color: #FF0000;
+}
+
+#report-search {
+  margin-left: 10px;
+}
+
+/* ================ begin: order-summary ================  */
+#order-num {
+  font-size: 16px;
+  font-weight: normal;
+  border-bottom: none;
+}
+.order-summary {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 545px;
+}
+
+.order-summary th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
+}
+
+.order-summary td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.order-address {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 545px;
+}
+
+.order-address th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-bottom: 1px solid
+}
+
+.order-address td {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+
+
+/* ================ end: order-summary ================  */
+
+#search-col {
+  padding-left: 10px;
+}
+
+.date-range {
+  width: 100px;
+}
+
+/** ================ begin: basic-table =================== */
+.basic-table {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 545px;
+}
+
+.basic-table th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
+}
+
+.basic-table td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;	
+}
+/** ================ end: basic-table =================== */
+
+/** ================ begin: full-table =================== */
+.full-table {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 780px;
+}
+
+.full-table th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
+}
+
+.full-table td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px; 
+}
+/** ================ end: full-table =================== */
+ */

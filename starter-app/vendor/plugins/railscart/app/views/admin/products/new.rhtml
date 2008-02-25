@@ -1,0 +1,9 @@
+<%= render :partial => 'menu' -%>
+
+<% form_for(:product, :html => { :multipart => true }) do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
+  <!--<input type="file" id="product_file" name="product[file]"/>--><br/>
+  <%= submit_tag "Create" %>
+<% end %>
+
+<%= link_to 'Back', :action => :index %>

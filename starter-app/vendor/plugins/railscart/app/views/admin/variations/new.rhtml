@@ -1,0 +1,14 @@
+<b>New Variation</b>
+<br/>
+<% fields_for :variation, @variation do |form| %>
+  <table>
+    <tr>
+      <td width="135">Name: </td>
+      <td><%= form.text_field :name %></td>
+    </tr>
+    <tr>
+      <td>Price Effect: </td>
+      <td><%= form.text_field :price_effect %></td>
+    </tr>
+  </table>  
+<% end %>

@@ -1,0 +1,8 @@
+<form>
+<% form_remote_tag :url => {:controller => 'option_types', :action => 'select', :id => @product},
+                   :update => 'result', 
+                   :complete => visual_effect(:highlight, 'result') do %>
+	<%= text_field :product, 'name' %>
+	<%= submit_tag 'Select Variation(s)' %>
+<% end %>
+</form>

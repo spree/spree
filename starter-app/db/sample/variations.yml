@@ -1,0 +1,31 @@
+small-red-baseball:
+  product: ror_baseball_jersey
+  option_values: s, red
+small-blue-baseball:
+  product: ror_baseball_jersey
+  option_values: s, blue
+small-green-baseball:
+  product: ror_baseball_jersey
+  option_values: s, green
+med-red-baseball:
+  product: ror_baseball_jersey
+  option_values: m, red
+med-blue-baseball:
+  product: ror_baseball_jersey
+  option_values: m, blue
+med-green-baseball:
+  product: ror_baseball_jersey
+  option_values: m, green
+large-red-baseball:
+  product: ror_baseball_jersey
+  option_values: l, red
+large-blue-baseball:
+  product: ror_baseball_jersey
+  option_values: l, blue
+large-green-baseball:
+  product: ror_baseball_jersey
+  option_values: l, green
+xlarge-green-baseball:
+  product: ror_baseball_jersey
+  option_values: xl, red
+		

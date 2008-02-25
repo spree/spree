@@ -1,0 +1,9 @@
+<!-- no need for thumnails unless there is more then one image -->
+<% if product.images.size > 1 %>
+	<% product.images.each do |i| %>  
+	  <%= link_to_remote image_tag(i.public_filename(:mini)), 
+	        :url => {:controller => 'store', :action => 'change_image', :id => product, :image_id => i},
+	        :update => 'product-image' 
+	   %>
+	<% end %>
+<% end %>

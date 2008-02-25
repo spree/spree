@@ -1,0 +1,15 @@
+<% 1.upto(30) do |i| %>
+order_<%= i %>:
+  id: <%= i %>
+  user: frank
+  number: <%= Array.new(9){rand(9)}.join %>
+  status: <%= Order::Status::AUTHORIZED %>
+  ship_method: 1
+  ship_amount: 5.00
+  tax_amount: 2.78
+  item_total: 37.97
+  total: 45.75
+  ship_address: frank_address
+  bill_address: frank_address
+  ip_address: 127.0.0.1
+<% end %>

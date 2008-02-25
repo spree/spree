@@ -1,0 +1,37 @@
+<%
+# HACK - in_place_editor field works only with instance variables and not local variables  
+# See http://dev.rubyonrails.org/ticket/3094 for details
+
+@address = address 
+%>
+
+<table cellpadding="0" cellspacing="0">
+  <tr>
+    <td>
+      <%=in_place_editor_field :address, :firstname %> <%=in_place_editor_field :address, :lastname %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+       <%=in_place_editor_field :address, :address1 %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%=in_place_editor_field :address, :address2 %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%=in_place_editor_field :address, :city %>, <%= @address.state.abbr %> <%=in_place_editor_field :address, :zipcode %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%=@address.country.name%>       
+    </td>
+  </tr>
+  <tr>
+    <td><%=in_place_editor_field :address, :phone %></td>
+  </tr>
+</table>

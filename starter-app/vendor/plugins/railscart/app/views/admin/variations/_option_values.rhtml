@@ -1,0 +1,5 @@
+<div id="ajaxWrapper">
+  <select name="option_value" id="option_value" style="width:200px">
+    <%= options_from_collection_for_select(@option.option_values, :id, :name) -%>
+  </select>
+</div>

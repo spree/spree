@@ -1,0 +1,23 @@
+li.product {
+	list-style: none;
+}
+
+li.preview {
+	float: left;
+	width: 102px; height: 14em;
+	margin-right: 50px;
+	font-size: .9em;
+	line-height: 1.2em;
+}
+/**
+* html dl.preview { margin-right: 38px; }
+#section-index dl.preview {
+	margin-right: 18px;
+}*/
+li.preview a {
+	text-decoration: none;
+}
+
+#variations li {
+  list-style-type: none;
+}

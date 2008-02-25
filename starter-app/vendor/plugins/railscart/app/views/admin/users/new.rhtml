@@ -1,0 +1,6 @@
+<%= render :partial => 'menu' -%>
+<h1>Editing User</h1>
+<% form_for :user, :url => { :action => 'new' } do |f| -%>
+  <%= render :partial => 'form', :locals => { :f => f, :create  => true } %>
+  <%= submit_tag "Create" %>
+<% end -%>

@@ -1,0 +1,12 @@
+<div id="tax-treatments">
+  <p>Tax Treatments: </p>
+  <% if selected_treatments.frozen? %>
+    <%= selected_treatments.collect { |t| t.name }.to_sentence -%>
+  <% else %>
+    <% selected_treatments = selected_treatments.collect { |t| t.id.to_i } %>
+    <select id="product_tax_treatments" name="tax_treatments[]" multiple="multiple" size="5" style="width:250px;">
+      <%= options_from_collection_for_select(tax_treatments, :id, :name, selected_treatments) %>
+    </select>
+    <br/>
+  <% end%>
+</div>

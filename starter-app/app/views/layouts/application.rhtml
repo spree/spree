@@ -1,0 +1,46 @@
+<!-- basic layout - feel free to replace with a more elaborate one -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>RailsCart</title>
+    <%= stylesheet_link_tag 'application' %>
+    <%= javascript_include_tag :defaults %>
+  </head>
+  <body>
+    <div id="main">
+			<table id="main-table" border='1'>
+				<tr>
+					<td colspan="2">
+						<table width="100%">
+							<tr>
+								<td>
+                  <h1>Welcome to Our Store</h1>									
+								</td>
+								<td>&nbsp;</td>
+								<td align="right">
+									<%= render :partial => 'shared/store_menu' %>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+	      <% if flash[:notice] %>
+	        <tr><td colspan="2"><div id="flash-notice"><%= flash[:notice] %></div></td></tr>
+	      <% end %>
+	      <% if flash[:error] %>
+	        <tr><td colspan="2"><div id="flash-errors"><%= flash[:error] %></div></td></tr>
+	      <% end %>
+				<tr>
+					<td id="shop-by-col" valign="top">
+						<!--todo: add the category info here -->
+					</td>
+					<td>
+						<div id="main-content">
+						  <%=@content_for_layout %> 	
+						</div>
+					</td>
+				</tr>
+			</table>
+    </div>
+  </body>
+</html>

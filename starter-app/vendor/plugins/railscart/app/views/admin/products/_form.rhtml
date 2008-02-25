@@ -1,0 +1,65 @@
+<!--[form:product]-->                       
+<p>
+  <label for="product_name">Name</label><br/>
+	<%=error_message_on :product, :name%>  
+  <%= f.text_field :name  %>
+</p>
+<p>
+  <label for="product_description">Description</label><br/>
+	<%=error_message_on :product, :description%>
+  <%= f.text_area :description, {:cols => 90, :rows => 10} %>
+</p>
+<p>
+<p>
+  <label for="price">Price:</label><br/>
+	<%=error_message_on :product, :price%>
+  <%= f.text_field :price  %></p>
+</p>
+<p>
+  <% fields_for :sku, @product.sku do |s| %>
+    <label for="product_sku">Sku</label><br/>
+    <%= s.text_field :number %>
+  <% end %>	
+</p>
+<p>
+  <label for="category">Category:</label><br/>
+  <select id="category" 
+	        name="category" 
+					style="width:250px;"> 
+    <%= options_from_collection_for_select(@all_categories, :id, :long_name, @selected_category) %>
+  </select>
+	<%= observe_field :category, 
+                    :update => 'treatmentWrapper', 
+                    :url => {:action => :tax_treatments}, 
+                    :with => "'id=#{@product.id}&category_id=' + encodeURIComponent(value)", 
+                    :on => 'changed' -%> 
+</p>
+<br/>
+<div id="variation-listing">
+	<%= render :partial => 'variations', :locals => {:product => @product} -%>
+</div>
+<br/>
+<div id="option-type-listing">
+	<%= render :partial => 'option_types', :locals => {:product => @product} -%>
+</div>
+<br/>
+<div id="image-listing">
+  <%= render :partial => 'shared/images', :locals => {:viewable => @product} -%>
+</div>
+
+<p>
+	<label for="tags">Tags:</label><br/>
+  <input autocomplete="off" id="product_tags" name="tags" value="<%= @product.tag_list %>" size="35" type="text"/>
+</p>
+<p>
+	<i>Space delimited, no special characters.</i>
+</p>
+<br/>
+
+<div id="treatmentWrapper">
+  <%= render :partial => 'shared/tax_treatments', :locals => {:tax_treatments => @all_tax_treatments, :selected_treatments => @product.tax_treatments} -%>
+</div>
+<div id="tags_update"></div>
+
+<!--[eoform:product]-->
+

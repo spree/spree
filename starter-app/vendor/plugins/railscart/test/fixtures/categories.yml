@@ -1,0 +1,40 @@
+all:
+  id: 1
+  name: All
+  position: 1
+apparel:
+  id: 2
+  name: Apparel
+  parent_id: 1
+  position: 1
+housewares:
+  id: 3
+  name: Housewares
+  parent_id: 1
+  position: 2 
+hats_and_bags:
+  id: 4
+  name: Hats and Bags
+  parent_id: 1
+  position: 3
+stickers_etc:
+  id: 5
+  name: Stickers, Buttons & Magnets
+  parent_id: 1
+  position: 4
+shirt:
+  id: 6
+  name: shirt
+  position: 2
+pants:
+  id: 7
+  name: pants
+  position: 3
+bags:
+  id: 8
+  name: bags
+  position: 4
+hats:
+  id: 9
+  name: hats
+  position: 5

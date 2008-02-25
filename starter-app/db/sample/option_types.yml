@@ -1,0 +1,6 @@
+size:
+  name: tshirt-size
+  presentation: Size
+color:
+  name: tshirt-color
+  presentation: Color

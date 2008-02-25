@@ -1,0 +1,69 @@
+<table>
+	<tr>
+		<td valign="top">
+			<div id="product-image">
+			  <%= render :partial => 'image' -%>
+			</div>
+			<div id="product-thumbnails">
+        <%= render :partial => 'thumbnails', :locals => {:product => @product} -%>
+      </div>
+		</td>
+		<td>
+			<table>
+				<tr>
+					<td class="product-name"><%= @product.name %></td>
+				</tr>
+				<tr>
+					<td class="product-description"><%= @product.description %></td>
+				</tr>
+				<tr>
+					<td>
+						<span class="product-price">Price: </span>
+						<%= @product.price %>
+					</td>
+				</tr>
+				<% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
+					<input type="hidden" name="product_id" value="<%= @product.id %>"/>
+					<%= f.hidden_field :id %>
+						<% unless @product.variations.empty? %>
+						<tr>
+							<td class="product-variations">Variations:</td>
+						</tr>
+							<tr>
+								<td>
+							    <div id="variations">
+							      <ul>
+							        <% @product.variations.each do |v| %>
+							          <li>
+							            <input type="radio" name="variation_id" value="<%= v.id %>" <%= @product.variations.first == v ? 'checked' : '' %>"/>
+							            <%= variation_options v%>
+							          </li>
+							        <% end%>
+							      </ul>
+							    </div>
+								</td>
+							</tr>
+						<% end%>						
+					  <% if @product.tags.size > 0 %>
+							<tr>
+								<td>
+								  <div id="Related Products">
+								  	<h4>Related Products</h4>
+								    [TODO - list related products]
+								  </div>							
+								</td>
+							</tr>
+					  <% end %>
+					<tr>
+						<td>
+							<%= submit_tag 'Add To Cart' %>
+						</td>
+					</tr>
+				<% end %>
+			</table>
+		</td>
+	</tr>
+</table>
+
+
+  

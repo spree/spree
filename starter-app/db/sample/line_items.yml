@@ -1,0 +1,23 @@
+<% for i in 1..30 do%>
+li_<%= i %>:
+  order_id: <%= i %>
+  product: ror_tote
+  quantity: 1
+  price: 8.99
+<% end %>
+
+<% for i in 1..30 do%>
+li_<%= i + 30 %>:
+  order_id: <%= i %>
+  product: ror_bag
+  quantity: 1
+  price: 8.99
+<% end %>
+
+<% for i in 1..30 do%>
+li_<%= i + 60 %>:
+  order_id: <%= i %>
+  product: ror_baseball_jersey
+  quantity: 1
+  price: 19.99
+<% end %>

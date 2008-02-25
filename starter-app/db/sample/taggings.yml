@@ -1,0 +1,16 @@
+taggings_1:
+  id: 1 
+  tag_id: 1           # delicious
+  taggable_id: 1
+  taggable_type: Product       
+taggings_2:
+  id: 2 
+  tag_id: 1           # delicious
+  taggable_id: 2
+  taggable_type: Product
+taggings_3:
+  id: 3 
+  tag_id: 2           # sexy
+  taggable_id: 3       
+  taggable_type: Product
+         
