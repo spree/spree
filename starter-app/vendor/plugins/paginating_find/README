@@ -1,0 +1,89 @@
+Visit http://cardboardrocket.com/pages/paginating_find for more documentation.
+
+This plugin makes it easy to page through your model instances by enhancing the default ActiveRecord::Base#find method.  In general, you can expect pagination to work with the standard #find options, including :conditions, :group, :order, :limit, and :include.  To activate paging, just specify the :page option.  You may also provide additional paging options that will control the behavior of the enumerator returned by the #find method.  The following options are supported:
+
+:size    => Number of records in each page of results. Defaults to the total
+            record count or 10, whichever is smaller.
+:current => The current page. Optional, defaults to the first page: 1.
+:first   => The first page. Optional, defaults to the current page.
+:auto    => Automatically load the next page during invocation of #each. Defaults to false.
+:count   => Number of records used to determine #page_count. Specifying this
+            option prevents the plugin from running a count query, which may 
+            be helpful if the table to be queried is very large.
+
+Note: if :page is specified, then the :offset option is not supported and an Exception to that effect will be raised.
+
+Some handy methods you can call on the result returned by #find, when paging is enabled:
+
+#each               => Iterate over the results
+#size               => Number of records on all pages combined (total size)
+#page_size          => Number of records on each page
+#page_count         => Number of pages
+#empty?             => Are there any results?
+#to_a               => Create an array of the records on the current page, or all pages if :auto => true
+#move!(num)         => Move to a specific page number
+#page_exists?(num)  => Does this page number exist?
+#first_page!        => Move to the first page
+#first_page         => Page number of the first page
+#last_page!         => Move to the last page
+#last_page          => Page number of the last page
+#next_page?         => Is there another page available?
+#next_page!         => Move to the next page, if one exists
+#next_page          => Page number of the next page
+#previous_page?     => Does a previous page exist?
+#previous_page!     => Move to the previous page, if one exists
+#previous_page      => Page number of the previous pages
+#first_item         => The index of the first item on the page
+#last_item          => The index of the last item on the page
+#load_page          => Reload the current page
+
+
+
+- Simple Example -------------------------------------------------------
+
+# Get the first page of 'new' Cogs. Each page contains
+# 10 cogs, and no more than 100 cogs will be returned.
+cogs = Cog.find(:all, 
+                :page,
+                :conditions => ["category = 'new'"],
+                :limit => 100)
+
+# Print the name of each cog on the 1st page. Calling #each
+# more than once will cause the 1st page to be printed for 
+# each invocation.
+cogs.each { |cog| puts cog.name }
+
+# The next_page! method must be used to move to the 2nd page.
+cogs.next_page!
+
+# Print the name of each cog on the 2nd page
+cogs.each { |cog| puts cog.name }
+
+
+
+
+
+- Scope Example -------------------------------------------------------
+
+# Get the second page of 'new' Cogs, using the #with_scope method. 
+# Each page contains 15 cogs, and no more than 100 cogs will be returned.
+Cog.with_scope(:find => {:conditions => "category = 'new'", :include => :widget}) do
+  cogs = Cog.find(:all, 
+                  :limit => 100,
+                  :page => { :start => 1,
+                             :current => 2,
+                             :size => 15 })
+end
+
+# Print the name of each cog on the 2nd page.
+cogs.each { |cog| puts cog.name }
+
+# Move to the 3rd page of cogs. The options specified by 
+# with_scope apply, even though a new page is loaded outside 
+# the with_scope block.
+cogs.next_page!
+
+
+... more examples soon.
+
+

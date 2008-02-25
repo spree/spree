@@ -1,0 +1,6 @@
+test:
+  bucket_name: afu
+  access_key_id: YOURACCESSKEY
+  secret_access_key: YOURSECRETACCESSKEY
+  server: 127.0.0.1
+  port: 3002

@@ -1,0 +1,120 @@
+2008-02-08
+* Count query now uses the :from find option, if specified. Thanks to Rich Wertz.
+
+2007-11-13
+* Removed extraneous statement from collect_count_options. Thanks to Wolfgang Postler.
+
+2007-9-14
+* Count query now respects the distinct keyword if it is included in the :select option.  Thanks to Luke Pearce.
+
+2007-8-25
+* PagingEnumerator#each now returns self.  Thanks to Takeru Sasaki.
+* Addeed #to_xml to the PagingEnumerator.
+
+2007-8-24
+* No longer overwrite the AR #validate_find_options method. Instead just append :page to VALID_FIND_OPTIONS. Thanks for the suggestion Pratik.
+
+2007-7-24
+* Fixed a bug in handling the HAVING having clause. Thanks to Daniel Aborg for the patch!
+* Added support for Array#extract_options! added to Rails edge (9087).  Thanks to Alex Payne!
+* Tests no longer use with_scope since it became protected in Rails edge.
+
+2007-5-7
+* Now uses alias_method_chain. Thanks to Jeremy Larkin for the patch.
+
+2007-4-27
+* PagingEnumerator now supports Marshal.dump and Marshal.load. When marshaled, the enumerator loses its callback, so :auto => true is not supported in this scenario.
+
+2007-02-05
+* :current < 1 is now gracefully handled.  Thanks again to Benjamin Curtis and 21st Century Music.
+
+2007-01-24
+* Added paging_helper that provides paginating_links and paginating_links_each to ActionView::Base. Special thanks to Benjamin Curtis and 21st Century Music (http://21cmusic.com/)!
+
+2007-01-07
+* :first now defaults to 1 rather than the value of :page. Thanks to Jack Baty for bringing this to my attention.
+
+2006-12-28
+* primary_key used to build count select statement rather than "id" column. Thanks to Rich Cox.
+
+2006-12-21
+* Applied another fix to counting with :group option. Special thanks to Ben Weiner.
+* Placed tests for grouping in a separate class.
+
+2006-12-12
+* Removed rails from vendor directory.
+
+2006-11-27
+* For purposes of counting, the HAVING statement is now extracted from the :group option as a convenience for users that are hacking around the lack of a AR#find :having option. Thanks to Gavin Joyce for pointing out this usage of :group. More info here: http://www.mail-archive.com/rails-core@lists.rubyonrails.org/msg01876.html.
+* For purposes of counting, the :select option is now ignored in favor of table_name.id. Thanks to Aron Atkins for reporting a bug that led to this fix.
+
+2006-10-17
+* Count query no longer uses :limit. This option doesn't have the same effect on count as it does on find. The :limit is applied to the count after the query is performed, if necessary.
+* Count query no longer uses :group. Grouping during a count doesn't get any different count than not grouping.
+* Count query no longer uses :order for the same reasons that :group is no longer used.
+
+2006-09-26
+* Change log is now in reverse chronological order
+* Count query now respects :group and :order. Previous changes removing this functionality are no longer applicable.
+
+2006-09-19
+* Added :count option. Using this will cause the plugin to skip the automatic database count query (which can sometimes be slow).
+* The :limit option no longer affects whether the count query will run.
+* Fixed a bug reported by Lisa, where the count query was choking on grouped results. The count query now ignores :group.
+
+2006-09-14
+* Scoping now works correctly, even when enumeration is done outside the #with_scope code block.
+* Added the #empty? method.
+* Added #first_item and #last_item, which return the index of the first and last items on the current page. Thanks, Ilya!
+
+2006-09-10
+* Now works correctly :with_scope, nested :with_scope, and :include.
+* Now correctly counts when querying on through associations.
+* Rewrote paginating_find_test so that it uses real AR::Base models, rather than mocks.
+* Trying out a bare-bones instance of rails in order to run tests without having to install the plugin.
+
+2006-09-10
+* next_page? and previous_page? now return booleans rather than the page number. Thanks, Hammed.
+* next_page and previous_page have been added.
+* The total count now correctly respects conditions, includes, etc.  Thanks, Ilya
+
+2006-09-09
+* ArgumentError is now correctly thrown if options[:offset] is used. Thanks, jonni!
+
+2006-09-08
+* :conditions are now correctly respected when paging is enabled
+* :size now defaults to total number of records if less than ten.
+
+2006-09-06
+* Added #last_page! method. Only works when :auto => true.
+* Added #first_page! method. Only works when :auto => true.
+* Added the #move!(page) method. Only works when :auto => true.
+* Added the #previous_page!(page) method. Only works when :auto => true.
+* Added the #page_exists?(page) method.
+* The #load_page method is no longer protected.
+* Fixed bug in #to_a that was causing :limit to be exceeded.
+* An ArgumentError is now raised if both :page and :offset options are specified
+* The first page and current page can be specified separately, using the :first and :current options respectively.
+* Reversed semantics of automatic pagination. By default, the enumerator will stop after all records on current page. To enumerate all records, pass option :auto => true.
+* :manual_paging is no longer supported.  Use the :auto option instead. :auto defaults to false.
+* All paging options are now specified in a hash, keyed by :page.  This is mostly an aesthetics issue:
+	# The old way:
+    cogs = Cog.find(:all,
+                    :limit => 3000,
+                    :page_size => 10,
+                    :page => 1,
+                    :manual_paging => true)
+
+	# The new way:
+    cogs = Cog.find(:all,
+                    :limit => 3000,
+                    :page => {:size => 10,
+                              :current => 1})
+
+* The following :page options are supported in this revision:
+    :size    => Number of records in each page of results. Defaults to 1/10
+                the total size if total size > 10, otherwise defaults to
+                the total size.
+    :current => The current page. Optional, defaults to the first page: 1.
+    :first   => The first page. Optional, defaults to the current page.
+    :auto    => Automatically load the next page during invocation of #each. Defaults to false.

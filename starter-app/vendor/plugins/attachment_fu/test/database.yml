@@ -1,0 +1,18 @@
+sqlite:
+  :adapter: sqlite
+  :dbfile: attachment_fu_plugin.sqlite.db
+sqlite3:
+  :adapter: sqlite3
+  :dbfile: attachment_fu_plugin.sqlite3.db
+postgresql:
+  :adapter: postgresql
+  :username: postgres
+  :password: postgres
+  :database: attachment_fu_plugin_test
+  :min_messages: ERROR
+mysql:
+  :adapter: mysql
+  :host: localhost
+  :username: rails
+  :password:
+  :database: attachment_fu_plugin_test

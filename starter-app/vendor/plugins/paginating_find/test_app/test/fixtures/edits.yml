@@ -1,0 +1,11 @@
+new_idea:
+  id: 1
+  text: I have a new idea
+  author_id: 1
+  article_id: 1
+  
+remove_para:
+  id: 2
+  text: Remove paragraph 2
+  author_id: 2
+  article_id: 1
