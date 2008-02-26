@@ -1,4 +1,4 @@
-require 'railscart/version'
+require 'spree/version'
 
 AUTHOR = 'Sean Schofield'  # can also be an array of Authors
 EMAIL = "sean.schofield@gmail.com"
@@ -31,8 +31,8 @@ end
 REV = nil 
 # UNCOMMENT IF REQUIRED: 
 # REV = `svn info`.each {|line| if line =~ /^Revision:/ then k,v = line.split(': '); break v.chomp; else next; end} rescue nil
-VERS = Railscart::VERSION::STRING + (REV ? ".#{REV}" : "")
-RDOC_OPTS = ['--quiet', '--title', 'railscart documentation',
+VERS = Spree::VERSION::STRING + (REV ? ".#{REV}" : "")
+RDOC_OPTS = ['--quiet', '--title', 'spree documentation',
     "--opname", "index.html",
     "--line-numbers", 
     "--main", "README",

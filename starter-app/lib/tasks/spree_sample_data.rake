@@ -1,4 +1,4 @@
-namespace :rc do
+namespace :spree do
   desc "Populates store with sample products"
   task :sample_data => :environment do
     require 'active_record/fixtures'

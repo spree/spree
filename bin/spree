@@ -6,7 +6,7 @@ require 'fileutils'
 Signal.trap("INT") { puts; exit }
 
 #hobo_src = File.join(File.dirname(__FILE__), "../hobo_files/plugin")
-starter_app = File.join(File.dirname(__FILE__), "../starter_app")
+starter_app = File.join(File.dirname(__FILE__), "../starter-app")
 
 #USAGE = "USAGE: spree [ --user-model <model-name-or-false> ] [ --svn ] [--db] [--hobo-src <path to hobo src>] <app-path>"
 USAGE = "USAGE: spree [ --edge ] <app-path> "

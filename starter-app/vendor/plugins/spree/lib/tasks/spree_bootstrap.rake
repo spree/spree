@@ -1,4 +1,4 @@
-namespace :rc do
+namespace :spree do
   desc "Loads admin user and other structural data required by RC.  You must run this task before using RC."
   task :bootstrap => :environment do
     # create the default admin user

@@ -59,7 +59,6 @@ starter-app/lib/hijacker.rb
 starter-app/lib/role_requirement_system.rb
 starter-app/lib/role_requirement_test_helper.rb
 starter-app/lib/tagging_extensions.rb
-starter-app/lib/tasks/rc_sample_data.rake
 starter-app/lib/tasks/sample/products/0000/0001/ror_tote.jpeg
 starter-app/lib/tasks/sample/products/0000/0001/ror_tote_mini.jpeg
 starter-app/lib/tasks/sample/products/0000/0001/ror_tote_product.jpeg
@@ -108,6 +107,7 @@ starter-app/lib/tasks/sample/products/0000/0012/ror_stein_back.jpeg
 starter-app/lib/tasks/sample/products/0000/0012/ror_stein_back_mini.jpeg
 starter-app/lib/tasks/sample/products/0000/0012/ror_stein_back_product.jpeg
 starter-app/lib/tasks/sample/products/0000/0012/ror_stein_back_small.jpeg
+starter-app/lib/tasks/spree_sample_data.rake
 starter-app/public/.htaccess
 starter-app/public/404.html
 starter-app/public/500.html
@@ -463,7 +463,7 @@ starter-app/vendor/plugins/spree/lib/constants/enumerable_constants.rb
 starter-app/vendor/plugins/spree/lib/format.rb
 starter-app/vendor/plugins/spree/lib/gateway/bogus_gateway.rb
 starter-app/vendor/plugins/spree/lib/shipping/flat_rate.rb
-starter-app/vendor/plugins/spree/lib/tasks/rc_bootstrap.rake
+starter-app/vendor/plugins/spree/lib/tasks/spree_bootstrap.rake
 starter-app/vendor/plugins/spree/lib/tax/sales_tax.rb
 starter-app/vendor/plugins/spree/routes.rb
 starter-app/vendor/plugins/spree/script/about

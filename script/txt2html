@@ -11,10 +11,10 @@ end
 require 'redcloth'
 require 'syntax/convertors/html'
 require 'erb'
-require File.dirname(__FILE__) + '/../lib/railscart/version.rb'
+require File.dirname(__FILE__) + '/../lib/spree/version.rb'
 
 version  = Railscart::VERSION::STRING
-download = 'http://rubyforge.org/projects/railscart'
+download = 'http://rubyforge.org/projects/spree'
 
 class Fixnum
   def ordinal
