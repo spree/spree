@@ -1,3 +1,7 @@
+== 0.0.5 2008-02-36
+
+* Test release of the newly named gem (formerly known as railscart)
+
 == 0.0.4 2008-02-12
 
 * Cookie sessions (no more db sessions)

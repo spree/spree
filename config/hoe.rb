@@ -1,10 +1,10 @@
 require 'railscart/version'
 
-AUTHOR = 'Sean Schofield - Schofield Tech Works LLC'  # can also be an array of Authors
+AUTHOR = 'Sean Schofield'  # can also be an array of Authors
 EMAIL = "sean.schofield@gmail.com"
-DESCRIPTION = "Build commerce applications for Ruby on Rails"
-GEM_NAME = 'railscart' # what ppl will type to install your gem
-RUBYFORGE_PROJECT = 'railscart' # The unix name for your project
+DESCRIPTION = "Complete commerce solution for Ruby on Rails"
+GEM_NAME = 'spree' # what ppl will type to install your gem
+RUBYFORGE_PROJECT = 'spree' # The unix name for your project
 HOMEPATH = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 DOWNLOAD_PATH = "http://rubyforge.org/projects/#{RUBYFORGE_PROJECT}"
 

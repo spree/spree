@@ -6,7 +6,7 @@
 # DISC: 6011000000000004
 # 
 # NOTE: Based on ActiveMerchant's Bogus Gateway with some added improvements
-module RailsCart #:nodoc:
+module Spree #:nodoc:
   class BogusGateway
     TEST_VISA = "4111111111111111" 
     TEST_MC = "5500000000000004"

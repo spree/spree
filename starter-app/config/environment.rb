@@ -22,8 +22,6 @@ Rails::Initializer.run do |config|
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
-  #config.plugins=["engines", "railscart", "*"]
-  #config.plugins = [:railscart, :engines, :all]
   
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
@@ -78,7 +76,7 @@ require 'mini_magick'
 # Include your application configuration below
 
 # RailsCart Configuration
-SESSION_KEY = '_rc_session_id'
+SESSION_KEY = '_spree_session_id'
 TAX_CALCULATOR = "SalesTax" # feel free to replace with a custom tax calculator class
 SHIPPING_METHODS = [:flat_rate]
 FLAT_SHIPPING_RATE = 10 # applies only to the flat rate shipping option
@@ -127,7 +125,7 @@ SALES_TAX_RATES = {:NY => 0.08375}
 # 
 # NOTE: Only works with specific card numbers.  See source code for details.
 # ================================================================================ 
-PAYMENT_GATEWAY = "RailsCart::BogusGateway"
+PAYMENT_GATEWAY = "Spree::BogusGateway"
 GATEWAY_OPTIONS = {}
 #
 # ================================================================================
