@@ -1,4 +1,4 @@
-class RailscartToVersion21 < ActiveRecord::Migration
+class SpreeToVersion21 < ActiveRecord::Migration
   def self.up
     Engines.plugins["spree"].migrate(21)
   end

@@ -8,8 +8,8 @@ Signal.trap("INT") { puts; exit }
 #hobo_src = File.join(File.dirname(__FILE__), "../hobo_files/plugin")
 starter_app = File.join(File.dirname(__FILE__), "../starter_app")
 
-#USAGE = "USAGE: railscart [ --user-model <model-name-or-false> ] [ --svn ] [--db] [--hobo-src <path to hobo src>] <app-path>"
-USAGE = "USAGE: railscart [ --edge ] <app-path> "
+#USAGE = "USAGE: spree [ --user-model <model-name-or-false> ] [ --svn ] [--db] [--hobo-src <path to hobo src>] <app-path>"
+USAGE = "USAGE: spree [ --edge ] <app-path> "
 
 RAILSCART_REPO = "http://railscart.googlecode.com/svn/trunk/railscart/"
 
@@ -63,8 +63,7 @@ until ARGV.empty?
   end 
 end
 
-puts "\nGenerating Rails app...\n"
-#system("rails #{app_path}")
+puts "\nGenerating Spree application...\n"
  
 # Create a new rails app by copying the starter app and renaming
 FileUtils.cp_r starter_app, app_path
