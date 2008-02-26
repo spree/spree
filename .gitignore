@@ -1,1 +1,6 @@
 starter-app/log/*
+starter-app/public/images/products
+starter-app/public/images/calendar_date_select
+starter-app/public/plugin_assets
+starter-app/public/javascripts/calendar_date_select
+starter-app/public/stylesheets/calendar_date_select
