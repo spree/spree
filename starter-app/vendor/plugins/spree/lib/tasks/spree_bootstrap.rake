@@ -2,7 +2,7 @@ namespace :spree do
   desc "Loads admin user and other structural data required by RC.  You must run this task before using RC."
   task :bootstrap => :environment do
     # create the default admin user
-    User.create(:login => 'rc_admin',
+    User.create(:login => 'admin',
                 :email => 'admin@changeme.com', 
                 :salt => '7e3041ebc2fc05a40c60028e2c4901a81035d3cd', 
                 :crypted_password => '00742970dc9e6319f8019fd54864d3ea740f04b1',
@@ -19,6 +19,6 @@ namespace :spree do
     TaxTreatment.create(:name => "Non taxable")
     TaxTreatment.create(:name => "U.S. Sales Tax")
     
-    puts "RC bootstrap process completed."
+    puts "Spree bootstrap process completed."
   end
 end
