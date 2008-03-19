@@ -5,7 +5,6 @@ class Admin::ImagesController < Admin::BaseController
     render :layout => false
   end
 
-  # delete the variation (ajax call from either product or category edit screen)
   def delete
     image = Image.find(params[:id])
     viewable = image.viewable
