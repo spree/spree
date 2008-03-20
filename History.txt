@@ -1,3 +1,9 @@
+== 0.0.6 2008-02-36
+
+* Now properly requires the mini_magick dependency
+* Fixed a few minor rake task issues
+* Other very minor bug fixes
+
 == 0.0.5 2008-02-36
 
 * Test release of the newly named gem (formerly known as railscart)
