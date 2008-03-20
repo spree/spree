@@ -64,7 +64,8 @@ hoe = Hoe.new(GEM_NAME, VERS) do |p|
       ['rails', '>= 2.0.0'], 
       ['activemerchant', '>= 1.2.1'], 
       ['mocha', '>= 0.5.6'], 
-      ['has_many_polymorphs', '>= 2.12']
+      ['has_many_polymorphs', '>= 2.12'],
+      ['mini_magick', ">=1.2.3"]
   ]
   #p.extra_deps = []     # An array of rubygem dependencies [name, version], e.g. [ ['active_support', '>= 1.3.1'] ]
   
