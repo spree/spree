@@ -292,7 +292,7 @@ starter-app/vendor/plugins/spree/app/controllers/admin/users_controller.rb
 starter-app/vendor/plugins/spree/app/controllers/admin/variations_controller.rb
 starter-app/vendor/plugins/spree/app/controllers/cart_controller.rb
 starter-app/vendor/plugins/spree/app/controllers/checkout_controller.rb
-starter-app/vendor/plugins/spree/app/controllers/rails_cart/base_controller.rb
+starter-app/vendor/plugins/spree/app/controllers/spree/base_controller.rb
 starter-app/vendor/plugins/spree/app/controllers/store_controller.rb
 starter-app/vendor/plugins/spree/app/helpers/account_helper.rb
 starter-app/vendor/plugins/spree/app/helpers/admin/base_helper.rb
@@ -305,8 +305,8 @@ starter-app/vendor/plugins/spree/app/helpers/admin/users_helper.rb
 starter-app/vendor/plugins/spree/app/helpers/admin/variations_helper.rb
 starter-app/vendor/plugins/spree/app/helpers/cart_helper.rb
 starter-app/vendor/plugins/spree/app/helpers/checkout_helper.rb
-starter-app/vendor/plugins/spree/app/helpers/rails_cart/base_helper.rb
 starter-app/vendor/plugins/spree/app/helpers/search_helper.rb
+starter-app/vendor/plugins/spree/app/helpers/spree/base_helper.rb
 starter-app/vendor/plugins/spree/app/helpers/store_helper.rb
 starter-app/vendor/plugins/spree/app/models/address.rb
 starter-app/vendor/plugins/spree/app/models/cart.rb

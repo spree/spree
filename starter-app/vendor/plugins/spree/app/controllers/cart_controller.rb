@@ -1,4 +1,4 @@
-class CartController < RailsCart::BaseController
+class CartController < Spree::BaseController
   before_filter :find_cart
   before_filter :store_previous_location
   

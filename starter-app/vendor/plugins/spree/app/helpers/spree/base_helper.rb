@@ -1,4 +1,4 @@
-module RailsCart::BaseHelper
+module Spree::BaseHelper
   require 'paginating_find'
   
   def stylesheets

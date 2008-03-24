@@ -1,4 +1,4 @@
-class StoreController < RailsCart::BaseController
+class StoreController < Spree::BaseController
   before_filter :find_cart
 
   def index

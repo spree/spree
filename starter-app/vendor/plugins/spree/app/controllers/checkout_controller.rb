@@ -1,4 +1,4 @@
-class CheckoutController < RailsCart::BaseController
+class CheckoutController < Spree::BaseController
   before_filter :find_order, :except => [:index, :thank_you]
   
   require_role 'admin', :only => :comp 
