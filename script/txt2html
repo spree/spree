@@ -13,7 +13,7 @@ require 'syntax/convertors/html'
 require 'erb'
 require File.dirname(__FILE__) + '/../lib/spree/version.rb'
 
-version  = Railscart::VERSION::STRING
+version  = Spree::VERSION::STRING
 download = 'http://rubyforge.org/projects/spree'
 
 class Fixnum

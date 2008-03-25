@@ -75,7 +75,7 @@ require 'mini_magick'
 
 # Include your application configuration below
 
-# RailsCart Configuration
+# Spree Configuration
 SESSION_KEY = '_spree_session_id'
 TAX_CALCULATOR = "SalesTax" # feel free to replace with a custom tax calculator class
 SHIPPING_METHODS = [:flat_rate]
