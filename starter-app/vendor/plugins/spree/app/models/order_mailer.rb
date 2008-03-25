@@ -1,5 +1,5 @@
 class OrderMailer < ActionMailer::Base
-  helper "rails_cart/base"
+  helper "spree/base"
   
   def confirm(order, resend = false)
     @subject    = (resend ? "[RESEND] " : "") 
