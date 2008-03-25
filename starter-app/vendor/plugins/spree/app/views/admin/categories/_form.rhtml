@@ -12,11 +12,7 @@
                   :url => {:action => :tax_treatments}, 
                   :with => "'category_id=#{@category.id}&parent_id=' + encodeURIComponent(value)",
                   :on => 'changed' -%>
-<%= observe_field :category_parent_id, 
-                  :update => 'variationsWrapper', 
-                  :url => {:controller => :variations, :action => :category_variations}, 
-                  :with => "'category_id=#{@category.id}&parent_id=' + encodeURIComponent(value)", 
-                  :on => 'changed' -%>                   
+             
 <div id="treatmentWrapper">
   <%= render :partial => 'shared/tax_treatments', :locals => {:tax_treatments => @all_tax_treatments, :selected_treatments => @category.tax_treatments} -%>
 </div>

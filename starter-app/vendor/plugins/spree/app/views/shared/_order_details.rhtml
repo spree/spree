@@ -10,7 +10,7 @@
   </tr>
   <% for item in @order.line_items %>
     <tr >
-      <td width="300"><%=item.product.name-%> <%= "(" + variation_options(item.variation) + ")" if item.variation %></td>
+      <td width="300"><%=item.product.name-%> <%= "(" + variant_options(item.variant) + ")" if item.variant %></td>
       <td valign="top"><%= number_to_currency item.price -%></td>
       <td valign="top"><%=item.quantity-%></td>
       <td valign="top"><%= number_to_currency (item.price * item.quantity)-%></td>

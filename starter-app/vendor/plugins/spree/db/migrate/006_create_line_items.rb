@@ -3,7 +3,7 @@ class CreateLineItems < ActiveRecord::Migration
 	  create_table "line_items", :force => true do |t|
 	    t.column "order_id",     :integer
 	    t.column "product_id",   :integer
-      t.column "variation_id", :integer
+      t.column "variant_id",   :integer
 	    t.column "quantity",     :integer, :null => false
 	    t.column "price",        :decimal, :precision => 8, :scale => 2, :null => false
 	    t.column "created_at",   :datetime

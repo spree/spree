@@ -1,6 +1,6 @@
 class CartItem < ActiveRecord::Base
   belongs_to :product
-  belongs_to :variation
+  belongs_to :variant
   belongs_to :cart
   
   validates_presence_of :product, :quantity
@@ -22,8 +22,6 @@ class CartItem < ActiveRecord::Base
   
   def price
     self.product.price
-    #pe = self.variation ? self.variation.price_effect : 0
-    #self.product.price + pe
   end
   
 end

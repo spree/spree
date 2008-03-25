@@ -1,7 +1,7 @@
 class Product < ActiveRecord::Base
   has_many :product_option_types, :dependent => :destroy
   has_many :option_types, :through => :product_option_types
-  has_many :variations, :dependent => :destroy
+  has_many :variants, :dependent => :destroy
   belongs_to :category
   has_and_belongs_to_many :tax_treatments
   has_many :images, :as => :viewable, :dependent => :destroy
@@ -35,7 +35,7 @@ class Product < ActiveRecord::Base
       # return empty array (does not need to be frozen since category has none)
       return tt
     else
-      # return a frozen copy of the cateogires variations
+      # return a frozen copy of the category tax treatments
       return Array.new(self.category.tax_treatments).freeze   
     end
   end  

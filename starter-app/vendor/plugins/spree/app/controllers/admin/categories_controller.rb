@@ -39,16 +39,6 @@ class Admin::CategoriesController < Admin::BaseController
     # clear out previous tax treatments since deselecting them will not communicated via POST
     @category.tax_treatments.clear
     @category.tax_treatments = TaxTreatment.find(params[:tax_treatments]) if params[:tax_treatments]
-
-    #if params[:variation]
-    #  @variation = Variation.new(params[:variation]) 
-    #  unless @variation.valid?
-    #    flash[:error] = "Problem saving variation"
-    #    redirect_to :action => "edit", :id => @category and return
-    #  end
-      
-    #  @category.variations << @variation if @variation
-    #end
     @category.save
       
     if @category.update_attributes(params[:category])
@@ -79,20 +69,6 @@ class Admin::CategoriesController < Admin::BaseController
 
     render  :partial => 'shared/tax_treatments', 
             :locals => {:tax_treatments => @all_tax_treatments, :selected_treatments => category.tax_treatments},
-            :layout => false
-  end
-
-  # AJAX method to show variations based on change in parent category
-  def category_variations
-    category = Category.find_or_create_by_id(params[:category_id])
-    if params[:parent_id].blank?
-      category.parent = nil
-    else
-      category.parent = Category.find(params[:parent_id])      
-    end
-    
-    render  :partial => 'shared/variations',
-            :locals => {:variations => category.variations, :category => category},
             :layout => false
   end
 

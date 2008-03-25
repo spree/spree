@@ -189,12 +189,12 @@ padding-right: 0;
 /* ================ end: product preview ================ */
 
 /* ================ begin: product-name ================ */
-.product-name, .product-price, .product-variations {
+.product-name, .product-price, .product-variants {
   font-weight: bold;
 }
 /* ================ end: product-name ================ */
 
-#variations ul {
+#variants ul {
 	list-style: none;
 	margin-left: 0px;
 	padding-left: 1em;

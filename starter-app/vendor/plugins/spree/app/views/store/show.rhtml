@@ -25,18 +25,18 @@
 				<% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
 					<input type="hidden" name="product_id" value="<%= @product.id %>"/>
 					<%= f.hidden_field :id %>
-						<% unless @product.variations.empty? %>
+						<% unless @product.variants.empty? %>
 						<tr>
-							<td class="product-variations">Variations:</td>
+							<td class="product-variants">Variants:</td>
 						</tr>
 							<tr>
 								<td>
-							    <div id="variations">
+							    <div id="variants">
 							      <ul>
-							        <% @product.variations.each do |v| %>
+							        <% @product.variants.each do |v| %>
 							          <li>
-							            <input type="radio" name="variation_id" value="<%= v.id %>" <%= @product.variations.first == v ? 'checked' : '' %>"/>
-							            <%= variation_options v%>
+							            <input type="radio" name="variant_id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked' : '' %>"/>
+							            <%= variant_options v%>
 							          </li>
 							        <% end%>
 							      </ul>

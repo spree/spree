@@ -70,13 +70,13 @@ class Admin::ProductsController < Admin::BaseController
       @product.sku.number = params[:sku][:number]
       @product.sku.save
       
-      if params[:variation]
-        @variation = Variation.new(params[:variation])
-        unless @variation.valid?
-          flash[:error] = "Problem saving variation"
+      if params[:variant]
+        @variant = Variant.new(params[:variant])
+        unless @variant.valid?
+          flash[:error] = "Problem saving variant"
           redirect_to :action => "edit", :id => @product and return
         end
-        @product.variations << @variation if @variation
+        @product.variants << @variant if @variant
       end
       
       # need to clear this every time in case user removes tags (those won't show up in the post)
@@ -91,13 +91,13 @@ class Admin::ProductsController < Admin::BaseController
         end
       end
       
-      if params[:new_variation]
-        v = Variation.new
-        params[:new_variation].each do |key, value|
+      if params[:new_variant]
+        v = Variant.new
+        params[:new_variant].each do |key, value|
           v.option_values << OptionValue.find(value)
         end
         v.save
-        @product.variations << v
+        @product.variants << v
         @product.save
       end
       
@@ -164,20 +164,20 @@ class Admin::ProductsController < Admin::BaseController
   end
     
   #AJAX method   
-  def new_variation
+  def new_variant
     @product = Product.find(params[:id])
-    @variation = Variation.new    
-    render  :partial => 'new_variation', 
+    @variant = Variant.new    
+    render  :partial => 'new_variant', 
             :locals => {:product => @product},
             :layout => false    
   end
   
   #AJAX method
-  def delete_variation
+  def delete_variant
     @product = Product.find(params[:id])
-    Variation.destroy(params[:variation_id])
-    flash.now[:notice] = 'Variation successfully removed.'
-    render  :partial => 'variations', 
+    Variant.destroy(params[:variant_id])
+    flash.now[:notice] = 'Variant successfully removed.'
+    render  :partial => 'variants', 
             :locals => {:product => @product},
             :layout => false    
   end

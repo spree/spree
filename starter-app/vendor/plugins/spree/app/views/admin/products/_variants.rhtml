@@ -1,5 +1,5 @@
-<h2>Variations</h2>
-<%=error_message_on :product, :variations %>
+<h2>Variants</h2>
+<%=error_message_on :product, :variants %>
 <table class="basic-table">
 	<thead>
 		<tr>
@@ -8,19 +8,19 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% @product.variations.each do |v| %>
+		<% @product.variants.each do |v| %>
 			<tr>
-				<td><%= variation_options v %></td>
+				<td><%= variant_options v %></td>
 				<td>
 				  <%= link_to_remote "Remove",
-				                     :url => {:action => 'delete_variation', :id=> @product, :variation_id => v},
+				                     :url => {:action => 'delete_variant', :id=> @product, :variant_id => v},
 				                     :before => "Element.show('busy_indicator')", 
 				                     :complete => "Element.hide('busy_indicator')",
-				                     :update => 'variation-listing' %>
+				                     :update => 'variant-listing' %>
 				</td>
 			</tr>
 		<% end %>
-		<% if @product.variations.empty? %>
+		<% if @product.variants.empty? %>
 			<tr>
 				<td colspan="3">None Available.</td>
 			</tr>
@@ -29,13 +29,13 @@
 </table>
 <% unless @product.new_record? or @product.selected_options.empty? %>
   <span id="new-var-link">
-	  <%= link_to_remote "New Product Variation",
-	                     :url => {:controller => 'products', :action => 'new_variation', :id=> @product},
+	  <%= link_to_remote "New Product Variant",
+	                     :url => {:controller => 'products', :action => 'new_variant', :id=> @product},
 	                     :before => "Element.hide('new-var-link');Element.show('var_busy_indicator')", 
 	                     :complete => "Element.hide('var_busy_indicator')",
-	                     :update => 'new-variation' %>
+	                     :update => 'new-variant' %>
   </span>
 	<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'var_busy_indicator' %>
 <% end %>
 
-<div id="new-variation"></div>
+<div id="new-variant"></div>

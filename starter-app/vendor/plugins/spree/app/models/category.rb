@@ -3,7 +3,6 @@ class Category < ActiveRecord::Base
   acts_as_list :scope => :parent_id
   acts_as_tree :order => :position
   has_and_belongs_to_many :tax_treatments
-  has_many :variations, :as => :variable, :dependent => :destroy
   validates_presence_of :name
   
   def ancestors_name
@@ -21,21 +20,6 @@ class Category < ActiveRecord::Base
   def before_save
     self.parent = nil if parent == self
   end
-  
-  # Serious Ruby hacking going on here.  We alias the original method for the association as added by 
-  # ActiveRecord and then override it so we can return the parent category's variations if they are present.
-  alias :ar_variations :variations
-  def variations
-    v = ar_variations
-    return v unless v.empty?
-    if self.parent and not self.parent.variations.empty?
-      # return a frozen copy of the parent category's variations
-      return Array.new(self.parent.variations).freeze   
-    else
-      # return category variations
-      return v
-    end
-  end   
 
   # Serious Ruby hacking going on here.  We alias the original method for the association as added by 
   # ActiveRecord and then override it so we can return the parent category's treatments if they are present.
@@ -56,11 +40,11 @@ class Category < ActiveRecord::Base
   # the previous parent-child relationship 
   def before_update
     return if self.parent.nil?
-    return if self.variations.frozen? and self.tax_treatments.frozen? # variations and treatments were inherited from previous parent - leave them alone
-    unless self.parent.variations.empty? # new parent has no variations to inherit - leave the current ones alone
-      self.ar_variations.each do |v|
-        v.destroy
-      end
-    end
+    return if self.tax_treatments.frozen? # tax treatments were inherited from previous parent - leave them alone
+    #unless self.parent.variations.empty? # new parent has no variations to inherit - leave the current ones alone
+    #  self.ar_variations.each do |v|
+    #    v.destroy
+    #  end
+    #end
   end
 end

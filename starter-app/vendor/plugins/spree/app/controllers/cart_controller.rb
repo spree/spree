@@ -16,13 +16,13 @@ class CartController < Spree::BaseController
   
   def add
     product = Product.find(params[:product][:id])
-    variation_id = params[:variation_id]
-    if variation_id.blank? 
-      variation = nil
+    variant_id = params[:variant_id]
+    if variant_id.blank? 
+      variant = nil
     else
-      variation = Variation.find(variation_id)
+      variant = Variant.find(variant_id)
     end
-    item = @cart.add_product(product, variation)
+    item = @cart.add_product(product, variant)
     @cart.save
     item.save
     

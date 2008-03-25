@@ -1,7 +1,7 @@
 class LineItem < ActiveRecord::Base
   belongs_to :order
   belongs_to :product
-  belongs_to :variation
+  belongs_to :variant
 
   validates_presence_of :product
   validates_numericality_of :quantity
@@ -12,7 +12,7 @@ class LineItem < ActiveRecord::Base
     line_item.product = cart_item.product
     line_item.quantity = cart_item.quantity
     line_item.price = cart_item.price
-    line_item.variation = cart_item.variation
+    line_item.variant = cart_item.variant
     line_item
   end  
   

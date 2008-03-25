@@ -21,7 +21,7 @@
           </td>
           <td valign="top">              
             <%=link_to @item.product.name, :controller => 'store', :action => 'show', :id => @item.product-%>
-            <%= variation_options @item.variation if @item.variation %><br/>
+            <%= variant_options @item.variant if @item.variant %><br/>
             <%=truncate(@item.product.description, length = 100, truncate_string = "...")-%>
           </td>
           <td valign="top" width="75">$ <%= sprintf("%0.2f", @item.price) %></td>

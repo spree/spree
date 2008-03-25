@@ -65,8 +65,8 @@ module Spree::BaseHelper
   end  
   
 
-  # human readable list of variation options
-  def variation_options(v)
+  # human readable list of variant options
+  def variant_options(v)
     list = []
     v.option_values.each do |ov|
       list << ov.option_type.presentation + ": " + ov.presentation
