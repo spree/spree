@@ -1,10 +1,15 @@
-== 0.0.6 2008-02-36
+== 0.0.7 2008-03-26
+
+* Fixed an error with improperly named helper in one of the mailers (this was preventing checkout)
+* Removed several trivial references to old project name 
+
+== 0.0.6 2008-03-26
 
 * Now properly requires the mini_magick dependency
 * Fixed a few minor rake task issues
 * Other very minor bug fixes
 
-== 0.0.5 2008-02-36
+== 0.0.5 2008-02-26
 
 * Test release of the newly named gem (formerly known as railscart)
 
