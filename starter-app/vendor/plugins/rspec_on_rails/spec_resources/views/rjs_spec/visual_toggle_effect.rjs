@@ -1,0 +1,1 @@
+page.visual_effect :toggle_blind, 'mydiv'

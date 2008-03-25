@@ -1,0 +1,18 @@
+Description:
+    The rspec_model generator creates stubs for a new model.
+
+    The generator takes a model name as its argument.  The model name may be
+    given in CamelCase or under_score and should not be suffixed with 'Model'.
+
+    The generator creates a model class in app/models, an RSpec spec in
+    spec/models, database fixtures in spec/fixtures/plural_name.yml, and a migration
+    in db/migrate.
+
+Example:
+    ./script/generate rspec_model Account
+
+    This will create an Account model:
+        Model:      app/models/account.rb
+        Spec:       spec/models/account_spec.rb
+        Fixtures:   spec/fixtures/accounts.yml
+        Migration:  db/migrate/XXX_add_accounts.rb
