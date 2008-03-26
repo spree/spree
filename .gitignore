@@ -1,4 +1,4 @@
-starter-app/log/*
+starter-app/log/*.log
 starter-app/public/images/products
 starter-app/public/images/calendar_date_select
 starter-app/public/plugin_assets
