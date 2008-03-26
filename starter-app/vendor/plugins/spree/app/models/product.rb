@@ -12,6 +12,14 @@ class Product < ActiveRecord::Base
   
   alias :selected_options :product_option_types
   
+  # checks is there are any meaningful variants (ie. variants with at least one option value)
+  def variants?
+    self.variants.each do |v|
+      return true unless v.option_values.empty?
+    end
+    false
+  end
+  
   # if product has a new category then we may need to delete tax_treatments associated with the  
   # previous category
   def before_update

@@ -40,39 +40,6 @@ class ProductTest < Test::Unit::TestCase
     p.stubs(:tax_treatments).returns []
     assert !(p.apply_tax_treatment? @tt.id)
   end
-  
-  def test_variations_no_category
-    assert (@p.variations.empty?)
-    assert (not @p.variations.frozen?)
-  end
-  
-  def test_variations_empty_category
-    @p.category = @c
-    assert (@p.variations.empty?)
-    assert !(@p.variations.frozen?)
-    v = Variation.new
-    @p.variations << v
-    assert (@p.variations == [v])
-    assert !(@p.variations.frozen?)
-  end
-  
-  def test_variations_category
-    v = ["mock variation"]
-    @c.stubs(:variations).returns v
-    @p.category = @c
-    assert (@p.variations == v)
-    assert (@p.variations.frozen?)
-  end
-  
-  def test_variations_parent_category
-    pc = Category.new
-    v = ["mock variation"]
-    pc.stubs(:variations).returns v
-    @c.parent = pc
-    @p.category = @c
-    assert @p.variations == v
-    assert @p.variations.frozen?
-  end
 
   def test_tax_no_category
     assert @p.tax_treatments.empty?

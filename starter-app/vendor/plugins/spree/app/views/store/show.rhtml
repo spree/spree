@@ -23,37 +23,37 @@
 					</td>
 				</tr>
 				<% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
-					<input type="hidden" name="product_id" value="<%= @product.id %>"/>
-					<%= f.hidden_field :id %>
-						<% unless @product.variants.empty? %>
+					<% if @product.variants? %>
 						<tr>
 							<td class="product-variants">Variants:</td>
 						</tr>
-							<tr>
-								<td>
-							    <div id="variants">
-							      <ul>
-							        <% @product.variants.each do |v| %>
-							          <li>
-							            <input type="radio" name="variant_id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked' : '' %>"/>
-							            <%= variant_options v%>
-							          </li>
-							        <% end%>
-							      </ul>
-							    </div>
-								</td>
-							</tr>
-						<% end%>						
-					  <% if @product.tags.size > 0 %>
-							<tr>
-								<td>
-								  <div id="Related Products">
-								  	<h4>Related Products</h4>
-								    [TODO - list related products]
-								  </div>							
-								</td>
-							</tr>
-					  <% end %>
+						<tr>
+							<td>
+						    <div id="variants">
+						      <ul>
+						        <% @product.variants.each do |v| %>
+						          <li>
+						            <input type="radio" name="id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked' : '' %>/>
+						            <%= variant_options v%>
+						          </li>
+						        <% end%>
+						      </ul>
+						    </div>
+							</td>
+						</tr>
+					<% else %>
+					  <input type="hidden" name="id" value=<%=@product.variants.first.id %>/>
+					<% end%>						
+				  <% if @product.tags.size > 0 %>
+						<tr>
+							<td>
+							  <div id="Related Products">
+							  	<h4>Related Products</h4>
+							    [TODO - list related products]
+							  </div>							
+							</td>
+						</tr>
+				  <% end %>
 					<tr>
 						<td>
 							<%= submit_tag 'Add To Cart' %>

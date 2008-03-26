@@ -1,11 +1,7 @@
 class Cart < ActiveRecord::Base
   has_many :cart_items, :dependent => :destroy do
-    def in_cart(product, variant = nil)
-      if variant
-        find :first, :conditions => ['product_id = ? and variant_id = ?', product.id, variant.id]
-      else
-        find :first, :conditions => ['product_id = ?', product.id]
-      end
+    def in_cart(variant)
+      find :first, :conditions => ['variant_id = ?', variant.id]
     end
   end
   has_many :products, :through => :cart_items
@@ -14,23 +10,14 @@ class Cart < ActiveRecord::Base
     cart_items.inject(0) {|sum, n| n.price * n.quantity + sum}
   end
   
-  def add_product(product, variant = nil)
-    current_item = cart_items.in_cart(product, variant)
+  def add_variant(variant, quantity=1)
+    current_item = cart_items.in_cart(variant)
     if current_item
-      current_item.increment_quantity
+      current_item.increment_quantity unless quantity > 1
+      current_item.quantity = (current_item.quantity + quantity) if quantity > 1
     else
-      current_item = CartItem.new(:quantity => 1, :product => product, :variant => variant)
+      current_item = CartItem.new(:quantity => quantity, :variant => variant)
       cart_items << current_item
-    end
-    current_item
-  end
-  
-  def remove_product(product, variant = nil)
-    current_item = cart_items.in_cart(product, variant)
-    if current_item.quantity > 1
-      current_item.decrement_quantity
-    else
-      CartItem.destroy(current_item.id)
     end
     current_item
   end

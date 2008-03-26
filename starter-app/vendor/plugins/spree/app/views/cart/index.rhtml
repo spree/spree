@@ -17,12 +17,12 @@
       <% for @item in @cart.cart_items %>
         <tr class="<%= cycle('even', 'odd') %>">
           <td width="100">
-            <%= small_image(@item.product) %>
+            <%= small_image(@item.variant.product) %>
           </td>
           <td valign="top">              
-            <%=link_to @item.product.name, :controller => 'store', :action => 'show', :id => @item.product-%>
-            <%= variant_options @item.variant if @item.variant %><br/>
-            <%=truncate(@item.product.description, length = 100, truncate_string = "...")-%>
+            <%=link_to @item.variant.product.name, :controller => 'store', :action => 'show', :id => @item.variant.product %>
+            <%= variant_options @item.variant %><br/>
+            <%=truncate(@item.variant.product.description, length = 100, truncate_string = "...")-%>
           </td>
           <td valign="top" width="75">$ <%= sprintf("%0.2f", @item.price) %></td>
           <td valign="top" width="50"><%= text_field "item[]", :quantity, :size => 1 -%></td>

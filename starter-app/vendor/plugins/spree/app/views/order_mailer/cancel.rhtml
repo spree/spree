@@ -6,7 +6,7 @@ Your order has been CANCELED.  Please retain this cancellation information for y
 Order Summary [CANCELED]
 ============================================================
 <% for item in @order.line_items -%>
-<%=item.product.sku if item.product.sku-%> <%=item.product.name-%> <%= variant_options(item.variant) if item.variant -%> (<%=item.quantity-%>) @ $ <%= sprintf("%0.2f", item.price) %> = $ <%= sprintf("%0.2f", item.price * item.quantity) %>
+<%=item.variant.product.sku if item.variant.product.sku-%> <%=item.variant.product.name-%> <%= variant_options(item.variant) %> (<%=item.quantity-%>) @ $ <%= sprintf("%0.2f", item.price) %> = $ <%= sprintf("%0.2f", item.price * item.quantity) %>
 <% end -%>      
 ============================================================
 Subtotal: <%= number_to_currency @order.item_total %>

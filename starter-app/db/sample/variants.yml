@@ -28,4 +28,20 @@ large-green-baseball:
 xlarge-green-baseball:
   product: ror_baseball_jersey
   option_values: xl, red
+ror_tote_v:
+  product: ror_tote
+ror_bag_v:
+  product: ror_bag
+ror_jr_spaghetti_v:
+  product: ror_jr_spaghetti
+ror_mug_v:
+  product: ror_mug  
+ror_ringer_v:
+  product: ror_ringer  
+ror_stein_v:
+  product: ror_stein  
+  
+
+ror_bag_v:
+    product: ror_bag  
 		

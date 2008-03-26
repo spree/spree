@@ -1,9 +1,8 @@
 class CartItem < ActiveRecord::Base
-  belongs_to :product
   belongs_to :variant
   belongs_to :cart
   
-  validates_presence_of :product, :quantity
+  validates_presence_of :variant, :quantity
   validates_numericality_of :quantity, :only_integer => true
   
   def validate
@@ -21,7 +20,7 @@ class CartItem < ActiveRecord::Base
   end
   
   def price
-    self.product.price
+    self.variant.product.price
   end
   
 end

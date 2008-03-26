@@ -65,7 +65,8 @@ hoe = Hoe.new(GEM_NAME, VERS) do |p|
       ['activemerchant', '>= 1.2.1'], 
       ['mocha', '>= 0.5.6'], 
       ['has_many_polymorphs', '>= 2.12'],
-      ['mini_magick', ">=1.2.3"]
+      ['mini_magick', ">=1.2.3"],
+      ['rspec', '=1.1.3'] #rspec version needs to exactly match what is required by the rspec plugin
   ]
   #p.extra_deps = []     # An array of rubygem dependencies [name, version], e.g. [ ['active_support', '>= 1.3.1'] ]
   
