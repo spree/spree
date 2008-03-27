@@ -1,3 +1,8 @@
+== 0.0.8 2008-03-27
+
+* Fixed a few new bugs introduced by the variant refactoring
+* Replaced some instances of the old Railscart logo
+
 == 0.0.7 2008-03-26
 
 * Fixed an error with improperly named helper in one of the mailers (this was preventing checkout)
