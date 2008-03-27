@@ -1,8 +1,0 @@
-Script started on Tue Mar 25 13:19:20 2008
-usage: install [-bCcpSsv] [-B suffix] [-f flags] [-g group] [-m mode]
-               [-o owner] file1 file2
-       install [-bCcpSsv] [-B suffix] [-f flags] [-g group] [-m mode]
-               [-o owner] file1 ... fileN directory
-       install -d [-v] [-g group] [-m mode] [-o owner] directory ...
-
-Script done on Tue Mar 25 13:19:20 2008
