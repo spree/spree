@@ -32,6 +32,7 @@
 						    <div id="variants">
 						      <ul>
 						        <% @product.variants.each do |v| %>
+						          <% next if v.option_values.empty? %>
 						          <li>
 						            <input type="radio" name="id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked' : '' %>/>
 						            <%= variant_options v%>

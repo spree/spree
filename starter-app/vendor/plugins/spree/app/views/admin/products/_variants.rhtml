@@ -8,19 +8,21 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% @product.variants.each do |v| %>
-			<tr>
-				<td><%= variant_options v %></td>
-				<td>
-				  <%= link_to_remote "Remove",
-				                     :url => {:action => 'delete_variant', :id=> @product, :variant_id => v},
-				                     :before => "Element.show('busy_indicator')", 
-				                     :complete => "Element.hide('busy_indicator')",
-				                     :update => 'variant-listing' %>
-				</td>
-			</tr>
-		<% end %>
-		<% if @product.variants.empty? %>
+	  <% if @product.variants? %>
+  		<% @product.variants.each do |v| %>
+  			<tr>
+  			  <% next if v.option_values.empty? %>
+  				<td><%= variant_options v %></td>
+  				<td>
+  				  <%= link_to_remote "Remove",
+  				                     :url => {:action => 'delete_variant', :id=> @product, :variant_id => v},
+  				                     :before => "Element.show('busy_indicator')", 
+  				                     :complete => "Element.hide('busy_indicator')",
+  				                     :update => 'variant-listing' %>
+  				</td>
+  			</tr>
+  		<% end %>
+		<% else %>
 			<tr>
 				<td colspan="3">None Available.</td>
 			</tr>
