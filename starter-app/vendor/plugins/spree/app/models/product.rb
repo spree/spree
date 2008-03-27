@@ -9,6 +9,7 @@ class Product < ActiveRecord::Base
   validates_presence_of :name
   validates_presence_of :description
   validates_presence_of :price
+  before_create :empty_variant
   
   alias :selected_options :product_option_types
   
@@ -47,4 +48,11 @@ class Product < ActiveRecord::Base
       return Array.new(self.category.tax_treatments).freeze   
     end
   end  
+  
+  private
+  
+      # all products must have an "empty variant" (this variant will be ignored if meaningful ones are added later)
+      def empty_variant
+        self.variants << Variant.new
+      end
 end
