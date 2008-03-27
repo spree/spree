@@ -19,7 +19,7 @@ class SalesTax
    
     tt = 0
     order.line_items.each do |li|
-      tt += li.total if li.product.apply_tax_treatment? US_SALES_TAX
+      tt += li.total if li.variant.product.apply_tax_treatment? US_SALES_TAX
     end
     tt * @@rate_map[state]
   end
