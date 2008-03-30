@@ -5,7 +5,6 @@ class Product < ActiveRecord::Base
   belongs_to :category
   has_and_belongs_to_many :tax_treatments
   has_many :images, :as => :viewable, :dependent => :destroy
-  has_one :sku, :as => :stockable, :dependent => :destroy
   validates_presence_of :name
   validates_presence_of :description
   validates_presence_of :price

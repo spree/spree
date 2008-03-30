@@ -2,6 +2,7 @@ class CreateVariants < ActiveRecord::Migration
   def self.up
     create_table :variants do |t| 
       t.integer :product_id
+      t.string :sku, :default => "", :null => false
     end
   end
 

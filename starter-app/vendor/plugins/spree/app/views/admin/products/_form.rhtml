@@ -2,25 +2,25 @@
 <p>
   <label for="product_name">Name</label><br/>
 	<%=error_message_on :product, :name%>  
-  <%= f.text_field :name  %>
+  <%= text_field :product, :name  %>
 </p>
 <p>
   <label for="product_description">Description</label><br/>
 	<%=error_message_on :product, :description%>
-  <%= f.text_area :description, {:cols => 90, :rows => 10} %>
+  <%= text_area :product, :description, {:cols => 90, :rows => 10} %>
 </p>
 <p>
 <p>
   <label for="price">Price:</label><br/>
 	<%=error_message_on :product, :price%>
-  <%= f.text_field :price  %></p>
+  <%= text_field :product, :price  %></p>
 </p>
-<p>
-  <% fields_for :sku, @product.sku do |s| %>
-    <label for="product_sku">Sku</label><br/>
-    <%= s.text_field :number %>
-  <% end %>	
-</p>
+<% if sku(@product) %>
+  <p>
+    <label for="sku">Sku</label><br/>
+    <input type="text" name="sku" value="<%=sku(@product)%>"/>
+  </p>
+<% end %>
 <p>
   <label for="category">Category:</label><br/>
   <select id="category" 

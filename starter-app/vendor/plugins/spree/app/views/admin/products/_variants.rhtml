@@ -4,24 +4,28 @@
 	<thead>
 		<tr>
 			<th>Options</th>
+		  <th>SKU</th>
 			<th>Action</th>
 		</tr>
 	</thead>
 	<tbody>
 	  <% if @product.variants? %>
-  		<% @product.variants.each do |v| %>
-  			<tr>
-  			  <% next if v.option_values.empty? %>
-  				<td><%= variant_options v %></td>
-  				<td>
-  				  <%= link_to_remote "Remove",
-  				                     :url => {:action => 'delete_variant', :id=> @product, :variant_id => v},
-  				                     :before => "Element.show('busy_indicator')", 
-  				                     :complete => "Element.hide('busy_indicator')",
-  				                     :update => 'variant-listing' %>
-  				</td>
-  			</tr>
-  		<% end %>
+      <% @product.variants.each do |@variant| %>
+        <% next if @variant.option_values.empty? %>
+        <tr>
+        	<td><%= variant_options @variant %></td>
+          <td>
+            <%= text_field :variant, :sku, :index => @variant.id, :class => :sku %>
+          </td>
+        	<td>
+        	  <%= link_to_remote "Remove",
+        	                     :url => {:action => 'delete_variant', :id=> @product, :variant_id => @variant},
+        	                     :before => "Element.show('busy_indicator')", 
+        	                     :complete => "Element.hide('busy_indicator')",
+        	                     :update => 'variant-listing' %>
+        	</td>
+        </tr>
+      <% end %>
 		<% else %>
 			<tr>
 				<td colspan="3">None Available.</td>

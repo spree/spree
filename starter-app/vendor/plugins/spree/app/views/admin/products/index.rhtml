@@ -11,7 +11,7 @@
 			<table class="admin-report" width="545">
 			  <tr>
 			    <td><b>Image</b></td>
-			    <td><b>Sku</b></td>
+			    <!--<td><b>Sku</b></td>-->
 			    <td><b>Title</b></td>
 			    <td><b>Price</b></td>
 			    <td><b>Tags</b></td>
@@ -20,7 +20,6 @@
 			<% for product in @products%>
 			  <tr>
 			    <td><%= mini_image(product) %></td>
-			    <td valign="top"><%=product.sku%></td>
 			    <td valign="top"><%=product.name%></td>
 			    <td valign="top"><%=product.price%></td>
 			    <td valign="top"><%=product.tag_list%></td>

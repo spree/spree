@@ -6,7 +6,7 @@ Please review and retain the following order information for your records.
 Order Summary
 ============================================================
 <% for item in @order.line_items -%>
-<%=item.variant.product.sku if item.variant.product.sku-%> <%=item.variant.product.name-%> <%= variant_options(item.variant) %> (<%=item.quantity-%>) @ $ <%= sprintf("%0.2f", item.price) %> = $ <%= sprintf("%0.2f", item.price * item.quantity) %>
+<%=item.variant.sku %> <%=item.variant.product.name-%> <%= variant_options(item.variant) %> (<%=item.quantity-%>) @ $ <%= sprintf("%0.2f", item.price) %> = $ <%= sprintf("%0.2f", item.price * item.quantity) %>
 <% end -%>      
 ============================================================
 Subtotal: <%= number_to_currency @order.item_total %>

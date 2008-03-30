@@ -98,4 +98,16 @@ module Spree::BaseHelper
     end
   end
 
+  # returns a single sku associated with the product (if any or if only one)
+  def sku(product)
+    if product.variants?
+      #product.variants.each do |v|
+      #  return nil if v.variant.sku.nil?
+      #end
+      #return 
+    else
+      variant = product.variants.first
+      variant ? variant.sku : "" 
+    end
+  end  
 end
