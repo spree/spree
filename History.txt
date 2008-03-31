@@ -1,3 +1,7 @@
+== 0.0.9 2008-03-31
+
+* #20 - Product images in arbitrary order.
+ 
 == 0.0.8 2008-03-27
 
 * Fixed a few new bugs introduced by the variant refactoring

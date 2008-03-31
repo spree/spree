@@ -10,6 +10,7 @@ class CreateImages < ActiveRecord::Migration
       t.integer :height
       t.integer :width
       t.string :thumbnail
+      t.integer :position
     end
   end
 

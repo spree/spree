@@ -1,5 +1,6 @@
 class Image < ActiveRecord::Base
   belongs_to :viewable, :polymorphic => true
+  acts_as_list :scope => :parent 
   has_attachment :content_type => :image,
                  :max_size => 500.kilobyte,
                  :resize_to => [360,360],
