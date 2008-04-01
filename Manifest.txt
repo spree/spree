@@ -118,7 +118,6 @@ starter-app/public/dispatch.rb
 starter-app/public/favicon.ico
 starter-app/public/images/rails.png
 starter-app/public/images/spree.jpg
-starter-app/public/index.html
 starter-app/public/javascripts/application.js
 starter-app/public/javascripts/controls.js
 starter-app/public/javascripts/dragdrop.js
