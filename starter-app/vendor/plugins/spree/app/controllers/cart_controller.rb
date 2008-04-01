@@ -3,12 +3,17 @@ class CartController < Spree::BaseController
   before_filter :store_previous_location
   
   def index
+    @cart_items = @cart.cart_items
     if request.post?
+      @cart_items = []
       params[:item].each do |key, values|
-        if values[:quantity].to_i == 0
+        q = values[:quantity]
+        if q.to_s == "0"
           CartItem.destroy(key)
         else
-          CartItem.update(key, values)
+          @cart_item = CartItem.find(key)
+          @cart_item.update_attributes(values)
+          @cart_items << @cart_item
         end
       end
     end

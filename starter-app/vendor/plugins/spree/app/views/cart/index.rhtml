@@ -3,6 +3,8 @@
 <div id="shopping-cart">
   <h1>Shopping Cart</h1>
   
+  <%=error_messages_for :cart_item%>
+  
   <% form_tag do-%>
     <table class="cart-summary" width="100% ">
       <tr>
@@ -14,7 +16,7 @@
         -->
         <th>Total</th>
       </tr>
-      <% for @item in @cart.cart_items %>
+      <% for @item in @cart_items %>
         <tr class="<%= cycle('even', 'odd') %>">
           <td width="100">
             <%= small_image(@item.variant.product) %>
@@ -25,8 +27,8 @@
             <%=truncate(@item.variant.product.description, length = 100, truncate_string = "...")-%>
           </td>
           <td valign="top" width="75">$ <%= sprintf("%0.2f", @item.price) %></td>
-          <td valign="top" width="50"><%= text_field "item[]", :quantity, :size => 1 -%></td>
-          <td valign="top" width="75">$ <%= sprintf("%0.2f", @item.price * @item.quantity)-%></td>
+          <td valign="top" width="50"><%= text_field "item[]", :quantity, :size => 3 -%></td>
+          <td valign="top" width="75">$ <%= sprintf("%0.2f", @item.price * @item.quantity) unless @item.quantity.nil? %></td>
         </tr>
       <% end %>      
     </table>
