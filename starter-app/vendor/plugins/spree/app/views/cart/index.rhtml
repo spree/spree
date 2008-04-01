@@ -37,7 +37,7 @@
     </div>
   <% end %>
   <%if previous_location %>
-    <p><a href="<%=previous_location%>">Continue Shopping</a></p>
+    <p><%=link_to "Continue Shopping", :controller => 'store', :action => 'index'%></p>
   <%end%>  
   <% unless @cart.cart_items.empty? %>
     <p id="clear_cart_link">
