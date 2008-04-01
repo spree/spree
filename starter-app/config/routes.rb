@@ -19,6 +19,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # spree mappings need to happen first
   map.from_plugin :spree
+  map.root :controller => "store"
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
