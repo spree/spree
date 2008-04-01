@@ -20,7 +20,9 @@
 								  <h1>Welcome To The Sample Store</h1>
 							  </td>
 								<td align="right" valign="top">
-									<%= render :partial => 'shared/store_menu' %>
+								  <% if store_menu? %>
+									  <%= render :partial => 'shared/store_menu' %>
+									<% end %>
 								</td>
 							</tr>
 						</table>
