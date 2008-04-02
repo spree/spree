@@ -11,7 +11,7 @@
 		<% @product.selected_options.each do |so| %>
 			<tr>
 				<td><%=so.option_type.name%></td>
-				<td><%=so.option_type.display%></td>
+				<td><%=so.option_type.presentation%></td>
 				<td>
 				  <%= link_to_remote "Remove",
 				                     :url => {:action => 'remove_option_type', :id=> @product, :product_option_type_id => so},
