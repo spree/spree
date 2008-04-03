@@ -6,10 +6,11 @@ class Admin::InventoryUnitsController < Admin::BaseController
     if request.post?
       @level = InventoryLevel.new(params[:level])
       @level.on_hand = @variant.inventory(InventoryUnit::Status::ON_HAND)
+
       begin
         #throw "Invalid Adjustment Quantity" unless @level.valid?
         InventoryUnit.create_on_hand(@variant, @level.adjustment) if @level.adjustment > 0
-        InventoryUnit.destroy_on_hand(@variant, @level.adjustment) if @level.adjustment < 0
+        InventoryUnit.destroy_on_hand(@variant, @level.adjustment.abs) if @level.adjustment < 0
         flash.now[:notice] = "Inventory level has been adjusted."
         @variant.reload
         @level = InventoryLevel.new(:adjustment => 0)
