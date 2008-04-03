@@ -20,6 +20,12 @@ class Product < ActiveRecord::Base
     false
   end
   
+  # special method that returns the single empty variant (but only if there are no meaningful variants)
+  def variant
+    return nil if variants?
+    variants.first
+  end
+  
   # if product has a new category then we may need to delete tax_treatments associated with the  
   # previous category
   def before_update
@@ -52,6 +58,6 @@ class Product < ActiveRecord::Base
   
       # all products must have an "empty variant" (this variant will be ignored if meaningful ones are added later)
       def empty_variant
-        self.variants << Variant.new
+        self.variants << Variant.new 
       end
 end

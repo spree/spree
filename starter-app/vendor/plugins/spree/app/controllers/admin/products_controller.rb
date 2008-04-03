@@ -36,7 +36,14 @@ class Admin::ProductsController < Admin::BaseController
       @product = Product.new(params[:product])
       @product.category = Category.find(params[:category]) unless params[:category].blank?
 
+      @sku = params[:sku]
+      @on_hand = params[:on_hand]
+
       if @product.save
+        # create a sku (if one has been supplied)
+        @product.variants.first.update_attributes(:sku => @sku) if @sku
+        InventoryUnit.create_on_hand(@product.variants.first, @on_hand.to_i) if @on_hand
+        
         #can't create tagging associations until product is saved
         unless params[:tags].blank?
           begin
@@ -66,10 +73,7 @@ class Admin::ProductsController < Admin::BaseController
       if params[:variant]
         @product.variants.update params[:variant].keys, params[:variant].values
       end
-      
-      # handle special "single sku" case (sku associated with a single empty variant)"
-      @product.variants.first.update_attributes(:sku => params[:sku]) if params[:sku]
-      
+
       # need to clear this every time in case user removes tags (those won't show up in the post)
       @product.taggings.clear
 

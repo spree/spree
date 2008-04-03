@@ -15,11 +15,24 @@
 	<%=error_message_on :product, :price%>
   <%= text_field :product, :price  %></p>
 </p>
-<% if sku(@product) %>
+<% if @product.new_record? %>
   <p>
     <label for="sku">Sku</label><br/>
-    <input type="text" name="sku" value="<%=sku(@product)%>"/>
+    <input type="text" name="sku" value="<%= @sku %>"/>
   </p>
+  <p>
+    <label for="on-hand">On Hand</label><br/>
+    <input type="text" name="on_hand" value="<%= @on_hand %>"/>
+  </p>
+<% end %>
+<% if @product.variant %>
+  <p>
+    <label for="sku">Sku</label><br/>
+    <input type="text" name="variant[<%= @product.variant.id %>][sku]" value="<%= @product.variant.sku %>"/>
+  </p>
+  <p>
+    On Hand: <%= on_hand(@product.variant) %> <%= link_to "Inventory", :controller => 'inventory_units', :action => 'adjust', :id => @product.variant %>
+  </p>  
 <% end %>
 <p>
   <label for="category">Category:</label><br/>

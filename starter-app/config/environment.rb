@@ -110,6 +110,8 @@ AVAILABLE_OPERATIONS = {
   :paid => [:ship, :cancel]
 }
 
+INVENTORY_STATES = [:on_hand, :sold, :shipped, :back_ordered]
+
 # Ignored unless using the SalesTax calculator
 SALES_TAX_RATES = {:NY => 0.08375}
 

@@ -25,5 +25,24 @@ describe Product do
     @product.variants?.should be_true
   end
   
+  it "variant should return the emtpy variant if the product contains only empty variant" do
+    variant = mock_model(Variant)
+    variant.stub!(:option_values).and_return([])
+    product = Product.new
+    product.stub!(:variants).and_return([variant])
+    product.variant.should == variant
+  end
+
+  it "variant should return nil if the product contains non-empty variants" do
+    variant1 = mock_model(Variant)
+    variant1.stub!(:option_values).and_return([])
+    ov = mock_model(OptionValue)
+    variant2 = mock_model(Variant)
+    variant2.stub!(:option_values).and_return([ov])
+    product = Product.new
+    product.stub!(:variants).and_return([variant1, variant2])
+    product.variant.should be_nil
+  end
+
   # TODO - Add the rest of the unit test stuff from product_test (once we're sure about tax treatment handling)
 end

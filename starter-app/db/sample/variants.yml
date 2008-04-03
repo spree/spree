@@ -56,6 +56,6 @@ ror_ringer_v:
 ror_stein_v:
   product: ror_stein  
   sku: ROR-00016
-ror_bag_v:
-  product: ror_bag  
-  sku: ROR-00017
+#ror_bag_v:
+#  product: ror_bag  
+#  sku: ROR-00017

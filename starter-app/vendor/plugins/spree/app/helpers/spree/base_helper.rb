@@ -97,17 +97,9 @@ module Spree::BaseHelper
       image_tag product.images.first.public_filename(:product)  
     end
   end
-
-  # returns a single sku associated with the product (if any or if only one)
-  def sku(product)
-    if product.variants?
-      #product.variants.each do |v|
-      #  return nil if v.variant.sku.nil?
-      #end
-      #return 
-    else
-      variant = product.variants.first
-      variant ? variant.sku : "" 
-    end
+  
+  # amount of on hand inventory for the specified variant
+  def on_hand(variant)
+    variant.inventory(InventoryUnit::Status::ON_HAND)
   end  
 end

@@ -150,8 +150,9 @@ class CheckoutController < Spree::BaseController
       end
 
       def finalize_order
+        # TODO - adjust inventory        
+        
         if @order.save
-          #TODO - send confirmation email
           session[:order_id] = nil
           # destroy cart (if applicable)
           cart = find_cart
