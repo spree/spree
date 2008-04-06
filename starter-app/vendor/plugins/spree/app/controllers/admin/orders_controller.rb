@@ -89,13 +89,23 @@ class Admin::OrdersController < Admin::BaseController
       :user => current_user
     )
 
-    if order.save
+    begin 
+      Order.transaction do
+        order.save!
+        # now update the inventory to reflect the new shipped status
+        order.inventory_units.each do |unit|
+puts "^^^^^^^^^ updating: " + unit.id.to_s + " to : " + unit.status.to_s          
+          unit.update_attributes(:status => InventoryUnit::Status::SHIPPED)
+        end
+      end
       flash[:notice] = "Order has been shipped."    
-    else
+    rescue
       logger.error "unable to ship order: " + order.inspect
       flash[:error] = "Unable to ship order.  Please contact your administrator."
-    end
+    end    
+    
     redirect_to :back
+    
   end
   
   def cancel
@@ -174,8 +184,11 @@ class Admin::OrdersController < Admin::BaseController
       def gateway_capture(order)
         authorization = find_authorization(order)
         gw = payment_gateway
+puts "^^^^^^^^^^ " + authorization.response_code
         response = gw.capture(order.total * 100, authorization.response_code, Order.minimal_gateway_options(order))
+puts "^^^^^^^^^^ response received"
         return unless response.success?
+puts "^^^^^^^^^^ successful response "
         order.credit_card.txns << Txn.new(
           :amount => order.total,
           :response_code => response.authorization,

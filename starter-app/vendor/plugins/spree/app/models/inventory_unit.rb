@@ -45,4 +45,5 @@ class InventoryUnit < ActiveRecord::Base
                                  :conditions => ['status = ? ', status], 
                                  :limit => quantity)
   end 
+  
 end
