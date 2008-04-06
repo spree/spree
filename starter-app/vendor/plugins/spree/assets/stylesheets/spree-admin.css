@@ -345,4 +345,11 @@ padding-right: 0;
   padding-right: 8px; 
 }
 /** ================ end: full-table =================== */
- */
+
+.sku {
+  width: 120px;
+} 
+
+.quantity {
+  width: 60px;  
+}

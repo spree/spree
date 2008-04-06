@@ -9,11 +9,11 @@ class Admin::ProductsController < Admin::BaseController
         conditions = build_conditions(p)
         if p.empty? 
           @products = Product.find(:all, :order => "created_at DESC", :page => {:size => 10, :current =>params[:page], :first => 1})          
-        else 
+        else
           @products = Product.find(:all, 
                                    :order => "products.name",
-                                   :joins => "as products inner join skus on products.id = skus.stockable_id ", #and s.stockable_type = 'Product'",
                                    :conditions => [conditions, p],
+                                   :include => :variants,
                                    :page => {:size => 10, :current =>params[:page], :first => 1})
         end
       else
@@ -24,8 +24,6 @@ class Admin::ProductsController < Admin::BaseController
       @search = SearchCriteria.new
       @products =  Product.find(:all, :page => {:size => 10, :current =>params[:page], :first => 1})
     end
-
-  #@products = searcher_find(:product, Product).
   end
 
   def show
@@ -36,10 +34,16 @@ class Admin::ProductsController < Admin::BaseController
     load_data
     if request.post?
       @product = Product.new(params[:product])
-      @product.sku = Sku.new("number" => params[:sku][:number])
       @product.category = Category.find(params[:category]) unless params[:category].blank?
 
+      @sku = params[:sku]
+      @on_hand = params[:on_hand]
+
       if @product.save
+        # create a sku (if one has been supplied)
+        @product.variants.first.update_attributes(:sku => @sku) if @sku
+        InventoryUnit.create_on_hand(@product.variants.first, @on_hand.to_i) if @on_hand
+        
         #can't create tagging associations until product is saved
         unless params[:tags].blank?
           begin
@@ -65,20 +69,11 @@ class Admin::ProductsController < Admin::BaseController
       @product = Product.find(params[:id])
       category_id = params[:category]
       @product.category = (category_id.blank? ? nil : Category.find(params[:category]))
-      
 
-      @product.sku.number = params[:sku][:number]
-      @product.sku.save
-      
       if params[:variant]
-        @variant = Variant.new(params[:variant])
-        unless @variant.valid?
-          flash[:error] = "Problem saving variant"
-          redirect_to :action => "edit", :id => @product and return
-        end
-        @product.variants << @variant if @variant
+        @product.variants.update params[:variant].keys, params[:variant].values
       end
-      
+
       # need to clear this every time in case user removes tags (those won't show up in the post)
       @product.taggings.clear
 
@@ -90,17 +85,7 @@ class Admin::ProductsController < Admin::BaseController
           return
         end
       end
-      
-      if params[:new_variant]
-        v = Variant.new
-        params[:new_variant].each do |key, value|
-          v.option_values << OptionValue.find(value)
-        end
-        v.save
-        @product.variants << v
-        @product.save
-      end
-      
+
       if params[:image]
         @product.images << Image.new(params[:image])
       end
@@ -108,7 +93,6 @@ class Admin::ProductsController < Admin::BaseController
       @product.tax_treatments = TaxTreatment.find(params[:tax_treatments]) if params[:tax_treatments]
       @product.save
       
-      #if @product.sku.save && @product.update_attributes(params[:product])
       if @product.update_attributes(params[:product])
         flash[:notice] = 'Product was successfully updated.'
         redirect_to :action => 'edit', :id => @product
@@ -198,7 +182,7 @@ class Admin::ProductsController < Admin::BaseController
           p.merge! :name => "%" + @search.name + "%"
         end
         unless @search.sku.blank?
-          c << "skus.number like :sku"
+          c << "variants.sku like :sku"
           p.merge! :sku => "%" + @search.sku + "%"
         end
         (c.to_sentence :skip_last_comma=>true).gsub(",", " and ")

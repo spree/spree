@@ -1,6 +1,6 @@
 <% 1.upto(30) do |i| %>
 order_<%= i %>:
-  id: <%= i %>
+#  id: <%= i %>
   user: frank
   number: <%= Array.new(9){rand(9)}.join %>
   status: <%= Order::Status::AUTHORIZED %>

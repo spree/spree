@@ -6,14 +6,8 @@ class CheckoutController < Spree::BaseController
   def index
     find_cart
     # remove any incomplete orders in the db associated with the session
-    if session[:order_id]
-      begin 
-        Order.destroy session[:order_id] 
-      rescue
-        # do nothing - order already removed from the database
-      end
-      session[:order_id] = nil
-    end
+    session[:order_id] = nil
+
     if @cart.nil? || @cart.cart_items.empty?
       render :template => 'checkout/empty_cart' and return
     end
@@ -150,19 +144,21 @@ class CheckoutController < Spree::BaseController
       end
 
       def finalize_order
-        if @order.save
-          #TODO - send confirmation email
-          session[:order_id] = nil
-          # destroy cart (if applicable)
-          cart = find_cart
-          cart.destroy unless cart.new_record?
-          session[:cart_id] = nil
-        else
-          logger.error("problem with saving order " + @order.inspect)
-          redirect_to :action => :incomplete
-        end        
+        Order.transaction do
+          if @order.save
+            InventoryUnit.adjust(@order)
+            session[:order_id] = nil
+            # destroy cart (if applicable)
+            cart = find_cart
+            cart.destroy unless cart.new_record?
+            session[:cart_id] = nil
+          else
+            logger.error("problem with saving order " + @order.inspect)
+            redirect_to :action => :incomplete
+          end        
+        end
       end
-
+      
       def authorize_creditcard(creditcard)
         gw = payment_gateway 
         # ActiveMerchant is configured to use cents so we need to multiply order total by 100

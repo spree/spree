@@ -1,0 +1,32 @@
+<%= error_messages_for(:level) %>
+
+<% form_tag do %>
+  <br/><br/>			
+
+  <h1>Inventory Adjustment</h1>
+
+  <table class="basic-table">
+  	<thead>
+  		<tr>
+  			<th>SKU</th>
+  		  <th>Product</th>
+  		  <th>Options</th>
+  			<th>Current</th>
+  			<th>Adjustment</th>
+  		</tr>
+  	</thead>
+  	<tbody>
+      <tr>
+        <td><%= @variant.sku %></td>
+        <td><%= @variant.product.name %></td>
+      	<td><%= variant_options @variant %></td>
+        <td><%= on_hand(@variant) %></td>
+        <td>
+          <%= text_field :level, :adjustment, :class => "quantity"  %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <%= submit_tag 'Update' %> or <%= link_to 'Cancel', :controller => 'overview', :action => :index %>
+<% end %>
+  

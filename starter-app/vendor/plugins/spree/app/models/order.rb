@@ -1,5 +1,6 @@
 class Order < ActiveRecord::Base  
   has_many :line_items
+  has_many :inventory_units
   has_many :order_operations
   has_one :credit_card
   belongs_to :user
