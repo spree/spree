@@ -93,8 +93,7 @@ class Admin::OrdersController < Admin::BaseController
       Order.transaction do
         order.save!
         # now update the inventory to reflect the new shipped status
-        order.inventory_units.each do |unit|
-puts "^^^^^^^^^ updating: " + unit.id.to_s + " to : " + unit.status.to_s          
+        order.inventory_units.each do |unit|     
           unit.update_attributes(:status => InventoryUnit::Status::SHIPPED)
         end
       end
@@ -184,11 +183,8 @@ puts "^^^^^^^^^ updating: " + unit.id.to_s + " to : " + unit.status.to_s
       def gateway_capture(order)
         authorization = find_authorization(order)
         gw = payment_gateway
-puts "^^^^^^^^^^ " + authorization.response_code
         response = gw.capture(order.total * 100, authorization.response_code, Order.minimal_gateway_options(order))
-puts "^^^^^^^^^^ response received"
         return unless response.success?
-puts "^^^^^^^^^^ successful response "
         order.credit_card.txns << Txn.new(
           :amount => order.total,
           :response_code => response.authorization,
