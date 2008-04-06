@@ -121,13 +121,20 @@ class Admin::OrdersController < Admin::BaseController
       :user => current_user
     )
     order.status = Order::Status::CANCELED
-    if order.save
-      flash[:notice] = "Order cancelled successfully."    
-    else
+    
+    begin 
+      Order.transaction do
+        order.save!
+        # now update the inventory to reflect the new on hand status
+        order.inventory_units.each do |unit|     
+          unit.update_attributes(:status => InventoryUnit::Status::ON_HAND)
+        end
+        flash[:notice] = "Order cancelled successfully."    
+      end
+    rescue
       logger.error "unable to cancel order: " + order.inspect
       flash[:error] = "Unable to cancel order."
-    end
-    
+    end    
     # send email confirmation
     OrderMailer.deliver_cancel(order)
     
@@ -150,12 +157,21 @@ class Admin::OrdersController < Admin::BaseController
       :user => current_user
     )
     order.status = Order::Status::RETURNED
-    if order.save
-      flash[:notice] = "Order successfully returned."    
-    else
+    
+    begin
+      Order.transaction do
+        order.save!
+        # now update the inventory to reflect the new on hand status
+        order.inventory_units.each do |unit|     
+          unit.update_attributes(:status => InventoryUnit::Status::ON_HAND)
+        end
+        flash[:notice] = "Order successfully returned."    
+      end
+    rescue
       logger.error "unable to return order: " + order.inspect
       flash[:error] = "Order payment was credited but database update has failed.  Please ask your administrator to manually adjust order status."
     end
+    
     redirect_to :back
   end
   
