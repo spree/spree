@@ -21,6 +21,8 @@ module Spree
 
     def pick_boot
       case
+      when app?
+        AppBoot.new        
       when vendor?
         VendorBoot.new
       else
@@ -31,6 +33,10 @@ module Spree
     def vendor?
       File.exist?("#{RAILS_ROOT}/vendor/spree")
     end
+    
+    def app?
+      File.exist?("#{RAILS_ROOT}/lib/spree.rb")
+    end    
         
     def loaded_via_gem?
       pick_boot.is_a? GemBoot
@@ -45,7 +51,7 @@ module Spree
     
     def load_initializer
       begin
-        require 'spree'
+        require 'spree'      
         require 'spree/initializer'
       rescue LoadError => e
         $stderr.puts %(Spree could not be initialized. #{load_error_message})
@@ -64,11 +70,22 @@ module Spree
       "Please verify that vendor/spree contains a complete copy of the Spree sources."
     end
   end
+  
+  class AppBoot < Boot
+    def load_initializer
+      $LOAD_PATH.unshift "#{RAILS_ROOT}/lib" 
+      super
+    end
+    
+    def load_error_message
+      "Please verify that you have a complete copy of the Spree sources."
+    end
+  end  
 
   class GemBoot < Boot
     def load_initializer
       self.class.load_rubygems
-      load_spre_gem
+      load_spree_gem
       super
     end
 
