@@ -1,7 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-non_taxable:
-  id: 1
-  name: "Non taxable"
-sales_tax:
-  id: 2
-  name: "U.S. Sales Tax"

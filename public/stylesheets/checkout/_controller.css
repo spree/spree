@@ -1,13 +1,31 @@
-/** ============== begin: cvv ============== */
-.cvv {
-  font-family:Verdana, Arial, Helvetica, sans-serif; 
-  font-size:12px; 
+/* ================ begin: cart-summary ================  */
+
+.order-summary {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
-.cid-caption{
-  font-family:Verdana, Arial, Helvetica, sans-serif; 
-  font-size:18px;
-  font-weight: bold;  
-  padding-top: 5px; 
-  padding-bottom: 5px;
+
+.order-summary th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
 }
-/** ============== end: cvv ============== */
+
+.order-summary td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+#subtotal-row {
+  border-top: solid 1px;
+  margin-top: 10px;
+}
+
+/* ================ end: cart-summary ================  */
