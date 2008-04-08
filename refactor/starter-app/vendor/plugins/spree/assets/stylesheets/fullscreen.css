@@ -1,0 +1,63 @@
+@import 'spree.css';
+
+#fullscreen {
+  float: none;
+  margin: 0 auto;
+  text-align: center;  
+}
+
+#fullscreen #main {
+  width: 330px;
+  float: none;
+  margin: 0 auto !important;
+  text-align: left;
+  padding: 0;
+}
+
+#header {
+  background: #000;
+  text-align: center;
+  height: 100px;
+}
+
+#header h1 {
+  margin: 0 auto;
+width: 268px; /*  width: 150px;*/
+}
+
+#flash-errors {
+  background: #a22;
+  color: #fff;
+}
+
+/*
+ *=FORMS
+ */
+
+
+
+/*
+ *=ACCOUNT/LOGIN
+ */
+ 
+#body-account {
+  color: #333;
+}
+
+#body-account .btns {
+  background: transparent;
+  text-align: right;
+  border: none;
+}
+
+/*
+ *=MISC BOXES
+ */
+
+.little-box {
+  width: 320px;
+  margin: 50px 0 0 0;
+  text-shadow: 2px 2px #fff;
+  background: #f7f7f7;
+  border: 5px solid #fff;
+}

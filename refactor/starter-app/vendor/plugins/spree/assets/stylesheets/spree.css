@@ -1,0 +1,66 @@
+/* === begin: login navigation === */
+#login-nav {
+  list-style: none;
+  float: right;
+  margin-right: 10px;
+  margin-top: 5px;
+  font-size: 90%;
+}
+#login-nav li, #act-nav li {
+  display: inline;
+  margin-right: 5px;
+}
+#login-nav li a {
+  /*color: #ccc;*/
+  border: none;
+}
+#login-nav li a:hover {
+  /*color: #fff;*/
+  background-color: transparent;
+}
+/* === end: login navigation === */
+
+/* === begin: admin navigation === */
+#admin-nav {
+  list-style: none;
+  float: left;
+  margin-right: 10px;
+  margin-top: 5px;
+  font-size: 14px;
+}
+#admin-nav li {
+  display: inline;
+  margin-right: 5px;
+}
+#admin-nav li a {
+  /*color: #ccc;*/
+  border: none;
+}
+#admin-nav li a:hover {
+  /*color: #fff;*/
+  /*background-color: transparent;*/
+}
+/* === end: admin navigation === */
+
+/* === begin: admin sub navigation === */
+#admin-sub-nav {
+  list-style: none;
+  float: left;
+  margin-right: 10px;
+  margin-top: 5px;
+  font-size: 90%;
+}
+#admin-sub-nav li {
+  display: inline;
+  margin-right: 5px;
+}
+#admin-sub-nav li a {
+  /*color: #ccc;*/
+  border: none;
+}
+#admin-sub-nav li a:hover {
+  /*color: #fff;*/
+  /*background-color: transparent;*/
+}
+/* === end: admin sub navigation === */
+
