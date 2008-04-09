@@ -30,7 +30,7 @@ class Spree::BaseController < ApplicationController
       access_forbidden
     else
       store_location
-      redirect_to login_path
+      redirect_to :controller => '/account', :action => 'login'
     end
     false  
   end

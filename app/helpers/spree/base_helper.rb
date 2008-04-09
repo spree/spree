@@ -2,12 +2,13 @@ module Spree::BaseHelper
   require 'paginating_find'
   
   def stylesheets
-    stylesheets = [stylesheet_link_tag("spree", :plugin=>"spree")]
+    stylesheets = [stylesheet_link_tag("spree"), stylesheet_link_tag("application")]
     ["#{controller.controller_name}/_controller", "#{controller.controller_name}/#{:action_name}"].each do |stylesheet|
       if File.exists? "#{RAILS_ROOT}/public/stylesheets/#{stylesheet}.css" 
         stylesheets << stylesheet_link_tag(stylesheet)   
-      else
-        stylesheets << stylesheet_link_tag(stylesheet, :plugin=>"spree") if File.exists? "#{RAILS_ROOT}/public/plugin_assets/spree/stylesheets/#{stylesheet}.css"
+      # TODO - consider bringing this back to use with stylesheets in the extension
+      #else
+      #  stylesheets << stylesheet_link_tag(stylesheet, :plugin=>"spree") if File.exists? "#{RAILS_ROOT}/public/plugin_assets/spree/stylesheets/#{stylesheet}.css"
       end
     end
     stylesheets.compact.join("\n")
