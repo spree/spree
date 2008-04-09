@@ -86,11 +86,11 @@ ror_mug_v_<%= i %>:
   variant: ror_mug_v
   status: 1
 <% end %>
-<% 1.upto(75) do |i| %>
-ror_ringer_v_<%= i %>:
-  variant: ror_ringer_v
-  status: 1
-<% end %>
+#<% 1.upto(75) do |i| %>
+#ror_ringer_v_<%= i %>:
+#  variant: ror_ringer_v
+#  status: 1
+#<% end %>
 <% 1.upto(75) do |i| %>
 ror_stein_v_<%= i %>:
   variant: ror_stein_v

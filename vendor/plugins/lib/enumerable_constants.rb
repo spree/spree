@@ -1,7 +1,4 @@
-##############################################################
-# Based on the code of Keith from Ruby Green Blue            # 
-# http://blog.rubygreenblue.com/project/enumerable_constants #
-##############################################################
+
 module EnumerableConstant
   
   # default (overridable) value for any
