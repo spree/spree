@@ -1,6 +1,3 @@
-require 'shipping/flat_rate'
-require 'tax/sales_tax'
-
 module CheckoutHelper
   CREDIT_CARD_TYPES = [
     ["Visa", "visa"], 
