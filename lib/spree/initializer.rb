@@ -47,7 +47,7 @@ module Spree
       end
 
       # Provide the load paths for the Radiant installation
-      def default_load_paths    
+      def default_load_paths         
         paths = ["#{SPREE_ROOT}/test/mocks/#{environment}"]
 
         # Add the app's controller directory
