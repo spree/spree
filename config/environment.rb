@@ -21,7 +21,6 @@ Spree::Initializer.run do |config|
   
   # Skip frameworks you're not going to use (only works if using vendor/rails)
   # config.frameworks -= [ :action_web_service, :action_mailer ]
-  config.frameworks -= [ :action_mailer ]
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
