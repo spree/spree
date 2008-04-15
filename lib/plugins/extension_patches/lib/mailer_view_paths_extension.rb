@@ -4,6 +4,9 @@
 
 require 'action_mailer'
 
+# This line seems to be necessary in order to help ActionMailer find the required views
+ActionMailer::Base.template_root = "#{SPREE_ROOT}/app/views"
+
 module Spree
   module MailerViewPathsExtension
     def self.included(base)
