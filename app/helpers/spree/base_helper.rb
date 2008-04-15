@@ -1,5 +1,4 @@
 module Spree::BaseHelper
-  require 'paginating_find'
   
   def stylesheets
     stylesheets = [stylesheet_link_tag("spree"), stylesheet_link_tag("application")]
