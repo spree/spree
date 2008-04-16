@@ -23,12 +23,19 @@ namespace 'spree' do
     s.version = PKG_VERSION
     s.summary = 'A complete commerce solution for Ruby on Rails.'
     s.description = "Spree is a complete commerce solution designed for use by experienced Rails developers. No solution can possibly solve everyone’s needs perfectly. There are simply too many ways that people do business for us to model them all specifically. Rather then come up short (like so many projects before it), Spree’s approach is to simply accept this and not even try. Instead Spree tries to focus on solving the 90% of the problem that most commerce projects face and anticipate that the other 10% will need to be addressed by the end developer familiar with the client’s exact business requirements."
+    s.author = "Sean Schofield"
+    s.email = "sean.schofield@gmail.com"
     s.homepage = 'http://spreehq.org'
     s.rubyforge_project = RUBY_FORGE_PROJECT
     s.platform = Gem::Platform::RUBY
     s.bindir = 'bin'
     s.executables = (Dir['bin/*'] + Dir['scripts/*']).map { |file| File.basename(file) } 
     s.add_dependency 'rake', '>= 0.7.1'
+    s.add_dependency 'activemerchant', '>= 1.2.1'
+    s.add_dependency 'has_many_polymorphs', '>= 2.12'
+    s.add_dependency 'highline', '>=1.4.0'
+    s.add_dependency 'mini_magick', '>=1.2.3'
+    s.add_dependency 'rspec', '=1.1.3'    
     s.autorequire = 'spree'
     s.has_rdoc = true
     #s.rdoc_options << '--title' << RDOC_TITLE << '--line-numbers' << '--main' << 'README'
