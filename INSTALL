@@ -1,0 +1,32 @@
+
+== Installation and Setup
+
+Once you have extracted the files into the directory where you would like to
+install Spree:
+
+1. Create the MySQL/PostgreSQL/SQLite databases for your Web site. You only
+   need to create the "production" database, but you may also want to create
+   the "development" and "test" databases if you are developing extensions
+   or running tests.
+
+2. Edit config/database.yml to taste.
+
+3. Run the database bootstrap rake task:
+   
+     % rake production db:bootstrap
+   
+   (If you would like bootstrap your development database run `rake
+   development db:bootstrap`.)
+
+4. Start it like a normal Rails application. To test execute:
+   
+     % script/server -e production
+   
+   And open your Web browser on port 3000 (http://localhost:3000). The
+   administrative interface is available at /admin/. By default the bootstrap
+   rake task creates a user called "admin" with a password of "test".
+
+Once you've installed Spree on your own Web site, be sure to add your name
+and Web site to the list of Spree users:
+
+http://support.spreehq.org/wiki/1/Spree_users

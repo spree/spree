@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+require File.dirname(__FILE__) + '/../config/boot'
+require "#{RAILS_ROOT}/config/environment"
+require 'rails_generator'
+require 'rails_generator/scripts/generate'
+
+class Rails::Generator::Base
+  def self.use_application_sources!
+    reset_sources
+    sources << Rails::Generator::PathSource.new(:builtin, "#{SPREE_ROOT}/lib/generators")
+  end
+end
+
+Rails::Generator::Base.use_application_sources!
+
+require 'commands/generate'

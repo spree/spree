@@ -1,0 +1,27 @@
+== Founder
+
+Sean Schofield is the founder of the Spree project. It was originally started in July 2007 as 
+a Google Code project with the name Rails Cart. The name of the project was changed to Spree 
+in March 2008 in order to avoid any confusion about it being endorsed by the Ruby on Rails team.
+
+== Contributors
+
+The following people have submitted changes which have been applied to the
+core:
+
+* Sean Schofield
+
+== Legacy Contributors
+
+The following people have submitted changes which have been applied to the
+project previously known as Railscart:
+
+* Sean Schofield
+* snacktime
+* jawolter
+* Brett Mchargue
+* Charles Cooke
+
+== Sponsor
+
+Special thanks to End Point Corporation for their generous sponsorship of the Spree project.

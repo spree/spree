@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+require File.join(File.dirname(__FILE__), '..', 'config', 'boot')
+
+$LOAD_PATH << File.join(File.dirname(__FILE__), '..')
+
+require 'lib/ruby_version_check'
+Signal.trap("INT") { puts; exit }
+
+require 'lib/spree'
+if ARGV.any? { |arg| %w(--version -v).any? { |flag| arg == flag } }
+  puts "Spree #{Spree::Version}"
+  exit 0
+end
+
+app_path = ARGV.first
+
+require 'lib/rails_generator'
+require 'rails_generator/scripts/generate'
+
+class Rails::Generator::Base
+
+  def self.use_application_sources!
+    reset_sources
+    sources << Rails::Generator::PathSource.new(:builtin, "#{File.dirname(__FILE__)}/../lib/generators")
+  end
+
+  def add_general_options!(opt)
+    opt.separator ''
+    opt.separator 'Spree Info:'
+    opt.on('-v', '--version', 'Show the Spree version number and quit.')
+    opt.on('-h', '--help', 'Show this help message and quit.') { |v| options[:help] = v }
+
+    opt.separator ''
+    opt.separator 'General Options:'
+
+    opt.on('-p', '--pretend', 'Run but do not make any changes.') { |v| options[:pretend] = v }
+    opt.on('-f', '--force', 'Overwrite files that already exist.') { options[:collision] = :force }
+    opt.on('-s', '--skip', 'Skip files that already exist.') { options[:collision] = :skip }
+    opt.on('-q', '--quiet', 'Suppress normal output.') { |v| options[:quiet] = v }
+    opt.on('-t', '--backtrace', 'Debugging: show backtrace on errors.') { |v| options[:backtrace] = v }
+=begin
+    opt.on('-c', '--svn', 'Modify files with subversion. (Note: svn must be in path)') do
+      options[:svn] = `svn status`.inject({}) do |opt, e|
+        opt[e.chomp[7..-1]] = true
+        opt
+      end
+    end
+=end
+  end
+
+end
+
+Rails::Generator::Base.use_application_sources!
+Rails::Generator::Scripts::Generate.new.run(ARGV, :generator => 'instance')

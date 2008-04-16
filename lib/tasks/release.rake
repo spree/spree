@@ -11,8 +11,8 @@ RUBY_FORGE_PROJECT = PKG_NAME
 RUBY_FORGE_USER = ENV['RUBY_FORGE_USER'] || 'schof'
 
 RELEASE_NAME  = PKG_VERSION
-RUBY_FORGE_GROUPID = '1337'
-RUBY_FORGE_PACKAGEID = '1638'
+RUBY_FORGE_GROUPID = '5614'
+RUBY_FORGE_PACKAGEID = '7123'
 
 RDOC_TITLE = "Spree -- Complete Commerce Solution for Ruby on Rails"
 RDOC_EXTRAS = ["README", "CONTRIBUTORS", "CHANGELOG", "INSTALL", "LICENSE"]
@@ -41,17 +41,18 @@ namespace 'spree' do
     files.exclude '**/._*'
     files.exclude '**/*.rej'
     files.exclude 'cache/'
-    files.exclude 'config/database.yml'
+    #files.exclude 'config/database.yml'
     files.exclude 'config/locomotive.yml'
     files.exclude 'config/lighttpd.conf'
     files.exclude 'config/mongrel_mimes.yml'
     files.exclude 'db/*.db'
+    files.exclude 'db/*.rb'
     files.exclude /^doc/
     files.exclude 'log/*.log'
     files.exclude 'log/*.pid'
     #files.include 'log/.keep'
     files.exclude /^pkg/
-    #files.include 'public/.htaccess'
+    files.include 'public/.htaccess'
     files.exclude 'tmp/'
     s.files = files.to_a
   end
@@ -64,14 +65,14 @@ namespace 'spree' do
   namespace :gem do
     desc "Uninstall Gem"
     task :uninstall do
-      sh "sudo gem uninstall #{PKG_NAME}" rescue nil
+      sh "gem uninstall #{PKG_NAME}" rescue nil
     end
 
     desc "Build and install Gem from source"
     task :install => [:package, :uninstall] do
       chdir("#{SPREE_ROOT}/pkg") do
         latest = Dir["#{PKG_NAME}-*.gem"].last
-        sh "sudo gem install #{latest}"
+        sh "gem install #{latest}"
       end
     end
   end
