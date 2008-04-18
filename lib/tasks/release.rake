@@ -60,6 +60,7 @@ namespace 'spree' do
     #files.include 'log/.keep'
     files.exclude /^pkg/
     files.include 'public/.htaccess'
+    files.exclude 'public/images/products'
     files.exclude 'tmp/'
     s.files = files.to_a
   end
