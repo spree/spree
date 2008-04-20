@@ -65,7 +65,6 @@ end
 
 require 'active_merchant'
 require 'has_many_polymorphs'
-require 'tagging_extensions'
 require 'mini_magick'
 
 # Include your application configuration below

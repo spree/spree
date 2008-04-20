@@ -43,16 +43,6 @@ class Admin::ProductsController < Admin::BaseController
         # create a sku (if one has been supplied)
         @product.variants.first.update_attributes(:sku => @sku) if @sku
         InventoryUnit.create_on_hand(@product.variants.first, @on_hand.to_i) if @on_hand
-        
-        #can't create tagging associations until product is saved
-        unless params[:tags].blank?
-          begin
-            @product.tag_with params[:tags]
-          rescue Tag::Error
-            flash.now[:error] = "Tag cannot contain special characters."
-            return
-          end
-        end        
         flash[:notice] = 'Product was successfully created.'
         redirect_to :action => :edit, :id => @product      
       else
@@ -72,18 +62,6 @@ class Admin::ProductsController < Admin::BaseController
 
       if params[:variant]
         @product.variants.update params[:variant].keys, params[:variant].values
-      end
-
-      # need to clear this every time in case user removes tags (those won't show up in the post)
-      @product.taggings.clear
-
-      unless params[:tags].blank?
-        begin
-          @product.tag_with params[:tags]
-        rescue Tag::Error
-          flash.now[:error] = "Tag cannot contain special characters."
-          return
-        end
       end
 
       if params[:image]

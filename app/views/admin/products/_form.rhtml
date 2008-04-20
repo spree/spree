@@ -60,19 +60,11 @@
   <%= render :partial => 'shared/images', :locals => {:viewable => @product} -%>
 </div>
 
-<p>
-	<label for="tags">Tags:</label><br/>
-  <input autocomplete="off" id="product_tags" name="tags" value="<%= @product.tag_list %>" size="35" type="text"/>
-</p>
-<p>
-	<i>Space delimited, no special characters.</i>
-</p>
 <br/>
 
 <div id="treatmentWrapper">
   <%= render :partial => 'shared/tax_treatments', :locals => {:tax_treatments => @all_tax_treatments, :selected_treatments => @product.tax_treatments} -%>
 </div>
-<div id="tags_update"></div>
 
 <!--[eoform:product]-->
 

@@ -14,7 +14,6 @@
 			    <!--<td><b>Sku</b></td>-->
 			    <td><b>Title</b></td>
 			    <td><b>Price</b></td>
-			    <td><b>Tags</b></td>
 			    <td/>
 			  </tr>
 			<% for product in @products%>
@@ -22,7 +21,6 @@
 			    <td><%= mini_image(product) %></td>
 			    <td valign="top"><%=product.name%></td>
 			    <td valign="top"><%=product.price%></td>
-			    <td valign="top"><%=product.tag_list%></td>
 			    <td valign="top">
 			      <%= link_to "Edit", :action => 'edit', :id => product -%>
 			      <%= link_to "Delete", {:action => 'destroy', :id => product}, :confirm => "Are you sure you want to delete this product?" -%>

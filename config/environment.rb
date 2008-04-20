@@ -59,7 +59,6 @@ end
 
 require 'active_merchant'
 require 'has_many_polymorphs'
-require 'tagging_extensions'
 require 'mini_magick'
 
 # Add new inflection rules using the following format 
