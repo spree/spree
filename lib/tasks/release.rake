@@ -87,7 +87,7 @@ namespace 'spree' do
 
   desc "Publish the release files to RubyForge."
   task :release => [:gem, :package] do
-    files = ["gem", "tgz", "zip"].map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
+    files = ["gem", "tgz"].map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
 
     system %{rubyforge login --username #{RUBY_FORGE_USER}}
   
