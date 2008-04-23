@@ -6,44 +6,31 @@ Spree is a complete open source commerce solution for Ruby on Rails.  It was dev
 QUICK START
 ===========
 
-1.) Install spree Gem
+1.) Install spree Gem 
 
 $ sudo gem install spree
 
+NOTE: This may take a while.  The gem currently includes a frozen version of Rails 2.0.2
+
 2.) Create Spree Application
 
-$ spree app_name
+$ spree <app_name>
 
-3.) Create MySQL Database
+3.) Create your database and edit the config/database.yml to taste.  You can skip this 
+step if using sqlite3 as your database.
 
-mysql> create database spree_dev;
-mysql> grant all privileges on spree_dev.* to 'spree'@'localhost' identified by 'spree';
-mysql> flush privileges;
+4.) Bootstrap
 
-4.) Migrations
+$ cd <app-name>
+$ rake db:bootstrap
 
-$ cd app_name
-$ rake db:migrate
-
-5.) Bootstrap
-
-Spree requires an admin user and a few other pieces of structural data to be loaded into your database.
-
-rake spree:bootstrap
-
-6.) Sample Data (Optional)
-
-Optionally load some sample data so you have something to look at.
-
-rake spree:sample_data
-
-7.) Launch Application
+5.) Launch Application
 
 Browse Store
 
 http://localhost:xxxx/store
 
-Admin Interface (user: admin password: test)
+Browse Admin Interface
 
 http://localhost:xxxx/admin     
 
