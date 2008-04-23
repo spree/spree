@@ -61,6 +61,9 @@ class InstanceGenerator < Rails::Generator::Base
           m.file spree_root(file), file, script_options
         when file =~ %r{^public/dispatch}
           m.file spree_root(file), file, dispatcher_options
+        when file =~ %r{^public/robots\.txt}
+          # we'll use a special robots.txt if creating a demo instance
+          m.file spree_root(file), file unless options[:demo]
         else
           m.file spree_root(file), file
         end
@@ -84,6 +87,12 @@ class InstanceGenerator < Rails::Generator::Base
         :spree_environment => File.join(File.dirname(__FILE__), 'templates', spree_root("config/environment.rb"))
       }
       m.template "instance_boot.rb", "config/boot.rb"
+      
+      # Demo Configuration
+      if options[:demo]
+        m.file "demo_mongrel_cluster.yml", "config/mongrel_cluster.yml"
+        m.file "demo_robots.txt", "public/robots.txt"
+      end
       
       # Install Readme
       m.readme spree_root("INSTALL")

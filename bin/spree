@@ -39,14 +39,7 @@ class Rails::Generator::Base
     opt.on('-s', '--skip', 'Skip files that already exist.') { options[:collision] = :skip }
     opt.on('-q', '--quiet', 'Suppress normal output.') { |v| options[:quiet] = v }
     opt.on('-t', '--backtrace', 'Debugging: show backtrace on errors.') { |v| options[:backtrace] = v }
-=begin
-    opt.on('-c', '--svn', 'Modify files with subversion. (Note: svn must be in path)') do
-      options[:svn] = `svn status`.inject({}) do |opt, e|
-        opt[e.chomp[7..-1]] = true
-        opt
-      end
-    end
-=end
+    opt.on('-m', '--demo', 'Creates special mongrel configuration needed for demo server (unlikely you will need this).') { |v| options[:demo] = v }
   end
 
 end

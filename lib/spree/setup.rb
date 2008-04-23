@@ -18,7 +18,7 @@ module Spree
     
     attr_accessor :config
     
-    def bootstrap(config)
+    def bootstrap(config)    
       @config = config
       @admin = create_admin_user(config[:admin_name], config[:admin_username], config[:admin_password], config[:admin_email])
       load_default_tax_treatments
