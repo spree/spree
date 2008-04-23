@@ -8,8 +8,8 @@ unless defined? Spree::Version
   module Spree
     module Version
       Major = '0'
-      Minor = '0'
-      Tiny  = '9'
+      Minor = '2'
+      Tiny  = '0'
 
       class << self
         def to_s
