@@ -63,6 +63,14 @@ class Admin::ProductsController < Admin::BaseController
       if params[:variant]
         @product.variants.update params[:variant].keys, params[:variant].values
       end
+      
+      if params[:new_variant]
+        variant = Variant.new(:product => @product)
+        option_values = params[:new_variant]
+        option_values.each_value {|id| variant.option_values << OptionValue.find(id)}
+        @product.variants << variant
+        @product.save
+      end
 
       if params[:image]
         @product.images << Image.new(params[:image])
