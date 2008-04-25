@@ -23,7 +23,7 @@ class CartItem < ActiveRecord::Base
   end
   
   def price
-    self.variant.product.price
+    self.variant.price
   end
   
 end

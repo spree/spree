@@ -9,13 +9,12 @@
 	<%=error_message_on :product, :description%>
   <%= text_area :product, :description, {:cols => 90, :rows => 10} %>
 </p>
-<p>
-<p>
-  <label for="price">Price:</label><br/>
-	<%=error_message_on :product, :price%>
-  <%= text_field :product, :price  %></p>
-</p>
 <% if @product.new_record? %>
+  <p>
+    <label for="price">Price:</label><br/>
+  	<%=error_message_on :product, :master_price%>
+    <%= text_field :product, :master_price  %></p>
+  </p>
   <p>
     <label for="sku">Sku</label><br/>
     <input type="text" name="sku" value="<%= @sku %>"/>
@@ -26,6 +25,11 @@
   </p>
 <% end %>
 <% if @product.variant %>
+  <p>
+    <label for="price">Price:</label><br/>
+  	<%=error_message_on :product, :master_price%>
+    <%= text_field :product, :master_price  %></p>
+  </p>
   <p>
     <label for="sku">Sku</label><br/>
     <input type="text" name="variant[<%= @product.variant.id %>][sku]" value="<%= @product.variant.sku %>"/>

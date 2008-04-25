@@ -19,7 +19,7 @@
 				<tr>
 					<td>
 						<span class="product-price">Price: </span>
-						<%= @product.price %>
+						<%= number_to_currency(product_price(@product)) %>
 					</td>
 				</tr>
 				<% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
@@ -36,6 +36,9 @@
 						          <li>
 						            <input type="radio" name="id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked' : '' %>/>
 						            <%= variant_options v%>
+						            <% if variant_price_diff v %>
+						              <span class="price-diff"><%= variant_price_diff v %></span>
+						            <% end %>
 						          </li>
 						        <% end%>
 						      </ul>

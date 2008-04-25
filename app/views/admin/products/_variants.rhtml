@@ -4,6 +4,7 @@
 	<thead>
 		<tr>
 			<th>Options</th>
+			<th>Price</th>
 		  <th>SKU</th>
 		  <th>On Hand</th>
 			<th>Action</th>
@@ -15,6 +16,7 @@
         <% next if @variant.option_values.empty? %>
         <tr>
         	<td><%= variant_options @variant %></td>
+        	<td><%= @variant.price %>
           <td>
             <%= text_field :variant, :sku, :index => @variant.id, :class => :sku %>
           </td>

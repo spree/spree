@@ -6,7 +6,7 @@
 	          <%= small_image(product) %>
 	        </a>
 		 	<%= link_to product.name, :controller => :store, :action => 'show', :id => product %>
-	        <b>$<%=product.price%></b>
+	        <b><%= "$ #{product.master_price}" if product.master_price %></b>
 	</li>
 	<%= draggable_element("product_#{product.id}", :revert => true) %>
 	
