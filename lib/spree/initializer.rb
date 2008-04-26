@@ -128,7 +128,7 @@ module Spree
         # Add the default view paths
         arr.concat configuration.view_paths
         # Add the extension view paths
-        arr.concat extension_loader.view_paths
+        arr.concat extension_loader.view_paths     
         # Reverse the list so extensions come first
         arr.reverse!
       end

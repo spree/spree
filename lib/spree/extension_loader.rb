@@ -72,7 +72,7 @@ module Spree
       @observer ||= DependenciesObserver.new(configuration).observe(::Dependencies)
       self.extensions = load_extension_roots.map do |root|
         begin
-          extension_file = "#{File.basename(root).sub(/^\d+_/,'')}_extension"
+          extension_file = "#{File.basename(root).sub(/^\d+_/,'')}_extension"       
           extension = extension_file.camelize.constantize
           extension.unloadable
           extension.root = root
