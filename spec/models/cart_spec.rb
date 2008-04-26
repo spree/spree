@@ -34,12 +34,12 @@ describe Cart do
   it "should return the correct cart item total" do
     v1_proxy = mock_model(Variant)
     p1_proxy = mock_model(Product)
-    p1_proxy.stub!(:price).and_return(10)
+    v1_proxy.stub!(:price).and_return(10)
     v1_proxy.stub!(:product).and_return(p1_proxy)
     
     v2_proxy = mock_model(Variant)
     p2_proxy = mock_model(Product)
-    p2_proxy.stub!(:price).and_return(100)
+    v2_proxy.stub!(:price).and_return(100)
     v2_proxy.stub!(:product).and_return(p2_proxy)
     
     @cart.add_variant(v1_proxy, 2)
