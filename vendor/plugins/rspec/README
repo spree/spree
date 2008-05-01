@@ -1,0 +1,71 @@
+== RSpec
+
+RSpec is a Behaviour Driven Development framework with tools to express User Stories
+with Executable Scenarios and Executable Examples at the code level.
+
+RSpec ships with several modules:
+
+Spec::Story provides a framework for expressing User Stories
+
+Spec::Example provides a framework for expressing code Examples
+
+Spec::Matchers provides Expression Matchers for use with Spec::Expectations
+and Spec::Mocks.
+
+Spec::Expectations supports setting expectations on your objects so you
+can do things like:
+
+  result.should equal(expected_result)
+  
+Spec::Mocks supports creating Mock Objects, Stubs, and adding Mock/Stub
+behaviour to your existing objects.
+
+== Installation
+
+The simplest approach is to install the gem:
+
+  gem install -r rspec #mac users must sudo
+
+== Building the RSpec gem
+If you prefer to build the gem locally, check out source from svn://rubyforge.org/var/svn/rspec/trunk. Then
+do the following:
+
+  rake gem
+  gem install pkg/rspec-0.x.x.gem (you may have to sudo)
+
+== Running RSpec's specs
+In order to run RSpec's full suite of specs (rake pre_commit) you must install the following gems:
+
+* rake          # Runs the build script
+* rcov          # Verifies that the code is 100% covered by specs
+* webby         # Generates the static HTML website
+* syntax        # Required to highlight ruby code
+* diff-lcs      # Required if you use the --diff switch
+* win32console  # Required by the --colour switch if you're on Windows
+* meta_project  # Required in order to make releases at RubyForge
+* heckle        # Required if you use the --heckle switch
+* hpricot       # Used for parsing HTML from the HTML output formatter in RSpec's own specs
+
+Once those are all installed, you should be able to run the suite with the following steps:
+
+* svn co svn://rubyforge.org/var/svn/rspec/trunk rspec
+* cd rspec
+* rake install_dependencies
+* cd example_rails_app
+* export RSPEC_RAILS_VERSION=1.2.3
+* rake rspec:generate_mysql_config
+* mysql -u root < db/mysql_setup.sql
+* cd ..
+* rake pre_commit
+
+Note that RSpec itself - once built - doesn't have any dependencies outside the Ruby core 
+and stdlib - with a few exceptions:
+
+* The spec command line uses diff-lcs when --diff is specified.
+* The spec command line uses heckle when --heckle is specified.
+* The Spec::Rake::SpecTask needs RCov if RCov is enabled in the task.
+
+See http://rspec.rubyforge.org for further documentation.
+
+== Contributing
+

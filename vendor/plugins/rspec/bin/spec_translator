@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+raise "\n\nUsage: spec_translator from_dir to_dir\n\n" if ARGV.size != 2
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
+require 'spec/translator'
+t = ::Spec::Translator.new
+from = ARGV[0]
+to = ARGV[1]
+t.translate(from, to)

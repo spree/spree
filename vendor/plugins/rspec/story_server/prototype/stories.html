@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Stories</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <script src="javascripts/prototype.js" type="text/javascript"></script>
+    <script src="javascripts/scriptaculous.js" type="text/javascript"></script>
+    <script src="javascripts/rspec.js" type="text/javascript"></script>
+    <script src="javascripts/unittest.js" type="text/javascript"></script>
+    
+    <link href="stylesheets/rspec.css" rel="stylesheet" type="text/css" />
+    <link href="stylesheets/test.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <!-- 
+    Classes and ids that are only used by the Story UI, which don't have to be present in
+    the Example report:
+    
+    #nav
+    #stock_steps
+    dl.story
+    ul.steps
+    -->
+    <div id="nav">
+      <a href="#" onclick="javascript:StoryDom.save();">SAVE</a>
+    </div>
+    <div id="container">
+      <ul id="stock_steps" style="display: none;">
+        <li>Given my savings account balance is $balance dollars</li>
+        <li>Given my cash account balance is $balance dollars</li>
+        <li>Given my $which account has been blocked for $n days</li>
+        <li>When I transfer $amount dollars</li>
+        <li>Then my savings account balance should be $balance dollars</li>
+        <li>Then my cash account balance should be $balance dollars</li>
+      </ul>
+      <dl class="story failed">
+        <dt>transfer to cash account</dt>
+        <dd>
+          <p>
+            As a savings account holder<br />
+            I want to transfer money from my savings account<br />
+            So that I can get cash easily from an ATM<br />
+          </p>
+          <dl class="passed">
+            <dt>savings account is in credit</dt>
+            <dd>
+              <ul class="steps">
+                <li class="passed">Given my savings account balance is <span class="param">100</span> dollars</li>
+                <li class="passed">Given my cash account balance is <span class="param">10</span> dollars</li>
+                <li class="passed">When I transfer <span class="param">20</span> dollars</li>
+                <li class="passed">Then my savings account balance should be <span class="param">80</span> dollars</li>
+                <li class="passed">Then my cash account balance should be <span class="param">30</span> dollars</li>
+              </ul>
+            </dd>
+          </dl>
+
+          <dl class="failed">
+            <dt>savings account is overdrawn</dt>
+            <dd>
+              <ul class="steps">
+                <li class="passed">Given my savings account balance is <span class="param">-20</span> dollars</li>
+                <li class="passed">Given my cash account balance is <span class="param">10</span> dollars</li>
+                <li class="passed">When I transfer <span class="param">20</span> dollars</li>
+                <li class="failed">Then my savings account balance should be <span class="param">-20</span> dollars</li>
+                <li class="failed">Then my cash account balance should be <span class="param">10</span> dollars</li>
+                <li class="pending">Then I should still be poor</li>
+              </ul>
+            </dd>
+          </dl>
+        </dd>
+      </dl>
+      <!-- More stories here... -->
+
+      <!-- Tests follow -->
+      <div id="testlog"> </div>
+      <script type="text/javascript" language="javascript" charset="utf-8">
+      // <![CDATA[
+      Test.context("RSpec editor tests (this won't be in the final editor - it's just self tests)",{
+        'should extract story narrative': function() {
+          var narrative = StoryDom.narrativeText($$('p')[0].innerHTML);
+          narrative.shouldEqual(
+            "  As a savings account holder\n" + 
+            "  I want to transfer money from my savings account\n" +
+            "  So that I can get cash easily from an ATM\n"
+          );
+        },
+
+        'should extract step text with two spans': function() {
+          var stepText = StoryDom.stepText('Given <span class="param">this</span> and <span class="param">that</span> stuff');
+          stepText.shouldEqual("Given this and that stuff");
+        },
+
+        'should extract scenario': function() {
+          var scenario = StoryDom.scenario($$('dl')[1]);
+          scenario.shouldEqual(
+            "  Scenario: savings account is in credit\n" + 
+            "    Given my savings account balance is 100 dollars\n" +
+            "    Given my cash account balance is 10 dollars\n" +
+            "    When I transfer 20 dollars\n" +
+            "    Then my savings account balance should be 80 dollars\n" +
+            "    Then my cash account balance should be 30 dollars\n"
+          );
+        },
+
+        'should extract story from page': function() {
+          var story = StoryDom.story();
+          story.shouldEqual(
+            "Story: transfer to cash account\n" + 
+            "\n" +
+            "  As a savings account holder\n" +
+            "  I want to transfer money from my savings account\n" +
+            "  So that I can get cash easily from an ATM\n" +
+            "\n" +
+            "  Scenario: savings account is in credit\n" + 
+            "    Given my savings account balance is 100 dollars\n" +
+            "    Given my cash account balance is 10 dollars\n" +
+            "    When I transfer 20 dollars\n" +
+            "    Then my savings account balance should be 80 dollars\n" +
+            "    Then my cash account balance should be 30 dollars\n" +
+            "\n" +
+            "  Scenario: savings account is overdrawn\n" + 
+            "    Given my savings account balance is -20 dollars\n" +
+            "    Given my cash account balance is 10 dollars\n" +
+            "    When I transfer 20 dollars\n" +
+            "    Then my savings account balance should be -20 dollars\n" +
+            "    Then my cash account balance should be 10 dollars\n" +
+            "    Then I should still be poor\n"
+          );
+        },
+
+        'should extract stock steps from dom': function() {
+          var stockSteps = RSpec.stockSteps();
+          stockSteps.shouldEqualEnum([
+            'Given my $which account has been blocked for $n days',
+            'Given my cash account balance is $balance dollars',
+            'Given my savings account balance is $balance dollars',
+            'Then my cash account balance should be $balance dollars',
+            'Then my savings account balance should be $balance dollars',
+            'When I transfer $amount dollars'
+          ]);
+        },
+
+        'should add new stock steps unless they already exist': function() {
+          RSpec.addStockStep('When Godzilla chews over a cable');
+          RSpec.stockSteps().shouldEqualEnum([
+            'Given my $which account has been blocked for $n days',
+            'Given my cash account balance is $balance dollars',
+            'Given my savings account balance is $balance dollars',
+            'Then my cash account balance should be $balance dollars',
+            'Then my savings account balance should be $balance dollars',
+            'When Godzilla chews over a cable',
+            'When I transfer $amount dollars'
+          ]);
+          RSpec.addStockStep('When Godzilla chews over a cable');
+          RSpec.stockSteps().shouldEqualEnum([
+            'Given my $which account has been blocked for $n days',
+            'Given my cash account balance is $balance dollars',
+            'Given my savings account balance is $balance dollars',
+            'Then my cash account balance should be $balance dollars',
+            'Then my savings account balance should be $balance dollars',
+            'When Godzilla chews over a cable',
+            'When I transfer $amount dollars'
+          ]);
+        }
+      });
+      // ]]>
+      </script>
+
+    </div>
+  </body>
+</html>
