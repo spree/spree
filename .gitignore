@@ -1,4 +1,6 @@
 .DS_Store
+config/database.yml
+db/schema.rb
 db/*.sql
 log/*.log
 public/images/products/*
@@ -8,4 +10,3 @@ public/javascripts/calendar_date_select
 public/stylesheets/calendar_date_select
 pkg
 tmp
-db/schema.rb
