@@ -1,0 +1,3 @@
+Autotest.add_hook :initialize do |at|
+  at.add_exception("spec/interop/test/unit/resources")
+end

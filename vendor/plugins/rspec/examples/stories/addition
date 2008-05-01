@@ -1,0 +1,34 @@
+This is a story about a calculator. The text up here above the Story: declaration
+won't be processed, so you can write whatever you wish!
+
+Story: simple addition
+
+  As an accountant
+  I want to add numbers
+  So that I can count beans
+
+  Scenario: add one plus one
+    Given an addend of 1
+    And an addend of 1
+    
+    When the addends are addeds
+    
+    Then the sum should be 3
+    And the corks should be popped
+  
+  Scenario: add two plus five
+    Given an addend of 2
+    And an addend of 5
+    
+    When the addends are added
+    
+    Then the sum should be 7
+    Then it should snow
+    
+  Scenario: add three more
+    GivenScenario add two plus five
+    And an addend of 3
+    
+    When the addends are added
+    
+    Then the sum should be 10

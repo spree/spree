@@ -1,0 +1,136 @@
+body {
+  background: #fff;
+  font-size: 80%;
+  margin:0pt;
+  padding:0pt;
+}
+
+#nav {
+  border-bottom:1px solid #222222;
+  border-top-style:solid;
+  border-top-width:0.5em;
+  font-family:Helvetica,Arial,sans-serif;
+  font-size:1.1em;
+  padding:0.2em 0pt;
+  position:fixed;
+  text-align:center;
+  width:100%;
+  z-index:50;
+
+  background-color: #000000;
+  opacity: 0.6;
+}
+
+#container {
+  background:white none repeat scroll 0%;
+  font-family:Helvetica,Arial,sans-serif;
+  margin:0pt auto;
+  position:relative;
+  text-align:left;
+  top:4.0em;
+  width:78em;
+}
+
+dl {
+  font: normal 11px "Lucida Grande", Helvetica, sans-serif;
+}
+
+dt {
+  color: #fff;
+}
+
+dl.passed {
+  border-left: 5px solid #65C400;
+}
+
+dl.failed {
+  border-left: 5px solid #C20000;
+}
+
+dt {
+  padding: 3px;
+  font-weight: bold;
+}
+
+dd {
+  margin: 0px 0px 0px 0px;
+}
+
+dd p {
+  padding: 5px;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+dd > dl {
+  margin-left: 5px;
+}
+
+dl.passed > dt {
+  background: #65C400;
+}
+
+dl.failed > dt {
+  background: #C20000;
+}
+
+dl.passed > dd > p, li.passed {
+  background: #DBFFB4; color: #3D7700;
+  border-bottom: 1px solid #65C400;
+}
+
+dl.failed > dd > p, li.failed {
+  color: #C20000; background: #FFFBD3;
+  border-bottom: 1px solid #C20000;
+}
+
+dl.pending > dd > p, li.pending {
+  color: #131313; background: #FCFB98;
+  border-bottom: 1px solid #FAF834;
+}
+
+dl.new > dd > p, li.new {
+  color: #444444; background: #DDDDDD;
+  border-bottom: 1px solid #444444;
+}
+
+dl > dd > p.wastebin {
+  background-color: black;
+}
+
+span.param, span.param_editor {
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+}
+
+ul.steps {
+  padding: 0px;
+  list-style: none;
+}
+
+ul.steps > li {
+  margin: 5px 0px 5px 5px;
+  padding: 3px 3px 3px 5px;
+}
+
+div.auto_complete ul {
+  list-style-type: none;
+  border: 2px solid #F0F0F0;
+  margin: 0px;
+  padding: 0px;
+}
+
+div.auto_complete ul li {
+  background-color: white;
+  list-style-type: none;
+  display: block;
+  margin: 0;
+  padding: 2px;
+}
+
+div.auto_complete ul li.selected {
+  color: #444444; background: #DDDDDD;
+}

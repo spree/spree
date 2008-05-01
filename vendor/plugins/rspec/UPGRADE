@@ -1,0 +1,31 @@
+= Upgrading existing code to RSpec-0.9
+
+== General (see below for Spec::Rails specifics)
+
+=== New Syntax for should and should_not
+
+* Use translator (should get 90% of your code)
+* Manually fix "parenthesis" warnings
+
+=== Change before_context_eval to before_eval
+
+before_context_eval is an un-published hook used by
+Spec::Rails to create specialized behaviour contexts.
+Most of you don't need to change this, but for those
+who have exploited it, you'll need to change it to
+before_eval.
+
+== Spec::Rails
+
+=== spec_helper.rb
+
+We've added a new way to configure Spec::Runner to do
+things like use_transactional_fixtures and use_instantiated_fixtures.
+You'll need to update spec/spec_helper.rb accordingly. You can either
+just re-generate it:
+
+  script/generate rspec
+  
+Or modify spec_helper.rb based on the template, which can be found at:
+
+  vendor/plugins/rspec_on_rails/generators/rspec/templates/spec_helper.rb

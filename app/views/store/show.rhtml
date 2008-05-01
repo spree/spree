@@ -18,8 +18,7 @@
 				</tr>
 				<tr>
 					<td>
-						<span class="product-price">Price: </span>
-						<%= number_to_currency(product_price(@product)) %>
+						<%="<span class='product-price'>Price: </span> #{product_price(@product)}" if product_price(@product) %>
 					</td>
 				</tr>
 				<% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
