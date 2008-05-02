@@ -1,6 +1,28 @@
 require 'rails_generator/base'
 require 'rails_generator/generators/components/model/model_generator'
 
+# Current migration number should be based on the migrations specific to the extension (and not the app as a whole)
+class Rails::Generator::Commands::Base
+  protected
+    def migration_directory(relative_path)
+      directory(@migration_directory = "#{extension_path}/db/migrate")
+    end
+end
+
+# Fix issue with the Destroy command not looking in the correct directory
+class Rails::Generator::Commands::Destroy
+  protected
+    def migration_template(relative_source, relative_destination, template_options = {})
+      directory(@migration_directory = "#{extension_path}/db/migrate")
+      migration_file_name = "#{template_options[:migration_file_name]}"
+
+      existing_migrations(migration_file_name).each do |file_path|
+        file_path.gsub!(extension_path, "")
+        file(relative_source, file_path)
+      end
+    end
+end
+
 class ExtensionModelGenerator < ModelGenerator
   
   attr_accessor :extension_name
@@ -57,4 +79,5 @@ class ExtensionModelGenerator < ModelGenerator
   def extension_uses_rspec?
     File.exists?(File.join(destination_root, 'spec'))
   end
+
 end
