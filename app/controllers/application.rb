@@ -13,7 +13,8 @@ class ApplicationController < ActionController::Base
 
   include AuthenticatedSystem
   include RoleRequirementSystem
-
+  include EasyRoleRequirementSystem
+  
   private 
   
     def instantiate_controller_and_action_names

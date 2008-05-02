@@ -1,5 +1,4 @@
 class Admin::ReportsController < Admin::BaseController
-  require_role "admin"
   
   AVAILABLE_REPORTS = {
     :sales_total => {:name => "Sales Total", :description => "Sales Total For All Orders"}

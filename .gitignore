@@ -10,3 +10,5 @@ public/javascripts/calendar_date_select
 public/stylesheets/calendar_date_select
 pkg
 tmp
+spree_dev
+spree_test

@@ -27,7 +27,6 @@ class User < ActiveRecord::Base
   # has_role? simply needs to return true or false whether a user has a role or not.  
   def has_role?(role_in_question)
     @_list ||= self.roles.collect(&:name)
-    return true if @_list.include?("admin")
     (@_list.include?(role_in_question.to_s) )
   end
 
@@ -85,6 +84,35 @@ class User < ActiveRecord::Base
       record = find(:first, :conditions => ["login = ?", login])
     end
     return login
+  end
+  
+  # I am not sure we want this, but if we do, here is a readymade user for anonymous login  
+  def self.anonymous_user
+    login = "anonymous_user_" + Time.now.to_s
+    pw = Digest::SHA1.hexdigest \
+       ("--#{Time.now.to_s}#{self.object_id}#{Array.new(256){rand(256)}.join}")
+    anonymous_user = User.new :login => login, 
+                     :password => pw,
+                     :password_confirmation => pw,
+                     :email => "anon_login_#{Time.now.to_s}@anon.com"
+    anonymous_user.roles.push(Role.find_by_name("anonymous").freeze).freeze
+  
+    # disallow saving the anonymous user by overwriting with singleton save methods
+    methods_to_overwrite =
+    "save
+    save!
+    save_with_transactions
+    save_with_transactions!
+    save_with_validation
+    save_with_validation!
+    save_without_transactions
+    save_without_transactions!
+    save_without_validation
+    save_without_validation!".split
+   
+    methods_to_overwrite.each do |method|
+      instance_eval("def anonymous_user.#{method}; true; end")
+    end
   end
   
   protected
