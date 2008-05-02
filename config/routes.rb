@@ -21,6 +21,7 @@ ActionController::Routing::Routes.draw do |map|
   map.root :controller => "store"
   map.connect '/login', :controller => 'account', :action => 'login'
   map.connect '/logout', :controller => 'account', :action => 'logout'
+  map.connect '/signup', :controller => 'account', :action => 'signup'
   map.connect '/admin', :controller => 'admin/overview', :action => 'index'  
 
   # Install the default route as the lowest priority.

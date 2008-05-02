@@ -4,7 +4,8 @@ class User < ActiveRecord::Base
   attr_accessor :password
 
   validates_presence_of     :login, :email
-  validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => 'email must be valid'
+  validates_format_of       :email, :with => RFC822::EmailAddress, 
+                            :message => 'email must be valid'
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 4..40, :if => :password_required?
