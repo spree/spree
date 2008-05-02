@@ -1,5 +1,4 @@
 class Admin::ProductsController < Admin::BaseController
-  require_role "admin"
   
   def index
     if params[:search]

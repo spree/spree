@@ -1,8 +1,6 @@
 class CheckoutController < Spree::BaseController
   before_filter :find_order, :except => [:index, :thank_you]
-  
-  require_role 'admin', :only => :comp 
-  
+    
   def index
     find_cart
     # remove any incomplete orders in the db associated with the session

@@ -1,6 +1,5 @@
 class Admin::InventoryUnitsController < Admin::BaseController
-  require_role "admin"
-  
+    
   def adjust
     @variant = Variant.find(params[:id])
     if request.post?

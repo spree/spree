@@ -1,5 +1,4 @@
 class Admin::OrdersController < Admin::BaseController
-  require_role "admin"
   
   in_place_edit_for :address, :firstname
   in_place_edit_for :address, :lastname

@@ -49,24 +49,25 @@ module RoleRequirementSystem
       roles = [roles] unless Array===roles
       
       options[:only] ||= options[:for] if options[:for]
-      options[:except] ||= options[:for_all_except] if options[:for_all_except]
-      
+      options[:except] ||= options[:for_all_except] if options[:for_all_except]      
+            
       # convert any actions into symbols
       for key in [:only, :except]
-        if options.has_key?(key)
+        if options.has_key?(key)          
           options[key] = [options[key]] unless Array === options[key]
           options[key] = options[key].compact.collect{|v| v.to_sym}
         end 
       end
       
       self.role_requirements||=[]
-      self.role_requirements << {:roles => roles, :options => options }
+      self.role_requirements << {:roles => roles, :options => options }      
     end
     
     # This is the core of RoleRequirement.  Here is where it discerns if a user can access a controller or not./
     def user_authorized_for?(user, params = {}, binding = self.binding)
       return true unless Array===self.role_requirements
       self.role_requirements.each{| role_requirement|
+        
         roles = role_requirement[:roles]
         options = role_requirement[:options]
         # do the options match the params?
@@ -75,7 +76,7 @@ module RoleRequirementSystem
         if options.has_key?(:only)
           next unless options[:only].include?( (params[:action]||"index").to_sym )
         end
-        
+                
         if options.has_key?(:except)
           next if options[:except].include?( (params[:action]||"index").to_sym)
         end
@@ -92,7 +93,7 @@ module RoleRequirementSystem
         
         # check to see if they have one of the required roles
         passed = false
-        roles.each { |role|
+        roles.each { |role|          
           passed = true if user.has_role?(role)
         } unless (user==:false || user==false)
         
