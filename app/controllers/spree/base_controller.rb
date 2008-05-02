@@ -1,16 +1,6 @@
 class Spree::BaseController < ApplicationController
-  # See ActionController::RequestForgeryProtection for details
-  # Uncomment the :secret if you're not using the cookie session store
-  #protect_from_forgery :secret => '55a66755bef2c41d411bd5486c001b16'
-  
-  #include AuthenticatedSystem
-  #include RoleRequirementSystem
   
   CalendarDateSelect.format = :american
-  
-  # unique cookie name to distinguish our session data from others'
-  session :session_key => SESSION_KEY
-
   #model :order, :address
   
   filter_parameter_logging "password"
