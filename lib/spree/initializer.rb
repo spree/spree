@@ -7,7 +7,7 @@ $LOAD_PATH.unshift "#{SPREE_ROOT}/vendor/rails/railties/lib"
 
 require 'initializer'
 #require 'radiant/admin_ui'
-#require 'radiant/extension_loader'
+require 'spree/extension_loader'
 
 module Spree
 
@@ -46,7 +46,7 @@ module Spree
         SPREE_ROOT + '/vendor/rails'
       end
 
-      # Provide the load paths for the Radiant installation
+      # Provide the load paths for the Spree installation
       def default_load_paths         
         paths = ["#{SPREE_ROOT}/test/mocks/#{environment}"]
 
@@ -94,23 +94,23 @@ module Spree
     end
 
     def set_autoload_paths
-#      extension_loader.add_extension_paths
+      extension_loader.add_extension_paths
       super
     end
 
     def add_plugin_load_paths
       # checks for plugins within extensions:
-#      extension_loader.add_plugin_paths
+      extension_loader.add_plugin_paths
       super
     end
 
     def load_plugins
       super
-#      extension_loader.load_extensions
+      extension_loader.load_extensions
     end
 
     def after_initialize
-#      extension_loader.activate_extensions
+      extension_loader.activate_extensions
       super
     end
 =begin
@@ -128,7 +128,7 @@ module Spree
         # Add the default view paths
         arr.concat configuration.view_paths
         # Add the extension view paths
-#        arr.concat extension_loader.view_paths
+        arr.concat extension_loader.view_paths     
         # Reverse the list so extensions come first
         arr.reverse!
       end
@@ -137,18 +137,18 @@ module Spree
     end
 
     def initialize_routing
-#      extension_loader.add_controller_paths
+      extension_loader.add_controller_paths
       super
     end
 =begin
     def admin
       configuration.admin
     end
-
+=end
     def extension_loader
       ExtensionLoader.instance {|l| l.initializer = self }
     end
-=end    
+    
   end
 
 end
