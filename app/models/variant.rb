@@ -4,7 +4,7 @@ class Variant < ActiveRecord::Base
   has_and_belongs_to_many :option_values
   
   validates_presence_of :product
-  before_save :check_price
+  validate :check_price
   
   # gives the inventory count for variants with the specified inventory status 
   def inventory(status)
@@ -15,8 +15,8 @@ class Variant < ActiveRecord::Base
       # if no variant price has been set, set it to be equivalent to the master_price
       def check_price
         return unless self.price.nil?
-        if product.master_price
-          self.price = product.master_price if product
+        if product && product.master_price
+          self.price = product.master_price
         else
           errors.add_to_base("Must supply price for variant or master_price for product.")
           return false
