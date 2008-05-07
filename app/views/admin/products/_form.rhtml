@@ -10,10 +10,7 @@
   <%= text_area :product, :description, {:cols => 90, :rows => 10} %>
 </p>
 <p>
-  <label for="price">
-    <%="Price:" if @product.variant %>
-    <%="Master Price:" if @product.variants? %>
-  </label><br/>
+  <label for="price">Master Price:</label><br/>
 	<%=error_message_on :product, :master_price%>
   <%= text_field :product, :master_price  %></p>
 </p>

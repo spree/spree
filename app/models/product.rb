@@ -7,6 +7,7 @@ class Product < ActiveRecord::Base
   has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
 
   validates_presence_of :name
+  validates_presence_of :master_price
   validates_presence_of :description
 
   before_create :empty_variant
