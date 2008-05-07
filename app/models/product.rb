@@ -8,6 +8,7 @@ class Product < ActiveRecord::Base
 
   validates_presence_of :name
   validates_presence_of :description
+  validates_associated :variants
 
   before_create :empty_variant
   
