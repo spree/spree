@@ -45,22 +45,4 @@ describe Product do
   end
 
   # TODO - Add the rest of the unit test stuff from product_test (once we're sure about tax treatment handling)
-  describe "#before_create" do
-    before do
-      @p2 = Product.new(:name => "blah", :description => "blah2")
-    end
-
-    it "should create an empty variant" do
-      @p2.should_receive(:empty_variant)
-      @p2.save
-    end
-
-    describe "with no meaningful variant" do
-      it "should not validate without a master price" do
-        lambda {
-          @p2.save!
-        }.should raise_error(RuntimeError)
-      end
-    end
-  end
 end

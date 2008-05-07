@@ -4,7 +4,7 @@ class Variant < ActiveRecord::Base
   has_and_belongs_to_many :option_values
   
   validates_presence_of :product
-  validate :check_price
+  before_save :check_price
   
   # gives the inventory count for variants with the specified inventory status 
   def inventory(status)
