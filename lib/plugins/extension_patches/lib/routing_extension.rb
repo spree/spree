@@ -22,13 +22,11 @@ module Spree
     private
   
       def add_extension_routes(mapper)
-=begin
         Extension.descendants.each do |ext|
           ext.route_definitions.each do |block|
             block.call(mapper)
           end
         end
-=end
       end
     
   end

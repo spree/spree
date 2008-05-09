@@ -5,9 +5,11 @@ class <%= class_name %> < Spree::Extension
   version "1.0"
   description "Describe your extension here"
   url "http://yourwebsite.com/<%= file_name %>"
-  
+
   # define_routes do |map|
-  #   map.connect 'admin/<%= file_name %>/:action', :controller => 'admin/<%= file_name %>'
+  #   map.namespace :admin do |admin|
+  #     admin.resources :whatever
+  #   end  
   # end
   
   def activate
