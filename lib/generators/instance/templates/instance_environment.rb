@@ -111,18 +111,9 @@ SALES_TAX_RATES = {:NY => 0.08375}
 
 # $$$$$$$$$$ Payment Gateway Settings $$$$$$$$$$ 
 # 
-# Uncomment the section below depending on the payment gateway you wish to use.  
-# The BogusGateway is a special gateway for testing that automatically approves 
-# all requests.  The other gateways are supplied by ActiveMerchant and will 
-# automatically be set to test mode when RAILS_ENV is development or test.
-#
-# ================================================================================
-# BOGUS 
-# 
-# NOTE: Only works with specific card numbers.  See source code for details.
-# ================================================================================ 
-PAYMENT_GATEWAY = "Spree::BogusGateway"
-GATEWAY_OPTIONS = {}
+# These settings are temporarily being ignored.  Settings will eventually be configured
+# in the admin interface once work on the PaymentGateway extension is completed.  For 
+# now, the Spree::BogusGateway is always used no matter which environment you're in.
 #
 # ================================================================================
 # LINKPOINT 

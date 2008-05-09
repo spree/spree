@@ -59,5 +59,10 @@ module Spree #:nodoc:
       end
     end
     
+    # Always in test mode
+    def test?
+      true
+    end
+    
   end
 end

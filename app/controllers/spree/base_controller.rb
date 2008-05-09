@@ -29,9 +29,4 @@ class Spree::BaseController < ApplicationController
     render :text => 'Access Forbidden', :layout => true, :status => 401
   end
   
-  # Instantiates the selected PAYMENT_GATEWAY and initializes with GATEWAY_OPTIONS (configured in environment.rb)
-  def payment_gateway
-    ActiveMerchant::Billing::Base.gateway_mode = :test unless RAILS_ENV == "production"
-    PAYMENT_GATEWAY.constantize.new(GATEWAY_OPTIONS)
-  end
 end
