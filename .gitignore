@@ -2,6 +2,7 @@
 config/database.yml
 db/schema.rb
 db/*.sql
+**/*.db
 log/*.log
 public/images/products/*
 public/images/calendar_date_select
