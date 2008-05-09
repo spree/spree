@@ -47,31 +47,13 @@ module EasyRoleRequirementSystem
   
   include InstanceMethods
   
-  module ClassMethods
-    def current_klass_name
-      self.to_s
-    end
-         
+  module ClassMethods        
     def role_permissions_file_path
       @role_permissions_file_path ||= "#{SPREE_ROOT}/lib/easy_role_permissions.yml"
     end
     
     def has_role_requirements?
       self.role_requirements && self.role_requirements != [] ? true : false
-    end
-    
-    # walks up the class ancestry to find the nearest defined role_requirements.
-    # returns those requirements or {}
-    def inherited_permissions(klass = self)
-      super_class = klass.superclass
-      if super_class.respond_to?(:has_role_requirements?) &&
-         super_class.has_role_requirements?
-           {'permission00' => super_class.role_requirements.pop}
-      elsif super_class.respond_to?(:has_role_requirements?)
-          inherited_permissions(super_class)
-      else
-          {}
-      end
     end
     
     # calls RoleRequirementSystem::require_role for every permission set in the 
@@ -82,16 +64,30 @@ module EasyRoleRequirementSystem
          permission.each do |p|
            check_format(p)
            parameter = {}           
-           parameter[:roles]   = add_roles(p) || {}
-           parameter[:options] = (reformat_options(p[:options]) if p[:options]) || {}           
+           parameter[:roles]   = add_roles(p)
+           parameter[:options] = (reformat_options(p[:options]) if p[:options]) || {}        
            all_parameters << parameter
          end
          all_parameters.each{|param| self.require_role(param[:roles], param[:options]) \
-           unless param[:roles] == {} || param[:roles] == [{}]}
+           if param[:roles]}
        end
     end
     
   private
+    # walks up the class ancestry to find the nearest defined role_requirements.
+    # returns those requirements or {}
+    def inherited_permissions(klass = self)
+      super_class = klass.superclass
+      if super_class.respond_to?(:has_role_requirements?) &&
+         super_class.has_role_requirements?
+           {'permission00' => super_class.role_requirements.last}
+      elsif super_class.respond_to?(:has_role_requirements?)
+          inherited_permissions(super_class)
+      else
+          {}
+      end
+    end
+  
     def check_format(permission)      
       legal_keys = [:role, :roles, :options]
       illegal_keys = permission.reject {|key, val| legal_keys.include?(key)}
@@ -104,8 +100,7 @@ module EasyRoleRequirementSystem
     def controller_permissions
       permissions = []
       permission_format = /permission\d+/       
-      @permissions = all_permissions[current_klass_name] && 
-                    all_permissions[current_klass_name] || inherited_permissions                                
+      @permissions = all_permissions[self.to_s] || inherited_permissions                                
       @permissions.each_pair do |key, value|
         value = symbolize_keys(value)
         if key =~ permission_format && (value.has_key?(:roles) || value.has_key?(:role))
@@ -127,7 +122,7 @@ module EasyRoleRequirementSystem
     # or from default if it is not. The default is no restrictions at all.
     def all_permissions
       @permissions_file ||= load_permissions_file
-      @permissions_file.has_key?(current_klass_name) ? @permissions_file : no_permissions
+      @permissions_file.has_key?(self.to_s) ? @permissions_file : no_permissions
     end
     
     # raises an error if permissions file is not loaded or child nodes got deleted
@@ -184,8 +179,9 @@ module EasyRoleRequirementSystem
         fix_comma_errors(permission[role_key]).each do |other_role|
           other_role.each {|r| roles << r}
         end
-      end      
-       roles.compact != [] ? roles.compact : nil
+      end
+       result = roles.compact      
+       (result != [] && result != [{}]) ? result : nil
     end
     
     # YAML interperts [admin,user] as ["admin,user"]. This corrects YAMLs default
@@ -221,8 +217,8 @@ module EasyRoleRequirementSystem
       options = [['if', 'unless'], ['only', 'except', 'for', 'for_all_except']]
       hash.each_pair do |key, val|
         case
-          when options[0].include?(key.downcase) then rehash[key.to_sym] = val.to_s
-          when options[1].include?(key.downcase) then rehash[key.to_sym] =
+          when options[0].include?(key.to_s.downcase) then rehash[key.to_sym] = val.to_s
+          when options[1].include?(key.to_s.downcase) then rehash[key.to_sym] =
                reformat_value(val)
           else
             raise "Unknown Option: #{key}, options are: #{options.flatten.inspect}"
