@@ -1,0 +1,12 @@
+<h1>New <%= singular_name.titleize %></h1>
+
+<%%= error_messages_for :<%= singular_name %> %>
+
+<%% form_for(:<%= singular_name %>, :url => collection_url) do |f| %>
+  <%%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%%= submit_tag "Create" %>
+  </p>
+<%% end %>
+<br/>
+<%%= link_to 'Back', collection_url %>

@@ -1,0 +1,123 @@
+= Shoulda - Making tests easy on the fingers and eyes
+
+Shoulda makes it easy to write elegant, understandable, and maintainable tests.  Shoulda consists of test macros, assertions, and helpers added on to the Test::Unit framework.  It's fully compatible with your existing tests, and requires no retooling to use.
+
+Helpers:: #context and #should give you rSpec like test blocks.  
+          In addition, you get nested contexts and a much more readable syntax.
+Macros:: Generate hundreds of lines of Controller and ActiveRecord tests with these powerful macros.  
+         They get you started quickly, and can help you ensure that your application is conforming to best practices.
+Assertions:: Many common rails testing idioms have been distilled into a set of useful assertions. 
+
+= Usage
+
+=== Context Helpers (ThoughtBot::Shoulda::Context)
+
+Stop killing your fingers with all of those underscores...  Name your tests with plain sentences!
+
+  class UserTest << Test::Unit::TestCase 
+    context "A User instance" do
+      setup do
+        @user = User.find(:first)
+      end
+    
+      should "return its full name"
+        assert_equal 'John Doe', @user.full_name
+      end
+    
+      context "with a profile" do
+        setup do
+          @user.profile = Profile.find(:first)
+        end
+      
+        should "return true when sent #has_profile?"
+          assert @user.has_profile?
+        end
+      end
+    end
+  end
+
+Produces the following test methods:
+
+  "test: A User instance should return its full name."
+  "test: A User instance with a profile should return true when sent #has_profile?."
+
+So readable!
+
+=== ActiveRecord Tests (ThoughtBot::Shoulda::ActiveRecord)
+
+Quick macro tests for your ActiveRecord associations and validations:
+
+  class PostTest < Test::Unit::TestCase
+    load_all_fixtures
+
+    should_belong_to :user
+    should_have_many :tags, :through => :taggings
+
+    should_require_unique_attributes :title
+    should_require_attributes :body, :message => /wtf/
+    should_require_attributes :title
+    should_only_allow_numeric_values_for :user_id
+  end
+
+  class UserTest < Test::Unit::TestCase
+    load_all_fixtures
+
+    should_have_many :posts
+
+    should_not_allow_values_for :email, "blah", "b lah"
+    should_allow_values_for :email, "a@b.com", "asdf@asdf.com"
+    should_ensure_length_in_range :email, 1..100
+    should_ensure_value_in_range :age, 1..100
+    should_protect_attributes :password
+  end
+
+Makes TDD so much easier.
+
+=== Controller Tests (ThoughtBot::Shoulda::Controller::ClassMethods)
+
+Macros to test the most common controller patterns...
+
+  context "on GET to :show for first record" do
+    setup do
+      get :show, :id => 1
+    end
+  
+    should_assign_to :user
+    should_respond_with :success
+    should_render_template :show
+    should_not_set_the_flash
+
+    should "do something else really cool" do
+      assert_equal 1, assigns(:user).id
+    end
+  end
+
+Test entire controllers in a few lines...
+
+  class PostsControllerTest < Test::Unit::TestCase
+    should_be_restful do |resource|
+      resource.parent = :user
+
+      resource.create.params = { :title => "first post", :body => 'blah blah blah'}
+      resource.update.params = { :title => "changed" }
+    end
+  end
+
+should_be_restful generates 40 tests on the fly, for both html and xml requests.
+
+=== Helpful Assertions (ThoughtBot::Shoulda::General)
+
+More to come here, but have fun with what's there.
+
+  load_all_fixtures
+  assert_same_elements([:a, :b, :c], [:c, :a, :b])
+  assert_contains(['a', '1'], /\d/)
+  assert_contains(['a', '1'], 'a')
+
+= Credits
+
+Shoulda is maintained by {Tammer Saleh}[mailto:tsaleh@thoughtbot.com], and is funded by Thoughtbot[http://www.thoughtbot.com], inc.
+
+= License
+
+Shoulda is Copyright © 2006-2007 Tammer Saleh, Thoughtbot. It is free software, and may be redistributed under the terms specified in the README file of the Ruby distribution.

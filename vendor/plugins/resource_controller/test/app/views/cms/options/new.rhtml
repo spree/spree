@@ -1,0 +1,16 @@
+<h1>New option</h1>
+
+<%= error_messages_for :option %>
+
+<% form_for(:option, :url => collection_url) do |f| %>
+  <p>
+    <b>Title</b><br />
+    <%= f.text_field :title %>
+  </p>
+
+  <p>
+    <%= submit_tag "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', collection_url %>
