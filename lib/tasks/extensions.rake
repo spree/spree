@@ -21,8 +21,32 @@ namespace :db do
   end
 end
 
+namespace :test do
+  desc "Runs tests on all available Spree extensions, pass EXT=extension_name to test a single extension"
+  task :extensions => "db:test:prepare" do
+    extension_roots = Spree::Extension.descendants.map(&:root)
+    if ENV["EXT"]
+      extension_roots = extension_roots.select {|x| /\/(\d+_)?#{ENV["EXT"]}$/ === x }
+      if extension_roots.empty?
+        puts "Sorry, that extension is not installed."
+      end
+    end
+    extension_roots.each do |directory|
+      if File.directory?(File.join(directory, 'test'))
+        chdir directory do
+          if RUBY_PLATFORM =~ /win32/
+            system "rake.cmd test SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+          else
+            system "rake test SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+          end
+        end
+      end
+    end
+  end
+end
+
 namespace :spec do
-  desc "Runs specs on all available Radiant extensions, pass EXT=extension_name to test a single extension"
+  desc "Runs specs on all available Spree extensions, pass EXT=extension_name to test a single extension"
   task :extensions => "db:test:prepare" do
     extension_roots = Spree::Extension.descendants.map(&:root)
     if ENV["EXT"]
