@@ -1,0 +1,277 @@
+# This file has all of the ActiveMerchant test account credentials.
+# Many gateways do not offer publicly available test accounts. In
+# order to make testing the gateways easy you can copy this file to
+# your home directory as the file ~/.active_merchant/fixtures.yml
+# You can then place your own test account credentials in your local
+# copy of the file.
+#
+# If the login is numeric, ensure that you place quotes around it.
+# Leading zeros will be lost when YAML parses the file if you don't.
+#
+# Paste any required PEM certificates after the pem key.  
+#
+authorize_net:
+  login: X
+  password: Y
+
+braintree:
+  login: demo
+  password: password
+  
+card_stream:
+  login: X
+  password: Y
+  
+cyber_source:
+  login: X
+  password: Y
+
+data_cash:
+  login: X
+  password: Y
+  
+efsnet:
+  login: X
+  password: Y
+
+# Working credentials, no need to replace
+eway:
+  login: '87654321'
+
+# Working credentials, no need to replace
+exact:
+  login: "A00427-01" 
+  password: testus
+
+ideal_ing_postbank:
+  login: LOGIN
+  password: PASSWORD
+  pem: |--
+    PASTE YOUR PEM FILE HERE
+
+linkpoint:
+  login: STOREID
+  pem: |--
+    PASTE YOUR PEM FILE HERE
+
+# Working credentials, no need to replace
+moneris:
+  login: store1
+  password: yesguy
+
+# Working credentials, no need to replace
+# Contact Netbilling for login info to the admin area  
+netbilling:
+  login: '104901072025'
+  
+net_registry:
+  login: X
+  password: Y
+  
+payflow:
+  login: LOGIN
+  password: PASSWORD
+  partner: PayPal
+  
+payflow_uk:
+  login: LOGIN
+  password: PASSWORD
+  partner: PayPalUk
+
+# Working credentials, no need to replace
+pay_junction:
+  login: 'pj-ql-01'
+  password: 'pj-ql-01p'
+  
+payment_express:
+  login: LOGIN
+  password: PASSWORD
+
+# You can use either your API PEM file or API signature with PayPal.
+paypal_certificate:
+  login: LOGIN
+  password: PASSWORD
+  subject:
+  pem: |--
+    PASTE YOUR PEM FILE HERE
+
+paypal_signature:
+  login: LOGIN
+  password: PASSWORD
+  signature: SIGNATURE
+
+pay_secure:
+  login: LOGIN
+  password: PASSWORD
+    
+plugnpay:
+  login: LOGIN
+  password: PASSWORD
+  
+protx:
+  login: LOGIN
+  
+# Working credentials, no need to replace
+psigate:
+  login: teststore
+  password: psigate1234
+ 
+psl_card:
+  login: LOGIN
+
+# PSL doesn't want the test data made public
+psl_maestro:
+  number: 
+  month: 
+  year: 
+  verification_value: 
+  issue_number: 
+
+psl_maestro_address: 
+  address1: 
+  address2: 
+  city: 
+  state: 
+  zip: 
+
+psl_solo:
+  number: 
+  month: 
+  year: 
+  verification_value: 
+  issue_number: 
+
+psl_solo_address:
+  address1: 
+  city: 
+  state: 
+  zip: 
+
+psl_visa:
+  number: 
+  month: 
+  year: 
+  verification_value: 
+
+psl_visa_address:
+  address1: 
+  address2: 
+  address3: 
+  city: 
+  zip: 
+
+quickpay:
+  login: X
+  password: Y
+    
+realex:
+  login: X 
+  password: Y
+    
+realex_with_account:
+  login: X
+  password: Y
+  account: testaccount
+
+# Realex doesn't provide public testing data
+# Fill in the card numbers with the Realex test
+# data.  
+realex_visa:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+
+realex_visa_declined:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+
+realex_visa_referral_a:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+  
+realex_visa_referral_b:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+  
+realex_visa_coms_error:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+  
+realex_mastercard:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+
+realex_mastercard_declined:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+
+realex_mastercard_referral_a:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+
+realex_mastercard_referral_b:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+
+realex_mastercard_coms_error:
+  number: 
+  month: '6'
+  year: '2020'
+  verification_value: '123'
+
+secure_pay:
+  login: LOGIN
+  password: PASSWORD
+
+secure_pay_tech:
+  login: TESTDIGISPL1
+  password: d557591484cb2cd12bba445aba420d2c69cd6a88
+
+secure_pay_au:
+  login:
+  password:
+
+#  Replace with your serial numbers for the skipjack test environment
+skipjack:
+  login: X
+  password: Y 
+
+trans_first:
+  login: LOGIN
+  password: PASSWORD
+
+# Working credentials, no need to replace
+trust_commerce: 
+  login: 'TestMerchant'
+  password: 'password'
+
+# Working credentials, no need to replace
+usa_epay:
+  login: 'yCaWGYQsSVR0S48B6AKMK07RQhaxHvGu'
+  
+# Working credentials, no need to replace
+verify:
+  login: 'demo'
+  password: 'password'
+
+viaklix:
+  login: LOGIN
+  password: PASSWORD
+  user: USER

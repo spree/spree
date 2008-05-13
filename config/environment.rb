@@ -57,7 +57,6 @@ Spree::Initializer.run do |config|
   
 end
 
-require 'active_merchant'
 require 'has_many_polymorphs'
 require 'mini_magick'
 
@@ -78,7 +77,6 @@ require 'mini_magick'
 
 # Spree Configuration
 SESSION_KEY = '_spree_session_id'
-TAX_CALCULATOR = "SalesTax" # feel free to replace with a custom tax calculator class
 SHIPPING_METHODS = [:flat_rate]
 FLAT_SHIPPING_RATE = 10 # applies only to the flat rate shipping option
 ORDER_FROM = "orders@example.com"
@@ -112,9 +110,6 @@ AVAILABLE_OPERATIONS = {
 }
 
 INVENTORY_STATES = [:on_hand, :sold, :shipped, :back_ordered]
-
-# Ignored unless using the SalesTax calculator
-SALES_TAX_RATES = {:NY => 0.08375}
 
 # $$$$$$$$$$ Payment Gateway Settings $$$$$$$$$$ 
 # 

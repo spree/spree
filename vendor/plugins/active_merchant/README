@@ -1,0 +1,127 @@
+= Active Merchant
+
+This library is supposed to aid in creating e-commerce software in Ruby.
+In the future we want to support all "good" payment gateways.
+
+This library is the foundation of commerce for http://www.shopify.com.
+
+Please visit the {ActiveMerchant homepage}[http://activemerchant.org] for more resources, tutorials and other information about this project.
+
+== Supported Direct Payment Gateways
+
+The {ActiveMerchant Wiki}[http://code.google.com/p/activemerchant/wiki] contains a {table of features supported by each gateway}[http://code.google.com/p/activemerchant/wiki/SupportedGatewayPaymentOperations].
+
+* {Authorize.net}[http://www.authorize.net/] - US
+* {Braintree}[http://www.braintreepaymentsolutions.com] - US
+* {CardStream}[http://www.cardstream.com/] - GB
+* {CyberSource}[http://www.cybersource.com] - US
+* {DataCash}[http://www.datacash.com/] - GB
+* {Efsnet}[http://www.concordefsnet.com/] - US
+* {eWAY}[http://www.eway.com.au/] - AU
+* {E-xact}[http://www.e-xact.com] - CA, US
+* {LinkPoint}[http://www.linkpoint.com/] - US
+* {Moneris}[http://www.moneris.com/] - CA
+* {NetRegistry}[http://www.netregistry.com.au] - AU
+* {NETbilling}[http://www.netbilling.com] - US
+* {PayJunction}[http://www.payjunction.com/] - US
+* {PaySecure}[http://www.commsecure.com.au/paysecure.shtml] - AU
+* {PayPal Express Checkout}[https://www.paypal.com/cgi-bin/webscr?cmd=xpt/merchant/ExpressCheckoutIntro-outside] - US, CA, SG, AU
+* {PayPal Express Checkout (UK)}[https://www.paypal.com/uk/cgi-bin/webscr?cmd=_additional-payment-overview-outside] - GB
+* {PayPal Payflow Pro}[https://www.paypal.com/cgi-bin/webscr?cmd=_payflow-pro-overview-outside] - US, CA, SG, AU
+* {PayPal Website Payments Pro (UK)}[https://www.paypal.com/uk/cgi-bin/webscr?cmd=_wp-pro-overview-outside] - GB
+* {PaymentExpress}[http://www.paymentexpress.com/] - AU, MY, NZ, SG, ZA, GB, US
+* {PayPal Express Checkout}[https://www.paypal.com/cgi-bin/webscr?cmd=xpt/merchant/ExpressCheckoutIntro-outside] - US
+* {PayPal Website Payments Pro (US)}[https://www.paypal.com/cgi-bin/webscr?cmd=_wp-pro-overview-outside] - US
+* {Plug'n Pay}[http://www.plugnpay.com/] - US
+* {Protx}[http://www.protx.com] - GB
+* {Psigate}[http://www.psigate.com/] - CA
+* {PSL Payment Solutions}[http://www.paymentsolutionsltd.com/] - GB
+* {Quickpay}[http://quickpay.dk/] - DK
+* {Realex}[http://www.realexpayments.com/] - IE, GB
+* {SecurePay}[http://www.securepay.com/] - US
+* {SecurePayTech}[http://www.securepaytech.com/] - NZ
+* {SkipJack}[http://www.skipjack.com/] - US, CA
+* {TransFirst}[http://www.transfirst.com/] - US
+* {TrustCommerce}[http://www.trustcommerce.com/] - US
+* {USA ePay}[http://www.usaepay.com/] - US
+* {Verifi}[http://www.verifi.com/] - US
+* {ViaKLIX}[http://viaklix.com] - US
+
+== Supported Offsite Payment Gateways
+
+* {PayPal Website Payments Standard}[https://www.paypal.com/cgi-bin/webscr?cmd=_wp-standard-overview-outside]
+* Chronopay[http://www.chronopay.com]
+* Nochex[http://www.nochex.com]
+* {Banca Sella GestPay}[https://www.sella.it/banca/ecommerce/gestpay/gestpay.jsp]
+* {2 Checkout}[http://www.2checkout.com]
+* {HiTRUST}[http://www.hitrust.com.hk/]
+
+== Download
+
+Currently this library is available with svn from:
+
+  http://activemerchant.googlecode.com/svn/trunk/active_merchant
+
+== Installation
+
+=== From Subversion
+
+You can check out the latest source from svn:
+
+  > svn co http://activemerchant.googlecode.com/svn/trunk/active_merchant
+
+=== As a Rails plugin
+
+ActiveMerchant includes an init.rb file. This means that Rails will automatically load ActiveMerchant on startup. Run the following command from the root directory of your Rails project to install ActiveMerchant as a Rails plugin:
+
+  > ./script/plugin install http://activemerchant.googlecode.com/svn/trunk/active_merchant
+
+=== From Ruby Gems
+
+Installation from RubyGems
+
+  > gem install activemerchant
+
+== Sample Usage
+  require 'rubygems'
+  require 'active_merchant'
+
+  # Use the TrustCommerce test servers
+  ActiveMerchant::Billing::Base.mode = :test
+
+  # ActiveMerchant accepts all amounts as Integer values in cents
+  # $10.00
+  amount = 1000
+
+  # The card verification value is also known as CVV2, CVC2, or CID 
+  credit_card = ActiveMerchant::Billing::CreditCard.new(
+                  :first_name         => 'Bob',
+                  :last_name          => 'Bobsen',
+                  :number             => '4242424242424242',
+                  :month              => '8',
+                  :year               => '2012',
+                  :verification_value => '123'
+                )
+
+  # Validating the card automatically detects the card type
+  if credit_card.valid?
+
+    # Create a gateway object for the TrustCommerce service
+    gateway = ActiveMerchant::Billing::TrustCommerceGateway.new(
+                :login => 'TestMerchant',
+                :password => 'password'
+              )
+
+    # Authorize for the amount
+    response = gateway.purchase(amount, credit_card)
+
+    if response.success?
+      puts "Successfully charged $#{sprintf("%.2f", amount / 100)} to the credit card #{credit_card.display_number}"
+    else
+      raise StandardError, response.message 
+    end
+  end
+
+== Contributing
+
+Please see the {ActiveMerchant Guide to Contributing}[http://code.google.com/p/activemerchant/wiki/Contributing] for information on adding a new gateway to ActiveMerchant.
