@@ -41,17 +41,14 @@ module ResourceController
 
           create do
             flash "Successfully created!"
-            # hacked by sean - just redirect to edit screen since we don't really need the show screens
-            wants.html { redirect_to edit_object_url } 
-            #wants.html { redirect_to object_url }
+            wants.html { redirect_to collection_url }
 
             failure.wants.html { render :action => "new" }
           end
 
           update do
             flash "Successfully updated!"
-            # hacked by sean - just redirect to edit screen since we don't really need the show screens
-            wants.html { redirect_to edit_object_url } 
+            wants.html { redirect_to object_url } 
 
             failure.wants.html { render :action => "edit" }
           end
