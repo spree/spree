@@ -55,11 +55,4 @@ describe Product do
       product.variant.should be_nil
     end
   end
-  
-
-  
-  
-
-
-  # TODO - Add the rest of the unit test stuff from product_test (once we're sure about tax treatment handling)
 end

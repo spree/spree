@@ -40,11 +40,6 @@
 					style="width:250px;"> 
     <%= options_from_collection_for_select(@all_categories, :id, :long_name, @selected_category) %>
   </select>
-	<%= observe_field :category, 
-                    :update => 'treatmentWrapper', 
-                    :url => {:action => :tax_treatments}, 
-                    :with => "'id=#{@product.id}&category_id=' + encodeURIComponent(value)", 
-                    :on => 'changed' -%> 
 </p>
 <br/>
 <div id="variant-listing">
@@ -60,10 +55,5 @@
 </div>
 
 <br/>
-
-<div id="treatmentWrapper">
-  <%= render :partial => 'shared/tax_treatments', :locals => {:tax_treatments => @all_tax_treatments, :selected_treatments => @product.tax_treatments} -%>
-</div>
-
 <!--[eoform:product]-->
 

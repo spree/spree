@@ -16,8 +16,9 @@ class CreateTaxTreatments < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :tax_treatments
-    drop_table :categories_tax_treatments
-    drop_table :products_tax_treatments
+    # Don't drop these since they are now dropped by migration 025
+    #drop_table :tax_treatments
+    #drop_table :categories_tax_treatments
+    #drop_table :products_tax_treatments
   end
 end

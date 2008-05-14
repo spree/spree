@@ -21,7 +21,6 @@ module Spree
     def bootstrap(config)    
       @config = config
       @admin = create_admin_user(config[:admin_name], config[:admin_username], config[:admin_password], config[:admin_email])
-      load_default_tax_treatments
       load_sample_data if sample_data?
       announce "Finished.\n\n"
     end
@@ -48,12 +47,6 @@ module Spree
       admin.roles << role
       admin.save      
       admin      
-    end
-    
-    # This is a temporary workaround.  Remove this once tax treatments are supported via extensions.
-    def load_default_tax_treatments
-      TaxTreatment.create(:name => "Non taxable")
-      TaxTreatment.create(:name => "U.S. Sales Tax")
     end
     
     # Uses a special set of fixtures to load sample data

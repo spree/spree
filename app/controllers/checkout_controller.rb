@@ -91,7 +91,8 @@ class CheckoutController < Spree::BaseController
       redirect_to :action => :thank_you, :id => @order.id and return
     else
       @order.ship_amount = calculate_shipping(@order)
-      @order.tax_amount = calculate_tax(@order)
+      # NOTE: calculate_tax method will be mixed in by the TaxCalculator extension
+      calculate_tax(@order)
     end
   end
   
@@ -168,11 +169,5 @@ class CheckoutController < Spree::BaseController
         sm = (Order::ShipMethod.from_value order.ship_method).sub(/ /, '')
         sc = sm.constantize.new
         sc.shipping_cost(order)
-      end
-      
-      def calculate_tax(order)
-        # use the environment to specify the name of the tax calculator class a string
-        tc = TAX_CALCULATOR.constantize
-        tc.calc_tax(order)
       end
 end

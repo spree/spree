@@ -66,3 +66,6 @@
     role : [admin]
     options :
       only : comp      
+'Admin::TaxRatesController':
+  permission1:
+    role : [admin]

@@ -73,10 +73,8 @@ class Admin::ProductsController < Admin::BaseController
 
       if params[:image]
         @product.images << Image.new(params[:image])
+        @product.save
       end
-      
-      @product.tax_treatments = TaxTreatment.find(params[:tax_treatments]) if params[:tax_treatments]
-      @product.save
       
       if @product.update_attributes(params[:product])
         flash[:notice] = 'Product was successfully updated.'
@@ -118,20 +116,6 @@ class Admin::ProductsController < Admin::BaseController
             :layout => false
   end  
 
-  # AJAX method to show tax treatments based on change in category
-  def tax_treatments
-    product = Product.find_or_initialize_by_id(params[:id])
-    if params[:category_id].blank?
-      product.category = nil
-    else
-      product.category = Category.find(params[:category_id])
-    end
-    @all_tax_treatments = TaxTreatment.find(:all)
-    render  :partial => 'shared/tax_treatments', 
-            :locals => {:tax_treatments => @all_tax_treatments, :selected_treatments => product.tax_treatments},
-            :layout => false
-  end
-    
   #AJAX method   
   def new_variant
     @product = Product.find(params[:id])
@@ -155,7 +139,6 @@ class Admin::ProductsController < Admin::BaseController
       def load_data
         @all_categories = Category.find(:all, :order=>"name")  
         @all_categories.unshift Category.new(:name => "<None>")
-        @all_tax_treatments = TaxTreatment.find(:all, :order=>"name")
       end
   
   private
