@@ -21,7 +21,7 @@
       <% end -%>      
       <table width="780">
         <tr>
-          <td rowspan="3"><%= image_tag "spree/spree.jpg", :plugin=>"spree" %></td>
+          <td rowspan="3" width="150"><%= image_tag "spree/spree.jpg", :plugin=>"spree" %></td>
           <td>
             <!-- TODO: may want to restrict to admin users only (instead of any authenticated user) -->
             <% if logged_in? -%>
@@ -32,6 +32,7 @@
                   <li><%= link_to 'Products', :controller => '/admin/products' %></li>                                    
                   <li><%= link_to 'Reports', :controller => '/admin/reports' %></li>
                   <li><%= link_to 'Users', :controller => '/admin/users' %></li>
+                  <li><%= link_to 'Extensions', :controller => '/admin/extensions' %></li>
                 </ul>
               </div>
             <% end -%>
