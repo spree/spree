@@ -31,11 +31,10 @@ namespace 'spree' do
     s.bindir = 'bin'
     s.executables = (Dir['bin/*'] + Dir['scripts/*']).map { |file| File.basename(file) } 
     s.add_dependency 'rake', '>= 0.7.1'
-    s.add_dependency 'activemerchant', '>= 1.2.1'
     s.add_dependency 'has_many_polymorphs', '>= 2.12'
     s.add_dependency 'highline', '>=1.4.0'
-    s.add_dependency 'mini_magick', '>=1.2.3'
-    s.add_dependency 'rspec', '=1.1.3'    
+    s.add_dependency 'mini_magick', '>=1.2.3'   
+    s.add_dependency 'ruby-debug', '>=0.10.0'   
     s.autorequire = 'spree'
     s.has_rdoc = true
     #s.rdoc_options << '--title' << RDOC_TITLE << '--line-numbers' << '--main' << 'README'
