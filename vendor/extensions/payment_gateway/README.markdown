@@ -1,6 +1,6 @@
 # Payment Gateway
 
-Mixins a payment_gateway method into Spree::BaseController.  Any gateway that is returned is expected to be compatible with [ActiveMerchant]:http://activemerchant.org.
+Mixins a payment_gateway method into Spree::BaseController.  Any gateway that is returned is expected to be compatible with Active Merchant.  See <http://activemerchant.org> for details.
 
 ## Warning
 

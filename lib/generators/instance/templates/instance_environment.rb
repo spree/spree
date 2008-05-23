@@ -104,20 +104,3 @@ AVAILABLE_OPERATIONS = {
 }
 
 INVENTORY_STATES = [:on_hand, :sold, :shipped, :back_ordered]
-
-# $$$$$$$$$$ Payment Gateway Settings $$$$$$$$$$ 
-# 
-# These settings are temporarily being ignored.  Settings will eventually be configured
-# in the admin interface once work on the PaymentGateway extension is completed.  For 
-# now, the Spree::BogusGateway is always used no matter which environment you're in.
-#
-# ================================================================================
-# LINKPOINT 
-# 
-# NOTE: Requires the PEM file provided by Linkpoint 
-# ================================================================================ 
-#PAYMENT_GATEWAY = "ActiveMerchant::Billing::LinkpointGateway"
-#GATEWAY_OPTIONS = {:login => "1909543518"}
-#ActiveMerchant::Billing::LinkpointGateway.pem_file = File.read( File.dirname(__FILE__) + '/../1909543518.pem' ) # Required for LinkPoint
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-

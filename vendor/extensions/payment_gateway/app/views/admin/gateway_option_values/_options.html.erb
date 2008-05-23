@@ -1,0 +1,28 @@
+<table class="full-table">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Value</th>
+  </tr>
+  <% option_values.each do |option_value| %>
+  <tr>
+    <td width="100px"valign="top"><%=option_value.gateway_option.name%></td>
+    <td valign="top" width="400px"><%=option_value.gateway_option.description%></td>
+    <td valign="top">
+      <% if option_value.gateway_option.textarea %>
+        <textarea name="option[<%=option_value.gateway_option.id%>]" 
+                  rows="5" 
+                  cols="26"><%= option_value.value %></textarea>
+      <% else %>
+        <input type="text" 
+               size="26"
+               name="option[<%=option_value.gateway_option.id%>]" 
+               value="<%= option_value.value %>" style="width: 228px"/>
+      <% end %>
+    </td>
+  </tr>
+  <% end %>
+  <% if option_values.empty? %>
+    <tr><td colspan="3">None.</td></tr>
+  <% end%>
+</table>

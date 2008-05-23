@@ -1,0 +1,8 @@
+<h1>Gateway Configuration</h1>
+<%= error_messages_for :gateway_configuration %>
+<% form_for(:gateway_configuration, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%=submit_tag "Update"%> <%= link_to "Cancel", :controller => "admin/overview"%>
+  </p>
+<% end %>
