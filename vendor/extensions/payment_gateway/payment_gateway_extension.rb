@@ -13,7 +13,7 @@ class PaymentGatewayExtension < Spree::Extension
       admin.resources :gateway_configurations, :has_many => [:gateway_option_values]
     end  
   end
-  
+
   def activate  
     # Set the global "gateway mode" for active merchant (depending on whate environment we're in)
     ActiveMerchant::Billing::Base.gateway_mode = :test unless ENV['RAILS_ENV'] == "production"

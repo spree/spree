@@ -9,10 +9,20 @@ module Spree
       base.class_eval do
         alias :draw_without_plugin_routes :draw
         alias :draw :draw_with_plugin_routes
+        alias :rails_reload :reload
+        alias :reload :force_reload
       end
     end
-  
-    def draw_with_plugin_routes
+
+    def force_reload
+      if RAILS_ENV == 'development'
+        load!
+      else
+        rails_reload
+      end
+    end  
+    
+    def draw_with_plugin_routes   
       draw_without_plugin_routes do |mapper|
         add_extension_routes(mapper)
         yield mapper
