@@ -3,12 +3,12 @@ class Admin::GatewayConfigurationsController < Admin::BaseController
     
   update.after do
     @gateway_configuration.gateway_option_values.clear
-    return unless params[:option]
-
-    params[:option].each do |key, value|
-      GatewayOptionValue.create(:gateway_configuration => @gateway_configuration,
-                                :gateway_option_id => key,
-                                :value => value)
+    if params[:option]
+      params[:option].each do |key, value|
+        GatewayOptionValue.create(:gateway_configuration => @gateway_configuration,
+                                  :gateway_option_id => key,
+                                  :value => value)
+      end
     end
   end
   
