@@ -3,7 +3,7 @@ class CreateGateways < ActiveRecord::Migration
     create_table :gateways do |t|
       t.string :clazz
       t.string :name
-      t.string :description
+      t.text :description
       t.boolean :active
       t.timestamps
     end
