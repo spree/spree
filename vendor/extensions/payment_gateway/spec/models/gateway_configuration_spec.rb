@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe GatewayConfigruation do
+describe GatewayConfiguration do
   before(:each) do
-    @gateway_configruation = GatewayConfigruation.new
+    @gateway_configruation = GatewayConfiguration.new
   end
 
   it "should be valid" do
