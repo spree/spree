@@ -1,6 +1,9 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Spree::BaseController do
+  
+  fixtures :gateways, :gateway_configurations
+  
   it "should include a payment gateway method" do
     controller.respond_to?(:payment_gateway).should be_true
   end

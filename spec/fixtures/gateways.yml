@@ -1,0 +1,3 @@
+bogus_gateway:
+  name: Bogus Gateway
+  clazz: Spree::BogusGateway
