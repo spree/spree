@@ -125,6 +125,7 @@ module Spree
       
       # ask user if we should generate some sample data
       def sample_data?
+        return true if ENV['AUTO_ACCEPT']
         sample = ask('Load Sample Data? [y]: ', String) do |q|
           q.echo = false
           q.whitespace = :strip

@@ -26,7 +26,7 @@ namespace :db do
   desc "Bootstrap your database for Spree."
   task :bootstrap  do
     require 'highline/import'
-    if ENV['SKIP_NAG'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
+    if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
       # Migrate downward
       ENV['SKIP_NAG'] = 'yes'
       Rake::Task["db:migrate:extensions:zero"].invoke
@@ -40,13 +40,18 @@ namespace :db do
       Rake::Task["db:schema:dump"].invoke
 
       require 'spree/setup'
-      Spree::Setup.bootstrap(
-        :admin_name => ENV['ADMIN_NAME'],
-        :admin_username => ENV['ADMIN_USERNAME'],
-        :admin_password => ENV['ADMIN_PASSWORD'],
-        :admin_email => ENV['ADMIN_EMAIL'],
-        :database_template => ENV['DATABASE_TEMPLATE']
-      )
+      
+      attributes = {}
+      if ENV['AUTO_ACCEPT']
+        attributes = {
+          :admin_name => "Administrator", 
+          :admin_username => "admin",
+          :admin_password => "spree",
+          :admin_email => "admin@example.com"          
+        }
+      end
+      
+      Spree::Setup.bootstrap attributes
     else
       say "Task cancelled."
       exit
