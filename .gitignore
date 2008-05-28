@@ -1,4 +1,6 @@
 .DS_Store
+.loadpath
+.project
 config/database.yml
 db/schema.rb
 db/*.sql
