@@ -7,8 +7,8 @@ body {
   font-style:normal;
   font-variant:normal;
   font-weight:normal;
-  line-height:1.6em;
-  text-align:center;
+  /*line-height:1.6em;*/
+  /*text-align:center;*/
 }
 
 #main {
@@ -178,7 +178,8 @@ padding-right: 0;
   list-style-position:outside;
   list-style-type:none; 
   float: right;
-  padding: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 /* ================ end: header-menu ================ */
@@ -213,9 +214,9 @@ padding-right: 0;
 #login-nav {
   list-style: none;
   float: right;
-  margin-right: 10px;
-  margin-top: 5px;
-  font-size: 90%;
+  /*margin-right: 10px;*/
+  /*margin-top: 5px;*/
+  font-size: 10px;
 }
 #login-nav li, #act-nav li {
   display: inline;
@@ -282,3 +283,9 @@ padding-right: 0;
 }
 /* ===================== end: price-diff =====================*/
 
+/* ===================== begin: store-header =====================*/
+.store-header h1 {
+  margin: 0px;
+  padding: 0px;
+}
+/* ===================== end: store-header =====================*/

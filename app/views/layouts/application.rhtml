@@ -11,15 +11,31 @@
 			<table id="main-table" border='1'>
 				<tr>
 					<td colspan="2">
-						<table width="100%">
+						<table width="100%" class="store-header">
 							<tr>
-								<td width="140px">
+								<td rowspan="2" width="140px">
                   <%= image_tag 'spree.jpg' %>									
 								</td>
-								<td valign="top">
-								  <h1>Welcome To The Sample Store</h1>
-							  </td>
-								<td align="right" valign="top">
+                <td valign="top">
+                  <h1>Welcome To The Sample Store</h1>
+                </td>
+								<td>
+									<% if logged_in? -%>
+						        <ul id="login-nav">
+						          <li>Logged in as: <%= current_user.login -%></li>
+						          <li><%= link_to 'Account', :controller => 'accoun', :action => 'show', :id => current_user %></li>
+						          <li><%= link_to 'Logout', :controller => '/account', :action => 'logout' %></li>
+						          <li><%= link_to 'Store', :controller => '/store' %></li>
+						        </ul>
+									<% else %>
+                    <ul id="login-nav">
+                      <li><%= link_to 'Login', :controller => '/account', :action => 'login' %></li>
+                    </ul>									 
+						      <% end -%>      
+								</td>
+							</tr>
+							<tr>
+								<td align="right" valign="top" colspan="2">
 								  <% if store_menu? %>
 									  <%= render :partial => 'shared/store_menu' %>
 									<% end %>
