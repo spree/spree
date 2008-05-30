@@ -13,8 +13,8 @@
     <div id="main">
     	<% if logged_in? -%>
 	      <ul id="login-nav">
-	      	<li>Logged in as: <%= current_user.login -%></li>
-	        <li><%= link_to 'Account', :controller => 'users', :action => 'show', :id => current_user %></li>
+	      	<li>Logged in as: <%= current_user.login %></li>
+	        <li><%= link_to 'Account', user_path(current_user) %></li>
 	        <li><%= link_to 'Logout', :controller => '/account', :action => 'logout' %></li>
 	        <li><%= link_to 'Store', :controller => '/store' %></li>
 	      </ul>
@@ -31,7 +31,7 @@
                   <li><%= link_to 'Orders', :controller => '/admin/orders' %></li>            
                   <li><%= link_to 'Products', :controller => '/admin/products' %></li>                                    
                   <li><%= link_to 'Reports', :controller => '/admin/reports' %></li>
-                  <li><%= link_to 'Users', :controller => '/admin/users' %></li>
+                  <li><%= link_to 'Users', users_path %></li>
                   <li><%= link_to 'Extensions', :controller => '/admin/extensions' %></li>
                 </ul>
               </div>

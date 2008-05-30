@@ -1,9 +1,0 @@
-<%= render :partial => 'menu' -%>
-
-<div id="user-description">
-  <% for column in User.content_columns %>
-  <p>
-    <b><%= column.human_name %>:</b> <%=h @user.send(column.name) %>
-  </p>
-  <% end %>
-</div>

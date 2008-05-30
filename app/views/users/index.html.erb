@@ -1,0 +1,21 @@
+<h1>Listing Users</h1>
+
+<table class="admin-report">
+	<thead>
+		<th>User</th>
+		<th>Action</th>
+	</thead>
+	<tbody>
+	  <%- @users.each do |user|%>
+	    <tr>
+	      <td width="350px"><%=link_to user.email, object_url(user) %></td>
+	      <td>
+	      	<%=link_to 'Edit', edit_object_url(user) %> |
+					<%=link_to 'Destroy', object_url(user), :confirm => 'Are you sure?', :method => :delete %></td>
+	    </tr>
+	  <% end %>
+	</tbody>
+</table>
+<br/>
+
+<%= link_to 'New User', new_object_url %>

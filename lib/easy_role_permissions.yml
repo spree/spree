@@ -41,6 +41,11 @@
 #          If it evaluates to true, the role is required.
 #  * :unless - The inverse of :if
 #
+'UsersController':
+  permission1:
+    roles : [admin]
+    options :
+      only : index      
 'Admin::BaseController':
   permission1:
     roles : [admin]

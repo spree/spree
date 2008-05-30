@@ -22,10 +22,8 @@
 								<td>
 									<% if logged_in? -%>
 						        <ul id="login-nav">
-						          <li>Logged in as: <%= current_user.login -%></li>
-						          <li><%= link_to 'Account', :controller => 'accoun', :action => 'show', :id => current_user %></li>
+						          <li><%= link_to 'My Account', user_path(current_user) %></li>
 						          <li><%= link_to 'Logout', :controller => '/account', :action => 'logout' %></li>
-						          <li><%= link_to 'Store', :controller => '/store' %></li>
 						        </ul>
 									<% else %>
                     <ul id="login-nav">
