@@ -1,6 +1,5 @@
 frank:
   login: frank.foo@example.com
   email: frank.foo@example.com
-  salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
-  crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 
-	# test
+  salt: 54340fb3737c0d1af17fe73b02d50f4350618c76
+  crypted_password: 5531faf8d0c82af323af307cf8aebcf4499af3a8
