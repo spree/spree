@@ -8,7 +8,5 @@
 		 	<%= link_to product.name, :controller => :store, :action => 'show', :id => product %>
 	        <b><%= "$ #{product.master_price}" if product.master_price %></b>
 	</li>
-	<%= draggable_element("product_#{product.id}", :revert => true) %>
-	
 	<% end %>
 </div>
