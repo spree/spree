@@ -218,6 +218,11 @@ padding-right: 0;
   /*margin-top: 5px;*/
   font-size: 10px;
 }
+
+#login-nav ui {
+	padding: 5px;
+}
+
 #login-nav li, #act-nav li {
   display: inline;
   margin-right: 5px;
