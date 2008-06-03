@@ -15,3 +15,6 @@ pkg
 tmp
 spree_dev
 spree_test
+*~
+#*
+.#*
