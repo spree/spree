@@ -14,18 +14,11 @@ class CheckoutController < Spree::BaseController
   end
 
   def addresses
-    @user = User.new
+    @user = current_user ? current_user : User.new
     @states = State.find(:all, :order => 'name')
     @countries = Country.find(:all)
     
     if request.post?
-      #TODO - eventually we need to grab user out of session once we support user accounts for orders
-      @user = User.new(params[:user]) unless params[:user].empty?
-      @user.password = "changeme"
-      @user.password_confirmation = "changeme"
-      #TODO - eventually you will be able to configure type of account support, for now its just anonymous
-      @user.login = User.generate_login
-      
       @different_shipping = params[:different_shipping]
       @bill_address = Address.new(params[:bill_address])
       #if only one country available there will be no choice (and user will post nothing)

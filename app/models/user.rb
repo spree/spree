@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :login, :case_sensitive => false
   before_save :encrypt_password
   
+  has_many :addresses
   has_many :orders
   has_many :ship_addresses, :class_name => "Address", :as => :addressable
   has_many :bill_addresses, :class_name => "Address", :as => :addressable
