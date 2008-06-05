@@ -1,38 +1,45 @@
 SUMMARY
 =======
 
-Spree is a complete open source commerce solution for Ruby on Rails.  It was developed by Sean Schofield under the original name of Rails Cart before changing its name to Spree.
+Spree is a complete open source commerce solution for Ruby on Rails.
+It was developed by Sean Schofield under the original name of Rails
+Cart before changing its name to Spree.
 
 QUICK START
 ===========
 
-1.) Install spree Gem 
+1. Install spree Gem
 
-$ sudo gem install spree
+        $ sudo gem install spree
 
-NOTE: This may take a while.  The gem currently includes a frozen version of Rails 2.0.2
+    **NOTE:** This may take a while. The gem currently includes a
+      frozen version of Rails 2.0.2
 
-2.) Create Spree Application
+2. Create Spree Application
 
-$ spree <app_name>
+        $ spree <app_name>
 
-3.) Create your database and edit the config/database.yml to taste.  You can skip this 
-step if using sqlite3 as your database.
+3. Create your database and edit the _config/database.yml_ to taste. You
+can skip this step if using sqlite3 as your database.
 
-4.) Bootstrap
+4. Bootstrap
 
-$ cd <app-name>
-$ rake db:bootstrap
+        $ cd <app-name>
+        $ rake db:bootstrap
 
-5.) Launch Application
+5. Launch Application
+
+        $ script/server
 
 Browse Store
+------------
 
 http://localhost:xxxx/store
 
 Browse Admin Interface
+----------------------
 
-http://localhost:xxxx/admin     
+http://localhost:xxxx/admin
 
 Is Spree Ready for Production?
 ==============================
@@ -57,7 +64,7 @@ The last I looked at this project it was fairly basic as well. So if
 you are going to start building your Rails project today, you have
 three choices.
 
-1. Write your own 
+1. Write your own
 2. Use Spree as your starting point and do lots of custom coding
 3. Use Substruct as your starting point and do lots of custom coding
 
