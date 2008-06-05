@@ -91,8 +91,7 @@ class User < ActiveRecord::Base
   # I am not sure we want this, but if we do, here is a readymade user for anonymous login  
   def self.anonymous_user
     login = "anonymous_user_" + Time.now.to_s
-    pw = Digest::SHA1.hexdigest \
-       ("--#{Time.now.to_s}#{self.object_id}#{Array.new(256){rand(256)}.join}")
+    pw = Digest::SHA1.hexdigest("--#{Time.now.to_s}#{self.object_id}#{Array.new(256){rand(256)}.join}")
     anonymous_user = User.new :login => login, 
                      :password => pw,
                      :password_confirmation => pw,
@@ -115,6 +114,10 @@ class User < ActiveRecord::Base
     methods_to_overwrite.each do |method|
       instance_eval("def anonymous_user.#{method}; true; end")
     end
+  end
+  
+  def add_address(addy)
+    self.addresses << addy
   end
   
   protected

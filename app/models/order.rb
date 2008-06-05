@@ -89,13 +89,13 @@ class Order < ActiveRecord::Base
 
   protected
   
-    def update_user_addresses
+    def update_user_addresses 
       return unless bill_address
-      new_addys = [ship_address]
-      new_addys << bill_address unless ship_address == bill_address
-      new_addys.each do |address|
-        self.user.addresses << address unless user.addresses.include?(address)         
+      new_addys = [bill_address]
+      new_addys << ship_address unless ship_address == bill_address
+      new_addys.each do |addy|
+        user.add_address addy unless user.addresses.include?(addy)         
       end
-      self.user.save!
+      user.save!
     end
 end
