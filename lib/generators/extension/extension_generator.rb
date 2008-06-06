@@ -18,7 +18,7 @@ class ExtensionGenerator < Rails::Generator::NamedBase
       m.directory "#{extension_path}/db/migrate"
       m.directory "#{extension_path}/lib/tasks"
       
-      m.template 'README',              "#{extension_path}/README"
+      m.template 'README.markdown',              "#{extension_path}/README.markdown"
       m.template 'extension.rb',        "#{extension_path}/#{extension_file_name}.rb"
       m.template 'tasks.rake',          "#{extension_path}/lib/tasks/#{extension_file_name}_tasks.rake"
 

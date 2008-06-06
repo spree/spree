@@ -15,7 +15,7 @@ RUBY_FORGE_GROUPID = '5614'
 RUBY_FORGE_PACKAGEID = '7123'
 
 RDOC_TITLE = "Spree -- Complete Commerce Solution for Ruby on Rails"
-RDOC_EXTRAS = ["README", "CONTRIBUTORS", "CHANGELOG", "INSTALL", "LICENSE"]
+RDOC_EXTRAS = ["README.markdown", "CONTRIBUTORS", "CHANGELOG", "INSTALL", "LICENSE"]
 
 namespace 'spree' do
   spec = Gem::Specification.new do |s|
