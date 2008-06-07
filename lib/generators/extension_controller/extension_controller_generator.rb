@@ -50,8 +50,8 @@ class ExtensionControllerGenerator < ControllerGenerator
         m.template 'view_spec.rb',
           File.join('spec/views', class_path, file_name, "#{action}_view_spec.rb"),
           :assigns => { :action => action, :model => file_name }
-        path = File.join('app/views', class_path, file_name, "#{action}.rhtml")
-        m.template 'controller:view.rhtml',
+        path = File.join('app/views', class_path, file_name, "#{action}.html.erb")
+        m.template 'controller:view.html.erb',
           path,
           :assigns => { :action => action, :path => path }
       end
