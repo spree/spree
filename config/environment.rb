@@ -24,6 +24,7 @@ Spree::Initializer.run do |config|
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
+  # config.plugins = %W(active_merchant acts_as_list acts_as_tree attachment_fu calendar_date_select enumerable_constants in_place_editing resource_controller rspec rspec_on_rails globalite)
   
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )

@@ -1,0 +1,324 @@
+# Portugues translation done by Marcus Derencius derencius_@t_gmail_dot_com
+
+locale_name: Português (Brasil)
+# ActiveRecord::Errors.default_error_messages
+error_message_inclusion: não está incluído na lista
+error_message_exclusion: é reservado
+error_message_invalid: é inválido
+error_message_confirmation: não é igual a confirmação
+error_message_accepted: deve ser aceito
+error_message_empty: não pode estar vazio
+error_message_blank: não pode ser nulo
+error_message_too_long: é muito longo (maximo é %d caracteres)
+error_message_too_short: is too short (mínimo é %d caracteres)
+error_message_wrong_length: tem tamanho incorreto (deve ter %d caracteres)
+error_message_taken: já está em uso
+error_message_not_a_number: não é um número
+
+# used by ActionView::Helpers::DateHelper.distance_of_time_in_words
+date_helper_less_than_x_seconds: menos de %d segundos
+date_helper_half_a_minute: meio minuto
+date_helper_less_than_a_minute: menos de 1 minuto
+date_helper_one_minute: 1 minuto
+date_helper_x_minutes: %d minutos
+date_helper_one_hour: há 1 hora
+date_helper_x_hours: há %d horas
+date_helper_one_day: 1 dia
+date_helper_x_days: %d dias
+date_helper_one_month: 1 mês
+date_helper_x_months: %d meses
+date_helper_one_year: 1 ano
+date_helper_x_years: %d anos
+
+# DON'T TRANSLATE, just order
+date_helper_order: [:day, :month, :years] #default Rails is US ordered: :order => [:year, :month, :day]
+
+date_helper_date_formats: # DON'T  TRANSLATE, RE ORDER
+  default: "%Y-%m-%d"
+  short: "%e %b"
+  long: "%e %B, %Y"
+
+date_helper_time_formats: # DON'T  TRANSLATE, RE ORDER
+  default: "%a, %d %b %Y %H:%M:%S %z"
+  short: "%d %b %H:%M"
+  long: "%B %d, %Y %H:%M"
+
+# added at the end of date if your date system doesn't use a 24 hours system
+date_helper_am: am
+date_helper_pm: pm
+    
+# used by ActionView::Helpers::NumberHelper.number_to_currency
+number_helper_unit: "R$"
+number_helper_separator: "," #unit separator (between integer part and fraction part)
+number_helper_delimiter: "." #delimiter between each group of thousands. Example: 1.234.567 
+number_helper_order: [ unit, number ] 
+#to support for instance French format, the order is different: Unit comes last (ex. "1.234,00 €")
+
+# use by +Array#to_sentence()+
+array_connector: 'e'
+array_skip_last_comma: 'true'
+
+active_record_helper_error_description: 'Foram detectados os seguintes erros:'
+active_record_helper_header_message: pluralize{{error_count}, erro impediu, erros impediram} esse {failed_object} de ser salvo
+
+date_helper_month_names:
+ -              # Leave that line
+   -            # Leave that line
+ - Janeiro
+ - Fevereiro
+ - Março
+ - Abril
+ - Maio
+ - Junho
+ - Julho
+ - Augosto
+ - Setembro
+ - Outubro
+ - Novembro
+ - Dezembro
+
+date_helper_abbr_month_names:
+  -             # Leave that line
+    -           # Leave that line
+  - Jan
+  - Fev
+  - Mar
+  - Abr
+  - Mai
+  - Jun
+  - Jul
+  - Agp
+  - Set
+  - Out
+  - Nov
+  - Dez
+
+date_helper_day_names: 
+  - Domingo
+  - Segunda-feira
+  - Terça-feira
+  - Quarta-feira
+  - Quinta-feira
+  - Sexta-feira
+  - Sábado
+
+date_helper_abbr_day_names: 
+  - Dom
+  - Seg
+  - Ter
+  - Qua
+  - Qui
+  - Sex 
+  - Sab
+
+countries_list:
+  - Afeganistão
+  - Albânia
+  - Alemanha
+  - Andorra
+  - Angola
+  - Antígua e Barbuda
+  - Arábia Saudita
+  - Argentina
+  - Argélia
+  - Armênia
+  - Austrália
+  - Azerbaijão
+  - Bahamas
+  - Bangladeche
+  - Barbados
+  - Barém
+  - Belarus
+  - Belize
+  - Benim
+  - Birmânia
+  - Bélgica
+  - Bolívia
+  - Botsuana
+  - Brasil
+  - Brunei
+  - Bósnia e Herzegovina
+  - Bulgária
+  - Burquina Faso
+  - Burundi
+  - Butão
+  - Cabo Verde
+  - Camarões
+  - Camboja
+  - Canadá
+  - Catar
+  - Cazaquistão
+  - Chade
+  - Chile
+  - China
+  - Chipre
+  - Chipre do Norte
+  - Cidade do Vaticano
+  - Cingapura
+  - Colômbia
+  - Comores
+  - Coréia do Norte
+  - Coréia do Sul
+  - Costa do Marfim
+  - Costa Rica
+  - Croácia
+  - Cuba
+  - Dinamarca
+  - Djibuti
+  - Dominica
+  - Egito
+  - El Salvador
+  - El Salvador: ver Salvador
+  - Emirados Árabes Unidos
+  - Equador
+  - Eritréia
+  - Eslovênia
+  - Eslováquia
+  - Espanha
+  - Estados Unidos
+  - Estônia
+  - Etiópia
+  - Fiji
+  - Filipinas
+  - Finlândia
+  - Formosa
+  - França
+  - África do Sul
+  - Gabão
+  - Gana
+  - Geórgia
+  - Gâmbia
+  - Granada
+  - Grã-Bretanha
+  - Grécia
+  - Guatemala
+  - Guiana
+  - Guiné
+  - Guiné-Bissau
+  - Guiné Equatorial
+  - Haiti
+  - Holanda: ver Países Baixos
+  - Honduras
+  - Hungria
+  - Ilhas Marechal
+  - Ilhas Salomão
+  - Iémen
+  - Indonésia
+  - Irã
+  - Iraque
+  - Irlanda
+  - Islândia
+  - Israel
+  - Itália
+  - Jamaica
+  - Japão
+  - Jibuti
+  - Jordânia
+  - Kiribati
+  - Kuwait
+  - Kuwait
+  - Laus
+  - Líbano
+  - Líbia
+  - Lesoto
+  - Letônia
+  - Libéria
+  - Listenstaine
+  - Lituânia
+  - Luxemburgo
+  - Macedônia
+  - Madagáscar
+  - Malaui
+  - Maldivas
+  - Mali
+  - Malásia
+  - Malta
+  - Marrocos
+  - Maurícia
+  - Mauritânia
+  - Micronésia
+  - Mônaco
+  - Moçambique
+  - Moldávia
+  - Mongólia
+  - Montenegro
+  - México
+  - Nagorno-Carabaque
+  - Namíbia
+  - Nauru
+  - Índia
+  - Nepal
+  - Níger
+  - Nicarágua
+  - Nigéria
+  - Noruega
+  - Nova Zelândia
+  - Omã
+  - Ossétia do Sul
+  - Palau
+  - Palestina
+  - Panamá
+  - Papua Nova Guiné
+  - Paquistão
+  - Paraguai
+  - Países Baixos
+  - Peru
+  - Polónia
+  - Portugal
+  - Qatar
+  - Quirguistão
+  - Quiribati
+  - Quênia
+  - Reino Unido
+  - República Centro-Africana
+  - República do Congo
+  - República Dominicana
+  - República Tcheca
+  - Romênia
+  - Rússia
+  - Ruanda
+  - Saara Ocidental
+  - Samoa
+  - Santa Lúcia
+  - Seicheles
+  - Senegal
+  - Serra Leoa
+  - Singapura
+  - São Cristóvão e Neves
+  - Somalilândia
+  - São Marinho
+  - Somália
+  - São Tomé e Príncipe
+  - São Vicente e Granadinas
+  - Síria
+  - Sri Lanka
+  - Sérvia
+  - Suíça
+  - Suazilândia
+  - Suécia
+  - Sudão
+  - Suriname
+  - Tailândia
+  - Taiwan: ver Formosa
+  - Tajiquistão
+  - Tanzânia
+  - Timor-Leste
+  - Togo
+  - Tonga
+  - Transnístria
+  - Trindade e Tobago
+  - Tunísia
+  - Turcomanistão
+  - Turquia
+  - Tuvalu
+  - Ucrânia
+  - Uganda
+  - Uruguai
+  - Usbequistão
+  - Áustria
+  - Vanuatu
+  - Venezuela
+  - Vietnã
+  - Yémen
+  - Zimbabué
+  - Zâmbia

@@ -1,42 +1,42 @@
-<h2>Images</h2>
+<h2><%= :images.l('Images') %></h2>
 <%=error_message_on :viewable, :images %>
 <table class="basic-table">
   <thead>
     <tr>
-      <th>Image</th>
-      <th>Action</th>
+      <th><%= :image.l('Image') %></th>
+      <th><%= :action.l('Action') %></th>
     </tr>
   </thead>
   <tbody>
     <% viewable.images.each do |i| %>
-      <tr>
-        <td><%= image_tag i.public_filename(:small) %></td>
-        <td>
-          <%= link_to_remote "Delete",
-                             :url => {:controller => 'images', :action => 'delete', :id=> i},
-                             :before => "Element.show('img_busy_indicator')", 
-                             :complete => "Element.hide('img_busy_indicator')",
-                             :confirm => "Are you sure you want to delete this image?",
-                             :update => 'image-listing' %>
-        </td>
-      </tr>
+    <tr>
+      <td><%= image_tag i.public_filename(:small) %></td>
+      <td>
+        <%= link_to_remote :delete.l('Delete'),
+            :url => {:controller => 'images', :action => 'delete', :id=> i},
+        :before => "Element.show('img_busy_indicator')", 
+        :complete => "Element.hide('img_busy_indicator')",
+        :confirm => :are_you_sure_delete_image.l("Are you sure you want to delete this image?"),
+        :update => 'image-listing' %>
+      </td>
+    </tr>
     <% end %>
     <% if viewable.images.empty? %>
-      <tr>
-        <td colspan="3">None Available.</td>
-      </tr>
+    <tr>
+      <td colspan="3"><%= :none_available.l('None Available') %>.</td>
+    </tr>
     <% end %>
   </tbody>
 </table>
 <% unless viewable.new_record? %>
-  <span id="new-img-link">
-    <%= link_to_remote "New Image",
-                       :url => {:controller => 'images', :action => 'new'},
-                       :before => "Element.hide('new-img-link');Element.show('img_busy_indicator')", 
-                       :complete => "Element.hide('img_busy_indicator')",
-                       :update => 'new-image' %>
-  </span>
-  <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'img_busy_indicator' %>
+<span id="new-img-link">
+  <%= link_to_remote :new_image.l("New Image"),
+      :url => {:controller => 'images', :action => 'new'},
+  :before => "Element.hide('new-img-link');Element.show('img_busy_indicator')", 
+  :complete => "Element.hide('img_busy_indicator')",
+  :update => 'new-image' %>
+</span>
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'img_busy_indicator' %>
 <% end %>
 <br/>
 <div id="new-image"></div>

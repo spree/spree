@@ -10,26 +10,28 @@ QUICK START
 
 1. Install spree Gem
 
-        $ sudo gem install spree
+        sudo gem install spree
 
-    **NOTE:** This may take a while. The gem currently includes a
-      frozen version of Rails 2.0.2
+    **NOTE:** This may take a while. The gem currently includes a frozen version of Rails 2.0.2
 
 2. Create Spree Application
 
-        $ spree <app_name>
+        spree <app_name>
 
-3. Create your database and edit the _config/database.yml_ to taste. You
-can skip this step if using sqlite3 as your database.
+3. Create your database and edit the _config/database.yml_ to taste.
+
+        rake db:create
+
+    You can skip this step if using sqlite3 as your database.
 
 4. Bootstrap
 
-        $ cd <app-name>
-        $ rake db:bootstrap
+        cd <app-name>
+        rake db:bootstrap
 
 5. Launch Application
 
-        $ script/server
+        script/server
 
 Browse Store
 ------------
@@ -40,6 +42,34 @@ Browse Admin Interface
 ----------------------
 
 http://localhost:xxxx/admin
+
+i18n/l10n Support?
+==================
+
+**Basic** localization and internationalization **support** is now
+added using the [Globalite Plugin][1] from Matt Aimonetti. 
+
+Working features:
+
+- Rails Localization
+- UI Localization
+
+In the near future:
+
+- Content Localization
+
+Please read [this][2], [this][3] and [this][4] to understand how the
+plugin works.
+
+Please, please, please ask Sean how you can help, lot of work is still
+to be done.
+
+[1]: http://www.railsontherun.com/globalite
+[2]: http://code.google.com/p/globalite/wiki/RailsLocalization
+[3]: http://code.google.com/p/globalite/wiki/UI_Localization
+[4]: http://code.google.com/p/globalite/wiki/PluralizationSupport
+
+**UPDATE:** Take a look at [i18n page on Spree wiki](http://support.spreehq.org/wiki/1/I18n)
 
 Is Spree Ready for Production?
 ==============================

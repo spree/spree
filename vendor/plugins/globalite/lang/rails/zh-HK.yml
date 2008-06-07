@@ -1,0 +1,357 @@
+locale_name: 香港 (HongKong)
+# ActiveRecord::Errors.default_error_messages
+error_message_inclusion: 不在指定的名單上
+error_message_exclusion: 已在指定的名單上
+error_message_invalid: 是錯誤的資料
+error_message_confirmation: 與指定值不同
+error_message_accepted: 必須要選擇接受指定的條款
+error_message_empty: 不能不填
+error_message_blank: 不能是空白
+error_message_too_long: 太長 (最多 %d 個字元)
+error_message_too_short: 太短 (最少 %d 個字元)
+error_message_wrong_length: 長度不正確 (應該要 %d 個字元)
+error_message_taken: 已經有人使用
+error_message_not_a_number: 不是數字
+
+# used by ActionView::Helpers::ActiveRecordHelper.error_messages_for
+active_record_helper_header_message: 輸入資訊錯誤
+active_record_helper_error_description: 請更正下列問題,
+
+# used by ActionView::Helpers::DateHelper.distance_of_time_in_words
+date_helper_less_than_x_seconds: 少於 %d 秒
+date_helper_half_a_minute: 30 秒
+date_helper_less_than_a_minute: 少於一分鐘
+date_helper_one_minute: 一分鐘
+date_helper_x_minutes: %d 分鐘
+date_helper_one_hour: 約 1 小時
+date_helper_x_hours: 約 %d 小時
+date_helper_one_day: 1 天
+date_helper_x_days: %d 天
+date_helper_one_month: 1 個月
+date_helper_x_months: %d 個月
+date_helper_one_year: 1 年
+date_helper_x_years: %d 年
+
+# DON'T TRANSLATE, just order
+date_helper_order: [:day, :month, :year] #default Rails is US ordered: :order => [:year, :month, :day]
+
+date_helper_date_formats: # DON'T  TRANSLATE, RE ORDER
+  default: "%Y/%m/%d"
+  short: "%b %e"
+  long: "%b %e, %Y"
+
+date_helper_time_formats: # DON'T  TRANSLATE, RE ORDER
+  default: "%a, %Y %b %d %H:%M:%S %z"
+  short: "%b %d, %H:%M"
+  long: "%Y/%b/%d %H:%M"
+
+# added at the end of date if your date system doesn't use a 24 hours system
+date_helper_am: am
+date_helper_pm: pm
+
+# used by ActionView::Helpers::NumberHelper.number_to_currency
+number_helper_unit: "HK$"
+number_helper_separator: "." #unit separator (between integer part and fraction part)
+number_helper_delimiter: "," #delimiter between each group of thousands. Example: 1.234.567
+number_helper_order: [ unit, number ]
+#to support for instance French format, the order is different: Unit comes last (ex. "1.234,00 €")
+
+# use by +Array#to_sentence()+
+array_connector: '和'
+array_skip_last_comma: 'true'
+
+date_helper_month_names:
+ -              # Leave that line
+   -            # Leave that line
+ - 一月
+ - 二月
+ - 三月
+ - 四月
+ - 五月
+ - 六月
+ - 七月
+ - 八月
+ - 九月
+ - 十月
+ - 十一月
+ - 十二月
+
+date_helper_abbr_month_names:
+  -             # Leave that line
+    -           # Leave that line
+  - 1月
+  - 2月
+  - 3月
+  - 4月
+  - 5月
+  - 6月
+  - 7月
+  - 8月
+  - 9月
+  - 10月
+  - 11月
+  - 12月
+
+date_helper_day_names:
+  - 星期天
+  - 星期一
+  - 星期二
+  - 星期三
+  - 星期四
+  - 星期五
+  - 星期六
+
+date_helper_abbr_day_names:
+  - 周日
+  - 周一
+  - 周二
+  - 周三
+  - 周四
+  - 周五
+  - 周六
+
+countries_list:
+  - Afghanistan
+  - Albania
+  - Algeria
+  - American Samoa
+  - Andorra
+  - Angola
+  - Anguilla
+  - Antarctica
+  - Antigua And Barbuda
+  - Argentina
+  - Armenia
+  - Aruba
+  - Australia
+  - Austria
+  - Azerbaijan
+  - Bahamas
+  - Bahrain
+  - Bangladesh
+  - Barbados
+  - Belarus
+  - Belgium
+  - Belize
+  - Benin
+  - Bermuda
+  - Bhutan
+  - Bolivia
+  - Bosnia and Herzegowina
+  - Botswana
+  - Bouvet Island
+  - Brazil
+  - British Indian Ocean Territory
+  - Brunei Darussalam
+  - Bulgaria
+  - Burkina Faso
+  - Burma
+  - Burundi
+  - Cambodia
+  - Cameroon
+  - Canada
+  - Cape Verde
+  - Cayman Islands
+  - Central African Republic
+  - Chad
+  - Chile
+  - China
+  - Christmas Island
+  - Cocos (Keeling) Islands
+  - Colombia
+  - Comoros
+  - Congo
+  - Congo, the Democratic Republic of the
+  - Cook Islands
+  - Costa Rica
+  - Cote d'Ivoire
+  - Croatia
+  - Cuba
+  - Cyprus
+  - Czech Republic
+  - Denmark
+  - Djibouti
+  - Dominica
+  - Dominican Republic
+  - East Timor
+  - Ecuador
+  - Egypt
+  - El Salvador
+  - England
+  - Equatorial Guinea
+  - Eritrea
+  - Espana
+  - Estonia
+  - Ethiopia
+  - Falkland Islands
+  - Faroe Islands
+  - Fiji
+  - Finland
+  - France
+  - French Guiana
+  - French Polynesia
+  - French Southern Territories
+  - Gabon
+  - Gambia
+  - Georgia
+  - Germany
+  - Ghana
+  - Gibraltar
+  - Great Britain
+  - Greece
+  - Greenland
+  - Grenada
+  - Guadeloupe
+  - Guam
+  - Guatemala
+  - Guinea
+  - Guinea-Bissau
+  - Guyana
+  - Haiti
+  - Heard and Mc Donald Islands
+  - Honduras
+  - Hong Kong
+  - Hungary
+  - Iceland
+  - India
+  - Indonesia
+  - Ireland
+  - Israel
+  - Italy
+  - Iran
+  - Iraq
+  - Jamaica
+  - Japan
+  - Jordan
+  - Kazakhstan
+  - Kenya
+  - Kiribati
+  - Korea, Republic of
+  - Korea (South)
+  - Kuwait
+  - Kyrgyzstan
+  - Lao People's Democratic Republic
+  - Latvia
+  - Lebanon
+  - Lesotho
+  - Liberia
+  - Liechtenstein
+  - Lithuania
+  - Luxembourg
+  - Macau
+  - Macedonia
+  - Madagascar
+  - Malawi
+  - Malaysia
+  - Maldives
+  - Mali
+  - Malta
+  - Marshall Islands
+  - Martinique
+  - Mauritania
+  - Mauritius
+  - Mayotte
+  - Mexico
+  - Micronesia, Federated States of
+  - Moldova, Republic of
+  - Monaco
+  - Mongolia
+  - Montserrat
+  - Morocco
+  - Mozambique
+  - Myanmar
+  - Namibia
+  - Nauru
+  - Nepal
+  - Netherlands
+  - Netherlands Antilles
+  - New Caledonia
+  - New Zealand
+  - Nicaragua
+  - Niger
+  - Nigeria
+  - Niue
+  - Norfolk Island
+  - Northern Ireland
+  - Northern Mariana Islands
+  - Norway
+  - Oman
+  - Pakistan
+  - Palau
+  - Panama
+  - Papua New Guinea
+  - Paraguay
+  - Peru
+  - Philippines
+  - Pitcairn
+  - Poland
+  - Portugal
+  - Puerto Rico
+  - Qatar
+  - Reunion
+  - Romania
+  - Russia
+  - Rwanda
+  - Saint Kitts and Nevis
+  - Saint Lucia
+  - Saint Vincent and the Grenadines
+  - Samoa (Independent)
+  - San Marino
+  - Sao Tome and Principe
+  - Saudi Arabia
+  - Scotland
+  - Senegal
+  - Serbia and Montenegro
+  - Seychelles
+  - Sierra Leone
+  - Singapore
+  - Slovakia
+  - Slovenia
+  - Solomon Islands
+  - Somalia
+  - South Africa
+  - South Georgia and the South Sandwich Islands
+  - South Korea
+  - Spain
+  - Sri Lanka
+  - St. Helena
+  - St. Pierre and Miquelon
+  - Suriname
+  - Svalbard and Jan Mayen Islands
+  - Swaziland
+  - Sweden
+  - Switzerland
+  - Taiwan
+  - Tajikistan
+  - Tanzania
+  - Thailand
+  - Togo
+  - Tokelau
+  - Tonga
+  - Trinidad
+  - Trinidad and Tobago
+  - Tunisia
+  - Turkey
+  - Turkmenistan
+  - Turks and Caicos Islands
+  - Tuvalu
+  - Uganda
+  - Ukraine
+  - United Arab Emirates
+  - United Kingdom
+  - United States
+  - United States Minor Outlying Islands
+  - Uruguay
+  - Uzbekistan
+  - Vanuatu
+  - Vatican City State (Holy See)
+  - Venezuela
+  - Viet Nam
+  - Virgin Islands (British)
+  - Virgin Islands (U.S.)
+  - Wales
+  - Wallis and Futuna Islands
+  - Western Sahara
+  - Yemen
+  - Zambia
+  - Zimbabwe

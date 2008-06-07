@@ -1,17 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-	  <title>Spree</title>
+    <title>Spree</title>
   </head>
   <body>
     <div id="main">
       <div id="main-body">
-		<% if flash[:notice] %>
-			<div id="notice"><%= flash[:notice] %></div>
-		<% end %>
-		<% if flash[:error] %>
-			<div id="error"><b>ERROR</b> - <%= flash[:error] %></div>
-		<% end %>		
+	<% if flash[:notice] %>
+	<div id="notice"><%= flash[:notice] %></div>
+	<% end %>
+	<% if flash[:error] %>
+	<div id="error"><b><%= :error.l("error").capitalize %></b> - <%= flash[:error] %></div>
+	<% end %>		
         <%=@content_for_layout %>
       </div>
     </div>

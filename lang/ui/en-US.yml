@@ -1,0 +1,36 @@
+locale_name: English
+
+welcome_to_sample_store: Welcome To The Sample Store
+login: Login
+login_name: Login
+password: Password
+
+account: Account
+action: Action 
+are_you_sure_delete_image: Are you sure you want to delete this image?
+error: error
+extensions: Extensions
+image: Image 
+images: Images 
+item_description: Item Description 
+logged_in_as: Logged in as
+logout: Logout
+my_account: My Account
+new_image: New Image
+none_available: None Available 
+order: Order
+order_total: Order Total 
+orders: Orders
+overview: Overview
+price: Price 
+products: Products
+qty: Qty 
+remember_me: Remember me 
+reports: Reports
+shipping: Shipping 
+store: Store
+subtotal: Subtotal 
+tax: Tax 
+total: Total 
+users: Users
+
