@@ -1,23 +1,23 @@
-<h1>Sales Totals </h1>
+<h1><%= :sales_totals.l("Sales Totals") %> </h1>
 <table>
   <tr>
     <td valign="top">
       <table class="admin-report">
         <tbody>
           <tr>
-            <td>Item Total: </td>
+            <td><%= :item_total.l("Item Total") %>:</td>
             <td align="right"><%=number_to_currency @item_total%></td>
           </tr>
           <tr>
-            <td>Shipping Total: </td>
+            <td><%= :shipping_total.l("Shipping Total") %>:</td>
             <td align="right"><%=number_to_currency @ship_total%></td>
           </tr>
           <tr>
-            <td>Tax Total: </td>
+            <td><%= :tax_total.l("Tax Total") %>:</td>
             <td align="right"><%=number_to_currency @tax_total%></td>
           </tr>
           <tr>
-            <td>Sales Total: </td>
+            <td><%= :sales_total.l("Sales Total") %>:</td>
             <td align="right"><%=number_to_currency @sales_total%></td>
           </tr>
         </tbody>

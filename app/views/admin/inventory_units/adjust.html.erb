@@ -1,32 +1,33 @@
 <%= error_messages_for(:level) %>
 
 <% form_tag do %>
-  <br/><br/>			
+<br/><br/>			
 
-  <h1>Inventory Adjustment</h1>
+<h1><%= :inventory_adjustment.l("Inventory Adjustment") %></h1>
 
-  <table class="basic-table">
-  	<thead>
-  		<tr>
-  			<th>SKU</th>
-  		  <th>Product</th>
-  		  <th>Options</th>
-  			<th>Current</th>
-  			<th>Adjustment</th>
-  		</tr>
-  	</thead>
-  	<tbody>
-      <tr>
-        <td><%= @variant.sku %></td>
-        <td><%= @variant.product.name %></td>
-      	<td><%= variant_options @variant %></td>
-        <td><%= on_hand(@variant) %></td>
-        <td>
-          <%= text_field :level, :adjustment, :class => "quantity"  %>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <%= submit_tag 'Update' %> or <%= link_to 'Cancel', :controller => 'overview', :action => :index %>
+<table class="basic-table">
+  <thead>
+    <tr>
+      <th><%= :sku.l("SKU") %></th>
+      <th><%= :product.l("Product") %></th>
+      <th><%= :options.l("Options") %></th>
+      <th><%= :current.l("Current") %></th>
+      <th><%= :adjustment.l("Adjustment") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @variant.sku %></td>
+      <td><%= @variant.product.name %></td>
+      <td><%= variant_options @variant %></td>
+      <td><%= on_hand(@variant) %></td>
+      <td>
+        <%= text_field :level, :adjustment, :class => "quantity"  %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<%= submit_tag :update.l('Update') %>
+<%= :or.l("or") %>
+<%= link_to :cancel.l('Cancel'), :controller => 'overview', :action => :index %>
 <% end %>
-  

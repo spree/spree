@@ -1,5 +1,5 @@
 <%= calendar_date_select_includes %>
-<h1>Listing reports</h1>
+<h1><%= :listing_reports.l("Listing reports") %></h1>
 <table>
   <tr>
     <td valign="top">
@@ -7,16 +7,16 @@
         <table class="admin-report" width="515">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Description</th>
+              <th><%= :name.l %></th>
+              <th><%= :description.l %></th>
             </tr>
           </thead>
           <tbody>     
             <% @reports.each do |key, value| %>
-              <tr class="<%= cycle('even', 'odd') %>">
-                <td><%=link_to value[:name], :action => key%></td>
-                <td><%=value[:description]%></td>
-              </tr>
+            <tr class="<%= cycle('even', 'odd') %>">
+              <td><%=link_to value[:name], :action => key%></td>
+              <td><%=value[:description]%></td>
+            </tr>
             <% end %>
           </tbody>
         </table>
@@ -24,6 +24,3 @@
     </td>
   </tr>
 </table>
-
-
-
