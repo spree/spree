@@ -22,6 +22,13 @@
                 <td width="200px">
                   <% if logged_in? -%>
                   <ul id="login-nav">
+		    <li>
+		      <% form_tag @current_path, :method => @request_method do -%>
+		      <%= :change_language.l %>:  
+		      <%= select('user_locale', "code",  Globalite.ui_locales, { :include_blank => true }) %>  
+		      <%= submit_tag :change.l %>
+		      <% end -%>
+		    </li>
                     <li><%= link_to :my_account.l('My Account'), user_path(current_user) %></li>
                     <li><%= link_to :logout.l('Logout'), :controller => '/account', :action => 'logout' %></li>
                   </ul>
@@ -29,7 +36,7 @@
                   <ul id="login-nav">
                     <li><%= link_to :login.l, :controller => '/account', :action => 'login' %></li>
                   </ul>
-                  <% end -%>      
+		  <% end -%>
                 </td>
               </tr>
               <tr>

@@ -20,6 +20,8 @@ card_number: Card Number
 cart: Cart
 categories: Categories
 category: Category
+change: Change
+change_language: Change Language
 checkout: Checkout
 city: City
 comp_order: Comp Order
@@ -149,7 +151,7 @@ user: User
 variants: Variants
 version: Version
 website: Website
-welcome_to_sample_store: 
+welcome_to_sample_store: Welcome to the sample store
 what_is_a_cvv: What is a (CVV) Credit Card Code?
 what_is_this: What's This?
 zip: Zip
