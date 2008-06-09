@@ -92,7 +92,7 @@ option_Values: Option Values
 order_confirmation_note: 
 order_date: Order Date
 order_details: Order Details
-order_number: Order #
+order_number: "Order #"
 order: Order
 order_processed_successfully: Your order has been processed successfully
 orders: Orders

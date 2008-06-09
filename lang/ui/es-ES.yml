@@ -89,7 +89,7 @@ option_Values: Valores de opción
 order_confirmation_note: Nota de confirmación de pedido
 order_date: Fecha de pedido
 order_details: Detalles del pedido
-order_number: Pedido \#
+order_number: "Pedido #"
 order: Pedido
 order_processed_successfully: Su pedido se ha procesado correctamente
 orders: Pedidos
