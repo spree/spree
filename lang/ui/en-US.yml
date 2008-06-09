@@ -14,7 +14,6 @@ back: Back
 back_to_store: Go Back To Store
 bill_address: Bill Address
 billing_address: Billing Address
-cancel: 
 cancel: Cancel
 card_code: Card Code
 card_number: Card Number
@@ -29,20 +28,16 @@ confirm_password: Password Confirmation
 continue_shopping: Continue shopping
 continue_shopping: Continue Shopping
 country: Country
-create: 
 create: Create
 current: Current
 customer: Customer
 date: Date
 date_range: Date Range
-delete: 
 delete: Delete
 description: 
 description: Description
 destroy: Destroy
 display: Display
-edit: 
-edit: Delete
 edit: Edit
 editing_category: Editing category
 editing_option_types: Editing Option Types
@@ -73,13 +68,11 @@ listing_orders: Listing orders
 listing_reports: Listing reports
 listing_users: Listing Users
 logged_in_as: Logged in as
-login: 
 log_in: Log In
 login_name: Login
 logout: Logout
 master_price: Master Price
 my_account: My Account
-name: 
 name: Name
 new_category: New category
 new_image: New Image
@@ -88,18 +81,14 @@ new_option_value: New Option Value
 new_user: New User
 new_variant: New Variant
 next: next
-next: Next
 no_items_in_cart: 
-none_available: 
 none_available: None Available
 number: Number
-on_hand: 
 on_hand: On Hand
 operation: Operation
 options: Options
 option_types: Option Types
 option_Values: Option Values
-or: 
 order_confirmation_note: 
 order_date: Order Date
 order_details: Order Details
@@ -120,9 +109,7 @@ price: Price
 problems_processing_order: We had problems processing your order
 process: Process
 product: Product
-products: 
 products: Products
-qty: 
 qty: Qty
 remember_me: Remember me
 reports: Reports
@@ -139,7 +126,6 @@ shipping: Shipping
 shipping_total: Shipping Total
 shopping_cart: Shopping Cart
 sign_up: Sign up
-sku: 
 sku: SKU
 start: Start
 state: State
@@ -156,7 +142,6 @@ total: Total
 transaction: Transaction
 try_again: Try Again
 type: Type
-update: 
 update: Update
 use_different_shipping_address: Use Different Shipping Address
 users: Users

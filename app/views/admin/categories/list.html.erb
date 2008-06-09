@@ -39,7 +39,7 @@
     </td>
     <td>
       <%= link_to :edit.l('Edit'), :action => 'edit', :id => category %> | 
-      <%= link_to :edit.l('Delete'), { :action => 'destroy', :id => category }, :confirm => :are_you_sure_category.l('Are you sure you want to delete this category?') %>
+      <%= link_to :destroy.l, { :action => 'destroy', :id => category }, :confirm => :are_you_sure_category.l('Are you sure you want to delete this category?') %>
     </td>
   </tr>
 <% end %>
