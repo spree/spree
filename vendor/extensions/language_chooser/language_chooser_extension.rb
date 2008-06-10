@@ -6,11 +6,12 @@ class LanguageChooserExtension < Spree::Extension
   description "Allows users to change the application language"
   # url "http://yourwebsite.com/language_chooser"
 
-  # define_routes do |map|
-  #   map.namespace :admin do |admin|
-  #     admin.resources :whatever
-  #   end  
-  # end
+  define_routes do |map|
+    map.resource :locale
+    # map.namespace :admin do |admin|
+    #   admin.resources :whatever
+    # end  
+  end
   
   def activate
     ApplicationController.send :include, LanguageChooser

@@ -23,7 +23,7 @@
                   <% if logged_in? -%>
                   <ul id="login-nav">
 		    <li>
-		      <% form_tag @current_path, :method => @request_method do -%>
+		      <% form_tag locale_path, :method => :put do -%>
 		      <%= :change_language.l %>:  
 		      <%= select('user_locale', "code",  Globalite.ui_locales, { :include_blank => true }) %>  
 		      <%= submit_tag :change.l %>

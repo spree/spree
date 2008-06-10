@@ -5,8 +5,8 @@ module LanguageChooser
     }
   end
 
-  private 
-  
+  private
+
   # Set the locale from the parameters, the session, or the navigator
   # If none of these works, the Globalite default locale is set (en-*)
   def set_locale
@@ -17,14 +17,14 @@ module LanguageChooser
     # Try to get the locale from the parameters, from the session, and then from the navigator
     if params[:user_locale]
       # Store the locale in the session
-      Locale.code = params[:user_locale][:code] #get_matching_ui_locale(params[:user_locale][:code]) #|| session[:locale] || get_valid_lang_from_accept_header || Globalite.default_language
+      Locale.code = params[:user_locale][:code]
       session[:locale] = Locale.code
     elsif session[:locale]
       Locale.code = session[:locale]
     else
       Locale.code = local_case(get_valid_lang_from_accept_header)
     end
-    
+
     logger.debug "[globalite] Locale set to #{Locale.code}"
     # render the page
     yield
@@ -61,7 +61,7 @@ module LanguageChooser
   # or nil if not found
   def get_matching_ui_locale(locale)
     lang = locale[0,2].downcase
-    
+
     # Check with exact matching
     if Globalite.ui_locales.values.include?(local_case(locale))
       local_case(locale)
@@ -82,3 +82,4 @@ module LanguageChooser
   end
 
 end
+# Locale.code = params[:user_locale][:code] #get_matching_ui_locale(params[:user_locale][:code]) #|| session[:locale] || get_valid_lang_from_accept_header || Globalite.default_language
