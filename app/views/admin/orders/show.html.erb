@@ -1,6 +1,6 @@
 <% content_for :action_nav do %>
   <ul id="act-nav">
-    <li><%= link_to "Resend", :action => :resend, :id => @order %></li>
+    <li><%= link_to :resend.l("Resend"), :action => :resend, :id => @order %></li>
   </ul>
 <% end %>
 
@@ -8,8 +8,8 @@
 
 <table class="order-address">
   <tr>
-    <th>Ship Address</th>
-    <th>Bill Address</th>
+    <th><%= :ship_address.l("Ship Address") %></th>
+    <th><%= :bill_address.l("Bill Address") %></th>
   </tr>
   <tr>
     <td width="50%">
@@ -22,7 +22,7 @@
 </table>
 <table class="order-address">
   <tr>
-    <th>Email</th>
+    <th><%= :email.l("Email") %></th>
   </tr>
   <tr>
     <td><%=in_place_editor_field :user, :email %></td>
@@ -30,31 +30,31 @@
 </table>
 <table class="basic-table">
   <tr>
-    <th>Operation</th>
-		<th>User</th>
-    <th>Date/Time</th>
+    <th><%= :operation.l("Operation") %></th>
+    <th><%= :user.l("User") %></th>
+    <th><%= "#{:date.l('Date')}/#{:time.l('Time')}" %></th>
   </tr>
   <% @order.order_operations.each do |o| %>
     <tr>
       <td><%=OrderOperation::OperationType.from_value o.operation_type%></td>
-			<td><%=o.user.login%></td>
+      <td><%=o.user.login%></td>
       <td><%=o.created_at.to_s(:db)%></td>
     </tr>
   <% end %>
   <% if @order.order_operations.empty? %>
     <tr>
-      <td colspan="3">None Available.</td>
+      <td colspan="3"><%= :none_available.l("None Available") %></td>
     </tr>
-  <% end %>	
+  <% end %>
 </table>
 <table class="full-table">
   <tr>
-    <th>Transaction</th>
-    <th>Amount</th>
-    <th>Card Number</th>
-    <th>Type</th>
-    <th>Response Code</th>
-    <th>Date/Time</th>
+    <th><%= :transaction.l("Transaction") %></th>
+    <th><%= :amount.l("Amount") %></th>
+    <th><%= :card_number.l("Card Number") %></th>
+    <th><%= :type.l("Type") %></th>
+    <th><%= :response_code.l("Response Code") %></th>
+    <th><%= "#{:date.l('Date')}/#{:time.l('Time')}" %></th>
   </tr>
 	<% if @order.credit_card %>
 	  <% @order.credit_card.txns.each do |t| %>
@@ -69,4 +69,4 @@
 	  <% end %>
 	<% end %>
 </table>
-<%= link_to "Back", :controller => :orders %>
+<%= link_to :back.l("Back"), :controller => :orders %>

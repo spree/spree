@@ -1,53 +1,52 @@
 <!--[form:product]-->                       
 <p>
-  <label for="product_name">Name</label><br/>
-	<%=error_message_on :product, :name%>  
+  <label for="product_name"><%= :name.l %></label><br/>
+  <%=error_message_on :product, :name%>  
   <%= text_field :product, :name  %>
 </p>
 <p>
-  <label for="product_description">Description</label><br/>
-	<%=error_message_on :product, :description%>
+  <label for="product_description"><%= :description.l("Description") %></label><br/>
+  <%= error_message_on :product, :description %>
   <%= text_area :product, :description, {:cols => 90, :rows => 10} %>
 </p>
 <p>
-  <label for="price">Master Price:</label><br/>
-	<%=error_message_on :product, :master_price%>
+  <label for="price"><%= :master_price.l("Master Price") %>:</label><br/>
+  <%=error_message_on :product, :master_price%>
   <%= text_field :product, :master_price  %></p>
 </p>
 <% if @product.new_record? %>
-  <p>
-    <label for="sku">Sku</label><br/>
-    <input type="text" name="sku" value="<%= @sku %>"/>
-  </p>
-  <p>
-    <label for="on-hand">On Hand</label><br/>
-    <input type="text" name="on_hand" value="<%= @on_hand %>"/>
-  </p>
+<p>
+  <label for="sku"><%= :sku.l("SKU") %></label><br/>
+  <input type="text" name="sku" value="<%= @sku %>"/>
+</p>
+<p>
+  <label for="on-hand"><%= :on_hand.l("On Hand") %></label><br/>
+  <input type="text" name="on_hand" value="<%= @on_hand %>"/>
+</p>
 <% end %>
 <% if @product.variant %>
-  <p>
-    <label for="sku">Sku</label><br/>
-    <input type="text" name="variant[<%= @product.variant.id %>][sku]" value="<%= @product.variant.sku %>"/>
-  </p>
-  <p>
-    On Hand: <%= on_hand(@product.variant) %> <%= link_to "Inventory", :controller => 'inventory_units', :action => 'adjust', :id => @product.variant %>
-  </p>  
+<p>
+  <label for="sku"><%= :sku.l %></label><br/>
+  <input type="text" name="variant[<%= @product.variant.id %>][sku]" value="<%= @product.variant.sku %>"/>
+</p>
+<p>
+  <%= :on_hand.l %>: <%= on_hand(@product.variant) %>
+  <%= link_to :inventory.l("Inventory"), :controller => 'inventory_units', :action => 'adjust', :id => @product.variant %>
+</p>  
 <% end %>
 <p>
-  <label for="category">Category:</label><br/>
-  <select id="category" 
-	        name="category" 
-					style="width:250px;"> 
+  <label for="category"><%= :category.l("Category") %>:</label><br/>
+  <select id="category" name="category" style="width:250px;"> 
     <%= options_from_collection_for_select(@all_categories, :id, :long_name, @selected_category) %>
   </select>
 </p>
 <br/>
 <div id="variant-listing">
-	<%= render :partial => 'variants', :locals => {:product => @product} -%>
+  <%= render :partial => 'variants', :locals => {:product => @product} -%>
 </div>
 <br/>
 <div id="option-type-listing">
-	<%= render :partial => 'option_types', :locals => {:product => @product} -%>
+  <%= render :partial => 'option_types', :locals => {:product => @product} -%>
 </div>
 <br/>
 <div id="image-listing">
@@ -56,4 +55,3 @@
 
 <br/>
 <!--[eoform:product]-->
-

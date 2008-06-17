@@ -1,0 +1,357 @@
+locale_name: Deutsch (Deutschland)
+# ActiveRecord::Errors.default_error_messages
+error_message_inclusion: ist nicht in Liste gültiger Optionen enthalten.
+error_message_exclusion: ist reserviert.
+error_message_invalid: ist ungültig.
+error_message_confirmation: entspricht nicht der Bestätigung.
+error_message_accepted: muss akzeptiert werden.
+error_message_empty: darf nicht leer sein.
+error_message_blank: muss ausgefüllt werden.
+error_message_too_long: ist zu lang (höchstens %d Zeichen).
+error_message_too_short: ist zu kurz (mindestens is %d Zeichen).
+error_message_wrong_length: hat die falsche Länge (%d Zeichen).
+error_message_taken: ist bereits vergeben.
+error_message_not_a_number: ist keine Zahl.
+
+# used by ActionView::Helpers::DateHelper.distance_of_time_in_words
+date_helper_less_than_x_seconds: weniger als %d Sekunden
+date_helper_half_a_minute: eine halbe Minute
+date_helper_less_than_a_minute: weniger als eine Minute
+date_helper_one_minute: 1 Minute
+date_helper_x_minutes: %d Minuten
+date_helper_one_hour: etwa 1 Stunde
+date_helper_x_hours: etwa %d Stunden
+date_helper_one_day: 1 Tag
+date_helper_x_days: %d Tage
+date_helper_one_month: 1 Monat
+date_helper_x_months: %d Monate
+date_helper_one_year: 1 Jahr
+date_helper_x_years: %d Jahre
+
+# DON'T TRANSLATE, just order
+date_helper_order: [:day, :month, :year] #default Rails is US ordered: :order => [:year, :month, :day]
+
+date_helper_date_formats: # DON'T  TRANSLATE, RE ORDER
+  default: "%d.%m.%Y"
+  short: "%e. %b"
+  long: "%e. %B %Y"
+
+date_helper_time_formats: # DON'T  TRANSLATE, RE ORDER
+  default: "%a, %d. %b %Y, %H:%M:%S %z"
+  short: "%d. %b, %H:%M"
+  long: "%d. %B %Y, %H:%M"
+
+# added at the end of date if your date system doesn't use a 24 hours system
+date_helper_am: am
+date_helper_pm: pm
+    
+# used by ActionView::Helpers::NumberHelper.number_to_currency
+number_helper_unit: "€"
+number_helper_separator: "," #unit separator (between integer part and fraction part)
+number_helper_delimiter: "." #delimiter between each group of thousands. Example: 1.234.567 
+number_helper_order: [ number, unit ] 
+#to support for instance French format, the order is different: Unit comes last (ex. "1.234,00 €")
+
+# use by +Array#to_sentence()+
+array_connector: 'und'
+array_skip_last_comma: 'false'
+
+# Active Record error messages:
+active_record_helper_error_description: 'Es gab Probleme mit den folgenden Feldern:'
+active_record_helper_header_message: Durch pluralize{{error_count}, Fehler, Fehler} konnte {failed_object} nicht gespeichert werden.
+
+date_helper_month_names:
+ -              # Leave that line
+   -            # Leave that line
+ - Januar
+ - Februar
+ - März
+ - April
+ - Mai
+ - Juni
+ - Juli
+ - August
+ - September
+ - Oktober
+ - November
+ - Dezember
+
+date_helper_abbr_month_names:
+  -             # Leave that line
+    -           # Leave that line
+  - Jan
+  - Feb
+  - Mar
+  - Apr
+  - Mai
+  - Jun
+  - Jul
+  - Aug
+  - Sep
+  - Okt
+  - Nov
+  - Dez
+
+date_helper_day_names: 
+  - Sonntag
+  - Montag
+  - Dienstag
+  - Mittwoch
+  - Donnerstag
+  - Freitag
+  - Samstag
+
+date_helper_abbr_day_names: 
+  - So
+  - Mo
+  - Di
+  - Mi
+  - Do
+  - Fr 
+  - Sa
+
+countries_list:
+  - Afghanistan
+  - Albanien
+  - Algerien
+  - Amerikanisch-Samoa
+  - Andorra
+  - Angola
+  - Anguilla
+  - Antarktis
+  - Antigua und Barbuda
+  - Argentinien
+  - Armenien
+  - Aruba
+  - Australien
+  - Österreich
+  - Aserbaidschan
+  - Bahamas
+  - Bahrain
+  - Bangladesch
+  - Barbados
+  - Belarus
+  - Belgien
+  - Belize
+  - Benin
+  - Bermuda
+  - Bhutan
+  - Bolivien
+  - Bosnien und Herzegowina
+  - Botsuana
+  - Bouvetinsel
+  - Brasilien
+  - Britisches Territorium im Indischen Ozean
+  - Brunei
+  - Bulgarien
+  - Burkina Faso
+  - Myanmar
+  - Burundi
+  - Kambodscha
+  - Kamerun
+  - Kanada
+  - Kap Verde
+  - Kaimaninseln
+  - Zentralafrikanische Republik
+  - Tschad
+  - Chile
+  - China
+  - Weihnachtsinsel
+  - Kokosinseln
+  - Kolumbien
+  - Komoren
+  - Kongo
+  - Demokratische Republik Kongo
+  - Cookinseln
+  - Costa Rica
+  - Elfenbeinküste
+  - Kroatien
+  - Kuba
+  - Zypern
+  - Tschechische Republik
+  - Dänemark
+  - Dschibuti
+  - Dominica
+  - Dominikanische Republik
+  - Osttimor
+  - Ecuador
+  - Ägypten
+  - El Salvador
+  - England
+  - Äquatorialguinea
+  - Eritrea
+  - Spanien
+  - Estland
+  - Äthiopien
+  - Falklandinseln
+  - Färöer
+  - Fidschi
+  - Finnland
+  - Frankreich
+  - Französisch-Guayana
+  - Französisch-Polynesien
+  - Französische Gebiete im südlichen Indischen Ozean
+  - Gabun
+  - Gambia
+  - Georgien
+  - Deutschland
+  - Ghana
+  - Gibraltar
+  - Großbritannien
+  - Griechenland
+  - Grönland
+  - Grenada
+  - Guadeloupe
+  - Guam
+  - Guatemala
+  - Guinea
+  - Guinea-Bissau
+  - Guyana
+  - Haiti
+  - Heard und McDonaldinseln
+  - Honduras
+  - Hongkong
+  - Ungarn
+  - Island
+  - Indien
+  - Indonesien
+  - Irland
+  - Israel
+  - Italien
+  - Iran
+  - Irak
+  - Jamaika
+  - Japan
+  - Jordanien
+  - Kasachstan
+  - Kenia
+  - Kiribati
+  - Nordkorea
+  - Südkorea
+  - Kuwait
+  - Kirgisistan
+  - Laos
+  - Lettland
+  - Libanon
+  - Lesotho
+  - Liberia
+  - Liechtenstein
+  - Litauen
+  - Luxemburg
+  - Macau
+  - Mazedonien
+  - Madagaskar
+  - Malawi
+  - Malaysia
+  - Malediven
+  - Mali
+  - Malta
+  - Marshallinseln
+  - Martinique
+  - Mauretanien
+  - Mauritius
+  - Mayotte
+  - Mexiko
+  - Mikronesien
+  - Moldawien
+  - Monaco
+  - Mongolei
+  - Montserrat
+  - Marokko
+  - Mosambik
+  - Myanmar
+  - Namibia
+  - Nauru
+  - Nepal
+  - Niederlande
+  - Niederländische Antillen
+  - Neukaledonien
+  - Neuseeland
+  - Nicaragua
+  - Niger
+  - Nigeria
+  - Niue
+  - Norfolkinsel
+  - Nordirland
+  - Nördliche Marianen
+  - Norwegen
+  - Oman
+  - Pakistan
+  - Palau
+  - Panama
+  - Papua-Neuguinea
+  - Paraguay
+  - Peru
+  - Philippinen
+  - Pitcairninseln
+  - Polen
+  - Portugal
+  - Puerto Rico
+  - Katar
+  - Réunion
+  - Rumänien
+  - Russische Föderation
+  - Ruanda
+  - St. Kitts und Nevis
+  - St. Lucia
+  - St. Vincent und die Grenadinen
+  - Samoa
+  - San Marino
+  - São Tomé und Príncipe
+  - Saudi-Arabien
+  - Schottland
+  - Senegal
+  - Serbien und Montenegro
+  - Seychellen
+  - Sierra Leone
+  - Singapur
+  - Slowakei
+  - Slowenien
+  - Salomonen
+  - Somalia
+  - Südafrika
+  - Südgeorgien und Südliche Sandwichinseln
+  - Republik Korea
+  - Spanien
+  - Sri Lanka
+  - St. Helena
+  - St.-Pierre und Miquelon
+  - Suriname
+  - Svalbard und Jan Mayen
+  - Swasiland
+  - Schweden
+  - Schweiz
+  - Taiwan
+  - Tadschikistan
+  - Tansania
+  - Thailand
+  - Togo
+  - Tokelau
+  - Tonga
+  - Trinidad
+  - Trinidad und Tobago
+  - Tunesien
+  - Türkei
+  - Turkmenistan
+  - Turks- und Caicosinseln
+  - Tuvalu
+  - Uganda
+  - Ukraine
+  - Vereinigte Arabische Emirate
+  - Vereinigtes Königreich
+  - Vereinigte Staaten
+  - Kleinere amerikanische Überseeinseln
+  - Uruguay
+  - Usbekistan
+  - Vanuatu
+  - Vatikanstadt
+  - Venezuela
+  - Vietnam
+  - Britische Jungferninseln
+  - Amerikanische Jungferninseln
+  - Wales
+  - Wallis und Futuna
+  - Westsahara
+  - Jemen
+  - Sambia
+  - Simbabwe

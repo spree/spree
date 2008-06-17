@@ -2,32 +2,32 @@
 <% if collection.page_count != collection.first_page -%>
 <div class="pagination">
   <ul>
-  <% if collection.previous_page? -%>
-         <li class="nextpage">
-	    	    <%= link_to '&#171; previous', { :page => collection.previous_page }.merge(options) %>
-	    	 </li>
-	  <% else -%>
-         <li class="disablepage">&#171; previous</li>
-	  <% end -%>
- 
+    <% if collection.previous_page? -%>
+    <li class="nextpage">
+      <%= link_to "&#171; #{:previous.l('previous')}", { :page => collection.previous_page }.merge(options) %>
+    </li>
+    <% else -%>
+    <li class="disablepage">&#171; <%= :previous.l('previous') %></li>
+    <% end -%>
+    
     <% last_page = 0 -%>
     <% windowed_pagination_links(collection, :window_size => 2, :link_to_current_page => true, :always_show_anchors => true) do |n| -%>
-       <% if collection.page == n -%>
-            <li class="currentpage"><%= n %></li>
-       <% else -%>
-	          <li><%= "..." if last_page+1 < n %>
-	           <%= link_to n, {:id => params[:id], :page => n}.merge(options) %>
-	          </li>
-	       <% end -%>
-	      <% last_page = n -%>
-	  <% end -%>
- 
-    <% if collection.next_page? -%>
-     <li class="nextpage">
-        <%=  link_to 'next &#187;', { :page => collection.next_page }.merge(options) %>
-     </li>
+    <% if collection.page == n -%>
+    <li class="currentpage"><%= n %></li>
     <% else -%>
-      <li class="disablepage">&#171; next</li>
+    <li><%= "..." if last_page+1 < n %>
+	    <%= link_to n, {:id => params[:id], :page => n}.merge(options) %>
+    </li>
+    <% end -%>
+    <% last_page = n -%>
+    <% end -%>
+    
+    <% if collection.next_page? -%>
+    <li class="nextpage">
+      <%=  link_to "#{:next.l('next')} &#187;", { :page => collection.next_page }.merge(options) %>
+    </li>
+    <% else -%>
+    <li class="disablepage">&#171; <%= :next.l('next') %></li>
     <% end -%>
   </ul>
 </div>

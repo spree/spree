@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Thu Jun 14 19:11:00 -0700 2007</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1><a href="../classes/Globalite.html">Globalite</a></h1>
+<p>
+<a href="../classes/Globalite.html">Globalite</a> is meant to be a breed of
+the best internationalization/localization plugins available for Rails.
+</p>
+<p>
+<a href="../classes/Globalite.html">Globalite</a> should provide you with a
+3-in-1 solution:
+</p>
+<ul>
+<li>Easy UI localization.
+
+</li>
+<li>Rails localization. (Localization of the core functions from rails)
+
+</li>
+<li>Simple yet powerful solution for user content availability in multiple
+languages.
+
+</li>
+</ul>
+<p>
+On top of that: yml files are used for most of the localization, which
+makes <a href="../classes/Globalite.html">Globalite</a> a light and fast
+solution. The <a href="../classes/Locale.html">Locale</a> is set on the
+user&#8216;s session making <a
+href="../classes/Globalite.html">Globalite</a> a perfect solution for
+multilingual support. The developer can pass dynamic values to be used in
+the localization.
+</p>
+<h2>What&#8216;s the difference between <a href="../classes/Globalite.html">Globalite</a> and the other existing l10n/i18n plugins?</h2>
+<p>
+Gibberish is a nice plugin but it doesn&#8216;t handle locales, you
+can&#8216;t have your application in British English and American English.
+I also don&#8216;t really like the syntax :p I based the UI localization of
+<a href="../classes/Globalite.html">Globalite</a> on Chris&#8217; work on
+Gibberish.
+</p>
+<p>
+Globalize is a great plugin but man, it&#8216;s bloated&#8230; I would like
+to have something a bit lighter and easier to use. (less options, less
+setup time, less database usage). I decided to trim down Globalize to offer
+less options and fulfill the needs of most developers.
+</p>
+<p>
+Also, <a href="../classes/Globalite.html">Globalite</a> doesn&#8216;t have
+the concept of a base language. Mainly because I think that&#8216;s a bad
+idea. If you use English as your base language and you need to fix a string
+in English(you did a typo), you will break all the other translations.
+That&#8216;s why <a href="../classes/Globalite.html">Globalite</a> uses
+localization keys only.
+</p>
+<h2>Usage</h2>
+<h3>installation:</h3>
+<pre>
+        script/plugin install http://globalite.googlecode.com/svn/trunk/
+</pre>
+<p>
+rename the vendor/plugins/trunk =&gt; vendor/plugins/globalite or from your
+vendor/plugins folder:
+</p>
+<pre>
+        svn checkout http://globalite.googlecode.com/svn/trunk/ globalite
+</pre>
+<h3>UI Localization:</h3>
+<p>
+Create a lang folder at the root of your project. Add your localization
+files in the lang/ui folder if you want to localize your interface.
+</p>
+<p>
+Declare the current locale or language &gt;
+</p>
+<pre>
+        Globalite.current_language :fr
+</pre>
+<p>
+Localize a key &gt;
+</p>
+<pre>
+        :localization_key.l
+</pre>
+<p>
+or
+</p>
+<pre>
+        :localization_key.localize
+</pre>
+<p>
+Easy, isn&#8216;t?
+</p>
+<p>
+Advanced users can also do more:
+</p>
+<p>
+You can also pass an optional localization string only used if the
+localization is missing
+</p>
+<pre>
+        :missing_localization_key.l(&quot;text used if the key is not localized yet&quot;)
+</pre>
+<p>
+You can also pass values to the localization, and the translator can do
+whatever he wants with them:
+</p>
+<pre>
+        :welcome_user.l_with_args({:user =&gt; @user.name}) would render &quot;Welcome Matt!&quot;
+</pre>
+<p>
+Note that variables can be used in any order the translator wants
+</p>
+<h3>Rails Localization:</h3>
+<p>
+Localize a time object by using a predefined format (defined in the
+date_helper_time_formats variable that you can find in
+globalite/lang/rails/[lang].yml)
+</p>
+<pre>
+        Globalite.current_language = :fr
+        Time.now.l(:long)
+</pre>
+<p>
+Localize a date object by using a predefined format (defined in the
+date_helper_date_formats variable that you can find in
+globalite/lang/rails/[lang].yml)
+</p>
+<pre>
+        Date.today.l
+</pre>
+<p>
+In your views, create a select box with a list of all countries(listed in
+the locale language):
+</p>
+<pre>
+        country_options_for_select
+</pre>
+<p>
+In your views, create a select box with a list of all the months(listed in
+the locale language) with the current month selected:
+</p>
+<pre>
+        select_month(Time.now)
+</pre>
+<p>
+In your views, create a set of html select-tags (one for year, month, day,
+hour, and minute):
+</p>
+<pre>
+        select_datetime
+</pre>
+<p>
+In your views, create a set of html select-tags (one for year, month, and
+day):
+</p>
+<pre>
+        select_date
+</pre>
+<p>
+Get a number returned in currency, for instance if the locale was set to
+&#8216;fr&#8217; the returned value would be 123,00 € but if the locale
+was set to &#8216;en-US&#8217; it would return $123.00
+</p>
+<pre>
+        number_to_currency(123)
+</pre>
+<p>
+Get a distance of time in words localized.
+</p>
+<pre>
+        distance_of_time_in_words(Time.mktime(2005, 6, 4, 15), Time.now)
+</pre>
+<p>
+Active record errors are automatically rendered in the locale language
+</p>
+<h4>Notes</h4>
+<h2>FAQ:</h2>
+<h3>Why did you call your plugin &#8216;<a href="../classes/Globalite.html">Globalite</a>&#8217;?</h3>
+<p>
+Globalize was already taken ;) Most seriously, I was looking for a
+i18n/l10n solution for a project I was working on, after few hours testing
+Globalize, Josh <a href="http://joshknowles.com">joshknowles.com</a>, Matt
+<a href="http://heidmotron.com">heidmotron.com</a>/ and I <a
+href="http://railsontherun.com">railsontherun.com</a> saw it wouldn&#8216;t
+work for us. Since we only had the choice between very simple solutions and
+a complicated solution, I decided to make a &quot;lite&quot; version of
+Globalize ;)
+</p>
+<h2>TODO:</h2>
+<ul>
+<li>add support for pluralization
+
+</li>
+<li>content translation
+
+</li>
+</ul>
+<h3>Internationalization, Localization, <a href="../classes/Locale.html">Locale</a>:</h3>
+<p>
+Internationalization refers to the process of modifying an application’s
+design so that it can support locale differences like text orientation,
+currency, date and time format, sorting, and so forth. This can be done by
+externalizing text strings into files or a database, and by developing
+currency and date formatting utilities.
+</p>
+<p>
+Localization means adapting an application to a specific language or
+locale; for example, by translating text into multiple languages. A locale
+is identified by the user’s language and country, and specifies how, for
+example, numbers, currencies, and dates are displayed on the screen. The
+code for the US English locale is en-US. Locales are specified by RFC 3066
+and consist of two parts. The first is an ISO 639 language code and uses
+lowercase letters. The second is usually an ISO 3166 country code in
+uppercase letters. [from Ruby on Rails Commerce (Hellsten, Laine)]
+</p>
+<h3>CREDITS:</h3>
+<p>
+Some code was very influenced from different projects such as:
+</p>
+<ul>
+<li>Gibberish <a
+href="http://require.errtheblog.com/plugins/browser/gibberish">require.errtheblog.com/plugins/browser/gibberish</a>
+written by Chris Wanstrath (<a
+href="http://errtheblog.com">errtheblog.com</a>)
+
+</li>
+<li>Globalize <a
+href="http://www.globalize-rails.org">www.globalize-rails.org</a> written
+by too many people to list them here ;)
+
+</li>
+<li>LocalizationSimplified (L10n-simplified) written By Jesper Ronn-Jensen ( <a
+href="http://justaddwater.dk">justaddwater.dk</a>/ )
+
+</li>
+</ul>
+<h3>Author:</h3>
+<p>
+Matt Aimonetti <a href="http://railsontherun.com">railsontherun.com</a>
+mattaimonetti AT gmail DOT com
+</p>
+<h3>Contributors:</h3>
+<p>
+your name here if you submit a patch :)
+</p>
+<h3>More info:</h3>
+<p>
+<a
+href="http://code.google.com/p/globalite">code.google.com/p/globalite</a>/
+</p>
+<p>
+<a
+href="http://railsontherun.com/globalite">railsontherun.com/globalite</a>
+</p>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

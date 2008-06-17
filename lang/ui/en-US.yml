@@ -1,0 +1,157 @@
+account: Account
+action: Action
+add_category: Add Category
+add_option_type: Add Option Type
+address_information: Address Information
+add_to_cart: Add To Cart
+adjustment: Adjustment
+administration: Administration
+amount: Amount
+are_you_sure_category: Are you sure you want to delete this category?
+are_you_sure_delete_image: Are you sure you want to delete this image?
+are_you_sure_option_type: Are you sure you want to delete this option type?
+back: Back
+back_to_store: Go Back To Store
+bill_address: Bill Address
+billing_address: Billing Address
+cancel: Cancel
+card_code: Card Code
+card_number: Card Number
+cart: Cart
+categories: Categories
+category: Category
+change: Change
+change_language: Change Language
+checkout: Checkout
+city: City
+comp_order: Comp Order
+confirm: Confirm
+confirm_password: Password Confirmation
+continue_shopping: Continue shopping
+continue_shopping: Continue Shopping
+country: Country
+create: Create
+current: Current
+customer: Customer
+date: Date
+date_range: Date Range
+delete: Delete
+description: 
+description: Description
+destroy: Destroy
+display: Display
+edit: Edit
+editing_category: Editing category
+editing_option_types: Editing Option Types
+editing_user: Editing User
+email_address: Email Address
+email: Email
+empty_cart: Empty Cart
+error: error
+expiration_month: Expiration Month
+expiration_year: Expiration Year
+extension: Extension
+extensions: Extensions
+filename: Filename
+final_confirmation: Final Confirmation
+first_name: First Name
+hello_user: Hello User
+image: Image
+images: Images
+inventory_adjustment: Inventory Adjustment
+inventory: Inventory
+item_description: Item Description
+item: Item
+item_total: Item Total
+last_name: Last Name
+listing_categories: Listing categories
+listing_option_types: Listing Option Types
+listing_orders: Listing orders
+listing_reports: Listing reports
+listing_users: Listing Users
+logged_in_as: Logged in as
+log_in: Log In
+login_name: Login
+logout: Logout
+master_price: Master Price
+my_account: My Account
+name: Name
+new_category: New category
+new_image: New Image
+new_option_type: New Option Type
+new_option_value: New Option Value
+new_user: New User
+new_variant: New Variant
+next: next
+no_items_in_cart: 
+none_available: None Available
+number: Number
+on_hand: On Hand
+operation: Operation
+options: Options
+option_types: Option Types
+option_Values: Option Values
+order_confirmation_note: 
+order_date: Order Date
+order_details: Order Details
+order_number: "Order #"
+order: Order
+order_processed_successfully: Your order has been processed successfully
+orders: Orders
+order_total: Order Total
+or: or
+overview: Overview
+parent_category: Parent Category
+password: Password
+payment: Payment
+phone: Phone
+presentation: Presentation
+previous: previous
+price: Price
+problems_processing_order: We had problems processing your order
+process: Process
+product: Product
+products: Products
+qty: Qty
+remember_me: Remember me
+reports: Reports
+resend: Resend
+response_code: Response Code
+sales_total: Sales Total
+sales_totals: Sales Totals
+search: Search
+select: Select
+ship_address: Ship Address
+shipping_address: Shipping Address
+shipping_method: Shipping Method
+shipping: Shipping
+shipping_total: Shipping Total
+shopping_cart: Shopping Cart
+sign_up: Sign up
+sku: SKU
+start: Start
+state: State
+status: Status
+stop: Stop
+store: Store
+street_address_2: Street Address (cont'd)
+street_address: Street Address
+subtotal: Subtotal
+tax: Tax
+tax_total: Tax Total
+time: Time
+total: Total
+transaction: Transaction
+try_again: Try Again
+type: Type
+update: Update
+use_different_shipping_address: Use Different Shipping Address
+users: Users
+user: User
+variants: Variants
+version: Version
+website: Website
+welcome_to_sample_store: Welcome to the sample store
+what_is_a_cvv: What is a (CVV) Credit Card Code?
+what_is_this: What's This?
+zip: Zip

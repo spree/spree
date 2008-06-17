@@ -1,42 +1,42 @@
-<h2>Option Values</h2>
+<h2><%= :option_Values.l("Option Values") %></h2>
 <table class="basic-table">
-	<thead>
-		<tr>
-			<th>Name</th>
-			<th>Display</th>
-			<th>Action</th>
-		</tr>
-	</thead>
-	<tbody>
-		<% @option_type.option_values.each do |ov| %>
-			<tr>
-				<td><%=ov.name%></td>
-				<td><%=ov.presentation%></td>
-				<td>
-				  <%= link_to_remote "Delete",
-				                     :url => {:action => 'delete_option_value', :id=> @option_type, :option_value_id => ov},
-				                     :before => "Element.show('ov_busy_indicator')", 
-				                     :complete => "Element.hide('ov_busy_indicator')",
-				                     :update => 'option-value-listing' %>
-				</td>
-			</tr>
-		<% end %>
-		<% if @option_type.option_values.empty? %>
-			<tr>
-				<td colspan="3">None Available.</td>
-			</tr>
-		<% end %>
-	</tbody>
+  <thead>
+    <tr>
+      <th><%= :name.l("Name") %></th>
+      <th><%= :display.l("Display") %></th>
+      <th><%= :action.l("Action") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @option_type.option_values.each do |ov| %>
+    <tr>
+      <td><%=ov.name%></td>
+      <td><%=ov.presentation%></td>
+      <td>
+	<%= link_to_remote :delete.l("Delete"),
+	                   :url => {:action => 'delete_option_value', :id=> @option_type, :option_value_id => ov},
+	                   :before => "Element.show('ov_busy_indicator')", 
+	                   :complete => "Element.hide('ov_busy_indicator')",
+	                   :update => 'option-value-listing' %>
+      </td>
+    </tr>
+    <% end %>
+    <% if @option_type.option_values.empty? %>
+    <tr>
+      <td colspan="3"><%= :none_available.l("None Available") %></td>
+    </tr>
+    <% end %>
+  </tbody>
 </table>
 <% unless @option_type.new_record? %>
-  <span id="new-ov-link">
-	  <%= link_to_remote "New Option Value",
-	                     :url => {:action => 'new_option_value', :id=> @option_type},
-	                     :before => "Element.hide('new-ov-link');Element.show('ov_busy_indicator')", 
-	                     :complete => "Element.hide('ov_busy_indicator');Element.hide('new-ov-link');",
-	                     :update => 'new-option-value' %>
-  </span>
-	<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'ov_busy_indicator' %>
+<span id="new-ov-link">
+  <%= link_to_remote :new_option_value.l("New Option Value"),
+                     :url => {:action => 'new_option_value', :id=> @option_type},
+                     :before => "Element.hide('new-ov-link');Element.show('ov_busy_indicator')", 
+                     :complete => "Element.hide('ov_busy_indicator');Element.hide('new-ov-link');",
+                     :update => 'new-option-value' %>
+</span>
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'ov_busy_indicator' %>
 <% end %>
 <br/>
 <div id="new-option-value"></div>

@@ -1,8 +1,10 @@
 <%= render :partial => 'admin/products/menu' %>
 
-<h1>Editing Option Types</h1>
+<h1><%= :editing_option_types.l("Editing Option Types") %></h1>
 
 <% form_for(:option_type) do |f| %>
   <%= render :partial => 'form' %>
-  <%= submit_tag 'Update' %> or <%= link_to 'Cancel', :action => :index %>
+  <%= submit_tag :update.l %>
+  <%= :or.l %>
+  <%= link_to :cancel.l, :action => :index %>
 <% end %>

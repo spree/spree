@@ -1,0 +1,79 @@
+<!-- basic layout - feel free to replace with a more elaborate one -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Spree</title>
+    <%= stylesheets %>
+    <%= javascript_include_tag :defaults %>
+  </head>
+  <body>
+    <div id="main">
+      <table id="main-table" border='1'>
+        <tr>
+          <td colspan="2">
+            <table width="100%" class="store-header">
+              <tr>
+                <td rowspan="2" width="140px">
+                  <%= image_tag 'spree.jpg' %>                                                                  
+                </td>
+                <td valign="top">
+                  <h1><%= :welcome_to_sample_store.l %></h1>
+                </td>
+                <td width="200px">
+                  <% if logged_in? -%>
+                  <ul id="login-nav">
+		    <li>
+		      <% form_tag locale_path, :method => :put do -%>
+		      <%= :change_language.l %>:  
+		      <%= select('user_locale', "code",  Globalite.ui_locales, { :include_blank => true }) %>  
+		      <%= submit_tag :change.l %>
+		      <% end -%>
+		    </li>
+                    <li><%= link_to :my_account.l('My Account'), user_path(current_user) %></li>
+                    <li><%= link_to :logout.l('Logout'), :controller => '/account', :action => 'logout' %></li>
+                  </ul>
+                  <% else %>
+                  <ul id="login-nav">
+                    <li><%= link_to :login.l, :controller => '/account', :action => 'login' %></li>
+                  </ul>
+		  <% end -%>
+                </td>
+              </tr>
+              <tr>
+                <td align="right" valign="top" colspan="2">
+                  <% if store_menu? %>
+                  <%= render :partial => 'shared/store_menu' %>
+                  <% end %>
+                </td>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
+	<% if flash[:notice] %>
+	<tr>
+	  <td colspan="2">
+	    <div id="flash-notice"><%= flash[:notice] %></div>
+	  </td>
+	</tr>
+	<% end %>
+	<% if flash[:error] %>
+	<tr>
+	  <td colspan="2">
+	    <div id="flash-errors"><%= flash[:error] %></div>
+	  </td>
+	</tr>
+	<% end %>
+	<tr>
+	  <td id="shop-by-col" valign="top">
+	    <!--todo: add the category info here -->
+	  </td>
+	  <td>
+	    <div id="main-content">
+	      <%=@content_for_layout %> 	
+	    </div>
+	  </td>
+	</tr>
+      </table>
+    </div>
+  </body>
+</html>

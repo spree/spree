@@ -1,0 +1,186 @@
+locale_name: T&#252;rk&#231;e
+# ActiveRecord::Errors.default_error_messages
+error_message_inclusion: listeye dahil edilmemi&#351;
+error_message_exclusion: rezerve edilmi&#351;
+error_message_invalid: ge&#231;ersiz
+error_message_confirmation: giri&#351;leri birbirini tutmuyor
+error_message_accepted: kabul edilmeli
+error_message_empty: bo&#351; olamaz
+error_message_blank: bo&#351; olamaz
+error_message_too_long: &#231;ok uzun (en fazla %d karakter olabilir)
+error_message_too_short: &#231;ok k&#305;sa (en az %d karakter olabilir)
+error_message_wrong_length: yanl&#305;&#351; uzunlukta (%d karakter olmal&#305;)
+error_message_taken: daha &#246;nce al&#305;nm&#305;&#351;
+error_message_not_a_number: bir say&#305; de&#287;il
+
+# used by ActionView::Helpers::DateHelper.distance_of_time_in_words
+date_helper_less_than_x_seconds: %d saniyeden az
+date_helper_half_a_minute: yar&#305;m dakika
+date_helper_less_than_a_minute: bir dakikadan az
+date_helper_one_minute: 1 dakika
+date_helper_x_minutes: %d dakika
+date_helper_one_hour: yakla&#351;&#305;k 1 saat
+date_helper_x_hours: yakla&#351;&#305;k %d saat
+date_helper_one_day: 1 g&#252;n
+date_helper_x_days: %d g&#252;n
+date_helper_one_month: 1 ay
+date_helper_x_months: %d ay
+date_helper_one_year: 1 y&#305;l
+date_helper_x_years: %d y&#305;l
+
+# DON'T TRANSLATE, just order
+date_helper_order: [:day, :month, :year] #default Rails is US ordered: :order => [:year, :month, :day]
+
+date_helper_date_formats: # DON'T  TRANSLATE, RE ORDER
+  default: "%Y-%m-%d"
+  short: "%e %b"
+  long: "%e %B, %Y"
+
+date_helper_time_formats: # DON'T  TRANSLATE, RE ORDER
+  default: "%a, %d %b %Y %H:%M:%S %z"
+  short: "%d %b, %H:%M"
+  long: "%d %B, %Y %H:%M"
+
+# added at the end of date if your date system doesn't use a 24 hours system
+date_helper_am: am
+date_helper_pm: pm
+    
+# used by ActionView::Helpers::NumberHelper.number_to_currency
+number_helper_unit: "YTL"
+number_helper_separator: "," #unit separator (between integer part and fraction part)
+number_helper_delimiter: "." #delimiter between each group of thousands. Example: 1.234.567 
+number_helper_order: [ number, unit ] 
+#to support for instance French format, the order is different: Unit comes last (ex. "1.234,00 €")
+
+# use by +Array#to_sentence()+
+array_connector: 've'
+array_skip_last_comma: 'false'
+
+# Active Record error messages:
+active_record_helper_error_description: 'A&#351;a&#287;&#305;daki alanlarla ilgili sorunlar olu&#351;tu:'
+active_record_helper_header_message: "{error_count} hata kayd&#305; engelledi"
+
+date_helper_month_names:
+ -              # Leave that line
+   -            # Leave that line
+ - Ocak
+ - &#350;ubat
+ - Mart
+ - Nisan
+ - May&#305;s
+ - Haziran
+ - Temmuz
+ - A&#287;ustos
+ - Eyl&#252;l
+ - Ekim
+ - Kas&#305;m
+ - Aral&#305;k
+
+date_helper_abbr_month_names:
+  -             # Leave that line
+    -           # Leave that line
+  - Oca
+  - &#350;ub
+  - Mar
+  - Nis
+  - May
+  - Haz
+  - Tem
+  - A&#287;u
+  - Eyl
+  - Eki
+  - Kas
+  - Ara
+
+date_helper_day_names: 
+  - Pazar
+  - Pazartesi
+  - Sal&#305;
+  - Çar&#351;amba
+  - Per&#351;embe
+  - Cuma
+  - Cumartesi
+
+date_helper_abbr_day_names: 
+  - Paz
+  - Pzt
+  - Sal
+  - Çar
+  - Per
+  - Cum
+  - Cmt
+
+countries_list:
+  - ABD
+  - Afganistan
+  - Almanya
+  - Arnavutluk
+  - Avustralya
+  - Avusturya
+  - Azerbaycan
+  - BAE
+  - Bahreyn
+  - Bel&#231;ika
+  - Bosna-Hersek
+  - Bulgaristan
+  - Cezayir
+  - Çek Cumhuriyeti
+  - Çin
+  - Danimarka
+  - Fas
+  - Fildi&#351;i Sahili Cumhuriyeti
+  - Finlandiya
+  - Fransa
+  - G. Afrika
+  - G&#252;rcistan
+  - H&#305;rvatistan
+  - Hindistan
+  - Hollanda
+  - Hong Kong
+  - Irak
+  - &#246;rlanda
+  - &#246;ngiltere
+  - &#246;ran
+  - &#246;spanya
+  - &#246;srail
+  - &#246;sve&#231;
+  - &#246;svi&#231;re
+  - &#246;talya
+  - Japonya
+  - Kanada
+  - Kazakistan
+  - Katar
+  - K&#305;rg&#305;zistan
+  - Kore
+  - Kuveyt
+  - Kuzey K&#305;br&#305;s T.C
+  - Libya
+  - L&#252;bnan
+  - Macaristan
+  - Malezya
+  - M&#305;s&#305;r
+  - Nepal
+  - Norve&#231;
+  - &#246;zbekistan
+  - Pakistan
+  - Polonya
+  - Romanya
+  - Rusya
+  - S&#305;rbistan
+  - Slovenya
+  - Sudan
+  - Suriye
+  - Suudi Arabistan
+  - Tacikistan
+  - Tayland
+  - Tayvan
+  - Tunus
+  - T&#252;rkmenistan
+  - Ukrayna
+  - Umman
+  - &#220;rd&#252;n
+  - Yemen
+  - Yugoslavya
+  - Yunanistan
+  - Di&#287;er/Other
+  

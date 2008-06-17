@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionView::Helpers::NumberHelper</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionView::Helpers::NumberHelper</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/rails/localized_action_view_rb.html">
+                lib/rails/localized_action_view.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000041">number_to_currency</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">number_to_currency</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">orig_number_to_currency</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000041" class="method-detail">
+        <a name="M000041"></a>
+
+        <div class="method-heading">
+          <a href="#M000041" class="method-signature">
+          <span class="method-name">number_to_currency</span><span class="method-args">(number, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+modify <a href="NumberHelper.html#M000041">number_to_currency</a> to accept
+:order option
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000041-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000041-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/rails/localized_action_view.rb, line 45</span>
+45:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">number_to_currency</span>(<span class="ruby-identifier">number</span>, <span class="ruby-identifier">options</span> = {})
+46:         <span class="ruby-comment cmt"># Blend default options with localized currency options</span>
+47:         <span class="ruby-comment cmt">#if :number_helper_unit.l != :missing_freaking_key.l</span>
+48:         <span class="ruby-identifier">options</span>.<span class="ruby-identifier">reverse_merge!</span>({<span class="ruby-identifier">:unit</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:number_helper_unit</span>.<span class="ruby-identifier">l</span>, <span class="ruby-identifier">:separator</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:number_helper_separator</span>.<span class="ruby-identifier">l</span>, <span class="ruby-identifier">:delimiter</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:number_helper_delimiter</span>.<span class="ruby-identifier">l</span>, <span class="ruby-identifier">:order</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:number_helper_order</span>.<span class="ruby-identifier">l</span>})
+49:         <span class="ruby-comment cmt"># else</span>
+50:         <span class="ruby-comment cmt">#          options.reverse_merge!({:unit =&gt; &quot;$&quot;, :separator =&gt; &quot;.&quot;, :delimiter =&gt; &quot;,&quot;, :order =&gt; [:unit, :number]})</span>
+51:         <span class="ruby-comment cmt">#        end</span>
+52:         <span class="ruby-comment cmt">#        options[:order] ||= [:unit, :number]</span>
+53:         <span class="ruby-identifier">options</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">stringify_keys</span>
+54:         
+55:         <span class="ruby-identifier">precision</span>, <span class="ruby-identifier">unit</span>, <span class="ruby-identifier">separator</span>, <span class="ruby-identifier">delimiter</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;precision&quot;</span>) { <span class="ruby-value">2</span> }, <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;unit&quot;</span>) { <span class="ruby-value str">&quot;$&quot;</span> }, <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;separator&quot;</span>) { <span class="ruby-value str">&quot;.&quot;</span> }, <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;delimiter&quot;</span>) { <span class="ruby-value str">&quot;,&quot;</span> }
+56:         <span class="ruby-identifier">separator</span> = <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">precision</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+57: 
+58:         <span class="ruby-comment cmt">#add leading space before trailing unit</span>
+59:         <span class="ruby-identifier">unit</span> = <span class="ruby-value str">&quot; &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">unit</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;order&quot;</span>] <span class="ruby-operator">==</span> [<span class="ruby-value str">'number'</span>, <span class="ruby-value str">'unit'</span>]
+60:         <span class="ruby-identifier">output</span> = <span class="ruby-value str">''</span>
+61:         <span class="ruby-keyword kw">begin</span>
+62:           <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;order&quot;</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">param</span><span class="ruby-operator">|</span>
+63:             <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">param</span>
+64:             <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'unit'</span>
+65:               <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">unit</span>
+66:             <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'number'</span>
+67:               <span class="ruby-identifier">parts</span> = <span class="ruby-identifier">number_with_precision</span>(<span class="ruby-identifier">number</span>, <span class="ruby-identifier">precision</span>).<span class="ruby-identifier">split</span>(<span class="ruby-value str">'.'</span>)
+68:               <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">number_with_delimiter</span>(<span class="ruby-identifier">parts</span>[<span class="ruby-value">0</span>], <span class="ruby-identifier">delimiter</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">separator</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">parts</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_s</span>
+69:             <span class="ruby-keyword kw">end</span>
+70:           <span class="ruby-keyword kw">end</span>
+71:         <span class="ruby-keyword kw">rescue</span>
+72:           <span class="ruby-identifier">output</span> = <span class="ruby-identifier">number</span>
+73:         <span class="ruby-keyword kw">end</span>
+74:         <span class="ruby-identifier">output</span>
+75:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

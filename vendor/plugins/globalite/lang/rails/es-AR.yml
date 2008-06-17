@@ -1,0 +1,357 @@
+locale_name: Español (Argentina)
+# Spanish translation file.
+# Translation by Mariano Ayesa (www.bluebrains.com.ar)
+
+# ActiveRecord::Errors.default_error_messages
+error_message_inclusion: no está incluido en la lista
+error_message_exclusion: está reservado
+error_message_invalid: no es válido
+error_message_confirmation: no coincide con la confirmación
+error_message_accepted: debe ser aceptado
+error_message_empty: no puede estar vacío
+error_message_blank: no puede quedar en blanco
+error_message_too_long: es demasiado largo (el máximo es %d caracteres)
+error_message_too_short: es demasiado corto (el mínimo es %d caracteres)
+error_message_wrong_length: no posee el largo correcto (debería ser de %d caracteres)
+error_message_taken: ya está siendo utilizado
+error_message_not_a_number: no es un número
+
+# used by ActionView::Helpers::DateHelper.distance_of_time_in_words
+date_helper_less_than_x_seconds: menos de %d segundos
+date_helper_half_a_minute: medio minuto
+date_helper_less_than_a_minute: menos de un minuto
+date_helper_one_minute: 1 minuto
+date_helper_x_minutes: %d minutos
+date_helper_one_hour: sobre una hora
+date_helper_x_hours: sobre %d horas
+date_helper_one_day: un día
+date_helper_x_days: %d días
+date_helper_one_month: 1 mes
+date_helper_x_months: %d meses
+date_helper_one_year: 1 año
+date_helper_x_years: %d años
+
+# DON'T TRANSLATE, just order
+date_helper_order: [:day, :month, :year] #default Rails is US ordered: :order => [:year, :month, :day]
+
+# DON'T TRANSLATE, RE ORDERED
+date_helper_date_formats:
+  default: "%Y-%m-%d"
+  short: "%e %b"
+  long: "%e %B, %Y"
+
+# DON'T TRANSLATE, RE ORDERED
+date_helper_time_formats:
+  default: "%a, %d %b %Y %H:%M:%S %z"
+  short: "%d %b, %H:%M"
+  long: "%d %B, %Y %H:%M"
+
+# added at the end of date if your date system doesn't use a 24 hours system
+date_helper_am: am
+date_helper_pm: pm
+
+# used by ActionView::Helpers::NumberHelper.number_to_currency
+number_helper_unit: "$"
+number_helper_separator: "," #unit separator (between integer part and fraction part)
+number_helper_delimiter: "." #delimiter between each group of thousands. Example: 1.234.567
+number_helper_order: [number, unit] #order is at present unsupported in Rails
+#to support for instance French format, the order is different: Unit comes last (ex. "1.234,00 €")
+
+# use by +Array#to_sentence()+
+array_connector: 'y'
+array_skip_last_comma: 'true'
+
+date_helper_month_names:
+  - # Leave that line
+  - # Leave that line
+  - Enero
+  - Febrero
+  - Marzo
+  - Abril
+  - Mayo
+  - Junio
+  - Julio
+  - Agosto
+  - Septiembre
+  - Octubre
+  - Noviembre
+  - Diciembre
+
+date_helper_abbr_month_names:
+  - # Leave that line
+  - # Leave that line
+  - Ene
+  - Feb
+  - Mar
+  - Abr
+  - May
+  - Jun
+  - Jul
+  - Ago
+  - Sep
+  - Oct
+  - Nov
+  - Dic
+
+date_helper_day_names:
+  - Domingo
+  - Lunes
+  - Martes
+  - Miércoles
+  - Jueves
+  - Viernes
+  - Sábado
+
+date_helper_abbr_day_names:
+  - Dom
+  - Lun
+  - Mar
+  - Mié
+  - Jue
+  - Vie
+  - Sáb
+
+# STILL NEEDS TRANSLATIONS
+countries_list:
+  - Afganistán
+  - Albania
+  - Algeria
+  - Samoa
+  - Andorra
+  - Angola
+  - Anguilla
+  - Antartda
+  - Antigua And Barbuda
+  - Argentina
+  - Armenia
+  - Aruba
+  - Australia
+  - Austria
+  - Azerbaijan
+  - Bahamas
+  - Bahrain
+  - Bangladesh
+  - Barbados
+  - Bierlorrusia
+  - Belgica
+  - Belice
+  - Benin
+  - Bermuda
+  - Bhutan
+  - Bolivia
+  - Bosnia Herzegovina
+  - Botswana
+  - Isla Bouvet
+  - Brasil
+  - British Indian Ocean Territory
+  - Sultanato Brunei
+  - Bulgaria
+  - Burkina Faso
+  - Burma
+  - Burundi
+  - Camboya
+  - Camerun
+  - Canadá
+  - Cabo Verde
+  - Islas Caiman
+  - Central African Republic
+  - Chad
+  - Chile
+  - China
+  - Isla de Pascua
+  - Isla Cocos
+  - Colombia
+  - Comoros
+  - Congo
+  - Congo
+  - Islas Cook
+  - Costa Rica
+  - Cote d'Ivoire
+  - Croacia
+  - Cuba
+  - Chipre
+  - Republica Checha
+  - Dinamarca
+  - Djibouti
+  - Dominica
+  - Republica Dominicana
+  - East Timor
+  - Ecuador
+  - Egipto
+  - El Salvador
+  - Inglaterra
+  - Guinea Ecuatorial
+  - Eritrea
+  - España
+  - Estonia
+  - Etiopia
+  - Islas Malvinas
+  - Islas Faroe
+  - Fiji
+  - Finlandia
+  - Francia
+  - Guinea Francesa
+  - Polinesia Francesa
+  - French Southern Territories
+  - Gabon
+  - Gambia
+  - Georgia
+  - Alemania
+  - Ghana
+  - Gibraltar
+  - Gran Bretaña
+  - Grecia
+  - Greenland
+  - Granada
+  - Guadalupe
+  - Guam
+  - Guatemala
+  - Guinea
+  - Guinea-Bissau
+  - Guyana
+  - Haiti
+  - Heard and Mc Donald Islands
+  - Honduras
+  - Hong Kong
+  - Hungria
+  - Islandia
+  - India
+  - Indonesia
+  - Irlanda
+  - Israel
+  - Italia
+  - Iran
+  - Irak
+  - Jamaica
+  - Japon
+  - Jordania
+  - Kazajistán
+  - Kenia
+  - Kiribati
+  - Corea (República)
+  - Corea (del Sur)
+  - Kuwait
+  - Kyrgyzstan
+  - Lao
+  - Latvia
+  - Libano
+  - Lesotho
+  - Liberia
+  - Liechtenstein
+  - Lituania
+  - Luxemburgo
+  - Macau
+  - Macedonia
+  - Madagascar
+  - Malawi
+  - Malasia
+  - Islas Maldivas
+  - Mali
+  - Malta
+  - Islas Marshall
+  - Martinica
+  - Mauritania
+  - Mauritius
+  - Mayotte
+  - Mejico
+  - Micronesia, Federated States of
+  - Moldova, Republic of
+  - Mónaco
+  - Mongolia
+  - Montserrat
+  - Marruecos
+  - Mozambique
+  - Myanmar
+  - Namibia
+  - Nauru
+  - Nepal
+  - Holanda
+  - Antillas Holandesas
+  - Nueva Caledonia
+  - Nueva Zelanda
+  - Nicaragua
+  - Níger
+  - Nigeria
+  - Niue
+  - Norfolk Island
+  - Irlanda del Norte
+  - Islas Mariana del Norte
+  - Noruega
+  - Oman
+  - Pakistan
+  - Palau
+  - Panamá
+  - Papúa Nueva Guinea
+  - Paraguay
+  - Perú
+  - Philippines
+  - Pitcairn
+  - Poland
+  - Portugal
+  - Puerto Rico
+  - Qatar
+  - Reunion
+  - Romania
+  - Russia
+  - Rwanda
+  - Saint Kitts and Nevis
+  - Saint Lucia
+  - Saint Vincent and the Grenadines
+  - Samoa (Independent)
+  - San Marino
+  - Sao Tome and Principe
+  - Saudi Arabia
+  - Scotland
+  - Senegal
+  - Serbia and Montenegro
+  - Seychelles
+  - Sierra Leone
+  - Singapore
+  - Slovakia
+  - Slovenia
+  - Solomon Islands
+  - Somalia
+  - Sudafrica
+  - Islas Sandwich y Georgias del Sur
+  - Sri Lanka
+  - Santa Helena
+  - San Pierre y Miquelon
+  - Suriname
+  - Svalbard and Jan Mayen Islands
+  - Swaziland
+  - Suecia
+  - Suiza
+  - Taiwan
+  - Tajikistan
+  - Tanzania
+  - Tailandia
+  - Togo
+  - Tokelau
+  - Tonga
+  - Trinidad
+  - Trinidad y Tobago
+  - Tunez
+  - Turquia
+  - Turkmenistan
+  - Islas Caicos
+  - Tuvalu
+  - Uganda
+  - Ucrania
+  - Emiratos Arabes Unidos
+  - Reino Unido
+  - Estados Unidos
+  - United States Minor Outlying Islands
+  - Uruguay
+  - Uzbekistan
+  - Vanuatu
+  - Vaticano
+  - Venezuela
+  - Vietnam
+  - Islas Virgenes (Británicas)
+  - Islas Virgenes (EE.UU.)
+  - Gales
+  - Wallis and Futuna Islands
+  - Sahara
+  - Yemen
+  - Zambia
+  - Zimbabwe

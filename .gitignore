@@ -1,8 +1,9 @@
-#*
+\#*
 **/*.db
 *~
 .#*
 .DS_Store
+.dotest
 .loadpath
 .project
 config/database.yml
