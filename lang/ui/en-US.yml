@@ -47,6 +47,7 @@ editing_user: Editing User
 email_address: Email Address
 email: Email
 empty_cart: Empty Cart
+english: English
 error: error
 expiration_month: Expiration Month
 expiration_year: Expiration Year
@@ -55,6 +56,7 @@ extensions: Extensions
 filename: Filename
 final_confirmation: Final Confirmation
 first_name: First Name
+german: German
 hello_user: Hello User
 image: Image
 images: Images
@@ -128,6 +130,7 @@ shipping: Shipping
 shipping_total: Shipping Total
 shopping_cart: Shopping Cart
 sign_up: Sign up
+spanish: Spanish
 sku: SKU
 start: Start
 state: State

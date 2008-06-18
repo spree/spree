@@ -44,6 +44,7 @@ editing_user: Editar usuario
 email_address: Dirección de Correo Electrónico
 email: Correo Electrónico
 empty_cart: Vaciar Cesta
+english: #TODO
 error: error
 expiration_month: Mes de vencimiento
 expiration_year: Año de vencimiento
@@ -52,6 +53,7 @@ extensions: Extensiones
 filename: Nombre de archivo
 final_confirmation: Confirmación Final
 first_name: Nombre
+german: #TODO
 hello_user: Hola usuario
 image: Imágen
 images: Imagenes
@@ -125,6 +127,7 @@ shipping_total: Total de envío
 shopping_cart: Cesta de compras
 sign_up: Registrarme
 sku: Código
+spanish: # TODO
 start: Inicio
 state: Comunidad
 status: Estado

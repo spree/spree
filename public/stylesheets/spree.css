@@ -294,3 +294,18 @@ padding-right: 0;
   padding: 0px;
 }
 /* ===================== end: store-header =====================*/
+
+/* ===================== begin: footer =====================*/
+#footer ul {
+  text-align: center;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+#footer li {
+  display:inline;
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+  padding-right:5px;
+}
+/* ===================== end: footer =====================*/

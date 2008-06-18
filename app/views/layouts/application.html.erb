@@ -29,7 +29,7 @@
                   <ul id="login-nav">
                     <li><%= link_to :login.l, :controller => '/account', :action => 'login' %></li>
                   </ul>
-		  <% end -%>
+		              <% end -%>
                 </td>
               </tr>
               <tr>
@@ -38,34 +38,37 @@
                   <%= render :partial => 'shared/store_menu' %>
                   <% end %>
                 </td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
-	<% if flash[:notice] %>
-	<tr>
-	  <td colspan="2">
-	    <div id="flash-notice"><%= flash[:notice] %></div>
-	  </td>
-	</tr>
-	<% end %>
-	<% if flash[:error] %>
-	<tr>
-	  <td colspan="2">
-	    <div id="flash-errors"><%= flash[:error] %></div>
-	  </td>
-	</tr>
-	<% end %>
-	<tr>
-	  <td id="shop-by-col" valign="top">
-	    <!--todo: add the category info here -->
-	  </td>
-	  <td>
-	    <div id="main-content">
-	      <%=@content_for_layout %> 	
-	    </div>
-	  </td>
-	</tr>
+      	      </tr>
+      	    </table>
+      	  </td>
+        </tr>
+        <% if flash[:notice] %>
+        <tr>
+          <td colspan="2">
+            <div id="flash-notice"><%= flash[:notice] %></div>
+          </td>
+        </tr>
+      	<% end %>
+      	<% if flash[:error] %>
+      	<tr>
+      	  <td colspan="2">
+      	    <div id="flash-errors"><%= flash[:error] %></div>
+      	  </td>
+      	</tr>
+      	<% end %>
+        <tr>
+          <td id="shop-by-col" valign="top">
+            <!--todo: add the category info here -->
+          </td>
+          <td>
+            <div id="main-content">
+              <%=@content_for_layout %> 	
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"><%= render :partial => 'shared/footer'%></td>
+        </tr>
       </table>
     </div>
   </body>

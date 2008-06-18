@@ -47,6 +47,7 @@ editing_user: Benutzer Bearbeiten
 email_address: Email Addresse
 email: Email
 empty_cart: Warenkorb Leeren
+english: #TODO
 error: Fehler
 expiration_month: Gültig bis (Monat)
 expiration_year: Gültig bis (Jahr)
@@ -55,6 +56,7 @@ extensions: Erweiterungen
 filename: Dateiname
 final_confirmation: End Bestätigung
 first_name: Vorname
+german: #TODO
 hello_user: Hallo User
 image: Bild
 images: Bilder
@@ -130,6 +132,7 @@ shipping_total: Lieferkosten Gesamt
 shopping_cart: Warenkorb
 sign_up: Sign up
 sku: SKU
+spanish: #TODO
 start: Von
 state: Bundesland
 status: Status
