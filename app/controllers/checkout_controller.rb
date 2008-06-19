@@ -1,6 +1,8 @@
 class CheckoutController < Spree::BaseController
   before_filter :new_or_login
   before_filter :find_order, :except => [:index, :thank_you]
+  
+  filter_parameter_logging :creditcard, "number"
     
   def index
     find_cart
