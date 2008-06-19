@@ -34,6 +34,10 @@ module Spree
       File.exist?("#{RAILS_ROOT}/vendor/spree")
     end
     
+    def vendor_rails?
+      File.exist?("#{RAILS_ROOT}/vendor/rails")
+    end
+        
     def app?
       File.exist?("#{RAILS_ROOT}/lib/spree.rb")
     end    

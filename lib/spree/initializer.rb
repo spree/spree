@@ -92,7 +92,12 @@ module Spree
     def self.run(command = :process, configuration = Configuration.new)
       super
     end
-
+    
+    # TODO - add rest of method in here (just overriding for now so we can try to load Spree with 2.1)
+    def install_gem_spec_stubs
+  
+    end
+    
     def set_autoload_paths
       extension_loader.add_extension_paths
       super
