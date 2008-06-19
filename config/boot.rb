@@ -1,110 +1,67 @@
-#######################################################################################################
-# Substantial portions of this code were adapted from the Radiant CMS project (http://radiantcms.org) #
-#######################################################################################################
-
 # Don't change this file!
 # Configure your app in config/environment.rb and config/environments/*.rb
 
-RAILS_ROOT = File.expand_path("#{File.dirname(__FILE__)}/..") unless defined?(RAILS_ROOT)
+RAILS_ROOT = "#{File.dirname(__FILE__)}/.." unless defined?(RAILS_ROOT)
 
-module Spree
+module Rails
   class << self
     def boot!
       unless booted?
+        preinitialize
         pick_boot.run
       end
     end
 
     def booted?
-      defined? Spree::Initializer
+      defined? Rails::Initializer
     end
 
     def pick_boot
-      case
-      when app?
-        AppBoot.new        
-      when vendor?
-        VendorBoot.new
-      else
-        GemBoot.new
-      end
+      (vendor_rails? ? VendorBoot : GemBoot).new
     end
 
-    def vendor?
-      File.exist?("#{RAILS_ROOT}/vendor/spree")
-    end
-    
     def vendor_rails?
       File.exist?("#{RAILS_ROOT}/vendor/rails")
     end
-        
-    def app?
-      File.exist?("#{RAILS_ROOT}/lib/spree.rb")
-    end    
-        
-    def loaded_via_gem?
-      pick_boot.is_a? GemBoot
+
+    def preinitialize
+      load(preinitializer_path) if File.exist?(preinitializer_path)
+    end
+
+    def preinitializer_path
+      "#{RAILS_ROOT}/config/preinitializer.rb"
     end
   end
 
   class Boot
     def run
       load_initializer
-      Spree::Initializer.run(:set_load_path)
-    end
-    
-    def load_initializer
-      begin
-        require 'spree'      
-        require 'spree/initializer'
-      rescue LoadError => e
-        $stderr.puts %(Spree could not be initialized. #{load_error_message})
-        exit 1
-      end
+      Rails::Initializer.run(:set_load_path)
     end
   end
 
   class VendorBoot < Boot
     def load_initializer
-      $LOAD_PATH.unshift "#{RAILS_ROOT}/vendor/spree/lib" 
-      super
-    end
-    
-    def load_error_message
-      "Please verify that vendor/spree contains a complete copy of the Spree sources."
+      require "#{RAILS_ROOT}/vendor/rails/railties/lib/initializer"
+      Rails::Initializer.run(:install_gem_spec_stubs)
     end
   end
-  
-  class AppBoot < Boot
-    def load_initializer
-      $LOAD_PATH.unshift "#{RAILS_ROOT}/lib" 
-      super
-    end
-    
-    def load_error_message
-      "Please verify that you have a complete copy of the Spree sources."
-    end
-  end  
 
   class GemBoot < Boot
     def load_initializer
       self.class.load_rubygems
-      load_spree_gem
-      super
+      load_rails_gem
+      require 'initializer'
     end
 
-    def load_error_message
-      "Please reinstall the Spree gem with the command 'gem install spree'."
-    end
-
-    def load_spree_gem
+    def load_rails_gem
       if version = self.class.gem_version
-        gem 'spree', version
+        gem 'rails', version
       else
-        gem 'spree'
+        gem 'rails'
       end
     rescue Gem::LoadError => load_error
-      $stderr.puts %(Missing the Spree #{version} gem. Please `gem install -v=#{version} spree`, update your SPREE_GEM_VERSION setting in config/environment.rb for the Spree version you do have installed, or comment out SPREE_GEM_VERSION to use the latest version installed.)
+      $stderr.puts %(Missing the Rails #{version} gem. Please `gem install -v=#{version} rails`, update your RAILS_GEM_VERSION setting in config/environment.rb for the Rails version you do have installed, or comment out RAILS_GEM_VERSION to use the latest version installed.)
       exit 1
     end
 
@@ -114,10 +71,10 @@ module Spree
       end
 
       def gem_version
-        if defined? SPREE_GEM_VERSION
-          SPREE_GEM_VERSION
-        elsif ENV.include?('SPREE_GEM_VERSION')
-          ENV['SPREE_GEM_VERSION']
+        if defined? RAILS_GEM_VERSION
+          RAILS_GEM_VERSION
+        elsif ENV.include?('RAILS_GEM_VERSION')
+          ENV['RAILS_GEM_VERSION']
         else
           parse_gem_version(read_environment_rb)
         end
@@ -127,17 +84,17 @@ module Spree
         require 'rubygems'
 
         unless rubygems_version >= '0.9.4'
-          $stderr.puts %(Spree requires RubyGems >= 0.9.4 (you have #{rubygems_version}). Please `gem update --system` and try again.)
+          $stderr.puts %(Rails requires RubyGems >= 0.9.4 (you have #{rubygems_version}). Please `gem update --system` and try again.)
           exit 1
         end
 
       rescue LoadError
-        $stderr.puts %(Spree requires RubyGems >= 0.9.4. Please install RubyGems and try again: http://rubygems.rubyforge.org)
+        $stderr.puts %(Rails requires RubyGems >= 0.9.4. Please install RubyGems and try again: http://rubygems.rubyforge.org)
         exit 1
       end
 
       def parse_gem_version(text)
-        $1 if text =~ /^[^#]*SPREE_GEM_VERSION\s*=\s*'([!~<>=]*\s*[\d.]+)'/
+        $1 if text =~ /^[^#]*RAILS_GEM_VERSION\s*=\s*["']([!~<>=]*\s*[\d.]+)["']/
       end
 
       private
@@ -149,4 +106,4 @@ module Spree
 end
 
 # All that for this:
-Spree.boot!
+Rails.boot!

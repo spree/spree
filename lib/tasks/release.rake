@@ -33,6 +33,7 @@ namespace 'spree' do
     s.add_dependency 'rake', '>= 0.7.1'
     s.add_dependency 'has_many_polymorphs', '>= 2.12'
     s.add_dependency 'highline', '>=1.4.0'
+    s.add_dependency 'mini_magick', '>=1.2.3'
     s.autorequire = 'spree'
     s.has_rdoc = true
     #s.rdoc_options << '--title' << RDOC_TITLE << '--line-numbers' << '--main' << 'README'
