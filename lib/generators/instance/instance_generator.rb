@@ -83,10 +83,8 @@ class InstanceGenerator < Rails::Generator::Base
 
       # Instance Configurations
       m.file "instance_routes.rb", "config/routes.rb"
-      m.template "instance_environment.rb", "config/environment.rb", :assigns => {
-        :spree_environment => File.join(File.dirname(__FILE__), 'templates', spree_root("config/environment.rb"))
-      }
-      m.template "instance_boot.rb", "config/boot.rb"
+      m.file "../../../../config/environment.rb", "config/environment.rb"
+      m.file "../../../../config/boot.rb", "config/boot.rb"
       
       # Demo Configuration
       if options[:demo]
