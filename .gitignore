@@ -21,3 +21,4 @@ public/stylesheets/calendar_date_select
 spree_dev
 spree_test
 tmp
+vendor/rails
