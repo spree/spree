@@ -75,6 +75,20 @@ class Admin::ProductsController < Admin::BaseController
         @product.images << Image.new(params[:image])
       end
       
+      if params[:property_value]
+        @product.property_values.update params[:property_value].keys, params[:property_value].values
+      end
+
+      if params[:add_property_value]
+        logger.debug("ADD PRODUCT PROPERTY VALUE: #{params.inspect}")
+        params[:add_property_value].keys.each do |property_id|
+          next if params[:add_property_value][property_id][:value].empty?
+          PropertyValue.create( :product_id => @product.id,
+                                :property_id => property_id,
+                                :value => params[:add_property_value][property_id][:value] );
+        end
+      end
+
       @product.tax_treatments = TaxTreatment.find(params[:tax_treatments]) if params[:tax_treatments]
       @product.save
       
@@ -149,6 +163,53 @@ class Admin::ProductsController < Admin::BaseController
     render  :partial => 'variants', 
             :locals => {:product => @product},
             :layout => false    
+  end
+
+  #AJAX method
+  def edit_property_value
+    @property_value = PropertyValue.find(params[:id])
+    if params[:cancel]
+      render :text => @property_value.value
+    else
+      render ({ :partial => 'edit_property_value',
+                :locals => { :property_value => @property_value } })
+    end
+  end
+
+
+  #AJAX method
+  def remove_property_value
+    @property_value = PropertyValue.find(params[:id])
+    @product = @property_value.product
+    @property_value.destroy
+    render :partial => 'properties', :locals => { :product => @product }
+  end
+
+  #AJAX method
+  def add_property_value
+    @product = Product.find(params[:id])
+    @property_value = PropertyValue.new
+    render :partial => 'add_property_value', :locals => { :product => @product }
+  end
+
+  #AJAX method
+  def add_property_value_view
+    if !['all', 'prototype'].include?(params[:view])
+      flash.now[:error] = 'invalid property value view'
+      render :nothing => true
+      return
+    end
+    @product = Product.find(params[:id])
+    render({ :partial => "add_property_value_view_#{params[:view]}",
+             :locals => { :product => @product } })
+  end
+
+  #AJAX method
+  def add_property_value_view_prototype_list
+    @product = Product.find(params[:id])
+    @prototype = Prototype.find(params[:prototype_id])
+    render({ :partial => "add_property_value_view_prototype_list",
+             :locals => { :product => @product, :prototype => @prototype } })
   end
 
   protected

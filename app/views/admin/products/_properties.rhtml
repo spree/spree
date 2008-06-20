@@ -1,0 +1,36 @@
+<h2>Properties</h2>
+<table class="basic-table">
+  <thead>
+	<tr>
+	  <th>Property</th>
+	  <th>Value</th>
+	  <th>Actions</th>
+	</tr>
+  </thead>
+  <tbody>
+	<% @product.property_values.each do |pv| %>	
+	<tr>
+	  <td><%= pv.property.presentation %></td>
+	  <td id="<%= pv_tag_id(pv) %>"><%= pv.value %></td>
+	  <td>
+		<%= link_to_remote 'Edit', :url => { :action => 'edit_property_value', :id => pv.id }, :update => pv_tag_id(pv) %>
+		|
+		<%= link_to_remote 'Remove', :url => { :action => 'remove_property_value', :id => pv.id }, :update => 'property-listing' %>
+	  </td>
+	</tr>
+	<% end %> 
+  </tbody>
+</table>
+
+<% unless @product.new_record? %>
+<span id="add-property-value-link">
+  <%= link_to_remote 'Add Property', 
+                     :url => { :action => :add_property_value, :id => @product },
+					 :before => "Element.hide('add-property-value-link');Element.show('add-property-value-busy_indicator')", 
+					 :complete => "Element.hide('add-property-value-busy_indicator')",
+					 :update => 'add-property-value' %>
+</span>
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'add-property-value-busy_indicator' %>
+<% end %>
+
+<div id="add-property-value"></div>

@@ -1,0 +1,39 @@
+prop_manufacturer:
+  name: manufacturer
+  presentation: Manufacturer
+prop_brand:
+  name: brand
+  presentation: Brand
+prop_model:
+  name: model
+  presentation: Model
+prop_shirt_type:
+  name: shirt_type
+  presentation: Type
+prop_shirt_sleeve_type:
+  name: shirt_sleeve_length
+  presentation: Sleeve
+prop_shirt_fabric:
+  name: shirt_fabric
+  presentation: Fabric
+prop_shirt_fit:
+  name: shirt_fit
+  presentation: fit
+prop_gender:
+  name: gender
+  presentation: Gender
+prop_mug_type:
+  name: mug_type
+  presentation: Type
+prop_mug_size:
+  name: mug_size
+  presentation: Size
+prop_bag_type:
+  name: bag_type
+  presentation: Type
+prop_bag_material:
+  name: bag_material
+  presentation: Material
+prop_bag_size:
+  name: bag_size
+  presentation: Size

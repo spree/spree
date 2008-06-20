@@ -1,0 +1,60 @@
+<h2><% if @prototype.new_record? %>New<% else %>Edit<% end %> Product Prototype</h2>
+
+<%= error_messages_for :prototype %>
+
+<% remote_form_for :prototype, @prototype, 
+                   :url => { :action => :update, :id => @prototype },
+				   :update => 'edit-prototype',
+				   :success => "#{remote_function(:url => { :action => :list }, :update => 'prototype-list')}" do |f| %>
+
+  name: <%= f.text_field :name %> <br />
+  presentation: <%= f.text_field :presentation %>
+  <h3>Properties</h3>
+  <h4>Current</h4>
+
+  <table>
+	<thead>
+	<tr>
+	  <th>Name</th>
+	  <th>Presentation</th>
+	  <th>Remove</th>
+	</tr>
+	</thead>
+	<tbody class="limited-height">
+	  <% @prototype.properties.each do |prop| %>
+	  <tr>
+		<td><%= prop.name %></td>
+		<td><%= prop.presentation %></td>
+		<td><input type="checkbox" name="property[<%= prop.id %>]" value="remove" 
+                   <% if properties_to_remove.include?(prop.id) %>checked="checked"<% end %> ></td>
+	  </tr>
+	  <% end %>
+	</tbody>
+  </table>
+
+  <h4>New</h4>
+  <table>
+	<thead>
+	<tr>
+	  <th>Name</th>
+	  <th>Presentation</th>
+	  <th>Add</th>
+	  <th></th>
+	</tr>
+	</thead>
+	<tbody class="limited-height">
+	  <% properties = exclusive_properties(@prototype, Property.find(:all))
+	  properties.each do |prop| %>
+	  <tr>
+		<td><%= prop.name %></td>
+		<td><%= prop.presentation %></td>
+		<td><input type="checkbox" name="property[<%= prop.id %>]" value="add"
+                   <% if properties_to_add.include?(prop.id) %>checked="checked"<% end %> ></td>
+		<td>&nbsp;&nbsp;</td>
+	  </tr>
+	  <% end %>
+	</tbody>
+  </table>
+  <%= submit_tag 'Submit' %>
+  <%= cancel_button "Cancel", 'edit-prototype' %>
+<% end %>

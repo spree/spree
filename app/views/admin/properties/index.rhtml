@@ -1,0 +1,43 @@
+<%= render :partial => 'admin/products/menu' %>
+
+<h1>Product Properties</h1>
+<table>
+  <tr>
+    <th>Name</th>
+	<th>Presentation</th>
+  </tr>
+<% Property.find(:all).each do |prop|
+   @property = prop %>
+  <tr>
+    <td>
+	  <%= in_place_editor_field :property, :name %>
+	</td>
+    <td>
+	  <%= in_place_editor_field :property, :presentation %>
+	</td>
+    <td valign="top">
+      <%= link_to "Delete", 
+                     {:action => 'delete', :id => prop}, 
+                     {:confirm => "Are you sure you want to delete this property?"} -%>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<span id="new-property-link">
+  <%= link_to_remote "New Product Property", 
+                     :url => { :action => :new_property_form },
+					 :before => "Element.hide('new-property-link');Element.show('new-property-link-busy_indicator')", 
+					 :complete => "Element.hide('new-property-link-busy_indicator')",
+					 :update => 'new-property' %>
+
+</span>
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'new-property-link-busy_indicator' %>
+<div id='new-property'>
+<% if @new_property_error %>
+<script language="javascript">
+  Element.hide('new-property-link')
+</script>
+<%= render :partial => 'edit', :locals => { :property => @property } %>
+<% end %>
+</div>

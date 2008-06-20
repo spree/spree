@@ -1,0 +1,18 @@
+<h3>Add Property Value</h3>
+<div id='add-property-view-link'>
+  View by
+  <%= link_to_remote 'Prototypes',
+                     :url => { :action => :add_property_value_view, :id => @product, :view => 'prototype' },
+					 :before => "Element.show('add-property-link-busy_indicator')", 
+					 :complete => "Element.hide('add-property-link-busy_indicator')",
+					 :update => 'add-property-view' %>
+  |
+  <%= link_to_remote 'All Properties',
+                     :url => { :action => :add_property_value_view, :id => @product, :view => 'all' },
+					 :before => "Element.show('add-property-link-busy_indicator')", 
+					 :complete => "Element.hide('add-property-link-busy_indicator')",
+					 :update => 'add-property-view' %>
+</div>
+<div id='add-property-view'>
+  <%= render :partial => 'add_property_value_view_prototype', :locals => { :product => @product } %>
+</div>

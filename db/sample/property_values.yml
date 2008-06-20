@@ -1,0 +1,136 @@
+shirt_man_a:
+  product: ror_baseball_jersey
+  property: prop_manufacturer
+  value: Wilson
+shirt_man_b:
+  product: ror_jr_spaghetti
+  property: prop_manufacturer
+  value: Jerseys
+shirt_man_c:
+  product: ror_ringer
+  property: prop_manufacturer
+  value: Jerseys
+shirt_brand_a:
+  product: ror_baseball_jersey
+  property: prop_brand
+  value: Wannabe Sports
+shirt_brand_b:
+  product: ror_jr_spaghetti
+  property: prop_brand
+  value: Resilance
+shirt_brand_c:
+  product: ror_ringer
+  property: prop_brand
+  value: Conditioned
+shirt_model_a:
+  product: ror_baseball_jersey
+  property: prop_model
+  value: JK1002
+shirt_model_b:
+  product: ror_jr_spaghetti
+  property: prop_model
+  value: TL174
+shirt_model_c:
+  product: ror_ringer
+  property: prop_model
+  value: TL9002
+shirt_type_a:
+  product: ror_baseball_jersey
+  property: prop_shirt_type
+  value: Baseball Jersey
+shirt_type_b:
+  product: ror_jr_spaghetti
+  property: prop_shirt_type
+  value: Jr Spaghetti T
+shirt_type_c:
+  product: ror_ringer
+  property: prop_shirt_type
+  value: Ringer T
+shirt_sleeve_a:
+  product: ror_baseball_jersey
+  property: prop_shirt_sleeve_type
+  value: long
+shirt_sleeve_b:
+  product: ror_jr_spaghetti
+  property: prop_shirt_sleeve_type
+  value: none
+shirt_sleeve_c:
+  product: ror_ringer
+  property: prop_shirt_sleeve_type
+  value: short
+shirt_fab_a:
+  product: ror_baseball_jersey
+  property: prop_shirt_fabric
+  value: 100% Cotton
+shirt_fab_b:
+  product: ror_jr_spaghetti
+  property: prop_shirt_fabric
+  value: 90% Cotton, 10% Nylon
+shirt_fab_c:
+  product: ror_ringer
+  property: prop_shirt_fabric
+  value: 100% Vellum
+shirt_fit_a:
+  product: ror_baseball_jersey
+  property: prop_shirt_fit
+  value: loose
+shirt_fit_b:
+  product: ror_jr_spaghetti
+  property: prop_shirt_fit
+  value: form
+shirt_fit_c:
+  product: ror_ringer
+  property: prop_shirt_fit
+  value: loose
+shirt_gender_a:
+  product: ror_baseball_jersey
+  property: prop_gender
+  value: Men's
+shirt_gender_b:
+  product: ror_jr_spaghetti
+  property: prop_gender
+  value: Women's
+shirt_gender_c:
+  product: ror_ringer
+  property: prop_gender
+  value: Men's
+bag_type_a:
+  product: ror_tote
+  property: prop_bag_type
+  value: Tote
+bag_type_b:
+  product: ror_bag
+  property: prop_bag_type
+  value: Messenger
+bag_size_a:
+  product: ror_tote
+  property: prop_bag_size
+  value: 15" x 18" x 6"
+bag_size_b:
+  product: ror_bag
+  property: prop_bag_size
+  value: 14 1/2" x 12" x 5"
+bag_mats_a:
+  product: ror_tote
+  property: prop_bag_material
+  value: Canvas
+bag_mats_b:
+  product: ror_bag
+  property: prop_bag_material
+  value: 600 Denier Polyester
+mug_type_a:
+  product: ror_mug
+  property: prop_mug_type
+  value: Mug
+mug_type_b:
+  product: ror_stein
+  property: prop_mug_type
+  value: Stein
+mug_size_a:
+  product: ror_mug
+  property: prop_mug_size
+  value: 4.5" tall, 3.25" dia.
+mug_size_b:
+  product: ror_stein
+  property: prop_mug_size
+  value: 6.75" tall, 3.75" dia. base, 3" dia. rim
