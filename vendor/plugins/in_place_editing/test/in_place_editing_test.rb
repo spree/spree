@@ -20,8 +20,13 @@ class InPlaceEditingTest < Test::Unit::TestCase
       end
     end
     @controller = @controller.new
+    @protect_against_forgery = false
   end
-  
+
+   def protect_against_forgery? 
+     @protect_against_forgery 
+   end 
+
   def test_in_place_editor_external_control
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nnew Ajax.InPlaceEditor('some_input', 'http://www.example.com/inplace_edit', {externalControl:'blah'})\n//]]>\n</script>),
         in_place_editor('some_input', {:url => {:action => 'inplace_edit'}, :external_control => 'blah'})
@@ -59,11 +64,26 @@ class InPlaceEditingTest < Test::Unit::TestCase
       :load_text_url => { :action => "action_to_get_value" })
   end
   
-  def test_in_place_editor_eval_scripts
-    assert_match "Ajax.InPlaceEditor('id-goes-here', 'http://www.example.com/action_to_set_value', {evalScripts:true})",
+  def test_in_place_editor_html_response
+    assert_match "Ajax.InPlaceEditor('id-goes-here', 'http://www.example.com/action_to_set_value', {htmlResponse:false})",
     in_place_editor( 'id-goes-here', 
       :url => { :action => "action_to_set_value" }, 
       :script => true )
   end
-  
+ def form_authenticity_token 
+   "authenticity token" 
+ end 
+ 
+ def test_in_place_editor_with_forgery_protection 
+   @protect_against_forgery = true 
+   assert_match "Ajax.InPlaceEditor('id-goes-here', 'http://www.example.com/action_to_set_value', {callback:function(form) { return Form.serialize(form) + '&authenticity_token=' + encodeURIComponent('authenticity token') }})", 
+   in_place_editor( 'id-goes-here', :url => { :action => "action_to_set_value" }) 
+ end 
+   
+ def test_in_place_editor_text_between_controls 
+   assert_match "Ajax.InPlaceEditor('id-goes-here', 'http://www.example.com/action_to_set_value', {textBetweenControls:'or'})", 
+   in_place_editor( 'id-goes-here',  
+                    :url => { :action => "action_to_set_value" },  
+                    :text_between_controls => "or" ) 
+ end 
 end
