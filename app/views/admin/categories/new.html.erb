@@ -1,0 +1,8 @@
+<%= render :partial => 'admin/products/menu' %>
+
+<h1><%= :new_category.l("New category") %></h1>
+
+<% form_tag :action => 'new' do %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag :create.l("Create") %>
+<% end %>

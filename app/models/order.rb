@@ -1,4 +1,6 @@
 class Order < ActiveRecord::Base  
+  before_save :update_user_addresses
+  
   has_many :line_items
   has_many :inventory_units
   has_many :order_operations
@@ -85,4 +87,15 @@ class Order < ActiveRecord::Base
      :subtotal => order.item_total * 100}  
   end
 
+  protected
+  
+    def update_user_addresses 
+      return unless bill_address
+      new_addys = [bill_address]
+      new_addys << ship_address unless ship_address == bill_address
+      new_addys.each do |addy|
+        user.add_address addy unless user.addresses.include?(addy)         
+      end
+      user.save!
+    end
 end

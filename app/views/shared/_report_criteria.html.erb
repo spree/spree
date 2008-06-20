@@ -1,0 +1,31 @@
+<%= calendar_date_select_includes %>
+<td valign="top">
+  <% form_for :search do |f| %>
+  <div id="report-search">
+    <table class="admin-search">
+      <thead>
+        <tr>
+          <th colspan="2"><%= :date_range.l("Date Range") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= :start.l("Start") %>:</td>
+          <td>
+            <%= error_message_on :search, :start%>
+            <%= calendar_date_select :search, :start, :style=>"width:100px" %>
+          </td>
+	</tr>
+	<tr>
+	  <td><%= :stop.l("Stop") %>:</td>
+	  <td>
+	    <%= error_message_on :search, :stop%>
+	    <%= calendar_date_select :search, :stop, :style=>"width:100px" %>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+    <%=submit_tag :search.l("Search") %>
+  </div>
+  <% end %>
+</td>

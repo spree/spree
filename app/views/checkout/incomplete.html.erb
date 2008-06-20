@@ -1,0 +1,7 @@
+<h1><%= :problems_processing_order.l("We had problems processing your order") %></h1>
+<br/>
+<%= error_messages_for 'order' %>
+<%= error_messages_for 'txn' %>
+<br/>
+
+<%= link_to :try_again.l("Try Again"), :action => :final_confirmation %>

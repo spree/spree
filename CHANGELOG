@@ -1,3 +1,15 @@
+== 0.3.0
+
+* Initial support for initialization
+* Rails 2.1 support
+* #38 - Credit card numbers are being logged
+
+== 0.2.0 2008-06-05
+
+* Extension support.
+* Improved user/address model.
+* Improved payment gateway configuraiton.
+
 == 0.0.9 2008-04-23
 
 * Changed source code layout.  Spree now runs in stand alone, gem and application modes. 

@@ -1,0 +1,28 @@
+<h3>Available Option Types</h3>
+<table class="option-types">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Display</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @option_types.each do |ot| %>
+    <tr>
+      <td><%=ot.name%></td>
+      <td><%=ot.display%></td>
+      <td>
+	<%= link_to_remote :select.l("Select"),
+	                   :url => {:controller => 'products', :action => 'add_option_type', :id=> @product, :option_type_id => ot},
+	                   :update => 'option-type-listing' %>					
+      </td>
+    </tr>
+    <% end %>
+    <% if @option_types.empty? %>
+    <tr>
+      <td colspan="3"><%= :none_available.l %></td>
+    </tr>
+    <% end %>		
+  </tbody>
+</table>

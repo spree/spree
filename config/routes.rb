@@ -17,6 +17,8 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
+  map.resources :users
+  
   # spree mappings need to happen first
   map.root :controller => "store"
   map.connect '/login', :controller => 'account', :action => 'login'

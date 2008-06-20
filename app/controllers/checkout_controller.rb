@@ -1,5 +1,8 @@
 class CheckoutController < Spree::BaseController
+  before_filter :new_or_login
   before_filter :find_order, :except => [:index, :thank_you]
+  
+  filter_parameter_logging :creditcard, "number"
     
   def index
     find_cart
@@ -13,18 +16,11 @@ class CheckoutController < Spree::BaseController
   end
 
   def addresses
-    @user = User.new
+    @user = current_user ? current_user : User.new
     @states = State.find(:all, :order => 'name')
     @countries = Country.find(:all)
     
     if request.post?
-      #TODO - eventually we need to grab user out of session once we support user accounts for orders
-      @user = User.new(params[:user]) unless params[:user].empty?
-      @user.password = "changeme"
-      @user.password_confirmation = "changeme"
-      #TODO - eventually you will be able to configure type of account support, for now its just anonymous
-      @user.login = User.generate_login
-      
       @different_shipping = params[:different_shipping]
       @bill_address = Address.new(params[:bill_address])
       #if only one country available there will be no choice (and user will post nothing)
@@ -91,7 +87,8 @@ class CheckoutController < Spree::BaseController
       redirect_to :action => :thank_you, :id => @order.id and return
     else
       @order.ship_amount = calculate_shipping(@order)
-      @order.tax_amount = calculate_tax(@order)
+      # NOTE: calculate_tax method will be mixed in by the TaxCalculator extension
+      calculate_tax(@order)
     end
   end
   
@@ -140,6 +137,12 @@ class CheckoutController < Spree::BaseController
           @order
         end
       end
+      
+      def new_or_login
+        # create a new user (or login an existing one)
+        return if logged_in?
+        redirect_to new_user_url
+      end
 
       def finalize_order
         Order.transaction do
@@ -168,11 +171,5 @@ class CheckoutController < Spree::BaseController
         sm = (Order::ShipMethod.from_value order.ship_method).sub(/ /, '')
         sc = sm.constantize.new
         sc.shipping_cost(order)
-      end
-      
-      def calculate_tax(order)
-        # use the environment to specify the name of the tax calculator class a string
-        tc = TAX_CALCULATOR.constantize
-        tc.calc_tax(order)
       end
 end

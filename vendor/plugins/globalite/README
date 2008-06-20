@@ -1,0 +1,199 @@
+=Globalite
+
+
+Globalite is meant to be a breed of the best internationalization/localization plugins available for Rails. 
+
+Globalite should provide you with a 3-in-1 solution: 
+
+* Easy UI localization. 
+* Rails localization. (Localization of the core functions from rails)
+* Simple yet powerful solution for user content availability in multiple languages.
+
+On top of that:
+yml files are used for most of the localization, which makes Globalite a light and fast solution.
+The Locale is set on the user's session making Globalite a perfect solution for multilingual support.
+The developer can pass dynamic values to be used in the localization.
+
+
+==What's the difference between Globalite and the other existing l10n/i18n plugins?
+
+Gibberish is a nice plugin but it doesn't handle locales, you can't have your application in British English and American English. I also don't really like the syntax :p I based the UI localization of Globalite on Chris' work on Gibberish.
+
+Globalize is a great plugin but man, it's bloated... I would like to have something a bit lighter and easier to use. (less options, less setup time, less database usage). I decided to trim down Globalize to offer less options and fulfill the needs of most developers.
+
+Also, Globalite doesn't have the concept of a base language. Mainly because I think that's a bad idea. If you use English as your base language and you need to fix a string in English(you did a typo), you will break all the other translations. That's why Globalite uses localization keys only.
+
+
+
+==Usage
+
+===installation:
+
+	script/plugin install http://globalite.googlecode.com/svn/trunk/
+rename the vendor/plugins/trunk => vendor/plugins/globalite
+or from your vendor/plugins folder:
+	svn checkout http://globalite.googlecode.com/svn/trunk/ globalite
+
+===UI Localization:
+
+Create a lang folder at the root of your project. Add your localization files in the lang/ui folder if you want to localize your interface. 
+
+Declare the current locale or language in your environment.rb > 
+	Globalite.language = :fr
+	
+Localize a key in your view > 
+	:localization_key.l 
+or 
+	:localization_key.localize
+
+
+Easy, isn't?
+
+Advanced users can also do more:
+
+You can also pass an optional localization string only used if the localization is missing
+	:missing_localization_key.l("text used if the key is not localized yet")
+
+You can also pass values to the localization, and the translator can do whatever he wants with them:	
+	:welcome_user.l_with_args({:user => @user.name}) would render "Welcome Matt!"
+Note that variables can be used in any order the translator wants	
+
+	
+You can also use pluralization right in your translations:
+  geese_amount:  we have pluralize{{geese_count}, goose, geese} in the farm!
+  
+In your view do the following:
+  :geese_amount.l_with_args({:geese_count => @geese.count})
+  
+Note that the pluralization form of your string is optional, you could use a translation like that too:
+  cow_amount:  we have pluralize{{count}, cow} in the farm!
+
+By pushing the pluralization to the translator, I  believe we offer more flexibility so the translation can be smoother.
+This solution was inspired by a discussion with Ivan:
+"It's very difficult to just translate "prohibited this" and "from being saved" to Chinese, cause the resulting sentence will look like a machine translated one without making much sense. Not to mention Chinese handles pluralization differently, we pretty much don't have it. For example, we'll use the same word for "person" and "people", no difference. So to me, it makes sense just to replace the whole thing with one simple header message that says "Invalid attributes!" in Chinese."
+
+
+===Rails Localization:
+
+Localize a time object by using a predefined format (defined in the date_helper_time_formats variable that you can find  in globalite/lang/rails/[lang].yml)
+
+	Globalite.language = :fr
+	Time.now.l(:long)  
+
+Localize a date object by using a predefined format (defined in the date_helper_date_formats variable that you can find  in globalite/lang/rails/[lang].yml)
+	
+	Date.today.l
+
+In your views, create a select box with a list of all countries(listed in the locale language):
+	country_options_for_select	
+
+In your views, create a select box with a list of all the months(listed in the locale language) with the current month selected:
+	select_month(Time.now)
+	
+In your views, create a set of html select-tags (one for year, month, day, hour, and minute):
+	select_datetime
+	
+In your views, create a set of html select-tags (one for year, month, and day):
+	select_date
+	
+Get a number returned in currency, for instance if the locale was set to 'fr' the returned value would be 123,00 € but if the locale was set to 'en-US' it would return $123.00
+	number_to_currency(123)	
+
+Get a distance of time in words localized.
+	distance_of_time_in_words(10.minutes.ago, Time.now)
+
+Active record errors are automatically rendered in the locale language
+
+==Localize field names in validator messages
+
+By default, here is the normal validation behavior:
+
+Name cannot be empty (en)
+Name nie może być puste(y,a) (pl)
+
+However, Name should be replaced with 'Nazwa' in polish.
+
+Consider the following example:
+
+validates_presence_of :name, :email, :age
+
+GlobaLite will try to use your yml language files entries using the following localization keys: name:, email:, age:.
+Globalite will also try to replace model name from validation messages with localized version from yml file, i.e. the message below:
+
+8 errors prohibited this user from being saved
+                         ^^^^
+
+will be localized and 'user' will be replaced if 'user' key exists in yml language file.
+
+If the plugin can't find any localizations, the original field name will be used.
+You can get rid of field name in custom validation message with :message attribute.
+
+validates_uniqueness_of :name, :message => '^my message'
+
+
+====Notes
+
+Check on the tests in the spec folder for more examples. There's also a demo app available: http://globalite.googlecode.com/svn/sample/ui/
+
+==FAQ:
+
+===Why did you call your plugin 'Globalite'? 
+
+Globalize was already taken ;) More seriously, I was looking for a i18n/l10n solution for a project I was working on, after few hours testing Globalize, Josh http://joshknowles.com, Matt http://heidmotron.com/ and I http://railsontherun.com saw it wouldn't work for us. Since we only had the choice between very simple solutions and a complicated solution, I decided to make a "lite" version of Globalize ;)
+
+==TODO:
+
+- Model i18n/l10n
+
+
+===Internationalization, Localization, Locale:
+
+Internationalization refers to the process of modifying an application’s design so that it can support 
+locale differences like text orientation, currency, date and time format, sorting, and so forth. This can be done 
+by externalizing text strings into files or a database, and by developing currency and date formatting utilities. 
+
+Localization means adapting an application to a specific language or locale; for example, by translating 
+text into multiple languages. A locale is identified by the user’s language and country, and specifies how, for 
+example, numbers, currencies, and dates are displayed on the screen. The code for the US English locale is 
+en-US. Locales are specified by RFC 3066 and consist of two parts. The first is an ISO 639 language code and 
+uses lowercase letters. The second is usually an ISO 3166 country code in uppercase letters.
+[from Ruby on Rails Commerce (Hellsten, Laine)]
+
+===CREDITS:
+
+Some code was very influenced from different projects such as:
+
+* Gibberish http://require.errtheblog.com/plugins/browser/gibberish written by Chris Wanstrath (http://errtheblog.com)
+* Globalize http://www.globalize-rails.org written by too many people to list them here ;)
+* LocalizationSimplified (L10n-simplified) written By Jesper Ronn-Jensen ( http://justaddwater.dk/ )
+
+
+===Author:
+
+Matt Aimonetti  http://railsontherun.com  mattaimonetti AT gmail DOT com
+
+
+===Contributors:
+
+Ivan Chang yuanhueichang AT gmail_DOT_com ( Chinese translation, help on the ActiveRecord msg error i18n/l10n)
+Ralph von Der Heyden ralph AT rvdh_DOT_de (German translation)
+jiman.ryu AT gmail http://jasonpa.tistory.com/ (bug fix)
+Guillaume Belleguic guillaume.belleguic AT oceans DOT eu (Model error handling)
+Marcus Derencius derencius AT gmail_dot_com (Brazilian Portuguese translation)
+MrPrise (Hungarian localization)
+Koen Punt (Dutch localization)
+Mariano Ayesa (Spanish Spain and Argentina localization)
+jyrkij http://github.com/jyrkij (Finnish)
+Ilke Akdeniz (Turkish)
+Dejan Dimic (Serbian)
+
+your name here if you submit a patch :)
+
+
+===More info:
+
+http://code.google.com/p/globalite/
+
+http://railsontherun.com/globalite
+
+Sample app: http://globalite.googlecode.com/svn/sample/ui/

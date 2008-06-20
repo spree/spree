@@ -1,0 +1,10 @@
+<table>
+  <tr>
+    <td>State: </td>
+    <td><%= collection_select(:tax_rate, :state_id, @available_states, :id, :name) %></td>
+  </tr>
+  <tr>
+    <td>Rate: </td>
+    <td><%= f.text_field :rate %></td>
+  </tr>
+</table>

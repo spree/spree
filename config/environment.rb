@@ -24,6 +24,7 @@ Spree::Initializer.run do |config|
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
+  # config.plugins = %W(active_merchant acts_as_list acts_as_tree attachment_fu calendar_date_select enumerable_constants in_place_editing resource_controller rspec rspec_on_rails globalite)
   
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
@@ -57,7 +58,6 @@ Spree::Initializer.run do |config|
   
 end
 
-require 'active_merchant'
 require 'has_many_polymorphs'
 require 'mini_magick'
 
@@ -78,7 +78,6 @@ require 'mini_magick'
 
 # Spree Configuration
 SESSION_KEY = '_spree_session_id'
-TAX_CALCULATOR = "SalesTax" # feel free to replace with a custom tax calculator class
 SHIPPING_METHODS = [:flat_rate]
 FLAT_SHIPPING_RATE = 10 # applies only to the flat rate shipping option
 ORDER_FROM = "orders@example.com"
@@ -112,32 +111,3 @@ AVAILABLE_OPERATIONS = {
 }
 
 INVENTORY_STATES = [:on_hand, :sold, :shipped, :back_ordered]
-
-# Ignored unless using the SalesTax calculator
-SALES_TAX_RATES = {:NY => 0.08375}
-
-# $$$$$$$$$$ Payment Gateway Settings $$$$$$$$$$ 
-# 
-# Uncomment the section below depending on the payment gateway you wish to use.  
-# The BogusGateway is a special gateway for testing that automatically approves 
-# all requests.  The other gateways are supplied by ActiveMerchant and will 
-# automatically be set to test mode when RAILS_ENV is development or test.
-#
-# ================================================================================
-# BOGUS 
-# 
-# NOTE: Only works with specific card numbers.  See source code for details.
-# ================================================================================ 
-PAYMENT_GATEWAY = "Spree::BogusGateway"
-GATEWAY_OPTIONS = {}
-#
-# ================================================================================
-# LINKPOINT 
-# 
-# NOTE: Requires the PEM file provided by Linkpoint 
-# ================================================================================ 
-#PAYMENT_GATEWAY = "ActiveMerchant::Billing::LinkpointGateway"
-#GATEWAY_OPTIONS = {:login => "1909543518"}
-#ActiveMerchant::Billing::LinkpointGateway.pem_file = File.read( File.dirname(__FILE__) + '/../1909543518.pem' ) # Required for LinkPoint
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-

@@ -1,0 +1,23 @@
+<%= render :partial => 'admin/products/menu' %>
+
+<h1><%= :listing_option_types.l("Listing Option Types") %></h1>
+<table>
+  <tr>
+    <td><b><%= :name.l %></b></td>
+    <td/>
+  </tr>
+<% @option_types.each do |ot| %>
+  <tr>
+    <td valign="top"><%= ot.name -%></td>
+    <td valign="top">
+      <%= link_to :edit.l, :action => 'edit', :id => ot -%>
+      <%= link_to :delete.l, 
+                     {:action => 'destroy', :id => ot}, 
+                     {:confirm => :are_you_sure_option_type.l("Are you sure you want to delete this option type?")} -%>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<br/><br/>
+<%= link_to :add_option_type.l("Add Option Type"), :action => 'new' -%>

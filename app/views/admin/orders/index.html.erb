@@ -1,0 +1,99 @@
+<%= calendar_date_select_includes %>
+<h1><%= :listing_orders.l("Listing orders") %></h1>
+<table>
+  <tr>
+    <td valign="top">
+      <div id="order-summary">
+        <table class="admin-report" width="545">
+          <thead>
+            <tr>
+              <th><%= :order_date.l("Order Date") %></th>
+              <th><%= :number.l("Number") %></th>
+              <th><%= :status.l("Status") %></th>
+              <th><%= :customer.l("Customer") %></th>
+              <th><%= :total.l("Total") %></th>
+              <th><%= :action.l("Action") %></th>
+            </tr>
+          </thead>
+          <tbody>
+          <% for order in @orders%>
+            <tr class="<%= cycle('even', 'odd') %>">
+              <td><%=order.created_at.to_date%></td>
+              <td><%= link_to order.number, {:action => 'show', :id => order} %></td>
+              <td><%=Order::Status.from_value order.status%></td>
+              <td><%=order.bill_address.full_name%></td>
+              <td><%=number_to_currency order.total%></td>
+              <td>
+                <% action_links(order).each do |a| %>
+                  <%= link_to a.to_s.humanize.titleize, :action => a, :id => order -%>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </td>
+    <td valign="top">
+      <% form_for :search do |f| %>
+        <div id="search-col">
+          <table class="admin-search">
+            <thead>
+              <tr>
+                <th colspan="2"><%= :date_range.l("Date Range") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+              </tr>
+                <td><%= :start.l("Start") %>:</td>
+                <td>
+                  <%= error_message_on :search, :start%>
+                  <%= calendar_date_select :search, :start, :style=>"width:100px" %>
+                </td>
+              </tr>
+              <tr>
+                <td>Stop:</td>
+                <td>
+                  <%= error_message_on :search, :stop%>
+                  <%= calendar_date_select :search, :stop, :style=>"width:100px" %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="admin-search">
+            <thead>
+              <tr>
+                <th colspan="2"><%= :order_details.l("Order Details") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><%= :order_number.l("Order #") %></td>
+                <td>
+                  <%= f.text_field :order_num, :size=>15 %>
+                </td>
+              </tr>
+              <tr>
+                <td><%= :status.l("Status") %></td>
+                <td>
+                  <%= f.collection_select :status, @status_options, :id, :title, {:include_blank => true}, {:style => "width:100%"}%>
+                </td>
+              </tr>
+              <tr>
+                <td><%= :customer.l("Customer") %></td>
+                <td>
+                  <%= f.text_field :customer, :size=>15 %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <%=submit_tag :search.l("Search") %>
+        </div>
+      <% end %>
+    </td>
+  </tr>
+</table>
+<%= render :partial => 'shared/paginate', :locals => {:collection => @orders, :options => search_options} unless @orders.empty? -%>
+
+

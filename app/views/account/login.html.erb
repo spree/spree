@@ -1,0 +1,14 @@
+<% form_tag do -%>
+<p><label for="login"><%= :login_name.l("Login") %></label><br/>
+<%= text_field_tag 'login' %></p>
+
+<p><label for="password"><%= :password.l("Password") %></label><br/>
+<%= password_field_tag 'password' %></p>
+
+<p>
+  <%= check_box_tag 'remember_me' %>
+  <label for="remember_me"><%= :remember_me.l("Remember me") %></label>
+</p>
+
+<p><%= submit_tag :log_in.l("Log In") %></p>
+<% end -%>

@@ -1,0 +1,161 @@
+account: Konto
+action: Aktion
+add_category: Kategorie hinzufügen 
+add_option_type: Option hinzufügen
+address_information: Adres Information
+add_to_cart: In den Warenkorb
+adjustment: Anpassung
+administration: Verwaltung
+amount: Summe
+are_you_sure_category: Are you sure you want to delete this category?
+are_you_sure_delete_image: Are you sure you want to delete this image?
+are_you_sure_option_type: Are you sure you want to delete this option type?
+back: Zurück
+back_to_store: Zurück zum shop
+bill_address: Rechnungsaddresse
+billing_address: Rechnungsaddresse
+cancel: Verwerfen
+card_code: CVV Code
+card_number: Karten Nummer
+cart: Warenkorb
+categories: Kategorien
+category: Kategorie
+change: wechseln
+change_language: Sprache wechseln
+checkout: Zur Kasse
+city: Stadt
+comp_order: Bestellung Abbrechen
+confirm: Bestätigen
+confirm_password: Passwort Bestätigen
+continue_shopping: Weiter Einkaufen
+continue_shopping: Weiter Einkaufen
+country: Land
+create: Einfügen
+current: Stand
+customer: Kunde
+date: Datum
+date_range: Datum (von/bis)
+delete: Löschen
+description: Beschreibung
+description: Beschreibung
+destroy: Entfernen
+display: Anzeigen
+edit: Bearbeiten
+editing_category: Kategorie Bearbeiten
+editing_option_types: Option Bearbeiten
+editing_user: Benutzer Bearbeiten
+email_address: Email Addresse
+email: Email
+empty_cart: Warenkorb Leeren
+english: #TODO
+error: Fehler
+expiration_month: Gültig bis (Monat)
+expiration_year: Gültig bis (Jahr)
+extension: Erweiterung
+extensions: Erweiterungen
+filename: Dateiname
+final_confirmation: End Bestätigung
+first_name: Vorname
+german: #TODO
+hello_user: Hallo User
+image: Bild
+images: Bilder
+inventory_adjustment: Lager Anpassung
+inventory: Lager
+item_description: Artikelbeschreibung
+item: Artikel
+item_total: Artikel Gesamt
+last_name: Nachname
+listing_categories: Kategorien
+listing_option_types: Optionen
+listing_orders: Bestellungen
+listing_reports: Berichte
+listing_users: Benutzer
+logged_in_as: Angemldet unter
+log_in: Anmelden
+login: Anmelden
+login_name: Benutzer
+logout: Abmelden
+master_price: Grundpreis
+my_account: mein Konto
+name: Name
+new_category: Neute Kategorie
+new_image: Neues Bild
+new_option_type: Neue Option
+new_option_value: Neuer Optionswert
+new_user: Neuer Benutzer
+new_variant: New Variant
+next: weiter
+no_items_in_cart: 
+none_available: None Available
+number: Nummer
+on_hand: Auf Lager
+operation: Operation
+options: Optionen
+option_types: Optionen
+option_Values: Options Werte
+order_confirmation_note: 
+order_date: Bestelldatum
+order_details: Bestellung Details
+order_number: "Bestellung #"
+order: Bestellung
+order_processed_successfully: Ihre Bestellung wurde erfolgreich bearbeitet
+orders: Bestellungen
+order_total: Gesamtsumme
+or: oder
+overview: Übersicht
+parent_category: Unterkategorie von
+password: Passwort
+payment: Zahlung
+phone: Telefon
+presentation: Anzeige
+previous: zurück
+price: Preis
+problems_processing_order: Ihre Bestellung konnte nicht bearbetet werden
+process: Abschicken
+product: Produkt
+products: Produkte
+qty: Anz
+remember_me: Details auf diesem Komputer speichern
+reports: Berichte
+resend: Resend
+response_code: Response Code
+sales_total: Verkauf Gesamt
+sales_totals: Gesamt Verkaufszahlen
+search: Suchen
+select: Select
+ship_address: Lieferaddresse
+shipping_address: Lieferaddresse
+shipping_method: Liefermethode
+shipping: Lieferung
+shipping_total: Lieferkosten Gesamt
+shopping_cart: Warenkorb
+sign_up: Sign up
+sku: SKU
+spanish: #TODO
+start: Von
+state: Bundesland
+status: Status
+stop: Bis
+store: Store
+street_address_2: Straße (Feld 2)
+street_address: Straße
+subtotal: Zwischensumme
+tax: MwSt.
+tax_total: MwSt. Gesamt
+time: Zeit
+total: Gesamt
+transaction: Transaktion
+try_again: Try Again
+type: Typ
+update: Speichern
+use_different_shipping_address: Andere Lieferaddresse verwenden
+users: Benutzer
+user: Benutzer
+variants: Varianten
+version: Version
+website: Webseite
+welcome_to_sample_store: Willkommen im Beispiel Shop
+what_is_a_cvv: Was ist der (CVV) Kredit Karten Code?
+what_is_this: Was ist das?
+zip: PLZ

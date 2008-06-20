@@ -1,0 +1,16 @@
+<!--[form:option]-->
+<p>
+  <%=error_message_on :option_type, :name%>  
+  <%= :name.l("Name") %>: <%= text_field 'option_type', 'name' -%>
+</p>
+<p>
+  <%= :presentation.l("Presentation") %>: <%= text_field 'option_type', 'presentation' -%>
+</p>
+
+<br/>
+<div id="option-value-listing">
+  <%= render :partial => 'option_values', :locals => {:option_type => @option_type} -%>
+</div>
+<br/>
+
+<!--[eoform:option]-->

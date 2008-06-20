@@ -1,0 +1,11 @@
+<h3><%= :new_variant.l("New Variant") %></h3>
+<table>
+  <% @product.selected_options.each do |so| %>
+  <tr>
+    <td><%=so.option_type.presentation%></td>
+    <td>
+      <%= option_type_select so %>
+    </td>
+  </tr>
+  <% end %>
+</table>

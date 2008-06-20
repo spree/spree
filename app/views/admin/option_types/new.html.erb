@@ -1,0 +1,8 @@
+<%= render :partial => 'admin/products/menu' %>
+
+<h1><%= :new_option_type.l("New Option Type") %></h1>
+<br/>
+<% form_tag( {:action => 'new' }) do %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag :create.l %>
+<% end %>

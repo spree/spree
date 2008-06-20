@@ -1,0 +1,23 @@
+<h1><%= :extensions.l("Extensions") %></h1>
+
+<table id="extensions" class="full-table" width="800px">
+  <thead>
+    <tr>
+      <th class="extension"><%= :extension.l("Extension") %></th>
+      <th class="website"><%= :website.l("Website") %></th>
+      <th class="version"><%= :version.l("Version") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for extension in @extensions -%>
+    <tr class="node level-1">
+      <td class="extension">
+	<h4><%=h extension.extension_name %></h4>
+	<p><%=h extension.description %></p>
+      </td>
+      <td class="website"><%= link_to :website.l("Website"), extension.url, :target => "_blank" unless extension.url.blank? %></td>
+      <td class="version"><%=h extension.version %></td>
+    </tr>
+    <% end -%>
+  </tbody>
+</table>

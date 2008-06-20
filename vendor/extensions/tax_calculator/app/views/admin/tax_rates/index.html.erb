@@ -1,0 +1,26 @@
+<h1>Tax Rates</h1>
+<table class="admin-report" width="545">
+  <thead>
+    <tr>
+      <th>State</th>
+      <th>Rate</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tax_rates.each do |tax_rate| %>
+      <tr class="<%= cycle('even', 'odd') %>">
+        <td><%=tax_rate.state.name %></td>
+        <td><%=tax_rate.rate %></td>
+        <td>
+          <%=link_to "Edit", edit_object_url(tax_rate) %> |
+          <%=link_to "Delete", object_url(tax_rate), :method => :delete %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @tax_rates.empty? %>
+      <tr><td colspan="2">None.</td></tr>
+    <% end %>
+  </tbody>
+</table>
+<%= link_to "New Tax Rate", new_object_url %>

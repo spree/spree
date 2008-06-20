@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Globalite::L10n</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Globalite::L10n</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/globalite/l10n_rb.html">
+                lib/globalite/l10n.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000025">add_localization_source</a>&nbsp;&nbsp;
+      <a href="#M000032">add_reserved_key</a>&nbsp;&nbsp;
+      <a href="#M000033">add_reserved_keys</a>&nbsp;&nbsp;
+      <a href="#M000014">countries</a>&nbsp;&nbsp;
+      <a href="#M000019">country</a>&nbsp;&nbsp;
+      <a href="#M000018">current_country</a>&nbsp;&nbsp;
+      <a href="#M000023">current_country=</a>&nbsp;&nbsp;
+      <a href="#M000016">current_language</a>&nbsp;&nbsp;
+      <a href="#M000022">current_language=</a>&nbsp;&nbsp;
+      <a href="#M000020">current_locale</a>&nbsp;&nbsp;
+      <a href="#M000024">current_locale=</a>&nbsp;&nbsp;
+      <a href="#M000013">default_language</a>&nbsp;&nbsp;
+      <a href="#M000038">interpolate_string</a>&nbsp;&nbsp;
+      <a href="#M000031">l_with_args</a>&nbsp;&nbsp;
+      <a href="#M000017">language</a>&nbsp;&nbsp;
+      <a href="#M000012">languages</a>&nbsp;&nbsp;
+      <a href="#M000035">load_localization!</a>&nbsp;&nbsp;
+      <a href="#M000029">loc</a>&nbsp;&nbsp;
+      <a href="#M000021">locale</a>&nbsp;&nbsp;
+      <a href="#M000015">locales</a>&nbsp;&nbsp;
+      <a href="#M000026">localization_sources</a>&nbsp;&nbsp;
+      <a href="#M000027">localizations</a>&nbsp;&nbsp;
+      <a href="#M000028">localize</a>&nbsp;&nbsp;
+      <a href="#M000030">localize_with_args</a>&nbsp;&nbsp;
+      <a href="#M000037">rails_localization_files</a>&nbsp;&nbsp;
+      <a href="#M000034">reset_l10n_data</a>&nbsp;&nbsp;
+      <a href="#M000036">ui_localization_files</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">default_language</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000025" class="method-detail">
+        <a name="M000025"></a>
+
+        <div class="method-heading">
+          <a href="#M000025" class="method-signature">
+          <span class="method-name">add_localization_source</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000025-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000025-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 107</span>
+107:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_localization_source</span>(<span class="ruby-identifier">path</span>)
+108:       <span class="ruby-ivar">@@localization_sources</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">path</span>
+109:       <span class="ruby-identifier">load_localization!</span>
+110:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000032" class="method-detail">
+        <a name="M000032"></a>
+
+        <div class="method-heading">
+          <a href="#M000032" class="method-signature">
+          <span class="method-name">add_reserved_key</span><span class="method-args">(*key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000032-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000032-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 141</span>
+141:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_reserved_key</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)
+142:       (<span class="ruby-ivar">@@reserved_keys</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">key</span>.<span class="ruby-identifier">flatten</span>).<span class="ruby-identifier">uniq!</span>
+143:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000033" class="method-detail">
+        <a name="M000033"></a>
+
+        <div class="method-heading">
+          <span class="method-name">add_reserved_keys</span><span class="method-args">(*key)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="L10n.html#M000032">add_reserved_key</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000014" class="method-detail">
+        <a name="M000014"></a>
+
+        <div class="method-heading">
+          <a href="#M000014" class="method-signature">
+          <span class="method-name">countries</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000014-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 23</span>
+23:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">countries</span>
+24:       <span class="ruby-ivar">@@countries</span>
+25:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000019" class="method-detail">
+        <a name="M000019"></a>
+
+        <div class="method-heading">
+          <span class="method-name">country</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="L10n.html#M000018">current_country</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000018" class="method-detail">
+        <a name="M000018"></a>
+
+        <div class="method-heading">
+          <a href="#M000018" class="method-signature">
+          <span class="method-name">current_country</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000018-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000018-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 39</span>
+39:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_country</span>
+40:       <span class="ruby-ivar">@@current_country</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">default_country</span>
+41:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000023" class="method-detail">
+        <a name="M000023"></a>
+
+        <div class="method-heading">
+          <a href="#M000023" class="method-signature">
+          <span class="method-name">current_country=</span><span class="method-args">(country)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the current <a href="L10n.html#M000019">country</a> code (ISO 3166 <a
+href="L10n.html#M000019">country</a> code in uppercase letters) Usage:
+Globalite.current_country = &#8216;US&#8217; or Globalite.current_country =
+:fr Will store the current <a href="L10n.html#M000019">country</a> code if
+supported Will try to automatically find the <a
+href="L10n.html#M000017">language</a> for your <a
+href="L10n.html#M000019">country</a> If the <a
+href="L10n.html#M000019">country</a> isn&#8216;t unknown from the system,
+the <a href="L10n.html#M000019">country</a> will be set as :*
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000023-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000023-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 78</span>
+ 78:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_country=</span>(<span class="ruby-identifier">country</span>)
+ 79:       <span class="ruby-identifier">load_localization!</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-constant">RAILS_ENV</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">RAILS_ENV</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'development'</span>
+ 80:       <span class="ruby-identifier">country</span> = <span class="ruby-identifier">country</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">upcase</span>.<span class="ruby-identifier">to_sym</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">country</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Symbol</span>
+ 81:       <span class="ruby-identifier">country</span> = <span class="ruby-identifier">country</span>.<span class="ruby-identifier">upcase</span>.<span class="ruby-identifier">to_sym</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">country</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">==</span> <span class="ruby-constant">String</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">country</span>.<span class="ruby-identifier">empty?</span>
+ 82: 
+ 83:       <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@@locales</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-node">&quot;#{current_language}-#{country}&quot;</span>.<span class="ruby-identifier">to_sym</span>)
+ 84:         <span class="ruby-ivar">@@current_country</span> = <span class="ruby-identifier">country</span>
+ 85:       <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">locales</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">locale</span><span class="ruby-operator">|</span> <span class="ruby-identifier">locale</span> <span class="ruby-operator">=~</span> <span class="ruby-node">/[a-z][a-z]-#{country.to_s}/</span> }
+ 86:         <span class="ruby-identifier">locales</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span> 
+ 87:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">country</span>.<span class="ruby-identifier">to_s</span>)  
+ 88:             <span class="ruby-ivar">@new_language</span> = <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'-'</span>)[<span class="ruby-value">0</span>].<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">to_sym</span>
+ 89:           <span class="ruby-keyword kw">end</span>
+ 90:         <span class="ruby-keyword kw">end</span>
+ 91:         <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@new_language</span>
+ 92:           <span class="ruby-ivar">@@current_language</span> = <span class="ruby-ivar">@new_language</span> 
+ 93:           <span class="ruby-ivar">@@current_country</span> = <span class="ruby-identifier">country</span> 
+ 94:         <span class="ruby-keyword kw">end</span>
+ 95:       <span class="ruby-keyword kw">else</span>  
+ 96:         <span class="ruby-ivar">@@current_country</span> = <span class="ruby-identifier">:*</span>
+ 97:       <span class="ruby-keyword kw">end</span>
+ 98:       <span class="ruby-constant">Locale</span>.<span class="ruby-identifier">update_session_locale</span>
+ 99:       <span class="ruby-ivar">@@current_country</span>
+100:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000016" class="method-detail">
+        <a name="M000016"></a>
+
+        <div class="method-heading">
+          <a href="#M000016" class="method-signature">
+          <span class="method-name">current_language</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000016-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000016-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 33</span>
+33:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_language</span>
+34:       <span class="ruby-ivar">@@current_language</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">default_language</span>
+35:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000022" class="method-detail">
+        <a name="M000022"></a>
+
+        <div class="method-heading">
+          <a href="#M000022" class="method-signature">
+          <span class="method-name">current_language=</span><span class="method-args">(language)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the current <a href="L10n.html#M000017">language</a> ( ISO 639-1 <a
+href="L10n.html#M000017">language</a> code in lowercase letters) Usage:
+Globalite.current_language = &#8216;fr&#8217; or Globalite.current_language
+= :Fr Will save the current <a href="L10n.html#M000017">language</a> code
+if available, otherwise nada, switching back to the previous <a
+href="L10n.html#M000017">language</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000022-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000022-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 54</span>
+54:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_language=</span>(<span class="ruby-identifier">language</span>)
+55:       
+56:       <span class="ruby-identifier">language</span> = <span class="ruby-identifier">language</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">to_sym</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">language</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Symbol</span>
+57:       <span class="ruby-identifier">language</span> = <span class="ruby-identifier">language</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">to_sym</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">language</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">==</span> <span class="ruby-constant">String</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">language</span>.<span class="ruby-identifier">empty?</span>
+58: 
+59:       <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@@languages</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">language</span>)
+60:         <span class="ruby-ivar">@@current_language</span> = <span class="ruby-identifier">language</span>
+61:         <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@@locales</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-node">&quot;#{language}-#{@@current_country}&quot;</span>.<span class="ruby-identifier">to_sym</span>)
+62:           <span class="ruby-ivar">@@current_country</span> = <span class="ruby-identifier">:*</span>
+63:         <span class="ruby-keyword kw">end</span>
+64:       <span class="ruby-keyword kw">end</span>
+65:       
+66:       <span class="ruby-constant">Locale</span>.<span class="ruby-identifier">update_session_locale</span>
+67:       <span class="ruby-identifier">localize_rails</span>
+68:       <span class="ruby-ivar">@@current_language</span>
+69:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000020" class="method-detail">
+        <a name="M000020"></a>
+
+        <div class="method-heading">
+          <a href="#M000020" class="method-signature">
+          <span class="method-name">current_locale</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000020-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000020-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 44</span>
+44:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_locale</span>
+45:       <span class="ruby-node">&quot;#{current_language}-#{current_country}&quot;</span>.<span class="ruby-identifier">to_sym</span>
+46:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000024" class="method-detail">
+        <a name="M000024"></a>
+
+        <div class="method-heading">
+          <a href="#M000024" class="method-signature">
+          <span class="method-name">current_locale=</span><span class="method-args">(locale)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000024-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000024-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 102</span>
+102:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_locale=</span>(<span class="ruby-identifier">locale</span>)
+103:       <span class="ruby-constant">Locale</span>.<span class="ruby-identifier">set_code</span>(<span class="ruby-identifier">locale</span>)
+104:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000013" class="method-detail">
+        <a name="M000013"></a>
+
+        <div class="method-heading">
+          <a href="#M000013" class="method-signature">
+          <span class="method-name">default_language</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000013-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000013-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 18</span>
+18:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">default_language</span>
+19:       <span class="ruby-ivar">@@default_language</span>
+20:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000031" class="method-detail">
+        <a name="M000031"></a>
+
+        <div class="method-heading">
+          <span class="method-name">l_with_args</span><span class="method-args">(key, args={})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="L10n.html#M000030">localize_with_args</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000017" class="method-detail">
+        <a name="M000017"></a>
+
+        <div class="method-heading">
+          <span class="method-name">language</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="L10n.html#M000016">current_language</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000012" class="method-detail">
+        <a name="M000012"></a>
+
+        <div class="method-heading">
+          <a href="#M000012" class="method-signature">
+          <span class="method-name">languages</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000012-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000012-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 14</span>
+14:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">languages</span>
+15:       <span class="ruby-ivar">@@languages</span>
+16:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000035" class="method-detail">
+        <a name="M000035"></a>
+
+        <div class="method-heading">
+          <a href="#M000035" class="method-signature">
+          <span class="method-name">load_localization!</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Loads ALL the UI localization in memory, I might want to refactor this
+later on. (can be hard on the memory if you load 25 <a
+href="L10n.html#M000012">languages</a> with 900 strings in each)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000035-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000035-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 154</span>
+154:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_localization!</span>
+155:       <span class="ruby-identifier">reset_l10n_data</span>
+156:       
+157:       <span class="ruby-comment cmt"># Load the rails localization</span>
+158:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rails_localization_files</span>
+159:         <span class="ruby-identifier">rails_localization_files</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
+160:           <span class="ruby-identifier">lang</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">'.*'</span>)[<span class="ruby-value">0</span>,<span class="ruby-value">2</span>].<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">to_sym</span>
+161:           <span class="ruby-comment cmt"># if a country is defined</span>
+162:           <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">'.*'</span>)[<span class="ruby-value">3</span>,<span class="ruby-value">5</span>]
+163:             <span class="ruby-identifier">country</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">'.*'</span>)[<span class="ruby-value">3</span>,<span class="ruby-value">5</span>].<span class="ruby-identifier">upcase</span>.<span class="ruby-identifier">to_sym</span>
+164:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">locales</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-node">&quot;#{lang}-#{country}&quot;</span>.<span class="ruby-identifier">to_sym</span>)
+165:               <span class="ruby-ivar">@@locales</span>[<span class="ruby-node">&quot;#{lang}-#{country}&quot;</span>.<span class="ruby-identifier">to_sym</span>].<span class="ruby-identifier">merge</span>(<span class="ruby-constant">YAML</span>.<span class="ruby-identifier">load_file</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">symbolize_keys</span>)
+166:             <span class="ruby-keyword kw">else</span>
+167:               <span class="ruby-ivar">@@locales</span>[<span class="ruby-node">&quot;#{lang}-#{country}&quot;</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-constant">YAML</span>.<span class="ruby-identifier">load_file</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">symbolize_keys</span>
+168:             <span class="ruby-keyword kw">end</span>
+169:             <span class="ruby-ivar">@@languages</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">lang</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@@languages</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">lang</span>
+170:           <span class="ruby-keyword kw">else</span>
+171:             <span class="ruby-ivar">@@languages</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">lang</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@@languages</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">lang</span> 
+172:             <span class="ruby-ivar">@f_locale</span> = <span class="ruby-node">&quot;#{lang}-*&quot;</span>.<span class="ruby-identifier">to_sym</span>
+173:             <span class="ruby-ivar">@@locales</span>[<span class="ruby-ivar">@f_locale</span>] = <span class="ruby-ivar">@@locales</span>[<span class="ruby-ivar">@f_locale</span>].<span class="ruby-identifier">merge</span>(<span class="ruby-constant">YAML</span>.<span class="ruby-identifier">load_file</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">symbolize_keys</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">locales</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-ivar">@f_locale</span>)
+174:             <span class="ruby-ivar">@@locales</span>[<span class="ruby-ivar">@f_locale</span>] = <span class="ruby-constant">YAML</span>.<span class="ruby-identifier">load_file</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">symbolize_keys</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">locales</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-ivar">@f_locale</span>)
+175:           <span class="ruby-keyword kw">end</span>
+176:         <span class="ruby-keyword kw">end</span>
+177:       <span class="ruby-keyword kw">end</span>
+178:       
+179:       <span class="ruby-comment cmt"># Load the UI localization</span>
+180:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ui_localization_files</span>
+181:         <span class="ruby-identifier">ui_localization_files</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span> 
+182:           <span class="ruby-identifier">lang</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">'.*'</span>)[<span class="ruby-value">0</span>,<span class="ruby-value">2</span>].<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">to_sym</span>
+183:           <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">'.*'</span>)[<span class="ruby-value">3</span>,<span class="ruby-value">5</span>]
+184:             <span class="ruby-identifier">country</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">'.*'</span>)[<span class="ruby-value">3</span>,<span class="ruby-value">5</span>].<span class="ruby-identifier">upcase</span>.<span class="ruby-identifier">to_sym</span>
+185:           <span class="ruby-keyword kw">else</span>
+186:             <span class="ruby-identifier">country</span> = <span class="ruby-value str">'*'</span>.<span class="ruby-identifier">to_sym</span>
+187:           <span class="ruby-keyword kw">end</span>
+188:           <span class="ruby-ivar">@@languages</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">lang</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@@languages</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">lang</span>
+189:           <span class="ruby-ivar">@@countries</span> <span class="ruby-operator">&lt;&lt;</span>  <span class="ruby-identifier">country</span> <span class="ruby-keyword kw">if</span> ( <span class="ruby-identifier">country</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">:*</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@@countries</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">country</span>) )
+190:           <span class="ruby-ivar">@file_locale</span> = <span class="ruby-node">&quot;#{lang}-#{country}&quot;</span>.<span class="ruby-identifier">to_sym</span>
+191:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">locales</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-ivar">@file_locale</span>)
+192:             <span class="ruby-ivar">@@locales</span>[<span class="ruby-ivar">@file_locale</span>] = <span class="ruby-ivar">@@locales</span>[<span class="ruby-ivar">@file_locale</span>].<span class="ruby-identifier">merge</span>(<span class="ruby-constant">YAML</span>.<span class="ruby-identifier">load_file</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">symbolize_keys</span>)
+193:           <span class="ruby-keyword kw">else</span>  
+194:             <span class="ruby-ivar">@@locales</span>[<span class="ruby-ivar">@file_locale</span>] = <span class="ruby-constant">YAML</span>.<span class="ruby-identifier">load_file</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">symbolize_keys</span>
+195:           <span class="ruby-keyword kw">end</span>
+196:         <span class="ruby-keyword kw">end</span>
+197:       <span class="ruby-keyword kw">end</span>
+198:       <span class="ruby-identifier">localize_rails</span>
+199:       <span class="ruby-comment cmt"># Return the path of the localization files</span>
+200:        <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;#{ui_localization_files} | #{rails_localization_files}&quot;</span>.<span class="ruby-identifier">to_s</span>
+201:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000029" class="method-detail">
+        <a name="M000029"></a>
+
+        <div class="method-heading">
+          <span class="method-name">loc</span><span class="method-args">(key, string='__localization_missing__', args={})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="L10n.html#M000028">localize</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000021" class="method-detail">
+        <a name="M000021"></a>
+
+        <div class="method-heading">
+          <span class="method-name">locale</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="L10n.html#M000020">current_locale</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000015" class="method-detail">
+        <a name="M000015"></a>
+
+        <div class="method-heading">
+          <a href="#M000015" class="method-signature">
+          <span class="method-name">locales</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000015-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000015-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 28</span>
+28:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">locales</span>
+29:       <span class="ruby-ivar">@@locales</span>.<span class="ruby-identifier">keys</span>
+30:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000026" class="method-detail">
+        <a name="M000026"></a>
+
+        <div class="method-heading">
+          <a href="#M000026" class="method-signature">
+          <span class="method-name">localization_sources</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000026-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000026-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 112</span>
+112:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">localization_sources</span>
+113:       <span class="ruby-ivar">@@localization_sources</span>
+114:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000027" class="method-detail">
+        <a name="M000027"></a>
+
+        <div class="method-heading">
+          <a href="#M000027" class="method-signature">
+          <span class="method-name">localizations</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+List <a href="L10n.html#M000027">localizations</a> for the current <a
+href="L10n.html#M000021">locale</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000027-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000027-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 117</span>
+117:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">localizations</span>
+118:         <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">locales</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-constant">Locale</span>.<span class="ruby-identifier">code</span>) 
+119:           <span class="ruby-identifier">locales</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@t_locale</span> = <span class="ruby-identifier">key</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-node">&quot;#{@@current_language.to_s}&quot;</span>) }
+120:           <span class="ruby-ivar">@@locales</span>[<span class="ruby-ivar">@t_locale</span>] <span class="ruby-operator">||</span> {}
+121:         <span class="ruby-keyword kw">else</span> 
+122:           <span class="ruby-ivar">@@locales</span>[<span class="ruby-constant">Locale</span>.<span class="ruby-identifier">code</span>] <span class="ruby-operator">||</span> {}
+123:         <span class="ruby-keyword kw">end</span>  
+124:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000028" class="method-detail">
+        <a name="M000028"></a>
+
+        <div class="method-heading">
+          <a href="#M000028" class="method-signature">
+          <span class="method-name">localize</span><span class="method-args">(key, string='__localization_missing__', args={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the translation for the key, a string can be passed to replaced a
+missing translation TODO support interpolation of passed arguments
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000028-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000028-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 128</span>
+128:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">localize</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">string</span>=<span class="ruby-value str">'__localization_missing__'</span>, <span class="ruby-identifier">args</span>={})
+129:       <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">reserved_keys</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">key</span>
+130:       <span class="ruby-identifier">localized</span> = <span class="ruby-identifier">localizations</span>[<span class="ruby-identifier">key</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">string</span>
+131:       <span class="ruby-identifier">localized</span> = <span class="ruby-identifier">interpolate_string</span>(<span class="ruby-identifier">localized</span>.<span class="ruby-identifier">dup</span>, <span class="ruby-identifier">args</span>.<span class="ruby-identifier">dup</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">localized</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">==</span> <span class="ruby-constant">String</span>
+132:       <span class="ruby-identifier">localized</span>
+133:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000030" class="method-detail">
+        <a name="M000030"></a>
+
+        <div class="method-heading">
+          <a href="#M000030" class="method-signature">
+          <span class="method-name">localize_with_args</span><span class="method-args">(key, args={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000030-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000030-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 136</span>
+136:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">localize_with_args</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">args</span>={})
+137:       <span class="ruby-identifier">localize</span>(<span class="ruby-identifier">key</span>, <span class="ruby-value str">'_localization missing_'</span>, <span class="ruby-identifier">args</span>)
+138:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000034" class="method-detail">
+        <a name="M000034"></a>
+
+        <div class="method-heading">
+          <a href="#M000034" class="method-signature">
+          <span class="method-name">reset_l10n_data</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000034-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000034-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 146</span>
+146:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset_l10n_data</span>
+147:       <span class="ruby-ivar">@@languages</span> = []
+148:       <span class="ruby-ivar">@@countries</span> = []
+149:       <span class="ruby-ivar">@@locales</span> = {}
+150:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M000038" class="method-detail">
+        <a name="M000038"></a>
+
+        <div class="method-heading">
+          <a href="#M000038" class="method-signature">
+          <span class="method-name">interpolate_string</span><span class="method-args">(string, args={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000038-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000038-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 219</span>
+219:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">interpolate_string</span>(<span class="ruby-identifier">string</span>, <span class="ruby-identifier">args</span>={})
+220:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+221:         <span class="ruby-identifier">args</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+222:           <span class="ruby-identifier">string</span> = <span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-node">&quot;{#{arg[0].to_s}}&quot;</span>, <span class="ruby-identifier">arg</span>[<span class="ruby-value">1</span>])
+223:         <span class="ruby-keyword kw">end</span>
+224:       <span class="ruby-keyword kw">end</span>
+225:       <span class="ruby-identifier">string</span>
+226:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000037" class="method-detail">
+        <a name="M000037"></a>
+
+        <div class="method-heading">
+          <a href="#M000037" class="method-signature">
+          <span class="method-name">rails_localization_files</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Rails localization files, doesn&#8216;t support <a
+href="L10n.html#M000015">locales</a>, only 1 file per <a
+href="L10n.html#M000017">language</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000037-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000037-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 215</span>
+215:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rails_localization_files</span>
+216:       <span class="ruby-identifier">loc_files</span> = <span class="ruby-constant">Dir</span>[<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>( <span class="ruby-constant">RAILS_ROOT</span>, <span class="ruby-value str">'/vendor/plugins/globalite/lang/rails/'</span>, <span class="ruby-value str">'*.{yml,yaml}'</span>)]
+217:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000036" class="method-detail">
+        <a name="M000036"></a>
+
+        <div class="method-heading">
+          <a href="#M000036" class="method-signature">
+          <span class="method-name">ui_localization_files</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000036-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000036-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/globalite/l10n.rb, line 204</span>
+204:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ui_localization_files</span>
+205:       <span class="ruby-identifier">loc_files</span> = <span class="ruby-constant">Dir</span>[<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-constant">RAILS_ROOT</span>, <span class="ruby-value str">'lang/ui/'</span>, <span class="ruby-value str">'*.{yml,yaml}'</span>)]
+206:       <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@@localization_sources</span>.<span class="ruby-identifier">empty?</span>
+207:         <span class="ruby-ivar">@@localization_sources</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span>
+208:           <span class="ruby-identifier">loc_files</span> <span class="ruby-operator">+=</span> <span class="ruby-constant">Dir</span>[<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">path</span>, <span class="ruby-value str">'*.{yml,yaml}'</span>)]
+209:         <span class="ruby-keyword kw">end</span>
+210:       <span class="ruby-keyword kw">end</span>
+211:       <span class="ruby-identifier">loc_files</span>
+212:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

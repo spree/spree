@@ -15,7 +15,7 @@ class AccountController < Spree::BaseController
         self.current_user.remember_me
         cookies[:auth_token] = { :value => self.current_user.remember_token , :expires => self.current_user.remember_token_expires_at }
       end
-      redirect_back_or_default(:controller => '/account', :action => 'index')
+      redirect_back_or_default(:controller => 'store', :action => 'index')
       flash.now[:notice] = "Logged in successfully"
     else
       flash.now[:error] = "Login authentication failed."

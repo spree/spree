@@ -1,0 +1,51 @@
+<% fields_for "#{address_type}_address", @address do |a| %>
+    <tr>
+      <td width="150"><%= :first_name.l("First Name") %></td>
+      <td><%= a.text_field :firstname %></td>
+      <td><%= error_message_on "#{address_type}_address", :firstname -%></td>
+    </tr>
+    <tr>
+      <td><%= :last_name.l("Last Name") %></td>
+      <td><%= a.text_field :lastname %></td>
+      <td><%= error_message_on "#{address_type}_address", :lastname -%></td>
+    </tr>
+    <tr>
+      <td><%= :street_address.l("Street Address") %></td>
+      <td><%= a.text_field :address1 %></td>
+      <td><%= error_message_on "#{address_type}_address", :address1 -%></td>
+    </tr>
+    <tr>
+      <td><%= :street_address_2.l("Street Address (cont'd)") %></td>
+      <td><%= a.text_field :address2 %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><%= :city.l("City") %></td>
+      <td><%= a.text_field :city %></td>
+      <td><%= error_message_on "#{address_type}_address", :city -%></td>
+    </tr>
+    <tr>
+      <td><%= :state.l("State") %></td>
+      <td>
+        <%= a.collection_select :state_id, @states, :id, :name, {}, {:style => "width:100%"}%>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><%= :zip.l("Zip") %></td>
+      <td><%= a.text_field :zipcode %></td>
+      <td><%= error_message_on "#{address_type}_address", :zipcode -%></td>
+    </tr>
+    <% if (@countries.size > 1) %>
+      <tr>
+        <td><%= :country.l("Country") %></td>
+        <td><%= a.collection_select :country_id, @countries, :id, :name, {}, {:style => "width:100%"}%></td>
+        <td></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td><%= :phone.l("Phone") %></td>
+      <td><%= a.text_field :phone %></td>
+      <td><%= error_message_on "#{address_type}_address", :phone -%></td>
+    </tr>
+<% end %>

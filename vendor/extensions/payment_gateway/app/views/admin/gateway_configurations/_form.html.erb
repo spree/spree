@@ -1,0 +1,20 @@
+<br/>
+Payment Gateway:   
+<%= f.collection_select :gateway_id, @available_gateways, :id, :name, {}, {:style => "width:200px", :id => "gateway"}%> 
+<br/><br/>
+<h2>Configuration Options</h2>
+
+<%= image_tag "spinner.gif", :style => "display:none", :id => 'busy_indicator' %>
+
+<div id="config-options">
+  <%= render :partial => "admin/gateway_option_values/options", 
+             :locals => {:option_values => @gateway_configuration.gateway_option_values} %>
+</div>  
+
+<%= observe_field :gateway, 
+                  :url => admin_gateway_configuration_gateway_option_values_url(@gateway_configuration),
+                  :with => 'gw_id',
+                  :method => :get,
+                  :before => "Element.show('busy_indicator')",
+                  :after => "Element.hide('busy_indicator')",
+                  :update => "config-options" %>
