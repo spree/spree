@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
-
 require File.join(File.dirname(__FILE__), '..', 'config', 'boot')
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..')
 
-require 'lib/ruby_version_check'
+require 'rubygems'
+gem 'rails'
+
+require 'ruby_version_check'
 Signal.trap("INT") { puts; exit }
 
 require 'lib/spree'
@@ -15,7 +17,11 @@ end
 
 app_path = ARGV.first
 
-require 'lib/rails_generator'
+# configuration must be set or we get uninitialized class variable @@configuration (introduced w/rails 2.1)
+require 'spree/initializer'
+Rails.configuration = Spree::Configuration.new
+
+require 'rails_generator'
 require 'rails_generator/scripts/generate'
 
 class Rails::Generator::Base

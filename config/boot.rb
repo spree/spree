@@ -73,7 +73,7 @@ module Spree
     # (but we need it in the initializer)
     def load_rails(version)
       if File.exist?("#{RAILS_ROOT}/vendor/rails")
-        $LOAD_PATH.unshift "#{SPREE_ROOT}/vendor/rails/railties/lib"
+        $LOAD_PATH.unshift "#{RAILS_ROOT}/vendor/rails/railties/lib"
       else
         load_rubygems
         begin
