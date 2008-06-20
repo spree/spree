@@ -1,12 +1,9 @@
-#######################################################################################################
-# Substantial portions of this code were adapted from the Radiant CMS project (http://radiantcms.org) #
-#######################################################################################################
-
 # Add necessary Rails path
-$LOAD_PATH.unshift "#{SPREE_ROOT}/vendor/rails/railties/lib"
+#$LOAD_PATH.unshift "#{SPREE_ROOT}/vendor/rails/railties/lib"
+#require 'rubygems'
+#gem 'rails', '>=2.1.0'
 
 require 'initializer'
-#require 'radiant/admin_ui'
 require 'spree/extension_loader'
 
 module Spree
@@ -16,7 +13,7 @@ module Spree
     attr_accessor :extensions
     attr_accessor :view_paths
 
-    def initialize
+    def initialize   
       self.view_paths = []
       self.extension_paths = default_extension_paths
       self.extensions = [ :all ]
@@ -31,11 +28,7 @@ module Spree
       paths.unshift(SPREE_ROOT + "/test/fixtures/extensions") if env == "test"
       paths
     end
-=begin
-    def admin
-      AdminUI.instance
-    end
-=end
+
     private
 
       def library_directories
@@ -47,7 +40,7 @@ module Spree
       end
 
       # Provide the load paths for the Spree installation
-      def default_load_paths         
+      def default_load_paths       
         paths = ["#{SPREE_ROOT}/test/mocks/#{environment}"]
 
         # Add the app's controller directory
@@ -92,12 +85,15 @@ module Spree
     def self.run(command = :process, configuration = Configuration.new)
       super
     end
-    
-    # TODO - add rest of method in here (just overriding for now so we can try to load Spree with 2.1)
+
+    # If Rails is vendored and RubyGems is available, install stub GemSpecs
+    # for Rails, Active Support, Active Record, Action Pack, Action Mailer, and
+    # Active Resource. This allows Gem plugins to depend on Rails even when
+    # the Gem version of Rails shouldn't be loaded.
     def install_gem_spec_stubs
-  
+      #TODO - provide meaningful implementation (commented out for now so we can start server)
     end
-    
+        
     def set_autoload_paths
       extension_loader.add_extension_paths
       super
