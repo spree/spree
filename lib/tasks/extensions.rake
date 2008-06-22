@@ -1,77 +1,73 @@
 require 'rake/testtask'
+require 'spree/extension'
 
 namespace :db do
+  desc "Migrate the database through scripts in db/migrate. Target specific version with VERSION=x. Turn off output with VERBOSE=false."
+  task :migrate => :environment do
+    ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
+    version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+    Spree::Extension.descendants.each do |extension|
+      ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
+    end    
+    Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+  end
+
   namespace :migrate do
-    desc "Run all Spree extension migrations"
-    task :extensions => :environment do
-      require 'spree/extension_migrator'
-      Spree::ExtensionMigrator.migrate_extensions
+    desc  'Rollbacks the database one migration and re migrate up. If you want to rollback more than one step, define STEP=x'
+    task :redo => [ 'db:rollback', 'db:migrate' ]
+
+    desc 'Resets your database using your migrations for the current environment'
+    task :reset => ["db:drop", "db:create", "db:migrate"]
+
+    desc 'Runs the "up" for a given migration VERSION.'
+    task :up => :environment do
+      version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+      raise "VERSION is required" unless version
+      # now extensions
+      Spree::Extension.descendants.each do |extension|
+        ActiveRecord::Migrator.run(:up, "#{extension.root}/db/migrate/", version)
+      end        
+      Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+    end
+
+    desc 'Runs the "down" for a given migration VERSION.'
+    task :down => :environment do
+      version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+      raise "VERSION is required" unless version
+      # now extensions
+      Spree::Extension.descendants.each do |extension|
+        ActiveRecord::Migrator.run(:down, "#{extension.root}/db/migrate/", version)
+      end        
+      Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
     end
   end
 
-  namespace :remigrate do
-    desc "Migrate down and back up all Spree extension migrations"
-    task :extensions => :environment do
-      require 'highline/import'
-      # skip the prompt if we're here as the result of db:bootstrap
-      if ENV['SKIP_NAG'] or agree("This task will destroy any data stored by extensions in the database. Are you sure you want to \ncontinue? [yn] ")
-        ENV['SKIP_NAG'] = 'yes'
-        Rake::Task['db:migrate:extensions:zero'].invoke
-        Rake::Task['db:migrate:extensions'].invoke
-      end
-    end
+  desc 'Rolls the schema back to the previous version. Specify the number of steps with STEP=n'
+  task :rollback => :environment do
+    raise "rollback is not currently supported in Spree (due to complications with extensions)"
+    #step = ENV['STEP'] ? ENV['STEP'].to_i : 1
+    #ActiveRecord::Migrator.rollback('db/migrate/', step)
+    #Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
   end
-end
 
-namespace :db do
-  namespace :migrate do
-    namespace :extensions do
-      desc "Migrate all Spree extensions back down to VERSION=0."
-      task :zero => :environment do
-        begin 
-          problem = false
-          # this will cause an exception if there is no schema info 
-          ActiveRecord::Migrator.current_version
-        rescue
-          # ignore problems - presumably schema is just missing b/c this is the first time running bootstrap
-          problem = true
-        end
-        
-        unless problem
-          require 'highline/import'
-          # skip the prompt if we're here as the result of db:bootstrap
-          if ENV['SKIP_NAG'] or agree("This task will destroy any data stored by extensions in the database. Are you sure you want to \ncontinue? [yn] ")
-            require 'spree/extension_migrator'     
-            Spree::Extension.descendants.map(&:migrator).each {|m| m.migrate(0) }
-          end
-        end
-      end
-    end
-  end
-end
+  desc "Raises an error if there are pending migrations"
+  task :abort_if_pending_migrations => :environment do
+    if defined? ActiveRecord
+      # now extensions
+      Spree::Extension.descendants.each do |extension|
+        pending_migrations += ActiveRecord::Migrator.new(:up, "#{extension.root}/db/migrate/").pending_migrations
+      end        
 
-namespace :test do
-  desc "Runs tests on all available Spree extensions, pass EXT=extension_name to test a single extension"
-  task :extensions => "db:test:prepare" do
-    extension_roots = Spree::Extension.descendants.map(&:root)
-    if ENV["EXT"]
-      extension_roots = extension_roots.select {|x| /\/(\d+_)?#{ENV["EXT"]}$/ === x }
-      if extension_roots.empty?
-        puts "Sorry, that extension is not installed."
-      end
-    end
-    extension_roots.each do |directory|
-      if File.directory?(File.join(directory, 'test'))
-        chdir directory do
-          if RUBY_PLATFORM =~ /win32/
-            system "rake.cmd test SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
-          else
-            system "rake test SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
-          end
+      if pending_migrations.any?
+        puts "You have #{pending_migrations.size} pending migrations:"
+        pending_migrations.each do |pending_migration|
+          puts '  %4d %s' % [pending_migration.version, pending_migration.name]
         end
+        abort %{Run "rake db:migrate" to update your database then try again.}
       end
     end
   end
+
 end
 
 namespace :spec do
