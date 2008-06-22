@@ -1,0 +1,27 @@
+<h3>By Product Prototype</h3>
+
+<table class="two-col">
+  <tr>
+	<td class="two-col-left">
+	  <ul class="no-bullets">
+		<% prototypes = Prototype.find(:all)
+           prototypes.each do |proto| %>
+		<li><%= link_to_remote proto.name,
+		                       :url => { :action => :add_property_value_view_prototype_list, 
+							             :id => @product, :prototype_id => proto },
+							   :before => "Element.hide('add-property-value-view-prototype');Element.show('add-property-value-view-prototype-busy_indicator')", 
+							   :complete => "Element.hide('add-property-value-view-prototype-busy_indicator');Element.show('add-property-value-view-prototype')",
+							   :update => 'add-property-value-view-prototype' %>
+
+		<% end %>
+	  </ul>
+	</td>
+	<td class="two-col-right">
+      <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'add-property-value-view-prototype-busy_indicator' %>
+	  <div id="add-property-value-view-prototype">
+	  <%= render :partial => 'add_property_value_view_prototype_list', 
+	             :locals => { :product => @product, :prototype => prototypes.first } %>
+	  </div>
+	</td>
+  </tr>
+</table>

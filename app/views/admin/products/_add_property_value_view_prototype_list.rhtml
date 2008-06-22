@@ -1,0 +1,26 @@
+<h3>Product Prototype: <%= prototype.name %></h3>
+<% properties = exclusive_properties(@product, Property.find_all_by_prototype(prototype))
+   if properties.empty? %>
+   <p>This product already has values for all properties of this prototype.</p>
+<% else %>
+  <table class="basic-table">
+	<tbody>
+	  <thead>
+		<tr>
+		  <th>Name</th>
+		  <th>Presentation</th>
+		  <th>Value</th>
+		</tr>
+	  </thead>
+	  <% properties.each do |prop| %>
+	  <tr>
+		<td><%= prop.name %></td>
+		<td><%= prop.presentation %></td>
+		<td>
+		  <%= text_field "add_property_value", :value, :index => prop.id %>
+		</td>
+	  </tr>
+      <% end %>
+	</tbody>
+  </table>
+<% end %>

@@ -1,0 +1,20 @@
+<table>
+  <tr>
+	<th>Name</th>
+  </tr>
+  <% Prototype.find(:all).each do |proto| %>
+  <tr>
+	<td>
+	  <%= proto.name %>
+	</td>
+	<td>
+	  <%= link_to_remote "Edit", :url => { :action => :edit, :id => proto },
+                                 :update => 'edit-prototype' %>
+	</td>
+	<td valign="top">
+	  <%= link_to "Delete", {:action => 'delete', :id => proto},
+	                        {:confirm => "Are you sure you want to delete this product prototype?"} -%>
+	</td>
+  </tr>
+  <% end %> 
+</table>

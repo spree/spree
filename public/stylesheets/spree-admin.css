@@ -346,6 +346,32 @@ padding-right: 0;
 }
 /** ================ end: full-table =================== */
 
+/** ================ begin: two-col =================== */
+table.two-col {
+	border: 1px solid black;
+	border-collapse: collapse;
+	padding: 5px;
+}
+td.two-col-left {
+	border-right: 1px solid black;
+	width: 15%;
+	padding: 5px;
+}
+td.two-col-right {
+	padding: 5px;
+}
+
+/** ================ end: two-col  =================== */
+
+/** ================ begin: limited-height-20  =================== */
+.limited-height {
+	max-height: 120px;
+	height: 120px;
+	width: 120%;
+	overflow: auto;
+}
+/** ================ end: limited-height-20  =================== */
+
 .sku {
   width: 120px;
 } 
@@ -353,3 +379,8 @@ padding-right: 0;
 .quantity {
   width: 60px;  
 }
+
+.no-bullets {
+	list-style-type: none;
+}
+

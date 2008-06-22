@@ -1,0 +1,16 @@
+<%= render :partial => 'admin/products/menu' %>
+
+<h1>Listing Product Prototypes</h1>
+<div id='prototype-list'>
+  <%= render :partial => 'list' %>
+</div>
+
+<div id="new-prototype-link">
+  <%= link_to_remote "Create New Prototype", :url => { :action => :edit },
+                                             :update => 'edit-prototype' %>
+
+</div>
+
+<div id="edit-prototype">
+</div>
+

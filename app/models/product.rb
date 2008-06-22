@@ -4,6 +4,7 @@ class Product < ActiveRecord::Base
   has_many :variants, :dependent => :destroy
   belongs_to :category
   has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
+  has_many :property_values
 
   validates_presence_of :name
   validates_presence_of :master_price

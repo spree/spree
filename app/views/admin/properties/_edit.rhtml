@@ -1,0 +1,15 @@
+<h3>New Product Property</h3>
+<% form_for :property, @property, :url => { :action => :new } do |f| %>
+  <table class="form">
+	<tr>
+	  <td>Name</td>
+	  <td><%= f.text_field :name %></td>
+	</tr>
+	<tr>
+	  <td>Presentation</td>
+	  <td><%= f.text_field :presentation %></td>
+	</tr>
+  </table>
+  <%= submit_tag "Create" %>
+  <%= cancel_button 'Cancel', 'new-property', 'new-property-link' %>
+<% end %>
