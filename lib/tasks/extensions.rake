@@ -53,7 +53,7 @@ namespace :db do
   desc "Raises an error if there are pending migrations"
   task :abort_if_pending_migrations => :environment do
     if defined? ActiveRecord
-      # now extensions
+      pending_migrations = []
       Spree::Extension.descendants.each do |extension|
         pending_migrations += ActiveRecord::Migrator.new(:up, "#{extension.root}/db/migrate/").pending_migrations
       end        
