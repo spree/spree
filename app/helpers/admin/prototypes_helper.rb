@@ -9,7 +9,7 @@ module Admin::PrototypesHelper
 
   def exclusive_properties(prototype, properties)
     prototype.properties.each do |prop|
-      logger.debug("proto property: #{pp.inspect}")
+      logger.debug("proto property: #{prop.inspect}")
       properties.delete(prop)
 #      properties = properties.delete_if { |p| p.id == pp.product_property_id }
     end
