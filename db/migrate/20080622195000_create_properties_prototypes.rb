@@ -1,4 +1,4 @@
-class PropertiesPrototypes < ActiveRecord::Migration
+class CreatePropertiesPrototypes < ActiveRecord::Migration
   def self.up
     create_table :properties_prototypes, :id => false do |t|
       t.integer :prototype_id
