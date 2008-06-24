@@ -64,7 +64,7 @@ module Spree
         require 'spree'
         require 'spree/initializer'
       rescue LoadError => e
-        $stderr.puts %(Spree could not be initialized. #{load_error_message})
+        $stderr.puts %(Spree could not be initialized. #{e})
         exit 1
       end
     end   
@@ -105,15 +105,14 @@ module Spree
   end
   
   class GemBoot < Boot
-    include Spree::RubyGemsLoader
-    
+
     def load_initializer
       self.class.load_rubygems
       load_spree_gem
-      require 'initializer'
+      super
     end
 
-    def load_spre_gem
+    def load_spree_gem
       if version = self.class.gem_version
         gem 'spree', version
       else
@@ -125,6 +124,7 @@ module Spree
     end
 
     class << self
+      include Spree::RubyGemsLoader      
 
       def gem_version
         if defined? SPREE_GEM_VERSION
@@ -134,19 +134,6 @@ module Spree
         else
           parse_gem_version(read_environment_rb)
         end
-      end
-
-      def load_rubygems
-        require 'rubygems'
-
-        unless rubygems_version >= '0.9.4'
-          $stderr.puts %(Spree requires RubyGems >= 0.9.4 (you have #{rubygems_version}). Please `gem update --system` and try again.)
-          exit 1
-        end
-
-      rescue LoadError
-        $stderr.puts %(Spree requires RubyGems >= 0.9.4. Please install RubyGems and try again: http://rubygems.rubyforge.org)
-        exit 1
       end
 
       def parse_gem_version(text)
