@@ -44,6 +44,7 @@ has_attachment(options = {})
     :path_prefix      # path to store the uploaded files.
                       # Uses public/#{table_name} by default for the filesystem, and just #{table_name} for the S3 backend.  
                       # Setting this sets the :storage to :file_system.
+    :partition        # Partiton files in directories like /0000/0001/image.jpg. Default is true. 
     :storage          # Specifies the storage system to use..
                       # Defaults to :db_file.  Options are :file_system, :db_file, and :s3.
     :processor        # Sets the image processor to use for resizing of the attached image.
@@ -60,7 +61,7 @@ has_attachment(options = {})
     has_attachment :thumbnails => { :thumb => [50, 50], :geometry => 'x50' }
     has_attachment :storage => :file_system, :path_prefix => 'public/files'
     has_attachment :storage => :file_system, :path_prefix => 'public/files', 
-                   :content_type => :image, :resize_to => [50,50]
+                   :content_type => :image, :resize_to => [50,50], :partition => false
     has_attachment :storage => :file_system, :path_prefix => 'public/files',
                    :thumbnails => { :thumb => [50, 50], :geometry => 'x50' }
     has_attachment :storage => :s3
@@ -160,3 +161,26 @@ Example in controller:
       render :action => :new
     end
   end
+
+attachement_fu scripting
+====================================
+
+You may wish to import a large number of images or attachments. 
+The following example shows how to upload a file from a script. 
+
+#!/usr/bin/env ./script/runner
+
+# required to use ActionController::TestUploadedFile 
+require 'action_controller'
+require 'action_controller/test_process.rb'
+
+path = "./public/images/x.jpg"
+
+# mimetype is a string like "image/jpeg". One way to get the mimetype for a given file on a UNIX system
+# mimetype = `file -ib #{path}`.gsub(/\n/,"")
+
+mimetype = "image/jpeg"
+
+# This will "upload" the file at path and create the new model.
+@attachable = AttachmentMetadataModel.new(:uploaded_data => ActionController::TestUploadedFile.new(path, mimetype))
+@attachable.save

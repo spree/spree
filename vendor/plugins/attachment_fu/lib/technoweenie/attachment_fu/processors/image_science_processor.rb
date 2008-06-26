@@ -9,7 +9,7 @@ module Technoweenie # :nodoc:
         end
 
         module ClassMethods
-          # Yields a block containing an RMagick Image for the given binary data.
+          # Yields a block containing an Image Science image for the given binary data.
           def with_image(file, &block)
             ::ImageScience.with_image file, &block
           end

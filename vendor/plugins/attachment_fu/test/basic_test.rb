@@ -42,6 +42,12 @@ class BasicTest < Test::Unit::TestCase
 
     @attachment.filename = 'f o!O-.bar'
     assert_equal 'f_o_O-.bar', @attachment.filename
+    
+    @attachment.filename = 'sheeps_says_bææ'
+    assert_equal 'sheeps_says_b__', @attachment.filename
+
+    @attachment.filename = nil
+    assert_nil @attachment.filename
   end
   
   def test_should_convert_thumbnail_name

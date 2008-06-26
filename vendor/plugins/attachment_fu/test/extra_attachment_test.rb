@@ -24,6 +24,16 @@ class OrphanAttachmentTest < Test::Unit::TestCase
     end
   end
   
+  def test_should_create_file_from_merb_temp_file
+    assert_created do
+      attachment = upload_merb_file :filename => '/files/foo.txt'
+      assert_valid attachment
+      assert !attachment.db_file.new_record? if attachment.respond_to?(:db_file)
+      assert  attachment.image?
+      assert !attachment.size.zero?
+    end
+  end
+  
   def test_should_create_image_from_uploaded_file_with_custom_content_type
     assert_created do
       attachment = upload_file :content_type => 'foo/bar', :filename => '/files/rails.png'
