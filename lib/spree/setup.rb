@@ -19,6 +19,9 @@ module Spree
     attr_accessor :config
     
     def bootstrap(config)    
+      # make sure the product images directory exists
+      FileUtils.mkdir_p "#{RAILS_ROOT}/public/images/products/"
+      
       @config = config
       @admin = create_admin_user(config[:admin_name], config[:admin_username], config[:admin_password], config[:admin_email])
       load_sample_data if sample_data?
