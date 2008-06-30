@@ -26,7 +26,7 @@ module Spec
         if error.nil?
           example_passed(example)
         elsif Spec::Example::ExamplePendingError === error
-          example_pending(example_groups.last, example, error.message)
+          example_pending(example, error.message)
         else
           example_failed(example, error)
         end
@@ -34,8 +34,7 @@ module Spec
 
       def failure(example, error)
         backtrace_tweaker.tweak_backtrace(error)
-        example_name = "#{example_groups.last.description} #{example.description}"
-        failure = Failure.new(example_name, error)
+        failure = Failure.new(example, error)
         @failures << failure
         formatters.each do |f|
           f.example_failed(example, @failures.length, failure)
@@ -91,6 +90,7 @@ module Spec
           index + 1
         end
       end
+
       def dump_pending
         formatters.each{|f| f.dump_pending}
       end
@@ -104,28 +104,28 @@ module Spec
         formatters.each{|f| f.example_passed(example)}
       end
       
-      def example_pending(example_group, example, message="Not Yet Implemented")
+      def example_pending(example, message="Not Yet Implemented")
         @pending_count += 1
         formatters.each do |f|
-          f.example_pending(example_group.description, example, message)
+          f.example_pending(example, message)
         end
       end
       
       class Failure
-        attr_reader :exception
+        attr_reader :example, :exception
         
-        def initialize(example_name, exception)
-          @example_name = example_name
+        def initialize(example, exception)
+          @example = example
           @exception = exception
         end
 
         def header
           if expectation_not_met?
-            "'#{@example_name}' FAILED"
+            "'#{example_name}' FAILED"
           elsif pending_fixed?
-            "'#{@example_name}' FIXED"
+            "'#{example_name}' FIXED"
           else
-            "#{@exception.class.name} in '#{@example_name}'"
+            "#{@exception.class.name} in '#{example_name}'"
           end
         end
         
@@ -137,6 +137,10 @@ module Spec
           @exception.is_a?(Spec::Expectations::ExpectationNotMetError)
         end
 
+        protected
+        def example_name
+          @example.__full_description
+        end
       end
     end
   end

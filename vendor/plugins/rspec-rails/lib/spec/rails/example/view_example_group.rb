@@ -72,7 +72,7 @@ module Spec
               return options[render_type]
             end
           end
-          raise Exception.new("Unhandled render type in view spec.")
+          return ""
         end
 
         def add_helpers(options) #:nodoc:
@@ -83,7 +83,8 @@ module Spec
         end
 
         # Renders a template for a View Spec, which then provides access to the result
-        # through the +response+.
+        # through the +response+. Also supports render with :inline, which you can
+        # use to spec custom form builders, helpers, etc, in the context of a view.
         #
         # == Examples
         #
@@ -91,6 +92,7 @@ module Spec
         #   render('/people/list', :helper => MyHelper)
         #   render('/people/list', :helpers => [MyHelper, MyOtherHelper])
         #   render(:partial => '/people/_address')
+        #   render(:inline => "<% custom_helper 'argument', 'another argument' %>")
         #
         # See Spec::Rails::Example::ViewExampleGroup for more information.
         def render(*args)
@@ -110,7 +112,7 @@ module Spec
           defaults = { :layout => false }
           options = defaults.merge options
 
-          @controller.instance_variable_set :@params, @request.parameters
+          @controller.send(:params).reverse_merge! @request.parameters
 
           @controller.send :initialize_current_url
 
@@ -145,6 +147,11 @@ module Spec
         end
 
         Spec::Example::ExampleGroupFactory.register(:view, self)
+
+        protected
+        def _assigns_hash_proxy
+          @_assigns_hash_proxy ||= AssignsHashProxy.new @controller
+        end
       end
 
       class ViewExampleGroupController < ApplicationController #:nodoc:
@@ -161,7 +168,7 @@ module Spec
           rescue
             return
           end
-          template.metaclass.class_eval do
+          (class << template; self; end).class_eval do
             include helper_module
           end
         end

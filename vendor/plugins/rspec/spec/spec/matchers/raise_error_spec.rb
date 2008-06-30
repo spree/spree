@@ -28,6 +28,9 @@ describe "should raise_error(message)" do
   it "should pass if RuntimeError is raised with the right message" do
     lambda {raise 'blah'}.should raise_error('blah')
   end
+  it "should pass if RuntimeError is raised with a matching message" do
+    lambda {raise 'blah'}.should raise_error(/blah/)
+  end
   it "should pass if any other error is raised with the right message" do
     lambda {raise NameError.new('blah')}.should raise_error('blah')
   end
@@ -123,6 +126,127 @@ describe "should raise_error(NamedError, error_message) with String" do
     lambda {
       lambda { raise RuntimeError.new("not the example message") }.should raise_error(RuntimeError, "example message")
     }.should fail_with(/expected RuntimeError with \"example message\", got #<RuntimeError: not the example message/)
+  end
+end
+
+describe "should raise_error(NamedError, error_message) { |err| ... }" do
+  it "should yield exception if named error is raised with same message" do
+    ran = false
+
+    lambda {
+      raise "example message"
+    }.should raise_error(RuntimeError, "example message") { |err|
+      ran = true
+      err.class.should == RuntimeError
+      err.message.should == "example message"
+    }
+
+    ran.should == true
+  end
+
+  it "yielded block should be able to fail on it's own right" do
+    ran, passed = false, false
+
+    lambda {
+      lambda {
+        raise "example message"
+      }.should raise_error(RuntimeError, "example message") { |err|
+        ran = true
+        5.should == 4
+        passed = true
+      }
+    }.should fail_with(/expected: 4/m)
+
+    ran.should == true
+    passed.should == false
+  end
+
+  it "should NOT yield exception if no error was thrown" do
+    ran = false
+
+    lambda {
+      lambda {}.should raise_error(RuntimeError, "example message") { |err|
+        ran = true
+      }
+    }.should fail_with("expected RuntimeError with \"example message\" but nothing was raised")
+
+    ran.should == false
+  end
+
+  it "should not yield exception if error class is not matched" do
+    ran = false
+
+    lambda {
+      lambda {
+        raise "example message"
+      }.should raise_error(SyntaxError, "example message") { |err|
+        ran = true
+      }
+    }.should fail_with("expected SyntaxError with \"example message\", got #<RuntimeError: example message>")
+
+    ran.should == false
+  end
+
+  it "should NOT yield exception if error message is not matched" do
+    ran = false
+
+    lambda {
+      lambda {
+        raise "example message"
+      }.should raise_error(RuntimeError, "different message") { |err|
+        ran = true
+      }
+    }.should fail_with("expected RuntimeError with \"different message\", got #<RuntimeError: example message>")
+
+    ran.should == false
+  end
+end
+
+describe "should_not raise_error(NamedError, error_message) { |err| ... }" do
+  it "should pass if nothing is raised" do
+    ran = false
+
+    lambda {}.should_not raise_error(RuntimeError, "example message") { |err|
+      ran = true
+    }
+
+    ran.should == false
+  end
+
+  it "should pass if a different error is raised" do
+    ran = false
+
+    lambda { raise }.should_not raise_error(NameError, "example message") { |err|
+      ran = true
+    }
+
+    ran.should == false
+  end
+
+  it "should pass if same error is raised with different message" do
+    ran = false
+
+    lambda {
+      raise RuntimeError.new("not the example message")
+    }.should_not raise_error(RuntimeError, "example message") { |err|
+      ran = true
+    }
+
+    ran.should == false
+  end
+
+  it "should fail if named error is raised with same message" do
+    ran = false
+
+    lambda {
+      lambda {
+        raise "example message"
+      }.should_not raise_error(RuntimeError, "example message") { |err|
+        ran = true
+      }
+    }.should fail_with("expected no RuntimeError with \"example message\", got #<RuntimeError: example message>")
+
+    ran.should == false
   end
 end
 

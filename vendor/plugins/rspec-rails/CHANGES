@@ -1,0 +1,26 @@
+== Version 1.1.5
+
+* Add conditional so Rails 2.1.0 doesn't warn about cache_template_extensions (patch from James Herdman)
+* Fixed stub_model examples to work with Rails 2.1.0 (the code was fine, just the spec needed patching)
+
+== Version 1.1.4
+
+Maintenance release.
+
+* Moved mock_model and stub_model to their own module: Spec::Rails::Mocks
+* Setting mock_model object id with stubs hash - patch from Adam Meehan
+* Added as_new_record to stub_model e.g. stub_model(Foo).as_new_record
+* Improved stub_model such that new_record? does "the right thing"
+* Patch from Pat Maddox to get integrate_views to work in nested example groups.
+* Patch from Pat Maddox to get controller_name to work in nested example groups.
+* Patch from Corey Haines to add include_text matcher
+* Added stub_model method which creates a real model instance with :id stubbed and data access prohibited.
+* Applied patch from Pat Maddox to handle redirect_to w/ SSL. Closes #320.
+* Added #helper and #assigns to helper specs.
+* Applied patch from Bryan Helmkamp to tweak format of generated spec.opts to be more obvious. Closes #162.
+* Tweaked list of exceptions (ignores) for autotest
+* Applied patch from Rick Olson to get rspec_on_rails working with rails edge (>= 8862)
+* Applied patch from Wincent Colaiuta to invert sense of "spec --diff". Closes #281.
+* Allow any type of render in view specs. Closes #57.
+* Applied patch from Ian White to get rspec working with edge rails (8804). Closes #271.
+* Applied patch from Jon Strother to have spec_server reload fixtures. Closes #344.

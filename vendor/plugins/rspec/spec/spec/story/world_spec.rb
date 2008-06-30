@@ -324,7 +324,7 @@ module Spec
 
       it 'should tell listeners but not execute the step in dry-run mode' do
         # given
-        Runner.stub!(:dry_run).and_return(true)
+        World.stub!(:dry_run).and_return(true)
         mock_listener = mock('listener')
         World.add_listener(mock_listener)
         $step_invoked = false

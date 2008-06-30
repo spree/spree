@@ -11,6 +11,12 @@ module Spec
           run_story_ignoring_scenarios(scenario.story, world)
           
           world.start_collecting_errors
+
+          unless scenario.body
+            @listeners.each { |l| l.scenario_pending(scenario.story.title, scenario.name, '') }
+            return true
+          end
+          
           world.instance_eval(&scenario.body)
           if world.errors.empty?
             @listeners.each { |l| l.scenario_succeeded(scenario.story.title, scenario.name) }
@@ -19,8 +25,10 @@ module Spec
               @listeners.each { |l| l.scenario_pending(scenario.story.title, scenario.name, e.message) }
             else
               @listeners.each { |l| l.scenario_failed(scenario.story.title, scenario.name, e) }
+              return false
             end
           end
+          true
         end
         
         def add_listener(listener)

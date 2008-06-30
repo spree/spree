@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '<%= '/..' * class_nesting_depth %>/../spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '<%= '/..' * class_nesting_depth %>/../spec_helper')
 
 describe <%= controller_class_name %>Controller do
   describe "route generation" do

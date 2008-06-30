@@ -28,7 +28,7 @@ module Spec
         error.should be_nil
       end
       
-      it "should raise when error raised running in another object" do
+      it "should raise an error when an error is raised running in another object" do
         #given
         story = Story.new 'title', 'narrative' do
           raise "this is raised in the story"
@@ -42,7 +42,7 @@ module Spec
       end
       
       it "should use the steps it is told to using a StepGroup" do
-        story = Story.new("title", "narrative", :steps => steps = StepGroup.new) do end
+        story = Story.new("title", "narrative", :steps_for => steps = StepGroup.new) do end
         assignee = mock("assignee")
         assignee.should_receive(:use).with(steps)
         story.assign_steps_to(assignee)

@@ -16,6 +16,14 @@ describe "should have_sym(*args)" do
       Object.new.should have_key(:a)
     }.should raise_error(NoMethodError)
   end
+  
+  it "should reraise an exception thrown in #has_sym?(*args)" do
+    o = Object.new
+    def o.has_sym?(*args)
+      raise "Funky exception"
+    end
+    lambda { o.should have_sym(:foo) }.should raise_error("Funky exception")
+  end
 end
 
 describe "should_not have_sym(*args)" do
@@ -33,5 +41,13 @@ describe "should_not have_sym(*args)" do
     lambda {
       Object.new.should have_key(:a)
     }.should raise_error(NoMethodError)
+  end
+  
+  it "should reraise an exception thrown in #has_sym?(*args)" do
+    o = Object.new
+    def o.has_sym?(*args)
+      raise "Funky exception"
+    end
+    lambda { o.should_not have_sym(:foo) }.should raise_error("Funky exception")
   end
 end

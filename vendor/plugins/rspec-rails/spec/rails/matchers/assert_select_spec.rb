@@ -781,3 +781,26 @@ describe "have_tag", :type => :controller do
   end
 end
 
+describe 'selecting in HTML that contains a mock with null_object' do
+  module HTML
+    class Document
+      def initialize_with_strict_error_checking(text, strict=false, xml=false)
+        initialize_without_strict_error_checking(text, true, xml)
+      end
+      alias_method :initialize_without_strict_error_checking, :initialize
+      alias_method :initialize, :initialize_with_strict_error_checking
+    end
+  end
+  
+  describe 'modified HTML::Document' do
+    it 'should raise error on valid HTML even though false is specified' do
+      lambda {HTML::Document.new("<b>#<Spec::Mocks::Mock:0x267b4f0></b>", false, false)}.should raise_error
+    end
+  end
+    
+  it 'should not print errors from assert_select' do
+    mock = mock("Dog", :null_object => true)
+    html = "<b>#{mock.colour}</b>"
+    lambda {html.should have_tag('b')}.should_not raise_error
+  end
+end

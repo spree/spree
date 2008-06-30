@@ -1,6 +1,6 @@
 class Regexp
   def step_name
-    self.source
+    self.source.gsub '\\$', '$$'
   end
   
   def arg_regexp

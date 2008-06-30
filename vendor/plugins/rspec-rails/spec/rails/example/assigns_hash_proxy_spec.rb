@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "An AssignsHashProxy" do
+describe "AssignsHashProxy" do
   before(:each) do
     @object = Object.new
     @assigns = Hash.new
@@ -51,5 +51,10 @@ describe "An AssignsHashProxy" do
     @proxy['foo'] = 'bar'
     @proxy.has_key?('foo').should == true
     @proxy.has_key?('bar').should == false
+  end
+  
+  it "should sets an instance var" do
+    @proxy['foo'] = 'bar'
+    @object.instance_eval { @foo }.should == 'bar'
   end
 end

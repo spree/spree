@@ -25,4 +25,5 @@ describe "A partial mock" do
     MockableClass.msg_2
     MockableClass.msg_3
   end
+
 end

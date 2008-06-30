@@ -22,28 +22,29 @@ module Spec
         
         it "should parse a story file" do
           runner = PlainTextStoryRunner.new("path")
-          
           during {
-            runner.run
+            runner.run(mock('runner'))
           }.expect {
             @parser.should_receive(:parse).with(["this", "and that"])
           }
         end
         
         it "should build up a mediator with its own steps and the singleton story_runner" do
+          @story_runner = mock('story runner', :null_object => true)
+
           runner = PlainTextStoryRunner.new("path")
-          Spec::Story::Runner.should_receive(:story_runner).and_return(story_runner = mock("story runner"))
-          Spec::Story::Runner::StoryMediator.should_receive(:new).with(runner.steps, story_runner, {}).
-            and_return(mediator = stub("mediator", :run_stories => nil))
-          runner.run
+          
+          Spec::Story::Runner::StoryMediator.should_receive(:new).with(
+            runner.steps, @story_runner, {}
+          ).and_return(mediator = stub("mediator", :run_stories => nil))
+          runner.run(@story_runner)
         end
         
         it "should build up a parser with the mediator" do
           runner = PlainTextStoryRunner.new("path")
-          Spec::Story::Runner.should_receive(:story_runner).and_return(story_runner = mock("story runner"))
           Spec::Story::Runner::StoryMediator.should_receive(:new).and_return(mediator = stub("mediator", :run_stories => nil))
           Spec::Story::Runner::StoryParser.should_receive(:new).with(mediator).and_return(@parser)
-          runner.run
+          runner.run(stub("story_runner"))
         end
         
         it "should tell the mediator to run the stories" do
@@ -51,7 +52,7 @@ module Spec
           mediator = mock("mediator")
           Spec::Story::Runner::StoryMediator.should_receive(:new).and_return(mediator)
           mediator.should_receive(:run_stories)
-          runner.run
+          runner.run(mock('runner'))
         end
         
         it "should accept a block instead of a path" do
@@ -59,13 +60,13 @@ module Spec
             runner.load("path/to/story")
           end
           File.should_receive(:read).with("path/to/story").and_return("this\nand that")
-          runner.run
+          runner.run(mock('runner'))
         end
         
         it "should tell you if you try to run with no path set" do
           runner = PlainTextStoryRunner.new
           lambda {
-            runner.run
+            runner.run(mock('runner'))
           }.should raise_error(RuntimeError, "You must set a path to the file with the story. See the RDoc.")
         end
         
@@ -74,7 +75,7 @@ module Spec
           Spec::Story::Runner::StoryMediator.should_receive(:new).
             with(anything, anything, :foo => :bar).
             and_return(mediator = stub("mediator", :run_stories => nil))
-          runner.run
+          runner.run(mock('runner'))
         end
         
         it "should provide access to its options" do
@@ -83,7 +84,7 @@ module Spec
           Spec::Story::Runner::StoryMediator.should_receive(:new).
             with(anything, anything, :foo => :bar).
             and_return(mediator = stub("mediator", :run_stories => nil))
-          runner.run
+          runner.run mock('runner')
         end
         
       end

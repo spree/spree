@@ -4,6 +4,6 @@ class String
   end
   
   def arg_regexp
-    ::Spec::Story::Step::PARAM_PATTERN
+    ::Spec::Story::Step::PARAM_OR_GROUP_PATTERN
   end
 end

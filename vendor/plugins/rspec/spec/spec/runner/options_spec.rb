@@ -293,39 +293,44 @@ module Spec
       end
 
       describe "#run_examples" do
-        it "should use the standard runner by default" do
-          runner = ::Spec::Runner::ExampleGroupRunner.new(@options)
-          ::Spec::Runner::ExampleGroupRunner.should_receive(:new).
+        describe "when not given a custom runner" do
+          it "should use the standard" do
+            runner = ::Spec::Runner::ExampleGroupRunner.new(@options)
+            ::Spec::Runner::ExampleGroupRunner.should_receive(:new).
             with(@options).
             and_return(runner)
-          @options.user_input_for_runner = nil
+            @options.user_input_for_runner = nil
 
-          @options.run_examples
+            @options.run_examples
+          end
         end
 
-        it "should use a custom runner when given" do
-          runner = Custom::ExampleGroupRunner.new(@options, nil)
-          Custom::ExampleGroupRunner.should_receive(:new).
+        describe "when given a custom runner" do
+          it "should use the custom runner" do
+            runner = Custom::ExampleGroupRunner.new(@options, nil)
+            Custom::ExampleGroupRunner.should_receive(:new).
             with(@options, nil).
             and_return(runner)
-          @options.user_input_for_runner = "Custom::ExampleGroupRunner"
+            @options.user_input_for_runner = "Custom::ExampleGroupRunner"
 
-          @options.run_examples
-        end
+            @options.run_examples
+          end
 
-        it "should use a custom runner with extra options" do
-          runner = Custom::ExampleGroupRunner.new(@options, 'something')
-          Custom::ExampleGroupRunner.should_receive(:new).
+          it "should use the custom runner with extra options" do
+            runner = Custom::ExampleGroupRunner.new(@options, 'something')
+            Custom::ExampleGroupRunner.should_receive(:new).
             with(@options, 'something').
             and_return(runner)
-          @options.user_input_for_runner = "Custom::ExampleGroupRunner:something"
+            @options.user_input_for_runner = "Custom::ExampleGroupRunner:something"
 
-          @options.run_examples
+            @options.run_examples
+          end
         end
 
         describe "when there are examples" do
           before(:each) do
-            @options.add_example_group Class.new(::Spec::Example::ExampleGroup)
+            @example_group = Class.new(::Spec::Example::ExampleGroup)
+            @options.add_example_group @example_group
             @options.formatters << Formatter::BaseTextFormatter.new(@options, @out)
           end
 
@@ -338,6 +343,77 @@ module Spec
             @options.examples_run?.should be_false
             @options.run_examples
             @options.examples_run?.should be_true
+          end
+
+          describe "and the suite passes" do
+            before do
+              @example_group.should_receive(:run).and_return(true)
+            end
+
+            it "invokes after_suite_parts with true" do
+              success_result = nil
+              @options.after_suite_parts << lambda do |success|
+                success_result = success
+              end
+              
+              @options.run_examples
+              success_result.should be_true
+            end
+          end
+
+          describe "and the suite fails" do
+            before do
+              @example_group.should_receive(:run).and_return(false)
+            end
+
+            it "invokes after_suite_parts with false" do
+              success_result = nil
+              @options.after_suite_parts << lambda do |success|
+                success_result = success
+              end
+
+              @options.run_examples
+              success_result.should be_false
+            end
+          end
+
+          describe "when using heckle runner" do
+            before(:each) do
+              @heckle_runner_mock = mock("HeckleRunner")
+              @options.heckle_runner = @heckle_runner_mock
+            end
+            
+            it "should heckle" do
+              @heckle_runner_mock.should_receive(:heckle_with)
+              @options.run_examples
+            end
+            
+            it "shouldn't heckle recursively" do
+              heckled = false
+              @heckle_runner_mock.should_receive(:heckle_with) {
+                heckled.should == false
+                heckled = true
+                @options.run_examples
+              }
+              @options.run_examples
+            end
+
+            it "shouldn't load spec files twice" do
+              example_runner = mock("ExampleGroupRunner")
+              example_runner_inside_heckle = mock("ExampleGroupRunner inside Heckle")
+
+              ExampleGroupRunner.should_receive(:new).twice.and_return(
+                example_runner, example_runner_inside_heckle
+              )
+
+              example_runner.stub!(:run)
+              example_runner.should_receive(:load_files)
+              @heckle_runner_mock.stub!(:heckle_with).and_return { @options.run_examples }
+              example_runner_inside_heckle.stub!(:run)
+              example_runner_inside_heckle.should_not_receive(:load_files)
+
+              @options.run_examples
+            end
           end
         end
 
@@ -356,6 +432,16 @@ module Spec
             @options.examples_run?.should be_false
             @options.run_examples
             @options.examples_run?.should be_false
+          end
+
+          it "invokes after_suite_parts with true" do
+            success_result = nil
+            @options.after_suite_parts << lambda do |success|
+              success_result = success
+            end
+
+            @options.run_examples
+            success_result.should be_true
           end
         end
       end

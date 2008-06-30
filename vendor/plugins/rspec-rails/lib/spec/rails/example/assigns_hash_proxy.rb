@@ -17,6 +17,7 @@ module Spec
         end
 
         def []=(ivar, val)
+          @object.instance_variable_set "@#{ivar}", val
           assigns[ivar.to_s] = val
         end
 

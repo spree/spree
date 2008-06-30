@@ -17,7 +17,7 @@ module Spec
         end
 
         # This is snagged from diff/lcs/ldiff.rb (which is a commandline tool)
-        def diff_as_string(data_old, data_new)
+        def diff_as_string(data_new, data_old)
           data_old = data_old.split(/\n/).map! { |e| e.chomp }
           data_new = data_new.split(/\n/).map! { |e| e.chomp }
           output = ""

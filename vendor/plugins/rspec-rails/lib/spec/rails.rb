@@ -8,10 +8,11 @@ require 'test/unit'
 
 require 'spec'
 
-require 'spec/rails/extensions'
-require 'spec/rails/example'
-require 'spec/rails/version'
 require 'spec/rails/matchers'
+require 'spec/rails/mocks'
+require 'spec/rails/example'
+require 'spec/rails/extensions'
+require 'spec/rails/version'
 
 module Spec
   # = Spec::Rails

@@ -17,9 +17,6 @@ module Spec
             expected_file = File.dirname(__FILE__) + "/html_formatted-#{::VERSION}#{suffix}.html"
             raise "There is no HTML file with expected content for this platform: #{expected_file}" unless File.file?(expected_file)
             expected_html = File.read(expected_file)
-            unless jruby?
-              raise "There should be no absolute paths in html_formatted.html!!" if (expected_html =~ /\/Users/n || expected_html =~ /\/home/n)
-            end
 
             Dir.chdir(root) do
               args = ['failing_examples/mocking_example.rb', 'failing_examples/diffing_spec.rb', 'examples/pure/stubbing_example.rb',  'examples/pure/pending_example.rb', '--format', 'html', opt]

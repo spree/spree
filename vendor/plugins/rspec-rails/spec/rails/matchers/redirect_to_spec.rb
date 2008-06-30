@@ -21,6 +21,12 @@ require File.dirname(__FILE__) + '/../../spec_helper'
       get 'action_with_redirect_to_somewhere_and_return'
       response.should redirect_to(:action => 'somewhere')
     end
+    
+    it "redirected from an SSL action to a non-SSL action" do
+      request.stub!(:ssl?).and_return true
+      get 'action_with_redirect_to_somewhere'
+      response.should redirect_to(:action => 'somewhere')
+    end
   
     it "redirected to correct path with leading /" do
       get 'action_with_redirect_to_somewhere'

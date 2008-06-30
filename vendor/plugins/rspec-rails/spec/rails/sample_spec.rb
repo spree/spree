@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "A sample spec" do
+describe "A sample spec", :type => :model do
+  fixtures :animals
   it "should pass" do
-    true.should === true
+    animals(:pig).name.should == "Pig"
   end
 end

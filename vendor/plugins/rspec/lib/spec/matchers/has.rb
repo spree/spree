@@ -8,24 +8,14 @@ module Spec
       end
       
       def matches?(target)
-        @target = target
-        begin
-          return target.send(predicate, *@args)
-        rescue => @error
-          # This clause should be empty, but rcov will not report it as covered
-          # unless something (anything) is executed within the clause
-          rcov_error_report = "http://eigenclass.org/hiki.rb?rcov-0.8.0"
-        end
-        return false
+        target.send(predicate, *@args)
       end
       
       def failure_message
-        raise @error if @error
         "expected ##{predicate}(#{@args[0].inspect}) to return true, got false"
       end
       
       def negative_failure_message
-        raise @error if @error
         "expected ##{predicate}(#{@args[0].inspect}) to return false, got true"
       end
       

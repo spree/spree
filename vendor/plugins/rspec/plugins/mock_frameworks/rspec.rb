@@ -1,4 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "lib", "spec", "mocks"))
+require 'spec/mocks/framework'
+require 'spec/mocks/extensions'
 
 module Spec
   module Plugins

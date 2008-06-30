@@ -39,9 +39,11 @@ module Spec
       # Accepts a String or a Regexp, matching a String using ==
       # and a Regexp using =~.
       #
+      # If response_or_text has a #body, then that is used as to match against
+      # else it uses response_or_text
+      #
       # Use this instead of <tt>response.should have_tag()</tt>
-      # when you either don't know or don't care where on the page
-      # this text appears.
+      # when you want to match the whole string or whole body
       #
       # == Examples
       #

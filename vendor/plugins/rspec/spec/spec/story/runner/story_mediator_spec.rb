@@ -47,7 +47,7 @@ module Spec
           @runner.scenarios.first.name.should == "scenario name"
           @runner.scenarios.first.story.should == @runner.stories.first
         end
-
+        
         it "should create a given scenario step if one matches" do
           pending("need to untangle the dark mysteries of the story runner - something needs to get stubbed here") do
             story = @mediator.create_story "title", "narrative"
@@ -120,10 +120,20 @@ module Spec
         it "should pass options to the stories it creates" do
           @mediator = StoryMediator.new @step_group, @runner, :foo => :bar
           @mediator.create_story "story title", "story narrative"
-
+        
           run_stories
           
           @runner.stories.first[:foo].should == :bar
+        end
+        
+        it "should description" do
+          @mediator = StoryMediator.new @step_group, @runner, :foo => :bar
+          @mediator.create_story "title", "narrative"
+          @mediator.create_scenario "scenario"
+          @mediator.create_given "something"
+          given = @mediator.last_step
+          @mediator.add_to_last " else"
+          given.name.should == "something else"
         end
         
       end

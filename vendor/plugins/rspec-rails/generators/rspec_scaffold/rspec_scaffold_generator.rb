@@ -147,8 +147,7 @@ module Rails
           when :decimal                     then "\"9.99\""
           when :datetime, :timestamp, :time then "Time.now"
           when :date                        then "Date.today"
-          when :string                      then "\"MyString\""
-          when :text                        then "\"MyText\""
+          when :string, :text               then "\"value for #{@name}\""
           when :boolean                     then "false"
           else
             ""

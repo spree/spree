@@ -1,6 +1,5 @@
 dir = File.dirname(__FILE__)
 
-require 'spec/rails/example/ivar_proxy'
 require 'spec/rails/example/assigns_hash_proxy'
 
 require "spec/rails/example/render_observer"

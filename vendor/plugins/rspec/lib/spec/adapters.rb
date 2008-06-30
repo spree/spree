@@ -1,0 +1,1 @@
+require 'spec/adapters/ruby_engine'

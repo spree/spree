@@ -1,23 +1,22 @@
-require File.dirname(__FILE__) + '<%= '/..' * class_nesting_depth %>/../spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '<%= '/..' * class_nesting_depth %>/../spec_helper')
 
 describe <%= controller_class_name %>Controller do
-  describe "handling GET /<%= table_name %>" do
+  describe "responding to GET /<%= table_name %>" do
 
     before(:each) do
-      @<%= file_name %> = mock_model(<%= class_name %>)
-      <%= class_name %>.stub!(:find).and_return([@<%= file_name %>])
+      <%= class_name %>.stub!(:find)
     end
   
     def do_get
       get :index
     end
   
-    it "should be successful" do
+    it "should succeed" do
       do_get
       response.should be_success
     end
 
-    it "should render index template" do
+    it "should render the 'index' template" do
       do_get
       response.should render_template('index')
     end
@@ -28,16 +27,16 @@ describe <%= controller_class_name %>Controller do
     end
   
     it "should assign the found <%= table_name %> for the view" do
+      <%= class_name %>.should_receive(:find).and_return([<%= file_name %> = mock_model(<%= class_name %>)] )
       do_get
-      assigns[:<%= table_name %>].should == [@<%= file_name %>]
+      assigns[:<%= table_name %>].should == [<%= file_name %>]
     end
   end
 
-  describe "handling GET /<%= table_name %>.xml" do
+  describe "responding to GET /<%= table_name %>.xml" do
 
     before(:each) do
-      @<%= file_name %> = mock_model(<%= class_name %>, :to_xml => "XML")
-      <%= class_name %>.stub!(:find).and_return(@<%= file_name %>)
+      <%= class_name %>.stub!(:find)
     end
   
     def do_get
@@ -45,154 +44,154 @@ describe <%= controller_class_name %>Controller do
       get :index
     end
   
-    it "should be successful" do
+    it "should succeed" do
       do_get
       response.should be_success
     end
 
     it "should find all <%= table_name %>" do
-      <%= class_name %>.should_receive(:find).with(:all).and_return([@<%= file_name %>])
+      <%= class_name %>.should_receive(:find).with(:all)
       do_get
     end
   
     it "should render the found <%= table_name %> as xml" do
-      @<%= file_name %>.should_receive(:to_xml).and_return("XML")
+      <%= file_name.pluralize %> = mock("Array of <%= class_name.pluralize %>")
+      <%= class_name %>.should_receive(:find).and_return(<%= file_name.pluralize %>)
+      <%= file_name.pluralize %>.should_receive(:to_xml).and_return("generated XML")
       do_get
-      response.body.should == "XML"
+      response.body.should == "generated XML"
     end
   end
 
-  describe "handling GET /<%= table_name %>/1" do
+  describe "responding to GET /<%= table_name %>/1" do
 
     before(:each) do
-      @<%= file_name %> = mock_model(<%= class_name %>)
-      <%= class_name %>.stub!(:find).and_return(@<%= file_name %>)
+      <%= class_name %>.stub!(:find)
     end
   
-    def do_get
-      get :show, :id => "1"
+    def do_get(id="1")
+      get :show, :id => id
     end
 
-    it "should be successful" do
+    it "should succeed" do
       do_get
       response.should be_success
     end
   
-    it "should render show template" do
+    it "should render the 'show' template" do
       do_get
       response.should render_template('show')
     end
   
     it "should find the <%= file_name %> requested" do
-      <%= class_name %>.should_receive(:find).with("1").and_return(@<%= file_name %>)
-      do_get
+      <%= class_name %>.should_receive(:find).with("37")
+      do_get("37")
     end
   
     it "should assign the found <%= file_name %> for the view" do
+      <%= class_name %>.should_receive(:find).and_return(<%= file_name %> = mock_model(<%= class_name %>))
       do_get
-      assigns[:<%= file_name %>].should equal(@<%= file_name %>)
+      assigns[:<%= file_name %>].should equal(<%= file_name %>)
     end
   end
 
-  describe "handling GET /<%= table_name %>/1.xml" do
+  describe "responding to GET /<%= table_name %>/1.xml" do
 
     before(:each) do
-      @<%= file_name %> = mock_model(<%= class_name %>, :to_xml => "XML")
-      <%= class_name %>.stub!(:find).and_return(@<%= file_name %>)
+      <%= class_name %>.stub!(:find)
     end
   
-    def do_get
+    def do_get(id="1")
       @request.env["HTTP_ACCEPT"] = "application/xml"
-      get :show, :id => "1"
+      get :show, :id => id
     end
 
-    it "should be successful" do
+    it "should succeed" do
       do_get
       response.should be_success
     end
   
     it "should find the <%= file_name %> requested" do
-      <%= class_name %>.should_receive(:find).with("1").and_return(@<%= file_name %>)
-      do_get
+      <%= class_name %>.should_receive(:find).with("37")
+      do_get("37")
     end
   
     it "should render the found <%= file_name %> as xml" do
-      @<%= file_name %>.should_receive(:to_xml).and_return("XML")
+      <%= file_name %> = mock_model(<%= class_name %>)
+      <%= class_name %>.should_receive(:find).and_return(<%= file_name %>)
+      <%= file_name %>.should_receive(:to_xml).and_return("generated XML")
       do_get
-      response.body.should == "XML"
+      response.body.should == "generated XML"
     end
   end
 
-  describe "handling GET /<%= table_name %>/new" do
+  describe "responding to GET /<%= table_name %>/new" do
 
-    before(:each) do
-      @<%= file_name %> = mock_model(<%= class_name %>)
-      <%= class_name %>.stub!(:new).and_return(@<%= file_name %>)
-    end
-  
     def do_get
       get :new
     end
 
-    it "should be successful" do
+    it "should succeed" do
       do_get
       response.should be_success
     end
   
-    it "should render new template" do
+    it "should render the 'new' template" do
       do_get
       response.should render_template('new')
     end
   
     it "should create an new <%= file_name %>" do
-      <%= class_name %>.should_receive(:new).and_return(@<%= file_name %>)
+      <%= class_name %>.should_receive(:new)
       do_get
     end
   
     it "should not save the new <%= file_name %>" do
-      @<%= file_name %>.should_not_receive(:save)
+      <%= class_name %>.should_receive(:new).and_return(<%= file_name %> = mock_model(<%= class_name %>))
+      <%= file_name %>.should_not_receive(:save)
       do_get
     end
   
     it "should assign the new <%= file_name %> for the view" do
+      <%= class_name %>.should_receive(:new).and_return(<%= file_name %> = mock_model(<%= class_name %>))
       do_get
-      assigns[:<%= file_name %>].should equal(@<%= file_name %>)
+      assigns[:<%= file_name %>].should equal(<%= file_name %>)
     end
   end
 
-  describe "handling GET /<%= table_name %>/1/edit" do
+  describe "responding to GET /<%= table_name %>/1/edit" do
 
     before(:each) do
-      @<%= file_name %> = mock_model(<%= class_name %>)
-      <%= class_name %>.stub!(:find).and_return(@<%= file_name %>)
+      <%= class_name %>.stub!(:find)
     end
   
     def do_get
       get :edit, :id => "1"
     end
 
-    it "should be successful" do
+    it "should succeed" do
       do_get
       response.should be_success
     end
   
-    it "should render edit template" do
+    it "should render the 'edit' template" do
       do_get
       response.should render_template('edit')
     end
   
     it "should find the <%= file_name %> requested" do
-      <%= class_name %>.should_receive(:find).and_return(@<%= file_name %>)
+      <%= class_name %>.should_receive(:find)
       do_get
     end
   
     it "should assign the found <%= class_name %> for the view" do
+      <%= class_name %>.should_receive(:find).and_return(<%= file_name %> = mock_model(<%= class_name %>))
       do_get
-      assigns[:<%= file_name %>].should equal(@<%= file_name %>)
+      assigns[:<%= file_name %>].should equal(<%= file_name %>)
     end
   end
 
-  describe "handling POST /<%= table_name %>" do
+  describe "responding to POST /<%= table_name %>" do
 
     before(:each) do
       @<%= file_name %> = mock_model(<%= class_name %>, :to_param => "1")
@@ -211,7 +210,12 @@ describe <%= controller_class_name %>Controller do
         do_post
       end
 
-      it "should redirect to the new <%= file_name %>" do
+      it "should assign the created <%= file_name %> for the view" do
+        do_post
+        assigns(:<%= file_name %>).should equal(@<%= file_name %>)
+      end
+
+      it "should redirect to the created <%= file_name %>" do
         do_post
         response.should redirect_to(<%= table_name.singularize %>_url("1"))
       end
@@ -225,7 +229,12 @@ describe <%= controller_class_name %>Controller do
         post :create, :<%= file_name %> => {}
       end
   
-      it "should re-render 'new'" do
+      it "should assign the invalid <%= file_name %> for the view" do
+        do_post
+        assigns(:<%= file_name %>).should equal(@<%= file_name %>)
+      end
+
+      it "should re-render the 'new' template" do
         do_post
         response.should render_template('new')
       end
@@ -233,7 +242,7 @@ describe <%= controller_class_name %>Controller do
     end
   end
 
-  describe "handling PUT /<%= table_name %>/1" do
+  describe "responding to PUT /<%= table_name %>/1" do
 
     before(:each) do
       @<%= file_name %> = mock_model(<%= class_name %>, :to_param => "1")
@@ -276,7 +285,12 @@ describe <%= controller_class_name %>Controller do
         put :update, :id => "1"
       end
 
-      it "should re-render 'edit'" do
+      it "should assign the found <%= file_name %> for the view" do
+        do_put
+        assigns(:<%= file_name %>).should equal(@<%= file_name %>)
+      end
+
+      it "should re-render the 'edit' template" do
         do_put
         response.should render_template('edit')
       end
@@ -284,7 +298,7 @@ describe <%= controller_class_name %>Controller do
     end
   end
 
-  describe "handling DELETE /<%= table_name %>/1" do
+  describe "responding to DELETE /<%= table_name %>/1" do
 
     before(:each) do
       @<%= file_name %> = mock_model(<%= class_name %>, :destroy => true)

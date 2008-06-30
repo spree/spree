@@ -17,6 +17,12 @@ require 'controller_spec_controller'
       session.should equal(session_before)
     end
   
+    it "should keep the same data in the session before and after the action" do
+      session[:foo] = :bar
+      get 'action_with_template'
+      session[:foo].should == :bar
+    end
+  
     it "should ensure controller.session is NOT nil before the action" do
       controller.session.should_not be_nil
       get 'action_with_template'
@@ -52,7 +58,6 @@ require 'controller_spec_controller'
       controller.expect_render(:update).and_yield(template)
       template.should_receive(:replace).with(:bottom, "replace_me", :partial => "non_existent_partial")
       get 'action_with_render_update'
-      puts response.body
     end
     
     it "should allow a path relative to RAILS_ROOT/app/views/ when specifying a partial" do
@@ -61,7 +66,7 @@ require 'controller_spec_controller'
     end
     
     it "should provide access to flash" do
-      get 'action_with_template'
+      get 'action_which_sets_flash'
       flash[:flash_key].should == "flash value"
     end
     
@@ -76,8 +81,10 @@ require 'controller_spec_controller'
     end
 
     it "should provide access to session" do
-      get 'action_with_template'
-      session[:session_key].should == "session value"
+      session[:session_key] = "session value"
+      lambda do
+        get 'action_which_gets_session', :expected => "session value"
+      end.should_not raise_error
     end
 
     it "should support custom routes" do
@@ -113,6 +120,7 @@ require 'controller_spec_controller'
     end
 
     it "should complain when calling stub!(:render) on the controller" do
+      controller.extend Spec::Mocks::Methods
       lambda {
         controller.stub!(:render)
       }.should raise_error(RuntimeError, /stub!\(:render\) has been disabled/)
@@ -167,6 +175,17 @@ end
 describe ControllerSpecController, :type => :controller do
   it "should not require naming the controller if describe is passed a type" do
   end  
+end
+
+describe "A controller spec with controller_name set", :type => :controller do
+  controller_name :controller_spec
+  
+  describe "nested" do
+    it "should inherit the controller name" do
+      get 'action_with_template'
+      response.should be_success
+    end
+  end
 end
 
 module Spec

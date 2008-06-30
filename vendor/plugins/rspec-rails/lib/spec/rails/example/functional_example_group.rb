@@ -11,9 +11,9 @@ module Spec
           raise "Can't determine controller class for #{@controller_class_name}" if @controller_class.nil?
 
           @controller = @controller_class.new
-
           @request = ActionController::TestRequest.new
           @response = ActionController::TestResponse.new
+          @response.session = @request.session
         end
 
         def params
@@ -25,7 +25,7 @@ module Spec
         end
 
         def session
-          request.session
+          response.session
         end
 
         # :call-seq:
@@ -48,17 +48,10 @@ module Spec
         #++
         def assigns(key = nil)
           if key.nil?
-            @controller.assigns
-            _controller_ivar_proxy
+            _assigns_hash_proxy
           else
-            @controller.assigns[key]
-            _controller_ivar_proxy[key]
+            _assigns_hash_proxy[key]
           end
-        end
-
-        protected
-        def _controller_ivar_proxy
-          @controller_ivar_proxy ||= IvarProxy.new @controller
         end
       end
     end

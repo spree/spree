@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
+<!DOCTYPE html 
   PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -188,10 +188,10 @@ a {
       <span class="failed_spec_name">should fail when expected message not received</span>
       <div class="failure" id="failure_1">
         <div class="message"><pre>Mock 'poke me' expected :poke with (any args) once, but received it 0 times</pre></div>
-        <div class="backtrace"><pre>./failing_examples/mocking_example.rb:13:
-./spec/spec/runner/formatter/html_formatter_spec.rb:18:
-./spec/spec/runner/formatter/html_formatter_spec.rb:14:in `chdir'
-./spec/spec/runner/formatter/html_formatter_spec.rb:14:</pre></div>
+        <div class="backtrace"><pre><a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/failing_examples/mocking_example.rb&line=13">./failing_examples/mocking_example.rb:13</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=50">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:50</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> :in `chdir'
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> </pre></div>
     <pre class="ruby"><code><span class="linenum">11</span>  <span class="ident">it</span> <span class="punct">&quot;</span><span class="string">should fail when expected message not received</span><span class="punct">&quot;</span> <span class="keyword">do</span>
 <span class="linenum">12</span>    <span class="ident">mock</span> <span class="punct">=</span> <span class="ident">mock</span><span class="punct">(&quot;</span><span class="string">poke me</span><span class="punct">&quot;)</span>
 <span class="offending"><span class="linenum">13</span>    <span class="ident">mock</span><span class="punct">.</span><span class="ident">should_receive</span><span class="punct">(</span><span class="symbol">:poke</span><span class="punct">)</span></span>
@@ -204,10 +204,10 @@ a {
       <span class="failed_spec_name">should fail when messages are received out of order</span>
       <div class="failure" id="failure_2">
         <div class="message"><pre>Mock 'one two three' received :three out of order</pre></div>
-        <div class="backtrace"><pre>./failing_examples/mocking_example.rb:22:
-./spec/spec/runner/formatter/html_formatter_spec.rb:18:
-./spec/spec/runner/formatter/html_formatter_spec.rb:14:in `chdir'
-./spec/spec/runner/formatter/html_formatter_spec.rb:14:</pre></div>
+        <div class="backtrace"><pre><a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/failing_examples/mocking_example.rb&line=22">./failing_examples/mocking_example.rb:22</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=50">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:50</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> :in `chdir'
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> </pre></div>
     <pre class="ruby"><code><span class="linenum">20</span>    <span class="ident">mock</span><span class="punct">.</span><span class="ident">should_receive</span><span class="punct">(</span><span class="symbol">:three</span><span class="punct">).</span><span class="ident">ordered</span>
 <span class="linenum">21</span>    <span class="ident">mock</span><span class="punct">.</span><span class="ident">one</span>
 <span class="offending"><span class="linenum">22</span>    <span class="ident">mock</span><span class="punct">.</span><span class="ident">three</span></span>
@@ -219,15 +219,14 @@ a {
     <dd class="spec failed">
       <span class="failed_spec_name">should get yelled at when sending unexpected messages</span>
       <div class="failure" id="failure_3">
-        <div class="message"><pre>Mock 'don't talk to me' expected :any_message_at_all with (any args) 0 times, but received it once</pre></div>
-        <div class="backtrace"><pre>./failing_examples/mocking_example.rb:28:
-./spec/spec/runner/formatter/html_formatter_spec.rb:18:
-./spec/spec/runner/formatter/html_formatter_spec.rb:14:in `chdir'
-./spec/spec/runner/formatter/html_formatter_spec.rb:14:</pre></div>
-    <pre class="ruby"><code><span class="linenum">26</span>  <span class="ident">it</span> <span class="punct">&quot;</span><span class="string">should get yelled at when sending unexpected messages</span><span class="punct">&quot;</span> <span class="keyword">do</span>
-<span class="linenum">27</span>    <span class="ident">mock</span> <span class="punct">=</span> <span class="ident">mock</span><span class="punct">(&quot;</span><span class="string">don't talk to me</span><span class="punct">&quot;)</span>
-<span class="offending"><span class="linenum">28</span>    <span class="ident">mock</span><span class="punct">.</span><span class="ident">should_not_receive</span><span class="punct">(</span><span class="symbol">:any_message_at_all</span><span class="punct">)</span></span>
-<span class="linenum">29</span>    <span class="ident">mock</span><span class="punct">.</span><span class="ident">any_message_at_all</span>
+        <div class="message"><pre>Mock 'don't talk to me' expected :any_message_at_all with (no args) 0 times, but received it once</pre></div>
+        <div class="backtrace"><pre><a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/failing_examples/mocking_example.rb&line=29">./failing_examples/mocking_example.rb:29</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=50">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:50</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> :in `chdir'
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> </pre></div>
+    <pre class="ruby"><code><span class="linenum">27</span>    <span class="ident">mock</span> <span class="punct">=</span> <span class="ident">mock</span><span class="punct">(&quot;</span><span class="string">don't talk to me</span><span class="punct">&quot;)</span>
+<span class="linenum">28</span>    <span class="ident">mock</span><span class="punct">.</span><span class="ident">should_not_receive</span><span class="punct">(</span><span class="symbol">:any_message_at_all</span><span class="punct">)</span>
+<span class="offending"><span class="linenum">29</span>    <span class="ident">mock</span><span class="punct">.</span><span class="ident">any_message_at_all</span></span>
 <span class="linenum">30</span>  <span class="keyword">end</span></code></pre>
       </div>
     </dd>
@@ -236,7 +235,10 @@ a {
       <span class="failed_spec_name">has a bug we need to fix</span>
       <div class="failure" id="failure_4">
         <div class="message"><pre>Expected pending 'here is the bug' to fail. No Error was raised.</pre></div>
-        
+        <div class="backtrace"><pre><a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/failing_examples/mocking_example.rb&line=33">./failing_examples/mocking_example.rb:33</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=50">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:50</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> :in `chdir'
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> </pre></div>
     <pre class="ruby"><code><span class="linenum">31</span>
 <span class="linenum">32</span>  <span class="ident">it</span> <span class="punct">&quot;</span><span class="string">has a bug we need to fix</span><span class="punct">&quot;</span> <span class="keyword">do</span>
 <span class="offending"><span class="linenum">33</span>    <span class="ident">pending</span> <span class="punct">&quot;</span><span class="string">here is the bug</span><span class="punct">&quot;</span> <span class="keyword">do</span></span>
@@ -259,11 +261,14 @@ a {
 Diff:
 @@ -1,4 +1,4 @@
  RSpec is a
--behavior driven development
-+behaviour driven development
+-behaviour driven development
++behavior driven development
  framework for Ruby
 </pre></div>
-        
+        <div class="backtrace"><pre><a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/failing_examples/diffing_spec.rb&line=13">./failing_examples/diffing_spec.rb:13</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=50">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:50</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> :in `chdir'
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> </pre></div>
     <pre class="ruby"><code><span class="linenum">11</span><span class="ident">framework</span> <span class="keyword">for</span> <span class="constant">Ruby</span>
 <span class="linenum">12</span><span class="constant">EOF</span>
 <span class="offending"><span class="linenum">13</span>    <span class="ident">usa</span><span class="punct">.</span><span class="ident">should</span> <span class="punct">==</span> <span class="ident">uk</span></span>
@@ -287,14 +292,14 @@ Diff:
 @@ -1,5 +1,5 @@
  &lt;Animal
  name=bob,
--species=giraffe
-+species=tortoise
+-species=tortoise
++species=giraffe
  &gt;
 </pre></div>
-        <div class="backtrace"><pre>./failing_examples/mocking_example.rb:33:
-./spec/spec/runner/formatter/html_formatter_spec.rb:18:
-./spec/spec/runner/formatter/html_formatter_spec.rb:14:in `chdir'
-./spec/spec/runner/formatter/html_formatter_spec.rb:14:</pre></div>
+        <div class="backtrace"><pre><a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/failing_examples/diffing_spec.rb&line=34">./failing_examples/diffing_spec.rb:34</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=50">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:50</a> 
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> :in `chdir'
+<a href="txmt://open?url=file:///Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb&line=46">/Users/david/projects/ruby/rspec/rspec/spec/spec/runner/formatter/spec_mate_formatter_spec.rb:46</a> </pre></div>
     <pre class="ruby"><code><span class="linenum">32</span>    <span class="ident">expected</span> <span class="punct">=</span> <span class="constant">Animal</span><span class="punct">.</span><span class="ident">new</span> <span class="punct">&quot;</span><span class="string">bob</span><span class="punct">&quot;,</span> <span class="punct">&quot;</span><span class="string">giraffe</span><span class="punct">&quot;</span>
 <span class="linenum">33</span>    <span class="ident">actual</span>   <span class="punct">=</span> <span class="constant">Animal</span><span class="punct">.</span><span class="ident">new</span> <span class="punct">&quot;</span><span class="string">bob</span><span class="punct">&quot;,</span> <span class="punct">&quot;</span><span class="string">tortoise</span><span class="punct">&quot;</span>
 <span class="offending"><span class="linenum">34</span>    <span class="ident">expected</span><span class="punct">.</span><span class="ident">should</span> <span class="ident">eql</span><span class="punct">(</span><span class="ident">actual</span><span class="punct">)</span></span>

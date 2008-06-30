@@ -1,5 +1,5 @@
 require 'spec/example/configuration'
-
+begin
 module Spec
   module Example
     class Configuration
@@ -63,4 +63,9 @@ module Spec
       end
     end
   end
+end
+rescue Exception => e
+  puts e.message
+  puts e.backtrace
+  raise e
 end

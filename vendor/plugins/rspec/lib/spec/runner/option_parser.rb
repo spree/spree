@@ -19,7 +19,7 @@ module Spec
                                                  "Separate multiple patterns with commas.",
                                                  "Applies only to directories named on the command line (files",
                                                  "named explicitly on the command line will be loaded regardless)."],
-        :diff =>    ["-D", "--diff [FORMAT]", "Show diff of objects that are expected to be equal when they are not",
+        :diff =>    ["-D", "--diff [FORMAT]","Show diff of objects that are expected to be equal when they are not",
                                              "Builtin formats: unified|u|context|c",
                                              "You can also specify a custom differ class",
                                              "(in which case you should also specify --require)"],
@@ -36,7 +36,7 @@ module Spec
         :specification => ["-s", "--specification [NAME]", "DEPRECATED - use -e instead", "(This will be removed when autotest works with -e)"],
         :line => ["-l", "--line LINE_NUMBER", Integer, "Execute behaviout or specification at given line.",
                                                        "(does not work for dynamically generated specs)"],
-        :format => ["-f", "--format FORMAT[:WHERE]",  "Specifies what format to use for output. Specify WHERE to tell",
+        :format => ["-f", "--format FORMAT[:WHERE]","Specifies what format to use for output. Specify WHERE to tell",
                                                     "the formatter where to write the output. All built-in formats",
                                                     "expect WHERE to be a file name, and will write to STDOUT if it's",
                                                     "not specified. The --format option may be specified several times",
@@ -46,6 +46,7 @@ module Spec
                                                     "progress|p               : Text progress",
                                                     "profile|o                : Text progress with profiling of 10 slowest examples",
                                                     "specdoc|s                : Example doc as text",
+                                                    "indented|i               : Example doc as indented text",
                                                     "html|h                   : A nice HTML report",
                                                     "failing_examples|e       : Write all failing examples - input for --example",
                                                     "failing_example_groups|g : Write all failing example groups - input for --example",
@@ -57,13 +58,13 @@ module Spec
                                                     "FORMAT can also be the name of a custom formatter class",
                                                     "(in which case you should also specify --require to load it)"],
         :require => ["-r", "--require FILE", "Require FILE before running specs",
-                                          "Useful for loading custom formatters or other extensions.",
-                                          "If this option is used it must come before the others"],
+                                             "Useful for loading custom formatters or other extensions.",
+                                             "If this option is used it must come before the others"],
         :backtrace => ["-b", "--backtrace", "Output full backtrace"],
         :loadby => ["-L", "--loadby STRATEGY", "Specify the strategy by which spec files should be loaded.",
-                                              "STRATEGY can currently only be 'mtime' (File modification time)",
-                                              "By default, spec files are loaded in alphabetical order if --loadby",
-                                              "is not specified."],
+                                               "STRATEGY can currently only be 'mtime' (File modification time)",
+                                               "By default, spec files are loaded in alphabetical order if --loadby",
+                                               "is not specified."],
         :reverse => ["-R", "--reverse", "Run examples in reverse order"],
         :timeout => ["-t", "--timeout FLOAT", "Interrupt and fail each example that doesn't complete in the",
                                               "specified time"],
@@ -107,11 +108,8 @@ module Spec
         on(*OPTIONS[:heckle]) {|heckle| @options.load_heckle_runner(heckle)}
         on(*OPTIONS[:dry_run]) {@options.dry_run = true}
         on(*OPTIONS[:options_file]) {|options_file| parse_options_file(options_file)}
-        on(*OPTIONS[:generate_options]) do |options_file|
-        end
-        on(*OPTIONS[:runner]) do |runner|
-          @options.user_input_for_runner = runner
-        end
+        on(*OPTIONS[:generate_options]) {|options_file|}
+        on(*OPTIONS[:runner]) {|runner|  @options.user_input_for_runner = runner}
         on(*OPTIONS[:drb]) {}
         on(*OPTIONS[:version]) {parse_version}
         on_tail(*OPTIONS[:help]) {parse_help}
@@ -141,6 +139,10 @@ module Spec
       def parse_options_file(options_file)
         option_file_args = IO.readlines(options_file).map {|l| l.chomp.split " "}.flatten
         @argv.push(*option_file_args)
+        # TODO - this is a brute force solution to http://rspec.lighthouseapp.com/projects/5645/tickets/293.
+        # Let's look for a cleaner way. Might not be one. But let's look. If not, perhaps
+        # this can be moved to a different method to indicate the special handling for drb?
+        parse_drb(@argv)
       end
 
       def parse_generate_options
@@ -170,12 +172,12 @@ module Spec
         @options.examples_should_not_be_run
       end
 
-      def parse_drb
+      def parse_drb(argv = nil)
+        argv ||= @options.argv # TODO - see note about about http://rspec.lighthouseapp.com/projects/5645/tickets/293
         is_drb = false
-        argv = @options.argv
         is_drb ||= argv.delete(OPTIONS[:drb][0])
         is_drb ||= argv.delete(OPTIONS[:drb][1])
-        return nil unless is_drb
+        return false unless is_drb
         @options.examples_should_not_be_run
         DrbCommandLine.run(
           self.class.parse(argv, @error_stream, @out_stream)

@@ -28,7 +28,25 @@ describe "Diff" do
   it "should output unified diff of two strings" do
     expected="foo\nbar\nzap\nthis\nis\nsoo\nvery\nvery\nequal\ninsert\na\nline\n"
     actual="foo\nzap\nbar\nthis\nis\nsoo\nvery\nvery\nequal\ninsert\na\nanother\nline\n"
-    expected_diff="\n\n@@ -1,6 +1,6 @@\n foo\n-bar\n zap\n+bar\n this\n is\n soo\n@@ -9,5 +9,6 @@\n equal\n insert\n a\n+another\n line\n"
+    expected_diff= <<'EOD'
+
+
+@@ -1,6 +1,6 @@
+ foo
+-zap
+ bar
++zap
+ this
+ is
+ soo
+@@ -9,6 +9,5 @@
+ equal
+ insert
+ a
+-another
+ line
+EOD
+
     diff = @differ.diff_as_string(expected, actual)
     diff.should eql(expected_diff)
   end
@@ -44,11 +62,11 @@ describe "Diff" do
   :metasyntactic,
   "variable",
   :delta,
-- "charlie",
-+ "tango",
+- "tango",
++ "charlie",
   :width,
-- "quite wide"]
-+ "very wide"]
+- "very wide"]
++ "quite wide"]
 EOD
 
 
@@ -65,8 +83,8 @@ EOD
 @@ -1,5 +1,5 @@
  <Animal
    name=bob,
--  species=giraffe
-+  species=tortoise
+-  species=tortoise
++  species=giraffe
  >
 EOD
 
@@ -94,12 +112,12 @@ describe "Diff in context format" do
 *** 1,5 ****
   <Animal
     name=bob,
-!   species=giraffe
+!   species=tortoise
   >
 --- 1,5 ----
   <Animal
     name=bob,
-!   species=tortoise
+!   species=giraffe
   >
 EOD
 

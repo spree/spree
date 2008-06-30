@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift File.dirname(__FILE__) + '/../../rspec/lib' # For svn
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../vendor/plugins/rspec/lib' # For rspec installed as plugin
 require 'rubygems'
 require 'drb/drb'
@@ -23,19 +22,28 @@ module Spec
               active_connections.delete(name)
             end
           end
-        end        
+        end
 
         if ActionController.const_defined?(:Dispatcher)
           dispatcher = ::ActionController::Dispatcher.new($stdout)
-          dispatcher.cleanup_application(true)
+          dispatcher.cleanup_application
         elsif ::Dispatcher.respond_to?(:reset_application!)
           ::Dispatcher.reset_application!
         else
           raise "Application reloading failed"
         end
+        if Object.const_defined?(:Fixtures) && Fixtures.respond_to?(:reset_cache)
+          Fixtures.reset_cache
+        end
+
         ::Dependencies.mechanism = :load
         require_dependency('application.rb') unless Object.const_defined?(:ApplicationController)
         load File.dirname(__FILE__) + '/../spec/spec_helper.rb'
+
+        if in_memory_database?
+          load "#{RAILS_ROOT}/db/schema.rb" # use db agnostic schema by default
+          ActiveRecord::Migrator.up('db/migrate') # use migrations
+        end
 
         ::Spec::Runner::CommandLine.run(
           ::Spec::Runner::OptionParser.parse(
@@ -44,6 +52,12 @@ module Spec
             $stdout
           )
         )
+      end
+
+      def in_memory_database?
+        ENV["RAILS_ENV"] == "test" and
+        ::ActiveRecord::Base.connection.class.to_s == "ActiveRecord::ConnectionAdapters::SQLite3Adapter" and
+        ::Rails::Configuration.new.database_configuration['test']['database'] == ':memory:'
       end
     end
   end
@@ -91,7 +105,7 @@ opts.parse!(ARGV)
 puts "Ready"
 exec_server = lambda {
   trap("USR2") { restart_test_server } if Signal.list.has_key?("USR2")
-  DRb.start_service("druby://localhost:8989", Spec::Runner::RailsSpecServer.new)
+  DRb.start_service("druby://127.0.0.1:8989", Spec::Runner::RailsSpecServer.new)
   DRb.thread.join
 }
 

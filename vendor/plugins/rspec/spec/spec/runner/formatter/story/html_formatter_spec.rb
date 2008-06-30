@@ -37,12 +37,18 @@ module Spec
           
           it "should create spans for params" do
             @reporter.step_succeeded('given', 'a $coloured $animal', 'brown', 'dog')
-            @out.string.should == "                <li class=\"passed\">Given a <span class=\"param\">brown</span> <span class=\"param\">dog</span></li>\n"
+            @reporter.scenario_ended
+            @reporter.story_ended('story_title', 'narrative')
+
+            @out.string.should include("                <li class=\"passed\">Given a <span class=\"param\">brown</span> <span class=\"param\">dog</span></li>\n")
           end
           
           it 'should create spanes for params in regexp steps' do
             @reporter.step_succeeded :given, /a (pink|blue) (.*)/, 'brown', 'dog'
-            @out.string.should == "                <li class=\"passed\">Given a <span class=\"param\">brown</span> <span class=\"param\">dog</span></li>\n"
+            @reporter.scenario_ended
+            @reporter.story_ended('story_title', 'narrative')
+            
+            @out.string.should include("                <li class=\"passed\">Given a <span class=\"param\">brown</span> <span class=\"param\">dog</span></li>\n")
           end
 
           it "should create a ul for collected_steps" do
@@ -54,6 +60,26 @@ module Spec
       </ul>
 EOF
           end
+          
+          it "should create a failed story if one of its scenarios fails" do
+              @reporter.story_started('story_title', 'narrative')
+              @reporter.scenario_started('story_title', 'succeeded_scenario_name')
+              @reporter.step_failed('then', 'failed_step', 'en', 'to')
+              @reporter.scenario_failed('story_title', 'failed_scenario_name', NameError.new('sup'))
+              @reporter.story_ended('story_title', 'narrative')
+            
+              @out.string.should include("      <dl class=\"story failed\">\n        <dt>Story: story_title</dt>\n")
+          end
+          
+          it "should create a failed scenario if one of its steps fails" do
+            @reporter.scenario_started('story_title', 'failed_scenario_name')
+            @reporter.step_failed('then', 'failed_step', 'en', 'to')
+            @reporter.scenario_failed('story_title', 'failed_scenario_name', NameError.new('sup'))
+            @reporter.story_ended('story_title', 'narrative')
+          
+            @out.string.should include("<dl class=\"failed\">\n              <dt>Scenario: failed_scenario_name</dt>\n")
+          end
+          
         end
       end
     end
