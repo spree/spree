@@ -1,0 +1,20 @@
+<h1>Listing people</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+  
+<% for person in @people %>
+  <tr>
+    <td><%=h person.name %></td>
+    <td><%= link_to 'Show', person_path(person) %></td>
+    <td><%= link_to 'Edit', edit_person_path(person) %></td>
+    <td><%= link_to 'Destroy', person_path(person), :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New person', new_person_path %>

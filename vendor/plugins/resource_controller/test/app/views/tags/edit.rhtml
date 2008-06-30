@@ -1,0 +1,17 @@
+<h1>Editing tag</h1>
+
+<%= error_messages_for :tag %>
+
+<% form_for(:tag, :url => object_url, :html => { :method => :put }) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <%= submit_tag "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', object_url %> |
+<%= link_to 'Back', collection_url %>

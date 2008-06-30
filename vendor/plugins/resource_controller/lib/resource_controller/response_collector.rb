@@ -17,5 +17,11 @@ module ResourceController
     def [](symbol)
       @responses.find { |method, block| method == symbol }
     end
+    
+    def dup
+      returning ResponseCollector.new do |duplicate|
+        duplicate.instance_variable_set(:@responses, responses.dup)
+      end
+    end
   end
 end
