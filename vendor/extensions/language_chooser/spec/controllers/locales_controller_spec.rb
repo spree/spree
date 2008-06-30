@@ -10,6 +10,6 @@ describe LocalesController do
 
   it "GET 'update' should be successful" do
     get 'update'
-    response.should be_success
+    response.should be_redirect
   end
 end
