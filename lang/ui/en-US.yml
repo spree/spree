@@ -38,8 +38,7 @@ customer: Customer
 date: Date
 date_range: Date Range
 delete: Delete
-description: description
-Description: Description
+description: Description
 destroy: Destroy
 display: Display
 edit: Edit
@@ -86,6 +85,7 @@ new_option_type: New Option Type
 new_option_value: New Option Value
 new_user: New User
 new_variant: New Variant
+new_zone: New Zone
 next: next
 no_items_in_cart: 
 none_available: None Available
@@ -161,4 +161,5 @@ welcome_to_sample_store: Welcome to the sample store
 what_is_a_cvv: What is a (CVV) Credit Card Code?
 what_is_this: What's This?
 zip: Zip
-Zone: Zone
+zone: Zone
+zones: Zones
