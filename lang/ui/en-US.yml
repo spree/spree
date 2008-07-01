@@ -25,6 +25,8 @@ change_language: Change Language
 checkout: Checkout
 city: City
 comp_order: Comp Order
+configuration: Configuration
+configurations: Configurations
 confirm: Confirm
 confirm_password: Password Confirmation
 continue_shopping: Continue shopping
@@ -36,8 +38,8 @@ customer: Customer
 date: Date
 date_range: Date Range
 delete: Delete
-description: 
-description: Description
+description: description
+Description: Description
 destroy: Destroy
 display: Display
 edit: Edit
@@ -140,6 +142,7 @@ store: Store
 street_address_2: Street Address (cont'd)
 street_address: Street Address
 subtotal: Subtotal
+system: System
 tax: Tax
 tax_total: Tax Total
 time: Time
@@ -158,3 +161,4 @@ welcome_to_sample_store: Welcome to the sample store
 what_is_a_cvv: What is a (CVV) Credit Card Code?
 what_is_this: What's This?
 zip: Zip
+Zone: Zone

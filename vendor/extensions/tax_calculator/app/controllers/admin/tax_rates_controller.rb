@@ -1,4 +1,5 @@
 class Admin::TaxRatesController < Admin::BaseController
+  resource_controller
   before_filter :load_data
   
   update.response do |wants|
@@ -7,7 +8,7 @@ class Admin::TaxRatesController < Admin::BaseController
     
   private 
   
-      def load_data     
-        @available_states = State.find :all, :order => :name
-      end
+    def load_data     
+      @available_states = State.find :all, :order => :name
+    end
 end

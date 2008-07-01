@@ -1,4 +1,4 @@
-class Spree::BaseController < ResourceController::Base
+class Spree::BaseController < ApplicationController
   
   CalendarDateSelect.format = :american
   #model :order, :address

@@ -1,4 +1,6 @@
 class Admin::GatewayOptionValuesController < Admin::BaseController
+  resource_controller
+  
   belongs_to :gateway_configuration
 
   index.before do

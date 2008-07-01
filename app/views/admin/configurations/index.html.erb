@@ -1,0 +1,16 @@
+<h1><%= :Configurations.l("Configurations") %></h1>
+
+<table id="configurations" class="full-table" width="800px">
+  <thead>
+    <tr>
+      <th><%= :System.l("System") %></th>
+      <th><%= :Description.l("Description") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="node level-1">
+      <td><%= link_to :Zone.l("Zone"), admin_zones_path %></td>
+      <td>Collections of countries, states or other zones to be used in various calculations.</td>
+    </tr>
+  </tbody>
+</table>

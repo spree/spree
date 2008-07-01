@@ -1,4 +1,6 @@
 class Admin::ZonesController < Admin::BaseController
+  resource_controller  
+  
   before_filter :load_data
 
   create.after do
