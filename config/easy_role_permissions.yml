@@ -44,28 +44,18 @@
 'UsersController':
   permission1:
     roles : [admin]
-    options :
-      only : index      
 'Admin::BaseController':
   permission1:
     roles : [admin]
 'Admin::UsersController':
   permission1:
-    roles : [admin, shipper]    
-  permission2:
-    role : [shipper]
-    options :
-      except : [index, show]
+    roles : [admin]   
 'Admin::OrdersController':
   permission1:
     role : [admin]
-    options :
-      except : [index, ship, show]
 'Admin::ProductsController':
   permission1:
     role : [admin]
-    options :
-      except : [index, show]
 'CheckoutController':
   permission1:
     role : [admin]
