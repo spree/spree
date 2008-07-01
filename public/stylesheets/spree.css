@@ -16,11 +16,11 @@ body {
   margin:20pt auto;
   position:relative;
   text-align:left;
-  width:780px;
+  width:980px;
 }
 
 #main-table {
-  width:780px;
+  width:980px;
   border-collapse: collapse;
   border:1px solid;
 }
