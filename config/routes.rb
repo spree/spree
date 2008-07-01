@@ -17,18 +17,24 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
-  map.resources :users
-  
-  # spree mappings need to happen first
   map.root :controller => "store"
+  # login mappings should appear before all others
   map.connect '/login', :controller => 'account', :action => 'login'
   map.connect '/logout', :controller => 'account', :action => 'logout'
   map.connect '/signup', :controller => 'account', :action => 'signup'
   map.connect '/admin', :controller => 'admin/overview', :action => 'index'  
 
+  map.resources :countries, :actions => [:index]
+  map.resources :states, :actions => [:index]
+  
+  map.resources :users
+  
+  map.namespace :admin do |admin|
+    admin.resources :zones
+  end
+
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
-  
-  
+
 end

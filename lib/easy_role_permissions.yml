@@ -74,3 +74,7 @@
 'Admin::TaxRatesController':
   permission1:
     role : [admin]
+'Admin::ZonesController':
+  permission1:
+    role : [admin]
+    

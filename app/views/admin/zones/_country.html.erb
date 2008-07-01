@@ -1,0 +1,15 @@
+<li>
+  Name: 
+  <%= text_field_with_auto_complete :zone, 
+                                    :member_name,
+                                    {:size => 35,
+                                     :onkeypress => "return event.which == Event.KEY_RETURN ? false : true",
+                                     :autocomplete => "off",
+                                     :name => "member_names[]",
+                                     :value => "#{value if local_assigns.has_key? :value}"
+                                    },
+                                    {:url => formatted_countries_path(:js),
+                                     :method => :get,
+                                     :with => "Object.toQueryString({q: element.value})" 
+                                    } %>
+</li>

@@ -1,0 +1,10 @@
+<h1>Editing Zone</h1>
+
+<%= error_messages_for :zone %>
+
+<% form_for(:zone, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%=submit_tag "Update"%>
+  </p>
+<% end %>

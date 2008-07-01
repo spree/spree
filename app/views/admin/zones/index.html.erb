@@ -1,0 +1,26 @@
+<h1>Zones</h1>
+<table class="admin-report" width="545">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @collection.each do |zone| %>
+      <tr class="<%= cycle('even', 'odd') %>">
+        <td><%=zone.name %></td>
+        <td><%=zone.description %></td>
+        <td>
+          <%=link_to "Edit", edit_object_url(zone) %> |
+          <%=link_to "Delete", object_url(zone), :method => :delete %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @collection.empty? %>
+      <tr><td colspan="2">None.</td></tr>
+    <% end %>
+  </tbody>
+</table>
+<%= link_to "New Zone", new_object_url %>

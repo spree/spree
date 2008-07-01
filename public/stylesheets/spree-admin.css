@@ -384,3 +384,7 @@ td.two-col-right {
 	list-style-type: none;
 }
 
+.zone-member-list li {
+  padding: 0 3px;  
+  list-style-type: none;
+}
