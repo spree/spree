@@ -30,7 +30,7 @@ class Admin::ZonesController < Admin::BaseController
   
   private
     def collection
-      @collection ||= end_of_association_chain.find(:all, :page => {:size => 10, :current => params[:page], :first => 1})
+      @collection ||= end_of_association_chain.find(:all, :order => :name, :page => {:size => 10, :current => params[:page], :first => 1})
     end  
 
     def load_data
