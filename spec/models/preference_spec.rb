@@ -34,26 +34,34 @@ describe Preference, "by default" do
   end
 end
 
-describe Preference, "in general" do
-  it "should be valid with valid attributes"
-  it "should require an attribute"
-  it "should have an owner"
-  it "should have an owner type"
-  it "should not require a group"
-  it "should not require a group even when a group type is specified"
-  it "should not require a group type"
-  it "should require a group type a group_id is specified"
-end
-
 describe Preference, "as a Class" do
-  it "should be able to split nil groups"
-  it "should be able to split non ActiveRecord groups"
-  it "should be able to split ActiveRecord group"
+  it "should be able to split nil groups" do
+    group_id, group_type = Preference.split_group(nil)
+    group_id.should be_nil
+    group_type.should be_nil
+  end
+  
+  it "should be able to split non ActiveRecord groups" do
+    group_id, group_type = Preference.split_group('car')
+    group_id.should be_nil
+    group_type.should == 'car'
+  end
 end
 
-describe Preference, "after being created" do
-  it "should have an owner"
-  it "should have a definition"
-  it "should have a value"
-  it "should not have a group association"
-end
+# describe Preference, "after being created" do
+#   it "should have an owner"
+#   it "should have a definition"
+#   it "should have a value"
+#   it "should not have a group association"
+# end
+
+# describe Preference, "in general" do
+#   it "should be valid with valid attributes"
+#   it "should require an attribute"
+#   it "should have an owner"
+#   it "should have an owner type"
+#   it "should not require a group"
+#   it "should not require a group even when a group type is specified"
+#   it "should not require a group type"
+#   it "should require a group type a group_id is specified"
+# end
