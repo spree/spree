@@ -24,15 +24,17 @@ ActionController::Routing::Routes.draw do |map|
   map.connect '/signup', :controller => 'account', :action => 'signup'
   map.connect '/admin', :controller => 'admin/overview', :action => 'index'  
 
-  map.resources :countries, :actions => [:index]
+  map.resources :countries, :has_many => :states, :actions => [:index]
   map.resources :states, :actions => [:index]
   
   map.resources :users
   
   map.namespace :admin do |admin|
     admin.resources :zones
+    admin.resources :countries, :has_many => :states
+    admin.resources :states
   end
-
+  
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'

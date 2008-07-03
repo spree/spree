@@ -3,14 +3,18 @@
 <table id="configurations" class="full-table" width="800px">
   <thead>
     <tr>
-      <th><%= :System.l("System") %></th>
-      <th><%= :Description.l("Description") %></th>
+      <th><%= :system.l("System") %></th>
+      <th><%= :description.l("Description") %></th>
     </tr>
   </thead>
   <tbody>
-    <tr class="node level-1">
-      <td><%= link_to :Zone.l("Zone"), admin_zones_path %></td>
+    <tr>
+      <td><%= link_to :zone.l("Zone"), admin_zones_path %></td>
       <td>Collections of countries, states or other zones to be used in various calculations.</td>
+    </tr>
+    <tr>
+      <td><%= link_to :states.l("States"), admin_country_states_path(214) %></td>
+      <td>Administer the list of states/provinces associated with each country.</td>
     </tr>
   </tbody>
 </table>

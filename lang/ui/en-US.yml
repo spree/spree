@@ -1,3 +1,4 @@
+abbreviation: Abbreviation
 account: Account
 action: Action
 add_category: Add Category
@@ -44,6 +45,7 @@ display: Display
 edit: Edit
 editing_category: Editing category
 editing_option_types: Editing Option Types
+editing_state: Editing State
 editing_user: Editing User
 email_address: Email Address
 email: Email
@@ -83,6 +85,7 @@ new_category: New category
 new_image: New Image
 new_option_type: New Option Type
 new_option_value: New Option Value
+new_state: New State
 new_user: New User
 new_variant: New Variant
 new_zone: New Zone
@@ -136,6 +139,7 @@ spanish: Spanish
 sku: SKU
 start: Start
 state: State
+states: States
 status: Status
 stop: Stop
 store: Store
