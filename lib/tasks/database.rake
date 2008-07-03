@@ -6,11 +6,9 @@ namespace :db do
     require 'highline/import'
     if ENV['SKIP_NAG'] or ENV['OVERWRITE'].to_s.downcase == 'true' or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
 
-      ENV['SKIP_NAG'] = 'yes'
-      
-      # Migrate downward
-      ActiveRecord::Migrator.migrate("#{SPREE_ROOT}/db/migrate/", 0)
-    
+      # Drop all tables
+      ActiveRecord::Base.connection.tables.each { |t| ActiveRecord::Base.connection.drop_table t }
+
       # Migrate upward 
       Rake::Task["db:migrate"].invoke
       
@@ -24,18 +22,16 @@ namespace :db do
   
   desc "Bootstrap your database for Spree."
   task :bootstrap  => :environment do
+    return unless %w[development test].include? RAILS_ENV    
+    
     require 'highline/import'
     if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
-      # Migrate downward
+
       ENV['SKIP_NAG'] = 'yes'
-      ActiveRecord::Migrator.migrate("#{SPREE_ROOT}/db/migrate/", 0)
 
-      # Migrate upward 
-      ActiveRecord::Migrator.migrate("#{SPREE_ROOT}/db/migrate/")
+      # Remigrate
+      Rake::Task["db:remigrate"].invoke
     
-      # Dump the schema
-      Rake::Task["db:schema:dump"].invoke
-
       require 'spree/setup'
       
       attributes = {}
