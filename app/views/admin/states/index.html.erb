@@ -1,7 +1,7 @@
 <h1><%= :states.l("States") %></h1>
 <br/>
 <select id="country">
-  <%= options_from_collection_for_select(@countries, :id, :printable_name, @country.id) %>
+  <%= options_from_collection_for_select(@countries, :id, :name, @country.id) %>
 </select>
 <%= observe_field :country,
                   :update => 'state-list',

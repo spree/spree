@@ -23,13 +23,9 @@ class CheckoutController < Spree::BaseController
     if request.post?
       @different_shipping = params[:different_shipping]
       @bill_address = Address.new(params[:bill_address])
-      #if only one country available there will be no choice (and user will post nothing)
-      @bill_address.country ||= Country.find(:first)
-
 
       params[:ship_address] = params[:bill_address].dup unless params[:different_shipping]
       @ship_address = Address.new(params[:ship_address])
-      @ship_address.country ||= Country.find(:first)      
 
       render :action => 'addresses' and return unless @user.valid? and @bill_address.valid? and 
         @ship_address.valid?      

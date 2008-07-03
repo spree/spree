@@ -27,22 +27,24 @@
     <tr>
       <td><%= :state.l("State") %></td>
       <td>
-        <%= a.collection_select :state_id, @states, :id, :name, {}, {:style => "width:100%"}%>
+        <%= a.collection_select :state_id, @states, :id, :name, {:prompt => ""}, {:style => "width: 150px"}%>
       </td>
-      <td></td>
+      <td><%= error_message_on "#{address_type}_address", :state %></td>
     </tr>
     <tr>
       <td><%= :zip.l("Zip") %></td>
       <td><%= a.text_field :zipcode %></td>
       <td><%= error_message_on "#{address_type}_address", :zipcode -%></td>
     </tr>
-    <% if (@countries.size > 1) %>
-      <tr>
-        <td><%= :country.l("Country") %></td>
-        <td><%= a.collection_select :country_id, @countries, :id, :name, {}, {:style => "width:100%"}%></td>
-        <td></td>
-      </tr>
-    <% end %>
+    <tr>
+      <td><%= :country.l("Country") %></td>
+      <td>
+        <select name="<%=address_type%>_address[country_id]" style="width:150px;"> 
+          <%= options_from_collection_for_select(@countries, :id, :name, 214) %>
+        </select>          
+      </td>
+      <td></td>
+    </tr>
     <tr>
       <td><%= :phone.l("Phone") %></td>
       <td><%= a.text_field :phone %></td>
