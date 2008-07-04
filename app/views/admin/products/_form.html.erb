@@ -24,6 +24,13 @@
   <input type="text" name="on_hand" value="<%= @on_hand %>"/>
 </p>
 <% end %>
+
+<p>
+  <label for="product_available">Available On:</label><br />
+  <%= error_message_on :product, :available %>
+  <%= datetime_select :product, :available_on %>
+</p>
+
 <% if @product.variant %>
 <p>
   <label for="sku"><%= :sku.l %></label><br/>
