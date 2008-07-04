@@ -1,4 +1,4 @@
-<%= link_to :back_to_store.l("Go Back To Store"), :controller => :store %>
+<%= link_to :back_to_store.l("Go Back To Store"), products_path %>
 <br/><br/>
 <h1><%= :order_processed_successfully.l("Your order has been processed successfully") %></h1>
 <br/>
@@ -8,4 +8,4 @@
 <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
 
 <br/>
-<%= link_to :back_to_store.l("Go Back To Store"), :controller => :store %>
+<%= link_to :back_to_store.l("Go Back To Store"), products_path %>

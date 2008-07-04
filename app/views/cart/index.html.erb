@@ -18,7 +18,7 @@
         <%= small_image(@item.variant.product) %>
       </td>
       <td valign="top">              
-        <%=link_to @item.variant.product.name, :controller => 'store', :action => 'show', :id => @item.variant.product %>
+        <%=link_to @item.variant.product.name,  product_path(@item.variant.product) %>
         <%= variant_options @item.variant %><br/>
         <%=truncate(@item.variant.product.description, length = 100, truncate_string = "...")-%>
       </td>
@@ -35,7 +35,7 @@
   </div>
   <% end %>
   <%if previous_location %>
-  <p><%=link_to :continue_shopping.l("Continue Shopping"), :controller => 'store', :action => 'index'%></p>
+  <p><%=link_to :continue_shopping.l("Continue Shopping"), products_path %></p>
   <%end%>  
   <% unless @cart.cart_items.empty? %>
   <p id="clear_cart_link">

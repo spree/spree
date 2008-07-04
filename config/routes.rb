@@ -17,7 +17,7 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
-  map.root :controller => "store"
+  map.root :controller => "products", :action => "index"
   # login mappings should appear before all others
   map.connect '/login', :controller => 'account', :action => 'login'
   map.connect '/logout', :controller => 'account', :action => 'logout'
@@ -28,6 +28,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :states, :actions => [:index]
   
   map.resources :users
+  map.resources :products, :member => {:change_image => :post}
   
   map.namespace :admin do |admin|
     admin.resources :zones

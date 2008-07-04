@@ -16,7 +16,7 @@
         <li><%= :logged_in_as.l('Logged in as') %>: <%= current_user.login %></li>
         <li><%= link_to :account.l('Account'), user_path(current_user) %></li>
         <li><%= link_to :logout.l('Logout'), :controller => '/account', :action => 'logout' %></li>
-        <li><%= link_to :store.l('Store'), :controller => '/store' %></li>
+        <li><%= link_to :store.l('Store'), products_path %></li>
       </ul>
       <% end -%>      
       <table width="780">

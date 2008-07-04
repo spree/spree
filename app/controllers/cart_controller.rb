@@ -30,7 +30,7 @@ class CartController < Spree::BaseController
 
   def empty
     @cart.cart_items.destroy_all
-    redirect_to :controller => :store, :action => :index
+    redirect_to products_path
   end
   
   private
