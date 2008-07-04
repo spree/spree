@@ -1,0 +1,5 @@
+<% if image %> 
+  <%= image_tag image.public_filename(:product) %>
+<% else %>
+  <%= product_image(@product) %>
+<% end %>
