@@ -9,6 +9,7 @@
       </div>
     </td>
     <td>
+      <% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
       <table>
 	<tr>
 	  <td class="product-name"><%= @product.name %></td>
@@ -21,7 +22,6 @@
 	    <%="<span class='product-price'>Price: </span> #{product_price(@product)}" if product_price(@product) %>
 	  </td>
 	</tr>
-	<% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
 	<% if @product.variants? %>
 	<tr>
 	  <td class="product-variants"><%= :variants.l("Variants") %>:</td>
@@ -33,7 +33,7 @@
 		<% @product.variants.each do |v| %>
 		<% next if v.option_values.empty? %>
 		<li>
-		  <input type="radio" name="id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked' : '' %>/>
+		  <input type="radio" name="id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked="checked"' : '' %>/>
 		  <%= variant_options v%>
 		  <% if variant_price_diff v %>
 		  <span class="price-diff"><%= variant_price_diff v %></span>
@@ -45,15 +45,15 @@
 	  </td>
 	</tr>
 	<% else %>
-	<input type="hidden" name="id" value=<%=@product.variants.first.id %>/>
+  <tr><td><input type="hidden" name="id" value="<%=@product.variants.first.id %>"/></td></tr>
 	<% end%>						
 	<tr>
 	  <td>
 	    <%= submit_tag :add_to_cart.l('Add To Cart') %>
 	  </td>
 	</tr>
-	<% end %>
       </table>
+      <% end %>
     </td>
   </tr>
 </table>

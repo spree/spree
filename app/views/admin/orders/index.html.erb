@@ -1,4 +1,6 @@
-<%= calendar_date_select_includes %>
+<% content_for :head do %>
+  <%= calendar_date_select_includes %>
+<% end %>
 <h1><%= :listing_orders.l("Listing orders") %></h1>
 <table>
   <tr>
@@ -45,7 +47,6 @@
             </thead>
             <tbody>
               <tr>
-              </tr>
                 <td><%= :start.l("Start") %>:</td>
                 <td>
                   <%= error_message_on :search, :start%>

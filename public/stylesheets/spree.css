@@ -87,7 +87,7 @@ color: #2e6ab1;
 .pagination a:hover, .pagination a:active{
 border: 1px solid #2b66a5;
 color: #000;
-background-color: lightyellow;
+background-color: LightYellow;
 }
 
 .pagination li.currentpage{
@@ -284,7 +284,7 @@ padding-right: 0;
 /* ===================== begin: price-diff =====================*/
 .price-diff {
   font-size: 10px;
-  text-color: #0000FF;
+  color: #0000FF;
 }
 /* ===================== end: price-diff =====================*/
 
