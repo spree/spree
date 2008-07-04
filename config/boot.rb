@@ -15,10 +15,11 @@ module Spree
       defined? Spree::Initializer
     end
 
-    def pick_boot
+    def pick_boot   
+      return VendorBoot.new if File.exist?("#{RAILS_ROOT}/vendor/spree")
       (File.exist?("#{RAILS_ROOT}/lib/spree.rb") ? AppBoot : GemBoot).new
     end
-
+    
     def vendor_rails?
       File.exist?("#{RAILS_ROOT}/vendor/rails")
     end
@@ -86,12 +87,16 @@ module Spree
     end 
   end
 
-  #class VendorBoot < Boot
-  #  def load_initializer
-  #    require "#{RAILS_ROOT}/vendor/rails/railties/lib/initializer"
-  #    Spree::Initializer.run(:install_gem_spec_stubs)
-  #  end
-  #end
+  class VendorBoot < Boot
+    def load_initializer
+      $LOAD_PATH.unshift "#{RAILS_ROOT}/vendor/spree/lib" 
+      super
+    end
+    
+    def load_error_message
+      "Please verify that vendor/spree contains a complete copy of the Spree sources."
+    end
+  end
 
   class AppBoot < Boot
     def load_initializer
