@@ -28,4 +28,10 @@ class Zone < ActiveRecord::Base
     end
     false
   end
+  
+  def self.match(address)
+    zones = []
+    Zone.all.each {|zone| zones << zone if zone.in_zone?(address)}
+    zones
+  end
 end

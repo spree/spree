@@ -70,4 +70,44 @@ describe Zone do
       end
     end
   end
+
+  describe "match" do
+    
+    before :each do
+      @address = mock_model(Address)
+    end
+    
+    it "should return an empty array if there are no zone" do
+      Zone.should_receive(:all).and_return([])
+      Zone.match(@address).should == []
+    end
+    
+    it "should return only one zone if the address matches only one zone" do
+      zone1 = mock_model(Zone)
+      zone1.should_receive(:in_zone?).with(@address).and_return(true)
+      zone2 = mock_model(Zone)
+      zone2.should_receive(:in_zone?).with(@address).and_return(false)
+      Zone.should_receive(:all).and_return([zone1, zone2])
+      Zone.match(@address).should == [zone1]
+    end
+
+    it "should return both zones if the address matches both zones" do
+      zone1 = mock_model(Zone)
+      zone1.should_receive(:in_zone?).with(@address).and_return(true)
+      zone2 = mock_model(Zone)
+      zone2.should_receive(:in_zone?).with(@address).and_return(true)
+      Zone.should_receive(:all).and_return([zone1, zone2])
+      Zone.match(@address).should == [zone1, zone2]
+    end
+
+    it "should return no zones if address matches neither of the zones" do
+      zone1 = mock_model(Zone)
+      zone1.should_receive(:in_zone?).with(@address).and_return(false)
+      zone2 = mock_model(Zone)
+      zone2.should_receive(:in_zone?).with(@address).and_return(false)
+      Zone.should_receive(:all).and_return([zone1, zone2])
+      Zone.match(@address).should == []
+    end
+
+  end
 end
