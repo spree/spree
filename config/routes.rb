@@ -32,6 +32,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.namespace :admin do |admin|
     admin.resources :zones
+    admin.resources :users
     admin.resources :countries, :has_many => :states
     admin.resources :states
   end
