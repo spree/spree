@@ -8,7 +8,7 @@ class CreatePaypalGateway < ActiveRecord::Migration
                                    :textarea => true,
                                    :description => "Your Paypal API Credentials signature string.")
                                 
-    gateway = Gateway.create(:name => "Paypal",
+    gateway = Gateway.create(:name => "Paypal - Website Payments Pro",
                              :clazz => "ActiveMerchant::Billing::PaypalGateway",
                              :description => "Active Merchant's Paypal Website Payments Pro (US) Gateway.",
                              :gateway_options => [login, password, signature])
