@@ -27,6 +27,7 @@ checkout: Checkout
 city: City
 comp_order: Comp Order
 configuration: Configuration
+configuration_options: Configuration Options
 configurations: Configurations
 confirm: Confirm
 confirm_password: Password Confirmation
@@ -59,6 +60,7 @@ extensions: Extensions
 filename: Filename
 final_confirmation: Final Confirmation
 first_name: First Name
+gateway: Gateway
 german: German
 hello_user: Hello User
 image: Image
@@ -111,6 +113,7 @@ overview: Overview
 parent_category: Parent Category
 password: Password
 payment: Payment
+payment_gateway: Payment Gateway
 phone: Phone
 presentation: Presentation
 previous: previous
