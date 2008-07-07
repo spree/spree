@@ -1,0 +1,11 @@
+<h1><%= :my_account.l("My Account") %></h1>
+<table>
+  <tr>
+    <td><%= :email.l("Email") %>:</td>
+    <td>
+      <%= @user.email %>
+    </td>
+  </tr>
+</table>
+<br/>
+<%= link_to :edit.l('Edit'), edit_object_url %>

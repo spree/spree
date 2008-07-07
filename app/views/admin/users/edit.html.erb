@@ -1,0 +1,9 @@
+<%= error_messages_for :user %>
+<h1><%= :editing_user.l("Editing User") %></h1>
+<br/>
+<% form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%=submit_tag :update.l %>
+  </p>
+<% end %>

@@ -30,7 +30,8 @@ Spree::Initializer.run do |config|
   config.gem "has_many_polymorphs", :version => '2.12'
   config.gem "highline", :version => '1.4.0'
   config.gem "mini_magick", :version => '1.2.3'
-  config.gem "activemerchant", :lib => "active_merchant", :version => '1.3.2'  
+  config.gem "activemerchant", :lib => "active_merchant", :version => '1.3.2'
+  config.gem "tlsmail"
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

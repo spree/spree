@@ -42,11 +42,10 @@
 #  * :unless - The inverse of :if
 #
 'UsersController':
-  permission1:
+  permission1: 
     roles : [admin]
-'Admin::BaseController':
-  permission1:
-    roles : [admin]
+    options :
+      for : [index, delete]
 'Admin::UsersController':
   permission1:
     roles : [admin]   
@@ -61,9 +60,6 @@
     role : [admin]
     options :
       only : comp      
-'Admin::TaxRatesController':
-  permission1:
-    role : [admin]
 'Admin::ZonesController':
   permission1:
     role : [admin]
