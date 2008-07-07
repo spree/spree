@@ -1,0 +1,28 @@
+<h1><%=:listing_tax_categories.l("Listing Tax Categories")%></h1>
+<table class="admin-report" width="545">
+  <thead>
+    <tr>
+      <th><%= :name.l("Name") %></th>
+      <th><%= :description.l("Description") %></th>
+      <th><%= :action.l("Action") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tax_categories.each do |tax_category|%>
+      <tr class="<%= cycle('even', 'odd') %>">
+        <td><%= tax_category.name %></td>
+        <td><%= tax_category.description %></td>
+        <td>
+          <%=link_to :show.l("Show"), object_url(tax_category) %> | 
+          <%=link_to :edit.l("Edit"), edit_object_url(tax_category) %> | 
+          <%=link_to :destroy.l("Destroy"), object_url(tax_category), 
+                     :confirm => :are_you_sure_delete.l("Are you sure you want to delete this record?"), 
+                     :method => :delete %></td>
+      </tr>
+    <% end %>
+    <% if @tax_categories.empty? %>
+      <tr><td colspan="3">None.</td></tr>
+    <% end %>    
+  </tbody>
+</table>
+<%= link_to :new_tax_category.l("New Tax Category"), new_object_url %>
