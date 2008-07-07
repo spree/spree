@@ -16,7 +16,7 @@ class Product < ActiveRecord::Base
 
   alias :selected_options :product_option_types
 
-  named_scope :available, lambda {|*args| {:conditions => ['available_on <= ?', (args.first || Time.now)]}}
+  named_scope :available, lambda {|*args| {:conditions => ["available_on <= ?", (args.first || Time.now)]}}
 
   # checks is there are any meaningful variants (ie. variants with at least one option value)
   def variants?

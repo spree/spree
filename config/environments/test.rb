@@ -20,5 +20,3 @@ config.action_mailer.delivery_method = :test
 
 # prevents rails 2.1 from complaining about protect_from_forgery while running rspec tests
 config.action_controller.allow_forgery_protection = false 
-
-Globalite.language = :en

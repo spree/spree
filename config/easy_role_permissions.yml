@@ -42,8 +42,10 @@
 #  * :unless - The inverse of :if
 #
 'UsersController':
-  permission1:
+  permission1: 
     roles : [admin]
+    options :
+      for : [index, delete]
 'Admin::BaseController':
   permission1:
     roles : [admin]
