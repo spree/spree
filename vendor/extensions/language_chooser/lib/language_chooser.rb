@@ -80,6 +80,11 @@ module LanguageChooser
       "#{l[0,2]}-*".to_sym
     end
   end
+  
+  # can be used as a shortcut for translation
+  def t(replacement_string = '__localization_missing__', override_key = nil) 
+    (override_key || replacement_string.downcase.gsub(/\s/, "_").to_sym).l(replacement_string)
+  end
 
 end
 # Locale.code = params[:user_locale][:code] #get_matching_ui_locale(params[:user_locale][:code]) #|| session[:locale] || get_valid_lang_from_accept_header || Globalite.default_language

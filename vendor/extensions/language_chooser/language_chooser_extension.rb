@@ -15,6 +15,11 @@ class LanguageChooserExtension < Spree::Extension
   
   def activate
     ApplicationController.send :include, LanguageChooser
+    
+    
+    ApplicationController.class_eval do
+      helper_method :t
+    end
     # admin.tabs.add "Language Chooser", "/admin/language_chooser", :after => "Layouts", :visibility => [:all]
   end
   
