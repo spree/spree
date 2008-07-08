@@ -63,6 +63,9 @@
 'Admin::ZonesController':
   permission1:
     role : [admin]
+'Admin::TaxCategoriesController':
+  permission1:
+    role : [admin]    
 'Admin::ConfigurationController':
   permission1:
     role : [admin]    

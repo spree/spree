@@ -14,13 +14,4 @@ describe TaxRate do
     @tax_rate.rate = 0.01
     @tax_rate.should be_valid
   end
-=begin  
-  it "should not allow tax more then one tax rate for a given state" do
-    state = mock_model State, {:name => "Foo", :id => 1}
-    rate = TaxRate.new(:state => state, :rate => 0.1)
-    TaxRate.stub!(:find).and_return(rate)
-    @tax_rate.state = state
-    @tax_rate.should_not be_valid
-  end
-=end  
 end

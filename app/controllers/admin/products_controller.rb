@@ -203,6 +203,7 @@ class Admin::ProductsController < Admin::BaseController
       def load_data
         @all_categories = Category.find(:all, :order=>"name")  
         @all_categories.unshift Category.new(:name => "<None>")
+        @tax_categories = TaxCategory.find(:all, :order=>"name")  
       end
   
   private

@@ -1,20 +1,21 @@
 module Spree #:nodoc:
   class VatCalculator
-    def self.calculate_tax(order, rates)
-      # TODO - skip if vat does not apply
-      
-=begin
-      # Check for taxable items
-      tax = 0
+    def self.calculate_tax(order, rates)      
+      return 0 if rates.empty?
+      taxable_totals = {}
       order.line_items.each do |line_item|
-        product = line_item.variant.product
-        next unless tax_category = product.property_values.tax_category.first
-        next unless tax_rate = VatTaxRate.category(tax_category).first      
-        tax += (line_item.quantity * line_item.price * tax_rate.rate)
+        next unless tax_category = line_item.variant.product.tax_category
+        next unless rate = rates[tax_category]
+        taxable_totals[tax_category] ||= 0
+        taxable_totals[tax_category] += line_item.price * rate.amount * line_item.quantity
       end
-      order.tax_amount = tax
-=end
-      0
+
+      return 0 if taxable_totals.empty?
+      tax = 0
+      taxable_totals.values.each do |total|
+        tax += total
+      end
+      tax
     end
   end
 end

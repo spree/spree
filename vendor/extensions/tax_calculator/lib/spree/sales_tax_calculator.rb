@@ -2,21 +2,22 @@ module Spree #:nodoc:
   class SalesTaxCalculator
 
     def self.calculate_tax(order, rates) 
-=begin      
-      # For now we're assuming every item in the order is either taxable or non-taxable (depending on the state.)
-      # We'll replace with something more sophisticated later (plus you can always write your own extension.)
-      state = order.ship_address.state
-      tax_rate = TaxRate.find(:first,
-                              :select => "tr.*", 
-                              :conditions => {"st.name", state.name},
-                              :joins => "as tr inner join states as st on tr.state_id = st.id")
-      if tax_rate
-        order.tax_amount = tax_rate.rate * order.item_total
-      else
-        order.tax_amount = 0 unless tax_rate
+      return 0 if rates.empty?
+      taxable_totals = {}
+      order.line_items.each do |line_item|
+        next unless tax_category = line_item.variant.product.tax_category
+        next unless rate = rates[tax_category]
+        taxable_totals[tax_category] ||= 0
+        taxable_totals[tax_category] += line_item.total
       end
-=end
-      0
+
+      return 0 if taxable_totals.empty?
+      tax = 0
+      rates.each do |category, rate|
+        return unless taxable_total = taxable_totals[category]   
+        tax += taxable_total * rate.amount
+      end
+      tax
     end
   end
 end

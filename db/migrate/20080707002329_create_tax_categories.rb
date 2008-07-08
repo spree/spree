@@ -5,9 +5,17 @@ class CreateTaxCategories < ActiveRecord::Migration
       t.string :description
       t.timestamps
     end
+    
+    change_table :products do |t|
+      t.references :tax_category
+    end
+    
   end
 
   def self.down
     drop_table :tax_categories
+    change_table :products do |t|
+      t.remove :tax_category_id
+    end
   end
 end

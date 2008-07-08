@@ -8,11 +8,11 @@ module Spree #:nodoc:
       # tax is also zero if none of the zones is associated with a tax rate
       return 0 if tax_rates.empty?
       
-      sales_tax_rates = []
-      tax_rates.each {|rate| sales_tax_rates << rate if rate.tax_type == TaxRate::TaxType::SALES_TAX}
+      sales_tax_rates = {}
+      tax_rates.each {|rate| sales_tax_rates[rate.tax_category] = rate if rate.tax_type == TaxRate::TaxType::SALES_TAX}
 
-      vat_rates = []
-      tax_rates.each {|rate| vat_rates << rate if rate.tax_type == TaxRate::TaxType::VAT}
+      vat_rates = {}
+      tax_rates.each {|rate| vat_rates[rate.tax_category] = rate if rate.tax_type == TaxRate::TaxType::VAT}
       
       sales_tax = Spree::SalesTaxCalculator.calculate_tax(order, sales_tax_rates)
       vat_tax = Spree::VatCalculator.calculate_tax(order, vat_rates)

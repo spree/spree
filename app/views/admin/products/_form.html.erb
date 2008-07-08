@@ -47,6 +47,11 @@
     <%= options_from_collection_for_select(@all_categories, :id, :long_name, @selected_category) %>
   </select>
 </p>
+<p>
+  <label for="tax-category"><%= t("Tax Category") %>:</label><br/>
+  <%= collection_select(:product, :tax_category_id, @tax_categories, :id, :name, 
+                            {:include_blank => true}, {"style" => "width:200px"}) %>
+</p>
 <br/>
 <div id="variant-listing">
   <%= render :partial => 'variants', :locals => {:product => @product} -%>
