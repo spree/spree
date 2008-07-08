@@ -37,10 +37,8 @@ namespace :db do
       attributes = {}
       if ENV['AUTO_ACCEPT']
         attributes = {
-          :admin_name => "Administrator", 
-          :admin_username => "admin",
           :admin_password => "spree",
-          :admin_email => "admin@example.com"          
+          :admin_email => "spree@example.com"          
         }
       end
       

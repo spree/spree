@@ -13,7 +13,7 @@
     <div id="main">
       <% if logged_in? -%>
       <ul id="login-nav">
-        <li><%= :logged_in_as.l('Logged in as') %>: <%= current_user.login %></li>
+        <li><%= :logged_in_as.l('Logged in as') %>: <%= current_user.email %></li>
         <li><%= link_to :account.l('Account'), user_path(current_user) %></li>
         <li><%= link_to :logout.l('Logout'), :controller => '/account', :action => 'logout' %></li>
         <li><%= link_to :store.l('Store'), products_path %></li>

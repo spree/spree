@@ -79,7 +79,7 @@ class Order < ActiveRecord::Base
   # options in this case since they aren't necessary.  
   def self.minimal_gateway_options(order)
     {:email => order.user.email, 
-     :customer => order.user.login, 
+     :customer => order.user.email, 
      :ip => order.ip_address, 
      :order_id => order.number,
      :shipping => order.ship_amount * 100,
