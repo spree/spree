@@ -1,23 +1,27 @@
-<h1><%= :Configurations.l("Configurations") %></h1>
+<h1><%= t("Configurations") %></h1>
 
 <table id="configurations" class="full-table" width="800px">
   <thead>
     <tr>
-      <th><%= :system.l("System") %></th>
-      <th><%= :description.l("Description") %></th>
+      <th><%= t("System") %></th>
+      <th><%= t("Description") %></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><%= link_to :zone.l("Zone"), admin_zones_path %></td>
+      <td><%= link_to t("Tax Categories"), admin_tax_categories_path %></td>
+      <td>Set up tax categories to identify which products should be taxable.</td>
+    </tr>
+    <tr>
+      <td><%= link_to t("Zones"), admin_zones_path %></td>
       <td>Collections of countries, states or other zones to be used in various calculations.</td>
     </tr>
     <tr>
-      <td><%= link_to :states.l("States"), admin_country_states_path(214) %></td>
+      <td><%= link_to t("States"), admin_country_states_path(214) %></td>
       <td>Administer the list of states/provinces associated with each country.</td>
     </tr>
     <tr>
-      <td><%= link_to :gateway.l("Gateway"), admin_gateways_path %></td>
+      <td><%= link_to t("Gateway"), admin_gateways_path %></td>
       <td>Select a payment gateway and configure its settings.</td>
     </tr>
   </tbody>
