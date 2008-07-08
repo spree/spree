@@ -24,11 +24,11 @@
                   <% if logged_in? -%>
                   <ul id="login-nav">
                     <li><%= link_to :my_account.l('My Account'), user_path(current_user) %></li>
-                    <li><%= link_to :logout.l('Logout'), :controller => '/account', :action => 'logout' %></li>
+                    <li><%= link_to :logout.l('Logout'), logout_path %></li>
                   </ul>
                   <% else %>
                   <ul id="login-nav">
-                    <li><%= link_to :login.l('Login'), :controller => '/account', :action => 'login' %></li>
+                    <li><%= link_to :login.l('Login'), login_path %></li>
                   </ul>
 		              <% end -%>
                 </td>

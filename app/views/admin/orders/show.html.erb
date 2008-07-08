@@ -37,7 +37,7 @@
   <% @order.order_operations.each do |o| %>
     <tr>
       <td><%=OrderOperation::OperationType.from_value o.operation_type%></td>
-      <td><%=o.user.login%></td>
+      <td><%=o.user.email%></td>
       <td><%=o.created_at.to_s(:db)%></td>
     </tr>
   <% end %>

@@ -5,10 +5,6 @@ class UsersController < Spree::BaseController
   before_filter :can_only_edit_self, :only => [:edit, :update, :show]
   
   resource_controller
-  
-  create.before do
-    @user.login = @user.email 
-  end
 
   create.after do   
     self.current_user = @user       
