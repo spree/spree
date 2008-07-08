@@ -19,4 +19,11 @@ module ApplicationHelper
     end
     stylesheets.compact.join("\n")
   end  
+  
+  # Renders all the extension partials that may have been specified in the extensions
+  def render_extra_partials(f)
+    @extension_partials.inject("") do |extras, partial|
+      extras += render :partial => partial, :locals => {:form => f}
+    end
+  end
 end

@@ -1,5 +1,6 @@
 class AccountController < Spree::BaseController
   before_filter :login_from_cookie
+  before_filter :initialize_extension_partials, :only => :signup
   
   layout 'admin'
 
