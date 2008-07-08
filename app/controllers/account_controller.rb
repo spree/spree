@@ -1,5 +1,6 @@
 class AccountController < Spree::BaseController
   before_filter :login_from_cookie
+  before_filter :initialize_extension_partials, :only => :signup
   
   layout 'admin'
 
@@ -15,7 +16,7 @@ class AccountController < Spree::BaseController
         self.current_user.remember_me
         cookies[:auth_token] = { :value => self.current_user.remember_token , :expires => self.current_user.remember_token_expires_at }
       end
-      redirect_back_or_default(:controller => 'store', :action => 'index')
+      redirect_back_or_default(products_path)
       flash.now[:notice] = "Logged in successfully"
     else
       flash.now[:error] = "Login authentication failed."
