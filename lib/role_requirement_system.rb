@@ -109,14 +109,16 @@ module RoleRequirementSystem
       raise "Because role_requirement extends acts_as_authenticated, You must include AuthenticatedSystem first before including RoleRequirementSystem!" unless klass.included_modules.include?(AuthenticatedSystem)
     end
     
-    def access_denied
-      if logged_in?
-        render :nothing => true, :status => 401
-        return false
-      else
-        super
-      end
-    end
+    # We want to render something when access is denied, how does this make sense?
+    #
+    # def access_denied
+    #   if logged_in?
+    #     render :nothing => true, :status => 401
+    #     return false
+    #   else
+    #     super
+    #   end
+    # end
     
     def check_roles       
       return access_denied unless self.class.user_authorized_for?(current_user, params, binding)

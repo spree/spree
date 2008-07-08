@@ -1,11 +1,8 @@
 class AccountController < Spree::BaseController
   before_filter :login_from_cookie
-  before_filter :initialize_extension_partials, :only => :signup
-  
-  layout 'admin'
 
   def index
-    redirect_to(:action => 'signup') unless logged_in? || User.count > 0
+    redirect_to(signup_path) unless logged_in? || User.count > 0
   end
 
   def login
@@ -21,19 +18,7 @@ class AccountController < Spree::BaseController
     else
       flash.now[:error] = "Login authentication failed."
     end
-  end
-
-  def signup
-    @user = User.new(params[:user])
-    return unless request.post?
-    @user.save!
-    self.current_user = @user
-    redirect_back_or_default(:controller => '/account', :action => 'index')
-    flash[:notice] = "Thanks for signing up!"
-  rescue ActiveRecord::RecordInvalid
-    flash[:error] = "Problem creating user account."
-    render :action => 'signup'
-  end
+  end 
   
   def logout
     self.current_user.forget_me if logged_in?
