@@ -2,7 +2,7 @@ class UsersController < Spree::BaseController
 
   resource_controller
   
-  before_filter :initialize_extension_partials, :only => :edit
+  before_filter :initialize_extension_partials
   
   create.before do
     @user.login = @user.email 
