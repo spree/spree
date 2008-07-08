@@ -24,5 +24,11 @@
       <td><%= link_to t("Gateway"), admin_gateways_path %></td>
       <td>Select a payment gateway and configure its settings.</td>
     </tr>
+    <% @extension_links.each do |link_map| %>
+      <tr>
+        <td><%= link_to(link_map[:link_text],  link_map[:link]) %></td>
+        <td><%= link_map[:description] %></td>
+      </tr>
+    <% end %>
   </tbody>
 </table>

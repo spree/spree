@@ -12,5 +12,7 @@
 <p><label for="password_confirmation"><%= :confirm_password.l("Password Confirmation") %></label><br/>
 <%= f.password_field :password_confirmation %></p>
 
+<%= render_extra_partials f %>
+
 <p><%= submit_tag :sign_up.l("Sign up") %></p>
 <% end -%>

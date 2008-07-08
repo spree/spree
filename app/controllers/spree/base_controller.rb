@@ -29,4 +29,10 @@ class Spree::BaseController < ApplicationController
     render :text => 'Access Forbidden', :layout => true, :status => 401
   end
   
+  # Used for pages which need to render certain partials in the middle
+  # of a view. Ex. Extra user form fields
+  def initialize_extension_partials
+    @extension_partials = []
+  end
+  
 end

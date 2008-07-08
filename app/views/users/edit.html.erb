@@ -4,6 +4,6 @@
 <% form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <p>
-    <%=submit_tag :update.l %>
+    <%=submit_tag :update.l("Update") %>
   </p>
 <% end %>
