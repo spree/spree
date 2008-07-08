@@ -46,9 +46,6 @@
     roles : [admin]
     options :
       for : [index, delete]
-'Admin::BaseController':
-  permission1:
-    roles : [admin]
 'Admin::UsersController':
   permission1:
     roles : [admin]   
@@ -63,9 +60,6 @@
     role : [admin]
     options :
       only : comp      
-'Admin::TaxRatesController':
-  permission1:
-    role : [admin]
 'Admin::ZonesController':
   permission1:
     role : [admin]
