@@ -11,7 +11,7 @@ describe TaxRate do
   
   it "should be valid with a zone and tax rate" do
     @tax_rate.zone = mock_model(Zone)
-    @tax_rate.rate = 0.01
+    @tax_rate.amount = 0.01
     @tax_rate.should be_valid
   end
 end
