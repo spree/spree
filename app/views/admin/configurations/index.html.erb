@@ -1,5 +1,32 @@
 <h1><%= t("Configurations") %></h1>
 
+<h2><%= :configuration_templates.l("Configuration Templates") %></h2>
+
+<table id="configuration-templates" class="full-table" width="800px" >
+  <thead>
+    <tr>
+      <th><%= :configuration_name.l("Configuration Name") %></th>
+      <th><%= :description.l %></th>
+      <th><%= :status.l("Status")  %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for config in @app_configurations -%>
+    <tr>
+      <td><%= link_to h(config.name), admin_configuration_path(config) %></td>
+      <td><%= h config.description %></td>
+      <td><%= config.active? %></td>
+    </tr>
+    <% end -%>
+  </tbody>
+</table>
+
+<%= 
+  link_to(:new_configuration_template.l("New Configuration Template"),
+          new_admin_configuration_path, {:id => 'new_configuration_link'})
+%>
+
+<h2><%= :other_configurations.l("Other Configurations") %></h2>
 <table id="configurations" class="full-table" width="800px">
   <thead>
     <tr>

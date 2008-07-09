@@ -3,7 +3,7 @@ class CreateAppConfigurations < ActiveRecord::Migration
     create_table :app_configurations do |t|
       t.string :name
       t.boolean :active, :default => false
-
+      t.text :description
       t.timestamps
     end
   end

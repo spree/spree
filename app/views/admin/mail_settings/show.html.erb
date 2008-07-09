@@ -1,0 +1,52 @@
+<h2><%= t("Mail Server Settings") %></h2>
+
+<div id="mail_settings">
+  <%# TODO: move this code to a helper? %>
+  <div id="mail_delivery_status" class="error-or-notice">
+    <%= 
+      if @configuration.prefers_enable_mail_delivery?
+        content_tag(:h4, t("Mail delivery is enabled"))
+      else
+        content_tag(:h4, t("Mail delivery is not enabled"))
+      end
+    %>
+  </div>
+  <div>
+    <strong><%= t("SMTP domain") %></strong><br />
+    <%=  @configuration.preferred_mail_domain %>
+  </div>
+  <div>
+    <strong><%= t('SMTP Mail Host') %></strong><br />
+    <%= @configuration.preferred_mail_host %>
+  </div>
+  <div>
+    <strong><%= t('SMTP Port') %></strong><br />
+    <%= @configuration.preferred_mail_port %>
+  </div>
+  <div>
+    <strong><%= t('Secure Connection Type')  %></strong><br />
+    <%= @configuration.preferred_secure_connection_type %>
+  </div>
+  <div>
+    <strong><%= t('SMTP Authentication Type') %></strong><br />
+    <%= @configuration.preferred_mail_auth_type %>
+  </div>
+  <% unless @configuration.preferred_mail_auth_type == "none" -%>
+  <div>
+    <strong><%= t('SMTP Username') %></strong><br />
+    <%= @configuration.preferred_smtp_login_user %>
+  </div>
+  <div>
+    <strong><%= t('SMTP Password') %></strong><br />
+    <%= @configuration.preferred_smtp_login_password %>
+  </div>
+  <% end -%>
+  <div>
+    <strong><%= t('Copy all mails to') %></strong><br />
+    <%= t('A copy of all mail will be sent to the following addresses') %>
+    <div class="">
+      <%= @configuration.preferred_mail_copy_to %>
+    </div>
+  </div>
+  <%= link_to t("Edit"), edit_admin_configuration_mail_settings_path(@configuration) %>
+</div>

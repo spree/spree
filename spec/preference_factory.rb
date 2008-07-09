@@ -49,4 +49,11 @@ module PreferenceFactory
       :login => "login_name"
     )
   end
+
+  build AppConfiguration do |attributes|
+    attributes.reverse_merge!(
+      :name => "Default Configuration",
+      :active => true
+    )
+  end
 end

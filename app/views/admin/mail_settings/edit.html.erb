@@ -1,0 +1,54 @@
+<h2><%= t('Mail Server Preferences') %></h2>
+
+<% form_tag(admin_configuration_mail_settings_path(@configuration), :method => :put) do -%>
+<div>
+  <p>
+    <%= check_box_tag('mail_preferences[enable_mail_delivery]', "1", @configuration.prefers_enable_mail_delivery?) %>
+    <strong><%= t('Enable Mail Delivery') %></strong>
+    <input name="mail_preferences[enable_mail_delivery]" type="hidden" value="0" />
+  </p>
+  <p>
+    <strong><%= t("SMTP domain") %></strong>
+    <%= text_field_tag('mail_preferences[mail_domain]', @configuration.preferred_mail_domain) %>
+  </p>
+  <p>
+    <strong><%= t('SMTP Mail Host') %></strong>
+    <%= text_field_tag('mail_preferences[mail_host]', @configuration.preferred_mail_host)%>
+  </p>
+  <p>
+    <strong><%= t('SMTP Port') %></strong>
+    <%= text_field_tag('mail_preferences[mail_port]', @configuration.preferred_mail_port)%>
+  </p>
+  <p>
+    <strong><%= t('Secure Connection Type')  %></strong>
+    <%= select_tag('mail_preferences[secure_connection_type]',
+	           options_for_select(
+	              AppConfiguration::SECURE_CONNECTION_TYPES, 
+	              @configuration.preferred_secure_connection_type)) %>
+  </p>
+  <p>
+    <strong><%= t('SMTP Authentication Type') %></strong>
+    <%= select_tag('mail_preferences[mail_auth_type]',
+	           options_for_select(AppConfiguration::MAIL_AUTH, 
+                     @configuration.preferred_mail_auth_type)) %>
+  </p>
+
+  <p>
+    <strong><%= t('SMTP Username') %></strong>
+    <%= text_field_tag('mail_preferences[smtp_login_user]', @configuration.preferred_smtp_login_user)%>
+  </p>
+  <p>
+    <strong><%= t('SMTP Password') %></strong>
+    <%= password_field_tag('mail_preferences[smtp_login_password]', @configuration.preferred_smtp_login_password)%>
+  </p>
+  <p>
+    <strong><%= t('Copy all mails to') %></strong>
+    <%= text_field_tag('mail_preferences[mail_copy_to]', @configuration.preferred_mail_copy_to, :size => 40, :maxlength => 256)%>
+    <br/>
+    <span class="info">
+      Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas.
+    </span>
+  </p>
+</div>
+<%= submit_tag t('Save Preferences') %>
+<% end -%>
