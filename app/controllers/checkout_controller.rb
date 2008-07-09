@@ -38,7 +38,8 @@ class CheckoutController < Spree::BaseController
       @order.ship_method = params[:order][:ship_method] if params[:order]
       @order.ship_method ||= 1
 
-      @order.ship_amount = calculate_shipping(@order)
+      # this should be done after the address is finalized (on the post - and not before)
+      #@order.ship_amount = calculate_shipping(@order)
       @order.save
           
       redirect_to :action => 'final_confirmation'
@@ -84,7 +85,8 @@ class CheckoutController < Spree::BaseController
     else
       @order.ship_amount = calculate_shipping(@order)
       # NOTE: calculate_tax method will be mixed in by the TaxCalculator extension
-      calculate_tax(@order)
+      @order.tax_amount = calculate_tax(@order)
+      @order.save
     end
   end
   
