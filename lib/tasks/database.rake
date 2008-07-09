@@ -22,7 +22,7 @@ namespace :db do
   
   desc "Bootstrap your database for Spree."
   task :bootstrap  => :environment do
-    return unless %w[development test].include? RAILS_ENV    
+    #return unless %w[development test].include? RAILS_ENV    
     
     require 'highline/import'
     if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
@@ -37,10 +37,8 @@ namespace :db do
       attributes = {}
       if ENV['AUTO_ACCEPT']
         attributes = {
-          :admin_name => "Administrator", 
-          :admin_username => "admin",
           :admin_password => "spree",
-          :admin_email => "admin@example.com"          
+          :admin_email => "spree@example.com"          
         }
       end
       

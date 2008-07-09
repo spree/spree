@@ -1,7 +1,6 @@
 class Spree::BaseController < ApplicationController
   
   CalendarDateSelect.format = :american
-  #model :order, :address
   
   filter_parameter_logging "password"
   
@@ -13,16 +12,6 @@ class Spree::BaseController < ApplicationController
       @cart = Cart.create
       session[:cart_id] = @cart.id
     end
-  end
-
-  def access_denied
-    if logged_in?
-      access_forbidden
-    else
-      store_location
-      redirect_to :controller => '/account', :action => 'login'
-    end
-    false  
   end
 
   def access_forbidden

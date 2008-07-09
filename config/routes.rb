@@ -23,7 +23,7 @@ ActionController::Routing::Routes.draw do |map|
   # login mappings should appear before all others
   map.login '/login', :controller => 'account', :action => 'login'
   map.logout '/logout', :controller => 'account', :action => 'logout'
-  map.signup '/signup', :controller => 'account', :action => 'signup'
+  map.signup '/signup', :controller => 'users', :action => 'new'
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
 
   map.resources :countries, :has_many => :states, :actions => [:index]

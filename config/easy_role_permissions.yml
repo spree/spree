@@ -59,7 +59,7 @@
   permission1:
     role : [admin]
     options :
-      only : comp      
+      only : comp     
 'Admin::ZonesController':
   permission1:
     role : [admin]
@@ -68,4 +68,7 @@
     role : [admin]    
 'Admin::ConfigurationController':
   permission1:
-    role : [admin]    
+    role : [admin]
+'Admin::OverviewController':
+  permission1:
+    role : [admin]  

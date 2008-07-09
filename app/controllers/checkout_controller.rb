@@ -1,5 +1,5 @@
 class CheckoutController < Spree::BaseController
-  before_filter :new_or_login
+  before_filter :login_required
   before_filter :find_order, :except => [:index, :thank_you]
   
   filter_parameter_logging :creditcard, "number"
@@ -132,12 +132,6 @@ class CheckoutController < Spree::BaseController
           session[:order_id] = @order.id    
           @order
         end
-      end
-      
-      def new_or_login
-        # create a new user (or login an existing one)
-        return if logged_in?
-        redirect_to new_user_url
       end
 
       def finalize_order
