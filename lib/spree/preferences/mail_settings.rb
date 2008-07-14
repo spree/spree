@@ -14,24 +14,23 @@ module Spree
         def init
           # Set mail server settings from preferences
           begin
-            application_config = AppConfiguration.active.first
             logger.info "INFO: Loading mail preferences"
 
-            if application_config.prefers_enable_mail_delivery?
+            if Spree::Config.instance.prefers_enable_mail_delivery?
               mail_server_settings = {
-                :address => application_config.preferred_mail_host,
-                :domain => application_config.preferred_mail_domain,
-                :port => application_config.preferred_mail_port,
+                :address => Spree::Config[:mail_host],
+                :domain => Spree::Config[:mail_domain],
+                :port => Spree::Config[:mail_port],
               }
 
-              if application_config.preferred_mail_auth_type != 'none'
-                mail_server_settings[:authentication] = application_config.preferred_mail_auth_type
-                mail_server_settings[:user_name] = application_config.preferred_mail_username,
-                mail_server_settings[:password] = application_config.preferred_mail_password
+              if Spree::Config[:mail_auth_type] != 'none'
+                mail_server_settings[:authentication] = Spree::Config[:mail_auth_type]
+                mail_server_settings[:user_name] = Spree::Config[:smtp_username]
+                mail_server_settings[:password] = Spree::Config[:smtp_password]
               end
 
               # Enable TLS
-              if application_config.preferred_secure_connection_type == 'TLS'
+              if Spree::Config[:secure_connection_type] == 'TLS'
                 Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
               end
 

@@ -46,14 +46,13 @@ module PreferenceFactory
 
   build User do |attributes|
     attributes.reverse_merge!(
-      :login => "login_name"
+      :email => "email_name"
     )
   end
 
   build AppConfiguration do |attributes|
     attributes.reverse_merge!(
-      :name => "Default Configuration",
-      :active => true
+      :name => "Default Configuration"
     )
   end
 end

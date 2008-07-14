@@ -4,7 +4,7 @@
   <%# TODO: move this code to a helper? %>
   <div id="mail_delivery_status" class="error-or-notice">
     <%= 
-      if @configuration.prefers_enable_mail_delivery?
+      if Spree::Config[:enable_mail_delivery]
         content_tag(:h4, t("Mail delivery is enabled"))
       else
         content_tag(:h4, t("Mail delivery is not enabled"))
@@ -12,41 +12,36 @@
     %>
   </div>
   <div>
-    <strong><%= t("SMTP domain") %></strong><br />
-    <%=  @configuration.preferred_mail_domain %>
+    <strong><%= t("SMTP domain") %>:</strong> <%=  Spree::Config[:mail_domain] %>
   </div>
   <div>
-    <strong><%= t('SMTP Mail Host') %></strong><br />
-    <%= @configuration.preferred_mail_host %>
+    <strong><%= t('SMTP Mail Host') %>:</strong> <%= Spree::Config[:mail_host] %>
   </div>
   <div>
-    <strong><%= t('SMTP Port') %></strong><br />
-    <%= @configuration.preferred_mail_port %>
+    <strong><%= t('SMTP Port') %>:</strong> <%= Spree::Config[:mail_port] %>
   </div>
   <div>
-    <strong><%= t('Secure Connection Type')  %></strong><br />
-    <%= @configuration.preferred_secure_connection_type %>
+    <strong><%= t('Secure Connection Type')  %>:</strong> <%= Spree::Config[:secure_connection_type] %>
   </div>
   <div>
-    <strong><%= t('SMTP Authentication Type') %></strong><br />
-    <%= @configuration.preferred_mail_auth_type %>
+    <strong><%= t('SMTP Authentication Type') %>:</strong> <%= Spree::Config[:mail_auth_type] %>
   </div>
-  <% unless @configuration.preferred_mail_auth_type == "none" -%>
+  <% unless Spree::Config[:mail_auth_type] == "none" -%>
   <div>
-    <strong><%= t('SMTP Username') %></strong><br />
-    <%= @configuration.preferred_smtp_login_user %>
+    <strong><%= t('SMTP Username') %>:</strong> <%= Spree::Config[:smtp_username] %>
   </div>
   <div>
-    <strong><%= t('SMTP Password') %></strong><br />
-    <%= @configuration.preferred_smtp_login_password %>
+    <strong><%= t('SMTP Password') %>:</strong><em> <%= t("Not shown") unless Spree::Config[:smtp_password].blank? -%></em>
   </div>
   <% end -%>
   <div>
-    <strong><%= t('Copy all mails to') %></strong><br />
+    <strong><%= t('Copy all mails to') %>:</strong><br />
     <%= t('A copy of all mail will be sent to the following addresses') %>
     <div class="">
-      <%= @configuration.preferred_mail_copy_to %>
+      <%= Spree::Config[:mail_copy_to] %>
     </div>
   </div>
-  <%= link_to t("Edit"), edit_admin_configuration_mail_settings_path(@configuration) %>
+  <%= link_to t("Edit"), edit_admin_mail_settings_path %>
 </div>
+
+<%= debug(Spree::Config[]) %>

@@ -38,7 +38,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :countries, :has_many => :states
     admin.resources :states
     admin.resources :tax_categories
-    admin.resources :configurations, :has_one => :mail_settings
+    admin.resources :configurations
+    admin.resource :mail_settings
   end
   
   # Install the default route as the lowest priority.

@@ -6,7 +6,7 @@ class OrderMailer < ActionMailer::Base
     @subject    += 'Order Confirmation #' + order.number
     @body       = {"order" => order}
     @recipients = order.user.email
-    @from       = ORDER_FROM
+    @from       = Spree::Config[:order_from]
     @bcc        = ORDER_BCC unless ORDER_BCC.empty? or resend
     @sent_on    = Time.now
   end
@@ -15,7 +15,7 @@ class OrderMailer < ActionMailer::Base
     @subject    = '[CANCEL] Order Confirmation #' + order.number
     @body       = {"order" => order}
     @recipients = order.user.email
-    @from       = ORDER_FROM
+    @from       = Spree::Config[:order_from]
     @bcc        = ORDER_BCC unless ORDER_BCC.empty?
     @sent_on    = Time.now
   end  

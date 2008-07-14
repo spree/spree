@@ -22,7 +22,6 @@ class Preference < ActiveRecord::Base
       else
         group_id, group_type = nil, group
       end
-      
       return group_id, group_type
     end
   end

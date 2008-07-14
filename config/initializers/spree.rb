@@ -26,8 +26,13 @@ INVENTORY_STATES = [:on_hand, :sold, :shipped, :back_ordered]
 
 # TODO - Add the lib/plugins stuff maybe?
 
-ActiveRecord::Base.send :include, Spree::Preferences
-ActiveRecord::Base.send :include, Spree::Preferences::ModelHooks
+# Initialize preference system
+ActiveRecord::Base.class_eval do
+  include Spree::Preferences
+  include Spree::Preferences::ModelHooks
+end
+
+# Initialize mail server settings
 Spree::Preferences::MailSettings.init
 
 # Add extra support goodies (similar to rails active support)
