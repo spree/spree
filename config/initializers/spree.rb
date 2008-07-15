@@ -7,7 +7,7 @@ ORDER_BCC = []
 
 TXN_TYPES = [:authorize, :capture, :purchase, :void, :credit]
 
-ORDER_STATES = [:incomplete, :authorized, :captured, :canceled, :returned, :shipped, :paid]
+ORDER_STATES = [:incomplete, :authorized, :captured, :canceled, :returned, :shipped, :paid, :pending_payement]
 ORDER_OPERATIONS = [:authorize, :capture, :cancel, :return, :ship, :comp, :delete]
 
 AVAILABLE_OPERATIONS = {
