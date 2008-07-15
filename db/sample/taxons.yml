@@ -1,0 +1,26 @@
+mc_root:
+  id: 1000
+  name: master_category
+  presentation: Categories
+  taxonomy: master_categories
+mc_l1_n0:
+  id: 1001
+  name: shirts
+  presentation: Shirts
+  taxonomy: master_categories
+  parent_id: 1000
+  position: 0
+mc_l1_n1:
+  id: 1002
+  name: bags
+  presentation: Bags
+  taxonomy: master_categories
+  parent_id: 1000
+  position: 1
+mc_l1_n2:
+  id: 1003
+  name: mugs
+  presentation: Mugs
+  taxonomy: master_categories
+  parent_id: 1000
+  position: 2

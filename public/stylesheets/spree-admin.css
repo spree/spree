@@ -372,6 +372,55 @@ td.two-col-right {
 }
 /** ================ end: limited-height-20  =================== */
 
+/** ================ begin: tree  =================== */
+ul.tree {
+	list-style-type: none;
+}
+
+ul.tree ul {
+	list-style-type: none;
+}
+
+ul.tree li {
+	margin-left: 25px;
+//	padding-left: 25px;
+}
+
+.tree-nav-leaf {
+	background: transparent url('/images/tree-nav-icons/bullet.gif') no-repeat scroll left center;
+    cursor: default;
+	padding-left: 20px;
+	font-size: larger;
+	font-weight: bold;
+}
+
+.tree-nav-open {
+	background: transparent url('/images/tree-nav-icons/minus.gif') no-repeat scroll left center;
+    cursor: pointer;
+	padding-left: 20px;
+	font-size: larger;
+	font-weight: bold;
+}
+
+.tree-nav-closed {
+	background: transparent url('/images/tree-nav-icons/plus.gif') no-repeat scroll left center;
+    cursor: pointer;
+	padding-left: 20px;
+	font-size: larger;
+	font-weight: bold;
+}
+
+.draggable {
+	color: green;
+	cursor: move;
+}
+
+.drop-hover {
+    background-color: #ffffcc;
+	border: 1px solid blue;
+}
+
+/** ================ end: tree  =================== */
 .sku {
   width: 120px;
 } 

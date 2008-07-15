@@ -158,6 +158,7 @@ module ActiveRecord
 #          self
 #        end
 
+        ## this function is for inserting a new node into the tree
         def insert_at(parent = nil, position = -1)
           self.parent_id = parent.nil? ? nil : parent.id
           self.position = position
@@ -167,6 +168,7 @@ module ActiveRecord
           self
         end
 
+        ## this function is for moving node from one part of the tree to another
         def move_to(parent = nil, position = -1)
           orig_parent = self.parent
           insert_at(parent, position)

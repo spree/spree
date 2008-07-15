@@ -1,0 +1,54 @@
+<%= render :partial => 'admin/products/menu' %>
+
+<%= link_to :add_taxonomy.l("Add Taxonomy"), :controller => 'taxonomies', :action => 'new' -%>
+<br/><br/>
+
+<h1><%= :listing_taxonomies.l("Listing taxonomies") %></h1>
+
+<div class="breadcrumb-nav">
+  <%= link_to :taxonomies.l("Taxonomies"), :action => "list", :id => nil %>
+  <% if @parent_taxonomy %>
+    >
+    <%= breadcrumb_nav @parent_taxonomy%>
+  <% end %>
+</div>
+
+<style>
+  .breadcrumb-nav {
+    font-size: 12px;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+</style>
+
+<table class="admin-report">
+  <tr>
+    <th><%= :name.l("Name") %></th>
+	<th><%= :presentation.l("Presentation") %></th>
+    <th><%= :action.l("Action") %></th>
+  </tr>
+  
+<% for taxonomy in @taxonomies %>
+  <tr>
+	<td>
+	  <%= taxonomy.name %>
+    </td>
+	<td>
+	  <%= taxonomy.presentation %>
+	</td>
+    <td>
+      <%= link_to_remote :edit.l('Edit'), :url => { :action => 'edit' , :id => taxonomy },
+                                          :update => 'edit-taxonomy' %> | 
+      <%= link_to :destroy.l, { :action => 'destroy', :id => taxonomy }, :confirm => :are_you_sure_taxonomy.l('Are you sure you want to delete this taxonomy?') %>
+    </td>
+  </tr>
+<% end %>
+</table>
+<%= render :partial => 'shared/paginate', :locals => {:collection => @taxonomies, :options => {}} -%>
+
+<div id="edit-taxonomy">
+</div>
+
+<div id="new-taxon">
+</div>
