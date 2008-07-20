@@ -59,7 +59,7 @@
 	<% if @order.credit_card %>
 	  <% @order.credit_card.txns.each do |t| %>
 	    <tr>
-	      <td><%=Txn::TxnType.from_value t.txn_type.to_i%></td>
+	      <td><%=CreditCardTxn::TxnType.from_value t.txn_type.to_i%></td>
 	      <td><%=t.amount%></td>
 	      <td><%=t.credit_card.display_number%></td>
 	      <td><%=t.credit_card.cc_type%></td>

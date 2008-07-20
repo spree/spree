@@ -200,10 +200,10 @@ class Admin::OrdersController < Admin::BaseController
         gw = payment_gateway
         response = gw.capture(order.total * 100, authorization.response_code, Order.minimal_gateway_options(order))
         return unless response.success?
-        order.credit_card.txns << Txn.new(
+        order.credit_card.txns << CreditCardTxn.new(
           :amount => order.total,
           :response_code => response.authorization,
-          :txn_type => Txn::TxnType::CAPTURE
+          :txn_type => CreditCardTxn::TxnType::CAPTURE
         )
         order.save
         response
@@ -214,10 +214,10 @@ class Admin::OrdersController < Admin::BaseController
         gw = payment_gateway
         response = gw.void(authorization.response_code, Order.minimal_gateway_options(order))
         return unless response.success?
-        order.credit_card.txns << Txn.new(
+        order.credit_card.txns << CreditCardTxn.new(
           :amount => order.total,
           :response_code => response.authorization,
-          :txn_type => Txn::TxnType::VOID
+          :txn_type => CreditCardTxn::TxnType::VOID
         )
         order.save
         response
@@ -228,10 +228,10 @@ class Admin::OrdersController < Admin::BaseController
         gw = payment_gateway
         response = gw.credit(order.total, authorization.response_code, Order.minimal_gateway_options(order))
         return unless response.success?
-        order.credit_card.txns << Txn.new(
+        order.credit_card.txns << CreditCardTxn.new(
           :amount => order.total,
           :response_code => response.authorization,
-          :txn_type => Txn::TxnType::CREDIT
+          :txn_type => CreditCardTxn::TxnType::CREDIT
         )
         order.save
         response
@@ -241,7 +241,7 @@ class Admin::OrdersController < Admin::BaseController
         #find the transaction associated with the original authorization/capture 
         cc = order.credit_card
         cc.txns.find(:first, 
-                     :conditions => ["txn_type = ? or txn_type = ?", Txn::TxnType::AUTHORIZE, Txn::TxnType::CAPTURE],
+                     :conditions => ["txn_type = ? or txn_type = ?", CreditCardTxn::TxnType::AUTHORIZE, CreditCardTxn::TxnType::CAPTURE],
                      :order => 'created_at DESC')
       end
 

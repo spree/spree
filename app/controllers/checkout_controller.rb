@@ -70,10 +70,10 @@ class CheckoutController < Spree::BaseController
       
       # Note: Create an ActiveRecord compatible object to store in our database
       @order.credit_card = CreditCard.new_from_active_merchant(@cc)
-      @order.credit_card.txns << Txn.new(
+      @order.credit_card.txns << CreditCardTxn.new(
         :amount => @order.total,
         :response_code => response.authorization,
-        :txn_type => Txn::TxnType::AUTHORIZE
+        :txn_type => CreditCardTxn::TxnType::AUTHORIZE
       )
 
       @order.status = Order::Status::AUTHORIZED  

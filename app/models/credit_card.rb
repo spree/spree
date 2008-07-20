@@ -5,8 +5,10 @@
 # It is desirable, because your gateway could go down for several minutes or even hours and you may want to run 
 # these transactions later when the gateway becomes available again.
 class CreditCard < ActiveRecord::Base
-  has_many :txns
+  has_many :credit_card_txns
   belongs_to :order
+  
+  alias :txns :credit_card_txns
   
   # creates a new instance of CreditCard using the active merchant version
   def self.new_from_active_merchant(cc)
