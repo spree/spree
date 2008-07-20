@@ -3,6 +3,5 @@ txn_<%= i %>:
   amount: 45.75
   txn_type: <%=Txn::TxnType::AUTHORIZE%>
   response_code: 12345
-  transactable: visa_<%=i%>
-  transactable_type: CreditCard
+  credit_card: visa_<%=i%>
 <% end %>

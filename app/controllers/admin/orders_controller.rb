@@ -44,7 +44,6 @@ class Admin::OrdersController < Admin::BaseController
     @user = @order.user
     @states = State.find(:all)
     @countries = Country.find(:all)
-    @cc_txns = Txn.credit_card @order.credit_card if @order.credit_card
   end
 
   def capture
