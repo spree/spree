@@ -49,20 +49,20 @@
 </table>
 <table class="full-table">
   <tr>
-    <th><%= :transaction.l("Transaction") %></th>
-    <th><%= :amount.l("Amount") %></th>
-    <th><%= :card_number.l("Card Number") %></th>
-    <th><%= :type.l("Type") %></th>
-    <th><%= :response_code.l("Response Code") %></th>
-    <th><%= "#{:date.l('Date')}/#{:time.l('Time')}" %></th>
+    <th><%= t("Transaction") %></th>
+    <th><%= t("Amount") %></th>
+    <th><%= t("Card Number") %></th>
+    <th><%= t("Type") %></th>
+    <th><%= t("Response Code") %></th>
+    <th><%= "#{t('Date')}/#{t('Time')}" %></th>
   </tr>
 	<% if @order.credit_card %>
-	  <% @order.credit_card.txns.each do |t| %>
+	  <% @cc_txns.each do |t| payment = t.transactable %>
 	    <tr>
 	      <td><%=Txn::TxnType.from_value t.txn_type.to_i%></td>
 	      <td><%=t.amount%></td>
-	      <td><%=t.credit_card.display_number%></td>
-	      <td><%=t.credit_card.cc_type%></td>
+	      <td><%=payment.display_number%></td>
+	      <td><%=payment.cc_type%></td>
 	      <td><%=t.response_code%></td>
 	      <td><%=t.created_at.to_s(:db)%></td>
 	    </tr>
