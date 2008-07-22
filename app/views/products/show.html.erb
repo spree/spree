@@ -24,7 +24,7 @@
 	</tr>
 	<% if @product.variants? %>
 	<tr>
-	  <td class="product-variants"><%= :variants.l("Variants") %>:</td>
+	  <td class="product-variants"><%= t("Variants") %>:</td>
 	</tr>
 	<tr>
 	  <td>
@@ -49,7 +49,7 @@
 	<% end%>						
 	<tr>
 	  <td>
-	    <%= submit_tag :add_to_cart.l('Add To Cart') %>
+	    <%= submit_tag t('Add To Cart') %>
 	  </td>
 	</tr>
       </table>

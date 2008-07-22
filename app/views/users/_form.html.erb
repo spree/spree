@@ -1,20 +1,20 @@
 <table>
   <tr>
-    <td><%= :email.l("Email") %>: </td>
+    <td><%= t("Email") %>: </td>
     <td>
       <%= error_message_on :user, :email %>
       <%= f.text_field :email  %>
     </td>
   </tr>
   <tr>
-    <td><%= :password.l("Password") %>:</td>
+    <td><%= t("Password") %>:</td>
     <td>
       <%= error_message_on :user, :password%>
       <%= f.password_field :password  %>
     </td>
   </tr>
   <tr>
-    <td><%= :confirm.l("Confirm") %>:</td>
+    <td><%= t("Confirm") %>:</td>
     <td>
       <%= f.password_field :password_confirmation %>
     </td>

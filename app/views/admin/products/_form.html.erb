@@ -5,22 +5,22 @@
   <%= text_field :product, :name  %>
 </p>
 <p>
-  <label for="product_description"><%= :description.l("Description") %></label><br/>
+  <label for="product_description"><%= t("Description") %></label><br/>
   <%= error_message_on :product, :description %>
   <%= text_area :product, :description, {:cols => 90, :rows => 10} %>
 </p>
 <p>
-  <label for="price"><%= :master_price.l("Master Price") %>:</label><br/>
+  <label for="price"><%= t("Master Price") %>:</label><br/>
   <%=error_message_on :product, :master_price%>
   <%= text_field :product, :master_price  %></p>
 </p>
 <% if @product.new_record? %>
 <p>
-  <label for="sku"><%= :sku.l("SKU") %></label><br/>
+  <label for="sku"><%= t("SKU") %></label><br/>
   <input type="text" name="sku" value="<%= @sku %>"/>
 </p>
 <p>
-  <label for="on-hand"><%= :on_hand.l("On Hand") %></label><br/>
+  <label for="on-hand"><%= t("On Hand") %></label><br/>
   <input type="text" name="on_hand" value="<%= @on_hand %>"/>
 </p>
 <% end %>
@@ -38,11 +38,11 @@
 </p>
 <p>
   <%= :on_hand.l %>: <%= on_hand(@product.variant) %>
-  <%= link_to :inventory.l("Inventory"), :controller => 'inventory_units', :action => 'adjust', :id => @product.variant %>
+  <%= link_to t("Inventory"), :controller => 'inventory_units', :action => 'adjust', :id => @product.variant %>
 </p>  
 <% end %>
 <p>
-  <label for="category"><%= :category.l("Category") %>:</label><br/>
+  <label for="category"><%= t("Category") %>:</label><br/>
   <select id="category" name="category" style="width:250px;"> 
     <%= options_from_collection_for_select(@all_categories, :id, :long_name, @selected_category) %>
   </select>

@@ -1,7 +1,7 @@
 <% content_for :head do -%>
   <%= calendar_date_select_includes %>
 <% end -%>
-<h1><%= :listing_orders.l("Listing orders") %></h1>
+<h1><%= t("Listing orders") %></h1>
 
 <table>
   <tr>
@@ -10,12 +10,12 @@
         <table class="admin-report" width="545">
           <thead>
             <tr>
-              <th><%= :order_date.l("Order Date") %></th>
-              <th><%= :number.l("Number") %></th>
-              <th><%= :status.l("Status") %></th>
-              <th><%= :customer.l("Customer") %></th>
-              <th><%= :total.l("Total") %></th>
-              <th><%= :action.l("Action") %></th>
+              <th><%= t("Order Date") %></th>
+              <th><%= t("Number") %></th>
+              <th><%= t("Status") %></th>
+              <th><%= t("Customer") %></th>
+              <th><%= t("Total") %></th>
+              <th><%= t("Action") %></th>
             </tr>
           </thead>
           <tbody>
@@ -43,12 +43,12 @@
           <table class="admin-search">
             <thead>
               <tr>
-                <th colspan="2"><%= :date_range.l("Date Range") %></th>
+                <th colspan="2"><%= t("Date Range") %></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><%= :start.l("Start") %>:</td>
+                <td><%= t("Start") %>:</td>
                 <td>
                   <%= error_message_on :search, :start%>
                   <%= calendar_date_select :search, :start, :style=>"width:100px" %>
@@ -66,31 +66,31 @@
           <table class="admin-search">
             <thead>
               <tr>
-                <th colspan="2"><%= :order_details.l("Order Details") %></th>
+                <th colspan="2"><%= t("Order Details") %></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><%= :order_number.l("Order #") %></td>
+                <td><%= t("Order #") %></td>
                 <td>
                   <%= f.text_field :order_num, :size=>15 %>
                 </td>
               </tr>
               <tr>
-                <td><%= :status.l("Status") %></td>
+                <td><%= t("Status") %></td>
                 <td>
                   <%= f.collection_select :status, @status_options, :id, :title, {:include_blank => true}, {:style => "width:100%"}%>
                 </td>
               </tr>
               <tr>
-                <td><%= :customer.l("Customer") %></td>
+                <td><%= t("Customer") %></td>
                 <td>
                   <%= f.text_field :customer, :size=>15 %>
                 </td>
               </tr>
             </tbody>
           </table>
-          <%=submit_tag :search.l("Search") %>
+          <%=submit_tag t("Search") %>
         </div>
       <% end %>
     </td>

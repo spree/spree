@@ -1,10 +1,10 @@
-<h2><%= :option_Values.l("Option Values") %></h2>
+<h2><%= t("Option Values") %></h2>
 <table class="basic-table">
   <thead>
     <tr>
-      <th><%= :name.l("Name") %></th>
-      <th><%= :display.l("Display") %></th>
-      <th><%= :action.l("Action") %></th>
+      <th><%= t("Name") %></th>
+      <th><%= t("Display") %></th>
+      <th><%= t("Action") %></th>
     </tr>
   </thead>
   <tbody>
@@ -13,7 +13,7 @@
       <td><%=ov.name%></td>
       <td><%=ov.presentation%></td>
       <td>
-	<%= link_to_remote :delete.l("Delete"),
+	<%= link_to_remote t("Delete"),
 	                   :url => {:action => 'delete_option_value', :id=> @option_type, :option_value_id => ov},
 	                   :before => "Element.show('ov_busy_indicator')", 
 	                   :complete => "Element.hide('ov_busy_indicator')",
@@ -23,14 +23,14 @@
     <% end %>
     <% if @option_type.option_values.empty? %>
     <tr>
-      <td colspan="3"><%= :none_available.l("None Available") %></td>
+      <td colspan="3"><%= t("None Available") %></td>
     </tr>
     <% end %>
   </tbody>
 </table>
 <% unless @option_type.new_record? %>
 <span id="new-ov-link">
-  <%= link_to_remote :new_option_value.l("New Option Value"),
+  <%= link_to_remote t("New Option Value"),
                      :url => {:action => 'new_option_value', :id=> @option_type},
                      :before => "Element.hide('new-ov-link');Element.show('ov_busy_indicator')", 
                      :complete => "Element.hide('ov_busy_indicator');Element.hide('new-ov-link');",

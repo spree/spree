@@ -1,12 +1,12 @@
 <%= render :partial => 'admin/products/menu' %>
 
-<%= link_to :add_category.l("Add Category"), :controller => 'categories', :action => 'new' -%>
+<%= link_to t("Add Category"), :controller => 'categories', :action => 'new' -%>
 <br/><br/>
 
-<h1><%= :listing_categories.l("Listing categories") %></h1>
+<h1><%= t("Listing categories") %></h1>
 
 <div class="breadcrumb-nav">
-  <%= link_to :categories.l("Categories"), :action => "list", :id => nil %>
+  <%= link_to t("Categories"), :action => "list", :id => nil %>
   <% if @parent_category %>
     >
     <%= breadcrumb_nav @parent_category%>
@@ -24,8 +24,8 @@
 
 <table class="admin-report">
   <tr>
-    <th width="75%"><%= :name.l("Name") %></th>
-    <th><%= :action.l("Action") %></th>
+    <th width="75%"><%= t("Name") %></th>
+    <th><%= t("Action") %></th>
   </tr>
   
 <% for category in @categories %>
@@ -38,8 +38,8 @@
       <% end %>
     </td>
     <td>
-      <%= link_to :edit.l('Edit'), :action => 'edit', :id => category %> | 
-      <%= link_to :destroy.l, { :action => 'destroy', :id => category }, :confirm => :are_you_sure_category.l('Are you sure you want to delete this category?') %>
+      <%= link_to t('Edit'), :action => 'edit', :id => category %> | 
+      <%= link_to :destroy.l, { :action => 'destroy', :id => category }, :confirm => t('Are you sure you want to delete this category?') %>
     </td>
   </tr>
 <% end %>

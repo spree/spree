@@ -1,10 +1,10 @@
-<h1><%= :new_state.l("New State")%></h1>
+<h1><%= t("New State")%></h1>
 
 <%= error_messages_for :state %>
 
 <% form_for(:state, :url => collection_url) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <p>
-    <%= submit_tag :create.l("Create") %>
+    <%= submit_tag t("Create") %>
   </p>
 <% end %>

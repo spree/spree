@@ -1,10 +1,10 @@
-<h1><%= :editing_state.l("Editing State") %></h1>
+<h1><%= t("Editing State") %></h1>
 
 <%= error_messages_for :state %>
 
 <% form_for(:state, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <p>
-    <%=submit_tag :update.l("Update") %>
+    <%=submit_tag t("Update") %>
   </p>
 <% end %>

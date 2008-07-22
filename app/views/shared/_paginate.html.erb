@@ -4,10 +4,10 @@
   <ul>
     <% if collection.previous_page? -%>
     <li class="nextpage">
-      <%= link_to "&#171; #{:previous.l('previous')}", { :page => collection.previous_page }.merge(options) %>
+      <%= link_to "&#171; #{t('previous')}", { :page => collection.previous_page }.merge(options) %>
     </li>
     <% else -%>
-    <li class="disablepage">&#171; <%= :previous.l('previous') %></li>
+    <li class="disablepage">&#171; <%= t('previous') %></li>
     <% end -%>
     
     <% last_page = 0 -%>
@@ -24,10 +24,10 @@
     
     <% if collection.next_page? -%>
     <li class="nextpage">
-      <%=  link_to "#{:next.l('next')} &#187;", { :page => collection.next_page }.merge(options) %>
+      <%=  link_to "#{t('next')} &#187;", { :page => collection.next_page }.merge(options) %>
     </li>
     <% else -%>
-    <li class="disablepage">&#171; <%= :next.l('next') %></li>
+    <li class="disablepage">&#171; <%= t('next') %></li>
     <% end -%>
   </ul>
 </div>

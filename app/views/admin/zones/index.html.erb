@@ -1,10 +1,10 @@
-<h1><%= :zones.l("Zones") %></h1>
+<h1><%= t("Zones") %></h1>
 <table class="admin-report" width="545">
   <thead>
     <tr>
-      <th><%= :name.l("Name") %></th>
-      <th><%= :description.l("Description") %></th>
-      <th><%= :action.l("Action") %></th>
+      <th><%= t("Name") %></th>
+      <th><%= t("Description") %></th>
+      <th><%= t("Action") %></th>
     </tr>
   </thead>
   <tbody>
@@ -13,8 +13,8 @@
         <td><%=zone.name %></td>
         <td><%=zone.description %></td>
         <td>
-          <%=link_to :edit.l("Edit"), edit_object_url(zone) %> |
-          <%=link_to :delete.l("Delete"), object_url(zone), :method => :delete %>
+          <%=link_to t("Edit"), edit_object_url(zone) %> |
+          <%=link_to t("Delete"), object_url(zone), :method => :delete %>
         </td>
       </tr>
     <% end %>
@@ -23,4 +23,4 @@
     <% end %>
   </tbody>
 </table>
-<%= link_to :new_zone.l("New Zone"), new_object_url %>
+<%= link_to t("New Zone"), new_object_url %>

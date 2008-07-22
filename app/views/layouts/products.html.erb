@@ -11,7 +11,7 @@
 	<div id="notice"><%= flash[:notice] %></div>
 	<% end %>
 	<% if flash[:error] %>
-	<div id="error"><b><%= :error.l("error").capitalize %></b> - <%= flash[:error] %></div>
+	<div id="error"><b><%= t("error").capitalize %></b> - <%= flash[:error] %></div>
 	<% end %>		
         <%=@content_for_layout %>
       </div>

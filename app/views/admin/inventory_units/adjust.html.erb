@@ -3,16 +3,16 @@
 <% form_tag do %>
 <br/><br/>			
 
-<h1><%= :inventory_adjustment.l("Inventory Adjustment") %></h1>
+<h1><%= t("Inventory Adjustment") %></h1>
 
 <table class="basic-table">
   <thead>
     <tr>
-      <th><%= :sku.l("SKU") %></th>
-      <th><%= :product.l("Product") %></th>
-      <th><%= :options.l("Options") %></th>
-      <th><%= :current.l("Current") %></th>
-      <th><%= :adjustment.l("Adjustment") %></th>
+      <th><%= t("SKU") %></th>
+      <th><%= t("Product") %></th>
+      <th><%= t("Options") %></th>
+      <th><%= t("Current") %></th>
+      <th><%= t("Adjustment") %></th>
     </tr>
   </thead>
   <tbody>
@@ -27,7 +27,7 @@
     </tr>
   </tbody>
 </table>
-<%= submit_tag :update.l('Update') %>
-<%= :or.l("or") %>
-<%= link_to :cancel.l('Cancel'), :controller => 'overview', :action => :index %>
+<%= submit_tag t('Update') %>
+<%= t("or") %>
+<%= link_to t('Cancel'), :controller => 'overview', :action => :index %>
 <% end %>
