@@ -4,7 +4,7 @@
 
 <% form_for(:option_type) do |f| %>
   <%= render :partial => 'form' %>
-  <%= submit_tag :update.l %>
-  <%= :or.l %>
-  <%= link_to :cancel.l, :action => :index %>
+  <%= submit_tag t("Update") %>
+  <%= t("or") %>
+  <%= link_to t("Cancel"), :action => :index %>
 <% end %>

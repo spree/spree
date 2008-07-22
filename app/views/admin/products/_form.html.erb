@@ -1,6 +1,6 @@
 <!--[form:product]-->                       
 <p>
-  <label for="product_name"><%= :name.l %></label><br/>
+  <label for="product_name"><%= t("Name") %></label><br/>
   <%=error_message_on :product, :name%>  
   <%= text_field :product, :name  %>
 </p>
@@ -33,7 +33,7 @@
 
 <% if @product.variant %>
 <p>
-  <label for="sku"><%= :sku.l %></label><br/>
+  <label for="sku"><%= t("Sku") %></label><br/>
   <input type="text" name="variant[<%= @product.variant.id %>][sku]" value="<%= @product.variant.sku %>"/>
 </p>
 <p>
