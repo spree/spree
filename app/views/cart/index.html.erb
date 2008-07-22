@@ -22,14 +22,14 @@
         <%= variant_options @item.variant %><br/>
         <%=truncate(@item.variant.product.description, length = 100, truncate_string = "...")-%>
       </td>
-      <td valign="top" width="75">$ <%= sprintf("%0.2f", @item.price) %></td>
+      <td valign="top" width="75"><%= number_to_currency(@item.price) %></td>
       <td valign="top" width="50"><%= text_field "item[]", :quantity, :size => 3 -%></td>
-      <td valign="top" width="75">$ <%= sprintf("%0.2f", @item.price * @item.quantity) unless @item.quantity.nil? %></td>
+      <td valign="top" width="75"><%= number_to_currency(@item.price * @item.quantity) unless @item.quantity.nil? %></td>
     </tr>
     <% end %>
   </table>
   <div id="subtotal">
-    <h3><%= t("Subtotal") %> $ <%= sprintf("%0.2f", @cart.total) %></h3>
+    <h3><%= "#{t("Subtotal")}: #{number_to_currency(@cart.total)}" %></h3>
     <%= submit_tag t('Update') %>
     <%= link_to t("Checkout"), :controller => 'checkout' %> <!-- todo: replace with image and surround with link -->
   </div>
