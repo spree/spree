@@ -17,7 +17,8 @@ AVAILABLE_OPERATIONS = {
   :canceled => [],
   :returned => [],
   :shipped => [:return, :cancel],
-  :paid => [:ship, :cancel]
+  :paid => [:ship, :cancel],
+  :pending_payment => [:cancel]
 }
 
 INVENTORY_STATES = [:on_hand, :sold, :shipped, :back_ordered]

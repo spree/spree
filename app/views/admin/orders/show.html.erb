@@ -6,28 +6,32 @@
 
 <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
 
-<table class="order-address">
-  <tr>
-    <th><%= t("Ship Address") %></th>
-    <th><%= t("Bill Address") %></th>
-  </tr>
-  <tr>
-    <td width="50%">
-      <%= render :partial => 'address', :locals => {:address => @order.ship_address} -%>      
-    </td>
-    <td width="50%">
-      <%= render :partial => 'address', :locals => {:address => @order.bill_address} -%>
-    </td>
-  </tr>
-</table>
-<table class="order-address">
-  <tr>
-    <th><%= t("Email") %></th>
-  </tr>
-  <tr>
-    <td><%=in_place_editor_field :user, :email %></td>
-  </tr>
-</table>
+<% if @order.ship_address %>
+  <table class="order-address">
+    <tr>
+      <th><%= t("Ship Address") %></th>
+      <th><%= t("Bill Address") %></th>
+    </tr>
+    <tr>
+      <td width="50%">
+        <%= render :partial => 'address', :locals => {:address => @order.ship_address} -%>      
+      </td>
+      <td width="50%">
+        <%= render :partial => 'address', :locals => {:address => @order.bill_address} -%>
+      </td>
+    </tr>
+  </table>
+<% end %>
+<% if @order.user %>
+  <table class="order-address">
+    <tr>
+      <th><%= t("Email") %></th>
+    </tr>
+    <tr>
+      <td><%=in_place_editor_field :user, :email %></td>
+    </tr>
+  </table>
+<% end %>
 <table class="basic-table">
   <tr>
     <th><%= t("Operation") %></th>

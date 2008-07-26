@@ -197,77 +197,83 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   private
-      def gateway_capture(order)
-        authorization = find_authorization(order)
-        gw = payment_gateway
-        response = gw.capture(order.total * 100, authorization.response_code, Order.minimal_gateway_options(order))
-        return unless response.success?
-        order.credit_card.txns << CreditCardTxn.new(
-          :amount => order.total,
-          :response_code => response.authorization,
-          :txn_type => CreditCardTxn::TxnType::CAPTURE
-        )
-        order.save
-        response
-      end
-      
-      def gateway_void(order)
-        authorization = find_authorization(order)
-        gw = payment_gateway
-        response = gw.void(authorization.response_code, Order.minimal_gateway_options(order))
-        return unless response.success?
-        order.credit_card.txns << CreditCardTxn.new(
-          :amount => order.total,
-          :response_code => response.authorization,
-          :txn_type => CreditCardTxn::TxnType::VOID
-        )
-        order.save
-        response
-      end
-     
-      def gateway_credit(order)
-        authorization = find_authorization(order)
-        gw = payment_gateway
-        response = gw.credit(order.total, authorization.response_code, Order.minimal_gateway_options(order))
-        return unless response.success?
-        order.credit_card.txns << CreditCardTxn.new(
-          :amount => order.total,
-          :response_code => response.authorization,
-          :txn_type => CreditCardTxn::TxnType::CREDIT
-        )
-        order.save
-        response
-      end
 
-      def find_authorization(order)
-        #find the transaction associated with the original authorization/capture 
-        cc = order.credit_card
-        cc.txns.find(:first, 
-                     :conditions => ["txn_type = ? or txn_type = ?", CreditCardTxn::TxnType::AUTHORIZE, CreditCardTxn::TxnType::CAPTURE],
-                     :order => 'created_at DESC')
-      end
+    # Allows extensions to add new forms of payment to provide their own display of stransactions
+    def initialize_txn_partials
+      @txn_partials = []
+    end
 
-      def build_conditions(p)
-        c = []
-        if not @search.start.blank?
-          c << "(orders.created_at between :start and :stop)"
-          p.merge! :start => @search.start.to_date
-          @search.stop = Date.today + 1 if @search.stop.blank?
-          p.merge! :stop => @search.stop.to_date + 1.day 
-        end
-        unless @search.order_num.blank?
-          c << "number like :order_num"
-          p.merge! :order_num => @search.order_num + "%"
-        end
-        unless @search.customer.blank?
-          c << "(firstname like :customer or lastname like :customer)"
-          p.merge! :customer => @search.customer + "%"
-        end
-        if @search.status
-          c << "status = :status"
-          p.merge! :status => @search.status
-        end
-        (c.to_sentence :skip_last_comma=>true).gsub(",", " and ")
+    def gateway_capture(order)
+      authorization = find_authorization(order)
+      gw = payment_gateway
+      response = gw.capture(order.total * 100, authorization.response_code, Order.minimal_gateway_options(order))
+      return unless response.success?
+      order.credit_card.txns << CreditCardTxn.new(
+        :amount => order.total,
+        :response_code => response.authorization,
+        :txn_type => CreditCardTxn::TxnType::CAPTURE
+      )
+      order.save
+      response
+    end
+    
+    def gateway_void(order)
+      authorization = find_authorization(order)
+      gw = payment_gateway
+      response = gw.void(authorization.response_code, Order.minimal_gateway_options(order))
+      return unless response.success?
+      order.credit_card.txns << CreditCardTxn.new(
+        :amount => order.total,
+        :response_code => response.authorization,
+        :txn_type => CreditCardTxn::TxnType::VOID
+      )
+      order.save
+      response
+    end
+   
+    def gateway_credit(order)
+      authorization = find_authorization(order)
+      gw = payment_gateway
+      response = gw.credit(order.total, authorization.response_code, Order.minimal_gateway_options(order))
+      return unless response.success?
+      order.credit_card.txns << CreditCardTxn.new(
+        :amount => order.total,
+        :response_code => response.authorization,
+        :txn_type => CreditCardTxn::TxnType::CREDIT
+      )
+      order.save
+      response
+    end
+
+    def find_authorization(order)
+      #find the transaction associated with the original authorization/capture 
+      cc = order.credit_card
+      cc.txns.find(:first, 
+                   :conditions => ["txn_type = ? or txn_type = ?", CreditCardTxn::TxnType::AUTHORIZE, CreditCardTxn::TxnType::CAPTURE],
+                   :order => 'created_at DESC')
+    end
+
+    def build_conditions(p)
+      c = []
+      if not @search.start.blank?
+        c << "(orders.created_at between :start and :stop)"
+        p.merge! :start => @search.start.to_date
+        @search.stop = Date.today + 1 if @search.stop.blank?
+        p.merge! :stop => @search.stop.to_date + 1.day 
       end
+      unless @search.order_num.blank?
+        c << "number like :order_num"
+        p.merge! :order_num => @search.order_num + "%"
+      end
+      unless @search.customer.blank?
+        c << "(firstname like :customer or lastname like :customer)"
+        p.merge! :customer => @search.customer + "%"
+      end
+      if @search.status
+        c << "status = :status"
+        p.merge! :status => @search.status
+      end
+      (c.to_sentence :skip_last_comma=>true).gsub(",", " and ")
+    end
 
 end

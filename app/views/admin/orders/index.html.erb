@@ -24,7 +24,7 @@
               <td><%=order.created_at.to_date%></td>
               <td><%= link_to order.number, {:action => 'show', :id => order} %></td>
               <td><%= Order::Status.from_value order.status %></td>
-              <td><%= order.bill_address.full_name %></td>
+              <td><%= order.bill_address.full_name if order.bill_address%></td>
               <td><%= number_to_currency order.total %></td>
               <td>
                 <% action_links(order).each do |a| %>
