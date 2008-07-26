@@ -47,26 +47,26 @@
     </tr>
   <% end %>
 </table>
-<table class="full-table">
-  <tr>
-    <th><%= t("Transaction") %></th>
-    <th><%= t("Amount") %></th>
-    <th><%= t("Card Number") %></th>
-    <th><%= t("Type") %></th>
-    <th><%= t("Response Code") %></th>
-    <th><%= "#{t('Date')}/#{t('Time')}" %></th>
-  </tr>
-	<% if @order.credit_card %>
-	  <% @order.credit_card.txns.each do |t| %>
-	    <tr>
-	      <td><%=CreditCardTxn::TxnType.from_value t.txn_type.to_i%></td>
-	      <td><%=t.amount%></td>
-	      <td><%=t.credit_card.display_number%></td>
-	      <td><%=t.credit_card.cc_type%></td>
-	      <td><%=t.response_code%></td>
-	      <td><%=t.created_at.to_s(:db)%></td>
-	    </tr>
-	  <% end %>
-	<% end %>
-</table>
-<%= link_to t("Back"), :controller => :orders %>
+
+<% if card = @order.credit_card %>
+  <b><%= t("Credit Card")%>: </b> &nbsp; #<%= card.display_number %><br/>
+  <b><%= t("Type")%> : </b> &nbsp; <%= card.cc_type.titleize %><br/>
+  <table class="basic-table">
+    <tr>
+      <th><%= t("Transaction") %></th>
+      <th><%= t("Amount") %></th>
+      <th><%= t("Response Code") %></th>
+      <th><%= "#{t('Date')}/#{t('Time')}" %></th>
+    </tr>
+    <% @order.credit_card.txns.each do |t| %>
+      <tr>
+        <td><%=CreditCardTxn::TxnType.from_value t.txn_type.to_i%></td>
+        <td><%=number_to_currency t.amount%></td>
+        <td><%=t.response_code%></td>
+        <td><%=t.created_at.to_s(:db)%></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<%= render_txn_partials @order %>

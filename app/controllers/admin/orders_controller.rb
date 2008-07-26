@@ -1,5 +1,7 @@
 class Admin::OrdersController < Admin::BaseController
   
+  before_filter :initialize_txn_partials
+  
   in_place_edit_for :address, :firstname
   in_place_edit_for :address, :lastname
   in_place_edit_for :address, :address1
