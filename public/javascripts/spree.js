@@ -223,6 +223,92 @@ spree.tree.tree_onload = function() {
 	spree.tree.register_expandable_nodes();
 }
 
+/*******************************************************************/
+/* Spree Taxon Product Management                                  */
+/*******************************************************************/
+
+spree.taxon = {}
+spree.taxon.pm = {}
+spree.taxon.current_taxon = null;
+
+spree.taxon.pm.register_all = function() {
+	$$('.product-action').each(function(node, index) {
+		node.product_id = node.identify().match(/^product-(\d+)$/)[1];
+	});
+
+	$$('.product-action-add').each(function(node, index) {
+		spree.register_node_click_event(node, spree.taxon.pm.add_product_event);
+	});
+	$$('.product-action-remove').each(function(node, index) {
+		spree.register_node_click_event(node, spree.taxon.pm.remove_product_event);
+	});
+}
+
+spree.taxon.pm.add_product = function(node) {
+	to_move = node.up('li');
+	to_move.parentNode.removeChild(to_move);
+	$('add-product-target').appendChild(to_move);
+
+	node.removeClassName('product-action-add');
+	node.addClassName('product-action-remove');
+	node.toggleClassName('product-modified');
+	spree.unregister_node_click_event(node);
+	spree.register_node_click_event(node, spree.taxon.pm.remove_product_event);
+	
+}
+
+spree.taxon.pm.remove_product = function(node) {
+	to_move = node.up('li');
+	to_move.parentNode.removeChild(to_move);
+	$('remove-product-target').appendChild(to_move);
+
+	node.removeClassName('product-action-remove');
+	node.addClassName('product-action-add');
+	node.toggleClassName('product-modified');
+	spree.unregister_node_click_event(node);
+	spree.register_node_click_event(node, spree.taxon.pm.add_product_event);
+}
+
+spree.taxon.pm.add_product_event = function(e) {
+	spree.taxon.pm.add_product(Event.element(e));
+}
+
+spree.taxon.pm.remove_product_event = function(e) {
+	spree.taxon.pm.remove_product(Event.element(e));
+}
+
+spree.taxon.pm.save_products = function(container, taxon_id) {
+	product_ids = [];
+	$('add-product-target').descendants().each(function(node, index) {
+		if (node.hasClassName('product-action')) {
+			product_ids[product_ids.length] = node.product_id;
+		}		
+	});
+
+	var url = '/admin/taxonomies/assign_products?id=' + taxon_id + 
+	          '&product_ids[]=' + product_ids.join("&product_ids[]=");
+	new Ajax.Updater(container, url, { method: 'post',
+                                       asynchronous:true,
+                                       evalScripts:true });
+}
+
+
+spree.unregister_node_click_event = function(node) {
+	node.stopObserving('click', node.click_event);
+	node.click_event = null;
+}
+
+spree.register_node_click_event = function(node, func) {
+	node.click_event = func.bindAsEventListener();
+	node.observe('click', node.click_event);
+}
+
+
+spree.taxon.pm.onload = function(taxon_id) {
+	spree.taxon.current_taxon = taxon_id;
+	spree.taxon.pm.register_all();	
+}
+
 window.onload = function() {
 	spree.tree.reset();
 }

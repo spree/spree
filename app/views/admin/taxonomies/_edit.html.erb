@@ -1,4 +1,4 @@
-<h2>Edit Taxonomy: <%= @taxonomy.name %></h2>
+<h2>Edit Taxonomy: <%= @taxonomy.name %></h2><%= cancel_button('Cancel', 'edit-taxonomy') %>
 <%= tree_editor @taxonomy.root %>
 
 <script type="text/javascript">

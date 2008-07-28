@@ -96,17 +96,15 @@ module Admin::TaxonomiesHelper
     %Q{<button type="reset" onClick="#{onclick}">#{label}</button>}
   end
 
-  def document_icon
-    %Q{<img src="/images/tree-view-icons/document.png" />}
+  def save_button(label, div_id, id)
+    remote_options = {:update => div_id, :url => {:action => 'save_products', :id => id}}
+    button_to_function(label, "spree.taxon.pm.save_products('#{div_id}', #{id})")
   end
 
-  def folder_icons
-    %Q{<img src="/images/tree-view-icons/yellow-folder-open.png" />}
-  end
-
-  def tree_pos_icon(type = :normal)
-#    %Q{<img src="/images/tree-view-icons/line-middle.gif" />}
-    ""
+  def reload_button(label, div_id, action, id)
+    remote_options = {:update => div_id, :url => {:action => action, :id => id}}
+    button_to_function(label, remote_function(remote_options))
+#    %Q{<button type="reset">#{label}t</button>}
   end
 
 end
