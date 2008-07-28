@@ -1,0 +1,20 @@
+<h1>Listing products</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+  
+<% for product in @products %>
+  <tr>
+    <td><%=h product.name %></td>
+    <td><%= link_to 'Show', object_url(product) %></td>
+    <td><%= link_to 'Edit', edit_object_url(product) %></td>
+    <td><%= link_to 'Destroy', object_url(product), :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New product', new_object_url %>

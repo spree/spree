@@ -1,4 +1,5 @@
 class Admin::GatewaysController < Admin::BaseController
+  resource_controller
   
   index.response do |wants|
     configuration = GatewayConfiguration.find 1

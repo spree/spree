@@ -1,0 +1,11 @@
+<%= error_messages_for :user %>
+<h1><%= t("New User") %></h1>
+<br/>
+<% form_for(:user, :url => collection_url) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%= submit_tag t("Create") %>
+  </p>
+<% end %>
+<br/>
+<%= link_to t('Back'), collection_url %>

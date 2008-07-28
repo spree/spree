@@ -7,7 +7,13 @@ describe "ExecutionContext" do
     dt.should be_an_instance_of(Spec::Mocks::DuckTypeArgConstraint)
     dt.matches?([]).should be_true
   end
-
+  
+  it "should provide hash_including" do
+    hi = hash_including(:a => 1)
+    hi.should be_an_instance_of(Spec::Mocks::HashIncludingConstraint)
+    hi.matches?(:a => 1).should be_true
+  end
+  
   it "should violate when violated()" do
     lambda do
       violated

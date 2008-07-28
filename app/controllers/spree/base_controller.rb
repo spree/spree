@@ -1,7 +1,6 @@
-class Spree::BaseController < ResourceController::Base
+class Spree::BaseController < ApplicationController
   
   CalendarDateSelect.format = :american
-  #model :order, :address
   
   filter_parameter_logging "password"
   
@@ -15,18 +14,14 @@ class Spree::BaseController < ResourceController::Base
     end
   end
 
-  def access_denied
-    if logged_in?
-      access_forbidden
-    else
-      store_location
-      redirect_to :controller => '/account', :action => 'login'
-    end
-    false  
-  end
-
   def access_forbidden
     render :text => 'Access Forbidden', :layout => true, :status => 401
+  end
+  
+  # Used for pages which need to render certain partials in the middle
+  # of a view. Ex. Extra user form fields
+  def initialize_extension_partials
+    @extension_partials = []
   end
   
 end

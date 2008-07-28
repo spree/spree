@@ -9,18 +9,22 @@ module Spec
         
         def initialize(options, output)
           super
-          @current_example_group_number = 0
-          @current_example_number = 0
+          @example_group_number = 0
+          @example_number = 0
+        end
+        
+        def method_missing(sym, *args)
+          # no-op
         end
 
         # The number of the currently running example_group
-        def current_example_group_number
-          @current_example_group_number
+        def example_group_number
+          @example_group_number
         end
         
         # The number of the currently running example (a global counter)
-        def current_example_number
-          @current_example_number
+        def example_number
+          @example_number
         end
         
         def start(example_count)
@@ -35,14 +39,14 @@ module Spec
           super
           @example_group_red = false
           @example_group_red = false
-          @current_example_group_number += 1
-          unless current_example_group_number == 1
+          @example_group_number += 1
+          unless example_group_number == 1
             @output.puts "  </dl>"
             @output.puts "</div>"
           end
           @output.puts "<div class=\"example_group\">"
           @output.puts "  <dl>"
-          @output.puts "  <dt id=\"example_group_#{current_example_group_number}\">#{h(example_group.description)}</dt>"
+          @output.puts "  <dt id=\"example_group_#{example_group_number}\">#{h(example_group.description)}</dt>"
           @output.flush
         end
 
@@ -53,7 +57,7 @@ module Spec
         end
 
         def example_started(example)
-          @current_example_number += 1
+          @example_number += 1
         end
 
         def example_passed(example)
@@ -67,7 +71,7 @@ module Spec
           failure_style = failure.pending_fixed? ? 'pending_fixed' : 'failed'
           @output.puts "    <script type=\"text/javascript\">makeRed('rspec-header');</script>" unless @header_red
           @header_red = true
-          @output.puts "    <script type=\"text/javascript\">makeRed('example_group_#{current_example_group_number}');</script>" unless @example_group_red
+          @output.puts "    <script type=\"text/javascript\">makeRed('example_group_#{example_group_number}');</script>" unless @example_group_red
           @example_group_red = true
           move_progress
           @output.puts "    <dd class=\"spec #{failure_style}\">"
@@ -81,9 +85,9 @@ module Spec
           @output.flush
         end
 
-        def example_pending(example_group_description, example, message)
+        def example_pending(example, message)
           @output.puts "    <script type=\"text/javascript\">makeYellow('rspec-header');</script>" unless @header_red
-          @output.puts "    <script type=\"text/javascript\">makeYellow('example_group_#{current_example_group_number}');</script>" unless @example_group_red
+          @output.puts "    <script type=\"text/javascript\">makeYellow('example_group_#{example_group_number}');</script>" unless @example_group_red
           move_progress
           @output.puts "    <dd class=\"spec not_implemented\"><span class=\"not_implemented_spec_name\">#{h(example.description)} (PENDING: #{h(message)})</span></dd>"
           @output.flush
@@ -106,7 +110,7 @@ module Spec
         def percent_done
           result = 100.0
           if @example_count != 0
-            result = ((current_example_number).to_f / @example_count.to_f * 1000).to_i / 10.0
+            result = ((example_number).to_f / @example_count.to_f * 1000).to_i / 10.0
           end
           result
         end

@@ -1,5 +1,7 @@
-<%= calendar_date_select_includes %>
-<h1><%= :listing_reports.l("Listing reports") %></h1>
+<% content_for :head do %>
+  <%= calendar_date_select_includes %>
+<% end %>
+<h1><%= t("Listing reports") %></h1>
 <table>
   <tr>
     <td valign="top">
@@ -7,8 +9,8 @@
         <table class="admin-report" width="515">
           <thead>
             <tr>
-              <th><%= :name.l %></th>
-              <th><%= :description.l %></th>
+              <th><%= t("Name") %></th>
+              <th><%= t("Description") %></th>
             </tr>
           </thead>
           <tbody>     

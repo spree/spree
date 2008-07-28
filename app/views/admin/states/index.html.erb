@@ -1,0 +1,18 @@
+<h1><%= t("States") %></h1>
+<br/>
+<select id="country">
+  <%= options_from_collection_for_select(@countries, :id, :name, @country.id) %>
+</select>
+<%= observe_field :country,
+                  :update => 'state-list',
+                  :url => admin_states_path,
+                  :before => "Element.hide('state-list');Element.show('busy_indicator')", 
+                  :complete => "Element.hide('busy_indicator');Element.show('state-list')",
+                  :method => :get,
+                  :with => "'country_id='+encodeURIComponent(value)",
+                  :update => 'state-list' %>                  
+<br/>
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+<div id="state-list">
+  <%=render :partial => 'state_list'%>
+</div>

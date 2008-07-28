@@ -1,0 +1,45 @@
+<h2><%= t("Mail Server Settings") %></h2>
+
+<div id="mail_settings">
+  <%# TODO: move this code to a helper? %>
+  <div id="mail_delivery_status" class="error-or-notice">
+    <%= 
+      if Spree::Config[:enable_mail_delivery]
+        content_tag(:h4, t("Mail delivery is enabled"))
+      else
+        content_tag(:h4, t("Mail delivery is not enabled"))
+      end
+    %>
+  </div>
+  <div>
+    <strong><%= t("SMTP domain") %>:</strong> <%=  Spree::Config[:mail_domain] %>
+  </div>
+  <div>
+    <strong><%= t('SMTP Mail Host') %>:</strong> <%= Spree::Config[:mail_host] %>
+  </div>
+  <div>
+    <strong><%= t('SMTP Port') %>:</strong> <%= Spree::Config[:mail_port] %>
+  </div>
+  <div>
+    <strong><%= t('Secure Connection Type')  %>:</strong> <%= Spree::Config[:secure_connection_type] %>
+  </div>
+  <div>
+    <strong><%= t('SMTP Authentication Type') %>:</strong> <%= Spree::Config[:mail_auth_type] %>
+  </div>
+  <% unless Spree::Config[:mail_auth_type] == "none" -%>
+  <div>
+    <strong><%= t('SMTP Username') %>:</strong> <%= Spree::Config[:smtp_username] %>
+  </div>
+  <div>
+    <strong><%= t('SMTP Password') %>:</strong><em> <%= t("Not shown") unless Spree::Config[:smtp_password].blank? -%></em>
+  </div>
+  <% end -%>
+  <div>
+    <strong><%= t('Copy all mails to') %>:</strong><br />
+    <%= t('A copy of all mail will be sent to the following addresses') %>
+    <div class="">
+      <%= Spree::Config[:mail_copy_to] %>
+    </div>
+  </div>
+  <%= link_to t("Edit"), edit_admin_mail_settings_path %>
+</div>

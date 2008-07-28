@@ -200,6 +200,7 @@ module Spec
           it 'should document a story title and narrative' do
             # when
             @formatter.story_started 'story', 'narrative'
+            @formatter.story_ended 'story', 'narrative'
 
             # then
             @out.string.should include("Story: story\n\n  narrative")
@@ -208,6 +209,8 @@ module Spec
           it 'should document a scenario name' do
             # when
             @formatter.scenario_started 'story', 'scenario'
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             # then
             @out.string.should include("\n\n  Scenario: scenario")
@@ -218,6 +221,8 @@ module Spec
             @formatter.step_succeeded :given, 'a context'
             @formatter.step_succeeded :when, 'an event'
             @formatter.step_succeeded :then, 'an outcome'
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             # then
             @out.string.should include("\n\n    Given a context\n\n    When an event\n\n    Then an outcome")
@@ -228,6 +233,8 @@ module Spec
             @formatter.step_succeeded :given, 'step 1'
             @formatter.step_succeeded :given, 'step 2'
             @formatter.step_succeeded :given, 'step 3'
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             # then
             @out.string.should include("    Given step 1\n    And step 2\n    And step 3")
@@ -238,6 +245,8 @@ module Spec
             @formatter.step_succeeded :when, 'step 1'
             @formatter.step_succeeded :when, 'step 2'
             @formatter.step_succeeded :when, 'step 3'
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             # then
             @out.string.should include("    When step 1\n    And step 2\n    And step 3")
@@ -248,6 +257,8 @@ module Spec
             @formatter.step_succeeded :then, 'step 1'
             @formatter.step_succeeded :then, 'step 2'
             @formatter.step_succeeded :then, 'step 3'
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             # then
             @out.string.should include("    Then step 1\n    And step 2\n    And step 3")
@@ -257,6 +268,8 @@ module Spec
             # when
             @formatter.step_succeeded :'given scenario', 'a scenario'
             @formatter.step_succeeded :given, 'a context'
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             # then
             @out.string.should include("    Given scenario a scenario\n    And a context")
@@ -264,17 +277,39 @@ module Spec
 
           it 'should document steps with replaced params' do
             @formatter.step_succeeded :given, 'a $coloured dog with $n legs', 'pink', 21
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
             @out.string.should include("  Given a pink dog with 21 legs")
+          end
+
+          it 'should document steps that include dollar signs ($)' do
+            @formatter.step_succeeded :given, 'kicks that cost $$amount', 50
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+            @out.string.should include("Given kicks that cost $50")
           end
 
           it 'should document regexp steps with replaced params' do
             @formatter.step_succeeded :given, /a (pink|blue) dog with (.*) legs/, 'pink', 21
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
             @out.string.should include("  Given a pink dog with 21 legs")
+          end
+
+          it 'should document regex steps that include dollar signs ($)' do
+            @formatter.step_succeeded :given, /kicks that cost \$(\d+)/, 50
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+            @out.string.should include("Given kicks that cost $50")
           end
 
           it "should append PENDING for the first pending step" do
             @formatter.scenario_started('','')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
             @formatter.step_pending(:given, 'a context')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             @out.string.should include('Given a context (PENDING)')
           end
@@ -283,6 +318,8 @@ module Spec
             @formatter.scenario_started('','')
             @formatter.step_pending(:given, 'a context')
             @formatter.step_pending(:when, 'I say hey')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             @out.string.should include('When I say hey (PENDING)')
           end
@@ -290,6 +327,8 @@ module Spec
           it "should append FAILED for the first failiure" do
             @formatter.scenario_started('','')
             @formatter.step_failed(:given, 'a context')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             @out.string.should include('Given a context (FAILED)')
           end
@@ -298,16 +337,190 @@ module Spec
             @formatter.scenario_started('','')
             @formatter.step_failed(:given, 'a context')
             @formatter.step_failed(:when, 'I say hey')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             @out.string.should include('When I say hey (SKIPPED)')
           end
 
-          it "should append SKIPPED for the a failiure after PENDING" do
+          it "should append SKIPPED for a failure after PENDING" do
             @formatter.scenario_started('','')
             @formatter.step_pending(:given, 'a context')
             @formatter.step_failed(:when, 'I say hey')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
 
             @out.string.should include('When I say hey (SKIPPED)')
+          end
+
+          it "should print steps which succeeded in green" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('','')
+            @formatter.step_succeeded(:given, 'a context')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+
+            @out.string.should =~ /\e\[32m[\n\s]+Given a context\e\[0m/m
+          end
+
+          it "should print failed steps in red" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('','')
+            @formatter.step_failed(:given, 'a context')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+
+            @out.string.should =~ /\e\[31m[\n\s]+Given a context\e\[0m/m
+          end
+
+          it "should print ' (FAILED)' in red" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('','')
+            @formatter.step_failed(:given, 'a context')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+
+            @out.string.should =~ /\e\[31m \(FAILED\)\e\[0m/
+          end
+
+          it "should print pending steps in yellow" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('','')
+            @formatter.step_pending(:given, 'a context')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+
+            @out.string.should =~ /\e\[33m[\n\s]+Given a context\e\[0m/m
+          end
+
+          it "should print ' (PENDING)' in yellow" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('','')
+            @formatter.step_pending(:given, 'a context')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+
+            @out.string.should =~ /\e\[33m \(PENDING\)\e\[0m/
+          end
+
+          it "should print a scenario in red if any of its steps fail" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('title','narrative')
+            @formatter.step_failed(:given, 'a context')
+            @formatter.scenario_failed('story', 'scenario1', exception_from { raise RuntimeError, 'oops1' })
+            @formatter.story_ended('title','narrative')
+            @out.string.should include("\e[31m\n\n  Scenario: narrative\e[0m")
+          end
+          
+          it "should print a scenario in yellow if its steps are pending" do
+             @out.stub!(:tty?).and_return(true)
+             @options.stub!(:colour).and_return(true)
+
+             @formatter.scenario_started('title','narrative')
+             @formatter.step_pending(:given, 'a context')
+             @formatter.scenario_ended
+             @formatter.story_ended('','')
+             @out.string.should include("\e[33m\n\n  Scenario: narrative\e[0m")
+          end
+   
+          it "should print a story in red if any of its scenarios fail" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+            
+            @formatter.story_started('story', 'narrative')
+            @formatter.scenario_started('','')
+            @formatter.step_failed(:given, 'a context')
+            @formatter.scenario_failed('story', 'scenario1', exception_from { raise RuntimeError, 'oops1' })
+            @formatter.story_ended('story', 'narrative')
+            @out.string.should include("\e[31mStory: story\n\n  narrative\e[0m")
+          end
+
+          it "should print a story in green if all its scenarios succeed" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+            
+            @formatter.story_started('story', 'narrative')
+            @formatter.scenario_started('','')
+            @formatter.step_succeeded(:given, 'a context')
+            @formatter.scenario_succeeded('story', 'scenario1')
+            @formatter.story_ended('story', 'narrative')
+            @out.string.should include("\e[32mStory: story\n\n  narrative\e[0m")
+          end
+
+          it "should print a story in yellow if all its scenarios are pending" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+            
+            @formatter.story_started('story', 'narrative')
+            @formatter.scenario_started('','')
+            @formatter.step_pending(:given, 'a context')
+            @formatter.scenario_pending('story', 'scenario1','pending')
+            @formatter.story_ended('story', 'narrative')
+            @out.string.should include("\e[33mStory: story\n\n  narrative\e[0m")
+          end
+          
+          it "should print skipped steps in yellow if the scenario is already pending" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('','')
+            @formatter.step_pending(:given, 'a context')
+            @formatter.step_failed(:when, 'I say hey')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+
+            @out.string.should =~ /\e\[33m[\n\s]+When I say hey\e\[0m/m
+          end
+
+          it "should print ' (SKIPPED)' in yellow if the scenario is already pending" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('','')
+            @formatter.step_pending(:given, 'a context')
+            @formatter.step_failed(:when, 'I say hey')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+
+            @out.string.should =~ /\e\[33m \(SKIPPED\)\e\[0m/
+          end
+
+          it "should print skipped steps in red if the scenario has already failed" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('','')
+            @formatter.step_failed(:given, 'a context')
+            @formatter.step_failed(:when, 'I say hey')
+            @formatter.scenario_ended
+            @formatter.story_ended '', ''
+
+            @out.string.should =~ /\e\[31m[\n\s]+When I say hey\e\[0m/m
+          end
+
+          it "should print ' (SKIPPED)' in red if the scenario has already failed" do
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started('','')
+            @formatter.step_failed(:given, 'a context')
+            @formatter.step_failed(:when, 'I say hey')
+            @formatter.scenario_failed('story', 'scenario1', exception_from { raise RuntimeError, 'oops1' })         
+            @formatter.story_ended('','')
+
+            @out.string.should =~ /\e\[31m \(SKIPPED\)\e\[0m/m
           end
 
           it 'should print some white space after each story' do

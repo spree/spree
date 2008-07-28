@@ -6,6 +6,9 @@ namespace :db do
   task :migrate => :environment do
     ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
     version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+    # spree 
+    ActiveRecord::Migrator.migrate("#{SPREE_ROOT}/db/migrate/", version)
+    # extensions
     Spree::Extension.descendants.each do |extension|
       ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
     end    
@@ -23,7 +26,9 @@ namespace :db do
     task :up => :environment do
       version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       raise "VERSION is required" unless version
-      # now extensions
+      # spree 
+      ActiveRecord::Migrator.run(:up, "#{SPREE_ROOT}/db/migrate/", version)
+      # extensions
       Spree::Extension.descendants.each do |extension|
         ActiveRecord::Migrator.run(:up, "#{extension.root}/db/migrate/", version)
       end        
@@ -34,7 +39,9 @@ namespace :db do
     task :down => :environment do
       version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       raise "VERSION is required" unless version
-      # now extensions
+      # spree
+      ActiveRecord::Migrator.run(:down, "#{SPREE_ROOT}/db/migrate/", version)
+      # extensions
       Spree::Extension.descendants.each do |extension|
         ActiveRecord::Migrator.run(:down, "#{extension.root}/db/migrate/", version)
       end        
@@ -53,7 +60,10 @@ namespace :db do
   desc "Raises an error if there are pending migrations"
   task :abort_if_pending_migrations => :environment do
     if defined? ActiveRecord
-      # now extensions
+      pending_migrations = []
+      # spree
+      pending_migrations += ActiveRecord::Migrator.new(:up, "#{SPREE_ROOT}/db/migrate/").pending_migrations
+      # extensions
       Spree::Extension.descendants.each do |extension|
         pending_migrations += ActiveRecord::Migrator.new(:up, "#{extension.root}/db/migrate/").pending_migrations
       end        

@@ -68,6 +68,44 @@ module Spec
           worlds[0].should_not == worlds[1]
         end
         
+        it "should return false if the scenario runner returns false ever" do
+          #given
+          stub_scenario_runner = stub_everything
+          story_runner = StoryRunner.new(stub_scenario_runner)
+          story_runner.Story 'story', 'narrative' do
+            Scenario 'scenario1' do end
+            Scenario 'scenario2' do end
+          end
+          
+          # expect
+          stub_scenario_runner.should_receive(:run).once.and_return(false,true)
+          
+          # when
+          success = story_runner.run_stories
+          
+          #then
+          success.should == false
+        end
+        
+        it "should return true if the scenario runner returns true for all scenarios" do
+          #given
+          stub_scenario_runner = stub_everything
+          story_runner = StoryRunner.new(stub_scenario_runner)
+          story_runner.Story 'story', 'narrative' do
+            Scenario 'scenario1' do end
+            Scenario 'scenario2' do end
+          end
+          
+          # expect
+          stub_scenario_runner.should_receive(:run).once.and_return(true,true)
+          
+          # when
+          success = story_runner.run_stories
+          
+          #then
+          success.should == true
+        end
+        
         it 'should use the provided world creator to create worlds' do
           # given
           stub_scenario_runner = stub_everything
@@ -225,7 +263,7 @@ module Spec
           steps1 = StepGroup.new
           steps1.add :when, step1
           
-          story_runner.Story 'title', 'narrative', :steps => steps1 do
+          story_runner.Story 'title', 'narrative', :steps_for => steps1 do
             Scenario 'first scenario' do
               When 'step'
             end
@@ -237,7 +275,7 @@ module Spec
           steps2 = StepGroup.new
           steps2.add :when, step2
           
-          story_runner.Story 'title2', 'narrative', :steps => steps2 do
+          story_runner.Story 'title2', 'narrative', :steps_for => steps2 do
             Scenario 'second scenario' do
               When 'step'
             end

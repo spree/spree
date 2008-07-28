@@ -49,7 +49,7 @@ module EasyRoleRequirementSystem
   
   module ClassMethods        
     def role_permissions_file_path
-      @role_permissions_file_path ||= "#{SPREE_ROOT}/lib/easy_role_permissions.yml"
+      @role_permissions_file_path ||= "#{SPREE_ROOT}/config/easy_role_permissions.yml"
     end
     
     def has_role_requirements?

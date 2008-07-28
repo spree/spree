@@ -27,7 +27,7 @@ module Spec
           /\/lib\/ruby\//,
           /bin\/spec:/,
           /bin\/rcov:/,
-          /lib\/rspec_on_rails/,
+          /lib\/rspec-rails/,
           /vendor\/rails/,
           # TextMate's Ruby and RSpec plugins
           /Ruby\.tmbundle\/Support\/tmruby.rb:/,

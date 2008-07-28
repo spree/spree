@@ -47,14 +47,16 @@ describe "should have(n).items" do
   end
 end
 
-describe 'should have(1).item when Inflector is defined' do
+describe 'should have(1).item when ActiveSupport::Inflector is defined' do
   include HaveSpecHelper
   
   before do
-    unless Object.const_defined?(:Inflector)
-      class Inflector
-        def self.pluralize(string)
-          string.to_s + 's'
+    unless defined?(ActiveSupport::Inflector)
+      module ActiveSupport
+        class Inflector
+          def self.pluralize(string)
+            string.to_s + 's'
+          end
         end
       end
     end

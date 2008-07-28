@@ -25,6 +25,7 @@ change_language: Sprache wechseln
 checkout: Zur Kasse
 city: Stadt
 comp_order: Bestellung Abbrechen
+configuration: Configuration
 confirm: Bestätigen
 confirm_password: Passwort Bestätigen
 continue_shopping: Weiter Einkaufen

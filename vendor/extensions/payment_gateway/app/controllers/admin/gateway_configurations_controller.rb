@@ -1,4 +1,6 @@
 class Admin::GatewayConfigurationsController < Admin::BaseController
+  resource_controller
+  
   before_filter :load_data
     
   update.after do

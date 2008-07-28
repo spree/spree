@@ -108,6 +108,32 @@ module Spec
         "duck_type"
       end
     end
+    
+    class HashIncludingConstraint
+      def initialize(expected)
+        @expected = expected
+      end
+      
+      def ==(actual)
+        @expected.each do | key, value |
+          # check key for case that value evaluates to nil
+          return false unless actual.has_key?(key) && actual[key] == value
+        end
+        true
+      rescue NoMethodError => ex
+        return false
+      end
+      
+      def matches?(value)
+        self == value
+      end
+      
+      def description
+        "hash_including(#{@expected.inspect.sub(/^\{/,"").sub(/\}$/,"")})"
+      end
+      
+    end
+    
 
     class ArgumentExpectation
       attr_reader :args
@@ -117,8 +143,10 @@ module Spec
       @@constraint_classes[:boolean] = BooleanArgConstraint
       @@constraint_classes[:string] = StringArgConstraint
       
-      def initialize(args)
+      def initialize(args, &block)
         @args = args
+        @constraints_block = block
+        
         if [:any_args] == args
           @expected_params = nil
           warn_deprecated(:any_args.inspect, "any_args()")
@@ -166,6 +194,11 @@ module Spec
       end
       
       def check_args(args)
+        if @constraints_block
+          @constraints_block.call(*args)
+          return true
+        end
+        
         return true if @expected_params.nil?
         return true if @expected_params == args
         return constraints_match?(args)

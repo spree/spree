@@ -20,9 +20,10 @@ module Spec
           formatter.add_example_group(Class.new(ExampleGroup).describe("b 2"))
           formatter.example_failed("e 2", nil, Reporter::Failure.new(nil, RuntimeError.new))
           formatter.example_failed("e 3", nil, Reporter::Failure.new(nil, RuntimeError.new))
-          io.string.should == "b 1\nb 2\n"
+          io.string.should include("b 1")
+          io.string.should include("b 2")
         end
-        
+
         it "should delimit ExampleGroup superclass descriptions with :" do
           parent_example_group = Class.new(example_group).describe("Parent")
           child_example_group = Class.new(parent_example_group).describe("#child_method")

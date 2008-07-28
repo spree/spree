@@ -31,7 +31,7 @@ img {
   margin:0pt auto;
   position:relative;
   text-align:left;
-  width:780px;
+  width:980px;
 }
 
 #header {
@@ -68,7 +68,7 @@ img {
   border: solid 1px;
   margin-top: 10px;
   margin-bottom: 10px;
-  width: 545px;
+  width: 745px;
 }
 
 .admin-report th {
@@ -326,7 +326,7 @@ padding-right: 0;
   border: solid 1px;
   margin-top: 10px;
   margin-bottom: 10px;
-  width: 780px;
+  width: 980px;
 }
 
 .full-table th {
@@ -470,3 +470,7 @@ ul.plain {
 	list-style-type: none;
 }
 
+.zone-member-list li {
+  padding: 0 3px;  
+  list-style-type: none;
+}

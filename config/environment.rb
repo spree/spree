@@ -6,7 +6,8 @@
 
 # Specifies gem version of Rails to use when vendor/rails is not present
 SPREE_GEM_VERSION = '0.3.0' unless defined? SPREE_GEM_VERSION
-
+RAILS_GEM_VERSION = "2.1.0" unless defined? RAILS_GEM_VERSION
+          
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
@@ -29,6 +30,8 @@ Spree::Initializer.run do |config|
   config.gem "has_many_polymorphs", :version => '2.12'
   config.gem "highline", :version => '1.4.0'
   config.gem "mini_magick", :version => '1.2.3'
+  config.gem "activemerchant", :lib => "active_merchant", :version => '1.3.2'
+  config.gem "tlsmail"
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -84,27 +87,3 @@ end
 # Mime::Type.register "application/x-mobile", :mobile
 
 # Include your application configuration below
-
-# Spree Configuration
-SESSION_KEY = '_spree_session_id'
-SHIPPING_METHODS = [:flat_rate]
-FLAT_SHIPPING_RATE = 10 # applies only to the flat rate shipping option
-ORDER_FROM = "orders@example.com"
-ORDER_BCC = []
-
-TXN_TYPES = [:authorize, :capture, :purchase, :void, :credit]
-
-ORDER_STATES = [:incomplete, :authorized, :captured, :canceled, :returned, :shipped, :paid]
-ORDER_OPERATIONS = [:authorize, :capture, :cancel, :return, :ship, :comp, :delete]
-
-AVAILABLE_OPERATIONS = {
-  :incomplete => [:delete],
-  :authorized => [:capture, :ship, :cancel],
-  :captured => [:ship, :cancel],
-  :canceled => [],
-  :returned => [],
-  :shipped => [:return, :cancel],
-  :paid => [:ship, :cancel]
-}
-
-INVENTORY_STATES = [:on_hand, :sold, :shipped, :back_ordered]

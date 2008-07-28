@@ -15,8 +15,8 @@ module ResourceController
         end
 
         self.helper_method :object_url, :edit_object_url, :new_object_url, :collection_url, :object, :collection, 
-                             :parent, :parent_type, :parent_object, :model_name, :model, :object_path, :edit_object_path,
-                              :new_object_path, :collection_path, :hash_for_collection_path, :hash_for_object_path, 
+                             :parent, :parent_type, :parent_object, :parent_model, :model_name, :model, :object_path, 
+                             :edit_object_path, :new_object_path, :collection_path, :hash_for_collection_path, :hash_for_object_path, 
                                 :hash_for_edit_object_path, :hash_for_new_object_path, :hash_for_collection_url, 
                                   :hash_for_object_url, :hash_for_edit_object_url, :hash_for_new_object_url, :parent?,
                                     :collection_url_options, :object_url_options, :new_object_url_options
@@ -41,14 +41,14 @@ module ResourceController
 
           create do
             flash "Successfully created!"
-            wants.html { redirect_to collection_url }
+            wants.html { redirect_to object_url }
 
             failure.wants.html { render :action => "new" }
           end
 
           update do
             flash "Successfully updated!"
-            wants.html { redirect_to object_url } 
+            wants.html { redirect_to object_url }
 
             failure.wants.html { render :action => "edit" }
           end

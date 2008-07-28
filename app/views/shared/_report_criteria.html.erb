@@ -1,23 +1,25 @@
-<%= calendar_date_select_includes %>
+<% content_for :head do %>
+  <%= calendar_date_select_includes %>
+<% end %>
 <td valign="top">
   <% form_for :search do |f| %>
   <div id="report-search">
     <table class="admin-search">
       <thead>
         <tr>
-          <th colspan="2"><%= :date_range.l("Date Range") %></th>
+          <th colspan="2"><%= t("Date Range") %></th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><%= :start.l("Start") %>:</td>
+          <td><%= t("Start") %>:</td>
           <td>
             <%= error_message_on :search, :start%>
             <%= calendar_date_select :search, :start, :style=>"width:100px" %>
           </td>
 	</tr>
 	<tr>
-	  <td><%= :stop.l("Stop") %>:</td>
+	  <td><%= t("Stop") %>:</td>
 	  <td>
 	    <%= error_message_on :search, :stop%>
 	    <%= calendar_date_select :search, :stop, :style=>"width:100px" %>
@@ -25,7 +27,7 @@
 	</tr>
       </tbody>
     </table>
-    <%=submit_tag :search.l("Search") %>
+    <%=submit_tag t("Search") %>
   </div>
   <% end %>
 </td>

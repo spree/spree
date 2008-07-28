@@ -1,0 +1,68 @@
+<script type='text/javascript'>
+  <%= render :partial => 'function.rjs' %>
+</script>
+<table>
+  <tr>
+    <td>Name:</td>
+    <td><%=f.text_field :name %></td>
+  </tr>
+  <tr>
+    <td>Description:</td>
+    <td><%=f.text_field :description %></td>
+  </tr>  
+  <tr>
+    <td>Type: </td>
+    <td>
+      <input type="radio" 
+             name="type" <%=country_checked %> 
+             onclick="Element.show('country-based'); Element.hide('state-based'); Element.hide('zone-based');"
+             value="country">Country Based</input>
+      <input type="radio" 
+             name="type" <%=state_checked %> 
+             onclick="Element.show('state-based'); Element.hide('country-based'); Element.hide('zone-based');"
+             value="state">State Based</input>
+      <input type="radio" 
+            name="type" <%=zone_checked %> 
+            onclick="Element.show('zone-based'); Element.hide('country-based'); Element.hide('state-based');"
+            value="zone">Zone Based</input>
+    </td>      
+  </tr>
+</table>
+<br/>
+<div id="country-based" <%= "style='display:none'" if country_checked.blank? %> >
+  <h2>Country</h2>
+  <ul id="country-list" class="zone-member-list">
+    <% @object.countries.each do |country| %>
+      <%= render :partial => "country", :locals => {:value => country.name} %>
+    <% end %>
+    <%= render :partial => "country" if @object.countries.empty?%>
+  </ul>
+  <br/>
+  <%= link_to_function('Add Country', 'add_country()' ) %> 
+</div>
+
+<div id="state-based" <%= "style='display:none'" if state_checked.blank? %> >
+  <h2>State(s)</h2>
+  <ul id="state-list" class="zone-member-list">
+    <% @object.states.each do |state| %>
+      <%= render :partial => "state", :locals => {:value => state.name} %>
+    <% end %>
+    <%= render :partial => "state"  if @object.states.empty?%>
+  </ul>
+  <br/>
+  <%= link_to_function('Add State', 'add_state()' ) %> 
+</div>
+
+<div id="zone-based" <%= "style='display:none'" if zone_checked.blank? %> >
+  <h2>Zones</h2>
+  <ul id="zone-list" class="zone-member-list">
+    <% @object.zones.each do |zone| %>
+      <%= render :partial => "zone", :locals => {:value => zone.name} %>
+    <% end %>
+    <%= render :partial => "zone"  if @object.zones.empty?%>
+  </ul>
+  <br/>
+  <%= link_to_function('Add Zone', 'add_zone()' ) %> 
+</div>
+
+<br/><br/>

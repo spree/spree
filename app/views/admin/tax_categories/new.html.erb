@@ -1,0 +1,10 @@
+<h1><%=t("New Tax Category")%></h1>
+
+<%= error_messages_for :tax_category %>
+
+<% form_for(:tax_category, :url => collection_url) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%= submit_tag t("Create") %>
+  </p>
+<% end %>

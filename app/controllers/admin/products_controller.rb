@@ -26,7 +26,7 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   def show
-    @product = Product.find(params[:id])
+    @product = Product.find_by_param(params[:id])
   end
 
   def new
@@ -55,7 +55,7 @@ class Admin::ProductsController < Admin::BaseController
   def edit
     if request.post?
       load_data
-      @product = Product.find(params[:id])
+      @product = Product.find_by_param(params[:id])
       category_id = params[:category]
       @product.category = (category_id.blank? ? nil : Category.find(params[:category]))
 
@@ -100,7 +100,7 @@ class Admin::ProductsController < Admin::BaseController
         flash.now[:error] = 'Problem updating product.'
       end
     else
-      @product = Product.find(params[:id])
+      @product = Product.find_by_param(params[:id])
       load_data
       @selected_category = @product.category.id if @product.category
     end
@@ -108,14 +108,14 @@ class Admin::ProductsController < Admin::BaseController
   
   def destroy
     flash[:notice] = 'Product was successfully deleted.'
-    @product = Product.find(params[:id])
+    @product = Product.find_by_param(params[:id])
     @product.destroy
     redirect_to :action => 'index'
   end
 
   #AJAX support method
   def add_option_type
-    @product = Product.find(params[:id])
+    @product = Product.find_by_param(params[:id])
     pot = ProductOptionType.new(:product => @product, :option_type => OptionType.find(params[:option_type_id]))
     @product.selected_options << pot
     @product.save
@@ -127,7 +127,7 @@ class Admin::ProductsController < Admin::BaseController
   #AJAX support method
   def remove_option_type
     ProductOptionType.delete(params[:product_option_type_id])
-    @product = Product.find(params[:id])
+    @product = Product.find_by_param(params[:id])
     render  :partial => 'option_types', 
             :locals => {:product => @product},
             :layout => false
@@ -135,7 +135,7 @@ class Admin::ProductsController < Admin::BaseController
 
   #AJAX method   
   def new_variant
-    @product = Product.find(params[:id])
+    @product = Product.find_by_param(params[:id])
     @variant = Variant.new    
     render  :partial => 'new_variant', 
             :locals => {:product => @product},
@@ -144,7 +144,7 @@ class Admin::ProductsController < Admin::BaseController
   
   #AJAX method
   def delete_variant
-    @product = Product.find(params[:id])
+    @product = Product.find_by_param(params[:id])
     Variant.destroy(params[:variant_id])
     flash.now[:notice] = 'Variant successfully removed.'
     render  :partial => 'variants', 
@@ -174,7 +174,7 @@ class Admin::ProductsController < Admin::BaseController
 
   #AJAX method
   def add_property_value
-    @product = Product.find(params[:id])
+    @product = Product.find_by_param(params[:id])
     @property_value = PropertyValue.new
     render :partial => 'add_property_value', :locals => { :product => @product }
   end
@@ -186,14 +186,14 @@ class Admin::ProductsController < Admin::BaseController
       render :nothing => true
       return
     end
-    @product = Product.find(params[:id])
+    @product = Product.find_by_param(params[:id])
     render({ :partial => "add_property_value_view_#{params[:view]}",
              :locals => { :product => @product } })
   end
 
   #AJAX method
   def add_property_value_view_prototype_list
-    @product = Product.find(params[:id])
+    @product = Product.find_by_param(params[:id])
     @prototype = Prototype.find(params[:prototype_id])
     render({ :partial => "add_property_value_view_prototype_list",
              :locals => { :product => @product, :prototype => @prototype } })
@@ -203,6 +203,7 @@ class Admin::ProductsController < Admin::BaseController
       def load_data
         @all_categories = Category.find(:all, :order=>"name")  
         @all_categories.unshift Category.new(:name => "<None>")
+        @tax_categories = TaxCategory.find(:all, :order=>"name")  
       end
   
   private

@@ -1,7 +1,7 @@
 module Spec
   module Mocks
     module ArgumentConstraintMatchers
-
+      
       # Shortcut for creating an instance of Spec::Mocks::DuckTypeArgConstraint
       def duck_type(*args)
         DuckTypeArgConstraint.new(*args)
@@ -17,6 +17,10 @@ module Spec
       
       def boolean
         BooleanArgConstraint.new(nil)
+      end
+      
+      def hash_including(expected={})
+        HashIncludingConstraint.new(expected)
       end
       
       def no_args

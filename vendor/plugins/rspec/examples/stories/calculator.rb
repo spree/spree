@@ -27,7 +27,7 @@ Story "addition", %{
   As an accountant
   I want to add numbers
   So that I can count some beans
-}, :steps => steps do
+}, :steps_for => steps do
   Scenario "2 + 3" do
     Given "an addend of 2"
     And "an addend of 3"

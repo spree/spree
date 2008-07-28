@@ -1,0 +1,13 @@
+<h2><%= t("New Configuration Template") %></h2>
+
+<%= error_messages_for :app_configuration %>
+
+<% form_for @app_configuration, :url => admin_configurations_path do |f| -%>
+  <p>
+    <strong><%= t("Name") %></strong><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.submit t("Create") %>
+<% end -%>
+

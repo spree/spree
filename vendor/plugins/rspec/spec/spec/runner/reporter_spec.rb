@@ -21,8 +21,10 @@ module Spec
       end
 
       def create_example_group(description_text)
-        example_group = Class.new(Spec::Example::ExampleGroup)
-        example_group.describe description_text
+        example_group = Spec::Example::ExampleGroup.describe(description_text) do
+          it "should do something" do
+          end
+        end
         example_group
       end
 
@@ -127,8 +129,9 @@ module Spec
 
       describe Reporter, "reporting one failing example" do
         it "should tell formatter that example failed" do
+          example = example_group.it("should do something") {}
           formatter.should_receive(:example_failed)
-          reporter.example_finished(example_group, RuntimeError.new)
+          reporter.example_finished(example, RuntimeError.new)
         end
 
         it "should delegate to backtrace tweaker" do
@@ -154,7 +157,7 @@ module Spec
       describe Reporter, "reporting one pending example (ExamplePendingError)" do
         it "should tell formatter example is pending" do
           example = ExampleGroup.new("example")
-          formatter.should_receive(:example_pending).with(example_group.description, example, "reason")
+          formatter.should_receive(:example_pending).with(example, "reason")
           formatter.should_receive(:add_example_group).with(example_group)
           reporter.add_example_group(example_group)
           reporter.example_finished(example, Spec::Example::ExamplePendingError.new("reason"))
@@ -162,7 +165,7 @@ module Spec
 
         it "should account for pending example in stats" do
           example = ExampleGroup.new("example")
-          formatter.should_receive(:example_pending).with(example_group.description, example, "reason")
+          formatter.should_receive(:example_pending).with(example, "reason")
           formatter.should_receive(:start_dump)
           formatter.should_receive(:dump_pending)
           formatter.should_receive(:dump_summary).with(anything(), 1, 0, 1)
@@ -177,11 +180,11 @@ module Spec
       describe Reporter, "reporting one pending example (PendingExampleFixedError)" do
         it "should tell formatter pending example is fixed" do
           formatter.should_receive(:example_failed) do |name, counter, failure|
-            failure.header.should == "'example_group example' FIXED"
+            failure.header.should == "'example_group should do something' FIXED"
           end
           formatter.should_receive(:add_example_group).with(example_group)
           reporter.add_example_group(example_group)
-          reporter.example_finished(ExampleGroup.new("example"), Spec::Example::PendingExampleFixedError.new("reason"))
+          reporter.example_finished(example_group.examples.first, Spec::Example::PendingExampleFixedError.new("reason"))
         end
       end
     end

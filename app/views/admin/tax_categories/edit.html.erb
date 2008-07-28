@@ -1,0 +1,10 @@
+<h1><%=t("Editing Tax Category")%></h1>
+
+<%= error_messages_for :tax_category %>
+
+<% form_for(:tax_category, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%=submit_tag t("Update")%>
+  </p>
+<% end %>

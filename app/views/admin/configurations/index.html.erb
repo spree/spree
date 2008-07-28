@@ -1,0 +1,38 @@
+<h1><%= t("Configurations") -%></h1>
+
+<table id="configurations" class="full-table" width="800px">
+  <thead>
+    <tr>
+      <th><%= t("System") %></th>
+      <th><%= t("Description") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= link_to t("Mail Server Settings"), admin_mail_settings_path %></td>
+      <td>Set email server settings.</td>
+    </tr>
+    <tr>
+      <td><%= link_to t("Tax Categories"), admin_tax_categories_path %></td>
+      <td>Set up tax categories to identify which products should be taxable.</td>
+    </tr>
+    <tr>
+      <td><%= link_to t("Zones"), admin_zones_path %></td>
+      <td>Collections of countries, states or other zones to be used in various calculations.</td>
+    </tr>
+    <tr>
+      <td><%= link_to t("States"), admin_country_states_path(214) %></td>
+      <td>Administer the list of states/provinces associated with each country.</td>
+    </tr>
+    <tr>
+      <td><%= link_to t("Gateway"), admin_gateways_path %></td>
+      <td>Select a payment gateway and configure its settings.</td>
+    </tr>
+    <% @extension_links.each do |link_map| %>
+      <tr>
+        <td><%= link_to(link_map[:link_text],  link_map[:link]) %></td>
+        <td><%= link_map[:description] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

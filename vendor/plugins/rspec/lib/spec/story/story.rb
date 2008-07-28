@@ -19,17 +19,14 @@ module Spec
       end
       
       def assign_steps_to(assignee)
-        if @params[:steps]
-          assignee.use(@params[:steps])
-        else
-          case keys = @params[:steps_for]
-          when Symbol
-            keys = [keys]
-          when nil
-            keys = []
-          end
-          keys.each do |key|
-            assignee.use(steps_for(key))
+        if steps=@params[:steps_for]
+          steps = [steps] unless steps.is_a?(Array)
+          steps.each do |step|
+            if step.is_a?(StepGroup)
+              assignee.use(step)
+            else
+              assignee.use(steps_for(step))
+            end
           end
         end
       end

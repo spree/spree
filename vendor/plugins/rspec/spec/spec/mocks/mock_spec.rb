@@ -37,18 +37,16 @@ module Spec
       
       it "should fail when receiving message specified as not to be received" do
         @mock.should_not_receive(:not_expected)
-        @mock.not_expected
         lambda {
-          @mock.rspec_verify
+          @mock.not_expected
           violated
-        }.should raise_error(MockExpectationError, "Mock 'test mock' expected :not_expected with (any args) 0 times, but received it once")
+        }.should raise_error(MockExpectationError, "Mock 'test mock' expected :not_expected with (no args) 0 times, but received it once")
       end
       
       it "should fail when receiving message specified as not to be received with args" do
         @mock.should_not_receive(:not_expected).with("unexpected text")
-        @mock.not_expected("unexpected text")
         lambda {
-          @mock.rspec_verify
+          @mock.not_expected("unexpected text")
           violated
         }.should raise_error(MockExpectationError, "Mock 'test mock' expected :not_expected with (\"unexpected text\") 0 times, but received it once")
       end
@@ -77,11 +75,29 @@ module Spec
         @mock.rspec_verify
       end
       
-      it "should raise exception if args dont match when method called" do
+      it "should raise exception if args don't match when method called" do
         @mock.should_receive(:something).with("a","b","c").and_return("booh")
         lambda {
           @mock.something("a","d","c")
           violated
+        }.should raise_error(MockExpectationError, "Mock 'test mock' expected :something with (\"a\", \"b\", \"c\") but received it with (\"a\", \"d\", \"c\")")
+      end
+           
+      it "should raise exception if args don't match when method called even when the method is stubbed" do
+        @mock.stub!(:something)
+        @mock.should_receive(:something).with("a","b","c")
+        lambda {
+          @mock.something("a","d","c")
+          @mock.rspec_verify
+        }.should raise_error(MockExpectationError, "Mock 'test mock' expected :something with (\"a\", \"b\", \"c\") but received it with (\"a\", \"d\", \"c\")")
+      end
+           
+      it "should raise exception if args don't match when method called even when using null_object" do
+        @mock = mock("test mock", :null_object => true)
+        @mock.should_receive(:something).with("a","b","c")
+        lambda {
+          @mock.something("a","d","c")
+          @mock.rspec_verify
         }.should raise_error(MockExpectationError, "Mock 'test mock' expected :something with (\"a\", \"b\", \"c\") but received it with (\"a\", \"d\", \"c\")")
       end
            
@@ -110,23 +126,19 @@ module Spec
       end
         
       it "should fail right away when method defined as never is received" do
-        pending "Used to pass (false positive). Which one is wrong, the spec or the actual behavior?"
-
         @mock.should_receive(:not_expected).never
         lambda {
           @mock.not_expected
-        }.should raise_error(MockExpectationError, "Mock 'test mock' expected :not_expected 0 times, but received it 1 times")
+        }.should raise_error(MockExpectationError, "Mock 'test mock' expected :not_expected with (no args) 0 times, but received it once")
       end
       
       it "should eventually fail when method defined as never is received" do
         @mock.should_receive(:not_expected).never
-        @mock.not_expected
-          
         lambda {
-          @mock.rspec_verify
-        }.should raise_error(MockExpectationError, "Mock 'test mock' expected :not_expected with (any args) 0 times, but received it once")
+          @mock.not_expected
+        }.should raise_error(MockExpectationError, "Mock 'test mock' expected :not_expected with (no args) 0 times, but received it once")
       end
-
+    
       it "should raise when told to" do
         @mock.should_receive(:something).and_raise(RuntimeError)
         lambda do
@@ -186,14 +198,20 @@ module Spec
           @mock.something 1
         }.should raise_error(MockExpectationError, "Mock 'test mock' expected :something with (no args) but received it with (1)")
       end
-
+    
       it "should fail when args are expected but none are received" do
         @mock.should_receive(:something).with(1)
         lambda {
           @mock.something
         }.should raise_error(MockExpectationError, "Mock 'test mock' expected :something with (1) but received it with (no args)")
       end
-      
+    
+      it "should return value from block by default" do
+        @mock.stub!(:method_that_yields).and_yield
+        @mock.method_that_yields { :returned_obj }.should == :returned_obj
+        @mock.rspec_verify
+      end
+    
       it "should yield 0 args to blocks that take a variable number of arguments" do
         @mock.should_receive(:yield_back).with(no_args()).once.and_yield
         a = nil
@@ -238,7 +256,7 @@ module Spec
         a.should == [99, 27, "go"]
         @mock.rspec_verify
       end
-
+    
       it "should yield many args 3 times consecutively to blocks that take a variable number of arguments" do
         @mock.should_receive(:yield_back).once.with(no_args()).once.and_yield(99, :green, "go").
                                                                     and_yield("wait", :amber).
@@ -347,7 +365,7 @@ module Spec
         mock.rspec_reset
         mock.rspec_verify #should throw if reset didn't work
       end
-
+    
       it "should work even after method_missing starts raising NameErrors instead of NoMethodErrors" do
         # Object#method_missing throws either NameErrors or NoMethodErrors.
         #
@@ -376,7 +394,7 @@ module Spec
         lambda { @mock.foobar }.should_not raise_error(NameError)
         lambda { @mock.foobar }.should raise_error(MockExpectationError)
       end
-
+    
       it "should temporarily replace a method stub on a mock" do
         @mock.stub!(:msg).and_return(:stub_value)
         @mock.should_receive(:msg).with(:arg).and_return(:mock_value)
@@ -385,7 +403,7 @@ module Spec
         @mock.msg.should equal(:stub_value)
         @mock.rspec_verify
       end
-
+    
       it "should temporarily replace a method stub on a non-mock" do
         non_mock = Object.new
         non_mock.stub!(:msg).and_return(:stub_value)
@@ -400,8 +418,9 @@ module Spec
         mock = Mock.new('name', :message => :response)
         mock.message.should == :response
       end
+      
     end
-
+    
     describe "a mock message receiving a block" do
       before(:each) do
         @mock = mock("mock")
@@ -414,61 +433,61 @@ module Spec
       
       it "should call the block after #should_receive" do
         @mock.should_receive(:foo) { add_call }
-
+    
         @mock.foo
-
+    
         @calls.should == 1
       end
-
+    
       it "should call the block after #once" do
         @mock.should_receive(:foo).once { add_call }
-
+    
         @mock.foo
-
+    
         @calls.should == 1
       end
-
+    
       it "should call the block after #twice" do
         @mock.should_receive(:foo).twice { add_call }
-
+    
         @mock.foo
         @mock.foo
-
+    
         @calls.should == 2
       end
-
+    
       it "should call the block after #times" do
         @mock.should_receive(:foo).exactly(10).times { add_call }
         
         (1..10).each { @mock.foo }
-
+    
         @calls.should == 10
       end
-
+    
       it "should call the block after #any_number_of_times" do
         @mock.should_receive(:foo).any_number_of_times { add_call }
         
         (1..7).each { @mock.foo }
-
+    
         @calls.should == 7
       end
-
-      it "should call the block after #with" do
-        @mock.should_receive(:foo).with(:arg) { add_call }
-        
-        @mock.foo(:arg)
-
-        @calls.should == 1
-      end
-
+    
       it "should call the block after #ordered" do
         @mock.should_receive(:foo).ordered { add_call }
         @mock.should_receive(:bar).ordered { add_call }
         
         @mock.foo
         @mock.bar
-
+    
         @calls.should == 2
+      end
+    end
+    
+    describe 'string representation generated by #to_s' do
+      it 'should not contain < because that might lead to invalid HTML in some situations' do
+        mock = mock("Dog")
+        valid_html_str = "#{mock}"
+        valid_html_str.should_not include('<')
       end
     end
   end

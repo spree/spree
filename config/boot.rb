@@ -15,10 +15,11 @@ module Spree
       defined? Spree::Initializer
     end
 
-    def pick_boot
+    def pick_boot   
+      return VendorBoot.new if File.exist?("#{RAILS_ROOT}/vendor/spree")
       (File.exist?("#{RAILS_ROOT}/lib/spree.rb") ? AppBoot : GemBoot).new
     end
-
+    
     def vendor_rails?
       File.exist?("#{RAILS_ROOT}/vendor/rails")
     end
@@ -64,7 +65,7 @@ module Spree
         require 'spree'
         require 'spree/initializer'
       rescue LoadError => e
-        $stderr.puts %(Spree could not be initialized. #{load_error_message})
+        $stderr.puts %(Spree could not be initialized. #{e})
         exit 1
       end
     end   
@@ -86,12 +87,16 @@ module Spree
     end 
   end
 
-  #class VendorBoot < Boot
-  #  def load_initializer
-  #    require "#{RAILS_ROOT}/vendor/rails/railties/lib/initializer"
-  #    Spree::Initializer.run(:install_gem_spec_stubs)
-  #  end
-  #end
+  class VendorBoot < Boot
+    def load_initializer
+      $LOAD_PATH.unshift "#{RAILS_ROOT}/vendor/spree/lib" 
+      super
+    end
+    
+    def load_error_message
+      "Please verify that vendor/spree contains a complete copy of the Spree sources."
+    end
+  end
 
   class AppBoot < Boot
     def load_initializer
@@ -105,15 +110,14 @@ module Spree
   end
   
   class GemBoot < Boot
-    include Spree::RubyGemsLoader
-    
+
     def load_initializer
       self.class.load_rubygems
       load_spree_gem
-      require 'initializer'
+      super
     end
 
-    def load_spre_gem
+    def load_spree_gem
       if version = self.class.gem_version
         gem 'spree', version
       else
@@ -125,6 +129,7 @@ module Spree
     end
 
     class << self
+      include Spree::RubyGemsLoader      
 
       def gem_version
         if defined? SPREE_GEM_VERSION
@@ -134,19 +139,6 @@ module Spree
         else
           parse_gem_version(read_environment_rb)
         end
-      end
-
-      def load_rubygems
-        require 'rubygems'
-
-        unless rubygems_version >= '0.9.4'
-          $stderr.puts %(Spree requires RubyGems >= 0.9.4 (you have #{rubygems_version}). Please `gem update --system` and try again.)
-          exit 1
-        end
-
-      rescue LoadError
-        $stderr.puts %(Spree requires RubyGems >= 0.9.4. Please install RubyGems and try again: http://rubygems.rubyforge.org)
-        exit 1
       end
 
       def parse_gem_version(text)

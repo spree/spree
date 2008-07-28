@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :tax_categories
+
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:
@@ -17,18 +19,31 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
-  map.resources :users
-  
-  # spree mappings need to happen first
-  map.root :controller => "store"
-  map.connect '/login', :controller => 'account', :action => 'login'
-  map.connect '/logout', :controller => 'account', :action => 'logout'
-  map.connect '/signup', :controller => 'account', :action => 'signup'
-  map.connect '/admin', :controller => 'admin/overview', :action => 'index'  
+  map.root :controller => "products", :action => "index"
+  # login mappings should appear before all others
+  map.login '/login', :controller => 'account', :action => 'login'
+  map.logout '/logout', :controller => 'account', :action => 'logout'
+  map.signup '/signup', :controller => 'users', :action => 'new'
+  map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
 
+  map.resources :countries, :has_many => :states, :actions => [:index]
+  map.resources :states, :actions => [:index]
+  
+  map.resources :users
+  map.resources :products, :member => {:change_image => :post}
+  
+  map.namespace :admin do |admin|
+    admin.resources :zones
+    admin.resources :users
+    admin.resources :countries, :has_many => :states
+    admin.resources :states
+    admin.resources :tax_categories
+    admin.resources :configurations
+    admin.resource :mail_settings
+  end
+  
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
-  
-  
+
 end

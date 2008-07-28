@@ -1,3 +1,14 @@
+* Apr 17 2008 *
+* amazon_s3.yml is now passed through ERB before being passed to AWS::S3 [François Beausoleil]
+
+* Mar 22 2008 *
+* Some tweaks to support Rails 2.0 and Rails 2.1 due to ActiveSupport::Callback changes.  
+  Thanks to http://blog.methodmissing.com/2008/1/19/edge-callback-refactorings-attachment_fu/
+
+* Feb. 26, 2008 *
+* remove breakpoint from test_helper, makes test suite crazy (at least Rails 2+) [Rob Sanheim]
+* make S3 test really optional [Rob Sanheim]
+
 * Nov 27, 2007 *
 * Handle properly ImageScience thumbnails resized from a gif file [Matt Aimonetti]
 * Save thumbnails file size properly when using ImageScience [Matt Aimonetti]

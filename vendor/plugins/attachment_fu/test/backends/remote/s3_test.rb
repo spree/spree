@@ -2,7 +2,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'test_hel
 require 'net/http'
 
 class S3Test < Test::Unit::TestCase
-  if File.exist?(File.join(File.dirname(__FILE__), '../../amazon_s3.yml'))
+  def self.test_S3?
+    true unless ENV["TEST_S3"] == "false"
+  end
+  
+  if test_S3? && File.exist?(File.join(File.dirname(__FILE__), '../../amazon_s3.yml'))
     include BaseAttachmentTests
     attachment_model S3Attachment
 
@@ -45,6 +49,18 @@ class S3Test < Test::Unit::TestCase
     end
 
     test_against_subclass :test_should_create_authenticated_url, S3Attachment
+    
+    def test_should_create_authenticated_url_for_thumbnail(klass = S3Attachment)
+      attachment_model klass
+      attachment = upload_file :filename => '/files/rails.png'
+      ['large', :large].each do |thumbnail|
+        assert_match(
+          /^http.+rails_large\.png.+AWSAccessKeyId.+Expires.+Signature/, 
+          attachment.authenticated_s3_url(thumbnail), 
+          "authenticated_s3_url failed with #{thumbnail.class} parameter"
+        )
+      end
+    end
 
     def test_should_save_attachment(klass = S3Attachment)
       attachment_model klass

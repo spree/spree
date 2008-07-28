@@ -26,7 +26,7 @@ module Spec
       
       unless Config::CONFIG['ruby_install_name'] == 'jruby'
         before(:all) do
-          DRb.start_service("druby://localhost:8989", CommandLineForSpec)
+          DRb.start_service("druby://127.0.0.1:8989", CommandLineForSpec)
           @@drb_example_file_counter = 0
         end
 

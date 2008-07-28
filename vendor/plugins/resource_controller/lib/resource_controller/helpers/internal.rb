@@ -30,10 +30,27 @@ module ResourceController::Helpers::Internal
       invoke_callbacks *self.class.send(action).before
     end
     
-    # Sets the flash for the action, if it is present.
+    # Sets the flash and flash_now for the action, if it is present.
     #
     def set_flash(action)
-      flash[:notice] = options_for(action).flash if options_for(action).flash
+      set_normal_flash(action)
+      set_flash_now(action)
+    end
+    
+    # Sets the regular flash (i.e. flash[:notice] = '...')
+    #
+    def set_normal_flash(action)
+      if f = options_for(action).flash
+        flash[:notice]     = f.is_a?(Proc) ? instance_eval(&f) : options_for(action).flash
+      end
+    end
+    
+    # Sets the flash.now (i.e. flash.now[:notice] = '...')
+    #
+    def set_flash_now(action)
+      if f = options_for(action).flash_now
+        flash.now[:notice] = f.is_a?(Proc) ? instance_eval(&f) : options_for(action).flash_now
+      end
     end
     
     # Returns the options for an action, which is a symbol.

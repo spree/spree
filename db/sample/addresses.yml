@@ -6,7 +6,7 @@ frank_address:
   city: Fooville
   state: new_york
   zipcode: 16804
-  country: usa
+  country_id: 214
   phone: 614-555-1212
   user: frank
 
@@ -18,7 +18,7 @@ foo_street:
   city: Fooville
   state: maryland
   zipcode: 14456
-  country: usa
+  country_id: 214
   phone: 555-555-1212
   created_at: <%= 3.days.ago.to_s :db %>
   updated_at: <%= 3.days.ago.to_s :db %>

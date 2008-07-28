@@ -1,0 +1,17 @@
+<h1>Editing option</h1>
+
+<%= error_messages_for :option %>
+
+<% form_for(:option, :url => object_url, :html => { :method => :put }) do |f| %>
+  <p>
+    <b>Title</b><br />
+    <%= f.text_field :title %>
+  </p>
+
+  <p>
+    <%= submit_tag "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', object_url %> |
+<%= link_to 'Back', collection_url %>

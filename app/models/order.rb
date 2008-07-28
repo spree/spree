@@ -60,7 +60,7 @@ class Order < ActiveRecord::Base
                        :city => order.bill_address.city,
                        :state => order.bill_address.state.abbr, 
                        :zip => order.bill_address.zipcode,
-                       :country => order.bill_address.country.name,
+                       :country => order.bill_address.country.iso,
                        :phone => order.bill_address.phone}
     shipping_address = {:name => order.ship_address.full_name,
                        :address1 => order.ship_address.address1,
@@ -68,7 +68,7 @@ class Order < ActiveRecord::Base
                        :city => order.ship_address.city,
                        :state => order.ship_address.state.abbr, 
                        :zip => order.ship_address.zipcode,
-                       :country => order.ship_address.country.name,
+                       :country => order.ship_address.country.iso,
                        :phone => order.ship_address.phone}
     options = {:billing_address => billing_address, :shipping_address => shipping_address}
     options.merge(self.minimal_gateway_options(order))
@@ -79,7 +79,7 @@ class Order < ActiveRecord::Base
   # options in this case since they aren't necessary.  
   def self.minimal_gateway_options(order)
     {:email => order.user.email, 
-     :customer => order.user.login, 
+     :customer => order.user.email, 
      :ip => order.ip_address, 
      :order_id => order.number,
      :shipping => order.ship_amount * 100,

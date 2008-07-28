@@ -19,8 +19,7 @@ module Spec
         end
 
         # This method is invoked at the beginning of the execution of each example_group.
-        # +name+ is the name of the example_group and +first+ is true if it is the
-        # first example_group - otherwise it's false.
+        # +example_group+ is the example_group.
         #
         # The next method to be invoked after this is #example_failed or #example_finished
         def add_example_group(example_group)
@@ -46,7 +45,7 @@ module Spec
         # been provided a block), or when an ExamplePendingError is raised.
         # +message+ is the message from the ExamplePendingError, if it exists, or the
         # default value of "Not Yet Implemented"
-        def example_pending(example_group_description, example, message)
+        def example_pending(example, message)
         end
 
         # This method is invoked after all of the examples have executed. The next method

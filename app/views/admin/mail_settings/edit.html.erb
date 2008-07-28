@@ -1,0 +1,85 @@
+<% form_tag(admin_mail_settings_path, :method => :put) do -%>
+
+<h2><%= t('Mail Server Preferences') %></h2>
+
+<div>
+  <p>
+    <%= check_box_tag('preferences[enable_mail_delivery]', "1", Spree::Config[:enable_mail_delivery]) %>
+    <strong><%= t('Enable Mail Delivery') %></strong>
+    <input name="preferences[enable_mail_delivery]" type="hidden" value="0" />
+  </p>
+  <p>
+    <strong><%= t("SMTP domain") %></strong>
+    <%= text_field_tag('preferences[mail_domain]', Spree::Config[:mail_domain]) %>
+  </p>
+  <p>
+    <strong><%= t('SMTP Mail Host') %></strong>
+    <%= text_field_tag('preferences[mail_host]', Spree::Config[:mail_host])%>
+  </p>
+  <p>
+    <strong><%= t('SMTP Port') %></strong>
+    <%= text_field_tag('preferences[mail_port]', Spree::Config[:mail_port])%>
+  </p>
+  <p>
+    <strong><%= t('Secure Connection Type')  %></strong>
+    <%= select_tag('preferences[secure_connection_type]',
+	           options_for_select(
+	              AppConfiguration::SECURE_CONNECTION_TYPES, 
+	              Spree::Config[:secure_connection_type])) %>
+  </p>
+  <p>
+    <strong><%= t('SMTP Authentication Type') %></strong>
+    <%= select_tag('preferences[mail_auth_type]',
+	           options_for_select(AppConfiguration::MAIL_AUTH, 
+                     Spree::Config[:mail_auth_type])) %>
+  </p>
+
+  <p>
+    <strong><%= t('SMTP Username') %></strong>
+    <%= text_field_tag('preferences[smtp_username]', Spree::Config[:smtp_username])%>
+  </p>
+  <p>
+    <strong><%= t('SMTP Password') %></strong>
+    <%= password_field_tag('preferences[smtp_password]', Spree::Config[:smtp_password])%>
+  </p>
+
+  <p>
+    <strong><%= t('Send mails as') %></strong>
+    <%= text_field_tag('preferences[mails_from]', Spree::Config[:mails_from], :maxlength => 256)%>
+    <br/>
+    <span class="info">
+      Send all mails as from the following address.
+    </span>
+  </p>
+
+  <p>
+    <strong><%= t('Send copy of all mails to') %></strong>
+    <%= text_field_tag('preferences[mail_bcc]', Spree::Config[:mail_bcc], :size => 40, :maxlength => 256)%>
+    <br/>
+    <span class="info">
+      Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas.
+    </span>
+  </p>
+
+  <h4>Orders</h4>
+  <p>
+    <strong><%= t('Send order mails as') %></strong>
+    <%= text_field_tag('preferences[order_from]', Spree::Config[:order_from], :maxlength => 256)%>
+    <br/>
+    <span class="info">
+      Send orders mails as from the following address.
+    </span>
+  </p>
+
+  <p>
+    <strong><%= t('Send copy of orders mails to') %></strong>
+    <%= text_field_tag('preferences[order_bcc]', Spree::Config[:order_bcc], :size => 40, :maxlength => 256)%>
+    <br/>
+    <span class="info">
+      Sends a copy of all order's mails to this address. For multiple addresses, separate with commas.
+    </span>
+  </p>
+
+</div>
+<%= submit_tag t('Save Preferences') %>
+<% end -%>

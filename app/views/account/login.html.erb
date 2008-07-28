@@ -1,14 +1,14 @@
 <% form_tag do -%>
-<p><label for="login"><%= :login_name.l("Login") %></label><br/>
-<%= text_field_tag 'login' %></p>
+<p><label for="email"><%= t("Email") %></label><br/>
+<%= text_field_tag 'email' %></p>
 
-<p><label for="password"><%= :password.l("Password") %></label><br/>
+<p><label for="password"><%= t("Password") %></label><br/>
 <%= password_field_tag 'password' %></p>
 
 <p>
   <%= check_box_tag 'remember_me' %>
-  <label for="remember_me"><%= :remember_me.l("Remember me") %></label>
+  <label for="remember_me"><%= t("Remember me") %></label>
 </p>
 
-<p><%= submit_tag :log_in.l("Log In") %></p>
+<p><%= submit_tag t("Log In") %> or <%= link_to "Create a new account", signup_path %> </p>
 <% end -%>

@@ -3,8 +3,4 @@ class Object
     options = Hash === args.last ? args.pop : {}
     return args, options
   end
-
-  def metaclass
-    class << self; self; end
-  end
 end

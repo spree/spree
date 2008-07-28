@@ -5,8 +5,27 @@ Spree is a complete open source commerce solution for Ruby on Rails.
 It was developed by Sean Schofield under the original name of Rails
 Cart before changing its name to Spree.
 
-QUICK START
-===========
+QUICK START (Running the Source)
+================================
+
+1. Clone the git repo
+
+        git clone git://github.com/schof/spree.git spree
+        
+2. Install the gem dependencies
+
+        rake gems:install
+        
+3. Bootstrap the database (run the migrations, create admin account, optionally load sample data.)
+
+        rake db:bootstrap
+
+4. Start the server
+
+        script/server
+
+QUICK START (Running the Gem)
+=============================
 
 1. Install spree Gem
 

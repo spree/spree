@@ -1,0 +1,2 @@
+module Admin::MailSettingsHelper
+end

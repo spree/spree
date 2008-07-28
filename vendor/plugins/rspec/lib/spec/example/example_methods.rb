@@ -3,6 +3,8 @@ module Spec
     module ExampleMethods
       extend ExampleGroupMethods
       extend ModuleReopeningFix
+      include ModuleInclusionWarnings
+      
 
       PENDING_EXAMPLE_BLOCK = lambda {
         raise Spec::Example::ExamplePendingError.new("Not Yet Implemented")
@@ -62,6 +64,10 @@ module Spec
 
       def description
         @_defined_description || @_matcher_description || "NO NAME"
+      end
+
+      def __full_description
+        "#{self.class.description} #{self.description}"
       end
       
       def set_instance_variables_from_hash(ivars)

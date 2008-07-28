@@ -1,0 +1,5 @@
+tmtags
+.DS_Store
+.emacs-project
+*~
+pkg

@@ -1,5 +1,5 @@
 class CheckoutController < Spree::BaseController
-  before_filter :new_or_login
+  before_filter :login_required
   before_filter :find_order, :except => [:index, :thank_you]
   
   filter_parameter_logging :creditcard, "number"
@@ -23,13 +23,9 @@ class CheckoutController < Spree::BaseController
     if request.post?
       @different_shipping = params[:different_shipping]
       @bill_address = Address.new(params[:bill_address])
-      #if only one country available there will be no choice (and user will post nothing)
-      @bill_address.country ||= Country.find(:first)
-
 
       params[:ship_address] = params[:bill_address].dup unless params[:different_shipping]
       @ship_address = Address.new(params[:ship_address])
-      @ship_address.country ||= Country.find(:first)      
 
       render :action => 'addresses' and return unless @user.valid? and @bill_address.valid? and 
         @ship_address.valid?      
@@ -42,7 +38,8 @@ class CheckoutController < Spree::BaseController
       @order.ship_method = params[:order][:ship_method] if params[:order]
       @order.ship_method ||= 1
 
-      @order.ship_amount = calculate_shipping(@order)
+      # this should be done after the address is finalized (on the post - and not before)
+      #@order.ship_amount = calculate_shipping(@order)
       @order.save
           
       redirect_to :action => 'final_confirmation'
@@ -65,18 +62,18 @@ class CheckoutController < Spree::BaseController
       
       unless response.success?
         # TODO - optionally handle gateway down scenario by accepting the order and putting into a special state
-        msg = "Problem authorizing credit card ... \n#{response.params['error']}"
+        msg = "Problem authorizing credit card ... #{response.params['message']}"
         logger.error(msg)
-        flash[:error] = msg
+        flash.now[:error] = msg
         render :action => 'final_confirmation' and return
       end
       
       # Note: Create an ActiveRecord compatible object to store in our database
       @order.credit_card = CreditCard.new_from_active_merchant(@cc)
-      @order.credit_card.txns << Txn.new(
+      @order.credit_card.txns << CreditCardTxn.new(
         :amount => @order.total,
         :response_code => response.authorization,
-        :txn_type => Txn::TxnType::AUTHORIZE
+        :txn_type => CreditCardTxn::TxnType::AUTHORIZE
       )
 
       @order.status = Order::Status::AUTHORIZED  
@@ -88,7 +85,8 @@ class CheckoutController < Spree::BaseController
     else
       @order.ship_amount = calculate_shipping(@order)
       # NOTE: calculate_tax method will be mixed in by the TaxCalculator extension
-      calculate_tax(@order)
+      @order.tax_amount = calculate_tax(@order)
+      @order.save
     end
   end
   
@@ -136,12 +134,6 @@ class CheckoutController < Spree::BaseController
           session[:order_id] = @order.id    
           @order
         end
-      end
-      
-      def new_or_login
-        # create a new user (or login an existing one)
-        return if logged_in?
-        redirect_to new_user_url
       end
 
       def finalize_order

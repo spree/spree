@@ -38,5 +38,7 @@ module Spec
         Regexp.escape(@example_name)
       end
     end
+
+    ExampleGroupMethods.matcher_class = ExampleMatcher
   end
 end

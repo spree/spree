@@ -1,0 +1,7 @@
+== Upgrade
+
+  script/generate rspec
+  
+Or modify spec_helper.rb based on the template, which can be found at:
+
+  vendor/plugins/rspec-rails/generators/rspec/templates/spec_helper.rb

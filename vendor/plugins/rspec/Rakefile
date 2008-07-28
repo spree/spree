@@ -7,8 +7,6 @@ require 'rake/rdoctask'
 require 'rake/testtask'
 require 'spec/version'
 dir = File.dirname(__FILE__)
-$LOAD_PATH.unshift(File.expand_path("#{dir}/pre_commit/lib"))
-require "pre_commit"
 
 # Some of the tasks are in separate files since they are also part of the website documentation
 load File.dirname(__FILE__) + '/rake_tasks/examples.rake'
@@ -27,7 +25,6 @@ PKG_FILES = FileList[
   'failing_examples/**/*',
   'plugins/**/*',
   'stories/**/*',
-  'pre_commit/**/*',
   'rake_tasks/**/*'
 ]
 
@@ -41,7 +38,7 @@ Spec::Rake::SpecTask.new do |t|
   unless ENV['NO_RCOV']
     t.rcov = true
     t.rcov_dir = '../doc/output/coverage'
-    t.rcov_opts = ['--exclude', 'spec\/spec,bin\/spec,examples,\/var\/lib\/gems,\/Library\/Ruby,\.autotest']
+    t.rcov_opts = ['--exclude', 'lib/spec.rb,lib/spec/runner.rb,spec\/spec,bin\/spec,examples,\/var\/lib\/gems,\/Library\/Ruby,\.autotest']
   end
 end
 
@@ -56,8 +53,8 @@ end
 
 desc "Run all specs and store html output in doc/output/report.html"
 Spec::Rake::SpecTask.new('spec_html') do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb', '../../RSpec.tmbundle/Support/spec/*_spec.rb']
-  t.spec_opts = ['--format html:../doc/output/report.html','--backtrace']
+  t.spec_files = FileList['spec/**/*_spec.rb']
+  t.spec_opts = ['--format html:../../../../doc/output/report.html', '--format progress','--backtrace']
 end
 
 desc "Run all failing examples"
@@ -69,7 +66,7 @@ desc 'Generate RDoc'
 rd = Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = '../doc/output/rdoc'
   rdoc.options << '--title' << 'RSpec' << '--line-numbers' << '--inline-source' << '--main' << 'README'
-  rdoc.rdoc_files.include('README', 'CHANGES', 'MIT-LICENSE', 'UPGRADE', 'lib/**/*.rb')
+  rdoc.rdoc_files.include('README', 'CHANGES', 'MIT-LICENSE', 'lib/**/*.rb')
 end
 
 spec = Gem::Specification.new do |s|
@@ -91,7 +88,7 @@ spec = Gem::Specification.new do |s|
   s.extra_rdoc_files = rd.rdoc_files.reject { |fn| fn =~ /\.rb$|^EXAMPLES.rd$/ }.to_a
 
   s.bindir = 'bin'
-  s.executables = ['spec', 'spec_translator']
+  s.executables = ['spec', 'spec_translator', 'autospec']
   s.default_executable = 'spec'
   s.author = "RSpec Development Team"
   s.email = "rspec-devel@rubyforge.org"
@@ -124,47 +121,35 @@ task :todo do
   egrep /(FIXME|TODO|TBD)/
 end
 
-task :clobber do
-  core.clobber
-end
-
-task :release => [:clobber, :verify_committed, :verify_user, :spec, :publish_packages, :tag, :publish_news]
+task :release => [:verify_committed, :verify_user, :spec, :publish_packages, :tag, :publish_news]
 
 desc "Verifies that there is no uncommitted code"
 task :verify_committed do
-  IO.popen('svn stat') do |io|
+  IO.popen('git status') do |io|
     io.each_line do |line|
-      raise "\n!!! Do a svn commit first !!!\n\n" if line =~ /^\s*M\s*/
+      raise "\n!!! Do a git commit first !!!\n\n" if line =~ /^#\s*modified:/
     end
   end
 end
 
 desc "Creates a tag in svn"
 task :tag do
-  from = `svn info #{File.dirname(__FILE__)}`.match(/URL: (.*)\/rspec/n)[1]
-  to = from.gsub(/trunk/, "tags/#{Spec::VERSION::TAG}")
-  current = from.gsub(/trunk/, "tags/CURRENT")
-
-  puts "Creating tag in SVN"
-  tag_cmd = "svn cp #{from} #{to} -m \"Tag release #{Spec::VERSION::FULL_VERSION}\""
-  `#{tag_cmd}` ; raise "ERROR: #{tag_cmd}" unless $? == 0
-
-  puts "Removing CURRENT"
-  remove_current_cmd = "svn rm #{current} -m \"Remove tags/CURRENT\""
-  `#{remove_current_cmd}` ; raise "ERROR: #{remove_current_cmd}" unless $? == 0
-
-  puts "Re-Creating CURRENT"
-  create_current_cmd = "svn cp #{to} #{current} -m \"Copy #{Spec::VERSION::TAG} to tags/CURRENT\""
-  `#{create_current_cmd}` ; "ERROR: #{create_current_cmd}" unless $? == 0
+  # from = `svn info #{File.dirname(__FILE__)}`.match(/URL: (.*)\/rspec/n)[1]
+  # to = from.gsub(/trunk/, "tags/#{Spec::VERSION::TAG}")
+  # current = from.gsub(/trunk/, "tags/CURRENT")
+  # 
+  # puts "Creating tag in SVN"
+  # tag_cmd = "svn cp #{from} #{to} -m \"Tag release #{Spec::VERSION::FULL_VERSION}\""
+  # `#{tag_cmd}` ; raise "ERROR: #{tag_cmd}" unless $? == 0
+  # 
+  # puts "Removing CURRENT"
+  # remove_current_cmd = "svn rm #{current} -m \"Remove tags/CURRENT\""
+  # `#{remove_current_cmd}` ; raise "ERROR: #{remove_current_cmd}" unless $? == 0
+  # 
+  # puts "Re-Creating CURRENT"
+  # create_current_cmd = "svn cp #{to} #{current} -m \"Copy #{Spec::VERSION::TAG} to tags/CURRENT\""
+  # `#{create_current_cmd}` ; "ERROR: #{create_current_cmd}" unless $? == 0
 end
-
-desc "Run this task before you commit. You should see 'OK TO COMMIT'"
-task(:pre_commit) {core.pre_commit}
-
-desc "Build the website, but do not publish it"
-task(:website) {core.website}
-
-task(:rdoc_rails) {core.rdoc_rails}
 
 task :verify_user do
   raise "RUBYFORGE_USER environment variable not set!" unless ENV['RUBYFORGE_USER']
@@ -197,10 +182,11 @@ end
 desc "Package the Rails plugin"
 task :package_rspec_on_rails do
   mkdir 'pkg' rescue nil
-  rm_rf 'pkg/rspec_on_rails' rescue nil
-  `svn export ../rspec_on_rails pkg/rspec_on_rails-#{PKG_VERSION}`
+  rm_rf "pkg/rspec-rails-#{PKG_VERSION}" rescue nil
+  `git clone ../rspec-rails pkg/rspec-rails-#{PKG_VERSION}`
+  rm_rf "pkg/rspec-rails-#{PKG_VERSION}/.git"
   Dir.chdir 'pkg' do
-    `tar cvzf rspec_on_rails-#{PKG_VERSION}.tgz rspec_on_rails-#{PKG_VERSION}`
+    `tar cvzf rspec-rails-#{PKG_VERSION}.tgz rspec-rails-#{PKG_VERSION}`
   end
 end
 task :pkg => :package_rspec_on_rails
@@ -208,20 +194,21 @@ task :pkg => :package_rspec_on_rails
 desc "Package the RSpec.tmbundle"
 task :package_tmbundle do
   mkdir 'pkg' rescue nil
-  rm_rf 'pkg/RSpec.tmbundle' rescue nil
-  `svn export ../RSpec.tmbundle pkg/RSpec.tmbundle`
+  rm_rf "pkg/RSpec-#{PKG_VERSION}.tmbundle" rescue nil
+  `git clone ../../../../RSpec.tmbundle pkg/RSpec-#{PKG_VERSION}.tmbundle`
+  rm_rf "pkg/RSpec-#{PKG_VERSION}.tmbundle/.git"
   Dir.chdir 'pkg' do
-    `tar cvzf RSpec-#{PKG_VERSION}.tmbundle.tgz RSpec.tmbundle`
+    `tar cvzf RSpec-#{PKG_VERSION}.tmbundle.tgz RSpec-#{PKG_VERSION}.tmbundle`
   end
 end
 task :pkg => :package_tmbundle
 
 desc "Publish gem+tgz+zip on RubyForge. You must make sure lib/version.rb is aligned with the CHANGELOG file"
-task :publish_packages => [:verify_user, :package] do
+task :publish_packages => [:verify_user, :package, :pkg] do
   release_files = FileList[
     "pkg/#{PKG_FILE_NAME}.gem",
     "pkg/#{PKG_FILE_NAME}.tgz",
-    "pkg/rspec_on_rails-#{PKG_VERSION}.tgz",
+    "pkg/rspec-rails-#{PKG_VERSION}.tgz",
     "pkg/#{PKG_FILE_NAME}.zip",
     "pkg/RSpec-#{PKG_VERSION}.tmbundle.tgz"
   ]
@@ -272,8 +259,4 @@ task :publish_news => [:verify_user] do
   else
     puts "** Not publishing news to RubyForge - this is a prerelease"
   end
-end
-
-def core
-  PreCommit::Core.new(self)
 end

@@ -1,0 +1,27 @@
+<h1><%=t("Listing Tax Categories")%></h1>
+<table class="admin-report" width="545">
+  <thead>
+    <tr>
+      <th><%= t("Name") %></th>
+      <th><%= t("Description") %></th>
+      <th><%= t("Action") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tax_categories.each do |tax_category|%>
+      <tr class="<%= cycle('even', 'odd') %>">
+        <td><%= tax_category.name %></td>
+        <td><%= tax_category.description %></td>
+        <td>
+          <%=link_to t("Edit"), edit_object_url(tax_category) %> | 
+          <%=link_to t("Destroy"), object_url(tax_category), 
+                     :confirm => t("Are you sure you want to delete this record?"), 
+                     :method => :delete %></td>
+      </tr>
+    <% end %>
+    <% if @tax_categories.empty? %>
+      <tr><td colspan="3">None.</td></tr>
+    <% end %>    
+  </tbody>
+</table>
+<%= link_to t("New Tax Category"), new_object_url %>

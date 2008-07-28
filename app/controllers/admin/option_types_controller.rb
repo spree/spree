@@ -46,8 +46,8 @@ class Admin::OptionTypesController < Admin::BaseController
     end
   end
   
-  def delete
-    Option.delete(params[:id])
+  def destroy
+    OptionType.destroy(params[:id])
     redirect_to :action => 'index'
   end  
   

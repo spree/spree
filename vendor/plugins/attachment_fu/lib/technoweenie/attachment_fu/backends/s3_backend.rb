@@ -133,20 +133,14 @@ module Technoweenie # :nodoc:
 
           begin
             @@s3_config_path = base.attachment_options[:s3_config_path] || (RAILS_ROOT + '/config/amazon_s3.yml')
-            @@s3_config = @@s3_config = YAML.load_file(@@s3_config_path)[RAILS_ENV].symbolize_keys
+            @@s3_config = @@s3_config = YAML.load(ERB.new(File.read(@@s3_config_path)).result)[RAILS_ENV].symbolize_keys
           #rescue
           #  raise ConfigFileNotFoundError.new('File %s not found' % @@s3_config_path)
           end
 
           @@bucket_name = s3_config[:bucket_name]
 
-          Base.establish_connection!(
-            :access_key_id     => s3_config[:access_key_id],
-            :secret_access_key => s3_config[:secret_access_key],
-            :server            => s3_config[:server],
-            :port              => s3_config[:port],
-            :use_ssl           => s3_config[:use_ssl]
-          )
+          Base.establish_connection!(s3_config.slice(:access_key_id, :secret_access_key, :server, :port, :use_ssl, :persistent, :proxy))
 
           # Bucket.create(@@bucket_name)
 
@@ -162,7 +156,7 @@ module Technoweenie # :nodoc:
         end
         
         def self.port_string
-          @port_string ||= s3_config[:port] == (s3_config[:use_ssl] ? 443 : 80) ? '' : ":#{s3_config[:port]}"
+          @port_string ||= (s3_config[:port].nil? || s3_config[:port] == (s3_config[:use_ssl] ? 443 : 80)) ? '' : ":#{s3_config[:port]}"
         end
 
         module ClassMethods
@@ -242,8 +236,8 @@ module Technoweenie # :nodoc:
         #
         #   @photo.authenticated_s3_url('thumbnail', :expires_in => 5.hours, :use_ssl => true)
         def authenticated_s3_url(*args)
-          thumbnail = args.first.is_a?(String) ? args.first : nil
-          options   = args.last.is_a?(Hash)    ? args.last  : {}
+          options   = args.extract_options!
+          thumbnail = args.shift
           S3Object.url_for(full_filename(thumbnail), bucket_name, options)
         end
 

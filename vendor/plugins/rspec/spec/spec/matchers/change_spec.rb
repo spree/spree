@@ -55,10 +55,9 @@ describe "should change { block }" do
     end.should fail_with("result should have changed, but is still 5")
   end
   
-  it "should warn if passed a block using do/end" do
+  it "should warn if passed a block using do/end instead of {}" do
     lambda do
-      lambda {}.should change do
-      end
+      lambda {}.should change do; end
     end.should raise_error(Spec::Matchers::MatcherError, /block passed to should or should_not/)
   end
 end
@@ -79,10 +78,9 @@ describe "should_not change { block }" do
     end.should fail_with("result should not have changed, but did change from 5 to 6")
   end
   
-  it "should warn if passed a block using do/end" do
+  it "should warn if passed a block using do/end instead of {}" do
     lambda do
-      lambda {}.should_not change do
-      end
+      lambda {}.should_not change do; end
     end.should raise_error(Spec::Matchers::MatcherError, /block passed to should or should_not/)
   end
 end

@@ -19,23 +19,23 @@ module Spree
     attr_accessor :config
     
     def bootstrap(config)    
+      # make sure the product images directory exists
+      FileUtils.mkdir_p "#{RAILS_ROOT}/public/images/products/"
+      
       @config = config
-      @admin = create_admin_user(config[:admin_name], config[:admin_username], config[:admin_password], config[:admin_email])
+      @admin = create_admin_user(config[:admin_password], config[:admin_email])
       load_sample_data if sample_data?
       announce "Finished.\n\n"
     end
 
-    def create_admin_user(name, username, password, email)
-      unless name and username and password
+    def create_admin_user(password, email)
+      unless email and password
         announce "Create the admin user (press enter for defaults)."
         #name = prompt_for_admin_name unless name
-        username = prompt_for_admin_username unless username
-        password = prompt_for_admin_password unless password
         email = prompt_for_admin_email unless email
+        password = prompt_for_admin_password unless password
       end
       attributes = {
-        #:name => name,
-        :login => username,
         :password => password,
         :password_confirmation => password,
         :email => email
@@ -82,26 +82,6 @@ module Spree
     end
          
     private
-=begin      
-      def prompt_for_admin_name
-        username = ask('Name (Administrator): ', String) do |q|
-          q.validate = /^.{0,100}$/
-          q.responses[:not_valid] = "Invalid name. Must be at less than 100 characters long."
-          q.whitespace = :strip
-        end
-        username = "Administrator" if username.blank?
-        username
-      end
-=end      
-      def prompt_for_admin_username
-        username = ask('Username [admin]: ', String) do |q|
-          q.validate = /^(|.{3,40})$/
-          q.responses[:not_valid] = "Invalid username. Must be at least 3 characters long."
-          q.whitespace = :strip
-        end
-        username = "admin" if username.blank?
-        username
-      end
       
       def prompt_for_admin_password
         password = ask('Password [spree]: ', String) do |q|

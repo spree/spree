@@ -7,7 +7,7 @@ module Technoweenie # :nodoc:
           base.send :extend, ClassMethods
           base.alias_method_chain :process_attachment, :processing
         end
-        
+
         module ClassMethods
           # Yields a block containing an MiniMagick Image for the given binary data.
           def with_image(file, &block)
@@ -38,15 +38,18 @@ module Technoweenie # :nodoc:
         # Performs the actual resizing operation for a thumbnail
         def resize_image(img, size)
           size = size.first if size.is_a?(Array) && size.length == 1
-          if size.is_a?(Fixnum) || (size.is_a?(Array) && size.first.is_a?(Fixnum))
-            if size.is_a?(Fixnum)
-              size = [size, size]
-              img.resize(size.join('x'))
+          img.combine_options do |commands|
+            commands.strip unless attachment_options[:keep_profile]
+            if size.is_a?(Fixnum) || (size.is_a?(Array) && size.first.is_a?(Fixnum))
+              if size.is_a?(Fixnum)
+                size = [size, size]
+                commands.resize(size.join('x'))
+              else
+                commands.resize(size.join('x') + '!')
+              end
             else
-              img.resize(size.join('x') + '!')
+              commands.resize(size.to_s)
             end
-          else
-            img.resize(size.to_s)
           end
           self.temp_path = img
         end

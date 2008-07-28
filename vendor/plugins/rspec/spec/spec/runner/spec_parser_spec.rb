@@ -3,9 +3,15 @@ require File.dirname(__FILE__) + '/../../spec_helper.rb'
 describe "SpecParser" do
   attr_reader :parser, :file
   before(:each) do
+    @original_rspec_options = $rspec_options
+    $rspec_options = ::Spec::Runner::Options.new(StringIO.new, StringIO.new)
     @parser = Spec::Runner::SpecParser.new
     @file = "#{File.dirname(__FILE__)}/spec_parser/spec_parser_fixture.rb"
-    require file
+    load file
+  end
+
+  after do
+    $rspec_options = @original_rspec_options
   end
 
   it "should find spec name for 'specify' at same line" do
@@ -32,9 +38,9 @@ describe "SpecParser" do
     parser.spec_name_for(file, 14).should == "d"
   end
 
- it "should find nearest example name between examples" do
-   parser.spec_name_for(file, 7).should == "c 1"
- end
+  it "should find nearest example name between examples" do
+    parser.spec_name_for(file, 7).should == "c 1"
+  end
 
   it "should find nothing outside a context" do
     parser.spec_name_for(file, 2).should be_nil

@@ -119,6 +119,6 @@ module ResourceController::Helpers::Urls
       names = self.class.name.split("::")
       names.pop
       
-      names.map(&:downcase).map(&:to_sym)
+      names.map(&:underscore).map(&:to_sym)
     end
 end

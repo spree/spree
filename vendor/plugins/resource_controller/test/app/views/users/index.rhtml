@@ -1,0 +1,20 @@
+<h1>Listing people</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+  
+<% for dude in @dudes %>
+  <tr>
+    <td><%=h dude.name %></td>
+    <td><%= link_to 'Show', object_url(dude) %></td>
+    <td><%= link_to 'Edit', edit_object_url(dude) %></td>
+    <td><%= link_to 'Destroy', object_url(dude), :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New dude', new_object_url %>

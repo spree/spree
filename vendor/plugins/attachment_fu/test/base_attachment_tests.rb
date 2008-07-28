@@ -12,6 +12,19 @@ module BaseAttachmentTests
     end
   end
   
+  def test_should_create_file_from_merb_temp_file
+    assert_created do
+      attachment = upload_merb_file :filename => '/files/foo.txt'
+      assert_valid attachment
+      assert !attachment.db_file.new_record? if attachment.respond_to?(:db_file)
+      assert  attachment.image?
+      assert !attachment.size.zero?
+      #assert_equal 3, attachment.size
+      assert_nil      attachment.width
+      assert_nil      attachment.height
+    end
+  end
+  
   def test_reassign_attribute_data
     assert_created 1 do
       attachment = upload_file :filename => '/files/rails.png'
@@ -53,5 +66,12 @@ module BaseAttachmentTests
     assert_valid attachment
     assert !attachment.save_attachment?
     assert_nothing_raised { attachment.save! }
+  end
+  
+  def test_should_handle_nil_file_upload
+    attachment = attachment_model.create :uploaded_data => ''
+    assert_raise ActiveRecord::RecordInvalid do
+      attachment.save!
+    end
   end
 end

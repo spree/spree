@@ -10,6 +10,11 @@ describe "should ==" do
     subject.should == "apple"
   end
   
+  it "should return true on success" do
+    subject = "apple"
+    (subject.should == "apple").should be_true
+  end
+  
   it "should fail when target.==(actual) returns false" do
     subject = "apple"
     Spec::Expectations.should_receive(:fail_with).with(%[expected: "orange",\n     got: "apple" (using ==)], "orange", "apple")
@@ -26,12 +31,17 @@ describe "should_not ==" do
     subject.should_not == "apple"
   end
   
+  it "should return true on success" do
+    subject = "apple"
+    (subject.should_not == "orange").should be_true
+  end
+
   it "should fail when target.==(actual) returns false" do
     subject = "apple"
     Spec::Expectations.should_receive(:fail_with).with(%[expected not: == "apple",\n         got:    "apple"], "apple", "apple")
     subject.should_not == "apple"
   end
-
+  
 end
 
 describe "should ===" do

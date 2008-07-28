@@ -4,16 +4,15 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password
 
-  validates_presence_of     :login, :email
+  validates_presence_of     :email
   validates_format_of       :email, :with => RFC822::EmailAddress, 
                             :message => 'email must be valid'
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 4..40, :if => :password_required?
   validates_confirmation_of :password,                   :if => :password_required?
-  validates_length_of       :login,    :within => 3..40
   validates_length_of       :email,    :within => 3..100
-  validates_uniqueness_of   :login, :case_sensitive => false
+  validates_uniqueness_of   :email, :case_sensitive => false
   before_save :encrypt_password
   
   has_many :addresses
@@ -24,7 +23,7 @@ class User < ActiveRecord::Base
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :login, :email, :password, :password_confirmation
+  attr_accessible :email, :password, :password_confirmation
 
   # has_role? simply needs to return true or false whether a user has a role or not.  
   def has_role?(role_in_question)
@@ -33,8 +32,9 @@ class User < ActiveRecord::Base
   end
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
-  def self.authenticate(login, password)
-    u = find_by_login(login) # need to get the salt
+  def self.authenticate(email, password)
+    email = "spree@example.com" if email == "admin" # Hack for users who want to type in just admin to this field
+    u = find_by_email(email) # need to get the salt
     u && u.authenticated?(password) ? u : nil
   end
 
@@ -82,18 +82,16 @@ class User < ActiveRecord::Base
   def self.generate_login
     record = true
     while record
-      login = "anon_" + Array.new(6){rand(6)}.join
-      record = find(:first, :conditions => ["login = ?", login])
+      login = "anon_" + Array.new(6){rand(6)}.join + "@anon.com"
+      record = find(:first, :conditions => ["email = ?", email])
     end
     return login
   end
   
   # I am not sure we want this, but if we do, here is a readymade user for anonymous login  
   def self.anonymous_user
-    login = "anonymous_user_" + Time.now.to_s
     pw = Digest::SHA1.hexdigest("--#{Time.now.to_s}#{self.object_id}#{Array.new(256){rand(256)}.join}")
-    anonymous_user = User.new :login => login, 
-                     :password => pw,
+    anonymous_user = User.new :password => pw,
                      :password_confirmation => pw,
                      :email => "anon_login_#{Time.now.to_s}@anon.com"
     anonymous_user.roles.push(Role.find_by_name("anonymous").freeze).freeze
@@ -124,7 +122,7 @@ class User < ActiveRecord::Base
     # before filter 
     def encrypt_password
       return if password.blank?
-      self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
+      self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{email}--") if new_record?
       self.crypted_password = encrypt(password)
     end
       

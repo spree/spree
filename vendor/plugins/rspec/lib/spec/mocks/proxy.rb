@@ -63,10 +63,14 @@ module Spec
       def message_received(sym, *args, &block)
         if expectation = find_matching_expectation(sym, *args)
           expectation.invoke(args, block)
-        elsif stub = find_matching_method_stub(sym, *args)
+        elsif (stub = find_matching_method_stub(sym, *args))
+          if expectation = find_almost_matching_expectation(sym, *args)
+            expectation.advise(args, block) unless expectation.expected_messages_received?
+          end
           stub.invoke([], block)
         elsif expectation = find_almost_matching_expectation(sym, *args)
-          raise_unexpected_message_args_error(expectation, *args) unless has_negative_expectation?(sym) unless null_object?
+          expectation.advise(args, block) if null_object? unless expectation.expected_messages_received?
+          raise_unexpected_message_args_error(expectation, *args) unless (has_negative_expectation?(sym) or null_object?)
         else
           @target.send :method_missing, sym, *args, &block
         end
@@ -88,18 +92,20 @@ module Spec
       end
       
       def define_expected_method(sym)
-        if target_responds_to?(sym) && !metaclass.method_defined?(munge(sym))
+        visibility_string = "#{visibility(sym)} :#{sym}"
+        if target_responds_to?(sym) && !target_metaclass.method_defined?(munge(sym))
           munged_sym = munge(sym)
-          metaclass.instance_eval do
+          target_metaclass.instance_eval do
             alias_method munged_sym, sym if method_defined?(sym.to_s)
           end
           @proxied_methods << sym
         end
         
-        metaclass_eval(<<-EOF, __FILE__, __LINE__)
+        target_metaclass.class_eval(<<-EOF, __FILE__, __LINE__)
           def #{sym}(*args, &block)
             __mock_proxy.message_received :#{sym}, *args, &block
           end
+          #{visibility_string}
         EOF
       end
 
@@ -107,6 +113,18 @@ module Spec
         return @target.send(munge(:respond_to?),sym) if @already_proxied_respond_to
         return @already_proxied_respond_to = true if sym == :respond_to?
         return @target.respond_to?(sym)
+      end
+
+      def visibility(sym)
+        if Mock === @target
+          'public'
+        elsif target_metaclass.private_method_defined?(sym)
+          'private'
+        elsif target_metaclass.protected_method_defined?(sym)
+          'protected'
+        else
+          'public'
+        end
       end
 
       def munge(sym)
@@ -125,12 +143,8 @@ module Spec
         @proxied_methods.clear
       end
 
-      def metaclass_eval(str, filename, lineno)
-        metaclass.class_eval(str, filename, lineno)
-      end
-      
-      def metaclass
-        (class << @target; self; end)
+      def target_metaclass
+        class << @target; self; end
       end
 
       def verify_expectations
@@ -142,7 +156,7 @@ module Spec
       def reset_proxied_methods
         @proxied_methods.each do |sym|
           munged_sym = munge(sym)
-          metaclass.instance_eval do
+          target_metaclass.instance_eval do
             if method_defined?(munged_sym.to_s)
               alias_method sym, munged_sym
               undef_method munged_sym

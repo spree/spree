@@ -1,50 +1,52 @@
 <% fields_for "#{address_type}_address", @address do |a| %>
     <tr>
-      <td width="150"><%= :first_name.l("First Name") %></td>
+      <td width="150"><%= t("First Name") %></td>
       <td><%= a.text_field :firstname %></td>
       <td><%= error_message_on "#{address_type}_address", :firstname -%></td>
     </tr>
     <tr>
-      <td><%= :last_name.l("Last Name") %></td>
+      <td><%= t("Last Name") %></td>
       <td><%= a.text_field :lastname %></td>
       <td><%= error_message_on "#{address_type}_address", :lastname -%></td>
     </tr>
     <tr>
-      <td><%= :street_address.l("Street Address") %></td>
+      <td><%= t("Street Address") %></td>
       <td><%= a.text_field :address1 %></td>
       <td><%= error_message_on "#{address_type}_address", :address1 -%></td>
     </tr>
     <tr>
-      <td><%= :street_address_2.l("Street Address (cont'd)") %></td>
+      <td><%= t("Street Address (cont'd)") %></td>
       <td><%= a.text_field :address2 %></td>
       <td></td>
     </tr>
     <tr>
-      <td><%= :city.l("City") %></td>
+      <td><%= t("City") %></td>
       <td><%= a.text_field :city %></td>
       <td><%= error_message_on "#{address_type}_address", :city -%></td>
     </tr>
     <tr>
-      <td><%= :state.l("State") %></td>
+      <td><%= t("State") %></td>
       <td>
-        <%= a.collection_select :state_id, @states, :id, :name, {}, {:style => "width:100%"}%>
+        <%= a.collection_select :state_id, @states, :id, :name, {:prompt => ""}, {:style => "width: 150px"}%>
+      </td>
+      <td><%= error_message_on "#{address_type}_address", :state %></td>
+    </tr>
+    <tr>
+      <td><%= t("Zip") %></td>
+      <td><%= a.text_field :zipcode %></td>
+      <td><%= error_message_on "#{address_type}_address", :zipcode -%></td>
+    </tr>
+    <tr>
+      <td><%= t("Country") %></td>
+      <td>
+        <select name="<%=address_type%>_address[country_id]" style="width:150px;"> 
+          <%= options_from_collection_for_select(@countries, :id, :name, 214) %>
+        </select>          
       </td>
       <td></td>
     </tr>
     <tr>
-      <td><%= :zip.l("Zip") %></td>
-      <td><%= a.text_field :zipcode %></td>
-      <td><%= error_message_on "#{address_type}_address", :zipcode -%></td>
-    </tr>
-    <% if (@countries.size > 1) %>
-      <tr>
-        <td><%= :country.l("Country") %></td>
-        <td><%= a.collection_select :country_id, @countries, :id, :name, {}, {:style => "width:100%"}%></td>
-        <td></td>
-      </tr>
-    <% end %>
-    <tr>
-      <td><%= :phone.l("Phone") %></td>
+      <td><%= t("Phone") %></td>
       <td><%= a.text_field :phone %></td>
       <td><%= error_message_on "#{address_type}_address", :phone -%></td>
     </tr>

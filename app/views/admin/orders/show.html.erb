@@ -1,72 +1,76 @@
 <% content_for :action_nav do %>
   <ul id="act-nav">
-    <li><%= link_to :resend.l("Resend"), :action => :resend, :id => @order %></li>
+    <li><%= link_to t("Resend"), :action => :resend, :id => @order %></li>
   </ul>
 <% end %>
 
 <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
 
-<table class="order-address">
-  <tr>
-    <th><%= :ship_address.l("Ship Address") %></th>
-    <th><%= :bill_address.l("Bill Address") %></th>
-  </tr>
-  <tr>
-    <td width="50%">
-      <%= render :partial => 'address', :locals => {:address => @order.ship_address} -%>      
-    </td>
-    <td width="50%">
-      <%= render :partial => 'address', :locals => {:address => @order.bill_address} -%>
-    </td>
-  </tr>
-</table>
-<table class="order-address">
-  <tr>
-    <th><%= :email.l("Email") %></th>
-  </tr>
-  <tr>
-    <td><%=in_place_editor_field :user, :email %></td>
-  </tr>
-</table>
+<% if @order.ship_address %>
+  <table class="order-address">
+    <tr>
+      <th><%= t("Ship Address") %></th>
+      <th><%= t("Bill Address") %></th>
+    </tr>
+    <tr>
+      <td width="50%">
+        <%= render :partial => 'address', :locals => {:address => @order.ship_address} -%>      
+      </td>
+      <td width="50%">
+        <%= render :partial => 'address', :locals => {:address => @order.bill_address} -%>
+      </td>
+    </tr>
+  </table>
+<% end %>
+<% if @order.user %>
+  <table class="order-address">
+    <tr>
+      <th><%= t("Email") %></th>
+    </tr>
+    <tr>
+      <td><%=in_place_editor_field :user, :email %></td>
+    </tr>
+  </table>
+<% end %>
 <table class="basic-table">
   <tr>
-    <th><%= :operation.l("Operation") %></th>
-    <th><%= :user.l("User") %></th>
-    <th><%= "#{:date.l('Date')}/#{:time.l('Time')}" %></th>
+    <th><%= t("Operation") %></th>
+    <th><%= t("User") %></th>
+    <th><%= "#{t('Date')}/#{t('Time')}" %></th>
   </tr>
   <% @order.order_operations.each do |o| %>
     <tr>
       <td><%=OrderOperation::OperationType.from_value o.operation_type%></td>
-      <td><%=o.user.login%></td>
+      <td><%=o.user.email%></td>
       <td><%=o.created_at.to_s(:db)%></td>
     </tr>
   <% end %>
   <% if @order.order_operations.empty? %>
     <tr>
-      <td colspan="3"><%= :none_available.l("None Available") %></td>
+      <td colspan="3"><%= t("None Available") %></td>
     </tr>
   <% end %>
 </table>
-<table class="full-table">
-  <tr>
-    <th><%= :transaction.l("Transaction") %></th>
-    <th><%= :amount.l("Amount") %></th>
-    <th><%= :card_number.l("Card Number") %></th>
-    <th><%= :type.l("Type") %></th>
-    <th><%= :response_code.l("Response Code") %></th>
-    <th><%= "#{:date.l('Date')}/#{:time.l('Time')}" %></th>
-  </tr>
-	<% if @order.credit_card %>
-	  <% @order.credit_card.txns.each do |t| %>
-	    <tr>
-	      <td><%=Txn::TxnType.from_value t.txn_type.to_i%></td>
-	      <td><%=t.amount%></td>
-	      <td><%=t.credit_card.display_number%></td>
-	      <td><%=t.credit_card.cc_type%></td>
-	      <td><%=t.response_code%></td>
-	      <td><%=t.created_at.to_s(:db)%></td>
-	    </tr>
-	  <% end %>
-	<% end %>
-</table>
-<%= link_to :back.l("Back"), :controller => :orders %>
+
+<% if card = @order.credit_card %>
+  <b><%= t("Credit Card")%>: </b> &nbsp; #<%= card.display_number %><br/>
+  <b><%= t("Type")%> : </b> &nbsp; <%= card.cc_type.titleize %><br/>
+  <table class="basic-table">
+    <tr>
+      <th><%= t("Transaction") %></th>
+      <th><%= t("Amount") %></th>
+      <th><%= t("Response Code") %></th>
+      <th><%= "#{t('Date')}/#{t('Time')}" %></th>
+    </tr>
+    <% @order.credit_card.txns.each do |t| %>
+      <tr>
+        <td><%=CreditCardTxn::TxnType.from_value t.txn_type.to_i%></td>
+        <td><%=number_to_currency t.amount%></td>
+        <td><%=t.response_code%></td>
+        <td><%=t.created_at.to_s(:db)%></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<%= render_txn_partials @order %>

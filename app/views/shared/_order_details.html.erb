@@ -1,12 +1,12 @@
 <table class="order-summary">
   <tr>
-    <th colspan="4" id="order-num"><%= :order.l('Order') %> # <%=@order.number%></th>
+    <th colspan="4" id="order-num"><%= t('Order') %> # <%=@order.number%></th>
   </tr>
   <tr>
-    <th><%= :item_description.l('Item Description') %></th>
-    <th><%= :price.l('Price') %></th>
-    <th><%= :qty.l('Qty') %></th>
-    <th><%= :total.l('Total') %></th>
+    <th><%= t('Item Description') %></th>
+    <th><%= t('Price') %></th>
+    <th><%= t('Qty') %></th>
+    <th><%= t('Total') %></th>
   </tr>
   <% for item in @order.line_items %>
   <tr >
@@ -17,19 +17,19 @@
   </tr>
   <% end %>      
   <tr id="subtotal-row">
-    <td colspan="3"><b><%= :subtotal.l('Subtotal') %>:</b></td>
+    <td colspan="3"><b><%= t('Subtotal') %>:</b></td>
     <td><%= number_to_currency @order.item_total -%></td>
   </tr>
   <tr>
-    <td colspan="3"><b><%= :tax.l('Tax') %>:</b></td>
+    <td colspan="3"><b><%= t('Tax') %>:</b></td>
     <td><%= number_to_currency @order.tax_amount -%></td>
   </tr>
   <tr>
-    <td colspan="3"><b><%= :shipping.l('Shipping') %>:</b></td>
+    <td colspan="3"><b><%= t('Shipping') %>:</b></td>
     <td><%= number_to_currency @order.ship_amount -%></td>
   </tr>
   <tr>
-    <td colspan="3"><b><%= :order_total.l('Order Total') %>:</b></td>
+    <td colspan="3"><b><%= t('Order Total') %>:</b></td>
     <td><%= number_to_currency @order.total -%></td>
   </tr>
 </table>

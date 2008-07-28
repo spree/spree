@@ -1,8 +1,8 @@
 <br/>
-Payment Gateway:   
-<%= f.collection_select :gateway_id, @available_gateways, :id, :name, {}, {:style => "width:200px", :id => "gateway"}%> 
+<%= t("Payment Gateway") %>:   
+<%= f.collection_select :gateway_id, @available_gateways, :id, :name, {}, {:style => "width:250px", :id => "gateway"}%> 
 <br/><br/>
-<h2>Configuration Options</h2>
+<h2><%= t("Configuration Options") %></h2>
 
 <%= image_tag "spinner.gif", :style => "display:none", :id => 'busy_indicator' %>
 

@@ -1,11 +1,11 @@
 <%= render :partial => 'admin/products/menu' %>
 
-<h1><%= :editing_category.l("Editing category") %></h1>
+<h1><%= t("Editing category") %></h1>
 
 <% form_tag :action => 'update', :id => @category do %>
   <%= render :partial => 'form' %>
   <br/>
-  <%= submit_tag :update.l('Update') %>
-  <%= :or.l("or") %>
-  <%= link_to :cancel.l('Cancel'), :action => 'index' %>
+  <%= submit_tag t('Update') %>
+  <%= t("or") %>
+  <%= link_to t('Cancel'), :action => 'index' %>
 <% end %>

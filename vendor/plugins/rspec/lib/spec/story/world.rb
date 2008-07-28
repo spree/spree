@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'spec/expectations'
 require 'spec/matchers'
 require 'spec/example/pending'
@@ -49,7 +48,7 @@ module Spec
           begin
             listeners.each { |l| l.found_scenario(type, name) }
             @listeners.clear
-            scenario.perform(world, name) unless ::Spec::Story::Runner.dry_run
+            scenario.perform(world, name) unless dry_run
           ensure
             @listeners.replace(current_listeners)
           end
@@ -71,7 +70,7 @@ module Spec
           args = step.parse_args(name) if args.empty?
           begin
             listeners.each { |l| l.step_upcoming(type, step_name, *args) }
-            step.perform(world, *args) unless ::Spec::Story::Runner.dry_run
+            step.perform(world, *args) unless dry_run
             listeners.each { |l| l.step_succeeded(type, step_name, *args) }
           rescue Exception => e
             case e
@@ -86,6 +85,10 @@ module Spec
         
         def errors
           @errors ||= []
+        end
+        
+        def dry_run
+          ::Spec::Story::Runner.dry_run
         end
       end # end of class << self
       

@@ -222,3 +222,27 @@ describe "should be(value)" do
     lambda { 5.should be(6) }.should fail_with("expected 6, got 5")
   end
 end
+
+
+describe "arbitrary predicate with DelegateClass" do
+  it "should access methods defined in the delegating class (LH[#48])" do
+    pending(%{
+      Looks like DelegateClass is delegating #should to the
+      delegate. Not sure how to fix this one. Or if we even should."
+    })
+    require 'delegate'
+    class ArrayDelegate < DelegateClass(Array)
+      def initialize(array)
+        @internal_array = array
+        super(@internal_array)
+      end
+
+      def large?
+        @internal_array.size >= 5
+      end
+    end
+
+    delegate = ArrayDelegate.new([1,2,3,4,5,6])
+    delegate.should be_large
+  end
+end

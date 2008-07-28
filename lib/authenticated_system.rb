@@ -64,7 +64,7 @@ module AuthenticatedSystem
       respond_to do |format|
         format.html do
           store_location
-          redirect_to :controller => '/session', :action => 'new'
+          redirect_to login_path
         end
         format.xml do
           request_http_basic_authentication 'Web Password'
@@ -99,8 +99,8 @@ module AuthenticatedSystem
 
     # Called from #current_user.  Now, attempt to login by basic authentication information.
     def login_from_basic_auth
-      authenticate_with_http_basic do |username, password|
-        self.current_user = User.authenticate(username, password)
+      authenticate_with_http_basic do |email, password|
+        self.current_user = User.authenticate(email, password)
       end
     end
 

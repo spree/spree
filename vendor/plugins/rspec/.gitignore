@@ -1,0 +1,7 @@
+pkg
+doc
+tmtags
+story_server/prototype/rspec_stories.html
+.DS_Store
+.emacs-project
+*~

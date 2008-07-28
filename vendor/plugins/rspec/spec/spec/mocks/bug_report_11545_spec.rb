@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../../spec_helper.rb'
 
 class LiarLiarPantsOnFire
+  include Spec::MetaClass
+  extend Spec::MetaClass
   def respond_to?(sym)
     true
   end
