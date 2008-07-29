@@ -29,10 +29,10 @@
 			  </tr>
 			<% end %>
 			</table>
-			<%= render :partial => 'shared/paginate', :locals => {:collection => @products, :options => search_options} -%>						
+			<%= render :partial => 'shared/paginate', :locals => {:collection => @collection, :options => search_options} -%>						
 		</td>
     <td valign="top">
-      <% form_for :search do |f| %>
+      <form action="/admin/products" method="GET">
         <div id="search-col">
           <table class="admin-search">
             <thead>
@@ -44,20 +44,20 @@
               <tr>
                 <td>Name</td>
                 <td>
-                  <%= f.text_field :name, :size=>15 %>
+                  <input name="name" size="15" value="<%=@name%>"/>
                 </td>
               </tr>
               <tr>
                 <td>Sku</td>
                 <td>
-                  <%= f.text_field :sku, :size=>15 %>
+                  <input name="sku" size="15" value="<%=@sku%>"/>
                 </td>
               </tr>
             </tbody>
           </table>
           <%=submit_tag "Search"%>
         </div>
-      <% end %>
+      </form>
     </td>		
 	</tr>
 </table>

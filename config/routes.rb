@@ -39,6 +39,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :states
     admin.resources :tax_categories
     admin.resources :configurations
+    admin.resources :products
     admin.resource :mail_settings
   end
   

@@ -1,8 +1,8 @@
-<%= render :partial => 'menu' -%>
+<%= render :partial => 'menu' %>
 
 <h1>Editing Product</h1>
 
-<% form_for(:product, :html => { :multipart => true}) do |f| %>
+<% form_for(:product, :url => object_url, :html => { :method => :put, :multipart => true }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
-  <%= submit_tag 'Update' %> or <%= link_to 'Cancel', :action => :index %>
+  <%= render :partial => 'shared/edit_resource_links' %>
 <% end %>

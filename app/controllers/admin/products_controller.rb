@@ -1,36 +1,8 @@
 class Admin::ProductsController < Admin::BaseController
-  
-  def index
-    if params[:search]
-      @search = SearchCriteria.new(params[:search])
-      if @search.valid?
-        p = {}
-        conditions = build_conditions(p)
-        if p.empty? 
-          @products = Product.find(:all, :order => "created_at DESC", :page => {:size => 10, :current =>params[:page], :first => 1})          
-        else
-          @products = Product.find(:all, 
-                                   :order => "products.name",
-                                   :conditions => [conditions, p],
-                                   :include => :variants,
-                                   :page => {:size => 10, :current =>params[:page], :first => 1})
-        end
-      else
-        @orders = []
-        flash.now[:error] = "Invalid search criteria.  Please check your results."      
-      end
-    else
-      @search = SearchCriteria.new
-      @products =  Product.find(:all, :page => {:size => 10, :current =>params[:page], :first => 1})
-    end
-  end
-
-  def show
-    @product = Product.find_by_param(params[:id])
-  end
+  resource_controller
+  before_filter :load_data
 
   def new
-    load_data
     if request.post?
       @product = Product.new(params[:product])
       @product.category = Category.find(params[:category]) unless params[:category].blank?
@@ -51,7 +23,7 @@ class Admin::ProductsController < Admin::BaseController
       @product = Product.new
     end
   end
-
+=begin
   def edit
     if request.post?
       load_data
@@ -105,14 +77,13 @@ class Admin::ProductsController < Admin::BaseController
       @selected_category = @product.category.id if @product.category
     end
   end
-  
   def destroy
     flash[:notice] = 'Product was successfully deleted.'
     @product = Product.find_by_param(params[:id])
     @product.destroy
     redirect_to :action => 'index'
   end
-
+=end
   #AJAX support method
   def add_option_type
     @product = Product.find_by_param(params[:id])
@@ -199,26 +170,20 @@ class Admin::ProductsController < Admin::BaseController
              :locals => { :product => @product, :prototype => @prototype } })
   end
 
-  protected
-      def load_data
-        @all_categories = Category.find(:all, :order=>"name")  
-        @all_categories.unshift Category.new(:name => "<None>")
-        @tax_categories = TaxCategory.find(:all, :order=>"name")  
-      end
-  
   private
-  
-      def build_conditions(p)
-        c = []
-        unless @search.name.blank?
-          c << "products.name like :name"
-          p.merge! :name => "%" + @search.name + "%"
-        end
-        unless @search.sku.blank?
-          c << "variants.sku like :sku"
-          p.merge! :sku => "%" + @search.sku + "%"
-        end
-        (c.to_sentence :skip_last_comma=>true).gsub(",", " and ")
-      end
-  
+    def load_data
+      @all_categories = Category.find(:all, :order=>"name")  
+      @all_categories.unshift Category.new(:name => "<None>")
+      @tax_categories = TaxCategory.find(:all, :order=>"name")  
+    end
+
+    def collection
+      @name = params[:name] || ""
+      @sku = params[:sku] || ""
+      @collection ||= end_of_association_chain.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:page]})
+    end
+    
+    def object      
+      @object ||= Product.find_by_param!(params[:id])
+    end    
 end
