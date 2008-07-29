@@ -5,7 +5,6 @@ class Admin::ProductsController < Admin::BaseController
   def new
     if request.post?
       @product = Product.new(params[:product])
-      @product.category = Category.find(params[:category]) unless params[:category].blank?
 
       @sku = params[:sku]
       @on_hand = params[:on_hand]
@@ -172,8 +171,6 @@ class Admin::ProductsController < Admin::BaseController
 
   private
     def load_data
-      @all_categories = Category.find(:all, :order=>"name")  
-      @all_categories.unshift Category.new(:name => "<None>")
       @tax_categories = TaxCategory.find(:all, :order=>"name")  
     end
 
