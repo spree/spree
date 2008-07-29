@@ -43,7 +43,7 @@ class InstanceGenerator < Rails::Generator::Base
       m.directory ""
       
       # Standard files and directories
-      base_dirs = %w(config config/environments db log script public vendor/plugins vendor/extensions)
+      base_dirs = %w(config config/environments config/initializers db log script public vendor/plugins vendor/extensions)
       text_files = %w(CHANGELOG CONTRIBUTORS LICENSE INSTALL README.markdown)
       environments = Dir["#{root}/config/environments/*.rb"]
       scripts = Dir["#{root}/script/**/*"].reject { |f| f =~ /(destroy|generate|plugin)$/ }
@@ -85,6 +85,7 @@ class InstanceGenerator < Rails::Generator::Base
       m.file "instance_routes.rb", "config/routes.rb"
       m.file "../../../../config/environment.rb", "config/environment.rb"
       m.file "../../../../config/boot.rb", "config/boot.rb"
+      m.file "../../../../config/initializers/spree.rb", "config/initializers/spree.rb"
       
       # Demo Configuration
       if options[:demo]
