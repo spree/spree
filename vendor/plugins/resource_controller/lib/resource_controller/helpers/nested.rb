@@ -34,6 +34,7 @@ module ResourceController::Helpers::Nested
     # Returns the current parent object if a parent object is present.
     #
     def parent_object
+      return nil if parent_param.blank?
       if (parent_param.is_integer?)
         parent? ? parent_model.find(parent_param) : nil
       else
