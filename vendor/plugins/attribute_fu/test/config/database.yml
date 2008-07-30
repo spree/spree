@@ -1,0 +1,15 @@
+development:
+  adapter: mysql
+  encoding: utf8
+  database: attribute_fu_test
+  username: root
+  password:
+  socket: /tmp/mysql.sock
+  
+test:
+  adapter: mysql
+  encoding: utf8
+  database: attribute_fu_test
+  username: root
+  password:
+  socket: /tmp/mysql.sock
