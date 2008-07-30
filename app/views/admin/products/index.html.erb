@@ -1,9 +1,5 @@
 <%= render :partial => 'menu' -%>
 
-<%= link_to "Add Product", :action => 'new' -%>
-
-<br/><br/>			
-
 <h1>Listing products</h1>
 <table>
 	<tr>
@@ -11,7 +7,6 @@
 			<table class="admin-report" width="545">
 			  <tr>
 			    <td><b>Image</b></td>
-			    <!--<td><b>Sku</b></td>-->
 			    <td><b>Name</b></td>
 			    <td><b>Master Price</b></td>
 			    <td/>
@@ -61,3 +56,5 @@
     </td>		
 	</tr>
 </table>
+
+<%= link_to "New Product", new_object_url %>
