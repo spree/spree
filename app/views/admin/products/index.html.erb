@@ -22,9 +22,9 @@
 			    <td valign="top"><%=product.name%></td>
 			    <td valign="top"><%=product.master_price%></td>
 			    <td valign="top">
-			      <%= link_to "Edit", :action => 'edit', :id => product -%>
+			      <%= link_to_edit product %>
 			      &nbsp;
-			      <%= link_to "Delete", {:action => 'destroy', :id => product}, :confirm => "Are you sure you want to delete this product?" -%>
+			      <%= link_to_delete product %>
 			    </td>
 			  </tr>
 			<% end %>
