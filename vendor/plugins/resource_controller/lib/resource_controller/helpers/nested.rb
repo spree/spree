@@ -34,7 +34,12 @@ module ResourceController::Helpers::Nested
     # Returns the current parent object if a parent object is present.
     #
     def parent_object
-      parent? ? parent_model.find(parent_param) : nil
+      if (parent_param.is_integer?)
+        parent? ? parent_model.find(parent_param) : nil
+      else
+        # hack by sean to allow permalink parents
+        parent_model.find_by_param!(parent_param)
+      end
     end
     
     # If there is a parent, returns the relevant association proxy.  Otherwise returns model.

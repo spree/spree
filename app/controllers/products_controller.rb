@@ -19,11 +19,8 @@ class ProductsController < Spree::BaseController
   end
 
   private
-  def collection
-    @collection ||= Product.available.find(:all, :page => {:start => 1, :size => 10, :current => params[:page]})
-  end
 
-  def object
-    @object ||= Product.available.find_by_param!(params[:id])
-  end
+    def collection
+      @collection ||= Product.available.find(:all, :page => {:start => 1, :size => 10, :current => params[:page]})
+    end
 end

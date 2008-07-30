@@ -40,3 +40,7 @@ Spree::Preferences::MailSettings.init
 #class Array #:nodoc:
 #  include Spree::Support::CoreExtensions::Array::Conversions
 #end
+
+class String #:nodoc:
+  include Spree::Support::CoreExtensions::String
+end

@@ -179,8 +179,4 @@ class Admin::ProductsController < Admin::BaseController
       @sku = params[:sku] || ""
       @collection ||= end_of_association_chain.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:page]})
     end
-    
-    def object      
-      @object ||= Product.find_by_param!(params[:id])
-    end    
 end
