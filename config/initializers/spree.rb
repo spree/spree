@@ -38,7 +38,7 @@ Spree::Preferences::MailSettings.init
 
 # Add extra support goodies (similar to rails active support)
 #class Array #:nodoc:
-#  include Spree::Support::CoreExtensions::Array::Conversions
+#  include Spree::Support::CoreExtensions::Array
 #end
 
 class String #:nodoc:
