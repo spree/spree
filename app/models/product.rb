@@ -1,4 +1,6 @@
 class Product < ActiveRecord::Base
+  after_create :set_initial_inventory
+  
   has_many :product_option_types, :dependent => :destroy
   has_many :option_types, :through => :product_option_types
   has_many :variants, :dependent => :destroy
@@ -41,6 +43,15 @@ class Product < ActiveRecord::Base
   end
 
   def on_hand=(quantity)
-    #variant.on_hand(quantity)
+    @quantity = quantity
   end
+  
+  private
+  
+    def set_initial_inventory
+      return unless @quantity.is_integer?    
+      level = @quantity.to_i
+      InventoryUnit.create_on_hand(self.variant, level)
+      reload
+    end
 end
