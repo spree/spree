@@ -39,7 +39,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :states
     admin.resources :tax_categories
     admin.resources :configurations
-    admin.resources :products, :has_many => :variants
+    admin.resources :products, :has_many => [:variants, :images]
+    admin.resources :images
     admin.resource :mail_settings
   end
   

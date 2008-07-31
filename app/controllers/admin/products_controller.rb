@@ -1,7 +1,9 @@
 class Admin::ProductsController < Admin::BaseController
   resource_controller
   before_filter :load_data
+  after_filter :set_image, :only => [:create, :update]
 
+  
 =begin
   def new
     if request.post?
@@ -157,6 +159,13 @@ class Admin::ProductsController < Admin::BaseController
       @tax_categories = TaxCategory.find(:all, :order=>"name")  
     end
 
+    def set_image
+      return unless params[:image]
+      return if params[:image][:uploaded_data].blank?    
+      image = Image.create params[:image] if params[:image]
+      object.images << image
+    end
+    
     def collection
       @name = params[:name] || ""
       @sku = params[:sku] || ""
