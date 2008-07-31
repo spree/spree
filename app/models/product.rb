@@ -14,7 +14,7 @@ class Product < ActiveRecord::Base
 
   make_permalink :with => :name, :field => :permalink
 
-  alias :selected_options :product_option_types
+  alias :options :product_option_types
 
   named_scope :available, lambda {|*args| {:conditions => ["available_on <= ?", (args.first || Time.now)]}}
   named_scope :by_name, lambda {|name| {:conditions => ["name like ?", "%#{name}%"]}}

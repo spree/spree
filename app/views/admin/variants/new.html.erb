@@ -1,0 +1,8 @@
+<h1>New Variant</h1>
+
+<%= error_messages_for :variants %>
+
+<% form_for(:variant, :url => collection_url) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <%= render :partial => 'shared/new_resource_links' %>
+<% end %>

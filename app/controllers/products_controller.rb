@@ -1,4 +1,6 @@
 class ProductsController < Admin::BaseController
+  layout 'application'
+  
   resource_controller
   actions :show, :index
 

@@ -1,6 +1,9 @@
 <%= render :partial => 'menu' %>
+<h1>New Product</h1>
+
+<%= error_messages_for :products %>
 
 <% form_for(:product,  :url => object_url, :html => { :method => :put, :multipart => true }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
-  <%= render :partial => 'shared/show_resource_links' %>
+  <%= render :partial => 'shared/new_resource_links' %>
 <% end %>

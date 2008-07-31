@@ -103,25 +103,6 @@ class Admin::ProductsController < Admin::BaseController
             :layout => false
   end  
 
-  #AJAX method   
-  def new_variant
-    @product = Product.find_by_param(params[:id])
-    @variant = Variant.new    
-    render  :partial => 'new_variant', 
-            :locals => {:product => @product},
-            :layout => false    
-  end
-  
-  #AJAX method
-  def delete_variant
-    @product = Product.find_by_param(params[:id])
-    Variant.destroy(params[:variant_id])
-    flash.now[:notice] = 'Variant successfully removed.'
-    render  :partial => 'variants', 
-            :locals => {:product => @product},
-            :layout => false    
-  end
-
   #AJAX method
   def edit_property_value
     @property_value = PropertyValue.find(params[:id])

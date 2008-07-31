@@ -1,3 +1,7 @@
+<!-- TODO: replace with tabs -->
+<%= link_to "Variants", admin_product_variants_url(@product) %> |
+<%= link_to "Option Types", "#" %> 
+
 <p>
   <label for="product_name"><%= t("Name") %></label><br/>
   <%=error_message_on :product, :name%>  
@@ -45,14 +49,6 @@
   <%= collection_select(:product, :tax_category_id, @tax_categories, :id, :name, 
                             {:include_blank => true}, {"style" => "width:200px"}) %>
 </p>
-<br/>
-<div id="variant-listing">
-  <%= render :partial => 'variants', :locals => {:product => @product} -%>
-</div>
-<br/>
-<div id="option-type-listing">
-  <%= render :partial => 'option_types', :locals => {:product => @product} -%>
-</div>
 <br/>
 <div id="image-listing">
   <%= render :partial => 'shared/images', :locals => {:viewable => @product} -%>
