@@ -56,3 +56,6 @@ Spree::Preferences::MailSettings.init
 class String #:nodoc:
   include Spree::Support::CoreExtensions::String
 end
+
+CalendarDateSelect.format = :american
+  

@@ -1,7 +1,5 @@
 class Spree::BaseController < ApplicationController
-  
-  CalendarDateSelect.format = :american
-  
+
   filter_parameter_logging "password"
   
   def find_cart

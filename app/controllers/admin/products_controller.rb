@@ -2,6 +2,7 @@ class Admin::ProductsController < Admin::BaseController
   resource_controller
   before_filter :load_data
 
+=begin
   def new
     if request.post?
       @product = Product.new(params[:product])
@@ -22,6 +23,7 @@ class Admin::ProductsController < Admin::BaseController
       @product = Product.new
     end
   end
+=end
 =begin
   def edit
     if request.post?
@@ -160,4 +162,14 @@ class Admin::ProductsController < Admin::BaseController
       @sku = params[:sku] || ""
       @collection ||= end_of_association_chain.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:page]})
     end
+
+    # override rc_default build b/c we need to make sure there's an empty variant added to each product
+    def build_object
+      @object ||= Product.new params[:product]      
+      if @object.variants.empty?
+        @object.available_on = Time.now
+        @object.variants << Variant.new(:product => @object)
+      end
+      @object
+    end    
 end

@@ -10,8 +10,6 @@ class Product < ActiveRecord::Base
   validates_presence_of :master_price
   validates_presence_of :description
 
-  before_create :empty_variant
-
   make_permalink :with => :name, :field => :permalink
 
   alias :options :product_option_types
@@ -34,10 +32,15 @@ class Product < ActiveRecord::Base
     return nil if variants?
     variants.first
   end
+  
+  # Pseduo Attribute.  Products don't really have inventory - variants do.  We want to make the variant stuff transparent
+  # in the simple cases, however, so we pretend like we're setting the inventory of the product when in fact, we're really 
+  # changing the inventory of the so-called "empty variant."
+  def on_hand
+    variant.on_hand
+  end
 
-  private
-    # all products must have an "empty variant" (this variant will be ignored if meaningful ones are added later)
-    def empty_variant
-      self.variants << Variant.new
-    end
+  def on_hand=(quantity)
+    #variant.on_hand(quantity)
+  end
 end
