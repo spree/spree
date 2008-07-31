@@ -7,8 +7,27 @@ class Variant < ActiveRecord::Base
   validate :check_price
   
   # gives the inventory count for variants with the specified inventory status 
-  def inventory(status)
-    InventoryUnit.count(:conditions => "status = #{status} AND variant_id = #{self.id}", :joins => "LEFT JOIN variants on variants.id = variant_id")
+  #def inventory(status)
+  #  InventoryUnit.count(:conditions => "status = #{status} AND variant_id = #{self.id}", :joins => "LEFT JOIN variants on variants.id = variant_id")
+  #end
+
+  def on_hand
+    inventory_units.count(:conditions => ["status = ?", InventoryUnit::Status::ON_HAND])
+  end
+
+  def on_hand=(new_level)
+    return unless new_level.is_integer?    
+    new_level = new_level.to_i
+    # don't allow negative on_hand inventory
+    return if new_level < 0
+    adjustment = new_level - on_hand
+    if adjustment > 0
+      InventoryUnit.create_on_hand(self, adjustment)
+      reload
+    elsif adjustment < 0
+      InventoryUnit.destroy_on_hand(self, adjustment.abs)
+      reload
+    end
   end
   
   private
