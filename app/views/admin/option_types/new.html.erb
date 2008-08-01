@@ -1,8 +1,8 @@
-<%= render :partial => 'admin/products/menu' %>
-
 <h1><%= t("New Option Type") %></h1>
-<br/>
-<% form_tag( {:action => 'new' }) do %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag t("Create") %>
+
+<%= error_messages_for :option_type %>
+
+<% form_for(:option_type, :url => collection_url) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <%= render :partial => 'shared/new_resource_links' %>
 <% end %>

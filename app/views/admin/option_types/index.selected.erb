@@ -1,0 +1,37 @@
+<div id="selected-options">
+  <h1><%= t("Selected Option Types") %></h1>
+
+  <table class="basic-table">
+  	<thead>
+  		<tr>
+  			<th><%= t("Name") %></th>
+  			<th><%= t("Presentation") %></th>
+  			<th><%= t("Action") %></th>
+  		</tr>
+  	</thead>
+  	<tbody>
+      <% @option_types.each do |option_type| %>
+        <tr>
+          <td valign="top"><%= option_type.name %></td>
+          <td valign="top"><%= option_type.presentation %></td>
+  		    <td valign="top">
+
+  		    </td>        
+        </tr>
+      <% end %>
+      <% if @option_types.empty? %>
+       <tr><td colspan="3">None.</td></tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= image_tag "spinner.gif", :style => "display:none", :id => 'busy_indicator' %>
+  <div id="option-types"></div>
+  <span id="new_opt_link">
+    <%= link_to_remote t("Add Option Type"), 
+                       :url => admin_product_option_types_path(@product),
+                       :method => :get,
+                       :update => "option-types",
+                       :before => "Element.hide('new_opt_link');Element.show('busy_indicator')", 
+                       :complete => "Element.hide('busy_indicator')" %>
+  </span>
+</div>

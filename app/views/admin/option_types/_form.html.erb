@@ -1,16 +1,23 @@
-<!--[form:option]-->
-<p>
-  <%=error_message_on :option_type, :name%>  
-  <%= t("Name") %>: <%= text_field 'option_type', 'name' -%>
-</p>
-<p>
-  <%= t("Presentation") %>: <%= text_field 'option_type', 'presentation' -%>
-</p>
-
+<table>
+  <tr>
+    <td><%= t("Name") %>: </td>
+    <td>
+      <%=error_message_on :option_type, :name %>
+      <%= f.text_field :name %>
+    </td>
+  </tr>
+  <tr>
+    <td><%= t("Presentation") %>: </td>
+    <td>
+      <%=error_message_on :option_type, :presentation %>
+      <%= f.text_field :presentation %>
+    </td>
+  </tr>
+</table>
 <br/>
+<% unless true %>
 <div id="option-value-listing">
   <%= render :partial => 'option_values', :locals => {:option_type => @option_type} -%>
 </div>
 <br/>
-
-<!--[eoform:option]-->
+<% end %>

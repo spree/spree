@@ -1,10 +1,8 @@
-<%= render :partial => 'admin/products/menu' %>
+<h1><%= t("Editing Option Type") %></h1>
 
-<h1><%= t("Editing Option Types") %></h1>
+<%= error_messages_for :option_type %>
 
-<% form_for(:option_type) do |f| %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag t("Update") %>
-  <%= t("or") %>
-  <%= link_to t("Cancel"), :action => :index %>
+<% form_for(:option_type, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <%= render :partial => 'shared/edit_resource_links' %>
 <% end %>

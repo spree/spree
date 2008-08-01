@@ -1,23 +1,38 @@
-<%= render :partial => 'admin/products/menu' %>
+<h1><%= t("Option Types") %></h1>
 
-<h1><%= t("Listing Option Types") %></h1>
-<table>
-  <tr>
-    <td><b><%= t("Name") %></b></td>
-    <td/>
-  </tr>
-<% @option_types.each do |ot| %>
-  <tr>
-    <td valign="top"><%= ot.name -%></td>
-    <td valign="top">
-      <%= link_to t("Edit"), :action => 'edit', :id => ot -%>
-      <%= link_to t("Delete"), 
-                     {:action => 'destroy', :id => ot}, 
-                     {:confirm => t("Are you sure you want to delete this option type?")} -%>
-    </td>
-  </tr>
-<% end %>
+<table class="basic-table">
+	<thead>
+		<tr>
+			<th><%= t("Name") %></th>
+			<th><%= t("Presentation") %></th>
+			<th><%= t("Action") %></th>
+		</tr>
+	</thead>
+	<tbody>
+    <% @option_types.each do |option_type| %>
+      <tr>
+        <td valign="top"><%= option_type.name %></td>
+        <td valign="top"><%= option_type.presentation %></td>
+		    <td valign="top">
+		      <%= link_to_edit(option_type) %>
+		      &nbsp;
+		      <%= link_to_delete(option_type) %>
+		    </td>        
+      </tr>
+    <% end %>
+  </tbody>
 </table>
 
-<br/><br/>
-<%= link_to t("Add Option Type"), :action => 'new' -%>
+<div id="option-types">
+  
+</div>
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+<br/>
+<span id="new_ot_link">
+  <%= link_to_remote t("New Option Type"), 
+                     :url => new_admin_option_type_url, 
+                     :method => :get,
+                     :update => "option-types",
+                     :before => "Element.hide('new_ot_link');Element.show('busy_indicator')", 
+                     :complete => "Element.hide('busy_indicator')" %>
+</span>

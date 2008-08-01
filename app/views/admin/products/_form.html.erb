@@ -4,7 +4,7 @@
 
 <!-- TODO: replace with tabs -->
 <%= link_to "Variants", admin_product_variants_url(@product) %> |
-<%= link_to "Option Types", "#" %> 
+<%= link_to "Option Types", formatted_admin_product_option_types_url(@product, :selected) %>  
 
 <p>
   <label for="product_name"><%= t("Name") %></label><br/>

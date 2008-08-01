@@ -31,7 +31,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :users
   map.resources :products, :member => {:change_image => :post}
-  
+
   map.namespace :admin do |admin|
     admin.resources :zones
     admin.resources :users
@@ -39,8 +39,9 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :states
     admin.resources :tax_categories
     admin.resources :configurations
-    admin.resources :products, :has_many => [:variants, :images]
+    admin.resources :products, :has_many => [:variants, :images, :option_types]
     admin.resources :images
+    admin.resources :option_types,:member => {:select => :get}
     admin.resource :mail_settings
   end
   
