@@ -9,8 +9,7 @@ class Admin::VariantsController < Admin::BaseController
   create.before do 
     option_values = params[:new_variant]
     option_values.each_value {|id| @object.option_values << OptionValue.find(id)}
-    @product.variants << @object
-    @product.save
+    @object.save
   end
   
   # redirect to index (instead of r_c default of show view)

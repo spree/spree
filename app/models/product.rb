@@ -1,4 +1,5 @@
 class Product < ActiveRecord::Base
+  after_update :adjust_inventory
   after_create :set_initial_inventory
   
   has_many :product_option_types, :dependent => :destroy
@@ -47,11 +48,29 @@ class Product < ActiveRecord::Base
   end
   
   private
+
+    def adjust_inventory    
+      return if self.new_record?
+      return unless @quantity && @quantity.is_integer?    
+      new_level = @quantity.to_i
+      # don't allow negative on_hand inventory
+      return if new_level < 0
+      variant.save
+      adjustment = new_level - on_hand
+      if adjustment > 0
+        InventoryUnit.create_on_hand(variant, adjustment)
+        reload
+      elsif adjustment < 0
+        InventoryUnit.destroy_on_hand(variant, adjustment.abs)
+        reload
+      end      
+    end
   
     def set_initial_inventory
-      return unless @quantity.is_integer?    
+      return unless @quantity && @quantity.is_integer?    
+      variant.save
       level = @quantity.to_i
-      InventoryUnit.create_on_hand(self.variant, level)
+      InventoryUnit.create_on_hand(variant, level)
       reload
     end
 end

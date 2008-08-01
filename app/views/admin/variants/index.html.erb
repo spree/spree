@@ -26,19 +26,22 @@
 		    </td>        
       </tr>
     <% end %>
+    <% unless @product.variants? %>
+      <tr><td colspan="5">None.</td></tr>
+    <% end %>
   </tbody>
 </table>
 
-<div id="variants">
-  
-</div>
-<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
-<br/>
-<span id="new_var_link">
-  <%= link_to_remote t("New Variant"), 
-                     :url => new_admin_product_variant_url(@product), 
-                     :method => :get,
-                     :update => "variants",
-                     :before => "Element.hide('new_var_link');Element.show('busy_indicator')", 
-                     :complete => "Element.hide('busy_indicator')" %>
-</span>
+<% unless @product.options.empty? %>
+  <div id="variants"/>
+  <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+  <br/>
+  <span id="new_var_link">
+    <%= link_to_remote t("New Variant"), 
+                       :url => new_admin_product_variant_url(@product), 
+                       :method => :get,
+                       :update => "variants",
+                       :before => "Element.hide('new_var_link');Element.show('busy_indicator')", 
+                       :complete => "Element.hide('busy_indicator')" %>
+  </span>
+<% end %>
