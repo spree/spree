@@ -28,7 +28,7 @@
   <div id="option-types"></div>
   <span id="new_opt_link">
     <%= link_to_remote t("Add Option Type"), 
-                       :url => admin_product_option_types_path(@product),
+                       :url => available_admin_product_option_types_url(@product),
                        :method => :get,
                        :update => "option-types",
                        :before => "Element.hide('new_opt_link');Element.show('busy_indicator')", 
