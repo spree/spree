@@ -15,9 +15,23 @@
   </tr>
 </table>
 <br/>
-<% unless true %>
-<div id="option-value-listing">
-  <%= render :partial => 'option_values', :locals => {:option_type => @option_type} -%>
-</div>
+
+<h3>Option Values</h3>
+<table class="basic-table">
+  <thead>
+    <tr>
+      <th><%= t("Name") %></th>
+      <th><%= t("Display") %></th>
+      <th><%= t("Action") %></th>
+    </tr>
+  </thead>
+  <tbody id="option_values">
+		<%= f.render_associated_form(@option_type.option_values) %>
+		<% if @option_type.option_values.empty? %>
+			<tr><td colspan="2">None.</td></tr>
+		<% end %>
+	</tbody>
+</table>
 <br/>
-<% end %>
+<%= f.add_associated_link("Add Option Value", @option_type.option_values.build) %>
+<br/>
