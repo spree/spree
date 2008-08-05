@@ -1,0 +1,11 @@
+<% content_for :sub_menu do %>
+  <% if @product %>
+    <table id="detail-menu" cellspacing="0" cellpadding="0">
+      <tr>
+        <td><%= link_to "Product Details", edit_admin_product_url(@product) %></td>
+        <td><%= link_to "Variants", admin_product_variants_url(@product) %></td>
+        <td><%= link_to "Option Types", selected_admin_product_option_types_url(@product) %></td>  
+      </tr>
+    </table>
+  <% end %>
+<% end %>

@@ -2,10 +2,6 @@
   <%= calendar_date_select_includes %>
 <% end %>
 
-<!-- TODO: replace with tabs -->
-<%= link_to "Variants", admin_product_variants_url(@product) %> |
-<%= link_to "Option Types", selected_admin_product_option_types_url(@product) %>  
-
 <p>
   <label for="product_name"><%= t("Name") %></label><br/>
   <%=error_message_on :product, :name%>  

@@ -21,35 +21,33 @@
       <% end -%>      
       <table width="780">
         <tr>
-          <td rowspan="3" width="150"><%= image_tag "spree/spree.jpg", :plugin=>"spree" %></td>
           <td>
-            <!-- TODO: may want to restrict to admin users only (instead of any authenticated user) -->
-            <% if logged_in? -%>
-            <div id="admin-nav">
-              <ul>
-                <li><%= link_to t('Overview'), :controller => '/admin/overview' %></li>
-                <li><%= link_to t('Configuration'), :controller => '/admin/configurations' %></li>
-                <li><%= link_to t('Orders'), :controller => '/admin/orders' %></li>            
-                <li><%= link_to t('Products'), :controller => '/admin/products' %></li>                                    
-                <li><%= link_to t('Reports'), :controller => '/admin/reports' %></li>
-                <li><%= link_to t('Users'), users_path %></li>
-                <li><%= link_to t('Extensions'), :controller => '/admin/extensions' %></li>
-              </ul>
-            </div>
-            <% end -%>
+            <table id="menu" border="0">
+              <tr>
+                <td rowspan="3" width="150" valign="top"><%= image_tag "spree/spree.jpg", :plugin=>"spree" %></td>
+                <td><%= link_to t('Overview'), :controller => '/admin/overview' %></td>
+                <td><%= link_to t('Configuration'), :controller => '/admin/configurations' %></td>
+                <td><%= link_to t('Orders'), :controller => '/admin/orders' %></td>
+                <td><%= link_to t('Products'), :controller => '/admin/products' %></td>
+                <td><%= link_to t('Reports'), :controller => '/admin/reports' %></td>
+                <td><%= link_to t('Users'), users_path %></td>
+              </tr>
+              <tr>
+                <td colspan="6" align="left">
+                  <%= yield :sub_menu %>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="6" align="left">
+                  <%= yield :detail_menu %>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
-        <%= yield :form if @content_for_form %>
+        <% unless flash.empty? %>
         <tr>
           <td>
-            <div id="admin-sub-nav">
-              <%= yield :action_nav %>
-            </div>
-          </td>
-        </tr>
-        <tr><td colspan="2">&nbsp;</td></tr> <!--spacer -->  
-        <tr>
-          <td colspan="2">
             <div id="flashes">
               <% if flash[:error] %>
               <div id="flash-errors"><%= flash[:error] %></div>
@@ -60,12 +58,12 @@
             </div>                
           </td>
         </tr>
+        <% end %>
         <tr>
-          <td colspan="2">
+          <td>
             <%= yield %>
           </td>
         </tr>
-        <%= '</form>' if @content_for_form %>
       </table>
     </div>
   </body>
