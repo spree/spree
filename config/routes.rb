@@ -43,6 +43,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :images
     admin.resources :option_types
     admin.resources :properties
+    admin.resources :prototypes
     admin.resource :mail_settings
   end
   

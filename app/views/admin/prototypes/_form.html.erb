@@ -1,0 +1,21 @@
+<table>
+	<tr>
+		<td>Name: </td>
+		<td>
+			<%= f.text_field :name %>
+		</td>
+	</tr>
+</table>
+<br/>
+<h3>Properties</h3>
+<br/>
+<ul id="properties">
+	<% Property.sorted.each do |property| %>
+		<li>
+	  	<%= check_box_tag "property[id][]", "#{property.id}", @prototype.properties.include?(property) %>
+	  	<%= property.name %>
+		</li>
+	<% end %>
+</ul>
+<!-- this div resets the crazy float stuff used to layout the checkboxes -->
+<div style="clear:both"></div>
