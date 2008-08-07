@@ -13,10 +13,10 @@ class CreditCard < ActiveRecord::Base
   # creates a new instance of CreditCard using the active merchant version
   def self.new_from_active_merchant(cc)
     card = self.new
-    card.number = cc.number
+    card.number = cc.number if Spree::Config[:store_cc]
     card.cc_type = cc.type
-    card.display_number = cc.display_number
-    card.verification_value = cc.verification_value
+    card.display_number = cc.display_number 
+    card.verification_value = cc.verification_value if Spree::Config[:store_cc]
     card.month = cc.month
     card.year = cc.year
     card.first_name = cc.first_name
