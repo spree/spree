@@ -28,10 +28,11 @@
   <tbody id="option_values">
 		<%= f.render_associated_form(@option_type.option_values) %>
 		<% if @option_type.option_values.empty? %>
-			<tr><td colspan="2">None.</td></tr>
+			<tr id="none"><td colspan="2">None.</td></tr>
 		<% end %>
 	</tbody>
 </table>
 <br/>
-<%= f.add_associated_link("Add Option Value", @option_type.option_values.build) %>
+<%= f.add_associated_link("Add Option Value", @option_type.option_values.build, 
+                         {:onclick => "Element.hide('none');"}) %>
 <br/>

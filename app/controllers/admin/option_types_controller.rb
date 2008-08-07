@@ -22,6 +22,10 @@ class Admin::OptionTypesController < Admin::BaseController
     wants.html {redirect_to collection_url}
   end
 
+  update.before do 
+    params[:option_type][:option_values] ||= {}
+  end
+
   # redirect to index (instead of r_c default of show view)
   update.response do |wants| 
     wants.html {redirect_to collection_url}
