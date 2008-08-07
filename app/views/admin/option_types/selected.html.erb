@@ -1,8 +1,7 @@
 <%= render :partial => 'shared/product_sub_menu' %>
-<%= render :partial => 'shared/product_detail_menu' %>
 <div id="selected-options">
-  <h1><%= t("Selected Option Types") %></h1>
-
+  <h1><%= t("Editing Product")%></h1>
+  <%= render :partial => 'shared/product_tabs', :locals => {:current => "Option Types"} %>
   <table class="basic-table">
   	<thead>
   		<tr>

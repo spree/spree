@@ -15,4 +15,5 @@ module Admin::ProductsHelper
     end
     properties
   end
+
 end

@@ -24,7 +24,7 @@
           <td>
             <table id="menu" border="0">
               <tr>
-                <td rowspan="3" width="150" valign="top"><%= image_tag "spree/spree.jpg", :plugin=>"spree" %></td>
+                <td rowspan="2" width="150" valign="top"><%= image_tag "spree/spree.jpg", :plugin=>"spree" %></td>
                 <td><%= link_to t('Overview'), :controller => '/admin/overview' %></td>
                 <td><%= link_to t('Configuration'), :controller => '/admin/configurations' %></td>
                 <td><%= link_to t('Orders'), :controller => '/admin/orders' %></td>
@@ -35,11 +35,6 @@
               <tr>
                 <td colspan="6" align="left">
                   <%= yield :sub_menu %>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="6" align="left">
-                  <%= yield :detail_menu %>
                 </td>
               </tr>
             </table>
