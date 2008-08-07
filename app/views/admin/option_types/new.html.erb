@@ -1,6 +1,5 @@
 <%= render :partial => 'shared/product_sub_menu' %>
 <h1><%= t("New Option Type") %></h1>
-<%= render :partial => 'shared/product_tabs', :locals => {:current => "Option Types"} %>
 <%= error_messages_for :option_type %>
 
 <% form_for(:option_type, :url => collection_url) do |f| %>
