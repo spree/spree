@@ -1,30 +1,30 @@
 <% content_for :head do %>
   <%= calendar_date_select_includes %>
 <% end %>
-<table>
+<table cellspacing="5">
   <tr>
-    <td><%= t("Name")%></td>
+    <td><%= t("Name")%>: </td>
     <td>
       <%=error_message_on :product, :name%>  
       <%= text_field :product, :name  %>
     </td>
   </tr>
   <tr>
-    <td><%= t("Description")%></td>
+    <td valign="top"><%= t("Description")%>: </td>
     <td>
       <%= error_message_on :product, :description %>
       <%= text_area :product, :description, {:cols => 90, :rows => 10} %>
     </td>
   </tr>
   <tr>
-    <td><%= t("Master Price")%></td>
+    <td nowrap><%= t("Master Price")%>: </td>
     <td>
       <%=error_message_on :product, :master_price%>
       <%= text_field :product, :master_price  %></p>
     </td>
   </tr>
   <tr>
-    <td><%= t("Available On")%></td>
+    <td><%= t("Available On")%>: </td>
     <td>
       <%= error_message_on :product, :available %>
       <%= calendar_date_select :product, :available_on, :style=>"width:150px" %>
@@ -32,18 +32,18 @@
   </tr>
   <% if @product.variant %>
     <tr>
-      <td><%=t("SKU")%></td>
+      <td><%=t("SKU")%>: </td>
       <td><input type="text" name="variant[<%= @product.variant.id %>][sku]" value="<%= @product.variant.sku %>"/></td>
     </tr>
     <tr>
-      <td><%=t("On Hand")%></td>
+      <td><%=t("On Hand")%>: </td>
       <td>
-        <%= t("On Hand") %>: <%= f.text_field :on_hand, :size => 4 %>        
+        <%= f.text_field :on_hand, :size => 4 %>        
       </td>
     </tr>
   <% end %>
   <tr>
-    <td><%=t("Tax Category")%></td>
+    <td nowrap><%=t("Tax Category")%>: </td>
     <td>
       <%= collection_select(:product, :tax_category_id, @tax_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        
     </td>
