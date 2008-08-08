@@ -18,4 +18,9 @@ module ProductsHelper
       "(Subtract: #{number_to_currency diff.abs})"
     end
   end
+  
+  # converts line breaks in product description into <p> tags (for html display purposes)
+  def product_description(product)
+    product.description.gsub(/^(.*)$/, '<p>\1</p>')
+  end  
 end
