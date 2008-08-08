@@ -1,0 +1,27 @@
+<%= render :partial => 'shared/product_sub_menu' %>
+<h1><%= t("Editing Product")%></h1>
+<%= render :partial => 'shared/product_tabs', :locals => {:current => "Product Properties"} %>
+
+<%= error_messages_for :product %>
+<% form_for(:product, :url => admin_product_url(@product), :html => { :method => :put }) do |f| %>
+  <table class="basic-table">
+    <thead>
+      <tr>
+        <th><%= t("Property") %></th>
+        <th><%= t("Value") %></th>
+        <th><%= t("Action") %></th>
+      </tr>
+    </thead>
+    <tbody id="product_properties">
+  		<%= f.render_associated_form(@product.product_properties) %>
+  		<tr id="none">
+  		  <td colspan="3"><%= @product.product_properties.empty? ? "None." : "" %></td>
+  		</tr>
+  	</tbody>
+  </table>
+  <input type="hidden" name="clear_product_properties" value="true">
+  <%= f.add_associated_link("Add Product Properties", @product.product_properties.build, 
+                            {:onclick => "Element.hide('none');"}) %>
+  <br/><br/>
+  <%= render :partial => 'shared/edit_resource_links' %>
+<% end %>

@@ -6,7 +6,8 @@ class Product < ActiveRecord::Base
   has_many :option_types, :through => :product_option_types
   has_many :variants, :dependent => :destroy
   has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
-  has_many :property_values
+  has_many :product_properties, :dependent => :destroy, :attributes => true
+  has_many :properties, :through => :product_properties
   belongs_to :tax_category
 
   validates_presence_of :name

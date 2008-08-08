@@ -37,18 +37,18 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :states
     admin.resources :tax_categories
     admin.resources :configurations
-    admin.resources :products, :has_many => [:variants, :images, :property_values] do |product|
-      product.resources :option_types,:member => {:select => :get}, :collection => {:available => :get, :selected => :get}
+    admin.resources :products, :has_many => [:variants, :images, :product_properties] do |product|
+      product.resources :option_types, :member => {:select => :get}, :collection => {:available => :get, :selected => :get}
     end
     admin.resources :images
     admin.resources :option_types
-    admin.resources :properties
+    admin.resources :properties, :collection => {:filtered => :get}
     admin.resources :prototypes
     admin.resource :mail_settings
   end
   
   # Install the default route as the lowest priority.
-  #map.connect ':controller/:action/:id.:format'
+  map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
 
 end
