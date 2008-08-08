@@ -15,6 +15,7 @@ class AppConfiguration < ActiveRecord::Base
   preference :mail_bcc, :string
   preference :order_from, :string, :default => "orders@example.com"
   preference :order_bcc, :string
+  preference :store_cc, :boolean, :default => false
 
   validates_presence_of :name
   validates_uniqueness_of :name
