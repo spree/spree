@@ -38,7 +38,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :tax_categories
     admin.resources :configurations
     admin.resources :products, :has_many => [:variants, :images, :product_properties] do |product|
-      product.resources :option_types, :member => {:select => :get}, :collection => {:available => :get, :selected => :get}
+      product.resources :option_types, :member => {:select => :get, :remove => :get}, :collection => {:available => :get, :selected => :get}
     end
     admin.resources :images
     admin.resources :option_types

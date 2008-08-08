@@ -1,7 +1,7 @@
 class Admin::OptionTypesController < Admin::BaseController
   resource_controller
   
-  before_filter :load_object, :only => [:selected, :available]
+  before_filter :load_object, :only => [:selected, :available, :remove]
   belongs_to :product
   
   def available
@@ -11,6 +11,13 @@ class Admin::OptionTypesController < Admin::BaseController
   
   def selected 
     @option_types = @product.option_types
+  end
+  
+  def remove
+    @product.option_types.delete(@option_type)
+    @product.save
+    flash[:notice] = "Succesfully removed option type."
+    redirect_to admin_product_option_types_url(@product)
   end
 
   new_action.response do |wants|
