@@ -2,8 +2,7 @@
   <td>
     <%= text_field_with_auto_complete :product_property, 
                                       :property_name,
-                                      {:size => 25,
-                                       :onkeypress => "return event.which == Event.KEY_RETURN ? false : true",
+                                      {:onkeypress => "return event.which == Event.KEY_RETURN ? false : true",
                                        :autocomplete => "off",
                                        :name => property_fu_name(product_property),
                                        :value => product_property.property ? product_property.property.name : ""
