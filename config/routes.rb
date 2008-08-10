@@ -43,7 +43,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :images
     admin.resources :option_types
     admin.resources :properties, :collection => {:filtered => :get}
-    admin.resources :prototypes
+    admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
     admin.resource :mail_settings
   end
   
