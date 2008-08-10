@@ -1,23 +1,27 @@
 class Product < ActiveRecord::Base
+  after_update :adjust_inventory
+  after_create :set_initial_inventory
+  
   has_many :product_option_types, :dependent => :destroy
   has_many :option_types, :through => :product_option_types
   has_many :variants, :dependent => :destroy
-  belongs_to :category
   has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
-  has_many :property_values
+  has_many :product_properties, :dependent => :destroy, :attributes => true
+  has_many :properties, :through => :product_properties
   belongs_to :tax_category
 
   validates_presence_of :name
   validates_presence_of :master_price
   validates_presence_of :description
 
-  before_create :empty_variant
-
   make_permalink :with => :name, :field => :permalink
 
-  alias :selected_options :product_option_types
+  alias :options :product_option_types
 
   named_scope :available, lambda {|*args| {:conditions => ["available_on <= ?", (args.first || Time.now)]}}
+  named_scope :by_name, lambda {|name| {:conditions => ["name like ?", "%#{name}%"]}}
+  named_scope :by_sku, lambda {|sku| { :include => :variants, :conditions => ["variants.sku like ?", "%#{sku}%"]}}
+  
 
   # checks is there are any meaningful variants (ie. variants with at least one option value)
   def variants?
@@ -32,10 +36,42 @@ class Product < ActiveRecord::Base
     return nil if variants?
     variants.first
   end
+  
+  # Pseduo Attribute.  Products don't really have inventory - variants do.  We want to make the variant stuff transparent
+  # in the simple cases, however, so we pretend like we're setting the inventory of the product when in fact, we're really 
+  # changing the inventory of the so-called "empty variant."
+  def on_hand
+    variant.on_hand
+  end
 
+  def on_hand=(quantity)
+    @quantity = quantity
+  end
+  
   private
-    # all products must have an "empty variant" (this variant will be ignored if meaningful ones are added later)
-    def empty_variant
-      self.variants << Variant.new
+
+    def adjust_inventory    
+      return if self.new_record?
+      return unless @quantity && @quantity.is_integer?    
+      new_level = @quantity.to_i
+      # don't allow negative on_hand inventory
+      return if new_level < 0
+      variant.save
+      adjustment = new_level - on_hand
+      if adjustment > 0
+        InventoryUnit.create_on_hand(variant, adjustment)
+        reload
+      elsif adjustment < 0
+        InventoryUnit.destroy_on_hand(variant, adjustment.abs)
+        reload
+      end      
+    end
+  
+    def set_initial_inventory
+      return unless @quantity && @quantity.is_integer?    
+      variant.save
+      level = @quantity.to_i
+      InventoryUnit.create_on_hand(variant, level)
+      reload
     end
 end

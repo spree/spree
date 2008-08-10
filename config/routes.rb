@@ -1,6 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :tax_categories
-
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:
@@ -26,12 +24,12 @@ ActionController::Routing::Routes.draw do |map|
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
 
+  map.resources :tax_categories
   map.resources :countries, :has_many => :states, :actions => [:index]
   map.resources :states, :actions => [:index]
-  
   map.resources :users
   map.resources :products, :member => {:change_image => :post}
-  
+
   map.namespace :admin do |admin|
     admin.resources :zones
     admin.resources :users
@@ -39,6 +37,13 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :states
     admin.resources :tax_categories
     admin.resources :configurations
+    admin.resources :products, :has_many => [:variants, :images, :product_properties] do |product|
+      product.resources :option_types, :member => {:select => :get, :remove => :get}, :collection => {:available => :get, :selected => :get}
+    end
+    admin.resources :images
+    admin.resources :option_types
+    admin.resources :properties, :collection => {:filtered => :get}
+    admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
     admin.resource :mail_settings
   end
   

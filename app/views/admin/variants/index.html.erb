@@ -1,0 +1,48 @@
+<%= render :partial => 'shared/product_sub_menu' %>
+<h1><%= t("Editing Product") %></h1>
+<%= render :partial => 'shared/product_tabs', :locals => {:current => "Variants"} %>
+<table class="basic-table">
+	<thead>
+		<tr>
+			<th>Options</th>
+			<th>Price</th>
+		  <th>SKU</th>
+		  <th>On Hand</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+	<tbody>
+    <% @variants.each do |variant| %>
+      <!-- you can skip variant with no options: that's just the default variant that all products have -->
+      <% next if variant.option_values.empty? %>
+      <tr>
+      	<td><%= variant_options variant %></td>
+      	<td><%= variant.price %>
+        <td><%= variant.sku %></td>
+        <td><%= variant.on_hand %></td>
+		    <td valign="top">
+		      <%= link_to_edit(variant) %>
+		      &nbsp;
+		      <%= link_to_delete(variant) %>
+		    </td>        
+      </tr>
+    <% end %>
+    <% unless @product.variants? %>
+      <tr><td colspan="5">None.</td></tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% unless @product.options.empty? %>
+  <div id="variants"/>
+  <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+  <br/>
+  <span id="new_var_link">
+    <%= link_to_remote t("New Variant"), 
+                       :url => new_admin_product_variant_url(@product), 
+                       :method => :get,
+                       :update => "variants",
+                       :before => "Element.hide('new_var_link');Element.show('busy_indicator')", 
+                       :complete => "Element.hide('busy_indicator')" %>
+  </span>
+<% end %>

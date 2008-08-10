@@ -1,0 +1,32 @@
+<table>
+  <% if @variant.new_record? %>
+    <% @product.options.each do |option| %>
+      <tr>
+        <td><%= option.option_type.presentation %>: </td>
+        <td>
+          <%= select(:new_variant, option.option_type.presentation, 
+                     option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] }) %>
+        </td>
+      </tr>
+    <% end %>
+  <% else %>
+    <% @variant.option_values.each do |option_value| %>
+      <tr>
+        <td><%= option_value.option_type.presentation %>: </td>
+        <td><%= option_value.presentation %></td>
+      </tr>
+    <% end %>
+  <% end %>
+  <tr>
+    <td><%= t("SKU") %>: </td>
+    <td><%= f.text_field :sku %></td>
+  </tr>
+  <tr>
+    <td><%= t("Price") %>: </td>
+    <td><%= f.text_field :price %></td>
+  </tr>
+  <tr>
+    <td><%= t("On Hand") %>: </td>
+    <td><%= f.text_field :on_hand %></td>
+  </tr>  
+</table>

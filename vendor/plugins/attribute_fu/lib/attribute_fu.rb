@@ -1,0 +1,2 @@
+module AttributeFu #:nodoc:  
+end

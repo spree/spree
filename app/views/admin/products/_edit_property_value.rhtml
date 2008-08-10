@@ -1,2 +1,0 @@
-<%= text_field :property_value, :value, :index => @property_value.id, :value => @property_value.value, :size => 15 %>
-<%= link_to_remote '[X]', :url => { :action => 'edit_property_value', :id => @property_value.id, :cancel => 1 }, :update => pv_tag_id(@property_value) %>

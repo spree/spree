@@ -1,17 +1,11 @@
-<%= render :partial => 'menu' -%>
-
-<%= link_to "Add Product", :action => 'new' -%>
-
-<br/><br/>			
-
-<h1>Listing products</h1>
+<%= render :partial => 'shared/product_sub_menu' %>
+<h1><%= t("Listing Products") %></h1>
 <table>
 	<tr>
 		<td valign="top">
 			<table class="admin-report" width="545">
 			  <tr>
 			    <td><b>Image</b></td>
-			    <!--<td><b>Sku</b></td>-->
 			    <td><b>Name</b></td>
 			    <td><b>Master Price</b></td>
 			    <td/>
@@ -22,17 +16,17 @@
 			    <td valign="top"><%=product.name%></td>
 			    <td valign="top"><%=product.master_price%></td>
 			    <td valign="top">
-			      <%= link_to "Edit", :action => 'edit', :id => product -%>
+			      <%= link_to_edit product %>
 			      &nbsp;
-			      <%= link_to "Delete", {:action => 'destroy', :id => product}, :confirm => "Are you sure you want to delete this product?" -%>
+			      <%= link_to_delete product %>
 			    </td>
 			  </tr>
 			<% end %>
 			</table>
-			<%= render :partial => 'shared/paginate', :locals => {:collection => @products, :options => search_options} -%>						
+			<%= render :partial => 'shared/paginate', :locals => {:collection => @collection, :options => search_options} -%>						
 		</td>
     <td valign="top">
-      <% form_for :search do |f| %>
+      <form action="/admin/products" method="GET">
         <div id="search-col">
           <table class="admin-search">
             <thead>
@@ -44,20 +38,22 @@
               <tr>
                 <td>Name</td>
                 <td>
-                  <%= f.text_field :name, :size=>15 %>
+                  <input name="name" size="15" value="<%=@name%>"/>
                 </td>
               </tr>
               <tr>
                 <td>Sku</td>
                 <td>
-                  <%= f.text_field :sku, :size=>15 %>
+                  <input name="sku" size="15" value="<%=@sku%>"/>
                 </td>
               </tr>
             </tbody>
           </table>
           <%=submit_tag "Search"%>
         </div>
-      <% end %>
+      </form>
     </td>		
 	</tr>
 </table>
+
+<%= link_to "New Product", new_object_url %>

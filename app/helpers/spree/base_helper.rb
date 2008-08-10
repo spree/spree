@@ -84,9 +84,4 @@ module Spree::BaseHelper
       image_tag product.images.first.public_filename(:product)  
     end
   end
-  
-  # amount of on hand inventory for the specified variant
-  def on_hand(variant)
-    variant.inventory(InventoryUnit::Status::ON_HAND)
-  end  
 end

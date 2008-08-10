@@ -37,7 +37,13 @@ module ResourceController::Helpers::CurrentObjects
     #   end
     #
     def object
-      @object ||= end_of_association_chain.find(param) unless param.nil?
+      return @object if param.blank?
+      if param.is_integer?
+        @object ||= end_of_association_chain.find(param) unless param.nil?
+      else
+        # hack by sean to allow permalink objects
+        @object = end_of_association_chain.find_by_param!(param)
+      end
       @object
     end
     

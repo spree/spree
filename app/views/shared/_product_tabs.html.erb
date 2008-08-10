@@ -1,0 +1,24 @@
+<div id="tab-container">
+  <ul id="tabnav">
+  	<li>
+  	  <%= link_to t("Product Details"), 
+  	              edit_admin_product_url(@product), 
+  	              :class => (current == "Product Details" ? "active" : "") %>
+  	</li>
+  	<li>
+  	  <%= link_to t("Variants"), 
+  	              admin_product_variants_url(@product), 
+  	              :class => (current == "Variants" ? "active" : "") %>
+    </li>
+  	<li>
+  	  <%= link_to t("Option Types"), 
+  	              selected_admin_product_option_types_url(@product),
+  	              :class => (current == "Option Types" ? "active" : "") %>
+  	</li>
+  	<li>
+  	  <%= link_to t("Product Properties"), 
+  	              admin_product_product_properties_url(@product),
+  	              :class => (current == "Product Properties" ? "active" : "") %>
+  	</li>
+  </ul>
+</div>

@@ -1,59 +1,49 @@
 class Admin::PrototypesController < Admin::BaseController
-  def edit
-    @prototype = find_prototype
-    if request.xhr?
-      render :partial => 'edit', :locals => { :properties_to_add => [],
-                                              :properties_to_remove => [] }
-    end
+  resource_controller
+  after_filter :set_properties, :only => [:create, :update]
+  
+  helper 'admin/product_properties'
+  
+  def available
+    @prototypes = Prototype.all
+    render :layout => false
   end
-
-  def update
-    @prototype = find_prototype
-    @prototype.update_attributes(params[:prototype])
-    success = @prototype.save
-
-    # deal with properties
-    properties = params[:property]
-    properties_to_add = []
-    properties_to_remove = []
-    if properties
-      properties.each do |key, value|
-        prop = Property.find(key)
-        if value == 'add'
-          @prototype.properties << prop if success
-          properties_to_add << prop.id
-        elsif value == 'remove'
-          @prototype.properties.delete(prop) if success
-          properties_to_remove << prop.id
-        end
-      end
-    end
-
-    if success
-      if request.xhr?
-        render :partial => 'success', :status => 201
-      else
-        redirect_to :index
-      end
-    else
-      if request.xhr?
-        render :partial => 'edit', :locals => { :properties_to_add => properties_to_add,
-                                                :properties_to_remove => properties_to_remove }
-      else
-        redirect_to :index
-      end
-    end
+  
+  def select
+    load_object
   end
-
-  def list
-    render :partial => 'list'
+  
+  new_action.response do |wants|
+    wants.html {render :action => :new, :layout => false}
   end
-
+    
+  # redirect to index (instead of r_c default of show view)
+  update.response do |wants| 
+    wants.html {redirect_to collection_url}
+  end
+  
+  # redirect to index (instead of r_c default of show view)
+  create.response do |wants| 
+    wants.html {redirect_to collection_url}
+  end
+  
   private
-  def find_prototype
-    prototype = Prototype.find(params[:id]) if params[:id]
-    prototype = Prototype.new(params[:prototype]) unless prototype
-    prototype
-  end
+  def set_properties
+    object.properties.clear
+    return unless params[:property]
+    params[:property][:id].each do |id|
+      object.properties << Property.find(id)
+    end
+    object.save
+  end  
 
+  def specified_rights(type)
+    rights = []
+    key = "#{type}_ids".to_sym     
+    params[:permission][key] ||= []
+    params[:permission][key].each do |id|
+      rights << type.classify.constantize.find(id) 
+    end
+    rights
+  end  
 end

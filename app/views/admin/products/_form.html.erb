@@ -1,74 +1,58 @@
-<!--[form:product]-->                       
-<p>
-  <label for="product_name"><%= t("Name") %></label><br/>
-  <%=error_message_on :product, :name%>  
-  <%= text_field :product, :name  %>
-</p>
-<p>
-  <label for="product_description"><%= t("Description") %></label><br/>
-  <%= error_message_on :product, :description %>
-  <%= text_area :product, :description, {:cols => 90, :rows => 10} %>
-</p>
-<p>
-  <label for="price"><%= t("Master Price") %>:</label><br/>
-  <%=error_message_on :product, :master_price%>
-  <%= text_field :product, :master_price  %></p>
-</p>
-<% if @product.new_record? %>
-<p>
-  <label for="sku"><%= t("SKU") %></label><br/>
-  <input type="text" name="sku" value="<%= @sku %>"/>
-</p>
-<p>
-  <label for="on-hand"><%= t("On Hand") %></label><br/>
-  <input type="text" name="on_hand" value="<%= @on_hand %>"/>
-</p>
+<% content_for :head do %>
+  <%= calendar_date_select_includes %>
 <% end %>
-
-<p>
-  <label for="product_available">Available On:</label><br />
-  <%= error_message_on :product, :available %>
-  <%= datetime_select :product, :available_on %>
-</p>
-
-<% if @product.variant %>
-<p>
-  <label for="sku"><%= t("Sku") %></label><br/>
-  <input type="text" name="variant[<%= @product.variant.id %>][sku]" value="<%= @product.variant.sku %>"/>
-</p>
-<p>
-  <%= :on_hand.l %>: <%= on_hand(@product.variant) %>
-  <%= link_to t("Inventory"), :controller => 'inventory_units', :action => 'adjust', :id => @product.variant %>
-</p>  
-<% end %>
-<p>
-  <label for="category"><%= t("Category") %>:</label><br/>
-  <select id="category" name="category" style="width:250px;"> 
-    <%= options_from_collection_for_select(@all_categories, :id, :long_name, @selected_category) %>
-  </select>
-</p>
-<p>
-  <label for="tax-category"><%= t("Tax Category") %>:</label><br/>
-  <%= collection_select(:product, :tax_category_id, @tax_categories, :id, :name, 
-                            {:include_blank => true}, {"style" => "width:200px"}) %>
-</p>
-<br/>
-<div id="variant-listing">
-  <%= render :partial => 'variants', :locals => {:product => @product} -%>
-</div>
-<br/>
-<div id="option-type-listing">
-  <%= render :partial => 'option_types', :locals => {:product => @product} -%>
-</div>
-<br/>
-<div id="image-listing">
-  <%= render :partial => 'shared/images', :locals => {:viewable => @product} -%>
-</div>
-
-<br/>
-
-<div id="property-listing">
-  <%= render :partial => 'properties', :locals => {:product => @product} %>
-</div>
-<br />
-<!--[eoform:product]-->
+<table cellspacing="5">
+  <tr>
+    <td><%= t("Name")%>: </td>
+    <td>
+      <%=error_message_on :product, :name%>  
+      <%= text_field :product, :name  %>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top"><%= t("Description")%>: </td>
+    <td>
+      <%= error_message_on :product, :description %>
+      <%= text_area :product, :description, {:cols => 90, :rows => 10} %>
+    </td>
+  </tr>
+  <tr>
+    <td nowrap><%= t("Master Price")%>: </td>
+    <td>
+      <%=error_message_on :product, :master_price%>
+      <%= text_field :product, :master_price  %></p>
+    </td>
+  </tr>
+  <tr>
+    <td><%= t("Available On")%>: </td>
+    <td>
+      <%= error_message_on :product, :available %>
+      <%= calendar_date_select :product, :available_on, :style=>"width:150px" %>
+    </td>
+  </tr>
+  <% if @product.variant %>
+    <tr>
+      <td><%=t("SKU")%>: </td>
+      <td><input type="text" name="variant[<%= @product.variant.id %>][sku]" value="<%= @product.variant.sku %>"/></td>
+    </tr>
+    <tr>
+      <td><%=t("On Hand")%>: </td>
+      <td>
+        <%= f.text_field :on_hand, :size => 4 %>        
+      </td>
+    </tr>
+  <% end %>
+  <tr>
+    <td nowrap><%=t("Tax Category")%>: </td>
+    <td>
+      <%= collection_select(:product, :tax_category_id, @tax_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <div id="image-listing">
+        <%= render :partial => 'images', :locals => {:viewable => @product, :f => f} -%>
+      </div>
+    </td>
+  </tr>
+</table>

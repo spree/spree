@@ -1,14 +1,11 @@
 module Admin::BaseHelper
-  def breadcrumb_nav category
-    ancestor(category) + link_to(category.name, :id => category)
+  
+  def link_to_edit(resource)
+    link_to t("Edit"), edit_object_url(resource)
   end
   
-  private
-    def ancestor(category, hide_last = false)
-      if category.parent
-        ancestor(category.parent) + link_to(category.parent.name, :id => category.parent) + (hide_last ? '' : ' > ')
-      else
-        ""
-      end
-    end      
+  def link_to_delete(resource)
+    link_to t("Delete"), object_url(resource), :confirm => "Are you sure you want to delete this record?", :method => :delete 
+  end
+  
 end

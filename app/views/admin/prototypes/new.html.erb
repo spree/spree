@@ -1,0 +1,9 @@
+<%= render :partial => 'shared/product_sub_menu' %>
+<h1><%= t("New Prototype")%></h1>
+
+<%= error_messages_for :prototype %>
+
+<% form_for(:prototype, :url => collection_url) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <%= render :partial => 'shared/new_resource_links' %>
+<% end %>

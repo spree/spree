@@ -1,70 +1,62 @@
 class Admin::OptionTypesController < Admin::BaseController
-  def select
-    @product = Product.find(params[:id])
-    @option_types = OptionType.find(:all)
-    selected_option_types = []
-    @product.selected_options.each do |so| 
-      selected_option_types << so.option_type
-    end
-    @option_types.delete_if {|ot| selected_option_types.include? ot}
-    
+  resource_controller
+  
+  before_filter :load_object, :only => [:selected, :available, :remove]
+  belongs_to :product
+  
+  def available
+    set_available_option_types
     render :layout => false
-  end  
-  
-  def index
-    @option_types = OptionType.find(:all)
   end
   
-  def new
-    if request.post?
-      @option_type = OptionType.new(params['option_type']) 
-      if @option_type.save
-        flash[:notice] = 'Option type was successfully created.'
-        redirect_to :action => 'index'    
-      else  
-        logger.error("unable to create new option type: #{@option_type.inspect}")
-        flash[:error] = 'Problem saving new option type.'
-        render :action => 'new'
-      end
-    else
-      @option_type = OptionType.new 
-    end
+  def selected 
+    @option_types = @product.option_types
   end
   
-  def edit
-    @option_type = OptionType.find(params[:id])
-    if request.post?
-      success = @option_type.update_attributes(params[:option_type])
-      if success and params[:option_value]
-        option_value = OptionValue.new(params[:option_value])
-        @option_type.option_values << option_value
-        success = @option_type.save
-      end
-      flash[:notice] = 'Option type was successfully updated.' if success
-      flash[:error] = "Problem updating option type." if not success
-      redirect_to :action => 'edit', :id => @option_type
-    end
+  def remove
+    @product.option_types.delete(@option_type)
+    @product.save
+    flash[:notice] = "Succesfully removed option type."
+    redirect_to admin_product_option_types_url(@product)
   end
-  
-  def destroy
-    OptionType.destroy(params[:id])
-    redirect_to :action => 'index'
-  end  
-  
-  #AJAX support method
-  def new_option_value
-    @option_type = OptionType.find(params[:id])
-    render  :partial => 'new_option_value', 
-            :locals => {:option_type => @option_type},
-            :layout => false
-  end  
 
-  #AJAX support method
-  def delete_option_value
-    OptionValue.delete(params[:option_value_id])
-    @option_type = OptionType.find(params[:id])
-    render  :partial => 'option_values', 
-            :locals => {:option_type => @option_type},
-            :layout => false
-  end    
+  new_action.response do |wants|
+    wants.html {render :action => :new, :layout => false}
+  end
+    
+  # redirect to index (instead of r_c default of show view)
+  create.response do |wants| 
+    wants.html {redirect_to collection_url}
+  end
+
+  update.before do 
+    params[:option_type][:option_values] ||= {}
+  end
+
+  # redirect to index (instead of r_c default of show view)
+  update.response do |wants| 
+    wants.html {redirect_to collection_url}
+  end
+
+  # AJAX method for selecting an existing option type and associating with the current product
+  def select
+    @product = Product.find_by_param!(params[:product_id])
+    product_option_type = ProductOptionType.new(:product => @product, :option_type => OptionType.find(params[:id]))
+    product_option_type.save
+    @product.reload
+    @option_types = @product.option_types
+    set_available_option_types
+    render :template => "admin/option_types/selected.html.erb", :layout => false
+  end 
+
+  private 
+  
+    def set_available_option_types
+      @available_option_types = OptionType.all
+      selected_option_types = []
+      @product.options.each do |option| 
+        selected_option_types << option.option_type
+      end
+      @available_option_types.delete_if {|ot| selected_option_types.include? ot}
+    end
 end
