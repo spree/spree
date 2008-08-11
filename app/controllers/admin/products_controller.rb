@@ -30,7 +30,11 @@ class Admin::ProductsController < Admin::BaseController
     def collection
       @name = params[:name] || ""
       @sku = params[:sku] || ""
-      @collection ||= end_of_association_chain.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:page]})
+      if @sku.blank?
+        @collection ||= end_of_association_chain.by_name(@name).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:page]})
+      else
+        @collection ||= end_of_association_chain.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:page]})
+      end
     end
 
     # override rc_default build b/c we need to make sure there's an empty variant added to each product
