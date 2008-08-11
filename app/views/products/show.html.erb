@@ -8,7 +8,7 @@
         <%= render :partial => 'thumbnails', :locals => {:product => @product} -%>
       </div>
     </td>
-    <td>
+    <td valign="top">
       <% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
       <table>
 	<tr>
