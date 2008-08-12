@@ -275,6 +275,11 @@ padding-right: 0;
 /* ===================== end: store-header =====================*/
 
 /* ===================== begin: footer =====================*/
+#footer p {
+  text-align: center;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
 #footer ul {
   text-align: center;
   margin-top: 2px;

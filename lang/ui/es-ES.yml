@@ -1,3 +1,5 @@
+locale_flag: es.png
+
 account: Cuenta
 action: Acción
 add_category: Añadir Categoría
@@ -69,6 +71,7 @@ listing_option_types: Listado de tipos de opciones
 listing_orders: Listado de pedidos
 listing_reports: Listado de reportes
 listing_users: Listado de usuarios
+locale_changed: Se ha cambiado el idioma
 logged_in_as: Identificado como
 log_in: Iniciar sesión
 login_name: Nombre de usuario
