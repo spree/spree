@@ -5,8 +5,11 @@ Spree is a complete open source commerce solution for Ruby on Rails.
 It was developed by Sean Schofield under the original name of Rails
 Cart before changing its name to Spree.
 
-QUICK START (Running the Source)
-================================
+QUICK START
+===========
+
+Running from sources (latest and greatest features)
+---------------------------------------------------
 
 1. Clone the git repo
 
@@ -24,8 +27,8 @@ QUICK START (Running the Source)
 
         script/server
 
-QUICK START (Running the Gem)
-=============================
+Running the Gem
+---------------
 
 1. Install spree Gem
 
@@ -61,6 +64,13 @@ Browse Admin Interface
 ----------------------
 
 http://localhost:xxxx/admin
+
+Deploying
+=========
+
+Deploy spree as a normal rails application. If you use apache+cgi/fastcgi take a look at the example .htaccess located in 
+
+    public/.htaccess.example
 
 i18n/l10n Support?
 ==================
