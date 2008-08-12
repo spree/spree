@@ -55,8 +55,8 @@ Spree::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_rails-test_session',
-    :secret      => '2271bed096798b2c9e7b7ec14263e669944808bb94cb56d4befa5757cbb931095a3644c7850c264aadfde669d470ff5dccb10dc80bcf727d80bc2d148341b43b'
+    :session_key => '_<%= app_name %>_session',
+    :secret      => '<%= app_secret_key_to_be_replaced_in_real_app_by_generator %>' 
   }
 
   # Use the database for sessions instead of the cookie-based default,
