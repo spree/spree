@@ -53,6 +53,7 @@ Spree::Extension.descendants.each do |extension|
     #extension_file = "#{File.basename(path).sub(/^\d+_/,'')}_extension"       
     source = "#{extension.root}/public"
     destination = "#{RAILS_ROOT}/public"
+    RAILS_DEFAULT_LOGGER.info "INFO: Mirroring assets from #{source} to #{destination}"
     Spree::FileUtilz.mirror_files(source, destination)
   rescue LoadError, NameError => e
     $stderr.puts "Could not copy extension assets from : #{source}.\n#{e.inspect}"
