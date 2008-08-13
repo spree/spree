@@ -1,5 +1,3 @@
-locale_flag: es.png
-
 account: Cuenta
 action: Acción
 add_category: Añadir Categoría
@@ -47,7 +45,6 @@ editing_user: Editar usuario
 email_address: Dirección de Correo Electrónico
 email: Correo Electrónico
 empty_cart: Vaciar Cesta
-english: #TODO
 error: error
 expiration_month: Mes de vencimiento
 expiration_year: Año de vencimiento
@@ -56,7 +53,6 @@ extensions: Extensiones
 filename: Nombre de archivo
 final_confirmation: Confirmación Final
 first_name: Nombre
-german: #TODO
 hello_user: Hola usuario
 image: Imágen
 images: Imagenes
@@ -71,7 +67,6 @@ listing_option_types: Listado de tipos de opciones
 listing_orders: Listado de pedidos
 listing_reports: Listado de reportes
 listing_users: Listado de usuarios
-locale_changed: Se ha cambiado el idioma
 logged_in_as: Identificado como
 log_in: Iniciar sesión
 login_name: Nombre de usuario
@@ -131,7 +126,6 @@ shipping_total: Total de envío
 shopping_cart: Cesta de compras
 sign_up: Registrarme
 sku: Código
-spanish: # TODO
 start: Inicio
 state: Comunidad
 status: Estado

@@ -14,6 +14,9 @@ class LocalizationExtension < Spree::Extension
   end
   
   def activate
+    # load extensions lang/ui
+    Globalite.add_localization_source(File.join(SPREE_ROOT, 'vendor/extensions/**/lang/ui'))
+
     ApplicationController.class_eval do
       include Localization
       helper_method :t

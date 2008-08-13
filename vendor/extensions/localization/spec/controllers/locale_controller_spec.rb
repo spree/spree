@@ -3,8 +3,20 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe LocaleController do
 
   #Delete these examples and add some real ones
-  it "should use LocaleController" do
-    controller.should be_an_instance_of(LocaleController)
+  it "should inherit from ApplicationController" do
+    controller.should be_a_kind_of(ApplicationController)
+  end
+
+  it 'should redirect when a locale is set' do
+    get 'set', { :locale => 'en-US'}
+    response.should be_redirect
+    flash[:notice].should eql("Locale changed")
+  end
+
+  it 'should set a correct value for session[:locale]' do
+    get 'set', { :locale => 'es-ES'}
+    session[:locale].should eql('es-ES')
+    flash[:notice].should eql('Se ha cambiado el idioma')
   end
 
   describe 'route generation' do
@@ -14,9 +26,10 @@ describe LocaleController do
     end
   end
 
-  # describe 'route recognition' do
-  #   it 'should generate params {:controller => "locale", :action => "set", :locale => "en-US"} from GET /locale/set?locale=en-US' do
-  #     params_from(:get, '/locale/set?locale=en-US').should == {:controller => 'locale', :action => 'set', :locale => 'en-US'}
-  #   end
-  # end
+  describe 'route recognition' do
+    it 'should generate params {:controller => "locale", :action => "set"} from GET /locale/set' do
+      params_from(:get, '/locale/set').should == {:controller => 'locale', :action => 'set', :method => :get}
+    end
+  end
+
 end
