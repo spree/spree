@@ -14,6 +14,7 @@ doc/**/*
 log/*.log
 pkg
 public/images/calendar_date_select
+public/images/flags
 public/images/products/*
 public/javascripts/calendar_date_select
 public/plugin_assets
@@ -23,3 +24,4 @@ spree_test
 tmp
 vendor/rails
 coverage/*
+TAGS

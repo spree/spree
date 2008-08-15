@@ -1,5 +1,5 @@
 class Product < ActiveRecord::Base
-  after_update :adjust_inventory
+  after_update :adjust_inventory, :adjust_variant_price
   after_create :set_initial_inventory
   
   has_many :product_option_types, :dependent => :destroy
@@ -67,6 +67,14 @@ class Product < ActiveRecord::Base
       end      
     end
   
+    def adjust_variant_price
+      # If there's a master price change, make sure the empty variant has its price changed as well (Bug #61)
+      if master_price_changed?
+        variants.first.price = master_price
+        variants.first.save
+      end
+    end
+      
     def set_initial_inventory
       return unless @quantity && @quantity.is_integer?    
       variant.save

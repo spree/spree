@@ -17,6 +17,8 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
+  # map.connect '/locale/:new_locale', :controller => 'locale', :action => 'set_session_locale'
+
   map.root :controller => "products", :action => "index"
   # login mappings should appear before all others
   map.login '/login', :controller => 'account', :action => 'login'

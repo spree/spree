@@ -134,6 +134,7 @@ module Spree
         arr.reverse!
       end
     
+      ActionMailer::Base.template_root = view_paths  if configuration.frameworks.include?(:action_mailer)        
       ActionController::Base.view_paths = view_paths if configuration.frameworks.include?(:action_controller)
     end
 

@@ -51,6 +51,8 @@ namespace 'spree' do
     files.exclude 'config/lighttpd.conf'
     files.exclude 'config/mongrel_mimes.yml'
     files.exclude 'db/*.db'
+    files.exclude 'db/*.sqlite3'
+    files.exclude 'db/*.sql'
     files.exclude 'db/*.rb'
     files.exclude /^doc/
     files.exclude 'log/*.log'

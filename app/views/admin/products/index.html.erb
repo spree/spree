@@ -10,7 +10,7 @@
 			    <td><b>Master Price</b></td>
 			    <td/>
 			  </tr>
-			<% for product in @products%>
+			<% @products.each do |product| %>
 			  <tr>
 			    <td><%= mini_image(product) %></td>
 			    <td valign="top"><%=product.name%></td>
