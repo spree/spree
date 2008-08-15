@@ -1,0 +1,20 @@
+<% variant = line_item.variant %>
+<tr class="<%= cycle('even', 'odd') %>">
+  <td width="100">
+    <%= small_image(line_item.variant.product) %>
+  </td>
+  <td valign="top">              
+    <%= link_to variant.product.name,  product_path(variant.product) %>
+    <%= variant_options variant %><br/>
+    <%= truncate(variant.product.description, length = 100, truncate_string = "...") %>
+  </td>
+  <td valign="top" width="75">
+		<%= number_to_currency(line_item.price) %>
+	</td>
+  <td valign="top" width="50">
+		<%= f.text_field :quantity, :size => 3 %>
+	</td>
+  <td valign="top" width="75">
+		<%= number_to_currency(line_item.price * line_item.quantity) unless line_item.quantity.nil? %>
+	</td>
+</tr>

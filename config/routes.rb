@@ -29,6 +29,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :states, :actions => [:index]
   map.resources :users
   map.resources :products, :member => {:change_image => :post}
+  map.resources :orders, :has_many => :line_items
 
   map.namespace :admin do |admin|
     admin.resources :zones

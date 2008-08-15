@@ -9,7 +9,7 @@
       </div>
     </td>
     <td>
-      <% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
+      <% form_for :order, :url => orders_url, :method => :put do |f| %>
       <table>
 	<tr>
 	  <td class="product-name"><%= @product.name %></td>

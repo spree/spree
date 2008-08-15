@@ -1,7 +1,13 @@
 class Order < ActiveRecord::Base  
   before_save :update_user_addresses
   
-  has_many :line_items
+  has_many :line_items, :dependent => :destroy, :attributes => true do
+    def in_order(variant)
+      find :first, :conditions => ['variant_id = ?', variant.id]
+    end
+  end
+  has_many :products, :through => :line_items
+  
   has_many :inventory_units
   has_many :order_operations
   has_one :credit_card
@@ -13,20 +19,23 @@ class Order < ActiveRecord::Base
   enumerable_constant :ship_method, {:constants => SHIPPING_METHODS, :no_validation => true}
 
   #TODO - validate presence of user once we have the means to add one through controller
-  validates_presence_of :line_items
+  #validates_presence_of :line_items
   validates_associated :line_items, :message => "are not valid"
   validates_numericality_of :tax_amount
   validates_numericality_of :ship_amount
   validates_numericality_of :item_total
   validates_numericality_of :total
 
-  def self.new_from_cart(cart)
-    return nil if cart.cart_items.empty?
-    order = self.new
-    order.line_items = cart.cart_items.map do |item|
-      LineItem.from_cart_item(item)
+  def add_variant(variant, quantity=1)
+    current_item = line_items.in_order(variant)
+    if current_item
+      current_item.increment_quantity unless quantity > 1
+      current_item.quantity = (current_item.quantity + quantity) if quantity > 1
+    else
+      current_item = LineItem.new(:quantity => quantity, :variant => variant, :price => variant.price)
+      line_items << current_item
     end
-    order
+    current_item
   end
 
   def self.generate_order_number
