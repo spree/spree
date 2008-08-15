@@ -18,16 +18,10 @@ describe LineItem do
     @line_item.errors.should be_invalid(:quantity)
   end
 
-  it "should require the quantity to be positive" do
-    @line_item.quantity = -1
-    @line_item.should_not be_valid
-    @line_item.errors.should be_invalid(:quantity)
-  end
-
   it "should accept a valid quantity of 1" do
     @line_item.quantity = 1
-    variant_proxy = mock_model(Variant)
-    @line_item.stub!(:variant).and_return(variant_proxy)
+    @line_item.price = 10
+    @line_item.stub!(:variant).and_return(mock_model(Variant))
     @line_item.should be_valid
   end
 

@@ -1,4 +1,5 @@
 class LineItem < ActiveRecord::Base
+  before_validation :adjust_quantity
   belongs_to :order
   belongs_to :variant
 
@@ -27,5 +28,8 @@ class LineItem < ActiveRecord::Base
     self.price * self.quantity  
   end
   
+  def adjust_quantity    
+    self.quantity = 0 if self.quantity < 0
+  end
 end
 

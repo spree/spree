@@ -1,5 +1,5 @@
 class Order < ActiveRecord::Base  
-  before_save :update_user_addresses
+  before_save :update_user_addresses, :update_line_items
   
   has_many :line_items, :dependent => :destroy, :attributes => true do
     def in_order(variant)
@@ -31,11 +31,11 @@ class Order < ActiveRecord::Base
     if current_item
       current_item.increment_quantity unless quantity > 1
       current_item.quantity = (current_item.quantity + quantity) if quantity > 1
+      current_item.save
     else
       current_item = LineItem.new(:quantity => quantity, :variant => variant, :price => variant.price)
-      line_items << current_item
+      self.line_items << current_item
     end
-    current_item
   end
 
   def self.generate_order_number
@@ -59,7 +59,14 @@ class Order < ActiveRecord::Base
   def total
     self.total = self.item_total + self.ship_amount + self.tax_amount
   end
-
+  
+  def self.current_order
+    unless session[:order_id].blank?
+      @order = Order.find_or_create_by_id(session[:order_id])
+    else      
+      @order = Order.new
+    end
+  end
 
   # Generate standard options used by ActiveMerchant gateway for authorize, capture, etc. 
   def self.gateway_options(order)
@@ -96,15 +103,21 @@ class Order < ActiveRecord::Base
      :subtotal => order.item_total * 100}  
   end
 
-  protected
-  
-    def update_user_addresses 
-      return unless bill_address
-      new_addys = [bill_address]
-      new_addys << ship_address unless ship_address == bill_address
-      new_addys.each do |addy|
-        user.add_address addy unless user.addresses.include?(addy)         
-      end
-      user.save!
+  private
+  def update_user_addresses 
+    return unless bill_address
+    new_addys = [bill_address]
+    new_addys << ship_address unless ship_address == bill_address
+    new_addys.each do |addy|
+      user.add_address addy unless user.addresses.include?(addy)         
     end
+    user.save!
+  end
+  
+  def update_line_items
+    #self.line_items.reject {|line_item| line_item.quantity == 0}
+    self.line_items.each do |line_item|
+      LineItem.destroy(line_item.id) if line_item.quantity == 0
+    end
+  end
 end
