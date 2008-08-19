@@ -17,6 +17,7 @@ class ExtensionGenerator < Rails::Generator::NamedBase
       m.directory "#{extension_path}/app/views"
       m.directory "#{extension_path}/db/migrate"
       m.directory "#{extension_path}/lib/tasks"
+      m.directory "#{extension_path}/public"
 
       m.template 'README.markdown',              "#{extension_path}/README.markdown"
       m.template 'extension.rb',        "#{extension_path}/#{extension_file_name}.rb"
