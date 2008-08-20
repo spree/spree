@@ -59,7 +59,7 @@ namespace 'spree' do
     files.exclude 'log/*.pid'
     #files.include 'log/.keep'
     files.exclude /^pkg/
-    files.include 'public/.htaccess'
+    files.include 'public/.htaccess.example'
     files.exclude 'public/images/products'
     files.exclude 'tmp/'
     s.files = files.to_a

@@ -62,7 +62,7 @@ class InstanceGenerator < Rails::Generator::Base
       text_files = %w(CHANGELOG CONTRIBUTORS LICENSE INSTALL README.markdown)
       environments = Dir["#{root}/config/environments/*.rb"]
       scripts = Dir["#{root}/script/**/*"].reject { |f| f =~ /(destroy|generate|plugin)$/ }
-      public_files = ["public/.htaccess"] + Dir["#{root}/public/**/*"]
+      public_files = ["public/.htaccess.example"] + Dir["#{root}/public/**/*"]
       
       files = base_dirs + text_files + environments + scripts + public_files
       files.map! { |f| f = $1 if f =~ %r{^#{root}/(.+)$}; f }
