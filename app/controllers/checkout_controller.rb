@@ -123,6 +123,7 @@ class CheckoutController < Spree::BaseController
   end
   
   private
+=begin
       def find_order
         id = session[:order_id]
         unless id.blank?
@@ -135,7 +136,7 @@ class CheckoutController < Spree::BaseController
           @order
         end
       end
-
+=end
       def finalize_order
         Order.transaction do
           if @order.save
