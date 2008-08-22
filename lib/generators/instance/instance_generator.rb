@@ -58,13 +58,14 @@ class InstanceGenerator < Rails::Generator::Base
       m.directory ""
       
       # Standard files and directories
-      base_dirs = %w(config config/environments config/initializers db log script public vendor/plugins vendor/extensions)
+      base_dirs = %w(config config/environments config/initializers db db/sample log script public vendor/plugins vendor/extensions)
       text_files = %w(CHANGELOG CONTRIBUTORS LICENSE INSTALL README.markdown)
       environments = Dir["#{root}/config/environments/*.rb"]
       scripts = Dir["#{root}/script/**/*"].reject { |f| f =~ /(destroy|generate|plugin)$/ }
       public_files = ["public/.htaccess.example"] + Dir["#{root}/public/**/*"]
+      sample_fixtures = Dir["#{root}/db/sample/**/*"]
       
-      files = base_dirs + text_files + environments + scripts + public_files
+      files = base_dirs + text_files + environments + scripts + public_files + sample_fixtures
       files.map! { |f| f = $1 if f =~ %r{^#{root}/(.+)$}; f }
       files.sort!
       
