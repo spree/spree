@@ -19,6 +19,8 @@ public/images/products/*
 public/javascripts/calendar_date_select
 public/plugin_assets
 public/stylesheets/calendar_date_select
+public/images/pp_checkout.gif
+public/stylesheets/language_chooser.css
 spree_dev
 spree_test
 tmp
