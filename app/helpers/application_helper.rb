@@ -26,4 +26,8 @@ module ApplicationHelper
       extras += render :partial => partial, :locals => {:form => f}
     end
   end
+  
+  def flag_image(code)
+    "#{code.to_s.split("-").last.downcase}.png"
+  end
 end

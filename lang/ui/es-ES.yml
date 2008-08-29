@@ -10,6 +10,7 @@ amount: Cuantía
 are_you_sure_category: ¿Está seguro de que quiere eliminar esta categoría?
 are_you_sure_delete_image: ¿Está seguro de que quiere eliminar esta imágen?
 are_you_sure_option_type: ¿Está seguro de que quiere eliminar este tipo de opción?
+available_on: 
 back: Atrás
 back_to_store: Volver a la tienda
 billing_address: Dirección de facturación
@@ -24,12 +25,14 @@ change_language: Cambiar Idioma
 checkout: Pagar
 city: Ciudad
 comp_order: Comp Order
+comp_order_confirmation: 
 configuration: Configuration
 confirm: Confirmar
 confirm_password: Confirme la contraseña
 continue_shopping: Seguir comprando
 country: País
 create: Crear
+create_a_new_account:
 current: Actual
 customer: Cliente
 date: Fecha
@@ -44,6 +47,7 @@ editing_option_types: Editar tipo de opción
 editing_user: Editar usuario
 email_address: Dirección de Correo Electrónico
 email: Correo Electrónico
+email_server_settings_description: 
 empty_cart: Vaciar Cesta
 error: error
 expiration_month: Mes de vencimiento
@@ -53,6 +57,8 @@ extensions: Extensiones
 filename: Nombre de archivo
 final_confirmation: Confirmación Final
 first_name: Nombre
+gateway:
+gateway_setting_description:
 hello_user: Hola usuario
 image: Imágen
 images: Imagenes
@@ -78,6 +84,9 @@ new_category: Nueva categoría
 new_image: Nueva Imágen
 new_option_type: Nuevo tipo de opción
 new_option_value: Nuevo valor de la opción
+new_product: 
+new_property: 
+new_prototype: 
 new_user: Nuevo usuario
 new_variant: Nueva Variante
 next: próximo
@@ -106,10 +115,13 @@ phone: Teléfono
 presentation: Presentación
 previous: Anterior
 price: Precio
+problem_authorizing_card: 
 problems_processing_order: Hemos tenido al procesar su pedido
 process: Procesar
 product: Producto
 products: Productos
+properties: 
+prototypes: 
 qty: Cant.
 remember_me: Recordarme en este equipo
 reports: Reportes
@@ -117,6 +129,7 @@ resend: Volver a enviar
 response_code: Código de respuesta
 sales_total: Total de ventas
 sales_totals: Ventas Totales
+sales_totals_description: 
 search: Buscar
 select: Seleccionar
 shipping_address: Dirección de envío
@@ -128,6 +141,7 @@ sign_up: Registrarme
 sku: Código
 start: Inicio
 state: Comunidad
+state_setting_description:
 status: Estado
 stop: Parar
 store: Tienda
@@ -135,7 +149,10 @@ street_address_2: Dirección (continuación)
 street_address: Dirección
 subtotal: Subtotal
 tax: Impuesto
+tax_categories:
+tax_categories_setting_description: 
 tax_total: IVA
+thank_you_for_your_order: 
 time: Hora
 total: Total
 transaction: Transacción
@@ -152,3 +169,14 @@ welcome_to_sample_store: Bienvenido a la tienda de ejemplo
 what_is_a_cvv: What is a (CVV) Credit Card Code?
 what_is_this: ¿Qué es esto?
 zip: Código postal
+zone: 
+zones: 
+zone_setting_description: 
+incomplete: 
+authorized: 
+captured: 
+canceled: 
+returned: 
+shipped: 
+paid: 
+pending_payment: 
