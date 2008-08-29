@@ -20,6 +20,7 @@ class LocalizationExtension < Spree::Extension
     ApplicationController.class_eval do
       include Localization
       helper_method :t
+      helper_method :flag
     end
 
     User.class_eval do

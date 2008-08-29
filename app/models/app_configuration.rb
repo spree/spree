@@ -16,6 +16,7 @@ class AppConfiguration < ActiveRecord::Base
   preference :order_from, :string, :default => "orders@example.com"
   preference :order_bcc, :string
   preference :store_cc, :boolean, :default => false
+  preference :default_locale, :string, :default => 'en-US'
 
   validates_presence_of :name
   validates_uniqueness_of :name

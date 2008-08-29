@@ -21,7 +21,10 @@ module Localization
     elsif logged_in?
       Locale.code = current_user.preferred_locale
     else
-      Locale.code = local_case(get_valid_lang_from_accept_header)
+    # Temporarily commented out.  This was causing major performance problems (doubling the time of the request).
+    # Replaced with a default locale based on an application preference.
+      #Locale.code = local_case(get_valid_lang_from_accept_header)
+      Spree::Config[:default_locale]
     end
 
     logger.debug "[globalite] Locale set to #{Locale.code}"
@@ -83,6 +86,11 @@ module Localization
   # can be used as a shortcut for translation
   def t(replacement_string = '__localization_missing__', override_key = nil) 
     (override_key || replacement_string.downcase.gsub(/\s/, "_").to_sym).l(replacement_string)
+  end
+  
+  # returns the flag image for the specified localization code (this is much faster then looking it up in the lang file)
+  def flag(name, code)
+    filename = "flags/#{code.to_s[3,4].downcase}.png"
   end
 
 end
