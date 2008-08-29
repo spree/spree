@@ -12,6 +12,7 @@ are_you_sure_category: Tem certeza que quer apagar esta categoria?
 are_you_sure_delete_image: Tem certeza que quer apagar esta imagem?
 are_you_sure_option_type: Tem certeza que quer apagar este tipo de opção?
 are_you_sure_delete: Tem certeza que quer apagar este registro?
+available_on: Disponível em
 back: Voltar
 back_to_store: Voltar à Loja
 bill_address: Endereço da Conta
@@ -27,15 +28,17 @@ change_language: Mudar Língua
 checkout: Finalizar
 city: Cidade
 comp_order: Computar Pedido
+comp_order_confirmation: O cliente não será cobrado. Tem certeza que quer computar este pedido?
 configuration: Configuração
 configuration_options: Opções de Configuração
 configurations: Configurações
 confirm: Confirme
 confirm_password: Confirmação de Senha
 continue_shopping: Continue comprando
-continue_shopping: Continue a compra
+continue_shopping: Continue sua compra
 country: País
 create: Criar
+create_a_new_account: Crie uma nova conta
 current: Atual
 customer: Cliente
 date: Data
@@ -52,7 +55,8 @@ editing_tax_category: Editando Categoria de Taxa
 editing_user: Editando Usuário
 email_address: Endereço de Email
 email: Email
-empty_cart: Carrinho Vazio
+email_server_settings_description: Ajustar as configurações do servidor de email.
+empty_cart: Esvaziar Carrinho
 error: erro
 expiration_month: Mês de Expiração
 expiration_year: Ano de Expiração
@@ -62,6 +66,7 @@ filename: Nome do arquivo
 final_confirmation: Confirmação Final
 first_name: Primeiro Nome
 gateway: Gateway
+gateway_setting_description: Selecionar um gateway de pagamento e ajustar suas configurações.
 hello_user: Olá Usuário
 image: Imagem
 images: Imagens
@@ -78,9 +83,10 @@ listing_reports: Listando Relatórios
 listing_tax_categories: Listando Categorias de Taxa
 listing_users: Listando Usuários
 logged_in_as: Logado como
-log_in: Entrar
+log_in: Entre
 login_name: Login
 logout: Sair
+mail_server_settings: Configuração do Servidor de E-mail
 master_price: Preço Principal
 my_account: Minha Conta
 name: Nome
@@ -88,6 +94,9 @@ new_category: Nova categoria
 new_image: Nova Imagem
 new_option_type: Novo Tipo de Opção
 new_option_value: Nova Opção de Valor
+new_product: Novo Produto
+new_property: Nova Propriedade
+new_prototype: Novo Protótipo
 new_state: Novo Estado
 new_tax_category: Nova Categoria de Taxa
 new_user: Novo Usuário
@@ -120,10 +129,13 @@ phone: Fone
 presentation: Apresentação
 previous: anterior
 price: Preço
+problem_authorizing_card: Problema na autorização do cartão
 problems_processing_order: Tivemos problemas processando este pedido
-process: Processo
+process: Processar
 product: Produto
 products: Produtos
+properties: Propriedades
+prototypes: Protótipos
 qty: Qtde.
 remember_me: Lembre-se de mim
 reports: Relatórios
@@ -131,12 +143,13 @@ resend: Reenviar
 response_code: Código de Resposta
 sales_total: Total de Venda
 sales_totals: Total de Vendas
+sales_totals_description: Total de Vendas para todos os Pedidos
 search: Pesquisa
 select: Selecionar
 ship_address: Endereço da Entrega
 shipping_address: Endereço de Entrega
 shipping_method: Método de Entrega
-shipping: Entregando
+shipping: Entrega
 shipping_total: Total de Entrega
 shopping_cart: Carrinho de Compra
 sign_up: Cadastrar
@@ -144,6 +157,7 @@ sku: SKU
 start: Iniciar
 state: Estado
 states: Estados
+state_setting_description: Administrar a lista de estados/províncias associados com cada país.
 status: Status
 stop: Parar
 store: Loja
@@ -153,7 +167,9 @@ subtotal: Sub-total
 system: Sistema
 tax: Taxa
 tax_categories: Categorias de Taxa
+tax_categories_setting_description: Ajustar as categorias de taxas para identificar quais produtos devem ser taxados.
 tax_total: Taxa Total
+thank_you_for_your_order: Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle.
 time: Horário
 total: Total
 transaction: Transação
@@ -172,3 +188,12 @@ what_is_this: O que é isso?
 zip: Cep
 zone: Zona
 zones: Zonas
+zone_setting_description: Coleção de países, estados e outras zonas a serem usados nos cálculos.
+incomplete: Incompleto
+authorized: Autorizado
+captured: Capturado
+canceled: Cancelado
+returned: Devolvido
+shipped: Entregue
+paid: Pago
+pending_payment: Pendente de Pagamento

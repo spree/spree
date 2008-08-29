@@ -1,0 +1,11 @@
+ext_tax_calculator_action: Action
+ext_tax_calculator_amount: Amount
+ext_tax_calculator_category: Category
+ext_tax_calculator_create: Create
+ext_tax_calculator_delete: Delete
+ext_tax_calculator_edit: Edit
+ext_tax_calculator_new_tax_rate: New Tax Rate
+ext_tax_calculator_tax_rates: Tax Rates
+ext_tax_calculator_tax_rates_description: Tax rates setup and configuration.
+ext_tax_calculator_tax_type: Tax Type
+ext_tax_calculator_zone: Zone

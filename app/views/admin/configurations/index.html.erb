@@ -10,23 +10,23 @@
   <tbody>
     <tr>
       <td><%= link_to t("Mail Server Settings"), admin_mail_settings_path %></td>
-      <td>Set email server settings.</td>
+      <td><%= Globalite.localize(:email_server_settings_description) %></td>
     </tr>
     <tr>
       <td><%= link_to t("Tax Categories"), admin_tax_categories_path %></td>
-      <td>Set up tax categories to identify which products should be taxable.</td>
+      <td><%= Globalite.localize(:tax_categories_setting_description) %></td>
     </tr>
     <tr>
       <td><%= link_to t("Zones"), admin_zones_path %></td>
-      <td>Collections of countries, states or other zones to be used in various calculations.</td>
+      <td><%= Globalite.localize(:zone_setting_description) %></td>
     </tr>
     <tr>
       <td><%= link_to t("States"), admin_country_states_path(214) %></td>
-      <td>Administer the list of states/provinces associated with each country.</td>
+      <td><%= Globalite.localize(:state_setting_description) %></td>
     </tr>
     <tr>
       <td><%= link_to t("Gateway"), admin_gateways_path %></td>
-      <td>Select a payment gateway and configure its settings.</td>
+      <td><%= Globalite.localize(:gateway_setting_description) %></td>
     </tr>
     <% @extension_links.each do |link_map| %>
       <tr>

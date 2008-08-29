@@ -15,7 +15,7 @@
       <td><%= error_message_on "#{address_type}_address", :address1 -%></td>
     </tr>
     <tr>
-      <td><%= t("Street Address (cont'd)") %></td>
+      <td><%= Globalite.localize(:street_address_2) %></td>
       <td><%= a.text_field :address2 %></td>
       <td></td>
     </tr>

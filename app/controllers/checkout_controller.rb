@@ -62,7 +62,7 @@ class CheckoutController < Spree::BaseController
       
       unless response.success?
         # TODO - optionally handle gateway down scenario by accepting the order and putting into a special state
-        msg = "Problem authorizing credit card ... #{response.params['message']}"
+        msg = "#{Globalize.localize(:problem_authorizing_card)} ... #{response.params['message']}"
         logger.error(msg)
         flash.now[:error] = msg
         render :action => 'final_confirmation' and return

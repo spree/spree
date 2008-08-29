@@ -16,8 +16,8 @@
           <tbody>     
             <% @reports.each do |key, value| %>
             <tr class="<%= cycle('even', 'odd') %>">
-              <td><%=link_to value[:name], :action => key%></td>
-              <td><%=value[:description]%></td>
+              <td><%= link_to t(value[:name]), :action => key %></td>
+              <td><%= t(value[:description]) %></td>
             </tr>
             <% end %>
           </tbody>
