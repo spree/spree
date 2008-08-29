@@ -24,7 +24,7 @@ module Localization
     # Temporarily commented out.  This was causing major performance problems (doubling the time of the request).
     # Replaced with a default locale based on an application preference.
       #Locale.code = local_case(get_valid_lang_from_accept_header)
-      Spree::Config[:default_locale]
+      Locale.code = Spree::Config[:default_locale]
     end
 
     logger.debug "[globalite] Locale set to #{Locale.code}"
