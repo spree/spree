@@ -87,10 +87,5 @@ module Localization
   def t(replacement_string = '__localization_missing__', override_key = nil) 
     (override_key || replacement_string.downcase.gsub(/\s/, "_").to_sym).l(replacement_string)
   end
-  
-  # returns the flag image for the specified localization code (this is much faster then looking it up in the lang file)
-  def flag(name, code)
-    filename = "flags/#{code.to_s[3,4].downcase}.png"
-  end
 
 end
