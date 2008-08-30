@@ -15,7 +15,7 @@ class Order < ActiveRecord::Base
   belongs_to :bill_address, :class_name => "Address", :foreign_key => :bill_address_id
   belongs_to :ship_address, :class_name => "Address", :foreign_key => :ship_address_id
 
-  enumerable_constant :status, :constants => ORDER_STATES
+  enumerable_constant :status, :constants => [:incomplete, :authorized, :captured, :canceled, :returned, :shipped, :paid, :pending_payment, :abandoned]
   enumerable_constant :ship_method, {:constants => SHIPPING_METHODS, :no_validation => true}
 
   #TODO - validate presence of user once we have the means to add one through controller
@@ -25,6 +25,20 @@ class Order < ActiveRecord::Base
   validates_numericality_of :ship_amount
   validates_numericality_of :item_total
   validates_numericality_of :total
+
+  # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
+  state_machine :checkout_state, :initial => 'editing' do    
+    #after_enter :confirming, :finalize!    
+    event :next do
+      transition :to => 'addressing', :from => 'editing'
+      transition :to => 'paying', :from => 'addressing'
+      transition :to => 'confirming', :from => 'paying'
+    end
+    event :previous do
+      transition :to => 'addressing', :from => 'paying'
+      transition :to => 'editing', :from => 'addressing'
+    end
+  end
 
   def add_variant(variant, quantity=1)
     current_item = line_items.in_order(variant)
@@ -115,9 +129,13 @@ class Order < ActiveRecord::Base
   end
   
   def update_line_items
-    #self.line_items.reject {|line_item| line_item.quantity == 0}
     self.line_items.each do |line_item|
       LineItem.destroy(line_item.id) if line_item.quantity == 0
     end
   end
+  
+  def finalize!
+    #TODO 
+  end
+
 end
