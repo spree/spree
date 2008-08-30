@@ -5,9 +5,9 @@
 		<td valign="top">
 			<table class="admin-report" width="545">
 			  <tr>
-			    <td><b>Image</b></td>
-			    <td><b>Name</b></td>
-			    <td><b>Master Price</b></td>
+			    <td><b><%= t("Image") %></b></td>
+			    <td><b><%= t("Name") %></b></td>
+			    <td><b><%= t("Master Price") %></b></td>
 			    <td/>
 			  </tr>
 			<% @products.each do |product| %>
@@ -56,4 +56,4 @@
 	</tr>
 </table>
 
-<%= link_to "New Product", new_object_url %>
+<%= link_to t("New Product"), new_object_url %>

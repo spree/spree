@@ -10,6 +10,7 @@ amount: Summe
 are_you_sure_category: Are you sure you want to delete this category?
 are_you_sure_delete_image: Are you sure you want to delete this image?
 are_you_sure_option_type: Are you sure you want to delete this option type?
+available_on: 
 back: Zurück
 back_to_store: Zurück zum shop
 bill_address: Rechnungsaddresse
@@ -25,12 +26,14 @@ change_language: Sprache wechseln
 checkout: Zur Kasse
 city: Stadt
 comp_order: Bestellung Abbrechen
+comp_order_confirmation: 
 configuration: Configuration
 confirm: Bestätigen
 confirm_password: Passwort Bestätigen
 continue_shopping: Weiter Einkaufen
 continue_shopping: Weiter Einkaufen
 country: Land
+create_a_new_account:
 create: Einfügen
 current: Stand
 customer: Kunde
@@ -47,6 +50,7 @@ editing_option_types: Option Bearbeiten
 editing_user: Benutzer Bearbeiten
 email_address: Email Addresse
 email: Email
+email_server_settings_description: 
 empty_cart: Warenkorb Leeren
 error: Fehler
 expiration_month: Gültig bis (Monat)
@@ -56,6 +60,8 @@ extensions: Erweiterungen
 filename: Dateiname
 final_confirmation: End Bestätigung
 first_name: Vorname
+gateway:
+gateway_setting_description:
 hello_user: Hallo User
 image: Bild
 images: Bilder
@@ -82,6 +88,9 @@ new_category: Neute Kategorie
 new_image: Neues Bild
 new_option_type: Neue Option
 new_option_value: Neuer Optionswert
+new_product: 
+new_property: 
+new_prototype: 
 new_user: Neuer Benutzer
 new_variant: New Variant
 next: weiter
@@ -110,10 +119,13 @@ phone: Telefon
 presentation: Anzeige
 previous: zurück
 price: Preis
+problem_authorizing_card: 
 problems_processing_order: Ihre Bestellung konnte nicht bearbetet werden
 process: Abschicken
 product: Produkt
 products: Produkte
+properties: 
+prototypes: 
 qty: Anz
 remember_me: Details auf diesem Komputer speichern
 reports: Berichte
@@ -121,6 +133,7 @@ resend: Resend
 response_code: Response Code
 sales_total: Verkauf Gesamt
 sales_totals: Gesamt Verkaufszahlen
+sales_totals_description: 
 search: Suchen
 select: Select
 ship_address: Lieferaddresse
@@ -133,6 +146,7 @@ sign_up: Sign up
 sku: SKU
 start: Von
 state: Bundesland
+state_setting_description:
 status: Status
 stop: Bis
 store: Store
@@ -141,6 +155,7 @@ street_address: Straße
 subtotal: Zwischensumme
 tax: MwSt.
 tax_total: MwSt. Gesamt
+thank_you_for_your_order: 
 time: Zeit
 total: Gesamt
 transaction: Transaktion
@@ -157,3 +172,14 @@ welcome_to_sample_store: Willkommen im Beispiel Shop
 what_is_a_cvv: Was ist der (CVV) Kredit Karten Code?
 what_is_this: Was ist das?
 zip: PLZ
+zone: 
+zones: 
+zone_setting_description: 
+incomplete: 
+authorized: 
+captured: 
+canceled: 
+returned: 
+shipped: 
+paid: 
+pending_payment: 

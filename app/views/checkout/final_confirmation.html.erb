@@ -92,6 +92,6 @@
 <br/>
 <%= submit_tag t("Process") %>   
 <% if logged_in? and current_user.has_role?("admin") %>
-<%= link_to t("Comp Order"), {:action => "comp"}, {:confirm => "Customer will not be charged.  Are you sure you want to comp this order?"} %>
+<%= link_to t("Comp Order"), {:action => "comp"}, {:confirm => Globalite.localize(:comp_order_confirmation)} %>
 <% end %>
 <% end %>
