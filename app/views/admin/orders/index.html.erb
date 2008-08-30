@@ -28,7 +28,7 @@
               <td><%= number_to_currency order.total %></td>
               <td>
                 <% action_links(order).each do |a| %>
-                  <%= link_to a.to_s.humanize.titleize, :action => a, :id => order -%>
+                  <%= link_to Globalite.localize("order_operation_#{a.to_s}".to_sym), :action => a, :id => order -%>
                 <% end %>
               </td>
             </tr>
@@ -71,7 +71,7 @@
             </thead>
             <tbody>
               <tr>
-                <td><%= t("Order #") %></td>
+                <td><%= Globalite.localize(:order_number) %></td>
                 <td>
                   <%= f.text_field :order_num, :size=>15 %>
                 </td>
@@ -79,7 +79,7 @@
               <tr>
                 <td><%= t("Status") %></td>
                 <td>
-                  <%= f.collection_select :status, @status_options, :id, :title, {:include_blank => true}, {:style => "width:100%"}%>
+                  <%= f.collection_select :status, @status_options, :id, :title_translated, {:include_blank => true}, {:style => "width:100%"}%>
                 </td>
               </tr>
               <tr>

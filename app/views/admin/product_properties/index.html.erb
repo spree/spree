@@ -15,12 +15,12 @@
     <tbody id="product_properties">
   		<%= f.render_associated_form(@product.product_properties) %>
   		<tr id="none">
-  		  <td colspan="3"><%= @product.product_properties.empty? ? "None." : "" %></td>
+  		  <td colspan="3"><%= @product.product_properties.empty? ? "#{t("None")}." : "" %></td>
   		</tr>
   	</tbody>
   </table>
   <input type="hidden" name="clear_product_properties" value="true">
-  <%= f.add_associated_link("Add Product Properties", @product.product_properties.build, 
+  <%= f.add_associated_link(t("Add Product Properties"), @product.product_properties.build, 
                             {:onclick => "Element.hide('none');"}) %>
   &nbsp;&nbsp;
 	<span id="new_ptype_link">

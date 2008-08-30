@@ -4,11 +4,11 @@
 <table class="basic-table">
 	<thead>
 		<tr>
-			<th>Options</th>
-			<th>Price</th>
-		  <th>SKU</th>
-		  <th>On Hand</th>
-			<th>Action</th>
+			<th><%= t("Options") %></th>
+			<th><%= t("Price") %></th>
+		  <th><%= t("SKU") %></th>
+		  <th><%= t("On Hand") %></th>
+			<th><%= t("Action") %></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -28,7 +28,7 @@
       </tr>
     <% end %>
     <% unless @product.variants? %>
-      <tr><td colspan="5">None.</td></tr>
+      <tr><td colspan="5"><%= t("None") %>.</td></tr>
     <% end %>
   </tbody>
 </table>

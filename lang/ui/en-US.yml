@@ -3,6 +3,8 @@ account: Account
 action: Action
 add_category: Add Category
 add_option_type: Add Option Type
+add_option_types: Add Option Types
+add_product_properties: Add Product Properties
 address_information: Address Information
 add_to_cart: Add To Cart
 adjustment: Adjustment
@@ -39,6 +41,7 @@ continue_shopping: Continue Shopping
 country: Country
 create: Create
 create_a_new_account: Create a new account
+credit_card: Credit Card
 current: Current
 customer: Customer
 date: Date
@@ -104,6 +107,7 @@ new_variant: New Variant
 new_zone: New Zone
 next: Next
 no_items_in_cart: 
+none: None
 none_available: None Available
 number: Number
 on_hand: On Hand
@@ -111,6 +115,7 @@ operation: Operation
 options: Options
 option_types: Option Types
 option_Values: Option Values
+order_number: Order #
 order_confirmation_note: 
 order_date: Order Date
 order_details: Order Details
@@ -134,6 +139,8 @@ problems_processing_order: We had problems processing your order
 process: Process
 product: Product
 products: Products
+product_properties: Product Properties
+property: Property
 properties: Properties
 prototypes: Prototypes
 qty: Qty
@@ -146,6 +153,7 @@ sales_total: Sales Total
 sales_totals: Sales Totals
 search: Search
 select: Select
+select_from_prototype: Select From Prototype
 ship_address: Ship Address
 shipping_address: Shipping Address
 shipping_method: Shipping Method
@@ -166,6 +174,7 @@ street_address: Street Address
 subtotal: Subtotal
 system: System
 tax: Tax
+tax_category: Tax Category
 tax_categories: Tax Categories
 tax_categories_setting_description: Set up tax categories to identify which products should be taxable.
 tax_total: Tax Total
@@ -179,6 +188,7 @@ update: Update
 use_different_shipping_address: Use Different Shipping Address
 users: Users
 user: User
+value: Value
 variants: Variants
 version: Version
 website: Website
@@ -189,11 +199,19 @@ zip: Zip
 zone: Zone
 zones: Zones
 zone_setting_description: Collections of countries, states or other zones to be used in various calculations.
-incomplete: Incomplete
-authorized: Authorized
-captured: Captured
-canceled: Canceled
-returned: Returned
-shipped: Shipped
-paid: Paid
-pending_payment: Pending Payment
+order_status_incomplete: Incomplete
+order_status_authorized: Authorized
+order_status_captured: Captured
+order_status_canceled: Canceled
+order_status_remove: Remove
+order_status_returned: Returned
+order_status_shipped: Shipped
+order_status_paid: Paid
+order_status_pending_payment: Pending Payment
+order_operation_authorize: Authorize
+order_operation_capture: Capture
+order_operation_cancel: Cancel
+order_operation_return: Return
+order_operation_ship: Ship
+order_operation_comp: Comp
+order_operation_delete: Delete

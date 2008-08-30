@@ -2,7 +2,9 @@ account: Cuenta
 action: Acción
 add_category: Añadir Categoría
 add_option_type: Añadir tipo de opción
+add_option_types: Añadir tipo de opcións
 address_information: Información de Dirección
+add_product_properties: 
 add_to_cart: Añadir a la cesta
 adjustment: Ajuste
 administration: Administración
@@ -33,6 +35,7 @@ continue_shopping: Seguir comprando
 country: País
 create: Crear
 create_a_new_account:
+credit_card: 
 current: Actual
 customer: Cliente
 date: Fecha
@@ -91,6 +94,7 @@ new_user: Nuevo usuario
 new_variant: Nueva Variante
 next: próximo
 no_items_in_cart: La cesta está vacía
+none: 
 none_available: No hay nada que mostrar
 number: Número
 on_hand: On Hand
@@ -98,6 +102,7 @@ operation: Operación
 options: Opciones
 option_types: Tipos de opción
 option_Values: Valores de opción
+order_number: 
 order_confirmation_note: Nota de confirmación de pedido
 order_date: Fecha de pedido
 order_details: Detalles del pedido
@@ -120,10 +125,13 @@ problems_processing_order: Hemos tenido al procesar su pedido
 process: Procesar
 product: Producto
 products: Productos
+product_properties: 
+property: 
 properties: 
 prototypes: 
 qty: Cant.
 remember_me: Recordarme en este equipo
+remove: 
 reports: Reportes
 resend: Volver a enviar
 response_code: Código de respuesta
@@ -132,6 +140,7 @@ sales_totals: Ventas Totales
 sales_totals_description: 
 search: Buscar
 select: Seleccionar
+select_from_prototype: 
 shipping_address: Dirección de envío
 shipping_method: Método de envío
 shipping: Envío
@@ -149,7 +158,8 @@ street_address_2: Dirección (continuación)
 street_address: Dirección
 subtotal: Subtotal
 tax: Impuesto
-tax_categories:
+tax_category: 
+tax_categories: 
 tax_categories_setting_description: 
 tax_total: IVA
 thank_you_for_your_order: 
@@ -162,6 +172,7 @@ update: Actualizar
 use_different_shipping_address: Usar una dirección de envío diferente
 users: Usuarios
 user: Usuario
+value: 
 variants: Variantes
 version: Versión
 website: Página web
@@ -172,11 +183,18 @@ zip: Código postal
 zone: 
 zones: 
 zone_setting_description: 
-incomplete: 
-authorized: 
-captured: 
-canceled: 
-returned: 
-shipped: 
-paid: 
-pending_payment: 
+order_status_incomplete: 
+order_status_authorized: 
+order_status_captured: 
+order_status_canceled: 
+order_status_returned: 
+order_status_shipped: 
+order_status_paid: 
+order_status_pending_payment: 
+order_operation_authorize: 
+order_operation_capture: 
+order_operation_cancel: 
+order_operation_return: 
+order_operation_ship: 
+order_operation_comp: 
+order_operation_delete: 

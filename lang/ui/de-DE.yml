@@ -2,6 +2,8 @@ account: Konto
 action: Aktion
 add_category: Kategorie hinzufügen 
 add_option_type: Option hinzufügen
+add_option_types: Option hinzufügens
+add_product_properties: 
 address_information: Adres Information
 add_to_cart: In den Warenkorb
 adjustment: Anpassung
@@ -35,6 +37,7 @@ continue_shopping: Weiter Einkaufen
 country: Land
 create_a_new_account:
 create: Einfügen
+credit_card: 
 current: Stand
 customer: Kunde
 date: Datum
@@ -95,6 +98,7 @@ new_user: Neuer Benutzer
 new_variant: New Variant
 next: weiter
 no_items_in_cart: 
+none: 
 none_available: None Available
 number: Nummer
 on_hand: Auf Lager
@@ -102,6 +106,7 @@ operation: Operation
 options: Optionen
 option_types: Optionen
 option_Values: Options Werte
+order_number: 
 order_confirmation_note: 
 order_date: Bestelldatum
 order_details: Bestellung Details
@@ -124,10 +129,13 @@ problems_processing_order: Ihre Bestellung konnte nicht bearbetet werden
 process: Abschicken
 product: Produkt
 products: Produkte
+product_properties: 
+property: 
 properties: 
 prototypes: 
 qty: Anz
 remember_me: Details auf diesem Komputer speichern
+remove: 
 reports: Berichte
 resend: Resend
 response_code: Response Code
@@ -136,6 +144,7 @@ sales_totals: Gesamt Verkaufszahlen
 sales_totals_description: 
 search: Suchen
 select: Select
+select_from_prototype: 
 ship_address: Lieferaddresse
 shipping_address: Lieferaddresse
 shipping_method: Liefermethode
@@ -154,6 +163,9 @@ street_address_2: Straße (Feld 2)
 street_address: Straße
 subtotal: Zwischensumme
 tax: MwSt.
+tax_category: 
+tax_categories: 
+tax_categories_setting_description: 
 tax_total: MwSt. Gesamt
 thank_you_for_your_order: 
 time: Zeit
@@ -165,6 +177,7 @@ update: Speichern
 use_different_shipping_address: Andere Lieferaddresse verwenden
 users: Benutzer
 user: Benutzer
+value: 
 variants: Varianten
 version: Version
 website: Webseite
@@ -175,11 +188,18 @@ zip: PLZ
 zone: 
 zones: 
 zone_setting_description: 
-incomplete: 
-authorized: 
-captured: 
-canceled: 
-returned: 
-shipped: 
-paid: 
-pending_payment: 
+order_status_incomplete: 
+order_status_authorized: 
+order_status_captured: 
+order_status_canceled: 
+order_status_returned: 
+order_status_shipped: 
+order_status_paid: 
+order_status_pending_payment: 
+order_operation_authorize: 
+order_operation_capture: 
+order_operation_cancel: 
+order_operation_return: 
+order_operation_ship: 
+order_operation_comp: 
+order_operation_delete: 
