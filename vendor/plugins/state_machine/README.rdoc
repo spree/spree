@@ -1,0 +1,132 @@
+== state_machine
+
++state_machine+ adds support for creating state machines for attributes within
+a model.
+
+== Resources
+
+API
+
+* http://api.pluginaweek.org/state_machine
+
+Bugs
+
+* http://pluginaweek.lighthouseapp.com/projects/13288-state_machine
+
+Development
+
+* http://github.com/pluginaweek/state_machine
+
+Source
+
+* git://github.com/pluginaweek/state_machine.git
+
+== Description
+
+State machines make it dead-simple to manage the behavior of a model.  Too often,
+the status of a record is kept by creating multiple boolean columns in the table
+and deciding how to behave based on the values in those columns.  This can become
+cumbersome and difficult to maintain when the complexity of your models starts to
+increase.
+
++state_machine+ simplifies this design by introducing the various parts of a real
+state machine, including states, events, and transitions.  However, the api is
+designed to be similar to ActiveRecord in terms of validations and callbacks,
+making it so simple you don't even need to know what a state machine is :)
+
+== Usage
+
+=== Example
+
+Below is an example of many of the features offered by this plugin, including
+* Initial states
+* State callbacks
+* Event callbacks
+* Conditional transitions
+
+  class Vehicle < ActiveRecord::Base
+    state_machine :state, :initial => 'idling' do
+      before_exit   'parked', :put_on_seatbelt
+      after_enter   'parked', Proc.new {|vehicle| vehicle.update_attribute(:seatbelt_on, false)}
+      
+      event :park do
+        transition :to => 'parked', :from => %w(idling first_gear)
+      end
+      
+      event :ignite do
+        transition :to => 'stalled', :from => 'stalled'
+        transition :to => 'idling', :from => 'parked'
+      end
+      
+      event :idle do
+        transition :to => 'idling', :from => 'first_gear'
+      end
+      
+      event :shift_up do
+        transition :to => 'first_gear', :from => 'idling'
+        transition :to => 'second_gear', :from => 'first_gear'
+        transition :to => 'third_gear', :from => 'second_gear'
+      end
+      
+      event :shift_down do
+        transition :to => 'second_gear', :from => 'third_gear'
+        transition :to => 'first_gear', :from => 'second_gear'
+      end
+      
+      event :crash, :after => :tow! do
+        transition :to => 'stalled', :from => %w(first_gear second_gear third_gear), :unless => :auto_shop_busy?
+      end
+      
+      event :repair, :after => :fix! do
+        transition :to => 'parked', :from => 'stalled', :if => :auto_shop_busy?
+      end
+    end
+    
+    def tow!
+    end
+    
+    def fix!
+    end
+    
+    def auto_shop_busy?
+      false
+    end
+  end
+
+Using the above model as an example, you can interact with the state machine
+like so:
+
+  vehicle = Vehicle.create    # => #<Vehicle id: 1, seatbelt_on: false, state: "parked">
+  vehicle.ignite              # => true
+  vehicle                     # => #<Vehicle id: 1, seatbelt_on: true, state: "idling">
+  vehicle.shift_up            # => true
+  vehicle                     # => #<Vehicle id: 1, seatbelt_on: true, state: "first_gear">
+  vehicle.shift_up            # => true
+  vehicle                     # => #<Vehicle id: 1, seatbelt_on: true, state: "second_gear">
+  
+  # The bang (!) operator can raise exceptions if the event fails
+  vehicle.park!               # => PluginAWeek::StateMachine::InvalidTransition: Cannot transition via :park from "second_gear"
+
+== Tools
+
+Jean Bovet - {Visual Automata Simulator}[http://www.cs.usfca.edu/~jbovet/vas.html].
+This is a great tool for "simulating, visualizing and transforming finite state
+automata and Turing Machines".  This tool can help in the creation of states and
+events for your models.  It is cross-platform, written in Java.
+
+== Testing
+
+Before you can run any tests, the following gem must be installed:
+* plugin_test_helper[http://github.com/pluginaweek/plugin_test_helper]
+
+To run against a specific version of Rails:
+
+  rake test RAILS_FRAMEWORK_ROOT=/path/to/rails
+
+== Dependencies
+
+* Rails 2.1 or later
+
+== References
+
+* Scott Barron - acts_as_state_machine[http://elitists.textdriven.com/svn/plugins/acts_as_state_machine]
