@@ -53,8 +53,8 @@ module Spree
     def load_sample_data
       # load initial database fixtures (in db/sample/*.yml) into the current environment's database
       ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
-      Dir.glob(File.join(SPREE_ROOT, "db", 'sample', '*.{yml,csv}')).each do |fixture_file|
-        Fixtures.create_fixtures("#{SPREE_ROOT}/db/sample", File.basename(fixture_file, '.*'))
+      Dir.glob(File.join(RAILS_ROOT, "db", 'sample', '*.{yml,csv}')).each do |fixture_file|
+        Fixtures.create_fixtures("#{RAILS_ROOT}/db/sample", File.basename(fixture_file, '.*'))
       end
 
       # make product images available to the app

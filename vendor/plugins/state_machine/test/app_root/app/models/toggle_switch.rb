@@ -1,0 +1,2 @@
+class ToggleSwitch < Switch
+end
