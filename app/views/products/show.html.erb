@@ -2,59 +2,59 @@
   <tr>
     <td valign="top">
       <div id="product-image">
-	<%= render :partial => 'image' -%>
+				<%= render :partial => 'image' -%>
       </div>
       <div id="product-thumbnails">
         <%= render :partial => 'thumbnails', :locals => {:product => @product} -%>
       </div>
     </td>
     <td valign="top">
-      <% form_for :product, :url => {:controller => :cart, :action => :add} do |f| %>
-      <table>
-	<tr>
-	  <td class="product-name"><%= @product.name %></td>
+      <% form_for :order, :url => orders_url, :method => :put do |f| %>
+	      <table>
+					<tr>
+					  <td class="product-name"><%= @product.name %></td>
+					</tr>
+					<tr>
+					  <td class="product-description"><%= product_description(@product) %></td>
+					</tr>
+					<tr>
+					  <td>
+					    <%="<span class='product-price'>#{t("Price")}: </span> #{product_price(@product)}" if product_price(@product) %>
+					  </td>
+					</tr>
+					<% if @product.variants? %>
+						<tr>
+						  <td class="product-variants"><%= t("Variants") %>:</td>
+						</tr>
+						<tr>
+						  <td>
+						    <div id="variants">
+						      <ul>
+										<% @product.variants.each do |v| %>
+											<% next if v.option_values.empty? %>
+											<li>
+											  <input type="radio" name="id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked="checked"' : '' %>/>
+											  <%= variant_options v%>
+											  <% if variant_price_diff v %>
+											  	<span class="price-diff"><%= variant_price_diff v %></span>
+											  <% end %>
+											</li>
+										<% end%>
+						      </ul>
+						    </div>
+						  </td>
+						</tr>
+					<% else %>
+	  				<tr><td><input type="hidden" name="id" value="<%=@product.variants.first.id %>"/></td></tr>
+					<% end%>						
+					<tr>
+					  <td>
+					    <%= submit_tag t('Add To Cart') %>
+					  </td>
+					</tr>
+				</table>
+			<% end %>
+		</td>
 	</tr>
-	<tr>
-	  <td class="product-description"><%= product_description(@product) %></td>
-	</tr>
-	<tr>
-	  <td>
-	    <%="<span class='product-price'>#{t("Price")}: </span> #{product_price(@product)}" if product_price(@product) %>
-	  </td>
-	</tr>
-	<% if @product.variants? %>
-	<tr>
-	  <td class="product-variants"><%= t("Variants") %>:</td>
-	</tr>
-	<tr>
-	  <td>
-	    <div id="variants">
-	      <ul>
-		<% @product.variants.each do |v| %>
-		<% next if v.option_values.empty? %>
-		<li>
-		  <input type="radio" name="id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked="checked"' : '' %>/>
-		  <%= variant_options v%>
-		  <% if variant_price_diff v %>
-		  <span class="price-diff"><%= variant_price_diff v %></span>
-		  <% end %>
-		</li>
-		<% end%>
-	      </ul>
-	    </div>
-	  </td>
-	</tr>
-	<% else %>
-  <tr><td><input type="hidden" name="id" value="<%=@product.variants.first.id %>"/></td></tr>
-	<% end%>						
-	<tr>
-	  <td>
-	    <%= submit_tag t('Add To Cart') %>
-	  </td>
-	</tr>
-      </table>
-      <% end %>
-    </td>
-  </tr>
 </table>
 

@@ -4,8 +4,6 @@ class ProductsController < Admin::BaseController
   resource_controller
   actions :show, :index
 
-  before_filter :find_cart
-
   index do
     before do
       @product_cols = 3
