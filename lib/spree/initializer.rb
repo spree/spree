@@ -107,11 +107,11 @@ module Spree
 
     def load_plugins
       super
-      extension_loader.load_extensions
+      extension_loader.load_extensions unless $rails_gem_installer
     end
 
     def after_initialize
-      extension_loader.activate_extensions
+      extension_loader.activate_extensions unless $rails_gem_installer
       super
     end
 =begin
