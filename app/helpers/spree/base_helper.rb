@@ -2,7 +2,7 @@ module Spree::BaseHelper
 
   def cart_link
     return new_order_url if session[:order_id].blank?
-    return edit_order_url(Order.find_or_create_by_id session[:order_id])
+    return edit_order_url(Order.find_or_create_by_id(session[:order_id]))
   end
   
   def windowed_pagination_links(pagingEnum, options)
