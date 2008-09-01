@@ -6,10 +6,15 @@ class AddressesController < Admin::BaseController
   
   belongs_to :order, :polymorphic => true
   
+  create.response do |wants|
+    wants.html do 
+      next_step
+    end
+  end
+  
   update.response do |wants|
     wants.html do 
-      @order.next!
-      redirect_to checkout_order_url(@order)
+      next_step
     end
   end
   
@@ -17,6 +22,11 @@ class AddressesController < Admin::BaseController
   def load_data
     @states = State.find(:all, :order => 'name')
     @countries = Country.find(:all)
+  end
+  
+  def next_step
+    @order.next!
+    redirect_to checkout_order_url(@order)
   end
   
   def check_existing

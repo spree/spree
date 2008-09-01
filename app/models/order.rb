@@ -29,14 +29,14 @@ class Order < ActiveRecord::Base
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :checkout_state, :initial => 'edit' do    
-    #after_enter :confirming, :finalize!    
+    #after_enter :confirm, :finalize!    
     event :next do
       transition :to => 'address', :from => 'edit'
-      transition :to => 'pay', :from => 'address'
-      transition :to => 'confirm', :from => 'pay'
+      transition :to => 'payment', :from => 'address'
+      transition :to => 'confirm', :from => 'payment'
     end
     event :previous do
-      transition :to => 'address', :from => 'pay'
+      transition :to => 'address', :from => 'payment'
       transition :to => 'edit', :from => 'address'
     end
     event :edit do
