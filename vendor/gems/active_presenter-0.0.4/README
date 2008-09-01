@@ -1,0 +1,75 @@
+= ActivePresenter
+
+ActivePresenter is the presenter library you already know! (...if you know ActiveRecord)
+
+By acting nearly identically to ActiveRecord models, ActivePresenter makes presenters highly approachable to anybody who is already familiar with ActiveRecord.
+
+== Get It
+
+As a gem:
+
+  $ sudo gem install active_presenter
+
+As a rails gem dependency:
+
+  config.gem 'active_presenter'
+  
+Or get the source from github:
+  
+  $ git clone git://github.com/giraffesoft/active_presenter.git
+  
+(or fork it at http://github.com/giraffesoft/active_presenter)
+    
+== Usage
+
+Creating a presenter is as simple as subclassing ActivePresenter::Base. Use the presents method to indicate which models the presenter should present.
+
+  class SignupPresenter < ActivePresenter::Base
+    presents User, Account
+  end
+
+=== Instantiation
+
+Then, you can instantiate the presenter using either, or both of two forms. 
+
+For example, if you had a SignupPresenter that presented User, and Account, you could specify arguments in the following two forms:
+  
+  1. SignupPresenter.new(:user_login => 'james', :user_password => 'swordfish', :user_password_confirmation => 'swordfish', :account_subdomain => 'giraffesoft')
+
+    - This form is useful for initializing a new presenter from the params hash: i.e. SignupPresenter.new(params[:signup_presenter])
+    
+  2. SignupPresenter.new(:user => User.find(1), :account => Account.find(2))
+
+    - This form is useful if you have instances that you'd like to edit using the presenter. You can subsequently call presenter.update_attributes(params[:signup_presenter]) just like with a regular AR instance.
+
+Both forms can also be mixed together: SignupPresenter.new(:user => User.find(1), :user_login => 'james'). 
+
+In this case, the login attribute will be updated on the user instance provided.
+ 
+If you don't specify an instance, one will be created by calling Model.new
+
+=== Validation
+  
+The #valid? method will return true or false based on the validity of the presented objects. 
+
+This is calculated by calling #valid? on them.
+
+You can retrieve the errors in two ways. 
+  
+  1. By calling #errors on the presenter, which returns an instance of ActiveRecord::Errors where all the attributes are in type_name_attribute_name form (i.e. You'd retrieve an error on User#login, by calling @presenter.errors.on(:user_login)).
+  
+  2. By calling @presenter.user_errors, or @presenter.user.errors to retrieve the errors from one presentable.
+  
+Both of these methods are compatible with error_messages_for. It just depends whether you'd like to show all the errors in one block, or whether you'd prefer to break them up.
+
+=== Saving
+
+You can save your presenter the same way you'd save an ActiveRecord object. Both #save, and #save! behave the same way they do on a normal AR model.
+
+== Credits
+
+ActivePresenter was created, and is maintained by {Daniel Haran}[http://danielharan.com] and {James Golick}[http://jamesgolick.com] on the train ride to {RubyFringe}[http://rubyfringe.com] from Montreal.
+
+== License
+
+ActivePresenter is available under the {MIT License}[http://en.wikipedia.org/wiki/MIT_License]
