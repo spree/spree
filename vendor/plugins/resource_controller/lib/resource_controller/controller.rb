@@ -57,6 +57,12 @@ module ResourceController
             flash "Successfully removed!"
             wants.html { redirect_to collection_url }
           end
+          
+          class << self
+            def singleton?
+              false
+            end
+          end
         end
       end
   end

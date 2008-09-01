@@ -1,8 +1,9 @@
 class CreateOptions < ActiveRecord::Migration
   def self.up
     create_table :options do |t|
-      t.column :product_id, :integer
-      t.column :title, :string
+      t.references :product
+      t.references :account
+      t.string :title
     end
   end
 

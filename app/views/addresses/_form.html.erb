@@ -1,0 +1,44 @@
+<table>
+  <tr>
+    <td width="150"><%= t("First Name") %></td>
+    <td><%= f.text_field :firstname %></td>
+  </tr>
+  <tr>
+    <td><%= t("Last Name") %></td>
+    <td><%= f.text_field :lastname %></td>
+  </tr>
+  <tr>
+    <td><%= t("Street Address") %></td>
+    <td><%= f.text_field :address1 %></td>
+  </tr>
+  <tr>
+    <td><%= Globalite.localize(:street_address_2) %></td>
+    <td><%= f.text_field :address2 %></td>
+  </tr>
+  <tr>
+    <td><%= t("City") %></td>
+    <td><%= f.text_field :city %></td>
+  </tr>
+  <tr>
+    <td><%= t("State") %></td>
+    <td>
+      <%= f.collection_select :state_id, @states, :id, :name, {:prompt => ""}, {:style => "width: 150px"}%>
+    </td>
+  </tr>
+  <tr>
+    <td><%= t("Zip") %></td>
+    <td><%= f.text_field :zipcode %></td>
+  </tr>
+  <tr>
+    <td><%= t("Country") %></td>
+    <td>
+      <select name="address[country_id]" style="width:150px;"> 
+        <%= options_from_collection_for_select(@countries, :id, :name, 214) %>
+      </select>          
+    </td>
+  </tr>
+  <tr>
+    <td><%= t("Phone") %></td>
+    <td><%= f.text_field :phone %></td>
+  </tr>
+</table>

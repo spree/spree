@@ -45,6 +45,10 @@ module ResourceController::Helpers::CurrentObjects
         @object = end_of_association_chain.find_by_param!(param)
       end
       @object
+=begin      
+      @object ||= end_of_association_chain.find(param) unless param.nil?
+      @object
+=end
     end
     
     # Used internally to load the member object in to an instance variable @#{model_name} (i.e. @post)

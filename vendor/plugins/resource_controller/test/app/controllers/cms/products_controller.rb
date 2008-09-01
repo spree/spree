@@ -1,3 +1,3 @@
 class Cms::ProductsController < ResourceController::Base
-  create.flash_now 'something'
+  create.flash 'something'
 end

@@ -1,9 +1,0 @@
-<h1><%= t("Address Information")%></h1>
-<% form_for(:order, :url => object_url, :html => { :method => :put}) do |f| %>
-  <%= render :partial => 'orders/states/form_addressing', :locals => {:f => f} %>
-
-	<div align="right">
-	  <%= submit_tag t('Back') %>
-	  <%= submit_tag t('Continue') %>
-	</div>
-<% end %>

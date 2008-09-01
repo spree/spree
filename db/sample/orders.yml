@@ -9,7 +9,5 @@ order_<%= i %>:
   tax_amount: 2.78
   item_total: 37.97
   total: 45.75
-  ship_address: frank_address
-  bill_address: frank_address
   ip_address: 127.0.0.1
 <% end %>

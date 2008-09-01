@@ -4,11 +4,17 @@ resource_controller makes RESTful controllers easier, more maintainable, and sup
 
 == Get It
 
-  svn export http://svn.jamesgolick.com/resource_controller/tags/stable vendor/plugins/resource_controller
-  
-SVN (stable): {http://svn.jamesgolick.com/resource_controller/tags/stable}[http://svn.jamesgolick.com/resource_controller/tags/stable]
+Add it as a gem dependency
 
-SVN (ongoing): {http://svn.jamesgolick.com/resource_controller/trunk}[http://svn.jamesgolick.com/resource_controller/trunk]
+  config.gem 'giraffesoft-resource_controller', :lib => 'resource_controller', :source => 'http://gems.github.com'
+  
+Or install it as a gem manually  
+  
+  sudo gem install giraffesoft-resource_controller
+  
+Or grab the source
+  
+  git clone git://github.com/giraffesoft/resource_controller.git
 
 = Usage
 

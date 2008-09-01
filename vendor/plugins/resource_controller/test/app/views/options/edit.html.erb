@@ -1,0 +1,16 @@
+<h1>Editing Option</h1>
+
+<%= error_messages_for :option %>
+
+<% form_for(:option, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%=submit_tag "Update"%>
+  </p>
+<% end %>
+
+<br/>
+
+<%= link_to 'Show', object_url %>
+|
+<%= link_to 'Back', collection_url %>

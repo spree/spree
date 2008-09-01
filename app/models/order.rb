@@ -12,6 +12,7 @@ class Order < ActiveRecord::Base
   has_many :order_operations
   has_one :credit_card
   belongs_to :user
+  has_one :address, :as => :addressable
   belongs_to :bill_address, :class_name => "Address", :foreign_key => :bill_address_id
   belongs_to :ship_address, :class_name => "Address", :foreign_key => :ship_address_id
 
@@ -27,16 +28,19 @@ class Order < ActiveRecord::Base
   validates_numericality_of :total
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-  state_machine :checkout_state, :initial => 'editing' do    
+  state_machine :checkout_state, :initial => 'edit' do    
     #after_enter :confirming, :finalize!    
     event :next do
-      transition :to => 'addressing', :from => 'editing'
-      transition :to => 'paying', :from => 'addressing'
-      transition :to => 'confirming', :from => 'paying'
+      transition :to => 'address', :from => 'edit'
+      transition :to => 'pay', :from => 'address'
+      transition :to => 'confirm', :from => 'pay'
     end
     event :previous do
-      transition :to => 'addressing', :from => 'paying'
-      transition :to => 'editing', :from => 'addressing'
+      transition :to => 'address', :from => 'pay'
+      transition :to => 'edit', :from => 'address'
+    end
+    event :edit do
+      transition :to => 'edit'
     end
   end
 

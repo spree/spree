@@ -1,6 +1,6 @@
 <h1><%= t("Shopping Cart")%></h1>
 <% form_for(:order, :url => object_url, :html => { :method => :put}) do |f| %>
-  <%= render :partial => 'orders/states/form_editing', :locals => {:f => f} %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
 
 	<div id="subtotal">
 		<h3><%= "#{t("Subtotal")}: #{number_to_currency(@order.item_total)}" %></h3>
