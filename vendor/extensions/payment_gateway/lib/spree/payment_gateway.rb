@@ -1,6 +1,18 @@
 module Spree
   module PaymentGateway
-    # Instantiates the selected PAYMENT_GATEWAY and initializes with GATEWAY_OPTIONS (configured in environment.rb)
+    
+    def authorize_card
+      gateway = payment_gateway 
+      # ActiveMerchant is configured to use cents so we need to multiply order total by 100
+      response = gateway.authorize(@order.total * 100, @creditcard, Order.gateway_options(order))
+      unless response.success?
+        msg = "#{Globalize.localize(:problem_authorizing_card)} ... #{response.params['message']}"
+        logger.error(msg)
+        raise msg
+      end
+    end
+    
+    # instantiates the selected gateway and configures with the options stored in the database
     def payment_gateway
       return Spree::BogusGateway.new if ENV['RAILS_ENV'] == "development"
 

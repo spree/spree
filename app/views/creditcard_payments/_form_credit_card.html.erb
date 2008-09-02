@@ -1,0 +1,30 @@
+<h4>Payment Information</h4>
+<table id="creditcard">
+  <tr>
+    <td colspan=2>
+      <%= image_tag "creditcard.gif", :id => 'creditcard-image' %>
+    </td>
+  </tr>
+  <tr>
+    <!-- use this sample (visa) cc# for testing 4111111111111111 -->
+    <td width="120"><%= t("Card Number") %></td>
+    <td><%= f.text_field :creditcard_number, :maxlength => 17 -%></td>
+  </tr>
+  <tr>
+    <td><%= t("Expiration Month") %></td>
+    <td><%= f.text_field :creditcard_month, :size => 4 -%></td>
+  </tr>
+  <tr>
+    <td><%= t("Expiration Year") %></td>
+    <td><%= f.text_field :creditcard_year, :size => 4 -%></td>
+  </tr>
+  <tr>
+    <td><%= t("Card Code") %></td>
+    <td>
+      <%= f.text_field :creditcard_verification_value, {:style => "width:40px"} -%>
+      <a href="" onclick="window.open('/payments/cvv','mywin','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false">
+	(<%= t("What's This?") %>)
+      </a>
+    </td>
+  </tr>
+</table>

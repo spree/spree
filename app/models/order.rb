@@ -7,10 +7,9 @@ class Order < ActiveRecord::Base
     end
   end
   has_many :products, :through => :line_items
-  
   has_many :inventory_units
   has_many :order_operations
-  has_one :credit_card
+  has_one :creditcard_payment
   belongs_to :user
   has_one :address, :as => :addressable
   belongs_to :bill_address, :class_name => "Address", :foreign_key => :bill_address_id
@@ -32,11 +31,11 @@ class Order < ActiveRecord::Base
     #after_enter :confirm, :finalize!    
     event :next do
       transition :to => 'address', :from => 'edit'
-      transition :to => 'payment', :from => 'address'
-      transition :to => 'confirm', :from => 'payment'
+      transition :to => 'creditcard_payment', :from => 'address'
+      transition :to => 'confirm', :from => 'creditcard_payment'
     end
     event :previous do
-      transition :to => 'address', :from => 'payment'
+      transition :to => 'address', :from => 'creditcard_payment'
       transition :to => 'edit', :from => 'address'
     end
     event :edit do

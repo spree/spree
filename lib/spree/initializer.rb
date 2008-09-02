@@ -55,6 +55,7 @@ module Spree
           app/models
           app/controllers
           app/helpers
+          app/presenters
           config
           lib
           vendor

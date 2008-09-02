@@ -10,4 +10,5 @@ order_<%= i %>:
   item_total: 37.97
   total: 45.75
   ip_address: 127.0.0.1
+  #creditcard_payment: visa_<%=i%>
 <% end %>
