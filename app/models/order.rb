@@ -1,5 +1,6 @@
 class Order < ActiveRecord::Base  
-  before_save :update_user_addresses, :update_line_items
+  before_create :generate_order_number
+  before_save :update_line_items #, :update_user_addresses
   
   has_many :line_items, :dependent => :destroy, :attributes => true do
     def in_order(variant)
@@ -55,13 +56,13 @@ class Order < ActiveRecord::Base
     end
   end
 
-  def self.generate_order_number
+  def generate_order_number
     record = true
     while record
       random = Array.new(9){rand(9)}.join
-      record = find(:first, :conditions => ["number = ?", random])
+      record = Order.find(:first, :conditions => ["number = ?", random])
     end
-    return random
+    self.number = random
   end
 
   # total of line items (no tax or shipping inc.)
@@ -84,43 +85,9 @@ class Order < ActiveRecord::Base
       @order = Order.new
     end
   end
-
-  # Generate standard options used by ActiveMerchant gateway for authorize, capture, etc. 
-  def self.gateway_options(order)
-    billing_address = {:name => order.bill_address.full_name,
-                       :address1 => order.bill_address.address1,
-                       :address2 => order.bill_address.address2, 
-                       :city => order.bill_address.city,
-                       :state => order.bill_address.state.abbr, 
-                       :zip => order.bill_address.zipcode,
-                       :country => order.bill_address.country.iso,
-                       :phone => order.bill_address.phone}
-    shipping_address = {:name => order.ship_address.full_name,
-                       :address1 => order.ship_address.address1,
-                       :address2 => order.ship_address.address2, 
-                       :city => order.ship_address.city,
-                       :state => order.ship_address.state.abbr, 
-                       :zip => order.ship_address.zipcode,
-                       :country => order.ship_address.country.iso,
-                       :phone => order.ship_address.phone}
-    options = {:billing_address => billing_address, :shipping_address => shipping_address}
-    options.merge(self.minimal_gateway_options(order))
-  end
  
-  # Generates a minimal set of gateway options.  There appears to be some issues with passing in 
-  # a billing address when authorizing/voiding a previously captured transaction.  So omits these 
-  # options in this case since they aren't necessary.  
-  def self.minimal_gateway_options(order)
-    {:email => order.user.email, 
-     :customer => order.user.email, 
-     :ip => order.ip_address, 
-     :order_id => order.number,
-     :shipping => order.ship_amount * 100,
-     :tax => order.tax_amount * 100, 
-     :subtotal => order.item_total * 100}  
-  end
-
   private
+=begin  
   def update_user_addresses 
     return unless bill_address
     new_addys = [bill_address]
@@ -130,7 +97,7 @@ class Order < ActiveRecord::Base
     end
     user.save!
   end
-  
+=end  
   def update_line_items
     self.line_items.each do |line_item|
       LineItem.destroy(line_item.id) if line_item.quantity == 0

@@ -2,7 +2,7 @@ class Address < ActiveRecord::Base
   belongs_to :user
   belongs_to :country
   belongs_to :state
-  belongs_to :address, :polymorphic => true
+  belongs_to :addressable, :polymorphic => true
   
   validates_presence_of :firstname
   validates_presence_of :lastname

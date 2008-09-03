@@ -1,4 +1,5 @@
 class OrdersController < Admin::BaseController
+  before_filter :login_required, :except => [:create, :edit]
   layout 'application'
   
   resource_controller
@@ -10,7 +11,7 @@ class OrdersController < Admin::BaseController
     @order.save
   end
 
-  # override the default r_c behavior (remove flash - redirect to line items instead of order)
+  # override the default r_c behavior (remove flash - redirect to edit details instead of show)
   create do
     flash nil 
     wants.html {redirect_to edit_order_url(@order)}
@@ -21,9 +22,15 @@ class OrdersController < Admin::BaseController
   
   def checkout
     # move into the next checkout state
-    object.next! if object.checkout_state == "edit"
+    if object.checkout_state == "edit"
+      object.update_attribute :user, current_user
+      object.update_attribute :ip_address, request.env['REMOTE_ADDR']
+      object.next! 
+    end
     if object.checkout_state == "confirm"
-      
+      # remove the order from the session
+      session[:order_id] = nil
+      redirect_to object_url and return
     else
       next_url = self.send("new_order_#{object.checkout_state}_url", object)
       redirect_to next_url
