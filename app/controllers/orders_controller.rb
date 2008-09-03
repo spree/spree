@@ -3,7 +3,6 @@ class OrdersController < Admin::BaseController
   layout 'application'
   
   resource_controller
-  #actions :show, :create, :edit, :update
 
   create.after do    
     # add the specified product to the order
@@ -36,22 +35,9 @@ class OrdersController < Admin::BaseController
       redirect_to next_url
     end
   end
-=begin    
-  update.after do 
-    transition = params[:transition] 
-    transition_method = "#{transition}!" unless transition.blank?
-    @order.send(transition_method) if transition_method
-    if @order.checkout_state == "confirming"
-      @order.user = current_user
-      @order.save
-      session[:order_id] = nil 
-    end
-  end
-=end
 
   # override the default r_c behavior (remove flash - redirect to appropriate view based on the checkout_state)
   update.flash nil
-
   update.response do |wants| 
     #wants.html {redirect_to edit_order_url(object)}
   end  
@@ -67,6 +53,10 @@ class OrdersController < Admin::BaseController
   end
   
   def object
+    if params[:id]
+      @order = Order.find params[:id]
+      return @order
+    end
     find_order
   end
 end

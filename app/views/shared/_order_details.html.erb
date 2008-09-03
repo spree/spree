@@ -8,7 +8,7 @@
     <th><%= t('Qty') %></th>
     <th><%= t('Total') %></th>
   </tr>
-  <% for item in @order.line_items %>
+  <% @order.line_items.each do |item| %>
   <tr >
     <td width="300"><%=item.variant.product.name-%> <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %></td>
     <td valign="top"><%= number_to_currency item.price -%></td>

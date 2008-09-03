@@ -4,7 +4,7 @@ class Spree::BaseController < ApplicationController
 
   # retrieve the order_id from the session and then load from the database (or return a new order if no 
   # such id exists in the session)
-  def find_order
+  def find_order      
     unless session[:order_id].blank?
       @order = Order.find_or_create_by_id(session[:order_id])
     else      
