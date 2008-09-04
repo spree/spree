@@ -24,7 +24,7 @@
               <td><%=order.created_at.to_date%></td>
               <td><%= link_to order.number, object_url(order) %></td>
               <td><%= t(order.state).titleize %></td>
-              <td><%= order.user.email %></td>
+              <td><%= order.user.email if order.user %></td>
               <td><%= number_to_currency order.total %></td>
               <td><%= available_events(order) %></td>
             </tr>
