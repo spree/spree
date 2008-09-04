@@ -28,7 +28,7 @@
       <th><%= t("Email") %></th>
     </tr>
     <tr>
-      <td><%=in_place_editor_field :user, :email %></td>
+      <td><%= @order.user.email if @order.user%></td>
     </tr>
   </table>
 <% end %>

@@ -46,9 +46,16 @@ class Order < ActiveRecord::Base
     event :capture do
       transition :to => 'captured', :from => 'authorized'
     end
+    # the pay transition is not used by spree for default, just a starting point for offsite payment plugins
+    # like google checkout, and paypal website payments pro.  (no sense in having these types of extensions 
+    # defining possibly conflicting state names)
+    event :pay do
+      transition :to => 'paid', :from => 'pending_payment'
+    end
     event :ship do
       transition :to => 'shipped', :from => 'captured'
-      # todo also allow from authorized state (but we need to make sure capture is applied first)
+      transition :to => 'shipped', :from => 'paid'
+      # todo: also allow from authorized state (but we need to make sure capture is applied first)
     end
     event :cancel do
       transition :to => 'canceled'
