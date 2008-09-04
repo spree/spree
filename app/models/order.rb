@@ -98,6 +98,16 @@ class Order < ActiveRecord::Base
     inventory_units.each { |unit| unit.update_attributes(:status => InventoryUnit::Status::SHIPPED) }
     save
   end
+  
+  def return
+    Order.transaction do
+      self.status = Order::Status::RETURNED    
+      inventory_units.each do |unit|     
+        unit.update_attributes(:status => InventoryUnit::Status::ON_HAND)
+      end
+      save
+    end
+  end
  
   private
 =begin  

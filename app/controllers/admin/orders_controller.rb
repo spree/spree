@@ -99,44 +99,22 @@ class Admin::OrdersController < Admin::BaseController
 
   def return
     order = Order.find(params[:id])
-    
-    # TODO - consider making the credit an option since it may not be supported by some gateways
-    response = gateway_credit(order)
-
-    unless response.success?
-      flash[:error] = "Problem crediting the credit card ... \n#{response.params['error']}"   
-      redirect_to :back and return
-    end
-
-    order.order_operations << OrderOperation.new(
-      :operation_type => OrderOperation::OperationType::RETURN,
-      :user => current_user
-    )
-    order.status = Order::Status::RETURNED
-    
-    begin
-      Order.transaction do
-        order.save!
-        # now update the inventory to reflect the new on hand status
-        order.inventory_units.each do |unit|     
-          unit.update_attributes(:status => InventoryUnit::Status::ON_HAND)
-        end
-        flash[:notice] = "Order successfully returned."    
-      end
-    rescue
-      logger.error "unable to return order: " + order.inspect
-      flash[:error] = "Order payment was credited but database update has failed.  Please ask your administrator to manually adjust order status."
-    end
-    
+    order.return
+    flash[:notice] = "Order successfully returned."    
+    flash[:warn] = "Warning: Creditcard has not been credited.  Please do so manually in your gateway."
+    order.order_operations.create (:operation_type => OrderOperation::OperationType::RETURN, :user => current_user)
+    # TODO: log errors, etc.
     redirect_to :back
   end
   
   def resend
     # resend the order receipt
+=begin    
     @order = Order.find(params[:id])
     OrderMailer.deliver_confirm(@order, true)
     flash[:notice] = "Confirmation message was resent successfully."
     redirect_to :back
+=end
   end
 
   def delete
