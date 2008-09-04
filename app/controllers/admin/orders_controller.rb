@@ -19,13 +19,14 @@ class Admin::OrdersController < Admin::BaseController
         p = {}
         conditions = build_conditions(p)
         if p.empty? 
-          @orders = Order.find(:all, :order => "created_at DESC", :page => {:size => 15, :current =>params[:page], :first => 1})          
+          @orders = Order.find(:all, :order => "created_at DESC", :include => [:address, :line_items], :page => {:size => 15, :current =>params[:page], :first => 1})          
         else 
           @orders = Order.find(:all, 
                                :order => "orders.created_at DESC",
                                :joins => "as orders inner join addresses as a on orders.bill_address_id = a.id",
                                :conditions => [conditions, p],
                                :select => "orders.*",
+                               :include => [:address, :line_items], 
                                :page => {:size => 15, :current =>params[:page], :first => 1})
         end
       else
@@ -37,6 +38,7 @@ class Admin::OrdersController < Admin::BaseController
       @orders = Order.find(:all, 
                            :order => "created_at DESC",
                            :conditions => ["status != ?", Order::Status::INCOMPLETE],
+                           :include => [:address, :line_items], 
                            :page => {:size => 15, :current =>params[:page], :first => 1})
     end
   end
