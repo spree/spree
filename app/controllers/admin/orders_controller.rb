@@ -17,6 +17,7 @@ class Admin::OrdersController < Admin::BaseController
     # itself will make sure transitions are not applied in the wrong state)
     transition = params[:t]
     @order.send("#{transition}!")
+    flash[:notice] = t('Order Updated')
     redirect_to :back
   end
   

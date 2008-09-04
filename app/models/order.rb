@@ -41,10 +41,20 @@ class Order < ActiveRecord::Base
       transition :to => 'in_progress', :from => 'address'
     end
     event :edit do
-      transition :to => 'in_progress'
+      transition :to => 'in_progress', :from => %{address, creditcard_payment, edit}
     end
     event :capture do
       transition :to => 'captured', :from => 'authorized'
+    end
+    event :ship do
+      transition :to => 'shipped', :from => 'captured'
+      # todo also allow from authorized state (but we need to make sure capture is applied first)
+    end
+    event :cancel do
+      transition :to => 'canceled'
+    end
+    event :return do
+      transition :to => 'returned', :from => 'shipped'
     end
   end
 

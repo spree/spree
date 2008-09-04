@@ -8,13 +8,14 @@ module Admin::OrdersHelper
     events = state_machine.events.keys
     events.each do |event|
       state_machine.events[event].transitions.each do |transition|
-        if transition.from_states.include?(order.state)
+        if transition.from_states.include?(order.state) or transition.from_states.empty?
           available << (link_to event, transition_admin_order_url(order, :t => event), :method => :put)
           break
         end
       end
     end
-    available
+    return "" if available.empty?
+    available.join(' &nbsp;')
   end
   
   # Renders all the txn partials that may have been specified in the extensions
