@@ -28,19 +28,21 @@ class Order < ActiveRecord::Base
   validates_numericality_of :total
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-  state_machine :checkout_state, :initial => 'edit' do    
-    #after_enter :confirm, :finalize!    
+  state_machine :initial => 'in_progress' do    
+    after_enter 'in_progress', Proc.new {|order| order.update_attribute(:checkout_complete, false)}
+    after_enter 'authorized', Proc.new {|order| order.update_attribute(:checkout_complete, true)}
+
     event :next do
-      transition :to => 'address', :from => 'edit'
+      transition :to => 'address', :from => 'in_progress'
       transition :to => 'creditcard_payment', :from => 'address'
-      transition :to => 'confirm', :from => 'creditcard_payment'
+      transition :to => 'authorized', :from => 'creditcard_payment'
     end
     event :previous do
       transition :to => 'address', :from => 'creditcard_payment'
-      transition :to => 'edit', :from => 'address'
+      transition :to => 'in_progress', :from => 'address'
     end
     event :edit do
-      transition :to => 'edit'
+      transition :to => 'in_progress'
     end
   end
 

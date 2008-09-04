@@ -1,5 +1,6 @@
 class OrdersController < Admin::BaseController
   before_filter :login_required, :except => [:create, :edit]
+  before_filter :load_object, :only => [:checkout]
   layout 'application'
   
   resource_controller
@@ -20,26 +21,26 @@ class OrdersController < Admin::BaseController
   edit.before {@order.edit!}
   
   def checkout
-    # move into the next checkout state
-    if object.checkout_state == "edit"
-      object.update_attribute :user, current_user
-      object.update_attribute :ip_address, request.env['REMOTE_ADDR']
-      object.next! 
+    if @order.state == "in_progress"
+      @order.update_attribute :user, current_user
+      @order.update_attribute :ip_address, request.env['REMOTE_ADDR']
+      @order.next! 
     end
-    if object.checkout_state == "confirm"
+    if object.checkout_complete
       # remove the order from the session
       session[:order_id] = nil
       redirect_to object_url and return
     else
-      next_url = self.send("new_order_#{object.checkout_state}_url", object)
+      # note: controllers participating in checkout process are responsible for calling Order#next! 
+      next_url = self.send("new_order_#{object.state}_url", @order)
       redirect_to next_url
     end
   end
 
-  # override the default r_c behavior (remove flash - redirect to appropriate view based on the checkout_state)
+  # override the default r_c flash behavior
   update.flash nil
   update.response do |wants| 
-    #wants.html {redirect_to edit_order_url(object)}
+    wants.html {redirect_to edit_order_url(object)}
   end  
 
   destroy do
