@@ -1,7 +1,8 @@
 class Admin::OrdersController < Admin::BaseController
-  
+  resource_controller
   before_filter :initialize_txn_partials
-  
+  before_filter :load_object, :only => :transition
+
   in_place_edit_for :address, :firstname
   in_place_edit_for :address, :lastname
   in_place_edit_for :address, :address1
@@ -11,6 +12,15 @@ class Admin::OrdersController < Admin::BaseController
   in_place_edit_for :address, :phone
   in_place_edit_for :user, :email
   
+  def transition   
+    # TODO - possible security check here but right now any admin can before any transition (and the state machine 
+    # itself will make sure transitions are not applied in the wrong state)
+    transition = params[:t]
+    @order.send("#{transition}!")
+    redirect_to :back
+  end
+  
+=begin
   def index
     @status_options = Order::Status.constants
     if params[:search]
@@ -109,12 +119,10 @@ class Admin::OrdersController < Admin::BaseController
   
   def resend
     # resend the order receipt
-=begin    
     @order = Order.find(params[:id])
     OrderMailer.deliver_confirm(@order, true)
     flash[:notice] = "Confirmation message was resent successfully."
     redirect_to :back
-=end
   end
 
   def delete
@@ -128,14 +136,19 @@ class Admin::OrdersController < Admin::BaseController
     end
     redirect_to :back
   end
-
+=end
   private
 
-    # Allows extensions to add new forms of payment to provide their own display of transactions
-    def initialize_txn_partials
-      @txn_partials = []
-    end
-    
+  def collection    
+    @collection ||= end_of_association_chain.find(:all, :order => :created_at, :include => :user,
+      :page => {:size => 15, :current =>params[:page], :first => 1})
+  end
+  
+  # Allows extensions to add new forms of payment to provide their own display of transactions
+  def initialize_txn_partials
+    @txn_partials = []
+  end
+=begin    
     def gateway_void(order)
       authorization = find_authorization(order)
       gw = payment_gateway
@@ -186,5 +199,5 @@ class Admin::OrdersController < Admin::BaseController
       end
       (c.to_sentence :skip_last_comma=>true).gsub(",", " and ")
     end
-
+=end
 end

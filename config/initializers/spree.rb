@@ -1,6 +1,5 @@
 # Spree Configuration
 SESSION_KEY = '_spree_session_id'
-SHIPPING_METHODS = [:flat_rate]
 FLAT_SHIPPING_RATE = 10 # applies only to the flat rate shipping option
 
 INVENTORY_STATES = [:on_hand, :sold, :shipped, :back_ordered]

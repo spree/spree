@@ -23,10 +23,6 @@ describe CreditcardPayment do
   end
   
   describe "authorize_card" do
-    it "should exist" do
-      @creditcard_payment.respond_to?(:authorize_card).should be_true
-    end
-    
     it "should authorize the card for the amount of the order"
   end
 end

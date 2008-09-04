@@ -8,10 +8,8 @@ class Spree::BaseController < ApplicationController
     unless session[:order_id].blank?
       @order = Order.find_or_create_by_id(session[:order_id])
     else      
-      @order = Order.new
+      @order = Order.create
     end
-    @order.status = Order::Status::ABANDONED
-    @order.save
     session[:order_id] = @order.id
     @order
   end

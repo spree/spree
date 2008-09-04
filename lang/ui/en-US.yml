@@ -200,16 +200,6 @@ zip: Zip
 zone: Zone
 zones: Zones
 zone_setting_description: Collections of countries, states or other zones to be used in various calculations.
-order_status_incomplete: Incomplete
-order_status_authorized: Authorized
-order_status_captured: Captured
-order_status_canceled: Canceled
-order_status_remove: Remove
-order_status_returned: Returned
-order_status_shipped: Shipped
-order_status_paid: Paid
-order_status_pending_payment: Pending Payment
-order_status_abandoned: Abandoned
 order_operation_authorize: Authorize
 order_operation_capture: Capture
 order_operation_cancel: Cancel
@@ -217,3 +207,7 @@ order_operation_return: Return
 order_operation_ship: Ship
 order_operation_comp: Comp
 order_operation_delete: Delete
+in_progress: In Progress
+address: Address
+creditcard_payment: Creditcard Payment
+authorized: Authorized

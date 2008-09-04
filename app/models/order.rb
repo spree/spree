@@ -16,8 +16,7 @@ class Order < ActiveRecord::Base
   belongs_to :bill_address, :class_name => "Address", :foreign_key => :bill_address_id
   belongs_to :ship_address, :class_name => "Address", :foreign_key => :ship_address_id
 
-  enumerable_constant :status, :constants => [:incomplete, :authorized, :captured, :canceled, :returned, :shipped, :paid, :pending_payment, :abandoned]
-  enumerable_constant :ship_method, {:constants => SHIPPING_METHODS, :no_validation => true}
+  #enumerable_constant :status, :constants => [:incomplete, :authorized, :captured, :canceled, :returned, :shipped, :paid, :pending_payment, :abandoned]
 
   #TODO - validate presence of user once we have the means to add one through controller
   #validates_presence_of :line_items
@@ -43,6 +42,9 @@ class Order < ActiveRecord::Base
     end
     event :edit do
       transition :to => 'in_progress'
+    end
+    event :capture do
+      transition :to => 'captured', :from => 'authorized'
     end
   end
 

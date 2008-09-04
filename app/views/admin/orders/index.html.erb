@@ -19,18 +19,14 @@
             </tr>
           </thead>
           <tbody>
-          <% for order in @orders%>
+          <% @orders.each do |order| %>
             <tr class="<%= cycle('even', 'odd') %>">
               <td><%=order.created_at.to_date%></td>
-              <td><%= link_to order.number, {:action => 'show', :id => order} %></td>
-              <td><%= Globalite.localize("order_status_#{Order::Status.from_value( order.status ).downcase}".to_sym) %></td>
-              <td><%= order.address.full_name if order.address %></td>
+              <td><%= link_to order.number, object_url(order) %></td>
+              <td><%= t(order.state).titleize %></td>
+              <td><%= order.user.email %></td>
               <td><%= number_to_currency order.total %></td>
-              <td>
-                <% action_links(order).each do |a| %>
-                  <%= link_to Globalite.localize("order_operation_#{a.to_s}".to_sym), :action => a, :id => order -%>
-                <% end %>
-              </td>
+              <td><%= available_events(order) %></td>
             </tr>
           <% end %>
           </tbody>
@@ -78,9 +74,7 @@
               </tr>
               <tr>
                 <td><%= t("Status") %></td>
-                <td>
-                  <%= f.collection_select :status, @status_options, :id, :title_translated, {:include_blank => true}, {:style => "width:100%"}%>
-                </td>
+                <td>TODO</td>
               </tr>
               <tr>
                 <td><%= t("Customer") %></td>
