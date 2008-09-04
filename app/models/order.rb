@@ -85,6 +85,12 @@ class Order < ActiveRecord::Base
       @order = Order.new
     end
   end
+  
+  def cancel
+    self.status = Order::Status::CANCELED      
+    creditcard_payment.void
+    save
+  end
  
   private
 =begin  

@@ -104,35 +104,15 @@ class Admin::OrdersController < Admin::BaseController
   
   def cancel
     order = Order.find(params[:id])
-    response = gateway_void(order)
-
-    unless response.success?
-      flash[:error] = "Problem voiding credit card authorization ... \n#{response.params['error']}"   
-      redirect_to :back and return
+    begin
+      order.cancel
+      order.order_operations.create(:operation_type => OrderOperation::OperationType::CANCEL, :user => current_user)
+      flash[:notice] = "Order has been cancelled."    
+    rescue SecurityError => se
+      flash[:error] = "Gateway Cancellation Error: #{se.message}"
     end
-
-    order.order_operations << OrderOperation.new(
-      :operation_type => OrderOperation::OperationType::CANCEL,
-      :user => current_user
-    )
-    order.status = Order::Status::CANCELED
-    
-    begin 
-      Order.transaction do
-        order.save!
-        # now update the inventory to reflect the new on hand status
-        order.inventory_units.each do |unit|     
-          unit.update_attributes(:status => InventoryUnit::Status::ON_HAND)
-        end
-        flash[:notice] = "Order cancelled successfully."    
-      end
-    rescue
-      logger.error "unable to cancel order: " + order.inspect
-      flash[:error] = "Unable to cancel order."
-    end    
     # send email confirmation
-    OrderMailer.deliver_cancel(order)
-    
+    #OrderMailer.deliver_cancel(order)
     redirect_to :back
   end
 

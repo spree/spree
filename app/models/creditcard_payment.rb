@@ -23,6 +23,10 @@ class CreditcardPayment < ActiveRecord::Base
     # to be implemented by an extension (default is payment_gateway extension which ships with spree)
   end
   
+  def void
+    # to be implemented by an extension (default is payment_gateway extension which ships with spree)
+  end
+  
   def find_authorization
     #find the transaction associated with the original authorization/capture 
     cc = order.creditcard_payment
