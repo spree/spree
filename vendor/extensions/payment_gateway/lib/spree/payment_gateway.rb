@@ -1,15 +1,11 @@
 module Spree
   module PaymentGateway
     
-    def authorize_card
+    def authorize
       gateway = payment_gateway 
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
       response = gateway.authorize(order.total * 100, @creditcard, gateway_options(order))
-      unless response.success?
-        msg = "#{Globalite.loc(:problem_authorizing_card)} ... #{response.params['message']}"
-        logger.error(msg)
-        raise SecurityError.new(msg)
-      end
+      gateway_error(:problem_authorizing_card) unless response.success?
       
       # create a transaction to reflect the authorization
       self.creditcard_txns << CreditcardTxn.new(
@@ -19,7 +15,27 @@ module Spree
       )
       # TODO - email confirmation
     end
+
+    def capture
+      authorization = find_authorization
+      gw = payment_gateway
+      response = gw.capture(order.total * 100, authorization.response_code, Order.minimal_gateway_options(order))
+      gateway_error(:problem_authorizing_card) unless response.success?
+      
+      order.credit_card.txns << CreditcardTxn.new(
+        :amount => order.total,
+        :response_code => response.authorization,
+        :txn_type => CreditcardTxn::TxnType::CAPTURE
+      )
+      order.save
+    end
     
+    def gateway_error(error_key, response)
+      msg = "#{Globalite.loc(error_key)} ... #{response.params['message']}"
+      logger.error(msg)
+      raise SecurityError.new(msg)
+    end
+        
     def gateway_options(order)
       options = {:billing_address => generate_address_hash(address), :shipping_address => generate_address_hash(order.address)}
       options.merge(minimal_gateway_options(order))

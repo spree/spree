@@ -136,6 +136,7 @@ previous: anterior
 price: Preço
 problem_authorizing_card: Problema na autorização do cartão
 problems_processing_order: Tivemos problemas processando este pedido
+problem_capturing_card:
 process: Processar
 product: Produto
 products: Produtos

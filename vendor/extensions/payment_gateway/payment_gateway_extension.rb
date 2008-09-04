@@ -19,7 +19,7 @@ class PaymentGatewayExtension < Spree::Extension
     ActiveMerchant::Billing::Base.gateway_mode = :test unless ENV['RAILS_ENV'] == "production"
     # Mixin the payment_gateway method into the base controller so it can be accessed by the checkout process, etc.
     CreditcardPayment.class_eval do
-      before_save :authorize_card
+      before_save :authorize
       include Spree::PaymentGateway
     end
     # admin.tabs.add "Payment Gateway", "/admin/payment_gateway", :after => "Layouts", :visibility => [:all]

@@ -136,6 +136,7 @@ previous: previous
 price: Price
 problem_authorizing_card: Problem authorizing credit card
 problems_processing_order: We had problems processing your order
+problem_capturing_card: Problem capturing credit card
 process: Process
 product: Product
 products: Products

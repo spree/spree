@@ -16,11 +16,6 @@ class CreditcardPaymentsController < Admin::BaseController
     rescue SecurityError => se
       flash.now[:error] = "Authorization Error: #{se.message}"
       render :action => "new" and return 
-    rescue Exception => e
-      raise e
-      # we should never get here (this is a programming error if we do)
-      #flash.now[:error] = "Unable to complete transaction: #{e.message}"
-      #render :action => "new" and return 
     end
     @order.next!
     redirect_to checkout_order_url(@order)

@@ -50,26 +50,20 @@ class Admin::OrdersController < Admin::BaseController
 
   def capture
     order = Order.find(params[:id])
-
-    response = gateway_capture(order)
-    unless response.success?
-      flash[:error] = "Problem capturing credit card ... \n#{response.params['error']}"   
-      redirect_to :back and return
-    end
-
-    order.status = Order::Status::CAPTURED
-    order.order_operations << OrderOperation.new(
-      :operation_type => OrderOperation::OperationType::CAPTURE,
-      :user => current_user
-    )
-
-    if order.save
+    begin
+      order.creditcard_payment.capture
       flash[:notice] = "Order has been captured."    
-    else
-      logger.error "unable to update order status: " + order.inspect
-      flash[:error] = "Order was captured but database update has failed.  Please ask your administrator to manually adjust order status."
+      order.status = Order::Status::CAPTURED
+      order.order_operations << OrderOperation.new(
+        :operation_type => OrderOperation::OperationType::CAPTURE,
+        :user => current_user
+      )
+      order.save
+    rescue SecurityError => se
+      flash[:error] = "Authorization Error: #{se.message}"
+    ensure
+      redirect_to :back
     end
-    redirect_to :back
   end
   
   def ship
@@ -229,14 +223,6 @@ class Admin::OrdersController < Admin::BaseController
       )
       order.save
       response
-    end
-
-    def find_authorization(order)
-      #find the transaction associated with the original authorization/capture 
-      cc = order.credit_card
-      cc.txns.find(:first, 
-                   :conditions => ["txn_type = ? or txn_type = ?", CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::CAPTURE],
-                   :order => 'created_at DESC')
     end
 
     def build_conditions(p)

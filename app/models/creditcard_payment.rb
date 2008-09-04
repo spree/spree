@@ -15,6 +15,22 @@ class CreditcardPayment < ActiveRecord::Base
     @creditcard = creditcard
   end
   
+  def authorize
+    # to be implemented by an extension (default is payment_gateway extension which ships with spree)
+  end
+
+  def capture
+    # to be implemented by an extension (default is payment_gateway extension which ships with spree)
+  end
+  
+  def find_authorization
+    #find the transaction associated with the original authorization/capture 
+    cc = order.creditcard_payment
+    cc.txns.find(:first, 
+                 :conditions => ["txn_type = ? or txn_type = ?", CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::CAPTURE],
+                 :order => 'created_at DESC')
+  end
+  
   # creates a new instance of CreditCard using the active merchant version
   def self.new_from_active_merchant(cc)
     card = self.new
