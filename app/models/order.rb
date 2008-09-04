@@ -91,6 +91,13 @@ class Order < ActiveRecord::Base
     creditcard_payment.void
     save
   end
+  
+  def ship
+    creditcard_payment.capture if status == Order::Status::AUTHORIZED          
+    self.status = Order::Status::SHIPPED
+    inventory_units.each { |unit| unit.update_attributes(:status => InventoryUnit::Status::SHIPPED) }
+    save
+  end
  
   private
 =begin  

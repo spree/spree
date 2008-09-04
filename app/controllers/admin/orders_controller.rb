@@ -67,39 +67,18 @@ class Admin::OrdersController < Admin::BaseController
   end
   
   def ship
-    order = Order.find(params[:id])
-    
-    # if the current status is AUTHORIZED then we need to CAPTURE as well
-    if order.status == Order::Status::AUTHORIZED
-      response = gateway_capture(order)
-      unless response.success?
-        flash[:error] = "Problem capturing credit card ... \n#{response.params['error']}"   
-        redirect_to :back and return
-      end
-    end
-    
-    order.status = Order::Status::SHIPPED
-    order.order_operations << OrderOperation.new(
-      :operation_type => OrderOperation::OperationType::SHIP,
-      :user => current_user
-    )
-
-    begin 
-      Order.transaction do
-        order.save!
-        # now update the inventory to reflect the new shipped status
-        order.inventory_units.each do |unit|     
-          unit.update_attributes(:status => InventoryUnit::Status::SHIPPED)
-        end
-      end
+    begin
+      order = Order.find(params[:id])    
+      order.ship
+      order.order_operations.create(:operation_type => OrderOperation::OperationType::SHIP, :user => current_user)
       flash[:notice] = "Order has been shipped."    
     rescue
+      # TODO capture gateway errors, etc.
       logger.error "unable to ship order: " + order.inspect
       flash[:error] = "Unable to ship order.  Please contact your administrator."
     end    
     
     redirect_to :back
-    
   end
   
   def cancel
