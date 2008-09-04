@@ -211,3 +211,4 @@ in_progress: In Progress
 address: Address
 creditcard_payment: Creditcard Payment
 authorized: Authorized
+order_updated: Order Updated

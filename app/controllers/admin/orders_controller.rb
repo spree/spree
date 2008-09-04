@@ -1,7 +1,7 @@
 class Admin::OrdersController < Admin::BaseController
   resource_controller
   before_filter :initialize_txn_partials
-  before_filter :load_object, :only => :transition
+  before_filter :load_object, :only => :fire
 
   in_place_edit_for :address, :firstname
   in_place_edit_for :address, :lastname
@@ -12,12 +12,13 @@ class Admin::OrdersController < Admin::BaseController
   in_place_edit_for :address, :phone
   in_place_edit_for :user, :email
   
-  def transition   
+  def fire   
     # TODO - possible security check here but right now any admin can before any transition (and the state machine 
     # itself will make sure transitions are not applied in the wrong state)
-    transition = params[:t]
-    @order.send("#{transition}!")
+    event = params[:e]
+    @order.send("#{event}!")
     flash[:notice] = t('Order Updated')
+    #@order.order_operations.create(:operation_type => event, :user => current_user)
     redirect_to :back
   end
   
