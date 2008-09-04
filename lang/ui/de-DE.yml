@@ -196,6 +196,7 @@ order_status_returned:
 order_status_shipped: 
 order_status_paid: 
 order_status_pending_payment: 
+order_status_abandoned:   
 order_operation_authorize: 
 order_operation_capture: 
 order_operation_cancel: 

@@ -54,8 +54,13 @@ class OrdersController < Admin::BaseController
   
   def object
     if params[:id]
-      @order = Order.find params[:id]
-      return @order
+      begin
+        @order = Order.find params[:id]
+      rescue ActiveRecord::RecordNotFound
+        @order = find_order
+      ensure
+        return @order
+      end
     end
     find_order
   end

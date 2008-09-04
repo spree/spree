@@ -52,7 +52,7 @@
   <% end %>
 </table>
 
-<% if card = @order.credit_card %>
+<% if card = @order.creditcard_payment %>
   <b><%= t("Credit Card")%>: </b> &nbsp; #<%= card.display_number %><br/>
   <b><%= t("Type")%> : </b> &nbsp; <%= card.cc_type.titleize %><br/>
   <table class="basic-table">
@@ -62,9 +62,9 @@
       <th><%= t("Response Code") %></th>
       <th><%= "#{t('Date')}/#{t('Time')}" %></th>
     </tr>
-    <% @order.credit_card.txns.each do |t| %>
+    <% card.txns.each do |t| %>
       <tr>
-        <td><%=CreditCardTxn::TxnType.from_value t.txn_type.to_i%></td>
+        <td><%=CreditcardTxn::TxnType.from_value t.txn_type.to_i%></td>
         <td><%=number_to_currency t.amount%></td>
         <td><%=t.response_code%></td>
         <td><%=t.created_at.to_s(:db)%></td>

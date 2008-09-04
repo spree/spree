@@ -198,23 +198,9 @@ class Admin::OrdersController < Admin::BaseController
 
   private
 
-    # Allows extensions to add new forms of payment to provide their own display of stransactions
+    # Allows extensions to add new forms of payment to provide their own display of transactions
     def initialize_txn_partials
       @txn_partials = []
-    end
-
-    def gateway_capture(order)
-      authorization = find_authorization(order)
-      gw = payment_gateway
-      response = gw.capture(order.total * 100, authorization.response_code, Order.minimal_gateway_options(order))
-      return unless response.success?
-      order.credit_card.txns << CreditCardTxn.new(
-        :amount => order.total,
-        :response_code => response.authorization,
-        :txn_type => CreditCardTxn::TxnType::CAPTURE
-      )
-      order.save
-      response
     end
     
     def gateway_void(order)
@@ -222,10 +208,10 @@ class Admin::OrdersController < Admin::BaseController
       gw = payment_gateway
       response = gw.void(authorization.response_code, Order.minimal_gateway_options(order))
       return unless response.success?
-      order.credit_card.txns << CreditCardTxn.new(
+      order.credit_card.txns << CreditcardTxn.new(
         :amount => order.total,
         :response_code => response.authorization,
-        :txn_type => CreditCardTxn::TxnType::VOID
+        :txn_type => CreditcardTxn::TxnType::VOID
       )
       order.save
       response
@@ -236,10 +222,10 @@ class Admin::OrdersController < Admin::BaseController
       gw = payment_gateway
       response = gw.credit(order.total, authorization.response_code, Order.minimal_gateway_options(order))
       return unless response.success?
-      order.credit_card.txns << CreditCardTxn.new(
+      order.credit_card.txns << CreditcardTxn.new(
         :amount => order.total,
         :response_code => response.authorization,
-        :txn_type => CreditCardTxn::TxnType::CREDIT
+        :txn_type => CreditcardTxn::TxnType::CREDIT
       )
       order.save
       response
@@ -249,7 +235,7 @@ class Admin::OrdersController < Admin::BaseController
       #find the transaction associated with the original authorization/capture 
       cc = order.credit_card
       cc.txns.find(:first, 
-                   :conditions => ["txn_type = ? or txn_type = ?", CreditCardTxn::TxnType::AUTHORIZE, CreditCardTxn::TxnType::CAPTURE],
+                   :conditions => ["txn_type = ? or txn_type = ?", CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::CAPTURE],
                    :order => 'created_at DESC')
     end
 

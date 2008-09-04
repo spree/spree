@@ -1,5 +1,17 @@
 module Admin::OrdersHelper
 
+  AVAILABLE_OPERATIONS = {
+    :abandoned => [:delete],
+    :incomplete => [:delete],
+    :authorized => [:capture, :ship, :cancel],
+    :captured => [:ship, :cancel],
+    :canceled => [],
+    :returned => [],
+    :shipped => [:return, :cancel],
+    :paid => [:ship, :cancel],
+    :pending_payment => [:cancel]
+  }
+
   # return the list of possible actions for the order based on its current state
   def action_links(order)
     state = Order::Status.from_value(order.status)

@@ -24,7 +24,7 @@
               <td><%=order.created_at.to_date%></td>
               <td><%= link_to order.number, {:action => 'show', :id => order} %></td>
               <td><%= Globalite.localize("order_status_#{Order::Status.from_value( order.status ).downcase}".to_sym) %></td>
-              <td><%= order.bill_address.full_name if order.bill_address%></td>
+              <td><%= order.address.full_name if order.address %></td>
               <td><%= number_to_currency order.total %></td>
               <td>
                 <% action_links(order).each do |a| %>

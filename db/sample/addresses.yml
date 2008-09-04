@@ -1,4 +1,5 @@
-frank_address:
+<% 1.upto(30) do |i| %>
+frank_address_<%= i %>:
   firstname: Frank
   lastname: Foo
   address1: 123 Foo St.
@@ -9,7 +10,9 @@ frank_address:
   country_id: 214
   phone: 614-555-1212
   user: frank
-
+  addressable: order_<%= i %>
+  addressable_type: Order
+<% end %>
 foo_street:
   id: 101
   firstname: joe

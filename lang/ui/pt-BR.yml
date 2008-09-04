@@ -208,6 +208,7 @@ order_status_returned: Devolvido
 order_status_shipped: Entregue
 order_status_paid: Pago
 order_status_pending_payment: Pendente de Pagamento
+order_status_abandoned: 
 order_operation_authorize: Autorizar
 order_operation_capture: Capturar
 order_operation_cancel: Cancelar
