@@ -9,7 +9,7 @@ class Order < ActiveRecord::Base
   end
   has_many :products, :through => :line_items
   has_many :inventory_units
-  has_many :order_operations
+  has_many :state_events
   has_one :creditcard_payment
   belongs_to :user
   has_one :address, :as => :addressable
@@ -58,7 +58,7 @@ class Order < ActiveRecord::Base
       # todo: also allow from authorized state (but we need to make sure capture is applied first)
     end
     event :cancel do
-      transition :to => 'canceled'
+      transition :to => 'canceled', :except_from => :cancel
     end
     event :return do
       transition :to => 'returned', :from => 'shipped'

@@ -16,9 +16,11 @@ class Admin::OrdersController < Admin::BaseController
     # TODO - possible security check here but right now any admin can before any transition (and the state machine 
     # itself will make sure transitions are not applied in the wrong state)
     event = params[:e]
-    @order.send("#{event}!")
+    Order.transaction do 
+      @order.send("#{event}!")
+      @order.state_events.create(:name => event, :user => current_user)
+    end
     flash[:notice] = t('Order Updated')
-    #@order.order_operations.create(:operation_type => event, :user => current_user)
     redirect_to :back
   end
   
