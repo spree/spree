@@ -1,9 +1,20 @@
 class InventoryUnit < ActiveRecord::Base
   belongs_to :variant
   belongs_to :order
-  validates_presence_of :status
   
-  enumerable_constant :status, {:constants => INVENTORY_STATES, :no_validation => true}
+  # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
+  state_machine :initial => 'on_hand' do    
+    event :sell do
+      transition :to => 'sold', :from => 'on_hand'
+    end
+    event :ship do
+      transition :to => 'shipped', :from => 'sold'
+    end
+    event :restock do
+      transition :to => 'on_hand', :from => %{sold shipped}
+    end
+    # TODO: add backorder state and relevant transitions
+  end
   
   # destory the specified number of on hand inventory units 
   def self.destroy_on_hand(variant, quantity)

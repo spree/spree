@@ -2,8 +2,6 @@
 SESSION_KEY = '_spree_session_id'
 FLAT_SHIPPING_RATE = 10 # applies only to the flat rate shipping option
 
-INVENTORY_STATES = [:on_hand, :sold, :shipped, :back_ordered]
-
 #require 'spree/support/core_ext/array/conversions'
 
 # TODO - Add the lib/plugins stuff maybe?
