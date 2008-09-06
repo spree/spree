@@ -18,9 +18,12 @@ class Admin::OrdersController < Admin::BaseController
     event = params[:e]
     Order.transaction do 
       @order.send("#{event}!")
-      @order.state_events.create(:name => event, :user => current_user)
+      @order.state_events.create(:name => t(event), :user => current_user)
     end
     flash[:notice] = t('Order Updated')
+  rescue Spree::GatewayError
+    
+  ensure
     redirect_to :back
   end
   

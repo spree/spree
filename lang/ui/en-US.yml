@@ -201,14 +201,14 @@ zone: Zone
 zones: Zones
 zone_setting_description: Collections of countries, states or other zones to be used in various calculations.
 order_operation_authorize: Authorize
-order_operation_capture: Capture
-order_operation_cancel: Cancel
-order_operation_return: Return
-order_operation_ship: Ship
-order_operation_comp: Comp
-order_operation_delete: Delete
+capture: capture
+cancel: cancel
+return: return
+ship: ship
+pay: pay
 in_progress: In Progress
 address: Address
 creditcard_payment: Creditcard Payment
 authorized: Authorized
 order_updated: Order Updated
+gateway_error: Gateway Error

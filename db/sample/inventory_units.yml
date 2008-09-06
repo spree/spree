@@ -33,10 +33,10 @@ large-red-baseball_<%= i %>:
   variant: large-red-baseball
   state: on_hand
 <% end %>
-<% 1.upto(30) do |i| %>
+<% 1.upto(29) do |i| %>
 large-blue-baseball_<%= i %>:
   variant: large-blue-baseball
-  state: 2
+  state: sold
   order: order_<%= i %>  
 <% end %>
 <% 31.upto(75) do |i| %>
@@ -58,7 +58,7 @@ xlarge-green-baseball_<%= i %>:
 ror_tote_v_<%= i %>:
   variant: ror_tote_v 
   order: order_<%= i %>
-  state: 2
+  state: sold
 <% end %>
 <% 31.upto(75) do |i| %>
 ror_tote_v_<%= i %>:
@@ -69,7 +69,7 @@ ror_tote_v_<%= i %>:
 ror_bag_v_<%= i %>:
   variant: ror_bag_v
   order: order_<%= i %>
-  state: 2
+  state: sold
 <% end %>
 <% 31.upto(75) do |i| %>
 ror_bag_v_<%= i %>:
@@ -86,11 +86,6 @@ ror_mug_v_<%= i %>:
   variant: ror_mug_v
   state: on_hand
 <% end %>
-#<% 1.upto(75) do |i| %>
-#ror_ringer_v_<%= i %>:
-#  variant: ror_ringer_v
-#  state: on_hand
-#<% end %>
 <% 1.upto(75) do |i| %>
 ror_stein_v_<%= i %>:
   variant: ror_stein_v

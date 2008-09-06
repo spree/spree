@@ -20,7 +20,7 @@ class InventoryUnit < ActiveRecord::Base
   
   # destory the specified number of on hand inventory units 
   def self.destroy_on_hand(variant, quantity)
-    inventory = self.find_by_status(variant, quantity, InventoryUnit::Status::ON_HAND)
+    inventory = self.retrieve_on_hand(variant, quantity)
     inventory.each do |unit|
       unit.destroy
     end                                          
@@ -29,7 +29,7 @@ class InventoryUnit < ActiveRecord::Base
   # destory the specified number of on hand inventory units
   def self.create_on_hand(variant, quantity)
     quantity.times do
-      self.create(:variant => variant, :status => InventoryUnit::Status::ON_HAND)
+      self.create(:variant => variant, :state => 'on_hand')
     end
   end
   
