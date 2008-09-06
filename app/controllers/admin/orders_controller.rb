@@ -1,4 +1,5 @@
 class Admin::OrdersController < Admin::BaseController
+  require 'spree/gateway_error'
   resource_controller
   before_filter :initialize_txn_partials
   before_filter :load_object, :only => :fire
@@ -21,8 +22,8 @@ class Admin::OrdersController < Admin::BaseController
       @order.state_events.create(:name => t(event), :user => current_user)
     end
     flash[:notice] = t('Order Updated')
-  rescue Spree::GatewayError
-    
+  rescue Spree::GatewayError => ge
+    flash[:error] = "#{ge.message}"
   ensure
     redirect_to :back
   end

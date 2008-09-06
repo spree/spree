@@ -22,7 +22,9 @@ class PaymentGatewayExtension < Spree::Extension
       before_save :authorize
       include Spree::PaymentGateway
     end
-    # admin.tabs.add "Payment Gateway", "/admin/payment_gateway", :after => "Layouts", :visibility => [:all]
+    Order.class_eval do 
+      Order.state_machines['state'].after_enter('captured', Proc.new{|order| order.creditcard_payment.capture})
+    end
   end
   
   def deactivate

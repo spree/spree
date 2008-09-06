@@ -1,0 +1,1 @@
+class GatewayError < RuntimeError; end

@@ -41,7 +41,7 @@ class Order < ActiveRecord::Base
       transition :to => 'in_progress', :from => 'address'
     end
     event :edit do
-      transition :to => 'in_progress', :from => %{address, creditcard_payment, edit}
+      transition :to => 'in_progress', :from => %w{address, creditcard_payment, in_progress}
     end
     event :capture do
       transition :to => 'captured', :from => 'authorized'
