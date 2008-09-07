@@ -56,6 +56,12 @@ module Factory
     )
   end
   
+  build ToggleSwitch do |attributes|
+    attributes.reverse_merge!(
+      :state => 'off'
+    )
+  end
+  
   build Vehicle do |attributes|
     attributes[:highway] = create_highway unless attributes.include?(:highway)
     attributes[:auto_shop] = create_auto_shop unless attributes.include?(:auto_shop)

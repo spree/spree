@@ -5,15 +5,17 @@ class Vehicle < ActiveRecord::Base
   attr_accessor :force_idle
   attr_accessor :callbacks
   
-  # Defines the state machine for the state of the vehicle
+  # Defines the state machine for the state of the vehicled
   state_machine :state, :initial => Proc.new {|vehicle| vehicle.force_idle ? 'idling' : 'parked'} do
-    before_exit   'parked', :put_on_seatbelt
-    after_enter   'parked', Proc.new {|vehicle| vehicle.update_attribute(:seatbelt_on, false)}
-    before_enter  'stalled', :increase_insurance_premium
+    before_transition :from => 'parked', :do => :put_on_seatbelt
+    before_transition :to => 'stalled', :do => :increase_insurance_premium
+    after_transition :to => 'parked', :do => lambda {|vehicle| vehicle.update_attribute(:seatbelt_on, false)}
+    after_transition :on => 'crash', :do => :tow!
+    after_transition :on => 'repair', :do => :fix!
     
     # Callback tracking for initial state callbacks
-    after_enter   'parked', Proc.new {|vehicle| (vehicle.callbacks ||= []) << 'before_enter_parked'}
-    before_enter  'idling', Proc.new {|vehicle| (vehicle.callbacks ||= []) << 'before_enter_idling'}
+    after_transition :to => 'parked', :do => lambda {|vehicle| (vehicle.callbacks ||= []) << 'before_enter_parked'}
+    before_transition :to => 'idling', :do => lambda {|vehicle| (vehicle.callbacks ||= []) << 'before_enter_idling'}
     
     event :park do
       transition :to => 'parked', :from => %w(idling first_gear)
@@ -39,11 +41,11 @@ class Vehicle < ActiveRecord::Base
       transition :to => 'first_gear', :from => 'second_gear'
     end
     
-    event :crash, :after => :tow! do
-      transition :to => 'stalled', :from => %w(first_gear second_gear third_gear), :if => Proc.new {|vehicle| vehicle.auto_shop.available?}
+    event :crash do
+      transition :to => 'stalled', :from => %w(first_gear second_gear third_gear), :if => lambda {|vehicle| vehicle.auto_shop.available?}
     end
     
-    event :repair, :after => :fix! do
+    event :repair do
       transition :to => 'parked', :from => 'stalled', :if => :auto_shop_busy?
     end
   end

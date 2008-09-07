@@ -1,7 +1,7 @@
 class AutoShop < ActiveRecord::Base
   state_machine :state, :initial => 'available' do
-    after_exit 'available', :increment_customers
-    after_exit 'busy', :decrement_customers
+    after_transition :from => 'available', :do => :increment_customers
+    after_transition :from => 'busy', :do => :decrement_customers
     
     event :tow_vehicle do
       transition :to => 'busy', :from => 'available'

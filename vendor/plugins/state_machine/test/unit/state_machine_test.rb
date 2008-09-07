@@ -72,45 +72,55 @@ class StateMachineAfterInitializedWithDynamicInitialStateTest < Test::Unit::Test
   end
 end
 
-class StateMachineAfterCreatedTest < Test::Unit::TestCase
-  def setup
-    machine = Switch.state_machine(:state, :initial => 'off')
-    
-    machine.before_exit 'off', Proc.new {|switch, value| switch.callbacks << 'before_exit'}
-    machine.before_enter 'off', Proc.new {|switch, value| switch.callbacks << 'before_enter'}
-    machine.after_exit 'off', Proc.new {|switch, value| switch.callbacks << 'after_exit'}
-    machine.after_enter 'off', Proc.new {|switch, value| switch.callbacks << 'after_enter'}
-    
-    @switch = create_switch
-  end
-  
-  def test_should_invoke_after_enter_callbacks_for_initial_state
-    assert_equal %w(after_enter), @switch.callbacks
-  end
-  
-  def teardown
-    Switch.write_inheritable_attribute(:state_machines, {})
-    
-    Switch.class_eval do
-      @transition_on_turn_on_callbacks = nil
-      @transition_bang_on_turn_on_callbacks = nil
-      @before_exit_state_off_callbacks = nil
-      @before_enter_state_on_callbacks = nil
-      @after_exit_state_off_callbacks = nil
-      @after_enter_state_on_callbacks = nil
-    end
-  end
-end
-
 class StateMachineWithSubclassTest < Test::Unit::TestCase
   def setup
-    Switch.state_machine(:state, :initial => 'on')
-    ToggleSwitch.state_machine(:state, :initial => 'off')
+    @machine = Switch.state_machine(:state, :initial => 'on') do
+      event :turn_on do
+        transition :to => 'on', :from => 'off'
+      end
+    end
+    
+    # Need to add this since the state machine isn't defined directly within the
+    # class
+    ToggleSwitch.write_inheritable_attribute :state_machines, {'state' => @machine}
+    
+    @new_machine = ToggleSwitch.state_machine(:state, :initial => 'off') do
+      event :turn_on do
+        transition :to => 'off', :from => 'on'
+      end
+      
+      event :replace do
+        transition :to => 'under_repair', :from => 'off'
+      end
+    end
   end
   
-  def test_should_be_able_to_override_initial_state
-    assert_equal 'on', Switch.new.state
-    assert_equal 'off', ToggleSwitch.new.state
+  def test_should_not_have_the_same_machine_as_the_superclass
+    assert_not_same @machine, @new_machine
+  end
+  
+  def test_should_use_new_initial_state
+    assert_equal 'off', @new_machine.initial_state(new_switch)
+  end
+  
+  def test_should_not_change_original_initial_state
+    assert_equal 'on', @machine.initial_state(new_switch)
+  end
+  
+  def test_should_define_new_events_on_subclass
+    assert new_toggle_switch.respond_to?(:replace)
+  end
+  
+  def test_should_not_define_new_events_on_superclass
+    assert !new_switch.respond_to?(:replace)
+  end
+  
+  def test_should_define_new_transitions_on_subclass
+    assert_equal 2, @new_machine.events['turn_on'].transitions.length
+  end
+  
+  def test_should_not_define_new_transitions_on_superclass
+    assert_equal 1, @machine.events['turn_on'].transitions.length
   end
   
   def teardown

@@ -19,8 +19,16 @@ class VehicleUnsavedTest < Test::Unit::TestCase
     assert_equal 'parked', @vehicle.state
   end
   
+  def test_should_not_be_able_to_park
+    assert !@vehicle.can_park?
+  end
+  
   def test_should_not_allow_park
     assert !@vehicle.park
+  end
+  
+  def test_should_be_able_to_ignite
+    assert @vehicle.can_ignite?
   end
   
   def test_should_allow_ignite
@@ -51,21 +59,6 @@ class VehicleUnsavedTest < Test::Unit::TestCase
   
   def test_should_not_allow_repair
     assert !@vehicle.repair
-  end
-  
-  def test_should_invoke_initial_state_and_event_callbacks
-    @vehicle.ignite
-    assert_equal %w(before_enter_parked before_enter_idling), @vehicle.callbacks
-  end
-end
-
-class VehicleAfterBeingCreatedTest < Test::Unit::TestCase
-  def setup
-    @vehicle = create_vehicle
-  end
-  
-  def test_should_invoke_initial_state_callbacks
-    assert_equal %w(before_enter_parked), @vehicle.callbacks
   end
 end
 

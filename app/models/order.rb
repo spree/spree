@@ -24,12 +24,12 @@ class Order < ActiveRecord::Base
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'in_progress' do    
-    after_enter 'in_progress', Proc.new {|order| order.update_attribute(:checkout_complete, false)}
-    after_enter 'authorized', :complete_order
-    after_enter 'paid', Proc.new {|order| InventoryUnit.sell_units(order)}
-    after_enter 'shipped', :mark_shipped
-    after_enter 'canceled', :restock_inventory
-    after_enter 'returned', :restock_inventory
+    after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
+    after_transition :to => 'authorized', :do => :complete_order
+    after_transition :to => 'paid', :do => lambda {|order| InventoryUnit.sell_units(order)}
+    after_transition :to => 'shipped', :do => :mark_shipped
+    after_transition :to => 'canceled', :do => :restock_inventory
+    after_transition :to => 'returned', :do => :restock_inventory
     
     event :next do
       transition :to => 'address', :from => 'in_progress'
@@ -66,8 +66,7 @@ class Order < ActiveRecord::Base
   end
 
   def can_cancel?
-    true
-    #self.checkout_complete && self.state != 'canceled'
+    self.checkout_complete && self.state != 'canceled'
   end
   def checkout_complete?
     true

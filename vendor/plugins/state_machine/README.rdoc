@@ -40,14 +40,15 @@ making it so simple you don't even need to know what a state machine is :)
 
 Below is an example of many of the features offered by this plugin, including
 * Initial states
-* State callbacks
-* Event callbacks
+* Transition callbacks
 * Conditional transitions
 
   class Vehicle < ActiveRecord::Base
     state_machine :state, :initial => 'idling' do
-      before_exit   'parked', :put_on_seatbelt
-      after_enter   'parked', Proc.new {|vehicle| vehicle.update_attribute(:seatbelt_on, false)}
+      before_transition :from => %w(parked idling), :do => :put_on_seatbelt
+      after_transition :to => 'parked', :do => lambda {|vehicle| vehicle.update_attribute(:seatbelt_on, false)}
+      after_transition :on => 'crash', :do => :tow!
+      after_transition :on => 'repair', :do => :fix!
       
       event :park do
         transition :to => 'parked', :from => %w(idling first_gear)
@@ -73,19 +74,21 @@ Below is an example of many of the features offered by this plugin, including
         transition :to => 'first_gear', :from => 'second_gear'
       end
       
-      event :crash, :after => :tow! do
+      event :crash do
         transition :to => 'stalled', :from => %w(first_gear second_gear third_gear), :unless => :auto_shop_busy?
       end
       
-      event :repair, :after => :fix! do
+      event :repair do
         transition :to => 'parked', :from => 'stalled', :if => :auto_shop_busy?
       end
     end
     
     def tow!
+      # do something here
     end
     
     def fix!
+      # do something here
     end
     
     def auto_shop_busy?
@@ -96,16 +99,62 @@ Below is an example of many of the features offered by this plugin, including
 Using the above model as an example, you can interact with the state machine
 like so:
 
-  vehicle = Vehicle.create    # => #<Vehicle id: 1, seatbelt_on: false, state: "parked">
-  vehicle.ignite              # => true
-  vehicle                     # => #<Vehicle id: 1, seatbelt_on: true, state: "idling">
-  vehicle.shift_up            # => true
-  vehicle                     # => #<Vehicle id: 1, seatbelt_on: true, state: "first_gear">
-  vehicle.shift_up            # => true
-  vehicle                     # => #<Vehicle id: 1, seatbelt_on: true, state: "second_gear">
+  vehicle = Vehicle.create  # => #<Vehicle id: 1, seatbelt_on: false, state: "parked">
+  vehicle.ignite            # => true
+  vehicle                   # => #<Vehicle id: 1, seatbelt_on: true, state: "idling">
+  vehicle.shift_up          # => true
+  vehicle                   # => #<Vehicle id: 1, seatbelt_on: true, state: "first_gear">
+  vehicle.shift_up          # => true
+  vehicle                   # => #<Vehicle id: 1, seatbelt_on: true, state: "second_gear">
   
   # The bang (!) operator can raise exceptions if the event fails
-  vehicle.park!               # => PluginAWeek::StateMachine::InvalidTransition: Cannot transition via :park from "second_gear"
+  vehicle.park!             # => PluginAWeek::StateMachine::InvalidTransition: Cannot transition via :park from "second_gear"
+
+=== With enumerations
+
+Using the acts_as_enumeration[http://github.com/pluginaweek/acts_as_enumeration] plugin
+states can be transparently stored using record ids in the database like so:
+
+  class VehicleState < ActiveRecord::Base
+    acts_as_enumeration
+    
+    create :id => 1, :name => 'parked'
+    create :id => 2, :name => 'idling'
+    create :id => 3, :name => 'first_gear'
+    ...
+  end
+  
+  class Vehicle < ActiveRecord::Base
+    belongs_to :state, :class_name => 'VehicleState'
+    
+    state_machine :state, :initial => 'idling' do
+      ...
+      
+      event :park do
+        transition :to => 'parked', :from => %w(idling first_gear)
+      end
+      
+      event :ignite do
+        transition :to => 'stalled', :from => 'stalled'
+        transition :to => 'idling', :from => 'parked'
+      end
+    end
+    
+    ...
+  end
+
+Notice in the above example, the state machine definition remains *exactly* the
+same.  However, when interacting with the records, the actual state will be
+stored using the identifiers defined for the enumeration:
+
+  vehicle = Vehicle.create  # => #<Vehicle id: 1, seatbelt_on: false, state_id: 1>
+  vehicle.ignite            # => true
+  vehicle                   # => #<Vehicle id: 1, seatbelt_on: true, state_id: 2>
+  vehicle.shift_up          # => true
+  vehicle                   # => #<Vehicle id: 1, seatbelt_on: true, state_id: 3>
+
+This allows states to take on more complex functionality other than just being
+a string value.
 
 == Tools
 
@@ -130,3 +179,4 @@ To run against a specific version of Rails:
 == References
 
 * Scott Barron - acts_as_state_machine[http://elitists.textdriven.com/svn/plugins/acts_as_state_machine]
+* acts_as_enumeration[http://github.com/pluginaweek/acts_as_enumeration]

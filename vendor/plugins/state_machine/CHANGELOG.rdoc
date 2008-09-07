@@ -1,5 +1,16 @@
 == master
 
+== 0.3.0 / 2008-09-07
+
+* No longer allow additional arguments to be passed into event actions
+* Add support for can_#{event}? for checking whether an event can be fired based on the current state of the record
+* Don't use callbacks for performing transitions
+* Fix state machines in subclasses not knowing what states/events/transitions were defined by superclasses
+* Replace all before/after_exit/enter/loopback callback hooks and :before/:after options for events with before_transition/after_transition callbacks, e.g.
+  
+  before_transition :from => 'parked', :do => :lock_doors # was before_exit :parked, :lock_doors
+  after_transition :on => 'ignite', :do => :turn_on_radio # was event :ignite, :after => :turn_on_radio do
+  
 * Always save when an event is fired even if it results in a loopback [Jürgen Strobel]
 * Ensure initial state callbacks are invoked in the proper order when an event is fired on a new record
 * Add before_loopback and after_loopback hooks [Jürgen Strobel]

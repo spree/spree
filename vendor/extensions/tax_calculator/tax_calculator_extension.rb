@@ -16,7 +16,7 @@ class TaxCalculatorExtension < Spree::Extension
     #PaymentsController.class_eval { include Spree::TaxCalculator }    
     Order.class_eval do
       include Spree::TaxCalculator
-      Order.state_machines['state'].after_enter('payment', Proc.new{|order| order.update_attribute(:tax_amount, order.calculate_tax)})
+      Order.state_machines['state'].after_transition(:to => 'payment', :do => lambda {|order| order.update_attribute(:tax_amount, order.calculate_tax)})
     end
     Admin::ConfigurationsController.class_eval do
       before_filter :add_tax_rate_links, :only => :index

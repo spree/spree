@@ -26,12 +26,6 @@ class MachineByDefaultTest < Test::Unit::TestCase
   end
 end
 
-class MachineWithInvalidOptionsTest < Test::Unit::TestCase
-  def test_should_throw_an_exception
-    assert_raise(ArgumentError) {PluginAWeek::StateMachine::Machine.new(Switch, 'state', :invalid => true)}
-  end
-end
-
 class MachineWithInitialStateTest < Test::Unit::TestCase
   def setup
     @machine = PluginAWeek::StateMachine::Machine.new(Switch, 'state', :initial => 'off')
@@ -40,25 +34,17 @@ class MachineWithInitialStateTest < Test::Unit::TestCase
   def test_should_have_an_initial_state
     assert_equal 'off', @machine.initial_state(new_switch)
   end
-  
-  def test_should_have_an_initial_state_without_processing
-    assert_equal 'off', @machine.initial_state_without_processing
-  end
 end
 
 class MachineWithDynamicInitialStateTest < Test::Unit::TestCase
   def setup
-    @initial_state = Proc.new {|switch| switch.initial_state}
+    @initial_state = lambda {|switch| switch.initial_state}
     @machine = PluginAWeek::StateMachine::Machine.new(Switch, 'state', :initial => @initial_state)
   end
   
   def test_should_use_the_record_for_determining_the_initial_state
     assert_equal 'off', @machine.initial_state(new_switch(:initial_state => 'off'))
     assert_equal 'on', @machine.initial_state(new_switch(:initial_state => 'on'))
-  end
-  
-  def test_should_have_an_initial_state_without_processing
-    assert_equal @initial_state, @machine.initial_state_without_processing
   end
 end
 
@@ -79,6 +65,74 @@ class MachineTest < Test::Unit::TestCase
     off = create_switch(:state => 'off')
     
     assert_equal [on, off], Switch.with_states('on', 'off')
+  end
+  
+  def test_should_raise_exception_if_invalid_option_specified
+    assert_raise(ArgumentError) {PluginAWeek::StateMachine::Machine.new(Switch, 'state', :invalid => true)}
+  end
+  
+  def test_should_symbolize_attribute
+    machine = PluginAWeek::StateMachine::Machine.new(Switch, :state)
+    assert_equal 'state', machine.attribute
+  end
+end
+
+class MachineAfterBeingCopiedTest < Test::Unit::TestCase
+  def setup
+    @machine = PluginAWeek::StateMachine::Machine.new(Switch, 'state')
+    @machine.event(:turn_on) {}
+    
+    @copied_machine = @machine.dup
+  end
+  
+  def test_should_not_have_the_same_collection_of_states
+    assert_not_same @copied_machine.states, @machine.states
+  end
+  
+  def test_should_not_have_the_same_collection_of_events
+    assert_not_same @copied_machine.events, @machine.events
+  end
+  
+  def test_should_copy_each_event
+    assert_not_same @copied_machine.events['turn_on'], @machine.events['turn_on']
+  end
+  
+  def test_should_update_machine_for_each_event
+    assert_equal @copied_machine, @copied_machine.events['turn_on'].machine
+  end
+  
+  def test_should_not_update_machine_for_original_event
+    assert_equal @machine, @machine.events['turn_on'].machine
+  end
+end
+
+class MachineAfterChangingContextTest < Test::Unit::TestCase
+  def setup
+    @machine = PluginAWeek::StateMachine::Machine.new(Switch, 'state')
+  end
+  
+  def test_should_create_copy_of_machine
+    new_machine = @machine.within_context(ToggleSwitch)
+    assert_not_same @machine, new_machine
+  end
+  
+  def test_should_update_owner_clas
+    new_machine = @machine.within_context(ToggleSwitch)
+    assert_equal ToggleSwitch, new_machine.owner_class
+  end
+  
+  def test_should_update_initial_state
+    new_machine = @machine.within_context(ToggleSwitch, :initial => 'off')
+    assert_equal 'off', new_machine.initial_state(new_switch)
+  end
+  
+  def test_should_not_update_initial_state_if_not_provided
+    new_machine = @machine.within_context(ToggleSwitch)
+    assert_nil new_machine.initial_state(new_switch)
+  end
+  
+  def test_raise_exception_if_invalid_option_specified
+    assert_raise(ArgumentError) {@machine.within_context(ToggleSwitch, :invalid => true)}
   end
 end
 
@@ -131,6 +185,18 @@ class MachineWithEventsTest < Test::Unit::TestCase
   end
 end
 
+class MachineWithExistingEventTest < Test::Unit::TestCase
+  def setup
+    @machine = PluginAWeek::StateMachine::Machine.new(Switch, 'state')
+    @event = @machine.event(:turn_on) {}
+    @same_event = @machine.event(:turn_on) {}
+  end
+  
+  def test_should_not_create_new_event
+    assert_same @event, @same_event
+  end
+end
+
 class MachineWithEventsAndTransitionsTest < Test::Unit::TestCase
   def setup
     @machine = PluginAWeek::StateMachine::Machine.new(Switch, 'state')
@@ -144,19 +210,22 @@ class MachineWithEventsAndTransitionsTest < Test::Unit::TestCase
     assert_equal %w(turn_on), @machine.events.keys
   end
   
-  def test_should_have_states
-    assert_equal %w(on off error unknown), @machine.states
+  def test_should_track_states_defined_in_event_transitions
+    assert_equal %w(error off on unknown), @machine.states
+  end
+  
+  def test_should_not_duplicate_states_defined_in_multiple_event_transitions
+    @machine.event :turn_off do
+      transition :to => 'off', :from => 'on'
+    end
+    
+    assert_equal %w(error off on unknown), @machine.states
   end
 end
 
-class MachineWithStateCallbacksTest < Test::Unit::TestCase
+class MachineWithTransitionCallbacksTest < Test::Unit::TestCase
   def setup
     @machine = PluginAWeek::StateMachine::Machine.new(Switch, 'state')
-    @machine.before_exit 'off', Proc.new {|switch, value| switch.callbacks << 'before_exit'}
-    @machine.before_enter 'on', Proc.new {|switch, value| switch.callbacks << 'before_enter'}
-    @machine.after_exit 'off', Proc.new {|switch, value| switch.callbacks << 'after_exit'}
-    @machine.after_enter 'on', Proc.new {|switch, value| switch.callbacks << 'after_enter'}
-    
     @event = @machine.event :turn_on do
       transition :to => 'on', :from => 'off'
     end
@@ -164,19 +233,74 @@ class MachineWithStateCallbacksTest < Test::Unit::TestCase
     @switch = create_switch(:state => 'off')
   end
   
+  def test_should_raise_exception_if_invalid_option_specified
+    assert_raise(ArgumentError) {@machine.before_transition :invalid => true}
+  end
+  
+  def test_should_raise_exception_if_do_option_not_specified
+    assert_raise(ArgumentError) {@machine.before_transition :to => 'on'}
+  end
+  
   def test_should_invoke_callbacks_during_transition
+    @machine.before_transition lambda {|switch| switch.callbacks << 'before'}
+    @machine.after_transition lambda {|switch| switch.callbacks << 'after'}
+    
     @event.fire(@switch)
-    assert_equal %w(before_exit before_enter after_exit after_enter), @switch.callbacks
+    assert_equal %w(before after), @switch.callbacks
+  end
+  
+  def test_should_support_from_query
+    @machine.before_transition :from => 'off', :do => lambda {|switch| switch.callbacks << 'off'}
+    @machine.before_transition :from => 'on', :do => lambda {|switch| switch.callbacks << 'on'}
+    
+    @event.fire(@switch)
+    assert_equal %w(off), @switch.callbacks
+  end
+  
+  def test_should_support_except_from_query
+    @machine.before_transition :except_from => 'off', :do => lambda {|switch| switch.callbacks << 'off'}
+    @machine.before_transition :except_from => 'on', :do => lambda {|switch| switch.callbacks << 'on'}
+    
+    @event.fire(@switch)
+    assert_equal %w(on), @switch.callbacks
+  end
+  
+  def test_should_support_to_query
+    @machine.before_transition :to => 'off', :do => lambda {|switch| switch.callbacks << 'off'}
+    @machine.before_transition :to => 'on', :do => lambda {|switch| switch.callbacks << 'on'}
+    
+    @event.fire(@switch)
+    assert_equal %w(on), @switch.callbacks
+  end
+  
+  def test_should_support_except_to_query
+    @machine.before_transition :except_to => 'off', :do => lambda {|switch| switch.callbacks << 'off'}
+    @machine.before_transition :except_to => 'on', :do => lambda {|switch| switch.callbacks << 'on'}
+    
+    @event.fire(@switch)
+    assert_equal %w(off), @switch.callbacks
+  end
+  
+  def test_should_support_on_query
+    @machine.before_transition :on => 'turn_off', :do => lambda {|switch| switch.callbacks << 'turn_off'}
+    @machine.before_transition :on => 'turn_on', :do => lambda {|switch| switch.callbacks << 'turn_on'}
+    
+    @event.fire(@switch)
+    assert_equal %w(turn_on), @switch.callbacks
+  end
+  
+  def test_should_support_except_on_query
+    @machine.before_transition :except_on => 'turn_off', :do => lambda {|switch| switch.callbacks << 'turn_off'}
+    @machine.before_transition :except_on => 'turn_on', :do => lambda {|switch| switch.callbacks << 'turn_on'}
+    
+    @event.fire(@switch)
+    assert_equal %w(turn_off), @switch.callbacks
   end
   
   def teardown
     Switch.class_eval do
-      @transition_on_turn_on_callbacks = nil
-      @transition_bang_on_turn_on_callbacks = nil
-      @before_exit_state_off_callbacks = nil
-      @before_enter_state_on_callbacks = nil
-      @after_exit_state_off_callbacks = nil
-      @after_enter_state_on_callbacks = nil
+      @before_transition_state_callbacks = nil
+      @after_transition_state_callbacks = nil
     end
   end
 end
