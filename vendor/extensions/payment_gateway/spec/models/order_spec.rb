@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper.rb'
 describe Order do
   before(:each) do
     @creditcard_payment = mock_model(CreditcardPayment, :null_object => true)
-    @order = Order.new(:creditcard_payment => @creditcard_payment)
+    @order = Order.new(:creditcard_payment => @creditcard_payment, :checkout_complete => true)
     add_stubs(@order, :save => true)
   end
 
@@ -20,6 +20,7 @@ describe Order do
       describe "from #{state} state" do
         it "should cancel the creditcard_payment" do
           @order.state = state
+          @inventory_unit.stub!(:state).and_return('sold')
           @creditcard_payment.should_receive(:void)
           @order.cancel
         end
@@ -27,4 +28,12 @@ describe Order do
     end
   end
 
+  describe "return" do
+    it "should cancel the creditcard_payment" do
+      @order.state = 'shipped'
+      @inventory_unit.stub!(:state).and_return('shipped')
+      @creditcard_payment.should_receive(:void)
+      @order.return
+    end
+  end
 end

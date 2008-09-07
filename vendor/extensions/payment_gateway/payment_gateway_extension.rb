@@ -25,6 +25,7 @@ class PaymentGatewayExtension < Spree::Extension
     Order.class_eval do 
       Order.state_machines['state'].after_transition(:to => 'captured', :do => lambda {|order| order.creditcard_payment.capture})
       Order.state_machines['state'].after_transition(:to => 'canceled', :do => lambda {|order| order.creditcard_payment.void})
+      Order.state_machines['state'].after_transition(:to => 'returned', :do => lambda {|order| order.creditcard_payment.void})
     end
   end
   

@@ -4,7 +4,8 @@ describe Order do
   before(:each) do
     @variant = mock_model(Variant)
     @inventory_unit = mock_model(InventoryUnit, :null_object => true)
-    @order = Order.new
+    @creditcard_payment = mock_model(CreditcardPayment, :null_object => true)
+    @order = Order.new(:checkout_complete => true, :creditcard_payment => @creditcard_payment)
     add_stubs(@order, :save => true, :inventory_units => [@inventory_unit])
     @order.line_items << (mock_model(LineItem, :variant => @variant, :quantity => 1))
     InventoryUnit.stub!(:retrieve_on_hand).with(@variant, 1).and_return [@inventory_unit]
@@ -53,6 +54,7 @@ describe Order do
   describe "cancel" do
     it "should mark inventory as on_hand" do
       @order.state = "captured"
+      @inventory_unit.stub!(:state).and_return('sold')
       @inventory_unit.should_receive(:restock!)
       @order.cancel
     end
@@ -61,6 +63,7 @@ describe Order do
   describe "return" do
     it "should mark inventory as on_hand" do
       @order.state = "shipped"
+      @inventory_unit.stub!(:state).and_return('shipped')
       @inventory_unit.should_receive(:restock!)
       @order.return
     end

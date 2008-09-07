@@ -58,7 +58,7 @@ class Order < ActiveRecord::Base
       # todo: also allow from authorized state (but we need to make sure capture is applied first)
     end
     event :cancel do
-      transition :to => 'canceled', :if => :can_cancel? #, :except_from => 'canceled'#, :if => :checkout_complete?
+      transition :to => 'canceled', :if => :can_cancel?
     end
     event :return do
       transition :to => 'returned', :from => 'shipped'
