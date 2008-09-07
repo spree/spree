@@ -68,10 +68,6 @@ class Order < ActiveRecord::Base
   def can_cancel?
     self.checkout_complete && self.state != 'canceled'
   end
-  def checkout_complete?
-    true
-    #self.checkout_complete
-  end
   
   def add_variant(variant, quantity=1)
     current_item = line_items.in_order(variant)

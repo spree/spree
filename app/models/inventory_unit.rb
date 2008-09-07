@@ -13,7 +13,7 @@ class InventoryUnit < ActiveRecord::Base
       transition :to => 'shipped', :from => 'sold'
     end
     event :restock do
-      transition :to => 'on_hand', :from => %{sold shipped}
+      transition :to => 'on_hand', :from => %w(sold shipped)
     end
     # TODO: add backorder state and relevant transitions
   end
