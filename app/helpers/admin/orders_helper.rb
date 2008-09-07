@@ -7,6 +7,7 @@ module Admin::OrdersHelper
     available = []
     events = state_machine.events.keys
     events.each do |event|
+puts ">>>>>>>>> checking: #{event}"      
       state_machine.events[event].transitions.each do |transition|
         if transition.from_states.include?(order.state) or transition.from_states.empty?
           available << (link_to event, fire_admin_order_url(order, :e => event), :method => :put)

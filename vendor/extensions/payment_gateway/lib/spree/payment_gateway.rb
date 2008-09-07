@@ -4,15 +4,13 @@ module Spree
       gateway = payment_gateway 
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
       response = gateway.authorize(order.total * 100, @creditcard, gateway_options)
-      gateway_error(response) #unless response.success?
-=begin      
+      gateway_error(response) unless response.success?
       # create a transaction to reflect the authorization
       self.creditcard_txns << CreditcardTxn.new(
         :amount => order.total,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::AUTHORIZE
       )
-=end
     end
 
     def capture
@@ -20,20 +18,14 @@ module Spree
       gw = payment_gateway
       response = gw.capture(order.total * 100, authorization.response_code, minimal_gateway_options)
       gateway_error(response) unless response.success?
-      order.creditcard_payment.txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
+      self.creditcard_txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
     end
 
     def void
-      # TODO: Test with Authorize.net, etc.  Make sure its really voiding.
       authorization = find_authorization
       response = payment_gateway.void(authorization.response_code, minimal_gateway_options)
-      gateway_error(:problem_voiding_card) unless response.success?
-      creditcard.txns << CreditcardTxn.new(
-        :amount => order.total,
-        :response_code => response.authorization,
-        :txn_type => CreditcardTxn::TxnType::CAPTURE
-      )
-      save
+      gateway_error(response) unless response.success?
+      self.creditcard_txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
     end
     
     def gateway_error(response)

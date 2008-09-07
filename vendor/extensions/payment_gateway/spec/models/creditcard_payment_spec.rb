@@ -21,8 +21,4 @@ describe CreditcardPayment do
       @creditcard_payment.payment_gateway.should be_test
     end
   end
-  
-  describe "authorize_card" do
-    it "should authorize the card for the amount of the order"
-  end
 end

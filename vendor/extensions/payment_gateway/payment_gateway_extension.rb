@@ -24,6 +24,7 @@ class PaymentGatewayExtension < Spree::Extension
     end
     Order.class_eval do 
       Order.state_machines['state'].after_enter('captured', Proc.new{|order| order.creditcard_payment.capture})
+      Order.state_machines['state'].after_enter('canceled', Proc.new{|order| order.creditcard_payment.void})
     end
   end
   

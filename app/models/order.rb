@@ -58,13 +58,22 @@ class Order < ActiveRecord::Base
       # todo: also allow from authorized state (but we need to make sure capture is applied first)
     end
     event :cancel do
-      transition :to => 'canceled', :except_from => :cancel
+      transition :to => 'canceled', :if => :can_cancel? #, :except_from => 'canceled'#, :if => :checkout_complete?
     end
     event :return do
       transition :to => 'returned', :from => 'shipped'
     end
   end
 
+  def can_cancel?
+    true
+    #self.checkout_complete && self.state != 'canceled'
+  end
+  def checkout_complete?
+    true
+    #self.checkout_complete
+  end
+  
   def add_variant(variant, quantity=1)
     current_item = line_items.in_order(variant)
     if current_item
@@ -121,5 +130,6 @@ class Order < ActiveRecord::Base
     self.line_items.each do |line_item|
       LineItem.destroy(line_item.id) if line_item.quantity == 0
     end
-  end
+  end  
+
 end
