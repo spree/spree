@@ -13,6 +13,7 @@ class CreditcardPayment < ActiveRecord::Base
   # authorization later.
   def creditcard=(creditcard)
     @creditcard = creditcard
+    self.cc_type = ActiveMerchant::Billing::CreditCard.type?(creditcard.number)
   end
   
   def find_authorization
