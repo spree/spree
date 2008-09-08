@@ -34,7 +34,7 @@
       </div>
     </td>
     <td valign="top">
-      <% form_for :search do |f| %>
+      <% form_for :filter, :url => admin_orders_url, :html => { :method => :get } do |f| %>
         <div id="search-col">
           <table class="admin-search">
             <thead>
@@ -46,15 +46,15 @@
               <tr>
                 <td><%= t("Start") %>:</td>
                 <td>
-                  <%= error_message_on :search, :start%>
-                  <%= calendar_date_select :search, :start, :style=>"width:100px" %>
+                  <%= error_message_on :filter, :start%>
+                  <%= calendar_date_select :filter, :start, :style=>"width:100px" %>
                 </td>
               </tr>
               <tr>
                 <td>Stop:</td>
                 <td>
-                  <%= error_message_on :search, :stop%>
-                  <%= calendar_date_select :search, :stop, :style=>"width:100px" %>
+                  <%= error_message_on :filter, :stop%>
+                  <%= calendar_date_select :filter, :stop, :style=>"width:100px" %>
                 </td>
               </tr>
             </tbody>

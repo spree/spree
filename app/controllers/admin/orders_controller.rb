@@ -29,7 +29,12 @@ class Admin::OrdersController < Admin::BaseController
   end
   
   private
-  def collection    
+  def collection   
+    @filter = OrderFilter.new(params[:filter])
+    if params[:filter] and @filter.valid?
+      # TODO - do search
+    end
+     
     @collection ||= end_of_association_chain.find(:all, :order => :created_at, :include => :user,
       :page => {:size => 15, :current =>params[:page], :first => 1})
   end

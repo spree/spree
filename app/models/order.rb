@@ -22,6 +22,8 @@ class Order < ActiveRecord::Base
   validates_numericality_of :item_total
   validates_numericality_of :total
 
+  named_scope :by_number, lambda {|number| {:conditions => ["available_on <= ?", (args.first || Time.now)]}}
+
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}

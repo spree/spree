@@ -1,5 +1,5 @@
 # Tableless model based on a forum post by Rick Olson
-class SearchCriteria < ActiveRecord::Base
+class OrderFilter < ActiveRecord::Base
   #Search criteria does not need to be stored in the database so these two methods will spoof the column stuff
   def self.columns() @columns ||= []; end
   def self.column(name, sql_type = nil, default = nil, null = true)
@@ -9,10 +9,8 @@ class SearchCriteria < ActiveRecord::Base
   column :start, :string
   column :stop, :string
   column :order_num, :string
-  column :status, :integer
+  column :status, :string
   column :customer, :string
-  column :name, :string
-  column :sku, :string
   
   def validate
     date_pattern = /^(0[1-9]|1[012])[\/][0-9]{2}[\/](19|20)[0-9]{2}$/
