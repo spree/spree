@@ -19,6 +19,6 @@ class ProductsController < Admin::BaseController
   private
 
     def collection
-      @collection ||= Product.available.find(:all, :page => {:start => 1, :size => 10, :current => params[:page]}, :include => :images)
+      @collection ||= Product.available.find(:all, :page => {:start => 1, :size => 10, :current => params[:p]}, :include => :images)
     end
 end

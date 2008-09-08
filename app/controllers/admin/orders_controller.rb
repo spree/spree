@@ -39,39 +39,15 @@ class Admin::OrdersController < Admin::BaseController
       scopes << [ :between, @filter.start, (@filter.stop.blank? ? default_stop : @filter.stop) ] unless @filter.start.blank?
       scopes << [ :by_state, @filter.state.tableize.singularize.gsub(" ", "_") ] unless @filter.state.blank?
       @collection = (scopes.inject(Order) {|m,v| m.scopes[v.shift].call(m, *v) }).find(:all, :order => 'orders.created_at DESC', :include => :user,
-        :page => {:size => 15, :current =>params[:page], :first => 1})
+        :page => {:size => 15, :current =>params[:p], :first => 1})
     end
      
     @collection ||= end_of_association_chain.find(:all, :order => 'created_at DESC', :include => :user,
-      :page => {:size => 15, :current =>params[:page], :first => 1})
+      :page => {:size => 15, :current =>params[:p], :first => 1})
   end
   
   # Allows extensions to add new forms of payment to provide their own display of transactions
   def initialize_txn_partials
     @txn_partials = []
   end
-=begin    
-    def build_conditions(p)
-      c = []
-      if not @search.start.blank?
-        c << "(orders.created_at between :start and :stop)"
-        p.merge! :start => @search.start.to_date
-        @search.stop = Date.today + 1 if @search.stop.blank?
-        p.merge! :stop => @search.stop.to_date + 1.day 
-      end
-      unless @search.order_num.blank?
-        c << "number like :order_num"
-        p.merge! :order_num => @search.order_num + "%"
-      end
-      unless @search.customer.blank?
-        c << "(firstname like :customer or lastname like :customer)"
-        p.merge! :customer => @search.customer + "%"
-      end
-      if @search.status
-        c << "status = :status"
-        p.merge! :status => @search.status
-      end
-      (c.to_sentence :skip_last_comma=>true).gsub(",", " and ")
-    end
-=end
 end
