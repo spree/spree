@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe CheckoutController do
+describe ApplicationController do
   
   before(:each) do 
     @new_york = mock_model State, :name => "New York"
