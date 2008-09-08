@@ -33,7 +33,7 @@ class Order < ActiveRecord::Base
     after_transition :to => 'authorized', :do => :complete_order
     after_transition :to => 'paid', :do => lambda {|order| InventoryUnit.sell_units(order)}
     after_transition :to => 'shipped', :do => :mark_shipped
-    after_transition :to => 'canceled', :do => :restock_inventory
+    after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
     
     event :next do
@@ -112,6 +112,12 @@ class Order < ActiveRecord::Base
   def complete_order
     self.update_attribute(:checkout_complete, true)
     InventoryUnit.sell_units(self)
+    OrderMailer.deliver_confirm(self)
+  end
+  
+  def cancel_order
+    restock_inventory
+    OrderMailer.deliver_cancel(self)
   end
   
   def mark_shipped

@@ -38,7 +38,7 @@
     <strong><%= t('Copy all mails to') %>:</strong><br />
     <%= t('A copy of all mail will be sent to the following addresses') %>
     <div class="">
-      <%= Spree::Config[:mail_copy_to] %>
+      <%= Spree::Config[:mail_bcc] %>
     </div>
   </div>
   <%= link_to t("Edit"), edit_admin_mail_settings_path %>

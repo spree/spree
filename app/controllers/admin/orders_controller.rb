@@ -2,7 +2,7 @@ class Admin::OrdersController < Admin::BaseController
   require 'spree/gateway_error'
   resource_controller
   before_filter :initialize_txn_partials
-  before_filter :load_object, :only => :fire
+  before_filter :load_object, :only => [:fire, :resend]
 
   in_place_edit_for :address, :firstname
   in_place_edit_for :address, :lastname
@@ -25,6 +25,12 @@ class Admin::OrdersController < Admin::BaseController
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
   ensure
+    redirect_to :back
+  end
+  
+  def resend
+    OrderMailer.deliver_confirm(@order, true)
+    flash[:notice] = t('Order Email Resent')
     redirect_to :back
   end
   

@@ -1,6 +1,6 @@
 <% content_for :sub_menu do %>
   <ul id="act-nav">
-    <li><%= link_to t("Resend"), :action => :resend, :id => @order %></li>
+    <li><%= link_to t("Resend"), resend_admin_order_url(@order), :method => :post %></li>
   </ul>
 <% end %>
 

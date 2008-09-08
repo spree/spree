@@ -212,3 +212,4 @@ creditcard_payment: Creditcard Payment
 authorized: Authorized
 order_updated: Order Updated
 gateway_error: Gateway Error
+order_email_resent: Order Email Resent

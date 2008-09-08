@@ -20,7 +20,7 @@ config.action_controller.perform_caching             = false
 config.action_view.debug_rjs                         = true
 
 # Don't send emails in development mode
-# config.action_mailer.delivery_method = :test
+config.action_mailer.delivery_method = :test
 
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false

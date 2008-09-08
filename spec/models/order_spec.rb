@@ -5,10 +5,13 @@ describe Order do
     @variant = mock_model(Variant)
     @inventory_unit = mock_model(InventoryUnit, :null_object => true)
     @creditcard_payment = mock_model(CreditcardPayment, :null_object => true)
-    @order = Order.new(:checkout_complete => true, :creditcard_payment => @creditcard_payment)
+    @user = mock_model(User, :email => "foo@exampl.com")
+    @order = Order.new(:checkout_complete => true, :creditcard_payment => @creditcard_payment, :number => '#TEST1010', :user => @user)
     add_stubs(@order, :save => true, :inventory_units => [@inventory_unit])
     @order.line_items << (mock_model(LineItem, :variant => @variant, :quantity => 1))
     InventoryUnit.stub!(:retrieve_on_hand).with(@variant, 1).and_return [@inventory_unit]
+    OrderMailer.stub!(:deliver_confirm).with(any_args)   
+    OrderMailer.stub!(:deliver_cancel).with(any_args)    
   end
 
   describe "create" do
@@ -26,6 +29,10 @@ describe Order do
       end
       it "should mark inventory as sold" do
         @inventory_unit.should_receive(:sell!)
+        @order.next
+      end
+      it "should send a confirmation email" do
+        OrderMailer.should_receive(:deliver_confirm).with(@order)
         @order.next
       end
     end
@@ -56,6 +63,10 @@ describe Order do
       @order.state = "captured"
       @inventory_unit.stub!(:state).and_return('sold')
       @inventory_unit.should_receive(:restock!)
+      @order.cancel
+    end
+    it "should send a cancellation email" do
+      OrderMailer.should_receive(:deliver_cancel).with(@order)
       @order.cancel
     end
   end
