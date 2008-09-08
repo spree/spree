@@ -8,8 +8,8 @@ class OrderFilter < ActiveRecord::Base
   
   column :start, :string
   column :stop, :string
-  column :order_num, :string
-  column :status, :string
+  column :number, :string
+  column :state, :string
   column :customer, :string
   
   def validate

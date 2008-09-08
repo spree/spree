@@ -69,17 +69,19 @@
               <tr>
                 <td><%= Globalite.localize(:order_number) %></td>
                 <td>
-                  <%= f.text_field :order_num, :size=>15 %>
+                  <%= f.text_field :number, :size=>13 %>
                 </td>
               </tr>
               <tr>
                 <td><%= t("Status") %></td>
-                <td>TODO</td>
+                <td>
+                  <%= f.select :state, %w{ authorized canceled captured paid pending_payment returned shipped }.collect {|status| status.titleize}, {:include_blank => true}, {:style => "width: 115px"}%>
+                </td>
               </tr>
               <tr>
                 <td><%= t("Customer") %></td>
                 <td>
-                  <%= f.text_field :customer, :size=>15 %>
+                  <%= f.text_field :customer, :size=>13 %>
                 </td>
               </tr>
             </tbody>
