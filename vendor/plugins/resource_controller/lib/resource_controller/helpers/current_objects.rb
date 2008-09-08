@@ -36,8 +36,7 @@ module ResourceController::Helpers::CurrentObjects
     #     end
     #   end
     #
-    def object
-debugger  
+    def object  
       return @object if param.blank?
       if param.is_integer?
         @object ||= end_of_association_chain.find(param) unless param.nil?

@@ -7,14 +7,9 @@ class Variant < ActiveRecord::Base
   
   validates_presence_of :product
   validate :check_price
-  
-  # gives the inventory count for variants with the specified inventory status 
-  #def inventory(status)
-  #  InventoryUnit.count(:conditions => "status = #{status} AND variant_id = #{self.id}", :joins => "LEFT JOIN variants on variants.id = variant_id")
-  #end
 
   def on_hand
-    inventory_units.count(:conditions => ["status = ?", InventoryUnit::Status::ON_HAND])
+    inventory_units.with_state("on_hand").size
   end
 
   def on_hand=(new_level)
