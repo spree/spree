@@ -15,7 +15,9 @@ describe Order do
     end
   end
 
-  describe "cancel" do
+  describe "cancel" do    
+    before(:each) { OrderMailer.stub!(:deliver_cancel).with(any_args) }
+    
     %w{authorized captured}.each do |state|
       describe "from #{state} state" do
         it "should cancel the creditcard_payment" do
