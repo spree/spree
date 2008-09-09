@@ -1,5 +1,4 @@
 <h3>New Taxon</h3>
-parent_id: <%= @taxon.parent_id %>
 <% remote_form_for :taxon, @taxon, :url => { :action => :update_taxon, :id => @taxon }, 
                    :update => 'new-taxon',
                    :success => "#{remote_function(:url => { :action => :edit, :id => @taxon.taxonomy_id }, :update => 'edit-taxonomy')}" do |f| %>

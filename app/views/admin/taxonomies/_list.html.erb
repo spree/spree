@@ -19,9 +19,11 @@
       <%= link_to_remote :delete.l, :url => { :action => 'delete', :id => taxonomy }, 
 									:update => 'edit-taxonomy',
 									:success => "#{remote_function(:url => { :action => 'list' }, :update => 'list-taxonomies')}",
-                                    :confirm => :are_you_sure_taxonomy.l('Are you sure you want to delete this taxonomy?')
+                                    :confirm => :are_you_sure_taxonomy.l('Are you sure you want to delete this taxonomy?') %> |
+	  <%= link_to_remote 'YUI Tree', :url=> { :action => 'yui_tree', :id => taxonomy },
+                                     :update => 'edit-taxonomy' %>
 
- %>
+ 
     </td>
   </tr>
 <% end %>

@@ -8,10 +8,17 @@ class Admin::TaxonomiesController < Admin::BaseController
     render :partial => 'list'
   end
 
-  def edit
+#  def edit
+#    @taxonomy = find_taxonomy
+#    render :partial => 'edit'
+#  end
+
+  def yui_tree
     @taxonomy = find_taxonomy
-    render :partial => 'edit'
+    render :partial => 'yui_tree'
   end
+
+  alias :edit :yui_tree
 
   def new
     render :partial => 'new'
