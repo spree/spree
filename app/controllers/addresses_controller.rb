@@ -18,9 +18,19 @@ class AddressesController < Admin::BaseController
     end
   end
   
+  def country_changed
+    render :partial => "states"
+  end
+  
   private
   def load_data
-    @states = State.find(:all, :order => 'name')
+    load_object
+ 
+    @selected_country_id = params[:address][:country_id].to_i if params.has_key?('address')
+    @selected_country_id ||= @order.address.country_id unless @order.nil? || @order.address.nil?  
+    @selected_country_id ||= Spree::Config[:default_country_id]
+
+    @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     @countries = Country.find(:all)
   end
   
