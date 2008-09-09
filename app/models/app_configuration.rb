@@ -17,6 +17,7 @@ class AppConfiguration < ActiveRecord::Base
   preference :order_bcc, :string
   preference :store_cc, :boolean, :default => false
   preference :default_locale, :string, :default => 'en-US'
+  preference :allow_locale_switching, :boolean, :default => false
 
   validates_presence_of :name
   validates_uniqueness_of :name
