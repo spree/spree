@@ -7,7 +7,6 @@
 .loadpath
 .project
 config/database.yml
-config/environments/staging.rb
 db/*.sql
 db/*.sqlite3
 db/schema.rb
