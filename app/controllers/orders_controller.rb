@@ -1,5 +1,5 @@
 class OrdersController < Admin::BaseController
-  before_filter :login_required, :except => [:create, :edit]
+  before_filter :login_required, :except => [:create, :edit, :update]
   before_filter :load_object, :only => [:checkout]
   layout 'application'
   
