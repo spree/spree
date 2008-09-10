@@ -4,5 +4,8 @@
 			<%= text_field(:address, :state_name) %>
 	<% else %>
 		<%= collection_select(:address, :state_id, @states, :id, :name, { :include_blank => true}, {:style=> 'width:150px;'}) %>
+		<noscript>
+				or <%= text_field(:address, :state_name)%>
+		</noscript>
 	<% end %>
 </td>
