@@ -6,6 +6,13 @@ class AddressesController < Admin::BaseController
   
   belongs_to :order, :polymorphic => true
   
+  create.before do 
+    # TODO - do not reset the state if the checkout is complete
+    # TODO - consider make this state check DRY for use in other controller
+    # set the state to address (in case user has hit back button from some other state)
+    @order.state = "address"
+  end
+
   create.response do |wants|
     wants.html do 
       next_step
