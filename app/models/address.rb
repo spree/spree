@@ -19,6 +19,6 @@ class Address < ActiveRecord::Base
   end
   
   def state_text
-    state.nil? ? state_name : state.name
+    state.nil? ? state_name : (state.abbr=="" ? state.name : state.abbr)
   end
 end

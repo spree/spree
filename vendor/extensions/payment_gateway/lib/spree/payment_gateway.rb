@@ -42,7 +42,7 @@ module Spree
     # Generates an ActiveMerchant compatible address hash from one of Spree's address objects
     def generate_address_hash(address)
       {:name => address.full_name, :address1 => address.address1, :address2 => address.address2, :city => address.city,
-       :state => address.state.abbr, :zip => address.zipcode, :country => address.country.iso, :phone => address.phone}
+       :state => address.state_text, :zip => address.zipcode, :country => address.country.iso, :phone => address.phone}
     end
     
     # Generates a minimal set of gateway options.  There appears to be some issues with passing in 
