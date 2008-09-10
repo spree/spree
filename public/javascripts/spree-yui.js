@@ -17,7 +17,7 @@ spree.YUI.new_node = function() {
   var url = '/admin/taxonomies/new_taxon';
   var message = 'new_taxon[parent_id]=' + taxon_id + '&new_taxon[taxonomy_id]=' + taxonomy_id;
 
-  spree.YUI.AJAX.simpleUpdater('new-taxon', url, message);
+  spree.YUI.AJAX.simple_updater('new-taxon', url, message);
 
   spree.YUI.reset_current_target();
 };
@@ -32,7 +32,7 @@ spree.YUI.delete_node = function() {
   var message = 'id=' + taxon_id;
 
   if (confirm('Are you sure that you want to delete this taxon []?'))
-	spree.YUI.AJAX.simpleUpdater('edit-taxonomy', url, message);
+	spree.YUI.AJAX.simple_updater('edit-taxonomy', url, message);
 
   spree.YUI.reset_current_target(); 
 };
@@ -159,21 +159,44 @@ spree.YUI.destroy_tree = function(tree) {
 spree.YUI.onload = function() {
 };
 
-spree.YUI.AJAX = {};
+spree.YUI.AJAX = {
+  simple_updater: function(container, url, message) {
+	message += '&authenticity_token=' + spree.YUI.authenticity_token;
+	var callback = { success: spree.YUI.AJAX.simple_updater_response, 
+					 failure: spree.YUI.AJAX.simple_updater_response, 
+					 argument: [container] };
+	
+	var ajaxRequest = YAHOO.util.Connect.asyncRequest('POST', url, callback, message);
+  },
 
-spree.YUI.AJAX.simpleUpdaterResponse = function(o) {
-  var container = YAHOO.util.Dom.get(o.argument[0]);
-  if (container) {
-	container.innerHTML = o.responseText;
+  simple_updater_response: function(o) {
+	var container = YAHOO.util.Dom.get(o.argument[0]);
+	if (container) {
+	  container.innerHTML = o.responseText;
+	  var js = spree.YUI.AJAX.extract_javascript(container);
+	  try {
+		eval(js);
+	  }
+	  catch(exception) {
+		alert(exception);
+	  }
+	}
+  },
+
+  extract_javascript: function(root) {
+	var nodes = root.getElementsByTagName('script');
+	var result = '';
+
+	var re = /text\/javascript/i;
+
+	for (var i = 0; i < nodes.length; i++) {
+	  if (re.test(nodes[i].type)) {
+		result = result + nodes[i].text + "\n\n";
+	  }
+	}
+
+	return result;
   }
-};
 
-spree.YUI.AJAX.simpleUpdater = function(container, url, message) {
-  message += '&authenticity_token=' + spree.YUI.authenticity_token;
-  var callback = { success: spree.YUI.AJAX.simpleUpdaterResponse, 
-				   failure: spree.YUI.AJAX.simpleUpdaterResponse, 
-				   argument: [container] };
-
-  var ajaxRequest = YAHOO.util.Connect.asyncRequest('POST', url, callback, message);
 };
 

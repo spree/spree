@@ -8,17 +8,10 @@ class Admin::TaxonomiesController < Admin::BaseController
     render :partial => 'list'
   end
 
-#  def edit
-#    @taxonomy = find_taxonomy
-#    render :partial => 'edit'
-#  end
-
-  def yui_tree
+  def edit
     @taxonomy = find_taxonomy
-    render :partial => 'yui_tree'
+    render :partial => 'edit'
   end
-
-  alias :edit :yui_tree
 
   def new
     render :partial => 'new'
@@ -99,7 +92,7 @@ class Admin::TaxonomiesController < Admin::BaseController
   def delete_taxon
     taxon = Taxon.find(params[:id])
     @taxonomy = Taxonomy.find(taxon.taxonomy_id)
-    taxon.destroy
+#    taxon.destroy
     render :partial => 'edit'
   end
 
