@@ -1,0 +1,31 @@
+<h3>Manage Products for [<%= @taxon.presentation %>]</h3>
+<%= save_button('Save', 'manage-products', @taxon.id) %> | 
+<%= reload_button('Reset', 'manage-products', 'manage_products', @taxon.id) %> | 
+<%= cancel_button('Cancel', 'manage-products') %>
+<table class="two-col">
+  <tr>
+	<td class="two-col-left">
+	  <h4>Current Products</h4>
+	  <h5>Click to remove</h5>
+	  <ul class="plain" id="add-product-target">
+		<% @taxon.products.each do |p| %>
+		  <li><span class="product-action product-action-remove" id="product-<%= p.id %>"><%= p.name %></span>
+		<% end %>
+	  </ul>
+	</td>
+	<td class="two-col-right">
+	  <h4>All Products</h4>
+	  <h5>Click to add</h5>
+	  <ul class="plain" id="remove-product-target">
+		<% Product.find(:all).each do |p| %>
+		  <li><span class="product-action product-action-add" id="product-<%= p.id %>"><%= p.name %></span>
+		<% end %>
+	  </ul>
+	</td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  spree.taxon.pm.onload(<%= @taxon.id %>);
+</script>
+

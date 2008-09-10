@@ -1,0 +1,34 @@
+mc_root:
+  id: 1000
+  name: master_category
+  presentation: Categories
+  taxonomy: master_categories
+mc_l1_n0:
+  id: 1001
+  name: shirts
+  presentation: Shirts
+  taxonomy: master_categories
+  parent_id: 1000
+  position: 0
+  products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer
+mc_l1_n1:
+  id: 1002
+  name: bags
+  presentation: Bags
+  taxonomy: master_categories
+  parent_id: 1000
+  position: 1
+  products: ror_tote, ror_bag
+mc_l1_n2:
+  id: 1003
+  name: mugs
+  presentation: Mugs
+  taxonomy: master_categories
+  parent_id: 1000
+  position: 2
+  products: ror_mug, ror_stein
+vp_root:
+  id: 1004
+  name: products_by_vendor
+  presentation: Vendors
+  taxonomy: vendor_products
