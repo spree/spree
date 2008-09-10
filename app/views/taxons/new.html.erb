@@ -1,0 +1,12 @@
+<h1>New Taxon</h1>
+
+<%= error_messages_for :taxon %>
+
+<% form_for(:taxon, :url => collection_url) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%= submit_tag "Create" %>
+  </p>
+<% end %>
+<br/>
+<%= link_to 'Back', collection_url %>

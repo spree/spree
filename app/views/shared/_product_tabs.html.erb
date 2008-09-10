@@ -20,5 +20,10 @@
   	              admin_product_product_properties_url(@product),
   	              :class => (current == "Product Properties" ? "active" : "") %>
   	</li>
+  	<li>
+  	  <%= link_to t("Taxons"), 
+  	              selected_admin_product_taxons_url(@product),
+  	              :class => (current == "Taxons" ? "active" : "") %>
+  	</li>
   </ul>
 </div>
