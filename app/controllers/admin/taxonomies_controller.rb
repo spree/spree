@@ -92,7 +92,7 @@ class Admin::TaxonomiesController < Admin::BaseController
   def delete_taxon
     taxon = Taxon.find(params[:id])
     @taxonomy = Taxonomy.find(taxon.taxonomy_id)
-    taxon.destroy
+#    taxon.destroy
     render :partial => 'edit'
   end
 

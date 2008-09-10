@@ -1,6 +1,5 @@
-<h2>Edit Taxonomy: <%= @taxonomy.name %></h2><%= cancel_button('Cancel', 'edit-taxonomy') %>
-<%= tree_editor @taxonomy.root %>
+<h2>Edit Taxonomy: [<%= @taxonomy.presentation %>]</h2><%= cancel_button('Cancel', 'edit-taxonomy') %>
 
-<script type="text/javascript">
-	spree.tree.tree_onload();
-</script>
+<%= yui_tree_helper @taxonomy %>
+
+some other stuff
