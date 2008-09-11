@@ -104,9 +104,7 @@ module Spree
             class_inheritable_hash :default_preferences
             self.default_preferences = {}
             
-            has_many  :stored_preferences,
-            :as => :owner,
-            :class_name => 'Preference'
+            has_many  :stored_preferences, :as => :owner, :class_name => 'Preference'
             
             after_save :update_preferences
             

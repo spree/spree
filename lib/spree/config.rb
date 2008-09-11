@@ -13,12 +13,14 @@ module Spree
     class << self
 
       def instance
+        return nil unless ActiveRecord::Base.connection.tables.include?('app_configurations')
         AppConfiguration.find_or_create_by_name("Default configuration")
       end
 
       def get(key = nil)
         key = key.to_s if key.is_a?(Symbol)
-        prefs = Rails.cache.fetch("spree_current_preferences") { self.instance.preferences }
+        return nil unless config = self.instance
+        prefs = Rails.cache.fetch("spree_current_preferences") { config.preferences }
         return prefs if key.nil?
         prefs[key]
       end

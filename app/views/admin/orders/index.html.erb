@@ -19,18 +19,14 @@
             </tr>
           </thead>
           <tbody>
-          <% for order in @orders%>
+          <% @orders.each do |order| %>
             <tr class="<%= cycle('even', 'odd') %>">
               <td><%=order.created_at.to_date%></td>
-              <td><%= link_to order.number, {:action => 'show', :id => order} %></td>
-              <td><%= Order::Status.from_value order.status %></td>
-              <td><%= order.bill_address.full_name if order.bill_address%></td>
+              <td><%= link_to order.number, object_url(order) %></td>
+              <td><%= t(order.state).titleize %></td>
+              <td><%= order.user.email if order.user %></td>
               <td><%= number_to_currency order.total %></td>
-              <td>
-                <% action_links(order).each do |a| %>
-                  <%= link_to a.to_s.humanize.titleize, :action => a, :id => order -%>
-                <% end %>
-              </td>
+              <td><%= available_events(order) %></td>
             </tr>
           <% end %>
           </tbody>
@@ -38,7 +34,7 @@
       </div>
     </td>
     <td valign="top">
-      <% form_for :search do |f| %>
+      <% form_for :filter, :url => admin_orders_url, :html => { :method => :get } do |f| %>
         <div id="search-col">
           <table class="admin-search">
             <thead>
@@ -50,15 +46,15 @@
               <tr>
                 <td><%= t("Start") %>:</td>
                 <td>
-                  <%= error_message_on :search, :start%>
-                  <%= calendar_date_select :search, :start, :style=>"width:100px" %>
+                  <%= error_message_on :filter, :start%>
+                  <%= calendar_date_select :filter, :start, :style=>"width:100px" %>
                 </td>
               </tr>
               <tr>
                 <td>Stop:</td>
                 <td>
-                  <%= error_message_on :search, :stop%>
-                  <%= calendar_date_select :search, :stop, :style=>"width:100px" %>
+                  <%= error_message_on :filter, :stop%>
+                  <%= calendar_date_select :filter, :stop, :style=>"width:100px" %>
                 </td>
               </tr>
             </tbody>
@@ -71,21 +67,21 @@
             </thead>
             <tbody>
               <tr>
-                <td><%= t("Order #") %></td>
+                <td><%= Globalite.localize(:order_number) %></td>
                 <td>
-                  <%= f.text_field :order_num, :size=>15 %>
+                  <%= f.text_field :number, :size=>13 %>
                 </td>
               </tr>
               <tr>
                 <td><%= t("Status") %></td>
                 <td>
-                  <%= f.collection_select :status, @status_options, :id, :title, {:include_blank => true}, {:style => "width:100%"}%>
+                  <%= f.select :state, %w{ authorized canceled captured paid pending_payment returned shipped }.collect {|status| status.titleize}, {:include_blank => true}, {:style => "width: 115px"}%>
                 </td>
               </tr>
               <tr>
                 <td><%= t("Customer") %></td>
                 <td>
-                  <%= f.text_field :customer, :size=>15 %>
+                  <%= f.text_field :customer, :size=>13 %>
                 </td>
               </tr>
             </tbody>

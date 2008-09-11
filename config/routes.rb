@@ -1,6 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :tax_categories
-
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:
@@ -19,6 +17,8 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
+  # map.connect '/locale/:new_locale', :controller => 'locale', :action => 'set_session_locale'
+
   map.root :controller => "products", :action => "index"
   # login mappings should appear before all others
   map.login '/login', :controller => 'account', :action => 'login'
@@ -26,12 +26,14 @@ ActionController::Routing::Routes.draw do |map|
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
 
+  map.resources :tax_categories
   map.resources :countries, :has_many => :states, :actions => [:index]
   map.resources :states, :actions => [:index]
-  
   map.resources :users
   map.resources :products, :member => {:change_image => :post}
-  
+  map.resources :addresses
+  map.resources :orders, :member => {:address_info => :get, :checkout => :get}, :has_many => :line_items, :has_one => [:address, :creditcard_payment]
+
   map.namespace :admin do |admin|
     admin.resources :zones
     admin.resources :users
@@ -39,7 +41,15 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :states
     admin.resources :tax_categories
     admin.resources :configurations
+    admin.resources :products, :has_many => [:variants, :images, :product_properties] do |product|
+      product.resources :option_types, :member => {:select => :get, :remove => :get}, :collection => {:available => :get, :selected => :get}
+    end
+    admin.resources :images
+    admin.resources :option_types
+    admin.resources :properties, :collection => {:filtered => :get}
+    admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
     admin.resource :mail_settings
+    admin.resources :orders, :member => {:fire => :put, :resend => :post}
   end
   
   # Install the default route as the lowest priority.

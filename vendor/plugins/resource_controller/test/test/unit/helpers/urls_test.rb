@@ -6,6 +6,9 @@ class Helpers::UrlsTest < Test::Unit::TestCase
 
     @params = stub :[] => "1"
     @controller.stubs(:params).returns(@params)
+    
+    @request = stub :path => ""
+    @controller.stubs(:request).returns(@request)        
 
     @object = Post.new
     Post.stubs(:find).with("1").returns(@object)
@@ -19,7 +22,8 @@ class Helpers::UrlsTest < Test::Unit::TestCase
       @products_controller = ::Cms::ProductsController.new
       
       @products_controller.stubs(:params).returns(@params)
-
+      @request = stub :path => ""
+      @products_controller.stubs(:request).returns(@request)    
       @product = Product.new
       Product.stubs(:find).with("1").returns(@product)
     end

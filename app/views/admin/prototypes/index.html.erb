@@ -1,0 +1,34 @@
+<%= render :partial => 'shared/product_sub_menu' %>
+<h1><%=t("Prototypes") %></h1>
+<table class="basic-table">
+	<thead>
+		<tr>
+			<th><%= t("Name") %></th>
+			<th><%= t("Action") %></th>
+		</tr>
+	</thead>
+	<tbody>
+    <% @prototypes.each do |prototype| %>
+      <tr>
+        <td valign="top"><%= prototype.name %></td>
+		    <td valign="top">
+		      <%= link_to_edit(prototype) %>
+		      &nbsp;
+		      <%= link_to_delete(prototype) %>
+		    </td>        
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div id="prototypes"/>
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+<br/>
+<span id="new_proto_link">
+  <%= link_to_remote t("New Prototype"), 
+                     :url => new_admin_prototype_url, 
+                     :method => :get,
+                     :update => "prototypes",
+                     :before => "Element.hide('new_proto_link');Element.show('busy_indicator')", 
+                     :complete => "Element.hide('busy_indicator')" %>
+</span>

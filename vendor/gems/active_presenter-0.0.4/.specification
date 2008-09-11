@@ -1,0 +1,65 @@
+--- !ruby/object:Gem::Specification 
+name: active_presenter
+version: !ruby/object:Gem::Version 
+  version: 0.0.4
+platform: ruby
+authors: 
+- James Golick & Daniel Haran
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2008-09-01 00:00:00 -04:00
+default_executable: 
+dependencies: []
+
+description: ActivePresenter is the presenter library you already know! (...if you know ActiveRecord)
+email: james@giraffesoft.ca
+executables: []
+
+extensions: []
+
+extra_rdoc_files: []
+
+files: 
+- README
+- LICENSE
+- Rakefile
+- lib/active_presenter
+- lib/active_presenter/base.rb
+- lib/active_presenter/version.rb
+- lib/active_presenter.rb
+- lib/tasks
+- lib/tasks/doc.rake
+- lib/tasks/gem.rake
+- test/base_test.rb
+- test/test_helper.rb
+has_rdoc: true
+homepage: http://jamesgolick.com/active_presenter
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+- bin
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: 1.8.5
+  version: 
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+requirements: []
+
+rubyforge_project: active_presenter
+rubygems_version: 1.0.1
+signing_key: 
+specification_version: 2
+summary: ActivePresenter is the presenter library you already know! (...if you know ActiveRecord)
+test_files: []
+

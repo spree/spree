@@ -29,15 +29,15 @@ module Globalite
     def locales
       @@locales.keys
     end
+    
+    @@ui_locales = {}
+    def ui_locales
+      @@ui_locales
+    end
 
     @@rails_locales = {}
     def rails_locales
       @@rails_locales
-    end
-
-    @@ui_locales = {}
-    def ui_locales
-      @@ui_locales
     end
 
     @@current_language = nil
@@ -272,7 +272,10 @@ module Globalite
     protected
     # Return the list of UI files used by Globalite
     def ui_localization_files
-      loc_files = Dir[File.join(SPREE_ROOT, 'lang/ui/', '*.{yml,yaml}')]
+      loc_files = Dir[
+        File.join(SPREE_ROOT, 'lang/ui/', '*.{yml,yaml}'),
+        File.join( SPREE_ROOT, '/vendor/extensions/*/lang/', '*.{yml,yaml}')
+      ]
       unless @@localization_sources.empty?
         @@localization_sources.each do |path|
           loc_files += Dir[File.join(path, '*.{yml,yaml}')]
@@ -283,7 +286,8 @@ module Globalite
 
     # Return a list of the Rails localization files
     def rails_localization_files
-      loc_files = Dir[File.join( SPREE_ROOT, '/vendor/plugins/globalite/lang/rails/', '*.{yml,yaml}')]
+      loc_files = Dir[
+        File.join( SPREE_ROOT, '/vendor/plugins/globalite/lang/rails/', '*.{yml,yaml}')]
     end
 
     # Interpolate a string using the passed arguments

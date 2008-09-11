@@ -7,7 +7,7 @@ class OrderMailer < ActionMailer::Base
     @body       = {"order" => order}
     @recipients = order.user.email
     @from       = Spree::Config[:order_from]
-    @bcc        = ORDER_BCC unless ORDER_BCC.empty? or resend
+    @bcc        = order_bcc
     @sent_on    = Time.now
   end
   
@@ -16,7 +16,12 @@ class OrderMailer < ActionMailer::Base
     @body       = {"order" => order}
     @recipients = order.user.email
     @from       = Spree::Config[:order_from]
-    @bcc        = ORDER_BCC unless ORDER_BCC.empty?
+    @bcc        = order_bcc
     @sent_on    = Time.now
   end  
+  
+  private
+  def order_bcc
+    [Spree::Config[:order_bcc], Spree::Config[:mail_bcc]].uniq
+  end
 end

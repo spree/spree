@@ -19,6 +19,9 @@ class Helpers::NestedTest < Test::Unit::TestCase
 
     @params = stub :[] => "1"
     @controller.stubs(:params).returns(@params)
+    
+    @request = stub :path => ""
+    @controller.stubs(:request).returns(@request)        
 
     @object = Post.new
     Post.stubs(:find).with("1").returns(@object)
@@ -69,7 +72,8 @@ class Helpers::NestedTest < Test::Unit::TestCase
       @comments_controller = CommentsControllerMock.new
       @comment_params = stub()
       @comment_params.stubs(:[]).with(:post_id).returns 2
-      
+      @request = stub :path => ""
+      @comments_controller.stubs(:request).returns(@request)          
       @comments_controller.stubs(:params).returns(@comment_params)
       @post = Post.new
       Post.stubs(:find).with(2).returns @post

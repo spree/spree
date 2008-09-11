@@ -1,14 +1,15 @@
 class Admin::ImagesController < Admin::BaseController
+  resource_controller
+  actions :destroy
 
-  def new
-    @image = Image.new
-    render :layout => false
+  destroy.before do 
+    @viewable = object.viewable
   end
-
-  def delete
-    image = Image.find(params[:id])
-    viewable = image.viewable
-    image.destroy
-    render :partial => 'shared/images', :locals => {:viewable => viewable}
+  
+  destroy.response do |wants| 
+    wants.html do
+      flash[:notice] = nil
+      render :partial => '/admin/products/images', :locals => {:viewable => @viewable}
+    end
   end
 end

@@ -1,0 +1,21 @@
+<h1>Listing Options</h1>
+
+<table>
+  <tr>
+    <th>Account</th>
+    <th>Title</th>
+  </tr>
+  <%- @options.each do |option|%>
+    <tr>
+      <td><%=h option.account_id %></td>
+      <td><%=h option.title %></td>
+    
+      <td><%=link_to 'Show', object_url(option) %></td>
+      <td><%=link_to 'Edit', edit_object_url(option) %></td>
+      <td><%=link_to 'Destroy', object_url(option), :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+<br/>
+
+<%= link_to 'New Option', new_object_url %>

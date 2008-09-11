@@ -51,13 +51,15 @@ namespace 'spree' do
     files.exclude 'config/lighttpd.conf'
     files.exclude 'config/mongrel_mimes.yml'
     files.exclude 'db/*.db'
+    files.exclude 'db/*.sqlite3'
+    files.exclude 'db/*.sql'
     files.exclude 'db/*.rb'
     files.exclude /^doc/
     files.exclude 'log/*.log'
     files.exclude 'log/*.pid'
     #files.include 'log/.keep'
     files.exclude /^pkg/
-    files.include 'public/.htaccess'
+    files.include 'public/.htaccess.example'
     files.exclude 'public/images/products'
     files.exclude 'tmp/'
     s.files = files.to_a

@@ -1,7 +1,9 @@
 class Admin::OrdersController < Admin::BaseController
-  
+  require 'spree/gateway_error'
+  resource_controller
   before_filter :initialize_txn_partials
-  
+  before_filter :load_object, :only => [:fire, :resend]
+
   in_place_edit_for :address, :firstname
   in_place_edit_for :address, :lastname
   in_place_edit_for :address, :address1
@@ -11,269 +13,47 @@ class Admin::OrdersController < Admin::BaseController
   in_place_edit_for :address, :phone
   in_place_edit_for :user, :email
   
-  def index
-    @status_options = Order::Status.constants
-    if params[:search]
-      @search = SearchCriteria.new(params[:search])
-      if @search.valid?
-        p = {}
-        conditions = build_conditions(p)
-        if p.empty? 
-          @orders = Order.find(:all, :order => "created_at DESC", :page => {:size => 15, :current =>params[:page], :first => 1})          
-        else 
-          @orders = Order.find(:all, 
-                               :order => "orders.created_at DESC",
-                               :joins => "as orders inner join addresses as a on orders.bill_address_id = a.id",
-                               :conditions => [conditions, p],
-                               :select => "orders.*",
-                               :page => {:size => 15, :current =>params[:page], :first => 1})
-        end
-      else
-        @orders = []
-        flash.now[:error] = "Invalid search criteria.  Please check your results."      
-      end
-    else
-      @search = SearchCriteria.new
-      @orders = Order.find(:all, 
-                           :order => "created_at DESC",
-                           :conditions => ["status != ?", Order::Status::INCOMPLETE],
-                           :page => {:size => 15, :current =>params[:page], :first => 1})
+  def fire   
+    # TODO - possible security check here but right now any admin can before any transition (and the state machine 
+    # itself will make sure transitions are not applied in the wrong state)
+    event = params[:e]
+    Order.transaction do 
+      @order.send("#{event}!")
+      @order.state_events.create(:name => t(event), :user => current_user)
     end
-  end
-  
-  def show
-    @order = Order.find(params[:id])
-    @user = @order.user
-    @states = State.find(:all)
-    @countries = Country.find(:all)
-  end
-
-  def capture
-    order = Order.find(params[:id])
-
-    response = gateway_capture(order)
-    unless response.success?
-      flash[:error] = "Problem capturing credit card ... \n#{response.params['error']}"   
-      redirect_to :back and return
-    end
-
-    order.status = Order::Status::CAPTURED
-    order.order_operations << OrderOperation.new(
-      :operation_type => OrderOperation::OperationType::CAPTURE,
-      :user => current_user
-    )
-
-    if order.save
-      flash[:notice] = "Order has been captured."    
-    else
-      logger.error "unable to update order status: " + order.inspect
-      flash[:error] = "Order was captured but database update has failed.  Please ask your administrator to manually adjust order status."
-    end
-    redirect_to :back
-  end
-  
-  def ship
-    order = Order.find(params[:id])
-    
-    # if the current status is AUTHORIZED then we need to CAPTURE as well
-    if order.status == Order::Status::AUTHORIZED
-      response = gateway_capture(order)
-      unless response.success?
-        flash[:error] = "Problem capturing credit card ... \n#{response.params['error']}"   
-        redirect_to :back and return
-      end
-    end
-    
-    order.status = Order::Status::SHIPPED
-    order.order_operations << OrderOperation.new(
-      :operation_type => OrderOperation::OperationType::SHIP,
-      :user => current_user
-    )
-
-    begin 
-      Order.transaction do
-        order.save!
-        # now update the inventory to reflect the new shipped status
-        order.inventory_units.each do |unit|     
-          unit.update_attributes(:status => InventoryUnit::Status::SHIPPED)
-        end
-      end
-      flash[:notice] = "Order has been shipped."    
-    rescue
-      logger.error "unable to ship order: " + order.inspect
-      flash[:error] = "Unable to ship order.  Please contact your administrator."
-    end    
-    
-    redirect_to :back
-    
-  end
-  
-  def cancel
-    order = Order.find(params[:id])
-    response = gateway_void(order)
-
-    unless response.success?
-      flash[:error] = "Problem voiding credit card authorization ... \n#{response.params['error']}"   
-      redirect_to :back and return
-    end
-
-    order.order_operations << OrderOperation.new(
-      :operation_type => OrderOperation::OperationType::CANCEL,
-      :user => current_user
-    )
-    order.status = Order::Status::CANCELED
-    
-    begin 
-      Order.transaction do
-        order.save!
-        # now update the inventory to reflect the new on hand status
-        order.inventory_units.each do |unit|     
-          unit.update_attributes(:status => InventoryUnit::Status::ON_HAND)
-        end
-        flash[:notice] = "Order cancelled successfully."    
-      end
-    rescue
-      logger.error "unable to cancel order: " + order.inspect
-      flash[:error] = "Unable to cancel order."
-    end    
-    # send email confirmation
-    OrderMailer.deliver_cancel(order)
-    
-    redirect_to :back
-  end
-
-  def return
-    order = Order.find(params[:id])
-    
-    # TODO - consider making the credit an option since it may not be supported by some gateways
-    response = gateway_credit(order)
-
-    unless response.success?
-      flash[:error] = "Problem crediting the credit card ... \n#{response.params['error']}"   
-      redirect_to :back and return
-    end
-
-    order.order_operations << OrderOperation.new(
-      :operation_type => OrderOperation::OperationType::RETURN,
-      :user => current_user
-    )
-    order.status = Order::Status::RETURNED
-    
-    begin
-      Order.transaction do
-        order.save!
-        # now update the inventory to reflect the new on hand status
-        order.inventory_units.each do |unit|     
-          unit.update_attributes(:status => InventoryUnit::Status::ON_HAND)
-        end
-        flash[:notice] = "Order successfully returned."    
-      end
-    rescue
-      logger.error "unable to return order: " + order.inspect
-      flash[:error] = "Order payment was credited but database update has failed.  Please ask your administrator to manually adjust order status."
-    end
-    
+    flash[:notice] = t('Order Updated')
+  rescue Spree::GatewayError => ge
+    flash[:error] = "#{ge.message}"
+  ensure
     redirect_to :back
   end
   
   def resend
-    # resend the order receipt
-    @order = Order.find(params[:id])
     OrderMailer.deliver_confirm(@order, true)
-    flash[:notice] = "Confirmation message was resent successfully."
+    flash[:notice] = t('Order Email Resent')
     redirect_to :back
   end
-
-  def delete
-    # delete an incomplete order from the system
-    order = Order.find(params[:id])
-    if order.destroy
-      flash[:notice] = "Order successfully deleted."    
-    else
-      logger.error "unable to delete order: " + order.inspect
-      flash[:error] = "Unable to delete order."
-    end
-    redirect_to :back
-  end
-
+  
   private
-
-    # Allows extensions to add new forms of payment to provide their own display of stransactions
-    def initialize_txn_partials
-      @txn_partials = []
+  def collection   
+    @filter = OrderFilter.new(params[:filter])
+    if params[:filter] and @filter.valid?
+      default_stop = (Date.today + 1).to_s(:db)
+      scopes = []
+      scopes << [ :by_number, @filter.number ] if @filter.number
+      scopes << [ :by_customer, @filter.customer ] unless @filter.customer.blank?
+      scopes << [ :between, @filter.start, (@filter.stop.blank? ? default_stop : @filter.stop) ] unless @filter.start.blank?
+      scopes << [ :by_state, @filter.state.tableize.singularize.gsub(" ", "_") ] unless @filter.state.blank?
+      @collection = (scopes.inject(Order) {|m,v| m.scopes[v.shift].call(m, *v) }).find(:all, :order => 'orders.created_at DESC', :include => :user,
+        :page => {:size => 15, :current =>params[:p], :first => 1})
     end
-
-    def gateway_capture(order)
-      authorization = find_authorization(order)
-      gw = payment_gateway
-      response = gw.capture(order.total * 100, authorization.response_code, Order.minimal_gateway_options(order))
-      return unless response.success?
-      order.credit_card.txns << CreditCardTxn.new(
-        :amount => order.total,
-        :response_code => response.authorization,
-        :txn_type => CreditCardTxn::TxnType::CAPTURE
-      )
-      order.save
-      response
-    end
-    
-    def gateway_void(order)
-      authorization = find_authorization(order)
-      gw = payment_gateway
-      response = gw.void(authorization.response_code, Order.minimal_gateway_options(order))
-      return unless response.success?
-      order.credit_card.txns << CreditCardTxn.new(
-        :amount => order.total,
-        :response_code => response.authorization,
-        :txn_type => CreditCardTxn::TxnType::VOID
-      )
-      order.save
-      response
-    end
-   
-    def gateway_credit(order)
-      authorization = find_authorization(order)
-      gw = payment_gateway
-      response = gw.credit(order.total, authorization.response_code, Order.minimal_gateway_options(order))
-      return unless response.success?
-      order.credit_card.txns << CreditCardTxn.new(
-        :amount => order.total,
-        :response_code => response.authorization,
-        :txn_type => CreditCardTxn::TxnType::CREDIT
-      )
-      order.save
-      response
-    end
-
-    def find_authorization(order)
-      #find the transaction associated with the original authorization/capture 
-      cc = order.credit_card
-      cc.txns.find(:first, 
-                   :conditions => ["txn_type = ? or txn_type = ?", CreditCardTxn::TxnType::AUTHORIZE, CreditCardTxn::TxnType::CAPTURE],
-                   :order => 'created_at DESC')
-    end
-
-    def build_conditions(p)
-      c = []
-      if not @search.start.blank?
-        c << "(orders.created_at between :start and :stop)"
-        p.merge! :start => @search.start.to_date
-        @search.stop = Date.today + 1 if @search.stop.blank?
-        p.merge! :stop => @search.stop.to_date + 1.day 
-      end
-      unless @search.order_num.blank?
-        c << "number like :order_num"
-        p.merge! :order_num => @search.order_num + "%"
-      end
-      unless @search.customer.blank?
-        c << "(firstname like :customer or lastname like :customer)"
-        p.merge! :customer => @search.customer + "%"
-      end
-      if @search.status
-        c << "status = :status"
-        p.merge! :status => @search.status
-      end
-      (c.to_sentence :skip_last_comma=>true).gsub(",", " and ")
-    end
-
+     
+    @collection ||= end_of_association_chain.find(:all, :order => 'created_at DESC', :include => :user,
+      :page => {:size => 15, :current =>params[:p], :first => 1})
+  end
+  
+  # Allows extensions to add new forms of payment to provide their own display of transactions
+  def initialize_txn_partials
+    @txn_partials = []
+  end
 end

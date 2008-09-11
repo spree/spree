@@ -10,5 +10,5 @@
   <label for="remember_me"><%= t("Remember me") %></label>
 </p>
 
-<p><%= submit_tag t("Log In") %> or <%= link_to "Create a new account", signup_path %> </p>
+<p><%= submit_tag t("Log In") %> <%= t("or") %> <%= link_to t("Create a new account"), signup_path %> </p>
 <% end -%>

@@ -1,6 +1,6 @@
-<% content_for :action_nav do %>
+<% content_for :sub_menu do %>
   <ul id="act-nav">
-    <li><%= link_to t("Resend"), :action => :resend, :id => @order %></li>
+    <li><%= link_to t("Resend"), resend_admin_order_url(@order), :method => :post %></li>
   </ul>
 <% end %>
 
@@ -28,31 +28,31 @@
       <th><%= t("Email") %></th>
     </tr>
     <tr>
-      <td><%=in_place_editor_field :user, :email %></td>
+      <td><%= @order.user.email if @order.user%></td>
     </tr>
   </table>
 <% end %>
 <table class="basic-table">
   <tr>
-    <th><%= t("Operation") %></th>
+    <th><%= t("Event") %></th>
     <th><%= t("User") %></th>
     <th><%= "#{t('Date')}/#{t('Time')}" %></th>
   </tr>
-  <% @order.order_operations.each do |o| %>
+  <% @order.state_events.sort.each do |event| %>
     <tr>
-      <td><%=OrderOperation::OperationType.from_value o.operation_type%></td>
-      <td><%=o.user.email%></td>
-      <td><%=o.created_at.to_s(:db)%></td>
+      <td><%=t("#{event.name}") %></td>
+      <td><%=event.user.email %></td>
+      <td><%=event.created_at.to_s(:db) %></td>
     </tr>
   <% end %>
-  <% if @order.order_operations.empty? %>
+  <% if @order.state_events.empty? %>
     <tr>
       <td colspan="3"><%= t("None Available") %></td>
     </tr>
   <% end %>
 </table>
 
-<% if card = @order.credit_card %>
+<% if card = @order.creditcard_payment %>
   <b><%= t("Credit Card")%>: </b> &nbsp; #<%= card.display_number %><br/>
   <b><%= t("Type")%> : </b> &nbsp; <%= card.cc_type.titleize %><br/>
   <table class="basic-table">
@@ -62,9 +62,9 @@
       <th><%= t("Response Code") %></th>
       <th><%= "#{t('Date')}/#{t('Time')}" %></th>
     </tr>
-    <% @order.credit_card.txns.each do |t| %>
+    <% card.txns.each do |t| %>
       <tr>
-        <td><%=CreditCardTxn::TxnType.from_value t.txn_type.to_i%></td>
+        <td><%=CreditcardTxn::TxnType.from_value t.txn_type.to_i%></td>
         <td><%=number_to_currency t.amount%></td>
         <td><%=t.response_code%></td>
         <td><%=t.created_at.to_s(:db)%></td>

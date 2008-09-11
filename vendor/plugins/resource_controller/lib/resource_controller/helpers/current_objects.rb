@@ -36,9 +36,19 @@ module ResourceController::Helpers::CurrentObjects
     #     end
     #   end
     #
-    def object
+    def object  
+      return @object if param.blank?
+      if param.is_integer?
+        @object ||= end_of_association_chain.find(param) unless param.nil?
+      else
+        # hack by sean to allow permalink objects
+        @object = end_of_association_chain.find_by_param!(param)
+      end
+      @object
+=begin      
       @object ||= end_of_association_chain.find(param) unless param.nil?
       @object
+=end
     end
     
     # Used internally to load the member object in to an instance variable @#{model_name} (i.e. @post)

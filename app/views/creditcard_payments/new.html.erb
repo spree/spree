@@ -1,0 +1,17 @@
+<%=error_messages_for :payment_presenter %>
+<h1><%= t("Payment")%></h1>
+<% form_for(:payment_presenter, :url => order_creditcard_payment_url(@order)) do |f| %>
+  <table cellpadding="5">
+    <tr>
+      <td valign="top">
+        <%= render :partial => 'form_credit_card', :locals => {:f => f} %>
+      </td>
+      <td>
+        <%= render :partial => 'form_billing', :locals => {:f => f} %>
+      </td>
+    </tr>
+  </table>
+  <div align="right">
+    <%= submit_tag t('Continue') %>
+  </div>
+<% end %>

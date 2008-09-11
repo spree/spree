@@ -1,0 +1,49 @@
+<h4>Billing Address</h4>
+<table>
+  <tr>
+    <td width="150"><%= t("First Name") %></td>
+    <td><%= f.text_field :address_firstname %></td>
+  </tr>
+  <tr>
+    <td><%= t("Last Name") %></td>
+    <td><%= f.text_field :address_lastname %></td>
+  </tr>
+  <tr>
+    <td><%= t("Street Address") %></td>
+    <td><%= f.text_field :address_address1 %></td>
+  </tr>
+  <tr>
+    <td><%= Globalite.localize(:street_address_2) %></td>
+    <td><%= f.text_field :address_address2 %></td>
+  </tr>
+  <tr>
+    <td><%= t("City") %></td>
+    <td><%= f.text_field :address_city %></td>
+  </tr>
+  <tr id="address_states_row">
+		<%= render :partial => "states" %>
+  </tr>
+  <tr>
+    <td><%= t("Zip") %></td>
+    <td><%= f.text_field :address_zipcode %></td>
+  </tr>
+  <tr>
+    <td><%= t("Country") %></td>
+    <td>
+      <select id="payment_presenter_address_country_id" name="payment_presenter[address_country_id]" style="width:150px;"> 
+        <%= options_from_collection_for_select(@countries, :id, :name, @selected_country_id) %>
+      </select>
+			<%= observe_field :payment_presenter_address_country_id, :url => {:action => :country_changed },
+	    	:frequency => 2,
+	    	:update => 'address_states_row',
+	  		:on => "onselect",
+		 		:with => "payment_presenter[address_country_id]",
+				:loading => "$('address_states_row').childElements()[1].update('Loading...');"
+			%>       
+    </td>
+  </tr>
+  <tr>
+    <td><%= t("Phone") %></td>
+    <td><%= f.text_field :address_phone %></td>
+  </tr>
+</table>

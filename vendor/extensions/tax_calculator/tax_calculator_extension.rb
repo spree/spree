@@ -13,11 +13,15 @@ class TaxCalculatorExtension < Spree::Extension
 
   def activate
     # Mixin the payment_gateway method into the base controller so it can be accessed by the checkout process, etc.
-    CheckoutController.class_eval { include Spree::TaxCalculator }    
+    #PaymentsController.class_eval { include Spree::TaxCalculator }    
+    Order.class_eval do
+      include Spree::TaxCalculator
+      Order.state_machines['state'].after_transition(:to => 'payment', :do => lambda {|order| order.update_attribute(:tax_amount, order.calculate_tax)})
+    end
     Admin::ConfigurationsController.class_eval do
       before_filter :add_tax_rate_links, :only => :index
       def add_tax_rate_links
-        @extension_links << {:link => admin_tax_rates_path, :link_text => t('Tax Rates'), :description => "Tax rates setup and configuration."}
+        @extension_links << {:link => admin_tax_rates_path, :link_text => Globalite.localize(:ext_tax_calculator_tax_rates), :description => Globalite.localize(:ext_tax_calculator_tax_rates_description)}
       end
     end
   end

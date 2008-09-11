@@ -1,0 +1,10 @@
+<% 1.upto(30) do |i| %>
+visa_<%= i %>:
+  order: order_<%= i %>
+  cc_type: visa
+  month: 12
+  year: 2011
+  display_number: XXXX-XXXX-XXXX-1111
+  first_name: Sean
+  last_name: Schofield
+<% end %>

@@ -32,12 +32,14 @@ Spree::Initializer.run do |config|
   config.gem "mini_magick", :version => '1.2.3'
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.3.2'
   config.gem "tlsmail"
+  config.gem 'active_presenter', :version => '0.0.4'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
-
+  config.plugins = [ :all, :resource_controller, :extension_patches ] 
+  
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
 
@@ -55,8 +57,8 @@ Spree::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_rails-test_session',
-    :secret      => '2271bed096798b2c9e7b7ec14263e669944808bb94cb56d4befa5757cbb931095a3644c7850c264aadfde669d470ff5dccb10dc80bcf727d80bc2d148341b43b'
+    :session_key => '_<%= app_name %>_session',
+    :secret      => '<%= app_secret_key_to_be_replaced_in_real_app_by_generator %>' 
   }
 
   # Use the database for sessions instead of the cookie-based default,

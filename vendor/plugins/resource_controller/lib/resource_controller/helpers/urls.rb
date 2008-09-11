@@ -110,7 +110,11 @@ module ResourceController::Helpers::Urls
     end
     
     def parent_url_options
-      parent? ? [parent_type.to_sym, parent_object] : nil
+      if parent?
+        parent_singleton? ? parent_type.to_sym : [parent_type.to_sym, parent_object]
+      else
+        nil
+      end
     end
     
     # Returns all of the current namespaces of the current controller, symbolized, in array form.

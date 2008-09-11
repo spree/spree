@@ -3,6 +3,8 @@
 #######################################################################################################
 
 require 'rbconfig'
+require 'digest/md5'
+require 'rails_generator/secret_key_generator'
 
 class InstanceGenerator < Rails::Generator::Base
   DEFAULT_SHEBANG = File.join(Config::CONFIG['bindir'],
@@ -28,9 +30,22 @@ class InstanceGenerator < Rails::Generator::Base
     usage if args.empty?
     usage("Databases supported for preconfiguration are: #{DATABASES.join(", ")}") if (options[:db] && !DATABASES.include?(options[:db]))
     @destination_root = args.shift
+    @app_name = File.basename(File.expand_path(@destination_root))
   end
 
   def manifest
+    
+    md5 = Digest::MD5.new
+    now = Time.now
+    md5 << now.to_s
+    md5 << String(now.usec)
+    md5 << String(rand(0))
+    md5 << String($$)
+    md5 << @app_name
+ 
+    # Do our best to generate a secure secret key for CookieStore
+    secret = Rails::SecretKeyGenerator.new(@app_name).generate_secret
+        
     # The absolute location of the Spree files
     root = File.expand_path(SPREE_ROOT) 
     
@@ -43,13 +58,14 @@ class InstanceGenerator < Rails::Generator::Base
       m.directory ""
       
       # Standard files and directories
-      base_dirs = %w(config config/environments db log script public vendor/plugins vendor/extensions)
+      base_dirs = %w(config config/environments config/initializers db db/sample log script public vendor/plugins vendor/extensions)
       text_files = %w(CHANGELOG CONTRIBUTORS LICENSE INSTALL README.markdown)
       environments = Dir["#{root}/config/environments/*.rb"]
       scripts = Dir["#{root}/script/**/*"].reject { |f| f =~ /(destroy|generate|plugin)$/ }
-      public_files = ["public/.htaccess"] + Dir["#{root}/public/**/*"]
+      public_files = ["public/.htaccess.example"] + Dir["#{root}/public/**/*"]
+      sample_fixtures = Dir["#{root}/db/sample/**/*"]
       
-      files = base_dirs + text_files + environments + scripts + public_files
+      files = base_dirs + text_files + environments + scripts + public_files + sample_fixtures
       files.map! { |f| f = $1 if f =~ %r{^#{root}/(.+)$}; f }
       files.sort!
       
@@ -83,8 +99,9 @@ class InstanceGenerator < Rails::Generator::Base
 
       # Instance Configurations
       m.file "instance_routes.rb", "config/routes.rb"
-      m.file "../../../../config/environment.rb", "config/environment.rb"
+      m.template "../../../../config/environment.rb", "config/environment.rb", :assigns => { :app_name => @app_name, :app_secret_key_to_be_replaced_in_real_app_by_generator => secret }
       m.file "../../../../config/boot.rb", "config/boot.rb"
+      m.file "../../../../config/initializers/spree.rb", "config/initializers/spree.rb"
       
       # Demo Configuration
       if options[:demo]

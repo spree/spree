@@ -1,0 +1,22 @@
+<tr class="product_property">
+  <td>
+    <%= text_field_with_auto_complete :product_property, 
+                                      :property_name,
+                                      {:onkeypress => "return event.which == Event.KEY_RETURN ? false : true",
+                                       :autocomplete => "off",
+                                       :name => property_fu_name(product_property),
+                                       :value => product_property.property ? product_property.property.name : ""
+                                      },
+                                      {:url => filtered_admin_properties_url,
+                                       :method => :get,
+                                       :with => "Object.toQueryString({q: element.value})" 
+                                      } %>  
+  </td>
+  <td>
+		<input type="test" size="25" name="product[product_property_attributes][<%= product_property.id %>][value]" 
+		       value="<%= product_property.value %>"/>
+	</td>	
+  <td>
+  	<a href='#' onclick="$(this).up('.product_property').remove();"><%= t("Remove") %></a>
+  </td>
+</tr>

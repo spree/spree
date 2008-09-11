@@ -1,0 +1,10 @@
+<% content_for :sub_menu do %>
+  <table cellspacing="0" cellpadding="0" id="sub-menu">
+    <tr>
+      <td><%= link_to t("Products"), admin_products_url %></td>
+      <td><%= link_to t("Option Types"), admin_option_types_url %></td>
+      <td><%= link_to t("Properties"), admin_properties_url %></td>
+      <td><%= link_to t("Prototypes"), admin_prototypes_url %></td>
+    </tr>
+  </table>
+<% end %>

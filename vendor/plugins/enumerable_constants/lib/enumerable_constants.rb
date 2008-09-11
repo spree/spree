@@ -26,6 +26,10 @@ module EnumerableConstant
       self.display_name <=> other.display_name
     end
     
+    def title_translated
+      Globalite.localize("order_status_#{self.name.downcase}".to_sym)
+    end
+    
     def title
       if @display_name
         self.display_name

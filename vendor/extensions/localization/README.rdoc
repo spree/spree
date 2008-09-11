@@ -1,0 +1,5 @@
+= Localization
+
+We have temporarily disabled the request header check for the locale since it was doubling the request time when examined with a request profiler.  Users can still select their own language via a link (like the flag links on the demo site or through a user account preference.)  
+
+Of course the default language for the entire site can also be specified to whatever locale you choose.

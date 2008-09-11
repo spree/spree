@@ -1,0 +1,10 @@
+<div id="language-bar">
+  <ul>
+    <li><strong><%= :change_language.l %></strong></li>
+    <% Globalite.ui_locales.each do |name, code| -%>
+      <li>
+        <%=link_to(image_tag("flags/#{flag_image(code)}",{:alt => name, :title => name}), set_locale_path(:locale => code)) %>
+      </li>
+    <% end -%>
+  </ul>
+</div>

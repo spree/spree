@@ -1,0 +1,9 @@
+#properties li{
+	list-style: none;
+	float: left;
+	width: 120px; 
+	height: 4em;
+	margin-right: 5px;
+	font-size: .9em;
+	line-height: 1.2em;
+}

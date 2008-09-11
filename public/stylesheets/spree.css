@@ -237,49 +237,28 @@ padding-right: 0;
 }
 /* === end: login navigation === */
 
-/* === begin: admin navigation === */
-#admin-nav {
-  list-style: none;
-  float: left;
-  margin-right: 10px;
-  margin-top: 5px;
+/* === begin: menu styles === */
+#menu td {
   font-size: 14px;
+  padding-right: 10px;
 }
-#admin-nav li {
-  display: inline;
-  margin-right: 5px;
-}
-#admin-nav li a {
-  /*color: #ccc;*/
-  border: none;
-}
-#admin-nav li a:hover {
-  /*color: #fff;*/
-  /*background-color: transparent;*/
-}
-/* === end: admin navigation === */
 
-/* === begin: admin sub navigation === */
-#admin-sub-nav {
-  list-style: none;
-  float: left;
-  margin-right: 10px;
-  margin-top: 5px;
-  font-size: 90%;
+#sub-menu td {
+  font-size: 12px;
+  padding-right: 10px;  
 }
-#admin-sub-nav li {
-  display: inline;
-  margin-right: 5px;
+
+#detail-menu td {
+  font-size: 10px;
+  padding-right: 10px;  
 }
-#admin-sub-nav li a {
-  /*color: #ccc;*/
-  border: none;
+
+#detail-menu tr {
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
-#admin-sub-nav li a:hover {
-  /*color: #fff;*/
-  /*background-color: transparent;*/
-}
-/* === end: admin sub navigation === */
+
+/* === end: menu styles === */
 
 /* ===================== begin: price-diff =====================*/
 .price-diff {
@@ -296,6 +275,11 @@ padding-right: 0;
 /* ===================== end: store-header =====================*/
 
 /* ===================== begin: footer =====================*/
+#footer p {
+  text-align: center;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
 #footer ul {
   text-align: center;
   margin-top: 2px;

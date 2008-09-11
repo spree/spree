@@ -1,33 +1,25 @@
 class Admin::PropertiesController < Admin::BaseController
-  in_place_edit_for :property, :name
-  in_place_edit_for :property, :presentation
-
-  def new
-    if request.post? && params[:property]
-      @property = Property.new(params[:property])
-      if @property.save
-        flash[:notice] = 'Option type was successfully created.'
-      else  
-        logger.error("unable to create new option type: #{@property.inspect}")
-        flash[:error] = 'Problem saving new option type.'
-        @new_property_error = true
-      end
-    end
-   render :action => :index
+  resource_controller
+  
+  before_filter :load_object, :only => :filtered
+  belongs_to :product
+  
+  def filtered
+    @properties = Property.find(:all, :conditions => ['lower(name) LIKE ?', "%#{params[:q].downcase}%"], :order => :name)
+    render :template => "admin/properties/filtered.html.erb", :layout => false
+  end
+  
+  new_action.response do |wants|
+    wants.html {render :action => :new, :layout => false}
   end
 
-  def delete
-    property = Property.find(params[:id])
-    property.destroy
-    flash[:notice] = "Product Property #{property.name} Deleted"
-    redirect_to :action => :index
+  # redirect to index (instead of r_c default of show view)
+  update.response do |wants| 
+    wants.html {redirect_to collection_url}
   end
-
-  def new_property_form
-    if request.xhr?
-      render :partial => 'edit', :locals => { :property => Property.new }
-    else
-      # not ajax thing
-    end
+  
+  # redirect to index (instead of r_c default of show view)
+  create.response do |wants| 
+    wants.html {redirect_to collection_url}
   end
 end

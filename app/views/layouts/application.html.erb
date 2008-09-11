@@ -10,6 +10,11 @@
   <body>
     <div id="main">
       <table id="main-table" border='1'>
+        <% if Spree::Config[:allow_locale_switching] %>
+  				<tr>
+            <td colspan="2"><%= render :partial => 'shared/language_bar' %></td>
+          </tr>
+        <% end %>
         <tr>
           <td colspan="2">
             <table width="100%" class="store-header">
@@ -59,7 +64,7 @@
       	<% end %>
         <tr>
           <td id="shop-by-col" valign="top">
-            <!--todo: add the category info here -->
+            <!--todo: add the taxonomy info here -->
           </td>
           <td>
             <div id="main-content">

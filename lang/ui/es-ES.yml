@@ -2,7 +2,9 @@ account: Cuenta
 action: Acción
 add_category: Añadir Categoría
 add_option_type: Añadir tipo de opción
+add_option_types: Añadir tipo de opcións
 address_information: Información de Dirección
+add_product_properties: 
 add_to_cart: Añadir a la cesta
 adjustment: Ajuste
 administration: Administración
@@ -10,6 +12,7 @@ amount: Cuantía
 are_you_sure_category: ¿Está seguro de que quiere eliminar esta categoría?
 are_you_sure_delete_image: ¿Está seguro de que quiere eliminar esta imágen?
 are_you_sure_option_type: ¿Está seguro de que quiere eliminar este tipo de opción?
+available_on: 
 back: Atrás
 back_to_store: Volver a la tienda
 billing_address: Dirección de facturación
@@ -24,12 +27,15 @@ change_language: Cambiar Idioma
 checkout: Pagar
 city: Ciudad
 comp_order: Comp Order
+comp_order_confirmation: 
 configuration: Configuration
 confirm: Confirmar
 confirm_password: Confirme la contraseña
 continue_shopping: Seguir comprando
 country: País
 create: Crear
+create_a_new_account:
+credit_card: 
 current: Actual
 customer: Cliente
 date: Fecha
@@ -44,8 +50,8 @@ editing_option_types: Editar tipo de opción
 editing_user: Editar usuario
 email_address: Dirección de Correo Electrónico
 email: Correo Electrónico
+email_server_settings_description: 
 empty_cart: Vaciar Cesta
-english: #TODO
 error: error
 expiration_month: Mes de vencimiento
 expiration_year: Año de vencimiento
@@ -54,7 +60,8 @@ extensions: Extensiones
 filename: Nombre de archivo
 final_confirmation: Confirmación Final
 first_name: Nombre
-german: #TODO
+gateway:
+gateway_setting_description:
 hello_user: Hola usuario
 image: Imágen
 images: Imagenes
@@ -80,10 +87,14 @@ new_category: Nueva categoría
 new_image: Nueva Imágen
 new_option_type: Nuevo tipo de opción
 new_option_value: Nuevo valor de la opción
+new_product: 
+new_property: 
+new_prototype: 
 new_user: Nuevo usuario
 new_variant: Nueva Variante
 next: próximo
 no_items_in_cart: La cesta está vacía
+none: 
 none_available: No hay nada que mostrar
 number: Número
 on_hand: On Hand
@@ -91,6 +102,7 @@ operation: Operación
 options: Opciones
 option_types: Tipos de opción
 option_Values: Valores de opción
+order_number: 
 order_confirmation_note: Nota de confirmación de pedido
 order_date: Fecha de pedido
 order_details: Detalles del pedido
@@ -108,19 +120,28 @@ phone: Teléfono
 presentation: Presentación
 previous: Anterior
 price: Precio
+problem_authorizing_card: 
+problem_capturing_card:
 problems_processing_order: Hemos tenido al procesar su pedido
 process: Procesar
 product: Producto
 products: Productos
+product_properties: 
+property: 
+properties: 
+prototypes: 
 qty: Cant.
 remember_me: Recordarme en este equipo
+remove: 
 reports: Reportes
 resend: Volver a enviar
 response_code: Código de respuesta
 sales_total: Total de ventas
 sales_totals: Ventas Totales
+sales_totals_description: 
 search: Buscar
 select: Seleccionar
+select_from_prototype: 
 shipping_address: Dirección de envío
 shipping_method: Método de envío
 shipping: Envío
@@ -128,9 +149,9 @@ shipping_total: Total de envío
 shopping_cart: Cesta de compras
 sign_up: Registrarme
 sku: Código
-spanish: # TODO
 start: Inicio
 state: Comunidad
+state_setting_description:
 status: Estado
 stop: Parar
 store: Tienda
@@ -138,7 +159,11 @@ street_address_2: Dirección (continuación)
 street_address: Dirección
 subtotal: Subtotal
 tax: Impuesto
+tax_category: 
+tax_categories: 
+tax_categories_setting_description: 
 tax_total: IVA
+thank_you_for_your_order: 
 time: Hora
 total: Total
 transaction: Transacción
@@ -148,6 +173,7 @@ update: Actualizar
 use_different_shipping_address: Usar una dirección de envío diferente
 users: Usuarios
 user: Usuario
+value: 
 variants: Variantes
 version: Versión
 website: Página web
@@ -155,3 +181,22 @@ welcome_to_sample_store: Bienvenido a la tienda de ejemplo
 what_is_a_cvv: What is a (CVV) Credit Card Code?
 what_is_this: ¿Qué es esto?
 zip: Código postal
+zone: 
+zones: 
+zone_setting_description: 
+order_status_incomplete: 
+order_status_authorized: 
+order_status_captured: 
+order_status_canceled: 
+order_status_returned: 
+order_status_shipped: 
+order_status_paid: 
+order_status_abandoned: 
+order_status_pending_payment: 
+order_operation_authorize: 
+order_operation_capture: 
+order_operation_cancel: 
+order_operation_return: 
+order_operation_ship: 
+order_operation_comp: 
+order_operation_delete: 

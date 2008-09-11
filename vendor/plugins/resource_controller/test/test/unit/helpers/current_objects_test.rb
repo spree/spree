@@ -6,6 +6,9 @@ class Helpers::CurrentObjectsTest < Test::Unit::TestCase
 
     @params = stub :[] => "1"
     @controller.stubs(:params).returns(@params)
+    
+    @request = stub :path => ""
+    @controller.stubs(:request).returns(@request)    
 
     @object = Post.new
     Post.stubs(:find).with("1").returns(@object)
@@ -112,6 +115,9 @@ class Helpers::CurrentObjectsTest < Test::Unit::TestCase
         @comment_params.stubs(:[]).with(:post_id).returns 2
         @comment_params.stubs(:[]).with('comment').returns ""
         @comments_controller.stubs(:params).returns(@comment_params)
+        
+        @request = stub :path => ""
+        @comments_controller.stubs(:request).returns(@request)    
         
         Post.expects(:find).with(2).returns(Post.new)
         @comments = stub()

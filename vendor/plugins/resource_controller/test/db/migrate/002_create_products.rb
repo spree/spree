@@ -6,6 +6,6 @@ class CreateProducts < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :cms_products
+    drop_table :products
   end
 end

@@ -1,10 +1,8 @@
-class ProductsController < Spree::BaseController
+class ProductsController < Admin::BaseController
   layout 'application'
-
+  
   resource_controller
   actions :show, :index
-
-  before_filter :find_cart
 
   index do
     before do
@@ -19,11 +17,8 @@ class ProductsController < Spree::BaseController
   end
 
   private
-  def collection
-    @collection ||= Product.available.find(:all, :page => {:start => 1, :size => 10, :current => params[:page]})
-  end
 
-  def object
-    @object ||= Product.available.find_by_param!(params[:id])
-  end
+    def collection
+      @collection ||= Product.available.find(:all, :page => {:start => 1, :size => 10, :current => params[:p]}, :include => :images)
+    end
 end

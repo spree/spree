@@ -4,7 +4,7 @@
   <ul>
     <% if collection.previous_page? -%>
     <li class="nextpage">
-      <%= link_to "&#171; #{t('previous')}", { :page => collection.previous_page }.merge(options) %>
+      <%= link_to "&#171; #{t('previous')}", { :p => collection.previous_page }.merge(options) %>
     </li>
     <% else -%>
     <li class="disablepage">&#171; <%= t('previous') %></li>
@@ -16,7 +16,7 @@
     <li class="currentpage"><%= n %></li>
     <% else -%>
     <li><%= "..." if last_page+1 < n %>
-	    <%= link_to n, {:id => params[:id], :page => n}.merge(options) %>
+	    <%= link_to n, {:id => params[:id], :p => n}.merge(options) %>
     </li>
     <% end -%>
     <% last_page = n -%>
@@ -24,7 +24,7 @@
     
     <% if collection.next_page? -%>
     <li class="nextpage">
-      <%=  link_to "#{t('next')} &#187;", { :page => collection.next_page }.merge(options) %>
+      <%=  link_to "#{t('next')} &#187;", { :p => collection.next_page }.merge(options) %>
     </li>
     <% else -%>
     <li class="disablepage">&#171; <%= t('next') %></li>

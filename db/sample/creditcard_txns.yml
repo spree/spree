@@ -1,0 +1,7 @@
+<% 1.upto(30) do |i| %>
+txn_<%= i %>:
+  amount: 45.75
+  txn_type: <%=CreditcardTxn::TxnType::AUTHORIZE%>
+  response_code: 12345
+  creditcard_payment: visa_<%=i%>
+<% end %>

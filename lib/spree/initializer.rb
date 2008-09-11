@@ -55,6 +55,7 @@ module Spree
           app/models
           app/controllers
           app/helpers
+          app/presenters
           config
           lib
           vendor
@@ -107,11 +108,11 @@ module Spree
 
     def load_plugins
       super
-      extension_loader.load_extensions
+      extension_loader.load_extensions unless $rails_gem_installer
     end
 
     def after_initialize
-      extension_loader.activate_extensions
+      extension_loader.activate_extensions unless $rails_gem_installer
       super
     end
 =begin
@@ -134,6 +135,7 @@ module Spree
         arr.reverse!
       end
     
+      ActionMailer::Base.template_root = view_paths  if configuration.frameworks.include?(:action_mailer)        
       ActionController::Base.view_paths = view_paths if configuration.frameworks.include?(:action_controller)
     end
 

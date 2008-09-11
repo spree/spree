@@ -1,0 +1,20 @@
+<h1><%= t("Shopping Cart")%></h1>
+<% form_for(:order, :url => object_url, :html => { :method => :put}) do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
+
+	<div id="subtotal">
+		<h3><%= "#{t("Subtotal")}: #{number_to_currency(@order.item_total)}" %></h3>
+	  <%= submit_tag t('Update') %>
+	  <%= link_to t("Checkout"), checkout_order_url(@order) %> <!-- todo: replace with cart image button -->
+	</div>
+
+	<p><%=link_to t("Continue Shopping"), products_path %></p>
+  
+	<% unless @order.line_items.empty? %>
+	  <p id="clear_cart_link">
+	    <small>
+	      <%= link_to t("Empty Cart"), object_url, :method => :delete  %>
+	    </small>
+	  </p>
+	<% end %>
+<% end %>
