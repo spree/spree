@@ -8,12 +8,17 @@ class Address < ActiveRecord::Base
   validates_presence_of :lastname
   validates_presence_of :address1
   validates_presence_of :city
-  validates_presence_of :state
+  validates_presence_of :state, :unless => Proc.new { |address| address.country.states.length==0 }
+  validates_presence_of :state_name, :if => Proc.new { |address| address.country.states.length==0 }
   validates_presence_of :zipcode
   validates_presence_of :country
   validates_presence_of :phone
   
   def full_name
     self.firstname + " " + self.lastname
+  end
+  
+  def state_text
+    state.nil? ? state_name : (state.abbr=="" ? state.name : state.abbr)
   end
 end
