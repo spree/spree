@@ -1,10 +1,10 @@
 module Localization
+    
   def self.included(base)
-    if Spree::Config[:allow_locale_switching]
-      base.class_eval {
-        before_filter :set_locale
-      }
-    end
+    return unless Spree::Config[:allow_locale_switching]
+    base.class_eval {
+      before_filter :set_locale
+    }
   end
 
   private

@@ -19,11 +19,8 @@
     <td><%= t("City") %></td>
     <td><%= f.text_field :city %></td>
   </tr>
-  <tr>
-    <td><%= t("State") %></td>
-    <td>
-      <%= f.collection_select :state_id, @states, :id, :name, {:prompt => ""}, {:style => "width: 150px"}%>
-    </td>
+  <tr id="address_states_row">
+		<%= render :partial => "states" %>
   </tr>
   <tr>
     <td><%= t("Zip") %></td>
@@ -32,9 +29,16 @@
   <tr>
     <td><%= t("Country") %></td>
     <td>
-      <select name="address[country_id]" style="width:150px;"> 
-        <%= options_from_collection_for_select(@countries, :id, :name, 214) %>
-      </select>          
+      <select id="address_country_id" name="address[country_id]" style="width:150px;"> 
+        <%= options_from_collection_for_select(@countries, :id, :name, @selected_country_id) %>
+      </select>
+			<%= observe_field :address_country_id, :url => { :action => :country_changed },
+	    	:frequency => 2,
+	    	:update => "address_states_row",
+	  		:on => "onselect",
+		 		:with => "address[country_id]",
+				:loading => "$('address_states_row').childElements()[1].update('Loading...');"
+			%>    
     </td>
   </tr>
   <tr>
