@@ -25,9 +25,6 @@ end
 # Initialize mail server settings
 Spree::Preferences::MailSettings.init
 
-# Set the default locale
-Locale.code = Spree::Config[:default_locale]
-
 # Add extra support goodies (similar to rails active support)
 #class Array #:nodoc:
 #  include Spree::Support::CoreExtensions::Array

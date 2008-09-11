@@ -1,10 +1,9 @@
 module Localization
+    
   def self.included(base)
-    if Spree::Config[:allow_locale_switching]
-      base.class_eval {
-        before_filter :set_locale
-      }
-    end
+    base.class_eval {
+      before_filter :set_locale
+    }
   end
 
   private
@@ -18,6 +17,7 @@ module Localization
     #         if params[:locale]
     #        Locale.code = params[:locale]
     #     els
+    return unless Spree::Config[:allow_locale_switching]
     if session[:locale]
       Locale.code = session[:locale]
     elsif logged_in?
