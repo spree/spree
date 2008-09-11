@@ -28,5 +28,5 @@ spree_test
 tmp
 vendor/rails
 coverage/*
-TAGS
 var
+TAGS

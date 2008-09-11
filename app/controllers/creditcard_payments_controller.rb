@@ -25,12 +25,20 @@ class CreditcardPaymentsController < Admin::BaseController
     render :layout => false
   end
   
+  def country_changed
+    render :partial => "states"
+  end
+  
   private
-  def load_data
-    @states = State.find(:all, :order => 'name')
+  def load_data 
+    load_object
+    @selected_country_id = params[:payment_presenter][:address_country_id].to_i if params.has_key?('payment_presenter')
+    @selected_country_id ||= @order.address.country_id unless @order.nil? || @order.address.nil?  
+ 
+    @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     @countries = Country.find(:all)
   end
-
+  
   def check_existing
     # TODO - redirect to the next step if there is no outstanding balance
   end
