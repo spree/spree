@@ -272,10 +272,8 @@ module Globalite
     protected
     # Return the list of UI files used by Globalite
     def ui_localization_files
-      loc_files = Dir[
-        File.join(SPREE_ROOT, 'lang/ui/', '*.{yml,yaml}'),
-        File.join( SPREE_ROOT, '/vendor/extensions/*/lang/', '*.{yml,yaml}')
-      ]
+      loc_files = Dir[File.join(SPREE_ROOT, 'lang/ui/', '*.{yml,yaml}')]
+      loc_files += Dir[File.join( SPREE_ROOT, '/vendor/extensions/*/lang/', '*.{yml,yaml}')]
       unless @@localization_sources.empty?
         @@localization_sources.each do |path|
           loc_files += Dir[File.join(path, '*.{yml,yaml}')]
