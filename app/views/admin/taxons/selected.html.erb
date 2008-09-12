@@ -5,7 +5,7 @@
   <table class="basic-table">
   	<thead>
   		<tr>
-  			<th><%= t("Display") %></th>
+  			<th><%= t("Name") %></th>
   			<th><%= t("Path") %></th>
   			<th><%= t("Action") %></th>
   		</tr>
@@ -13,7 +13,7 @@
   	<tbody>
       <% @taxons.each do |taxon| %>
         <tr>
-          <td valign="top"><%= taxon.display %></td>
+          <td valign="top"><%= taxon.name %></td>
           <td valign="top"><%= taxon_path taxon %></td>
   		    <td valign="top"><%= link_to "Remove", remove_admin_product_taxon_url(@product, taxon) %>
 
@@ -25,5 +25,20 @@
       <% end %>
     </tbody>
   </table>
-  <%= image_tag "spinner.gif", :style => "display:none", :id => 'busy_indicator' %>
+  <table>
+    <tr>
+      <td><b><%= t('Search') %>:</b></td>
+      <td><input id="searchtext" size="25"></td>
+    </tr>
+  </table>
 </div>
+<%= image_tag "spinner.gif", :style => "display:none", :id => 'spinner' %>
+<%= observe_field(:searchtext,
+                  :frequency => 0.75,
+                  :update => :search_hits,
+                  :loading => "Element.show('spinner')",
+                  :complete => "Element.hide('spinner')",
+                  :url => available_admin_product_taxons_url(@product),
+                  :with => "'q=' + value") %>  
+<br/>                 
+<div id="search_hits"></div>

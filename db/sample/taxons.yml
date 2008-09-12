@@ -1,12 +1,12 @@
 mc_root:
   id: 1000
   name: master_category
-  display: Categories
+  presentation: Categories
   taxonomy: master_categories
 #mc_l1_n0:
 #  id: 1001
 #  name: shirts
-#  display: Shirts
+#  presentation: Shirts
 #  taxonomy: master_categories
 #  parent_id: 1000
 #  position: 0
@@ -14,7 +14,7 @@ mc_root:
 mc_l1_n1:
   id: 1002
   name: bags
-  display: Bags
+  presentation: Bags
   taxonomy: master_categories
   parent_id: 1000
   position: 1
@@ -22,7 +22,7 @@ mc_l1_n1:
 mc_l1_n2:
   id: 1003
   name: mugs
-  display: Mugs
+  presentation: Mugs
   taxonomy: master_categories
   parent_id: 1000
   position: 2
@@ -30,12 +30,12 @@ mc_l1_n2:
 vp_root:
   id: 1004
   name: products_by_vendor
-  display: Vendors
+  presentation: Vendors
   taxonomy: vendor_products
 clothing:
   id: 1001
   name: clothing
-  display: Clothing
+  presentation: Clothing
   taxonomy: master_categories
   parent_id: 1000
   #products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer
@@ -43,14 +43,14 @@ clothing:
 shirts:
   id: 2000
   name: shirts
-  display: Shirts
+  presentation: Shirts
   taxonomy: master_categories
   parent_id: 1001
   position: 0
 t_shirts:
   id: 3000
   name: t_shirts
-  display: T-Shirts
+  presentation: T-Shirts
   taxonomy: master_categories
   parent_id: 2000
   products: ror_baseball_jersey, ror_ringer

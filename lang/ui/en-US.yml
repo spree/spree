@@ -217,3 +217,7 @@ taxons: Taxons
 taxon: Taxon
 display: Display
 path: Path
+assign_taxon: Assign Taxon
+assign_taxons: Assign Taxons
+remove: Remove
+no_match_found: No Match Found
