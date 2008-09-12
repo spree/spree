@@ -17,7 +17,7 @@ class Admin::OptionTypesController < Admin::BaseController
     @product.option_types.delete(@option_type)
     @product.save
     flash[:notice] = "Succesfully removed option type."
-    redirect_to admin_product_option_types_url(@product)
+    redirect_to selected_admin_product_option_types_url(@product)
   end
 
   new_action.response do |wants|

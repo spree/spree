@@ -1,0 +1,27 @@
+<h4><%= t('Available Taxons') %></h4>
+<table class="basic-table">
+	<thead>
+		<tr>
+			<th><%= t("Name") %></th>
+			<th><%= t("Path") %></th>
+			<th><%= t("Action") %></th>
+		</tr>
+	</thead>
+	<tbody>
+    <% @available_taxons.each do |taxon| %>
+      <tr>
+        <td valign="top"><%= taxon.name %></td>
+        <td valign="top"><%= taxon_path taxon %></td>
+		    <td valign="top">
+		      <%= link_to_remote t('Select'), 
+		                         :url => select_admin_product_taxon_path(@product, taxon),
+		                         :update => 'selected-taxons' %>
+
+		    </td>        
+      </tr>
+    <% end %>
+    <% if @available_taxons.empty? %>
+     <tr><td colspan="3"><%= t('No match found') %>.</td></tr>
+    <% end %>
+  </tbody>
+</table>
