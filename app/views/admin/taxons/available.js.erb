@@ -1,3 +1,10 @@
+<script type="text/javascript">
+  function displayRow(){
+    var row = document.getElementById("captionRow");
+    if (row.style.display == '') row.style.display = 'none';
+    else row.style.display = '';
+  }
+</script>
 <h4><%= t('Available Taxons') %></h4>
 <table class="basic-table">
 	<thead>
@@ -9,13 +16,15 @@
 	</thead>
 	<tbody>
     <% @available_taxons.each do |taxon| %>
-      <tr>
+      <tr class="available_taxon">
         <td valign="top"><%= taxon.name %></td>
         <td valign="top"><%= taxon_path taxon %></td>
 		    <td valign="top">
+		      <a href="#" onclick="$(this).up('.available_taxon').remove();">Test</a>
 		      <%= link_to_remote t('Select'), 
 		                         :url => select_admin_product_taxon_path(@product, taxon),
-		                         :update => 'selected-taxons' %>
+		                         :update => 'selected-taxons',
+		                         :complete => "alert('foo')" %>
 
 		    </td>        
       </tr>
