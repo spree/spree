@@ -11,6 +11,6 @@ module OrdersHelper
     amount =  order.item_total
     amount += Spree::VatCalculator.calculate_tax(order, Rails.cache.read('vat_rates')) if show_price_inc_vat
 
-    options[:format_as_currency] ? format_price(amount, options) : amount
+    options.delete(:format_as_currency) ? format_price(amount, options) : amount
   end
 end

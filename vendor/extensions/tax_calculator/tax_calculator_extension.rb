@@ -24,6 +24,30 @@ class TaxCalculatorExtension < Spree::Extension
         @extension_links << {:link => admin_tax_rates_path, :link_text => Globalite.localize(:ext_tax_calculator_tax_rates), :description => Globalite.localize(:ext_tax_calculator_tax_rates_description)}
       end
     end
+    
+    ProductsHelper.class_eval do
+      def product_price(product_or_variant, options={})
+        options.assert_valid_keys(:format_as_currency, :show_vat_text, :show_price_inc_vat)
+        options.reverse_merge! :show_price_inc_vat => Rails.cache.fetch('show_prices_inc_vat') {Spree::Config[:show_prices_inc_vat]}, :format_as_currency => true, :show_vat_text => true
+
+        show_price_inc_vat = options.delete(:show_price_inc_vat)
+
+        # overwrite show_vat_text if show_price_inc_vat is false
+        options[:show_vat_text] = false unless show_price_inc_vat
+
+        amount = product_or_variant.is_a?(Product) ? product_or_variant.master_price : product_or_variant.price
+        amount += Spree::VatCalculator.calculate_tax_on(product_or_variant) if show_price_inc_vat
+
+        options.delete(:format_as_currency) ? format_price(amount, options) : amount
+      end
+      
+      def format_price(price, options={})
+        options.assert_valid_keys(:show_vat_text)
+        options.reverse_merge!:show_vat_text => true
+
+        options[:show_vat_text]  ?  number_to_currency(price) + ' (inc. VAT)' : number_to_currency(price)
+      end
+    end
   end
   
   def deactivate
