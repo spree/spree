@@ -2,11 +2,13 @@
   <h3><%= t("Products") %></h3>
   <ul class="product-listing">
     <% for product in @products %>
-    <li class="product preview" id="product_<%= product.id %>">
-      <%= link_to small_image(product), product %>
-      <%= link_to product.name, product %>
-      <b><%= number_to_currency(product.master_price) if product.master_price %></b>
-    </li>
+      <% if product.has_stock? %>
+        <li class="product preview" id="product_<%= product.id %>">
+          <%= link_to small_image(product), product %>
+          <%= link_to product.name, product %>
+          <b><%= number_to_currency(product.master_price) if product.master_price %></b>
+        </li>
+      <% end %>
     <% end %>
   </ul>
 </div>

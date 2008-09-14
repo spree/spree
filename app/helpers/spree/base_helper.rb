@@ -58,12 +58,10 @@ module Spree::BaseHelper
   
 
   # human readable list of variant options
-  def variant_options(v)
-    list = []
-    v.option_values.each do |ov|
-      list << ov.option_type.presentation + ": " + ov.presentation
-    end
-    list.to_sentence({:connector => ","})
+  def variant_options(v, mark_out_of_stock = false)
+    list = v.option_values.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence({:connector => ","})
+    list = "<span class =\"out-of-stock\">(OUT OF STOCK) #{list}</span>" if !v.in_stock && mark_out_of_stock
+    list
   end  
   
   def mini_image(product)
