@@ -48,6 +48,11 @@ class TaxCalculatorExtension < Spree::Extension
         options[:show_vat_text]  ?  number_to_currency(price) + ' (inc. VAT)' : number_to_currency(price)
       end
     end
+    
+    AppConfiguration.class_eval do
+      Rails.cache.delete("spree_current_preferences") 
+      preference :show_prices_inc_vat, :boolean, :default => true
+    end
   end
   
   def deactivate
