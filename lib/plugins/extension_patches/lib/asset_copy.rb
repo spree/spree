@@ -17,7 +17,7 @@ module Spree
       source_files -= source_dirs
     
       unless source_files.empty?
-        base_target_dir = File.join(destination, File.dirname(source_files.first))
+        base_target_dir = File.join(destination)
         FileUtils.mkdir_p(base_target_dir)
       end
     
