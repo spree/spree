@@ -22,8 +22,10 @@
 		    <td valign="top">
 		      <%= link_to_remote t('Select'), 
 		                         :url => select_admin_product_taxon_path(@product, taxon),
+		                         :loading => "Element.show(#{dom_id(taxon, :spinner)})",
 		                         :update => 'selected-taxons',
-		                         :complete => "$('#{dom_id(taxon)}').remove();" %>
+		                         :complete => "$('#{dom_id(taxon)}').remove(); Element.hide(#{dom_id(taxon, :spinner)});" %>
+          <%= image_tag "spinner.gif", :style => "display:none", :id => "#{dom_id(taxon, :spinner)}" %>		    
 		    </td>        
       </tr>
     <% end %>
