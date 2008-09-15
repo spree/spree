@@ -15,10 +15,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :email, :case_sensitive => false
   before_save :encrypt_password
   
-  has_many :addresses
   has_many :orders
-  has_many :ship_addresses, :class_name => "Address", :as => :addressable
-  has_many :bill_addresses, :class_name => "Address", :as => :addressable
   has_and_belongs_to_many :roles
 
   # prevents a user from submitting a crafted form that bypasses activation

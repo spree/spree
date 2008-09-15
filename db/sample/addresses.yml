@@ -9,7 +9,6 @@ frank_address_<%= i %>:
   zipcode: 16804
   country_id: 214
   phone: 614-555-1212
-  user: frank
   addressable: order_<%= i %>
   addressable_type: Order
 <% end %>
@@ -25,4 +24,3 @@ foo_street:
   phone: 555-555-1212
   created_at: <%= 3.days.ago.to_s :db %>
   updated_at: <%= 3.days.ago.to_s :db %>
-  user: frank
