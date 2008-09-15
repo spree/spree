@@ -23,8 +23,10 @@ spree.YUI = {
   },
 
   edit_node: function() { 
+	var tree = spree.YUI.current_tree;
 	var target = spree.YUI.current_tree.current_target;
-	alert("edit node: " + target.id); 
+	
+	window.location.href=target.data.edit_url + '/edit';
   },
 
   delete_node: function() { 
@@ -32,12 +34,21 @@ spree.YUI = {
 	//alert("delete node: " + target.id); 
 
 	var taxon_id = spree.YUI.current_tree.current_target.id;
-
-	var url = '/admin/taxonomies/delete_taxon';
+	
+	var url = spree.YUI.current_tree.current_target.data	.object_url;
 	var message = 'id=' + taxon_id;
 
-	if (confirm('Are you sure that you want to delete this taxon?'))
-	  spree.YUI.AJAX.simple_updater('edit-taxonomy', url, message);
+	if (confirm('Are you sure that you want to delete this taxon?')){
+	  new Ajax.Request(url, {
+	  	method: 'post',
+	  	parameters: {_method: 'delete'},
+		onSuccess: function(transport){
+		      var response = transport.responseText || "no response text";
+		      alert("Success! \n\n" + response);
+		    },
+	  	onFailure: function(){ alert('Something went wrong...') }
+	  });
+	}
 
 	spree.YUI.reset_current_target(); 
   },
@@ -121,8 +132,9 @@ spree.YUI = {
 	? tree.tree_view.getRoot() 
 	: tree.node_map[node.parent_id];
 	
-	tree.node_map[node.id] = new YAHOO.widget.HTMLNode(node.html, parent_node, false, true);
+	tree.node_map[node.id] = new YAHOO.widget.HTMLNode(node, parent_node, false, true);
 	if (node.parent_id == null) tree.root = tree.node_map[node.id];
+
   },
 
   set_current_target: function(target) {
@@ -130,7 +142,7 @@ spree.YUI = {
 	var tree = spree.YUI.find_tree_by_element(target); 
 	var spree_target = YAHOO.util.Dom.getElementsByClassName('spree-YUI-tree-node','span',target)
 
-	tree.current_target = spree_target[0];
+	tree.current_target = tree.node_map[spree_target[0].id];
 	spree.YUI.current_tree = tree;
 	return tree;
   },
@@ -174,48 +186,7 @@ spree.YUI = {
   },
 
   onload: function() {
-  },
-
-  AJAX: {
-	simple_updater: function(container, url, message) {
-	  message += '&authenticity_token=' + spree.YUI.authenticity_token;
-	  var callback = { success: spree.YUI.AJAX.simple_updater_response, 
-					   failure: spree.YUI.AJAX.simple_updater_response, 
-					   argument: [container] };
-	
-	  var ajaxRequest = YAHOO.util.Connect.asyncRequest('POST', url, callback, message);
-	},
-
-	simple_updater_response: function(o) {
-	  var container = YAHOO.util.Dom.get(o.argument[0]);
-	  if (container) {
-		container.innerHTML = o.responseText;
-		var js = spree.YUI.AJAX.extract_javascript(container);
-		try {
-		  eval(js);
-		}
-		catch(exception) {
-		  alert(exception);
-		}
-	  }
-	},
-	
-	extract_javascript: function(root) {
-	  var nodes = root.getElementsByTagName('script');
-	  var result = '';
-	  
-	  var re = /text\/javascript/i;
-	  
-	  for (var i = 0; i < nodes.length; i++) {
-		if (re.test(nodes[i].type)) {
-		  result = result + nodes[i].text + "\n\n";
-		}
-	  }
-	  
-	  return result;
-	},
-
-  }, // end spree.YUI.AJAX namespace
+  }
 
 }; // end spree.YUI namespace
 

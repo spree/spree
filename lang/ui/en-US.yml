@@ -221,3 +221,5 @@ assign_taxon: Assign Taxon
 assign_taxons: Assign Taxons
 remove: Remove
 no_match_found: No Match Found
+taxonomies: Taxonomies
+taxonomies_setting_description: Create and manage taxonomies

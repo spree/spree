@@ -1,0 +1,16 @@
+<table cellspacing="5">
+  <tr>
+    <td><%= t("Name")%>: </td>
+    <td>
+      <%=error_message_on :taxon, :name%>  
+      <%= text_field :taxon, :name  %>
+    </td>
+  </tr>
+  <tr>
+    <td><%= t("Presentation")%>: </td>
+    <td>
+      <%=error_message_on :taxon, :presentation%>  
+      <%= text_field :taxon, :presentation  %>
+    </td>
+  </tr>
+</table>

@@ -3,6 +3,10 @@ class Admin::TaxonsController < Admin::BaseController
   
   before_filter :load_object, :only => [:selected, :available, :remove]
   belongs_to :product
+  belongs_to :taxonomy
+  
+  update.wants.html {redirect_to edit_admin_taxonomy_path(@taxon.taxonomy)}
+  destroy.wants.html {redirect_to edit_admin_taxonomy_path(@taxon.taxonomy)}
   
   def selected 
     @taxons = @product.taxons

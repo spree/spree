@@ -122,7 +122,7 @@ module Admin::TaxonomiesHelper
 //]]>
   var tree = spree.YUI.build_tree("#{tree_elem_id}", #{tree_data_name});
   tree.tree_view.draw();
-
+  
 </script>
 EOT
      out
@@ -132,8 +132,9 @@ EOT
      html = %Q{<span id=\\"#{taxonomy.root.id}\\" class=\\"spree-YUI-tree-node\\">#{taxonomy.root.presentation}</span>}
      out = [%Q{{"id":#{taxonomy.root.id}, "parent_id":null, "html":"#{html}"}}]
      taxonomy.root.descendents.each do |node| 
+       logger.debug("NODE #{node}")
        html = %Q{<span id=\\"#{node.id}\\" class=\\"spree-YUI-tree-node\\">#{node.presentation}</span>}
-       out << [%Q{{"id":#{node.id}, "parent_id":#{node.parent.id}, "html":"#{html}"}}]
+       out << [%Q{{"id":#{node.id}, "parent_id":#{node.parent.id}, "object_url":"#{admin_taxonomy_taxon_path(node.taxonomy, node)}", "html":"#{html}"}}]
      end
      return %Q{[#{out.join(",\n")}]}
    end

@@ -1,0 +1,7 @@
+<h1><%= t("Editing Taxon")%></h1>
+ 
+<% form_for(:taxon, :url => admin_taxonomy_taxon_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
+	<%= submit_tag t("Update") %> or <%= link_to t("Cancel"), edit_admin_taxonomy_path(@taxon.taxonomy) %>
+
+<% end %>
