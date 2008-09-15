@@ -16,16 +16,14 @@
 	</thead>
 	<tbody>
     <% @available_taxons.each do |taxon| %>
-      <tr class="available_taxon">
+      <tr id="<%= dom_id(taxon) %>">
         <td valign="top"><%= taxon.name %></td>
         <td valign="top"><%= taxon_path taxon %></td>
 		    <td valign="top">
-		      <a href="#" onclick="$(this).up('.available_taxon').remove();">Test</a>
 		      <%= link_to_remote t('Select'), 
 		                         :url => select_admin_product_taxon_path(@product, taxon),
 		                         :update => 'selected-taxons',
-		                         :complete => "alert('foo')" %>
-
+		                         :complete => "$('#{dom_id(taxon)}').remove();" %>
 		    </td>        
       </tr>
     <% end %>
