@@ -11,8 +11,8 @@ class LineItem < ActiveRecord::Base
     unless quantity && quantity >= 0
       errors.add(:quantity, "must be a positive value")
     end
-    unless quantity <= 100000
-      errors.add(:quantity, "is too large")
+    unless quantity <= variant.on_hand
+      errors.add(:quantity, " for #{variant.product.name} is too large-- stock on hand cannot cover requested quantity!")
     end
   end
   
