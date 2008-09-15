@@ -9,7 +9,12 @@ class Admin::TaxonsController < Admin::BaseController
   end
   
   def available
-    @available_taxons = Taxon.find(:all, :conditions => ['lower(presentation) LIKE ?', "%#{params[:q].downcase}%"])
+    if params[:q].blank?
+      @available_taxons = []
+    else
+      @available_taxons = Taxon.find(:all, :conditions => ['lower(presentation) LIKE ?', "%#{params[:q].downcase}%"])
+    end
+    @available_taxons.delete_if { |taxon| @product.taxons.include?(taxon) }
     respond_to do |format|
       format.html
       format.js {render :layout => false}
@@ -31,7 +36,7 @@ class Admin::TaxonsController < Admin::BaseController
     @product.taxons << taxon
     @product.save
     @taxons = @product.taxons
-    render :action => :selected, :layout => false
+    render :parital => 'taxon_table', :locals => {:taxons => @available}, :layout => false and return
   end
   
   private 
