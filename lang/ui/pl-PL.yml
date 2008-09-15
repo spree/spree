@@ -1,0 +1,213 @@
+abbreviation: Skrót
+account: Konto
+action: Akcja
+add_category: Dodaj kategorię
+add_option_type: Dodaj typ opcji
+add_option_types: Dodaj typy opcji
+add_product_properties: Dodaj właściwości produktu
+address_information: Address Information
+add_to_cart: Dodaj do koszyka
+adjustment: Dostosowanie
+administration: Administracja
+amount: Suma
+are_you_sure_category: Czy napewno usunąć tę kategorię?
+are_you_sure_delete_image: Czy napewno usunąć ten obrazek?
+are_you_sure_option_type: Czy napewno usunąć ten typ opcji?
+are_you_sure_delete: Czy napewno usunąć ten rekord?
+available_on: Dostępny od
+back: Wstecz
+back_to_store: Powrót do sklepu
+bill_address: Adres billingowy
+billing_address: Adres billingowy
+cancel: Anuluj
+card_code: Kod Karty
+card_number: Numer Karty
+cart: Koszyk
+categories: Kategorie
+category: Kategoria
+change: Zmień
+change_language: Zmień język
+checkout: Do kasy
+city: Miejscowość
+comp_order: Comp Order
+comp_order_confirmation: Customer will not be charged.  Are you sure you want to comp this order?
+configuration: Konfiguracja
+configuration_options: Opcje konfiguracji
+configurations: Konfiguracje
+confirm: Potwierdź
+confirm_password: Potwierdzenie hasła
+continue_shopping: Kontynuuj zakupy
+country: Kraj
+create: Utwórz
+create_a_new_account: Utwórz nowe konto
+credit_card: Karta kredytowa
+current: Biężący
+customer: Klient
+date: Data
+date_range: Zakres czasu
+delete: Skasuj
+description: Opis
+destroy: Usuń
+display: Wyświetl
+edit: Edytuj
+editing_category: Edycja kategorii
+editing_option_types: Edycja typów opcji
+editing_state: Edycja stanu
+editing_tax_category: Edycja kategorii podatkowej
+editing_user: Edycja użytkownika
+email_address: Adres email
+email: Email
+email_server_settings_description: Skonfiguruj ustawienia serwera pocztowego.
+empty_cart: Opróżnij koszyk
+error: błąd
+expiration_month: Miesiąc wygaśnięcia
+expiration_year: Rok wygaśnięcia
+extension: Rozszerzenie
+extensions: Rozszerzenia
+filename: Nazwa pliku
+final_confirmation: Ostateczne potwierdzenie
+first_name: Imię
+gateway: Brama
+gateway_setting_description: Wybierz metodę płatności i skonfiguruj jej ustawienia.
+hello_user: Witaj użytkowniku
+image: Obrazek
+images: Obrazki
+inventory_adjustment: Dostosowanie zapasów
+inventory: Zapasy
+item_description: Opis pozycji
+item: Pozycja
+item_total: Liczba pozycji
+last_name: Nazwisko
+listing_categories: Lista kategorii
+listing_option_types: Lista typów opcji
+listing_orders: Lista zamówień
+listing_reports: Lista raportów
+listing_tax_categories: Lista kategorii podatkowych
+listing_users: Lista użytkowników
+logged_in_as: Zalogowany jako
+log_in: Zaloguj
+login_name: Login
+logout: Wyloguj
+mail_server_settings: Ustawienia serwera pocztowego
+master_price: Cena główna
+my_account: Moje konto
+name: Nazwa
+new_category: Nowa kategoria
+new_image: Nowy obrazek
+new_option_type: Nowy typ opcji
+new_option_value: Nowa wartość opcji
+new_product: Nowy produkt
+new_property: Nowa właściwość
+new_prototype: Nowy prototyp
+new_state: Nowy stan
+new_tax_category: Nowa kategoria podatkowa
+new_user: Nowy użytkownik
+new_variant: Nowy wariant
+new_zone: Nowa Strefa
+next: Następne
+no_items_in_cart:  Koszyk jest pusty
+none: Żaden
+none_available: Niedostępne
+number: Numer
+on_hand: On Hand
+operation: Operacja
+options: Opcje
+option_types: Typy Opcji
+option_Values: Wartości Opcji
+order_confirmation_note: 
+order_date: Data zamówienia
+order_details: Szczegóły zamówienia
+order_number: "Nr zamówienia"
+order: Zamówienie
+order_processed_successfully: Twoje zamówienie zostało pomyślnie przetworzone
+orders: Zamówienia
+order_total: Zamówienie łącznie
+or: lub
+overview: Przegląd
+parent_category: Kategoria Nadrzędna
+password: Hasło
+payment: Płatność
+payment_gateway: Metoda Płatności
+phone: Telefon
+presentation: Presentacja
+previous: Poprzednie
+price: Cena
+problem_authorizing_card: Wystąpił problem przy autoryzacji karty 
+problems_processing_order: Wystąpiły problemy podczas przetwarzania zamówienia
+problem_capturing_card: Wystąpił problem z przechwyceniem karty
+process: Przetwarzaj
+product: Produkt
+products: Produkty
+product_properties: Właściwości produktu
+property: Właściwość
+properties: Właściwości
+prototypes: Prototypy
+qty: Ilość
+remember_me: Zapamiętaj mnie
+reports: Raporty
+resend: Przeslij ponownie
+response_code: Response Code
+sales_totals_description: Sales Total For All Orders
+sales_total: Sales Total
+sales_totals: Sales Totals
+search: Szukaj
+select: Wybierz
+select_from_prototype: Wybierz z prototypu
+ship_address: Adres Dostawy
+shipping_address: Adres Dostawy
+shipping_method: Metoda dostawy
+shipping: Dostawa
+shipping_total: Koszt dostawy
+shopping_cart: Koszyk
+sign_up: Załóż konto
+sku: SKU
+start: Start
+state: Stan
+states: Stany
+state_setting_description: Zarządzaj listą stanów/prowincji powiązanych z każdym z krajów.
+status: Status
+stop: Stop
+store: Sklep
+street_address_2: Ulica (c.d)
+street_address: Ulica
+subtotal: Suma częściowa
+system: System
+tax: Podatek
+tax_category: Kategoria Podatkowa
+tax_categories: Kategorie Podatkowe
+tax_categories_setting_description: Ustaw kategorie podatkow aby ustalić, które produkty powinny być opodatkowane.
+tax_total: Podatek łącznie
+thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
+time: Czas
+total: Łącznie
+transaction: Transakcja
+try_again: Spróbuj ponownie
+type: Typ
+update: Aktualizuj
+use_different_shipping_address: Użyj innego adresy dostawy
+users: Użytkownicy
+user: Użytkownik
+value: Wartość
+variants: Warianty
+version: Wersja
+website: Strona www
+welcome_to_sample_store: Witamy w przykładowycm sklepie
+what_is_a_cvv: Czym jest Kod Karty Kredytowej (CVV)?
+what_is_this: Co to?
+zip: Kod pocztowy
+zone: Strefa
+zones: Strefy
+zone_setting_description: Zbiory krajów, stanów i innych stref używane w różnych przeliczeniach.
+order_operation_authorize: Autoryzuj
+capture: przechwyć
+cancel: anuluj
+return: powrót
+ship: wyślij
+pay: zapłać
+in_progress: W trakcie...
+address: Adres
+creditcard_payment: Płatność kartą kredytową
+authorized: Autoryzowany
+order_updated: Zamówienie uaktualnione
+gateway_error: Błąd bramki
+order_email_resent: Email z zamowieniem ponownie przesłany

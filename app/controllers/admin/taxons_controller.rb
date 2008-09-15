@@ -30,8 +30,8 @@ class Admin::TaxonsController < Admin::BaseController
   def remove
     @product.taxons.delete(@taxon)
     @product.save
-    flash[:notice] = "Succesfully removed taxon."
-    redirect_to selected_admin_product_taxons_url(@product)
+    @taxons = @product.taxons
+    render :layout => false
   end  
   
   def select
@@ -40,7 +40,7 @@ class Admin::TaxonsController < Admin::BaseController
     @product.taxons << taxon
     @product.save
     @taxons = @product.taxons
-    render :parital => 'taxon_table', :locals => {:taxons => @available}, :layout => false and return
+    render :layout => false
   end
   
   private 
