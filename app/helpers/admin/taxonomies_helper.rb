@@ -129,11 +129,11 @@ EOT
    end
 
    def build_tree_data(taxonomy)
-     html = %Q{<span id=\\"#{taxonomy.root.id}\\" class=\\"spree-YUI-tree-node\\">#{taxonomy.root.presentation}</span>}
-     out = [%Q{{"id":#{taxonomy.root.id}, "parent_id":null, "html":"#{html}"}}]
+     html = %Q{<span id=\\"#{taxonomy.root.id}\\" class=\\"spree-YUI-tree-node\\">#{taxonomy.root.presentation}&nbsp;<img src='/images/spinner.gif' style='display:none;vertical-align:middle;' id='#{dom_id(taxonomy.root)}'></span>}
+     out = [%Q{{"id":#{taxonomy.root.id}, "parent_id":null, "object_url":"#{admin_taxonomy_taxon_path(taxonomy, taxonomy.root)}", "html":"#{html}"}}]
      taxonomy.root.descendents.each do |node| 
        logger.debug("NODE #{node}")
-       html = %Q{<span id=\\"#{node.id}\\" class=\\"spree-YUI-tree-node\\">#{node.presentation}</span>}
+       html = %Q{<span id=\\"#{node.id}\\" class=\\"spree-YUI-tree-node\\">#{node.presentation}&nbsp;<img src='/images/spinner.gif' style='display:none;vertical-align:middle;' id='#{dom_id(node)}'></span>}
        out << [%Q{{"id":#{node.id}, "parent_id":#{node.parent.id}, "object_url":"#{admin_taxonomy_taxon_path(node.taxonomy, node)}", "html":"#{html}"}}]
      end
      return %Q{[#{out.join(",\n")}]}

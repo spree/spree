@@ -3,11 +3,16 @@ class Admin::TaxonsController < Admin::BaseController
   
   before_filter :load_object, :only => [:selected, :available, :remove]
   belongs_to :product
-  belongs_to :taxonomy
   
+  create.wants.html {redirect_to edit_admin_taxonomy_path(@taxon.taxonomy)}
   update.wants.html {redirect_to edit_admin_taxonomy_path(@taxon.taxonomy)}
-  destroy.wants.html {redirect_to edit_admin_taxonomy_path(@taxon.taxonomy)}
+  destroy.wants.js {render :text => ""}
   
+  create.before do 
+    @taxon.taxonomy_id = params[:taxonomy_id]
+    @taxon.position = Taxon.find(@taxon.parent_id).children.length + 1
+  end
+    
   def selected 
     @taxons = @product.taxons
   end
