@@ -6,7 +6,13 @@ describe Order do
     @inventory_unit = mock_model(InventoryUnit, :null_object => true)
     @creditcard_payment = mock_model(CreditcardPayment, :null_object => true)
     @user = mock_model(User, :email => "foo@exampl.com")
-    @order = Order.new(:checkout_complete => true, :creditcard_payment => @creditcard_payment, :number => '#TEST1010', :user => @user)
+
+    @order = Order.new
+    @order.checkout_complete = true
+    @order.creditcard_payment = @creditcard_payment
+    @order.number = '#TEST1010'
+    @order.user =  @user
+
     add_stubs(@order, :save => true, :inventory_units => [@inventory_unit])
     @order.line_items << (mock_model(LineItem, :variant => @variant, :quantity => 1))
     InventoryUnit.stub!(:retrieve_on_hand).with(@variant, 1).and_return [@inventory_unit]
