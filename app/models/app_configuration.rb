@@ -19,6 +19,7 @@ class AppConfiguration < ActiveRecord::Base
   preference :default_locale, :string, :default => 'en-US'
   preference :allow_locale_switching, :boolean, :default => false
   preference :default_country_id, :integer, :default => 214
+  preference :allow_backorders, :boolean, :default => false
 
   validates_presence_of :name
   validates_uniqueness_of :name
