@@ -11,7 +11,7 @@ class LineItem < ActiveRecord::Base
     unless quantity && quantity >= 0
       errors.add(:quantity, "must be a positive value")
     end
-    unless quantity <= variant.on_hand
+    unless quantity <= variant.on_hand || Spree::Config[:allow_backorders]
       errors.add(:quantity, " for #{variant.product.name} is too large-- stock on hand cannot cover requested quantity!")
     end
   end
