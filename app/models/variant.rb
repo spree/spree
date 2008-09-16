@@ -16,6 +16,10 @@ class Variant < ActiveRecord::Base
     @new_level = new_level
   end
   
+  def in_stock
+    on_hand > 0
+  end
+
   private
 
     def adjust_inventory    

@@ -86,6 +86,38 @@ describe Product do
       Product.available.should include(@product)
     end
   end
+
+
+  describe 'inventory' do
+
+    before(:each) do
+      @variant = mock_model(Variant, :on_hand => 45)
+      @product = create_product
+    end
+
+    describe 'on_hand' do
+      it "should return the number of items available for the first variant" do
+        @product.stub!(:variant).and_return(@variant)
+        @product.on_hand.should == 45
+      end
+    end
+
+    describe 'has_stock?' do
+      it "should be true if any variants are in stock" do
+        @variant.stub!(:in_stock).and_return(true)
+        @product.stub!(:variants).and_return([@variant])
+        @product.has_stock?.should be_true
+      end
+
+      it "should be false if all variants are out of stock" do
+        @variant.stub!(:in_stock).and_return(false)
+        @product.stub!(:variants).and_return([@variant])
+        @product.has_stock?.should be_false
+      end
+    end
+
+  end
+
 end
 
 def create_product(options={})

@@ -18,7 +18,7 @@ class Product < ActiveRecord::Base
 
   alias :options :product_option_types
 
-  named_scope :available, lambda {|*args| {:conditions => ["available_on <= ?", (args.first || Time.now)]}}
+  named_scope :available, lambda { |*args| { :conditions => ["available_on <= ?", (args.first || Time.now)] } }
   named_scope :by_name, lambda {|name| {:conditions => ["name like ?", "%#{name}%"]}}
   named_scope :by_sku, lambda {|sku| { :include => :variants, :conditions => ["variants.sku like ?", "%#{sku}%"]}}
   
@@ -48,6 +48,10 @@ class Product < ActiveRecord::Base
     @quantity = quantity
   end
   
+  def has_stock?
+    variants.inject(false){ |tf, v| tf ||= v.in_stock }
+  end
+
   private
 
     def adjust_inventory    
