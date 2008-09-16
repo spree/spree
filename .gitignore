@@ -7,6 +7,7 @@
 .loadpath
 .project
 config/database.yml
+config/mongrel_cluster.yml
 db/*.sql
 db/*.sqlite3
 db/schema.rb
@@ -27,4 +28,5 @@ spree_test
 tmp
 vendor/rails
 coverage/*
+var
 TAGS

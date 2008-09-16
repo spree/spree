@@ -40,3 +40,4 @@ ror_stein:
   master_price: 16.99
   available_on: <%= Time.now.to_s(:db) %>  
   permalink: ruby-on-rails-stein
+

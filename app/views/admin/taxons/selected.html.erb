@@ -1,0 +1,24 @@
+<%= render :partial => 'shared/product_sub_menu' %>
+<h1><%= t("Taxons")%></h1>
+<%= render :partial => 'shared/product_tabs', :locals => {:current => "Taxons"} %>
+<div id="selected-taxons">
+  <%= render :partial => "taxon_table", :locals => {:taxons => @taxons} %>
+</div>
+<table>
+  <tr>
+    <td><b><%= t('Search') %>:</b></td>
+    <td><input id="searchtext" size="25"></td>
+  </tr>
+</table>
+<div id="searching" style="display:none">
+  Searching &nbsp; <%= image_tag "spinner.gif" %>  
+</div>
+<%= observe_field(:searchtext,
+                  :frequency => 0.75,
+                  :update => :search_hits,
+                  :loading => "Element.show('searching')",
+                  :complete => "Element.hide('searching')",
+                  :url => available_admin_product_taxons_url(@product),
+                  :with => "'q=' + value") %>  
+<br/>                 
+<div id="search_hits"></div>

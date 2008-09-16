@@ -1,0 +1,28 @@
+<table class="basic-table">
+  <thead>
+  	<tr>
+  		<th><%= t("Name") %></th>
+  		<th><%= t("Path") %></th>
+  		<th><%= t("Action") %></th>
+  	</tr>
+  </thead>
+  <tbody>
+    <% taxons.each do |taxon| %>
+      <tr id="<%= dom_id(taxon, :sel)%>">
+        <td valign="top"><%= taxon.name %></td>
+        <td valign="top"><%= taxon_path taxon %></td>
+  	    <td valign="top">
+		      <%= link_to_remote t('Remove'), 
+		                         :url => remove_admin_product_taxon_url(@product, taxon),
+		                         :loading => "Element.show(#{dom_id(taxon, :rem_spinner)})",
+		                         :update => 'selected-taxons',
+		                         :complete => "$('#{dom_id(taxon, :sel)}').remove(); Element.hide(#{dom_id(taxon, :rem_spinner)});" %>
+          <%= image_tag "spinner.gif", :style => "display:none", :id => "#{dom_id(taxon, :rem_spinner)}" %>		                         
+  	    </td>        
+      </tr>
+    <% end %>
+    <% if taxons.empty? %>
+     <tr><td colspan="3">None.</td></tr>
+    <% end %>
+  </tbody>
+</table>

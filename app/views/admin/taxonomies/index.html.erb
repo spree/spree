@@ -1,0 +1,41 @@
+<%= link_to_remote :new_taxonomy.l("New Taxonomy"), 
+				   :url => { :action => 'new' },
+				   :update => 'new-taxonomy' %>
+
+<div id='new-taxonomy'>
+</div>
+
+<h1><%= :listing_taxonomies.l("Listing taxonomies") %></h1>
+
+<div class="breadcrumb-nav">
+  <%= link_to :taxonomies.l("Taxonomies"), :action => "list", :id => nil %>
+  <% if @parent_taxonomy %>
+    >
+    <%= breadcrumb_nav @parent_taxonomy%>
+  <% end %>
+</div>
+
+<style>
+  .breadcrumb-nav {
+    font-size: 12px;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+</style>
+
+<div id='list-taxonomies'>
+<%= render :partial => 'list' %>
+</div>
+
+<div id="edit-taxonomy">
+</div>
+
+<div id="new-taxon">
+</div>
+
+<div id="manage-products">
+</div>
+
+<div id="yui-logger">
+</div>
