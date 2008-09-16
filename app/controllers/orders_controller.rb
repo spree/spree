@@ -3,6 +3,8 @@ class OrdersController < Admin::BaseController
   before_filter :load_object, :only => [:checkout]
   layout 'application'
   
+  helper :products
+  
   resource_controller
 
   create.after do    
