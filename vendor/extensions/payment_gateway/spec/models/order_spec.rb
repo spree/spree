@@ -2,8 +2,9 @@ require File.dirname(__FILE__) + '/../spec_helper.rb'
 
 describe Order do
   before(:each) do
-    @creditcard_payment = mock_model(CreditcardPayment, :null_object => true)
-    @order = Order.new(:creditcard_payment => @creditcard_payment, :checkout_complete => true)
+    @order = Order.new
+    @order.creditcard_payment = (@creditcard_payment = mock_model(CreditcardPayment, :null_object => true))
+    @order.checkout_complete = true
     add_stubs(@order, :save => true)
   end
 
