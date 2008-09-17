@@ -64,8 +64,9 @@ class InstanceGenerator < Rails::Generator::Base
       scripts = Dir["#{root}/script/**/*"].reject { |f| f =~ /(destroy|generate|plugin)$/ }
       public_files = ["public/.htaccess.example"] + Dir["#{root}/public/**/*"]
       sample_fixtures = Dir["#{root}/db/sample/**/*"]
+      frozen_gems =  Dir["#{root}/vendor/gems/**/*"]
       
-      files = base_dirs + text_files + environments + scripts + public_files + sample_fixtures
+      files = base_dirs + text_files + environments + scripts + public_files + sample_fixtures + frozen_gems
       files.map! { |f| f = $1 if f =~ %r{^#{root}/(.+)$}; f }
       files.sort!
       
