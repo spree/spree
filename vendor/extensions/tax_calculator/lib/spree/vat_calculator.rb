@@ -5,7 +5,7 @@ module Spree #:nodoc:
       taxable_totals = {}
       order.line_items.each do |line_item|
         next unless tax_category = line_item.variant.product.tax_category
-        next unless rate = rates.find { | vat_rate | vat_rate.tax_category_id = tax_category.id }
+        next unless rate = rates.find { | vat_rate | vat_rate.tax_category == tax_category }
         taxable_totals[tax_category] ||= 0
         taxable_totals[tax_category] += line_item.price * rate.amount * line_item.quantity
       end

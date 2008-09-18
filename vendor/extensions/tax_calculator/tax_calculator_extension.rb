@@ -26,6 +26,7 @@ class TaxCalculatorExtension < Spree::Extension
     end
     
     ProductsHelper.class_eval do
+      # overrides the original product_price helper to include VAT if applicable
       def product_price(product_or_variant, options={})
         options.assert_valid_keys(:format_as_currency, :show_vat_text, :show_price_inc_vat)
         options.reverse_merge! :show_price_inc_vat => Rails.cache.fetch('show_prices_inc_vat') {Spree::Config[:show_prices_inc_vat]}, :format_as_currency => true, :show_vat_text => true
@@ -41,6 +42,7 @@ class TaxCalculatorExtension < Spree::Extension
         options.delete(:format_as_currency) ? format_price(amount, options) : amount
       end
       
+      # overrides the original format_price helper to include the VAT label if applicable
       def format_price(price, options={})
         options.assert_valid_keys(:show_vat_text)
         options.reverse_merge!:show_vat_text => true
