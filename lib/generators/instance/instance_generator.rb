@@ -61,7 +61,7 @@ class InstanceGenerator < Rails::Generator::Base
       base_dirs = %w(config config/environments config/initializers db db/sample log script public vendor/plugins vendor/extensions)
       text_files = %w(CHANGELOG CONTRIBUTORS LICENSE INSTALL README.markdown)
       environments = Dir["#{root}/config/environments/*.rb"]
-      scripts = Dir["#{root}/script/**/*"].reject { |f| f =~ /(destroy|generate|plugin)$/ }
+      scripts = Dir["#{root}/script/**/*"].reject { |f| f =~ /(destroy|generate)$/ }
       public_files = ["public/.htaccess.example"] + Dir["#{root}/public/**/*"]
       sample_fixtures = Dir["#{root}/db/sample/**/*"]
       frozen_gems =  Dir["#{root}/vendor/gems/**/*"]
