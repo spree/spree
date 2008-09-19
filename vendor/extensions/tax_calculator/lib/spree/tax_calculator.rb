@@ -1,6 +1,5 @@
 module Spree #:nodoc:
   module TaxCalculator
-        
     def calculate_tax
       # tax is zero if ship address does not match any existing zone
       return 0 unless zone = Zone.match(address).first
@@ -15,7 +14,6 @@ module Spree #:nodoc:
       vat_tax = Spree::VatCalculator.calculate_tax(self, vat_rates)
       
       sales_tax + vat_tax
-      #self.update_attribute(:tax_amount, sales_tax + vat_tax)
     end
   end
 end
