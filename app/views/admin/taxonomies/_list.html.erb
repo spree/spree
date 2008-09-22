@@ -1,7 +1,6 @@
 <table class="admin-report">
   <tr>
     <th><%= :name.l("Name") %></th>
-	<th><%= :presentation.l("Presentation") %></th>
     <th><%= :action.l("Action") %></th>
   </tr>
   
@@ -10,9 +9,6 @@
 	<td>
 	  <%= taxonomy.name %>
     </td>
-	<td>
-	  <%= taxonomy.presentation %>
-	</td>
     <td>
       <%= link_to_edit taxonomy.id %> | <%= link_to_delete taxonomy %>
     </td>

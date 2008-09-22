@@ -293,3 +293,7 @@ padding-right: 0;
   padding-right:5px;
 }
 /* ===================== end: footer =====================*/
+.spree-YUI-tree-node{
+	background-color:#ffffff;
+}
+.inplaceeditor-saving { background: url(/images/spinner.gif) bottom right no-repeat; }
