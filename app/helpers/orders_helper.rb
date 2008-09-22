@@ -5,9 +5,9 @@ module OrdersHelper
     
     # overwrite show_vat_text if show_price_inc_vat is false
     options[:show_vat_text] = Spree::Tax::Config[:show_price_inc_vat]
-debugger    
-    amount =  order.item_total
-    amount += Spree::VatCalculator.calculate_tax(order, Rails.cache.read('vat_rates')) if Spree::Tax::Config[:show_price_inc_vat]
+
+    amount =  order.item_total    
+    amount += Spree::VatCalculator.calculate_tax(order) if Spree::Tax::Config[:show_price_inc_vat]    
 
     options.delete(:format_as_currency) ? format_price(amount, options) : amount
   end

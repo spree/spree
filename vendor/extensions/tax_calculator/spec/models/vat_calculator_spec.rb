@@ -24,7 +24,7 @@ describe Spree::VatCalculator do
     tax_rate = mock_model(TaxRate, :amount => 0.05, :category => tax_category)
     @product1.should_receive(:tax_category).and_return(nil)
     @product2.should_receive(:tax_category).and_return(nil)
-    Spree::VatCalculator.calculate_tax(@order, {tax_category => tax_rate}).should == 0
+    Spree::VatCalculator.calculate_tax(@order, [tax_rate]).should == 0
   end
 
   it "should calc tax only on the items that are taxable" do
