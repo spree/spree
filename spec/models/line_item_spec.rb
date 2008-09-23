@@ -28,7 +28,7 @@ describe LineItem do
 
   describe "with :allow_backorders => false" do
     before(:each) do
-      Spree::Config.set :allow_backorders => false
+      Spree::Config.stub!(:[]).with(:allow_backorders).and_return(false)
       @line_item.price = 10
     end
     it "should not accept a quantity if there are none on hand" do
@@ -47,7 +47,7 @@ describe LineItem do
 
   describe "with :allow_backorders => true" do
     before(:each) do
-      Spree::Config.set :allow_backorders => true
+      Spree::Config.stub!(:[]).with(:allow_backorders).and_return(true)
       @line_item.price = 10
     end
     it "should accept a quantity if there are none on hand" do
