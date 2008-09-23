@@ -1,9 +1,9 @@
-<%= error_messages_for 'category' %>
-
-<!--[form:category]-->
-<p><label for="category_name"><%= :name.l("Name") %></label><br/>
-<%= text_field 'category', 'name'  %></p>
-
-<p><label for="category_parent_id"><%= :parent_category.l("Parent Category") %></label><br/>
-<%= collection_select :category, :parent_id, @all_categories, :id, :long_name, {}, {"style" => "width:250px"} %></p>
-<!--[eoform:category]-->
+<table cellspacing="5">
+  <tr>
+    <td><%= t("Name")%>: </td>
+    <td>
+      <%=error_message_on :taxonomy, :name%>  
+      <%= text_field :taxonomy, :name  %>
+    </td>
+  </tr>
+ 

@@ -1,0 +1,31 @@
+<% content_for :head do %>
+
+	
+	<!-- css --> 
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/menu/assets/skins/sam/menu.css"> 
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/treeview/assets/skins/sam/treeview.css"> 
+	<!-- js --> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/dom/dom.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/event/event.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/dragdrop/dragdrop.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/container/container_core.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/menu/menu.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/treeview/treeview.js"></script>
+	
+	<%= javascript_include_tag 'spree-yui.js' %>
+	
+	<script type="text/javascript">
+	<!-- Add authenticity token to prototype --/>
+	Ajax.Base.prototype.initialize = Ajax.Base.prototype.initialize.wrap(
+	        function(p, options){
+	                p(options);
+	                this.options.parameters = this.options.parameters || {};
+	                this.options.parameters.authenticity_token = '<%= form_authenticity_token %>';
+	        }
+	);
+
+	spree.YUI.authenticity_token = '<%= form_authenticity_token %>';
+	</script>
+
+<% end %>

@@ -51,6 +51,9 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
     admin.resource :mail_settings
     admin.resources :orders, :member => {:fire => :put, :resend => :post}
+    admin.resources :taxonomies do |taxonomy|
+      taxonomy.resources :taxons
+    end
   end
   
   # Install the default route as the lowest priority.

@@ -1,0 +1,16 @@
+<%= render :partial => "yui_head" %>
+
+<h2>Edit Taxonomy</h2>
+
+<% form_for(:taxon, :url => admin_taxonomy_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
+	  <tr>
+	    <td style="vertical-align:top;"><%= t("Tree")%>: </td>
+	    <td>
+				<%= yui_tree_helper @taxonomy %>
+			</td>
+		</tr>
+	</table>
+	<%= submit_tag t("Update") %> or <%= link_to t("Cancel"), admin_taxonomies_path %>
+
+<% end %>

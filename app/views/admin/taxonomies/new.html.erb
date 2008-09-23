@@ -1,8 +1,9 @@
-<%= render :partial => 'admin/products/menu' %>
+<h1><%= :new_taxonomy.l("New Taxonomy") %></h1>
 
-<h1><%= :new_category.l("New category") %></h1>
-
-<% form_tag :action => 'new' do %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag :create.l("Create") %>
+<% form_for(:taxon, :url => object_url) do |f| %>
+	<%= render :partial => "form", :locals => { :f => f } %>
+	</table>
+	<p>
+	  <%= submit_tag t("Create") %>
+</p>
 <% end %>

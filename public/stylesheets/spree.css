@@ -267,12 +267,14 @@ padding-right: 0;
 }
 /* ===================== end: price-diff =====================*/
 
-/* ===================== begin: out-of-stock =====================*/
+/* ===================== begin: out-of-stock =====================*/
+
 .out-of-stock {
  font-weight: bold;
  color: #999999;
 }
-/* ===================== end: out-of-stock =====================*/
+/* ===================== end: out-of-stock =====================*/
+
 
 /* ===================== begin: store-header =====================*/
 .store-header h1 {
@@ -300,3 +302,8 @@ padding-right: 0;
   padding-right:5px;
 }
 /* ===================== end: footer =====================*/
+
+.spree-YUI-tree-node{
+	background-color:#ffffff;
+}
+.inplaceeditor-saving { background: url(/images/spinner.gif) bottom right no-repeat; }
