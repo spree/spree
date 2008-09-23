@@ -1,6 +1,4 @@
 master_categories:
-  name: master_categories
-  presentation: Categories
+  name: Categories
 vendor_products:
-  name: products_by_vendor
-  presentation: Vendors
+  name: Vendors
