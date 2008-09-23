@@ -31,7 +31,7 @@ EOT
        html = %Q{<span id=\\"node_#{node.id}\\" class=\\"spree-YUI-tree-node\\">}
        html << node.name
        html << %Q{</span>&nbsp;<img src='/images/spinner.gif' style='display:none;vertical-align:middle;' id='#{dom_id(node)}'>}
-       out << [%Q{{"id":#{node.id}, "parent_id":#{node.parent.id}, "object_url":"#{admin_taxonomy_taxon_path(node.taxonomy, node)}", "html":"#{html}"}}]
+       out << [%Q{{"id":#{node.id}, "parent_id":#{node.parent.id}, "object_url":"#{admin_taxonomy_taxon_path(node.taxonomy, node)}","position": #{node.position}, "html":"#{html}"}}]
      end
      return %Q{[#{out.join(",\n")}]}
    end

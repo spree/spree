@@ -13,15 +13,36 @@ class Admin::TaxonsController < Admin::BaseController
     @taxon.position = Taxon.find(@taxon.parent_id).children.length + 1
   end
   
-  destroy.after do
-    taxons = Taxon.find_all_by_taxonomy_id(@taxon.taxonomy_id)
-    taxons.each do |taxon|
-      if taxon.position >= @taxon.position
+  update.before do
+    #taxon being moved to new parent
+    unless @taxon.parent_id == params[:taxon][:parent_id]
+      reposition_taxons(Taxon.find_all_by_parent_id(@taxon.parent_id))
+
+      @taxon.position = Taxon.find(params[:taxon][:parent_id]).children.length + 1
+    end if params[:taxon].include? "parent_id"
+    
+    #taxon being moved up or down
+    unless @taxon.position == params[:taxon][:position]
+      taxons = Taxon.find_all_by_parent_id(@taxon.parent_id)
+      taxons.slice! taxons.index(@taxon)
+      
+      #taxon getting forced out of the way
+      taxon = Taxon.find_by_position_and_parent_id(params[:taxon][:position], @taxon.parent_id)
+      
+      if @taxon.position < params[:taxon][:position].to_f
         taxon.position += -1
-        taxon.save
+      elsif @taxon.position > params[:taxon][:position].to_f
+        taxon.position += 1
       end
       
-    end
+      taxon.save!
+
+    end if params[:taxon].include? "position"
+  end
+  
+  destroy.after do
+    reposition_taxons(Taxon.find_all_by_taxonomy_id(@taxon.taxonomy_id))
+
   end
     
   def selected 
@@ -59,5 +80,13 @@ class Admin::TaxonsController < Admin::BaseController
   end
   
   private 
-  
+  def reposition_taxons(taxons)
+    taxons.each do |taxon|
+      if taxon.position >= @taxon.position
+        taxon.position += -1 unless taxon.position == 1
+        taxon.save
+      end
+      
+    end
+  end
 end

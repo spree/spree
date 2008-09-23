@@ -44,8 +44,10 @@ spree.YUI = {
 							node.parent.refresh();
 							spree.YUI.register_inplace_controls();
 							
-							//add inplace editor
+							//add inplace editor & drag / drop
 							spree.YUI.inplace_editors[spree.YUI.inplace_editors.length] = new Ajax.InPlaceEditor('node_' + new_taxon.id, node.data.object_url, {callback: function(form, value) { return 'taxon[name]=' + encodeURIComponent(value) }, onComplete: spree.YUI.after_inplace_edit, savingText: 'Saving...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', ajaxOptions: {method: 'put'}});
+							spree.YUI.drag_objects[spree.YUI.drag_objects.length] = new YAHOO.util.DD('node_' + new_taxon.id);
+							spree.YUI.drop_objects[spree.YUI.drop_objects.length] = new DDSend('node_' + new_taxon.id);
 						}else{
 							//no response from server (user clicked cancel)
 							
@@ -99,6 +101,74 @@ spree.YUI = {
 
   },
 
+  move_node_up: function() { 
+		var tree = spree.YUI.current_tree;
+		var target = spree.YUI.current_tree.current_target;
+		var url = target.data.object_url;
+
+	  new Ajax.Request(url, {
+		 	method: 'post',
+		 	parameters: '_method=put&taxon[position]=' + (target.data.position - 1),
+			onLoading: function(){
+				Element.show('taxon_' + target.data.id)
+			},
+			onSuccess: function(transport){				
+				target.data.position = (target.data.position - 1);
+				tree.tree_view.popNode(target);
+						
+				var nodes = new Hash(tree.node_map);
+				nodes.each(function(node) { 
+		 			data=node.value.data;
+					
+					if(data.parent_id==target.data.parent_id && data.id != target.data.id){
+						if(data.position==target.data.position){
+							data.position = (target.data.position + 1);
+													
+							target.insertBefore(tree.node_map[data.id]);
+							tree.node_map[data.id].parent.refresh();
+							
+							spree.YUI.register_inplace_controls();
+						}
+					}
+				});
+			}
+	  });
+  },
+
+	move_node_down: function() { 
+		var tree = spree.YUI.current_tree;
+		var target = spree.YUI.current_tree.current_target;
+		var url = target.data.object_url;
+ 	
+	  new Ajax.Request(url, {
+		 	method: 'post',
+		 	parameters: '_method=put&taxon[position]=' + (target.data.position + 1),
+			onLoading: function(){
+				Element.show('taxon_' + target.data.id)
+			},
+			onSuccess: function(transport){
+				target.data.position = (target.data.position + 1);
+				tree.tree_view.popNode(target);
+						
+				var nodes = new Hash(tree.node_map);
+				nodes.each(function(node) { 
+		 			data=node.value.data;
+					
+					if(data.parent_id==target.data.parent_id && data.id != target.data.id){
+						if(data.position==target.data.position){
+							data.position = (target.data.position - 1);
+													
+							target.insertAfter(tree.node_map[data.id]);
+							tree.node_map[data.id].parent.refresh();
+							
+							spree.YUI.register_inplace_controls();
+						}
+					}
+				});
+			}
+	  });
+  },
+
 	fire_event: function(obj, event){
 		if (document.createEventObject){
         // dispatch for IE
@@ -115,12 +185,12 @@ spree.YUI = {
 
   onTriggerContextMenu: function(p_sType, p_Args) { 
 		var event = p_Args[0]; 
-		var target = YAHOO.util.Event.getTarget(event);
+		var node = YAHOO.util.Event.getTarget(event);
 
 		// find the target which is a tree node 
-		target = YAHOO.util.Dom.hasClass(target, 'ygtvhtml') 
-		? target 
-		: YAHOO.util.Dom.getAncestorByClassName(target, 'ygtvhtml'); 
+		var target = YAHOO.util.Dom.hasClass(node, 'ygtvhtml') 
+		? node 
+		: YAHOO.util.Dom.getAncestorByClassName(node, 'ygtvhtml'); 
  
 		if (target) { 
 		  var tree = spree.YUI.set_current_target(target);	
@@ -134,7 +204,17 @@ spree.YUI = {
 					{ text: "New Child", onclick: { fn: spree.YUI.new_node } }, 
 					{ text: "Edit", onclick: { fn: spree.YUI.edit_node } },
 					{ text: "Delete", onclick: { fn: spree.YUI.delete_node } } ];
+			}	
+			
+			var node_id = node.id.gsub('node_', '');
+			node = tree.node_map[node_id];
+			if(node.previousSibling!=null){
+				items[items.length] = { text: "Move Up", onclick: { fn: spree.YUI.move_node_up } }
 			}
+			if(node.nextSibling!=null){
+				items[items.length] = { text: "Move Down", onclick: { fn: spree.YUI.move_node_down } }
+			}
+			
 			this.itemData = items;
 			this.init();
 		}	
@@ -169,6 +249,10 @@ spree.YUI = {
   },
 
 	add_inplace_controls: function(tree_data){
+		//add drop control for root node
+		spree.YUI.drop_objects[spree.YUI.drop_objects.length] = new DDSend('node_' + tree_data[0].id);
+		
+		//add inplace editor and drag/drop controls
 		for (var i = 1; i < tree_data.length; i++) {
 			spree.YUI.inplace_editors[spree.YUI.inplace_editors.length] = new Ajax.InPlaceEditor('node_' + tree_data[i].id, tree_data[i].object_url, {
 					callback: function(form, value) { return 'taxon[name]=' + encodeURIComponent(value) }, 
@@ -185,8 +269,9 @@ spree.YUI = {
 	
 	register_inplace_controls: function(){
 		spree.YUI.inplace_editors.each(function(ipe) {
-			ipe.destroy();
-			ipe.initialize(ipe.element.id, ipe.url, ipe.options);
+ 			var element = $(ipe.element.id);
+	 
+ 			if (element!=null) ipe.initialize(element, ipe.url, ipe.options);
 		});
 		
 		spree.YUI.drag_objects.each(function(dd) { 
@@ -310,7 +395,7 @@ DDSend = function(id, sGroup, config) {
 // extend proxy so we don't move the whole object around
 DDSend.prototype = new YAHOO.util.DDProxy();
 
-DDSend.prototype.onDragDrop = function(e, id) {
+DDSend.prototype.onDragDrop = function(e, id) {	
 		var target = this._domRef;
 		target = YAHOO.util.Dom.hasClass(target, 'ygtvhtml') 
 		? target 
@@ -321,11 +406,15 @@ DDSend.prototype.onDragDrop = function(e, id) {
 		var dragged_node = tree.node_map[this.id.gsub('node_', '')];
 		var drop_node = tree.node_map[id.gsub('node_', '')];
 		
-		tree.tree_view.removeNode(dragged_node, true)
+		$(id).style.border = "";
+		
+		if(dragged_node.data.parent_id==drop_node.data.id) return
+		
+		tree.tree_view.popNode(dragged_node);
 		
 		dragged_node.appendTo(drop_node);
 		if(!drop_node.expanded) drop_node.expand();
-		drop_node.refresh();
+		tree.root.refresh();
 		
 		var url = dragged_node.data.object_url;
 		
@@ -337,6 +426,21 @@ DDSend.prototype.onDragDrop = function(e, id) {
 			},
 			onSuccess: function(transport){
 				Element.hide('taxon_' + dragged_node.data.id)
+				
+				var nodes = new Hash(tree.node_map);
+
+				var count = 0;
+				nodes.each(function(node) {   
+	 				data=node.value.data;
+					if(data.parent_id==drop_node.data.id){
+						 count = count + 1;
+					}else if(data.parent_id==dragged_node.data.parent_id && data.position>=dragged_node.data.position){
+						data.position=(data.position - 1);
+					}
+				});
+				
+				dragged_node.data.parent_id = drop_node.data.id;
+				dragged_node.data.position = (count + 1);
 			}
 		});
 		
@@ -353,7 +457,6 @@ DDSend.prototype.startDrag = function(x, y) {
     dragEl.className = clickEl.className;
     dragEl.style.color = clickEl.style.color;
     dragEl.style.border = "1px solid red";
-
 };
 
 DDSend.prototype.onDragEnter = function(e, id) {
@@ -367,8 +470,23 @@ DDSend.prototype.onDragEnter = function(e, id) {
     } else {
         el = YAHOO.util.DDM.getBestMatch(id).getEl();
     }
+		
+		var target = this._domRef;
+		target = YAHOO.util.Dom.hasClass(target, 'ygtvhtml') 
+		? target 
+		: YAHOO.util.Dom.getAncestorByClassName(target, 'ygtvhtml'); 
+ 
+		var tree = spree.YUI.set_current_target(target);
+		
+		var drag_node = tree.node_map[this.id.gsub('node_', '')];
+		
+		if(drag_node.data.parent_id==id.gsub('node_', '')){
+			    el.style.border = "";
+		}else{
+			    el.style.border = "1px solid green";
+		}
+		
 
-    el.style.border = "1px solid green";
 };
 
 DDSend.prototype.onDragOut = function(e, id) {
