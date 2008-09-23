@@ -32,7 +32,7 @@ module Spree
       def activate_extension
         return if instance.active?
         instance.activate if instance.respond_to? :activate
-        #ActionController::Routing::Routes.reload
+        ActionController::Routing::Routes.reload
         instance.active = true
       end
       alias :activate :activate_extension
