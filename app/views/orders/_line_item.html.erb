@@ -9,12 +9,12 @@
     <%= truncate(variant.product.description, length = 100, truncate_string = "...") %>
   </td>
   <td valign="top" width="75">
-		<%= number_to_currency(line_item.price) %>
+		<%= product_price(variant) %>
 	</td>
   <td valign="top" width="50">
 		<%= f.text_field :quantity, :size => 3 %>
 	</td>
   <td valign="top" width="75">
-		<%= number_to_currency(line_item.price * line_item.quantity) unless line_item.quantity.nil? %>
+		<%= format_price(product_price(variant, :format_as_currency => false) * line_item.quantity) unless line_item.quantity.nil? %>
 	</td>
 </tr>

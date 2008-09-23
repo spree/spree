@@ -8,7 +8,7 @@ describe Spree::BaseHelper do
   end
   describe "variant_options" do
     describe "with :allow_backorders => true" do
-      before(:each) {Spree::Config.set :allow_backorders => true}
+      before(:each) { Spree::Config.stub!(:[]).with(:allow_backorders).and_return(true) }
       it "should not mention 'out of stock'" do
         helper.variant_options(@variant).should_not include("OUT OF STOCK")
       end
@@ -18,7 +18,7 @@ describe Spree::BaseHelper do
     end
 
     describe "with :allow_backorders => false" do
-      before(:each) {Spree::Config.set :allow_backorders => false}    
+      before(:each) { Spree::Config.stub!(:[]).with(:allow_backorders).and_return(false) }    
       it "should mention 'out of stock'" do
         helper.variant_options(@variant).should include("OUT OF STOCK")        
       end

@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe OrdersController do
   before(:each) do
-    Variant.stub!(:find).with(any_args).and_return(@variant = mock_model(Variant, :price => 10))
+    Variant.stub!(:find).with(any_args).and_return(@variant = mock_model(Variant, :price => 10, :on_hand => 50))
     controller.stub!(:find_order).and_return(@order = Order.new)
   end
 

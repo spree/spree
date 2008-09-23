@@ -24,33 +24,33 @@ describe Spree::VatCalculator do
     tax_rate = mock_model(TaxRate, :amount => 0.05, :category => tax_category)
     @product1.should_receive(:tax_category).and_return(nil)
     @product2.should_receive(:tax_category).and_return(nil)
-    Spree::VatCalculator.calculate_tax(@order, {tax_category => tax_rate}).should == 0
+    Spree::VatCalculator.calculate_tax(@order, [tax_rate]).should == 0
   end
 
   it "should calc tax only on the items that are taxable" do
     tax_category = mock_model(TaxCategory)
-    tax_rate = mock_model(TaxRate, :amount => 0.05, :category => tax_category)
+    tax_rate = mock_model(TaxRate, :amount => 0.05, :tax_category => tax_category)
     @product1.should_receive(:tax_category).and_return(nil)
     @product2.should_receive(:tax_category).and_return(tax_category)
-    Spree::VatCalculator.calculate_tax(@order, {tax_category => tax_rate}).should == 5
+    Spree::VatCalculator.calculate_tax(@order, [tax_rate]).should == 5
   end
 
   it "should apply tax to the total of all taxable line items" do
     tax_category = mock_model(TaxCategory)
-    tax_rate = mock_model(TaxRate, :amount => 0.10, :category => tax_category)
+    tax_rate = mock_model(TaxRate, :amount => 0.10, :tax_category => tax_category)
     @product1.stub!(:tax_category).and_return(tax_category)
     @product2.stub!(:tax_category).and_return(tax_category)
-    Spree::VatCalculator.calculate_tax(@order, {tax_category => tax_rate}).should == 20
+    Spree::VatCalculator.calculate_tax(@order, [tax_rate]).should == 20
   end
   
   it "should apply the correct tax rates based on tax category" do
     tax_category1 = mock_model(TaxCategory)
     tax_category2 = mock_model(TaxCategory)
-    tax_rate1 = mock_model(TaxRate, :amount => 0.10, :category => tax_category1)
-    tax_rate2 = mock_model(TaxRate, :amount => 0.05, :category => tax_category2)
+    tax_rate1 = mock_model(TaxRate, :amount => 0.10, :tax_category => tax_category1)
+    tax_rate2 = mock_model(TaxRate, :amount => 0.05, :tax_category => tax_category2)
     @product1.stub!(:tax_category).and_return(tax_category1)
     @product2.stub!(:tax_category).and_return(tax_category2)
-    Spree::VatCalculator.calculate_tax(@order, {tax_category1 => tax_rate1, tax_category2 => tax_rate2}).should == 15
+    Spree::VatCalculator.calculate_tax(@order, [tax_rate1, tax_rate2]).should == 15
   end
 
 end

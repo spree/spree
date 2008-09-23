@@ -24,24 +24,27 @@ describe Spree::TaxCalculator do
     end
     
     it "should calc zero tax if there is no tax rate matching the same zone" do
-      TaxRate.should_receive(:by_zone).with(@zone).and_return([])
+      TaxRate.stub!(:find_all_by_zone_id_and_tax_type).with(@zone, TaxRate::TaxType::SALES_TAX).and_return([])
+      TaxRate.stub!(:find_all_by_zone_id_and_tax_type).with(@zone, TaxRate::TaxType::VAT).and_return([])
       @order.calculate_tax.should == 0
     end
     
     describe "with tax rates of two different types" do
-      before :each do 
-        TaxRate.should_receive(:by_zone).with(@zone).and_return([@sales_rate, @vat_rate])
-      end
       
+      before :each do
+        TaxRate.should_receive(:find_all_by_zone_id_and_tax_type).with(@zone, TaxRate::TaxType::SALES_TAX).and_return([@sales_rate])
+        TaxRate.should_receive(:find_all_by_zone_id_and_tax_type).with(@zone, TaxRate::TaxType::VAT).and_return([@vat_rate])
+      end
+
       it "should calculate the correct sales tax" do
-        Spree::SalesTaxCalculator.should_receive(:calculate_tax).with(@order, {@tax_category => @sales_rate}).and_return(100)
-        Spree::VatCalculator.should_receive(:calculate_tax).with(@order, {@tax_category => @vat_rate}).and_return(0)
+        Spree::SalesTaxCalculator.should_receive(:calculate_tax).with(@order, [@sales_rate]).and_return(100)
+        Spree::VatCalculator.should_receive(:calculate_tax).with(@order, [@vat_rate]).and_return(0)
         @order.calculate_tax.should == 100
       end
 
       it "should calculate the correct vat tax" do
-        Spree::SalesTaxCalculator.should_receive(:calculate_tax).with(@order, {@tax_category => @sales_rate}).and_return(0)
-        Spree::VatCalculator.should_receive(:calculate_tax).with(@order, {@tax_category => @vat_rate}).and_return(100)
+        Spree::SalesTaxCalculator.should_receive(:calculate_tax).with(@order, [@sales_rate]).and_return(0)
+        Spree::VatCalculator.should_receive(:calculate_tax).with(@order, [@vat_rate]).and_return(100)
         @order.calculate_tax.should == 100
       end
       

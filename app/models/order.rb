@@ -27,7 +27,8 @@ class Order < ActiveRecord::Base
   named_scope :by_customer, lambda {|customer| {:include => :user, :conditions => ["users.email = ?", customer]}}
   named_scope :by_state, lambda {|state| {:conditions => ["state = ?", state]}}
   
-  attr_accessible :address
+  # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
+  attr_protected :ship_amount, :tax_amount, :item_total, :total, :user, :number, :ip_address, :checkout_complete, :state
   
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'in_progress' do    

@@ -3,7 +3,7 @@
   <%= render :partial => 'form', :locals => {:f => f} %>
 
 	<div id="subtotal">
-		<h3><%= "#{t("Subtotal")}: #{number_to_currency(@order.item_total)}" %></h3>
+		<h3><%= "#{t("Subtotal")}: #{order_price(@order)}" %></h3>
 	  <%= submit_tag t('Update') %>
 	  <%= link_to t("Checkout"), checkout_order_url(@order) %> <!-- todo: replace with cart image button -->
 	</div>
