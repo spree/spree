@@ -3,8 +3,7 @@ class Image < ActiveRecord::Base
   acts_as_list :scope => :parent 
   has_attachment :content_type => :image,
                  :max_size => 500.kilobyte,
-                 :resize_to => [360,360],
-                 :thumbnails => {:product => [240,240], :small => [100,100], :mini => [48,48]},
+                 :thumbnails => { :mini => '48x48>', :small => '100x100>', :product => '240x240>' },
                  :path_prefix => 'public/images/products',
                  :storage => :file_system,
                  :processor => :MiniMagick
