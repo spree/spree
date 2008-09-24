@@ -75,6 +75,7 @@ image: Imagem
 images: Imagens
 inventory_adjustment: Ajuste de Inventário
 inventory: Inventário
+inventory_setting_description: Inventory Configuration, Backordering, Zero-Stock Display
 item_description: Descrição de Ítem
 item: Ítem
 item_total: Total de Ítem

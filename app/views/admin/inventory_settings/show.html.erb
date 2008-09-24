@@ -1,0 +1,11 @@
+<h2><%= t("Inventory Server Settings") %></h2>
+
+<div id="inventory_settings">
+  <div id="show_zero_stock_products">
+    <h4>Products with a zero inventory will <%= show_not(Spree::Config[:show_zero_stock_products]) %> be displayed</h4>
+  </div>
+  <div id="allow_backorders">
+     <h4>Backordering is <%= show_not(Spree::Config[:allow_backorders]) %> allowed</h4>
+  </div>
+  <%= link_to t("Edit"), edit_admin_inventory_settings_path %>
+</div>

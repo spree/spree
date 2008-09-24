@@ -49,6 +49,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :properties, :collection => {:filtered => :get}
     admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
     admin.resource :mail_settings
+    admin.resource :inventory_settings
     admin.resources :orders, :member => {:fire => :put, :resend => :post}
   end
   

@@ -74,6 +74,7 @@ image: Obrazek
 images: Obrazki
 inventory_adjustment: Dostosowanie zapasów
 inventory: Zapasy
+inventory_setting_description: Inventory Configuration, Backordering, Zero-Stock Display
 item_description: Opis pozycji
 item: Pozycja
 item_total: Liczba pozycji

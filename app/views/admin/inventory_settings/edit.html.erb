@@ -1,0 +1,18 @@
+<% form_tag(admin_inventory_settings_path, :method => :put) do -%>
+
+<h2><%= t('Inventory Server Preferences') %></h2>
+
+<div>
+  <p>
+    <%= check_box_tag('preferences[show_zero_stock_products]', "1", Spree::Config[:show_zero_stock_products]) %>
+    <strong><%= t('Show Out-of-Stock Products') %></strong>
+    <input name="preferences[show_zero_stock_products]" type="hidden" value="0" />
+  </p>
+  <p>
+    <%= check_box_tag('preferences[allow_backorders]', "1", Spree::Config[:allow_backorders]) %>
+    <strong><%= t('Allow Backorders') %></strong>
+    <input name="preferences[allow_backorders]" type="hidden" value="0" />
+  </p>
+</div>
+<%= submit_tag t('Save Preferences') %>
+<% end -%>
