@@ -76,9 +76,9 @@ images: Imagens
 inventory_adjustment: Ajuste de Inventário
 inventory: Inventário
 inventory_setting_description: Inventory Configuration, Backordering, Zero-Stock Display
-item_description: Descrição de Ítem
-item: Ítem
-item_total: Total de Ítem
+item_description: Descrição de Item
+item: Item
+item_total: Total de Item
 last_name: Último Nome
 listing_categories: Listando Categorias
 listing_option_types: Listando Tipos de Opções
@@ -107,7 +107,7 @@ new_user: Novo Usuário
 new_variant: Nova Variante
 new_zone: Nova Zona
 next: Próximo
-no_items_in_cart: Nr. de ítems no carrinho
+no_items_in_cart: Nr. de itens no carrinho
 none: Nenhum
 none_available: Nenhum Disponível
 number: Número
@@ -137,7 +137,7 @@ previous: anterior
 price: Preço
 problem_authorizing_card: Problema na autorização do cartão
 problems_processing_order: Tivemos problemas processando este pedido
-problem_capturing_card:
+problem_capturing_card: Problema capturando cartão de crédito
 process: Processar
 product: Produto
 products: Produtos
@@ -168,7 +168,7 @@ sku: SKU
 start: Início
 state: Estado
 states: Estados
-state_setting_description: Administrar a lista de estados/províncias associados com cada país.
+state_setting_description: Administrar a lista de estados/províncias associados a cada país.
 status: Status
 stop: Final
 store: Loja
@@ -210,7 +210,7 @@ order_status_returned: Devolvido
 order_status_shipped: Entregue
 order_status_paid: Pago
 order_status_pending_payment: Pendente de Pagamento
-order_status_abandoned: 
+order_status_abandoned: Abandonado
 order_operation_authorize: Autorizar
 order_operation_capture: Capturar
 order_operation_cancel: Cancelar
