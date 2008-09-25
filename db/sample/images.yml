@@ -298,3 +298,53 @@ img_stein_back_mini:
   content_type: image/jpeg
   filename: ror_stein_back_mini.jpeg 	 	
   position: 3
+img_apache_baseball:
+  id: 1004
+  viewable: apache_baseball_jersey
+  viewable_type: Product
+  content_type: image/png
+  filename: apache_baseball.png
+  position: 1
+img_apache_baseball_small:
+  id: 1005
+  parent_id: 1003
+  content_type: image/png
+  filename: apache_baseball_small.png
+  position: 1
+img_apache_baseball_product:
+  id: 1006
+  parent_id: 1004
+  content_type: image/png
+  filename: apache_baseball_product.png
+  position: 2
+img_apache_baseball_mini:
+  id: 1007
+  parent_id: 1004
+  content_type: image/png
+  filename: apache_baseball_mini.png
+  position: 3
+img_ruby_baseball:
+  id: 1008
+  viewable: ruby_baseball_jersey
+  viewable_type: Product
+  content_type: image/png
+  filename: ruby_baseball.png
+  position: 1  
+img_ruby_baseball_small:
+  id: 1009
+  parent_id: 1008
+  content_type: image/png
+  filename: ruby_baseball_small.png
+  position: 1
+img_ruby_baseball_product:
+  id: 1010
+  parent_id: 1008
+  content_type: image/png
+  filename: ruby_baseball_product.png
+  position: 2
+img_ruby_baseball_mini:
+  id: 1011
+  parent_id: 1008
+  content_type: image/png
+  filename: ruby_baseball_mini.png
+  position: 3  

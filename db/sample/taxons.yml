@@ -2,14 +2,6 @@ mc_root:
   id: 1000
   name: Categories
   taxonomy: master_categories
-#mc_l1_n0:
-#  id: 1001
-#  name: shirts
-#  name: Shirts
-#  taxonomy: master_categories
-#  parent_id: 1000
-#  position: 0
-#  products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer
 mc_l1_n1:
   id: 1002
   name: Bags
@@ -24,10 +16,6 @@ mc_l1_n2:
   parent_id: 1000
   position: 2
   products: ror_mug, ror_stein
-vp_root:
-  id: 1004
-  name: Vendors
-  taxonomy: vendor_products
 clothing:
   id: 1001
   name: Clothing
@@ -41,6 +29,7 @@ shirts:
   taxonomy: master_categories
   parent_id: 1001
   position: 0
+  products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer
 t_shirts:
   id: 3000
   name: T-Shirts
@@ -48,3 +37,25 @@ t_shirts:
   parent_id: 2000
   products: ror_baseball_jersey, ror_ringer
   position: 0
+brand_root:
+  id: 20000
+  name: Brands
+  taxonomy: brand
+ruby:
+  name: Ruby
+  taxonomy: brand
+  parent_id: 20000
+  position: 0
+  products: ruby_baseball_jersey
+rails:
+  name: Ruby on Rails
+  taxonomy: brand
+  parent_id: 20000
+  position: 1
+  products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer, ror_stein, ror_bag, ror_tote
+apache:
+  name: Apache
+  taxonomy: brand
+  parent_id: 20000
+  position: 2
+  products: apache_baseball_jersey
