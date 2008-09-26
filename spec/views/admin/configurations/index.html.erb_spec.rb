@@ -1,10 +1,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
 
+include PreferenceFactory
+
 describe "/admin/configurations" do
 
 
   before(:each) do
-    assigns[:extension_link] = []
+    assigns[:extension_links] = []
     render 'admin/configurations/index'
   end
   

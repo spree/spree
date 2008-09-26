@@ -1,6 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-
 describe '/products/index' do
   before(:each) do
     @product = mock_model(Product)
