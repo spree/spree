@@ -56,8 +56,9 @@ describe Preference, "as a Class" do
     group_type.should == 'Product'
   end
 end
-
-describe Preference, "after being created" do
+# -- See Issue #86
+=begin
+describe Preference, "after being created" do  
   before(:each) do
     User.preference :notifications, :boolean
     @preference = new_preference
@@ -84,6 +85,7 @@ describe Preference, "after being created" do
     User.default_preferences.delete('notifications')
   end
 end
+=end
 
 describe Preference, "in general" do
   it "should be valid with valid attributes" do
@@ -138,6 +140,8 @@ describe Preference, "with ActiveRecord group" do
   end
 end
 
+# -- See Issue #86
+=begin
 describe Preference, "with boolean attribute" do
   before(:each) do
     User.preference :notifications, :boolean
@@ -178,3 +182,4 @@ describe Preference, "with boolean attribute" do
     User.default_preferences.delete('notifications')
   end
 end
+=end
