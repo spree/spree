@@ -72,3 +72,11 @@ ror_stein_v:
   product: ror_stein  
   sku: ROR-00016
   price: 16.99
+apache_baseball_v:
+  product: apache_baseball_jersey
+  sku: APC-00001
+  price: 19.99
+ruby_baseball_v:
+  product: ruby_baseball_jersey
+  sku: RUB-00001
+  price: 19.99

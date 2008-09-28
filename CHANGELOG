@@ -1,8 +1,23 @@
-== 0.3.0
+== 0.4.0
 
 * Initial support for initialization
 * Rails 2.1 support
 * #38 - Credit card numbers are being logged
+* #39 - Rails 2.1 Support
+* #43 - Increase application width
+* #48 - Support fo Pay Pal Website Payments Pro
+* #51 - SEO Permalinks for Products
+* #57 - Optionally store cc numbers in the database
+* #59 - Convert line breaks to <p> elements in prodcut description
+* #60 - Fix image clipping in product details
+* #61 - Price change is not always reflected in the actual order
+* #62 - Ability to override mailer templates in extensions
+* #63 - New spree applications should use a random secret key for sessions
+* #64 - Extension support of "public" assets
+* #69 - New spree project is missing script/plugin
+* #79 - Frozen gems inside of the Spree source are not copied into new applications 
+* #80 - Named routes don't work when defined inside its own extension using define_routes.
+* #84 - Generating Thumbnails for products: wrong aspect ratio
 
 == 0.2.0 2008-06-05
 
