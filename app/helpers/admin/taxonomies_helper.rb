@@ -10,12 +10,19 @@ module Admin::TaxonomiesHelper
      out = <<EOT
 <div id="#{tree_elem_id}" class="taxonomy_tree"></div>
 <script type="text/javascript">
+
+
+  function setup_tree(){
 //<![CDATA[
   var #{tree_data_name} = #{tree_data};
 //]]>
   var tree = spree.YUI.build_tree("#{tree_elem_id}", #{tree_data_name});
   tree.tree_view.draw();
   spree.YUI.add_inplace_controls(#{tree_data_name});
+};
+
+
+YAHOO.util.Event.onDOMReady(setup_tree, spree.YUI.DDList, true);
 </script>
 EOT
      out

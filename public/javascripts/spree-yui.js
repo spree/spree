@@ -4,9 +4,15 @@ spree.YUI = {
 	inplace_editors: [],
 	drag_objects: [],
 	drop_objects: [],
+	goingUp: false,
+	lastY:0,
+	drag_parent:null,
+	drag_node:null,
+	drag_text:null,
 	
   new_node: function() { 
 		var target = spree.YUI.current_tree.current_target;
+		var tree = spree.YUI.current_tree;
 		
 		var rand_no = Math.ceil(1000000 * Math.random());
 		var node_config = {id: 'new_taxon_node_' + rand_no, html:'<span id="new_taxon_node_' + rand_no + '" class="spree-YUI-tree-node">New Taxon</span>', parent_id: target.data.id}
@@ -14,7 +20,12 @@ spree.YUI = {
 		var HTMLnode = spree.YUI.initialize_node(tree, node_config);
 		
 		//refresh the tree and reattach all inplace editors
-		if(!target.expanded) target.expand();
+		if(target.expanded) {
+			target.collapse();
+			target.expand();
+		} else {
+			target.expand();
+		}
 		target.refresh();
 		spree.YUI.register_inplace_controls();
 
@@ -24,7 +35,7 @@ spree.YUI = {
 		
 		//add inplace creator
 		var ipe = new Ajax.InPlaceEditor('new_taxon_node_' + rand_no, target_url.join('/'), {
-				callback: function(form, value) { return 'taxon[name]=' + encodeURIComponent(value) + '&taxon[parent_id]=' + encodeURIComponent(parent_id)}, 
+				callback: function(form, value) { return 'taxon[name]=' + encodeURIComponent(value) + '&taxon[parent_id]=' + encodeURIComponent(parent_id)},  	
 				onComplete: function(transport, element) {
 						if (transport){
 							//got response from server
@@ -34,34 +45,56 @@ spree.YUI = {
 							//destory inplace creator
 							spree.YUI.remove_inplace_control(element.id);
 
-							var node = tree.node_map[element.id];
+							var node = tree.tree_view.getNodeByProperty('id', element.id);
 							node.data.id = new_taxon.id;
 							node.data.object_url = this.url + '/' + new_taxon.id;
+							node.data.position = new_taxon.position;
 							node.html = '<span id="node_' + new_taxon.id + '" class="spree-YUI-tree-node">' + new_taxon.name + '</span>&nbsp;<img src="/images/spinner.gif" style="display:none;vertical-align:middle;" id="taxon_' +  new_taxon.id + '">';
-							tree.node_map[new_taxon.id] = node;
 		
 							//refresh the tree and reattach all inplace editors
 							node.parent.refresh();
 							spree.YUI.register_inplace_controls();
 							
 							//add inplace editor & drag / drop
-							spree.YUI.inplace_editors[spree.YUI.inplace_editors.length] = new Ajax.InPlaceEditor('node_' + new_taxon.id, node.data.object_url, {callback: function(form, value) { return 'taxon[name]=' + encodeURIComponent(value) }, onComplete: spree.YUI.after_inplace_edit, savingText: 'Saving...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', ajaxOptions: {method: 'put'}});
-							spree.YUI.drag_objects[spree.YUI.drag_objects.length] = new YAHOO.util.DD('node_' + new_taxon.id);
-							spree.YUI.drop_objects[spree.YUI.drop_objects.length] = new DDSend('node_' + new_taxon.id);
+							spree.YUI.inplace_editors[spree.YUI.inplace_editors.length] = new Ajax.InPlaceEditor('node_' + new_taxon.id, node.data.object_url, {
+								callback: function(form, value) { return 'taxon[name]=' + encodeURIComponent(value) }, 
+								onComplete: spree.YUI.after_inplace_edit, 
+								savingText: 'Saving...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
+								textBetweenControls: ' or ',      
+								ajaxOptions: {method: 'put'}
+							});
+							var ddp = new YAHOO.util.DDProxy('node_' + new_taxon.id);
+							ddp = spree.YUI.register_drag_events(ddp);
+							spree.YUI.drag_objects[spree.YUI.drag_objects.length] = ddp;
+							spree.YUI.drop_objects[spree.YUI.drop_objects.length] = new YAHOO.util.DDTarget('node_' + new_taxon.id);
 						}else{
 							//no response from server (user clicked cancel)
 							
 						}
 				},
 				savingText: 'Adding...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+				textBetweenControls: ' or ',
 				ajaxOptions: {method: 'post'}});
-		
+ 
 		spree.YUI.inplace_editors[spree.YUI.inplace_editors.length] = ipe;
 		
 		//get the newly created node, and force the onclick event, to display the inplace creator
- 	 	var span =	$('new_taxon_node_' + rand_no);
+		spree.YUI.fire_event($('new_taxon_node_' + rand_no), 'click');
 		
-		spree.YUI.fire_event(span, 'click');
+		var form = $('new_taxon_node_' + rand_no + '-inplaceeditor');
+		var cancel_link = form.select('.editor_cancel_link')[0];
+		
+		//delete node again if user cancels before saving.
+		cancel_link.observe('click', function(event){
+			var parent = HTMLnode.parent
+			tree.tree_view.removeNode(HTMLnode, true)
+			spree.YUI.remove_inplace_control(HTMLnode.data.id)
+			if(parent.children.length==0) parent.collapse();
+			parent.refresh();
+			spree.YUI.register_inplace_controls();
+		});
+		
+		
   },
 
   edit_node: function() { 
@@ -89,6 +122,7 @@ spree.YUI = {
 					spree.YUI.remove_inplace_control('node_' + target.data.id)
 					
 					//refresh the tree and reattach all inplace editors
+					if(parent.children.length==0) parent.collapse();
 					parent.refresh();
 					spree.YUI.register_inplace_controls();
 				 
@@ -101,7 +135,7 @@ spree.YUI = {
 
   },
 
-  move_node_up: function() { 
+  move_node_up: function() { 	
 		var tree = spree.YUI.current_tree;
 		var target = spree.YUI.current_tree.current_target;
 		var url = target.data.object_url;
@@ -113,24 +147,24 @@ spree.YUI = {
 				Element.show('taxon_' + target.data.id)
 			},
 			onSuccess: function(transport){				
+				Element.hide('taxon_' + target.data.id)
 				target.data.position = (target.data.position - 1);
+				var parent = target.parent;
 				tree.tree_view.popNode(target);
+
+				parent.children.each(function(node) { 
+ 					if(node.data.position==target.data.position){
+						node.data.position = (target.data.position + 1);
+												
+						target.insertBefore(node);
+						node.parent.refresh();
 						
-				var nodes = new Hash(tree.node_map);
-				nodes.each(function(node) { 
-		 			data=node.value.data;
-					
-					if(data.parent_id==target.data.parent_id && data.id != target.data.id){
-						if(data.position==target.data.position){
-							data.position = (target.data.position + 1);
-													
-							target.insertBefore(tree.node_map[data.id]);
-							tree.node_map[data.id].parent.refresh();
-							
-							spree.YUI.register_inplace_controls();
-						}
+						spree.YUI.register_inplace_controls();
+						throw $break;
 					}
+	 
 				});
+				
 			}
 	  });
   },
@@ -147,27 +181,82 @@ spree.YUI = {
 				Element.show('taxon_' + target.data.id)
 			},
 			onSuccess: function(transport){
+				Element.hide('taxon_' + target.data.id)
 				target.data.position = (target.data.position + 1);
-				tree.tree_view.popNode(target);
-						
-				var nodes = new Hash(tree.node_map);
-				nodes.each(function(node) { 
-		 			data=node.value.data;
+		
+				var parent = target.parent;
+				tree.tree_view.popNode(target); 
+		
+				parent.children.each(function(node) { 
+ 
+					if(node.data.position==target.data.position){
+						node.data.position = (target.data.position - 1);
+											
+						target.insertAfter(node);
+						node.parent.refresh();
 					
-					if(data.parent_id==target.data.parent_id && data.id != target.data.id){
-						if(data.position==target.data.position){
-							data.position = (target.data.position - 1);
-													
-							target.insertAfter(tree.node_map[data.id]);
-							tree.node_map[data.id].parent.refresh();
-							
-							spree.YUI.register_inplace_controls();
-						}
+						spree.YUI.register_inplace_controls();
+						throw $break;
 					}
+	 
 				});
+				
+ 
 			}
 	  });
   },
+
+	cut_node: function() {
+		var tree = spree.YUI.current_tree;
+		var target = spree.YUI.current_tree.current_target;
+		
+		spree.YUI.drag_node = target;
+		spree.YUI.drag_parent = target.parent;
+		if (tree.tree_view.getNodeByProperty('id', target.data.id)) tree.tree_view.popNode(target);
+ 		if (spree.YUI.drag_parent.children.length==0) spree.YUI.drag_parent.collapse();
+
+		tree.tree_view.root.refresh(); 
+		spree.YUI.register_inplace_controls();
+	},
+	
+	paste_node: function() {
+		var tree = spree.YUI.current_tree;
+		var target = spree.YUI.current_tree.current_target;
+		
+		var paste_node = spree.YUI.drag_node;
+		paste_node.appendTo(target);
+ 		if (!target.expanded) target.expand();
+		
+		tree.tree_view.root.refresh(); 
+		spree.YUI.register_inplace_controls();
+		
+		var url = paste_node.data.object_url;
+		
+		var count = 1;
+		if(target.children.length!=0) count = target.children.length
+		
+		if(target.data.id==spree.YUI.drag_parent.data.parent_id){
+			//being pasted onto same parent
+			count = count + 1;
+		}
+
+		new Ajax.Request(url, {
+		 	method: 'post',
+		 	parameters: '_method=put&taxon[parent_id]=' + encodeURIComponent(target.data.id) + '&taxon[position]=' + count,
+			onLoading: function(){
+				Element.show('taxon_' + paste_node.data.id)
+			},
+			onSuccess: function(transport){
+				Element.hide('taxon_' + paste_node.data.id)
+
+				paste_node.data.parent_id = target.data.id;
+				paste_node.data.position = 1;
+			}
+		});
+		
+		spree.YUI.drag_node = null;
+		spree.YUI.drag_parent = null;
+	},
 
 	fire_event: function(obj, event){
 		if (document.createEventObject){
@@ -203,17 +292,28 @@ spree.YUI = {
 			 	items = [ 
 					{ text: "New Child", onclick: { fn: spree.YUI.new_node } }, 
 					{ text: "Edit", onclick: { fn: spree.YUI.edit_node } },
-					{ text: "Delete", onclick: { fn: spree.YUI.delete_node } } ];
+					{ text: "Delete", onclick: { fn: spree.YUI.delete_node } }, 
+					{ text: "Cut", onclick: { fn: spree.YUI.cut_node } }];
 			}	
 			
+			if(spree.YUI.drag_node){
+				items[items.length] = { text: "Paste", onclick: { fn: spree.YUI.paste_node } }
+			}
+			
 			var node_id = node.id.gsub('node_', '');
-			node = tree.node_map[node_id];
-			if(node.previousSibling!=null){
-				items[items.length] = { text: "Move Up", onclick: { fn: spree.YUI.move_node_up } }
+			node = tree.tree_view.getNodeByProperty('id',node_id);
+			if(Object.isUndefined(node)){
+				//inplace editing, drop submenu
+				items = {};
+			}else{
+				if(node.previousSibling!=null){
+					items[items.length] = { text: "Move Up", onclick: { fn: spree.YUI.move_node_up } }
+				}
+				if(node.nextSibling!=null){
+					items[items.length] = { text: "Move Down", onclick: { fn: spree.YUI.move_node_down } }
+				}
 			}
-			if(node.nextSibling!=null){
-				items[items.length] = { text: "Move Down", onclick: { fn: spree.YUI.move_node_down } }
-			}
+ 
 			
 			this.itemData = items;
 			this.init();
@@ -230,7 +330,6 @@ spree.YUI = {
 		spree.YUI.register_tree(tree, container_element_id, "taxonomy_tree");
 
 		tree.tree_view = new YAHOO.widget.TreeView(container_element_id);
-		tree.node_map = {};
 
 		for (var i = 0; i < tree_data.length; i++) {
 			spree.YUI.initialize_node(tree, tree_data[i]);
@@ -244,25 +343,28 @@ spree.YUI = {
 															 itemdata: {} }); 
 	
 		tree.context_menu.subscribe("triggerContextMenu", spree.YUI.onTriggerContextMenu ); 
-
+ 
 		return tree;
   },
 
 	add_inplace_controls: function(tree_data){
 		//add drop control for root node
-		spree.YUI.drop_objects[spree.YUI.drop_objects.length] = new DDSend('node_' + tree_data[0].id);
+		spree.YUI.drop_objects[spree.YUI.drop_objects.length] = new YAHOO.util.DDTarget('node_' + tree_data[0].id);
 		
 		//add inplace editor and drag/drop controls
 		for (var i = 1; i < tree_data.length; i++) {
 			spree.YUI.inplace_editors[spree.YUI.inplace_editors.length] = new Ajax.InPlaceEditor('node_' + tree_data[i].id, tree_data[i].object_url, {
 					callback: function(form, value) { return 'taxon[name]=' + encodeURIComponent(value) }, 
 					onComplete: spree.YUI.after_inplace_edit,
+					textBetweenControls: ' or ',
 					savingText: 'Saving...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
 					ajaxOptions: {method: 'put'}
 			});
 			
-			spree.YUI.drag_objects[spree.YUI.drag_objects.length] = new YAHOO.util.DD('node_' + tree_data[i].id);
-			spree.YUI.drop_objects[spree.YUI.drop_objects.length] = new DDSend('node_' + tree_data[i].id);
+			var ddp = spree.YUI.register_drag_events(new YAHOO.util.DDProxy('node_' + tree_data[i].id));
+			
+			spree.YUI.drag_objects[spree.YUI.drag_objects.length] = ddp;
+			spree.YUI.drop_objects[spree.YUI.drop_objects.length] = new YAHOO.util.DDTarget('node_' + tree_data[i].id);
   
 		}
 	},
@@ -274,16 +376,27 @@ spree.YUI = {
  			if (element!=null) ipe.initialize(element, ipe.url, ipe.options);
 		});
 		
-		spree.YUI.drag_objects.each(function(dd) { 
-			dd.unreg();
-			dd = new YAHOO.util.DD(dd.id);  
+		spree.YUI.drag_objects = spree.YUI.drag_objects.collect(function(ddp, i) { 
+	 		return spree.YUI.register_drag_events( new YAHOO.util.DDProxy(ddp.id));
 		});
 			
-		spree.YUI.drag_objects.each(function(dd) {
- 			dd.unreg();
-			dd = new DDSend(dd.id);
+		spree.YUI.drop_objects =	spree.YUI.drop_objects.each(function(dd, i) {
+ 			return new YAHOO.util.DDTarget(dd.id);
 		});
 		
+	},
+	
+	register_drag_events: function(ddp){
+		ddp.onDragDrop = spree.YUI.onDragDrop;
+		ddp.startDrag = spree.YUI.startDrag;
+		ddp.onDragOver = spree.YUI.onDragOver;
+	 
+		ddp.endDrag = spree.YUI.endDrag;
+		ddp.onDrag = spree.YUI.onDrag;
+		
+		ddp.onInvalidDrop = spree.YUI.onInvalidDrop;
+		
+		return ddp;
 	},
 	
 	remove_inplace_control: function(element_id){
@@ -298,7 +411,7 @@ spree.YUI = {
 			//got response from server
 			var tree = spree.YUI.find_tree_by_element(element);
 
-			var node = tree.node_map[element.id.gsub('node_', '')];
+			var node = tree.tree_view.getNodeByProperty('id', element.id.gsub('node_', ''));
 			node.html = '<span id="' + element.id + '" class="spree-YUI-tree-node">' + transport.responseText + '</span>&nbsp;<img src="/images/spinner.gif" style="display:none;vertical-align:middle;" id="taxon_' + element.id.gsub('node_', '') + '">';
 		}
 	},
@@ -306,13 +419,14 @@ spree.YUI = {
   initialize_node: function(tree, node) {
 		var parent_node = node.parent_id == null 
 		? tree.tree_view.getRoot() 
-		: tree.node_map[node.parent_id];
+		: tree.tree_view.getNodeByProperty('id', node.parent_id);
 		
 		var HTMLnode = new YAHOO.widget.HTMLNode(node, parent_node, false, true);
 		HTMLnode.renderHidden=true;
-		tree.node_map[node.id] = HTMLnode;
-		if (node.parent_id == null) tree.root = tree.node_map[node.id];
-		
+		if (node.parent_id == null){
+			 tree.root = tree.tree_view.getNodeByProperty('id', node.id);
+			 if(!tree.root.expanded) tree.root.expand();
+		}
 		return HTMLnode;
   },
 
@@ -323,12 +437,11 @@ spree.YUI = {
 		
 		var target_id = spree_target[0].id;
 		if(target_id.include('new_taxon_node_')){
-			tree.current_target = tree.node_map[target_id];
+			tree.current_target = tree.tree_view.getNodeByProperty('id', target_id);
 		}else{
-			tree.current_target = tree.node_map[target_id.gsub('node_', '')];
+			tree.current_target = tree.tree_view.getNodeByProperty('id',target_id.gsub('node_', ''));
 		}
-		
-		
+				
 		spree.YUI.current_tree = tree;
 		return tree;
   },
@@ -354,12 +467,6 @@ spree.YUI = {
   },
 
   destroy_tree: function(tree) {
-		// uninitialize nodes
-		for (var i=0; i<tree.node_map.length; i++) {
-		  delete tree.node_map[i];
-		}
-		delete tree.node_map;
-
 		// unsubscribe menu
 		tree.context_menu.unsubscribe("triggerContextMenu", spree.YUI.onTriggerContextMenu);
 		delete tree.context_menu;
@@ -372,138 +479,189 @@ spree.YUI = {
   },
 
   onload: function() {
-  }
+  },
 
-}; // end spree.YUI namespace
+	onDragDrop: function(e, id) {	
+		var tree = spree.YUI.find_tree_by_element($(id));	
+		var temp_node = tree.tree_view.getNodeByProperty('id', 'temp_node');
 
-DDSend = function(id, sGroup, config) {
-
-    if (id) {
-        // bind this drag drop object to the
-        // drag source object
-        this.init(id, sGroup, config);
-        this.initFrame();
-    }
-
-    var s = this.getDragEl().style;
-    s.borderColor = "transparent";
-    s.backgroundColor = "#f6f5e5";
-    s.opacity = 0.76;
-    s.filter = "alpha(opacity=76)";
-};
-
-// extend proxy so we don't move the whole object around
-DDSend.prototype = new YAHOO.util.DDProxy();
-
-DDSend.prototype.onDragDrop = function(e, id) {	
-		var target = this._domRef;
-		target = YAHOO.util.Dom.hasClass(target, 'ygtvhtml') 
-		? target 
-		: YAHOO.util.Dom.getAncestorByClassName(target, 'ygtvhtml'); 
+		dragged_node = spree.YUI.drag_node;
+		
+		var data = dragged_node.data;
+		var n = $('node_' + dragged_node.data.id);
+		n.style.color='#000';
+		n.style.backgroundColor='#fff'
+	 	dragged_node.setHtml(n.up().innerHTML);
+		dragged_node.data = data;
+		
+		var old_parent = dragged_node.data.parent_id;
+		
+		//remove from previous location
+		if (tree.tree_view.getNodeByProperty('id', dragged_node.data.id)) tree.tree_view.popNode(dragged_node);
+		if (spree.YUI.drag_parent.children.length==0) spree.YUI.drag_parent.collapse();
  
-		var tree = spree.YUI.set_current_target(target);
+		//render node in correct location 
+		dragged_node.data.parent_id = temp_node.parent.data.id;
+		dragged_node.insertBefore(temp_node);
+		tree.tree_view.removeNode(temp_node);
+		tree.tree_view.root.refresh();  	
+ 
+		//get position of node
+		var position = 1;
+
+		//get actual position of dropped node
+		dragged_node.parent.children.each(function(node) { 
+			if(node.data.id != dragged_node.data.id){
+				position = position + 1;
+			}else{
+				throw $break;
+			}
+		});
 		
-		var dragged_node = tree.node_map[this.id.gsub('node_', '')];
-		var drop_node = tree.node_map[id.gsub('node_', '')];
-		
-		$(id).style.border = "";
-		
-		if(dragged_node.data.parent_id==drop_node.data.id) return
-		
-		tree.tree_view.popNode(dragged_node);
-		
-		dragged_node.appendTo(drop_node);
-		if(!drop_node.expanded) drop_node.expand();
-		tree.root.refresh();
-		
+		//reset all nodes to correct values
+		var i = 1;
+		dragged_node.parent.children.each(function(node) { 
+ 			node.data.position = i;
+			i = i + 1;
+		});
+ 
+	
 		var url = dragged_node.data.object_url;
+		var params = '_method=put&taxon[position]=' + position;
+ 
+		if(old_parent != dragged_node.data.parent_id){
+			params = params + '&taxon[parent_id]=' + encodeURIComponent(dragged_node.parent.data.id)
+		}
 		
 		new Ajax.Request(url, {
 		 	method: 'post',
-		 	parameters: '_method=put&taxon[parent_id]=' + encodeURIComponent(drop_node.data.id),
+		 	parameters: params,
 			onLoading: function(){
 				Element.show('taxon_' + dragged_node.data.id)
 			},
 			onSuccess: function(transport){
 				Element.hide('taxon_' + dragged_node.data.id)
-				
-				var nodes = new Hash(tree.node_map);
 
-				var count = 0;
-				nodes.each(function(node) {   
-	 				data=node.value.data;
-					if(data.parent_id==drop_node.data.id){
-						 count = count + 1;
-					}else if(data.parent_id==dragged_node.data.parent_id && data.position>=dragged_node.data.position){
-						data.position=(data.position - 1);
-					}
-				});
-				
 				dragged_node.data.parent_id = drop_node.data.id;
-				dragged_node.data.position = (count + 1);
+				dragged_node.data.position = position;
+				
+				if(old_parent.children.length==0) old_parent.collapse();
 			}
 		});
-		
+
 		spree.YUI.register_inplace_controls();
-}
+	},
 
-DDSend.prototype.startDrag = function(x, y) {
-    // called when source object first selected for dragging
-    // draw a red border around the drag object we create
-    var dragEl = this.getDragEl();
-    var clickEl = this.getEl();
-
-    dragEl.innerHTML = clickEl.innerHTML;
-    dragEl.className = clickEl.className;
-    dragEl.style.color = clickEl.style.color;
-    dragEl.style.border = "1px solid red";
-};
-
-DDSend.prototype.onDragEnter = function(e, id) {
-    var el;
-
-    // this is called anytime we drag over
-    // a potential valid target
-    // highlight the target in red
-    if ("string" == typeof id) {
-        el = YAHOO.util.DDM.getElement(id);
-    } else {
-        el = YAHOO.util.DDM.getBestMatch(id).getEl();
-    }
+	startDrag: function(x, y) {
+		var dragEl = this.getDragEl();
+		var clickEl = this.getEl();
+		if(!clickEl) return
 		
-		var target = this._domRef;
-		target = YAHOO.util.Dom.hasClass(target, 'ygtvhtml') 
-		? target 
-		: YAHOO.util.Dom.getAncestorByClassName(target, 'ygtvhtml'); 
+		var tree = spree.YUI.find_tree_by_element(clickEl);	
+		target = tree.tree_view.getNodeByProperty('id', clickEl.id.gsub('node_', ''));
+		spree.YUI.drag_node = target;
+		spree.YUI.drag_text = clickEl.textContent;
+		spree.YUI.drag_parent = target.parent;
+
+		var data = target.data;
+		var n = $('node_' + target.data.id);
+		n.style.color='#ccc';
+		n.style.backgroundColor='#fff'
+	 	target.setHtml(n.up().innerHTML);
+ 		target.data = data;
+
+		dragEl.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;';
+		dragEl.style.border = 'none';
+		var ddp = spree.YUI.register_drag_events(new YAHOO.util.DDProxy(dragEl));
+	},
+
+	onDragOver: function(e, id) {
+			if(id=='temp_node') return
+			if(!id.include('node_')) return
+	    var el;
+	
+	    // this is called anytime we drag over
+	    // a potential valid target
+	    // highlight the target in red
+	    if ("string" == typeof id) {
+	        el = YAHOO.util.DDM.getElement(id);
+	    } else {
+	        el = YAHOO.util.DDM.getBestMatch(id).getEl();
+	    }
+	 		
+			if(!el) return
  
-		var tree = spree.YUI.set_current_target(target);
+			var tree = spree.YUI.find_tree_by_element(el);
+
+ 			var hover_node = tree.tree_view.getNodeByProperty('id', el.id.gsub('node_', ''));
+	
+			var node_config = {id: 'temp_node', html:'<span class="spree-YUI-tree-node" style="color:green;font-weight:bold;	">' + spree.YUI.drag_text + '</span>'}
+			temp_node = new YAHOO.widget.HTMLNode(node_config, null, false, true);
 		
-		var drag_node = tree.node_map[this.id.gsub('node_', '')];
+			if (spree.YUI.goingUp) {  
+				if(!hover_node.previousSibling || hover_node.previousSibling.data.id!=temp_node.data.id){
+					spree.YUI.drop_temp_node(tree);	
+					
+					temp_node.insertBefore(hover_node);
+					//console.log("UP: BEFORE " + hover_node.html)
+				}
+			}else{
+				if(hover_node.children.length>0){
+					if(hover_node.children[0].data.id!=temp_node.data.id){
+						spree.YUI.drop_temp_node(tree);	
+											
+						temp_node.insertBefore(hover_node.children[0]);
+						//console.log("DOWN: BEFORE " + hover_node.children[0].html)					
+					}
+
+				}else{
+						if(!hover_node.nextSibling || hover_node.nextSibling.data.id!=temp_node.data.id){
+							spree.YUI.drop_temp_node(tree);						
+				
+							temp_node.insertAfter(hover_node);
+							//console.log("DOWN: AFTER " + hover_node.html)
+						}
+				
+				}
+			
+				 
+			}
+			tree.tree_view.root.refresh();
+			spree.YUI.register_inplace_controls();
+ 	
+	},
+
+	onDrag: function(e) { 
+	 
+   		// Keep track of the direction of the drag for use during onDragOver 
+		var y = YAHOO.util.Event.getPageY(e); 
+
+		if (y < spree.YUI.lastY) { 
+		    spree.YUI.goingUp = true; 
+		} else if (y > spree.YUI.lastY) { 
+		    spree.YUI.goingUp = false; 
+		} 
+	 
+		spree.YUI.lastY = y; 
+	},
+
+	endDrag: function(e) {
+	   // override so source object doesn't move when we are done
+	},
+	
+	onInvalidDrop: function(e) {
+		console.log("INVLAUD DROP");
+		spree.YUI.drag_node.appendTo(spree.YUI.drag_parent);
+		spree.YUI.drag_parent.refresh();
+		spree.YUI.register_inplace_controls();
 		
-		if(drag_node.data.parent_id==id.gsub('node_', '')){
-			    el.style.border = "";
-		}else{
-			    el.style.border = "1px solid green";
-		}
-		
+	},
+	
+	drop_temp_node: function(tree) {
+		var rm = tree.tree_view.getNodeByProperty('id', 'temp_node');
+		if(rm) tree.tree_view.removeNode(rm, false);
+	}
 
-};
+}; // end spree.YUI namespace
 
-DDSend.prototype.onDragOut = function(e, id) {
-    var el;
 
-    // this is called anytime we drag out of
-    // a potential valid target
-    // remove the highlight
-    if ("string" == typeof id) {
-        el = YAHOO.util.DDM.getElement(id);
-    } else {
-        el = YAHOO.util.DDM.getBestMatch(id).getEl();
-    }
-
-    el.style.border = "";
-}
-
-DDSend.prototype.endDrag = function(e) {
-   // override so source object doesn't move when we are done
-}

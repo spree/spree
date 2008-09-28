@@ -67,3 +67,9 @@
 'Admin::OverviewController':
   permission1:
     role : [admin]  
+'Admin::TaxonsController':
+  permission1:
+    role : [admin]
+'Admin::TaxonomiesController':
+  permission1:
+    role : [admin]
