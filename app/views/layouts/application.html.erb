@@ -64,9 +64,9 @@
       	<% end %>
         <tr>
           <td id="shop-by-col" valign="top">
-            <!--todo: add the taxonomy info here -->
+          	<%= render :partial => "shared/taxonomies" %>
           </td>
-          <td>
+          <td id="main-col">
             <div id="main-content">
               <%=@content_for_layout %> 	
             </div>

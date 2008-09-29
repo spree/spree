@@ -32,7 +32,17 @@ body {
 
 
 #shop-by-col {
+	padding: 4px;
   width: 140px;
+	vertical-align:top;
+}
+
+#shop-by-col h4{
+	margin: 4px 0px 2px 0px;
+}
+
+#main-col{
+	vertical-align:top;
 }
 
 .even {
@@ -303,7 +313,9 @@ padding-right: 0;
 }
 /* ===================== end: footer =====================*/
 
+/* ===================== begin: Taxonomy Tree =====================*/
 .spree-YUI-tree-node{
 	background-color:#ffffff;
 }
 .inplaceeditor-saving { background: url(/images/spinner.gif) bottom right no-repeat; }
+/* ===================== end: Taxonomy Tree =====================*/
