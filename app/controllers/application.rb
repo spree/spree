@@ -21,6 +21,8 @@ class ApplicationController < ActionController::Base
   def instantiate_controller_and_action_names
     @current_action = action_name
     @current_controller = controller_name
+    
+    @taxonomies = Taxonomy.find(:all, :include => {:root => :children})
   end
   
 end

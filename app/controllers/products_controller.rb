@@ -6,8 +6,6 @@ class ProductsController < Admin::BaseController
 
   index do
     before do
-      @taxonomies = Taxonomy.find(:all, :include => {:root => :children})
-    
       @product_cols = 3
     end
   end
