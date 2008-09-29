@@ -481,10 +481,12 @@ spree.YUI = {
   },
 
 	onDragDrop: function(e, id) {	
-		var tree = spree.YUI.find_tree_by_element($(id));	
-		var temp_node = tree.tree_view.getNodeByProperty('id', 'temp_node');
+		if(!spree.YUI.drag_node) return
 
-		dragged_node = spree.YUI.drag_node;
+		var dragged_node = spree.YUI.drag_node;
+
+		var tree = dragged_node.tree;
+		var temp_node = tree.getNodeByProperty('id', 'temp_node');
 		
 		var data = dragged_node.data;
 		var n = $('node_' + dragged_node.data.id);
@@ -496,14 +498,14 @@ spree.YUI = {
 		var old_parent = dragged_node.data.parent_id;
 		
 		//remove from previous location
-		if (tree.tree_view.getNodeByProperty('id', dragged_node.data.id)) tree.tree_view.popNode(dragged_node);
+		if (tree.getNodeByProperty('id', dragged_node.data.id)) tree.popNode(dragged_node);
 		if (spree.YUI.drag_parent.children.length==0) spree.YUI.drag_parent.collapse();
  
 		//render node in correct location 
 		dragged_node.data.parent_id = temp_node.parent.data.id;
 		dragged_node.insertBefore(temp_node);
-		tree.tree_view.removeNode(temp_node);
-		tree.tree_view.root.refresh();  	
+		tree.removeNode(temp_node);
+		tree.root.refresh();  	
  
 		//get position of node
 		var position = 0;
@@ -524,7 +526,6 @@ spree.YUI = {
 			i = i + 1;
 		});
  
-	
 		var url = dragged_node.data.object_url;
 		var params = '_method=put&taxon[position]=' + position;
  
@@ -545,6 +546,7 @@ spree.YUI = {
 				dragged_node.data.position = position;
 				
 				if(old_parent.children.length==0) old_parent.collapse();
+
 			}
 		});
 
@@ -580,7 +582,7 @@ spree.YUI = {
 
 	onDragOver: function(e, id) {
 			if(id=='temp_node') return
-			if(!id.include('node_')) return
+			if(!id.include('node')) return
 	    var el;
 
 	    if ("string" == typeof id) {
@@ -596,9 +598,9 @@ spree.YUI = {
 			
  			var hover_node = tree.tree_view.getNodeByProperty('id', el.id.gsub('node_', ''));
 			
-			var node_config = {id: 'temp_node', html:'<span class="spree-YUI-tree-node" style="color:green;font-weight:bold;	">' + spree.YUI.drag_text + '</span>'}
+			var node_config = {id: 'temp_node', html:'<span id="temp_node" class="spree-YUI-tree-node" style="color:green;font-weight:bold;	">' + spree.YUI.drag_text + '</span>'}
 			temp_node = new YAHOO.widget.HTMLNode(node_config, null, false, true);
-		
+			
 			if (spree.YUI.goingUp) {  		
 				spree.YUI.drop_temp_node(tree);	
 				
@@ -623,14 +625,12 @@ spree.YUI = {
 					} else {
 						temp_node.insertAfter(hover_node);
 					}
-			
-				}else{
-						
+				}else{		
 						spree.YUI.drop_temp_node(tree);							
 						temp_node.insertAfter(hover_node);
-				}
-			
+				}			
 			}
+
 			tree.tree_view.root.refresh();
 			spree.YUI.register_inplace_controls();
  	
