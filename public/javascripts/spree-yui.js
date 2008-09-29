@@ -550,6 +550,8 @@ spree.YUI = {
 		});
 
 		spree.YUI.register_inplace_controls();
+		spree.YUI.drag_node = null;
+		spree.YUI.drag_parent = null;
 	},
 
 	startDrag: function(x, y) {
@@ -558,6 +560,8 @@ spree.YUI = {
 		if(!clickEl) return
 		
 		var tree = spree.YUI.find_tree_by_element(clickEl);	
+		spree.YUI.current_tree = tree;
+		
 		target = tree.tree_view.getNodeByProperty('id', clickEl.id.gsub('node_', ''));
 		spree.YUI.drag_node = target;
 		spree.YUI.drag_text = clickEl.textContent;
@@ -579,10 +583,7 @@ spree.YUI = {
 			if(id=='temp_node') return
 			if(!id.include('node_')) return
 	    var el;
-	
-	    // this is called anytime we drag over
-	    // a potential valid target
-	    // highlight the target in red
+
 	    if ("string" == typeof id) {
 	        el = YAHOO.util.DDM.getElement(id);
 	    } else {
@@ -592,39 +593,44 @@ spree.YUI = {
 			if(!el) return
  
 			var tree = spree.YUI.find_tree_by_element(el);
-
+			spree.YUI.current_tree = tree;
+			
  			var hover_node = tree.tree_view.getNodeByProperty('id', el.id.gsub('node_', ''));
-	
+			
 			var node_config = {id: 'temp_node', html:'<span class="spree-YUI-tree-node" style="color:green;font-weight:bold;	">' + spree.YUI.drag_text + '</span>'}
 			temp_node = new YAHOO.widget.HTMLNode(node_config, null, false, true);
 		
-			if (spree.YUI.goingUp) {  
-				if(!hover_node.previousSibling || hover_node.previousSibling.data.id!=temp_node.data.id){
-					spree.YUI.drop_temp_node(tree);	
-					
+			if (spree.YUI.goingUp) {  		
+				spree.YUI.drop_temp_node(tree);	
+				
+				if(hover_node.index==1){
+					//hovering over root, can only insert as child
+					if(hover_node.children.length>0){
+						temp_node.insertBefore(hover_node.children[0]);
+					}else{
+						temp_node.appendTo(hover_node);
+					}
+				} else {
 					temp_node.insertBefore(hover_node);
-					//console.log("UP: BEFORE " + hover_node.html)
 				}
+
 			}else{
 				if(hover_node.children.length>0){
-					if(hover_node.children[0].data.id!=temp_node.data.id){
-						spree.YUI.drop_temp_node(tree);	
-											
+		
+					spree.YUI.drop_temp_node(tree);	
+					
+					if(hover_node.expanded){		
 						temp_node.insertBefore(hover_node.children[0]);
-						//console.log("DOWN: BEFORE " + hover_node.children[0].html)					
+					} else {
+						temp_node.insertAfter(hover_node);
 					}
-
+			
 				}else{
-						if(!hover_node.nextSibling || hover_node.nextSibling.data.id!=temp_node.data.id){
-							spree.YUI.drop_temp_node(tree);						
-				
-							temp_node.insertAfter(hover_node);
-							//console.log("DOWN: AFTER " + hover_node.html)
-						}
-				
+						
+						spree.YUI.drop_temp_node(tree);							
+						temp_node.insertAfter(hover_node);
 				}
 			
-				 
 			}
 			tree.tree_view.root.refresh();
 			spree.YUI.register_inplace_controls();
@@ -650,10 +656,23 @@ spree.YUI = {
 	},
 	
 	onInvalidDrop: function(e) {
-		console.log("INVLAUD DROP");
-		spree.YUI.drag_node.appendTo(spree.YUI.drag_parent);
+		var dragged_node = spree.YUI.drag_node;
+		
+		var data = dragged_node.data;
+		var n = $('node_' + dragged_node.data.id);
+		n.style.color='#000';
+		n.style.backgroundColor='#fff'
+	 	dragged_node.setHtml(n.up().innerHTML);
+		dragged_node.data = data;
+		
+		
+		spree.YUI.drop_temp_node(spree.YUI.current_tree);
+		
 		spree.YUI.drag_parent.refresh();
 		spree.YUI.register_inplace_controls();
+		
+		spree.YUI.drag_node = null;
+		spree.YUI.drag_parent = null;
 		
 	},
 	
