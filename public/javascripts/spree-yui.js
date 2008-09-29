@@ -223,6 +223,8 @@ spree.YUI = {
 		var tree = spree.YUI.current_tree;
 		var target = spree.YUI.current_tree.current_target;
 		
+		var count = target.children.length
+		
 		var paste_node = spree.YUI.drag_node;
 		paste_node.appendTo(target);
  		if (!target.expanded) target.expand();
@@ -232,13 +234,10 @@ spree.YUI = {
 		
 		var url = paste_node.data.object_url;
 		
-		var count = 1;
-		if(target.children.length!=0) count = target.children.length
-		
 		if(target.data.id==spree.YUI.drag_parent.data.parent_id){
 			//being pasted onto same parent
-			count = count + 1;
-		}
+		} 
+			console.log(count)
 
 		new Ajax.Request(url, {
 		 	method: 'post',
@@ -250,7 +249,7 @@ spree.YUI = {
 				Element.hide('taxon_' + paste_node.data.id)
 
 				paste_node.data.parent_id = target.data.id;
-				paste_node.data.position = 1;
+				paste_node.data.position = count	;
 			}
 		});
 		
@@ -507,7 +506,7 @@ spree.YUI = {
 		tree.tree_view.root.refresh();  	
  
 		//get position of node
-		var position = 1;
+		var position = 0;
 
 		//get actual position of dropped node
 		dragged_node.parent.children.each(function(node) { 
@@ -519,7 +518,7 @@ spree.YUI = {
 		});
 		
 		//reset all nodes to correct values
-		var i = 1;
+		var i = 0;
 		dragged_node.parent.children.each(function(node) { 
  			node.data.position = i;
 			i = i + 1;

@@ -10,12 +10,12 @@ class Admin::TaxonsController < Admin::BaseController
   
   create.before do 
     @taxon.taxonomy_id = params[:taxonomy_id]
-    @taxon.position = Taxon.find(@taxon.parent_id).children.length + 1
+    @taxon.position = Taxon.find(@taxon.parent_id).children.length
   end
   
   update.before do
    
-    if params[:taxon].include? "parent_id"  #taxon being moved to new parent
+    if params[:taxon].include? "parent_id" #taxon being moved to new parent
       @previous_parent_id = @taxon.parent_id
       
       if params[:taxon].include? "position" #taxon being moved up or down aswell as new parent
@@ -38,14 +38,14 @@ class Admin::TaxonsController < Admin::BaseController
       total_taxons = taxons.length
       taxons = taxons.reject{ |t| t.id == @taxon.id}
       
-      if params[:taxon][:position].to_f == total_taxons #being moved/dropped at the end of the children list, everything moves up one (-1)
+      if params[:taxon][:position].to_f == total_taxons #being moved/dropped at the end of the children list
         taxons.each do |taxon|
           if taxon.position >= @taxon.position #only affects node higher that node being moved
             taxon.position += -1
             taxon.save!
           end
         end
-      elsif params[:taxon][:position].to_f == 1 #being moved/dropped at the start of the children list, everything moves up down (1)
+      elsif params[:taxon][:position].to_f == 0 #being moved/dropped at the start of the children list
         taxons.each do |taxon|
           if taxon.position <= @taxon.position #only affects node lower that node being moved
             taxon.position += 1
@@ -57,7 +57,6 @@ class Admin::TaxonsController < Admin::BaseController
         logger.debug("#{@taxon.position} < #{params[:taxon][:position].to_f}")
         
         if @taxon.position > params[:taxon][:position].to_f #old position greater than new postion
-          logger.debug("=======UP======")
           #up
           taxons.each do |taxon|
             logger.debug("#{taxon.position} <= #{@taxon.position} && #{taxon.position} >= #{params[:taxon][:position].to_f}")
@@ -67,7 +66,6 @@ class Admin::TaxonsController < Admin::BaseController
             end
           end
         elsif @taxon.position < params[:taxon][:position].to_f #old position less than new position
-           logger.debug("=======DOWN======")
           #down
           taxons.each do |taxon|
             logger.debug  ("#{taxon.position} >= #{@taxon.position} && #{taxon.position} <= #{params[:taxon][:position].to_f}")
@@ -90,7 +88,7 @@ class Admin::TaxonsController < Admin::BaseController
   end
   
   destroy.after do
-    reposition_taxons(Taxon.find_all_by_taxonomy_id(@taxon.taxonomy_id, :order => "position ASC"))
+    reposition_taxons(Taxon.find_all_by_parent_id(@taxon.parent_id, :order => "position ASC"))
 
   end
     
@@ -131,7 +129,8 @@ class Admin::TaxonsController < Admin::BaseController
   private 
   def reposition_taxons(taxons)
     taxons.each_with_index do |taxon, i|
-        taxon.position = (i + 1)
+        logger.debug("DID YOU I IS NOW: #{taxon.position} = #{i}")
+        taxon.position = i
         taxon.save!
     end
   end
