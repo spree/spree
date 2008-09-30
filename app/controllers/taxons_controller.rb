@@ -5,7 +5,9 @@ class TaxonsController < Spree::BaseController
   helper :products
   
   show.response do |wants|
-    wants.html { render :template => 'products/index.html.erb' }
+    wants.html do 
+      render :template => 'products/index.html.erb' if @taxon.children.empty?
+    end
   end
   
   private

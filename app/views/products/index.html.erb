@@ -1,15 +1,6 @@
 <div id="product-listing">
-  <div class="breadcrumbs"><%= breadcrumbs(@taxon) %></div>
-  <ul class="product-listing">
-    <% for product in @products %>
-      <% if Spree::Config[:allow_backorders] || product.has_stock? %>
-        <li class="product preview" id="product_<%= product.id %>">
-          <%= link_to small_image(product), product %>
-          <%= link_to product.name, product %>
-          <b><%= product_price(product) %></b>
-        </li>
-      <% end %>
-    <% end %>
-  </ul>
+  <%= breadcrumbs(@taxon) %>
+  <br/>
+  <%= render :partial => "shared/products.html.erb", :locals => {:products => @products } %>
 </div>
-<%= render :partial => 'shared/paginate', :locals => {:collection => @products, :options => {}} unless @products.empty? -%>
+<%= render :partial => 'shared/paginate', :locals => {:collection => @products, :options => {}} unless @products.empty? %>

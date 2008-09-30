@@ -1,6 +1,7 @@
 class ProductsController < Admin::BaseController
   layout 'application'
   
+  helper :taxons
   resource_controller
   actions :show, :index
 
