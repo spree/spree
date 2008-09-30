@@ -29,13 +29,13 @@ shirts:
   taxonomy: master_categories
   parent_id: 1001
   position: 0
-  products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer
+  products: ror_jr_spaghetti
 t_shirts:
   id: 3000
   name: T-Shirts
   taxonomy: master_categories
   parent_id: 2000
-  products: ror_baseball_jersey, ror_ringer
+  products: ror_baseball_jersey, ror_ringer, apache_baseball_jersey, ruby_baseball_jersey
   position: 0
 brand_root:
   id: 20000
@@ -52,7 +52,7 @@ rails:
   taxonomy: brand
   parent_id: 20000
   position: 1
-  products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer, ror_stein, ror_bag, ror_tote
+  products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer, ror_stein, ror_bag, ror_tote, ror_mug
 apache:
   name: Apache
   taxonomy: brand
