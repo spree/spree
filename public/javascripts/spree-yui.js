@@ -388,6 +388,8 @@ spree.YUI = {
 	register_drag_events: function(ddp){
 		ddp.onDragDrop = spree.YUI.onDragDrop;
 		ddp.startDrag = spree.YUI.startDrag;
+		
+		ddp.onDragOut = spree.YUI.onDragOut;
 		ddp.onDragOver = spree.YUI.onDragOver;
 	 
 		ddp.endDrag = spree.YUI.endDrag;
@@ -579,7 +581,13 @@ spree.YUI = {
 		dragEl.style.border = 'none';
 		var ddp = spree.YUI.register_drag_events(new YAHOO.util.DDProxy(dragEl));
 	},
-
+ 	onDragOut: function(e, id){
+		var tree = spree.YUI.drag_node.tree;		
+		spree.YUI.drop_temp_node(tree);
+		
+		tree.root.refresh();
+		spree.YUI.register_inplace_controls();				
+	}, 
 	onDragOver: function(e, id) {
 			if(id=='temp_node') return
 			if(!id.include('node')) return
@@ -602,7 +610,7 @@ spree.YUI = {
 			temp_node = new YAHOO.widget.HTMLNode(node_config, null, false, true);
 			
 			if (spree.YUI.goingUp) {  		
-				spree.YUI.drop_temp_node(tree);	
+				spree.YUI.drop_temp_node(tree.tree_view);	
 				
 				if(hover_node.index==1){
 					//hovering over root, can only insert as child
@@ -618,7 +626,7 @@ spree.YUI = {
 			}else{
 				if(hover_node.children.length>0){
 		
-					spree.YUI.drop_temp_node(tree);	
+					spree.YUI.drop_temp_node(tree.tree_view);	
 					
 					if(hover_node.expanded){		
 						temp_node.insertBefore(hover_node.children[0]);
@@ -626,7 +634,7 @@ spree.YUI = {
 						temp_node.insertAfter(hover_node);
 					}
 				}else{		
-						spree.YUI.drop_temp_node(tree);							
+						spree.YUI.drop_temp_node(tree.tree_view);							
 						temp_node.insertAfter(hover_node);
 				}			
 			}
@@ -664,10 +672,10 @@ spree.YUI = {
 	 	dragged_node.setHtml(n.up().innerHTML);
 		dragged_node.data = data;
 		
+		var tree = spree.YUI.current_tree;
+		spree.YUI.drop_temp_node(tree.tree_view);
 		
-		spree.YUI.drop_temp_node(spree.YUI.current_tree);
-		
-		spree.YUI.drag_parent.refresh();
+		tree.tree_view.root.refresh();
 		spree.YUI.register_inplace_controls();
 		
 		spree.YUI.drag_node = null;
@@ -676,8 +684,8 @@ spree.YUI = {
 	},
 	
 	drop_temp_node: function(tree) {
-		var rm = tree.tree_view.getNodeByProperty('id', 'temp_node');
-		if(rm) tree.tree_view.removeNode(rm, false);
+		var rm = tree.getNodeByProperty('id', 'temp_node');
+		if(rm) tree.removeNode(rm, false);
 	}
 
 }; // end spree.YUI namespace
