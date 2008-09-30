@@ -30,4 +30,5 @@ module ProductsHelper
   def product_description(product)
     product.description.gsub(/^(.*)$/, '<p>\1</p>')
   end  
+  
 end

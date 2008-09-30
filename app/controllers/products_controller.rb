@@ -1,4 +1,5 @@
 class ProductsController < Spree::BaseController
+  helper :taxons
   resource_controller
   actions :show, :index
 

@@ -22,7 +22,6 @@ class Product < ActiveRecord::Base
   named_scope :available, lambda { |*args| { :conditions => ["available_on <= ?", (args.first || Time.zone.now)] } }
   named_scope :by_name, lambda {|name| {:conditions => ["name like ?", "%#{name}%"]}}
   named_scope :by_sku, lambda {|sku| { :include => :variants, :conditions => ["variants.sku like ?", "%#{sku}%"]}}
-  
 
   # checks is there are any meaningful variants (ie. variants with at least one option value)
   def variants?

@@ -33,6 +33,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :products, :member => {:change_image => :post}
   map.resources :addresses
   map.resources :orders, :member => {:address_info => :get, :checkout => :get}, :has_many => :line_items, :has_one => [:address, :creditcard_payment]
+  map.resources :taxons
 
   map.namespace :admin do |admin|
     admin.resources :zones
