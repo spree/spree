@@ -1,6 +1,4 @@
-class ProductsController < Admin::BaseController
-  layout 'application'
-  
+class ProductsController < Spree::BaseController
   resource_controller
   actions :show, :index
 

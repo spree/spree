@@ -13,3 +13,9 @@
   </ul>
 </div>
 <%= render :partial => 'shared/paginate', :locals => {:collection => @products, :options => {}} unless @products.empty? -%>
+
+<% content_for :sidebar do %>
+  <td id="shop-by-col" valign="top">
+  	<%= render :partial => "shared/taxonomies" %>
+  </td>
+<% end %>

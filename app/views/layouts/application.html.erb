@@ -63,9 +63,7 @@
       	</tr>
       	<% end %>
         <tr>
-          <td id="shop-by-col" valign="top">
-          	<%= render :partial => "shared/taxonomies" %>
-          </td>
+          <%= yield :sidebar %>
           <td id="main-col">
             <div id="main-content">
               <%=@content_for_layout %> 	
