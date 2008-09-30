@@ -30,4 +30,13 @@ module ProductsHelper
   def product_description(product)
     product.description.gsub(/^(.*)$/, '<p>\1</p>')
   end  
+  
+  def breadcrumbs(taxon)
+    crumbs = link_to t('Products'), products_url
+    return crumbs unless taxon
+    crumbs += image_tag("breadcrumb.gif")
+    crumbs += taxon.ancestors.reverse.collect { |ancestor| link_to ancestor.name.singularize, taxon_path(ancestor) }.join( image_tag("breadcrumb.gif") )
+    crumbs += image_tag("breadcrumb.gif")
+    crumbs += taxon.name
+  end
 end

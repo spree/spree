@@ -1,5 +1,8 @@
 <% @taxonomies.each do |taxonomy| %>
-	<h4>Shop by <%= taxonomy.name %></h4>
-		<%= render :partial => "shared/taxon", :collection => taxonomy.root.children, :locals => {:selected_taxon => @taxon, :padding => 4} %>
-
+	<h4>Shop by <%= taxonomy.name.singularize %></h4>
+	<br/>
+	<% taxonomy.root.children.each do |taxon| %>
+	  <%= link_to taxon.name, taxon_url(taxon) %><br/>
+	<% end %>
+	<br/><br/>
 <% end %>

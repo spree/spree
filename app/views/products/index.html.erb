@@ -1,5 +1,5 @@
 <div id="product-listing">
-  <h3><%= t("Products") %>: <%= @taxon.name if @taxon %></h3>
+  <div class="breadcrumbs"><%= breadcrumbs(@taxon) %></div>
   <ul class="product-listing">
     <% for product in @products %>
       <% if Spree::Config[:allow_backorders] || product.has_stock? %>

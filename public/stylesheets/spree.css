@@ -319,3 +319,78 @@ padding-right: 0;
 }
 .inplaceeditor-saving { background: url(/images/spinner.gif) bottom right no-repeat; }
 /* ===================== end: Taxonomy Tree =====================*/
+
+/* ===================== begin: Breadcrumbs =====================*/
+.breadcrumbs {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.breadcrumbs a {
+  color: #0000ff;
+}
+
+.breadcrumbs img {
+  padding-left: 5px;
+}
+/* ===================== end: Breadcrumbs =====================*/
+
+/** ================ begin: product-related =================== */
+
+#product-description {
+  float:left;
+  margin-right:10px;
+  width:500px;
+}
+
+#product-image {
+  margin-right:10px;
+  width:240px;
+  overflow: hidden;
+	text-align: right;  
+}
+
+.option-types {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 545px;
+}
+
+.option-types th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
+}
+
+.option-types td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;	
+}
+
+li.product {
+	list-style: none;
+}
+
+li.preview {
+	float: left;
+	width: 102px; height: 14em;
+	margin-right: 50px;
+	font-size: .9em;
+	line-height: 1.2em;
+}
+
+li.preview a {
+	text-decoration: none;
+}
+
+#variants li {
+  list-style-type: none;
+}
+/** ================ end: product-related =================== */
