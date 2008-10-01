@@ -36,7 +36,7 @@ module Spree
       end
 
       def framework_root_path   
-        SPREE_ROOT + '/vendor/rails'
+        RAILS_ROOT + '/vendor/rails'
       end
 
       # Provide the load paths for the Spree installation

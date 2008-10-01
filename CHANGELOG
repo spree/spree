@@ -18,6 +18,7 @@
 * #79 - Frozen gems inside of the Spree source are not copied into new applications 
 * #80 - Named routes don't work when defined inside its own extension using define_routes.
 * #84 - Generating Thumbnails for products: wrong aspect ratio
+* #82 - Unable to start server when both rails and spree are frozen
 
 == 0.2.0 2008-06-05
 
