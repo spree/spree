@@ -1,6 +1,7 @@
 abbreviation: Abbreviation
 account: Account
 action: Action
+add: Add
 add_category: Add Category
 add_option_type: Add Option Type
 add_option_types: Add Option Types
@@ -173,6 +174,7 @@ store: Store
 street_address_2: Street Address (cont'd)
 street_address: Street Address
 subtotal: Subtotal
+subtract: Subtract
 system: System
 tax: Tax
 tax_category: Tax Category
