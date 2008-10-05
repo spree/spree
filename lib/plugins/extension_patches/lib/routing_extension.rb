@@ -24,8 +24,8 @@ module Spree
     
     def draw_with_plugin_routes   
       draw_without_plugin_routes do |mapper|
-        yield mapper
         add_extension_routes(mapper)
+        yield mapper
       end
     end
 
