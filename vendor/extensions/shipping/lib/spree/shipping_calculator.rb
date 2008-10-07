@@ -1,7 +1,15 @@
 module Spree #:nodoc:
-  module TaxCalculator
-    def shipping_options(order)
-      # TODO - list shipping options for the order based on delivery address, zone, etc.
+  module ShippingCalculator
+
+    def shipping_methods
+      methods = ShippingMethod.all
+      methods.select { |method| method.zone.in_zone?(address) }
     end
+    
+    # collection of available shipping countries
+    def shipping_countries
+      # TODO 
+    end
+
   end
 end

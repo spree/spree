@@ -8,12 +8,14 @@ class ShippingExtension < Spree::Extension
 
   define_routes do |map|
     map.namespace :admin do |admin|
-      admin.resources :shipping_method
+      admin.resources :shipping_methods
     end  
   end
   
   def activate
-    # admin.tabs.add "Shipping", "/admin/shipping", :after => "Layouts", :visibility => [:all]
+    Order.class_eval do
+      include Spree::ShippingCalculator
+    end    
   end
   
   def deactivate

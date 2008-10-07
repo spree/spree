@@ -5,7 +5,4 @@ describe ShippingCategory do
     @shipping_category = ShippingCategory.new
   end
 
-  it "should be valid" do
-    @shipping_category.should be_valid
-  end
 end
