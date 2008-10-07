@@ -110,4 +110,11 @@ describe Zone do
     end
 
   end
+  
+  describe "country_list" do
+    it "should return an empty array if the zone type is state"
+    it "should return an empty array if the zone type is country but there are no matching countries"
+    it "should return the corresponding countries if zone type is country"
+    it "should return the countries of the zone children if the type is zone"
+  end
 end

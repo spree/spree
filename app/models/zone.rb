@@ -34,4 +34,10 @@ class Zone < ActiveRecord::Base
     Zone.all.each {|zone| zones << zone if zone.in_zone?(address)}
     zones
   end
+  
+  # convenience method for returning the countries contained within a zone (different then the countries method which only 
+  # returns the zones children and does not consider the grand children if the children themselves are zones)
+  def country_list
+    # TODO
+  end
 end
