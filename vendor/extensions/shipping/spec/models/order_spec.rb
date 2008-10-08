@@ -11,8 +11,21 @@ describe Order do
       ShippingMethod.stub!(:all).and_return([])
       @order.shipping_countries.should == []
     end
-    it "should contain only a single country even if multiple shipping methods are configured with that same country"
-    it "should contain the unique list of countries that fall within at least one shipping method's zone"
+    it "should contain only a single country even if multiple shipping methods are configured with that same country" do
+      country = mock_model(Country)
+      method1 = mock_model(ShippingMethod, :zone => mock_model(Zone, :country_list => [country]))
+      method2 = mock_model(ShippingMethod, :zone => mock_model(Zone, :country_list => [country]))
+      ShippingMethod.stub!(:all).and_return([method1, method2])
+      @order.shipping_countries.should == [country]
+    end
+    it "should contain the unique list of countries that fall within at least one shipping method's zone" do
+      country1 = mock_model(Country)
+      country2 = mock_model(Country)
+      method1 = mock_model(ShippingMethod, :zone => mock_model(Zone, :country_list => [country1]))
+      method2 = mock_model(ShippingMethod, :zone => mock_model(Zone, :country_list => [country2]))
+      ShippingMethod.stub!(:all).and_return([method1, method2])
+      @order.shipping_countries.should == [country1, country2]
+    end
   end
   
   describe "shipping_methods" do

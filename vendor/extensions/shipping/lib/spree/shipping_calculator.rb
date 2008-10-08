@@ -8,7 +8,7 @@ module Spree #:nodoc:
     
     # collection of available shipping countries
     def shipping_countries
-      # TODO 
+      ShippingMethod.all.collect { |method| method.zone.country_list }.flatten.uniq
     end
 
   end
