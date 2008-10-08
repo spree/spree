@@ -112,9 +112,22 @@ describe Zone do
   end
   
   describe "country_list" do
-    it "should return an empty array if the zone type is state"
-    it "should return an empty array if the zone type is country but there are no matching countries"
-    it "should return the corresponding countries if zone type is country"
-    it "should return the countries of the zone children if the type is zone"
+    it "should return an empty array if the zone type is state" do
+      @zone.stub!(:type).and_return("state")
+      @zone.country_list.should == []
+    end
+    it "should return the corresponding countries if zone type is country" do
+      country = mock_model(Country)
+      @zone.should_receive(:countries).and_return([country])
+      @zone.country_list.should == [country]
+    end
+    it "should return the countries of the zone children if the type is zone" do
+      country1 = mock_model(Country)
+      country2 = mock_model(Country)
+      zone1 = mock_model(Zone, :country_list => [country1])
+      zone2 = mock_model(Zone, :country_list => [country2])
+      @zone.stub!(:members).and_return([zone1, zone2])
+      @zone.country_list.should == [country1, country2]
+    end
   end
 end

@@ -38,6 +38,8 @@ class Zone < ActiveRecord::Base
   # convenience method for returning the countries contained within a zone (different then the countries method which only 
   # returns the zones children and does not consider the grand children if the children themselves are zones)
   def country_list
-    # TODO
+    return [] if type == "state"
+    return countries if type == "country"
+    members.collect { |zone| zone.country_list }.flatten
   end
 end
