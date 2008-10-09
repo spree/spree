@@ -4,6 +4,7 @@ describe '/products/index' do
   before(:each) do
     @product = mock_model(Product)
     template.stub!(:small_image)
+    template.stub!(:breadcrumbs).and_return("")
     @product.stub!(:master_price)
     @product.stub!(:name).and_return('Delicious Cows')
     @product.stub!(:has_stock?).and_return(true)
