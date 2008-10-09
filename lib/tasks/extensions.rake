@@ -81,9 +81,22 @@ namespace :db do
 end
 
 namespace :spec do
-  desc "Runs specs on all available Spree extensions, pass EXT=extension_name to test a single extension"
+  desc "Runs specs on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"
   task :extensions => "db:test:prepare" do
-    extension_roots = Spree::Extension.descendants.map(&:root)
+    
+    current_extensions_path = File.join(File.expand_path(Dir.pwd), 'vendor/extensions')
+    all_extension_names = Spree::Extension.descendants
+    all_extension_names.collect!{ |x| x.extension_name.tr(' ', '').underscore }
+    verified_extension_paths = []
+
+    all_extension_names.each do |ext_name|
+      extension_path = File.join(current_extensions_path, ext_name)
+      if File.directory?(extension_path)
+         verified_extension_paths << extension_path
+      end
+    end
+
+    extension_roots = verified_extension_paths
     if ENV["EXT"]
       extension_roots = extension_roots.select {|x| /\/(\d+_)?#{ENV["EXT"]}$/ === x }
       if extension_roots.empty?
