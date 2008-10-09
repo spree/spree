@@ -6,21 +6,25 @@ add_category: Add Category
 add_option_type: Add Option Type
 add_option_types: Add Option Types
 add_product_properties: Add Product Properties
-address_information: Address Information
 add_to_cart: Add To Cart
+address: Address
+address_information: Address Information
 adjustment: Adjustment
 administration: Administration
 amount: Amount
 are_you_sure_category: Are you sure you want to delete this category?
+are_you_sure_delete: Are you sure you want to delete this record?
 are_you_sure_delete_image: Are you sure you want to delete this image?
 are_you_sure_option_type: Are you sure you want to delete this option type?
-are_you_sure_delete: Are you sure you want to delete this record?
+authorized: Authorized
 available_on: Available On
 back: Back
 back_to_store: Go Back To Store
 bill_address: Bill Address
 billing_address: Billing Address
 cancel: Cancel
+cancel: cancel
+capture: capture
 card_code: Card Code
 card_number: Card Number
 cart: Cart
@@ -37,12 +41,13 @@ configuration_options: Configuration Options
 configurations: Configurations
 confirm: Confirm
 confirm_password: Password Confirmation
-continue_shopping: Continue shopping
 continue_shopping: Continue Shopping
+continue_shopping: Continue shopping
 country: Country
 create: Create
 create_a_new_account: Create a new account
 credit_card: Credit Card
+creditcard_payment: Creditcard Payment
 current: Current
 customer: Customer
 date: Date
@@ -57,8 +62,8 @@ editing_option_types: Editing Option Types
 editing_state: Editing State
 editing_tax_category: Editing Tax Category
 editing_user: Editing User
-email_address: Email Address
 email: Email
+email_address: Email Address
 email_server_settings_description: Set email server settings.
 empty_cart: Empty Cart
 error: error
@@ -70,14 +75,17 @@ filename: Filename
 final_confirmation: Final Confirmation
 first_name: First Name
 gateway: Gateway
+gateway_error: Gateway Error
 gateway_setting_description: Select a payment gateway and configure its settings.
 hello_user: Hello User
 image: Image
 images: Images
-inventory_adjustment: Inventory Adjustment
+in_progress: In Progress
 inventory: Inventory
-item_description: Item Description
+inventory_adjustment: Inventory Adjustment
+inventory_setting_description: Inventory Configuration, Backordering, Zero-Stock Display
 item: Item
+item_description: Item Description
 item_total: Item Total
 last_name: Last Name
 listing_categories: Listing Categories
@@ -86,8 +94,8 @@ listing_orders: Listing Orders
 listing_reports: Listing Reports
 listing_tax_categories: Listing Tax Categories
 listing_users: Listing Users
-logged_in_as: Logged in as
 log_in: Log In
+logged_in_as: Logged in as
 login_name: Login
 logout: Logout
 mail_server_settings: Mail Server Settings
@@ -113,22 +121,26 @@ none_available: None Available
 number: Number
 on_hand: On Hand
 operation: Operation
-options: Options
-option_types: Option Types
 option_Values: Option Values
-order_number: Order #
+option_types: Option Types
+options: Options
+or: or
+order: Order
 order_confirmation_note: 
 order_date: Order Date
 order_details: Order Details
+order_email_resent: Order Email Resent
 order_number: "Order #"
-order: Order
+order_number: Order #
+order_operation_authorize: Authorize
 order_processed_successfully: Your order has been processed successfully
-orders: Orders
 order_total: Order Total
-or: or
+order_updated: Order Updated
+orders: Orders
 overview: Overview
 parent_category: Parent Category
 password: Password
+pay: pay
 payment: Payment
 payment_gateway: Payment Gateway
 phone: Phone
@@ -136,50 +148,52 @@ presentation: Presentation
 previous: previous
 price: Price
 problem_authorizing_card: Problem authorizing credit card
-problems_processing_order: We had problems processing your order
 problem_capturing_card: Problem capturing credit card
+problems_processing_order: We had problems processing your order
 process: Process
 product: Product
-products: Products
 product_properties: Product Properties
-property: Property
+products: Products
 properties: Properties
+property: Property
 prototypes: Prototypes
 qty: Qty
 remember_me: Remember me
 reports: Reports
 resend: Resend
 response_code: Response Code
-sales_totals_description: Sales Total For All Orders
+return: return
 sales_total: Sales Total
 sales_totals: Sales Totals
+sales_totals_description: Sales Total For All Orders
 search: Search
 select: Select
 select_from_prototype: Select From Prototype
+ship: ship
 ship_address: Ship Address
+shipping: Shipping
 shipping_address: Shipping Address
 shipping_method: Shipping Method
-shipping: Shipping
 shipping_total: Shipping Total
 shopping_cart: Shopping Cart
 sign_up: Sign up
 sku: SKU
 start: Start
 state: State
-states: States
 state_setting_description: Administer the list of states/provinces associated with each country.
+states: States
 status: Status
 stop: Stop
 store: Store
-street_address_2: Street Address (cont'd)
 street_address: Street Address
+street_address_2: Street Address (cont'd)
 subtotal: Subtotal
 subtract: Subtract
 system: System
 tax: Tax
-tax_category: Tax Category
 tax_categories: Tax Categories
 tax_categories_setting_description: Set up tax categories to identify which products should be taxable.
+tax_category: Tax Category
 tax_total: Tax Total
 thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
 time: Time
@@ -189,8 +203,8 @@ try_again: Try Again
 type: Type
 update: Update
 use_different_shipping_address: Use Different Shipping Address
-users: Users
 user: User
+users: Users
 value: Value
 variants: Variants
 version: Version
@@ -200,7 +214,6 @@ what_is_a_cvv: What is a (CVV) Credit Card Code?
 what_is_this: What's This?
 zip: Zip
 zone: Zone
-zones: Zones
 zone_setting_description: Collections of countries, states or other zones to be used in various calculations.
 order_operation_authorize: Authorize
 capture: capture
@@ -225,3 +238,4 @@ remove: Remove
 no_match_found: No Match Found
 taxonomies: Taxonomies
 taxonomies_setting_description: Create and manage taxonomies
+zones: Zones

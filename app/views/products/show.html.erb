@@ -33,7 +33,7 @@
 										<% @product.variants.each do |v| %>
 											<% next if v.option_values.empty? %>
 											<li>
-                        <input type="radio" name="id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked="checked"' : '' %> <%= 'disabled' unless v.in_stock or Spree::Config[:allow_backorders]  %> />
+                        <input type="radio" name="id" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked="checked"' : '' %> <%= 'disabled' unless v.in_stock or Spree::Config[:show_zero_stock_products]  %> />
 											  <%= variant_options v %>
 											  <% if variant_price_diff v %>
 											  	<span class="price-diff"><%= variant_price_diff v %></span>
@@ -49,7 +49,13 @@
 					<% end%>						
 					<tr>
 					  <td>
-					    <%= submit_tag t('Add To Cart') %>
+              <%=
+                if @product.has_stock? || Spree::Config[:allow_backorders]
+                  submit_tag t('Add To Cart')
+                else
+                  content_tag('strong', 'Out of Stock')
+                end
+            %>
 					  </td>
 					</tr>
 				</table>

@@ -21,6 +21,7 @@ class AppConfiguration < Configuration
   preference :default_country_id, :integer, :default => 214
   preference :allow_backorders, :boolean, :default => true
   preference :show_descendents, :boolean, :default => true
+  preference :show_zero_stock_products, :boolean, :default => true
 
   validates_presence_of :name
   validates_uniqueness_of :name

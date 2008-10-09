@@ -31,6 +31,10 @@
     <tr>
       <td><%= link_to t("Taxonomies"), admin_taxonomies_path %></td>
       <td><%= Globalite.localize(:taxonomies_setting_description) %></td>
+		</tr>
+		<tr>
+      <td><%= link_to t("Inventory Settings"), admin_inventory_settings_path %></td>
+      <td><%= Globalite.localize(:inventory_setting_description) %></td>
     </tr>
     <% @extension_links.each do |link_map| %>
       <tr>

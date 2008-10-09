@@ -1,7 +1,7 @@
 <div id="product-listing">
   <ul class="product-listing">
     <% products.each do |product| %>
-      <% if Spree::Config[:allow_backorders] || product.has_stock? %>
+      <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
         <li class="product preview" id="product_<%= product.id %>">
           <%= link_to small_image(product), product %>
           <%= link_to product.name, product %>
