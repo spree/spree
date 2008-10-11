@@ -16,6 +16,7 @@ describe '/products/index' do
     assigns[:products].stub!(:previous_page?).and_return(false)
     assigns[:products].stub!(:next_page?).and_return(false)
     template.stub!(:windowed_pagination_links).and_return(false)
+    template.stub_render(:partial => 'shared/taxonomies')
   end
 
   it "should display items in stock" do
