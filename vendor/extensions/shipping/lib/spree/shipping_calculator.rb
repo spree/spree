@@ -3,7 +3,7 @@ module Spree #:nodoc:
 
     def shipping_methods
       methods = ShippingMethod.all
-      methods.select { |method| method.zone.in_zone?(address) }
+      methods.select { |method| method.zone.include?(address) }
     end
     
     # collection of available shipping countries

@@ -14,8 +14,14 @@ class Zone < ActiveRecord::Base
   def member_name
     # does nothing - just here to satisfy text_field_with_auto_complete (which requires a model property)
   end
-    
+  
+  # alias to the new include? method 
   def in_zone?(address)
+    $stderr.puts "Warning: calling deprecated method :in_zone? use :include? instead."
+    include?(address)  
+  end
+      
+  def include?(address)
     # NOTE: This is complicated by the fact that include? for HMP is broken in Rails 2.1 (so we use awkward index method)
     case self.type
     when "country"
@@ -24,14 +30,14 @@ class Zone < ActiveRecord::Base
       return members.index(address.state).respond_to?(:integer?)
     end
     members.each do |zone|
-      return true if zone.in_zone?(address)
+      return true if zone.include?(address)
     end
     false
   end
   
   def self.match(address)
     zones = []
-    Zone.all.each {|zone| zones << zone if zone.in_zone?(address)}
+    Zone.all.each {|zone| zones << zone if zone.include?(address)}
     zones
   end
   

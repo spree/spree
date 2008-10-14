@@ -37,18 +37,18 @@ describe Order do
       zone = mock_model(Zone)
       method = mock_model(ShippingMethod, :zone => zone)
       ShippingMethod.stub!(:all).and_return([method])
-      zone.should_receive(:in_zone?).with(@address)
+      zone.should_receive(:include?).with(@address)
       @order.shipping_methods
     end
     it "should return empty array if none of the configured shipping methods cover the shipping address" do
-      method = mock_model(ShippingMethod, :zone => mock_model(Zone, :in_zone? => false))
+      method = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => false))
       ShippingMethod.stub!(:all).and_return([method])
       @order.shipping_methods.should == []
     end
     it "should return all shipping methiods that cover the shipping address" do
-      method1 = mock_model(ShippingMethod, :zone => mock_model(Zone, :in_zone? => true))
-      method2 = mock_model(ShippingMethod, :zone => mock_model(Zone, :in_zone? => true))
-      method3 = mock_model(ShippingMethod, :zone => mock_model(Zone, :in_zone? => false))
+      method1 = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => true))
+      method2 = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => true))
+      method3 = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => false))
       ShippingMethod.stub!(:all).and_return([method1, method2, method3])
       @order.shipping_methods.should == [method1, method2]
     end
