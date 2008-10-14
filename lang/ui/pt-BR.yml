@@ -1,6 +1,7 @@
 abbreviation: Abreviação
 account: Conta
-action: Ação 
+action: Ação
+add: Adicionar
 add_category: Adicionar Categoria
 add_option_type: Adicionar Tipo de Opção
 add_option_types: Adicionar Tipo de Opção
@@ -75,6 +76,7 @@ image: Imagem
 images: Imagens
 inventory_adjustment: Ajuste de Inventário
 inventory: Inventário
+inventory_setting_description: Inventory Configuration, Backordering, Zero-Stock Display
 item_description: Descrição de Item
 item: Item
 item_total: Total de Item
@@ -174,6 +176,7 @@ store: Loja
 street_address_2: Endereço (compl.)
 street_address: Endereço
 subtotal: Sub-total
+subtract: Subtrair
 system: Sistema
 tax: Taxa
 tax_category: Categoria de Taxa

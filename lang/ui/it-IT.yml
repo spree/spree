@@ -64,6 +64,7 @@ image: Imagine
 images: Imagini
 inventory_adjustment: Edita magazzino
 inventory: Magazzino
+inventory_setting_description: Inventory Configuration, Backordering, Zero-Stock Display
 item_description: Descrizione articolo
 item: Articolo
 item_total: Articolo totale
