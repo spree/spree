@@ -3,10 +3,11 @@ class ShippingMethod < ActiveRecord::Base
   belongs_to :shipping_category
 
   def available?(order)
-    # TODO
+    zone.include?(order.ship_address)
   end
   
   def calculate_shipping(order)
-    # TODO
+    return 0 unless zone.include?(order.ship_address)
+    return shipping_calculator.constantize.send(:calculate_shipping, order)
   end
 end
