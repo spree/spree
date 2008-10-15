@@ -53,4 +53,46 @@ describe Order do
       @order.shipping_methods.should == [method1, method2]
     end
   end
+  
+  describe "state_machine in 'address' state" do
+    before :each do
+      @order.state = 'address'
+    end
+    describe "when there are no shipping methods" do
+      it "next! should transition to 'creditcard_payment'" do
+        @order.stub!(:shipping_methods).and_return([])
+        @order.next!
+        @order.state.should == "creditcard_payment"
+      end
+    end
+    describe "when there is only one shipping method" do
+      before :each do
+        @shipping_method = ShippingMethod.new
+        @order.stub!(:shipping_methods).and_return([@shipping_method]) 
+      end
+      it "next! should transition to 'creditcard_payment'" do
+        @order.next!
+        @order.state.should == "creditcard_payment"
+      end
+      it "should automatically calculate the shipping cost using the single shipping method" do
+        @order.next!
+        @order.shipments.first.shipping_method.should == @shipping_method
+      end
+    end
+    describe "when there is only one shipping method" do
+      it "next! should transition to 'shipment'" do
+        @order.stub!(:shipping_methods).and_return([ShippingMethod.new, ShippingMethod.new])
+        @order.next!
+        @order.state.should == "shipment"
+      end
+    end
+  end
+  
+  describe "state_machine in 'shipment' state" do
+    it "next! should transition to 'creditcard_payment'" do
+      @order.state = 'shipment'
+      @order.next!
+      @order.state.should == "creditcard_payment"
+    end
+  end  
 end
