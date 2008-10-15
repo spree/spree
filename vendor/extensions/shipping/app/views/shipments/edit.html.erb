@@ -1,0 +1,8 @@
+<%= error_messages_for :shipment %>
+<h1><%= t("Shipment") %></h1>
+<% form_for(:shipment, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <div align="right">
+    <%= submit_tag t('Continue') %>
+  </div>
+<% end %>

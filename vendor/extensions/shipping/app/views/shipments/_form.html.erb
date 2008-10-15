@@ -1,0 +1,9 @@
+<div class="simple-radios">
+  <% @order.shipping_methods.each do |shipping_method| %>
+  	<li>
+      <input type="radio" name="method_id" value="<%= shipping_method.id %>" <%= @shipment.shipping_method == shipping_method ? 'checked="checked"' : '' %> /> 
+      <%= shipping_method.name %> 
+      &nbsp; (Cost: TODO)
+  	</li>
+  <% end%>
+</div>

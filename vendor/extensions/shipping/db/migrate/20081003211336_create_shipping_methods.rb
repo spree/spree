@@ -4,6 +4,7 @@ class CreateShippingMethods < ActiveRecord::Migration
       t.references :zone
       t.references :shipping_category
       t.string :shipping_calculator
+      t.string :name
       t.timestamps
     end
   end

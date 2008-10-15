@@ -1,0 +1,8 @@
+usa_member:
+  parent: available_shipping
+  member_id: 214
+  member_type: Country
+canada_member:
+  parent: available_shipping
+  member_id: 35
+  member_type: Country
