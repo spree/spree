@@ -1,0 +1,30 @@
+<h1><%=t("Shipping Methods") %></h1>
+<table class="admin-report" width="545">
+  <thead>
+    <tr>
+	    <th><%=t("Name")%></th>
+      <th><%=t("Category")%></th>
+      <th><%=t("Zone")%></th>
+      <th><%=t("Calculator")%></th>
+      <th><%=t("Action")%></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @shipping_methods.each do |shipping_method| %>
+      <tr class="<%= cycle('even', 'odd') %>">
+        <td><%=shipping_method.name %></td>
+        <td><%=shipping_method.shipping_category.name %></td>
+        <td><%=shipping_method.zone.name %></td>
+        <td><%=shipping_method.shipping_calculator %></td>
+        <td>
+          <%=link_to t("Edit"), edit_object_url(shipping_method) %> |
+          <%=link_to t("Delete"), object_url(shipping_method), :method => :delete %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @shipping_methods.empty? %>
+      <tr><td colspan="5">None.</td></tr>
+    <% end %>
+  </tbody>
+</table>
+<%= link_to t("New Shipping Method"), new_object_url %>

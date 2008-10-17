@@ -1,0 +1,9 @@
+ext_shipping_shipping_methods: Shipping Methods
+ext_shipping_shipping_methods_description: Manage shipping methods
+ext_shipping_calculator: Calculator
+ext_shipping_new_shipping_method: New Shipping Method
+ext_shipping_editing_shipping_method: Editing Shipping Method
+ext_shipping_shipping_categories: Shipping Categories
+ext_shipping_shipping_categories_description: Manage shipping categories to identify which products can be shipped via which method
+ext_shipping_new_shipping_category: New Shipping Category
+ext_shipping_editing_shipping_category: Editing Shipping Category

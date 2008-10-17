@@ -18,6 +18,7 @@ class Admin::ProductsController < Admin::BaseController
   private
     def load_data
       @tax_categories = TaxCategory.find(:all, :order=>"name")  
+      @shipping_categories = ShippingCategory.find(:all, :order=>"name")  
     end
 
     def set_image

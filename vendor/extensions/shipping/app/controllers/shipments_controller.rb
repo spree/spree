@@ -13,8 +13,8 @@ class ShipmentsController < Admin::BaseController
     end
   end
   
-  create.after do    
-    # add the specified shipping method to the shipment
+  create.before do    
+    # add the specified shipping method to the shipment, before it's saved.
     @shipment.update_attribute(:shipping_method, ShippingMethod.find(params[:method_id]))
   end  
 
