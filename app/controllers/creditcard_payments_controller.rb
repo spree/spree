@@ -13,8 +13,8 @@ class CreditcardPaymentsController < Admin::BaseController
     creditcard_payment.creditcard = @payment_presenter.creditcard
     begin
       creditcard_payment.save
-    rescue SecurityError => se
-      flash.now[:error] = "Authorization Error: #{se.message}"
+    rescue Spree::GatewayError => ge
+      flash.now[:error] = "Authorization Error: #{ge.message}"
       render :action => "new" and return 
     end
     @order.next!
