@@ -31,8 +31,8 @@ spree.YUI = {
 
 		var target_url = target.data.object_url.split('/');
  		var parent_id = target_url.last();
-		target_url = target_url.without(parent_id);
-		
+		target_url = target_url.slice(0, (target_url.length - 1))
+				
 		//add inplace creator
 		var ipe = new Ajax.InPlaceEditor('new_taxon_node_' + rand_no, target_url.join('/'), {
 				callback: function(form, value) { return 'taxon[name]=' + encodeURIComponent(value) + '&taxon[parent_id]=' + encodeURIComponent(parent_id)},  	
