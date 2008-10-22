@@ -1,4 +1,4 @@
-class <%= migration_name %> < ActiveRecord::Migration
+class <%= migration_name.classify %> < ActiveRecord::Migration
   def self.up
   end
 
