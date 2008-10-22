@@ -1,33 +1,40 @@
 class RefactorImagesForPaperclip < ActiveRecord::Migration
   def self.up
-    # Attachment_fu columns
-    remove_column :images, :thumbnail
-    remove_column :images, :width
-    remove_column :images, :height
-    remove_column :images, :filename
-    remove_column :images, :content_type
-    remove_column :images, :size
-
-    # Paperclip columns
-    add_column :images, :photo_file_name,    :string
-    add_column :images, :photo_content_type, :string
-    add_column :images, :photo_file_size,    :integer
-    add_column :images, :photo_updated_at,   :datetime
+    rename_table :images, :assets
+    change_table :assets do |t|
+      t.string :type   
+       
+      # Attachment_fu columns
+      t.remove :thumbnail
+      t.remove :width
+      t.remove :height
+      
+      # Paperclip columns
+      t.rename :filename, :document_file_name
+      t.rename :content_type, :document_content_type
+      t.rename :size, :document_size
+      t.datetime  :document_updated_at
+    end
+          
   end
 
   def self.down
-    # Paperclip columns
-    remove_column :images, :photo_file_name
-    remove_column :images, :photo_content_type
-    remove_column :images, :photo_file_size
-    remove_column :images, :photo_updated_at
     
-    # Attachment_fu columns
-    add_column :images, :size, :integer
-    add_column :images, :content_type, :string
-    add_column :images, :filename, :string
-    add_column :images, :height, :integer
-    add_column :images, :width, :integer
-    add_column :images, :thumbnail, :string
+    change_table :assets do |t|
+      t.remove :type
+      
+      # Attachment_fu columns
+      t.string :thumbnail
+      t.integer :width
+      t.integer :height
+      
+      # Paperclip columns
+      t.rename :document_file_name, :filename
+      t.rename :document_content_type, :content_type
+      t.rename :document_size, :size
+      t.remove  :document_updated_at
+    end
+    
+    rename_table :assets, :images
   end
 end
