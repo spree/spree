@@ -1,12 +1,15 @@
 <%= render :partial => 'shared/product_sub_menu' %>
 <h1><%= t("Editing Product") %></h1>
 <%= render :partial => 'shared/product_tabs', :locals => {:current => "Variants"} %>
-<table class="basic-table">
+<table class="full-table">
 	<thead>
 		<tr>
 			<th><%= t("Options") %></th>
 			<th><%= t("Price") %></th>
 		  <th><%= t("SKU") %></th>
+		  <% @additional_fields.each do |field| %>
+		    <th><%= field.titleize %></th>
+		  <% end %>
 		  <th><%= t("On Hand") %></th>
 			<th><%= t("Action") %></th>
 		</tr>
@@ -19,6 +22,9 @@
       	<td><%= variant_options variant %></td>
       	<td><%= variant.price %>
         <td><%= variant.sku %></td>
+        <% @additional_fields.each do |field| %>        
+  		    <td><%= variant[field] %></td>
+  		  <% end %>
         <td><%= variant.on_hand %></td>
 		    <td valign="top">
 		      <%= link_to_edit(variant) %>

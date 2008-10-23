@@ -240,3 +240,7 @@ taxonomies: Taxonomies
 taxonomies_setting_description: Create and manage taxonomies
 zones: Zones
 shipment: Shipment
+weight: Weight
+height: Height
+depth: Depth
+width: Width
