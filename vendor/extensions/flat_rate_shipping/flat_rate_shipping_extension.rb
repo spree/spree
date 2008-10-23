@@ -18,9 +18,4 @@ class FlatRateShippingExtension < Spree::Extension
   def deactivate
     # admin.tabs.remove "Flat Rate Shipping"
   end
-  
-  def calculate_shipping(order)
-    return Spree::FlatRateShipping::Config[:flat_rate_amount]
-  end
-  
 end
