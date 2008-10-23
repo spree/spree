@@ -62,4 +62,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
 
+  # a catchall route for "static" content
+  map.connect '*path', :controller => 'content', :action => 'show'
+
 end
