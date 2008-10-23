@@ -1,4 +1,4 @@
-class <%= migration_name.classify %> < ActiveRecord::Migration
+class <%= migration_name.titleize.gsub(" ", "") %> < ActiveRecord::Migration
   def self.up
   end
 
