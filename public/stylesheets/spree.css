@@ -394,3 +394,9 @@ li.preview a {
   list-style-type: none;
 }
 /** ================ end: product-related =================== */
+
+/** ================ begin: simple-radios =================== */
+.simple-radios li {
+  list-style-type: none;
+}
+/** ================ end: simple-radios =================== */

@@ -1,0 +1,9 @@
+<div class="simple-radios">
+  <% @order.shipping_methods.each do |shipping_method| %>
+  	<li>
+      <input type="radio" name="method_id" value="<%= shipping_method.id %>" <%= (@shipment.shipping_method == shipping_method) || (@order.shipping_methods.first === shipping_method) ? 'checked="checked"' : '' %> /> 
+      <%= shipping_method.name %> 
+      &nbsp; (Cost: <%= number_to_currency(shipping_method.shipping_calculator.constantize.calculate_shipping(@order)) %>)
+  	</li>
+  <% end%>
+</div>

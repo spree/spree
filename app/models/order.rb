@@ -12,9 +12,7 @@ class Order < ActiveRecord::Base
   has_many :state_events
   has_one :creditcard_payment
   belongs_to :user
-  has_one :address, :as => :addressable
-  belongs_to :bill_address, :class_name => "Address", :foreign_key => :bill_address_id
-  belongs_to :ship_address, :class_name => "Address", :foreign_key => :ship_address_id
+  has_one :address, :as => :addressable, :dependent => :destroy
 
   validates_associated :line_items, :message => "are not valid"
   validates_numericality_of :tax_amount

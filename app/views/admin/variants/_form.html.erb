@@ -29,4 +29,10 @@
     <td><%= t("On Hand") %>: </td>
     <td><%= f.text_field :on_hand %></td>
   </tr>  
+  <% @additional_fields.each do |field| %>
+  <tr>
+    <td><%= t(field.titleize) %>: </td>
+    <td><%= f.text_field field %></td>
+  </tr>  
+  <% end %>
 </table>

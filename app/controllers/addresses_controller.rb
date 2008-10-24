@@ -38,7 +38,11 @@ class AddressesController < Admin::BaseController
     @selected_country_id ||= Spree::Config[:default_country_id]
 
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
-    @countries = Country.find(:all)
+    load_countries
+  end
+  
+  def load_countries
+    @countries = Country.all
   end
   
   def next_step

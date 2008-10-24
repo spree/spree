@@ -3,7 +3,6 @@ order_<%= i %>:
   user: frank
   number: <%= Array.new(9){rand(9)}.join %>
   state: authorized
-  ship_method: 1
   ship_amount: 5.00
   tax_amount: 2.78
   item_total: 37.97

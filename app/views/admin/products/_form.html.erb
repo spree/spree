@@ -43,6 +43,12 @@
     </tr>
   <% end %>
   <tr>
+    <td nowrap><%=t("Shipping Category")%>: </td>
+    <td>
+      <%= collection_select(:product, :shipping_category_id, @shipping_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        
+    </td>
+  </tr>
+  <tr>
     <td nowrap><%=t("Tax Category")%>: </td>
     <td>
       <%= collection_select(:product, :tax_category_id, @tax_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        
