@@ -68,7 +68,7 @@ module Spree::BaseHelper
     if product.images.empty?
       # TODO - show image not available    
     else
-      image_tag product.images.first.photo.url(:mini)  
+      image_tag product.images.first.document.url(:mini)  
     end
   end
 
@@ -76,7 +76,7 @@ module Spree::BaseHelper
     if product.images.empty?
       # TODO - show image not available
     else
-      image_tag product.images.first.photo.url(:small)  
+      image_tag product.images.first.document.url(:small)  
     end
   end
 
@@ -84,7 +84,7 @@ module Spree::BaseHelper
     if product.images.empty?
       # TODO - show image not available
     else
-      image_tag product.images.first.photo.url(:product)  
+      image_tag product.images.first.document.url(:product)  
     end
   end
 end
