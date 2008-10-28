@@ -12,7 +12,7 @@ class ShippingExtension < Spree::Extension
       admin.resources :shipping_categories  
     end  
     map.resources :shipments
-    map.resources :orders, :has_many => :shipments
+    map.resources :orders, :has_many => :shipments, :member => {:fatal_shipping => :get}
   end
   
   def activate
