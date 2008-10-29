@@ -17,6 +17,5 @@ class Admin::ShippingMethodsController < ApplicationController
     private 
     def load_data     
       @available_zones = Zone.find :all, :order => :name
-      @available_categories = ShippingCategory.find :all, :order => :name
     end
 end

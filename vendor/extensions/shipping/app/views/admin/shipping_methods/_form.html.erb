@@ -4,12 +4,6 @@
     <td><%= f.text_field :name, {"style" => "width:200px"} %></td>
   </tr>
   <tr>
-    <td><%=t("Category")%>:</td>
-    <td><%= collection_select(:shipping_method, 
-                              :shipping_category_id, @available_categories, :id, :name, 
-                              {}, {"style" => "width:200px"}) %></td>
-  </tr>
-  <tr>
     <td><%=t("Zone")%>:</td>
     <td><%= collection_select(:shipping_method, :zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"}) %></td>
   </tr>
