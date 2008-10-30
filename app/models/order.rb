@@ -56,7 +56,7 @@ class Order < ActiveRecord::Base
     # like google checkout, and paypal website payments pro.  (no sense in having these types of extensions 
     # defining possibly conflicting state names)
     event :pay do
-      transition :to => 'paid', :from => 'pending_payment'
+      transition :to => 'paid'
     end
     event :ship do
       transition :to => 'shipped', :from => 'captured'
