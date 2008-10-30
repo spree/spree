@@ -14,6 +14,12 @@ class CreditcardPayment < ActiveRecord::Base
   def creditcard=(creditcard)
     @creditcard = creditcard
     self.cc_type = ActiveMerchant::Billing::CreditCard.type?(creditcard.number)
+    self.number = creditcard.number if Spree::Config[:store_cc]
+    self.display_number = creditcard.display_number 
+    self.month = creditcard.month
+    self.year = creditcard.year
+    self.first_name = creditcard.first_name
+    self.last_name = creditcard.last_name
   end
   
   def find_authorization
@@ -22,19 +28,5 @@ class CreditcardPayment < ActiveRecord::Base
     cc.txns.find(:first, 
                  :conditions => ["txn_type = ? or txn_type = ?", CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::CAPTURE],
                  :order => 'created_at DESC')
-  end
-  
-  # creates a new instance of CreditCard using the active merchant version
-  def self.new_from_active_merchant(cc)
-    card = self.new
-    card.number = cc.number if Spree::Config[:store_cc]
-    card.cc_type = ActiveMerchant::Billing::CreditCard.type?(cc.number)
-    card.display_number = cc.display_number 
-    card.verification_value = cc.verification_value if Spree::Config[:store_cc]
-    card.month = cc.month
-    card.year = cc.year
-    card.first_name = cc.first_name
-    card.last_name = cc.last_name
-    card
   end
 end
