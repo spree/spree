@@ -400,3 +400,7 @@ li.preview a {
   list-style-type: none;
 }
 /** ================ end: simple-radios =================== */
+
+.disabled {
+  color: #AFAFAF;
+}

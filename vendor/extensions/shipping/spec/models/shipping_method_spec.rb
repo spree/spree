@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-class MockShippingCalc
-  def self.calculate_shipping(order)
+class MockCalculator
+  def calculate_shipping(order)
     2.5
   end
 end
@@ -10,8 +10,8 @@ describe ShippingMethod do
   before(:each) do
     @zone = mock_model(Zone)
     @address = mock_model(Address)
-    @shipping_method = ShippingMethod.new(:zone => @zone, :shipping_calculator => "MockShippingCalc")
-    @order = mock_model(Order, :ship_address => @address)
+    @shipping_method = ShippingMethod.new(:zone => @zone, :shipping_calculator => "MockCalculator")
+    @order = mock_model(Order, :address => @address)
   end
 
   describe "available?" do
@@ -40,7 +40,9 @@ describe ShippingMethod do
         # TODO - stub out instatiation code        
       end
       it "should use the calculate_shipping method of the specified calculator" do
-        MockShippingCalc.should_receive(:calculate_shipping).with(@order)
+        @calculator = MockCalculator.new
+        MockCalculator.stub!(:new).and_return(@calculator)
+        @calculator.should_receive(:calculate_shipping).with(@order)
         @shipping_method.calculate_shipping(@order)
       end
       it "should return the correct amount" do

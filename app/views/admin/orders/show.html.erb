@@ -6,7 +6,7 @@
 
 <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
 
-<% if @order.ship_address %>
+<% if @order.address || @order.creditcard_payment %>
   <table class="order-address">
     <tr>
       <th><%= t("Ship Address") %></th>
@@ -14,10 +14,10 @@
     </tr>
     <tr>
       <td width="50%">
-        <%= render :partial => 'address', :locals => {:address => @order.ship_address} -%>      
+        <%= render :partial => 'address', :locals => {:address => @order.address} if @order.address%>      
       </td>
       <td width="50%">
-        <%= render :partial => 'address', :locals => {:address => @order.bill_address} -%>
+        <%= render :partial => 'address', :locals => {:address => @order.creditcard_payment.address} if @order.creditcard_payment%>
       </td>
     </tr>
   </table>

@@ -2,6 +2,7 @@ class ShipmentsController < Admin::BaseController
   before_filter :login_required
   before_filter :state_check
   before_filter :check_existing, :only => :new
+  before_filter :load_data, :only => [:new, :edit]
   layout 'application'
   
   resource_controller
@@ -28,6 +29,9 @@ class ShipmentsController < Admin::BaseController
     @shipment.update_attribute(:shipping_method, ShippingMethod.find(params[:method_id]))
   end  
 
+  def fail
+  end
+  
   private
   def build_object        
     find_shipment
@@ -60,5 +64,21 @@ class ShipmentsController < Admin::BaseController
     end
     # set the state to shipment (in case user has hit back button from some other state)
     @order.update_attribute(:state, "shipment")
+  end
+  
+  def load_data
+    @shipping_methods = @order.shipping_methods
+    # check that the price of each method is available - if we encounter an error, we can inform the user gracefully
+    # (instead of having the next view just crash when asked the price)
+    begin
+      @shipping_methods.each do |shipping_method|
+        rate = shipping_method.calculate_shipping(@order)
+        @default_method ||= shipping_method unless rate.nil?
+      end      
+    rescue Spree::ShippingError => se
+      # We cannot recover from this error (for now.)  Send back to the previous step (and alert the user)
+      flash[:error] = se.message
+      redirect_to fatal_shipping_order_url(@order)
+    end
   end
 end

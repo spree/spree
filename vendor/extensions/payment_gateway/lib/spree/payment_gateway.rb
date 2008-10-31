@@ -60,7 +60,7 @@ module Spree
     
     # instantiates the selected gateway and configures with the options stored in the database
     def payment_gateway
-      return Spree::BogusGateway.new if ENV['RAILS_ENV'] == "development"
+      return Spree::BogusGateway.new if ENV['RAILS_ENV'] == "development" and Spree::Gateway::Config[:use_bogus]
 
       # retrieve gateway configuration from the database
       gateway_config = GatewayConfiguration.find :first

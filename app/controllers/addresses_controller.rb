@@ -1,6 +1,7 @@
 class AddressesController < Admin::BaseController
   before_filter :check_existing, :only => :new
   before_filter :load_data
+  before_filter :load_countries, :except => :country_changed
   layout 'application'
   resource_controller :singleton
   
@@ -38,7 +39,6 @@ class AddressesController < Admin::BaseController
     @selected_country_id ||= Spree::Config[:default_country_id]
 
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
-    load_countries
   end
   
   def load_countries

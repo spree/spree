@@ -12,7 +12,7 @@ class ShippingExtension < Spree::Extension
       admin.resources :shipping_categories  
     end  
     map.resources :shipments
-    map.resources :orders, :has_many => :shipments
+    map.resources :orders, :has_many => :shipments, :member => {:fatal_shipping => :get}
   end
   
   def activate
@@ -24,7 +24,6 @@ class ShippingExtension < Spree::Extension
     AddressesController.class_eval do
       # limit the countries to the ones that are possible to ship to
       def load_countries
-        return @countries = Country.all unless parent_model == Order
         @countries = @order.shipping_countries
         @countries = [Country.find(Spree::Config[:default_country_id])] if @countries.empty?
       end
