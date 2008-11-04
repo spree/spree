@@ -5,7 +5,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.0.2' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.1.1' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -45,20 +45,3 @@ Rails::Initializer.run do |config|
   
   config.action_controller.session = { :session_key => "_myapp_session", :secret => "6c1372e61789239a727cdbc8252eb6da" }
 end
-
-require "#{RAILS_ROOT}/../init"
-
-# Add new inflection rules using the following format 
-# (all these examples are active by default):
-# Inflector.inflections do |inflect|
-#   inflect.plural /^(ox)$/i, '\1en'
-#   inflect.singular /^(ox)en/i, '\1'
-#   inflect.irregular 'person', 'people'
-#   inflect.uncountable %w( fish sheep )
-# end
-
-# Add new mime types for use in respond_to blocks:
-# Mime::Type.register "text/richtext", :rtf
-# Mime::Type.register "application/x-mobile", :mobile
-
-# Include your application configuration below
