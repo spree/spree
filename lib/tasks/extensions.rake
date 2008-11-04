@@ -123,6 +123,8 @@ namespace :extensions do
     config = create_config
 
     config.gems.each do |gem|
+      gem.add_load_paths
+      gem.load
       code = gem.loaded? ? (gem.frozen? ? "F" : "I") : " "
       puts "[#{code}] #{gem.name} #{gem.requirement.to_s}"
     end
