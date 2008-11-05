@@ -2,6 +2,7 @@ test/log/*.log
 pkg
 test/tmp
 test/nbproject
+nbproject/*
 .gitignore~
-test/config/database.yml
 rdoc
+test/db/test.sqlite3

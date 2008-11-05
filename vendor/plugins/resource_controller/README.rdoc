@@ -4,13 +4,9 @@ resource_controller makes RESTful controllers easier, more maintainable, and sup
 
 == Get It
 
-Add it as a gem dependency
+Install it as a plugin:
 
-  config.gem 'giraffesoft-resource_controller', :lib => 'resource_controller', :source => 'http://gems.github.com'
-  
-Or install it as a gem manually  
-  
-  sudo gem install giraffesoft-resource_controller
+  script/plugin install git://github.com/giraffesoft/resource_controller.git
   
 Or grab the source
   
@@ -101,6 +97,42 @@ With actions that can fail, the scoping defaults to success.  That means that cr
       end
     end
     
+  end
+  
+== Singleton Resource
+
+If you want to create a singleton RESTful controller inherit from ResourceController::Singleton.
+
+  class AccountsController < ResourceController::Singleton
+  end
+
+*Note:* This type of controllers handle a single resource only so the index action and all the collection helpers (collection_url, collection_path...) are not available for them.
+
+Loading objects in singletons is similar to plural controllers with one exception. For non-nested singleton controllers you should override the object method as it defaults to nil for them.
+
+  class AccountsController < ResourceController::Singleton
+    private
+      def object
+        @object ||= Account.find(session[:account_id])
+      end
+   end
+
+In other cases you can use the default logic and override it only if you use permalinks or anything special. 
+
+Singleton nesting with both :has_many and :has_one associations is provided...
+
+  map.resource :account, :has_many => :options  # /account/options, account is a singleton parent
+  map.resources :users, :has_one => :image  # /users/1/image, image is a singleton child
+
+If you have the :has_many association with a singleton parent remember to override parent_object for your :has_many controller as it returns nil by default in this case.
+
+  class OptionsController < ResourceController::Base
+    belongs_to :account
+
+    protected
+    def parent_object
+      Account.find(session[:account_id])
+    end
   end
 
 == Helpers (ResourceController::Helpers)
