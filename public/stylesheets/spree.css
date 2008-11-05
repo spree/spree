@@ -404,3 +404,29 @@ li.preview a {
 .disabled {
   color: #AFAFAF;
 }
+/* ================ begin: cart-summary ================  */
+
+.order-summary {
+  border-collapse:  collapse;
+  border: solid 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.order-summary th {
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid
+}
+
+.order-summary td {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* ================ end: cart-summary ================  */
