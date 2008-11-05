@@ -1,7 +1,43 @@
-<div class="simple-radios">
-  <% @shipping_methods.each do |shipping_method| %>
-  	<li>
-  	  <%= shipping_radio(shipping_method, @order) %>
-  	</li>
-  <% end%>
-</div>
+<table class="order-summary" style="width:100%;">
+  <tr>
+    <th><%= t('Item Description') %></th>
+    <th><%= t('Price') %></th>
+    <th><%= t('Qty') %></th>
+    <th width="250" align="right"><%= t('Total') %></th>
+  </tr>
+  <% @order.line_items.each do |item| %>
+  <tr >
+    <td width="300"><%=item.variant.product.name-%> <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %></td>
+    <td valign="top"><%= number_to_currency item.price -%></td>
+    <td valign="top"><%=item.quantity-%></td>
+    <td valign="top" align="right"><%= number_to_currency (item.price * item.quantity)-%></td>
+  </tr>
+  <% end %>      
+  <tr id="subtotal-row">
+    <td colspan="3" align="right"><b><%= t('Subtotal') %>:</b></td>
+    <td align="right"><%= number_to_currency @order.item_total -%></td>
+  </tr>
+  <tr>
+    <td colspan="3" align="right"><b><%= t('Tax') %>:</b></td>
+    <td align="right"><%= number_to_currency @order.tax_amount -%></td>
+  </tr>
+  <tr>
+    <td colspan="3" align="right" valign="top"><b><%= t('Select preferred shipping option') %>:</b></td>
+    <td class="simple-radios" align="right">
+    	<% @shipping_methods.each do |shipping_method| %>
+		  	<li>
+		  	  <%= shipping_radio(shipping_method, @order) %>
+		  	</li>
+		  <% end%>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3" align="right"><b><%= t('Order Total') %>:</b></td>
+    <td id="order_total_cell" align="right"><%= number_to_currency(@order.total + @default_method.calculate_shipping(@order))%></td>
+  </tr>
+</table>
+<script type="text/javascript">
+	var order_total_without_shipping = <%= @order.total %>;
+</script>
+
+ 

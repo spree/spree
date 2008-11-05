@@ -92,7 +92,7 @@ listing_categories: Listing Categories
 listing_option_types: Listing Option Types
 listing_orders: Listing Orders
 listing_reports: Listing Reports
-listing_tax_categories: Listing Tax Categories
+listing_tax_cateThe total amount charged to your card will be gories: Listing Tax Categories
 listing_users: Listing Users
 log_in: Log In
 logged_in_as: Logged in as
@@ -136,6 +136,7 @@ order_operation_authorize: Authorize
 order_processed_successfully: Your order has been processed successfully
 order_total: Order Total
 order_updated: Order Updated
+order_total_message: The total amount charged to your card will be 
 orders: Orders
 overview: Overview
 parent_category: Parent Category
