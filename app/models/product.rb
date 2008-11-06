@@ -80,7 +80,7 @@ class Product < ActiveRecord::Base
       end      
     end
   
-    def adjust_variant_pric
+    def adjust_variant_price
       # If there's a master price change, make sure the empty variant has its price changed as well (Bug #61)
       if master_price_changed?
         variants.first.price = master_price
