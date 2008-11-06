@@ -45,6 +45,7 @@ class Admin::ProductsController < Admin::BaseController
         @object.available_on = Time.now
         @object.variants << Variant.new(:product => @object)
       end
+      @object.variant.sku = params[:product] ? params[:product][:sku] : ""
       @object
     end    
 end

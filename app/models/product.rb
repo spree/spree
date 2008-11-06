@@ -48,6 +48,15 @@ class Product < ActiveRecord::Base
     @quantity = quantity
   end
   
+  # Pseduo attribute for SKU, similiar as on_hand above.
+  def sku
+    variant.sku if variant
+  end
+  
+  def sku=(sku)
+    variant.sku = sku if variant
+  end
+  
   def has_stock?
     variants.inject(false){ |tf, v| tf ||= v.in_stock }
   end
@@ -71,7 +80,7 @@ class Product < ActiveRecord::Base
       end      
     end
   
-    def adjust_variant_price
+    def adjust_variant_pric
       # If there's a master price change, make sure the empty variant has its price changed as well (Bug #61)
       if master_price_changed?
         variants.first.price = master_price
