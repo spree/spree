@@ -113,7 +113,9 @@ class Order < ActiveRecord::Base
   def complete_order
     self.update_attribute(:checkout_complete, true)
     InventoryUnit.sell_units(self)
-    OrderMailer.deliver_confirm(self)
+    if user && user.email
+      OrderMailer.deliver_confirm(self)
+    end
   end
   
   def cancel_order
