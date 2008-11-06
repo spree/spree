@@ -3,7 +3,7 @@ module Spree
     def authorize
       gateway = payment_gateway 
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
-      response = gateway.authorize(order.total * 100, @creditcard, gateway_options)
+      response = gateway.authorize((order.total * 100)).to_i, @creditcard, gateway_options)
       gateway_error(response) unless response.success?
       # create a transaction to reflect the authorization
       self.creditcard_txns << CreditcardTxn.new(
@@ -16,9 +16,33 @@ module Spree
     def capture
       authorization = find_authorization
       gw = payment_gateway
-      response = gw.capture(order.total * 100, authorization.response_code, minimal_gateway_options)
+      response = gw.capture((order.total * 100).to_i, authorization.response_code, minimal_gateway_options)
       gateway_error(response) unless response.success?
       self.creditcard_txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
+    end
+
+    def purchase
+      #purchase is a combined Authorize and Capture that gets processed
+      #by the ActiveMerchant gateway as one single transaction.
+      
+      gateway = payment_gateway 
+
+      response = gateway.purchase((order.total * 100).to_i, @creditcard, gateway_options) 
+      gateway_error(response) unless response.success?
+      
+      # create a transaction to reflect the authorization
+      self.creditcard_txns << CreditcardTxn.new(
+        :amount => order.total,
+        :response_code => response.authorization,
+        :txn_type => CreditcardTxn::TxnType::AUTHORIZE
+      )
+      
+      # create a transaction to reflect the capture
+      self.creditcard_txns << CreditcardTxn.new(
+        :amount => order.total, 
+        :response_code => response.authorization, 
+        :txn_type => CreditcardTxn::TxnType::CAPTURE
+      )
     end
 
     def void
