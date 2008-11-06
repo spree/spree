@@ -3,7 +3,7 @@ module Spree
     def authorize
       gateway = payment_gateway 
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
-      response = gateway.authorize((order.total * 100)).to_i, @creditcard, gateway_options)
+      response = gateway.authorize((order.total * 100).to_i, @creditcard, gateway_options)
       gateway_error(response) unless response.success?
       # create a transaction to reflect the authorization
       self.creditcard_txns << CreditcardTxn.new(
