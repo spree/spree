@@ -13,8 +13,7 @@
                                       } %>  
   </td>
   <td>
-		<input type="test" size="25" name="product[product_property_attributes][<%= product_property.id %>][value]" 
-		       value="<%= product_property.value %>"/>
+    <%= f.text_field :value %>
 	</td>	
   <td>
   	<a href='#' onclick="$(this).up('.product_property').remove();"><%= t("Remove") %></a>
