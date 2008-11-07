@@ -29,9 +29,4 @@ class LocalizationExtension < Spree::Extension
 
     # admin.tabs.add "Localization", "/admin/localization", :after => "Layouts", :visibility => [:all]
   end
-  
-  def deactivate
-    # admin.tabs.remove "Localization"
-  end
-  
 end

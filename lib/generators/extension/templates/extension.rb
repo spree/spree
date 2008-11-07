@@ -19,9 +19,4 @@ class <%= class_name %> < Spree::Extension
   def activate
     # admin.tabs.add "<%= extension_name %>", "/admin/<%= file_name %>", :after => "Layouts", :visibility => [:all]
   end
-  
-  def deactivate
-    # admin.tabs.remove "<%= extension_name %>"
-  end
-  
 end

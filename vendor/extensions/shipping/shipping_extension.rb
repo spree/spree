@@ -36,9 +36,4 @@ class ShippingExtension < Spree::Extension
       end
     end
   end
-  
-  def deactivate
-    # admin.tabs.remove "Shipping"
-  end
-  
 end
