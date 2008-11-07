@@ -30,7 +30,7 @@ class Admin::OptionTypesController < Admin::BaseController
   end
 
   update.before do 
-    params[:option_type][:option_values] ||= {}
+    params[:option_type][:option_value_attributes] ||= {}
   end
 
   # redirect to index (instead of r_c default of show view)
