@@ -14,8 +14,4 @@ class FlatRateShippingExtension < Spree::Extension
   def activate
     # admin.tabs.add "Flat Rate Shipping", "/admin/flat_rate_shipping", :after => "Layouts", :visibility => [:all]
   end
-  
-  def deactivate
-    # admin.tabs.remove "Flat Rate Shipping"
-  end
 end

@@ -14,10 +14,6 @@ module Spree
         @config = rails_config
       end
       
-      def before_clear(*args)
-        ExtensionLoader.deactivate_extensions
-      end
-      
       def after_clear(*args)
         ExtensionLoader.load_extensions
         ExtensionLoader.activate_extensions
@@ -82,10 +78,6 @@ module Spree
           nil
         end
       end.compact
-    end
-    
-    def deactivate_extensions
-      extensions.each &:deactivate
     end
     
     def activate_extensions

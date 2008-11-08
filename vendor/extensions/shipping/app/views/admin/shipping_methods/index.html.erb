@@ -3,7 +3,6 @@
   <thead>
     <tr>
 	    <th><%=t("Name")%></th>
-      <th><%=t("Category")%></th>
       <th><%=t("Zone")%></th>
       <th><%=t("Calculator")%></th>
       <th><%=t("Action")%></th>
@@ -13,7 +12,6 @@
     <% @shipping_methods.each do |shipping_method| %>
       <tr class="<%= cycle('even', 'odd') %>">
         <td><%=shipping_method.name %></td>
-        <td><%=shipping_method.shipping_category.name %></td>
         <td><%=shipping_method.zone.name %></td>
         <td><%=shipping_method.shipping_calculator %></td>
         <td>

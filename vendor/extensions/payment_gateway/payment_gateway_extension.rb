@@ -28,8 +28,4 @@ class PaymentGatewayExtension < Spree::Extension
       Order.state_machines['state'].after_transition(:to => 'returned', :do => lambda {|order| order.creditcard_payment.void})
     end
   end
-  
-  def deactivate
-    # admin.tabs.remove "Payment Gateway"
-  end
 end

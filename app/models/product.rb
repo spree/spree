@@ -48,6 +48,15 @@ class Product < ActiveRecord::Base
     @quantity = quantity
   end
   
+  # Pseduo attribute for SKU, similiar as on_hand above.
+  def sku
+    variant.sku if variant
+  end
+  
+  def sku=(sku)
+    variant.sku = sku if variant
+  end
+  
   def has_stock?
     variants.inject(false){ |tf, v| tf ||= v.in_stock }
   end

@@ -37,13 +37,6 @@ module Spree
       end
       alias :activate :activate_extension
 
-      def deactivate_extension
-        return unless instance.active?
-        instance.active = false
-        instance.deactivate if instance.respond_to? :deactivate
-      end
-      alias :deactivate :deactivate_extension
-
       def define_routes(&block)
         route_definitions << block
       end

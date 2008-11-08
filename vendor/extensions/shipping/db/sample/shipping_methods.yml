@@ -1,15 +1,12 @@
 ups_ground:
   name: UPS Ground
-  shipping_category: default_shipping
   zone: available_shipping
   shipping_calculator: Spree::FlatRateShipping::Calculator
 ups_two_day:
   name: UPS Two Day
-  shipping_category: default_shipping
   zone: available_shipping
   shipping_calculator: Spree::FlatRateShipping::Calculator
 ups_one_day:
   name: UPS One Day
-  shipping_category: default_shipping
   zone: available_shipping
   shipping_calculator: Spree::FlatRateShipping::Calculator

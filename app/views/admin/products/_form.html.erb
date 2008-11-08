@@ -33,7 +33,9 @@
   <% if @product.variant %>
     <tr>
       <td><%=t("SKU")%>: </td>
-      <td><input type="text" name="variant[<%= @product.variant.id %>][sku]" value="<%= @product.variant.sku %>"/></td>
+      <td>
+				<%= f.text_field :sku, :size => 16 %>
+			</td>
     </tr>
     <tr>
       <td><%=t("On Hand")%>: </td>

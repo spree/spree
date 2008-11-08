@@ -43,8 +43,4 @@ class TaxCalculatorExtension < Spree::Extension
       end
     end
   end
-  
-  def deactivate
-  end
-  
 end

@@ -23,7 +23,7 @@
   </tr>
   <tr>
     <td>
-      <%=in_place_editor_field :address, :city %>, <%= @address.state.abbr %> <%=in_place_editor_field :address, :zipcode %>
+      <%=in_place_editor_field :address, :city %>, <%= @address.state.nil? ? in_place_editor_field(:address, :state_name) : @address.state.abbr %> <%=in_place_editor_field :address, :zipcode %>
     </td>
   </tr>
   <tr>

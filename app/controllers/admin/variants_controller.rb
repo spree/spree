@@ -1,7 +1,7 @@
 class Admin::VariantsController < Admin::BaseController
   resource_controller
   belongs_to :product
-  before_filter :load_data, :only => [:index, :edit]
+  before_filter :load_data, :only => [:index, :edit, :new]
   
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => false}

@@ -11,13 +11,12 @@ class <%= class_name %> < Spree::Extension
   #     admin.resources :whatever
   #   end  
   # end
+
+  # def self.require_gems(config)
+  #   config.gem "gemname-goes-here", :version => '1.2.3'
+  # end
   
   def activate
     # admin.tabs.add "<%= extension_name %>", "/admin/<%= file_name %>", :after => "Layouts", :visibility => [:all]
   end
-  
-  def deactivate
-    # admin.tabs.remove "<%= extension_name %>"
-  end
-  
 end

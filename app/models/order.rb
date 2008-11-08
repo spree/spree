@@ -32,7 +32,7 @@ class Order < ActiveRecord::Base
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
     after_transition :to => 'authorized', :do => :complete_order
-    after_transition :to => 'paid', :do => lambda {|order| InventoryUnit.sell_units(order)}
+    after_transition :to => 'paid', :do => :complete_order
     after_transition :to => 'shipped', :do => :mark_shipped
     after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
@@ -113,7 +113,9 @@ class Order < ActiveRecord::Base
   def complete_order
     self.update_attribute(:checkout_complete, true)
     InventoryUnit.sell_units(self)
-    OrderMailer.deliver_confirm(self)
+    if user && user.email
+      OrderMailer.deliver_confirm(self)
+    end
   end
   
   def cancel_order
