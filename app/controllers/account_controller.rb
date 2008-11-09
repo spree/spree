@@ -2,7 +2,7 @@ class AccountController < Spree::BaseController
   before_filter :login_from_cookie
 
   def index
-    redirect_to(signup_path) unless logged_in? || User.count > 0
+    redirect_to(login_path) unless logged_in? || User.count > 0
   end
 
   def login
