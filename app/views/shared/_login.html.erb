@@ -1,0 +1,17 @@
+<% form_tag '/login' do %>
+  <table>
+    <tr>
+      <td><%= t("Email") %>: </td>
+      <td>
+        <%= text_field_tag 'email' %>
+      </td>
+    </tr>
+    <tr>
+      <td><%= t("Password") %>:</td>
+      <td>
+        <%= password_field_tag 'password' %>
+      </td>
+    </tr>
+  </table>
+  <p><%= submit_tag t("Log In") %>
+<% end %>
