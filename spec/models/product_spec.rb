@@ -1,16 +1,44 @@
-require File.dirname(__FILE__) + '/../spec_helper.rb'
+require File.dirname(__FILE__) + '/../spec_helper'
+
+module ProductSpecHelper
+  def valid_product_attributes
+    {
+      :name => "A Product",
+      :master_price => 10,
+      :description => "Just a test product."
+    }
+  end
+
+  def valid_variant_attributes
+    {
+      :on_hand => 45,
+      :sku => "un"
+    }
+  end
+end
+
 
 describe Product do
+  include ProductSpecHelper
 
   before(:each) do
     @product = Product.new
   end
 
-  ['name', 'master price', 'description'].each do |field|
+  it "should not be valid when empty" do
+    @product.should_not be_valid
+  end
+
+  ['name', 'master_price', 'description'].each do |field|
     it "should require #{field}" do
-      @product.valid?.should be_false
-      @product.errors.full_messages.should include("#{field.capitalize} can't be blank")
+      @product.should_not be_valid
+      @product.errors.full_messages.should include("#{field.intern.l(field).humanize} #{:error_message_blank.l}")
     end
+  end
+
+  it "should be valid when having correct information" do
+    @product.attributes = valid_product_attributes
+    @product.should be_valid
   end
 
   describe "#variants?" do
@@ -20,17 +48,17 @@ describe Product do
     end
 
     it "should be false when none of the variants have option values" do
-      variant_proxy = mock_model(Variant)
-      variant_proxy.should_receive(:option_values).and_return([])
-      @product.variants << variant_proxy
+      variant = mock_model(Variant)
+      variant.should_receive(:option_values).and_return([])
+      @product.variants << variant
       @product.variants?.should be_false
     end
 
     it "should be true when at least one variant has option values" do
-      ov_proxy = mock_model(OptionValue)
-      variant_proxy = mock_model(Variant)
-      variant_proxy.should_receive(:option_values).and_return([ov_proxy])
-      @product.variants << variant_proxy
+      option_value = mock_model(OptionValue)
+      variant = mock_model(Variant)
+      variant.should_receive(:option_values).and_return([option_value])
+      @product.variants << variant
       @product.variants?.should be_true
     end
   end
@@ -39,20 +67,18 @@ describe Product do
     it "should return the emtpy variant if there are only empty variant" do
       variant = mock_model(Variant)
       variant.stub!(:option_values).and_return([])
-      product = Product.new
-      product.stub!(:variants).and_return([variant])
-      product.variant.should == variant
+      @product.stub!(:variants).and_return([variant])
+      @product.variant.should == variant
     end
 
     it "should return nil if there are any non-empty variants" do
       variant1 = mock_model(Variant)
       variant1.stub!(:option_values).and_return([])
-      ov = mock_model(OptionValue)
+      option_value = mock_model(OptionValue)
       variant2 = mock_model(Variant)
-      variant2.stub!(:option_values).and_return([ov])
-      product = Product.new
-      product.stub!(:variants).and_return([variant1, variant2])
-      product.variant.should be_nil
+      variant2.stub!(:option_values).and_return([option_value])
+      @product.stub!(:variants).and_return([variant1, variant2])
+      @product.variant.should be_nil
     end
   end
 
@@ -74,11 +100,11 @@ describe Product do
 
   describe "availability" do
     before(:each) do
-      @product = create_product(:name => 'test 1', :available_on => (Time.now - 1.day))
-      @old_product = create_product(:available_on => (Time.now + 2.weeks))
+      @product = Product.create(valid_product_attributes.with(:available_on => (Time.now - 1.day)))
+      @not_available_product = Product.create(valid_product_attributes.with(:available_on => (Time.now + 2.weeks)))
     end
 
-    it "should only find availble products using the available class method" do
+    it "should only find available products using the available class method" do
       Product.available.all.size.should eql(1)
     end
 
@@ -91,14 +117,54 @@ describe Product do
   describe 'inventory' do
 
     before(:each) do
-      @variant = mock_model(Variant, :on_hand => 45)
-      @product = create_product
+      @variant = Variant.create(valid_variant_attributes)
+      @product.attributes = valid_product_attributes
     end
 
     describe 'on_hand' do
       it "should return the number of items available for the first variant" do
         @product.stub!(:variant).and_return(@variant)
+        @variant.stub!(:on_hand).and_return(45)
         @product.on_hand.should == 45
+      end
+
+      it "should update the inventory unit records of the corresponding variant when added" do
+        @product.save
+        @variant = Variant.create!({"price" => "10", "product" => @product})
+
+        @product.variant.inventory_units.size.should == 0
+        
+        @product.update_attributes!({"on_hand" => "1"})
+        @product.variant.inventory_units.size.should == 1
+      end
+
+      it "should update the inventory unit records of the corresponding variant when removed" do
+        @product.save
+        @variant = Variant.create!({"price" => "10", "product" => @product})
+
+        @product.variant.inventory_units.size.should == 0
+
+        @product.update_attributes!({"on_hand" => "2"})
+        @product.variant.inventory_units.size.should == 2
+        
+        @product.update_attributes!({"on_hand" => "1"})
+        @product.variant.inventory_units.size.should == 1
+        
+        @product.update_attributes!({"on_hand" => "0"})
+        @product.variant.inventory_units.size.should == 0
+      end
+    end
+    
+    describe 'sku' do 
+      it "should return the stock keeping unit for the first variant" do
+        @product.stub!(:variant).and_return(@variant)
+        @product.sku.should == "un"
+      end
+
+      it "should update the stock keeping unit of the corresponding variant when changed" do
+        @product.stub!(:variant).and_return(@variant)
+        @product.sku = "mt"
+        @variant.sku.should == "mt"
       end
     end
 
@@ -118,13 +184,24 @@ describe Product do
 
   end
 
-end
+  it "should update the inventory unit records of the corresponding variant with an initial value when created" do
+    @product.save
+    if @product.variants.empty?
+      @product.available_on = Time.now
+      @product.variants << Variant.new(:product => @product)
+    end
 
-def create_product(options={})
-  Product.create({
-    :name => 'test product',
-    :available_on => Time.now,
-    :description => 'A test product',
-    :master_price => 100.00,
-  }.merge(options))
+    @product.update_attributes!(valid_product_attributes.with("on_hand" => "2"))
+    
+    first_size = @product.variant.inventory_units.size
+    first_size.should == 2
+  end
+
+  it "should update the empty variant if the 'master_price' attribute is changed" do
+    @variant = Variant.create(valid_variant_attributes)
+    @product.update_attributes!(valid_product_attributes)
+    @product.variants.stub!(:first).and_return(@variant)
+    @variant.should_receive(:price=).with(20)
+    @product.update_attributes!({"master_price" => "20"})
+  end
 end
