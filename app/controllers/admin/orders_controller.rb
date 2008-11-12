@@ -40,7 +40,7 @@ class Admin::OrdersController < Admin::BaseController
     if params[:filter] and @filter.valid?
       default_stop = (Date.today + 1).to_s(:db)
       scopes = []
-      scopes << [ :by_number, @filter.number ] if @filter.number
+      scopes << [ :by_number, @filter.number ] unless @filter.number.blank?
       scopes << [ :by_customer, @filter.customer ] unless @filter.customer.blank?
       scopes << [ :between, @filter.start, (@filter.stop.blank? ? default_stop : @filter.stop) ] unless @filter.start.blank?
       scopes << [ :by_state, @filter.state.tableize.singularize.gsub(" ", "_") ] unless @filter.state.blank?
