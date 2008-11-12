@@ -16,7 +16,7 @@ module Spree #:nodoc:
     
     # collection of available shipping countries
     def shipping_countries
-      ShippingMethod.all.collect { |method| method.zone.country_list }.flatten.uniq
+      ShippingMethod.all.collect { |method| method.zone.country_list }.flatten.uniq.sort_by {|item| item.send 'name'}
     end
     
     private
