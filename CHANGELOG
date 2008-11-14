@@ -1,3 +1,35 @@
+== 0.5.0
+
+* #	55	-	Variants need shipping weights to do shipping calculations.
+* #	66	-	Add a migration generator for extensions
+* #	83	-	Internal Server Error when adding product property to product 
+* #	90	-	Support for sample data in extensions
+* #	91	-	Shipping address should be limited to the countries that are configured by a shipping zone
+* #	92	-	Configuration screen for inventory settings.
+* #	95	-	Bogus gateway should decline card instead of raising an exception
+* #	96	-	Creating first Taxon fails with blank database
+* #	97	-	Exception when returning to cart from shipping method selection screen
+* #	98	-	Exception occurs when changing country dropdown for Ship Address
+* #	99	-	Provide built-in mechanism for dealing with near static content
+* #	100	-	Add support for require gems inside extensions and an easy way to install them.
+* #	101	-	Add configuration setting to make bogus gateway in development mode optional
+* #	102	-	Credit card information is not being stored.
+* #	103	-	Rails 2.1.2 Support
+* #	105	-	Error when viewing order with non US state in either address.
+* #	106	-	Adding a new variant causes NoMethodError
+* #	107	-	SKU not saving for products (empty variant)
+* #	108	-	Correct after_transition for paid state in Order model
+* #	109	-	Add pruchase method to Spree::PaymentGateway
+* #	110	-	Empty address cannot be validated
+* #	112	-	Check for user before emailing order confirmations
+* #	113	-	Property model references bogus value table.
+* #	114	-	Remove unsupported deactivate method from extensions
+* #	116	-	Updating option types causes all option values to disappear
+* #	118	-	Default authenticaiton screen should be login
+* #	119	-	Include login fields on user creation screen
+* #	120	-	Orders search does not return any results.
+* #	122	-	Credit card Number text field enforces 17 character restriction
+
 == 0.4.1
 
 * #94 - User must be logged in to empty cart
