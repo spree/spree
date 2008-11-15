@@ -13,7 +13,10 @@
                                       } %>  
   </td>
   <td>
-    <%= f.text_field :value %>
+    <%= text_field :product_property, :property_value, {
+                                       :name => property_fu_value(product_property),
+                                       :value => product_property.value
+                                      } %>
 	</td>	
   <td>
   	<a href='#' onclick="$(this).up('.product_property').remove();"><%= t("Remove") %></a>

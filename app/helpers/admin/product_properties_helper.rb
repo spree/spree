@@ -10,4 +10,12 @@ module Admin::ProductPropertiesHelper
       "product[product_property_attributes][#{product_property.id}][property_name]"   
     end
   end
+
+  def property_fu_value(product_property)
+    if product_property.new_record?
+      "product[product_property_attributes][new][-1][value]"   
+    else
+      "product[product_property_attributes][#{product_property.id}][value]"   
+    end
+  end
 end
