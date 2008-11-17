@@ -14,16 +14,18 @@ Running from sources (latest and greatest features)
 1. Clone the git repo
 
         git clone git://github.com/schof/spree.git spree
+
+2. Create the necessary config/database.yml file
         
-2. Install the gem dependencies
+3. Install the gem dependencies
 
         rake gems:install
         
-3. Bootstrap the database (run the migrations, create admin account, optionally load sample data.)
+4. Bootstrap the database (run the migrations, create admin account, optionally load sample data.)
 
         rake db:bootstrap
 
-4. Start the server
+5. Start the server
 
         script/server
 
@@ -72,8 +74,8 @@ Deploy spree as a normal rails application. If you use apache+cgi/fastcgi take a
 
     public/.htaccess.example
 
-i18n/l10n Support?
-==================
+i18n/l10n Support
+=================
 
 **Basic** localization and internationalization **support** is now
 added using the [Globalite Plugin][1] from Matt Aimonetti. 
@@ -99,49 +101,3 @@ to be done.
 [4]: http://code.google.com/p/globalite/wiki/PluralizationSupport
 
 **UPDATE:** Take a look at [i18n page on Spree wiki](http://support.spreehq.org/wiki/1/I18n)
-
-Is Spree Ready for Production?
-==============================
-
-I have been asked by several people about the status of the Spree
-project. I thought I would take a moment to address the current state
-of the codebase and whether or not its “production ready.”
-
-In my opinion, you can use Spree in a real world commerce application
-right now. This is especially true if you are already committed to
-using Ruby on Rails. What are the drawbacks to doing this? The major
-drawback is that Spree is still “rough around the edges” so you will
-be doing a lot of the polishing yourself. For instance, if you want to
-have FedEx shipping calculations you will need to write/port your own.
-On the other hand, the basic admin functionality is working and the
-ActiveMerchant plugin support means you don’t have to worry about
-credit cards. In fact, I have already built two production sites with
-this software (under the old RailsCart name).
-
-The only other Rails commerce application I am aware of is Substruct.
-The last I looked at this project it was fairly basic as well. So if
-you are going to start building your Rails project today, you have
-three choices.
-
-1. Write your own
-2. Use Spree as your starting point and do lots of custom coding
-3. Use Substruct as your starting point and do lots of custom coding
-
-If you are uncomfortable with these three options then you should
-consider another application framework.
-
-The good news is that Spree is rapidly improving with each passing
-day. The major effort right now is to rejigger the data model so that
-it is rock solid. There is nothing “wrong” with the current data model
-which is why it is ok to build a production Spree app with the
-existing software. We’re just trying to make the data model as “future
-proof” as possible. The more we improve the data model now, the less
-disruptive it will be for users to upgrade to subsequent versions of
-the software.
-
-When will this refactoring be done? Our goal is to have our first beta
-release in time for RailsConf (May 29). This means we will pushing
-hard for another 6-8 weeks on all things data model. Once we go “beta”
-we be on the next level of stability. There will be a lot less coding
-needed to use Spree for your production site and we also hope to have
-a standardized approach for the custom code you do need to write.
