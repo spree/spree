@@ -2,6 +2,7 @@ module Spree #:nodoc:
   module ShippingCalculator
 
     # modify the transitions in core - go to shipping after address (instead of cc payment)
+    Order.state_machines['state'].states << "shipment"
     Order.state_machines['state'].events['next'].transitions.delete_if { |t| t.options[:to] == "creditcard_payment" && t.options[:from] == "address" }
     Order.state_machines['state'].events['next'].transition(:to => 'shipment', :from => 'address')
     Order.state_machines['state'].events['next'].transition(:to => 'creditcard_payment', :from => 'shipment')
