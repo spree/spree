@@ -1,10 +1,11 @@
+<% number ||= 0 %>
 <tr class="product_property">
   <td>
     <%= text_field_with_auto_complete :product_property, 
                                       :property_name,
                                       {:onkeypress => "return event.which == Event.KEY_RETURN ? false : true",
                                        :autocomplete => "off",
-                                       :name => property_fu_name(product_property),
+                                       :name => property_fu_name(product_property, number),
                                        :value => product_property.property ? product_property.property.name : ""
                                       },
                                       {:url => filtered_admin_properties_url,
@@ -14,7 +15,7 @@
   </td>
   <td>
     <%= text_field :product_property, :property_value, {
-                                       :name => property_fu_value(product_property),
+                                       :name => property_fu_value(product_property, number),
                                        :value => product_property.value
                                       } %>
 	</td>	
@@ -22,3 +23,5 @@
   	<a href='#' onclick="$(this).up('.product_property').remove();"><%= t("Remove") %></a>
   </td>
 </tr>
+
+<% end %>
