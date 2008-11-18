@@ -29,6 +29,9 @@
 * #	119	-	Include login fields on user creation screen
 * #	120	-	Orders search does not return any results.
 * #	122	-	Credit card Number text field enforces 17 character restriction
+* # 124 - Move the pay action out of the FSM for order.
+* # 125 - Sales Tax calculation causes exception
+* # 126 - Incomplete orders are appearing in admin orders views.
 
 == 0.4.1
 
