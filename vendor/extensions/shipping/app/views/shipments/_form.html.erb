@@ -21,9 +21,12 @@
     <td colspan="3" align="right"><b><%= t('Tax') %>:</b></td>
     <td align="right"><%= number_to_currency @order.tax_amount -%></td>
   </tr>
+  <tr><th colspan="4"/></tr>
   <tr>
-    <td colspan="3" align="right" valign="top"><b><%= t('Select preferred shipping option') %>:</b></td>
-    <td class="simple-radios" align="right">
+    <th colspan="4"><%= t('Select preferred shipping option') %></th>
+  </tr>
+  <tr>
+    <td class="simple-radios">
     	<% @shipping_methods.each do |shipping_method| %>
 		  	<li>
 		  	  <%= shipping_radio(shipping_method, @order) %>

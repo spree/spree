@@ -36,24 +36,30 @@ class Admin::OrdersController < Admin::BaseController
   
   private
   def collection   
-    @filter = OrderFilter.new(params[:filter])
+    @filter = params.has_key?(:filter) ? OrderFilter.new(params[:filter]) : OrderFilter.new(:checkout => "1")
+ 
+    scopes = []
     if params[:filter] and @filter.valid?
       default_stop = (Date.today + 1).to_s(:db)
-      scopes = []
+     
       scopes << [ :by_number, @filter.number ] unless @filter.number.blank?
       scopes << [ :by_customer, @filter.customer ] unless @filter.customer.blank?
       scopes << [ :between, @filter.start, (@filter.stop.blank? ? default_stop : @filter.stop) ] unless @filter.start.blank?
       scopes << [ :by_state, @filter.state.tableize.singularize.gsub(" ", "_") ] unless @filter.state.blank?
-      @collection = (scopes.inject(Order) {|m,v| m.scopes[v.shift].call(m, *v) }).find(:all, :order => 'orders.created_at DESC', :include => :user,
-        :page => {:size => 15, :current =>params[:p], :first => 1})
+      scopes << [ :checkout_completed, @filter.checkout=='1' ? true : false] unless @filter.checkout.blank?  
+    else
+      scopes << [ :checkout_completed, true]  
     end
-     
-    @collection ||= end_of_association_chain.find(:all, :order => 'created_at DESC', :include => :user,
-      :page => {:size => 15, :current =>params[:p], :first => 1})
+    
+    
+    @collection = (scopes.inject(Order) {|m,v| m.scopes[v.shift].call(m, *v) }).find(:all, :order => 'orders.created_at DESC', :include => :user,
+       :page => {:size => 15, :current =>params[:p], :first => 1})
+
   end
   
   # Allows extensions to add new forms of payment to provide their own display of transactions
   def initialize_txn_partials
     @txn_partials = []
   end
+
 end

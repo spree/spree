@@ -24,6 +24,8 @@ class Order < ActiveRecord::Base
   named_scope :between, lambda {|*dates| {:conditions => ["orders.created_at between :start and :stop", {:start => dates.first.to_date, :stop => dates.last.to_date}]}}
   named_scope :by_customer, lambda {|customer| {:include => :user, :conditions => ["users.email = ?", customer]}}
   named_scope :by_state, lambda {|state| {:conditions => ["state = ?", state]}}
+  named_scope :checkout_completed, lambda {|state| {:conditions => ["checkout_complete = ?", state]}}
+  
   
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
   attr_protected :ship_amount, :tax_amount, :item_total, :total, :user, :number, :ip_address, :checkout_complete, :state
@@ -32,7 +34,6 @@ class Order < ActiveRecord::Base
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
     after_transition :to => 'authorized', :do => :complete_order
-    after_transition :to => 'paid', :do => :complete_order
     after_transition :to => 'shipped', :do => :mark_shipped
     after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
@@ -52,15 +53,8 @@ class Order < ActiveRecord::Base
     event :capture do
       transition :to => 'captured', :from => 'authorized'
     end
-    # the pay transition is not used by spree for default, just a starting point for offsite payment plugins
-    # like google checkout, and paypal website payments pro.  (no sense in having these types of extensions 
-    # defining possibly conflicting state names)
-    event :pay do
-      transition :to => 'paid'
-    end
     event :ship do
       transition :to => 'shipped', :from => 'captured'
-      transition :to => 'shipped', :from => 'paid'
       # todo: also allow from authorized state (but we need to make sure capture is applied first)
     end
     event :cancel do
