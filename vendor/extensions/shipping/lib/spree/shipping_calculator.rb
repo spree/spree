@@ -9,6 +9,7 @@ module Spree #:nodoc:
     Order.state_machines['state'].events['previous'].transition(:to => 'address', :from => 'shipment')
     Order.state_machines['state'].after_transition :to => 'shipment', :do => :before_shipment
     Order.state_machines['state'].events['edit'].transition(:to => 'in_progress', :from => 'shipment')
+    Order.state_machines['state'].after_transition(:to => 'shipment', :do => lambda {|order| order.update_attribute(:tax_amount, order.calculate_tax)})
 
     def shipping_methods
       methods = ShippingMethod.all
