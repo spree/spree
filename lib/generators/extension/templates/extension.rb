@@ -6,11 +6,7 @@ class <%= class_name %> < Spree::Extension
   description "Describe your extension here"
   url "http://yourwebsite.com/<%= file_name %>"
 
-  # define_routes do |map|
-  #   map.namespace :admin do |admin|
-  #     admin.resources :whatever
-  #   end  
-  # end
+  # Please use <%= file_name %>/config/routes.rb instead for extension routes.
 
   # def self.require_gems(config)
   #   config.gem "gemname-goes-here", :version => '1.2.3'
