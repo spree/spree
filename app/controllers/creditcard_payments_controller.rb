@@ -2,6 +2,7 @@ class CreditcardPaymentsController < Admin::BaseController
   before_filter :load_data
   before_filter :check_existing, :only => :new
   before_filter :validate_payment, :only => :create
+  ssl_required :new, :create
   layout 'application'
   resource_controller :singleton
   

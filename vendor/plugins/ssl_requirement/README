@@ -1,0 +1,43 @@
+SSL Requirement
+===============
+
+SSL requirement adds a declarative way of specifying that certain actions
+should only be allowed to run under SSL, and if they're accessed without it,
+they should be redirected.
+
+Example:
+
+  class ApplicationController < ActiveRecord::Base
+    include SslRequirement
+  end
+
+  class AccountController < ApplicationController
+    ssl_required :signup, :payment
+    ssl_allowed :index
+    
+    def signup
+      # Non-SSL access will be redirected to SSL
+    end
+    
+    def payment
+      # Non-SSL access will be redirected to SSL
+    end
+
+    def index
+      # This action will work either with or without SSL
+    end
+
+    def other
+      # SSL access will be redirected to non-SSL
+    end
+  end
+  
+You can overwrite the protected method ssl_required? to rely on other things
+than just the declarative specification. Say, only premium accounts get SSL.
+
+P.S.: Beware when you include the SslRequirement module. At the time of
+inclusion, it'll add the before_filter that validates the declarations. Some
+times you'll want to run other before_filters before that. They should then be
+declared ahead of including this module.
+
+Copyright (c) 2005 David Heinemeier Hansson, released under the MIT license

@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include RoleRequirementSystem
   include EasyRoleRequirementSystem
+  include SslRequirement
   
   private 
   

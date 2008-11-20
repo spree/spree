@@ -1,6 +1,7 @@
 class OrdersController < Admin::BaseController
   before_filter :login_required, :only => [:checkout]
   before_filter :load_object, :only => [:checkout]
+  ssl_required :show
   layout 'application'
   
   helper :products
