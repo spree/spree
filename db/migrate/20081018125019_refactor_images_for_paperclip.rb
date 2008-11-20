@@ -10,10 +10,10 @@ class RefactorImagesForPaperclip < ActiveRecord::Migration
       t.remove :height
       
       # Paperclip columns
-      t.rename :filename, :document_file_name
-      t.rename :content_type, :document_content_type
-      t.rename :size, :document_size
-      t.datetime  :document_updated_at
+      t.rename :filename, :attachment_file_name
+      t.rename :content_type, :attachment_content_type
+      t.rename :size, :attachment_size
+      t.datetime  :attachment_updated_at
     end
           
   end
@@ -29,10 +29,10 @@ class RefactorImagesForPaperclip < ActiveRecord::Migration
       t.integer :height
       
       # Paperclip columns
-      t.rename :document_file_name, :filename
-      t.rename :document_content_type, :content_type
-      t.rename :document_size, :size
-      t.remove  :document_updated_at
+      t.rename :attachment_file_name, :filename
+      t.rename :attachment_content_type, :content_type
+      t.rename :attachment_size, :size
+      t.remove  :attachment_updated_at
     end
     
     rename_table :assets, :images
