@@ -7,13 +7,6 @@ class PaymentGatewayExtension < Spree::Extension
   description "Provides basic payment gateway functionality.  User specifies an ActiveMerchant compatible gateway 
   to use in the aplication."
 
-  define_routes do |map|
-    map.namespace :admin do |admin|
-      admin.resources :gateways, :has_many => [:gateway_options]
-      admin.resources :gateway_configurations, :has_many => [:gateway_option_values]
-    end  
-  end
-
   def activate  
     # Set the global "gateway mode" for active merchant (depending on whate environment we're in)
     ActiveMerchant::Billing::Base.gateway_mode = :test unless ENV['RAILS_ENV'] == "production"
