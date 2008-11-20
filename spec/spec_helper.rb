@@ -63,3 +63,18 @@ unless defined? SPEC_ROOT
     # for all of your examples, even those that don't use them.
   end
 end
+
+
+class Hash
+  def except(*keys)
+    self.reject { |k,v| keys.include?(k || k.to_sym) }
+  end
+
+  def with(overrides = {})
+    self.merge overrides
+  end
+
+  def only(*keys)
+    self.reject { |k,v| !keys.include?(k || k.to_sym) }
+  end
+end

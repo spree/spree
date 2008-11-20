@@ -75,13 +75,17 @@
               <tr>
                 <td><%= t("Status") %></td>
                 <td>
-                  <%= f.select :state, %w{ authorized canceled captured paid pending_payment returned shipped }.collect {|status| status.titleize}, {:include_blank => true}, {:style => "width: 115px"}%>
+                  <%= f.select :state, Order.state_machines['state'].states.collect {|status| status.titleize}, {:include_blank => true}, {:style => "width: 115px"}%>
                 </td>
               </tr>
               <tr>
                 <td><%= t("Customer") %></td>
                 <td>
                   <%= f.text_field :customer, :size=>13 %>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2"><%= t("Checkout Complete") %>&nbsp;<%= f.check_box :checkout, {:style => "vertical-align:middle;"}%>
                 </td>
               </tr>
             </tbody>
