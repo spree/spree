@@ -46,10 +46,23 @@ module SslRequirement
     end
 
   private
+    def dvp_mode?
+      ENV['RAILS_ENV'] == 'development' ? true : false
+    end
+
+    def test_mode?
+      ENV['RAILS_ENV'] == 'test' ? true : false
+    end
+
+    # don't require ssl in development or test mode 
+    def ssl_supported?
+      !dvp_mode? && !test_mode? ? true : false
+    end
+  
     def ensure_proper_protocol
       return true if ssl_allowed?
 
-      if ssl_required? && !request.ssl?
+      if ssl_required? && !request.ssl? && ssl_supported?
         redirect_to "https://" + request.host + request.request_uri
         flash.keep
         return false
