@@ -23,7 +23,7 @@ class Admin::ProductsController < Admin::BaseController
 
     def set_image
       return unless params[:image]
-      return if params[:image][:uploaded_data].blank?    
+      return if params[:image][:document].blank?    
       image = Image.create params[:image] if params[:image]
       object.images << image
     end

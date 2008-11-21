@@ -1,0 +1,350 @@
+img_tote:
+  id: 1
+  viewable: ror_tote
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_tote.jpeg 
+  position: 1
+img_tote_small:
+  id: 101
+  #parent_id: 1
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_tote_small.jpeg
+  position: 1
+img_tote_product:
+  id: 102
+  #parent_id: 1
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_tote_product.jpeg	
+  position: 2
+img_tote_mini:
+  id: 103
+  #parent_id: 1
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_tote_mini.jpeg
+  position: 3
+img_tote_back:
+  id: 2
+  viewable: ror_tote
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_tote_back.jpeg 
+  position: 2
+img_tote_back_small:
+  id: 201
+  #parent_id: 2
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_tote_back_small.jpeg
+  position: 1
+img_tote_back_product:
+  id: 202
+  #parent_id: 2
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_tote_back_product.jpeg 
+  position: 2
+img_tote_back_mini:
+  id: 203
+  #parent_id: 2
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_tote_back_mini.jpeg	
+  position: 3
+img_bag:
+  id: 3
+  viewable: ror_bag
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_bag.jpeg
+  position: 1 
+img_bag_small:
+  id: 301
+  #parent_id: 3
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_bag_small.jpeg
+  position: 1
+img_bag_product:
+  id: 302
+  #parent_id: 3
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_bag_product.jpeg
+  position: 2 
+img_bag_mini:
+  id: 303
+  #parent_id: 3
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_bag_mini.jpeg
+  position: 3
+img_baseball:
+  id: 4
+  viewable: ror_baseball_jersey
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_baseball.jpeg 
+  position: 1
+img_baseball_small:
+  id: 401
+  #parent_id: 4
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_baseball_small.jpeg
+  position: 1
+img_baseball_product:
+  id: 402
+  #parent_id: 4
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_baseball_product.jpeg 
+  position: 2
+img_baseball_mini:
+  id: 403
+  #parent_id: 4
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_baseball_mini.jpeg 	
+  position: 3
+img_baseball_back:
+  id: 5
+  viewable: ror_baseball_jersey
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_baseball_back.jpeg 
+  position: 2
+img_baseball_back_small:
+  id: 501
+  #parent_id: 5
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_baseball_back_small.jpeg
+  position: 1
+img_baseball_back_product:
+  id: 502
+  #parent_id: 5
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_baseball_back_product.jpeg 
+  position: 2
+img_baseball_back_mini:
+  id: 503
+  #parent_id: 5
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_baseball_back_mini.jpeg
+  position: 3
+img_jr_spaghetti:
+  id: 6
+  viewable: ror_jr_spaghetti
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_jr_spaghetti.jpeg 
+  position: 1
+img_jr_spaghetti_small:
+  id: 601
+  #parent_id: 6
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_jr_spaghetti_small.jpeg
+  position: 1
+img_jr_spaghetti_product:
+  id: 602
+  #parent_id: 6
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_jr_spaghetti_product.jpeg 
+  position: 2
+img_jr_spaghetti_mini:
+  id: 603
+  #parent_id: 6
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_jr_spaghetti_mini.jpeg   	
+  position: 3
+img_mug:
+  id: 7
+  viewable: ror_mug
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_mug.jpeg 
+  position: 1
+img_mug_small:
+  id: 701
+  #parent_id: 7
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_mug_small.jpeg
+  position: 1
+img_mug_product:
+  id: 702
+  #parent_id: 7
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_mug_product.jpeg 
+  position: 2
+img_mug_mini:
+  id: 703
+  #parent_id: 7
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_mug_mini.jpeg
+  position: 3
+img_mug_back:
+  id: 8
+  viewable: ror_mug
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_mug_back.jpeg 
+  position: 2
+img_mug_back_small:
+  id: 801
+  #parent_id: 8
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_mug_back_small.jpeg
+  position: 1
+img_mug_back_product:
+  id: 802
+  #parent_id: 8
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_mug_back_product.jpeg 
+  position: 2
+img_mug_back_mini:
+  id: 803
+  #parent_id: 8
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_mug_back_mini.jpeg 	
+  position: 3
+img_ringer:
+  id: 9
+  viewable: ror_ringer
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_ringer.jpeg 
+  position: 1
+img_ringer_small:
+  id: 901
+  #parent_id: 9
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_ringer_small.jpeg
+  position: 1
+img_ringer_product:
+  id: 902
+  #parent_id: 9
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_ringer_product.jpeg 
+  position: 2
+img_ringer_mini:
+  id: 903
+  #parent_id: 9
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_ringer_mini.jpeg
+  position: 3
+img_ringer_back:
+  id: 10
+  viewable: ror_ringer
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_ringer_back.jpeg
+  position: 2 
+img_ringer_back_small:
+  id: 1001
+  #parent_id: 10
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_ringer_back_small.jpeg
+  position: 1
+img_ringer_back_product:
+  id: 1002
+  #parent_id: 10
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_ringer_back_product.jpeg 
+  position: 2
+img_ringer_back_mini:
+  id: 1003
+  #parent_id: 10
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_ringer_back_mini.jpeg
+  position: 3
+img_stein:
+  id: 11
+  viewable: ror_stein
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_stein.jpeg 
+  position: 1
+img_stein_small:
+  id: 111
+  #parent_id: 11
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_stein_small.jpeg
+  position: 1
+img_stein_product:
+  id: 112
+  #parent_id: 11
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_stein_product.jpeg 
+  position: 2
+img_stein_mini:
+  id: 113
+  #parent_id: 11
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_stein_mini.jpeg
+  position: 3
+img_stein_back:
+  id: 12
+  viewable: ror_stein
+  viewable_type: Product
+  attachment_content_type: image/jpg
+  attachment_file_name: ror_stein_back.jpeg 
+  position: 2
+img_stein_back_small:
+  id: 121
+  #parent_id: 12
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_stein_back_small.jpeg
+  position: 1
+img_stein_back_product:
+  id: 122
+  #parent_id: 12
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_stein_back_product.jpeg 
+  position: 2
+img_stein_back_mini:
+  id: 123
+  #parent_id: 12
+  attachment_content_type: image/jpeg
+  attachment_file_name: ror_stein_back_mini.jpeg 	 	
+  position: 3
+img_apache_baseball:
+  id: 1004
+  viewable: apache_baseball_jersey
+  viewable_type: Product
+  attachment_content_type: image/png
+  attachment_file_name: apache_baseball.png
+  position: 1
+img_apache_baseball_small:
+  id: 1005
+  #parent_id: 1003
+  attachment_content_type: image/png
+  attachment_file_name: apache_baseball_small.png
+  position: 1
+img_apache_baseball_product:
+  id: 1006
+  #parent_id: 1004
+  attachment_content_type: image/png
+  attachment_file_name: apache_baseball_product.png
+  position: 2
+img_apache_baseball_mini:
+  id: 1007
+  #parent_id: 1004
+  attachment_content_type: image/png
+  attachment_file_name: apache_baseball_mini.png
+  position: 3
+img_ruby_baseball:
+  id: 1008
+  viewable: ruby_baseball_jersey
+  viewable_type: Product
+  attachment_content_type: image/png
+  attachment_file_name: ruby_baseball.png
+  position: 1  
+img_ruby_baseball_small:
+  id: 1009
+  #parent_id: 1008
+  attachment_content_type: image/png
+  attachment_file_name: ruby_baseball_small.png
+  position: 1
+img_ruby_baseball_product:
+  id: 1010
+  #parent_id: 1008
+  attachment_content_type: image/png
+  attachment_file_name: ruby_baseball_product.png
+  position: 2
+img_ruby_baseball_mini:
+  id: 1011
+  #parent_id: 1008
+  attachment_content_type: image/png
+  attachment_file_name: ruby_baseball_mini.png
+  position: 3  
