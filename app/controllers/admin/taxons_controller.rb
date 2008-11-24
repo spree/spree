@@ -1,6 +1,6 @@
 class Admin::TaxonsController < Admin::BaseController
   resource_controller
-  before_filter :set_permalink, :only => [:update, :create]
+  after_filter :set_permalink, :only => [:update, :create]
   before_filter :load_object, :only => [:selected, :available, :remove]
   belongs_to :product
   
@@ -137,6 +137,7 @@ class Admin::TaxonsController < Admin::BaseController
   
   def set_permalink
     object.permalink = escape(object.name)
+    object.save!
   end
   
   def escape(str)

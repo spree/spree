@@ -17,7 +17,10 @@ class TaxonsController < Spree::BaseController
   end
   
   def object
-    @object ||= end_of_association_chain.find_by_permalink(params[:taxon_id] ||= params[:id])
+    objects ||= end_of_association_chain.find_all_by_permalink(params[:taxon_id] ||= params[:id])
+    return objects[0] if objects.size == 1
+    
+    objects.find { |t| t.store_path.chomp(t.permalink + '/') == t.parent.store_path}
   end
  
 end
