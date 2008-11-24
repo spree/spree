@@ -1,5 +1,5 @@
 <div style="clear:both">
-  <%= link_to taxon.name, taxon_path(taxon), :class => 'breadcrumbs' %>
+  <%= link_to taxon.name, taxon.store_path, :class => 'breadcrumbs' %>
   <br/><br/>
-  <%= render :partial => "shared/products.html.erb", :locals => {:products => taxon_preview(taxon)} %>
+  <%= render :partial => "shared/products.html.erb", :locals => {:products => taxon_preview(taxon), :taxon => taxon} %>
 </div>

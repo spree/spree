@@ -60,6 +60,10 @@ class Product < ActiveRecord::Base
   def has_stock?
     variants.inject(false){ |tf, v| tf ||= v.in_stock }
   end
+  
+  def store_path(taxon)
+    taxon.store_path + "p/" + permalink
+  end
 
   private
 

@@ -1,6 +1,6 @@
 class Admin::TaxonsController < Admin::BaseController
   resource_controller
-  
+  before_filter :set_permalink, :only => [:update, :create]
   before_filter :load_object, :only => [:selected, :available, :remove]
   belongs_to :product
   
@@ -132,6 +132,22 @@ class Admin::TaxonsController < Admin::BaseController
         logger.debug("DID YOU I IS NOW: #{taxon.position} = #{i}")
         taxon.position = i
         taxon.save!
+    end
+  end
+  
+  def set_permalink
+    object.permalink = escape(object.name)
+  end
+  
+  def escape(str)
+    return "" if str.blank? # hack if the str/attribute is nil/blank
+    s = Iconv.iconv('ascii//ignore//translit', 'utf-8', str.dup).to_s
+    returning str.dup.to_s do |s|
+      s.gsub!(/\ +/, '-') # spaces to dashes, preferred separator char everywhere
+      s.gsub!(/[^\w^-]+/, '') # kill non-word chars except -
+      s.strip!            # ohh la la
+      s.downcase!         # :D
+      s.gsub!(/([^ a-zA-Z0-9_-]+)/n,"") # and now kill every char not allowed.
     end
   end
 end

@@ -2,7 +2,7 @@
 	<h4>Shop by <%= taxonomy.name.singularize %></h4>
 	<br/>
 	<% taxonomy.root.children.each do |taxon| %>
-	  <%= link_to taxon.name, taxon_url(taxon) %><br/>
+	  <%= link_to taxon.name, taxon.store_path %><br/>
 	<% end %>
 	<br/><br/>
 <% end %>

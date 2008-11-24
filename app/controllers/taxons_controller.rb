@@ -16,4 +16,8 @@ class TaxonsController < Spree::BaseController
     @product_cols = 3
   end
   
+  def object
+    @object ||= end_of_association_chain.find_by_permalink(params[:taxon_id] ||= params[:id])
+  end
+ 
 end

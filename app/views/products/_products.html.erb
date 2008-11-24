@@ -2,7 +2,11 @@
 <ul>
   <% for product in @products %>  
   <% content_tag_for (:li, product, :class => 'preview') do %>
-  <%= link_to image_tag ('products/' + product.filename, :size => '100x100'), product %>
+	<% if taxon.nil? %> 
+  	<%= link_to image_tag ('products/' + product.filename, :size => '100x100'), product %>
+  <% else %>
+		<%= link_to image_tag ('products/' + product.filename, :size => '100x100'), product.store_path(taxon) %>
+	<% end %>
   <%= link_to product.name, product %>
   <b>$<%=product.price%></b>
   <% end %>

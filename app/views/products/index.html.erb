@@ -1,7 +1,7 @@
 <div id="product-listing">
   <%= breadcrumbs(@taxon) %>
   <br/>
-  <%= render :partial => "shared/products.html.erb", :locals => {:products => @products } %>
+  <%= render :partial => "shared/products.html.erb", :locals => {:products => @products, :taxon => @taxon } %>
 </div>
 <% content_for :sidebar do %>
   <td id="shop-by-col" valign="top">

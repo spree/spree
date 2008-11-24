@@ -3,8 +3,13 @@
     <% products.each do |product| %>
       <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
         <li class="product preview" id="product_<%= product.id %>">
-          <%= link_to small_image(product), product %>
-          <%= link_to product.name, product %>
+					<% if taxon.nil? %>
+				  	  <%= link_to small_image(product), product %>
+							<%= link_to product.name, product %>
+				  <% else %>
+			     		<%= link_to small_image(product), product.store_path(taxon) %>
+							<%= link_to product.name, product.store_path(taxon) %>
+					<% end %>
           <b><%= product_price(product) %></b>
         </li>
       <% end %>
