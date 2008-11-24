@@ -1,4 +1,5 @@
 class Admin::TaxonsController < Admin::BaseController
+  include Railslove::Plugins::FindByParam::SingletonMethods
   resource_controller
   after_filter :set_permalink, :only => [:update, :create]
   before_filter :load_object, :only => [:selected, :available, :remove]
@@ -136,19 +137,14 @@ class Admin::TaxonsController < Admin::BaseController
   end
   
   def set_permalink
-    object.permalink = escape(object.name)
+    object.permalink = ""
+    t = object
+    until t.nil?
+      object.permalink = escape(t.name) + "/" + object.permalink
+      t = t.parent
+    end
+ 
     object.save!
   end
   
-  def escape(str)
-    return "" if str.blank? # hack if the str/attribute is nil/blank
-    s = Iconv.iconv('ascii//ignore//translit', 'utf-8', str.dup).to_s
-    returning str.dup.to_s do |s|
-      s.gsub!(/\ +/, '-') # spaces to dashes, preferred separator char everywhere
-      s.gsub!(/[^\w^-]+/, '') # kill non-word chars except -
-      s.strip!            # ohh la la
-      s.downcase!         # :D
-      s.gsub!(/([^ a-zA-Z0-9_-]+)/n,"") # and now kill every char not allowed.
-    end
-  end
 end

@@ -7,8 +7,8 @@
 				  	  <%= link_to small_image(product), product %>
 							<%= link_to product.name, product %>
 				  <% else %>
-			     		<%= link_to small_image(product), product.store_path(taxon) %>
-							<%= link_to product.name, product.store_path(taxon) %>
+			     		<%= link_to small_image(product), seo_url(taxon, product) %>
+							<%= link_to product.name, seo_url(taxon, product) %>
 					<% end %>
           <b><%= product_price(product) %></b>
         </li>

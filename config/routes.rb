@@ -37,8 +37,7 @@ ActionController::Routing::Routes.draw do |map|
   
   # route globbing for pretty nested taxon and product paths
   map.taxons_with_product '/t/*taxon_path/p/:id', :controller => 'products', :action => 'show'
-  map.single_taxon '/t/:taxon_id', :controller => 'taxons', :action => 'show'
-  map.nested_taxons '/t/*taxon_path/:taxon_id', :controller => 'taxons', :action => 'show'
+  map.nested_taxons '/t/*id', :controller => 'taxons', :action => 'show'
   
   map.namespace :admin do |admin|
     admin.resources :zones

@@ -7,7 +7,7 @@ module TaxonsHelper
     end
     crumbs += image_tag("breadcrumb.gif")
     unless taxon.ancestors.empty?
-      crumbs += taxon.ancestors.reverse.collect { |ancestor| link_to ancestor.name, ancestor.store_path }.join( image_tag("breadcrumb.gif") )
+      crumbs += taxon.ancestors.reverse.collect { |ancestor| link_to ancestor.name, seo_url(ancestor) }.join( image_tag("breadcrumb.gif") )
       crumbs += image_tag("breadcrumb.gif")
     end
     crumbs += taxon.name
