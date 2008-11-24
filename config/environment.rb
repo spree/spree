@@ -75,20 +75,6 @@ Spree::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector  
 end
 
-
-# Load extension gems.
-config = Rails::Configuration.new
-Object.subclasses_of(Spree::Extension).each do |extension|
-  if extension.respond_to? :require_gems
-    extension.require_gems(config)
-  end
-end
-
-config.gems.each do |gem|
-  gem.add_load_paths
-  gem.load
-end
-
 # Add new inflection rules using the following format 
 # (all these examples are active by default):
 # Inflector.inflections do |inflect|

@@ -5,12 +5,6 @@ class FlatRateShippingExtension < Spree::Extension
   version "1.0"
   description "Provides FlatRate shiping_calculator" 
 
-  # define_routes do |map|
-  #   map.namespace :admin do |admin|
-  #     admin.resources :whatever
-  #   end  
-  # end
-  
   def activate
     # admin.tabs.add "Flat Rate Shipping", "/admin/flat_rate_shipping", :after => "Layouts", :visibility => [:all]
   end

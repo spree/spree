@@ -5,12 +5,6 @@ class TaxCalculatorExtension < Spree::Extension
   version "1.0"
   description "Provides basic tax calculation functionality using the contents and shipping destination of the order."
 
-  define_routes do |map|
-    map.namespace :admin do |admin|
-      admin.resources :tax_rates
-    end  
-  end
-
   def activate
     # Mixin the payment_gateway method into the base controller so it can be accessed by the checkout process, etc.
     Order.class_eval do

@@ -1,4 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
+  # Loads all extension routes in the order they are specified.
+  map.load_extension_routes
+
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:

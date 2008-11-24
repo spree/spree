@@ -117,53 +117,6 @@ namespace :spec do
   end
 end
 
-namespace :extensions do
-  desc "List the gems that the extensions depends on"
-  task :gems => [ 'gems:base' ] do
-    config = create_config
-
-    config.gems.each do |gem|
-      gem.add_load_paths
-      gem.load
-      code = gem.loaded? ? (gem.frozen? ? "F" : "I") : " "
-      puts "[#{code}] #{gem.name} #{gem.requirement.to_s}"
-    end
-    puts
-    puts "I = Installed"
-    puts "F = Frozen"
-  end
-
-  namespace :gems do
-    task :base do
-      $rails_gem_installer = true
-      Rake::Task[:environment].invoke
-    end
-  
-    def create_config
-      config = Rails::Configuration.new
-  
-      Spree::Extension.descendants.each do |extension|
-        if extension.respond_to? :require_gems
-          extension.require_gems(config)
-        end
-      end
-      
-      config
-    end
-  
-    desc "Installs all required gems for the extensions."
-    task :install => :base do
-      require 'rubygems'
-      require 'rubygems/gem_runner'
-
-      config = create_config
-
-      config.gems.each { |gem| gem.install unless gem.loaded? }
-    end
-  end
-  
-end
-
 # Load any custom rakefiles from extensions
 [RAILS_ROOT, SPREE_ROOT].uniq.each do |root|
   Dir[root + '/vendor/extensions/*/lib/tasks/*.rake'].sort.each { |ext| load ext }
