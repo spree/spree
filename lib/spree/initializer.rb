@@ -109,6 +109,13 @@ module Spree
     def load_plugins
       super
       extension_loader.load_extensions
+
+      # Add extension gems.
+      Object.subclasses_of(Spree::Extension).each do |extension_class|
+        if extension_class.respond_to? :require_gems
+          extension_class.require_gems(@configuration)
+        end
+      end
     end
 
     def after_initialize
@@ -152,16 +159,6 @@ module Spree
       ExtensionLoader.instance {|l| l.initializer = self }
     end
     
-    def add_gem_load_paths
-      # Add extension gems.
-      Object.subclasses_of(Spree::Extension).each do |extension|
-        if extension.respond_to? :require_gems
-          extension.require_gems(@configuration)
-        end
-      end
-      super
-    end
-
   end
 
 end
