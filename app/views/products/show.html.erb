@@ -11,6 +11,9 @@
     <td valign="top">
       <% form_for :order, :url => orders_url do |f| %>
 	      <table>
+          <% if @taxon %>
+            <tr><td><%= breadcrumbs(@taxon) %><br/></td></tr>
+          <%end %>
 					<tr>
 					  <td class="product-name"><%= @product.name %></td>
 					</tr>

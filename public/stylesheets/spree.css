@@ -203,6 +203,7 @@ padding-right: 0;
 /* ================ begin: product-name ================ */
 .product-name, .product-price, .product-variants {
   font-weight: bold;
+  font-size: 14px;
 }
 /* ================ end: product-name ================ */
 

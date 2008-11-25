@@ -1,6 +1,7 @@
 class ProductsController < Spree::BaseController
-  helper :taxons
   resource_controller
+  helper :taxons
+  before_filter :load_data, :only => :show
   actions :show, :index
 
   index do
@@ -16,18 +17,22 @@ class ProductsController < Spree::BaseController
   end
 
   private
+  def load_data
+    return unless permalink = params[:taxon_path]
+    @taxon = Taxon.find_by_permalink(params[:taxon_path].join("/") + "/")
+  end
+  
+  def collection
+    if params[:taxon]
+      @taxon = Taxon.find(params[:taxon])
 
-    def collection
-      if params[:taxon]
-        @taxon = Taxon.find(params[:taxon])
-
-        @collection ||= Product.available.find(
-          :all, 
-          :conditions => ["products.id in (select product_id from products_taxons where taxon_id in (" +  @taxon.descendents.inject( @taxon.id.to_s) { |clause, t| clause += ', ' + t.id.to_s} + "))" ], 
-          :page => {:start => 1, :size => 10, :current => params[:p]}, 
-          :include => :images)
-      else
-        @collection ||= Product.available.find(:all, :page => {:start => 1, :size => 10, :current => params[:p]}, :include => :images)
-      end
+      @collection ||= Product.available.find(
+        :all, 
+        :conditions => ["products.id in (select product_id from products_taxons where taxon_id in (" +  @taxon.descendents.inject( @taxon.id.to_s) { |clause, t| clause += ', ' + t.id.to_s} + "))" ], 
+        :page => {:start => 1, :size => 10, :current => params[:p]}, 
+        :include => :images)
+    else
+      @collection ||= Product.available.find(:all, :page => {:start => 1, :size => 10, :current => params[:p]}, :include => :images)
     end
+  end
 end
