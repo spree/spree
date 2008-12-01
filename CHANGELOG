@@ -19,7 +19,7 @@
 * #	106	-	Adding a new variant causes NoMethodError
 * #	107	-	SKU not saving for products (empty variant)
 * #	108	-	Correct after_transition for paid state in Order model
-* #	109	-	Add pruchase method to Spree::PaymentGateway
+* #	109	-	Add purchase method to Spree::PaymentGateway
 * #	110	-	Empty address cannot be validated
 * #	112	-	Check for user before emailing order confirmations
 * #	113	-	Property model references bogus value table.
@@ -41,7 +41,7 @@
 
 == 0.4.0
 
-* Initial support for initialization
+* Initial support for internationalization
 * Rails 2.1 support
 * #38 - Credit card numbers are being logged
 * #39 - Rails 2.1 Support
