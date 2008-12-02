@@ -31,4 +31,11 @@ module ProductsHelper
     product.description.gsub(/^(.*)$/, '<p>\1</p>')
   end  
   
+  # generates nested url to product based on supplied taxon
+  def seo_url(taxon, product = nil)
+    return '/t/' + taxon.permalink if product.nil?
+    
+    '/t/' + taxon.permalink + "p/" + product.permalink
+  end
+  
 end
