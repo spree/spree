@@ -65,7 +65,7 @@ module Spree
     
     # Load the extensions
     def load_extensions
-      @observer ||= DependenciesObserver.new(configuration).observe(::Dependencies)
+      @observer ||= DependenciesObserver.new(configuration).observe(ActiveSupport::Dependencies)
       self.extensions = load_extension_roots.map do |root|
         begin
           extension_file = "#{File.basename(root).sub(/^\d+_/,'')}_extension"       
