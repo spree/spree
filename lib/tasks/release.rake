@@ -29,12 +29,9 @@ namespace 'spree' do
     s.rubyforge_project = RUBY_FORGE_PROJECT
     s.platform = Gem::Platform::RUBY
     s.bindir = 'bin'
-    s.executables = (Dir['bin/*'] + Dir['scripts/*']).map { |file| File.basename(file) } 
+    s.executables = ['spree']
     s.add_dependency 'rake', '>= 0.7.1'
-    s.add_dependency 'has_many_polymorphs', '>= 2.12'
     s.add_dependency 'highline', '>=1.4.0'
-    s.add_dependency 'mini_magick', '>=1.2.3'
-    s.autorequire = 'spree'
     s.has_rdoc = true
     #s.rdoc_options << '--title' << RDOC_TITLE << '--line-numbers' << '--main' << 'README'
     rdoc_excludes = Dir["**"].reject { |f| !File.directory? f }
