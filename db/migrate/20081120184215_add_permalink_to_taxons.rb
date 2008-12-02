@@ -1,4 +1,4 @@
-require 'vendor/plugins/find_by_param/lib/find_by_param.rb'
+require "#{SPREE_ROOT}/vendor/plugins/find_by_param/lib/find_by_param.rb"
 
 class AddPermalinkToTaxons < ActiveRecord::Migration
   extend Railslove::Plugins::FindByParam::SingletonMethods
