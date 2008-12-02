@@ -1,3 +1,10 @@
+== 0.5.1
+
+* #139: Spree command not working if Rails 2.2.2 installed on the same system
+* #138: Support all Rails 2.1.x versions (not just 2.1.2)
+* #140: Fix active_merchant deprecation warnings
+* #141: Fix deprecation warnings for Dependencies
+
 == 0.5.0
 
 * #	55	-	Variants need shipping weights to do shipping calculations.
