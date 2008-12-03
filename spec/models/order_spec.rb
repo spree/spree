@@ -44,14 +44,6 @@ describe Order do
     end
   end
   
-  describe "pay" do
-    it "should mark inventory as sold" do
-      @order.state = "pending_payment"
-      @inventory_unit.should_receive(:sell!)
-      @order.pay
-    end
-  end
-  
   describe "ship" do
     before(:each) {@order.state = "captured"}
     it "should transition to shipped" do
