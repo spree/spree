@@ -19,6 +19,11 @@ class Variant < ActiveRecord::Base
   def in_stock
     on_hand > 0
   end
+  
+  #Tries to get missing attribute value from  product
+  def method_missing(method, *args)
+    product.has_attribute?(method) ? product[method] : super 
+  end
 
   private
 
@@ -47,4 +52,5 @@ class Variant < ActiveRecord::Base
         return false
       end
     end
+    
 end

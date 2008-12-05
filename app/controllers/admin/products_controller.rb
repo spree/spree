@@ -19,6 +19,8 @@ class Admin::ProductsController < Admin::BaseController
     def load_data
       @tax_categories = TaxCategory.find(:all, :order=>"name")  
       @shipping_categories = ShippingCategory.find(:all, :order=>"name")  
+      
+      @additional_product_fields = []
     end
 
     def set_image
