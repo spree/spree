@@ -26,7 +26,12 @@ class Admin::VariantsController < Admin::BaseController
   private
   def load_data
     # this allows extensions to provide their own additional columns in the index and edit views
-    @additional_fields = Variant.column_names - ["id", "price", "sku", "product_id"]
+    @additional_product_fields = [
+        {:name => 'Weight', :only => :variant},
+        {:name => 'Height', :only => :variant},
+        {:name => 'Width', :only => :variant},
+        {:name => 'Depth', :only => :variant}
+      ]
   end
   
 end
