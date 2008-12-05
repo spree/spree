@@ -5,8 +5,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-SPREE_GEM_VERSION = '0.4.99' unless defined? SPREE_GEM_VERSION
-RAILS_GEM_VERSION = "2.1.2" unless defined? RAILS_GEM_VERSION
+SPREE_GEM_VERSION = '0.5.99' unless defined? SPREE_GEM_VERSION
           
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -29,8 +28,7 @@ Spree::Initializer.run do |config|
 
   config.gem "has_many_polymorphs", :version => '2.12'
   config.gem "highline", :version => '1.4.0'
-  # config.gem "mini_magick", :version => '1.2.3'
-  config.gem "activemerchant", :lib => "active_merchant", :version => '1.3.2'
+  config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.0'
   config.gem "tlsmail"
   config.gem 'active_presenter', :version => '0.0.4'
 

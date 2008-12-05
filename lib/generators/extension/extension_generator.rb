@@ -18,11 +18,13 @@ class ExtensionGenerator < Rails::Generator::NamedBase
       m.directory "#{extension_path}/db/migrate"
       m.directory "#{extension_path}/db/sample"
       m.directory "#{extension_path}/lib/tasks"
+      m.directory "#{extension_path}/config"
       m.directory "#{extension_path}/public"
 
       m.template 'README.markdown',              "#{extension_path}/README.markdown"
       m.template 'extension.rb',        "#{extension_path}/#{extension_file_name}.rb"
       m.template 'tasks.rake',          "#{extension_path}/lib/tasks/#{extension_file_name}_tasks.rake"
+      m.template 'routes.rb',          "#{extension_path}/config/routes.rb"
 
       if options[:with_test_unit]
         m.directory "#{extension_path}/test/fixtures"

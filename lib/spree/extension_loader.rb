@@ -33,7 +33,7 @@ module Spree
     end
     
     def extension_load_paths
-      load_extension_roots.map { |extension| load_paths_for(extension) }.flatten.select { |d| File.directory?(d) }
+      load_extension_roots.map { |extension| load_paths_for(extension) }.flatten
     end
 
     def plugin_paths
@@ -65,7 +65,7 @@ module Spree
     
     # Load the extensions
     def load_extensions
-      @observer ||= DependenciesObserver.new(configuration).observe(::Dependencies)
+      @observer ||= DependenciesObserver.new(configuration).observe(ActiveSupport::Dependencies)
       self.extensions = load_extension_roots.map do |root|
         begin
           extension_file = "#{File.basename(root).sub(/^\d+_/,'')}_extension"       
@@ -88,6 +88,14 @@ module Spree
     end
     alias :reactivate :activate_extensions
 
+    def load_extension_roots
+      @load_extension_roots ||= unless configuration.extensions.empty?
+        select_extension_roots
+      else
+        []
+      end
+    end
+
     private
 
       def load_paths_for(dir)
@@ -96,14 +104,6 @@ module Spree
             path = "#{dir}/#{p}"
             path if File.directory?(path)
           end.compact << dir
-        else
-          []
-        end
-      end
-      
-      def load_extension_roots
-        @load_extension_roots ||= unless configuration.extensions.empty?
-          select_extension_roots
         else
           []
         end

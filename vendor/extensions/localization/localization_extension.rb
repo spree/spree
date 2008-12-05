@@ -6,13 +6,6 @@ class LocalizationExtension < Spree::Extension
   description "Localization support for Spree"
   url "http://support.spreehq.org/wiki/1/I18n"
 
-  define_routes do |map|
-    map.set_locale '/locale/set', :controller => 'locale', :action => 'set', :method => :get
-    map.namespace :admin do |admin|
-      admin.resource :localization, :controller => 'admin/localization'
-    end  
-  end
-  
   def activate
     # load extensions lang/ui
     Globalite.add_localization_source(File.join(SPREE_ROOT, 'vendor/extensions/**/lang/ui'))

@@ -1,6 +1,7 @@
 class Admin::TaxonsController < Admin::BaseController
+  include Railslove::Plugins::FindByParam::SingletonMethods
   resource_controller
-  
+  after_filter :set_permalink, :only => [:update, :create]
   before_filter :load_object, :only => [:selected, :available, :remove]
   belongs_to :product
   
@@ -134,4 +135,16 @@ class Admin::TaxonsController < Admin::BaseController
         taxon.save!
     end
   end
+  
+  def set_permalink
+    object.permalink = ""
+    t = object
+    until t.nil?
+      object.permalink = escape(t.name) + "/" + object.permalink
+      t = t.parent
+    end
+ 
+    object.save!
+  end
+  
 end

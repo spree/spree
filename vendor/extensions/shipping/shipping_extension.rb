@@ -6,15 +6,6 @@ class ShippingExtension < Spree::Extension
   description "Describe your extension here"
   url "http://yourwebsite.com/shipping"
 
-  define_routes do |map|
-    map.namespace :admin do |admin|
-      admin.resources :shipping_methods
-      admin.resources :shipping_categories  
-    end  
-    map.resources :shipments
-    map.resources :orders, :has_many => :shipments, :member => {:fatal_shipping => :get}
-  end
-  
   def activate
 
     Order.class_eval do

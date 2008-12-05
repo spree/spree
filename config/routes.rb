@@ -1,4 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
+  # Loads all extension routes in the order they are specified.
+  map.load_extension_routes
+
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:
@@ -34,7 +37,11 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :addresses
   map.resources :orders, :member => {:address_info => :get, :checkout => :get}, :has_many => :line_items, :has_one => [:address, :creditcard_payment]
   map.resources :taxons
-
+  
+  # route globbing for pretty nested taxon and product paths
+  map.taxons_with_product '/t/*taxon_path/p/:id', :controller => 'products', :action => 'show'
+  map.nested_taxons '/t/*id', :controller => 'taxons', :action => 'show'
+  
   map.namespace :admin do |admin|
     admin.resources :zones
     admin.resources :users
