@@ -28,7 +28,6 @@ Spree::Initializer.run do |config|
 
   config.gem "has_many_polymorphs", :version => '2.12'
   config.gem "highline", :version => '1.4.0'
-  config.gem "mini_magick", :version => '1.2.3'
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.0'
   config.gem "tlsmail"
   config.gem 'active_presenter', :version => '0.0.4'

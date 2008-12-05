@@ -10,7 +10,7 @@
   <tbody>
     <% viewable.images.each do |image| %>
     <tr>
-      <td><%= image_tag image.public_filename(:small) %></td>
+      <td><%= image_tag image.attachment.url(:small) %></td>
       <td>
         <%= link_to_remote t('Delete'),
             :url => admin_image_url(image),
@@ -39,7 +39,7 @@
   <% fields_for :image do |image| %>
     <tr>
       <td>Filename:</td>
-      <td><%= image.file_field :uploaded_data, :size => 50 %></td>
+      <td><%= image.file_field :attachment, :size => 50 %></td>      
     </tr>
   <% end %>
 </table>

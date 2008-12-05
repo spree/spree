@@ -1,0 +1,59 @@
+=Paperclip
+
+Paperclip is intended as an easy file attachment library for ActiveRecord. The intent behind it was to keep setup as easy as possible and to treat files as much like other attributes as possible. This means they aren't saved to their final locations on disk, nor are they deleted if set to nil, until ActiveRecord::Base#save is called. It manages validations based on size and presence, if required. It can transform its assigned image into thumbnails if needed, and the prerequisites are as simple as installing ImageMagick (which, for most modern Unix-based systems, is as easy as installing the right packages). Attached files are saved to the filesystem and referenced in the browser by an easily understandable specification, which has sensible and useful defaults.
+
+See the documentation for the +has_attached_file+ method for options.
+
+==Usage
+
+In your model:
+
+  class User < ActiveRecord::Base
+    has_attached_file :avatar, :styles => { :medium => "300x300>", :thumb => "100x100>" }
+  end
+
+In your migrations:
+
+  class AddAvatarColumnsToUser < ActiveRecord::Migration
+    def self.up
+      add_column :users, :avatar_file_name,    :string
+      add_column :users, :avatar_content_type, :string
+      add_column :users, :avatar_file_size,    :integer
+      add_column :users, :avatar_updated_at,   :datetime
+    end
+
+    def self.down
+      remove_column :users, :avatar_file_name
+      remove_column :users, :avatar_content_type
+      remove_column :users, :avatar_file_size
+      remove_column :users, :avatar_updated_at
+    end
+  end
+
+In your edit and new views:
+
+  <% form_for :user, @user, :url => user_path, :html => { :multipart => true } do |form| %>
+    <%= form.file_field :avatar %>
+  <% end %>
+
+In your controller:
+
+  def create
+    @user = User.create( params[:user] )
+  end
+
+In your show view:
+
+  <%= image_tag @user.avatar.url %>
+  <%= image_tag @user.avatar.url(:medium) %>
+  <%= image_tag @user.avatar.url(:thumb) %>
+
+==Contributing
+
+If you'd like to contribute a feature or bugfix, thanks! To make sure your fix/feature
+has a high chance of being added, please read the following guidelines:
+
+1. Ask on the mailing list, or post a ticket in Lighthouse.
+2. Make sure there are tests! I will not accept any patch that is not tested.
+   It's a rare time when explicit tests aren't needed. If you have questions about
+   writing tests for paperclip, please ask the mailing list.
