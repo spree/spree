@@ -3,6 +3,7 @@ class Admin::TaxonsController < Admin::BaseController
   resource_controller
   after_filter :set_permalink, :only => [:update, :create]
   before_filter :load_object, :only => [:selected, :available, :remove]
+  before_filter :initialize_product_extensions
   belongs_to :product
   
   create.wants.js {render :text => @taxon.to_json()}
