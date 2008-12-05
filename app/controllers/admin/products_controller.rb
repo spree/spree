@@ -2,7 +2,6 @@ class Admin::ProductsController < Admin::BaseController
   resource_controller
   before_filter :load_data
   after_filter :set_image, :only => [:create, :update]
-  before_filter :initialize_product_extensions
 
   update.before do
     # note: we only reset the product properties if we're receiving a post from the form on that tab

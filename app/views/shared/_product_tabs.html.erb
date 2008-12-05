@@ -25,8 +25,8 @@
   	              selected_admin_product_taxons_url(@product),
   	              :class => (current == "Taxons" ? "active" : "") %>
   	</li>
-		<% if @product_extensions && @product_extensions.size > 0
-			@product_extensions.each do |extension| %>
+		<% if @product_admin_tabs && @product_admin_tabs.size > 0
+			@product_admin_tabs.each do |extension| %>
 	     <li>
 	  	  <%= link_to extension[:name].capitalize.pluralize, 
 	  	              eval(extension[:url] + " @product") ,

@@ -2,7 +2,6 @@ class Admin::OptionTypesController < Admin::BaseController
   resource_controller
   
   before_filter :load_object, :only => [:selected, :available, :remove]
-  before_filter :initialize_product_extensions
   belongs_to :product
   
   def available
