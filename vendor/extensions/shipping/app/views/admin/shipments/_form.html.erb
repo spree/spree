@@ -1,0 +1,26 @@
+<br/>
+<h2><%= t('Contents') %></h2>
+<table class="order-summary" style="width:100%;">
+  <tr>
+    <th><%= t('SKU') %></th>
+    <th><%= t('Item Description') %></th>
+    <th><%= t('Qty') %></th>
+  </tr>
+  <% @order.line_items.each do |item| %>
+    <tr>
+      <td valign="top"><%=item.variant.sku %></td>
+      <td width="300">
+        <%=item.variant.product.name %> 
+        <%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+      </td>
+      <td valign="top"><%=item.quantity %></td>
+    </tr>
+  <% end %>      
+</table>
+<h2><%= t('Details') %></h2>
+<table class="order-summary" style="width:100%;">
+  <tr>
+    <td><%= t('Tracking:') %></td>
+    <td><%= f.text_field :tracking %></td>
+  </tr>
+</table>
