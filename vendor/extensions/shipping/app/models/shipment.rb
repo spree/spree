@@ -3,6 +3,11 @@ class Shipment < ActiveRecord::Base
   belongs_to :order
   belongs_to :shipping_method
   before_create :calculate_shipping
+  after_save :transition_order
+    
+  def shipped?
+    self.shipped_at
+  end
     
   private
   
@@ -20,4 +25,11 @@ class Shipment < ActiveRecord::Base
     self.number = random
   end
   
+  def transition_order
+    order.shipments.each do |shipment|
+      return unless shipment.shipped?
+    end
+    # transition order to shipped if all shipments have been shipped
+    order.ship!
+  end
 end

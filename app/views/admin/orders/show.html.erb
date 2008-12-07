@@ -3,7 +3,7 @@
     <li><%= link_to t("Resend"), resend_admin_order_url(@order), :method => :post %></li>
   </ul>
 <% end %>
-
+<%= render :partial => 'shared/order_tabs', :locals => {:current => "Order Details"} %>
 <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
 
 <% if @order.address || @order.creditcard_payment %>
@@ -74,5 +74,3 @@
 <% end %>
 
 <%= render_txn_partials @order %>
-
-<%= render :partial => 'shipping_details' %>

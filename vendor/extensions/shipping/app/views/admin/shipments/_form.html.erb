@@ -1,6 +1,8 @@
 <br/>
-<h2><%= t('Contents') %></h2>
 <table class="order-summary" style="width:100%;">
+  <tr>
+    <th colspan="3" id="shipment-num"><%= t('Shipment') %> # <%=@shipment.number%></th>
+  </tr>
   <tr>
     <th><%= t('SKU') %></th>
     <th><%= t('Item Description') %></th>
@@ -17,7 +19,6 @@
     </tr>
   <% end %>      
 </table>
-<h2><%= t('Details') %></h2>
 <table class="order-summary" style="width:100%;">
   <tr>
     <td><%= t('Tracking:') %></td>

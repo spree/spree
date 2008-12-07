@@ -1,4 +1,4 @@
-<h2><%= t('Shipments') %></h2>
+<%= render :partial => 'shared/order_tabs', :locals => {:current => "Shipments"} %>
 <table class="admin-report">
   <tr>
     <th><%= t("Number") %></th>

@@ -26,5 +26,15 @@ class ShippingExtension < Spree::Extension
         @extension_links << {:link => admin_shipping_categories_path, :link_text => Globalite.localize(:ext_shipping_shipping_categories), :description => Globalite.localize(:ext_shipping_shipping_categories_description)}
       end
     end
+    # register Accessories product tab
+    Admin::BaseController.class_eval do
+      before_filter :add_shipments_tab
+      
+      private
+      def add_shipments_tab
+        @order_admin_tabs << {:name => 'Shipments', :url => "admin_order_shipments_url"}
+      end
+    end
+    
   end
 end
