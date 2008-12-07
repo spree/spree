@@ -23,4 +23,12 @@
     <td><%= t('Tracking:') %></td>
     <td><%= f.text_field :tracking %></td>
   </tr>
+  <tr>
+    <td><%= t('Shipping Cost:') %></td>
+    <td><%= f.text_field :cost %></td>
+  </tr>
+  <tr>
+    <td><%= t('Mark Shipped:') %></td>
+    <td><%= check_box_tag 'mark_shipped', value="1", @shipment.shipped_at, :disabled => (not @order.can_ship?) %></td>
+  </tr>
 </table>

@@ -20,7 +20,6 @@ class ShipmentsController < Admin::BaseController
   end  
 
   update.before do
-    5/0
     calculator = @order.shipping_method.shipping_calculator.constantize.new
     @order.update_attribute(:ship_amount, calculator.calculate_shipping(order))
   end
