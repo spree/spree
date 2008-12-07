@@ -14,8 +14,13 @@ body {
   text-align:center;
 }
 
+a {
+  text-decoration: none;
+   color:#3875D7;
+}
 a:hover, a:active {
   color:#333333;
+  text-decoration:underline;
 }
 
 a:link, a:visited {
@@ -523,3 +528,26 @@ ul.plain {
 		background: #fff;
 	}
 /** ================ end: product-tabs  =================== */
+
+/* === begin: menu styles === */
+#menu td {
+  font-size: 14px;
+  padding-right: 10px;
+}
+
+#sub-menu td {
+  font-size: 12px;
+  padding-right: 10px;  
+}
+
+#detail-menu td {
+  font-size: 10px;
+  padding-right: 10px;  
+}
+
+#detail-menu tr {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+/* === end: menu styles === */
