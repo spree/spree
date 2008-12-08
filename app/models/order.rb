@@ -10,7 +10,9 @@ class Order < ActiveRecord::Base
   has_many :products, :through => :line_items
   has_many :inventory_units
   has_many :state_events
-  has_one :creditcard_payment
+  #has_many :payments
+  has_many :creditcard_payments
+  has_many :creditcards
   belongs_to :user
   has_one :address, :as => :addressable, :dependent => :destroy
 
@@ -33,30 +35,26 @@ class Order < ActiveRecord::Base
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
-    after_transition :to => 'authorized', :do => :complete_order
+    after_transition :to => 'charged', :do => :complete_order
     after_transition :to => 'shipped', :do => :mark_shipped
     after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
     
     event :next do
       transition :to => 'address', :from => 'in_progress'
-      transition :to => 'creditcard_payment', :from => 'address'
-      transition :to => 'authorized', :from => 'creditcard_payment'
+      transition :to => 'creditcard', :from => 'address'
+      transition :to => 'charged', :from => 'creditcard'
     end
     event :previous do
-      transition :to => 'address', :from => 'creditcard_payment'
+      transition :to => 'address', :from => 'creditcard'
       transition :to => 'in_progress', :from => 'address'
     end
     event :edit do
-      transition :to => 'in_progress', :from => %w{address creditcard_payment in_progress}
+      transition :to => 'in_progress', :from => %w{address creditcard in_progress}
     end
-    event :capture do
-      transition :to => 'captured', :from => 'authorized'
-    end
-    event :ship do
-      transition :to => 'shipped', :from => 'captured'
-      # todo: also allow from authorized state (but we need to make sure capture is applied first)
-    end
+    #event :capture do
+    #  transition :to => 'captured', :from => 'authorized'
+    #end
     event :cancel do
       transition :to => 'canceled', :if => :allow_cancel?
     end

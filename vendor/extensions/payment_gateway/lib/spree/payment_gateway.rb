@@ -1,12 +1,15 @@
 module Spree
   module PaymentGateway    
-    def authorize
+    def authorize(amount)
       gateway = payment_gateway 
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
-      response = gateway.authorize((order.total * 100).to_i, @creditcard, gateway_options)
+      response = gateway.authorize((amount * 100).to_i, self, gateway_options)      
       gateway_error(response) unless response.success?
+      
+      # create a creditcard_payment for the amount that was authorized
+      creditcard_payment = order.creditcard_payments.create(:amount => amount)
       # create a transaction to reflect the authorization
-      self.creditcard_txns << CreditcardTxn.new(
+      creditcard_payment.creditcard_txns << CreditcardTxn.new(
         :amount => order.total,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::AUTHORIZE
@@ -60,7 +63,8 @@ module Spree
     end
         
     def gateway_options
-      options = {:billing_address => generate_address_hash(address), :shipping_address => generate_address_hash(order.address)}
+      options = {:billing_address => generate_address_hash(address), 
+                 :shipping_address => generate_address_hash(order.address)}
       options.merge minimal_gateway_options
     end    
     

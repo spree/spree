@@ -15,7 +15,6 @@
               <th><%= t("Status") %></th>
               <th><%= t("Customer") %></th>
               <th><%= t("Total") %></th>
-              <th><%= t("Action") %></th>
             </tr>
           </thead>
           <tbody>
@@ -26,7 +25,6 @@
               <td><%= t(order.state).titleize %></td>
               <td><%= order.user.email if order.user %></td>
               <td><%= number_to_currency order.total %></td>
-              <td><%= available_events(order) %></td>
             </tr>
           <% end %>
           </tbody>

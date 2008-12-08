@@ -19,6 +19,11 @@ class ShipmentsController < Admin::BaseController
     @shipment.update_attribute(:shipping_method, ShippingMethod.find(params[:method_id]))
   end  
 
+  update.before do
+    calculator = @order.shipping_method.shipping_calculator.constantize.new
+    @order.update_attribute(:ship_amount, calculator.calculate_shipping(order))
+  end
+  
   update.response do |wants|
     wants.html do 
       next_step

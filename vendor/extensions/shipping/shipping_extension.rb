@@ -33,5 +33,16 @@ class ShippingExtension < Spree::Extension
         {:name => 'Width', :only => [:variant], :format => "%.2f"},
         {:name => 'Depth', :only => [:variant], :format => "%.2f"}
       ]
+
+    # register Accessories product tab
+    Admin::BaseController.class_eval do
+      before_filter :add_shipments_tab
+      
+      private
+      def add_shipments_tab
+        @order_admin_tabs << {:name => 'Shipments', :url => "admin_order_shipments_url"}
+      end
+    end
+
   end
 end

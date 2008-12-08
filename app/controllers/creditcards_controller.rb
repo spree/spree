@@ -1,23 +1,26 @@
-class CreditcardPaymentsController < Admin::BaseController
+class CreditcardsController < Admin::BaseController
   before_filter :load_data
-  before_filter :check_existing, :only => :new
   before_filter :validate_payment, :only => :create
   ssl_required :new, :create
   layout 'application'
-  resource_controller :singleton
+  resource_controller
   
   belongs_to :order
 
   # override the r_c create since we need special logic to deal with the presenter in the create case
   def create
-    creditcard_payment = CreditcardPayment.new(:order => @order, :address => @payment_presenter.address)            
-    creditcard_payment.creditcard = @payment_presenter.creditcard
+    creditcard = Creditcard.new_from_active_merchant(@payment_presenter.creditcard)
+    creditcard.address = @payment_presenter.address
+    creditcard.order = @order
     begin
-      creditcard_payment.save
+      creditcard.authorize(@order.total)
+      #creditcard.authorize(@order) if creditcard.respond_to?(:authorize)
+      #creditcard_payment.creditcard = creditcard
     rescue Spree::GatewayError => ge
       flash.now[:error] = "Authorization Error: #{ge.message}"
       render :action => "new" and return 
     end
+    creditcard.save
     @order.next!
     redirect_to checkout_order_url(@order)
   end
@@ -40,10 +43,6 @@ class CreditcardPaymentsController < Admin::BaseController
     @countries = Country.find(:all)
   end
   
-  def check_existing
-    # TODO - redirect to the next step if there is no outstanding balance
-  end
-
   def build_object
     @payment_presenter ||= PaymentPresenter.new(:address => parent_object.address)
   end

@@ -1,0 +1,6 @@
+<% 1.upto(30) do |i| %>
+visa_<%= i %>:
+  order: order_<%= i %>
+  amount: 45.75
+  type: CreditcardPayment
+<% end %>
