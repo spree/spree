@@ -1,8 +1,7 @@
 <tr>
   <td nowrap><%= field[:name] %>:</td>
   <td>
-		<% value = eval("@" + controller.controller_name.singularize + "." + field[:name].gsub(" ", "_").downcase)  %>
 		<%=error_message_on controller.controller_name.singularize, field[:name].gsub(" ", "_").downcase%>
-    <%=text_field controller.controller_name.singularize, field[:name].gsub(" ", "_").downcase, :value => field.key?(:format) ? sprintf(field[:format], value) : value %></p>
+    <%=text_field controller.controller_name.singularize, field[:name].gsub(" ", "_").downcase, :value => get_additional_field_value(controller, field) %></p>
   </td>
 </tr>	

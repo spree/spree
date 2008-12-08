@@ -26,5 +26,12 @@ class ShippingExtension < Spree::Extension
         @extension_links << {:link => admin_shipping_categories_path, :link_text => Globalite.localize(:ext_shipping_shipping_categories), :description => Globalite.localize(:ext_shipping_shipping_categories_description)}
       end
     end
+    
+    Variant.additional_fields += [
+        {:name => 'Weight', :only => [:variant], :format => "%.2f"},
+        {:name => 'Height', :only => [:variant], :format => "%.2f"},
+        {:name => 'Width', :only => [:variant], :format => "%.2f"},
+        {:name => 'Depth', :only => [:variant], :format => "%.2f"}
+      ]
   end
 end

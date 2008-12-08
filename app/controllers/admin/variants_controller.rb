@@ -1,8 +1,7 @@
 class Admin::VariantsController < Admin::BaseController
   resource_controller
   belongs_to :product
-  before_filter :load_data, :only => [:index, :edit, :new, :update]
-  
+ 
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => false}
   end
@@ -22,16 +21,5 @@ class Admin::VariantsController < Admin::BaseController
   update.response do |wants| 
     wants.html {redirect_to collection_url}
   end
-  
-  private
-  def load_data
-    # this allows extensions to provide their own additional columns in the index and edit views
-    @additional_product_fields = [
-        {:name => 'Weight', :only => :variant, :format => "%.2f"},
-        {:name => 'Height', :only => :variant, :format => "%.2f"},
-        {:name => 'Width', :only => :variant, :format => "%.2f"},
-        {:name => 'Depth', :only => :variant, :format => "%.2f"}
-      ]
-  end
-  
+   
 end
