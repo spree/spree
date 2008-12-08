@@ -56,7 +56,7 @@
       <%= collection_select(:product, :tax_category_id, @tax_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        
     </td>
   </tr>
-	<%  @additional_product_fields.select{|f| f[:only].nil? || f[:only] == :product }.each do |field| %>
+	<% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:product) }.each do |field| %>
 		<%= render :partial => "shared/additional_field", :locals => {:field => field, :f => f} %>
 	<% end %>
   <tr>
