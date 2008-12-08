@@ -13,6 +13,7 @@ describe Taxon do
   include TaxonHelper
 
   before(:each) do
+    @taxonomy = Taxonomy.create(:name => "Test")
     @taxon = Taxon.new
   end
 
@@ -33,6 +34,17 @@ describe Taxon do
     @taxon.attributes = valid_taxon_attributes
 
     @taxon.should be_valid
+  end
+  
+  it "should set the permalink on create" do
+    @taxon = Taxon.create(:name => "foo", :taxonomy => @taxonomy)
+    @taxon.permalink.should == "foo/"
+  end
+  
+  it "should update the permalink on update" do
+    @taxon = Taxon.create(:name => "foo", :taxonomy => @taxonomy)
+    @taxon.update_attribute("name", "fooz")
+    @taxon.permalink.should == "fooz/"
   end
   
 end
