@@ -47,5 +47,6 @@ class Admin::ProductsController < Admin::BaseController
       end
       @object.variant.sku = params[:product] ? params[:product][:sku] : ""
       @object
-    end    
+    end   
+  
 end

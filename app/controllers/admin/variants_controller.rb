@@ -1,7 +1,7 @@
 class Admin::VariantsController < Admin::BaseController
   resource_controller
   belongs_to :product
- 
+
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => false}
   end
