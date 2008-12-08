@@ -25,7 +25,7 @@ class ExtensionMigrationGenerator < Rails::Generator::NamedBase
       m.migration_template 'migration.rb', 
                            "#{extension_path}/db/migrate", 
                            :assigns => {:migration_name => @migration_name},
-                           :migration_file_name => @migration_name
+                           :migration_file_name => @migration_name.underscore
     end
   end
 
