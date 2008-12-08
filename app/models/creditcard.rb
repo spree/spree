@@ -1,6 +1,19 @@
-class Creditcard < ActiveMerchant::Billing::CreditCard
-  # Just a hack to make active_presenter happy (note the AM CreditCard class does not extend ActiveRecord::Base)
-  def remove_attributes_protected_from_mass_assignment(attributes)
-    attributes
+class Creditcard < ActiveRecord::Base #ActiveMerchant::Billing::CreditCard
+  belongs_to :order
+  has_one :address, :as => :addressable
+  
+  # intialize from active_merchant creditcard object  
+  def self.new_from_active_merchant(creditcard)
+    card = self.new
+    card.cc_type = ActiveMerchant::Billing::CreditCard.type?(creditcard.number)
+    card.number = creditcard.number #if Spree::Config[:store_cc]
+    card.verification_value = creditcard.verification_value #if Spree::Config[:store_cc]
+    card.display_number = ActiveMerchant::Billing::CreditCard.mask(creditcard.number) #creditcard.display_number 
+    card.month = creditcard.month
+    card.year = creditcard.year
+    card.first_name = creditcard.first_name
+    card.last_name = creditcard.last_name
+    card
   end
+
 end

@@ -4,10 +4,11 @@ module Spree #:nodoc:
     # modify the transitions in core - go to shipping after address (instead of cc payment)
     fsm = Order.state_machines['state']
     fsm.states << "shipment"
-    fsm.events['next'].transitions.delete_if { |t| t.options[:to] == "creditcard_payment" && t.options[:from] == "address" }
+    fsm.events['next'].transitions.delete_if { |t| t.options[:to] == "creditcard" && t.options[:from] == "address" }
     fsm.events['next'].transition(:to => 'shipment', :from => 'address')
-    fsm.events['next'].transition(:to => 'creditcard_payment', :from => 'shipment')
+    fsm.events['next'].transition(:to => 'creditcard', :from => 'shipment')
     fsm.events['previous'].transition(:to => 'address', :from => 'shipment')
+    fsm.events['previous'].transition(:to => 'shipment', :from => 'creditcard')
     fsm.after_transition :to => 'shipment', :do => :before_shipment
     fsm.events['edit'].transition(:to => 'in_progress', :from => 'shipment')
     fsm.after_transition(:to => 'shipment', :do => lambda {|order| order.update_attribute(:tax_amount, order.calculate_tax)})
