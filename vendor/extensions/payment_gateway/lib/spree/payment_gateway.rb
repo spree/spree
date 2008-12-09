@@ -1,13 +1,13 @@
 module Spree
   module PaymentGateway    
     def authorize(amount)
-      gateway = payment_gateway 
+      gateway = payment_gateway       
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
       response = gateway.authorize((amount * 100).to_i, self, gateway_options)      
       gateway_error(response) unless response.success?
       
       # create a creditcard_payment for the amount that was authorized
-      creditcard_payment = order.creditcard_payments.create(:amount => amount)
+      creditcard_payment = order.creditcard_payments.create(:amount => amount, :creditcard => self)
       # create a transaction to reflect the authorization
       creditcard_payment.creditcard_txns << CreditcardTxn.new(
         :amount => order.total,
@@ -17,17 +17,19 @@ module Spree
     end
 
     def capture
+=begin
       authorization = find_authorization
       gw = payment_gateway
       response = gw.capture((order.total * 100).to_i, authorization.response_code, minimal_gateway_options)
       gateway_error(response) unless response.success?
       self.creditcard_txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
+=end      
     end
 
     def purchase
       #purchase is a combined Authorize and Capture that gets processed
       #by the ActiveMerchant gateway as one single transaction.
-      
+=begin      
       gateway = payment_gateway 
 
       response = gateway.purchase((order.total * 100).to_i, @creditcard, gateway_options) 
@@ -46,13 +48,16 @@ module Spree
         :response_code => response.authorization, 
         :txn_type => CreditcardTxn::TxnType::CAPTURE
       )
+=end
     end
 
     def void
+=begin
       authorization = find_authorization
       response = payment_gateway.void(authorization.response_code, minimal_gateway_options)
       gateway_error(response) unless response.success?
       self.creditcard_txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
+=end
     end
     
     def gateway_error(response)

@@ -19,7 +19,7 @@ module Spree #:nodoc:
 
     end
     
-    def authorize(money, creditcard, options = {})
+    def authorize(money, creditcard, options = {})      
       if VALID_CCS.include? creditcard.number 
         ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
       else

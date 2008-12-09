@@ -10,7 +10,7 @@ class Order < ActiveRecord::Base
   has_many :products, :through => :line_items
   has_many :inventory_units
   has_many :state_events
-  #has_many :payments
+  has_many :payments
   has_many :creditcard_payments
   has_many :creditcards
   belongs_to :user

@@ -59,7 +59,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
     admin.resource :mail_settings
     admin.resource :inventory_settings
-    admin.resources :orders, :has_many => :payments, :member => {:fire => :put, :resend => :post}
+    admin.resources :orders, :has_many => [:payments, :creditcard_payments], :member => {:fire => :put, :resend => :post}
     admin.resources :taxonomies do |taxonomy|
       taxonomy.resources :taxons
     end

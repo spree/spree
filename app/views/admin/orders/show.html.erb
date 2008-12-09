@@ -6,18 +6,14 @@
 <%= render :partial => 'shared/order_tabs', :locals => {:current => "Order Details"} %>
 <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
 
-<% if @order.address || @order.creditcard_payment %>
+<% if @order.address %>
   <table class="order-address">
     <tr>
       <th><%= t("Ship Address") %></th>
-      <th><%= t("Bill Address") %></th>
     </tr>
     <tr>
-      <td width="50%">
-        <%= render :partial => 'address', :locals => {:address => @order.address} if @order.address%>      
-      </td>
-      <td width="50%">
-        <%= render :partial => 'address', :locals => {:address => @order.creditcard_payment.address} if @order.creditcard_payment%>
+      <td>
+        <%= render :partial => 'shared/address', :locals => {:address => @order.address} if @order.address%>      
       </td>
     </tr>
   </table>
@@ -51,26 +47,3 @@
     </tr>
   <% end %>
 </table>
-
-<% if card = @order.creditcard_payment %>
-  <b><%= t("Credit Card")%>: </b> &nbsp; #<%= card.display_number %><br/>
-  <b><%= t("Type")%> : </b> &nbsp; <%= card.cc_type.titleize %><br/>
-  <table class="basic-table">
-    <tr>
-      <th><%= t("Transaction") %></th>
-      <th><%= t("Amount") %></th>
-      <th><%= t("Response Code") %></th>
-      <th><%= "#{t('Date')}/#{t('Time')}" %></th>
-    </tr>
-    <% card.txns.each do |t| %>
-      <tr>
-        <td><%=CreditcardTxn::TxnType.from_value t.txn_type.to_i%></td>
-        <td><%=number_to_currency t.amount%></td>
-        <td><%=t.response_code%></td>
-        <td><%=t.created_at.to_s(:db)%></td>
-      </tr>
-    <% end %>
-  </table>
-<% end %>
-
-<%= render_txn_partials @order %>

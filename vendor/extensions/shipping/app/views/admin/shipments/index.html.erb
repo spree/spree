@@ -8,7 +8,7 @@
     <th><%= "#{t('Date')}/#{t('Time')}" %></th>
     <th><%= t("Action") %></th>
   </tr>
-  <% @order.shipments.each do |shipment| %>
+  <% @shipments.each do |shipment| %>
     <tr>
       <td><%= shipment.number %></td>
       <td><%= shipment.shipping_method.name if shipment.shipping_method %></td>

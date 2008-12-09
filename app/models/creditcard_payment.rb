@@ -1,5 +1,6 @@
 class CreditcardPayment < Payment
   has_many :creditcard_txns
+  belongs_to :creditcard
   #has_one :address, :as => :addressable
   
   alias :txns :creditcard_txns
