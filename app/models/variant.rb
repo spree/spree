@@ -7,7 +7,9 @@ class Variant < ActiveRecord::Base
   
   validates_presence_of :product
   validate :check_price
-
+  
+  @fields =[]
+  
   def on_hand
     inventory_units.with_state("on_hand").size
   end
@@ -18,6 +20,14 @@ class Variant < ActiveRecord::Base
   
   def in_stock
     on_hand > 0
+  end
+  
+  def self.additional_fields
+    @fields
+  end
+  
+  def self.additional_fields=(new_fields)
+    @fields = new_fields
   end
   
   #Tries to get missing attribute value from  product

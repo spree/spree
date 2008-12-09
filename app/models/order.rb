@@ -79,6 +79,17 @@ class Order < ActiveRecord::Base
       current_item = LineItem.new(:quantity => quantity, :variant => variant, :price => variant.price)
       self.line_items << current_item
     end
+    
+    Variant.additional_fields.select{|f| !f[:populate].nil? && f[:populate].include?(:line_item) }.each do |field| 
+      value = ""
+      
+      if field[:only].nil? || field[:only].include?(:variant)
+        value = variant.send(field[:name].gsub(" ", "_").downcase)
+      elsif field[:only].include?(:product)
+        value = variant.product.send(field[:name].gsub(" ", "_").downcase)
+      end
+      current_item.update_attribute(field[:name].gsub(" ", "_").downcase, value)
+    end
   end
 
   def generate_order_number
