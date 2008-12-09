@@ -12,7 +12,8 @@ class Admin::ProductsController < Admin::BaseController
 
   update.response do |wants| 
     # override the default redirect behavior of r_c
-    wants.html {redirect_to edit_object_url}
+    # need to reload Product in case name / permalink has changed
+    wants.html {redirect_to edit_admin_product_url Product.find(@product.id) }
   end
   
   private
