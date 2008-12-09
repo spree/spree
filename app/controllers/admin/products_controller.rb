@@ -35,9 +35,9 @@ class Admin::ProductsController < Admin::BaseController
       @name = params[:name] || ""
       @sku = params[:sku] || ""
       if @sku.blank?
-        @collection ||= end_of_association_chain.by_name(@name).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})
+        @collection ||= end_of_association_chain.by_name(@name).find(:all, :order => :name, :page => {:start => 1, :size =>  Spree::Config[:admin_products_per_page], :current => params[:p]})
       else
-        @collection ||= end_of_association_chain.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})
+        @collection ||= end_of_association_chain.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size =>  Spree::Config[:admin_products_per_page], :current => params[:p]})
       end
     end
 
