@@ -16,6 +16,7 @@ class AppConfiguration < Configuration
   preference :order_from, :string, :default => "orders@example.com"
   preference :order_bcc, :string
   preference :store_cc, :boolean, :default => false
+  preference :store_cvv, :boolean, :default => false
   preference :default_locale, :string, :default => 'en-US'
   preference :allow_locale_switching, :boolean, :default => false
   preference :default_country_id, :integer, :default => 214

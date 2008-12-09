@@ -13,7 +13,7 @@ class CreatePaymentsTable < ActiveRecord::Migration
     Payment.all.each do |payment|
       creditcard = Creditcard.new
       %w{month year cc_type display_number first_name last_name number}.each do |name|
-        creditcard[:name] = payment.send(name)
+        creditcard[name] = payment[name]
       end
       # also move the address to the creditcard (no longer associated with the payment)
       creditcard.address = Address.find :first, :conditions => ["addressable_type = 'CreditcardPayment' AND addressable_id = ?", payment.id]
