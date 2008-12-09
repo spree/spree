@@ -15,6 +15,26 @@ class Admin::ProductsController < Admin::BaseController
     wants.html {redirect_to edit_object_url}
   end
   
+  # override the destory method to set deleted_at value 
+  # instead of actually deleting the product.
+  def destroy
+    @product = Product.find_by_permalink(params[:id])
+    @product.deleted_at = Time.now()
+    
+    @product.variants.each do |v|   
+      v.deleted_at = Time.now()
+      v.save
+    end
+    
+    if @product.save
+      flash[:notice] = "Product has been deleted"
+    else
+      flash[:notice] = "Product could not be deleted"
+    end
+    
+    redirect_to collection_url
+  end
+  
   private
     def load_data
       @tax_categories = TaxCategory.find(:all, :order=>"name")  
@@ -31,10 +51,20 @@ class Admin::ProductsController < Admin::BaseController
     def collection
       @name = params[:name] || ""
       @sku = params[:sku] || ""
+      @deleted =  (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
+      
       if @sku.blank?
-        @collection ||= end_of_association_chain.by_name(@name).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})
+        if @deleted.blank?
+          @collection ||= end_of_association_chain.active.by_name(@name).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})
+        else
+          @collection ||= end_of_association_chain.deleted.by_name(@name).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})  
+        end
       else
-        @collection ||= end_of_association_chain.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})
+        if @deleted.blank?
+          @collection ||= end_of_association_chain.active.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})
+        else
+          @collection ||= end_of_association_chain.deleted.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})
+        end
       end
     end
 

@@ -8,6 +8,11 @@ class Variant < ActiveRecord::Base
   validates_presence_of :product
   validate :check_price
   
+  
+  # default variant scope only lists non-deleted variants
+  named_scope :active, :conditions => "deleted_at is null"
+  named_scope :deleted, :conditions => "not deleted_at is null"
+  
   @fields =[]
   
   def on_hand

@@ -26,13 +26,13 @@ class ProductsController < Spree::BaseController
     if params[:taxon]
       @taxon = Taxon.find(params[:taxon])
 
-      @collection ||= Product.available.find(
+      @collection ||= Product.active.find(
         :all, 
         :conditions => ["products.id in (select product_id from products_taxons where taxon_id in (" +  @taxon.descendents.inject( @taxon.id.to_s) { |clause, t| clause += ', ' + t.id.to_s} + "))" ], 
         :page => {:start => 1, :size => 10, :current => params[:p]}, 
         :include => :images)
     else
-      @collection ||= Product.available.find(:all, :page => {:start => 1, :size => 10, :current => params[:p]}, :include => :images)
+      @collection ||= Product.active.find(:all, :page => {:start => 1, :size => 10, :current => params[:p]}, :include => :images)
     end
   end
 end
