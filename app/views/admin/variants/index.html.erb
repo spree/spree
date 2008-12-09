@@ -7,8 +7,8 @@
 			<th><%= t("Options") %></th>
 			<th><%= t("Price") %></th>
 		  <th><%= t("SKU") %></th>
-		  <% @additional_fields.each do |field| %>
-		    <th><%= field.titleize %></th>
+		  <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
+		    <th><%= field[:name].titleize %></th>
 		  <% end %>
 		  <th><%= t("On Hand") %></th>
 			<th><%= t("Action") %></th>
@@ -22,8 +22,8 @@
       	<td><%= variant_options variant %></td>
       	<td><%= variant.price %>
         <td><%= variant.sku %></td>
-        <% @additional_fields.each do |field| %>        
-  		    <td><%= variant[field] %></td>
+        <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>        
+  		    <td><%= variant[field[:name].gsub(" ", "_").downcase] %></td>
   		  <% end %>
         <td><%= variant.on_hand %></td>
 		    <td valign="top">

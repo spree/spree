@@ -29,10 +29,7 @@
     <td><%= t("On Hand") %>: </td>
     <td><%= f.text_field :on_hand %></td>
   </tr>  
-  <% @additional_fields.each do |field| %>
-  <tr>
-    <td><%= t(field.titleize) %>: </td>
-    <td><%= f.text_field field %></td>
-  </tr>  
-  <% end %>
+	<% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
+		<%= render :partial => "shared/additional_field", :locals => {:field => field, :f => f} %>
+	<% end %>
 </table>
