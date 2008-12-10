@@ -1,22 +1,24 @@
-<%=error_messages_for :payment_presenter %>
-<h1><%= t("Payment")%></h1>
-<% form_for(:payment_presenter, :url => order_creditcards_url(@order)) do |f| %>
-  <table cellpadding="5" width="100%">
-    <tr>
-      <td valign="top" wdith="50%">
-        <%= render :partial => 'form_credit_card', :locals => {:f => f} %>
-      </td>
-      <td>
-        <%= render :partial => 'form_billing', :locals => {:f => f} %>
-      </td>
-    </tr>
-  </table>
-	<div align="right" style="font-size:120%;">
-		<br />
-		<%= Globalite.localize(:order_total_message) %> <strong><%= number_to_currency @order.total%></strong>
-	</div>
-  <div align="right">
-		<br/>
-    <%= submit_tag t('Continue') %>
-  </div>
-<% end %>
+<div id="creditcard">
+  <%=error_messages_for :payment_presenter %>
+  <h1><%= t("Payment")%></h1>
+  <% form_for(:payment_presenter, :url => order_creditcards_url(@order)) do |f| %>
+    <table cellpadding="5" width="100%">
+      <tr>
+        <td valign="top" wdith="50%">
+          <%= render :partial => 'form_credit_card', :locals => {:f => f} %>
+        </td>
+        <td>
+          <%= render :partial => 'form_billing', :locals => {:f => f} %>
+        </td>
+      </tr>
+    </table>
+  	<div align="right" style="font-size:120%;">
+  		<br />
+  		<%= Globalite.localize(:order_total_message) %> <strong><%= number_to_currency @order.total%></strong>
+  	</div>
+    <div align="right">
+  		<br/>
+      <%= submit_tag t('Continue') %>
+    </div>
+  <% end %>
+</div>
