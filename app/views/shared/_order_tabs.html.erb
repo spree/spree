@@ -1,3 +1,11 @@
+<table width="100%">
+  <tr>
+    <td id="order-num"><%= t('Order') %> # <%=@order.number%></td>
+    <td align="right">
+      <b><%= @order.state.titleize %></b>
+    </td>
+  </tr>
+</table>
 <div id="tab-container">
   <ul id="tabnav">
   	<li>

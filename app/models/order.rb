@@ -134,7 +134,7 @@ class Order < ActiveRecord::Base
   
   def restock_inventory
     inventory_units.each do |inventory_unit|
-      inventory_unit.restock!
+      inventory_unit.restock! if inventory_unit.can_restock?
     end
   end
   

@@ -2,6 +2,7 @@ class Admin::OrdersController < Admin::BaseController
   require 'spree/gateway_error'
   resource_controller
   before_filter :initialize_txn_partials
+  before_filter :initialize_order_events
   before_filter :load_object, :only => [:fire, :resend]
 
   in_place_edit_for :address, :firstname
@@ -61,5 +62,11 @@ class Admin::OrdersController < Admin::BaseController
   def initialize_txn_partials
     @txn_partials = []
   end
+  
+  # Used for extensions which need to provide their own custom event links on the order details view.
+  def initialize_order_events
+    @order_events = ["cancel"]
+  end
+  
 
 end
