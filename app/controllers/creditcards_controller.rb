@@ -9,7 +9,7 @@ class CreditcardsController < Admin::BaseController
 
   # override the r_c create since we need special logic to deal with the presenter in the create case
   def create
-    creditcard = Creditcard.new_from_active_merchant(@payment_presenter.creditcard)
+    creditcard = @payment_presenter.creditcard
     creditcard.address = @payment_presenter.address
     creditcard.order = @order
     begin
