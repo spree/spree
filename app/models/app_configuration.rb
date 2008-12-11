@@ -24,6 +24,7 @@ class AppConfiguration < Configuration
   preference :show_descendents, :boolean, :default => true
   preference :show_zero_stock_products, :boolean, :default => true
   preference :admin_products_per_page, :integer, :default => 10 
+  preference :default_tax_category, :string, :default => nil # Use the name (exact case) of the tax category if you wish to specify
 
   validates_presence_of :name
   validates_uniqueness_of :name

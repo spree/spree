@@ -3,6 +3,12 @@ class Admin::ProductsController < Admin::BaseController
   before_filter :load_data
   after_filter :set_image, :only => [:create, :update]
 
+  # set the default tax_category if applicable
+  new_action.before do
+    next unless Spree::Config[:default_tax_category]
+    @product.tax_category = TaxCategory.find_by_name Spree::Config[:default_tax_category]
+  end
+  
   update.before do
     # note: we only reset the product properties if we're receiving a post from the form on that tab
     next unless params[:clear_product_properties] 
