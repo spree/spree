@@ -53,13 +53,10 @@ class Admin::TaxonsController < Admin::BaseController
           end
         end
       else  #being moved/dropped BEFORE the end of the list.
-        logger.debug("#{@taxon.position} > #{params[:taxon][:position].to_f}")
-        logger.debug("#{@taxon.position} < #{params[:taxon][:position].to_f}")
         
         if @taxon.position > params[:taxon][:position].to_f #old position greater than new postion
           #up
           taxons.each do |taxon|
-            logger.debug("#{taxon.position} <= #{@taxon.position} && #{taxon.position} >= #{params[:taxon][:position].to_f}")
             if taxon.position <= @taxon.position && taxon.position >= params[:taxon][:position].to_f
               taxon.position += 1
               taxon.save!
@@ -68,7 +65,6 @@ class Admin::TaxonsController < Admin::BaseController
         elsif @taxon.position < params[:taxon][:position].to_f #old position less than new position
           #down
           taxons.each do |taxon|
-            logger.debug  ("#{taxon.position} >= #{@taxon.position} && #{taxon.position} <= #{params[:taxon][:position].to_f}")
             if taxon.position >= @taxon.position && taxon.position <= params[:taxon][:position].to_f
               taxon.position += -1
               taxon.save!              
@@ -77,14 +73,23 @@ class Admin::TaxonsController < Admin::BaseController
         end
         
       end
-    
-        
-    end 
+    end
+     
+    #check if we need to rename child taxons if parent name changes
+    @update_children = params[:taxon][:name] == @taxon.name ? false : true
   end
   
   update.after do
     #reposition old parent's children after move to new parent
     reposition_taxons(Taxon.find_all_by_parent_id(@previous_parent_id, :order => "position ASC")) if @previous_parent_id
+    
+    #rename child taxons                  
+    if @update_children
+      @taxon.descendents.each do |taxon|
+        taxon.permalink = nil
+        taxon.save!
+      end
+    end    
   end
   
   destroy.after do
@@ -129,7 +134,6 @@ class Admin::TaxonsController < Admin::BaseController
   private 
   def reposition_taxons(taxons)
     taxons.each_with_index do |taxon, i|
-        logger.debug("DID YOU I IS NOW: #{taxon.position} = #{i}")
         taxon.position = i
         taxon.save!
     end

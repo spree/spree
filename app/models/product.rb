@@ -10,6 +10,7 @@ class Product < ActiveRecord::Base
   has_many :properties, :through => :product_properties
   belongs_to :tax_category
   has_and_belongs_to_many :taxons
+  
 
   validates_presence_of :name
   validates_presence_of :master_price
