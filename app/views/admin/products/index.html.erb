@@ -11,14 +11,14 @@
 			    <td/>
 			  </tr>
 			<% @products.each do |product| %>
-			  <tr>
+			  <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %>>
 			    <td><%= mini_image(product) %></td>
 			    <td valign="top"><%=product.name%></td>
 			    <td valign="top"><%=product.master_price%></td>
 			    <td valign="top">
-			      <%= link_to_edit product %>
+			      <%= link_to_edit product if product.deleted_at.nil?  %>
 			      &nbsp;
-			      <%= link_to_delete product %>
+			      <%= link_to_delete product if product.deleted_at.nil?  %>
 			    </td>
 			  </tr>
 			<% end %>
@@ -46,6 +46,10 @@
                 <td>
                   <input name="sku" size="15" value="<%=@sku%>"/>
                 </td>
+              </tr>
+              <tr>
+   							<td>Deleted</td>
+								<td><input name="deleted" type="checkbox" <%= @deleted %>/></td>
               </tr>
             </tbody>
           </table>

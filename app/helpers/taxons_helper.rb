@@ -18,11 +18,11 @@ module TaxonsHelper
   # that we can use configurations as well as make it easier for end users to override this determination.  One idea is
   # to show the most popular products for a particular taxon (that is an exercise left to the developer.) 
   def taxon_preview(taxon)
-    products = taxon.products[0..4]
+    products = taxon.products.active[0..4]
     return products unless products.size < 5
     if Spree::Config[:show_descendents]
       taxon.descendents.each do |taxon|
-        products += taxon.products[0..4]
+        products += taxon.products.active[0..4]
         break if products.size >= 5
       end
     end

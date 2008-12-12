@@ -3,6 +3,12 @@ class Admin::ProductsController < Admin::BaseController
   before_filter :load_data
   after_filter :set_image, :only => [:create, :update]
 
+  # set the default tax_category if applicable
+  new_action.before do
+    next unless Spree::Config[:default_tax_category]
+    @product.tax_category = TaxCategory.find_by_name Spree::Config[:default_tax_category]
+  end
+  
   update.before do
     # note: we only reset the product properties if we're receiving a post from the form on that tab
     next unless params[:clear_product_properties] 
@@ -12,7 +18,28 @@ class Admin::ProductsController < Admin::BaseController
 
   update.response do |wants| 
     # override the default redirect behavior of r_c
-    wants.html {redirect_to edit_object_url}
+    # need to reload Product in case name / permalink has changed
+    wants.html {redirect_to edit_admin_product_url Product.find(@product.id) }
+  end
+  
+  # override the destory method to set deleted_at value 
+  # instead of actually deleting the product.
+  def destroy
+    @product = Product.find_by_permalink(params[:id])
+    @product.deleted_at = Time.now()
+    
+    @product.variants.each do |v|   
+      v.deleted_at = Time.now()
+      v.save
+    end
+    
+    if @product.save
+      flash[:notice] = "Product has been deleted"
+    else
+      flash[:notice] = "Product could not be deleted"
+    end
+    
+    redirect_to collection_url
   end
   
   private
@@ -31,10 +58,20 @@ class Admin::ProductsController < Admin::BaseController
     def collection
       @name = params[:name] || ""
       @sku = params[:sku] || ""
+      @deleted =  (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
+      
       if @sku.blank?
-        @collection ||= end_of_association_chain.by_name(@name).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})
+        if @deleted.blank?
+          @collection ||= end_of_association_chain.active.by_name(@name).find(:all, :order => :name, :page => {:start => 1, :size => Spree::Config[:admin_products_per_page], :current => params[:p]})
+        else
+          @collection ||= end_of_association_chain.deleted.by_name(@name).find(:all, :order => :name, :page => {:start => 1, :size => Spree::Config[:admin_products_per_page], :current => params[:p]})  
+        end
       else
-        @collection ||= end_of_association_chain.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => 10, :current => params[:p]})
+        if @deleted.blank?
+          @collection ||= end_of_association_chain.active.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => Spree::Config[:admin_products_per_page], :current => params[:p]})
+        else
+          @collection ||= end_of_association_chain.deleted.by_name(@name).by_sku(@sku).find(:all, :order => :name, :page => {:start => 1, :size => Spree::Config[:admin_products_per_page], :current => params[:p]})
+        end
       end
     end
 

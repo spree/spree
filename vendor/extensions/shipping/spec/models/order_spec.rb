@@ -12,15 +12,15 @@ describe Order do
       @order.shipping_countries.should == []
     end
     it "should contain only a single country even if multiple shipping methods are configured with that same country" do
-      country = mock_model(Country)
+      country = Country.new(:name => "foo")
       method1 = mock_model(ShippingMethod, :zone => mock_model(Zone, :country_list => [country]))
       method2 = mock_model(ShippingMethod, :zone => mock_model(Zone, :country_list => [country]))
       ShippingMethod.stub!(:all).and_return([method1, method2])
       @order.shipping_countries.should == [country]
     end
     it "should contain the unique list of countries that fall within at least one shipping method's zone" do
-      country1 = mock_model(Country)
-      country2 = mock_model(Country)
+      country1 = Country.new(:name => "bar")
+      country2 = Country.new(:name => "foo")
       method1 = mock_model(ShippingMethod, :zone => mock_model(Zone, :country_list => [country1]))
       method2 = mock_model(ShippingMethod, :zone => mock_model(Zone, :country_list => [country2]))
       ShippingMethod.stub!(:all).and_return([method1, method2])
@@ -67,7 +67,7 @@ describe Order do
     end
     describe "when there is only one shipping method" do
       before :each do
-        @shipping_method = ShippingMethod.new
+        @shipping_method = ShippingMethod.new(:shipping_calculator => "MockCalculator")
         @order.stub!(:shipping_methods).and_return([@shipping_method]) 
       end
       it "next! should transition to 'creditcard_payment'" do
