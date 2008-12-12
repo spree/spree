@@ -44,5 +44,8 @@ class ShippingExtension < Spree::Extension
       end
     end
 
+    Product.class_eval do
+      belongs_to :shipping_category
+    end
   end
 end
