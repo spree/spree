@@ -1,12 +1,11 @@
 module Spree #:nodoc:
   module TaxCalculator
-    def calculate_tax
-      # tax is zero if ship address does not match any existing zone
-      return 0 unless zone = Zone.match(address).first
-      
-      sales_tax_rates = TaxRate.find_all_by_zone_id_and_tax_type(zone, TaxRate::TaxType::SALES_TAX)  
-
-      vat_rates = TaxRate.find_all_by_zone_id_and_tax_type(zone, TaxRate::TaxType::VAT)  
+    def calculate_tax      
+      # tax is zero if ship address does not match any existing tax zone
+      tax_rates = TaxRate.all.find_all { |rate| rate.zone.include?(address) }
+      return 0 if tax_rates.empty?  
+      sales_tax_rates = tax_rates.find_all { |rate| rate.tax_type == TaxRate::TaxType::SALES_TAX }
+      vat_rates = tax_rates.find_all { |rate| rate.tax_type == TaxRate::TaxType::VAT }
 
       # note we expect only one of these tax calculations to have a value but its technically possible to model
       # both a sales tax and vat if you wanted to do that for some reason
