@@ -7,22 +7,6 @@ class Creditcard < ActiveRecord::Base
     
   include ActiveMerchant::Billing::CreditCardMethods
 
-  # intialize from active_merchant creditcard object  
-=begin
-  def self.new_from_active_merchant(creditcard)
-    card = self.new
-    card.cc_type = Creditcard.type?(creditcard.number)
-    card.number = creditcard.number
-    card.verification_value = creditcard.verification_value
-    card.display_number = ActiveMerchant::Billing::CreditCard.mask(creditcard.number) 
-    card.month = creditcard.month
-    card.year = creditcard.year
-    card.first_name = creditcard.first_name
-    card.last_name = creditcard.last_name
-    card
-  end
-=end
-
   class ExpiryDate #:nodoc:
     attr_reader :month, :year
     def initialize(month, year)
@@ -85,10 +69,6 @@ class Creditcard < ActiveRecord::Base
   
   def validate 
     validate_essential_attributes
-
-    # Bogus card is pretty much for testing purposes. Lets just skip these extra tests if its used
-    return if type == 'bogus'
-
     validate_card_type
     validate_card_number
     validate_verification_value
