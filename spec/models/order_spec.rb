@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper.rb'
 
 describe Order do
   before(:each) do
-    @variant = mock_model(Variant)
+    @variant = mock_model(Variant, :id => "1234", :price => 7.99)
     @inventory_unit = mock_model(InventoryUnit, :null_object => true)
     @creditcard_payment = mock_model(CreditcardPayment, :null_object => true)
     @user = mock_model(User, :email => "foo@exampl.com")
@@ -14,10 +14,12 @@ describe Order do
     @order.user =  @user
 
     add_stubs(@order, :save => true, :inventory_units => [@inventory_unit])
-    @order.line_items << (mock_model(LineItem, :variant => @variant, :quantity => 1))
+    @line_item =  LineItem.new(:variant => @variant, :quantity => 1)
+    @order.line_items << @line_item
     InventoryUnit.stub!(:retrieve_on_hand).with(@variant, 1).and_return [@inventory_unit]
     OrderMailer.stub!(:deliver_confirm).with(any_args)   
     OrderMailer.stub!(:deliver_cancel).with(any_args)    
+
   end
 
   describe "create" do
@@ -78,4 +80,66 @@ describe Order do
     end
   end
   
+  
+  describe "add_variant" do
+    it "should add new line item if product does not currently existing in order" do
+      @variant2 = mock_model(Variant, :id => "5678", :price => 9.99)
+      
+      @order.line_items.should_receive(:in_order).with(@variant2).and_return(nil)
+      @order.line_items.size.should == 1
+
+      @order.add_variant(@variant2)
+      
+      @order.line_items.size.should == 2
+    end
+    
+    it "should increment the quantity of line_item by 1 when product already exists in order, and no specific quantity is supplied" do
+
+      @order.line_items.should_receive(:in_order).with(@variant).and_return(@line_item)
+      @line_item.should_receive(:save).and_return(true)
+      
+      @order.line_items[0].quantity.should == 1
+      @order.add_variant(@variant)
+    
+      @order.line_items[0].quantity.should == 2
+    end
+    
+    it "should increment the quantity of line_item by x when product already exists in order, and a specific quantity is supplied"do
+
+      @order.line_items.should_receive(:in_order).with(@variant).and_return(@line_item)
+      @line_item.should_receive(:save).and_return(true)
+      
+      @order.line_items[0].quantity.should == 1
+      @order.add_variant(@variant, 5)
+    
+      @order.line_items[0].quantity.should == 6
+    end
+    
+    it "should populate additional fields on line_item when additional_fields is present" do
+        Variant.stub!(:additional_fields).and_return([
+          {:name => 'Weight', :only => [:product]},
+          {:name => 'Height', :only => [:product, :variant], :format => "%.2f"},
+          {:name => 'Width', :only => [:variant], :format => "%.2f", :populate => [:line_item]},
+          {:name => 'Depth', :only => [:variant], :populate => [:line_item]}
+        ])
+        
+        #build / mock second line item to be returned, when we add the new variant
+        @line_item2 =  LineItem.new(:variant => @variant, :quantity => 1)
+        @line_item2.should_receive(:save).exactly(3).times.and_return(true)
+        @line_item2.stub!(:width=) 
+        @line_item2.stub!(:depth=)
+        
+        #mock new variant to add to order
+        @variant2 = mock_model(Variant, :id => "5678", :price => 9.99, :width => 19, :depth => 79)
+        
+        #this is what we expect to happen
+        @order.line_items.should_receive(:in_order).with(@variant2).and_return(@line_item2)
+        @line_item2.should_receive(:width=).with(@variant2.width) 
+        @line_item2.should_receive(:depth=).with(@variant2.depth)
+          
+        @order.add_variant(@variant2)
+        
+ 
+    end
+  end
 end

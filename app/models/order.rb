@@ -80,6 +80,8 @@ class Order < ActiveRecord::Base
       self.line_items << current_item
     end
     
+    # populate line_items attributes for additional_fields entries
+    # that have populate => [:line_item]
     Variant.additional_fields.select{|f| !f[:populate].nil? && f[:populate].include?(:line_item) }.each do |field| 
       value = ""
       
