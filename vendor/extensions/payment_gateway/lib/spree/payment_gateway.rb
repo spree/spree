@@ -26,29 +26,21 @@ module Spree
 =end      
     end
 
-    def purchase
-      #purchase is a combined Authorize and Capture that gets processed
-      #by the ActiveMerchant gateway as one single transaction.
-=begin      
+    def purchase(amount)
+      #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
       gateway = payment_gateway 
-
-      response = gateway.purchase((order.total * 100).to_i, @creditcard, gateway_options) 
+      response = gateway.purchase((order.total * 100).to_i, self, gateway_options) 
       gateway_error(response) unless response.success?
       
-      # create a transaction to reflect the authorization
-      self.creditcard_txns << CreditcardTxn.new(
+      
+      # create a creditcard_payment for the amount that was purchased
+      creditcard_payment = order.creditcard_payments.create(:amount => amount, :creditcard => self)
+      # create a transaction to reflect the purchase
+      creditcard_payment.creditcard_txns << CreditcardTxn.new(
         :amount => order.total,
         :response_code => response.authorization,
-        :txn_type => CreditcardTxn::TxnType::AUTHORIZE
+        :txn_type => CreditcardTxn::TxnType::PURCHASE
       )
-      
-      # create a transaction to reflect the capture
-      self.creditcard_txns << CreditcardTxn.new(
-        :amount => order.total, 
-        :response_code => response.authorization, 
-        :txn_type => CreditcardTxn::TxnType::CAPTURE
-      )
-=end
     end
 
     def void
