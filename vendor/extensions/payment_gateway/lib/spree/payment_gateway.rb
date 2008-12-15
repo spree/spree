@@ -10,7 +10,7 @@ module Spree
       creditcard_payment = order.creditcard_payments.create(:amount => amount, :creditcard => self)
       # create a transaction to reflect the authorization
       creditcard_payment.creditcard_txns << CreditcardTxn.new(
-        :amount => order.total,
+        :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::AUTHORIZE
       )
@@ -29,7 +29,7 @@ module Spree
     def purchase(amount)
       #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
       gateway = payment_gateway 
-      response = gateway.purchase((order.total * 100).to_i, self, gateway_options) 
+      response = gateway.purchase((amount * 100).to_i, self, gateway_options) 
       gateway_error(response) unless response.success?
       
       
@@ -37,7 +37,7 @@ module Spree
       creditcard_payment = order.creditcard_payments.create(:amount => amount, :creditcard => self)
       # create a transaction to reflect the purchase
       creditcard_payment.creditcard_txns << CreditcardTxn.new(
-        :amount => order.total,
+        :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::PURCHASE
       )

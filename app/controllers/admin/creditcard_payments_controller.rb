@@ -11,7 +11,7 @@ class Admin::CreditcardPaymentsController < Admin::BaseController
     creditcard.address = @payment_presenter.address
     creditcard.order = @order
     begin
-      creditcard.purchase(@order.total)
+      creditcard.purchase(params[:amount])
     rescue Spree::GatewayError => ge
       flash.now[:error] = "Authorization Error: #{ge.message}"
       render :action => "new" and return 
@@ -38,6 +38,7 @@ class Admin::CreditcardPaymentsController < Admin::BaseController
  
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     @countries = Country.find(:all)
+    @amount = params[:amount] || @order.total
   end
   
   def build_object

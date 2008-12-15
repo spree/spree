@@ -17,7 +17,7 @@
     </table>
   	<div align="right" style="font-size:120%;">
   		<br />
-  		<%= Globalite.localize(:order_total_message) %> <strong><%= number_to_currency @order.total%></strong>
+  		<%= Globalite.localize(:order_total_message) %> <input type="text" name="amount" value="<%= @amount %>">
   	</div>
     <div align="right">
   		<br/>
