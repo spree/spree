@@ -36,11 +36,14 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :products, :member => {:change_image => :post}
   map.resources :addresses
   map.resources :orders, :member => {:address_info => :get, :checkout => :get}, :has_many => [:line_items, :creditcards, :creditcard_payments], :has_one => :address
-  map.resources :taxons
-  
+
   # route globbing for pretty nested taxon and product paths
   map.taxons_with_product '/t/*taxon_path/p/:id', :controller => 'products', :action => 'show'
   map.nested_taxons '/t/*id', :controller => 'taxons', :action => 'show'
+  
+  #moved old taxons route to after nested_taxons so nested_taxons will be default route
+  #this route maybe removed in the near future (no longer used by core)
+  map.resources :taxons
   
   map.namespace :admin do |admin|
     admin.resources :zones
