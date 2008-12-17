@@ -9,6 +9,10 @@
   </thead>
   <tbody>
     <tr>
+      <td><%= link_to t("General Settings"), admin_general_settings_path %></td>
+      <td><%= Globalite.localize(:general_settings_description) %></td>
+    </tr>
+    <tr>
       <td><%= link_to t("Mail Server Settings"), admin_mail_settings_path %></td>
       <td><%= Globalite.localize(:email_server_settings_description) %></td>
     </tr>

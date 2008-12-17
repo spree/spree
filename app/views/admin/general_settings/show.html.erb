@@ -1,0 +1,17 @@
+<h2><%= t("General Settings") %></h2>
+
+<div id="general_settings">
+  <div id="allow_ssl_in_production">
+    <h4>
+      SSL will <%= Spree::Config[:allow_ssl_in_production] ? '' : 'NOT' %> be used in production
+      mode if necessary.
+    </h4>
+  </div>
+  <div id="allow_ssl_in_development_or_test">
+    <h4>
+      SSL will <%= Spree::Config[:allow_ssl_in_development_and_test] ? '' : 'NOT' %> be used in development
+      and test mode if necessary.
+    </h4>
+  </div>
+  <%= link_to t("Edit"), edit_admin_general_settings_path %>
+</div>
