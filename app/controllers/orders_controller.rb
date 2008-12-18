@@ -10,7 +10,7 @@ class OrdersController < Admin::BaseController
 
   create.after do    
     # add the specified product to the order
-    @order.add_variant(Variant.find(params[:id]))    
+    @order.add_variant(Variant.find(params[:variant][:id]))
     @order.save
   end
 

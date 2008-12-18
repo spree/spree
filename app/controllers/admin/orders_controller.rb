@@ -45,7 +45,7 @@ class Admin::OrdersController < Admin::BaseController
       scopes << [ :by_number, @filter.number ] unless @filter.number.blank?
       scopes << [ :by_customer, @filter.customer ] unless @filter.customer.blank?
       scopes << [ :between, @filter.start, (@filter.stop.blank? ? default_stop : @filter.stop) ] unless @filter.start.blank?
-      scopes << [ :by_state, @filter.state.tableize.singularize.gsub(" ", "_") ] unless @filter.state.blank?
+      scopes << [ :by_state, @filter.state.classify.downcase.gsub(" ", "_") ] unless @filter.state.blank?
       scopes << [ :checkout_completed, @filter.checkout=='1' ? true : false] unless @filter.checkout.blank?  
     else
       scopes << [ :checkout_completed, true]  

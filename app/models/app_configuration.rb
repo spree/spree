@@ -24,6 +24,8 @@ class AppConfiguration < Configuration
   preference :show_zero_stock_products, :boolean, :default => true
   preference :admin_products_per_page, :integer, :default => 10 
   preference :default_tax_category, :string, :default => nil # Use the name (exact case) of the tax category if you wish to specify
+  preference :allow_ssl_in_production, :boolean, :default => true
+  preference :allow_ssl_in_development_and_test, :boolean, :default => false
 
   validates_presence_of :name
   validates_uniqueness_of :name
