@@ -22,7 +22,7 @@ class Order < ActiveRecord::Base
   validates_numericality_of :item_total
   validates_numericality_of :total
 
-  named_scope :by_number, lambda {|number| {:conditions => ["number = ?", number]}}
+  named_scope :by_number, lambda {|number| {:conditions => ["orders.number = ?", number]}}
   named_scope :between, lambda {|*dates| {:conditions => ["orders.created_at between :start and :stop", {:start => dates.first.to_date, :stop => dates.last.to_date}]}}
   named_scope :by_customer, lambda {|customer| {:include => :user, :conditions => ["users.email = ?", customer]}}
   named_scope :by_state, lambda {|state| {:conditions => ["state = ?", state]}}

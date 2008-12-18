@@ -77,13 +77,25 @@
                 </td>
               </tr>
               <tr>
-                <td><%= t("Customer") %></td>
+                <td><%= t("Email") %></td>
                 <td>
                   <%= f.text_field :customer, :size=>13 %>
                 </td>
               </tr>
               <tr>
-                <td colspan="2"><%= t("Checkout Complete") %>&nbsp;<%= f.check_box :checkout, {:style => "vertical-align:middle;"}%>
+                <td><%= t("First Name") %></td>
+                <td>
+                  <%= f.text_field :firstname, :size=>13 %>
+                </td>
+              </tr>
+              <tr>
+                <td><%= t("Last Name") %></td>
+                <td>
+                  <%= f.text_field :lastname, :size=>13 %>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2"><%= t("Show Incomplete Orders") %>&nbsp;<%= f.check_box :checkout, {:style => "vertical-align:middle;"}%>
                 </td>
               </tr>
             </tbody>
