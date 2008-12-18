@@ -26,7 +26,7 @@
           <td>
             <table id="menu" border="0">
               <tr>
-                <td rowspan="2" width="150" valign="top"><%= image_tag "spree/spree.jpg", :plugin=>"spree" %></td>
+                <td rowspan="2" width="150" valign="top"><%= image_tag Spree::Config[:admin_interface_logo] %></td>
                 <td><%= link_to t('Overview'), :controller => '/admin/overview' %></td>
                 <td><%= link_to t('Configuration'), :controller => '/admin/configurations' %></td>
                 <td><%= link_to t('Orders'), :controller => '/admin/orders' %></td>
