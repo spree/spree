@@ -19,7 +19,7 @@ class Admin::ProductsController < Admin::BaseController
   update.response do |wants| 
     # override the default redirect behavior of r_c
     # need to reload Product in case name / permalink has changed
-    wants.html {redirect_to edit_admin_product_url Product.find(@product.id) }
+    wants.html {redirect_to edit_admin_product_url(Product.find(@product.id)) }
   end
   
   # override the destory method to set deleted_at value 
