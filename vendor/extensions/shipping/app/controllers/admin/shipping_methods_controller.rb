@@ -3,8 +3,6 @@ class Admin::ShippingMethodsController < ApplicationController
     before_filter :load_data
     layout 'admin'
     
-    require_role :admin
-    
     update.response do |wants|
       wants.html { redirect_to collection_url }
     end

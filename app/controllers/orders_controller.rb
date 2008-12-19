@@ -1,4 +1,4 @@
-class OrdersController < Admin::BaseController
+class OrdersController < Spree::BaseController
   before_filter :login_required, :only => [:checkout]
   before_filter :load_object, :only => [:checkout]
   ssl_required :show

@@ -41,35 +41,10 @@
 #          If it evaluates to true, the role is required.
 #  * :unless - The inverse of :if
 #
-'UsersController':
-  permission1: 
-    roles : [admin]
-    options :
-      for : [index, delete]
-'Admin::UsersController':
+
+# By default, admin role is required for all controllers extending Admin::BaseController (unless otherwise specified here)
+'Admin::BaseController':
   permission1:
     roles : [admin]   
-'Admin::OrdersController':
-  permission1:
-    role : [admin]
-'Admin::ProductsController':
-  permission1:
-    role : [admin]
-'Admin::ZonesController':
-  permission1:
-    role : [admin]
-'Admin::TaxCategoriesController':
-  permission1:
-    role : [admin]    
-'Admin::ConfigurationController':
-  permission1:
-    role : [admin]
-'Admin::OverviewController':
-  permission1:
-    role : [admin]  
-'Admin::TaxonsController':
-  permission1:
-    role : [admin]
-'Admin::TaxonomiesController':
-  permission1:
-    role : [admin]
+    
+# TODO - restrict users and orders
