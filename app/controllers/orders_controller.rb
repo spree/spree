@@ -1,7 +1,10 @@
 class OrdersController < Admin::BaseController
   before_filter :login_required, :only => [:checkout]
   before_filter :load_object, :only => [:checkout]
+  before_filter :can_only_view_own_orders, :only => [:show]
+
   ssl_required :show
+
   layout 'application'
   
   helper :products
@@ -32,7 +35,7 @@ class OrdersController < Admin::BaseController
     if object.checkout_complete
       # remove the order from the session
       session[:order_id] = nil
-      redirect_to object_url and return
+      redirect_to object_url(:checkout_complete => true) and return
     else
       # note: controllers participating in checkout process are responsible for calling Order#next! 
       next_url = self.send("new_order_#{object.state}_url", @order)
@@ -83,5 +86,9 @@ class OrdersController < Admin::BaseController
       end
     end
     find_order
+  end
+ 
+  def can_only_view_own_orders
+    access_denied unless current_user.id == object.user_id || current_user.has_role?("admin")
   end
 end

@@ -1,8 +1,13 @@
-<%= link_to Globalite.localize(:back_to_store), products_path %>
-<br/><br/>
-<h1><%= Globalite.localize(:order_processed_successfully) %></h1>
-<br/>
-<%= Globalite.localize(:thank_you_for_your_order) %>
+<%= link_to Globalite.localize(:back_to_store), products_path %> 
+
+<% if params.has_key? :checkout_complete %>
+	<br/><br/>
+	<h1><%= Globalite.localize(:order_processed_successfully) %></h1>
+	<br/>
+	<%= Globalite.localize(:thank_you_for_your_order) %>
+<% else %>
+	| <%= link_to Globalite.localize(:my_account), user_path(current_user) %>
+<% end %>
 <br/><br/>
 
 <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
