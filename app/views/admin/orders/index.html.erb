@@ -106,4 +106,4 @@
     </td>
   </tr>
 </table>
-<%= render :partial => 'shared/paginate', :locals => {:collection => @orders, :options => search_options} unless @orders.empty? -%>
+<%= render :partial => 'shared/paginate', :locals => {:collection => @orders, :options => generate_search_options(@filter)} unless @orders.empty? -%>
