@@ -77,8 +77,9 @@ module ResourceController
           hash_for_smart_path *new_object_url_options
         end
     
-        def collection_url
-          smart_url *collection_url_options
+        def collection_url(options={})
+          return smart_url(*collection_url_options) if options.empty?
+          smart_url *collection_url_options << options
         end
     
         def collection_path
