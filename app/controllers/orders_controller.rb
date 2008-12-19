@@ -1,7 +1,9 @@
 class OrdersController < Spree::BaseController
   before_filter :login_required, :only => [:checkout]
   before_filter :load_object, :only => [:checkout]
+
   ssl_required :show
+
   layout 'application'
   
   helper :products
@@ -32,7 +34,7 @@ class OrdersController < Spree::BaseController
     if object.checkout_complete
       # remove the order from the session
       session[:order_id] = nil
-      redirect_to object_url and return
+      redirect_to object_url(:checkout_complete => true) and return
     else
       # note: controllers participating in checkout process are responsible for calling Order#next! 
       next_url = self.send("new_order_#{object.state}_url", @order)
