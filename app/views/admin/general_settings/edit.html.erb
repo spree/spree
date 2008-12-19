@@ -1,0 +1,18 @@
+<% form_tag(admin_general_settings_path, :method => :put) do -%>
+
+<h2><%= t('General Settings') %></h2>
+
+<div>
+  <p>
+    <%= check_box_tag('preferences[allow_ssl_in_production]', "1", Spree::Config[:allow_ssl_in_production]) %>
+    <strong><%= t('Allow SSL to be used when in production mode') %></strong>
+    <input name="preferences[allow_ssl_in_production]" type="hidden" value="0" />
+  </p>
+  <p>
+    <%= check_box_tag('preferences[allow_ssl_in_development_and_test]', "1", Spree::Config[:allow_ssl_in_development_and_test]) %>
+    <strong><%= t('Allow SSL to be used when in developement and test modes') %></strong>
+    <input name="preferences[allow_ssl_in_development_and_test]" type="hidden" value="0" />
+  </p>
+</div>
+<%= submit_tag t('Save Preferences') %>
+<% end -%>

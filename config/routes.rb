@@ -63,6 +63,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :mail_settings
     admin.resource :inventory_settings
     admin.resources :orders, :has_many => [:payments, :creditcards, :creditcard_payments], :member => {:fire => :put, :resend => :post}
+    admin.resource :general_settings
     admin.resources :taxonomies do |taxonomy|
       taxonomy.resources :taxons
     end

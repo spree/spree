@@ -66,7 +66,7 @@ module Spree::BaseHelper
   
   def mini_image(product)
     if product.images.empty?
-      # TODO - show image not available    
+      image_tag "noimage/mini.jpg"  
     else
       image_tag product.images.first.attachment.url(:mini)  
     end
@@ -74,7 +74,7 @@ module Spree::BaseHelper
 
   def small_image(product)
     if product.images.empty?
-      # TODO - show image not available
+      image_tag "noimage/small.jpg"  
     else
       image_tag product.images.first.attachment.url(:small)  
     end
@@ -82,7 +82,7 @@ module Spree::BaseHelper
 
   def product_image(product)
     if product.images.empty?
-      # TODO - show image not available
+      image_tag "noimage/product.jpg"  
     else
       image_tag product.images.first.attachment.url(:product)  
     end
