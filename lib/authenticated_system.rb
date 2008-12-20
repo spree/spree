@@ -65,7 +65,7 @@ module AuthenticatedSystem
       respond_to do |format|
         format.html do
           store_location
-          flash[:error] = t("Access Denied")
+          flash[:error] = t("Access Denied") if logged_in?
           redirect_to login_path
         end
         format.xml do
