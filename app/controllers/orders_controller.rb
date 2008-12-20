@@ -4,11 +4,12 @@ class OrdersController < Spree::BaseController
 
   ssl_required :show
 
+  resource_controller
+  actions :all, :except => [:index, :destroy]
+
   layout 'application'
   
   helper :products
-  
-  resource_controller
 
   create.after do    
     # add the specified product to the order

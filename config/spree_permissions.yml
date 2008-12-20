@@ -53,5 +53,12 @@
     options :
       except : [new, create]   
       unless : "current_user.id == object.id"
+# Users can only see their own orders
+'OrdersController':
+  permission1:
+    roles : [admin]
+    options :
+      except : [new, create]   
+      unless : "object.user_id == nil || current_user.id == object.user_id"
       
 # TODO - restrict orders
