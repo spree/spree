@@ -1,5 +1,5 @@
 class OrdersController < Spree::BaseController
-  before_filter :login_required, :only => [:checkout]
+  before_filter :require_user_account, :only => [:checkout]
   before_filter :load_object, :only => [:checkout]
 
   ssl_required :show
@@ -55,19 +55,8 @@ class OrdersController < Spree::BaseController
   end
 
   protected
-  # Custom access denied action for orders.  In the case of an order, we'd like the user to be presented with a user 
-  # signup screen (as opposed to login) since its likely the user does not yet have an account.  The signup screen 
-  # also contains a link to the login screen if they already have an account.
-  def access_denied
-    respond_to do |format|
-      format.html do
-        store_location
-        redirect_to signup_path
-      end
-      format.xml do
-        request_http_basic_authentication 'Web Password'
-      end
-    end
+  def require_user_account
+    redirect_to signup_path unless logged_in?
   end
     
   private
