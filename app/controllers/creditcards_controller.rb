@@ -1,4 +1,4 @@
-class CreditcardsController < Admin::BaseController
+class CreditcardsController < Spree::BaseController
   before_filter :load_data
   before_filter :validate_payment, :only => :create
   ssl_required :new, :create

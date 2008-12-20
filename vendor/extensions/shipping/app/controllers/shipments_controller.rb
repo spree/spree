@@ -1,4 +1,4 @@
-class ShipmentsController < Admin::BaseController
+class ShipmentsController < Spree::BaseController
   before_filter :login_required
   before_filter :state_check
   before_filter :check_existing, :only => :new

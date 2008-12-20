@@ -1,4 +1,4 @@
-class AddressesController < Admin::BaseController
+class AddressesController < Spree::BaseController
   before_filter :check_existing, :only => :new
   before_filter :load_data
   before_filter :load_countries, :except => :country_changed
