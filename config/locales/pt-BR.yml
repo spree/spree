@@ -1,0 +1,223 @@
+pt-BR:
+  abbreviation: Abreviação
+  account: Conta
+  action: Ação
+  add: Adicionar
+  add_category: Adicionar Categoria
+  add_option_type: Adicionar Tipo de Opção
+  add_option_types: Adicionar Tipo de Opção
+  add_product_properties: Adicionar Propriedades de Produto
+  address_information: Informação de Endereço
+  add_to_cart: Adicionar ao Carrinho
+  adjustment: Ajuste
+  administration: Administração
+  amount: Valor
+  are_you_sure_category: Tem certeza que quer apagar esta categoria?
+  are_you_sure_delete_image: Tem certeza que quer apagar esta imagem?
+  are_you_sure_option_type: Tem certeza que quer apagar este tipo de opção?
+  are_you_sure_delete: Tem certeza que quer apagar este registro?
+  available_on: Disponível em
+  back: Voltar
+  back_to_store: Voltar à Loja
+  bill_address: Endereço da Conta
+  billing_address: Endereço de Cobrança
+  cancel: Cancelar
+  card_code: Código do Cartão
+  card_number: Número do Cartão
+  cart: Carrinho
+  categories: Categorias
+  category: Categoria
+  change: Mudar
+  change_language: Mudar Língua
+  checkout: Finalizar
+  city: Cidade
+  comp_order: Computar Pedido
+  comp_order_confirmation: O cliente não será cobrado. Tem certeza que quer computar este pedido?
+  configuration: Configuração
+  configuration_options: Opções de Configuração
+  configurations: Configurações
+  confirm: Confirme
+  confirm_password: Confirmação de Senha
+  continue_shopping: Continue comprando
+  continue_shopping: Continue sua compra
+  country: País
+  create: Criar
+  create_a_new_account: Crie uma nova conta
+  credit_card: Cartão de Crédito
+  current: Atual
+  customer: Cliente
+  date: Data
+  date_range: Período de Data
+  delete: Apagar
+  description: Descrição
+  destroy: Destruir
+  display: Mostrar
+  edit: Editar
+  editing_category: Editando Categoria
+  editing_option_types: Editando Tipos de Opção
+  editing_state: Editando Estado
+  editing_tax_category: Editando Categoria de Taxa
+  editing_user: Editando Usuário
+  email_address: Endereço de Email
+  email: Email
+  email_server_settings_description: Ajustar as configurações do servidor de email.
+  empty_cart: Esvaziar Carrinho
+  error: erro
+  expiration_month: Mês de Expiração
+  expiration_year: Ano de Expiração
+  extension: Extensão
+  extensions: Extensões
+  filename: Nome do arquivo
+  final_confirmation: Confirmação Final
+  first_name: Primeiro Nome
+  gateway: Gateway
+  gateway_setting_description: Selecionar um gateway de pagamento e ajustar suas configurações.
+  hello_user: Olá Usuário
+  image: Imagem
+  images: Imagens
+  inventory_adjustment: Ajuste de Inventário
+  inventory: Inventário
+  inventory_setting_description: Inventory Configuration, Backordering, Zero-Stock Display
+  item_description: Descrição de Item
+  item: Item
+  item_total: Total de Item
+  last_name: Último Nome
+  listing_categories: Listando Categorias
+  listing_option_types: Listando Tipos de Opções
+  listing_orders: Listando Pedidos
+  listing_reports: Listando Relatórios
+  listing_tax_categories: Listando Categorias de Taxa
+  listing_users: Listando Usuários
+  logged_in_as: Logado como
+  log_in: Entre
+  login_name: Login
+  logout: Sair
+  mail_server_settings: Configuração do Servidor de E-mail
+  master_price: Preço Principal
+  my_account: Minha Conta
+  name: Nome
+  new_category: Nova categoria
+  new_image: Nova Imagem
+  new_option_type: Novo Tipo de Opção
+  new_option_value: Nova Opção de Valor
+  new_product: Novo Produto
+  new_property: Nova Propriedade
+  new_prototype: Novo Protótipo
+  new_state: Novo Estado
+  new_tax_category: Nova Categoria de Taxa
+  new_user: Novo Usuário
+  new_variant: Nova Variante
+  new_zone: Nova Zona
+  next: Próximo
+  no_items_in_cart: Nr. de itens no carrinho
+  none: Nenhum
+  none_available: Nenhum Disponível
+  number: Número
+  on_hand: Na Mão
+  operation: Operação
+  options: Opções
+  option_types: Tipos de Opção
+  option_Values: Opção de Valores
+  order_number: Nr. Pedido
+  order_confirmation_note: Anotação de confirmação do pedido
+  order_date: Data do Pedido
+  order_details: Detalhes do Pedido
+  order_number: "Nr. Pedido"
+  order: Pedido
+  order_processed_successfully: Seu pedido foi processado com sucesso.
+  orders: Pedidos
+  order_total: Total do Pedido
+  or: ou
+  overview: Resumo
+  parent_category: Categoria Pai
+  password: Senha
+  payment: Pagamento
+  payment_gateway: Gateway de Pagamento
+  phone: Fone
+  presentation: Apresentação
+  previous: anterior
+  price: Preço
+  problem_authorizing_card: Problema na autorização do cartão
+  problems_processing_order: Tivemos problemas processando este pedido
+  problem_capturing_card: Problema capturando cartão de crédito
+  process: Processar
+  product: Produto
+  products: Produtos
+  product_properties: Propriedades de Produto
+  property: Propriedade
+  properties: Propriedades
+  prototypes: Protótipos
+  qty: Qtde.
+  remember_me: Lembre-se de mim
+  remove: Remover
+  reports: Relatórios
+  resend: Reenviar
+  response_code: Código de Resposta
+  sales_total: Total de Venda
+  sales_totals: Total de Vendas
+  sales_totals_description: Total de Vendas para todos os Pedidos
+  search: Pesquisa
+  select: Selecionar
+  select_from_prototype: Selecionar a partir de Protótipo
+  ship_address: Endereço da Entrega
+  shipping_address: Endereço de Entrega
+  shipping_method: Método de Entrega
+  shipping: Entrega
+  shipping_total: Total de Entrega
+  shopping_cart: Carrinho de Compra
+  sign_up: Cadastrar
+  sku: SKU
+  start: Início
+  state: Estado
+  states: Estados
+  state_setting_description: Administrar a lista de estados/províncias associados a cada país.
+  status: Status
+  stop: Final
+  store: Loja
+  street_address_2: Endereço (compl.)
+  street_address: Endereço
+  subtotal: Sub-total
+  subtract: Subtrair
+  system: Sistema
+  tax: Taxa
+  tax_category: Categoria de Taxa
+  tax_categories: Categorias de Taxa
+  tax_categories_setting_description: Ajustar as categorias de taxas para identificar quais produtos devem ser taxados.
+  tax_total: Taxa Total
+  thank_you_for_your_order: Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle.
+  time: Horário
+  total: Total
+  transaction: Transação
+  try_again: Tente novamente
+  type: Tipo
+  update: Atualizar
+  use_different_shipping_address: Use um Endereço de Entrega Diferente
+  users: Usuários
+  user: Usuário
+  value: Valor
+  variants: Variantes
+  version: Versão
+  website: Website
+  welcome_to_sample_store: Bem Vindo à Loja de Exemplo
+  what_is_a_cvv: O que é o Código do Cartão de Crédito (CVV)?
+  what_is_this: O que é isso?
+  zip: Cep
+  zone: Zona
+  zones: Zonas
+  zone_setting_description: Coleção de países, estados e outras zonas a serem usados nos cálculos.
+  order_status_incomplete: Incompleto
+  order_status_authorized: Autorizado
+  order_status_captured: Capturado
+  order_status_canceled: Cancelado
+  order_status_returned: Devolvido
+  order_status_shipped: Entregue
+  order_status_paid: Pago
+  order_status_pending_payment: Pendente de Pagamento
+  order_status_abandoned: Abandonado
+  order_operation_authorize: Autorizar
+  order_operation_capture: Capturar
+  order_operation_cancel: Cancelar
+  order_operation_return: Devolver
+  order_operation_ship: Entregar
+  order_operation_comp: Computar
+  order_operation_delete: Apagar

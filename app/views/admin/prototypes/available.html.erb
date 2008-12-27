@@ -1,8 +1,8 @@
 <table class="basic-table">
 	<thead>
 		<tr>
-			<th><%= t("Name") %></th>
-			<th><%= t("Action") %></th>
+			<th><%= t("name") %></th>
+			<th><%= t("action") %></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -10,7 +10,7 @@
       <tr id="row_<%= prototype.id %>">
         <td valign="top"><%= prototype.name %></td>
 		    <td valign="top">
-					<%= link_to_remote "Select", 
+					<%= link_to_remote t("select"), 
 		                         :url => select_admin_prototype_url(prototype), 
 		                         :update => 'rjs-target',
 														 :before => "Element.show('busy_indicator')", 
@@ -19,7 +19,7 @@
       </tr>
     <% end %>
     <% if @prototypes.empty? %>
-     <tr><td colspan="2">None.</td></tr>
+     <tr><td colspan="2"><% t("none") %>.</td></tr>
     <% end %>
   </tbody>
 </table>

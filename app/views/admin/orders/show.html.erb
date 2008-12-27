@@ -1,6 +1,6 @@
 <% content_for :sub_menu do %>
   <ul id="act-nav">
-    <li><%= link_to t("Resend"), resend_admin_order_url(@order), :method => :post %></li>
+    <li><%= link_to t("resend"), resend_admin_order_url(@order), :method => :post %></li>
   </ul>
 <% end %>
 <%= render :partial => 'shared/order_tabs', :locals => {:current => "Order Details"} %>
@@ -9,7 +9,7 @@
 <% if @order.address %>
   <table class="order-address">
     <tr>
-      <th><%= t("Ship Address") %></th>
+      <th><%= t("ship_address") %></th>
     </tr>
     <tr>
       <td>
@@ -21,7 +21,7 @@
 <% if @order.user %>
   <table class="order-address">
     <tr>
-      <th><%= t("Email") %></th>
+      <th><%= t("email") %></th>
     </tr>
     <tr>
       <td><%= @order.user.email if @order.user%></td>
@@ -30,9 +30,9 @@
 <% end %>
 <table class="basic-table">
   <tr>
-    <th><%= t("Event") %></th>
-    <th><%= t("User") %></th>
-    <th><%= "#{t('Date')}/#{t('Time')}" %></th>
+    <th><%= t("event") %></th>
+    <th><%= t("user") %></th>
+    <th><%= "#{t('date')}/#{t('time')}" %></th>
   </tr>
   <% @order.state_events.sort.each do |event| %>
     <tr>
@@ -43,7 +43,7 @@
   <% end %>
   <% if @order.state_events.empty? %>
     <tr>
-      <td colspan="3"><%= t("None Available") %></td>
+      <td colspan="3"><%= t("none_available") %></td>
     </tr>
   <% end %>
 </table>

@@ -1,7 +1,7 @@
 <%= render :partial => "yui_head" %>
-<h1><%= :taxonomies.l("Taxonomies") %></h1>	
+<h1><%= t("taxonomies") %></h1>	
 
 <div id='list-taxonomies'>
 	<%= render :partial => 'list' %>
 </div>
-<%= link_to t('New Taxonomy'), new_admin_taxonomy_url %>
+<%= link_to t('new_taxonomy'), new_admin_taxonomy_url %>

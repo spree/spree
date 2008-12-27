@@ -14,11 +14,11 @@
     </table>
   	<div align="right" style="font-size:120%;">
   		<br />
-  		<%= Globalite.localize(:order_total_message) %> <strong><%= number_to_currency @order.total%></strong>
+  		<%= r("order_total_message") %> <strong><%= number_to_currency @order.total%></strong>
   	</div>
     <div align="right">
   		<br/>
-      <%= submit_tag t('Continue') %>
+      <%= submit_tag t('continue') %>
     </div>
   <% end %>
 </div>

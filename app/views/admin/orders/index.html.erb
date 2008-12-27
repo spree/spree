@@ -1,7 +1,7 @@
 <% content_for :head do -%>
   <%= calendar_date_select_includes %>
 <% end -%>
-<h1><%= t("Listing orders") %></h1>
+<h1><%= t("listing_orders") %></h1>
 
 <table>
   <tr>
@@ -10,11 +10,11 @@
         <table class="admin-report" width="545">
           <thead>
             <tr>
-              <th><%= t("Order Date") %></th>
-              <th><%= t("Number") %></th>
-              <th><%= t("Status") %></th>
-              <th><%= t("Customer") %></th>
-              <th><%= t("Total") %></th>
+              <th><%= t("order_date") %></th>
+              <th><%= t("number") %></th>
+              <th><%= t("status") %></th>
+              <th><%= t("customer") %></th>
+              <th><%= t("total") %></th>
             </tr>
           </thead>
           <tbody>
@@ -37,19 +37,19 @@
           <table class="admin-search">
             <thead>
               <tr>
-                <th colspan="2"><%= t("Date Range") %></th>
+                <th colspan="2"><%= t("date_range") %></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><%= t("Start") %>:</td>
+                <td><%= t("start") %>:</td>
                 <td>
                   <%= error_message_on :filter, :start%>
                   <%= calendar_date_select :filter, :start, :style=>"width:100px" %>
                 </td>
               </tr>
               <tr>
-                <td>Stop:</td>
+                <td><%= t("stop") %>:</td>
                 <td>
                   <%= error_message_on :filter, :stop%>
                   <%= calendar_date_select :filter, :stop, :style=>"width:100px" %>
@@ -60,47 +60,47 @@
           <table class="admin-search">
             <thead>
               <tr>
-                <th colspan="2"><%= t("Order Details") %></th>
+                <th colspan="2"><%= t("order_details") %></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><%= Globalite.localize(:order_number) %></td>
+                <td><%= t("order_number") %></td>
                 <td>
                   <%= f.text_field :number, :size=>13 %>
                 </td>
               </tr>
               <tr>
-                <td><%= t("Status") %></td>
+                <td><%= t("status") %></td>
                 <td>
                   <%= f.select :state, Order.state_machines['state'].states.collect {|status| status.titleize}, {:include_blank => true}, {:style => "width: 115px"}%>
                 </td>
               </tr>
               <tr>
-                <td><%= t("Email") %></td>
+                <td><%= t("email") %></td>
                 <td>
                   <%= f.text_field :customer, :size=>13 %>
                 </td>
               </tr>
               <tr>
-                <td><%= t("First Name") %></td>
+                <td><%= t("first_name") %></td>
                 <td>
                   <%= f.text_field :firstname, :size=>13 %>
                 </td>
               </tr>
               <tr>
-                <td><%= t("Last Name") %></td>
+                <td><%= t("last_name") %></td>
                 <td>
                   <%= f.text_field :lastname, :size=>13 %>
                 </td>
               </tr>
               <tr>
-                <td colspan="2"><%= t("Show Incomplete Orders") %>&nbsp;<%= f.check_box :checkout, {:style => "vertical-align:middle;"}%>
+                <td colspan="2"><%= t("show_incomplete_orders") %>&nbsp;<%= f.check_box :checkout, {:style => "vertical-align:middle;"}%>
                 </td>
               </tr>
             </tbody>
           </table>
-          <%=submit_tag t("Search") %>
+          <%=submit_tag t("search") %>
         </div>
       <% end %>
     </td>

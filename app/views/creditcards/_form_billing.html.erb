@@ -1,34 +1,34 @@
-<h4>Billing Address</h4>
+<h4><%= t("billing_address") %></h4>
 <table>
   <tr>
-    <td width="150"><%= t("First Name") %></td>
+    <td width="150"><%= t("first_name") %></td>
     <td><%= f.text_field :address_firstname %></td>
   </tr>
   <tr>
-    <td><%= t("Last Name") %></td>
+    <td><%= t("last_name") %></td>
     <td><%= f.text_field :address_lastname %></td>
   </tr>
   <tr>
-    <td><%= t("Street Address") %></td>
+    <td><%= t("street_address") %></td>
     <td><%= f.text_field :address_address1 %></td>
   </tr>
   <tr>
-    <td><%= Globalite.localize(:street_address_2) %></td>
+    <td><%= t("street_address_2") %></td>
     <td><%= f.text_field :address_address2 %></td>
   </tr>
   <tr>
-    <td><%= t("City") %></td>
+    <td><%= t("city") %></td>
     <td><%= f.text_field :address_city %></td>
   </tr>
   <tr id="address_states_row">
 		<%= render :partial => "creditcards/states" %>
   </tr>
   <tr>
-    <td><%= t("Zip") %></td>
+    <td><%= t("zip") %></td>
     <td><%= f.text_field :address_zipcode %></td>
   </tr>
   <tr>
-    <td><%= t("Country") %></td>
+    <td><%= t("country") %></td>
     <td>
       <select id="payment_presenter_address_country_id" name="payment_presenter[address_country_id]" style="width:150px;"> 
         <%= options_from_collection_for_select(@countries, :id, :name, @selected_country_id) %>
@@ -43,7 +43,7 @@
     </td>
   </tr>
   <tr>
-    <td><%= t("Phone") %></td>
+    <td><%= t("phone") %></td>
     <td><%= f.text_field :address_phone %></td>
   </tr>
 </table>

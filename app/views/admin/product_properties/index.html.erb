@@ -1,21 +1,21 @@
 <%= render :partial => 'shared/product_sub_menu' %>
-<h1><%= t("Editing Product")%></h1>
-<%= render :partial => 'shared/product_tabs', :locals => {:current => "Product Properties"} %>
+<h1><%= t("editing_product")%></h1>
+<%= render :partial => 'shared/product_tabs', :locals => {:current => "product_properties"} %>
 
 <%= error_messages_for :product %>
 <% form_for(:product, :url => admin_product_url(@product), :html => { :method => :put }) do |f| %>
   <table class="basic-table">
     <thead>
       <tr>
-        <th><%= t("Property") %></th>
-        <th><%= t("Value") %></th>
-        <th><%= t("Action") %></th>
+        <th><%= t("property") %></th>
+        <th><%= t("value") %></th>
+        <th><%= t("action") %></th>
       </tr>
     </thead>
     <tbody id="product_properties">
   		<%= f.render_associated_form(@product.product_properties) %>
   		<tr id="none">
-  		  <td colspan="3"><%= @product.product_properties.empty? ? "#{t("None")}." : "" %></td>
+  		  <td colspan="3"><%= @product.product_properties.empty? ? "#{t("none")}." : "" %></td>
   		</tr>
   	</tbody>
   </table>
@@ -24,7 +24,7 @@
                             {:onclick => "Element.hide('none');"}) %>
   &nbsp;&nbsp;
 	<span id="new_ptype_link">
-	  <%= link_to_remote t("Select From Prototype"), 
+	  <%= link_to_remote t("select_from_prototype"), 
 	                     :url => available_admin_prototypes_url, 
 	                     :method => :get,
 	                     :update => "prototypes",

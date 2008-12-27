@@ -1,10 +1,10 @@
 <%= render :partial => 'shared/order_tabs', :locals => {:current => "Payments"} %>
 <br/>
-<h2><%= t("Credit Card Payment")%></h2>
+<h2><%= t("credit_card_payment")%></h2>
 <br/>
 <table class="order-address">
   <tr>
-    <th><%= t("Bill Address") %></th>
+    <th><%= t("bill_address") %></th>
   </tr>
   <tr>
     <td>
@@ -13,14 +13,14 @@
   </tr>
 </table>
 <br/>
-<b><%= t("Credit Card")%>: </b> &nbsp; #<%= @creditcard_payment.creditcard.display_number %><br/>
-<b><%= t("Type")%> : </b> &nbsp; <%= @creditcard_payment.creditcard.cc_type.titleize %><br/>
+<b><%= t("credit_card")%>: </b> &nbsp; #<%= @creditcard_payment.creditcard.display_number %><br/>
+<b><%= t("type")%> : </b> &nbsp; <%= @creditcard_payment.creditcard.cc_type.titleize %><br/>
 <table class="basic-table">
   <tr>
-    <th><%= t("Transaction") %></th>
-    <th><%= t("Amount") %></th>
-    <th><%= t("Response Code") %></th>
-    <th><%= "#{t('Date')}/#{t('Time')}" %></th>
+    <th><%= t("transaction") %></th>
+    <th><%= t("amount") %></th>
+    <th><%= t("response_code") %></th>
+    <th><%= "#{t('date')}/#{t('time')}" %></th>
   </tr>
   <% @creditcard_payment.txns.each do |t| %>
     <tr>
@@ -31,4 +31,4 @@
     </tr>
   <% end %>
 </table>
-<%= link_to t("List"), admin_order_payments_url(@order) %>
+<%= link_to t("list"), admin_order_payments_url(@order) %>

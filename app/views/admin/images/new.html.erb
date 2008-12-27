@@ -1,8 +1,8 @@
-<h4><%= t("New Image") %></h4>
+<h4><%= t("new_image") %></h4>
 <% form_for(:image, :url => { :controller => 'images', :action => "new" }, :html => { :multipart => true }) do |form| %>
 	<table class="basic-table">
 	  <tr>
-	    <td><%= t("Filename") %>:</td>
+	    <td><%= t("filename") %>:</td>
 	    <td><%= form.file_field :uploaded_data %></td>
 	  </tr>
 	</table> 

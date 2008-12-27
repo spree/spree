@@ -2,7 +2,7 @@
 <br/>
 <div id="creditcard">
   <%=error_messages_for :payment_presenter %>
-  <h1><%= t("New Creditcard Payment")%></h1>
+  <h1><%= t("new_creditcard_payment")%></h1>
   <br/>
   <% form_for(:payment_presenter, :url => admin_order_creditcard_payments_url(@order)) do |f| %>
     <table cellpadding="5" width="100%">
@@ -17,11 +17,11 @@
     </table>
   	<div align="right" style="font-size:120%;">
   		<br />
-  		<%= Globalite.localize(:order_total_message) %> <input type="text" name="amount" value="<%= @amount %>">
+  		<%= t("order_total_message") %> <input type="text" name="amount" value="<%= @amount %>">
   	</div>
     <div align="right">
   		<br/>
-      <%= submit_tag t('Continue') %>
+      <%= submit_tag t('continue') %>
     </div>
   <% end %>
 </div>

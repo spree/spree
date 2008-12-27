@@ -1,6 +1,6 @@
 <%= render :partial => 'shared/product_sub_menu' %>
-<h1><%= t("Editing Product") %></h1>
-<%= render :partial => 'shared/product_tabs', :locals => {:current => "Variants"} %>
+<h1><%= t("editing_product") %></h1>
+<%= render :partial => 'shared/product_tabs', :locals => {:current => "variants"} %>
 <%= error_messages_for :variant %>
 
 <% form_for(:variant, :url => object_url, :html => { :method => :put }) do |f| %>

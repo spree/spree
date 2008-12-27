@@ -3,6 +3,7 @@
 
 class ApplicationController < ActionController::Base
   before_filter :instantiate_controller_and_action_names
+  before_filter :set_user_language
 
   # Pick a unique cookie name to distinguish our session data from others'
   session :session_key => '_spree_session_id'
@@ -26,4 +27,7 @@ class ApplicationController < ActionController::Base
     @taxonomies = Taxonomy.find(:all, :include => {:root => :children})
   end
   
+  def set_user_language
+    #I18n.locale = Spree::Config[:default_locale]
+  end
 end

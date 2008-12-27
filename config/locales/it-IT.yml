@@ -1,0 +1,196 @@
+it-IT:
+  account: Conto
+  action: Azione
+  add_category: Aggiungi categoria 
+  add_option_type: Aggiungi opzione
+  add_option_types: Aggiungi opziones
+  add_product_properties: 
+  address_information: Informazione indirizzo
+  add_to_cart: In carrello
+  adjustment: Adeguamento
+  administration: Amministrazione
+  amount: Totale
+  are_you_sure_category: Sei sicuro di voler cancellare questa categoria?
+  are_you_sure_delete_image: Sei sicuro di voler cancellare questa imagine?
+  are_you_sure_option_type: Sei sicuro di voler cancellare questa opzione?
+  back: Indietro
+  back_to_store: Indietro al shop
+  bill_address: Indirizzo di fatturazione
+  billing_address: Indirizzo di fatturazione
+  cancel: cancelare
+  card_code: CCC Code
+  card_number: Nummero carta
+  cart: Carrello
+  categories: Categorie
+  category: Categoria
+  change: cambia
+  change_language: Cambia lingua
+  checkout: Acquista
+  city: Città
+  comp_order: Cancellare l'ordine
+  configuration: Configurazione
+  confirm: Confermare
+  confirm_password: Confermare Password
+  continue_shopping: Continuare l'acquisto
+  continue_shopping: Continuare l'acquisto
+  country: country
+  create: Inserire
+  credit_card: 
+  current: stato
+  customer: Cliente
+  date: Data
+  date_range: data (da/a)
+  delete: Cancellare
+  description: Descrizione
+  description: Descrizione
+  destroy: Cancellare
+  display: Visualizza
+  edit: editare
+  editing_category: Edita la categoria
+  editing_option_types: Edita l'opzione
+  editing_user: Edita l'utente
+  email_address: Indirizzo email
+  email: Email
+  empty_cart: Cancella carrello
+  error: errore
+  expiration_month: Valido fino (Mese)
+  expiration_year: Valido fino (Anno)
+  extension: estensione
+  extensions: estensioni
+  filename: file
+  final_confirmation: Conferma finale
+  first_name: nome
+  hello_user: Ciao User
+  image: Imagine
+  images: Imagini
+  inventory_adjustment: Edita magazzino
+  inventory: Magazzino
+  inventory_setting_description: Inventory Configuration, Backordering, Zero-Stock Display
+  item_description: Descrizione articolo
+  item: Articolo
+  item_total: Articolo totale
+  last_name: Cognome
+  listing_categories: Categorie
+  listing_option_types: Opzioni
+  listing_orders: Ordini
+  listing_reports: Report
+  listing_users: Utente
+  logged_in_as: Loggato con
+  log_in: Login
+  login: Registrarsi
+  login_name: Utente
+  logout: Logout
+  master_price: Prezzo base
+  my_account: Mio conto
+  name: Nome
+  new_category: Nuova categoria
+  new_image: Nuova immagine
+  new_option_type: Nuova opzione
+  new_option_value: Nuovo valore opzione
+  new_user: Nuovo utente
+  new_variant: Nuova variante
+  next: continua
+  no_items_in_cart: Carrello vuoto
+  none: 
+  none_available: None Available
+  number: Nummero
+  on_hand: In magazzino
+  operation: Operazione
+  options: Operazioni
+  option_types: Opzioni 
+  option_Values: Valori opzioni
+  order_number: 
+  order_confirmation_note: Nota ordina
+  order_date: Data ordine 
+  order_details: Detagli ordine
+  order_number: "Ordine #"
+  order: Ordine
+  order_processed_successfully: L'ordine è terminato con successo
+  orders: Ordini
+  order_total: Totale
+  or: o
+  overview: Panoramica
+  parent_category: Sottocategoria di
+  password: Password
+  payment: Pagamento
+  phone: Telefono
+  presentation: Presentazione
+  previous: Indietro
+  price: Prezzo
+  problems_processing_order: Suo ordine non è stato elaborato
+  problem_capturing_card:
+  process: Manda
+  product: Prodotto
+  products: Prodotti
+  product_properties: 
+  property: 
+  properties: 
+  prototypes: 
+  qty: Qnt
+  remember_me: Salva i dettagli su questo computer
+  remove: 
+  reports: Reports
+  resend: Riinvia
+  response_code: Response Code
+  sales_total: Vendità totale
+  sales_totals: Vendite totali
+  search: Cerca
+  select: Seleziona
+  select_from_prototype: 
+  ship_address: Indirizzo di consegna
+  shipping_address: Indirizzo di consegna
+  shipping_method: Metodo di consegna
+  shipping: Consegna
+  shipping_total: Totale costi di consegna
+  shopping_cart: Carrello
+  sign_up: Sign up
+  sku: SKU
+  start: Di
+  state: state
+  status: stato
+  stop: A
+  store: Store
+  street_address_2: Via (Campo 2)
+  street_address: Via
+  subtotal: Somma
+  tax: Piva.
+  tax_category: 
+  tax_categories: 
+  tax_categories_setting_description: 
+  tax_total: Piva. Totale
+  time: Tempo
+  total: Totale
+  transaction: Transazioni
+  try_again: Riprova
+  type: Tipo
+  update: Salva
+  use_different_shipping_address: Altro indirizzo di consegna
+  users: Utenti
+  user: Utente
+  value: 
+  variants: Varianti
+  version: Versione
+  website: Sito web
+  welcome_to_sample_store: Benvenuti nel sample store
+  what_is_a_cvv: Cos'è il (CCC) Codice Carta di credito?
+  what_is_this: Cos'è?
+  zip: CAP
+  zone: 
+  zones: 
+  zone_setting_description: 
+  order_status_incomplete: 
+  order_status_authorized: 
+  order_status_captured: 
+  order_status_canceled: 
+  order_status_returned: 
+  order_status_shipped: 
+  order_status_paid: 
+  order_status_pending_payment: 
+  order_status_abandoned:   
+  order_operation_authorize: 
+  order_operation_capture: 
+  order_operation_cancel: 
+  order_operation_return: 
+  order_operation_ship: 
+  order_operation_comp: 
+  order_operation_delete: 

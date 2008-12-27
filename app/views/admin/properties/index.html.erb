@@ -1,11 +1,11 @@
 <%= render :partial => 'shared/product_sub_menu' %>
-<h1><%= t("Properties") %></h1>
+<h1><%= t("properties") %></h1>
 <table class="basic-table">
 	<thead>
 		<tr>
-			<th><%= t("Name") %></th>
-			<th><%= t("Presentation") %></th>
-			<th><%= t("Action") %></th>
+			<th><%= t("name") %></th>
+			<th><%= t("presentation") %></th>
+			<th><%= t("action") %></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -27,7 +27,7 @@
 <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 <br/>
 <span id="new_prop_link">
-  <%= link_to_remote t("New Property"), 
+  <%= link_to_remote t("new_property"), 
                      :url => new_admin_property_url, 
                      :method => :get,
                      :update => "properties",

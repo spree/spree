@@ -1,13 +1,13 @@
 <%= render :partial => 'shared/product_sub_menu' %>
-<h1><%= t("Listing Products") %></h1>
+<h1><%= t("listing_products") %></h1>
 <table>
 	<tr>
 		<td valign="top">
 			<table class="admin-report" width="545">
 			  <tr>
-			    <td><b><%= t("Image") %></b></td>
-			    <td><b><%= t("Name") %></b></td>
-			    <td><b><%= t("Master Price") %></b></td>
+			    <td><b><%= t("image") %></b></td>
+			    <td><b><%= t("name") %></b></td>
+			    <td><b><%= t("master_price") %></b></td>
 			    <td/>
 			  </tr>
 			<% @products.each do |product| %>
@@ -31,33 +31,33 @@
           <table class="admin-search">
             <thead>
               <tr>
-                <th colspan="2">Product Details</th>
+                <th colspan="2"><%= t("product_details") %></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Name</td>
+                <td><%= t("name") %></td>
                 <td>
                   <input name="name" size="15" value="<%=@name%>"/>
                 </td>
               </tr>
               <tr>
-                <td>Sku</td>
+                <td><%= t("sku") %></td>
                 <td>
                   <input name="sku" size="15" value="<%=@sku%>"/>
                 </td>
               </tr>
               <tr>
-   							<td>Deleted</td>
+   							<td><%= t("deleted") %></td>
 								<td><input name="deleted" type="checkbox" <%= @deleted %>/></td>
               </tr>
             </tbody>
           </table>
-          <%=submit_tag "Search"%>
+          <%=submit_tag t("search")%>
         </div>
       </form>
     </td>		
 	</tr>
 </table>
 
-<%= link_to t("New Product"), new_object_url %>
+<%= link_to t("new_product"), new_object_url %>

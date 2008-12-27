@@ -1,4 +1,4 @@
-<h2><%= t("Inventory Server Settings") %></h2>
+<h2><%= t("inventory_server_settings") %></h2>
 
 <div id="inventory_settings">
   <div id="show_zero_stock_products">
@@ -7,5 +7,5 @@
   <div id="allow_backorders">
      <h4>Backordering is <%= show_not(Spree::Config[:allow_backorders]) %> allowed</h4>
   </div>
-  <%= link_to t("Edit"), edit_admin_inventory_settings_path %>
+  <%= link_to t("edit"), edit_admin_inventory_settings_path %>
 </div>

@@ -1,12 +1,12 @@
 <%= render :partial => 'shared/product_sub_menu' %>
-<h1><%= t("Taxons")%></h1>
+<h1><%= t("taxons")%></h1>
 <%= render :partial => 'shared/product_tabs', :locals => {:current => "Taxons"} %>
 <div id="selected-taxons">
   <%= render :partial => "taxon_table", :locals => {:taxons => @taxons} %>
 </div>
 <table>
   <tr>
-    <td><b><%= t('Search') %>:</b></td>
+    <td><b><%= t('search') %>:</b></td>
     <td><input id="searchtext" size="25"></td>
   </tr>
 </table>

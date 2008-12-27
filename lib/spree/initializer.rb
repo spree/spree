@@ -1,7 +1,7 @@
 # Add necessary Rails path
 #$LOAD_PATH.unshift "#{SPREE_ROOT}/vendor/rails/railties/lib"
 #require 'rubygems'
-#gem 'rails', '>=2.1.0'
+#gem 'rails', '>=2.2.2'
 
 require 'initializer'
 require 'spree/extension_loader'
@@ -138,8 +138,13 @@ module Spree
       ActionMailer::Base.template_root = view_paths  if configuration.frameworks.include?(:action_mailer)        
       ActionController::Base.view_paths = view_paths if configuration.frameworks.include?(:action_controller)
     end
+    
+    def initialize_i18n
+      extension_loader.add_locale_paths
+      super
+    end
 
-    def initialize_routing
+    def initialize_routing #BQ - Don't this think method is needed anymore?
       extension_loader.add_controller_paths
       super
     end

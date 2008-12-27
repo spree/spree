@@ -40,6 +40,4 @@ class String #:nodoc:
 end
 
 CalendarDateSelect.format = :american
-
-Locale.code = Spree::Config[:default_locale]
   
