@@ -5,7 +5,7 @@ class OrdersController < Spree::BaseController
   ssl_required :show
 
   resource_controller
-  actions :all, :except => [:index, :destroy]
+  actions :all, :except => :index
 
   layout 'application'
   
