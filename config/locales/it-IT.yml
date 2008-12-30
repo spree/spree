@@ -1,4 +1,6 @@
 it-IT:
+  this_file_language: Italian
+  locale_changed: Locale Changed  
   account: Conto
   action: Azione
   add_category: Aggiungi categoria 

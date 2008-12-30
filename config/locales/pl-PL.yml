@@ -1,4 +1,6 @@
-pl-PT:
+pl-PL:
+  this_file_language: Polski
+  locale_changed: Locale Changed  
   abbreviation: Skrót
   account: Konto
   action: Akcja

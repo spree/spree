@@ -1,4 +1,6 @@
 en-US:
+  this_file_language: English (US)
+  locale_changed: Locale Changed  
   abbreviation: Abbreviation
   account: Account
   action: Action

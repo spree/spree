@@ -28,6 +28,8 @@ class ApplicationController < ActionController::Base
   end
   
   def set_user_language
-    #I18n.locale = Spree::Config[:default_locale]
+    locale = session[:locale] || Spree::Config[:default_locale] || I18n.default_locale
+    locale = AVAILABLE_LOCALES.keys.include?(locale) ? locale : I18n.default_locale
+    I18n.locale = locale
   end
 end

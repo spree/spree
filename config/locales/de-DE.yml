@@ -1,4 +1,6 @@
 de-DE:
+  this_file_language: Deutsch
+  locale_changed: Locale Changed
   account: Konto
   action: Aktion
   add_category: Kategorie hinzufügen 
