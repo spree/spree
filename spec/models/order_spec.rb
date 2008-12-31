@@ -9,7 +9,7 @@ describe Order do
 
     @order = Order.new
     @order.checkout_complete = true
-    @order.creditcard_payment = @creditcard_payment
+    @order.creditcard_payments = [@creditcard_payment]
     @order.number = '#TEST1010'
     @order.user =  @user
 
@@ -29,11 +29,11 @@ describe Order do
   describe "next" do
     describe "from creditcard_payment" do
       before(:each) do
-        @order.state = 'creditcard_payment'
+        @order.state = 'creditcard'
       end
       it "should transition to authorized" do
         @order.next
-        @order.state.should == "authorized"
+        @order.state.should == "charged"
       end
       it "should mark inventory as sold" do
         @inventory_unit.should_receive(:sell!)
@@ -45,19 +45,7 @@ describe Order do
       end
     end
   end
-  
-  describe "ship" do
-    before(:each) {@order.state = "captured"}
-    it "should transition to shipped" do
-      @order.ship
-      @order.state.should == 'shipped'
-    end
-    it "should mark inventory as shipped" do
-      @inventory_unit.should_receive(:ship!)
-      @order.ship
-    end
-  end
-  
+    
   describe "cancel" do
     it "should mark inventory as on_hand" do
       @order.state = "captured"

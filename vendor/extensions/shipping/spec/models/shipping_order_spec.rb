@@ -2,8 +2,20 @@ require File.dirname(__FILE__) + '/../spec_helper.rb'
 
 describe Order do
   before(:each) do
-    @order = Order.new(:address => @address = mock_model(Address, :null_object => true))
-    #add_stubs(@order, :save => true)
+    @order = Order.new #(:address => @address = mock_model(Address, :null_object => true))
+  end
+
+  # moved from order_spec (may not be correct or relevant)
+  describe "ship" do
+    before(:each) {@order.state = "captured"}
+    it "should transition to shipped" do
+      @order.ship
+      @order.state.should == 'shipped'
+    end
+    it "should mark inventory as shipped" do
+      @inventory_unit.should_receive(:ship!)
+      @order.ship
+    end
   end
 
   describe "shipping_countries" do
@@ -88,11 +100,16 @@ describe Order do
     end
   end
   
-  describe "state_machine in 'shipment' state" do
-    it "next! should transition to 'creditcard_payment'" do
+  describe "next!" do
+    it "should transition from 'shipment' to 'shipping_method'" do
       @order.state = 'shipment'
       @order.next!
-      @order.state.should == "creditcard_payment"
+      @order.state.should == "shipping_method"
     end
-  end  
+    it "should transition from 'shipping_method' to 'creditcard'" do
+      @order.state = 'shipping_method'
+      @order.next!
+      @order.state.should == "creditcard"
+    end
+  end
 end
