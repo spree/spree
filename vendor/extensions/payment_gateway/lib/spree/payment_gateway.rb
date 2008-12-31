@@ -60,13 +60,14 @@ module Spree
     end
         
     def gateway_options
-      options = {:billing_address => generate_address_hash(address), 
-                 :shipping_address => generate_address_hash(order.address)}
+      options = {:billing_address => generate_address_hash(order.bill_address), 
+                 :shipping_address => generate_address_hash(order.ship_address)}
       options.merge minimal_gateway_options
     end    
     
     # Generates an ActiveMerchant compatible address hash from one of Spree's address objects
     def generate_address_hash(address)
+      return {} if address.nil?
       {:name => address.full_name, :address1 => address.address1, :address2 => address.address2, :city => address.city,
        :state => address.state_text, :zip => address.zipcode, :country => address.country.iso, :phone => address.phone}
     end

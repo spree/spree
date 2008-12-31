@@ -2,20 +2,19 @@ class Shipment < ActiveRecord::Base
   before_create :generate_shipment_number
   belongs_to :order
   belongs_to :shipping_method
-  before_create :calculate_shipping
+
   after_save :transition_order
+  has_one :address, :as => :addressable, :dependent => :destroy
     
   def shipped?
     self.shipped_at
   end
     
-  private
-  
-  def calculate_shipping
-    calculator = shipping_method.shipping_calculator.constantize.new
-    order.update_attribute(:ship_amount, calculator.calculate_shipping(order))
+  def shipping_methods
+    ShippingMethod.all.select { |method| method.zone.include?(address) }
   end
-  
+
+  private  
   def generate_shipment_number
     record = true
     while record

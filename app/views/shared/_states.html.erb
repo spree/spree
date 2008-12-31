@@ -1,0 +1,14 @@
+<td><%= t("State") %></td>
+<td>
+	<% if @states.length == 0 %>
+			<%= text_field("#{presenter_type}_presenter_address", :state_name) %>
+	<% else %>
+		<%= collection_select("#{presenter_type}_presenter", 
+		                      :address_state_id, 
+		                      @states, 
+		                      :id, 
+		                      :name, 
+		                      {:include_blank => true}, 
+		                      {:style=> 'width:150px;'}) %>
+	<% end %>
+</td>

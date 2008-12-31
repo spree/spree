@@ -1,4 +1,3 @@
-<h4>Billing Address</h4>
 <table>
   <tr>
     <td width="150"><%= t("First Name") %></td>
@@ -21,7 +20,7 @@
     <td><%= f.text_field :address_city %></td>
   </tr>
   <tr id="address_states_row">
-		<%= render :partial => "creditcards/states" %>
+		<%= render :partial => "shared/states", :locals => {:presenter_type => presenter_type} %>
   </tr>
   <tr>
     <td><%= t("Zip") %></td>
@@ -30,14 +29,15 @@
   <tr>
     <td><%= t("Country") %></td>
     <td>
-      <select id="payment_presenter_address_country_id" name="payment_presenter[address_country_id]" style="width:150px;"> 
+      <select id="address_country_id" name="<%=presenter_type%>_presenter[address_country_id]" style="width:150px;"> 
         <%= options_from_collection_for_select(@countries, :id, :name, @selected_country_id) %>
       </select>
-			<%= observe_field :payment_presenter_address_country_id, :url => {:action => :country_changed },
+			<%= observe_field :address_country_id, 
+			  :url => {:action => :country_changed },
 	    	:frequency => 2,
 	    	:update => 'address_states_row',
 	  		:on => "onselect",
-		 		:with => "payment_presenter[address_country_id]",
+		 		:with => "#{presenter_type}_presenter[address_country_id]",
 				:loading => "$('address_states_row').childElements()[1].update('Loading...');"
 			%>       
     </td>

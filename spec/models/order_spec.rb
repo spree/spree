@@ -80,7 +80,6 @@ describe Order do
     end
   end
   
-  
   describe "add_variant" do
     it "should add new line item if product does not currently existing in order" do
       @variant2 = mock_model(Variant, :id => "5678", :price => 9.99)
@@ -142,4 +141,5 @@ describe Order do
  
     end
   end
+
 end

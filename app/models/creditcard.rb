@@ -1,7 +1,7 @@
 class Creditcard < ActiveRecord::Base 
   before_create :filter_sensitive
   belongs_to :order
-  has_one :address, :as => :addressable
+  has_one :address, :as => :addressable, :dependent => :destroy
   has_many :creditcard_payments
   before_validation :prepare
     

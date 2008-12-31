@@ -12,6 +12,7 @@ class CreditcardsController < Spree::BaseController
     creditcard = @payment_presenter.creditcard
     creditcard.address = @payment_presenter.address
     creditcard.order = @order
+    
     begin
       creditcard.authorize(@order.total)
       #creditcard.authorize(@order) if creditcard.respond_to?(:authorize)
@@ -37,14 +38,16 @@ class CreditcardsController < Spree::BaseController
   def load_data 
     load_object
     @selected_country_id = params[:payment_presenter][:address_country_id].to_i if params.has_key?('payment_presenter')
-    @selected_country_id ||= @order.address.country_id unless @order.nil? || @order.address.nil?  
+    @selected_country_id ||= @order.ship_address.country_id unless @order.nil? || @order.ship_address.nil?  
+    @selected_country_id ||= Spree::Config[:default_country_id]
  
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     @countries = Country.find(:all)
   end
   
   def build_object
-    @payment_presenter ||= PaymentPresenter.new(:address => parent_object.address)
+    address = parent_object.ship_address ? parent_object.ship_address : Address.new
+    @payment_presenter ||= PaymentPresenter.new(:address => address)
   end
   
   def validate_payment
