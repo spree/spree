@@ -35,7 +35,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users
   map.resources :products, :member => {:change_image => :post}
   map.resources :addresses
-  map.resources :orders, :member => {:address_info => :get, :checkout => :get}, :has_many => [:line_items, :creditcards, :creditcard_payments], :has_one => :address
+  map.resources :orders, :member => {:address_info => :get, :checkout => :get}, :has_many => [:line_items, :creditcards, :creditcard_payments]
 
   # route globbing for pretty nested taxon and product paths
   map.taxons_with_product '/t/*taxon_path/p/:id', :controller => 'products', :action => 'show'

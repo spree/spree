@@ -5,7 +5,7 @@ class OrdersController < Spree::BaseController
   ssl_required :show
 
   resource_controller
-  actions :all, :except => [:index, :destroy]
+  actions :all, :except => :index
 
   layout 'application'
   
@@ -56,7 +56,9 @@ class OrdersController < Spree::BaseController
 
   protected
   def require_user_account
-    redirect_to signup_path unless logged_in?
+    return if logged_in?
+    store_location
+    redirect_to signup_path 
   end
     
   private

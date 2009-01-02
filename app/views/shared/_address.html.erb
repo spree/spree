@@ -7,31 +7,29 @@
 
 <table cellpadding="0" cellspacing="0">
   <tr>
+    <td><%="#{address.firstname} #{address.lastname}" %></td>
+  </tr>
+  <tr>
     <td>
-      <%=in_place_editor_field :address, :firstname %> <%=in_place_editor_field :address, :lastname %>
+       <%= address.address1 %>
     </td>
   </tr>
   <tr>
     <td>
-       <%=in_place_editor_field :address, :address1 %>
+      <%= address.address2 %>
     </td>
   </tr>
   <tr>
     <td>
-      <%=in_place_editor_field :address, :address2 %>
+      <%= "#{address.city}, #{address.state_name || address.state.abbr} #{address.zipcode}" %>
     </td>
   </tr>
   <tr>
     <td>
-      <%=in_place_editor_field :address, :city %>, <%= @address.state.nil? ? in_place_editor_field(:address, :state_name) : @address.state.abbr %> <%=in_place_editor_field :address, :zipcode %>
+      <%= address.country.name %>       
     </td>
   </tr>
   <tr>
-    <td>
-      <%=@address.country.name%>       
-    </td>
-  </tr>
-  <tr>
-    <td><%=in_place_editor_field :address, :phone %></td>
+    <td><%= address.phone %></td>
   </tr>
 </table>

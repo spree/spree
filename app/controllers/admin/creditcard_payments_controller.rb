@@ -1,5 +1,6 @@
 class Admin::CreditcardPaymentsController < Admin::BaseController
   before_filter :load_data
+  before_filter :load_amount, :except => :country_changed
   before_filter :validate_payment, :only => :create
   resource_controller
   belongs_to :order
@@ -21,29 +22,48 @@ class Admin::CreditcardPaymentsController < Admin::BaseController
     @order.save
     redirect_to admin_order_payments_url(@order)
   end
+  
+  # override r_c default with special presenter logic
+  def edit 
+    @payment_presenter = PaymentPresenter.new(:creditcard => object.creditcard, :address => object.creditcard.address)    
+  end
+  
+  # override r_c default with special presenter logic
+  def update
+    load_payment_presenter
+    creditcard = @creditcard_payment.creditcard
+    creditcard.address = @payment_presenter.address
+    creditcard.save
+    flash[:notice] = t("Updated Successfully")
+    redirect_to edit_object_url 
+  end
 
   def cvv
     render :layout => false
   end
   
   def country_changed
-    render :partial => "states"
+    render :partial => "shared/states", :locals => {:presenter_type => "payment"}
   end
     
   private
   def load_data 
     load_object
     @selected_country_id = params[:payment_presenter][:address_country_id].to_i if params.has_key?('payment_presenter')
-    @selected_country_id ||= @order.address.country_id unless @order.nil? || @order.address.nil?  
+    @selected_country_id ||= @order.creditcards.last.address.country_id unless @order.creditcards.empty?
+    @selected_country_id ||= Spree::Config[:default_country_id]
  
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     @countries = Country.find(:all)
+  end
+
+  def load_amount
     @amount = params[:amount] || @order.total
   end
-  
+
   def build_object
-    # TODO - build with parent billing address as default
-    @payment_presenter ||= PaymentPresenter.new(:address => parent_object.address)
+    address = parent_object.ship_address ? parent_object.ship_address : Address.new
+    @payment_presenter ||= PaymentPresenter.new(:address => address)
   end
   
   def validate_payment

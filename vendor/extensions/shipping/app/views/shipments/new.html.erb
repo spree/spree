@@ -1,8 +1,8 @@
 <div id="shipment">
-  <%=error_messages_for :shipment%>
-  <h1><%= t("Shipment")%></h1>
-  <% form_for(:shipment, :url => order_shipments_url(@order)) do |f| %>
-    <%= render :partial => 'form', :locals => {:f => f} %>
+  <%=error_messages_for :shipment_presenter%>
+  <h1><%= t("Shipping Address")%></h1>
+  <% form_for :shipment_presenter, :url => object_url do |f| %>
+		<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "shipment"} %>
     <div align="right">
       <%= submit_tag t('Continue') %>
     </div>

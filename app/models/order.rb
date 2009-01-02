@@ -14,7 +14,6 @@ class Order < ActiveRecord::Base
   has_many :creditcard_payments
   has_many :creditcards
   belongs_to :user
-  has_one :address, :as => :addressable, :dependent => :destroy
 
   validates_associated :line_items, :message => "are not valid"
   validates_numericality_of :tax_amount
@@ -41,16 +40,11 @@ class Order < ActiveRecord::Base
     after_transition :to => 'returned', :do => :restock_inventory
     
     event :next do
-      transition :to => 'address', :from => 'in_progress'
-      transition :to => 'creditcard', :from => 'address'
+      transition :to => 'creditcard', :from => 'in_progress'
       transition :to => 'charged', :from => 'creditcard'
     end
-    event :previous do
-      transition :to => 'address', :from => 'creditcard'
-      transition :to => 'in_progress', :from => 'address'
-    end
     event :edit do
-      transition :to => 'in_progress', :from => %w{address creditcard in_progress}
+      transition :to => 'in_progress', :from => %w{creditcard in_progress}
     end
     #event :capture do
     #  transition :to => 'captured', :from => 'authorized'
@@ -113,6 +107,11 @@ class Order < ActiveRecord::Base
   def total
     self.total = self.item_total + self.ship_amount + self.tax_amount
   end 
+ 
+  def bill_address
+    return nil if creditcards.empty?
+    return creditcards.last.address
+  end
  
   private
   def complete_order

@@ -1,34 +1,36 @@
 <%= render :partial => 'shared/order_tabs', :locals => {:current => "Payments"} %>
 <br/>
-<h2><%= t("credit_card_payment")%></h2>
-<br/>
-<table class="order-address">
-  <tr>
-    <th><%= t("bill_address") %></th>
-  </tr>
-  <tr>
-    <td>
-      <%= render :partial => 'shared/address', :locals => {:address => @creditcard_payment.creditcard.address} %>      
-    </td>
-  </tr>
-</table>
+<h2><%= t("credit_card_cayment")%></h2>
 <br/>
 <b><%= t("credit_card")%>: </b> &nbsp; #<%= @creditcard_payment.creditcard.display_number %><br/>
 <b><%= t("type")%> : </b> &nbsp; <%= @creditcard_payment.creditcard.cc_type.titleize %><br/>
-<table class="basic-table">
-  <tr>
-    <th><%= t("transaction") %></th>
-    <th><%= t("amount") %></th>
-    <th><%= t("response_code") %></th>
-    <th><%= "#{t('date')}/#{t('time')}" %></th>
-  </tr>
-  <% @creditcard_payment.txns.each do |t| %>
-    <tr>
-      <td><%=CreditcardTxn::TxnType.from_value t.txn_type.to_i%></td>
-      <td><%=number_to_currency t.amount%></td>
-      <td><%=t.response_code%></td>
-      <td><%=t.created_at.to_s(:db)%></td>
-    </tr>
-  <% end %>
-</table>
+<br/>
+<% form_for(:payment_presenter, :url => object_url, :html => { :method => :put}) do |f| %>
+	<h4><%= t("billing_address")%></h4>
+	<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "payment"} %>
+	<br/>
+	<table class="basic-table">
+	  <tr>
+	    <th><%= t("transaction") %></th>
+	    <th><%= t("amount") %></th>
+	    <th><%= t("response_code") %></th>
+	    <th><%= "#{t('date')}/#{t('time')}" %></th>
+	  </tr>
+	  <% @creditcard_payment.txns.each do |t| %>
+	    <tr>
+	      <td><%=CreditcardTxn::TxnType.from_value t.txn_type.to_i%></td>
+	      <td><%=number_to_currency t.amount%></td>
+	      <td><%=t.response_code%></td>
+	      <td><%=t.created_at.to_s(:db)%></td>
+	    </tr>
+	  <% end %>
+	</table>
+
+	<div align="right">
+		<br/>
+	  <%= submit_tag t('update') %>
+	</div>	
+
+<% end %>
+
 <%= link_to t("list"), admin_order_payments_url(@order) %>

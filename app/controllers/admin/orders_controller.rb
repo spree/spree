@@ -5,15 +5,8 @@ class Admin::OrdersController < Admin::BaseController
   before_filter :initialize_order_events
   before_filter :load_object, :only => [:fire, :resend]
 
-  in_place_edit_for :address, :firstname
-  in_place_edit_for :address, :lastname
-  in_place_edit_for :address, :address1
-  in_place_edit_for :address, :address2
-  in_place_edit_for :address, :city
-  in_place_edit_for :address, :zipcode
-  in_place_edit_for :address, :phone
   in_place_edit_for :user, :email
-  
+
   def fire   
     # TODO - possible security check here but right now any admin can before any transition (and the state machine 
     # itself will make sure transitions are not applied in the wrong state)
@@ -40,7 +33,7 @@ class Admin::OrdersController < Admin::BaseController
     default_stop = (Date.today + 1).to_s(:db)
     @filter = params.has_key?(:filter) ? OrderFilter.new(params[:filter]) : OrderFilter.new
 
-    scope = Order.scoped({:include => [:shipments, :payments, :address]})
+    scope = Order.scoped(:include => [:shipments, {:creditcards => :address}])
     scope = scope.by_number @filter.number unless @filter.number.blank?
     scope = scope.by_customer @filter.customer unless @filter.customer.blank?
     scope = scope.between(@filter.start, (@filter.stop.blank? ? default_stop : @filter.stop)) unless @filter.start.blank?

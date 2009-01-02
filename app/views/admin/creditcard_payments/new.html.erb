@@ -11,7 +11,8 @@
           <%= render :partial => 'creditcards/form_credit_card', :locals => {:f => f} %>
         </td>
         <td>
-          <%= render :partial => 'creditcards/form_billing', :locals => {:f => f} %>
+					<h4><%= t("Billing Address")%></h4>
+					<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "payment"} %>
         </td>
       </tr>
     </table>

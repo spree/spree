@@ -14,11 +14,11 @@ describe Shipment do
   
   describe "update" do
     it "should calculate the shipping cost using the specified calculator" do
-      @calculator.should_receive(:calculate_shipping).with(@order)
+      @calculator.should_receive(:calculate_shipping).with(@shipment)
       @shipment.save
     end
     it "should assign the calculated cost to the order" do
-      @calculator.stub!(:calculate_shipping).with(@order).and_return(8.95)
+      @calculator.stub!(:calculate_shipping).with(@shipment).and_return(8.95)
       @order.should_receive(:update_attribute).with(:ship_amount, 8.95)
       @shipment.save
     end

@@ -1,18 +1,4 @@
 <% 1.upto(30) do |i| %>
-frank_address_<%= i %>:
-  firstname: Frank
-  lastname: Foo
-  address1: 123 Foo St.
-  address2: Apt. F
-  city: Fooville
-  state: new_york
-  zipcode: 16804
-  country_id: 214
-  phone: 614-555-1212
-  addressable: order_<%= i %>
-  addressable_type: Order
-<% end %>
-<% 1.upto(30) do |i| %>
 frank_cc_address_<%= i %>:
   firstname: Frank
   lastname: Foo
@@ -26,15 +12,3 @@ frank_cc_address_<%= i %>:
   addressable: card_<%= i %>
   addressable_type: Creditcard
 <% end %>
-foo_street:
-  id: 101
-  firstname: joe
-  lastname: blow
-  address1: 123 Foo St.
-  city: Fooville
-  state: maryland
-  zipcode: 14456
-  country_id: 214
-  phone: 555-555-1212
-  created_at: <%= 3.days.ago.to_s :db %>
-  updated_at: <%= 3.days.ago.to_s :db %>

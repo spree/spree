@@ -1,83 +1,92 @@
 class ShipmentsController < Spree::BaseController
   before_filter :login_required
-  before_filter :state_check
-  before_filter :check_existing, :only => :new
-  before_filter :load_data, :only => [:new, :edit]
-  layout 'application'
+  before_filter :load_data
+  before_filter :state_check, :except => :shipping_method
+  before_filter :remove_existing, :only => :new
+  before_filter :validate_shipment, :only => [:create, :update]
   
   resource_controller
   belongs_to :order
   
-  create.response do |wants|
-    wants.html do 
-      next_step
-    end
+  # override r_c defaults so we can handle special presenter logic
+  def create
+    @shipment = @order.shipments.create(:address => @shipment_presenter.address)
+    @order.next!
+    redirect_to shipping_method_order_shipment_url(@order, @shipment)
   end
-  
-  create.before do    
-    # add the specified shipping method to the shipment, before it's saved.
-    @shipment.update_attribute(:shipping_method, ShippingMethod.find(params[:method_id]))
-  end  
 
-  update.before do
-    calculator = @order.shipping_method.shipping_calculator.constantize.new
-    @order.update_attribute(:ship_amount, calculator.calculate_shipping(order))
+  def shipping_method
+    state_check 'shipping_method'
+    load_shipping_methods
   end
-  
-  update.response do |wants|
-    wants.html do 
-      next_step
-    end
-  end  
-  
-  update.after do    
-    @shipment.update_attribute(:shipping_method, ShippingMethod.find(params[:method_id]))
-  end  
 
-  def fail
+  # override r_c defaults so we can handle special presenter logic
+  def update
+    if @shipment_presenter
+      @shipment.update_attribute(:address, @shipment_presenter.address)
+      # note: we can reach update from two different views (edit and shipping_method)
+      @order.next!
+      redirect_to shipping_method_order_shipment_url(@order, @shipment)
+      return
+    end
+    if params[:method_id]
+      state_check("shipping_method")
+      shipping_method = ShippingMethod.find(params[:method_id])
+      @shipment.update_attribute(:shipping_method, shipping_method)
+      calculator = @shipment.shipping_method.shipping_calculator.constantize.new
+      @order.update_attribute(:ship_amount, calculator.calculate_shipping(@shipment))
+    end
+    @order.next!
+    redirect_to checkout_order_url(@order)
   end
-  
+
   private
-  def build_object        
-    find_shipment
-  end
-  
   def object
     return find_shipment if param.blank?
     @object ||= end_of_association_chain.find(param) unless param.nil?
   end
 
-  def find_shipment
-    @object = parent_object.shipments.first
-    @object ||= Shipment.new(:order => parent_object)
-  end
-  
-  def check_existing
+  def load_data 
     load_object
-    redirect_to edit_order_shipment_url(@order, @shipment) unless @order.shipments.empty? 
+    @selected_country_id = params[:shipment_presenter][:address_country_id].to_i if params.has_key?('shipment_presenter')
+    @selected_country_id ||= Spree::Config[:default_country_id] 
+    @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
+    @countries = Country.find(:all)
   end
 
-  def next_step
-    @order.next!
-    redirect_to checkout_order_url(@order)
+  def find_shipment
+    @object = parent_object.shipments.last
+    @object ||= Shipment.new(:order => parent_object)
   end
-  
-  def state_check
-    load_object
+
+  def state_check(state="shipment")
     if @order.checkout_complete
+      # if order has already completed user shouldn't be able to edit shipping information
       redirect_to checkout_order_url(@order) and return 
     end
-    # set the state to shipment (in case user has hit back button from some other state)
-    @order.update_attribute(:state, "shipment")
+    # reset the state to the appropriate value (in case user has hit back button from some other state)
+    @order.update_attribute(:state, state)
+  end
+
+  def remove_existing
+    # right now we assume only one shipment and we're going to clear out any existing (abandoned) shipments
+    # in case user has edited cart in the meantime
+    @order.shipments.clear
   end
   
-  def load_data
-    @shipping_methods = @order.shipping_methods
-    # check that the price of each method is available - if we encounter an error, we can inform the user gracefully
-    # (instead of having the next view just crash when asked the price)
+  def validate_shipment
+    return unless params[:shipment_presenter]
+    @shipment_presenter = ShipmentPresenter.new(params[:shipment_presenter]) 
+    render :action => "new" unless @shipment_presenter.valid?
+  end
+  
+  def load_shipping_methods
+    @shipping_methods = @shipment.shipping_methods
+    # check that the rate for each method is available - if we encounter an error, we can inform the user gracefully
+    # (instead of having the next view just crash when asked the rate)
     begin
       @shipping_methods.each do |shipping_method|
-        rate = shipping_method.calculate_shipping(@order)
+        rate = shipping_method.calculate_shipping(@shipment)
         @default_method ||= shipping_method unless rate.nil?
       end      
     rescue Spree::ShippingError => se
@@ -86,4 +95,5 @@ class ShipmentsController < Spree::BaseController
       redirect_to fatal_shipping_order_url(@order)
     end
   end
+  
 end

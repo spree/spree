@@ -6,14 +6,26 @@
 <%= render :partial => 'shared/order_tabs', :locals => {:current => "Order Details"} %>
 <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
 
-<% if @order.address %>
+<% if @order.bill_address %>
+  <table class="order-address">
+    <tr>
+      <th><%= t("Bill Address") %></th>
+    </tr>
+    <tr>
+      <td>
+        <%= render :partial => 'shared/address', :locals => {:address => @order.bill_address} %>      
+      </td>
+    </tr>
+  </table>
+<% end %>
+<% if @order.ship_address %>
   <table class="order-address">
     <tr>
       <th><%= t("ship_address") %></th>
     </tr>
     <tr>
       <td>
-        <%= render :partial => 'shared/address', :locals => {:address => @order.address} if @order.address%>      
+        <%= render :partial => 'shared/address', :locals => {:address => @order.ship_address} %>      
       </td>
     </tr>
   </table>
