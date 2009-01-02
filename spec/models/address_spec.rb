@@ -30,7 +30,7 @@ describe Address do
   ['firstname', 'lastname', 'address1', 'city', 'country', 'zipcode', 'phone'].each do |field|
     it "should require #{field}" do
       @address.should_not be_valid
-      @address.errors.full_messages.should include("#{field.intern.l(field).humanize} #{:error_message_blank.l}")
+      @address.errors.full_messages.should include("#{field.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
     end
   end
 
@@ -38,7 +38,7 @@ describe Address do
     @address.attributes = valid_address_attributes.with(:state_name => "")
 
     @address.should_not be_valid
-    @address.errors.full_messages.should include("#{'state_name'.intern.l('state_name').humanize} #{:error_message_blank.l}")
+    @address.errors.full_messages.should include("#{'state_name'.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
   end
 
   it "should require a state when the associated country have states" do
@@ -47,7 +47,7 @@ describe Address do
     )
 
     @address.should_not be_valid
-    @address.errors.full_messages.should include("#{'state'.intern.l('state').humanize} #{:error_message_blank.l}")
+    @address.errors.full_messages.should include("#{'state'.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
   end
   
   it "should be valid when having correct information" do
