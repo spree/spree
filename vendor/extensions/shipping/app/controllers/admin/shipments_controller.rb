@@ -1,37 +1,44 @@
 class Admin::ShipmentsController < Admin::BaseController
   before_filter :load_data
+  before_filter :load_shipment_presenter, :only => [:create, :update]
+
   resource_controller
   belongs_to :order
   
   # override r_c default with special presenter logic
-  def edit 
-    @shipment_presenter = ShipmentPresenter.new(:shipment => object, :address => object.address)    
-  end
-    
-  # override r_c default with special presenter logic
-  def update
-    @shipment_presenter = ShipmentPresenter.new(params[:shipment_presenter])     
-    @shipment.address = @shipment_presenter.address
-    @shipment.tracking = @shipment_presenter.shipment.tracking
-    @shipment.cost = @shipment_presenter.shipment.cost
-    @shipment.shipped_at = Time.now if params[:mark_shipped]
-    @shipment.save
-    flash[:notice] = t("Updated Successfully")
-    redirect_to edit_object_url
-  end
-      
-  update.after do 
+  def create
+    # TODO - provide AJAX interface for setting shipping method instead of assuming first available
+    shipment = @shipment_presenter.shipment
+    shipment.order = @order
+    shipment.shipping_method = ShippingMethod.first
+    shipment.address = @shipment_presenter.address
+    shipment.save
     if params['mark_shipped']
       @order.ship!
     end 
+    flash[:notice] = t("Created Successfully")
+    redirect_to collection_url
   end
-  
-  update.response do |wants|
-    wants.html do 
-      redirect_to admin_order_url(@order)
-    end
+
+  # override r_c default with special presenter logic
+  def edit 
+    @shipment_presenter = ShipmentPresenter.new(:shipment => object, :address => object.address)    
   end
-  
+
+  # override r_c default with special presenter logic
+  def update
+    @shipment.address = @shipment_presenter.address 
+    @shipment.tracking = @shipment_presenter.shipment.tracking
+    @shipment.cost = @shipment_presenter.shipment.cost
+    @shipment.shipped_at = Time.now if params[:mark_shipped]    
+    @shipment.save
+    if params['mark_shipped']
+      @order.ship!
+    end 
+    flash[:notice] = t("Updated Successfully")
+    redirect_to edit_object_url
+  end
+
   def country_changed
     render :partial => "shared/states", :locals => {:presenter_type => "shipment"}
   end
@@ -52,4 +59,8 @@ class Admin::ShipmentsController < Admin::BaseController
     @shipment_presenter ||= ShipmentPresenter.new(:address => Address.new)
   end  
   
+  def load_shipment_presenter
+    @shipment_presenter = ShipmentPresenter.new(params[:shipment_presenter])     
+  end
+
 end
