@@ -4,8 +4,8 @@
     <th colspan="3" id="shipment-num"><%= t('Shipment') %> # <%=@shipment.number%></th>
   </tr>
   <tr>
-    <th><%= t('SKU') %></th>
-    <th><%= t('Item Description') %></th>
+    <th width="100"><%= t('SKU') %></th>
+    <th width="550"><%= t('Item Description') %></th>
     <th><%= t('Qty') %></th>
   </tr>
   <% @order.line_items.each do |item| %>
