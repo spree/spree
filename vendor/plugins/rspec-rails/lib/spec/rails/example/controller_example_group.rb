@@ -125,7 +125,7 @@ module Spec
 
         attr_reader :response, :request, :controller
 
-        def initialize(defined_description, &implementation) #:nodoc:
+        def initialize(defined_description, options={}, &implementation) #:nodoc:
           super
           controller_class_name = self.class.controller_class_name
           if controller_class_name
@@ -158,7 +158,9 @@ module Spec
 
         protected
         def _assigns_hash_proxy
-          @_assigns_hash_proxy ||= AssignsHashProxy.new @controller
+          @_assigns_hash_proxy ||= AssignsHashProxy.new self do
+            @response.template
+          end
         end
 
         private
@@ -183,61 +185,49 @@ module Spec
               unless integrate_views?
                 if @template.respond_to?(:finder)
                   (class << @template.finder; self; end).class_eval do
-                    define_method :file_exists? do
-                      true
-                    end
+                    define_method :file_exists? do; true; end
                   end
                 else
                   (class << @template; self; end).class_eval do
-                    define_method :file_exists? do
-                      true
-                    end
+                    define_method :file_exists? do; true; end
                   end
                 end
                 (class << @template; self; end).class_eval do
                   define_method :render_file do |*args|
-                    @first_render ||= args[0]
+                    @first_render ||= args[0] unless args[0] =~ /^layouts/
+                    @_first_render ||= args[0] unless args[0] =~ /^layouts/
+                  end
+                  
+                  define_method :_pick_template do |*args|
+                    @_first_render ||= args[0] unless args[0] =~ /^layouts/
+                    PickedTemplate.new
+                  end
+                  
+                  define_method :render do |*args|
+                    if @_rendered
+                      opts = args[0]
+                      (@_rendered[:template] ||= opts[:file]) if opts[:file]
+                      (@_rendered[:partials][opts[:partial]] += 1) if opts[:partial]
+                    else
+                      super
+                    end
                   end
                 end
               end
             end
 
             if matching_message_expectation_exists(options)
-              expect_render_mock_proxy.render(options, &block)
+              render_proxy.render(options, &block)
               @performed_render = true
             else
-              unless matching_stub_exists(options)
+              if matching_stub_exists(options)
+                @performed_render = true
+              else
                 super(options, deprecated_status_or_extra_options, &block)
               end
             end
           end
           
-          def raise_with_disable_message(old_method, new_method)
-            raise %Q|
-      controller.#{old_method}(:render) has been disabled because it
-      can often produce unexpected results. Instead, you should
-      use the following (before the action):
-
-      controller.#{new_method}(*args)
-
-      See the rdoc for #{new_method} for more information.
-            |
-          end
-          def should_receive(*args)
-            if args[0] == :render
-              raise_with_disable_message("should_receive", "expect_render")
-            else
-              super
-            end
-          end
-          def stub!(*args)
-            if args[0] == :render
-              raise_with_disable_message("stub!", "stub_render")
-            else
-              super
-            end
-          end
-
           def response(&block)
             # NOTE - we're setting @update for the assert_select_spec - kinda weird, huh?
             @update = block
@@ -255,16 +245,24 @@ module Spec
           end
 
           def matching_message_expectation_exists(options)
-            expect_render_mock_proxy.send(:__mock_proxy).send(:find_matching_expectation, :render, options)
+            render_proxy.send(:__mock_proxy).send(:find_matching_expectation, :render, options)
           end
         
           def matching_stub_exists(options)
-            expect_render_mock_proxy.send(:__mock_proxy).send(:find_matching_method_stub, :render, options)
+            render_proxy.send(:__mock_proxy).send(:find_matching_method_stub, :render, options)
           end
         
         end
 
         Spec::Example::ExampleGroupFactory.register(:controller, self)
+      end
+      
+      # Returned by _pick_template when running controller examples in isolation mode.
+      class PickedTemplate 
+        # Do nothing when running controller examples in isolation mode.
+        def render_template(*ignore_args); end
+        # Do nothing when running controller examples in isolation mode.
+        def render_partial(*ignore_args);  end
       end
     end
   end

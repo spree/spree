@@ -1,5 +1,10 @@
 require File.dirname(__FILE__) + '/../../../spec_helper'
-require 'hpricot' # Needed to compare generated with wanted HTML
+begin
+  require 'nokogiri' # Needed to compare generated with wanted HTML
+rescue LoadError
+  warn "nokogiri not loaded -- skipping HtmlFormatter specs"
+  return
+end
 require 'spec/runner/formatter/html_formatter'
 
 module Spec
@@ -7,24 +12,18 @@ module Spec
     module Formatter
       describe HtmlFormatter do
         ['--diff', '--dry-run'].each do |opt|
-          def jruby?
-            PLATFORM == 'java'
-          end
-    
           it "should produce HTML identical to the one we designed manually with #{opt}" do
             root = File.expand_path(File.dirname(__FILE__) + '/../../../..')
             suffix = jruby? ? '-jruby' : ''
-            expected_file = File.dirname(__FILE__) + "/html_formatted-#{::VERSION}#{suffix}.html"
+            expected_file = File.dirname(__FILE__) + "/html_formatted-#{::RUBY_VERSION}#{suffix}.html"
             raise "There is no HTML file with expected content for this platform: #{expected_file}" unless File.file?(expected_file)
             expected_html = File.read(expected_file)
 
             Dir.chdir(root) do
-              args = ['failing_examples/mocking_example.rb', 'failing_examples/diffing_spec.rb', 'examples/pure/stubbing_example.rb',  'examples/pure/pending_example.rb', '--format', 'html', opt]
+              args = ['examples/failing/mocking_example.rb', 'examples/failing/diffing_spec.rb', 'examples/passing/stubbing_example.rb',  'examples/passing/pending_example.rb', '--format', 'html', opt]
               err = StringIO.new
               out = StringIO.new
-              CommandLine.run(
-                OptionParser.parse(args, err, out)
-              )
+              run_with ::Spec::Runner::OptionParser.parse(args, err, out)
 
               seconds = /\d+\.\d+ seconds/
               html = out.string.gsub seconds, 'x seconds'
@@ -35,12 +34,12 @@ module Spec
                 # Use with care!!!
                 # File.open(expected_file, 'w') {|io| io.write(html)}
 
-                doc = Hpricot(html)
-                backtraces = doc.search("div.backtrace").collect {|e| e.at("/pre").inner_html}
-                doc.search("div.backtrace").remove
+                doc = Nokogiri::HTML(html)
+                backtraces = doc.search("div.backtrace").collect {|e| e.at("pre").inner_html}
+                doc.css("div.backtrace").remove
 
-                expected_doc = Hpricot(expected_html)
-                expected_backtraces = expected_doc.search("div.backtrace").collect {|e| e.at("/pre").inner_html}
+                expected_doc = Nokogiri::HTML(expected_html)
+                expected_backtraces = expected_doc.search("div.backtrace").collect {|e| e.at("pre").inner_html}
                 expected_doc.search("div.backtrace").remove
 
                 doc.inner_html.should == expected_doc.inner_html

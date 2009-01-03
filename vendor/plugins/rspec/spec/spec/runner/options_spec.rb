@@ -1,4 +1,5 @@
-require File.dirname(__FILE__) + '/../../spec_helper.rb'
+require File.dirname(__FILE__) + '/../../spec_helper'
+require File.dirname(__FILE__) + '/resources/custom_example_group_runner'
 
 module Spec
   module Runner
@@ -7,12 +8,17 @@ module Spec
         @err = StringIO.new('')
         @out = StringIO.new('')
         @options = Options.new(@err, @out)
+
+        before_suite_parts = []
+        after_suite_parts = []
+        @options.stub!(:before_suite_parts).and_return(before_suite_parts)
+        @options.stub!(:after_suite_parts).and_return(after_suite_parts)
       end
 
       after(:each) do
         Spec::Expectations.differ = nil
       end
-
+      
       describe "#examples" do
         it "should default to empty array" do
           @options.examples.should == []
@@ -212,7 +218,7 @@ module Spec
       describe "#load_class" do
         it "should raise error when not class name" do
           lambda do
-            @options.send(:load_class, 'foo', 'fruit', '--food')
+            @options.__send__(:load_class, 'foo', 'fruit', '--food')
           end.should raise_error('"foo" is not a valid class name')
         end
       end
@@ -223,9 +229,24 @@ module Spec
           @options.reporter.options.should === @options
         end
       end
+      
+      describe "#number_of_examples" do
+        context "when --example is parsed" do
+          it "provides the number of examples parsed instead of the total number of examples collected" do
+            @example_group = Class.new(::Spec::Example::ExampleGroup).describe("Some Examples") do
+              it "uses this example_group 1" do; end
+              it "uses this example_group 2" do; end
+              it "uses this example_group 3" do; end
+            end
+            @options.add_example_group @example_group
+            @options.parse_example("an example")
+            @options.number_of_examples.should == 1
+          end
+        end
+      end
 
       describe "#add_example_group affecting passed in example_group" do
-        it "runs all examples when options.examples is nil" do
+        it "runs all examples when options.examples is empty" do
           example_1_has_run = false
           example_2_has_run = false
           @example_group = Class.new(::Spec::Example::ExampleGroup).describe("Some Examples") do
@@ -237,7 +258,7 @@ module Spec
             end
           end
 
-          @options.examples = nil
+          @options.examples.clear
 
           @options.add_example_group @example_group
           @options.run_examples
@@ -256,8 +277,6 @@ module Spec
               example_2_has_run = true
             end
           end
-
-          @options.examples = []
 
           @options.add_example_group @example_group
           @options.run_examples
@@ -362,7 +381,7 @@ module Spec
           end
 
           describe "and the suite fails" do
-            before do
+            before(:each) do
               @example_group.should_receive(:run).and_return(false)
             end
 

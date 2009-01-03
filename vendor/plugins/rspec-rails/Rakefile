@@ -1,64 +1,51 @@
-$:.unshift('lib')
-require 'rake'
-require 'rake/rdoctask'
 require 'rubygems'
-require 'rake/gempackagetask'
+require 'hoe'
+require './lib/spec/rails/version'
+require 'cucumber/rake/task'
 
-begin
-  
-  module Spec
-    module VERSION
-      BUILD_TIME_UTC = 'place_holder'
-    end
-  end  
-  
-  require 'spec/rails/version'
+$:.unshift(File.join(File.dirname(__FILE__), "/../rspec/lib"))
 
-rescue
-  # Catch the BUILD_TIME_UTC verification exception.
-  # This exception is not relevant when running these tasks and hinders the gem installation.
+require 'spec/rake/spectask'
+
+class Hoe
+  def extra_deps
+    @extra_deps.reject! { |x| Array(x).first == 'hoe' }
+    @extra_deps
+  end
 end
 
-desc 'Generate RDoc'
-rd = Rake::RDocTask.new do |rdoc|
-  rdoc.rdoc_dir = '../doc/output/rdoc-rails'
-  rdoc.options << '--title' << 'Spec::Rails' << '--line-numbers' << '--inline-source' << '--main' << 'Spec::Rails'
-  rdoc.rdoc_files.include('MIT-LICENSE', 'lib/**/*.rb')
+Hoe.new('rspec-rails', Spec::Rails::VERSION::STRING) do |p|
+  p.summary = Spec::Rails::VERSION::SUMMARY
+  p.url = 'http://rspec.info/'
+  p.description = "Behaviour Driven Development for Ruby on Rails."
+  p.rubyforge_name = 'rspec'
+  p.developer('RSpec Development Team', 'rspec-devel@rubyforge.org')
+  p.extra_deps = [["rspec","1.1.11.4"]]
+  p.extra_dev_deps = [["cucumber",">= 0.1.13"]]
+  p.remote_rdoc_dir = "rspec-rails/#{Spec::Rails::VERSION::STRING}"
 end
 
-PKG_NAME = "rspec-rails"
-PKG_VERSION   = Spec::Rails::VERSION::STRING
-PKG_FILE_NAME = "#{PKG_NAME}-#{PKG_VERSION}"
-PKG_FILES = FileList[
-  '[A-Z]*',
-  'lib/**/*.rb', 
-  'spec/**/*',
-  'spec_resources/**/*',
-  'generators/**/*',
-  'stories/**/*',
-  'tasks/**/*'
-]
-
-rspec_rails = Gem::Specification.new do |s|
-  s.name = PKG_NAME
-  s.version = PKG_VERSION
-  s.summary = Spec::Rails::VERSION::DESCRIPTION
-  s.description = <<-EOF
-    rpsec-rails is a Ruby on Rails plugin that allows you to drive the development
-    of your RoR application using RSpec, a framework that aims to enable BDD in Ruby.
-  EOF
-
-  s.files = PKG_FILES.to_a
-  s.require_path = 'lib'
-
-  s.has_rdoc = true
-  s.rdoc_options = rd.options
-
-  s.author = "RSpec Development Team"
-  s.email = "rspec-devel@rubyforge.org"
-  s.homepage = Spec::Rails::VERSION::URL  
-  s.platform = Gem::Platform::RUBY
+['audit','test','test_deps','default','post_blog', 'release'].each do |task|
+  Rake.application.instance_variable_get('@tasks').delete(task)
 end
 
-Rake::GemPackageTask.new(rspec_rails) do |pkg|
+task :release => [:clean, :package] do |t|
+  version = ENV["VERSION"] or abort "Must supply VERSION=x.y.z"
+  abort "Versions don't match #{version} vs #{Spec::Rails::VERSION::STRING}" unless version == Spec::Rails::VERSION::STRING
+  pkg = "pkg/rspec-rails-#{version}"
+
+  rubyforge = RubyForge.new.configure
+  puts "Logging in to rubyforge ..."
+  rubyforge.login
+
+  puts "Releasing rspec-rails version #{version} ..."
+  ["#{pkg}.gem", "#{pkg}.tgz"].each do |file|
+    rubyforge.add_file('rspec', 'rspec', Spec::Rails::VERSION::STRING, file)
+  end
 end
+
+Spec::Rake::SpecTask.new
+
+Cucumber::Rake::Task.new
+
+task :default => [:features]

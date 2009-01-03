@@ -10,7 +10,17 @@ module Spec
       def matches?(actual)
         @actual = actual
         @expecteds.each do |expected|
-          return false unless actual.include?(expected)
+          if actual.is_a?(Hash)
+            if expected.is_a?(Hash)
+              expected.each_pair do |k,v|
+                return false unless actual[k] == v
+              end
+            else
+              return false unless actual.has_key?(expected)
+            end
+          else
+            return false unless actual.include?(expected)
+          end
         end
         true
       end

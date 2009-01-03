@@ -1,7 +1,7 @@
 module Spec
   module Mocks
     module ExampleMethods
-      include Spec::Mocks::ArgumentConstraintMatchers
+      include Spec::Mocks::ArgumentConstraints
 
       # Shortcut for creating an instance of Spec::Mocks::Mock.
       #
@@ -31,6 +31,14 @@ module Spec
       # to respond to.
       def stub_everything(name = 'stub')
         mock(name, :null_object => true)
+      end
+      
+      # Disables warning messages about expectations being set on nil.
+      #
+      # By default warning messages are issued when expectations are set on nil.  This is to 
+      # prevent false-positives and to catch potential bugs early on.
+      def allow_message_expectations_on_nil
+        Proxy.allow_message_expectations_on_nil
       end
 
     end

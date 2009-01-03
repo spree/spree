@@ -2,12 +2,16 @@ module Spec
   module Story
     module Runner
       class StoryRunner
-        class << self
-          attr_accessor :current_story_runner
-          
-          def scenario_from_current_story(scenario_name)
-            current_story_runner.scenario_from_current_story(scenario_name)
-          end
+        def self.current_story_runner
+          @current_story_runner
+        end
+
+        def self.current_story_runner=(current_story_runner)
+          @current_story_runner = current_story_runner
+        end
+
+        def self.scenario_from_current_story(scenario_name)
+          current_story_runner.scenario_from_current_story(scenario_name)
         end
         
         attr_accessor :stories, :scenarios, :current_story

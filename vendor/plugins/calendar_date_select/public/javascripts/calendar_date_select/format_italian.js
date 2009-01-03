@@ -3,7 +3,7 @@
 
 Date.prototype.toFormattedString = function(include_time){
   str = this.getDate() + "/" + (this.getMonth() + 1) + "/" + this.getFullYear();
-  if (include_time) { hour=this.getHours(); str += " " + this.getAMPMHour() + ":" + this.getPaddedMinutes() }
+  if (include_time) { str += " " + this.getHours() + ":" + this.getPaddedMinutes() }
   return str;
 }
 

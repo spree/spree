@@ -50,14 +50,14 @@ describe ProductsHelper do
   describe "format_price" do
     before :each do
       @price = 100
-      Locale.code = "en-US"
+      I18n.locale = "en-US"
     end
     describe "localization in general" do
       it "should format the price using $ when locale is en-US" do
         helper.format_price(@price).should include("$100.00")
       end
-      it "should format the price using $ when locale is es-ES" do
-        Locale.code = "es-ES"
+      it "should format the price using $ when locale is es" do
+        I18n.locale = "es"
         helper.format_price(@price).should include("100,00 €")
       end
     end

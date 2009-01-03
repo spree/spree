@@ -1,0 +1,12 @@
+<h1>Editing address</h1>
+
+<%= error_messages_for :address %>
+
+<% form_for(@address) do |f| %>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @address %> |
+<%= link_to 'Back', addresses_path %>

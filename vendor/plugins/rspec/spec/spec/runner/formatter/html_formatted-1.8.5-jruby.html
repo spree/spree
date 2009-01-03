@@ -188,7 +188,7 @@ a {
       <span class="failed_spec_name">should fail when expected message not received</span>
       <div class="failure" id="failure_1">
         <div class="message"><pre>Mock 'poke me' expected :poke with (any args) once, but received it 0 times</pre></div>
-        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./failing_examples/mocking_example.rb:13:in `should_receive'
+        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./examples/failing/mocking_example.rb:13:in `should_receive'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:24:in `run'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
@@ -206,8 +206,8 @@ a {
       <span class="failed_spec_name">should fail when messages are received out of order</span>
       <div class="failure" id="failure_2">
         <div class="message"><pre>Mock 'one two three' received :three out of order</pre></div>
-        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./failing_examples/mocking_example.rb:22:in `three'
-/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./failing_examples/mocking_example.rb:16:in `instance_eval'
+        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./examples/failing/mocking_example.rb:22:in `three'
+/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./examples/failing/mocking_example.rb:16:in `instance_eval'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:24:in `run'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
@@ -225,7 +225,7 @@ a {
       <span class="failed_spec_name">should get yelled at when sending unexpected messages</span>
       <div class="failure" id="failure_3">
         <div class="message"><pre>Mock 'don't talk to me' expected :any_message_at_all with (any args) 0 times, but received it once</pre></div>
-        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./failing_examples/mocking_example.rb:28:in `should_not_receive'
+        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./examples/failing/mocking_example.rb:28:in `should_not_receive'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:24:in `run'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
@@ -243,8 +243,8 @@ a {
       <span class="failed_spec_name">has a bug we need to fix</span>
       <div class="failure" id="failure_4">
         <div class="message"><pre>Expected pending 'here is the bug' to fail. No Error was raised.</pre></div>
-        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./failing_examples/mocking_example.rb:33:in `pending'
-/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./failing_examples/mocking_example.rb:33:in `instance_eval'
+        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./examples/failing/mocking_example.rb:33:in `pending'
+/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./examples/failing/mocking_example.rb:33:in `instance_eval'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:24:in `run'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
@@ -276,7 +276,7 @@ Diff:
 +behaviour driven development
  framework for Ruby
 </pre></div>
-        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./failing_examples/diffing_spec.rb:13:in `=='
+        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./examples/failing/diffing_spec.rb:13:in `=='
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:24:in `run'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
@@ -310,8 +310,8 @@ Diff:
 +species=tortoise
  &gt;
 </pre></div>
-        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./failing_examples/diffing_spec.rb:34:in `should'
-/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./failing_examples/diffing_spec.rb:31:in `instance_eval'
+        <div class="backtrace"><pre>/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./examples/failing/diffing_spec.rb:34:in `should'
+/Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/./examples/failing/diffing_spec.rb:31:in `instance_eval'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:24:in `run'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'
 /Users/david/projects/ruby/jruby/testsuites/rspec/target/rspec/spec/spec/runner/formatter/html_formatter_spec.rb:20:in `chdir'

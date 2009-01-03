@@ -32,7 +32,7 @@ describe Product do
   ['name', 'master_price', 'description'].each do |field|
     it "should require #{field}" do
       @product.should_not be_valid
-      @product.errors.full_messages.should include("#{field.intern.l(field).humanize} #{:error_message_blank.l}")
+      @product.errors.full_messages.should include("#{field.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
     end
   end
 

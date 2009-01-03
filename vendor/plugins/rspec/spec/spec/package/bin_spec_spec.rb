@@ -11,4 +11,12 @@ describe "The bin/spec script" do
     output = ruby "-w #{spec_path} --help 2>&1"
     output.should_not =~ /warning/n
   end
+  
+  it "should show the help w/ no args" do
+    pending "Hangs on JRuby" if PLATFORM =~ /java/
+    spec_path = "#{File.dirname(__FILE__)}/../../../bin/spec"
+
+    output = ruby "-w #{spec_path} 2>&1"
+    output.should =~ /^Usage: spec/
+  end
 end

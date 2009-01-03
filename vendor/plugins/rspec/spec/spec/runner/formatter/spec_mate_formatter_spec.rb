@@ -1,5 +1,10 @@
 require File.dirname(__FILE__) + '/../../../spec_helper'
-require 'hpricot' # Needed to compare generated with wanted HTML
+begin
+  require 'nokogiri' # Needed to compare generated with wanted HTML
+rescue LoadError
+  warn "nokogiri not loaded -- skipping TextMateFormatter specs"
+  return
+end
 require 'spec/runner/formatter/text_mate_formatter'
 
 module Spec
@@ -10,11 +15,7 @@ module Spec
         before do
           @root = File.expand_path(File.dirname(__FILE__) + '/../../../..')
           @suffix = jruby? ? '-jruby' : ''
-          @expected_file = File.dirname(__FILE__) + "/text_mate_formatted-#{::VERSION}#{suffix}.html"
-        end
-
-        def jruby?
-          PLATFORM == 'java'
+          @expected_file = File.dirname(__FILE__) + "/text_mate_formatted-#{::RUBY_VERSION}#{suffix}.html"
         end
 
         def produces_html_identical_to_manually_designed_document(opt)
@@ -22,29 +23,29 @@ module Spec
 
           Dir.chdir(root) do
             args = [
-              'failing_examples/mocking_example.rb',
-                'failing_examples/diffing_spec.rb',
-                'examples/pure/stubbing_example.rb',
-                'examples/pure/pending_example.rb',
+              'examples/failing/mocking_example.rb',
+                'examples/failing/diffing_spec.rb',
+                'examples/passing/stubbing_example.rb',
+                'examples/passing/pending_example.rb',
                 '--format',
                 'textmate',
                 opt
             ]
             err = StringIO.new
             out = StringIO.new
-            options = ::Spec::Runner::OptionParser.parse(args, err, out)
-            Spec::Runner::CommandLine.run(options)
 
+            run_with ::Spec::Runner::OptionParser.parse(args, err, out)
+              
             yield(out.string)
           end          
         end
 
         # # Uncomment this spec temporarily in order to overwrite the expected with actual.
         # # Use with care!!!
-        # describe TextMateFormatter, "functional spec file generator" do
+        # describe "functional spec file generator" do
         #   it "generates a new comparison file" do
         #     Dir.chdir(root) do
-        #       args = ['failing_examples/mocking_example.rb', 'failing_examples/diffing_spec.rb', 'examples/pure/stubbing_example.rb',  'examples/pure/pending_example.rb', '--format', 'textmate', '--diff']
+        #       args = ['examples/failing/mocking_example.rb', 'examples/failing/diffing_spec.rb', 'examples/passing/stubbing_example.rb',  'examples/passing/pending_example.rb', '--format', 'textmate', '--diff']
         #       err = StringIO.new
         #       out = StringIO.new
         #       Spec::Runner::CommandLine.run(
@@ -73,17 +74,17 @@ module Spec
                html.gsub! seconds, 'x seconds'
                expected_html.gsub! seconds, 'x seconds'
 
-               doc = Hpricot(html)
-               backtraces = doc.search("div.backtrace/a")
+               doc = Nokogiri::HTML(html)
+               backtraces = doc.search("div.backtrace a")
                doc.search("div.backtrace").remove
 
-               expected_doc = Hpricot(expected_html)
+               expected_doc = Nokogiri::HTML(expected_html)
                expected_doc.search("div.backtrace").remove
 
                doc.inner_html.should == expected_doc.inner_html
 
                backtraces.each do |backtrace_link|
-                 backtrace_link[:href].should include("txmt://open?url=")
+                 backtrace_link['href'].should include("txmt://open?url=")
                end
              end
            end

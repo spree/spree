@@ -51,6 +51,12 @@ module Spec
         @tweaker.tweak_backtrace(@error)
         @error.backtrace.should include("/a/b/c/d.rb")
       end
+
+      it "should gracefully handle backtraces with newlines" do
+        @error.set_backtrace(["we like\nbin/spec:\nnewlines"])
+        @tweaker.tweak_backtrace(@error)
+        @error.backtrace.should include("we like\nnewlines")
+      end
     end
   end
 end

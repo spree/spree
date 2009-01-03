@@ -8,13 +8,13 @@ module Spec
         @match_block = match_block
       end
 
-      def matches?(actual)
-        @actual = actual
+      def matches?(given)
+        @given = given
         case @match_block.arity
         when 2
-          @match_block.call(@actual, self)
+          @match_block.call(@given, self)
         else
-          @match_block.call(@actual)
+          @match_block.call(@given)
         end
       end
       
@@ -23,11 +23,11 @@ module Spec
       end
 
       def failure_message
-        @failure_message || (@description.nil? ? explanation : %[expected #{@description.inspect} but got #{@actual.inspect}])
+        @failure_message || (@description.nil? ? explanation : %[expected #{@description.inspect} but got #{@given.inspect}])
       end
 
       def negative_failure_message
-        @negative_failure_message || (@description.nil? ? explanation : %[expected not to get #{@description.inspect}, but got #{@actual.inspect}])
+        @negative_failure_message || (@description.nil? ? explanation : %[expected not to get #{@description.inspect}, but got #{@given.inspect}])
       end
 
       def explanation
@@ -81,7 +81,7 @@ module Spec
     #     simple_matcher("rhyme with #{expected.inspect}") do |given, matcher|
     #       matcher.failure_message = "expected #{given.inspect} to rhyme with #{expected.inspect}"
     #       matcher.negative_failure_message = "expected #{given.inspect} not to rhyme with #{expected.inspect}"
-    #       actual.rhymes_with? expected
+    #       given.rhymes_with? expected
     #     end
     #   end
     #
@@ -92,7 +92,7 @@ module Spec
     #       matcher.description = "rhyme with #{expected.inspect}"
     #       matcher.failure_message = "expected #{given.inspect} to rhyme with #{expected.inspect}"
     #       matcher.negative_failure_message = "expected #{given.inspect} not to rhyme with #{expected.inspect}"
-    #       actual.rhymes_with? expected
+    #       given.rhymes_with? expected
     #     end
     #   end
     #

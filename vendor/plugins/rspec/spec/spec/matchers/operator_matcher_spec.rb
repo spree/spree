@@ -20,7 +20,7 @@ describe "should ==" do
     Spec::Expectations.should_receive(:fail_with).with(%[expected: "orange",\n     got: "apple" (using ==)], "orange", "apple")
     subject.should == "orange"
   end
-
+  
 end
 
 describe "should_not ==" do
@@ -166,3 +166,26 @@ describe "should <=" do
 
 end
 
+describe Spec::Matchers::PositiveOperatorMatcher do
+
+  it "should work when the target has implemented #send" do
+    o = Object.new
+    def o.send(*args); raise "DOH! Library developers shouldn't use #send!" end
+    lambda {
+      o.should == o
+    }.should_not raise_error
+  end
+
+end
+
+describe Spec::Matchers::NegativeOperatorMatcher do
+
+  it "should work when the target has implemented #send" do
+    o = Object.new
+    def o.send(*args); raise "DOH! Library developers shouldn't use #send!" end
+    lambda {
+      o.should_not == :foo
+    }.should_not raise_error
+  end
+
+end

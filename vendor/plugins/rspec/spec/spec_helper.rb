@@ -12,7 +12,15 @@ spec_classes_path = File.expand_path("#{dir}/../spec/spec/spec_classes")
 require spec_classes_path unless $LOAD_PATH.include?(spec_classes_path)
 require File.dirname(__FILE__) + '/../lib/spec/expectations/differs/default'
 
-module Spec
+def jruby?
+  ::RUBY_PLATFORM == 'java'
+end
+
+module Spec  
+  module Example
+    class NonStandardError < Exception; end
+  end
+
   module Matchers
     def fail
       raise_error(Spec::Expectations::ExpectationNotMetError)
@@ -22,82 +30,56 @@ module Spec
       raise_error(Spec::Expectations::ExpectationNotMetError, message)
     end
 
-    class Pass
-      def matches?(proc, &block)
-        begin
-          proc.call
-          true
-        rescue Exception => @error
-          false
-        end
+    def exception_from(&block)
+      exception = nil
+      begin
+        yield
+      rescue StandardError => e
+        exception = e
       end
-
-      def failure_message
-        @error.message + "\n" + @error.backtrace.join("\n")
-      end
-    end
-
-    def pass
-      Pass.new
+      exception
     end
     
-    class CorrectlyOrderedMockExpectation
-      def initialize(&event)
-        @event = event
-      end
-      
-      def expect(&expectations)
-        expectations.call
-        @event.call
-      end
+    def run_with(options)
+      ::Spec::Runner::CommandLine.run(options)
     end
-    
-    def during(&block)
-      CorrectlyOrderedMockExpectation.new(&block) 
+
+    def with_ruby(version)
+      yield if RUBY_PLATFORM =~ Regexp.compile("^#{version}")
     end
   end
 end
 
-class NonStandardError < Exception; end
-
-module Custom
-  class ExampleGroupRunner
-    attr_reader :options, :arg
-    def initialize(options, arg)
-      @options, @arg = options, arg
-    end
-
-    def load_files(files)
-    end
-
-    def run
-    end
-  end  
-end
-
-def exception_from(&block)
-  exception = nil
-  begin
-    yield
-  rescue StandardError => e
-    exception = e
-  end
-  exception
-end
-
-describe "sandboxed rspec_options", :shared => true do
+def with_sandboxed_options
   attr_reader :options
-
-  before(:all) do
-    @original_rspec_options = $rspec_options
-  end
-
+  
   before(:each) do
-    @options = ::Spec::Runner::Options.new(StringIO.new, StringIO.new)
-    $rspec_options = options
+    @original_rspec_options = ::Spec::Runner.options
+    ::Spec::Runner.use(@options = ::Spec::Runner::Options.new(StringIO.new, StringIO.new))
   end
 
-  after do
-    $rspec_options = @original_rspec_options
+  after(:each) do
+    ::Spec::Runner.use(@original_rspec_options)
   end
+  
+  yield
+end
+
+def with_sandboxed_config
+  attr_reader :config
+  
+  before(:each) do
+    @config = ::Spec::Runner::Configuration.new
+    @original_configuration = ::Spec::Runner.configuration
+    spec_configuration = @config
+    ::Spec::Runner.instance_eval {@configuration = spec_configuration}
+  end
+  
+  after(:each) do
+    original_configuration = @original_configuration
+    ::Spec::Runner.instance_eval {@configuration = original_configuration}
+    ::Spec::Example::ExampleGroupFactory.reset
+  end
+  
+  yield
 end

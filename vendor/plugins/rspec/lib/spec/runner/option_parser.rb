@@ -10,6 +10,10 @@ module Spec
           parser.parse(args)
           parser.options
         end
+
+        def spec_command?
+          $0.split('/').last == 'spec'
+        end
       end
 
       attr_reader :options
@@ -34,26 +38,27 @@ module Spec
                                                           "an example name directly, causing RSpec to run just the example",
                                                           "matching that name"],
         :specification => ["-s", "--specification [NAME]", "DEPRECATED - use -e instead", "(This will be removed when autotest works with -e)"],
-        :line => ["-l", "--line LINE_NUMBER", Integer, "Execute behaviout or specification at given line.",
-                                                       "(does not work for dynamically generated specs)"],
+        :line => ["-l", "--line LINE_NUMBER", Integer, "Execute example group or example at given line.",
+                                                       "(does not work for dynamically generated examples)"],
         :format => ["-f", "--format FORMAT[:WHERE]","Specifies what format to use for output. Specify WHERE to tell",
                                                     "the formatter where to write the output. All built-in formats",
-                                                    "expect WHERE to be a file name, and will write to STDOUT if it's",
+                                                    "expect WHERE to be a file name, and will write to $stdout if it's",
                                                     "not specified. The --format option may be specified several times",
                                                     "if you want several outputs",
                                                     " ",
-                                                    "Builtin formats for examples: ",
-                                                    "progress|p               : Text progress",
-                                                    "profile|o                : Text progress with profiling of 10 slowest examples",
-                                                    "specdoc|s                : Example doc as text",
-                                                    "indented|i               : Example doc as indented text",
+                                                    "Builtin formats for code examples:",
+                                                    "progress|p               : Text-based progress bar",
+                                                    "profile|o                : Text-based progress bar with profiling of 10 slowest examples",
+                                                    "specdoc|s                : Code example doc strings",
+                                                    "nested|n                 : Code example doc strings with nested groups intented",
                                                     "html|h                   : A nice HTML report",
                                                     "failing_examples|e       : Write all failing examples - input for --example",
                                                     "failing_example_groups|g : Write all failing example groups - input for --example",
                                                     " ",
-                                                    "Builtin formats for stories: ",
-                                                    "plain|p              : Plain Text",
-                                                    "html|h               : A nice HTML report",
+                                                    "Builtin formats for stories:",
+                                                    "plain|p                  : Plain Text",
+                                                    "html|h                   : A nice HTML report",
+                                                    "progress|r               : Text progress",
                                                     " ",
                                                     "FORMAT can also be the name of a custom formatter class",
                                                     "(in which case you should also specify --require to load it)"],
@@ -93,30 +98,31 @@ module Spec
 
         self.banner = "Usage: spec (FILE|DIRECTORY|GLOB)+ [options]"
         self.separator ""
-        on(*OPTIONS[:pattern]) {|pattern| @options.filename_pattern = pattern}
-        on(*OPTIONS[:diff]) {|diff| @options.parse_diff(diff)}
-        on(*OPTIONS[:colour]) {@options.colour = true}
-        on(*OPTIONS[:example]) {|example| @options.parse_example(example)}
-        on(*OPTIONS[:specification]) {|example| @options.parse_example(example)}
-        on(*OPTIONS[:line]) {|line_number| @options.line_number = line_number.to_i}
-        on(*OPTIONS[:format]) {|format| @options.parse_format(format)}
-        on(*OPTIONS[:require]) {|requires| invoke_requires(requires)}
-        on(*OPTIONS[:backtrace]) {@options.backtrace_tweaker = NoisyBacktraceTweaker.new}
-        on(*OPTIONS[:loadby]) {|loadby| @options.loadby = loadby}
-        on(*OPTIONS[:reverse]) {@options.reverse = true}
-        on(*OPTIONS[:timeout]) {|timeout| @options.timeout = timeout.to_f}
-        on(*OPTIONS[:heckle]) {|heckle| @options.load_heckle_runner(heckle)}
-        on(*OPTIONS[:dry_run]) {@options.dry_run = true}
-        on(*OPTIONS[:options_file]) {|options_file| parse_options_file(options_file)}
+        on(*OPTIONS[:pattern])          {|pattern| @options.filename_pattern = pattern}
+        on(*OPTIONS[:diff])             {|diff| @options.parse_diff(diff)}
+        on(*OPTIONS[:colour])           {@options.colour = true}
+        on(*OPTIONS[:example])          {|example| @options.parse_example(example)}
+        on(*OPTIONS[:specification])    {|example| @options.parse_example(example)}
+        on(*OPTIONS[:line])             {|line_number| @options.line_number = line_number.to_i}
+        on(*OPTIONS[:format])           {|format| @options.parse_format(format)}
+        on(*OPTIONS[:require])          {|requires| invoke_requires(requires)}
+        on(*OPTIONS[:backtrace])        {@options.backtrace_tweaker = NoisyBacktraceTweaker.new}
+        on(*OPTIONS[:loadby])           {|loadby| @options.loadby = loadby}
+        on(*OPTIONS[:reverse])          {@options.reverse = true}
+        on(*OPTIONS[:timeout])          {|timeout| @options.timeout = timeout.to_f}
+        on(*OPTIONS[:heckle])           {|heckle| @options.load_heckle_runner(heckle)}
+        on(*OPTIONS[:dry_run])          {@options.dry_run = true}
+        on(*OPTIONS[:options_file])     {|options_file| parse_options_file(options_file)}
         on(*OPTIONS[:generate_options]) {|options_file|}
-        on(*OPTIONS[:runner]) {|runner|  @options.user_input_for_runner = runner}
-        on(*OPTIONS[:drb]) {}
-        on(*OPTIONS[:version]) {parse_version}
-        on_tail(*OPTIONS[:help]) {parse_help}
+        on(*OPTIONS[:runner])           {|runner|  @options.user_input_for_runner = runner}
+        on(*OPTIONS[:drb])              {}
+        on(*OPTIONS[:version])          {parse_version}
+        on_tail(*OPTIONS[:help])        {parse_help}
       end
-
+      
       def order!(argv, &blk)
-        @argv = argv
+        @argv = argv.dup
+        @argv = (@argv.empty? && self.class.spec_command?) ? ['--help'] : @argv 
         @options.argv = @argv.dup
         return if parse_generate_options
         return if parse_drb
@@ -128,7 +134,7 @@ module Spec
 
         @options
       end
-
+      
       protected
       def invoke_requires(requires)
         requires.split(",").each do |file|
@@ -186,7 +192,7 @@ module Spec
       end
 
       def parse_version
-        @out_stream.puts ::Spec::VERSION::DESCRIPTION
+        @out_stream.puts ::Spec::VERSION::SUMMARY
         exit if stdout?
       end
 

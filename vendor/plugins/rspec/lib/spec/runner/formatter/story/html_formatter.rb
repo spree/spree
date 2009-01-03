@@ -86,6 +86,7 @@ EOF
           end
      
           def scenario_started(story_title, scenario_name)
+            @previous_type = nil
             @scenario_failed = false
             @scenario_text = <<-EOF
               <dt>Scenario: #{h scenario_name}</dt>
@@ -149,9 +150,21 @@ EOF
             spans = args.map { |arg| "<span class=\"param\">#{arg}</span>" }
             desc_string = description.step_name
             arg_regexp = description.arg_regexp           
+            inner = if(type == @previous_type)
+              "And "
+            else
+              "#{type.to_s.capitalize} "
+            end
             i = -1
-            inner = type.to_s.capitalize + ' ' + desc_string.gsub(arg_regexp) { |param| spans[i+=1] }
+            inner += desc_string.gsub(arg_regexp) { |param| spans[i+=1] }
+            
             @scenario_text += "                  <li class=\"#{klass}\">#{inner}</li>\n"
+            
+            if type == :'given scenario'
+              @previous_type = :given
+            else
+              @previous_type = type
+            end
             
           end
         end

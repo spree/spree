@@ -85,7 +85,7 @@ module Spec
           @output.flush
         end
 
-        def example_pending(example, message)
+        def example_pending(example, message, pending_caller)
           @output.puts "    <script type=\"text/javascript\">makeYellow('rspec-header');</script>" unless @header_red
           @output.puts "    <script type=\"text/javascript\">makeYellow('example_group_#{example_group_number}');</script>" unless @example_group_red
           move_progress
@@ -154,14 +154,6 @@ module Spec
     font-size: 80%;
   }
   </style>
-</head>
-<body>
-EOF
-        end
-
-        def report_header
-          <<-EOF
-<div class="rspec-report">
   <script type="text/javascript">
     // <![CDATA[
 #{global_scripts}
@@ -170,9 +162,19 @@ EOF
   <style type="text/css">
 #{global_styles}
   </style>
+</head>
+<body>
+EOF
+        end
+
+        def report_header
+          <<-EOF
+<div class="rspec-report">
 
 <div id="rspec-header">
-  <h1>RSpec Results</h1>
+  <div id="label">
+    <h1>RSpec Results</h1>
+  </div>
 
   <div id="summary">
     <p id="totals">&nbsp;</p>
@@ -212,7 +214,7 @@ EOF
         def global_styles
           <<-EOF
 #rspec-header {
-  background: #65C400; color: #fff;
+  background: #65C400; color: #fff; height: 42px;
 }
 
 .rspec-report h1 {
@@ -220,15 +222,16 @@ EOF
   padding: 10px;
   font-family: "Lucida Grande", Helvetica, sans-serif;
   font-size: 1.8em;
+  float: left;
 }
 
 #summary {
   margin: 0; padding: 5px 10px;
   font-family: "Lucida Grande", Helvetica, sans-serif;
   text-align: right;
-  position: absolute;
   top: 0px;
   right: 0px;
+  float:right;
 }
 
 #summary p {

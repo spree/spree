@@ -22,11 +22,8 @@ module Spec
         
         it "should parse a story file" do
           runner = PlainTextStoryRunner.new("path")
-          during {
-            runner.run(mock('runner'))
-          }.expect {
-            @parser.should_receive(:parse).with(["this", "and that"])
-          }
+          @parser.should_receive(:parse).with(["this", "and that"])
+          runner.run(mock('runner'))
         end
         
         it "should build up a mediator with its own steps and the singleton story_runner" do

@@ -1,6 +1,5 @@
 module Spec
   module Matchers
-    
     class Have #:nodoc:
       def initialize(expected, relativity=:exactly)
         @expected = (expected == :no ? 0 : expected)
@@ -15,34 +14,22 @@ module Spec
         }
       end
     
-      def method_missing(sym, *args, &block)
-        @collection_name = sym
-        if defined?(ActiveSupport::Inflector)
-          @plural_collection_name = ActiveSupport::Inflector.pluralize(sym.to_s)
-        elsif Object.const_defined?(:Inflector)
-          @plural_collection_name = Inflector.pluralize(sym.to_s)
-        end
-        @args = args
-        @block = block
-        self
-      end
-    
       def matches?(collection_owner)
         if collection_owner.respond_to?(@collection_name)
-          collection = collection_owner.send(@collection_name, *@args, &@block)
+          collection = collection_owner.__send__(@collection_name, *@args, &@block)
         elsif (@plural_collection_name && collection_owner.respond_to?(@plural_collection_name))
-          collection = collection_owner.send(@plural_collection_name, *@args, &@block)
+          collection = collection_owner.__send__(@plural_collection_name, *@args, &@block)
         elsif (collection_owner.respond_to?(:length) || collection_owner.respond_to?(:size))
           collection = collection_owner
         else
-          collection_owner.send(@collection_name, *@args, &@block)
+          collection_owner.__send__(@collection_name, *@args, &@block)
         end
-        @actual = collection.size if collection.respond_to?(:size)
-        @actual = collection.length if collection.respond_to?(:length)
-        raise not_a_collection if @actual.nil?
-        return @actual >= @expected if @relativity == :at_least
-        return @actual <= @expected if @relativity == :at_most
-        return @actual == @expected
+        @given = collection.size if collection.respond_to?(:size)
+        @given = collection.length if collection.respond_to?(:length)
+        raise not_a_collection if @given.nil?
+        return @given >= @expected if @relativity == :at_least
+        return @given <= @expected if @relativity == :at_most
+        return @given == @expected
       end
       
       def not_a_collection
@@ -50,12 +37,12 @@ module Spec
       end
     
       def failure_message
-        "expected #{relative_expectation} #{@collection_name}, got #{@actual}"
+        "expected #{relative_expectation} #{@collection_name}, got #{@given}"
       end
 
       def negative_failure_message
         if @relativity == :exactly
-          return "expected target not to have #{@expected} #{@collection_name}, got #{@actual}"
+          return "expected target not to have #{@expected} #{@collection_name}, got #{@given}"
         elsif @relativity == :at_most
           return <<-EOF
 Isn't life confusing enough?
@@ -79,7 +66,21 @@ EOF
         "have #{relative_expectation} #{@collection_name}"
       end
       
+      def respond_to?(sym)
+        @expected.respond_to?(sym) || super
+      end
+    
       private
+      
+      def method_missing(sym, *args, &block)
+        @collection_name = sym
+        if inflector = (defined?(ActiveSupport::Inflector) ? ActiveSupport::Inflector : (defined?(Inflector) ? Inflector : nil))
+          @plural_collection_name = inflector.pluralize(sym.to_s)
+        end
+        @args = args
+        @block = block
+        self
+      end
       
       def relative_expectation
         "#{relativities[@relativity]}#{@expected}"

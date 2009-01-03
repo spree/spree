@@ -13,7 +13,8 @@ module Spec
         @steps.add(type, step)
       end
       
-      def find(type, name)
+      def find(type, unstripped_name)
+        name = unstripped_name.strip
         if @steps.find(type, name).nil?
           @steps.add(type,
           Step.new(name) do

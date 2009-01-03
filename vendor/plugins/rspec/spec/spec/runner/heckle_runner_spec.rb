@@ -21,18 +21,18 @@ unless [/mswin/, /java/].detect{|p| p =~ RUBY_PLATFORM}
     end
 
     it "should heckle all methods in all classes in a module" do
-      @heckle_class.should_receive(:new).with("Foo::Bar", "one", rspec_options).and_return(@heckle)
-      @heckle_class.should_receive(:new).with("Foo::Bar", "two", rspec_options).and_return(@heckle)
-      @heckle_class.should_receive(:new).with("Foo::Zap", "three", rspec_options).and_return(@heckle)
-      @heckle_class.should_receive(:new).with("Foo::Zap", "four", rspec_options).and_return(@heckle)
+      @heckle_class.should_receive(:new).with("Foo::Bar", "one", Spec::Runner.options).and_return(@heckle)
+      @heckle_class.should_receive(:new).with("Foo::Bar", "two", Spec::Runner.options).and_return(@heckle)
+      @heckle_class.should_receive(:new).with("Foo::Zap", "three", Spec::Runner.options).and_return(@heckle)
+      @heckle_class.should_receive(:new).with("Foo::Zap", "four", Spec::Runner.options).and_return(@heckle)
 
       heckle_runner = Spec::Runner::HeckleRunner.new("Foo", @heckle_class)
       heckle_runner.heckle_with
     end
 
     it "should heckle all methods in a class" do
-      @heckle_class.should_receive(:new).with("Foo::Bar", "one", rspec_options).and_return(@heckle)
-      @heckle_class.should_receive(:new).with("Foo::Bar", "two", rspec_options).and_return(@heckle)
+      @heckle_class.should_receive(:new).with("Foo::Bar", "one", Spec::Runner.options).and_return(@heckle)
+      @heckle_class.should_receive(:new).with("Foo::Bar", "two", Spec::Runner.options).and_return(@heckle)
 
       heckle_runner = Spec::Runner::HeckleRunner.new("Foo::Bar", @heckle_class)
       heckle_runner.heckle_with
@@ -46,14 +46,14 @@ unless [/mswin/, /java/].detect{|p| p =~ RUBY_PLATFORM}
     end
 
     it "should heckle specific method in a class (with #)" do
-      @heckle_class.should_receive(:new).with("Foo::Bar", "two", rspec_options).and_return(@heckle)
+      @heckle_class.should_receive(:new).with("Foo::Bar", "two", Spec::Runner.options).and_return(@heckle)
 
       heckle_runner = Spec::Runner::HeckleRunner.new("Foo::Bar#two", @heckle_class)
       heckle_runner.heckle_with
     end
 
     it "should heckle specific method in a class (with .)" do
-      @heckle_class.should_receive(:new).with("Foo::Bar", "two", rspec_options).and_return(@heckle)
+      @heckle_class.should_receive(:new).with("Foo::Bar", "two", Spec::Runner.options).and_return(@heckle)
 
       heckle_runner = Spec::Runner::HeckleRunner.new("Foo::Bar.two", @heckle_class)
       heckle_runner.heckle_with

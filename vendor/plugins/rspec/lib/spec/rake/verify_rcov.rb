@@ -35,11 +35,11 @@ module RCov
     def define
       desc "Verify that rcov coverage is at least #{threshold}%"
       task @name do
-        total_coverage = nil
+        total_coverage = 0
 
         File.open(index_html).each_line do |line|
-          if line =~ /<tt class='coverage_total'>(\d+\.\d+)%<\/tt>/
-            total_coverage = eval($1)
+          if line =~ /<tt class='coverage_total'>\s*(\d+\.\d+)%\s*<\/tt>/
+            total_coverage = $1.to_f
             break
           end
         end

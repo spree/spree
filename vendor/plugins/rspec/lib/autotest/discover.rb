@@ -1,3 +1,3 @@
 Autotest.add_discovery do
-  "rspec" if File.exist?('spec') && ENV['RSPEC']
+  "rspec" if File.directory?('spec') && ENV['RSPEC']
 end

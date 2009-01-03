@@ -61,6 +61,54 @@ module Spec
 EOF
           end
           
+          it 'should document additional givens using And' do
+            # when
+            @reporter.step_succeeded :given, 'step 1'
+            @reporter.step_succeeded :given, 'step 2'
+            @reporter.scenario_ended
+            @reporter.story_ended '', ''
+
+            # then
+            @out.string.should include("Given step 1")
+            @out.string.should include("And step 2")
+          end
+
+          it 'should document additional events using And' do
+            # when
+            @reporter.step_succeeded :when, 'step 1'
+            @reporter.step_succeeded :when, 'step 2'
+            @reporter.scenario_ended
+            @reporter.story_ended '', ''
+
+            # then
+            @out.string.should include("When step 1")
+            @out.string.should include("And step 2")
+          end
+
+          it 'should document additional outcomes using And' do
+            # when
+            @reporter.step_succeeded :then, 'step 1'
+            @reporter.step_succeeded :then, 'step 2'
+            @reporter.scenario_ended
+            @reporter.story_ended '', ''
+
+            # then
+            @out.string.should include("Then step 1")
+            @out.string.should include("And step 2")
+          end
+
+          it 'should document a GivenScenario followed by a Given using And' do
+            # when
+            @reporter.step_succeeded :'given scenario', 'a scenario'
+            @reporter.step_succeeded :given, 'a context'
+            @reporter.scenario_ended
+            @reporter.story_ended '', ''
+
+            # then
+            @out.string.should include("Given scenario a scenario")
+            @out.string.should include("And a context")
+          end
+          
           it "should create a failed story if one of its scenarios fails" do
               @reporter.story_started('story_title', 'narrative')
               @reporter.scenario_started('story_title', 'succeeded_scenario_name')

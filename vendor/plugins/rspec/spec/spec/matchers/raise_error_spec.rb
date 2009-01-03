@@ -12,6 +12,24 @@ describe "should raise_error" do
   end
 end
 
+describe "should raise_error {|err| ... }" do
+  it "passes if there is an error" do
+    ran = false
+    lambda { non_existent_method }.should raise_error {|e|
+      ran = true
+    }
+    ran.should be_true
+  end
+
+  it "passes the error to the block" do
+    error = nil
+    lambda { non_existent_method }.should raise_error {|e|
+      error = e
+    }
+    error.should be_an_instance_of(NameError)
+  end
+end
+
 describe "should_not raise_error" do
   it "should pass if nothing is raised" do
     lambda {}.should_not raise_error

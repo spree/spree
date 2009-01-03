@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper.rb'
 
-module HaveSpecHelper
+share_as :HaveSpecHelper do
   def create_collection_owner_with(n)
     owner = Spec::Expectations::Helper::CollectionOwner.new
     (1..n).each do |n|
@@ -9,7 +9,20 @@ module HaveSpecHelper
     end
     owner
   end
+  before(:each) do
+    unless defined?(::ActiveSupport::Inflector)
+      @active_support_was_not_defined
+      module ::ActiveSupport
+        class Inflector
+          def self.pluralize(string)
+            string.to_s + 's'
+          end
+        end
+      end
+    end
+  end
 end
+
 
 describe "should have(n).items" do
   include HaveSpecHelper
@@ -50,13 +63,27 @@ end
 describe 'should have(1).item when ActiveSupport::Inflector is defined' do
   include HaveSpecHelper
   
-  before do
-    unless defined?(ActiveSupport::Inflector)
-      module ActiveSupport
-        class Inflector
-          def self.pluralize(string)
-            string.to_s + 's'
-          end
+  it 'should pluralize the collection name' do
+    owner = create_collection_owner_with(1)
+    owner.should have(1).item
+  end
+  
+  after(:each) do
+    if @active_support_was_not_defined
+      Object.__send__ :remove_const, :ActiveSupport
+    end
+  end
+end
+
+describe 'should have(1).item when Inflector is defined' do
+  include HaveSpecHelper
+  
+  before(:each) do
+    unless defined?(Inflector)
+      @inflector_was_not_defined
+      class Inflector
+        def self.pluralize(string)
+          string.to_s + 's'
         end
       end
     end
@@ -65,6 +92,12 @@ describe 'should have(1).item when ActiveSupport::Inflector is defined' do
   it 'should pluralize the collection name' do
     owner = create_collection_owner_with(1)
     owner.should have(1).item
+  end
+
+  after(:each) do
+    if @inflector_was_not_defined
+      Object.__send__ :remove_const, :Inflector
+    end
   end
 end
 
@@ -289,5 +322,78 @@ end
 describe "have(n).things on an object which is not a collection nor contains one" do
   it "should fail" do
     lambda { Object.new.should have(2).things }.should raise_error(NoMethodError, /undefined method `things' for #<Object:/)
+  end
+end
+
+describe Spec::Matchers::Have, "for a collection owner that implements #send" do
+  include HaveSpecHelper
+  
+  before(:each) do
+    @collection = Object.new
+    def @collection.floozles; [1,2] end
+    def @collection.send(*args); raise "DOH! Library developers shouldn't use #send!" end
+  end
+  
+  it "should work in the straightforward case" do
+    lambda {
+      @collection.should have(2).floozles
+    }.should_not raise_error
+  end
+
+  it "should work when doing automatic pluralization" do
+    lambda {
+      @collection.should have_at_least(1).floozle
+    }.should_not raise_error
+  end
+
+  it "should blow up when the owner doesn't respond to that method" do
+    lambda {
+      @collection.should have(99).problems
+    }.should raise_error(NoMethodError, /problems/)
+  end
+end
+
+module Spec
+  module Matchers
+    describe Have do
+      it "should have method_missing as private" do
+        with_ruby '1.8' do
+          Have.private_instance_methods.should include("method_missing")
+        end
+        with_ruby '1.9' do
+          Have.private_instance_methods.should include(:method_missing)
+        end
+      end
+      
+      describe "respond_to?" do
+        before :each do
+          @have = Have.new(:foo)
+          @a_method_which_have_defines = Have.instance_methods.first
+          @a_method_which_object_defines = Object.instance_methods.first
+        end
+        
+        it "should be true for a method which Have defines" do
+          @have.should respond_to(@a_method_which_have_defines)
+        end
+        
+        it "should be true for a method that it's superclass (Object) defines" do
+          @have.should respond_to(@a_method_which_object_defines)
+        end
+        
+        it "should be false for a method which neither Object nor nor Have defines" do
+          @have.should_not respond_to(:foo_bar_baz)
+        end
+        
+        it "should be false if the owner doesn't respond to the method" do
+          have = Have.new(99)
+          have.should_not respond_to(:problems)
+        end
+        
+        it "should be true if the owner responds to the method" do
+          have = Have.new(:a_symbol)
+          have.should respond_to(:to_sym)
+        end
+      end
+    end
   end
 end

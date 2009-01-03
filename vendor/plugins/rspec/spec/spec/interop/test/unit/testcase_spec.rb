@@ -42,4 +42,8 @@ describe "Test::Unit::TestCase" do
       $?.should == 256
     end
   end
+  
+  describe "not yet implemented examples:" do
+    it "this example should be reported as pending (not an error)"
+  end
 end

@@ -315,3 +315,15 @@ describe "should change{ block }.from(old).to(new)" do
     lambda { @instance.some_value = "cat" }.should change{@instance.some_value}.from("string").to("cat")
   end
 end
+
+describe Spec::Matchers::Change do
+  it "should work when the receiver has implemented #send" do
+    @instance = SomethingExpected.new
+    @instance.some_value = "string"
+    def @instance.send(*args); raise "DOH! Library developers shouldn't use #send!" end
+    
+    lambda {
+      lambda { @instance.some_value = "cat" }.should change(@instance, :some_value)
+    }.should_not raise_error
+  end
+end

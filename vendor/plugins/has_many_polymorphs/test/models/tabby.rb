@@ -1,0 +1,2 @@
+class Tabby < Cat
+end
