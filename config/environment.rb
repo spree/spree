@@ -26,7 +26,6 @@ Spree::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
 
-  config.gem "has_many_polymorphs", :version => '2.12'
   config.gem "highline", :version => '1.4.0'
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.0'
   config.gem "tlsmail"
