@@ -6,13 +6,15 @@ class Admin::ShipmentsController < Admin::BaseController
   belongs_to :order
   
   # override r_c default with special presenter logic
-  def create
+  def create  
     # TODO - provide AJAX interface for setting shipping method instead of assuming first available
     shipment = @shipment_presenter.shipment
     shipment.order = @order
     shipment.shipping_method = ShippingMethod.first
     shipment.address = @shipment_presenter.address
-    shipment.save
+    unless @shipment_presenter.valid? and shipment.save
+      render :action => "new" and return
+    end    
     if params['mark_shipped']
       @order.ship!
     end 
