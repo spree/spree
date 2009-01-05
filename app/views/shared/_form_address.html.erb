@@ -34,9 +34,8 @@
       </select>
 			<%= observe_field :address_country_id, 
 			  :url => {:action => :country_changed },
-	    	:frequency => 2,
 	    	:update => 'address_states_row',
-	  		:on => "onselect",
+	  		:on => "changed",
 		 		:with => "#{presenter_type}_presenter[address_country_id]",
 				:loading => "$('address_states_row').childElements()[1].update('Loading...');"
 			%>       
