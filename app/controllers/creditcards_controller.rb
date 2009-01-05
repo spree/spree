@@ -31,7 +31,7 @@ class CreditcardsController < Spree::BaseController
   end
   
   def country_changed
-    render :partial => "states"
+    render :partial => "shared/states", :locals => {:presenter_type => "creditcard"}
   end
   
   private

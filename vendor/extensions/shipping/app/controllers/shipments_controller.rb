@@ -23,7 +23,7 @@ class ShipmentsController < Spree::BaseController
   def country_changed
     country_id = params[:shipment_presenter][:address_country_id]
     @states = State.find_all_by_country_id(country_id, :order => 'name')  
-    render :partial => "shared/states"
+    render :partial => "shared/states", :locals => {:presenter_type => "shipment"}
   end  
 
   # override r_c defaults so we can handle special presenter logic
