@@ -11,7 +11,7 @@ module Admin::OrdersHelper
   def event_links
     links = []
     @order_events.sort.each do |event| 
-      links << (link_to event, fire_admin_order_url(@order, :e => event), :method => :put) if @order.send("can_#{event}?")
+      links << (link_to event, fire_admin_order_url(@order, :e => event), {:method => :put, :confirm => "Are you sure you want to #{event}?"}) if @order.send("can_#{event}?")
     end
     return "" if links.empty?
     links.join(' &nbsp;')    
