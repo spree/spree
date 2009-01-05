@@ -7,7 +7,7 @@ class UsersController < Spree::BaseController
   actions :all, :except => [:index, :destroy]
   
   show.before do
-    @orders = Order.find_all_by_user_id(current_user.id)
+    @orders = Order.checkout_completed(true).find_all_by_user_id(current_user.id)
   end
 
   create.after do   
