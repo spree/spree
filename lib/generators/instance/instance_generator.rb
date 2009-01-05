@@ -102,6 +102,7 @@ class InstanceGenerator < Rails::Generator::Base
       m.template "../../../../config/environment.rb", "config/environment.rb", :assigns => { :app_name => @app_name, :app_secret_key_to_be_replaced_in_real_app_by_generator => secret }
       m.file "../../../../config/boot.rb", "config/boot.rb"
       m.file "../../../../config/initializers/spree.rb", "config/initializers/spree.rb"
+      m.file "../../../../config/spree_permissions.yml", "config/spree_permissions.yml"
       
       # Demo Configuration
       if options[:demo]

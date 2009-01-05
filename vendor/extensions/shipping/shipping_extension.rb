@@ -11,14 +11,18 @@ class ShippingExtension < Spree::Extension
     Order.class_eval do
       has_many :shipments, :dependent => :destroy
       include Spree::ShippingCalculator
-    end    
-    AddressesController.class_eval do
-      # limit the countries to the ones that are possible to ship to
-      def load_countries
-        @countries = @order.shipping_countries
-        @countries = [Country.find(Spree::Config[:default_country_id])] if @countries.empty?
+
+      # convenience method since many stores will not allow user to create multiple shipments
+      def shipment
+        shipments.last
       end
-    end
+      
+      def ship_address
+        return nil if shipments.empty?
+        return shipment.address
+      end      
+    end    
+
     Admin::ConfigurationsController.class_eval do
       before_filter :add_shipping_links, :only => :index
       def add_shipping_links
@@ -33,5 +37,19 @@ class ShippingExtension < Spree::Extension
         {:name => 'Width', :only => [:variant], :format => "%.2f"},
         {:name => 'Depth', :only => [:variant], :format => "%.2f"}
       ]
+
+    # register Accessories product tab
+    Admin::BaseController.class_eval do
+      before_filter :add_shipments_tab
+      
+      private
+      def add_shipments_tab
+        @order_admin_tabs << {:name => 'Shipments', :url => "admin_order_shipments_url"}
+      end
+    end
+
+    Product.class_eval do
+      belongs_to :shipping_category
+    end
   end
 end

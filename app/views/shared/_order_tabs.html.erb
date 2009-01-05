@@ -1,0 +1,32 @@
+<table width="100%">
+  <tr>
+    <td id="order-num"><%= t('Order') %> # <%=@order.number%></td>
+    <td align="right">
+      <b><%= @order.state.titleize %></b>
+    </td>
+  </tr>
+</table>
+<div id="tab-container">
+  <ul id="tabnav">
+  	<li>
+  	  <%= link_to t("Order Details"), 
+  	              admin_order_url(@order), 
+  	              :class => (current == "Order Details" ? "active" : "") %>
+  	</li>
+  	<li>
+  	  <%= link_to t("Payments"), 
+  	              admin_order_payments_url(@order), 
+  	              :class => (current == "Payments" ? "active" : "") %>
+  	</li>
+		<% if @order_admin_tabs && @order_admin_tabs.size > 0
+			@order_admin_tabs.each do |extension| %>
+	     <li>
+	  	  <%= link_to extension[:name].capitalize.pluralize, 
+	  	              eval(extension[:url] + " @order") ,
+										:class => (current == extension[:name].capitalize.pluralize ? "active" : "") %>
+	  	</li>
+	   <% end
+		end %>
+		
+  </ul>
+</div>

@@ -9,12 +9,12 @@ describe OrdersController do
   describe "create" do
     it "should add the variant to the order" do
       @order.should_receive(:add_variant).with(@variant)
-      post :create, :id => "123"
+      post :create, :id => "345", :variant => "id[123]"
     end
   
     it "should not set the state" do
       @order.should_not_receive(:state=)
-      post :create, :id => "123", :order => {:state => "paid"}
+      post :create, :id => "345", :variant => "id[123]", :order => {:state => "paid"}
     end    
   end
   

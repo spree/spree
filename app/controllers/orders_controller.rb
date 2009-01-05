@@ -1,15 +1,15 @@
-class OrdersController < Admin::BaseController
-  before_filter :login_required, :only => [:checkout]
+class OrdersController < Spree::BaseController
+  before_filter :require_user_account, :only => [:checkout]
   before_filter :load_object, :only => [:checkout]
-  before_filter :can_only_view_own_orders, :only => [:show]
 
   ssl_required :show
+
+  resource_controller
+  actions :all, :except => :index
 
   layout 'application'
   
   helper :products
-  
-  resource_controller
 
   create.after do    
     # add the specified product to the order
@@ -55,19 +55,10 @@ class OrdersController < Admin::BaseController
   end
 
   protected
-  # Custom access denied action for orders.  In the case of an order, we'd like the user to be presented with a user 
-  # signup screen (as opposed to login) since its likely the user does not yet have an account.  The signup screen 
-  # also contains a link to the login screen if they already have an account.
-  def access_denied
-    respond_to do |format|
-      format.html do
-        store_location
-        redirect_to signup_path
-      end
-      format.xml do
-        request_http_basic_authentication 'Web Password'
-      end
-    end
+  def require_user_account
+    return if logged_in?
+    store_location
+    redirect_to signup_path 
   end
     
   private
@@ -86,9 +77,5 @@ class OrdersController < Admin::BaseController
       end
     end
     find_order
-  end
- 
-  def can_only_view_own_orders
-    access_denied unless current_user.id == object.user_id || current_user.has_role?("admin")
   end
 end

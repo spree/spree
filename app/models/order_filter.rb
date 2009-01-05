@@ -12,6 +12,8 @@ class OrderFilter < ActiveRecord::Base
   column :state, :string
   column :customer, :string
   column :checkout, :string
+  column :firstname, :string
+  column :lastname, :string
   
   def validate
     date_pattern = /^(0[1-9]|1[012])[\/][0-9]{2}[\/](19|20)[0-9]{2}$/

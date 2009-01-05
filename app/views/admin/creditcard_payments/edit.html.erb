@@ -1,0 +1,36 @@
+<%= render :partial => 'shared/order_tabs', :locals => {:current => "Payments"} %>
+<br/>
+<h2><%= t("Credit Card Payment")%></h2>
+<br/>
+<b><%= t("Credit Card")%>: </b> &nbsp; #<%= @creditcard_payment.creditcard.display_number %><br/>
+<b><%= t("Type")%> : </b> &nbsp; <%= @creditcard_payment.creditcard.cc_type.titleize %><br/>
+<br/>
+<% form_for(:payment_presenter, :url => object_url, :html => { :method => :put}) do |f| %>
+	<h4><%= t("Billing Address")%></h4>
+	<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "payment"} %>
+	<br/>
+	<table class="basic-table">
+	  <tr>
+	    <th><%= t("Transaction") %></th>
+	    <th><%= t("Amount") %></th>
+	    <th><%= t("Response Code") %></th>
+	    <th><%= "#{t('Date')}/#{t('Time')}" %></th>
+	  </tr>
+	  <% @creditcard_payment.txns.each do |t| %>
+	    <tr>
+	      <td><%=CreditcardTxn::TxnType.from_value t.txn_type.to_i%></td>
+	      <td><%=number_to_currency t.amount%></td>
+	      <td><%=t.response_code%></td>
+	      <td><%=t.created_at.to_s(:db)%></td>
+	    </tr>
+	  <% end %>
+	</table>
+
+	<div align="right">
+		<br/>
+	  <%= submit_tag t('Update') %>
+	</div>	
+
+<% end %>
+
+<%= link_to t("List"), admin_order_payments_url(@order) %>

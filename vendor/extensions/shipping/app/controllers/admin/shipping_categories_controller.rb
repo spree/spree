@@ -3,8 +3,6 @@ class Admin::ShippingCategoriesController < ApplicationController
   
   layout 'admin'
   
-  require_role :admin
-  
   update.response do |wants|
     wants.html { redirect_to collection_url }
   end

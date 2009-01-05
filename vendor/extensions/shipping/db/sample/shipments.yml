@@ -1,0 +1,6 @@
+<% 1.upto(30) do |i| %>
+shipment_<%= i %>:
+  number: <%= Array.new(11){rand(11)}.join %>
+  order: <%= "order_#{i}" %>
+  shipping_method: ups_ground
+<% end %>

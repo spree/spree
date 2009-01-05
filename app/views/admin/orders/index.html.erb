@@ -15,7 +15,6 @@
               <th><%= t("Status") %></th>
               <th><%= t("Customer") %></th>
               <th><%= t("Total") %></th>
-              <th><%= t("Action") %></th>
             </tr>
           </thead>
           <tbody>
@@ -26,7 +25,6 @@
               <td><%= t(order.state).titleize %></td>
               <td><%= order.user.email if order.user %></td>
               <td><%= number_to_currency order.total %></td>
-              <td><%= available_events(order) %></td>
             </tr>
           <% end %>
           </tbody>
@@ -79,13 +77,25 @@
                 </td>
               </tr>
               <tr>
-                <td><%= t("Customer") %></td>
+                <td><%= t("Email") %></td>
                 <td>
                   <%= f.text_field :customer, :size=>13 %>
                 </td>
               </tr>
               <tr>
-                <td colspan="2"><%= t("Checkout Complete") %>&nbsp;<%= f.check_box :checkout, {:style => "vertical-align:middle;"}%>
+                <td><%= t("First Name") %></td>
+                <td>
+                  <%= f.text_field :firstname, :size=>13 %>
+                </td>
+              </tr>
+              <tr>
+                <td><%= t("Last Name") %></td>
+                <td>
+                  <%= f.text_field :lastname, :size=>13 %>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2"><%= t("Show Incomplete Orders") %>&nbsp;<%= f.check_box :checkout, {:style => "vertical-align:middle;"}%>
                 </td>
               </tr>
             </tbody>
@@ -96,4 +106,4 @@
     </td>
   </tr>
 </table>
-<%= render :partial => 'shared/paginate', :locals => {:collection => @orders, :options => search_options} unless @orders.empty? -%>
+<%= render :partial => 'shared/paginate', :locals => {:collection => @orders, :options => generate_search_options(@filter)} unless @orders.empty? -%>

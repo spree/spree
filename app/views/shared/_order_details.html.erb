@@ -1,7 +1,9 @@
 <table class="order-summary">
+<!-->
   <tr>
     <th colspan="4" id="order-num"><%= t('Order') %> # <%=@order.number%></th>
   </tr>
+-->
   <tr>
     <th><%= t('Item Description') %></th>
     <th><%= t('Price') %></th>
@@ -25,7 +27,7 @@
     <td><%= number_to_currency @order.tax_amount -%></td>
   </tr>
   <tr>
-    <td colspan="3"><b><%= t('Shipping') %>:</b></td>
+    <td colspan="3"><b><%= t('Shipping') %>:</b> (<%= @order.shipment.shipping_method.name %>)</td>
     <td><%= number_to_currency @order.ship_amount -%></td>
   </tr>
   <tr>

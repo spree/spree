@@ -551,3 +551,9 @@ ul.plain {
 }
 
 /* === end: menu styles === */
+
+#shipment-num {
+  border-bottom:medium none;
+  font-size:16px;
+  font-weight:normal;
+}

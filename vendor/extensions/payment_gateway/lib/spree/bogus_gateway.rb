@@ -19,11 +19,11 @@ module Spree #:nodoc:
 
     end
     
-    def authorize(money, creditcard, options = {})
+    def authorize(money, creditcard, options = {})      
       if VALID_CCS.include? creditcard.number 
         ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
       else
-        ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", {:error => 'Bogus Gateway: Forced failure'}, :test => true)
+        ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", {:message => 'Bogus Gateway: Forced failure'}, :test => true)
       end      
     end
 
@@ -31,7 +31,7 @@ module Spree #:nodoc:
       if VALID_CCS.include? creditcard.number 
         ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
       else
-        ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", :error => 'Bogus Gateway: Forced failure', :test => true)
+        ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", :message => 'Bogus Gateway: Forced failure', :test => true)
       end
     end 
 

@@ -1,10 +1,12 @@
 module Urligence
   def smart_url(*objects)
-    urligence(*objects.push(:url))
+    opts = objects.extract_options!    
+    urligence(*objects.push(:url).push(opts))
   end
   
   def smart_path(*objects)
-    urligence(*objects.push(:path))
+    opts = objects.extract_options!
+    urligence(*objects.push(:path).push(opts))
   end
   
   def hash_for_smart_url(*objects)
@@ -32,7 +34,11 @@ module Urligence
     end
     
     unless config[:type] == :hash
-      send url_fragments.join("_"), *objects.flatten.select { |obj| !obj.is_a? Symbol }
+      objects=objects.flatten.select { |obj| !obj.is_a? Symbol }
+      url_params = config.reject { |k,v| v.nil? }
+
+      objects.push(url_params) unless url_params.empty?
+      send url_fragments.join("_"), *objects.flatten
     else
       params = {}
       unparsed_params = objects.select { |obj| !obj.is_a? Symbol }

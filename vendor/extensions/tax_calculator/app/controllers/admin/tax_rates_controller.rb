@@ -2,8 +2,6 @@ class Admin::TaxRatesController < Admin::BaseController
   resource_controller
   before_filter :load_data
   
-  require_role :admin
-  
   update.response do |wants|
     wants.html { redirect_to collection_url }
   end

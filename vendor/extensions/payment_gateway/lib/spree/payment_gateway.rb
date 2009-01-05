@@ -1,55 +1,55 @@
 module Spree
   module PaymentGateway    
-    def authorize
-      gateway = payment_gateway 
+    def authorize(amount)
+      gateway = payment_gateway       
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
-      response = gateway.authorize((order.total * 100).to_i, @creditcard, gateway_options)
+      response = gateway.authorize((amount * 100).to_i, self, gateway_options)      
       gateway_error(response) unless response.success?
+      
+      # create a creditcard_payment for the amount that was authorized
+      creditcard_payment = order.creditcard_payments.create(:amount => amount, :creditcard => self)
       # create a transaction to reflect the authorization
-      self.creditcard_txns << CreditcardTxn.new(
-        :amount => order.total,
+      creditcard_payment.creditcard_txns << CreditcardTxn.new(
+        :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::AUTHORIZE
       )
     end
 
     def capture
+=begin
       authorization = find_authorization
       gw = payment_gateway
       response = gw.capture((order.total * 100).to_i, authorization.response_code, minimal_gateway_options)
       gateway_error(response) unless response.success?
       self.creditcard_txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
+=end      
     end
 
-    def purchase
-      #purchase is a combined Authorize and Capture that gets processed
-      #by the ActiveMerchant gateway as one single transaction.
-      
+    def purchase(amount)
+      #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
       gateway = payment_gateway 
-
-      response = gateway.purchase((order.total * 100).to_i, @creditcard, gateway_options) 
+      response = gateway.purchase((amount * 100).to_i, self, gateway_options) 
       gateway_error(response) unless response.success?
       
-      # create a transaction to reflect the authorization
-      self.creditcard_txns << CreditcardTxn.new(
-        :amount => order.total,
-        :response_code => response.authorization,
-        :txn_type => CreditcardTxn::TxnType::AUTHORIZE
-      )
       
-      # create a transaction to reflect the capture
-      self.creditcard_txns << CreditcardTxn.new(
-        :amount => order.total, 
-        :response_code => response.authorization, 
-        :txn_type => CreditcardTxn::TxnType::CAPTURE
+      # create a creditcard_payment for the amount that was purchased
+      creditcard_payment = order.creditcard_payments.create(:amount => amount, :creditcard => self)
+      # create a transaction to reflect the purchase
+      creditcard_payment.creditcard_txns << CreditcardTxn.new(
+        :amount => amount,
+        :response_code => response.authorization,
+        :txn_type => CreditcardTxn::TxnType::PURCHASE
       )
     end
 
     def void
+=begin
       authorization = find_authorization
       response = payment_gateway.void(authorization.response_code, minimal_gateway_options)
       gateway_error(response) unless response.success?
       self.creditcard_txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
+=end
     end
     
     def gateway_error(response)
@@ -60,12 +60,14 @@ module Spree
     end
         
     def gateway_options
-      options = {:billing_address => generate_address_hash(address), :shipping_address => generate_address_hash(order.address)}
+      options = {:billing_address => generate_address_hash(order.bill_address), 
+                 :shipping_address => generate_address_hash(order.ship_address)}
       options.merge minimal_gateway_options
     end    
     
     # Generates an ActiveMerchant compatible address hash from one of Spree's address objects
     def generate_address_hash(address)
+      return {} if address.nil?
       {:name => address.full_name, :address1 => address.address1, :address2 => address.address2, :city => address.city,
        :state => address.state_text, :zip => address.zipcode, :country => address.country.iso, :phone => address.phone}
     end

@@ -2,7 +2,7 @@ module Spree #:nodoc:
   module TaxCalculator
     def calculate_tax      
       # tax is zero if ship address does not match any existing tax zone
-      tax_rates = TaxRate.all.find_all { |rate| rate.zone.include?(address) }
+      tax_rates = TaxRate.all.find_all { |rate| rate.zone.include?(ship_address) }
       return 0 if tax_rates.empty?  
       sales_tax_rates = tax_rates.find_all { |rate| rate.tax_type == TaxRate::TaxType::SALES_TAX }
       vat_rates = tax_rates.find_all { |rate| rate.tax_type == TaxRate::TaxType::VAT }

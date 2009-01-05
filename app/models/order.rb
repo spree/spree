@@ -10,9 +10,10 @@ class Order < ActiveRecord::Base
   has_many :products, :through => :line_items
   has_many :inventory_units
   has_many :state_events
-  has_one :creditcard_payment
+  has_many :payments
+  has_many :creditcard_payments
+  has_many :creditcards
   belongs_to :user
-  has_one :address, :as => :addressable, :dependent => :destroy
 
   validates_associated :line_items, :message => "are not valid"
   validates_numericality_of :tax_amount
@@ -20,7 +21,7 @@ class Order < ActiveRecord::Base
   validates_numericality_of :item_total
   validates_numericality_of :total
 
-  named_scope :by_number, lambda {|number| {:conditions => ["number = ?", number]}}
+  named_scope :by_number, lambda {|number| {:conditions => ["orders.number = ?", number]}}
   named_scope :between, lambda {|*dates| {:conditions => ["orders.created_at between :start and :stop", {:start => dates.first.to_date, :stop => dates.last.to_date}]}}
   named_scope :by_customer, lambda {|customer| {:include => :user, :conditions => ["users.email = ?", customer]}}
   named_scope :by_state, lambda {|state| {:conditions => ["state = ?", state]}}
@@ -33,30 +34,21 @@ class Order < ActiveRecord::Base
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
-    after_transition :to => 'authorized', :do => :complete_order
+    after_transition :to => 'charged', :do => :complete_order
     after_transition :to => 'shipped', :do => :mark_shipped
     after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
     
     event :next do
-      transition :to => 'address', :from => 'in_progress'
-      transition :to => 'creditcard_payment', :from => 'address'
-      transition :to => 'authorized', :from => 'creditcard_payment'
-    end
-    event :previous do
-      transition :to => 'address', :from => 'creditcard_payment'
-      transition :to => 'in_progress', :from => 'address'
+      transition :to => 'creditcard', :from => 'in_progress'
+      transition :to => 'charged', :from => 'creditcard'
     end
     event :edit do
-      transition :to => 'in_progress', :from => %w{address creditcard_payment in_progress}
+      transition :to => 'in_progress', :from => %w{creditcard in_progress}
     end
-    event :capture do
-      transition :to => 'captured', :from => 'authorized'
-    end
-    event :ship do
-      transition :to => 'shipped', :from => 'captured'
-      # todo: also allow from authorized state (but we need to make sure capture is applied first)
-    end
+    #event :capture do
+    #  transition :to => 'captured', :from => 'authorized'
+    #end
     event :cancel do
       transition :to => 'canceled', :if => :allow_cancel?
     end
@@ -116,6 +108,11 @@ class Order < ActiveRecord::Base
     self.total = self.item_total + self.ship_amount + self.tax_amount
   end 
  
+  def bill_address
+    return nil if creditcards.empty?
+    return creditcards.last.address
+  end
+ 
   private
   def complete_order
     self.update_attribute(:checkout_complete, true)
@@ -138,7 +135,7 @@ class Order < ActiveRecord::Base
   
   def restock_inventory
     inventory_units.each do |inventory_unit|
-      inventory_unit.restock!
+      inventory_unit.restock! if inventory_unit.can_restock?
     end
   end
   

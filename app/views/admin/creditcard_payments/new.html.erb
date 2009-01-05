@@ -1,0 +1,28 @@
+<%= render :partial => 'shared/order_tabs', :locals => {:current => "Payments"} %>
+<br/>
+<div id="creditcard">
+  <%=error_messages_for :payment_presenter %>
+  <h1><%= t("New Creditcard Payment")%></h1>
+  <br/>
+  <% form_for(:payment_presenter, :url => admin_order_creditcard_payments_url(@order)) do |f| %>
+    <table cellpadding="5" width="100%">
+      <tr>
+        <td valign="top" wdith="50%">
+          <%= render :partial => 'creditcards/form_credit_card', :locals => {:f => f} %>
+        </td>
+        <td>
+					<h4><%= t("Billing Address")%></h4>
+					<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "payment"} %>
+        </td>
+      </tr>
+    </table>
+  	<div align="right" style="font-size:120%;">
+  		<br />
+  		<%= Globalite.localize(:order_total_message) %> <input type="text" name="amount" value="<%= @amount %>">
+  	</div>
+    <div align="right">
+  		<br/>
+      <%= submit_tag t('Continue') %>
+    </div>
+  <% end %>
+</div>

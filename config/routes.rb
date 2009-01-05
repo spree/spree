@@ -35,7 +35,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users
   map.resources :products, :member => {:change_image => :post}
   map.resources :addresses
-  map.resources :orders, :member => {:address_info => :get, :checkout => :get}, :has_many => :line_items, :has_one => [:address, :creditcard_payment]
+  map.resources :orders, :member => {:address_info => :get, :checkout => :get}, :has_many => [:line_items, :creditcards, :creditcard_payments]
 
   # route globbing for pretty nested taxon and product paths
   map.taxons_with_product '/t/*taxon_path/p/:id', :controller => 'products', :action => 'show'
@@ -62,8 +62,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
     admin.resource :mail_settings
     admin.resource :inventory_settings
+    admin.resources :orders, :has_many => [:payments, :creditcards, :creditcard_payments], :member => {:fire => :put, :resend => :post}
     admin.resource :general_settings
-    admin.resources :orders, :member => {:fire => :put, :resend => :post}
     admin.resources :taxonomies do |taxonomy|
       taxonomy.resources :taxons
     end

@@ -41,35 +41,24 @@
 #          If it evaluates to true, the role is required.
 #  * :unless - The inverse of :if
 #
+
+# By default, admin role is required for all controllers extending Admin::BaseController (unless otherwise specified here)
+'Admin::BaseController':
+  permission1:
+    roles : [admin]
+# Users can only see their own accounts
 'UsersController':
-  permission1: 
+  permission1:
     roles : [admin]
     options :
-      for : [index, delete]
-'Admin::UsersController':
+      except : [new, create]   
+      unless : "current_user.id == object.id"
+# Users can only see their own orders
+'OrdersController':
   permission1:
-    roles : [admin]   
-'Admin::OrdersController':
-  permission1:
-    role : [admin]
-'Admin::ProductsController':
-  permission1:
-    role : [admin]
-'Admin::ZonesController':
-  permission1:
-    role : [admin]
-'Admin::TaxCategoriesController':
-  permission1:
-    role : [admin]    
-'Admin::ConfigurationController':
-  permission1:
-    role : [admin]
-'Admin::OverviewController':
-  permission1:
-    role : [admin]  
-'Admin::TaxonsController':
-  permission1:
-    role : [admin]
-'Admin::TaxonomiesController':
-  permission1:
-    role : [admin]
+    roles : [admin]
+    options :
+      except : [new, create]   
+      unless : "object.user_id == nil || current_user.id == object.user_id"
+      
+# TODO - restrict orders

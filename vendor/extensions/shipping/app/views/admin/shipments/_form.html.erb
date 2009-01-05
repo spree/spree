@@ -1,0 +1,35 @@
+<br/>
+<table class="order-summary" style="width:100%;">
+  <tr>
+    <th colspan="3" id="shipment-num"><%= t('Shipment') %> # <%=@shipment.number%></th>
+  </tr>
+  <tr>
+    <th width="100"><%= t('SKU') %></th>
+    <th width="550"><%= t('Item Description') %></th>
+    <th><%= t('Qty') %></th>
+  </tr>
+  <% @order.line_items.each do |item| %>
+    <tr>
+      <td valign="top"><%=item.variant.sku %></td>
+      <td width="300">
+        <%=item.variant.product.name %> 
+        <%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+      </td>
+      <td valign="top"><%=item.quantity %></td>
+    </tr>
+  <% end %>      
+</table>
+<table class="order-summary" style="width:100%;">
+  <tr>
+    <td><%= t('Tracking:') %></td>
+    <td><%= f.text_field :shipment_tracking %></td>
+  </tr>
+  <tr>
+    <td><%= t('Shipping Cost:') %></td>
+    <td><%= f.text_field :shipment_cost %></td>
+  </tr>
+  <tr>
+    <td><%= t('Mark Shipped:') %></td>
+    <td><%= check_box_tag 'mark_shipped', value="1", @shipment.shipped_at, :disabled => (not @order.can_ship?) %></td>
+  </tr>
+</table>
