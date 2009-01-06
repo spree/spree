@@ -12,8 +12,8 @@ class Admin::OrdersController < Admin::BaseController
     # itself will make sure transitions are not applied in the wrong state)
     event = params[:e]
     Order.transaction do 
+      @order.state_events.create(:name => t(event), :user => current_user, :previous_state => @order.state)
       @order.send("#{event}!")
-      @order.state_events.create(:name => t(event), :user => current_user)
     end
     flash[:notice] = t('Order Updated')
   rescue Spree::GatewayError => ge
@@ -52,7 +52,7 @@ class Admin::OrdersController < Admin::BaseController
   
   # Used for extensions which need to provide their own custom event links on the order details view.
   def initialize_order_events
-    @order_events = ["cancel"]
+    @order_events = %w{cancel resume}
   end
   
 

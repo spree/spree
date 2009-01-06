@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper.rb'
 
 describe Order do
   before(:each) do
-    @variant = mock_model(Variant, :id => "1234", :price => 7.99)
+    @variant = Variant.new(:id => "1234", :price => 7.99)
     @inventory_unit = mock_model(InventoryUnit, :null_object => true)
     @creditcard_payment = mock_model(CreditcardPayment, :null_object => true)
     @user = mock_model(User, :email => "foo@exampl.com")
@@ -14,7 +14,7 @@ describe Order do
     @order.user =  @user
 
     add_stubs(@order, :save => true, :inventory_units => [@inventory_unit])
-    @line_item =  LineItem.new(:variant => @variant, :quantity => 1)
+    @line_item =  LineItem.new(:variant => @variant, :quantity => 1, :price => 7.99)
     @order.line_items << @line_item
     InventoryUnit.stub!(:retrieve_on_hand).with(@variant, 1).and_return [@inventory_unit]
     OrderMailer.stub!(:deliver_confirm).with(any_args)   
@@ -127,6 +127,31 @@ describe Order do
         @order.add_variant(@variant2)
         
  
+    end
+  end
+
+  describe "resume" do
+    %w{in_progress shipment shipping_method creditcard charged }.each do |state|
+      it "should not be available in #{state} state" do 
+        @order.state = state
+        @order.send("can_resume?").should == false
+      end
+    end
+    it "should be available in canceled state" do 
+      @order.state = 'canceled'
+      @order.state_events = [StateEvent.new(:name => 'cancel', :previous_state => 'charged')]
+      @order.send("can_resume?").should == true
+    end
+    it "should restore the order to the previous state" do
+      @order.state_events = [StateEvent.new(:name => 'cancel', :previous_state => 'charged')]
+      @order.state = 'canceled'
+      @order.resume!
+      @order.state.should == 'charged'
+    end
+    it "should not be available for legacy orders wtih no prior state information" do 
+      @order.state = 'canceled'
+      @order.state_events = [StateEvent.new(:name => 'cancel')]
+      @order.send("can_resume?").should == false
     end
   end
 
