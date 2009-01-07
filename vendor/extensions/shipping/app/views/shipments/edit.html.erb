@@ -1,5 +1,5 @@
 <div id="shipment">
-  <%= error_messages_for :shipment %>
+  <%= error_messages_for :shipment_presenter %>
   <h1><%= t("Shipment") %></h1>
   <% form_for(:shipment, :url => admin_order_shipment_url(@order, @shipment), :html => { :method => :put }) do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
