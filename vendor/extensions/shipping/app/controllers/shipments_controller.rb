@@ -8,6 +8,11 @@ class ShipmentsController < Spree::BaseController
   resource_controller
   belongs_to :order
   
+  new_action.before do 
+    #set default country for form_address
+    @shipment_presenter = ShipmentPresenter.new(:address => Address.new(:country_id => @selected_country_id))
+  end
+  
   # override r_c defaults so we can handle special presenter logic
   def create
     @shipment = @order.shipments.create(:address => @shipment_presenter.address)
