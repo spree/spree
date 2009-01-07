@@ -7,6 +7,11 @@ class CreditcardsController < Spree::BaseController
   
   belongs_to :order
 
+  new_action.before do 
+    #set default country for form_address
+    @payment_presenter = PaymentPresenter.new(:address => Address.new(:country_id => @selected_country_id))
+  end
+
   # override the r_c create since we need special logic to deal with the presenter in the create case
   def create
     creditcard = @payment_presenter.creditcard
