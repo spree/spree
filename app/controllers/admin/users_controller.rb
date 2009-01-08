@@ -11,6 +11,14 @@ class Admin::UsersController < Admin::BaseController
   end
                 
   private
+  def collection   
+    @filter = UserFilter.new(params[:filter])
+
+    scope = User.scoped({})
+    scope = scope.conditions "lower(email) = ?", @filter.email.downcase unless @filter.email.blank?
+    @collection = scope.find(:all, :order => 'email', :page => {:size => 15, :current =>params[:p], :first => 1})
+  end
+
   def load_user_roles
     load_object
     @all_roles = Role.find(:all)

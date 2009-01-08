@@ -1,20 +1,49 @@
 <h1><%= t("Listing Users") %></h1>
 
-<table class="admin-report">
-  <thead>
-    <th><%= t("User") %></th>
-    <th><%= t("Action") %></th>
-  </thead>
-  <tbody>
-    <%- @users.each do |user|%>
-    <tr>
-      <td width="350px"><%=link_to user.email, object_url(user) %></td>
-      <td>
-	<%=link_to t('Edit'), edit_object_url(user) %> |
-	<%=link_to t('Destroy'), object_url(user), :confirm => 'Are you sure?', :method => :delete %></td>
-    </tr>
-    <% end %>
-  </tbody>
+<table>
+  <tr>
+    <td valign="top">
+      <table class="admin-report">
+        <thead>
+          <th><%= t("User") %></th>
+          <th><%= t("Action") %></th>
+        </thead>
+        <tbody>
+          <%- @users.each do |user|%>
+          <tr>
+            <td width="350px"><%=link_to user.email, object_url(user) %></td>
+            <td>
+            	<%=link_to t('Edit'), edit_object_url(user) %> |
+            	<%=link_to t('Destroy'), object_url(user), :confirm => 'Are you sure?', :method => :delete %>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </td>
+    <td valign="top">
+      <% form_for :filter, :url => admin_users_url, :html => { :method => :get } do |f| %>
+        <div id="search-col">
+          <table class="admin-search">
+            <thead>
+              <tr>
+                <th colspan="2"><%= t("User Details") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><%= t("Email") %></td>
+                <td>
+                  <%= f.text_field :email, :size=>18 %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <%=submit_tag t("Search") %>
+        </div>
+      <% end %>
+    </td>
+  </tr>
 </table>
 <br/>
 
