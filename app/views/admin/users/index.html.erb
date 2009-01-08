@@ -45,6 +45,6 @@
     </td>
   </tr>
 </table>
+<%= render :partial => 'shared/paginate', :locals => {:collection => @users, :options => generate_search_options(@filter)} unless @users.empty? %>            
 <br/>
-
-<%= link_to t('New User'), new_object_url %>
+<%= link_to t('New User'), new_object_url %>    
