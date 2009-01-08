@@ -42,7 +42,7 @@ class Admin::OrdersController < Admin::BaseController
     scope = scope.conditions "lower(addresses.lastname) LIKE ?", "%#{@filter.lastname.downcase}%" unless @filter.lastname.blank?
     scope = scope.checkout_completed(@filter.checkout == '1' ? false : true)
 
-    @collection = scope.find(:all, :order => 'orders.created_at DESC', :include => :user, :page => {:size => 15, :current =>params[:p], :first => 1})
+    @collection = scope.find(:all, :order => 'orders.created_at DESC', :include => :user, :page => {:size => Spree::Config[:orders_per_page], :current =>params[:p], :first => 1})
   end
   
   # Allows extensions to add new forms of payment to provide their own display of transactions
