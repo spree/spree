@@ -7,6 +7,19 @@
     </td>
   </tr>
   <tr>
+    <td><%= t("Roles") %>: </td>
+    <td> 
+      <table>
+        <tr>
+          <% for role in @all_roles %>
+            <td><%= check_box_tag('user[role_' + role.name + ']', 1, role.user_is) %></td>
+            <td valign="top"><%= role.name %> &nbsp;</td>
+          <% end %>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
     <td><%= t("Password") %>:</td>
     <td>
       <%= error_message_on :user, :password%>
