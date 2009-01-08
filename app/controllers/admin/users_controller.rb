@@ -1,5 +1,6 @@
 class Admin::UsersController < Admin::BaseController
-  resource_controller
+  resource_controller                                                             
+  before_filter :initialize_extension_partials
   before_filter :load_user_roles, :only => [:edit, :new, :update, :create]
   
   create.after do   

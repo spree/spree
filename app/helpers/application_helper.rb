@@ -23,7 +23,7 @@ module ApplicationHelper
   # Renders all the extension partials that may have been specified in the extensions
   def render_extra_partials(f)
     @extension_partials.inject("") do |extras, partial|
-      extras += render :partial => partial, :locals => {:form => f}
+      extras += render :partial => partial, :locals => {:f => f}
     end
   end
   
