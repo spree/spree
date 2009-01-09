@@ -11,7 +11,7 @@
           <thead>
             <tr>
               <th><%= t("order_date") %></th>
-              <th><%= t("number") %></th>
+              <th><%= t("order_number") %></th>
               <th><%= t("status") %></th>
               <th><%= t("customer") %></th>
               <th><%= t("total") %></th>
@@ -22,7 +22,7 @@
             <tr class="<%= cycle('even', 'odd') %>">
               <td><%=order.created_at.to_date%></td>
               <td><%= link_to order.number, object_url(order) %></td>
-              <td><%= t(order.state).titleize %></td>
+              <td><%= t(order.state.downcase) %></td>
               <td><%= order.user.email if order.user %></td>
               <td><%= number_to_currency order.total %></td>
             </tr>

@@ -1,6 +1,7 @@
 --- 
 it: 
   abbreviation: Abbreviation
+  access_denied: "Access Denied"
   account: Conto
   action: Azione
   actions: 
@@ -142,15 +143,21 @@ it:
         other: Zones
   add: Add
   add_category: "Aggiungi categoria"
+  add_country: "Add Country"
   add_option_type: "Aggiungi opzione"
   add_option_types: "Aggiungi opziones"
+  add_option_value: "Add Option Value"
   add_product_properties: ""
+  add_state: "Add State"
   add_to_cart: "In carrello"
+  add_zone: "Add Zone"
   address: Address
   address_information: "Informazione indirizzo"
   adjustment: Adeguamento
   administration: Amministrazione
+  allow_backorders: "Allow Backorders"
   amount: Totale
+  are_you_sure: "Are you sure"
   are_you_sure_category: "Sei sicuro di voler cancellare questa categoria?"
   are_you_sure_delete: "Are you sure you want to delete this record?"
   are_you_sure_delete_image: "Sei sicuro di voler cancellare questa imagine?"
@@ -159,11 +166,13 @@ it:
   assign_taxons: "Assign Taxons"
   authorized: Authorized
   available_on: "Available On"
+  available_taxons: "Available Taxons"
   back: Indietro
   back_to_store: "Indietro al shop"
   bill_address: "Indirizzo di fatturazione"
   billing_address: "Indirizzo di fatturazione"
   cancel: cancelare
+  canceled: Canceled
   capture: capture
   card_code: "CCC Code"
   card_number: "Nummero carta"
@@ -172,6 +181,7 @@ it:
   category: Categoria
   change: cambia
   change_language: "Cambia lingua"
+  charged: Charged
   checkout: Acquista
   city: Città
   comp_order: "Cancellare l'ordine"
@@ -181,11 +191,14 @@ it:
   configurations: Configurations
   confirm: Confermare
   confirm_password: "Confermare Password"
+  continue: Continue
   continue_shopping: "Continuare l'acquisto"
   country: country
+  country_based: "Country Based"
   create: Inserire
   create_a_new_account: "Create a new account"
   credit_card: ""
+  credit_card_cayment: "Credit Card Payment"
   creditcard_payment: "Creditcard Payment"
   current: stato
   customer: Cliente
@@ -198,7 +211,11 @@ it:
   display: Visualizza
   edit: editare
   editing_category: "Edita la categoria"
+  editing_option_type: "Editing Option Type"
   editing_option_types: "Edita l'opzione"
+  editing_product: "Editing Product"
+  editing_property: "Editing Property"
+  editing_prototype: "Editing Prototype"
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
   editing_user: "Edita l'utente"
@@ -207,6 +224,7 @@ it:
   email_server_settings_description: "Set email server settings."
   empty_cart: "Cancella carrello"
   error: errore
+  event: Event
   existing_customer: "Existing Customer"
   expiration_month: "Valido fino (Mese)"
   expiration_year: "Valido fino (Anno)"
@@ -233,6 +251,7 @@ it:
   item_description: "Descrizione articolo"
   item_total: "Articolo totale"
   last_name: Cognome
+  list: List
   listing_categories: Categorie
   listing_option_types: Opzioni
   listing_orders: Ordini
@@ -247,8 +266,10 @@ it:
   mail_server_settings: "Mail Server Settings"
   master_price: "Prezzo base"
   my_account: "Mio conto"
+  my_orders: "My Orders"
   name: Nome
   new_category: "Nuova categoria"
+  new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
   new_image: "Nuova immagine"
   new_option_type: "Nuova opzione"
@@ -259,6 +280,7 @@ it:
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
+  new_taxonomy: "New Taxonomy"
   new_user: "Nuovo utente"
   new_variant: "Nuova variante"
   new_zone: "New Zone"
@@ -272,6 +294,7 @@ it:
   operation: Operazione
   option_Values: "Valori opzioni"
   option_types: Opzioni
+  option_values: "Option Values"
   options: Operazioni
   or: o
   order: Ordine
@@ -294,6 +317,8 @@ it:
   pay: pay
   payment: Pagamento
   payment_gateway: "Payment Gateway"
+  payment_information: "Payment Information"
+  payments: Payments
   phone: Telefono
   presentation: Presentazione
   previous: Indietro
@@ -303,6 +328,7 @@ it:
   problems_processing_order: "Suo ordine non è stato elaborato"
   process: Manda
   product: Prodotto
+  product_details: "Product Details"
   product_properties: ""
   products: Prodotti
   properties: ""
@@ -315,8 +341,12 @@ it:
   reports: Reports
   resend: Riinvia
   response_code: "Response Code"
+  resumed: Resumed
   return: return
+  returned: Returned
+  roles: Roles
   sales_total: "Vendità totale"
+  sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Vendite totali"
   sales_totals_description: "Sales Total For All Orders"
   search: Cerca
@@ -325,16 +355,21 @@ it:
   ship: ship
   ship_address: "Indirizzo di consegna"
   shipment: Shipment
+  shipped: Shipped
   shipping: Consegna
   shipping_address: "Indirizzo di consegna"
   shipping_error: "Shipping Error"
   shipping_method: "Metodo di consegna"
   shipping_total: "Totale costi di consegna"
   shopping_cart: Carrello
+  show_deleted: "Show Deleted"
+  show_incomplete_orders: "Show Incomplete Orders"
+  show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Sign up"
   sku: SKU
   start: Di
   state: state
+  state_based: "State Based"
   state_setting_description: "Administer the list of states/provinces associated with each country."
   states: States
   status: stato
@@ -360,11 +395,13 @@ it:
   time: Tempo
   total: Totale
   transaction: Transazioni
+  tree: Tree
   try_again: Riprova
   type: Tipo
   update: Salva
   use_different_shipping_address: "Altro indirizzo di consegna"
   user: Utente
+  user_details: "User Details"
   users: Utenti
   value: ""
   variants: Varianti
@@ -374,9 +411,11 @@ it:
   welcome_to_sample_store: "Benvenuti nel sample store"
   what_is_a_cvv: "Cos'è il (CCC) Codice Carta di credito?"
   what_is_this: Cos'è?
+  whats_this: "What's this"
   width: Width
   your_cart_is_empty: "Your cart is empty"
   zip: CAP
   zone: ""
+  zone_based: "Zone Based"
   zone_setting_description: ""
   zones: ""

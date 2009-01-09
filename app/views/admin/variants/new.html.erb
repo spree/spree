@@ -1,5 +1,5 @@
 <%= render :partial => 'shared/product_sub_menu' %>
-<h1>t("new_variant")</h1>
+<h1><%= t("new_variant") %></h1>
 <%= error_messages_for :variant %>
 
 <% form_for(:variant, :url => collection_url) do |f| %>

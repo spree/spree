@@ -5,7 +5,6 @@ class ProductsController < Spree::BaseController
   actions :show, :index
 
   index do
-    puts "--------------------------#{I18n.locale}"
     before do
       @product_cols = 3
     end

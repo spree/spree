@@ -21,15 +21,15 @@
 </table>
 <table class="order-summary" style="width:100%;">
   <tr>
-    <td><%= t('tracking') %>:</td>
+    <td><%= t('ext_shipping_tracking') %>:</td>
     <td><%= f.text_field :shipment_tracking %></td>
   </tr>
   <tr>
-    <td><%= t('shipping_cost') %>:</td>
+    <td><%= t('ext_shipping_cost') %>:</td>
     <td><%= f.text_field :shipment_cost %></td>
   </tr>
   <tr>
-    <td><%= t('mark_shipped') %>:</td>
+    <td><%= t('ext_shipping_mark_shipped') %>:</td>
     <td><%= check_box_tag 'mark_shipped', value="1", @shipment.shipped_at, :disabled => (not @order.can_ship?) %></td>
   </tr>
 </table>

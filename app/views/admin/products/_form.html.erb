@@ -45,7 +45,7 @@
     </tr>
   <% end %>
   <tr>
-    <td nowrap><%=t("shipping_category")%>: </td>
+    <td nowrap><%=t("ext_shipping_shipping_categories")%>: </td>
     <td>
       <%=error_message_on :product, :shipping_category%>
       <%= collection_select(:product, :shipping_category_id, @shipping_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        

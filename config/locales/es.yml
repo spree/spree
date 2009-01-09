@@ -1,6 +1,7 @@
 --- 
 es: 
   abbreviation: Abbreviation
+  access_denied: "Access Denied"
   account: Cuenta
   action: Acción
   actions: 
@@ -142,15 +143,21 @@ es:
         other: Zones
   add: Add
   add_category: "Añadir Categoría"
+  add_country: "Add Country"
   add_option_type: "Añadir tipo de opción"
   add_option_types: "Añadir tipo de opcións"
+  add_option_value: "Add Option Value"
   add_product_properties: ""
+  add_state: "Add State"
   add_to_cart: "Añadir a la cesta"
+  add_zone: "Add Zone"
   address: Address
   address_information: "Información de Dirección"
   adjustment: Ajuste
   administration: Administración
+  allow_backorders: "Allow Backorders"
   amount: Cuantía
+  are_you_sure: "Are you sure"
   are_you_sure_category: "¿Está seguro de que quiere eliminar esta categoría?"
   are_you_sure_delete: "Are you sure you want to delete this record?"
   are_you_sure_delete_image: "¿Está seguro de que quiere eliminar esta imágen?"
@@ -159,11 +166,13 @@ es:
   assign_taxons: "Assign Taxons"
   authorized: Authorized
   available_on: ""
+  available_taxons: "Available Taxons"
   back: Atrás
   back_to_store: "Volver a la tienda"
   bill_address: "Bill Address"
   billing_address: "Dirección de facturación"
   cancel: Cancelar
+  canceled: Canceled
   capture: capture
   card_code: "Código de la tarjeta"
   card_number: "Número de tarjeta"
@@ -172,6 +181,7 @@ es:
   category: Categoría
   change: Cambiar
   change_language: "Cambiar Idioma"
+  charged: Charged
   checkout: Pagar
   city: Ciudad
   comp_order: "Comp Order"
@@ -181,11 +191,14 @@ es:
   configurations: Configurations
   confirm: Confirmar
   confirm_password: "Confirme la contraseña"
+  continue: Continue
   continue_shopping: "Seguir comprando"
   country: País
+  country_based: "Country Based"
   create: Crear
   create_a_new_account: ""
   credit_card: ""
+  credit_card_cayment: "Credit Card Payment"
   creditcard_payment: "Creditcard Payment"
   current: Actual
   customer: Cliente
@@ -198,7 +211,11 @@ es:
   display: Mostrar
   edit: Editar
   editing_category: "Editar categoría"
+  editing_option_type: "Editing Option Type"
   editing_option_types: "Editar tipo de opción"
+  editing_product: "Editing Product"
+  editing_property: "Editing Property"
+  editing_prototype: "Editing Prototype"
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
   editing_user: "Editar usuario"
@@ -207,6 +224,7 @@ es:
   email_server_settings_description: ""
   empty_cart: "Vaciar Cesta"
   error: error
+  event: Event
   existing_customer: "Existing Customer"
   expiration_month: "Mes de vencimiento"
   expiration_year: "Año de vencimiento"
@@ -233,6 +251,7 @@ es:
   item_description: "Descripción del artículo"
   item_total: "Total de artículos"
   last_name: Apellidos
+  list: List
   listing_categories: "Listado de Categorías"
   listing_option_types: "Listado de tipos de opciones"
   listing_orders: "Listado de pedidos"
@@ -247,8 +266,10 @@ es:
   mail_server_settings: "Mail Server Settings"
   master_price: "Precio principal"
   my_account: "Mi cuenta"
+  my_orders: "My Orders"
   name: Nombre
   new_category: "Nueva categoría"
+  new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
   new_image: "Nueva Imágen"
   new_option_type: "Nuevo tipo de opción"
@@ -259,6 +280,7 @@ es:
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
+  new_taxonomy: "New Taxonomy"
   new_user: "Nuevo usuario"
   new_variant: "Nueva Variante"
   new_zone: "New Zone"
@@ -272,6 +294,7 @@ es:
   operation: Operación
   option_Values: "Valores de opción"
   option_types: "Tipos de opción"
+  option_values: "Option Values"
   options: Opciones
   or: o
   order: Pedido
@@ -294,6 +317,8 @@ es:
   pay: pay
   payment: Pago
   payment_gateway: "Payment Gateway"
+  payment_information: "Payment Information"
+  payments: Payments
   phone: Teléfono
   presentation: Presentación
   previous: Anterior
@@ -303,6 +328,7 @@ es:
   problems_processing_order: "Hemos tenido al procesar su pedido"
   process: Procesar
   product: Producto
+  product_details: "Product Details"
   product_properties: ""
   products: Productos
   properties: ""
@@ -315,8 +341,12 @@ es:
   reports: Reportes
   resend: "Volver a enviar"
   response_code: "Código de respuesta"
+  resumed: Resumed
   return: return
+  returned: Returned
+  roles: Roles
   sales_total: "Total de ventas"
+  sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Ventas Totales"
   sales_totals_description: ""
   search: Buscar
@@ -325,16 +355,21 @@ es:
   ship: ship
   ship_address: "Ship Address"
   shipment: Shipment
+  shipped: Shipped
   shipping: Envío
   shipping_address: "Dirección de envío"
   shipping_error: "Shipping Error"
   shipping_method: "Método de envío"
   shipping_total: "Total de envío"
   shopping_cart: "Cesta de compras"
+  show_deleted: "Show Deleted"
+  show_incomplete_orders: "Show Incomplete Orders"
+  show_out_of_stock_products: "Show out-of-stock products"
   sign_up: Registrarme
   sku: Código
   start: Inicio
   state: Comunidad
+  state_based: "State Based"
   state_setting_description: ""
   states: States
   status: Estado
@@ -360,11 +395,13 @@ es:
   time: Hora
   total: Total
   transaction: Transacción
+  tree: Tree
   try_again: "Volver a intentar"
   type: Tipo
   update: Actualizar
   use_different_shipping_address: "Usar una dirección de envío diferente"
   user: Usuario
+  user_details: "User Details"
   users: Usuarios
   value: ""
   variants: Variantes
@@ -374,9 +411,11 @@ es:
   welcome_to_sample_store: "Bienvenido a la tienda de ejemplo"
   what_is_a_cvv: "What is a (CVV) Credit Card Code?"
   what_is_this: "¿Qué es esto?"
+  whats_this: "What's this"
   width: Width
   your_cart_is_empty: "Your cart is empty"
   zip: "Código postal"
   zone: Zone
+  zone_based: "Zone Based"
   zone_setting_description: ""
   zones: Zones

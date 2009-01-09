@@ -1,6 +1,7 @@
 --- 
 en-US: 
   abbreviation: Abbreviation
+  access_denied: "Access Denied"
   account: Account
   action: Action
   actions: 
@@ -142,15 +143,21 @@ en-US:
         other: Zones
   add: Add
   add_category: "Add Category"
+  add_country: "Add Country"
   add_option_type: "Add Option Type"
   add_option_types: "Add Option Types"
+  add_option_value: "Add Option Value"
   add_product_properties: "Add Product Properties"
+  add_state: "Add State"
   add_to_cart: "Add To Cart"
+  add_zone: "Add Zone"
   address: Address
   address_information: "Address Information"
   adjustment: Adjustment
   administration: Administration
+  allow_backorders: "Allow Backorders"
   amount: Amount
+  are_you_sure: "Are you sure"
   are_you_sure_category: "Are you sure you want to delete this category?"
   are_you_sure_delete: "Are you sure you want to delete this record?"
   are_you_sure_delete_image: "Are you sure you want to delete this image?"
@@ -159,11 +166,13 @@ en-US:
   assign_taxons: "Assign Taxons"
   authorized: Authorized
   available_on: "Available On"
+  available_taxons: "Available Taxons"
   back: Back
   back_to_store: "Go Back To Store"
   bill_address: "Bill Address"
   billing_address: "Billing Address"
   cancel: cancel
+  canceled: Canceled
   capture: capture
   card_code: "Card Code"
   card_number: "Card Number"
@@ -172,6 +181,7 @@ en-US:
   category: Category
   change: Change
   change_language: "Change Language"
+  charged: Charged
   checkout: Checkout
   city: City
   comp_order: "Comp Order"
@@ -181,11 +191,14 @@ en-US:
   configurations: Configurations
   confirm: Confirm
   confirm_password: "Password Confirmation"
+  continue: Continue
   continue_shopping: "Continue shopping"
   country: Country
+  country_based: "Country Based"
   create: Create
   create_a_new_account: "Create a new account"
   credit_card: "Credit Card"
+  credit_card_cayment: "Credit Card Payment"
   creditcard_payment: "Creditcard Payment"
   current: Current
   customer: Customer
@@ -198,7 +211,11 @@ en-US:
   display: Display
   edit: Edit
   editing_category: "Editing Category"
+  editing_option_type: "Editing Option Type"
   editing_option_types: "Editing Option Types"
+  editing_product: "Editing Product"
+  editing_property: "Editing Property"
+  editing_prototype: "Editing Prototype"
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
   editing_user: "Editing User"
@@ -207,6 +224,7 @@ en-US:
   email_server_settings_description: "Set email server settings."
   empty_cart: "Empty Cart"
   error: error
+  event: Event
   existing_customer: "Existing Customer"
   expiration_month: "Expiration Month"
   expiration_year: "Expiration Year"
@@ -233,6 +251,7 @@ en-US:
   item_description: "Item Description"
   item_total: "Item Total"
   last_name: "Last Name"
+  list: List
   listing_categories: "Listing Categories"
   listing_option_types: "Listing Option Types"
   listing_orders: "Listing Orders"
@@ -247,8 +266,10 @@ en-US:
   mail_server_settings: "Mail Server Settings"
   master_price: "Master Price"
   my_account: "My Account"
+  my_orders: "My Orders"
   name: Name
   new_category: "New category"
+  new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
   new_image: "New Image"
   new_option_type: "New Option Type"
@@ -259,6 +280,7 @@ en-US:
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
+  new_taxonomy: "New Taxonomy"
   new_user: "New User"
   new_variant: "New Variant"
   new_zone: "New Zone"
@@ -272,6 +294,7 @@ en-US:
   operation: Operation
   option_Values: "Option Values"
   option_types: "Option Types"
+  option_values: "Option Values"
   options: Options
   or: or
   order: Order
@@ -294,6 +317,8 @@ en-US:
   pay: pay
   payment: Payment
   payment_gateway: "Payment Gateway"
+  payment_information: "Payment Information"
+  payments: Payments
   phone: Phone
   presentation: Presentation
   previous: previous
@@ -303,6 +328,7 @@ en-US:
   problems_processing_order: "We had problems processing your order"
   process: Process
   product: Product
+  product_details: "Product Details"
   product_properties: "Product Properties"
   products: Products
   properties: Properties
@@ -315,8 +341,12 @@ en-US:
   reports: Reports
   resend: Resend
   response_code: "Response Code"
+  resumed: Resumed
   return: return
+  returned: Returned
+  roles: Roles
   sales_total: "Sales Total"
+  sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Sales Totals"
   sales_totals_description: "Sales Total For All Orders"
   search: Search
@@ -325,16 +355,21 @@ en-US:
   ship: ship
   ship_address: "Ship Address"
   shipment: Shipment
+  shipped: Shipped
   shipping: Shipping
   shipping_address: "Shipping Address"
   shipping_error: "Shipping Error"
   shipping_method: "Shipping Method"
   shipping_total: "Shipping Total"
   shopping_cart: "Shopping Cart"
+  show_deleted: "Show Deleted"
+  show_incomplete_orders: "Show Incomplete Orders"
+  show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Sign up"
   sku: SKU
   start: Start
   state: State
+  state_based: "State Based"
   state_setting_description: "Administer the list of states/provinces associated with each country."
   states: States
   status: Status
@@ -360,11 +395,13 @@ en-US:
   time: Time
   total: Total
   transaction: Transaction
+  tree: Tree
   try_again: "Try Again"
   type: Type
   update: Update
   use_different_shipping_address: "Use Different Shipping Address"
   user: User
+  user_details: "User Details"
   users: Users
   value: Value
   variants: Variants
@@ -374,9 +411,11 @@ en-US:
   welcome_to_sample_store: "Welcome to the sample store"
   what_is_a_cvv: "What is a (CVV) Credit Card Code?"
   what_is_this: "What's This?"
+  whats_this: "What's this"
   width: Width
   your_cart_is_empty: "Your cart is empty"
   zip: Zip
   zone: Zone
+  zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones

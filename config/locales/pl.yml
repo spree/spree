@@ -1,6 +1,7 @@
 --- 
 pl: 
   abbreviation: Skrót
+  access_denied: "Access Denied"
   account: Konto
   action: Akcja
   actions: 
@@ -142,15 +143,21 @@ pl:
         other: Zones
   add: Add
   add_category: "Dodaj kategorię"
+  add_country: "Add Country"
   add_option_type: "Dodaj typ opcji"
   add_option_types: "Dodaj typy opcji"
+  add_option_value: "Add Option Value"
   add_product_properties: "Dodaj właściwości produktu"
+  add_state: "Add State"
   add_to_cart: "Dodaj do koszyka"
+  add_zone: "Add Zone"
   address: Adres
   address_information: "Address Information"
   adjustment: Dostosowanie
   administration: Administracja
+  allow_backorders: "Allow Backorders"
   amount: Suma
+  are_you_sure: "Are you sure"
   are_you_sure_category: "Czy napewno usunąć tę kategorię?"
   are_you_sure_delete: "Czy napewno usunąć ten rekord?"
   are_you_sure_delete_image: "Czy napewno usunąć ten obrazek?"
@@ -159,11 +166,13 @@ pl:
   assign_taxons: "Assign Taxons"
   authorized: Autoryzowany
   available_on: "Dostępny od"
+  available_taxons: "Available Taxons"
   back: Wstecz
   back_to_store: "Powrót do sklepu"
   bill_address: "Adres billingowy"
   billing_address: "Adres billingowy"
   cancel: anuluj
+  canceled: Canceled
   capture: przechwyć
   card_code: "Kod Karty"
   card_number: "Numer Karty"
@@ -172,6 +181,7 @@ pl:
   category: Kategoria
   change: Zmień
   change_language: "Zmień język"
+  charged: Charged
   checkout: "Do kasy"
   city: Miejscowość
   comp_order: "Comp Order"
@@ -181,11 +191,14 @@ pl:
   configurations: Konfiguracje
   confirm: Potwierdź
   confirm_password: "Potwierdzenie hasła"
+  continue: Continue
   continue_shopping: "Kontynuuj zakupy"
   country: Kraj
+  country_based: "Country Based"
   create: Utwórz
   create_a_new_account: "Utwórz nowe konto"
   credit_card: "Karta kredytowa"
+  credit_card_cayment: "Credit Card Payment"
   creditcard_payment: "Płatność kartą kredytową"
   current: Biężący
   customer: Klient
@@ -198,7 +211,11 @@ pl:
   display: Wyświetl
   edit: Edytuj
   editing_category: "Edycja kategorii"
+  editing_option_type: "Editing Option Type"
   editing_option_types: "Edycja typów opcji"
+  editing_product: "Editing Product"
+  editing_property: "Editing Property"
+  editing_prototype: "Editing Prototype"
   editing_state: "Edycja stanu"
   editing_tax_category: "Edycja kategorii podatkowej"
   editing_user: "Edycja użytkownika"
@@ -207,6 +224,7 @@ pl:
   email_server_settings_description: "Skonfiguruj ustawienia serwera pocztowego."
   empty_cart: "Opróżnij koszyk"
   error: błąd
+  event: Event
   existing_customer: "Existing Customer"
   expiration_month: "Miesiąc wygaśnięcia"
   expiration_year: "Rok wygaśnięcia"
@@ -233,6 +251,7 @@ pl:
   item_description: "Opis pozycji"
   item_total: "Liczba pozycji"
   last_name: Nazwisko
+  list: List
   listing_categories: "Lista kategorii"
   listing_option_types: "Lista typów opcji"
   listing_orders: "Lista zamówień"
@@ -247,8 +266,10 @@ pl:
   mail_server_settings: "Ustawienia serwera pocztowego"
   master_price: "Cena główna"
   my_account: "Moje konto"
+  my_orders: "My Orders"
   name: Nazwa
   new_category: "Nowa kategoria"
+  new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
   new_image: "Nowy obrazek"
   new_option_type: "Nowy typ opcji"
@@ -259,6 +280,7 @@ pl:
   new_state: "Nowy stan"
   new_tax_category: "Nowa kategoria podatkowa"
   new_tax_rate: "New Tax Rate"
+  new_taxonomy: "New Taxonomy"
   new_user: "Nowy użytkownik"
   new_variant: "Nowy wariant"
   new_zone: "Nowa Strefa"
@@ -272,6 +294,7 @@ pl:
   operation: Operacja
   option_Values: "Wartości Opcji"
   option_types: "Typy Opcji"
+  option_values: "Option Values"
   options: Opcje
   or: lub
   order: Zamówienie
@@ -294,6 +317,8 @@ pl:
   pay: zapłać
   payment: Płatność
   payment_gateway: "Metoda Płatności"
+  payment_information: "Payment Information"
+  payments: Payments
   phone: Telefon
   presentation: Presentacja
   previous: Poprzednie
@@ -303,6 +328,7 @@ pl:
   problems_processing_order: "Wystąpiły problemy podczas przetwarzania zamówienia"
   process: Przetwarzaj
   product: Produkt
+  product_details: "Product Details"
   product_properties: "Właściwości produktu"
   products: Produkty
   properties: Właściwości
@@ -315,8 +341,12 @@ pl:
   reports: Raporty
   resend: "Przeslij ponownie"
   response_code: "Response Code"
+  resumed: Resumed
   return: powrót
+  returned: Returned
+  roles: Roles
   sales_total: "Sales Total"
+  sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Sales Totals"
   sales_totals_description: "Sales Total For All Orders"
   search: Szukaj
@@ -325,16 +355,21 @@ pl:
   ship: wyślij
   ship_address: "Adres Dostawy"
   shipment: Shipment
+  shipped: Shipped
   shipping: Dostawa
   shipping_address: "Adres Dostawy"
   shipping_error: "Shipping Error"
   shipping_method: "Metoda dostawy"
   shipping_total: "Koszt dostawy"
   shopping_cart: Koszyk
+  show_deleted: "Show Deleted"
+  show_incomplete_orders: "Show Incomplete Orders"
+  show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Załóż konto"
   sku: SKU
   start: Start
   state: Stan
+  state_based: "State Based"
   state_setting_description: "Zarządzaj listą stanów/prowincji powiązanych z każdym z krajów."
   states: Stany
   status: Status
@@ -360,11 +395,13 @@ pl:
   time: Czas
   total: Łącznie
   transaction: Transakcja
+  tree: Tree
   try_again: "Spróbuj ponownie"
   type: Typ
   update: Aktualizuj
   use_different_shipping_address: "Użyj innego adresy dostawy"
   user: Użytkownik
+  user_details: "User Details"
   users: Użytkownicy
   value: Wartość
   variants: Warianty
@@ -374,9 +411,11 @@ pl:
   welcome_to_sample_store: "Witamy w przykładowycm sklepie"
   what_is_a_cvv: "Czym jest Kod Karty Kredytowej (CVV)?"
   what_is_this: "Co to?"
+  whats_this: "What's this"
   width: Width
   your_cart_is_empty: "Your cart is empty"
   zip: "Kod pocztowy"
   zone: Strefa
+  zone_based: "Zone Based"
   zone_setting_description: "Zbiory krajów, stanów i innych stref używane w różnych przeliczeniach."
   zones: Strefy

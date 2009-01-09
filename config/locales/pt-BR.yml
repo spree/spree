@@ -1,6 +1,7 @@
 --- 
 pt-BR: 
   abbreviation: Abreviação
+  access_denied: "Access Denied"
   account: Conta
   action: Ação
   actions: 
@@ -142,15 +143,21 @@ pt-BR:
         other: Zones
   add: Adicionar
   add_category: "Adicionar Categoria"
+  add_country: "Add Country"
   add_option_type: "Adicionar Tipo de Opção"
   add_option_types: "Adicionar Tipo de Opção"
+  add_option_value: "Add Option Value"
   add_product_properties: "Adicionar Propriedades de Produto"
+  add_state: "Add State"
   add_to_cart: "Adicionar ao Carrinho"
+  add_zone: "Add Zone"
   address: Address
   address_information: "Informação de Endereço"
   adjustment: Ajuste
   administration: Administração
+  allow_backorders: "Allow Backorders"
   amount: Valor
+  are_you_sure: "Are you sure"
   are_you_sure_category: "Tem certeza que quer apagar esta categoria?"
   are_you_sure_delete: "Tem certeza que quer apagar este registro?"
   are_you_sure_delete_image: "Tem certeza que quer apagar esta imagem?"
@@ -159,11 +166,13 @@ pt-BR:
   assign_taxons: "Assign Taxons"
   authorized: Authorized
   available_on: "Disponível em"
+  available_taxons: "Available Taxons"
   back: Voltar
   back_to_store: "Voltar à Loja"
   bill_address: "Endereço da Conta"
   billing_address: "Endereço de Cobrança"
   cancel: Cancelar
+  canceled: Canceled
   capture: capture
   card_code: "Código do Cartão"
   card_number: "Número do Cartão"
@@ -172,6 +181,7 @@ pt-BR:
   category: Categoria
   change: Mudar
   change_language: "Mudar Língua"
+  charged: Charged
   checkout: Finalizar
   city: Cidade
   comp_order: "Computar Pedido"
@@ -181,11 +191,14 @@ pt-BR:
   configurations: Configurações
   confirm: Confirme
   confirm_password: "Confirmação de Senha"
+  continue: Continue
   continue_shopping: "Continue sua compra"
   country: País
+  country_based: "Country Based"
   create: Criar
   create_a_new_account: "Crie uma nova conta"
   credit_card: "Cartão de Crédito"
+  credit_card_cayment: "Credit Card Payment"
   creditcard_payment: "Creditcard Payment"
   current: Atual
   customer: Cliente
@@ -198,7 +211,11 @@ pt-BR:
   display: Mostrar
   edit: Editar
   editing_category: "Editando Categoria"
+  editing_option_type: "Editing Option Type"
   editing_option_types: "Editando Tipos de Opção"
+  editing_product: "Editing Product"
+  editing_property: "Editing Property"
+  editing_prototype: "Editing Prototype"
   editing_state: "Editando Estado"
   editing_tax_category: "Editando Categoria de Taxa"
   editing_user: "Editando Usuário"
@@ -207,6 +224,7 @@ pt-BR:
   email_server_settings_description: "Ajustar as configurações do servidor de email."
   empty_cart: "Esvaziar Carrinho"
   error: erro
+  event: Event
   existing_customer: "Existing Customer"
   expiration_month: "Mês de Expiração"
   expiration_year: "Ano de Expiração"
@@ -233,6 +251,7 @@ pt-BR:
   item_description: "Descrição de Item"
   item_total: "Total de Item"
   last_name: "Último Nome"
+  list: List
   listing_categories: "Listando Categorias"
   listing_option_types: "Listando Tipos de Opções"
   listing_orders: "Listando Pedidos"
@@ -247,8 +266,10 @@ pt-BR:
   mail_server_settings: "Configuração do Servidor de E-mail"
   master_price: "Preço Principal"
   my_account: "Minha Conta"
+  my_orders: "My Orders"
   name: Nome
   new_category: "Nova categoria"
+  new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
   new_image: "Nova Imagem"
   new_option_type: "Novo Tipo de Opção"
@@ -259,6 +280,7 @@ pt-BR:
   new_state: "Novo Estado"
   new_tax_category: "Nova Categoria de Taxa"
   new_tax_rate: "New Tax Rate"
+  new_taxonomy: "New Taxonomy"
   new_user: "Novo Usuário"
   new_variant: "Nova Variante"
   new_zone: "Nova Zona"
@@ -272,6 +294,7 @@ pt-BR:
   operation: Operação
   option_Values: "Opção de Valores"
   option_types: "Tipos de Opção"
+  option_values: "Option Values"
   options: Opções
   or: ou
   order: Pedido
@@ -294,6 +317,8 @@ pt-BR:
   pay: pay
   payment: Pagamento
   payment_gateway: "Gateway de Pagamento"
+  payment_information: "Payment Information"
+  payments: Payments
   phone: Fone
   presentation: Apresentação
   previous: anterior
@@ -303,6 +328,7 @@ pt-BR:
   problems_processing_order: "Tivemos problemas processando este pedido"
   process: Processar
   product: Produto
+  product_details: "Product Details"
   product_properties: "Propriedades de Produto"
   products: Produtos
   properties: Propriedades
@@ -315,8 +341,12 @@ pt-BR:
   reports: Relatórios
   resend: Reenviar
   response_code: "Código de Resposta"
+  resumed: Resumed
   return: return
+  returned: Returned
+  roles: Roles
   sales_total: "Total de Venda"
+  sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Total de Vendas"
   sales_totals_description: "Total de Vendas para todos os Pedidos"
   search: Pesquisa
@@ -325,16 +355,21 @@ pt-BR:
   ship: ship
   ship_address: "Endereço da Entrega"
   shipment: Shipment
+  shipped: Shipped
   shipping: Entrega
   shipping_address: "Endereço de Entrega"
   shipping_error: "Shipping Error"
   shipping_method: "Método de Entrega"
   shipping_total: "Total de Entrega"
   shopping_cart: "Carrinho de Compra"
+  show_deleted: "Show Deleted"
+  show_incomplete_orders: "Show Incomplete Orders"
+  show_out_of_stock_products: "Show out-of-stock products"
   sign_up: Cadastrar
   sku: SKU
   start: Início
   state: Estado
+  state_based: "State Based"
   state_setting_description: "Administrar a lista de estados/províncias associados a cada país."
   states: Estados
   status: Status
@@ -360,11 +395,13 @@ pt-BR:
   time: Horário
   total: Total
   transaction: Transação
+  tree: Tree
   try_again: "Tente novamente"
   type: Tipo
   update: Atualizar
   use_different_shipping_address: "Use um Endereço de Entrega Diferente"
   user: Usuário
+  user_details: "User Details"
   users: Usuários
   value: Valor
   variants: Variantes
@@ -374,9 +411,11 @@ pt-BR:
   welcome_to_sample_store: "Bem Vindo à Loja de Exemplo"
   what_is_a_cvv: "O que é o Código do Cartão de Crédito (CVV)?"
   what_is_this: "O que é isso?"
+  whats_this: "What's this"
   width: Width
   your_cart_is_empty: "Your cart is empty"
   zip: Cep
   zone: Zona
+  zone_based: "Zone Based"
   zone_setting_description: "Coleção de países, estados e outras zonas a serem usados nos cálculos."
   zones: Zonas
