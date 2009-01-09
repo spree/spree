@@ -1,14 +1,14 @@
 <table class="cart-summary" width="100% ">
   <thead>
-    <th colspan="2"><%= t("Item") %></th>
-    <th><%= t("Price") %></th>
-    <th><%= t("Qty") %></th>
-    <th><%= t("Total") %></th>
+    <th colspan="2"><%= t("item") %></th>
+    <th><%= t("price") %></th>
+    <th><%= t("qty") %></th>
+    <th><%= t("total") %></th>
   </thead>
   <tbody id="line_items">
 		<%= f.render_associated_form(@order.line_items) %>
 		<tr id="none">
-		  <td colspan="5"><%= @order.line_items.empty? ? t("You cart is empty.") : "" %></td>
+		  <td colspan="5"><%= @order.line_items.empty? ? t("your_cart_is_empty.") : "" %></td>
 		</tr>
 	</tbody>
 

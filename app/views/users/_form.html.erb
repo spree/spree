@@ -1,20 +1,20 @@
 <table id="user-form">
   <tr>
-    <td><%= t("Email") %>: </td>
+    <td><%= t("email") %>: </td>
     <td>
       <%= error_message_on :user, :email %>
       <%= f.text_field :email  %>
     </td>
   </tr>
   <tr>
-    <td><%= t("Password") %>:</td>
+    <td><%= t("password") %>:</td>
     <td>
       <%= error_message_on :user, :password%>
       <%= f.password_field :password  %>
     </td>
   </tr>
   <tr>
-    <td><%= t("Confirm") %>:</td>
+    <td><%= t("confirm") %>:</td>
     <td>
       <%= f.password_field :password_confirmation %>
     </td>

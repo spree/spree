@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title><%= "Spree #{t('Administration')}: #{controller.controller_name.titleize}" %></title>
+    <title><%= "Spree #{t('administration')}: #{controller.controller_name.titleize}" %></title>
     <%= stylesheets %>
     <%= stylesheet_link_tag "spree-admin.css", :plugin => "spree" %>
     <%= javascript_include_tag :defaults %>
@@ -15,10 +15,10 @@
     <div id="main">
       <% if logged_in? -%>
       <ul id="login-nav">
-        <li><%= t('Logged in as') %>: <%= current_user.email %></li>
-        <li><%= link_to t('Account'), user_path(current_user) %></li>
-        <li><%= link_to t('Logout'), :controller => '/account', :action => 'logout' %></li>
-        <li><%= link_to t('Store'), products_path %></li>
+        <li><%= t('logged_in_as') %>: <%= current_user.email %></li>
+        <li><%= link_to t('account'), user_path(current_user) %></li>
+        <li><%= link_to t('logout'), :controller => '/account', :action => 'logout' %></li>
+        <li><%= link_to t('store'), products_path %></li>
       </ul>
       <% end -%>      
       <table width="780">
@@ -27,12 +27,12 @@
             <table id="menu" border="0">
               <tr>
                 <td rowspan="2" width="150" valign="top"><%= image_tag Spree::Config[:admin_interface_logo] %></td>
-                <td><%= link_to t('Overview'), :controller => '/admin/overview' %></td>
-                <td><%= link_to t('Configuration'), :controller => '/admin/configurations' %></td>
-                <td><%= link_to t('Orders'), :controller => '/admin/orders' %></td>
-                <td><%= link_to t('Products'), :controller => '/admin/products' %></td>
-                <td><%= link_to t('Reports'), :controller => '/admin/reports' %></td>
-                <td><%= link_to t('Users'), admin_users_url %></td>
+                <td><%= link_to t('overview'), :controller => '/admin/overview' %></td>
+                <td><%= link_to t('configuration'), :controller => '/admin/configurations' %></td>
+                <td><%= link_to t('orders'), :controller => '/admin/orders' %></td>
+                <td><%= link_to t('products'), :controller => '/admin/products' %></td>
+                <td><%= link_to t('reports'), :controller => '/admin/reports' %></td>
+                <td><%= link_to t('users'), admin_users_url %></td>
               </tr>
               <tr>
                 <td colspan="6" align="left">

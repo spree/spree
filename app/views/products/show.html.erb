@@ -54,9 +54,9 @@
 					  <td>
               <%=
                 if @product.has_stock? || Spree::Config[:allow_backorders]
-                  submit_tag t('Add To Cart')
+                  submit_tag t('add_to_cart')
                 else
-                  content_tag('strong', 'Out of Stock')
+                  content_tag('strong', t('out_of_stock'))
                 end
             %>
 					  </td>

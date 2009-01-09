@@ -1,5 +1,5 @@
 --- 
-en-US: 
+en-GB: 
   abbreviation: Abbreviation
   account: Account
   action: Action
@@ -145,7 +145,7 @@ en-US:
   add_option_type: "Add Option Type"
   add_option_types: "Add Option Types"
   add_product_properties: "Add Product Properties"
-  add_to_cart: "Add To Cart"
+  add_to_cart: "Add To Basket"
   address: Address
   address_information: "Address Information"
   adjustment: Adjustment
@@ -167,7 +167,7 @@ en-US:
   capture: capture
   card_code: "Card Code"
   card_number: "Card Number"
-  cart: Cart
+  cart: Basket
   categories: Categories
   category: Category
   change: Change
@@ -205,7 +205,7 @@ en-US:
   email: Email
   email_address: "Email Address"
   email_server_settings_description: "Set email server settings."
-  empty_cart: "Empty Cart"
+  empty_cart: "Empty Basket"
   error: error
   existing_customer: "Existing Customer"
   expiration_month: "Expiration Month"
@@ -263,7 +263,7 @@ en-US:
   new_variant: "New Variant"
   new_zone: "New Zone"
   next: Next
-  no_items_in_cart: ""
+  no_items_in_cart: "Basket is empty."
   no_match_found: "No Match Found"
   none: None
   none_available: "None Available"
@@ -330,7 +330,7 @@ en-US:
   shipping_error: "Shipping Error"
   shipping_method: "Shipping Method"
   shipping_total: "Shipping Total"
-  shopping_cart: "Shopping Cart"
+  shopping_cart: "Shopping Basket"
   sign_up: "Sign up"
   sku: SKU
   start: Start
@@ -356,7 +356,7 @@ en-US:
   taxonomies_setting_description: "Create and manage taxonomies"
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
-  this_file_language: "English (US)"
+  this_file_language: "English (UK)"
   time: Time
   total: Total
   transaction: Transaction
@@ -375,7 +375,7 @@ en-US:
   what_is_a_cvv: "What is a (CVV) Credit Card Code?"
   what_is_this: "What's This?"
   width: Width
-  your_cart_is_empty: "Your cart is empty"
+  your_cart_is_empty: "Your basket is empty"
   zip: Zip
   zone: Zone
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."

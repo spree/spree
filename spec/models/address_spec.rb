@@ -27,10 +27,10 @@ describe Address do
     @address.should_not be_valid
   end
 
-  ['firstname', 'lastname', 'address1', 'city', 'country', 'zipcode', 'phone'].each do |field|
+  ['First Name', 'Last Name', 'Address', 'City', 'Country', 'Zip Code', 'Phone'].each do |field|
     it "should require #{field}" do
       @address.should_not be_valid
-      @address.errors.full_messages.should include("#{field.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
+      @address.errors.full_messages.should include("#{field} #{I18n.translate("activerecord.errors.messages.blank")}")
     end
   end
 
