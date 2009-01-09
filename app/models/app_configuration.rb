@@ -26,6 +26,7 @@ class AppConfiguration < Configuration
   preference :show_zero_stock_products, :boolean, :default => true
   preference :orders_per_page, :integer, :default => 15   
   preference :admin_products_per_page, :integer, :default => 10 
+  preference :products_per_page, :integer, :default => 10
   preference :default_tax_category, :string, :default => nil # Use the name (exact case) of the tax category if you wish to specify
   preference :admin_interface_logo, :string, :default => "spree/spree.jpg"
   preference :allow_ssl_in_production, :boolean, :default => true

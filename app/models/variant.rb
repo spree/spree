@@ -37,7 +37,11 @@ class Variant < ActiveRecord::Base
   
   #Tries to get missing attribute value from  product
   def method_missing(method, *args)
-    product.has_attribute?(method) ? product[method] : super 
+    if product
+      product.has_attribute?(method) ? product[method] : super
+    else
+      super
+    end
   end
 
   private

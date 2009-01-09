@@ -12,7 +12,7 @@ class TaxonsController < Spree::BaseController
   
   private
   def load_data
-    @products ||= object.products.active.find(:all, :page => {:start => 1, :size => 10, :current => params[:p]}, :include => :images)
+    @products ||= object.products.active.find(:all, :page => {:start => 1, :size => Spree::Config[:products_per_page], :current => params[:p]}, :include => :images)
     @product_cols = 3
   end
   
