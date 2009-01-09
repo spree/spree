@@ -63,10 +63,16 @@ module AuthenticatedSystem
     # simply close itself.
     def access_denied
       respond_to do |format|
-        format.html do
-          store_location
-          flash[:error] = t("Access Denied") if logged_in?
-          redirect_to login_path
+        format.html do    
+          if logged_in?
+            flash[:error] = t("Authorization Failure")
+            redirect_to '/account/authorization_failure'
+            next
+          else
+            store_location
+            redirect_to login_path   
+            next
+          end
         end
         format.xml do
           request_http_basic_authentication 'Web Password'
