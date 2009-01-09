@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/test_helper'
 
 class PhotoTest < ActiveSupport::TestCase
   should_have_many :comments
@@ -66,6 +66,17 @@ class PhotoTest < ActiveSupport::TestCase
 
         should "remove all comments" do
           assert @photo.comments.empty?, "one or more comments not removed: #{@photo.comments.inspect}"
+        end
+      end
+      
+      context "with comment_attributes unset" do
+        setup do
+          @photo.reload
+          @photo.save
+        end
+
+        should "not load the comments" do
+          assert !@photo.comments.loaded?, "comments were loaded unnecessarily: #{@photo.comments.inspect}"
         end
       end
       

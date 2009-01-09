@@ -1,4 +1,4 @@
-require File.dirname(__FILE__)+'/../test_helper'
+require File.dirname(__FILE__)+'/test_helper'
 
 class AssociatedFormHelperTest < Test::Unit::TestCase
   include ActionView::Helpers::FormHelper
@@ -160,7 +160,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     should "produce the following link" do
       # this is a way of testing the whole link
       assert_equal %{
-        <a class=\"something\" href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('comments', new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
+        <a class=\"something\" href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('comments', new Template(null).evaluate({'number': --attribute_fu_comment_count}).gsub(/__number_/, attribute_fu_comment_count)); return false;\">Add Comment</a>
       }.strip, @erbout
     end
   end
@@ -198,7 +198,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     should "produce the following link" do
       # this is a way of testing the whole link
       assert_equal %{
-        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('something_comments', new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
+        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('something_comments', new Template(null).evaluate({'number': --attribute_fu_comment_count}).gsub(/__number_/, attribute_fu_comment_count)); return false;\">Add Comment</a>
       }.strip, @erbout
     end
   end
@@ -236,7 +236,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     should "produce the following link" do
       # this is a way of testing the whole link
       assert_equal %{
-        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom($(this).up(&quot;.something_comments&quot;), new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
+        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom($(this).up(&quot;.something_comments&quot;), new Template(null).evaluate({'number': --attribute_fu_comment_count}).gsub(/__number_/, attribute_fu_comment_count)); return false;\">Add Comment</a>
       }.strip, @erbout
     end    
   end
