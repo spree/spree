@@ -1,12 +1,17 @@
 class ShipmentsController < Spree::BaseController
   before_filter :login_required
-  before_filter :load_data
-  before_filter :state_check, :except => :shipping_method
+  before_filter :load_data, :except => :country_changed
+  before_filter :state_check, :except => [:shipping_method, :country_changed]
   before_filter :remove_existing, :only => :new
   before_filter :validate_shipment, :only => [:create, :update]
   
   resource_controller
   belongs_to :order
+  
+  new_action.before do 
+    #set default country for form_address
+    @shipment_presenter = ShipmentPresenter.new(:address => Address.new(:country_id => @selected_country_id))
+  end
   
   # override r_c defaults so we can handle special presenter logic
   def create
@@ -19,6 +24,12 @@ class ShipmentsController < Spree::BaseController
     state_check 'shipping_method'
     load_shipping_methods
   end
+  
+  def country_changed
+    country_id = params[:shipment_presenter][:address_country_id]
+    @states = State.find_all_by_country_id(country_id, :order => 'name')  
+    render :partial => "shared/states", :locals => {:presenter_type => "shipment"}
+  end  
 
   # override r_c defaults so we can handle special presenter logic
   def update
@@ -51,9 +62,9 @@ class ShipmentsController < Spree::BaseController
     @selected_country_id = params[:shipment_presenter][:address_country_id].to_i if params.has_key?('shipment_presenter')
     @selected_country_id ||= Spree::Config[:default_country_id] 
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
-    @countries = Country.find(:all)
+    @countries = @order.shipping_countries 
   end
-
+  
   def find_shipment
     @object = parent_object.shipments.last
     @object ||= Shipment.new(:order => parent_object)

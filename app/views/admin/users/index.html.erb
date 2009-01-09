@@ -1,21 +1,52 @@
 <h1><%= t("listing_users") %></h1>
 
-<table class="admin-report">
-  <thead>
-    <th><%= t("user") %></th>
-    <th><%= t("action") %></th>
-  </thead>
-  <tbody>
-    <%- @users.each do |user|%>
-    <tr>
-      <td width="350px"><%=link_to user.email, object_url(user) %></td>
-      <td>
-	<%=link_to t('edit'), edit_object_url(user) %> |
-	<%=link_to t('destroy'), object_url(user), :confirm => 'Are you sure?', :method => :delete %></td>
-    </tr>
-    <% end %>
-  </tbody>
+<table>
+  <tr>
+    <td valign="top">
+      <table class="admin-report">
+        <thead>
+          <th><%= t("user") %></th>
+          <th><%= t("action") %></th>
+        </thead>
+        <tbody>
+          <%- @users.each do |user|%>
+          <tr>
+            <td width="350px"><%=link_to user.email, object_url(user) %></td>
+            <td>
+            	<%=link_to t('edit'), edit_object_url(user) %> |
+            	<%=link_to t('destroy'), object_url(user), :confirm => t('are_you_sure'), :method => :delete %>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </td>
+    <td valign="top">
+      <% form_for :filter, :url => admin_users_url, :html => { :method => :get } do |f| %>
+        <div id="search-col">
+          <table class="admin-search">
+            <thead>
+              <tr>
+                <th colspan="2"><%= t("user_details") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><%= t("email") %></td>
+                <td>
+                  <%= f.text_field :email, :size=>18 %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <%=submit_tag t("search") %>
+        </div>
+      <% end %>
+    </td>
+  </tr>
 </table>
-<br/>
+<%= render :partial => 'shared/paginate', :locals => {:collection => @users, :options => generate_search_options(@filter)} unless @users.empty? %>            
+
 
 <%= link_to t('new_user'), new_object_url %>
+

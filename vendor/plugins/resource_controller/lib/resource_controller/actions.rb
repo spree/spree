@@ -30,7 +30,7 @@ module ResourceController
       end
     end
 
-    def update
+    def update  
       load_object
       before :update
       if object.update_attributes object_params

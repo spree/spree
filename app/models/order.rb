@@ -38,6 +38,7 @@ class Order < ActiveRecord::Base
     after_transition :to => 'shipped', :do => :mark_shipped
     after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
+    after_transition :to => 'resumed', :do => :restore_state 
     
     event :next do
       transition :to => 'creditcard', :from => 'in_progress'
@@ -55,10 +56,25 @@ class Order < ActiveRecord::Base
     event :return do
       transition :to => 'returned', :from => 'shipped'
     end
+    event :resume do 
+      transition :to => 'resumed', :from => 'canceled', :if => :allow_resume?
+    end
+  end
+  
+  def restore_state
+    # pop the resume event so we can see what the event before that was
+    state_events.pop if state_events.last.name == "resume"
+    update_attribute("state", state_events.last.previous_state)
   end
 
   def allow_cancel?
     self.checkout_complete && self.state != 'canceled'
+  end
+  
+  def allow_resume?
+    # we shouldn't allow resume for legacy orders b/c we lack the information necessary to restore to a previous state
+    return false if state_events.empty? || state_events.last.previous_state.nil?
+    true
   end
   
   def add_variant(variant, quantity=1)

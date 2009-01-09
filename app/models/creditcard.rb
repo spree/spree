@@ -55,7 +55,7 @@ class Creditcard < ActiveRecord::Base
   end
         
   def verification_value?
-    !@verification_value.blank?
+    !verification_value.blank?
   end
 
   # Show the card number, with all but last 4 numbers replace with "X". (XXXX-XXXX-XXXX-4338)
@@ -71,7 +71,7 @@ class Creditcard < ActiveRecord::Base
     validate_essential_attributes
     validate_card_type
     validate_card_number
-    validate_verification_value
+    validate_verification_value 
     validate_switch_or_solo_attributes
   end
   
@@ -129,7 +129,7 @@ class Creditcard < ActiveRecord::Base
   
   def validate_verification_value #:nodoc:
     if Creditcard.requires_verification_value?
-      errors.add :verification_value, "is required" unless verification_value
+      errors.add :verification_value, "is required" unless verification_value?
     end
   end
 

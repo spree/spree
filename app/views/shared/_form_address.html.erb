@@ -29,14 +29,11 @@
   <tr>
     <td><%= t("country") %></td>
     <td>
-      <select id="address_country_id" name="<%=presenter_type%>_presenter[address_country_id]" style="width:150px;"> 
-        <%= options_from_collection_for_select(@countries, :id, :name, @selected_country_id) %>
-      </select>
-			<%= observe_field :address_country_id, 
+			<%= f.collection_select :address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %>
+			<%= observe_field "#{presenter_type}_presenter_address_country_id", 
 			  :url => {:action => :country_changed },
-	    	:frequency => 2,
 	    	:update => 'address_states_row',
-	  		:on => "onselect",
+	  		:on => "changed",
 		 		:with => "#{presenter_type}_presenter[address_country_id]",
 				:loading => "$('address_states_row').childElements()[1].update('Loading...');"
 			%>       

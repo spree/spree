@@ -1,9 +1,16 @@
-<h1><%= t("my_account") %></h1>
+<h1><%= t("user_account") %></h1>        
+<br/>
 <table>
   <tr>
-    <td><%= t("email") %>:</td>
+    <td><%= t("email") %>: &nbsp;</td>
     <td>
       <%= @user.email %>
+    </td>
+  </tr>  
+  <tr>
+    <td><%= t("roles") %>: &nbsp;</td>
+    <td>
+      <%= list_roles(@user) %>
     </td>
   </tr>
 </table>

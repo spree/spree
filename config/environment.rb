@@ -30,6 +30,7 @@ Spree::Initializer.run do |config|
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.0'
   config.gem "tlsmail"
   config.gem 'active_presenter', :version => '0.0.4'
+  config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

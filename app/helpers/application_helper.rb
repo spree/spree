@@ -29,5 +29,16 @@ module ApplicationHelper
   
   def flag_image(code)
     "#{code.to_s.split("-").last.downcase}.png"
+  end                      
+  
+  # Takes a filter and converts it into a hash of name/value pairs that can be used in query string
+  def generate_search_options(filter)
+    options = {}
+    filter.attributes.each do |key, value|
+      filter_key = "filter[#{key.to_s}]"
+      options[filter_key] = value
+    end
+    options
   end
+  
 end
