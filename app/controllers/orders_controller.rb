@@ -1,6 +1,7 @@
 class OrdersController < Spree::BaseController
   before_filter :require_user_account, :only => [:checkout]
-  before_filter :load_object, :only => [:checkout]
+  before_filter :load_object, :only => [:checkout]          
+  before_filter :prevent_editing_complete_order, :only => [:edit, :update]            
 
   ssl_required :show
 
@@ -22,9 +23,8 @@ class OrdersController < Spree::BaseController
     flash nil 
     wants.html {redirect_to edit_order_url(@order)}
   end
-  
-  # override the default r_c behavior (r_c doesn't realize we're in a multi step process here)
-  edit.before {@order.edit!}
+                                                                           
+  edit.before { @order.edit! }
   
   def checkout
     if @order.state == "in_progress"
@@ -77,5 +77,9 @@ class OrdersController < Spree::BaseController
       end
     end
     find_order
+  end   
+  
+  def prevent_editing_complete_order
+    redirect_to object_url unless @order.can_edit?
   end
 end

@@ -21,8 +21,8 @@ class ShippingExtension < Spree::Extension
         return nil if shipments.empty?
         return shipment.address
       end      
-    end    
-
+    end 
+    
     Admin::ConfigurationsController.class_eval do
       before_filter :add_shipping_links, :only => :index
       def add_shipping_links

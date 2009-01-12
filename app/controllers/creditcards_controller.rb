@@ -1,11 +1,13 @@
 class CreditcardsController < Spree::BaseController
   before_filter :load_data
-  before_filter :validate_payment, :only => :create
+  before_filter :validate_payment, :only => :create   
+  before_filter :state_check, :except => [:country_changed, :cvv]  
   ssl_required :new, :create
   layout 'application'
   resource_controller
   
   belongs_to :order
+  actions :new, :create
 
   # override the r_c create since we need special logic to deal with the presenter in the create case
   def create
@@ -15,8 +17,6 @@ class CreditcardsController < Spree::BaseController
     
     begin
       creditcard.authorize(@order.total)
-      #creditcard.authorize(@order) if creditcard.respond_to?(:authorize)
-      #creditcard_payment.creditcard = creditcard
     rescue Spree::GatewayError => ge
       flash.now[:error] = "Authorization Error: #{ge.message}"
       render :action => "new" and return 
@@ -46,8 +46,8 @@ class CreditcardsController < Spree::BaseController
   end
   
   def build_object
-    address = parent_object.ship_address ? parent_object.ship_address : Address.new
-    @payment_presenter ||= PaymentPresenter.new(:address => address)
+    address = parent_object.ship_address ? parent_object.ship_address : Address.new(:country_id => @selected_country_id)
+    @payment_presenter ||= PaymentPresenter.new(:address => address)    
   end
   
   def validate_payment
@@ -63,4 +63,11 @@ class CreditcardsController < Spree::BaseController
     payment_presenter.creditcard.last_name = payment_presenter.address.lastname
     @payment_presenter = payment_presenter
   end
+  
+  def state_check
+    if @order.checkout_complete
+      # if order has already completed user shouldn't be able to enter new cc information
+      redirect_to checkout_order_url(@order) and return 
+    end
+  end  
 end
