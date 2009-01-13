@@ -33,7 +33,9 @@ class Admin::ShipmentsController < Admin::BaseController
     @shipment.tracking = @shipment_presenter.shipment.tracking
     @shipment.cost = @shipment_presenter.shipment.cost
     @shipment.shipped_at = Time.now if params[:mark_shipped]    
-    @shipment.save
+    unless @shipment_presenter.valid? and @shipment.save
+      render :action => "edit" and return
+    end    
     if params['mark_shipped']
       @order.ship!
     end 
