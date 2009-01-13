@@ -11,8 +11,8 @@
     <td> 
       <table>
         <tr>
-          <% for role in @all_roles %>
-            <td><%= check_box_tag('user[role_' + role.name + ']', 1, role.user_is) %></td>
+          <% for role in @roles %>
+            <td><%= check_box_tag 'user[role_' + role.name + ']', 1, @user.has_role?(role.name) %></td>
             <td valign="top"><%= role.name %> &nbsp;</td>
           <% end %>
         </tr>

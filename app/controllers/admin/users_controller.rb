@@ -1,7 +1,7 @@
 class Admin::UsersController < Admin::BaseController
   resource_controller                                                             
   before_filter :initialize_extension_partials
-  before_filter :load_user_roles, :only => [:edit, :new, :update, :create]
+  before_filter :load_roles, :only => [:edit, :new, :update, :create]
   
   create.after do   
     save_user_roles
@@ -20,12 +20,8 @@ class Admin::UsersController < Admin::BaseController
     @collection = scope.find(:all, :order => 'email', :page => {:size => 15, :current =>params[:p], :first => 1})
   end
 
-  def load_user_roles
-    load_object
-    @all_roles = Role.find(:all)
-    @all_roles.each { |role|
-      role['user_is'] = @user.has_role?(role.name) ? true : false
-    }
+  def load_roles
+    @roles = Role.all
   end
   
   def save_user_roles
