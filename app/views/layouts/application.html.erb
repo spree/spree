@@ -23,17 +23,17 @@
                   <%= link_to image_tag('spree.jpg'), root_path %>                                                                  
                 </td>
                 <td valign="top">
-                  <h1><%= :welcome_to_sample_store.l %></h1>
+                  <h1><%= t("welcome_to_sample_store") %></h1>
                 </td>
                 <td width="200px">
                   <% if logged_in? -%>
                   <ul id="login-nav">
-                    <li><%= link_to t('My Account'), user_path(current_user) %></li>
-                    <li><%= link_to t('Logout'), logout_path %></li>
+                    <li><%= link_to t('my_account'), user_path(current_user) %></li>
+                    <li><%= link_to t('logout'), logout_path %></li>
                   </ul>
                   <% else %>
                   <ul id="login-nav">
-                    <li><%= link_to t('Login'), login_path %></li>
+                    <li><%= link_to t('log_in'), login_path %></li>
                   </ul>
 		              <% end -%>
                 </td>

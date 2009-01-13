@@ -1,10 +1,19 @@
 module Spec
   module Example
     class ExampleGroupFactory
-      class << self
+      module ClassMethods
         def reset
           @example_group_types = nil
           default(ExampleGroup)
+        end
+
+        def registered_or_ancestor_of_registered?(example_group_classes) # :nodoc:
+          example_group_classes.each do |example_group_class|
+            return false unless registered_types.any? do |registered_type|
+              registered_type.ancestors.include? example_group_class
+            end
+          end
+          return true
         end
 
         # Registers an example group class +klass+ with the symbol +type+. For
@@ -41,12 +50,32 @@ module Spec
         end
         
         def create_example_group(*args, &block)
-          opts = Hash === args.last ? args.last : {}
-          superclass = determine_superclass(opts)
+          raise ArgumentError if args.empty?
+          raise ArgumentError unless block
+          Spec::Example::add_spec_path_to(args)
+          block = include_scope(args.last[:scope], &block)
+          superclass = determine_superclass(args.last)
           superclass.describe(*args, &block)
         end
+        
+        def create_shared_example_group(*args, &block)
+          Spec::Example::add_spec_path_to(args)
+          SharedExampleGroup.register(*args, &block)
+        end
+        
+        def include_scope(context, &block)
+          if (Spec::Ruby.version.to_f == 1.9) && Module === context
+            lambda {include context;instance_eval(&block)}
+          else
+            block
+          end
+        end
+        
+        def assign_scope(scope, args)
+          args.last[:scope] = scope
+        end
 
-        protected
+      protected
 
         def determine_superclass(opts)
           key = if opts[:type]
@@ -56,8 +85,15 @@ module Spec
           end
           get(key)
         end
+        
+      private
+        
+        def registered_types
+          @example_group_types.values
+        end
 
       end
+      extend ClassMethods
       self.reset
     end
   end

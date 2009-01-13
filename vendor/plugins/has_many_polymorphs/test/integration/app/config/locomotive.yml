@@ -1,0 +1,6 @@
+---
+mode: development
+runs_at_launch: 0
+identifier: testapp
+port: 3005
+bundle: /Applications/Locomotive2/Bundles/rmagickRailsMar2007_i386.locobundle

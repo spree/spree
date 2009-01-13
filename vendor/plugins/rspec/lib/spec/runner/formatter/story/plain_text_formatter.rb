@@ -104,7 +104,14 @@ module Spec
           end
           
           def run_ended
-            @output.puts "#@count scenarios: #@successful_scenario_count succeeded, #{@failed_scenarios.size} failed, #@pending_scenario_count pending"
+            summary_text = "#@count scenarios: #@successful_scenario_count succeeded, #{@failed_scenarios.size} failed, #@pending_scenario_count pending"
+            if !@failed_scenarios.empty?
+              @output.puts red(summary_text)
+            elsif !@pending_steps.empty?
+              @output.puts yellow(summary_text)
+            else
+              @output.puts green(summary_text)
+            end
             unless @pending_steps.empty?
               @output.puts "\nPending Steps:"
               @pending_steps.each_with_index do |pending, i|
@@ -116,11 +123,10 @@ module Spec
               @output.print "\nFAILURES:"
               @failed_scenarios.each_with_index do |failure, i|
                 title, scenario_name, err = failure
-                @output.print %[
-    #{i+1}) #{title} (#{scenario_name}) FAILED
-    #{err.class}: #{err.message}
-    #{err.backtrace.join("\n")}
-]
+                @output.print "\n    #{i+1}) "
+                @output.print red("#{title} (#{scenario_name}) FAILED")
+                @output.print red("\n    #{err.class}: #{err.message}")
+                @output.print "\n    #{err.backtrace.join("\n")}\n"
               end
             end            
           end

@@ -62,12 +62,14 @@ module AttributeFu
       def save_managed_associations #:nodoc:
         if managed_association_attributes != nil
           managed_association_attributes.keys.each do |association_id|
-            association = send(association_id)
-            association.each(&:save)
+            if send(association_id).loaded? # don't save what we haven't even loaded
+              association = send(association_id)
+              association.each(&:save)
 
-            unless (objects_to_remove = instance_variable_get removal_variable_name(association_id)).nil?
-              objects_to_remove.each { |remove_id| association.delete association.detect { |obj| obj.id.to_s == remove_id.to_s } }
-              instance_variable_set removal_variable_name(association_id), nil
+              unless (objects_to_remove = instance_variable_get removal_variable_name(association_id)).nil?
+                objects_to_remove.each { |remove_id| association.delete association.detect { |obj| obj.id.to_s == remove_id.to_s } }
+                instance_variable_set removal_variable_name(association_id), nil
+              end
             end
           end
         end
@@ -114,10 +116,20 @@ module AttributeFu
             discard_if = discard_if.to_proc if discard_if.is_a?(Symbol)
             managed_association_attributes[association_id][:discard_if] = discard_if
           end
+          collection_with_attributes_writer(association_id)
         end
         
         has_many_without_association_option(association_id, options, &extension)
       end
+      
+    private
+    
+      def collection_with_attributes_writer(association_name)
+        define_method("#{association_name.to_s.singularize}_attributes=") do |attributes|
+          has_many_attributes association_name, attributes
+        end
+      end
+      
     end
     
   end # Associations

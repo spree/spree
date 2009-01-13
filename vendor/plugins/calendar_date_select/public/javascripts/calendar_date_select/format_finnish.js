@@ -8,10 +8,18 @@ Date.prototype.toFormattedString = function(include_time){
   return str;
 }
 Date.parseFormattedString = function (string) {
-  var regexp = '([0-9]{1,2})\.(([0-9]{1,2})\.(([0-9]{4})( ([0-9]{1,2}):([0-9]{2})? *)?)?)?';
+  var regexp = '([0-9]{1,2})\.(([0-9]{1,2})\.(([0-9]{2,4})( ([0-9]{1,2}):([0-9]{2})? *)?)?)?';
   var d = string.match(new RegExp(regexp, "i"));
   if (d==null) return Date.parse(string); // at least give javascript a crack at it.
   var offset = 0;
+  if (d[5] && d[5].length == 2) {
+    // we got only two digits for the year...
+    d[5] = Number(d[5]);
+    if (d[5] > 30)
+      d[5] += 1900;
+    else
+      d[5] += 2000;
+  }
   var date = new Date(d[5], 0, 1);
   if (d[3]) { date.setMonth(d[3] - 1); }
   if (d[5]) { date.setDate(d[1]); }

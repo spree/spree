@@ -1,0 +1,12 @@
+swimmy:
+  id: 1
+  name: Swimmy
+  speed: 10
+  created_at: "2007-02-01 12:00:00"
+  updated_at: "2007-02-04 10:00:00"
+jaws:
+  id: 2
+  name: Jaws
+  speed: 20
+  created_at: "2007-02-02 12:00:00"
+  updated_at: "2007-02-03 10:00:00"

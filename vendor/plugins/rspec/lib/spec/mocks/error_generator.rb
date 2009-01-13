@@ -44,7 +44,7 @@ module Spec
       
       private
       def intro
-        @name ? "Mock '#{@name}'" : @target.inspect
+        @name ? "Mock '#{@name}'" : @target.class == Class ? "<#{@target.inspect} (class)>" : (@target.nil? ? "nil" : @target.to_s)
       end
       
       def __raise(message)

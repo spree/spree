@@ -13,16 +13,20 @@ module Spec
       def run(argv, stderr, stdout)
         $stdout = stdout
         $stderr = stderr
-
-        base = ActiveRecord::Base
-        def base.clear_reloadable_connections!
-          active_connections.each do |name, conn|
-            if conn.requires_reloading?
-              conn.disconnect!
-              active_connections.delete(name)
+        
+        unless ActiveRecord::Base.respond_to?(:clear_reloadable_connections!)
+          base = ActiveRecord::Base
+          def base.clear_reloadable_connections!
+            active_connections.each do |name, conn|
+              if conn.requires_reloading?
+                conn.disconnect!
+                active_connections.delete(name)
+              end
             end
           end
         end
+
+        ActiveRecord::Base.clear_reloadable_connections!
 
         if ActionController.const_defined?(:Dispatcher)
           dispatcher = ::ActionController::Dispatcher.new($stdout)
@@ -35,8 +39,13 @@ module Spec
         if Object.const_defined?(:Fixtures) && Fixtures.respond_to?(:reset_cache)
           Fixtures.reset_cache
         end
+        
+        if ::ActiveSupport.const_defined?(:Dependencies)
+          ::ActiveSupport::Dependencies.mechanism = :load
+        else
+          ::Dependencies.mechanism = :load
+        end
 
-        ::Dependencies.mechanism = :load
         require_dependency('application.rb') unless Object.const_defined?(:ApplicationController)
         load File.dirname(__FILE__) + '/../spec/spec_helper.rb'
 

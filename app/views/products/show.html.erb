@@ -22,7 +22,7 @@
 					</tr>
 					<tr>
 					  <td>
-					    <%="<span class='product-price'>#{t("Price")}: </span> #{product_price(@product)}" if product_price(@product) %>
+					    <%="<span class='product-price'>#{t("price")}: </span> #{product_price(@product)}" if product_price(@product) %>
 					  </td>
 					</tr>
 					<% if @product.variants? %>
@@ -54,9 +54,9 @@
 					  <td>
               <%=
                 if @product.has_stock? || Spree::Config[:allow_backorders]
-                  submit_tag t('Add To Cart')
+                  submit_tag t('add_to_cart')
                 else
-                  content_tag('strong', 'Out of Stock')
+                  content_tag('strong', t('out_of_stock'))
                 end
             %>
 					  </td>

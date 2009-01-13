@@ -95,7 +95,6 @@ describe "PreferenceDefinition with :boolean type" do
   end
 
   it "should type_cast to false if value is not true string" do
-    @definition.type_cast('').should be_false
     @definition.type_cast('false').should be_false
     @definition.type_cast('hola').should be_false
   end

@@ -1,7 +1,7 @@
 module TaxonsHelper
   def breadcrumbs(taxon)
     crumbs = "<div class='breadcrumbs'>"
-    crumbs += link_to t('Products'), products_url
+    crumbs += link_to t('products'), products_url
     unless taxon
       return crumbs += "</div>"
     end

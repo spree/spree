@@ -235,13 +235,13 @@ module Spec
         it 'should find a scenario in the current story by name' do
           # given
           story_runner = StoryRunner.new(ScenarioRunner.new)
-          $scenario = nil
+          scenario = nil
           
           story_runner.Story 'title', 'narrative' do
             Scenario 'first scenario' do
             end
             Scenario 'second scenario' do
-              $scenario = StoryRunner.scenario_from_current_story 'first scenario'
+              scenario = StoryRunner.scenario_from_current_story 'first scenario'
             end
           end
           
@@ -249,7 +249,7 @@ module Spec
           story_runner.run_stories
           
           # then
-          $scenario.name.should == 'first scenario'
+          scenario.name.should == 'first scenario'
         end
         
         it "should clean the steps between stories" do

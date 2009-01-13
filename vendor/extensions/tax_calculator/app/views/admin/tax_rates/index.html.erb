@@ -1,12 +1,12 @@
-<h1><%=t("Tax Rates") %></h1>
+<h1><%=t("ext_tax_calculator_tax_rates") %></h1>
 <table class="admin-report" width="545">
   <thead>
     <tr>
-      <th><%=t("Zone")%></th>
-      <th><%=t("Category")%></th>
-      <th><%=t("Amount")%></th>
-      <th><%=t("Tax Type")%></th>
-      <th><%=t("Action")%></th>
+      <th><%=t("zone")%></th>
+      <th><%=t("category")%></th>
+      <th><%=t("amount")%></th>
+      <th><%=t("tax_type")%></th>
+      <th><%=t("action")%></th>
     </tr>
   </thead>
   <tbody>
@@ -17,8 +17,8 @@
         <td><%=tax_rate.amount %></td>
         <td><%=TaxRate::TaxType.from_value tax_rate.tax_type %></td>
         <td>
-          <%=link_to t("Edit"), edit_object_url(tax_rate) %> |
-          <%=link_to t("Delete"), object_url(tax_rate), :method => :delete %>
+          <%=link_to t("edit"), edit_object_url(tax_rate) %> |
+          <%=link_to t("delete"), object_url(tax_rate), :method => :delete %>
         </td>
       </tr>
     <% end %>
@@ -27,4 +27,4 @@
     <% end %>
   </tbody>
 </table>
-<%= link_to t("New Tax Rate"), new_object_url %>
+<%= link_to t("new_tax_rate"), new_object_url %>

@@ -1,0 +1,2 @@
+module BonesHelper
+end

@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <%= calendar_date_select_includes %>
 <% end %>
-<h1><%= t("Listing reports") %></h1>
+<h1><%= t("listing_reports") %></h1>
 <table>
   <tr>
     <td valign="top">
@@ -9,15 +9,15 @@
         <table class="admin-report" width="515">
           <thead>
             <tr>
-              <th><%= t("Name") %></th>
-              <th><%= t("Description") %></th>
+              <th><%= t("name") %></th>
+              <th><%= t("description") %></th>
             </tr>
           </thead>
           <tbody>     
             <% @reports.each do |key, value| %>
             <tr class="<%= cycle('even', 'odd') %>">
-              <td><%= link_to t(value[:name]), :action => key %></td>
-              <td><%= t(value[:description]) %></td>
+              <td><%= link_to t(value[:name].downcase.gsub(" ","_")), :action => key %></td>
+              <td><%= t(value[:description].downcase.gsub(" ","_")) %></td>
             </tr>
             <% end %>
           </tbody>

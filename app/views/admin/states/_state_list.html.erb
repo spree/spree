@@ -1,9 +1,9 @@
 <table class="admin-report" width="545">
   <thead>
     <tr>
-      <th><%= t("Name") %></th>
-      <th><%= t("Abbreviation") %></th>
-      <th><%= t("Action") %></th>
+      <th><%= t("name") %></th>
+      <th><%= t("abbreviation") %></th>
+      <th><%= t("action") %></th>
     </tr>
   </thead>
   <tbody>
@@ -12,8 +12,8 @@
         <td><%=state.name %></td>
         <td><%=state.abbr %></td>
         <td>
-          <%=link_to t("Edit"), edit_admin_country_state_url(@country, state) %> |
-          <%=link_to t("Delete"), object_url(state), :method => :delete %>
+          <%=link_to t("edit"), edit_admin_country_state_url(@country, state) %> |
+          <%=link_to t("delete"), object_url(state), :method => :delete %>
         </td>
       </tr>
     <% end %>
@@ -22,4 +22,4 @@
     <% end %>
   </tbody>
 </table>
-<%= link_to t("New State"), new_admin_country_state_url(@country) %>
+<%= link_to t("new_state"), new_admin_country_state_url(@country) %>

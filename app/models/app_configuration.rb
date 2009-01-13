@@ -18,7 +18,7 @@ class AppConfiguration < Configuration
   preference :store_cc, :boolean, :default => false
   preference :store_cvv, :boolean, :default => false
   preference :default_locale, :string, :default => 'en-US'
-  preference :allow_locale_switching, :boolean, :default => false
+  preference :allow_locale_switching, :boolean, :default => true
   preference :default_country_id, :integer, :default => 214
   preference :allow_backorders, :boolean, :default => true
   preference :allow_backorder_shipping, :boolean, :default => false # should only be true if you don't need to track inventory

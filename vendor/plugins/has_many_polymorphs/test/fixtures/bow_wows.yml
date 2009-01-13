@@ -1,0 +1,10 @@
+rover:
+  id: 1
+  name: Rover
+  created_at: "2007-01-01 12:00:00"
+  updated_at: "2007-01-04 10:00:00"
+spot:
+  id: 2
+  name: Spot
+  created_at: "2007-01-02 12:00:00"
+  updated_at: "2007-01-03 10:00:00"

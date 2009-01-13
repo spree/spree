@@ -1,20 +1,20 @@
 <table>
   <tr>
-    <td><%=t("Zone")%>:</td>
+    <td><%=t("zone")%>:</td>
     <td><%= collection_select(:tax_rate, :zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"}) %></td>
   </tr>
   <tr>
-    <td><%=t("Category")%>:</td>
+    <td><%=t("category")%>:</td>
     <td><%= collection_select(:tax_rate, 
                               :tax_category_id, @available_categories, :id, :name, 
                               {}, {"style" => "width:200px"}) %></td>
   </tr>
   <tr>
-    <td><%=t("Rate")%>:</td>
+    <td><%=t("rate")%>:</td>
     <td><%= f.text_field :amount, {"style" => "width:200px"} %></td>
   </tr>
   <tr>
-    <td><%=t("Tax Type")%>:</td>
+    <td><%=t("tax_type")%>:</td>
     <td><%= f.collection_select :tax_type, TaxRate::TaxType.constants, :id, :title, {}, {:style => "width:200px"}%> </td>
   </tr>
 </table>

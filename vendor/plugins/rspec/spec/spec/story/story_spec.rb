@@ -20,9 +20,7 @@ module Spec
       
       it 'should not raise an error if no block is supplied' do
         # when
-        error = exception_from do
-          Story.new 'title', 'narrative'
-        end
+        error = exception_from { Story.new 'title', 'narrative' }
         
         # then
         error.should be_nil

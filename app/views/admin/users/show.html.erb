@@ -1,18 +1,18 @@
-<h1><%= t("User Account") %></h1>        
+<h1><%= t("user_account") %></h1>        
 <br/>
 <table>
   <tr>
-    <td><%= t("Email") %>: &nbsp;</td>
+    <td><%= t("email") %>: &nbsp;</td>
     <td>
       <%= @user.email %>
     </td>
   </tr>  
   <tr>
-    <td><%= t("Roles") %>: &nbsp;</td>
+    <td><%= t("roles") %>: &nbsp;</td>
     <td>
       <%= list_roles(@user) %>
     </td>
   </tr>
 </table>
 <br/>
-<%= link_to t('Edit'), edit_object_url %>
+<%= link_to t('edit'), edit_object_url %>

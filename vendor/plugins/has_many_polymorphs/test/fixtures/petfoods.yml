@@ -1,0 +1,11 @@
+kibbles:
+  the_petfood_primary_key: 1
+  name: Kibbles
+  created_at: "2007-06-01 12:00:00"
+  updated_at: "2007-06-04 10:00:00"
+bits:
+  the_petfood_primary_key: 2
+  name: Bits
+  created_at: "2007-06-02 12:00:00"
+  updated_at: "2007-06-03 10:00:00"
+  

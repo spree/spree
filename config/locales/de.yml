@@ -1,0 +1,422 @@
+--- 
+de: 
+  abbreviation: Abbreviation
+  access_denied: "Access Denied"        
+  authorization_failure: "Authorization Failure"  
+  account: Konto
+  action: Aktion
+  actions: 
+    cancel: Cancel
+    create: Create
+    destroy: Destroy
+    list: List
+    listing: Listing
+    new: New
+    update: Update
+  activerecord: 
+    attributes: 
+      address: 
+        address1: Address
+        address2: "Address (contd.)"
+        city: City
+        firstname: "First Name"
+        lastname: "Last Name"
+        phone: Phone
+        zipcode: "Zip Code"
+      country: 
+        iso: ISO
+        iso3: ISO3
+        iso_name: "ISO Name"
+        name: Name
+        numcode: "ISO Code"
+      creditcard: 
+        cc_type: Type
+        month: Month
+        number: Number
+        verification_value: "Verification Value"
+        year: Year
+      inventory_unit: 
+        state: State
+      line_item: 
+        price: Price
+        quantity: Quantity
+      order: 
+        checkout_complete: "Checkout Complete"
+        ip_address: "IP Address"
+        item_total: "Item Total"
+        number: Number
+        ship_amount: "Ship Amount"
+        special_instructions: "Special Instructions"
+        state: State
+        tax_amount: "Tax Amount"
+        total: Total
+      product: 
+        available_on: "Available On"
+        description: Description
+        master_price: "Master Price"
+        name: Name
+        on_hand: "On Hande"
+      property: 
+        name: Name
+        presentation: Presentation
+      prototype: 
+        name: Name
+      role: 
+        name: Name
+      state: 
+        abbr: Abbreviation
+        name: Name
+      taxon: 
+        name: Name
+        permalink: Permalink
+        position: Position
+      taxonomy: 
+        name: Name
+      user: 
+        email: Email
+      variant: 
+        depth: Depth
+        height: Height
+        price: Price
+        sku: SKU
+        weight: Weight
+        width: Width
+      zone: 
+        description: Description
+        name: Name
+    models: 
+      address: 
+        one: Address
+        other: Addresses
+      country: 
+        one: Country
+        other: Countries
+      creditcard: 
+        one: "Credit Card"
+        other: "Credit Cards"
+      creditcard_payment: 
+        one: "Credit Card Payment"
+        other: "Credit Card Payments"
+      creditcard_txn: 
+        one: "Credit Card Transaction"
+        other: "Credit Card Transactions"
+      inventory_unit: 
+        one: "Inventory Unit"
+        other: "Inventory Units"
+      line_item: 
+        one: "Line Item"
+        other: "Line Items"
+      order: 
+        one: Order
+        other: Orders
+      payment: 
+        one: Payment
+        other: Payments
+      product: 
+        one: Product
+        other: Products
+      property: 
+        one: Property
+        other: Properties
+      prototype: 
+        one: Prototype
+        other: Prototypes
+      role: 
+        one: Roles
+        other: Roles
+      state: 
+        one: State
+        other: States
+      taxon: 
+        one: Taxon
+        other: Taxons
+      taxonomy: 
+        one: Taxonomy
+        other: Taxonomies
+      user: 
+        one: User
+        other: Users
+      variant: 
+        one: Variant
+        other: Variants
+      zone: 
+        one: Zone
+        other: Zones
+  add: Add
+  add_category: "Kategorie hinzufügen"
+  add_country: "Add Country"
+  add_option_type: "Option hinzufügen"
+  add_option_types: "Option hinzufügens"
+  add_option_value: "Add Option Value"
+  add_product_properties: ""
+  add_state: "Add State"
+  add_to_cart: "In den Warenkorb"
+  add_zone: "Add Zone"
+  address: Address
+  address_information: "Adres Information"
+  adjustment: Anpassung
+  administration: Verwaltung
+  allow_backorders: "Allow Backorders"
+  amount: Summe
+  are_you_sure: "Are you sure"
+  are_you_sure_category: "Are you sure you want to delete this category?"
+  are_you_sure_delete: "Are you sure you want to delete this record?"
+  are_you_sure_delete_image: "Are you sure you want to delete this image?"
+  are_you_sure_option_type: "Are you sure you want to delete this option type?"
+  assign_taxon: "Assign Taxon"
+  assign_taxons: "Assign Taxons"
+  authorized: Authorized
+  available_on: ""
+  available_taxons: "Available Taxons"
+  back: Zurück
+  back_to_store: "Zurück zum shop"
+  bill_address: Rechnungsaddresse
+  billing_address: Rechnungsaddresse
+  cancel: Verwerfen
+  canceled: Canceled
+  capture: capture
+  card_code: "CVV Code"
+  card_number: "Karten Nummer"
+  cart: Warenkorb
+  categories: Kategorien
+  category: Kategorie
+  change: wechseln
+  change_language: "Sprache wechseln"
+  charged: Charged
+  checkout: "Zur Kasse"
+  city: Stadt
+  comp_order: "Bestellung Abbrechen"
+  comp_order_confirmation: ""
+  configuration: Configuration
+  configuration_options: "Configuration Options"
+  configurations: Configurations
+  confirm: Bestätigen
+  confirm_password: "Passwort Bestätigen"
+  continue: Continue
+  continue_shopping: "Weiter Einkaufen"
+  country: Land
+  country_based: "Country Based"
+  create: Einfügen
+  create_a_new_account: ""
+  credit_card: ""
+  credit_card_cayment: "Credit Card Payment"
+  creditcard_payment: "Creditcard Payment"
+  current: Stand
+  customer: Kunde
+  date: Datum
+  date_range: "Datum (von/bis)"
+  delete: Löschen
+  depth: Depth
+  description: Beschreibung
+  destroy: Entfernen
+  display: Anzeigen
+  edit: Bearbeiten
+  editing_category: "Kategorie Bearbeiten"
+  editing_option_type: "Editing Option Type"
+  editing_option_types: "Option Bearbeiten"
+  editing_product: "Editing Product"
+  editing_property: "Editing Property"
+  editing_prototype: "Editing Prototype"
+  editing_state: "Editing State"
+  editing_tax_category: "Editing Tax Category"
+  editing_user: "Benutzer Bearbeiten"
+  email: Email
+  email_address: "Email Addresse"
+  email_server_settings_description: ""
+  empty_cart: "Warenkorb Leeren"
+  error: Fehler
+  event: Event
+  existing_customer: "Existing Customer"
+  expiration_month: "Gültig bis (Monat)"
+  expiration_year: "Gültig bis (Jahr)"
+  extension: Erweiterung
+  extensions: Erweiterungen
+  filename: Dateiname
+  final_confirmation: "End Bestätigung"
+  first_name: Vorname
+  gateway: ""
+  gateway_error: "Gateway Error"
+  gateway_setting_description: ""
+  general_settings: "General Settings"
+  general_settings_description: "Configure general Spree settings."
+  height: Height
+  hello_user: "Hallo User"
+  image: Bild
+  images: Bilder
+  in_progress: "In Progress"
+  inventory: Lager
+  inventory_adjustment: "Lager Anpassung"
+  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
+  inventory_settings: "Inventory Settings"
+  item: Artikel
+  item_description: Artikelbeschreibung
+  item_total: "Artikel Gesamt"
+  last_name: Nachname
+  list: List
+  listing_categories: Kategorien
+  listing_option_types: Optionen
+  listing_orders: Bestellungen
+  listing_reports: Berichte
+  listing_tax_categories: "Listing Tax Categories"
+  listing_users: Benutzer
+  locale_changed: "Locale Changed"
+  log_in: Anmelden
+  logged_in_as: "Angemldet unter"
+  login_name: Benutzer
+  logout: Abmelden
+  mail_server_settings: "Mail Server Settings"
+  master_price: Grundpreis
+  my_account: "mein Konto"
+  my_orders: "My Orders"
+  name: Name
+  new_category: "Neute Kategorie"
+  new_credit_card_payment: "New Credit Card Payment"
+  new_customer: "New Customer"
+  new_image: "Neues Bild"
+  new_option_type: "Neue Option"
+  new_option_value: "Neuer Optionswert"
+  new_product: ""
+  new_property: ""
+  new_prototype: ""
+  new_state: "New State"
+  new_tax_category: "New Tax Category"
+  new_tax_rate: "New Tax Rate"
+  new_taxonomy: "New Taxonomy"
+  new_user: "Neuer Benutzer"
+  new_variant: "New Variant"
+  new_zone: "New Zone"
+  next: weiter
+  no_items_in_cart: ""
+  no_match_found: "No Match Found"
+  none: ""
+  none_available: "None Available"
+  number: Nummer
+  on_hand: "Auf Lager"
+  operation: Operation
+  option_Values: "Options Werte"
+  option_types: Optionen
+  option_values: "Option Values"
+  options: Optionen
+  or: oder
+  order: Bestellung
+  order_confirmation_note: ""
+  order_date: Bestelldatum
+  order_details: "Bestellung Details"
+  order_email_resent: "Order Email Resent"
+  order_number: "Bestellung #"
+  order_operation_authorize: ""
+  order_processed_successfully: "Ihre Bestellung wurde erfolgreich bearbeitet"
+  order_total: Gesamtsumme
+  order_total_message: "The total amount charged to your card will be"
+  order_updated: "Order Updated"
+  orders: Bestellungen
+  out_of_stock: "Out of Stock"
+  overview: Übersicht
+  parent_category: "Unterkategorie von"
+  password: Passwort
+  path: Path
+  pay: pay
+  payment: Zahlung
+  payment_gateway: "Payment Gateway"
+  payment_information: "Payment Information"
+  payments: Payments
+  phone: Telefon
+  presentation: Anzeige
+  previous: zurück
+  price: Preis
+  problem_authorizing_card: ""
+  problem_capturing_card: ""
+  problems_processing_order: "Ihre Bestellung konnte nicht bearbetet werden"
+  process: Abschicken
+  product: Produkt
+  product_details: "Product Details"
+  product_properties: ""
+  products: Produkte
+  properties: ""
+  property: ""
+  prototypes: ""
+  qty: Anz
+  rate: Rate
+  remember_me: "Details auf diesem Komputer speichern"
+  remove: ""
+  reports: Berichte
+  resend: Resend
+  response_code: "Response Code"
+  resumed: Resumed
+  return: return
+  returned: Returned
+  roles: Roles
+  sales_total: "Verkauf Gesamt"
+  sales_total_for_all_orders: "Sales total for all orders"
+  sales_totals: "Gesamt Verkaufszahlen"
+  sales_totals_description: ""
+  search: Suchen
+  select: Select
+  select_from_prototype: ""
+  ship: ship
+  ship_address: Lieferaddresse
+  shipment: Shipment
+  shipped: Shipped
+  shipping: Lieferung
+  shipping_address: Lieferaddresse
+  shipping_error: "Shipping Error"
+  shipping_method: Liefermethode
+  shipping_total: "Lieferkosten Gesamt"
+  shopping_cart: Warenkorb
+  show_deleted: "Show Deleted"
+  show_incomplete_orders: "Show Incomplete Orders"
+  show_out_of_stock_products: "Show out-of-stock products"
+  sign_up: "Sign up"
+  sku: SKU
+  start: Von
+  state: Bundesland
+  state_based: "State Based"
+  state_setting_description: ""
+  states: States
+  status: Status
+  stop: Bis
+  store: Store
+  street_address: Straße
+  street_address_2: "Straße (Feld 2)"
+  subtotal: Zwischensumme
+  subtract: Subtract
+  system: System
+  tax: MwSt.
+  tax_categories: ""
+  tax_categories_setting_description: ""
+  tax_category: ""
+  tax_total: "MwSt. Gesamt"
+  tax_type: "Tax Type"
+  taxon: Taxon
+  taxonomies: Taxonomies
+  taxonomies_setting_description: "Create and manage taxonomies"
+  taxons: Taxons
+  thank_you_for_your_order: ""
+  this_file_language: Deutsch
+  time: Zeit
+  total: Gesamt
+  transaction: Transaktion
+  tree: Tree
+  try_again: "Try Again"
+  type: Typ
+  update: Speichern
+  use_different_shipping_address: "Andere Lieferaddresse verwenden"
+  user: Benutzer
+  user_details: "User Details"
+  users: Benutzer
+  value: ""
+  variants: Varianten
+  version: Version
+  website: Webseite
+  weight: Weight
+  welcome_to_sample_store: "Willkommen im Beispiel Shop"
+  what_is_a_cvv: "Was ist der (CVV) Kredit Karten Code?"
+  what_is_this: "Was ist das?"
+  whats_this: "What's this"
+  width: Width
+  your_cart_is_empty: "Your cart is empty"
+  zip: PLZ
+  zone: Zone
+  zone_based: "Zone Based"
+  zone_setting_description: ""
+  zones: Zones

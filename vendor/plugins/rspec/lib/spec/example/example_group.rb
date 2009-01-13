@@ -6,9 +6,18 @@ module Spec
       extend Spec::Example::ExampleGroupMethods
       include Spec::Example::ExampleMethods
 
-      def initialize(defined_description, &implementation)
+      def initialize(defined_description, options={}, &implementation)
+        @_options = options
         @_defined_description = defined_description
-        @_implementation = implementation
+        @_implementation = implementation || pending_implementation
+        @_backtrace = caller
+      end
+      
+    private
+      
+      def pending_implementation
+        error = NotYetImplementedError.new(caller)
+        lambda { raise(error) }
       end
     end
   end

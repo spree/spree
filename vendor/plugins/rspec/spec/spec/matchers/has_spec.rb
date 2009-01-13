@@ -51,3 +51,13 @@ describe "should_not have_sym(*args)" do
     lambda { o.should_not have_sym(:foo) }.should raise_error("Funky exception")
   end
 end
+
+describe "has" do
+  it "should work when the target implements #send" do
+    o = {:a => "A"}
+    def o.send(*args); raise "DOH! Library developers shouldn't use #send!" end
+    lambda {
+      o.should have_key(:a)
+    }.should_not raise_error
+  end
+end

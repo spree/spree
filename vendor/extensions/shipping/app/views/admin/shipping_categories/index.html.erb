@@ -1,9 +1,9 @@
-<h1><%=t("Shipping Categories") %></h1>
+<h1><%=t("ext_shipping_shipping_categories") %></h1>
 <table class="admin-report" width="545">
   <thead>
     <tr>
-	    <th><%=t("Name")%></th>
-      <th><%=t("Action")%></th>
+	    <th><%=t("name")%></th>
+      <th><%=t("action")%></th>
     </tr>
   </thead>
   <tbody>
@@ -11,8 +11,8 @@
       <tr class="<%= cycle('even', 'odd') %>">
         <td><%=shipping_category.name %></td>
         <td>
-          <%=link_to t("Edit"), edit_object_url(shipping_category) %> |
-          <%=link_to t("Delete"), object_url(shipping_category), :method => :delete %>
+          <%=link_to t("edit"), edit_object_url(shipping_category) %> |
+          <%=link_to t("delete"), object_url(shipping_category), :method => :delete %>
         </td>
       </tr>
     <% end %>
@@ -21,4 +21,4 @@
     <% end %>
   </tbody>
 </table>
-<%= link_to t("New Shipping Category"), new_object_url %>
+<%= link_to t("ext_shipping_new_shipping_category"), new_object_url %>

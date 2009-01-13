@@ -1,13 +1,13 @@
 <table>
 	<tr>
-		<td>Name: </td>
+		<td><%= t("name") %>: </td>
 		<td>
 			<%= f.text_field :name %>
 		</td>
 	</tr>
 </table>
 <br/>
-<h3>Properties</h3>
+<h3><%= t("properties") %></h3>
 <br/>
 <ul id="properties">
 	<% Property.sorted.each do |property| %>

@@ -17,7 +17,7 @@ module Spec
       end
 
       def failure
-        Mocks::DuckTypeArgConstraint.new(:header, :exception)
+        Mocks::ArgumentConstraints::DuckTypeConstraint.new(:header, :exception)
       end
 
       def create_example_group(description_text)
@@ -104,7 +104,7 @@ module Spec
         reporter.dump
       end
 
-      describe Reporter, "reporting one passing example" do
+      describe "reporting one passing example" do
         it "should tell formatter example passed" do
           formatter.should_receive(:example_passed)
           reporter.example_finished("example")
@@ -127,7 +127,7 @@ module Spec
         end
       end
 
-      describe Reporter, "reporting one failing example" do
+      describe "reporting one failing example" do
         it "should tell formatter that example failed" do
           example = example_group.it("should do something") {}
           formatter.should_receive(:example_failed)
@@ -154,30 +154,76 @@ module Spec
 
       end
 
-      describe Reporter, "reporting one pending example (ExamplePendingError)" do
+      describe "reporting one pending example (ExamplePendingError)" do
+        before :each do
+          @pending_error = Spec::Example::ExamplePendingError.new("reason")
+          @pending_caller = @pending_error.pending_caller
+        end
+        
         it "should tell formatter example is pending" do
           example = ExampleGroup.new("example")
-          formatter.should_receive(:example_pending).with(example, "reason")
+          formatter.should_receive(:example_pending).with(example, "reason", @pending_caller)
           formatter.should_receive(:add_example_group).with(example_group)
           reporter.add_example_group(example_group)
-          reporter.example_finished(example, Spec::Example::ExamplePendingError.new("reason"))
+          reporter.example_finished(example, @pending_error)
         end
 
         it "should account for pending example in stats" do
           example = ExampleGroup.new("example")
-          formatter.should_receive(:example_pending).with(example, "reason")
+          formatter.should_receive(:example_pending).with(example, "reason", @pending_caller)
           formatter.should_receive(:start_dump)
           formatter.should_receive(:dump_pending)
           formatter.should_receive(:dump_summary).with(anything(), 1, 0, 1)
           formatter.should_receive(:close).with(no_args)
           formatter.should_receive(:add_example_group).with(example_group)
           reporter.add_example_group(example_group)
-          reporter.example_finished(example, Spec::Example::ExamplePendingError.new("reason"))
+          reporter.example_finished(example, @pending_error)
           reporter.dump
+        end
+        
+        describe "to formatters which have example_pending's arity of 2 (which is now deprecated)" do
+          before :each do
+            Kernel.stub!(:warn).with(Spec::Runner::Reporter::EXAMPLE_PENDING_DEPRECATION_WARNING)
+          
+            @deprecated_formatter = Class.new(@formatter.class) do
+              attr_reader :example_passed_to_method, :message_passed_to_method
+
+              def example_pending(example_passed_to_method, message_passed_to_method)
+                @example_passed_to_method = example_passed_to_method
+                @message_passed_to_method = message_passed_to_method
+              end
+            end.new(options, formatter_output)
+            
+            options.formatters << @deprecated_formatter
+          end
+          
+          it "should pass the correct example to the formatter" do
+            example = ExampleGroup.new("example")
+            reporter.add_example_group(example_group)
+            reporter.example_finished(example, @pending_error)
+            
+            (@deprecated_formatter.example_passed_to_method == example).should be_true
+          end
+          
+          it "should pass the correct pending error message to the formatter" do
+            example = ExampleGroup.new("example")
+            reporter.add_example_group(example_group)
+            reporter.example_finished(example, @pending_error)
+            
+            @deprecated_formatter.message_passed_to_method.should ==  @pending_error.message
+          end
+          
+          it "should raise a deprecation warning" do
+            Kernel.should_receive(:warn).with(Spec::Runner::Reporter::EXAMPLE_PENDING_DEPRECATION_WARNING)
+            
+            example = ExampleGroup.new("example")
+            reporter.add_example_group(example_group)
+            reporter.example_finished(example, @pending_error)
+          end
         end
       end
 
-      describe Reporter, "reporting one pending example (PendingExampleFixedError)" do
+      describe "reporting one pending example (PendingExampleFixedError)" do
         it "should tell formatter pending example is fixed" do
           formatter.should_receive(:example_failed) do |name, counter, failure|
             failure.header.should == "'example_group should do something' FIXED"

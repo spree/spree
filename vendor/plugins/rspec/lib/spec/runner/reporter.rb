@@ -26,7 +26,7 @@ module Spec
         if error.nil?
           example_passed(example)
         elsif Spec::Example::ExamplePendingError === error
-          example_pending(example, error.message)
+          example_pending(example, error.pending_caller, error.message)
         else
           example_failed(example, error)
         end
@@ -103,12 +103,32 @@ module Spec
       def example_passed(example)
         formatters.each{|f| f.example_passed(example)}
       end
+
+      EXAMPLE_PENDING_DEPRECATION_WARNING = <<-WARNING
+        DEPRECATION NOTICE: RSpec's formatters have changed example_pending
+        to accept three arguments instead of just two. Please see the rdoc
+        for Spec::Runner::Formatter::BaseFormatter#example_pending
+        for more information.
+          
+        Please update any custom formatters to accept the third argument
+        to example_pending. Support for example_pending with two arguments
+        and this warning message will be removed after the RSpec 1.1.5 release.
+      WARNING
       
-      def example_pending(example, message="Not Yet Implemented")
+      def example_pending(example, pending_caller, message="Not Yet Implemented")
         @pending_count += 1
-        formatters.each do |f|
-          f.example_pending(example, message)
+        formatters.each do |formatter|
+          if formatter_uses_deprecated_example_pending_method?(formatter)
+            Kernel.warn EXAMPLE_PENDING_DEPRECATION_WARNING
+            formatter.example_pending(example, message)
+          else
+            formatter.example_pending(example, message, pending_caller)
+          end
         end
+      end
+      
+      def formatter_uses_deprecated_example_pending_method?(formatter)
+        formatter.method(:example_pending).arity == 2
       end
       
       class Failure
@@ -139,7 +159,7 @@ module Spec
 
         protected
         def example_name
-          @example.__full_description
+          @example.full_description
         end
       end
     end

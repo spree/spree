@@ -42,6 +42,18 @@ module Spec
         end.should raise_error(Spec::Example::ExamplePendingError, /Unimplemented/)
       end
       
+      it "should create a default step with it's name stripped" do
+        # given
+        step_mother = StepMother.new
+        
+        # when
+        step = step_mother.find(:given, "doesn't exist\n\n")
+        
+        # then
+        step.should be_an_instance_of(Step)
+        step.name.should == "doesn't exist"
+      end
+      
       it 'should clear itself' do
         # given
         step_mother = StepMother.new

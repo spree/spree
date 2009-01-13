@@ -3,7 +3,6 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 module Spec
   module Mocks
     describe Mock do
-
       before(:each) do
         @mock = mock("test mock")
       end
@@ -13,6 +12,18 @@ module Spec
       end
       
       it "should report line number of expectation of unreceived message" do
+        expected_error_line = __LINE__; @mock.should_receive(:wont_happen).with("x", 3)
+        begin
+          @mock.rspec_verify
+          violated
+        rescue MockExpectationError => e
+          # NOTE - this regexp ended w/ $, but jruby adds extra info at the end of the line
+          e.backtrace[0].should match(/#{File.basename(__FILE__)}:#{expected_error_line}/)
+        end
+      end
+      
+      it "should report line number of expectation of unreceived message after #should_receive after similar stub" do
+        @mock.stub!(:wont_happen)
         expected_error_line = __LINE__; @mock.should_receive(:wont_happen).with("x", 3)
         begin
           @mock.rspec_verify
@@ -215,7 +226,7 @@ module Spec
       it "should yield 0 args to blocks that take a variable number of arguments" do
         @mock.should_receive(:yield_back).with(no_args()).once.and_yield
         a = nil
-        @mock.yield_back {|*a|}
+        @mock.yield_back {|*x| a = x}
         a.should == []
         @mock.rspec_verify
       end
@@ -233,7 +244,7 @@ module Spec
       it "should yield one arg to blocks that take a variable number of arguments" do
         @mock.should_receive(:yield_back).with(no_args()).once.and_yield(99)
         a = nil
-        @mock.yield_back {|*a|}
+        @mock.yield_back {|*x| a = x}
         a.should == [99]
         @mock.rspec_verify
       end
@@ -252,7 +263,7 @@ module Spec
       it "should yield many args to blocks that take a variable number of arguments" do
         @mock.should_receive(:yield_back).with(no_args()).once.and_yield(99, 27, "go")
         a = nil
-        @mock.yield_back {|*a|}
+        @mock.yield_back {|*x| a = x}
         a.should == [99, 27, "go"]
         @mock.rspec_verify
       end
@@ -271,7 +282,7 @@ module Spec
       it "should yield single value" do
         @mock.should_receive(:yield_back).with(no_args()).once.and_yield(99)
         a = nil
-        @mock.yield_back {|a|}
+        @mock.yield_back {|x| a = x}
         a.should == 99
         @mock.rspec_verify
       end
@@ -290,7 +301,7 @@ module Spec
       it "should yield two values" do
         @mock.should_receive(:yield_back).with(no_args()).once.and_yield('wha', 'zup')
         a, b = nil
-        @mock.yield_back {|a,b|}
+        @mock.yield_back {|x,y| a=x; b=y}
         a.should == 'wha'
         b.should == 'zup'
         @mock.rspec_verify
@@ -403,7 +414,22 @@ module Spec
         @mock.msg.should equal(:stub_value)
         @mock.rspec_verify
       end
-    
+
+      it "should not require a different signature to replace a method stub" do
+        @mock.stub!(:msg).and_return(:stub_value)
+        @mock.should_receive(:msg).and_return(:mock_value)
+        @mock.msg(:arg).should equal(:mock_value)
+        @mock.msg.should equal(:stub_value)
+        @mock.msg.should equal(:stub_value)
+        @mock.rspec_verify
+      end
+
+      it "should raise an error when a previously stubbed method has a negative expectation" do
+        @mock.stub!(:msg).and_return(:stub_value)
+        @mock.should_not_receive(:msg).and_return(:mock_value)
+        lambda {@mock.msg(:arg)}.should raise_error(MockExpectationError)
+      end
+
       it "should temporarily replace a method stub on a non-mock" do
         non_mock = Object.new
         non_mock.stub!(:msg).and_return(:stub_value)
@@ -413,7 +439,32 @@ module Spec
         non_mock.msg.should equal(:stub_value)
         non_mock.rspec_verify
       end
-      
+
+      it "should return the stubbed value when no new value specified" do
+        @mock.stub!(:msg).and_return(:stub_value)
+        @mock.should_receive(:msg)
+        @mock.msg.should equal(:stub_value)
+        @mock.rspec_verify
+      end
+
+      it "should not mess with the stub's yielded values when also mocked" do
+        @mock.stub!(:yield_back).and_yield(:stub_value)
+        @mock.should_receive(:yield_back).and_yield(:mock_value)
+        @mock.yield_back{|v| v.should == :mock_value }
+        @mock.yield_back{|v| v.should == :stub_value }
+        @mock.rspec_verify
+      end
+
+      it "should yield multiple values after a similar stub" do
+        File.stub!(:open).and_yield(:stub_value)
+        File.should_receive(:open).and_yield(:first_call).and_yield(:second_call)
+        yielded_args = []
+        File.open {|v| yielded_args << v }
+        yielded_args.should == [:first_call, :second_call]
+        File.open {|v| v.should == :stub_value }
+        File.rspec_verify
+      end
+
       it "should assign stub return values" do
         mock = Mock.new('name', :message => :response)
         mock.message.should == :response
@@ -432,6 +483,15 @@ module Spec
       end
       
       it "should call the block after #should_receive" do
+        @mock.should_receive(:foo) { add_call }
+    
+        @mock.foo
+    
+        @calls.should == 1
+      end
+    
+      it "should call the block after #should_receive after a similar stub" do
+        @mock.stub!(:foo).and_return(:bar)
         @mock.should_receive(:foo) { add_call }
     
         @mock.foo

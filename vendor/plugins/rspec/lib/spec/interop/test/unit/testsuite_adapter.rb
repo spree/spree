@@ -14,7 +14,7 @@ module Test
 
       def run(*args)
         return true unless args.empty?
-        example_group.run
+        example_group.run(Spec::Runner.options)
       end
 
       def size

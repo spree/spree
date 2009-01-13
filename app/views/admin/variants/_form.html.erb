@@ -18,15 +18,15 @@
     <% end %>
   <% end %>
   <tr>
-    <td><%= t("SKU") %>: </td>
+    <td><%= t("sku") %>: </td>
     <td><%= f.text_field :sku %></td>
   </tr>
   <tr>
-    <td><%= t("Price") %>: </td>
+    <td><%= t("price") %>: </td>
     <td><%= f.text_field :price %></td>
   </tr>
   <tr>
-    <td><%= t("On Hand") %>: </td>
+    <td><%= t("on_hand") %>: </td>
     <td><%= f.text_field :on_hand %></td>
   </tr>  
 	<% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>

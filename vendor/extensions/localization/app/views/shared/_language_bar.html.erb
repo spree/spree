@@ -1,9 +1,9 @@
 <div id="language-bar">
   <ul>
-    <li><strong><%= :change_language.l %></strong></li>
-    <% Globalite.ui_locales.each do |name, code| -%>
+    <li><strong><%= t('change_language') %></strong></li>
+    <% AVAILABLE_LOCALES.each do |locale| -%>
       <li>
-        <%=link_to(image_tag("flags/#{flag_image(code)}",{:alt => name, :title => name}), set_locale_path(:locale => code)) %>
+        <%=link_to(image_tag("flags/#{flag_image(locale[0])}",{:alt => locale[1], :title => locale[1]}), set_locale_path(:locale => locale[0])) %>
       </li>
     <% end -%>
   </ul>

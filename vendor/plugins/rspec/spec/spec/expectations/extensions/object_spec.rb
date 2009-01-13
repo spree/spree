@@ -39,12 +39,6 @@ describe Object, "#should" do
     }.should raise_error(Spec::Expectations::InvalidMatcherError)
   end
   
-  it "should raise error if it receives nil" do
-    lambda {
-      @target.should nil
-    }.should raise_error(Spec::Expectations::InvalidMatcherError)
-  end
-
   it "should raise error if it receives no argument and it is not used as a left side of an operator" do
     pending "Is it even possible to catch this?"
     lambda {
@@ -89,12 +83,6 @@ describe Object, "#should_not" do
   it "should raise error if it receives true" do
     lambda {
       @target.should_not true
-    }.should raise_error(Spec::Expectations::InvalidMatcherError)
-  end
-
-  it "should raise error if it receives nil" do
-    lambda {
-      @target.should_not nil
     }.should raise_error(Spec::Expectations::InvalidMatcherError)
   end
 

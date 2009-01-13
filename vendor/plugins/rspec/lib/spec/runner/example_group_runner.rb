@@ -15,11 +15,11 @@ module Spec
         end
       end
 
-      def run
+      def run(run_options)
         prepare
         success = true
         example_groups.each do |example_group|
-          success = success & example_group.run
+          success = success & example_group.run(run_options)
         end
         return success
       ensure

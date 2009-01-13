@@ -32,8 +32,9 @@
       $("cds_test").readOnly = false;
     }},
     teardown: function() { with(this){
-      if (typeof(cds)!="undefined")
-        assert(cds.closed,"all tests should close their calendar control");
+      if (typeof(cds)!="undefined") assert(cds.closed,"all tests should close their calendar control");
+      Date.first_day_of_week = 0;
+      Date.weekdays = $w("S M T W T F S")
     }},
     testMixedTime_feedDateWithAndWithoutTime_shouldSetAccordingly: function() { with(this) {
       $A(["January 2, 2007 5:00 pm", "January 2, 2007 0:00 pm"]).each(function(d) {
@@ -157,7 +158,7 @@
     test_timePassed_notUsingTime_shouldIgnore: function() {with(this) {
       $("cds_test").value = "May 10, 2007 5:00 pm";
       cds = new CalendarDateSelect($("cds_test"), {time:false});
-      assert(cds.options.get("close_on_click"), "should set close_on_click to true when not using time")
+      assert(cds.closeOnClick(), "should set close_on_click to true when not using time")
       assertEqual(false, cds.use_time, "When parsing time");
       cds.today();
       assert(cds.closed, "should close when clicking today");
@@ -315,6 +316,15 @@
         assert( ! e.hasClassName("disabled"));
       });
       
+      cds.close();
+    }},
+    test__should_pull_up_dec_07_when_first_day_of_week_is_1: function() {with (this) {
+      Date.first_day_of_week = 1;
+      Date.weekdays = $w("M T W T F S S");
+      $('cds_test').value = "December 1, 2007";
+      cds = new CalendarDateSelect($("cds_test"));
+      
+      assertEqual(1, $$(".calendar_date_select").length);
       cds.close();
     }}
   });

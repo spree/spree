@@ -1,8 +1,7 @@
 if defined?(ActiveRecord::Base)
   module ActiveRecord #:nodoc:
     class Base
-
-      (class << self; self; end).class_eval do
+      class << self
         # Extension for <tt>should have</tt> on AR Model classes
         #
         #   ModelClass.should have(:no).records

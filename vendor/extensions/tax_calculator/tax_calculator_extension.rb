@@ -14,7 +14,7 @@ class TaxCalculatorExtension < Spree::Extension
     Admin::ConfigurationsController.class_eval do
       before_filter :add_tax_rate_links, :only => :index
       def add_tax_rate_links
-        @extension_links << {:link => admin_tax_rates_path, :link_text => Globalite.localize(:ext_tax_calculator_tax_rates), :description => Globalite.localize(:ext_tax_calculator_tax_rates_description)}
+        @extension_links << {:link => admin_tax_rates_path, :link_text => t("ext_tax_calculator_tax_rates"), :description => t("ext_tax_calculator_tax_rates_description")}
       end
     end
     

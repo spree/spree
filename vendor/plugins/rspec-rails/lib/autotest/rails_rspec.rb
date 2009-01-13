@@ -73,9 +73,4 @@ Autotest.add_hook :initialize do |at|
 end
 
 class Autotest::RailsRspec < Autotest::Rspec
-
-  def spec_command
-    "script/spec"
-  end
-    
 end

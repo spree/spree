@@ -1,9 +1,9 @@
-<h4><%= t("Add Option Types") %></h4>
+<h4><%= t("add_option_types") %></h4>
 <table class="option-types">
   <thead>
     <tr>
-      <th><%= t("Name") %></th>
-      <th><%= t("Presentation") %></th>
+      <th><%= t("name") %></th>
+      <th><%= t("presentation") %></th>
       <th></th>
     </tr>
   </thead>
@@ -12,7 +12,7 @@
     <tr>
       <td><%=ot.name %></td>
       <td><%=ot.presentation %></td>
-      <td><%= link_to_remote t("Select"),
+      <td><%= link_to_remote t("select"),
 	                           :url => {:controller => "admin/option_types/",
 	                                    :id => ot,
 	                                    :product_id => @product.permalink, 

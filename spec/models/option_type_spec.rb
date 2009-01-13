@@ -24,7 +24,7 @@ describe OptionType do
   ['name', 'presentation'].each do |field|
     it "should require #{field}" do
       @option_type.should_not be_valid
-      @option_type.errors.full_messages.should include("#{field.intern.l(field).humanize} #{:error_message_blank.l}")
+      @option_type.errors.full_messages.should include("#{field.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
     end
   end
 

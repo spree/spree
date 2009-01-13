@@ -1,11 +1,11 @@
 module Admin::BaseHelper
   
   def link_to_edit(resource)
-    link_to t("Edit"), edit_object_url(resource)
+    link_to t("edit"), edit_object_url(resource)
   end
   
   def link_to_delete(resource)
-    link_to t("Delete"), object_url(resource), :confirm => "Are you sure you want to delete this record?", :method => :delete 
+    link_to t("delete"), object_url(resource), :confirm => t('are_you_sure'), :method => :delete 
   end
   
   def get_additional_field_value(controller, field)  

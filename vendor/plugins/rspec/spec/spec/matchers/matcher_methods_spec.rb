@@ -16,17 +16,8 @@ This module should provide the following methods, each of which returns a Matche
       it "be_arbitrary_predicate" do
         be_arbitrary_predicate.should be_an_instance_of(Be)
       end
-      it "be_close" do
-        be_close(1,2).should be_an_instance_of(BeClose)
-      end
       it "change" do
         change("target", :message).should be_an_instance_of(Change)
-      end
-      it "eql" do
-        eql(:expected).should be_an_instance_of(Eql)
-      end
-      it "equal" do
-        equal(:expected).should be_an_instance_of(Equal)
       end
       it "have" do
         have(0).should be_an_instance_of(Have)
@@ -42,9 +33,6 @@ This module should provide the following methods, each of which returns a Matche
       end
       it "include" do
         include(:value).should be_an_instance_of(Include)
-      end
-      it "match" do
-        match(:value).should be_an_instance_of(Match)
       end
       it "raise_error" do
         raise_error.should be_an_instance_of(RaiseError)
@@ -70,7 +58,7 @@ This module should provide the following methods, each of which returns a Matche
       end
 
       it "should convert have_xyz to Has(:have_xyz)" do
-        Has.should_receive(:new).with(:have_whatever)
+        self.should_receive(:has).with(:have_whatever)
         have_whatever
       end
     end

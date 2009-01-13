@@ -24,7 +24,7 @@ describe Property do
   ['name', 'presentation'].each do |field|
     it "should require #{field}" do
       @property.should_not be_valid
-      @property.errors.full_messages.should include("#{field.intern.l(field).humanize} #{:error_message_blank.l}")
+      @property.errors.full_messages.should include("#{field.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
     end
   end
 
