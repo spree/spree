@@ -7,11 +7,15 @@ class LocalizationExtension < Spree::Extension
   url "http://support.spreehq.org/wiki/1/I18n"
 
   def activate
-
-    User.class_eval do
-    #  include Localization::UserPreferences
+    ApplicationController.class_eval do
+        before_filter :set_user_language
+        
+        private
+        def set_user_language
+          locale = session[:locale] || Spree::Config[:default_locale] || I18n.default_locale
+          locale = AVAILABLE_LOCALES.keys.include?(locale) ? locale : I18n.default_locale
+          I18n.locale = locale
+        end
     end
-
-    # admin.tabs.add "Localization", "/admin/localization", :after => "Layouts", :visibility => [:all]
   end
 end
