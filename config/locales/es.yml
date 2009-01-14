@@ -259,7 +259,7 @@ es:
   listing_reports: "Listado de reportes"
   listing_tax_categories: "Listing Tax Categories"
   listing_users: "Listado de usuarios"
-  locale_changed: "Locale Changed"
+  locale_changed: "Se ha cambiado el idioma"
   log_in: "Iniciar sesión"
   logged_in_as: "Identificado como"
   login_name: "Nombre de usuario"

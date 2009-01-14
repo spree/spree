@@ -10,12 +10,12 @@ describe LocaleController do
   it 'should redirect when a locale is set' do
     get 'set', { :locale => 'en-US'}
     response.should be_redirect
-    flash[:notice].should eql("Locale changed")
+    flash[:notice].should eql("Locale Changed")
   end
 
   it 'should set a correct value for session[:locale]' do
-    get 'set', { :locale => 'es-ES'}
-    session[:locale].should eql('es-ES')
+    get 'set', { :locale => 'es'}
+    session[:locale].should eql('es')
     flash[:notice].should eql('Se ha cambiado el idioma')
   end
 
