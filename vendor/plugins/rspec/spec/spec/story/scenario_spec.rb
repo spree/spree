@@ -8,9 +8,7 @@ module Spec
         story = StoryBuilder.new.to_story
         
         # when
-        error = exception_from do
-          Scenario.new story, 'name'
-        end
+        error = exception_from { Scenario.new story, 'name' }
         
         # then
         error.should be_nil

@@ -1,6 +1,6 @@
 <table width="100%">
   <tr>
-    <td id="order-num"><%= t('Order') %> # <%=@order.number%></td>
+    <td id="order-num"><%= t('order') %> # <%=@order.number%></td>
     <td align="right">
       <b><%= @order.state.titleize %></b>
     </td>
@@ -9,12 +9,12 @@
 <div id="tab-container">
   <ul id="tabnav">
   	<li>
-  	  <%= link_to t("Order Details"), 
+  	  <%= link_to t("order_details"), 
   	              admin_order_url(@order), 
   	              :class => (current == "Order Details" ? "active" : "") %>
   	</li>
   	<li>
-  	  <%= link_to t("Payments"), 
+  	  <%= link_to t("payments"), 
   	              admin_order_payments_url(@order), 
   	              :class => (current == "Payments" ? "active" : "") %>
   	</li>

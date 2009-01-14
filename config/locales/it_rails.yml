@@ -1,0 +1,104 @@
+# Italian translations for Ruby on Rails 
+# by Claudio Poli (masterkain@gmail.com)
+
+it:
+  date:
+    formats:
+      default: "%d-%m-%Y"
+      short: "%d %b"
+      long: "%d %B %Y"
+      only_day: "%e"
+
+    day_names: [Domenica, Lunedì, Martedì, Mercoledì, Giovedì, Venerdì, Sabato]
+    abbr_day_names: [Dom, Lun, Mar, Mer, Gio, Ven, Sab]
+    month_names: [~, Gennaio, Febbraio, Marzo, Aprile, Maggio, Giugno, Luglio, Agosto, Settembre, Ottobre, Novembre, Dicembre]
+    abbr_month_names: [~, Gen, Feb, Mar, Apr, Mag, Giu, Lug, Ago, Set, Ott, Nov, Dic]
+    order: [ :day, :month, :year ]
+  
+  time:
+    formats:
+      default: "%a %d %b %Y, %H:%M:%S %z"
+      time: "%H:%M"
+      short: "%d %b %H:%M"
+      long: "%d %B %Y %H:%M"
+      only_second: "%S"
+      
+      datetime:
+        formats:
+          default: "%d-%m-%YT%H:%M:%S%Z"
+          
+    am: 'am'
+    pm: 'pm'
+      
+  datetime:
+    distance_in_words:
+      half_a_minute: "mezzo minuto"
+      less_than_x_seconds:
+        one:  "meno di un secondo"
+        other: "meno di {{count}} secondi"
+      x_seconds:
+        one:  "1 secondo"
+        other: "{{count}} secondi"
+      less_than_x_minutes:
+        one:  "meno di un minuto"
+        other: "meno di {{count}} minuti"
+      x_minutes:
+        one:  "1 minuto"
+        other: "{{count}} minuti"
+      about_x_hours:
+        one:  "circa un'ora"
+        other: "circa {{count}} ore"
+      x_days:
+        one:  "1 giorno"
+        other: "{{count}} giorni"
+      about_x_months:
+        one:  "circa un mese"
+        other: "circa {{count}} mesi"
+      x_months:
+        one:  "1 mese"
+        other: "{{count}} mesi"
+      about_x_years:
+        one:  "circa un anno"
+        other: "circa {{count}} anni"
+      over_x_years:
+        one:  "oltre un anno"
+        other: "oltre {{count}} anni"
+      
+  number:
+    format:
+      precision: 3
+      separator: ','
+      delimiter: '.'
+    currency:
+      format:
+        unit: '€'
+        precision: 2
+        format: '%n %u'
+        
+  activerecord:
+    errors:
+      template:
+        header: 
+          one: "Non posso salvare questo {{model}}: 1 errore"
+          other: "Non posso salvare questo {{model}}: {{count}} errori."
+        body: "Per favore ricontrolla i seguenti campi:"
+      messages:
+        inclusion: "non è incluso nella lista"
+        exclusion: "è riservato"
+        invalid: "non è valido"
+        confirmation: "non coincide con la conferma"
+        accepted: "deve essere accettata"
+        empty: "non può essere vuoto"
+        blank: "non può essere lasciato in bianco"
+        too_long: "è troppo lungo (il massimo è {{count}} lettere)"
+        too_short: "è troppo corto (il minimo è {{count}} lettere)"
+        wrong_length: "è della lunghezza sbagliata (deve essere di {{count}} lettere)"
+        taken: "è già in uso"
+        not_a_number: "non è un numero"
+        greater_than: "deve essere superiore a {{count}}"
+        greater_than_or_equal_to: "deve essere superiore o uguale a {{count}}"
+        equal_to: "deve essere uguale a {{count}}"
+        less_than: "deve essere meno di {{count}}"
+        less_than_or_equal_to: "deve essere meno o uguale a {{count}}"
+        odd: "deve essere dispari"
+        even: "deve essere pari"

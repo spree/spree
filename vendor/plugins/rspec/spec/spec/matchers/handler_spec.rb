@@ -54,14 +54,14 @@ module Spec
           matcher = mock("matcher")
           actual = Object.new
           matcher.should_receive(:matches?).with(actual).and_return(true)
-          ExpectationMatcherHandler.handle_matcher(actual, matcher)
+          Spec::Expectations::ExpectationMatcherHandler.handle_matcher(actual, matcher)
         end
       
         it "should explain when the matcher parameter is not a matcher" do
           begin
             nonmatcher = mock("nonmatcher")
             actual = Object.new
-            ExpectationMatcherHandler.handle_matcher(actual, nonmatcher)
+            Spec::Expectations::ExpectationMatcherHandler.handle_matcher(actual, nonmatcher)
           rescue Spec::Expectations::InvalidMatcherError => e
           end
 
@@ -72,7 +72,7 @@ module Spec
           matcher = mock("matcher")
           actual = Object.new
           matcher.should_receive(:matches?).with(actual).and_return(:this_value)
-          ExpectationMatcherHandler.handle_matcher(actual, matcher).should == :this_value
+          Spec::Expectations::ExpectationMatcherHandler.handle_matcher(actual, matcher).should == :this_value
         end
       end
     end
@@ -84,7 +84,7 @@ module Spec
           matcher.stub!(:matches?)
           actual = Object.new
           lambda {
-            NegativeExpectationMatcherHandler.handle_matcher(actual, matcher)
+            Spec::Expectations::NegativeExpectationMatcherHandler.handle_matcher(actual, matcher)
           }.should fail_with(/Matcher does not support should_not.\n/)
         end      
       
@@ -93,14 +93,14 @@ module Spec
           actual = Object.new
           matcher.stub!(:negative_failure_message)
           matcher.should_receive(:matches?).with(actual).and_return(false)
-          NegativeExpectationMatcherHandler.handle_matcher(actual, matcher)
+          Spec::Expectations::NegativeExpectationMatcherHandler.handle_matcher(actual, matcher)
         end
       
         it "should explain when the matcher parameter is not a matcher" do
           begin
             nonmatcher = mock("nonmatcher")
             actual = Object.new
-            NegativeExpectationMatcherHandler.handle_matcher(actual, nonmatcher)
+            Spec::Expectations::NegativeExpectationMatcherHandler.handle_matcher(actual, nonmatcher)
           rescue Spec::Expectations::InvalidMatcherError => e
           end
 
@@ -113,7 +113,7 @@ module Spec
           actual = Object.new
           matcher.should_receive(:matches?).with(actual).and_return(false)
           matcher.stub!(:negative_failure_message).and_return("ignore")
-          NegativeExpectationMatcherHandler.handle_matcher(actual, matcher).should be_false
+          Spec::Expectations::NegativeExpectationMatcherHandler.handle_matcher(actual, matcher).should be_false
         end
       end
     end

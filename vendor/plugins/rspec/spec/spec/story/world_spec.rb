@@ -347,10 +347,10 @@ module Spec
 
       it 'should suppress listeners while it runs a GivenScenario' do
         # given
-        $scenario_ran = false
+        scenario_ran = false
 
         scenario = ScenarioBuilder.new.name('a scenario').to_scenario do
-          $scenario_ran = true
+          scenario_ran = true
           Given 'given' do end
           When 'event' do end
           Then 'outcome' do end
@@ -374,16 +374,16 @@ module Spec
         world.GivenScenario 'a scenario'
 
         # then
-        $scenario_ran.should be_true
+        scenario_ran.should be_true
       end
 
       it 'should interpret GivenScenario... And... as multiple givens' do
         # given
         world = World.create
-        $steps = []
+        steps = []
 
         scenario = ScenarioBuilder.new.name('a scenario').to_scenario do
-          $steps << 1
+          steps << 1
         end
         Runner::StoryRunner.should_receive(:scenario_from_current_story).
           with('a scenario').and_return(scenario)
@@ -392,12 +392,12 @@ module Spec
         world.instance_eval do
           GivenScenario 'a scenario'
           And 'step 2' do
-            $steps << 2
+            steps << 2
           end
         end
 
         # then
-        $steps.should == [1,2]
+        steps.should == [1,2]
         World.step_mother.find(:given, 'step 2').should_not be_nil
       end
 

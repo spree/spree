@@ -1,0 +1,1 @@
+As of Rails a14bbd7a8574c3b485d4b71e0950b2b9ff4e90d7, cookies are managed differently.

@@ -159,6 +159,45 @@ module Spec
             @out.string.should include("3 scenarios: 1 succeeded, 1 failed, 1 pending")
           end
 
+          it 'should show test summary in red if there were failed scenarios' do
+            # when
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started(nil, nil)
+            @formatter.scenario_failed('story', 'scenario', exception_from { raise RuntimeError, 'oops' })
+            @formatter.run_ended
+
+            # then
+            @out.string.should include("\e[31m scenarios: 0 succeeded, 1 failed, 0 pending\e[0m")
+          end
+
+          it 'should show test summary in yellow if there are pending scenarios' do
+            # when
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started(nil, nil)
+            @formatter.scenario_pending('story', 'scenario', '')
+            @formatter.run_ended
+
+            # then
+            @out.string.should include("\e[32m scenarios: 0 succeeded, 0 failed, 1 pending\e[0m")
+          end
+
+          it 'should show test summary in green if all scenarios pass' do
+            # when
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+
+            @formatter.scenario_started(nil, nil)
+            @formatter.scenario_succeeded('story', 'scenario')
+            @formatter.run_ended
+
+            # then
+            @out.string.should include("\e[32m scenarios: 1 succeeded, 0 failed, 0 pending\e[0m")
+          end
+        
           it 'should produce details of the first failure each failed scenario when the run ends' do
             # when
             @formatter.run_started(3)
@@ -178,6 +217,19 @@ module Spec
             @out.string.should_not include("RuntimeError: oops2 - this one should not appear")
             @out.string.should include("2) story (scenario3) FAILED")
             @out.string.should include("RuntimeError: oops3")
+          end
+
+          it 'should produce details of the failures in red when the run ends' do
+            # when
+            @out.stub!(:tty?).and_return(true)
+            @options.stub!(:colour).and_return(true)
+            @formatter.scenario_started(nil, nil)
+            @formatter.scenario_failed('story', 'scenario1', exception_from { raise RuntimeError, 'oops1' })
+            @formatter.run_ended
+
+            # then
+            @out.string.should =~ /\e\[31m[\n\s]*story \(scenario1\) FAILED\e\[0m/m
+            @out.string.should =~ /\e\[31m[\n\s]*RuntimeError: oops1\e\[0m/m
           end
 
           it 'should produce details of each pending step when the run ends' do

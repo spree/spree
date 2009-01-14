@@ -1,10 +1,10 @@
 <%= render :partial => 'shared/order_tabs', :locals => {:current => "Payments"} %>
 <table class="admin-report">
   <tr>
-    <th><%= "#{t('Date')}/#{t('Time')}" %></th>
-    <th><%= t("Amount") %></th>
-    <th><%= t("Type") %></th>
-    <th><%= t("Action") %></th>
+    <th><%= "#{t('date')}/#{t('time')}" %></th>
+    <th><%= t("amount") %></th>
+    <th><%= t("type") %></th>
+    <th><%= t("action") %></th>
   </tr>
   <% @payments.each do |payment| %>
     <tr>
@@ -13,10 +13,10 @@
       <td><%= payment.class.to_s %></td>
       <!-- TODO: don't assume credit card, make it possible to edit other kinds of payments -->
       <td>
-        <%= link_to t('Edit'), edit_admin_order_creditcard_payment_url(@order, payment) %>
+        <%= link_to t('edit'), edit_admin_order_creditcard_payment_url(@order, payment) %>
       </td>
     </tr>
   <% end %>
 </table>
 
-<%= link_to t("New Credit Card Payment"), new_admin_order_creditcard_payment_url(@order) %>
+<%= link_to t("new_credit_card_payment"), new_admin_order_creditcard_payment_url(@order) %>

@@ -107,6 +107,11 @@ describe "Matchers should be able to generate their own descriptions" do
     [1,2,3].should include(3)
     Spec::Matchers.generated_description.should == "should include 3"
   end
+
+  it "array.should =~ [1,2,3]" do
+    [1,2,3].should =~ [1,2,3]
+    Spec::Matchers.generated_description.should == "should contain exactly 1, 2 and 3"
+  end
   
   it "should match" do
     "this string".should match(/this string/)
@@ -149,5 +154,19 @@ describe "Matchers should be able to generate their own descriptions" do
         [1,2,3]
       end
     end.new
+  end
+end
+
+describe "a Matcher with no description" do
+  def matcher
+     Class.new do
+       def matches?(ignore); true; end
+       def failure_message; ""; end
+     end.new
+  end
+  
+  it "should provide a helpful message when used in a string-less example block" do
+    5.should matcher
+    Spec::Matchers.generated_description.should =~ /When you call.*description method/m
   end
 end

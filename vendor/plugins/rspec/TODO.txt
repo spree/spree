@@ -1,0 +1,18 @@
+== Refactoring
+
+Refactoring for 1.2.0
+
+* eliminate dependency from Spec::Example to Spec::Runner
+** global predictate matchers should be stored in run_options
+* eliminate dependency on global options and configuration
+** the only place they should exist is in the Runner, which should manage them
+
+== Future
+
+* do SOMETHING with the website
+* extract spec/story to rspec-stories (new gem)
+* rename top level namespace to Rspec and commands to 'rspec' and 'autorspec'
+  * continue to support Spec 'spec' and 'autospec' as aliases for a reasonable time
+* separate the underlying framework from the DSL
+  * be able to do everything with classes and methods
+* tweak raise_error rdoc to show only one arg

@@ -1,1 +1,4 @@
 .DS_Store
+test/debug.log
+test/db/*.sqlite3
+test/log/*

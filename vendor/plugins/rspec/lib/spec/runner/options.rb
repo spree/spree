@@ -8,7 +8,7 @@ module Spec
       EXAMPLE_FORMATTERS = { # Load these lazily for better speed
                'specdoc' => ['spec/runner/formatter/specdoc_formatter',                'Formatter::SpecdocFormatter'],
                      's' => ['spec/runner/formatter/specdoc_formatter',                'Formatter::SpecdocFormatter'],
-                'nested' => ['spec/runner/formatter/nested_text_formatter',          'Formatter::NestedTextFormatter'],
+                'nested' => ['spec/runner/formatter/nested_text_formatter',            'Formatter::NestedTextFormatter'],
                      'n' => ['spec/runner/formatter/nested_text_formatter',            'Formatter::NestedTextFormatter'],
                   'html' => ['spec/runner/formatter/html_formatter',                   'Formatter::HtmlFormatter'],
                      'h' => ['spec/runner/formatter/html_formatter',                   'Formatter::HtmlFormatter'],
@@ -24,10 +24,13 @@ module Spec
       }
 
       STORY_FORMATTERS = {
-        'plain' => ['spec/runner/formatter/story/plain_text_formatter', 'Formatter::Story::PlainTextFormatter'],
-            'p' => ['spec/runner/formatter/story/plain_text_formatter', 'Formatter::Story::PlainTextFormatter'],
-         'html' => ['spec/runner/formatter/story/html_formatter',       'Formatter::Story::HtmlFormatter'],
-            'h' => ['spec/runner/formatter/story/html_formatter',       'Formatter::Story::HtmlFormatter']
+        'plain' => ['spec/runner/formatter/story/plain_text_formatter',   'Formatter::Story::PlainTextFormatter'],
+            'p' => ['spec/runner/formatter/story/plain_text_formatter',   'Formatter::Story::PlainTextFormatter'],
+         'html' => ['spec/runner/formatter/story/html_formatter',         'Formatter::Story::HtmlFormatter'],
+            'h' => ['spec/runner/formatter/story/html_formatter',         'Formatter::Story::HtmlFormatter'],
+     'progress' => ['spec/runner/formatter/story/progress_bar_formatter', 'Formatter::Story::ProgressBarFormatter'],
+            'r' => ['spec/runner/formatter/story/progress_bar_formatter', 'Formatter::Story::ProgressBarFormatter']
+            
       }
 
       attr_accessor(
@@ -37,7 +40,6 @@ module Spec
         :diff_format,
         :dry_run,
         :profile,
-        :examples,
         :heckle_runner,
         :line_number,
         :loadby,
@@ -48,13 +50,11 @@ module Spec
         :user_input_for_runner,
         :error_stream,
         :output_stream,
-        :before_suite_parts,
-        :after_suite_parts,
         # TODO: BT - Figure out a better name
         :argv
       )
-      attr_reader :colour, :differ_class, :files, :example_groups
-
+      attr_reader :colour, :differ_class, :files, :examples, :example_groups
+      
       def initialize(error_stream, output_stream)
         @error_stream = error_stream
         @output_stream = output_stream
@@ -73,7 +73,6 @@ module Spec
         @examples_run = false
         @examples_should_be_run = nil
         @user_input_for_runner = nil
-        @before_suite_parts = []
         @after_suite_parts = []
       end
 
@@ -89,9 +88,6 @@ module Spec
         return true unless examples_should_be_run?
         success = true
         begin
-          before_suite_parts.each do |part|
-            part.call
-          end
           runner = custom_runner || ExampleGroupRunner.new(self)
 
           unless @files_loaded
@@ -99,11 +95,20 @@ module Spec
             @files_loaded = true
           end
 
+          # TODO - this has to happen after the files get loaded,
+          # otherwise the before_suite_parts are not populated
+          # from the configuration. There is no spec for this
+          # directly, but stories/configuration/before_blocks.story
+          # will fail if this happens before the files are loaded.
+          before_suite_parts.each do |part|
+            part.call
+          end
+
           if example_groups.empty?
             true
           else
             set_spec_from_line_number if line_number
-            success = runner.run
+            success = runner.run(self)
             @examples_run = true
             heckle if heckle_runner
             success
@@ -114,6 +119,14 @@ module Spec
           end
         end
       end
+      
+      def before_suite_parts
+        Spec::Example::BeforeAndAfterHooks.before_suite_parts
+      end
+      
+      def after_suite_parts
+        Spec::Example::BeforeAndAfterHooks.after_suite_parts
+      end
 
       def examples_run?
         @examples_run
@@ -121,14 +134,26 @@ module Spec
 
       def examples_should_not_be_run
         @examples_should_be_run = false
-      end      
+      end
+      
+      def predicate_matchers
+        # TODO - don't like this dependency - perhaps store these in here instead?
+        Spec::Runner.configuration.predicate_matchers
+      end
+      
+      def mock_framework
+        # TODO - don't like this dependency - perhaps store this in here instead?
+        Spec::Runner.configuration.mock_framework
+      end
 
       def colour=(colour)
         @colour = colour
         if @colour && RUBY_PLATFORM =~ /mswin|mingw/ ;\
           begin ;\
+            replace_output = @output_stream.equal?($stdout) ;\
             require 'rubygems' ;\
             require 'Win32/Console/ANSI' ;\
+            @output_stream = $stdout if replace_output ;\
           rescue LoadError ;\
             warn "You must 'gem install win32console' to use colour on Windows" ;\
             @colour = false ;\
@@ -152,7 +177,7 @@ module Spec
 
       def parse_example(example)
         if(File.file?(example))
-          @examples = File.open(example).read.split("\n")
+          @examples = [File.open(example).read.split("\n")].flatten
         else
           @examples = [example]
         end
@@ -198,11 +223,8 @@ module Spec
       end
 
       def number_of_examples
-        total = 0
-        @example_groups.each do |example_group|
-          total += example_group.number_of_examples
-        end
-        total
+        return examples.size unless examples.empty?
+        @example_groups.inject(0) {|sum, group| sum + group.number_of_examples}
       end
 
       def files_to_load
@@ -219,6 +241,10 @@ module Spec
           end
         end
         result
+      end
+      
+      def dry_run?
+        @dry_run == true
       end
       
       protected
@@ -288,7 +314,7 @@ module Spec
               error_stream.puts "You must specify one file, not a directory when using the --line option"
               exit(1) if stderr?
             else
-              example = SpecParser.new.spec_name_for(files[0], line_number)
+              example = SpecParser.new(self).spec_name_for(files[0], line_number)
               @examples = [example]
             end
           else

@@ -40,15 +40,23 @@ class ActiveRecordSafetyListener
   include Singleton
   def scenario_started(*args)
     if defined?(ActiveRecord::Base)
-      ActiveRecord::Base.send :increment_open_transactions unless Rails::VERSION::STRING == "1.1.6"
-      ActiveRecord::Base.connection.begin_db_transaction
+      if ActiveRecord::Base.connection.respond_to?(:increment_open_transactions)
+        ActiveRecord::Base.connection.increment_open_transactions
+      else
+        ActiveRecord::Base.send :increment_open_transactions
+      end
     end
+    ActiveRecord::Base.connection.begin_db_transaction
   end
 
   def scenario_succeeded(*args)
     if defined?(ActiveRecord::Base)
       ActiveRecord::Base.connection.rollback_db_transaction
-      ActiveRecord::Base.send :decrement_open_transactions unless Rails::VERSION::STRING == "1.1.6"
+      if ActiveRecord::Base.connection.respond_to?(:decrement_open_transactions)
+        ActiveRecord::Base.connection.decrement_open_transactions
+      else
+        ActiveRecord::Base.send :decrement_open_transactions
+      end
     end
   end
   alias :scenario_pending :scenario_succeeded

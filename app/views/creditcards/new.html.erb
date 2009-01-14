@@ -1,6 +1,6 @@
 <div id="creditcard">
   <%=error_messages_for :payment_presenter %>
-  <h1><%= t("Payment")%></h1>
+  <h1><%= t("payment")%></h1>
   <% form_for(:payment_presenter, :url => order_creditcards_url(@order)) do |f| %>
     <table cellpadding="5" width="100%">
       <tr>
@@ -8,18 +8,18 @@
           <%= render :partial => 'form_credit_card', :locals => {:f => f} %>
         </td>
         <td>
-					<h4><%= t("Billing Address")%></h4>
+					<h4><%= t("billing_address")%></h4>
 					<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "payment"} %>
         </td>
       </tr>
     </table>
   	<div align="right" style="font-size:120%;">
   		<br />
-  		<%= Globalite.localize(:order_total_message) %> <strong><%= number_to_currency @order.total%></strong>
+  		<%= t("order_total_message") %> <strong><%= number_to_currency @order.total%></strong>
   	</div>
     <div align="right">
   		<br/>
-      <%= submit_tag t('Continue') %>
+      <%= submit_tag t('continue') %>
     </div>
   <% end %>
 </div>

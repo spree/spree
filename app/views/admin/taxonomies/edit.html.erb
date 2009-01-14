@@ -5,7 +5,7 @@
 <% form_for(:taxon, :url => admin_taxonomy_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
 	  <tr>
-	    <td style="vertical-align:top;"><%= t("Tree")%>: </td>
+	    <td style="vertical-align:top;"><%= t("tree")%>: </td>
 	    <td>
 				<%= yui_tree_helper @taxonomy %>
 			</td>
@@ -14,6 +14,6 @@
 		<td colspan="2"><small>* Right click a child in the tree to access the menu for adding, deleting or sorting a child.</small></td>
 	  </tr>
 	</table>
-	<%= submit_tag t("Update") %> or <%= link_to t("Cancel"), admin_taxonomies_path %>
+	<%= submit_tag t("update") %> or <%= link_to t("cancel"), admin_taxonomies_path %>
 
 <% end %>

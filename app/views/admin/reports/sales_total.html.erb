@@ -1,23 +1,23 @@
-<h1><%= t("Sales Totals") %> </h1>
+<h1><%= t("sales_totals") %> </h1>
 <table>
   <tr>
     <td valign="top">
       <table class="admin-report">
         <tbody>
           <tr>
-            <td><%= t("Item Total") %>:</td>
+            <td><%= t("item_total") %>:</td>
             <td align="right"><%=number_to_currency @item_total%></td>
           </tr>
           <tr>
-            <td><%= t("Shipping Total") %>:</td>
+            <td><%= t("shipping_total") %>:</td>
             <td align="right"><%=number_to_currency @ship_total%></td>
           </tr>
           <tr>
-            <td><%= t("Tax Total") %>:</td>
+            <td><%= t("tax_total") %>:</td>
             <td align="right"><%=number_to_currency @tax_total%></td>
           </tr>
           <tr>
-            <td><%= t("Sales Total") %>:</td>
+            <td><%= t("sales_total") %>:</td>
             <td align="right"><%=number_to_currency @sales_total%></td>
           </tr>
         </tbody>

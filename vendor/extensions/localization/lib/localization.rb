@@ -15,21 +15,17 @@ module Localization
   def set_locale
     # Try to get the locale from the session, from user preferred
     # locale, and then from the navigator
-    #         if params[:locale]
-    #        Locale.code = params[:locale]
-    #     els
     if session[:locale]
-      Locale.code = session[:locale]
+      I18n.locale = session[:locale]
     elsif logged_in?
-      Locale.code = current_user.preferred_locale
+      I18n.locale = current_user.preferred_locale
     else
-    # Temporarily commented out.  This was causing major performance problems (doubling the time of the request).
-    # Replaced with a default locale based on an application preference.
+      # Temporarily commented out.  This was causing major performance problems (doubling the time of the request).
+      # Replaced with a default locale based on an application preference.
       #Locale.code = local_case(get_valid_lang_from_accept_header)
-      Locale.code = Spree::Config[:default_locale]
+      I18n.locale = Spree::Config[:default_locale]
     end
 
-    logger.debug "[globalite] Locale set to #{Locale.code}"
     # render the page
     # yield
 

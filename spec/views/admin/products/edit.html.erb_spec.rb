@@ -13,7 +13,7 @@ describe '/admin/products/edit' do
     )
     assigns[:product] = @product
     
-    template.stub!(:object_url).and_return(admin_product_url(@product))
+    template.stub!(:object_url).and_return('')
     template.stub!(:collection_url).and_return('')
 
     assigns[:product_admin_tabs] = []
@@ -37,7 +37,7 @@ describe '/admin/products/edit' do
   it "should display the standard edit form" do
     render '/admin/products/edit'
     
-    response.should have_tag('form[method=?][action=?]', 'post', admin_product_url(@product)) do
+    response.should have_tag('form[method=?][action=?]', 'post', '') do
       with_tag("input[type=?][id=?][value=?]", 'text', 'product_name', @product.name)
       with_tag("textarea[id=?]", 'product_description', :text => @product.description)
       with_tag("input[type=?][id=?][value=?]", 'text', 'product_master_price', @product.master_price)
@@ -74,7 +74,7 @@ describe '/admin/products/edit' do
  
     render '/admin/products/edit'
     
-    response.should have_tag('form[method=?][action=?]', 'post', admin_product_url(@product)) do     
+    response.should have_tag('form[method=?][action=?]', 'post', '') do     
       with_tag("input[type=?][id=?][value=?]", 'text', 'product_weight', '1200')
       with_tag("input[type=?][id=?][value=?]", 'text', 'product_height', '99.00') #format present
       

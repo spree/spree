@@ -26,7 +26,6 @@ Spree::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
 
-  config.gem "has_many_polymorphs", :version => '2.12'
   config.gem "highline", :version => '1.4.0'
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.0'
   config.gem "tlsmail"
@@ -72,6 +71,11 @@ Spree::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector  
+  
+  # The internationalization framework can be changed to have another default locale (standard is :en) or more load paths.
+  # All files from config/locales/*.rb,yml are added automatically.
+  #config.i18n.load_path << Dir[File.join(RAILS_ROOT, 'my', 'locales', '*.{rb,yml}')]
+  config.i18n.default_locale = :'en-US'
 end
 
 # Add new inflection rules using the following format 

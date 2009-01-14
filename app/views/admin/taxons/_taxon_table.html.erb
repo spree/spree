@@ -1,9 +1,9 @@
 <table class="basic-table">
   <thead>
   	<tr>
-  		<th><%= t("Name") %></th>
-  		<th><%= t("Path") %></th>
-  		<th><%= t("Action") %></th>
+  		<th><%= t("name") %></th>
+  		<th><%= t("path") %></th>
+  		<th><%= t("action") %></th>
   	</tr>
   </thead>
   <tbody>
@@ -12,7 +12,7 @@
         <td valign="top"><%= taxon.name %></td>
         <td valign="top"><%= taxon_path taxon %></td>
   	    <td valign="top">
-		      <%= link_to_remote t('Remove'), 
+		      <%= link_to_remote t('remove'), 
 		                         :url => remove_admin_product_taxon_url(@product, taxon),
 		                         :loading => "Element.show(#{dom_id(taxon, :rem_spinner)})",
 		                         :update => 'selected-taxons',
@@ -22,7 +22,7 @@
       </tr>
     <% end %>
     <% if taxons.empty? %>
-     <tr><td colspan="3">None.</td></tr>
+     <tr><td colspan="3"><%= t("None") %>.</td></tr>
     <% end %>
   </tbody>
 </table>

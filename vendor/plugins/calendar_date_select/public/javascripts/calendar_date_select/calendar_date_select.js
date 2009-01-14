@@ -1,23 +1,22 @@
-// CalendarDateSelect version 1.10.0 - a prototype based date picker
-// Questions, comments, bugs? - email the Author - Tim Harper <"timseeharper@gmail.seeom".gsub("see", "c")> 
+// CalendarDateSelect version 1.13 - a prototype based date picker
+// Questions, comments, bugs? - see the project page: http://code.google.com/p/calendardateselect
 if (typeof Prototype == 'undefined') alert("CalendarDateSelect Error: Prototype could not be found. Please make sure that your application's layout includes prototype.js (.g. <%= javascript_include_tag :defaults %>) *before* it includes calendar_date_select.js (.g. <%= calendar_date_select_includes %>).");
 if (Prototype.Version < "1.6") alert("Prototype 1.6.0 is required.  If using earlier version of prototype, please use calendar_date_select version 1.8.3");
 
 Element.addMethods({
   purgeChildren: function(element) { $A(element.childNodes).each(function(e){$(e).remove();}); },
   build: function(element, type, options, style) {
-    var newElement = Element.build(type, options, style);
+    var newElement = Element.buildAndAppend(type, options, style);
     element.appendChild(newElement);
     return newElement;
   }
 });
 
-Element.build = function(type, options, style)
+Element.buildAndAppend = function(type, options, style)
 {
   var e = $(document.createElement(type));
-  $H(options).each(function(pair) { eval("e." + pair.key + " = pair.value" ); });
-  if (style) 
-    $H(style).each(function(pair) { eval("e.style." + pair.key + " = pair.value" ); });
+  $H(options).each(function(pair) { e[pair.key] = pair.value });
+  if (style) e.setStyle(style);
   return e;
 };
 nil = null;
@@ -47,7 +46,8 @@ window.f_scrollTop = function() { return ([window.pageYOffset ? window.pageYOffs
 _translations = {
   "OK": "OK",
   "Now": "Now",
-  "Today": "Today"
+  "Today": "Today",
+  "Clear": "Clear"
 }
 SelectBox = Class.create();
 SelectBox.prototype = {
@@ -72,7 +72,7 @@ CalendarDateSelect.prototype = {
   initialize: function(target_element, options) {
     this.target_element = $(target_element); // make sure it's an element, not a string
     if (!this.target_element) { alert("Target element " + target_element + " not found!"); return false;}
-    if (down = this.target_element.down("INPUT")) this.target_element = down;
+    if (this.target_element.tagName != "INPUT") this.target_element = this.target_element.down("INPUT")
     
     this.target_element.calendar_date_select = this;
     this.last_click_at = 0;
@@ -82,8 +82,8 @@ CalendarDateSelect.prototype = {
       popup: nil,
       time: false,
       buttons: true,
+      clear_button: true,
       year_range: 10,
-      calendar_div: nil,
       close_on_click: nil,
       minute_interval: 5,
       popup_by: this.target_element,
@@ -91,39 +91,16 @@ CalendarDateSelect.prototype = {
       onchange: this.target_element.onchange,
       valid_date_check: nil
     }).merge(options || {});
-    
-    this.selection_made = $F(this.target_element).strip()!=="";
     this.use_time = this.options.get("time");
-    
-    this.callback("before_show")
-    this.calendar_div = $(this.options.get("calendar_div"));
-    
     this.parseDate();
-    
-    // by default, stick it by the target element (if embedded, that's where we'll want it to show up)
-    if (this.calendar_div == nil) { this.calendar_div = $( this.options.get("embedded") ? this.target_element.parentNode : document.body ).build('div'); }
-    if (!this.options.get("embedded")) this.calendar_div.setStyle( { position:"absolute", visibility: "hidden", left:0, top:0 } )
-    
-    this.calendar_div.addClassName("calendar_date_select");
-    
-    if (this.options.get("embedded")) this.options.set("close_on_click", false);
-    // logic for close on click
-    if (this.options.get("close_on_click")===nil )
-    {
-      if (this.options.get("time"))
-        this.options.set("close_on_click", false);
-      else
-        this.options.set("close_on_click", true);
-    }
-    
-    // set the click handler to check if a user has clicked away from the document
+    this.callback("before_show")
+    this.initCalendarDiv();
     if(!this.options.get("embedded")) {
+      this.positionCalendarDiv()
+      // set the click handler to check if a user has clicked away from the document
       Event.observe(document, "mousedown", this.closeIfClickedOut_handler = this.closeIfClickedOut.bindAsEventListener(this));
       Event.observe(document, "keypress", this.keyPress_handler = this.keyPress.bindAsEventListener(this));
     }
-    
-    this.init();
-    if(!this.options.get("embedded")) { this.positionCalendarDiv() };
     this.callback("after_show")
   },
   positionCalendarDiv: function() {
@@ -140,9 +117,18 @@ CalendarDateSelect.prototype = {
     this.calendar_div.setStyle({visibility:""});
     
     // draw an iframe behind the calendar -- ugly hack to make IE 6 happy
-    if(navigator.appName=="Microsoft Internet Explorer") this.iframe = $(document.body).build("iframe", {className: "ie6_blocker"}, { left: left_px, top: top_px, height: c_height.toString()+"px", width: c_width.toString()+"px", border: "0px"})
+    if(navigator.appName=="Microsoft Internet Explorer") this.iframe = $(document.body).build("iframe", {src: "javascript:false", className: "ie6_blocker"}, { left: left_px, top: top_px, height: c_height.toString()+"px", width: c_width.toString()+"px", border: "0px"})
   },
-  init: function() {
+  initCalendarDiv: function() {
+    if (this.options.get("embedded")) {
+      var parent = this.target_element.parentNode;
+      var style = {}
+    } else {
+      var parent = document.body
+      var style = { position:"absolute", visibility: "hidden", left:0, top:0 }
+    }
+    this.calendar_div = $(parent).build('div', {className: "calendar_date_select"}, style);
+    
     var that = this;
     // create the divs
     $w("top header body buttons footer bottom").each(function(name) {
@@ -152,7 +138,7 @@ CalendarDateSelect.prototype = {
     this.initHeaderDiv();
     this.initButtonsDiv();
     this.initCalendarGrid();
-    this.updateFooter("&nbsp;");
+    this.updateFooter("&#160;");
     
     this.refresh();
     this.setUseTime(this.use_time);
@@ -231,14 +217,14 @@ CalendarDateSelect.prototype = {
     } else if (! this.options.get("buttons")) buttons_div.remove();
     
     if (this.options.get("buttons")) {
-      buttons_div.build("span", {innerHTML: "&nbsp;"});
+      buttons_div.build("span", {innerHTML: "&#160;"});
       if (this.options.get("time")=="mixed" || !this.options.get("time")) b = buttons_div.build("a", {
           innerHTML: _translations["Today"],
           href: "#",
           onclick: function() {this.today(false); return false;}.bindAsEventListener(this)
         });
       
-      if (this.options.get("time")=="mixed") buttons_div.build("span", {innerHTML: " | ", className:"button_seperator"})
+      if (this.options.get("time")=="mixed") buttons_div.build("span", {innerHTML: "&#160;|&#160;", className:"button_seperator"})
       
       if (this.options.get("time")) b = buttons_div.build("a", {
         innerHTML: _translations["Now"],
@@ -246,10 +232,14 @@ CalendarDateSelect.prototype = {
         onclick: function() {this.today(true); return false}.bindAsEventListener(this)
       });
       
-      if (!this.options.get("embedded"))
+      if (!this.options.get("embedded") && !this.closeOnClick())
       {
-        buttons_div.build("span", {innerHTML: "&nbsp;"});
+        buttons_div.build("span", {innerHTML: "&#160;|&#160;", className:"button_seperator"})
         buttons_div.build("a", { innerHTML: _translations["OK"], href: "#", onclick: function() {this.close(); return false;}.bindAsEventListener(this) });
+      }
+      if (this.options.get('clear_button')) {
+        buttons_div.build("span", {innerHTML: "&#160;|&#160;", className:"button_seperator"})
+        buttons_div.build("a", { innerHTML: _translations["Clear"], href: "#", onclick: function() {this.clearDate(); if (!this.options.get("embedded")) this.close(); return false;}.bindAsEventListener(this) });
       }
     }
   },
@@ -287,7 +277,7 @@ CalendarDateSelect.prototype = {
     
     if (this.today_cell) this.today_cell.removeClassName("today");
     
-    if ( $R( 0, 42 ).include(days_until = this.beginning_date.daysDistance(today)) ) {
+    if ( $R( 0, 41 ).include(days_until = this.beginning_date.stripTime().daysDistance(today)) ) {
       this.today_cell = this.calendar_day_grid[days_until];
       this.today_cell.addClassName("today");
     }
@@ -327,12 +317,10 @@ CalendarDateSelect.prototype = {
     this.updateFooter(hover_date.toFormattedString(this.use_time));
   },
   dayHoverOut: function(element) { this.updateFooter(); },
+  clearSelectedClass: function() {if (this.selected_cell) this.selected_cell.removeClassName("selected");},
   setSelectedClass: function() {
     if (!this.selection_made) return;
-    
-    // clear selection
-    if (this.selected_cell) this.selected_cell.removeClassName("selected");
-    
+    this.clearSelectedClass()
     if ($R(0,42).include( days_until = this.beginning_date.stripTime().daysDistance(this.selected_date.stripTime()) )) {
       this.selected_cell = this.calendar_day_grid[days_until];
       this.selected_cell.addClassName("selected");
@@ -340,11 +328,12 @@ CalendarDateSelect.prototype = {
   },
   reparse: function() { this.parseDate(); this.refresh(); },
   dateString: function() {
-    return (this.selection_made) ? this.selected_date.toFormattedString(this.use_time) : "&nbsp;";
+    return (this.selection_made) ? this.selected_date.toFormattedString(this.use_time) : "&#160;";
   },
   parseDate: function()
   {
     var value = $F(this.target_element).strip()
+    this.selection_made = (value != "");
     this.date = value=="" ? NaN : Date.parseFormattedString(this.options.get("date") || value);
     if (isNaN(this.date)) this.date = new Date();
     if (!this.validYear(this.date.getFullYear())) this.date.setYear( (this.date.getFullYear() < this.yearRange().start) ? this.yearRange().start : this.yearRange().end);
@@ -353,6 +342,14 @@ CalendarDateSelect.prototype = {
     this.date.setDate(1);
   },
   updateFooter:function(text) { if (!text) text = this.dateString(); this.footer_div.purgeChildren(); this.footer_div.build("span", {innerHTML: text }); },
+  clearDate:function() {
+    if ((this.target_element.disabled || this.target_element.readOnly) && this.options.get("popup") != "force") return false;
+    var last_value = this.target_element.value;
+    this.target_element.value = "";
+    this.clearSelectedClass();
+    this.updateFooter('&#160;');
+    if (last_value!=this.target_element.value) this.callback("onchange");
+  },
   updateSelectedDate:function(partsOrElement, via_click) {
     var parts = $H(partsOrElement);
     if ((this.target_element.disabled || this.target_element.readOnly) && this.options.get("popup") != "force") return false;
@@ -378,11 +375,18 @@ CalendarDateSelect.prototype = {
     this.setSelectedClass();
     
     if (this.selection_made) this.updateValue();
-    if (this.options.get("close_on_click")) { this.close(); }
+    if (this.closeOnClick()) { this.close(); }
     if (via_click && !this.options.get("embedded")) {
       if ((new Date() - this.last_click_at) < 333) this.close();
       this.last_click_at = new Date();
     }
+  },
+  closeOnClick: function() {
+    if (this.options.get("embedded")) return false;
+    if (this.options.get("close_on_click")===nil )
+      return (this.options.get("time")) ? false : true
+    else
+      return (this.options.get("close_on_click"))
   },
   navMonth: function(month) { (target_date = new Date(this.date)).setMonth(month); return (this.navTo(target_date)); },
   navYear: function(year) { (target_date = new Date(this.date)).setYear(year); return (this.navTo(target_date)); },
@@ -426,7 +430,7 @@ CalendarDateSelect.prototype = {
     Event.stopObserving(document, "keypress", this.keyPress_handler);
     this.calendar_div.remove(); this.closed = true;
     if (this.iframe) this.iframe.remove();
-    if (this.target_element.type!="hidden") this.target_element.focus();
+    if (this.target_element.type != "hidden" && ! this.target_element.disabled) this.target_element.focus();
     this.callback("after_close");
   },
   closeIfClickedOut: function(e) {

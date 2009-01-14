@@ -65,7 +65,7 @@ module AuthenticatedSystem
       respond_to do |format|
         format.html do    
           if logged_in?
-            flash[:error] = t("Authorization Failure")
+            flash[:error] = t("authorization_failure")
             redirect_to '/account/authorization_failure'
             next
           else

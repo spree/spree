@@ -59,6 +59,14 @@ module Spree
       configuration.controller_paths.concat(controller_paths)
     end
     
+    def locale_paths
+      load_extension_roots.map { |extension|  Dir[File.join("#{extension}/config/locales" , '*.{rb,yml}')]  }.flatten
+    end
+    
+    def add_locale_paths
+      configuration.i18n.load_path.concat(locale_paths)
+    end
+ 
     def view_paths
       extensions.map { |extension| "#{extension.root}/app/views" }.select { |d| File.directory?(d) }
     end

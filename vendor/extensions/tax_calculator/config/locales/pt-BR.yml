@@ -1,0 +1,30 @@
+--- 
+pt-BR: 
+  activerecord: 
+    attributes: 
+      product: 
+        tax_category: "Tax Category"
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate
+    models: 
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"
+  ext_tax_calculator_action: Ação
+  ext_tax_calculator_amount: Valor
+  ext_tax_calculator_category: Categoria
+  ext_tax_calculator_create: Criar
+  ext_tax_calculator_delete: Apagar
+  ext_tax_calculator_edit: Editar
+  ext_tax_calculator_editing_tax_rate: "Edit Tax Rate"
+  ext_tax_calculator_new_tax_rate: "Nova Taxa de Imposto"
+  ext_tax_calculator_tax_rates: "Taxas de Imposto"
+  ext_tax_calculator_tax_rates_description: "Configuração de Taxas de Impostos."
+  ext_tax_calculator_tax_type: "Tipo de Taxa"
+  ext_tax_calculator_zone: Zona

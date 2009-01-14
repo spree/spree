@@ -1,10 +1,10 @@
 <%= render :partial => 'shared/product_sub_menu' %>
-<h1><%=t("Prototypes") %></h1>
+<h1><%=t("prototypes") %></h1>
 <table class="basic-table">
 	<thead>
 		<tr>
-			<th><%= t("Name") %></th>
-			<th><%= t("Action") %></th>
+			<th><%= t("name") %></th>
+			<th><%= t("action") %></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -25,7 +25,7 @@
 <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 <br/>
 <span id="new_proto_link">
-  <%= link_to_remote t("New Prototype"), 
+  <%= link_to_remote t("new_prototype"), 
                      :url => new_admin_prototype_url, 
                      :method => :get,
                      :update => "prototypes",

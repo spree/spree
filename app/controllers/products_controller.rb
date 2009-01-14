@@ -18,6 +18,7 @@ class ProductsController < Spree::BaseController
 
   private
   def load_data
+    
     return unless permalink = params[:taxon_path]
     @taxon = Taxon.find_by_permalink(params[:taxon_path].join("/") + "/")
   end

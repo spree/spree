@@ -1,8 +1,0 @@
-welcome_friend: Bienvenue l'ami!
-welcome_user: Cher {user}, Bienvenue!
-love_rails: J'aime Rails.
-user: utilisateur
-many_args_test: "{other}, {name} vraiment {what} comme une bete ;)"
-simple_pluralization: pluralize{2, erreur}
-pluralization_test: Heidi a vu trois pluralize{3, cheval, chevaux} dans le parc
-:pluralization_with_passed_args: Heidi a vu trois pluralize{{count}, cheval, chevaux} dans le parc

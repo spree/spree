@@ -1,4 +1,4 @@
-<h2><%= t("Mail Server Settings") %></h2>
+<h2><%= t("mail_server_settings") %></h2>
 
 <div id="mail_settings">
   <%# TODO: move this code to a helper? %>
@@ -12,34 +12,34 @@
     %>
   </div>
   <div>
-    <strong><%= t("SMTP domain") %>:</strong> <%=  Spree::Config[:mail_domain] %>
+    <strong><%= t("smtp_domain") %>:</strong> <%=  Spree::Config[:mail_domain] %>
   </div>
   <div>
-    <strong><%= t('SMTP Mail Host') %>:</strong> <%= Spree::Config[:mail_host] %>
+    <strong><%= t('smtp_mail_host') %>:</strong> <%= Spree::Config[:mail_host] %>
   </div>
   <div>
-    <strong><%= t('SMTP Port') %>:</strong> <%= Spree::Config[:mail_port] %>
+    <strong><%= t('smtp_port') %>:</strong> <%= Spree::Config[:mail_port] %>
   </div>
   <div>
-    <strong><%= t('Secure Connection Type')  %>:</strong> <%= Spree::Config[:secure_connection_type] %>
+    <strong><%= t('secure_connection_type')  %>:</strong> <%= Spree::Config[:secure_connection_type] %>
   </div>
   <div>
-    <strong><%= t('SMTP Authentication Type') %>:</strong> <%= Spree::Config[:mail_auth_type] %>
+    <strong><%= t('smtp_authentication_type') %>:</strong> <%= Spree::Config[:mail_auth_type] %>
   </div>
   <% unless Spree::Config[:mail_auth_type] == "none" -%>
   <div>
-    <strong><%= t('SMTP Username') %>:</strong> <%= Spree::Config[:smtp_username] %>
+    <strong><%= t('smtp_username') %>:</strong> <%= Spree::Config[:smtp_username] %>
   </div>
   <div>
-    <strong><%= t('SMTP Password') %>:</strong><em> <%= t("Not shown") unless Spree::Config[:smtp_password].blank? -%></em>
+    <strong><%= t('smtp_password') %>:</strong><em> <%= t("not_shown") unless Spree::Config[:smtp_password].blank? -%></em>
   </div>
   <% end -%>
   <div>
-    <strong><%= t('Copy all mails to') %>:</strong><br />
-    <%= t('A copy of all mail will be sent to the following addresses') %>
+    <strong><%= t('copy_all_mails_to') %>:</strong><br />
+    <%= t('a_copy_of_all_mail_will_be_sent_to_the_following_addresses') %>
     <div class="">
       <%= Spree::Config[:mail_bcc] %>
     </div>
   </div>
-  <%= link_to t("Edit"), edit_admin_mail_settings_path %>
+  <%= link_to t("edit"), edit_admin_mail_settings_path %>
 </div>

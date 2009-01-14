@@ -1,9 +1,9 @@
 <table class="order-summary" style="width:100%;">
   <tr>
-    <th><%= t('Item Description') %></th>
-    <th><%= t('Price') %></th>
-    <th><%= t('Qty') %></th>
-    <th width="250" align="right"><%= t('Total') %></th>
+    <th><%= t('item_description') %></th>
+    <th><%= t('price') %></th>
+    <th><%= t('qty') %></th>
+    <th width="250" align="right"><%= t('total') %></th>
   </tr>
   <% @order.line_items.each do |item| %>
   <tr >
@@ -14,16 +14,16 @@
   </tr>
   <% end %>      
   <tr id="subtotal-row">
-    <td colspan="3" align="right"><b><%= t('Subtotal') %>:</b></td>
+    <td colspan="3" align="right"><b><%= t('subtotal') %>:</b></td>
     <td align="right"><%= number_to_currency @order.item_total -%></td>
   </tr>
   <tr>
-    <td colspan="3" align="right"><b><%= t('Tax') %>:</b></td>
+    <td colspan="3" align="right"><b><%= t('tax') %>:</b></td>
     <td align="right"><%= number_to_currency @order.tax_amount -%></td>
   </tr>
   <tr><th colspan="4"/></tr>
   <tr>
-    <th colspan="4"><%= t('Select preferred shipping option') %></th>
+    <th colspan="4"><%= t('select_preferred_shipping_option') %></th>
   </tr>
   <tr>
     <td class="simple-radios">
@@ -35,7 +35,7 @@
     </td>
   </tr>
   <tr>
-    <td colspan="3" align="right"><b><%= t('Order Total') %>:</b></td>
+    <td colspan="3" align="right"><b><%= t('order_total') %>:</b></td>
     <td id="order_total_cell" align="right"><%= number_to_currency(@order.total + @default_method.calculate_shipping(@order))%></td>
   </tr>
 </table>

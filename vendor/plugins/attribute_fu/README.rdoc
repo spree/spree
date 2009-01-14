@@ -1,0 +1,121 @@
+= AttributeFu
+
+
+Creating multi-model forms is amazingly easy with AttributeFu.
+
+= Get It!
+
+  $ script/plugin install git://github.com/giraffesoft/attribute_fu.git
+
+= Conventions
+
+attribute_fu requires the fewest keystrokes if you follow certain conventions.
+
+* The partial that contains your associated model's form is expected to be called _class_name.template_ext
+  (e.g. the partial for your Task model would be called _task.html.erb)
+* The DOM element that contains the form for your model should have the CSS class .class_name
+  (e.g. the CSS class for your Task would be .task)
+* The DOM element that contains all of the rendered forms should have the DOM ID #class_name
+  (e.g. the DOM ID of the container of your Task forms would be #tasks)
+  <i>Note: This is only relevant if using the add_associated_link method.</i>
+
+= Example
+
+In this example, you'll build a form for a Project model, in which a list of associated (has_many) tasks can be edited. 
+
+The first thing you need to do is enable attributes on the association.
+  
+  class Project < ActiveRecord::Base
+    has_many :tasks, :attributes => true
+  end
+
+Instances of Project will now respond to task_attributes, whose format is as follows:
+  
+  @project.task_attributes = {
+    @project.tasks.first.id => {:title => "A new title for an existing task"},
+    :new => {
+      "0" => {:title => "A new task"}
+    }
+  }
+  
+Any tasks that already exist in that collection, and are not included in the hash, as supplied to task_attributes, will be removed from the association when saved. Most of the time, the form helpers should take care of building that hash for you, though.
+
+== Form Helpers
+
+If you follow certain conventions, rendering your associated model's form elements is incredibly simple. The partial should have the name of the associated element's type, and look like a regular old form partial (no messy fields_for calls, or any nonsense like that).
+  
+  ## _task.html.erb
+  <div class="task">
+    <label>Title</label>
+    <%= f.text_field :title %>
+  </div>
+
+Then, in your parent element's form, call the render_associated_form method on the form builder, with the collection of elements you'd like to render as the only argument.
+
+  ## _form.html.erb
+  <%= f.render_associated_form(@project.tasks) %>
+  
+That call will render the partial named _task.html.erb with each element in the supplied collection of tasks, wrapping the partial in a form builder (fields_for) with all the necessary arguments to produce a hash that will satisfy the task_attributes method.
+
+You may want to add a few blank tasks to the bottom of your form; no need to do that in the controller anymore.
+
+  <%= f.render_associated_form(@project.tasks, :new => 3) %>
+  
+Since this is Web2.0, no form would be complete without some DHTML add and remove buttons. Fortunately, there are some nifty helpers to create them for us. Simply calling remove_link on the form builder in your _task partial will do the trick.
+
+  ## _task.html.erb
+  <div class="task">
+    <label>Title</label>
+    <%= f.text_field :title %>
+    <%= f.remove_link "remove" %>
+  </div>
+  
+Creating the add button is equally simple. The add_associated_link helper will do all of the heavy lifting for you.
+
+  ## _form.html.erb
+  <%= f.add_associated_link "Add New Task", @project.tasks.build %>
+  
+That's all you have to do to create a multi-model form with attribute_fu!
+
+== Discarding Blank Child Models
+
+If you want to show a bunch of blank child model forms at the bottom of your form, but you only want to save the ones that are filled out, you can use the discard_if option. It accepts either a proc:
+
+  class Project < ActiveRecord::Base
+    has_many :tasks, :attributes => true, :discard_if => proc { |task| task.title.blank? }
+  end
+
+...or a symbol...
+
+  class Project < ActiveRecord::Base
+    has_many :tasks, :attributes => true, :discard_if => :blank?
+  end
+  
+  class Task < ActiveRecord::Base
+    def blank?
+      title.blank?
+    end
+  end
+
+Using a symbol allows you to keep code DRYer if you are using that routine in more than one place. Both of those examples, however, would have the same effect.
+
+= Updates
+
+Come join the discussion on the {mailing list}[link:http://groups.google.com/group/attribute_fu]
+
+Updates will be available {here}[http://jamesgolick.com/attribute_fu]
+
+= Running the tests
+
+To run the tests, you need Shoulda, mocha and multi-rails:
+
+  $ sudo gem install thoughtbot-shoulda --source http://gems.github.com/
+  $ sudo gem install mocha multi_rails
+
+== Credits
+
+attribute_fu was created, and is maintained by {James Golick}[http://jamesgolick.com].
+
+
+
+Copyright (c) 2007 James Golick, GiraffeSoft Inc., released under the MIT license

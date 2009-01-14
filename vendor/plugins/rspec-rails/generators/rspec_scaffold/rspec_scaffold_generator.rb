@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + '/../rspec_default_values'
+
 class RspecScaffoldGenerator < Rails::Generator::NamedBase
   default_options :skip_migration => false
   
@@ -140,20 +142,6 @@ end
 module Rails
   module Generator
     class GeneratedAttribute
-      def default_value
-        @default_value ||= case type
-          when :int, :integer               then "\"1\""
-          when :float                       then "\"1.5\""
-          when :decimal                     then "\"9.99\""
-          when :datetime, :timestamp, :time then "Time.now"
-          when :date                        then "Date.today"
-          when :string, :text               then "\"value for #{@name}\""
-          when :boolean                     then "false"
-          else
-            ""
-        end      
-      end
-
       def input_type
         @input_type ||= case type
           when :text                        then "textarea"

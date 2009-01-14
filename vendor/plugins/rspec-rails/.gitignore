@@ -3,3 +3,5 @@ tmtags
 .emacs-project
 *~
 pkg
+doc
+email.txt

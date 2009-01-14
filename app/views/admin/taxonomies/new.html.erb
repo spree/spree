@@ -1,9 +1,9 @@
-<h1><%= :new_taxonomy.l("New Taxonomy") %></h1>
+<h1><%= t("new_taxonomy") %></h1>
 
 <% form_for(:taxon, :url => object_url) do |f| %>
 	<%= render :partial => "form", :locals => { :f => f } %>
 	</table>
 	<p>
-	  <%= submit_tag t("Create") %>
+	  <%= submit_tag t("create") %>
 </p>
 <% end %>

@@ -2,31 +2,14 @@ require File.dirname(__FILE__) + '/../../spec_helper.rb'
 
 module Spec
   module Example
-    module ExampleMatcherSpecHelper
-      class MatchDescription
-        def initialize(description)
-          @description = description
-        end
-        
-        def matches?(matcher)
-          matcher.matches?(@description)
-        end
-        
-        def failure_message
-          "expected matcher.matches?(#{@description.inspect}) to return true, got false"
-        end
-        
-        def negative_failure_message
-          "expected matcher.matches?(#{@description.inspect}) to return false, got true"
-        end
-      end
-      def match_description(description)
-        MatchDescription.new(description)
-      end
-    end
-
     describe ExampleMatcher, "#matches?" do
-      include ExampleMatcherSpecHelper
+      def match_description(description)
+        simple_matcher do |actual, matcher|
+          matcher.failure_message = "expected matcher.matches?(#{description.inspect}) to return true, got false"
+          matcher.negative_failure_message = "expected matcher.matches?(#{description.inspect}) to return false, got true"
+          actual.matches?(description)
+        end
+      end
       
       it "should match correct example_group and example" do
         matcher = ExampleMatcher.new("example_group", "example")
