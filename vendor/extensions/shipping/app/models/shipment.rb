@@ -25,6 +25,7 @@ class Shipment < ActiveRecord::Base
   end
   
   def transition_order
+    return unless shipped_at_changed?
     order.shipments.each do |shipment|
       return unless shipment.shipped?
     end
