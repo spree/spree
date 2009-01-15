@@ -13,7 +13,7 @@ describe Order do
     @order.number = '#TEST1010'
     @order.user =  @user
 
-    add_stubs(@order, :save => true, :inventory_units => [@inventory_unit])
+    @order.stub!(:save => true, :inventory_units => [@inventory_unit])
     @line_item =  LineItem.new(:variant => @variant, :quantity => 1, :price => 7.99)
     @order.line_items << @line_item
     InventoryUnit.stub!(:retrieve_on_hand).with(@variant, 1).and_return [@inventory_unit]

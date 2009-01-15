@@ -19,13 +19,13 @@ describe '/admin/variants/edit' do
     @product.stub!(:id).and_return(99)
     
     @option_type = mock_model(OptionType)
-    add_stubs(@option_type, :id => 11, :name => "cow-color", :presentation => "Color")
+    @option_type.stub!(:id => 11, :name => "cow-color", :presentation => "Color")
     
     @option_value = mock_model(OptionValue)
-    add_stubs(@option_value, :id => 111, :option_type => @option_type, :name => 'Red', :position => 1, :presentation => "Red")
+    @option_value.stub!(:id => 111, :option_type => @option_type, :name => 'Red', :position => 1, :presentation => "Red")
     
     @variant = mock_model(Variant)
-    add_stubs(@variant, :sku => "DEL-COW-1A", :price => 49.99, :product => @product, :option_values => [@option_value], :on_hand => 9)
+    @variant.stub!(:sku => "DEL-COW-1A", :price => 49.99, :product => @product, :option_values => [@option_value], :on_hand => 9)
     @variant.errors.stub!(:on).and_return(false)
   
     assigns[:variant] = @variant
