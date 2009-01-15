@@ -40,6 +40,7 @@ module Spec
         def ensure_that_flash_and_session_work_properly #:nodoc:
           @controller.send :initialize_template_class, @response
           @controller.send :assign_shortcuts, @request, @response
+          @controller.send :initialize_current_url
           @session = @controller.session
           @controller.class.send :public, :flash
         end
@@ -113,8 +114,6 @@ module Spec
           options = defaults.merge options
 
           @controller.send(:params).reverse_merge! @request.parameters
-
-          @controller.send :initialize_current_url
 
           @controller.class.instance_eval %{
             def controller_path

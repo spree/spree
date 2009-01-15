@@ -6,8 +6,6 @@ require 'controller_spec_controller'
     controller_name :controller_spec
     integrate_views if mode == 'integration'
     
-    specify "this example should be pending, not an error"
-    
     it "should provide controller.session as session" do
       get 'action_with_template'
       session.should equal(controller.session)
@@ -131,11 +129,9 @@ require 'controller_spec_controller'
         get 'action_which_gets_cookie', :expected => "cookie value"
       end
       
-      if Rails::VERSION::STRING >= "2.0.0"
-        it "should support a Hash value" do
-          cookies[:cookie_key] = {'value' => 'cookie value', 'path' => '/not/default'}
-          get 'action_which_gets_cookie', :expected => {'value' => 'cookie value', 'path' => '/not/default'}
-        end
+      it "should support a Hash value" do
+        cookies[:cookie_key] = {'value' => 'cookie value', 'path' => '/not/default'}
+        get 'action_which_gets_cookie', :expected => {'value' => 'cookie value', 'path' => '/not/default'}
       end
       
     end
@@ -161,6 +157,55 @@ require 'controller_spec_controller'
       end
     
     end
+    
+    describe "with an error that is not rescued in the controller" do
+      context "without rails' error handling" do
+        it "raises the error" do
+          lambda do
+            get 'other_error_action'
+          end.should raise_error(ControllerSpecController::UnRescuedError)
+        end
+      end
+      context "with rails' error handling" do
+        it "does not raise the error" do
+          controller.use_rails_error_handling!
+          lambda do
+            get 'other_error_action'
+          end.should_not raise_error
+        end
+      end
+    end
+    
+    describe "with an error that is rescued in the controller" do
+      context "without rails' error handling" do
+        it "does not raise error" do
+          lambda do
+            get 'rescued_error_action'
+          end.should_not raise_error
+        end
+
+        it "executes rescue_from" do
+          get 'rescued_error_action'
+          response.body.should == 'Rescued!'
+        end
+      end
+
+      context "with rails' error handling" do
+        before(:each) do
+          controller.use_rails_error_handling!
+        end
+        it "does not raise error" do
+          lambda do
+            get 'rescued_error_action'
+          end.should_not raise_error
+        end
+
+        it "executes rescue_from" do
+          get 'rescued_error_action'
+          response.body.should == 'Rescued!'
+        end
+      end
+    end
 
     it "should support custom routes" do
       route_for(:controller => "custom_route_spec", :action => "custom_route").should == "/custom_route"
@@ -170,31 +215,45 @@ require 'controller_spec_controller'
       route_for(:controller => "controller_spec", :action => "some_action").should == "/controller_spec/some_action"
     end
 
+    it "should support existing routes with additional parameters" do
+      route_for(:controller => "controller_spec", :action => "some_action", :param => '1').should == "/controller_spec/some_action?param=1"
+    end
+
     it "should generate params for custom routes" do
       params_from(:get, '/custom_route').should == {:controller => "custom_route_spec", :action => "custom_route"}
     end
-    
+
     it "should generate params for existing routes" do
       params_from(:get, '/controller_spec/some_action').should == {:controller => "controller_spec", :action => "some_action"}
     end
-    
+
+    it "should generate params for an existing route with a query parameter" do
+      expected = {:controller => "controller_spec", :action => "some_action", :param => '1'}
+      params_from(:get, '/controller_spec/some_action?param=1').should == expected
+    end
+
+    it "should generate params for an existing route with multiple query parameters" do
+      expected = {:controller => "controller_spec", :action => "some_action", :param1 => '1', :param2 => '2' }
+      params_from(:get, '/controller_spec/some_action?param1=1&param2=2').should == expected
+    end
+
     it "should expose instance vars through the assigns hash" do
       get 'action_setting_the_assigns_hash'
       assigns[:indirect_assigns_key].should == :indirect_assigns_key_value
     end
-    
+
     it "should expose instance vars through the assigns hash that are set to false" do
       get 'action_that_assigns_false_to_a_variable'
       assigns[:a_variable].should be_false
     end
-    
+
     it "should NOT complain when calling should_receive with arguments other than :render" do
       controller.should_receive(:anything_besides_render)
       lambda {
         controller.rspec_verify
       }.should raise_error(Exception, /expected :anything_besides_render/)
     end
-    
+
     it "should not run a skipped before_filter" do
       lambda {
         get 'action_with_skipped_before_filter'

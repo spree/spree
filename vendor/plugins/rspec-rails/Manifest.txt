@@ -3,6 +3,7 @@ License.txt
 Manifest.txt
 README.txt
 Rakefile
+TODO.txt
 features/step_definitions/people.rb
 features/support/env.rb
 features/transactions/transactions_should_rollback.feature
@@ -95,8 +96,8 @@ spec/resources/views/layouts/simple.rhtml
 spec/resources/views/objects/_object.html.erb
 spec/resources/views/render_spec/_a_partial.rhtml
 spec/resources/views/render_spec/action_with_alternate_layout.rhtml
+spec/resources/views/render_spec/some_action.html.erb
 spec/resources/views/render_spec/some_action.js.rjs
-spec/resources/views/render_spec/some_action.rhtml
 spec/resources/views/render_spec/some_action.rjs
 spec/resources/views/rjs_spec/_replacement_partial.rhtml
 spec/resources/views/rjs_spec/hide_div.rjs
@@ -144,7 +145,6 @@ spec/spec/rails/extensions/active_record_spec.rb
 spec/spec/rails/interop/testcase_spec.rb
 spec/spec/rails/matchers/ar_be_valid_spec.rb
 spec/spec/rails/matchers/assert_select_spec.rb
-spec/spec/rails/matchers/description_generation_spec.rb
 spec/spec/rails/matchers/errors_on_spec.rb
 spec/spec/rails/matchers/have_text_spec.rb
 spec/spec/rails/matchers/include_text_spec.rb

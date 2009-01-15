@@ -5,6 +5,9 @@ module ActionController
     before(:each) do
       @fixture = Object.new
       @fixture.extend ActionController::Rescue
+      def @fixture.rescue_with_handler(exception)
+        false
+      end
       class << @fixture
         public :rescue_action
       end

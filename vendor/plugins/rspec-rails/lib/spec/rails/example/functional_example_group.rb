@@ -35,15 +35,6 @@ module Spec
         # cookies in examples using the same API with which you set and read
         # them in controllers.
         #
-        # == Examples (Rails >= 1.2.6)
-        #
-        #   cookies[:user_id] = '1234'
-        #   get :index
-        #   assigns[:user].id.should == '1234'
-        #
-        #   post :login
-        #   cookies[:login].expires.should == 1.week.from_now
-        #
         # == Examples (Rails 2.0 > 2.2)
         #
         #   cookies[:user_id] = {:value => '1234', :expires => 1.minute.ago}

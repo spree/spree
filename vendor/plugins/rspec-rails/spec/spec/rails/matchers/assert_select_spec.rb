@@ -35,10 +35,6 @@ class AssertSelectController < ActionController::Base
     @content = nil
   end
 
-  def rescue_action(e)
-    raise e
-  end
-
 end
 
 class AssertSelectMailer < ActionMailer::Base

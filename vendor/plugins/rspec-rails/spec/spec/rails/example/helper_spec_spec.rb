@@ -112,8 +112,6 @@ module Spec
           ActionView::Helpers::TextHelper,
           ActionView::Helpers::UrlHelper
         ]
-        helpers << ActionView::Helpers::PaginationHelper rescue nil       #removed for 2.0
-        helpers << ActionView::Helpers::JavaScriptMacrosHelper rescue nil #removed for 2.0
         helpers.each do |helper_module|
           it "should include #{helper_module}" do
             self.class.ancestors.should include(helper_module)
@@ -143,6 +141,38 @@ module Spec
           assigns[:addend].should == 3
         end
       end
+      
+      describe HelperExampleGroup, "using a helper that uses output_buffer inside helper", :type => :helper do
+        helper_name :explicit
+        
+        before(:each) do
+          if Rails::VERSION::STRING <= "2.1"
+            pending("need to get this new feature working against pre 2.2 versions of rails")
+          end
+        end
+
+        it "should not raise an error" do
+          lambda { method_using_output_buffer }.should_not raise_error
+        end
+
+        it "should put the output in the output_buffer" do
+          method_using_output_buffer
+          output_buffer.should == "the_text_from_concat"
+        end
+      end
+
+      describe HelperExampleGroup, "using a helper that tries to access @template", :type => :helper do
+        helper_name :explicit
+
+        it "should not raise an error" do
+          lambda { method_using_template }.should_not raise_error
+        end
+
+        it "should have the correct output" do
+          method_using_template.should have_text(/#some_id/)
+        end
+      end
+
     end
   end
 end

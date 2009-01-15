@@ -1,7 +1,6 @@
 = Spec::Rails
 
 * http://rspec.info
-* http://rspec.info/rdoc-rails/
 * http://rubyforge.org/projects/rspec
 * http://github.com/dchelimsky/rspec-rails/wikis
 * mailto:rspec-devel@rubyforge.org
@@ -10,15 +9,14 @@
 
 Behaviour Driven Development for Ruby on Rails.
 
-Spec::Rails (a.k.a. RSpec on Rails) is a Ruby on Rails plugin that allows you
-to drive the development of your RoR application using RSpec, a framework that
-aims to enable Example Driven Development in Ruby.
+Spec::Rails (a.k.a. RSpec on Rails) is an RSpec extension that allows you
+to drive the development of your RoR application using RSpec.
 
 == FEATURES:
 
 * Use RSpec to independently specify Rails Models, Views, Controllers and Helpers
 * Integrated fixture loading
-* Special generators for Resources, Models, Views and Controllers that generate Specs instead of Tests.
+* Special generators for Resources, Models, Views and Controllers that generate RSpec code examples.
 
 == VISION:
 
@@ -35,10 +33,10 @@ these different concerns.
 
 == MORE INFORMATION:
 
-See Spec::Rails::Runner for information about the different kinds of example
+See Spec::Rails::Example for information about the different kinds of example
 groups you can use to spec the different Rails components
 
-See Spec::Rails::Expectations for information about Rails-specific
+See Spec::Rails::Matchers for information about Rails-specific
 expectations you can set on responses and models, etc.
 
 == INSTALL

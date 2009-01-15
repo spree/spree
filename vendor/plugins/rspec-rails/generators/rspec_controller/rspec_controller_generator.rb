@@ -15,11 +15,7 @@ class RspecControllerGenerator < ControllerGenerator
       m.directory File.join('spec/helpers', class_path)
       m.directory File.join('spec/views', class_path, file_name)
 
-			if Rails::VERSION::STRING < "2.0.0"
-        @default_file_extension = "rhtml"
-      else
-        @default_file_extension = "html.erb"
-      end
+      @default_file_extension = "html.erb"
 
       # Controller spec, class, and helper.
       m.template 'controller_spec.rb',

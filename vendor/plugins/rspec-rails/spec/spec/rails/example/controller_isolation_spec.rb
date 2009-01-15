@@ -21,10 +21,6 @@ describe "a controller spec running in integration mode", :type => :controller d
   controller_name :controller_spec
   integrate_views
   
-  before(:each) do
-    controller.class.send(:define_method, :rescue_action) { |e| raise e }
-  end
-
   it "should render a template" do
     get 'action_with_template'
     response.should be_success

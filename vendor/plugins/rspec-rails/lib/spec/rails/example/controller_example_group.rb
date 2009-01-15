@@ -38,29 +38,9 @@ module Spec
       #
       # == Expecting Errors
       #
-      # Rspec on Rails will raise errors that occur in controller actions.
-      # In contrast, Rails will swallow errors that are raised in controller
-      # actions and return an error code in the header. If you wish to override
-      # Rspec and have Rail's default behaviour,tell the controller to use
-      # rails error handling ...
+      # Rspec on Rails will raise errors that occur in controller actions and
+      # are not rescued or handeled with rescue_from.
       #
-      #   before(:each) do
-      #     controller.use_rails_error_handling!
-      #   end
-      #
-      # When using Rail's error handling, you can expect error codes in headers ...
-      #
-      #   it "should return an error in the header" do
-      #     response.should be_error
-      #   end
-      #
-      #   it "should return a 501" do
-      #     response.response_code.should == 501
-      #   end
-      #
-      #   it "should return a 501" do
-      #     response.code.should == "501"
-      #   end
       class ControllerExampleGroup < FunctionalExampleGroup
         class << self
                     
@@ -149,11 +129,13 @@ module Spec
         # Uses ActionController::Routing::Routes to parse
         # an incoming path so the parameters it generates can be checked
         # == Example
-        #   params_from(:get, '/registrations/1;edit')
+        #   params_from(:get, '/registrations/1/edit')
         #     => :controller => 'registrations', :action => 'edit', :id => 1
         def params_from(method, path)
           ensure_that_routes_are_loaded
-          ActionController::Routing::Routes.recognize_path(path, :method => method)
+          path, querystring = path.split('?')
+          params = ActionController::Routing::Routes.recognize_path(path, :method => method)
+          querystring.blank? ? params : params.merge(params_from_querystring(querystring))
         end
 
         protected
@@ -164,6 +146,15 @@ module Spec
         end
 
         private
+        def params_from_querystring(querystring)
+          params = {}
+          querystring.split('&').each do |piece|
+            key, value = piece.split('=')
+            params[key.to_sym] = value
+          end
+          params
+        end
+
         def ensure_that_routes_are_loaded
           ActionController::Routing::Routes.reload if ActionController::Routing::Routes.empty?
         end
@@ -176,10 +167,7 @@ module Spec
           # This gets added to the controller's singleton meta class,
           # allowing Controller Examples to run in two modes, freely switching
           # from context to context.
-          def render(options=nil, deprecated_status_or_extra_options=nil, &block)
-            if ::Rails::VERSION::STRING >= '2.0.0' && deprecated_status_or_extra_options.nil?
-              deprecated_status_or_extra_options = {}
-            end
+          def render(options=nil, &block)
               
             unless block_given?
               unless integrate_views?
@@ -223,7 +211,7 @@ module Spec
               if matching_stub_exists(options)
                 @performed_render = true
               else
-                super(options, deprecated_status_or_extra_options, &block)
+                super(options, &block)
               end
             end
           end

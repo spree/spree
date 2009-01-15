@@ -8,14 +8,18 @@ module ActionController
       @use_rails_error_handling ||= false
     end
 
-    protected
+  protected
+  
     def rescue_action_with_fast_errors(exception)
-      if use_rails_error_handling?
-        rescue_action_without_fast_errors exception
-      else
-        raise exception
+      unless respond_to?(:rescue_with_handler) and rescue_with_handler(exception)
+        if use_rails_error_handling?
+          rescue_action_without_fast_errors exception
+        else
+          raise exception
+        end
       end
     end
     alias_method_chain :rescue_action, :fast_errors
+
   end
 end

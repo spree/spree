@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe "script/spec_server file", :shared => true do
-  attr_accessor :tmbundle_install_directory
+  attr_accessor :tmbundle_install_directory, :tmbundle_source_directory
   attr_reader :animals_yml_path, :original_animals_content
 
   before do
@@ -71,14 +71,25 @@ end
 
 describe "script/spec_server file with TextMate bundle" do
   it_should_behave_like "script/spec_server file"
+  def tmbundle_directory
+    current_directory = File.expand_path("#{File.dirname(__FILE__)}/../../../../../../")
+    directories = current_directory.split('/')
+    while directories.any?
+      current_directory = File.join(*directories)
+      bundle_directory = File.join(current_directory, @bundle_name)
+      return bundle_directory if File.directory?(bundle_directory)
+      directories.pop
+    end
+  end
+
   before(:each) do
-    dir = File.dirname(__FILE__)
     @tmbundle_install_directory = File.expand_path("#{Dir.tmpdir}/Library/Application Support/TextMate/Bundles")
     @bundle_name = "RSpec.tmbundle"
+    @tmbundle_source_directory = tmbundle_directory
+
     FileUtils.mkdir_p(tmbundle_install_directory)
-    bundle_dir = File.expand_path("#{dir}/../../../../../../#{@bundle_name}")
-    File.directory?(bundle_dir).should be_true
-    unless system(%Q|ln -s #{bundle_dir} "#{tmbundle_install_directory}"|)
+    File.directory?(tmbundle_source_directory).should be_true
+    unless system(%Q|ln -s #{tmbundle_source_directory} "#{tmbundle_install_directory}"|)
       raise "Creating link to Textmate Bundle"
     end
     start_spec_server

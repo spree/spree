@@ -149,18 +149,16 @@ describe "A view that includes a partial using :collection and :spacer_template"
 
 end
 
-if Rails::VERSION::MAJOR >= 2
-  describe "A view that includes a partial using an array as partial_path", :type => :view do
-    before(:each) do
-      renderable_object = Object.new
-      renderable_object.stub!(:name).and_return("Renderable Object")
-      assigns[:array] = [renderable_object]
-    end
+describe "A view that includes a partial using an array as partial_path", :type => :view do
+  before(:each) do
+    renderable_object = Object.new
+    renderable_object.stub!(:name).and_return("Renderable Object")
+    assigns[:array] = [renderable_object]
+  end
 
-    it "should render the array passed through to render_partial without modification" do
-      render "view_spec/template_with_partial_with_array" 
-      response.body.should match(/^Renderable Object$/)
-    end
+  it "should render the array passed through to render_partial without modification" do
+    render "view_spec/template_with_partial_with_array" 
+    response.body.should match(/^Renderable Object$/)
   end
 end
 
@@ -267,6 +265,12 @@ describe "setting path parameters", :type => :view do
       render "view_spec/entry_form", :path_parameters => {:foo => 'bar'}
       request.path_parameters[:foo].should == 'bar'
     end
+  end
+end
+
+describe "route helpers", :type => :view do
+  it "should be available before render is called" do
+    custom_route_path.should == '/custom_route'
   end
 end
 

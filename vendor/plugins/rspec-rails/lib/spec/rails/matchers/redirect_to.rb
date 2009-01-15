@@ -4,6 +4,8 @@ module Spec
 
       class RedirectTo  #:nodoc:
 
+        include ActionController::StatusCodes
+
         def initialize(request, expected)
           @expected = expected
           @request = request
@@ -13,12 +15,20 @@ module Spec
           @redirected = response.redirect?
           @actual = response.redirect_url
           return false unless @redirected
+
+          if @expected_status
+            @actual_status = interpret_status(response.code.to_i)
+            @status_matched = @expected_status == @actual_status
+          else
+            @status_matched = true
+          end
+
           if @expected.instance_of? Hash
             return false unless @actual =~ %r{^\w+://#{@request.host}}
             return false unless actual_redirect_to_valid_route
-            return actual_hash == expected_hash
+            return actual_hash == expected_hash && @status_matched
           else
-            return @actual == expected_url
+            return @actual == expected_url && @status_matched
           end
         end
 
@@ -40,7 +50,7 @@ module Spec
 
         def path_hash(url)
           path = url.sub(%r{^\w+://#{@request.host}(?::\d+)?}, "").split("?", 2)[0]
-          ActionController::Routing::Routes.recognize_path path
+          ActionController::Routing::Routes.recognize_path path, { :method => :get }
         end
 
         def query_hash(url)
@@ -48,6 +58,11 @@ module Spec
           QueryParameterParser.parse_query_parameters(query, @request)
         end
 
+        def with(options)
+          @expected_status = interpret_status(options[:status])
+          self
+        end
+        
        def expected_url
           case @expected
             when Hash
@@ -63,7 +78,11 @@ module Spec
 
         def failure_message
           if @redirected
-            return %Q{expected redirect to #{@expected.inspect}, got redirect to #{@actual.inspect}}
+            if @status_matched
+              return %Q{expected redirect to #{@expected.inspect}, got redirect to #{@actual.inspect}}
+            else
+              return %Q{expected redirect to #{@expected.inspect} with status #{@expected_status}, got #{@actual_status}}
+            end
           else
             return %Q{expected redirect to #{@expected.inspect}, got no redirect}
           end

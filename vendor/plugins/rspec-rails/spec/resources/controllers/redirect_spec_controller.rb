@@ -55,5 +55,16 @@ class RedirectSpecController < ApplicationController
     redirect_to :controller => "nonexistant", :action => "none"
   end
 
+  def action_with_method_restriction
+    render :text => ''
+  end
+
+  def action_to_redirect_to_action_with_method_restriction
+    redirect_to :action => 'action_with_method_restriction'
+  end
+
+  def action_with_redirect_to_somewhere_with_status
+    redirect_to :action => 'somewhere', :status => 301
+  end
 end
 

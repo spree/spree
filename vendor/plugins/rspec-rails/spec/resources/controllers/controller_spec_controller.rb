@@ -86,6 +86,21 @@ class ControllerSpecController < ActionController::Base
     @a_variable = false
     render :text => ""
   end
+  
+  class RescuedError < Exception; end
+  class UnRescuedError < Exception; end
+  
+  rescue_from RescuedError do |e|
+    render :text => 'Rescued!'
+  end
+
+  def rescued_error_action
+    raise RescuedError
+  end
+
+  def other_error_action
+    raise UnRescuedError
+  end
 end
 
 class ControllerInheritingFromApplicationControllerController < ApplicationController
