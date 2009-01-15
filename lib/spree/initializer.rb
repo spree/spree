@@ -148,6 +148,8 @@ module Spree
     
     def initialize_i18n
       extension_loader.add_locale_paths
+      spree_locale_paths = Dir[File.join(SPREE_ROOT, 'config', 'locales', '*.{rb,yml}')]
+      extension_loader.configuration.i18n.load_path.concat(spree_locale_paths)
       super
     end
 
