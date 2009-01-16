@@ -2,7 +2,6 @@
 de: 
   abbreviation: Abbreviation
   access_denied: "Access Denied"        
-  authorization_failure: "Authorization Failure"  
   account: Konto
   action: Aktion
   actions: 
@@ -165,6 +164,7 @@ de:
   are_you_sure_option_type: "Are you sure you want to delete this option type?"
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
+  authorization_failure: "Authorization Failure"  
   authorized: Authorized
   available_on: ""
   available_taxons: "Available Taxons"
@@ -198,6 +198,7 @@ de:
   country_based: "Country Based"
   create: Einfügen
   create_a_new_account: ""
+  created_successfully:
   credit_card: ""
   credit_card_cayment: "Credit Card Payment"
   creditcard_payment: "Creditcard Payment"
@@ -264,6 +265,8 @@ de:
   logged_in_as: "Angemldet unter"
   login_name: Benutzer
   logout: Abmelden
+  mail_delivery_enabled:
+  mail_delivery_not_enabled:
   mail_server_settings: "Mail Server Settings"
   master_price: Grundpreis
   my_account: "mein Konto"
@@ -278,6 +281,7 @@ de:
   new_product: ""
   new_property: ""
   new_prototype: ""
+  new_shipment:
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
@@ -400,6 +404,7 @@ de:
   try_again: "Try Again"
   type: Typ
   update: Speichern
+  updated_successfully:
   use_different_shipping_address: "Andere Lieferaddresse verwenden"
   user: Benutzer
   user_details: "User Details"

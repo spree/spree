@@ -1,12 +1,12 @@
 <div id="shipment">
   <%=error_messages_for :shipment_presenter%>
-  <h1><%= t("New Shipment")%></h1>
+  <h1><%= t('new_shipment')%></h1>
   <br/>
   <% form_for(:shipment_presenter, :url => object_url) do |f| %>
-    <h4><%= t("Shipping Address")%></h4>
+    <h4><%= t('shipping_address')%></h4>
   	<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "shipment"} %>
     <div align="right">
-      <%= submit_tag t('Create') %>
+      <%= submit_tag t('create') %>
     </div>
   <% end %>
 </div>

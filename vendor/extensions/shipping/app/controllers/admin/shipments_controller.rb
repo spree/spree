@@ -18,7 +18,7 @@ class Admin::ShipmentsController < Admin::BaseController
     if params['mark_shipped']
       @order.ship!
     end 
-    flash[:notice] = t("Created Successfully")
+    flash[:notice] = t('created_successfully')
     redirect_to collection_url
   end
 
@@ -39,7 +39,7 @@ class Admin::ShipmentsController < Admin::BaseController
     if params['mark_shipped']
       @order.ship!
     end 
-    flash[:notice] = t("Updated Successfully")
+    flash[:notice] = t('updated_successfully')
     redirect_to edit_object_url
   end
 

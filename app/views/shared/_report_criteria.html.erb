@@ -7,19 +7,19 @@
     <table class="admin-search">
       <thead>
         <tr>
-          <th colspan="2"><%= t("Date Range") %></th>
+          <th colspan="2"><%= t('date_range') %></th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><%= t("Start") %>:</td>
+          <td><%= t('start') %>:</td>
           <td>
             <%= error_message_on :search, :start%>
             <%= calendar_date_select :search, :start, :style=>"width:100px" %>
           </td>
 	</tr>
 	<tr>
-	  <td><%= t("Stop") %>:</td>
+	  <td><%= t('stop') %>:</td>
 	  <td>
 	    <%= error_message_on :search, :stop%>
 	    <%= calendar_date_select :search, :stop, :style=>"width:100px" %>
@@ -27,7 +27,7 @@
 	</tr>
       </tbody>
     </table>
-    <%=submit_tag t("Search") %>
+    <%=submit_tag t('search') %>
   </div>
   <% end %>
 </td>

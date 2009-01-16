@@ -5,9 +5,9 @@
   <div id="mail_delivery_status" class="error-or-notice">
     <%= 
       if Spree::Config[:enable_mail_delivery]
-        content_tag(:h4, t("Mail delivery is enabled"))
+        content_tag(:h4, t('mail_delivery_enabled'))
       else
-        content_tag(:h4, t("Mail delivery is not enabled"))
+        content_tag(:h4, t('mail_delivery_not_enabled'))
       end
     %>
   </div>
