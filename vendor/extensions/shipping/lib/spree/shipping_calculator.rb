@@ -11,11 +11,18 @@ module Spree #:nodoc:
     # skip right to creditcard step if there are no shipping methods at all (ex. store sells only electronic downloads)
     fsm.after_transition :to => 'shipment', :do => lambda { |order| order.update_attribute(:state, "creditcard") if ShippingMethod.all.empty? }
     fsm.events['edit'].transition(:to => 'in_progress', :from => ['shipment', 'shipping_method'])
-    fsm.after_transition(:to => 'shipping_method', :do => lambda {|order| order.update_attribute(:tax_amount, order.calculate_tax)})
+    fsm.after_transition :to => 'shipping_method', :do => lambda {|order| order.update_attribute(:tax_amount, order.calculate_tax)}
+    fsm.after_transition :to => 'shipped', :do => :mark_shipped
 
     fsm.events['ship'] = PluginAWeek::StateMachine::Event.new(fsm, "ship")
-    fsm.events['ship'].transition(:to => 'shipped', :from => 'charged')
-    
+    fsm.events['ship'].transition(:to => 'shipped', :from => 'paid')
+
+    def mark_shipped
+      inventory_units.each do |inventory_unit|
+        inventory_unit.ship!
+      end
+    end
+        
     # collection of available shipping countries
     def shipping_countries
       ShippingMethod.all.collect { |method| method.zone.country_list }.flatten.uniq.sort_by {|item| item.send 'name'}

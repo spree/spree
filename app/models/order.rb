@@ -35,7 +35,6 @@ class Order < ActiveRecord::Base
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
     after_transition :to => 'charged', :do => :complete_order
-    after_transition :to => 'shipped', :do => :mark_shipped
     after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
     after_transition :to => 'resumed', :do => :restore_state 
@@ -141,12 +140,6 @@ class Order < ActiveRecord::Base
   def cancel_order
     restock_inventory
     OrderMailer.deliver_cancel(self)
-  end
-  
-  def mark_shipped
-    inventory_units.each do |inventory_unit|
-      inventory_unit.ship!
-    end
   end
   
   def restock_inventory

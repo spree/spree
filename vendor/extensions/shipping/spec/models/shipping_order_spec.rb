@@ -2,12 +2,14 @@ require File.dirname(__FILE__) + '/../spec_helper.rb'
 
 describe Order do
   before(:each) do
-    @order = Order.new #(:address => @address = mock_model(Address, :null_object => true))
+    @shipment = Shipment.new                                                          
+    @inventory_unit = InventoryUnit.new(:state => "sold")
+    @order = Order.new(:shipments => [@shipment], :inventory_units => [@inventory_unit]) #(:address => @address = mock_model(Address, :null_object => true))
   end
 
   # moved from order_spec (may not be correct or relevant)
   describe "ship" do
-    before(:each) {@order.state = "captured"}
+    before(:each) {@order.state = "paid"}
     it "should transition to shipped" do
       @order.ship
       @order.state.should == 'shipped'
@@ -43,48 +45,49 @@ describe Order do
   describe "shipping_methods" do
     it "should return empty array if there are no shipping methods configured" do
       ShippingMethod.stub!(:all).and_return([])
-      @order.shipping_methods.should == []
+      @shipment.shipping_methods.should == []
     end
     it "should check the shipping address against the shipping method's zone" do
       zone = mock_model(Zone)
       method = mock_model(ShippingMethod, :zone => zone)
       ShippingMethod.stub!(:all).and_return([method])
       zone.should_receive(:include?).with(@address)
-      @order.shipping_methods
+      @shipment.shipping_methods
     end
     it "should return empty array if none of the configured shipping methods cover the shipping address" do
       method = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => false))
       ShippingMethod.stub!(:all).and_return([method])
-      @order.shipping_methods.should == []
+      @shipment.shipping_methods.should == []
     end
     it "should return all shipping methiods that cover the shipping address" do
       method1 = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => true))
       method2 = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => true))
       method3 = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => false))
       ShippingMethod.stub!(:all).and_return([method1, method2, method3])
-      @order.shipping_methods.should == [method1, method2]
+      @shipment.shipping_methods.should == [method1, method2]
     end
   end
   
   describe "state_machine in 'address' state" do
     before :each do
-      @order.state = 'address'
+      @order.state = 'in_progress'
     end
     describe "when there are no shipping methods" do
-      it "next! should transition to 'creditcard_payment'" do
+      it "next! should transition to 'creditcard'" do
         @order.stub!(:shipping_methods).and_return([])
         @order.next!
-        @order.state.should == "creditcard_payment"
+        @order.state.should == "creditcard"
       end
     end
     describe "when there is only one shipping method" do
-      before :each do
+      before :each do   
+        @order.state = "shipment"
         @shipping_method = ShippingMethod.new(:shipping_calculator => "MockCalculator")
         @order.stub!(:shipping_methods).and_return([@shipping_method]) 
       end
-      it "next! should transition to 'creditcard_payment'" do
+      it "next! should transition to 'creditcard'" do
         @order.next!
-        @order.state.should == "creditcard_payment"
+        @order.state.should == "creditcard"
       end
       it "should automatically calculate the shipping cost using the single shipping method" do
         @order.next!
