@@ -221,6 +221,7 @@ pl:
   editing_state: "Edycja stanu"
   editing_tax_category: "Edycja kategorii podatkowej"
   editing_user: "Edycja użytkownika"
+  editing_zone:
   email: Email
   email_address: "Adres email"
   email_server_settings_description: "Skonfiguruj ustawienia serwera pocztowego."

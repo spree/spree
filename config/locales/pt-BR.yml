@@ -221,6 +221,7 @@ pt-BR:
   editing_state: "Editando Estado"
   editing_tax_category: "Editando Categoria de Taxa"
   editing_user: "Editando Usuário"
+  editing_zone:
   email: Email
   email_address: "Endereço de Email"
   email_server_settings_description: "Ajustar as configurações do servidor de email."
