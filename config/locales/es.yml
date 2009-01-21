@@ -245,6 +245,7 @@ es:
   image: Imágen
   images: Imagenes
   in_progress: "In Progress"
+  invalid_search:
   inventory: Inventario
   inventory_adjustment: "Ajuste de inventario"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"

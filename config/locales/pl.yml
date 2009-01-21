@@ -245,6 +245,7 @@ pl:
   image: Obrazek
   images: Obrazki
   in_progress: "W trakcie..."
+  invalid_search:
   inventory: Zapasy
   inventory_adjustment: "Dostosowanie zapasów"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"

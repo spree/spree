@@ -245,6 +245,7 @@ en-US:
   image: Image
   images: Images
   in_progress: "In Progress"
+  invalid_search: "Invalid search criteria."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"

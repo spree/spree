@@ -245,6 +245,7 @@ it:
   image: Imagine
   images: Imagini
   in_progress: "In Progress"
+  invalid_search:
   inventory: Magazzino
   inventory_adjustment: "Edita magazzino"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"

@@ -1,4 +1,5 @@
 class Admin::ReportsController < Admin::BaseController
+  before_filter :load_data  
   
   AVAILABLE_REPORTS = {
     :sales_total => {:name => "Sales Total", :description => "Sales Total For All Orders"}
@@ -8,45 +9,26 @@ class Admin::ReportsController < Admin::BaseController
     @reports = AVAILABLE_REPORTS
   end
   
-  def sales_total
-    c = build_conditions
-    @item_total = Order.sum(:item_total, :conditions => c)
-    @ship_total = Order.sum(:ship_amount, :conditions => c)
-    @tax_total = Order.sum(:tax_amount, :conditions => c)
-    @sales_total = Order.sum(:total, :conditions => c)
+  def sales_total    
+    scope = Order.scoped({})
+    scope = scope.between(@filter.start, (@filter.stop.blank? ? @default_stop : @filter.stop.to_date + 1 )) unless @filter.start.blank?
+
+    @orders = scope.find(:all, :order => 'orders.created_at DESC', :page => {:size => Spree::Config[:orders_per_page], :current =>params[:p], :first => 1})    
+
+    @item_total = scope.sum(:item_total)
+    @ship_total = scope.sum(:ship_amount)
+    @tax_total = scope.sum(:tax_amount)
+    @sales_total = scope.sum(:total)
   end
 
   private 
-  
-      def date_conditions
-        return nil unless params[:search]
-        
-        @search = SearchCriteria.new(params[:search])
-        
-        unless @search.valid?
-          flash.now[:error] = "Invalid search criteria.  Please check your results."
-          return nil
-        end
+  def load_data
+    @filter = params.has_key?(:filter) ? OrderFilter.new(params[:filter]) : OrderFilter.new
+    unless @filter.valid?
+      flash.now[:error] = t('invalid_search')
+      return nil
+    end
+    @default_stop = (Date.today + 1).to_s(:db)    
+  end  
 
-        p = {}
-        c = []
-        if not @search.start.blank?
-          c << "(orders.created_at between :start and :stop)"
-          p.merge! :start => @search.start.to_date
-          @search.stop = Date.today + 1 if @search.stop.blank?
-          p.merge! :stop => @search.stop.to_date + 1.day 
-        end
-        
-        return nil if c.empty? 
-        
-        {:conditions => c, :parameters => p}
-      end
-  
-      def build_conditions
-        dc = date_conditions
-        return nil if dc.nil?
-        c = dc[:conditions]
-        p = dc[:parameters]
-        [(c.to_sentence :skip_last_comma=>true).gsub(",", " and "), p]
-      end
 end
