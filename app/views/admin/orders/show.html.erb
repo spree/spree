@@ -5,31 +5,42 @@
 <% end %>
 <%= render :partial => 'shared/order_tabs', :locals => {:current => "Order Details"} %>
 <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
+        
+<table width="100%">
+  <tr>
+    <td width="50%" valign="top">
+      <% if @order.bill_address %>
+        <table class="admin-table">
+          <tr>
+            <th>
+              <%= link_to "Bill Address", edit_admin_order_creditcard_payment_url(@order, @order.creditcard_payments.last) %>
+            </th>
+          </tr>
+          <tr>
+            <td>
+              <%= render :partial => 'shared/address', :locals => {:address => @order.bill_address} %>      
+            </td>
+          </tr>
+        </table>
+      <% end %>
+    </td>
+    <td width="50%" valign="top">
+      <% if @order.ship_address %>
+        <table class="admin-table">
+          <tr>
+            <th><%= link_to "Ship Address", edit_admin_order_shipment_url(@order, @order.shipments.last) %></th>
+          </tr>
+          <tr>
+            <td>
+              <%= render :partial => 'shared/address', :locals => {:address => @order.ship_address} %>      
+            </td>
+          </tr>
+        </table>
+      <% end %>
+    </td>
+  </tr>
+</table>
 
-<% if @order.bill_address %>
-  <table class="order-address">
-    <tr>
-      <th><%= t("bill_address") %></th>
-    </tr>
-    <tr>
-      <td>
-        <%= render :partial => 'shared/address', :locals => {:address => @order.bill_address} %>      
-      </td>
-    </tr>
-  </table>
-<% end %>
-<% if @order.ship_address %>
-  <table class="order-address">
-    <tr>
-      <th><%= t("ship_address") %></th>
-    </tr>
-    <tr>
-      <td>
-        <%= render :partial => 'shared/address', :locals => {:address => @order.ship_address} %>      
-      </td>
-    </tr>
-  </table>
-<% end %>
 <% if @order.user %>
   <table class="order-address">
     <tr>
