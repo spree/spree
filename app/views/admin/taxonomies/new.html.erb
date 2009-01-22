@@ -1,6 +1,6 @@
 <h1><%= t("new_taxonomy") %></h1>
 
-<% form_for(:taxon, :url => object_url) do |f| %>
+<% form_for(:taxon, :url => collection_url) do |f| %>
 	<%= render :partial => "form", :locals => { :f => f } %>
 	</table>
 	<p>
