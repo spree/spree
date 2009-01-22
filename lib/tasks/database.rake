@@ -22,7 +22,7 @@ namespace :db do
   
   desc "Bootstrap your database for Spree."
   task :bootstrap  => :environment do
-    #return unless %w[development test].include? RAILS_ENV    
+    raise "Cannot bootstrap in production mode (for saftey reasons.)" unless %w[development test].include? RAILS_ENV    
     
     require 'highline/import'
     if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
