@@ -201,6 +201,7 @@ pl:
   created_successfully:
   credit_card: "Karta kredytowa"
   credit_card_cayment: "Credit Card Payment"
+  credit_card_payment: "Credit Card Payment"
   creditcard_payment: "Płatność kartą kredytową"
   current: Biężący
   customer: Klient

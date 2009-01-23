@@ -201,6 +201,7 @@ pt-BR:
   created_successfully:
   credit_card: "Cartão de Crédito"
   credit_card_cayment: "Credit Card Payment"
+  credit_card_payment: "Credit Card Payment"
   creditcard_payment: "Creditcard Payment"
   current: Atual
   customer: Cliente

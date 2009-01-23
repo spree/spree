@@ -1,6 +1,6 @@
 <%= render :partial => 'shared/order_tabs', :locals => {:current => "Payments"} %>
 <br/>
-<h2><%= t("credit_card_cayment")%></h2>
+<h2><%= t("credit_card_payment")%></h2>
 <br/>
 <b><%= t("credit_card")%>: </b> &nbsp; #<%= @creditcard_payment.creditcard.display_number %><br/>
 <b><%= t("type")%> : </b> &nbsp; <%= @creditcard_payment.creditcard.cc_type.titleize %><br/>
