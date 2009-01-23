@@ -1,17 +1,34 @@
 namespace :spree do
-  namespace :translation do
+  namespace :i18n do
+    #Define locales root
+    language_root = "#{SPREE_ROOT}/config/locales/"
+
     task :sync => :environment do
-      language_root = "#{SPREE_ROOT}/config/locales/"
-      (dummy_comments, words) = read_file("#{language_root}en-US.yml", 'en-US')
-      Dir["#{SPREE_ROOT}/config/locales/*.yml"].each do |filename|
+      words = get_translation_keys(language_root)
+      Dir["#{language_root}*.yml"].each do |filename|
         next if filename.match('_rails')
         basename = File.basename(filename, '.yml')
         (comments, other) = read_file(filename, basename)
-        words.each { |k,v| other[k] ||= '' }                     #Initializing hash variable as empty if it does not exist
+        words.each { |k,v| other[k] ||= words[k] }                     #Initializing hash variable as empty if it does not exist
         write_file(filename, basename, comments, other)
       end
     end
+
+    task :new => :environment do
+      if !ENV['LOCALE'] || ENV['LOCALE'] == ''
+        print "You must provide a valid LOCALE value, for example:\nrake spree:i18:new LOCALE=pt-PT\n"
+        exit
+      end
+      write_file("#{language_root}/#{ENV['LOCALE']}.yml", "#{ENV['LOCALE']}", '---', get_translation_keys(language_root))
+      print "Also, download the rails translation from: http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale\n"
+    end
   end
+end
+
+#Retrieve US word set
+def get_translation_keys(language_root)
+  (dummy_comments, words) = read_file("#{language_root}en-US.yml", 'en-US')
+  words
 end
 
 #Retrieve comments, translation data in hash form
@@ -49,4 +66,4 @@ def write_file(filename,basename,comments,words)
       log.puts(keys[keys.size-1]+':'+v+"\n")
     end
   end
-end 
+end
