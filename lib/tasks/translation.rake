@@ -9,7 +9,7 @@ namespace :spree do
         next if filename.match('_rails')
         basename = File.basename(filename, '.yml')
         (comments, other) = read_file(filename, basename)
-        words.each { |k,v| other[k] ||= '' }                     #Initializing hash variable as empty if it does not exist
+        words.each { |k,v| other[k] ||= words[k] }                     #Initializing hash variable as empty if it does not exist
         write_file(filename, basename, comments, other)
       end
     end
@@ -19,10 +19,7 @@ namespace :spree do
         print "You must provide a valid LOCALE value, for example:\nrake spree:i18:new LOCALE=pt-PT\n"
         exit
       end
-      words = get_translation_keys(language_root)
-      other = Hash.new
-      words.each { |k,v| other[k] = '' }
-      write_file("#{language_root}/#{ENV['LOCALE']}.yml", "#{ENV['LOCALE']}", '---', other)
+      write_file("#{language_root}/#{ENV['LOCALE']}.yml", "#{ENV['LOCALE']}", '---', get_translation_keys(language_root))
       print "Also, download the rails translation from: http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale\n"
     end
   end
