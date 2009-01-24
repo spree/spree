@@ -38,6 +38,8 @@ class Order < ActiveRecord::Base
     after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
     after_transition :to => 'resumed', :do => :restore_state 
+
+    before_transition :to => 'paid', :do => :record_payment_event
     
     event :next do
       transition :to => 'creditcard', :from => 'in_progress'
@@ -46,9 +48,6 @@ class Order < ActiveRecord::Base
     event :edit do
       transition :to => 'in_progress', :from => %w{creditcard in_progress}
     end
-    #event :capture do
-    #  transition :to => 'captured', :from => 'authorized'
-    #end
     event :cancel do
       transition :to => 'canceled', :if => :allow_cancel?
     end
@@ -57,7 +56,15 @@ class Order < ActiveRecord::Base
     end
     event :resume do 
       transition :to => 'resumed', :from => 'canceled', :if => :allow_resume?
+    end    
+    event :pay do
+      transition :to => 'paid', :if => :allow_pay?
     end
+  end
+
+  def record_payment_event
+    # normally these types of transitions are recorded by controller
+    state_events.create(:name => I18n.t(:pay), :previous_state => state)
   end
   
   def restore_state
@@ -74,6 +81,10 @@ class Order < ActiveRecord::Base
     # we shouldn't allow resume for legacy orders b/c we lack the information necessary to restore to a previous state
     return false if state_events.empty? || state_events.last.previous_state.nil?
     true
+  end
+  
+  def allow_pay?
+    checkout_complete
   end
   
   def add_variant(variant, quantity=1)
@@ -108,6 +119,10 @@ class Order < ActiveRecord::Base
       record = Order.find(:first, :conditions => ["number = ?", random])
     end
     self.number = random
+  end          
+  
+  def payment_total
+    payments.inject(0) {|sum, payment| sum + payment.amount}
   end
 
   # total of line items (no tax or shipping inc.)
@@ -152,6 +167,5 @@ class Order < ActiveRecord::Base
     self.line_items.each do |line_item|
       LineItem.destroy(line_item.id) if line_item.quantity == 0
     end
-  end  
-
+  end      
 end

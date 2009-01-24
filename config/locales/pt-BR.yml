@@ -162,6 +162,7 @@ pt-BR:
   are_you_sure_delete: "Tem certeza que quer apagar este registro?"
   are_you_sure_delete_image: "Tem certeza que quer apagar esta imagem?"
   are_you_sure_option_type: "Tem certeza que quer apagar este tipo de opção?"
+  are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
   authorization_failure: "Authorization Failure"  
@@ -200,6 +201,7 @@ pt-BR:
   create_a_new_account: "Crie uma nova conta"
   created_successfully:
   credit_card: "Cartão de Crédito"
+  credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_cayment: "Credit Card Payment"
   credit_card_payment: "Credit Card Payment"
   creditcard_payment: "Creditcard Payment"
@@ -275,6 +277,7 @@ pt-BR:
   my_account: "Minha Conta"
   my_orders: "My Orders"
   name: Nome
+  new: New
   new_category: "Nova categoria"
   new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
@@ -319,6 +322,7 @@ pt-BR:
   orders: Pedidos
   out_of_stock: "Out of Stock"
   overview: Resumo
+  paid: Paid
   parent_category: "Categoria Pai"
   password: Senha
   path: Path
@@ -349,6 +353,7 @@ pt-BR:
   reports: Relatórios
   resend: Reenviar
   response_code: "Código de Resposta"
+  resume: "resume"
   resumed: Resumed
   return: return
   returned: Returned
@@ -406,6 +411,7 @@ pt-BR:
   tree: Tree
   try_again: "Tente novamente"
   type: Tipo
+  unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Atualizar
   updated_successfully:
   use_different_shipping_address: "Use um Endereço de Entrega Diferente"

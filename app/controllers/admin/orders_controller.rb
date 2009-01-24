@@ -15,7 +15,7 @@ class Admin::OrdersController < Admin::BaseController
       @order.state_events.create(:name => t(event), :user => current_user, :previous_state => @order.state)
       @order.send("#{event}!")
     end
-    flash[:notice] = t('Order Updated')
+    flash[:notice] = t('order_updated')
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
   ensure

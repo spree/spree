@@ -15,11 +15,5 @@ class PaymentGatewayExtension < Spree::Extension
       # add gateway methods to the creditcard so we can authorize, capture, etc.
       include Spree::PaymentGateway
     end
-    Order.class_eval do 
-      #fsm = Order.state_machines['state']      
-      #fsm.after_transition(:to => 'captured', :do => lambda {|order| order.creditcard_payment.capture})
-      #fsm.after_transition(:to => 'canceled', :do => lambda {|order| order.creditcard_payment.void})
-      #fsm.after_transition(:to => 'returned', :do => lambda {|order| order.creditcard_payment.void})
-    end
   end
 end

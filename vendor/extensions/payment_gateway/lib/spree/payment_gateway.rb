@@ -16,14 +16,12 @@ module Spree
       )
     end
 
-    def capture
-=begin
-      authorization = find_authorization
+    def capture(authorization)
       gw = payment_gateway
-      response = gw.capture((order.total * 100).to_i, authorization.response_code, minimal_gateway_options)
-      gateway_error(response) unless response.success?
-      self.creditcard_txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
-=end      
+      response = gw.capture((authorization.amount * 100).to_i, authorization.response_code, minimal_gateway_options)
+      gateway_error(response) unless response.success?          
+      creditcard_payment = authorization.creditcard_payment
+      creditcard_payment.creditcard_txns.create(:amount => authorization.amount, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
     end
 
     def purchase(amount)

@@ -1,7 +1,7 @@
---- 
-en-GB: 
+---
+pt-PT: 
   abbreviation: Abbreviation
-  access_denied: "Access Denied" 
+  access_denied: "Access Denied"
   account: Account
   action: Action
   actions: 
@@ -149,7 +149,7 @@ en-GB:
   add_option_value: "Add Option Value"
   add_product_properties: "Add Product Properties"
   add_state: "Add State"
-  add_to_cart: "Add To Basket"
+  add_to_cart: "Add To Cart"
   add_zone: "Add Zone"
   address: Address
   address_information: "Address Information"
@@ -165,7 +165,7 @@ en-GB:
   are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
-  authorization_failure: "Authorization Failure"  
+  authorization_failure: "Authorization Failure"
   authorized: Authorized
   available_on: "Available On"
   available_taxons: "Available Taxons"
@@ -178,7 +178,7 @@ en-GB:
   capture: capture
   card_code: "Card Code"
   card_number: "Card Number"
-  cart: Basket
+  cart: Cart
   categories: Categories
   category: Category
   change: Change
@@ -199,7 +199,7 @@ en-GB:
   country_based: "Country Based"
   create: Create
   create_a_new_account: "Create a new account"
-  created_successfully:
+  created_successfully: "Created Successfully"
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_cayment: "Credit Card Payment"
@@ -223,12 +223,12 @@ en-GB:
   editing_prototype: "Editing Prototype"
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
-  editing_user: "Editing User"
-  editing_zone:
+  editing_user: "Editing User"   
+  editing_zone: "Editing Zone"
   email: Email
   email_address: "Email Address"
   email_server_settings_description: "Set email server settings."
-  empty_cart: "Empty Basket"
+  empty_cart: "Empty Cart"
   error: error
   event: Event
   existing_customer: "Existing Customer"
@@ -249,7 +249,7 @@ en-GB:
   image: Image
   images: Images
   in_progress: "In Progress"
-  invalid_search:
+  invalid_search: "Invalid search criteria."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
@@ -270,8 +270,8 @@ en-GB:
   logged_in_as: "Logged in as"
   login_name: Login
   logout: Logout
-  mail_delivery_enabled:
-  mail_delivery_not_enabled:
+  mail_delivery_enabled: "Mail delivery is enabled"
+  mail_delivery_not_enabled: "Mail delivery is not enabled"
   mail_server_settings: "Mail Server Settings"
   master_price: "Master Price"
   my_account: "My Account"
@@ -287,7 +287,7 @@ en-GB:
   new_product: "New Product"
   new_property: "New Property"
   new_prototype: "New Prototype"
-  new_shipment:
+  new_shipment: "New Shipment"
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
@@ -296,7 +296,7 @@ en-GB:
   new_variant: "New Variant"
   new_zone: "New Zone"
   next: Next
-  no_items_in_cart: "Basket is empty."
+  no_items_in_cart: ""
   no_match_found: "No Match Found"
   none: None
   none_available: "None Available"
@@ -374,7 +374,7 @@ en-GB:
   shipping_error: "Shipping Error"
   shipping_method: "Shipping Method"
   shipping_total: "Shipping Total"
-  shopping_cart: "Shopping Basket"
+  shopping_cart: "Shopping Cart"
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
   show_out_of_stock_products: "Show out-of-stock products"
@@ -404,7 +404,7 @@ en-GB:
   taxonomies_setting_description: "Create and manage taxonomies"
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
-  this_file_language: "English (UK)"
+  this_file_language: "English (US)"
   time: Time
   total: Total
   transaction: Transaction
@@ -413,7 +413,7 @@ en-GB:
   type: Type
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Update
-  updated_successfully:
+  updated_successfully: "Updated Successfully"  
   use_different_shipping_address: "Use Different Shipping Address"
   user: User
   user_details: "User Details"
@@ -428,9 +428,9 @@ en-GB:
   what_is_this: "What's This?"
   whats_this: "What's this"
   width: Width
-  your_cart_is_empty: "Your basket is empty"
+  your_cart_is_empty: "Your cart is empty"
   zip: Zip
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
-  zones: Zones
+  zones: Zones  

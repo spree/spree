@@ -45,7 +45,21 @@ class Admin::CreditcardPaymentsController < Admin::BaseController
   def country_changed
     render :partial => "shared/states", :locals => {:presenter_type => "payment"}
   end
-    
+         
+  def capture       
+    if @creditcard_payment.can_capture?      
+      creditcard = @creditcard_payment.creditcard
+      authorization = @creditcard_payment.find_authorization
+      creditcard.capture(authorization)
+      @creditcard_payment.amount = authorization.amount
+      @creditcard_payment.save
+      flash[:notice] = t("credit_card_capture_complete")
+    else  
+      flash[:error] = t("unable_to_capture_credit_card")    
+    end 
+    redirect_to edit_object_url
+  end  
+  
   private
   def load_data 
     load_object

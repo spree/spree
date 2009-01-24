@@ -32,5 +32,5 @@
 	</div>	
 
 <% end %>
-
-<%= link_to t("list"), admin_order_payments_url(@order) %>
+<%= link_to t("capture").titleize, capture_admin_order_creditcard_payment_url(@order, @creditcard_payment), :confirm => t('are_you_sure_you_want_to_capture') if @creditcard_payment.can_capture?  %> &nbsp;
+<%= link_to t("list"), collection_url %>

@@ -162,6 +162,7 @@ en-US:
   are_you_sure_delete: "Are you sure you want to delete this record?"
   are_you_sure_delete_image: "Are you sure you want to delete this image?"
   are_you_sure_option_type: "Are you sure you want to delete this option type?"
+  are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
   authorization_failure: "Authorization Failure"
@@ -200,6 +201,7 @@ en-US:
   create_a_new_account: "Create a new account"
   created_successfully: "Created Successfully"
   credit_card: "Credit Card"
+  credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
   current: Current
   customer: Customer
@@ -272,7 +274,8 @@ en-US:
   master_price: "Master Price"
   my_account: "My Account"
   my_orders: "My Orders"
-  name: Name
+  name: Name                    
+  new: New
   new_category: "New category"
   new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
@@ -317,9 +320,10 @@ en-US:
   orders: Orders
   out_of_stock: "Out of Stock"
   overview: Overview
+  paid: Paid
   parent_category: "Parent Category"
   password: Password
-  path: Path
+  path: Path      
   pay: pay
   payment: Payment
   payment_gateway: "Payment Gateway"
@@ -346,7 +350,8 @@ en-US:
   remove: Remove
   reports: Reports
   resend: Resend
-  response_code: "Response Code"
+  response_code: "Response Code"  
+  resume: "resume"
   resumed: Resumed
   return: return
   returned: Returned
@@ -404,6 +409,7 @@ en-US:
   tree: Tree
   try_again: "Try Again"
   type: Type
+  unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Update
   updated_successfully: "Updated Successfully"  
   use_different_shipping_address: "Use Different Shipping Address"
@@ -425,4 +431,4 @@ en-US:
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
-  zones: Zones  
+  zones: Zones                                                 
