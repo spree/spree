@@ -36,9 +36,6 @@ class Admin::ShipmentsController < Admin::BaseController
     unless @shipment_presenter.valid? and @shipment.save
       render :action => "edit" and return
     end    
-    if params['mark_shipped']
-      @order.ship!
-    end 
     flash[:notice] = t('updated_successfully')
     redirect_to edit_object_url
   end
