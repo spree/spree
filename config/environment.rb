@@ -27,7 +27,7 @@ Spree::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
 
   config.gem "highline", :version => '1.4.0'
-  config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.0'
+  config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.1'
   config.gem "tlsmail"
   config.gem 'active_presenter', :version => '0.0.4'
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
