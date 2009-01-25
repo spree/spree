@@ -1,6 +1,5 @@
 # Uncomment this if you reference any of your controllers in activate
 require_dependency 'application'
-require 'active_merchant'
 
 class PaymentGatewayExtension < Spree::Extension
   version "1.0"
