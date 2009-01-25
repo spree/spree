@@ -34,7 +34,7 @@ class Order < ActiveRecord::Base
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
-    after_transition :to => 'charged', :do => :complete_order
+    after_transition :to => 'new', :do => :complete_order
     after_transition :to => 'canceled', :do => :cancel_order
     after_transition :to => 'returned', :do => :restock_inventory
     after_transition :to => 'resumed', :do => :restore_state 
@@ -43,7 +43,7 @@ class Order < ActiveRecord::Base
     
     event :next do
       transition :to => 'creditcard', :from => 'in_progress'
-      transition :to => 'charged', :from => 'creditcard'
+      transition :to => 'new', :from => 'creditcard'
     end
     event :edit do
       transition :to => 'in_progress', :from => %w{creditcard in_progress}
