@@ -22,6 +22,6 @@ class OrderMailer < ActionMailer::Base
   
   private
   def order_bcc
-    [Spree::Config[:order_bcc], Spree::Config[:mail_bcc]].uniq
+    [Spree::Config[:order_bcc], Spree::Config[:mail_bcc]].delete_if { |email| email.blank? }.uniq
   end
 end
