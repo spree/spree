@@ -27,7 +27,7 @@ module EnumerableConstant
     end
     
     def title_translated
-      Globalite.localize("order_status_#{self.name.downcase}".to_sym)
+      t("order_status_#{self.name.downcase}")
     end
     
     def title

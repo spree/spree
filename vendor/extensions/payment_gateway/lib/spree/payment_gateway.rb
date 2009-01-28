@@ -52,7 +52,7 @@ module Spree
     
     def gateway_error(response)
       text = response.params['message'] || response.params['response_reason_text']      
-      msg = "#{Globalite.loc(:gateway_error)} ... #{text}"
+      msg = "#{t('gateway_error')} ... #{text}"
       logger.error(msg)
       raise Spree::GatewayError.new(msg)
     end
