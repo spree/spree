@@ -31,9 +31,9 @@ describe Order do
       before(:each) do
         @order.state = 'creditcard'
       end
-      it "should transition to authorized" do
+      it "should transition to new" do
         @order.next
-        @order.state.should == "charged"
+        @order.state.should == "new"
       end
       it "should mark inventory as sold" do
         @inventory_unit.should_receive(:sell!)
