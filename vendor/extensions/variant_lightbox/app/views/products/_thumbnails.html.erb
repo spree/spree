@@ -1,0 +1,23 @@
+<% if product.images.size > 1 %>
+<% content_for :head do -%>
+<%= javascript_include_tag 'jquery/jquery.js' %>
+<%= javascript_include_tag 'jquery/jquery.lightbox.js' %>
+<%= stylesheet_link_tag 'lightbox.css' %>
+<% end -%>
+<script type="text/javascript">
+$(function() {
+	$('#gallery a').lightBox();
+});
+</script>
+<div id="gallery">
+	<ul>
+		<% product.images.each do |i| -%>
+		<li>
+			<a href="/assets/products/<%= i.id %>/product/<%= i.attachment_file_name %>" title="<%= product.name %>">
+				<img src="/assets/products/<%= i.id %>/product/<%= i.attachment_file_name %>" height="50" width="50" />
+			</a>
+		</li>
+		<% end -%>
+	</ul>
+</div>
+<% end %>

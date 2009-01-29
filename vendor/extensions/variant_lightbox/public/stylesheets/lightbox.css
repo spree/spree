@@ -1,0 +1,23 @@
+#jquery-overlay { position: absolute; top: 0; left: 0; z-index: 90; width: 100%; height: 500px; }
+#jquery-lightbox { position: absolute; top: 0; left: 0; width: 100%; z-index: 100; text-align: center; line-height: 0; }
+#jquery-lightbox a img { border: none; }
+#lightbox-container-image-box { position: relative; background-color: #fff; width: 250px; height: 250px; margin: 0 auto; }
+#lightbox-container-image { padding: 10px; }
+#lightbox-loading { position: absolute; top: 40%; left: 0%; height: 25%; width: 100%; text-align: center; line-height: 0; }
+#lightbox-nav { position: absolute; top: 0; left: 0; height: 100%; width: 100%; z-index: 10; }
+#lightbox-container-image-box > #lightbox-nav { left: 0; }
+#lightbox-nav a { outline: none;}
+#lightbox-nav-btnPrev, #lightbox-nav-btnNext { width: 49%; height: 100%; zoom: 1; display: block; }
+#lightbox-nav-btnPrev { left: 0; float: left; }
+#lightbox-nav-btnNext { right: 0; float: right; }
+#lightbox-container-image-data-box { font: 10px Verdana, Helvetica, sans-serif; background-color: #fff; margin: 0 auto; line-height: 1.4em; overflow: auto; width: 100%; padding: 0 10px 0; }
+#lightbox-container-image-data { padding: 0 10px; color: #666; }
+#lightbox-container-image-data #lightbox-image-details { width: 70%; float: left; text-align: left; }
+#lightbox-image-details-caption { font-weight: bold; }
+#lightbox-image-details-currentNumber { display: block; clear: left; padding-bottom: 1.0em; }
+#lightbox-secNav-btnClose { width: 66px; float: right; padding-bottom: 0.7em; }
+div#gallery ul { list-style: none; }
+div#gallery ul li { display: inline; }
+div#gallery ul img { border: 2px solid #FFFFFF; }
+div#gallery ul a:hover img { border: 2px solid #3e3e3e; color: #3e3d3e; }
+div#gallery ul a:hover { color: #FFFFFF; }
