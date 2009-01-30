@@ -41,6 +41,7 @@ rdoc_options: []
 
 require_paths: 
 - bin
+- bin
 - lib
 required_ruby_version: !ruby/object:Gem::Requirement 
   requirements: 
@@ -57,7 +58,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: active_presenter
-rubygems_version: 1.0.1
+rubygems_version: 1.2.0
 signing_key: 
 specification_version: 2
 summary: ActivePresenter is the presenter library you already know! (...if you know ActiveRecord)
