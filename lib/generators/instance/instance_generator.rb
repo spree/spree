@@ -44,7 +44,7 @@ class InstanceGenerator < Rails::Generator::Base
     md5 << @app_name
  
     # Do our best to generate a secure secret key for CookieStore
-    secret = Rails::SecretKeyGenerator.new(@app_name).generate_secret
+    secret = ActiveSupport::SecureRandom.hex(64)
         
     # The absolute location of the Spree files
     root = File.expand_path(SPREE_ROOT) 
