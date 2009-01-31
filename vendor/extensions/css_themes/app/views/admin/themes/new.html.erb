@@ -1,0 +1,10 @@
+<h1>New Theme</h1>
+
+<%= error_messages_for :theme %>
+
+<% form_for(:theme, :url => collection_url) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%= submit_tag t('create') %>
+  </p>
+<% end %>
