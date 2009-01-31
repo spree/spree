@@ -1,3 +1,61 @@
+== 0.6.0
+
+* #	129 - Public extension assets don't respect order when mirrored.
+* #	131 - Core specs keeps being overriden by extension specs.
+* #	132 - Add support for use routes.rb files inside extensions instead of using class_eval.
+* #	133 - Make extension gems be installed by the same gem tasks that installs the system gems.
+* #	136 - SEO Friendly URL's for Taxonomy
+* #	142 - Spree don't bootstrap from inside skeleton root dir.
+* #	145 - Remove legacy FLAT_SHIPPING_RATE variable
+* #	146 - All actions in the admin order list view should be confirmed
+* #	147 - Params[:id] in OrdersController used for both product id and order id
+* #	149 - Bootstrap task should load sample data from SPREE_ROOT instead of RAILS_ROOT
+* #	150 - Allow users to configure SSL settings for all modes.
+* #	151 - Switch from attachment_fu to paperclip.
+* #	152 - Allow extensions to add tabs to products admin UI
+* #	153 - Allow adding fields to either products or variants
+* #	156 - New taxonomy is created with a nil permalink
+* #	158 - CamelCased migration name results in incorrect migration file name
+* #	159 - Make the number of products that are displayed on the admin interface configurable.
+* #	160 - Renaming a product causes exception
+* #	161 - Borders not appearing correctly on cart view (Safari Only)
+* #	162 - Paranoid deletion of products.
+* #	163 - Allow user to configure default tax category for products
+* #	164 - Validation error messages for tax category and shipping category.
+* #	165 - Child taxon permalinks can get out of date when parent updates
+* #	167 - Improper zone matching for tax calculations if shipping zones are also configured
+* #	168 - Product named_scopes should use table names
+* #	169 - Old taxons route needs to be repositioned
+* #	171 - Order status filter does not work with certain state names.
+* #	172 - Allow user to configure the logo in the admin user interface
+* #	173 - Allow shipping of backordered items.
+* #	174 - Allow orders to be searched by name
+* #	175 - Show default "No Image Available" placeholder when a product doesn't have any images.
+* #	176 - Order search results are not preserved when paging
+* #	177 - Searching on products and associated models can be slow
+* #	178 - Standardize security model
+* #	179 - Unauthorized users are redirected to login page.
+* #	180 - Allow usesr to view their order history
+* #	181 - My account should not show incomplete orders
+* #	184 - add variant
+* #	185 - When executing rake specs from inside an extension only its specs should be executed
+* #	186 - Add paging to admin/users
+* #	187 - Allow admin to assign user roles
+* #	189 - Text Bug
+* #	190 - Add "Resume" event for undoing canceled orders, etc.
+* #	191 - Country list on address form is firing ajax queries too frequently.
+* #	192 - shared/form_address partial hard codes the address_country_id field id
+* #	193 - Allow admin to search existing users
+* #	194 - Allow orders per page to be configurable
+* #	197 - Disable bootstrap task in production
+* #	203 - Create a rake task for keeping translation files in sync with en-US.yml
+* #	210 - Error when attemtping to create new taxonomy
+* #	216 - New rake task for creating new translations
+* #	221 - Rake tasks fail if activemerchant gem is not up to date
+* #	222 - New demo mode for use in the online demo
+* #	224 - BCC email is not sent if only one the bcc fields is configured
+* #	229 - generate_secret is deprecated
+
 == 0.5.0
 
 * #	55	-	Variants need shipping weights to do shipping calculations.
