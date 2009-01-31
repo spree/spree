@@ -202,9 +202,7 @@ de:
   created_successfully:
   credit_card: ""
   credit_card_capture_complete: "Credit Card Was Captured"
-  credit_card_cayment: "Credit Card Payment"
   credit_card_payment: "Credit Card Payment"
-  creditcard_payment: "Creditcard Payment"
   current: Stand
   customer: Kunde
   date: Datum
