@@ -72,10 +72,6 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   
-  # Install the default route as the lowest priority.
-  map.connect ':controller/:action/:id.:format'
-  map.connect ':controller/:action/:id'
-
   # a catchall route for "static" content
   map.connect '*path', :controller => 'content', :action => 'show'
 
