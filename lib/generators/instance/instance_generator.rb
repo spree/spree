@@ -44,7 +44,7 @@ class InstanceGenerator < Rails::Generator::Base
     md5 << @app_name
  
     # Do our best to generate a secure secret key for CookieStore
-    secret = Rails::SecretKeyGenerator.new(@app_name).generate_secret
+    secret = ActiveSupport::SecureRandom.hex(64)
         
     # The absolute location of the Spree files
     root = File.expand_path(SPREE_ROOT) 
@@ -67,6 +67,9 @@ class InstanceGenerator < Rails::Generator::Base
       
       files = base_dirs + text_files + environments + scripts + public_files + frozen_gems
       files.map! { |f| f = $1 if f =~ %r{^#{root}/(.+)$}; f }
+      
+      # hack to add specification (we're ignoring other hidden files)
+      files << "vendor/gems/active_presenter-0.0.4/.specification"
       files.sort!
       
       files.each do |file|
