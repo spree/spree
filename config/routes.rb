@@ -30,8 +30,8 @@ ActionController::Routing::Routes.draw do |map|
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
 
   map.resources :tax_categories
-  map.resources :countries, :has_many => :states, :actions => [:index]
-  map.resources :states, :actions => [:index]
+  map.resources :countries, :has_many => :states, :only => :index
+  map.resources :states, :only => :index
   map.resources :users
   map.resources :products, :member => {:change_image => :post}
   map.resources :addresses
