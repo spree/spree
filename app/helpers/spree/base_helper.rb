@@ -1,8 +1,32 @@
 module Spree::BaseHelper
 
-  def cart_link
+  def cart_path
     return new_order_url if session[:order_id].blank?
     return edit_order_url(Order.find_or_create_by_id(session[:order_id]))
+  end
+  
+  def cart_link(text=t('cart'))
+    path = cart_path
+    order = Order.find_or_create_by_id(session[:order_id]) unless session[:order_id].blank?
+    unless order.nil?
+      line_items_count = order.line_items.size
+      return "" if current_page?(path)
+      text = "#{text}: (#{line_items_count}) #{order_price(order)}"
+    end
+    link_to text, path
+  end
+  
+  def order_price(order, options={})
+    options.assert_valid_keys(:format_as_currency, :show_vat_text, :show_price_inc_vat)
+    options.reverse_merge! :format_as_currency => true, :show_vat_text => true
+    
+    # overwrite show_vat_text if show_price_inc_vat is false
+    options[:show_vat_text] = Spree::Tax::Config[:show_price_inc_vat]
+
+    amount =  order.item_total    
+    amount += Spree::VatCalculator.calculate_tax(order) if Spree::Tax::Config[:show_price_inc_vat]    
+
+    options.delete(:format_as_currency) ? number_to_currency(amount, options) : amount
   end
   
   def windowed_pagination_links(pagingEnum, options)
