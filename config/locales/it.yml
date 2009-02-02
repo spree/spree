@@ -209,7 +209,6 @@ it:
   credit_card_payment: "Credit Card Payment"
   current: stato
   customer: Cliente
-  date: Data
   date_range: "data (da/a)"
   delete: Cancellare
   depth: Depth
@@ -280,7 +279,6 @@ it:
   master_price: "Prezzo base"
   my_account: "Mio conto"
   my_orders: "My Orders"
-  name: Nome
   new: New
   new_category: "Nuova categoria"
   new_credit_card_payment: "New Credit Card Payment"
@@ -304,7 +302,6 @@ it:
   no_match_found: "No Match Found"
   none: ""
   none_available: "None Available"
-  number: Nummero
   on_hand: "In magazzino"
   operation: Operazione
   option_Values: "Valori opzioni"
@@ -396,6 +393,9 @@ it:
   smtp_password: SMTP Password
   smtp_port: SMTP Port          
   smtp_username: SMTP Username  
+  spree:
+    date: Data
+    time: Tempo                                               
   start: Di
   state: state
   state_based: "State Based"
@@ -421,7 +421,6 @@ it:
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: Italian
-  time: Tempo
   total: Totale
   transaction: Transazioni
   tree: Tree

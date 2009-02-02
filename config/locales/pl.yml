@@ -209,7 +209,6 @@ pl:
   credit_card_payment: "Credit Card Payment"
   current: Biężący
   customer: Klient
-  date: Data
   date_range: "Zakres czasu"
   delete: Skasuj
   depth: Depth
@@ -280,7 +279,6 @@ pl:
   master_price: "Cena główna"
   my_account: "Moje konto"
   my_orders: "My Orders"
-  name: Nazwa
   new: New
   new_category: "Nowa kategoria"
   new_credit_card_payment: "New Credit Card Payment"
@@ -304,7 +302,6 @@ pl:
   no_match_found: "No Match Found"
   none: Żaden
   none_available: Niedostępne
-  number: Numer
   on_hand: "On Hand"
   operation: Operacja
   option_Values: "Wartości Opcji"
@@ -396,6 +393,9 @@ pl:
   smtp_password: SMTP Password
   smtp_port: SMTP Port          
   smtp_username: SMTP Username  
+  spree:
+    date: Data
+    time: Czas                                               
   start: Start
   state: Stan
   state_based: "State Based"
@@ -421,7 +421,6 @@ pl:
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: Polski
-  time: Czas
   total: Łącznie
   transaction: Transakcja
   tree: Tree

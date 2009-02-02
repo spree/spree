@@ -209,7 +209,6 @@ en-US:
   credit_card_payment: "Credit Card Payment"
   current: Current
   customer: Customer
-  date: Date
   date_range: "Date Range"
   delete: Delete
   depth: Depth
@@ -280,7 +279,6 @@ en-US:
   master_price: "Master Price"
   my_account: "My Account"
   my_orders: "My Orders"
-  name: Name                    
   new: New
   new_category: "New category"
   new_credit_card_payment: "New Credit Card Payment"
@@ -304,7 +302,6 @@ en-US:
   no_match_found: "No Match Found"
   none: None
   none_available: "None Available"
-  number: Number
   on_hand: "On Hand"
   operation: Operation
   option_Values: "Option Values"
@@ -396,6 +393,9 @@ en-US:
   smtp_password: SMTP Password
   smtp_port: SMTP Port          
   smtp_username: SMTP Username  
+  spree:
+    date: Date
+    time: Time                                               
   start: Start
   state: State
   state_based: "State Based"
@@ -421,7 +421,6 @@ en-US:
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "English (US)"
-  time: Time
   total: Total
   transaction: Transaction
   tree: Tree
@@ -449,4 +448,4 @@ en-US:
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
-  zones: Zones                                                 
+  zones: Zones  

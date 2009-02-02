@@ -209,7 +209,6 @@ de:
   credit_card_payment: Kreditkartenzahlung
   current: Stand
   customer: Kunde
-  date: Datum
   date_range: "Datum (von/bis)"
   delete: Löschen
   depth: Tiefe
@@ -280,7 +279,6 @@ de:
   master_price: Grundpreis
   my_account: "Mein Konto"
   my_orders: "Meine Bestellungen"
-  name: Name
   new: Neu
   new_category: "Neue Kategorie"
   new_credit_card_payment: "Neue Kreditkartenzahlung"
@@ -304,7 +302,6 @@ de:
   no_match_found: "Kein Treffer"
   none: kein
   none_available: "keine verfügbar"
-  number: Nummer
   on_hand: "Auf Lager"
   operation: Operation
   option_Values: "Options Werte"
@@ -396,6 +393,9 @@ de:
   smtp_password: SMTP Password
   smtp_port: SMTP Port          
   smtp_username: SMTP Username  
+  spree:
+    date: Datum
+    time: Zeit                                               
   start: Von
   state: Bundesland
   state_based: "Basierend auf Bundesland"
@@ -421,7 +421,6 @@ de:
   taxons: Taxons
   thank_you_for_your_order: "Vielen Dank für ihre Bestellung"
   this_file_language: Deutsch
-  time: Zeit
   total: Gesamt
   transaction: Transaktion
   tree: Baum
