@@ -1,5 +1,6 @@
 --- 
 pt-PT: 
+  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abreviação
   access_denied: "Accesso Recusado"             
   account: Conta
@@ -156,6 +157,8 @@ pt-PT:
   adjustment: Acerto
   administration: Administração
   allow_backorders: "Allow Backorders"
+  allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
+  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
   amount: Valor
   are_you_sure: "Tem a certeza"
   are_you_sure_category: "Tem certeza que quer apagar esta categoria?"
@@ -195,6 +198,7 @@ pt-PT:
   confirm_password: "Confirmação da palavra passe"
   continue: Continue
   continue_shopping: "Continue a sua compra"
+  copy_all_mails_to: Copy All Mails To                                                                             
   country: País
   country_based: "Baseado em País"
   create: Criar
@@ -227,6 +231,7 @@ pt-PT:
   email_address: "Endereço de Email"
   email_server_settings_description: "Ajustar as configurações do servidor de email."
   empty_cart: "Esvaziar o Carro"
+  enable_mail_delivery: Enable Mail Delivery      
   error: erro
   event: Evento
   existing_customer: "Cliente Existente"
@@ -270,6 +275,7 @@ pt-PT:
   logout: Sair
   mail_delivery_enabled: "Envio de email permitido"
   mail_delivery_not_enabled: "Envio de email não permitido"
+  mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Configuração do Servidor de E-mail"
   master_price: "Preço Principal"
   my_account: "Minha Conta"
@@ -360,9 +366,15 @@ pt-PT:
   sales_total_for_all_orders: "Valor total de todas as encomendas"
   sales_totals: "Total de Vendas"
   sales_totals_description: "Total de Vendas para todos os Pedidos"
+  save_preferences: Save Preferences           
   search: Pesquisa
+  secure_connection_type: Secure Connection Type
   select: Selecionar
   select_from_prototype: "Selecionar a partir de Protótipo"
+  send_copy_of_all_mails_to: Send Copy of All Mails To
+  send_copy_of_orders_mails_to: Send Copy of Order Mails To         
+  send_mails_as: Send Mails As                    
+  send_order_mails_as: Send Order Mails As   
   ship: ship
   ship_address: "Endereço da Entrega"
   shipment: Distribuição
@@ -378,6 +390,12 @@ pt-PT:
   show_out_of_stock_products: "Mostra produtos sem stock"
   sign_up: Inscrever
   sku: SKU
+  smtp_authentication_type: SMTP Authentication Type         
+  smtp_domain: SMTP Domain
+  smtp_mail_host: SMTP Mail Host                       
+  smtp_password: SMTP Password
+  smtp_port: SMTP Port          
+  smtp_username: SMTP Username  
   start: Início
   state: Estado
   state_based: "Baseado em Estado"
