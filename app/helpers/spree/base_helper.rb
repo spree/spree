@@ -26,7 +26,7 @@ module Spree::BaseHelper
     amount =  order.item_total    
     amount += Spree::VatCalculator.calculate_tax(order) if Spree::Tax::Config[:show_price_inc_vat]    
 
-    options.delete(:format_as_currency) ? format_price(amount, options) : amount
+    options.delete(:format_as_currency) ? number_to_currency(amount, options) : amount
   end
   
   def windowed_pagination_links(pagingEnum, options)
