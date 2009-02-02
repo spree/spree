@@ -209,7 +209,6 @@ es:
   credit_card_payment: "Credit Card Payment"
   current: Actual
   customer: Cliente
-  date: Fecha
   date_range: "Rango de Fecha"
   delete: Eliminar
   depth: Depth
@@ -280,7 +279,6 @@ es:
   master_price: "Precio principal"
   my_account: "Mi cuenta"
   my_orders: "My Orders"
-  name: Nombre
   new: New
   new_category: "Nueva categoría"
   new_credit_card_payment: "New Credit Card Payment"
@@ -304,7 +302,6 @@ es:
   no_match_found: "No Match Found"
   none: ""
   none_available: "No hay nada que mostrar"
-  number: Número
   on_hand: "On Hand"
   operation: Operación
   option_Values: "Valores de opción"
@@ -396,6 +393,9 @@ es:
   smtp_password: SMTP Password
   smtp_port: SMTP Port          
   smtp_username: SMTP Username  
+  spree:
+    date: Fecha 
+    time: Hora                                               
   start: Inicio
   state: Comunidad
   state_based: "State Based"
@@ -421,7 +421,6 @@ es:
   taxons: Taxons
   thank_you_for_your_order: ""
   this_file_language: "Español (España)"
-  time: Hora
   total: Total
   transaction: Transacción
   tree: Tree

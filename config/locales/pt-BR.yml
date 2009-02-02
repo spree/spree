@@ -209,7 +209,6 @@ pt-BR:
   credit_card_payment: "Credit Card Payment"
   current: Atual
   customer: Cliente
-  date: Data
   date_range: "Período de Data"
   delete: Apagar
   depth: Depth
@@ -280,7 +279,6 @@ pt-BR:
   master_price: "Preço Principal"
   my_account: "Minha Conta"
   my_orders: "My Orders"
-  name: Nome
   new: New
   new_category: "Nova categoria"
   new_credit_card_payment: "New Credit Card Payment"
@@ -304,7 +302,6 @@ pt-BR:
   no_match_found: "No Match Found"
   none: Nenhum
   none_available: "Nenhum Disponível"
-  number: Número
   on_hand: "Na Mão"
   operation: Operação
   option_Values: "Opção de Valores"
@@ -396,6 +393,9 @@ pt-BR:
   smtp_password: SMTP Password
   smtp_port: SMTP Port          
   smtp_username: SMTP Username  
+  spree:
+    date: Data
+    time: Horário                                               
   start: Início
   state: Estado
   state_based: "State Based"
@@ -421,7 +421,6 @@ pt-BR:
   taxons: Taxons
   thank_you_for_your_order: "Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle."
   this_file_language: "Português (Brasil)"
-  time: Horário
   total: Total
   transaction: Transação
   tree: Tree
