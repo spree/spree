@@ -28,7 +28,7 @@
 	              Spree::Config[:secure_connection_type])) %>
   </p>
   <p>
-    <strong><%= t('smpt_authentication_type') %></strong>
+    <strong><%= t('smtp_authentication_type') %></strong>
     <%= select_tag('preferences[mail_auth_type]',
 	           options_for_select(AppConfiguration::MAIL_AUTH, 
                      Spree::Config[:mail_auth_type])) %>
