@@ -11,7 +11,7 @@ describe CountriesController do
   it "should include AuthenticatedSystem" do
     controller.class.included_modules.should include(AuthenticatedSystem)
   end
-
+=begin
   it "should not allow deletion of a county from a default rails route" do
     lambda {
       get :destroy, :id => countries(:united_states).id
@@ -19,5 +19,5 @@ describe CountriesController do
 
     Country.find_by_id(countries(:united_states).id).should_not be_nil
   end
-
+=end
 end
