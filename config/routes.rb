@@ -72,6 +72,9 @@ ActionController::Routing::Routes.draw do |map|
     end 
     admin.resources :reports, :only => [:index, :show], :collection => {:sales_total => :get}
   end
+      
+  map.connect ':controller/:action/:id.:format'
+  map.connect ':controller/:action/:id'  
   
   # a catchall route for "static" content
   map.connect '*path', :controller => 'content', :action => 'show'
