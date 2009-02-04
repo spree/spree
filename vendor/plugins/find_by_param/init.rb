@@ -1,4 +1,3 @@
-require 'iconv'
 require 'find_by_param'
 class ActiveRecord::Base
   class_inheritable_accessor :permalink_options

@@ -41,7 +41,7 @@ options for make_permalink:
 Issues
 =======
 
-* The database table must be created before you can use make_permalink
+* Alex Sharp (http://github.com/ajsharp) pointed to an issue with STI. Better call make_permalink in every child class and not only in the parent class..
 * write nice docs
 * write nicer tests
 

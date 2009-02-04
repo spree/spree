@@ -1,3 +1,9 @@
+begin
+  require "active_support/multibyte"
+rescue LoadError
+  require "rubygems"
+  require "active_support/multibyte"
+end
 module Railslove
   module Plugins
     module FindByParam
@@ -31,46 +37,49 @@ You can use for example User.find_by_param(params[:id], args) to find the user b
 <tt>:field</tt>:: The name of your permalink column. make_permalink first checks if there is a column. 
 <tt>:prepend_id</tt>:: [true|false] Do you want to prepend the ID to the permalink? for URLs like: posts/123-my-post-title - find_by_param uses the ID column to search.
 <tt>:escape</tt>:: [true|false] Do you want to escape the permalink value? (strip chars like öä?&?) - actually you must do that
-
+<tt>:validate</tt>:: [true|false] Don't validate the :with field - set this to false if you validate it on your own
 =end
         def make_permalink(options={})
           options[:field] ||= "permalink"
-          options[:param] = options.delete(:with)
+          options[:param] = options[:with] # :with => :login - but if we have a spcific permalink column we need to set :param to the name of that column
           options[:escape] ||= true
           options[:prepend_id] ||= false
-    
+          options[:param_size] ||= 50
+          options[:validate] ||= true
+          
+          # validate if there is something we can use as param. you can overwrite the validate_param_is_not_blank method to customize the validation and the error messge.
+          if !options[:prepend_id] || !options[:validate]
+            validate :validate_param_is_not_blank
+          end
+          
           if self.column_names.include?(options[:field].to_s)
-            options[:field_to_encode] = options[:param]
             options[:param] = options[:field]
-      
-            before_validation :save_permalink
-            validates_uniqueness_of options[:param]
-            validates_presence_of options[:param]
+            before_save :save_permalink
           end
     
           self.permalink_options = options
   	      extend Railslove::Plugins::FindByParam::SingletonMethods
         	include Railslove::Plugins::FindByParam::InstanceMethods
     	  rescue
-    	    puts "Database not available"
+    	    puts "[find_by_param error] database not available?"
         end
       end
       
       module SingletonMethods
   
-        # found somewhere on the web.... don't know where... but it's from a clever guy - (done some motifications)
-        def escape(str)
+        # borrowed from http://github.com/henrik/slugalizer ;) thanks henrik http://github.com/henrik
+        def escape(str, separator='-')
           return "" if str.blank? # hack if the str/attribute is nil/blank
-          s = Iconv.iconv('ascii//ignore//translit', 'utf-8', str.dup).to_s
-          returning str.dup.to_s do |s|
-            s.gsub!(/\ +/, '-') # spaces to dashes, preferred separator char everywhere
-            s.gsub!(/[^\w^-]+/, '') # kill non-word chars except -
-            s.strip!            # ohh la la
-            s.downcase!         # :D
-            s.gsub!(/([^ a-zA-Z0-9_-]+)/n,"") # and now kill every char not allowed.
-          end
+          re_separator = Regexp.escape(separator)
+          result = ActiveSupport::Multibyte::Handlers::UTF8Handler.normalize(str.to_s, :kd)
+          result.gsub!(/[^\x00-\x7F]+/, '') # Remove non-ASCII (e.g. diacritics).
+          result.gsub!(/[^a-z0-9\-_\+]+/i, separator) # Turn non-slug chars into the separator.
+          result.gsub!(/#{re_separator}{2,}/, separator) # No more than one of the separator in a row.
+          result.gsub!(/^#{re_separator}|#{re_separator}$/, '') # Remove leading/trailing separator.
+          result.downcase!
+          result
         end
-        
+          
 =begin rdoc
 
 Search for an object by the defined permalink column. Similar to find_by_login.
@@ -78,7 +87,12 @@ Returns nil if nothing is found
 Accepts an options hash as a second parameter which is passed on to the rails finder.
 =end
         def find_by_param(value,args={})
-          param = permalink_options[:prepend_id] ? "id" : permalink_options[:param]
+          if permalink_options[:prepend_id]
+            param = "id"
+            value = value.to_i
+          else
+            param = permalink_options[:param]
+          end
           self.send("find_by_#{param}".to_sym, value, args)
         end
 
@@ -106,13 +120,13 @@ Accepts an options hash as a second parameter which is passed on to the rails fi
           end
         end
         
-        private
+        protected
         
         def save_permalink
           return unless self.class.column_names.include?(permalink_options[:field].to_s)
           counter = 0
-          base_value = escape_and_truncate_for_permalink(read_attribute(permalink_options[:field_to_encode]))
-          permalink_value = "#{base_value}"
+          base_value = escape_and_truncate_for_permalink(read_attribute(permalink_options[:with]))
+          permalink_value = "#{base_value}".downcase
           
           conditions = ["#{self.class.table_name}.#{permalink_options[:field]} = ?", permalink_value]
           unless new_record?
@@ -127,14 +141,18 @@ Accepts an options hash as a second parameter which is passed on to the rails fi
           true
         end
         
-        def escape(value)
-          self.class.escape(value)
+        def validate_param_is_not_blank
+          errors.add(permalink_options[:with], "must have at least one non special character (a-z 0-9)") if self.escape( self.send(permalink_options[:with]) ).blank?
         end
         
-        #this escapes and truncates a value. default length is 100
+        def escape(value)
+          "#{value.respond_to?("parameterize") ? value.parameterize : self.class.escape(value)}"
+        end
+        
+        #this escapes and truncates a value.
         #used to escape and truncate permalink value
-        def escape_and_truncate_for_permalink(value, length=100)
-          self.class.escape(value)[0..length]
+        def escape_and_truncate_for_permalink(value)
+          self.escape(value)[0...self.permalink_options[:param_size]]
         end
       end
       
