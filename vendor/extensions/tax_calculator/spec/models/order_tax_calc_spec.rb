@@ -7,11 +7,11 @@ describe Order do
   end
 
   describe "with address state" do
-    before(:each) {@order.state = 'address'}
+    before(:each) {@order.state = 'shipment'}
     describe "next" do
       it "should transition to credit_card_payment state" do
         @order.next
-        @order.state.should == "creditcard_payment"
+        @order.state.should == "shipping_method"
       end
       it "should calculate the tax during the transition" do
         @order.should_receive(:calculate_tax)
