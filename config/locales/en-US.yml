@@ -278,7 +278,8 @@ en-US:
   mail_server_settings: "Mail Server Settings"
   master_price: "Master Price"
   my_account: "My Account"
-  my_orders: "My Orders"
+  my_orders: "My Orders"    
+  name: Name
   new: New
   new_category: "New category"
   new_credit_card_payment: "New Credit Card Payment"

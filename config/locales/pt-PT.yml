@@ -279,6 +279,7 @@ pt-PT:
   master_price: "Preço Principal"
   my_account: "Minha Conta"
   my_orders: "As Minhas Encomendas"
+  name: Name
   new: New
   new_category: "Nova categoria"
   new_credit_card_payment: "Novo Pagamento por Cartão de Credito"
