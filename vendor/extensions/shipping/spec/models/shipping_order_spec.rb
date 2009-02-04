@@ -79,26 +79,12 @@ describe Order do
         @order.state.should == "creditcard"
       end
     end
-    describe "when there is only one shipping method" do
-      before :each do   
+    describe "when there is more then one shipping method" do
+      it "next! should transition to 'shipping_method'" do
         @order.state = "shipment"
-        @shipping_method = ShippingMethod.new(:shipping_calculator => "MockCalculator")
-        @order.stub!(:shipping_methods).and_return([@shipping_method]) 
-      end
-      it "next! should transition to 'creditcard'" do
-        @order.next!
-        @order.state.should == "creditcard"
-      end
-      it "should automatically calculate the shipping cost using the single shipping method" do
-        @order.next!
-        @order.shipments.first.shipping_method.should == @shipping_method
-      end
-    end
-    describe "when there is only one shipping method" do
-      it "next! should transition to 'shipment'" do
         @order.stub!(:shipping_methods).and_return([ShippingMethod.new, ShippingMethod.new])
         @order.next!
-        @order.state.should == "shipment"
+        @order.state.should == "shipping_method"
       end
     end
   end
