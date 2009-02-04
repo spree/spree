@@ -1,10 +1,11 @@
 class Shipment < ActiveRecord::Base
-  before_create :generate_shipment_number
   belongs_to :order
   belongs_to :shipping_method
-
-  after_save :transition_order
   has_one :address, :as => :addressable, :dependent => :destroy
+
+  before_create :generate_shipment_number
+  after_save :recalculate_tax
+  after_save :transition_order
     
   def shipped?
     self.shipped_at
@@ -31,5 +32,10 @@ class Shipment < ActiveRecord::Base
     end
     # transition order to shipped if all shipments have been shipped
     order.ship!
+  end
+  
+  def recalculate_tax
+    return unless order && order.respond_to?(:calculate_tax)      
+    order.update_attribute("tax_amount", order.calculate_tax)
   end
 end
