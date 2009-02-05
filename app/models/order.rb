@@ -1,5 +1,5 @@
 class Order < ActiveRecord::Base  
-  before_create :generate_order_number
+#  before_create :generate_order_number
   before_save :update_line_items
   
   has_many :line_items, :dependent => :destroy, :attributes => true do
@@ -30,6 +30,13 @@ class Order < ActiveRecord::Base
   
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
   attr_protected :ship_amount, :tax_amount, :item_total, :total, :user, :number, :ip_address, :checkout_complete, :state
+  
+  def to_param  
+    self.number if self.number
+    generate_order_number unless self.number
+    self.number.parameterize.to_s.upcase
+  end
+  make_permalink :field => :number
   
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'in_progress' do    
@@ -112,12 +119,12 @@ class Order < ActiveRecord::Base
     end
   end
 
-  def generate_order_number
+  def generate_order_number                
     record = true
     while record
-      random = Array.new(9){rand(9)}.join
+      random = "R#{Array.new(9){rand(9)}.join}"                                        
       record = Order.find(:first, :conditions => ["number = ?", random])
-    end
+    end          
     self.number = random
   end          
   

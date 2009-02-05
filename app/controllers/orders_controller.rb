@@ -69,7 +69,7 @@ class OrdersController < Spree::BaseController
   def object
     if params[:id]
       begin
-        @order = Order.find params[:id]
+        @order = Order.find_by_param! params[:id]
       rescue ActiveRecord::RecordNotFound
         @order = find_order
       ensure
