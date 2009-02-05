@@ -27,7 +27,11 @@
     <td><%= number_to_currency @order.tax_amount -%></td>
   </tr>
   <tr>
-    <td colspan="3"><b><%= t('shipping') %>:</b> (<%= @order.shipment.shipping_method.name %>)</td>
+    <td colspan="3"><b><%= t('shipping') %>:</b> 
+      <% if @order.shipment %>
+        (<%= @order.shipment.shipping_method.name %>)
+      <% end %>
+    </td>
     <td><%= number_to_currency @order.ship_amount -%></td>
   </tr>
   <tr>
