@@ -1,5 +1,6 @@
 --- 
 de: 
+  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abkürzung
   access_denied: "Zugriff verweigert"        
   account: Konto
@@ -156,6 +157,8 @@ de:
   adjustment: Anpassung
   administration: Verwaltung
   allow_backorders: "Lieferrückstand erlauben"
+  allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
+  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
   amount: Summe
   are_you_sure: "Sind sie sicher"
   are_you_sure_category: "Sind sie sicher dass sie diese Kategorie löschen möchten?"
@@ -195,6 +198,7 @@ de:
   confirm_password: "Passwort Bestätigen"
   continue: Weitermachen
   continue_shopping: "Weiter Einkaufen"
+  copy_all_mails_to: Copy All Mails To                                                                             
   country: Land
   country_based: "Country Based"
   create: Erstellen
@@ -205,7 +209,6 @@ de:
   credit_card_payment: Kreditkartenzahlung
   current: Stand
   customer: Kunde
-  date: Datum
   date_range: "Datum (von/bis)"
   delete: Löschen
   depth: Tiefe
@@ -227,6 +230,7 @@ de:
   email_address: "E-Mail Adresse"
   email_server_settings_description: "Mailserver-Einstellungen ändern"
   empty_cart: "Warenkorb leeren"
+  enable_mail_delivery: Enable Mail Delivery      
   error: Fehler
   event: Ereignis
   existing_customer: "Vorhandener Kunde"
@@ -272,6 +276,7 @@ de:
   logout: Abmelden
   mail_delivery_enabled: "Mailversand aktiviert"
   mail_delivery_not_enabled: "Mailversand deaktiviert"
+  mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mailserver-Einstellungen"
   master_price: Grundpreis
   my_account: "Mein Konto"
@@ -300,7 +305,6 @@ de:
   no_match_found: "Kein Treffer"
   none: kein
   none_available: "keine verfügbar"
-  number: Nummer
   on_hand: "Auf Lager"
   operation: Operation
   option_Values: "Options Werte"
@@ -362,9 +366,15 @@ de:
   sales_total_for_all_orders: "Umsätze für alle Bestellungen"
   sales_totals: "Umsätze Gesamt"
   sales_totals_description: ""
+  save_preferences: Save Preferences           
   search: Suchen
+  secure_connection_type: Secure Connection Type
   select: Auswählen
   select_from_prototype: ""
+  send_copy_of_all_mails_to: Send Copy of All Mails To
+  send_copy_of_orders_mails_to: Send Copy of Order Mails To         
+  send_mails_as: Send Mails As                    
+  send_order_mails_as: Send Order Mails As   
   ship: ship
   ship_address: Lieferadresse
   shipment: Shipment
@@ -380,6 +390,15 @@ de:
   show_out_of_stock_products: "Zeige ausverkaufte Produkte"
   sign_up: "Anmelden"
   sku: Lagerhaltungsnummer
+  smtp_authentication_type: SMTP Authentication Type         
+  smtp_domain: SMTP Domain
+  smtp_mail_host: SMTP Mail Host                       
+  smtp_password: SMTP Password
+  smtp_port: SMTP Port          
+  smtp_username: SMTP Username  
+  spree:
+    date: Datum
+    time: Zeit                                               
   start: Von
   state: Bundesland
   state_based: "Basierend auf Bundesland"
@@ -405,7 +424,6 @@ de:
   taxons: Taxons
   thank_you_for_your_order: "Vielen Dank für ihre Bestellung"
   this_file_language: Deutsch
-  time: Zeit
   total: Gesamt
   transaction: Transaktion
   tree: Baum

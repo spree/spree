@@ -1,5 +1,5 @@
 class Admin::ShipmentsController < Admin::BaseController
-  before_filter :load_data
+  before_filter :load_data, :except => :country_changed
   before_filter :load_shipment_presenter, :only => [:create, :update]
 
   resource_controller
@@ -41,6 +41,8 @@ class Admin::ShipmentsController < Admin::BaseController
   end
 
   def country_changed
+    @selected_country_id = params[:shipment_presenter][:address_country_id].to_i if params.has_key?('shipment_presenter')
+    @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     render :partial => "shared/states", :locals => {:presenter_type => "shipment"}
   end
   

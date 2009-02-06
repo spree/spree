@@ -1,3 +1,9 @@
+NOTE
+====
+
+This is a customized version of the original `find_by_param` plugin.  Its been simplified to take advantage of new Rails 2.2 functionality and I've also stripped out some stuff that I really didn't need.  We're using this customized version in the [Spree](http://spreehq.org) commerce platform.
+
+
 FindByParam
 ===========
 
@@ -41,7 +47,7 @@ options for make_permalink:
 Issues
 =======
 
-* The database table must be created before you can use make_permalink
+* Alex Sharp (http://github.com/ajsharp) pointed to an issue with STI. Better call make_permalink in every child class and not only in the parent class..
 * write nice docs
 * write nicer tests
 

@@ -2,7 +2,6 @@ require 'test/unit'
 require 'rubygems'
 require 'active_record'
 require 'active_support'
-require 'iconv'
 require 'find_by_param'
 class ActiveRecord::Base
   class_inheritable_accessor :permalink_options

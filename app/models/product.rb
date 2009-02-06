@@ -15,8 +15,8 @@ class Product < ActiveRecord::Base
   validates_presence_of :name
   validates_presence_of :master_price
   validates_presence_of :description
-
-  make_permalink :with => :name, :field => :permalink
+  
+  make_permalink
 
   alias :options :product_option_types
 
@@ -27,7 +27,11 @@ class Product < ActiveRecord::Base
   named_scope :by_name, lambda {|name| {:conditions => ["products.name like ?", "%#{name}%"]}}
   named_scope :by_sku, lambda {|sku| { :include => :variants, :conditions => ["variants.sku like ?", "%#{sku}%"]}}
   named_scope :deleted, :conditions =>  "not products.deleted_at is null"
-
+                 
+  def to_param
+    name.parameterize.to_s
+  end
+  
   # checks is there are any meaningful variants (ie. variants with at least one option value)
   def variants?
     self.variants.each do |v|

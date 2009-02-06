@@ -30,8 +30,8 @@ ActionController::Routing::Routes.draw do |map|
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
 
   map.resources :tax_categories
-  map.resources :countries, :has_many => :states, :actions => [:index]
-  map.resources :states, :actions => [:index]
+  map.resources :countries, :has_many => :states, :only => :index
+  map.resources :states, :only => :index
   map.resources :users
   map.resources :products, :member => {:change_image => :post}
   map.resources :addresses
@@ -70,13 +70,13 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :general_settings
     admin.resources :taxonomies do |taxonomy|
       taxonomy.resources :taxons
-    end
-  end
+    end 
+    admin.resources :reports, :only => [:index, :show], :collection => {:sales_total => :get}
+  end                   
   
-  # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
-  map.connect ':controller/:action/:id'
-
+  map.connect ':controller/:action/:id'  
+  
   # a catchall route for "static" content
   map.connect '*path', :controller => 'content', :action => 'show'
 

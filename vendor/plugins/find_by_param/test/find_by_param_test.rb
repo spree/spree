@@ -17,14 +17,22 @@ class FindByParamTest < Test::Unit::TestCase
   def test_permalink_should_be_saved
     Post.class_eval "make_permalink :with => :title"
     post = Post.create(:title=>"hey ho let's go!")
-    assert_equal post.to_param, "hey-ho-lets-go"
+    assert_equal "hey-ho-let-s-go", post.to_param
     assert_equal post.permalink, post.to_param
   end
   
   def test_permalink_should_be_trunkated
     Post.class_eval "make_permalink :with => :title"
     post = Post.create(:title=>"thisoneisaveryveryveryveryveryveryverylonglonglonglongtitlethisoneisaveryveryveryveryveryveryverylonglonglonglongtitle")
-    assert_equal post.to_param, "thisoneisaveryveryveryveryveryveryverylonglonglonglongtitlethisoneisaveryveryveryveryveryveryverylong"
+    assert_equal "thisoneisaveryveryveryveryveryveryverylonglonglong", post.to_param
+    assert_equal post.to_param.size, 50
+    assert_equal post.permalink, post.to_param
+  end
+  
+  def test_permalink_should_be_trunkated_to_custom_size
+    Post.class_eval "make_permalink :with => :title, :param_size=>10"
+    post = Post.create(:title=>"thisoneisaveryveryveryveryveryveryverylonglonglonglongtitlethisoneisaveryveryveryveryveryveryverylonglonglonglongtitle")
+    assert_equal "thisoneisa",post.to_param
     assert_equal post.permalink, post.to_param
   end
   
@@ -35,17 +43,23 @@ class FindByParamTest < Test::Unit::TestCase
     assert_equal user, User.find_by_param!("bumi")
   end
   
+  def test_should_validate_presence_of_the_field_used_to_create_the_param
+    User.class_eval "make_permalink :with => :login"
+    user = User.create(:login=>nil)
+    assert_equal false, user.valid?
+  end
+  
   def test_to_param_should_perpend_id
     Article.class_eval "make_permalink :with => :title, :prepend_id=>true "
     article = Article.create(:title=>"hey ho let's go!")
-    assert_equal article.to_param, "#{article.id}-hey-ho-lets-go"
+    assert_equal article.to_param, "#{article.id}-hey-ho-let-s-go"
   end
   
   def test_should_increment_counter_if_not_unique
     Post.class_eval "make_permalink :with => :title"
     Post.create(:title=>"my awesome title!")
     post = Post.create(:title=>"my awesome title!")
-    assert_equal post.to_param, "my-awesome-title-1"
+    assert_equal "my-awesome-title-1", post.to_param
     assert_equal post.permalink, post.to_param
   end
   
@@ -57,18 +71,18 @@ class FindByParamTest < Test::Unit::TestCase
   end
   
   def test_escape_should_strip_special_chars
-    assert_equal "hello-nice-dude", Post.escape("+*(he/=&l$l<o !ni^?ce-`duäöde;:@")
+    assert_equal "+-he-l-l-o-ni-ce-duaode", Post.escape("+*(he/=&l$l<o !ni^?ce-`duäöde;:@")
   end
   
   def test_does_not_leak_options
     Post.class_eval "make_permalink :with => :title"
     User.class_eval "make_permalink :with => :login"
     Article.class_eval "make_permalink :with => :title, :prepend_id => true"
-    assert_equal( {:param => "permalink", :field => "permalink", :field_to_encode => :title, :prepend_id => false, :escape => true}, Post.permalink_options)
+    assert_equal( {:param => "permalink", :param_size => 50, :field => "permalink", :prepend_id => false, :escape => true, :with => :title, :validate => true}, Post.permalink_options)
     
-    assert_equal( {:param => :login, :field => "permalink", :prepend_id => false, :escape => true}, User.permalink_options)
+    assert_equal( {:param => :login, :param_size => 50, :field => "permalink", :prepend_id => false, :escape => true, :with => :login, :validate => true}, User.permalink_options)
     
-    assert_equal( {:param => :title, :field => "permalink", :prepend_id => true, :escape => true}, Article.permalink_options)
+    assert_equal( {:param => :title, :param_size => 50, :field => "permalink", :prepend_id => true, :escape => true, :with => :title, :validate => true}, Article.permalink_options)
   end
   
 end
