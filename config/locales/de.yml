@@ -202,9 +202,7 @@ de:
   created_successfully: "Erfolgreich erstellt"
   credit_card: Kreditkarte
   credit_card_capture_complete: "Credit Card Was Captured"
-  credit_card_cayment: Kreditkartenzahlung
   credit_card_payment: Kreditkartenzahlung
-  creditcard_payment: Kreditkartenzahlung
   current: Stand
   customer: Kunde
   date: Datum
@@ -244,6 +242,8 @@ de:
   gateway_setting_description: "Gateway-Einstellungen ändern"
   general_settings: "Allgemeine Einstellungen"
   general_settings_description: "Allgemeine Einstellungen ändern"
+  google_analytics: "Google Analytics"
+  google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Höhe
   hello_user: "Hallo Benutzer"
   image: Bild
