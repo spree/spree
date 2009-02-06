@@ -247,6 +247,10 @@ pl:
   general_settings: "General Settings"
   general_settings_description: "Configure general Spree settings."
   google_analytics: "Google Analytics"
+  google_analytics_active: "Active"
+  google_analytics_create: "Create New Google Analytics Account"
+  google_analytics_id: "Analytics ID"
+  google_analytics_new: "New Google Analytics Account"
   google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Height
   hello_user: "Witaj użytkowniku"

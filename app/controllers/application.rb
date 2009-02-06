@@ -24,6 +24,6 @@ class ApplicationController < ActionController::Base
     @current_controller = controller_name
     
     @taxonomies = Taxonomy.find(:all, :include => {:root => :children})
+    @ga_account = GoogleAnalytic.find(:first, :conditions => { :is_active => 't' })
   end
-
 end
