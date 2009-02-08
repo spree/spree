@@ -1,0 +1,18 @@
+<h1><%= t("google_analytics") %></h1>
+<br />
+<table class="admin-report" width="545">
+  <tr>
+    <th><%= t('google_analytics_id') %></th>
+    <th><%= t('google_analytics_active') %></th>
+    <th><%= t('action') %></th>
+  </tr>
+<% @google_analytics.each do |ga_account| %>
+  <tr class="<%= cycle('even', 'odd') %>">
+    <td><%= ga_account.analytics_id %></td>
+    <td><%= ga_account.is_active %></td>
+    <td><%= link_to t('delete'), object_url(ga_account), :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+<br />
+<%= link_to t('google_analytics_create'), new_object_url %>

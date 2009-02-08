@@ -40,6 +40,10 @@
       <td><%= link_to t("inventory_settings"), admin_inventory_settings_path %></td>
       <td><%= t("inventory_setting_description") %></td>
     </tr>
+   <tr>
+     <td><%= link_to t("google_analytics"), admin_google_analytics_path %></td>
+     <td><%= t("google_analytics_setting_description") %></td>
+   </tr>
     <% @extension_links.each do |link_map| %>
       <tr>
         <td><%= link_to(link_map[:link_text],  link_map[:link]) %></td>
