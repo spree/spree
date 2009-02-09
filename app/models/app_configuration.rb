@@ -31,6 +31,7 @@ class AppConfiguration < Configuration
   preference :admin_interface_logo, :string, :default => "spree/spree.jpg"
   preference :allow_ssl_in_production, :boolean, :default => true
   preference :allow_ssl_in_development_and_test, :boolean, :default => false
+  preference :google_analytics_id, :string, :default => nil # Replace with real Google Analytics Id
 
   validates_presence_of :name
   validates_uniqueness_of :name
