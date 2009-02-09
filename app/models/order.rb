@@ -7,7 +7,6 @@ class Order < ActiveRecord::Base
       find :first, :conditions => ['variant_id = ?', variant.id]
     end
   end
-  has_many :products, :through => :line_items
   has_many :inventory_units
   has_many :state_events
   has_many :payments
