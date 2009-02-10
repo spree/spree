@@ -9,12 +9,15 @@ describe '/products/index' do
     @product.stub!(:name).and_return('Delicious Cows')
     @product.stub!(:has_stock?).and_return(true)
     assigns[:products] = [@product]
+    @search = mock_model(Product)
+    @search.stub!(:page_count).and_return(1)
+    assigns[:search] = @search
 
     # TODO: put these pagination stubs into a helper?
-    assigns[:products].stub!(:page_count).and_return(1)
-    assigns[:products].stub!(:first_page).and_return(true)
-    assigns[:products].stub!(:previous_page?).and_return(false)
-    assigns[:products].stub!(:next_page?).and_return(false)
+    #assigns[:products].stub!(:page_count).and_return(1)
+    #assigns[:products].stub!(:first_page).and_return(true)
+    #assigns[:products].stub!(:previous_page?).and_return(false)
+    #assigns[:products].stub!(:next_page?).and_return(false)
     template.stub!(:windowed_pagination_links).and_return(false)
     template.stub_render(:partial => 'shared/taxonomies')
   end
