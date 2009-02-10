@@ -10,11 +10,11 @@
         <table class="admin-report" width="545">
           <thead>
             <tr>
-              <th><%= t("order_date") %></th>
-              <th><%= t("order_number") %></th>
-              <th><%= t("status") %></th>
-              <th><%= t("customer") %></th>
-              <th><%= t("total") %></th>
+              <th><%= order_by_link :created_at, :text => t("order_date") %></th>
+              <th><%= order_by_link :number, :text => t("order_number") %></th>
+              <th><%= order_by_link :state, :text => t("status") %></th>
+              <th><%= order_by_link ({:user => :email}, :text => t("customer")) %></th>
+              <th><%= order_by_link :total, :text =>t("total") %></th>
             </tr>
           </thead>
           <tbody>
@@ -32,7 +32,8 @@
       </div>
     </td>
     <td valign="top">
-      <% form_for :filter, :url => admin_orders_url, :html => { :method => :get } do |f| %>
+	  <% form_for [:admin, @search] do |f| %>
+	  	<% f.fields_for @search.conditions do |orders| %>
         <div id="search-col">
           <table class="admin-search">
             <thead>
@@ -44,15 +45,15 @@
               <tr>
                 <td><%= t("start") %>:</td>
                 <td>
-                  <%= error_message_on :filter, :start%>
-                  <%= calendar_date_select :filter, :start, :style=>"width:100px" %>
+                  <%#= error_message_on :search, :start%>
+                  <%= orders.calendar_date_select :created_at_after, :style=>"width:100px" %>
                 </td>
               </tr>
               <tr>
                 <td><%= t("stop") %>:</td>
                 <td>
-                  <%= error_message_on :filter, :stop%>
-                  <%= calendar_date_select :filter, :stop, :style=>"width:100px" %>
+                  <%#= error_message_on :search, :stop%>
+                  <%= orders.calendar_date_select :created_at_before, :style=>"width:100px" %>
                 </td>
               </tr>
             </tbody>
@@ -67,43 +68,51 @@
               <tr>
                 <td><%= t("order_number") %></td>
                 <td>
-                  <%= f.text_field :number, :size=>13 %>
+                  <%= orders.text_field :number, :size=>13 %>
                 </td>
               </tr>
               <tr>
                 <td><%= t("status") %></td>
                 <td>
-                  <%= f.select :state, Order.state_machines['state'].states.collect {|status| status.titleize}, {:include_blank => true}, {:style => "width: 115px"}%>
+                  <%= orders.select :state, Order.state_machines['state'].states.collect {|status| [status.titleize, status]}, {:include_blank => true}, {:style => "width: 115px"}%>
                 </td>
               </tr>
+            <% orders.fields_for orders.object.user do |user| %>
               <tr>
                 <td><%= t("email") %></td>
                 <td>
-                  <%= f.text_field :customer, :size=>13 %>
+                  <%= user.text_field :email, :size=>13 %>
                 </td>
               </tr>
+            <% end %>
+            <% orders.fields_for orders.object.creditcards do |cc| %>
+            	<% cc.fields_for cc.object.address do |address| %>
               <tr>
                 <td><%= t("first_name") %></td>
                 <td>
-                  <%= f.text_field :firstname, :size=>13 %>
+                  <%= address.text_field :lower_of_firstname_contains, :size=>13 %>
                 </td>
               </tr>
               <tr>
                 <td><%= t("last_name") %></td>
                 <td>
-                  <%= f.text_field :lastname, :size=>13 %>
+                  <%= address.text_field :lower_of_lastname_contains, :size=>13 %>
                 </td>
               </tr>
+				<% end %>
+			<% end %>
               <tr>
-                <td colspan="2"><%= t("show_incomplete_orders") %>&nbsp;<%= f.check_box :checkout, {:style => "vertical-align:middle;"}%>
+                <td colspan="2"><%= t("show_incomplete_orders") %>&nbsp;
+				<%= orders.check_box :checkout_complete_not, {:style => "vertical-align:middle;"}, "true", "false" %> 
                 </td>
               </tr>
             </tbody>
           </table>
-          <%=submit_tag t("search") %>
+		  <%= f.submit t("search") %>
         </div>
+      	<% end %>
       <% end %>
     </td>
   </tr>
 </table>
-<%= render :partial => 'shared/paginate', :locals => {:collection => @orders, :options => generate_search_options(@filter)} unless @orders.empty? -%>
+<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>

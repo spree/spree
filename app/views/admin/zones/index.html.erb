@@ -2,8 +2,8 @@
 <table class="admin-report" width="545">
   <thead>
     <tr>
-      <th><%= t("name") %></th>
-      <th><%= t("description") %></th>
+      <th><%= order_by_link :name, :text => t("name") %></th>
+      <th><%= order_by_link :description, :text => t("description") %></th>
       <th><%= t("action") %></th>
     </tr>
   </thead>
@@ -23,4 +23,7 @@
     <% end %>
   </tbody>
 </table>
+
+<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
+
 <%= link_to t("new_zone"), new_object_url %>
