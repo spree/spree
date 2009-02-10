@@ -24,9 +24,6 @@ class Product < ActiveRecord::Base
   named_scope :active, lambda { |*args| { :conditions => ["products.available_on <= ? and products.deleted_at is null", (args.first || Time.zone.now)] } }
   
   named_scope :available, lambda { |*args| { :conditions => ["products.available_on <= ?", (args.first || Time.zone.now)] } }
-  named_scope :by_name, lambda {|name| {:conditions => ["products.name like ?", "%#{name}%"]}}
-  named_scope :by_sku, lambda {|sku| { :include => :variants, :conditions => ["variants.sku like ?", "%#{sku}%"]}}
-  named_scope :deleted, :conditions =>  "not products.deleted_at is null"
                  
   def to_param
     name.parameterize.to_s
