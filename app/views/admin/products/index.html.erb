@@ -6,11 +6,11 @@
 			<table class="admin-report" width="545">
 			  <tr>
 			    <td><b><%= t("image") %></b></td>
-			    <td><b><%= t("name") %></b></td>
-			    <td><b><%= t("master_price") %></b></td>
+			    <td><b><%= order_by_link :name, :text => t("name") %></b></td>
+			    <td><b><%= order_by_link :master_price, :text => t("master_price") %></b></td>
 			    <td/>
 			  </tr>
-			<% @products.each do |product| %>
+			<% @collection.each do |product| %>
 			  <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %>>
 			    <td><%= mini_image(product) %></td>
 			    <td valign="top"><%=product.name%></td>
@@ -23,10 +23,10 @@
 			  </tr>
 			<% end %>
 			</table>
-			<%= render :partial => 'shared/paginate', :locals => {:collection => @collection, :options => search_options} -%>						
+	        <%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>						
 		</td>
     <td valign="top">
-      <form action="/admin/products" method="GET">
+	 <% form_for [:admin, @search] do |f| %>		
         <div id="search-col">
           <table class="admin-search">
             <thead>
@@ -35,27 +35,31 @@
               </tr>
             </thead>
             <tbody>
+		   <% f.fields_for @search.conditions do |products| %>
+	
               <tr>
                 <td><%= t("name") %></td>
                 <td>
-                  <input name="name" size="15" value="<%=@name%>"/>
+				  <%= products.text_field :name_contains, :size => 15 %>
                 </td>
               </tr>
               <tr>
+
+            <% products.fields_for products.object.variants do |variants| %>
                 <td><%= t("sku") %></td>
-                <td>
-                  <input name="sku" size="15" value="<%=@sku%>"/>
-                </td>
+                <td><%= variants.text_field :sku_contains, :size => 15 %></td>
+            <% end %>                
               </tr>
               <tr>
-   							<td><%= t("show_deleted") %></td>
-								<td><input name="deleted" type="checkbox" <%= @deleted %>/></td>
+   				<td><%= t("show_deleted") %></td>
+				<td><%= products.check_box :deleted_at_is_not_null, {}, "1", "" %></td>
               </tr>
+			<%end%>
             </tbody>
           </table>
-          <%=submit_tag t("search")%>
+		  <%= f.submit t("search") %>
         </div>
-      </form>
+      <% end %>
     </td>		
 	</tr>
 </table>
