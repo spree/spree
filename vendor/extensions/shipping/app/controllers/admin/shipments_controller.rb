@@ -35,7 +35,8 @@ class Admin::ShipmentsController < Admin::BaseController
     @shipment.shipped_at = Time.now if params[:mark_shipped]    
     unless @shipment_presenter.valid? and @shipment.save
       render :action => "edit" and return
-    end    
+    end
+    @order.state_events.create(:name => t('ship'), :user => current_user, :previous_state => @order.state) if params[:mark_shipped]
     flash[:notice] = t('updated_successfully')
     redirect_to edit_object_url
   end
