@@ -246,6 +246,12 @@ de:
   gateway_setting_description: "Gateway-Einstellungen ändern"
   general_settings: "Allgemeine Einstellungen"
   general_settings_description: "Allgemeine Einstellungen ändern"
+  google_analytics: "Google Analytics"
+  google_analytics_active: "Active"
+  google_analytics_create: "Create New Google Analytics Account"
+  google_analytics_id: "Analytics ID"
+  google_analytics_new: "New Google Analytics Account"
+  google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Höhe
   hello_user: "Hallo Benutzer"
   image: Bild

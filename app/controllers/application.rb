@@ -25,5 +25,4 @@ class ApplicationController < ActionController::Base
     
     @taxonomies = Taxonomy.find(:all, :include => {:root => :children})
   end
-
 end
