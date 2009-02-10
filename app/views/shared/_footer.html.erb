@@ -12,7 +12,5 @@
   	var pageTracker = _gat._getTracker("<%= Spree::Config[:google_analytics_id] %>");
   	pageTracker._initData();
   	pageTracker._trackPageview();
-	//IF RECEIPT PAGE ONLY
-	<%= render :partial => "shared/google_order", :locals => {:order => @order} %>
   </script>
 <% end %>

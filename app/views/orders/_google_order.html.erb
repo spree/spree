@@ -1,0 +1,23 @@
+<script type="text/javascript">
+  pageTracker._addTrans(
+  "<%= order.number %>",		//Order Number
+  "",		//Affiliation
+  "<%= order.total %>",		//Order total
+  "<%= order.tax_amount %>",		//Tax Amount
+  "<%= order.ship_amount %>",		//Ship Amount
+  "",		//City
+  "",		//State
+  ""		//Country
+  );
+  <% order.line_items.each do |line_item| -%>
+  pageTracker._addItem(
+  "<%= order.number %>",		//Order Number
+  "<%= line_item.variant.sku %>",		//Sku
+  "<%= line_item.variant.product.name %>",		//Product Name
+  "",		//Product Category
+  "<%= line_item.price %>",		//Price
+  "<%= line_item.quantity %>"		//Quantity
+  );
+  <% end -%>
+  pageTracker._trackTrans();
+</script>
