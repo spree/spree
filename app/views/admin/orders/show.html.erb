@@ -61,7 +61,7 @@
     <tr>
       <td><%=t("#{event.name}") %></td>
       <td><%=event.user.email if event.user %></td>
-      <td><%=event.created_at.to_s(:db) %></td>
+      <td><%=event.created_at.to_s(:date_time24) %></td>
     </tr>
   <% end %>
   <% if @order.state_events.empty? %>

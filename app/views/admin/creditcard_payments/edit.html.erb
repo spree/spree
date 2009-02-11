@@ -21,7 +21,7 @@
 	      <td><%=CreditcardTxn::TxnType.from_value t.txn_type.to_i%></td>
 	      <td><%=number_to_currency t.amount%></td>
 	      <td><%=t.response_code%></td>
-	      <td><%=t.created_at.to_s(:db)%></td>
+	      <td><%=t.created_at.to_s(:date_time24)%></td>
 	    </tr>
 	  <% end %>
 	</table>
