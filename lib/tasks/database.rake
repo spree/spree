@@ -1,9 +1,10 @@
-require 'activerecord'
-require 'highline/import'       
+require 'activerecord'              
 
 namespace :db do
   desc "Migrate schema to version 0 and back up again. WARNING: Destroys all data in tables!!"
   task :remigrate => :environment do
+    require 'highline/import'       
+    
     if ENV['SKIP_NAG'] or ENV['OVERWRITE'].to_s.downcase == 'true' or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
 
       # Drop all tables
@@ -29,6 +30,8 @@ namespace :db do
   
   desc "Bootstrap your database for Spree."
   task :bootstrap  => :environment do
+    require 'highline/import'       
+
     raise "Cannot bootstrap in production mode (for saftey reasons.)" unless %w[demo development test].include? RAILS_ENV    
     if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
 

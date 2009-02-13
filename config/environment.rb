@@ -31,6 +31,7 @@ Spree::Initializer.run do |config|
   config.gem "tlsmail"
   config.gem 'active_presenter', :version => '0.0.4'
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
+  config.gem 'searchlogic', :version => '1.6.3'  
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -75,8 +76,11 @@ Spree::Initializer.run do |config|
   # The internationalization framework can be changed to have another default locale (standard is :en) or more load paths.
   # All files from config/locales/*.rb,yml are added automatically.
   #config.i18n.load_path << Dir[File.join(RAILS_ROOT, 'my', 'locales', '*.{rb,yml}')]
-  config.i18n.default_locale = :'en-US'
+  config.i18n.default_locale = :'en-US'    
+    
 end
+
+Time::DATE_FORMATS[:date_time24] = "%Y-%m-%d %H:%M"
 
 # Add new inflection rules using the following format 
 # (all these examples are active by default):

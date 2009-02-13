@@ -1,6 +1,0 @@
-test:
-  adapter: mysql
-  database: paginating_find_test
-  username: root
-  password:
-  host: localhost

@@ -29,20 +29,18 @@ class Admin::OrdersController < Admin::BaseController
   end
   
   private
-  def collection   
-    default_stop = (Date.today + 1).to_s(:db)
-    @filter = params.has_key?(:filter) ? OrderFilter.new(params[:filter]) : OrderFilter.new
 
-    scope = Order.scoped(:include => [:shipments, {:creditcards => :address}])
-    scope = scope.by_number @filter.number unless @filter.number.blank?
-    scope = scope.by_customer @filter.customer unless @filter.customer.blank?
-    scope = scope.between(@filter.start, (@filter.stop.blank? ? default_stop : @filter.stop)) unless @filter.start.blank?
-    scope = scope.by_state @filter.state.classify.downcase.gsub(" ", "_") unless @filter.state.blank?
-    scope = scope.conditions "lower(addresses.firstname) LIKE ?", "%#{@filter.firstname.downcase}%" unless @filter.firstname.blank?
-    scope = scope.conditions "lower(addresses.lastname) LIKE ?", "%#{@filter.lastname.downcase}%" unless @filter.lastname.blank?
-    scope = scope.checkout_completed(@filter.checkout == '1' ? false : true)
+  def collection
+    @search = Order.new_search(params[:search])
+    #set order by to default or form result
+    @search.order_by ||= :created_at
+    @search.order_as ||= "DESC"
+    #set results per page to default or form result
+    @search.per_page = Spree::Config[:orders_per_page]
+    #named_scope :checkout_completed, lambda {|state| {:conditions => ["checkout_complete = ?", state]}}
+    #scope = scope.checkout_completed(@filter.checkout == '1' ? false : true)
 
-    @collection = scope.find(:all, :order => 'orders.created_at DESC', :include => :user, :page => {:size => Spree::Config[:orders_per_page], :current =>params[:p], :first => 1})
+    @collection = @search.find(:all, :include => [:user, :shipments, {:creditcards => :address}] )
   end
   
   # Allows extensions to add new forms of payment to provide their own display of transactions

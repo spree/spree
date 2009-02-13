@@ -30,7 +30,10 @@ class Admin::ZonesController < Admin::BaseController
   
   private
     def collection
-      @collection ||= end_of_association_chain.find(:all, :order => :name, :page => {:size => 10, :current => params[:p], :first => 1})
+      @search = end_of_association_chain.new_search(params[:search])
+      @search.order_by ||= :name
+      @search.per_page = Spree::Config[:orders_per_page]
+      @collection, @collection_count = @search.all, @search.count
     end  
 
     def load_data

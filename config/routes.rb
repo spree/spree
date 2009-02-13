@@ -62,6 +62,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
     admin.resource :mail_settings
     admin.resource :inventory_settings
+    admin.resources :google_analytics
     admin.resources :orders, :has_many => [:payments, :creditcards], :member => {:fire => :put, :resend => :post}
     admin.resources :orders do |order|
       order.resources :creditcard_payments, :member => {:capture => :get}
