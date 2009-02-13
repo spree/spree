@@ -1,0 +1,8 @@
+<div id="order">
+  <h1><%= t("shopping_cart")%></h1>
+  <% form_for(:order, :url => object_url, :html => { :method => :put}) do |f| %>
+    <%= render :partial => 'form', :locals => {:f => f} %>
+  <% end %>
+  <br/>
+  <p><%=link_to t("continue_shopping"), products_path %></p>
+</div>
