@@ -55,7 +55,7 @@ en-US:
         description: Description
         master_price: "Master Price"
         name: Name
-        on_hand: "On Hande"
+        on_hand: "On Hand"
       property: 
         name: Name
         presentation: Presentation
@@ -341,7 +341,7 @@ en-US:
   payments: Payments
   phone: Phone
   presentation: Presentation
-  previous: previous
+  previous: Previous
   price: Price
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
