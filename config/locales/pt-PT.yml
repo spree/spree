@@ -391,6 +391,7 @@ pt-PT:
   shopping_cart: "Carro de Compra"
   show_deleted: "Mortra Eliminados"
   show_incomplete_orders: "Mostra Encomendas Incompletas"
+  show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Mostra produtos sem stock"
   sign_up: Inscrever
   sku: SKU

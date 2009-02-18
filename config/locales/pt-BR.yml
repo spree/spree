@@ -391,6 +391,7 @@ pt-BR:
   shopping_cart: "Carrinho de Compra"
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
+  show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: Cadastrar
   sku: SKU

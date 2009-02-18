@@ -391,6 +391,7 @@ de:
   shopping_cart: Warenkorb
   show_deleted: "Zeige gelöschte"
   show_incomplete_orders: "Zeige unvollständige Bestellungen"
+  show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Zeige ausverkaufte Produkte"
   sign_up: "Anmelden"
   sku: Lagerhaltungsnummer
