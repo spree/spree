@@ -53,8 +53,12 @@ module AttributeFu
 
       css_selector = options.delete(:selector) || ".#{@object.class.name.split("::").last.underscore}"
       function     = options.delete(:function) || ""
-      
+                                            
+      # HACK - added by sean to allow another javascript function to be called after the removal
+      after        = options.delete(:after) || ""
+            
       function << "$(this).up('#{css_selector}').remove()"
+      function << after
       
       @template.link_to_function(name, function, *args.push(options))
     end
@@ -84,6 +88,9 @@ module AttributeFu
       opts.symbolize_keys!
       partial          = opts.delete(:partial)    || associated_name
       container        = opts.delete(:expression) || "'#{opts.delete(:container) || associated_name.pluralize}'"
+                 
+      # Hack by sean
+      object_name      = opts.delete(:object_name)
       
       form_builder     = self # because the value of self changes in the block
       
@@ -128,7 +135,8 @@ module AttributeFu
     end
     
     private
-      def associated_base_name(associated_name)
+      def associated_base_name(associated_name)        
+        return "#{object_name}[#{associated_name}_attributes]" if object_name #HACK - Added by sean to allow attribute_fu to use prepopulated objects
         "#{@object_name}[#{associated_name}_attributes]"
       end
       
