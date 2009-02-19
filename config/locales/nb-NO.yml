@@ -380,7 +380,7 @@ nb-NO:
   send_order_mails_as: "Send ordre-epost som"
   ship: send
   ship_address: "Leveringsadresse"
-  shipment: Fraktes
+  shipment: Leveranse
   shipped: Sendt
   shipping: Frakt
   shipping_address: "Leveringsadresse"
