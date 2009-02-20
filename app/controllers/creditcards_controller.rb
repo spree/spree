@@ -43,6 +43,10 @@ class CreditcardsController < Spree::BaseController
  
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     @countries = Country.find(:all)
+
+    month = (params[:payment_presenter] && params[:payment_presenter][:creditcard_month]) ? params[:payment_presenter][:creditcard_month].to_i : Date.today.month
+    year = (params[:payment_presenter] && params[:payment_presenter][:creditcard_year]) ? params[:payment_presenter][:creditcard_year].to_i : Date.today.year
+    @date = Date.new(year, month, 1)
   end
   
   def build_object
