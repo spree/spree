@@ -22,7 +22,7 @@ en-GB:
         firstname: "First Name"
         lastname: "Last Name"
         phone: Phone
-        zipcode: "Zip Code"
+        zipcode: "Post Code"
       country: 
         iso: ISO
         iso3: ISO3
@@ -55,7 +55,7 @@ en-GB:
         description: Description
         master_price: "Master Price"
         name: Name
-        on_hand: "On Hande"
+        on_hand: "On Hand"
       property: 
         name: Name
         presentation: Presentation
@@ -341,7 +341,7 @@ en-GB:
   payments: Payments
   phone: Phone
   presentation: Presentation
-  previous: previous
+  previous: Previous
   price: Price
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
@@ -391,6 +391,7 @@ en-GB:
   shopping_cart: "Shopping Basket"
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
+  show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Sign up"
   sku: SKU

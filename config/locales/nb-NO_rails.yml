@@ -1,0 +1,105 @@
+# Norwegian, norsk bokmål, by irb.no
+"nb-NO":
+  support:
+    array:
+      sentence_connector: "og"
+  date:
+    formats:
+      default: "%d.%m.%Y"
+      short: "%e. %b"
+      long: "%e. %B %Y"
+    day_names: [søndag, mandag, tirsdag, onsdag, torsdag, fredag, lørdag]
+    abbr_day_names: [søn, man, tir, ons, tor, fre, lør]
+    month_names: [~, januar, februar, mars, april, mai, juni, juli, august, september, oktober, november, desember]
+    abbr_month_names: [~, jan, feb, mar, apr, mai, jun, jul, aug, sep, okt, nov, des]
+    order: [:day, :month, :year]
+  time:
+    formats:
+      default: "%A, %e. %B %Y, %H:%M"
+      time: "%H:%M"
+      short: "%e. %B, %H:%M"
+      long: "%A, %e. %B %Y, %H:%M"
+    am: ""
+    pm: ""
+  datetime:
+    distance_in_words:
+      half_a_minute: "et halvt minutt"
+      less_than_x_seconds:
+        one: "mindre enn 1 sekund"
+        other: "mindre enn {{count}} sekunder"
+      x_seconds:
+        one: "1 sekund"
+        other: "{{count}} sekunder"
+      less_than_x_minutes:
+        one: "mindre enn 1 minutt"
+        other: "mindre enn {{count}} minutter"
+      x_minutes:
+        one: "1 minutt"
+        other: "{{count}} minutter"
+      about_x_hours:
+        one: "rundt 1 time"
+        other: "rundt {{count}} timer"
+      x_days:
+        one: "1 dag"
+        other: "{{count}} dager"
+      about_x_months:
+        one: "rundt 1 måned"
+        other: "rundt {{count}} måneder"
+      x_months:
+        one: "1 måned"
+        other: "{{count}} måneder"
+      about_x_years:
+        one: "rundt 1 år"
+        other: "rundt {{count}} år"
+      over_x_years:
+        one: "over 1 år"
+        other: "over {{count}} år"
+  number:
+    format:
+      precision: 2
+      separator: ','
+      delimiter: '.'
+    currency:
+      format:
+        unit: 'kr'
+        format: '%u %n'
+        separator:
+        delimiter:
+        precision:
+    percentage:
+      format:
+        delimiter: ""
+    precision:
+      format:
+        delimiter: ""
+    human:
+      format:
+        delimiter: ""
+        precision: 1
+  activerecord:
+    errors:
+      template:
+        header: "kunne ikke lagre {{model}} på grunn av {{count}} feil."
+        body: "det oppstod problemer i følgende felt:"
+      messages:
+        inclusion: "er ikke inkludert i listen"
+        exclusion: "er reservert"
+        invalid: "er ugyldig"
+        confirmation: "passer ikke bekreftelsen"
+        accepted: "må være akseptert"
+        empty: "kan ikke være tom"
+        blank: "kan ikke være blank"
+        too_long: "er for lang (maksimum {{count}} tegn)"
+        too_short: "er for kort (minimum {{count}} tegn)"
+        wrong_length: "er av feil lengde (maksimum {{count}} tegn)"
+        taken: "er allerede i bruk"
+        not_a_number: "er ikke et tall"
+        greater_than: "må være større enn {{count}}"
+        greater_than_or_equal_to: "må være større enn eller lik {{count}}"
+        equal_to: "må være lik {{count}}"
+        less_than: "må være mindre enn {{count}}"
+        less_than_or_equal_to: "må være mindre enn eller lik {{count}}"
+        odd: "må være oddetall"
+        even: "må være partall"
+      # models:
+      # attributes:
