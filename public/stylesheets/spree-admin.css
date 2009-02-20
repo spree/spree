@@ -557,3 +557,7 @@ ul.plain {
   font-size:16px;
   font-weight:normal;
 }
+
+table#creditcard select {
+  padding-right: 7px;
+}
