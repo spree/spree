@@ -24,7 +24,7 @@ class Admin::OrdersController < Admin::BaseController
   
   def resend
     OrderMailer.deliver_confirm(@order, true)
-    flash[:notice] = t('Order Email Resent')
+    flash[:notice] = t('order_email_resent')
     redirect_to :back
   end
   
