@@ -31,12 +31,14 @@
 
       <%= image_tag Spree::Config[:admin_interface_logo] %>
 
-      <%= link_to t('overview'), :controller => '/admin/overview' %>
-      <%= link_to t('configuration'), :controller => '/admin/configurations' %>
-      <%= link_to t('orders'), :controller => '/admin/orders' %>
-      <%= link_to t('products'), :controller => '/admin/products' %>
-      <%= link_to t('reports'), :controller => '/admin/reports' %>
-      <%= link_to t('users'), admin_users_url %>
+      <div class="nav" id="global_nav">
+        <%= tab :overview, :route => :admin %>
+        <%= tab :orders %>
+        <%= tab :products , :option_types, :properties, :prototypes %>
+        <%= tab :reports %>
+        <%= tab :configurations, :label => 'configuration' %>
+        <%= tab :users %>
+      </div>
 
       <%= yield :sub_menu %>
     
