@@ -25,7 +25,8 @@ class Product < ActiveRecord::Base
   
   named_scope :available, lambda { |*args| { :conditions => ["products.available_on <= ?", (args.first || Time.zone.now)] } }
                  
-  def to_param
+  def to_param       
+    return permalink unless permalink.blank?
     name.parameterize.to_s
   end
   
