@@ -1,0 +1,64 @@
+<%= render :partial => 'shared/product_sub_menu' %>
+<h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
+
+
+<div id="yui-main">
+  <div class="yui-b">
+
+    <table class="admin-report" width="545">
+      <tr>
+        <td><b><%= t("sku") %></b></td>
+        <td><b><%= order_by_link :name, :text => t("name") %></b></td>
+        <td><b><%= order_by_link :master_price, :text => t("master_price") %></b></td>
+        <td/>
+      </tr>
+    <% @collection.each do |product| %>
+      <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %>>
+        <td><%= product.sku %></td>
+        <td valign="top"><%=product.name%></td>
+        <td valign="top"><%=product.master_price%></td>
+        <td valign="top">
+          <%= link_to_edit product if product.deleted_at.nil?  %>
+          &nbsp;
+          <%= link_to_delete product if product.deleted_at.nil?  %>
+        </td>
+      </tr>
+    <% end %>
+    </table>
+    <%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>						
+
+  </div>
+</div>
+<div class="yui-b">
+
+  <% form_for [:admin, @search] do |f| %>		
+  <fieldset>
+    <legend><%= t("product_details") %></legend>
+
+    <% f.fields_for @search.conditions do |products| %>
+    <p>
+      <label><%= t("name") %></label><br />
+      <%= products.text_field :name_contains, :size => 15 %>
+    </p>
+
+    <% products.fields_for products.object.variants do |variants| %>
+      <p>
+        <label><%= t("sku") %></label><br />
+        <%= variants.text_field :sku_contains, :size => 15 %>
+      </p>
+    <% end %>                
+    <p>
+      <label><%= t("show_deleted") %></label><br />
+      <%= products.check_box :deleted_at_is_not_null, {}, "1", "" %>
+    </p>
+    <%end%>
+    <p>
+      <%= f.submit t("search") %>
+    </p>
+  </fieldset>
+  <% end %>
+
+
+</div>
+
+<%= link_to t("new_product"), new_object_url %>
