@@ -10,7 +10,6 @@
 body { 
   font-size: 75%;
   color: #222; 
-  background: #fff;
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
@@ -36,13 +35,13 @@ h4 img, h5 img, h6 img {
 /* Text elements
 -------------------------------------------------------------- */
 
-p           { margin: 0 0 1.5em; }
+p           { margin: 0 0 1em; }
 p img.left  { float: left; margin: 1.5em 1.5em 1.5em 0; padding: 0; }
 p img.right { float: right; margin: 1.5em 0 1.5em 1.5em; }
 
 a:focus, 
 a:hover     { color: #000; }
-a           { color: #009; text-decoration: underline; }
+a           { color: #009; text-decoration: none; }
 
 blockquote  { margin: 1.5em; color: #666; font-style: italic; }
 strong      { font-weight: bold; }

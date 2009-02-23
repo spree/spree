@@ -1,35 +1,36 @@
-<%= render :partial => 'shared/product_sub_menu' %>
+<% render :partial => 'shared/product_sub_menu' %>
+
+
+
 <h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
 
+<p><%= link_to t("new_product"), new_object_url %></p>
 
-<div id="yui-main">
-  <div class="yui-b">
+<table class="index">
+  <tr>
+    <th><%= t("sku") %></td>
+    <th><%= order_by_link :name, :text => t("name") %></td>
+    <th><%= order_by_link :master_price, :text => t("master_price") %></td>
+    <th>&nbsp;</th>
+  </tr>
+<% @collection.each do |product| %>
+  <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %>>
+    <td><%= product.sku %></td>
+    <td><%=product.name%></td>
+    <td><%=product.master_price%></td>
+    <td class="actions">
+      <%= link_to_edit product if product.deleted_at.nil?  %>
+      &nbsp;
+      <%= link_to_delete product if product.deleted_at.nil?  %>
+    </td>
+  </tr>
+<% end %>
+</table>
+<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>						
 
-    <table class="admin-report" width="545">
-      <tr>
-        <td><b><%= t("sku") %></b></td>
-        <td><b><%= order_by_link :name, :text => t("name") %></b></td>
-        <td><b><%= order_by_link :master_price, :text => t("master_price") %></b></td>
-        <td/>
-      </tr>
-    <% @collection.each do |product| %>
-      <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %>>
-        <td><%= product.sku %></td>
-        <td valign="top"><%=product.name%></td>
-        <td valign="top"><%=product.master_price%></td>
-        <td valign="top">
-          <%= link_to_edit product if product.deleted_at.nil?  %>
-          &nbsp;
-          <%= link_to_delete product if product.deleted_at.nil?  %>
-        </td>
-      </tr>
-    <% end %>
-    </table>
-    <%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>						
 
-  </div>
-</div>
-<div class="yui-b">
+
+<% content_for :sidebar do %>
 
   <% form_for [:admin, @search] do |f| %>		
   <fieldset>
@@ -58,7 +59,5 @@
   </fieldset>
   <% end %>
 
+<% end %>
 
-</div>
-
-<%= link_to t("new_product"), new_object_url %>

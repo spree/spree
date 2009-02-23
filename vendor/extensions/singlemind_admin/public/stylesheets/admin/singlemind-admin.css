@@ -1,0 +1,138 @@
+html {
+  background-color: #ddd;
+  margin:10px 20px 20px 20px;
+}
+
+hr { 
+  clear:left;
+  border:none;
+  border-top:1px solid #999;
+  }
+
+
+#doc3 {
+  background-color:#fff;
+}
+
+
+#hd {
+  position:relative;
+  background: #0269AB url(../../images/admin/bg/header-bg.png) bottom left repeat-x;
+  color: white;
+  height:80px;
+}
+
+#bd {
+  padding:10px;
+}
+
+#sidebar {
+  padding-top:3em;
+}
+
+
+#login-nav {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+#login-nav a {
+  text-decoration: underline;
+  color: #4FAEE5;
+}
+
+
+
+
+ul.tab_nav {
+  margin:0;
+	padding: 10px 0 0 0;
+	width: 60em; /* a width is required for Opera, older Mozilla browsers, and Konqueror browsers */
+  padding-left:10px;
+}
+
+ul.tab_nav li  {
+	display: inline;
+	list-style: none;
+}
+
+ul.tab_nav a, ul.tab_nav span, ul.tab_nav a.active {
+	width: 8em;
+	display: block;
+	float: left;
+	padding: 4px 0;
+	margin: 1px 4px -1px 0;
+	text-align: center;
+	font-size: 85%;
+	color: #333;
+}
+
+ul.tab_nav a {
+	background: #eee;
+	border: 1px solid #999;
+	border-bottom: none;
+}
+
+ul.tab_nav span, ul.tab_nav li.active a, ul.tab_nav li a.active, ul.tab_nav li a.active,  ul.tab_nav li.active a:hover {
+	border: 1px solid #999;
+	border-bottom: none;
+	background: #fff;
+	padding-bottom: 6px;
+	margin-top: 0;
+}
+
+
+
+ul.tab_nav a:hover {
+	margin-top: 0;
+	background: #FFF7CD;
+	padding-bottom: 5px;
+}
+
+
+
+#hd hr {
+  border:none;height:0;
+}
+#global_nav {
+  width:auto;
+  position:absolute;
+  text-align:right;
+  right:0;
+  bottom:0;
+}
+#global_nav {
+  text-align:right;
+}
+#global_nav a {
+	background: #115480;
+	font-weight:bold;
+	color:#fff;
+	border-color:#2370AD;
+	font-size: 100%;
+}
+#global_nav li.active a {
+	background: #fff;
+	color:#115480;
+	border-color:#fff;
+}
+
+
+
+
+/*
+
+    <div id="sub_nav" class="nav">
+      <span class="on"><a href="/admin/products">Products</a></span>
+      <span><a href="/admin/option_types">Option types</a></span>
+      <span><a href="/admin/properties">Properties</a></span>
+
+      <span><a href="/admin/prototypes">Prototypes</a></span>
+    </div>
+*/
+
+
+
+
+
+

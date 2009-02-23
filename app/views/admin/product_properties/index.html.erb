@@ -1,6 +1,6 @@
 <%= render :partial => 'shared/product_sub_menu' %>
 <h1><%= t("editing_product")%></h1>
-<%= render :partial => 'shared/product_tabs', :locals => {:current => "product_properties"} %>
+<%= render :partial => 'shared/product_tabs', :locals => {:current => "Product Properties"} %>
 
 <%= error_messages_for :product %>
 <% form_for(:product, :url => admin_product_url(@product), :html => { :method => :put }) do |f| %>

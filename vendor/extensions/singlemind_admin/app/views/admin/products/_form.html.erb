@@ -1,0 +1,76 @@
+<% content_for :head do %>
+<%= calendar_date_select_includes %>
+<% end %>
+
+
+<div class="yui-gc">
+  <div class="yui-u first">
+    
+    <p>
+      <label><%= t("name")%></label> <span class="required">*</span><br />
+      <%= f.text_field :name, :class => 'fullwidth title'  %>
+      <%=error_message_on :product, :name%>  
+    </p>
+
+    <p>
+      <label><%= t("description")%></label><br />
+      <%= f.text_area :description, {:cols => 60, :rows => 4, :class => 'fullwidth'} %>
+      <%= error_message_on :product, :description %>
+    </p>    
+    
+  </div>
+  <div class="yui-u">
+        
+    <p>
+      <label><%= t("master_price")%></label> <span class="required">*</span><br />
+      <%=error_message_on :product, :master_price%>
+      <%= text_field :product, :master_price  %>
+    </p>
+
+    </div>
+    <div class="yui-u">
+
+    <p>
+      <label><%= t("available_on")%></label><br />
+      <%= error_message_on :product, :available %>
+      <%= calendar_date_select :product, :available_on, :style=>"width:150px" %>
+    </p>
+
+    <% if @product.variant %>
+    <p>
+      <label><%=t("sku")%></label><br />
+      <%= f.text_field :sku, :size => 16 %>
+    </p>
+    <p>
+      <label><%=t("on_hand")%></label><br />
+      <%= f.text_field :on_hand, :size => 4 %>        
+    </p>
+    <% end %>
+
+    <p>
+      <label><%=t("ext_shipping_shipping_categories")%></label><br />    
+      <%= collection_select(:product, :shipping_category_id, @shipping_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        
+      <%=error_message_on :product, :shipping_category%>
+    </p>
+
+    <p>
+      <label><%=t("tax_category")%></label><br />
+      <%= collection_select(:product, :tax_category_id, @tax_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        
+      <%=error_message_on :product, :tax_category%>      
+    </p>    
+        
+  </div>
+  
+</div>
+
+
+
+
+<% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:product) }.each do |field| %>
+<%= render :partial => "shared/additional_field", :locals => {:field => field, :f => f} %>
+<% end %>
+
+<div id="image-listing">
+  <%= render :partial => 'images', :locals => {:viewable => @product, :f => f} -%>
+</div>
+
