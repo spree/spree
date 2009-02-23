@@ -51,7 +51,9 @@ module Spree
     end
     
     def gateway_error(response)
-      text = response.params['message'] || response.params['response_reason_text']
+      text = response.params['message'] || 
+             response.params['response_reason_text'] ||
+             response.message
       msg = "#{I18n.t('gateway_error')} ... #{text}"
       logger.error(msg)
       raise Spree::GatewayError.new(msg)
