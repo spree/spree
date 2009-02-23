@@ -1,9 +1,9 @@
 <% content_for :sub_menu do %>
-  <ul class="tab_nav" id="sub_nav">
+  <ul id="sub_nav">
     <%= tab :products %>
     <%= tab :option_types %>
     <%= tab :properties %>
-    <%= tab :prototypes %>
+    <%= tab :prototypes, :css_class => 'last' %>
   </ul>
-  <hr />
+
 <% end %>

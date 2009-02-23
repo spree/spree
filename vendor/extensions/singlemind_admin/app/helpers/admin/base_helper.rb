@@ -22,10 +22,15 @@ module Admin::BaseHelper
     end
     options[:route] ||=  "admin_#{args.first}"
     link = link_to(t(options[:label]).capitalize, send("#{options[:route]}_path"))
+    
+    css_classes = []
     if args.include?(controller.controller_name.to_sym)
-      css_class = 'active'
+      css_classes << 'active'
     end
-    content_tag('li', link, :class => css_class)
+    if options[:css_class]
+      css_classes << options[:css_class]
+    end
+    content_tag('li', link, :class => css_classes.join(' '))
   end
   
 end

@@ -1,6 +1,6 @@
 html {
   background-color: #ddd;
-  margin:10px 20px 20px 20px;
+  margin:0 20px 20px 20px;
 }
 
 hr { 
@@ -57,10 +57,9 @@ ul.tab_nav li  {
 }
 
 ul.tab_nav a, ul.tab_nav span, ul.tab_nav a.active {
-	width: 8em;
 	display: block;
 	float: left;
-	padding: 4px 0;
+	padding: 4px 10px 4px 10px;
 	margin: 1px 4px -1px 0;
 	text-align: center;
 	font-size: 85%;
@@ -98,7 +97,7 @@ ul.tab_nav a:hover {
   width:auto;
   position:absolute;
   text-align:right;
-  right:0;
+  right:10px;
   bottom:0;
 }
 #global_nav {
@@ -115,24 +114,34 @@ ul.tab_nav a:hover {
 	background: #fff;
 	color:#115480;
 	border-color:#fff;
+	background: #fff url(../../images/admin/bg/active-tab.png) repeat-x;
 }
 
 
 
 
-/*
-
-    <div id="sub_nav" class="nav">
-      <span class="on"><a href="/admin/products">Products</a></span>
-      <span><a href="/admin/option_types">Option types</a></span>
-      <span><a href="/admin/properties">Properties</a></span>
-
-      <span><a href="/admin/prototypes">Prototypes</a></span>
-    </div>
-*/
-
-
-
-
-
-
+#sub_nav {
+  margin:0;
+  height:30px;
+	background:url(../../images/admin/bg/subnav.png) bottom left repeat-x;
+}
+#sub_nav li  {
+	display: inline;
+	list-style: none;
+}
+#sub_nav li a {
+	display: block;
+	float: left;
+	padding: 4px 20px 4px 20px;
+	margin: 1px 4px -1px 0;
+	text-align: center;
+	color: #115480;
+	font-weight:bold;
+	background: url(../../images/admin/bg/subnav-divider.png) center right no-repeat;
+}
+#sub_nav li.last a {
+  background:none;
+}
+#sub_nav li.active a {
+  color:#333;
+}
