@@ -40,5 +40,20 @@ module Admin::BaseHelper
     end
     content_tag('li', link, :class => css_classes.join(' '))
   end
+
+
+  def field_container(model, method, options = {}, &block)
+    if error_message_on(model, method)
+      css_class = 'withError' 
+    end
+    html = content_tag('p', capture(&block), :class => css_class)
+    concat(html, proc.binding)
+  end
+
+  def class_for_error(model, method)
+    if error_message_on :product, :name
+    end
+  end
+
   
 end

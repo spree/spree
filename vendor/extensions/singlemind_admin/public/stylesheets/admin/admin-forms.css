@@ -41,8 +41,15 @@ textarea      { height: 250px; padding:5px; }
 .required { color:#f00; font-weight:bold; font-size:1.2em;}
 .fullwidth { width:98% }
 
+/* contains button and link actions for a form */
+p.actions {
+  text-align:right;
+  padding:4px 10px;
+  background-image:url(../../images/admin/bg/green-stripes.png);
+}
 
-/* Flashes
+
+/* Flashes and error messages
 -------------------------------------------------------------- */
 
 .flash {
@@ -59,3 +66,13 @@ textarea      { height: 250px; padding:5px; }
   background: #E7F8D7 url(../../images/admin/icons/tick.png) 10px center no-repeat;
   color:#59A151; border-color: #59A151;
 }
+
+.withError {
+  background-color:#FDE4E4;
+  background-image:url(../../images/admin/bg/red-stripes.png);
+}
+.formError {
+  color:#c00; font-weight:bold;
+}
+
+
