@@ -23,7 +23,7 @@ hr {
 }
 
 #bd {
-  padding:10px;
+  padding:15px;
 }
 
 #sidebar {
@@ -41,6 +41,11 @@ hr {
   color: #4FAEE5;
 }
 
+
+
+.iconlink img {
+  vertical-align:bottom;
+}
 
 
 
@@ -147,6 +152,3 @@ ul.tab_nav a:hover {
 }
 
 
-    
-       
-       

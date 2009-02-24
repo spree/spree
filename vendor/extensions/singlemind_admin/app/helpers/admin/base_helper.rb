@@ -2,12 +2,20 @@ require_dependency "#{RAILS_ROOT}/app/helpers/admin/base_helper.rb"
 
 module Admin::BaseHelper
 
+  def link_to_new(resource)
+    link_to_with_icon('add', t("new"), edit_object_url(resource))
+  end
+
   def link_to_edit(resource)
-    link_to image_tag('/images/admin/icons/edit.gif') + ' ' + t("edit"), edit_object_url(resource)
+    link_to_with_icon('edit', t("edit"), edit_object_url(resource))
   end
   
   def link_to_delete(resource)
-    link_to image_tag('/images/admin/icons/delete.gif') + ' ' + t("delete"), object_url(resource), :confirm => t('are_you_sure'), :method => :delete 
+    link_to_with_icon('delete', t("delete"), object_url(resource), :confirm => t('are_you_sure'), :method => :delete )
+  end
+  
+  def link_to_with_icon(icon, text, url, options = {})
+    link_to(image_tag("/images/admin/icons/#{icon}.png") + ' ' + text, url, options.update(:class => 'iconlink'))
   end
 
 

@@ -64,10 +64,8 @@
 </div>
 
 
-
-
 <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:product) }.each do |field| %>
-<%= render :partial => "shared/additional_field", :locals => {:field => field, :f => f} %>
+  <%= render :partial => "admin/shared/additional_field", :locals => {:field => field, :f => f} %>
 <% end %>
 
 <div id="image-listing">

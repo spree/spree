@@ -53,14 +53,20 @@
       <div class="flash notice"><%= flash[:notice] %></div>
       <% end %>
 
-      <div id="yui-main">
-        <div class="yui-b">
-          <%= yield %>
+
+      <% if @content_for_sidebar.blank? %>
+        <%= yield %>
+      <% else %>
+        <div id="yui-main">
+          <div class="yui-b">
+            <%= yield %>
+          </div>
         </div>
-      </div>
-      <div class="yui-b" id="sidebar">
-        <%= yield :sidebar %>
-      </div>
+        <div class="yui-b" id="sidebar">
+          <%= yield :sidebar %>
+        </div>
+      <% end %>
+
 
     </div>
 

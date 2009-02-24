@@ -22,6 +22,11 @@ input, textarea, select {
   margin:0.25em 0;
   border:1px solid #bbb;
 }
+input.button {
+  padding:0.25em 1em 0.3em 1em;
+  font-weight:bold;
+  font-size:1.2em;
+}
 
 input.text:focus, input.title:focus,
 textarea:focus, select:focus {

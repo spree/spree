@@ -1,0 +1,41 @@
+<h2><%= t('images') %></h2>
+<%=error_message_on :viewable, :images %>
+<table class="index">
+  <tr>
+    <th><%= t('image') %></th>
+    <th><%= t('action') %></th>
+  </tr>
+  <% viewable.images.each do |image| %>
+  <tr>
+    <td><%= image_tag image.attachment.url(:small) %></td>
+    <td>
+      <%= link_to_remote t('delete'),
+          :url => admin_image_url(image),
+          :method => 'delete',
+          :before => "Element.show('img_busy_indicator')", 
+          :complete => "Element.hide('img_busy_indicator')",
+          :confirm => t("are_you_sure_you_want_to_delete_this_image"),
+          :update => 'image-listing' %>
+      <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'img_busy_indicator' %>
+    </td>
+  </tr>
+  <% end %>
+  <% if viewable.images.empty? %>
+    <tr>
+      <td colspan="3"><%= t('none_available') %>.</td>
+    </tr>
+  <% end %>
+</table>
+
+<p>
+  <%= link_to_function image_tag("/images/admin/icons/add.png") + ' ' + t("new_image"), "$('new-img-link').hide();$('new-image').show()", :id => "new-img-link", :class => 'iconlink' %>
+</p>
+
+<table id="new-image" style="display:none">
+  <% fields_for :image do |image| %>
+    <tr>
+      <td>Filename:</td>
+      <td><%= image.file_field :attachment, :size => 50 %></td>      
+    </tr>
+  <% end %>
+</table>

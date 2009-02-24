@@ -4,7 +4,7 @@
 
 <h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
 
-<p><%= link_to t("new_product"), new_object_url %></p>
+<p><%= link_to_with_icon 'add', t("new_product"), new_object_url %></p>
 
 <table class="index">
   <tr>
@@ -16,8 +16,8 @@
 <% @collection.each do |product| %>
   <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %>>
     <td><%= product.sku %></td>
-    <td><%=product.name%></td>
-    <td><%=product.master_price%></td>
+    <td><%= product.name %></td>
+    <td><%= product.master_price %></td>
     <td class="actions">
       <%= link_to_edit product if product.deleted_at.nil?  %>
       &nbsp;
@@ -33,8 +33,8 @@
 <% content_for :sidebar do %>
 
   <% form_for [:admin, @search] do |f| %>
-  <fieldset>
-    <legend><%= t(:search) %></legend>
+  <div class="box">
+    <h3><%= t(:search) %></h3>
 
     <% f.fields_for @search.conditions do |products| %>
     <p>
@@ -56,7 +56,7 @@
     <p>
       <%= f.submit t("search") %>
     </p>
-  </fieldset>
+  </div>
   <% end %>
 
 <% end %>

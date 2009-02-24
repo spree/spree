@@ -1,0 +1,7 @@
+<tr>
+  <td nowrap><%= field[:name] %>:</td>
+  <td>
+		<%=error_message_on controller.controller_name.singularize, field[:name].gsub(" ", "_").downcase%>
+    <%=text_field controller.controller_name.singularize, field[:name].gsub(" ", "_").downcase, :value => get_additional_field_value(controller, field) %>
+  </td>
+</tr>	

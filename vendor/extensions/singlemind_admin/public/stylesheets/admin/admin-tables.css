@@ -1,33 +1,33 @@
 /* index table */
 
 table.index {
-border-collapse: collapse;
-border-spacing: 0;
-width: 100%;
-margin-bottom: 20px;
-border-bottom: 1px solid #eaeaea;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eaeaea;
 }
 table.index tr:hover td {
-background-color: #ffd;
+  background-color: #ffd;
 }
 table.index th {
-text-align: left;
-background-color: #f5f5f5;
-font-weight: normal;
+  text-align: left;
+  background-color: #f5f5f5;
+  font-weight: normal;
 }
 table.index th, table.index td {
-padding: 4px;
-border-bottom: 1px solid #eaeaea;
+  padding: 6px 5px 7px 5px;
+  border-bottom: 1px solid #eaeaea;
 }
 table.index span.title {
-font-weight: bold;
-color: #333;
+  font-weight: bold;
+  color: #333;
 }
 table.index a.title:hover {
-text-decoration: underline;
+  text-decoration: underline;
 }
 table.index .page img.expander {
-padding: 6px 3px;
+  padding: 6px 3px;
 }
 
 table.index th.sortable.current {
