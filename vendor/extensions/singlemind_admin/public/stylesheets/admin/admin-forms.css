@@ -37,22 +37,20 @@ textarea      { height: 250px; padding:5px; }
 .fullwidth { width:98% }
 
 
-/* Success, notice and error boxes
+/* Flashes
 -------------------------------------------------------------- */
 
 .flash {
   font-size:130%;font-weight:bold;
-  padding: .8em 0 .8em 50px; margin-bottom: 1em;
+  padding: .4em 0 .4em 38px; margin-bottom: 1em;
+  border:1px solid #c00;
+  border-left:none;border-right:none;
 }
 .flash.error {
-  background: #FDE4E4 url(../../images/admin/bg/flash-error.png) center left no-repeat;
-  color:#c00;
-  border-top:2px solid #c00;
-  border-bottom:2px solid #c00;
+  background: #FDE4E4 url(../../images/admin/icons/exclamation.png) 10px center no-repeat;
+  color:#c00; border-color:#c00;
 }
 .flash.notice {
-  background: #FDE4E4 url(../../images/admin/bg/flash-notice.png) center left no-repeat;
-  color:#4D9A00;
-  border-top:2px solid #4D9A00;
-  border-bottom:2px solid #4D9A00;
+  background: #E7F8D7 url(../../images/admin/icons/tick.png) 10px center no-repeat;
+  color:#59A151; border-color: #59A151;
 }
