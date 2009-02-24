@@ -7,7 +7,7 @@
   	<br/>
   	<%= t('thank_you_for_your_order') %>         
   	<% if Spree::Config[:google_analytics_id] and not %w{development test}.include? RAILS_ENV %>
-  	  <%= render :partial => "shared/google_order", :locals => {:order => @order} %>
+  	  <%= render :partial => "orders/google_order", :locals => {:order => @order} %>
   	<% end %>
   <% else %>
   	| <%= link_to t('my_account'), user_path(current_user) %>

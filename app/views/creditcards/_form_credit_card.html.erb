@@ -1,7 +1,7 @@
 <h4><%= t("payment_information") %></h4>
-<table id="creditcard">
+<table class="creditcard">
   <tr>
-    <td colspan=2>
+    <td colspan="2">
       <%= image_tag "creditcard.gif", :id => 'creditcard-image' %>
     </td>
   </tr>
@@ -12,11 +12,11 @@
   </tr>
   <tr>
     <td><%= t("expiration_month") %></td>
-    <td><%= f.text_field :creditcard_month, :size => 4 -%></td>
+    <td><%= select_month(@date, :prefix => 'payment_presenter', :field_name => 'creditcard_month', :use_month_numbers => true) -%>
   </tr>
   <tr>
     <td><%= t("expiration_year") %></td>
-    <td><%= f.text_field :creditcard_year, :size => 4 -%></td>
+    <td><%= select_year(@date, :prefix => 'payment_presenter', :field_name => 'creditcard_year', :start_year => Date.today.year, :end_year => Date.today.year + 15) -%></td>
   </tr>
   <tr>
     <td><%= t("card_code") %></td>

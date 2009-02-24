@@ -14,10 +14,8 @@ class Admin::ShipmentsController < Admin::BaseController
     shipment.address = @shipment_presenter.address
     unless @shipment_presenter.valid? and shipment.save
       render :action => "new" and return
-    end    
-    if params['mark_shipped']
-      @order.ship!
     end 
+    @order.state_events.create(:name => t('ship'), :user => current_user, :previous_state => @order.state) if params[:mark_shipped]  
     flash[:notice] = t('created_successfully')
     redirect_to collection_url
   end
