@@ -1,20 +1,20 @@
-<table class="basic-table">
+<table class="index">
 	<thead>
 		<tr>
 			<th><%= t("name") %></th>
-			<th><%= t("action") %></th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
     <% @prototypes.each do |prototype| %>
       <tr id="row_<%= prototype.id %>">
-        <td valign="top"><%= prototype.name %></td>
-		    <td valign="top">
-					<%= link_to_remote t("select"), 
-		                         :url => select_admin_prototype_url(prototype), 
+        <td><%= prototype.name %></td>
+		    <td class="actions">
+					<%= link_to_remote icon('add') + ' ' + t("select"), 
+		                         {:url => select_admin_prototype_url(prototype), 
 		                         :update => 'rjs-target',
 														 :before => "Element.show('busy_indicator')", 
-				                     :complete => "Element.hide('busy_indicator');Element.hide('row_#{prototype.id}');" %>
+				                     :complete => "Element.hide('busy_indicator');Element.hide('row_#{prototype.id}');"}, :class => 'iconlink' %>
 				</td>
       </tr>
     <% end %>

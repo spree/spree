@@ -1,7 +1,0 @@
-number = 0
-@prototype.properties.each do |property|
-  page.insert_html :bottom, 'product_properties', 
-                   :partial => 'admin/product_properties/product_property',
-                   :locals => {:product_property => ProductProperty.new (:property => property), :number => number}
-  number += 1
-end

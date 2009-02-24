@@ -1,7 +1,0 @@
-<%= render :partial => 'admin/shared/product_sub_menu' %>
-<h1><%= "#{t("actions.new")} #{t("product")}" %></h1>
-
-<% form_for(:product,  :url => collection_url, :html => { :multipart => true }) do |f| %>
-  <%= render :partial => 'form', :locals => {:f => f} %>
-  <%= render :partial => 'admin/shared/new_resource_links' %>
-<% end %>

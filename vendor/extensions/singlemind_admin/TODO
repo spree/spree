@@ -1,9 +1,0 @@
-* login screen
-* make sure all resources are specified for tabs so active state is maintained
-* better title on product editing screens, should always show product title/sku - use shared partial to render it with product menu tabs
-* missing styles for tree widget when managing taxonomies
-* icon on new links
-* style admin pagination
-
-* translations
-  * en-US, show_active

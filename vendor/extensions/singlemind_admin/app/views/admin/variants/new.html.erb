@@ -1,8 +1,0 @@
-<%= render :partial => 'admin/shared/product_sub_menu' %>
-
-<%= error_messages_for :variant %>
-
-<% form_for(:variant, :url => collection_url) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
-  <%= render :partial => 'admin/shared/new_resource_links' %>
-<% end %>
