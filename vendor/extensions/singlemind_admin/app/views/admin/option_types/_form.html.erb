@@ -1,28 +1,22 @@
-<table>
-  <tr>
-    <td><%= t("name") %>: </td>
-    <td>
-      <%=error_message_on :option_type, :name %>
-      <%= f.text_field :name %>
-    </td>
-  </tr>
-  <tr>
-    <td><%= t("presentation") %>: </td>
-    <td>
-      <%=error_message_on :option_type, :presentation %>
-      <%= f.text_field :presentation %>
-    </td>
-  </tr>
-</table>
-<br/>
+<p>
+  <%= f.label :name, t("name") %><br />
+  <%= f.text_field :name %>
+  <%= f.error_message_on :name %>
+</p>
+
+<p>
+  <%= f.label :name, t("presentation") %><br />
+  <%= f.text_field :presentation %>
+  <%= f.error_message_on :presentation %>
+</p>
 
 <h3><%= t("option_values") %></h3>
-<table class="basic-table">
+<table class="index">
   <thead>
     <tr>
       <th><%= t("name") %></th>
       <th><%= t("display") %></th>
-      <th><%= t("action") %></th>
+      <th></th>
     </tr>
   </thead>
   <tbody id="option_values">
@@ -32,6 +26,9 @@
 		</tr>
 	</tbody>
 </table>
-<%= f.add_associated_link(t("add_option_value"), @option_type.option_values.build, 
-                         {:onclick => "Element.hide('none');"}) %>
-<br/>
+
+<p>
+<%= f.add_associated_link( icon('add') + ' ' + t("add_option_value"), @option_type.option_values.build, 
+                         {:onclick => "Element.hide('none');", :class => 'iconlink'}) %>
+</p>
+
