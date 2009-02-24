@@ -1,6 +1,4 @@
-<% render :partial => 'shared/product_sub_menu' %>
-
-
+<% render :partial => 'admin/shared/product_sub_menu' %>
 
 <h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
 
@@ -27,8 +25,6 @@
 <% end %>
 </table>
 <%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>						
-
-
 
 <% content_for :sidebar do %>
 
