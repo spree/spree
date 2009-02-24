@@ -35,3 +35,5 @@ vendor/rails
 coverage/*
 var
 TAGS
+public/stylesheets/admin
+public/images/admin
