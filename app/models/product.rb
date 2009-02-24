@@ -24,6 +24,10 @@ class Product < ActiveRecord::Base
   named_scope :active, lambda { |*args| { :conditions => ["products.available_on <= ? and products.deleted_at is null", (args.first || Time.zone.now)] } }
   
   named_scope :available, lambda { |*args| { :conditions => ["products.available_on <= ?", (args.first || Time.zone.now)] } }
+
+
+  named_scope :with_property_value, lambda { |property_id, value| { :include => :product_properties, :conditions => ["product_properties.property_id = ? AND product_properties.value = ?", property_id, value] } }
+
                  
   def to_param
     name.parameterize.to_s
