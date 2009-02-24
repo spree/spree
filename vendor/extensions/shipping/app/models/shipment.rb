@@ -12,7 +12,7 @@ class Shipment < ActiveRecord::Base
   end
     
   def shipping_methods
-    ShippingMethod.all.select { |method| method.zone.include?(address) }
+    ShippingMethod.all.select { |method| method.zone.include?(address) && method.available?(order) }
   end
 
   private  

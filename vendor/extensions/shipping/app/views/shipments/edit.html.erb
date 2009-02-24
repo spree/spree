@@ -33,11 +33,13 @@
 		  </tr>
 		  <tr>
 		    <td class="simple-radios">
-		    	<% @shipping_methods.each do |shipping_method| %>
-				  	<li>
-				  	  <%= shipping_radio(shipping_method, @shipment) %>
-				  	</li>
-				  <% end%>
+		      <ul>
+  		    	<% @shipping_methods.each do |shipping_method| %>
+  				  	<li>
+  				  	  <%= shipping_radio(shipping_method, @shipment) %>
+  				  	</li>
+  				  <% end%>		        
+		      </ul>
 		    </td>
 		  </tr>
 		  <tr>

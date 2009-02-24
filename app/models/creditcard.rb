@@ -66,7 +66,12 @@ class Creditcard < ActiveRecord::Base
   def last_digits
     self.class.last_digits(number)
   end
-  
+
+  # needed for some of the ActiveMerchant gateways (eg. Protx)
+  def brand
+    cc_type
+  end 
+
   def validate 
     validate_essential_attributes
     validate_card_type

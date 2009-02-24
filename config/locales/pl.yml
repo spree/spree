@@ -439,6 +439,7 @@ pl:
   updated_successfully:
   use_different_shipping_address: "Użyj innego adresy dostawy"
   user: Użytkownik
+  user_account: User Account
   user_details: "User Details"
   users: Użytkownicy
   value: Wartość

@@ -1,9 +1,11 @@
 <table class="cart-summary" width="100% ">
   <thead>
-    <th colspan="2"><%= t("item") %></th>
-    <th><%= t("price") %></th>
-    <th><%= t("qty") %></th>
-    <th><%= t("total") %></th>
+    <tr>      
+      <th colspan="2"><%= t("item") %></th>
+      <th><%= t("price") %></th>
+      <th><%= t("qty") %></th>
+      <th><%= t("total") %></th>
+    </tr>
   </thead>
   <tbody id="line_items">
 		<%= f.render_associated_form(@order.line_items) %>

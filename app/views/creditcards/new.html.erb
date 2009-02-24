@@ -4,7 +4,7 @@
   <% form_for(:payment_presenter, :url => order_creditcards_url(@order)) do |f| %>
     <table cellpadding="5" width="100%">
       <tr>
-        <td valign="top" wdith="50%">
+        <td valign="top" width="50%">
           <%= render :partial => 'form_credit_card', :locals => {:f => f} %>
         </td>
         <td>
