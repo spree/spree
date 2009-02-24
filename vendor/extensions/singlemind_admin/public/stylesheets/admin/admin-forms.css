@@ -33,20 +33,26 @@ input.title   { padding:5px; }
 input.title   { font-size:1.5em; }
 textarea      { height: 250px; padding:5px; }
 
+.required { color:#f00; font-weight:bold; font-size:1.2em;}
+.fullwidth { width:98% }
+
 
 /* Success, notice and error boxes
 -------------------------------------------------------------- */
 
-.error,
-.notice, 
-.success    { padding: .8em; margin-bottom: 1em; border: 2px solid #ddd; }
-
-.error      { background: #FBE3E4; color: #8a1f11; border-color: #FBC2C4; }
-.notice     { background: #FFF6BF; color: #514721; border-color: #FFD324; }
-.success    { background: #E6EFC2; color: #264409; border-color: #C6D880; }
-.error a    { color: #8a1f11; }
-.notice a   { color: #514721; }
-.success a  { color: #264409; }
-
-.required { color:#f00; font-weight:bold; font-size:1.2em;}
-.fullwidth { width:98% }
+.flash {
+  font-size:130%;font-weight:bold;
+  padding: .8em 0 .8em 50px; margin-bottom: 1em;
+}
+.flash.error {
+  background: #FDE4E4 url(../../images/admin/bg/flash-error.png) center left no-repeat;
+  color:#c00;
+  border-top:2px solid #c00;
+  border-bottom:2px solid #c00;
+}
+.flash.notice {
+  background: #FDE4E4 url(../../images/admin/bg/flash-notice.png) center left no-repeat;
+  color:#4D9A00;
+  border-top:2px solid #4D9A00;
+  border-bottom:2px solid #4D9A00;
+}

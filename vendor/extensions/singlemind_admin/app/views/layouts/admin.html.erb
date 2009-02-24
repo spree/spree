@@ -33,9 +33,9 @@
       <ul class="tab_nav" id="global_nav">
         <%= tab :overview, :route => :admin %>
         <%= tab :orders %>
-        <%= tab :products , :option_types, :properties, :prototypes %>
+        <%= tab :products , :option_types, :properties, :prototypes, :variants %>
         <%= tab :reports %>
-        <%= tab :configurations, :label => 'configuration' %>
+        <%= tab :configurations, :taxonomies, :label => 'configuration' %>
         <%= tab :users %>
       </ul>
       <hr />
@@ -46,15 +46,11 @@
   	<div id="bd">
 
 
-      <% unless flash.empty? %>
-      <div id="flashes">
-        <% if flash[:error] %>
-        <div id="flash-errors"><%= flash[:error] %></div>
-        <% end %>
-        <% if flash[:notice] %>
-        <div id="flash-notice"><%= flash[:notice] %></div>
-        <% end %>
-      </div>                
+      <% if flash[:error] %>
+      <div class="flash error"><%= flash[:error] %></div>
+      <% end %>
+      <% if flash[:notice] %>
+      <div class="flash notice"><%= flash[:notice] %></div>
       <% end %>
 
       <div id="yui-main">

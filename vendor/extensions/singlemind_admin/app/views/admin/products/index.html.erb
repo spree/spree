@@ -32,9 +32,9 @@
 
 <% content_for :sidebar do %>
 
-  <% form_for [:admin, @search] do |f| %>		
+  <% form_for [:admin, @search] do |f| %>
   <fieldset>
-    <legend><%= t("product_details") %></legend>
+    <legend><%= t(:search) %></legend>
 
     <% f.fields_for @search.conditions do |products| %>
     <p>
