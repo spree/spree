@@ -43,7 +43,7 @@ module Admin::BaseHelper
 
 
   def field_container(model, method, options = {}, &block)
-    if error_message_on(model, method)
+    unless error_message_on(model, method).blank?
       css_class = 'withError' 
     end
     html = content_tag('p', capture(&block), :class => css_class)
