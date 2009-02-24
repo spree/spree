@@ -1,0 +1,26 @@
+<h1><%= t(:order) + " #{@order.number} (#{@order.state.titleize})" %></h1>
+
+<ul class="tab_nav">
+	<li>
+	  <%= link_to t("order_details"), 
+	              admin_order_url(@order), 
+	              :class => (current == "Order Details" ? "active" : "") %>
+	</li>
+	<li>
+	  <%= link_to t("payments"), 
+	              admin_order_payments_url(@order), 
+	              :class => (current == "Payments" ? "active" : "") %>
+	</li>
+	<% if @order_admin_tabs && @order_admin_tabs.size > 0
+		@order_admin_tabs.each do |extension| %>
+     <li>
+  	  <%= link_to extension[:name].titleize.pluralize, 
+  	              eval(extension[:url] + " @order") ,
+									:class => (current == extension[:name].titleize.pluralize ? "active" : "") %>
+  	</li>
+   <% end
+	end %>
+	
+</ul>
+
+<hr />

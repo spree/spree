@@ -1,119 +1,91 @@
 <% content_for :head do -%>
   <%= calendar_date_select_includes %>
 <% end -%>
+
 <h1><%= t("listing_orders") %></h1>
 
-<table>
-  <tr>
-    <td valign="top">
-      <div id="order-summary">
-        <table class="admin-report" width="545">
-          <thead>
-            <tr>
-              <th><%= order_by_link :created_at, :text => t("order_date") %></th>
-              <th><%= order_by_link :number, :text => t("order_number") %></th>
-              <th><%= order_by_link :state, :text => t("status") %></th>
-              <th><%= order_by_link ({:user => :email}, :text => t("customer")) %></th>
-              <th><%= order_by_link :total, :text =>t("total") %></th>
-            </tr>
-          </thead>
-          <tbody>
-          <% @orders.each do |order| %>
-            <tr class="<%= cycle('even', 'odd') %>">
-              <td><%=order.created_at.to_date%></td>
-              <td><%= link_to order.number, object_url(order) %></td>
-              <td><%= t(order.state.downcase) %></td>
-              <td><%= order.user.email if order.user %></td>
-              <td><%= number_to_currency order.total %></td>
-            </tr>
-          <% end %>
-          </tbody>
-        </table>
-      </div>
-    </td>
-    <td valign="top">
-	  <% form_for [:admin, @search] do |f| %>
-	  	<% f.fields_for @search.conditions do |orders| %>
-        <div id="search-col">
-          <table class="admin-search">
-            <thead>
-              <tr>
-                <th colspan="2"><%= t("date_range") %></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><%= t("start") %>:</td>
-                <td>
-                  <%#= error_message_on :search, :start%>
-                  <%= orders.calendar_date_select :created_at_after, :style=>"width:100px" %>
-                </td>
-              </tr>
-              <tr>
-                <td><%= t("stop") %>:</td>
-                <td>
-                  <%#= error_message_on :search, :stop%>
-                  <%= orders.calendar_date_select :created_at_before, :style=>"width:100px" %>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <table class="admin-search">
-            <thead>
-              <tr>
-                <th colspan="2"><%= t("order_details") %></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><%= t("order_number") %></td>
-                <td>
-                  <%= orders.text_field :number, :size=>13 %>
-                </td>
-              </tr>
-              <tr>
-                <td><%= t("status") %></td>
-                <td>
-                  <%= orders.select :state, Order.state_machines['state'].states.collect {|status| [status.titleize, status]}, {:include_blank => true}, {:style => "width: 115px"}%>
-                </td>
-              </tr>
-            <% orders.fields_for orders.object.user do |user| %>
-              <tr>
-                <td><%= t("email") %></td>
-                <td>
-                  <%= user.text_field :email, :size=>13 %>
-                </td>
-              </tr>
-            <% end %>
-            <% orders.fields_for orders.object.creditcards do |cc| %>
-            	<% cc.fields_for cc.object.address do |address| %>
-              <tr>
-                <td><%= t("first_name") %></td>
-                <td>
-                  <%= address.text_field :lower_of_firstname_contains, :size=>13 %>
-                </td>
-              </tr>
-              <tr>
-                <td><%= t("last_name") %></td>
-                <td>
-                  <%= address.text_field :lower_of_lastname_contains, :size=>13 %>
-                </td>
-              </tr>
-				<% end %>
-			<% end %>
-              <tr>
-                <td colspan="2">
-                  <%= t("show_only_complete_orders") %>&nbsp;
-				          <%= orders.check_box :checkout_complete, {:style => "vertical-align:middle;"}, "1", "" %>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-		  <%= f.submit t("search") %>
-        </div>
-      	<% end %>
-      <% end %>
-    </td>
-  </tr>
+<table class="index">
+  <thead>
+    <tr>
+      <th><%= order_by_link :created_at, :text => t("order_date") %></th>
+      <th><%= order_by_link :number, :text => t("order_number") %></th>
+      <th><%= order_by_link :state, :text => t("status") %></th>
+      <th><%= order_by_link ({:user => :email}, :text => t("customer")) %></th>
+      <th><%= order_by_link :total, :text =>t("total") %></th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @orders.each do |order| %>
+    <tr>
+      <td><%=order.created_at.to_date%></td>
+      <td><%= link_to order.number, object_url(order) %></td>
+      <td><%= t(order.state.downcase) %></td>
+      <td><%= order.user.email if order.user %></td>
+      <td><%= number_to_currency order.total %></td>
+    </tr>
+  <% end %>
+  </tbody>
 </table>
 <%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
+        
+        
+        
+<% content_for :sidebar do %>      
+<div class="box">
+  <h3><%= t(:search) %></h3>
+
+  <% form_for [:admin, @search] do |f| %>
+  	<% f.fields_for @search.conditions do |orders| %>
+
+      <label><%= t("date_range") %></label><br />
+      <div class="yui-g">
+        <div class="yui-u sub-field first">
+          <%= orders.calendar_date_select :created_at_after, :style=>"width:75px" %><br />
+          <label class="sub"><%= t("start") %></label>
+        </div>
+        <div class="yui-u sub-field">
+          <%= orders.calendar_date_select :created_at_before, :style=>"width:75px" %><br />
+          <label><%= t("stop") %></label>
+        </div>
+      </div>
+
+      <p><label><%= t("order_number") %></label><br />
+      <%= orders.text_field :number, :size=>25 %></p>
+
+      <p><label><%= t("status") %></label><br />
+      <%= orders.select :state, Order.state_machines['state'].states.collect {|status| [status.titleize, status]}, {:include_blank => true} %></p>
+
+      <% orders.fields_for orders.object.user do |user| %>
+        <p>
+          <label><%= t("email") %></label><br />
+          <%= user.text_field :email, :size=>25 %>
+        </p>
+      <% end %>
+      <% orders.fields_for orders.object.creditcards do |cc| %>
+      	<% cc.fields_for cc.object.address do |address| %>
+        <p>
+          <label><%= t("first_name") %></label><br />
+            <%= address.text_field :lower_of_firstname_contains, :size=>25 %>
+        </p>
+        <p>
+          <label><%= t("last_name") %></label><br />
+          <%= address.text_field :lower_of_lastname_contains, :size=>25 %>
+        </p>
+      <% end %>
+      <% end %>
+
+      <p>
+        <label>
+          <%= orders.check_box :checkout_complete, {:style => "vertical-align:middle;"}, "1", "" %>
+          <%= t("show_only_complete_orders") %>
+        </label>
+      </p>
+
+      <p><%= f.submit t("search"), :class => 'button' %></p>
+
+    <% end %>
+
+  <% end %>
+
+</div>
+<% end %>
