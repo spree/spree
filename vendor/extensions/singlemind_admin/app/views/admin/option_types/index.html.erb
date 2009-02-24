@@ -1,0 +1,34 @@
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+<h1><%= t("option_types") %></h1>
+<table class="index">
+	<tr>
+		<th><%= t("name") %></th>
+		<th><%= t("presentation") %></th>
+		<th><%= t("action") %></th>
+	</tr>
+  <% @option_types.each do |option_type| %>
+    <tr>
+      <td valign="top"><%= option_type.name %></td>
+      <td valign="top"><%= option_type.presentation %></td>
+	    <td valign="top">
+	      <%= link_to_edit(option_type) %>
+	      &nbsp;
+	      <%= link_to_delete(option_type) %>
+	    </td>        
+    </tr>
+  <% end %>
+</table>
+
+<div id="option-types"></div>
+
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+<br/>
+
+<span id="new_ot_link">
+  <%= link_to_remote t("new_option_type"), 
+                     :url => new_admin_option_type_url, 
+                     :method => :get,
+                     :update => "option-types",
+                     :before => "Element.hide('new_ot_link');Element.show('busy_indicator')", 
+                     :complete => "Element.hide('busy_indicator')" %>
+</span>

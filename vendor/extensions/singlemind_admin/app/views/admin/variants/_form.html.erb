@@ -1,0 +1,37 @@
+<div class="yui-gb">
+  <div class="yui-u first">
+
+    <% @product.options.each do |option| %>
+      <p>
+        <%= label :new_variant, option.option_type.presentation %><br />
+        <%= select(:new_variant, 
+          option.option_type.presentation, 
+          option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
+          {}, :disabled => @variant.new_record? ? false : 'disabled'
+          ) 
+        %>
+      </p>
+    <% end %>
+
+    <p><%= f.label :sku, t("sku") %><br />
+    <%= f.text_field :sku %></p>
+
+
+    <p><%= f.label :price, t("price") %>:<br />
+    <%= f.text_field :price %></p>
+
+
+    <p><%= f.label :on_hand, t("on_hand") %>: <br />
+    <%= f.text_field :on_hand %></p>
+
+
+
+  </div>
+  <div class="yui-u">
+
+    <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
+      <%= render :partial => "admin/shared/additional_field", :locals => {:field => field, :f => f} %>
+    <% end %>
+
+  </div>
+</div>

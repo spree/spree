@@ -14,10 +14,13 @@ module Admin::BaseHelper
     link_to_with_icon('delete', t("delete"), object_url(resource), :confirm => t('are_you_sure'), :method => :delete )
   end
   
-  def link_to_with_icon(icon, text, url, options = {})
-    link_to(image_tag("/images/admin/icons/#{icon}.png") + ' ' + text, url, options.update(:class => 'iconlink'))
+  def link_to_with_icon(icon_name, text, url, options = {})
+    link_to(icon(icon_name) + ' ' + text, url, options.update(:class => 'iconlink'))
   end
 
+  def icon(icon_name)
+    image_tag("/images/admin/icons/#{icon_name}.png")
+  end
 
   # Make an admin tab that coveres one or more resources supplied by symbols
   # Option hash may follow. Valid options are

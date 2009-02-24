@@ -1,0 +1,38 @@
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+
+<div id="selected-options">
+
+<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Option Types"} %>
+
+
+  <table class="index">
+		<tr>
+			<th><%= t("name") %></th>
+			<th><%= t("presentation") %></th>
+			<th>&nbsp;</th>
+		</tr>
+    <% @option_types.each do |option_type| %>
+      <tr>
+        <td><%= option_type.name %></td>
+        <td><%= option_type.presentation %></td>
+		    <td class="actions">
+		    <%= link_to_with_icon 'delete',  t("remove"), remove_admin_product_option_type_url(@product, option_type) %>
+		    </td>        
+      </tr>
+    <% end %>
+    <% if @option_types.empty? %>
+     <tr><td colspan="3">None.</td></tr>
+    <% end %>
+  </table>
+
+  <%= image_tag "spinner.gif", :style => "display:none", :id => 'busy_indicator' %>
+  <div id="option-types"></div>
+  <span id="new_opt_link">
+    <%= link_to_remote icon('add') + ' ' + t("add_option_type"), 
+                       {:url => available_admin_product_option_types_url(@product),
+                       :method => :get,
+                       :update => "option-types",
+                       :before => "$('new_opt_link').hide();$('busy_indicator').show()", 
+                       :complete => "Element.hide('busy_indicator')"}, :class => 'iconlink' %>
+  </span>
+</div>

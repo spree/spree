@@ -1,3 +1,5 @@
+<h1><%= t("editing_product") + " &ldquo;#{@product.name}&rdquo;" %></h1>
+
 <ul class="tab_nav">
   <li<%= ' class="active"' if current == "Product Details" %>>
     <%= link_to t("product_details"), edit_admin_product_url(@product) %>
