@@ -102,8 +102,9 @@
 				<% end %>
 			<% end %>
               <tr>
-                <td colspan="2"><%= t("show_incomplete_orders") %>&nbsp;
-				<%= orders.check_box :checkout_complete_not, {:style => "vertical-align:middle;"}, "true", "false" %> 
+                <td colspan="2">
+                  <%= t("show_only_complete_orders") %>&nbsp;
+				          <%= orders.check_box :checkout_complete, {:style => "vertical-align:middle;"}, "1", "" %>
                 </td>
               </tr>
             </tbody>

@@ -24,7 +24,7 @@ class Admin::OrdersController < Admin::BaseController
   
   def resend
     OrderMailer.deliver_confirm(@order, true)
-    flash[:notice] = t('Order Email Resent')
+    flash[:notice] = t('order_email_resent')
     redirect_to :back
   end
   
@@ -32,17 +32,20 @@ class Admin::OrdersController < Admin::BaseController
 
   def collection
     @search = Order.new_search(params[:search])
+
+    if params[:search].nil? || params[:search][:conditions].nil?
+      @search.conditions.checkout_complete = true
+    end
+
     #set order by to default or form result
     @search.order_by ||= :created_at
     @search.order_as ||= "DESC"
     #set results per page to default or form result
     @search.per_page = Spree::Config[:orders_per_page]
-    #named_scope :checkout_completed, lambda {|state| {:conditions => ["checkout_complete = ?", state]}}
-    #scope = scope.checkout_completed(@filter.checkout == '1' ? false : true)
 
     @collection = @search.find(:all, :include => [:user, :shipments, {:creditcards => :address}] )
   end
-  
+
   # Allows extensions to add new forms of payment to provide their own display of transactions
   def initialize_txn_partials
     @txn_partials = []

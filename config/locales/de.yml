@@ -391,6 +391,7 @@ de:
   shopping_cart: Warenkorb
   show_deleted: "Zeige gelöschte"
   show_incomplete_orders: "Zeige unvollständige Bestellungen"
+  show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Zeige ausverkaufte Produkte"
   sign_up: "Anmelden"
   sku: Lagerhaltungsnummer
@@ -438,6 +439,7 @@ de:
   updated_successfully: "Erfolgreich aktualisiert"
   use_different_shipping_address: "Andere Lieferaddresse verwenden"
   user: Benutzer
+  user_account: User Account
   user_details: "Benutzer Details"
   users: Benutzer
   value: ""

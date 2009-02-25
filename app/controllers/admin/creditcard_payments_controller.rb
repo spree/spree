@@ -50,9 +50,12 @@ class Admin::CreditcardPaymentsController < Admin::BaseController
     if @creditcard_payment.can_capture?      
       creditcard = @creditcard_payment.creditcard
       authorization = @creditcard_payment.find_authorization
-      creditcard.capture(authorization)
-      @creditcard_payment.amount = authorization.amount
-      @creditcard_payment.save
+      Creditcard.transaction do 
+        creditcard.order.state_events.create(:name => t('pay'), :user => current_user, :previous_state => creditcard.order.state)
+        creditcard.capture(authorization)
+        @creditcard_payment.amount = authorization.amount
+        @creditcard_payment.save
+      end
       flash[:notice] = t("credit_card_capture_complete")
     else  
       flash[:error] = t("unable_to_capture_credit_card")    
@@ -69,6 +72,10 @@ class Admin::CreditcardPaymentsController < Admin::BaseController
  
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     @countries = Country.find(:all)
+
+    month = (params[:payment_presenter] && params[:payment_presenter][:creditcard_month]) ? params[:payment_presenter][:creditcard_month].to_i : Date.today.month
+    year = (params[:payment_presenter] && params[:payment_presenter][:creditcard_year]) ? params[:payment_presenter][:creditcard_year].to_i : Date.today.year
+    @date = Date.new(year, month, 1)
   end
 
   def load_amount

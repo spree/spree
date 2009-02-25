@@ -1,5 +1,461 @@
---- 
-en-US: 
+nb-NO: 
+  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: En kopi av all epost vil bli sendt til følgende adresser
+  abbreviation: Fortkortelse
+  access_denied: "Ikke tilgang"
+  account: "Konto"
+  action: Aksjon
+  actions: 
+    cancel: Avbryt
+    create: Opprett
+    destroy: Fjern
+    list: "List opp"
+    listing: "Viser"
+    new: Ny
+    update: Oppdater
+  activerecord: 
+    attributes: 
+      address: 
+        address1: Adresse
+        address2: "Adresse (forts.)"
+        city: Sted
+        firstname: "Fornavn"
+        lastname: "Etternavn"
+        phone: Telefon
+        zipcode: "Postnummer"
+      country: 
+        iso: ISO
+        iso3: ISO3
+        iso_name: "ISO-navn"
+        name: Navn
+        numcode: "ISO-kode"
+      creditcard: 
+        cc_type: Type
+        month: Måned
+        number: Nummer
+        verification_value: "Verifiseringsnummer"
+        year: År
+      inventory_unit: 
+        state: Status
+      line_item: 
+        price: Pris
+        quantity: Antall
+      order: 
+        checkout_complete: "Fullført handel"
+        ip_address: "IP-nummer"
+        item_total: "Sum varer"
+        number: Nummer
+        ship_amount: "Frakt"
+        special_instructions: "Annen informasjon"
+        state: "Status"
+        tax_amount: "Moms"
+        total: Totalt
+      product: 
+        available_on: "Tilgjengelig"
+        description: Beskrivelse
+        master_price: "Ordinær pris"
+        name: Navn
+        on_hand: "På lager"
+      property: 
+        name: Navn
+        presentation: "Presentasjon"
+      prototype: 
+        name: Navn
+      role: 
+        name: Navn
+      state: 
+        abbr: Forkortelse
+        name: Navn
+      taxon: 
+        name: Navn
+        permalink: Permalink
+        position: Posisjon
+      taxonomy: 
+        name: Navn
+      user: 
+        email: Epost
+      variant: 
+        depth: Dybde
+        height: Høyde
+        price: Pris
+        sku: Varenummer
+        weight: Vekt
+        width: Bredde
+      zone: 
+        description: Beskrivelse
+        name: Navn
+    models: 
+      address: 
+        one: Adresse
+        other: Adresser
+      country: 
+        one: Land
+        other: Land
+      creditcard: 
+        one: "Kredittkort"
+        other: "Kredittkort"
+      creditcard_payment: 
+        one: "Betaling med kort"
+        other: "Betalinger med kort"
+      creditcard_txn: 
+        one: "Korttransaksjon"
+        other: "Korttransaksjoner"
+      inventory_unit: 
+        one: "Lagervare"
+        other: "Lagervarer"
+      line_item: 
+        one: "Ordrelinje"
+        other: "Ordrelinjer"
+      order: 
+        one: Ordre
+        other: Ordrer
+      payment: 
+        one: Betaling
+        other: Betalinger
+      product: 
+        one: Produkt
+        other: Produkter
+      property: 
+        one: Egenskap
+        other: Egenskaper
+      prototype: 
+        one: Prototype
+        other: Prototyper
+      role: 
+        one: Rolle
+        other: Roller
+      state: 
+        one: "Stat"
+        other: "Stater"
+      taxon: 
+        one: Klasse
+        other: Klasser
+      taxonomy: 
+        one: Klassifikasjon
+        other: Klassifikasjoner
+      user: 
+        one: Bruker
+        other: Brukere
+      variant: 
+        one: Variant
+        other: Varianter
+      zone: 
+        one: Sone
+        other: Soner
+  add: Legg til
+  add_category: "Legg til kategori"
+  add_country: "Legg til land"
+  add_option_type: "Legg til variasjonstype"
+  add_option_types: "Legg til variasjonstyper"
+  add_option_value: "Legg til variasjonsverdi"
+  add_product_properties: "Legg til produktegenskaper"
+  add_state: "Legg til tilstand"
+  add_to_cart: "Legg i handlekurv"
+  add_zone: "Legg til sone"
+  address: Adresse
+  address_information: "Adresseinformasjon"
+  adjustment: Justering
+  administration: Administrasjon
+  allow_backorders: "Tillat restordre"
+  allow_ssl_to_be_used_when_in_developement_and_test_modes: Tillat at SSL brukes i utviklings- og testmodus.
+  allow_ssl_to_be_used_when_in_production_mode: Tillat at SSL brukes i produksjonsmodus.
+  amount: Beløp
+  are_you_sure: "Er du sikker"
+  are_you_sure_category: "Er du sikker på at du vil slette denne kategorien?"
+  are_you_sure_delete: "Er du sikker på at du vil slette denne?"
+  are_you_sure_delete_image: "Er du sikker på at du vil slette dette bildet?"
+  are_you_sure_option_type: "Er du sikker på at du vil slette denne variasjonstypen?"
+  are_you_sure_you_want_to_capture: "Er du sikker på at du vil lagre kortopplysningene?"
+  assign_taxon: "Tilknytte klasse"
+  assign_taxons: "Tilknytte klasser"
+  authorization_failure: "Autorisering feilet"
+  authorized: Autorisert
+  available_on: "Tilgjengelig"
+  available_taxons: "Tilgjengelige klasser"
+  back: Tilbake
+  back_to_store: "Tilbake til butikken"
+  bill_address: "Fakturaadresse"
+  billing_address: "Fakturaadresse"
+  cancel: Avbryt
+  canceled: Avbrutt
+  capture: capture
+  card_code: "CVV-kode"
+  card_number: "Kortnummer"
+  cart: Handlekurv
+  categories: Kategorier
+  category: Kategori
+  change: Endre
+  change_language: "Endre språk"
+  charged: "Belastet"
+  checkout: "Til kassen"
+  city: Sted
+  comp_order: "Kanseller ordre"
+  comp_order_confirmation: "Kunden vil ikke bli belastet. Er du sikker på at du vil kansellere ordren?"
+  configuration: Konfigurasjon
+  configuration_options: "Konfigurasjonsvalg"
+  configurations: Konfigurasjoner
+  confirm: Bekreft
+  confirm_password: "Bekreft passord"
+  continue: Fortsett
+  continue_shopping: "Fortsett å handle"
+  copy_all_mails_to: Kopier alle eposter til
+  country: Land
+  country_based: "Land"
+  create: Opprett
+  create_a_new_account: "Opprett ny konto"
+  created_successfully: "Vellykket opprettelse"
+  credit_card: "Kredittkort"
+  credit_card_capture_complete: "Kortopplysninger har blitt lagret"
+  credit_card_payment: "Betaling med kort"
+  current: "Nå"
+  customer: Kunde
+  date_range: "Datoområde"
+  delete: Slett
+  depth: Dybde
+  description: Beskrivelse
+  destroy: Fjern
+  display: Vis
+  edit: Endre
+  editing_category: "Endre kategori"
+  editing_option_type: "Endre variasjonstype"
+  editing_option_types: "Endre variasjonstyper"
+  editing_product: "Endre produkt"
+  editing_property: "Endre egenskap"
+  editing_prototype: "Endre prototype"
+  editing_state: "Endre stat"
+  editing_tax_category: "Endre momskategori"
+  editing_user: "Endre bruker"   
+  editing_zone: "Endre sone"
+  email: Epost
+  email_address: "Epostadresse"
+  email_server_settings_description: "Konfigurer epostserver."
+  empty_cart: "Tøm handlekurv"
+  enable_mail_delivery: "Skru på sending av epost"
+  error: feil
+  event: Hendelse
+  existing_customer: "Eksisterende kunde"
+  expiration_month: "Utgår måned"
+  expiration_year: "Utgår år"
+  extension: Utvidelse
+  extensions: Utvidelser
+  filename: Filnavn
+  final_confirmation: "Endelig bekreftelse"
+  first_name: "Fornavn"
+  gateway: "Tjeneste"
+  gateway_error: "Feil oppstått i tjeneste"
+  gateway_setting_description: "Velg en betalingstjeneste og konfigurer den."
+  general_settings: "Generelle innstillinger"
+  general_settings_description: "Konfigurer generelle innstillinger."
+  google_analytics: "Google Analytics"
+  google_analytics_active: "Aktiv"
+  google_analytics_create: "Opprett ny Google Analytics-konto"
+  google_analytics_id: "Analytics ID"
+  google_analytics_new: "Ny Google Analytics-konto"
+  google_analytics_setting_description: "Manage Google Analytics ID" 
+  height: Høyde
+  hello_user: "Hallo, bruker"
+  image: Bilde
+  images: Bilder
+  in_progress: "Pågår"
+  invalid_search: "Ugyldig søkekriterie."
+  inventory: Varelager
+  inventory_adjustment: "Justering av varelager"
+  inventory_setting_description: "Konfigurer varelager og restordre."
+  inventory_settings: "Varelagerinnstillinger"
+  item: Artikkel
+  item_description: "Beskrivelse"
+  item_total: "Solgte varer"
+  last_name: "Etternavn"
+  list: Liste
+  listing_categories: "Kategorier"
+  listing_option_types: "Variasjonstyper"
+  listing_orders: "Ordrer"
+  listing_reports: "Rapporter"
+  listing_tax_categories: "Momskategorier"
+  listing_users: "Brukere"
+  locale_changed: "Endret språk"
+  log_in: "Logg inn"
+  logged_in_as: "Innlogget som"
+  login_name: Brukernavn
+  logout: "Logg ut"
+  mail_delivery_enabled: "Sending av epost er skrudd på"
+  mail_delivery_not_enabled: "Sending av epost er ikke skrudd på"
+  mail_server_preferences: "Preferanser for epostserver"
+  mail_server_settings: "Innstillinger for epostserver"
+  master_price: "Ordinær pris"
+  my_account: "Min konto"
+  my_orders: "Mine ordrer"    
+  name: Navn
+  new: Ny
+  new_category: "Ny kategori"
+  new_credit_card_payment: "Ny kortbetaling"
+  new_customer: "Ny kunde"
+  new_image: "Nytt bilde"
+  new_option_type: "Ny variasjonstype"
+  new_option_value: "Ny variasjonsverdi"
+  new_product: "Nytt produkt"
+  new_property: "Ny egenskap"
+  new_prototype: "Ny prototype"
+  new_shipment: "Ny leveranse"
+  new_state: "Ny stat"
+  new_tax_category: "Ny momskategori"
+  new_tax_rate: "Nytt momsnivå"
+  new_taxonomy: "Ny klassifikasjon"
+  new_user: "Ny bruker"
+  new_variant: "Ny variant"
+  new_zone: "Ny sone"
+  next: Neste
+  no_items_in_cart: "Ingen artikler i handlekurven"
+  no_match_found: "Ingen treff"
+  none: Ingen
+  none_available: "Ingen tilgjengelig"
+  on_hand: "Tilgjengelig"
+  operation: Operasjon
+  option_Values: "Variasjonsverdier"
+  option_types: "Variasjonstyper"
+  option_values: "Variasjonsverdier"
+  options: Valg
+  or: eller
+  order: Ordre
+  order_confirmation_note: ""
+  order_date: "Ordredato"
+  order_details: "Ordredetaljer"
+  order_email_resent: "Ordre-epost sent på nytt"
+  order_number: Ordrenummer
+  order_operation_authorize: Autoriser
+  order_processed_successfully: "Din ordre har blitt behandlet"
+  order_total: "Ordresum"
+  order_total_message: "Beløpet som vil bli belastet ditt kort er"
+  order_updated: "Ordre oppdatert"
+  orders: Ordrer
+  out_of_stock: "Ikke på lager"
+  overview: Oversikt
+  paid: Betalt
+  parent_category: "Overkategori"
+  password: Passord
+  path: Sti
+  pay: betal
+  payment: Betaling
+  payment_gateway: "Betalingstjeneste"
+  payment_information: "Betalingsinformasjon"
+  payments: Betalinger
+  phone: Telefon
+  presentation: Presentasjon
+  previous: Forrige
+  price: Pris
+  problem_authorizing_card: "Problem ved autorisering av kort"
+  problem_capturing_card: "Problem ved lagring av kortopplysninger"
+  problems_processing_order: "Problemer ved prosessering av ordre"
+  process: Prosess
+  product: Produkt
+  product_details: "Produktdetaljer"
+  product_properties: "Produktegenskaper"
+  products: Produkter
+  properties: Egenskaper
+  property: Egenskap
+  prototypes: Prototyper
+  qty: Antall
+  rate: "Nivå"
+  remember_me: "Husk meg"
+  remove: Fjern
+  reports: Rapporter
+  resend: "Send på nytt"
+  response_code: "Responskode"  
+  resume: "fortsett"
+  resumed: Fortsatt
+  return: returner
+  returned: Returnert
+  roles: Roller
+  sales_total: "Brutto omsetning"
+  sales_total_for_all_orders: "Totale salg for alle ordrer"
+  sales_totals: "Omsetning"
+  sales_totals_description: "Totale salg for alle ordrer"
+  save_preferences: "Lagre preferanser"
+  search: Søk
+  secure_connection_type: "Kryptert forbindelse"
+  select: Velg
+  select_from_prototype: "Velg fra prototype"
+  send_copy_of_all_mails_to: "Send kopi av all epost til"
+  send_copy_of_orders_mails_to: "Send kopi av alle ordre-eposter til"
+  send_mails_as: "Send epost som"
+  send_order_mails_as: "Send ordre-epost som"
+  ship: send
+  ship_address: "Leveringsadresse"
+  shipment: Leveranse
+  shipped: Sendt
+  shipping: Frakt
+  shipping_address: "Leveringsadresse"
+  shipping_error: "Feil i forbindelse med leveranse"
+  shipping_method: "Leveransemåte"
+  shipping_total: "Fraktkostnader"
+  shopping_cart: "Handlekurv"
+  show_deleted: "Vis slettede"
+  show_incomplete_orders: "Vis ufullstendige ordrer"
+  show_out_of_stock_products: "Vis produkter som ikke er på lager"
+  sign_up: "Meld meg på"
+  sku: Varenummer
+  smtp_authentication_type: "SMTP autentisering"
+  smtp_domain: "SMTP domene"
+  smtp_mail_host: "SMTP server"
+  smtp_password: "SMTP passord"
+  smtp_port: "SMTP portnummer"
+  smtp_username: "SMTP brukernavn"
+  spree:
+    date: Dato
+    time: Tid                                               
+  start: Start
+  state: Stat
+  state_based: "Stater"
+  state_setting_description: "Konfigurer listen over stater/provinser assosiert med hvert land."
+  states: Stater
+  status: Status
+  stop: Stopp
+  store: Butikk
+  street_address: "Gateadresse"
+  street_address_2: "Gateadresse (forts.)"
+  subtotal: "Sum"
+  subtract: "Trekk fra"
+  system: System
+  tax: Moms
+  tax_categories: "Momskategorier"
+  tax_categories_setting_description: "Sett opp momskategorier for å identifisere hvilke produkter som er momsbelagt."
+  tax_category: "Momskategori"
+  tax_total: "Moms"
+  tax_type: "Momstype"
+  taxon: Klasse
+  taxonomies: Klassifikasjoner
+  taxonomies_setting_description: "Konfigurer klassifikasjoner."
+  taxons: Klasser
+  thank_you_for_your_order: "Takk for bestillingen. Vennligst skriv ut og ta vare på denne bekreftelsen."
+  this_file_language: "Norsk"
+  total: Total
+  transaction: Transaksjon
+  tree: Tre
+  try_again: "Forsøk på nytt"
+  type: Type
+  unable_to_capture_credit_card: "Kunne ikke lagre kortopplysningene"
+  update: Oppdater
+  updated_successfully: "Oppdatert"  
+  use_different_shipping_address: "Bruk en annen leveringsadresse"
+  user: Bruker
+  user_details: "Brukeropplysninger"
+  users: Brukere
+  value: Verdi
+  variants: Varianter
+  version: Versjon
+  website: Nettsted
+  weight: Vekt
+  welcome_to_sample_store: "Velkommen til eksempelbutikken"
+  what_is_a_cvv: "Hva er en CVV-kode?"
+  what_is_this: "Hva er dette?"
+  whats_this: "Hva er dette?"
+  width: Bredde
+  your_cart_is_empty: "Din handlekurv er tom"
+  zip: Postnummer
+  zone: Sone
+  zone_based: "Soner"
+  zone_setting_description: "Liste over land, stater og andre soner som brukes i diverse beregninger."
+  zones: Soner
+nb-NO: 
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
   access_denied: "Access Denied"

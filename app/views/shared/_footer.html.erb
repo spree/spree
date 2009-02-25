@@ -3,7 +3,7 @@
     Powered by <a href="http://spreehq.org">Spree</a>
   </p>
 </div>   
-<% if Spree::Config[:google_analytics_id] and not %w{development test}.include? RAILS_ENV %>
+<% if Spree::Config[:google_analytics_id] and not %w{development test}.include? RAILS_ENV and not params[:checkout_complete] %>
   <script type="text/javascript">
   	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
   	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
