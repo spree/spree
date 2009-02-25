@@ -1,0 +1,59 @@
+/* -------------------------------------------------------------- 
+   
+   ie.css
+   
+   Contains every hack for Internet Explorer,
+   so that our core files stay sweet and nimble.
+   
+-------------------------------------------------------------- */
+
+/* Make sure the layout is centered in IE5 */
+body { text-align: center; }
+.container { text-align: left; }
+
+/* Fixes IE margin bugs */
+* html .column, * html div.span-1, * html div.span-2, 
+* html div.span-3, * html div.span-4, * html div.span-5, 
+* html div.span-6, * html div.span-7, * html div.span-8, 
+* html div.span-9, * html div.span-10, * html div.span-11, 
+* html div.span-12, * html div.span-13, * html div.span-14, 
+* html div.span-15, * html div.span-16, * html div.span-17, 
+* html div.span-18, * html div.span-19, * html div.span-20, 
+* html div.span-21, * html div.span-22, * html div.span-23, 
+* html div.span-24 { overflow-x: hidden; }
+
+
+/* Elements
+-------------------------------------------------------------- */
+
+/* Fixes incorrect styling of legend in IE6. */
+* html legend { margin:0px -8px 16px 0; padding:0; }
+
+/* Fixes incorrect placement of ol numbers in IE6/7. */
+ol { margin-left:2em; }
+
+/* Fixes wrong line-height on sup/sub in IE. */
+sup { vertical-align: text-top; }
+sub { vertical-align: text-bottom; }
+
+/* Fixes IE7 missing wrapping of code elements. */
+html>body p code { *white-space: normal; } 
+
+/* IE 6&7 has problems with setting proper <hr> margins. */
+hr  { margin: -8px auto 11px; }
+
+
+/* Clearing 
+-------------------------------------------------------------- */
+
+/* Makes clearfix actually work in IE */ 
+.clearfix, .container {display: inline-block;}
+* html .clearfix,
+* html .container {height: 1%;}
+
+
+/* Forms 
+-------------------------------------------------------------- */
+
+/* Fixes padding on fieldset */
+fieldset {padding-top: 0;}
