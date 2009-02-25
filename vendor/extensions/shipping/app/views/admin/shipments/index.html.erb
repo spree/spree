@@ -1,12 +1,12 @@
-<%= render :partial => 'shared/order_tabs', :locals => {:current => "Shipments"} %>
-<table class="admin-report">
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
+<table class="index">
   <tr>
     <th><%= t("ext_shipping_shipment_number") %></th>
     <th><%= t("ext_shipping_method") %></th>
     <th><%= t("ext_shipping_cost") %></th>
     <th><%= t("ext_shipping_tracking") %></th>
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-    <th><%= t("action") %></th>
+    <th></th>
   </tr>
   <% @shipments.each do |shipment| %>
     <tr>
@@ -15,7 +15,7 @@
       <td><%= shipment.cost %></td>
       <td><%= shipment.tracking %></td>
       <td><%= shipment.shipped_at.to_s(:date_time24) if shipment.shipped_at %></td>
-      <td><%= link_to t('edit'), edit_admin_order_shipment_url(@order, shipment) %></td>
+      <td class="actions"><%= link_to_with_icon 'edit', t('edit'), edit_admin_order_shipment_url(@order, shipment) %></td>
     </tr>
   <% end %>
 </table>

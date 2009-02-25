@@ -1,11 +1,28 @@
-<%= render :partial => 'shared/order_tabs', :locals => {:current => "Shipments"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
+
+
+<%= render :partial => "details" %>
+
 <%= error_messages_for :shipment_presenter %>
 <% form_for(:shipment_presenter, :url => object_url, :html => { :method => :put }) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
-  <h4><%= t("shipping_address")%></h4>
-	<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "shipment"} %>
 
-  <div align="right">
-    <%= submit_tag t('update') %>
+
+<div class="yui-g">
+  <div class="yui-u first">
+    <h4><%= t("shipping_address")%></h4>
+  	<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "shipment"} %>
   </div>
+  <div class="yui-u">
+    <%= render :partial => "form", :locals => { :f => f } %>
+  </div>
+</div>
+
+
+
+
+
+  <p class="actions">
+    <%= submit_tag t('update'), :class => 'button' %>
+  </p>
+  
 <% end %>
