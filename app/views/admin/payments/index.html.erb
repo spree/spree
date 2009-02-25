@@ -1,5 +1,5 @@
-<%= render :partial => 'shared/order_tabs', :locals => {:current => "Payments"} %>
-<table class="admin-report">
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
+<table class="index">
   <tr>
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
     <th><%= t("amount") %></th>
@@ -19,4 +19,4 @@
   <% end %>
 </table>
 
-<%= link_to t("new_credit_card_payment"), new_admin_order_creditcard_payment_url(@order) %>
+<%= link_to icon("add") + ' ' + t("new_credit_card_payment"), new_admin_order_creditcard_payment_url(@order), :class => 'iconlink' %>

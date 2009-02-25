@@ -234,6 +234,7 @@ en-GB:
   error: error
   event: Event
   existing_customer: "Existing Customer"
+  expiration: "Expiration"
   expiration_month: "Expiration Month"
   expiration_year: "Expiration Year"
   extension: Extension
@@ -283,6 +284,7 @@ en-GB:
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mail Server Settings"
   master_price: "Master Price"
+  month: "Month"
   my_account: "My Account"
   my_orders: "My Orders"
   name: Name
@@ -452,6 +454,7 @@ en-GB:
   what_is_this: "What's This?"
   whats_this: "What's this"
   width: Width
+  year: "Year"
   your_cart_is_empty: "Your basket is empty"
   zip: Zip
   zone: Zone
