@@ -207,6 +207,7 @@ pt-PT:
   credit_card: "Cartão de Crédito"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Pagamento com Cartão de Crédito"
+  creditcard: Creditcard
   current: Actual
   customer: Cliente
   date_range: "Entre as Datas"

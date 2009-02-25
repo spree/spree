@@ -207,6 +207,7 @@ en-US:
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  creditcard: Creditcard
   current: Current
   customer: Customer
   date_range: "Date Range"
@@ -457,4 +458,4 @@ en-US:
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
-  zones: Zones  
+  zones: Zones          
