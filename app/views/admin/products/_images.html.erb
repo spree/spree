@@ -28,8 +28,9 @@
 </table>
 
 <p>
-  <%= link_to_function image_tag("/images/admin/icons/add.png") + ' ' + t("new_image"), "$('new-img-link').hide();$('new-image').show()", :id => "new-img-link", :class => 'iconlink' %>
+  <%= button_link_to_function t("new_image"), "$('new-img-link').hide();$('new-image').show()", :icon => 'add', :id => "new-img-link" %>
 </p>
+
 
 <table id="new-image" style="display:none">
   <% fields_for :image do |image| %>

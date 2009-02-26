@@ -1,8 +1,15 @@
 <% render :partial => 'admin/shared/product_sub_menu' %>
 
-<h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_product"), new_object_url, :icon => 'add' %></p>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
 
-<p><%= link_to_with_icon 'add', t("new_product"), new_object_url %></p>
+<h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
 
 <table class="index">
   <tr>

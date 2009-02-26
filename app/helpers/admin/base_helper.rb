@@ -24,6 +24,36 @@ module Admin::BaseHelper
     content_tag('button', content_tag('span', text))
   end
 
+  def button_link_to(text, url, html_options = {})
+    link_to(text_for_button_link(text, html_options), url, html_options_for_button_link(html_options))
+  end
+  
+  def button_link_to_function(text, function, html_options = {})
+    link_to_function(text_for_button_link(text, html_options), function, html_options_for_button_link(html_options))
+  end
+  
+  def button_link_to_remote(text, options, html_options = {})
+    link_to_remote(text_for_button_link(text, options), options, html_options_for_button_link(html_options))
+  end
+  
+  def text_for_button_link(text, html_options)
+    s = ''
+    if html_options[:icon]
+      s << icon(html_options.delete(:icon)) + ' &nbsp; '
+    end
+    s << text
+    content_tag('span', s)
+  end
+
+  def html_options_for_button_link(html_options)
+    if html_options.delete(:icon) # replace button class with icon link if an icon option is supplied
+      html_options[:class] = 'iconlink'
+    end
+    options = {:class => 'button'}.update(html_options)
+  end
+
+
+
   # Make an admin tab that coveres one or more resources supplied by symbols
   # Option hash may follow. Valid options are
   #   * :label to override link text, otherwise based on the first resource name (translated)

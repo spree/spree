@@ -18,7 +18,7 @@ body {
 
 h1,h2,h3,h4,h5,h6 { font-weight: bold; color: #111; }
 
-h1 { font-size: 2.5em; margin-bottom: 0.75em; }
+h1 { font-size: 2.5em; margin-bottom: 0.75em; line-height: 1em; }
 h2 { font-size: 1.5em; line-height: 1; margin-bottom: 0.6em; }
 h3 { font-size: 1.5em; line-height: 1.25; margin-bottom: 1.25em; }
 h4 { font-size: 1em; font-weight: bold; margin-bottom: 1.5em; }
