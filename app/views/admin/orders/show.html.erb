@@ -1,5 +1,9 @@
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
+<div class='toolbar order-links'>
+  <%= button_link_to t("resend"), resend_admin_order_url(@order), :method => :post, :icon => 'send-email' %>
+  <%= event_links %>
+</div>
 
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
 
 <%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} -%>
 
@@ -51,10 +55,3 @@
     </tr>
   <% end %>
 </table>
-
-
-<p class="actions">
-  <%= link_to icon('send-email') + ' ' + t("resend"), resend_admin_order_url(@order), :method => :post, :class => 'iconlink' %>
-  &nbsp; 
-  <%= event_links %>
-</p>
