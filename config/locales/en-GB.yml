@@ -406,10 +406,10 @@ en-GB:
     date: Date
     time: Time                                               
   start: Start
-  state: State
+  state: County
   state_based: "State Based"
   state_setting_description: "Administer the list of states/provinces associated with each country."
-  states: States
+  states: Counties
   status: Status
   stop: Stop
   store: Store
@@ -454,7 +454,7 @@ en-GB:
   whats_this: "What's this"
   width: Width
   your_cart_is_empty: "Your basket is empty"
-  zip: Zip
+  zip: Post Code
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
