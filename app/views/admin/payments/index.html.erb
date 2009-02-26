@@ -1,10 +1,20 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_credit_card_payment"), new_admin_order_creditcard_payment_url(@order), :icon => 'add' %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
+
 <table class="index">
   <tr>
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
     <th><%= t("amount") %></th>
     <th><%= t("type") %></th>
-    <th><%= t("action") %></th>
+    <th></th>
   </tr>
   <% @payments.each do |payment| %>
     <tr>
@@ -13,10 +23,8 @@
       <td><%= payment.class.to_s %></td>
       <!-- TODO: don't assume credit card, make it possible to edit other kinds of payments -->
       <td>
-        <%= link_to t('edit'), edit_admin_order_creditcard_payment_url(@order, payment) %>
+        <%= link_to_with_icon 'edit', t('edit'), edit_admin_order_creditcard_payment_url(@order, payment) %>
       </td>
     </tr>
   <% end %>
 </table>
-
-<%= link_to icon("add") + ' ' + t("new_credit_card_payment"), new_admin_order_creditcard_payment_url(@order), :class => 'iconlink' %>
