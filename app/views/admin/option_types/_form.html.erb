@@ -1,14 +1,14 @@
-<p>
+<% f.field_container :name do %>
   <%= f.label :name, t("name") %><br />
   <%= f.text_field :name %>
   <%= f.error_message_on :name %>
-</p>
+<% end %>
 
-<p>
-  <%= f.label :name, t("presentation") %><br />
+<% f.field_container :name do %>
+  <%= f.label :presentation, t("presentation") %><br />
   <%= f.text_field :presentation %>
   <%= f.error_message_on :presentation %>
-</p>
+<% end %>
 
 <h3><%= t("option_values") %></h3>
 <table class="index">
@@ -31,4 +31,3 @@
 <%= f.add_associated_link( icon('add') + ' ' + t("add_option_value"), @option_type.option_values.build, 
                          {:onclick => "Element.hide('none');", :class => 'iconlink'}) %>
 </p>
-

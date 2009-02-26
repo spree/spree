@@ -3,6 +3,9 @@
 <%= error_messages_for :option_type %>
 
 <% form_for(:option_type, :url => object_url, :html => { :method => :put }) do |f| %>
+<fieldset>
+  <legend><%= t("editing_option_type") %></legend>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <%= render :partial => 'shared/edit_resource_links' %>
+  <%= render :partial => 'admin/shared/edit_resource_links' %>
+</fieldset>
 <% end %>

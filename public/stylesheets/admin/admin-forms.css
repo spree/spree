@@ -133,18 +133,21 @@ form div.right.w30 {
       
       
 
-.sub-form {
+
+
+
+fieldset {
   margin-bottom: 1em;
-  display: none;
   padding: 1em;
   border: solid 1px #ccc;
   -moz-border-radius: 10px;
-  -webkit-border-radius: 10px; }
-  .sub-form h1 {
+  -webkit-border-radius: 10px; 
+  }
+  fieldset h1 {
     font-size: 1.75em; }
-  .sub-form table.index th:first-child {
+  fieldset table.index th:first-child {
     -moz-border-radius-topleft: 5px;
     -webkit-border-top-left-radius: 5px; }
-  .sub-form table.index th:last-child {
+  fieldset table.index th:last-child {
     -moz-border-radius-topright: 5px;
     -webkit-border-top-right-radius: 5px; }

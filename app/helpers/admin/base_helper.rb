@@ -33,7 +33,7 @@ module Admin::BaseHelper
   end
   
   def button_link_to_remote(text, options, html_options = {})
-    link_to_remote(text_for_button_link(text, options), options, html_options_for_button_link(html_options))
+    link_to_remote(text_for_button_link(text, html_options), options, html_options_for_button_link(html_options))
   end
   
   def text_for_button_link(text, html_options)
@@ -46,9 +46,6 @@ module Admin::BaseHelper
   end
 
   def html_options_for_button_link(html_options)
-    if html_options.delete(:icon) # replace button class with icon link if an icon option is supplied
-      html_options[:class] = 'iconlink'
-    end
     options = {:class => 'button'}.update(html_options)
   end
 
