@@ -1,21 +1,26 @@
-<table>
-	<tr>
-		<td><%= t("name") %>: </td>
-		<td>
-			<%= f.text_field :name %>
-		</td>
-	</tr>
-</table>
-<br/>
+<% f.field_container :name do %>
+  <%= f.label :name, t("name") %><br />
+  <%= f.text_field :name %>
+  <%= f.error_message_on :name %>
+<% end %>
+
 <h3><%= t("properties") %></h3>
-<br/>
-<ul id="properties">
+
+<ul class='checkbox-list' id='properties'>
 	<% Property.sorted.each do |property| %>
+  <% selected = if @prototype.new_record?
+    (params[:property] and params[:property][:id] and params[:property][:id].include?(property.id.to_s))
+  else
+    @prototype.properties.include?(property)
+  end %>
 		<li>
-	  	<%= check_box_tag "property[id][]", "#{property.id}", @prototype.properties.include?(property) %>
-	  	<%= property.name %>
+	  	<label>
+	  	  <%= check_box_tag "property[id][]", "#{property.id}", selected %>
+        <%= property.name %>
+      </label>
 		</li>
 	<% end %>
 </ul>
-<!-- this div resets the crazy float stuff used to layout the checkboxes -->
-<div style="clear:both"></div>
+<hr />
+
+
