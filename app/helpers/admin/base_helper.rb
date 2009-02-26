@@ -1,5 +1,3 @@
-require_dependency "#{RAILS_ROOT}/app/helpers/admin/base_helper.rb"
-
 module Admin::BaseHelper
 
   def link_to_new(resource)
@@ -20,6 +18,10 @@ module Admin::BaseHelper
 
   def icon(icon_name)
     image_tag("/images/admin/icons/#{icon_name}.png")
+  end
+  
+  def button(text, icon = nil)
+    content_tag('button', content_tag('span', text))
   end
 
   # Make an admin tab that coveres one or more resources supplied by symbols

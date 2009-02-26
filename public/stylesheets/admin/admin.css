@@ -11,14 +11,6 @@
 
 
 
-
-
-
-
-
-
-
-
 .address-form label,
 #creditcard label {
   width: 200px;
@@ -65,59 +57,64 @@ body {
       #content a:active,
       #content a:visited {
         color: #3C7DFB; }
-    #content.with-side-menu {
+    #content.with-sidebar {
       background: #fff url(../../images/admin/bg/content-back.png) right top repeat-y;
       padding-right: 340px;
       position: relative; }
-      #side-menu {
+      #sidebar {
         position: absolute;
         width: 305px;
         top: 0; right: 0;
         padding-top: 3em;
         }
-        #side-menu h3.name {
+        #sidebar .box {
+          padding:10px;
+        }
+        #sidebar .box h3 { margin: 0 0 10px 0; }
+        #sidebar h3 {
           margin: 0 10px; }
-          #side-menu h3.name a {
+          #sidebar h3 a {
             color: #111;
             text-decoration: none; }
-        #side-menu span.sku {
+        #sidebar span.sku {
           display: block;
           font-weight: normal; }
-        #side-menu img {
+        #sidebar img {
           float: right;
           margin-right: 1em; }
-          #side-menu img.calendar_date_select_popup_icon {
+          #sidebar img.calendar_date_select_popup_icon {
             float: none; }
-        #side-menu .field {
+        #sidebar .field {
           padding: 0 1em; }
-        #side-menu .form-buttons {
+        #sidebar .form-buttons {
           padding: 0 1em; }
-        #side-menu h4 {
+        #sidebar h4 {
           margin-left: 10px; }
-        #side-menu ul.side-menu {
+        #sidebar ul.sidebar {
           clear: both;
           position: relative;
           margin: 0;
           padding: 0; }
-          #side-menu ul.side-menu li {
+          #sidebar ul.sidebar li {
             list-style: none; }
-            #side-menu ul.side-menu li a {
+            #sidebar ul.sidebar li a {
               display: block;
               padding: 10px 20px 10px;
               outline: none;
               text-decoration: none;
               color: #666 !important; }
-              #side-menu ul.side-menu li.active a {
+              #sidebar ul.sidebar li a:hover { background-color:#ddd }
+              #sidebar ul.sidebar li.active a {
                 font-weight: bold;
                 background: url(../../images/admin/bg/menu-current.png) left center no-repeat;
                 color: #363 !important;
                 margin-left: -20px;
                 padding-left: 30px; }
-        #side-menu .order-number,
-        #side-menu .order-status {
+        #sidebar .order-number,
+        #sidebar .order-status {
           text-align: right;
           margin-right: 20px; }
-        #side-menu .order-status {
+        #sidebar .order-status {
           padding: 7px 15px;
           -moz-border-radius: 3px;
           -webkit-border-radius: 3px;
@@ -125,10 +122,10 @@ body {
           background-color: #999;
           color: #111;
           text-transform: uppercase; }
-          #side-menu .order-status.new {
+          #sidebar .order-status.new {
             background-color: #5D9C0F;
             color: #fff; }
-          #side-menu .order-status.canceled {
+          #sidebar .order-status.canceled {
             background-color: #c00;
             color: #fff; }
   h1.logo {
@@ -142,11 +139,14 @@ body {
       text-decoration: none;
       line-height: 50px;
       color: #BBDAFD; }
-  #admin-menu {
-    clear: both; }
+  #admin-menu { clear: both; }
   #admin-menu,
   #sub-menu {
-    margin: 0 1em; }
+    margin: 0 1em; 
+    }
+    #admin-menu li {
+
+    }
     #admin-menu ul,
     #sub-menu ul {
       padding: 0;
@@ -158,7 +158,7 @@ body {
         list-style: none; }
       #admin-menu ul li,
       #sub-menu ul li {
-        margin-right: 0; }
+        margin-right: 0; margin-bottom: -1px;}
         #admin-menu ul li a,
         #sub-menu ul li a {
           display: block;
@@ -168,12 +168,17 @@ body {
           outline: none; }
         #admin-menu ul li.selected a,
         #sub-menu ul li.selected a {
-          background-color: #0095da; }
+          background-color: #0095da; 
+          }
+        #admin-menu ul li.selected {
+          border-bottom:1px solid #0095DA;
+        }
   #admin-menu {
     background: #154e8c url(../../images/admin/bg/admin_tab_back.png) top left repeat-x;
     border-top: 1px solid #4B83E2;
     border-right: 1px solid #34599B;
-    border-bottom: 1px solid #41A6F0; }
+    border-bottom: 1px solid #41A6F0; 
+    }
     #admin-menu ul {
       margin-bottom: -1px; }
       #admin-menu ul li:first-child {
@@ -312,21 +317,6 @@ body {
       font-size: 1.75em;
       padding-left: 40px;
       background: url(../../images/admin/icons/orb/32x32/3.png) center left no-repeat; }
-  .sub-form {
-    margin-bottom: 1em;
-    display: none;
-    padding: 1em;
-    border: solid 1px #ccc;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px; }
-    .sub-form h1 {
-      font-size: 1.75em; }
-    .sub-form table.index th:first-child {
-      -moz-border-radius-topleft: 5px;
-      -webkit-border-top-left-radius: 5px; }
-    .sub-form table.index th:last-child {
-      -moz-border-radius-topright: 5px;
-      -webkit-border-top-right-radius: 5px; }
   ul.checkbox-list {
     list-style: none; }
     ul.checkbox-list li {
@@ -408,3 +398,7 @@ body {
   #searching {
     clear: both;
     margin-top: 2em; }
+
+
+
+

@@ -2,7 +2,6 @@
 <%= calendar_date_select_includes %>
 <% end %>
 
-
 <div class="yui-gc">
   <div class="yui-u first">
     
@@ -26,9 +25,6 @@
       <%= f.text_field :master_price  %>
       <%= f.error_message_on :master_price%>
     <% end %>
-
-    </div>
-    <div class="yui-u">
 
     <p>
       <%= f.label :available_on, t("available_on") %><br />
@@ -60,9 +56,7 @@
     </p>    
         
   </div>
-  
 </div>
-
 
 <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:product) }.each do |field| %>
   <%= render :partial => "admin/shared/additional_field", :locals => {:field => field, :f => f} %>
@@ -71,4 +65,3 @@
 <div id="image-listing">
   <%= render :partial => 'images', :locals => {:viewable => @product, :f => f} -%>
 </div>
-

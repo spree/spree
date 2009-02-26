@@ -29,30 +29,31 @@
 <% content_for :sidebar do %>
 
   <% form_for [:admin, @search] do |f| %>
-  <div class="box">
-    <h3><%= t(:search) %></h3>
 
-    <% f.fields_for @search.conditions do |products| %>
-    <p>
-      <label><%= t("name") %></label><br />
-      <%= products.text_field :name_contains, :size => 15 %>
-    </p>
+    <div class="box">
+      <h3><%= t(:search) %></h3>
 
-    <% products.fields_for products.object.variants do |variants| %>
+      <% f.fields_for @search.conditions do |products| %>
       <p>
-        <label><%= t("sku") %></label><br />
-        <%= variants.text_field :sku_contains, :size => 15 %>
+        <label><%= t("name") %></label><br />
+        <%= products.text_field :name_contains, :size => 15 %>
       </p>
-    <% end %>                
-    <p>
-      <label><%= t("show_deleted") %></label><br />
-      <%= products.check_box :deleted_at_is_not_null, {}, "1", "" %>
-    </p>
-    <%end%>
-    <p>
-      <%= f.submit t("search") %>
-    </p>
-  </div>
+
+      <% products.fields_for products.object.variants do |variants| %>
+        <p>
+          <label><%= t("sku") %></label><br />
+          <%= variants.text_field :sku_contains, :size => 15 %>
+        </p>
+      <% end %>                
+      <p>
+        <label><%= t("show_deleted") %></label><br />
+        <%= products.check_box :deleted_at_is_not_null, {}, "1", "" %>
+      </p>
+      <%end%>
+      <p class="form-buttons">
+        <%= button t("search") %>
+      </p>
+    </div>
   <% end %>
 
 <% end %>

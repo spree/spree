@@ -27,3 +27,4 @@ table.index.order-summary {
     background: transparent;
     text-align: right;
     border: none; }
+table.index td.actions {text-align:right;}

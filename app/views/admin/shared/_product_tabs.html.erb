@@ -5,7 +5,7 @@
   <h3 class="name"><%= @product.name %><span class='sku'><%= @product.sku %></span></h3>
   <br clear="clear" />
 
-  <ul class="side-menu product-menu">
+  <ul class="sidebar product-menu">
     <li<%= ' class="active"' if current == "Product Details" %>>
       <%= link_to t("product_details"), edit_admin_product_url(@product) %>
     </li>
