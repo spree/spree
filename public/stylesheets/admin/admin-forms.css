@@ -98,3 +98,31 @@ form div.right {
 
 
 
+
+
+.form-buttons {
+  margin-top: 1em;
+  clear: both;
+  }
+  .form-buttons a {
+    text-transform: lowercase; }
+
+.field {
+  margin-bottom: 1em;
+  clear: both;
+  position: relative; }
+  .field .formError {
+    color: #fff;
+    background: #f15700 url(../..//images/admin/icons/fugue/exclamation_small.png) center left no-repeat;
+    padding: 3px 7px;
+    display: inline-block;
+    margin-bottom: 1em;
+    padding-left: 20px; }
+  .field.fluid {
+    clear: none;
+    float: left;
+    margin-right: 1em; }
+  .field label {
+    display: block; }
+    .field label span.label {
+      display: block; }
