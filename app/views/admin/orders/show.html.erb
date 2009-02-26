@@ -8,21 +8,19 @@
 <%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} -%>
 
 
-<div class="yui-g">
-  <div class="yui-u first">
-    <% if @order.bill_address %>
-      <h4><%= link_to "Bill Address", edit_admin_order_creditcard_payment_url(@order, @order.creditcard_payments.last) %></h4>
-      <%= render :partial => 'shared/address', :locals => {:address => @order.bill_address} %>      
-    <% end %>
-  </div>
-  <div class="yui-u">
-    <% if @order.ship_address %>
-      <h4><%= link_to "Ship Address", edit_admin_order_shipment_url(@order, @order.shipments.last) %></h4>
-      <%= render :partial => 'shared/address', :locals => {:address => @order.ship_address} %>      
-    <% end %>
-  </div>
+<div class='adr'>
+  <h4><%= link_to "Bill Address", edit_admin_order_creditcard_payment_url(@order, @order.creditcard_payments.last) %></h4>
+  <% if @order.bill_address %>
+    <%= render :partial => 'admin/shared/address', :locals => {:address => @order.bill_address} %>      
+  <% end %>
 </div>
-
+<div class='adr'>
+  <h4><%= link_to "Ship Address", edit_admin_order_shipment_url(@order, @order.shipments.last) %></h4>
+  <% if @order.ship_address %>
+    <%= render :partial => 'admin/shared/address', :locals => {:address => @order.ship_address} %>      
+  <% end %>
+</div>
+<hr />
 
 
 <% if @order.user %>
@@ -35,6 +33,8 @@
     </tr>
   </table>
 <% end %>
+
+<h4><%= t('history') %></h4>
 
 <table class="index">
   <tr>
