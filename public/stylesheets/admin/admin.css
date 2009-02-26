@@ -207,19 +207,6 @@ body {
   #slide-content {
     margin: 0 1em;
     background-color: #cdf; }
-  .pagination ul {
-    float: right; }
-    .pagination ul li {
-      float: left;
-      margin-right: 1em;
-      list-style: none; }
-    .pagination ul li {
-      line-height: 2em;
-      padding: 0px 5px;
-      margin-right: 0; }
-      .pagination ul li.currentpage {
-        background-color: #4884BD;
-        color: #fff; }
   .toolbar {
     float: right;
     margin-bottom: 1em; }
@@ -398,3 +385,41 @@ body {
   #searching {
     clear: both;
     margin-top: 2em; }
+
+
+.pagination{
+	padding-top: 10px;
+	text-align: right;
+}
+a.page, span.page {  
+	padding: 0px 5px; 
+	margin: 0 3px;
+}
+a.page {  	  
+	text-decoration: none;  
+	border: 1px solid #9aafe5;
+	color: #2e6ab1;	
+}
+a.page:hover, a.page:active {  
+	border: 1px solid #2b66a5;
+	color: #000;
+	background-color: LightYellow;	
+} 
+
+a.next_page {
+	font-weight: bold;
+}
+
+
+span.disabled_page {  
+	border: 1px solid #929292;
+	color: #929292;
+} 
+
+span.current_page {  
+	font-weight: bold;
+	border: 1px solid navy;
+	background-color: #2e6ab1;
+	color: #FFF;
+}
+
