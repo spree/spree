@@ -73,7 +73,7 @@ class Order < ActiveRecord::Base
   end
 
   def allow_cancel?
-    self.checkout_complete && self.state != 'canceled'
+    self.state != 'canceled'
   end
   
   def allow_resume?

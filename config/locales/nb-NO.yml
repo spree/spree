@@ -663,6 +663,7 @@ nb-NO:
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  creditcard: Creditcard
   current: Current
   customer: Customer
   date_range: "Date Range"
