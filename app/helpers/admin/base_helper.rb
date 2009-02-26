@@ -36,7 +36,7 @@ module Admin::BaseHelper
     
     css_classes = []
     if args.include?(controller.controller_name.to_sym)
-      css_classes << 'active'
+      css_classes << 'selected'
     end
     if options[:css_class]
       css_classes << options[:css_class]

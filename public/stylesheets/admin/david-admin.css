@@ -1,0 +1,210 @@
+html {
+  background-color: #ddd;
+  margin:0 20px 20px 20px;
+}
+
+hr { 
+  clear:left;
+  border:none;
+  border-top:1px solid #999;
+  }
+
+
+#doc3 {
+  background-color:#fff;
+}
+
+
+#hd {
+  position:relative;
+  background: #0269AB url(../../images/admin/bg/header-bg.png) bottom left repeat-x;
+  color: white;
+  height:80px;
+}
+
+#bd {
+  padding:15px;
+}
+
+#sidebar {
+  padding-top:3em;
+}
+
+
+#login-nav {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+#login-nav a {
+  text-decoration: underline;
+  color: #4FAEE5;
+}
+
+
+
+.iconlink img {
+  vertical-align:bottom;
+}
+
+
+
+ul.tab_nav {
+  margin:0;
+	padding: 10px 0 0 0;
+	width: 60em; /* a width is required for Opera, older Mozilla browsers, and Konqueror browsers */
+  padding-left:10px;
+}
+
+ul.tab_nav li  {
+	display: inline;
+	list-style: none;
+}
+
+ul.tab_nav a, ul.tab_nav span, ul.tab_nav a.active {
+	display: block;
+	float: left;
+	padding: 4px 10px 4px 10px;
+	margin: 1px 4px -1px 0;
+	text-align: center;
+	font-size: 85%;
+	color: #333;
+}
+
+ul.tab_nav a {
+	background: #eee;
+	border: 1px solid #999;
+	border-bottom: none;
+}
+
+ul.tab_nav span, ul.tab_nav li.active a, ul.tab_nav li a.active, ul.tab_nav li a.active,  ul.tab_nav li.active a:hover {
+	border: 1px solid #999;
+	border-bottom: none;
+	background: #fff;
+	padding-bottom: 6px;
+	margin-top: 0;
+}
+
+
+
+ul.tab_nav a:hover {
+	margin-top: 0;
+	background: #FFF7CD;
+	padding-bottom: 5px;
+}
+
+
+
+#hd hr {
+  border:none;height:0;
+}
+#global_nav {
+  width:auto;
+  position:absolute;
+  text-align:right;
+  right:10px;
+  bottom:0;
+}
+#global_nav {
+  text-align:right;
+}
+#global_nav a {
+	background: #115480;
+	font-weight:bold;
+	color:#fff;
+	border-color:#2370AD;
+	font-size: 100%;
+}
+#global_nav li.active a {
+	background: #fff;
+	color:#115480;
+	border-color:#fff;
+	background: #fff url(../../images/admin/bg/active-tab.png) repeat-x;
+}
+
+
+
+
+#sub_nav {
+  margin:0;
+  height:30px;
+	background:url(../../images/admin/bg/subnav.png) bottom left repeat-x;
+}
+#sub_nav li  {
+	display: inline;
+	list-style: none;
+}
+#sub_nav li a {
+	display: block;
+	float: left;
+	padding: 4px 20px 4px 20px;
+	margin: 1px 4px -1px 0;
+	text-align: center;
+	color: #115480;
+	font-weight:bold;
+	background: url(../../images/admin/bg/subnav-divider.png) center right no-repeat;
+}
+#sub_nav li.last a {
+  background:none;
+}
+#sub_nav li.active a {
+  color:#333;
+}
+
+
+
+
+
+
+
+.pagination{
+	text-align: right;
+}
+ 
+a.page, span.page {  
+	padding: 0px 5px; 
+	margin: 0 3px;
+}
+ 
+a.page {  	  
+	text-decoration: none;  
+	border: 1px solid #9aafe5;
+	color: #2e6ab1;	
+}
+
+a.page:hover, a.page:active {  
+	border: 1px solid #2b66a5;
+	color: #000;
+	background-color: LightYellow;	
+} 
+
+a.next_page {
+	font-weight: bold;
+}
+
+
+span.disabled_page {  
+	border: 1px solid #929292;
+	color: #929292;
+} 
+
+span.current_page {  
+	font-weight: bold;
+	border: 1px solid navy;
+	background-color: #2e6ab1;
+	color: #FFF;
+}
+
+
+
+.box {
+  background-color:#F5F5F5;
+  padding:10px;
+}
+.box h3 {
+ background-color:#115480; 
+ color:#fff;
+ padding:2px 10px 3px 10px;
+ margin:-10px -10px 10px -10px;
+}
+

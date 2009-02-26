@@ -5,10 +5,10 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <title><%= "Spree #{t('administration')}: #{controller.controller_name.titleize}" %></title>
 
-  <%= stylesheet_link_tag 'admin/reset-fonts-grids-2-6-0.css' %>
-  <%= stylesheet_link_tag 'admin/admin-typography' %>
-  <%= stylesheet_link_tag 'admin/admin-forms' %>
-  <%= stylesheet_link_tag 'admin/admin-tables' %>
+  <%#= stylesheet_link_tag 'admin/reset-fonts-grids-2-6-0.css' %>
+  <%#= stylesheet_link_tag 'admin/admin-typography' %>
+  <%#= stylesheet_link_tag 'admin/admin-forms' %>
+  <%#= stylesheet_link_tag 'admin/admin-tables' %>
   <%= stylesheet_link_tag 'admin/admin' %>
 
   <%= javascript_include_tag :defaults, :cache => true %>
@@ -16,20 +16,21 @@
 
   <%= yield :head %>
 </head>
-<body>
-<div id="doc3" class="yui-t5">
+<body class='yui-skin-sam admin'>
+<div id='wrapper'>
 
-	<div id="hd">
-    
-      <% if logged_in? -%>
-      <div id="login-nav">
-        <%= t('logged_in_as') %>: <%= current_user.email %> | 
-        <%= link_to t('logout'), :controller => '/account', :action => 'logout' %> | 
-        <%= link_to t('store'), products_path %>
-      </div>
-      <% end -%>      
-
-      <ul class="tab_nav" id="global_nav">
+  <div id="header">
+    <% if logged_in? -%>
+    <ul id="login-nav">
+      <li><%= t('logged_in_as') %>: <%= current_user.email %></li>
+      <li><%= link_to t('logout'), :controller => '/account', :action => 'logout' %></li>
+      <li><%= link_to t('store'), products_path %></li>
+    </ul>
+    <% end -%>      
+    <h1 class='logo'><%= link_to 'Administration', admin_path %></h1>
+  </div>
+    <div id="admin-menu">
+      <ul id="main-menu">
         <%= tab :overview, :route => :admin %>
         <%= tab :orders, :payments, :creditcard_payments, :shipments %>
         <%= tab :products , :option_types, :properties, :prototypes, :variants, :product_properties, :taxons %>
@@ -37,12 +38,15 @@
         <%= tab :configurations, :general_settings, :mail_settings, :tax_categories, :zones, :states, :gateway_configurations, :inventory_settings, :taxonomies, :label => 'configuration' %>
         <%= tab :users %>
       </ul>
-      <hr />
+      <br class="clear" />
     </div>
-    <%= yield :sub_menu %>
 
+    <div id="sub-menu">
+      <%#= yield :sub_menu %>
+      <br class="clear" />
+    </div>
 
-  	<div id="bd">
+    <div class="clear" id="content">
 
 
       <% if flash[:error] %>
@@ -69,7 +73,9 @@
 
     </div>
 
-    <div id="ft"></div>
+    <div id="footer">
+      <p>Icons by <a href='http://pinvoke.com'>pInvoke</a></p>
+    </div>
 
 </div>
 
