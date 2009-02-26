@@ -42,82 +42,82 @@ p.help-text {
 
 
 
-body.admin {
+body {
   background-color: #162F54;
   color: #476D9B; }
-  body.admin a {
+  a {
     color: #4884BD; }
-    body.admin a:active,
-    body.admin a:visited {
+    a:active,
+    a:visited {
       color: #4884BD; }
-  body.admin #header,
-  body.admin #footer {
+  #header,
+  #footer {
     padding: 1em 1em 0;
     clear: both; }
-  body.admin #content {
+  #content {
     margin: 0em 1em 1em 1em;
     padding: 1em;
     background: #fff;
     color: #111;
     min-height: 500px; }
-    body.admin #content a {
+    #content a {
       color: #3C7DFB; }
-      body.admin #content a:active,
-      body.admin #content a:visited {
+      #content a:active,
+      #content a:visited {
         color: #3C7DFB; }
-    body.admin #content.with-side-menu {
-      background: #fff url(/images/content-back.png) right top repeat-y;
+    #content.with-side-menu {
+      background: #fff url(../../images/admin/bg/content-back.png) right top repeat-y;
       padding-right: 340px;
       position: relative; }
-      body.admin #content.with-side-menu #side-menu {
+      #side-menu {
         position: absolute;
         width: 305px;
-        top: 0px;
-        right: 0px;
-        padding-top: 1em; }
-        body.admin #content.with-side-menu #side-menu h3.name {
+        top: 0; right: 0;
+        padding-top: 3em;
+        }
+        #side-menu h3.name {
           margin: 0 10px; }
-          body.admin #content.with-side-menu #side-menu h3.name a {
+          #side-menu h3.name a {
             color: #111;
             text-decoration: none; }
-        body.admin #content.with-side-menu #side-menu span.sku {
+        #side-menu span.sku {
           display: block;
           font-weight: normal; }
-        body.admin #content.with-side-menu #side-menu img {
+        #side-menu img {
           float: right;
           margin-right: 1em; }
-          body.admin #content.with-side-menu #side-menu img.calendar_date_select_popup_icon {
+          #side-menu img.calendar_date_select_popup_icon {
             float: none; }
-        body.admin #content.with-side-menu #side-menu .field {
+        #side-menu .field {
           padding: 0 1em; }
-        body.admin #content.with-side-menu #side-menu .form-buttons {
+        #side-menu .form-buttons {
           padding: 0 1em; }
-        body.admin #content.with-side-menu #side-menu h4 {
+        #side-menu h4 {
           margin-left: 10px; }
-        body.admin #content.with-side-menu #side-menu ul.side-menu {
+        #side-menu ul.side-menu {
           clear: both;
           position: relative;
           margin: 0;
           padding: 0; }
-          body.admin #content.with-side-menu #side-menu ul.side-menu li {
+          #side-menu ul.side-menu li {
             list-style: none; }
-            body.admin #content.with-side-menu #side-menu ul.side-menu li a {
+            #side-menu ul.side-menu li a {
               display: block;
               padding: 10px 20px 10px;
               outline: none;
               text-decoration: none;
               color: #666 !important; }
-              body.admin #content.with-side-menu #side-menu ul.side-menu li a.active {
+              #side-menu ul.side-menu li.active a {
                 font-weight: bold;
-                background: url(/images/menu-current.png) left center no-repeat;
+                background: url(../../images/admin/bg/menu-current.png) left center no-repeat;
                 color: #363 !important;
                 margin-left: -20px;
                 padding-left: 30px; }
-        body.admin #content.with-side-menu #side-menu .order-number,
-        body.admin #content.with-side-menu #side-menu .order-status {
+        #side-menu .order-number,
+        #side-menu .order-status {
           text-align: right;
           margin-right: 20px; }
-        body.admin #content.with-side-menu #side-menu .order-status {
+        #side-menu .order-status {
           padding: 7px 15px;
           -moz-border-radius: 3px;
           -webkit-border-radius: 3px;
@@ -125,16 +125,16 @@ body.admin {
           background-color: #999;
           color: #111;
           text-transform: uppercase; }
-          body.admin #content.with-side-menu #side-menu .order-status.new {
+          #side-menu .order-status.new {
             background-color: #5D9C0F;
             color: #fff; }
-          body.admin #content.with-side-menu #side-menu .order-status.canceled {
+          #side-menu .order-status.canceled {
             background-color: #c00;
             color: #fff; }
-  body.admin h1.logo {
+  h1.logo {
     float: left;
     margin: 10px; }
-    body.admin h1.logo a {
+    h1.logo a {
       background: url(../../images/admin/bg/spree_50.png) left center no-repeat;
       padding-left: 120px;
       display: block;
@@ -142,101 +142,101 @@ body.admin {
       text-decoration: none;
       line-height: 50px;
       color: #BBDAFD; }
-  body.admin #admin-menu {
+  #admin-menu {
     clear: both; }
-  body.admin #admin-menu,
-  body.admin #sub-menu {
+  #admin-menu,
+  #sub-menu {
     margin: 0 1em; }
-    body.admin #admin-menu ul,
-    body.admin #sub-menu ul {
+    #admin-menu ul,
+    #sub-menu ul {
       padding: 0;
       margin: 0; }
-      body.admin #admin-menu ul li,
-      body.admin #sub-menu ul li {
+      #admin-menu ul li,
+      #sub-menu ul li {
         float: left;
         margin-right: 1em;
         list-style: none; }
-      body.admin #admin-menu ul li,
-      body.admin #sub-menu ul li {
+      #admin-menu ul li,
+      #sub-menu ul li {
         margin-right: 0; }
-        body.admin #admin-menu ul li a,
-        body.admin #sub-menu ul li a {
+        #admin-menu ul li a,
+        #sub-menu ul li a {
           display: block;
           padding: 10px 20px;
           color: #fff;
           text-decoration: none;
           outline: none; }
-        body.admin #admin-menu ul li.selected a,
-        body.admin #sub-menu ul li.selected a {
+        #admin-menu ul li.selected a,
+        #sub-menu ul li.selected a {
           background-color: #0095da; }
-  body.admin #admin-menu {
+  #admin-menu {
     background: #154e8c url(../../images/admin/bg/admin_tab_back.png) top left repeat-x;
     border-top: 1px solid #4B83E2;
     border-right: 1px solid #34599B;
     border-bottom: 1px solid #41A6F0; }
-    body.admin #admin-menu ul {
+    #admin-menu ul {
       margin-bottom: -1px; }
-      body.admin #admin-menu ul li:first-child {
+      #admin-menu ul li:first-child {
         border-left: 1px solid #34599B; }
-      body.admin #admin-menu ul li.selected {
+      #admin-menu ul li.selected {
         background: #0095da url(../../images/admin/bg/admin_tab_selected_back.png) top left repeat-x;
         border-left: 1px solid #41A6F0;
         border-top: 1px solid #41A6F0;
         border-right: 1px solid #4986BF;
         height: 40px;
         margin-top: -2px; }
-  body.admin #sub-menu {
+  #sub-menu {
     background: #0095da;
     border-left: 1px solid #41A6F0;
     border-right: 1px solid #4986BF; }
-    body.admin #sub-menu ul li a {
+    #sub-menu ul li a {
       padding: 3px 7px;
       margin: 10px 5px;
       color: #154e8c;
       background: none; }
-    body.admin #sub-menu ul li.selected a {
+    #sub-menu ul li.selected a {
       background: #154e8c;
       color: #9BC3FC;
       -moz-border-radius: 3px;
       -webkit-border-radius: 3px; }
-  body.admin #slide-content {
+  #slide-content {
     margin: 0 1em;
     background-color: #cdf; }
-  body.admin .pagination ul {
+  .pagination ul {
     float: right; }
-    body.admin .pagination ul li {
+    .pagination ul li {
       float: left;
       margin-right: 1em;
       list-style: none; }
-    body.admin .pagination ul li {
+    .pagination ul li {
       line-height: 2em;
       padding: 0px 5px;
       margin-right: 0; }
-      body.admin .pagination ul li.currentpage {
+      .pagination ul li.currentpage {
         background-color: #4884BD;
         color: #fff; }
-  body.admin .toolbar {
+  .toolbar {
     float: right;
     margin-bottom: 1em; }
-    body.admin .toolbar ul.actions {
+    .toolbar ul.actions {
       margin: 0;
       padding: 0;
       float: right; }
-      body.admin .toolbar ul.actions li {
+      .toolbar ul.actions li {
         float: left;
         margin-right: 1em;
         list-style: none; }
-      body.admin .toolbar ul.actions li {
+      .toolbar ul.actions li {
         margin-right: 0; }
-    body.admin .toolbar.order-links a {
+    .toolbar.order-links a {
       text-transform: capitalize; }
-  body.admin .search-form {
+  .search-form {
     display: none;
     padding: 1em; }
-    body.admin .search-form label {
+    .search-form label {
       display: block; }
-  body.admin a.button {
-    background: transparent url('/images/buttons/right_01.png') no-repeat scroll top right;
+  a.button {
+    background: transparent url(../../images/admin/buttons/right_01.png) no-repeat scroll top right;
     display: block;
     float: left;
     margin-right: 6px;
@@ -245,106 +245,106 @@ body.admin {
     color: #111 !important;
     font-weight: bold;
     outline: none; }
-    body.admin a.button span {
-      background: transparent url(/images/buttons/left_01.png) no-repeat;
+    a.button span {
+      background: transparent url(../../images/admin/buttons/left_01.png) no-repeat;
       display: block;
       line-height: 22px;
       padding: 7px 0 5px 14px;
       text-shadow: #efefef 1px 1px 0px; }
-    body.admin a.button img {
+    a.button img {
       vertical-align: middle;
       margin: 0 3px 0 0; }
-    body.admin a.button.cancel span {
+    a.button.cancel span {
       font-weight: normal; }
-    body.admin a.button.small {
+    a.button.small {
       font-size: 1em;
-      background: transparent url('/images/buttons/right_01_small.png') no-repeat scroll top right;
+      background: transparent url(../../images/admin/buttons/right_01_small.png) no-repeat scroll top right;
       padding-right: 20px; }
-      body.admin a.button.small span {
-        background: transparent url(/images/buttons/left_01_small.png) no-repeat;
+      a.button.small span {
+        background: transparent url(../../images/admin/buttons/left_01_small.png) no-repeat;
         padding: 5px 0 3px 20px;
         line-height: 21px; }
-    body.admin a.button.green {
-      background: transparent url('/images/buttons/green/right_01.png') no-repeat scroll top right;
+    a.button.green {
+      background: transparent url(../../images/admin/buttons/green/right_01.png) no-repeat scroll top right;
       color: #151 !important; }
-      body.admin a.button.green span {
-        background: transparent url(/images/buttons/green/left_01.png) no-repeat; }
-  body.admin button {
+      a.button.green span {
+        background: transparent url(../../images/admin/buttons/green/left_01.png) no-repeat; }
+  button {
     border: 0;
     cursor: pointer;
     font-weight: bold;
     padding: 0 20px 0 0;
     text-align: center;
-    background: url(/images/buttons/right_01.png) center right no-repeat;
+    background: url(../../images/admin/buttons/right_01.png) center right no-repeat;
     font-size: 1.3em;
     outline: none; }
-    body.admin button span {
+    button span {
       position: relative;
       display: block;
       white-space: nowrap;
       padding: 0 0 0 20px;
       height: 35px;
       line-height: 35px;
-      background: url(/images/buttons/left_01.png) center left no-repeat;
+      background: url(../../images/admin/buttons/left_01.png) center left no-repeat;
       text-shadow: #efefef 1px 1px 0px; }
-      body.admin button span img {
+      button span img {
         vertical-align: middle;
         margin: 0 3px 0 0; }
-    body.admin button:focus {
+    button:focus {
       outline: none; }
-    body.admin button.tick {
+    button.tick {
       background: none;
       width: 24px; }
-  body.admin input.title,
-  body.admin textarea {
+  input.title,
+  textarea {
     margin: 0; }
-  body.admin .errorExplanation {
+  .errorExplanation {
     border: solid 2px #f15700;
     padding: 1em;
     margin-bottom: 1em;
     background: #cdf;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px; }
-    body.admin .errorExplanation ul {
+    .errorExplanation ul {
       color: #f15700;
       list-style: square; }
-    body.admin .errorExplanation h2 {
+    .errorExplanation h2 {
       font-size: 1.75em;
       padding-left: 40px;
-      background: url(/images/icons/orb/32x32/3.png) center left no-repeat; }
-  body.admin .sub-form {
+      background: url(../../images/admin/icons/orb/32x32/3.png) center left no-repeat; }
+  .sub-form {
     margin-bottom: 1em;
     display: none;
     padding: 1em;
     border: solid 1px #ccc;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px; }
-    body.admin .sub-form h1 {
+    .sub-form h1 {
       font-size: 1.75em; }
-    body.admin .sub-form table.index th:first-child {
+    .sub-form table.index th:first-child {
       -moz-border-radius-topleft: 5px;
       -webkit-border-top-left-radius: 5px; }
-    body.admin .sub-form table.index th:last-child {
+    .sub-form table.index th:last-child {
       -moz-border-radius-topright: 5px;
       -webkit-border-top-right-radius: 5px; }
-  body.admin ul.checkbox-list {
+  ul.checkbox-list {
     list-style: none; }
-    body.admin ul.checkbox-list li {
+    ul.checkbox-list li {
       display: block;
       float: left;
       width: 200px; }
-      body.admin ul.checkbox-list li label {
+      ul.checkbox-list li label {
         font-weight: normal !important; }
-  body.admin #busy_indicator {
+  #busy_indicator {
     margin-bottom: 1em; }
-  body.admin select#filter_state {
+  select#filter_state {
     font-size: 1.5em; }
-  body.admin h2.order-number {
+  h2.order-number {
     margin-bottom: 0; }
-  body.admin h4.order-status {
+  h4.order-status {
     display: block;
     font-weight: normal; }
-  body.admin .adr {
+  .adr {
     float: left;
     margin-right: 1em;
     margin-bottom: 1em;
@@ -353,58 +353,58 @@ body.admin {
     -moz-border-radius: .5em;
     -webkit-border-radius: .5em;
     min-width: 200px; }
-    body.admin .adr .fn {
+    .adr .fn {
       font-weight: bold; }
-    body.admin .adr h4 {
+    .adr h4 {
       margin-bottom: 1em;
       border-bottom: 1px solid #ccc;
       padding-bottom: .5em;
       color: #666; }
-  body.admin ul.taxonomy-tree {
+  ul.taxonomy-tree {
     cursor: default;
     list-style: none;
     margin: 0;
     padding: 0 0 0 35px;
     min-height: 2em; }
-    body.admin ul.taxonomy-tree li.taxon {
+    ul.taxonomy-tree li.taxon {
       clear: both;
       padding: 5px; }
-      body.admin ul.taxonomy-tree li.taxon span,
-      body.admin ul.taxonomy-tree li.taxon input {
+      ul.taxonomy-tree li.taxon span,
+      ul.taxonomy-tree li.taxon input {
         float: left;
         margin-right: 1em; }
-      body.admin ul.taxonomy-tree li.taxon .name {
+      ul.taxonomy-tree li.taxon .name {
         float: left;
         cursor: move; }
-      body.admin ul.taxonomy-tree li.taxon.new ul.taxonomy-actions,
-      body.admin ul.taxonomy-tree li.taxon.editing ul.taxonomy-actions {
+      ul.taxonomy-tree li.taxon.new ul.taxonomy-actions,
+      ul.taxonomy-tree li.taxon.editing ul.taxonomy-actions {
         display: none; }
-      body.admin ul.taxonomy-tree li.taxon.to-destroy {
+      ul.taxonomy-tree li.taxon.to-destroy {
         color: #900;
         text-decoration: line-through; }
-        body.admin ul.taxonomy-tree li.taxon.to-destroy ul.taxonomy-actions {
+        ul.taxonomy-tree li.taxon.to-destroy ul.taxonomy-actions {
           display: none; }
-  body.admin .placeholder {
+  .placeholder {
     height: 30px;
     clear: both;
     border: dashed 2px #ddd; }
-  body.admin ul.taxonomy-actions {
+  ul.taxonomy-actions {
     float: left;
     list-style: none;
     margin: 0px 0px 10px 10px;
     padding: 0; }
-    body.admin ul.taxonomy-actions li {
+    ul.taxonomy-actions li {
       float: left;
       margin-right: 5px; }
-      body.admin ul.taxonomy-actions li img {
+      ul.taxonomy-actions li img {
         vertical-align: text-top; }
-      body.admin ul.taxonomy-actions li.disabled {
+      ul.taxonomy-actions li.disabled {
         opacity: .5; }
-  body.admin h3.warning {
-    background-image: url(/images/icons/fugue/exclamation.png);
+  h3.warning {
+    background-image: url(../../images/admin/icons/fugue/exclamation.png);
     background-position: 10px 15px;
     background-repeat: no-repeat;
     padding-left: 35px; }
-  body.admin #searching {
+  #searching {
     clear: both;
     margin-top: 2em; }

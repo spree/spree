@@ -42,7 +42,7 @@
       <br class="clear" />
     </div>
 
-    <div class="clear" id="content">
+    <div class="<%= 'with-side-menu ' unless @content_for_sidebar.blank? %> clear" id="content">
 
 
       <% if flash[:error] %>
@@ -53,19 +53,14 @@
       <% end %>
 
 
-      <% if @content_for_sidebar.blank? %>
-        <%= yield %>
-      <% else %>
-        <div id="yui-main">
-          <div class="yui-b">
-            <%= yield %>
-          </div>
-        </div>
-        <div class="yui-b" id="sidebar">
-          <%= yield :sidebar %>
+      <%= yield %>
+
+      <% unless @content_for_sidebar.blank? %>
+        <br class='clear' />
+        <div id="side-menu">
+            <%= yield :sidebar %>
         </div>
       <% end %>
-
 
     </div>
 
