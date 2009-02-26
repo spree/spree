@@ -1,14 +1,12 @@
-<table>
-	<tr>
-		<td><%= t("name") %>: </td>
-		<td>
-			<%= f.text_field :name %>
-		</td>
-	</tr>
-	<tr>
-		<td><%= t("presentation") %>: </td>
-		<td>
-			<%= f.text_field :presentation %>
-		</td>
-	</tr>
-</table>
+<% f.field_container :name do %>
+  <%= f.label :name, t("name") %><br />
+  <%= f.text_field :name %>
+  <%= f.error_message_on :name %>
+<% end %>
+
+<% f.field_container :presentation do %>
+  <%= f.label :presentation, t("presentation") %><br />
+  <%= f.text_field :presentation %>
+  <%= f.error_message_on :presentation %>
+<% end %>
+

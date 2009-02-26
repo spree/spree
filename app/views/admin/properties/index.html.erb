@@ -1,19 +1,39 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
+
+<div class='toolbar'>
+  <ul class='actions'>
+    <li id="new_prop_link">
+      <%= button_link_to_remote t("new_property"),  {
+                         :url => new_admin_property_url, 
+                         :method => :get,
+                         :update => "properties",
+                         :before => "Element.hide('new_prop_link');Element.show('busy_indicator')", 
+                         :complete => "Element.hide('busy_indicator')"}, :icon => 'add' %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
 <h1><%= t("properties") %></h1>
+
+<div id="properties"></div>
+
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+
 <table class="index">
 	<thead>
 		<tr>
 			<th><%= t("name") %></th>
 			<th><%= t("presentation") %></th>
-			<th><%= t("action") %></th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
     <% @properties.each do |property| %>
       <tr>
-        <td valign="top"><%= property.name %></td>
-        <td valign="top"><%= property.presentation %></td>
-		    <td valign="top">
+        <td><%= property.name %></td>
+        <td><%= property.presentation %></td>
+		    <td class="actions">
 		      <%= link_to_edit(property) %>
 		      &nbsp;
 		      <%= link_to_delete(property) %>
@@ -23,14 +43,3 @@
   </tbody>
 </table>
 
-<div id="properties"/>
-<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
-<br/>
-<span id="new_prop_link">
-  <%= link_to_remote t("new_property"), 
-                     :url => new_admin_property_url, 
-                     :method => :get,
-                     :update => "properties",
-                     :before => "Element.hide('new_prop_link');Element.show('busy_indicator')", 
-                     :complete => "Element.hide('busy_indicator')" %>
-</span>
