@@ -18,17 +18,23 @@ ActionController::Routing::Routes.draw do |map|
 
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
-  map.connect ':controller/service.wsdl', :action => 'wsdl'
+  #map.connect ':controller/service.wsdl', :action => 'wsdl'
 
   # map.connect '/locale/:new_locale', :controller => 'locale', :action => 'set_session_locale'
 
   map.root :controller => "products", :action => "index"
+  
   # login mappings should appear before all others
   map.login '/login', :controller => 'account', :action => 'login'
   map.logout '/logout', :controller => 'account', :action => 'logout'
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
-
+  
+  # custom route for checkout since its not really a resource
+  map.checkout 'orders/:order_number/checkout', :controller => 'checkout', :action => 'new'
+  map.checkout 'orders/:order_number/complete', :controller => 'checkout', :action => 'create'
+  map.checkout 'orders/:order_number/checkout/:action', :controller => 'checkout'
+  
   map.resources :tax_categories
   map.resources :countries, :has_many => :states, :only => :index
   map.resources :states, :only => :index
