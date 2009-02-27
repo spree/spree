@@ -3,7 +3,8 @@
 	<h3>Shop by <%= taxonomy.name.singularize %></h3>
 	<ul class="navigation-list">
 	<% taxonomy.root.children.each do |taxon| %>
-	  <li><%= link_to taxon.name, seo_url(taxon) %></li>
+	  
+	  <li<%= ' class="current"' if @taxon and @taxon == taxon %>><%= link_to taxon.name, seo_url(taxon) %></li>
 	<% end %>
 	</ul>
 <% end %>

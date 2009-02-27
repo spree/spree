@@ -18,6 +18,9 @@
 !link_hover_color = #eee
 !lighter_text_color = #666
 !selling_price_color = #f33
+!medium_blue = #2E6AB1
+!light_blue = #E5F2F8
+!dark_blue = !medium_blue - 100
 
 // Custom mixins
 = no_margin_or_padding
@@ -55,6 +58,7 @@ body.two-col #content
   li
     :margin 0
     a
+      :cursor pointer!important
       +unstyled-link
       :display block
       :padding 3px 10px 4px 10px
@@ -62,6 +66,9 @@ body.two-col #content
       :border-color = !default_border_color
       &:hover
         :background-color = !link_hover_color
+  li.current
+    a
+      :background-color = !light_blue
         
 #breadcrumbs
   :border-bottom 1px solid
@@ -84,31 +91,31 @@ body.two-col #content
 
 // Pagination
 
+
 .pagination
   :padding-top 10px
-  :font-size 16px
   :text-align right
-a.page, span.page   
-  :padding 0px 5px 
-  :margin 0 3px
-a.page   	  
-  :text-decoration none  
-  :border 1px solid #9aafe5
-  :color #2e6ab1	
-a.page:hover, a.page:active   
-  :border 1px solid #2b66a5
-  :color #000
-  :background-color LightYellow	
-a.next_page 
-  :font-weight bold
-span.disabled_page   
-  :border 1px solid #929292
-  :color #929292
-span.current_page   
-  :font-weight bold
-  :border 1px solid navy
-  :background-color #2e6ab1
-  :color #FFF
+  a.page, span.page   
+    :padding 0px 5px 
+    :margin 0 3px
+  a.page   	  
+    :text-decoration none  
+    :border 1px solid #9aafe5
+    :color #2e6ab1	
+    &:hover, &:active   
+      :border 1px solid #2b66a5
+      :color #000
+  a.next_page 
+    :font-weight bold
+  span.disabled_page   
+    :border 1px solid #929292
+    :color #929292
+  span.current_page   
+    :font-weight bold
+    :border 1px solid
+    :border-color = !dark_blue
+    :background-color = !medium_blue
+    :color #FFF
 
 
 // Product thumbnail grids
