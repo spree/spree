@@ -5,104 +5,109 @@
 <% end %>                 
 
 <%= error_messages_for :checkout_presenter %>
-<h2><%= t("billing_address")%></h2>
-<table>
-  <tr>
-    <td width="150"><%= t("first_name") %></td>
-    <td><%= f.text_field :bill_address_firstname %></td>
-  </tr>
-  <tr>
-    <td><%= t("last_name") %></td>
-    <td><%= f.text_field :bill_address_lastname %></td>
-  </tr>
-  <tr>
-    <td><%= t("street_address") %></td>
-    <td><%= f.text_field :bill_address_address1 %></td>
-  </tr>
-  <tr>
-    <td><%= t("street_address_2") %></td>
-    <td><%= f.text_field :bill_address_address2 %></td>
-  </tr>
-  <tr>
-    <td><%= t("city") %></td>
-    <td><%= f.text_field :bill_address_city %></td>
-  </tr>                        
-  <tr>
-    <td><%= t("state") %></td>    
-    <td>
-  		<%= collection_select("checkout_presenter", 
-  		                      :bill_address_state_id, 
-  		                      @states, 
-  		                      :id, 
-  		                      :name, 
-  		                      {:include_blank => true}, 
-  		                      {:style=> 'width:150px;'}) %>
-    </td>
-  </tr>  
-  <tr>
-    <td><%= t("zip") %></td>
-    <td><%= f.text_field :bill_address_zipcode %></td>
-  </tr>    
-  <tr>
-    <td><%= t("country") %></td>
-    <td>
-			<%= f.collection_select :bill_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %>
-		</td>
-	</tr>
-  <tr>
-    <td><%= t("phone") %></td>
-    <td><%= f.text_field :bill_address_phone %></td>
-  </tr>
-</table>    
-<h2><%= t("shipping_address")%></h2>
-<table>
-  <tr>
-    <td width="150"><%= t("first_name") %></td>
-    <td><%= f.text_field :ship_address_firstname %></td>
-  </tr>
-  <tr>
-    <td><%= t("last_name") %></td>
-    <td><%= f.text_field :ship_address_lastname %></td>
-  </tr>
-  <tr>
-    <td><%= t("street_address") %></td>
-    <td><%= f.text_field :ship_address_address1 %></td>
-  </tr>
-  <tr>
-    <td><%= t("street_address_2") %></td>
-    <td><%= f.text_field :ship_address_address2 %></td>
-  </tr>
-  <tr>
-    <td><%= t("city") %></td>
-    <td><%= f.text_field :ship_address_city %></td>
-  </tr>    
-  <tr>
-    <td><%= t("state") %></td>    
-    <td>
-  		<%= collection_select("checkout_presenter", 
-  		                      :ship_address_state_id, 
-  		                      @states, 
-  		                      :id, 
-  		                      :name, 
-  		                      {:include_blank => true}, 
-  		                      {:style=> 'width:150px;'}) %>
-    </td>
-  </tr>  
-  <tr>
-    <td><%= t("zip") %></td>
-    <td><%= f.text_field :ship_address_zipcode %></td>
-  </tr>
-  <tr>
-    <td><%= t("country") %></td>
-    <td>
-			<%= f.collection_select :ship_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %>
-		</td>
-	</tr>
-  <tr>
-    <td><%= t("phone") %></td>
-    <td><%= f.text_field :ship_address_phone %></td>
-  </tr>
-</table> 
+<div id="billing">
+  <h2><%= t("billing_address")%></h2>  
+  <table>
+    <tr>
+      <td width="150"><%= t("first_name") %></td>
+      <td><%= f.text_field :bill_address_firstname %></td>
+    </tr>
+    <tr>
+      <td><%= t("last_name") %></td>
+      <td><%= f.text_field :bill_address_lastname %></td>
+    </tr>
+    <tr>
+      <td><%= t("street_address") %></td>
+      <td><%= f.text_field :bill_address_address1 %></td>
+    </tr>
+    <tr>
+      <td><%= t("street_address_2") %></td>
+      <td><%= f.text_field :bill_address_address2 %></td>
+    </tr>
+    <tr>
+      <td><%= t("city") %></td>
+      <td><%= f.text_field :bill_address_city %></td>
+    </tr>                        
+    <tr>
+      <td><%= t("state") %></td>    
+      <td>
+    		<%= collection_select("checkout_presenter", 
+    		                      :bill_address_state_id, 
+    		                      @states, 
+    		                      :id, 
+    		                      :name, 
+    		                      {:include_blank => true}, 
+    		                      {:style=> 'width:150px;'}) %>
+      </td>
+    </tr>  
+    <tr>
+      <td><%= t("zip") %></td>
+      <td><%= f.text_field :bill_address_zipcode %></td>
+    </tr>    
+    <tr>
+      <td><%= t("country") %></td>
+      <td>
+  			<%= f.collection_select :bill_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %>
+  		</td>
+  	</tr>
+    <tr>
+      <td><%= t("phone") %></td>
+      <td><%= f.text_field :bill_address_phone %></td>
+    </tr>
+  </table> 
+</div>
+<input id="same_address" type="checkbox"><%= t("use_as_shipping_address") %></input>   
+<div id = "shipping">
+  <h2><%= t("shipping_address")%></h2>
+  <table>
+    <tr>
+      <td width="150"><%= t("first_name") %></td>
+      <td><%= f.text_field :ship_address_firstname %></td>
+    </tr>
+    <tr>
+      <td><%= t("last_name") %></td>
+      <td><%= f.text_field :ship_address_lastname %></td>
+    </tr>
+    <tr>
+      <td><%= t("street_address") %></td>
+      <td><%= f.text_field :ship_address_address1 %></td>
+    </tr>
+    <tr>
+      <td><%= t("street_address_2") %></td>
+      <td><%= f.text_field :ship_address_address2 %></td>
+    </tr>
+    <tr>
+      <td><%= t("city") %></td>
+      <td><%= f.text_field :ship_address_city %></td>
+    </tr>    
+    <tr>
+      <td><%= t("state") %></td>    
+      <td>
+    		<%= collection_select("checkout_presenter", 
+    		                      :ship_address_state_id, 
+    		                      @states, 
+    		                      :id, 
+    		                      :name, 
+    		                      {:include_blank => true}, 
+    		                      {:style=> 'width:150px;'}) %>
+      </td>
+    </tr>  
+    <tr>
+      <td><%= t("zip") %></td>
+      <td><%= f.text_field :ship_address_zipcode %></td>
+    </tr>
+    <tr>
+      <td><%= t("country") %></td>
+      <td>
+  			<%= f.collection_select :ship_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %>
+  		</td>
+  	</tr>
+    <tr>
+      <td><%= t("phone") %></td>
+      <td><%= f.text_field :ship_address_phone %></td>
+    </tr>
+  </table> 
+</div>
 <h2><%= t("payment_information") %></h2>
 <table class="creditcard">
   <tr>

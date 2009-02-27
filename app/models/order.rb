@@ -170,7 +170,6 @@ class Order < ActiveRecord::Base
     self.ship_amount = calculator.calculate_shipping(shipment) 
     self.tax_amount = calculate_tax
     save
-    # TODO - recalculate tax
   end
   
   def cancel_order

@@ -18,7 +18,24 @@ jQuery.fn.submitWithAjax = function() {
   return this;
 };
 
+$("#shipping_fieldset input, #shipping_fieldset select").each(function() {
+    var elem = $(this);
+    $("#billing_fieldset #"+ 
+        elem.attr("id").replace(/shipping/, "billing")).val(elem.val());
+});
+                                  
+jQuery.fn.sameAddress = function() {
+  this.click(function() {
+    $("#billing :input, #billing select").each(function() {    
+      var elem = $(this);
+      $("#shipping #"+ elem.attr("id").replace(/bill/, "ship")).val(elem.val());
+    })
+  })
+}
+
+
 $(function() {  
   $("#checkout_presenter_bill_address_country_id").submitWithAjax();  
+  $('#same_address').sameAddress();
   //$("#new_review").submitWithAjax();
 })
