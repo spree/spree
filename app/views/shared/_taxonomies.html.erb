@@ -1,8 +1,10 @@
+<div id="taxonomies" class="sidebar-item">
 <% @taxonomies.each do |taxonomy| %>
-	<h4>Shop by <%= taxonomy.name.singularize %></h4>
-	<br/>
+	<h3>Shop by <%= taxonomy.name.singularize %></h3>
+	<ul class="navigation-list">
 	<% taxonomy.root.children.each do |taxon| %>
-	  <%= link_to taxon.name, seo_url(taxon) %><br/>
+	  <li><%= link_to taxon.name, seo_url(taxon) %></li>
 	<% end %>
-	<br/><br/>
+	</ul>
 <% end %>
+</div>

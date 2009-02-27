@@ -1,0 +1,33 @@
+<% content_for :head do %>
+  <%= calendar_date_select_includes %>
+<% end %>
+
+<% content_for :sidebar do %>
+
+  <% form_for [:admin, @search], :url => "" do |f| %> 
+
+    <div class="box">
+      <h3><%= t("date_range") %></h3>
+
+	  	<% f.fields_for @search.conditions do |s| %>
+        <div class="yui-g date-range-filter">
+          <div class="yui-u sub-field first">
+            <%= s.calendar_date_select :created_at_after %><br />
+            <label><%= t("start") %>:</label><br />
+          </div>
+          <div class="yui-u sub-field">
+            <%= s.calendar_date_select :created_at_before %><br />
+            <label><%= t("stop") %>:</label>
+          </div>
+        </div>
+  		  <%= button t("search") %>
+        </div>
+    	<% end %>
+
+  	</div>
+
+  <% end %>	
+
+
+
+<% end %>

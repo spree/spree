@@ -3,10 +3,9 @@
   <br/>
   <%= render :partial => "shared/products.html.erb", :locals => {:products => @products, :taxon => @taxon } %>
 </div>
+
 <% content_for :sidebar do %>
-  <td id="shop-by-col" valign="top">
-  	<%= render :partial => "shared/taxonomies" %>
-  </td>
+	<%= render :partial => "shared/taxonomies" %>
 <% end %>
 
 <%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>

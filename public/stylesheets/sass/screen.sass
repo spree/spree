@@ -1,0 +1,60 @@
+@import blueprint.sass
+@import blueprint/modules/scaffolding.sass
+@import compass/reset.sass
+
+// Trying out some of these optional modules that provide handy mixins
+@import compass/utilities/general/inline_block.sass
+@import compass/utilities/lists.sass
+@import compass/utilities/links.sass
+
+
+
++blueprint
+// Remove the scaffolding when you're ready to start doing visual design.
+// Or leave it in if you're happy with how blueprint looks out-of-the-box
++blueprint-scaffolding
+
+
+
+
+// Shared colour constants
+!default_border_color = #DDD
+!link_hover_color = #eee
+
+
+
+
+#sidebar 
+  +column(6)
+  +colborder
+  
+#content
+  +column(16,last)
+  +showgrid
+
+
+#language-bar
+  +horizontal-list(10)
+
+
+.navigation-list
+  +no-bullets
+  :margin 0 0 1.5em 0
+  :border-top 1px solid
+  :border-color = !default_border_color
+  li
+    :margin 0
+    a
+      +unstyled-link
+      :display block
+      :padding 3px 10px 4px 10px
+      :border-bottom 1px solid
+      :border-color = !default_border_color
+      &:hover
+        :background-color = !link_hover_color
+
+
+//.pagination
+//#footer
+//#store-nav
+//#taxonomies
