@@ -1,15 +1,17 @@
 <% content_for :sidebar do %>
-<div class="box">
-  <h3><%= t("configurations") -%></h3>
-  <ul>
-    <li><%= link_to t("general_settings"), admin_general_settings_path %></li>
-    <li><%= link_to t("mail_server_settings"), admin_mail_settings_path %></li>
-    <li><%= link_to t("tax_categories"), admin_tax_categories_path %></li>
-    <li><%= link_to t("zones"), admin_zones_path %></li>
-    <li><%= link_to t("states"), admin_country_states_path(214) %></li>
-    <li><%= link_to t("gateway"), admin_gateways_path %></li>
-    <li><%= link_to t("taxonomies"), admin_taxonomies_path %></li>
-    <li><%= link_to t("inventory_settings"), admin_inventory_settings_path %></li>
+
+  <h3 class="name"><%= t("configurations") -%></h3>
+  <br class="clear" />
+  
+  <ul class="sidebar">
+    <li<%= ' class="active"' if controller.controller_name == 'general_settings' %>><%= link_to t("general_settings"), admin_general_settings_path %></li>
+    <li<%= ' class="active"' if controller.controller_name == 'mail_settings' %>><%= link_to t("mail_server_settings"), admin_mail_settings_path %></li>
+    <li<%= ' class="active"' if controller.controller_name == 'tax_categories' %>><%= link_to t("tax_categories"), admin_tax_categories_path %></li>
+    <li<%= ' class="active"' if controller.controller_name == 'zones' %>><%= link_to t("zones"), admin_zones_path %></li>
+    <li<%= ' class="active"' if controller.controller_name == 'states' %>><%= link_to t("states"), admin_country_states_path(214) %></li>
+    <li<%= ' class="active"' if controller.controller_name == 'gateway_configurations' %>><%= link_to t("gateway"), admin_gateways_path %></li>
+    <li<%= ' class="active"' if controller.controller_name == 'taxonomies' %>><%= link_to t("taxonomies"), admin_taxonomies_path %></li>
+    <li<%= ' class="active"' if controller.controller_name == 'inventory_settings' %>><%= link_to t("inventory_settings"), admin_inventory_settings_path %></li>
   </ul>
-</div>
+
 <% end %>
