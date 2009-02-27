@@ -1,36 +1,35 @@
-<table>
-  <tr>
-    <td><%= t("email") %>: </td>
-    <td>
-      <%= error_message_on :user, :email%>
-      <%= f.text_field :email  %>
-    </td>
-  </tr>
-  <tr>
-    <td><%= t("roles") %>: </td>
-    <td> 
-      <table>
-        <tr>    
-          <% for role in @roles %>
-            <td><%= check_box_tag 'user[role_' + role.name + ']', 1, @user.has_role?(role.name) %></td>
-            <td valign="top"><%= role.name %> &nbsp;</td>
-          <% end %>
-        </tr>
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td><%= t("password") %>:</td>
-    <td>
-      <%= error_message_on :user, :password%>
-      <%= f.password_field :password  %>
-    </td>
-  </tr>
-  <tr>
-    <td><%= t("confirm") %>:</td>
-    <td>
-      <%= f.password_field :password_confirmation %>
-    </td>
-  </tr>
-  <%= render_extra_partials f %>      
-</table>
+<% f.field_container :email do %>
+  <%= f.label :email, t("email") %><br />
+  <%= f.text_field :email  %>
+  <%= error_message_on :user, :email%>
+<% end %>
+
+<% f.field_container :password do %>
+  <%= f.label :password, t("password") %><br />
+  <%= f.password_field :password  %>
+  <%= f.error_message_on :password %>
+<% end %>
+
+<% f.field_container :password do %>
+  <%= f.label :password_confirmation, t("confirm") %><br />
+  <%= f.password_field :password_confirmation  %>
+  <%= f.error_message_on :password_confirmation %>
+<% end %>
+
+
+<p>
+  <label><%= t("roles") %></label><br />
+<% for role in @roles %>
+  <label class="sub">
+    <%= check_box_tag 'user[role_' + role.name + ']', 1, @user.has_role?(role.name) %>
+    <%= role.name %>
+  </label> &nbsp; 
+<% end %>
+</p>
+
+<%= render_extra_partials f %>      
+
+
+
+
+
