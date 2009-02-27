@@ -5,24 +5,24 @@
       <table class="admin-report">
         <tbody>
           <tr>
-            <td><%= t("item_total") %>:</td>
+            <th scope="row"><%= t("item_total") %>:</th>
             <td align="right"><%=number_to_currency @item_total%></td>
           </tr>
           <tr>
-            <td><%= t("shipping_total") %>:</td>
+            <th scope="row"><%= t("shipping_total") %>:</th>
             <td align="right"><%=number_to_currency @ship_total%></td>
           </tr>
           <tr>
-            <td><%= t("tax_total") %>:</td>
+            <th scope="row"><%= t("tax_total") %>:</th>
             <td align="right"><%=number_to_currency @tax_total%></td>
           </tr>
           <tr>
-            <td><%= t("sales_total") %>:</td>
+            <th scope="row"><%= t("sales_total") %>:</th>
             <td align="right"><%=number_to_currency @sales_total%></td>
           </tr>
         </tbody>
       </table>
     </td>
-    <%= render :partial => 'shared/report_criteria', :locals => {} %>
+    <%= render :partial => 'admin/shared/report_criteria', :locals => {} %>
   </tr>
 </table>

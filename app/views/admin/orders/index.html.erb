@@ -38,13 +38,13 @@
   	<% f.fields_for @search.conditions do |orders| %>
 
       <label><%= t("date_range") %></label><br />
-      <div class="yui-g">
+      <div class="yui-g date-range-filter">
         <div class="yui-u sub-field first">
-          <%= orders.calendar_date_select :created_at_after, :style=>"width:75px" %><br />
+          <%= orders.calendar_date_select :created_at_after %><br />
           <label class="sub"><%= t("start") %></label>
         </div>
         <div class="yui-u sub-field">
-          <%= orders.calendar_date_select :created_at_before, :style=>"width:75px" %><br />
+          <%= orders.calendar_date_select :created_at_before %><br />
           <label><%= t("stop") %></label>
         </div>
       </div>
