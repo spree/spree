@@ -1,9 +1,5 @@
-<table cellspacing="5">
-  <tr>
-    <td><%= t("name")%>: </td>
-    <td>
-      <%=error_message_on :taxonomy, :name%>  
-      <%= text_field :taxonomy, :name  %>
-    </td>
-  </tr>
- 
+<% f.field_container :name do %>
+  <%= f.label :name, t("name") %><br />
+  <%= error_message_on :taxonomy, :name %>
+  <%= text_field :taxonomy, :name  %>
+<% end %>
