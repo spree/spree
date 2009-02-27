@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: active_presenter
 version: !ruby/object:Gem::Version 
-  version: 0.0.4
+  version: 0.0.6
 platform: ruby
 authors: 
 - James Golick & Daniel Haran
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2008-09-01 00:00:00 -04:00
+date: 2009-01-22 00:00:00 -05:00
 default_executable: 
 dependencies: []
 
@@ -40,8 +40,6 @@ post_install_message:
 rdoc_options: []
 
 require_paths: 
-- bin
-- bin
 - lib
 required_ruby_version: !ruby/object:Gem::Requirement 
   requirements: 
@@ -58,7 +56,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: active_presenter
-rubygems_version: 1.2.0
+rubygems_version: 1.3.1
 signing_key: 
 specification_version: 2
 summary: ActivePresenter is the presenter library you already know! (...if you know ActiveRecord)

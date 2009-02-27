@@ -437,7 +437,8 @@ en-US:
   type: Type
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Update
-  updated_successfully: "Updated Successfully"  
+  updated_successfully: "Updated Successfully"                    
+  use_as_shipping_address: Use as Shipping Address
   use_different_shipping_address: "Use Different Shipping Address"
   user: User
   user_account: User Account

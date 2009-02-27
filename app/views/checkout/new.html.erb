@@ -1,0 +1,8 @@
+<div id="checkout">
+  <h1><%= t("checkout")%></h1>
+  <% form_for(:checkout_presenter, :url => "/orders/#{@order.number}/complete", :html => { :method => :put}) do |f| %>
+    <%= render :partial => 'form', :locals => {:f => f} %>
+    <%= submit_tag t('continue') %>
+  <% end %>
+  <br/>
+</div>

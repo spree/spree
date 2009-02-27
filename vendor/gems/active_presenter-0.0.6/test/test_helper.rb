@@ -19,6 +19,14 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string :subdomain, :default => ''
     t.string :title,     :default => ''
   end
+  
+  create_table :addresses do |t|
+    t.string :street
+  end
+
+  create_table :account_infos do |t|
+    t.string :info
+  end
 end
 
 class User < ActiveRecord::Base
@@ -27,9 +35,37 @@ class User < ActiveRecord::Base
   attr_accessor   :password_confirmation
 end
 class Account < ActiveRecord::Base; end
+class Address < ActiveRecord::Base; end
+class AccountInfo < ActiveRecord::Base; end
 
 class SignupPresenter < ActivePresenter::Base
   presents :account, :user
+end
+
+class EndingWithSPresenter < ActivePresenter::Base
+  presents :address
+end
+
+class CantSavePresenter < ActivePresenter::Base
+  presents :address
+  
+  before_save :halt
+  
+  def halt; false; end
+end
+
+class AfterSavePresenter < ActivePresenter::Base
+  presents :address
+  
+  after_save :set_street
+  
+  def set_street
+    address.street = 'Some Street'
+  end
+end
+
+class SamePrefixPresenter < ActivePresenter::Base
+  presents :account, :account_info
 end
 
 def hash_for_user(opts = {})

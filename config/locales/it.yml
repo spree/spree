@@ -438,6 +438,7 @@ it:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Salva
   updated_successfully:
+  use_as_shipping_address: Use as Shipping Address
   use_different_shipping_address: "Altro indirizzo di consegna"
   user: Utente
   user_account: User Account

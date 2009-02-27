@@ -1,6 +1,5 @@
 class OrdersController < Spree::BaseController
-  before_filter :require_user_account, :only => [:checkout]
-  before_filter :load_object, :only => [:checkout]          
+#  before_filter :load_object, :only => [:checkout]          
   before_filter :prevent_editing_complete_order, :only => [:edit, :update]            
 
   ssl_required :show
@@ -52,13 +51,6 @@ class OrdersController < Spree::BaseController
   destroy do
     flash nil 
     wants.html {redirect_to new_order_url}
-  end
-
-  protected
-  def require_user_account
-    return if logged_in?
-    store_location
-    redirect_to signup_path 
   end
     
   private
