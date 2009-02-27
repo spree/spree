@@ -38,9 +38,11 @@ body.one-col #content
 body.two-col #content
   +column(18,last)
 
+#header
+  :position relative
 
-#language-bar
-  +horizontal-list(10)
+
+
 
 
 // Navigation
@@ -66,9 +68,49 @@ body.two-col #content
   :border-color = !default_border_color
   :line-height 3
   :margin-bottom 1em
+
+
+#login-nav, #language-bar, #store-nav 
+  +inline-list
+  :position absolute
+  :right 0
+#login-nav
+  :top 20px
+#language-bar
+  :top 0
+#store-nav 
+  :top 40px
   
 
-        
+// Pagination
+
+.pagination
+  :padding-top 10px
+  :font-size 16px
+  :text-align right
+a.page, span.page   
+  :padding 0px 5px 
+  :margin 0 3px
+a.page   	  
+  :text-decoration none  
+  :border 1px solid #9aafe5
+  :color #2e6ab1	
+a.page:hover, a.page:active   
+  :border 1px solid #2b66a5
+  :color #000
+  :background-color LightYellow	
+a.next_page 
+  :font-weight bold
+span.disabled_page   
+  :border 1px solid #929292
+  :color #929292
+span.current_page   
+  :font-weight bold
+  :border 1px solid navy
+  :background-color #2e6ab1
+  :color #FFF
+
+
 // Product thumbnail grids
 .product-listing
   +no_margin_or_padding
@@ -113,6 +155,8 @@ body.two-col #content
     :font-size 1.25em
   .price
     :font-size 1.5em
+
+
 
 
 //.pagination
