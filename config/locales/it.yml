@@ -207,6 +207,7 @@ it:
   credit_card: ""
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  creditcard: Creditcard
   current: stato
   customer: Cliente
   date_range: "data (da/a)"

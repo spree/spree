@@ -207,6 +207,7 @@ pl:
   credit_card: "Karta kredytowa"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  creditcard: Creditcard
   current: Biężący
   customer: Klient
   date_range: "Zakres czasu"
