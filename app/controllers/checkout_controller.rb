@@ -20,10 +20,11 @@ class CheckoutController < Spree::BaseController
   def build_object
     @order = Order.find_by_number(params[:order_number])
     @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]
+    @object.order = @order
   end
   
   def load_data
     @countries = Country.find(:all)    
-    @states = []
+    @states = Country.find(214).states.sort
   end
 end
