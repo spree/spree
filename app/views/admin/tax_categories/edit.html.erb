@@ -6,7 +6,7 @@
 
 <% form_for(:tax_category, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <p>
-    <%=submit_tag t("update")%>
+  <p class="form-buttons">
+    <%= button t("update") %>
   </p>
 <% end %>
