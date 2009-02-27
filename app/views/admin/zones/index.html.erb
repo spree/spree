@@ -1,22 +1,32 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_zone"), new_object_url, :icon => 'add' %></p>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+
 <h1><%= t("zones") %></h1>
-<table class="admin-report" width="545">
+<table class="index">
   <thead>
     <tr>
       <th><%= order_by_link :name, :text => t("name") %></th>
       <th><%= order_by_link :description, :text => t("description") %></th>
-      <th><%= t("action") %></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
     <% @collection.each do |zone| %>
-      <tr class="<%= cycle('even', 'odd') %>">
+      <tr>
         <td><%=zone.name %></td>
         <td><%=zone.description %></td>
-        <td>
-          <%=link_to t("edit"), edit_object_url(zone) %> |
-          <%=link_to t("delete"), object_url(zone), :method => :delete %>
+        <td class="actions">
+          <%=link_to_edit zone %> &nbsp; 
+          <%=link_to_delete zone %>
         </td>
       </tr>
     <% end %>
@@ -28,4 +38,3 @@
 
 <%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
 
-<%= link_to t("new_zone"), new_object_url %>
