@@ -1,19 +1,17 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h2><%= t("general_settings") %></h2>
+<h1><%= t("general_settings") %></h1>
 
-<div id="general_settings">
-  <div id="allow_ssl_in_production">
-    <h4>
-      SSL will <%= Spree::Config[:allow_ssl_in_production] ? '' : 'NOT' %> be used in production
-      mode if necessary.
-    </h4>
-  </div>
-  <div id="allow_ssl_in_development_or_test">
-    <h4>
-      SSL will <%= Spree::Config[:allow_ssl_in_development_and_test] ? '' : 'NOT' %> be used in development
-      and test mode if necessary.
-    </h4>
-  </div>
-  <%= link_to t("edit"), edit_admin_general_settings_path %>
-</div>
+<h4>
+  SSL will <%= Spree::Config[:allow_ssl_in_production] ? '' : 'NOT' %> be used in production
+  mode if necessary.
+</h4>
+
+<h4>
+  SSL will <%= Spree::Config[:allow_ssl_in_development_and_test] ? '' : 'NOT' %> be used in development
+  and test mode if necessary.
+</h4>
+
+<p><%= link_to_with_icon 'edit', t("edit"), edit_admin_general_settings_path %></p>
+
+
