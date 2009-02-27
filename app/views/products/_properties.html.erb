@@ -1,0 +1,8 @@
+<% unless @product.product_properties.empty? %>
+<dl>
+<% for product_property in @product.product_properties %>
+  <dt><%= product_property.property.presentation %></dt>
+  <dd><%= product_property.value %></dd>
+<% end %>
+</dl>
+<% end %>

@@ -21,8 +21,8 @@ if @body_class.nil?
 end
  %>
 <body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
-	<div class="container showgrid"> 
-
+	<div class="container"> 
+	  
 	  <div id="header">
       <%= link_to image_tag('spree.jpg'), root_path %>                                                                  
   	  <%= render :partial => 'shared/language_bar' if Spree::Config[:allow_locale_switching] %>
