@@ -245,6 +245,7 @@ en-US:
   gateway: Gateway
   gateway_error: "Gateway Error"
   gateway_setting_description: "Select a payment gateway and configure its settings."
+  general: "General"
   general_settings: "General Settings"
   general_settings_description: "Configure general Spree settings."
   google_analytics: "Google Analytics"
@@ -397,6 +398,7 @@ en-US:
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Sign up"
   sku: SKU
+  smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
   smtp_domain: SMTP Domain
   smtp_mail_host: SMTP Mail Host                       
