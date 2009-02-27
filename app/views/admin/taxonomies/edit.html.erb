@@ -7,7 +7,8 @@
 <% form_for(:taxon, :url => admin_taxonomy_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
 
-	  <div><%= t("tree")%> <br />
+	  <div>
+	    <label><%= t("tree")%></label><br />
     	<%= yui_tree_helper @taxonomy %>
   	</div>
     <p><small>* Right click a child in the tree to access the menu for adding, deleting or sorting a child.</small></p>

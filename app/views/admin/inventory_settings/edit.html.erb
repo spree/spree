@@ -1,20 +1,27 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
+<h1><%= t('inventory_settings') %></h1>
+
 <% form_tag(admin_inventory_settings_path, :method => :put) do -%>
 
-<h2><%= t('inventory_settings') %></h2>
-
-<div>
   <p>
-    <%= check_box_tag('preferences[show_zero_stock_products]', "1", Spree::Config[:show_zero_stock_products]) %>
-    <strong><%= t('show_out_of_stock_products') %></strong>
+    <label>
+      <%= check_box_tag('preferences[show_zero_stock_products]', "1", Spree::Config[:show_zero_stock_products]) %>
+      <%= t('show_out_of_stock_products') %>
+    </label>
     <input name="preferences[show_zero_stock_products]" type="hidden" value="0" />
   </p>
+  
   <p>
-    <%= check_box_tag('preferences[allow_backorders]', "1", Spree::Config[:allow_backorders]) %>
-    <strong><%= t('allow_backorders') %></strong>
+    <label>
+      <%= check_box_tag('preferences[allow_backorders]', "1", Spree::Config[:allow_backorders]) %>
+      <%= t('allow_backorders') %>
+    </label>
     <input name="preferences[allow_backorders]" type="hidden" value="0" />
   </p>
-</div>
-<%= submit_tag t('update') %>
+
+  <p class="form-buttons">
+    <%= button t('update') %>
+  </p>
+
 <% end -%>
