@@ -1,10 +1,14 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
 <h1><%= t("states") %></h1>
-<br/>
-<select id="country">
+
+<p>
+  <label for="country"><%= t('country') %></label>
+  <select id="country">
   <%= options_from_collection_for_select(@countries, :id, :name, @country.id) %>
-</select>
+  </select>
+</p>
+
 <%= observe_field :country,
                   :update => 'state-list',
                   :url => admin_states_path,
@@ -13,8 +17,9 @@
                   :method => :get,
                   :with => "'country_id='+encodeURIComponent(value)",
                   :update => 'state-list' %>                  
-<br/>
+
 <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+
 <div id="state-list">
   <%=render :partial => 'state_list'%>
 </div>
