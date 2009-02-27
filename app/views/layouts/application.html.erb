@@ -1,18 +1,27 @@
 <!-- basic layout - feel free to replace with a more elaborate one -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>Spree</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<head>
+  <title>Spree</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 
-    <%= stylesheet_link_tag 'compiled/screen' %>
+  <%= stylesheet_link_tag 'compiled/screen' %>
 
-    <%= javascript_include_tag :defaults, :cache => true %>
+  <%= javascript_include_tag :defaults, :cache => true %>
 
-    <%= yield :head %>
+  <%= yield :head %>
 </head>
-<body>
-	<div class="container"> 
+<% 
+if @body_class.nil?
+  if @content_for_sidebar
+    @body_class = 'two-col'
+  else
+    @body_class = 'one-col'
+  end
+end
+ %>
+<body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
+	<div class="container showgrid"> 
 
 	  <div id="header">
       <%= link_to image_tag('spree.jpg'), root_path %>                                                                  
@@ -36,12 +45,16 @@
 		<hr/>
 
 
-
+    <% if @content_for_sidebar %>
     <div id="sidebar">
       <%= yield :sidebar %>
     </div>
+    <% end %>
     
     <div id="content">
+      
+      <%= breadcrumbs(@taxon) if @taxon %>
+      
       <% if flash[:notice] %>
         <div id="flash-notice"><%= flash[:notice] %></div>
     	<% end %>
@@ -49,6 +62,8 @@
   	    <div id="flash-errors"><%= flash[:error] %></div>
     	<% end %>
       <%= yield %>
+      <hr class="space" />
+
     </div>
     <hr/>
     

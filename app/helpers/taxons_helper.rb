@@ -1,18 +1,16 @@
 module TaxonsHelper
   def breadcrumbs(taxon)
-    crumbs = "<div class='breadcrumbs'>"
-    crumbs += link_to t('products'), products_url
-    unless taxon
-      return crumbs += "</div>"
+    crumbs = []
+    crumbs << link_to(t('products'), products_url)
+    if taxon
+      unless taxon.ancestors.empty?
+        crumbs += taxon.ancestors.reverse.collect { |ancestor| link_to ancestor.name, seo_url(ancestor) }
+      end
+      crumbs << taxon.name
     end
-    crumbs += image_tag("breadcrumb.gif")
-    unless taxon.ancestors.empty?
-      crumbs += taxon.ancestors.reverse.collect { |ancestor| link_to ancestor.name, seo_url(ancestor) }.join( image_tag("breadcrumb.gif") )
-      crumbs += image_tag("breadcrumb.gif")
-    end
-    crumbs += taxon.name
-    crumbs += "</div>"
+    content_tag('p', crumbs.join(' <span class="divider">&raquo;</span> '), :id => 'breadcrumbs')
   end
+
   
   # Retrieves the collection of products to display when "previewing" a taxon.  This is abstracted into a helper so 
   # that we can use configurations as well as make it easier for end users to override this determination.  One idea is

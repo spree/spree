@@ -1,6 +1,5 @@
-<%= breadcrumbs(@taxon) %>
-<br/><br/>
 <%= render :partial => "taxon", :collection => @taxon.children %>
+
 <% content_for :sidebar do %>
   <td id="shop-by-col" valign="top">
   	<%= render :partial => "shared/taxonomies" %>

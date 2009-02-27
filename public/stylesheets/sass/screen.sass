@@ -7,35 +7,43 @@
 @import compass/utilities/lists.sass
 @import compass/utilities/links.sass
 
-
-
 +blueprint
 // Remove the scaffolding when you're ready to start doing visual design.
 // Or leave it in if you're happy with how blueprint looks out-of-the-box
 +blueprint-scaffolding
 
 
-
-
 // Shared colour constants
 !default_border_color = #DDD
 !link_hover_color = #eee
+!lighter_text_color = #666
+!selling_price_color = #f33
+
+// Custom mixins
+= no_margin_or_padding
+  :margin 0
+  :padding 0
 
 
 
-
+// Main Layout
 #sidebar 
-  +column(6)
+  +column(5)
   +colborder
-  
+
 #content
-  +column(16,last)
-  +showgrid
+//  :background url(../../images/grid.png)
+body.one-col #content
+  +column(26,last)
+body.two-col #content
+  +column(18,last)
 
 
 #language-bar
   +horizontal-list(10)
 
+
+// Navigation
 
 .navigation-list
   +no-bullets
@@ -52,6 +60,59 @@
       :border-color = !default_border_color
       &:hover
         :background-color = !link_hover_color
+        
+#breadcrumbs
+  :border-bottom 1px solid
+  :border-color = !default_border_color
+  :line-height 3
+  :margin-bottom 1em
+  
+
+        
+// Product thumbnail grids
+.product-listing
+  +no_margin_or_padding
+  +no-bullets
+  li
+    :width 110px
+    :height 14em
+    :text-align center
+    :float left
+    :margin 0 10px 10px 0
+    &.last
+      :margin-right 0
+
+
+
+// Product details
+#product-variants
+  :margin-bottom 1em
+  ul
+    +no-bullets
+    +no_margin_or_padding
+
+#product-images
+  +column(7)
+#product-description
+  +column(8)
+  +colborder
+#cart-form
+  +column(7,last)
+
+
+  
+// Prices
+.prices
+  :font-weight bold
+.price
+  &.selling
+    :color = !selling_price_color
+
+#product-details
+  .prices
+    :font-size 1.25em
+  .price
+    :font-size 1.5em
 
 
 //.pagination
