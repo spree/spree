@@ -4,7 +4,7 @@
 	<ul class="navigation-list">
 	<% taxonomy.root.children.each do |taxon| %>
 	  
-	  <li<%= ' class="current"' if @taxon and @taxon == taxon %>><%= link_to taxon.name, seo_url(taxon) %></li>
+	  <li<%= ' class="current"' if @taxon and ([@taxon] + @taxon.ancestors).include?(taxon) %>><%= link_to taxon.name, seo_url(taxon) %></li>
 	<% end %>
 	</ul>
 <% end %>

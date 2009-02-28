@@ -28,23 +28,23 @@
   :padding 0
 
 
-
+body
+  :margin-top 10px
+  
 // Main Layout
 #sidebar 
   +column(5)
   +colborder
 
 #content
-//  :background url(../../images/grid.png)
-body.one-col #content
-  +column(26,last)
-body.two-col #content
-  +column(18,last)
+  body.one-col &
+    +column(26,last)
+  body.two-col &
+    +column(18,last)
 
 #header
   :position relative
-
-
+  :padding-bottom 10px
 
 
 
@@ -76,7 +76,6 @@ body.two-col #content
   :line-height 3
   :margin-bottom 1em
 
-
 #login-nav, #language-bar, #store-nav 
   +inline-list
   :position absolute
@@ -87,10 +86,6 @@ body.two-col #content
   :top 0
 #store-nav 
   :top 40px
-  
-
-// Pagination
-
 
 .pagination
   :padding-top 10px
@@ -132,14 +127,12 @@ body.two-col #content
       :margin-right 0
 
 
-
 // Product details
 #product-variants
   :margin-bottom 1em
   ul
     +no-bullets
     +no_margin_or_padding
-
 #product-images
   +column(7)
 #product-description
@@ -148,25 +141,19 @@ body.two-col #content
 #cart-form
   +column(7,last)
 
-
   
 // Prices
 .prices
   :font-weight bold
+  #product-details &
+    :font-size 1.25em
 .price
   &.selling
     :color = !selling_price_color
-
-#product-details
-  .prices
-    :font-size 1.25em
-  .price
-    :font-size 1.5em
-
-
-
-
-//.pagination
-//#footer
-//#store-nav
-//#taxonomies
+    #product-details &
+      :font-size 1.5em
+.price.diff
+  :font-style italic
+  :font-weight normal
+  :color = !lighter_text_color
+  

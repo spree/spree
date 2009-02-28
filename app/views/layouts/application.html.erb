@@ -56,10 +56,10 @@ end
       <%= breadcrumbs(@taxon) if @taxon %>
       
       <% if flash[:notice] %>
-        <div id="flash-notice"><%= flash[:notice] %></div>
+        <div class="flash notice"><%= flash[:notice] %></div>
     	<% end %>
     	<% if flash[:error] %>
-  	    <div id="flash-errors"><%= flash[:error] %></div>
+  	    <div class="flash errors"><%= flash[:error] %></div>
     	<% end %>
       <%= yield %>
       <hr class="space" />
