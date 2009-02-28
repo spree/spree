@@ -30,6 +30,9 @@
 
 body
   :margin-top 10px
+
+.container 
+//  :background url(/images/grid.png)
   
 // Main Layout
 #sidebar 
@@ -61,9 +64,11 @@ body
       :cursor pointer!important
       +unstyled-link
       :display block
-      :padding 3px 10px 4px 10px
       :border-bottom 1px solid
       :border-color = !default_border_color
+      :line-height 2.5em
+      :padding-left 10px
+      //:padding 3px 10px 4px 10px
       &:hover
         :background-color = !link_hover_color
   li.current
