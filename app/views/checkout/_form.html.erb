@@ -30,7 +30,7 @@
     </tr>                        
     <tr>
       <td><%= t("state") %></td>    
-      <td>
+      <td id="bstate">
     		<%= collection_select("checkout_presenter", 
     		                      :bill_address_state_id, 
     		                      @states, 
@@ -46,7 +46,7 @@
     </tr>    
     <tr>
       <td><%= t("country") %></td>
-      <td>
+      <td id="bcountry">
   			<%= f.collection_select :bill_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %>
   		</td>
   	</tr>
@@ -82,7 +82,7 @@
     </tr>    
     <tr>
       <td><%= t("state") %></td>    
-      <td>
+      <td id="sstate">
     		<%= collection_select("checkout_presenter", 
     		                      :ship_address_state_id, 
     		                      @states, 
@@ -98,7 +98,7 @@
     </tr>
     <tr>
       <td><%= t("country") %></td>
-      <td>
+      <td id="scountry">
   			<%= f.collection_select :ship_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %>
   		</td>
   	</tr>
