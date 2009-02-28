@@ -58,8 +58,8 @@ var get_states = function() {
 
 //Update state input / select
 var update_state = function(region) {
-  var name = $('td#' + region + 'state :child').attr('id');
-  var id = $('td#' + region + 'state :child').attr('name');
+  var name = $('td#' + region + 'state :child').attr('name');
+  var id = $('td#' + region + 'state :child').attr('id');
   $('td#' + region + 'state :child').remove();
   var match;
   var selected = $('td#' + region + 'country :child :selected').html()
