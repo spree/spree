@@ -29,17 +29,13 @@ class CheckoutPresenter < ActivePresenter::Base
       order.shipments.clear
       order.shipments.create(:address => ship_address, :shipping_method => shipping_method)
       order.complete
+      # authorize the credit card and then save (authorize first before number is cleared for security purposes)
       creditcard.order = order
-debugger
       creditcard.authorize(order.total)
       creditcard.save
-      #if valid? && run_callbacks_with_halt(:before_save)
-      #  saved = presented_instances.map { |i| i.save(false) }.all?
-      #  raise ActiveRecord::Rollback unless saved # TODO: Does this happen implicitly?
-      #end
+      
+      saved = true
     end
-    #run_callbacks_with_halt(:after_save) if saved
-    
     saved  
   end
 end

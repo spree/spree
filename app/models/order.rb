@@ -49,13 +49,6 @@ class Order < ActiveRecord::Base
     event :complete do
       transition :to => 'new', :from => 'in_progress'
     end
-    event :next do
-      transition :to => 'creditcard', :from => 'in_progress'
-      transition :to => 'new', :from => 'creditcard'
-    end
-    event :edit do
-      transition :to => 'in_progress', :from => %w{creditcard in_progress}
-    end
     event :cancel do
       transition :to => 'canceled', :if => :allow_cancel?
     end
@@ -67,6 +60,9 @@ class Order < ActiveRecord::Base
     end    
     event :pay do
       transition :to => 'paid', :if => :allow_pay?
+    end
+    event :ship do
+      transition :to => 'shipped', :from  => 'paid'
     end
   end
   

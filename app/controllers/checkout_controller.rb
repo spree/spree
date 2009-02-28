@@ -15,8 +15,14 @@ class CheckoutController < Spree::BaseController
     @order.ip_address = request.env['REMOTE_ADDR']
   end             
 
-  create.response do |wants|
-    wants.html { redirect_to order_url(@order, :checkout_complete => true) }
+  create do
+    flash nil 
+    wants.html {redirect_to order_url(@order, :checkout_complete => true) }
+  end
+
+  create.after do 
+    # remove the order from the session
+    session[:order_id] = nil if @order.checkout_complete
   end
   
   def cvv

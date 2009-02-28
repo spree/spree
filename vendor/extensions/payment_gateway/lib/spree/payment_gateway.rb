@@ -7,7 +7,7 @@ module Spree
       gateway_error(response) unless response.success?
       
       # create a creditcard_payment for the amount that was authorized
-      creditcard_payment = order.creditcard_payments.create(:amount => amount, :creditcard => self)
+      creditcard_payment = order.creditcard_payments.create(:amount => 0, :creditcard => self)
       # create a transaction to reflect the authorization
       creditcard_payment.creditcard_txns << CreditcardTxn.new(
         :amount => amount,
