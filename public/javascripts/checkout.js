@@ -42,8 +42,8 @@ jQuery.fn.sameAddress = function() {
 $(function() {  
   //$("#checkout_presenter_bill_address_country_id").submitWithAjax();  
   $('#same_address').sameAddress();
-  $('td#bcountry :child').change(function() { update_state('b'); });
-  $('td#scountry :child').change(function() { update_state('s'); });
+  $('td#bcountry select').change(function() { update_state('b'); });
+  $('td#scountry select').change(function() { update_state('s'); });
   get_states();
   //$("#new_review").submitWithAjax();
 })
@@ -53,10 +53,10 @@ var state_mapper;
 var get_states = function() {
   $.getJSON('/javascripts/states.js', function(json) {
     state_mapper = json;
-    $('td#bcountry :child').val($('[name=submit_bcountry]').val());
+    $('td#bcountry select').val($('[name=submit_bcountry]').val());
     update_state('b');
     $('td#bstate :child').val($('[name=submit_bstate]').val());
-    $('td#scountry :child').val($('[name=submit_scountry]').val());
+    $('td#scountry select').val($('[name=submit_scountry]').val());
     update_state('s');
     $('td#sstate :child').val($('[name=submit_sstate]').val());
   });
