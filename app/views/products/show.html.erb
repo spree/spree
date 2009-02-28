@@ -1,69 +1,63 @@
-<table>
-  <tr>
-    <td valign="top">
-      <div id="product-image">
-				<%= render :partial => 'image' -%>
-      </div>
-      <div id="product-thumbnails">
-        <%= render :partial => 'thumbnails', :locals => {:product => @product} -%>
-      </div>
-    </td>
-    <td valign="top">
-      <% form_for :order, :url => orders_url do |f| %>
-	      <table>
-          <% if @taxon %>
-            <tr><td><%= breadcrumbs(@taxon) %><br/></td></tr>
-          <%end %>
-					<tr>
-					  <td class="product-name"><%= @product.name %></td>
-					</tr>
-					<tr>
-					  <td class="product-description"><%= product_description(@product) %></td>
-					</tr>
-					<tr>
-					  <td>
-					    <%="<span class='product-price'>#{t("price")}: </span> #{product_price(@product)}" if product_price(@product) %>
-					  </td>
-					</tr>
-					<% if @product.variants? %>
-						<tr>
-						  <td class="product-variants"><%= t('variants') %>:</td>
-						</tr>
-						<tr>
-						  <td>
-						    <div id="variants">
-						      <ul>
-										<% @product.variants.each do |v| %>
-											<% next if v.option_values.empty? %>
-											<li>
-                        <input type="radio" name="variant[id]" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked="checked"' : '' %> <%= 'disabled' unless v.in_stock or Spree::Config[:show_zero_stock_products]  %> />
-											  <%= variant_options v %>
-											  <% if variant_price_diff v %>
-											  	<span class="price-diff"><%= variant_price_diff v %></span>
-											  <% end %>
-											</li>
-										<% end%>
-						      </ul>
-						    </div>
-						  </td>
-						</tr>
-					<% else %>
-	  				<tr><td><input type="hidden" name="variant[id]" value="<%=@product.variants.first.id %>"/></td></tr>
-					<% end%>						
-					<tr>
-					  <td>
-              <%=
-                if @product.has_stock? || Spree::Config[:allow_backorders]
-                  submit_tag t('add_to_cart')
-                else
-                  content_tag('strong', t('out_of_stock'))
-                end
-            %>
-					  </td>
-					</tr>
-				</table>
-			<% end %>
-		</td>
-	</tr>
-</table>
+<% @body_id = 'product-details' %>
 
+<h1><%= @product.name %></h1>
+
+<div id="product-images">
+  <div id="main-image">
+		<%= render :partial => 'image' -%>
+  </div>
+  <div id="thumbnails">
+    <%= render :partial => 'thumbnails', :locals => {:product => @product} -%>
+  </div>
+</div>
+
+<div id="product-description">
+  <%= product_description(@product) %>
+
+  <%= render :partial => 'properties' %>
+</div>
+
+<div id="cart-form">
+<% form_for :order, :url => orders_url do |f| %>
+
+  <% if product_price(@product) %>
+  <p class="prices">
+    <%= t("price") %>
+    <span class="price selling"><%= product_price(@product) %></span>
+  </p>
+  <% end %>
+
+  <% if @product.variants? %>
+  <div id="product-variants">
+    <h2><%= t('variants') %></h2>
+
+    <ul>
+      <% @product.variants.each do |v| %>
+      <% next if v.option_values.empty? %>
+      <li>
+        <label>
+          <input type="radio" name="variant[id]" value="<%= v.id %>" <%= @product.variants.first == v ? 'checked="checked"' : '' %> <%= 'disabled' unless v.in_stock or Spree::Config[:show_zero_stock_products]  %> />
+          <%= variant_options v %>
+          <% if variant_price_diff v %>
+            <span class="price diff"><%= variant_price_diff v %></span>
+          <% end %>
+        </label>
+      </li>
+      <% end%>
+    </ul>
+  </div>
+
+  <% else %>
+    <input type="hidden" name="variant[id]" value="<%=@product.variants.first.id %>"/>
+  <% end%>						
+
+  <p><%=
+    if @product.has_stock? || Spree::Config[:allow_backorders]
+      submit_tag t('add_to_cart')
+    else
+      content_tag('strong', t('out_of_stock'))
+    end
+  %></p>
+
+<% end %>
+</div>

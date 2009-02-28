@@ -1,0 +1,164 @@
+@import blueprint.sass
+@import blueprint/modules/scaffolding.sass
+@import compass/reset.sass
+
+// Trying out some of these optional modules that provide handy mixins
+@import compass/utilities/general/inline_block.sass
+@import compass/utilities/lists.sass
+@import compass/utilities/links.sass
+
++blueprint
+// Remove the scaffolding when you're ready to start doing visual design.
+// Or leave it in if you're happy with how blueprint looks out-of-the-box
++blueprint-scaffolding
+
+
+// Shared colour constants
+!default_border_color = #DDD
+!link_hover_color = #eee
+!lighter_text_color = #666
+!selling_price_color = #f33
+!medium_blue = #2E6AB1
+!light_blue = #E5F2F8
+!dark_blue = !medium_blue - 100
+
+// Custom mixins
+= no_margin_or_padding
+  :margin 0
+  :padding 0
+
+
+body
+  :margin-top 10px
+
+.container 
+//  :background url(/images/grid.png)
+  
+// Main Layout
+#sidebar 
+  +column(5)
+  +colborder
+
+#content
+  body.one-col &
+    +column(26,last)
+  body.two-col &
+    +column(18,last)
+
+#header
+  :position relative
+  :padding-bottom 10px
+
+
+
+// Navigation
+
+.navigation-list
+  +no-bullets
+  :margin 0 0 1.5em 0
+  :border-top 1px solid
+  :border-color = !default_border_color
+  li
+    :margin 0
+    a
+      :cursor pointer!important
+      +unstyled-link
+      :display block
+      :border-bottom 1px solid
+      :border-color = !default_border_color
+      :line-height 2.5em
+      :padding-left 10px
+      //:padding 3px 10px 4px 10px
+      &:hover
+        :background-color = !link_hover_color
+  li.current
+    a
+      :background-color = !light_blue
+        
+#breadcrumbs
+  :border-bottom 1px solid
+  :border-color = !default_border_color
+  :line-height 3
+  :margin-bottom 1em
+
+#login-nav, #language-bar, #store-nav 
+  +inline-list
+  :position absolute
+  :right 0
+#login-nav
+  :top 20px
+#language-bar
+  :top 0
+#store-nav 
+  :top 40px
+
+.pagination
+  :padding-top 10px
+  :text-align right
+  a.page, span.page   
+    :padding 0px 5px 
+    :margin 0 3px
+  a.page   	  
+    :text-decoration none  
+    :border 1px solid #9aafe5
+    :color #2e6ab1	
+    &:hover, &:active   
+      :border 1px solid #2b66a5
+      :color #000
+  a.next_page 
+    :font-weight bold
+  span.disabled_page   
+    :border 1px solid #929292
+    :color #929292
+  span.current_page   
+    :font-weight bold
+    :border 1px solid
+    :border-color = !dark_blue
+    :background-color = !medium_blue
+    :color #FFF
+
+
+// Product thumbnail grids
+.product-listing
+  +no_margin_or_padding
+  +no-bullets
+  li
+    :width 110px
+    :height 14em
+    :text-align center
+    :float left
+    :margin 0 10px 10px 0
+    &.last
+      :margin-right 0
+
+
+// Product details
+#product-variants
+  :margin-bottom 1em
+  ul
+    +no-bullets
+    +no_margin_or_padding
+#product-images
+  +column(7)
+#product-description
+  +column(8)
+  +colborder
+#cart-form
+  +column(7,last)
+
+  
+// Prices
+.prices
+  :font-weight bold
+  #product-details &
+    :font-size 1.25em
+.price
+  &.selling
+    :color = !selling_price_color
+    #product-details &
+      :font-size 1.5em
+.price.diff
+  :font-style italic
+  :font-weight normal
+  :color = !lighter_text_color
+  
