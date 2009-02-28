@@ -4,6 +4,13 @@
   <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
 <% end %>                 
 
+<% if(params[:checkout_presenter]) -%>
+<input type="hidden" name="submit_sstate" value="<%= params[:checkout_presenter][:ship_address_state_id] %>" />
+<input type="hidden" name="submit_bstate" value="<%= params[:checkout_presenter][:bill_address_state_id] %>" />
+<input type="hidden" name="submit_scountry" value="<%= params[:checkout_presenter][:ship_address_country_id] %>" />
+<input type="hidden" name="submit_bcountry" value="<%= params[:checkout_presenter][:bill_address_country_id] %>" />
+<% end -%>
+
 <%= error_messages_for :checkout_presenter %>
 <div id="billing">
   <h2><%= t("billing_address")%></h2>  

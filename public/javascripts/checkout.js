@@ -53,6 +53,12 @@ var state_mapper;
 var get_states = function() {
   $.getJSON('/javascripts/states.js', function(json) {
     state_mapper = json;
+    $('td#bcountry :child').val($('[name=submit_bcountry]').val());
+    update_state('b');
+    $('td#bstate :child').val($('[name=submit_bstate]').val());
+    $('td#scountry :child').val($('[name=submit_scountry]').val());
+    update_state('s');
+    $('td#sstate :child').val($('[name=submit_sstate]').val());
   });
 };
 
