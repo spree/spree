@@ -55,18 +55,24 @@ module Admin::BaseHelper
   # Option hash may follow. Valid options are
   #   * :label to override link text, otherwise based on the first resource name (translated)
   #   * :route to override automatically determining the default route
+  #   * :match_path as an alternative way to control when the tab is active, /products would match /admin/products, /admin/products/5/variants etc.
   def tab(*args)
     options = {:label => args.first.to_s}
     if args.last.is_a?(Hash)
-      options = options.merge args.pop
+      options = options.merge(args.pop)
     end
     options[:route] ||=  "admin_#{args.first}"
     link = link_to(t(options[:label]).capitalize, send("#{options[:route]}_path"))
     
     css_classes = []
-    if args.include?(controller.controller_name.to_sym)
-      css_classes << 'selected'
+
+    selected = if options[:match_path]
+      request.request_uri.starts_with?("/admin#{options[:match_path]}")
+    else
+      args.include?(controller.controller_name.to_sym)
     end
+    css_classes << 'selected' if selected
+
     if options[:css_class]
       css_classes << options[:css_class]
     end

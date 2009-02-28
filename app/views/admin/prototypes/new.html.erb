@@ -1,9 +1,11 @@
 <%= render :partial => 'shared/product_sub_menu' %>
-<h1><%= t("new_prototype")%></h1>
 
 <%= error_messages_for :prototype %>
 
 <% form_for(:prototype, :url => collection_url) do |f| %>
+<fieldset>
+  <legend><%= t("new_prototype")%></legend>
   <%= render :partial => "form", :locals => { :f => f } %>
   <%= render :partial => 'admin/shared/new_resource_links' %>
+</fieldset>
 <% end %>
