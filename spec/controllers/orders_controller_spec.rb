@@ -13,13 +13,13 @@ describe OrdersController do
     it "should add the variant to the order" do
       controller.stub!(:object).and_return(@order)
       @order.should_receive(:add_variant).with(@variant, 2)
-	    post :create, :variants => {"345" => 2}
+      post :create, :variants => {"345" => 2}
     end
-  
+
     it "should not set the state" do
       @order.should_not_receive(:state=)
       post :create, :id => @order.number, :quantities => {456 => "123=1"}, :order => {:state => "paid"}
-    end    
+    end   
   end
   
   describe "update" do

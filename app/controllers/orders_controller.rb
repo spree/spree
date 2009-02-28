@@ -15,7 +15,7 @@ class OrdersController < Spree::BaseController
   create.after do    
     params[:products].each do |product_id,variant_id|
       quantity = params[:quantity].to_i if !params[:quantity].is_a?(Array)
-      quantity = params[:quantity][variant_id].to_i  if params[:quantity].is_a?(Array)
+      quantity = params[:quantity][variant_id].to_i if params[:quantity].is_a?(Array)
       @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
     end if params[:products]
     
@@ -24,7 +24,7 @@ class OrdersController < Spree::BaseController
       @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
     end if params[:variants]
     
-    @order.save 
+    @order.save
     
     # store order token in the session
     session[:order_token] = @order.token
