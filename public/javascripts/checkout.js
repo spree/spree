@@ -79,7 +79,8 @@ var update_state = function(region) {
     $.each(match, function(i, item) {
       $('td#' + region + 'state select').append($(document.createElement('option')).attr('value', item.value).html(item.text));
     });
-  } else {
+  } else {                                                                                                
+    name = name.replace('_id', '_name');
     $('td#' + region + 'state').append($(document.createElement('input')).attr('id', id).attr('name', name));
   }
 };
