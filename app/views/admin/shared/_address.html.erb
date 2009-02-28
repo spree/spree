@@ -5,31 +5,9 @@
 @address = address 
 %>
 
-<table cellpadding="0" cellspacing="0">
-  <tr>
-    <td><%="#{address.firstname} #{address.lastname}" %></td>
-  </tr>
-  <tr>
-    <td>
-       <%= address.address1 %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= address.address2 %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= "#{address.city}, #{address.state_name || address.state.abbr} #{address.zipcode}" %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= address.country.name %>       
-    </td>
-  </tr>
-  <tr>
-    <td><%= address.phone %></td>
-  </tr>
-</table>
+<p><%="#{address.firstname} #{address.lastname}" %><br />
+ <%= address.address1 %><br />
+<%= address.address2 %><br />
+<%= "#{address.city}, #{address.state_name || address.state.abbr} #{address.zipcode}" %><br />
+<%= address.country.name %><br />
+<%= address.phone %></p>
