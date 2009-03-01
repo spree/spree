@@ -1,4 +1,4 @@
-class Admin::ShippingMethodsController < ApplicationController
+class Admin::ShippingMethodsController < Admin::BaseController    
     resource_controller
     before_filter :load_data
     layout 'admin'
