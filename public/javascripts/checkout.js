@@ -45,8 +45,20 @@ $(function() {
   $('td#bcountry select').change(function() { update_state('b'); });
   $('td#scountry select').change(function() { update_state('s'); });
   get_states();
-  //$("#new_review").submitWithAjax();
+  $('div#validate_billing').css('cursor', 'pointer').click(function() { validate_section('billing'); });
+  $('div#validate_shipping').css('cursor', 'pointer').click(function() { validate_section('shipping'); });
+  $('div#validate_creditcard').css('cursor', 'pointer').click(function() { validate_section('creditcard'); });
 })
+
+var validate_section = function(region) {
+	var validator = $('form#checkout_form').validate();
+	var valid = true; 
+	$('div#' + region + ' input, div#' + region + ' select, div#' + region + ' textarea').each(function() {
+		if(!validator.element(this)) {
+			valid = false;
+		}
+	});
+};
 
 //Initial state mapper on page load
 var state_mapper;
@@ -75,11 +87,12 @@ var update_state = function(region) {
     }
   });
   if(match) {
-    $('td#' + region + 'state').append($(document.createElement('select')).attr('id', id).attr('name', name));
+    $('td#' + region + 'state').append($(document.createElement('select')));
     $.each(match, function(i, item) {
       $('td#' + region + 'state select').append($(document.createElement('option')).attr('value', item.value).html(item.text));
     });
   } else {
-    $('td#' + region + 'state').append($(document.createElement('input')).attr('id', id).attr('name', name));
+    $('td#' + region + 'state').append($(document.createElement('input')));
   }
+  $('td#' + region + 'state select, td#' + region + 'state input').addClass('required').attr('name', name).attr('id', id);
 };
