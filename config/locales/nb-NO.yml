@@ -690,6 +690,7 @@ nb-NO:
   error: error
   event: Event
   existing_customer: "Existing Customer"
+  expiration: "Expiration"
   expiration_month: "Expiration Month"
   expiration_year: "Expiration Year"
   extension: Extension
@@ -700,6 +701,7 @@ nb-NO:
   gateway: Gateway
   gateway_error: "Gateway Error"
   gateway_setting_description: "Select a payment gateway and configure its settings."
+  general: "General"
   general_settings: "General Settings"
   general_settings_description: "Configure general Spree settings."
   google_analytics: "Google Analytics"
@@ -710,6 +712,7 @@ nb-NO:
   google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Height
   hello_user: "Hello User"
+  history: History
   image: Image
   images: Images
   in_progress: "In Progress"
@@ -739,6 +742,7 @@ nb-NO:
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mail Server Settings"
   master_price: "Master Price"
+  month: "Month"
   my_account: "My Account"
   my_orders: "My Orders"    
   name: Name
@@ -851,6 +855,7 @@ nb-NO:
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Sign up"
   sku: SKU
+  smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
   smtp_domain: SMTP Domain
   smtp_mail_host: SMTP Mail Host                       
@@ -885,6 +890,7 @@ nb-NO:
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "English (US)"
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Total
   transaction: Transaction
   tree: Tree
@@ -908,6 +914,7 @@ nb-NO:
   what_is_this: "What's This?"
   whats_this: "What's this"
   width: Width
+  year: "Year"
   your_cart_is_empty: "Your cart is empty"
   zip: Zip
   zone: Zone

@@ -234,6 +234,7 @@ pt-PT:
   error: erro
   event: Evento
   existing_customer: "Cliente Existente"
+  expiration: "Expiration"
   expiration_month: "Mês de Expiração"
   expiration_year: "Ano de Expiração"
   extension: Extensão
@@ -244,6 +245,7 @@ pt-PT:
   gateway: Gateway
   gateway_error: "Erro na Gateway"
   gateway_setting_description: "Selecionar um gateway de pagamento e ajustar suas configurações."
+  general: "General"
   general_settings: "Configurações Gerais"
   general_settings_description: "Configuração Geral de Spree."
   google_analytics: "Google Analytics"
@@ -254,6 +256,7 @@ pt-PT:
   google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Altura
   hello_user: "Olá Utilizador"
+  history: History
   image: Imagem
   images: Imagens
   in_progress: "Em Progresso"
@@ -283,6 +286,7 @@ pt-PT:
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Configuração do Servidor de E-mail"
   master_price: "Preço Principal"
+  month: "Month"
   my_account: "Minha Conta"
   my_orders: "As Minhas Encomendas"
   name: Name
@@ -395,6 +399,7 @@ pt-PT:
   show_out_of_stock_products: "Mostra produtos sem stock"
   sign_up: Inscrever
   sku: SKU
+  smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
   smtp_domain: SMTP Domain
   smtp_mail_host: SMTP Mail Host                       
@@ -429,6 +434,7 @@ pt-PT:
   taxons: Taxons
   thank_you_for_your_order: "Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle."
   this_file_language: "Português"
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Total
   transaction: Transacção
   tree: Árvore
@@ -452,6 +458,7 @@ pt-PT:
   what_is_this: "O que é isto?"
   whats_this: "O que é isto?"
   width: Largura
+  year: "Year"
   your_cart_is_empty: "O carro está vazio"
   zip: Codigo Postal
   zone: Zona
