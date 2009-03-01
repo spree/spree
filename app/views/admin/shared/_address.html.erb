@@ -7,7 +7,7 @@
 
 <p><%="#{address.firstname} #{address.lastname}" %><br />
  <%= address.address1 %><br />
-<%= address.address2 %><br />
+<%= "#{address.address2} <br />" unless address.address2.blank? %>
 <%= "#{address.city}, #{address.state_name || address.state.abbr} #{address.zipcode}" %><br />
 <%= address.country.name %><br />
 <%= address.phone %></p>
