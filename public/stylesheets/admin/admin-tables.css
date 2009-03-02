@@ -10,6 +10,7 @@ table.index th {
     text-align: center; }
   table.index td {
     border-bottom:1px solid #ddd;
+    padding: 3px 10px;
   }
 table.index tr.alt td {
   background-color: #efefef; }
