@@ -67,16 +67,24 @@ class Product < ActiveRecord::Base
   def has_stock?
     variants.inject(false){ |tf, v| tf ||= v.in_stock }
   end
-
+  
   private
 
-    def adjust_inventory    
+    def adjust_inventory
       return if self.new_record?
       return unless @quantity && @quantity.is_integer?    
       new_level = @quantity.to_i
       # don't allow negative on_hand inventory
       return if new_level < 0
       variant.save
+      variant.inventory_units.with_state("backordered").each{|iu|
+        if new_level > 0
+          iu.fill_backorder
+          new_level = new_level - 1
+        end
+        break if new_level < 1
+        }
+      
       adjustment = new_level - on_hand
       if adjustment > 0
         InventoryUnit.create_on_hand(variant, adjustment)
