@@ -1,6 +1,6 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'jquery-1.3.2.min' %>
-  <%= javascript_include_tag 'jquery/jquery.validate.js' %>
+  <%= javascript_include_tag 'jquery.validate.pack.js' %>
   <%= javascript_include_tag 'checkout' %> 
   <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
 <% end %>                 
