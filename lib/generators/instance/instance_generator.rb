@@ -69,7 +69,7 @@ class InstanceGenerator < Rails::Generator::Base
       files.map! { |f| f = $1 if f =~ %r{^#{root}/(.+)$}; f }
       
       # hack to add specification (we're ignoring other hidden files)
-      files << "vendor/gems/active_presenter-0.0.4/.specification"
+      files << "vendor/gems/active_presenter-0.0.6/.specification"
       files.sort!
       
       files.each do |file|
