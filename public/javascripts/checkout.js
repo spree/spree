@@ -105,12 +105,12 @@ var shift_to_region = function(active) {
       if(active == regions[i]) {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
         $('div#' + regions[i] + ' div.inner').show();
+        $('div#' + regions[i]).removeClass('checkout_disabled');
         found = 1;
       }
       else {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'pointer').click(function() {shift_to_region($(this).parent().attr('id'));});
         $('div#' + regions[i] + ' div.inner').hide();
-        $('div#' + regions[i]).removeClass('checkout_disabled');
       }
     } else {
       $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
