@@ -41,6 +41,7 @@ public/stylesheets/lightbox.css
 vendor/extensions/google_base
 public/stylesheets/google_base.css
 public/google_base.xml
+public/template_google_base.xml
 vendor/extensions/css_themes
 coverage/*
 var

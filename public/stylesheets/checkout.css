@@ -1,0 +1,11 @@
+div#checkout p, div#checkout div { clear: both; }
+  div#checkout p label { float: left; width: 150px; position: relative; top: 5px; }
+  div#checkout p input, div#checkout p select { float: left; width: 200px; margin: 0px 5px 10px 0px; }
+  div#checkout p label.error { color: red; }
+
+div#shipping div.inner, div#creditcard div.inner { display: none; }
+  div#checkout h2 { height: 22px; background-color: #CCF; border: 1px solid black; padding: 5px; font-size: 18px; margin: 5px 0px; }
+  div.checkout_disabled h2 { color: #AFAFAF; }
+  div#checkout h2:hover { cursor: pointer; }
+
+div#creditcard select { width: 100px; }
