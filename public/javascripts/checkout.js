@@ -47,6 +47,9 @@ $(function() {
   get_states();
   $('div#validate_billing').css('cursor', 'pointer').click(function() { if(validate_section('billing')) { submit_billing(); }});
   $('div#validate_shipping').css('cursor', 'pointer').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
+  $('div#select_shipping_method').css('cursor', 'pointer').click(function() { submit_shipping_method(); });  
+  $('div#confirm_payment').css('cursor', 'pointer').click(function() { confirm_payment(); }); 
+  $('div#confirm_order').css('cursor', 'pointer').click(function() { confirm_order(); });      
   $('div#billing h2').click(function() { check_billing(); });
   $('div#shipping h2').click(function() { check_shipping(); });
   $('div#creditcard h2').click(function() { check_creditcard(); });  
@@ -96,7 +99,8 @@ var submit_billing = function() {
 var submit_shipping = function() {
   //INSIDE SUCCESS OF VALIDATION
   $('div#shipping div.inner').hide();
-  $('div#creditcard div.inner').show();
+  $('div#shipping-method div.inner').show(); 
+  $('div#shipping-method').removeClass('checkout_disabled');
   //OTHERWISE ADD ERROR
   return;
 }
@@ -151,5 +155,22 @@ var update_state = function(region) {
  
                      
 var submit_form = function() {
-  return false;
+  if($('div#confirm_order').attr('class') == 'checkout_disabled') return false;
+  return true;
+};                           
+
+var submit_shipping_method = function() {
+  $('div#shipping-method div.inner').hide();
+  $('div#creditcard div.inner').show();
+  $('div#creditcard').removeClass('checkout_disabled');
 };
+
+var confirm_payment = function() {
+  $('div#creditcard div.inner').hide();
+  $('div#confirm_order div.inner').show();
+  $('div#confirm_order').removeClass('checkout_disabled');  
+} 
+
+var confirm_order = function() {
+  $('form').submit();
+}
