@@ -33,10 +33,10 @@
 						  <td>
 						    <div id="variants">
 						      <ul>
-										<% @product.variants.active.each do |v| %>
+										<% @product.variants.active.each_with_index do |v,index| %>
 											<% next if v.option_values.empty? %>
-											<li>
-                        <input type="radio" name="quantities[<%= @product.id %>]" value="<%= "#{v.id}=1" %>" <%= @product.variants.first == v ? 'checked="checked"' : '' %> <%= 'disabled' unless v.in_stock or Spree::Config[:show_zero_stock_products]  %> />
+											<li> 
+                        <input type="radio" name="quantities[<%= @product.id %>]" value="<%= "#{v.id}=1" %>" <%= index == 1 ? 'checked="checked"' : '' %> <%= 'disabled' unless v.in_stock or Spree::Config[:show_zero_stock_products]  %> />
 											  <%= variant_options v %>
 											  <% if variant_price_diff v %>
 											  	<span class="price-diff"><%= variant_price_diff v %></span>
