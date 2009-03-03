@@ -44,10 +44,10 @@ $(function() {
   $('span#scountry select').change(function() { update_state('s'); });
   get_states();
 
-  $('div#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
-  $('div#validate_shipping').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
-  $('div#select_shipping_method').click(function() { submit_shipping_method(); });  
-  $('div#confirm_payment').click(function() { if(validate_section('creditcard')) { confirm_payment(); }}); 
+  $('#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
+  $('#validate_shipping').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
+  $('#select_shipping_method').click(function() { submit_shipping_method(); });  
+  $('#confirm_payment').click(function() { if(validate_section('creditcard')) { confirm_payment(); }}); 
 })
 
 //Initial state mapper on page load
