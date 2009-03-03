@@ -1,3 +1,5 @@
+var regions = new Array('billing', 'shipping', 'shipping_method', 'creditcard', 'confirm_order');
+
 $(document).ajaxSend(function(event, request, settings) {
   if (typeof(AUTH_TOKEN) == "undefined") return;
   // settings.data is a serialized string like "foo=bar&baz=boink" (or null)
@@ -18,10 +20,6 @@ jQuery.fn.submitWithAjax = function() {
   return this;
 };
 
-$("#shipping_fieldset input, #shipping_fieldset select").each(function() {
-    $("#billing_fieldset #"+ $(this).attr("id").replace(/shipping/, "billing")).val($(this).val());
-});
-                                  
 jQuery.fn.sameAddress = function() {
   this.click(function() {
     if(!$(this).attr('checked')) {
@@ -45,76 +43,12 @@ $(function() {
   $('span#bcountry select').change(function() { update_state('b'); });
   $('span#scountry select').change(function() { update_state('s'); });
   get_states();
-  $('div#validate_billing').css('cursor', 'pointer').click(function() { if(validate_section('billing')) { submit_billing(); }});
-  $('div#validate_shipping').css('cursor', 'pointer').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
-  $('div#select_shipping_method').css('cursor', 'pointer').click(function() { submit_shipping_method(); });  
-  $('div#confirm_payment').css('cursor', 'pointer').click(function() { confirm_payment(); }); 
-  $('div#confirm_order').css('cursor', 'pointer').click(function() { confirm_order(); });      
-  $('div#billing h2').click(function() { check_billing(); });
-  $('div#shipping h2').click(function() { check_shipping(); });
-  $('div#creditcard h2').click(function() { check_creditcard(); });  
-  $('form').submit(function() { return submit_form(); });
+
+  $('div#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
+  $('div#validate_shipping').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
+  $('div#select_shipping_method').click(function() { submit_shipping_method(); });  
+  $('div#confirm_payment').click(function() { if(validate_section('creditcard')) { confirm_payment(); }}); 
 })
-
-var check_billing = function() {
-  $('div#creditcard div.inner, div#shipping div.inner').hide();
-  $('div#creditcard, div#shipping').addClass('checkout_disabled');
-  $('div#billing div.inner').show();
-}
-
-var check_shipping = function() {
-  if($('div#shipping').attr('class') == 'checkout_disabled') {
-    if(validate_section('billing')) {
-      submit_billing();
-    }
-  } else {
-    $('div#creditcard div.inner').hide();
-    $('div#creditcard').addClass('checkout_disabled');
-    $('div#shipping div.inner').show();
-  }
-  return;
-}
-
-var check_creditcard = function() {
-  if($('div#creditcard').attr('class') == 'checkout_disabled') {
-    if($('div#shipping').attr('class') == 'checkout_disabled') {
-      if(validate_section('billing')) {
-        submit_billing();
-      }
-    }
-    if(validate_section('shipping')) {
-      submit_shipping();
-    }
-  }
-}
-
-var submit_billing = function() {
-  //INSIDE SUCCESS OF VALIDATION
-  $('div#billing div.inner').hide();
-  $('div#shipping div.inner').show();
-  $('div#shipping').removeClass('checkout_disabled');
-  //OTHERWISE ADD ERROR
-  return;
-}
-var submit_shipping = function() {
-  //INSIDE SUCCESS OF VALIDATION
-  $('div#shipping div.inner').hide();
-  $('div#shipping-method div.inner').show(); 
-  $('div#shipping-method').removeClass('checkout_disabled');
-  //OTHERWISE ADD ERROR
-  return;
-}
-
-var validate_section = function(region) {
-  var validator = $('form#checkout_form').validate();
-  var valid = true; 
-  $('div#' + region + ' input, div#' + region + ' select, div#' + region + ' textarea').each(function() {
-    if(!validator.element(this)) {
-      valid = false;
-    }
-  });
-  return valid;
-};
 
 //Initial state mapper on page load
 var state_mapper;
@@ -152,25 +86,54 @@ var update_state = function(region) {
   }
   $('span#' + region + 'state select, span#' + region + 'state input').addClass('required').attr('name', name).attr('id', id);
 };
- 
-                     
-var submit_form = function() {
-  if($('div#confirm_order').attr('class') == 'checkout_disabled') return false;
-  return true;
-};                           
 
+var validate_section = function(region) {
+  var validator = $('form#checkout_form').validate();
+  var valid = true;
+  $('div#' + region + ' input, div#' + region + ' select, div#' + region + ' textarea').each(function() {
+    if(!validator.element(this)) {
+      valid = false;
+    }
+  });
+  return valid;
+};
+
+var shift_to_region = function(active) {
+  var found = 0;
+  for(var i=0; i<regions.length; i++) {
+    if(!found) {
+      if(active == regions[i]) {
+        $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
+        $('div#' + regions[i] + ' div.inner').show();
+        found = 1;
+      }
+      else {
+        $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'pointer').click(function() {shift_to_region($(this).parent().attr('id'));});
+        $('div#' + regions[i] + ' div.inner').hide();
+        $('div#' + regions[i]).removeClass('checkout_disabled');
+      }
+    } else {
+      $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
+      $('div#' + regions[i] + ' div.inner').hide();
+      $('div#' + regions[i]).addClass('checkout_disabled');
+    }
+  }
+  return;
+};
+
+var submit_billing = function() {
+  shift_to_region('shipping');
+  return;
+};
+var submit_shipping = function() {
+  shift_to_region('shipping_method');
+  return;
+};
+                     
 var submit_shipping_method = function() {
-  $('div#shipping-method div.inner').hide();
-  $('div#creditcard div.inner').show();
-  $('div#creditcard').removeClass('checkout_disabled');
+  shift_to_region('creditcard');
 };
 
 var confirm_payment = function() {
-  $('div#creditcard div.inner').hide();
-  $('div#confirm_order div.inner').show();
-  $('div#confirm_order').removeClass('checkout_disabled');  
-} 
-
-var confirm_order = function() {
-  $('form').submit();
-}
+  shift_to_region('confirm_order');
+};
