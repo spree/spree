@@ -13,8 +13,14 @@ class OrdersController < Spree::BaseController
   helper :products
 
   create.after do    
-    # add the specified product to the order
-    @order.add_variant(Variant.find(params[:variant][:id]))
+    # add the specified products in given quantities to the order
+    # the information is specified in a hash.
+    
+    params[:quantities].each do |product_id,vq|
+      (variant_id,quantity) = vq.split '='
+      quantity = quantity.to_i
+      @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
+    end
     @order.save
   end
 
