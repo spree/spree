@@ -49,7 +49,8 @@ $(function() {
   $('div#validate_shipping').css('cursor', 'pointer').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
   $('div#billing h2').click(function() { check_billing(); });
   $('div#shipping h2').click(function() { check_shipping(); });
-  $('div#creditcard h2').click(function() { check_creditcard(); });
+  $('div#creditcard h2').click(function() { check_creditcard(); });  
+  $('form').submit(function() { return submit_form(); });
 })
 
 var check_billing = function() {
@@ -146,4 +147,9 @@ var update_state = function(region) {
     $('span#' + region + 'state').append($(document.createElement('input')));
   }
   $('span#' + region + 'state select, span#' + region + 'state input').addClass('required').attr('name', name).attr('id', id);
+};
+ 
+                     
+var submit_form = function() {
+  return false;
 };
