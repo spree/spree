@@ -235,6 +235,7 @@ en-GB:
   error: error
   event: Event
   existing_customer: "Existing Customer"
+  expiration: Expiration
   expiration_month: "Expiration Month"
   expiration_year: "Expiration Year"
   extension: Extension
@@ -439,6 +440,7 @@ en-GB:
   update: Update
   updated_successfully:
   use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Use Different Shipping Address"
   user: User
   user_account: User Account

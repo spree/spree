@@ -235,6 +235,7 @@ pl:
   error: błąd
   event: Event
   existing_customer: "Existing Customer"
+  expiration: Expiration
   expiration_month: "Miesiąc wygaśnięcia"
   expiration_year: "Rok wygaśnięcia"
   extension: Rozszerzenie
@@ -439,6 +440,7 @@ pl:
   update: Aktualizuj
   updated_successfully:
   use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Użyj innego adresy dostawy"
   user: Użytkownik
   user_account: User Account
