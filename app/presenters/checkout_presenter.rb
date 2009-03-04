@@ -3,7 +3,7 @@ class CheckoutPresenter < ActivePresenter::Base
  
   alias_method :old_initialize, :initialize 
   attr_accessor :order
-  attr_accessor :final_answer
+  attr_accessor :shipping_method
   
   def initialize(args = {})               
     old_initialize(args)
@@ -23,8 +23,6 @@ class CheckoutPresenter < ActivePresenter::Base
     self.errors.clear
 
     saved = false
-    # TODO - make shipping method selectable by user
-    shipping_method = ShippingMethod.first
 
     ActiveRecord::Base.transaction do
       # clear existing shipments (no orphans please)

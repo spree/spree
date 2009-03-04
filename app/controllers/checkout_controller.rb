@@ -50,7 +50,8 @@ class CheckoutController < Spree::BaseController
   def build_object
     @order = Order.find_by_number(params[:order_number])
     @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]
-    @object.order = @order
+    @object.order = @order      
+    @object.shipping_method = ShippingMethod.find_by_id(params[:method_id]) 
   end
   
   def load_data
