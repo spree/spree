@@ -18,9 +18,8 @@ class CheckoutPresenter < ActivePresenter::Base
   def save              
     # TODO - do not allow save if checkout complete (double post, other user shennaingans)
     # TODO - handle this unxpected situation better (unexpected b/c we have client side validation along the way)
-    return false unless valid?           
+#    return false unless valid?           
     saved = false
-
     # TODO - make shipping method selectable by user
     shipping_method = ShippingMethod.first
 
@@ -28,12 +27,13 @@ class CheckoutPresenter < ActivePresenter::Base
       # clear existing shipments (no orphans please)
       order.shipments.clear
       order.shipments.create(:address => ship_address, :shipping_method => shipping_method)
+=begin --- remove when done testing
       order.complete
       # authorize the credit card and then save (authorize first before number is cleared for security purposes)
       creditcard.order = order
       creditcard.authorize(order.total)
       creditcard.save
-      
+=end      
       saved = true
     end
     saved  

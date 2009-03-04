@@ -10,7 +10,6 @@ class CheckoutController < Spree::BaseController
   object_name :checkout_presenter
          
   create.before do
-    # TODO - make sure user is still logged in
     @order.user = current_user       
     @order.ip_address = request.env['REMOTE_ADDR']
   end             
@@ -18,9 +17,13 @@ class CheckoutController < Spree::BaseController
   create do
     flash nil 
     wants.html {redirect_to order_url(@order, :checkout_complete => true) }
+    #wants.json {render :json => @order.to_json, :layout => false}
+    wants.json {render :json => { :order => @order, 
+                                  :available_methods => @order.shipment.rates }.to_json,
+                       :layout => false} 
   end
 
-  create.after do 
+  create.after do  
     # remove the order from the session
     session[:order_id] = nil if @order.checkout_complete
   end

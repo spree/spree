@@ -125,14 +125,41 @@ var submit_billing = function() {
   shift_to_region('shipping');
   return;
 };
+
 var submit_shipping = function() {
+  // Save what we have so far and get the list of shipping methods via AJAX
+  $.ajax({
+    type: "POST",
+    url: 'complete',                                 
+    //contentType: "application/json; charset=utf-8",
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');
+    },      
+    dataType: "json",
+    data: "{form: '" + $('#checkout_form').serialize() + "'}",
+    success: function(json) {  
+      update_shipping_methods(json.available_methods); 
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      // TODO - put some real error handling in here
+      $("#error").html(XMLHttpRequest.responseText);
+    }
+  });  
   shift_to_region('shipping_method');
   return;
 };
                      
 var submit_shipping_method = function() {
   shift_to_region('creditcard');
-};
+}; 
+
+var update_shipping_methods = function(methods) {        
+  $(methods).each( function(i) {
+    // we want to create radio buttons for shipping methods instead of this alert which is just a place holder
+    alert("name: " + this.name);
+    // "this" is a JSON hash with id, name and rate
+  });
+}
 
 var confirm_payment = function() {
   shift_to_region('confirm_order');
