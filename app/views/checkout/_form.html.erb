@@ -61,7 +61,7 @@
     <label for=""><%= t("phone") %></label>
     <%= f.text_field :bill_address_phone, :class => 'required' %>
   </p>
-  <div><input id="validate_billing" type="button" value="<%=t("continue")%>"/></div>
+  <p><input id="validate_billing" type="button" value="<%=t("continue")%>"/></p>
   </div>
 </div>
 
@@ -113,15 +113,15 @@
     <label for=""><%= t("phone") %></label>
     <%= f.text_field :ship_address_phone, :class => 'required' %>
   </p>
-  <div><input id="validate_shipping" type="button" value="<%=t("continue")%>"/></div>
+  <p><input id="validate_shipping" type="button" value="<%=t("continue")%>"/></p>
   </div>
 </div>
             
 <div id="shipping_method" class="checkout_disabled">
   <h2><%= t("shipping_method") %></h2>
   <div class="inner">
-    <input id="select_shipping_method" type="button" value="<%=t("continue")%>"/>
-    <div id="error"></div>
+    <div id="methods"></div>
+    <p><input id="select_shipping_method" type="button" value="<%=t("continue")%>"/></p>
   </div>  
 </div>
 
@@ -147,13 +147,16 @@
 	(<%= t("whats_this") %>)
       </a>
   </p>
-    <div><input id="confirm_payment" type="button" value="<%=t("continue")%>"/></div>
+  <p><input id="confirm_payment" type="button" value="<%=t("continue")%>"/></p>
   </div>
 </div>
 
 <div id="confirm_order" class="checkout_disabled">
   <h2><%= t("confirm") %></h2>
   <div class="inner">
+    <div id="billing_summary"></div>
+    <div id="shipping_summary"></div>
+    <div id="total_summary"></div>
     <%= submit_tag t('continue') %>
   </div>
 </div>

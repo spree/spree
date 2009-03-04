@@ -7,5 +7,12 @@ div#shipping div.inner, div#creditcard div.inner, div#shipping_method div.inner,
   div#checkout h2 { height: 22px; background-color: #CCF; border: 1px solid black; padding: 5px; font-size: 18px; margin: 5px 0px; }
   div.checkout_disabled h2 { color: #AFAFAF; }
 
-div#creditcard select { width: 100px; }
-div#validate_billing, div#validate_shipping, div#select_shipping_method, div#confirm_payment, div#confirm_order div.inner input { cursor: pointer; }
+div#checkout div#creditcard p select { width: 75px; }
+div#checkout p input#validate_billing,
+div#checkout p input#validate_shipping,
+div#checkout p input#select_shipping_method,
+div#checkout p input#confirm_payment,
+div#checkout div#confirm_order div.inner input { cursor: pointer; clear: both; width: 100px; margin: 10px 0px; }
+
+div#billing_summary, div#shipping_summary { float: left; width: 200px; border: 1px solid red; }
+div#total_summary { clear: both; width: 200px; border: 1px solid blue; }

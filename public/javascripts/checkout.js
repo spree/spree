@@ -123,10 +123,13 @@ var shift_to_region = function(active) {
 
 var submit_billing = function() {
   shift_to_region('shipping');
+  //build billing_summary section
   return;
 };
 
 var submit_shipping = function() {
+  $('div#methods :child').remove();
+  $('div#methods').append($(document.createElement('img')).attr('src', '/images/ajax_loader.gif').attr('id', 'shipping_loader'));
   // Save what we have so far and get the list of shipping methods via AJAX
   $.ajax({
     type: "POST",
@@ -146,19 +149,38 @@ var submit_shipping = function() {
     }
   });  
   shift_to_region('shipping_method');
+  //build shipping_summary section
   return;
 };
                      
 var submit_shipping_method = function() {
-  shift_to_region('creditcard');
+  //TODO: Move to validate_section('shipping_method'), but must debug how to validate radio buttons
+  var valid = false;
+  $('div#methods :child input').each(function() {
+    if($(this).attr('checked')) {
+      valid = true;
+    }
+  });
+  if(valid) {
+    shift_to_region('creditcard');
+    //build total_summary section
+  } else {
+    var p = document.createElement('p');
+    $(p).append($(document.createElement('label')).addClass('error').html('Please select a shipping method').css('width', '300px').css('top', '0px'));
+    $('div#methods').append(p);
+  }
 }; 
 
-var update_shipping_methods = function(methods) {        
+var update_shipping_methods = function(methods) {
   $(methods).each( function(i) {
-    // we want to create radio buttons for shipping methods instead of this alert which is just a place holder
-    alert("name: " + this.name);
-    // "this" is a JSON hash with id, name and rate
+    $('div$methods img#shipping_loader').remove();
+    var p = document.createElement('p');
+    $(p).append($(document.createElement('input')).attr('type', 'radio').attr('name', 'method_id').val(this.id));
+    $(p).append($(document.createElement('label')).html(this.name + ' ' + this.rate).css('top', '-1px'));
+    $('div#methods').append(p);
   });
+  $('div#methods input:first').attr('validate', 'required:true');
+  return;
 }
 
 var confirm_payment = function() {
