@@ -134,7 +134,6 @@ var submit_shipping = function() {
   $.ajax({
     type: "POST",
     url: 'complete',                                 
-    //contentType: "application/json; charset=utf-8",
     beforeSend : function (xhr) {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
     },      
@@ -162,8 +161,24 @@ var submit_shipping_method = function() {
     }
   });
   if(valid) {
+    // Save what we have so far and get the updated order totals via AJAX
+    $.ajax({
+      type: "POST",
+      url: 'complete',                                 
+      beforeSend : function (xhr) {
+        xhr.setRequestHeader('Accept-Encoding', 'identity');
+      },      
+      dataType: "json",
+      data: "{form: '" + $('#checkout_form').serialize() + "'}",
+      success: function(json) {  
+        update_confirmation(json.order); 
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        // TODO - put some real error handling in here
+        //$("#error").html(XMLHttpRequest.responseText);
+      }
+    });  
     shift_to_region('creditcard');
-    //build total_summary section
   } else {
     var p = document.createElement('p');
     $(p).append($(document.createElement('label')).addClass('error').html('Please select a shipping method').css('width', '300px').css('top', '0px'));
@@ -181,6 +196,11 @@ var update_shipping_methods = function(methods) {
   });
   $('div#methods input:first').attr('validate', 'required:true');
   return;
+}                                     
+
+var update_confirmation = function(order) {
+  // TODO update the confirmation section with order totals
+  alert("Placeholder for JQuery");
 }
 
 var confirm_payment = function() {
