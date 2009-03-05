@@ -342,6 +342,7 @@ pl:
   payment_information: "Payment Information"
   payments: Payments
   phone: Telefon
+  place_order: Place Order        
   presentation: Presentacja
   previous: Poprzednie
   price: Cena

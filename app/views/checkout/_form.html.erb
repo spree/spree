@@ -159,6 +159,7 @@
     <div id="bdisplay"><img src="/images/ajax_loader.gif" id="bconfirm_loader" /></div>
     <div id="sdisplay"><img src="/images/ajax_loader.gif" id="sconfirm_loader" /></div>
     <div class="clear"></div>
-    <%= submit_tag t('continue') %>
+    <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
+    <%= submit_tag t('place_order') %>
   </div>
 </div>
