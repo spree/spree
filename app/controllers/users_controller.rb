@@ -10,7 +10,9 @@ class UsersController < Spree::BaseController
     @orders = Order.checkout_completed(true).find_all_by_user_id(current_user.id)
   end
 
-  create.after do   
+  create.after do
+    @user.roles << Role.find_by_name("user")
+    @user.save   
     self.current_user = @user       
   end
 
