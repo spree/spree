@@ -4,6 +4,8 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password
 
+  has_many :addresses, :as => :addressable, :dependent => :destroy
+  
   validates_presence_of     :email
   validates_format_of       :email, :with => RFC822::EmailAddress, 
                             :message => 'email must be valid'

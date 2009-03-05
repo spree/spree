@@ -23,17 +23,22 @@ class CheckoutPresenter < ActivePresenter::Base
     self.errors.clear
 
     saved = false
-
     ActiveRecord::Base.transaction do
-      # clear existing shipments (no orphans please)
+      # clear existing shipments (no orphans please)                             
       order.shipments.clear
+      # clear existing addresses, eventually this won't be necessary (we'll have an address book)
+      order.user.addresses.clear
+      
+      order.user.addresses << bill_address.clone
+      order.save
+      
       order.shipments.create(:address => ship_address, :shipping_method => shipping_method)
       if final_answer
-        order.complete
         # authorize the credit card and then save (authorize first before number is cleared for security purposes)
         creditcard.order = order
         creditcard.authorize(order.total)
         creditcard.save
+        order.complete
       end      
       saved = true
     end
