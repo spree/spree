@@ -1,4 +1,5 @@
-class CheckoutController < Spree::BaseController    
+class CheckoutController < Spree::BaseController                 
+  before_filter :stop_monkey_business
   before_filter :require_user_account
   before_filter :load_data
   before_filter :build_object, :except => [:new, :create]
@@ -57,11 +58,16 @@ class CheckoutController < Spree::BaseController
                                                                           :shipping_method => (@order.shipment ? @order.shipment.shipping_method : nil) }
     end      
     @object.order = @order      
-    @object.shipping_method = ShippingMethod.find_by_id(params[:method_id]) if params[:method_id]
+    @object.shipping_method = ShippingMethod.find_by_id(params[:method_id]) if params[:method_id]        
   end
   
   def load_data
     @countries = Country.find(:all)    
     @states = Country.find(214).states.sort
+  end 
+  
+  def stop_monkey_business
+    build_object
+    redirect_to order_url(@order) and return if @order.checkout_complete    
   end
 end
