@@ -342,6 +342,7 @@ en-US:
   payment_information: "Payment Information"
   payments: Payments
   phone: Phone
+  place_order: Place Order        
   presentation: Presentation
   previous: Previous
   price: Price
@@ -461,4 +462,4 @@ en-US:
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
-  zones: Zones          
+  zones: Zones  
