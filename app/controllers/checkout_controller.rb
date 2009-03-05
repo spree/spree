@@ -51,10 +51,15 @@ class CheckoutController < Spree::BaseController
     @order = Order.find_by_number(params[:order_number])
     if params[:checkout_presenter]
       @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]  
-    else
-      @object ||= end_of_association_chain.send parent? ? :build : :new, {:bill_address => (current_user == :false ? Address.new : current_user.last_address ), 
-                                                                          :ship_address => (@order.ship_address || Address.new), 
-                                                                          :shipping_method => (@order.shipment ? @order.shipment.shipping_method : nil) }
+    else                       
+      # user has not yet submitted checkout parameters, we can use defaults of current_user and order objects
+      bill_address = current_user.last_address unless current_user == :false
+      bill_address ||= Address.new
+      ship_address = @order.ship_address || Address.new
+      shipping_method = @order.shipment ? @order.shipment.shipping_method : nil
+      @object ||= end_of_association_chain.send parent? ? :build : :new, {:bill_address => bill_address, 
+                                                                          :ship_address => ship_address, 
+                                                                          :shipping_method => shipping_method }
     end      
     @object.order = @order      
     @object.shipping_method = ShippingMethod.find_by_id(params[:method_id]) if params[:method_id]        
