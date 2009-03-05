@@ -40,8 +40,8 @@ jQuery.fn.sameAddress = function() {
 $(function() {  
   //$("#checkout_presenter_bill_address_country_id").submitWithAjax();  
   $('#checkout_presenter_same_address').sameAddress();
-  $('span#bcountry select').change(function() { update_state('b'); });
-  $('span#scountry select').change(function() { update_state('s'); });
+  $('span#bcountry select').change(function() { $('input#hidden_bstate').val(''); update_state('b'); });
+  $('span#scountry select').change(function() { $('input#hidden_sstate').val(''); update_state('s'); });
   get_states();
 
   $('#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
@@ -84,7 +84,10 @@ var update_state = function(region) {
   } else {
     $('span#' + region + 'state').append($(document.createElement('input')));
   }
-  $('span#' + region + 'state select, span#' + region + 'state input').addClass('required').attr('name', name).attr('id', id);
+  $('span#' + region + 'state select, span#' + region + 'state input').addClass('required').attr('name', name).attr('id', id).val($('input#hidden_' + region + 'state').val()); 
+  $('span#' + region + 'state select, span#' + region + 'state input').change(function() {
+    $('input#hidden_' + region + 'state').val($(this).val());
+  });
 };
 
 var validate_section = function(region) {
