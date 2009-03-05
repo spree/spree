@@ -1,5 +1,4 @@
-class CheckoutController < Spree::BaseController
-  before_filter :stop_monkey_business 
+class CheckoutController < Spree::BaseController    
   before_filter :require_user_account
   before_filter :load_data
   before_filter :build_object, :except => [:new, :create]
@@ -18,7 +17,8 @@ class CheckoutController < Spree::BaseController
   create do
     flash nil 
     wants.html {redirect_to order_url(@order, :checkout_complete => true) }
-    wants.json {render :json => { :order => @checkout_presenter.order_hash,
+    #wants.json {render :json => @order.to_json, :layout => false}
+    wants.json {render :json => { :order => @order, 
                                   :available_methods => @order.shipment.rates }.to_json,
                        :layout => false} 
   end
@@ -52,7 +52,7 @@ class CheckoutController < Spree::BaseController
     if params[:checkout_presenter]
       @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]  
     else
-      @object ||= end_of_association_chain.send parent? ? :build : :new, {:bill_address => (current_user == :false ? Address.new : current_user.last_address),
+      @object ||= end_of_association_chain.send parent? ? :build : :new, {:bill_address => (current_user.last_address || Address.new), 
                                                                           :ship_address => (@order.ship_address || Address.new), 
                                                                           :shipping_method => (@order.shipment ? @order.shipment.shipping_method : nil) }
     end      
@@ -63,10 +63,5 @@ class CheckoutController < Spree::BaseController
   def load_data
     @countries = Country.find(:all)    
     @states = Country.find(214).states.sort
-  end
-
-  def stop_monkey_business
-    build_object
-    redirect_to object_url(@order) and return if @order.checkout_complete
   end
 end
