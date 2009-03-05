@@ -18,8 +18,7 @@ class CheckoutController < Spree::BaseController
   create do
     flash nil 
     wants.html {redirect_to order_url(@order, :checkout_complete => true) }
-    #wants.json {render :json => @order.to_json, :layout => false}
-    wants.json {render :json => { :order => @order, 
+    wants.json {render :json => { :order => @checkout_presenter.order_hash, 
                                   :available_methods => @order.shipment.rates }.to_json,
                        :layout => false} 
   end
@@ -53,7 +52,7 @@ class CheckoutController < Spree::BaseController
     if params[:checkout_presenter]
       @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]  
     else
-      @object ||= end_of_association_chain.send parent? ? :build : :new, {:bill_address => (current_user.last_address || Address.new), 
+      @object ||= end_of_association_chain.send parent? ? :build : :new, {:bill_address => (current_user == :false ? Address.new : current_user.last_address ), 
                                                                           :ship_address => (@order.ship_address || Address.new), 
                                                                           :shipping_method => (@order.shipment ? @order.shipment.shipping_method : nil) }
     end      

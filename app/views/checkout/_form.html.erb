@@ -154,9 +154,7 @@
 <div id="confirm_order" class="checkout_disabled">
   <h2><%= t("confirm") %></h2>
   <div class="inner">
-    <div id="billing_summary"></div>
-    <div id="shipping_summary"></div>
-    <div id="total_summary"></div>
-    <%= submit_tag t('continue') %>
+    <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
+    <%= submit_tag t('place_order') %>
   </div>
 </div>
