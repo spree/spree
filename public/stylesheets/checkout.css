@@ -14,5 +14,5 @@ div#checkout p input#select_shipping_method,
 div#checkout p input#confirm_payment,
 div#checkout div#confirm_order div.inner input { cursor: pointer; clear: both; width: 100px; margin: 10px 0px; }
 
-div#billing_summary, div#shipping_summary { float: left; width: 200px; border: 1px solid red; }
-div#total_summary { clear: both; width: 200px; border: 1px solid blue; }
+div#checkout div#bdisplay, div#checkout div#sdisplay { float: left; width: 300px; clear: right; }
+div.clear { clear: both; }
