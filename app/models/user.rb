@@ -113,8 +113,8 @@ class User < ActiveRecord::Base
     end
   end
   
-  def add_address(addy)
-    self.addresses << addy
+  def last_address
+    addresses.last
   end
   
   protected

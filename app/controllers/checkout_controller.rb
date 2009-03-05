@@ -49,9 +49,15 @@ class CheckoutController < Spree::BaseController
   private
   def build_object
     @order = Order.find_by_number(params[:order_number])
-    @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]
+    if params[:checkout_presenter]
+      @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]  
+    else
+      @object ||= end_of_association_chain.send parent? ? :build : :new, {:bill_address => (current_user.last_address || Address.new), 
+                                                                          :ship_address => (@order.ship_address || Address.new), 
+                                                                          :shipping_method => (@order.shipment ? @order.shipment.shipping_method : nil) }
+    end      
     @object.order = @order      
-    @object.shipping_method = ShippingMethod.find_by_id(params[:method_id]) 
+    @object.shipping_method = ShippingMethod.find_by_id(params[:method_id]) if params[:method_id]
   end
   
   def load_data
