@@ -17,23 +17,23 @@
 <div id="billing">
   <h2><%= t("billing_address")%></h2>
   <div class="inner">
-  <p>
+  <p id="bfname">
     <label for="<%= t("first_name") %>"><%= t("first_name") %></label>
     <%= f.text_field :bill_address_firstname, :class => 'required' %>
   </p>
-  <p>
+  <p id="blname">
     <label for="<%= t("last_name") %>"><%= t("last_name") %></label>
     <%= f.text_field :bill_address_lastname, :class => 'required' %>
   </p>
-  <p>
+  <p id="baddress">
     <label for=""><%= t("street_address") %></label>
     <%= f.text_field :bill_address_address1, :class => 'required' %>
   </p>
-  <p>
+  <p id="baddress2">
     <label for=""><%= t("street_address_2") %></label>
     <%= f.text_field :bill_address_address2 %>
   </p>
-  <p>
+  <p id="bcity">
     <label for=""><%= t("city") %></label>
     <%= f.text_field :bill_address_city, :class => 'required' %>
   </p>                        
@@ -50,15 +50,15 @@
         {:style=> 'width:150px;'}) %>
     </span>
   </p>
-  <p>
+  <p id="bzip">
     <label for=""><%= t("zip") %></label>
     <%= f.text_field :bill_address_zipcode, :class => 'required' %>
   </p>    
-  <p>
+  <p id="bcountry">
     <label for=""><%= t("country") %></label>
     <span id="bcountry"><%= f.collection_select :bill_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
   </p>
-  <p>
+  <p id="bphone">
     <label for=""><%= t("phone") %></label>
     <%= f.text_field :bill_address_phone, :class => 'required' %>
   </p>
@@ -70,23 +70,23 @@
   <h2><%= t("shipping_address")%></h2>
   <div class="inner">
   <p><label for=""><%= t("use_billing_address") %></label><input id="checkout_presenter_same_address" name="checkout_presenter_same_address" type="checkbox" /></p> 
-  <p>
+  <p id="sfname">
       <label for=""><%= t("first_name") %></label>
       <%= f.text_field :ship_address_firstname, :class => 'required' %>
   </p>
-  <p>
+  <p id="slname">
     <label for=""><%= t("last_name") %></label>
     <%= f.text_field :ship_address_lastname, :class => 'required' %>
   </p>
-  <p>
+  <p id="saddress">
     <label for=""><%= t("street_address") %></label>
     <%= f.text_field :ship_address_address1, :class => 'required' %>
   </p>
-  <p>
+  <p id="saddress2">
     <label for=""><%= t("street_address_2") %></label>
     <%= f.text_field :ship_address_address2 %>
   </p>
-  <p>
+  <p id="scity">
     <label for=""><%= t("city") %></label>
     <%= f.text_field :ship_address_city, :class => 'required' %>
   </p>    
@@ -103,15 +103,15 @@
           {:style=> 'width:150px;'}) %>
     </span>
   </p>  
-  <p>
+  <p id="szip">
     <label for=""><%= t("zip") %></label>
     <%= f.text_field :ship_address_zipcode, :class => 'required' %>
   </p>
-  <p>
+  <p id="scountry">
     <label for=""><%= t("country") %></label>
     <span id="scountry"><%= f.collection_select :ship_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
   </p>
-  <p>
+  <p id="sphone">
     <label for=""><%= t("phone") %></label>
     <%= f.text_field :ship_address_phone, :class => 'required' %>
   </p>
@@ -156,6 +156,9 @@
 <div id="confirm_order" class="checkout_disabled">
   <h2><%= t("confirm") %></h2>
   <div class="inner">
+    <div id="bdisplay"><img src="/images/ajax_loader.gif" id="bconfirm_loader" /></div>
+    <div id="sdisplay"><img src="/images/ajax_loader.gif" id="sconfirm_loader" /></div>
+    <div class="clear"></div>
     <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
     <%= submit_tag t('place_order') %>
   </div>
