@@ -235,6 +235,7 @@ es:
   error: error
   event: Event
   existing_customer: "Existing Customer"
+  expiration: Expiration
   expiration_month: "Mes de vencimiento"
   expiration_year: "Año de vencimiento"
   extension: Extensión
@@ -341,6 +342,7 @@ es:
   payment_information: "Payment Information"
   payments: Payments
   phone: Teléfono
+  place_order: Place Order        
   presentation: Presentación
   previous: Anterior
   price: Precio
@@ -438,6 +440,8 @@ es:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Actualizar
   updated_successfully:
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Usar una dirección de envío diferente"
   user: Usuario
   user_account: User Account

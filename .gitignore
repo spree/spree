@@ -32,6 +32,17 @@ spree_dev
 spree_test
 tmp
 vendor/rails
+vendor/extensions/sitemaps
+vendor/extensions/extend_taxons
+vendor/extensions/product_lightbox
+public/javascripts/jquery
+public/images/lightbox
+public/stylesheets/lightbox.css
+vendor/extensions/google_base
+public/stylesheets/google_base.css
+public/google_base.xml
+public/template_google_base.xml
+vendor/extensions/css_themes
 coverage/*
 var
 TAGS

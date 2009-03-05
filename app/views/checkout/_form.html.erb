@@ -1,0 +1,165 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'jquery-1.3.2.min' %>
+  <%= javascript_include_tag 'jquery.validate.pack.js' %>
+  <%= javascript_include_tag 'checkout' %> 
+  <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+  <%= stylesheet_link_tag 'checkout.css' %>
+<% end %>                 
+
+<% if(params[:checkout_presenter]) -%>
+<input type="hidden" name="submit_sstate" value="<%= params[:checkout_presenter][:ship_address_state_id] %>" />
+<input type="hidden" name="submit_bstate" value="<%= params[:checkout_presenter][:bill_address_state_id] %>" />
+<input type="hidden" name="submit_scountry" value="<%= params[:checkout_presenter][:ship_address_country_id] %>" />
+<input type="hidden" name="submit_bcountry" value="<%= params[:checkout_presenter][:bill_address_country_id] %>" />
+<% end -%>
+
+<%= error_messages_for :checkout_presenter %>
+<div id="billing">
+  <h2><%= t("billing_address")%></h2>
+  <div class="inner">
+  <p id="bfname">
+    <label for="<%= t("first_name") %>"><%= t("first_name") %></label>
+    <%= f.text_field :bill_address_firstname, :class => 'required' %>
+  </p>
+  <p id="blname">
+    <label for="<%= t("last_name") %>"><%= t("last_name") %></label>
+    <%= f.text_field :bill_address_lastname, :class => 'required' %>
+  </p>
+  <p id="baddress">
+    <label for=""><%= t("street_address") %></label>
+    <%= f.text_field :bill_address_address1, :class => 'required' %>
+  </p>
+  <p id="baddress2">
+    <label for=""><%= t("street_address_2") %></label>
+    <%= f.text_field :bill_address_address2 %>
+  </p>
+  <p id="bcity">
+    <label for=""><%= t("city") %></label>
+    <%= f.text_field :bill_address_city, :class => 'required' %>
+  </p>                        
+  <p>
+    <label for=""><%= t("state") %></label>
+    <input type="hidden" id="hidden_bstate" name="hidden_bstate" value="" />
+    <span id="bstate">
+      <%= collection_select("checkout_presenter", 
+        :bill_address_state_id, 
+        @states, 
+        :id, 
+        :name, 
+        {:include_blank => true}, 
+        {:style=> 'width:150px;'}) %>
+    </span>
+  </p>
+  <p id="bzip">
+    <label for=""><%= t("zip") %></label>
+    <%= f.text_field :bill_address_zipcode, :class => 'required' %>
+  </p>    
+  <p id="bcountry">
+    <label for=""><%= t("country") %></label>
+    <span id="bcountry"><%= f.collection_select :bill_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
+  </p>
+  <p id="bphone">
+    <label for=""><%= t("phone") %></label>
+    <%= f.text_field :bill_address_phone, :class => 'required' %>
+  </p>
+  <p><input id="validate_billing" type="button" value="<%=t("continue")%>"/></p>
+  </div>
+</div>
+
+<div id="shipping" class="checkout_disabled">
+  <h2><%= t("shipping_address")%></h2>
+  <div class="inner">
+  <p><label for=""><%= t("use_billing_address") %></label><input id="checkout_presenter_same_address" name="checkout_presenter_same_address" type="checkbox" /></p> 
+  <p id="sfname">
+      <label for=""><%= t("first_name") %></label>
+      <%= f.text_field :ship_address_firstname, :class => 'required' %>
+  </p>
+  <p id="slname">
+    <label for=""><%= t("last_name") %></label>
+    <%= f.text_field :ship_address_lastname, :class => 'required' %>
+  </p>
+  <p id="saddress">
+    <label for=""><%= t("street_address") %></label>
+    <%= f.text_field :ship_address_address1, :class => 'required' %>
+  </p>
+  <p id="saddress2">
+    <label for=""><%= t("street_address_2") %></label>
+    <%= f.text_field :ship_address_address2 %>
+  </p>
+  <p id="scity">
+    <label for=""><%= t("city") %></label>
+    <%= f.text_field :ship_address_city, :class => 'required' %>
+  </p>    
+  <p>
+    <label for=""><%= t("state") %></label>
+    <input type="hidden" id="hidden_sstate" name="hidden_sstate" value="" />
+    <span id="sstate">
+        <%= collection_select("checkout_presenter", 
+          :ship_address_state_id, 
+          @states, 
+          :id, 
+          :name, 
+          {:include_blank => true}, 
+          {:style=> 'width:150px;'}) %>
+    </span>
+  </p>  
+  <p id="szip">
+    <label for=""><%= t("zip") %></label>
+    <%= f.text_field :ship_address_zipcode, :class => 'required' %>
+  </p>
+  <p id="scountry">
+    <label for=""><%= t("country") %></label>
+    <span id="scountry"><%= f.collection_select :ship_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
+  </p>
+  <p id="sphone">
+    <label for=""><%= t("phone") %></label>
+    <%= f.text_field :ship_address_phone, :class => 'required' %>
+  </p>
+  <p><input id="validate_shipping" type="button" value="<%=t("continue")%>"/></p>
+  </div>
+</div>
+            
+<div id="shipping_method" class="checkout_disabled">
+  <h2><%= t("shipping_method") %></h2>
+  <div class="inner">
+    <div id="methods"></div>
+    <p><input id="select_shipping_method" type="button" value="<%=t("continue")%>"/></p>
+  </div>  
+</div>
+
+<div id="creditcard" class="checkout_disabled">
+  <h2><%= t("payment_information") %></h2>
+  <div class="inner">
+  <p>
+    <%= image_tag "creditcard.gif", :id => 'creditcard-image' %>
+  </p>
+  <p>
+    <label for=""><%= t("card_number") %></label>
+    <%= f.text_field :creditcard_number, :size=> 19, :class => 'required' -%>
+  </p>
+  <p>
+    <label for=""><%= t("expiration") %></label>
+    <%= select_month(@date, :prefix => 'checkout_presenter', :field_name => 'creditcard_month', :use_month_numbers => true, :class => 'required') -%>
+    <%= select_year(@date, :prefix => 'checkout_presenter', :field_name => 'creditcard_year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required') -%>
+  </p>
+  <p>
+    <label for=""><%= t("card_code") %></label>
+    <%= f.text_field :creditcard_verification_value, {:style => 'width:40px', :class => 'required'} -%>
+      <a href="" onclick="window.open('/checkout/cvv','mywin','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false">
+	(<%= t("whats_this") %>)
+      </a>
+  </p>
+  <p><input id="confirm_payment" type="button" value="<%=t("continue")%>"/></p>
+  </div>
+</div>
+
+<div id="confirm_order" class="checkout_disabled">
+  <h2><%= t("confirm") %></h2>
+  <div class="inner">
+    <div id="bdisplay"><img src="/images/ajax_loader.gif" id="bconfirm_loader" /></div>
+    <div id="sdisplay"><img src="/images/ajax_loader.gif" id="sconfirm_loader" /></div>
+    <div class="clear"></div>
+    <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
+    <%= submit_tag t('place_order') %>
+  </div>
+</div>

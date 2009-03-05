@@ -17,7 +17,7 @@
             :method => 'delete',
             :before => "Element.show('img_busy_indicator')", 
             :complete => "Element.hide('img_busy_indicator')",
-            :confirm => t("are_you_sure_you_want_to_delete_this_image"),
+            :confirm => t("are_you_sure_delete_image"),
             :update => 'image-listing' %>
         <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'img_busy_indicator' %>
       </td>

@@ -235,6 +235,7 @@ it:
   error: errore
   event: Event
   existing_customer: "Existing Customer"
+  expiration: Expiration
   expiration_month: "Valido fino (Mese)"
   expiration_year: "Valido fino (Anno)"
   extension: estensione
@@ -341,6 +342,7 @@ it:
   payment_information: "Payment Information"
   payments: Payments
   phone: Telefono
+  place_order: Place Order        
   presentation: Presentazione
   previous: Indietro
   price: Prezzo
@@ -438,6 +440,8 @@ it:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Salva
   updated_successfully:
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Altro indirizzo di consegna"
   user: Utente
   user_account: User Account
