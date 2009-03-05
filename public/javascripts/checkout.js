@@ -47,7 +47,8 @@ $(function() {
   $('#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
   $('#validate_shipping').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
   $('#select_shipping_method').click(function() { submit_shipping_method(); });  
-  $('#confirm_payment').click(function() { if(validate_section('creditcard')) { confirm_payment(); }}); 
+  $('#confirm_payment').click(function() { if(validate_section('creditcard')) { confirm_payment(); }});
+  $('form#checkout_form').submit(function() { return !($('div#confirm_order').hasClass('checkout_disabled')); });
 })
 
 //Initial state mapper on page load
