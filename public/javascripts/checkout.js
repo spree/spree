@@ -107,17 +107,17 @@ var shift_to_region = function(active) {
     if(!found) {
       if(active == regions[i]) {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
-        $('div#' + regions[i] + ' div.inner').show('fast');
+        $('div#' + regions[i] + ' div.inner').show();
         $('div#' + regions[i]).removeClass('checkout_disabled');
         found = 1;
       }
       else {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'pointer').click(function() {shift_to_region($(this).parent().attr('id'));});
-        $('div#' + regions[i] + ' div.inner').hide('fast');
+        $('div#' + regions[i] + ' div.inner').hide();
       }
     } else {
       $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
-      $('div#' + regions[i] + ' div.inner').hide('fast');
+      $('div#' + regions[i] + ' div.inner').hide();
       $('div#' + regions[i]).addClass('checkout_disabled');
     }
   }
@@ -202,10 +202,8 @@ var update_shipping_methods = function(methods) {
 }                                     
 
 var update_confirmation = function(order) {
-  $('span#order_total').html(order.order_total);
-  $('span#ship_amount').html(order.ship_amount);
-  $('span#tax_amount').html(order.tax_amount);                                  
-  $('span#ship_method').html(order.ship_method);                                    
+  // TODO update the confirmation section with order totals
+  alert("Placeholder for JQuery");
 }
 
 var confirm_payment = function() {

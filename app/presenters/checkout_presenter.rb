@@ -1,12 +1,9 @@
 class CheckoutPresenter < ActivePresenter::Base
   presents :creditcard, {:bill_address => Address}, {:ship_address => Address} 
-
-  include ActionView::Helpers::NumberHelper # Needed for JS usable rate information 
-  
+ 
   alias_method :old_initialize, :initialize 
   attr_accessor :order
   attr_accessor :shipping_method
-  attr_accessor :order_hash
   
   def initialize(args = {})               
     old_initialize(args)
@@ -16,8 +13,7 @@ class CheckoutPresenter < ActivePresenter::Base
     # credit card needs to use some bill_address attributes
     creditcard.address = bill_address  
     creditcard.first_name = bill_address.firstname
-    creditcard.last_name = bill_address.lastname   
-    self.order_hash = {}   
+    creditcard.last_name = bill_address.lastname      
   end 
   
   def save              
@@ -34,13 +30,9 @@ class CheckoutPresenter < ActivePresenter::Base
       order.user.addresses.clear
       
       order.user.addresses << bill_address.clone
-      
-      order.shipments.create(:address => ship_address, :shipping_method => shipping_method)
-      
-      order.ship_amount = order.shipment.shipping_method.calculate_shipping(order.shipment) if order.shipment and order.shipment.shipping_method
-      order.tax_amount = order.calculate_tax
       order.save
       
+      order.shipments.create(:address => ship_address, :shipping_method => shipping_method)
       if final_answer
         # authorize the credit card and then save (authorize first before number is cleared for security purposes)
         creditcard.order = order
@@ -49,13 +41,7 @@ class CheckoutPresenter < ActivePresenter::Base
         order.complete
       end      
       saved = true
-    end  
-    # populate the order hash  
-    
-    order_hash[:ship_amount] = number_to_currency(order.ship_amount)
-    order_hash[:tax_amount] = number_to_currency(order.tax_amount)
-    order_hash[:order_total] = number_to_currency(order.total)
-    order_hash[:ship_method] = order.shipment.shipping_method.name if order.shipment and order.shipment.shipping_method
+    end
     saved  
   end
 end
