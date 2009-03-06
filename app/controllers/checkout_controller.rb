@@ -81,6 +81,11 @@ class CheckoutController < Spree::BaseController
   def load_data
     @countries = Country.find(:all)    
     @states = Country.find(214).states.sort
+
+    month = @object.creditcard.month ? @object.creditcard.month : Date.today.month
+    year = @object.creditcard.year ? object.creditcard.year : Date.today.year
+    @date = Date.new(year, month, 1)
+
     @current_bill_state = @object.bill_address ? @object.bill_address.state_id : '';
     @current_ship_state = @object.ship_address ? @object.ship_address.state_id : '';
   end 
