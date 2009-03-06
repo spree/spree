@@ -68,6 +68,8 @@ class CheckoutController < Spree::BaseController
   def load_data
     @countries = Country.find(:all)    
     @states = Country.find(214).states.sort
+    @current_bill_state = @object.bill_address ? @object.bill_address.state_id : '';
+    @current_ship_state = @object.ship_address ? @object.ship_address.state_id : '';
   end 
   
   def stop_monkey_business
