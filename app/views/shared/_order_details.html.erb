@@ -23,7 +23,7 @@
   </tr>
   <tr>
     <td colspan="3"><b><%= t('shipping') %>:</b> 
-      <% if @order.shipment %>
+      <% if @order.shipment && @order.shipment.shipping_method %>
         <span id="ship_method">(<%= @order.shipment.shipping_method.name %>)</span>
       <% end %>
     </td>
