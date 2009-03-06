@@ -9,25 +9,38 @@ class CheckoutController < Spree::BaseController
   resource_controller   
   model_name :checkout_presenter
   object_name :checkout_presenter
-         
-  create.before do
+
+  # modified version of r_c create method (easier then all the before after hooks - especially for gateway error handling)
+  def create
+    build_object
+    load_object
+
     @order.user = current_user       
     @order.ip_address = request.env['REMOTE_ADDR']
-  end             
+    
+    begin
+      if object.save
+        # remove the order from the session
+        session[:order_id] = nil if @order.checkout_complete
+#        response_for :create
+#      else
+#        set_flash :create_fails
+#        response_for :create_fails
+      end       
+    rescue Spree::GatewayError => ge
+      flash.now[:error] = "Authorization Error: #{ge.message}"
+      render :action => "new" and return 
+    end
+        
+    respond_to do |format|
+      format.html {redirect_to order_url(@order, :checkout_complete => true) }
+      format.js {render :json => { :order => @checkout_presenter.order_hash, 
+                                   :available_methods => @order.shipment.rates }.to_json,
+                        :layout => false}
+    end
+    
+  end         
 
-  create do
-    flash nil 
-    wants.html {redirect_to order_url(@order, :checkout_complete => true) }
-    wants.json {render :json => { :order => @checkout_presenter.order_hash, 
-                                  :available_methods => @order.shipment.rates }.to_json,
-                       :layout => false} 
-  end
-
-  create.after do  
-    # remove the order from the session
-    session[:order_id] = nil if @order.checkout_complete
-  end
-  
   def cvv
     render :layout => false
   end  
