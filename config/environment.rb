@@ -31,7 +31,9 @@ Spree::Initializer.run do |config|
   config.gem "tlsmail"
   config.gem 'active_presenter', :version => '0.0.6'
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
-  config.gem 'searchlogic', :version => '1.6.3'  
+  #config.gem 'searchlogic', :version => '1.6.3'                           
+  # HACKED version of search logic - we'll move back when our fix is accepted into core
+  config.gem 'schof-searchlogic', :lib => 'searchlogic', :version => '0.0.2'  
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
