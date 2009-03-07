@@ -22,10 +22,6 @@ class CheckoutController < Spree::BaseController
       if object.save
         # remove the order from the session
         session[:order_id] = nil if @order.checkout_complete
-#        response_for :create
-#      else
-#        set_flash :create_fails
-#        response_for :create_fails
       end       
     rescue Spree::GatewayError => ge
       flash.now[:error] = "Authorization Error: #{ge.message}"
