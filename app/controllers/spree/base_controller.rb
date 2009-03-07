@@ -1,6 +1,6 @@
 class Spree::BaseController < ApplicationController
 
-  filter_parameter_logging "password"
+  filter_parameter_logging :password, :creditcard_verification_value, :creditcard_number
 
   # retrieve the order_id from the session and then load from the database (or return a new order if no 
   # such id exists in the session)
