@@ -214,14 +214,17 @@ var update_shipping_methods = function(methods) {
   $(methods).each( function(i) {
     $('div$methods img#shipping_loader').remove();
     var p = document.createElement('p');
+    var s = this.name + ' ' + this.rate;
     $(p).append($(document.createElement('input'))
+                .attr('id', s)
                 .attr('type', 'radio')
                 .attr('name', 'method_id')
                 .attr(1 == $(methods).length ? 'checked' : 'notchecked', 'foo')
                 .val(this.id)
                 );
     $(p).append($(document.createElement('label'))
-                .html(this.name + ' ' + this.rate)
+                .attr('for', s)
+                .html(s)
                 .css('top', '-1px'));
     $('div#methods').append(p);
   });
