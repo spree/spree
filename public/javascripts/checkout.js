@@ -48,7 +48,10 @@ $(function() {
   $('#validate_shipping').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
   $('#select_shipping_method').click(function() { submit_shipping_method(); });  
   $('#confirm_payment').click(function() { if(validate_section('creditcard')) { confirm_payment(); }});
-  $('form#checkout_form').submit(function() { return !($('div#confirm_order').hasClass('checkout_disabled')); });
+  $('form#checkout_form').submit(function() { return !($('div#confirm_order').hasClass('checkout_disabled')); }); 
+  // indicates order is ready to be processed (as opposed to simply updated)
+  $("div#creditcard div.inner").hide(function() { $("input#final_answer").attr("value", ""); });
+  $("div#creditcard div.inner").show(function() { $("input#final_answer").attr("value", "yes"); });  
 })
 
 //Initial state mapper on page load
@@ -214,8 +217,18 @@ var update_shipping_methods = function(methods) {
   $(methods).each( function(i) {
     $('div$methods img#shipping_loader').remove();
     var p = document.createElement('p');
-    $(p).append($(document.createElement('input')).attr('type', 'radio').attr('name', 'method_id').val(this.id));
-    $(p).append($(document.createElement('label')).html(this.name + ' ' + this.rate).css('top', '-1px'));
+    var s = this.name + ' ' + this.rate;
+    $(p).append($(document.createElement('input'))
+                .attr('id', s)
+                .attr('type', 'radio')
+                .attr('name', 'method_id')
+                .attr(1 == $(methods).length ? 'checked' : 'notchecked', 'foo')
+                .val(this.id)
+                );
+    $(p).append($(document.createElement('label'))
+                .attr('for', s)
+                .html(s)
+                .css('top', '-1px'));
     $('div#methods').append(p);
   });
   $('div#methods input:first').attr('validate', 'required:true');

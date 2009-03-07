@@ -22,10 +22,6 @@ class CheckoutController < Spree::BaseController
       if object.save
         # remove the order from the session
         session[:order_id] = nil if @order.checkout_complete
-#        response_for :create
-#      else
-#        set_flash :create_fails
-#        response_for :create_fails
       end       
     rescue Spree::GatewayError => ge
       flash.now[:error] = "Authorization Error: #{ge.message}"
@@ -73,7 +69,8 @@ class CheckoutController < Spree::BaseController
       @object ||= end_of_association_chain.send parent? ? :build : :new, {:bill_address => bill_address, 
                                                                           :ship_address => ship_address, 
                                                                           :shipping_method => shipping_method }
-    end      
+    end     
+    @object.final_answer = params[:final_answer] unless params[:final_answer].blank? 
     @object.order = @order      
     @object.shipping_method = ShippingMethod.find_by_id(params[:method_id]) if params[:method_id]        
   end
@@ -82,8 +79,8 @@ class CheckoutController < Spree::BaseController
     @countries = Country.find(:all)    
     @states = Country.find(214).states.sort
 
-    month = @object.creditcard.month ? @object.creditcard.month : Date.today.month
-    year = @object.creditcard.year ? object.creditcard.year : Date.today.year
+    month = @object.creditcard.month ? @object.creditcard.month.to_i : Date.today.month
+    year = @object.creditcard.year ? object.creditcard.year.to_i : Date.today.year
     @date = Date.new(year, month, 1)
 
     @current_bill_state = @object.bill_address ? @object.bill_address.state_id : '';

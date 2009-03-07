@@ -6,7 +6,8 @@ class CheckoutPresenter < ActivePresenter::Base
   alias_method :old_initialize, :initialize 
   attr_accessor :order
   attr_accessor :shipping_method
-  attr_accessor :order_hash
+  attr_accessor :order_hash   
+  attr_accessor :final_answer
   
   def initialize(args = {})               
     old_initialize(args)
@@ -21,11 +22,6 @@ class CheckoutPresenter < ActivePresenter::Base
   end 
   
   def save              
-    # TODO - do not allow save if checkout complete (double post, other user shennaingans)
-    # Client side validation should ensure everything is valid, if its not all valid, user must not be done yet
-    final_answer = valid?
-    self.errors.clear
-
     saved = false
     ActiveRecord::Base.transaction do
       # clear existing shipments (no orphans please)                             
