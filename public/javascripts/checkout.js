@@ -214,8 +214,15 @@ var update_shipping_methods = function(methods) {
   $(methods).each( function(i) {
     $('div$methods img#shipping_loader').remove();
     var p = document.createElement('p');
-    $(p).append($(document.createElement('input')).attr('type', 'radio').attr('name', 'method_id').val(this.id));
-    $(p).append($(document.createElement('label')).html(this.name + ' ' + this.rate).css('top', '-1px'));
+    $(p).append($(document.createElement('input'))
+                .attr('type', 'radio')
+                .attr('name', 'method_id')
+                .attr(1 == $(methods).length ? 'checked' : 'notchecked', 'foo')
+                .val(this.id)
+                );
+    $(p).append($(document.createElement('label'))
+                .html(this.name + ' ' + this.rate)
+                .css('top', '-1px'));
     $('div#methods').append(p);
   });
   $('div#methods input:first').attr('validate', 'required:true');
