@@ -49,9 +49,6 @@ $(function() {
   $('#select_shipping_method').click(function() { submit_shipping_method(); });  
   $('#confirm_payment').click(function() { if(validate_section('creditcard')) { confirm_payment(); }});
   $('form#checkout_form').submit(function() { return !($('div#confirm_order').hasClass('checkout_disabled')); }); 
-  // indicates order is ready to be processed (as opposed to simply updated)
-  $("div#creditcard div.inner").hide(function() { $("input#final_answer").attr("value", ""); });
-  $("div#creditcard div.inner").show(function() { $("input#final_answer").attr("value", "yes"); });  
 })
 
 //Initial state mapper on page load
@@ -124,6 +121,12 @@ var shift_to_region = function(active) {
       $('div#' + regions[i] + ' div.inner').hide('fast');
       $('div#' + regions[i]).addClass('checkout_disabled');
     }
+  }                                                                         
+  if (active == 'confirm_order') {
+    $("input#final_answer").attr("value", "yes");    
+  } else {
+    // indicates order is ready to be processed (as opposed to simply updated)
+    $("input#final_answer").attr("value", "");    
   }
   return;
 };
