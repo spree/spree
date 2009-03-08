@@ -1,4 +1,6 @@
-class Shipment < ActiveRecord::Base
+class Shipment < ActiveRecord::Base      
+  include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
+  
   belongs_to :order
   belongs_to :shipping_method
   has_one :address, :as => :addressable, :dependent => :destroy
@@ -13,6 +15,14 @@ class Shipment < ActiveRecord::Base
     
   def shipping_methods
     ShippingMethod.all.select { |method| method.zone.include?(address) && method.available?(order) }
+  end 
+  
+  def rates
+    quotes = []
+    shipping_methods.each do |method|
+      quotes << {:id => method.id, :name => method.name, :rate => number_to_currency(method.calculate_shipping(self)) }
+    end
+    quotes
   end
 
   private  

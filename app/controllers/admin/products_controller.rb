@@ -59,7 +59,7 @@ class Admin::ProductsController < Admin::BaseController
       
       #use the active named scope only if the 'show deleted' checkbox is unchecked
       if params[:search].nil? || params[:search][:conditions].nil? || params[:search][:conditions][:deleted_at_is_not_null].blank?
-        @search = end_of_association_chain.active.new_search(params[:search])
+        @search = end_of_association_chain.not_deleted.new_search(params[:search])
       else
         @search = end_of_association_chain.new_search(params[:search])
       end

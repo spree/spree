@@ -207,6 +207,7 @@ de:
   credit_card: Kreditkarte
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: Kreditkartenzahlung
+  creditcard: Creditcard
   current: Stand
   customer: Kunde
   date_range: "Datum (von/bis)"
@@ -234,6 +235,7 @@ de:
   error: Fehler
   event: Ereignis
   existing_customer: "Vorhandener Kunde"
+  expiration: Expiration
   expiration_month: "Gültig bis (Monat)"
   expiration_year: "Gültig bis (Jahr)"
   extension: Erweiterung
@@ -340,6 +342,7 @@ de:
   payment_information: Zahlungsinformationen
   payments: Zahlungen
   phone: Telefon
+  place_order: Place Order        
   presentation: Anzeige
   previous: zurück
   price: Preis
@@ -437,6 +440,8 @@ de:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Speichern
   updated_successfully: "Erfolgreich aktualisiert"
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Andere Lieferaddresse verwenden"
   user: Benutzer
   user_account: User Account
