@@ -168,7 +168,7 @@ var submit_shipping = function() {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
     },      
     dataType: "json",
-    data: "{form: '" + $('#checkout_form').serialize() + "'}",
+    data: $('#checkout_form').serialize(),
     success: function(json) {  
       update_shipping_methods(json.available_methods); 
     },
@@ -199,7 +199,7 @@ var submit_shipping_method = function() {
         xhr.setRequestHeader('Accept-Encoding', 'identity');
       },      
       dataType: "json",
-      data: "{form: '" + $('#checkout_form').serialize() + "'}",
+      data: $('#checkout_form').serialize(),
       success: function(json) {  
         update_confirmation(json.order); 
       },
