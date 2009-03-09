@@ -103,6 +103,7 @@ var validate_section = function(region) {
 };
 
 var shift_to_region = function(active) {
+  $('div#flash-errors').remove();  
   var found = 0;
   for(var i=0; i<regions.length; i++) {
     if(!found) {

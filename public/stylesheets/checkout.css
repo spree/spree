@@ -20,3 +20,6 @@ div#checkout div#confirm_order div.inner input { cursor: pointer; width: 100px; 
 
 div#checkout div#bdisplay, div#checkout div#sdisplay { float: left; width: 300px; clear: right; }
 div.clear { clear: both; }
+
+div#errorExplanation h2 { height: 22px; background-color: #FF0000; border: none; padding: 5px; font-size: 18px; margin: 5px 0px; }
+form#checkout_form div.fieldWithErrors { clear: none; }
