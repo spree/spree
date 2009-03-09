@@ -1,6 +1,6 @@
 div#checkout p { clear: both; margin-bottom: 15px; }
   div#checkout p label { float: left; width: 150px; position: relative; top: 5px; }
-    div#checkout p label span.req { color: red; margin-left: 2px; position: relative; top: -3px; }                
+    div#checkout p span.req { color: red; margin-left: 2px; position: relative; top: -3px; }                
     div#methods p label { float:none; width: 150px; position: relative; top: 5px; }
   div#checkout p label#use_billing { top: 0px; }
   div#checkout p input, div#checkout p select { margin-left: 150px; width: 200px; margin: 0px; }
