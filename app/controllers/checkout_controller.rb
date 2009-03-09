@@ -59,9 +59,23 @@ class CheckoutController < Spree::BaseController
   end
   
   private
+
+  # switch state info into name if the id isn't a valid state
+  def fix_address_states(params)
+    unless State.find_by_id(params[:bill_address_state_id])
+      params[:bill_address_state_name] = params[:bill_address_state_id]
+      params.delete :bill_address_state_id
+    end
+    unless State.find_by_id(params[:ship_address_state_id])
+      params[:ship_address_state_name] = params[:ship_address_state_id]
+      params.delete :ship_address_state_id
+    end
+  end 
+
   def build_object
     @order = Order.find_by_number(params[:order_number])
     if params[:checkout_presenter]
+      fix_address_states params[:checkout_presenter]
       @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]  
     else                       
       # user has not yet submitted checkout parameters, we can use defaults of current_user and order objects

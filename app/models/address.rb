@@ -12,12 +12,12 @@ class Address < ActiveRecord::Base
   validates_presence_of :zipcode
   validates_presence_of :country
   validates_presence_of :phone
-  
+
   def full_name
     self.firstname + " " + self.lastname
   end
-  
+
   def state_text
-    state.nil? ? state_name : (state.abbr=="" ? state.name : state.abbr)
+    state.nil? ? state_name : (state.abbr.blank? ? state.name : state.abbr)
   end
 end
