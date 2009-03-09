@@ -1,9 +1,9 @@
 div#checkout p { clear: both; margin-bottom: 15px; }
   div#checkout p label { float: left; width: 150px; position: relative; top: 5px; }
-    div#checkout p label span.req { color: red; margin-left: 2px; }                
+    div#checkout p span.req { color: red; margin-left: 2px; position: relative; top: -3px; }                
     div#methods p label { float:none; width: 150px; position: relative; top: 5px; }
   div#checkout p label#use_billing { top: 0px; }
-  div#checkout p input, div#checkout p select { margin-left: 150px; width: 200px; margin: 0px 5px 0px 0px; }
+  div#checkout p input, div#checkout p select { margin-left: 150px; width: 200px; margin: 0px; }
   div#checkout p label.error { color: red; clear: both; margin: 0px 0px 5px 150px; top: 0px; font-size: 11px; }
 
 div#checkout div { clear: both; }
@@ -20,3 +20,6 @@ div#checkout div#confirm_order div.inner input { cursor: pointer; width: 100px; 
 
 div#checkout div#bdisplay, div#checkout div#sdisplay { float: left; width: 300px; clear: right; }
 div.clear { clear: both; }
+
+div#errorExplanation h2 { height: 22px; background-color: #FF0000; border: none; padding: 5px; font-size: 18px; margin: 5px 0px; }
+form#checkout_form div.fieldWithErrors { clear: none; }
