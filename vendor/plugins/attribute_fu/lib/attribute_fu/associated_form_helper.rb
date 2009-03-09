@@ -21,7 +21,7 @@ module AttributeFu
     def fields_for_associated(associated, *args, &block)
       conf            = args.last.is_a?(Hash) ? args.last : {}
       associated_name = extract_option_or_class_name(conf, :name, associated)
-      name            = associated_base_name associated_name
+      name            = associated_base_name(associated_name, conf[:object_name])
       
       unless associated.new_record?
         name << "[#{associated.new_record? ? 'new' : associated.id}]"
@@ -53,8 +53,12 @@ module AttributeFu
 
       css_selector = options.delete(:selector) || ".#{@object.class.name.split("::").last.underscore}"
       function     = options.delete(:function) || ""
-      
+                                            
+      # HACK - added by sean to allow another javascript function to be called after the removal
+      after        = options.delete(:after) || ""
+            
       function << "$(this).up('#{css_selector}').remove()"
+      function << after
       
       @template.link_to_function(name, function, *args.push(options))
     end
@@ -84,12 +88,15 @@ module AttributeFu
       opts.symbolize_keys!
       partial          = opts.delete(:partial)    || associated_name
       container        = opts.delete(:expression) || "'#{opts.delete(:container) || associated_name.pluralize}'"
+                 
+      # Hack by sean
+      object_name      = opts.delete(:object_name)
       
       form_builder     = self # because the value of self changes in the block
       
       @template.link_to_function(name, opts) do |page|
         page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"
-        page << "new Insertion.Bottom(#{container}, new Template("+form_builder.render_associated_form(object, :fields_for => { :javascript => true }, :partial => partial).to_json+").evaluate({'number': --#{variable}}).gsub(/__number_/, #{variable}))"
+        page << "new Insertion.Bottom(#{container}, new Template("+form_builder.render_associated_form(object, :fields_for => { :javascript => true, :object_name => object_name }, :partial => partial).to_json+").evaluate({'number': --#{variable}}).gsub(/__number_/, #{variable}))"
       end
     end
     
@@ -128,7 +135,8 @@ module AttributeFu
     end
     
     private
-      def associated_base_name(associated_name)
+      def associated_base_name(associated_name, object_name)        
+        return "#{object_name}[#{associated_name}_attributes]" if object_name #HACK - Added by sean to allow attribute_fu to use prepopulated objects
         "#{@object_name}[#{associated_name}_attributes]"
       end
       

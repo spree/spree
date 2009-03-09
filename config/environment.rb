@@ -5,7 +5,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-SPREE_GEM_VERSION = '0.5.99' unless defined? SPREE_GEM_VERSION
+SPREE_GEM_VERSION = '0.6.99' unless defined? SPREE_GEM_VERSION
           
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -29,8 +29,11 @@ Spree::Initializer.run do |config|
   config.gem "highline", :version => '1.4.0'
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.1'
   config.gem "tlsmail"
-  config.gem 'active_presenter', :version => '0.0.4'
+  config.gem 'active_presenter', :version => '0.0.6'
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
+  #config.gem 'searchlogic', :version => '1.6.3'                           
+  # HACKED version of search logic - we'll move back when our fix is accepted into core
+  config.gem 'schof-searchlogic', :lib => 'searchlogic', :version => '0.0.2'  
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -75,8 +78,11 @@ Spree::Initializer.run do |config|
   # The internationalization framework can be changed to have another default locale (standard is :en) or more load paths.
   # All files from config/locales/*.rb,yml are added automatically.
   #config.i18n.load_path << Dir[File.join(RAILS_ROOT, 'my', 'locales', '*.{rb,yml}')]
-  config.i18n.default_locale = :'en-US'
+  config.i18n.default_locale = :'en-US'    
+    
 end
+
+Time::DATE_FORMATS[:date_time24] = "%Y-%m-%d %H:%M"
 
 # Add new inflection rules using the following format 
 # (all these examples are active by default):

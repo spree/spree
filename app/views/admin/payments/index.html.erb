@@ -1,14 +1,14 @@
 <%= render :partial => 'shared/order_tabs', :locals => {:current => "Payments"} %>
 <table class="admin-report">
   <tr>
-    <th><%= "#{t('date')}/#{t('time')}" %></th>
+    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
     <th><%= t("amount") %></th>
     <th><%= t("type") %></th>
     <th><%= t("action") %></th>
   </tr>
   <% @payments.each do |payment| %>
     <tr>
-      <td><%= payment.created_at.to_s(:db) %></td>
+      <td><%= payment.created_at.to_s(:date_time24) %></td>
       <td><%= number_to_currency(payment.amount) %></td>
       <td><%= payment.class.to_s %></td>
       <!-- TODO: don't assume credit card, make it possible to edit other kinds of payments -->

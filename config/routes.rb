@@ -18,20 +18,26 @@ ActionController::Routing::Routes.draw do |map|
 
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
-  map.connect ':controller/service.wsdl', :action => 'wsdl'
+  #map.connect ':controller/service.wsdl', :action => 'wsdl'
 
   # map.connect '/locale/:new_locale', :controller => 'locale', :action => 'set_session_locale'
 
   map.root :controller => "products", :action => "index"
+  
   # login mappings should appear before all others
   map.login '/login', :controller => 'account', :action => 'login'
   map.logout '/logout', :controller => 'account', :action => 'logout'
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
-
+  
+  # custom route for checkout since its not really a resource
+  map.checkout 'orders/:order_number/checkout', :controller => 'checkout', :action => 'new'
+  map.checkout 'orders/:order_number/complete', :controller => 'checkout', :action => 'create'
+  map.checkout 'orders/:order_number/checkout/:action', :controller => 'checkout'
+  
   map.resources :tax_categories
-  map.resources :countries, :has_many => :states, :actions => [:index]
-  map.resources :states, :actions => [:index]
+  map.resources :countries, :has_many => :states, :only => :index
+  map.resources :states, :only => :index
   map.resources :users
   map.resources :products, :member => {:change_image => :post}
   map.resources :addresses
@@ -62,6 +68,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
     admin.resource :mail_settings
     admin.resource :inventory_settings
+    admin.resources :google_analytics
     admin.resources :orders, :has_many => [:payments, :creditcards], :member => {:fire => :put, :resend => :post}
     admin.resources :orders do |order|
       order.resources :creditcard_payments, :member => {:capture => :get}
@@ -69,13 +76,13 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :general_settings
     admin.resources :taxonomies do |taxonomy|
       taxonomy.resources :taxons
-    end
-  end
+    end 
+    admin.resources :reports, :only => [:index, :show], :collection => {:sales_total => :get}
+  end                   
   
-  # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
-  map.connect ':controller/:action/:id'
-
+  map.connect ':controller/:action/:id'  
+  
   # a catchall route for "static" content
   map.connect '*path', :controller => 'content', :action => 'show'
 

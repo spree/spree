@@ -364,7 +364,7 @@ table.two-col td {
 
 td.two-col-left {
 	border-right: 1px solid black;
-//	width: 15%;
+/*	width: 15%;	*/
 	padding: 5px;
 }
 
@@ -398,7 +398,7 @@ ul.tree ul {
 
 ul.tree li {
 	margin-left: 25px;
-//	padding-left: 25px;
+/*	padding-left: 25px;	*/
 }
 
 .tree-nav-leaf {
@@ -556,4 +556,8 @@ ul.plain {
   border-bottom:medium none;
   font-size:16px;
   font-weight:normal;
+}
+
+table#creditcard select {
+  padding-right: 7px;
 }

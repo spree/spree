@@ -22,7 +22,9 @@ module ProductsHelper
     end
   end
   
-  def format_price(price)
+  def format_price(price)      
+    # Don't be fooled - default implementation uses number_to_currency but other extensions may patch into this.  It is
+    # suggested that you leave your format_price calls alone.
     number_to_currency(price)
   end
   

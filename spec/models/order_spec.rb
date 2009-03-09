@@ -31,9 +31,9 @@ describe Order do
       before(:each) do
         @order.state = 'creditcard'
       end
-      it "should transition to authorized" do
+      it "should transition to new" do
         @order.next
-        @order.state.should == "charged"
+        @order.state.should == "new"
       end
       it "should mark inventory as sold" do
         @inventory_unit.should_receive(:sell!)
@@ -56,6 +56,13 @@ describe Order do
     it "should send a cancellation email" do
       OrderMailer.should_receive(:deliver_cancel).with(@order)
       @order.cancel
+    end                        
+    %w{in_progress creditcard}.each do |state|
+      it "should be available in the #{state} state" do
+        @order.state = state
+        @order.checkout_complete = false
+        @order.can_cancel?.should be_true
+      end
     end
   end
   

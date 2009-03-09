@@ -67,61 +67,48 @@ img {
 }
 /* =============== begin: pagination stuff ===============  */
 
-/*Credits: Dynamic Drive CSS Library */
-/*URL: http://www.dynamicdrive.com/style/ */
 
 .pagination{
-padding-top: 10px;
+	padding-top: 10px;
+	font-size: 16px;
+	text-align: left; /*Set to "right" to right align pagination interface*/
+}
+ 
+a.page, span.page {  
+	padding: 0px 5px; 
+	margin: 0 3px;
+}
+ 
+a.page {  	  
+	text-decoration: none;  
+	border: 1px solid #9aafe5;
+	color: #2e6ab1;	
 }
 
-.pagination ul{
-margin: 0;
-padding: 0;
-text-align: left; /*Set to "right" to right align pagination interface*/
-font-size: 16px;
+a.page:hover, a.page:active {  
+	border: 1px solid #2b66a5;
+	color: #000;
+	background-color: LightYellow;	
+} 
+
+a.next_page {
+	font-weight: bold;
 }
 
-.pagination li{
-list-style-type: none;
-display: inline;
-padding-bottom: 1px;
+
+span.disabled_page {  
+	border: 1px solid #929292;
+	color: #929292;
+} 
+
+span.current_page {  
+	font-weight: bold;
+	border: 1px solid navy;
+	background-color: #2e6ab1;
+	color: #FFF;
 }
 
-.pagination a, .pagination a:visited{
-padding: 0 5px;
-border: 1px solid #9aafe5;
-text-decoration: none; 
-color: #2e6ab1;
-}
 
-.pagination a:hover, .pagination a:active{
-border: 1px solid #2b66a5;
-color: #000;
-background-color: LightYellow;
-}
-
-.pagination li.currentpage{
-font-weight: bold;
-padding: 0 5px;
-border: 1px solid navy;
-background-color: #2e6ab1;
-color: #FFF;
-}
-
-.pagination li.disablepage{
-padding: 0 5px;
-border: 1px solid #929292;
-color: #929292;
-}
-
-.pagination li.nextpage{
-font-weight: bold;
-}
-
-* html .pagination li.currentpage, * html .pagination li.disablepage{ /*IE 6 and below. Adjust non linked LIs slightly to account for bugs*/
-margin-right: 5px;
-padding-right: 0;
-}
 /* =============== end: pagination stuff ===============  */
 
 .formError, .errorExplanation {
@@ -131,7 +118,7 @@ padding-right: 0;
 /* ================ begin: flash ================  */
 #flash-errors, #errorExplanation {
   margin: 0 auto;
-  background: #EF1D61;/*#F69A91;*/
+  background: #FF0000;
   padding: 10px;
   color: #FFFFFF;
   text-align: center;

@@ -1,7 +1,7 @@
 #######################################################################################################
 # Substantial portions of this code were adapted from the Radiant CMS project (http://radiantcms.org) #
 #######################################################################################################
-require "highline"
+require 'highline/import' 
 require 'custom_fixtures'
 require 'find'
 
@@ -13,6 +13,10 @@ module Spree
         setup = new
         setup.bootstrap(config)
         setup
+      end  
+      def create_admin_user
+        raise "Cannot create a second admin user." unless User.count == 0
+        new.create_admin_user
       end
     end
     
@@ -28,7 +32,7 @@ module Spree
       announce "Finished.\n\n"
     end
 
-    def create_admin_user(password, email)
+    def create_admin_user(password=nil, email=nil)
       unless email and password
         announce "Create the admin user (press enter for defaults)."
         #name = prompt_for_admin_name unless name

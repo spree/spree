@@ -1,7 +1,7 @@
 <% 1.upto(30) do |i| %>
 order_<%= i %>:
   user: frank
-  number: <%= Array.new(9){rand(9)}.join %>
+  number: <%= "R#{Array.new(9){rand(9)}.join}" %>
   state: new
   ship_amount: 5.00
   tax_amount: 2.78

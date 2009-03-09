@@ -13,11 +13,16 @@ class Admin::UsersController < Admin::BaseController
                 
   private
   def collection   
-    @filter = UserFilter.new(params[:filter])
+    @search = User.new_search(params[:search])
+    #set order by to default or form result
+    @search.order_by ||= :email
+    @search.order_as ||= "ASC"
+    #set results per page to default or form result
+    @search.per_page = Spree::Config[:admin_products_per_page]
 
-    scope = User.scoped({})
-    scope = scope.conditions "lower(email) = ?", @filter.email.downcase unless @filter.email.blank?
-    @collection = scope.find(:all, :order => 'email', :page => {:size => 15, :current =>params[:p], :first => 1})
+    @collection, @collection_count = @search.all, @search.count
+
+    #scope = scope.conditions "lower(email) = ?", @filter.email.downcase unless @filter.email.blank?
   end
 
   def load_roles
@@ -28,7 +33,7 @@ class Admin::UsersController < Admin::BaseController
     return unless params[:user]
     @user.roles.delete_all
     Role.find(:all).each { |role|
-      @user.roles << role if !params[:user]['role_' + role.name].blank?
+      @user.roles << role if !params[:user]['role_' + role.name].blank? || role.name.downcase == "user"
     }
   end
 end

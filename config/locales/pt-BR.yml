@@ -1,5 +1,6 @@
 --- 
 pt-BR: 
+  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abreviação
   access_denied: "Access Denied"             
   account: Conta
@@ -156,6 +157,8 @@ pt-BR:
   adjustment: Ajuste
   administration: Administração
   allow_backorders: "Allow Backorders"
+  allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
+  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
   amount: Valor
   are_you_sure: "Are you sure"
   are_you_sure_category: "Tem certeza que quer apagar esta categoria?"
@@ -195,6 +198,7 @@ pt-BR:
   confirm_password: "Confirmação de Senha"
   continue: Continue
   continue_shopping: "Continue sua compra"
+  copy_all_mails_to: Copy All Mails To                                                                             
   country: País
   country_based: "Country Based"
   create: Criar
@@ -202,12 +206,10 @@ pt-BR:
   created_successfully:
   credit_card: "Cartão de Crédito"
   credit_card_capture_complete: "Credit Card Was Captured"
-  credit_card_cayment: "Credit Card Payment"
   credit_card_payment: "Credit Card Payment"
-  creditcard_payment: "Creditcard Payment"
+  creditcard: Creditcard
   current: Atual
   customer: Cliente
-  date: Data
   date_range: "Período de Data"
   delete: Apagar
   depth: Depth
@@ -229,9 +231,11 @@ pt-BR:
   email_address: "Endereço de Email"
   email_server_settings_description: "Ajustar as configurações do servidor de email."
   empty_cart: "Esvaziar Carrinho"
+  enable_mail_delivery: Enable Mail Delivery      
   error: erro
   event: Event
   existing_customer: "Existing Customer"
+  expiration: Expiration
   expiration_month: "Mês de Expiração"
   expiration_year: "Ano de Expiração"
   extension: Extensão
@@ -244,6 +248,12 @@ pt-BR:
   gateway_setting_description: "Selecionar um gateway de pagamento e ajustar suas configurações."
   general_settings: "General Settings"
   general_settings_description: "Configure general Spree settings."
+  google_analytics: "Google Analytics"
+  google_analytics_active: "Active"
+  google_analytics_create: "Create New Google Analytics Account"
+  google_analytics_id: "Analytics ID"
+  google_analytics_new: "New Google Analytics Account"
+  google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Height
   hello_user: "Olá Usuário"
   image: Imagem
@@ -272,11 +282,12 @@ pt-BR:
   logout: Sair
   mail_delivery_enabled:
   mail_delivery_not_enabled:
+  mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Configuração do Servidor de E-mail"
   master_price: "Preço Principal"
   my_account: "Minha Conta"
   my_orders: "My Orders"
-  name: Nome
+  name: Name
   new: New
   new_category: "Nova categoria"
   new_credit_card_payment: "New Credit Card Payment"
@@ -300,7 +311,6 @@ pt-BR:
   no_match_found: "No Match Found"
   none: Nenhum
   none_available: "Nenhum Disponível"
-  number: Número
   on_hand: "Na Mão"
   operation: Operação
   option_Values: "Opção de Valores"
@@ -332,6 +342,7 @@ pt-BR:
   payment_information: "Payment Information"
   payments: Payments
   phone: Fone
+  place_order: Place Order        
   presentation: Apresentação
   previous: anterior
   price: Preço
@@ -362,9 +373,15 @@ pt-BR:
   sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Total de Vendas"
   sales_totals_description: "Total de Vendas para todos os Pedidos"
+  save_preferences: Save Preferences           
   search: Pesquisa
+  secure_connection_type: Secure Connection Type
   select: Selecionar
   select_from_prototype: "Selecionar a partir de Protótipo"
+  send_copy_of_all_mails_to: Send Copy of All Mails To
+  send_copy_of_orders_mails_to: Send Copy of Order Mails To         
+  send_mails_as: Send Mails As                    
+  send_order_mails_as: Send Order Mails As   
   ship: ship
   ship_address: "Endereço da Entrega"
   shipment: Shipment
@@ -377,9 +394,19 @@ pt-BR:
   shopping_cart: "Carrinho de Compra"
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
+  show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: Cadastrar
   sku: SKU
+  smtp_authentication_type: SMTP Authentication Type         
+  smtp_domain: SMTP Domain
+  smtp_mail_host: SMTP Mail Host                       
+  smtp_password: SMTP Password
+  smtp_port: SMTP Port          
+  smtp_username: SMTP Username  
+  spree:
+    date: Data
+    time: Horário                                               
   start: Início
   state: Estado
   state_based: "State Based"
@@ -405,7 +432,6 @@ pt-BR:
   taxons: Taxons
   thank_you_for_your_order: "Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle."
   this_file_language: "Português (Brasil)"
-  time: Horário
   total: Total
   transaction: Transação
   tree: Tree
@@ -414,8 +440,11 @@ pt-BR:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Atualizar
   updated_successfully:
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Use um Endereço de Entrega Diferente"
   user: Usuário
+  user_account: User Account
   user_details: "User Details"
   users: Usuários
   value: Valor

@@ -9,6 +9,9 @@ class InventoryUnit < ActiveRecord::Base
     event :sell do
       transition :to => 'sold', :from => 'on_hand'
     end
+    event :fill_backorder do
+      transition :to => 'sold', :from => 'backordered'
+    end
     event :ship do
       transition :to => 'shipped', :if => :allow_ship? #, :from => 'sold'
     end
@@ -61,7 +64,7 @@ class InventoryUnit < ActiveRecord::Base
   
   private
   def allow_ship?
-    state == 'sold' || Spree::Config[:allow_backorder_shipping]
+    state == 'ready_to_ship' || Spree::Config[:allow_backorder_shipping]
   end
   
 end

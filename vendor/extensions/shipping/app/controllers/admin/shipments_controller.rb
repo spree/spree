@@ -1,5 +1,5 @@
 class Admin::ShipmentsController < Admin::BaseController
-  before_filter :load_data
+  before_filter :load_data, :except => :country_changed
   before_filter :load_shipment_presenter, :only => [:create, :update]
 
   resource_controller
@@ -14,10 +14,8 @@ class Admin::ShipmentsController < Admin::BaseController
     shipment.address = @shipment_presenter.address
     unless @shipment_presenter.valid? and shipment.save
       render :action => "new" and return
-    end    
-    if params['mark_shipped']
-      @order.ship!
     end 
+    @order.state_events.create(:name => t('ship'), :user => current_user, :previous_state => @order.state) if params[:mark_shipped]  
     flash[:notice] = t('created_successfully')
     redirect_to collection_url
   end
@@ -35,12 +33,15 @@ class Admin::ShipmentsController < Admin::BaseController
     @shipment.shipped_at = Time.now if params[:mark_shipped]    
     unless @shipment_presenter.valid? and @shipment.save
       render :action => "edit" and return
-    end    
+    end
+    @order.state_events.create(:name => t('ship'), :user => current_user, :previous_state => @order.state) if params[:mark_shipped]
     flash[:notice] = t('updated_successfully')
     redirect_to edit_object_url
   end
 
   def country_changed
+    @selected_country_id = params[:shipment_presenter][:address_country_id].to_i if params.has_key?('shipment_presenter')
+    @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     render :partial => "shared/states", :locals => {:presenter_type => "shipment"}
   end
   

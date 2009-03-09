@@ -23,6 +23,10 @@ class Variant < ActiveRecord::Base
     @new_level = new_level
   end
   
+  def on_backorder
+    inventory_units.with_state("backordered").size
+  end
+  
   def in_stock
     on_hand > 0
   end
@@ -43,6 +47,10 @@ class Variant < ActiveRecord::Base
       super
     end
   end
+  
+  def orderable?
+    self.in_stock || ( !self.in_stock && self.allow_backordering) || Spree::Config[:allow_backorders]
+  end
 
   private
 
@@ -51,7 +59,17 @@ class Variant < ActiveRecord::Base
       @new_level = @new_level.to_i
       # don't allow negative on_hand inventory
       return if @new_level < 0
-      adjustment = @new_level - on_hand
+      
+      # fill backordered orders first
+      inventory_units.with_state("backordered").each{|iu|
+        if @new_level > 0
+          iu.fill_backorder
+          @new_level = @new_level - 1
+        end
+        break if @new_level < 1
+        }
+      
+      adjustment = @new_level - on_hand 
       if adjustment > 0
         InventoryUnit.create_on_hand(self, adjustment)
         reload

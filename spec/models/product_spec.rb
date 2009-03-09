@@ -83,8 +83,8 @@ describe Product do
   end
 
   describe "permalinks" do
-    before(:each) do
-      @product.name = "Air force ones"
+    before(:each) do 
+      @product = Product.new(:name => "Air force ones", :description => "Whatever", :master_price => 10.00)
     end
 
     it "should not have a nil permalink with a saved name" do

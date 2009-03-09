@@ -1,5 +1,6 @@
 --- 
 en-GB: 
+  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
   access_denied: "Access Denied" 
   account: Account
@@ -21,7 +22,7 @@ en-GB:
         firstname: "First Name"
         lastname: "Last Name"
         phone: Phone
-        zipcode: "Zip Code"
+        zipcode: "Post Code"
       country: 
         iso: ISO
         iso3: ISO3
@@ -54,7 +55,7 @@ en-GB:
         description: Description
         master_price: "Master Price"
         name: Name
-        on_hand: "On Hande"
+        on_hand: "On Hand"
       property: 
         name: Name
         presentation: Presentation
@@ -156,6 +157,8 @@ en-GB:
   adjustment: Adjustment
   administration: Administration
   allow_backorders: "Allow Backorders"
+  allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
+  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
   amount: Amount
   are_you_sure: "Are you sure"
   are_you_sure_category: "Are you sure you want to delete this category?"
@@ -195,6 +198,7 @@ en-GB:
   confirm_password: "Password Confirmation"
   continue: Continue
   continue_shopping: "Continue shopping"
+  copy_all_mails_to: Copy All Mails To                                                                             
   country: Country
   country_based: "Country Based"
   create: Create
@@ -202,12 +206,10 @@ en-GB:
   created_successfully:
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
-  credit_card_cayment: "Credit Card Payment"
   credit_card_payment: "Credit Card Payment"
-  creditcard_payment: "Creditcard Payment"
+  creditcard: Creditcard
   current: Current
   customer: Customer
-  date: Date
   date_range: "Date Range"
   delete: Delete
   depth: Depth
@@ -229,9 +231,11 @@ en-GB:
   email_address: "Email Address"
   email_server_settings_description: "Set email server settings."
   empty_cart: "Empty Basket"
+  enable_mail_delivery: Enable Mail Delivery      
   error: error
   event: Event
   existing_customer: "Existing Customer"
+  expiration: Expiration
   expiration_month: "Expiration Month"
   expiration_year: "Expiration Year"
   extension: Extension
@@ -244,6 +248,12 @@ en-GB:
   gateway_setting_description: "Select a payment gateway and configure its settings."
   general_settings: "General Settings"
   general_settings_description: "Configure general Spree settings."
+  google_analytics: "Google Analytics"
+  google_analytics_active: "Active"
+  google_analytics_create: "Create New Google Analytics Account"
+  google_analytics_id: "Analytics ID"
+  google_analytics_new: "New Google Analytics Account"
+  google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Height
   hello_user: "Hello User"
   image: Image
@@ -272,6 +282,7 @@ en-GB:
   logout: Logout
   mail_delivery_enabled:
   mail_delivery_not_enabled:
+  mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mail Server Settings"
   master_price: "Master Price"
   my_account: "My Account"
@@ -300,7 +311,6 @@ en-GB:
   no_match_found: "No Match Found"
   none: None
   none_available: "None Available"
-  number: Number
   on_hand: "On Hand"
   operation: Operation
   option_Values: "Option Values"
@@ -332,8 +342,9 @@ en-GB:
   payment_information: "Payment Information"
   payments: Payments
   phone: Phone
+  place_order: Place Order        
   presentation: Presentation
-  previous: previous
+  previous: Previous
   price: Price
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
@@ -362,9 +373,15 @@ en-GB:
   sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Sales Totals"
   sales_totals_description: "Sales Total For All Orders"
+  save_preferences: Save Preferences           
   search: Search
+  secure_connection_type: Secure Connection Type
   select: Select
   select_from_prototype: "Select From Prototype"
+  send_copy_of_all_mails_to: Send Copy of All Mails To
+  send_copy_of_orders_mails_to: Send Copy of Order Mails To         
+  send_mails_as: Send Mails As                    
+  send_order_mails_as: Send Order Mails As   
   ship: ship
   ship_address: "Ship Address"
   shipment: Shipment
@@ -377,14 +394,24 @@ en-GB:
   shopping_cart: "Shopping Basket"
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
+  show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Sign up"
   sku: SKU
+  smtp_authentication_type: SMTP Authentication Type         
+  smtp_domain: SMTP Domain
+  smtp_mail_host: SMTP Mail Host                       
+  smtp_password: SMTP Password
+  smtp_port: SMTP Port          
+  smtp_username: SMTP Username  
+  spree:
+    date: Date
+    time: Time                                               
   start: Start
-  state: State
+  state: County
   state_based: "State Based"
   state_setting_description: "Administer the list of states/provinces associated with each country."
-  states: States
+  states: Counties
   status: Status
   stop: Stop
   store: Store
@@ -405,7 +432,6 @@ en-GB:
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "English (UK)"
-  time: Time
   total: Total
   transaction: Transaction
   tree: Tree
@@ -414,8 +440,11 @@ en-GB:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Update
   updated_successfully:
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Use Different Shipping Address"
   user: User
+  user_account: User Account
   user_details: "User Details"
   users: Users
   value: Value
@@ -429,7 +458,7 @@ en-GB:
   whats_this: "What's this"
   width: Width
   your_cart_is_empty: "Your basket is empty"
-  zip: Zip
+  zip: Post Code
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."

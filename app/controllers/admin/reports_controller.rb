@@ -9,26 +9,24 @@ class Admin::ReportsController < Admin::BaseController
     @reports = AVAILABLE_REPORTS
   end
   
-  def sales_total    
-    scope = Order.scoped({})
-    scope = scope.between(@filter.start, (@filter.stop.blank? ? @default_stop : @filter.stop.to_date + 1 )) unless @filter.start.blank?
+  def sales_total
 
-    @orders = scope.find(:all, :order => 'orders.created_at DESC', :page => {:size => Spree::Config[:orders_per_page], :current =>params[:p], :first => 1})    
+    @search = Order.new_search(params[:search])
+    #set order by to default or form result
+    @search.order_by ||= :created_at
+    @search.order_as ||= "DESC"
+    
+    @orders = @search.find(:all)    
 
-    @item_total = scope.sum(:item_total)
-    @ship_total = scope.sum(:ship_amount)
-    @tax_total = scope.sum(:tax_amount)
-    @sales_total = scope.sum(:total)
+    @item_total = @search.sum(:item_total)
+    @ship_total = @search.sum(:ship_amount)
+    @tax_total = @search.sum(:tax_amount)
+    @sales_total = @search.sum(:total)
   end
 
   private 
   def load_data
-    @filter = params.has_key?(:filter) ? OrderFilter.new(params[:filter]) : OrderFilter.new
-    unless @filter.valid?
-      flash.now[:error] = t('invalid_search')
-      return nil
-    end
-    @default_stop = (Date.today + 1).to_s(:db)    
+
   end  
 
 end

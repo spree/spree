@@ -1,0 +1,6 @@
+<div id="checkout">
+  <h1><%= t("checkout")%></h1>
+  <% form_for(:checkout_presenter, :url => "/orders/#{@order.number}/complete", :html => { :method => :put, :id => 'checkout_form'}) do |f| %>
+    <%= render :partial => 'form', :locals => {:f => f} %>
+  <% end %>
+</div>
