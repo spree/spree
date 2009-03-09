@@ -6,12 +6,10 @@
   <%= stylesheet_link_tag 'checkout.css' %>
 <% end %>                 
 
-<% if(params[:checkout_presenter]) -%>
-<input type="hidden" name="submit_sstate" value="<%= params[:checkout_presenter][:ship_address_state_id] %>" />
-<input type="hidden" name="submit_bstate" value="<%= params[:checkout_presenter][:bill_address_state_id] %>" />
-<input type="hidden" name="submit_scountry" value="<%= params[:checkout_presenter][:ship_address_country_id] %>" />
-<input type="hidden" name="submit_bcountry" value="<%= params[:checkout_presenter][:bill_address_country_id] %>" />
-<% end -%>
+<input type="hidden" id="hidden_bstate" name="hidden_bstate" value="<%= @object.bill_address.state_id %>" />
+<input type="hidden" id="hidden_bcountry" name="hidden_bcountry" value="" />
+<input type="hidden" id="hidden_sstate" name="hidden_sstate" value="<%= @object.ship_address.state_id %>" />
+<input type="hidden" id="hidden_scountry" name="hidden_scountry" value="" />
 
 <%= error_messages_for :checkout_presenter %>
 <div id="billing">
@@ -39,7 +37,6 @@
   </p>                        
   <p>
     <label for=""><%= t("state") %></label>
-    <input type="hidden" id="hidden_bstate" name="hidden_bstate" value="<%= @current_bill_state %>" />
     <span id="bstate">
       <%= collection_select("checkout_presenter", 
         :bill_address_state_id, 
@@ -92,7 +89,6 @@
   </p>    
   <p>
     <label for="<%= t("state") %>"><%= t("state") %></label>
-    <input type="hidden" id="hidden_sstate" name="hidden_sstate" value="<%= @current_ship_state %>" />
     <span id="sstate">
         <%= collection_select("checkout_presenter", 
           :ship_address_state_id, 
