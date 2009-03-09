@@ -32,7 +32,8 @@ jQuery.fn.sameAddress = function() {
       $("#shipping #"+ $(this).attr('id').replace('bill', 'ship')).val($(this).val());
     })
     //For some reason this isn't getting picked up from above.. Debug later
-    $('#sstate :child').val($('#bstate :child').val());
+    // paulcc: this statement is nonsense - should be hidden_Xstate? TODO
+    $('#sstate :only-child').val($('#bstate :only-child').val());
   })
 }
 
@@ -58,38 +59,68 @@ var get_states = function() {
     state_mapper = json;
     $('span#bcountry select').val($('[name=submit_bcountry]').val());
     update_state('b');
-    $('span#bstate :child').val($('[name=submit_bstate]').val());
+    // paulcc: suspect - no matches? TODO
+    $('span#bstate :only-child').val($('[name=submit_bstate]').val());
     $('span#scountry select').val($('[name=submit_scountry]').val());
     update_state('s');
-    $('span#sstate :child').val($('[name=submit_sstate]').val());
+    // paulcc: suspect - no matches? TODO
+    $('span#sstate :only-child').val($('[name=submit_sstate]').val());
   });
 };
 
+// replace the :only child of the parent with the given html, and transfer
+//   {name,id} attributes over, returning the new child
+//   init is the value to copy over (which can be "")
+var chg_input_element = function (parent, html, init) {
+  var child = parent.find(':only-child');
+  html.addClass('required')
+      .attr('name', child.attr('name'))
+      .attr('id',   child.attr('id'))
+      .val(init);  
+		// old value (eg state id) no longer valid so do not keep it
+		// HOWEVER: if this is a reload of the same, we need to keep it
+		// TODO...
+  child.remove();
+  parent.append(html);
+  return html;
+};
+
+
 //Update state input / select
 var update_state = function(region) {
-  var name = $('span#' + region + 'state :child').attr('name');
-  var id = $('span#' + region + 'state :child').attr('id');
-  $('span#' + region + 'state :child').remove();
-  var match;
-  var selected = $('span#' + region + 'country :child :selected').html();
+  var country = $('span#' + region + 'country :only-child :selected').html();
+  var states;
+
+  // get state map for the country
+  // QQ: map LU function? check
   $.each(state_mapper.maps, function(i, item) {
-    if(selected == item.country) {
-      match = item.states;
+    if(country == item.country) {
+      states = item.states;
     }
   });
-  if(match) {
-    $('span#' + region + 'state').append($(document.createElement('select')));
-    $.each(match, function(i, item) {
-      $('span#' + region + 'state select').append($(document.createElement('option')).attr('value', item.value).html(item.text));
+
+  var replacement;
+  // HERE: just look at the incumbent before deciding to copy/delete...
+  if(states) {
+    // recreate state selection list
+    replacement = $(document.createElement('select'));
+    $.each(states, function(i, item) {
+      replacement.append($(document.createElement('option'))
+                 .attr('value', item.value)
+                 .html(item.text));
     });
   } else {
-    $('span#' + region + 'state').append($(document.createElement('input')));
+    // recreate an input box
+    replacement = $(document.createElement('input'));
   }
-  $('span#' + region + 'state select, span#' + region + 'state input').addClass('required').attr('name', name).attr('id', id).val($('input#hidden_' + region + 'state').val()); 
-  $('span#' + region + 'state select, span#' + region + 'state input').change(function() {
-    $('input#hidden_' + region + 'state').val($(this).val());
-  });
+
+  // callback to update val when form object is changed
+  chg_input_element($('span#' + region + 'state'), replacement, "todo")
+    .change(function() {
+      $('input#hidden_' + region + 'state').val($(this).val());
+    });
 };
+
 
 var validate_section = function(region) {
   var validator = $('form#checkout_form').validate();
