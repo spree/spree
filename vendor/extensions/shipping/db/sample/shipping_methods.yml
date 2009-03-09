@@ -10,3 +10,7 @@ ups_one_day:
   name: UPS One Day
   zone: available_shipping
   shipping_calculator: Spree::FlatRateShipping::Calculator
+one_option:
+  name: Only one option
+  zone: one_ship_option
+  shipping_calculator: Spree::FlatRateShipping::Calculator
