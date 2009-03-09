@@ -96,9 +96,6 @@ class CheckoutController < Spree::BaseController
     month = @object.creditcard.month ? @object.creditcard.month.to_i : Date.today.month
     year = @object.creditcard.year ? object.creditcard.year.to_i : Date.today.year
     @date = Date.new(year, month, 1)
-
-    @current_bill_state = @object.bill_address ? @object.bill_address.state_id : '';
-    @current_ship_state = @object.ship_address ? @object.ship_address.state_id : '';
   end 
   
   def stop_monkey_business
