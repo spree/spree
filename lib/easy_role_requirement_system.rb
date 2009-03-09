@@ -160,7 +160,7 @@ module EasyRoleRequirementSystem
       new_permissions_file.keys.each{|pf_key|
           if permissions_file.has_key?(pf_key)
             new_permissions_file[pf_key].keys.each{|p_key|
-              permissions_file[pf_key][p_key] = new_permissions_file[pf_key][p_key] if !new_permissions_file[pf_key].has_key?(p_key)
+              permissions_file[pf_key][p_key] = new_permissions_file[pf_key][p_key]
               }
           else
             permissions_file[pf_key] = new_permissions_file[pf_key]
