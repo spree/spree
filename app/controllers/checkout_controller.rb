@@ -21,10 +21,13 @@ class CheckoutController < Spree::BaseController
     begin
       if object.save
         # remove the order from the session
-        session[:order_id] = nil if @order.checkout_complete
+        session[:order_id] = nil if @order.checkout_complete  
+      else
+        flash[:error] = t("unable_to_save_order")
+        render :action => "new" and return
       end       
     rescue Spree::GatewayError => ge
-      flash.now[:error] = "Authorization Error: #{ge.message}"
+      flash.now[:error] = t("unable_to_authorize_credit_card") + ": #{ge.message}"
       render :action => "new" and return 
     end
         
