@@ -6,9 +6,9 @@ class StatesController < Spree::BaseController
     wants.js do
       # @states = end_of_association_chain.find(:all, :conditions => ['lower(name) LIKE ?', "%#{params[:q].downcase}%"], :order => :name)
       
-      usa = {}
+      usa = { '' => '' }
       State.find(:all, :conditions => "country_id = 214", 
-                       :select => "id, name",
+                       :select => "id, name"
                        ).each do |s|
         usa[s.id] = s.name
       end
