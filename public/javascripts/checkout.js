@@ -55,12 +55,14 @@ $(function() {
 //Initial state mapper on page load
 var state_mapper;
 var get_states = function() {
-  $.getJSON('/javascripts/states.js', function(json) {
+  $.getJSON('/states.js', function(json) {
     state_mapper = json;
+
     $('span#bcountry select').val($('[name=submit_bcountry]').val());
     update_state('b');
     // paulcc: suspect - no matches? TODO
     $('span#bstate :only-child').val($('[name=submit_bstate]').val());
+
     $('span#scountry select').val($('[name=submit_scountry]').val());
     update_state('s');
     // paulcc: suspect - no matches? TODO
@@ -70,54 +72,49 @@ var get_states = function() {
 
 // replace the :only child of the parent with the given html, and transfer
 //   {name,id} attributes over, returning the new child
-//   init is the value to copy over (which can be "")
-var chg_input_element = function (parent, html, init) {
+var chg_state_input_element = function (parent, html) {
   var child = parent.find(':only-child');
   html.addClass('required')
       .attr('name', child.attr('name'))
-      .attr('id',   child.attr('id'))
-      .val(init);  
-		// old value (eg state id) no longer valid so do not keep it
-		// HOWEVER: if this is a reload of the same, we need to keep it
-		// TODO...
-  child.remove();
+      .attr('id',   child.attr('id'));
+  child.remove();		// better as parent-relative?
   parent.append(html);
   return html;
 };
 
 
-//Update state input / select
+// TODO: better as sibling dummy state ?
+// Update the input method for address.state 
+//
 var update_state = function(region) {
-  var country = $('span#' + region + 'country :only-child :selected').html();
-  var states;
-
-  // get state map for the country
-  // QQ: map LU function? check
-  $.each(state_mapper.maps, function(i, item) {
-    if(country == item.country) {
-      states = item.states;
-    }
-  });
+  var country        = $('span#' + region + 'country :only-child').val();
+  var states         = state_mapper[country];
+  var hidden_element = $('input#hidden_' + region + 'state');
 
   var replacement;
-  // HERE: just look at the incumbent before deciding to copy/delete...
   if(states) {
     // recreate state selection list
     replacement = $(document.createElement('select'));
-    $.each(states, function(i, item) {
-      replacement.append($(document.createElement('option'))
-                 .attr('value', item.value)
-                 .html(item.text));
+    $.each(states, function(id,nm) {
+      var opt = $(document.createElement('option'))
+                .attr('value', id)
+                .html(nm);
+      replacement.append(opt)
+      if (id == hidden_element.val()) { opt.attr('selected', 'true') }
+      // query - should opt.val(...) work too? was used in original
+      // probably will when states are fixed...
     });
   } else {
     // recreate an input box
     replacement = $(document.createElement('input'));
+    replacement.val(hidden_element.val()) 
   }
 
   // callback to update val when form object is changed
-  chg_input_element($('span#' + region + 'state'), replacement, "todo")
+	// don't redo if need select
+  chg_state_input_element($('span#' + region + 'state'), replacement)
     .change(function() {
-      $('input#hidden_' + region + 'state').val($(this).val());
+      hidden_element.val($(this).val());
     });
 };
 
