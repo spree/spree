@@ -107,7 +107,7 @@
   </p>
   <p id="scountry">
     <label for="<%= t("country") %>"><%= t("country") %></label>
-    <span id="scountry"><%= f.collection_select :ship_address_country_id, @countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
+    <span id="scountry"><%= f.collection_select :ship_address_country_id, @shipping_countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
   </p>
   <p id="sphone">
     <label for="<%= t("phone") %>"><%= t("phone") %></label>
