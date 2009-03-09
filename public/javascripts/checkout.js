@@ -38,8 +38,8 @@ jQuery.fn.sameAddress = function() {
 $(function() {  
   //$("#checkout_presenter_bill_address_country_id").submitWithAjax();  
   $('#checkout_presenter_same_address').sameAddress();
-  $('span#bcountry select').change(function() { update_state('b'); });
-  $('span#scountry select').change(function() { update_state('s'); });
+  $('span#bcountry select').change(function() { update_state('b'); $('span#bstate :only-child').val(''); });
+  $('span#scountry select').change(function() { update_state('s'); $('span#state :only-child').val(''); });
   get_states();
 
   $('#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
@@ -103,7 +103,7 @@ var update_state = function(region) {
     replacement.val(hidden_element.val()) 
   }
 
-  chg_input_element($('span#' + region + 'state'), replacement);
+  chg_state_input_element($('span#' + region + 'state'), replacement);
   // callback to update val when form object is changed
     //This is only needed if we want to preserve state when someone refreshes the checkout page
     //.change(function() {
