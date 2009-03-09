@@ -1,1 +1,13 @@
-<%= @state_info.to_json %>
+<%= first = true 
+    def inner(ct)
+      ct.sort.inject('"" : ""') do |pre,n|
+        pre + ', "' + n[1].to_s + '":"' + n[0] + '"'
+      end
+    end 
+    out = "" 
+    @state_info.to_a.each do |cv,ct| 
+      out += (first ? "{" : ",") + cv + " : {" + inner(ct) + "}"
+      first = false
+    end
+    out + "}" 
+%>
