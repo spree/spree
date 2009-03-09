@@ -94,16 +94,16 @@ var update_state = function(region) {
                 .html(nm);
       replacement.append(opt)
       if (id == hidden_element.val()) { opt.attr('selected', 'true') }
-      // query - should opt.val(...) work too? was used in original
-      // probably will when states are fixed...
+        // set this directly IFF the old value is still valid
     });
   } else {
     // recreate an input box
     replacement = $(document.createElement('input'));
-    if (! hidden_element.val().match(/\d+/)) { replacement.val(hidden_element.val()) }
+    if (! hidden_element.val().match(/^\d+$/)) { replacement.val(hidden_element.val()) }
   }
 
   chg_state_input_element($('span#' + region + 'state'), replacement);
+  hidden_element.val(replacement.val());
 
   // callback to update val when form object is changed
   // This is only needed if we want to preserve state when someone refreshes the checkout page
