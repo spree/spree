@@ -48,7 +48,7 @@ $(function() {
   $('#validate_shipping').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
   $('#select_shipping_method').click(function() { submit_shipping_method(); });  
   $('#confirm_payment').click(function() { if(validate_section('creditcard')) { confirm_payment(); }});
-  $('form#checkout_form').submit(function() { return !($('div#confirm_order').hasClass('checkout_disabled')); });
+  $('form#checkout_form').submit(function() { return !($('div#confirm_order').hasClass('checkout_disabled')); }); 
 })
 
 //Initial state mapper on page load
@@ -121,6 +121,12 @@ var shift_to_region = function(active) {
       $('div#' + regions[i] + ' div.inner').hide('fast');
       $('div#' + regions[i]).addClass('checkout_disabled');
     }
+  }                                                                         
+  if (active == 'confirm_order') {
+    $("input#final_answer").attr("value", "yes");    
+  } else {
+    // indicates order is ready to be processed (as opposed to simply updated)
+    $("input#final_answer").attr("value", "");    
   }
   return;
 };
@@ -162,7 +168,7 @@ var submit_shipping = function() {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
     },      
     dataType: "json",
-    data: "{form: '" + $('#checkout_form').serialize() + "'}",
+    data: $('#checkout_form').serialize(),
     success: function(json) {  
       update_shipping_methods(json.available_methods); 
     },
@@ -193,7 +199,7 @@ var submit_shipping_method = function() {
         xhr.setRequestHeader('Accept-Encoding', 'identity');
       },      
       dataType: "json",
-      data: "{form: '" + $('#checkout_form').serialize() + "'}",
+      data: $('#checkout_form').serialize(),
       success: function(json) {  
         update_confirmation(json.order); 
       },
@@ -214,8 +220,18 @@ var update_shipping_methods = function(methods) {
   $(methods).each( function(i) {
     $('div$methods img#shipping_loader').remove();
     var p = document.createElement('p');
-    $(p).append($(document.createElement('input')).attr('type', 'radio').attr('name', 'method_id').val(this.id));
-    $(p).append($(document.createElement('label')).html(this.name + ' ' + this.rate).css('top', '-1px'));
+    var s = this.name + ' ' + this.rate;
+    $(p).append($(document.createElement('input'))
+                .attr('id', s)
+                .attr('type', 'radio')
+                .attr('name', 'method_id')
+                .attr(1 == $(methods).length ? 'checked' : 'notchecked', 'foo')
+                .val(this.id)
+                );
+    $(p).append($(document.createElement('label'))
+                .attr('for', s)
+                .html(s)
+                .css('top', '-1px'));
     $('div#methods').append(p);
   });
   $('div#methods input:first').attr('validate', 'required:true');

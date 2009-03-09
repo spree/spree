@@ -1,7 +1,7 @@
 #######################################################################################################
 # Substantial portions of this code were adapted from the Radiant CMS project (http://radiantcms.org) #
 #######################################################################################################
-require "highline"
+require 'highline/import' 
 require 'custom_fixtures'
 require 'find'
 
