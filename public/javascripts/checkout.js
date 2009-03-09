@@ -31,9 +31,6 @@ jQuery.fn.sameAddress = function() {
     $("#billing input, #billing select").each(function() {
       $("#shipping #"+ $(this).attr('id').replace('bill', 'ship')).val($(this).val());
     })
-    //For some reason this isn't getting picked up from above.. Debug later
-    // paulcc: this statement is nonsense - should be hidden_Xstate? TODO
-    $('#sstate :only-child').val($('#bstate :only-child').val());
   })
 }
 
@@ -41,8 +38,8 @@ jQuery.fn.sameAddress = function() {
 $(function() {  
   //$("#checkout_presenter_bill_address_country_id").submitWithAjax();  
   $('#checkout_presenter_same_address').sameAddress();
-  $('span#bcountry select').change(function() { $('input#hidden_bstate').val(''); update_state('b'); });
-  $('span#scountry select').change(function() { $('input#hidden_sstate').val(''); update_state('s'); });
+  $('span#bcountry select').change(function() { update_state('b'); });
+  $('span#scountry select').change(function() { update_state('s'); });
   get_states();
 
   $('#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
@@ -57,14 +54,12 @@ var state_mapper;
 var get_states = function() {
   $.getJSON('/javascripts/states.js', function(json) {
     state_mapper = json;
-    $('span#bcountry select').val($('[name=submit_bcountry]').val());
+    $('span#bcountry select').val($('input#hidden_bcountry').val());
     update_state('b');
-    // paulcc: suspect - no matches? TODO
-    $('span#bstate :only-child').val($('[name=submit_bstate]').val());
-    $('span#scountry select').val($('[name=submit_scountry]').val());
+    $('span#bstate :only-child').val($('input#hidden_bstate').val());
+    $('span#scountry select').val($('input#hidden_scountry').val());
     update_state('s');
-    // paulcc: suspect - no matches? TODO
-    $('span#sstate :only-child').val($('[name=submit_sstate]').val());
+    $('span#sstate :only-child').val($('input#hidden_sstate').val());
   });
 };
 
@@ -115,10 +110,11 @@ var update_state = function(region) {
   }
 
   // callback to update val when form object is changed
-  chg_input_element($('span#' + region + 'state'), replacement, "todo")
-    .change(function() {
-      $('input#hidden_' + region + 'state').val($(this).val());
-    });
+  chg_input_element($('span#' + region + 'state'), replacement, '');
+    //This is only needed if we want to preserve state when someone refreshes the checkout page
+    //.change(function() {
+    //  $('input#hidden_' + region + 'state').val($(this).val());
+    //});
 };
 
 
