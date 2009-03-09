@@ -1,9 +1,4 @@
 <table class="order-summary">
-<!-->
-  <tr>
-    <th colspan="4" id="order-num"><%= t('order') %> # <%=@order.number%></th>
-  </tr>
--->
   <tr>
     <th><%= t('item_description') %></th>
     <th><%= t('price') %></th>
@@ -24,18 +19,18 @@
   </tr>
   <tr>
     <td colspan="3"><b><%= t('tax') %>:</b></td>
-    <td><%= number_to_currency @order.tax_amount -%></td>
+    <td><span id="tax_amount"><%= number_to_currency @order.tax_amount -%></span></td>
   </tr>
   <tr>
     <td colspan="3"><b><%= t('shipping') %>:</b> 
-      <% if @order.shipment %>
-        (<%= @order.shipment.shipping_method.name %>)
+      <% if @order.shipment && @order.shipment.shipping_method %>
+        <span id="ship_method">(<%= @order.shipment.shipping_method.name %>)</span>
       <% end %>
     </td>
-    <td><%= number_to_currency @order.ship_amount -%></td>
+    <td><span id="ship_amount"><%= number_to_currency @order.ship_amount -%></span></td>
   </tr>
   <tr>
     <td colspan="3"><b><%= t('order_total') %>:</b></td>
-    <td><%= number_to_currency @order.total -%></td>
+    <td><span id="order_total"><%= number_to_currency @order.total -%></span></td>
   </tr>
 </table>

@@ -207,6 +207,7 @@ en-GB:
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  creditcard: Creditcard
   current: Current
   customer: Customer
   date_range: "Date Range"
@@ -234,6 +235,7 @@ en-GB:
   error: error
   event: Event
   existing_customer: "Existing Customer"
+  expiration: Expiration
   expiration_month: "Expiration Month"
   expiration_year: "Expiration Year"
   extension: Extension
@@ -340,6 +342,7 @@ en-GB:
   payment_information: "Payment Information"
   payments: Payments
   phone: Phone
+  place_order: Place Order        
   presentation: Presentation
   previous: Previous
   price: Price
@@ -405,10 +408,10 @@ en-GB:
     date: Date
     time: Time                                               
   start: Start
-  state: State
+  state: County
   state_based: "State Based"
   state_setting_description: "Administer the list of states/provinces associated with each country."
-  states: States
+  states: Counties
   status: Status
   stop: Stop
   store: Store
@@ -437,6 +440,8 @@ en-GB:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   update: Update
   updated_successfully:
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Use Different Shipping Address"
   user: User
   user_account: User Account
@@ -453,7 +458,7 @@ en-GB:
   whats_this: "What's this"
   width: Width
   your_cart_is_empty: "Your basket is empty"
-  zip: Zip
+  zip: Post Code
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."

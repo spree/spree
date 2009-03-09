@@ -8,21 +8,6 @@ class ShippingExtension < Spree::Extension
 
   def activate
 
-    Order.class_eval do
-      has_many :shipments, :dependent => :destroy
-      include Spree::ShippingCalculator
-
-      # convenience method since many stores will not allow user to create multiple shipments
-      def shipment
-        shipments.last
-      end
-      
-      def ship_address
-        return nil if shipments.empty?
-        return shipment.address
-      end      
-    end 
-    
     Admin::ConfigurationsController.class_eval do
       before_filter :add_shipping_links, :only => :index
       def add_shipping_links

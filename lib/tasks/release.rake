@@ -57,7 +57,7 @@ namespace 'spree' do
     #files.include 'log/.keep'
     files.exclude /^pkg/
     files.include 'public/.htaccess.example'
-    files.include 'vendor/gems/active_presenter-0.0.4/.specification'
+    files.include 'vendor/gems/active_presenter-0.0.6/.specification'
     files.exclude 'public/images/products'
     files.exclude 'tmp/'
     s.files = files.to_a

@@ -25,9 +25,9 @@ Or get the source from github:
 Creating a presenter is as simple as subclassing ActivePresenter::Base. Use the presents method to indicate which models the presenter should present.
 
   class SignupPresenter < ActivePresenter::Base
-    presents User, Account
+    presents :user, :account
   end
-
+ 
 === Instantiation
 
 Then, you can instantiate the presenter using either, or both of two forms. 
@@ -66,6 +66,12 @@ Both of these methods are compatible with error_messages_for. It just depends wh
 
 You can save your presenter the same way you'd save an ActiveRecord object. Both #save, and #save! behave the same way they do on a normal AR model.
 
+=== Callbacks
+
+Callbacks work exactly like ActiveRecord callbacks. before_save, and after_save are available.
+
+Note that if any of your after_save callbacks return false, the rest of them will not be run. This is consistent with AR behavior.
+
 == Credits
 
 ActivePresenter was created, and is maintained by {Daniel Haran}[http://danielharan.com] and {James Golick}[http://jamesgolick.com] on the train ride to {RubyFringe}[http://rubyfringe.com] from Montreal.
@@ -73,3 +79,4 @@ ActivePresenter was created, and is maintained by {Daniel Haran}[http://danielha
 == License
 
 ActivePresenter is available under the {MIT License}[http://en.wikipedia.org/wiki/MIT_License]
+
