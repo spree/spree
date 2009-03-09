@@ -4,7 +4,7 @@ class CheckoutController < Spree::BaseController
   before_filter :load_data
   before_filter :build_object, :except => [:new, :create]
 
-  ssl_required
+  ssl_required :new, :create
 
   resource_controller   
   model_name :checkout_presenter
