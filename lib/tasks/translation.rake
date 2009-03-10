@@ -45,6 +45,7 @@ def create_hash(data, basename)
   parent = Array.new
   previous_key = 'base'
   data.split("\n").each do |w|
+    next if w.strip.blank?
     (key, value) = w.split(':')
     value ||= ''
     shift = (key =~ /\w/)/2 - parent.size                             #Determine level of current key in comparison to parent array
