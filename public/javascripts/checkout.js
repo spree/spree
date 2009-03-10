@@ -67,9 +67,19 @@ var get_states = function() {
 //   {name,id} attributes over, returning the new child
 var chg_state_input_element = function (parent, html) {
   var child = parent.find(':only-child');
+  var name = child.attr('name');
+  var id = child.attr('id');
+  //Toggle back and forth between id and name
+  if(html.attr('type') == 'text' && child.attr('type') != 'text') {
+    name = name.replace('_id', '_name');
+    id = id.replace('_id', '_name');
+  } else if(html.attr('type') != 'text' && child.attr('type') == 'text') {
+    name = name.replace('_name', '_id');
+    id = id.replace('_name', '_id');
+  }
   html.addClass('required')
-      .attr('name', child.attr('name'))
-      .attr('id',   child.attr('id'));
+      .attr('name', name)
+      .attr('id',   id);
   child.remove();		// better as parent-relative?
   parent.append(html);
   return html;
