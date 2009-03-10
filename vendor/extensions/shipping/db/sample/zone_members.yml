@@ -6,3 +6,11 @@ canada_member:
   parent: available_shipping
   member_id: 35
   member_type: Country
+uk_one_ship_opt:
+  parent: one_ship_option
+  member_id: 213
+  member_type: Country
+uae_one_ship_opt:
+  parent: one_ship_option
+  member_id: 212                # UAE, just cos it's close to US/UK in the list
+  member_type: Country

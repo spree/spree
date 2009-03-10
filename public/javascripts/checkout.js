@@ -26,13 +26,11 @@ jQuery.fn.sameAddress = function() {
       //Clear ship values?
       return;
     }
-    $('span#scountry select').val($('span#bcountry select').val());
-    update_state('s');
+    $('input#hidden_sstate').val($('input#hidden_bstate').val());
     $("#billing input, #billing select").each(function() {
       $("#shipping #"+ $(this).attr('id').replace('bill', 'ship')).val($(this).val());
     })
-    //For some reason this isn't getting picked up from above.. Debug later
-    $('#sstate :child').val($('#bstate :child').val());
+    update_state('s');
   })
 }
 
@@ -40,8 +38,8 @@ jQuery.fn.sameAddress = function() {
 $(function() {  
   //$("#checkout_presenter_bill_address_country_id").submitWithAjax();  
   $('#checkout_presenter_same_address').sameAddress();
-  $('span#bcountry select').change(function() { $('input#hidden_bstate').val(''); update_state('b'); });
-  $('span#scountry select').change(function() { $('input#hidden_sstate').val(''); update_state('s'); });
+  $('span#bcountry select').change(function() { update_state('b'); });
+  $('span#scountry select').change(function() { update_state('s'); });
   get_states();
 
   $('#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
@@ -54,42 +52,67 @@ $(function() {
 //Initial state mapper on page load
 var state_mapper;
 var get_states = function() {
-  $.getJSON('/javascripts/states.js', function(json) {
+  $.getJSON('/states.js', function(json) {
     state_mapper = json;
-    $('span#bcountry select').val($('[name=submit_bcountry]').val());
+    $('span#bcountry select').val($('input#hidden_bcountry').val());
     update_state('b');
-    $('span#bstate :child').val($('[name=submit_bstate]').val());
-    $('span#scountry select').val($('[name=submit_scountry]').val());
+    $('span#bstate :only-child').val($('input#hidden_bstate').val());
+    $('span#scountry select').val($('input#hidden_scountry').val());
     update_state('s');
-    $('span#sstate :child').val($('[name=submit_sstate]').val());
+    $('span#sstate :only-child').val($('input#hidden_sstate').val());
   });
 };
 
-//Update state input / select
+// replace the :only child of the parent with the given html, and transfer
+//   {name,id} attributes over, returning the new child
+var chg_state_input_element = function (parent, html) {
+  var child = parent.find(':only-child');
+  html.addClass('required')
+      .attr('name', child.attr('name'))
+      .attr('id',   child.attr('id'));
+  child.remove();		// better as parent-relative?
+  parent.append(html);
+  return html;
+};
+
+
+// TODO: better as sibling dummy state ?
+// Update the input method for address.state 
+//
 var update_state = function(region) {
-  var name = $('span#' + region + 'state :child').attr('name');
-  var id = $('span#' + region + 'state :child').attr('id');
-  $('span#' + region + 'state :child').remove();
-  var match;
-  var selected = $('span#' + region + 'country :child :selected').html();
-  $.each(state_mapper.maps, function(i, item) {
-    if(selected == item.country) {
-      match = item.states;
-    }
-  });
-  if(match) {
-    $('span#' + region + 'state').append($(document.createElement('select')));
-    $.each(match, function(i, item) {
-      $('span#' + region + 'state select').append($(document.createElement('option')).attr('value', item.value).html(item.text));
+  var country        = $('span#' + region + 'country :only-child').val();
+  var states         = state_mapper[country];
+  var hidden_element = $('input#hidden_' + region + 'state');
+
+  var replacement;
+  if(states) {
+    // recreate state selection list
+    replacement = $(document.createElement('select'));
+    $.each(states, function(id,nm) {
+      var opt = $(document.createElement('option'))
+                .attr('value', id)
+                .html(nm);
+      replacement.append(opt)
+      if (id == hidden_element.val()) { opt.attr('selected', 'true') }
+        // set this directly IFF the old value is still valid
     });
   } else {
-    $('span#' + region + 'state').append($(document.createElement('input')));
+    // recreate an input box
+    replacement = $(document.createElement('input'));
+    if (! hidden_element.val().match(/^\d+$/)) { replacement.val(hidden_element.val()) }
   }
-  $('span#' + region + 'state select, span#' + region + 'state input').addClass('required').attr('name', name).attr('id', id).val($('input#hidden_' + region + 'state').val()); 
-  $('span#' + region + 'state select, span#' + region + 'state input').change(function() {
+
+  chg_state_input_element($('span#' + region + 'state'), replacement);
+  hidden_element.val(replacement.val());
+
+  // callback to update val when form object is changed
+  // This is only needed if we want to preserve state when someone refreshes the checkout page
+  // Or... if someone changes between countries with no given states
+  replacement.change(function() {
     $('input#hidden_' + region + 'state').val($(this).val());
   });
 };
+
 
 var validate_section = function(region) {
   var validator = $('form#checkout_form').validate();
@@ -103,6 +126,7 @@ var validate_section = function(region) {
 };
 
 var shift_to_region = function(active) {
+  $('div#flash-errors').remove();  
   var found = 0;
   for(var i=0; i<regions.length; i++) {
     if(!found) {

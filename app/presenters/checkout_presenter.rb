@@ -21,7 +21,8 @@ class CheckoutPresenter < ActivePresenter::Base
     self.order_hash = {}   
   end 
   
-  def save              
+  def save           
+    return false if final_answer and not valid?
     saved = false
     ActiveRecord::Base.transaction do
       # clear existing shipments (no orphans please)                             

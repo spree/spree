@@ -118,7 +118,7 @@ span.current_page {
 /* ================ begin: flash ================  */
 #flash-errors, #errorExplanation {
   margin: 0 auto;
-  background: #EF1D61;/*#F69A91;*/
+  background: #FF0000;
   padding: 10px;
   color: #FFFFFF;
   text-align: center;

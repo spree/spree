@@ -4,7 +4,7 @@ class CheckoutController < Spree::BaseController
   before_filter :load_data
   before_filter :build_object, :except => [:new, :create]
 
-  ssl_required
+  ssl_required :new, :create
 
   resource_controller   
   model_name :checkout_presenter
@@ -21,10 +21,13 @@ class CheckoutController < Spree::BaseController
     begin
       if object.save
         # remove the order from the session
-        session[:order_id] = nil if @order.checkout_complete
+        session[:order_id] = nil if @order.checkout_complete  
+      else
+        flash[:error] = t("unable_to_save_order")
+        render :action => "new" and return
       end       
     rescue Spree::GatewayError => ge
-      flash.now[:error] = "Authorization Error: #{ge.message}"
+      flash.now[:error] = t("unable_to_authorize_credit_card") + ": #{ge.message}"
       render :action => "new" and return 
     end
         
@@ -56,9 +59,23 @@ class CheckoutController < Spree::BaseController
   end
   
   private
+
+  # switch state info into name if the id isn't a valid state
+  def fix_address_states(params)
+    unless State.find_by_id(params[:bill_address_state_id])
+      params[:bill_address_state_name] = params[:bill_address_state_id]
+      params.delete :bill_address_state_id
+    end
+    unless State.find_by_id(params[:ship_address_state_id])
+      params[:ship_address_state_name] = params[:ship_address_state_id]
+      params.delete :ship_address_state_id
+    end
+  end 
+
   def build_object
     @order = Order.find_by_number(params[:order_number])
     if params[:checkout_presenter]
+      fix_address_states params[:checkout_presenter]
       @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]  
     else                       
       # user has not yet submitted checkout parameters, we can use defaults of current_user and order objects
@@ -76,15 +93,13 @@ class CheckoutController < Spree::BaseController
   end
   
   def load_data
-    @countries = Country.find(:all)    
+    @countries = Country.find(:all).sort  
+    @shipping_countries = @object.order.shipping_countries.sort  
     @states = Country.find(214).states.sort
 
     month = @object.creditcard.month ? @object.creditcard.month.to_i : Date.today.month
     year = @object.creditcard.year ? object.creditcard.year.to_i : Date.today.year
     @date = Date.new(year, month, 1)
-
-    @current_bill_state = @object.bill_address ? @object.bill_address.state_id : '';
-    @current_ship_state = @object.ship_address ? @object.ship_address.state_id : '';
   end 
   
   def stop_monkey_business
