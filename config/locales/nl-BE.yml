@@ -207,6 +207,7 @@ nl-BE:
   credit_card: "Kredietkaart"
   credit_card_capture_complete: "Aanrekening via kredietkaart voltooid"
   credit_card_payment: "Kredietkaart Betaling"
+  creditcard: Kredietkaart
   current: Huidige
   customer: Klant
   date_range: "Datum Bereik"
@@ -234,6 +235,7 @@ nl-BE:
   error: fout
   event: Gebeurtenis
   existing_customer: "Bestaande Klant"
+  expiration: Verval
   expiration_month: "Vervalmaand"
   expiration_year: "Vervaljaar"
   extension: Extensie
@@ -340,6 +342,7 @@ nl-BE:
   payment_information: "Informatie Betaling"
   payments: Betalingen
   phone: Telefoon
+  place_order: Bestellen
   presentation: Presentatie
   previous: vorige
   price: Prijs
@@ -391,6 +394,7 @@ nl-BE:
   shopping_cart: "Winkelmandje"
   show_deleted: "Toon verwijderde bestellingen"
   show_incomplete_orders: "Toon niet afgewerkte bestellingen"
+  show_only_complete_orders: "Toon enkel afgewerkte bestellingen"
   show_out_of_stock_products: "Toon producten die niet voorradig zijn"
   sign_up: "Registreer"
   sku: Sku
@@ -433,11 +437,16 @@ nl-BE:
   tree: Structuur
   try_again: "Probeer Opnieuw"
   type: Type
+  unable_to_authorize_credit_card: "Autorisatie van de Kredietkaart mislukt"
   unable_to_capture_credit_card: "Aanrekening via Kredietkaart mislukt"
+  unable_to_save_order: "Bestelling opslaan is mislukt"
   update: Updaten
-  updated_successfully: "Succesvol Geüpdatet"  
+  updated_successfully: "Succesvol Aangepast"
+  use_as_shipping_address: "Gebruik als afleveringsadres"
+  use_billing_address: "Gebruik als factuuradres"
   use_different_shipping_address: "Ander afleveringsadres gebruiken"
   user: Gebruiker
+  user_account: "Account Gebruiker"
   user_details: "Details Gebruiker"
   users: Gebruikers
   value: Waarde
@@ -456,14 +465,3 @@ nl-BE:
   zone_based: "Zone Gebaseerd"
   zone_setting_description: "Verzameling van langen, provincies of andere zones om in verschillende berekeningen te gebruiken."
   zones: Zones  
-  password_forgotten: "Wachtwoord vergeten"
-  enter_email_address_to_reset: "E-mail adres"
-  reset: Verzenden
-  further_instructions_mailed: "Verdere instructies werden verzonden naar je e-mail adres."
-  email_not_found: "E-mail adres niet gevonden."
-  one_time_login_expired: "Je hebt een éénmalige aanmeldingslink proberen te gebruiken die vervallen is. Vraag aub een nieuwe aan via onderstaand formulier."
-  one_time_login_invalid: "Je hebt een éénmalige aanmeldingslink proberen te gebruiken die reeds gebruikt werd of vervallen is. Vraag aub een nieuwe aan via onderstaand formulier."
-  enter_new_password: "Nieuw Wachtwoord"
-  passwords_do_not_match: "Wachtwoorden komen niet overeen"
-  password_changed: "Wachtwoord gewijzigd"
-  please_enter_input: "Geef je nieuwe wachtwoord in"
