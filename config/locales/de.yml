@@ -437,7 +437,9 @@ de:
   tree: Baum
   try_again: "Erneut versuchen"
   type: Typ
+  unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
+  unable_to_save_order: "Unable to Save Order"
   update: Speichern
   updated_successfully: "Erfolgreich aktualisiert"
   use_as_shipping_address: Use as Shipping Address
