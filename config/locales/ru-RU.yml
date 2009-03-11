@@ -1,5 +1,5 @@
 ---
-ru-RU:
+ru-RU: 
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: Копии всех писем будут отосланы на следующие адреса
   abbreviation: Аббревиатура
   access_denied: "Доступ запрещен"
@@ -207,6 +207,7 @@ ru-RU:
   credit_card: "Кредитная карта"
   credit_card_capture_complete: "Credit Card Was Captured ??"
   credit_card_payment: "Платеж крелитной картой"
+  creditcard: Creditcard
   current: Текущий
   customer: Пользователь
   date_range: "Период времени"
@@ -234,6 +235,7 @@ ru-RU:
   error: ошибка
   event: Событие
   existing_customer: "Для зарегистрированных пользователей"
+  expiration: Expiration
   expiration_month: "Месяц экспирации ??"
   expiration_year: "Год экспирации ??"
   extension: Расширение
@@ -340,6 +342,7 @@ ru-RU:
   payment_information: "Информация о платеже"
   payments: Платежи
   phone: Телефон
+  place_order: Place Order        
   presentation: Презентация ??
   previous: предыдущий
   price: Цена
@@ -391,6 +394,7 @@ ru-RU:
   shopping_cart: "Корзина"
   show_deleted: "Показать удаленные"
   show_incomplete_orders: "Показать необработанные заказы"
+  show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Показать продукты, которых нет в наличии"
   sign_up: "Регистрация"
   sku: SKU
@@ -433,11 +437,16 @@ ru-RU:
   tree: Дерево
   try_again: "Попробуйте еще раз"
   type: Тип
+  unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
+  unable_to_save_order: "Unable to Save Order"
   update: Изменить
   updated_successfully: "Успешна изменена"
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "использовать другой адрес доставки"
   user: Пользователь
+  user_account: User Account
   user_details: "Дополнительно"
   users: Пользователи
   value: Значение

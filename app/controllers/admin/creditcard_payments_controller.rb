@@ -34,7 +34,7 @@ class Admin::CreditcardPaymentsController < Admin::BaseController
     creditcard = @creditcard_payment.creditcard
     creditcard.address = @payment_presenter.address
     creditcard.save
-    flash[:notice] = t("Updated Successfully")
+    flash[:notice] = t("updated_successfully")
     redirect_to edit_object_url 
   end
 
@@ -67,7 +67,7 @@ class Admin::CreditcardPaymentsController < Admin::BaseController
   def load_data 
     load_object
     @selected_country_id = params[:payment_presenter][:address_country_id].to_i if params.has_key?('payment_presenter')
-    @selected_country_id ||= @order.creditcards.last.address.country_id unless @order.creditcards.empty?
+    @selected_country_id ||= @order.bill_address.country_id if @order and @order.bill_address
     @selected_country_id ||= Spree::Config[:default_country_id]
  
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  

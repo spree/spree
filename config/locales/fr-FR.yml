@@ -1,5 +1,5 @@
 --- 
-fr-FR:
+fr-FR: 
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: Une copie du courrier sera envoyé aux adresses suivantes
   abbreviation: Abréviation
   access_denied: "Accès interdit"
@@ -235,6 +235,7 @@ fr-FR:
   error: erreur
   event: Evenements
   existing_customer: "Client existant"
+  expiration: Expiration
   expiration_month: "Mois d'expiration"
   expiration_year: "Année d'expiration"
   extension: Prolongation
@@ -341,6 +342,7 @@ fr-FR:
   payment_information: "Information sur le paiement"
   payments: Paiements
   phone: Téléphone
+  place_order: Place Order        
   presentation: Presentation
   previous: Précédent
   price: Prix
@@ -435,9 +437,13 @@ fr-FR:
   tree: Arborescence
   try_again: "Reessayer"
   type: Type
+  unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Impossible de récupérer votre carte de crédit"
+  unable_to_save_order: "Unable to Save Order"
   update: Mise à jour
   updated_successfully: "Mise à jour effectuée avec succès"
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Utiliser une adresse de facturation différente"
   user: Utilisateur
   user_account: Compte utilisateur
@@ -459,5 +465,3 @@ fr-FR:
   zone_based: "Zone de base"
   zone_setting_description: "Liste des pays, régions ou autre zone, utilisé dans plusieurs calcul."
   zones: Zones
-
-  
