@@ -1,8 +1,8 @@
 class CheckoutController < Spree::BaseController                 
-  before_filter :stop_monkey_business
+  before_filter :stop_monkey_business, :except => :cvv
   before_filter :require_user_account
-  before_filter :load_data
-  before_filter :build_object, :except => [:new, :create]
+  before_filter :load_data, :except => :cvv
+  before_filter :build_object, :except => [:new, :create, :cvv]
 
   ssl_required :new, :create
 
