@@ -1,3 +1,33 @@
+== 0.7.0
+
+* #	166	- Order numbers should also use permalink
+* #	220	- Security holes in a few controllers
+* #	234	- Sales tax should recalculate after a change in shipping address
+* #	239	- Rake task for upgrade an existing Spree deployment
+* #	242	- State events show the UTC version of the timestamp
+* #	246	- Rake tasks failing if highline is not installed on the system 
+* #	247	- Restrict shipping methods based on order contents
+* #	249	- Backorders not updated with new quantity
+* #	251	- Missing message
+* #	253	- Norwegian Translation
+* #	255	- Admin has problems with "Available On"
+* #	260	- Remove the automatic pay event from the order model
+* #	261	- Do not allow creditcard capture without a response code
+* #	263	- Support for Protx Gateway
+* #	264	- Change credit card month and year to drop down
+* #	265	- Google Analytics Order Tracking
+* #	266	- Allow quantities when adding a variant to an order
+* #	268	- Cannot cancel an incomplete order
+* #	269	- Adjusting inventory on a 1 variant product does not update backorder status properly
+* #	270	- Additional database indexes
+* #	276	- French Translation
+* #	277	- New users should be assigned the 'user' role by default
+* #	278	- Allow backordering to be set at the variant level instead of all-or-nothing
+* #	279	- No variant is pre-selected
+* #	280	- Even deleted variants are available
+* #	284	- Russian Translation
+* #	288	- Credit card information should be filtered in logs
+
 == 0.6.0
 
 * #	129 - Public extension assets don't respect order when mirrored.
