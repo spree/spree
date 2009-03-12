@@ -1,0 +1,6 @@
+<% content_for :header_section do %>
+h2. Credits
+
+p. We'd like to thank the following people for their documentation contributions to this project.
+
+<% end %>

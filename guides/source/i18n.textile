@@ -1,0 +1,3 @@
+h2. Internationalization (i18n)
+
+endprologue.
