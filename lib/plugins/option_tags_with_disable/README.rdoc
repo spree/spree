@@ -1,0 +1,35 @@
+=OptionTagsWithDisabled
+
+Enhancements to form option tag helpers.
+	
+==Disabled option tags
+
+Disabled option tags can now be specified:
+
+ 	<%= options_for_select(['Please choose a size', 'small', 'medium', 'large'], nil, 'medium' ) %>
+
+Gives you:
+	
+	<option value="Please choose a size">Please choose a size</option>
+	<option value="s">small</option>
+	<option value="m" disabled="disabled">medium</option>
+	<option value="l">large</option>
+	
+You can specify a single value or an array of disabled values.
+
+==Proc for selected and disabled option tags
+
+options_from_collection_for_select now accepts a proc to identify selected and/or disabled attributes:
+
+  options_from_collection_for_select(@products, :id, :name, nil, lambda{|p| p.in_stock? })
+
+Would produce:
+
+<option value="s">small</option>
+<option value="m" disabled="disabled">medium</option>
+<option value="l">large</option>
+<option value="xl">extra large</option>
+
+Where any elements of the collection that are out of stock would be disabled.
+
+Copyright (c) 2008 Tekin Suleyman, released under the MIT license

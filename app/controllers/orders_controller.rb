@@ -12,14 +12,17 @@ class OrdersController < Spree::BaseController
   helper :products
 
   create.after do    
-    # add the specified products in given quantities to the order
-    # the information is specified in a hash.
+    params[:products].each do |product_id,variant_id|
+      quantity = params[:quantity].to_i if !params[:quantity].is_a?(Array)
+      quantity = params[:quantity][variant_id].to_i  if params[:quantity].is_a?(Array)
+      @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
+    end if params[:products]
     
-    params[:quantities].each do |product_id,vq|
-      (variant_id,quantity) = vq.split '='
+    params[:variants].each do |variant_id, quantity|
       quantity = quantity.to_i
       @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
-    end
+    end if params[:variants]
+    
     @order.save
   end
 
