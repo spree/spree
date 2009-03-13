@@ -3,7 +3,7 @@ class LineItem < ActiveRecord::Base
   belongs_to :order
   belongs_to :variant
   
-  delegate :product, :to => :variant, :allow_nil => true
+  has_one :product, :through => :variant
 
   validates_presence_of :variant
   validates_numericality_of :quantity, :only_integer => true, :message => "must be an integer"
