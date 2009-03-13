@@ -2,6 +2,8 @@ class LineItem < ActiveRecord::Base
   before_validation :adjust_quantity
   belongs_to :order
   belongs_to :variant
+  
+  delegate :product, :to => :variant, :allow_nil => true
 
   validates_presence_of :variant
   validates_numericality_of :quantity, :only_integer => true, :message => "must be an integer"
