@@ -278,6 +278,8 @@ ru-RU:
   locale_changed: "Локаль изменена"
   log_in: "Зайти"
   logged_in_as: "Пользователь"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Логин
   logout: Выйти
   mail_delivery_enabled: "Доставка почты включена"
@@ -459,6 +461,7 @@ ru-RU:
   what_is_this: "Что это ?"
   whats_this: "Что это"
   width: Ширина
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Ваша корзина пуста"
   zip: Индекс
   zone: Зона

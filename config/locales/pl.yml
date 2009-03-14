@@ -278,6 +278,8 @@ pl:
   locale_changed: "Locale Changed"
   log_in: Zaloguj
   logged_in_as: "Zalogowany jako"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Login
   logout: Wyloguj
   mail_delivery_enabled:
@@ -459,6 +461,7 @@ pl:
   what_is_this: "Co to?"
   whats_this: "What's this"
   width: Width
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: "Kod pocztowy"
   zone: Strefa

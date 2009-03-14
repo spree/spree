@@ -278,6 +278,8 @@ it:
   locale_changed: "Locale Changed"
   log_in: Login
   logged_in_as: "Loggato con"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Utente
   logout: Logout
   mail_delivery_enabled:
@@ -459,6 +461,7 @@ it:
   what_is_this: Cos'è?
   whats_this: "What's this"
   width: Width
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: CAP
   zone: ""

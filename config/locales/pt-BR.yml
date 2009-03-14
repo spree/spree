@@ -278,6 +278,8 @@ pt-BR:
   locale_changed: "Locale Changed"
   log_in: Entre
   logged_in_as: "Logado como"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Login
   logout: Sair
   mail_delivery_enabled:
@@ -459,6 +461,7 @@ pt-BR:
   what_is_this: "O que é isso?"
   whats_this: "What's this"
   width: Width
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: Cep
   zone: Zona

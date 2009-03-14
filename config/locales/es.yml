@@ -278,6 +278,8 @@ es:
   locale_changed: "Se ha cambiado el idioma"
   log_in: "Iniciar sesión"
   logged_in_as: "Identificado como"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: "Nombre de usuario"
   logout: "Cerrar sesión"
   mail_delivery_enabled:
@@ -459,6 +461,7 @@ es:
   what_is_this: "¿Qué es esto?"
   whats_this: "What's this"
   width: Width
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: "Código postal"
   zone: Zone

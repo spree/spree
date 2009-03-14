@@ -278,6 +278,8 @@ nb-NO:
   locale_changed: "Endret språk"
   log_in: "Logg inn"
   logged_in_as: "Innlogget som"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Brukernavn
   logout: "Logg ut"
   mail_delivery_enabled: "Sending av epost er skrudd på"
@@ -459,6 +461,7 @@ nb-NO:
   what_is_this: "Hva er dette?"
   whats_this: "Hva er dette?"
   width: Bredde
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Din handlekurv er tom"
   zip: Postnummer
   zone: Sone

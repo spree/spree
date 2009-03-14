@@ -34,7 +34,7 @@ module Spree::BaseHelper
   # human readable list of variant options
   def variant_options(v, allow_back_orders = Spree::Config[:allow_backorders])
     list = v.option_values.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence({:connector => ","})
-    list = "<span class =\"out-of-stock\">(OUT OF STOCK) #{list}</span>" unless (v.in_stock or allow_back_orders)
+    list = "<span class =\"out-of-stock\">(" + t("out_of_stock") + ") #{list}</span>" unless (v.in_stock or allow_back_orders)
     list
   end  
   
