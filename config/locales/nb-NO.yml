@@ -207,6 +207,7 @@ nb-NO:
   credit_card: "Kredittkort"
   credit_card_capture_complete: "Kortopplysninger har blitt lagret"
   credit_card_payment: "Betaling med kort"
+  creditcard: Kredittkort
   current: "Nå"
   customer: Kunde
   date_range: "Datoområde"
@@ -393,6 +394,7 @@ nb-NO:
   shopping_cart: "Handlekurv"
   show_deleted: "Vis slettede"
   show_incomplete_orders: "Vis ufullstendige ordrer"
+  show_only_complete_orders: "Vis bare ferdige ordrer"
   show_out_of_stock_products: "Vis produkter som ikke er på lager"
   sign_up: "Meld meg på"
   sku: Varenummer
@@ -444,6 +446,7 @@ nb-NO:
   use_billing_address: "Bruk fakturaadressen"
   use_different_shipping_address: "Bruk en annen leveringsadresse"
   user: Bruker
+  user_account: Brukerkonto
   user_details: "Brukeropplysninger"
   users: Brukere
   value: Verdi
