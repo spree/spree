@@ -173,7 +173,7 @@ var submit_billing = function() {
 
 var build_address = function(title, region) {
   var address = '<h3>' + title + '</h3>';
-  address += $('p#' + region + 'fname input').val() + ' ' + $('p#blname input').val() + '<br />';
+  address += $('p#' + region + 'fname input').val() + ' ' + $('p#' + region + 'lname input').val() + '<br />';
   address += $('p#' + region + 'address input').val() + '<br />';
   if($('p#' + region + 'address2').val() != '') {
     address += $('p#' + region + 'address2').val() + '<br />';
