@@ -1,24 +1,13 @@
 var regions = new Array('billing', 'shipping', 'shipping_method', 'creditcard', 'confirm_order');
 
+/*
 $(document).ajaxSend(function(event, request, settings) {
   if (typeof(AUTH_TOKEN) == "undefined") return;
   // settings.data is a serialized string like "foo=bar&baz=boink" (or null)
   settings.data = settings.data || "";
   settings.data += (settings.data ? "&" : "") + "authenticity_token=" + encodeURIComponent(AUTH_TOKEN);
 });
-
-// public/javascripts/application.js
-jQuery.ajaxSetup({ 
-  'beforeSend': function(xhr) {xhr.setRequestHeader("Accept", "text/javascript")}
-})
-
-jQuery.fn.submitWithAjax = function() {
-  this.change(function() {
-    $.post('select_country', $(this).serialize(), null, "script");
-    return false;
-  })
-  return this;
-};
+*/
 
 jQuery.fn.sameAddress = function() {
   this.click(function() {
@@ -36,12 +25,10 @@ jQuery.fn.sameAddress = function() {
 
 //On page load
 $(function() {  
-  //$("#checkout_presenter_bill_address_country_id").submitWithAjax();  
   $('#checkout_presenter_same_address').sameAddress();
   $('span#bcountry select').change(function() { update_state('b'); });
   $('span#scountry select').change(function() { update_state('s'); });
   get_states();
-
   $('#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
   $('#validate_shipping').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
   $('#select_shipping_method').click(function() { submit_shipping_method(); });  
@@ -88,7 +75,6 @@ var chg_state_input_element = function (parent, html) {
 
 // TODO: better as sibling dummy state ?
 // Update the input method for address.state 
-//
 var update_state = function(region) {
   var country        = $('span#' + region + 'country :only-child').val();
   var states         = state_mapper[country];
@@ -122,7 +108,6 @@ var update_state = function(region) {
     $('input#hidden_' + region + 'state').val($(this).val());
   });
 };
-
 
 var validate_section = function(region) {
   var validator = $('form#checkout_form').validate();
@@ -255,18 +240,21 @@ var update_shipping_methods = function(methods) {
     $('div$methods img#shipping_loader').remove();
     var p = document.createElement('p');
     var s = this.name + ' ' + this.rate;
-    $(p).append($(document.createElement('input'))
-                .attr('id', s)
+    var i = $(document.createElement('input'))
+                .attr('id', this.id)
                 .attr('type', 'radio')
                 .attr('name', 'method_id')
-                .attr(1 == $(methods).length ? 'checked' : 'notchecked', 'foo')
                 .val(this.id)
-                );
-    $(p).append($(document.createElement('label'))
+                .click(function() { $('div#methods input').attr('checked', ''); $(this).attr('checked', 'checked'); });
+    if($(methods.length) == 1) {
+      i.attr('checked', 'checked');
+    }
+    var l = $(document.createElement('label'))
                 .attr('for', s)
                 .html(s)
-                .css('top', '-1px'));
-    $('div#methods').append(p);
+                .css('top', '-1px')
+                .css('width', '300px');
+    $('div#methods').append($(p).append(i).append(l));
   });
   $('div#methods input:first').attr('validate', 'required:true');
   return;
