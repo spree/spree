@@ -235,6 +235,7 @@ it:
   error: errore
   event: Event
   existing_customer: "Existing Customer"
+  expiration: "Expiration"
   expiration_month: "Valido fino (Mese)"
   expiration_year: "Valido fino (Anno)"
   extension: estensione
@@ -245,6 +246,7 @@ it:
   gateway: Gateway
   gateway_error: "Gateway Error"
   gateway_setting_description: "Select a payment gateway and configure its settings."
+  general: "General"
   general_settings: "General Settings"
   general_settings_description: "Configure general Spree settings."
   google_analytics: "Google Analytics"
@@ -255,6 +257,7 @@ it:
   google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Height
   hello_user: "Ciao User"
+  history: History
   image: Imagine
   images: Imagini
   in_progress: "In Progress"
@@ -277,6 +280,8 @@ it:
   locale_changed: "Locale Changed"
   log_in: Login
   logged_in_as: "Loggato con"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Utente
   logout: Logout
   mail_delivery_enabled:
@@ -284,6 +289,7 @@ it:
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mail Server Settings"
   master_price: "Prezzo base"
+  month: "Month"
   my_account: "Mio conto"
   my_orders: "My Orders"
   name: Name
@@ -341,6 +347,7 @@ it:
   payment_information: "Payment Information"
   payments: Payments
   phone: Telefono
+  place_order: Place Order        
   presentation: Presentazione
   previous: Indietro
   price: Prezzo
@@ -396,6 +403,7 @@ it:
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Sign up"
   sku: SKU
+  smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
   smtp_domain: SMTP Domain
   smtp_mail_host: SMTP Mail Host                       
@@ -430,14 +438,19 @@ it:
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: Italian
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Totale
   transaction: Transazioni
   tree: Tree
   try_again: Riprova
   type: Tipo
+  unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
+  unable_to_save_order: "Unable to Save Order"
   update: Salva
   updated_successfully:
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Altro indirizzo di consegna"
   user: Utente
   user_account: User Account
@@ -453,6 +466,8 @@ it:
   what_is_this: Cos'è?
   whats_this: "What's this"
   width: Width
+  year: "Year"
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: CAP
   zone: ""

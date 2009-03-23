@@ -1,0 +1,31 @@
+table.index th {
+  background: #cdcdcd url(../../images/admin/bg/grid_header_back.png) top left repeat-x;
+  padding: 7px 10px;
+  border-left: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  text-shadow: #efefef 1px 1px 0px; }
+  table.index th.id-col {
+    text-align: center; }
+  table.index td {
+    border-bottom:1px solid #ddd;
+    padding: 3px 10px;
+  }
+table.index tr.alt td {
+  background-color: #efefef; }
+table.index.green th {
+  background: #cfefa7 url(/images/grid_header_back_green.png) top left repeat-x;
+  border-left: 1px solid #E4FDB4;
+  border-top: 1px solid #E4FDB4;
+  border-right: 1px solid #B7CB90;
+  border-bottom: 1px solid #B7CB90; }
+table.index.green td {
+  background-color: #efe; }
+table.index.order-summary {
+  clear: both; }
+  table.index.order-summary tr.totals th {
+    background: transparent;
+    text-align: right;
+    border: none; }
+table.index td.actions {text-align:right;}

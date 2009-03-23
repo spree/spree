@@ -1,8 +1,8 @@
-<%= render :partial => 'shared/product_sub_menu' %>
-<h1><%= t("new_variant") %></h1>
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+
 <%= error_messages_for :variant %>
 
 <% form_for(:variant, :url => collection_url) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <%= render :partial => 'shared/new_resource_links' %>
+  <%= render :partial => 'admin/shared/new_resource_links' %>
 <% end %>

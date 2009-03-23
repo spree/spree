@@ -1,68 +1,53 @@
 <script type='text/javascript'>
   <%= render :partial => 'function.rjs' %>
 </script>
-<table>
-  <tr>
-    <td><%= t("name") %>:</td>
-    <td><%=f.text_field :name %></td>
-  </tr>
-  <tr>
-    <td><%= t("description") %>:</td>
-    <td><%=f.text_field :description %></td>
-  </tr>  
-  <tr>
-    <td><%= t("type") %>: </td>
-    <td>
-      <input type="radio" 
-             name="type" <%=country_checked %> 
-             onclick="Element.show('country-based'); Element.hide('state-based'); Element.hide('zone-based');"
-             value="country"><%= t("country_based") %></input>
-      <input type="radio" 
-             name="type" <%=state_checked %> 
-             onclick="Element.show('state-based'); Element.hide('country-based'); Element.hide('zone-based');"
-             value="state"><%= t("state_based") %></input>
-      <input type="radio" 
-            name="type" <%=zone_checked %> 
-            onclick="Element.show('zone-based'); Element.hide('country-based'); Element.hide('state-based');"
-            value="zone"><%= t("zone_based") %></input>
-    </td>      
-  </tr>
-</table>
-<br/>
-<div id="country-based" <%= "style='display:none'" if country_checked.blank? %> >
-  <h2><%= t("country") %></h2>
-  <ul id="country-list" class="zone-member-list">
-    <% @object.countries.each do |country| %>
-      <%= render :partial => "country", :locals => {:value => country.name} %>
+
+<% f.field_container :name do %>
+  <%= f.label :name, t("name") %><br />
+  <%=f.text_field :name %></td>
+<% end %>
+
+<% f.field_container :description do %>
+  <%= f.label :description, t("description") %><br />
+  <%=f.text_field :description %>
+<% end %>
+
+<p>
+  <label><%= t("type") %></label><br />
+  <label class="sub"><input type="radio" 
+         name="type" <%=country_checked %> 
+         onclick="Element.show('country-based'); Element.hide('state-based'); Element.hide('zone-based');"
+         value="country" />
+       <%= t("country_based") %>
+  </label> &nbsp; 
+  <label class="sub"><input type="radio" 
+         name="type" <%=state_checked %> 
+         onclick="Element.show('state-based'); Element.hide('country-based'); Element.hide('zone-based');"
+         value="state" />
+       <%= t("state_based") %>
+  </label> &nbsp; 
+  <label class="sub"><input type="radio" 
+        name="type" <%=zone_checked %> 
+        onclick="Element.show('zone-based'); Element.hide('country-based'); Element.hide('state-based');"
+        value="zone" />
+      <%= t("zone_based") %>
+  </label>
+</p>
+
+
+<% for name in %w(country state zone) %>
+<fieldset id="<%= name %>-based" <%= "style='display:none'" if send("#{name}_checked").blank? %> >
+  <legend><%= t(name) %></legend>
+  <ul id="<%= name %>-list" class="member-list">
+    <% @object.send(name.pluralize).each do |member| %>
+      <%= render :partial => name, :locals => {:value => member.name} %>
     <% end %>
-    <%= render :partial => "country" if @object.countries.empty?%>
+    <%= render :partial => name if @object.send(name.pluralize).empty?%>
   </ul>
   <br/>
-  <%= link_to_function(t('add_country'), 'add_country()' ) %> 
-</div>
+  <%= button_link_to_function(t("add_#{name}"), "add_#{name}()", :icon => 'add' ) %> 
+</fieldset>
+<% end %>
 
-<div id="state-based" <%= "style='display:none'" if state_checked.blank? %> >
-  <h2><%= t("states") %></h2>
-  <ul id="state-list" class="zone-member-list">
-    <% @object.states.each do |state| %>
-      <%= render :partial => "state", :locals => {:value => state.name} %>
-    <% end %>
-    <%= render :partial => "state"  if @object.states.empty?%>
-  </ul>
-  <br/>
-  <%= link_to_function(t('add_state'), 'add_state()' ) %> 
-</div>
 
-<div id="zone-based" <%= "style='display:none'" if zone_checked.blank? %> >
-  <h2><%= t("zones") %></h2>
-  <ul id="zone-list" class="zone-member-list">
-    <% @object.zones.each do |zone| %>
-      <%= render :partial => "zone", :locals => {:value => zone.name} %>
-    <% end %>
-    <%= render :partial => "zone"  if @object.zones.empty?%>
-  </ul>
-  <br/>
-  <%= link_to_function(t('add_zone'), 'add_zone()' ) %> 
-</div>
 
-<br/><br/>

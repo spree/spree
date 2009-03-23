@@ -1,30 +1,32 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_tax_rate"), new_object_url, :icon => 'add'  %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
 <h1><%=t("ext_tax_calculator_tax_rates") %></h1>
-<table class="admin-report" width="545">
-  <thead>
-    <tr>
-      <th><%=t("zone")%></th>
-      <th><%=t("category")%></th>
-      <th><%=t("amount")%></th>
-      <th><%=t("tax_type")%></th>
-      <th><%=t("action")%></th>
-    </tr>
+<table class="index">
+  <thead>                        
+    <th><%=t("zone")%></th>
+    <th><%=t("category")%></th>
+    <th><%=t("amount")%></th>
+    <th><%=t("tax_type")%></th>
+    <th><%=t("action")%></th>
   </thead>
   <tbody>
-    <% @tax_rates.each do |tax_rate| %>
-      <tr class="<%= cycle('even', 'odd') %>">
-        <td><%=tax_rate.zone.name %></td>
-        <td><%=tax_rate.tax_category.name %></td>
-        <td><%=tax_rate.amount %></td>
-        <td><%=TaxRate::TaxType.from_value tax_rate.tax_type %></td>
-        <td>
-          <%=link_to t("edit"), edit_object_url(tax_rate) %> |
-          <%=link_to t("delete"), object_url(tax_rate), :method => :delete %>
-        </td>
-      </tr>
-    <% end %>
-    <% if @tax_rates.empty? %>
-      <tr><td colspan="5">None.</td></tr>
+    <% @tax_rates.each do |tax_rate|%>
+    <tr>
+      <td><%=tax_rate.zone.name %></td>
+      <td><%=tax_rate.tax_category.name %></td>
+      <td><%=tax_rate.amount %></td>
+      <td><%=TaxRate::TaxType.from_value tax_rate.tax_type %></td>
+      <td>
+      	<%= link_to_edit tax_rate %> &nbsp;
+      	<%= link_to_delete tax_rate %>
+      </td>
+    </tr>
     <% end %>
   </tbody>
 </table>
-<%= link_to t("new_tax_rate"), new_object_url %>

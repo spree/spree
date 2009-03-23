@@ -1,4 +1,4 @@
-class Admin::ShippingCategoriesController < ApplicationController
+class Admin::ShippingCategoriesController < Admin::BaseController    
   resource_controller
   
   layout 'admin'

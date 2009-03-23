@@ -1,9 +1,12 @@
+<%= render :partial => 'admin/shared/configuration_menu' %>
+
 <h1><%= t("new_taxonomy") %></h1>
 
 <% form_for(:taxon, :url => collection_url) do |f| %>
+
 	<%= render :partial => "form", :locals => { :f => f } %>
-	</table>
-	<p>
-	  <%= submit_tag t("create") %>
-</p>
+
+	<p class="form-buttons">
+	  <%= button t("create") %>
+  </p>
 <% end %>

@@ -1,52 +1,50 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_user"), new_object_url, :icon => 'add' %></p>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+
 <h1><%= t("listing_users") %></h1>
 
-<table>
-  <tr>
-    <td valign="top">
-      <table class="admin-report">
-        <thead>
-          <th><%= order_by_link :email, :text => t("user") %></th>
-          <th><%= t("action") %></th>
-        </thead>
-        <tbody>
-          <%- @collection.each do |user|%>
-          <tr>
-            <td width="350px"><%=link_to user.email, object_url(user) %></td>
-            <td>
-            	<%=link_to t('edit'), edit_object_url(user) %> |
-            	<%=link_to t('destroy'), object_url(user), :confirm => t('are_you_sure'), :method => :delete %>
-            </td>
-          </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </td>
-    <td valign="top">
-      <% form_for [:admin, @search] do |f| %>
-	  	<% f.fields_for @search.conditions do |user| %>
-        <div id="search-col">
-          <table class="admin-search">
-            <thead>
-              <tr>
-                <th colspan="2"><%= t("user_details") %></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><%= t("email") %></td>
-                <td>
-                  <%= user.text_field :lower_of_email, :size=>18 %>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-		  <%= f.submit t("search") %>
-        </div>
-      	<% end %>
-      <% end %>
-    </td>
-  </tr>
-</table>
-<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
-<%= link_to t('new_user'), new_object_url %>
 
+<table class="index">
+  <thead>
+    <th><%= order_by_link :email, :text => t("user") %></th>
+    <th><%= t("action") %></th>
+  </thead>
+  <tbody>
+    <%- @collection.each do |user|%>
+    <tr>
+      <td width="350px"><%=link_to user.email, object_url(user) %></td>
+      <td>
+      	<%= link_to_edit user %> &nbsp;
+      	<%= link_to_delete user %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
+
+
+<% content_for :sidebar do %>
+
+  <% form_for [:admin, @search] do |f| %>
+    <div class="box">
+      <h3><%= t(:search) %></h3>
+    <% f.fields_for @search.conditions do |user| %>
+      <p>
+        <%= t("email") %><br />
+        <%= user.text_field :lower_of_email, :size=>18 %>
+      </p>
+      <p><%= button t("search") %></p>
+  	<% end %>
+  	</div>
+  <% end %>
+
+<% end %>

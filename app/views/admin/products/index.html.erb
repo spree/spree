@@ -1,67 +1,67 @@
-<%= render :partial => 'shared/product_sub_menu' %>
+<% render :partial => 'admin/shared/product_sub_menu' %>
+
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_product"), new_object_url, :icon => 'add' %></p>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
 <h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
-<table>
-	<tr>
-		<td valign="top">
-			<table class="admin-report" width="545">
-			  <tr>
-			    <td><b><%= t("image") %></b></td>
-			    <td><b><%= order_by_link :name, :text => t("name") %></b></td>
-			    <td><b><%= order_by_link :master_price, :text => t("master_price") %></b></td>
-			    <td/>
-			  </tr>
-			<% @collection.each do |product| %>
-			  <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %>>
-			    <td><%= mini_image(product) %></td>
-			    <td valign="top"><%=product.name%></td>
-			    <td valign="top"><%=product.master_price%></td>
-			    <td valign="top">
-			      <%= link_to_edit product if product.deleted_at.nil?  %>
-			      &nbsp;
-			      <%= link_to_delete product if product.deleted_at.nil?  %>
-			    </td>
-			  </tr>
-			<% end %>
-			</table>
-	        <%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>						
-		</td>
-    <td valign="top">
-	 <% form_for [:admin, @search] do |f| %>		
-        <div id="search-col">
-          <table class="admin-search">
-            <thead>
-              <tr>
-                <th colspan="2"><%= t("product_details") %></th>
-              </tr>
-            </thead>
-            <tbody>
-		   <% f.fields_for @search.conditions do |products| %>
-	
-              <tr>
-                <td><%= t("name") %></td>
-                <td>
-				  <%= products.text_field :name_contains, :size => 15 %>
-                </td>
-              </tr>
-              <tr>
 
-            <% products.fields_for products.object.variants do |variants| %>
-                <td><%= t("sku") %></td>
-                <td><%= variants.text_field :sku_contains, :size => 15 %></td>
-            <% end %>                
-              </tr>
-              <tr>
-   				<td><%= t("show_deleted") %></td>
-				<td><%= products.check_box :deleted_at_is_not_null, {}, "1", "" %></td>
-              </tr>
-			<%end%>
-            </tbody>
-          </table>
-		  <%= f.submit t("search") %>
-        </div>
-      <% end %>
-    </td>		
-	</tr>
+<table class="index">
+  <tr>
+    <th><%= t("sku") %></td>
+    <th><%= order_by_link :name, :text => t("name") %></td>
+    <th><%= order_by_link :master_price, :text => t("master_price") %></td>
+    <th>&nbsp;</th>
+  </tr>
+<% @collection.each do |product| %>
+  <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %>>
+    <td><%= product.sku %></td>
+    <td><%= product.name %></td>
+    <td><%= product.master_price %></td>
+    <td class="actions">
+      <%= link_to_edit product if product.deleted_at.nil?  %>
+      &nbsp;
+      <%= link_to_delete product if product.deleted_at.nil?  %>
+    </td>
+  </tr>
+<% end %>
 </table>
+<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>						
 
-<%= link_to t("new_product"), new_object_url %>
+<% content_for :sidebar do %>
+
+  <% form_for [:admin, @search] do |f| %>
+
+    <div class="box">
+      <h3><%= t(:search) %></h3>
+
+      <% f.fields_for @search.conditions do |products| %>
+      <p>
+        <label><%= t("name") %></label><br />
+        <%= products.text_field :name_contains, :size => 15 %>
+      </p>
+
+      <% products.fields_for products.object.variants do |variants| %>
+        <p>
+          <label><%= t("sku") %></label><br />
+          <%= variants.text_field :sku_contains, :size => 15 %>
+        </p>
+      <% end %>                
+      <p>
+        <label><%= t("show_deleted") %></label><br />
+        <%= products.check_box :deleted_at_is_not_null, {}, "1", "" %>
+      </p>
+      <%end%>
+      <p class="form-buttons">
+        <%= button t("search") %>
+      </p>
+    </div>
+  <% end %>
+
+<% end %>
+

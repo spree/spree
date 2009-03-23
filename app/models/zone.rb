@@ -1,5 +1,6 @@
 class Zone < ActiveRecord::Base
   has_many_polymorphs :members, :from => [:states, :countries, :zones], :through => :zone_members, :as => :parent
+  validates_presence_of :name
   validates_uniqueness_of :name
   
   #attr_accessor :type

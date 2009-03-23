@@ -1,22 +1,32 @@
+<%= render :partial => 'admin/shared/configuration_menu' %>
+
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_tax_category"), new_object_url, :icon => 'add' %></p>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+
 <h1><%=t("listing_tax_categories")%></h1>
-<table class="admin-report" width="545">
+<table class="index">
   <thead>
     <tr>
       <th><%= t("name") %></th>
       <th><%= t("description") %></th>
-      <th><%= t("action") %></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
     <% @tax_categories.each do |tax_category|%>
-      <tr class="<%= cycle('even', 'odd') %>">
+      <tr>
         <td><%= tax_category.name %></td>
         <td><%= tax_category.description %></td>
-        <td>
-          <%=link_to t("edit"), edit_object_url(tax_category) %> | 
-          <%=link_to t("destroy"), object_url(tax_category), 
-                     :confirm => t("are_you_sure_you_want_to_delete_this_record"), 
-                     :method => :delete %></td>
+        <td class="actions">
+          <%=link_to_edit tax_category %> &nbsp; 
+          <%=link_to_delete tax_category %>
       </tr>
     <% end %>
     <% if @tax_categories.empty? %>
@@ -24,4 +34,4 @@
     <% end %>    
   </tbody>
 </table>
-<%= link_to t("new_tax_category"), new_object_url %>
+

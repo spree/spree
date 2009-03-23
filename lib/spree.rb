@@ -8,7 +8,7 @@ unless defined? Spree::Version
   module Spree
     module Version
       Major = '0'
-      Minor = '6'
+      Minor = '7'
       Tiny  = '99'
 
       class << self

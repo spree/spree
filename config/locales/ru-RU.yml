@@ -1,0 +1,476 @@
+---
+ru-RU: 
+  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: Копии всех писем будут отосланы на следующие адреса
+  abbreviation: Аббревиатура
+  access_denied: "Доступ запрещен"
+  account: Учетная запись
+  action: Действие
+  actions:
+    cancel: Отменить
+    create: Создать
+    destroy: Удалить
+    list: Показать
+    listing: Список
+    new: Новый
+    update: Изменить
+  activerecord:
+    attributes:
+      address:
+        address1: Адрес
+        address2: "Адрес (2я строка)"
+        city: Город
+        firstname: "Имя"
+        lastname: "Фамилия"
+        phone: Телефон
+        zipcode: "Индекс"
+      country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: "Название ISO"
+        name: Название
+        numcode: "Код ISO"
+      creditcard:
+        cc_type: "Тип"
+        month: Месяц
+        number: Номер
+        verification_value: "Код верификации"
+        year: Год
+      inventory_unit:
+        state: Состояние
+      line_item:
+        price: Цена
+        quantity: Количество
+      order:
+        checkout_complete: "Заказ завершен"
+        ip_address: "IP Адрес"
+        item_total: "Итого ??"
+        number: Номер
+        ship_amount: "Ship amount ???"
+        special_instructions: "Дополнительные инструкции"
+        state: Статус
+        tax_amount: "tax amount ??"
+        total: Итого
+      product:
+        available_on: "Доступен ??"
+        description: Описание
+        master_price: "master price ??"
+        name: Name
+        on_hand: "On Hand ?"
+      property:
+        name: Наименование
+        presentation: Представление?
+      prototype:
+        name: Наименование
+      role:
+        name: Наименование
+      state:
+        abbr: Аббревиатура
+        name: Название
+      taxon:
+        name: Наименование
+        permalink: Постоянная ссылка
+        position: Позиция
+      taxonomy:
+        name: Наименование
+      user:
+        email: Email
+      variant:
+        depth: Глубина
+        height: Высота
+        price: Цена
+        sku: Код
+        weight: Вес
+        width: Ширина
+      zone:
+        description: Описание
+        name: Наименование
+    models:
+      address:
+        one: Адрес
+        other: Адреса
+      country:
+        one: Страна
+        other: Страны
+      creditcard:
+        one: "Кредитная карта"
+        other: "Кредитные карты"
+      creditcard_payment:
+        one: "Платеж кредитной картой"
+        other: "Платежи кредитной картой"
+      creditcard_txn:
+        one: "Транзакция по кредитной карте"
+        other: "Транзакции по кредитным картам"
+      inventory_unit:
+        one: "Единица учета"
+        other: "Единицы учета"
+      line_item:
+        one: "Элемент списка"
+        other: "Элементы списка"
+      order:
+        one: Заказ
+        other: Заказы
+      payment:
+        one: Платеж
+        other: Платежи
+      product:
+        one: Продукт
+        other: Продукты
+      property:
+        one: Свойство
+        other: Свойства
+      prototype:
+        one: Прототип
+        other: Прототипы
+      role:
+        one: Роль
+        other: Роли
+      state:
+        one: Статус
+        other: Статусы
+      taxon:
+        one: Таксон
+        other: Таксоны
+      taxonomy:
+        one: Таксономия
+        other: Таксономии
+      user:
+        one: Пользователь
+        other: Пользователи
+      variant:
+        one: Вариант
+        other: Варианты
+      zone:
+        one: Зона
+        other: Зоны
+  add: Add
+  add_category: "Добавить категорию"
+  add_country: "Добавить страну"
+  add_option_type: "Добавить тип опции"
+  add_option_types: "Добавить типы опций"
+  add_option_value: "Добавить значение опции"
+  add_product_properties: "Добавить свойства продукта"
+  add_state: "Добавить область"
+  add_to_cart: "Положить в корзину"
+  add_zone: "Добавить зону"
+  address: Адрес
+  address_information: "Адресная информация"
+  adjustment: Поправка(Adjustment)
+  administration: Администрирование
+  allow_backorders: "Allow Backorders ??"
+  allow_ssl_to_be_used_when_in_developement_and_test_modes: Использовать SSL в development и test режимах
+  allow_ssl_to_be_used_when_in_production_mode: Использовать SSL в production
+  amount: Сумма
+  are_you_sure: "Вы уверены"
+  are_you_sure_category: "Вы уверены, что хотите удалить эту категорию?"
+  are_you_sure_delete: "Вы уверены, что хотите удалить эту запись?"
+  are_you_sure_delete_image: "Вы уверены, что хотите удалить эту картинку?"
+  are_you_sure_option_type: "Вы уверены, что хотите удалить этот тип опции ?"
+  are_you_sure_you_want_to_capture: "Вы уверены, что хотите capture? ??"
+  assign_taxon: "Назначить таксон ??"
+  assign_taxons: "Назначить таксоны ??"
+  authorization_failure: "Ошибка авторизации"
+  authorized: Авторизован
+  available_on: "Доступно On ??"
+  available_taxons: "Доступные таксоны ??"
+  back: Назад
+  back_to_store: "Назад к списку"
+  bill_address: "Адрес счета"
+  billing_address: "Адрес биллинга"
+  cancel: отмена
+  canceled: Отменен
+  capture: capture ??
+  card_code: "Код карты"
+  card_number: "Номер карты"
+  cart: Корзина
+  categories: Категории
+  category: Категория
+  change: Изменить
+  change_language: "Сменить язык"
+  charged: Оплачено
+  checkout: оформить заказ
+  city: Город
+  comp_order: "Comp Order ??"
+  comp_order_confirmation: "Customer will not be charged.  Are you sure you want to comp this order? ??"
+  configuration: Конфигурация
+  configuration_options: "Опции конфигурации"
+  configurations: Конфигурации
+  confirm: Подтвердить
+  confirm_password: "Подтверждение пароля"
+  continue: Продолжить
+  continue_shopping: "Продолжить покупки"
+  copy_all_mails_to: Копировать все письма на
+  country: Страна
+  country_based: "Страна"
+  create: Создать
+  create_a_new_account: "Создать новую учетную запись"
+  created_successfully: "Успешно создана"
+  credit_card: "Кредитная карта"
+  credit_card_capture_complete: "Credit Card Was Captured ??"
+  credit_card_payment: "Платеж крелитной картой"
+  creditcard: Creditcard
+  current: Текущий
+  customer: Пользователь
+  date_range: "Период времени"
+  delete: Удалить
+  depth: Глубина
+  description: Описание
+  destroy: Удалить
+  display: Показать
+  edit: Редактировать
+  editing_category: "Редактирование категории"
+  editing_option_type: "Редактирование типа опции"
+  editing_option_types: "Редактирование типов опций"
+  editing_product: "Редактирование продукта"
+  editing_property: "Редактирование свойства"
+  editing_prototype: "Редактирование прототипа"
+  editing_state: "Редактирование статуса"
+  editing_tax_category: "Редактирование категории налога"
+  editing_user: "Редактирование пользователя"
+  editing_zone: "Редактирование зоны"
+  email: Email
+  email_address: "Email адрес"
+  email_server_settings_description: "Настройки сервера email."
+  empty_cart: "Очистить корзину"
+  enable_mail_delivery: Включить доставку почты
+  error: ошибка
+  event: Событие
+  existing_customer: "Для зарегистрированных пользователей"
+  expiration: Expiration
+  expiration_month: "Месяц экспирации ??"
+  expiration_year: "Год экспирации ??"
+  extension: Расширение
+  extensions: Расширения
+  filename: Имя Файла
+  final_confirmation: "Финальное подтверждение"
+  first_name: "Имя"
+  gateway: Платежный шлюз ??
+  gateway_error: "Ошибка платежного шлюза ??"
+  gateway_setting_description: "Выберите платежный шлюз и настройте его."
+  general: "General"
+  general_settings: "Общие настройки"
+  general_settings_description: "Общие настройки Spree."
+  google_analytics: "Google Analytics"
+  google_analytics_active: "Включено"
+  google_analytics_create: "Создать новую учетную запись Google Analytics"
+  google_analytics_id: "Analytics ID"
+  google_analytics_new: "Новая учетная запись Google Analytics"
+  google_analytics_setting_description: "Управление Google Analytics ID"
+  height: Высота
+  hello_user: "Добро пожаловать"
+  history: History
+  image: Картинка
+  images: Картинки
+  in_progress: "В процессе"
+  invalid_search: "Неверный критерий поиска."
+  inventory: Инвентарь(Inventory) ??
+  inventory_adjustment: "Inventory Adjustment ??"
+  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display ??"
+  inventory_settings: "Inventory Settings ??"
+  item: Наименование
+  item_description: "Описание позиции ??"
+  item_total: "Item Total"
+  last_name: "Фамилия"
+  list: Список
+  listing_categories: "Список категорий"
+  listing_option_types: "Список Option Types ??"
+  listing_orders: "Список заказок"
+  listing_reports: "Список отчетов"
+  listing_tax_categories: "Список категорий налогов"
+  listing_users: "Список пользователей"
+  locale_changed: "Локаль изменена"
+  log_in: "Зайти"
+  logged_in_as: "Пользователь"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
+  login_name: Логин
+  logout: Выйти
+  mail_delivery_enabled: "Доставка почты включена"
+  mail_delivery_not_enabled: "Доставка почты не включена"
+  mail_server_preferences: Настройки почтового сервера
+  mail_server_settings: "Установки почтового сервера"
+  master_price: "Master Price"
+  month: "Month"
+  my_account: "Моя учетная запись"
+  my_orders: "Мои заказы"
+  name: Название
+  new: Новый
+  new_category: "Новая категория"
+  new_credit_card_payment: "Новый платеж по кредитной карте"
+  new_customer: "Для новых пользователей"
+  new_image: "Новая картинка"
+  new_option_type: "Новый Option Type ??"
+  new_option_value: "Новое Option Value ??"
+  new_product: "Новый продукт"
+  new_property: "Новое свойство"
+  new_prototype: "Новый прототип"
+  new_shipment: "Ноавя доставка"
+  new_state: "Новая область"
+  new_tax_category: "Новая категория налогов"
+  new_tax_rate: "Новая ставка налога"
+  new_taxonomy: "Новая таксономия"
+  new_user: "Новый пользователь"
+  new_variant: "Новый вариант"
+  new_zone: "Новая зона"
+  next: След.
+  no_items_in_cart: ""
+  no_match_found: "Совпадений не найдено"
+  none: Ни одного
+  none_available: "Нет в наличии"
+  on_hand: "On Hand"
+  operation: Операция
+  option_Values: "Option Values"
+  option_types: "Option Types"
+  option_values: "Option Values"
+  options: Опции
+  or: или
+  order: Заказ
+  order_confirmation_note: ""
+  order_date: "Дата заказа"
+  order_details: "Детали заказа"
+  order_email_resent: "Письмо с описанием заказа выслано повторно"
+  order_number: Заказ
+  order_operation_authorize: Авторизовать
+  order_processed_successfully: "Ваш заказ был успешно обработан"
+  order_total: "Итого заказ"
+  order_total_message: "Полная сумма, снятая с вашей карточки, составит"
+  order_updated: "Заказ обновлен"
+  orders: Заказы
+  out_of_stock: "Нет в наличии"
+  overview: Обзор
+  paid: Оплачен
+  parent_category: "Родительская категория"
+  password: Пароль
+  path: Путь
+  pay: оплатить
+  payment: Платеж
+  payment_gateway: "Платежный шлюз"
+  payment_information: "Информация о платеже"
+  payments: Платежи
+  phone: Телефон
+  place_order: Place Order        
+  presentation: Презентация ??
+  previous: предыдущий
+  price: Цена
+  problem_authorizing_card: "Проблема при авторизации Вашей кредитной карты"
+  problem_capturing_card: "Проблема при capture Вашей кредитной карты"
+  problems_processing_order: "При обработке Вашего заказа возникли проблемы"
+  process: Обработать
+  product: Продукт
+  product_details: "Описание продукта"
+  product_properties: "Свойства продукта"
+  products: Продукты
+  properties: Свойства
+  property: Свойство
+  prototypes: Прототипы
+  qty: Кол-во
+  rate: rate ??
+  remember_me: "Запомнить меня"
+  remove: Убрать
+  reports: отчеты
+  resend: Отослать повторно
+  response_code: "Response Code"
+  resume: "возобновить"
+  resumed: Возобновлен
+  return: возвратить
+  returned: Возвращенные
+  roles: Роли
+  sales_total: "Продажи итого"
+  sales_total_for_all_orders: "Продажи итого по всем заказам"
+  sales_totals: "Sales Totals ??"
+  sales_totals_description: "Sales Total For All Orders ??"
+  save_preferences: Сохранить настройки
+  search: Поиск
+  secure_connection_type: Тип защищенного соединения
+  select: Выбрать
+  select_from_prototype: "Выбрать из прототипов"
+  send_copy_of_all_mails_to: Отсылать копии всех писем на
+  send_copy_of_orders_mails_to: Отсылать копии всех писем с заказами на
+  send_mails_as: Отсылать почту как
+  send_order_mails_as: Отсылать почту с заказами как
+  ship: доставка
+  ship_address: "Ship Address"
+  shipment: Доставка
+  shipped: Доставлено
+  shipping: Доставка
+  shipping_address: "Адрес доставки"
+  shipping_error: "Ошибка при доставке"
+  shipping_method: "Тип доставки"
+  shipping_total: "Итого за доставку"
+  shopping_cart: "Корзина"
+  show_deleted: "Показать удаленные"
+  show_incomplete_orders: "Показать необработанные заказы"
+  show_only_complete_orders: "Only show complete orders"
+  show_out_of_stock_products: "Показать продукты, которых нет в наличии"
+  sign_up: "Регистрация"
+  sku: SKU
+  smtp: SMTP
+  smtp_authentication_type: "Тип SMTP Аутентификации"
+  smtp_domain: SMTP Domain
+  smtp_mail_host: SMTP Mail Host
+  smtp_password: SMTP Password
+  smtp_port: SMTP Port
+  smtp_username: SMTP Username
+  spree:
+    date: Дата
+    time: Время
+  start: Начать
+  state: область
+  state_based: "есть области"
+  state_setting_description: "Administer the list of states/provinces associated with each country."
+  states: Области
+  status: Статус
+  stop: Остановить
+  store: Сохранить
+  street_address: "Адрес"
+  street_address_2: "Адрес (строка 2)"
+  subtotal: Подитог
+  subtract: Subtract
+  system: Система
+  tax: Налог
+  tax_categories: "Категории налогов"
+  tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
+  tax_category: "Категория налогов"
+  tax_total: "Налоги Итого"
+  tax_type: "Тип налога"
+  taxon: Таксон
+  taxonomies: Таксонономии
+  taxonomies_setting_description: "Create and manage taxonomies"
+  taxons: Таксоны
+  thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
+  this_file_language: "Русский (RU)"
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
+  total: Итого
+  transaction: Транзакция
+  tree: Дерево
+  try_again: "Попробуйте еще раз"
+  type: Тип
+  unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
+  unable_to_capture_credit_card: "Unable to Capture Credit Card"
+  unable_to_save_order: "Unable to Save Order"
+  update: Изменить
+  updated_successfully: "Успешна изменена"
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
+  use_different_shipping_address: "использовать другой адрес доставки"
+  user: Пользователь
+  user_account: User Account
+  user_details: "Дополнительно"
+  users: Пользователи
+  value: Значение
+  variants: Варианты
+  version: Версия
+  website: Сайт
+  weight: Вес
+  welcome_to_sample_store: "Добро пожаловать в тестовый магазин"
+  what_is_a_cvv: "Что означает CVV ?"
+  what_is_this: "Что это ?"
+  whats_this: "Что это"
+  width: Ширина
+  year: "Year"
+  you_have_been_logged_out: "You have been logged out."
+  your_cart_is_empty: "Ваша корзина пуста"
+  zip: Индекс
+  zone: Зона
+  zone_based: "состоит из других зон"
+  zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
+  zones: Зоны
