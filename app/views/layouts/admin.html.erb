@@ -12,11 +12,11 @@
   </head>
   <body class="yui-skin-sam">
     <div id="main">
-      <% if logged_in? -%>
+      <% if current_user -%>
       <ul id="login-nav">
         <li><%= t('logged_in_as') %>: <%= current_user.email %></li>
         <li><%= link_to t('account'), user_path(current_user) %></li>
-        <li><%= link_to t('logout'), :controller => '/account', :action => 'logout' %></li>
+        <li><%= link_to t('logout'), logout_path %></li>
         <li><%= link_to t('store'), products_path %></li>
       </ul>
       <% end -%>      

@@ -53,7 +53,7 @@ class CheckoutController < Spree::BaseController
   
   protected
   def require_user_account
-    return if logged_in?
+    return if current_user
     store_location
     redirect_to signup_path 
   end
@@ -66,7 +66,7 @@ class CheckoutController < Spree::BaseController
       @object ||= end_of_association_chain.send parent? ? :build : :new, params[:checkout_presenter]  
     else                       
       # user has not yet submitted checkout parameters, we can use defaults of current_user and order objects
-      bill_address = current_user.last_address unless current_user == :false
+      bill_address = current_user.last_address unless current_user.nil?
       bill_address ||= Address.new
       ship_address = @order.ship_address || Address.new
       shipping_method = @order.shipment ? @order.shipment.shipping_method : nil
