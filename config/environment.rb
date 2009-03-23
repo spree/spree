@@ -33,7 +33,7 @@ Spree::Initializer.run do |config|
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
   config.gem 'searchlogic', :version => '1.6.3' 
   config.gem 'haml', :version => '2.1.0'
-  #config.gem 'chriseppstein-compass', :version => '0.5.1'
+  config.gem 'chriseppstein-compass', :lib => 'compass', :version => '0.5.1'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
