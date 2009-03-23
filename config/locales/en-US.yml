@@ -278,6 +278,8 @@ en-US:
   locale_changed: "Locale Changed"
   log_in: "Log In"
   logged_in_as: "Logged in as"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Login
   logout: Logout
   mail_delivery_enabled: "Mail delivery is enabled"
@@ -459,6 +461,7 @@ en-US:
   what_is_this: "What's This?"
   whats_this: "What's this"
   width: Width
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: Zip
   zone: Zone

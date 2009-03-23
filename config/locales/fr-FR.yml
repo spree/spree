@@ -278,6 +278,8 @@ fr-FR:
   locale_changed: "Locale changée"
   log_in: "S'identifier"
   logged_in_as: "Identifié en tant que"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Identifiant
   logout: Se déconnecter
   mail_delivery_enabled: "Distribution des emails activée"
@@ -459,6 +461,7 @@ fr-FR:
   what_is_this: "Qu'est ce que c'est ?"
   whats_this: "Qu'est ce que"
   width: Largeur
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Votre panier est vide"
   zip: Code postal
   zone: Zone

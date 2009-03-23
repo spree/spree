@@ -1,3 +1,4 @@
+---
 nb-NO: 
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: En kopi av all epost vil bli sendt til følgende adresser
   abbreviation: Fortkortelse
@@ -206,6 +207,7 @@ nb-NO:
   credit_card: "Kredittkort"
   credit_card_capture_complete: "Kortopplysninger har blitt lagret"
   credit_card_payment: "Betaling med kort"
+  creditcard: Kredittkort
   current: "Nå"
   customer: Kunde
   date_range: "Datoområde"
@@ -233,6 +235,7 @@ nb-NO:
   error: feil
   event: Hendelse
   existing_customer: "Eksisterende kunde"
+  expiration: "Utgår"
   expiration_month: "Utgår måned"
   expiration_year: "Utgår år"
   extension: Utvidelse
@@ -275,6 +278,8 @@ nb-NO:
   locale_changed: "Endret språk"
   log_in: "Logg inn"
   logged_in_as: "Innlogget som"
+  logged_in_successfully: "Vellykket innlogging."
+  login_authentication_failed: "Feil brukernavn eller passord."
   login_name: Brukernavn
   logout: "Logg ut"
   mail_delivery_enabled: "Sending av epost er skrudd på"
@@ -339,6 +344,7 @@ nb-NO:
   payment_information: "Betalingsinformasjon"
   payments: Betalinger
   phone: Telefon
+  place_order: "Bekreft ordre"
   presentation: Presentasjon
   previous: Forrige
   price: Pris
@@ -390,6 +396,7 @@ nb-NO:
   shopping_cart: "Handlekurv"
   show_deleted: "Vis slettede"
   show_incomplete_orders: "Vis ufullstendige ordrer"
+  show_only_complete_orders: "Vis bare ferdige ordrer"
   show_out_of_stock_products: "Vis produkter som ikke er på lager"
   sign_up: "Meld meg på"
   sku: Varenummer
@@ -432,11 +439,16 @@ nb-NO:
   tree: Tre
   try_again: "Forsøk på nytt"
   type: Type
+  unable_to_authorize_credit_card: "Kunne ikke autorisere kredittkortet"
   unable_to_capture_credit_card: "Kunne ikke lagre kortopplysningene"
+  unable_to_save_order: "Kunne ikke lagre ordren"
   update: Oppdater
   updated_successfully: "Oppdatert"  
+  use_as_shipping_address: "Bruk som leveringsadresse"
+  use_billing_address: "Bruk fakturaadressen"
   use_different_shipping_address: "Bruk en annen leveringsadresse"
   user: Bruker
+  user_account: Brukerkonto
   user_details: "Brukeropplysninger"
   users: Brukere
   value: Verdi
@@ -449,6 +461,7 @@ nb-NO:
   what_is_this: "Hva er dette?"
   whats_this: "Hva er dette?"
   width: Bredde
+  you_have_been_logged_out: "Du har nå logget ut."
   your_cart_is_empty: "Din handlekurv er tom"
   zip: Postnummer
   zone: Sone

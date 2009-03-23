@@ -278,6 +278,8 @@ de:
   locale_changed: "Sprache geändert"
   log_in: Anmelden
   logged_in_as: "Angemldet unter"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Benutzer
   logout: Abmelden
   mail_delivery_enabled: "Mailversand aktiviert"
@@ -459,6 +461,7 @@ de:
   what_is_this: "Was ist das?"
   whats_this: "What's this"
   width: Breite
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Ihr Warenkorb ist leer"
   zip: PLZ
   zone: Zone

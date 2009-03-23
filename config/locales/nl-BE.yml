@@ -278,6 +278,8 @@ nl-BE:
   locale_changed: "Regionale Instellingen Gewijzigd"
   log_in: "Aanmelden"
   logged_in_as: "Aangemeld als"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Login
   logout: Afmelden
   mail_delivery_enabled: "Mail aflevering aangezet"
@@ -459,6 +461,7 @@ nl-BE:
   what_is_this: "Wat is dit?"
   whats_this: "Wat is dit"
   width: Breedte
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Uw winkelmandje is leeg"
   zip: Postcode
   zone: Zone

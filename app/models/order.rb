@@ -162,8 +162,12 @@ class Order < ActiveRecord::Base
       OrderMailer.deliver_confirm(self)
     end   
     # finalize order totals 
-    calculator = shipment.shipping_method.shipping_calculator.constantize.new
-    self.ship_amount = calculator.calculate_shipping(shipment) 
+    unless shipment.nil?
+      calculator = shipment.shipping_method.shipping_calculator.constantize.new
+      self.ship_amount = calculator.calculate_shipping(shipment) 
+    else
+      self.ship_amount = 0
+    end
     self.tax_amount = calculate_tax
     save
   end
