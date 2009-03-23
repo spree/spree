@@ -1,79 +1,71 @@
 <!-- basic layout - feel free to replace with a more elaborate one -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <title>Spree</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <%= stylesheets %>
-    <%= yield :head %>
-  </head>
-  <body>
-    <div id="main">
-      <table id="main-table" border='1'>
-        <% if Spree::Config[:allow_locale_switching] %>
-  				<tr>
-            <td colspan="2"><%= render :partial => 'shared/language_bar' %></td>
-          </tr>
-        <% end %>
-        <tr>
-          <td colspan="2">
-            <table width="100%" class="store-header">
-              <tr>
-                <td rowspan="2" width="140px">
-                  <%= link_to image_tag('spree.jpg'), root_path %>                                                                  
-                </td>
-                <td valign="top">
-                  <h1><%= t("welcome_to_sample_store") %></h1>
-                </td>
-                <td width="200px">
-                  <% if logged_in? -%>
-                  <ul id="login-nav">
-                    <li><%= link_to t('my_account'), user_path(current_user) %></li>
-                    <li><%= link_to t('logout'), logout_path %></li>
-                  </ul>
-                  <% else %>
-                  <ul id="login-nav">
-                    <li><%= link_to t('log_in'), login_path %></li>
-                  </ul>
-		              <% end -%>
-                </td>
-              </tr>
-              <tr>
-                <td align="right" valign="top" colspan="2">
-                  <% if store_menu? %>
-                  <%= render :partial => 'shared/store_menu' %>
-                  <% end %>
-                </td>
-      	      </tr>
-      	    </table>
-      	  </td>
-        </tr>
-        <% if flash[:notice] %>
-        <tr>
-          <td colspan="2">
-            <div id="flash-notice"><%= flash[:notice] %></div>
-          </td>
-        </tr>
-      	<% end %>
-      	<% if flash[:error] %>
-      	<tr>
-      	  <td colspan="2">
-      	    <div id="flash-errors"><%= flash[:error] %></div>
-      	  </td>
-      	</tr>
-      	<% end %>
-        <tr>
-          <%= yield :sidebar %>
-          <td id="main-col">
-            <div id="main-content">
-              <%=@content_for_layout %> 	
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2"><%= render :partial => 'shared/footer'%></td>
-        </tr>
-      </table>
+<head>
+  <title>Spree</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+  <%= stylesheet_link_tag 'compiled/screen' %>
+  <%= yield :head %>
+</head>
+<% 
+if @body_class.nil?
+  if @content_for_sidebar
+    @body_class = 'two-col'
+  else
+    @body_class = 'one-col'
+  end
+end
+ %>
+<body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
+	<div class="container"> 
+	  
+	  <div id="header">
+      <%= link_to image_tag('spree.jpg'), root_path %>                                                                  
+  	  <%= render :partial => 'shared/language_bar' if Spree::Config[:allow_locale_switching] %>
+
+      <ul id="login-nav">
+        <% if logged_in? -%>
+          <li><%= link_to t('my_account'), user_path(current_user) %></li>
+          <li><%= link_to t('logout'), logout_path %></li>
+        <% else %>
+          <li><%= link_to t('log_in'), login_path %></li>
+        <% end -%>
+      </ul>
+
+      <% if store_menu? %>
+        <%= render :partial => 'shared/store_menu' %>
+      <% end %>
+
+	  </div>
+
+		<hr/>
+
+
+    <% if @content_for_sidebar %>
+    <div id="sidebar">
+      <%= yield :sidebar %>
     </div>
-  </body>
+    <% end %>
+    
+    <div id="content">
+      
+      <%= breadcrumbs(@taxon) if @taxon %>
+      
+      <% if flash[:notice] %>
+        <div class="flash notice"><%= flash[:notice] %></div>
+    	<% end %>
+    	<% if flash[:error] %>
+  	    <div class="flash errors"><%= flash[:error] %></div>
+    	<% end %>
+      <%= yield %>
+      <hr class="space" />
+
+    </div>
+    <hr/>
+    
+    <%= render :partial => 'shared/footer'%>    		
+
+  </div>
+</body>
 </html>

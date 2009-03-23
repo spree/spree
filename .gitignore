@@ -26,6 +26,7 @@ public/images/pp_checkout.gif
 public/javascripts/calendar_date_select
 public/plugin_assets
 public/stylesheets/calendar_date_select
+public/stylesheets/compiled
 public/stylesheets/language_chooser.css
 public/stylesheets/open_id.css
 spree_dev
