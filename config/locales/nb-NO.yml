@@ -246,6 +246,7 @@ nb-NO:
   gateway: "Tjeneste"
   gateway_error: "Feil oppstått i tjeneste"
   gateway_setting_description: "Velg en betalingstjeneste og konfigurer den."
+  general: "General"
   general_settings: "Generelle innstillinger"
   general_settings_description: "Konfigurer generelle innstillinger."
   google_analytics: "Google Analytics"
@@ -256,6 +257,7 @@ nb-NO:
   google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Høyde
   hello_user: "Hallo, bruker"
+  history: History
   image: Bilde
   images: Bilder
   in_progress: "Pågår"
@@ -287,6 +289,7 @@ nb-NO:
   mail_server_preferences: "Preferanser for epostserver"
   mail_server_settings: "Innstillinger for epostserver"
   master_price: "Ordinær pris"
+  month: "Month"
   my_account: "Min konto"
   my_orders: "Mine ordrer"    
   name: Navn
@@ -400,6 +403,7 @@ nb-NO:
   show_out_of_stock_products: "Vis produkter som ikke er på lager"
   sign_up: "Meld meg på"
   sku: Varenummer
+  smtp: SMTP
   smtp_authentication_type: "SMTP autentisering"
   smtp_domain: "SMTP domene"
   smtp_mail_host: "SMTP server"
@@ -434,6 +438,7 @@ nb-NO:
   taxons: Klasser
   thank_you_for_your_order: "Takk for bestillingen. Vennligst skriv ut og ta vare på denne bekreftelsen."
   this_file_language: "Norsk"
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Total
   transaction: Transaksjon
   tree: Tre
@@ -461,6 +466,7 @@ nb-NO:
   what_is_this: "Hva er dette?"
   whats_this: "Hva er dette?"
   width: Bredde
+  year: "Year"
   you_have_been_logged_out: "Du har nå logget ut."
   your_cart_is_empty: "Din handlekurv er tom"
   zip: Postnummer

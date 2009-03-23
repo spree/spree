@@ -246,6 +246,7 @@ fr-FR:
   gateway: Passerelle
   gateway_error: "Erreur de la passerelle"
   gateway_setting_description: "Sélectionner une passerelle de paiement et configurez ses paramètres."
+  general: "General"
   general_settings: "Paramètres généraux"
   general_settings_description: "Configuration générale des paramètres Spree."
   google_analytics: "Google Analytics"
@@ -256,6 +257,7 @@ fr-FR:
   google_analytics_setting_description: "Gestion de l'ID Google Analytics"
   height: Taille
   hello_user: "Bonjour utilisateur"
+  history: History
   image: Image
   images: Images
   in_progress: "En progression"
@@ -287,6 +289,7 @@ fr-FR:
   mail_server_preferences: Préférence du serveur de messagerie
   mail_server_settings: "Paramètres du serveur de messagerie"
   master_price: "Prix de départ"
+  month: "Month"
   my_account: "Mon compte"
   my_orders: "Mes commandes"
   name: Nom
@@ -400,6 +403,7 @@ fr-FR:
   show_out_of_stock_products: "Afficher les produits n'étant plus en stock"
   sign_up: "S'inscrire"
   sku: Code barre
+  smtp: SMTP
   smtp_authentication_type: Type d'authentification SMTP
   smtp_domain: Domaine SMTP
   smtp_mail_host: Serveur de messagerie
@@ -434,6 +438,7 @@ fr-FR:
   taxons: Arborescence
   thank_you_for_your_order: "Merci de nous avoir fait confiance. Imprimez cette page de confirmation pour vos archives."
   this_file_language: "Français (FR)"
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Total
   transaction: Transaction
   tree: Arborescence
@@ -461,6 +466,7 @@ fr-FR:
   what_is_this: "Qu'est ce que c'est ?"
   whats_this: "Qu'est ce que"
   width: Largeur
+  year: "Year"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Votre panier est vide"
   zip: Code postal
