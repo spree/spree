@@ -207,6 +207,7 @@ pt-BR:
   credit_card: "Cartão de Crédito"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  creditcard: Creditcard
   current: Atual
   customer: Cliente
   date_range: "Período de Data"
@@ -279,6 +280,8 @@ pt-BR:
   locale_changed: "Locale Changed"
   log_in: Entre
   logged_in_as: "Logado como"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: Login
   logout: Sair
   mail_delivery_enabled:
@@ -344,6 +347,7 @@ pt-BR:
   payment_information: "Payment Information"
   payments: Payments
   phone: Fone
+  place_order: Place Order        
   presentation: Apresentação
   previous: anterior
   price: Preço
@@ -440,9 +444,13 @@ pt-BR:
   tree: Tree
   try_again: "Tente novamente"
   type: Tipo
+  unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
+  unable_to_save_order: "Unable to Save Order"
   update: Atualizar
   updated_successfully:
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Use um Endereço de Entrega Diferente"
   user: Usuário
   user_account: User Account
@@ -459,6 +467,7 @@ pt-BR:
   whats_this: "What's this"
   width: Width
   year: "Year"
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: Cep
   zone: Zona

@@ -24,7 +24,7 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+require 'spree'
 module EasyRoleRequirementSystem
   def self.included(klass)
     super
@@ -134,7 +134,38 @@ module EasyRoleRequirementSystem
         rescue
           raise "#{__FILE__ }: #{__LINE__}: in 'all_permissions': YAML Could not load role pemissions file at '#{role_permissions_file_path}', check the file location and YAML formatting. Duplicate YAML nodes may have been deleted during serialization."
       end
+      load_extension_permissions_files(permissions_file)
+    end
+    
+    def load_extension_permissions_files(permissions_file)
+      paths_to_routes = Spree::ExtensionLoader.instance.load_extension_roots
+      paths_to_routes.each do |routes_path|
+        if File.directory?("#{routes_path}/config")
+          Dir.new("#{routes_path}/config").each do |filename|
+            if filename.match(/permissions.yml$/)
+              begin
+                RAILS_DEFAULT_LOGGER.warn("INFO: Loading permissions from #{routes_path}/config/#{filename}")
+                merge_permissions_files(permissions_file, YAML.load_file("#{routes_path}/config/#{filename}"))
+              rescue
+                raise "#{__FILE__ }: #{__LINE__}: YAML Could not load role pemissions file at '#{routes_path}/config/#{filename}', check the file location and YAML formatting. Duplicate YAML nodes may have been deleted during serialization."
+              end
+            end
+          end
+        end
+      end
       permissions_file
+    end
+    
+    def merge_permissions_files(permissions_file, new_permissions_file)
+      new_permissions_file.keys.each{|pf_key|
+          if permissions_file.has_key?(pf_key)
+            new_permissions_file[pf_key].keys.each{|p_key|
+              permissions_file[pf_key][p_key] = new_permissions_file[pf_key][p_key]
+              }
+          else
+            permissions_file[pf_key] = new_permissions_file[pf_key]
+          end
+        }
     end
     
     # make sure nothing is deleted in serialization

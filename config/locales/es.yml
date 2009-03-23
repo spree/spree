@@ -207,6 +207,7 @@ es:
   credit_card: ""
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  creditcard: Creditcard
   current: Actual
   customer: Cliente
   date_range: "Rango de Fecha"
@@ -279,6 +280,8 @@ es:
   locale_changed: "Se ha cambiado el idioma"
   log_in: "Iniciar sesión"
   logged_in_as: "Identificado como"
+  logged_in_successfully: "Logged in successfully."
+  login_authentication_failed: "Login authentication failed."
   login_name: "Nombre de usuario"
   logout: "Cerrar sesión"
   mail_delivery_enabled:
@@ -344,6 +347,7 @@ es:
   payment_information: "Payment Information"
   payments: Payments
   phone: Teléfono
+  place_order: Place Order        
   presentation: Presentación
   previous: Anterior
   price: Precio
@@ -440,9 +444,13 @@ es:
   tree: Tree
   try_again: "Volver a intentar"
   type: Tipo
+  unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
+  unable_to_save_order: "Unable to Save Order"
   update: Actualizar
   updated_successfully:
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
   use_different_shipping_address: "Usar una dirección de envío diferente"
   user: Usuario
   user_account: User Account
@@ -459,6 +467,7 @@ es:
   whats_this: "What's this"
   width: Width
   year: "Year"
+  you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: "Código postal"
   zone: Zone

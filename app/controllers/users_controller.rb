@@ -9,13 +9,16 @@ class UsersController < Spree::BaseController
   show.before do
     @orders = Order.checkout_completed(true).find_all_by_user_id(current_user.id)
   end
-
-  create.after do   
-    self.current_user = @user       
-  end
-
-  create.response do |wants|  
+                 
+  create do
+    flash nil
     wants.html { redirect_back_or_default(products_path) }         
+  end
+  
+  create.after do
+    @user.roles << Role.find_by_name("user")
+    @user.save   
+    self.current_user = @user       
   end
   
 end

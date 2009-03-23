@@ -33,7 +33,7 @@ class Admin::UsersController < Admin::BaseController
     return unless params[:user]
     @user.roles.delete_all
     Role.find(:all).each { |role|
-      @user.roles << role if !params[:user]['role_' + role.name].blank?
+      @user.roles << role if !params[:user]['role_' + role.name].blank? || role.name.downcase == "user"
     }
   end
 end

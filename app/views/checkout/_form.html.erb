@@ -1,0 +1,33 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'jquery-1.3.2.min' %>
+  <%= javascript_include_tag 'jquery.validate.pack.js' %>
+  <%= javascript_include_tag 'checkout' %> 
+  <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+  <%= stylesheet_link_tag 'checkout.css' %>
+<% end %>                 
+
+<input type="hidden" id="hidden_bstate" name="hidden_bstate" value="<%= @object.bill_address.state_id || @object.bill_address.state_name %>" />
+<input type="hidden" id="hidden_bcountry" name="hidden_bcountry" value="<%= @object.bill_address.country_id %>" />
+<input type="hidden" id="hidden_sstate" name="hidden_sstate" value="<%= @object.ship_address.state_id || @object.ship_address.state_name %>" />
+<input type="hidden" id="hidden_scountry" name="hidden_scountry" value="<%= @object.ship_address.country_id %>" />
+
+<%= error_messages_for :checkout_presenter %>
+<div id="billing">
+  <%= render :partial => 'billing', :locals => {:f => f} %>
+</div>
+
+<div id="shipping" class="checkout_disabled">
+  <%= render :partial => 'shipping', :locals => {:f => f} %>
+</div>
+            
+<div id="shipping_method" class="checkout_disabled">
+  <%= render :partial => 'shipping_method', :locals => {:f => f} %>
+</div>
+
+<div id="creditcard" class="checkout_disabled">
+  <%= render :partial => 'payment', :locals => {:f => f} %>
+</div>
+
+<div id="confirm_order" class="checkout_disabled">
+  <%= render :partial => 'confirm_order', :locals => {:f => f} %>
+</div>
