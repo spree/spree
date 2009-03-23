@@ -26,7 +26,7 @@
                   <h1><%= t("welcome_to_sample_store") %></h1>
                 </td>
                 <td width="200px">
-                  <% if logged_in? -%>
+                  <% if current_user -%>
                   <ul id="login-nav">
                     <li><%= link_to t('my_account'), user_path(current_user) %></li>
                     <li><%= link_to t('logout'), logout_path %></li>

@@ -23,10 +23,14 @@ ActionController::Routing::Routes.draw do |map|
   # map.connect '/locale/:new_locale', :controller => 'locale', :action => 'set_session_locale'
 
   map.root :controller => "products", :action => "index"
+
+  map.resource :user_session
+  #map.root :controller => "user_sessions", :action => "new"
+  map.resource :account, :controller => "users"
   
   # login mappings should appear before all others
-  map.login '/login', :controller => 'account', :action => 'login'
-  map.logout '/logout', :controller => 'account', :action => 'logout'
+  map.login '/login', :controller => 'user_sessions', :action => 'new'
+  map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
   
