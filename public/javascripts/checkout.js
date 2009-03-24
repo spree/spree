@@ -84,12 +84,13 @@ var update_state = function(region) {
   if(states) {
     // recreate state selection list
     replacement = $(document.createElement('select'));
-    $.each(states, function(id,nm) {
+    var states_with_blank = [["",""]].concat(states);
+    $.each(states_with_blank, function(pos,id_nm) {
       var opt = $(document.createElement('option'))
-                .attr('value', id)
-                .html(nm);
-      replacement.append(opt)
-      if (id == hidden_element.val()) { opt.attr('selected', 'true') }
+                .attr('value', id_nm[0])
+                .html(id_nm[1]);
+      replacement.append(opt);
+      if (id_nm[0] == hidden_element.val()) { opt.attr('selected', 'true') }
         // set this directly IFF the old value is still valid
     });
   } else {
@@ -246,7 +247,7 @@ var update_shipping_methods = function(methods) {
                 .attr('name', 'method_id')
                 .val(this.id)
                 .click(function() { $('div#methods input').attr('checked', ''); $(this).attr('checked', 'checked'); });
-    if($(methods.length) == 1) {
+    if($(methods).length == 1) {
       i.attr('checked', 'checked');
     }
     var l = $(document.createElement('label'))

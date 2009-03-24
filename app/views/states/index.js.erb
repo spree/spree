@@ -1,10 +1,1 @@
-<%= 
-    def inner(ct)
-      ct[''] = ''
-      ct.sort.map {|nm,id| '"' + id.to_s + '":"' + nm + '"'}.join(',')
-    end 
-    "{" + @state_info.
-            to_a.
-            map {|cv,ct| cv + " : {" + inner(ct) + "}" }.
-            join(",") + "}" 
-%>
+<%= @state_info.to_json %> 

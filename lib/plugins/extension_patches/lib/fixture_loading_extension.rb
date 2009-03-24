@@ -29,7 +29,9 @@ module Spree
           end
           all_loaded_fixtures.merge! fixtures_map
 
-          connection.transaction(Thread.current['open_transactions'] == 0) do
+          # was connection.transaction(Thread.current['open_transactions'] == 0) do 
+          # active_record (2.3.2) now looks at this quantity directly
+          connection.transaction do
             fixtures.reverse.each { |fixture| fixture.delete_existing_fixtures }
             fixtures.each { |fixture| fixture.insert_fixtures }
 
