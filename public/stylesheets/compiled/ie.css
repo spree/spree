@@ -1,0 +1,22 @@
+body {
+  text-align: center; }
+  * html body legend {
+    margin: -18px -8px 16px 0;
+    padding: 0; }
+  html>body p code {
+    *white-space: normal; }
+
+.container {
+  text-align: left; }
+
+ol {
+  margin-left: 2em; }
+
+sup {
+  vertical-align: text-top; }
+
+sub {
+  vertical-align: text-bottom; }
+
+hr {
+  margin: -8px auto 11px; }

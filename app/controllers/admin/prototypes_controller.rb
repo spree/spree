@@ -1,6 +1,6 @@
 class Admin::PrototypesController < Admin::BaseController
   resource_controller
-  after_filter :set_properties, :only => [:create, :update]
+  after_filter :set_habtm_associations, :only => [:create, :update]
   
   helper 'admin/product_properties'
   
@@ -28,13 +28,9 @@ class Admin::PrototypesController < Admin::BaseController
   end
   
   private
-  def set_properties
-    object.properties.clear
-    return unless params[:property]
-    params[:property][:id].each do |id|
-      object.properties << Property.find(id)
-    end
-    object.save
+  def set_habtm_associations
+    object.property_ids = params[:property][:id] if params[:property]
+    object.option_type_ids = params[:option_type][:id] if params[:option_type]
   end  
 
   def specified_rights(type)

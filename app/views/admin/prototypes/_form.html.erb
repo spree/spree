@@ -21,6 +21,24 @@
 		</li>
 	<% end %>
 </ul>
+
 <hr />
 
+<h3><%= t("option_types") %></h3>
 
+<ul class='checkbox-list' id='properties'>
+	<% OptionType.all.each do |option_type| %>
+  <% selected = if @prototype.new_record?
+    (params[:option_type] and params[:option_type][:id] and params[:option_type][:id].include?(option_type.id.to_s))
+  else
+    @prototype.option_types.include?(option_type)
+  end %>
+		<li>
+	  	<label>
+	  	  <%= check_box_tag "option_type[id][]", "#{option_type.id}", selected %>
+        <%= option_type.name %>
+      </label>
+		</li>
+	<% end %>
+</ul>
+<hr />
