@@ -55,7 +55,7 @@ module Spree
   class Boot 
     include Spree::RubyGemsLoader
     def run
-      load_rails("~>2.2.2")  # note: spree requires rails 2.2.2 (change at your own risk)
+      load_rails("2.3.2")  # note: spree requires rails 2.2.2 (change at your own risk)
       load_initializer
       Spree::Initializer.run(:set_load_path)
     end
