@@ -21,6 +21,7 @@
 !medium_blue = #2E6AB1
 !light_blue = #E5F2F8
 !dark_blue = !medium_blue - 100
+!error_text_color = #c00
 
 // Custom mixins
 = no_margin_or_padding
@@ -161,4 +162,16 @@ body
   :font-style italic
   :font-weight normal
   :color = !lighter_text_color
-  
+
+
+
+#signup #new-customer
+  +column(12)
+#signup #existing-customer
+  +column(12)
+
+
+
+// Errors
+.formError, .errorExplanation h2
+  color = !error_text_color

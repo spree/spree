@@ -1,17 +1,11 @@
-<% form_tag '/login' do %>
-  <table>
-    <tr>
-      <td><%= t("email") %>: </td>
-      <td>
-        <%= text_field_tag 'email' %>
-      </td>
-    </tr>
-    <tr>
-      <td><%= t("password") %>:</td>
-      <td>
-        <%= password_field_tag 'password' %>
-      </td>
-    </tr>
-  </table>
+<% form_tag login_path do %>
+
+  <p><%= t("email") %>:<br />
+  <%= text_field_tag 'email' %></p>
+
+  <p><%= t("password") %>:<br />
+  <%= password_field_tag 'password' %></p>
+
   <p><%= submit_tag t("log_in") %></p>
+
 <% end %>
