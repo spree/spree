@@ -1,2 +1,0 @@
-class Tabby < Cat
-end
