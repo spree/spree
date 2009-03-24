@@ -175,3 +175,79 @@ body
 // Errors
 .formError, .errorExplanation h2
   color = !error_text_color
+
+#errorExplanation h2
+  :height 22px
+  :background-color #FF0000
+  :border none
+  :padding 5px
+  :font-size 18px
+  :margin 5px 0px
+  
+.fieldWithErrors
+  :clear none
+
+
+
+
+#checkout
+  p
+    :clear both
+    :margin-bottom 15px
+    label
+      :float left
+      :width 150px
+      :position relative
+      :top 5px
+    span.req
+      :color red
+      :margin-left 2px
+      :position relative
+      :top -3px
+    label#use_billing
+      :top 0px
+    input, select
+      :margin-left 150px
+      :width 200px
+      :margin 0px
+    label.error
+      :color red
+      :clear both
+      :margin 0px 0px 5px 150px
+      :top 0px
+      :font-size 11px
+  .inner
+    :padding 10px
+  div#creditcard p select
+    :width 75px
+  p input#validate_billing,  p input#validate_shipping,  p input#select_shipping_method,  p input#confirm_payment,  #confirm_order .inner input
+    :cursor pointer
+    :width 100px
+
+  h2
+    :height 22px
+    :border= 1px solid default_border_color
+    :font-size 18px
+    :margin 5px 0px
+    :background-color = !light_blue
+    :padding 4px 10px 4px 10px
+    :line-height 1em
+
+  div#bdisplay, div#sdisplay
+    :float left
+    :width 300px
+    :clear right
+
+#methods p label
+  :float none
+  :width 150px
+  :position relative
+  :top 5px
+
+div#shipping div.inner, div#creditcard div.inner, div#shipping_method div.inner, div#confirm_order div.inner
+  :display none
+div.checkout_disabled h2
+  :color #AFAFAF
+
+.clear
+  :clear both
