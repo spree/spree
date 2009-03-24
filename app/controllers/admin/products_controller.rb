@@ -16,6 +16,11 @@ class Admin::ProductsController < Admin::BaseController
     params[:product][:product_property_attributes] ||= {} if params[:product][:product_property_attributes].nil?
   end
 
+  create.response do |wants| 
+    # go to edit form after creating as new product
+    wants.html {redirect_to edit_admin_product_url(Product.find(@product.id)) }
+  end
+
   update.response do |wants| 
     # override the default redirect behavior of r_c
     # need to reload Product in case name / permalink has changed
