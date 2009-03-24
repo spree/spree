@@ -1,3 +1,16 @@
+== 0.7.1
+
+* # 298 - rake spree:i18n:sync fails on yml files with empty lines
+* # 303 - "What's This?" CVV link broken
+* # 308 - Unable to change country for credit card payment (Admin form)
+* # 309 - Last name of shipping address is wrong field
+* # 310 - Fixed typo in Tennessee
+* # 311 - No shipping method can be selected in IE 7
+* # 312 - Remove assumption that order has shipment (when finalizing the order)
+* # 315 - state selector failing on IE7 due to "Object not supported" js error
+* # 317 - gem dependency command does not list all dependencies
+* # 314 - Refactor checkout steps as partials
+
 == 0.7.0
 
 * #	166	- Order numbers should also use permalink
