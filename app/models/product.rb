@@ -14,7 +14,6 @@ class Product < ActiveRecord::Base
 
   validates_presence_of :name
   validates_presence_of :master_price
-  validates_presence_of :description
   
   make_permalink
 
@@ -68,6 +67,26 @@ class Product < ActiveRecord::Base
   def has_stock?
     variants.inject(false){ |tf, v| tf ||= v.in_stock }
   end
+  
+  validates_presence_of :sku
+  
+  
+  # Adding properties and option types on creation based on a chosen prototype
+  
+  attr_reader :prototype_id
+  def prototype_id=(value)
+    @prototype_id = value.to_i
+  end
+  after_create :add_properties_and_option_types_from_prototype
+  
+  def add_properties_and_option_types_from_prototype
+    if prototype_id and prototype = Prototype.find_by_id(prototype_id)
+      puts 'Using prototype:'
+      puts prototype.inspect
+    end
+  end
+  
+  
   
   private
 

@@ -370,6 +370,7 @@ en-US:
   properties: Properties
   property: Property
   prototypes: Prototypes
+  prototype: Prototype
   qty: Qty
   rate: Rate
   remember_me: "Remember me"

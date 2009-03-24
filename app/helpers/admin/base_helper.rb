@@ -85,7 +85,7 @@ module Admin::BaseHelper
       css_class = 'withError' 
     end
     html = content_tag('p', capture(&block), :class => css_class)
-    concat(html, proc.binding)
+    concat(html)
   end
 
   def class_for_error(model, method)
