@@ -68,8 +68,6 @@ class Product < ActiveRecord::Base
     variants.inject(false){ |tf, v| tf ||= v.in_stock }
   end
   
-  validates_presence_of :sku
-  
   
   # Adding properties and option types on creation based on a chosen prototype
   
