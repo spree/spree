@@ -1,0 +1,37 @@
+@import compass/utilities/text/nowrap.sass
+@import compass/utilities/general/clearfix.sass
+
+// Most of these utility classes are not "semantic". If you use them,
+// you are mixing your content and presentation. For shame!
+
+=blueprint-utilities
+  // Regular clearing apply to column that should drop below previous ones.
+  .clear
+    :clear both
+  // turn off text wrapping for the element.
+  .nowrap
+    +nowrap
+  // Apply to an element that has floated children to make the bottom
+  // of the element fall _below_ the floated children.
+  .clearfix
+    +clearfix
+  .small
+    :font-size .8em
+    :margin-bottom 1.875em
+    :line-height 1.875em
+  .large
+    :font-size 1.2em
+    :line-height 2.5em
+    :margin-bottom 1.25em
+  .first
+    :margin-left 0
+    :padding-left 0
+  .last
+    :margin-right 0
+    :padding-right 0
+  .top
+    :margin-top 0
+    :padding-top 0
+  .bottom
+    :margin-bottom 0
+    :padding-bottom 0

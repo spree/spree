@@ -32,7 +32,7 @@ Spree::Initializer.run do |config|
   config.gem 'active_presenter', :version => '0.0.6'
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
   config.gem 'haml', :version => '2.1.0'
-  config.gem 'chriseppstein-compass', :lib => 'compass', :version => '0.5.1'
+  config.gem 'chriseppstein-compass', :lib => 'compass', :version => '0.5.4'
   config.gem 'has_many_polymorphs', :version => '2.13'
   config.gem 'calendar_date_select', :version => '1.15'
 

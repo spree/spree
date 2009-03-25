@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Blueprint test pages</title>
+
+  <!-- Framework CSS -->
+  <link rel="stylesheet" href="stylesheets/screen.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="stylesheets/index.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="stylesheets/print.css" type="text/css" media="print">
+  <!--[if IE]><link rel="stylesheet" href="stylesheets/ie.css" type="text/css" media="screen, projection"><![endif]-->
+</head>
+<body>
+
+  <div class="container">  
+    <h1>Blueprint test pages</h1>
+    <hr>
+    
+    <p>Welcome to the Blueprint test pages. The HTML files below tests most HTML elements, and especially classes provided
+      by&nbsp;Blueprint.</p>
+  
+    <table border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <th class="span-6">Test page</th>
+        <th class="span-8">Main files tested</th>
+        <th class="span-10">Description</th>
+      </tr>
+      <tr>
+        <td><a href="parts/grid.html">Grid</a></td>
+				<td>
+					<a href="../../frameworks/blueprint/stylesheets/blueprint/modules/_grid.sass">grid.sass</a>
+				</td>
+        <td>Tests classes provided by the grid module.</td>
+      </tr>
+      <tr class="even">
+        <td><a href="parts/elements.html">Typography</a></td>
+				<td>
+					<a href="../../frameworks/blueprint/stylesheets/blueprint/modules/_typography.sass">typography.sass</a>
+				</td>
+        <td>Tests HTML elements which gets set in the typography module.</td>
+      </tr>
+      <tr>
+        <td><a href="parts/forms.html">Forms</a></td>
+				<td>
+					<a href="../../frameworks/blueprint/stylesheets/blueprint/modules/_form.sass">form.sass</a>
+				</td>
+        <td>Tests classes and default look provided by the form module.</td>
+      </tr>
+    </table>
+    
+    <p><em><strong>Note about the css files:</strong></em>
+       These test files utilize the css files that are generated from
+       <a href="http://haml.hamptoncatlin.com/docs/rdoc/classes/Sass.html">Sass templates</a>.
+       In other words, if you change any of the source files,
+       you'll have to re-build them with <code>rake examples</code> to see any&nbsp;changes.</p>
+    
+    <div class="box">
+      <p>For more information and help, try these resources:</p>
+      <ul class="bottom">
+        <li><a href="http://code.google.com/p/blueprintcss">The Blueprint home page.</a></li>
+        <li><a href="http://groups.google.com/group/blueprintcss">Our anything-goes mailing list.</a></li>
+        <li><a href="http://bjorkoy.com">The blog where news about Blueprint gets posted.</a></li>
+      </ul>
+    </div>
+
+    <p><a href="http://validator.w3.org/check?uri=referer">
+    <img src="parts/valid.png" alt="Valid HTML 4.01 Strict" height="31" width="88" class="top"></a></p>
+    
+  </div>
+</body>
+</html>
