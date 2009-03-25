@@ -17,7 +17,7 @@ class UsersController < Spree::BaseController
   
   create.after do
     @user.roles << Role.find_by_name("user")
-    @user.save   
+    @user.save!   
     self.current_user = @user       
   end
   
