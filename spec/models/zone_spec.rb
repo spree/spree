@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Zone do
   before(:each) do
     # has_many_polymorphs requires that the record be saved before you create associations
-    @zone = Zone.create
+    @zone = Zone.create(:name => "foo", :description => "foofah")
   end
   
   describe "#type" do
@@ -53,19 +53,17 @@ describe Zone do
         @zone.include?(address).should be_false
       end
     end
-    describe "with zones based zone" do
+    describe "with zones based zone" do               
       it "should return true when the address satisfies at least one of the zones in the list of zones" do
         address = mock_model(Address, :null_object => true)
-        zone = mock_model(Zone)
-        zone.should_receive(:include?).with(address).and_return(true)
-        @zone.zones << zone
+        @zone.should_receive(:include?).with(address).and_return(true)
+        @zone.zones << @zone
         @zone.include?(address).should be_true
       end
       it "should return false when the address satisfies none of the zones in the list of zones" do
-        address = mock_model(Address, :null_object => true)
-        zone = mock_model(Zone)
-        zone.should_receive(:include?).with(address).and_return(false)
-        @zone.zones << zone
+        address = mock_model(Address, :null_object => true)        
+        @zone.should_receive(:include?).with(address).and_return(false)
+        @zone.zones << @zone
         @zone.include?(address).should be_false
       end
     end

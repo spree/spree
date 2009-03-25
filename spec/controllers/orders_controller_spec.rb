@@ -10,8 +10,8 @@ describe OrdersController do
 
   describe "create" do
     it "should add the variant to the order" do
-      @order.should_receive(:add_variant).with(@variant,2)
-	post :create, :id => "345", :quantities => {456 => "123=2"}
+      @order.should_receive(:add_variant).with(@variant, 2)
+	    post :create, :variants => {"345" => 2}
     end
   
     it "should not set the state" do
