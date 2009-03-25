@@ -68,7 +68,7 @@ a, a:link, a:visited { color: #162F54; text-decoration: underline; }
 #guides a {color: #FFF; background: none !important;}
 #guides .L, #guides .R {float: left; width: 50%; margin: 0; padding: 0;}
 #guides .R {float: right;}
-#guides hr { display: block; border: none; height: 1px; color: #162F54; background: #162F54; }
+#guides hr { display: block; border: none; height: 1px; color: #363; background: #363; }
 
 /* Headings--------------------------------------- */
 h1 { font-size: 2.5em; line-height: 1em; margin: 0.6em 0 .2em; font-weight: bold; }
