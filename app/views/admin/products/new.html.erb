@@ -1,11 +1,10 @@
-<% content_for :head do %>
-<%= calendar_date_select_includes %>
-<% end %>
-
 <%= render :partial => 'admin/shared/product_sub_menu' %>
-<h1><%= "#{t("actions.new")} #{t("product")}" %></h1>
+
+<%= error_messages_for :product %>
+
 
 <% form_for(:product,  :url => collection_url, :html => { :multipart => true }) do |f| %>
+<fieldset>
 
   <% f.field_container :name do %>
     <%= f.label :name, t("name") %> <span class="required">*</span><br />
@@ -49,4 +48,6 @@
   </div>
 
   <%= render :partial => 'admin/shared/new_resource_links' %>
+
+</fieldset>
 <% end %>
