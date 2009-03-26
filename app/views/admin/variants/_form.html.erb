@@ -4,12 +4,15 @@
     <% @product.options.each do |option| %>
       <p>
         <%= label :new_variant, option.option_type.presentation %><br />
-        <%= select(:new_variant, 
-          option.option_type.presentation, 
-          option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
-          {}, :disabled => @variant.new_record? ? false : 'disabled'
-          ) 
-        %>
+        <% if @variant.new_record? %>
+          <%= select(:new_variant, option.option_type.presentation, 
+            option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
+            {}) 
+          %>
+        <% else %>
+          <% opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.presentation %>
+          <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled') %>
+        <% end %>
       </p>
     <% end %>
 
