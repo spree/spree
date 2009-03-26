@@ -10,7 +10,7 @@
       <th><%= order_by_link :created_at, :text => t("order_date") %></th>
       <th><%= order_by_link :number, :text => t("order_number") %></th>
       <th><%= order_by_link :state, :text => t("status") %></th>
-      <th><%= order_by_link ({:user => :email}, :text => t("customer")) %></th>
+      <th><%= order_by_link({:user => :email}, :text => t("customer")) %></th>
       <th><%= order_by_link :total, :text =>t("total") %></th>
     </tr>
   </thead>
