@@ -4,6 +4,14 @@
 
 <div>
   <p>
+	<strong><%= t("site_name") %></strong>
+	<%= text_field_tag('preferences[site_name]', Spree::Config[:site_name]) %>
+  </p>
+  <p>
+	<strong><%= t('site_url') %></strong>
+	<%= text_field_tag('preferences[site_url]', Spree::Config[:site_url])%>
+ </p>	
+  <p>
     <%= check_box_tag('preferences[allow_ssl_in_production]', "1", Spree::Config[:allow_ssl_in_production]) %>
     <strong><%= t('allow_ssl_to_be_used_when_in_production_mode') %></strong>
     <input name="preferences[allow_ssl_in_production]" type="hidden" value="0" />

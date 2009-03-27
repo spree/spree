@@ -1,6 +1,14 @@
 <h2><%= t("general_settings") %></h2>
 
 <div id="general_settings">
+
+  <div>
+    <strong><%= t("site_name") %>:</strong> <%=  Spree::Config[:site_name] %>
+  </div>	
+  <div>
+    <strong><%= t("site_url") %>:</strong> <%=  Spree::Config[:site_url] %>
+  </div>	
+	
   <div id="allow_ssl_in_production">
     <h4>
       SSL will <%= Spree::Config[:allow_ssl_in_production] ? '' : 'NOT' %> be used in production
