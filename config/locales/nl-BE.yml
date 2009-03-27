@@ -246,6 +246,7 @@ nl-BE:
   gateway: Gateway
   gateway_error: "Gateway Fout"
   gateway_setting_description: "Selecteer een betalings-gateway en stel deze in."
+  general: "General"
   general_settings: "Algemene Instellingen"
   general_settings_description: "Algemene Spree Instellingen."
   google_analytics: "Google Analytics"
@@ -256,6 +257,7 @@ nl-BE:
   google_analytics_setting_description: "Instellen Google Analytics ID" 
   height: Hoogte
   hello_user: "Hallo Gebruiker"
+  history: History
   image: Afbeelding
   images: Afbeeldingen
   in_progress: "Aan de gang"
@@ -287,6 +289,7 @@ nl-BE:
   mail_server_preferences: "Mail server Instellingen"
   mail_server_settings: "Mail server Instellingen"
   master_price: "Prijs"
+  month: "Month"
   my_account: "Mijn Profiel"
   my_orders: "Mijn Bestellingen"    
   name: Naam
@@ -400,6 +403,7 @@ nl-BE:
   show_out_of_stock_products: "Toon producten die niet voorradig zijn"
   sign_up: "Registreer"
   sku: Sku
+  smtp: SMTP
   smtp_authentication_type: "SMTP Autorisatie Type"
   smtp_domain: "SMTP Domein"
   smtp_mail_host: "SMTP Mail Host"
@@ -434,6 +438,7 @@ nl-BE:
   taxons: Taxons
   thank_you_for_your_order: "Hartelijk dank voor uw bestelling. U kan deze pagina afdrukken als bewijs van bestelling."
   this_file_language: "Nederlands (BE)"
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Totaal
   transaction: Transactie
   tree: Structuur
@@ -461,6 +466,7 @@ nl-BE:
   what_is_this: "Wat is dit?"
   whats_this: "Wat is dit"
   width: Breedte
+  year: "Year"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Uw winkelmandje is leeg"
   zip: Postcode

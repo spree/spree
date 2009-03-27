@@ -1,4 +1,4 @@
-<%= render :partial => 'shared/order_tabs', :locals => {:current => "Payments"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
 <br/>
 <h2><%= t("credit_card_payment")%></h2>
 <br/>
@@ -9,7 +9,7 @@
 	<h4><%= t("billing_address")%></h4>
 	<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "payment"} %>
 	<br/>
-	<table class="basic-table">
+	<table class="index">
 	  <tr>
 	    <th><%= t("transaction") %></th>
 	    <th><%= t("amount") %></th>
@@ -26,10 +26,9 @@
 	  <% end %>
 	</table>
 
-	<div align="right">
-		<br/>
-	  <%= submit_tag t('update') %>
-	</div>	
+	<p class="form-buttons">
+	  <%= button t('update') %>
+	</p>	
 
 <% end %>
 <%= link_to t("capture").titleize, capture_admin_order_creditcard_payment_url(@order, @creditcard_payment), :confirm => t('are_you_sure_you_want_to_capture') if @creditcard_payment.can_capture?  %> &nbsp;

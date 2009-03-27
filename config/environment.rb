@@ -29,9 +29,12 @@ Spree::Initializer.run do |config|
   config.gem "highline", :version => '1.4.0'
   config.gem 'has_many_polymorphs'
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.1'
-  config.gem "tlsmail"
+  config.gem "tlsmail", :version => '0.0.1'
   config.gem 'active_presenter', :version => '0.0.6'
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
+  config.gem 'has_many_polymorphs', :version => '2.13'
+  config.gem 'calendar_date_select', :version => '1.15'
+  
   #config.gem 'searchlogic', :version => '1.6.3'                           
   # HACKED version of search logic - we'll move back when our fix is accepted into core
   config.gem 'schof-searchlogic', :lib => 'searchlogic', :version => '0.0.2'  
@@ -54,20 +57,6 @@ Spree::Initializer.run do |config|
   # in the database in UTC, and return them converted to the specified local zone.
   # Run "rake -D time" for a list of tasks for finding time zone names. 
   config.time_zone = "Eastern Time (US & Canada)"
-
-  # Your secret key for verifying cookie session data integrity.
-  # If you change this key, all old sessions will become invalid!
-  # Make sure the secret is at least 30 characters and all random, 
-  # no regular words or you'll be exposed to dictionary attacks.
-  config.action_controller.session = {
-    :session_key => '_<%= app_name %>_session',
-    :secret      => '<%= app_secret_key_to_be_replaced_in_real_app_by_generator %>' 
-  }
-
-  # Use the database for sessions instead of the cookie-based default,
-  # which shouldn't be used to store highly confidential information
-  # (create the session table with "rake db:sessions:create")
-  # config.action_controller.session_store = :active_record_store
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper,

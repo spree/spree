@@ -1,57 +1,40 @@
-<% content_for :sub_menu do %>
-  <ul id="act-nav">
-    <li><%= link_to t("resend"), resend_admin_order_url(@order), :method => :post %></li>
-  </ul>
-<% end %>
-<%= render :partial => 'shared/order_tabs', :locals => {:current => "Order Details"} %>
-<%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
-        
-<table width="100%">
-  <tr>
-    <td width="50%" valign="top">
-      <% if @order.bill_address %>
-        <table class="admin-table">
-          <tr>
-            <th>
-              <%= link_to "Bill Address", edit_admin_order_creditcard_payment_url(@order, @order.creditcard_payments.last) %>
-            </th>
-          </tr>
-          <tr>
-            <td>
-              <%= render :partial => 'shared/address', :locals => {:address => @order.bill_address} %>      
-            </td>
-          </tr>
-        </table>
-      <% end %>
-    </td>
-    <td width="50%" valign="top">
-      <% if @order.ship_address %>
-        <table class="admin-table">
-          <tr>
-            <th><%= link_to "Ship Address", edit_admin_order_shipment_url(@order, @order.shipments.last) %></th>
-          </tr>
-          <tr>
-            <td>
-              <%= render :partial => 'shared/address', :locals => {:address => @order.ship_address} %>      
-            </td>
-          </tr>
-        </table>
-      <% end %>
-    </td>
-  </tr>
-</table>
+<div class='toolbar order-links'>
+  <%= button_link_to t("resend"), resend_admin_order_url(@order), :method => :post, :icon => 'send-email' %>
+  <%= event_links %>
+</div>
+
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
+
+<%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} -%>
+
+<% if @order.bill_address %>
+  <div class='adr'>
+    <h4><%= link_to "Bill Address", edit_admin_order_creditcard_payment_url(@order, @order.creditcard_payments.last) %></h4>
+    <%= render :partial => 'admin/shared/address', :locals => {:address => @order.bill_address} %>      
+  </div>
+<% end %>                   
+<% if @order.ship_address %>
+  <div class='adr'>
+    <h4><%= link_to "Ship Address", edit_admin_order_shipment_url(@order, @order.shipments.last) %></h4>
+    <%= render :partial => 'admin/shared/address', :locals => {:address => @order.ship_address} %>      
+  </div>
+  <% end %>
+<hr />
 
 <% if @order.user %>
-  <table class="order-address">
+  <table class="index">
     <tr>
       <th><%= t("email") %></th>
     </tr>
     <tr>
-      <td><%= @order.user.email if @order.user%></td>
+      <td><%= @order.user.email if @order.user %></td>
     </tr>
   </table>
 <% end %>
-<table class="basic-table">
+
+<h4><%= t('history') %></h4>
+
+<table class="index">
   <tr>
     <th><%= t("event") %></th>
     <th><%= t("user") %></th>
@@ -70,4 +53,3 @@
     </tr>
   <% end %>
 </table>
-<%= event_links %>

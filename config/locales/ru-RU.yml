@@ -246,6 +246,7 @@ ru-RU:
   gateway: Платежный шлюз ??
   gateway_error: "Ошибка платежного шлюза ??"
   gateway_setting_description: "Выберите платежный шлюз и настройте его."
+  general: "General"
   general_settings: "Общие настройки"
   general_settings_description: "Общие настройки Spree."
   google_analytics: "Google Analytics"
@@ -256,6 +257,7 @@ ru-RU:
   google_analytics_setting_description: "Управление Google Analytics ID"
   height: Высота
   hello_user: "Добро пожаловать"
+  history: History
   image: Картинка
   images: Картинки
   in_progress: "В процессе"
@@ -287,6 +289,7 @@ ru-RU:
   mail_server_preferences: Настройки почтового сервера
   mail_server_settings: "Установки почтового сервера"
   master_price: "Master Price"
+  month: "Month"
   my_account: "Моя учетная запись"
   my_orders: "Мои заказы"
   name: Название
@@ -400,6 +403,7 @@ ru-RU:
   show_out_of_stock_products: "Показать продукты, которых нет в наличии"
   sign_up: "Регистрация"
   sku: SKU
+  smtp: SMTP
   smtp_authentication_type: "Тип SMTP Аутентификации"
   smtp_domain: SMTP Domain
   smtp_mail_host: SMTP Mail Host
@@ -434,6 +438,7 @@ ru-RU:
   taxons: Таксоны
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "Русский (RU)"
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Итого
   transaction: Транзакция
   tree: Дерево
@@ -461,6 +466,7 @@ ru-RU:
   what_is_this: "Что это ?"
   whats_this: "Что это"
   width: Ширина
+  year: "Year"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Ваша корзина пуста"
   zip: Индекс

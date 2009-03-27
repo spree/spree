@@ -235,7 +235,7 @@ pl:
   error: błąd
   event: Event
   existing_customer: "Existing Customer"
-  expiration: Expiration
+  expiration: "Expiration"
   expiration_month: "Miesiąc wygaśnięcia"
   expiration_year: "Rok wygaśnięcia"
   extension: Rozszerzenie
@@ -246,6 +246,7 @@ pl:
   gateway: Brama
   gateway_error: "Błąd bramki"
   gateway_setting_description: "Wybierz metodę płatności i skonfiguruj jej ustawienia."
+  general: "General"
   general_settings: "General Settings"
   general_settings_description: "Configure general Spree settings."
   google_analytics: "Google Analytics"
@@ -256,6 +257,7 @@ pl:
   google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Height
   hello_user: "Witaj użytkowniku"
+  history: History
   image: Obrazek
   images: Obrazki
   in_progress: "W trakcie..."
@@ -287,6 +289,7 @@ pl:
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Ustawienia serwera pocztowego"
   master_price: "Cena główna"
+  month: "Month"
   my_account: "Moje konto"
   my_orders: "My Orders"
   name: Name
@@ -400,6 +403,7 @@ pl:
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Załóż konto"
   sku: SKU
+  smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
   smtp_domain: SMTP Domain
   smtp_mail_host: SMTP Mail Host                       
@@ -434,6 +438,7 @@ pl:
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: Polski
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Łącznie
   transaction: Transakcja
   tree: Tree
@@ -461,6 +466,7 @@ pl:
   what_is_this: "Co to?"
   whats_this: "What's this"
   width: Width
+  year: "Year"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: "Kod pocztowy"

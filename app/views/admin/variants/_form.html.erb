@@ -1,35 +1,37 @@
-<table>
-  <% if @variant.new_record? %>
+<div class="yui-gb">
+  <div class="yui-u first">
+
     <% @product.options.each do |option| %>
-      <tr>
-        <td><%= option.option_type.presentation %>: </td>
-        <td>
-          <%= select(:new_variant, option.option_type.presentation, 
-                     option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] }) %>
-        </td>
-      </tr>
+      <p>
+        <%= label :new_variant, option.option_type.presentation %><br />
+        <%= select(:new_variant, 
+          option.option_type.presentation, 
+          option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
+          {}, :disabled => @variant.new_record? ? false : 'disabled'
+          ) 
+        %>
+      </p>
     <% end %>
-  <% else %>
-    <% @variant.option_values.each do |option_value| %>
-      <tr>
-        <td><%= option_value.option_type.presentation %>: </td>
-        <td><%= option_value.presentation %></td>
-      </tr>
+
+    <p><%= f.label :sku, t("sku") %><br />
+    <%= f.text_field :sku %></p>
+
+
+    <p><%= f.label :price, t("price") %>:<br />
+    <%= f.text_field :price %></p>
+
+
+    <p><%= f.label :on_hand, t("on_hand") %>: <br />
+    <%= f.text_field :on_hand %></p>
+
+
+
+  </div>
+  <div class="yui-u">
+
+    <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
+      <%= render :partial => "admin/shared/additional_field", :locals => {:field => field, :f => f} %>
     <% end %>
-  <% end %>
-  <tr>
-    <td><%= t("sku") %>: </td>
-    <td><%= f.text_field :sku %></td>
-  </tr>
-  <tr>
-    <td><%= t("price") %>: </td>
-    <td><%= f.text_field :price %></td>
-  </tr>
-  <tr>
-    <td><%= t("on_hand") %>: </td>
-    <td><%= f.text_field :on_hand %></td>
-  </tr>  
-	<% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
-		<%= render :partial => "shared/additional_field", :locals => {:field => field, :f => f} %>
-	<% end %>
-</table>
+
+  </div>
+</div>

@@ -1,8 +1,10 @@
+<%= render :partial => 'admin/shared/configuration_menu' %>
+
 <h1>Gateway Configuration</h1>
 <%= error_messages_for :gateway_configuration %>
 <% form_for(:gateway_configuration, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <p>
-    <%=submit_tag t("update")%> <%= link_to t("cancel"), :controller => "admin/overview"%>
+  <p class="form-buttons">
+    <%= button t("update")%>
   </p>
 <% end %>

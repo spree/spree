@@ -235,7 +235,7 @@ de:
   error: Fehler
   event: Ereignis
   existing_customer: "Vorhandener Kunde"
-  expiration: Expiration
+  expiration: "Expiration"
   expiration_month: "Gültig bis (Monat)"
   expiration_year: "Gültig bis (Jahr)"
   extension: Erweiterung
@@ -246,6 +246,7 @@ de:
   gateway: Gateway
   gateway_error: "Gateway Fehler"
   gateway_setting_description: "Gateway-Einstellungen ändern"
+  general: "General"
   general_settings: "Allgemeine Einstellungen"
   general_settings_description: "Allgemeine Einstellungen ändern"
   google_analytics: "Google Analytics"
@@ -256,6 +257,7 @@ de:
   google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Höhe
   hello_user: "Hallo Benutzer"
+  history: History
   image: Bild
   images: Bilder
   in_progress: "In Bearbeitung"
@@ -287,6 +289,7 @@ de:
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mailserver-Einstellungen"
   master_price: Grundpreis
+  month: "Month"
   my_account: "Mein Konto"
   my_orders: "Meine Bestellungen"
   name: Name
@@ -400,6 +403,7 @@ de:
   show_out_of_stock_products: "Zeige ausverkaufte Produkte"
   sign_up: "Anmelden"
   sku: Lagerhaltungsnummer
+  smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
   smtp_domain: SMTP Domain
   smtp_mail_host: SMTP Mail Host                       
@@ -434,6 +438,7 @@ de:
   taxons: Taxons
   thank_you_for_your_order: "Vielen Dank für ihre Bestellung"
   this_file_language: Deutsch
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Gesamt
   transaction: Transaktion
   tree: Baum
@@ -461,6 +466,7 @@ de:
   what_is_this: "Was ist das?"
   whats_this: "What's this"
   width: Breite
+  year: "Year"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Ihr Warenkorb ist leer"
   zip: PLZ

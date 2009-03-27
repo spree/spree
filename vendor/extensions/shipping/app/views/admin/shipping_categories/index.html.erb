@@ -1,24 +1,27 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("ext_shipping_new_shipping_category"), new_object_url, :icon => 'add'  %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
 <h1><%=t("ext_shipping_shipping_categories") %></h1>
-<table class="admin-report" width="545">
+<table class="index">
   <thead>
-    <tr>
-	    <th><%=t("name")%></th>
-      <th><%=t("action")%></th>
-    </tr>
+    <th><%= t("name") %></th>
+    <th><%= t("action") %></th>
   </thead>
   <tbody>
-    <% @shipping_categories.each do |shipping_category| %>
-      <tr class="<%= cycle('even', 'odd') %>">
-        <td><%=shipping_category.name %></td>
-        <td>
-          <%=link_to t("edit"), edit_object_url(shipping_category) %> |
-          <%=link_to t("delete"), object_url(shipping_category), :method => :delete %>
-        </td>
-      </tr>
-    <% end %>
-    <% if @shipping_categories.empty? %>
-      <tr><td colspan="5">None.</td></tr>
+    <% @shipping_categories.each do |shipping_category|%>
+    <tr>
+      <td width="350px"><%= shipping_category.name %></td>
+      <td>
+      	<%= link_to_edit shipping_category %> &nbsp;
+      	<%= link_to_delete shipping_category %>
+      </td>
+    </tr>
     <% end %>
   </tbody>
 </table>
-<%= link_to t("ext_shipping_new_shipping_category"), new_object_url %>

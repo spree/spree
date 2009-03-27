@@ -2,27 +2,22 @@
   <%= calendar_date_select_includes %>
 <% end %>
 <h1><%= t("listing_reports") %></h1>
-<table>
-  <tr>
-    <td valign="top">
-      <div id="order-summary">
-        <table class="admin-report" width="515">
-          <thead>
-            <tr>
-              <th><%= t("name") %></th>
-              <th><%= t("description") %></th>
-            </tr>
-          </thead>
-          <tbody>     
-            <% @reports.each do |key, value| %>
-            <tr class="<%= cycle('even', 'odd') %>">
-              <td><%= link_to t(value[:name].downcase.gsub(" ","_")), send("#{key}_admin_reports_url".to_sym) %></td>
-              <td><%= t(value[:description].downcase.gsub(" ","_")) %></td>
-            </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </td>
-  </tr>
+
+
+<table class="index">
+  <thead>
+    <tr>
+      <th><%= t("name") %></th>
+      <th><%= t("description") %></th>
+    </tr>
+  </thead>
+  <tbody>     
+    <% @reports.each do |key, value| %>
+    <tr>
+      <td><%= link_to t(value[:name].downcase.gsub(" ","_")), send("#{key}_admin_reports_url".to_sym) %></td>
+      <td><%= t(value[:description].downcase.gsub(" ","_")) %></td>
+    </tr>
+    <% end %>
+  </tbody>
 </table>
+

@@ -1,19 +1,19 @@
-<table class="admin-report" width="545">
+<table class="index">
   <thead>
     <tr>
       <th><%= t("name") %></th>
       <th><%= t("abbreviation") %></th>
-      <th><%= t("action") %></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
     <% @states.each do |state| %>
-      <tr class="<%= cycle('even', 'odd') %>">
+      <tr>
         <td><%=state.name %></td>
         <td><%=state.abbr %></td>
-        <td>
-          <%=link_to t("edit"), edit_admin_country_state_url(@country, state) %> |
-          <%=link_to t("delete"), object_url(state), :method => :delete %>
+        <td class="actions">
+          <%=link_to_with_icon 'edit', t("edit"), edit_admin_country_state_url(@country, state) %> &nbsp;
+          <%=link_to_with_icon 'delete', t("delete"), object_url(state), :method => :delete %>
         </td>
       </tr>
     <% end %>
@@ -22,4 +22,7 @@
     <% end %>
   </tbody>
 </table>
-<%= link_to t("new_state"), new_admin_country_state_url(@country) %>
+
+<p>
+  <%= button_link_to t("new_state"), new_admin_country_state_url(@country), :icon => 'add' %>
+</p>

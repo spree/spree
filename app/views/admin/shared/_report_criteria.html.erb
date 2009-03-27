@@ -1,0 +1,24 @@
+<% content_for :head do %>
+  <%= calendar_date_select_includes %>
+<% end %>
+
+<% form_for [:admin, @search], :url => "" do |f| %> 
+	<% f.fields_for @search.conditions do |s| %>
+
+    <label><%= t("date_range") %></label><br />
+    <div class="yui-g date-range-filter">
+      <div class="yui-u sub-field first">
+        <%= s.calendar_date_select :created_at_after %><br />
+        <label class="sub"><%= t("start") %></label>
+      </div>
+      <div class="yui-u sub-field">
+        <%= s.calendar_date_select :created_at_before %><br />
+        <label><%= t("stop") %></label>
+      </div>
+    </div>
+
+		<p><%= button t("search") %></p>
+
+	<% end %>
+<% end %>	
+

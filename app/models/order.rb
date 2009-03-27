@@ -2,11 +2,7 @@ class Order < ActiveRecord::Base
 #  before_create :generate_order_number
   before_save :update_line_items
   
-  has_many :line_items, :dependent => :destroy, :attributes => true do
-    def in_order(variant)
-      find :first, :conditions => ['variant_id = ?', variant.id]
-    end
-  end
+  has_many :line_items, :dependent => :destroy, :attributes => true
   has_many :inventory_units
   has_many :state_events
   has_many :payments
@@ -87,7 +83,7 @@ class Order < ActiveRecord::Base
   end
   
   def add_variant(variant, quantity=1)
-    current_item = line_items.in_order(variant)
+    current_item = contains?(variant)
     if current_item
       current_item.increment_quantity unless quantity > 1
       current_item.quantity = (current_item.quantity + quantity) if quantity > 1
@@ -151,6 +147,10 @@ class Order < ActiveRecord::Base
     return nil if shipments.empty?
     return shipment.address
   end      
+      
+  def contains?(variant)
+    line_items.select { |line_item| line_item.variant == variant }.first
+  end
  
   include Spree::ShippingCalculator
  

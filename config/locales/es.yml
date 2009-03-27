@@ -235,7 +235,7 @@ es:
   error: error
   event: Event
   existing_customer: "Existing Customer"
-  expiration: Expiration
+  expiration: "Expiration"
   expiration_month: "Mes de vencimiento"
   expiration_year: "Año de vencimiento"
   extension: Extensión
@@ -246,6 +246,7 @@ es:
   gateway: ""
   gateway_error: "Gateway Error"
   gateway_setting_description: ""
+  general: "General"
   general_settings: "General Settings"
   general_settings_description: "Configure general Spree settings."
   google_analytics: "Google Analytics"
@@ -256,6 +257,7 @@ es:
   google_analytics_setting_description: "Manage Google Analytics ID" 
   height: Height
   hello_user: "Hola usuario"
+  history: History
   image: Imágen
   images: Imagenes
   in_progress: "In Progress"
@@ -287,6 +289,7 @@ es:
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mail Server Settings"
   master_price: "Precio principal"
+  month: "Month"
   my_account: "Mi cuenta"
   my_orders: "My Orders"
   name: Name
@@ -400,6 +403,7 @@ es:
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: Registrarme
   sku: Código
+  smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
   smtp_domain: SMTP Domain
   smtp_mail_host: SMTP Mail Host                       
@@ -434,6 +438,7 @@ es:
   taxons: Taxons
   thank_you_for_your_order: ""
   this_file_language: "Español (España)"
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Total
   transaction: Transacción
   tree: Tree
@@ -461,6 +466,7 @@ es:
   what_is_this: "¿Qué es esto?"
   whats_this: "What's this"
   width: Width
+  year: "Year"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: "Código postal"

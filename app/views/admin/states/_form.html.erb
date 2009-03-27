@@ -1,10 +1,9 @@
-<table>
-  <tr>
-    <td><%= t("name") %>:</td>
-    <td><%=f.text_field :name %></td>
-  </tr>
-  <tr>
-    <td><%= t("abbreviation") %>:</td>
-    <td><%=f.text_field :abbr %></td>
-  </tr>
-</table>
+<% f.field_container :name do %>
+  <%= f.label :name, t("name") %><br />
+  <%=f.text_field :name %>
+<% end %>
+
+<% f.field_container :abbr do %>
+  <%= f.label :abbr, t("abbreviation") %><br />
+  <%= f.text_field :abbr %>
+<% end %>
