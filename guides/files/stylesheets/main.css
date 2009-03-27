@@ -35,7 +35,7 @@ table th { border-bottom: 2px solid #CCC; background: #EEE; font-weight: bold; p
 /* Structure and Layout --------------------------------------- */
 body { text-align: center; font-family: Helvetica, Arial, sans-serif; font-size: 87.5%; line-height: 1.5em; background-color: #0095DA; color: #222; }
 .wrapper { text-align: left; margin: 0 auto; width: 69em; }
-#topNav { padding: 1em 0; color: #565656; border-bottom: 1px solid #162F54; }
+#topNav { padding: 5px 0; color: #565656; border-bottom: 1px solid #162F54; }
 #header { background-color: #162F54; color: #FFF; padding: 1.5em 0; position: relative; z-index: 99; border-top: 1px solid #0095DA; }
 #feature { background: #d5e9f6 url(../../images/feature_tile.gif) repeat-x; color: #333; padding: 0.5em 0 1.5em; }
 #container { background: #FFF; color: #333; padding: 0.5em 0 1.5em 0; border-bottom: #0095DA 1px solid; }
