@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper.rb'
 
 
 class Control0Controller < ActionController::Base
-  include AuthenticatedSystem
+  #include AuthenticatedSystem
   include RoleRequirementSystem
   
   def index;end
@@ -60,7 +60,7 @@ def define_classes
     
     if self.to_s == "EasyRolesTest0Controller"
       @permissions_file = YAML.load(create_permissions)
-      include AuthenticatedSystem
+      #include AuthenticatedSystem
       include RoleRequirementSystem     
       include EasyRoleRequirementSystem 
     end
