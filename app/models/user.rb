@@ -1,87 +1,35 @@
-#require 'digest/sha1'
-require 'RFC822'
 class User < ActiveRecord::Base
   acts_as_authentic do |c|
-     #c.my_config_option = my_value # for available options see documentation in: Authlogic::ActsAsAuthentic
      c.transition_from_restful_authentication = true
-   end 
+     #AuthLogic defaults
+     #c.validate_email_field = true
+     #c.validates_length_of_email_field_options = {:within => 6..100} 
+     #c.validates_format_of_email_field_options = {:with => email_regex, :message => I18n.t(‘error_messages.email_invalid’, :default => “should look like an email address.”)}
+     #c.validate_password_field = true
+     #c.validates_length_of_password_field_options = {:minimum => 4, :if => :require_password?} 
+     #for more defaults check the AuthLogic documentation
+  end 
   
-  # Virtual attribute for the unencrypted password
-  #attr_accessor :password
-
   has_many :addresses, :as => :addressable, :dependent => :destroy
-  
-  validates_presence_of     :email
-  validates_format_of       :email, :with => RFC822::EmailAddress, 
-                            :message => 'email must be valid'
-  #validates_presence_of     :password,                   :if => :password_required?
-  #validates_presence_of     :password_confirmation,      :if => :password_required?
-  #validates_length_of       :password, :within => 4..40, :if => :password_required?
-  #validates_confirmation_of :password,                   :if => :password_required?
-  #validates_length_of       :email,    :within => 3..100
-  #validates_uniqueness_of   :email, :case_sensitive => false
-  #before_save :encrypt_password
-  
   has_many :orders
   has_and_belongs_to_many :roles
-
-  # prevents a user from submitting a crafted form that bypasses activation
-  # anything else you want your user to change should be added here.
-  #attr_accessible :email, :password, :password_confirmation
+    
+  def deliver_password_reset_instructions!
+    reset_perishable_token!
+    UserMailer.deliver_password_reset_instructions(self)
+  end
 
   # has_role? simply needs to return true or false whether a user has a role or not.  
   def has_role?(role_in_question)
     @_list ||= self.roles.collect(&:name)
     (@_list.include?(role_in_question.to_s) )
   end
+
 =begin
-  # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
-  def self.authenticate(email, password)
-    email = "spree@example.com" if email == "admin" # Hack for users who want to type in just admin to this field
-    u = find_by_email(email) # need to get the salt
-    u && u.authenticated?(password) ? u : nil
-  end
-
-  # Encrypts some data with the salt.
-  def self.encrypt(password, salt)
-    Digest::SHA1.hexdigest("--#{salt}--#{password}--")
-  end
-
-  # Encrypts the password with the user salt
-  def encrypt(password)
-    self.class.encrypt(password, salt)
-  end
-
-  def authenticated?(password)
-    crypted_password == encrypt(password)
-  end
-
-  def remember_token?
-    exp_time = ParseDate.parsedate(remember_token_expires_at)
-    remember_token_expires_at && Time.now.utc < Time.gm(*exp_time) 
-  end
-
-  # These create and unset the fields required for remembering users between browser closes
-  def remember_me
-    remember_me_for 2.weeks
-  end
-
-  def remember_me_for(time)
-    remember_me_until time.from_now.utc
-  end
-
-  def remember_me_until(time)
-    self.remember_token_expires_at = time
-    self.remember_token            = encrypt("#{email}--#{remember_token_expires_at}")
-    save(false)
-  end
-
-  def forget_me
-    self.remember_token_expires_at = nil
-    self.remember_token            = nil
-    save(false)
-  end
-=end  
+  # -----------------------------------------
+  # TODO: Untested with AuthLogic
+  # -----------------------------------------
+  
   # for anonymous customer support
   def self.generate_login
     record = true
@@ -117,22 +65,10 @@ class User < ActiveRecord::Base
       instance_eval("def anonymous_user.#{method}; true; end")
     end
   end
+=end
   
   def last_address
     addresses.last
-  end
-=begin  
-  protected
-    # before filter 
-    def encrypt_password
-      return if password.blank?
-      self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{email}--") if new_record?
-      self.crypted_password = encrypt(password)
-    end
-    def password_required?
-      crypted_password.blank? || !password.blank?
-    end
-=end      
-    
+  end    
     
 end
