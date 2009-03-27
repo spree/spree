@@ -122,7 +122,7 @@ class InstanceGenerator < Rails::Generator::Base
   
   def after_generate
     Rails::Generator::Scripts::Generate.new.run(%w{extension site}, :destination => "#{@destination_root}/")
-    puts File.read("INSTALL") unless options[:pretend]
+    puts File.read("#{@destination_root}/INSTALL") unless options[:pretend]
   end  
 
   protected
