@@ -1,3 +1,11 @@
 h2. Contributing to Spree
 
+Spree is an open source project.  Anyone can use the code, but more importantly, anyone can contribute.  This is a group effort and we value your input.  Please consider making a contribution to help improve the Spree project.
+
 endprologue.
+
+h3. Before You Start Coding
+
+h4. Git
+
+h4. Issue Tracker

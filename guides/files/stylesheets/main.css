@@ -50,7 +50,7 @@ body { text-align: center; font-family: Helvetica, Arial, sans-serif; font-size:
 
 /* Links --------------------------------------- */
 a, a:link, a:visited { color: #162F54; text-decoration: underline; }
-#mainCol a, #subCol a, #feature a {color: #980905;}
+#mainCol a, #subCol a, #feature a {color: #336633;}
 
 /* Navigation --------------------------------------- */
 .nav {margin: 0; padding: 0;}

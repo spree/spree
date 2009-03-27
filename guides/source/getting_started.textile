@@ -1,3 +1,264 @@
 h2. Getting Started With Spree
 
+This guide covers getting up and running with Spree. After reading it, you should be familiar with:
+
+* Installing Spree, creating a new Spree application, and connecting your application to a database
+* The general layout of a Spree application
+* The basic principles behind the Spree design
+* How to quickly generate the starting pieces of a Spree application.
+
 endprologue.
+
+WARNING. This Guide is based on Spree 0.8.0. Some of the code shown here will not work in older versions of Spree.
+
+h3. This Guide Assumes
+
+This guide is designed for beginners who want to get started with a Spree application from scratch. It assumes a baisc working knowledge of Ruby on Rails.  To get the most out of this guide, you need to have some prerequisites installed:
+
+* The "Ruby":http://www.ruby-lang.org/en/downloads language
+* The "RubyGems":http://rubyforge.org/frs/?group_id=126 packaging system
+* The "Ruby on Rails":http://rubyonrails.org/download gems 
+* A working installation of "SQLite":http://www.sqlite.org (preferred), "MySQL":http://www.mysql.com, or "PostgreSQL":http://www.postgresql.org
+
+It is highly recommended that you *familiarize yourself with Ruby on Rails before diving into Spree*. You will find it much easier to follow what’s going on with a Spree application if you understand basic Ruby syntax. 
+
+There are many excellent online resources for learning Ruby on Rails, including:
+
+* "Rails Guides":http://guides.rubyonrails.org
+* "Ruby on Rails Wiki":http://wiki.rubyonrails.org
+* "Railscasts (Free Screencasts)":http://railscasts.com/
+
+There are also some good free resources on the internet for learning Ruby, including:
+
+* "Mr. Neighborly’s Humble Little Ruby Book":http://www.humblelittlerubybook.com
+* "Programming Ruby":http://www.rubycentral.com/book
+* "Why’s (Poignant) Guide to Ruby":http://poignantguide.net/ruby
+
+h3. What is Spree?
+
+Spree is a full featured commmerce platform written for the Ruby on Rails framework. It is designed to make programming commerce applications easier by making several assumptions about what most developers needs to get started. Spree is a production ready store that can be used "out of the box", but more importantly, it is also a developer tool that can be used as a solid foundation for a more sophisticated application then what is generally possible with traditional open source offerings.
+
+Spree is "open source":http://en.wikipedia.org/wiki/Open_source.  It is licensed under the very permissive "New BSD License":http://spreehq.org/license.  You are free to use the software as you see fit, at no charge.  Perhaps more important than the cost, Spree is a true open source community.  Spree has dozens of contributors who have used and improved it while building their own commerce solutions.  
+
+h4. Motivation
+
+The goal of the project is to build a complete open source commerce solution for Ruby on Rails. At the start of this project, the Rails commerce space was immature and lacking serious solutions for developers with complex business needs. In the past, Rails has suffered from "small project mentality." Most open source projects in Rails are maintained by a single individual and tend to be limited in scope. Spree seeks to create a large and healthy open source community that developers of other languages have come to expect.
+
+The founder of Spree was motivated to start the project after failing to find an existing community in the Rails space dedicated to this vision. In addition, he was motivated by unsuccessful efforts to use other open source solutions in other programming languages, including (but not limited to) the infamous OSCommerce. These solutions seemed to be unsatisfactory when presented with even the simplest of use cases.
+
+h4. Opinionated Commerce
+
+David Heinemeier Hansson (the creator of Rails) is well known for saying that Rails is "opinionated software." Spree continues this fine tradition of adopting a few strong (possibly controversial) opinions which drive its development.
+
+h5. No Solution Will Satisfy Everyone
+
+No solution can possibly solve everyone's needs perfectly. There are simply too many ways that people do business for us to model them all specifically. Rather then come up short (like so many projects before it), Spree's approach is to simply accept this and not even try. Instead Spree tries to focus on solving the 90% portion that most commerce projects face.  The remaining 10% will need to be addressed by the end developer familiar with the client's exact business requirements.
+
+A model represents the information (data) of the application and the rules to manipulate that data. In the case of Rails, models are primarily used for managing the rules of interaction with a corresponding database table. In most cases, one table in your database will correspond to one model in your application. The bulk of your application’s business logic will be concentrated in the models.
+
+h5. Online Commerce is not for "Noobs"
+
+Rails developers are the target audience for this application - not business owers. No serious company would ever try to run an online store by just paying some fool on Craig's List to install OSCommerce for them. Serious businesses have complicated needs that require paying one or more software professionals to solve them. Spree seeks to be the platform that developers use as the foundation for their project rather than having to start from scratch or settle for less with other software.
+
+Views represent the user interface of your application. In Rails, views are often HTML files with embedded Ruby code that performs tasks related solely to the presentation of the data. Views handle the job of providing data to the web browser or other tool that is used to make requests from your application.
+               
+h5. Developers Need Complete Control
+
+Most business owners will not be satisfied with the generic templates offered by other platforms. Why should they? They want their website to look just like the other professional sites they see on the web. Most businesses also have very specific shipping and taxation rules.  Spree needs to be flexible enough to accomodate most situations.  Sensible defaults should be provided with the eye towards allowing further customization.
+
+h5. Stay Focused
+
+This is perhaps the most important principle behind the design philosophy. We need to stay focused on core functionality (the 90% that everybody needs.) For this reason it is not appropriate for Spree to attempt to become a Content Management System (CMS). There are already some pretty good Rails based CMS projects out there such as "Radiant":http://radiantcms.org. CMS is definitely important but it is a big enough task to warrant its own project. Spree will definitely be looking at ways to integrate with existing CMS platforms, we just won't be attempting to reinvent the CMS concept.
+
+h3. Creating a New Spree Project
+
+If you follow this guide, you’ll create a Spree project called <tt>mystore</tt>, a (very) simple online store. Before you can start building the application, you need to make sure that you have Rails itself installed.
+
+h4. Installing Rails
+
+In most cases, the easiest way to install Rails is to take advantage of RubyGems:
+
+<shell>
+$ gem install rails
+</shell>
+
+h4. Installing Spree
+
+Again, you should use RubyGems to install Spree:
+
+<shell>
+$ gem install spree
+</shell>
+
+h4. Creating the Application
+
+Open a terminal, navigate to a folder where you have rights to create files, and type:
+
+<shell>
+$ spree mystore
+</shell>
+
+This will create a Spree application that uses a SQLite database for data storage. If you prefer to use MySQL, run this command instead:
+
+<shell>
+$ spree mystore -d mysql
+</shell>
+
+And if you’re using PostgreSQL for data storage, run this command:
+
+<shell>
+$ spree mystore -d postgresql
+</shell>
+
+TIP. You can see all of the switches that the Spree application builder accepts by running <tt>spree -h</tt>.
+
+After you create the store application, switch to its folder to continue work directly in that application:
+
+<shell>
+$ cd mystore
+</shell>
+
+Spree will create a folder in your working directory called <tt>mystore</tt>. Open up that folder and explore its contents. Most of the work in this tutorial will happen in the <tt>vendor/extension/site/</tt> folder, but here’s a basic rundown on the function of each folder that Rails creates in a new application by default:
+
+|_.File/Folder|_.Purpose|
+|CHANGELOG|List of changes by version.|
+|config/|Configure your application's runtime rules, routes, database, and more.|
+|CONTRIBUTORS|List of Spree contributors.|
+|db/|Shows your current database schema, as well as the database migrations. You'll learn about migrations shortly.|
+|INSTALL|An abbreviated set of installation instructions.|
+|LICENSE|Copy of the Spree license.|
+|log/|Application log files.|
+|public/|The only folder seen to the world as-is.  This is where your images, javascript, stylesheets (CSS), and other static files go.|
+|Rakefile|This file contains batch jobs that can be run from the terminal.|
+|README|This is a brief instruction manual for your application. Use it to tell others what your application does, how to set it up, and so on.|
+|script/|Scripts provided by Rails to do recurring tasks, such as benchmarking, plugin installation, and starting the console or the web server.|
+|tmp/|Temporary files|
+|vendor/|A place for third-party code. In a typical Spree application, this includes Ruby Gems, the Spree source code (if you install it into your project) and extensions containing additional prepackaged functionality.  This also typically includes your customized site logic in the "site" extension.|
+ 
+NOTE. If you're an experienced Rails developer you may be wondering where your +app+ directory is.  Spree actually runs as an embedeed Rails app inside of your gem.  How do you customize things then?  We'll cover that later in extensions.
+
+h4. Configuring the Database
+
+Just about every Rails application will interact with a database. The database to use is specified in a configuration file, +config/database.yml+.
+If you open this file in a new Rails application, you'll see a default database configuration using SQLite. The file contains sections for three different environments in which Rails can run by default:
+
+* The +development+ environment is used on your development computer as you interact manually with the application
+* The +test+ environment is used to run automated tests
+* The +production+ environment is used when you deploy your application for the world to use.
+
+h5. Configuring a SQLite Database
+
+Rails comes with built-in support for "SQLite":http://www.sqlite.org, which is a lightweight serverless database application. While a busy production environment may overload SQLite, it works well for development and testing. Rails defaults to using a SQLite database when creating a new project, but you can always change it later.
+
+Here's the section of the default configuration file with connection information for the development environment:
+
+<yaml>
+development:
+adapter: sqlite3
+database: db/development.sqlite3
+pool: 5
+timeout: 5000
+</yaml>
+
+If you don't have any database set up, SQLite is the easiest to get installed. If you're on OS X 10.5 or greater on a Mac, you already have it. Otherwise, you can install it using RubyGems:
+
+<shell>
+$ gem install sqlite3-ruby
+</shell>
+
+h5. Configuring a MySQL Database
+
+If you choose to use MySQL, your +config/database.yml+ will look a little different. Here's the development section:
+
+<yaml>
+development:
+adapter: mysql
+encoding: utf8
+database: mystore_development
+pool: 5
+username: root
+password:
+socket: /tmp/mysql.sock
+</yaml>
+
+If your development computer's MySQL installation includes a root user with an empty password, this configuration should work for you. Otherwise, change the username and password in the +development+ section as appropriate.
+
+h5. Configuring a PostgreSQL Database
+
+If you choose to use PostgreSQL, your +config/database.yml+ will be customized to use PostgreSQL databases:
+
+<yaml>
+development:
+adapter: postgresql
+encoding: unicode
+database: mystore_development
+pool: 5
+username: blog
+password:
+</yaml>
+
+Change the username and password in the +development+ section as appropriate.
+
+h4. Populating the Database
+
+Now that you have your database configured, it's time to have Spree populate it with the necessary tables and data.  You can do this by running a rake command:
+
+<shell>
+$ rake db:bootstrap
+</shell>
+
+NOTE. This will effectively drop the existing database and recreate it from scratch with the option of creating sample product data.  It is disabled for production databases for saftey reasons.  For a production database you should use +rake db:migrate+ to create the tables and +rake db:admin:create+ to create the admin user.
+
+h3. Hello, Spree!
+
+h4. Starting up Spree
+
+You actually have a functional Spree application already - after running only two commands! To see it, you need to start a web server on your development machine. You can do this by running another command:
+
+<shell>
+$ script/server
+</shell>
+
+This will fire up an instance of the Mongrel web server by default (Spree can also use several other web servers). To see your application in action, open a browser window and navigate to +http://localhost:3000+. You should see the Spree default home page:
+
+!images/spree_welcome.png(Spree welcome screenshot)!
+
+To stop the web server, hit Ctrl+C in the terminal window where it's running. In development mode, Spree does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
+
+h4. Logging into the Backend
+
+The next thing you'll probably want to do is to log into the admin inteface.  User your browser window to navigate to +http://localhost:3000/admin+.  You can login with the username and password you entering during the database setup step.  If you just accepted the defaults, the username is +admin+ and the password is +spree+.
+
+Upon successful authentication you should see the admin screen:
+
+!images/admin_welcome.png(Admin welcome screenshot)! 
+
+We're just covering how to log in for now.  There are other guides that will detail how the basic admin features work.
+
+h4. Modifying the Look of your Applicaiton
+
+The last step is to customize the look and feel of the store you just built.  We're going to add some text to the footer just to give you a sense of how such things are done in Spree.  Modifications to Spree are best achieved through extensions.  Extensions enable you to add custom functionality to your application.  Spree also supports the notion of third party extensions which allow developers to share useful functionality with each other across applications.  This is not meant to serve as a detailed review of extensions, rather, it is meant to give you an idea of what is possible.
+
+h5. The Site Extension
+
+We'll start by editing the site extension.  Spree creates a site extension for you by default in +vendor/extensions/site+. If you examine the contents of this extension folder you wills see the following:
+
+|_.File/Folder|_.Purpose|
+|README.markdown|A default README file for your new extension.|
+|Rakefile|This file contains batch jobs that can be run from the terminal.|
+|app||
+|config||
+|db||
+|lib||
+|public||
+|site_extension.rb||
+|spec||
+
+h5. Overriding a View
+
+One of the things extensions alows you to do is to override a view that is normally supplied by Spree.  
+
+ Go ahead an navigate to +vendor/extensions/site/app/views+.  
+
+TODO - finish up here
+
