@@ -25,8 +25,8 @@ ActionController::Routing::Routes.draw do |map|
   map.root :controller => "products", :action => "index"
 
   map.resource :user_session
-  #map.root :controller => "user_sessions", :action => "new"
   map.resource :account, :controller => "users"
+  map.resources :password_resets
   
   # login mappings should appear before all others
   map.login '/login', :controller => 'user_sessions', :action => 'new'
