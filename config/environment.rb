@@ -27,6 +27,8 @@ Spree::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
 
   config.gem "highline", :version => '1.4.0'
+  config.gem 'has_many_polymorphs'
+  config.gem 'authlogic', :version => '2.0.3'
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.1'
   config.gem "tlsmail", :version => '0.0.1'
   config.gem 'active_presenter', :version => '0.0.6'
@@ -37,6 +39,7 @@ Spree::Initializer.run do |config|
   #config.gem 'searchlogic', :version => '1.6.3'                           
   # HACKED version of search logic - we'll move back when our fix is accepted into core
   config.gem 'schof-searchlogic', :lib => 'searchlogic', :version => '0.0.2'  
+  config.gem "calendar_date_select"
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

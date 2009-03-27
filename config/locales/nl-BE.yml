@@ -276,7 +276,7 @@ nl-BE:
   listing_orders: "Lijst Bestellingen"
   listing_reports: "Lijst Rapporten"
   listing_tax_categories: "Lijst BTW categorieën"
-  listing_users: "Lijst Bebruikers"
+  listing_users: "Lijst Gebruikers"
   locale_changed: "Regionale Instellingen Gewijzigd"
   log_in: "Aanmelden"
   logged_in_as: "Aangemeld als"

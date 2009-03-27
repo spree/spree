@@ -3,7 +3,7 @@ class OrderMailer < ActionMailer::Base
   
   def confirm(order, resend = false)
     @subject    = (resend ? "[RESEND] " : "") 
-    @subject    += 'Order Confirmation #' + order.number
+    @subject    += Spree::Config[:site_name] + ' ' + 'Order Confirmation #' + order.number
     @body       = {"order" => order}
     @recipients = order.user.email
     @from       = Spree::Config[:order_from]
@@ -12,7 +12,7 @@ class OrderMailer < ActionMailer::Base
   end
   
   def cancel(order)
-    @subject    = '[CANCEL] Order Confirmation #' + order.number
+    @subject    = '[CANCEL]' + Spree::Config[:site_name] + ' Order Confirmation #' + order.number
     @body       = {"order" => order}
     @recipients = order.user.email
     @from       = Spree::Config[:order_from]
