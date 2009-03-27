@@ -5,6 +5,14 @@
 <% form_tag(admin_general_settings_path, :method => :put) do -%>
 
   <p>
+	<label><%= t("site_name") %></label>
+	<%= text_field_tag('preferences[site_name]', Spree::Config[:site_name]) %>
+  </p>
+  <p>
+	<label><%= t('site_url') %></label>
+	<%= text_field_tag('preferences[site_url]', Spree::Config[:site_url])%>
+  </p>	
+  <p>
     <label>
       <%= check_box_tag('preferences[allow_ssl_in_production]', "1", Spree::Config[:allow_ssl_in_production]) %>
       <%= t('allow_ssl_to_be_used_when_in_production_mode') %>

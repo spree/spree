@@ -2,15 +2,28 @@
 
 <h1><%= t("general_settings") %></h1>
 
-<h4>
-  SSL will <%= Spree::Config[:allow_ssl_in_production] ? '' : 'NOT' %> be used in production
-  mode if necessary.
-</h4>
-
-<h4>
-  SSL will <%= Spree::Config[:allow_ssl_in_development_and_test] ? '' : 'NOT' %> be used in development
-  and test mode if necessary.
-</h4>
+<table>
+  <tr>
+    <th scope="row"><%= t("site_name") %>:</th> 
+    <td><%=  Spree::Config[:site_name] %></td>
+  </tr>
+  <tr>
+    <th scope="row"><%= t("site_url") %>:</th> 
+    <td><%=  Spree::Config[:site_url] %></td>
+  </tr>
+  <tr>
+	<td colspan="2">
+	  SSL will <%= Spree::Config[:allow_ssl_in_production] ? '' : 'NOT' %> be used in production
+	  mode if necessary.	  		
+	</td>
+  </tr>
+  <tr>
+	<td colspan="2">
+	  SSL will <%= Spree::Config[:allow_ssl_in_development_and_test] ? '' : 'NOT' %> be used in development
+	  and test mode if necessary.
+	</td>	
+  </tr>
+</table>
 
 <p><%= link_to_with_icon 'edit', t("edit"), edit_admin_general_settings_path %></p>
 
