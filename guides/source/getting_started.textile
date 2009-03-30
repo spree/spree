@@ -135,7 +135,7 @@ Spree will create a folder in your working directory called <tt>mystore</tt>. Op
 |tmp/|Temporary files|
 |vendor/|A place for third-party code. In a typical Spree application, this includes Ruby Gems, the Spree source code (if you install it into your project) and extensions containing additional prepackaged functionality.  This also typically includes your customized site logic in the "site" extension.|
  
-NOTE. If you're an experienced Rails developer you may be wondering where your +app+ directory is.  Spree actually runs as an embedeed Rails app inside of your gem.  How do you customize things then?  We'll cover that later in extensions.
+INFO. If you're an experienced Rails developer you may be wondering where your +app+ directory is.  Spree actually runs as an embedeed Rails app inside of your gem.  How do you customize things then?  We'll cover that later in extensions.
 
 h4. Configuring the Database
 
@@ -207,7 +207,7 @@ Now that you have your database configured, it's time to have Spree populate it 
 $ rake db:bootstrap
 </shell>
 
-NOTE. This will effectively drop the existing database and recreate it from scratch with the option of creating sample product data.  It is disabled for production databases for saftey reasons.  For a production database you should use +rake db:migrate+ to create the tables and +rake db:admin:create+ to create the admin user.
+INFO. This will effectively drop the existing database and recreate it from scratch with the option of creating sample product data.  It is disabled for production databases for saftey reasons.  For a production database you should use +rake db:migrate+ to create the tables and +rake db:admin:create+ to create the admin user.
 
 h3. Hello, Spree!
 
@@ -246,19 +246,32 @@ We'll start by editing the site extension.  Spree creates a site extension for y
 |_.File/Folder|_.Purpose|
 |README.markdown|A default README file for your new extension.|
 |Rakefile|This file contains batch jobs that can be run from the terminal.|
-|app||
-|config||
-|db||
-|lib||
-|public||
-|site_extension.rb||
-|spec||
+|app|Use this directory to override the model, view, controller and helper defaults contained in Spree.|
+|config|Custom permissions and routing configuration needed by your extension are contained in this directory.|
+|db|Custom migrations needed for your extension.|
+|lib|Additional supporting libraries needed by your extension.|
+|public|Custom images, stylesheets and javascript files should be placed in this directory.|
+|site_extension.rb|Extension initializer - it always has the same name as your extension (in this case site.)|
+|spec|Tests associated with the extension.|
 
 h5. Overriding a View
 
 One of the things extensions alows you to do is to override a view that is normally supplied by Spree.  
 
- Go ahead an navigate to +vendor/extensions/site/app/views+.  
+Go ahead an navigate to +vendor/extensions/site/app/views+.  
 
-TODO - finish up here
+<shell>
+$ mkdir shared
+$ vi _footer.html.erb
+</shell>
+
+Now add the following contents to +_footer.html.erb+:
+
+<shell>
+  <div id="footer">
+    <p>Hello Spree!</p>
+  </div>  
+</shell>
+
+If you return to your browser and navigate to +http://localhost:3000+ you will see the revised footer in action.  Congratulations!  You have now modified your newly installed Spree application.
 
