@@ -1,0 +1,17 @@
+// Based on http://ryanfait.com/resources/footer-stick-to-bottom-of-page/
+// Mix into the top level.
+// Footer element must be outside of root wrapper element.
+// Footer must be a fixed height.
+
+=sticky-footer(!footer_height, !root_selector = "#root", !root_footer_selector = "#root_footer", !footer_selector = "#footer")
+  html, body
+    :height 100%
+  #{!root_selector}
+    :min-height 100%
+    :margin-bottom= -!footer_height
+    #{!root_footer_selector}
+      :height= !footer_height
+  #{!footer_selector}
+    :clear both
+    :position relative
+    :height= !footer_height

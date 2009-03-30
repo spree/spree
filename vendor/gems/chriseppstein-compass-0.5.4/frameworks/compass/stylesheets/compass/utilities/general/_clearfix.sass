@@ -1,0 +1,11 @@
+// Clearing floats without extra markup
+// Simple Clearing of Floats
+// [http://www.sitepoint.com/blogs/2005/02/26/simple-clearing-of-floats/]
+=clearfix
+  :overflow auto
+  :overflow -moz-scrollbars-none
+  // This makes ie6 get layout
+  :display inline-block
+  // and this puts it back to block
+  &
+    :display block

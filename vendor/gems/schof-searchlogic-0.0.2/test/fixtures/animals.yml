@@ -1,0 +1,7 @@
+pepper:
+  type: Cat
+  description: pepper meows
+  
+harry:
+  type: Doc
+  description: harry is hairy

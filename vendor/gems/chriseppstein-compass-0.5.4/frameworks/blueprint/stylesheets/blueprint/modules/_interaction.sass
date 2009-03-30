@@ -1,0 +1,58 @@
+@import colors.sass
+
+
+=blueprint-interaction
+  .error
+    +error
+  .notice
+    +notice
+  .success
+    +success
+  .hide
+    :display none
+  .highlight
+    +highlight
+  .added
+    +added
+  .removed
+    +removed
+
+=feedback-base
+  :padding .8em
+  :margin-bottom 1em
+  :border= 2px "solid" !feedback_border_color
+
+=error
+  +feedback-base
+  :background   = !error_bg_color
+  :color        = !error_color
+  :border-color = !error_border_color
+  a
+    :color      = !error_color
+
+=notice
+  +feedback-base
+  :background   = !notice_bg_color
+  :color        = !notice_color
+  :border-color = !notice_border_color
+  a
+    :color      = !notice_color
+
+=success
+  +feedback-base
+  :background   = !success_bg_color
+  :color        = !success_color
+  :border-color = !success_border_color
+  a
+    :color      = !success_color
+
+=highlight
+  :background = !highlight_color
+
+=added
+  :background = !added_bg_color
+  :color      = !added_color
+
+=removed
+  :background = !removed_bg_color
+  :color      = !removed_color

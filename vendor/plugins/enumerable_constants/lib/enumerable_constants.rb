@@ -194,7 +194,7 @@ class ActiveRecord::Base
       end
     EOF
 
-    should_be_in_text = set_class.constantize.names.to_sentence :connector => connector, :skip_last_comma => skip_last_comma
+    should_be_in_text = set_class.constantize.names.to_sentence :words_connector => connector, :last_word_connector => skip_last_comma
   
     unless options[:no_validation]
       class_eval <<-EOF  

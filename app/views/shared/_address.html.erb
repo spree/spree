@@ -21,7 +21,7 @@
   </tr>
   <tr>
     <td>
-      <%= "#{address.city}, #{address.state_name || address.state.abbr} #{address.zipcode}" %>
+      <%= "#{address.city}, #{address.state_name || address.state.abbr || address.state.name} #{address.zipcode}" %>
     </td>
   </tr>
   <tr>

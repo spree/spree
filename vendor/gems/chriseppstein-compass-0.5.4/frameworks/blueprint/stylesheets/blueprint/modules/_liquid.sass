@@ -1,0 +1,137 @@
+//  --------------------------------------------------------------
+//  SASS Gridification
+//  * Author:   Geoff Garside
+//  A SASS adaptation of Blueprint CSS
+//  * Version:         0.7.1 (2008-02-25)
+//  * Website:         http://code.google.com/p/blueprintcss/
+//  Based on work by:
+//  * Chris Eppstein    [eppsteins.net]
+//  * Lorin Tacket      [lorintackett.com]
+//  * Olav Bjorkoy      [bjorkoy.com]
+//  * Nathan Borror     [playgroundblues.com]
+//  * Jeff Croft        [jeffcroft.com]
+//  * Christian Metts   [mintchaos.com]
+//  * Khoi Vinh         [subtraction.com]
+//  Liquid grid work by:
+//  * Ben Listwon
+//  * David Bedingfield
+//  * Andrei Michael Herasimchuk
+//  Involution Studios, http://www.involutionstudios.com
+//  Read more about using a grid here:
+//  * subtraction.com/archives/2007/0318_oh_yeeaahh.php
+//  -----
+//  By default, the grid is 80% of window width, with 24 columns.
+//  
+//  To make the grid fixed, simply change the .container width
+//  property to a pixel value. e.g., 960px.
+//  -----
+//  To use:
+//  This module is a REPLACEMENT for the grid module. Simply import it:
+//  @import blueprint.sass
+//  @import blueprint/modules/liquid.sass
+//  -------------------------------------------------------------------
+
+@import compass/utilities/general/clearfix.sass
+
+// Main layout grid, override these constants to build your grid and container sizes.
+// The width shown gives the right floored percentage values.
+!blueprint_liquid_grid_columns ||= 24
+!blueprint_liquid_grid_width   ||= 4.173%
+!blueprint_liquid_grid_margin  ||= 0.833em
+
+// Do not edit below this line unless you really know what you're doing.
+!blueprint_liquid_container_width = 80%
+!blueprint_liquid_container_min_width = 950px
+!blueprint_liquid_grid_push_pull = -(!blueprint_liquid_grid_margin * 4)
+
+=blueprint-liquid-grid
+  // A container should group all your columns
+  .container
+    +container
+  // Use these classes (or mixins) to set the width of a column.
+  @for !n from 1 to !blueprint_liquid_grid_columns + 1
+    .span-#{!n}
+      +span(!n)
+    div
+      &.span-#{!n}
+        +column(!n, !n == !blueprint_liquid_grid_columns)
+  // The last column in a row needs this class (or mixin) or it will end up on the next row.
+  div.last
+    +last
+  // Add these to a column to append empty cols.
+  @for !n from 1 to !blueprint_liquid_grid_columns
+    .append-#{!n}
+      +append(!n)
+  // Add these to a column to prepend empty cols.
+  @for !n from 1 to !blueprint_liquid_grid_columns
+    .prepend-#{!n}
+      +prepend(!n)
+  // Use these classes on an element to push it into the
+  // next column, or to pull it into the previous column.
+  @for !n from 1 to !blueprint_liquid_grid_columns + 1
+    .pull-#{!n}
+      +pull(!n)
+  @for !n from 1 to !blueprint_liquid_grid_columns + 1
+    .push-#{!n}
+      +push(!n)
+
+=container
+  :min-width= !blueprint_liquid_container_min_width
+  :width = !blueprint_liquid_container_width
+  :margin 0 auto
+  +clearfix
+
+=span(!n)
+  :width= (!blueprint_liquid_grid_width * !n) - ((!blueprint_liquid_grid_width * !n) % 1)
+
+=last
+  :margin-right 0
+
+=column(!n, !last = false)
+  :float left
+  :overflow hidden
+  +span(!n)
+  @if !last
+    +last
+  @else
+    :margin-right = !blueprint_liquid_grid_margin
+
+=append(!n)
+  :padding-right= (!blueprint_liquid_grid_width * !n) - ((!blueprint_liquid_grid_width * !n) % 1)
+  
+=prepend(!n)
+  :padding-left= (!blueprint_liquid_grid_width * !n) - ((!blueprint_liquid_grid_width * !n) % 1)
+
+=pull(!n, !last = false)
+  :margin-left= (!blueprint_liquid_grid_push_pull * !n)
+
+=push(!n)
+  :float right
+  :margin
+    :top 0
+    :left 1.5em
+    :right= (!blueprint_liquid_grid_push_pull * !n)
+    :bottom 0
+
+=border
+  :border-right 1px solid #eee
+
+=colborder
+  :padding-right 2%
+  :margin-right 2%
+  +border
+
+=colruler
+  :background #ddd 
+  :color #ddd
+  :clear both
+  :width 100% 
+  :height 0.083em
+  :margin 0 0 1.583em
+  :border none
+
+=colspacer
+  +colruler
+  :background #fff
+  :color #fff
+
