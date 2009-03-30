@@ -4,64 +4,21 @@
 
 <div id="product-images">
   <div id="main-image">
-		<%= render :partial => 'image' -%>
+		<%= render 'image' -%>
   </div>
   <div id="thumbnails">
-    <%= render :partial => 'thumbnails', :locals => {:product => @product} -%>
+    <%= render 'thumbnails', :product => @product -%>
   </div>
 </div>
 
 <div id="product-description">
   <%= product_description(@product) %>
 
-  <%= render :partial => 'properties' %>
+  <%= render 'properties' %>
 </div>
 
 <div id="cart-form">
-<% form_for :order, :url => orders_url do |f| %>
 
-  <% if product_price(@product) %>
-  <p class="prices">
-    <%= t("price") %>
-    <span class="price selling"><%= product_price(@product) %></span>
-  </p>
-  <% end %>
+<%= render 'cart_form' %>
 
-  <% if @product.variants? %>
-  <div id="product-variants">
-    <h2><%= t('variants') %></h2>
-
-    <ul>
-      <% has_checked = false
-         @product.variants.active.each_with_index do |v,index|
-       		next if v.option_values.empty? || (!v.in_stock && !Spree::Config[:show_zero_stock_products])
-       		checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
-       		has_checked = true if checked
-      %>
-      <li>
-        <label>
-          <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders] %>
-          <%= variant_options v %>
-          <% if variant_price_diff v %>
-            <span class="price diff"><%= variant_price_diff v %></span>
-          <% end %>
-        </label>
-      </li>
-      <% end%>
-    </ul>
-  </div>
-
-  <% else %>
-    <%= text_field_tag "variants[#{@product.variant.id}]", 1 %>
-  <% end%>						
-
-  <p><%=
-    if @product.has_stock? || Spree::Config[:allow_backorders]
-      submit_tag t('add_to_cart')
-    else
-      content_tag('strong', t('out_of_stock'))
-    end
-  %></p>
-
-<% end %>
 </div>
