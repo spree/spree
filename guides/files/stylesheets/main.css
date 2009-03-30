@@ -36,8 +36,8 @@ table th { border-bottom: 2px solid #CCC; background: #EEE; font-weight: bold; p
 body { text-align: center; font-family: Helvetica, Arial, sans-serif; font-size: 87.5%; line-height: 1.5em; background-color: #D5E9F6; color: #222; }
 .wrapper { text-align: left; margin: 0 auto; width: 69em; }
 #topNav { padding: 5px 0; color: #565656; border-bottom: 1px solid #162F54; background-color: #0095DA; }
-#header { background-color: #162F54; color: #FFF; padding: 1.5em 0; position: relative; z-index: 99; border-top: 1px solid #0095DA; }
-#feature { background: #d5e9f6 url(../../images/feature_tile.gif) repeat-x; color: #333; padding: 0.5em 0 1.5em; }
+#header { background-color: #162F54; color: #FFF; padding: 1.5em 0; position: relative; z-index: 99; border-top: 1px solid #0095DA; border-bottom: 1px solid #D5E9F6; }
+#feature { border-top: #162F54 1px solid; color: #333; padding: 0.5em 0 1.5em; background-color: #D5E9F6; }
 #container { background: #FFF; color: #333; padding: 0.5em 0 1.5em 0; border-bottom: #D5E9F6 1px solid; }
 #mainCol { width: 45em; margin-left: 2em; }	
 #subCol { position: absolute; z-index: 0; top: 0; right: 0; background: #FFF; padding: 1em 1.5em 1em 1.25em; width: 17em; font-size: 0.9285em; line-height: 1.3846em; }
