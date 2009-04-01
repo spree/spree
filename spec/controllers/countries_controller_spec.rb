@@ -8,9 +8,9 @@ describe CountriesController do
     controller.should be_an_instance_of(CountriesController)
   end
 
-  it "should include AuthenticatedSystem" do
-    controller.class.included_modules.should include(AuthenticatedSystem)
-  end
+  #it "should include AuthenticatedSystem" do
+  #  controller.class.included_modules.should include(AuthenticatedSystem)
+  #end
   it "should not allow deletion of a county from a default rails route" 
 =begin  
   do

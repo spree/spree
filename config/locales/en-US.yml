@@ -142,6 +142,7 @@ en-US:
       zone: 
         one: Zone
         other: Zones
+  account_updated: "Account updated!"        
   add: Add
   add_category: "Add Category"
   add_country: "Add Country"
@@ -243,6 +244,7 @@ en-US:
   filename: Filename
   final_confirmation: "Final Confirmation"
   first_name: "First Name"
+  forgot_password: "Forgot Password"
   gateway: Gateway
   gateway_error: "Gateway Error"
   gateway_setting_description: "Select a payment gateway and configure its settings."
@@ -281,10 +283,11 @@ en-US:
   locale_changed: "Locale Changed"
   log_in: "Log In"
   logged_in_as: "Logged in as"
-  logged_in_successfully: "Logged in successfully."
-  login_authentication_failed: "Login authentication failed."
+  logged_in_succesfully: "Logged in successfully"
+  logged_out: "You have been logged out." 
+  login_failed: "Login authentication failed."      
   login_name: Login
-  logout: Logout
+  logout: Logout  
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
   mail_server_preferences: Mail Server Preferences
@@ -315,6 +318,7 @@ en-US:
   next: Next
   no_items_in_cart: ""
   no_match_found: "No Match Found"
+  no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
   on_hand: "On Hand"
@@ -341,6 +345,10 @@ en-US:
   paid: Paid
   parent_category: "Parent Category"
   password: Password
+  password_reset_instructions: "Password Reset Instructions"
+  password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
+  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."    
+  password_updated: "Password successfully updated"  
   path: Path      
   pay: pay
   payment: Payment
@@ -363,12 +371,14 @@ en-US:
   properties: Properties
   property: Property
   prototypes: Prototypes
+  prototype: Prototype
   qty: Qty
   rate: Rate
   remember_me: "Remember me"
   remove: Remove
   reports: Reports
   resend: Resend
+  reset_password: "Reset my password"
   response_code: "Response Code"  
   resume: "resume"
   resumed: Resumed
@@ -403,6 +413,8 @@ en-US:
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Sign up"
+  site_name: "Site Name"
+  site_url: "Site URL"
   sku: SKU
   smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
@@ -449,7 +461,8 @@ en-US:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
   update: Update
-  updated_successfully: "Updated Successfully"                    
+  updated_successfully: "Updated Successfully"
+  update_password: "Update my password and log me in"                    
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
   use_different_shipping_address: "Use Different Shipping Address"

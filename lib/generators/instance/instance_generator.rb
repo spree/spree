@@ -5,6 +5,8 @@
 require 'rbconfig'
 require 'digest/md5'
 require 'rails_generator/secret_key_generator'
+require 'generators/extension/extension_generator'
+require 'lib/plugins/string_extensions/lib/string_extensions'
 
 class InstanceGenerator < Rails::Generator::Base
   DEFAULT_SHEBANG = File.join(Config::CONFIG['bindir'],
@@ -30,7 +32,7 @@ class InstanceGenerator < Rails::Generator::Base
     usage if args.empty?
     usage("Databases supported for preconfiguration are: #{DATABASES.join(", ")}") if (options[:db] && !DATABASES.include?(options[:db]))
     @destination_root = args.shift
-    @app_name = File.basename(File.expand_path(@destination_root))
+    @app_name = File.basename(File.expand_path(@destination_root))  
   end
 
   def manifest
@@ -115,11 +117,13 @@ class InstanceGenerator < Rails::Generator::Base
         m.file "demo_mongrel_cluster.yml", "config/mongrel_cluster.yml"
         m.file "demo_robots.txt", "public/robots.txt"
       end
-      
-      # Install Readme
-      m.readme spree_root("INSTALL")
     end
-  end
+  end 
+  
+  def after_generate
+    Rails::Generator::Scripts::Generate.new.run(%w{extension site}, :destination => "#{@destination_root}/")
+    puts File.read("#{@destination_root}/INSTALL") unless options[:pretend]
+  end  
 
   protected
 

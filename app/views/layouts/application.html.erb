@@ -29,7 +29,7 @@ end
   	  <%= render :partial => 'shared/language_bar' if Spree::Config[:allow_locale_switching] %>
 
       <ul id="login-nav">
-        <% if logged_in? -%>
+        <% if current_user -%>
           <li><%= link_to t('my_account'), user_path(current_user) %></li>
           <li><%= link_to t('logout'), logout_path %></li>
         <% else %>

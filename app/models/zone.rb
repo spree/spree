@@ -4,7 +4,7 @@ class Zone < ActiveRecord::Base
   validates_uniqueness_of :name
   
   #attr_accessor :type
-  def type
+  def kind
     return "country" unless member = self.members.last
     return "state" if member.class == State
     return "zone" if member.class == Zone
@@ -24,7 +24,7 @@ class Zone < ActiveRecord::Base
       
   def include?(address)
     # NOTE: This is complicated by the fact that include? for HMP is broken in Rails 2.1 (so we use awkward index method)
-    case self.type
+    case self.kind
     when "country"
       return members.index(address.country).respond_to?(:integer?)
     when "state"
@@ -45,8 +45,8 @@ class Zone < ActiveRecord::Base
   # convenience method for returning the countries contained within a zone (different then the countries method which only 
   # returns the zones children and does not consider the grand children if the children themselves are zones)
   def country_list
-    return [] if type == "state"
-    return countries if type == "country"
+    return [] if kind == "state"
+    return countries if kind == "country"
     members.collect { |zone| zone.country_list }.flatten
   end
 end

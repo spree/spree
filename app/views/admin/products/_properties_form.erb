@@ -1,0 +1,7 @@
+<h2>Properties</h2>
+<% f.fields_for :product_properties do |properties_form| %>
+    <p>
+      <%= properties_form.label :value, properties_form.object.property.presentation %><br />
+      <%= properties_form.text_field :value %>
+    </p>
+<% end %>

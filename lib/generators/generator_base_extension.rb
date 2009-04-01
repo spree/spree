@@ -1,5 +1,5 @@
 require 'rails_generator'
-module Radiant
+module Spree
   module GeneratorBaseExtension
     def self.included(base)
       base.class_eval %{
@@ -20,4 +20,4 @@ module Radiant
     end
   end
 end
-Rails::Generator::Commands::Base.class_eval { include Radiant::GeneratorBaseExtension }
+Rails::Generator::Commands::Base.class_eval { include Spree::GeneratorBaseExtension }

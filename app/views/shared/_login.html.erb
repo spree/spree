@@ -1,10 +1,18 @@
-<% form_tag login_path do %>
-
-  <p><%= t("email") %>:<br />
-  <%= text_field_tag 'email' %></p>
-
-  <p><%= t("password") %>:<br />
-  <%= password_field_tag 'password' %></p>
+<% form_tag user_session_path do  %>
+  <p>
+    <%= label :user_session, :email, t("email") %><br />
+    <%= text_field :user_session, 'email' %>
+  </p>
+  <p>
+    <%= label :user_session, :password, t("password") %><br />
+    <%= password_field :user_session, 'password' %>
+  </p>
+  <p>
+  	<label>
+      <%= check_box :user_session, :remember_me %>
+  	  <%= t ('remember_me') %>
+	  </label>
+	</p>
 
   <p><%= submit_tag t("log_in") %></p>
 

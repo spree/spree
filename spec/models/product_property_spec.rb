@@ -20,13 +20,6 @@ describe ProductProperty do
     @product_property.should_not be_valid
   end
 
-  ['value'].each do |field|
-    it "should require #{field}" do
-      @product_property.should_not be_valid
-      @product_property.errors.full_messages.should include("#{field.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
-    end
-  end
-
   it "should be valid when having correct information" do
     pending "Shouldn't it require a product and a property too?"
     @product_property.attributes = valid_product_property_attributes

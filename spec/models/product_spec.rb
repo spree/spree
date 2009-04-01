@@ -29,7 +29,7 @@ describe Product do
     @product.should_not be_valid
   end
 
-  ['Name', 'Master Price', 'Description'].each do |field|
+  ['Name', 'Master Price'].each do |field|
     it "should require #{field}" do
       @product.should_not be_valid
       @product.errors.full_messages.should include("#{field} #{I18n.translate("activerecord.errors.messages.blank")}")

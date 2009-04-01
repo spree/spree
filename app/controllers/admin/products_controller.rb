@@ -9,11 +9,20 @@ class Admin::ProductsController < Admin::BaseController
     @product.tax_category = TaxCategory.find_by_name Spree::Config[:default_tax_category]
   end
   
+  new_action.response do |wants|
+    wants.html {render :action => :new, :layout => false}
+  end
+
   update.before do
     # note: we only reset the product properties if we're receiving a post from the form on that tab
     next unless params[:clear_product_properties] 
     params[:product] ||= {}
     params[:product][:product_property_attributes] ||= {} if params[:product][:product_property_attributes].nil?
+  end
+
+  create.response do |wants| 
+    # go to edit form after creating as new product
+    wants.html {redirect_to edit_admin_product_url(Product.find(@product.id)) }
   end
 
   update.response do |wants| 

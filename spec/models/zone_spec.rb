@@ -6,21 +6,21 @@ describe Zone do
     @zone = Zone.create(:name => "foo", :description => "foofah")
   end
   
-  describe "#type" do
+  describe "#kind" do
     it "should be country when zone contains countries" do
       @zone.countries << mock_model(Country)
-      @zone.type.should == "country"
+      @zone.kind.should == "country"
     end
     it "should be state when zone contains states" do
       @zone.states << mock_model(State)
-      @zone.type.should == "state"
+      @zone.kind.should == "state"
     end
     it "should be zone when zone contains zones" do
       @zone.zones << mock_model(Zone)
-      @zone.type.should == "zone"
+      @zone.kind.should == "zone"
     end
     it "should be country when zone contains no members (default)" do
-      @zone.type.should == "country"
+      @zone.kind.should == "country"
     end
   end
 
@@ -110,16 +110,16 @@ describe Zone do
   end
   
   describe "country_list" do
-    it "should return an empty array if the zone type is state" do
-      @zone.stub!(:type).and_return("state")
+    it "should return an empty array if the zone kind is state" do
+      @zone.stub!(:kind).and_return("state")
       @zone.country_list.should == []
     end
-    it "should return the corresponding countries if zone type is country" do
+    it "should return the corresponding countries if zone kind is country" do
       country = mock_model(Country)
       @zone.should_receive(:countries).and_return([country])
       @zone.country_list.should == [country]
     end
-    it "should return the countries of the zone children if the type is zone" do
+    it "should return the countries of the zone children if the kind is zone" do
       country1 = mock_model(Country)
       country2 = mock_model(Country)
       zone1 = mock_model(Zone, :country_list => [country1])

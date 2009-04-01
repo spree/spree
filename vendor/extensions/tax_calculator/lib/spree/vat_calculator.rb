@@ -35,13 +35,9 @@ module Spree #:nodoc:
     
     # list the vat rates for the default country
     def self.default_rates
-      rates = Rails.cache.fetch('vat_rates') do
-        # get default zone using default_country_id value
-        default_country = Country.find(Spree::Config[:default_country_id], :include => {:zone_members => :parent}) 
-        default_zone = default_country.zone_members[0].parent unless default_country.zone_members.empty?
-        default_zone.nil? ? [] : TaxRate.find_all_by_zone_id_and_tax_type(default_zone, TaxRate::TaxType::VAT)        
-      end
-      rates
+      default_country = Country.find(Spree::Config[:default_country_id], :include => {:zone_members => :parent}) 
+      default_zone = default_country.zone_members[0].parent unless default_country.zone_members.empty?
+      default_zone.nil? ? [] : TaxRate.find_all_by_zone_id_and_tax_type(default_zone, TaxRate::TaxType::VAT)        
     end
   end
 end

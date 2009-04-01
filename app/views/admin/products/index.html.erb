@@ -1,15 +1,27 @@
+<% content_for :head do %>
+<%= calendar_date_select_includes %>
+<% end %>
+
 <% render :partial => 'admin/shared/product_sub_menu' %>
 
 <div class='toolbar'>
   <ul class='actions'>
-    <li>
-      <%= button_link_to t("new_product"), new_object_url, :icon => 'add' %></p>
+    <li id="new_ot_link">
+      <%= button_link_to_remote t("new_product"), 
+                         {:url => new_object_url, 
+                         :method => :get,
+                         :update => "new-product",
+                         :before => "Element.hide('new_ot_link');Element.show('busy_indicator')", 
+                         :complete => "Element.hide('busy_indicator')"}, :icon => 'add' %>
     </li>
   </ul>
   <br class='clear' />
 </div>
 
 <h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
+
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+<div id="new-product"></div>
 
 <table class="index">
   <tr>
