@@ -1,0 +1,155 @@
+
+# Auto-generated at Wed Oct 03 03:57:12 -0400 2007.
+# Hand modifications will be overwritten.
+# /Users/eweaver/Desktop/projects/chow/vendor/plugins/ultrasphinx/test/integration/app/config/ultrasphinx/default.base
+indexer {
+  mem_limit = 256M
+}
+searchd {
+  read_timeout = 5
+  max_children = 300
+  log = /tmp/sphinx/searchd.log
+  port = 3313
+  max_matches = 100000
+  query_log = /tmp/sphinx/query.log
+  pid_file = /tmp/sphinx/searchd.pid
+  address = 0.0.0.0
+}
+
+# Source configuration
+
+source geo__states
+{
+  strip_html = 0
+  sql_range_step = 20000
+  index_html_attrs = 
+  sql_query_post = 
+
+type = mysql
+sql_query_pre = SET SESSION group_concat_max_len = 65535
+sql_query_pre = SET NAMES utf8
+  
+sql_db = app_development
+sql_host = localhost
+sql_pass = 
+sql_user = root
+sql_query_range = SELECT MIN(id), MAX(id) FROM states
+sql_query = SELECT (states.id * 4 + 0) AS id, CAST(GROUP_CONCAT(addresses.name SEPARATOR ' ') AS CHAR) AS address_name, 0 AS capitalization, 'Geo::State' AS class, 0 AS class_id, '' AS company, '' AS company_name, 0 AS company_name_facet, '' AS content, UNIX_TIMESTAMP('1970-01-01 00:00:00') AS created_at, 0 AS deleted, '' AS email, '__empty_searchable__' AS empty_searchable, '' AS login, '' AS name, '' AS state, 0 AS user_id FROM states LEFT OUTER JOIN addresses ON states.id = addresses.state_id WHERE states.id >= $start AND states.id <= $end GROUP BY id
+
+sql_group_column = capitalization
+sql_group_column = class_id
+sql_group_column = company_name_facet
+sql_date_column = created_at
+sql_group_column = deleted
+sql_group_column = user_id
+sql_query_info = SELECT * FROM states WHERE states.id = (($id - 0) / 4)
+}
+
+
+# Source configuration
+
+source sellers
+{
+  strip_html = 0
+  sql_range_step = 20000
+  index_html_attrs = 
+  sql_query_post = 
+
+type = mysql
+sql_query_pre = SET SESSION group_concat_max_len = 65535
+sql_query_pre = SET NAMES utf8
+  
+sql_db = app_development
+sql_host = localhost
+sql_pass = 
+sql_user = root
+sql_query_range = SELECT MIN(id), MAX(id) FROM sellers
+sql_query = SELECT (sellers.id * 4 + 1) AS id, '' AS address_name, sellers.capitalization AS capitalization, 'Seller' AS class, 1 AS class_id, '' AS company, sellers.company_name AS company_name, CRC32(sellers.company_name) AS company_name_facet, '' AS content, UNIX_TIMESTAMP(sellers.created_at) AS created_at, 0 AS deleted, '' AS email, '__empty_searchable__' AS empty_searchable, '' AS login, '' AS name, '' AS state, sellers.user_id AS user_id FROM sellers WHERE sellers.id >= $start AND sellers.id <= $end GROUP BY id
+
+sql_group_column = capitalization
+sql_group_column = class_id
+sql_group_column = company_name_facet
+sql_date_column = created_at
+sql_group_column = deleted
+sql_group_column = user_id
+sql_query_info = SELECT * FROM sellers WHERE sellers.id = (($id - 1) / 4)
+}
+
+
+# Source configuration
+
+source geo__addresses
+{
+  strip_html = 0
+  sql_range_step = 20000
+  index_html_attrs = 
+  sql_query_post = 
+
+type = mysql
+sql_query_pre = SET SESSION group_concat_max_len = 65535
+sql_query_pre = SET NAMES utf8
+  
+sql_db = app_development
+sql_host = localhost
+sql_pass = 
+sql_user = root
+sql_query_range = SELECT MIN(id), MAX(id) FROM addresses
+sql_query = SELECT (addresses.id * 4 + 2) AS id, '' AS address_name, 0 AS capitalization, 'Geo::Address' AS class, 2 AS class_id, '' AS company, '' AS company_name, 0 AS company_name_facet, CONCAT_WS(' ', addresses.line_1, addresses.line_2, addresses.city, addresses.province_region, addresses.zip_postal_code) AS content, UNIX_TIMESTAMP('1970-01-01 00:00:00') AS created_at, 0 AS deleted, '' AS email, '__empty_searchable__' AS empty_searchable, '' AS login, addresses.name AS name, states.name AS state, 0 AS user_id FROM addresses LEFT OUTER JOIN states ON states.id = addresses.state_id WHERE addresses.id >= $start AND addresses.id <= $end GROUP BY id
+
+sql_group_column = capitalization
+sql_group_column = class_id
+sql_group_column = company_name_facet
+sql_date_column = created_at
+sql_group_column = deleted
+sql_group_column = user_id
+sql_query_info = SELECT * FROM addresses WHERE addresses.id = (($id - 2) / 4)
+}
+
+
+# Source configuration
+
+source users
+{
+  strip_html = 0
+  sql_range_step = 20000
+  index_html_attrs = 
+  sql_query_post = 
+
+type = mysql
+sql_query_pre = SET SESSION group_concat_max_len = 65535
+sql_query_pre = SET NAMES utf8
+  
+sql_db = app_development
+sql_host = localhost
+sql_pass = 
+sql_user = root
+sql_query_range = SELECT MIN(id), MAX(id) FROM users
+sql_query = SELECT (users.id * 4 + 3) AS id, '' AS address_name, 0 AS capitalization, 'User' AS class, 3 AS class_id, sellers.company_name AS company, '' AS company_name, 0 AS company_name_facet, '' AS content, UNIX_TIMESTAMP('1970-01-01 00:00:00') AS created_at, users.deleted AS deleted, users.email AS email, '__empty_searchable__' AS empty_searchable, users.login AS login, '' AS name, '' AS state, 0 AS user_id FROM users LEFT OUTER JOIN sellers ON users.id = sellers.user_id WHERE users.id >= $start AND users.id <= $end AND (deleted = 0) GROUP BY id
+
+sql_group_column = capitalization
+sql_group_column = class_id
+sql_group_column = company_name_facet
+sql_date_column = created_at
+sql_group_column = deleted
+sql_group_column = user_id
+sql_query_info = SELECT * FROM users WHERE users.id = (($id - 3) / 4)
+}
+
+
+# Index configuration
+
+index complete
+{
+  source = geo__addresses
+  source = geo__states
+  source = sellers
+  source = users
+  charset_type = utf-8
+  charset_table = 0..9, A..Z->a..z, -, _, ., &, a..z, U+410..U+42F->U+430..U+44F, U+430..U+44F,U+C5->U+E5, U+E5, U+C4->U+E4, U+E4, U+D6->U+F6, U+F6, U+16B, U+0c1->a, U+0c4->a, U+0c9->e, U+0cd->i, U+0d3->o, U+0d4->o, U+0da->u, U+0dd->y, U+0e1->a, U+0e4->a, U+0e9->e, U+0ed->i, U+0f3->o, U+0f4->o, U+0fa->u, U+0fd->y, U+104->U+105, U+105, U+106->U+107, U+10c->c, U+10d->c, U+10e->d, U+10f->d, U+116->U+117, U+117, U+118->U+119, U+11a->e, U+11b->e, U+12E->U+12F, U+12F, U+139->l, U+13a->l, U+13d->l, U+13e->l, U+141->U+142, U+142, U+143->U+144, U+144,U+147->n, U+148->n, U+154->r, U+155->r, U+158->r, U+159->r, U+15A->U+15B, U+15B, U+160->s, U+160->U+161, U+161->s, U+164->t, U+165->t, U+16A->U+16B, U+16B, U+16e->u, U+16f->u, U+172->U+173, U+173, U+179->U+17A, U+17A, U+17B->U+17C, U+17C, U+17d->z, U+17e->z,
+  min_word_len = 1
+  stopwords = 
+  path = /tmp/sphinx//sphinx_index_complete
+  docinfo = extern
+  morphology = stem_en
+}
+
