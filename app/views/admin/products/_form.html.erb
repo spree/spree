@@ -58,7 +58,17 @@
   </div>
 </div>
 
-<%= render 'properties_form', :f => f %>
+<h2><%= t("metadata") %></h2>
+<p>
+  <%= f.label :meta_keywords, t("meta_keywords")%><br />
+  <%= f.text_field :meta_keywords, :class => 'fullwidth' %>        
+</p>
+<p>
+  <%= f.label :meta_description, t("meta_description")%><br />
+  <%= f.text_field :meta_keywords, :class => 'fullwidth' %>        
+</p>
+
+<%#= render 'properties_form', :f => f %>
 
 <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:product) }.each do |field| %>
   <%= render :partial => "admin/shared/additional_field", :locals => {:field => field, :f => f} %>

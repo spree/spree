@@ -294,6 +294,9 @@ en-US:
   login_failed: "Login authentication failed."      
   login_name: Login
   logout: Logout  
+  meta_keywords: "Meta Keywords"
+  meta_description: "Meta Description"
+  metadata: "Metadata"
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
   mail_server_preferences: Mail Server Preferences
