@@ -9,6 +9,10 @@ class User < ActiveRecord::Base
      #c.validates_length_of_password_field_options = {:minimum => 4, :if => :require_password?} 
      #for more defaults check the AuthLogic documentation
   end 
+
+  # prevents a user from submitting a crafted form that bypasses activation
+  # anything else you want your user to change should be added here.
+  attr_accessible :email, :password, :password_confirmation
   
   has_many :addresses, :as => :addressable, :dependent => :destroy
   has_many :orders
