@@ -8,15 +8,15 @@ describe Zone do
   
   describe "#kind" do
     it "should be country when zone contains countries" do
-      @zone.countries << mock_model(Country)
+      @zone.members << ZoneMember.new(:zoneable => Country.new)
       @zone.kind.should == "country"
     end
     it "should be state when zone contains states" do
-      @zone.states << mock_model(State)
+      @zone.members << ZoneMember.new(:zoneable => State.new)
       @zone.kind.should == "state"
     end
     it "should be zone when zone contains zones" do
-      @zone.zones << mock_model(Zone)
+      @zone.members << ZoneMember.new(:zoneable => Zone.new)
       @zone.kind.should == "zone"
     end
     it "should be country when zone contains no members (default)" do
@@ -27,43 +27,43 @@ describe Zone do
   describe "#include?" do
     describe "with countries based zone" do 
       it "should return true when the address country is included in the zones list of countries" do
-        country = mock_model(Country)
-        address = mock_model(Address, :country => country, :null_object => true)
-        @zone.countries << country
+        country = Country.new
+        address = Address.new(:country => country)
+        @zone.members << ZoneMember.new(:zoneable => country)
         @zone.include?(address).should be_true
       end
       it "should return false when the address country is not included in the zones list of countries " do
-        country = mock_model(Country)
-        address = mock_model(Address, :country => country, :null_object => true)
-        @zone.countries << mock_model(Country)
+        country = Country.new
+        address = Address.new(:country => country)
+        @zone.members << ZoneMember.new(:zoneable => Country.new)
         @zone.include?(address).should be_false
       end
     end
-    describe "with states based zone" do 
+    describe "with states based zone" do   
       it "should return true when the address state is included in the zones list of states" do
-        state = mock_model(State)
-        address = mock_model(Address, :state => state, :null_object => true)
-        @zone.states << state
+        state = State.new
+        address = Address.new(:state => state)
+        @zone.members << ZoneMember.new(:zoneable => state)
         @zone.include?(address).should be_true
       end
       it "should return false when the address state is not included in the zones list of states" do
-        state = mock_model(State)
-        address = mock_model(Address, :state => state, :null_object => true)
-        @zone.states << mock_model(State)
+        state = State.new
+        address = Address.new(:state => state)
+        @zone.members << ZoneMember.new(:zoneable => Address.new)
         @zone.include?(address).should be_false
       end
     end
     describe "with zones based zone" do               
       it "should return true when the address satisfies at least one of the zones in the list of zones" do
-        address = mock_model(Address, :null_object => true)
+        address = Address.new
         @zone.should_receive(:include?).with(address).and_return(true)
-        @zone.zones << @zone
+        @zone.members << ZoneMember.new(:zoneable => @zone)
         @zone.include?(address).should be_true
       end
       it "should return false when the address satisfies none of the zones in the list of zones" do
-        address = mock_model(Address, :null_object => true)        
+        address = Address.new
         @zone.should_receive(:include?).with(address).and_return(false)
-        @zone.zones << @zone
+        @zone.members << ZoneMember.new(:zoneable => @zone)
         @zone.include?(address).should be_false
       end
     end
@@ -115,16 +115,22 @@ describe Zone do
       @zone.country_list.should == []
     end
     it "should return the corresponding countries if zone kind is country" do
-      country = mock_model(Country)
-      @zone.should_receive(:countries).and_return([country])
+      country = Country.new
+      @zone.members << ZoneMember.new(:zoneable => country)
       @zone.country_list.should == [country]
     end
-    it "should return the countries of the zone children if the kind is zone" do
-      country1 = mock_model(Country)
-      country2 = mock_model(Country)
-      zone1 = mock_model(Zone, :country_list => [country1])
-      zone2 = mock_model(Zone, :country_list => [country2])
-      @zone.stub!(:members).and_return([zone1, zone2])
+    it "should return the countries of the zone children if the kind is zone" do   
+      country1 = Country.new
+      country2 = Country.new
+      
+      zone1 = Zone.new
+      zone1.members << ZoneMember.new(:zoneable => country1)
+      
+      zone2 = Zone.new
+      zone2.members << ZoneMember.new(:zoneable => country2)
+      
+      @zone.members << ZoneMember.new(:zoneable => zone1)
+      @zone.members << ZoneMember.new(:zoneable => zone2)
       @zone.country_list.should == [country1, country2]
     end
   end

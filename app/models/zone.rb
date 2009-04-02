@@ -1,13 +1,15 @@
 class Zone < ActiveRecord::Base
-  has_many_polymorphs :members, :from => [:states, :countries, :zones], :through => :zone_members, :as => :parent
+  has_many :zone_members#, :as => :zoneable #, :from => [:states, :countries, :zones], :through => :zone_members, :as => :parent
   validates_presence_of :name
   validates_uniqueness_of :name
+  
+  alias :members :zone_members
   
   #attr_accessor :type
   def kind
     return "country" unless member = self.members.last
-    return "state" if member.class == State
-    return "zone" if member.class == Zone
+    return "state" if member.zoneable_type == "State"
+    return "zone" if member.zoneable_type == "Zone"
     "country"
   end
   
@@ -22,16 +24,17 @@ class Zone < ActiveRecord::Base
     include?(address)  
   end
       
-  def include?(address)
+  def include?(address)        
     # NOTE: This is complicated by the fact that include? for HMP is broken in Rails 2.1 (so we use awkward index method)
     case self.kind
     when "country"
-      return members.index(address.country).respond_to?(:integer?)
+      return members.select { |zone_member| zone_member.zoneable == address.country }.any?
     when "state"
-      return members.index(address.state).respond_to?(:integer?)
+      return members.select { |zone_member| zone_member.zoneable == address.state }.any?
+      #members.index(address.state).respond_to?(:integer?)
     end
-    members.each do |zone|
-      return true if zone.include?(address)
+    members.each do |zone_member|
+      return true if zone_member.zoneable.include?(address)
     end
     false
   end
@@ -46,7 +49,7 @@ class Zone < ActiveRecord::Base
   # returns the zones children and does not consider the grand children if the children themselves are zones)
   def country_list
     return [] if kind == "state"
-    return countries if kind == "country"
-    members.collect { |zone| zone.country_list }.flatten
+    return members.collect { |zone_member| zone_member.zoneable } if kind == "country"
+    members.collect { |zone_member| zone_member.zoneable.country_list }.flatten
   end
 end

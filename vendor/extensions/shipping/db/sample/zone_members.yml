@@ -1,16 +1,16 @@
 usa_member:
-  parent: available_shipping
-  member_id: 214
-  member_type: Country
+  zone: available_shipping
+  zoneable_id: 214
+  zoneable_type: Country
 canada_member:
-  parent: available_shipping
-  member_id: 35
-  member_type: Country
+  zone: available_shipping
+  zoneable_id: 35
+  zoneable_type: Country
 uk_one_ship_opt:
-  parent: one_ship_option
-  member_id: 213
-  member_type: Country
+  zone: one_ship_option
+  zoneable_id: 213
+  zoneable_type: Country
 uae_one_ship_opt:
-  parent: one_ship_option
-  member_id: 212                # UAE, just cos it's close to US/UK in the list
-  member_type: Country
+  zone: one_ship_option
+  zoneable_id: 212                # UAE, just cos it's close to US/UK in the list
+  zoneable_type: Country

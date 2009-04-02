@@ -1,4 +1,4 @@
-class CreateEuVatZone < ActiveRecord::Migration
+class CreateEuVatZoneAgain < ActiveRecord::Migration
   def self.up
     # create an EU VAT zone (for optional use with EU VAT)
     zone = Zone.create :name => "EU_VAT", :description => "Countries that make up the EU VAT zone."
@@ -9,7 +9,7 @@ class CreateEuVatZone < ActiveRecord::Migration
     
     # manually create the countries (instead of using ActiveRecord method due to some apparent issues with HMP plugin)
     countries.each do |country|
-      execute "INSERT INTO zone_members (parent_id, member_id, member_type, created_at, updated_at) 
+      execute "INSERT INTO zone_members (zone_id, zoneable_id, zoneable_type, created_at, updated_at) 
                VALUES (#{zone.id}, #{country.id}, 'Country', '#{Time.now.to_s(:db)}', '#{Time.now.to_s(:db)}')"
     end
   end
