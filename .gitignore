@@ -33,7 +33,10 @@ spree_test
 tmp
 vendor/rails
 vendor/extensions
-public/javascripts/jquery
+public/images/reviews_ratings.png
+public/javascripts/jquery.product_reviews_ratings.*
+public/javascripts/jquery.tablesorter.min.js
+public/stylesheets/product_reviews_ratings.*
 public/images/lightbox
 public/stylesheets/lightbox.css
 vendor/extensions/google_base
