@@ -1,4 +1,4 @@
-<table class="cart-summary" width="100% ">
+<table id="cart">
   <thead>
     <tr>      
       <th colspan="2"><%= t("item") %></th>
@@ -13,5 +13,4 @@
 		  <td colspan="5"><%= @order.line_items.empty? ? t("your_cart_is_empty.") : "" %></td>
 		</tr>
 	</tbody>
-
 </table>

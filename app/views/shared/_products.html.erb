@@ -1,18 +1,21 @@
-<div class="product-listing">
-  <ul class="product-listing">
-    <% products.each do |product| %>
-      <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
-        <li class="product preview" id="product_<%= product.id %>">
-					<% if taxon.nil? %>
-				  	  <%= link_to small_image(product), product %>
-							<%= link_to product.name, product %>
-				  <% else %>
-			     		<%= link_to small_image(product), seo_url(taxon, product) %>
-							<%= link_to product.name, seo_url(taxon, product) %>
-					<% end %>
-          <b><%= product_price(product) %></b>
-        </li>
-      <% end %>
+<ul class="product-listing">
+  <% column_count = 0 %>
+  <% products.each do |product| %>
+  <% column_count += 1
+  column_count = 1 if column_count == 7
+   %>
+    <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
+      <li id="product_<%= product.id %>"<%= ' class="last"' if column_count == 6 %>>
+				<% if taxon.nil? %>
+			  	  <%= link_to small_image(product), product %><br />
+						<%= link_to product.name, product %>
+			  <% else %>
+		     		<%= link_to small_image(product), seo_url(taxon, product) %><br />
+						<%= link_to product.name, seo_url(taxon, product) %>
+				<% end %>
+        <span class="price selling"><%= product_price(product) %></span>
+      </li>
     <% end %>
-  </ul>
-</div>
+  <% end %>
+</ul>
+<hr class="space" />

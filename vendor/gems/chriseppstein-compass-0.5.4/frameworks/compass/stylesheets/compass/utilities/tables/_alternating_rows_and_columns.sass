@@ -1,0 +1,20 @@
+=alternating-rows-and-columns(!even_row_color, !odd_row_color, !dark_intersection, !header_color = #FFF, !footer_color = #FFF)
+  th
+    :background-color= !header_color
+    &.even
+      :background-color= !header_color - !dark_intersection
+  tr.odd
+    td
+      :background-color= !odd_row_color
+      &.even
+        :background-color= !odd_row_color - !dark_intersection
+  tr.even
+    td
+      :background-color= !even_row_color
+      &.even
+        :background-color= !even_row_color - !dark_intersection
+  tfoot
+    th, td
+      :background-color= !footer_color
+      &.even
+      :background-color= !footer_color - !dark_intersection
