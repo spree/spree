@@ -59,10 +59,6 @@
     roles : [admin]
     options :
       except : [new, create]   
-      unless : "object.user_id == nil || current_user.id == object.user_id"
-  permission2:
-    roles : [admin,user]
-    options :
-      for : [checkout]   
+      unless : can_access?  #orders_controller may grant access based on presence of token, etc.
       
 # TODO - restrict orders

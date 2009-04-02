@@ -24,7 +24,10 @@ class OrdersController < Spree::BaseController
       @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
     end if params[:variants]
     
-    @order.save
+    @order.save 
+    
+    # store order token in the session
+    session[:order_token] = @order.token
   end
 
   # override the default r_c behavior (remove flash - redirect to edit details instead of show)
@@ -49,6 +52,11 @@ class OrdersController < Spree::BaseController
                                    
   # feel free to override this library in your own extension
   include Spree::Checkout
+  
+  def can_access?
+    order = load_object
+    order.grant_access?(session[:order_token])
+  end
     
   private
   def build_object        
