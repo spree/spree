@@ -56,6 +56,7 @@ pl:
         master_price: "Master Price"
         name: Name
         on_hand: "On Hande"
+        shipping_category: "Shipping Category"
       property: 
         name: Name
         presentation: Presentation
@@ -124,6 +125,9 @@ pl:
       role: 
         one: Roles
         other: Roles
+      shipping_category: 
+        one: "Shipping Category"
+        other: "Shipping Categories"
       state: 
         one: State
         other: States
@@ -474,3 +478,18 @@ pl:
   zone_based: "Zone Based"
   zone_setting_description: "Zbiory krajów, stanów i innych stref używane w różnych przeliczeniach."
   zones: Strefy
+  ext_shipping_calculator: Calculator
+  ext_shipping_cost: Cost
+  ext_shipping_editing_shipping_category: "Editing Shipping Category"
+  ext_shipping_editing_shipping_method: "Editing Shipping Method"
+  ext_shipping_mark_shipped: "Mark Shipped"
+  ext_shipping_method: Method
+  ext_shipping_new_shipping_category: "New Shipping Category"
+  ext_shipping_new_shipping_method: "New Shipping Method"
+  ext_shipping_shipment_number: "Shipment #"
+  ext_shipping_shipping_categories: "Shipping Categories"
+  ext_shipping_shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  ext_shipping_shipping_methods: "Shipping Methods"
+  ext_shipping_shipping_methods_description: "Manage shipping methods"
+  ext_shipping_tracking: Tracking
+  select_preferred_shipping_option: "Select preferred shipping option"

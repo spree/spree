@@ -56,6 +56,7 @@ pt-BR:
         master_price: "Preço Mestre"
         name: Nome
         on_hand: "Em mãos"
+        shipping_category: "Shipping Category"
       property: 
         name: Nome
         presentation: Apresentação
@@ -124,6 +125,9 @@ pt-BR:
       role: 
         one: Papél
         other: Papéis
+      shipping_category: 
+        one: "Shipping Category"
+        other: "Shipping Categories"
       state: 
         one: Estado
         other: Estados
@@ -474,3 +478,19 @@ pt-BR:
   zone_based: "Baseado em Zona"
   zone_setting_description: "Coleção de países, estados e outras zonas a serem usados nos cálculos."
   zones: Zonas
+  zones: Zonas
+  ext_shipping_calculator: Calculator
+  ext_shipping_cost: Cost
+  ext_shipping_editing_shipping_category: "Editing Shipping Category"
+  ext_shipping_editing_shipping_method: "Editing Shipping Method"
+  ext_shipping_mark_shipped: "Mark Shipped"
+  ext_shipping_method: Method
+  ext_shipping_new_shipping_category: "New Shipping Category"
+  ext_shipping_new_shipping_method: "New Shipping Method"
+  ext_shipping_shipment_number: "Shipment #"
+  ext_shipping_shipping_categories: "Shipping Categories"
+  ext_shipping_shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  ext_shipping_shipping_methods: "Shipping Methods"
+  ext_shipping_shipping_methods_description: "Manage shipping methods"
+  ext_shipping_tracking: Tracking
+  select_preferred_shipping_option: "Select preferred shipping option"

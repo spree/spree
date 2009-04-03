@@ -56,6 +56,7 @@ nb-NO:
         master_price: "Ordinær pris"
         name: Navn
         on_hand: "På lager"
+        shipping_category: "Fraktkategori"
       property: 
         name: Navn
         presentation: "Presentasjon"
@@ -124,6 +125,9 @@ nb-NO:
       role: 
         one: Rolle
         other: Roller
+      shipping_category: 
+        one: "Fraktkategori"
+        other: "Fraktkategorier"
       state: 
         one: "Stat"
         other: "Stater"
@@ -474,3 +478,18 @@ nb-NO:
   zone_based: "Soner"
   zone_setting_description: "Liste over land, stater og andre soner som brukes i diverse beregninger."
   zones: Soner  
+  ext_shipping_calculator: Kalkulator
+  ext_shipping_cost: Kostnad
+  ext_shipping_editing_shipping_category: Endre fraktkategori
+  ext_shipping_editing_shipping_method: "Endre leveransemåte"
+  ext_shipping_mark_shipped: "Merk som levert"
+  ext_shipping_method: Leveransemåte
+  ext_shipping_new_shipping_category: "Ny fraktkategori"
+  ext_shipping_new_shipping_method: "Ny leveransemåte"
+  ext_shipping_shipment_number: "Leveransenummer"
+  ext_shipping_shipping_categories: "Fraktkategorier"
+  ext_shipping_shipping_categories_description: "Konfigurer fraktkategorier for å styre hvilke produkter som kan bruke de ulike leveransemåtene."
+  ext_shipping_shipping_methods: "Leveransemåter"
+  ext_shipping_shipping_methods_description: "Konfigurer leveransemåter."
+  ext_shipping_tracking: Sporing
+  select_preferred_shipping_option: "Velg ønsket leveransemåte"
