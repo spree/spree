@@ -6,8 +6,8 @@ class Admin::ConfigurationsController < Admin::BaseController
   protected
 
   def add_shipping_links
-    @extension_links << {:link => admin_shipping_methods_path, :link_text => t("ext_shipping_shipping_methods"), :description => t("ext_shipping_shipping_methods_description")}
-    @extension_links << {:link => admin_shipping_categories_path, :link_text => t("ext_shipping_shipping_categories"), :description => t("ext_shipping_shipping_categories_description")}
+    @extension_links << {:link => admin_shipping_methods_path, :link_text => t("shipping_methods"), :description => t("shipping_methods_description")}
+    @extension_links << {:link => admin_shipping_categories_path, :link_text => t("shipping_categories"), :description => t("shipping_categories_description")}
   end
 
   def initialize_extension_links

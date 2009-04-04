@@ -4,6 +4,7 @@ it:
   abbreviation: Abbreviation
   access_denied: "Access Denied"        
   account: Conto
+  account_updated: "Account updated!"        
   action: Azione
   actions: 
     cancel: Cancelare
@@ -227,6 +228,8 @@ it:
   editing_product: "Editing Product"
   editing_property: "Editing Property"
   editing_prototype: "Editing Prototype"
+  editing_shipping_category: "Editing Shipping Category"
+  editing_shipping_method: "Editing Shipping Method"
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
   editing_user: "Edita l'utente"
@@ -247,6 +250,7 @@ it:
   filename: file
   final_confirmation: "Conferma finale"
   first_name: nome
+  forgot_password: "Forgot Password"
   gateway: Gateway
   gateway_error: "Gateway Error"
   gateway_setting_description: "Select a payment gateway and configure its settings."
@@ -262,6 +266,7 @@ it:
   height: Height
   hello_user: "Ciao User"
   history: History
+  home: "Home"
   image: Imagine
   images: Imagini
   in_progress: "In Progress"
@@ -284,14 +289,16 @@ it:
   locale_changed: "Locale Changed"
   log_in: Login
   logged_in_as: "Loggato con"
-  logged_in_successfully: "Logged in successfully."
-  login_authentication_failed: "Login authentication failed."
+  logged_in_succesfully: "Logged in successfully"
+  logged_out: "You have been logged out." 
+  login_failed: "Login authentication failed."      
   login_name: Utente
   logout: Logout
   mail_delivery_enabled:
   mail_delivery_not_enabled:
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mail Server Settings"
+  mark_shipped: "Mark Shipped"
   master_price: "Prezzo base"
   month: "Month"
   my_account: "Mio conto"
@@ -308,6 +315,8 @@ it:
   new_property: "New Property"
   new_prototype: "New Prototype"
   new_shipment:
+  new_shipping_category: "New Shipping Category"
+  new_shipping_method: "New Shipping Method"
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
@@ -318,6 +327,7 @@ it:
   next: continua
   no_items_in_cart: "Carrello vuoto"
   no_match_found: "No Match Found"
+  no_user_found: "No user was found with that email address"
   none: ""
   none_available: "None Available"
   on_hand: "In magazzino"
@@ -344,6 +354,10 @@ it:
   paid: Paid
   parent_category: "Sottocategoria di"
   password: Password
+  password_reset_instructions: "Password Reset Instructions"
+  password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
+  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."    
+  password_updated: "Password successfully updated"  
   path: Path
   pay: pay
   payment: Pagamento
@@ -365,6 +379,7 @@ it:
   products: Prodotti
   properties: ""
   property: ""
+  prototype: Prototype
   prototypes: ""
   qty: Qnt
   rate: Rate
@@ -372,6 +387,7 @@ it:
   remove: ""
   reports: Reports
   resend: Riinvia
+  reset_password: "Reset my password"
   response_code: "Response Code"
   resume: "resume"
   resumed: Resumed
@@ -387,6 +403,7 @@ it:
   secure_connection_type: Secure Connection Type
   select: Seleziona
   select_from_prototype: ""
+  select_preferred_shipping_option: "Select preferred shipping option"
   send_copy_of_all_mails_to: Send Copy of All Mails To
   send_copy_of_orders_mails_to: Send Copy of Order Mails To         
   send_mails_as: Send Mails As                    
@@ -394,11 +411,18 @@ it:
   ship: ship
   ship_address: "Indirizzo di consegna"
   shipment: Shipment
+  shipment_number: "Shipment #"
   shipped: Shipped
   shipping: Consegna
   shipping_address: "Indirizzo di consegna"
+  shipping_calculator: Calculator
+  shipping_categories: "Shipping Categories"
+  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_cost: Cost
   shipping_error: "Shipping Error"
-  shipping_method: "Metodo di consegna"
+  shipping_method: Method
+  shipping_methods: "Shipping Methods"
+  shipping_methods_description: "Manage shipping methods"
   shipping_total: "Totale costi di consegna"
   shopping_cart: Carrello
   show_deleted: "Show Deleted"
@@ -406,6 +430,8 @@ it:
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
   sign_up: "Sign up"
+  site_name: "Site Name"
+  site_url: "Site URL"
   sku: SKU
   smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
@@ -444,6 +470,7 @@ it:
   this_file_language: Italian
   to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Totale
+  tracking: Tracking
   transaction: Transazioni
   tree: Tree
   try_again: Riprova
@@ -452,6 +479,7 @@ it:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
   update: Salva
+  update_password: "Update my password and log me in"                    
   updated_successfully:
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
@@ -478,18 +506,3 @@ it:
   zone_based: "Zone Based"
   zone_setting_description: ""
   zones: ""
-  ext_shipping_calculator: Calculator
-  ext_shipping_cost: Cost
-  ext_shipping_editing_shipping_category: "Editing Shipping Category"
-  ext_shipping_editing_shipping_method: "Editing Shipping Method"
-  ext_shipping_mark_shipped: "Mark Shipped"
-  ext_shipping_method: Method
-  ext_shipping_new_shipping_category: "New Shipping Category"
-  ext_shipping_new_shipping_method: "New Shipping Method"
-  ext_shipping_shipment_number: "Shipment #"
-  ext_shipping_shipping_categories: "Shipping Categories"
-  ext_shipping_shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
-  ext_shipping_shipping_methods: "Shipping Methods"
-  ext_shipping_shipping_methods_description: "Manage shipping methods"
-  ext_shipping_tracking: Tracking
-  select_preferred_shipping_option: "Select preferred shipping option"

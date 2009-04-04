@@ -44,7 +44,7 @@
     <% end %>
 
     <p>
-      <%= f.label :shipping_category_id, t("ext_shipping_shipping_categories")%><br />    
+      <%= f.label :shipping_category_id, t("shipping_categories")%><br />    
       <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        
       <%= f.error_message_on :shipping_category %>
     </p>
