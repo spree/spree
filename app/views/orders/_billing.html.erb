@@ -45,7 +45,14 @@
   	<p id="bphone">
   		<label for="<%= t("phone") %>"><%= t("phone") %></label>
   		<%= bill_form.text_field :phone, :class => 'required' -%><span class="req">*</span>
-  	</p>
+        </p>
+        <% if Spree::Config[:alternative_billing_phone] %>
+          <p id="baltphone">
+            <label for=""><%= t("alternative_phone") %></label>
+            <%= bill_form.text_field :alternative_phone -%>
+          </p>
+        <% end %>
+
   	<div class="form-buttons">
       <input id="continue_billing" type="button" class="button primary" value="<%=t("continue")%>"/>
     </div>
