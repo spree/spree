@@ -4,12 +4,6 @@ class TaxonsController < Spree::BaseController
   actions :show
   helper :products
   
-  show.response do |wants|
-    wants.html do 
-      render :template => 'products/index.html.erb' if @taxon.children.empty?
-    end
-  end
-  
   private
   def load_data
     @search = object.products.active.new_search(params[:search])

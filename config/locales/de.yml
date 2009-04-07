@@ -4,6 +4,7 @@ de:
   abbreviation: Abkürzung
   access_denied: "Zugriff verweigert"        
   account: Konto
+  account_updated: "Account updated!"        
   action: Aktion
   actions: 
     cancel: Abbrechen
@@ -56,6 +57,7 @@ de:
         master_price: Grundpreis
         name: Name
         on_hand: verfügbar
+        shipping_category: "Shipping Category"
       property: 
         name: Name
         presentation: Darstellung
@@ -124,6 +126,9 @@ de:
       role: 
         one: Rolle
         other: Rollen
+      shipping_category: 
+        one: "Shipping Category"
+        other: "Shipping Categories"
       state: 
         one: Bundesland
         other: Bundesländer
@@ -223,6 +228,8 @@ de:
   editing_product: "Produkt bearbeiten"
   editing_property: "Eigenschaft bearbeiten"
   editing_prototype: "Prototyp bearbeiten"
+  editing_shipping_category: "Editing Shipping Category"
+  editing_shipping_method: "Editing Shipping Method"
   editing_state: "Bundesland bearbeiten"
   editing_tax_category: "Steuer-Kategorie bearbeiten"
   editing_user: "Benutzer bearbeiten"
@@ -243,6 +250,7 @@ de:
   filename: Dateiname
   final_confirmation: "End Bestätigung"
   first_name: Vorname
+  forgot_password: "Forgot Password"
   gateway: Gateway
   gateway_error: "Gateway Fehler"
   gateway_setting_description: "Gateway-Einstellungen ändern"
@@ -258,6 +266,7 @@ de:
   height: Höhe
   hello_user: "Hallo Benutzer"
   history: History
+  home: "Home"
   image: Bild
   images: Bilder
   in_progress: "In Bearbeitung"
@@ -280,14 +289,16 @@ de:
   locale_changed: "Sprache geändert"
   log_in: Anmelden
   logged_in_as: "Angemldet unter"
-  logged_in_successfully: "Logged in successfully."
-  login_authentication_failed: "Login authentication failed."
+  logged_in_succesfully: "Logged in successfully"
+  logged_out: "You have been logged out." 
+  login_failed: "Login authentication failed."      
   login_name: Benutzer
   logout: Abmelden
   mail_delivery_enabled: "Mailversand aktiviert"
   mail_delivery_not_enabled: "Mailversand deaktiviert"
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mailserver-Einstellungen"
+  mark_shipped: "Mark Shipped"
   master_price: Grundpreis
   month: "Month"
   my_account: "Mein Konto"
@@ -304,6 +315,8 @@ de:
   new_property: "Neue Eigenschaft"
   new_prototype: "Neuer Prototyp"
   new_shipment: "Neue Lieferung"
+  new_shipping_category: "New Shipping Category"
+  new_shipping_method: "New Shipping Method"
   new_state: "Neues Bundesland"
   new_tax_category: "Neue Steuer-Kategorie"
   new_tax_rate: "Neuer Steuersatz"
@@ -314,6 +327,7 @@ de:
   next: weiter
   no_items_in_cart: "Keine Artikel im  Warenkorb"
   no_match_found: "Kein Treffer"
+  no_user_found: "No user was found with that email address"
   none: kein
   none_available: "keine verfügbar"
   on_hand: "Auf Lager"
@@ -340,6 +354,10 @@ de:
   paid: Bezahlt
   parent_category: "Unterkategorie von"
   password: Passwort
+  password_reset_instructions: "Password Reset Instructions"
+  password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
+  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."    
+  password_updated: "Password successfully updated"  
   path: Pfad
   pay: zahlen
   payment: Zahlung
@@ -361,6 +379,7 @@ de:
   products: Produkte
   properties: "Eigenschaften"
   property: "Eigenschaft"
+  prototype: Prototype
   prototypes: "Prototyp"
   qty: Anz
   rate: Rate
@@ -368,6 +387,7 @@ de:
   remove: Entfernen
   reports: Berichte
   resend: "Neu versenden"
+  reset_password: "Reset my password"
   response_code: Rückgabewert
   resume: Fortsetzen
   resumed: Fortgesetzt
@@ -383,6 +403,7 @@ de:
   secure_connection_type: Secure Connection Type
   select: Auswählen
   select_from_prototype: ""
+  select_preferred_shipping_option: "Select preferred shipping option"
   send_copy_of_all_mails_to: Send Copy of All Mails To
   send_copy_of_orders_mails_to: Send Copy of Order Mails To         
   send_mails_as: Send Mails As                    
@@ -390,11 +411,18 @@ de:
   ship: ship
   ship_address: Lieferadresse
   shipment: Shipment
+  shipment_number: "Shipment #"
   shipped: Ausgeliefert
   shipping: Lieferung
   shipping_address: Lieferadresse
+  shipping_calculator: Calculator
+  shipping_categories: "Shipping Categories"
+  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_cost: Cost
   shipping_error: "Shipping Error"
-  shipping_method: Liefermethode
+  shipping_method: Method
+  shipping_methods: "Shipping Methods"
+  shipping_methods_description: "Manage shipping methods"
   shipping_total: "Lieferkosten Gesamt"
   shopping_cart: Warenkorb
   show_deleted: "Zeige gelöschte"
@@ -402,6 +430,8 @@ de:
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Zeige ausverkaufte Produkte"
   sign_up: "Anmelden"
+  site_name: "Site Name"
+  site_url: "Site URL"
   sku: Lagerhaltungsnummer
   smtp: SMTP
   smtp_authentication_type: SMTP Authentication Type         
@@ -440,6 +470,7 @@ de:
   this_file_language: Deutsch
   to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Gesamt
+  tracking: Tracking
   transaction: Transaktion
   tree: Baum
   try_again: "Erneut versuchen"
@@ -448,6 +479,7 @@ de:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
   update: Speichern
+  update_password: "Update my password and log me in"                    
   updated_successfully: "Erfolgreich aktualisiert"
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address

@@ -39,10 +39,10 @@
 <fieldset id="<%= name %>-based" <%= "style='display:none'" if send("#{name}_checked").blank? %> >
   <legend><%= t(name) %></legend>
   <ul id="<%= name %>-list" class="member-list">
-    <% @object.send(name.pluralize).each do |member| %>
-      <%= render :partial => name, :locals => {:value => member.name} %>
+    <% @zone.members.each do |member| %>
+      <%= render :partial => name, :locals => {:value => member} %>
     <% end %>
-    <%= render :partial => name if @object.send(name.pluralize).empty?%>
+    <%= render :partial => name if @zone.members.empty?%>
   </ul>
   <br/>
   <%= button_link_to_function(t("add_#{name}"), "add_#{name}()", :icon => 'add' ) %> 

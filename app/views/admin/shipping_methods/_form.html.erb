@@ -1,0 +1,14 @@
+<table>
+	<tr>
+    <td><%=t("name")%>:</td>
+    <td><%= f.text_field :name, {"style" => "width:200px"} %></td>
+  </tr>
+  <tr>
+    <td><%=t("zone")%>:</td>
+    <td><%= collection_select(:shipping_method, :zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"}) %></td>
+  </tr>
+	<tr>
+    <td><%=t("shipping_calculator")%>:</td>
+    <td><%= f.text_field :shipping_calculator, {"style" => "width:200px"} %></td>
+  </tr>
+</table>

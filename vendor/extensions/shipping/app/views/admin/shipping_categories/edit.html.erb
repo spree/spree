@@ -1,8 +1,0 @@
-<h1><%= t("ext_shipping_editing_shipping_category") %></h1>
-<%= error_messages_for :shipping_category %>
-<% form_for(:shipping_category, :url => object_url, :html => { :method => :put }) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
-  <p>
-    <%=submit_tag t("update")%>
-  </p>
-<% end %>

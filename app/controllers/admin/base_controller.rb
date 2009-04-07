@@ -4,6 +4,12 @@ class Admin::BaseController < Spree::BaseController
   
   before_filter :initialize_product_admin_tabs
   before_filter :initialize_order_admin_tabs
+  before_filter :add_shipments_tab
+
+private
+  def add_shipments_tab
+    @order_admin_tabs << {:name => 'Shipments', :url => "admin_order_shipments_url"}
+  end
   
   #used to add tabs / partials to product admin interface
   def initialize_product_admin_tabs

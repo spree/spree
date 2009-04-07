@@ -1,0 +1,19 @@
+
+.noprint,
+.no-print {
+  display: none; }
+
+address.print-only, blockquote.print-only, center.print-only, dir.print-only, div.print-only, dd.print-only, dl.print-only, dt.print-only,
+fieldset.print-only, form.print-only, frameset.print-only, h1.print-only, h2.print-only, h3.print-only, h4.print-only, h5.print-only, h6.print-only, hr.print-only,
+isindex.print-only, li.print-only, menu.print-only, noframes.print-only, noscript.print-only, ol.print-only, p.print-only, pre.print-only,
+table.print-only, tbody.print-only, td.print-only, tfoot.print-only, th.print-only, thead.print-only, tr.print-only, ul.print-only {
+  display: block; }
+
+a.print-only, abbr.print-only, acronym.print-only, b.print-only, basefont.print-only, bdo.print-only, big.print-only, br.print-only, cite.print-only,
+code.print-only, dfn.print-only, em.print-only, font.print-only, i.print-only, img.print-only, input.print-only, kbd.print-only, label.print-only, q.print-only, s.print-only,
+samp.print-only, select.print-only, small.print-only, span.print-only, strike.print-only, strong.print-only, sub.print-only, sup.print-only,
+textarea.print-only, tt.print-only, u.print-only, var.print-only {
+  display: inline; }
+
+.print-only {
+  display: none; }

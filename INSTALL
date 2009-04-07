@@ -13,10 +13,10 @@ install Spree:
 
 3. Run the database bootstrap rake task:
    
-     $ rake production db:bootstrap
+     $ rake db:bootstrap RAILS_ENV=production
    
    (If you would like bootstrap your development database just run `rake
-   development db:bootstrap` or simply `rake db:bootstrap`.)
+   db:bootstrap RAILS_ENV=development` or simply `rake db:bootstrap`.)
 
 4. Start it like a normal Rails application. To test execute:
    

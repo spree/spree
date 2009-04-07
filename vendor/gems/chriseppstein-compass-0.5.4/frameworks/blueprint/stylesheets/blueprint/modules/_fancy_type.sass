@@ -1,0 +1,81 @@
+/*
+  To install the fancy type plugin:
+    1. import the fancy_type module:
+      @import blueprint/modules/fancy_type
+    2. mixin +fancy-type to your project's body or at the top level of your stylesheet:
+      body
+        +fancy-type
+
+=fancy-type
+  +fancy-paragraphs
+  .caps
+    +caps
+  .dquo
+    +dquo
+  .alt
+    +alt
+
+/* Indentation instead of line shifts for sibling paragraphs. Mixin to a style like p + p
+=sibling-indentation
+  :text-indent 2em
+  :margin-top -1.5em
+  /* Don't want this in forms.
+  form &
+    :text-indent 0
+
+/* 
+  For great looking type, use this code instead of asdf: 
+  <span class="alt">asdf</span>  
+  Best used on prepositions and ampersands.
+
+=alt
+  :color #666
+  :font-family "Warnock Pro", "Goudy Old Style","Palatino","Book Antiqua", Georgia, serif
+  :font-style italic
+  :font-weight normal
+
+/*
+  For great looking quote marks in titles, replace "asdf" with:
+  <span class="dquo">&#8220;</span>asdf&#8221;
+  (That is, when the title starts with a quote mark). 
+  (You may have to change this value depending on your font size).
+=dquo(!offset = 0.5em)
+  :margin-left -!offset
+
+/*
+  Reduced size type with incremental leading
+  (http://www.markboulton.co.uk/journal/comments/incremental_leading/)
+  
+  This could be used for side notes. For smaller type, you don't necessarily want to 
+  follow the 1.5x vertical rhythm -- the line-height is too much. 
+  
+  Using this mixin, reduces your font size and line-height so that for 
+  every four lines of normal sized type, there is five lines of the sidenote. eg:
+  
+  Arguments:
+    font_size - The desired font size in pixels. This will be converted to ems for you. Defaults to 10px.
+    base_font_size - The base font size in pixels. Defaults to 12px
+    old_line_height - The old line height. Defaults to 1.5 times the base_font_size
+=incr(!font_size = 10px, !base_font_size = 12px, !old_line_height = !base_font_size * 1.5)
+  :font-size= 1em * !font_size / !base_font_size
+  :line-height= 1em * !old_line_height / !font_size * 4 / 5
+  :margin-bottom 1.5em
+
+/*
+  Surround uppercase words and abbreviations with this class.
+  Based on work by Jørgen Arnor Gårdsø Lom [http://twistedintellect.com/]
+=caps
+  :font-variant small-caps
+  :letter-spacing 1px
+  :text-transform lowercase
+  :font-size 1.2em
+  :line-height 1%
+  :font-weight bold
+  :padding 0 2px
+
+=fancy-paragraphs
+  p + p
+    +sibling-indentation
+  p.incr,
+  .incr p
+    +incr

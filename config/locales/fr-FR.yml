@@ -4,6 +4,7 @@ fr-FR:
   abbreviation: Abréviation
   access_denied: "Accès interdit"
   account: Compte
+  account_updated: "Account updated!"        
   action: Action
   actions: 
     cancel: Annuler
@@ -56,6 +57,7 @@ fr-FR:
         master_price: "Prix de départ"
         name: Nom
         on_hand: "On Hand"
+        shipping_category: "Shipping Category"
       property: 
         name: Nom
         presentation: Presentation
@@ -124,6 +126,9 @@ fr-FR:
       role: 
         one: Rôles
         other: Rôles
+      shipping_category: 
+        one: "Shipping Category"
+        other: "Shipping Categories"
       state: 
         one: Région
         other: Régions
@@ -223,6 +228,8 @@ fr-FR:
   editing_product: "Edition du produit"
   editing_property: "Edition de la propriété"
   editing_prototype: "Edition du prototype"
+  editing_shipping_category: "Editing Shipping Category"
+  editing_shipping_method: "Editing Shipping Method"
   editing_state: "Edition de la région"
   editing_tax_category: "Edition de la catégorie de taxe"
   editing_user: "Edition d'un utilisateur"
@@ -243,6 +250,7 @@ fr-FR:
   filename: Nom du fichier
   final_confirmation: "Confirmation finale"
   first_name: "Prenom"
+  forgot_password: "Forgot Password"
   gateway: Passerelle
   gateway_error: "Erreur de la passerelle"
   gateway_setting_description: "Sélectionner une passerelle de paiement et configurez ses paramètres."
@@ -258,6 +266,7 @@ fr-FR:
   height: Taille
   hello_user: "Bonjour utilisateur"
   history: History
+  home: "Home"
   image: Image
   images: Images
   in_progress: "En progression"
@@ -280,14 +289,16 @@ fr-FR:
   locale_changed: "Locale changée"
   log_in: "S'identifier"
   logged_in_as: "Identifié en tant que"
-  logged_in_successfully: "Logged in successfully."
-  login_authentication_failed: "Login authentication failed."
+  logged_in_succesfully: "Logged in successfully"
+  logged_out: "You have been logged out." 
+  login_failed: "Login authentication failed."      
   login_name: Identifiant
   logout: Se déconnecter
   mail_delivery_enabled: "Distribution des emails activée"
   mail_delivery_not_enabled: "Distribution des emails est désactivée"
   mail_server_preferences: Préférence du serveur de messagerie
   mail_server_settings: "Paramètres du serveur de messagerie"
+  mark_shipped: "Mark Shipped"
   master_price: "Prix de départ"
   month: "Month"
   my_account: "Mon compte"
@@ -304,6 +315,8 @@ fr-FR:
   new_property: "Nouvelle proprieté"
   new_prototype: "Nouveau prototype"
   new_shipment: "Nouvelle expédition"
+  new_shipping_category: "New Shipping Category"
+  new_shipping_method: "New Shipping Method"
   new_state: "Nouvelle région"
   new_tax_category: "Nouvelle catégorie de taxes"
   new_tax_rate: "Nouvelle taxe"
@@ -314,6 +327,7 @@ fr-FR:
   next: Suivant
   no_items_in_cart: ""
   no_match_found: "Aucune correspondance trouvée"
+  no_user_found: "No user was found with that email address"
   none: Aucun
   none_available: "Aucun de disponible"
   on_hand: "Disponible"
@@ -340,6 +354,10 @@ fr-FR:
   paid: Payer
   parent_category: "Catégorie racine"
   password: Mot de passe
+  password_reset_instructions: "Password Reset Instructions"
+  password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
+  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."    
+  password_updated: "Password successfully updated"  
   path: Chemin
   pay: payé
   payment: Paiement
@@ -361,6 +379,7 @@ fr-FR:
   products: Produits
   properties: Propriétés
   property: Propriété
+  prototype: Prototype
   prototypes: Prototypes
   qty: Qté
   rate: Taux
@@ -368,6 +387,7 @@ fr-FR:
   remove: Supprimer
   reports: Statistiques
   resend: Renvoyer
+  reset_password: "Reset my password"
   response_code: "Code de réponse"
   resume: "reprendre"
   resumed: repris
@@ -383,6 +403,7 @@ fr-FR:
   secure_connection_type: Connection de type sécurisée
   select: Selectionner
   select_from_prototype: "Sélectionner d'après le prototype"
+  select_preferred_shipping_option: "Select preferred shipping option"
   send_copy_of_all_mails_to: Envoyer une copie de tous les emails à
   send_copy_of_orders_mails_to: Envoyer une copie des commandes email à
   send_mails_as: Envoyer des mails en tant que
@@ -390,11 +411,18 @@ fr-FR:
   ship: livraison
   ship_address: "Adresse de livraison"
   shipment: Livraison
+  shipment_number: "Shipment #"
   shipped: Livré
   shipping: Frais de livraison
   shipping_address: "Adresse de livraison"
+  shipping_calculator: Calculator
+  shipping_categories: "Shipping Categories"
+  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_cost: Cost
   shipping_error: "Erreur de livraison"
   shipping_method: "Méthode de livraison"
+  shipping_methods: "Shipping Methods"
+  shipping_methods_description: "Manage shipping methods"
   shipping_total: "Total de la livraison"
   shopping_cart: "Panier"
   show_deleted: "Afficher les commandes supprimées"
@@ -402,6 +430,8 @@ fr-FR:
   show_only_complete_orders: "Afficher seulement les commandes complète"
   show_out_of_stock_products: "Afficher les produits n'étant plus en stock"
   sign_up: "S'inscrire"
+  site_name: "Site Name"
+  site_url: "Site URL"
   sku: Code barre
   smtp: SMTP
   smtp_authentication_type: Type d'authentification SMTP
@@ -440,6 +470,7 @@ fr-FR:
   this_file_language: "Français (FR)"
   to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Total
+  tracking: Tracking
   transaction: Transaction
   tree: Arborescence
   try_again: "Reessayer"
@@ -448,6 +479,7 @@ fr-FR:
   unable_to_capture_credit_card: "Impossible de récupérer votre carte de crédit"
   unable_to_save_order: "Unable to Save Order"
   update: Mise à jour
+  update_password: "Update my password and log me in"                    
   updated_successfully: "Mise à jour effectuée avec succès"
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address

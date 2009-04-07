@@ -12,8 +12,12 @@ class Variant < ActiveRecord::Base
   # default variant scope only lists non-deleted variants
   named_scope :active, :conditions => "deleted_at is null"
   named_scope :deleted, :conditions => "not deleted_at is null"
-  
-  @fields =[]
+ 
+  # default extra fields for shipping purposes 
+  @fields = [ {:name => 'Weight', :only => [:variant], :format => "%.2f"},
+              {:name => 'Height', :only => [:variant], :format => "%.2f"},
+              {:name => 'Width',  :only => [:variant], :format => "%.2f"},
+              {:name => 'Depth',  :only => [:variant], :format => "%.2f"} ]
   
   def on_hand
     inventory_units.with_state("on_hand").size

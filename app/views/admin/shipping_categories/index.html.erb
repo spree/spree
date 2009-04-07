@@ -1,0 +1,27 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_shipping_category"), new_object_url, :icon => 'add'  %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+<h1><%=t("shipping_categories") %></h1>
+<table class="index">
+  <thead>
+    <th><%= t("name") %></th>
+    <th><%= t("action") %></th>
+  </thead>
+  <tbody>
+    <% @shipping_categories.each do |shipping_category|%>
+    <tr>
+      <td width="350px"><%= shipping_category.name %></td>
+      <td>
+      	<%= link_to_edit shipping_category %> &nbsp;
+      	<%= link_to_delete shipping_category %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>

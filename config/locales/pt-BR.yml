@@ -4,6 +4,7 @@ pt-BR:
   abbreviation: Abreviação
   access_denied: "Acesso Negado"
   account: Conta
+  account_updated: "Account updated!"        
   action: Ação
   actions: 
     cancel: Cancelar
@@ -56,6 +57,7 @@ pt-BR:
         master_price: "Preço Mestre"
         name: Nome
         on_hand: "Em mãos"
+        shipping_category: "Shipping Category"
       property: 
         name: Nome
         presentation: Apresentação
@@ -124,6 +126,9 @@ pt-BR:
       role: 
         one: Papél
         other: Papéis
+      shipping_category: 
+        one: "Shipping Category"
+        other: "Shipping Categories"
       state: 
         one: Estado
         other: Estados
@@ -223,6 +228,8 @@ pt-BR:
   editing_product: "Editando Produto"
   editing_property: "Editando Propriedade"
   editing_prototype: "Editando Protótipo"
+  editing_shipping_category: "Editing Shipping Category"
+  editing_shipping_method: "Editing Shipping Method"
   editing_state: "Editando Estado"
   editing_tax_category: "Editando Categoria de Taxa"
   editing_user: "Editando Usuário"
@@ -243,6 +250,7 @@ pt-BR:
   filename: "Nome do arquivo"
   final_confirmation: "Confirmação Final"
   first_name: "Primeiro Nome"
+  forgot_password: "Forgot Password"
   gateway: Gateway
   gateway_error: "Erro de Gateway"
   gateway_setting_description: "Selecionar um gateway de pagamento e ajustar suas configurações."
@@ -258,6 +266,7 @@ pt-BR:
   height: Largura
   hello_user: "Olá Usuário"
   history: História
+  home: "Home"
   image: Imagem
   images: Imagens
   in_progress: "Em progresso"
@@ -280,14 +289,16 @@ pt-BR:
   locale_changed: "Localização Modificada"
   log_in: Entre
   logged_in_as: "Logado como"
-  logged_in_successfully: "Logado com sucesso."
-  login_authentication_failed: "Autenticação do login falhou."
+  logged_in_succesfully: "Logged in successfully"
+  logged_out: "You have been logged out." 
+  login_failed: "Login authentication failed."      
   login_name: Login
   logout: Sair
   mail_delivery_enabled: "Envio de Email está habilitado"
   mail_delivery_not_enabled: "Envio de Email não está habilitado"
   mail_server_preferences: Preferências de Servidor de Email
   mail_server_settings: "Configuração do Servidor de Email"
+  mark_shipped: "Mark Shipped"
   master_price: "Preço Principal"
   month: "Mês"
   my_account: "Minha Conta"
@@ -304,6 +315,8 @@ pt-BR:
   new_property: "Nova Propriedade"
   new_prototype: "Novo Protótipo"
   new_shipment: "Novo Envio"
+  new_shipping_category: "New Shipping Category"
+  new_shipping_method: "New Shipping Method"
   new_state: "Novo Estado"
   new_tax_category: "Nova Categoria de Imposto"
   new_tax_rate: "Nova Taxa de Imposto"
@@ -314,6 +327,7 @@ pt-BR:
   next: Próximo
   no_items_in_cart: "Nr. de itens no carrinho"
   no_match_found: "Nada encontrado"
+  no_user_found: "No user was found with that email address"
   none: Nenhum
   none_available: "Nenhum Disponível"
   on_hand: "Na Mão"
@@ -340,6 +354,10 @@ pt-BR:
   paid: Pago
   parent_category: "Categoria Pai"
   password: Senha
+  password_reset_instructions: "Password Reset Instructions"
+  password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
+  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."    
+  password_updated: "Password successfully updated"  
   path: Caminho
   pay: pagar
   payment: Pagamento
@@ -361,6 +379,7 @@ pt-BR:
   products: Produtos
   properties: Propriedades
   property: Propriedade
+  prototype: Prototype
   prototypes: Protótipos
   qty: Qtde.
   rate: Taxa
@@ -368,6 +387,7 @@ pt-BR:
   remove: Remover
   reports: Relatórios
   resend: Reenviar
+  reset_password: "Reset my password"
   response_code: "Código de Resposta"
   resume: "continuar"
   resumed: Continuado
@@ -383,6 +403,7 @@ pt-BR:
   secure_connection_type: Tipo de Conexão Segura
   select: Selecionar
   select_from_prototype: "Selecionar a partir de Protótipo"
+  select_preferred_shipping_option: "Select preferred shipping option"
   send_copy_of_all_mails_to: Enviar Cópia de Todos os Emails Para
   send_copy_of_orders_mails_to: Enviar Cópia de Emails de Pedidos Para
   send_mails_as: Enviar Emails como
@@ -390,11 +411,18 @@ pt-BR:
   ship: entregar
   ship_address: "Endereço da Entrega"
   shipment: Entrega
+  shipment_number: "Shipment #"
   shipped: Entrgue
   shipping: Entregando
   shipping_address: "Endereço de Entrega"
+  shipping_calculator: Calculator
+  shipping_categories: "Shipping Categories"
+  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_cost: Cost
   shipping_error: "Erro de Entrega"
-  shipping_method: "Método de Entrega"
+  shipping_method: Method
+  shipping_methods: "Shipping Methods"
+  shipping_methods_description: "Manage shipping methods"
   shipping_total: "Total de Entrega"
   shopping_cart: "Carrinho de Compra"
   show_deleted: "Mostrar Apagados"
@@ -402,6 +430,8 @@ pt-BR:
   show_only_complete_orders: "Apenas mostre pedidos completos"
   show_out_of_stock_products: "Mostre produtos sem estoque"
   sign_up: Cadastrar
+  site_name: "Site Name"
+  site_url: "Site URL"
   sku: SKU
   smtp: SMTP
   smtp_authentication_type: Tipo de Autenticação SMTP
@@ -440,6 +470,7 @@ pt-BR:
   this_file_language: "Português (Brasil)"
   to_add_variants_you_must_first_define: "Para adicionar variantes, primeiro você deve definir"
   total: Total
+  tracking: Tracking
   transaction: Transação
   tree: Árvore
   try_again: "Tente novamente"
@@ -448,6 +479,7 @@ pt-BR:
   unable_to_capture_credit_card: "Não foi possível Capturar o Cartão de Crédito"
   unable_to_save_order: "Não foi Possível gravar Pedido"
   update: Atualizar
+  update_password: "Update my password and log me in"                    
   updated_successfully: "Atualizado com Sucesso"
   use_as_shipping_address: Use como Endereço de Entrega
   use_billing_address: Use como Endereço de Cobrança

@@ -1,0 +1,14 @@
+
+html, body {
+  height: 100%; }
+
+#layout {
+  min-height: 100%;
+  margin-bottom: -72px; }
+  #layout #layout_footer {
+    height: 72px; }
+
+#footer {
+  clear: both;
+  position: relative;
+  height: 72px; }

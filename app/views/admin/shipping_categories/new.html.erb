@@ -1,0 +1,10 @@
+<h1><%= t("new_shipping_category") %></h1>
+
+<%= error_messages_for :shipping_category %>
+
+<% form_for(:shipping_category, :url => collection_url) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%= submit_tag t("create") %>
+  </p>
+<% end %>

@@ -1,23 +1,19 @@
-<table id="user-form">
-  <tr>
-    <td><%= t("email") %>: </td>
-    <td>
-      <%= error_message_on :user, :email %>
-      <%= f.text_field :email  %>
-    </td>
-  </tr>
-  <tr>
-    <td><%= t("password") %>:</td>
-    <td>
-      <%= error_message_on :user, :password%>
-      <%= f.password_field :password  %>
-    </td>
-  </tr>
-  <tr>
-    <td><%= t("confirm") %>:</td>
-    <td>
-      <%= f.password_field :password_confirmation %>
-    </td>
-  </tr> 
-  <%= render_extra_partials f %>
-</table>
+<p>
+  <%= t("email") %>:<br />
+  <%= f.text_field :email  %>
+  <%= error_message_on :user, :email %>
+</p>
+
+
+<p>
+  <%= t("password") %>:<br />
+  <%= f.password_field :password  %>
+  <%= error_message_on :user, :password%>
+</p>
+
+<p>
+  <%= t("confirm") %>:<br />
+  <%= f.password_field :password_confirmation %>
+</p>
+
+<%= render_extra_partials f %>

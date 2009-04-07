@@ -10,6 +10,7 @@ class Product < ActiveRecord::Base
   has_many :properties, :through => :product_properties
   belongs_to :tax_category
   has_and_belongs_to_many :taxons
+  belongs_to :shipping_category
   
 
   validates_presence_of :name
@@ -26,6 +27,10 @@ class Product < ActiveRecord::Base
   named_scope :not_deleted, lambda { |*args| { :conditions => ["products.deleted_at is null", (args.first || Time.zone.now)] } }
   
   named_scope :available, lambda { |*args| { :conditions => ["products.available_on <= ?", (args.first || Time.zone.now)] } }
+
+
+  named_scope :with_property_value, lambda { |property_id, value| { :include => :product_properties, :conditions => ["product_properties.property_id = ? AND product_properties.value = ?", property_id, value] } }
+
                  
   def to_param       
     return permalink unless permalink.blank?

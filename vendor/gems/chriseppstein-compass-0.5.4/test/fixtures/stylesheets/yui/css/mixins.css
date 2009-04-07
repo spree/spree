@@ -1,0 +1,16 @@
+
+
+
+.font-size-26px {
+  font-size: 200%; }
+
+.font-size-baseline {
+  font-size: 300%; }
+
+.em-sizing {
+  width: 1em;
+  margin: 9em; }
+
+.em-sizing-hack {
+  width: 1em;
+  *width: 0.975em; }
