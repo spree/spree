@@ -14,7 +14,6 @@ class User < ActiveRecord::Base
   # anything else you want your user to change should be added here.
   attr_accessible :email, :password, :password_confirmation
   
-  has_many :addresses, :as => :addressable, :dependent => :destroy
   has_many :orders
   has_and_belongs_to_many :roles
     

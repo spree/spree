@@ -9,11 +9,9 @@ frank_ship_address_<%= i %>:
   zipcode: 16804
   country_id: 214
   phone: 614-555-1212
-  addressable: shipment_<%= i %>
-  addressable_type: Shipment
 <% end %>
 <% 1.upto(30) do |i| %>
-frank_cc_address_<%= i %>:
+frank_bill_address_<%= i %>:
   firstname: Frank
   lastname: Foo
   address1: 123 Foo St.
@@ -23,6 +21,4 @@ frank_cc_address_<%= i %>:
   zipcode: 16804
   country_id: 214
   phone: 614-555-1212
-  addressable: card_<%= i %>
-  addressable_type: Creditcard
 <% end %>

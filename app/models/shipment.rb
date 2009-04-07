@@ -3,7 +3,7 @@ class Shipment < ActiveRecord::Base
   
   belongs_to :order
   belongs_to :shipping_method
-  has_one :address, :as => :addressable, :dependent => :destroy
+  belongs_to :address
 
   before_create :generate_shipment_number
   after_save :recalculate_tax

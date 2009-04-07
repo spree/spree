@@ -10,7 +10,9 @@ class Order < ActiveRecord::Base
   has_many :creditcards
   belongs_to :user
   has_many :shipments, :dependent => :destroy
-
+  belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
+  belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
+  
   validates_associated :line_items, :message => "are not valid"
   validates_numericality_of :tax_amount
   validates_numericality_of :ship_amount
@@ -133,21 +135,11 @@ class Order < ActiveRecord::Base
     self.total = self.item_total + self.ship_amount + self.tax_amount
   end 
  
-  def bill_address
-    return nil if creditcards.empty?
-    return creditcards.last.address
-  end
-
   # convenience method since many stores will not allow user to create multiple shipments
   def shipment
     shipments.last
   end
   
-  def ship_address
-    return nil if shipments.empty?
-    return shipment.address
-  end      
-      
   def contains?(variant)
     line_items.select { |line_item| line_item.variant == variant }.first
   end
