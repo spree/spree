@@ -12,10 +12,6 @@ class Shipment < ActiveRecord::Base
   def shipped?
     self.shipped_at
   end
-    
-  def shipping_methods
-    ShippingMethod.all.select { |method| method.zone.include?(address) && method.available?(order) }
-  end 
   
   def rates
     quotes = []

@@ -144,8 +144,22 @@ class Order < ActiveRecord::Base
     line_items.select { |line_item| line_item.variant == variant }.first
   end
  
-  include Spree::ShippingCalculator
- 
+  def mark_shipped
+    inventory_units.each do |inventory_unit|
+      inventory_unit.ship!
+    end
+  end
+      
+  # collection of available shipping countries
+  def shipping_countries
+    ShippingMethod.all.collect { |method| method.zone.country_list }.flatten.uniq.sort_by {|item| item.send 'name'}
+  end
+  
+  def shipping_methods
+    return [] unless ship_address
+    ShippingMethod.all.select { |method| method.zone.include?(ship_address) && method.available?(self) }
+  end
+   
   private
   def complete_order
     self.update_attribute(:checkout_complete, true)
