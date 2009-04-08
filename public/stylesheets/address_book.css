@@ -1,3 +1,4 @@
-#edit_address p { clear: both; margin-bottom: 15px; }
-#edit_address p label { float: left; position: relative; top: 5px; width: 150px; }
-#edit_address p label#nickname { width: 200px; font-size: 10px; top: 0px; font-style: italic;}
+div#edit_address p { clear: both; margin-bottom: 15px; }
+div#edit_address p label { float: left; position: relative; top: 5px; width: 150px; }
+div#edit_address p label#nickname { width: 200px; font-size: 10px; top: 0px; font-style: italic;}
+div#edit_address select, div#edit_address input { border: 1px solid #EAE8E3; margin: 0px; }
