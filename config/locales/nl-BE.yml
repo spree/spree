@@ -222,6 +222,7 @@ nl-BE:
   destroy: Verwijder
   display: Weergeven
   edit: Wijzig
+  editing_address: "Edit Address"
   editing_category: "Wijzig Categorie"
   editing_option_type: "Optie Type Wijzigen"
   editing_option_types: "Optie Types Wijzigen"
@@ -305,6 +306,7 @@ nl-BE:
   my_orders: "Mijn Bestellingen"    
   name: Naam
   new: Nieuw
+  new_address: "Add New Address"
   new_category: "Nieuwe categorie"
   new_credit_card_payment: "Nieuwe Kredietkaart betaling"
   new_customer: "Nieuwe Klant"
@@ -325,6 +327,7 @@ nl-BE:
   new_variant: "Nieuwe Variant"
   new_zone: "Nieuwe Zone"
   next: Volgende
+  nickname: Nickname
   no_items_in_cart: "Geen producten in Winkelmandje"
   no_match_found: "Geen gelijke gevonden"
   no_user_found: "No user was found with that email address"

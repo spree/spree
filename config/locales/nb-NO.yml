@@ -222,6 +222,7 @@ nb-NO:
   destroy: Fjern
   display: Vis
   edit: Endre
+  editing_address: "Edit Address"
   editing_category: "Endre kategori"
   editing_option_type: "Endre variasjonstype"
   editing_option_types: "Endre variasjonstyper"
@@ -305,6 +306,7 @@ nb-NO:
   my_orders: "Mine ordrer"    
   name: Navn
   new: Ny
+  new_address: "Add New Address"
   new_category: "Ny kategori"
   new_credit_card_payment: "Ny kortbetaling"
   new_customer: "Ny kunde"
@@ -325,6 +327,7 @@ nb-NO:
   new_variant: "Ny variant"
   new_zone: "Ny sone"
   next: Neste
+  nickname: Nickname
   no_items_in_cart: "Ingen artikler i handlekurven"
   no_match_found: "Ingen treff"
   no_user_found: "No user was found with that email address"
