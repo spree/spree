@@ -1,8 +1,7 @@
 class OrdersController < Spree::BaseController     
   include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
   
-  before_filter :prevent_editing_complete_order, :only => [:edit, :update]            
-  before_filter :load_data, :only => :checkout
+  before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]            
 
   ssl_required :show, :checkout
 
@@ -47,7 +46,8 @@ class OrdersController < Spree::BaseController
   
   def checkout
     build_object 
-    load_object  
+    load_object 
+    load_data 
     
     # additional default values needed for checkout
     @order.bill_address ||= Address.new(:country => @default_country)
@@ -109,7 +109,8 @@ class OrdersController < Spree::BaseController
     find_order
   end   
   
-  def prevent_editing_complete_order
+  def prevent_editing_complete_order      
+    load_object
     redirect_to object_url if @order.checkout_complete
   end         
   
