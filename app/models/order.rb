@@ -12,6 +12,8 @@ class Order < ActiveRecord::Base
   has_many :shipments, :dependent => :destroy
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
+  accepts_nested_attributes_for :creditcards, :reject_if => proc { |attributes| attributes['number'].blank? }  
+  accepts_nested_attributes_for :ship_address, :bill_address
   
   validates_associated :line_items, :message => "are not valid"
   validates_numericality_of :tax_amount
@@ -160,13 +162,7 @@ class Order < ActiveRecord::Base
     ShippingMethod.all.select { |method| method.zone.include?(ship_address) && method.available?(self) }
   end
    
-  private
-  def complete_order
-    self.update_attribute(:checkout_complete, true)
-    InventoryUnit.sell_units(self)
-    if user && user.email
-      OrderMailer.deliver_confirm(self)
-    end   
+  def update_totals
     # finalize order totals 
     unless shipment.nil?
       calculator = shipment.shipping_method.shipping_calculator.constantize.new
@@ -175,8 +171,18 @@ class Order < ActiveRecord::Base
       self.ship_amount = 0
     end
     self.tax_amount = calculate_tax
-    save
   end
+
+  private
+  def complete_order
+    self.update_attribute(:checkout_complete, true)
+    InventoryUnit.sell_units(self)
+    if user && user.email
+      OrderMailer.deliver_confirm(self)
+    end   
+    update_totals
+    save
+  end   
   
   def cancel_order
     restock_inventory

@@ -1,6 +1,4 @@
-class Shipment < ActiveRecord::Base      
-  include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
-  
+class Shipment < ActiveRecord::Base        
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :address
@@ -11,14 +9,6 @@ class Shipment < ActiveRecord::Base
     
   def shipped?
     self.shipped_at
-  end
-  
-  def rates
-    quotes = []
-    shipping_methods.each do |method|
-      quotes << {:id => method.id, :name => method.name, :rate => number_to_currency(method.calculate_shipping(self)) }
-    end
-    quotes
   end
 
   private  

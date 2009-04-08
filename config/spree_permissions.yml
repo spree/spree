@@ -60,5 +60,9 @@
     options :
       except : [new, create]   
       unless : "object.user_id == nil || current_user.id == object.user_id"
+  permission2:
+    roles : [admin,user]
+    options :
+      for : [checkout]   
       
 # TODO - restrict orders
