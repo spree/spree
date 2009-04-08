@@ -1,7 +1,6 @@
 <% content_for :head do -%>
 	<%= javascript_include_tag 'address.js' %>
 	<%= javascript_include_tag 'address_book.js' %>
-	<%= stylesheet_link_tag 'address_book.css' %>
 <% end -%>
 
 <input type="hidden" id="hidden_state" name="hidden_state" value="<%= @address.state_id || @address.state_name %>" />
