@@ -6,8 +6,8 @@ class RefactorAddressesUserNickname < ActiveRecord::Migration
     end
     Address.find_in_batches do |addresses|
       addresses.each do |address|
-        creditcard = Creditcard.find_by_address_id(address.id).user.id
-        shipment = Shipment.find_by_address_id(address.id).user.id
+        creditcard = Creditcard.find_by_address_id(address.id)
+        shipment = Shipment.find_by_address_id(address.id)
         address.user_id = creditcard ? creditcard.user.id : shipment.user.id
         address.save
       end
