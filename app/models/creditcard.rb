@@ -1,7 +1,7 @@
 class Creditcard < ActiveRecord::Base 
   before_create :filter_sensitive
   belongs_to :order
-  has_one :address, :as => :addressable, :dependent => :destroy
+  belongs_to :address
   has_many :creditcard_payments
   before_validation :prepare
     
@@ -75,9 +75,9 @@ class Creditcard < ActiveRecord::Base
   def validate 
     validate_essential_attributes
     validate_card_type
-    validate_card_number
-    validate_verification_value 
-    validate_switch_or_solo_attributes
+    #validate_card_number
+    #validate_verification_value 
+    #validate_switch_or_solo_attributes
   end
   
   def self.requires_verification_value?
@@ -99,7 +99,9 @@ class Creditcard < ActiveRecord::Base
     self.number = number.to_s.gsub(/[^\d]/, "")
     self.display_number = ActiveMerchant::Billing::CreditCard.mask(number)
     self.cc_type.downcase! if cc_type.respond_to?(:downcase)
-    self.cc_type = self.class.type?(number) if cc_type.blank?
+    self.cc_type = self.class.type?(number) if cc_type.blank?    
+    self.first_name = address.firstname
+    self.last_name = address.lastname
   end
   
   def validate_card_number #:nodoc:

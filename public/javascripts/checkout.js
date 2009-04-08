@@ -25,7 +25,7 @@ jQuery.fn.sameAddress = function() {
 
 //On page load
 $(function() {  
-  $('#checkout_presenter_same_address').sameAddress();
+  $('#checkout_same_address').sameAddress();
   $('span#bcountry select').change(function() { update_state('b'); });
   $('span#scountry select').change(function() { update_state('s'); });
   get_states();
@@ -183,7 +183,7 @@ var submit_shipping = function() {
   // Save what we have so far and get the list of shipping methods via AJAX
   $.ajax({
     type: "POST",
-    url: 'complete',                                 
+    url: 'checkout',                                 
     beforeSend : function (xhr) {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
     },      
@@ -214,7 +214,7 @@ var submit_shipping_method = function() {
     // Save what we have so far and get the updated order totals via AJAX
     $.ajax({
       type: "POST",
-      url: 'complete',                                 
+      url: 'checkout',                                 
       beforeSend : function (xhr) {
         xhr.setRequestHeader('Accept-Encoding', 'identity');
       },      

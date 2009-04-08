@@ -45,20 +45,21 @@ describe Order do
   
   describe "shipping_methods" do
     it "should return empty array if there are no shipping methods configured" do
-      ShippingMethod.stub!(:all).and_return([])
-      @shipment.shipping_methods.should == []
+      @order.shipping_methods.should == []
     end
     it "should check the shipping address against the shipping method's zone" do
+      address = Address.new
+      @order.ship_address = address
       zone = mock_model(Zone)
       method = mock_model(ShippingMethod, :zone => zone)
       ShippingMethod.stub!(:all).and_return([method])
-      zone.should_receive(:include?).with(@address)
-      @shipment.shipping_methods
+      zone.should_receive(:include?).with(address)
+      @order.shipping_methods
     end
     it "should return empty array if none of the configured shipping methods cover the shipping address" do
       method = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => false))
       ShippingMethod.stub!(:all).and_return([method])
-      @shipment.shipping_methods.should == []
+      @order.shipping_methods.should == []
     end
     it "should return all shipping methiods that cover the shipping address" do
       method1 = mock_model(ShippingMethod, :zone => mock_model(Zone, :include? => true))
