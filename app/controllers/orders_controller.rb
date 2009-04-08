@@ -104,7 +104,8 @@ class OrdersController < Spree::BaseController
     @object ||= find_order
   end
   
-  def object  
+  def object 
+    return Order.find_by_number(params[:id]) if params[:id]
     find_order
   end   
   
