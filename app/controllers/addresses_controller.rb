@@ -5,6 +5,7 @@ class AddressesController < Spree::BaseController
 
   create.before do
     @object.nickname = @object.address1 if @object.nickname.blank?
+    @object.user_id = @user.id
   end
 
   destroy.before do
@@ -17,14 +18,14 @@ class AddressesController < Spree::BaseController
   end
 
   create.response do |wants|
-    wants.html { redirect_to user_addresses_url(current_user.id) }
+    wants.html { redirect_to user_addresses_url(@user.id) }
   end
 
   update.response do |wants|
-    wants.html { redirect_to user_addresses_url(current_user.id) }
+    wants.html { redirect_to user_addresses_url(@user.id) }
   end
   destroy.response do |wants|
-    wants.html { redirect_to user_addresses_url(current_user.id) }
+    wants.html { redirect_to user_addresses_url(@user.id) }
   end
 
   def load_data
