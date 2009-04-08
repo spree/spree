@@ -35,6 +35,7 @@ tmp
 vendor/rails
 vendor/extensions
 public/images/reviews_ratings.png
+public/javascripts/jquery.lightbox.js
 public/javascripts/jquery.product_reviews_ratings.*
 public/javascripts/jquery.tablesorter.min.js
 public/stylesheets/product_reviews_ratings.*
