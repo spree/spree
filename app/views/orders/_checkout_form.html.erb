@@ -1,5 +1,8 @@
 <% content_for :head do %>
-  <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+  <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %> 
+  <script type="text/javascript">
+    var regions = new Array('billing', 'shipping', 'shipping_method', 'payment', 'confirmation');  
+  </script>
 <% end %>                 
 
 <input type="hidden" id="hidden_bstate" name="hidden_bstate" value="<%= @order.bill_address.state_id || @order.bill_address.state_name %>" />
@@ -20,10 +23,10 @@
   <%= render :partial => 'shipping_method', :locals => {:order_form => order_form} %>
 </div>
 
-<div id="creditcard" class="checkout_disabled">
+<div id="payment" class="checkout_disabled">
   <%= render :partial => 'payment', :locals => {:order_form => order_form} %>
 </div>
 
-<div id="confirm_order" class="checkout_disabled">
-  <%= render :partial => 'confirm_order', :locals => {:order_form => order_form} %>
+<div id="confirmation" class="checkout_disabled">
+  <%= render :partial => 'confirmation', :locals => {:order_form => order_form} %>
 </div>
