@@ -275,6 +275,10 @@ var update_confirmation = function(order) {
   $('span#ship_amount').html(order.ship_amount);
   $('span#tax_amount').html(order.tax_amount);                                  
   $('span#ship_method').html(order.ship_method);                                    
+}       
+
+var submit_registration = function() {
+  return true;
 }
 
 var submit_payment = function() {             

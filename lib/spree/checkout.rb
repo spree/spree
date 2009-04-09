@@ -7,7 +7,7 @@ module Spree::Checkout
     load_object 
     load_data                                             
     
-    @checkout_steps = %w{billing shipping shipping_method payment confirmation}
+    @checkout_steps = %w{registration billing shipping shipping_method payment confirmation}
     
     # additional default values needed for checkout
     @order.bill_address ||= Address.new(:country => @default_country)
