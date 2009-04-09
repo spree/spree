@@ -1,0 +1,8 @@
+<h2><%= t("registration")%></h2>
+<div class="inner">
+	<p id="bfname">
+		<label for="<%= t("email") %>"><%= t("email") %></label> 
+		<%= order_form.text_field :email, :class => 'required' -%><span class="req">*</span>
+	</p>
+	<p><input id="validate_billing" type="button" value="<%=t("continue")%>"/></p>
+</div>
