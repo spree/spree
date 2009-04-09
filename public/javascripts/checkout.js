@@ -22,7 +22,9 @@ $(function() {
   // hook up the continue buttons for each section
   for(var i=0; i < regions.length; i++) {                               
     $('#continue_' + regions[i]).click(function() { eval( "continue_button(this);") });   
-  } 
+  }                           
+  // activate first region
+  shift_to_region(regions[0]); 
 })
 
 //Initial state mapper on page load

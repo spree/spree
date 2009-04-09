@@ -236,16 +236,18 @@ body
   div#bdisplay, div#sdisplay
     :float left
     :width 300px
-    :clear right
-
+    :clear right  
+        
 #methods p label
   :float none
   :width 150px
   :position relative
   :top 5px
 
-div#shipping div.inner, div#payment div.inner, div#shipping_method div.inner, div#confirmation div.inner
-  :display none
+form#checkout_form
+  div.inner
+    :display none
+
 div.checkout_disabled h2
   :color #AFAFAF
 

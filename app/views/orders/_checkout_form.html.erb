@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %> 
   <script type="text/javascript">
-    var regions = new Array('billing', 'shipping', 'shipping_method', 'payment', 'confirmation');  
+    var regions = new Array(<%= @checkout_steps.collect { |step| "'#{step}'" }.join(",") %>);  
   </script>
 <% end %>                 
 
@@ -11,22 +11,9 @@
 <input type="hidden" id="hidden_scountry" name="hidden_scountry" value="<%= @order.ship_address.country_id %>" />
 
 <%= error_messages_for :order %>
-<div id="billing">
-  <%= render :partial => 'billing', :locals => {:order_form => order_form} %>
-</div>
 
-<div id="shipping" class="checkout_disabled">
-  <%= render :partial => 'shipping', :locals => {:order_form => order_form} %>
-</div>
-            
-<div id="shipping_method" class="checkout_disabled">
-  <%= render :partial => 'shipping_method', :locals => {:order_form => order_form} %>
-</div>
-
-<div id="payment" class="checkout_disabled">
-  <%= render :partial => 'payment', :locals => {:order_form => order_form} %>
-</div>
-
-<div id="confirmation" class="checkout_disabled">
-  <%= render :partial => 'confirmation', :locals => {:order_form => order_form} %>
-</div>
+<% @checkout_steps.each do |step| %>
+  <div id="<%=step%>" class="checkout_disabled">
+    <%= render step, :order_form => order_form %>  
+  </div>
+<% end %>
