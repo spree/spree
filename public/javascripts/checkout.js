@@ -1,3 +1,5 @@
+var authenticated = false; 
+
 jQuery.fn.sameAddress = function() {
   this.click(function() {
     if(!$(this).attr('checked')) {
@@ -121,7 +123,7 @@ var continue_button = function(button) {
 var validate_section = function(region) {
   var validator = $('form#checkout_form').validate();
   var valid = true;
-  $('div#' + region + ' input, div#' + region + ' select, div#' + region + ' textarea').each(function() {
+  $('div#' + region + ' input:text:visible, div#' + region + ' select:visible, div#' + region + ' textarea:visible').each(function() {
     if(!validator.element(this)) {
       valid = false;
     }
@@ -278,7 +280,43 @@ var update_confirmation = function(order) {
 }       
 
 var submit_registration = function() {
-  return true;
+  var valid = false; 
+  var fail_message = "Invalid username or password";
+  $('div#registration_choice :child input').each(function() {
+    if($(this).attr('checked')) {
+      valid = true;
+    }
+  });    
+  if(valid) {
+    $('div#registration_error').removeClass('error').html("");    
+    $.ajax({
+      type: "POST",
+      url: '/user_session',                                 
+      beforeSend : function (xhr) {
+        xhr.setRequestHeader('Accept-Encoding', 'identity');
+      },      
+      dataType: "json",
+      data: $('#checkout_form').serialize(),
+      success: function(result) {  
+        if (result) {
+          // todo
+        } else {
+          registration_error("Invalid username or password.");
+        };
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        // TODO - put some real error handling in here
+        $("#ajax_error").html(XMLHttpRequest.responseText);           
+      }
+    });  
+  } else {                                                 
+    registration_error("Please select a registration method");
+  }
+  return $('div#registration_error').val() == "";  
+};
+
+var registration_error = function(error_message) {
+  $('div#registration_error').addClass('error').html(error_message);
 }
 
 var submit_payment = function() {             

@@ -506,4 +506,8 @@ en-US:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones              
-  registration: Registration
+  registration: Registration           
+  already_registered: Already Registered?
+  register_or_guest: Checkout as Guest or Register
+  proceed_as_guest: "No Thanks, Proceed as Guest"
+  register: Register

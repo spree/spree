@@ -1,8 +1,35 @@
 <h2><%= t("registration")%></h2>
 <div class="inner">
-	<p id="bfname">
-		<label for="<%= t("email") %>"><%= t("email") %></label> 
-		<%= order_form.text_field :email, :class => 'required' -%><span class="req">*</span>
-	</p>
-	<p><input id="continue_registration" type="button" value="<%=t("continue")%>"/></p>
+  <div id="registration_error"></div>
+  <div id="registration_choice">          
+    <h3><%= t("register_or_guest") %></h3>    
+    <p>
+      <input id="choose_register" type="radio" name="choose_register" value="register"/>
+      <label for="register" class="radio"><%= t("register") %></label>
+    </p>    	 
+    <p>
+      <input id="choose_guest" type="radio" name="choose_register" value="guest"/>
+      <label for="register" class="radio"><%= t("proceed_as_guest") %></label>
+    </p>    	 
+  </div>
+  <div id="login_or_email">
+    <h3><%= t("already_registered") %></h3>
+    <div id="login">
+      <p>
+        <%= label :user_session, :login, t("email") %>
+        <%= text_field :user_session, 'login' %>
+      </p>
+      <p>
+        <%= label :user_session, :password, t("password") %>
+        <%= password_field :user_session, 'password' %>
+      </p>
+    </div>
+    <div id="email">
+    	<p>
+    		<label for="<%= t("email") %>"><%= t("email") %></label> 
+    		<%= order_form.text_field :email, :class => 'required' -%><span class="req">*</span>
+    	</p>
+    </div>
+  	<p><input id="continue_registration" type="button" value="<%=t("continue")%>"/></p>
+  </div>
 </div>

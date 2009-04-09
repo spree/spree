@@ -19,7 +19,7 @@ module Spree::Checkout
     @shipping_method ||= @order.shipping_methods.first    
     @order.shipments.build(:address => @order.ship_address, :shipping_method => @shipping_method)      
 
-    if request.put?                           
+    if request.post?                           
       @order.creditcards.clear
       @order.attributes = params[:order]
       @order.creditcards[0].address = @order.bill_address if @order.creditcards.present?

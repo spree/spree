@@ -1,10 +1,10 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'checkout' %>
 <% end %>
-
+<div id="ajax_error">
 <div id="checkout">
   <h1><%= t("checkout")%></h1>
-  <% form_for @order, :url => checkout_order_path(@order), :html => { :method => :put, :id => 'checkout_form'} do |order_form| %>
+  <% form_for @order, :url => checkout_order_path(@order), :html => { :method => :post, :id => 'checkout_form'} do |order_form| %>
     <%= render :partial => 'checkout_form', :locals => {:order_form => order_form} %>
   <% end %>
 </div>
