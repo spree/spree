@@ -49,7 +49,7 @@ class OrdersController < Spree::BaseController
       format.html { redirect_to(edit_object_url) } 
     end
   end  
-                                   
+
   # feel free to override this library in your own extension
   include Spree::Checkout
   
