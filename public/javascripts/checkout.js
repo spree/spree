@@ -1,4 +1,23 @@
-var authenticated = false; 
+//On page load
+$(function() {  
+  $('#checkout_same_address').sameAddress();
+  $('span#bcountry select').change(function() { update_state('b'); });
+  $('span#scountry select').change(function() { update_state('s'); });
+  get_states();
+  
+  // hook up the continue buttons for each section
+  for(var i=0; i < regions.length; i++) {                               
+    $('#continue_' + regions[i]).click(function() { eval( "continue_button(this);") });   
+  }                           
+
+	// hookup the radio buttons for registration
+	$('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); });
+	$('#choose_existing').click(function() { $('div#existing_user').show(); $('div#guest_user, div#new_user').hide(); });
+	$('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });	
+
+  // activate first region
+  shift_to_region(regions[0]); 
+})
 
 jQuery.fn.sameAddress = function() {
   this.click(function() {
@@ -13,21 +32,6 @@ jQuery.fn.sameAddress = function() {
     update_state('s');
   })
 }
-
-//On page load
-$(function() {  
-  $('#checkout_same_address').sameAddress();
-  $('span#bcountry select').change(function() { update_state('b'); });
-  $('span#scountry select').change(function() { update_state('s'); });
-  get_states();
-  
-  // hook up the continue buttons for each section
-  for(var i=0; i < regions.length; i++) {                               
-    $('#continue_' + regions[i]).click(function() { eval( "continue_button(this);") });   
-  }                           
-  // activate first region
-  shift_to_region(regions[0]); 
-})
 
 //Initial state mapper on page load
 var state_mapper;
@@ -123,7 +127,7 @@ var continue_button = function(button) {
 var validate_section = function(region) {
   var validator = $('form#checkout_form').validate();
   var valid = true;
-  $('div#' + region + ' input:text:visible, div#' + region + ' select:visible, div#' + region + ' textarea:visible').each(function() {
+  $('div#' + region + ' input:visible, div#' + region + ' select:visible, div#' + region + ' textarea:visible').each(function() {
     if(!validator.element(this)) {
       valid = false;
     }
@@ -280,40 +284,42 @@ var update_confirmation = function(order) {
 }       
 
 var submit_registration = function() {
-  var valid = false; 
-  var fail_message = "Invalid username or password";
-  $('div#registration_choice :child input').each(function() {
-    if($(this).attr('checked')) {
-      valid = true;
-    }
-  });    
-  if(valid) {
-    $('div#registration_error').removeClass('error').html("");    
-    $.ajax({
-      type: "POST",
-      url: '/user_session',                                 
-      beforeSend : function (xhr) {
-        xhr.setRequestHeader('Accept-Encoding', 'identity');
-      },      
-      dataType: "json",
-      data: $('#checkout_form').serialize(),
-      success: function(result) {  
-        if (result) {
-          // todo
-        } else {
-          registration_error("Invalid username or password.");
-        };
-      },
-      error: function (XMLHttpRequest, textStatus, errorThrown) {
-        // TODO - put some real error handling in here
-        $("#ajax_error").html(XMLHttpRequest.responseText);           
-      }
-    });  
-  } else {                                                 
-    registration_error("Please select a registration method");
-  }
-  return $('div#registration_error').val() == "";  
+  $('div#registration_error').removeClass('error').html("");    
+
+	// we assume the user wants to login if they supply both a username and password
+	if ($('#user_session_login').val() != "" && $('#user_session_password').val() != "") {
+		ajax_login();
+		return ($('div#registration_error:hidden').size() == 1);
+	}
+		
+  return ($('div#registration_error:hidden').size() == 1);  
 };
+
+var ajax_login = function() {
+  $.ajax({
+		async: false,
+    type: "POST",
+    url: '/user_session',                                 
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');
+    },      
+    dataType: "json",
+    data: $('#checkout_form').serialize(),
+    success: function(result) {  
+      if (result) {
+				$('div#already_logged_in').show();
+				$('div#register_or_guest').hide();
+        // todo
+      } else {
+        registration_error("Invalid username or password.");
+      };
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      // TODO - put some real error handling in here
+      $("#ajax_error").html(XMLHttpRequest.responseText);           
+    }
+  });  	
+}
 
 var registration_error = function(error_message) {
   $('div#registration_error').addClass('error').html(error_message);

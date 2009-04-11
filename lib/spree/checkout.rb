@@ -5,9 +5,8 @@ module Spree::Checkout
   def checkout
     build_object 
     load_object 
-    load_data                                             
-    
-    @checkout_steps = %w{registration billing shipping shipping_method payment confirmation}
+    load_data
+    load_checkout_steps                                             
     
     # additional default values needed for checkout
     @order.bill_address ||= Address.new(:country => @default_country)
@@ -58,5 +57,10 @@ module Spree::Checkout
       
     end
   end
+  
+  def load_checkout_steps
+    @checkout_steps = %w{registration billing shipping shipping_method payment confirmation}
+    @checkout_steps.delete "registration" if current_user
+  end  
   
 end

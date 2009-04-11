@@ -510,4 +510,6 @@ en-US:
   already_registered: Already Registered?
   register_or_guest: Checkout as Guest or Register
   proceed_as_guest: "No Thanks, Proceed as Guest"
-  register: Register
+  register: Register as a New User
+  create_user_account: Create User Account
+  guest_user_account: Checkout as a Guest

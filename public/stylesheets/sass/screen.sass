@@ -248,11 +248,11 @@ body
     :block none     
     :width 50%
 
-  div#login_or_email
+  div#registration_input
     :float right
     :block none
     :width 50%
-    div#email
+    div#guest_user, div#existing_user
       :display none 
   
   div#registration_error
@@ -263,9 +263,11 @@ body
   :width 150px
   :position relative
   :top 5px
-
+	
 form#checkout_form
   div.inner
+    :display none
+  div#already_logged_in
     :display none
 
 div.checkout_disabled h2
