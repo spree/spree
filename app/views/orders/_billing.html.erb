@@ -1,6 +1,18 @@
 <% order_form.fields_for :bill_address do |bill_form| %>
   <h2><%= t("billing_address")%></h2>
+  <% if !current_user.addresses.empty? -%>
+  <div class="saved_address inner">
+    <input type="radio" name="bill_address" class="saved_radio" value="1" />
+    <label for="<%= t('saved_address') %>"><%= t('saved_address') %></label>
+    <%= collection_select("checkout_presenter", :bill_address_id, current_user.addresses, :id, :nickname) %>
+    <p></p>
+  </div>
+  <div class="new_address inner">
+    <input type="radio" name="bill_address" class="saved_radio" value="0" />
+    <label for="<%= t("new_address") %>"><%= t("new_address") %></label>
+  <% else -%>
   <div class="inner">
+  <% end -%>
   	<p id="bfname">
   		<label for="<%= t("first_name") %>"><%= t("first_name") %></label>
   		<%= bill_form.text_field :firstname, :class => 'required' -%><span class="req">*</span>
@@ -46,6 +58,8 @@
   		<label for="<%= t("phone") %>"><%= t("phone") %></label>
   		<%= bill_form.text_field :phone, :class => 'required' -%><span class="req">*</span>
   	</p>
-  	<p><input id="continue_billing" type="button" value="<%=t("continue")%>"/></p>
+  </div>
+  <div class="inner">
+    <p><input id="continue_billing" type="button" value="<%=t("continue")%>"/></p>
   </div>
 <% end %>

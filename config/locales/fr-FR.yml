@@ -402,6 +402,7 @@ fr-FR:
   sales_totals: "Total des ventes"
   sales_totals_description: "Total des ventes pour toutes les commandes"
   save_preferences: Sauvegarder les préférences
+  saved_address: "Use Saved Address"
   search: Rechercher
   secure_connection_type: Connection de type sécurisée
   select: Selectionner

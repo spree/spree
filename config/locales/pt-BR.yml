@@ -402,6 +402,7 @@ pt-BR:
   sales_totals: "Total de Vendas"
   sales_totals_description: "Total de Vendas para todos os Pedidos"
   save_preferences: Gravar Preferências           
+  saved_address: "Use Saved Address"
   search: Pesquisa
   secure_connection_type: Tipo de Conexão Segura
   select: Selecionar

@@ -402,6 +402,7 @@ it:
   sales_totals: "Vendite totali"
   sales_totals_description: "Sales Total For All Orders"
   save_preferences: Save Preferences           
+  saved_address: "Use Saved Address"
   search: Cerca
   secure_connection_type: Secure Connection Type
   select: Seleziona

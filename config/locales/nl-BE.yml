@@ -402,6 +402,7 @@ nl-BE:
   sales_totals: "Omzet"
   sales_totals_description: "Omzet voor alle bestellingen"
   save_preferences: "Instellingen Opslaan"           
+  saved_address: "Use Saved Address"
   search: Zoek
   secure_connection_type: "Secure Connection Type"
   select: Selecteer

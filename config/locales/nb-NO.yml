@@ -402,6 +402,7 @@ nb-NO:
   sales_totals: "Omsetning"
   sales_totals_description: "Totale salg for alle ordrer"
   save_preferences: "Lagre preferanser"
+  saved_address: "Use Saved Address"
   search: Søk
   secure_connection_type: "Kryptert forbindelse"
   select: Velg

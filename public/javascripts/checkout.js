@@ -24,8 +24,28 @@ $(function() {
     $('#continue_' + regions[i]).click(function() { eval( "continue_button(this);") });   
   }                           
   // activate first region
-  shift_to_region(regions[0]); 
+  shift_to_region(regions[0]);
+
+  $('input.saved_radio').click(function() { toggle_address_region($(this).parent().parent().attr('id'), $(this).val()); });
+  $('div.saved_address select').change(function() { toggle_saved_address($(this).parent().parent().attr('id')); });
 })
+
+var toggle_saved_address = function(region) {
+  var address_region = 'div#addr_' + $('div#' + region + ' div.saved_address select').val();
+  $('div#' + region + ' div.saved_address p').html($(address_region).html());
+};
+
+var toggle_address_region = function(region, value) {
+  if(value == 1) {
+    $('div#' + region + ' div.new_address p').hide();
+    $('div#' + region + ' div.saved_address p').show();
+    $('div#' + region + ' div.saved_address select').removeAttr('disabled');
+  } else {
+    $('div#' + region + ' div.new_address p').show();
+    $('div#' + region + ' div.saved_address p').hide();
+    $('div#' + region + ' div.saved_address select').attr('disabled', true);
+  }
+};
 
 //Initial state mapper on page load
 var state_mapper;
@@ -119,6 +139,9 @@ var continue_button = function(button) {
 };
 
 var validate_section = function(region) {
+  if($('div#' + region + ' div.saved_address').length > 0 && $('div#' + region + ' input.saved_radio:first').attr('checked')) {
+    return true;
+  }
   var validator = $('form#checkout_form').validate();
   var valid = true;
   $('div#' + region + ' input, div#' + region + ' select, div#' + region + ' textarea').each(function() {

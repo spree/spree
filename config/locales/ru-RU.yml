@@ -402,6 +402,7 @@ ru-RU:
   sales_totals: "Sales Totals ??"
   sales_totals_description: "Sales Total For All Orders ??"
   save_preferences: Сохранить настройки
+  saved_address: "Use Saved Address"
   search: Поиск
   secure_connection_type: Тип защищенного соединения
   select: Выбрать
