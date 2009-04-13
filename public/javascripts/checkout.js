@@ -26,9 +26,23 @@ $(function() {
   // activate first region
   shift_to_region(regions[0]);
 
-  $('input.saved_radio').click(function() { toggle_address_region($(this).parent().parent().attr('id'), $(this).val()); });
-  $('div.saved_address select').change(function() { toggle_saved_address($(this).parent().parent().attr('id')); });
+  initiate_address_book_fxnality();
 })
+
+var initiate_address_book_fxnality = function() {
+  if($('div#billing div.saved_address').length > 0) {
+    $('div#billing div.saved_address input:first').attr('checked', 1);
+    toggle_address_region('billing', 1);
+    toggle_saved_address('billing');
+  }
+  if($('div#shipping div.saved_address').length > 0) {
+    $('div#shipping div.saved_address input:first').attr('checked', 1); 
+    toggle_address_region('shipping', 1); 
+    toggle_saved_address('shipping');
+  }
+  $('input.saved_radio').click(function() { toggle_address_region($(this).parent().parent().attr('id'), $(this).val()); });
+  $('div.saved_address select').change(function() { toggle_saved_address($(this).parent().parent().attr('id')); });  
+};
 
 var toggle_saved_address = function(region) {
   var address_region = 'div#addr_' + $('div#' + region + ' div.saved_address select').val();
