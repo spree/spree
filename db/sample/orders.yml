@@ -9,6 +9,6 @@ order_<%= i %>:
   total: 45.75
   ip_address: 127.0.0.1
   checkout_complete: true 
-  ship_address: frank_ship_address_<%= i %>
-  bill_address: frank_bill_address_<%= i %>
+  ship_address: frank_ship_address
+  bill_address: frank_bill_address
 <% end %>

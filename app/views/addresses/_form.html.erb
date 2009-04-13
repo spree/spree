@@ -5,6 +5,7 @@
 
 <input type="hidden" id="hidden_state" name="hidden_state" value="<%= @address.state_id || @address.state_name %>" />
 <input type="hidden" id="hidden_country" name="hidden_country" value="<%= @address.country_id || 214 %>" />
+<%= f.hidden_field :active, { :value => 1 } %>
 
 <div id="edit_address">
 	<p>
