@@ -4,7 +4,7 @@
   <div class="saved_address inner">
     <input type="radio" name="bill_address" class="saved_radio" value="1" />
     <label for="<%= t('saved_address') %>"><%= t('saved_address') %></label>
-    <%= collection_select("checkout_presenter", :bill_address_id, current_user.addresses, :id, :nickname) %>
+    <%= collection_select("order", :bill_address_id, current_user.addresses, :id, :nickname) %>
     <p></p>
   </div>
   <div class="new_address inner">
