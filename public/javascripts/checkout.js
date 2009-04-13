@@ -197,26 +197,32 @@ var shift_to_region = function(active) {
 };
 
 var submit_billing = function() {
-  build_address('Billing Address', 'b');
+  build_address('Billing Address', 'b', 'billing');
   return true;
 };
 
-var build_address = function(title, region) {
+var build_address = function(title, region, region_o) {
   var address = '<h3>' + title + '</h3>';
-  address += $('p#' + region + 'fname input').val() + ' ' + $('p#' + region + 'lname input').val() + '<br />';
-  address += $('p#' + region + 'address input').val() + '<br />';
-  if($('p#' + region + 'address2').val() != '') {
-    address += $('p#' + region + 'address2').val() + '<br />';
+  if($('div#' + region_o + ' div.saved_address').length > 0 && $('div#' + region_o + ' div.saved_address input:first').attr('checked')) {
+    var address_region = 'div#addr_' + $('div#' + region_o + ' div.saved_address select').val();
+    address += $(address_region).html();
   }
-  address += $('p#' + region + 'city input').val() + ', ';
-  if($('span#' + region + 'state input').length > 0) {
-    address += $('span#' + region + 'state input').val();
-  } else {
-    address += $('span#' + region + 'state :selected').html();
+  else {
+    address += $('p#' + region + 'fname input').val() + ' ' + $('p#' + region + 'lname input').val() + '<br />';
+    address += $('p#' + region + 'address input').val() + '<br />';
+    if($('p#' + region + 'address2').val() != '') {
+      address += $('p#' + region + 'address2').val() + '<br />';
+    }
+    address += $('p#' + region + 'city input').val() + ', ';
+    if($('span#' + region + 'state input').length > 0) {
+      address += $('span#' + region + 'state input').val();
+    } else {
+      address += $('span#' + region + 'state :selected').html();
+    }
+    address += ' ' + $('p#' + region + 'zip input').val() + '<br />';
+    address += $('p#' + region + 'country :selected').html() + '<br />';
+    address += $('p#' + region + 'phone input').val();
   }
-  address += ' ' + $('p#' + region + 'zip input').val() + '<br />';
-  address += $('p#' + region + 'country :selected').html() + '<br />';
-  address += $('p#' + region + 'phone input').val();
   $('div#' + region + 'display').html(address);
   return;
 };
@@ -242,7 +248,7 @@ var submit_shipping = function() {
       return false;
     }
   });  
-  build_address('Shipping Address', 's');
+  build_address('Shipping Address', 's', 'shipping');
   return true;
 };
                      

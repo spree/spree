@@ -9,12 +9,24 @@ class AddressesController < Spree::BaseController
   end
 
   destroy.before do
-    #TODO: If address is tied to orders, hide instead of delete
+    @ship_orders = Order.find_by_ship_address_id(@object.id)
+    @bill_orders = Order.find_by_bill_address_id(@object.id)
+    if @ship_orders || @bill_orders
+      @object.active = 0
+      @object.save
+      #DON'T DESTROY ADDRESS
+    end
   end
 
   update.before do
+    @ship_orders = Order.find_by_ship_address_id(@object.id)
+    @bill_orders = Order.find_by_bill_address_id(@object.id)
+    if @ship_orders || @bill_orders
+      @object.active = 0
+      @object.save
+      #CREATE NEW ADDRESS INSTEAD OF EDIT
+    end
     @object.nickname = @object.address1 if @object.nickname.blank?
-    #TODO: If address is tied to orders, create instead of edit
   end
 
   create.response do |wants|
