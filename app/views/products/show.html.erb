@@ -22,3 +22,7 @@
 <%= render 'cart_form' %>
 
 </div>
+
+<%= render :partial => 'shared/reviews_ratings', :locals => { :product => @product } -%>
+<%= render :partial => 'ratings/average_rating', :locals => { :product => @product } -%>
+<%= render :partial => 'reviews/all_reviews', :locals => { :product => @product } -%>

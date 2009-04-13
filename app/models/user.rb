@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
   
   has_many :orders
   has_and_belongs_to_many :roles
+  has_many :addresses
     
   def deliver_password_reset_instructions!
     reset_perishable_token!

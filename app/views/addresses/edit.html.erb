@@ -1,0 +1,7 @@
+<%= error_messages_for :address %>
+<h1><%= t("editing_address") %></h1>
+
+<% form_for(:address, :url => object_url, :html => { :method => :put, :id => 'address_form' }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p><%= submit_tag t("update"), :id => 'save_address' %></p>
+<% end -%>
