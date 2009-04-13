@@ -220,7 +220,7 @@ body
     :padding 10px
   div#creditcard p select
     :width 75px
-  p input#validate_billing,  p input#validate_shipping,  p input#select_shipping_method,  p input#confirm_payment,  #confirm_order .inner input
+  p input#continue_billing,  p input#continue_shipping,  p input#continue_shipping_method,  p input#continue_payment,  #confirm_order .inner input
     :cursor pointer
     :width 100px
 
@@ -236,16 +236,18 @@ body
   div#bdisplay, div#sdisplay
     :float left
     :width 300px
-    :clear right
-
+    :clear right  
+        
 #methods p label
   :float none
   :width 150px
   :position relative
   :top 5px
 
-div#shipping div.inner, div#creditcard div.inner, div#shipping_method div.inner, div#confirm_order div.inner
-  :display none
+form#checkout_form
+  div.inner
+    :display none
+
 div.checkout_disabled h2
   :color #AFAFAF
 
