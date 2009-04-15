@@ -5,6 +5,7 @@
 <div id="checkout">
   <h1><%= t("checkout")%></h1>
   <% form_for @order, :url => checkout_order_path(@order), :html => { :method => :post, :id => 'checkout_form'} do |order_form| %>
-    <%= render :partial => 'checkout_form', :locals => {:order_form => order_form} %>
+    <%= render :partial => 'checkout_form', :locals => {:order_form => order_form} %>    
+    <input id="post-final" type="submit" style="display:none"/>
   <% end %>
 </div>

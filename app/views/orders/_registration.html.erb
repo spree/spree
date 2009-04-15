@@ -33,17 +33,17 @@
   	  </div>
   	  <div id="new_user">
   	    <h3><%= t("create_user_account") %></h3>
-	    	<p>
+	    	<p>                                               
 	    		<label for="<%= t("email") %>"><%= t("email") %></label> 
-	    		<%= order_form.text_field :email, :class => 'required' -%><span class="req">*</span>
+	    		<%= text_field :user, 'email', :class => 'required' -%><span class="req">*</span>
 	    	</p>
 	    	<p>
-	    		<label for="<%= t("password") %>"><%= t("password") %></label> 
-	    		<input name="user[password]" class='required'/><span class="req">*</span>
+	    		<label for="<%= t("password") %>"><%= t("password") %></label>
+	    		<%= password_field :user, 'password', :class => 'required' %><span class="req">*</span> 
 	    	</p>
 	    	<p>
 	    		<label for="<%= t("confirm") %>"><%= t("confirm") %></label> 
-	    		<input name="user[password_confirmation]" class='required'/><span class="req">*</span>
+	    		<%= password_field :user, 'password_confirmation', :class => 'required' %><span class="req">*</span> 
 	    	</p>
   	  </div>
   	  <div id="guest_user">

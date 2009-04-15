@@ -6,15 +6,13 @@ class UsersController < Spree::BaseController
   before_filter :initialize_extension_partials
 
   actions :all, :except => [:index, :destroy]
-  
-  def create
-    @user = User.new(params[:user])
-    @user.roles << Role.find_by_name("user")
-    if @user.save
-      redirect_back_or_default products_path
-    else
-      render :action => :new
-    end
+
+  create do   
+    flash nil
+    wants.html { redirect_back_or_default products_path }
+    wants.js { render :js => true.to_json }
+    failure.wants.html { render :new }
+    failure.wants.js { render :js => @user.errors.to_json }    
   end
 
   show.before do

@@ -28,6 +28,6 @@ class UserSessionsController < Spree::BaseController
   def destroy
     current_user_session.destroy
     flash[:notice] = t("logged_out")
-    redirect_back_or_default('/')
+    redirect_to products_path
   end
 end

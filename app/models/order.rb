@@ -1,7 +1,7 @@
 class Order < ActiveRecord::Base  
 #  before_create :generate_order_number
   before_save :update_line_items 
-  before_save :generate_token
+  before_create :generate_token
   
   has_many :line_items, :dependent => :destroy, :attributes => true
   has_many :inventory_units

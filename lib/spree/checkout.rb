@@ -46,8 +46,14 @@ module Spree::Checkout
         render :action => "new" and return 
       end
       
+
       respond_to do |format|
-        format.html {redirect_to order_url(@order, :checkout_complete => true) }
+        format.html do  
+          flash[:notice] = t('order_processed_successfully')
+          order_params = {:checkout_complete => true}
+          order_params[:order_token] = @order.token unless @order.user
+          redirect_to order_url(@order, order_params)
+        end
         format.js {render :json => { :order => {:order_total => @order.total, 
                                                 :ship_amount => @order.ship_amount, 
                                                 :tax_amount => @order.tax_amount},

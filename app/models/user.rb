@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base           
-  before_validation :set_login
+  before_validation :set_login  
+  before_save :add_user_role
   
   acts_as_authentic do |c|
      c.transition_from_restful_authentication = true
@@ -38,5 +39,10 @@ class User < ActiveRecord::Base
   def set_login
     # for now force login to be same as email, eventually we will make this configurable, etc.
     self.login = email
-  end      
+  end 
+  
+  def add_user_role
+    user_role = Role.find_by_name("user")
+    self.roles << user_role if user_role and self.roles.empty?
+  end     
 end
