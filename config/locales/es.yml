@@ -1,10 +1,10 @@
 --- 
 es: 
-  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
-  abbreviation: Abbreviation
-  access_denied: "Access Denied"   
+  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: Una copia de todos los correos sera enviada a las siguientes direcciones
+  abbreviation: Abreviatura
+  access_denied: "Acceso denegado"   
   account: Cuenta
-  account_updated: "Account updated!"        
+  account_updated: "Cuenta actualizada!"        
   action: Acción
   actions: 
     cancel: Cancelar
@@ -17,173 +17,173 @@ es:
   activerecord: 
     attributes: 
       address: 
-        address1: Address
-        address2: "Address (contd.)"
-        city: City
-        firstname: "First Name"
-        lastname: "Last Name"
-        phone: Phone
-        zipcode: "Zip Code"
+        address1: Direccion
+        address2: "Direccion (continuación)"
+        city: Ciudad
+        firstname: "Nombre"
+        lastname: "Apellidos"
+        phone: Telefono
+        zipcode: "Codigo postal"
       country: 
         iso: ISO
         iso3: ISO3
-        iso_name: "ISO Name"
-        name: Name
-        numcode: "ISO Code"
+        iso_name: "Nombre ISO"
+        name: Nombre
+        numcode: "Codigo ISO"
       creditcard: 
-        cc_type: Type
-        month: Month
-        number: Number
-        verification_value: "Verification Value"
-        year: Year
+        cc_type: Tipo
+        month: Mes
+        number: Numero
+        verification_value: "Codigo de verificacion"
+        year: Año
       inventory_unit: 
-        state: State
+        state: Provincia
       line_item: 
-        price: Price
-        quantity: Quantity
+        price: Precio
+        quantity: Cantidad
       order: 
-        checkout_complete: "Checkout Complete"
-        ip_address: "IP Address"
-        item_total: "Item Total"
-        number: Number
-        ship_amount: "Ship Amount"
-        special_instructions: "Special Instructions"
-        state: State
-        tax_amount: "Tax Amount"
+        checkout_complete: "Pedido completado"
+        ip_address: "Direccion IP"
+        item_total: "Total articulos"
+        number: Numero
+        ship_amount: "Coste de envio"
+        special_instructions: "Instrucciones especiales"
+        state: Provincia
+        tax_amount: "Total impuestos"
         total: Total
       product: 
-        available_on: "Available On"
-        description: Description
-        master_price: "Master Price"
-        name: Name
-        on_hand: "On Hande"
-        shipping_category: "Shipping Category"
+        available_on: "Disponible en"
+        description: Descripción
+        master_price: "Precio principal"
+        name: Nombre
+        on_hand: "En mano"
+        shipping_category: "Categoria de envio"
       property: 
-        name: Name
-        presentation: Presentation
+        name: Nombre
+        presentation: Presentacion
       prototype: 
-        name: Name
+        name: Nombre
       role: 
-        name: Name
+        name: Nombre
       state: 
-        abbr: Abbreviation
-        name: Name
+        abbr: Abreviatura
+        name: Nombre
       taxon: 
-        name: Name
-        permalink: Permalink
-        position: Position
+        name: Nombre
+        permalink: Enlace permanente
+        position: Posicion
       taxonomy: 
-        name: Name
+        name: Nombre
       user: 
         email: Email
       variant: 
-        depth: Depth
-        height: Height
-        price: Price
+        depth: Profundidad
+        height: Altura
+        price: Precio
         sku: SKU
-        weight: Weight
-        width: Width
+        weight: Peso
+        width: Ancho
       zone: 
-        description: Description
-        name: Name
+        description: Descripcion
+        name: Nombre
     models: 
       address: 
-        one: Address
-        other: Addresses
+        one: Direccion
+        other: Direcciones
       country: 
-        one: Country
-        other: Countries
+        one: Pais
+        other: Paises
       creditcard: 
-        one: "Credit Card"
-        other: "Credit Cards"
+        one: "Tarjeta de credito"
+        other: "Tarjetas de credito"
       creditcard_payment: 
-        one: "Credit Card Payment"
-        other: "Credit Card Payments"
+        one: "Pago con Tarjeta de Crédito"
+        other: "Pagos con Tarjeta de Crédito"
       creditcard_txn: 
-        one: "Credit Card Transaction"
-        other: "Credit Card Transactions"
+        one: "Transaccion con Tarjeta de Crédito"
+        other: "Transacciones con Tarjeta de Crédito"
       inventory_unit: 
-        one: "Inventory Unit"
-        other: "Inventory Units"
+        one: "Unidad en inventario"
+        other: "Unidades en inventario"
       line_item: 
-        one: "Line Item"
-        other: "Line Items"
+        one: "Articulo"
+        other: "Articulos"
       order: 
-        one: Order
-        other: Orders
+        one: Pedido
+        other: Pedidos
       payment: 
-        one: Payment
-        other: Payments
+        one: Pago
+        other: Pagos
       product: 
-        one: Product
-        other: Products
+        one: Producto
+        other: Productos
       property: 
-        one: Property
-        other: Properties
+        one: Propiedad
+        other: Propiedades
       prototype: 
-        one: Prototype
-        other: Prototypes
+        one: Prototipo
+        other: Prototipos
       role: 
-        one: Roles
-        other: Roles
+        one: Funcion
+        other: Funciones
       shipping_category: 
-        one: "Shipping Category"
-        other: "Shipping Categories"
+        one: "Categoría de envio"
+        other: "Categorías de envio"
       state: 
-        one: Comunidad
-        other: States
+        one: Provincia
+        other: Provincias
       taxon: 
         one: Taxon
         other: Taxons
       taxonomy: 
-        one: Taxonomy
-        other: Taxonomies
+        one: Taxonomia
+        other: Taxonomias
       user: 
-        one: User
-        other: Users
+        one: Usuario
+        other: Usuarios
       variant: 
-        one: Variant
-        other: Variants
+        one: Variante
+        other: Variantes
       zone: 
-        one: Zone
-        other: Zones
-  add: Add
+        one: Zona
+        other: Zonas
+  add: Añadir
   add_category: "Añadir Categoría"
-  add_country: "Add Country"
+  add_country: "Añadir Pais"
   add_option_type: "Añadir tipo de opción"
-  add_option_types: "Añadir tipo de opcións"
-  add_option_value: "Add Option Value"
-  add_product_properties: ""
-  add_state: "Add State"
+  add_option_types: "Añadir tipos de opciones"
+  add_option_value: "Añadir valor de opcion"
+  add_product_properties: "Añadir propiedades de producto"
+  add_state: "Añadir provincia"
   add_to_cart: "Añadir a la cesta"
-  add_zone: "Add Zone"
-  address: Address
-  address_information: "Información de Dirección"
+  add_zone: "Añadir zona"
+  address: Dirección
+  address_information: "Información de la Dirección"
   adjustment: Ajuste
   administration: Administración
-  allow_backorders: "Allow Backorders"
-  allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
-  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
+  allow_backorders: "Permitir devoluciones"
+  allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir el uso de SSL en los modos de desarrollo y prueba
+  allow_ssl_to_be_used_when_in_production_mode: Permitir el uso de SSL en produccion        
   amount: Cuantía
-  are_you_sure: "Are you sure"
+  are_you_sure: "¿Está seguro?"
   are_you_sure_category: "¿Está seguro de que quiere eliminar esta categoría?"
-  are_you_sure_delete: "Are you sure you want to delete this record?"
+  are_you_sure_delete: "¿Está seguro de que quiere eliminar esta entrada?"
   are_you_sure_delete_image: "¿Está seguro de que quiere eliminar esta imágen?"
   are_you_sure_option_type: "¿Está seguro de que quiere eliminar este tipo de opción?"
-  are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
-  assign_taxon: "Assign Taxon"
-  assign_taxons: "Assign Taxons"
-  authorization_failure: "Authorization Failure"  
-  authorized: Authorized
-  available_on: ""
-  available_taxons: "Available Taxons"
+  are_you_sure_you_want_to_capture: "¿Estás seguro de que deseas capturar?"
+  assign_taxon: "Asignar Taxon"
+  assign_taxons: "Asignar Taxons"
+  authorization_failure: "Fallo de autorización"  
+  authorized: Autorizado
+  available_on: "Disponible en"
+  available_taxons: "Taxons disponibles"
   back: Atrás
   back_to_store: "Volver a la tienda"
-  bill_address: "Bill Address"
+  bill_address: "Dirección de facturación"
   billing_address: "Dirección de facturación"
   cancel: Cancelar
-  canceled: Canceled
-  capture: capture
+  canceled: Cancelado
+  capture: captura
   card_code: "Código de la tarjeta"
   card_number: "Número de tarjeta"
   cart: Cesta
@@ -191,58 +191,58 @@ es:
   category: Categoría
   change: Cambiar
   change_language: "Cambiar Idioma"
-  charged: Charged
+  charged: Cargado
   checkout: Pagar
   city: Ciudad
-  comp_order: "Comp Order"
-  comp_order_confirmation: ""
-  configuration: Configuration
-  configuration_options: "Configuration Options"
-  configurations: Configurations
+  comp_order: "Pedido completado"
+  comp_order_confirmation: "Confirmacion de pedido completado"
+  configuration: Configuracion
+  configuration_options: "Opciones de configuracion"
+  configurations: Configuraciones
   confirm: Confirmar
   confirm_password: "Confirme la contraseña"
-  continue: Continue
+  continue: Continuar
   continue_shopping: "Seguir comprando"
-  copy_all_mails_to: Copy All Mails To                                                                             
+  copy_all_mails_to: Copiar todos los correos a
   country: País
-  country_based: "Country Based"
+  country_based: "Pais base"
   create: Crear
-  create_a_new_account: ""
-  created_successfully:
-  credit_card: ""
-  credit_card_capture_complete: "Credit Card Was Captured"
-  credit_card_payment: "Credit Card Payment"
-  creditcard: Creditcard
+  create_a_new_account: "Crear una nueva cuenta"
+  created_successfully: "Creado correctamente"
+  credit_card: "Tarjeta de credito"
+  credit_card_capture_complete: "La tarjeta de credito ha sido registrada"
+  credit_card_payment: "Pago con tarjeta de credito"
+  creditcard: "Tarjeta de credito"
   current: Actual
   customer: Cliente
   date_range: "Rango de Fecha"
   delete: Eliminar
-  depth: Depth
+  depth: Profundidad
   description: Descripción
   destroy: Eliminar
   display: Mostrar
   edit: Editar
-  editing_category: "Editar categoría"
-  editing_option_type: "Editing Option Type"
-  editing_option_types: "Editar tipo de opción"
-  editing_product: "Editing Product"
-  editing_property: "Editing Property"
-  editing_prototype: "Editing Prototype"
-  editing_shipping_category: "Editing Shipping Category"
-  editing_shipping_method: "Editing Shipping Method"
-  editing_state: "Editing State"
-  editing_tax_category: "Editing Tax Category"
-  editing_user: "Editar usuario"
-  editing_zone:
+  editing_category: "Editando categoría"
+  editing_option_type: "Editando tipo de opción"
+  editing_option_types: "Editando tipos de opción"
+  editing_product: "Editando Producto"
+  editing_property: "Editando Propiedad"
+  editing_prototype: "Editando Prototipo"
+  editing_shipping_category: "Editando Categoria de envío"
+  editing_shipping_method: "Editando metodo de envío"
+  editing_state: "Editando provincia"
+  editing_tax_category: "Editando Categoría fiscal"
+  editing_user: "Editando usuario"
+  editing_zone: "Editando zona"
   email: "Correo Electrónico"
   email_address: "Dirección de Correo Electrónico"
-  email_server_settings_description: ""
+  email_server_settings_description: "Configuración del servidor de correo electrónico"
   empty_cart: "Vaciar Cesta"
-  enable_mail_delivery: Enable Mail Delivery      
+  enable_mail_delivery: Habilitar envio por correo      
   error: error
-  event: Event
-  existing_customer: "Existing Customer"
-  expiration: "Expiration"
+  event: Evento
+  existing_customer: "Cliente existente"
+  expiration: "Expiracion"
   expiration_month: "Mes de vencimiento"
   expiration_year: "Año de vencimiento"
   extension: Extensión
@@ -250,36 +250,36 @@ es:
   filename: "Nombre de archivo"
   final_confirmation: "Confirmación Final"
   first_name: Nombre
-  forgot_password: "Forgot Password"
-  gateway: ""
-  gateway_error: "Gateway Error"
-  gateway_setting_description: ""
+  forgot_password: "¿Olvidaste tu contraseña?"
+  gateway: "pasarela"
+  gateway_error: "Error en la pasarela"
+  gateway_setting_description: "Configuracion de la pasarela"
   general: "General"
-  general_settings: "General Settings"
-  general_settings_description: "Configure general Spree settings."
+  general_settings: "Configuracion general"
+  general_settings_description: "Configurar los ajustes generales de Spree."
   google_analytics: "Google Analytics"
-  google_analytics_active: "Active"
-  google_analytics_create: "Create New Google Analytics Account"
+  google_analytics_active: "Activo"
+  google_analytics_create: "Crear nueva cuenta de Google Analytics"
   google_analytics_id: "Analytics ID"
-  google_analytics_new: "New Google Analytics Account"
-  google_analytics_setting_description: "Manage Google Analytics ID" 
-  height: Height
+  google_analytics_new: "Nueva cuenta de Google Analytics"
+  google_analytics_setting_description: "Gestionar Google Analytics ID" 
+  height: Altura
   hello_user: "Hola usuario"
-  history: History
-  home: "Home"
+  history: Historia
+  home: "Inicio"
   image: Imágen
   images: Imagenes
-  in_progress: "In Progress"
-  invalid_search:
+  in_progress: "En progreso"
+  invalid_search: "Busqueda invalida"
   inventory: Inventario
   inventory_adjustment: "Ajuste de inventario"
-  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
-  inventory_settings: "Inventory Settings"
+  inventory_setting_description: "Configuracion del inventario, Devoluciones, mostrar articulos sin stock"
+  inventory_settings: "Configuracion del inventario"
   item: artículo
   item_description: "Descripción del artículo"
   item_total: "Total de artículos"
   last_name: Apellidos
-  list: List
+  list: Lista
   listing_categories: "Listado de Categorías"
   listing_option_types: "Listado de tipos de opciones"
   listing_orders: "Listado de pedidos"
@@ -289,48 +289,48 @@ es:
   locale_changed: "Se ha cambiado el idioma"
   log_in: "Iniciar sesión"
   logged_in_as: "Identificado como"
-  logged_in_succesfully: "Logged in successfully"
-  logged_out: "You have been logged out." 
-  login_failed: "Login authentication failed."      
+  logged_in_succesfully: "Conectado con éxito"
+  logged_out: "Se ha cerrado la sesión." 
+  login_failed: "No se ha podido iniciar la sesion, error de autenticacion."      
   login_name: "Nombre de usuario"
   logout: "Cerrar sesión"
-  mail_delivery_enabled:
-  mail_delivery_not_enabled:
-  mail_server_preferences: Mail Server Preferences
-  mail_server_settings: "Mail Server Settings"
-  mark_shipped: "Mark Shipped"
+  mail_delivery_enabled: "La entrega de correo está habilitada"
+  mail_delivery_not_enabled: "La entrega de correo está deshabilitada"
+  mail_server_preferences: Preferencias del servidor de correo
+  mail_server_settings: "Configuración del servidor de correo"
+  mark_shipped: "Marcar como enviado"
   master_price: "Precio principal"
-  month: "Month"
+  month: "Mes"
   my_account: "Mi cuenta"
-  my_orders: "My Orders"
-  name: Name
-  new: New
+  my_orders: "Mis pedidos"
+  name: Nombre
+  new: Nuevo
   new_category: "Nueva categoría"
-  new_credit_card_payment: "New Credit Card Payment"
-  new_customer: "New Customer"
+  new_credit_card_payment: "Nuevo pago ocn tarjeta de credito"
+  new_customer: "Nuevo cliente"
   new_image: "Nueva Imágen"
   new_option_type: "Nuevo tipo de opción"
   new_option_value: "Nuevo valor de la opción"
-  new_product: ""
-  new_property: ""
-  new_prototype: ""
-  new_shipment:
-  new_shipping_category: "New Shipping Category"
-  new_shipping_method: "New Shipping Method"
-  new_state: "New State"
-  new_tax_category: "New Tax Category"
-  new_tax_rate: "New Tax Rate"
+  new_product: "Nuevo producto"
+  new_property: "Nueva propiedad"
+  new_prototype: "Nuevo prototipo"
+  new_shipment: "Nuevo envio"
+  new_shipping_category: "Nueva categoria de envio"
+  new_shipping_method: "Nueva forma de envio"
+  new_state: "Nueva provincia"
+  new_tax_category: "Nueva categoría de impuestos"
+  new_tax_rate: "Nuevo iipo impositivo"
   new_taxonomy: "New Taxonomy"
   new_user: "Nuevo usuario"
   new_variant: "Nueva Variante"
-  new_zone: "New Zone"
+  new_zone: "Nueva zona"
   next: próximo
   no_items_in_cart: "La cesta está vacía"
-  no_match_found: "No Match Found"
-  no_user_found: "No user was found with that email address"
-  none: ""
+  no_match_found: "No se ha encontrado"
+  no_user_found: "No se ha encontrado ningun usuario con esa direccion de correo"
+  none: "Ninguno"
   none_available: "No hay nada que mostrar"
-  on_hand: "On Hand"
+  on_hand: "En mano"
   operation: Operación
   option_Values: "Valores de opción"
   option_types: "Tipos de opción"
@@ -341,168 +341,168 @@ es:
   order_confirmation_note: "Nota de confirmación de pedido"
   order_date: "Fecha de pedido"
   order_details: "Detalles del pedido"
-  order_email_resent: "Order Email Resent"
+  order_email_resent: "Email de pedido reenviado"
   order_number: "Pedido #"
-  order_operation_authorize: ""
+  order_operation_authorize: "Autorizar"
   order_processed_successfully: "Su pedido se ha procesado correctamente"
   order_total: "Total del pedido"
-  order_total_message: "The total amount charged to your card will be"
-  order_updated: "Order Updated"
+  order_total_message: "El importe total cargado a su tarjeta sera"
+  order_updated: "Pedido actualizado"
   orders: Pedidos
-  out_of_stock: "Out of Stock"
+  out_of_stock: "Sin stock"
   overview: General
-  paid: Paid
+  paid: Pagado
   parent_category: "Categoría padre"
   password: Contraseña
-  password_reset_instructions: "Password Reset Instructions"
-  password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
-  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."    
-  password_updated: "Password successfully updated"  
-  path: Path
-  pay: pay
+  password_reset_instructions: "Instrucciones para recuperar la contraseña"
+  password_reset_instructions_are_mailed: "Las instrucciones para recuperar su contraseña se le han enviado por email. Por favor revise su correo."
+  password_reset_token_not_found: "Lo sentimos, no podemos localizar su cuenta de usuario. Si tienes problemas, intenta copiar y pegar la URL desde el correo al navegador, o reinicia el proceso de recuperar la contraseña."    
+  password_updated: "Contraseña actualizada correctamente"  
+  path: Ruta
+  pay: Pagar
   payment: Pago
-  payment_gateway: "Payment Gateway"
-  payment_information: "Payment Information"
-  payments: Payments
+  payment_gateway: "Pasarela de pago"
+  payment_information: "Informacion del pago"
+  payments: Pagos
   phone: Teléfono
-  place_order: Place Order        
+  place_order: Hacer pedido
   presentation: Presentación
   previous: Anterior
   price: Precio
-  problem_authorizing_card: ""
-  problem_capturing_card: ""
-  problems_processing_order: "Hemos tenido al procesar su pedido"
+  problem_authorizing_card: "Problema autorizando la tarjeta"
+  problem_capturing_card: "Problema capturando la tarjeta"
+  problems_processing_order: "Hemos tenido problemas al procesar su pedido"
   process: Procesar
   product: Producto
-  product_details: "Product Details"
-  product_properties: ""
+  product_details: "Detalles del producto"
+  product_properties: "Propiedades del producto"
   products: Productos
-  properties: ""
-  property: ""
-  prototype: Prototype
-  prototypes: ""
+  properties: "Propiedades"
+  property: "Propiedad"
+  prototype: Prototipo
+  prototypes: "Prototipos"
   qty: Cant.
-  rate: Rate
+  rate: proporción
   remember_me: "Recordarme en este equipo"
-  remove: ""
+  remove: "Remover"
   reports: Reportes
   resend: "Volver a enviar"
-  reset_password: "Reset my password"
+  reset_password: "Reinicia my contraseña"
   response_code: "Código de respuesta"
-  resume: "resume"
-  resumed: Resumed
-  return: return
-  returned: Returned
-  roles: Roles
+  resume: "Reanudar"
+  resumed: Reanudado 
+  return: volver
+  returned: regresó
+  roles: Funciones
   sales_total: "Total de ventas"
-  sales_total_for_all_orders: "Sales total for all orders"
+  sales_total_for_all_orders: "Total de ventas para todos los pedidos"
   sales_totals: "Ventas Totales"
-  sales_totals_description: ""
-  save_preferences: Save Preferences           
+  sales_totals_description: "Total de ventas para todos los pedidos"
+  save_preferences: Guardar preferencias
   search: Buscar
-  secure_connection_type: Secure Connection Type
+  secure_connection_type: Tipo de conexion segura
   select: Seleccionar
-  select_from_prototype: ""
-  select_preferred_shipping_option: "Select preferred shipping option"
-  send_copy_of_all_mails_to: Send Copy of All Mails To
-  send_copy_of_orders_mails_to: Send Copy of Order Mails To         
-  send_mails_as: Send Mails As                    
-  send_order_mails_as: Send Order Mails As   
-  ship: ship
-  ship_address: "Ship Address"
-  shipment: Shipment
-  shipment_number: "Shipment #"
-  shipped: Shipped
+  select_from_prototype: "Seleccionar desde prototipo"
+  select_preferred_shipping_option: "Seleccionar la opcion de envio preferida"
+  send_copy_of_all_mails_to: Envia una copia de todos los correos a
+  send_copy_of_orders_mails_to: Envia una copia de todos los correos de pedidos a         
+  send_mails_as: Enviar correos como
+  send_order_mails_as: Enviar correos de pedidos como
+  ship: enviar
+  ship_address: "Direccion de envio"
+  shipment: Envio
+  shipment_number: "Envio #"
+  shipped: Enviado
   shipping: Envío
   shipping_address: "Dirección de envío"
-  shipping_calculator: Calculator
-  shipping_categories: "Shipping Categories"
-  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
-  shipping_cost: Cost
-  shipping_error: "Shipping Error"
-  shipping_method: Method
-  shipping_methods: "Shipping Methods"
-  shipping_methods_description: "Manage shipping methods"
+  shipping_calculator: Calculadora
+  shipping_categories: "Categorias de envio"
+  shipping_categories_description: "Gestionar las categorias de envio para determinar qué categorías de productos pueden ser transportados a través de qué método"
+  shipping_cost: Costes de envio
+  shipping_error: "Error de envio"
+  shipping_method: Metodo de envio
+  shipping_methods: "Metodos de envio"
+  shipping_methods_description: "Manejar metodos de envio"
   shipping_total: "Total de envío"
   shopping_cart: "Cesta de compras"
-  show_deleted: "Show Deleted"
-  show_incomplete_orders: "Show Incomplete Orders"
-  show_only_complete_orders: "Only show complete orders"
-  show_out_of_stock_products: "Show out-of-stock products"
+  show_deleted: "Mostrar borrados"
+  show_incomplete_orders: "Mostrar los pedidos incompletos"
+  show_only_complete_orders: "Mostrar solo los pedidos completados"
+  show_out_of_stock_products: "Mostrar productos sin stock"
   sign_up: Registrarme
-  site_name: "Site Name"
-  site_url: "Site URL"
+  site_name: "Nombre del sitio"
+  site_url: "URL del sitio"
   sku: Código
   smtp: SMTP
-  smtp_authentication_type: SMTP Authentication Type         
-  smtp_domain: SMTP Domain
+  smtp_authentication_type: Tipo de autenticacion SMTP 
+  smtp_domain: Dominio SMTP
   smtp_mail_host: SMTP Mail Host                       
-  smtp_password: SMTP Password
-  smtp_port: SMTP Port          
-  smtp_username: SMTP Username  
+  smtp_password: contraseña SMTP
+  smtp_port: puerto SMTP          
+  smtp_username: nombre de usuario SMTP  
   spree:
     date: Fecha 
     time: Hora                                               
   start: Inicio
-  state: Comunidad
-  state_based: "State Based"
-  state_setting_description: ""
-  states: States
+  state: Provincia
+  state_based: "Provincia"
+  state_setting_description: "Administrar la lista de estados o provincias asociados con cada país."
+  states: Provincias
   status: Estado
   stop: Parar
   store: Tienda
   street_address: Dirección
   street_address_2: "Dirección (continuación)"
   subtotal: Subtotal
-  subtract: Subtract
-  system: System
+  subtract: Restar
+  system: sistema
   tax: Impuesto
-  tax_categories: ""
-  tax_categories_setting_description: ""
-  tax_category: ""
-  tax_total: IVA
-  tax_type: "Tax Type"
+  tax_categories: "Categorias de impuestos"
+  tax_categories_setting_description: "Establecer categorías de impuestos para determinar qué productos deben estar sujetos a impuestos."
+  tax_category: "Categoria de impuestos"
+  tax_total: "Total impuestos"
+  tax_type: "Tipo de impuesto"
   taxon: Taxon
-  taxonomies: Taxonomies
-  taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomies: Taxonomias
+  taxonomies_setting_description: "Crear y manejar taxonomias"
   taxons: Taxons
-  thank_you_for_your_order: ""
+  thank_you_for_your_order: "Gracias por su pedido"
   this_file_language: "Español (España)"
-  to_add_variants_you_must_first_define: "To add variants, you must first define"
+  to_add_variants_you_must_first_define: "Para agregar variantes, primero debe definir"
   total: Total
-  tracking: Tracking
+  tracking: Seguimiento
   transaction: Transacción
-  tree: Tree
+  tree: Arbol
   try_again: "Volver a intentar"
   type: Tipo
-  unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
-  unable_to_capture_credit_card: "Unable to Capture Credit Card"
-  unable_to_save_order: "Unable to Save Order"
+  unable_to_authorize_credit_card: "No se ha podido autorizar la tarjeta de credito"
+  unable_to_capture_credit_card: "No se ha podido capturar la tarjeta de credito"
+  unable_to_save_order: "No se ha podido guardar el pedido"
   update: Actualizar
-  update_password: "Update my password and log me in"                    
-  updated_successfully:
-  use_as_shipping_address: Use as Shipping Address
-  use_billing_address: Use Billing Address
+  update_password: "Actualiza mi contraseña y dejame entrar"                    
+  updated_successfully: "Actualizado correctamente"
+  use_as_shipping_address: Usar como direccion de envio
+  use_billing_address: Usar la direccion de facturacion
   use_different_shipping_address: "Usar una dirección de envío diferente"
   user: Usuario
-  user_account: User Account
-  user_details: "User Details"
+  user_account: Cuenta de usuario
+  user_details: "Detalles del usuario"
   users: Usuarios
-  value: ""
+  value: "valor"
   variants: Variantes
   version: Versión
   website: "Página web"
-  weight: Weight
+  weight: Peso
   welcome_to_sample_store: "Bienvenido a la tienda de ejemplo"
-  what_is_a_cvv: "What is a (CVV) Credit Card Code?"
+  what_is_a_cvv: "¿Que es el codigo de verificacion (CVV)?"
   what_is_this: "¿Qué es esto?"
-  whats_this: "What's this"
-  width: Width
-  year: "Year"
-  you_have_been_logged_out: "You have been logged out."
-  your_cart_is_empty: "Your cart is empty"
+  whats_this: "¿Qué es esto?"
+  width: Ancho
+  year: "Año"
+  you_have_been_logged_out: "Se ha cerrado la sesión."
+  your_cart_is_empty: "Su cesta está vacía"
   zip: "Código postal"
-  zone: Zone
-  zone_based: "Zone Based"
-  zone_setting_description: ""
-  zones: Zones
+  zone: Zona
+  zone_based: "Zona"
+  zone_setting_description: "Colecciones de países, estados o de otras zonas que se utilizarán en diversos cálculos"
+  zones: Zonas
