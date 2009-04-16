@@ -424,6 +424,7 @@ nl-BE:
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
   shipping_total: "Verzending"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Winkelmandje"
   show_deleted: "Toon verwijderde bestellingen"
   show_incomplete_orders: "Toon niet afgewerkte bestellingen"

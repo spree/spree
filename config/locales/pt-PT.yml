@@ -424,6 +424,7 @@ pt-PT:
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
   shipping_total: "Total de Entrega"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Carro de Compra"
   show_deleted: "Mortra Eliminados"
   show_incomplete_orders: "Mostra Encomendas Incompletas"

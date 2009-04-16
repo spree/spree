@@ -424,6 +424,7 @@ de:
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
   shipping_total: "Lieferkosten Gesamt"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: Warenkorb
   show_deleted: "Zeige gelöschte"
   show_incomplete_orders: "Zeige unvollständige Bestellungen"

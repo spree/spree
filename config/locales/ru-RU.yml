@@ -424,6 +424,7 @@ ru-RU:
   shipping_methods: "Способы доставки"
   shipping_methods_description: "Управление методами доставки"
   shipping_total: "Итого за доставку"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Корзина"
   show_deleted: "Показать удаленные"
   show_incomplete_orders: "Показать необработанные заказы"

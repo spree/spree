@@ -428,6 +428,7 @@ en-US:
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
   shipping_total: "Shipping Total"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Shopping Cart"
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"

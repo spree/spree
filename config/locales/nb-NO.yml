@@ -424,6 +424,7 @@ nb-NO:
   shipping_methods: "Leveransemåter"
   shipping_methods_description: "Konfigurer leveransemåter."
   shipping_total: "Fraktkostnader"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Handlekurv"
   show_deleted: "Vis slettede"
   show_incomplete_orders: "Vis ufullstendige ordrer"
