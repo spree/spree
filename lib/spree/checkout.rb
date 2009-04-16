@@ -16,7 +16,7 @@ module Spree::Checkout
     end
     @shipping_method = ShippingMethod.find_by_id(params[:method_id]) if params[:method_id]  
     @shipping_method ||= @order.shipping_methods.first    
-    @order.shipments.build(:address => @order.ship_address, :shipping_method => @shipping_method)      
+    @order.shipments.build(:address => @order.ship_address, :shipping_method => @shipping_method) if @order.shipments.empty?    
 
     if request.post?                           
       @order.creditcards.clear
