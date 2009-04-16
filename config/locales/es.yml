@@ -294,6 +294,9 @@ es:
   login_failed: "No se ha podido iniciar la sesion, error de autenticacion."      
   login_name: "Nombre de usuario"
   logout: "Cerrar sesión"
+  meta_keywords: "Meta palabras clave"
+  meta_description: "Meta descripcion"
+  metadata: "Metadatos"
   mail_delivery_enabled: "La entrega de correo está habilitada"
   mail_delivery_not_enabled: "La entrega de correo está deshabilitada"
   mail_server_preferences: Preferencias del servidor de correo
@@ -306,7 +309,7 @@ es:
   name: Nombre
   new: Nuevo
   new_category: "Nueva categoría"
-  new_credit_card_payment: "Nuevo pago ocn tarjeta de credito"
+  new_credit_card_payment: "Nuevo pago con tarjeta de credito"
   new_customer: "Nuevo cliente"
   new_image: "Nueva Imágen"
   new_option_type: "Nuevo tipo de opción"
@@ -456,10 +459,10 @@ es:
   subtotal: Subtotal
   subtract: Restar
   system: sistema
-  tax: Impuesto
+  tax: Impuestos
   tax_categories: "Categorias de impuestos"
   tax_categories_setting_description: "Establecer categorías de impuestos para determinar qué productos deben estar sujetos a impuestos."
-  tax_category: "Categoria de impuestos"
+  tax_category: "Categoria"
   tax_total: "Total impuestos"
   tax_type: "Tipo de impuesto"
   taxon: Taxon
