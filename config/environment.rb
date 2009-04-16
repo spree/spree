@@ -34,7 +34,8 @@ Spree::Initializer.run do |config|
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
   config.gem 'haml', :version => '2.1.0'
   config.gem 'chriseppstein-compass', :lib => 'compass', :version => '0.5.4'
-  config.gem 'calendar_date_select', :version => '1.15'
+  config.gem 'calendar_date_select', :version => '1.15'    
+  config.gem 'echoe' # needed by schof-searchlogic (can remove once it leaves vendor/gems)
 
   #config.gem 'searchlogic', :version => '1.6.3'                           
   # HACKED version of search logic - we'll move back when our fix is accepted into core
