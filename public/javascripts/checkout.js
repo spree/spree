@@ -6,11 +6,17 @@ $(function() {
   get_states();
   
   // hook up the continue buttons for each section
-  for(var i=0; i < regions.length; i++) {                               
-    $('#continue_' + regions[i]).click(function() { eval( "continue_button(this);") });   
+  for(var i=0; i < regions.length; i++) {     
+    var section = regions[i];                          
+    $('#continue_' + section).click(function() { eval( "continue_button(this);") });   
+    
+    // enter key should be same as continue button (don't submit form though)
+    $('#' + section + ' input').bind("keyup", section, function(e) {
+      if(e.keyCode == 13) {      
+        continue_section(e.data);
+      }
+    });
   }                           
-          
-  //$('form#checkout_form').submit(function() { return !($('div#confirm_order').hasClass('checkout_disabled')); });
 
 	// hookup the radio buttons for registration
 	$('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); });
@@ -19,13 +25,6 @@ $(function() {
 
   // activate first region
   shift_to_region(regions[0]);  
-  
-  $('input#user_password_confirmation, input#user_session_password').keyup(function(e) {
-    if(e.keyCode == 13) {
-      $('#continue_registration').click();
-    }
-  });
-  
 })
 
 jQuery.fn.sameAddress = function() {
@@ -117,7 +116,10 @@ var update_state = function(region) {
 };       
 
 var continue_button = function(button) {
-  var section = button.id.substring(9);
+  continue_section(button.id.substring(9));
+};  
+
+var continue_section = function(section) {
   // validate
   if (!validate_section(section)) { return; };
   // submit
@@ -129,9 +131,8 @@ var continue_button = function(button) {
       if (i == (regions.length - 1)) { break; };
       shift_to_region(regions[i+1]);
     }
-  }
-  
-};
+  }  
+} 
 
 var validate_section = function(region) {
   var validator = $('form#checkout_form').validate();
@@ -167,9 +168,13 @@ var shift_to_region = function(active) {
   }                                                                         
   if (active == 'confirmation') {
     $("input#final_answer").attr("value", "yes");    
+    $('#continue_confirmation').removeAttr('disabled', 'disabled'); 
+    $('#post-final').removeAttr('disabled', 'disabled'); 
   } else {
     // indicates order is ready to be processed (as opposed to simply updated)
-    $("input#final_answer").attr("value", "");    
+    $("input#final_answer").attr("value", "");
+    // disable form submit
+    $(':submit').attr('disabled', 'disbled'); 
   }
   return;
 };
@@ -378,6 +383,6 @@ var submit_payment = function() {
 };    
 
 var submit_confirmation = function() {  
-  //$('form#checkout_form').submit();
+  //$('form').submit();
   $('#post-final').click();
 };
