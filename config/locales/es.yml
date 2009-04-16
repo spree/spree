@@ -284,7 +284,7 @@ es:
   listing_option_types: "Listado de tipos de opciones"
   listing_orders: "Listado de pedidos"
   listing_reports: "Listado de reportes"
-  listing_tax_categories: "Listing Tax Categories"
+  listing_tax_categories: "Listado de Taxons"
   listing_users: "Listado de usuarios"
   locale_changed: "Se ha cambiado el idioma"
   log_in: "Iniciar sesión"
@@ -321,7 +321,7 @@ es:
   new_shipping_category: "Nueva categoria de envio"
   new_shipping_method: "Nueva forma de envio"
   new_state: "Nueva provincia"
-  new_tax_category: "Nueva categoría de impuestos"
+  new_tax_category: "Nueva categoría"
   new_tax_rate: "Nuevo iipo impositivo"
   new_taxonomy: "New Taxonomy"
   new_user: "Nuevo usuario"
@@ -461,8 +461,8 @@ es:
   subtract: Restar
   system: sistema
   tax: Impuestos
-  tax_categories: "Categorias de impuestos"
-  tax_categories_setting_description: "Establecer categorías de impuestos para determinar qué productos deben estar sujetos a impuestos."
+  tax_categories: "Categorias"
+  tax_categories_setting_description: "Establecer categorías para determinar qué productos deben estar sujetos a que categorias"
   tax_category: "Categoria"
   tax_total: "Total impuestos"
   tax_type: "Tipo de impuesto"
