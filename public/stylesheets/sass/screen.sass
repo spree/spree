@@ -42,7 +42,7 @@ body
 
 #content
   body.one-col &
-    +column(26,"last")
+    +column(24,"last")
   body.two-col &
     +column(18,"last")
 
@@ -216,14 +216,18 @@ body
       :margin 0px 0px 5px 150px
       :top 0px
       :font-size 11px
+    label.radio
+      :float none
+      :left 5px
+      :top -2px
   .inner
     :padding 10px
   div#creditcard p select
     :width 75px
-  p input#continue_billing,  p input#continue_shipping,  p input#continue_shipping_method,  p input#continue_payment,  #confirm_order .inner input
+  p input#continue_registration, input#continue_billing,  p input#continue_shipping,  p input#continue_shipping_method,  p input#continue_payment,  #confirm_order .inner input
     :cursor pointer
     :width 100px
-
+      
   h2
     :height 22px
     :border= 1px "solid" !default_border_color
@@ -231,21 +235,39 @@ body
     :margin 5px 0px
     :background-color = !light_blue
     :padding 4px 10px 4px 10px
-    :line-height 1em
+    :line-height 1em    
+    :clear both
 
   div#bdisplay, div#sdisplay
     :float left
     :width 300px
     :clear right  
+    
+  div#registration_choice
+    :float left
+    :block none     
+    :width 50%
+
+  div#registration_input
+    :float right
+    :block none
+    :width 50%
+    div#guest_user, div#existing_user
+      :display none 
+  
+  div#registration_error
+    :width 100%
         
 #methods p label
   :float none
   :width 150px
   :position relative
   :top 5px
-
+	
 form#checkout_form
   div.inner
+    :display none
+  div#already_logged_in
     :display none
 
 div.checkout_disabled h2

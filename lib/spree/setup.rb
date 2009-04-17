@@ -42,7 +42,8 @@ module Spree
       attributes = {
         :password => password,
         :password_confirmation => password,
-        :email => email
+        :email => email,
+        :login => email
       }
       admin = User.create(attributes)
       

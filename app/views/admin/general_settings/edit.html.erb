@@ -14,18 +14,18 @@
   </p>	
   <p>
     <label>
+	  <input name="preferences[allow_ssl_in_production]" type="hidden" value="0" />
       <%= check_box_tag('preferences[allow_ssl_in_production]', "1", Spree::Config[:allow_ssl_in_production]) %>
       <%= t('allow_ssl_to_be_used_when_in_production_mode') %>
     </label>
-    <input name="preferences[allow_ssl_in_production]" type="hidden" value="0" />
   </p>
 
   <p>
     <label>
+	  <input name="preferences[allow_ssl_in_development_and_test]" type="hidden" value="0" />	
       <%= check_box_tag('preferences[allow_ssl_in_development_and_test]', "1", Spree::Config[:allow_ssl_in_development_and_test]) %>
       <%= t('allow_ssl_to_be_used_when_in_developement_and_test_modes') %>
     </label>
-    <input name="preferences[allow_ssl_in_development_and_test]" type="hidden" value="0" />
   </p>
 
   <p class="form-buttons">

@@ -62,7 +62,10 @@ module Admin::BaseHelper
       options = options.merge(args.pop)
     end
     options[:route] ||=  "admin_#{args.first}"
-    link = link_to(t(options[:label]).capitalize, send("#{options[:route]}_path"))
+    
+    ## if more than one form, it'll capitalize all words
+    label_with_first_letters_capitalized = t(options[:label]).gsub(/\b\w/){$&.upcase}
+    link = link_to(label_with_first_letters_capitalized, send("#{options[:route]}_path"))
     
     css_classes = []
 

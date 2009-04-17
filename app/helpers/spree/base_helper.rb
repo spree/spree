@@ -61,4 +61,17 @@ module Spree::BaseHelper
       image_tag product.images.first.attachment.url(:product)  
     end
   end
+  
+  def meta_data_tags
+    return unless self.respond_to?(:object) && object
+    "".tap do |tags|
+      if object.respond_to?(:meta_keywords) and object.meta_keywords.present?
+        tags << tag('meta', :name => 'keywords', :content => object.meta_keywords) + "\n"
+      end
+      if object.respond_to?(:meta_description) and object.meta_description.present?
+        tags << tag('meta', :name => 'description', :content => object.meta_description) + "\n"
+      end
+    end
+  end
+  
 end
