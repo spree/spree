@@ -23,7 +23,14 @@ describe Order do
   end
 
   describe "create" do
-    it "should generate an order number"
+    it "should generate an order number" do
+      order = Order.create
+      order.number.should_not be_nil
+    end
+    it "should generate a token" do
+      order = Order.create
+      order.token.should_not be_nil 
+    end
   end
   
   describe "next" do
@@ -160,6 +167,41 @@ describe Order do
       @order.state_events = [StateEvent.new(:name => 'cancel')]
       @order.send("can_resume?").should == false
     end
+  end  
+  
+  describe "grant_access?" do
+    it "should grant if current_user is the same as the order's user" do
+      current_user = User.new
+      user_session = mock_model(UserSession, :user => current_user)
+      UserSession.stub!(:find).and_return(user_session)
+      @order.user = current_user
+      @order.grant_access?.should be_true
+    end
+    it "should deny if current_user is not the same as the order's user and no token" do
+      current_user = User.new
+      user_session = mock_model(UserSession, :user => current_user)
+      UserSession.stub!(:find).and_return(user_session)
+      @order.user = User.new
+      @order.grant_access?.should be_false
+    end
+    it "should deny if current_user is not the same as the order's user and wrong token" do
+      current_user = User.new
+      user_session = mock_model(UserSession, :user => current_user)
+      UserSession.stub!(:find).and_return(user_session)
+      @order.user = User.new
+      @order.token = "FOO_TOKEN"
+      @order.grant_access?("WRONG_TOKEN").should be_false
+    end
+    it "should allow if current_user does not match order but correct token is provided" do
+      token = "FOO_TOKEN"
+      current_user = User.new
+      user_session = mock_model(UserSession, :user => current_user)
+      UserSession.stub!(:find).and_return(user_session)
+      @order.user = User.new
+      @order.token = token
+      @order.grant_access?(token).should be_true
+    end
+    
   end
 
 end

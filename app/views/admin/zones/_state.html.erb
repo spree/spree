@@ -8,7 +8,7 @@
                                      :name => "member_names[]",
                                      :value => "#{value if local_assigns.has_key? :value}"
                                     },
-                                    {:url => formatted_states_path(:js),
+                                    {:url => states_path(:format => :js),
                                      :method => :get,
                                      :with => "Object.toQueryString({q: element.value})" 
                                     } %>
