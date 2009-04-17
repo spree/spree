@@ -13,10 +13,10 @@
 
       <p>
         <label>
+	      <input name="preferences[enable_mail_delivery]" type="hidden" value="0" />
           <%= check_box_tag('preferences[enable_mail_delivery]', "1", Spree::Config[:enable_mail_delivery]) %>
           <%= t('enable_mail_delivery') %>
         </label>
-        <input name="preferences[enable_mail_delivery]" type="hidden" value="0" />
       </p>
 
       <p>

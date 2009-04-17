@@ -1,0 +1,17 @@
+<%= render :partial => 'admin/shared/configuration_menu' %>
+
+<h1><%= t('tax_settings') %></h1>
+
+<% form_tag(admin_tax_settings_path, :method => :put) do -%>
+
+  <p>
+	<label><%= t("show_price_incl_vat") %></label>
+    <input name="preferences[show_price_inc_vat]" type="hidden" value="0" />
+	<%= check_box_tag('preferences[show_price_inc_vat]', "1",  Spree::Tax::Config[:show_price_inc_vat]) %>
+  </p>
+
+  <p class="form-buttons">
+    <%= button t('update') %> 
+    or <%= link_to t("cancel"), admin_tax_settings_url %>
+  </p>
+<% end -%>

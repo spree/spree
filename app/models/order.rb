@@ -1,6 +1,7 @@
 class Order < ActiveRecord::Base  
 #  before_create :generate_order_number
-  before_save :update_line_items
+  before_save :update_line_items 
+  before_create :generate_token
   
   has_many :line_items, :dependent => :destroy, :attributes => true
   has_many :inventory_units
@@ -29,7 +30,7 @@ class Order < ActiveRecord::Base
   
   
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
-  attr_protected :ship_amount, :tax_amount, :item_total, :total, :user, :number, :ip_address, :checkout_complete, :state
+  attr_protected :ship_amount, :tax_amount, :item_total, :total, :user, :number, :ip_address, :checkout_complete, :state, :token
   
   def to_param  
     self.number if self.number
@@ -145,7 +146,12 @@ class Order < ActiveRecord::Base
   def contains?(variant)
     line_items.select { |line_item| line_item.variant == variant }.first
   end
- 
+
+  def grant_access?(token=nil)
+    return true if token && token == self.token
+    return false unless current_user_session = UserSession.find   
+    return current_user_session.user == self.user
+  end
   def mark_shipped
     inventory_units.each do |inventory_unit|
       inventory_unit.ship!
@@ -171,7 +177,7 @@ class Order < ActiveRecord::Base
       self.ship_amount = 0
     end
     self.tax_amount = calculate_tax
-  end
+  end  
 
   private
   def complete_order
@@ -199,5 +205,9 @@ class Order < ActiveRecord::Base
     self.line_items.each do |line_item|
       LineItem.destroy(line_item.id) if line_item.quantity == 0
     end
+  end
+  
+  def generate_token
+    self.token = Authlogic::Random.friendly_token    
   end      
 end

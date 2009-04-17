@@ -5,10 +5,9 @@ module Spree::Checkout
   def checkout
     build_object 
     load_object 
-    load_data                                             
+    load_data
+    load_checkout_steps                                             
     
-    @checkout_steps = %w{billing shipping shipping_method payment confirmation}
-
     # additional default values needed for checkout
     @order.bill_address ||= params[:order] && params[:order][:bill_address_id] && params[:bill_address] == '1' ? Address.find(params[:order][:bill_address_id]) : Address.new(:country => @default_country)
     @order.ship_address ||= params[:order] && params[:order][:ship_address_id] && params[:ship_address] == '1' ? Address.find(params[:order][:ship_address_id]) : Address.new(:country => @default_country)
@@ -17,9 +16,9 @@ module Spree::Checkout
     end
     @shipping_method = ShippingMethod.find_by_id(params[:method_id]) if params[:method_id]  
     @shipping_method ||= @order.shipping_methods.first    
-    @order.shipments.build(:address => @order.ship_address, :shipping_method => @shipping_method)      
+    @order.shipments.build(:address => @order.ship_address, :shipping_method => @shipping_method) if @order.shipments.empty?    
 
-    if request.put?                           
+    if request.post?                           
       @order.creditcards.clear
       @order.attributes = params[:order]
       @order.creditcards[0].address = @order.bill_address if @order.creditcards.present?
@@ -47,8 +46,14 @@ module Spree::Checkout
         render :action => "new" and return 
       end
       
+
       respond_to do |format|
-        format.html {redirect_to order_url(@order, :checkout_complete => true) }
+        format.html do  
+          flash[:notice] = t('order_processed_successfully')
+          order_params = {:checkout_complete => true}
+          order_params[:order_token] = @order.token unless @order.user
+          redirect_to order_url(@order, order_params)
+        end
         format.js {render :json => { :order => {:order_total => @order.total, 
                                                 :ship_amount => @order.ship_amount, 
                                                 :tax_amount => @order.tax_amount},
@@ -58,5 +63,10 @@ module Spree::Checkout
       
     end
   end
+  
+  def load_checkout_steps
+    @checkout_steps = %w{registration billing shipping shipping_method payment confirmation}
+    @checkout_steps.delete "registration" if current_user
+  end  
   
 end

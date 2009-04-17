@@ -3,7 +3,7 @@
 
 
 fr-FR:
-  switch_language : "Change de langue"
+  switch_language : "Changez de langue"
   this_file_language : "Francais"
   date:
     formats:
@@ -94,7 +94,7 @@ fr-FR:
           other: "Impossible d'enregistrer {{model}}: {{count}} erreurs."
         body: "Veuillez vérifier les champs suivants :"
       messages:
-        inclusion: "n'est pas inclus(e) dans la liste"
+        inclusion: "n'est pas compris(e) dans la liste"
         exclusion: "n'est pas disponible"
         invalid: "n'est pas valide"
         confirmation: "ne concorde pas avec la confirmation"
