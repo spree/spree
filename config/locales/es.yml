@@ -164,6 +164,7 @@ es:
   allow_backorders: "Permitir devoluciones"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir el uso de SSL en los modos de desarrollo y prueba
   allow_ssl_to_be_used_when_in_production_mode: Permitir el uso de SSL en produccion        
+  already_registered: Already Registered?
   amount: Cuantía
   are_you_sure: "¿Está seguro?"
   are_you_sure_category: "¿Está seguro de que quiere eliminar esta categoría?"
@@ -196,6 +197,7 @@ es:
   city: Ciudad
   comp_order: "Pedido completado"
   comp_order_confirmation: "Confirmacion de pedido completado"
+  complete_list: "Complete List"
   configuration: Configuracion
   configuration_options: "Opciones de configuracion"
   configurations: Configuraciones
@@ -208,6 +210,7 @@ es:
   country_based: "Pais base"
   create: Crear
   create_a_new_account: "Crear una nueva cuenta"
+  create_user_account: Create User Account
   created_successfully: "Creado correctamente"
   credit_card: "Tarjeta de credito"
   credit_card_capture_complete: "La tarjeta de credito ha sido registrada"
@@ -263,6 +266,7 @@ es:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "Nueva cuenta de Google Analytics"
   google_analytics_setting_description: "Gestionar Google Analytics ID" 
+  guest_user_account: Checkout as a Guest
   height: Altura
   hello_user: "Hola usuario"
   history: Historia
@@ -294,15 +298,15 @@ es:
   login_failed: "No se ha podido iniciar la sesion, error de autenticacion."      
   login_name: "Nombre de usuario"
   logout: "Cerrar sesión"
-  meta_keywords: "Meta palabras clave"
-  meta_description: "Meta descripcion"
-  metadata: "Metadatos"
   mail_delivery_enabled: "La entrega de correo está habilitada"
   mail_delivery_not_enabled: "La entrega de correo está deshabilitada"
   mail_server_preferences: Preferencias del servidor de correo
   mail_server_settings: "Configuración del servidor de correo"
   mark_shipped: "Marcar como enviado"
   master_price: "Precio principal"
+  meta_description: "Meta descripcion"
+  meta_keywords: "Meta palabras clave"
+  metadata: "Metadatos"
   month: "Mes"
   my_account: "Mi cuenta"
   my_orders: "Mis pedidos"
@@ -375,6 +379,7 @@ es:
   problem_authorizing_card: "Problema autorizando la tarjeta"
   problem_capturing_card: "Problema capturando la tarjeta"
   problems_processing_order: "Hemos tenido problemas al procesar su pedido"
+  proceed_as_guest: "No Thanks, Proceed as Guest"
   process: Procesar
   product: Producto
   product_details: "Detalles del producto"
@@ -386,6 +391,9 @@ es:
   prototypes: "Prototipos"
   qty: Cant.
   rate: proporción
+  register: Register as a New User
+  register_or_guest: Checkout as Guest or Register
+  registration: Registration           
   remember_me: "Recordarme en este equipo"
   remove: "Remover"
   reports: Reportes

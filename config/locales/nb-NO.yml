@@ -164,6 +164,7 @@ nb-NO:
   allow_backorders: "Tillat restordre"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Tillat at SSL brukes i utviklings- og testmodus.
   allow_ssl_to_be_used_when_in_production_mode: Tillat at SSL brukes i produksjonsmodus.
+  already_registered: Already Registered?
   amount: Beløp
   are_you_sure: "Er du sikker"
   are_you_sure_category: "Er du sikker på at du vil slette denne kategorien?"
@@ -196,6 +197,7 @@ nb-NO:
   city: Sted
   comp_order: "Kanseller ordre"
   comp_order_confirmation: "Kunden vil ikke bli belastet. Er du sikker på at du vil kansellere ordren?"
+  complete_list: "Complete List"
   configuration: Konfigurasjon
   configuration_options: "Konfigurasjonsvalg"
   configurations: Konfigurasjoner
@@ -208,6 +210,7 @@ nb-NO:
   country_based: "Land"
   create: Opprett
   create_a_new_account: "Opprett ny konto"
+  create_user_account: Create User Account
   created_successfully: "Vellykket opprettelse"
   credit_card: "Kredittkort"
   credit_card_capture_complete: "Kortopplysninger har blitt lagret"
@@ -263,6 +266,7 @@ nb-NO:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "Ny Google Analytics-konto"
   google_analytics_setting_description: "Manage Google Analytics ID" 
+  guest_user_account: Checkout as a Guest
   height: Høyde
   hello_user: "Hallo, bruker"
   history: History
@@ -300,6 +304,9 @@ nb-NO:
   mail_server_settings: "Innstillinger for epostserver"
   mark_shipped: "Merk som levert"
   master_price: "Ordinær pris"
+  meta_description: "Meta Description"
+  meta_keywords: "Meta Keywords"
+  metadata: "Metadata"
   month: "Month"
   my_account: "Min konto"
   my_orders: "Mine ordrer"    
@@ -372,6 +379,7 @@ nb-NO:
   problem_authorizing_card: "Problem ved autorisering av kort"
   problem_capturing_card: "Problem ved lagring av kortopplysninger"
   problems_processing_order: "Problemer ved prosessering av ordre"
+  proceed_as_guest: "No Thanks, Proceed as Guest"
   process: Prosess
   product: Produkt
   product_details: "Produktdetaljer"
@@ -383,6 +391,9 @@ nb-NO:
   prototypes: Prototyper
   qty: Antall
   rate: "Nivå"
+  register: Register as a New User
+  register_or_guest: Checkout as Guest or Register
+  registration: Registration           
   remember_me: "Husk meg"
   remove: Fjern
   reports: Rapporter

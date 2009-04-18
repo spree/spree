@@ -164,6 +164,7 @@ en-GB:
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
+  already_registered: Already Registered?
   amount: Amount
   are_you_sure: "Are you sure"
   are_you_sure_category: "Are you sure you want to delete this category?"
@@ -196,6 +197,7 @@ en-GB:
   city: Town / City
   comp_order: "Comp Order"
   comp_order_confirmation: "Customer will not be charged.  Are you sure you want to comp this order?"
+  complete_list: "Complete List"
   configuration: Configuration
   configuration_options: "Configuration Options"
   configurations: Configurations
@@ -208,6 +210,7 @@ en-GB:
   country_based: "Country Based"
   create: Create
   create_a_new_account: "Create a new account"
+  create_user_account: Create User Account
   created_successfully:
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
@@ -263,6 +266,7 @@ en-GB:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "New Google Analytics Account"
   google_analytics_setting_description: "Manage Google Analytics ID" 
+  guest_user_account: Checkout as a Guest
   height: Height
   hello_user: "Hello User"
   history: History
@@ -294,15 +298,15 @@ en-GB:
   login_failed: "Login authentication failed."      
   login_name: Login
   logout: Logout
-  meta_keywords: "Meta Keywords"
-  meta_description: "Meta Description"
-  metadata: "Metadata"
   mail_delivery_enabled:
   mail_delivery_not_enabled:
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mail Server Settings"
   mark_shipped: "Mark Shipped"
   master_price: "Master Price"
+  meta_description: "Meta Description"
+  meta_keywords: "Meta Keywords"
+  metadata: "Metadata"
   month: "Month"
   my_account: "My Account"
   my_orders: "My Orders"
@@ -375,6 +379,7 @@ en-GB:
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
   problems_processing_order: "We had problems processing your order"
+  proceed_as_guest: "No Thanks, Proceed as Guest"
   process: Process
   product: Product
   product_details: "Product Details"
@@ -386,6 +391,9 @@ en-GB:
   prototypes: Prototypes
   qty: Qty
   rate: Rate
+  register: Register as a New User
+  register_or_guest: Checkout as Guest or Register
+  registration: Registration           
   remember_me: "Remember me"
   remove: Remove
   reports: Reports
