@@ -116,7 +116,7 @@ module Admin::BaseHelper
   end
 
   def get_additional_field_value(controller, field)  
-    attribute = field[:name].gsub(" ", "_").downcase
+    attribute = attribute_name_for(field[:name])
 
     value = eval("@" + controller.controller_name.singularize + "." + attribute)  
     
@@ -214,5 +214,34 @@ module Admin::BaseHelper
         preference_field(form, "preferred_#{key}", :type => type)
     }.join("<br />")
   end
+  
+  def additional_field_for(controller, field)
+     field[:use] ||= 'text_field'
+     options = field[:options] || {}
 
+     object_name, method = controller.controller_name.singularize, attribute_name_for(field[:name])
+
+     case field[:use]    
+     when 'check_box'
+       check_box(object_name, method, options, field[:checked_value] || 1, field[:unchecked_value] || 0)
+     when 'radio_button'
+       html = ''
+       field[:value].call(controller, field).each do |value| 
+         html << radio_button(object_name, method, value, options)
+         html << " #{value.to_s} "
+       end
+       html
+     when 'select'
+       select(object_name, method, field[:value].call(controller, field), options, field[:html_options] || {})
+     else
+       value = field[:value] ? field[:value].call(controller, field) : get_additional_field_value(controller, field)
+       __send__(field[:use], object_name, method, options.merge(:value => value))
+     end # case
+   end
+   
+  private
+  def attribute_name_for(field_name)
+    field_name.gsub(' ', '_').downcase
+  end
+  
 end
