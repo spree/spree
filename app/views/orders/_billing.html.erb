@@ -1,6 +1,6 @@
 <% order_form.fields_for :bill_address do |bill_form| %>
   <h2><%= t("billing_address")%></h2>
-  <% if !current_user.addresses.empty? -%>
+  <% if current_user -%>
   <div class="saved_address inner">
     <input type="radio" name="bill_address" class="saved_radio" value="1" />
     <label for="<%= t('saved_address') %>"><%= t('saved_address') %></label>
