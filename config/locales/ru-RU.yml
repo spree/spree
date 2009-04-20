@@ -164,6 +164,7 @@ ru-RU:
   allow_backorders: "Allow Backorders ??"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Использовать SSL в development и test режимах
   allow_ssl_to_be_used_when_in_production_mode: Использовать SSL в production
+  already_registered: Already Registered?
   amount: Сумма
   are_you_sure: "Вы уверены"
   are_you_sure_category: "Вы уверены, что хотите удалить эту категорию?"
@@ -196,6 +197,7 @@ ru-RU:
   city: Город
   comp_order: "Comp Order ??"
   comp_order_confirmation: "Customer will not be charged.  Are you sure you want to comp this order? ??"
+  complete_list: "Complete List"
   configuration: Конфигурация
   configuration_options: "Опции конфигурации"
   configurations: Конфигурации
@@ -208,6 +210,7 @@ ru-RU:
   country_based: "Страна"
   create: Создать
   create_a_new_account: "Создать новую учетную запись"
+  create_user_account: Create User Account
   created_successfully: "Успешно создана"
   credit_card: "Кредитная карта"
   credit_card_capture_complete: "Credit Card Was Captured ??"
@@ -264,6 +267,7 @@ ru-RU:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "Новая учетная запись Google Analytics"
   google_analytics_setting_description: "Управление Google Analytics ID"
+  guest_user_account: Checkout as a Guest
   height: Высота
   hello_user: "Добро пожаловать"
   history: History
@@ -301,6 +305,9 @@ ru-RU:
   mail_server_settings: "Установки почтового сервера"
   mark_shipped: "Отметить как доставленный"
   master_price: "Master Price"
+  meta_description: "Meta Description"
+  meta_keywords: "Meta Keywords"
+  metadata: "Metadata"
   month: "Month"
   my_account: "Моя учетная запись"
   my_orders: "Мои заказы"
@@ -375,6 +382,7 @@ ru-RU:
   problem_authorizing_card: "Проблема при авторизации Вашей кредитной карты"
   problem_capturing_card: "Проблема при capture Вашей кредитной карты"
   problems_processing_order: "При обработке Вашего заказа возникли проблемы"
+  proceed_as_guest: "No Thanks, Proceed as Guest"
   process: Обработать
   product: Продукт
   product_details: "Описание продукта"
@@ -386,6 +394,9 @@ ru-RU:
   prototypes: Прототипы
   qty: Кол-во
   rate: rate ??
+  register: Register as a New User
+  register_or_guest: Checkout as Guest or Register
+  registration: Registration           
   remember_me: "Запомнить меня"
   remove: Убрать
   reports: отчеты
@@ -428,6 +439,7 @@ ru-RU:
   shipping_methods: "Способы доставки"
   shipping_methods_description: "Управление методами доставки"
   shipping_total: "Итого за доставку"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Корзина"
   show_deleted: "Показать удаленные"
   show_incomplete_orders: "Показать необработанные заказы"

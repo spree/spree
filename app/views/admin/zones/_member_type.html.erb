@@ -1,0 +1,15 @@
+<%= javascript_tag "var #{type}_member='#{generate_template(zone_form, :zone_members, {:partial => type + "_member"})}'" %>
+
+<div id="<%= type %>_members">
+  <fieldset id="">
+    <legend><%= t(type) %></legend>
+    <ul id="ul-nested-<%= type %>" class="member-list">
+      <% zone_form.fields_for :zone_members do |member_form| %>
+        <%= render "#{type}_member", :f => member_form %>
+      <% end %>
+    </ul>
+  </fieldset>  
+  <p>
+    <%= button_link_to t("add_#{type}"), "##{type}_member", :icon => 'add', :id => "nested-#{type}", :class => "button" %>
+  </p>      
+</div>

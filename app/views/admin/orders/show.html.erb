@@ -9,13 +9,13 @@
 
 <% if @order.bill_address %>
   <div class='adr'>
-    <h4><%= link_to "Bill Address", edit_admin_order_creditcard_payment_url(@order, @order.creditcard_payments.last) %></h4>
+    <h4><%= link_to t("bill_address"), edit_admin_order_creditcard_payment_url(@order, @order.creditcard_payments.last) %></h4>
     <%= render :partial => 'admin/shared/address', :locals => {:address => @order.bill_address} %>      
   </div>
 <% end %>                   
 <% if @order.ship_address %>
   <div class='adr'>
-    <h4><%= link_to "Ship Address", edit_admin_order_shipment_url(@order, @order.shipments.last) %></h4>
+    <h4><%= link_to t("ship_address"), edit_admin_order_shipment_url(@order, @order.shipments.last) %></h4>
     <%= render :partial => 'admin/shared/address', :locals => {:address => @order.ship_address} %>      
   </div>
   <% end %>
