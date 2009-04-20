@@ -1,53 +1,29 @@
-<script type='text/javascript'>
-  <%= render :partial => 'function' %>
-</script>
-
-<% f.field_container :name do %>
-  <%= f.label :name, t("name") %><br />
-  <%=f.text_field :name %></td>
+<% zone_form.field_container :name do %>
+  <%= zone_form.label :name, t("name") %><br />
+  <%=zone_form.text_field :name %></td>
 <% end %>
 
-<% f.field_container :description do %>
-  <%= f.label :description, t("description") %><br />
-  <%=f.text_field :description %>
+<% zone_form.field_container :description do %>
+  <%= zone_form.label :description, t("description") %><br />
+  <%=zone_form.text_field :description %>
 <% end %>
 
 <p>
-  <label><%= t("type") %></label><br />
-  <label class="sub"><input type="radio" 
-         name="type" <%=country_checked %> 
-         onclick="Element.show('country-based'); Element.hide('state-based'); Element.hide('zone-based');"
-         value="country" />
-       <%= t("country_based") %>
+  <label><%= t("type") %></label><br />  
+  <label class="sub">
+    <%= zone_form.radio_button("kind", "country", {:id => "country_based"}) %>
+    <%= t("country_based") %>
   </label> &nbsp; 
-  <label class="sub"><input type="radio" 
-         name="type" <%=state_checked %> 
-         onclick="Element.show('state-based'); Element.hide('country-based'); Element.hide('zone-based');"
-         value="state" />
-       <%= t("state_based") %>
+  <label class="sub">
+    <%= zone_form.radio_button("kind", "state", {:id => "state_based"}) %>
+    <%= t("state_based") %>
   </label> &nbsp; 
-  <label class="sub"><input type="radio" 
-        name="type" <%=zone_checked %> 
-        onclick="Element.show('zone-based'); Element.hide('country-based'); Element.hide('state-based');"
-        value="zone" />
-      <%= t("zone_based") %>
+  <label class="sub">                                         
+    <%= zone_form.radio_button("kind", "zone", {:id => "zone_based"}) %>
+    <%= t("zone_based") %>
   </label>
 </p>
 
-
-<% for name in %w(country state zone) %>
-<fieldset id="<%= name %>-based" <%= "style='display:none'" if send("#{name}_checked").blank? %> >
-  <legend><%= t(name) %></legend>
-  <ul id="<%= name %>-list" class="member-list">
-    <% @zone.members.each do |member| %>
-      <%= render :partial => name, :locals => {:value => member} %>
-    <% end %>
-    <%= render :partial => name if @zone.members.empty?%>
-  </ul>
-  <br/>
-  <%= button_link_to_function(t("add_#{name}"), "add_#{name}()", :icon => 'add' ) %> 
-</fieldset>
-<% end %>
-
-
-
+<%= render "member_type", :type => "country", :zone_form => zone_form %> 
+<%= render "member_type", :type => "state", :zone_form => zone_form %>        
+<%= render "member_type", :type => "zone", :zone_form => zone_form %>
