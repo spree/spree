@@ -6,6 +6,11 @@
 .dotest
 .loadpath
 .project
+public/dispatch.cgi
+public/dispatch.fcgi
+public/dispatch.rb
+httpd
+pgsql
 config/*-public.asc
 config/database.yml
 config/mongrel_cluster.yml
