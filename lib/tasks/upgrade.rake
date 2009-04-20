@@ -7,7 +7,8 @@ namespace :spree do
     Spree::FileUtilz.mirror_files "#{SPREE_ROOT}/public/images", "#{RAILS_ROOT}/public/images"
     Spree::FileUtilz.mirror_files "#{SPREE_ROOT}/config/initializers", "#{RAILS_ROOT}/config/initializers"
     FileUtils.cp("#{SPREE_ROOT}/config/spree_permissions.yml", "#{RAILS_ROOT}/config")
-    FileUtils.cp("#{SPREE_ROOT}/config/routes.rb", "#{RAILS_ROOT}/config")    
+    FileUtils.cp("#{SPREE_ROOT}/config/routes.rb", "#{RAILS_ROOT}/config")
+    FileUtils.cp("#{SPREE_ROOT}/config/boot.rb", "#{RAILS_ROOT}/config")    
   end
 end  
 
