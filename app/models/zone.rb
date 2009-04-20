@@ -1,9 +1,11 @@
 class Zone < ActiveRecord::Base
-  has_many :zone_members#, :as => :zoneable #, :from => [:states, :countries, :zones], :through => :zone_members, :as => :parent
+  has_many :zone_members
   validates_presence_of :name
   validates_uniqueness_of :name
+  after_save :remove_defunct_members
   
   alias :members :zone_members
+  accepts_nested_attributes_for :zone_members, :allow_destroy => true, :reject_if => proc { |a| a['zoneable_id'].blank? }
   
   #attr_accessor :type
   def kind
@@ -11,11 +13,10 @@ class Zone < ActiveRecord::Base
     return "state" if member.zoneable_type == "State"
     return "zone" if member.zoneable_type == "Zone"
     "country"
-  end
+  end   
   
-  # virtual attributes for use with AJAX completion stuff
-  def member_name
-    # does nothing - just here to satisfy text_field_with_auto_complete (which requires a model property)
+  def kind=(value)
+    # do nothing - just here to satisfy the form
   end
   
   # alias to the new include? method 
@@ -51,5 +52,16 @@ class Zone < ActiveRecord::Base
     return [] if kind == "state"
     return members.collect { |zone_member| zone_member.zoneable } if kind == "country"
     members.collect { |zone_member| zone_member.zoneable.country_list }.flatten
+  end
+  
+  def <=>(other)
+    name <=> other.name
+  end  
+  
+  private
+  def remove_defunct_members
+    zone_members.each do |zone_member|
+      zone_member.destroy if zone_member.zoneable_id.nil?
+    end
   end
 end
