@@ -30,7 +30,6 @@ Spree::Initializer.run do |config|
   config.gem 'authlogic', :version => '2.0.5'
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.1'
   config.gem "tlsmail", :version => '0.0.1'
-  config.gem 'active_presenter', :version => '0.0.6'
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
   config.gem 'haml', :version => '2.1.0'
   config.gem 'chriseppstein-compass', :lib => 'compass', :version => '0.5.4'

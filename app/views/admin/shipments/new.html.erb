@@ -1,12 +1,14 @@
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
+<%= error_messages_for :shipment %>
+
 <div id="shipment">
-  <%=error_messages_for :shipment_presenter%>
-  <h1><%= t('new_shipment')%></h1>
+  <h3><%= t('new_shipment')%></h3>
   <br/>
-  <% form_for(:shipment_presenter, :url => object_url) do |f| %>
-    <h4><%= t('shipping_address')%></h4>
-  	<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "shipment"} %>
-    <div align="right">
-      <%= submit_tag t('create') %>
-    </div>
+  <%=error_messages_for :shipment %>
+  <% form_for(@shipment, :url => collection_url) do |shipment_form| %>
+    <%= render :partial => "form", :locals => { :shipment_form => shipment_form } %>
+    <p class="form-buttons">
+      <%= button t('create') %>
+    </p>
   <% end %>
 </div>
