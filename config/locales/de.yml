@@ -164,6 +164,7 @@ de:
   allow_backorders: "Lieferrückstand erlauben"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
+  already_registered: Already Registered?
   amount: Summe
   are_you_sure: "Sind sie sicher"
   are_you_sure_category: "Sind sie sicher dass sie diese Kategorie löschen möchten?"
@@ -196,6 +197,7 @@ de:
   city: Stadt
   comp_order: "Bestellung abbrechen"
   comp_order_confirmation: ""
+  complete_list: "Complete List"
   configuration: Konfiguration
   configuration_options: "Konfigurations-Optionen"
   configurations: Konfigurationen
@@ -208,6 +210,7 @@ de:
   country_based: "Country Based"
   create: Erstellen
   create_a_new_account: "Neues Konto erstellen"
+  create_user_account: Create User Account
   created_successfully: "Erfolgreich erstellt"
   credit_card: Kreditkarte
   credit_card_capture_complete: "Credit Card Was Captured"
@@ -263,6 +266,7 @@ de:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "New Google Analytics Account"
   google_analytics_setting_description: "Manage Google Analytics ID" 
+  guest_user_account: Checkout as a Guest
   height: Höhe
   hello_user: "Hallo Benutzer"
   history: History
@@ -300,6 +304,9 @@ de:
   mail_server_settings: "Mailserver-Einstellungen"
   mark_shipped: "Mark Shipped"
   master_price: Grundpreis
+  meta_description: "Meta Description"
+  meta_keywords: "Meta Keywords"
+  metadata: "Metadata"
   month: "Month"
   my_account: "Mein Konto"
   my_orders: "Meine Bestellungen"
@@ -372,6 +379,7 @@ de:
   problem_authorizing_card: "Es gab ein Problem ihre Kreditkarte zu identifizieren"
   problem_capturing_card: "Es gab ein Problem beim belasten ihrer Kreditkarte"
   problems_processing_order: "Ihre Bestellung konnte nicht bearbetet werden"
+  proceed_as_guest: "No Thanks, Proceed as Guest"
   process: Abschicken
   product: Produkt
   product_details: "Produkt Details"
@@ -383,6 +391,9 @@ de:
   prototypes: "Prototyp"
   qty: Anz
   rate: Rate
+  register: Register as a New User
+  register_or_guest: Checkout as Guest or Register
+  registration: Registration           
   remember_me: "Details auf diesem Computer speichern"
   remove: Entfernen
   reports: Berichte
@@ -424,6 +435,7 @@ de:
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
   shipping_total: "Lieferkosten Gesamt"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: Warenkorb
   show_deleted: "Zeige gelöschte"
   show_incomplete_orders: "Zeige unvollständige Bestellungen"

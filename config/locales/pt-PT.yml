@@ -164,6 +164,7 @@ pt-PT:
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
+  already_registered: Already Registered?
   amount: Valor
   are_you_sure: "Tem a certeza"
   are_you_sure_category: "Tem certeza que quer apagar esta categoria?"
@@ -196,6 +197,7 @@ pt-PT:
   city: Cidade
   comp_order: "Calcular Encomenda"
   comp_order_confirmation: "O cliente não será cobrado. Tem certeza que quer calcular esta encomenda?"
+  complete_list: "Complete List"
   configuration: Configuração
   configuration_options: "Opções de Configuração"
   configurations: Configurações
@@ -208,6 +210,7 @@ pt-PT:
   country_based: "Baseado em País"
   create: Criar
   create_a_new_account: "Crie uma nova conta"
+  create_user_account: Create User Account
   created_successfully: "Criado com sucesso"
   credit_card: "Cartão de Crédito"
   credit_card_capture_complete: "Credit Card Was Captured"
@@ -263,6 +266,7 @@ pt-PT:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "New Google Analytics Account"
   google_analytics_setting_description: "Manage Google Analytics ID" 
+  guest_user_account: Checkout as a Guest
   height: Altura
   hello_user: "Olá Utilizador"
   history: History
@@ -300,6 +304,9 @@ pt-PT:
   mail_server_settings: "Configuração do Servidor de E-mail"
   mark_shipped: "Mark Shipped"
   master_price: "Preço Principal"
+  meta_description: "Meta Description"
+  meta_keywords: "Meta Keywords"
+  metadata: "Metadata"
   month: "Month"
   my_account: "Minha Conta"
   my_orders: "As Minhas Encomendas"
@@ -372,6 +379,7 @@ pt-PT:
   problem_authorizing_card: "Problema na autorização do cartão"
   problem_capturing_card: "Problema capturando cartão de crédito"
   problems_processing_order: "Tivemos problemas processando esta encomenda"
+  proceed_as_guest: "No Thanks, Proceed as Guest"
   process: Processar
   product: Produto
   product_details: "Detalhes do Produto"
@@ -383,6 +391,9 @@ pt-PT:
   prototypes: Protótipos
   qty: Qt.
   rate: Rate
+  register: Register as a New User
+  register_or_guest: Checkout as Guest or Register
+  registration: Registration           
   remember_me: "Lembre-se de mim"
   remove: Remover
   reports: Relatórios
@@ -424,6 +435,7 @@ pt-PT:
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
   shipping_total: "Total de Entrega"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Carro de Compra"
   show_deleted: "Mortra Eliminados"
   show_incomplete_orders: "Mostra Encomendas Incompletas"

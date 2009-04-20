@@ -164,6 +164,7 @@ en-US:
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
+  already_registered: Already Registered?
   amount: Amount
   are_you_sure: "Are you sure"
   are_you_sure_category: "Are you sure you want to delete this category?"
@@ -209,6 +210,7 @@ en-US:
   country_based: "Country Based"
   create: Create
   create_a_new_account: "Create a new account"
+  create_user_account: Create User Account
   created_successfully: "Created Successfully"
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
@@ -264,6 +266,7 @@ en-US:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "New Google Analytics Account"
   google_analytics_setting_description: "Manage Google Analytics ID" 
+  guest_user_account: Checkout as a Guest
   height: Height
   hello_user: "Hello User"
   history: History
@@ -295,15 +298,15 @@ en-US:
   login_failed: "Login authentication failed."      
   login_name: Login
   logout: Logout  
-  meta_keywords: "Meta Keywords"
-  meta_description: "Meta Description"
-  metadata: "Metadata"
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mail Server Settings"
   mark_shipped: "Mark Shipped"
   master_price: "Master Price"
+  meta_description: "Meta Description"
+  meta_keywords: "Meta Keywords"
+  metadata: "Metadata"
   month: "Month"
   my_account: "My Account"
   my_orders: "My Orders"    
@@ -376,6 +379,7 @@ en-US:
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
   problems_processing_order: "We had problems processing your order"
+  proceed_as_guest: "No Thanks, Proceed as Guest"
   process: Process
   product: Product
   product_details: "Product Details"
@@ -387,6 +391,9 @@ en-US:
   prototypes: Prototypes
   qty: Qty
   rate: Rate
+  register: Register as a New User
+  register_or_guest: Checkout as Guest or Register
+  registration: Registration           
   remember_me: "Remember me"
   remove: Remove
   reports: Reports
@@ -428,6 +435,7 @@ en-US:
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
   shipping_total: "Shipping Total"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Shopping Cart"
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
@@ -510,10 +518,3 @@ en-US:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones              
-  registration: Registration           
-  already_registered: Already Registered?
-  register_or_guest: Checkout as Guest or Register
-  proceed_as_guest: "No Thanks, Proceed as Guest"
-  register: Register as a New User
-  create_user_account: Create User Account
-  guest_user_account: Checkout as a Guest

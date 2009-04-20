@@ -4,9 +4,9 @@
 
 <%= error_messages_for :zone %>
 
-<% form_for(:zone, :url => object_url, :html => { :method => :put }) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
+<% form_for(@zone, :url => object_url, :html => { :method => :put }) do |zone_form| %>
+  <%= render :partial => "form", :locals => { :zone_form => zone_form } %>
   <p class="form-buttons">
-    <%= button t("update") %>
+    <span id="update-zone"><%= button t("update") %></span>
   </p>
 <% end %>

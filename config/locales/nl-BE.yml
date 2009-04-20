@@ -164,6 +164,7 @@ nl-BE:
   allow_backorders: "Nabestellingen toelaten"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "SSL gebruik toestaan in ontwikkel- en testomgevingen"
   allow_ssl_to_be_used_when_in_production_mode: "SSL gebruik toestaan in productie-omgeving"         
+  already_registered: Already Registered?
   amount: Bedrag
   are_you_sure: "Ben je zeker"
   are_you_sure_category: "Wil je zeker deze categorie verwijderen?"
@@ -196,6 +197,7 @@ nl-BE:
   city: Stad
   comp_order: "Afgebroken order"
   comp_order_confirmation: "De klant wordt niets aangerekend. Ben je zeker dat je het order wil onderbreken?"
+  complete_list: "Complete List"
   configuration: Configuratie
   configuration_options: "Configuratie Opties"
   configurations: Configuraties
@@ -208,6 +210,7 @@ nl-BE:
   country_based: "Gebaseerd op land"
   create: Aanmaken
   create_a_new_account: "Maak een nieuwe account aan"
+  create_user_account: Create User Account
   created_successfully: "Succesvol aangemaakt"
   credit_card: "Kredietkaart"
   credit_card_capture_complete: "Aanrekening via kredietkaart voltooid"
@@ -263,6 +266,7 @@ nl-BE:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "Nieuwe Google Analytics Account"
   google_analytics_setting_description: "Instellen Google Analytics ID" 
+  guest_user_account: Checkout as a Guest
   height: Hoogte
   hello_user: "Hallo Gebruiker"
   history: History
@@ -300,6 +304,9 @@ nl-BE:
   mail_server_settings: "Mail server Instellingen"
   mark_shipped: "Mark Shipped"
   master_price: "Prijs"
+  meta_description: "Meta Description"
+  meta_keywords: "Meta Keywords"
+  metadata: "Metadata"
   month: "Month"
   my_account: "Mijn Profiel"
   my_orders: "Mijn Bestellingen"    
@@ -372,6 +379,7 @@ nl-BE:
   problem_authorizing_card: "Fout bij autorisatie betaling"
   problem_capturing_card: "Fout bij aanrekenen betaling"
   problems_processing_order: "Fout vastgesteld bij het verwerken van de bestelling"
+  proceed_as_guest: "No Thanks, Proceed as Guest"
   process: Verwerking
   product: Product
   product_details: "Product Details"
@@ -383,6 +391,9 @@ nl-BE:
   prototypes: Prototypes
   qty: Aantal
   rate: Tarief
+  register: Register as a New User
+  register_or_guest: Checkout as Guest or Register
+  registration: Registration           
   remember_me: "Onthouden"
   remove: Verwijderen
   reports: Rapporten
@@ -424,6 +435,7 @@ nl-BE:
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
   shipping_total: "Verzending"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Winkelmandje"
   show_deleted: "Toon verwijderde bestellingen"
   show_incomplete_orders: "Toon niet afgewerkte bestellingen"
