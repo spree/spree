@@ -1,6 +1,6 @@
 <div id="taxonomies" class="sidebar-item">
 <% @taxonomies.each do |taxonomy| %>
-	<h3>Shop by <%= taxonomy.name.singularize %></h3>
+	<h3><%= t("shop_by_taxonomy", :taxonomy => taxonomy.name.singularize) %></h3>
 	<ul class="navigation-list">
 	<% taxonomy.root.children.each do |taxon| %>
 	  

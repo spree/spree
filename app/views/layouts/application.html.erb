@@ -4,15 +4,15 @@
 <head>
   <title>Spree</title>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-
+ 
   <%= stylesheet_link_tag 'compiled/screen' %>
-
+ 
   <%= javascript_include_tag 'jquery-1.3.2.min', 'jquery.validate.pack.js', :cache => 'jquery-and-plugins' %>
-
+  <%= meta_data_tags %> 
   <%= yield :head %>
-
+ 
 </head>
-<% 
+<%
 if @body_class.nil?
   if @content_for_sidebar
     @body_class = 'two-col'
@@ -22,12 +22,12 @@ if @body_class.nil?
 end
  %>
 <body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
-	<div class="container"> 
-	  
-	  <div id="header">
-      <%= link_to image_tag('spree.jpg'), root_path %>                                                                  
-  	  <%= render :partial => 'shared/language_bar' if Spree::Config[:allow_locale_switching] %>
-
+  <div class="container">
+  
+   <div id="header">
+      <%= link_to image_tag('spree.jpg'), root_path %>
+     <%= render :partial => 'shared/language_bar' if Spree::Config[:allow_locale_switching] %>
+ 
       <ul id="login-nav">
         <% if current_user -%>
           <li><%= link_to t('my_account'), user_path(current_user) %></li>
@@ -36,16 +36,16 @@ end
           <li><%= link_to t('log_in'), login_path %></li>
         <% end -%>
       </ul>
-
+ 
       <% if store_menu? %>
         <%= render :partial => 'shared/store_menu' %>
       <% end %>
-
-	  </div>
-
-		<hr/>
-
-
+ 
+   </div>
+ 
+    <hr/>
+ 
+ 
     <% if @content_for_sidebar %>
     <div id="sidebar">
       <%= yield :sidebar %>
@@ -58,18 +58,19 @@ end
       
       <% if flash[:notice] %>
         <div class="flash notice"><%= flash[:notice] %></div>
-    	<% end %>
-    	<% if flash[:error] %>
-  	    <div class="flash errors"><%= flash[:error] %></div>
-    	<% end %>
+      <% end %>
+      <% if flash[:error] %>
+     <div class="flash errors"><%= flash[:error] %></div>
+      <% end %>
       <%= yield %>
       <hr class="space" />
-
+ 
     </div>
     <hr/>
     
-    <%= render :partial => 'shared/footer'%>    		
-
+    <%= render :partial => 'shared/footer'%>     
+ 
   </div>
 </body>
 </html>
+
