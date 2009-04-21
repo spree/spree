@@ -1,0 +1,50 @@
+<% f.fields_for :address do |address_form| %>
+  <div class="yui-g">
+    <label>Name</label>
+    <div class="yui-u sub-field first">
+      <%= address_form.text_field :firstname, :class => 'fullwidth' %>
+      <br/>
+      <label for="<%= t("first_name") %>"><%= t("first_name") %></label>
+    </div>
+    <div class="yui-u sub-field">
+      <%= address_form.text_field :lastname, :class => 'fullwidth' %>
+      <br/>
+      <label for="<%= t("last_name") %>"><%= t("last_name") %></label>
+    </div>
+  </div>
+  <p>
+    <label><%= t("address") %></label>
+    <div class="sub-field">
+      <%= address_form.label :address1, t("street_address") %><br />
+      <%= address_form.text_field :address1, :class => 'fullwidth' %>
+    </div>
+    <div class="sub-field">
+      <%= address_form.label :address2, t("street_address") %><br />
+      <%= address_form.text_field :address2, :class => 'fullwidth' %>
+    </div>
+  </p>
+  <div class="left sub-field">
+    <%= address_form.label :city, t("city") %><br />
+    <%= address_form.text_field :city, :size => 20 %>
+  </div>
+  <div class="right sub-field">
+    <%= address_form.label :zipcode, t("zip") %><br />
+    <%= address_form.text_field :zipcode, :size => 10 %>
+  </div>
+  <div class="left sub-field">
+    <%= address_form.label :state, t("state") %><br />
+  	<% if @states.length == 0 %>
+  		<%= address_form.text_field :state_name, :autocomplete => 'off' %>
+  	<% else %>
+  	  <%= address_form.collection_select :state_id, @states, :id, :name %>
+  	<% end %>    
+  </div>
+  <div class="right sub-field">
+    <%= address_form.label :country_id, t("country") %><br />
+  	<%= address_form.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %>
+  </div>
+  <p>
+    <%= address_form.label :phone, t("phone") %><br />
+    <%= address_form.text_field :phone %>
+  </p>
+<% end %>

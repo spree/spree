@@ -6,9 +6,16 @@ class Shipment < ActiveRecord::Base
   before_create :generate_shipment_number
   after_save :recalculate_tax
   after_save :transition_order
-    
+
+  accepts_nested_attributes_for :address 
+     
   def shipped?
     self.shipped_at
+  end
+  
+  def shipped=(value)
+    return unless value == "1" && shipped_at.nil?
+    self.shipped_at = Time.now
   end
 
   private  
@@ -22,12 +29,15 @@ class Shipment < ActiveRecord::Base
   end
   
   def transition_order
+    # transition order to shipped if all shipments have been shipped
     return unless shipped_at_changed?
     order.shipments.each do |shipment|
       return unless shipment.shipped?
     end
-    # transition order to shipped if all shipments have been shipped
-    order.ship!
+    current_user_session = UserSession.find   
+    current_user = current_user_session.user if current_user_session    
+    order.ship!                                        
+    order.state_events.create(:name => I18n.t('ship'), :user => current_user, :previous_state => order.state_was)
   end
   
   def recalculate_tax

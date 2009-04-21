@@ -1,25 +1,10 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
-
 <%= render :partial => "details" %>
 
-<%= error_messages_for :shipment_presenter %>
-<% form_for(:shipment_presenter, :url => object_url, :html => { :method => :put }) do |f| %>
+<%= error_messages_for :shipment %>
+<% form_for(@shipment, :url => object_url, :html => { :method => :put }) do |shipment_form| %>
 
-  <div class="yui-g">
-    <div class="yui-u first">
-      <fieldset>
-        <legend><%= t("shipping_address")%></legend>
-    	<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "shipment"} %>
-    	</fieldset>
-    </div>
-    <div class="yui-u">
-      <fieldset>
-        <legend>&nbsp;</legend>
-        <%= render :partial => "form", :locals => { :f => f } %>
-      </fieldset>
-    </div>
-  </div>
-
+  <%= render :partial => "form", :locals => { :shipment_form => shipment_form } %>
   <p class="form-buttons">
     <%= button t('update') %>
   </p>
