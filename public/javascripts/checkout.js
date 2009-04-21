@@ -361,20 +361,21 @@ var submit_registration = function() {
   
   $('div#registration_error').removeClass('error').html("");    
 
-	if (register_method == "login") {
-		ajax_login();
-		return ($('div#registration_error:hidden').size() == 1);
-	}
+  if (register_method == "existing") {
+	ajax_login();
+	return ($('div#registration_error:hidden').size() == 1);
+  }
 
-	if (register_method == "register") {
-		ajax_register();
-		return ($('div#registration_error:hidden').size() == 1);
-	}
+  if (register_method == "register") {
+	ajax_register();
+	return ($('div#registration_error:hidden').size() == 1);
+  }
 		
   return ($('div#registration_error:hidden').size() == 1);  
 };
 
 var ajax_login = function() {
+  alert('attempting login');
   $.ajax({
 	async: false,
     type: "POST",
@@ -388,6 +389,7 @@ var ajax_login = function() {
       if (result) {
 	    $('div#already_logged_in').show();
 		$('div#register_or_guest').hide();
+        alert('login success');
         // todo update login partial
       } else {
         registration_error("Invalid username or password.");
