@@ -4,7 +4,6 @@ class Admin::ShipmentsController < Admin::BaseController
   resource_controller
   belongs_to :order
   
-  # override r_c default with special presenter logic
   create do
     wants.html { redirect_to edit_object_url }
     failure.wants.html { redirect_to new_object_url }
@@ -15,9 +14,6 @@ class Admin::ShipmentsController < Admin::BaseController
   end 
   
 #  def country_changed
-#    @selected_country_id = params[:shipment_presenter][:address_country_id].to_i if params.has_key?('shipment_presenter')
-#    @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
-#    render :partial => "shared/states", :locals => {:presenter_type => "shipment"}
 #  end
   
   private

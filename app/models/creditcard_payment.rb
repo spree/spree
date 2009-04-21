@@ -1,6 +1,7 @@
 class CreditcardPayment < Payment
   has_many :creditcard_txns
   belongs_to :creditcard
+  accepts_nested_attributes_for :creditcard
   
   alias :txns :creditcard_txns
   
