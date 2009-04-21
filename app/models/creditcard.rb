@@ -4,7 +4,9 @@ class Creditcard < ActiveRecord::Base
   belongs_to :address
   has_many :creditcard_payments
   before_validation :prepare
-    
+
+  accepts_nested_attributes_for :address
+      
   include ActiveMerchant::Billing::CreditCardMethods
 
   class ExpiryDate #:nodoc:

@@ -4,10 +4,13 @@
 <br/>
 <b><%= t("credit_card")%>: </b> &nbsp; #<%= @creditcard_payment.creditcard.display_number %><br/>
 <b><%= t("type")%> : </b> &nbsp; <%= @creditcard_payment.creditcard.cc_type.titleize %><br/>
-<br/>
-<% form_for(:payment_presenter, :url => object_url, :html => { :method => :put}) do |f| %>
+<br/>         
+<%=error_messages_for :creditcard_payment %>
+<% form_for(@creditcard_payment, :url => object_url, :html => { :method => :put}) do |payment_form| %>
 	<h4><%= t("billing_address")%></h4>
-	<%= render :partial => 'shared/form_address', :locals => {:f => f, :presenter_type => "payment"} %>
+	<% payment_form.fields_for :creditcard do |creditcard_form| %>
+	  <%= render :partial => 'admin/shared/form_address', :locals => {:f => creditcard_form} %>
+	<% end %>
 	<br/>
 	<table class="index">
 	  <tr>

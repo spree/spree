@@ -1,8 +1,0 @@
-#!/usr/bin/env ruby
-# The compass command line utility
-
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'compass'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'compass', 'exec'))
-
-command = Compass::Exec::Compass.new(ARGV)
-exit command.run!
