@@ -1,4 +1,0 @@
-= To Do
-
-1. Perform "more efficient" checks: year_of_created_at = 2008 and month_of_created_at = 8. Should result in a "BETWEEN" statement utilizing the column indexes. Thanks Georg for letting me know about this.
-2. Solve conflicts between scope joins and joins in the search (for old versions of AR). Also solve conflicts between joins and includes.
