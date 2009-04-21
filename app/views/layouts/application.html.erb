@@ -22,12 +22,7 @@ if @body_class.nil?
 end
  %>
 <body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
-  <div class="container">
-  
-   <div id="header">
-      <%= link_to image_tag('spree.jpg'), root_path %>
-     <%= render :partial => 'shared/language_bar' if Spree::Config[:allow_locale_switching] %>
- 
+  <div id="header" class="container">                                                           
       <ul id="login-nav">
         <% if current_user -%>
           <li><%= link_to t('my_account'), user_path(current_user) %></li>
@@ -40,10 +35,10 @@ end
       <% if store_menu? %>
         <%= render :partial => 'shared/store_menu' %>
       <% end %>
- 
+    <%= link_to image_tag('/images/admin/bg/spree_50.png'), root_path %> 
    </div>
  
-    <hr/>
+   <div id="wrapper" class="container"> 
  
  
     <% if @content_for_sidebar %>
@@ -63,10 +58,8 @@ end
      <div class="flash errors"><%= flash[:error] %></div>
       <% end %>
       <%= yield %>
-      <hr class="space" />
  
     </div>
-    <hr/>
     
     <%= render :partial => 'shared/footer'%>     
  

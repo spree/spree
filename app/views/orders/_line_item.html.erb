@@ -1,11 +1,11 @@
 <% variant = line_item.variant -%>
-<tr>
+<tr class="<%= cycle('', 'alt') %>">
   <td>
     <%= small_image(line_item.variant.product) %>
   </td>
   <td>              
-    <%= link_to variant.product.name,  product_path(variant.product) %>
-    <%= variant_options variant %><br/>
+    <h4><%= link_to variant.product.name,  product_path(variant.product) %></h4>
+    <%= variant_options variant %>
     <%= truncate(variant.product.description, :length => 100, :omission => "...") %>
 
   </td>
