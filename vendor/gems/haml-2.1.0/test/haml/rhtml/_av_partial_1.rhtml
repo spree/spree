@@ -1,0 +1,12 @@
+<h2>This is a pretty complicated partial</h2>
+<div class="partial">
+  <p>It has several nested partials,</p>
+  <ul>
+    <% 5.times do %>
+      <li>
+        <strong>Partial:</strong>
+        <% @nesting = 5 %>
+        <%= render :partial => 'haml/rhtml/av_partial_2' %>
+    <% end %>
+  </ul>
+</div>
