@@ -17,12 +17,10 @@ $(function() {
       }
     });
   }                           
-
-	// hookup the radio buttons for registration
-	$('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); });
-	$('#choose_existing').click(function() { $('div#existing_user').show(); $('div#guest_user, div#new_user').hide(); });
-	$('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });	
-
+  // hookup the radio buttons for registration
+  $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }).attr('checked', true);
+  $('#choose_existing').click(function() { $('div#existing_user').show(); $('div#guest_user, div#new_user').hide(); });
+  $('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });	
   // activate first region
   shift_to_region(regions[0]);  
 })
@@ -39,7 +37,7 @@ jQuery.fn.sameAddress = function() {
     })
     update_state('s');
   })
-}
+};
 
 //Initial state mapper on page load
 var state_mapper;
@@ -299,19 +297,16 @@ var update_confirmation = function(order) {
 var submit_registration = function() {
   // no need to do any ajax, user is already logged in
   if ($('div#already_logged_in:hidden').size() == 0) return true;
-  var register_method = $("input[name='choose_registration']:checked").val();
+  var register_method = $('input[name=choose_registration]:checked').val();
   
-  $('div#registration_error').removeClass('error').html("");    
+  $('div#registration_error').removeClass('error').html('');    
 
-	if (register_method == "login") {
-		ajax_login();
-		return ($('div#registration_error:hidden').size() == 1);
-	}
-
-	if (register_method == "register") {
-		ajax_register();
-		return ($('div#registration_error:hidden').size() == 1);
-	}
+  if (register_method == 'existing') {
+	ajax_login();
+  }
+  else if (register_method == 'register') {
+	ajax_register();
+  }
 		
   return ($('div#registration_error:hidden').size() == 1);  
 };
