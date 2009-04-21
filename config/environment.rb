@@ -31,6 +31,7 @@ Spree::Initializer.run do |config|
   config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.1'
   config.gem "tlsmail", :version => '0.0.1'
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
+  config.gem 'haml', :version => "2.1.0"
   config.gem 'chriseppstein-compass', :lib => 'compass', :source => "http://gems.github.com", :version => '0.6.1'
   config.gem 'calendar_date_select', :version => '1.15'    
   config.gem 'searchlogic', :version => '1.6.6'                           
