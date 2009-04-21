@@ -22,28 +22,24 @@ if @body_class.nil?
 end
  %>
 <body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
-	<div class="container"> 
-	  
-	  <div id="header">
-      <%= link_to image_tag('spree.jpg'), root_path %>                                                                  
-  	  <%= render :partial => 'shared/language_bar' if Spree::Config[:allow_locale_switching] %>
+  <div id="header" class="container">                                                           
+    <ul id="login-nav">
+      <% if current_user -%>
+        <li><%= link_to t('my_account'), user_path(current_user) %></li>
+        <li><%= link_to t('logout'), logout_path %></li>
+      <% else %>
+        <li><%= link_to t('log_in'), login_path %></li>
+      <% end -%>
+    </ul>
 
-      <ul id="login-nav">
-        <% if current_user -%>
-          <li><%= link_to t('my_account'), user_path(current_user) %></li>
-          <li><%= link_to t('logout'), logout_path %></li>
-        <% else %>
-          <li><%= link_to t('log_in'), login_path %></li>
-        <% end -%>
-      </ul>
-
-      <% if store_menu? %>
-        <%= render :partial => 'shared/store_menu' %>
-      <% end %>
-
-	  </div>
-
-		<hr/>
+    <% if store_menu? %>
+      <%= render :partial => 'shared/store_menu' %>
+    <% end %>
+    <%= link_to image_tag('/images/admin/bg/spree_50.png'), root_path %> 
+  </div>
+  
+  <div id="wrapper" class="container"> 
+  
 
 
     <% if @content_for_sidebar %>
@@ -53,9 +49,7 @@ end
     <% end %>
     
     <div id="content">
-      
       <%= breadcrumbs(@taxon) if @taxon %>
-      
       <% if flash[:notice] %>
         <div class="flash notice"><%= flash[:notice] %></div>
     	<% end %>
@@ -63,13 +57,11 @@ end
   	    <div class="flash errors"><%= flash[:error] %></div>
     	<% end %>
       <%= yield %>
-      <hr class="space" />
 
     </div>
-    <hr/>
     
     <%= render :partial => 'shared/footer'%>    		
-
+    
   </div>
 </body>
 </html>
