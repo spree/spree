@@ -3,6 +3,17 @@ class AddressesController < Spree::BaseController
   belongs_to :user
   before_filter :load_data, :only => [:new, :edit]
 
+  index.response do |wants|
+    wants.html
+    wants.js do
+      if current_user 
+        render :json => { :addresses => current_user.addresses }.to_json
+      else
+        render :json => { :addresses => '' }.to_json
+      end
+    end
+  end
+
   create.before do
     @object.nickname = @object.address1 if @object.nickname.blank?
     @object.user_id = @user.id

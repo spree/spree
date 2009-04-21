@@ -1,9 +1,12 @@
+var addresses = new Array;
+var state_mapper; 
 //On page load
-$(function() {  
+$(function() {
   $('#checkout_same_address').sameAddress();
   $('span#bcountry select').change(function() { update_state('b'); });
   $('span#scountry select').change(function() { update_state('s'); });
   get_states();
+  get_addresses(1);
   
   // hook up the continue buttons for each section
   for(var i=0; i < regions.length; i++) {     
@@ -16,13 +19,11 @@ $(function() {
         continue_section(e.data);
       }
     });
-  }                           
+  }
   // hookup the radio buttons for registration
   $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }).attr('checked', true);
   $('#choose_existing').click(function() { $('div#existing_user').show(); $('div#guest_user, div#new_user').hide(); });
   $('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });	
-  // activate first region
-  shift_to_region(regions[0]);  
 })
 
 jQuery.fn.sameAddress = function() {
@@ -39,57 +40,45 @@ jQuery.fn.sameAddress = function() {
   })
 };
 
-//On page load
-$(function() {  
-  $('#checkout_same_address').sameAddress();
-  $('span#bcountry select').change(function() { update_state('b'); });
-  $('span#scountry select').change(function() { update_state('s'); });
-  get_states();
-  
-  // hook up the continue buttons for each section
-  for(var i=0; i < regions.length; i++) {                               
-    $('#continue_' + regions[i]).click(function() { eval( "continue_button(this);") });   
-  }                           
-  // activate first region
-  shift_to_region(regions[0]);
-
-  initiate_address_book_fxnality();
-})
-
 var initiate_address_book_fxnality = function() {
-  if($('div#billing div.saved_address').length > 0) {
-    $('div#billing div.saved_address input:first').attr('checked', 1);
+  if($('div#billing div.saved_addresses').length > 0) {
+    $('div#billing div.saved_addresses input:first').attr('checked', 1);
     toggle_address_region('billing', 1);
     toggle_saved_address('billing');
   }
-  if($('div#shipping div.saved_address').length > 0) {
-    $('div#shipping div.saved_address input:first').attr('checked', 1); 
+  if($('div#shipping div.saved_addresses').length > 0) {
+    $('div#shipping div.saved_addresses input:first').attr('checked', 1); 
     toggle_address_region('shipping', 1); 
     toggle_saved_address('shipping');
   }
-  $('input.saved_radio').click(function() { toggle_address_region($(this).parent().parent().attr('id'), $(this).val()); });
-  $('div.saved_address select').change(function() { toggle_saved_address($(this).parent().parent().attr('id')); });  
+  $('input.saved_radio').click(function() {
+    var region = $(this).parent().parent().attr('id');
+    if($(this).parent().attr('class') == 'saved_addresses') {
+      region = $(this).parent().parent().parent().attr('id');
+    }
+    toggle_address_region(region, $(this).val());
+  });
+  $('div.saved_addresses select').change(function() { toggle_saved_address($(this).attr('class')); });
 };
 
 var toggle_saved_address = function(region) {
-  var address_region = 'div#addr_' + $('div#' + region + ' div.saved_address select').val();
-  $('div#' + region + ' div.saved_address p').html($(address_region).html());
+  var address_id = $('div#' + region + ' div.saved_addresses select').val();
+  $('div#' + region + ' div.saved_addresses span').html(addresses['address_' + address_id]);
 };
 
 var toggle_address_region = function(region, value) {
   if(value == 1) {
-    $('div#' + region + ' div.new_address p').hide();
-    $('div#' + region + ' div.saved_address p').show();
-    $('div#' + region + ' div.saved_address select').removeAttr('disabled');
+    $('div#' + region + ' div.inner p').hide();
+    $('div#' + region + ' div.saved_addresses span').show();
+    $('div#' + region + ' div.saved_addresses select').removeAttr('disabled');
   } else {
-    $('div#' + region + ' div.new_address p').show();
-    $('div#' + region + ' div.saved_address p').hide();
-    $('div#' + region + ' div.saved_address select').attr('disabled', true);
+    $('div#' + region + ' div.inner p').show();
+    $('div#' + region + ' div.saved_addresses span').hide();
+    $('div#' + region + ' div.saved_addresses select').attr('disabled', true);
   }
 };
 
 //Initial state mapper on page load
-var state_mapper;
 var get_states = function() {
   $.getJSON('/states.js', function(json) {
     state_mapper = json;
@@ -99,6 +88,30 @@ var get_states = function() {
     $('span#scountry select').val($('input#hidden_scountry').val());
     update_state('s');
     $('span#sstate :only-child').val($('input#hidden_sstate').val());
+  });
+};
+
+//Initial address loader
+var get_addresses = function(on_page_load) {
+  $.getJSON('/addresses.js', function(json) {
+    if(json.addresses == '') {
+      $('div.saved_addresses').hide();
+      $('input.saved_radio').hide();
+      $('label.saved_label').hide();
+    } else {
+      $.each(json.addresses, function(pos,id_nm) {
+        address = id_nm.address;
+        addresses['address_' + address.id] = address.firstname + ' ' + address.lastname + '<br />' + address.address1 + '<br />'
+          + address.city + ', ' + address.state_id + ' ' + address.country_id + '<br />' + address.phone;
+        $('div#billing select:first').append($(document.createElement('option')).val(address.id).html(address.nickname));
+        $('div#shipping select:first').append($(document.createElement('option')).val(address.id).html(address.nickname));
+      });
+      initiate_address_book_fxnality();
+      $('div.saved_addresses').show();
+      $('input.saved_radio').show();
+      $('label.saved_label').show();  
+    }
+    if(on_page_load) shift_to_region(regions[0]);
   });
 };
 
@@ -181,7 +194,7 @@ var continue_section = function(section) {
 };
 
 var validate_section = function(region) {
-  if($('div#' + region + ' div.saved_address').length > 0 && $('div#' + region + ' input.saved_radio:first').attr('checked')) {
+  if($('div#' + region + ' div.saved_addresses select:child').length > 0 && $('div#' + region + ' input.saved_radio:first').attr('checked')) {
     return true;
   }
   var validator = $('form#checkout_form').validate();
@@ -365,12 +378,10 @@ var submit_registration = function() {
   else if (register_method == 'register') {
 	ajax_register();
   }
-		
   return ($('div#registration_error:hidden').size() == 1);  
 };
 
 var ajax_login = function() {
-  alert('attempting login');
   $.ajax({
 	async: false,
     type: "POST",
@@ -380,11 +391,11 @@ var ajax_login = function() {
     },      
     dataType: "json",
     data: $('#checkout_form').serialize(),
-    success: function(result) {  
+    success: function(result) {
       if (result) {
 	    $('div#already_logged_in').show();
 		$('div#register_or_guest').hide();
-        alert('login success');
+        get_addresses(0);
         // todo update login partial
       } else {
         registration_error("Invalid username or password.");
