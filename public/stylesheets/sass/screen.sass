@@ -17,11 +17,11 @@
 !default_border_color = #DDD
 !link_hover_color = #eee
 !lighter_text_color = #666
-!selling_price_color = #f33
 !medium_blue = #2E6AB1
 !light_blue = #E5F2F8
-!dark_blue = !medium_blue - 100
+!dark_blue = #162F54
 !error_text_color = #c00
+!selling_price_color = !medium_blue
 
 // Custom mixins
 = no_margin_or_padding
@@ -31,67 +31,118 @@
 
 body
   :margin-top 10px
+  :background #fff url(/images/body-back.png) top left repeat-x
 
 .container 
 //  :background url(/images/grid.png)
+
+#wrapper
+  :background transparent url(/images/wrapper-back.png) top center no-repeat
+  :padding 25px 20px 20px
+  :position relative
+  body.two-col &
+    :background-image url(/images/wrapper-back-2.png) 
   
 // Main Layout
 #sidebar 
-  +column(5)
+  +column(4)
   +colborder
+  h3
+    :margin-bottom .5em
 
 #content
   body.one-col &
     +column(24,"last")
   body.two-col &
-    +column(18,"last")
+    +column(19,"last")
 
 #header
   :position relative
-  :padding-bottom 10px
-
+  :color = !medium_blue
+  :clear both
+  a
+    :color = !medium_blue
+    &:hover
+      :color = !light_blue
+#footer
+  :padding-top 2em
+  :clear both
+  
+h1
+  :font-size 2.5em
 
 
 // Navigation
 
 .navigation-list
   +no-bullets
-  :margin 0 0 1.5em 0
-  :border-top 1px solid
-  :border-color = !default_border_color
+  :margin 0 0 1.5em -15px
   li
     :margin 0
     a
       :cursor pointer!important
       +unstyled-link
       :display block
-      :border-bottom 1px solid
-      :border-color = !default_border_color
       :line-height 2.5em
-      :padding-left 10px
+      :padding-left 20px
       //:padding 3px 10px 4px 10px
-      &:hover
-        :background-color = !link_hover_color
   li.current
+    :width 200px
     a
-      :background-color = !light_blue
+      :background url(/images/menu-current.png) right center no-repeat
         
-#breadcrumbs
-  :border-bottom 1px solid
-  :border-color = !default_border_color
-  :line-height 3
+.breadcrumbs
   :margin-bottom 1em
+  ul
+    +inline-list
+    :overflow auto
+    :margin 0
+    :padding 0
+    li
+      :line-height 20px
+      :color #666
+      a,span
+        :text-decoration none
+        :padding 5px 7px
+        :color #666
+      span
+        :color #333
 
-#login-nav, #language-bar, #store-nav 
-  +inline-list
-  :position absolute
-  :right 0
+
 #login-nav
-  :top 20px
+  +inline-list
+  :float right
+  :text-align right
+  ul
+    :margin 0
+    :padding 0
+  li
+    :margin-left 1em
+    
 #language-bar
-  :top 0
+  +inline-list
+  :float right
+  strong
+    :font-weight normal
 #store-nav 
-  :top 40px
+  :line-height 40px
+  :float right
+  :clear both
+  :font-size 1.2em
+  ul
+    :list-style none
+    :margin 0
+    :padding 0
+    li
+      :float left
+      :margin-left 1em
+      &.cart-indicator
+        a
+          :display block
+          :padding-right 40px
+          :background transparent url(/images/cart-empty_x32.png) center right no-repeat
+          &.full
+            :background-image url(/images/cart-full_x32.png)
 
 .pagination
   :padding-top 10px
@@ -121,14 +172,40 @@ body
 
 // Product thumbnail grids
 .product-listing
-  +no_margin_or_padding
+  :margin 2em 0 0 0
+  :padding 0
   +no-bullets
   li
     :width 110px
-    :height 14em
+    :height 180px
+    :width 140px
     :text-align center
     :float left
-    :margin 0 10px 10px 0
+    :margin 1em
+    :padding 10px
+    :border 1px solid #ddd
+    :position relative
+    :-moz-border-radius 3px
+    :-webkit-border-radius 3px
+    a
+      :display block
+      :text-decoration none
+      :color #111
+      :position absolute
+      
+    a.info
+      :bottom 0px
+      :right 0em
+      :padding 5px 
+      :width 150px
+      :-moz-border-radius-bottomright 3px
+      :-webkit-border-bottom-right-radius 3px
+      :-moz-border-radius-bottomleft 3px
+      :-webkit-border-bottom-left-radius 3px
+      :background #1b1b1b
+      :color #fff
+      span
+        :display block
     &.last
       :margin-right 0
 
@@ -163,7 +240,9 @@ body
   :font-weight normal
   :color = !lighter_text_color
 
-
+// cart
+#subtotal
+  :float right
 
 #signup #new-customer
   +column(12)
@@ -247,14 +326,10 @@ div#checkout
     :display block
     :clear both
   h2
-    :height 22px
-    :border= 1px "solid" !default_border_color
-    :font-size 18px
-    :margin 5px 0px
-    :background-color = !light_blue
-    :padding 4px 10px 4px 10px
-    :line-height 1em    
-    :clear both
+    :font-size 1.4em
+    :padding-bottom 10px
+    :border-bottom 1px solid #ddd
+
   div#bdisplay, div#sdisplay
     :float left
     :width 300px
@@ -292,3 +367,101 @@ div.checkout_disabled h2
 
 .clear
   :clear both
+
+button,
+a.button,input.button
+  :background #efefef url(/images/buttons/bg-button.png) center left repeat-x !important
+  :border-style solid 
+  :border-width 1px !important
+  :border-color #ddd #999 #999 #ddd !important
+  :-moz-border-radius .3em
+  :-webkit-border-radius .3em
+  :-moz-outline-radius .3em
+  :color #111
+  :display inline-block
+  :font-family Helvetica Neue, Helvetica, Arial, Sans-serif
+  :font-size 1.1em !important
+  :font-size-adjust none
+  :font-stretch normal
+  :font-style normal
+  :font-variant normal
+  :font-weight normal
+  :line-height 1.2em
+  :margin 0
+  :overflow visible
+  :padding 10px 17px
+  :text-decoration none
+  :text-transform lowercase
+  :width auto
+  :height auto
+  :cursor pointer
+  &.primary
+    :font-weight bold
+    :color #000
+  &:hover
+    :background-image url(/images/buttons/bg-button-hover.png) !important
+    //:outline solid 2px #cdf
+  &.large
+    :font-size 1.7em !important
+    :line-height 1.9em
+    :-moz-border-radius 5px
+    :-webkit-border-radius 5px
+  &.small
+    :font-size .9em
+    :line-height 1.4em
+    :padding 5px 10px
+    :-moz-border-radius 4px
+    :-webkit-border-radius 4px
+    img
+      :margin 0 3px 0 0 !important
+  &.update,
+  &.checkout
+    img
+      :margin-right 7px
+  img
+    :vertical-align middle
+input.title
+  :width auto
+  
+p
+  a.button, button
+    img
+      margin: 0 5px 0 0
+
+  &.follow-all
+    :font-size 1.3em
+    :text-align center
+    :display block
+      
+  img
+    :float left
+    :margin-right 5px
+    :vertical-align middle
+a.button
+  &:focus
+    :outline none
+  &:active
+    //:background-image url(/images/buttons/bg-button-pressed.png)
+    //:border-color #999 #ddd #ddd #999
+// hack for firefox jacking my buttons
+button 
+  &::-moz-focus-inner
+    :padding 0
+    :border none
+
+table
+  :border-collapse collapse
+  th
+    :background #efefef url(/images/buttons/bg-button.png) center left repeat-x !important
+    :padding 10px
+    :border 1px solid #ccc
+  &#cart
+    tr
+      td
+        :border-bottom 1px solid #ddd
+        :padding 1em 0
+      &#none
+        td
+          :border-bottom none
+    h4
+      :margin-bottom 0em
