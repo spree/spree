@@ -9,24 +9,9 @@
 <input type="hidden" id="hidden_bcountry" name="hidden_bcountry" value="<%= @order.bill_address.country_id %>" />
 <input type="hidden" id="hidden_sstate" name="hidden_sstate" value="<%= @order.ship_address.state_id || @order.ship_address.state_name %>" />
 <input type="hidden" id="hidden_scountry" name="hidden_scountry" value="<%= @order.ship_address.country_id %>" />
-
-<% #if !current_user.addresses.empty?
--%>
-<div id="hidden_addresses">
-  <input type="hidden" id="hidden_edit_prefix" value="/users/<%= #current_user.id
-%>/addresses/" />
-  <% #current_user.addresses.each do |address|
--%>
-  <div id="addr_<%= #address.id
-%>"/>
-    <%= #render :partial => 'shared/address_display', :locals => { :address => address }
-%>
-  </div>
-  <% #end
--%>
-</div>
-<% #end
--%>
+<% if current_user && !current_user.addresses.empty? -%>
+<input type="hidden" id="retrieve_addresses" />
+<% end -%>
 
 <%= error_messages_for :order %>
 
