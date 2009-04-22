@@ -22,15 +22,19 @@ class RefactorAddresses < ActiveRecord::Migration
           creditcard.address = address
           creditcard.save
           order = creditcard.order
-          order.bill_address = address
-          order.save
+          if order
+            order.bill_address = address
+            order.save
+		      end
         elsif address.addressable_type == "Shipment"
           shipment = Shipment.find address.addressable_id 
           shipment.address = address
           shipment.save
           order = shipment.order
-          order.ship_address = address
-          order.save
+          if order
+            order.ship_address = address
+            order.save
+          end
         end
       end
     end
