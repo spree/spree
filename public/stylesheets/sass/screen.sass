@@ -237,11 +237,15 @@ div#checkout
       :margin 0px
     span
       :display block
+  input.saved_radio, label.saved_label
+    :display none
   div#creditcard p select
     :width 75px
   p input#continue_registration, input#continue_billing, input#continue_shipping,  p input#continue_shipping_method,  p input#continue_payment,  #confirm_order .inner input
     :cursor pointer
     :width 100px
+    :display block
+    :clear both
   h2
     :height 22px
     :border= 1px "solid" !default_border_color

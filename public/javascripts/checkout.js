@@ -2,11 +2,15 @@ var addresses = new Array;
 var state_mapper; 
 //On page load
 $(function() {
+  get_states();
+  if($('input#retrieve_addresses').length == 1) {
+    get_addresses(1);
+  } else {
+    shift_to_region(regions[0]);    
+  } 
   $('#checkout_same_address').sameAddress();
   $('span#bcountry select').change(function() { update_state('b'); });
   $('span#scountry select').change(function() { update_state('s'); });
-  get_states();
-  get_addresses(1);
   
   // hook up the continue buttons for each section
   for(var i=0; i < regions.length; i++) {     
@@ -101,8 +105,13 @@ var get_addresses = function(on_page_load) {
     } else {
       $.each(json.addresses, function(pos,id_nm) {
         address = id_nm.address;
-        addresses['address_' + address.id] = address.firstname + ' ' + address.lastname + '<br />' + address.address1 + '<br />'
-          + address.city + ', ' + address.state_id + ' ' + address.country_id + '<br />' + address.phone;
+        var address_display = address.firstname + ' ' + address.lastname + '<br />' + address.address1 + '<br />';
+        if(address.address2 != '') {
+          address_display += address.address2 + '<br />';
+        }
+        address_display += address.city + ', ' + address.state_id + ' ' + address.zipcode + '<br />';
+        address_display += address.country_id + '<br />' + address.phone;
+        addresses['address_' + address.id] = address_display;
         $('div#billing select:first').append($(document.createElement('option')).val(address.id).html(address.nickname));
         $('div#shipping select:first').append($(document.createElement('option')).val(address.id).html(address.nickname));
       });
@@ -242,15 +251,16 @@ var shift_to_region = function(active) {
 };
 
 var submit_billing = function() {
-  build_address('Billing Address', 'b', 'billing');
+  build_address('Billing Address', 'billing');
   return true;
 };
 
-var build_address = function(title, region, region_o) {
+var build_address = function(title, region_long) {
+  var region = region_long.substring(0,1);
   var address = '<h3>' + title + '</h3>';
-  if($('div#' + region_o + ' div.saved_address').length > 0 && $('div#' + region_o + ' div.saved_address input:first').attr('checked')) {
-    var address_region = 'div#addr_' + $('div#' + region_o + ' div.saved_address select').val();
-    address += $(address_region).html();
+  if($('div#' + region_long + ' div.saved_addresses select:child').length > 0 && $('div#' + region_long + ' input.saved_radio:first').attr('checked')) {
+    var address_id = $('div#' + region_long + ' div.saved_addresses select').val();
+    address += addresses['address_' + address_id];
   }
   else {
     address += $('p#' + region + 'fname input').val() + ' ' + $('p#' + region + 'lname input').val() + '<br />';
@@ -293,7 +303,7 @@ var submit_shipping = function() {
       return false;
     }
   });  
-  build_address('Shipping Address', 's', 'shipping');
+  build_address('Shipping Address', 'shipping');
   return true;
 };
                      
