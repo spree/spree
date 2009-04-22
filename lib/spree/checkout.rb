@@ -9,8 +9,8 @@ module Spree::Checkout
     load_checkout_steps                                             
     
     # additional default values needed for checkout
-    @order.bill_address ||= params[:order] && params[:order][:bill_address_id] && params[:bill_address] == '1' ? Address.find(params[:order][:bill_address_id]) : Address.new(:country => @default_country)
-    @order.ship_address ||= params[:order] && params[:order][:ship_address_id] && params[:ship_address] == '1' ? Address.find(params[:order][:ship_address_id]) : Address.new(:country => @default_country)
+    @order.bill_address ||= params[:order] && params[:order][:bill_address_id] ? Address.find(params[:order][:bill_address_id]) : Address.new(:country => @default_country)
+    @order.ship_address ||= params[:order] && params[:order][:ship_address_id] ? Address.find(params[:order][:ship_address_id]) : Address.new(:country => @default_country)
     if @order.creditcards.empty?
       @order.creditcards.build(:month => Date.today.month, :year => Date.today.year)
     end
