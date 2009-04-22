@@ -7,7 +7,9 @@ module Spree::Checkout
     load_object 
     load_data
     load_checkout_steps                                             
-    
+
+    @order.update_attributes(params[:order])
+
     # additional default values needed for checkout
     @order.bill_address ||= Address.new(:country => @default_country)
     @order.ship_address ||= Address.new(:country => @default_country)
@@ -43,7 +45,7 @@ module Spree::Checkout
         end       
       rescue Spree::GatewayError => ge
         flash.now[:error] = t("unable_to_authorize_credit_card") + ": #{ge.message}"
-        render :action => "new" and return 
+        render :action => "checkout" and return 
       end
       
 
