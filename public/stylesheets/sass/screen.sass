@@ -288,7 +288,6 @@ div#checkout, div#edit_address
       :margin-left 150px
       :width 200px
       :margin 0px
-      :border 1px solid #EAE8E3
     label.error
       :color red
       :clear both
@@ -300,61 +299,62 @@ div#checkout, div#edit_address
       :background #FFF
 
 div#edit_address
+  label
+    :float left
   label#nickname
     :width 200px
     :font-size 10px
     :top 0px
     :font-style italic
+  input, select
+    :border 1px solid #EAE8E3
 
 div#checkout
   .inner
     :padding 10px
   .saved_addresses
     :display none
-    :padding 0px 0px 0px 10px
-    p
-      :margin 0px
     span
       :display block
+      :margin-bottom 10px
   input.saved_radio, label.saved_label
     :display none
   div#creditcard p select
     :width 75px
-  p input#continue_registration, input#continue_billing, input#continue_shipping,  p input#continue_shipping_method,  p input#continue_payment,  #confirm_order .inner input
+  input#continue_billing, input#continue_shipping
     :cursor pointer
     :width 100px
     :display block
     :clear both
+    :margin-top 10px
+  p input#continue_registration, p input#continue_shipping_method,  p input#continue_payment,  #confirm_order .inner input
+    :cursor pointer
+    :width 100px
   h2
     :font-size 1.4em
     :padding-bottom 10px
     :border-bottom 1px solid #ddd
-
   div#bdisplay, div#sdisplay
     :float left
     :width 300px
     :clear right  
-    
   div#registration_choice
     :float left
     :block none     
     :width 50%
-
   div#registration_input
     :float right
     :block none
     :width 50%
     div#guest_user, div#existing_user
       :display none 
-  
   div#registration_error
     :width 100%
-        
-#methods p label
-  :float none
-  :width 150px
-  :position relative
-  :top 5px
+  div#methods p input
+    :float left
+  div#methods p label
+    :margin 0px 0px 10px 5px
+    :top -2px
 	
 form#checkout_form
   div.inner
