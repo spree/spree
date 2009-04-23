@@ -1,7 +1,12 @@
 class CreateEuVatZoneAgain < ActiveRecord::Migration
   def self.up
     # create an EU VAT zone (for optional use with EU VAT)
-    zone = Zone.create :name => "EU_VAT", :description => "Countries that make up the EU VAT zone."
+    zone = Zone.find_or_create_by_name_and_description "EU_VAT", "Countries that make up the EU VAT zone."
+
+    unless zone.id
+      say "Zone EU_VAT ID not found"
+    end
+
     countries = []
     %w[AT BE BG CY CZ DK EE FI FR DE HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE GB].each do |iso|
       countries << Country.find_by_iso(iso)

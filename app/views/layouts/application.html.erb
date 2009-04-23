@@ -23,22 +23,24 @@ end
  %>
 <body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
   <div id="header" class="container">                                                           
-    <ul id="login-nav">
-      <% if current_user -%>
-        <li><%= link_to t('my_account'), user_path(current_user) %></li>
-        <li><%= link_to t('logout'), logout_path %></li>
-      <% else %>
-        <li><%= link_to t('log_in'), login_path %></li>
-      <% end -%>
-    </ul>
-
-    <% if store_menu? %>
-      <%= render :partial => 'shared/store_menu' %>
-    <% end %>
+      <ul id="login-nav">
+        <% if current_user -%>
+          <li><%= link_to t('my_account'), user_path(current_user) %></li>
+          <li><%= link_to t('logout'), logout_path %></li>
+        <% else %>
+          <li><%= link_to t('log_in'), login_path %></li>
+        <% end -%>
+      </ul>
+ 
+      <% if store_menu? %>
+        <%= render :partial => 'shared/store_menu' %>
+      <% end %>
     <%= link_to image_tag('/images/admin/bg/spree_50.png'), root_path %> 
-  </div>
-  
-  <div id="wrapper" class="container"> 
+   </div>
+ 
+   <div id="wrapper" class="container"> 
+ 
+ 
     <% if @content_for_sidebar %>
     <div id="sidebar">
       <%= yield :sidebar %>
@@ -54,6 +56,7 @@ end
      <div class="flash errors"><%= flash[:error] %></div>
       <% end %>
       <%= yield %>
+ 
     </div>
     
     <%= render :partial => 'shared/footer'%>    		

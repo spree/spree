@@ -2,7 +2,7 @@
   <%= javascript_include_tag 'address' %>
   <%= javascript_include_tag 'checkout' %>
 <% end %>
-<div id="ajax_error">
+<div id="ajax_error"></div>
 <div id="checkout">
   <h1><%= t("checkout")%></h1>
   <% form_for @order, :url => checkout_order_path(@order), :html => { :method => :post, :id => 'checkout_form'} do |order_form| %>
