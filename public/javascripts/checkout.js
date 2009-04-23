@@ -19,11 +19,14 @@ $(function() {
     
     // enter key should be same as continue button (don't submit form though)
     $('#' + section + ' input').bind("keyup", section, function(e) {
-      if(e.keyCode == 13) {      
+      if(e.keyCode == 13) {          
         continue_section(e.data);
       }
     });
   }
+  // disable submit
+  $(':submit').attr('disabled', 'disbled');
+  
   // hookup the radio buttons for registration
   $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }).attr('checked', true);
   $('#choose_existing').click(function() { $('div#existing_user').show(); $('div#guest_user, div#new_user').hide(); });
