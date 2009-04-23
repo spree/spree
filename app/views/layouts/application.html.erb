@@ -23,18 +23,17 @@ end
  %>
 <body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
   <div id="header" class="container">                                                           
-      <ul id="login-nav">
+      <ul id="nav-bar">
         <% if current_user -%>
           <li><%= link_to t('my_account'), user_path(current_user) %></li>
           <li><%= link_to t('logout'), logout_path %></li>
         <% else %>
           <li><%= link_to t('log_in'), login_path %></li>
         <% end -%>
-      </ul>
- 
       <% if store_menu? %>
         <%= render :partial => 'shared/store_menu' %>
       <% end %>
+      </ul>
     <%= link_to image_tag('/images/admin/bg/spree_50.png'), root_path %> 
    </div>
  
@@ -58,10 +57,7 @@ end
       <%= yield %>
  
     </div>
-    
     <%= render :partial => 'shared/footer'%>    		
-    
   </div>
 </body>
 </html>
-

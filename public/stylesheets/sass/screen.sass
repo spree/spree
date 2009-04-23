@@ -32,6 +32,15 @@
 body
   :margin-top 10px
   :background #fff url(/images/body-back.png) top left repeat-x
+  div.left
+    :float left
+    :width 49%
+  div.right
+    :float right
+    :width 49%
+    :text-align right
+  a
+    :outline none
 
 .container 
 //  :background url(/images/grid.png)
@@ -85,11 +94,15 @@ h1
       :display block
       :line-height 2.5em
       :padding-left 20px
-      //:padding 3px 10px 4px 10px
+    a:hover
+      :width 170px
+      :background url(/images/menu-hover.png) right center no-repeat
   li.current
     :width 200px
     a
       :background url(/images/menu-current.png) right center no-repeat
+    a:hover
+      :width 180px
         
 .breadcrumbs
   :margin-bottom 1em
@@ -108,40 +121,28 @@ h1
       span
         :color #333
 
-#login-nav
+ul#language-bar
   +inline-list
-  :float right
-  :text-align right
-  ul
-    :margin 0
-    :padding 0
-  li
-    :margin-left 1em
-
-#language-bar
-  +inline-list
-  :float right
   strong
     :font-weight normal
-#store-nav 
+ul#nav-bar
   :line-height 40px
   :float right
   :clear both
   :font-size 1.2em
-  ul
-    :list-style none
-    :margin 0
-    :padding 0
-    li
-      :float left
-      :margin-left 1em
-      &.cart-indicator
-        a
-          :display block
-          :padding-right 40px
-          :background transparent url(/images/cart-empty_x32.png) center right no-repeat
-          &.full
-            :background-image url(/images/cart-full_x32.png)
+  :list-style none
+  :margin 0
+  :padding 0
+  li
+    :float left
+    :margin-left 1em
+    &.cart-indicator
+      a
+        :display block
+        :padding-right 40px
+        :background transparent url(/images/cart-empty_x32.png) center right no-repeat
+        &.full
+          :background-image url(/images/cart-full_x32.png)
 
 .pagination
   :padding-top 10px
@@ -190,6 +191,7 @@ h1
       :text-decoration none
       :color #111
       :position absolute
+      :margin-left 20px
       
     a.info
       :bottom 0px
