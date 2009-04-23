@@ -1,9 +1,44 @@
 module Spree::BaseHelper
 
+  # this should be cart_path since it returns path only
+  # didn't wan't to change until we know what breaks so
+  # I named new helpers differently below - WN
   def cart_link
     return new_order_url if session[:order_id].blank?
     return edit_order_url(Order.find_or_create_by_id(session[:order_id]))
   end
+  
+  def cart_path
+    cart_link
+  end
+  
+  
+  def link_to_cart(text=t('cart'))
+    path = cart_path
+    order = Order.find_or_create_by_id(session[:order_id]) unless session[:order_id].blank?
+    css_class = ''
+    unless order.nil?
+      line_items_count = order.line_items.size
+      return "" if current_page?(path)
+      text = "#{text}: (#{line_items_count}) #{order_price(order)}"
+      css_class = 'full' if line_items_count > 0
+    end
+    link_to text, path, :class => css_class
+  end
+  
+  def order_price(order, options={})
+    options.assert_valid_keys(:format_as_currency, :show_vat_text, :show_price_inc_vat)
+    options.reverse_merge! :format_as_currency => true, :show_vat_text => true
+    
+    # overwrite show_vat_text if show_price_inc_vat is false
+    options[:show_vat_text] = Spree::Tax::Config[:show_price_inc_vat]
+
+    amount =  order.item_total    
+    amount += Spree::VatCalculator.calculate_tax(order) if Spree::Tax::Config[:show_price_inc_vat]    
+
+    options.delete(:format_as_currency) ? number_to_currency(amount) : amount
+  end
+  
 
   def add_product_link(text, product) 
     link_to_remote text, {:url => {:controller => "cart", 
