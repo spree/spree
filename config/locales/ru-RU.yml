@@ -225,7 +225,6 @@ ru-RU:
   destroy: Удалить
   display: Показать
   edit: Редактировать
-  editing_address: "Edit Address"
   editing_category: "Редактирование категории"
   editing_option_type: "Редактирование типа опции"
   editing_option_types: "Редактирование типов опций"
@@ -313,7 +312,6 @@ ru-RU:
   my_orders: "Мои заказы"
   name: Название
   new: Новый
-  new_address: "Add New Address"
   new_category: "Новая категория"
   new_credit_card_payment: "Новый платеж по кредитной карте"
   new_customer: "Для новых пользователей"
@@ -334,7 +332,6 @@ ru-RU:
   new_variant: "Новый вариант"
   new_zone: "Новая зона"
   next: След.
-  nickname: Nickname
   no_items_in_cart: ""
   no_match_found: "Совпадений не найдено"
   no_user_found: "No user was found with that email address"
@@ -413,7 +410,6 @@ ru-RU:
   sales_totals: "Sales Totals ??"
   sales_totals_description: "Sales Total For All Orders ??"
   save_preferences: Сохранить настройки
-  saved_address: "Use Saved Address"
   search: Поиск
   secure_connection_type: Тип защищенного соединения
   select: Выбрать

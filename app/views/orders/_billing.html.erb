@@ -1,14 +1,6 @@
 <% order_form.fields_for :bill_address do |bill_form| %>
   <h2><%= t("billing_address")%></h2>
   <div class="inner">
-    <div class="saved_addresses">
-      <input type="radio" name="bill_address" class="saved_radio" value="1" />
-      <label class="saved_label" for="<%= t('saved_address') %>"><%= t('saved_address') %></label>
-      <select class="billing" id="order_bill_address_id" name="order[bill_address_id]"></select>
-      <span></span>
-    </div> 
-    <input type="radio" name="bill_address" class="saved_radio" value="0" />
-    <label class="saved_label" for="<%= t("new_address") %>"><%= t("new_address") %></label>
   	<p id="bfname">
   		<label for="<%= t("first_name") %>"><%= t("first_name") %></label>
   		<%= bill_form.text_field :firstname, :class => 'required' -%><span class="req">*</span>

@@ -11,8 +11,8 @@ module Spree::Checkout
     @order.update_attributes(params[:order])
 
     # additional default values needed for checkout
-    @order.bill_address ||= params[:order] && params[:order][:bill_address_id] ? Address.find(params[:order][:bill_address_id]) : Address.new(:country => @default_country)
-    @order.ship_address ||= params[:order] && params[:order][:ship_address_id] ? Address.find(params[:order][:ship_address_id]) : Address.new(:country => @default_country)
+    @order.bill_address ||= Address.new(:country => @default_country)
+    @order.ship_address ||= Address.new(:country => @default_country) 
     if @order.creditcards.empty?
       @order.creditcards.build(:month => Date.today.month, :year => Date.today.year)
     end

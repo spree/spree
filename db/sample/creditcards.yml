@@ -7,5 +7,5 @@ card_<%= i %>:
   first_name: Sean
   last_name: Schofield
   order: order_<%= i %>  
-  address: frank_bill_address
+  address: frank_bill_address_<%= i %>
 <% end %>

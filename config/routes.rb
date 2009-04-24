@@ -37,7 +37,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :tax_categories
   map.resources :countries, :has_many => :states, :only => :index
   map.resources :states, :only => :index
-  map.resources :users, :has_many => :addresses
+  map.resources :users
   map.resources :products, :member => {:change_image => :post}
   map.resources :addresses
   map.resources :orders, :member => {:address_info => :get, :checkout => :any}, :has_many => [:line_items, :creditcards, :creditcard_payments]

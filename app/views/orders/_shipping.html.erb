@@ -1,14 +1,6 @@
 <% order_form.fields_for :ship_address do |ship_form| %>     
   <h2><%= t("shipping_address")%></h2>
-   <div class="inner">
-     <div class="saved_addresses">
-       <input type="radio" name="ship_address" class="saved_radio" value="1" />
-       <label class="saved_label" for="<%= t('saved_address') %>"><%= t('saved_address') %></label>
-       <select class="shipping" id="order_ship_address_id" name="order[ship_address_id]"></select>
-       <span></span>
-     </div> 
-     <input type="radio" name="ship_address" class="saved_radio" value="0" style="display:none;"/>
-     <label class="saved_label" for="<%= t("new_address") %>" style="display:none;"><%= t("new_address") %></label>
+  <div class="inner">
   	<p><label for="<%= t("use_billing_address") %>" id="use_billing"><%= t("use_billing_address") %></label><input id="checkout_same_address" name="checkout_same_address" type="checkbox" /></p> 
   	<p id="sfname">
   		<label for="<%= t("first_name") %>"><%= t("first_name") %></label>

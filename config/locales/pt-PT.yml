@@ -225,7 +225,6 @@ pt-PT:
   destroy: Destruir
   display: Mostrar
   edit: Editar
-  editing_address: "Edit Address"
   editing_category: "Editando Categoria"
   editing_option_type: "Editando Tipo de Opção"
   editing_option_types: "Editando Tipos de Opção"
@@ -313,7 +312,6 @@ pt-PT:
   my_orders: "As Minhas Encomendas"
   name: Name
   new: New
-  new_address: "Add New Address"
   new_category: "Nova categoria"
   new_credit_card_payment: "Novo Pagamento por Cartão de Credito"
   new_customer: "Novo Cliente"
@@ -334,7 +332,6 @@ pt-PT:
   new_variant: "Nova Variante"
   new_zone: "Nova Zona"
   next: Próximo
-  nickname: Nickname
   no_items_in_cart: "Nr. de itens no carro"
   no_match_found: "Não encontrado"
   no_user_found: "No user was found with that email address"
@@ -413,7 +410,6 @@ pt-PT:
   sales_totals: "Total de Vendas"
   sales_totals_description: "Total de Vendas para todos os Pedidos"
   save_preferences: Save Preferences           
-  saved_address: "Use Saved Address"
   search: Pesquisa
   secure_connection_type: Secure Connection Type
   select: Selecionar
