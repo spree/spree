@@ -54,6 +54,8 @@
   		<label for="<%= t("phone") %>"><%= t("phone") %></label>
   		<%= bill_form.text_field :phone, :class => 'required' -%><span class="req">*</span>
   	</p>
-    <input id="continue_billing" type="button" value="<%=t("continue")%>"/>
+  	<div class="form-buttons">
+      <input id="continue_billing" type="button" class="button primary" value="<%=t("continue")%>"/>
+    </div>
   </div>
 <% end %>

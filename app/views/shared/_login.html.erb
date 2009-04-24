@@ -1,18 +1,18 @@
 <% form_tag user_session_path do  %>
   <p>
     <%= label :user_session, :login, t("email") %><br />
-    <%= text_field :user_session, 'login' %>
+    <%= text_field :user_session, 'login', :class => 'title' %>
   </p>
   <p>
     <%= label :user_session, :password, t("password") %><br />
-    <%= password_field :user_session, 'password' %>
+    <%= password_field :user_session, 'password', :class => 'title' %>
   </p>
   <p>
   	<label>
       <%= check_box :user_session, :remember_me %>
-  	  <%= t ('remember_me') %>
+      <%= label :user_session, :remember_me, t ('remember_me') %>
 	  </label>
 	</p>
-  <p><%= submit_tag t("log_in") %></p>
+  <p><%= submit_tag t("log_in"), :class => 'button primary'%></p>
 
 <% end %>

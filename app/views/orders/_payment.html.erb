@@ -6,7 +6,7 @@
   	</p>
   	<p>
   		<label for=""><%= t("card_number") %></label>
-  		<%= creditcard_form.text_field :number, :size=> 19, :class => 'required' -%><span class="req">*</span>
+  		<%= creditcard_form.text_field :number, :size=> 19, :max_length => 19, :class => 'required' -%><span class="req">*</span>
   	</p>
   	<p>
   		<label for=""><%= t("expiration") %></label>  		
@@ -21,7 +21,9 @@
   			(<%= t("whats_this") %>)
   		</a>
   	</p>
-  	<p><input id="continue_payment" type="button" value="<%=t("continue")%>"/></p> 
+  	<div class="form-buttons">
+  	  <input id="continue_payment" type="button" class="button primary" value="<%=t("continue")%>"/>
+  	</div>
   	<%= creditcard_form.hidden_field :first_name -%>
     <%= creditcard_form.hidden_field :last_name -%>  	
   </div>    

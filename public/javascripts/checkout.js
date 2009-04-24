@@ -227,17 +227,18 @@ var shift_to_region = function(active) {
       if(active == regions[i]) {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
         $('div#' + regions[i] + ' div.inner').show('fast');
-        $('div#' + regions[i]).removeClass('checkout_disabled');
+        $('div#' + regions[i]).removeClass('disabled').removeClass('completed');
         found = 1;
       }
       else {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'pointer').click(function() {shift_to_region($(this).parent().attr('id'));});
         $('div#' + regions[i] + ' div.inner').hide('fast');
+        $('div#' + regions[i]).addClass('completed');
       }
     } else {
       $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
       $('div#' + regions[i] + ' div.inner').hide('fast');
-      $('div#' + regions[i]).addClass('checkout_disabled');
+      $('div#' + regions[i]).addClass('disabled');
     }
   }                                                                         
   if (active == 'confirmation') {
