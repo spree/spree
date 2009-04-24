@@ -1,5 +1,4 @@
-<% 1.upto(30) do |i| %>
-frank_ship_address_<%= i %>:
+frank_ship_address:
   firstname: Betty
   lastname: Bar
   address1: 123 Foo St.
@@ -9,9 +8,10 @@ frank_ship_address_<%= i %>:
   zipcode: 16804
   country_id: 214
   phone: 614-555-1212
-<% end %>
-<% 1.upto(30) do |i| %>
-frank_bill_address_<%= i %>:
+  nickname: Ship to Betty
+  active: 1
+  user: frank
+frank_bill_address:
   firstname: Frank
   lastname: Foo
   address1: 123 Foo St.
@@ -21,4 +21,6 @@ frank_bill_address_<%= i %>:
   zipcode: 16804
   country_id: 214
   phone: 614-555-1212
-<% end %>
+  nickname: Bill to Frank
+  active: 1
+  user: frank

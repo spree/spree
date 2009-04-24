@@ -1,6 +1,14 @@
 <% order_form.fields_for :bill_address do |bill_form| %>
   <h2><%= t("billing_address")%></h2>
   <div class="inner">
+    <div class="saved_addresses">
+      <input type="radio" name="bill_address" class="saved_radio" value="1" />
+      <label class="saved_label" for="<%= t('saved_address') %>"><%= t('saved_address') %></label>
+      <select class="billing" id="order_bill_address_id" name="order[bill_address_id]"></select>
+      <span></span>
+    </div> 
+    <input type="radio" name="bill_address" class="saved_radio" value="0" />
+    <label class="saved_label" for="<%= t("new_address") %>"><%= t("new_address") %></label>
   	<p id="bfname">
   		<label for="<%= t("first_name") %>"><%= t("first_name") %></label>
   		<%= bill_form.text_field :firstname, :class => 'required' -%><span class="req">*</span>
@@ -10,19 +18,19 @@
   		<%= bill_form.text_field :lastname, :class => 'required' -%><span class="req">*</span>
   	</p>
   	<p id="baddress">
-  		<label for=""><%= t("street_address") %></label>
+  		<label for="<%= t("street_address") %>"><%= t("street_address") %></label>
   		<%= bill_form.text_field :address1, :class => 'required' -%><span class="req">*</span>
   	</p>
   	<p id="baddress2">
-  		<label for=""><%= t("street_address_2") %></label>
+  		<label for="<%= t("street_address_2") %>"><%= t("street_address_2") %></label>
   		<%= bill_form.text_field :address2 %>
   	</p>
   	<p id="bcity">
-  		<label for=""><%= t("city") %></label>
+  		<label for="<%= t("city") %>"><%= t("city") %></label>
   		<%= bill_form.text_field :city, :class => 'required' -%><span class="req">*</span>
   	</p>                        
   	<p>
-  		<label for=""><%= t("state") %></label>
+  		<label for="<%= t("state") %>"><%= t("state") %></label>
   		<span id="bstate">
   			<%= collection_select("order[bill_address_attributes]", 
   			:state_id, 
@@ -35,17 +43,19 @@
   		<span class="req">*</span>
   	</p>
   	<p id="bzip">
-  		<label for=""><%= t("zip") %></label>
+  		<label for="<%= t("zip") %>"><%= t("zip") %></label>
   		<%= bill_form.text_field :zipcode, :class => 'required' -%><span class="req">*</span>
   	</p>    
   	<p id="bcountry">
-  		<label for=""><%= t("country") %></label>
+  		<label for="<%= t("country") %>"><%= t("country") %></label>
   		<span id="bcountry"><%= bill_form.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
   	</p>
   	<p id="bphone">
-  		<label for=""><%= t("phone") %></label>
+  		<label for="<%= t("phone") %>"><%= t("phone") %></label>
   		<%= bill_form.text_field :phone, :class => 'required' -%><span class="req">*</span>
   	</p>
-  	<p><input id="continue_billing" type="button" value="<%=t("continue")%>"/></p>
+  	<div class="form-buttons">
+      <input id="continue_billing" type="button" class="button primary" value="<%=t("continue")%>"/>
+    </div>
   </div>
 <% end %>

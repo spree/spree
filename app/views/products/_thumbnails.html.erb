@@ -1,8 +1,30 @@
 <!-- no need for thumnails unless there is more then one image -->
 <% if product.images.size > 1 %>
-<% product.images.each do |i| %>  
-<%= link_to_remote image_tag(i.attachment.url(:mini)), 
-                   :url =>  change_image_product_path(product, :image_id => i) ,
-                   :update => 'product-image' %>
+  <ul id="product-thumbnails">
+    <% product.images.each do |i| %>  
+      <li><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>
+    <% end %>
 <% end %>
+
+
+<% content_for :head do %>
+  <script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function($){
+      $("#main-image").data('selectedThumb', $('#main-image img').attr('src'));
+      $('ul#product-thumbnails li').eq(0).addClass('selected');
+      $('ul#product-thumbnails li a').click(function() {
+        $("#main-image").data('selectedThumb', $(this).attr('href'));
+        $('ul#product-thumbnails li').removeClass('selected');
+        $(this).parent('li').addClass('selected');
+        return false;
+      }).hover(
+        function() {
+          $('#main-image img').attr('src', $(this).attr('href').replace('mini', 'product'));
+        },
+        function() {
+          $('#main-image img').attr('src', $("#main-image").data('selectedThumb'));
+        }
+      );
+    });
+  </script>
 <% end %>

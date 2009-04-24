@@ -225,6 +225,7 @@ pl:
   destroy: Usuń
   display: Wyświetl
   edit: Edytuj
+  editing_address: "Edit Address"
   editing_category: "Edycja kategorii"
   editing_option_type: "Editing Option Type"
   editing_option_types: "Edycja typów opcji"
@@ -312,6 +313,7 @@ pl:
   my_orders: "My Orders"
   name: Name
   new: New
+  new_address: "Add New Address"
   new_category: "Nowa kategoria"
   new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
@@ -332,6 +334,7 @@ pl:
   new_variant: "Nowy wariant"
   new_zone: "Nowa Strefa"
   next: Następne
+  nickname: Nickname
   no_items_in_cart: "Koszyk jest pusty"
   no_match_found: "No Match Found"
   no_user_found: "No user was found with that email address"
@@ -410,6 +413,7 @@ pl:
   sales_totals: "Sales Totals"
   sales_totals_description: "Sales Total For All Orders"
   save_preferences: Save Preferences           
+  saved_address: "Use Saved Address"
   search: Szukaj
   secure_connection_type: Secure Connection Type
   select: Wybierz

@@ -1,0 +1,14 @@
+<h1>Addresses</h1>
+<p><%= link_to t('new_address'), new_user_address_url %></p>
+
+<% if !@addresses.empty? -%>
+<% @addresses.each do |address| -%>
+<% if address.active == 1 -%>
+<b><%= address.nickname %></b><br />
+<%= render :partial => 'shared/address_display', :locals => { :address => address } %><br />
+<%= link_to t('destroy'), object_url(address), :method => :delete %> | <%= link_to t('edit'), edit_object_url(address) %><br /><br />
+<% end -%>
+<% end -%>
+<% else -%>
+<p>You have no addresses</p>
+<% end -%>

@@ -101,3 +101,7 @@ to be done.
 [4]: http://code.google.com/p/globalite/wiki/PluralizationSupport
 
 **UPDATE:** Take a look at [i18n page on Spree wiki](http://support.spreehq.org/wiki/1/I18n)
+
+Refer to [spree: ruby on rails ecommerce][1] to learn more about spree.
+
+[1]: http://spreecommerce.com/

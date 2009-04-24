@@ -6,6 +6,11 @@
 .dotest
 .loadpath
 .project
+public/dispatch.cgi
+public/dispatch.fcgi
+public/dispatch.rb
+httpd
+pgsql
 config/*-public.asc
 config/database.yml
 config/mongrel_cluster.yml
@@ -33,21 +38,26 @@ spree_dev
 spree_test
 tmp
 vendor/rails
-vendor/extensions/sitemaps
-vendor/extensions/extend_taxons
-vendor/extensions/product_lightbox
-public/javascripts/jquery
+vendor/extensions
+public/images/reviews_ratings.png
+public/javascripts/jquery.lightbox.js
+public/javascripts/jquery.product_reviews_ratings.*
+public/javascripts/jquery.tablesorter.min.js
+public/stylesheets/product_reviews_ratings.*
 public/images/lightbox
 public/stylesheets/lightbox.css
 vendor/extensions/google_base
 public/stylesheets/google_base.css
 public/google_base.xml
 public/template_google_base.xml
+<<<<<<< HEAD:.gitignore
 vendor/extensions/css_themes
 httpd
 pgsql
 public/stylesheets/product_reviews_ratings.*
 vendor/extensions/product_reviews_ratings/
+=======
+>>>>>>> a54e2ec8b35b521758134987b32f02063c867cf7:.gitignore
 coverage/*
 var
 TAGS
