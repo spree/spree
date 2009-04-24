@@ -100,4 +100,4 @@ to be done.
 [3]: http://code.google.com/p/globalite/wiki/UI_Localization
 [4]: http://code.google.com/p/globalite/wiki/PluralizationSupport
 
-**UPDATE:** Take a look at [i18n page on Spree wiki](http://support.spreehq.org/wiki/1/I18n)
+**UPDATE:** Take a look at [i18n page on Spree wiki](http://support.spreecommerce.com/wiki/1/I18n)
