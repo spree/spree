@@ -198,17 +198,33 @@ ul#nav-bar
       :right 0em
       :padding 5px 
       :width 150px
-      :-moz-border-radius-bottomright 3px
-      :-webkit-border-bottom-right-radius 3px
-      :-moz-border-radius-bottomleft 3px
-      :-webkit-border-bottom-left-radius 3px
-      :background #1b1b1b
-      :color #fff
+      :min-height 60px
+      :background #fff url(/images/shadow_top.png) 0px -35px repeat-x
+      :background-color rgba(255,255,255,.25)
+      :border-top 1px solid #fff
       span
         :display block
     &.last
       :margin-right 0
-
+    &:hover
+      :border-color #1b1b1b
+      a.info
+        :background #1b1b1b url(/images/bottom_shine.png) bottom left repeat-x
+        :background-color rgba(0,0,0,.9)
+        :color #fff
+ul#product-thumbnails
+  :margin 0
+  :padding 0
+  :list-style none
+  li
+    :float left
+    :margin-right 5px
+    :padding 3px
+    :border 1px solid #fff
+    &:hover
+      :border-color #ccc
+    &.selected
+      :border-color #999
 
 // Product details
 #product-variants
@@ -402,8 +418,8 @@ a.button,input.button
     :background-image url(/images/buttons/bg-button-hover.png) !important
     //:outline solid 2px #cdf
   &.large
-    :font-size 1.7em !important
-    :line-height 1.9em
+    :font-size 1.4em !important
+    :line-height 1.4em
     :-moz-border-radius 5px
     :-webkit-border-radius 5px
   &.small
