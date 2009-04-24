@@ -48,14 +48,18 @@ module ActiveRecord
           belongs_to :parent, :class_name => name, :foreign_key => configuration[:foreign_key], :counter_cache => configuration[:counter_cache]
           has_many :children, :class_name => name, :foreign_key => configuration[:foreign_key], :order => configuration[:order], :dependent => :destroy
 
+          after_destroy { |node| node.reorder_and_save(node.siblings) }
+          before_create { |node| node.position ||= node.parent.children.length }
+          after_create  { |node| node.reorder_and_save(node.self_and_siblings) }
+
           class_eval <<-EOV
             include ActiveRecord::Acts::AdjacencyList::InstanceMethods
 
-	        def self.ordered
+	    def self.ordered
 	          #{configuration[:order].nil? ? "nil" : %Q{"#{configuration[:order]}"}}
             end
 
-	        def self.ordered?
+	    def self.ordered?
 	          #{configuration[:order].nil? ? false : true}
             end
 
@@ -148,19 +152,10 @@ module ActiveRecord
           end
         end
 
-#        def insert
-#          if self.class.ordered
-#            self.position ||= -1
-#            reorder_and_save(siblings.insert(self.position, self))
-#          else
-#            save
-#          end
-#          self
-#        end
-
         ## this function is for inserting a new node into the tree
         def insert_at(parent = nil, position = -1)
           self.parent_id = parent.nil? ? nil : parent.id
+          position = parent.children.length if parent && position == -1
           self.position = position
           self.save
 
@@ -172,7 +167,9 @@ module ActiveRecord
         def move_to(parent = nil, position = -1)
           orig_parent = self.parent
           insert_at(parent, position)
-          reorder_and_save(orig_parent.children) unless orig_parent.nil?
+          reorder_and_save(orig_parent.children) unless 
+            orig_parent.nil? || orig_parent == parent
+          self
         end
 
         def decrement_position(count = 1)
@@ -215,17 +212,12 @@ module ActiveRecord
           raise "Please implement merge_match? in your class"
         end    
 
-        private
-
         def reorder_and_save(nodes)
 #          puts "reorder_and_save start"
           nodes.compact!
-          new_position = 0
-
-          nodes.each do |node|
-            node.position = new_position
+          nodes.each_with_index do |node, i|
+            node.position = i
             node.save!
-            new_position += 1
 #            puts "reorder_and_save id: #{node.id}, position: #{node.position}"
           end
         end
