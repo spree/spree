@@ -44,6 +44,10 @@ public/stylesheets/google_base.css
 public/google_base.xml
 public/template_google_base.xml
 vendor/extensions/css_themes
+httpd
+pgsql
+public/stylesheets/product_reviews_ratings.*
+vendor/extensions/product_reviews_ratings/
 coverage/*
 var
 TAGS
