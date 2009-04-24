@@ -39,7 +39,7 @@ spree.YUI = {
 				onComplete: function(transport, element) {
 						if (transport){
 							//got response from server
-							var new_taxon = transport.responseText.evalJSON();
+							var new_taxon = transport.responseText.evalJSON().taxon;
 				 			var tree = spree.YUI.current_tree;
 									
 							//destory inplace creator
