@@ -50,14 +50,6 @@ vendor/extensions/google_base
 public/stylesheets/google_base.css
 public/google_base.xml
 public/template_google_base.xml
-<<<<<<< HEAD:.gitignore
-vendor/extensions/css_themes
-httpd
-pgsql
-public/stylesheets/product_reviews_ratings.*
-vendor/extensions/product_reviews_ratings/
-=======
->>>>>>> a54e2ec8b35b521758134987b32f02063c867cf7:.gitignore
 coverage/*
 var
 TAGS
