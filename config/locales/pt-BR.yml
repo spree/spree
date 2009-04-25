@@ -4,7 +4,7 @@ pt-BR:
   abbreviation: Abreviação
   access_denied: "Acesso Negado"
   account: Conta
-  account_updated: "Account updated!"        
+  account_updated: "Conta Atualizada!"        
   action: Ação
   actions: 
     cancel: Cancelar
@@ -127,8 +127,8 @@ pt-BR:
         one: Papél
         other: Papéis
       shipping_category: 
-        one: "Shipping Category"
-        other: "Shipping Categories"
+        one: "Categoria de Entrega"
+        other: "Categorias de Entrega"
       state: 
         one: Estado
         other: Estados
@@ -164,7 +164,7 @@ pt-BR:
   allow_backorders: "Permitir Devoluções"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir uso de SSL quando no modo de desenvolvimento e teste
   allow_ssl_to_be_used_when_in_production_mode: Permitir uso de SSL quando em modo de produção
-  already_registered: Already Registered?
+  already_registered: Já Registrado?
   amount: Valor
   are_you_sure: "Tem certeza?"
   are_you_sure_category: "Tem certeza que quer apagar esta categoria?"
@@ -197,7 +197,7 @@ pt-BR:
   city: Cidade
   comp_order: "Computar Pedido"
   comp_order_confirmation: "O cliente não será cobrado. Tem certeza que quer computar este pedido?"
-  complete_list: "Complete List"
+  complete_list: "Lista Completa"
   configuration: Configuração
   configuration_options: "Opções de Configuração"
   configurations: Configurações
@@ -210,7 +210,7 @@ pt-BR:
   country_based: "Baseado em País"
   create: Criar
   create_a_new_account: "Crie uma nova conta"
-  create_user_account: Create User Account
+  create_user_account: Criar Conta do Usuário
   created_successfully: "Criado com sucesso"
   credit_card: "Cartão de Crédito"
   credit_card_capture_complete: "Cartão de Crédito foi Capturado"
@@ -231,8 +231,8 @@ pt-BR:
   editing_product: "Editando Produto"
   editing_property: "Editando Propriedade"
   editing_prototype: "Editando Protótipo"
-  editing_shipping_category: "Editing Shipping Category"
-  editing_shipping_method: "Editing Shipping Method"
+  editing_shipping_category: "Editando Categoria de Entrega"
+  editing_shipping_method: "Editando Método de Entrega"
   editing_state: "Editando Estado"
   editing_tax_category: "Editando Categoria de Taxa"
   editing_user: "Editando Usuário"
@@ -253,7 +253,7 @@ pt-BR:
   filename: "Nome do arquivo"
   final_confirmation: "Confirmação Final"
   first_name: "Primeiro Nome"
-  forgot_password: "Forgot Password"
+  forgot_password: "Esqueceu a senha"
   gateway: Gateway
   gateway_error: "Erro de Gateway"
   gateway_setting_description: "Selecionar um gateway de pagamento e ajustar suas configurações."
@@ -266,11 +266,11 @@ pt-BR:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "Nova Conta Google Analytics"
   google_analytics_setting_description: "Gerencie ID do Google Analytics" 
-  guest_user_account: Checkout as a Guest
+  guest_user_account: Finalizar como um Convidado
   height: Largura
   hello_user: "Olá Usuário"
   history: História
-  home: "Home"
+  home: "Página Inicial"
   image: Imagem
   images: Imagens
   in_progress: "Em progresso"
@@ -293,20 +293,20 @@ pt-BR:
   locale_changed: "Localização Modificada"
   log_in: Entre
   logged_in_as: "Logado como"
-  logged_in_succesfully: "Logged in successfully"
-  logged_out: "You have been logged out." 
-  login_failed: "Login authentication failed."      
+  logged_in_succesfully: "Logado com sucesso."
+  logged_out: "Você foi desconectado." 
+  login_failed: "Autenticação de Login Falhou."      
   login_name: Login
   logout: Sair
   mail_delivery_enabled: "Envio de Email está habilitado"
   mail_delivery_not_enabled: "Envio de Email não está habilitado"
   mail_server_preferences: Preferências de Servidor de Email
   mail_server_settings: "Configuração do Servidor de Email"
-  mark_shipped: "Mark Shipped"
+  mark_shipped: "Marcado como Enviado"
   master_price: "Preço Principal"
-  meta_description: "Meta Description"
-  meta_keywords: "Meta Keywords"
-  metadata: "Metadata"
+  meta_description: "Meta Descrição"
+  meta_keywords: "Meta Palavras-Chave"
+  metadata: "Metadados"
   month: "Mês"
   my_account: "Minha Conta"
   my_orders: "Meus Pedidos"
@@ -322,8 +322,8 @@ pt-BR:
   new_property: "Nova Propriedade"
   new_prototype: "Novo Protótipo"
   new_shipment: "Novo Envio"
-  new_shipping_category: "New Shipping Category"
-  new_shipping_method: "New Shipping Method"
+  new_shipping_category: "Nova Categoria de Entrega"
+  new_shipping_method: "Novo Método de Entrega"
   new_state: "Novo Estado"
   new_tax_category: "Nova Categoria de Imposto"
   new_tax_rate: "Nova Taxa de Imposto"
@@ -334,7 +334,7 @@ pt-BR:
   next: Próximo
   no_items_in_cart: "Nr. de itens no carrinho"
   no_match_found: "Nada encontrado"
-  no_user_found: "No user was found with that email address"
+  no_user_found: "Nenhum usuário encontrado com esse endereço de email"
   none: Nenhum
   none_available: "Nenhum Disponível"
   on_hand: "Na Mão"
@@ -361,15 +361,15 @@ pt-BR:
   paid: Pago
   parent_category: "Categoria Pai"
   password: Senha
-  password_reset_instructions: "Password Reset Instructions"
-  password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
-  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."    
-  password_updated: "Password successfully updated"  
+  password_reset_instructions: "Instruções de Reinício da Senha"
+  password_reset_instructions_are_mailed: "As Instruções para reiniciar sua senha foram enviadas por email para você. Por favor cheque seu email."
+  password_reset_token_not_found: "Sentimos muito, mas não conseguimos localizar sua conta. Se estiver tendo problemas tente copiar e colar a URL do seu email para o navegador ou refaça o processo de reiniciar sua senha."    
+  password_updated: "Senha atualizada com sucesso"  
   path: Caminho
   pay: pagar
   payment: Pagamento
   payment_gateway: "Gateway de Pagamento"
-  payment_information: "Payment Information"
+  payment_information: "Informação de Pagamento"
   payments: Pagamentos
   phone: Telefone
   place_order: Coloque o Pedido
@@ -379,7 +379,7 @@ pt-BR:
   problem_authorizing_card: "Problema na autorização do cartão"
   problem_capturing_card: "Problema capturando cartão de crédito"
   problems_processing_order: "Tivemos problemas processando este pedido"
-  proceed_as_guest: "No Thanks, Proceed as Guest"
+  proceed_as_guest: "Não, obrigado. Prosseguir como Convidado"
   process: Processar
   product: Produto
   product_details: "Detalhes do Produto"
@@ -387,18 +387,18 @@ pt-BR:
   products: Produtos
   properties: Propriedades
   property: Propriedade
-  prototype: Prototype
+  prototype: Protótipo
   prototypes: Protótipos
   qty: Qtde.
   rate: Taxa
-  register: Register as a New User
-  register_or_guest: Checkout as Guest or Register
-  registration: Registration           
+  register: Registrar como um Novo Usuário
+  register_or_guest: Finalizar como Convidado ou Registrar
+  registration: Registro
   remember_me: "Lembre-se de mim"
   remove: Remover
   reports: Relatórios
   resend: Reenviar
-  reset_password: "Reset my password"
+  reset_password: "Reiniciar minha senha"
   response_code: "Código de Resposta"
   resume: "continuar"
   resumed: Continuado
@@ -414,7 +414,7 @@ pt-BR:
   secure_connection_type: Tipo de Conexão Segura
   select: Selecionar
   select_from_prototype: "Selecionar a partir de Protótipo"
-  select_preferred_shipping_option: "Select preferred shipping option"
+  select_preferred_shipping_option: "Selecionar opção de entrega preferida"
   send_copy_of_all_mails_to: Enviar Cópia de Todos os Emails Para
   send_copy_of_orders_mails_to: Enviar Cópia de Emails de Pedidos Para
   send_mails_as: Enviar Emails como
@@ -422,28 +422,28 @@ pt-BR:
   ship: entregar
   ship_address: "Endereço da Entrega"
   shipment: Entrega
-  shipment_number: "Shipment #"
-  shipped: Entrgue
+  shipment_number: "Nr. de Entrega"
+  shipped: Entregue
   shipping: Entregando
   shipping_address: "Endereço de Entrega"
-  shipping_calculator: Calculator
-  shipping_categories: "Shipping Categories"
-  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
-  shipping_cost: Cost
+  shipping_calculator: Calculadora
+  shipping_categories: "Categorias de Entrega"
+  shipping_categories_description: "Gerencia categorias de entrega para identificar quais produtos podem ser enviados por qual método"
+  shipping_cost: Custo
   shipping_error: "Erro de Entrega"
-  shipping_method: Method
-  shipping_methods: "Shipping Methods"
-  shipping_methods_description: "Manage shipping methods"
+  shipping_method: Método
+  shipping_methods: "Métodos de Entrega"
+  shipping_methods_description: "Gerenciar Métodos de Entrega"
   shipping_total: "Total de Entrega"
-  shop_by_taxonomy: "Shop by {{taxonomy}}"
+  shop_by_taxonomy: "Comprar por {{taxonomy}}"
   shopping_cart: "Carrinho de Compra"
   show_deleted: "Mostrar Apagados"
   show_incomplete_orders: "Mostrar Pedidos Incompletos"
   show_only_complete_orders: "Apenas mostre pedidos completos"
   show_out_of_stock_products: "Mostre produtos sem estoque"
   sign_up: Cadastrar
-  site_name: "Site Name"
-  site_url: "Site URL"
+  site_name: "Nome do Site"
+  site_url: "URL do Site"
   sku: SKU
   smtp: SMTP
   smtp_authentication_type: Tipo de Autenticação SMTP
@@ -491,7 +491,7 @@ pt-BR:
   unable_to_capture_credit_card: "Não foi possível Capturar o Cartão de Crédito"
   unable_to_save_order: "Não foi Possível gravar Pedido"
   update: Atualizar
-  update_password: "Update my password and log me in"                    
+  update_password: "Atualizar minha senha e fazer meu login"
   updated_successfully: "Atualizado com Sucesso"
   use_as_shipping_address: Use como Endereço de Entrega
   use_billing_address: Use como Endereço de Cobrança
