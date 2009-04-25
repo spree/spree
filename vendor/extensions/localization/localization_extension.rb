@@ -4,7 +4,7 @@
 class LocalizationExtension < Spree::Extension
   version "0.1.1"
   description "Localization support for Spree"
-  url "http://support.spreehq.org/wiki/1/I18n"
+  url "http://support.spreecommerce.com/wiki/1/I18n"
 
   def activate
     ApplicationController.class_eval do

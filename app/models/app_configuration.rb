@@ -4,7 +4,7 @@ class AppConfiguration < Configuration
   SECURE_CONNECTION_TYPES = ['None','SSL','TLS']
 
   preference :site_name, :string, :default => 'Spree Demo Site'
-  preference :site_url, :string, :default => 'demo.spreehq.org'  
+  preference :site_url, :string, :default => 'demo.spreecommerce.com'
   preference :enable_mail_delivery, :boolean, :default => false
   preference :mail_host, :string, :default => 'localhost'
   preference :mail_domain, :string, :default => 'localhost'

@@ -25,7 +25,7 @@ namespace 'spree' do
     s.description = "Spree is a complete commerce solution designed for use by experienced Rails developers. No solution can possibly solve everyone’s needs perfectly. There are simply too many ways that people do business for us to model them all specifically. Rather then come up short (like so many projects before it), Spree’s approach is to simply accept this and not even try. Instead Spree tries to focus on solving the 90% of the problem that most commerce projects face and anticipate that the other 10% will need to be addressed by the end developer familiar with the client’s exact business requirements."
     s.author = "Sean Schofield"
     s.email = "sean.schofield@gmail.com"
-    s.homepage = 'http://spreehq.org'
+    s.homepage = 'http://spreecommerce.com/'
     s.rubyforge_project = RUBY_FORGE_PROJECT
     s.platform = Gem::Platform::RUBY
     s.bindir = 'bin'

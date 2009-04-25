@@ -12,7 +12,7 @@ production:
   adapter: sqlite3
   database: db/production.sqlite3
                                     
-# special mode for demo.spreehq.org (you probably don't need this)                                    
+# special mode for demo.spreecommerce.com (you probably don't need this)                                    
 demo:
   adapter: sqlite3
   database: db/production.sqlite3

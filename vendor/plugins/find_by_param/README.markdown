@@ -1,7 +1,7 @@
 NOTE
 ====
 
-This is a customized version of the original `find_by_param` plugin.  Its been simplified to take advantage of new Rails 2.2 functionality and I've also stripped out some stuff that I really didn't need.  We're using this customized version in the [Spree](http://spreehq.org) commerce platform.
+This is a customized version of the original `find_by_param` plugin.  Its been simplified to take advantage of new Rails 2.2 functionality and I've also stripped out some stuff that I really didn't need.  We're using this customized version in the [Spree](http://spreecommerce.com/) commerce platform.
 
 
 FindByParam
