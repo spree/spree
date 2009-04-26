@@ -17,9 +17,9 @@ de:
   
   time:
     formats:
-      default: "%A, %e. %B %Y, %H:%M Uhr"
-      short: "%e. %B, %H:%M Uhr"
-      long: "%A, %e. %B %Y, %H:%M Uhr"
+      default: "%A, %d. %B %Y, %H:%M Uhr"
+      short: "%d. %B, %H:%M Uhr"
+      long: "%A, %d. %B %Y, %H:%M Uhr"
       time: "%H:%M"
 
     am: "vormittags"
@@ -60,7 +60,14 @@ de:
       over_x_years:
         one: 'mehr als 1 Jahr'
         other: 'mehr als {{count}} Jahre'
-      
+    prompts:
+      second: "Sekunden"
+      minute: "Minuten"
+      hour: "Stunden"
+      day: "Tag"
+      month: "Monat"
+      year: "Jahr"
+
   number:
     format:
       precision: 2
@@ -83,12 +90,25 @@ de:
       format:
         delimiter: ""
         precision: 1
+      storage_units:
+        # Storage units output formatting.
+        # %u is the storage unit, %n is the number (default: 2 MB)
+        format: "%n %u"
+        units:
+          byte:
+            one:   "Byte"
+            other: "Bytes"
+          kb: "KB"
+          mb: "MB"
+          gb: "GB"
+          tb: "TB"
 
   support:
     array:
-      sentence_connector: "und"
-      skip_last_comma: true
-        
+      words_connector: ", "
+      two_words_connector: " und "
+      last_word_connector: " und "
+
   activerecord:
     errors:
       template:

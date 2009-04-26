@@ -1,10 +1,8 @@
-# French translations for Ruby on Rails
+# French translations for Ruby on Rails 
 # by Christian Lescuyer (christian@flyingcoders.com)
+# contributor: Sebastien Grosjean - ZenCocoon.com
 
-
-fr-FR:
-  switch_language : "Changez de langue"
-  this_file_language : "Francais"
+fr:
   date:
     formats:
       default: "%d/%m/%Y"
@@ -18,7 +16,7 @@ fr-FR:
     month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
     abbr_month_names: [~, jan., fév., mar., avr., mai, juin, juil., août, sept., oct., nov., déc.]
     order: [ :day, :month, :year ]
-
+  
   time:
     formats:
       default: "%d %B %Y %H:%M"
@@ -27,74 +25,84 @@ fr-FR:
       long: "%A %d %B %Y %H:%M:%S %Z"
       long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
       only_second: "%S"
-      post_date_time: "le %d %B %Y à %H:%M"
-      event_date_time: "%Y-%m-%d  %H:%M:%S"
     am: 'am'
     pm: 'pm'
-    text: "il y a {{time}}"
 
   datetime:
     distance_in_words:
       half_a_minute: "une demi-minute"
       less_than_x_seconds:
-        zero: "moins d'une seconde"
-        one: "moins de 1 seconde"
-        other: "moins de {{count}} secondes"
+        zero:  "moins d'une seconde"
+        one:   "moins de 1 seconde"
+        other: "moins de {{count}} secondes"
       x_seconds:
-        one: "1 seconde"
-        other: "{{count}} secondes"
+        one:   "1 seconde"
+        other: "{{count}} secondes"
       less_than_x_minutes:
-        zero: "moins d'une minute"
-        one: "moins de 1 minute"
-        other: "moins de {{count}} minutes"
+        zero:  "moins d'une minute"
+        one:   "moins de 1 minute"
+        other: "moins de {{count}} minutes"
       x_minutes:
-        one: "1 minute"
-        other: "{{count}} minutes"
+        one:   "1 minute"
+        other: "{{count}} minutes"
       about_x_hours:
-        one: "environ une heure"
-        other: "environ {{count}} heures"
+        one:   "environ une heure"
+        other: "environ {{count}} heures"
       x_days:
-        one: "1 jour"
-        other: "{{count}} jours"
+        one:   "1 jour"
+        other: "{{count}} jours"
       about_x_months:
-        one: "environ un mois"
-        other: "environ {{count}} mois"
+        one:   "environ un mois"
+        other: "environ {{count}} mois"
       x_months:
-        one: "1 mois"
-        other: "{{count}} mois"
+        one:   "1 mois"
+        other: "{{count}} mois"
       about_x_years:
-        one: "environ un an"
-        other: "environ {{count}} ans"
-      x_years:
-        one: "un an"
-        other: "{{count}} ans"
+        one:   "environ un an"
+        other: "environ {{count}} ans"
       over_x_years:
-        one: "plus d'un an"
-        other: "plus de {{count}} ans"
-
+        one:   "plus d'un an"
+        other: "plus de {{count}} ans"
+    prompts:
+      year:   "Année"
+      month:  "Mois"
+      day:    "Jour"
+      hour:   "Heure"
+      minute: "Minute"
+      second: "Seconde"
+  
   number:
     format:
       precision: 3
       separator: ','
-      delimiter: ' '
+      delimiter: ' '
     currency:
       format:
-        unit: 'EUR'
+        unit: '€'
         precision: 2
-        format: '%n %u'
+        format: '%n %u'
     human:
+      format:
+        precision: 2
       storage_units: [ Octet, ko, Mo, Go, To ]
-
-
+  
+  support:
+    array:
+      sentence_connector: 'et'
+      skip_last_comma: true
+      words_connector: ", "
+      two_words_connector: " et "
+      last_word_connector: " et "
+  
   activerecord:
     errors:
       template:
-        header:
+        header: 
           one: "Impossible d'enregistrer {{model}}: 1 erreur"
           other: "Impossible d'enregistrer {{model}}: {{count}} erreurs."
-        body: "Veuillez vérifier les champs suivants :"
+        body: "Veuillez vérifier les champs suivants :"
       messages:
-        inclusion: "n'est pas compris(e) dans la liste"
+        inclusion: "n'est pas inclus(e) dans la liste"
         exclusion: "n'est pas disponible"
         invalid: "n'est pas valide"
         confirmation: "ne concorde pas avec la confirmation"

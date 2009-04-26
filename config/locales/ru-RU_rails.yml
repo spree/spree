@@ -1,154 +1,200 @@
-ru-RU:
+# Russian localization for Ruby on Rails 2.2+
+# by Yaroslav Markin <yaroslav@markin.net>
+#
+# Be sure to check out "russian" gem (http://github.com/yaroslav/russian) for
+# full Russian language support in Rails (month names, pluralization, etc). 
+# The following is an excerpt from that gem.
+#
+# Для полноценной поддержки русского языка (варианты названий месяцев, 
+# плюрализация и так далее) в Rails 2.2 нужно использовать gem "russian" 
+# (http://github.com/yaroslav/russian). Следующие данные -- выдержка их него, чтобы
+# была возможность минимальной локализации приложения на русский язык.
+
+ru:
+  date:
+    formats:
+      default: "%d.%m.%Y"
+      short: "%d %b"
+      long: "%d %B %Y"
+
+    day_names: [воскресенье, понедельник, вторник, среда, четверг, пятница, суббота]
+    standalone_day_names: [Воскресенье, Понедельник, Вторник, Среда, Четверг, Пятница, Суббота]
+    abbr_day_names: [Вс, Пн, Вт, Ср, Чт, Пт, Сб]
+
+    month_names: [~, января, февраля, марта, апреля, мая, июня, июля, августа, сентября, октября, ноября, декабря]
+    # see russian gem for info on "standalone" day names
+    standalone_month_names: [~, Январь, Февраль, Март, Апрель, Май, Июнь, Июль, Август, Сентябрь, Октябрь, Ноябрь, Декабрь]
+    abbr_month_names: [~, янв., февр., марта, апр., мая, июня, июля, авг., сент., окт., нояб., дек.]
+    standalone_abbr_month_names: [~, янв., февр., март, апр., май, июнь, июль, авг., сент., окт., нояб., дек.]
+
+    order: [ :day, :month, :year ]
+
+  time:
+    formats:
+      default: "%a, %d %b %Y, %H:%M:%S %z"
+      short: "%d %b, %H:%M"
+      long: "%d %B %Y, %H:%M"
+
+    am: "утра"
+    pm: "вечера"
+
   number:
-    # Used in number_with_delimiter()
-    # These are also the defaults for 'currency', 'percentage', 'precision', and 'human'
     format:
-      # Sets the separator between the units, for more precision (e.g. 1.0 / 2.0 == 0.5)
       separator: "."
-      # Delimets thousands (e.g. 1,000,000 is a million) (always in groups of three)
-      delimiter: ","
-      # Number of decimals, behind the separator (the number 1 with a precision of 2 gives: 1.00)
+      delimiter: " "
       precision: 3
       
-    # Used in number_to_currency()
     currency:
       format:
-        # Where is the currency sign? %u is the currency unit, %n the number (default: $5.00)
-        format: "%u%n"
-        unit: "$"
-        # These three are to override number.format and are optional
+        format: "%n %u"
+        unit: "руб."
         separator: "."
-        delimiter: ","
+        delimiter: " "
         precision: 2
         
-    # Used in number_to_percentage()
     percentage:
       format:
-        # These three are to override number.format and are optional
-        # separator: 
         delimiter: ""
-        # precision: 
         
-    # Used in number_to_precision()
     precision:
       format:
-        # These three are to override number.format and are optional
-        # separator:
         delimiter: ""
-        # precision:
         
-    # Used in number_to_human_size()
     human:
       format:
-        # These three are to override number.format and are optional
-        # separator: 
         delimiter: ""
         precision: 1
-      storage_units: [Bytes, KB, MB, GB, TB]
+      # Rails 2.2
+      # storage_units: [байт, КБ, МБ, ГБ, ТБ]
 
-  # Used in distance_of_time_in_words(), distance_of_time_in_words_to_now(), time_ago_in_words()
+      # Rails 2.3
+      storage_units:
+        # Storage units output formatting.
+        # %u is the storage unit, %n is the number (default: 2 MB)
+        format: "%n %u"
+        units:
+          byte:
+            one:   "байт"
+            few:   "байта"
+            many:  "байт"
+            other: "байта"
+          kb: "КБ"
+          mb: "МБ"
+          gb: "ГБ"
+          tb: "ТБ"
+
   datetime:
     distance_in_words:
-      half_a_minute: "half a minute"
+      half_a_minute: "меньше минуты"
       less_than_x_seconds:
-        one:   "less than 1 second"
-        other: "less than {{count}} seconds"
+        one:   "меньше {{count}} секунды"
+        few:   "меньше {{count}} секунд"
+        many:  "меньше {{count}} секунд"
+        other: "меньше {{count}} секунды"
       x_seconds:
-        one:   "1 second"
-        other: "{{count}} seconds"
+        one:   "{{count}} секунда"
+        few:   "{{count}} секунды"
+        many:  "{{count}} секунд"
+        other: "{{count}} секунды"
       less_than_x_minutes:
-        one:   "less than a minute"
-        other: "less than {{count}} minutes"
+        one:   "меньше {{count}} минуты"
+        few:   "меньше {{count}} минут"
+        many:  "меньше {{count}} минут"
+        other: "меньше {{count}} минуты"
       x_minutes:
-        one:   "1 minute"
-        other: "{{count}} minutes"
+        one:   "{{count}} минуту"
+        few:   "{{count}} минуты"
+        many:  "{{count}} минут"
+        other: "{{count}} минуты"
       about_x_hours:
-        one:   "about 1 hour"
-        other: "about {{count}} hours"
+        one:   "около {{count}} часа"
+        few:   "около {{count}} часов"
+        many:  "около {{count}} часов"
+        other: "около {{count}} часа"
       x_days:
-        one:   "1 day"
-        other: "{{count}} days"
+        one:   "{{count}} день"
+        few:   "{{count}} дня"
+        many:  "{{count}} дней"
+        other: "{{count}} дня"
       about_x_months:
-        one:   "about 1 month"
-        other: "about {{count}} months"
+        one:   "около {{count}} месяца"
+        few:   "около {{count}} месяцев"
+        many:  "около {{count}} месяцев"
+        other: "около {{count}} месяца"
       x_months:
-        one:   "1 month"
-        other: "{{count}} months"
+        one:   "{{count}} месяц"
+        few:   "{{count}} месяца"
+        many:  "{{count}} месяцев"
+        other: "{{count}} месяца"
       about_x_years:
-        one:   "about 1 year"
-        other: "about {{count}} years"
+        one:   "около {{count}} года"
+        few:   "около {{count}} лет"
+        many:  "около {{count}} лет"
+        other: "около {{count}} лет"
       over_x_years:
-        one:   "over 1 year"
-        other: "over {{count}} years"
+        one:   "больше {{count}} года"
+        few:   "больше {{count}} лет"
+        many:  "больше {{count}} лет"
+        other: "больше {{count}} лет"
     prompts:
-      year:   "Year"
-      month:  "Month"
-      day:    "Day"
-      hour:   "Hour"
-      minute: "Minute"
-      second: "Seconds"
+      year: "Год"
+      month: "Месяц"
+      day: "День"
+      hour: "Часов"
+      minute: "Минут"
+      second: "Секунд"
 
   activerecord:
     errors:
       template:
         header:
-          one:    "1 error prohibited this {{model}} from being saved"
-          other:  "{{count}} errors prohibited this {{model}} from being saved"
-        # The variable :count is also available
-        body: "There were problems with the following fields:"
-    
-      # The values :model, :attribute and :value are always available for interpolation
-      # The value :count is available when applicable. Can be used for pluralization.
+          one:   "{{model}}: сохранение не удалось из-за {{count}} ошибки"
+          few:   "{{model}}: сохранение не удалось из-за {{count}} ошибок"
+          many:  "{{model}}: сохранение не удалось из-за {{count}} ошибок"
+          other: "{{model}}: сохранение не удалось из-за {{count}} ошибки"
+
+        body: "Проблемы возникли со следующими полями:"
+
       messages:
-        inclusion: "is not included in the list"
-        exclusion: "is reserved"
-        invalid: "is invalid"
-        confirmation: "doesn't match confirmation"
-        accepted: "must be accepted"
-        empty: "can't be empty"
-        blank: "can't be blank"
-        too_long: "is too long (maximum is {{count}} characters)"
-        too_short: "is too short (minimum is {{count}} characters)"
-        wrong_length: "is the wrong length (should be {{count}} characters)"
-        taken: "has already been taken"
-        not_a_number: "is not a number"
-        greater_than: "must be greater than {{count}}"
-        greater_than_or_equal_to: "must be greater than or equal to {{count}}"
-        equal_to: "must be equal to {{count}}"
-        less_than: "must be less than {{count}}"
-        less_than_or_equal_to: "must be less than or equal to {{count}}"
-        odd: "must be odd"
-        even: "must be even"
-    
-    date:
-      formats:
-        # Use the strftime parameters for formats.
-        # When no format has been given, it uses default.
-        # You can provide other formats here if you like!
-        default: "%Y-%m-%d"
-        short: "%b %d"
-        long: "%B %d, %Y"
+        inclusion: "имеет непредусмотренное значение"
+        exclusion: "имеет зарезервированное значение"
+        invalid: "имеет неверное значение"
+        confirmation: "не совпадает с подтверждением"
+        accepted: "нужно подтвердить"
+        empty: "не может быть пустым"
+        blank: "не может быть пустым"
+        too_long:
+          one:   "слишком большой длины (не может быть больше чем {{count}} символ)"
+          few:   "слишком большой длины (не может быть больше чем {{count}} символа)"
+          many:  "слишком большой длины (не может быть больше чем {{count}} символов)"
+          other: "слишком большой длины (не может быть больше чем {{count}} символа)"
+        too_short:
+          one:   "недостаточной длины (не может быть меньше {{count}} символа)"
+          few:   "недостаточной длины (не может быть меньше {{count}} символов)"
+          many:  "недостаточной длины (не может быть меньше {{count}} символов)"
+          other: "недостаточной длины (не может быть меньше {{count}} символа)"
+        wrong_length:
+          one:   "неверной длины (может быть длиной ровно {{count}} символ)"
+          few:   "неверной длины (может быть длиной ровно {{count}} символа)"
+          many:  "неверной длины (может быть длиной ровно {{count}} символов)"
+          other: "неверной длины (может быть длиной ровно {{count}} символа)"
+        taken: "уже существует"
+        not_a_number: "не является числом"
+        greater_than: "может иметь значение большее {{count}}"
+        greater_than_or_equal_to: "может иметь значение большее или равное {{count}}"
+        equal_to: "может иметь лишь значение, равное {{count}}"
+        less_than: "может иметь значение меньшее чем {{count}}"
+        less_than_or_equal_to: "может иметь значение меньшее или равное {{count}}"
+        odd: "может иметь лишь четное значение"
+        even: "может иметь лишь нечетное значение"
 
-      day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
-      abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
-
-      # Don't forget the nil at the beginning; there's no such thing as a 0th month
-      month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
-      abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
-      # Used in date_select and datime_select.
-      order: [ :year, :month, :day ]
-
-    time:
-      formats:
-        default: "%a, %d %b %Y %H:%M:%S %z"
-        short: "%d %b %H:%M"
-        long: "%B %d, %Y %H:%M"
-      am: "am"
-      pm: "pm"
-
-    # Used in array.to_sentence.
-    support:
-      array:
-        words_connector: ", "
-        two_words_connector: " and "
-        last_word_connector: ", and "
+  support:
+    array:
+      # Rails 2.2
+      sentence_connector: "и"
+      skip_last_comma: true
+      
+      # Rails 2.3
+      words_connector: ", "
+      two_words_connector: " и "
+      last_word_connector: " и "
