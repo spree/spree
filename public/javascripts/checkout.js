@@ -335,8 +335,7 @@ var ajax_login = function() {
       };
     },
     error: function (XMLHttpRequest, textStatus, errorThrown) {
-      // TODO - put some real error handling in here
-      $("#ajax_error").html(XMLHttpRequest.responseText);           
+      registration_error("Unable to perform login due to a server error.");
     }
   });  	
 };
@@ -366,8 +365,7 @@ var ajax_register = function() {
       };
     },
     error: function (XMLHttpRequest, textStatus, errorThrown) {
-      // TODO - put some real error handling in here
-      $("#ajax_error").html(XMLHttpRequest.responseText);           
+      registration_error("Unable to register due to a server error.");    
     }
   });  	
 };
