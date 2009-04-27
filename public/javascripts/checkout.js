@@ -317,7 +317,7 @@ var submit_registration = function() {
 
 var ajax_login = function() {
   $.ajax({
-	async: false,
+    async: false,
     type: "POST",
     url: '/user_session',                                 
     beforeSend : function (xhr) {
@@ -342,7 +342,7 @@ var ajax_login = function() {
 
 var ajax_register = function() {
   $.ajax({
-		async: false,
+    async: false,
     type: "POST",
     url: '/users',                                 
     beforeSend : function (xhr) {
