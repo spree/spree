@@ -1,3 +1,37 @@
+== 0.8.0
+
+* # 273 -	Improve usefulness of prototypes
+* # 292 -	Allow the ability to import roles based permission yaml files from extensions
+* # 299 -	Translation to dutch (belgium)
+* # 304 -	Password reset functionality
+* # 313 -	Line items association extension causes issues with AJAX version of cart
+* # 318 -	Rails 2.3.2 Support
+* # 321 -	Broken spec for admin/variants/edit, and form doesn't show option settings
+* # 322 -	Move searchlogic and all unreleased gems into vendor/gems
+* # 328 -	Bug when adding taxonomies
+* # 329 -	Move shipping out of extension and into main core
+* # 331 -	New Spree apps should be created with a default site extension
+* # 333 -	Switch to authlogic gem to handle authentication
+* # 334 -	Meta data keywords and description fields for products
+* # 337 -	Add user login field which is not restricted to be the user email address
+* # 338 -	Guest Checkout
+* # 339 -	Empty cart should not actually destroy the entire order
+* # 340 -	Token access to restrict viewing of incomplete orders
+* # 341 -	Add email address to order model
+* # 345 -	Refactor address model and relationships
+* # 346 -	Remove defunct viewable_id field from products table
+* # 347 -	Dump active_presenter in favor of nested_attributes
+* # 348 -	Upgrade task should automatically update permissions
+* # 349 -	Upgrade task should update routes.rb 
+* # 352 -	Make checkout process more extensible
+* # 357 -	multiple shipments being created for 1 item in checkout
+* # 362 -	Rake doesn't use UTC time
+* # 365 -	Ajax failing on product pages
+* # 366 -	Echoe gem dependency is not installed
+* # 367 -	pagination is missing when you browse products through the taxonomy
+* # 369 -	Upgrade task should automatically update boot.rb
+* # 386 -	Currency problem in order confirmation page
+
 == 0.7.1
 
 * # 298 - rake spree:i18n:sync fails on yml files with empty lines
