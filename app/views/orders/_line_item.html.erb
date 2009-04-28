@@ -7,15 +7,14 @@
     <h4><%= link_to variant.product.name,  product_path(variant.product) %></h4>
     <%= variant_options variant %>
     <%= truncate(variant.product.description, :length => 100, :omission => "...") %>
-
   </td>
   <td>
-		<%= product_price(line_item) %>
-	</td>
+    <%= product_price(line_item) %>
+  </td>
   <td>
-		<%= f.text_field :quantity, :size => 3 %>
-	</td>
+    <%= f.text_field :quantity, :size => 3 %>
+  </td>
   <td>
-		<%= format_price(product_price(line_item, :format_as_currency => false) * line_item.quantity) unless line_item.quantity.nil? %>
-	</td>
+    <%= format_price(product_price(line_item, :format_as_currency => false) * line_item.quantity) unless line_item.quantity.nil? %>
+  </td>
 </tr>

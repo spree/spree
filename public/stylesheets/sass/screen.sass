@@ -296,7 +296,11 @@ ul#product-thumbnails
 .fieldWithErrors
   :clear none
 
-div#checkout, div#edit_address
+div#checkout
+  div.inner
+    :display none
+  div#already_logged_in
+    :display none
   select.error, input.error
     :padding 0px
     :background #FFF
@@ -327,20 +331,6 @@ div#checkout, div#edit_address
       :border none
       :padding 0px
       :background #FFF
-          
-
-div#edit_address
-  label
-    :float left
-  label#nickname
-    :width 200px
-    :font-size 10px
-    :top 0px
-    :font-style italic
-  input, select
-    :border 1px solid #EAE8E3
-
-div#checkout
   #registration
     :background transparent url(/images/steps/1.png) top right no-repeat
     &.completed,&.disabled
@@ -383,6 +373,15 @@ div#checkout
       h2
         :background transparent url(/images/steps/6_small.png) top left no-repeat
         :padding-left 32px
+    table.order-summary
+      .price, .qty
+        :width 165px
+      .total_display
+        :width 300px
+        span
+          :display block
+          :text-align right
+          :padding-right 150px
   .checkout
     &.disabled, &.completed
       h2
@@ -441,12 +440,6 @@ div#checkout
   div#methods p label
     :margin 0px 0px 10px 5px
     :top -2px
-
-form#checkout_form
-  div.inner
-    :display none
-  div#already_logged_in
-    :display none
 
 .form-buttons
   :clear both

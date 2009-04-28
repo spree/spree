@@ -249,7 +249,7 @@ var submit_shipping_method = function() {
       dataType: "json",
       data: $('#checkout_form').serialize(),
       success: function(json) {  
-        update_confirmation(json.order); 
+        update_confirmation(json);
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
         // TODO - put some real error handling in here

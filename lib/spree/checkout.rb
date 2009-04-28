@@ -56,9 +56,9 @@ module Spree::Checkout
           order_params[:order_token] = @order.token unless @order.user
           redirect_to order_url(@order, order_params)
         end
-        format.js {render :json => { :order => {:order_total => @order.total, 
-                                                :ship_amount => @order.ship_amount, 
-                                                :tax_amount => @order.tax_amount},
+        format.js {render :json => { :order_total => number_to_currency(@order.total), 
+                                     :ship_amount => number_to_currency(@order.ship_amount), 
+                                     :tax_amount => number_to_currency(@order.tax_amount),
                                      :available_methods => rate_hash}.to_json,
                           :layout => false}
       end
@@ -70,5 +70,4 @@ module Spree::Checkout
     @checkout_steps = %w{registration billing shipping shipping_method payment confirmation}
     @checkout_steps.delete "registration" if current_user
   end  
-  
 end
