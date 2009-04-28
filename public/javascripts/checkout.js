@@ -327,9 +327,9 @@ var ajax_login = function() {
     data: $('#checkout_form').serialize(),
     success: function(result) {  
       if (result) {
-	    $('div#already_logged_in').show();
-		$('div#register_or_guest').hide();
-        // todo update login partial
+        $('div#already_logged_in').show();
+        $('div#register_or_guest').hide();
+        update_login();
       } else {
         registration_error("Invalid username or password.");
       };
@@ -352,9 +352,9 @@ var ajax_register = function() {
     data: $('#checkout_form').serialize(),
     success: function(result) {  
       if (result == true) {
-				$('div#already_logged_in').show();
-				$('div#register_or_guest').hide();
-        // todo update login partial
+        $('div#already_logged_in').show();
+        $('div#register_or_guest').hide();
+        update_login();
       } else {                                         
         var error_msg = "Unable to register user";              
         for (var i=0; i < result.length; i++) {
@@ -381,4 +381,21 @@ var submit_payment = function() {
 var submit_confirmation = function() {  
   //$('form').submit();
   $('#post-final').click();
+};
+
+// update login partial
+var update_login = function() {
+  $.ajax({
+    url: '/user_session/login_bar',                                 
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');
+    },      
+    dataType: "html",
+    success: function(result) {
+	 		$("div#login-bar").html(result);  
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      // TODO (maybe do nothing)
+    }
+  });  	
 };

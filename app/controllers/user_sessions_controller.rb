@@ -31,4 +31,8 @@ class UserSessionsController < Spree::BaseController
     flash[:notice] = t("logged_out")
     redirect_to products_path
   end
+  
+  def login_bar
+    render :partial => "shared/login_bar"
+  end
 end
