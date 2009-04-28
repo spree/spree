@@ -295,6 +295,7 @@ es:
   logged_in_as: "Identificado como"
   logged_in_succesfully: "Conectado con éxito"
   logged_out: "Se ha cerrado la sesión." 
+  login_as_existing: "Log In as Existing Customer" 
   login_failed: "No se ha podido iniciar la sesion, error de autenticacion."      
   login_name: "Nombre de usuario"
   logout: "Cerrar sesión"

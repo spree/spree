@@ -295,6 +295,7 @@ ru-RU:
   logged_in_as: "Пользователь"
   logged_in_succesfully: "Logged in successfully"
   logged_out: "You have been logged out." 
+  login_as_existing: "Log In as Existing Customer" 
   login_failed: "Login authentication failed."      
   login_name: Логин
   logout: Выйти

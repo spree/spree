@@ -295,6 +295,7 @@ pt-PT:
   logged_in_as: "Registado como"
   logged_in_succesfully: "Logged in successfully"
   logged_out: "You have been logged out." 
+  login_as_existing: "Log In as Existing Customer" 
   login_failed: "Login authentication failed."      
   login_name: "Nome de Login"
   logout: Sair

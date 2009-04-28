@@ -295,6 +295,7 @@ it:
   logged_in_as: "Loggato con"
   logged_in_succesfully: "Logged in successfully"
   logged_out: "You have been logged out." 
+  login_as_existing: "Log In as Existing Customer" 
   login_failed: "Login authentication failed."      
   login_name: Utente
   logout: Logout

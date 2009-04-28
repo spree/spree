@@ -295,6 +295,7 @@ pt-BR:
   logged_in_as: "Logado como"
   logged_in_succesfully: "Logado com sucesso."
   logged_out: "Você foi desconectado." 
+  login_as_existing: "Log In as Existing Customer" 
   login_failed: "Autenticação de Login Falhou."      
   login_name: Login
   logout: Sair

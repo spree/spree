@@ -295,8 +295,8 @@ en-US:
   logged_in_as: "Logged in as"
   logged_in_succesfully: "Logged in successfully"
   logged_out: "You have been logged out." 
-  login_failed: "Login authentication failed."    
   login_as_existing: "Log In as Existing Customer" 
+  login_failed: "Login authentication failed."    
   login_name: Login
   logout: Logout  
   mail_delivery_enabled: "Mail delivery is enabled"
