@@ -164,7 +164,7 @@ var shift_to_region = function(active) {
     } else {
       $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
       $('div#' + regions[i] + ' div.inner').hide('fast');
-      $('div#' + regions[i]).addClass('checkout_disabled');
+      $('div#' + regions[i]).addClass('checkout_disabled').addClass('disabled');
     }
   }                                                                         
   if (active == 'confirmation') {
