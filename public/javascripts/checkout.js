@@ -153,7 +153,7 @@ var shift_to_region = function(active) {
       if(active == regions[i]) {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
         $('div#' + regions[i] + ' div.inner').show('fast');
-        $('div#' + regions[i]).removeClass('checkout_disabled').removeClass('disabled');
+        $('div#' + regions[i]).removeClass('checkout_disabled').removeClass('disabled').removeClass('completed');
         found = 1;
       }
       else {
@@ -164,7 +164,7 @@ var shift_to_region = function(active) {
     } else {
       $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
       $('div#' + regions[i] + ' div.inner').hide('fast');
-      $('div#' + regions[i]).addClass('checkout_disabled').addClass('disabled');
+      $('div#' + regions[i]).addClass('checkout_disabled').addClass('disabled').removeClass('completed');
     }
   }                                                                         
   if (active == 'confirmation') {
@@ -283,7 +283,7 @@ var update_shipping_methods = function(methods) {
     var l = $(document.createElement('label'))
                 .attr('for', s)
                 .html(s)
-                .css('top', '-1px')
+                .css('top', '-4px')
                 .css('width', '300px');
     $('div#methods').append($(p).append(i).append(l));
   });

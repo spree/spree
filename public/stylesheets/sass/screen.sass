@@ -299,8 +299,9 @@ ul#product-thumbnails
 div#checkout
   div.inner
     :display none
-  div#already_logged_in
-    :display none
+    :padding 10px 2px
+  h2
+    :margin-bottom 0.25em
   select.error, input.error
     :padding 0px
     :background #FFF
@@ -331,21 +332,48 @@ div#checkout
       :border none
       :padding 0px
       :background #FFF
+  label.radio
+    :display inline
   #registration
     :background transparent url(/images/steps/1.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/1_small.png) top left no-repeat
-        :padding-left 32px
+    div#registration_choice
+      :float left
+      :block none
+      :margin-bottom 2em
+      input
+        :float left
+      label
+        :top -4px
+        :width auto
+        :margin 0px 0px 5px 5px
+    div#registration_input
+      :float left
+      :margin-left 100px
+      input
+        :border 1px solid #BBB
+    div#guest_user, div#existing_user
+      :display none
+    div#registration_error
+      :width 100%
+    div#already_logged_in
+      :display none
   #billing
+    input
+      :border 1px solid #BBB
     :background transparent url(/images/steps/2.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/2_small.png) top left no-repeat
-        :padding-left 32px
   #shipping
+    label#use_billing
+      :top -3px
+    input
+      :border 1px solid #BBB
     :background transparent url(/images/steps/3.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
@@ -353,26 +381,34 @@ div#checkout
         :background transparent url(/images/steps/3_small.png) top left no-repeat
         :padding-left 32px
   #shipping_method
+    div.inner
+      :padding-top 0px
+    div#methods
+      :padding-bottom 5px
     :background transparent url(/images/steps/4.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/4_small.png) top left no-repeat
-        :padding-left 32px
+    div#methods p input
+      :float left
+    div#methods p label
+      :margin 0px 0px 5px 5px
+      :top -2px
   #payment
     :background transparent url(/images/steps/5.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/5_small.png) top left no-repeat
-        :padding-left 32px
+    p select
+      :width 75px
   #confirmation
     :background transparent url(/images/steps/6.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/6_small.png) top left no-repeat
-        :padding-left 32px
     table.order-summary
       .price, .qty
         :width 165px
@@ -382,9 +418,14 @@ div#checkout
           :display block
           :text-align right
           :padding-right 150px
+    div#bdisplay, div#sdisplay
+      :float left
+      :width 300px
+      :clear right
   .checkout
     &.disabled, &.completed
       h2
+        :padding-left 32px
         :color #AFAFAF
         :font-size 1.4em
         :padding-bottom 10px
@@ -396,19 +437,6 @@ div#checkout
       h2
         :color #111
         :border-color #999
-  label.radio
-    :display inline
-  .inner
-    :padding 10px
-  .saved_addresses
-    :display none
-    span
-      :display block
-      :margin-bottom 10px
-  input.saved_radio, label.saved_label
-    :display none
-  div#creditcard p select
-    :width 75px
   input#continue_billing, input#continue_shipping
     :cursor pointer
     :width 100px
@@ -418,28 +446,6 @@ div#checkout
   p input#continue_registration, p input#continue_shipping_method,  p input#continue_payment,  #confirm_order .inner input
     :cursor pointer
     :width 100px
-  div#bdisplay, div#sdisplay
-    :float left
-    :width 300px
-    :clear right  
-  div#registration_choice
-    :float left
-    :block none     
-    :margin-bottom 2em
-    label 
-      :width auto
-  div#registration_input
-    :float left
-    :margin-left 100px
-    div#guest_user, div#existing_user
-      :display none 
-  div#registration_error
-    :width 100%
-  div#methods p input
-    :float left
-  div#methods p label
-    :margin 0px 0px 10px 5px
-    :top -2px
 
 .form-buttons
   :clear both
