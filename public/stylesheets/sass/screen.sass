@@ -545,9 +545,14 @@ table
   :-moz-border-radius 5px
   :-webkit-border-radius 5px
   &.notice,&.errors
-    :background #cdf url(/images/shadow_top.png) 0 -50px repeat-x
-    :border 1px solid #9ac
-    :color #569
     :font-size 1.3em
     :margin-bottom 1em
     :padding 0.8em
+  &.notice
+    :background #cdf url(/images/shadow_top.png) 0 -50px repeat-x
+    :color #569
+    :border 1px solid #9ac
+  &.errors
+    :color #000
+    :background #F4B4B4 url(/images/shadow_top.png) 0 -50px repeat-x
+    :border 1px solid #000
