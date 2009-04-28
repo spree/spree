@@ -6,13 +6,7 @@
   <h2><%= t("new_customer") %></h2>
   <% form_for(@user) do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
-    <p>
-      <%= submit_tag t("create") %> 
-    </p>
+    <p><%= submit_tag t("create"), :class => 'button primary' %></p>
   <% end %>
-</div>
-
-<div id="existing-customer">
-  <h2><%= t("existing_customer") %></h2>
-  <%= render :partial => 'shared/login' %>
+  <%= t("or") %> <%= link_to t("login_as_existing"), login_path %>
 </div>

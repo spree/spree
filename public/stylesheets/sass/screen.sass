@@ -22,7 +22,6 @@
 !light_blue = #E5F2F8
 !dark_blue = #162F54
 !light_green = #92D363
-!error_text_color = #c00
 !selling_price_color = !medium_blue
 
 // Custom mixins
@@ -265,25 +264,35 @@ ul#product-thumbnails
 #subtotal
   :float right
 
-#signup #new-customer
+#signup #new-customer, #login #existing-customer
   +column(12)
-#signup #existing-customer
-  +column(12)
-
-
+  h2
+    :margin-bottom .25em
+  p
+    :margin-bottom 10px
+    input.title
+      :padding 3px
+      :margin 0px
 
 // Errors
-.formError, .errorExplanation h2
-  color = !error_text_color
+.formError, .errorExplanation
+  :font-size 1.3em
+  :margin-bottom 1em
+  :padding 0.8em
+  :-moz-border-radius 5px
+  :-webkit-border-radius 5px
+  :background #F4B4B4 url(/images/shadow_top.png) repeat-x scroll 0pt -50px
+  :border 1px solid #000
+  :color #000
+  p
+    :margin 0px
+  ul
+    :margin-bottom 0px
+  h2
+    :font-weight bold
+    :font-size 1.0em
+    :margin 0px
 
-#errorExplanation h2
-  :height 22px
-  :background-color #FF0000
-  :border none
-  :padding 5px
-  :font-size 18px
-  :margin 5px 0px
-  
 .fieldWithErrors
   :clear none
 
