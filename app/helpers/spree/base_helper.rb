@@ -18,10 +18,10 @@ module Spree::BaseHelper
     order = Order.find_or_create_by_id(session[:order_id]) unless session[:order_id].blank?
     css_class = ''
     unless order.nil?
-      line_items_count = order.line_items.size
+      item_count = order.line_items.inject(0) { |kount, line_item| kount + line_item.quantity }
       return "" if current_page?(path)
-      text = "#{text}: (#{line_items_count}) #{order_price(order)}"
-      css_class = 'full' if line_items_count > 0
+      text = "#{text}: (#{item_count}) #{order_price(order)}"
+      css_class = 'full' if item_count > 0
     end
     link_to text, path, :class => css_class
   end
