@@ -23,20 +23,17 @@ end
  %>
 <body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
   <div id="header" class="container">                                                           
-      <ul id="nav-bar">
-        <div id="login-bar">
-          <%= render 'shared/login_bar' %>
-        </div>
-        <% if store_menu? %>
-          <%= render 'shared/store_menu' %>
-        <% end %>
-      </ul>
+    <ul id="nav-bar">
+      <div id="login-bar">
+        <%= render 'shared/login_bar' %>
+      </div>
+      <% if store_menu? %>
+        <%= render 'shared/store_menu' %>
+      <% end %>
+    </ul>
     <%= link_to image_tag('/images/admin/bg/spree_50.png'), root_path %> 
-   </div>
- 
-   <div id="wrapper" class="container"> 
- 
- 
+  </div>
+  <div id="wrapper" class="container"> 
     <% if @content_for_sidebar %>
     <div id="sidebar">
       <%= yield :sidebar %>
@@ -46,13 +43,12 @@ end
     <div id="content">
       <%= breadcrumbs(@taxon) if @taxon %>
       <% if flash[:notice] %>
-        <div class="flash notice"><%= flash[:notice] %></div>
+      <div class="flash notice"><%= flash[:notice] %></div>
       <% end %>
       <% if flash[:error] %>
-     <div class="flash errors"><%= flash[:error] %></div>
+      <div class="flash errors"><%= flash[:error] %></div>
       <% end %>
       <%= yield %>
- 
     </div>
     <%= render :partial => 'shared/footer'%>    		
   </div>

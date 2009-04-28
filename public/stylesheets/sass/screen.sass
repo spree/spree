@@ -18,8 +18,10 @@
 !link_hover_color = #eee
 !lighter_text_color = #666
 !medium_blue = #2E6AB1
+!lightest_blue = #BBDAFD
 !light_blue = #E5F2F8
 !dark_blue = #162F54
+!light_green = #92D363
 !error_text_color = #c00
 !selling_price_color = !medium_blue
 
@@ -129,7 +131,7 @@ ul#language-bar
   strong
     :font-weight normal
 ul#nav-bar
-  :line-height 40px
+  :line-height 50px
   :float right
   :clear both
   :font-size 1.2em
@@ -542,10 +544,10 @@ table
 .flash
   :-moz-border-radius 5px
   :-webkit-border-radius 5px
-  &.notice
+  &.notice,&.errors
     :background #cdf url(/images/shadow_top.png) 0 -50px repeat-x
     :border 1px solid #9ac
     :color #569
     :font-size 1.3em
-  &.error
-    :color #900
+    :margin-bottom 1em
+    :padding 0.8em
