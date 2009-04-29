@@ -16,9 +16,115 @@ These guides are designed to make you immediately productive with Spree, and to 
 h3. Start Here
 
 <dl>
-<% guide('Getting Started with Spree', 'getting_started.html') do %>
-  Everything you need to know to install Spree and create your first application.
-<% end %>
+  <% guide('Getting Started with Spree', 'getting_started.html') do %>
+    Everything you need to know to install Spree and create your first application.
+  <% end %>       
+</dl>
+<dl>
+  <% guide('Server Configuration', 'server_configuration.html') do %>
+    Steps to get your Spree application up and running in a production environment.
+  <% end %>
+</dl>
+
+h3. Basic Configuration
+
+<dl>
+  <% guide('Zones', 'zones.html') do %>
+    This guide covers how to configure a zone for shipping, taxation or other custom purposes.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Taxation', 'taxation.html') do %>
+    Information on how to configure the tax calculations for your site (including Sales Tax and VAT.)
+  <% end %>
+</dl>
+<dl>
+  <% guide('Pricing', 'pricing.html') do %>
+    This guide covers how to configure pricing information for your store.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Inventory', 'inventory.html') do %>
+    Information on the powerful inventory management system used by Spree.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Payment Gateways', 'payment_gateways.html') do %>
+    This guide covers how to setup a payment gateway using ActiveMerchant or another gateway solution of your choice.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Shipping', 'shipping.html') do %>
+    Information on how to configure shiping options as well as building your own shipping calculator.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Taxonomy/Categories', 'taxonomy.html') do %>
+    This guide covers various methods for categorizing your products.
+  <% end %>
+</dl>
+          
+h3. Customization
+
+<dl>
+  <% guide('Using Extensions', 'extension_overview.html') do %>
+    This guide covers how to use the extension system to customize Spree to meet your exact needs.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Extension Tutorial', 'extension_tutorial.html') do %>
+    This tutorial covers the basic steps of creating your own custom extension.
+  <% end %>
+</dl>
+                                                                   
+h3. Digging Deeper
+
+<dl>
+  <% guide('Internationalization/Localization', 'i18n.html') do %>
+    This guide covers issues related to using Spree in different countries and locales.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Boot Modes', 'boot_modes.html') do %>
+    Information on the different modes in which you can run Spree.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Testing Spree Applications', 'testing.html') do %>
+    This guide covers how to test the Spree source code as well as how to write new tests. 
+  <% end %>
+</dl>
+<dl>
+  <% guide('Securing Spree Applications', 'security.html') do %>
+    Information on how to secure your Spree application (including roles and permisions settings.)
+  <% end %>
+</dl>
+<dl>
+  <% guide('Customizing the Checkout Process', 'checkout.html') do %>
+    This guide covers how to customize the checkout process to meet your own requirements.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Preferences', 'preferences.html') do %>
+    Information on how to administer the various preferences in Spree.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Contributing to Spree', 'contributing_to_spree.html') do %>
+    Do you enjoy Spree and want to "give something back?"  This guide contains information on how to contribute to the Spree project.  
+  <% end %>
+
+h3. Best Practices   
+
+<dl>
+  <% guide('Upgrade Considerations', 'upgrade_considerations.html') do %>
+    This guide covers how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
+  <% end %>
+</dl>
+<dl>
+  <% guide('SEO Considerations', 'seo_considerations.html') do %>
+    Information on how to leverage the exisitng SEO features of Spree as well general SEO best practices.
+  <% end %>
 </dl>
 
 <% end %>
