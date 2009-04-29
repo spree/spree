@@ -6,6 +6,24 @@ endprologue.
 
 h3. Before You Start Coding
 
-h4. Git
+If you are planning on coding a major new feature or extension, you might want to post a quick message on "spree-user":http://groups.google.com/group/spree-user before you get started. Its possible that you may get some valuable feedback from the regular contributors to the project. This feedback may help improve the overall quality of your idea as well as to increase its chances of being adopted into the core project. You can use any email address to join the list, you don't need a gmail account to subscribe.
 
-h4. Issue Tracker
+This is the suggested approach to making a contribution. Its not required that you mail the list in order to contribute. All contributions are welcome. Minor changes and bug fixes should bypass the user list and just be handled through the issue tracker (see below.)
+
+h3. Git
+
+You'll need a "GitHub":http://github.com/ account in order to contribute to the Spree project in a meaningful way. Technically you can just clone the public URL from GitHub and submit a git patch to the issue tracker, but we prefer GitHub. Eventually we might encourage git patches (as opposed to Github forks) for contributions (like they do for the Rails core) but right now the project is a manageable size.
+
+h4. Creating a GitHub Fork
+
+Create a fork in GitHub. A fork is not as extreme as it sounds. Its really just another distributed copy of the git repository where you can work on your changes. It doesn't mean you are going to be "forking the project" in the classic sense of the term. The folks at GitHub have created a quick "guide":http://github.com/guides/fork-a-project-and-submit-your-modifications which will help explain the details. Forks are key to sharing code in this project so please try to understand how they work.
+
+h4. Git Branches
+
+Git branches are "cheap." There is really isn't any cost to creating them, so use them liberally. Unless its a minor bug fix, you should work on a separate branch (even in your own fork.) This will allow you to keep your master branch "clean" and make it easier to sync your local master with the "official master" upstream. It will also make it easy for you to submit quick bug fixes that you may discover while working on your other branches. Just switch back to the master and commit a quick change.
+
+h3. Issue Tracker
+
+We are using Red Mine as an "issue tracker":http://support.spreehq.org/projects/spree/issues for tracking issues and feature requests. All changes to the core should flow through this system. Please file an issue before you commit your code and then reference the issue number in your commit. This helps the core team process your contribution because once you push your changes to your fork, we can quickly associate the commit with the relevant ticket. We also use these tickets to create release notes and to assist with upgrade documentation.
+
+Take a look at "this commit":http://github.com/schof/spree/commit/f60f61926d2a14372f0c6a10530de730f79d240b for an example of how to reference the issue number in your commit. Please use #123 (or whatever your number is) in this exact format. We're planning on integrating the git commits with the actual ticket number in the future so this will help.  It also helps us to keep track of your contribution and make sure that it gets applied.
