@@ -8,7 +8,7 @@ The guides are written in [Textile]() and there is information on the [spree-gui
 To build the entire set of guides simply run the following command
 
 <pre><code>
-  rake guides
+rake guides
 </code></pre>
             
 Output will be generated in the `output` directory.

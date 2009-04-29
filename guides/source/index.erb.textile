@@ -19,6 +19,11 @@ h3. Start Here
   <% guide('Getting Started with Spree', 'getting_started.html') do %>
     Everything you need to know to install Spree and create your first application.
   <% end %>       
+</dl>    
+<dl>
+  <% guide('Working With the Source Code', 'source_code.html') do %>
+    An introduction to working with the source code..
+  <% end %>       
 </dl>
 <dl>
   <% guide('Server Configuration', 'server_configuration.html') do %>
