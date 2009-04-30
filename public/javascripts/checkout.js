@@ -21,9 +21,16 @@ $(function() {
   $(':submit').attr('disabled', 'disbled');
       
   // hookup the radio buttons for registration
-  $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }).attr('checked', true);
+  $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }); 
   $('#choose_existing').click(function() { $('div#existing_user').show(); $('div#guest_user, div#new_user').hide(); });
-  $('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });	
+  $('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });
+  var reg_choice = $('input[name=choose_registration]:checked').val();
+  if(reg_choice) {
+    $('#choose_' + reg_choice).click(); 
+  } else {
+    $('#choose_register').attr('checked', true);
+  }
+
   // activate first region
   shift_to_region(regions[0]);  
 })
