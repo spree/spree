@@ -488,6 +488,7 @@ fr-FR:
   tree: Arborescence
   try_again: "Reessayer"
   type: Type
+  unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Impossible de récupérer votre carte de crédit"
   unable_to_save_order: "Unable to Save Order"

@@ -207,6 +207,7 @@ var build_address = function(title, region) {
 
 var submit_shipping = function() {
   $('div#methods :child').remove();
+  $('div#shipping_method div.error').hide();
   $('div#methods').append($(document.createElement('img')).attr('src', '/images/ajax_loader.gif').attr('id', 'shipping_loader'));
   // Save what we have so far and get the list of shipping methods via AJAX
   $.ajax({
@@ -214,15 +215,15 @@ var submit_shipping = function() {
     url: 'checkout',                                 
     beforeSend : function (xhr) {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
-    },      
+    },
     dataType: "json",
     data: $('#checkout_form').serialize(),
     success: function(json) {  
       update_shipping_methods(json.available_methods); 
     },
     error: function (XMLHttpRequest, textStatus, errorThrown) {
-      // TODO - put some real error handling in here
-      $("#error").html(XMLHttpRequest.responseText); 
+      $('div#methods :child').remove();
+      $('div#shipping_method div.error').show();
       return false;
     }
   });  

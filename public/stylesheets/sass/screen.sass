@@ -297,6 +297,12 @@ ul#product-thumbnails
   :clear none
 
 div#checkout
+  div#registration div.error, div#shipping_method div.error
+    :width 815px
+    :-moz-border-radius 5px
+    :-webkit-border-radius 5px
+  div#billing input, div#shipping input, div#payment input, div#registration_input input
+    :border 1px solid #BBB
   div.inner
     :display none
     :padding 10px 2px
@@ -353,17 +359,11 @@ div#checkout
     div#registration_input
       :float left
       :margin-left 100px
-      input
-        :border 1px solid #BBB
     div#guest_user, div#existing_user
       :display none
-    div#registration_error
-      :width 100%
     div#already_logged_in
       :display none
   #billing
-    input
-      :border 1px solid #BBB
     :background transparent url(/images/steps/2.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
@@ -372,8 +372,6 @@ div#checkout
   #shipping
     label#use_billing
       :top -3px
-    input
-      :border 1px solid #BBB
     :background transparent url(/images/steps/3.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
@@ -395,6 +393,8 @@ div#checkout
     div#methods p label
       :margin 0px 0px 5px 5px
       :top -2px
+    div.error
+      :display none
   #payment
     :background transparent url(/images/steps/5.png) top right no-repeat
     &.completed,&.disabled
