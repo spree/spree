@@ -91,7 +91,8 @@ h1
     :margin 0
     a
       :cursor pointer!important
-      +unstyled-link
+      :text-decoration none
+      :color #333
       :display block
       :line-height 2.5em
       :padding-left 20px
@@ -194,17 +195,14 @@ ul#nav-bar
       :display block
       :text-decoration none
       :color #111
-      :position absolute
-      :margin-left 20px
-      
     a.info
+      :position absolute
       :bottom 0px
       :right 0em
       :padding 5px 
       :width 150px
       :min-height 60px
       :background #fff url(/images/shadow_top.png) 0px -35px repeat-x
-      :background-color rgba(255,255,255,.25)
       :border-top 1px solid #fff
       span
         :display block
@@ -214,7 +212,6 @@ ul#nav-bar
       :border-color #1b1b1b
       a.info
         :background #1b1b1b url(/images/bottom_shine.png) bottom left repeat-x
-        :background-color rgba(0,0,0,.9)
         :color #fff
 ul#product-thumbnails
   :margin 0
