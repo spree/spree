@@ -20,8 +20,8 @@ module Admin::BaseHelper
     image_tag("/images/admin/icons/#{icon_name}.png")
   end
   
-  def button(text, icon = nil)
-    content_tag('button', content_tag('span', text))
+  def button(text, icon = nil, button_type = 'submit')
+    content_tag('button', content_tag('span', text), :type => button_type)
   end
 
   def button_link_to(text, url, html_options = {})
