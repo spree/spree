@@ -320,7 +320,7 @@ var submit_registration = function() {
 	ajax_register();
   }
 		
-  return ($('div#registration_error:hidden').size() == 1);  
+  return ($('div#registration_error').html() == "");  
 };
 
 var ajax_login = function() {
