@@ -290,9 +290,7 @@ var update_shipping_methods = function(methods) {
     }
     var l = $(document.createElement('label'))
                 .attr('for', s)
-                .html(s)
-                .css('top', '-4px')
-                .css('width', '300px');
+                .html(s);
     $('div#methods').append($(p).append(i).append(l));
   });
   $('div#methods input:first').attr('validate', 'required:true');
@@ -320,7 +318,7 @@ var submit_registration = function() {
 	ajax_register();
   }
 		
-  return ($('div#registration_error:hidden').size() == 1);  
+  return ($('div#registration_error').html() == "");  
 };
 
 var ajax_login = function() {

@@ -240,7 +240,8 @@ ul#product-thumbnails
   +colborder
 #cart-form
   +column(7,"last")
-
+  button.large
+    :margin-bottom 0px
   
 // Prices
 .prices
@@ -337,6 +338,17 @@ div#checkout
       :background #FFF
   label.radio
     :display inline
+  div#methods p, div#registration_choice p
+    :margin-bottom 7px 
+    input, label
+      :display inline
+      :float none
+    label
+      :margin 0px 0px 0px 5px 
+      :top -1px
+      :width 300px
+    input
+      :width 15px
   #registration
     :background transparent url(/images/steps/1.png) top right no-repeat
     &.completed,&.disabled
@@ -346,13 +358,7 @@ div#checkout
     div#registration_choice
       :float left
       :block none
-      :margin-bottom 2em
-      input
-        :float left
-      label
-        :top -4px
-        :width auto
-        :margin 0px 0px 5px 5px
+      :margin-bottom 1em
     div#registration_input
       :float left
       :margin-left 100px
@@ -369,6 +375,9 @@ div#checkout
   #shipping
     label#use_billing
       :top -3px
+    input#checkout_same_address
+      :border none
+      :width 12px
     :background transparent url(/images/steps/3.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
@@ -378,18 +387,11 @@ div#checkout
   #shipping_method
     div.inner
       :padding-top 0px
-    div#methods
-      :padding-bottom 5px
     :background transparent url(/images/steps/4.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/4_small.png) top left no-repeat
-    div#methods p input
-      :float left
-    div#methods p label
-      :margin 0px 0px 5px 5px
-      :top -2px
     div.error
       :display none
   #payment
