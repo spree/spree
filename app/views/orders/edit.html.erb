@@ -2,13 +2,15 @@
 
 <h1><%= t("shopping_cart")%></h1>
 
-<% form_for(:order, :url => object_url, :html => { :method => :put}) do |f| %>
+<% form_for(:order, :url => object_url, :html => { :method => :put, :id => 'updatecart' }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
   <% unless @order.line_items.empty? -%>
   <div id="subtotal">
     <h3><%= "#{t("subtotal")}: #{order_price(@order)}" %></h3>
-    <%= content_tag :button, image_tag('/images/update.png') + t('update'), :class => 'update', :type => 'submit' %>
-    <%= link_to image_tag('/images/checkout.png') + t("checkout"), checkout_order_url(@order), :class => 'button checkout primary' %>
+    <div class="links">
+      <%= link_to image_tag('/images/update.png') + t("update"), edit_order_url(@order), :class => 'button checkout primary', :onclick => "$('form#updatecart').submit();" %>
+      <%= link_to image_tag('/images/checkout.png') + t("checkout"), checkout_order_url(@order), :class => 'button checkout primary' %>
+    </div>
   </div>
   <% end -%>
   <p><%=link_to t("continue_shopping"), products_path, :class => 'button continue' %></p>
