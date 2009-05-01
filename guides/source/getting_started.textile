@@ -110,7 +110,7 @@ And if you’re using PostgreSQL for data storage, run this command:
 $ spree mystore -d postgresql
 </shell>
 
-TIP. You can see all of the switches that the Spree application builder accepts by running <tt>spree -h</tt>.
+INFO. You can see all of the switches that the Spree application builder accepts by running <tt>spree -h</tt>.
 
 After you create the store application, switch to its folder to continue work directly in that application:
 
