@@ -8,7 +8,7 @@
 
 	<div id="subtotal">
 		<h3><%= "#{t("subtotal")}: #{order_price(@order)}" %></h3>
-	  <%= content_tag :button, image_tag('/images/update.png') + t('update'), :class => 'update' %>
+                <%= content_tag :button, image_tag('/images/update.png') + t('update'), :class => 'update', :type => 'submit' %>
 	  <%= link_to image_tag('/images/checkout.png') + t("checkout"), checkout_order_url(@order), :class => 'button checkout primary' %>
 	</div>
 

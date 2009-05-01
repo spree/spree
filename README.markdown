@@ -67,39 +67,4 @@ Browse Admin Interface
 
 http://localhost:xxxx/admin
 
-Deploying
-=========
-
-Deploy spree as a normal rails application. If you use apache+cgi/fastcgi take a look at the example .htaccess located in 
-
-    public/.htaccess.example
-
-i18n/l10n Support
-=================
-
-**Basic** localization and internationalization **support** is now
-added using the [Globalite Plugin][1] from Matt Aimonetti. 
-
-Working features:
-
-- Rails Localization
-- UI Localization
-
-In the near future:
-
-- Content Localization
-
-Please read [this][2], [this][3] and [this][4] to understand how the
-plugin works.
-
-Please, please, please ask Sean how you can help, lot of work is still
-to be done.
-
-[1]: http://www.railsontherun.com/globalite
-[2]: http://code.google.com/p/globalite/wiki/RailsLocalization
-[3]: http://code.google.com/p/globalite/wiki/UI_Localization
-[4]: http://code.google.com/p/globalite/wiki/PluralizationSupport
-
-**UPDATE:** Take a look at [i18n page on Spree wiki](http://support.spreecommerce.com/wiki/1/I18n)
-
-Refer to [spree: ruby on rails ecommerce][1] to learn more about spree.
+Refer to the [Spree ecommerce project page](http://spreecommerce.com) to learn more about spree.
