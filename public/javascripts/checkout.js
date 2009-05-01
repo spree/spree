@@ -142,6 +142,7 @@ var continue_section = function(section) {
 };
 
 var validate_section = function(region) {
+  if(region == 'shipping_method') { return true; }
   var validator = $('form#checkout_form').validate();
   var valid = true;
   $('div#' + region + ' input:visible, div#' + region + ' select:visible, div#' + region + ' textarea:visible').each(function() {
