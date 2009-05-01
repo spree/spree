@@ -290,9 +290,7 @@ var update_shipping_methods = function(methods) {
     }
     var l = $(document.createElement('label'))
                 .attr('for', s)
-                .html(s)
-                .css('top', '-4px')
-                .css('width', '300px');
+                .html(s);
     $('div#methods').append($(p).append(i).append(l));
   });
   $('div#methods input:first').attr('validate', 'required:true');
