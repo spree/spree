@@ -1,3 +1,88 @@
 h2. Checkout Process
 
+The checkout page is designed as a series of self-contained units which can be run in any order and individually over-ridden with a customized style. 
+You can also easily modify the actual processing performed for a checkout.
+
 endprologue.
+
+h3. Overview
+
+TODO later
+
+h3. The +lib/spree/checkout.rb+ file
+
+Aspects of the checkout which developers may want to change for client 
+projects have been isolated in the file +lib/spree/checkout.rb+.
+At present, this contains two items: a checkout method and the order of 
+sections in the checkout page. This code is included into the orders 
+controller; putting it in this separate module avoids messy monkey patching
+in extension initializer code.
+
+To over-ride this file, an alternative version should be placed in one
+of your project's extensions, typically your main 'site' extension. 
+Remember that it should go in +lib/spree+ in the extension. 
+
+
+h4. Specifying an order
+
+The method +load_checkout_steps+ sets the instance variable +@checkout_steps+
+with a list of sections to run. The method is typically run at the start of
+the checkout method (which is itself run at entry to the checkout process
+and at each point when a major section of the form has been completed).
+
+NOTE. once the checkout process has begun, you should probably avoid changing
+the list that is set.
+
+You can also omit sections from the checkout process, though this may require
+modifications to the checkout method to compensate for missing information.
+Observe that the registration step is omitted by default if a user is 
+already logged in.
+
+
+h4. Changing the processing
+
+Possible changes to processing include collecting more information or 
+leaving some out. The following is an overview of the default method.
+This method is called several times during the checkout process: first
+at entry (to set up defaults), then after each major step - the last of
+which triggers the final processing. The effect is to capture the full
+set of order information incrementally.
+
+# the first 5 lines loads incoming data (in +params+) into instance variables -
+  and note that the nested attributes feature is used to pull in nested data,
+  e.g. to set the address(es) associated with the order;
+# the next few lines establish default values for objects not yet set by 
+  the incoming data;
+# for calls which arise from (possibly intermediate) form posts, we next
+  set up 'derived' information for the order which isn't immediately given
+  on the form - including order totals
+# if the resulting order is not valid, then an error is flagged (note that
+  some client-side verification is done, so this occurrence should be rare)
+# incomplete (non-final) orders are saved, to retain the information so far
+# otherwise, final orders are sent for payment authorization and then the
+  order is completed
+# gateway exceptions during this last step are caught and reported 
+
+
+h3. Over-riding a section
+
+Changing the appearance of a section is straightforward: just copy the 
+relevant partial to +app/views/orders+ in one of your extensions, and edit. 
+
+h4. Conventions and requirements in the Html
+
+Be careful to retain the +div#inner+ wrapper and the name of the continue 
+button, since both are used in the section transition mechanism.  
+
+Compulsory fields are marked by +class='required'+. The JavaScript will check
+that all such fields are non-empty.
+
+
+h3. Inserting a new section
+
+If collecting new information that does not fit in an existing section, 
+you will need to create a partial that follows the style of existing partials
+and add the name of your section to the list in +load_checkout_steps+. 
+(this list is used to build the checkout page, so you don't need to 
+mention your partial elsewhere)
+
