@@ -4,6 +4,10 @@ class ContentController < Spree::BaseController
   def show
     render :action => params[:path].join('/')
   end
+  
+  def cvv
+    render "cvv", :layout => false
+  end  
 
   protected
   def render_404(exception)
