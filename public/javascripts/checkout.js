@@ -291,7 +291,7 @@ var update_shipping_methods = function(methods) {
       i.attr('checked', 'checked');
     }
     var l = $(document.createElement('label'))
-                .attr('for', s)
+                .attr('for', this.id)
                 .html(s);
     $('div#methods').append($(p).append(i).append(l));
   });
