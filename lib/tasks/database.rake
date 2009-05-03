@@ -24,6 +24,7 @@ namespace :db do
   namespace :admin do                       
     desc "Create admin username and password"
     task :create => :environment do
+      require 'authlogic'     
       Spree::Setup.create_admin_user      
     end
   end     
@@ -31,6 +32,7 @@ namespace :db do
   desc "Bootstrap your database for Spree."
   task :bootstrap  => :environment do
     require 'highline/import'       
+    require 'authlogic'     
 
     raise "Cannot bootstrap in production mode (for saftey reasons.)" unless %w[demo development test].include? RAILS_ENV    
     if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
