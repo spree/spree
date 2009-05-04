@@ -37,7 +37,7 @@
   &nbsp;
   <%=
     if @product.has_stock? || Spree::Config[:allow_backorders]
-      "<button class='large primary'>#{image_tag('/images/add-to-cart.png')} #{t('add_to_cart')}</button"
+      "<button type='submit' class='large primary'>#{image_tag('/images/add-to-cart.png')} #{t('add_to_cart')}</button"
     else
       content_tag('strong', t('out_of_stock'))
     end

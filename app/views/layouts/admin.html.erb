@@ -13,6 +13,9 @@
   <%= yield :head %>
 </head>
 <body class='yui-skin-sam admin'>
+<!--[if IE 7]>
+<div id='IE7'>
+<![endif]-->
 <div id='wrapper'>
 
   <div id="header">
@@ -70,7 +73,9 @@
     </div>
 
 </div>
-
+<!--[if IE]>
+</div>
+<![endif]-->
 
 </body>
 </html>

@@ -488,6 +488,7 @@ nb-NO:
   tree: Tre
   try_again: "Forsøk på nytt"
   type: Type
+  unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "Kunne ikke autorisere kredittkortet"
   unable_to_capture_credit_card: "Kunne ikke lagre kortopplysningene"
   unable_to_save_order: "Kunne ikke lagre ordren"

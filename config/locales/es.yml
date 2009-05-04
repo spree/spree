@@ -488,6 +488,7 @@ es:
   tree: Arbol
   try_again: "Volver a intentar"
   type: Tipo
+  unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "No se ha podido autorizar la tarjeta de credito"
   unable_to_capture_credit_card: "No se ha podido capturar la tarjeta de credito"
   unable_to_save_order: "No se ha podido guardar el pedido"

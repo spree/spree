@@ -21,16 +21,14 @@
   <% end %>
 <hr />
 
-<% if @order.user %>
-  <table class="index">
-    <tr>
-      <th><%= t("email") %></th>
-    </tr>
-    <tr>
-      <td><%= @order.user.email if @order.user %></td>
-    </tr>
-  </table>
-<% end %>
+<table class="index">
+  <tr>
+    <th><%= t("email") %></th>
+  </tr>
+  <tr>
+    <td><%= @order.email %></td>
+  </tr>
+</table>
 
 <h4><%= t('history') %></h4>
 

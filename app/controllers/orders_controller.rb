@@ -54,7 +54,7 @@ class OrdersController < Spree::BaseController
   include Spree::Checkout
   
   def can_access?
-    order = load_object    
+    return true unless order = load_object    
     session[:order_token] ||= params[:order_token]
     order.grant_access?(session[:order_token])
   end

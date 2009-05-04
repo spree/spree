@@ -21,9 +21,16 @@ $(function() {
   $(':submit').attr('disabled', 'disbled');
       
   // hookup the radio buttons for registration
-  $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }).attr('checked', true);
+  $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }); 
   $('#choose_existing').click(function() { $('div#existing_user').show(); $('div#guest_user, div#new_user').hide(); });
-  $('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });	
+  $('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });
+  var reg_choice = $('input[name=choose_registration]:checked').val();
+  if(reg_choice) {
+    $('#choose_' + reg_choice).click(); 
+  } else {
+    $('#choose_register').attr('checked', true);
+  }
+
   // activate first region
   shift_to_region(regions[0]);  
 })
@@ -135,6 +142,7 @@ var continue_section = function(section) {
 };
 
 var validate_section = function(region) {
+  if(region == 'shipping_method') { return true; }
   var validator = $('form#checkout_form').validate();
   var valid = true;
   $('div#' + region + ' input:visible, div#' + region + ' select:visible, div#' + region + ' textarea:visible').each(function() {
@@ -181,12 +189,12 @@ var shift_to_region = function(active) {
 };
 
 var submit_billing = function() {
-  build_address('Billing Address', 'b');
+  build_address('b');
   return true;
 };
 
-var build_address = function(title, region) {
-  var address = '<h3>' + title + '</h3>';
+var build_address = function(region) {
+  var address = "";
   address += $('p#' + region + 'fname input').val() + ' ' + $('p#' + region + 'lname input').val() + '<br />';
   address += $('p#' + region + 'address input').val() + '<br />';
   if($('p#' + region + 'address2').val() != '') {
@@ -201,12 +209,13 @@ var build_address = function(title, region) {
   address += ' ' + $('p#' + region + 'zip input').val() + '<br />';
   address += $('p#' + region + 'country :selected').html() + '<br />';
   address += $('p#' + region + 'phone input').val();
-  $('div#' + region + 'display').html(address);
+  $('div#' + region + 'display div').html(address);
   return;
 };
 
 var submit_shipping = function() {
   $('div#methods :child').remove();
+  $('div#shipping_method div.error').hide();
   $('div#methods').append($(document.createElement('img')).attr('src', '/images/ajax_loader.gif').attr('id', 'shipping_loader'));
   // Save what we have so far and get the list of shipping methods via AJAX
   $.ajax({
@@ -214,19 +223,19 @@ var submit_shipping = function() {
     url: 'checkout',                                 
     beforeSend : function (xhr) {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
-    },      
+    },
     dataType: "json",
     data: $('#checkout_form').serialize(),
     success: function(json) {  
       update_shipping_methods(json.available_methods); 
     },
     error: function (XMLHttpRequest, textStatus, errorThrown) {
-      // TODO - put some real error handling in here
-      $("#error").html(XMLHttpRequest.responseText); 
+      $('div#methods :child').remove();
+      $('div#shipping_method div.error').show();
       return false;
     }
   });  
-  build_address('Shipping Address', 's');
+  build_address('s');
   return true;
 };
                      
@@ -282,9 +291,7 @@ var update_shipping_methods = function(methods) {
     }
     var l = $(document.createElement('label'))
                 .attr('for', s)
-                .html(s)
-                .css('top', '-4px')
-                .css('width', '300px');
+                .html(s);
     $('div#methods').append($(p).append(i).append(l));
   });
   $('div#methods input:first').attr('validate', 'required:true');
@@ -312,7 +319,7 @@ var submit_registration = function() {
 	ajax_register();
   }
 		
-  return ($('div#registration_error:hidden').size() == 1);  
+  return ($('div#registration_error').html() == "");  
 };
 
 var ajax_login = function() {

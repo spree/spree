@@ -488,6 +488,7 @@ nl-BE:
   tree: Structuur
   try_again: "Probeer Opnieuw"
   type: Type
+  unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "Autorisatie van de Kredietkaart mislukt"
   unable_to_capture_credit_card: "Aanrekening via Kredietkaart mislukt"
   unable_to_save_order: "Bestelling opslaan is mislukt"
