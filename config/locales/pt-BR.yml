@@ -187,6 +187,7 @@ pt-BR:
   capture: capturar
   card_code: "Código do Cartão"
   card_number: "Número do Cartão"
+  card_type_is: Card type is
   cart: Carrinho
   categories: Categorias
   category: Categoria
@@ -242,6 +243,7 @@ pt-BR:
   email_server_settings_description: "Ajustar as configurações do servidor de email."
   empty_cart: "Esvaziar Carrinho"
   enable_mail_delivery: Habilitar Entrega de Email
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: erro
   event: Evento
   existing_customer: "Cliente Existente"
@@ -279,6 +281,7 @@ pt-BR:
   inventory_adjustment: "Ajuste de Inventário"
   inventory_setting_description: "Configuração de Inventário, Devoluções, Mostrador de Estoque Zero"
   inventory_settings: "Configurações de Inventário"
+  issue_number: Issue Number
   item: Item
   item_description: "Descrição de Item"
   item_total: "Total de Item"
@@ -299,6 +302,7 @@ pt-BR:
   login_failed: "Autenticação de Login Falhou."      
   login_name: Login
   logout: Sair
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Envio de Email está habilitado"
   mail_delivery_not_enabled: "Envio de Email não está habilitado"
   mail_server_preferences: Preferências de Servidor de Email
@@ -398,6 +402,7 @@ pt-BR:
   remember_me: "Lembre-se de mim"
   remove: Remover
   reports: Relatórios
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: Reenviar
   reset_password: "Reiniciar minha senha"
   response_code: "Código de Resposta"
@@ -457,6 +462,7 @@ pt-BR:
     date: Data
     time: Horário                                               
   start: Início
+  start_date: Valid from
   state: Estado
   state_based: "Baseado no Estado"
   state_setting_description: "Administrar a lista de estados/províncias associados a cada país."
@@ -492,6 +498,7 @@ pt-BR:
   unable_to_authorize_credit_card: "Não foi possível Autorizar o Cartão de Crédito"
   unable_to_capture_credit_card: "Não foi possível Capturar o Cartão de Crédito"
   unable_to_save_order: "Não foi Possível gravar Pedido"
+  unrecognized_card_type: Unrecognized card type
   update: Atualizar
   update_password: "Atualizar minha senha e fazer meu login"
   updated_successfully: "Atualizado com Sucesso"

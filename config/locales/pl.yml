@@ -187,6 +187,7 @@ pl:
   capture: przechwyć
   card_code: "Kod Karty"
   card_number: "Numer Karty"
+  card_type_is: Card type is
   cart: Koszyk
   categories: Kategorie
   category: Kategoria
@@ -242,6 +243,7 @@ pl:
   email_server_settings_description: "Skonfiguruj ustawienia serwera pocztowego."
   empty_cart: "Opróżnij koszyk"
   enable_mail_delivery: Enable Mail Delivery      
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: błąd
   event: Event
   existing_customer: "Existing Customer"
@@ -279,6 +281,7 @@ pl:
   inventory_adjustment: "Dostosowanie zapasów"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
   inventory_settings: "Inventory Settings"
+  issue_number: Issue Number
   item: Pozycja
   item_description: "Opis pozycji"
   item_total: "Liczba pozycji"
@@ -299,6 +302,7 @@ pl:
   login_failed: "Login authentication failed."      
   login_name: Login
   logout: Wyloguj
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled:
   mail_delivery_not_enabled:
   mail_server_preferences: Mail Server Preferences
@@ -398,6 +402,7 @@ pl:
   remember_me: "Zapamiętaj mnie"
   remove: Remove
   reports: Raporty
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: "Przeslij ponownie"
   reset_password: "Reset my password"
   response_code: "Response Code"
@@ -457,6 +462,7 @@ pl:
     date: Data
     time: Czas                                               
   start: Start
+  start_date: Valid from
   state: Stan
   state_based: "State Based"
   state_setting_description: "Zarządzaj listą stanów/prowincji powiązanych z każdym z krajów."
@@ -492,6 +498,7 @@ pl:
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
+  unrecognized_card_type: Unrecognized card type
   update: Aktualizuj
   update_password: "Update my password and log me in"                    
   updated_successfully:

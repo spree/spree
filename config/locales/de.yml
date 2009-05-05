@@ -187,6 +187,7 @@ de:
   capture: capture
   card_code: "Kartenprüfnummer"
   card_number: "Kartennummer"
+  card_type_is: Card type is
   cart: Warenkorb
   categories: Kategorien
   category: Kategorie
@@ -242,6 +243,7 @@ de:
   email_server_settings_description: "Mailserver-Einstellungen ändern"
   empty_cart: "Warenkorb leeren"
   enable_mail_delivery: Enable Mail Delivery      
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: Fehler
   event: Ereignis
   existing_customer: "Vorhandener Kunde"
@@ -279,6 +281,7 @@ de:
   inventory_adjustment: "Lager Anpassung"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
   inventory_settings: "Lager Einstellungen"
+  issue_number: Issue Number
   item: Artikel
   item_description: Artikelbeschreibung
   item_total: "Artikel Gesamt"
@@ -299,6 +302,7 @@ de:
   login_failed: "Login authentication failed."      
   login_name: Benutzer
   logout: Abmelden
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mailversand aktiviert"
   mail_delivery_not_enabled: "Mailversand deaktiviert"
   mail_server_preferences: Mail Server Preferences
@@ -398,6 +402,7 @@ de:
   remember_me: "Details auf diesem Computer speichern"
   remove: Entfernen
   reports: Berichte
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: "Neu versenden"
   reset_password: "Reset my password"
   response_code: Rückgabewert
@@ -457,6 +462,7 @@ de:
     date: Datum
     time: Zeit                                               
   start: Von
+  start_date: Valid from
   state: Bundesland
   state_based: "Basierend auf Bundesland"
   state_setting_description: ""
@@ -492,6 +498,7 @@ de:
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
+  unrecognized_card_type: Unrecognized card type
   update: Speichern
   update_password: "Update my password and log me in"                    
   updated_successfully: "Erfolgreich aktualisiert"
