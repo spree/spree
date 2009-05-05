@@ -1,3 +1,94 @@
 h2. Internationalization (i18n)
 
+This guide covers how Spree uses Rails' internationalization features, and how you can leverage and extend these features in your Spree contributions and extensions. After reading it, you should be familiar with:
+
+* How Spree is internationalized
+* How to add translations
+* Internationalizing extensions
+* Disabling internationalization
+
 endprologue.
+
+h3. How Spree is internationalized
+
+Spree uses the standard Rails approach to internationalization so we suggest taking at look at the "rails-i18n.org wiki":http://rails-i18n.org/wiki to get started.
+
+h4. Locating Translations
+
+Each language is stored in one or more yaml files located in *config/locales*. Each yaml file contains one top level key which is the language code for the translations contained within that file:
+
+<shell>en-US: 
+  abbreviation: Abbreviation
+  access_denied: "Access Denied"
+  account: Account
+  account_updated: "Account updated!"
+</shell>
+
+Within Spree, each language is maintained in two separate files:
+
+h5. Spree Specific Translations
+
+These files are normally named after the language code, ie: *en-US.yaml* or *de.yaml* and contain translations specific to Spree.
+
+h5. Rails Generic Translations
+
+These are usually named with the language code followed by *_rails*, ie: *en-US_rails.yaml* or *de_rails.yaml* and these contain generic Rails internationalization options like currency, dates / times, ActiveRecord validation error messages, etc.
+
+These translations are kindly maintained by Sven Fuchs in his GitHub project "rails-i18n":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale .
+
+h4. Translating Views
+
+When reviewing the source of any view in Spree you'll notice that all text is rendered by passing a string to a helper method similar to:
+
+<shell><%= t('price') %></shell>
+
+The *t()* helper method looks up the currently configured locale and retrieves the translated value from the relevant locale yaml file.
+
+<shell>>> I18n.locale = :"en-US"
+=> :"en-US"
+>> I18n.t('price')
+=> "Price"
+>> I18n.locale = :de
+=> :de
+>> I18n.t('price')
+=> "Preis"
+</shell>
+
+
+h4. Setting the Default Locale
+
+The default locale for Spree is en-US. This can be changed by editing the :default_locale setting in the AppConfiguration model. In the future we hope to add a localization settings page that will allow you to set the default locale from the admin screen [#35].
+
+h3. Adding translations
+
+Spree has two rake tasks that help ease the pain of adding translations:
+
+h4. Adding a new string to all translations
+
+If you're working on a patch for Spree it's vital that you ensure any interface text is present in all translation yaml files and that you use the helper methods to display the relevant translation on all views (or helper methods). to add a new string to all translations you must first add it to the default en-US.yaml file, they run the following rake task to copy it out into the rest of the translation files.
+
+<shell>$ rake spree:i18n:sync</shell>
+
+This task simply ensures that you're new string is included in all translations (with the US English value as the default value), and it also alphabetizes all strings in the YAML files!
+
+
+h4. Adding a new language
+
+When adding a new language all you need to do is copy the en-US.yml file and rename it to whatever language code you require, you must also change the top level element of this new file to the same language code. 
+
+You can do this automatically by running the following rake task (where *ja* is the new language you want to add):
+
+<shell>$ rake spree:i18n:new LOCALE=ja</shell>
+
+This rake task will also remind you to download the relevant rails translation file from "rails-i18n":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale , which in this example should be saved as *ja_rails.yaml*.
+
+h3. Internationalizing Extensions
+
+Spree extensions can contain their own *config/locale* directory where developers can include yaml files for each language they wish to support. 
+
+We strongly urge all extension developers to ensure all customer facing text is rendered via the *t()* helper method even if they only include a single default language locale file (as other users can simply include the required yaml file and translations in their site extension).
+
+h3. Disabling Internationalization
+
+If you don't want to allow users to change the language / locale you can disable locale switching by changing the :allow_locale_switching setting to false in the AppConfiguration model.
+
