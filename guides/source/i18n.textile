@@ -11,7 +11,7 @@ endprologue.
 
 h3. How Spree is internationalized
 
-Spree uses the standard Rails approach to internationalization so we suggest taking at look at the "rails-i18n.org wiki":http://rails-i18n.org/wiki to get started.
+Spree uses the standard Rails approach to internationalization so we suggest take some time to review the "official Rails i18n guide":http://guides.rubyonrails.org/i18n.html and the "rails-i18n.org wiki":http://rails-i18n.org/wiki to help you get started.
 
 h4. Locating Translations
 

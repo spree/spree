@@ -1,3 +1,80 @@
 h2. Taxation
 
+Spree currently supports both consumption and value-added taxation. This means that the standard U.S. Sales Tax and the EU VAT are both supported. 
+
+
 endprologue.
+
+h3. Overview
+
+All taxation logic within Spree is implemented as a core extension (meaning it ships with Spree), the idea is that the logic is isolated in an extension so it can be easily replaced with your own custom extension.
+
+h3. Tax Categories
+
+The Spree default is to treat everything as exempt from tax. In order for a product to be considered taxable, it must belong to a tax category. The tax category is a special concept that is specific to taxation. It has nothing to do with the categories (taxonomies) that users use to navigate through your store. The tax category is normally never seen by the user so you could call it something generic like "Taxable Goods." If you wish to tax certain products at different rates, however, then you will want to choose something more descriptive (ex. "Clothing.").
+
+NOTE: It can be somewhat tedious to set the tax category for every product. We're currently exploring ways to make this simpler. If you are importing inventory from another source you will likely be writing your own custom Ruby program that automates this process.
+
+h3. Tax Zone
+
+You must also create a tax zone before your products can be taxed. A tax zone is a geographical area where products are shipped to. If an order is being shipped to somewhere within the zone, then it will be taxed at the appropriate rate. Please see the zones overview for more information on constructing a zone.
+
+h3. Tax Rates
+
+Tax rates are set up through the admin interface (Configurations | Tax Rates). A tax rate is essentially a percentage amount charged based on the sales price. Tax rates also contain other important information.
+
+    * The manner in which the tax is to be applied (ie. Sales Tax or VAT)
+    * The zone in which the shipping address must fall within
+    * The tax category that a product must belong to in order to be considered taxable.
+
+
+h3. Sales Tax
+
+TODO: Intro needed here for Sales Tax
+
+h4. Sales Tax Example
+
+*Scenairo*: 8.5% U.S. sales tax on all orders shipped to NY and 4.0% on all orders shipped to OH.
+
+    * Create a NY_TAX zone (type is 'State Based', state name 'New York')
+    * Create a OH_TAX zone (type is 'State Based', state name 'Ohio')
+    * Create a new Tax Category (name is 'Taxable Goods')
+    * Make sure all taxable products are assigned to the 'Taxable Goods' category (do this through product admin)
+    * Create a new Tax Rate (zone is 'NY_TAX', category 'Taxable Goods', rate 0.085, type 'Sales Tax')
+    * Create a new Tax Rate (zone is 'OH_TAX', category 'Taxable Goods', rate 0.04, type 'Sales Tax')
+
+h3. Value Added Tax (VAT)
+
+VAT is normally levied on all sales with European Union member states. On business-to-consumer stores/sites prices are normally displayed inclusive of VAT, while on business-to-business sites prices are commonly displayed excluding VAT.
+
+h4. Displaying VAT inclusive prices
+
+For countries / websites that need to include VAT on products the Tax Calculator can show the VAT inclusive price on the customer facing pages of the site. To enable this feature you'll need to:
+
+    * Create a Tax Rate with the applicable rate percentage and the Tax Type set to VAT.
+    * Ensure all relevant products are using the correct Tax Category.
+    * Change the :show_price_inc_vat preference value to true in vendor/extensions/tax_calculator/lib/tax_configuration.rb
+    * Restart the application / server to ensure the new preference values are loaded.
+
+On each page where a product's price is displayed the VAT amount will be calculated, added to the price, and displayed as: *€19.99 (inc. VAT)*
+
+If you do not want to display the *(inc. VAT)* string after the price, you can override the call to the *product_price()* helper method as follows:
+
+<shell>product_price(@product, :show_vat_text => false)</shell>
+
+When VAT inclusive prices are enabled, the order confirmation page will display the products prices excluding VAT, and will show the total VAT applicable to the order.
+
+h3. Future Development
+
+h4. EU VAT Numbers
+
+Ideally customers should be able to provide a valid EUVAT number and be excluded from taxation if their business is located in the EU outside the country of the shop. This feature is still pending, see the "Spree Wiki":http://wiki.github.com/schof/spree/vat-rules for more.
+
+h4. Improved EU Zone.
+
+The default EUVAT zone that currently ships with Spree is simply a list of all the EU countries. Ideally a more sophisticated zone should be created such that various localities that are supposed to be exempt from the EUVAT are excluded. Its already possible to construct such a zone, someone with the time and interest just needs to do so (and ideally donate it back to the Spree community.)
+
+
+h4. Default Taxability.
+
+Its possible that we might want to implement a preference setting to allow users to change the default so that everything is taxable unless otherwise specified.
