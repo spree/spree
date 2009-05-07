@@ -4,6 +4,7 @@
     <% product.images.each do |i| %>  
       <li><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>
     <% end %>
+  </ul>
 <% end %>
 
 
