@@ -47,4 +47,10 @@
     <%= address_form.label :phone, t("phone") %><br />
     <%= address_form.text_field :phone %>
   </p>
+  <% if Spree::Config[:alternative_billing_phone] or Spree::Config[:alternative_billing_phone] %>
+    <p>
+      <%= address_form.label :alternative_phone, t("alternative_phone") %><br />
+      <%= address_form.text_field :alternative_phone %>
+    </p>
+  <% end %>
 <% end %>
