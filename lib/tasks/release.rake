@@ -35,9 +35,10 @@ namespace 'spree' do
     s.add_dependency 'rails', '= 2.3.2'
     s.add_dependency 'activemerchant', '>= 1.4.1'
     s.add_dependency 'activerecord-tableless', '>= 0.1.0' 
-    s.add_dependency 'has_many_polymorphs', '= 2.13'     
     s.add_dependency 'calendar_date_select', '= 1.15' 
     s.add_dependency 'tlsmail', '= 0.0.1'
+    # For some reason the authlogic dependency really screws things up (See Issue #433)
+    #s.add_dependency 'authlogic', '>= 2.0.11'
     s.has_rdoc = true
     #s.rdoc_options << '--title' << RDOC_TITLE << '--line-numbers' << '--main' << 'README'
     rdoc_excludes = Dir["**"].reject { |f| !File.directory? f }

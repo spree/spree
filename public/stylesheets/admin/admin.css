@@ -171,6 +171,8 @@ body {
         #admin-menu ul li.selected {
           border-bottom:1px solid #0095DA;
         }
+  #IE7 #admin-menu {
+    height: 39px; }
   #admin-menu {
     background: #154e8c url(../../images/admin/bg/admin_tab_back.png) top left repeat-x;
     border-top: 1px solid #4B83E2;
@@ -192,6 +194,8 @@ body {
     background: #0095da;
     border-left: 1px solid #41A6F0;
     border-right: 1px solid #4986BF; }
+    #IE7 #sub-menu ul {
+      height: 26px; }
     #sub-menu ul li a {
       padding: 3px 7px;
       margin: 10px 5px;
