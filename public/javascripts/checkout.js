@@ -18,7 +18,8 @@ $(function() {
     });
   }                          
   //disable submit
-  $(':submit').attr('disabled', 'disbled');
+  $('div#checkout :submit').attr('disabled', 'disabled');
+
       
   // hookup the radio buttons for registration
   $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }); 
@@ -183,7 +184,7 @@ var shift_to_region = function(active) {
     // indicates order is ready to be processed (as opposed to simply updated)
     $("input#final_answer").attr("value", "");
     // disable form submit
-    $(':submit').attr('disabled', 'disbled'); 
+    $('div#checkout :submit').attr('disabled', 'disabled');
   }
   return;
 };
@@ -290,7 +291,7 @@ var update_shipping_methods = function(methods) {
       i.attr('checked', 'checked');
     }
     var l = $(document.createElement('label'))
-                .attr('for', s)
+                .attr('for', this.id)
                 .html(s);
     $('div#methods').append($(p).append(i).append(l));
   });

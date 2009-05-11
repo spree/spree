@@ -1,7 +1,7 @@
 <% order_form.fields_for :ship_address do |ship_form| %>     
   <h2><%= t("shipping_address")%></h2>
   <div class="inner">
-  	<p><label for="<%= t("use_billing_address") %>" id="use_billing"><%= t("use_billing_address") %></label><input id="checkout_same_address" name="checkout_same_address" type="checkbox" /></p> 
+  	<p><label for="checkout_same_address" id="use_billing"><%= t("use_billing_address") %></label><input id="checkout_same_address" name="checkout_same_address" type="checkbox" /></p> 
   	<p id="sfname">
   		<label for="<%= t("first_name") %>"><%= t("first_name") %></label>
   		<%= ship_form.text_field :firstname, :class => 'required' -%><span class="req">*</span>
