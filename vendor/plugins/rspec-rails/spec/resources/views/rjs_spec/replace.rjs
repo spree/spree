@@ -1,1 +1,0 @@
-page.replace 'mydiv', 'replacement text'

@@ -34,7 +34,7 @@ Spree::Initializer.run do |config|
   config.gem 'haml-edge', :lib=> 'haml', :version => "2.1.3"
   config.gem 'chriseppstein-compass', :lib => 'compass', :source => "http://gems.github.com", :version => '0.6.6'
   config.gem 'calendar_date_select', :version => '1.15'    
-  config.gem 'searchlogic', :version => '1.6.6'                           
+  config.gem 'searchlogic', :version => '1.6.6'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
