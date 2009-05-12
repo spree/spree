@@ -3,7 +3,7 @@
 	<%= javascript_include_tag 'yui-includes.js' %>
 	<%= javascript_include_tag 'spree-yui.js' %>
 	<script type="text/javascript">
-	<!-- Add authenticity token to prototype --/>
+	// Add authenticity token to prototype
 	Ajax.Base.prototype.initialize = Ajax.Base.prototype.initialize.wrap(
 	        function(p, options){
 	                p(options);
