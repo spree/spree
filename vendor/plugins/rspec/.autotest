@@ -1,4 +1,0 @@
-Autotest.add_hook :initialize do |at|
-  at.add_exception("spec/interop/test/unit/resources")
-  at.add_exception("spec/spec/runner/drb_command_line_spec.rb")
-end
