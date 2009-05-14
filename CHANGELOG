@@ -1,3 +1,7 @@
+== 0.8.3
+
+* # 450 - Rake tasks failing if rspec is not installed on the system
+
 == 0.8.2
 
 * # 445 - Removed rspec plugin and replaced with gem dependency.

@@ -36,7 +36,9 @@ namespace 'spree' do
     s.add_dependency 'activemerchant', '>= 1.4.1'
     s.add_dependency 'activerecord-tableless', '>= 0.1.0' 
     s.add_dependency 'calendar_date_select', '= 1.15' 
-    s.add_dependency 'tlsmail', '= 0.0.1'
+    s.add_dependency 'tlsmail', '= 0.0.1' 
+    s.add_dependency 'rspec', '>= 1.2.0'
+    s.add_dependency 'rspec-rails', '>= 1.2.0' 
     # For some reason the authlogic dependency really screws things up (See Issue #433)
     #s.add_dependency 'authlogic', '>= 2.0.11'
     s.has_rdoc = true
