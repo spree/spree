@@ -9,6 +9,13 @@ namespace :db do
     # spree 
     ActiveRecord::Migrator.migrate("#{SPREE_ROOT}/db/migrate/", version)
     # extensions
+    Spree::Extension.descendants.select{|ext| ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
+      ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
+    end    
+    Spree::Extension.descendants.select{|ext| !ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
+      ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
+    end    
+    
     Spree::Extension.descendants.each do |extension|
       ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
     end    
@@ -29,9 +36,12 @@ namespace :db do
       # spree 
       ActiveRecord::Migrator.run(:up, "#{SPREE_ROOT}/db/migrate/", version)
       # extensions
-      Spree::Extension.descendants.each do |extension|
-        ActiveRecord::Migrator.run(:up, "#{extension.root}/db/migrate/", version)
-      end        
+      Spree::Extension.descendants.select{|ext| ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
+        ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
+      end    
+      Spree::Extension.descendants.select{|ext| !ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
+        ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
+      end    
       Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
     end
 
@@ -42,9 +52,12 @@ namespace :db do
       # spree
       ActiveRecord::Migrator.run(:down, "#{SPREE_ROOT}/db/migrate/", version)
       # extensions
-      Spree::Extension.descendants.each do |extension|
-        ActiveRecord::Migrator.run(:down, "#{extension.root}/db/migrate/", version)
-      end        
+      Spree::Extension.descendants.select{|ext| ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
+        ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
+      end    
+      Spree::Extension.descendants.select{|ext| !ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
+        ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
+      end    
       Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
     end
   end
@@ -64,9 +77,12 @@ namespace :db do
       # spree
       pending_migrations += ActiveRecord::Migrator.new(:up, "#{SPREE_ROOT}/db/migrate/").pending_migrations
       # extensions
-      Spree::Extension.descendants.each do |extension|
+      Spree::Extension.descendants.select{|ext| ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
         pending_migrations += ActiveRecord::Migrator.new(:up, "#{extension.root}/db/migrate/").pending_migrations
-      end        
+      end
+      Spree::Extension.descendants.select{|ext| !ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
+        pending_migrations += ActiveRecord::Migrator.new(:up, "#{extension.root}/db/migrate/").pending_migrations
+      end
 
       if pending_migrations.any?
         puts "You have #{pending_migrations.size} pending migrations:"
