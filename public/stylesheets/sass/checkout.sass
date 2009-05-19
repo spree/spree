@@ -14,7 +14,7 @@ div#checkout
     +round_corners
     :width 815px
   div#billing input, div#shipping input, div#payment input, div#registration_input input
-    :border 1px solid !input_border
+    :border= 1px solid !input_border
   select.error, input.error
     :padding 0px
     :background = !white
@@ -79,7 +79,7 @@ div#checkout
     span#checkout_same_address
       :float left
       :display block
-      :border 1px solid !input_border
+      :border = 1px solid !input_border
       :width 20px
       :height 20px
       &:hover
