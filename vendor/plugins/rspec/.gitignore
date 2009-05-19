@@ -1,9 +1,0 @@
-pkg
-doc
-coverage
-tmtags
-story_server/prototype/rspec_stories.html
-.DS_Store
-.emacs-project
-*~
-email.txt

@@ -22,7 +22,7 @@ describe LocaleController do
   describe 'route generation' do
     it 'should generate correct routes' do
       # set_locale_path(:locale => 'es-ES').should == "/locale/set?locale=es-ES"
-      route_for(:controller => 'locale', :action => 'set', :locale => 'en-US').should == "/locale/set?locale=en-US"
+      route_for(:controller => 'locale', :action => 'set', :locale => 'en-US', :method => :get).should == "/locale/set?locale=en-US"
     end
   end
 

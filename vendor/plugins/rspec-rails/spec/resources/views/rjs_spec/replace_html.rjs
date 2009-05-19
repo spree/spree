@@ -1,1 +1,0 @@
-page.replace_html 'mydiv', 'replacement text'
