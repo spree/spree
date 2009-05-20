@@ -1,20 +1,25 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<%= render :partial => "yui_head" %>
+<%= render :partial => "js_head" %>
 
 <h1>Edit Taxonomy</h1>
 
 <% form_for(:taxon, :url => admin_taxonomy_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
-
 	  <div>
 	    <label><%= t("tree")%></label><br />
-    	<%= yui_tree_helper @taxonomy %>
+      <div id="taxonomy_tree" class="tree">
+        <ul>
+          <li id="<%= @taxonomy.root.id %>" class="open">
+            <a href="#"><%= @taxonomy.root.name %></a>
+            <%= render :partial => "taxon", :locals => {:taxon => @taxonomy.root} %>
+          </li>
+        </ul>
+      </div>
   	</div>
-    <p><small>* Right click a child in the tree to access the menu for adding, deleting or sorting a child.</small></p>
+    <p><br/><small>* Right click a child in the tree to access the menu for adding, deleting or sorting a child.</small></p>
 
 	<p class="form-buttons">
 	  <%= button t("update") %> or <%= link_to t("cancel"), admin_taxonomies_path %>
   </p>
-
 <% end %>

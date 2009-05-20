@@ -1,0 +1,62 @@
+/* TREE LAYOUT */
+.tree ul { margin:0 0 0 5px; padding:0 0 0 0; list-style-type:none; }
+.tree li { display:block; min-height:18px; line-height:18px; padding:0 0 0 15px; margin:0 0 0 0; /* Background fix */ clear:both; _height:18px; #height:auto; }
+.tree li ul { display:none; }
+.tree li a, .tree li span { display:inline-block;line-height:16px;height:16px;color:black;white-space:nowrap;text-decoration:none;padding:1px 4px 1px 1px;margin:0; }
+.tree li a:focus { outline: none; }
+.tree li a input, .tree li span input { margin:0;padding:0 0;display:inline-block;height:12px !important;border:1px solid white;background:white;font-size:10px;font-family:Verdana; }
+.tree li a input:not([class="xxx"]), .tree li span input:not([class="xxx"]) { padding:1px 0; }
+/* FOR DOTS */
+.tree .ltr li.last { float:left; }
+.tree .rtl li.last { float:right; #float:none; _float:right; }
+.tree > ul li.last { overflow:visible; }
+/* OPEN OR CLOSE */
+.tree li.open ul { display:block; }
+.tree li.closed ul { display:none !important; }
+/* FOR DRAGGING */
+#jstree-dragged { position:absolute; top:-10px; left:-10px; margin:0; padding:0; }
+#jstree-dragged .rtl { _width:20px; #width:200px; margin:0; padding:0;} 
+#jstree-dragged ul ul ul { display:none; }
+
+/* RTL modification */
+.tree .rtl, .tree .rtl ul { margin:0 5px 0 0; }
+.tree .rtl li { padding:0 15px 0 0; }
+.tree .rtl li a, .tree .rtl li span { padding:1px 1px 1px 4px; }
+
+/* CONTEXT MENU */
+.tree-context { display:none; position:absolute; list-style-type:none; margin:0; padding:0; left:-2000px; top:-2000px; }
+.tree-context .separator { display:none; }
+.tree-context a { display:block; margin:0; padding:0; }
+
+/** FIREFOX2 fix **/
+.tree .ltr li a, x:-moz-any-link { display:inline; float:left; }
+.tree .rtl li a, x:-moz-any-link { display:inline; float:right; }
+.tree li ul, x:-moz-any-link { clear:both; }
+/** FIREFOX3 restore **/
+.tree .ltr li a, .tree .rtl li a, x:-moz-any-link, x:default { display:inline-block; float:none; }
+.tree li ul, x:-moz-any-link, x:default { clear:none; }
+/** IE7 Restore **/
+.tree .ltr li a, .tree .rtl li a { #display:inline-block; #float:none; }
+.tree li ul { #clear:none; }
+
+.tree li { _width:1px; }
+.tree li li { overflow:hidden; #overflow:visible; _overflow:visible; }
+
+.tree > .ltr > li { display:table; }
+.tree > .rtl > li { display:table; }
+
+
+/* EXPLORER 6 and 7 fix for 2px whitespace */
+.tree .ltr li.last { #margin-top: expression( (this.previousSibling && /open/.test(this.previousSibling.className) ) ? "-2px" : "0"); _margin-top: expression( (this.previousSibling && /open/.test(this.previousSibling.className) ) ? "-2px" : "0"); }
+.tree .rtl li.last { _margin-top: expression( (this.previousSibling && /open/.test(this.previousSibling.className) ) ? "-2px" : "0"); }
+
+/* OPERA SCROLLBAR ISSUE */
+@media all and (-webkit-min-device-pixel-ratio:10000), not all and (-webkit-min-device-pixel-ratio:0) {
+	head~body .tree > ul > li.last > ul { margin-bottom:36px; }
+	.tree li li { overflow:visible; }
+}
+
+/*
+FIREFOX FIX
+@-moz-document url-prefix() {} 
+*/

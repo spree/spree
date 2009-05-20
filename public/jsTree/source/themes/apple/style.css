@@ -1,0 +1,20 @@
+.tree-apple li.open { background-image:url("minus.gif"); background-position:2px 5px; }
+.tree-apple li.closed, #jstree-dragged.tree-apple li li.open { background-image:url("plus.gif"); background-position:2px 5px; }
+.tree-apple li a, .tree-apple li span { background-image:url("folder.png"); }
+.tree-apple .rtl li.closed, #jstree-dragged.tree-apple .rtl li li.open { background-image:url("plus_rtl.gif"); }
+.tree-apple li a:hover { background-color:silver; border-color:silver; color:white; }
+.tree-apple li a.clicked, .tree-apple li a.clicked:hover, .tree-apple li span.clicked { background-color:#2E72DF; border-color:#2E72DF; color:white; }
+/* RIGHT TO LEFT SUPPORT */
+.tree-apple .rtl li.open { background:url("minus_rtl.gif") right 6px no-repeat;  }
+.tree-apple .rtl li.closed { background:url("plus_rtl.gif") right 4px no-repeat; }
+.tree-apple .rtl li li.open, .tree-apple .rtl li li.closed { padding-right:19px; margin-right:-3px; }
+#jstree-dragged.tree-apple .rtl li li.open { background:url("plus_rtl.gif") right 4px no-repeat; }
+
+/* SCROLLING BACKGROUND */
+.tree-apple .ltr, .tree-apple .rtl { background:url("bg.jpg") left top repeat; min-width:100%; _width:100%; margin-left:0; margin-right:0; }
+.tree-apple .ltr > li.leaf, .tree-apple .rtl > li.leaf { background-image:none; }
+.tree-apple > ul > li.last { height:auto !important; margin-bottom:auto !important; background-image:none; }
+#jstree-dragged.tree-apple .rtl, #jstree-dragged.tree-apple .ltr { min-width:auto; _width:auto; }
+
+/* IE6 
+* html .tree-apple ul li.leaf { _background-image: expression(/DIV/.test(this.parentNode.parentNode.tagName) ? "none" : "inherit"); }*/

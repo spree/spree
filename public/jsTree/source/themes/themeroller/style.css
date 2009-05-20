@@ -1,0 +1,25 @@
+/** EXPERIMENTAL STUFF FOR ThemeRoller **/
+.tree-themeroller .ltr .ui-icon { float:left; margin:0 4px 0 2px; display:inline; }
+.tree-themeroller .rtl .ui-icon { float:right; margin:0 2px 0 4px; display:inline; }
+.tree-themeroller .ltr li a, .tree-themeroller .rtl li a, .tree-themeroller li a:hover, .tree-themeroller li a.hover,.tree-themeroller li a.clicked,.tree-themeroller li a.clicked:hover,.tree-themeroller li span,.tree-themeroller li span.clicked { padding:0 2px; }
+
+/** DEFAULT THEME PART COPY **/
+/** DOTS - could not find an equivalent in themeroller **/
+.tree-themeroller ul { background-position:6px 1px; background-repeat:repeat-y; background-image:url("dot.gif"); }
+.tree-themeroller li { background-position:7px 8px; background-repeat:no-repeat; background-image:url("li.gif"); }
+.tree-themeroller li.last { background-position:5px top; background-repeat:no-repeat; background-image:url("lastli.gif"); }
+/* DOTS - RIGHT TO LEFT */
+.tree-themeroller .rtl, .tree-themeroller .rtl ul { background-position:right 1px; }
+.tree-themeroller .rtl li { background-position:right 8px; }
+.tree-themeroller .rtl li.last { background-image:url("lastli_rtl.gif"); background-position:right top; }
+/* NO DOTS */
+.tree-themeroller .no_dots, .tree-themeroller .no_dots ul { background:transparent; }
+.tree-themeroller .no_dots li.leaf { background-image:none; background-color:transparent; }
+/** OPEN or CLOSED - an extra element is needed to use theme roller's icons - will add it soon **/
+.tree-themeroller li.open { background:url("fminus.gif") 4px 6px no-repeat; }
+.tree-themeroller li.closed, #jstree-dragged.tree-themeroller li li.open { background:url("fplus.gif") 5px 5px no-repeat; }
+/* RIGHT TO LEFT */
+.tree-themeroller .rtl li { margin-right:1px; }
+.tree-themeroller .rtl li.last { margin-right:0; padding-right:16px; }
+.tree-themeroller .rtl li.open { background:url("fminus_rtl.gif") right 6px no-repeat; margin-right:0; padding-right:16px; }
+.tree-themeroller .rtl li.closed, #jstree-dragged.tree-themeroller .rtl li li.open { background:url("fplus_rtl.gif") right 4px no-repeat; margin-right:0; padding-right:16px; }
