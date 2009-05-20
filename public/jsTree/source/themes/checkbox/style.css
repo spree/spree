@@ -1,0 +1,4 @@
+.tree-checkbox li a, .tree-checkbox li a.unchecked { background-image:url("check_0.png"); }
+.tree-checkbox li a.undetermined { background-image:url("check_1.png"); }
+.tree-checkbox li a.checked { background-image:url("check_2.png"); }
+.tree-checkbox li a.clicked, .tree-checkbox li span.clicked { background-color:transparent; border-color:transparent; color:black; }

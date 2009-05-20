@@ -5,7 +5,7 @@ class Admin::TaxonsController < Admin::BaseController
   belongs_to :product
   
   create.wants.js {render :text => @taxon.to_json()}
-  update.wants.js {render :text => @taxon.name}
+  update.wants.html {render :text => @taxon.name}
   destroy.wants.js {render :text => ""}
   
   create.before do 

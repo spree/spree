@@ -4,6 +4,8 @@ en-US:
   abbreviation: Abbreviation
   access_denied: "Access Denied"
   account: Account
+  new_taxon: "New Taxon"
+  loading: Loading
   account_updated: "Account updated!"        
   action: Action
   actions: 

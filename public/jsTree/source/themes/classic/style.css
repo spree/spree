@@ -1,0 +1,11 @@
+.tree-classic .ltr li.open, .tree-classic .rtl li.open { background-image:url("minus.gif"); background-position:2px 5px; background-repeat: no-repeat; }
+.tree-classic .ltr li.closed, .tree-classic .rtl li.closed, #jstree-dragged.tree-classic li li.open { background-image:url("plus.gif"); background-position:2px 5px; background-repeat: no-repeat; }
+.tree-classic li a, .tree-classic li span { border-radius:0px; -moz-border-radius:0px; -webkit-border-radius:0px; }
+.tree-classic li.open a { background-image:url("folderopen.gif"); }
+.tree-classic li.closed a { background-image:url("folder.gif"); }
+.tree-classic li.leaf a { background-image:url("folder.gif"); }
+.tree-classic li a:hover { background-color:white; border-color:white; }
+.tree-classic li a.clicked, .tree-classic li span.clicked, .tree-classic li a.clicked:hover, .tree-classic li span.clicked:hover { background-color:navy; border-color:navy; color:white; }
+.tree-classic .rtl li.open { background-position:right 5px; margin-right:-3px; padding-right:19px; }
+.tree-classic .rtl li.closed { background-position:right 5px; margin-right:-3px; padding-right:19px; }
+#jstree-dragged.tree-classic .rtl li li.open { background-position: right 5px; }
