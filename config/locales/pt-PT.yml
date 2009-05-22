@@ -294,6 +294,7 @@ pt-PT:
   listing_reports: "Listando Relatórios"
   listing_tax_categories: "Listando Categorias de IVA"
   listing_users: "Listando Utilizadores"
+  loading: Loading
   locale_changed: "Localização Alterada"
   log_in: Entre
   logged_in_as: "Registado como"
@@ -333,6 +334,7 @@ pt-PT:
   new_state: "Novo Estado"
   new_tax_category: "Nova Categoria de IVA"
   new_tax_rate: "Nova Taxa de IVA"
+  new_taxon: "New Taxon"
   new_taxonomy: "Nova Taxonomia"
   new_user: "Novo Utilizador"
   new_variant: "Nova Variante"
@@ -427,6 +429,7 @@ pt-PT:
   send_copy_of_orders_mails_to: Send Copy of Order Mails To         
   send_mails_as: Send Mails As                    
   send_order_mails_as: Send Order Mails As   
+  server_error: "The server returned an error"
   ship: ship
   ship_address: "Endereço da Entrega"
   shipment: Distribuição
@@ -487,6 +490,7 @@ pt-PT:
   taxon: Taxon
   taxonomies: Taxonomias
   taxonomies_setting_description: "Criar e gerir taxonomias"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxons: Taxons
   thank_you_for_your_order: "Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle."
   this_file_language: "Português"
@@ -505,6 +509,7 @@ pt-PT:
   update: Actualizar
   update_password: "Update my password and log me in"                    
   updated_successfully: Actualizado com sucesso
+  updating: Updating
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
   use_different_shipping_address: "Use um Endereço de Entrega Diferente"

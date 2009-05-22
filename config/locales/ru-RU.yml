@@ -294,6 +294,7 @@ ru-RU:
   listing_reports: "Список отчетов"
   listing_tax_categories: "Список категорий налогов"
   listing_users: "Список пользователей"
+  loading: Loading
   locale_changed: "Локаль изменена"
   log_in: "Зайти"
   logged_in_as: "Пользователь"
@@ -333,6 +334,7 @@ ru-RU:
   new_state: "Новая область"
   new_tax_category: "Новая категория налогов"
   new_tax_rate: "Новая ставка налога"
+  new_taxon: "New Taxon"
   new_taxonomy: "Новая таксономия"
   new_user: "Новый пользователь"
   new_variant: "Новый вариант"
@@ -427,6 +429,7 @@ ru-RU:
   send_copy_of_orders_mails_to: Отсылать копии всех писем с заказами на
   send_mails_as: Отсылать почту как
   send_order_mails_as: Отсылать почту с заказами как
+  server_error: "The server returned an error"
   ship: доставка
   ship_address: "Ship Address"
   shipment: Доставка
@@ -487,6 +490,7 @@ ru-RU:
   taxon: Таксон
   taxonomies: Таксонономии
   taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxons: Таксоны
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "Русский (RU)"
@@ -505,6 +509,7 @@ ru-RU:
   update: Изменить
   update_password: "Update my password and log me in"                    
   updated_successfully: "Успешна изменена"
+  updating: Updating
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
   use_different_shipping_address: "использовать другой адрес доставки"

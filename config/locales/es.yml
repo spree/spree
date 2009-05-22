@@ -294,6 +294,7 @@ es:
   listing_reports: "Listado de reportes"
   listing_tax_categories: "Listado de Taxons"
   listing_users: "Listado de usuarios"
+  loading: Loading
   locale_changed: "Se ha cambiado el idioma"
   log_in: "Iniciar sesión"
   logged_in_as: "Identificado como"
@@ -333,6 +334,7 @@ es:
   new_state: "Nueva provincia"
   new_tax_category: "Nueva categoría"
   new_tax_rate: "Nuevo iipo impositivo"
+  new_taxon: "New Taxon"
   new_taxonomy: "New Taxonomy"
   new_user: "Nuevo usuario"
   new_variant: "Nueva Variante"
@@ -427,6 +429,7 @@ es:
   send_copy_of_orders_mails_to: Envia una copia de todos los correos de pedidos a         
   send_mails_as: Enviar correos como
   send_order_mails_as: Enviar correos de pedidos como
+  server_error: "The server returned an error"
   ship: enviar
   ship_address: "Direccion de envio"
   shipment: Envio
@@ -487,6 +490,7 @@ es:
   taxon: Taxon
   taxonomies: Taxonomias
   taxonomies_setting_description: "Crear y manejar taxonomias"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxons: Taxons
   thank_you_for_your_order: "Gracias por su pedido"
   this_file_language: "Español (España)"
@@ -505,6 +509,7 @@ es:
   update: Actualizar
   update_password: "Actualiza mi contraseña y dejame entrar"                    
   updated_successfully: "Actualizado correctamente"
+  updating: Updating
   use_as_shipping_address: Usar como direccion de envio
   use_billing_address: Usar la direccion de facturacion
   use_different_shipping_address: "Usar una dirección de envío diferente"
