@@ -4,8 +4,6 @@ en-US:
   abbreviation: Abbreviation
   access_denied: "Access Denied"
   account: Account
-  new_taxon: "New Taxon"
-  loading: Loading
   account_updated: "Account updated!"        
   action: Action
   actions: 
@@ -292,6 +290,7 @@ en-US:
   listing_reports: "Listing Reports"
   listing_tax_categories: "Listing Tax Categories"
   listing_users: "Listing Users"
+  loading: Loading
   locale_changed: "Locale Changed"
   log_in: "Log In"
   logged_in_as: "Logged in as"
@@ -330,6 +329,7 @@ en-US:
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
+  new_taxon: "New Taxon"
   new_taxonomy: "New Taxonomy"
   new_user: "New User"
   new_variant: "New Variant"
@@ -422,6 +422,7 @@ en-US:
   send_copy_of_orders_mails_to: Send Copy of Order Mails To         
   send_mails_as: Send Mails As                    
   send_order_mails_as: Send Order Mails As   
+  server_error: "The server returned an error"
   ship: ship
   ship_address: "Ship Address"
   shipment: Shipment
@@ -480,6 +481,7 @@ en-US:
   taxon: Taxon
   taxonomies: Taxonomies
   taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "English (US)"
@@ -497,6 +499,7 @@ en-US:
   update: Update
   update_password: "Update my password and log me in"                    
   updated_successfully: "Updated Successfully"
+  updating: Updating
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
   use_different_shipping_address: "Use Different Shipping Address"

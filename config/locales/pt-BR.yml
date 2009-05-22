@@ -290,6 +290,7 @@ pt-BR:
   listing_reports: "Listando Relatórios"
   listing_tax_categories: "Listando Categorias de Impostos"
   listing_users: "Listando Usuários"
+  loading: Loading
   locale_changed: "Localização Modificada"
   log_in: Entre
   logged_in_as: "Logado como"
@@ -328,6 +329,7 @@ pt-BR:
   new_state: "Novo Estado"
   new_tax_category: "Nova Categoria de Imposto"
   new_tax_rate: "Nova Taxa de Imposto"
+  new_taxon: "New Taxon"
   new_taxonomy: "Nova Taxonomia"
   new_user: "Novo Usuário"
   new_variant: "Nova Variante"
@@ -420,6 +422,7 @@ pt-BR:
   send_copy_of_orders_mails_to: Enviar Cópia de Emails de Pedidos Para
   send_mails_as: Enviar Emails como
   send_order_mails_as: Enviar Emails de Pedidos como
+  server_error: "The server returned an error"
   ship: entregar
   ship_address: "Endereço da Entrega"
   shipment: Entrega
@@ -478,6 +481,7 @@ pt-BR:
   taxon: Grupo de Taxonomia
   taxonomies: Taxonomias
   taxonomies_setting_description: "Criar e gerenciar taxonomias"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxons: Grupos de Taxonomias
   thank_you_for_your_order: "Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle."
   this_file_language: "Português (Brasil)"
@@ -495,6 +499,7 @@ pt-BR:
   update: Atualizar
   update_password: "Atualizar minha senha e fazer meu login"
   updated_successfully: "Atualizado com Sucesso"
+  updating: Updating
   use_as_shipping_address: Use como Endereço de Entrega
   use_billing_address: Use como Endereço de Cobrança
   use_different_shipping_address: "Use um Endereço de Entrega Diferente"

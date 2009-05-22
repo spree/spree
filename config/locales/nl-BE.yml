@@ -290,6 +290,7 @@ nl-BE:
   listing_reports: "Lijst Rapporten"
   listing_tax_categories: "Lijst BTW categorieën"
   listing_users: "Lijst Gebruikers"
+  loading: Loading
   locale_changed: "Regionale Instellingen Gewijzigd"
   log_in: "Aanmelden"
   logged_in_as: "Aangemeld als"
@@ -328,6 +329,7 @@ nl-BE:
   new_state: "Nieuwe Status"
   new_tax_category: "Nieuwe BTW Categorie"
   new_tax_rate: "Nieuw BTW Tarief"
+  new_taxon: "New Taxon"
   new_taxonomy: "Nieuwe Taxonomie"
   new_user: "Nieuwe Gebruiker"
   new_variant: "Nieuwe Variant"
@@ -420,6 +422,7 @@ nl-BE:
   send_copy_of_orders_mails_to: "Zend kopie van bestelmails naar"      
   send_mails_as: "Zend mail als"                    
   send_order_mails_as: "Zend bestelmaild als"
+  server_error: "The server returned an error"
   ship: Verzenden
   ship_address: "Afleveringssadres"
   shipment: Verzending
@@ -478,6 +481,7 @@ nl-BE:
   taxon: Taxon
   taxonomies: Taxonomieën
   taxonomies_setting_description: "Aanmaken en wijzigen taxonomieën"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxons: Taxons
   thank_you_for_your_order: "Hartelijk dank voor uw bestelling. U kan deze pagina afdrukken als bewijs van bestelling."
   this_file_language: "Nederlands (BE)"
@@ -495,6 +499,7 @@ nl-BE:
   update: Updaten
   update_password: "Update my password and log me in"                    
   updated_successfully: "Succesvol Aangepast"
+  updating: Updating
   use_as_shipping_address: "Gebruik als afleveringsadres"
   use_billing_address: "Gebruik als factuuradres"
   use_different_shipping_address: "Ander afleveringsadres gebruiken"

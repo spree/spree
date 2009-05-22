@@ -250,10 +250,6 @@ da:
   expiration_year: "Expiration Year"
   extension: Extension
   extensions: Extensions
-  ext_tax_calculator_tax_rates: "Moms satser"
-  ext_tax_calculator_tax_rates_description: "Moms satser per geografisk område og produkt kategori."
-  ext_tax_calculator_tax_settings: "Moms indstillinger"
-  ext_tax_calculator_tax_settings_description: "Vælg om priser skal vises med eller uden moms."
   filename: Filename
   final_confirmation: "Final Confirmation"
   first_name: "First Name"
@@ -294,6 +290,7 @@ da:
   listing_reports: "Listing Reports"
   listing_tax_categories: "Listing Tax Categories"
   listing_users: "Listing Users"
+  loading: Loading
   locale_changed: "Locale Changed"
   log_in: "Log In"
   logged_in_as: "Logged in as"
@@ -332,6 +329,7 @@ da:
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
+  new_taxon: "New Taxon"
   new_taxonomy: "New Taxonomy"
   new_user: "New User"
   new_variant: "New Variant"
@@ -424,6 +422,7 @@ da:
   send_copy_of_orders_mails_to: Send Copy of Order Mails To         
   send_mails_as: Send Mails As                    
   send_order_mails_as: Send Order Mails As   
+  server_error: "The server returned an error"
   ship: ship
   ship_address: "Ship Address"
   shipment: Shipment
@@ -446,8 +445,6 @@ da:
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
-  show_price_inc_vat: "Pris inkl. moms"
-  show_price_incl_vat: "Vis pris inkl. moms"
   sign_up: "Sign up"
   site_name: "Site Name"
   site_url: "Site URL"
@@ -479,12 +476,12 @@ da:
   tax_categories: "Tax Categories"
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: "Tax Category"
-  tax_settings: "Moms indstillinger"
   tax_total: "Tax Total"
   tax_type: "Tax Type"
   taxon: Taxon
   taxonomies: Taxonomies
   taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "Dansk (DK)"
@@ -502,6 +499,7 @@ da:
   update: Update
   update_password: "Update my password and log me in"                    
   updated_successfully:
+  updating: Updating
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
   use_different_shipping_address: "Use Different Shipping Address"

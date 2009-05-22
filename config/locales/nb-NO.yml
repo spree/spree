@@ -290,6 +290,7 @@ nb-NO:
   listing_reports: "Rapporter"
   listing_tax_categories: "Momskategorier"
   listing_users: "Brukere"
+  loading: Loading
   locale_changed: "Endret språk"
   log_in: "Logg inn"
   logged_in_as: "Innlogget som"
@@ -328,6 +329,7 @@ nb-NO:
   new_state: "Ny stat"
   new_tax_category: "Ny momskategori"
   new_tax_rate: "Nytt momsnivå"
+  new_taxon: "New Taxon"
   new_taxonomy: "Ny klassifikasjon"
   new_user: "Ny bruker"
   new_variant: "Ny variant"
@@ -420,6 +422,7 @@ nb-NO:
   send_copy_of_orders_mails_to: "Send kopi av alle ordre-eposter til"
   send_mails_as: "Send epost som"
   send_order_mails_as: "Send ordre-epost som"
+  server_error: "The server returned an error"
   ship: send
   ship_address: "Leveringsadresse"
   shipment: Leveranse
@@ -478,6 +481,7 @@ nb-NO:
   taxon: Klasse
   taxonomies: Klassifikasjoner
   taxonomies_setting_description: "Konfigurer klassifikasjoner."
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxons: Klasser
   thank_you_for_your_order: "Takk for bestillingen. Vennligst skriv ut og ta vare på denne bekreftelsen."
   this_file_language: "Norsk"
@@ -495,6 +499,7 @@ nb-NO:
   update: Oppdater
   update_password: "Update my password and log me in"                    
   updated_successfully: "Oppdatert"  
+  updating: Updating
   use_as_shipping_address: "Bruk som leveringsadresse"
   use_billing_address: "Bruk fakturaadressen"
   use_different_shipping_address: "Bruk en annen leveringsadresse"
