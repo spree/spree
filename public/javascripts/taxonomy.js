@@ -176,6 +176,7 @@ conf = {
     deletable : ["taxon"],
     draggable : ["taxon"],
 	 	dragrules : [ "taxon * taxon", "taxon inside root", ],
+		renameable  : "taxon"
   },
   callback : {
     onmove: handle_move,
