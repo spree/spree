@@ -81,6 +81,11 @@ h3. Customization
     This tutorial covers the basic steps of creating your own custom extension.
   <% end %>
 </dl>
+<dl>
+  <% guide('Checkout Process', 'checkout.html') do %>
+    This guide will show you how to customize the steps in your checkout process.
+  <% end %>
+</dl>
                                                                    
 h3. Digging Deeper
 
