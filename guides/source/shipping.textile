@@ -1,3 +1,89 @@
 h2. Shipping
 
+This section explains how Spree represents shipping options and how it calculates 
+expected costs, and shows how you can configure the system with your own shipping 
+methods.
+After reading it you should know:
+* the design used in Spree
+* how to specify your shipping structure
+* how to configure products for special shipping treatment
+* how to capture delivery instructions
+
 endprologue.
+
+h3. Overview
+
+Spree uses a flexible system which allows you to specify a range of shipping 
+options for zones, and supports precise calculation of shipping options. A 
+key concept is the 'calculator' - a class which _you_ supply to calculate 
+the total shipping cost from a shipment (and the products and quantities it 
+contains).
+
+h3. Design and functionality
+
+Rather than try to have a prescriptive general design for shipping possibilities, 
+Spree uses a flexible system
+based on 'calculators' - objects that perform specific computations from
+any information accessible from the whole order. Such calculators have a 
+name and a "zone":zones.html of applicability. 
+The calculators are called in turn to cost up each applicable option.
+
+h4. What the Customer Sees
+
+In the standard system, there is no mention of shipping until the 
+checkout phase. After entering a shipping address, the system displays 
+all relevant shipping options and their costs for the whole order. 
+Only the shipping options whose zones include the _shipping_ address 
+are presented. 
+The Customer must choose one before proceeding to the next stage. At 
+confirmation, the shipping cost has been added to the order total.
+
+NOTE. _what about special instructions?_ (I have a patch for this)
+
+h4. What the Orders Administrator Sees
+
+A shipment object is created at checkout time for the order. Initially it 
+records just the shipping method and the order it applies to. The administrator
+can update the record with actual shipping cost and a tracking code, and 
+may also (once only) confirm the despatch. This confirmation causes a 
+shipping date to be set as the time of confirmation. 
+
+NOTE. There is little support at present for split shipments. Spree allows multiple shipments for an order but uses only the last in calculations.
+
+-- shipments
+
+h4. Configuration Options
+
+Administrators may create new shipping methods by specifying a descriptive
+name, the name of a suitable calculator class, and a zone. Editing of existing
+methods is also allowed.
+(Recall that administrators can freely create new zones to reflect 
+shipping constraints.)
+
+To customize how products are rated in shipping 
+
+
+h3. Adding New Methods
+
+NOTE. lib/spree/shipping_calculator is dead code now? seems like code in order.rb
+
+h4. The FlatRate extension
+
+h4. Other useful extensions
+
+h3. Product Configuration
+
+h4. Variant configuration
+
+
+----------
+
+
+shipment is 
+Shipment(id: integer, order_id: integer, shipping_method_id: integer, tracking:string, created_at: datetime, updated_at: datetime, number: string, cost: decimal,shipped_at: datetime, address_id: integer)
+ShippingMethod(id: integer, zone_id: integer, shipping_calculator: string, name: string, created_at: datetime, updated_at: datetime)
+
+Category = id + name
+
+Order - usu one shipment (no split yet?)
+
