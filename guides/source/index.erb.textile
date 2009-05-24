@@ -72,7 +72,7 @@ h3. Basic Configuration
 h3. Customization
 
 <dl>
-  <% guide('Using Extensions', 'extension_overview.html') do %>
+  <% guide('Using Extensions', 'extensions.html') do %>
     This guide covers how to use the extension system to customize Spree to meet your exact needs.
   <% end %>
 </dl>
