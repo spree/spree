@@ -237,8 +237,7 @@ spree.YUI = {
 		if(target.data.id==spree.YUI.drag_parent.data.parent_id){
 			//being pasted onto same parent
 		} 
-			console.log(count)
-
+	
 		new Ajax.Request(url, {
 		 	method: 'post',
 		 	parameters: '_method=put&taxon[parent_id]=' + encodeURIComponent(target.data.id) + '&taxon[position]=' + count,

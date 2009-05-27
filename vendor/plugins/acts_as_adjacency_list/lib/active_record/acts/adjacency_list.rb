@@ -158,6 +158,7 @@ module ActiveRecord
           position = parent.children.length if parent && position == -1
           self.position = position
           self.save
+          self.reload
 
           reorder_and_save(siblings.insert(self.position, self))
           self

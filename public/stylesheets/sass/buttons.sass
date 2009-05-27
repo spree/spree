@@ -1,0 +1,59 @@
+button,
+a.button,input.button
+  +round_corners(0.3em)
+  :background #efefef url(/images/buttons/bg-button.png) center left repeat-x !important
+  :border-style solid
+  :border-width 1px !important
+  :border-color #ddd #999 #999 #ddd !important
+  :-moz-outline-radius .3em
+  :color #111
+  :display inline-block
+  :font-family Helvetica Neue, Helvetica, Arial, Sans-serif
+  :font-size 1.1em !important
+  :font-size-adjust none
+  :font-stretch normal
+  :font-style normal
+  :font-variant normal
+  :font-weight normal
+  :line-height 1.2em
+  :margin 0px
+  :overflow visible
+  :padding 10px 17px
+  :text-decoration none
+  :text-transform lowercase
+  :width auto
+  :height auto
+  :cursor pointer
+  &.primary
+    :font-weight bold
+    :color #000
+  &:hover
+    :background-image url(/images/buttons/bg-button-hover.png) !important
+  &.large
+    +round_corners
+    :font-size 1.4em !important
+    :line-height 1.4em
+  &.small
+    +round_corners(4px)
+    :font-size .9em
+    :line-height 1.4em
+    :padding 5px 10px
+    img
+      :margin 0 3px 0 0 !important
+  &.update, &.checkout
+    img
+      :margin-right 7px
+  img
+    :vertical-align middle
+  &:focus
+    :outline none
+
+button
+  &::-moz-focus-inner
+    :padding 0px
+    :border none
+
+p
+  a.button, button
+    img
+      margin: 0 5px 0 0

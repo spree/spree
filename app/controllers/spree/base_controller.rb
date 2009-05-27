@@ -10,7 +10,8 @@ class Spree::BaseController < ApplicationController
     else      
       @order = Order.create
     end
-    session[:order_id] = @order.id
+    session[:order_id]    = @order.id
+    session[:order_token] = @order.token
     @order
   end
     

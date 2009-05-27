@@ -30,13 +30,13 @@ EOT
 
    def build_tree_data(taxonomy)
      html = %Q{<span id=\\"node_#{taxonomy.root.id}\\" class=\\"spree-YUI-tree-node\\">}
-     html << taxonomy.root.name
+     html << escape_javascript(taxonomy.root.name)
      html << %Q{</span>&nbsp;<img src='/images/spinner.gif' style='display:none;vertical-align:middle;' id='#{dom_id(taxonomy.root)}'>}
      
      out = [%Q{{"id":#{taxonomy.root.id}, "parent_id":null, "object_url":"#{admin_taxonomy_taxon_path(taxonomy, taxonomy.root)}", "html":"#{html}"}}]
      taxonomy.root.descendents.each do |node| 
        html = %Q{<span id=\\"node_#{node.id}\\" class=\\"spree-YUI-tree-node\\">}
-       html << node.name
+       html << escape_javascript(node.name)
        html << %Q{</span>&nbsp;<img src='/images/spinner.gif' style='display:none;vertical-align:middle;' id='#{dom_id(node)}'>}
        out << [%Q{{"id":#{node.id}, "parent_id":#{node.parent.id}, "object_url":"#{admin_taxonomy_taxon_path(node.taxonomy, node)}","position": #{node.position}, "html":"#{html}"}}]
      end
