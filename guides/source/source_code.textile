@@ -8,10 +8,10 @@ h3. Git
 
 The Spree source code is currently maintained in a "Git":http://git.or.cz/ repository. Git is a distributed version control system (DVCS) and it allows us to do things never before possible with SVN. If you're skeptical of Git just remember how skeptical you were of SVN when you were using CVS. The differences are subtle but important and they are best understood by hands on use.
 
-The authoritative git repository is hosted by "GitHub":http://github.com/ and is located "here":http://github.com/schof/spree/tree/master. You can clone the git repository using the following command:
+The authoritative git repository is hosted by "GitHub":http://github.com/ and is located "here":http://github.com/railsdog/spree/tree/master. You can clone the git repository using the following command:
 
 <shell>
-git clone git://github.com/schof/spree.git spree 
+git clone git://github.com/railsdog/spree.git spree 
 </shell>
 
 INFO. If you are planning on contributing to Spree you should create a fork through Git Hub and initiate a pull request when you're done. (See the Contributors Guide for details.)
@@ -20,7 +20,7 @@ INFO. If the official GitHub repo is down you can try our mirror at "repo.or.cz"
 
 h4. Browsing the Repository and/or Downloading the Source Code
 
-You can easily browse the repository through Git Hub's excellent "visual interface":http://github.com/schof/spree/tree/master. Git Hub also contains a link to download a tarball copy of the latest source code as well as links to "previous versions":http://github.com/schof/spree/downloads.
+You can easily browse the repository through Git Hub's excellent "visual interface":http://github.com/railsdog/spree/tree/master. Git Hub also contains a link to download a tarball copy of the latest source code as well as links to "previous versions":http://github.com/railsdog/spree/downloads.
 
 h4. Git on Windows
 
@@ -32,4 +32,4 @@ There are no immediate plans to support SVN clients. Given that most of the Rail
 
 h3. Monitoring Changes in the Source
 
-If you would like to keep up to date on changes to the source you can subscribe to the github "RSS":http://github.com/feeds/schof/commits/spree/master feed and you will be notified of all the commits.
+If you would like to keep up to date on changes to the source you can subscribe to the github "RSS":http://github.com/feeds/railsdog/commits/spree/master feed and you will be notified of all the commits.
