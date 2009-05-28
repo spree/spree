@@ -231,7 +231,7 @@ Here we are changing a preference to something other then the default as specifi
   1|default_locale|1|Configuration|||es|2009-05-04 22:30:17|2009-05-04 22:30:17
 </shell>
 
-INFO. Most sites are going to require at least some custom preferences.  It is recommended that you do this by creating a migration for your site extension.  See the "Upgrade Considerations":upgrade_considerations.html guide for more details.
+INFO. Most sites are going to require at least some custom preferences.  It is recommended that you do this by creating a migration for your site extension.  See the "Extensions guide":extensions.html#using-migrationsfor-custom-configurations for more details.
 
 h4. Configuration Through the Admin Interface
 
@@ -239,4 +239,4 @@ The Spree admin interface has several different screens where various settings c
 
 Many of the configuration settings are not editable from an admin screen.  This was basically put on hold during the refactoring of the admin interface.  Now that things have stabilized we'll be adding the missing settings in the near future.  The most important thing is to allow the settings to at least be changed through Ruby code which we currently support.
 
-INFO. Even though you can change many settings in the admin interface, you should realize that these settings will be lost should you decide to rebuild your database.  You'll also be missing these settings in your production server once you promote your code.  You should consider using a migration to set these values instead. See the "Upgrade Considerations":upgrade_considerations.html guide for more details.    
+INFO. Even though you can change many settings in the admin interface, you should realize that these settings will be lost should you decide to rebuild your database.  You'll also be missing these settings in your production server once you promote your code.  You should consider using a migration to set these values instead.  See the "Extensions guide":extensions.html#using-migrationsfor-custom-configurations for more details.
