@@ -1,3 +1,19 @@
 h2. Security
 
 endprologue.
+
+h3. Credit Cards
+
+h4. Transmit Exactly Once
+
+Spree uses extreme caution in its handling of credit cards.  During the single page checkout process there are several intermediate AJAX calls to the +OrdersController+.  Credit card details are not passed during any of these calls.  The number, expiration and security code are passed  during the final POST of the order only.  If there is a problem authorizing the card the credit card information is not passed back to the client browser.
+
+h4. Transmit Securely
+
+The sensitive credit card details are transmitted using the Secure Socket Layer (SSL) protocol.  In fact, all order information during checkout is processed over SSL.  The communication between the Spree server and the payment gateway is also secure.
+
+h4. No Persistence
+
+The credit card information is not persisted to the filesystem nor database at any time during this process.  It is also not stored in the session - not even temporarily.  It is only stored in memory for the instant it takes to formulate the gateway authorization request and then it is discarded.  The last four digits of the credit card are stored permanently in the Spree database along with the expiration information but this is considered to be safe practice.  The security code is never persisted to the database.
+
+INFO. There is an "offline-creditcard":http://github.com/railsdog/spree-offline-creditcard/tree/master extension available if your requirements call for PGP encrypted storage of creditcard information. 
