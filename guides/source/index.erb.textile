@@ -127,8 +127,8 @@ h3. Digging Deeper
 h3. Best Practices   
 
 <dl>
-  <% guide('Upgrade Considerations', 'upgrade_considerations.html') do %>
-    This guide covers how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
+  <% guide('Developer Tips', 'developer_tips.html') do %>
+    This guide contains a miscellany of useful advice from Spree developers, including how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
   <% end %>
 </dl>
 <dl>
