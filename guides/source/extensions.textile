@@ -54,7 +54,7 @@ So even though your Spree application will not have an +app+ directory, your ext
 
 h3. Site Extension
 
-When you use the +spree+ command to create a new application, it will automatically create a +site+ extension for you.  This is where you should put all of the code to customize your site views, etc. This is essentially what you would normally put into the +app+ directory of a standard Rails application.  It may seem a little bit strange to put this type of content into an extension (as opposed to a top level directory) but this process makes upgrading to newer versions of Spree considerably easier.
+When you use the +spree+ command to create a new application (a gem installation), it will automatically create a +site+ extension for you.  This is where you should put all of the code to customize your site views, etc. This is essentially what you would normally put into the +app+ directory of a standard Rails application.  It may seem a little bit strange to put this type of content into an extension (as opposed to a top level directory) but this process makes upgrading to newer versions of Spree considerably easier.
 
 Technically there is nothing special about the site extension.  It is just a naming convention.  Every Spree application will likely need one so we have come up with a standard name for this concept.  You could call this extension whatever you wish.  You could also break the contents of the site extension into as many extensions as you wish (although there aren't many usecases for this.)
 
