@@ -165,6 +165,7 @@ nb-NO:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Tillat at SSL brukes i utviklings- og testmodus.
   allow_ssl_to_be_used_when_in_production_mode: Tillat at SSL brukes i produksjonsmodus.
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Beløp
   are_you_sure: "Er du sikker"
   are_you_sure_category: "Er du sikker på at du vil slette denne kategorien?"
@@ -354,6 +355,7 @@ nb-NO:
   order_date: "Ordredato"
   order_details: "Ordredetaljer"
   order_email_resent: "Ordre-epost sent på nytt"
+  order_not_in_system: That order number is not valid on this site.
   order_number: Ordrenummer
   order_operation_authorize: Autoriser
   order_processed_successfully: "Din ordre har blitt behandlet"
@@ -437,6 +439,7 @@ nb-NO:
   shipping_categories_description: "Konfigurer fraktkategorier for å styre hvilke produkter som kan bruke de ulike leveransemåtene."
   shipping_cost: Kostnad
   shipping_error: "Feil i forbindelse med leveranse"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: Leveransemåte
   shipping_methods: "Leveransemåter"
   shipping_methods_description: "Konfigurer leveransemåter."

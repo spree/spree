@@ -165,6 +165,7 @@ es:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir el uso de SSL en los modos de desarrollo y prueba
   allow_ssl_to_be_used_when_in_production_mode: Permitir el uso de SSL en produccion        
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Cuantía
   are_you_sure: "¿Está seguro?"
   are_you_sure_category: "¿Está seguro de que quiere eliminar esta categoría?"
@@ -354,6 +355,7 @@ es:
   order_date: "Fecha de pedido"
   order_details: "Detalles del pedido"
   order_email_resent: "Email de pedido reenviado"
+  order_not_in_system: That order number is not valid on this site.
   order_number: "Pedido #"
   order_operation_authorize: "Autorizar"
   order_processed_successfully: "Su pedido se ha procesado correctamente"
@@ -437,6 +439,7 @@ es:
   shipping_categories_description: "Gestionar las categorias de envio para determinar qué categorías de productos pueden ser transportados a través de qué método"
   shipping_cost: Costes de envio
   shipping_error: "Error de envio"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: Metodo de envio
   shipping_methods: "Metodos de envio"
   shipping_methods_description: "Manejar metodos de envio"

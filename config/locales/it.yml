@@ -165,6 +165,7 @@ it:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Totale
   are_you_sure: "Are you sure"
   are_you_sure_category: "Sei sicuro di voler cancellare questa categoria?"
@@ -354,6 +355,7 @@ it:
   order_date: "Data ordine"
   order_details: "Detagli ordine"
   order_email_resent: "Order Email Resent"
+  order_not_in_system: That order number is not valid on this site.
   order_number: "Ordine #"
   order_operation_authorize: ""
   order_processed_successfully: "L'ordine è terminato con successo"
@@ -437,6 +439,7 @@ it:
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
   shipping_cost: Cost
   shipping_error: "Shipping Error"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: Method
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"

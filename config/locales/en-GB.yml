@@ -355,6 +355,7 @@ en-GB:
   order_date: "Order Date"
   order_details: "Order Details"
   order_email_resent: "Order Email Resent"
+  order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
   order_processed_successfully: "Your order has been processed successfully"
@@ -431,19 +432,19 @@ en-GB:
   shipment: Shipment
   shipment_number: "Shipment #"
   shipped: Shipped
+  shipping: Delivery
+  shipping_address: "Delivery Address"
   shipping_calculator: Calculator
   shipping_categories: "Shipping Categories"
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
   shipping_cost: Cost
-  shipping_methods: "Shipping Methods"
-  shipping_methods_description: "Manage shipping methods"
-  shop_by_taxonomy: "Shop by {{taxonomy}}"
-  shipping: Delivery
-  shipping_address: "Delivery Address"
   shipping_error: "Delivery Error"
   shipping_instructions: "Delivery Instructions"
   shipping_method: "Delivery Method"
+  shipping_methods: "Shipping Methods"
+  shipping_methods_description: "Manage shipping methods"
   shipping_total: "Delivery Total"
+  shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Shopping Basket"
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
