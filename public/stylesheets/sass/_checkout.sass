@@ -1,9 +1,9 @@
 = checkout_region(!image, !image_small)
-  :background= transparent url(/images/steps/!image) top right no-repeat
+  :background= "transparent" url(!image) "top right no-repeat"
   &.completed,&.disabled
     :background-image none
     h2
-      :background= transparent url(/images/steps/!image_small) top left no-repeat
+      :background= "transparent" url(!image_small) "top left no-repeat"
       :margin-bottom 0.25em
   div.inner
     :display none
@@ -14,7 +14,7 @@ div#checkout
     +round_corners
     :width 815px
   div#billing input, div#shipping input, div#payment input, div#registration_input input
-    :border= 1px solid !input_border
+    :border= 1px "solid" !input_border
   select.error, input.error
     :padding 0px
     :background = !white
@@ -59,7 +59,7 @@ div#checkout
     input
       :width 15px
   #registration
-    +checkout_region("1.png", "1_small.png")
+    +checkout_region("/images/steps/1.png", "/images/steps/1_small.png")
     div#registration_choice
       :float left
       :block none
@@ -70,16 +70,16 @@ div#checkout
     div#guest_user, div#existing_user, div#already_logged_in
       :display none
   #billing
-    +checkout_region("2.png", "2_small.png")
+    +checkout_region("/images/steps/2.png", "/images/steps/2_small.png")
   #shipping
-    +checkout_region("3.png", "3_small.png")
+    +checkout_region("/images/steps/3.png", "/images/steps/3_small.png")
     span#clear_same_address
       :clear both
       :display block
     span#checkout_same_address
       :float left
       :display block
-      :border = 1px solid !input_border
+      :border = 1px "solid" !input_border
       :width 20px
       :height 20px
       &:hover
@@ -90,17 +90,17 @@ div#checkout
       h2
         :padding-left 32px
   #shipping_method
-    +checkout_region("4.png", "4_small.png")
+    +checkout_region("/images/steps/4.png", "/images/steps/4_small.png")
     div.inner
       :padding-top 0px
     div.error
       :display none
   #payment
-    +checkout_region("5.png", "5_small.png")
+    +checkout_region("/images/steps/5.png", "/images/steps/5_small.png")
     p select
       :width 75px
   #confirmation
-    +checkout_region("6.png", "6_small.png")
+    +checkout_region("/images/steps/6.png", "/images/steps/6_small.png")
     table.order-summary
       .price, .qty
         :width 165px
