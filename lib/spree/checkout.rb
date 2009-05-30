@@ -8,34 +8,35 @@ module Spree::Checkout
     load_data
     load_checkout_steps                                             
 
-    # push the current record ids into the incoming params to allow nested_attribs to do update-in-place
-    # assumes that if a record is set, it was set from the nested hash and so update will work
-    if params[:order]
-      params[:order][:bill_address_attributes][:id] = @order.bill_address.id if @order.bill_address
-      params[:order][:ship_address_attributes][:id] = @order.ship_address.id if @order.ship_address
+    if request.get?                     # default values needed for GET / first pass
+      @order.bill_address ||= Address.new(:country => @default_country)
+      @order.ship_address ||= Address.new(:country => @default_country) 
+
+      if @order.creditcard.nil?
+        @order.creditcard = Creditcard.new(:month => Date.today.month, :year => Date.today.year)
+      end
     end
 
-    # and now do the over-write, saving any new changes as we go
-    @order.update_attributes(params[:order])
+    unless request.get?                 # the proper processing
+      @order.initial_shipping_method = ShippingMethod.find_by_id(params[:method_id]) if params[:method_id]  
+      @method_id = params[:method_id]
 
-    # default values needed for GET / first pass
-    @order.bill_address ||= Address.new(:country => @default_country)
-    @order.ship_address ||= Address.new(:country => @default_country) 
-    if @order.creditcards.empty?
-      @order.creditcards.build(:month => Date.today.month, :year => Date.today.year)
-    end
-    @shipping_method = ShippingMethod.find_by_id(params[:method_id]) if params[:method_id]  
-    @shipping_method ||= @order.shipping_methods.first    
-    @order.shipments.build(:address => @order.ship_address, :shipping_method => @shipping_method) if @order.shipments.empty?    
+      # push the current record ids into the incoming params to allow nested_attribs to do update-in-place
+      if @order.bill_address && params[:order][:bill_address_attributes]
+        params[:order][:bill_address_attributes][:id] = @order.bill_address.id 
+      end
+      if @order.ship_address && params[:order][:ship_address_attributes]
+        params[:order][:bill_address_attributes][:id] = @order.bill_address.id if @order.bill_address
+      end
 
-    if request.post?                           
-      # @order.creditcards.clear
-      # @order.attributes = params[:order]
-      @order.creditcards[0].address = @order.bill_address if @order.creditcards.present?
+      # and now do the over-write, saving any new changes as we go
+      @order.update_attributes(params[:order])
+    
+      # set some derived information
       @order.user = current_user       
-      @order.ip_address = request.env['REMOTE_ADDR']
-      @order.update_totals
       @order.email = current_user.email if @order.email.blank? && current_user
+      @order.ip_address = request.env['REMOTE_ADDR']
+      @order.update_totals  
 
       begin
         # need to check valid b/c we dump the creditcard info while saving
@@ -43,9 +44,13 @@ module Spree::Checkout
           if params[:final_answer].blank?
             @order.save
           else                                           
-            @order.creditcards[0].authorize(@order.total)
+            # now fetch the CC info and do the authorization
+            @order.creditcard = Creditcard.new params[:order][:creditcard]
+            @order.creditcard.address = @order.bill_address 
+            @order.creditcard.order = @order;
+            @order.creditcard.authorize(@order.total)
+
             @order.complete
-            # remove the order from the session
             session[:order_id] = nil 
           end
         else

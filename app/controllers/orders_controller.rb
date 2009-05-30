@@ -91,9 +91,10 @@ class OrdersController < Spree::BaseController
   end 
   
   def rate_hash       
-    shipment = @order.shipments.last
-    @order.shipping_methods.collect { |ship_method| {:id => ship_method.id, 
-                                                     :name => ship_method.name, 
-                                                     :rate => number_to_currency(ship_method.calculate_shipping(shipment)) } }    
+    @order.shipping_methods.collect do |ship_method| 
+      { :id   => ship_method.id, 
+        :name => ship_method.name, 
+        :rate => number_to_currency(ship_method.calculate_shipping(@order)) }
+    end
   end 
 end

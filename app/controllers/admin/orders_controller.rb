@@ -43,7 +43,7 @@ class Admin::OrdersController < Admin::BaseController
     #set results per page to default or form result
     @search.per_page = Spree::Config[:orders_per_page]
 
-    @collection = @search.find(:all, :include => [:user, :shipments, {:creditcards => :address}] )
+    @collection = @search.find(:all, :include => [:user, :shipments, {:creditcard_payments => {:creditcard => :address}}] )
   end
 
   # Allows extensions to add new forms of payment to provide their own display of transactions
