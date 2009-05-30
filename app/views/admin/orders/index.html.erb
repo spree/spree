@@ -63,8 +63,8 @@
           <%= user.text_field :email, :size=>25 %>
         </p>
       <% end %>
-      <% orders.fields_for orders.object.creditcards do |cc| %>
-      	<% cc.fields_for cc.object.address do |address| %>
+      <% orders.fields_for orders.object.creditcard_payments do |cc| %>
+      	<% cc.fields_for cc.object.creditcard.address do |address| %>
         <p>
           <label><%= t("first_name") %></label><br />
             <%= address.text_field :lower_of_firstname_contains, :size=>25 %>
