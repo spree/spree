@@ -30,6 +30,17 @@
   </tr>
 </table>
 
+<% unless @order.special_instructions.blank? %>
+  <table class="index">
+    <tr>
+      <th><%= t("shipping_instructions") %></th>
+    </tr>
+    <tr>
+      <td><pre><%= @order.special_instructions %></pre></td>
+    </tr>
+  </table>
+<% end %>
+
 <h4><%= t('history') %></h4>
 
 <table class="index">

@@ -165,6 +165,7 @@ nb-NO:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Tillat at SSL brukes i utviklings- og testmodus.
   allow_ssl_to_be_used_when_in_production_mode: Tillat at SSL brukes i produksjonsmodus.
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Beløp
   are_you_sure: "Er du sikker"
   are_you_sure_category: "Er du sikker på at du vil slette denne kategorien?"
@@ -187,6 +188,7 @@ nb-NO:
   capture: capture
   card_code: "CVV-kode"
   card_number: "Kortnummer"
+  card_type_is: Card type is
   cart: Handlekurv
   categories: Kategorier
   category: Kategori
@@ -242,6 +244,7 @@ nb-NO:
   email_server_settings_description: "Konfigurer epostserver."
   empty_cart: "Tøm handlekurv"
   enable_mail_delivery: "Skru på sending av epost"
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: feil
   event: Hendelse
   existing_customer: "Eksisterende kunde"
@@ -279,6 +282,7 @@ nb-NO:
   inventory_adjustment: "Justering av varelager"
   inventory_setting_description: "Konfigurer varelager og restordre."
   inventory_settings: "Varelagerinnstillinger"
+  issue_number: Issue Number
   item: Artikkel
   item_description: "Beskrivelse"
   item_total: "Solgte varer"
@@ -300,6 +304,7 @@ nb-NO:
   login_failed: "Login authentication failed."      
   login_name: Brukernavn
   logout: "Logg ut"
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Sending av epost er skrudd på"
   mail_delivery_not_enabled: "Sending av epost er ikke skrudd på"
   mail_server_preferences: "Preferanser for epostserver"
@@ -352,6 +357,7 @@ nb-NO:
   order_date: "Ordredato"
   order_details: "Ordredetaljer"
   order_email_resent: "Ordre-epost sent på nytt"
+  order_not_in_system: That order number is not valid on this site.
   order_number: Ordrenummer
   order_operation_authorize: Autoriser
   order_processed_successfully: "Din ordre har blitt behandlet"
@@ -400,6 +406,7 @@ nb-NO:
   remember_me: "Husk meg"
   remove: Fjern
   reports: Rapporter
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: "Send på nytt"
   reset_password: "Reset my password"
   response_code: "Responskode"  
@@ -435,6 +442,7 @@ nb-NO:
   shipping_categories_description: "Konfigurer fraktkategorier for å styre hvilke produkter som kan bruke de ulike leveransemåtene."
   shipping_cost: Kostnad
   shipping_error: "Feil i forbindelse med leveranse"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: Leveransemåte
   shipping_methods: "Leveransemåter"
   shipping_methods_description: "Konfigurer leveransemåter."
@@ -460,6 +468,7 @@ nb-NO:
     date: Dato
     time: Tid                                               
   start: Start
+  start_date: Valid from
   state: Stat
   state_based: "Stater"
   state_setting_description: "Konfigurer listen over stater/provinser assosiert med hvert land."
@@ -496,6 +505,7 @@ nb-NO:
   unable_to_authorize_credit_card: "Kunne ikke autorisere kredittkortet"
   unable_to_capture_credit_card: "Kunne ikke lagre kortopplysningene"
   unable_to_save_order: "Kunne ikke lagre ordren"
+  unrecognized_card_type: Unrecognized card type
   update: Oppdater
   update_password: "Update my password and log me in"                    
   updated_successfully: "Oppdatert"  

@@ -1,6 +1,7 @@
 class OrdersController < Spree::BaseController     
   include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
   
+  prepend_before_filter :reject_unknown_order
   before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]            
 
   ssl_required :show, :checkout
@@ -68,6 +69,14 @@ class OrdersController < Spree::BaseController
     return Order.find_by_number(params[:id]) if params[:id]
     find_order
   end   
+  
+  def reject_unknown_order
+    load_object
+    if (@order.nil?)
+      flash[:error] = t('order_not_in_system')
+      redirect_to products_path
+    end
+  end         
   
   def prevent_editing_complete_order      
     load_object

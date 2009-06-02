@@ -165,6 +165,7 @@ pt-PT:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Valor
   are_you_sure: "Tem a certeza"
   are_you_sure_category: "Tem certeza que quer apagar esta categoria?"
@@ -187,6 +188,7 @@ pt-PT:
   capture: capturar
   card_code: "Código do Cartão"
   card_number: "Número do Cartão"
+  card_type_is: Card type is
   cart: Carro
   categories: Categorias
   category: Categoria
@@ -242,6 +244,7 @@ pt-PT:
   email_server_settings_description: "Ajustar as configurações do servidor de email."
   empty_cart: "Esvaziar o Carro"
   enable_mail_delivery: Enable Mail Delivery      
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: erro
   event: Evento
   existing_customer: "Cliente Existente"
@@ -279,6 +282,7 @@ pt-PT:
   inventory_adjustment: "Acerto de Inventário"
   inventory_setting_description: "Configuação do Inventario - Descrição"
   inventory_settings: "Configuração de Settings"
+  issue_number: Issue Number
   item: Artigo
   item_description: "Descrição do Artigo"
   item_total: "Total do Artigo"
@@ -300,6 +304,7 @@ pt-PT:
   login_failed: "Login authentication failed."      
   login_name: "Nome de Login"
   logout: Sair
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Envio de email permitido"
   mail_delivery_not_enabled: "Envio de email não permitido"
   mail_server_preferences: Mail Server Preferences
@@ -352,6 +357,7 @@ pt-PT:
   order_date: "Data da Encomenda"
   order_details: "Detalhes da Encomenda"
   order_email_resent: "Email de Confirmação Reenviado"
+  order_not_in_system: That order number is not valid on this site.
   order_number: "Nr. Encomenda"
   order_operation_authorize: Autorizar
   order_processed_successfully: "A Sua encomenda foi processado com sucesso."
@@ -400,6 +406,7 @@ pt-PT:
   remember_me: "Lembre-se de mim"
   remove: Remover
   reports: Relatórios
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: Reenviar
   reset_password: "Reset my password"
   response_code: "Código de Resposta"
@@ -435,6 +442,7 @@ pt-PT:
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
   shipping_cost: Cost
   shipping_error: "Erro na Entrega"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: "Método de Entrega"
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
@@ -460,6 +468,7 @@ pt-PT:
     date: Data
     time: Horário                                               
   start: Início
+  start_date: Valid from
   state: Estado
   state_based: "Baseado em Estado"
   state_setting_description: "Administrar a lista de estados/províncias associados a cada país."
@@ -496,6 +505,7 @@ pt-PT:
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
+  unrecognized_card_type: Unrecognized card type
   update: Actualizar
   update_password: "Update my password and log me in"                    
   updated_successfully: Actualizado com sucesso

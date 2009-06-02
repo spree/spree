@@ -4,6 +4,7 @@ $(function() {
   $('span#bcountry select').change(function() { update_state('b'); });
   $('span#scountry select').change(function() { update_state('s'); });
   get_states();
+  $('input#order_creditcards_attributes_0_number').blur(set_card_validation);
   
   // hook up the continue buttons for each section
   for(var i=0; i < regions.length; i++) {     
@@ -406,4 +407,69 @@ var update_login = function() {
       // TODO (maybe do nothing)
     }
   });  	
+};
+
+
+
+/* validating card details */
+
+/* this info is held in an array to get a strict order on the tests in case of overlap
+ * (original info taken from activemerchant, but a better reference seems to be 
+ *   http://en.wikipedia.org/wiki/Credit_card_number - though there's nothing definitive?)
+ * this info could be used to tell AM what the correct type is... (and remove the hook...?)
+ * switch now identified as maestro
+ * TODO: finish this list
+ * (from AM_protx, extra - ELECTRON = /^(424519|42496[23]|450875|48440[6-8]|4844[1-5][1-5]|4917[3-5][0-9]|491880)\d{10}(\d{3})?$/
+ */
+var current_card_type = null;
+
+var card_regexps 
+   = [ 
+       [ 'Visa Electron'      , /^(417500|(4917|4913|4508|4844)\d{2})\d{10}$/ ]
+     , [ 'Visa'               , /^4\d{12}(\d{3})?$/                           ]
+     , [ 'MasterCard'         , /^(5[1-5]\d{4}|677189)\d{10}$/                ]
+  // , [ 'discover'           , /^(6011|65\d{2})\d{12}$/                      ]
+     , [ 'American Express'   , /^(34|37)\d{13}$/                             ]
+     , [ 'Diners Club'        , /^3(0[0-5]|[68]\d)\d{11}$/                    ]
+     , [ 'JCB'                , /^35(2[89]|[3-8]\d)\d{12}$/                ]
+     , [ 'Solo'               , /^(6767|6334)\d{12}(\d{2,3})?$/               ]
+  // , [ 'dankort'            , /^5019\d{12}$/                                ]
+     , [ 'Maestro'            , /^((5018|5020|5038|6304|6759|6761|4903|4905|4911|4936|6333|6759)\d{2}|564182|633100)\d{10,13}$/ ]
+  // , [ 'forbrugsforeningen' , /^600722\d{10}$/                              ]
+     , [ 'Laser'              , /^(6304|6706|6771|6709)\d{12,15}$/            ]
+     ];
+
+var card_type = function(number) {
+  var name = null;
+  $.each(card_regexps, function (i,e) {
+    if (number.match(e[1])) {
+      name = e[0];
+      return false;
+    }
+  });
+  return name;
+};
+
+var set_card_validation = function () {
+  if ($("#order_creditcards_attributes_0_number").val().match(/^\s*$/)) {
+    $('#card_type').hide();
+    return;
+  }
+  current_card_type = card_type($("#order_creditcards_attributes_0_number").val());
+  $('#card_type').show();
+  $('#card_type #looks_like').hide();
+  $('#card_type #unrecognized').hide();
+  if (current_card_type == null) {
+    $('#card_type #unrecognized').show();
+    current_card_type = "unknown";   
+  } else {
+    $('#card_type #looks_like #type').html(current_card_type);
+    $('#card_type #looks_like').show();
+  }
+  if (current_card_type.match(/unknown|maestro|solo|switch/i)) {
+    $('p#maestro_extra').show('slow');
+  } else {
+    $('p#maestro_extra').hide('slow');
+    $('p#maestro_extra input, p#maestro_extra select').val("")      // clear the values
+  }
 };

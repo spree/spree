@@ -1,0 +1,17 @@
+= no_margin_or_padding
+  :margin 0
+  :padding 0
+= leftie
+  :float left
+  :width 49%
+= rightie
+  :float right
+  :width 49%
+  :text-align right
+= round_corners(!radius = 5px)
+  :-moz-border-radius= !radius
+  :-webkit-border-radius= !radius
+= message_box(!bg_color, !color, !border_color)
+  :background= !bg_color "url(/images/shadow_top.png)" 0px -50px "repeat-x"
+  :color= !color
+  :border= 1px "solid" !border_color

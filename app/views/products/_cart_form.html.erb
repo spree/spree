@@ -11,7 +11,6 @@
   <% if @product.variants? %>
   <div id="product-variants">
     <h2><%= t('variants') %></h2>
-    <p>Quantity: <%= text_field_tag :quantity, 1 %></p>
     <ul>
       <%  has_checked = false
           @product.variants.active.each_with_index do |v,index|
@@ -30,17 +29,15 @@
       <% end%>
     </ul>
   </div>
-
-  <% else %>
-    <%= text_field_tag "variants[#{@product.variant.id}]", 1 , :class => "title", :size => 3%>
   <% end%>						
-  &nbsp;
-  <%=
-    if @product.has_stock? || Spree::Config[:allow_backorders]
-      "<button type='submit' class='large primary'>#{image_tag('/images/add-to-cart.png')} #{t('add_to_cart')}</button>"
-    else
-      content_tag('strong', t('out_of_stock'))
-    end
-  %>
-
+  <% if @product.has_stock? || Spree::Config[:allow_backorders] %>
+      <%= text_field_tag (@product.variants? ? :quantity : "variants[#{@product.variant.id}]"), 
+                     1, :class => "title", :size => 3 %>
+      &nbsp;
+      <button type='submit' class='large primary'>
+        <%= image_tag('/images/add-to-cart.png') + t('add_to_cart') %>
+      </button>
+  <% else %>
+      <%= content_tag('strong', t('out_of_stock')) %>
+  <% end %>
 <% end %>

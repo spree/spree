@@ -1,0 +1,138 @@
+= checkout_region(!image, !image_small)
+  :background= "transparent" url(!image) "top right no-repeat"
+  &.completed,&.disabled
+    :background-image none
+    h2
+      :background= "transparent" url(!image_small) "top left no-repeat"
+      :margin-bottom 0.25em
+  div.inner
+    :display none
+    :padding 10px 2px
+
+div#checkout
+  div#registration div.error, div#shipping_method div.error
+    +round_corners
+    :width 815px
+  div#billing input, div#shipping input, div#payment input, div#registration_input input
+    :border= 1px "solid" !input_border
+  select.error, input.error
+    :padding 0px
+    :background = !white
+    :border 1px solid #EAE8E3
+  p
+    :clear both
+    :margin-bottom 15px
+    label
+      :float left
+      :width 150px
+      :position relative
+      :top 5px
+    span.req
+      :color red
+      :margin-left 2px
+      :position relative
+      :top -3px
+    input, select
+      :margin-left 150px
+      :width 200px
+      :margin 0px
+    label.error
+      :color red
+      :clear both
+      :margin 0px 0px 5px 150px
+      :top 0px
+      :font-size 11px
+      :border none
+      :padding 0px
+      :background = !white
+  label.radio
+    :display inline
+  div#methods p, div#registration_choice p
+    :margin-bottom 7px
+    input, label
+      :display inline
+      :float none
+    label
+      :margin 0px 0px 0px 5px
+      :top -1px
+      :width 300px
+    input
+      :width 15px
+  #registration
+    +checkout_region("/images/steps/1.png", "/images/steps/1_small.png")
+    div#registration_choice
+      :float left
+      :block none
+      :margin-bottom 1em
+    div#registration_input
+      :float left
+      :margin-left 100px
+    div#guest_user, div#existing_user, div#already_logged_in
+      :display none
+  #billing
+    +checkout_region("/images/steps/2.png", "/images/steps/2_small.png")
+  #shipping
+    +checkout_region("/images/steps/3.png", "/images/steps/3_small.png")
+    span#clear_same_address
+      :clear both
+      :display block
+    span#checkout_same_address
+      :float left
+      :display block
+      :border = 1px "solid" !input_border
+      :width 20px
+      :height 20px
+      &:hover
+        :cursor pointer
+      &.is_checked
+        :background transparent url(/images/checkmark.png) top right no-repeat
+    &.completed,&.disabled
+      h2
+        :padding-left 32px
+  #shipping_method
+    +checkout_region("/images/steps/4.png", "/images/steps/4_small.png")
+    div.inner
+      :padding-top 0px
+    div.error
+      :display none
+  #payment
+    +checkout_region("/images/steps/5.png", "/images/steps/5_small.png")
+    p select
+      :width 75px
+  #confirmation
+    +checkout_region("/images/steps/6.png", "/images/steps/6_small.png")
+    table.order-summary
+      .price, .qty
+        :width 165px
+      .total_display
+        :width 300px
+        span
+          :display block
+          :text-align right
+          :padding-right 150px
+    div#bdisplay, div#sdisplay
+      :float left
+      :width 300px
+      :clear right
+  .checkout
+    &.disabled, &.completed
+      h2
+        :padding-left 32px
+        :color #AFAFAF
+        :font-size 1.4em
+        :padding-bottom 10px
+        :border-bottom 1px solid #DDD
+      &:last-child
+        h2
+          :border-bottom none
+    &.completed
+      h2
+        :color #111
+        :border-color #999
+  input#continue_billing, input#continue_shipping
+    :display block
+    :clear both
+    :margin-top 10px
+  input#continue_billing, input#continue_shipping, p input#continue_registration, p input#continue_shipping_method,  p input#continue_payment,  #confirm_order .inner input
+    :cursor pointer
+    :width 100px

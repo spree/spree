@@ -7,6 +7,7 @@ class Shipment < ActiveRecord::Base
   after_save :recalculate_tax
   after_save :transition_order
 
+  attr_accessor :special_instructions 
   accepts_nested_attributes_for :address 
      
   def shipped?

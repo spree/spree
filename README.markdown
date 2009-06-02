@@ -13,7 +13,7 @@ Running from sources (latest and greatest features)
 
 1. Clone the git repo
 
-        git clone git://github.com/schof/spree.git spree
+        git clone git://github.com/railsdog/spree.git spree
 
 2. Create the necessary config/database.yml file
         

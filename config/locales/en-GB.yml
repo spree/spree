@@ -165,6 +165,7 @@ en-GB:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Amount
   are_you_sure: "Are you sure"
   are_you_sure_category: "Are you sure you want to delete this category?"
@@ -187,6 +188,7 @@ en-GB:
   capture: capture
   card_code: "Card Code"
   card_number: "Card Number"
+  card_type_is: Card type is
   cart: Basket
   categories: Categories
   category: Category
@@ -242,6 +244,7 @@ en-GB:
   email_server_settings_description: "Set email server settings."
   empty_cart: "Empty Basket"
   enable_mail_delivery: Enable Mail Delivery      
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: error
   event: Event
   existing_customer: "Existing Customer"
@@ -279,6 +282,7 @@ en-GB:
   inventory_adjustment: "Inventory Adjustment"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
   inventory_settings: "Inventory Settings"
+  issue_number: Issue Number
   item: Item
   item_description: "Item Description"
   item_total: "Item Total"
@@ -300,6 +304,7 @@ en-GB:
   login_failed: "Login authentication failed."      
   login_name: Login
   logout: Logout
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled:
   mail_delivery_not_enabled:
   mail_server_preferences: Mail Server Preferences
@@ -352,6 +357,7 @@ en-GB:
   order_date: "Order Date"
   order_details: "Order Details"
   order_email_resent: "Order Email Resent"
+  order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
   order_processed_successfully: "Your order has been processed successfully"
@@ -400,6 +406,7 @@ en-GB:
   remember_me: "Remember me"
   remove: Remove
   reports: Reports
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: Resend
   reset_password: "Reset my password"
   response_code: "Response Code"
@@ -428,17 +435,18 @@ en-GB:
   shipment: Shipment
   shipment_number: "Shipment #"
   shipped: Shipped
-  shipping: Shipping
-  shipping_address: "Shipping Address"
+  shipping: Delivery
+  shipping_address: "Delivery Address"
   shipping_calculator: Calculator
   shipping_categories: "Shipping Categories"
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
   shipping_cost: Cost
-  shipping_error: "Shipping Error"
-  shipping_method: Method
+  shipping_error: "Delivery Error"
+  shipping_instructions: "Delivery Instructions"
+  shipping_method: "Delivery Method"
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
-  shipping_total: "Shipping Total"
+  shipping_total: "Delivery Total"
   shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Shopping Basket"
   show_deleted: "Show Deleted"
@@ -460,6 +468,7 @@ en-GB:
     date: Date
     time: Time                                               
   start: Start
+  start_date: Valid from
   state: County
   state_based: "State Based"
   state_setting_description: "Administer the list of states/provinces associated with each country."
@@ -496,6 +505,7 @@ en-GB:
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
+  unrecognized_card_type: Unrecognized card type
   update: Update
   update_password: "Update my password and log me in"                    
   updated_successfully:

@@ -165,6 +165,7 @@ ru-RU:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Использовать SSL в development и test режимах
   allow_ssl_to_be_used_when_in_production_mode: Использовать SSL в production
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Сумма
   are_you_sure: "Вы уверены"
   are_you_sure_category: "Вы уверены, что хотите удалить эту категорию?"
@@ -187,6 +188,7 @@ ru-RU:
   capture: capture ??
   card_code: "Код карты"
   card_number: "Номер карты"
+  card_type_is: Card type is
   cart: Корзина
   categories: Категории
   category: Категория
@@ -242,6 +244,7 @@ ru-RU:
   email_server_settings_description: "Настройки сервера email."
   empty_cart: "Очистить корзину"
   enable_mail_delivery: Включить доставку почты
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: ошибка
   event: Событие
   existing_customer: "Для зарегистрированных пользователей"
@@ -279,6 +282,7 @@ ru-RU:
   inventory_adjustment: "Inventory Adjustment ??"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display ??"
   inventory_settings: "Inventory Settings ??"
+  issue_number: Issue Number
   item: Наименование
   item_description: "Описание позиции ??"
   item_total: "Item Total"
@@ -300,6 +304,7 @@ ru-RU:
   login_failed: "Login authentication failed."      
   login_name: Логин
   logout: Выйти
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Доставка почты включена"
   mail_delivery_not_enabled: "Доставка почты не включена"
   mail_server_preferences: Настройки почтового сервера
@@ -352,6 +357,7 @@ ru-RU:
   order_date: "Дата заказа"
   order_details: "Детали заказа"
   order_email_resent: "Письмо с описанием заказа выслано повторно"
+  order_not_in_system: That order number is not valid on this site.
   order_number: Заказ
   order_operation_authorize: Авторизовать
   order_processed_successfully: "Ваш заказ был успешно обработан"
@@ -400,6 +406,7 @@ ru-RU:
   remember_me: "Запомнить меня"
   remove: Убрать
   reports: отчеты
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: Отослать повторно
   reset_password: "Reset my password"
   response_code: "Response Code"
@@ -435,6 +442,7 @@ ru-RU:
   shipping_categories_description: "Настройка категорий доставки - укажите, какие продукты могут быть доставлены какими способами"
   shipping_cost: Стоимость
   shipping_error: "Ошибка при доставке"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: Способ
   shipping_methods: "Способы доставки"
   shipping_methods_description: "Управление методами доставки"
@@ -460,6 +468,7 @@ ru-RU:
     date: Дата
     time: Время
   start: Начать
+  start_date: Valid from
   state: область
   state_based: "есть области"
   state_setting_description: "Administer the list of states/provinces associated with each country."
@@ -496,6 +505,7 @@ ru-RU:
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
+  unrecognized_card_type: Unrecognized card type
   update: Изменить
   update_password: "Update my password and log me in"                    
   updated_successfully: "Успешна изменена"

@@ -8,9 +8,17 @@ module Spree::Checkout
     load_data
     load_checkout_steps                                             
 
+    # push the current record ids into the incoming params to allow nested_attribs to do update-in-place
+    # assumes that if a record is set, it was set from the nested hash and so update will work
+    if params[:order]
+      params[:order][:bill_address_attributes][:id] = @order.bill_address.id if @order.bill_address
+      params[:order][:ship_address_attributes][:id] = @order.ship_address.id if @order.ship_address
+    end
+
+    # and now do the over-write, saving any new changes as we go
     @order.update_attributes(params[:order])
 
-    # additional default values needed for checkout
+    # default values needed for GET / first pass
     @order.bill_address ||= Address.new(:country => @default_country)
     @order.ship_address ||= Address.new(:country => @default_country) 
     if @order.creditcards.empty?
@@ -21,8 +29,8 @@ module Spree::Checkout
     @order.shipments.build(:address => @order.ship_address, :shipping_method => @shipping_method) if @order.shipments.empty?    
 
     if request.post?                           
-      @order.creditcards.clear
-      @order.attributes = params[:order]
+      # @order.creditcards.clear
+      # @order.attributes = params[:order]
       @order.creditcards[0].address = @order.bill_address if @order.creditcards.present?
       @order.user = current_user       
       @order.ip_address = request.env['REMOTE_ADDR']

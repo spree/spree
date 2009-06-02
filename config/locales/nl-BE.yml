@@ -165,6 +165,7 @@ nl-BE:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "SSL gebruik toestaan in ontwikkel- en testomgevingen"
   allow_ssl_to_be_used_when_in_production_mode: "SSL gebruik toestaan in productie-omgeving"         
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Bedrag
   are_you_sure: "Ben je zeker"
   are_you_sure_category: "Wil je zeker deze categorie verwijderen?"
@@ -187,6 +188,7 @@ nl-BE:
   capture: "in rekening brengen"
   card_code: "Kaart Code"
   card_number: "Kaartnummer"
+  card_type_is: Card type is
   cart: Winkelmandje
   categories: Categorieën
   category: Categorie
@@ -242,6 +244,7 @@ nl-BE:
   email_server_settings_description: "E-mail server installen."
   empty_cart: "Winkelmandje leegmaken"
   enable_mail_delivery: "Mail aflevering aanzetten"
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: fout
   event: Gebeurtenis
   existing_customer: "Bestaande Klant"
@@ -279,6 +282,7 @@ nl-BE:
   inventory_adjustment: "Voorraad Aanpassing"
   inventory_setting_description: "Voorraad instellingen, Nabestellingen, Nul-Voorraad Weergave"
   inventory_settings: "Voorraad instellingen"
+  issue_number: Issue Number
   item: Products
   item_description: "Product Omschrijving"
   item_total: "Product Totaal"
@@ -300,6 +304,7 @@ nl-BE:
   login_failed: "Login authentication failed."      
   login_name: Login
   logout: Afmelden
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail aflevering aangezet"
   mail_delivery_not_enabled: "Mail aflevering afgezet"
   mail_server_preferences: "Mail server Instellingen"
@@ -352,6 +357,7 @@ nl-BE:
   order_date: "Besteldatum"
   order_details: "Bestelling Details"
   order_email_resent: "Order Email Herverzending"
+  order_not_in_system: That order number is not valid on this site.
   order_number: "Nummer Bestelling"
   order_operation_authorize: Autoriseren
   order_processed_successfully: "Uw bestelling is succesvol verwerkt"
@@ -400,6 +406,7 @@ nl-BE:
   remember_me: "Onthouden"
   remove: Verwijderen
   reports: Rapporten
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: "Opnieuw verzenden"
   reset_password: "Reset my password"
   response_code: "Antwoord Code"  
@@ -435,6 +442,7 @@ nl-BE:
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
   shipping_cost: Cost
   shipping_error: "Fout met aflevering"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: "Verzendingsmethode"
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
@@ -460,6 +468,7 @@ nl-BE:
     date: Datum
     time: Tijd                                               
   start: Start
+  start_date: Valid from
   state: Status
   state_based: "Status Gebaseerd"
   state_setting_description: "Administer the list of states/provinces associated with each country."
@@ -496,6 +505,7 @@ nl-BE:
   unable_to_authorize_credit_card: "Autorisatie van de Kredietkaart mislukt"
   unable_to_capture_credit_card: "Aanrekening via Kredietkaart mislukt"
   unable_to_save_order: "Bestelling opslaan is mislukt"
+  unrecognized_card_type: Unrecognized card type
   update: Updaten
   update_password: "Update my password and log me in"                    
   updated_successfully: "Succesvol Aangepast"

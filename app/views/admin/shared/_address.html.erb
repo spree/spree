@@ -10,4 +10,6 @@
 <%= "#{address.address2} <br />" unless address.address2.blank? %>
 <%= "#{address.city}, #{address.state_text} #{address.zipcode}" %><br />
 <%= address.country.name %><br />
-<%= address.phone %></p>
+<%= address.phone %>
+<%= '<br/>' + address.alternative_phone unless address.alternative_phone.blank? %>
+</p>

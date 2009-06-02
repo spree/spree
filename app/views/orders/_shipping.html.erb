@@ -47,6 +47,12 @@
   		<label for="<%= t("phone") %>"><%= t("phone") %></label>
   		<%= ship_form.text_field :phone, :class => 'required' -%><span class="req">*</span>
   	</p>
+  	<% if Spree::Config[:alternative_shipping_phone] %>
+          <p id="saltphone">
+            <label for=""><%= t("alternative_phone") %></label>
+            <%= ship_form.text_field :alternative_phone -%>
+          </p>
+        <% end %>
   	<div class="form-buttons">
   	  <input id="continue_shipping" type="button" class="button primary" value="<%=t("continue")%>"/>
   	</div>

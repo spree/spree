@@ -18,4 +18,14 @@
       </p>
     </fieldset>
   </div>
+  <% if Spree::Config[:shipping_instructions] %>
+    <div class="yui-u">
+      <fieldset>
+        <legend> <%= t("shipping_instructions") %></legend>
+        <p>
+          <%= shipment_form.text_area :special_instructions %>
+        </p>
+      </fieldset>
+    </div>
+  <% end %>
 </div>

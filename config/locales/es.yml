@@ -165,6 +165,7 @@ es:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir el uso de SSL en los modos de desarrollo y prueba
   allow_ssl_to_be_used_when_in_production_mode: Permitir el uso de SSL en produccion        
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Cuantía
   are_you_sure: "¿Está seguro?"
   are_you_sure_category: "¿Está seguro de que quiere eliminar esta categoría?"
@@ -187,6 +188,7 @@ es:
   capture: captura
   card_code: "Código de la tarjeta"
   card_number: "Número de tarjeta"
+  card_type_is: Card type is
   cart: Cesta
   categories: Categorías
   category: Categoría
@@ -242,6 +244,7 @@ es:
   email_server_settings_description: "Configuración del servidor de correo electrónico"
   empty_cart: "Vaciar Cesta"
   enable_mail_delivery: Habilitar envio por correo      
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: error
   event: Evento
   existing_customer: "Cliente existente"
@@ -279,6 +282,7 @@ es:
   inventory_adjustment: "Ajuste de inventario"
   inventory_setting_description: "Configuracion del inventario, Devoluciones, mostrar articulos sin stock"
   inventory_settings: "Configuracion del inventario"
+  issue_number: Issue Number
   item: artículo
   item_description: "Descripción del artículo"
   item_total: "Total de artículos"
@@ -300,6 +304,7 @@ es:
   login_failed: "No se ha podido iniciar la sesion, error de autenticacion."      
   login_name: "Nombre de usuario"
   logout: "Cerrar sesión"
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "La entrega de correo está habilitada"
   mail_delivery_not_enabled: "La entrega de correo está deshabilitada"
   mail_server_preferences: Preferencias del servidor de correo
@@ -352,6 +357,7 @@ es:
   order_date: "Fecha de pedido"
   order_details: "Detalles del pedido"
   order_email_resent: "Email de pedido reenviado"
+  order_not_in_system: That order number is not valid on this site.
   order_number: "Pedido #"
   order_operation_authorize: "Autorizar"
   order_processed_successfully: "Su pedido se ha procesado correctamente"
@@ -400,6 +406,7 @@ es:
   remember_me: "Recordarme en este equipo"
   remove: "Remover"
   reports: Reportes
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: "Volver a enviar"
   reset_password: "Reinicia my contraseña"
   response_code: "Código de respuesta"
@@ -435,6 +442,7 @@ es:
   shipping_categories_description: "Gestionar las categorias de envio para determinar qué categorías de productos pueden ser transportados a través de qué método"
   shipping_cost: Costes de envio
   shipping_error: "Error de envio"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: Metodo de envio
   shipping_methods: "Metodos de envio"
   shipping_methods_description: "Manejar metodos de envio"
@@ -460,6 +468,7 @@ es:
     date: Fecha 
     time: Hora                                               
   start: Inicio
+  start_date: Valid from
   state: Provincia
   state_based: "Provincia"
   state_setting_description: "Administrar la lista de estados o provincias asociados con cada país."
@@ -496,6 +505,7 @@ es:
   unable_to_authorize_credit_card: "No se ha podido autorizar la tarjeta de credito"
   unable_to_capture_credit_card: "No se ha podido capturar la tarjeta de credito"
   unable_to_save_order: "No se ha podido guardar el pedido"
+  unrecognized_card_type: Unrecognized card type
   update: Actualizar
   update_password: "Actualiza mi contraseña y dejame entrar"                    
   updated_successfully: "Actualizado correctamente"

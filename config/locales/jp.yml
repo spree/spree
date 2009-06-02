@@ -1,0 +1,532 @@
+---
+jp: 
+  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
+  abbreviation: 略語
+  access_denied: "Access Denied"
+  account: アカウント
+  account_updated: "Account updated!"
+  action: アクション
+  actions:
+    cancel: キャンセル
+    create: 作成
+    destroy: 削除
+    list: リスト
+    listing: 一覧
+    new: 新規
+    update: 更新
+  activerecord:
+    attributes:
+      address:
+        address1: 住所
+        address2: "Address (contd.)"
+        city: 都市名
+        firstname: 名前
+        lastname: 名字
+        phone: 電話番号
+        zipcode: 郵便番号
+      country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: "ISO Name"
+        name: Name
+        numcode: "ISO Code"
+      creditcard:
+        cc_type: Type
+        month: Month
+        number: Number
+        verification_value: "Verification Value"
+        year: Year
+      inventory_unit:
+        state: 都道府県（州）
+      line_item:
+        price: 価格
+        quantity: 個数
+      order:
+        checkout_complete: "Checkout Complete"
+        ip_address: "IP Address"
+        item_total: "Item Total"
+        number: Number
+        ship_amount: "Ship Amount"
+        special_instructions: "Special Instructions"
+        state: 都道府県（州）
+        tax_amount: "Tax Amount"
+        total: 合計
+      product:
+        available_on: "Available On"
+        description: 説明
+        master_price: "Master Price"
+        name: 氏名
+        on_hand: 入荷日
+        shipping_category: "Shipping Category"
+      property:
+        name: 名称
+        presentation: Presentation
+      prototype:
+        name: 名称
+      role:
+        name: 名称
+      state:
+        abbr: 略語
+        name: 名称
+      taxon:
+        name: 名称
+        permalink: Permalink
+        position: Position
+      taxonomy:
+        name: 名称
+      user:
+        email: Eメール
+      variant:
+        depth: 奥行き
+        height: 高さ
+        price: 価格
+        sku: SKU
+        weight: 重量
+        width: 幅
+      zone:
+        description: 説明
+        name: 名前
+    models:
+      address:
+        one: Address
+        other: Addresses
+      country:
+        one: 国名
+        other: 国名
+      creditcard:
+        one: クレジットカード
+        other: "Credit Cards"
+      creditcard_payment:
+        one: "Credit Card Payment"
+        other: "Credit Card Payments"
+      creditcard_txn:
+        one: "Credit Card Transaction"
+        other: "Credit Card Transactions"
+      inventory_unit:
+        one: "Inventory Unit"
+        other: "Inventory Units"
+      line_item:
+        one: "Line Item"
+        other: "Line Items"
+      order:
+        one: Order
+        other: Orders
+      payment:
+        one: Payment
+        other: Payments
+      product:
+        one: Product
+        other: Products
+      property:
+        one: Property
+        other: Properties
+      prototype:
+        one: Prototype
+        other: Prototypes
+      role:
+        one: Roles
+        other: Roles
+      shipping_category:
+        one: "Shipping Category"
+        other: "Shipping Categories"
+      state:
+        one: 都道府県（州）
+        other: 都道府県（州）
+      taxon:
+        one: Taxon
+        other: Taxons
+      taxonomy:
+        one: Taxonomy
+        other: Taxonomies
+      user:
+        one: User
+        other: Users
+      variant:
+        one: Variant
+        other: Variants
+      zone:
+        one: Zone
+        other: Zones
+  add: 追加
+  add_category: カテゴリーの追加
+  add_country: 国の追加
+  add_option_type: "Add Option Type"
+  add_option_types: "Add Option Types"
+  add_option_value: "Add Option Value"
+  add_product_properties: "Add Product Properties"
+  add_state: 都道府県（州）の追加
+  add_to_cart: カートに追加
+  add_zone: "Add Zone"
+  address: 住所
+  address_information: 住所情報
+  adjustment: 調整
+  administration: 管理
+  allow_backorders: 取り寄せ注文を許可する
+  allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
+  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode
+  already_registered: Already Registered?
+  alternative_phone: Alternative Phone
+  amount: 個数
+  are_you_sure: よろしいでしょうか
+  are_you_sure_category: "Are you sure you want to delete this category?"
+  are_you_sure_delete: "Are you sure you want to delete this record?"
+  are_you_sure_delete_image: "Are you sure you want to delete this image?"
+  are_you_sure_option_type: "Are you sure you want to delete this option type?"
+  are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
+  assign_taxon: "Assign Taxon"
+  assign_taxons: "Assign Taxons"
+  authorization_failure: "Authorization Failure"
+  authorized: Authorized
+  available_on: "Available On"
+  available_taxons: 使用可能な分類
+  back: 戻る
+  back_to_store: "Go Back To Store"
+  bill_address: 請求先住所
+  billing_address: 請求先住所
+  cancel: キャンセル
+  canceled: キャンセル済み
+  capture: capture
+  card_code: "Card Code"
+  card_number: カード番号
+  card_type_is: Card type is
+  cart: カート
+  categories: カテゴリー
+  category: カテゴリー
+  change: 変更
+  change_language: 言語の変更
+  charged: 課金
+  checkout: 精算
+  city: 都市名
+  comp_order: "Comp Order"
+  comp_order_confirmation: "Customer will not be charged.  Are you sure you want to comp this order?"
+  complete_list: "Complete List"
+  configuration: 設定
+  configuration_options: 設定オプション
+  configurations: 設定
+  confirm: 確認
+  confirm_password: "Password Confirmation"
+  continue: 続ける
+  continue_shopping: ショッピングを続ける
+  copy_all_mails_to: Copy All Mails To
+  country: 国名
+  country_based: "Country Based"
+  create: 作成
+  create_a_new_account: 新規アカウント作成
+  create_user_account: ユーザアカウント作成
+  created_successfully: 作成されました
+  credit_card: クレジットカード
+  credit_card_capture_complete: "Credit Card Was Captured"
+  credit_card_payment: "Credit Card Payment"
+  creditcard: クレジットカード
+  current: Current
+  customer: 顧客
+  date_range: 日範囲
+  delete: 削除
+  depth: 奥行き
+  description: 説明
+  destroy: 破壊する
+  display: 表示
+  edit: 編集
+  editing_category: カテゴリーの編集
+  editing_option_type: "Editing Option Type"
+  editing_option_types: "Editing Option Types"
+  editing_product: 商品の編集
+  editing_property: 属性の編集
+  editing_prototype: プロトタイプの編集
+  editing_shipping_category: 配送カテゴリー編集
+  editing_shipping_method: 配送方法編集
+  editing_state: 都道府県（州）編集
+  editing_tax_category: 税カテゴリー編集
+  editing_user: ユーザー編集
+  editing_zone: ゾーン編集
+  email: Eメール
+  email_address: Eメールアドレス
+  email_server_settings_description: メールサーバの設定をします。
+  empty_cart: カートを空にする
+  enable_mail_delivery: Enable Mail Delivery
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
+  error: エラー
+  event: イベント
+  existing_customer: "Existing Customer"
+  expiration: 有効期限
+  expiration_month: 有効期限(月)
+  expiration_year: 有効期限(年)
+  extension: Extension
+  extensions: Extensions
+  filename: ファイル名
+  final_confirmation: 最終確認
+  first_name: 名前
+  forgot_password: "Forgot Password"
+  gateway: ゲートウェー
+  gateway_error: ゲートウェーエラー
+  gateway_setting_description: "Select a payment gateway and configure its settings."
+  general: 一般
+  general_settings: 一般設定
+  general_settings_description: Spreeの一般的な設定をします。
+  google_analytics: "Google Analytics"
+  google_analytics_active: "Active"
+  google_analytics_create: "Create New Google Analytics Account"
+  google_analytics_id: "Analytics ID"
+  google_analytics_new: "New Google Analytics Account"
+  google_analytics_setting_description: "Manage Google Analytics ID"
+  guest_user_account: Checkout as a Guest
+  height: 高さ
+  hello_user: "Hello User"
+  history: 履歴
+  home: ホーム
+  image: 画像
+  images: 画像
+  in_progress: "In Progress"
+  invalid_search: "Invalid search criteria."
+  inventory: 在庫
+  inventory_adjustment: 在庫調整
+  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
+  inventory_settings: 在庫設定
+  issue_number: Issue Number
+  item: 品目
+  item_description: 品目説明
+  item_total: 合計
+  last_name: 名字
+  list: リスト
+  listing_categories: カテゴリー一覧
+  listing_option_types: "Listing Option Types"
+  listing_orders: 注文一覧
+  listing_reports: リポート一覧
+  listing_tax_categories: "Listing Tax Categories"
+  listing_users: ユーザ一覧
+  locale_changed: "Locale Changed"
+  log_in: ログイン
+  logged_in_as: ログイン
+  logged_in_succesfully: ログインに成功しました
+  logged_out: ログアウトしました。
+  login_as_existing: "Log In as Existing Customer"
+  login_failed: "Login authentication failed."
+  login_name: ログイン
+  logout: ログアウト
+  maestro_or_solo_cards: Maestro/Solo cards
+  mail_delivery_enabled: "Mail delivery is enabled"
+  mail_delivery_not_enabled: "Mail delivery is not enabled"
+  mail_server_preferences: Mail Server Preferences
+  mail_server_settings: メールサーバ設定
+  mark_shipped: "Mark Shipped"
+  master_price: 定価
+  meta_description: メタ情報説明
+  meta_keywords: メタキーワード
+  metadata: メタデータ
+  month: "Month"
+  my_account: アカウント情報
+  my_orders: 注文情報
+  name: 名称
+  new: 新規
+  new_category: 新規カテゴリー
+  new_credit_card_payment: 新規カード払い
+  new_customer: 新規顧客
+  new_image: 新規画像
+  new_option_type: 新規オプションタイプ
+  new_option_value: 新規オプション値
+  new_product: 新規商品
+  new_property: 新規属性
+  new_prototype: 新規プロトタイプ
+  new_shipment: 新規配送
+  new_shipping_category: 新規配送カテゴリー
+  new_shipping_method: 新規配送方法
+  new_state: 新規都道府県（州）
+  new_tax_category: 新規税カテゴリー
+  new_tax_rate: 新規税率
+  new_taxonomy: "新規分類"
+  new_user: 新規ユーザ
+  new_variant: 新規形式
+  new_zone: 新規ゾーン
+  next: 次へ
+  no_items_in_cart: ""
+  no_match_found: "No Match Found"
+  no_user_found: "No user was found with that email address"
+  none: 空です
+  none_available: "None Available"
+  on_hand: 入荷日
+  operation: Operation
+  option_Values: オプション値
+  option_types: オプションタイプ
+  option_values: オプション値
+  options: オプション
+  or: or
+  order: 注文
+  order_confirmation_note: ""
+  order_date: 注文日
+  order_details: 注文詳細
+  order_email_resent: "Order Email Resent"
+  order_not_in_system: That order number is not valid on this site.
+  order_number: 注文
+  order_operation_authorize: Authorize
+  order_processed_successfully: "Your order has been processed successfully"
+  order_total: 合計
+  order_total_message: "The total amount charged to your card will be"
+  order_updated: "Order Updated"
+  orders: 注文
+  out_of_stock: 在庫切りです
+  overview: 概要
+  paid: 支払い済み
+  parent_category: "Parent Category"
+  password: パスワード
+  password_reset_instructions: "Password Reset Instructions"
+  password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
+  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."
+  password_updated: "Password successfully updated"
+  path: パス
+  pay: 支払い
+  payment: 支払い方法
+  payment_gateway: "Payment Gateway"
+  payment_information: 支払い情報
+  payments: 支払い方法
+  phone: 電話番号
+  place_order: Place Order
+  presentation: 表示名
+  previous: 前へ
+  price: 価格
+  problem_authorizing_card: "Problem authorizing credit card"
+  problem_capturing_card: "Problem capturing credit card"
+  problems_processing_order: "We had problems processing your order"
+  proceed_as_guest: "No Thanks, Proceed as Guest"
+  process: Process
+  product: 商品
+  product_details: 商品詳細
+  product_properties: 商品情報
+  products: 商品
+  properties: 属性
+  property: 属性
+  prototype: プロトタイプ
+  prototypes: プロトタイプ
+  qty: 個数
+  rate: 比率
+  register: 新規ユーザとして登録
+  register_or_guest: Checkout as Guest or Register
+  registration: 登録
+  remember_me: 記録する
+  remove: 削除
+  reports: リポート
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
+  resend: 再送
+  reset_password: "Reset my password"
+  response_code: "Response Code"
+  resume: "resume"
+  resumed: Resumed
+  return: return
+  returned: Returned
+  roles: 役割
+  sales_total: 売上げ合計
+  sales_total_for_all_orders: 全ての注文の売上げ合計
+  sales_totals: 売上げ合計
+  sales_totals_description: 全ての注文の売上げ合計
+  save_preferences: Save Preferences
+  search: 検索
+  secure_connection_type: Secure Connection Type
+  select: 選択
+  select_from_prototype: "Select From Prototype"
+  select_preferred_shipping_option: "Select preferred shipping option"
+  send_copy_of_all_mails_to: Send Copy of All Mails To
+  send_copy_of_orders_mails_to: Send Copy of Order Mails To
+  send_mails_as: Send Mails As
+  send_order_mails_as: Send Order Mails As
+  ship: 配送
+  ship_address: 配送先住所
+  shipment: 発送
+  shipment_number: "発送 #"
+  shipped: 発送済
+  shipping: 送料
+  shipping_address: 配送先
+  shipping_calculator: 計算式
+  shipping_categories: 配送カテゴリー
+  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_cost: Cost
+  shipping_error: "Shipping Error"
+  shipping_instructions: "Shipping Instructions"
+  shipping_method: 配送方法
+  shipping_methods: 配送方法
+  shipping_methods_description: 配送方法を管理します。
+  shipping_total: 配送料合計
+  shop_by_taxonomy: "{{taxonomy}}"
+  shopping_cart: ショッピングカート
+  show_deleted: 削除済みも表示
+  show_incomplete_orders: 未処理の注文も表示
+  show_only_complete_orders: 処理済みの注文のみを表示
+  show_out_of_stock_products: 在庫切れの商品を表示
+  sign_up: サインアップ
+  site_name: サイト名
+  site_url: サイトURL
+  sku: SKU
+  smtp: SMTP
+  smtp_authentication_type: SMTP Authentication Type
+  smtp_domain: SMTPドメイン
+  smtp_mail_host: SMTPサーバ
+  smtp_password: SMTPパスワード
+  smtp_port: SMTPポート
+  smtp_username: SMTPユーザ名
+  spree:
+    date: 日付
+    time: 時間
+  start: 始め
+  start_date: Valid from
+  state: 都道府県（州）
+  state_based: "State Based"
+  state_setting_description: "Administer the list of states/provinces associated with each country."
+  states: 都道府県（州）
+  status: 状況
+  stop: 終わり
+  store: ストアー
+  street_address: 住所
+  street_address_2: 住所2
+  subtotal: 合計
+  subtract: Subtract
+  system: システム
+  tax: 税
+  tax_categories: 税カテゴリー
+  tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
+  tax_category: 税カテゴリー
+  tax_total: 税合計
+  tax_type: 税種別
+  taxon: 分類単位
+  taxonomies: 分類単位
+  taxonomies_setting_description: "Create and manage taxonomies"
+  taxons: 分類
+  thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
+  this_file_language: "Japanese"
+  to_add_variants_you_must_first_define: "To add variants, you must first define"
+  total: 小計
+  tracking: Tracking
+  transaction: Transaction
+  tree: Tree
+  try_again: "Try Again"
+  type: 支払い方法
+  unable_ship_method: "Unable to generate shipping methods due to a server error."
+  unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
+  unable_to_capture_credit_card: "Unable to Capture Credit Card"
+  unable_to_save_order: "Unable to Save Order"
+  unrecognized_card_type: Unrecognized card type
+  update: 更新
+  update_password: "Update my password and log me in"
+  updated_successfully: 更新しました
+  use_as_shipping_address: Use as Shipping Address
+  use_billing_address: Use Billing Address
+  use_different_shipping_address: "Use Different Shipping Address"
+  user: ユーザ
+  user_account: ユーザアカウント
+  user_details: ユーザ詳細
+  users: ユーザ
+  value: 値
+  variants: 形式
+  version: バージョン
+  website: ウェブサイト
+  weight: 重量
+  welcome_to_sample_store: "Welcome to the sample store"
+  what_is_a_cvv: "What is a (CVV) Credit Card Code?"
+  what_is_this: "What's This?"
+  whats_this: "What's this"
+  width: 横幅
+  year: "Year"
+  you_have_been_logged_out: "You have been logged out."
+  your_cart_is_empty: カートは空です
+  zip: 郵便番号
+  zone: ゾーン
+  zone_based: "Zone Based"
+  zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
+  zones: ゾーン

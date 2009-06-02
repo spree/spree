@@ -12,7 +12,8 @@
       <label for="choose_existing"><%= t("existing_customer") %></label>
     </p>    	 
     <p>
-      <input id="choose_guest" type="radio" name="choose_registration" value="guest"/>
+      <input id="choose_guest" type="radio" name="choose_registration" value="guest"
+        <%= current_user.nil? ? 'checked="checked"' : '' %> />
       <label for="choose_guest"><%= t("proceed_as_guest") %></label>
     </p>    	 
   </div>

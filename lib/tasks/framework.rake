@@ -10,7 +10,6 @@ namespace :spree do
       end
       require 'rubygems'
       require 'rubygems/gem_runner'
-      Gem.manage_gems
 
       spree = (version = ENV['VERSION']) ?
         Gem.cache.search('spreee', "= #{version}").first :
