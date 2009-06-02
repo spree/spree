@@ -1,10 +1,11 @@
 <% content_for :head do %>
-	<%= stylesheet_link_tag '/jsTree/source/tree_component.css' %>
-	<%= javascript_include_tag '/jsTree/source/_lib.js' %>
-	<%= javascript_include_tag '/jsTree/source/tree_component.js' %>
+	<%= stylesheet_link_tag '/javascripts/jsTree/source/tree_component.css' %>
+	<%= javascript_include_tag 'jsTree/source/_lib.js' %>
+	<%= javascript_include_tag 'jsTree/source/tree_component.js' %>
 	
-	<%= javascript_include_tag '/jquery.alerts/jquery.alerts.js' %>
-	<%= stylesheet_link_tag '/jquery.alerts/jquery.alerts.css' %>
+	<%= javascript_include_tag 'jquery.alerts/jquery.alerts.js' %>
+	<%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.css' %>
+	<%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.spree.css' %>
  
   <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %> 
   <%= javascript_tag "var taxonomy_id = #{@taxonomy.id}; 
