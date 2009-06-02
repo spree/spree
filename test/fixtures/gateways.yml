@@ -1,0 +1,4 @@
+bogus_gateway:
+  name: Bogus Gateway
+  clazz: Spree::BogusGateway
+  description: Bogus gateway for testing

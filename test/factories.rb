@@ -16,7 +16,7 @@ Factory.define :shipping_method do |f|
 end
 
 Factory.define :zone do |f|
-  f.name "Bogus"
+  f.name { Factory.next(:name) }
 end
 
 Factory.define :address do |f|
@@ -31,8 +31,13 @@ Factory.define :address do |f|
 end
 
 Factory.define :country do |f|
-  f.name "Foozistan"
+  f.name { Factory.next(:name) }
 end
+
+Factory.sequence :name do |n|
+  "Foo_#{n}"
+end
+
 
 Factory.define :creditcard do |f|
   f.verification_value 123
