@@ -94,7 +94,8 @@ var handle_rename = function(li, bl, tree, rb) {
 };
 
 var handle_before_delete = function(li){
-
+	$.alerts.dialogClass = "spree";
+	
 	if (!delete_confirmed){
 		jConfirm('Are you sure you want to delete this taxon?', 'Confirm Taxon Deletion', function(r) {
 			if(r){
@@ -124,7 +125,8 @@ var handle_delete = function(li, tree, rb){
 
 conf = { 
   ui : {
-    theme_path  : "/jsTree/source/themes/",
+    theme_path  : "/javascripts/jsTree/source/themes/",
+		theme_name	: "spree",
     context     : [ 
         {
             id      : "create",
