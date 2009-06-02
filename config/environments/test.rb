@@ -19,7 +19,10 @@ config.action_controller.perform_caching             = false
 config.action_mailer.delivery_method = :test
 
 # prevents rails 2.1 from complaining about protect_from_forgery while running rspec tests
-config.action_controller.allow_forgery_protection = false 
+config.action_controller.allow_forgery_protection = false
 
 config.gem "rspec", :lib => false, :version => ">= 1.2.0"
 config.gem "rspec-rails", :lib => false, :version => ">= 1.2.0"
+config.gem "thoughtbot-shoulda", :lib => "shoulda", :version => ">= 2.10"
+config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"       
+config.gem "jeremymcanally-stump", :lib => "stump", :source => "http://gems.github.com"

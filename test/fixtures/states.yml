@@ -1,0 +1,204 @@
+alabama:
+  name: Alabama
+  abbr: AL
+  country_id: 214
+alaska:
+  name: Alaska
+  abbr: AK
+  country_id: 214
+arizona:
+  name: Arizona
+  abbr: AZ
+  country_id: 214
+arkansas:
+  name: Arkansas
+  abbr: AR
+  country_id: 214
+california:
+  name: California
+  abbr: CA
+  country_id: 214
+colorado:
+  name: Colorado
+  abbr: CO
+  country_id: 214
+connecticut:
+  name: Connecticut
+  abbr: CT
+  country_id: 214
+deleware:
+  name: Delaware
+  abbr: DE
+  country_id: 214
+dc:
+  name: District of Columbia
+  abbr: DC
+  country_id: 214
+florida:
+  name: Florida
+  abbr: FL
+  country_id: 214
+georgia:
+  name: Georgia
+  abbr: GA
+  country_id: 214
+hawaii:
+  name: Hawaii
+  abbr: HI
+  country_id: 214
+idaho:
+  name: Idaho
+  abbr: ID
+  country_id: 214
+illinois:
+  name: Illinois
+  abbr: IL
+  country_id: 214
+indiana:
+  name: Indiana
+  abbr: IN
+  country_id: 214
+iowa:
+  name: Iowa
+  abbr: IA
+  country_id: 214
+kansas:
+  name: Kansas
+  abbr: KS
+  country_id: 214
+kentucky:
+  name: Kentucky
+  abbr: KY
+  country_id: 214
+louisiana:
+  name: Louisiana
+  abbr: LA
+  country_id: 214
+maine: 
+  name: Maine
+  abbr: ME
+  country_id: 214
+maryland:
+  name: Maryland
+  abbr: MD
+  country_id: 214
+massachusetts:
+  name: Massachusetts
+  abbr: MA
+  country_id: 214
+michigan:
+  name: Michigan
+  abbr: MI
+  country_id: 214
+minnesota:
+  name: Minnesota
+  abbr: MN
+  country_id: 214
+mississippi:
+  name: Mississippi
+  abbr: MS
+  country_id: 214
+missouri:
+  name: Missouri
+  abbr: MO
+  country_id: 214
+montana:
+  name: Montana
+  abbr: MT
+  country_id: 214
+nebraska:
+  name: Nebraska
+  abbr: NE
+  country_id: 214
+nevada:
+  name: Nevada
+  abbr: NV
+  country_id: 214
+new_hampshire:
+  name: New Hampshire
+  abbr: NH
+  country_id: 214
+new_jersey:
+  name: New Jersey
+  abbr: NJ
+  country_id: 214
+new_mexico:
+  name: New Mexico
+  abbr: NM
+  country_id: 214
+new_york:
+  name: New York
+  abbr: NY
+  country_id: 214
+north_carolina:
+  name: North Carolina
+  abbr: NC
+  country_id: 214
+north_dakota:
+  name: North Dakota
+  abbr: ND
+  country_id: 214
+ohio: 
+  name: Ohio
+  abbr: OH
+  country_id: 214
+oklahoma: 
+  name: Oklahoma
+  abbr: OK
+  country_id: 214
+oregon:
+  name: Oregon
+  abbr: OR
+  country_id: 214
+pennsylvania:
+  name: Pennsylvania
+  abbr: PA
+  country_id: 214
+rhode_island:
+  name: Rhode Island
+  abbr: RI
+  country_id: 214
+south_carolina:
+  name: South Carolina
+  abbr: SC
+  country_id: 214
+south_dakota:
+  name: South Dakota
+  abbr: SD
+  country_id: 214
+tennesse:
+  name: Tennessee
+  abbr: TN
+  country_id: 214
+texas:
+  name: Texas
+  abbr: TX
+  country_id: 214
+utah: 
+  name: Utah
+  abbr: UT
+  country_id: 214
+vermont:
+  name: Vermont
+  abbr: VT
+  country_id: 214
+virginia:
+  name: Virginia
+  abbr: VA
+  country_id: 214
+washington:
+  name: Washington
+  abbr: WA
+  country_id: 214
+west_virginia:
+  name: West Virginia
+  abbr: WV
+  country_id: 214
+wisconsin:
+  name: Wisconsin
+  abbr: WI
+  country_id: 214
+wyoming:
+  name: Wyoming
+  abbr: WY
+  country_id: 214
