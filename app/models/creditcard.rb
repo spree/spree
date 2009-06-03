@@ -1,5 +1,5 @@
 class Creditcard < ActiveRecord::Base 
-  before_save :filter_sensitive
+  before_create :filter_sensitive
   belongs_to :order
   belongs_to :address
   has_many :creditcard_payments

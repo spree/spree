@@ -8,10 +8,12 @@ class Order < ActiveRecord::Base
   has_many :state_events
   has_many :payments
   has_many :creditcard_payments
+  has_many :creditcards
   belongs_to :user
   has_many :shipments, :dependent => :destroy
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
+  accepts_nested_attributes_for :creditcards, :reject_if => proc { |attributes| attributes['number'].blank? }  
   accepts_nested_attributes_for :ship_address, :bill_address
   
   validates_associated :line_items, :message => "are not valid"
@@ -29,13 +31,7 @@ class Order < ActiveRecord::Base
   
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
   attr_protected :ship_amount, :tax_amount, :item_total, :total, :user, :number, :ip_address, :checkout_complete, :state, :token
-
-  # for memory-only storage of creditcard details
-  attr_accessor :creditcard
-
-  # for storage of shipping method before it is saved in a shipment
-  attr_accessor :initial_shipping_method
-
+  
   def to_param  
     self.number if self.number
     generate_order_number unless self.number
@@ -174,8 +170,9 @@ class Order < ActiveRecord::Base
    
   def update_totals
     # finalize order totals 
-    if initial_shipping_method
-      self.ship_amount = initial_shipping_method.calculate_shipping(self) 
+    unless shipment.nil?
+      calculator = shipment.shipping_method.shipping_calculator.constantize.new
+      self.ship_amount = calculator.calculate_shipping(shipment) 
     else
       self.ship_amount = 0
     end
@@ -184,11 +181,10 @@ class Order < ActiveRecord::Base
 
   private
   def complete_order
-    shipments.build(:address => ship_address, :shipping_method => initial_shipping_method)
     self.update_attribute(:checkout_complete, true)
     InventoryUnit.sell_units(self)
     update_totals
-    save_result = save!
+    save_result = save
     if user && user.email
       OrderMailer.deliver_confirm(self)
     end   

@@ -22,7 +22,7 @@ describe ShippingMethod do
     @zone = mock_model(Zone)
     @address = mock_model(Address)
     @shipping_method = ShippingMethod.new(:zone => @zone, :shipping_calculator => "MockCalculator")
-    @order = mock_model(Order, :ship_address => @address)
+    @order = mock_model(Order, :address => @address)
   end
 
   describe "available?" do      

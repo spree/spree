@@ -4,7 +4,7 @@ $(function() {
   $('span#bcountry select').change(function() { update_state('b'); });
   $('span#scountry select').change(function() { update_state('s'); });
   get_states();
-  $('input#order_creditcard_number').blur(set_card_validation);
+  $('input#order_creditcards_attributes_0_number').blur(set_card_validation);
   
   // hook up the continue buttons for each section
   for(var i=0; i < regions.length; i++) {     
@@ -451,11 +451,11 @@ var card_type = function(number) {
 };
 
 var set_card_validation = function () {
-  if ($("#order_creditcard_number").val().match(/^\s*$/)) {
+  if ($("#order_creditcards_attributes_0_number").val().match(/^\s*$/)) {
     $('#card_type').hide();
     return;
   }
-  current_card_type = card_type($("#order_creditcard_number").val());
+  current_card_type = card_type($("#order_creditcards_attributes_0_number").val());
   $('#card_type').show();
   $('#card_type #looks_like').hide();
   $('#card_type #unrecognized').hide();
