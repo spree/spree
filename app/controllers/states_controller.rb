@@ -11,7 +11,7 @@ class StatesController < Spree::BaseController
       # we return ALL known information, since billing country isn't restricted
       #   by shipping country
       @state_info = {};
-      Country.all.each do |c|
+      Country.find(:all, :include => :states).each do |c|
         next if c.states.empty?
         @state_info[c.id] = c.states.sort.collect {|s| [s.id, s.name] }
       end
