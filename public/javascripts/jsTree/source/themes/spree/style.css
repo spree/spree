@@ -27,14 +27,9 @@
 .tree-spree li a, .tree-spree li span { background-color:transparent; height:30px; line-height:32px; background-repeat:no-repeat; font-size: 120%; background-position:4px 1px; padding:1px 4px 1px 41px; background-image:url("f.png"); border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; }
 .tree-spree li a:hover, .tree-spree li a.hover { background-color: #e7f4f9; border:1px solid #d8f0fa; padding:0px 3px 0px 40px; background-position:3px 0px;  }
 .tree-spree li a.clicked, .tree-spree li a.clicked:hover, .tree-spree li span.clicked { background-color: #beebff; border:1px solid #99defd; padding:0px 3px 0px 41px; background-position:3px 0px;  }
-.tree-spree li span.clicked { padding:0px 3px 0px 20px; }
+.tree-spree li a input, .tree li span input { margin:0;padding:4px 0;height:20px !important;border:1px solid white;background:white;font-size: 100%;font-family:Verdana; }
+.tree-spree li span.clicked { padding:0px 3px 0px 40px; }
 .tree-spree li a.loading { background-image:url("throbber.gif"); }
-
-/* DEFAULT, HOVER, CLICKED, LOADING STATES - RIGHT TO LEFT */
-.tree-spree .rtl li a, .tree-spree .rtl li span { padding:1px 23px 1px 4px; background-position:right 1px; margin-right:1px; }
-.tree-spree .rtl li a:hover, .tree-spree .rtl li a.hover { padding:0px 23px 0px 3px; background-position:right 0px; margin-right:0px; }
-.tree-spree .rtl li a.clicked, .tree-spree .rtl li a.clicked:hover, .tree-spree .rtl li span.clicked { padding:0px 23px 0px 3px; background-position:right 0px;  margin-right:0px; }
-.tree-spree .rtl li span.clicked { padding:0px 21px 0px 3px; }
 
 /* CONTEXT MENU */
 .tree-spree-context { width:160px; background:#F0F0F0 url("context.gif") 22px 0 repeat-y; border:1px solid silver; position:absolute; }
