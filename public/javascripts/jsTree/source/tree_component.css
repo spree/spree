@@ -5,7 +5,7 @@
 .tree li a, .tree li span { display:inline-block;line-height:16px;height:16px;color:black;white-space:nowrap;text-decoration:none;padding:1px 4px 1px 1px;margin:0; }
 .tree li a:focus { outline: none; }
 .tree li a input, .tree li span input { margin:0;padding:0 0;display:inline-block;height:12px !important;border:1px solid white;background:white;font-size:10px;font-family:Verdana; }
-.tree li a input:not([class="xxx"]), .tree li span input:not([class="xxx"]) { padding:1px 0; }
+/*.tree li a input:not([class="xxx"]), .tree li span input:not([class="xxx"]) { padding:1px 0; } */
 /* FOR DOTS */
 .tree .ltr li.last { float:left; }
 .tree .rtl li.last { float:right; #float:none; _float:right; }

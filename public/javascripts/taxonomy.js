@@ -5,35 +5,35 @@ var last_rollback = null;
 
 
 var show_progress = function(){
-	$("#progress").show();
-	$("#ajax_error").hide();
+	jQuery("#progress").show();
+	jQuery("#ajax_error").hide();
 }
 
 var hide_progress = function(){
-	$("#progress").hide();
+	jQuery("#progress").hide();
 }
 
 var handle_ajax_error = function(XMLHttpRequest, textStatus, errorThrown){
-	$.tree_rollback(last_rollback);
-	$("#progress").hide();
-	$("#ajax_error").show().html("<strong>" + server_error + "</strong><br/>" + taxonomy_tree_error);
+	jQuery.tree_rollback(last_rollback);
+	jQuery("#progress").hide();
+	jQuery("#ajax_error").show().html("<strong>" + server_error + "</strong><br/>" + taxonomy_tree_error);
 };
 
 var handle_move = function(li, target, droppped, tree, rb) {
 	last_rollback = rb;
-  var position = $(li).prevAll().length;
+  var position = jQuery(li).prevAll().length;
 
   var parent = -1;
   
   if(droppped=='inside'){
     parent = target;
   }else if(droppped=='after'){
-    parent = $(target).parents()[1];
+    parent = jQuery(target).parents()[1];
   }else if(droppped=='before'){
-    parent = $(target).parents()[1];
+    parent = jQuery(target).parents()[1];
   }
  
-  $.ajax({
+  jQuery.ajax({
     type: "POST",
     url: base_url + li.id,
     data: ({_method: "put", "taxon[parent_id]": parent.id, "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
@@ -57,18 +57,18 @@ var handle_create = function(parent, sib, created, tree, rb){
 var handle_created = function(id,result) {
 	hide_progress();
 	
-	$.tree_reference('taxonomy_tree').selected.attr('id', id);
+	jQuery.tree_reference('taxonomy_tree').selected.attr('id', id);
 }
 
 var handle_rename = function(li, bl, tree, rb) {
-  var name = $(li).children()[0].text;
+  var name = jQuery(li).children()[0].innerHTML;
   
 	if (creating){
 		//actually creating new
-		var position = $(li).prevAll().length;
-		var parent = $(li).parents()[1];
+		var position = jQuery(li).prevAll().length;
+		var parent = jQuery(li).parents()[1];
 	  
-		$.ajax({
+		jQuery.ajax({
 	    type: "POST",
 	    url: base_url,
 	    data: ({"taxon[name]": name, "taxon[parent_id]": parent.id, "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
@@ -82,7 +82,7 @@ var handle_rename = function(li, bl, tree, rb) {
 		//just renaming
 		last_rollback = rb;
 		
-	  $.ajax({
+	  jQuery.ajax({
 	    type: "POST",
 	    url: base_url + li.id,
 	    data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
@@ -94,13 +94,13 @@ var handle_rename = function(li, bl, tree, rb) {
 };
 
 var handle_before_delete = function(li){
-	$.alerts.dialogClass = "spree";
+	jQuery.alerts.dialogClass = "spree";
 	
 	if (!delete_confirmed){
 		jConfirm('Are you sure you want to delete this taxon?', 'Confirm Taxon Deletion', function(r) {
 			if(r){
 				delete_confirmed = true;
-				$.tree_reference('taxonomy_tree').remove(li);
+				jQuery.tree_reference('taxonomy_tree').remove(li);
 			}
 		});
 	}
@@ -111,7 +111,7 @@ var handle_before_delete = function(li){
 var handle_delete = function(li, tree, rb){
 	last_rollback = rb;
 		
-	$.ajax({
+	jQuery.ajax({
     type: "POST",
     url: base_url + li.id,
     data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
@@ -141,14 +141,14 @@ conf = {
             label   : "Rename", 
             icon    : "rename.png",
             visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return TREE_OBJ.check("renameable", NODE); }, 
-            action  : function (NODE, TREE_OBJ) { TREE_OBJ.rename(); } 
+            action  : function (NODE, TREE_OBJ) { jQuery.each(NODE, function () { TREE_OBJ.rename(this); }); } 
         },
         { 
             id      : "delete",
             label   : "Delete",
             icon    : "remove.png",
-            visible : function (NODE, TREE_OBJ) { var ok = true; $.each(NODE, function () { if(TREE_OBJ.check("deletable", this) == false || this.id == 'root') ok = false; return false; }); return ok; }, 
-            action  : function (NODE, TREE_OBJ) { $.each(NODE, function () { TREE_OBJ.remove(this); }); } 
+            visible : function (NODE, TREE_OBJ) { var ok = true; jQuery.each(NODE, function () { if(TREE_OBJ.check("deletable", this) == false || this.id == 'root') ok = false; return false; }); return ok; }, 
+            action  : function (NODE, TREE_OBJ) { jQuery.each(NODE, function () { TREE_OBJ.remove(this); }); } 
         },
         "separator",
         { 
@@ -156,14 +156,14 @@ conf = {
             label   : "Cut",
             icon    : "cut.png",
             visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return true; }, 
-            action  : function (NODE, TREE_OBJ) { TREE_OBJ.cut(); $(NODE).hide(); } 
+            action  : function (NODE, TREE_OBJ) { TREE_OBJ.cut(); jQuery(NODE).hide(); } 
         },
         { 
             id      : "paste",
             label   : "Paste",
             icon    : "paste.png",
             visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return true; }, 
-            action  : function (NODE, TREE_OBJ) { TREE_OBJ.open_branch(NODE); TREE_OBJ.paste(NODE); $(NODE).children(":last").children(":last").show(); } 
+            action  : function (NODE, TREE_OBJ) { TREE_OBJ.open_branch(NODE); TREE_OBJ.paste(NODE); jQuery(NODE).children(":last").children(":last").show(); } 
         }
 
     ]
@@ -190,12 +190,12 @@ conf = {
   }
 };
 
-$(document).ready(function(){
+jQuery(document).ready(function(){
 	
-  tax_tree = $.tree_create();
-  tax_tree.init($("#taxonomy_tree"), $.extend({},conf));
+  tax_tree = jQuery.tree_create();
+  tax_tree.init(jQuery("#taxonomy_tree"), jQuery.extend({},conf));
   
-	$(document).keypress(function(e){
+	jQuery(document).keypress(function(e){
     //surpress form submit on enter/return
     if (e.keyCode == 13){
         e.preventDefault();
