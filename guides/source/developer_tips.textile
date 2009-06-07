@@ -1,0 +1,68 @@
+h2. Developer Tips and Tricks
+
+This guide presents accumulated wisdom from person-years of Spree use.
+
+
+endprologue.
+
+h3. Upgrade Considerations
+
+h4. The important commands
+
++rake spree:upgrade+ 
+will copy in any new "infrastructure" files, e.g. new configuration or javascript or 
+style files. It saves you from needing to run the +spree+ command to get an empty project and then copying
+changes across.
+
+NOTE. currently this over-writes existing files, so be careful if you have experimental changes. (IDEA: use +-b+ flag on the copies? it does help)
+
+
+h4. Dos and Don'ts
+
+NOTE. Try to avoid modifying +config/boot.rb+ and +config/environment.rb+: use "initializers":#initializers instead.
+
+h4. Tracking changes for over-ridden code
+
+Be aware that core changes might have an impact on the components you have over-ridden in your project. 
+You might need to patch your local copies, or ensure that such copies interact correctly with changed
+code (e.g. using appropriate ids in Html to allow the javascript to work).
+
+If you can help us to generalise the core code so that your preferred effect is achieved by altering 
+a few parameters, then this is more useful than duplicating several files. Ideas and suggestions always
+welcome.  
+
+INFO. The "Spree Wiki":/wiki/scripts contains a few scripts to automate some of the checking.
+
+
+h3. Initializers
+
+Initializers are run during startup, and are the recommended way to execute certain settings.
+
+NOTE. Initializers are run in alphabetical order. Most of the time this won't matter, but you probably want your site initializer to run last. I call mine +zzzzzzz.rb+. 
+
+NOTE. At the moment, initializers in extensions are ignored (but we are looking at this). For now, still put initializers in their extensions but use symbolic links in +config/initializers+ to point to them. 
+
+
+
+h3. Debugging techniques
+
+h4. Use tests!
+
+Use +rake spec+ to test basic functioning after you've made changes.
+
+
+h4. Analysing crashes on a non-local machine
+
+If you're testing on a server, whether in production or development mode, the following code in one
+of your +FOO_extension.rb+ files might save some time. It triggers local behaviour for users who have
+an admin role. One useful consequence is that uncaught exceptions will show the detailed error page
+instead of +404.html+, so you don't have to hunt through the server logs. 
+
+<shell>
+Spree::BaseController.class_eval do
+  def local_request?
+    current_user.present? && current_user.has_role?(:admin)
+  end
+end
+</shell>
+

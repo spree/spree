@@ -1,0 +1,197 @@
+h2. Extensions
+
+This guide covers the use of extensions and their role in customizing and enhancing the standard Spree installation.  After reading this guide you should learn:
+
+* The role extensions play in a Spree deployment
+* How to build a "site" extension to customize the look and feel of your store
+* How to write a custom extension
+* Where to find existing extensions
+
+endprologue.
+
+h3. Overview
+
+Spree supports a powerful extension mechanism.  This allows us to focus on our mission of building a solid foundation that addresses 90% of the commerce problem.  Extensions address the remaining 10%.  Extensions provide a logical and consistent way for Spree users to supply any missing functionality in their application.  Extensions are designed in a way that should be highly intuitive to the experienced Rails programmer.  They also provide a convenient way for users to develop and share extensions with other members of the Spree community.
+
+The Spree extension mechanism was based extensively on the work of the "Radiant":http://radiantcms.org community.  The Radiant CMS project has a very similar design philosophy ("no fluff") and has already solved the problem in a very elegant fashion.
+
+h3. Overriding the Spree Defaults
+
+Custom extensions should be placed in the @vendor/extensions@ directory of your project.  Extensions placed in this directory will be automatically available to your application. What does an extension allow you to customize?  The short answer is pretty much everything.
+
+* Models
+* Views
+* Controllers
+* Routes
+* Migrations
+* Rake tasks
+
+Some of the more obvious possibilities would be to override the default view or controller used by Spree.  Most stores will need to customize the UI and you can use extensions to do this.  You can also use an extension to mixin functionality into an existing controller or view.  Since extensions have their own migrations you can modify existing Spree tables or create new ones in your database. The possibilities are almost endless.
+
+h3. Directory Structure
+
+Extensions have a directory structure that should look very familiar to you.  They follow essentially the same layout as a standard Rails app.  
+<shell>
+app
+  controllers
+  helpers
+  models
+  views
+config
+db
+  migrate
+lib
+spec
+  controllers
+  helpers
+  models
+  spec.opts
+  spec_helper
+  views
+</shell>
+
+So even though your Spree application will not have an +app+ directory, your extensions will.  If your primary goal is to simply customize Spree for a specific business then you could just create a single extension and put all of your custom stuff in there.  If you would like to reuse stuff between your own projects, or even share them with the Spree community, then you will want to organize your work logically into multiple self-contained extensions. 
+
+h3. Site Extension
+
+When you use the +spree+ command to create a new application (a gem installation), it will automatically create a +site+ extension for you.  This is where you should put all of the code to customize your site views, etc. This is essentially what you would normally put into the +app+ directory of a standard Rails application.  It may seem a little bit strange to put this type of content into an extension (as opposed to a top level directory) but this process makes upgrading to newer versions of Spree considerably easier.
+
+Technically there is nothing special about the site extension.  It is just a naming convention.  Every Spree application will likely need one so we have come up with a standard name for this concept.  You could call this extension whatever you wish.  You could also break the contents of the site extension into as many extensions as you wish (although there aren't many usecases for this.)
+
+h3. I18n
+
+Extensions can be used to provide custom locales for your extension.  For instance, if you wanted to use the +en-GB+ locale but there were a few translations that you disagreed with and wanted to change.  You could createa a new locale called +en-GB-custom+ and start by copying over the existing locale files.  
+
+<shell>
+app
+config
+  locales
+    en-GB-custom.yml
+    en-GB-custom_rails.yml
+db
+lib
+spec
+</shell>
+
+Suppose you wanted to change the appearance of the term "City / Town" to "Hamlet."  Simply edit your custom locale file in your extension as follows
+
+<shell>
+...
+city: Hamlet  
+...
+</shell>  
+
+Typically you would save your custom locales in the site extension but you might also want to create it as its own extension if you were planning on building more then one Spree store and you wished to reuse your custom locale.
+
+INFO. If there is a translation error or missing translation information in one of the existing Spree locales, you should fork the Spree project in GitHub and provide a patch.  See "contributing to spree":contributing_to_spree.html for more details.
+
+h3. Tutorial
+
+There is a very detailed "extensions tutorial":extensions_tutorial.html that will go through a detailed example of how to create your own extension.
+
+h3. Extensions Directory
+
+There are numerous extensions that have been written for Spree.  We've attempted to consolidate the list of known extensions in the "extensions directory":http://ext.spreecommerce.com for your convenience.  Extensions are listed by author, tag as well as supported Spree versions.  
+
+One thing to keep in mind is that extensions are often the result of a generous donation from one or more of our users.  A typical extension reflects the code needed to make the extension work at a particular moment (and for a particular version of Spree.)  Consequently, not all extensions will work with all versions of Spree.  These extensions are still often very useful starting points for addressing your own specific needs.  Many times the extension requires only a minor tweak to make it working with the latest version of Spree.  Other times, the extension is not listed as being compatible with a particular version of Spree only because it has yet to be tested.  There may not even be any issues at all.
+
+h3. Installing an Existing Extension
+
+Installing extensions is simple enough since they are typically stored in GitHub.  The command is similar to that for installing a Rails plugin: 
+
+<shell>
+  script/extension install git://github.com/developer/whatever.git
+</shell>
+
+You need to replace +developer+ and +whatever+ with the actual extension author and name respectively.
+
+h3. Extension Migrations
+
+Extensions have a special migration script that allows you to add migrations with the appropriate timestamp to your extension.
+
+<shell>
+script/generate extension_migration <extension_name> 
+<migration_name>
+</shell>
+
+The standard rake command for running Rails migrations will run all of the Spree migrations as well your extension migrations. 
+
+<shell>
+  rake db:migrate
+</shell>
+
+INFO. There are currently some known issues with migrating +DOWN+ using extension migrations.  Since down migrations are rarely useful in the real world, this problem is likely to remain unresolved for a while.        
+
+NOTE. For more information on Rails migrations in general, please see the excellent "rails guide":http://guides.rubyonrails.org/migrations.html on this subject.
+
+h3. Extension Load Order
+
+In the +environment.rb+ inside the initializer block put something like this:
+
+<shell>
+config.extensions = [:all, :site]
+</shell>
+
+Where +:all+ means all extensions available and not specified in that array. Those "all" extensions will follow a predefined order then, first Spree's internal extensions will be loaded in alphabetical order then external extensions will be loaded in alphabetical order.
+
+You can even make something be loaded first too:
+
+<shell>
+config.extensions = [:first_extension, :all, :site]
+</shell>
+
+h3. Tips and Tricks
+
+h4. Adding Fields to Product or Variants
+
+You may be interested in adding one or more fields to variant and / or product models using an extension. The Variant model has a class method called +additional_fields+ which exposes an array of hash objects, which you can add to from your extension to provide any extra fields that you might need. It's important to note that you should always _append_ or _add_ to this array as you might overwrite fields added from another extension. 
+
+Each field added to this array automatically gets presented on the relevant add / edit admin interfaces, but *you still need to create a migration to added these fields to the relevant tables*.  This is a better approach to simply overriding the admin views in your extension, because it enables multiple extensions to add columns to the product/variant model without having the clash of views.
+
+h4. Variant#additional_fields 
+
+From your extension class you can add to the variant and / or product models by adding a hash for each value, like:
+
+<shell>
+  Variant.additional_fields += [
+    {:name => 'Foo', :only => [:variant], :format => "%.2f"},
+    {:name => 'Bar', :only => [:product], :format => "%.2f"},
+    {:name => 'Buzz', :populate => [:line_items]}
+  ]
+</shell>
+
+In this example the extension would be adding the following fields:
+
+* *Foo* - will be added to the _variant_ model (and formatted to two decimal points)
+* *Bar* - will be added to the _product_ model (and formatted to two decimal points)
+* *Buzz* - will be added to both the _variant_ and _product_ models. It will also populate the _buzz_ attribute on the _line_item_ model when the product/variant is added to an order(cart).
+
+The supported parameters for the config hash are:
+
+* *:name* - The name of the field to be added, this should match the column added to table (column name will be lowercase)
+* *:only* - Defines which models the field has been added to. If no +:only+ key is present it's presumed to be added to both Variant and Product
+* *:format* - An sprintf compatible string to be used to format the value.
+* *:populate* - If +[:line_items]+ is passed to the +:populate key+, the value will be updated on the line_item when the product / variant is added to an order (i.e. cart). This can be helpful if your field changes frequently, but you'd like to record the value at the time of purchase (like cost price for example).
+
+h4. Modifying the Checkout Workflow
+
+You may wish to change the checkout workflow for your specific application.  Extensions are a logical place to do this.  Typically you would override the +checkout+ in your site extension.  Please see the guide on the "checkout process":checkout.html for more detailed information.
+
+h4. Using Migrations for Custom Configurations
+
+Spree comes with all sorts of default configurations that you will likely want to customize.  Many of these values can be changed now through admin screens (those that can't be changed will be able to shortly once those screens are written.)  Once a preference is changed from its default, the value is stored in the database.
+
+It is possible to use a migration to setup these preferences so that you can set the preferences of your site automatically.  This is handy when migrating a new series of configurations from a tested development environment to production.  You no longer have to remember to manually change these settings, just run the migrations like normal.
+
+For example, the default country in Spree is United States.  If you wanted the default country to be Ireland you could add the following to your site extension:
+
+<shell>
+class AddCustomConfigurations < ActiveRecord::Migration
+  def self.up
+    Spree::Config.set(:default_country_id => 96)
+  end
+
+  def self.down
+  end
+end
+</shell>

@@ -72,13 +72,18 @@ h3. Basic Configuration
 h3. Customization
 
 <dl>
-  <% guide('Using Extensions', 'extension_overview.html') do %>
+  <% guide('Using Extensions', 'extensions.html') do %>
     This guide covers how to use the extension system to customize Spree to meet your exact needs.
   <% end %>
 </dl>
 <dl>
   <% guide('Extension Tutorial', 'extension_tutorial.html') do %>
     This tutorial covers the basic steps of creating your own custom extension.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Checkout Process', 'checkout.html') do %>
+    This guide will show you how to customize the steps in your checkout process.
   <% end %>
 </dl>
                                                                    
@@ -122,8 +127,8 @@ h3. Digging Deeper
 h3. Best Practices   
 
 <dl>
-  <% guide('Upgrade Considerations', 'upgrade_considerations.html') do %>
-    This guide covers how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
+  <% guide('Developer Tips', 'developer_tips.html') do %>
+    This guide contains a miscellany of useful advice from Spree developers, including how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
   <% end %>
 </dl>
 <dl>

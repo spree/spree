@@ -1,0 +1,298 @@
+h2. Tutorial: A Customization Extensions
+
+This guide contains a tutorial for the development of an extension to customize the appearance of the standard Spree installation. After reading this guide you should learn:
+
+* How to build a "site" extension to customize the look of your store
+* How to include custom stylesheets, javascript, or images
+* How to deactivate the "site" extension
+
+endprologue.
+
+h3. Creating the Site Extension
+
+WARNING. You must understand the difference between running Spree as a gem and running it as a Rails application.
+
+h4. Site Extension with Spree Application
+
+First, to generate the extension, run the following to create an extension by the name of 'Site'.
+
+<shell>
+script/generate extension Site
+</shell>
+
+This command will create many files in the vendor/extensions/site/ directory that looks similar to a generic rails application.
+
+h4. Site Extension with Spree Gem Install
+
+A site extension exists upon creation of an application using the Spree gem.
+
+<shell>
+ls vendor/extensions
+</shell>
+
+h4. Override the Layout
+
+The first step is to override the standard spree application layout to include your site stylesheet on all application pages.
+
+First, complete the following command to make a new directory: 
+
+<shell>
+mkdir SITE_EXTENSION_DIR/app/views/layouts/
+</shell>
+
+h5. Spree Application Installation
+
+If you are running Spree as an application, copy the Spree application.html.erb layout file to your extension app/views/layouts/ directory.
+ 
+<shell>
+cp SPREE_ROOT/app/views/layouts/application.html.erb /
+  SITE_EXTENSION_DIR/app/views/layouts/
+</shell>
+
+h5. Gem Installation
+
+If you are running Spree as a gem, copy the Spree gem application.html.erb layout file to your extension app/views/layouts/ directory.
+
+<shell>
+cp GEM_ROOT/app/views/layouts/application.html.erb /
+  SITE_EXTENSION_DIR/app/views/layouts/
+</shell>
+
+h3. Adding a Custom Stylesheet
+
+This part of the tutorial explains how to add a custom stylesheet to change the look of your site.
+
+h4. Edit the Layout
+
+WARNING. Spree uses SASS and Compass, a CSS framework that includes Blueprint. We recommend you become familiar with SASS. However, you may continue this tutorial without the knowlege of SASS.
+
+Next, include the stylesheet with one of the following steps.
+
+h5. SASS
+
+Perform the following patch to include your compiled site.css (built from site.sass) to SITE_EXTENSION_DIR/app/views/layouts/application.html.erb:
+
+<code>
+  <%= stylesheet_link_tag 'compiled/screen' %>
++ <%= stylesheet_link_tag 'compiled/site' %>
+</code>
+
+h5. CSS
+
+Perform the following patch to include your site.css to SITE_EXTENSION_DIR/app/views/layouts/application.html.erb:
+
+<code>
+  <%= stylesheet_link_tag 'compiled/screen' %>
++ <%= stylesheet_link_tag 'site' %>
+</code>
+
+h4. Create the Stylesheet
+
+h5. SASS
+
+To create the directories and stylesheet with SASS, complete the following:
+
+<shell>
+mkdir -p public/stylesheets/sass
+vi public/stylesheets/sass/site.sass
+</shell>
+
+Edit the site.sass file to contain the following:
+
+<code>
+body
+  :background #99CC99
+</code>
+
+h5. CSS
+
+To create the directories and stylesheet without SASS, complete the following:
+
+<shell>
+mkdir public/stylesheets
+vi public/stylesheets/site.css
+</shell>
+
+Edit the site.css file to contain the following:
+
+<code>
+body {
+  background: #99CC99;
+}
+</code>
+
+h4. Server Restart
+
+When any extension public/* files are modified, a server restart is required to copy the files over to the main app public/ directory.
+
+Restart the server with the +script/server+, +touch tmp/restart.txt+, etc. command.
+
+h4. Results
+
+After the server has restarted, refresh your browser to verify the changes have taken affect.
+
+!images/customize1.png(Custom CSS Part 1)!
+
+h4. Another Iteration
+
+Complete the following steps to perform another iteration of style changes:
+
+h5. SASS
+
+Apply the following patch on site.sass:
+ 
+<code>
+  body
+   :background #99CC99
++ body.two-col div#wrapper
++   :background-image none
++   :background #FFF
++   :-moz-border-radius 10px
++   :-webkit-border-radius 10px
+</code>
+
+h5. CSS
+
+Apply the following patch on site.css:
+
+<code>
+  body {
+    background: #99CC99; 
+  }
++ body.two-col div#wrapper {
++   background-image: none;
++   background: #FFF;
++   -moz-border-radius: 10px;
++   -webkit-border-radius: 10px;
++ }
+</code>
+
+Restart the server with the +script/server+, +touch tmp/restart.txt+, etc. command.
+
+View the results: 
+
+!images/customize2.png(Custom CSS Part 2)!
+
+h3. Adding a Custom Image
+
+The following describes how to add a custom logo to your site.
+
+h4. Edit the Layout
+
+First, apply the following patch to SITE_EXTENSION_DIR/app/views/layouts/application.html.erb to change the logo image used:
+
+<code>
+- <%= link_to image_tag('/images/admin/bg/spree_50.png'), root_path %>
++ <%= link_to image_tag('/images/logo.png'), root_path %>
+</code>
+
+h4. Upload the Image
+
+Next, create a public/images directory with the following command:
+
+<shell>
+mkdir public/images
+</shell>
+
+Then, retrieve "this image":images/logo.png and save it to your SITE_EXTENSION_DIR/public/images/ directory.
+<shell>
+wget http://spreecommerce.com/guides/images/logo.png
+mv logo.png SITE_EXTENSION_DIR/public/images/logo.png
+</shell>
+
+h4. Server Restart
+
+Finally, restart the server with the +script/server+, +touch tmp/restart.txt+, etc. command to copy the public directory contents to the main rails application public/ directory.
+
+h4. Results
+
+View the results:
+
+!images/customize3.png(Custom Logo)!
+
+h3. Using Custom Javascript
+
+This final step of the tutorial describes how to add custom javascript to your site.
+
+h4. Edit the Layout
+
+First, apply the following patch to SITE_EXTESION_DIR/app/views/layout/ to include site.js on all of your application pages. The rails helper will be used to consolidate and cache the three javascript files into one file to be included on all pages.
+ 
+<code>
+- <%= javascript_include_tag 'jquery-1.3.2.min',
+-   'jquery.validate.pack.js' :cache => 'jquery-and-plugins' %>
++ <%= javascript_include_tag 'jquery-1.3.2.min',
++   'jquery.validate.pack.js', 'site.js'
++   :cache => 'jquery-and-site' %>
+</code>
+
+h4. Create the Javascript
+
+WARNING. Spree endorses the use of jQuery rather than the Rails convention of Prototype. Using Prototype will most likely cause jQuery conflicts.
+
+Create a new directory to house the javascript in the SITE_EXTENSION/public/javascripts/ directory.
+
+<shell>
+mkdir public/javascripts/
+vi public/javascripts/site.js
+</shell>
+
+Add the following code to site.js:
+
+<code>
+$(function() {
+  alert('hi');
+})
+</code>
+
+h4. Server Restart
+
+Again, restart the server to copy the public/ files over to the main application public/ directory with +script/server+, +touch tmp/restart+, etc. command.
+
+h4. Results
+
+Refresh your browser to see the new alert message on page load:
+
+!images/customize4.png(Custom Javascript Part 1)!
+
+h4. Another Iteration
+
+To complete another iteration of javascript changes, replace site.js with the following code:
+
+<code>
+var are_you_sure = function() {
+   return confirm('Are you sure you
+     would like to add this item to your cart?');
+};
+$(function() {
+   $('div#cart-form button').click(function() {
+      return are_you_sure();
+   });
+})
+</code>
+
+Restart the server again.
+
+Upon adding an item to the cart, you will be prompted with the following message:
+
+!images/customize5.png(Custom Javascript Part 2)!
+
+h3. Notes
+
+h4. Git
+
+<shell>
+git status
+</shell>
+
+Your new site extension files will be identified as untracked files by git. These should be added to the main repository.
+
+Additionally, the files copied over from the SITE_EXTENSION_DIR/public/ directory will show as untracked files by git as well. These files can be ignored or added to the main repository.
+
+h4. Deactivation
+
+At this point in time, to deactivate your site extension, move the SITE_EXTENSION_DIR out of vendor/extensions directory.
+
+<shell>
+mv vendor/extensions/site/ ~/
+</shell>
