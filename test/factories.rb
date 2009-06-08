@@ -53,6 +53,12 @@ end
 Factory.define :inventory_unit do |f|
 end
 
+Factory.define :line_item do |f|
+  f.quantity 2
+  f.price 12.99
+  f.association :variant
+end
+
 Factory.define :country do |f|
   f.name { Factory.next(:name) }
 end
