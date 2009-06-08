@@ -12,8 +12,7 @@
       <label for="choose_existing"><%= t("existing_customer") %></label>
     </p>    	 
     <p>
-      <input id="choose_guest" type="radio" name="choose_registration" value="guest"
-        <%= current_user.nil? ? 'checked="checked"' : '' %> />
+      <input id="choose_guest" type="radio" name="choose_registration" value="guest"/>
       <label for="choose_guest"><%= t("proceed_as_guest") %></label>
     </p>    	 
   </div>
@@ -50,7 +49,7 @@
         <h3><%= t("guest_user_account") %></h3>
         <p>
           <label for="<%= t("email") %>"><%= t("email") %></label> 
-          <%= order_form.text_field :email, :class => 'required' -%><span class="req">*</span>
+          <%= checkout_form.text_field :email, :class => 'required' -%><span class="req">*</span>
         </p>
       </div>
     </div>

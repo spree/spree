@@ -1,7 +1,7 @@
 class Order < ActiveRecord::Base  
-#  before_create :generate_order_number
   before_save :update_line_items 
   before_create :generate_token
+  before_create :create_checkout
   
   has_many :line_items, :dependent => :destroy, :attributes => true
   has_many :inventory_units
@@ -10,9 +10,13 @@ class Order < ActiveRecord::Base
   has_many :creditcard_payments
   belongs_to :user
   has_many :shipments, :dependent => :destroy
-  belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
-  belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
-  accepts_nested_attributes_for :ship_address, :bill_address
+  has_one :checkout
+  has_one :bill_address, :through => :checkout
+  has_one :ship_address, :through => :checkout   
+
+  delegate :email, :to => :checkout
+  delegate :ip_address, :to => :checkout
+  delegate :special_instructions, :to => :checkout 
   
   validates_associated :line_items, :message => "are not valid"
   validates_numericality_of :tax_amount
@@ -24,25 +28,21 @@ class Order < ActiveRecord::Base
   named_scope :between, lambda {|*dates| {:conditions => ["orders.created_at between :start and :stop", {:start => dates.first.to_date, :stop => dates.last.to_date}]}}
   named_scope :by_customer, lambda {|customer| {:include => :user, :conditions => ["users.email = ?", customer]}}
   named_scope :by_state, lambda {|state| {:conditions => ["state = ?", state]}}
-  named_scope :checkout_completed, lambda {|state| {:conditions => ["checkout_complete = ?", state]}}
-  
+  named_scope :checkout_complete, {:include => :checkout, :conditions => ["checkouts.completed_at IS NOT NULL"]}
+  make_permalink :field => :number
   
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
   attr_protected :ship_amount, :tax_amount, :item_total, :total, :user, :number, :ip_address, :checkout_complete, :state, :token
-
-  # for memory-only storage of creditcard details
-  attr_accessor :creditcard
-
-  # for storage of shipping method before it is saved in a shipment
-  attr_accessor :initial_shipping_method
 
   def to_param  
     self.number if self.number
     generate_order_number unless self.number
     self.number.parameterize.to_s.upcase
   end
-  make_permalink :field => :number
-  
+
+  def checkout_complete
+    checkout.completed_at
+  end
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
@@ -174,24 +174,26 @@ class Order < ActiveRecord::Base
    
   def update_totals
     # finalize order totals 
-    if initial_shipping_method
-      self.ship_amount = initial_shipping_method.calculate_shipping(self)
+    tmp_shipment = shipment || Shipment.new(:order => self, :address => checkout.ship_address)
+    if checkout.shipping_method
+      self.ship_amount = checkout.shipping_method.calculate_shipping(tmp_shipment) if checkout.ship_address
     else
       self.ship_amount = 0
     end
     self.tax_amount = calculate_tax
+    save!
   end  
 
   private
-  def complete_order
-    shipments.build(:address => ship_address, :shipping_method => initial_shipping_method)
-    self.update_attribute(:checkout_complete, true)
+  def complete_order  
+    shipments.build(:address => ship_address, :shipping_method => checkout.shipping_method)
+    checkout.update_attribute(:completed_at, Time.now)
     InventoryUnit.sell_units(self)
-    update_totals
-    save_result = save!
+    #update_totals
+    save_result = save! 
     if user && user.email
       OrderMailer.deliver_confirm(self)
-    end   
+    end     
     save_result
   end   
   
@@ -214,5 +216,9 @@ class Order < ActiveRecord::Base
   
   def generate_token
     self.token = Authlogic::Random.friendly_token    
+  end
+  
+  def create_checkout
+    self.checkout = Checkout.create unless self.checkout
   end      
 end

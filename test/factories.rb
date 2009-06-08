@@ -1,9 +1,26 @@
-Factory.define :order do |f|
-  f.shipments do |shipments|
-    [shipments.association(:shipment)]
-  end
+Factory.define :order do |f| 
+  #f.checkout { Factory(:checkout) }
+  #f.shipments do |shipments|
+  #  [shipments.association(:shipment)]
+  #end
+end
+
+Factory.define :checkout do |f|
   f.association :bill_address, :factory => :address
   f.association :ship_address, :factory => :address
+  f.completed_at Time.now 
+  f.association :order
+end 
+
+Factory.define :incomplete_checkout, :parent => :checkout do |f|
+  f.completed_at nil
+end
+
+Factory.define :user do |f|
+  f.login { Factory.next(:name) }
+  f.email { Factory.next(:email) }
+  f.password "spree"
+  f.password_confirmation "spree"
 end
 
 Factory.define :shipment do |f|
@@ -75,9 +92,30 @@ Factory.sequence :name do |n|
   "Foo_#{n}"
 end
 
+Factory.sequence :email do |n|
+  "foo_#{n}@example.com"
+end
+
 Factory.define :creditcard do |f|
   f.verification_value 123
   f.month 12
   f.year 2013
-  f.number 4111111111111111
+  f.number "4111111111111111"
+  f.association :address  
+  f.association :checkout
+end
+
+Factory.define :authorized_creditcard, :parent => :creditcard do |f|
+  f.creditcard_payments { [Factory(:creditcard_payment)] }
+end
+
+Factory.define :creditcard_payment do |f|
+  f.association :creditcard
+  f.creditcard_txns { [Factory(:creditcard_txn, :txn_type => CreditcardTxn::TxnType::AUTHORIZE)] }
+  f.association :order
+end               
+
+Factory.define :creditcard_txn do |f|
+  f.amount 45.75
+  f.response_code 12345
 end

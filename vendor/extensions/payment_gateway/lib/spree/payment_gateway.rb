@@ -7,7 +7,7 @@ module Spree
       gateway_error(response) unless response.success?
       
       # create a creditcard_payment for the amount that was authorized
-      creditcard_payment = order.creditcard_payments.create(:amount => 0, :creditcard => self)
+      creditcard_payment = checkout.order.creditcard_payments.create(:amount => 0, :creditcard => self)
       # create a transaction to reflect the authorization
       creditcard_payment.creditcard_txns << CreditcardTxn.new(
         :amount => amount,
@@ -21,7 +21,12 @@ module Spree
       response = gw.capture((authorization.amount * 100).to_i, authorization.response_code, minimal_gateway_options)
       gateway_error(response) unless response.success?          
       creditcard_payment = authorization.creditcard_payment
-      creditcard_payment.creditcard_txns.create(:amount => authorization.amount, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
+      # create a transaction to reflect the capture
+      creditcard_payment.creditcard_txns << CreditcardTxn.new(
+        :amount => authorization.amount,
+        :response_code => response.authorization,
+        :txn_type => CreditcardTxn::TxnType::CAPTURE
+      )
     end
 
     def purchase(amount)
@@ -60,8 +65,8 @@ module Spree
     end
         
     def gateway_options
-      options = {:billing_address => generate_address_hash(address), 
-                 :shipping_address => generate_address_hash(order.ship_address)}
+      options = {:billing_address => generate_address_hash(checkout.bill_address), 
+                 :shipping_address => generate_address_hash(checkout.ship_address)}
       options.merge minimal_gateway_options
     end    
     
@@ -76,13 +81,13 @@ module Spree
     # a billing address when authorizing/voiding a previously captured transaction.  So omits these 
     # options in this case since they aren't necessary.  
     def minimal_gateway_options
-      {:email => order.email, 
-       :customer => order.email, 
-       :ip => order.ip_address, 
-       :order_id => order.number,
-       :shipping => order.ship_amount * 100,
-       :tax => order.tax_amount * 100, 
-       :subtotal => order.item_total * 100}  
+      {:email => checkout.email, 
+       :customer => checkout.email, 
+       :ip => checkout.ip_address, 
+       :order_id => checkout.order.number,
+       :shipping => checkout.order.ship_amount * 100,
+       :tax => checkout.order.tax_amount * 100, 
+       :subtotal => checkout.order.item_total * 100}  
     end
     
     # instantiates the selected gateway and configures with the options stored in the database

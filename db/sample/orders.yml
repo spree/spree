@@ -7,9 +7,4 @@ order_<%= i %>:
   tax_amount: 2.78
   item_total: 37.97
   total: 45.75
-  ip_address: 127.0.0.1
-  checkout_complete: true 
-  ship_address: frank_ship_address_<%= i %>
-  bill_address: frank_bill_address_<%= i %>
-  email: frank.foo@example.com
 <% end %>

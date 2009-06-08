@@ -14,14 +14,10 @@ class Admin::CreditcardPaymentsController < Admin::BaseController
          
   def capture       
     if @creditcard_payment.can_capture?      
-      creditcard = @creditcard_payment.creditcard
-      authorization = @creditcard_payment.find_authorization
-      Creditcard.transaction do 
-        creditcard.order.state_events.create(:name => t('pay'), :user => current_user, :previous_state => creditcard.order.state)
-        creditcard.capture(authorization)
-        @creditcard_payment.amount = authorization.amount
-        @creditcard_payment.save
-      end
+      #Creditcard.transaction do
+      #  @order.state_events.create(:name => t('pay'), :user => current_user, :previous_state => order.state)
+        @creditcard_payment.capture#(authorization)
+      #end
       flash[:notice] = t("credit_card_capture_complete")
     else  
       flash[:error] = t("unable_to_capture_credit_card")    

@@ -33,17 +33,18 @@ class Admin::OrdersController < Admin::BaseController
   def collection
     @search = Order.new_search(params[:search])
 
-    if params[:search].nil? || params[:search][:conditions].nil?
-      @search.conditions.checkout_complete = true
+    if params[:search].nil? || params[:limit_complete]
+      @search.conditions.checkout.completed_at_does_not_equal = nil
+      @limit_complete = true
     end
-
+    
     #set order by to default or form result
     @search.order_by ||= :created_at
     @search.order_as ||= "DESC"
     #set results per page to default or form result
     @search.per_page = Spree::Config[:orders_per_page]
 
-    @collection = @search.find(:all, :include => [:user, :shipments, {:creditcard_payments => {:creditcard => :address}}] )
+    @collection = @search.find(:all, :include => [:user, :shipments, {:creditcard_payments => {:creditcard => :address}}])
   end
 
   # Allows extensions to add new forms of payment to provide their own display of transactions

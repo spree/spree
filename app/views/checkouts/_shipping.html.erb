@@ -1,4 +1,4 @@
-<% order_form.fields_for :ship_address do |ship_form| %>     
+<% checkout_form.fields_for :ship_address do |ship_form| %>     
   <h2><%= t("shipping_address")%></h2>
   <div class="inner">
   	<p><label for="checkout_same_address" id="use_billing"><%= t("use_billing_address") %></label><input id="checkout_same_address" name="checkout_same_address" type="checkbox" /></p> 
@@ -25,7 +25,7 @@
   	<p>
   		<label for="<%= t("state") %>"><%= t("state") %></label>
   		<span id="sstate">
-  			<%= collection_select("order[ship_address_attributes]", 
+  			<%= collection_select("checkout[ship_address_attributes]", 
   			:state_id, 
   			@states, 
   			:id, 

@@ -1,0 +1,10 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'checkout' %>
+<% end %>
+<div id="checkout">
+  <h1><%= t("checkout")%></h1>
+  <% form_for @checkout, :url => object_url, :html => { :id => 'checkout_form'} do |checkout_form| %>
+    <%= render 'form', :checkout_form => checkout_form %>    
+    <input id="post-final" type="submit" style="display:none"/>
+  <% end %>
+</div>

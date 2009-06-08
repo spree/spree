@@ -6,6 +6,5 @@ card_<%= i %>:
   display_number: XXXX-XXXX-XXXX-1111
   first_name: Sean
   last_name: Schofield
-  order: order_<%= i %>  
   address: frank_bill_address_<%= i %>
 <% end %>

@@ -57,28 +57,25 @@
       <p><label><%= t("status") %></label><br />
       <%= orders.select :state, Order.state_machines['state'].states.collect {|status| [status.titleize, status]}, {:include_blank => true} %></p>
 
-      <% orders.fields_for orders.object.user do |user| %>
+      <% orders.fields_for orders.object.checkout do |checkout| %>
         <p>
           <label><%= t("email") %></label><br />
-          <%= user.text_field :email, :size=>25 %>
+          <%= checkout.text_field :email, :size=>25 %>
         </p>
+      	<% checkout.fields_for checkout.object.bill_address do |address| %>
+          <p>
+            <label><%= t("first_name") %></label><br />
+              <%= address.text_field :lower_of_firstname_contains, :size=>25 %>
+          </p>
+          <p>
+            <label><%= t("last_name") %></label><br />
+            <%= address.text_field :lower_of_lastname_contains, :size=>25 %>
+          </p>
+        <% end %>
       <% end %>
-      <% orders.fields_for orders.object.creditcard_payments do |cc| %>
-      	<% cc.fields_for cc.object.creditcard.address do |address| %>
-        <p>
-          <label><%= t("first_name") %></label><br />
-            <%= address.text_field :lower_of_firstname_contains, :size=>25 %>
-        </p>
-        <p>
-          <label><%= t("last_name") %></label><br />
-          <%= address.text_field :lower_of_lastname_contains, :size=>25 %>
-        </p>
-      <% end %>
-      <% end %>
-
       <p>
+        <input type="checkbox" style="vertical-align:middle;" name="limit_complete" value="1" <%= "checked" if @limit_complete %> />
         <label>
-          <%= orders.check_box :checkout_complete, {:style => "vertical-align:middle;"}, "1", "" %>
           <%= t("show_only_complete_orders") %>
         </label>
       </p>

@@ -1,4 +1,4 @@
-<% order_form.fields_for :bill_address do |bill_form| %>
+<% checkout_form.fields_for :bill_address do |bill_form| %>
   <h2><%= t("billing_address")%></h2>
   <div class="inner">
   	<p id="bfname">
@@ -24,7 +24,7 @@
   	<p>
   		<label for="<%= t("state") %>"><%= t("state") %></label>
   		<span id="bstate">
-  			<%= collection_select("order[bill_address_attributes]", 
+  			<%= collection_select("checkout[bill_address_attributes]", 
   			:state_id, 
   			@states, 
   			:id, 

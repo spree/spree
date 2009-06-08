@@ -1,7 +1,5 @@
 class OrdersController < Spree::BaseController     
-  include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
-  
-  prepend_before_filter :reject_unknown_order
+    prepend_before_filter :reject_unknown_order
   before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]            
 
   ssl_required :show, :checkout
@@ -50,9 +48,6 @@ class OrdersController < Spree::BaseController
       format.html { redirect_to(edit_object_url) } 
     end
   end  
-
-  # feel free to override this library in your own extension
-  include Spree::Checkout
   
   def can_access?
     return true unless order = load_object    
@@ -82,20 +77,4 @@ class OrdersController < Spree::BaseController
     load_object
     redirect_to object_url if @order.checkout_complete
   end         
-  
-  def load_data     
-    @default_country = Country.find Spree::Config[:default_country_id]
-    @countries = Country.find(:all).sort  
-    @shipping_countries = @order.shipping_countries.sort  
-    @states = @default_country.states.sort
-  end 
-  
-  def rate_hash       
-    fake_shipment = Shipment.new :order => @order, :address => @order.ship_address
-    @order.shipping_methods.collect do |ship_method| 
-      { :id   => ship_method.id, 
-        :name => ship_method.name, 
-        :rate => number_to_currency(ship_method.calculate_shipping(fake_shipment)) }
-    end
-  end 
 end

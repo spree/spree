@@ -156,7 +156,7 @@ var validate_section = function(region) {
 };
 
 var shift_to_region = function(active) {
-  if (active != regions[0]) { $('div#flash-errors').remove(); }
+  if (active != regions[0]) { $('div.flash.errors').remove(); }
   var found = 0;
   for(var i=0; i<regions.length; i++) {
     if(!found) {
@@ -222,7 +222,7 @@ var submit_shipping = function() {
   // Save what we have so far and get the list of shipping methods via AJAX
   $.ajax({
     type: "POST",
-    url: 'checkout',                                 
+    url: '../checkout',                                 
     beforeSend : function (xhr) {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
     },
@@ -253,7 +253,7 @@ var submit_shipping_method = function() {
     // Save what we have so far and get the updated order totals via AJAX
     $.ajax({
       type: "POST",
-      url: 'checkout',                                 
+      url: '../checkout',                                 
       beforeSend : function (xhr) {
         xhr.setRequestHeader('Accept-Encoding', 'identity');
       },      
@@ -285,7 +285,7 @@ var update_shipping_methods = function(methods) {
     var i = $(document.createElement('input'))
                 .attr('id', this.id)
                 .attr('type', 'radio')
-                .attr('name', 'method_id')
+                .attr('name', 'checkout[shipping_method_id]')
                 .val(this.id)
                 .click(function() { $('div#methods input').attr('checked', ''); $(this).attr('checked', 'checked'); });
     if($(methods).length == 1) {
@@ -333,7 +333,7 @@ var ajax_login = function() {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
     },      
     dataType: "json",
-    data: $('#checkout_form').serialize(),
+    data: $('#checkout_form').serialize() + "&_method=post",
     success: function(result) {  
       if (result) {
         $('div#already_logged_in').show();
@@ -358,7 +358,7 @@ var ajax_register = function() {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
     },      
     dataType: "json",
-    data: $('#checkout_form').serialize(),
+    data: $('#checkout_form').serialize() + "&_method=post",
     success: function(result) {  
       if (result == true) {
         $('div#already_logged_in').show();
