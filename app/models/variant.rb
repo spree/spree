@@ -1,5 +1,5 @@
 class Variant < ActiveRecord::Base
-  after_update :adjust_inventory
+  after_save :adjust_inventory
   
   belongs_to :product
   has_many :inventory_units
