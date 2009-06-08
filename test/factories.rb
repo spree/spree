@@ -30,6 +30,29 @@ Factory.define :address do |f|
   f.association :country
 end
 
+Factory.define :product do |f|
+  f.name "Foo Product"
+  f.master_price 19.99
+  f.variants do |variants|
+    [Factory(:variant, :option_values => []), variants.association(:variant)]
+  end
+end
+
+Factory.define :option_value do |f|
+end
+
+Factory.define :empty_variant, :class => :Variant do |f|
+  f.price 19.99
+end
+
+Factory.define :variant do |f|
+  f.price 19.99
+  f.option_values { [Factory(:option_value)] }  
+end
+
+Factory.define :inventory_unit do |f|
+end
+
 Factory.define :country do |f|
   f.name { Factory.next(:name) }
 end
@@ -37,7 +60,6 @@ end
 Factory.sequence :name do |n|
   "Foo_#{n}"
 end
-
 
 Factory.define :creditcard do |f|
   f.verification_value 123

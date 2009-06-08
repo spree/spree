@@ -5,7 +5,6 @@ class Variant < ActiveRecord::Base
   has_many :inventory_units
   has_and_belongs_to_many :option_values
   
-  validates_presence_of :product
   validate :check_price
   
   

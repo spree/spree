@@ -2,7 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe OrdersController do
   before(:each) do
-    Variant.stub!(:find).with(any_args).and_return(@variant = mock_model(Variant, :price => 10, :on_hand => 50))
+    @variant = mock_model(Variant, :price => 10, :on_hand => 50)
+    Variant.stub!(:find, :return => @variant)
     @order = Order.create
     @token = "TOKEN123"
     @order.token = @token
@@ -11,7 +12,7 @@ describe OrdersController do
 
   describe "create" do
     it "should add the variant to the order" do
-      controller.stub!(:object).and_return(@order)
+      controller.stub!(:object, :return => @order)
       @order.should_receive(:add_variant).with(@variant, 2)
       post :create, :variants => {"345" => 2}
     end

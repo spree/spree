@@ -35,8 +35,8 @@ describe Variant do
   describe "with a valid product" do
     before do
       p = Product.new
-      p.stub!(:valid?).and_return true
-      @variant.stub!(:product).and_return p
+      p.stub!(:valid?, :return => true)
+      @variant.stub!(:product, :return => p)
     end
 
     it "should be valid when having correct information" do

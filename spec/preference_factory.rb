@@ -24,7 +24,7 @@ module PreferenceFactory
   # Build and save/reload a record
   def create_record(model, *args)
     record = new_record(model, *args)
-    record.stub!(:valid?).and_return(true)
+    record.stub!(:valid?, :return => true)
     record.save!
     record.reload
     record

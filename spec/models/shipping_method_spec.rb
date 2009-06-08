@@ -18,7 +18,7 @@ end
 describe ShippingMethod do
   before(:each) do
     @calculator = MockCalculator.new
-    MockCalculator.stub!(:new).and_return(@calculator)
+    MockCalculator.stub!(:new, :return => @calculator)
     @zone = mock_model(Zone)
     @address = mock_model(Address)
     @shipping_method = ShippingMethod.new(:zone => @zone, :shipping_calculator => "MockCalculator")
@@ -47,7 +47,7 @@ describe ShippingMethod do
       end
       it "should use the calculate_shipping method of the specified calculator" do
         @calculator = MockCalculator.new
-        MockCalculator.stub!(:new).and_return(@calculator)
+        MockCalculator.stub!(:new, :return => @calculator)
         @calculator.should_receive(:calculate_shipping).with(@order)
         @shipping_method.calculate_shipping(@order)
       end

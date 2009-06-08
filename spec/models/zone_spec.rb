@@ -111,7 +111,7 @@ describe Zone do
   
   describe "country_list" do
     it "should return an empty array if the zone kind is state" do
-      @zone.stub!(:kind).and_return("state")
+      @zone.stub!(:kind, :return => "state")
       @zone.country_list.should == []
     end
     it "should return the corresponding countries if zone kind is country" do
