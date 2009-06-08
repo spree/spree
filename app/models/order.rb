@@ -189,6 +189,7 @@ class Order < ActiveRecord::Base
     shipments.build(:address => ship_address, :shipping_method => checkout.shipping_method)
     checkout.update_attribute(:completed_at, Time.now)
     InventoryUnit.sell_units(self)
+    #update_totals
     save_result = save! 
     if email 
       OrderMailer.deliver_confirm(self)
