@@ -7,7 +7,7 @@ After reading it you should know:
 * the design used in Spree
 * how to specify your shipping structure
 * how to configure products for special shipping treatment
-* how to capture delivery instructions
+* how to capture shipping instructions
 
 endprologue.
 
@@ -38,7 +38,7 @@ are presented.
 The Customer must choose one before proceeding to the next stage. At 
 confirmation, the shipping cost has been added to the order total.
 
-NOTE. You can enable collection of extra _shipping instructions_ by setting the option +Spree::Config.set(:shipping_instructions => true)+. This is turned off by default. Such instructions will be shown in an order's shipment admin page. 
+NOTE. You can enable collection of extra _shipping instructions_ by setting the option +Spree::Config.set(:shipping_instructions => true)+. This is turned off by default. See "Shipping Instructions":#shipping-instructions below.
 
 h4. What the Orders Administrator Sees
 
@@ -61,12 +61,12 @@ shipping constraints.)
 Each product can also set a +ShippingCategory+, as explained below.
 
 
-h3. Adding New Methods
+h3. Adding New Shipping Methods
 
 The main work is to provide a suitable calculator. You can write your own, but there
 are some existing ones which might be useful for simple pricing structures.
 
-NOTE. lib/spree/shipping_calculator is dead code now? seems like code in order.rb
+NOTE. ******** lib/spree/shipping_calculator is dead code now? seems like code in order.rb
 
 h4. The FlatRate extension
 
@@ -82,22 +82,34 @@ information.
 
 h4. Writing your own
 
-Your calculator should accep a shipmend return a cost. Your calculator can look at 
+Your calculator should accept a shipment and return a cost. Your calculator can look at 
 any reachable data, but typically uses the address and order in a shipment, plus 
-the information from variants.
+the information from variants which are contained in the line_items.
 
 h3. Product Configuration
 
-Users can assign products to specific +ShippingCategories+ or include extra information in variants to enable the calculator to determine results.
+Users can assign products to specific ShippingCategories or include extra information in 
+variants to enable the calculator to determine results.
 
 Each product has an (optional) +ShippingCategory+: this adds product-specific information
 to the calculations beyond the standard information from the shipment (which is
 destination address, variants and quantities, and possibly some weight and dimension 
 information if given for a variant). +ShippingCategory+ is basically a wrapper for
 a string. One use is to code up specific rates, eg "Fixed $20" or "Fixed $40", from 
-which a calculator could extract imposed prices (and not go through its usual 
+which a calculator could extract imposed prices (and not go through its other
 calculations).
 
 h4. Variant configuration
 
-Variants can be specified with weight and dimension information. 
+Variants can be specified with weight and dimension information. Some shipping method
+calculators will use this information if it is present. 
+
+h3. Shipping instructions
+
+The option +Spree::Config[:shipping_instructions]+ controls collection of additional
+_shipping instructions_. This is turned off by default. If an order has any shipping
+instructions attached, they will be shown in an order's shipment admin page and can
+also be edited at that stage. Observe that instructions are currently attached to
+the order and not to actual shipments.
+
+
