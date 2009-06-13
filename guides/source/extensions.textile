@@ -140,6 +140,32 @@ You can even make something be loaded first too:
 config.extensions = [:first_extension, :all, :site]
 </shell>
 
+h3. Creating Your Own Extension
+
+h4. Generate the Extension
+
+Spree comes with a handy generator so you can easily create your own custom extension.  Lets suppose we want to create a "Foo" extension.
+
+<shell>
+  script/generate extension Foo
+</shell>
+
+This will create a series of folders and files, including +test_extension.rb+, which will define a +FooExtension+ class.
+
+INFO. Do not use spaces or dashes when creating a new extension.  If there is more then one word to the extension (such as "Foo Bar") use +script/generate extension FooBar+ instead.
+
+h4. Making the Extension Available on GitHub
+
+Once you are satisfied that your extension is running properly, feel free to share it with others through "GitHub":http://github.com.  There is just a simple naming convention that you should follow in order to make things easier for everyone to use it.  
+
+If your extension class is named  +FooBar+ and it is defined in +foo_bar_extension.rb+, you should name your GitHub project +spree-foo-bar+.  Notice how there are no spaces or underscores in the GitHub project name and that it is prefixed with +spree+.  The underscores in the filename are replaced with '-' and the word 'extension' does not appear anywhere in the GitHub project name.
+
+INFO. It is important that you observe the suggested naming conventions when adding your extension to GitHub, otherwise, people will not be able to automatically install it with the special +script/extension install+ command.
+
+h4. Publishing Your Extension in the Spree Extension Registry
+
+Once your extension is complete and you have published it to GitHub, its time to let everyone else know about it.  The best way to do this is to add your extension to the "official extension registry":http://ext.spreecommerce.com.
+
 h3. Tips and Tricks
 
 h4. Adding Fields to Product or Variants
