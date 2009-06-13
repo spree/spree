@@ -1,3 +1,67 @@
 h2. Inventory
 
+This section explains how Spree represents stock and how it can be managed.
+After reading it you should know:
+* the design used in Spree
+* which aspects of inventory control are seen by customers
+* how to manage stock in the administration
+* 
+
 endprologue.
+
+h3. Overview
+
+Inventory is being modeled in a fairly new and innovative way. This approach was suggested by some of the commerce gurus at End Point. Since the goal was for Spree to be suitable for simple and sophisticated applications alike, the real challenge was implementing these ideas in a way that was as transparent as possible to the user (should the user choose not to use this level of sophistication.)
+
+Basically the idea is to have one record per unit of inventory that you have available 
+for sale. 
+Each Inventory item has one of these possible states: on hand, sold, shipped or back-ordered. 
+The inventory state changes through out the process in the way you would probably expect.
+
+Why do we bother with all of these records in our database? Won’t that mean millions of records in the database if we have millions of items in our inventory? The answer is yes. But if you think about it, if you have that much inventory, your application needs go way beyond a simple quantity field in a database. You’ll need something more powerful.
+
+There are several advantages to this approach. The first is that it allows you very fine grained control over inventory. You can easily expand upon this model to track the location of items in a warehouse, or even which warehouse the item is located in. You can also track serial number information or other information (perhaps RFID) that is unit specific.
+
+What if you don’t need to track inventory? We have come up with a design that basically shields the simple store user from much of this complexity. Simply leave the inventory fields blank and you never have to worry about it. You can also create new products in the system and give them a starting “on hand” inventory level which will create the necessary records. You can subsequently adjust the inventory levels by positive or negative integers and the appropriate number of records will be created or destroyed.
+
+We’ve also done a great deal of improvement with variants. Every line item in an order tracks the exact variant of the product sold. Things work fine even if the product has no meaningful variant information (say you are just selling CD’s and you don’t need to worry about “size”, “color”, etc.) An “empty” variant is created behind the scenes and your inventory and SKU information will be associated with this variant. If you do end up using variants though, you now have fine grained control over the SKU and inventory information.
+
+
+h3. Design and functionality
+
+h4. What the Customer Sees
+
+h4. What the Orders Administrator Sees
+
+h4. Configuration Options
+
+h4. Programming interface
+
+v.has_stock (typo)
+lifted to product level
+
+
+
+h3. Administration issues
+
+h4. Other useful extensions
+
+There are a few Spree extensions which provide additional shipping methods, including
+special support for the fees for common carriers, or support for bulk orders.
+See the "Spree Extension Registry":http://ext.spreecommerce.org for the latest 
+information.
+
+
+h4. Global options
+
+show_zero_stock
+
+
+
+h4. Product Configuration
+
+Stock is controlled at the level of variants: each variant has assigned inventory
+
+
+
+
