@@ -82,7 +82,7 @@ h3. Customization
   <% end %>
 </dl>
 <dl>
-  <% guide('Checkout Process', 'checkout.html') do %>
+  <% guide('Customizing the Checkout Process', 'checkout.html') do %>
     This guide will show you how to customize the steps in your checkout process.
   <% end %>
 </dl>
@@ -107,11 +107,6 @@ h3. Digging Deeper
 <dl>
   <% guide('Securing Spree Applications', 'security.html') do %>
     Information on how to secure your Spree application (including roles and permisions settings.)
-  <% end %>
-</dl>
-<dl>
-  <% guide('Customizing the Checkout Process', 'checkout.html') do %>
-    This guide covers how to customize the checkout process to meet your own requirements.
   <% end %>
 </dl>
 <dl>
