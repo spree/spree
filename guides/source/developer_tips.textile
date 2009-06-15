@@ -100,11 +100,16 @@ git submodule update --init
 h4. Managing submodules
 
 +git submodule foreach+ is very useful for managing your submodules, e.g. you can update all of them
-with +git submodule foreach "git pull"+, or check for modifications with 
-+git submodule foreach "git status || echo ok"+ (the +echo ok+ gets round a return-code issue). 
+with +git submodule foreach "git pull"+, or check for modifications with this 
+(the +echo ok+ gets round a return-code issue):
+<shell>
+git submodule foreach "git status || echo ok"
+</shell>
 
 When pushing modifications, remember to check each of your repositories (with +foreach+ above),
 and then check in the main repository. Git tracks the last commit in each submodule and includes
 this information in the main repository, hence allowing the right versions to be checked out 
 later. 
+
+NOTE: +git foreach+ seems to be a recent addition, so you might need to update your installation of +git+.
 
