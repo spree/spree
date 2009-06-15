@@ -1,4 +1,4 @@
-h2. Tutorial: A Customization Extensions
+h2. Tutorial: A Customization Extension
 
 This guide contains a tutorial for the development of an extension to customize the appearance of the standard Spree installation. After reading this guide you should learn:
 
@@ -10,14 +10,14 @@ endprologue.
 
 h3. Creating the Site Extension
 
-WARNING. You must understand the difference between running Spree as a gem and running it as a Rails application.
+WARNING. You must understand the difference between running Spree as a gem and running it as a Rails application. Certain instructions below depend on how you are running Spree.
 
 h4. Site Extension with Spree Application
 
-First, to generate the extension, run the following to create an extension by the name of 'Site'.
+First, to generate the extension, run the following to create an extension by the name of 'site'.
 
 <shell>
-script/generate extension Site
+script/generate extension site
 </shell>
 
 This command will create many files in the vendor/extensions/site/ directory that looks similar to a generic rails application.
@@ -32,7 +32,7 @@ ls vendor/extensions
 
 h4. Override the Layout
 
-The first step is to override the standard spree application layout to include your site stylesheet on all application pages.
+The first step is to override the standard Spree application layout to include your site stylesheet on all application pages.
 
 First, complete the following command to make a new directory: 
 
