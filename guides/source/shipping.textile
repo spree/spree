@@ -104,7 +104,7 @@ h4. Variant configuration
 Variants can be specified with weight and dimension information. Some shipping method
 calculators will use this information if it is present. 
 
-h3. Shipping instructions
+h3. Shipping Instructions
 
 The option +Spree::Config[:shipping_instructions]+ controls collection of additional
 _shipping instructions_. This is turned off by default. If an order has any shipping
