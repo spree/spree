@@ -61,7 +61,7 @@ h5. Online Commerce is not for "Noobs"
 Rails developers are the target audience for this application - not business owners. No serious company would ever try to run an online store by just paying some fool on Craig's List to install OSCommerce for them. Serious businesses have complicated needs that require paying one or more software professionals to solve them. Spree seeks to be the platform that developers use as the foundation for their project rather than having to start from scratch or settle for less with other software.
 
 Views represent the user interface of your application. In Rails, views are often HTML files with embedded Ruby code that performs tasks related solely to the presentation of the data. Views handle the job of providing data to the web browser or other tool that is used to make requests from your application.
-               
+
 h5. Developers Need Complete Control
 
 Most business owners will not be satisfied with the generic templates offered by other platforms. Why should they? They want their website to look just like the other professional sites they see on the web. Most businesses also have very specific shipping and taxation rules.  Spree needs to be flexible enough to accommodate most situations.  Sensible defaults should be provided with the eye towards allowing further customization.
