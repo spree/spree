@@ -57,10 +57,8 @@ class Variant < ActiveRecord::Base
 
   private
 
-    def adjust_inventory    
-      return unless @new_level && @new_level.is_integer?    
-      @new_level = @new_level.to_i
-      # don't allow negative on_hand inventory
+    def adjust_inventory
+			@new_level = @new_level ? @new_level.to_i : -1 
       return if @new_level < 0
       
       # fill backordered orders first
@@ -72,7 +70,7 @@ class Variant < ActiveRecord::Base
         break if @new_level < 1
         }
       
-      adjustment = @new_level - on_hand 
+      adjustment = @new_level - on_hand
       if adjustment > 0
         InventoryUnit.create_on_hand(self, adjustment)
         reload
