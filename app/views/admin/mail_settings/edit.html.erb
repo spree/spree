@@ -24,7 +24,7 @@
         <%= text_field_tag('preferences[mails_from]', Spree::Config[:mails_from], :maxlength => 256)%>
         <br/>
         <span class="info">
-          Send all mails as from the following address.
+          <%= t("smtp_send_all_emails_as_from_following_address") %>
         </span>
       </p>
 
@@ -33,7 +33,7 @@
         <%= text_field_tag('preferences[mail_bcc]', Spree::Config[:mail_bcc], :size => 40, :maxlength => 256)%>
         <br/>
         <span class="info">
-          Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas.
+          <%= t("smtp_send_copy_to_this_addresses") %> 
         </span>
       </p>
 
@@ -48,7 +48,7 @@
         <%= text_field_tag('preferences[order_from]', Spree::Config[:order_from], :maxlength => 256)%>
         <br/>
         <span class="info">
-          Send orders mails as from the following address.
+          <%= t("smtp_send_order_mails_as_from_following_address")%>
         </span>
       </p>
 
@@ -57,7 +57,7 @@
         <%= text_field_tag('preferences[order_bcc]', Spree::Config[:order_bcc], :size => 40, :maxlength => 256)%>
         <br/>
         <span class="info">
-          Sends a copy of all order's mails to this address. For multiple addresses, separate with commas.
+          <%= t("smtp_send_copy_of_orders_to_this_addresses")%>
         </span>
       </p>
     </fieldset>

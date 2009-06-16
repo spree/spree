@@ -164,6 +164,7 @@ ru-RU:
   allow_backorders: "Allow Backorders ??"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Использовать SSL в development и test режимах
   allow_ssl_to_be_used_when_in_production_mode: Использовать SSL в production
+  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: Сумма
@@ -181,6 +182,7 @@ ru-RU:
   available_taxons: "Доступные таксоны ??"
   back: Назад
   back_to_store: "Назад к списку"
+  backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Адрес счета"
   billing_address: "Адрес биллинга"
   cancel: отмена
@@ -258,6 +260,7 @@ ru-RU:
   first_name: "Имя"
   forgot_password: "Forgot Password"
   gateway: Платежный шлюз ??
+  gateway_configuration: "Gateway configuration"
   gateway_error: "Ошибка платежного шлюза ??"
   gateway_setting_description: "Выберите платежный шлюз и настройте его."
   general: "General"
@@ -274,6 +277,7 @@ ru-RU:
   hello_user: "Добро пожаловать"
   history: History
   home: "Home"
+  icons_by: "Icons by"
   image: Картинка
   images: Картинки
   in_progress: "В процессе"
@@ -382,6 +386,7 @@ ru-RU:
   payments: Платежи
   phone: Телефон
   place_order: Place Order        
+  powered_by: "Powered by"
   presentation: Презентация ??
   previous: предыдущий
   price: Цена
@@ -395,6 +400,7 @@ ru-RU:
   product_has_no_description: Product has not description
   product_properties: "Свойства продукта"
   products: Продукты
+  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: Свойства
   property: Свойство
   prototype: Prototype
@@ -454,6 +460,7 @@ ru-RU:
   show_incomplete_orders: "Показать необработанные заказы"
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Показать продукты, которых нет в наличии"
+  show_price_inc_vat: "Show price including VAT"
   sign_up: "Регистрация"
   site_name: "Site Name"
   site_url: "Site URL"
@@ -464,10 +471,18 @@ ru-RU:
   smtp_mail_host: SMTP Mail Host
   smtp_password: SMTP Password
   smtp_port: SMTP Port
+  smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
+  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTP Username
   spree:
     date: Дата
     time: Время
+  ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
+  ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
+  ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
+  ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   start: Начать
   start_date: Valid from
   state: область
@@ -486,12 +501,15 @@ ru-RU:
   tax_categories: "Категории налогов"
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: "Категория налогов"
+  tax_settings: "Tax settings"
   tax_total: "Налоги Итого"
   tax_type: "Тип налога"
   taxon: Таксон
   taxonomies: Таксонономии
   taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
+  taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Таксоны
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "Русский (RU)"

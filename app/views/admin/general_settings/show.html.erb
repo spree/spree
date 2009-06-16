@@ -13,14 +13,12 @@
   </tr>
   <tr>
 	<td colspan="2">
-	  SSL will <%= Spree::Config[:allow_ssl_in_production] ? '' : 'NOT' %> be used in production
-	  mode if necessary.	  		
+	  <%= (Spree::Config[:allow_ssl_in_production] ? t("ssl_will_be_used_in_production_mode") : t("ssl_will_not_be_used_in_production_mode")) %> 
 	</td>
   </tr>
   <tr>
 	<td colspan="2">
-	  SSL will <%= Spree::Config[:allow_ssl_in_development_and_test] ? '' : 'NOT' %> be used in development
-	  and test mode if necessary.
+	  <%= (Spree::Config[:allow_ssl_in_development_and_test] ? t("ssl_will_be_used_in_development_and_test_modes") : t("ssl_will_not_be_used_in_development_and_test_modes")) %>
 	</td>	
   </tr>
 </table>
