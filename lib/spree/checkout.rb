@@ -35,7 +35,7 @@ module Spree::Checkout
       @order.user = current_user       
       @order.ip_address = request.env['REMOTE_ADDR']
       @order.update_totals
-      @order.email = current_user.email if @order.email.blank? && current_user
+      @order.email = current_user.email if current_user
 
       begin
         # need to check valid b/c we dump the creditcard info while saving
