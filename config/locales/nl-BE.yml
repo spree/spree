@@ -392,6 +392,7 @@ nl-BE:
   process: Verwerking
   product: Product
   product_details: "Product Details"
+  product_has_no_description: Product has not description
   product_properties: "Product Eigenschappen"
   products: Producten
   properties: Eigenschappen

@@ -392,6 +392,7 @@ en-US:
   process: Process
   product: Product
   product_details: "Product Details"
+  product_has_no_description: Product has not description
   product_properties: "Product Properties"
   products: Products
   properties: Properties
@@ -535,4 +536,3 @@ en-US:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones              
-  product_has_no_description: Product has not description

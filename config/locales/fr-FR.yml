@@ -392,6 +392,7 @@ fr-FR:
   process: Process
   product: Produit
   product_details: "Détails du produit"
+  product_has_no_description: Product has not description
   product_properties: "Propriété du produit"
   products: Produits
   properties: Propriétés

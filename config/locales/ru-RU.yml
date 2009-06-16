@@ -392,6 +392,7 @@ ru-RU:
   process: Обработать
   product: Продукт
   product_details: "Описание продукта"
+  product_has_no_description: Product has not description
   product_properties: "Свойства продукта"
   products: Продукты
   properties: Свойства

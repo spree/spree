@@ -392,6 +392,7 @@ it:
   process: Manda
   product: Prodotto
   product_details: "Product Details"
+  product_has_no_description: Product has not description
   product_properties: ""
   products: Prodotti
   properties: ""

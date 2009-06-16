@@ -392,6 +392,7 @@ da:
   process: Process
   product: Product
   product_details: "Product Details"
+  product_has_no_description: Product has not description
   product_properties: "Product Properties"
   products: Products
   properties: Properties

@@ -392,6 +392,7 @@ pt-BR:
   process: Processar
   product: Produto
   product_details: "Detalhes do Produto"
+  product_has_no_description: Product has not description
   product_properties: "Propriedades do Produto"
   products: Produtos
   properties: Propriedades

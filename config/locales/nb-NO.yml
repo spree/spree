@@ -392,6 +392,7 @@ nb-NO:
   process: Prosess
   product: Produkt
   product_details: "Produktdetaljer"
+  product_has_no_description: Product has not description
   product_properties: "Produktegenskaper"
   products: Produkter
   properties: Egenskaper

@@ -392,6 +392,7 @@ de:
   process: Abschicken
   product: Produkt
   product_details: "Produkt Details"
+  product_has_no_description: Product has not description
   product_properties: "Produkt-Eigenschaften"
   products: Produkte
   properties: "Eigenschaften"

@@ -392,6 +392,7 @@ pl:
   process: Przetwarzaj
   product: Produkt
   product_details: "Product Details"
+  product_has_no_description: Product has not description
   product_properties: "Właściwości produktu"
   products: Produkty
   properties: Właściwości
