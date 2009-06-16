@@ -185,7 +185,7 @@ class Order < ActiveRecord::Base
     InventoryUnit.sell_units(self)
     update_totals
     save_result = save
-    if user && user.email
+    if email 
       OrderMailer.deliver_confirm(self)
     end   
     save_result
