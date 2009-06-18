@@ -164,6 +164,7 @@ es:
   allow_backorders: "Permitir devoluciones"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir el uso de SSL en los modos de desarrollo y prueba
   allow_ssl_to_be_used_when_in_production_mode: Permitir el uso de SSL en produccion        
+  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: Cuantía
@@ -181,6 +182,7 @@ es:
   available_taxons: "Taxons disponibles"
   back: Atrás
   back_to_store: "Volver a la tienda"
+  backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Dirección de facturación"
   billing_address: "Dirección de facturación"
   cancel: Cancelar
@@ -258,6 +260,7 @@ es:
   first_name: Nombre
   forgot_password: "¿Olvidaste tu contraseña?"
   gateway: "pasarela"
+  gateway_configuration: "Gateway configuration"
   gateway_error: "Error en la pasarela"
   gateway_setting_description: "Configuracion de la pasarela"
   general: "General"
@@ -274,6 +277,7 @@ es:
   hello_user: "Hola usuario"
   history: Historia
   home: "Inicio"
+  icons_by: "Icons by"
   image: Imágen
   images: Imagenes
   in_progress: "En progreso"
@@ -382,6 +386,7 @@ es:
   payments: Pagos
   phone: Teléfono
   place_order: Hacer pedido
+  powered_by: "Powered by"
   presentation: Presentación
   previous: Anterior
   price: Precio
@@ -395,6 +400,7 @@ es:
   product_has_no_description: Product has not description
   product_properties: "Propiedades del producto"
   products: Productos
+  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: "Propiedades"
   property: "Propiedad"
   prototype: Prototipo
@@ -454,6 +460,7 @@ es:
   show_incomplete_orders: "Mostrar los pedidos incompletos"
   show_only_complete_orders: "Mostrar solo los pedidos completados"
   show_out_of_stock_products: "Mostrar productos sin stock"
+  show_price_inc_vat: "Show price including VAT"
   sign_up: Registrarme
   site_name: "Nombre del sitio"
   site_url: "URL del sitio"
@@ -464,10 +471,18 @@ es:
   smtp_mail_host: SMTP Mail Host                       
   smtp_password: contraseña SMTP
   smtp_port: puerto SMTP          
+  smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
+  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: nombre de usuario SMTP  
   spree:
     date: Fecha 
     time: Hora                                               
+  ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
+  ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
+  ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
+  ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   start: Inicio
   start_date: Valid from
   state: Provincia
@@ -486,12 +501,15 @@ es:
   tax_categories: "Categorias"
   tax_categories_setting_description: "Establecer categorías para determinar qué productos deben estar sujetos a que categorias"
   tax_category: "Categoria"
+  tax_settings: "Tax settings"
   tax_total: "Total impuestos"
   tax_type: "Tipo de impuesto"
   taxon: Taxon
   taxonomies: Taxonomias
   taxonomies_setting_description: "Crear y manejar taxonomias"
+  taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
+  taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Taxons
   thank_you_for_your_order: "Gracias por su pedido"
   this_file_language: "Español (España)"

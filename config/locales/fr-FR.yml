@@ -164,6 +164,7 @@ fr-FR:
   allow_backorders: "Permettre la rupture de stock"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permettre l'utilisation du SSL lors des modes développement et test
   allow_ssl_to_be_used_when_in_production_mode: Permettre l'utilisation du SSL lors du mode production
+  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: Montant
@@ -181,6 +182,7 @@ fr-FR:
   available_taxons: "Chemins disponible"
   back: Arrière
   back_to_store: "Retour sur les produits"
+  backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Adresse facturée"
   billing_address: "Adresse de facturation"
   cancel: annulé
@@ -258,6 +260,7 @@ fr-FR:
   first_name: "Prenom"
   forgot_password: "Forgot Password"
   gateway: Passerelle
+  gateway_configuration: "Gateway configuration"
   gateway_error: "Erreur de la passerelle"
   gateway_setting_description: "Sélectionner une passerelle de paiement et configurez ses paramètres."
   general: "General"
@@ -274,6 +277,7 @@ fr-FR:
   hello_user: "Bonjour utilisateur"
   history: History
   home: "Home"
+  icons_by: "Icons by"
   image: Image
   images: Images
   in_progress: "En progression"
@@ -382,6 +386,7 @@ fr-FR:
   payments: Paiements
   phone: Téléphone
   place_order: Place Order        
+  powered_by: "Powered by"
   presentation: Presentation
   previous: Précédent
   price: Prix
@@ -395,6 +400,7 @@ fr-FR:
   product_has_no_description: Product has not description
   product_properties: "Propriété du produit"
   products: Produits
+  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: Propriétés
   property: Propriété
   prototype: Prototype
@@ -454,6 +460,7 @@ fr-FR:
   show_incomplete_orders: "Afficher les commandes imcomplètes"
   show_only_complete_orders: "Afficher seulement les commandes complète"
   show_out_of_stock_products: "Afficher les produits n'étant plus en stock"
+  show_price_inc_vat: "Show price including VAT"
   sign_up: "S'inscrire"
   site_name: "Site Name"
   site_url: "Site URL"
@@ -464,10 +471,18 @@ fr-FR:
   smtp_mail_host: Serveur de messagerie
   smtp_password: Mot de passe SMTP
   smtp_port: Port SMTP
+  smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
+  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: Identifiant SMTP
   spree:
     date: Date
     time: Heure
+  ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
+  ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
+  ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
+  ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   start: Départ
   start_date: Valid from
   state: Etat
@@ -486,12 +501,15 @@ fr-FR:
   tax_categories: "Catégories de taxes"
   tax_categories_setting_description: "Définir une catégorie de taxes pour identifier quels produits sont taxables."
   tax_category: "Catégorie de taxe"
+  tax_settings: "Tax settings"
   tax_total: "Total des Taxes"
   tax_type: "Type de taxe"
   taxon: Taxon
   taxonomies: Arborescence
   taxonomies_setting_description: "Création et gestion des Arborescence"
+  taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
+  taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Arborescence
   thank_you_for_your_order: "Merci de nous avoir fait confiance. Imprimez cette page de confirmation pour vos archives."
   this_file_language: "Français (FR)"

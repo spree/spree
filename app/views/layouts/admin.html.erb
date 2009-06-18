@@ -27,7 +27,7 @@
       <li><%= link_to t('store'), products_path %></li>
     </ul>
     <% end -%>      
-    <h1 class='logo'><%= link_to 'Administration', admin_path %></h1>
+    <h1 class='logo'><%= link_to t("administration"), admin_path %></h1>
   </div>
     <div id="admin-menu">
       <ul>
@@ -69,7 +69,7 @@
     </div>
 
     <div id="footer">
-      <p>Icons by <a href='http://pinvoke.com'>pInvoke</a></p>
+      <p><%= t("icons_by") %> <a href='http://pinvoke.com'>pInvoke</a></p>
     </div>
 
 </div>

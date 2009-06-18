@@ -17,7 +17,11 @@ class Variant < ActiveRecord::Base
               {:name => 'Height', :only => [:variant], :format => "%.2f"},
               {:name => 'Width',  :only => [:variant], :format => "%.2f"},
               {:name => 'Depth',  :only => [:variant], :format => "%.2f"} ]
-  
+ 
+  def describe_variant
+    option_values.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence({:words_connector => ", ", :two_words_connector => ", "})
+  end
+
   def on_hand
     inventory_units.with_state("on_hand").size
   end

@@ -9,7 +9,7 @@ class Taxon < ActiveRecord::Base
     ancestors.reverse.collect { |ancestor| ancestor.name }.join( "/")
     prefix = ancestors.reverse.collect { |ancestor| escape(ancestor.name) }.join( "/")
     prefix += "/" unless prefix.blank?
-    self.permalink =  prefix + "#{escape(name)}/"
+    self.permalink =  prefix + "#{name.to_url}/"
   end
   
   # taken from the find_by_param plugin

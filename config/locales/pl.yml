@@ -164,6 +164,7 @@ pl:
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
+  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: Suma
@@ -181,6 +182,7 @@ pl:
   available_taxons: "Available Taxons"
   back: Wstecz
   back_to_store: "Powrót do sklepu"
+  backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Adres billingowy"
   billing_address: "Adres billingowy"
   cancel: anuluj
@@ -258,6 +260,7 @@ pl:
   first_name: Imię
   forgot_password: "Forgot Password"
   gateway: Brama
+  gateway_configuration: "Gateway configuration"
   gateway_error: "Błąd bramki"
   gateway_setting_description: "Wybierz metodę płatności i skonfiguruj jej ustawienia."
   general: "General"
@@ -274,6 +277,7 @@ pl:
   hello_user: "Witaj użytkowniku"
   history: History
   home: "Home"
+  icons_by: "Icons by"
   image: Obrazek
   images: Obrazki
   in_progress: "W trakcie..."
@@ -382,6 +386,7 @@ pl:
   payments: Payments
   phone: Telefon
   place_order: Place Order        
+  powered_by: "Powered by"
   presentation: Presentacja
   previous: Poprzednie
   price: Cena
@@ -395,6 +400,7 @@ pl:
   product_has_no_description: Product has not description
   product_properties: "Właściwości produktu"
   products: Produkty
+  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: Właściwości
   property: Właściwość
   prototype: Prototype
@@ -454,6 +460,7 @@ pl:
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
+  show_price_inc_vat: "Show price including VAT"
   sign_up: "Załóż konto"
   site_name: "Site Name"
   site_url: "Site URL"
@@ -464,10 +471,18 @@ pl:
   smtp_mail_host: SMTP Mail Host                       
   smtp_password: SMTP Password
   smtp_port: SMTP Port          
+  smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
+  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTP Username  
   spree:
     date: Data
     time: Czas                                               
+  ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
+  ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
+  ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
+  ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   start: Start
   start_date: Valid from
   state: Stan
@@ -486,12 +501,15 @@ pl:
   tax_categories: "Kategorie Podatkowe"
   tax_categories_setting_description: "Ustaw kategorie podatkow aby ustalić, które produkty powinny być opodatkowane."
   tax_category: "Kategoria Podatkowa"
+  tax_settings: "Tax settings"
   tax_total: "Podatek łącznie"
   tax_type: "Tax Type"
   taxon: Taxon
   taxonomies: Taxonomies
   taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
+  taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: Polski
