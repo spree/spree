@@ -301,10 +301,12 @@ var update_shipping_methods = function(methods) {
 };                                     
 
 var update_confirmation = function(order) {
+  var textToInsert = '';
+  for (var key in order.charges) {
+    textToInsert  += '<tr><td colspan="3"><strong>' + key + '</strong></td><td class="total_display"><span>' + order.charges[key] + '</span></td>';
+  }
+  $('tbody#order-charges').html(textToInsert); 
   $('span#order_total').html(order.order_total);
-  $('span#ship_amount').html(order.ship_amount);
-  $('span#tax_amount').html(order.tax_amount);                                  
-  $('span#ship_method').html(order.ship_method);                                    
 };      
 
 var submit_registration = function() {

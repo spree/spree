@@ -4,7 +4,7 @@ class Shipment < ActiveRecord::Base
   belongs_to :address
 
   before_create :generate_shipment_number
-  after_save :recalculate_tax
+#  after_save :recalculate_tax
   after_save :transition_order
 
   attr_accessor :special_instructions 
@@ -41,8 +41,8 @@ class Shipment < ActiveRecord::Base
     order.state_events.create(:name => I18n.t('ship'), :user => current_user, :previous_state => order.state_was)
   end
   
-  def recalculate_tax
-    return unless order && order.respond_to?(:calculate_tax)      
-    order.update_attribute("tax_amount", order.calculate_tax)
-  end
+#  def recalculate_tax
+#    return unless order && order.respond_to?(:calculate_tax)      
+#    order.update_attribute("tax_amount", order.calculate_tax)
+#  end
 end

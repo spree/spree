@@ -1,5 +1,4 @@
 Factory.define :order do |f| 
-  f.line_items { [Factory(:line_item)] }
   f.charges { [Factory(:ship_charge), Factory(:tax_charge)] } 
 end
 
@@ -116,4 +115,14 @@ end
 Factory.define :creditcard_txn do |f|
   f.amount 45.75
   f.response_code 12345
+end
+
+Factory.define :ship_charge, :class => ShippingCharge do |f|
+  f.amount 8.99
+  f.description "Shipping"
+end
+
+Factory.define :tax_charge, :class => TaxCharge do |f|
+  f.amount 3.17
+  f.description "Sales Tax"
 end

@@ -1,0 +1,2 @@
+class ShippingCharge < Charge
+end

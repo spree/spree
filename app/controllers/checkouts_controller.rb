@@ -30,9 +30,9 @@ class CheckoutsController < Spree::BaseController
     end 
 
     success.wants.js do   
-      render :json => { :order_total => number_to_currency(@order.total), 
-                        :ship_amount => number_to_currency(@order.ship_amount), 
-                        :tax_amount => number_to_currency(@order.tax_amount),
+      @order.reload
+      render :json => { :order_total => number_to_currency(@order.total),
+                        :charges => charge_hash,
                         :available_methods => rate_hash}.to_json,
              :layout => false
     end
@@ -74,5 +74,9 @@ class CheckoutsController < Spree::BaseController
         :name => ship_method.name, 
         :rate => number_to_currency(ship_method.calculate_shipping(fake_shipment)) }
     end
+  end
+  
+  def charge_hash
+    Hash[*@order.charges.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]    
   end  
 end

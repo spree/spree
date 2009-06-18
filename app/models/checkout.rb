@@ -1,6 +1,6 @@
-class Checkout < ActiveRecord::Base
-  after_update :update_order_totals
+class Checkout < ActiveRecord::Base  
   before_save :authorize_creditcard
+  after_save :update_charges
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
@@ -17,7 +17,26 @@ class Checkout < ActiveRecord::Base
     return unless cc.valid? and cc.authorize(order.total)
     order.complete
   end
-  def update_order_totals
+  def update_charges
+    # update shipping (if applicable)
+    if shipping_method
+      ship_charge = order.shipping_charges.first
+      ship_charge ||= order.shipping_charges.build    
+      ship_charge.amount = shipping_method.calculate_shipping(Shipment.new(:order => order, :address => ship_address))
+      ship_charge.description = "#{I18n.t(:shipping)} (#{shipping_method.name})" 
+      ship_charge.save
+    end
+    # update tax (if applicable)
+    tax_amount = order.calculate_tax
+    if tax_amount > 0                           
+      tax_charge = order.tax_charges.first
+      tax_charge ||= order.tax_charges.build(:description => I18n.t(:tax))
+      tax_charge.amount = tax_amount
+      tax_charge.save    
+    end
+
+    order.reload
     order.update_totals
+    order.save 
   end 
 end

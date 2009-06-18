@@ -10,8 +10,8 @@
   "<%= order.number %>",		//Order Number
   "",		//Affiliation
   "<%= order.total %>",		//Order total
-  "<%= order.tax_amount %>",		//Tax Amount
-  "<%= order.ship_amount %>",		//Ship Amount
+  "<%= order.tax_charges.sum(:amount).to_s %>",		//Tax Amount
+  "<%= order.shipping_charges.sum(:amount).to_s %>",		//Ship Amount
   "",		//City
   "",		//State
   ""		//Country

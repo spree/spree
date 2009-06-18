@@ -1,6 +1,12 @@
 class Order < ActiveRecord::Base  
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
-  belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
+  belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"  
+  has_many :shipments
+end
+Checkout.class_eval do
+  # temporarily disable the charge stuff since its interfering with this migration
+  def update_charges
+  end
 end
 
 class CreateCheckouts < ActiveRecord::Migration
@@ -19,13 +25,13 @@ class CreateCheckouts < ActiveRecord::Migration
     change_table :creditcards do |t|
       t.references :checkout
     end                     
-    
+
     Checkout.reset_column_information
     Creditcard.reset_column_information
     
     # move address, etc. from order to checkout
     Order.all.each do |order|             
-      shipping_method = order.shipment.shipping_method if order.shipment  
+      shipping_method = order.shipments.last.shipping_method if order.shipments.present?  
       completed_at = order.attributes["created_at"] if order.attributes["checkout_complete"] 
       creditcard = Creditcard.find_by_order_id(order.id)
       checkout = Checkout.create(:order => order, 

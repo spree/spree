@@ -10,6 +10,7 @@ Order Summary [CANCELED]
 <% end -%>      
 ============================================================
 Subtotal: <%= number_to_currency @order.item_total %>
-Tax: <%= number_to_currency @order.tax_amount %>
-Shipping: <%= number_to_currency @order.ship_amount %>
+<% @order.charges.each do |charge| %>
+  <%= "#{charge.description}: #{number_to_currency charge.amount}"%>
+<% end %>
 Order Total: <%= number_to_currency @order.total %>

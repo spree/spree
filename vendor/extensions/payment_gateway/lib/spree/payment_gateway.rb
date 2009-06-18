@@ -85,8 +85,8 @@ module Spree
        :customer => checkout.email, 
        :ip => checkout.ip_address, 
        :order_id => checkout.order.number,
-       :shipping => checkout.order.ship_amount * 100,
-       :tax => checkout.order.tax_amount * 100, 
+       :shipping => checkout.order.ship_total * 100,
+       :tax => checkout.order.tax_total * 100, 
        :subtotal => checkout.order.item_total * 100}  
     end
     

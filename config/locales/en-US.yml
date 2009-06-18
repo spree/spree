@@ -46,10 +46,8 @@ en-US:
         ip_address: "IP Address"
         item_total: "Item Total"
         number: Number
-        ship_amount: "Ship Amount"
         special_instructions: "Special Instructions"
         state: State
-        tax_amount: "Tax Amount"
         total: Total
       product: 
         available_on: "Available On"

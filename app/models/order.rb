@@ -1,7 +1,7 @@
 class Order < ActiveRecord::Base  
-  before_save :update_line_items 
   before_create :generate_token
-  before_create :create_checkout
+  before_save :update_line_items, :update_totals
+  after_create :create_checkout
   
   has_many :line_items, :dependent => :destroy, :attributes => true
   has_many :inventory_units
@@ -13,14 +13,15 @@ class Order < ActiveRecord::Base
   has_one :checkout
   has_one :bill_address, :through => :checkout
   has_one :ship_address, :through => :checkout   
-
+  has_many :charges, :order => :position
+  has_many :shipping_charges
+  has_many :tax_charges
+  
   delegate :email, :to => :checkout
   delegate :ip_address, :to => :checkout
   delegate :special_instructions, :to => :checkout 
   
   validates_associated :line_items, :message => "are not valid"
-  validates_numericality_of :tax_amount
-  validates_numericality_of :ship_amount
   validates_numericality_of :item_total
   validates_numericality_of :total
 
@@ -32,7 +33,7 @@ class Order < ActiveRecord::Base
   make_permalink :field => :number
   
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
-  attr_protected :ship_amount, :tax_amount, :item_total, :total, :user, :number, :ip_address, :checkout_complete, :state, :token
+  attr_protected :charge_total, :item_total, :total, :user, :number, :state, :token
 
   def to_param  
     self.number if self.number
@@ -138,10 +139,14 @@ class Order < ActiveRecord::Base
     self.item_total = tot
   end
   
-  def total
-    self.total = self.item_total + self.ship_amount + self.tax_amount
-  end 
- 
+  def ship_total
+    shipping_charges.inject(0) { |sum, charge| charge.amount + 0 }  
+  end
+  
+  def tax_total
+    tax_charges.inject(0) { |sum, charge| charge.amount + 0 }  
+  end
+  
   # convenience method since many stores will not allow user to create multiple shipments
   def shipment
     shipments.last
@@ -172,16 +177,9 @@ class Order < ActiveRecord::Base
     ShippingMethod.all.select { |method| method.zone.include?(ship_address) && method.available?(self) }
   end
    
-  def update_totals
-    # finalize order totals 
-    tmp_shipment = shipment || Shipment.new(:order => self, :address => checkout.ship_address)
-    if checkout.shipping_method
-      self.ship_amount = checkout.shipping_method.calculate_shipping(tmp_shipment) if checkout.ship_address
-    else
-      self.ship_amount = 0
-    end
-    self.tax_amount = calculate_tax
-    save!
+  def update_totals                                 
+    self.charge_total = self.charges.inject(0) { |sum, charge| charge.amount + sum }   
+    self.total = self.item_total + self.charge_total
   end  
 
   def calculate_tax      
@@ -204,14 +202,13 @@ class Order < ActiveRecord::Base
     shipments.build(:address => ship_address, :shipping_method => checkout.shipping_method)
     checkout.update_attribute(:completed_at, Time.now)
     InventoryUnit.sell_units(self)
-    #update_totals
     save_result = save! 
     if email 
       OrderMailer.deliver_confirm(self)
     end     
     save_result
-  end   
-  
+  end
+
   def cancel_order
     restock_inventory
     OrderMailer.deliver_cancel(self)
@@ -234,6 +231,6 @@ class Order < ActiveRecord::Base
   end
   
   def create_checkout
-    self.checkout = Checkout.create unless self.checkout
-  end      
+    self.checkout = Checkout.create(:order => self) unless self.checkout
+  end
 end

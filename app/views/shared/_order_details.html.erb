@@ -1,36 +1,38 @@
-<table class="order-summary">
-  <tr>
-    <th><%= t('item_description') %></th>
-    <th class="price"><%= t('price') %></th>
-    <th class="qty"><%= t('qty') %></th>
-    <th class="total_display"><span><%= t('total') %></span></th>
-  </tr>
-  <% @order.line_items.each do |item| %>
-  <tr >
-    <td width="300"><%=item.variant.product.name-%> <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %></td>
-    <td valign="top"><%= number_to_currency item.price -%></td>
-    <td valign="top"><%=item.quantity-%></td>
-    <td valign="top" class="total_display"><span><%= number_to_currency (item.price * item.quantity)-%></span></td>
-  </tr>
-  <% end %>      
-  <tr id="subtotal-row">
-    <td colspan="3"><b><%= t('subtotal') %>:</b></td>
-    <td class="total_display"><span><%= number_to_currency @order.item_total -%></span></td>
-  </tr>
-  <tr>
-    <td colspan="3"><b><%= t('tax') %>:</b></td>
-    <td class="total_display"><span id="tax_amount"><%= number_to_currency @order.tax_amount -%></span></td>
-  </tr>
-  <tr>
-    <td colspan="3"><b><%= t('shipping') %>:</b> 
-      <% if @order.shipment && @order.shipment.shipping_method %>
-        <span id="ship_method">(<%= @order.shipment.shipping_method.name %>)</span>
-      <% end %>
-    </td>
-    <td class="total_display"><span id="ship_amount"><%= number_to_currency @order.ship_amount -%></span></td>
-  </tr>
-  <tr>
-    <td colspan="3"><b><%= t('order_total') %>:</b></td>
-    <td class="total_display"><span id="order_total"><%= number_to_currency @order.total -%></span></td>
-  </tr>
+<table class="index">
+  <tbody id='line-items'>
+    <tr>
+      <th><%= t('item_description') %></th>
+      <th class="price"><%= t('price') %></th>
+      <th class="qty"><%= t('qty') %></th>
+      <th class="total_display"><span><%= t('total') %></span></th>
+    </tr>
+    <% @order.line_items.each do |item| %>
+      <tr >
+        <td width="300"><%=item.variant.product.name-%> <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %></td>
+        <td valign="top"><%= number_to_currency item.price -%></td>
+        <td valign="top"><%=item.quantity-%></td>
+        <td valign="top" class="total_display"><span><%= number_to_currency (item.price * item.quantity)-%></span></td>
+      </tr>
+    <% end %>      
+  </tbody>
+  <tbody id='subtotal'>
+    <tr class="total" id="subtotal-row">
+      <td colspan="3"><b><%= t('subtotal') %>:</b></td>
+      <td class="total_display"><span><%= number_to_currency @order.item_total -%></span></td>
+    </tr>
+  </tbody>
+  <tbody id="order-charges">
+    <% order.charges.each do |charge| %>
+      <tr class="total">
+        <td colspan="3"><strong><%= charge.description %></strong></td>
+        <td class="total_display"><span><%= number_to_currency charge.amount -%></span></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tbody id='order-total'>
+    <tr class="total">
+      <td colspan="3"><b><%= t('order_total') %>:</b></td>
+      <td class="total_display"><span id="order_total"><%= number_to_currency @order.total -%></span></td>
+    </tr>
+  </tbody>
 </table>

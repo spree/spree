@@ -34,6 +34,62 @@ class CheckoutTest < ActiveSupport::TestCase
       should_not_change "Creditcard.count"
       should_not_change "CreditcardPayment.count"
       should_not_change "CreditcardTxn.count"
-    end  
+    end
   end
+
+  context "belonging to an order" do
+    setup do 
+      @checkout = Checkout.new(:order => Order.create, :ship_address => Factory(:address), :bill_address => Factory(:address))
+    end
+    context "with no shipping method" do
+      setup { @checkout.save }
+      should_not_change "@checkout.order.shipping_charges"
+    end  
+    context "with shipping method" do
+      setup do
+        @shipping_method = ShippingMethod.new  
+        @checkout.shipping_method = @shipping_method
+        @shipping_method.stub!(:available?, :return => true)
+        @shipping_method.stub!(:calculate_shipping, :return => 10)
+        @checkout.save 
+      end
+      should "increase shipping_charges by 1" do
+        assert_equal 1, @checkout.order.shipping_charges.size
+      end
+      should "have the correct value for the new shipping charge" do
+        assert_equal 10, @checkout.order.shipping_charges.first.amount
+      end
+      should_change "@checkout.order.total", :by => 10
+      context "and shipping amount changes" do
+        setup do
+          @shipping_method.stub!(:calculate_shipping, :return => 20)
+          @checkout.save
+        end
+        should_not_change "@checkout.order.shipping_charges.count"
+        should_change "@checkout.order.shipping_charges.first.amount", :from => 10, :to => 20
+      end      
+    end 
+    context "with taxable items" do
+      setup do
+        @checkout.order.stub!(:calculate_tax, :return => 15)
+        @checkout.save
+      end
+      should "increase tax_charges by 1" do
+        assert_equal 1, @checkout.order.tax_charges.size
+      end
+      should "have the correct value for the newly created tax charge" do
+        assert_equal 15, @checkout.order.tax_charges.first.amount
+      end
+      should_change "@checkout.order.total", :by => 15
+      context "and tax amount changes" do
+        setup do
+          @checkout.order.stub!(:calculate_tax, :return => 8)
+          @checkout.save
+        end
+        should_not_change "@checkout.order.tax_charges.count"
+        should_change "@checkout.order.tax_charges.first.amount", :from => 15, :to => 8
+      end
+    end 
+  end
+
 end
