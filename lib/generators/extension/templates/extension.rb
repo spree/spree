@@ -13,6 +13,9 @@ class <%= class_name %> < Spree::Extension
   # end
   
   def activate
-    # admin.tabs.add "<%= extension_name %>", "/admin/<%= file_name %>", :after => "Layouts", :visibility => [:all]
+    # make your helper avaliable in all views
+    # Spree::BaseController.class_eval do
+    #   helper YourHelper
+    # end
   end
 end
