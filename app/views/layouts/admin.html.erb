@@ -37,6 +37,9 @@
         <%= tab :reports %>
         <%= tab :configurations, :general_settings, :mail_settings, :tax_categories, :zones, :states, :gateway_configurations, :inventory_settings, :taxonomies, :label => 'configuration' %>
         <%= tab :users %>
+        <% @extension_tabs.each do |etab| -%>
+          <%= tab etab[0], etab[1] %>
+        <% end -%>
       </ul>
       <br class="clear" />
     </div>
