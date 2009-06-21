@@ -61,8 +61,55 @@ instead of +404.html+, so you don't have to hunt through the server logs.
 <shell>
 Spree::BaseController.class_eval do
   def local_request?
-    current_user.present? && current_user.has_role?(:admin)
+    ENV["RAILS_ENV] != "production" || current_user.present? && current_user.has_role?(:admin)
   end
 end
 </shell>
+
+h3. Managing large projects
+
+h4. Setting up submodules
+
+Some of us use "Git submodules":http://git.or.cz/gitwiki/GitSubmoduleTutorial
+to tie large projects together: the basic Spree shell plus the 
++site/+ extension is the main repository, and everything else is loaded in as a submodule, 
+including Spree itself. See "this Spree-demo fork":http://github.com/paulcc/spree-demo/tree
+for an example. 
+
+The basic command to set up a submodule is this. Call it for each of the submodules you need.
+For Spree, you want to use the path +vendor/spree+.
+
+<shell>
+git submodule add some_repo [-b branch] vendor/extension/some_ext
+</shell>
+
+If your project is public, then you probably want to give the public version of your repo so
+other people can use it without change. When I need to change a submodule in place, I add a
+new remote with the proper url for changes to be pushed to. 
+The branch option is recommended (and you probably want to specify "master" most of the time).
+
+h4. Checking out submodules
+
+On the first run, the following command fetches the submodule repositories into the nominated 
+directories.
+<shell>
+git submodule update --init
+</shell>
+
+
+h4. Managing submodules
+
++git submodule foreach+ is very useful for managing your submodules, e.g. you can update all of them
+with +git submodule foreach "git pull"+, or check for modifications with this 
+(the +echo ok+ gets round a return-code issue):
+<shell>
+git submodule foreach "git status || echo ok"
+</shell>
+
+When pushing modifications, remember to check each of your repositories (with +foreach+ above),
+and then check in the main repository. Git tracks the last commit in each submodule and includes
+this information in the main repository, hence allowing the right versions to be checked out 
+later. 
+
+NOTE: +git foreach+ seems to be a recent addition, so you might need to update your installation of +git+.
 

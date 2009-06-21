@@ -13,7 +13,7 @@ WARNING. This Guide is based on Spree 0.8.0. Some of the code shown here will no
 
 h3. This Guide Assumes
 
-This guide is designed for beginners who want to get started with a Spree application from scratch. It assumes a baisc working knowledge of Ruby on Rails.  To get the most out of this guide, you need to have some prerequisites installed:
+This guide is designed for beginners who want to get started with a Spree application from scratch. It assumes a basic working knowledge of Ruby on Rails.  To get the most out of this guide, you need to have some prerequisites installed:
 
 * The "Ruby":http://www.ruby-lang.org/en/downloads language
 * The "RubyGems":http://rubyforge.org/frs/?group_id=126 packaging system
@@ -36,7 +36,7 @@ There are also some good free resources on the internet for learning Ruby, inclu
 
 h3. What is Spree?
 
-Spree is a full featured commmerce platform written for the Ruby on Rails framework. It is designed to make programming commerce applications easier by making several assumptions about what most developers needs to get started. Spree is a production ready store that can be used "out of the box", but more importantly, it is also a developer tool that can be used as a solid foundation for a more sophisticated application then what is generally possible with traditional open source offerings.
+Spree is a full featured commerce platform written for the Ruby on Rails framework. It is designed to make programming commerce applications easier by making several assumptions about what most developers needs to get started. Spree is a production ready store that can be used "out of the box", but more importantly, it is also a developer tool that can be used as a solid foundation for a more sophisticated application then what is generally possible with traditional open source offerings.
 
 Spree is "open source":http://en.wikipedia.org/wiki/Open_source.  It is licensed under the very permissive "New BSD License":http://spreehq.org/license.  You are free to use the software as you see fit, at no charge.  Perhaps more important than the cost, Spree is a true open source community.  Spree has dozens of contributors who have used and improved it while building their own commerce solutions.  
 
@@ -58,13 +58,13 @@ A model represents the information (data) of the application and the rules to ma
 
 h5. Online Commerce is not for "Noobs"
 
-Rails developers are the target audience for this application - not business owers. No serious company would ever try to run an online store by just paying some fool on Craig's List to install OSCommerce for them. Serious businesses have complicated needs that require paying one or more software professionals to solve them. Spree seeks to be the platform that developers use as the foundation for their project rather than having to start from scratch or settle for less with other software.
+Rails developers are the target audience for this application - not business owners. No serious company would ever try to run an online store by just paying some fool on Craig's List to install OSCommerce for them. Serious businesses have complicated needs that require paying one or more software professionals to solve them. Spree seeks to be the platform that developers use as the foundation for their project rather than having to start from scratch or settle for less with other software.
 
 Views represent the user interface of your application. In Rails, views are often HTML files with embedded Ruby code that performs tasks related solely to the presentation of the data. Views handle the job of providing data to the web browser or other tool that is used to make requests from your application.
-               
+
 h5. Developers Need Complete Control
 
-Most business owners will not be satisfied with the generic templates offered by other platforms. Why should they? They want their website to look just like the other professional sites they see on the web. Most businesses also have very specific shipping and taxation rules.  Spree needs to be flexible enough to accomodate most situations.  Sensible defaults should be provided with the eye towards allowing further customization.
+Most business owners will not be satisfied with the generic templates offered by other platforms. Why should they? They want their website to look just like the other professional sites they see on the web. Most businesses also have very specific shipping and taxation rules.  Spree needs to be flexible enough to accommodate most situations.  Sensible defaults should be provided with the eye towards allowing further customization.
 
 h5. Stay Focused
 
@@ -135,7 +135,7 @@ Spree will create a folder in your working directory called <tt>mystore</tt>. Op
 |tmp/|Temporary files|
 |vendor/|A place for third-party code. In a typical Spree application, this includes Ruby Gems, the Spree source code (if you install it into your project) and extensions containing additional prepackaged functionality.  This also typically includes your customized site logic in the "site" extension.|
  
-INFO. If you're an experienced Rails developer you may be wondering where your +app+ directory is.  Spree actually runs as an embedeed Rails app inside of your gem.  How do you customize things then?  We'll cover that later in extensions.
+INFO. If you're an experienced Rails developer you may be wondering where your +app+ directory is.  Spree actually runs as an embedded Rails app inside of your gem.  How do you customize things then?  We'll cover that later in extensions.
 
 h4. Configuring the Database
 
@@ -207,7 +207,7 @@ Now that you have your database configured, it's time to have Spree populate it 
 $ rake db:bootstrap
 </shell>
 
-INFO. This will effectively drop the existing database and recreate it from scratch with the option of creating sample product data.  It is disabled for production databases for saftey reasons.  For a production database you should use +rake db:migrate+ to create the tables and +rake db:admin:create+ to create the admin user.
+INFO. This will effectively drop the existing database and recreate it from scratch with the option of creating sample product data.  It is disabled for production databases for safety reasons.  For a production database you should use +rake db:migrate+ to create the tables and +rake db:admin:create+ to create the admin user.
 
 h3. Hello, Spree!
 
@@ -235,7 +235,7 @@ Upon successful authentication you should see the admin screen:
 
 We're just covering how to log in for now.  There are other guides that will detail how the basic admin features work.
 
-h4. Modifying the Look of your Applicaiton
+h4. Modifying the Look of your Application
 
 The last step is to customize the look and feel of the store you just built.  We're going to add some text to the footer just to give you a sense of how such things are done in Spree.  Modifications to Spree are best achieved through extensions.  Extensions enable you to add custom functionality to your application.  Spree also supports the notion of third party extensions which allow developers to share useful functionality with each other across applications.  This is not meant to serve as a detailed review of extensions, rather, it is meant to give you an idea of what is possible.
 
@@ -256,7 +256,7 @@ We'll start by editing the site extension.  Spree creates a site extension for y
 
 h5. Overriding a View
 
-One of the things extensions alows you to do is to override a view that is normally supplied by Spree.  
+One of the things extensions allows you to do is to override a view that is normally supplied by Spree.  
 
 Go ahead an navigate to +vendor/extensions/site/app/views+.  
 
