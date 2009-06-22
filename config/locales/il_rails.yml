@@ -1,0 +1,103 @@
+# Hebrew translations for Ruby on Rails 
+# by Dotan Nahum (dipidi@gmail.com)
+
+il:
+  date:
+    formats:
+      default: "%Y-%m-%d"
+      short: "%e %b"
+      long: "%B %e, %Y"
+      only_day: "%e"
+
+    day_names: [ראשון, שני, שלישי, רביעי, חמישי, שישי, שבת]
+    abbr_day_names: [רא, שנ, של, רב, חמ, שי, שב]
+    month_names: [~, ינואר, פברואר, מרץ, אפריל, מאי, יוני, יולי, אוגוסט, ספטמבר, אוקטובר, נובמבר, דצמבר]
+    abbr_month_names: [~, יאנ, פב, מרץ, אפר, מאי, יונ, יול, אוג, ספט, אוק, נוב, דצ]
+    order: [ :day, :month, :year ]
+  
+  time:
+    formats:
+      default: "%a %b %d %H:%M:%S %Z %Y"
+      time: "%H:%M"
+      short: "%d %b %H:%M"
+      long: "%B %d, %Y %H:%M"
+      only_second: "%S"
+      
+      datetime:
+        formats:
+          default: "%d-%m-%YT%H:%M:%S%Z"
+          
+      am: 'am'
+      pm: 'pm'
+      
+  datetime:
+    distance_in_words:
+      half_a_minute: 'חצי דקה'
+      less_than_x_seconds:
+        zero: 'פחות משניה אחת'
+        one: 'פחות משניה אחת'
+        other: 'פחות מ- {{count}} שניות'
+      x_seconds:
+        one: 'שניה אחת'
+        other: '{{count}} שניות'
+      less_than_x_minutes:
+        zero: 'פחות מדקה אחת'
+        one: 'פחות מדקה אחת'
+        other: 'פחות מ- {{count}} דקות'
+      x_minutes:
+        one: 'דקה אחת'
+        other: '{{count}} דקות'
+      about_x_hours:
+        one: 'בערך שעה אחת'
+        other: 'בערך {{count}} שעות'
+      x_days:
+        one: 'יום אחד'
+        other: '{{count}} ימים'
+      about_x_months:
+        one: 'בערך חודש אחד'
+        other: 'בערך {{count}} חודשים'
+      x_months:
+        one: 'חודש אחד'
+        other: '{{count}} חודשים'
+      about_x_years:
+        one: 'בערך שנה אחת'
+        other: 'בערך {{count}} שנים'
+      over_x_years:
+        one: 'מעל שנה אחת'
+        other: 'מעל {{count}} שנים'
+      
+  number:
+    format:
+      precision: 3
+      separator: '.'
+      delimiter: ','
+    currency:
+      format:
+        unit: 'שח'
+        precision: 2
+        format: '%u %n'
+        
+  active_record:
+    error:
+      header_message: ["לא ניתן לשמור {{model}}: שגיאה אחת", "לא ניתן לשמור {{model}}: {{count}} שגיאות."]
+      message: "אנא בדוק את השדות הבאים:"
+    error_messages:
+      inclusion: "לא נכלל ברשימה"
+      exclusion: "לא זמין"
+      invalid: "לא ולידי"
+      confirmation: "לא תואם לאישורו"
+      accepted: "חייב באישור"
+      empty: "חייב להכלל"
+      blank: "חייב להכלל"
+      too_long: "יותר מדי ארוך (לא יותר מ- {{count}} תוים)"
+      too_short: "יותר מדי קצר (לא יותר מ- {{count}} תוים)"
+      wrong_length: "לא באורך הנכון (חייב להיות {{count}} תוים)"
+      taken: "לא זמין"
+      not_a_number: "הוא לא מספר"
+      greater_than: "חייב להיות גדול מ- {{count}}"
+      greater_than_or_equal_to: "חייב להיות גדול או שווה ל- {{count}}"
+      equal_to: "חייב להיות שווה ל- {{count}}"
+      less_than: "חייב להיות קטן מ- {{count}}"
+      less_than_or_equal_to: "חייב להיות קטן או שווה ל- {{count}}"
+      odd: "חייב להיות אי זוגי"
+      even: "חייב להיות זוגי"
