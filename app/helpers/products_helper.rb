@@ -22,12 +22,21 @@ module ProductsHelper
     end
   end
   
-  def format_price(price)      
-    # Don't be fooled - default implementation uses number_to_currency but other extensions may patch into this.  It is
-    # suggested that you leave your format_price calls alone.
-    number_to_currency(price)
+  def product_price(product_or_variant, options={})
+    options.assert_valid_keys(:format_as_currency, :show_vat_text)
+    options.reverse_merge! :format_as_currency => true, :show_vat_text => Spree::Config[:show_price_inc_vat]
+
+    amount = product_or_variant.is_a?(Product) ? product_or_variant.master_price : product_or_variant.price
+    amount += Spree::VatCalculator.calculate_tax_on(product_or_variant) if Spree::Config[:show_price_inc_vat]
+    options.delete(:format_as_currency) ? format_price(amount, options) : amount
   end
   
+  def format_price(price, options={})
+    options.assert_valid_keys(:show_vat_text)
+    options.reverse_merge! :show_vat_text => Spree::Config[:show_price_inc_vat]
+    options[:show_vat_text]  ?  number_to_currency(price) + ' (inc. VAT)' : number_to_currency(price)
+  end
+    
   # converts line breaks in product description into <p> tags (for html display purposes)
   def product_description(product)
     product.description.gsub(/^(.*)$/, '<p>\1</p>')

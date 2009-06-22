@@ -23,6 +23,7 @@ class Spree::BaseHelperTest < ActionView::TestCase
   end
   context "when backordering is disallowed" do
     setup { Spree::Config.set(:allow_backorders => false) }
+    teardown { Spree::Config.set(:allow_backorders => true) }
     context "and variant is out of stock" do
       setup { @variant = Factory(:variant, :on_hand => "0")}
       context "variant_options" do

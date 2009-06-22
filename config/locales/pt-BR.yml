@@ -500,8 +500,11 @@ pt-BR:
   tax: Imposto
   tax_categories: "Categorias de Imposto"
   tax_categories_setting_description: "Ajustar as categorias de impostos para identificar quais produtos devem ser taxados."
-  tax_category: "Categoria de Imposto"
-  tax_settings: "Tax settings"
+  tax_category: "Categoria de Imposto" 
+  tax_rates: "Taxas de Imposto"
+  tax_rates_description: Configuração de Taxas de Impostos.
+  tax_settings: "Tax Settings"
+  tax_settings_description: Basic tax settings.
   tax_total: "Imposto Total"
   tax_type: "Tipo de Imposto"
   taxon: Grupo de Taxonomia

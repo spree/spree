@@ -37,7 +37,8 @@ class LineItemTest < Test::Unit::TestCase
     end
 
     context "when backordering is disallowed" do
-      setup { Spree::Config.set(:allow_backorders => false) }
+      setup { Spree::Config.set(:allow_backorders => false) }    
+      teardown { Spree::Config.set(:allow_backorders => true) }
       should "disallow creation for an out of stock variant" do
         assert !@line_item.valid?
       end
@@ -59,9 +60,8 @@ class LineItemTest < Test::Unit::TestCase
     end
 
     context "when backordering is disallowed" do
-      setup do
-        Spree::Config.set(:allow_backorders => false)
-      end
+      setup { Spree::Config.set(:allow_backorders => false) }
+      teardown { Spree::Config.set(:allow_backorders => true) }
       should "disallow creation for an out of stock variant" do
         assert !@line_item.valid?
       end

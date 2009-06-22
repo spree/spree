@@ -1,7 +1,7 @@
 class Admin::TaxSettingsController < Admin::BaseController
 
   def update
-    Spree::Tax::Config.set(params[:preferences])
+    Spree::Config.set(params[:preferences])
     
     respond_to do |format|
       format.html {

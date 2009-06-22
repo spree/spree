@@ -67,7 +67,14 @@ nb-NO:
         name: Navn
       state: 
         abbr: Forkortelse
+        name: Navn 
+      product: 
+        tax_category: "Momskategori"
+      tax_category: 
+        description: Beskrivelse
         name: Navn
+      tax_rate: 
+        amount: Momsnivå        
       taxon: 
         name: Navn
         permalink: Permalink
@@ -132,6 +139,12 @@ nb-NO:
       state: 
         one: "Stat"
         other: "Stater"
+      tax_category: 
+        one: "Momskategori"
+        other: "Momskategorier"
+      tax_rate: 
+        one: "Momsnivå"
+        other: "Momsnivå"
       taxon: 
         one: Klasse
         other: Klasser
@@ -501,7 +514,10 @@ nb-NO:
   tax_categories: "Momskategorier"
   tax_categories_setting_description: "Sett opp momskategorier for å identifisere hvilke produkter som er momsbelagt."
   tax_category: "Momskategori"
-  tax_settings: "Tax settings"
+  tax_rates: "Momsnivå"
+  tax_rates_description: "Konfigurer momsnivå."
+  tax_settings: "Tax Settings"
+  tax_settings_description: Basic tax settings.
   tax_total: "Moms"
   tax_type: "Momstype"
   taxon: Klasse

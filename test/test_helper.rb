@@ -7,6 +7,7 @@ class ActiveSupport::TestCase
   self.use_instantiated_fixtures  = false
 end
 
+I18n.locale = "en-US"
 
 ActionController::TestCase.class_eval do
   # special overload methods for "global"/nested params

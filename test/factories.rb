@@ -1,8 +1,6 @@
 Factory.define :order do |f| 
-  #f.checkout { Factory(:checkout) }
-  #f.shipments do |shipments|
-  #  [shipments.association(:shipment)]
-  #end
+  f.line_items { [Factory(:line_item)] }
+  f.charges { [Factory(:ship_charge), Factory(:tax_charge)] } 
 end
 
 Factory.define :checkout do |f|
