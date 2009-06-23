@@ -281,3 +281,17 @@ The array that is appended to the extension_tabs attribute is passed in the call
 
 Any option supported by the tabs helper can be passed in the hash argument.
 
+
+h4. Make your extension helper avaliable to all views (helpful if you're using it in a layout override)
+
+@foo_extension.rb@
+
+<shell>
+def activate
+
+  Spree::BaseController.class_eval do
+    helper FooHelper
+  end
+
+end
+</shell>
