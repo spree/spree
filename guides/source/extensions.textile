@@ -221,3 +221,63 @@ class AddCustomConfigurations < ActiveRecord::Migration
   end
 end
 </shell>
+
+h4. Adding a tab to the Admin screens
+
+If your extension needs to have a section in the admin screens, you can add a tab to the admin panel from the activate method in your extension file. 
+
+*Generate an extension admin controller:*
+
+<shell>
+script/generate extension_controller foo admin/foos
+</shell>
+
+*Add a route to your config/routes.rb file:*
+
+<shell>
+map.namespace :admin do |admin|
+  admin.resources :foos
+end
+</shell>
+
+*Add your localization file*
+
+You'll need to create at the least, a localization file for en-US that contains your extension name. A minimal locale file would contain the string the tab helper will use to render the tab label.  You may want to include other translations for your particular admin needs. 
+
+@config/locales/en-US.yml@
+
+<shell>
+---
+en-US:
+  foos: "Foos"
+  delete_foo: "Delete Foo"
+  edit_foo: "Edit Foo"
+  transmorgify_foo: "Turn Foo into a T-Rex"
+</shell>
+
+Once you've got the parts you need set up, you can tie your admin screen into the main panel by editing foo_extension.rb and adding the following to the activate method:
+
+@foo_extension.rb@
+
+<shell>
+def activate
+  Admin::BaseController.class_eval do
+    before_filter :add_foos_tab
+
+    def add_foos_tab
+      @extension_tabs << [ :foos ]
+    end
+  end
+end
+</shell>
+
+The array that is appended to the extension_tabs attribute is passed in the call to the tab helper. You can pass in options to the tab helper like:
+
+<shell>
+...
+@extension_tabs << [ :foos, { :label => "Some other tab label", :route => :mapped_path_name } ]
+...
+</shell>
+
+Any option supported by the tabs helper can be passed in the hash argument.
+
