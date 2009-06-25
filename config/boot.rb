@@ -48,7 +48,7 @@ module Spree
     end
     
     def rubygems_version
-      Gem::RubyGemsVersion if defined? Gem::RubyGemsVersion
+      Gem::RubyGemsVersion.nil? ? '0.0' : Gem::RubyGemsVersion
     end
   end
 
