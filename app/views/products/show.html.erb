@@ -12,7 +12,7 @@
 </div>
 
 <div id="product-description">
-  <%= product_description(@product) %>
+  <%= product_description(@product) rescue t("product_has_no_description") %>
 
   <%= render 'properties' %>
 </div>

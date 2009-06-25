@@ -34,7 +34,7 @@ class Product < ActiveRecord::Base
                  
   def to_param       
     return permalink unless permalink.blank?
-    name.parameterize.to_s
+    name.to_url
   end
   
   # checks is there are any meaningful variants (ie. variants with at least one option value)

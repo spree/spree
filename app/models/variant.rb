@@ -17,7 +17,11 @@ class Variant < ActiveRecord::Base
               {:name => 'Height', :only => [:variant], :format => "%.2f"},
               {:name => 'Width',  :only => [:variant], :format => "%.2f"},
               {:name => 'Depth',  :only => [:variant], :format => "%.2f"} ]
-  
+ 
+  def describe_variant
+    option_values.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence({:words_connector => ", ", :two_words_connector => ", "})
+  end
+
   def on_hand
     inventory_units.with_state("on_hand").size
   end
@@ -57,10 +61,8 @@ class Variant < ActiveRecord::Base
 
   private
 
-    def adjust_inventory    
-      return unless @new_level && @new_level.is_integer?    
-      @new_level = @new_level.to_i
-      # don't allow negative on_hand inventory
+    def adjust_inventory
+			@new_level = @new_level ? @new_level.to_i : -1 
       return if @new_level < 0
       
       # fill backordered orders first
@@ -72,7 +74,7 @@ class Variant < ActiveRecord::Base
         break if @new_level < 1
         }
       
-      adjustment = @new_level - on_hand 
+      adjustment = @new_level - on_hand
       if adjustment > 0
         InventoryUnit.create_on_hand(self, adjustment)
         reload

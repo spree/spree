@@ -164,6 +164,7 @@ nb-NO:
   allow_backorders: "Tillat restordre"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Tillat at SSL brukes i utviklings- og testmodus.
   allow_ssl_to_be_used_when_in_production_mode: Tillat at SSL brukes i produksjonsmodus.
+  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: Beløp
@@ -181,6 +182,7 @@ nb-NO:
   available_taxons: "Tilgjengelige klasser"
   back: Tilbake
   back_to_store: "Tilbake til butikken"
+  backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Fakturaadresse"
   billing_address: "Fakturaadresse"
   cancel: Avbryt
@@ -258,6 +260,7 @@ nb-NO:
   first_name: "Fornavn"
   forgot_password: "Forgot Password"
   gateway: "Tjeneste"
+  gateway_configuration: "Gateway configuration"
   gateway_error: "Feil oppstått i tjeneste"
   gateway_setting_description: "Velg en betalingstjeneste og konfigurer den."
   general: "General"
@@ -274,6 +277,7 @@ nb-NO:
   hello_user: "Hallo, bruker"
   history: History
   home: "Home"
+  icons_by: "Icons by"
   image: Bilde
   images: Bilder
   in_progress: "Pågår"
@@ -382,6 +386,7 @@ nb-NO:
   payments: Betalinger
   phone: Telefon
   place_order: "Bekreft ordre"
+  powered_by: "Powered by"
   presentation: Presentasjon
   previous: Forrige
   price: Pris
@@ -392,8 +397,10 @@ nb-NO:
   process: Prosess
   product: Produkt
   product_details: "Produktdetaljer"
+  product_has_no_description: Product has not description
   product_properties: "Produktegenskaper"
   products: Produkter
+  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: Egenskaper
   property: Egenskap
   prototype: Prototype
@@ -453,6 +460,7 @@ nb-NO:
   show_incomplete_orders: "Vis ufullstendige ordrer"
   show_only_complete_orders: "Vis bare ferdige ordrer"
   show_out_of_stock_products: "Vis produkter som ikke er på lager"
+  show_price_inc_vat: "Show price including VAT"
   sign_up: "Meld meg på"
   site_name: "Site Name"
   site_url: "Site URL"
@@ -463,10 +471,18 @@ nb-NO:
   smtp_mail_host: "SMTP server"
   smtp_password: "SMTP passord"
   smtp_port: "SMTP portnummer"
+  smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
+  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: "SMTP brukernavn"
   spree:
     date: Dato
     time: Tid                                               
+  ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
+  ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
+  ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
+  ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   start: Start
   start_date: Valid from
   state: Stat
@@ -485,12 +501,15 @@ nb-NO:
   tax_categories: "Momskategorier"
   tax_categories_setting_description: "Sett opp momskategorier for å identifisere hvilke produkter som er momsbelagt."
   tax_category: "Momskategori"
+  tax_settings: "Tax settings"
   tax_total: "Moms"
   tax_type: "Momstype"
   taxon: Klasse
   taxonomies: Klassifikasjoner
   taxonomies_setting_description: "Konfigurer klassifikasjoner."
+  taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
+  taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Klasser
   thank_you_for_your_order: "Takk for bestillingen. Vennligst skriv ut og ta vare på denne bekreftelsen."
   this_file_language: "Norsk"

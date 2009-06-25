@@ -164,6 +164,7 @@ jp:
   allow_backorders: 取り寄せ注文を許可する
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode
+  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: 個数
@@ -181,6 +182,7 @@ jp:
   available_taxons: 使用可能な分類
   back: 戻る
   back_to_store: "Go Back To Store"
+  backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: 請求先住所
   billing_address: 請求先住所
   cancel: キャンセル
@@ -258,6 +260,7 @@ jp:
   first_name: 名前
   forgot_password: "Forgot Password"
   gateway: ゲートウェー
+  gateway_configuration: "Gateway configuration"
   gateway_error: ゲートウェーエラー
   gateway_setting_description: "Select a payment gateway and configure its settings."
   general: 一般
@@ -274,6 +277,7 @@ jp:
   hello_user: "Hello User"
   history: 履歴
   home: ホーム
+  icons_by: "Icons by"
   image: 画像
   images: 画像
   in_progress: "In Progress"
@@ -294,6 +298,7 @@ jp:
   listing_reports: リポート一覧
   listing_tax_categories: "Listing Tax Categories"
   listing_users: ユーザ一覧
+  loading: Loading
   locale_changed: "Locale Changed"
   log_in: ログイン
   logged_in_as: ログイン
@@ -333,6 +338,7 @@ jp:
   new_state: 新規都道府県（州）
   new_tax_category: 新規税カテゴリー
   new_tax_rate: 新規税率
+  new_taxon: "New Taxon"
   new_taxonomy: "新規分類"
   new_user: 新規ユーザ
   new_variant: 新規形式
@@ -380,6 +386,7 @@ jp:
   payments: 支払い方法
   phone: 電話番号
   place_order: Place Order
+  powered_by: "Powered by"
   presentation: 表示名
   previous: 前へ
   price: 価格
@@ -390,8 +397,10 @@ jp:
   process: Process
   product: 商品
   product_details: 商品詳細
+  product_has_no_description: Product has not description
   product_properties: 商品情報
   products: 商品
+  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: 属性
   property: 属性
   prototype: プロトタイプ
@@ -427,6 +436,7 @@ jp:
   send_copy_of_orders_mails_to: Send Copy of Order Mails To
   send_mails_as: Send Mails As
   send_order_mails_as: Send Order Mails As
+  server_error: "The server returned an error"
   ship: 配送
   ship_address: 配送先住所
   shipment: 発送
@@ -450,6 +460,7 @@ jp:
   show_incomplete_orders: 未処理の注文も表示
   show_only_complete_orders: 処理済みの注文のみを表示
   show_out_of_stock_products: 在庫切れの商品を表示
+  show_price_inc_vat: "Show price including VAT"
   sign_up: サインアップ
   site_name: サイト名
   site_url: サイトURL
@@ -460,10 +471,18 @@ jp:
   smtp_mail_host: SMTPサーバ
   smtp_password: SMTPパスワード
   smtp_port: SMTPポート
+  smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
+  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTPユーザ名
   spree:
     date: 日付
     time: 時間
+  ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
+  ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
+  ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
+  ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   start: 始め
   start_date: Valid from
   state: 都道府県（州）
@@ -482,11 +501,15 @@ jp:
   tax_categories: 税カテゴリー
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: 税カテゴリー
+  tax_settings: "Tax settings"
   tax_total: 税合計
   tax_type: 税種別
   taxon: 分類単位
   taxonomies: 分類単位
   taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomy_edit: "Edit taxonomy"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
+  taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: 分類
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "Japanese"
@@ -505,6 +528,7 @@ jp:
   update: 更新
   update_password: "Update my password and log me in"
   updated_successfully: 更新しました
+  updating: Updating
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
   use_different_shipping_address: "Use Different Shipping Address"

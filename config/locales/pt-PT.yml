@@ -164,6 +164,7 @@ pt-PT:
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
+  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: Valor
@@ -181,6 +182,7 @@ pt-PT:
   available_taxons: "Taxons Disponíveis"
   back: "Para Trás"
   back_to_store: "Voltar à Loja"
+  backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Endereço da Conta"
   billing_address: "Endereço de Cobrança"
   cancel: Cancelar
@@ -258,6 +260,7 @@ pt-PT:
   first_name: Nome
   forgot_password: "Forgot Password"
   gateway: Gateway
+  gateway_configuration: "Gateway configuration"
   gateway_error: "Erro na Gateway"
   gateway_setting_description: "Selecionar um gateway de pagamento e ajustar suas configurações."
   general: "General"
@@ -274,6 +277,7 @@ pt-PT:
   hello_user: "Olá Utilizador"
   history: History
   home: "Home"
+  icons_by: "Icons by"
   image: Imagem
   images: Imagens
   in_progress: "Em Progresso"
@@ -382,6 +386,7 @@ pt-PT:
   payments: Pagamentos
   phone: Telefone
   place_order: Place Order        
+  powered_by: "Powered by"
   presentation: Apresentação
   previous: anterior
   price: Preço
@@ -392,8 +397,10 @@ pt-PT:
   process: Processar
   product: Produto
   product_details: "Detalhes do Produto"
+  product_has_no_description: Product has not description
   product_properties: "Propriedades do Produto"
   products: Produtos
+  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: Propriedades
   property: Propriedade
   prototype: Prototype
@@ -453,6 +460,7 @@ pt-PT:
   show_incomplete_orders: "Mostra Encomendas Incompletas"
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Mostra produtos sem stock"
+  show_price_inc_vat: "Show price including VAT"
   sign_up: Inscrever
   site_name: "Site Name"
   site_url: "Site URL"
@@ -463,10 +471,18 @@ pt-PT:
   smtp_mail_host: SMTP Mail Host                       
   smtp_password: SMTP Password
   smtp_port: SMTP Port          
+  smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
+  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTP Username  
   spree:
     date: Data
     time: Horário                                               
+  ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
+  ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
+  ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
+  ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   start: Início
   start_date: Valid from
   state: Estado
@@ -485,12 +501,15 @@ pt-PT:
   tax_categories: "Categorias de Taxa"
   tax_categories_setting_description: "Ajustar as categorias de taxas para identificar quais produtos devem ser taxados."
   tax_category: "Categoria de Taxa"
+  tax_settings: "Tax settings"
   tax_total: "Taxa Total"
   tax_type: "Tax Type"
   taxon: Taxon
   taxonomies: Taxonomias
   taxonomies_setting_description: "Criar e gerir taxonomias"
+  taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
+  taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Taxons
   thank_you_for_your_order: "Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle."
   this_file_language: "Português"
