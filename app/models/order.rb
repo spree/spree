@@ -3,7 +3,7 @@ class Order < ActiveRecord::Base
   before_save :update_line_items, :update_totals
   after_create :create_checkout
   
-  has_many :line_items, :dependent => :destroy, :attributes => true
+  has_many :line_items, :dependent => :destroy
   has_many :inventory_units
   has_many :state_events
   has_many :payments
