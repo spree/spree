@@ -33,3 +33,52 @@ There are no immediate plans to support SVN clients. Given that most of the Rail
 h3. Monitoring Changes in the Source
 
 If you would like to keep up to date on changes to the source you can subscribe to the github "RSS":http://github.com/feeds/railsdog/commits/spree/master feed and you will be notified of all the commits.
+
+h3. Building the Gem from the Source
+
+h4. Motivation
+
+Why bother building the Spree gem from the source?  The primary answer is that it allows you to take advantage of all of those great "edge" features without having to wait for the next official release of Spree.  Its true that you can always run the latest source by cloning from "github":http://github.com/railsdog/spree/tree/master but this method has its limitations.  
+
+In order to create a new Spree application you will need to run +spree <app-name>+ which is invoked using the currently installed Spree gem.  The +spree+ command is also responsible for setting up your applications environment settings, etc. so if you're trying to build a new store with the cutting edge features, you'll want to build the gem locally.
+
+h4. Prerequisites
+
+# Rails 2.3.x 
+# Ruby Gems (1.2.0 is suggested, other earlier versions may or may not work)
+# Spree gem dependencies (run +rake gems+ to check, +rake gems:install+ to install)
+
+INFO. There are also a few gem dependencies needed to run the tests (which are automatically run when building the gem.)  Use +rake gems:install RAILS_ENV=test+ to install these.
+
+NOTE. It is suggested that you get Spree up and running using the source first before attempting to build the gem.  This will be the easiest way to make sure you have all of the correct dependencies, etc.
+
+h4. Database Requirements
+
+The gem build process requires that the tests are able to run successfully.  This is turn requires that both a test and development database need to be configured in +config/database.yml+.  
+
+Why are both of these databases needed?  Some of the tests require fixtures which are created in the test database.  Most of the tests use the RSpec +mock_model+ helper which requires access to the database so that the mock can learn the dynamic database attributes of the model class (even though no data is written to the database in these cases.)  Still other tests are using "Factory Girl":http://thoughtbot.com/projects/factory_girl whic also reqiures access to the database.
+
+The tests simply will not not run without these two databases configured and you will not be able to install the gem without passing the tests.  So trust us on this one.
+
+h4. Performing the Actual Build
+
+Use the following command to build and install the gem
+
+<shell>
+rake spree:gem:install
+</shell>
+
+If you are on a Unix style system you may need to use sudo instead
+
+<shell>
+sudo rake spree:gem:install
+</shell>
+
+h4. Considerations
+
+* The gem will have a x.y.99 version number.  This denotes an "edge" version.  You will need to uninstall the edge version later if you want to work with the x.y.z gem once its released.
+
+* If you want to deploy the gem on multiple machines: the built gem is in the spree source directory, in +pkg+. Just copy it and install it, eg +sudo gem install spree-0.8.99.gem+
+
+* You may want to do  +rm -rf pkg+ to clean things up from previous build attempts before building the gem again.
+
