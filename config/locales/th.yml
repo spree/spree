@@ -409,7 +409,7 @@ th:
   process: Process
   product: สินค้า
   product_details: รายละเอียดสินค้า
-  product_has_no_description: Product has not description
+  product_has_no_description: สินค้าไม่มีรายละเอียด
   product_properties: สรรพคุณของสินค้า
   products: สินค้า
   products_with_zero_inventory_display: "({{not}} Display) แสดงสินค้าที่หมดคลังสินค้า"
@@ -569,4 +569,3 @@ th:
   zone_based: ยึดเขตเป็นหลัก
   zone_setting_description: "รายการ ประเทศ จังหวัด หรืออื่นๆ เพื่อแยกการคำนวนตามเขต"
   zones: เขตทั้งหมด
-  product_has_no_description: สินค้าไม่มีรายละเอียด

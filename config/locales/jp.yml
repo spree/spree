@@ -46,10 +46,8 @@ jp:
         ip_address: "IP Address"
         item_total: "Item Total"
         number: Number
-        ship_amount: "Ship Amount"
         special_instructions: "Special Instructions"
         state: 都道府県（州）
-        tax_amount: "Tax Amount"
         total: 合計
       product:
         available_on: "Available On"
@@ -58,6 +56,7 @@ jp:
         name: 氏名
         on_hand: 入荷日
         shipping_category: "Shipping Category"
+        tax_category: "Tax Category"
       property:
         name: 名称
         presentation: Presentation
@@ -68,6 +67,11 @@ jp:
       state:
         abbr: 略語
         name: 名称
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate        
       taxon:
         name: 名称
         permalink: Permalink
@@ -132,6 +136,12 @@ jp:
       state:
         one: 都道府県（州）
         other: 都道府県（州）
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"        
       taxon:
         one: Taxon
         other: Taxons
@@ -239,6 +249,7 @@ jp:
   editing_shipping_method: 配送方法編集
   editing_state: 都道府県（州）編集
   editing_tax_category: 税カテゴリー編集
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: ユーザー編集
   editing_zone: ゾーン編集
   email: Eメール
@@ -349,6 +360,7 @@ jp:
   no_user_found: "No user was found with that email address"
   none: 空です
   none_available: "None Available"
+  not: not
   on_hand: 入荷日
   operation: Operation
   option_Values: オプション値
@@ -501,7 +513,10 @@ jp:
   tax_categories: 税カテゴリー
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: 税カテゴリー
+  tax_rates: "Tax Rates"
+  tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Tax settings"
+  tax_settings_description: Basic tax settings.
   tax_total: 税合計
   tax_type: 税種別
   taxon: 分類単位

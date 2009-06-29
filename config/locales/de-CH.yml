@@ -46,10 +46,8 @@ de-CH:
         ip_address: "IP-Adresse"
         item_total: "Artikel gesamt"
         number: Bestellnummer
-        ship_amount: Versandkosten
         special_instructions: "Spezielle Anmerkungen"
         state: Kanton
-        tax_amount: Mehrwertsteuer
         total: Gesamt
       product: 
         available_on: "Erhältlich ab"
@@ -58,6 +56,7 @@ de-CH:
         name: Name
         on_hand: verfügbar
         shipping_category: "Versandkategorie"
+        tax_category: "Tax Category"
       property: 
         name: Name
         presentation: Darstellung
@@ -68,6 +67,11 @@ de-CH:
       state: 
         abbr: Abkürzung
         name: Name
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate        
       taxon: 
         name: Name
         permalink: Permalink
@@ -132,6 +136,12 @@ de-CH:
       state: 
         one: Kanton
         other: Kantone
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"        
       taxon: 
         one: Taxon
         other: Taxons
@@ -239,6 +249,7 @@ de-CH:
   editing_shipping_method: "Editiere Versandmethoden"
   editing_state: "Kanton bearbeiten"
   editing_tax_category: "Steuer-Kategorie bearbeiten"
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: "Benutzer bearbeiten"
   editing_zone: "Zone bearbeiten"
   email: E-Mail
@@ -349,6 +360,7 @@ de-CH:
   no_user_found: "Kein Benutzer mit dieser E-Mailadresse gefunden"
   none: kein
   none_available: "keine verfügbar"
+  not: not
   on_hand: "Auf Lager"
   operation: Operation
   option_Values: "Optionswerte"
@@ -501,7 +513,10 @@ de-CH:
   tax_categories: ""
   tax_categories_setting_description: ""
   tax_category: ""
+  tax_rates: "Tax Rates"
+  tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Tax settings"
+  tax_settings_description: Basic tax settings.
   tax_total: "MwSt. Gesamt"
   tax_type: "Tax Type"
   taxon: Taxon

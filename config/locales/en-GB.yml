@@ -46,10 +46,8 @@ en-GB:
         ip_address: "IP Address"
         item_total: "Item Total"
         number: Number
-        ship_amount: "Ship Amount"
         special_instructions: "Special Instructions"
         state: State
-        tax_amount: "Tax Amount"
         total: Total
       product: 
         available_on: "Available On"
@@ -58,6 +56,7 @@ en-GB:
         name: Name
         on_hand: "On Hand"
         shipping_category: "Shipping Category"
+        tax_category: "Tax Category"
       property: 
         name: Name
         presentation: Presentation
@@ -68,6 +67,11 @@ en-GB:
       state: 
         abbr: Abbreviation
         name: Name
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate        
       taxon: 
         name: Name
         permalink: Permalink
@@ -132,6 +136,12 @@ en-GB:
       state: 
         one: State
         other: States
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"        
       taxon: 
         one: Taxon
         other: Taxons
@@ -239,6 +249,7 @@ en-GB:
   editing_shipping_method: "Editing Shipping Method"
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: "Editing User"
   editing_zone:
   email: Email
@@ -349,6 +360,7 @@ en-GB:
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
+  not: not
   on_hand: "On Hand"
   operation: Operation
   option_Values: "Option Values"
@@ -501,7 +513,10 @@ en-GB:
   tax_categories: "Tax Categories"
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: "Tax Category"
+  tax_rates: "Tax Rates"
+  tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Tax settings"
+  tax_settings_description: Basic tax settings.
   tax_total: "Tax Total"
   tax_type: "Tax Type"
   taxon: Taxon

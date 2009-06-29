@@ -360,6 +360,7 @@ en-US:
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
+  not: not
   on_hand: "On Hand"
   operation: Operation
   option_Values: "Option Values"
@@ -568,4 +569,3 @@ en-US:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones              
-  product_has_no_description: Product has not description

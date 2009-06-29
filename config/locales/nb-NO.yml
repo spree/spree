@@ -46,10 +46,8 @@ nb-NO:
         ip_address: "IP-nummer"
         item_total: "Sum varer"
         number: Nummer
-        ship_amount: "Frakt"
         special_instructions: "Annen informasjon"
         state: "Status"
-        tax_amount: "Moms"
         total: Totalt
       product: 
         available_on: "Tilgjengelig"
@@ -58,6 +56,7 @@ nb-NO:
         name: Navn
         on_hand: "På lager"
         shipping_category: "Fraktkategori"
+        tax_category: "Momskategori"
       property: 
         name: Navn
         presentation: "Presentasjon"
@@ -68,8 +67,6 @@ nb-NO:
       state: 
         abbr: Forkortelse
         name: Navn 
-      product: 
-        tax_category: "Momskategori"
       tax_category: 
         description: Beskrivelse
         name: Navn
@@ -252,6 +249,7 @@ nb-NO:
   editing_shipping_method: "Endre leveransemåte"
   editing_state: "Endre stat"
   editing_tax_category: "Endre momskategori"
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: "Endre bruker"   
   editing_zone: "Endre sone"
   email: Epost
@@ -362,6 +360,7 @@ nb-NO:
   no_user_found: "No user was found with that email address"
   none: Ingen
   none_available: "Ingen tilgjengelig"
+  not: not
   on_hand: "Tilgjengelig"
   operation: Operasjon
   option_Values: "Variasjonsverdier"
