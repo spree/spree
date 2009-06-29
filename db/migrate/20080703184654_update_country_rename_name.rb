@@ -4,11 +4,14 @@ class UpdateCountryRenameName < ActiveRecord::Migration
       t.rename :name, :iso_name
       t.rename :printable_name, :name
     end    
-    
-    Country.update(119, { :name => 'Macedonia' })
-    Country.update(197, { :name => 'Taiwan' })
-    Country.update(105, { :name => 'North Korea' })
-    Country.update(106, { :name => 'South Korea' })
+
+    begin
+      Country.update(119, { :name => 'Macedonia' })
+      Country.update(197, { :name => 'Taiwan' })
+      Country.update(105, { :name => 'North Korea' })
+      Country.update(106, { :name => 'South Korea' })
+    rescue Exception
+    end
   end
 
   def self.down
