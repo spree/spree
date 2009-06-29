@@ -2,7 +2,7 @@
 # by Christian Lescuyer (christian@flyingcoders.com)
 # contributor: Sebastien Grosjean - ZenCocoon.com
 
-fr:
+fr-FR:
   date:
     formats:
       default: "%d/%m/%Y"
