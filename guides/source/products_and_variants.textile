@@ -12,12 +12,13 @@ endprologue.
 h3. Products vs Variants
 
 It will be handy to have the admin interface of the Spree demo site open as you go through this guide. 
-Products are the basic units in the system, and variants allow for 'flavours' of these units. 
-A system of option types and values allows flavours to be defined by a set of characteristics,
-such as size or colour. 
+
+Products are the basic units in the system, and variants allow for representation of choices like
+color or size for a product.
+Available choices are represented by a system of option types and option values.
 
 
-NOTE: There's a special case of a product with no (explicit) flavours, where Spree creates a 'empty' variant to store the information which is best kept in a variant. For such products, the menus are extended to allow easy access to the empty variant's settings, such as SKU.
+NOTE: There's a special case of a product with no choices or options, i.e. the product is available in just one standard version. Spree will create an "empty" variant to store information like SKU and inventory levels for this product. 
 
 Products must have at least a name and a (master) price. Optionally, they can have:
 * a text description
@@ -33,16 +34,18 @@ They can also have other data which are best explained elsewhere:
 
 Additionally, a product may be withdrawn from sale by marking it as 'deleted' in the product listings
 admin page. Details are still kept on the system for reference, but will not be shown on the store pages.
+A similar mechanism exists for variants.
 
 Variants have
-* a variety of "option values":#option-values which distinguish them from other variants
+* zero or more "option values":#option-values which distinguish them from other variants
 * an "inventory level":inventory.html
 * an SKU
-* a variant price (which can be different from the master price)
-* dimensions and weight (for "shipping purposes":shipping.html)
+* a variant price (optional, which can be different from the master price)
+* dimensions and weight (optional, for "shipping purposes":shipping.html)
 
-Flavour-less products provide convenient admin interface access to the following, although 
-modifications actually happen to the empty variant underneath.
+For products with an "empty" variant, i.e. no choices like size or color (and hence no option values), 
+the admin interface provides
+convenient access to the following, with modifications actually happening to the empty variant underneath.
 * an inventory level":inventory.html
 * SKU code 
 * Price (which is set via the "master price")
@@ -121,9 +124,9 @@ NOTE: actual availability of options combinations is determined by how the varia
 
 h4. Product Pricing
 
-A master price is (optionally) assigned at the product level. For store owners who are creating products without variants, the master price serves as the price of the so called “empty variant” that is created for you behind the scenes. Behind the scenes you are creating an empty variant with the specified inventory quantity and price.
+A master price must be assigned at the product level. For store owners who are creating products without variants, the master price serves as the price of the so called “empty variant” that is created for you behind the scenes. This empty variant also has an specified inventory quantity. (You can also set a specific price on the variant itself, but this will rarely be needed.)
 
-The master price is also useful for products with meaningful variants. One such use is to allow for the display of a single price in your store while users are “browsing” the general listing of your products. It might be preferable to list the most “common” price of a product even though for certain variants, you may charge a slightly different price. In this scenario the user can be initially presented with the master price and then shown the true variant price when they choose their variant and the item to their cart.
+The master price is also useful for products with meaningful variants. One such use is to allow for the display of a single price in your store while users are “browsing” the general listing of your products. It might be preferable to list the most “common” price of a product even though for certain variants, you may charge a slightly different price. In this scenario the user can be initially presented with the master price and then shown the true variant price when they choose their variant and add it to their cart.
 
 h4. Deleted products
 
@@ -134,11 +137,14 @@ Details are still kept on the system for reference, but will not be shown on the
 
 h3. Variants
 
-h4. The empty variant
+h4. The "empty" variant
 
-This is a special case for a product which has only one standard variant, and does not use option types 
-to distinguish or characterise the variants. Products will be created with an empty variant, and this 
-variant is used until variant option types are created. 
+This is a special case for a product which does not have "meaningful" variants, i.e. there are no
+options like colour or size for a customer to choose from, so the product comes in just one standard
+format. 
+
+When using the admin interface, products will be created 
+with an empty variant, and this variant is used until variant option types are created. 
 
 
 h4. Option Values
@@ -153,10 +159,7 @@ To create a variant, you just give a (not yet used) combination of the product's
 enter any variant-specific information. See the "inventory guide":inventory.html for information
 on stock control issues.
 
-NOTE: to check - can any opt type be left unspecified? are duplicates allowed?
-
-h4. Option Values
-
+NOTE: to check - can any option type be left unspecified? are duplicates allowed?
 
 
 h4. Variant Pricing
@@ -188,7 +191,7 @@ h4. Pricing displays
 
 h4. Testing for variants
 
-* +variants?+ tests whether a product has meaningful variants (i.e. not empty and hence defined by option types) 
+* +variants?+ tests whether a product has meaningful variants (i.e. not empty and hence not characterised by a set of option values) 
 * +variant+ returns the empty variant for a product _only if_ it really is an empty variant
 * +variants+ returns the set of variants accessible through the +has_many+ association
 
