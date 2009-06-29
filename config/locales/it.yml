@@ -46,10 +46,8 @@ it:
         ip_address: "IP Address"
         item_total: "Item Total"
         number: Number
-        ship_amount: "Ship Amount"
         special_instructions: "Special Instructions"
         state: State
-        tax_amount: "Tax Amount"
         total: Total
       product: 
         available_on: "Available On"
@@ -58,6 +56,7 @@ it:
         name: Name
         on_hand: "On Hande"
         shipping_category: "Shipping Category"
+        tax_category: "Tax Category"
       property: 
         name: Name
         presentation: Presentation
@@ -68,6 +67,11 @@ it:
       state: 
         abbr: Abbreviation
         name: Name
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate        
       taxon: 
         name: Name
         permalink: Permalink
@@ -132,6 +136,12 @@ it:
       state: 
         one: State
         other: States
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"        
       taxon: 
         one: Taxon
         other: Taxons
@@ -239,6 +249,7 @@ it:
   editing_shipping_method: "Editing Shipping Method"
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: "Edita l'utente"
   editing_zone:
   email: Email
@@ -349,6 +360,7 @@ it:
   no_user_found: "No user was found with that email address"
   none: ""
   none_available: "None Available"
+  not: not
   on_hand: "In magazzino"
   operation: Operazione
   option_Values: "Valori opzioni"
@@ -501,7 +513,10 @@ it:
   tax_categories: ""
   tax_categories_setting_description: ""
   tax_category: ""
+  tax_rates: "Tax Rates"
+  tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Tax settings"
+  tax_settings_description: Basic tax settings.
   tax_total: "Piva. Totale"
   tax_type: "Tax Type"
   taxon: Taxon

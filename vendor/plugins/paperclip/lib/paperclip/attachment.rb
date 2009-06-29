@@ -257,7 +257,7 @@ module Paperclip
                                                    dimensions,
                                                    format, 
                                                    extra_options_for(name),
-                                                   @whiny_thumnails)
+                                                   @whiny_thumbnails)
         rescue PaperclipError => e
           @errors << e.message if @whiny_thumbnails
         end

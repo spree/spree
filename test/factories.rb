@@ -83,6 +83,7 @@ end
 
 Factory.define :country do |f|
   f.name { Factory.next(:name) }
+  f.iso_name {|c| "#{c.name}"}
 end
 
 Factory.sequence :name do |n|
@@ -125,4 +126,9 @@ end
 Factory.define :tax_charge, :class => TaxCharge do |f|
   f.amount 3.17
   f.description "Sales Tax"
-end
+end    
+
+#Factory.define :state do |f|
+#  f.name "Foosylvania"    
+#  f.association :country
+#end

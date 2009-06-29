@@ -46,10 +46,8 @@ es:
         ip_address: "Direccion IP"
         item_total: "Total articulos"
         number: Numero
-        ship_amount: "Coste de envio"
         special_instructions: "Instrucciones especiales"
         state: Provincia
-        tax_amount: "Total impuestos"
         total: Total
       product: 
         available_on: "Disponible en"
@@ -58,6 +56,7 @@ es:
         name: Nombre
         on_hand: "En mano"
         shipping_category: "Categoria de envio"
+        tax_category: "Tax Category"
       property: 
         name: Nombre
         presentation: Presentacion
@@ -68,6 +67,11 @@ es:
       state: 
         abbr: Abreviatura
         name: Nombre
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate        
       taxon: 
         name: Nombre
         permalink: Enlace permanente
@@ -132,6 +136,12 @@ es:
       state: 
         one: Provincia
         other: Provincias
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"        
       taxon: 
         one: Taxon
         other: Taxons
@@ -239,6 +249,7 @@ es:
   editing_shipping_method: "Editando metodo de envío"
   editing_state: "Editando provincia"
   editing_tax_category: "Editando Categoría fiscal"
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: "Editando usuario"
   editing_zone: "Editando zona"
   email: "Correo Electrónico"
@@ -349,6 +360,7 @@ es:
   no_user_found: "No se ha encontrado ningun usuario con esa direccion de correo"
   none: "Ninguno"
   none_available: "No hay nada que mostrar"
+  not: not
   on_hand: "En mano"
   operation: Operación
   option_Values: "Valores de opción"
@@ -501,7 +513,10 @@ es:
   tax_categories: "Categorias"
   tax_categories_setting_description: "Establecer categorías para determinar qué productos deben estar sujetos a que categorias"
   tax_category: "Categoria"
+  tax_rates: "Tax Rates"
+  tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Tax settings"
+  tax_settings_description: Basic tax settings.
   tax_total: "Total impuestos"
   tax_type: "Tipo de impuesto"
   taxon: Taxon

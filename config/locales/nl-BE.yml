@@ -46,10 +46,8 @@ nl-BE:
         ip_address: "IP Adres"
         item_total: "Product Totaal"
         number: Nummer
-        ship_amount: "Verzendkosten"
         special_instructions: "Bijkomende opmerkingen"
         state: Provincie
-        tax_amount: "BTW bedrag"
         total: Totaal
       product: 
         available_on: "Beschikbaar Op"
@@ -58,6 +56,7 @@ nl-BE:
         name: Naam
         on_hand: "Op Voorraad"
         shipping_category: "Shipping Category"
+        tax_category: "Tax Category"
       property: 
         name: Naam
         presentation: Presentatie
@@ -68,6 +67,11 @@ nl-BE:
       state: 
         abbr: Afkorting
         name: Naam
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate        
       taxon: 
         name: Naam
         permalink: Permalink
@@ -132,6 +136,12 @@ nl-BE:
       state: 
         one: Status
         other: Statussen
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"        
       taxon: 
         one: Taxon
         other: Taxons
@@ -239,6 +249,7 @@ nl-BE:
   editing_shipping_method: "Editing Shipping Method"
   editing_state: "Wijzigen Status"
   editing_tax_category: "Wijzigen BTW categorie"
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: "Gebruiker Wijzigen"   
   editing_zone: "Zone Wijzigen"
   email: E-mail
@@ -349,6 +360,7 @@ nl-BE:
   no_user_found: "No user was found with that email address"
   none: Geen
   none_available: "Niet op voorraad"
+  not: not
   on_hand: "Op voorraad"
   operation: Operatie
   option_Values: "Waarden Opties"
@@ -501,7 +513,10 @@ nl-BE:
   tax_categories: "BTW Categorieën"
   tax_categories_setting_description: "Instellen BTW categorieën om aan te duiden welke producten onderhevig zijn aan BTW."
   tax_category: "BTW Categorie"
+  tax_rates: "Tax Rates"
+  tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Tax settings"
+  tax_settings_description: Basic tax settings.
   tax_total: "BTW Totaal"
   tax_type: "BTW Type"
   taxon: Taxon

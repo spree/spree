@@ -46,10 +46,8 @@ ru-RU:
         ip_address: "IP адрес"
         item_total: "Всего товаров"
         number: "Номер"
-        ship_amount: "Ship amount ???"
         special_instructions: "Дополнительные инструкции"
         state: "Статус"
-        tax_amount: "tax amount ??"
         total: "Итого"
       product:
         available_on: "Доступно с"
@@ -58,6 +56,7 @@ ru-RU:
         name: "Name"
         on_hand: "В наличии"
         shipping_category: "Категория доставки"
+        tax_category: "Tax Category"
       property:
         name: "Наименование"
         presentation: "Отображение"
@@ -68,6 +67,11 @@ ru-RU:
       state:
         abbr: "Аббревиатура"
         name: "Название"
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate        
       taxon:
         name: "Наименование"
         permalink: "Постоянная ссылка"
@@ -132,6 +136,12 @@ ru-RU:
       state:
         one: "Статус"
         other: "Статусы"
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"        
       taxon:
         one: "Таксон"
         other: "Таксоны"
@@ -165,7 +175,7 @@ ru-RU:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "Использовать SSL в development и test режимах"
   allow_ssl_to_be_used_when_in_production_mode: "Использовать SSL в production"
   allowed_ssl_in_production_mode: "SSL {{not}} будет использован в режиме production"
-  already_registered: "Уже зарегистрированны:"
+  already_registered: "Уже зарегистрированны
   alternative_phone: "Дополнительный телефон"
   amount: "Сумма"
   are_you_sure: "Вы уверены"
@@ -239,6 +249,7 @@ ru-RU:
   editing_shipping_method: "Редактировать способ доставки"
   editing_state: "Редактирование статуса"
   editing_tax_category: "Редактирование категории налога"
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: "Редактирование пользователя"
   editing_zone: "Редактирование зоны"
   email: "Email"
@@ -260,9 +271,9 @@ ru-RU:
   first_name: "Имя"
   forgot_password: "Напомнить пароль"
   gateway: "Платежный шлюз" 
+  gateway_configuration: "Настройка платёжных шлюзов"
   gateway_error: "Ошибка платежного шлюза"
   gateway_setting_description: "Выберите платежный шлюз и настройте его."
-  gateway_configuration: "Настройка платёжных шлюзов"
   general: "Основные"
   general_settings: "Общие настройки"
   general_settings_description: "Общие настройки магазина."
@@ -349,6 +360,7 @@ ru-RU:
   no_user_found: "Пользователь с таким адресом email у нас не числится."
   none: "Ни одного"
   none_available: "Нет в наличии"
+  not: not
   on_hand: "В наличии"
   operation: "Операция"
   option_Values: "Option Values"
@@ -397,6 +409,7 @@ ru-RU:
   process: "Обработать"
   product: "Продукт"
   product_details: "Описание продукта"
+  product_has_no_description: Product has not description
   product_properties: "Свойства продукта"
   products: "Продукты"
   products_with_zero_inventory_display: "Отсутсвующие товары {{not}} будут отображаться"
@@ -500,7 +513,10 @@ ru-RU:
   tax_categories: "Категории налогов"
   tax_categories_setting_description: "Установка категорий налогов для различных товаров."
   tax_category: "Категория налогов"
+  tax_rates: "Tax Rates"
+  tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Настройки налогообложения"
+  tax_settings_description: Basic tax settings.
   tax_total: "Налоги"
   tax_type: "Тип налога"
   taxon: "Таксон"

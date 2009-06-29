@@ -43,7 +43,7 @@ class CreateCheckouts < ActiveRecord::Migration
                                  :created_at => order.attributes["created_at"],
                                  :completed_at => completed_at, 
                                  :shipping_method => shipping_method)
-      creditcard.update_attribute("checkout_id", checkout.id)
+      creditcard.update_attribute("checkout_id", checkout.id) if creditcard
     end
 
     change_table :orders do |t|

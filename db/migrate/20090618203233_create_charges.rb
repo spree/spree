@@ -19,6 +19,7 @@ class CreateCharges < ActiveRecord::Migration
       order.attributes
       ship_total = order.attributes["ship_amount"] || 0      
       tax_total = order.attributes["tax_amount"] || 0             
+      order.shipping_charges.reset
       order.shipping_charges.create(:amount => ship_total, :description => "Shipping") if ship_total > 0
       order.tax_charges.create(:amount => tax_total, :description => "Tax") if tax_total > 0
       order.update_attribute("charge_total", ship_total + tax_total)
@@ -32,5 +33,8 @@ class CreateCharges < ActiveRecord::Migration
 
   def self.down
     drop_table :charges    
+    change_table :orders do |t|
+      t.remove :charge_total
+    end  
   end
 end
