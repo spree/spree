@@ -175,7 +175,7 @@ ru-RU:
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "Использовать SSL в development и test режимах"
   allow_ssl_to_be_used_when_in_production_mode: "Использовать SSL в production"
   allowed_ssl_in_production_mode: "SSL {{not}} будет использован в режиме production"
-  already_registered: "Уже зарегистрированны
+  already_registered: "Уже зарегистрированы"
   alternative_phone: "Дополнительный телефон"
   amount: "Сумма"
   are_you_sure: "Вы уверены"
@@ -184,7 +184,7 @@ ru-RU:
   are_you_sure_delete_image: "Вы уверены, что хотите удалить эту картинку?"
   are_you_sure_option_type: "Вы уверены, что хотите удалить этот тип опции ?"
   are_you_sure_you_want_to_capture: "Вы уверены, что хотите capture? ??"
-  assign_taxon: "Прикрепить к такосну"
+  assign_taxon: "Прикрепить к таксону"
   assign_taxons: "прикрепить к таксонам"
   authorization_failure: "Ошибка авторизации"
   authorized: "Авторизован"
