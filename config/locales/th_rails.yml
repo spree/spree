@@ -1,0 +1,195 @@
+th:
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      # When no format has been given, it uses default.
+      # You can provide other formats here if you like!
+      default: "%d-%m-%Y"
+      short: "%b %d"
+      long: "%B %d, %Y"
+      
+    day_names: [วันอาทิตย์, วันจันทร์, วันอังคาร, วันพุธ, วันพฤหัส, วันศุกร์, วันเสาร์]
+    abbr_day_names: [อา, จ, อ, พ, พฤ, ศ, ส]
+      
+    # Don't forget the nil at the beginning; there's no such thing as a 0th month
+    month_names: [~, มกราคม, กุมภาพันธ์, มีนาคม, เมษายน, พฤษภาคม, มิถุนายน, กรกฎาคม, สิงหาคม, กันยายน, ตุลาคม, พฤศจิกายน, ธันวาคม]
+    abbr_month_names: [~, ม.ค., ก.พ., มี.ค., เม.ย., พ.ค., มี.ย., ก.ค., ส.ค., ก.ย., ต.ค., พ.ย., ธ.ค.]
+    # Used in date_select and datime_select.
+    order: [ :day, :month, :year ]
+
+  time:
+    formats:
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      short: "%d %b %H:%M"
+      long: "%B %d, %Y %H:%M"
+    am: "am"
+    pm: "pm"
+      
+# Used in array.to_sentence.
+  support:
+    array:
+      words_connector: ", "
+      two_words_connector: " และ "
+      last_word_connector: ", และ "
+
+  number:
+    # Used in number_with_delimiter()
+    # These are also the defaults for 'currency', 'percentage', 'precision', and 'human'
+    format:
+      # Sets the separator between the units, for more precision (e.g. 1.0 / 2.0 == 0.5)
+      separator: "."
+      # Delimets thousands (e.g. 1,000,000 is a million) (always in groups of three)
+      delimiter: ","
+      # Number of decimals, behind the separator (the number 1 with a precision of 2 gives: 1.00)
+      precision: 3
+  
+    # Used in number_to_currency()
+    currency:
+      format:
+        # Where is the currency sign? %u is the currency unit, %n the number (default: $5.00)
+        format: "%n %u"
+        unit: "บาท"
+        # These three are to override number.format and are optional
+        separator: "."
+        delimiter: ","
+        precision: 2
+  
+    # Used in number_to_percentage()
+    percentage:
+      format:
+        # These three are to override number.format and are optional
+        # separator: 
+        delimiter: ""
+        # precision: 
+  
+    # Used in number_to_precision()
+    precision:
+      format:
+        # These three are to override number.format and are optional
+        # separator:
+        delimiter: ""
+        # precision:
+  
+    # Used in number_to_human_size()
+    human:
+      format:
+        # These three are to override number.format and are optional
+        # separator: 
+        delimiter: ""
+        precision: 1
+      storage_units:
+        # Storage units output formatting.
+        # %u is the storage unit, %n is the number (default: 2 MB)
+        format: "%n %u"
+        units:
+          byte:
+            one:   "Byte"
+            other: "Bytes"
+          kb: "KB"
+          mb: "MB"
+          gb: "GB"
+          tb: "TB"
+  
+  # Used in distance_of_time_in_words(), distance_of_time_in_words_to_now(), time_ago_in_words()
+  datetime:
+    distance_in_words:
+      half_a_minute: "ครึ่งนาที"
+      less_than_x_seconds:
+        one:   "น้อยกว่าวินาที"
+        other: "น้อยกว่า {{count}} วินาที"
+      x_seconds:
+        one:   "1 วินาที"
+        other: "{{count}} วินาที"
+      less_than_x_minutes:
+        one:   "น้อยกว่านาที"
+        other: "น้อยกว่า {{count}} นาที"
+      x_minutes:
+        one:   "1 นาที"
+        other: "{{count}} นาที"
+      about_x_hours:
+        one:   "ประมาณ 1 ชั่วโมง"
+        other: "ประมาณ {{count}} ชั่วโมง"
+      x_days:
+        one:   "1 วัน"
+        other: "{{count}} วัน"
+      about_x_months:
+        one:   "ประมาณ 1 เดือน"
+        other: "ประมาณ {{count}} เดือน"
+      x_months:
+        one:   "1 เดือน"
+        other: "{{count}} เดือน"
+      about_x_years:
+        one:   "ประมาณ 1 ปี"
+        other: "ประมาณ {{count}} ปี"
+      over_x_years:
+        one:   "มากกว่า 1 ปี"
+        other: "มากกว่า {{count}} ปี"
+    prompts:
+      year:   "ปี"
+      month:  "เดือน"
+      day:    "วัน"
+      hour:   "ชั่วโมง"
+      minute: "นาที"
+      second: "วินาที"
+
+  activerecord:
+    errors:
+      template:
+        header:
+          one:    "1 ข้อขัดข้อง เกิดขึ้นกับ {{model}} ในการบันทึก"
+          other:  "{{count}} ข้อขัดข้อง เกิดขึ้นกับ {{model}} ในการบันทึก"
+        # The variable :count is also available
+        body: "เกิดปัญหากับรายการต่อไปนี้:"
+  
+      # The values :model, :attribute and :value are always available for interpolation
+      # The value :count is available when applicable. Can be used for pluralization.
+      messages:
+        inclusion: "ไม่ถูกรวมอยู่ในรายการ"
+        exclusion: "ถูกจองไว้แล้ว"
+        invalid: "ถูกต้อง"
+        confirmation: "ไม่เข้ากับค่าที่ตั้งเอาไว้"
+        accepted: "ต้องยอมรับก่อน"
+        empty: "เป็นช่องว่างไม่ได้"
+        blank: "ไม่ใส่ข้อมูลไม่ได้"
+        too_long: "ยาวเกินไป (จำนวนสูงสุดคือ {{count}} ตัวอักษร)"
+        too_short: "สั้นเกินไป (น้อยที่สุดคือ {{count}} ตัวอักษร)"
+        wrong_length: "ความยาวไม่ตรง (ควรจะยาว {{count}} ตัวอักษร)"
+        taken: "มีคนจองไว้แล้ว"
+        not_a_number: "ไม่เป็นสมาชิก"
+        greater_than: "ต้องมีจำนวนมากกว่า {{count}}"
+        greater_than_or_equal_to: "จะต้องมากกว่าหรือเท่ากับ {{count}}"
+        equal_to: "จะต้องเท่ากับ {{count}}"
+        less_than: "จะต้องน้อยกว่า {{count}}"
+        less_than_or_equal_to: "จะต้องน้อยกว่าหรือเท่ากับ {{count}}"
+        odd: "ต้องเป็นจำนวนคู่"
+        even: "ต้องเป็นจำนวนคี่"
+        # Append your own errors here or at the model/attributes scope.
+    
+      # You can define own errors for models or model attributes.
+      # The values :model, :attribute and :value are always available for interpolation.
+      #
+      # For example,
+      #   models:
+      #     user:
+      #       blank: "This is a custom blank message for {{model}}: {{attribute}}"
+      #       attributes:
+      #         login:
+      #           blank: "This is a custom blank message for User login"
+      # Will define custom blank validation message for User model and 
+      # custom blank validation message for login attribute of User model.
+      #models:
+    
+    # Translate model names. Used in Model.human_name().
+    #models:
+      # For example,
+      #   user: "Dude"
+      # will translate User model name to "Dude"
+    
+    # Translate model attribute names. Used in Model.human_attribute_name(attribute).
+    #attributes:
+      # For example,
+      #   user:
+      #     login: "Handle"
+      # will translate User attribute "login" as "Handle"
+    
+    

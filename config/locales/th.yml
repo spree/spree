@@ -192,7 +192,7 @@ th:
   available_taxons: "Available Taxons"
   back: กลับ
   back_to_store: "กลับไปหน้าร้าน"
-  backordering_is_allowed: "({{not}} allowed) การซื้อเมื่อสินค้าที่หมด"
+  backordering_is_allowed: "({{not}} allowed) การซื้อเมื่อสินค้าหมด"
   bill_address: "ที่อยู่บนใบเสร็จรับเงิน"
   billing_address: ใบเสร็จรับเงิน
   cancel: ยกเลิก
