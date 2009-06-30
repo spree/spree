@@ -101,7 +101,7 @@ module Spree
       
       def prompt_for_admin_email
         email = ask('Email [spree@example.com]: ', String) do |q|
-          q.echo = false
+          q.echo = true
           q.whitespace = :strip
         end
         email = "spree@example.com" if email.blank?
