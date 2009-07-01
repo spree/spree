@@ -127,24 +127,20 @@ class Order < ActiveRecord::Base
   end          
   
   def payment_total
-    payments.inject(0) {|sum, payment| sum + payment.amount}
+    payments.map(&:amount).sum
   end
 
   # total of line items (no tax or shipping inc.)
   def item_total
-    tot = 0
-    self.line_items.each do |li|
-      tot += li.total
-    end
-    self.item_total = tot
+    self.item_total = line_items.map{|line_item| line_item.price * line_item.quantity}.sum
   end
   
   def ship_total
-    shipping_charges.inject(0) { |sum, charge| charge.amount + 0 }  
+    shipping_charges.map(&:amount).sum
   end
   
   def tax_total
-    tax_charges.inject(0) { |sum, charge| charge.amount + 0 }  
+    tax_charges.map(&:amount).sum
   end
   
   # convenience method since many stores will not allow user to create multiple shipments
@@ -178,7 +174,7 @@ class Order < ActiveRecord::Base
   end
    
   def update_totals                                 
-    self.charge_total = self.charges.inject(0) { |sum, charge| charge.amount + sum }   
+    self.charge_total = self.charges.map(&:amount).sum
     self.total = self.item_total + self.charge_total
   end  
 

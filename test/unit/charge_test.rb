@@ -14,17 +14,26 @@ class ChargeTest < ActiveSupport::TestCase
         @order.save
       end
       
-      should_change "@order.total.to_f", :by => 8.99
-      should_change "@order.charge_total.to_f", :by => 8.99
+      should_change "@order.total", :by => BigDecimal("8.99")
+      should_change "@order.charge_total", :by => BigDecimal("8.99")
       should_not_change "@order.item_total"
+    end
+    context "when adding another tax charge" do
+      setup do 
+        @order.charges << Factory(:tax_charge, :amount => 8.99)
+        @order.save
+      end
+      should "have correct tax total" do
+        assert_equal BigDecimal("12.16"), @order.tax_total
+      end
     end
     context "when destroying a charge" do
       setup do 
         @order.charges.clear
         @order.save
       end
-      should_change "@order.total.to_f", :by => -3.17
-      should_change "@order.charge_total.to_f", :by => -3.17
+      should_change "@order.total", :by => BigDecimal("-3.17")
+      should_change "@order.charge_total", :by => BigDecimal("-3.17")
       should_not_change "@order.item_total"
     end
   end
