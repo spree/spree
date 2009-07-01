@@ -29,6 +29,14 @@
       </tr>
     <% end %>
   </tbody>
+  <tbody id="order-credits">
+    <% order.credits.each do |credit| %>
+      <tr class="total">
+        <td colspan="3"><%= credit.description %></td>
+        <td class="total_display"><span><%= number_to_currency credit.amount -%></span></td>
+      </tr>
+    <% end %>
+  </tbody>
   <tbody id='order-total'>
     <tr class="total">
       <td colspan="3"><b><%= t('order_total') %>:</b></td>

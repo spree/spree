@@ -16,6 +16,7 @@ class Order < ActiveRecord::Base
   has_many :charges, :order => :position
   has_many :shipping_charges
   has_many :tax_charges
+  has_many :credits, :order => :position
   
   delegate :email, :to => :checkout
   delegate :ip_address, :to => :checkout
@@ -175,7 +176,8 @@ class Order < ActiveRecord::Base
    
   def update_totals                                 
     self.charge_total = self.charges.map(&:amount).sum
-    self.total = self.item_total + self.charge_total
+    self.credit_total = self.credits.map(&:amount).sum
+    self.total = self.item_total + self.charge_total - self.credit_total
   end  
 
   def calculate_tax      

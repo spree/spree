@@ -2,6 +2,8 @@ class Checkout < ActiveRecord::Base
   before_save :authorize_creditcard, :unless => "Spree::Config[:auto_capture]"
   before_save :capture_creditcard, :if => "Spree::Config[:auto_capture]"
   after_save :update_charges
+  after_update :update_credits
+
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
@@ -50,4 +52,11 @@ class Checkout < ActiveRecord::Base
     order.update_totals
     order.save 
   end 
+  
+  def update_credits  
+    order.credits.each do |credit|
+      # provide opportunity for coupon related discounts to be recalculated
+      credit.creditable.save if credit.creditable.is_a?(Coupon)
+    end
+  end
 end

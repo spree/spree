@@ -128,7 +128,7 @@ Factory.define :tax_charge, :class => TaxCharge do |f|
   f.description "Sales Tax"
 end    
 
-#Factory.define :state do |f|
-#  f.name "Foosylvania"    
-#  f.association :country
-#end
+Factory.define :credit do |f|
+  f.amount 2.00
+  f.description "20% Off"
+end
