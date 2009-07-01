@@ -17,7 +17,7 @@ class UsersController < Spree::BaseController
   end
 
   show.before do
-    @orders = Order.checkout_complete.find_all_by_user_id(current_user.id)
+    @orders = @user.orders.checkout_complete 
   end
 
   def update
