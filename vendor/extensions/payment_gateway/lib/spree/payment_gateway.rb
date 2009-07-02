@@ -37,7 +37,7 @@ module Spree
       
       
       # create a creditcard_payment for the amount that was purchased
-      creditcard_payment = order.creditcard_payments.create(:amount => amount, :creditcard => self)
+      creditcard_payment = checkout.order.creditcard_payments.create(:amount => amount, :creditcard => self)
       # create a transaction to reflect the purchase
       creditcard_payment.creditcard_txns << CreditcardTxn.new(
         :amount => amount,

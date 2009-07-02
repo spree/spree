@@ -38,7 +38,8 @@ class AppConfiguration < Configuration
   preference :alternative_billing_phone,  :boolean, :default => false # Request extra phone for bill addr
   preference :alternative_shipping_phone, :boolean, :default => false # Request extra phone for ship addr
   preference :shipping_instructions,      :boolean, :default => false # Request instructions/info for shipping 
-  preference :show_price_inc_vat, :boolean, :default => false
+  preference :show_price_inc_vat, :boolean, :default => false 
+  preference :auto_capture, :boolean, :default => false # automatically capture the creditcard (as opposed to just authorize and capture later)
 
   validates_presence_of :name
   validates_uniqueness_of :name

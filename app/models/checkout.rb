@@ -1,5 +1,6 @@
 class Checkout < ActiveRecord::Base  
-  before_save :authorize_creditcard
+  before_save :authorize_creditcard, :unless => "Spree::Config[:auto_capture]"
+  before_save :capture_creditcard, :if => "Spree::Config[:auto_capture]"
   after_save :update_charges
   belongs_to :order
   belongs_to :shipping_method
@@ -12,10 +13,20 @@ class Checkout < ActiveRecord::Base
 
   private
   def authorize_creditcard
-    return unless order and creditcard and not creditcard[:number].blank?
+    return unless process_creditcard? 
     cc = Creditcard.new(creditcard.merge(:address => self.bill_address, :checkout => self))
     return unless cc.valid? and cc.authorize(order.total)
     order.complete
+  end
+  def capture_creditcard
+    return unless process_creditcard? 
+    cc = Creditcard.new(creditcard.merge(:address => self.bill_address, :checkout => self))
+    return unless cc.valid? and cc.purchase(order.total)
+    order.complete
+    order.pay
+  end
+  def process_creditcard?
+    order and creditcard and not creditcard[:number].blank?
   end
   def update_charges
     # update shipping (if applicable)
