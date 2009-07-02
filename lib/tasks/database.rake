@@ -34,7 +34,6 @@ namespace :db do
     require 'highline/import'       
     require 'authlogic'     
 
-    raise "Cannot bootstrap in production mode (for saftey reasons.)" unless %w[demo development test].include? RAILS_ENV    
     if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
 
       ENV['SKIP_NAG'] = 'yes'
