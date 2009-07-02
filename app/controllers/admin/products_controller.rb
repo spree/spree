@@ -77,7 +77,7 @@ class Admin::ProductsController < Admin::BaseController
       @search.order_by ||= :name
       @search.order_as ||= "ASC"
       #set results per page to default or form result
-      @search.per_page = Spree::Config[:admin_products_per_page]
+      @search.per_page ||= Spree::Config[:admin_products_per_page]
       @search.include = :images
       @collection = @search.all
     end

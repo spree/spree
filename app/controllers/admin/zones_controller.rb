@@ -21,7 +21,7 @@ class Admin::ZonesController < Admin::BaseController
   def collection
     @search = end_of_association_chain.new_search(params[:search])
     @search.order_by ||= :name
-    @search.per_page = Spree::Config[:orders_per_page]
+    @search.per_page ||= Spree::Config[:orders_per_page]
     @collection, @collection_count = @search.all, @search.count
   end  
 

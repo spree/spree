@@ -42,7 +42,7 @@ class Admin::OrdersController < Admin::BaseController
     @search.order_by ||= :created_at
     @search.order_as ||= "DESC"
     #set results per page to default or form result
-    @search.per_page = Spree::Config[:orders_per_page]
+    @search.per_page ||= Spree::Config[:orders_per_page]
 
     @collection = @search.find(:all, :include => [:user, :shipments, {:creditcard_payments => {:creditcard => :address}}])
   end
