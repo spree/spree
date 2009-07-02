@@ -11,18 +11,33 @@ h3. Types of Contributions
 
 h3. For the impatient
 
-To contribute to the spree core:
+h4. One Time Setup
 
-* Fork "Spree":http://github.com/railsdog/spree
+* Fork "Spree":http://github.com/railsdog/spree in GitHub
+* Clone your new fork and add +railsdog+ as a remote reference
+
+<shell>
+git remote add railsdog git://github.com/railsdog/spree.git  
+</shell>
+
+h4. For Each Contribution
+
 * Create ticket for the issue/feature in "lighthouse":http://railsdog.lighthouseapp.com/projects/31096-spree/overview
 * Create branch for your ticket using ticket number and "title slug"
 
 <shell>
-git checkout -b 525-add-thai-localization --track railsdog/origin 
+git fetch railsdog  
+git checkout -b 525-add-thai-localization --track railsdog/master 
 </shell>
 	
 * Commit your changes to your branch.
-* Update ticket to let us know about your fork and commit.
+* Push your changes back to your fork
+
+<shell>
+git push origin 525-add-thai-localization   
+</shell>
+
+* Update ticket and include the URL for your commit that fixes the issue.
 
 h3. Before You Start Coding
 
