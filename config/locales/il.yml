@@ -46,10 +46,8 @@ il:
         ip_address: "IP Address"
         item_total: "Item Total"
         number: Number
-        ship_amount: "Ship Amount"
         special_instructions: "Special Instructions"
         state: מדינה
-        tax_amount: "Tax Amount"
         total: Total
       product: 
         available_on: "Available On"
@@ -58,6 +56,7 @@ il:
         name: Name
         on_hand: "On Hand"
         shipping_category: "Shipping Category"
+        tax_category: "Tax Category"
       property: 
         name: Name
         presentation: Presentation
@@ -68,6 +67,11 @@ il:
       state: 
         abbr: Abbreviation
         name: Name
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate        
       taxon: 
         name: Name
         permalink: Permalink
@@ -132,6 +136,12 @@ il:
       state: 
         one: State
         other: States
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"        
       taxon: 
         one: Taxon
         other: Taxons
@@ -164,7 +174,9 @@ il:
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
+  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
+  alternative_phone: Alternative Phone
   amount: Amount
   are_you_sure: "Are you sure"
   are_you_sure_category: "Are you sure you want to delete this category?"
@@ -180,6 +192,7 @@ il:
   available_taxons: "Available Taxons"
   back: Back
   back_to_store: "Go Back To Store"
+  backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Bill Address"
   billing_address: "כתובת למשלוח חשבונית"
   cancel: cancel
@@ -187,6 +200,7 @@ il:
   capture: capture
   card_code: "קוד כרטיס"
   card_number: "מספר כרטיס"
+  card_type_is: Card type is
   cart: עגלה
   categories: Categories
   category: Category
@@ -235,6 +249,7 @@ il:
   editing_shipping_method: "Editing Shipping Method"
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: "Editing User"   
   editing_zone: "Editing Zone"
   email: Email
@@ -242,6 +257,7 @@ il:
   email_server_settings_description: "Set email server settings."
   empty_cart: "רוקן עגלה"
   enable_mail_delivery: Enable Mail Delivery      
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: error
   event: Event
   existing_customer: "Existing Customer"
@@ -255,6 +271,7 @@ il:
   first_name: "שם פרטי"
   forgot_password: "Forgot Password"
   gateway: Gateway
+  gateway_configuration: "Gateway configuration"
   gateway_error: "Gateway Error"
   gateway_setting_description: "Select a payment gateway and configure its settings."
   general: "General"
@@ -271,6 +288,7 @@ il:
   hello_user: "Hello User"
   history: History
   home: "עמוד הבית"
+  icons_by: "Icons by"
   image: Image
   images: Images
   in_progress: "In Progress"
@@ -279,6 +297,7 @@ il:
   inventory_adjustment: "Inventory Adjustment"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
   inventory_settings: "Inventory Settings"
+  issue_number: Issue Number
   item: פריט
   item_description: "Item Description"
   item_total: "Item Total"
@@ -290,6 +309,7 @@ il:
   listing_reports: "Listing Reports"
   listing_tax_categories: "Listing Tax Categories"
   listing_users: "Listing Users"
+  loading: Loading
   locale_changed: "Locale Changed"
   log_in: "התחברות"
   logged_in_as: "Logged in as"
@@ -299,6 +319,7 @@ il:
   login_failed: "Login authentication failed."    
   login_name: Login
   logout: יציאה  
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
   mail_server_preferences: Mail Server Preferences
@@ -328,6 +349,7 @@ il:
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
+  new_taxon: "New Taxon"
   new_taxonomy: "New Taxonomy"
   new_user: "New User"
   new_variant: "New Variant"
@@ -338,6 +360,7 @@ il:
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
+  not: not
   on_hand: "On Hand"
   operation: Operation
   option_Values: "Option Values"
@@ -350,6 +373,7 @@ il:
   order_date: "Order Date"
   order_details: "Order Details"
   order_email_resent: "Order Email Resent"
+  order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
   order_processed_successfully: "Your order has been processed successfully"
@@ -374,6 +398,8 @@ il:
   payments: Payments
   phone: טלפון
   place_order: הזמן
+  please_create_user: "Please create a user account"     
+  powered_by: "Powered by"
   presentation: Presentation
   previous: Previous
   price: מחיר
@@ -384,8 +410,10 @@ il:
   process: Process
   product: Product
   product_details: "Product Details"
+  product_has_no_description: Product has not description
   product_properties: "Product Properties"
   products: Products
+  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: Properties
   property: Property
   prototype: Prototype
@@ -398,6 +426,7 @@ il:
   remember_me: "Remember me"
   remove: Remove
   reports: Reports
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: Resend
   reset_password: "Reset my password"
   response_code: "Response Code"  
@@ -420,6 +449,7 @@ il:
   send_copy_of_orders_mails_to: Send Copy of Order Mails To         
   send_mails_as: Send Mails As                    
   send_order_mails_as: Send Order Mails As   
+  server_error: "The server returned an error"
   ship: ship
   ship_address: "Ship Address"
   shipment: Shipment
@@ -432,6 +462,7 @@ il:
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
   shipping_cost: Cost
   shipping_error: "Shipping Error"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: אופן המשלוח
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
@@ -442,6 +473,7 @@ il:
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
+  show_price_inc_vat: "Show price including VAT"
   sign_up: "Sign up"
   site_name: "Site Name"
   site_url: "Site URL"
@@ -452,11 +484,20 @@ il:
   smtp_mail_host: SMTP Mail Host                       
   smtp_password: SMTP Password
   smtp_port: SMTP Port          
+  smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
+  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTP Username  
   spree:
     date: Date
     time: Time                                               
+  ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
+  ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
+  ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
+  ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   start: Start
+  start_date: Valid from
   state: מדינה
   state_based: "State Based"
   state_setting_description: "Administer the list of states/provinces associated with each country."
@@ -473,11 +514,18 @@ il:
   tax_categories: "Tax Categories"
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: "Tax Category"
+  tax_rates: "Tax Rates"
+  tax_rates_description: Tax rates setup and configuration.
+  tax_settings: "Tax Settings"
+  tax_settings_description: Basic tax settings.
   tax_total: "Tax Total"
   tax_type: "Tax Type"
   taxon: Taxon
   taxonomies: Taxonomies
   taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomy_edit: "Edit taxonomy"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
+  taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "English (US)"
@@ -492,9 +540,11 @@ il:
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
+  unrecognized_card_type: Unrecognized card type
   update: עדכן
   update_password: "Update my password and log me in"                    
   updated_successfully: "Updated Successfully"
+  updating: Updating
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: זהה לכתובת למשלוח חשבונית
   use_different_shipping_address: "Use Different Shipping Address"

@@ -398,6 +398,7 @@ en-GB:
   payments: Payments
   phone: Phone
   place_order: Place Order        
+  please_create_user: "Please create a user account"     
   powered_by: "Powered by"
   presentation: Presentation
   previous: Previous

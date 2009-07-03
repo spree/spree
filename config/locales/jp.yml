@@ -398,6 +398,7 @@ jp:
   payments: 支払い方法
   phone: 電話番号
   place_order: Place Order
+  please_create_user: "Please create a user account"     
   powered_by: "Powered by"
   presentation: 表示名
   previous: 前へ

@@ -398,6 +398,7 @@ th:
   payments: รายการจ่าย
   phone: เบอร์โทรศัพท์
   place_order: Place Order        
+  please_create_user: "Please create a user account"     
   powered_by: "สนับสนุนโดย"
   presentation: ชื่อที่แสดง
   previous: ก่อนหน้า
