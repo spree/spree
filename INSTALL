@@ -1,9 +1,6 @@
 
 == Installation and Setup
 
-Once you have extracted the files into the directory where you would like to
-install Spree:
-
 1. Create the MySQL/PostgreSQL/SQLite databases for your Web site. You only
    need to create the "production" database, but you may also want to create
    the "development" and "test" databases if you are developing extensions
@@ -11,11 +8,11 @@ install Spree:
 
 2. Edit config/database.yml to taste.
 
-3. Run the database migrations and set up the admin user:
+3. Run the database migrations, seed data and set up the admin user:
    
-     $ rake db:migrate db:admin:create RAILS_ENV=production 
+     $ rake db:bootstrap RAILS_ENV=production 
    
-   (NOTE: In dev mode you can run `rake db:bootstrap` which is equivalent to above but also gives you some sample data.)
+   (NOTE: In dev mode you can just run `rake db:bootstrap`.)
 
 4. Start it like a normal Rails application. To test execute:
    
