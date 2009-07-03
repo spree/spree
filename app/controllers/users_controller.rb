@@ -14,6 +14,11 @@ class UsersController < Spree::BaseController
     wants.js { render :js => true.to_json }
     failure.wants.html { render :new }
     failure.wants.js { render :js => @user.errors.to_json }    
+  end 
+  
+  create.after do
+    next if admin_created?
+    @user.roles << Role.find_by_name("admin")
   end
 
   show.before do
