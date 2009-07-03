@@ -54,13 +54,9 @@ h5. No Solution Will Satisfy Everyone
 
 No solution can possibly solve everyone's needs perfectly. There are simply too many ways that people do business for us to model them all specifically. Rather then come up short (like so many projects before it), Spree's approach is to simply accept this and not even try. Instead Spree tries to focus on solving the 90% portion that most commerce projects face.  The remaining 10% will need to be addressed by the end developer familiar with the client's exact business requirements.
 
-A model represents the information (data) of the application and the rules to manipulate that data. In the case of Rails, models are primarily used for managing the rules of interaction with a corresponding database table. In most cases, one table in your database will correspond to one model in your application. The bulk of your application’s business logic will be concentrated in the models.
-
 h5. Online Commerce is not for "Noobs"
 
 Rails developers are the target audience for this application - not business owners. No serious company would ever try to run an online store by just paying some fool on Craig's List to install OSCommerce for them. Serious businesses have complicated needs that require paying one or more software professionals to solve them. Spree seeks to be the platform that developers use as the foundation for their project rather than having to start from scratch or settle for less with other software.
-
-Views represent the user interface of your application. In Rails, views are often HTML files with embedded Ruby code that performs tasks related solely to the presentation of the data. Views handle the job of providing data to the web browser or other tool that is used to make requests from your application.
 
 h5. Developers Need Complete Control
 
