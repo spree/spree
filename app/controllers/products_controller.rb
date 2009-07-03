@@ -1,5 +1,5 @@
 class ProductsController < Spree::BaseController
-  before_filter :setup_admin_user
+  before_filter(:setup_admin_user) unless RAILS_ENV == "test"
 
   resource_controller
   helper :taxons  
