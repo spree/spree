@@ -7,7 +7,7 @@
   <% if Spree::Config[:shipping_instructions] %>
     <p id="minstrs">
       <label for=""><%= t("shipping_instructions") %></label>
-      <%= order_form.text_area :special_instructions, :cols => 40, :rows => 7 -%>
+      <%= checkout_form.text_area :special_instructions, :cols => 40, :rows => 7 -%>
     </p>
   <% end %>
 
