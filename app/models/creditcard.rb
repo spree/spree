@@ -101,7 +101,7 @@ class Creditcard < ActiveRecord::Base
     self.number = number.to_s.gsub(/[^\d]/, "")
     self.display_number = ActiveMerchant::Billing::CreditCard.mask(number)
     self.cc_type.downcase! if cc_type.respond_to?(:downcase)
-    self.cc_type = self.class.type?(number) if cc_type.blank?    
+    self.cc_type = spree_cc_type if cc_type.blank?    
     self.first_name = address.firstname if address
     self.last_name = address.lastname if address
   end
