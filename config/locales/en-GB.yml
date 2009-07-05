@@ -444,7 +444,7 @@ en-GB:
   secure_connection_type: Secure Connection Type
   select: Select
   select_from_prototype: "Select From Prototype"
-  select_preferred_shipping_option: "Select preferred shipping option"
+  select_preferred_shipping_option: "Select preferred delivery option"
   send_copy_of_all_mails_to: Send Copy of All Mails To
   send_copy_of_orders_mails_to: Send Copy of Order Mails To         
   send_mails_as: Send Mails As                    
@@ -464,7 +464,7 @@ en-GB:
   shipping_error: "Delivery Error"
   shipping_instructions: "Delivery Instructions"
   shipping_method: "Delivery Method"
-  shipping_methods: "Shipping Methods"
+  shipping_methods: "Delivery Methods"
   shipping_methods_description: "Manage shipping methods"
   shipping_total: "Delivery Total"
   shop_by_taxonomy: "Shop by {{taxonomy}}"
@@ -536,7 +536,7 @@ en-GB:
   tree: Tree
   try_again: "Try Again"
   type: Type
-  unable_ship_method: "Unable to generate shipping methods due to a server error."
+  unable_ship_method: "Unable to generate delivery methods due to a server error."
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
@@ -545,9 +545,9 @@ en-GB:
   update_password: "Update my password and log me in"                    
   updated_successfully:
   updating: Updating
-  use_as_shipping_address: Use as Shipping Address
+  use_as_shipping_address: Use as Delivery Address
   use_billing_address: Use Billing Address
-  use_different_shipping_address: "Use Different Shipping Address"
+  use_different_shipping_address: "Use Different Delivery Address"
   user: User
   user_account: User Account
   user_details: "User Details"
