@@ -90,6 +90,11 @@ module Spree
        :subtotal => checkout.order.item_total * 100}  
     end
     
+    def spree_cc_type
+      return "visa" if ENV['RAILS_ENV'] == "development" and Spree::Gateway::Config[:use_bogus]
+      self.class.type?(number)
+    end
+
     # instantiates the selected gateway and configures with the options stored in the database
     def payment_gateway
       return Spree::BogusGateway.new if ENV['RAILS_ENV'] == "development" and Spree::Gateway::Config[:use_bogus]
