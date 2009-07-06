@@ -5,7 +5,7 @@
 
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
 
-<%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
+<%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} -%>
 
 <% if @order.bill_address %>
   <div class='adr'>
