@@ -96,6 +96,15 @@ module Spree
     end
     alias :reactivate :activate_extensions
 
+    def run_initializers
+      load_extension_roots.each do |extension_path|
+        Dir["#{extension_path}/config/initializers/**/*.rb"].sort.each do |initializer|
+          RAILS_DEFAULT_LOGGER.info "INFO: Loading initializer #{initializer}"
+          load(initializer)
+        end
+      end
+    end 
+
     def load_extension_roots
       @load_extension_roots ||= unless configuration.extensions.empty?
         select_extension_roots
