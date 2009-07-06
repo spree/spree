@@ -101,7 +101,7 @@ class Creditcard < ActiveRecord::Base
     self.number = number.to_s.gsub(/[^\d]/, "")
     self.display_number = ActiveMerchant::Billing::CreditCard.mask(number)
     self.cc_type.downcase! if cc_type.respond_to?(:downcase)
-    self.cc_type = self.class.type?(number) if cc_type.blank?    
+    self.cc_type = spree_cc_type if cc_type.blank?    
     self.first_name = address.firstname if address
     self.last_name = address.lastname if address
   end
@@ -127,7 +127,7 @@ class Creditcard < ActiveRecord::Base
   end
   
   def validate_switch_or_solo_attributes #:nodoc:
-    if %w[switch solo].include?(type)
+    if %w[switch solo].include?(cc_type)
       unless valid_month?(@start_month) && valid_start_year?(@start_year) || valid_issue_number?(@issue_number)
         errors.add :start_month, "is invalid" unless valid_month?(@start_month)
         errors.add :start_year, "is invalid" unless valid_start_year?(@start_year)
