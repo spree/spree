@@ -45,7 +45,7 @@ class CheckoutsController < Spree::BaseController
       params[:checkout][:ship_address_attributes][:id] = @checkout.ship_address.id if @checkout.ship_address
     end
     @checkout.ip_address ||= request.env['REMOTE_ADDR']
-    @checkout.email ||= current_user.email if current_user
+    @checkout.email = current_user.email if current_user && @checkout.email.blank?
     @order.update_attribute(:user, current_user) if current_user and @order.user.blank?
   end    
     
@@ -55,8 +55,8 @@ class CheckoutsController < Spree::BaseController
     default_country = Country.find Spree::Config[:default_country_id]
     @object = parent_object.checkout                                                  
     @object.ship_address ||= Address.new(:country => default_country)
-    @object.creditcard ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
     @object.bill_address ||= Address.new(:country => default_country)   
+    @object.creditcard   ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
     @object         
   end
   
