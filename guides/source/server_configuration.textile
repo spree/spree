@@ -43,7 +43,21 @@ This step will make sure any extra necessary gems are properly installed on the 
 rake db:admin:create
 </shell>
 
-Now the code and the database are ready for the site. All that is needed from here is to start the production server, which will vary depending on what you are using to serve the code.
+Now the code and the database are ready for the site. All that is needed from here is to start the production server, which will vary depending on what you are using to serve the code.      
+
+h3. SSL Considerations
+
+h4. Default Settings
+
+Spree is configured with SSL enabled by default.  It is not enabled for development or test mode but if you deploy Spree in production, it will assume you have SSL configured.  SSL is only enabled for certain sensitive URL's (related to login and checkout.)  A modified version of the "ssl_requirement":http://github.com/rails/ssl_requirement/tree/master plugin is used to force redirects to SSL (or non-SSL) as approrpriate.
+
+h4. Changing the Default Settings
+
+If you do not wish to use SSL in production, or if you wish to enable SSL in development mode, you will have to change the +:allow_ssl_in_production+ configuration setting.  Generally this is done via the admin interface (+Configuration | General Settings+) as shown below.
+
+!images/server_configuration/change_ssl_setting.png(Changing SSL Setting)!
+
+There is also a technique for "using migrations to change configuration settings":extensions.html#using-migrationsfor-custom-configurations.
 
 h3. Special Production Deployment
 
