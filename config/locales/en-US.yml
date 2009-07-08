@@ -373,7 +373,8 @@ en-US:
   payment_information: "Payment Information"
   payments: Payments
   phone: Phone
-  place_order: Place Order        
+  place_order: Place Order
+  please_create_user: "Please create a user account"        
   presentation: Presentation
   previous: Previous
   price: Price

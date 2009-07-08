@@ -374,6 +374,7 @@ pl:
   payments: Payments
   phone: Telefon
   place_order: Place Order        
+  please_create_user: "Please create a user account"        
   presentation: Presentacja
   previous: Poprzednie
   price: Cena

@@ -374,6 +374,7 @@ es:
   payments: Pagos
   phone: Teléfono
   place_order: Hacer pedido
+  please_create_user: "Please create a user account"        
   presentation: Presentación
   previous: Anterior
   price: Precio

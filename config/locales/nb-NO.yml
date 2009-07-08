@@ -374,6 +374,7 @@ nb-NO:
   payments: Betalinger
   phone: Telefon
   place_order: "Bekreft ordre"
+  please_create_user: "Please create a user account"        
   presentation: Presentasjon
   previous: Forrige
   price: Pris
