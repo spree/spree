@@ -43,7 +43,7 @@ class ProductsController < Spree::BaseController
     end
 
     @search.per_page ||= Spree::Config[:products_per_page]
-    @search.include = :images
+    @search.include = {:variants => :images}
 
     @product_cols = 3
     @products ||= @search.all

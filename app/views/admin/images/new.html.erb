@@ -1,10 +1,22 @@
 <h4><%= t("new_image") %></h4>
-<% form_for(:image, :url => { :controller => 'images', :action => "new" }, :html => { :multipart => true }) do |form| %>
-	<table class="basic-table">
-	  <tr>
-	    <td><%= t("filename") %>:</td>
-	    <td><%= form.file_field :uploaded_data %></td>
-	  </tr>
-	</table> 
- <% end %>
+<% form_for(:image, :url => { :controller => 'images', :action => 'create' }, :html => { :multipart => true }) do |form| %>
+  <table class="basic-table">
+    <%= render :partial => "form", :locals => { :f => form } %>
+  </table>
+  <p class="form-buttons">
+    <%= button t("update") %>
+    or <%= link_to t("cancel"), "#", :id => "cancel_link" %>
+  </p>
+<% end %>
+
+
+<script type="text/javascript">    
+  jQuery('#cancel_link').click(function (event) { 
+    jQuery('#new_image_link').show();
+    jQuery('#images').html('');
+  });  
+ 
+</script>
+
+ 
  

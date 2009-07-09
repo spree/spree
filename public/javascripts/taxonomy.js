@@ -94,8 +94,6 @@ var handle_rename = function(li, bl, tree, rb) {
 };
 
 var handle_before_delete = function(li){
-	jQuery.alerts.dialogClass = "spree";
-	
 	if (!delete_confirmed){
 		jConfirm('Are you sure you want to delete this taxon?', 'Confirm Taxon Deletion', function(r) {
 			if(r){

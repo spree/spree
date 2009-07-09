@@ -530,10 +530,11 @@ ru-RU:
   thank_you_for_your_order: "Спасибо за покупку! Для сохранности, пожалуйста, рапспечатайте эту страницу."
   this_file_language: "Русский (RU)"
   to_add_variants_you_must_first_define: "Перед добавлением вариантов, вы должны определить"
-  total: "Итого"
-  tracking: "Отслеживание"
-  transaction: "Транзакция"
-  tree: "Дерево"
+  thumbnail: "Thumbnail"
+  total: Итого
+  tracking: Отслеживание
+  transaction: Транзакция
+  tree: Дерево
   try_again: "Попробуйте еще раз"
   type: "Тип"
   unable_ship_method: "Не удалось создать методы доставки из-за ошибки на сервере."

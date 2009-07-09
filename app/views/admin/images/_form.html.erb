@@ -1,0 +1,10 @@
+<tr>
+  <td><%= t("filename") %>:</td>
+  <td><%= f.file_field :attachment %></td>
+</tr>
+<% if @product.variants? %>
+  <tr>
+    <td><%= Variant.human_name %>:</td>
+    <td><%= select_tag :variant_id, options_for_select(@variants) %></td>
+  </tr>
+<% end %>

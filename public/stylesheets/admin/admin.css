@@ -1,7 +1,8 @@
 #language-bar,
 #login-nav,
 #store-nav {
-  float: right; }
+  float: right;
+ 	margin-top: 10px;}
   #language-bar li,
   #login-nav li,
   #store-nav li {
@@ -42,7 +43,7 @@ body {
       color: #4884BD; }
   #header,
   #footer {
-    padding: 1em 1em 0;
+		position: relative;
     clear: both; }
   #content {
     margin: 0em 1em 1em 1em;
@@ -128,7 +129,7 @@ body {
             color: #fff; }
   h1.logo {
     float: left;
-    margin: 10px; }
+    margin: 20px 10px 10px 10px;	 }
     h1.logo a {
       background: url(../../images/admin/bg/spree_50.png) left center no-repeat;
       padding-left: 120px;
@@ -423,4 +424,23 @@ span.current_page {
 	border: 1px solid navy;
 	background-color: #2e6ab1;
 	color: #FFF;
+}
+#progress{
+	display:none;
+	background:#154E8C url(../../images/admin/bg/admin_tab_back.png) repeat-x scroll left top;
+	color:#fff;
+	font-size:170%;
+	height:25px;
+	left:33%;
+	padding:10px 0 15px;
+	position:absolute;
+	text-align:center;
+	width:33%;
+	font-weight:bold;
+	-moz-border-radius-bottomleft:15px;
+	-moz-border-radius-bottomright:15px;
+}
+#progress img{
+	vertical-align:middle;
+	padding-right:10px;
 }

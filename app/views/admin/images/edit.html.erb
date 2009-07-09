@@ -1,0 +1,15 @@
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+
+<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Images"} %>
+
+<%= error_messages_for :image %>
+
+<% form_for(:image, :url => admin_product_image_url(@product), :html => { :method => :put }) do |f| %>
+  <table class="basic-table">
+    <tr>
+      <td><%= t("thumbnail") %>:</td>
+      <td><%= link_to(image_tag(@image.attachment.url(:mini)), @image.attachment.url(:product)) %></td>
+    </tr>
+    <%= render :partial => "form", :locals => { :f => f } %>
+  </table>
+<% end %>

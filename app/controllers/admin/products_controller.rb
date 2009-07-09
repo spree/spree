@@ -1,7 +1,6 @@
 class Admin::ProductsController < Admin::BaseController
   resource_controller
   before_filter :load_data
-  after_filter :set_image, :only => [:create, :update]
 
   # set the default tax_category if applicable
   new_action.before do
@@ -56,16 +55,8 @@ class Admin::ProductsController < Admin::BaseController
       @tax_categories = TaxCategory.find(:all, :order=>"name")  
       @shipping_categories = ShippingCategory.find(:all, :order=>"name")  
     end
-
-    def set_image
-      return unless params[:image]
-      return if params[:image][:attachment].blank?    
-      image = Image.create params[:image] if params[:image]
-      object.images << image
-    end
     
     def collection
-      
       #use the active named scope only if the 'show deleted' checkbox is unchecked
       if params[:search].nil? || params[:search][:conditions].nil? || params[:search][:conditions][:deleted_at_is_not_null].blank?
         @search = end_of_association_chain.not_deleted.new_search(params[:search])
@@ -78,7 +69,7 @@ class Admin::ProductsController < Admin::BaseController
       @search.order_as ||= "ASC"
       #set results per page to default or form result
       @search.per_page ||= Spree::Config[:admin_products_per_page]
-      @search.include = :images
+      @search.include = {:variants => :images}
       @collection = @search.all
     end
 

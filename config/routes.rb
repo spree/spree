@@ -61,11 +61,11 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :states
     admin.resources :tax_categories
     admin.resources :configurations
-    admin.resources :products, :has_many => [:variants, :images, :product_properties] do |product|
+    admin.resources :products, :has_many => [:product_properties, :images] do |product|
+			product.resources :variants 
       product.resources :option_types, :member => {:select => :get, :remove => :get}, :collection => {:available => :get, :selected => :get}
       product.resources :taxons, :member => {:select => :post, :remove => :post}, :collection => {:available => :post, :selected => :get}
     end
-    admin.resources :images
     admin.resources :option_types
     admin.resources :properties, :collection => {:filtered => :get}
     admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
