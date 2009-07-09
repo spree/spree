@@ -41,7 +41,7 @@ class CheckoutsController < Spree::BaseController
   end
   
   update.before do
-    if params[:checkout]
+    if params[:checkout] and params[:checkout][:bill_address_attributes]
       # prevent double creation of addresses if user is jumping back to address stup without refreshing page
       params[:checkout][:bill_address_attributes][:id] = @checkout.bill_address.id if @checkout.bill_address
       params[:checkout][:ship_address_attributes][:id] = @checkout.ship_address.id if @checkout.ship_address
@@ -56,9 +56,12 @@ class CheckoutsController < Spree::BaseController
     return @object if @object
     default_country = Country.find Spree::Config[:default_country_id]
     @object = parent_object.checkout                                                  
-    @object.ship_address ||= Address.new(:country => default_country)
-    @object.bill_address ||= Address.new(:country => default_country)   
-    @object.creditcard   ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
+    unless params[:checkout] and params[:checkout][:coupon_code]
+      # do not create these defaults if we're merely updating coupon code, otherwise we'll have a validation error
+      @object.ship_address ||= Address.new(:country => default_country)
+      @object.bill_address ||= Address.new(:country => default_country)   
+      @object.creditcard   ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
+    end
     @object         
   end
   

@@ -47,7 +47,11 @@
 		<tr>
       <td><%= link_to t("tax_settings"), admin_tax_settings_path %></td>
       <td><%= t("tax_settings_description") %></td>
-    </tr>    
+    </tr> 
+		<tr>
+      <td><%= link_to t("coupons"), admin_coupons_path %></td>
+      <td><%= t("coupons_description") %></td>
+    </tr>       
     <% @extension_links.each do |link_map| %>
       <tr>
         <td><%= link_to(link_map[:link_text],  link_map[:link]) %></td>

@@ -1,0 +1,9 @@
+<h1><%= t("new_coupon") %></h1>
+<%= error_messages_for :coupon %>
+
+<% form_for(:coupon, :url => collection_url) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p>
+    <%= submit_tag t("create") %>
+  </p>
+<% end %>

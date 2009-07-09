@@ -2,16 +2,20 @@ class Checkout < ActiveRecord::Base
   before_save :authorize_creditcard, :unless => "Spree::Config[:auto_capture]"
   before_save :capture_creditcard, :if => "Spree::Config[:auto_capture]"
   after_save :update_charges
-  after_update :update_credits
+  after_save :update_credits
+  after_save :process_coupon_code
 
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
+  has_many :discounts, :dependent => :destroy
+
   accepts_nested_attributes_for :ship_address, :bill_address
 
   # for memory-only storage of creditcard details
-  attr_accessor :creditcard
+  attr_accessor :creditcard    
+  attr_accessor :coupon_code
 
   private
   def authorize_creditcard
@@ -53,10 +57,16 @@ class Checkout < ActiveRecord::Base
     order.save 
   end 
   
-  def update_credits  
+  def update_credits                
     order.credits.each do |credit|
-      # provide opportunity for coupon related discounts to be recalculated
-      credit.creditable.save if credit.creditable.is_a?(Coupon)
+      # provide opportunity for coupon related discounts to be recalculated 
+      creditable = credit.creditable
+      creditable.update_credit if creditable.is_a?(Discount)
     end
+  end
+
+  def process_coupon_code    
+    return unless @coupon_code and coupon = Coupon.find_by_code(@coupon_code.upcase)
+    coupon.create_discount(self)
   end
 end

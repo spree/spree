@@ -223,7 +223,11 @@ en-US:
   confirm_password: "Password Confirmation"
   continue: Continue
   continue_shopping: "Continue shopping"
-  copy_all_mails_to: Copy All Mails To                                                                             
+  copy_all_mails_to: Copy All Mails To
+  yes: "Yes"
+  no: "No"
+  flat_percent: Flat Percent
+  coupon: Coupon                                                                             
   country: Country
   country_based: "Country Based"
   create: Create
@@ -543,7 +547,15 @@ en-US:
   tracking: Tracking
   transaction: Transaction
   tree: Tree
-  try_again: "Try Again"
+  try_again: "Try Again"     
+  code: Code
+  combine: Combine
+  usage_limit: Usage Limit
+  new_coupon: New Coupon
+  coupons: Coupons
+  coupon_calculator: Coupon Calculator
+  editing_coupon: Editing Coupon
+  coupons_description: Manage coupons
   type: Type
   unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"

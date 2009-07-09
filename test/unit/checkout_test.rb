@@ -105,26 +105,6 @@ class CheckoutTest < ActiveSupport::TestCase
         should_change "@checkout.order.tax_charges.first.amount", :from => 15, :to => 8
       end
     end 
+    
   end
-  
-  # context "save with existing credits" do
-  #   setup do
-  #     @checkout = Checkout.create(:order => Order.create(:credits => [Factory(:credit)]))
-  #     @checkout.save
-  #   end
-  #   should "clear existing credits" do
-  #     assert_equal(0, @checkout.order.credits.count)
-  #   end
-  # end
-  # 
-  # context "save with existing credits and completed checkout" do
-  #   setup do
-  #     @checkout = Checkout.create(:order => Order.create(:credits => [Factory(:credit)]), :completed_at => Time.now)
-  #     @checkout.save
-  #   end
-  #   should "not clear existing credits" do
-  #     assert_equal(1, @checkout.order.credits.count)
-  #   end
-  # end
-
 end
