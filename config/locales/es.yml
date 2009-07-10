@@ -216,6 +216,7 @@ es:
   configuration_options: "Opciones de configuracion"
   configurations: Configuraciones
   confirm: Confirmar
+  confirm_delete: "Confirm Deletion"
   confirm_password: "Confirme la contraseña"
   continue: Continuar
   continue_shopping: "Seguir comprando"

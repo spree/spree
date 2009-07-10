@@ -8,8 +8,24 @@ module Admin::BaseHelper
     link_to_with_icon('edit', t("edit"), edit_object_url(resource))
   end
   
-  def link_to_delete(resource)
-    link_to_with_icon('delete', t("delete"), object_url(resource), :confirm => t('are_you_sure'), :method => :delete )
+  def link_to_delete(resource, options = {})
+	  options.assert_valid_keys(:url, :caption, :title)
+
+		options.reverse_merge! :url => object_url(resource) unless options.key? :url
+    options.reverse_merge! :caption => t('are_you_sure')
+    options.reverse_merge! :title => t('confirm_delete')
+
+    #link_to_with_icon('delete', t("delete"), object_url(resource), :confirm => t('are_you_sure'), :method => :delete )
+		link_to_function icon("delete") + ' ' + t("delete"), "jConfirm('#{options[:caption]}', '#{options[:title]}', function(r) { 
+      if(r){ 
+        jQuery.ajax({
+          type: 'POST',
+          url: '#{options[:url]}',
+          data: ({_method: 'delete', authenticity_token: AUTH_TOKEN}),
+          success: function(r){ jQuery('##{dom_id resource}').fadeOut('hide'); } 
+        });
+      }
+		});"
   end
   
   def link_to_with_icon(icon_name, text, url, options = {})

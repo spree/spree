@@ -17,9 +17,12 @@ class Admin::ImagesController < Admin::BaseController
   
   destroy.response do |wants| 
     wants.html do
-      flash[:notice] = nil
-			render :view => "index"
+			render :text => "text to render..."
     end
+		wants.js do
+			render :text => "true"
+		end
+		
   end
  
   private

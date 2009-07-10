@@ -15,7 +15,7 @@
   </thead>
   <tbody>
     <% @shipping_categories.each do |shipping_category|%>
-    <tr>
+    <tr id="<%= dom_id shipping_category %>">
       <td width="350px"><%= shipping_category.name %></td>
       <td>
       	<%= link_to_edit shipping_category %> &nbsp;

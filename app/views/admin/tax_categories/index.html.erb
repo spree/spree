@@ -21,7 +21,7 @@
   </thead>
   <tbody>
     <% @tax_categories.each do |tax_category|%>
-      <tr>
+      <tr id="<%= dom_id tax_category %>">
         <td><%= tax_category.name %></td>
         <td><%= tax_category.description %></td>
         <td class="actions">

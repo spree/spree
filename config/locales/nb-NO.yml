@@ -216,6 +216,7 @@ nb-NO:
   configuration_options: "Konfigurasjonsvalg"
   configurations: Konfigurasjoner
   confirm: Bekreft
+  confirm_delete: "Confirm Deletion"
   confirm_password: "Bekreft passord"
   continue: Fortsett
   continue_shopping: "Fortsett å handle"

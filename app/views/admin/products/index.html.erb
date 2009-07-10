@@ -31,7 +31,7 @@
     <th>&nbsp;</th>
   </tr>
 <% @collection.each do |product| %>
-  <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %>>
+  <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %> id="<%= dom_id product %>">
     <td><%= product.sku %></td>
     <td><%= product.name %></td>
     <td><%= product.master_price %></td>

@@ -26,7 +26,7 @@
     <th></th>
 	</tr>
   <% @option_types.each do |option_type| %>
-    <tr>
+    <tr id="<%= dom_id option_type %>">
       <td><%= option_type.name %></td>
       <td><%= option_type.presentation %></td>
 	    <td class="actions">

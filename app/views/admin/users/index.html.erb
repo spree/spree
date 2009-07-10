@@ -18,7 +18,7 @@
   </thead>
   <tbody>
     <%- @collection.each do |user|%>
-    <tr>
+    <tr id="<%= dom_id user %>">
       <td width="350px"><%=link_to user.email, object_url(user) %></td>
       <td>
       	<%= link_to_edit user %> &nbsp;

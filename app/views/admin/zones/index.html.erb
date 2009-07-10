@@ -21,7 +21,7 @@
   </thead>
   <tbody>
     <% @collection.each do |zone| %>
-      <tr>
+      <tr id="<%= dom_id zone %>">
         <td><%=zone.name %></td>
         <td><%=zone.description %></td>
         <td class="actions">

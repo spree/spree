@@ -216,6 +216,7 @@ jp:
   configuration_options: 設定オプション
   configurations: 設定
   confirm: 確認
+  confirm_delete: "Confirm Deletion"
   confirm_password: "Password Confirmation"
   continue: 続ける
   continue_shopping: ショッピングを続ける

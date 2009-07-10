@@ -216,6 +216,7 @@ nl-BE:
   configuration_options: "Configuratie Opties"
   configurations: Configuraties
   confirm: Bevestig
+  confirm_delete: "Confirm Deletion"
   confirm_password: "Wachtwoord bevestiging"
   continue: "Ga Verder"
   continue_shopping: "Verder Winkelen"

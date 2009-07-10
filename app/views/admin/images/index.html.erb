@@ -12,7 +12,7 @@
 	</tr>
 	<% @product.variants.each do |variant| %>
     <% variant.images.each do |image| %>
-      <tr>
+      <tr id="<%= dom_id(image) %>">
         <td><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
         <% if @product.variants? %>
           <td><%= variant.options_text %></td>
@@ -20,7 +20,7 @@
         <td class="actions">
           <%= link_to_with_icon('edit', t("edit"), edit_admin_product_image_url(@product, image)) %>
           &nbsp;
-          <%= link_to_with_icon('delete', t("delete"), admin_product_image_url(@product, image), :confirm => t('are_you_sure'), :method => :delete ) %>
+          <%= link_to_delete image, {:url => admin_product_image_url(@product, image),  :caption => "Do you like JAM?" }%>
         </td>
       </tr>
     <% end %>

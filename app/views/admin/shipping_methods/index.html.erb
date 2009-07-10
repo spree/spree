@@ -18,7 +18,7 @@
   </thead>
   <tbody>
     <% @shipping_methods.each do |shipping_method|%>
-    <tr>
+    <tr id="<%= dom_id shipping_method %>">
       <td width="100px"><%= shipping_method.name %></td>
       <td width="100px"><%= shipping_method.zone.name %></td>
       <td width="100px"><%= shipping_method.shipping_calculator %></td>      

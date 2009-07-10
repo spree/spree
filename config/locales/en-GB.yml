@@ -216,6 +216,7 @@ en-GB:
   configuration_options: "Configuration Options"
   configurations: Configurations
   confirm: Confirm
+  confirm_delete: "Confirm Deletion"
   confirm_password: "Password Confirmation"
   continue: Continue
   continue_shopping: "Continue shopping"

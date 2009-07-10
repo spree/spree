@@ -30,7 +30,7 @@
 	</thead>
 	<tbody>
     <% @properties.each do |property| %>
-      <tr>
+      <tr id="<%= dom_id property %>">
         <td><%= property.name %></td>
         <td><%= property.presentation %></td>
 		    <td class="actions">

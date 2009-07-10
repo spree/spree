@@ -214,8 +214,8 @@ ru-RU:
   complete_list: "Список настроек"
   configuration: "Конфигурация"
   configuration_options: "Опции конфигурации"
-  configurations: "Конфигурации"
-  confirm: "Подтвердить"
+  confirm: Подтвердить
+  confirm_delete: "Confirm Deletion"
   confirm_password: "Подтверждение пароля"
   continue: "Продолжить"
   continue_shopping: "Продолжить покупки"
