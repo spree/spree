@@ -1,21 +1,46 @@
 <!-- no need for thumnails unless there is more then one image -->
 <% if product.images.size > 1 %>
-  <ul id="product-thumbnails">
+  <ul id="product-thumbnails" class="thumbnails">
     <% product.images.each do |i| %>  
       <li><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>
     <% end %>
   </ul>
 <% end %>
 
+<% if @product.variants? 
+  has_checked = false %>
+  <h4 id="variant-images"><%= t('images_for') %>: <%= @selected_variant.options_text %></h4>
+  <ul id="variant-thumbnails" class="thumbnails">
+    <% product.variants.each do |v|
+        checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
+   		  has_checked = true if checked
+        
+        if checked 
+          v.images.each do |i| %>  
+            <li><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>
+          <% end %>
+        <% end %>
+      <% end %>
+    </ul>
+<% end %>
 
 <% content_for :head do %>
   <script type="text/javascript" charset="utf-8">
-    jQuery(document).ready(function($){
+ 
+    var images = new Array();
+    <% product.variants.each do |v| %>
+      images[<%= v.id.to_s %>] = new Array();
+      <% v.images.each_with_index do |image, i| %>
+        images[<%= v.id.to_s %>][<%= i %>] = '<%= image.attachment.url(:mini) %>';
+      <% end %>
+    <% end %>
+ 
+    var add_image_handlers = function(){
       $("#main-image").data('selectedThumb', $('#main-image img').attr('src'));
-      $('ul#product-thumbnails li').eq(0).addClass('selected');
-      $('ul#product-thumbnails li a').click(function() {
+      $('ul.thumbnails li').eq(0).addClass('selected');
+      $('ul.thumbnails li a').click(function() {
         $("#main-image").data('selectedThumb', $(this).attr('href'));
-        $('ul#product-thumbnails li').removeClass('selected');
+        $('ul.thumbnails li').removeClass('selected');
         $(this).parent('li').addClass('selected');
         return false;
       }).hover(
@@ -26,6 +51,8 @@
           $('#main-image img').attr('src', $("#main-image").data('selectedThumb'));
         }
       );
-    });
+    };
+ 
+    jQuery(document).ready(function(){ add_image_handlers(); });
   </script>
 <% end %>

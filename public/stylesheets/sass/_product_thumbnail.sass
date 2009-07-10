@@ -34,7 +34,7 @@
       a.info
         :background #1B1B1B url(/images/bottom_shine.png) bottom left repeat-x
         :color #fff
-ul#product-thumbnails
+ul.thumbnails
   +no_margin_or_padding
   :list-style none
   li
@@ -42,7 +42,17 @@ ul#product-thumbnails
     :margin-right 5px
     :padding 3px
     :border = 1px "solid" !white
+    :min-height 50px
+    :width 50px
+    :position relative
     &:hover
       :border-color #CCC
     &.selected
       :border-color #999
+    img
+      :position absolute
+      :top 0
+      :bottom 0
+      :left 0
+      :right 0
+      :margin auto

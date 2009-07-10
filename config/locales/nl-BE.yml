@@ -171,6 +171,7 @@ nl-BE:
   address_information: "Adresgegevens"
   adjustment: Aanpassing
   administration: Administratie
+  all: "All"
   allow_backorders: "Nabestellingen toelaten"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "SSL gebruik toestaan in ontwikkel- en testomgevingen"
   allow_ssl_to_be_used_when_in_production_mode: "SSL gebruik toestaan in productie-omgeving"         
@@ -292,6 +293,7 @@ nl-BE:
   icons_by: "Icons by"
   image: Afbeelding
   images: Afbeeldingen
+  images_for: "Images for"
   in_progress: "Aan de gang"
   invalid_search: "Foute zoekcriteria."
   inventory: Voorraad

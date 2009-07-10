@@ -7,6 +7,8 @@ class Product < ActiveRecord::Base
   has_many :variants, :dependent => :destroy
   has_many :product_properties, :dependent => :destroy, :attributes => true
   has_many :properties, :through => :product_properties
+	has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
+	
   belongs_to :tax_category
   has_and_belongs_to_many :taxons
   belongs_to :shipping_category
@@ -74,15 +76,6 @@ class Product < ActiveRecord::Base
     variants.inject(false){ |tf, v| tf ||= v.in_stock }
   end
 
-	def images
-		if variants?
-			variants.inject([]) { | images, variant | images.concat(variant.images) }
-		else
-			variant.images
-		end
-	end
-  
-  
   # Adding properties and option types on creation based on a chosen prototype
   
   attr_reader :prototype_id

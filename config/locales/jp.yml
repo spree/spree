@@ -171,6 +171,7 @@ jp:
   address_information: 住所情報
   adjustment: 調整
   administration: 管理
+  all: "All"
   allow_backorders: 取り寄せ注文を許可する
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode
@@ -292,6 +293,7 @@ jp:
   icons_by: "Icons by"
   image: 画像
   images: 画像
+  images_for: "Images for"
   in_progress: "In Progress"
   invalid_search: "Invalid search criteria."
   inventory: 在庫

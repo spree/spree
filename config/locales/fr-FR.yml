@@ -171,6 +171,7 @@ fr-FR:
   address_information: "Informations complémentaire sur l'adresse"
   adjustment: Revalorisation
   administration: Administration
+  all: "All"
   allow_backorders: "Permettre la rupture de stock"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permettre l'utilisation du SSL lors des modes développement et test
   allow_ssl_to_be_used_when_in_production_mode: Permettre l'utilisation du SSL lors du mode production
@@ -292,6 +293,7 @@ fr-FR:
   icons_by: "Icons by"
   image: Image
   images: Images
+  images_for: "Images for"
   in_progress: "En progression"
   invalid_search: "Critère de recherche invalide."
   inventory: Inventaire

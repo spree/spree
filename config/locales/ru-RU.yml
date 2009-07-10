@@ -171,6 +171,7 @@ ru-RU:
   address_information: "Адресная информация"
   adjustment: "Поправка(Adjustment)"
   administration: "Администрирование"
+  all: "All"
   allow_backorders: "Разрешить задолженные заказы"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "Использовать SSL в development и test режимах"
   allow_ssl_to_be_used_when_in_production_mode: "Использовать SSL в production"
@@ -291,6 +292,7 @@ ru-RU:
   icons_by: "Иконки предоставлены"
   image: "Картинка"
   images: "Картинки"
+  images_for: "Images for"
   in_progress: "В процессе"
   invalid_search: "Неверный критерий поиска."
   inventory: "Ассортимент "
@@ -531,6 +533,7 @@ ru-RU:
   this_file_language: "Русский (RU)"
   to_add_variants_you_must_first_define: "Перед добавлением вариантов, вы должны определить"
   thumbnail: "Thumbnail"
+  to_add_variants_you_must_first_define: "Перед добавлением вариантов, вы должны определить"
   total: Итого
   tracking: Отслеживание
   transaction: Транзакция

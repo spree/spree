@@ -171,6 +171,7 @@ th:
   address_information: "Address Information"
   adjustment: Adjustment
   administration: การจัดการ
+  all: "All"
   allow_backorders: "อนุญาติการสั่งซื้อ เมื่อสินค้าหมด"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
@@ -216,6 +217,7 @@ th:
   configuration_options: ข้อมูลตัวเลือก
   configurations: รายการจัดการ
   confirm: ยืนยันรหัสผ่าน
+  confirm_delete: "Confirm Deletion"
   confirm_password: ยืนยันรหัสผ่าน
   continue: ดำเนินการต่อ
   continue_shopping: เลือกสินค้าต่อ
@@ -291,6 +293,7 @@ th:
   icons_by: "Icons by"
   image: รูปภาพ
   images: รูปภาพ
+  images_for: "Images for"
   in_progress: "In Progress"
   invalid_search: "Invalid search criteria."
   inventory: คลัง
@@ -529,6 +532,7 @@ th:
   taxons: ประเภทภาษี
   thank_you_for_your_order: "ขอบคุณสำหรับการสั่งซื้อ ท่านสามารถพิมพ์รายการยืนยันเพื่อเก็บเป็นหลักฐานได้"
   this_file_language: "English (US)"
+  thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "เพื่อเพิ่มความต่างในสินค้า ต้องเพิ่มรายการเพื่อเลือกก่อนเสมอ"
   total: รวม
   tracking: ติดตาม

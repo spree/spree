@@ -109,4 +109,148 @@ img_ruby_baseball:
   attachment_content_type: image/png
   attachment_file_name: ruby_baseball.png
   type: Image  
+  position: 1  
+img_baseball_small_green:
+  id: 1009
+  viewable: small-green-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_green.png
+  type: Image  
   position: 1
+img_baseball_small_green_back:
+  id: 1010
+  viewable: small-green-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_back_green.png
+  type: Image  
+  position: 2
+img_baseball_med_green:
+  id: 1011
+  viewable: med-green-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_green.png
+  type: Image  
+  position: 1
+img_baseball_med_green_back:
+  id: 1012
+  viewable: med-green-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_back_green.png
+  type: Image  
+  position: 2  
+img_baseball_large_green:
+  id: 1013
+  viewable: large-green-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_green.png
+  type: Image  
+  position: 1
+img_baseball_large_green_back:
+  id: 1014
+  viewable: large-green-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_back_green.png
+  type: Image  
+  position: 2
+img_baseball_small_blue:
+  id: 1015
+  viewable: small-blue-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_blue.png
+  type: Image  
+  position: 1
+img_baseball_small_blue_back:
+  id: 1016
+  viewable: small-blue-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_back_blue.png
+  type: Image  
+  position: 2
+img_baseball_med_blue:
+  id: 1017
+  viewable: med-blue-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_blue.png
+  type: Image  
+  position: 1
+img_baseball_med_blue_back:
+  id: 1018
+  viewable: med-blue-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_back_blue.png
+  type: Image  
+  position: 2
+img_baseball_large_blue:
+  id: 1019
+  viewable: large-blue-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_blue.png
+  type: Image  
+  position: 1
+img_baseball_large_blue_back:
+  id: 1020
+  viewable: large-blue-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_back_blue.png
+  type: Image  
+  position: 2
+img_baseball_large_red:
+  id: 1021
+  viewable: large-red-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_red.png
+  type: Image  
+  position: 1
+img_baseball_large_red_back:
+  id: 1022
+  viewable: large-red-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_back_red.png
+  type: Image  
+  position: 2
+img_baseball_med_red:
+  id: 1023
+  viewable: med-red-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_red.png
+  type: Image  
+  position: 1
+img_baseball_med_red_back:
+  id: 1024
+  viewable: med-red-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_back_red.png
+  type: Image  
+  position: 2
+img_baseball_small_red:
+  id: 1025
+  viewable: small-red-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_red.png
+  type: Image  
+  position: 1
+img_baseball_small_red_back:
+  id: 1026
+  viewable: small-red-baseball
+  viewable_type: Variant
+  attachment_content_type: image/png
+  attachment_file_name: ror_baseball_jersey_back_red.png
+  type: Image  
+  position: 2

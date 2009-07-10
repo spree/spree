@@ -5,6 +5,8 @@
 <% if @product.variants? %>
   <tr>
     <td><%= Variant.human_name %>:</td>
-    <td><%= select_tag :variant_id, options_for_select(@variants) %></td>
+    <td><%= select_tag :viewable_id, options_for_select(@variants) %></td>
   </tr>
+<% else %>
+  <%= hidden_field_tag :product_id, @product.id %>
 <% end %>

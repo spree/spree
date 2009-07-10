@@ -26,6 +26,38 @@
             <% end %>
           </label>
         </li>
+        
+        <% content_for :head do %>
+          <script type="text/javascript">
+            jQuery(document).ready(function(){  
+
+              jQuery("#products_<%= @product.id %>_<%= v.id %>").click(function (event) { 
+                  jQuery("#variant-thumbnails").empty();
+                  
+                  jQuery("#variant-images").html('<%= t('images_for') %>: <%= v.options_text %>')
+                  
+                  if(images[<%= v.id %>].length > 0){
+                    <% v.images.each do |i| %>
+                       jQuery("#variant-thumbnails").append('<li><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>');
+                    <% end %>
+                    
+                    jQuery("#variant-images").show();
+                  }else{
+                    jQuery("#variant-images").hide();
+                  }
+                  
+                  add_image_handlers();
+                  
+                  var link = jQuery("#variant-thumbnails a")[0];
+  
+                  jQuery("#main-image img").attr({src: jQuery(link).attr('href')});  
+                  jQuery('ul.thumbnails li').removeClass('selected');
+                  jQuery(link).parent('li').addClass('selected');
+               });
+
+            });
+          </script>
+        <% end %>
       <% end%>
     </ul>
   </div>
@@ -41,3 +73,5 @@
       <%= content_tag('strong', t('out_of_stock')) %>
   <% end %>
 <% end %>
+
+

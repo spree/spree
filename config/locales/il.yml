@@ -171,6 +171,7 @@ il:
   address_information: "Address Information"
   adjustment: Adjustment
   administration: Administration
+  all: "All"
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
@@ -216,6 +217,7 @@ il:
   configuration_options: "Configuration Options"
   configurations: Configurations
   confirm: אישור
+  confirm_delete: "Confirm Deletion"
   confirm_password: "Password Confirmation"
   continue: המשך
   continue_shopping: "בחזרה לחנות"
@@ -291,6 +293,7 @@ il:
   icons_by: "Icons by"
   image: Image
   images: Images
+  images_for: "Images for"
   in_progress: "In Progress"
   invalid_search: "Invalid search criteria."
   inventory: Inventory
@@ -529,6 +532,7 @@ il:
   taxons: Taxons
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   this_file_language: "English (US)"
+  thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: "סה\"כ"
   tracking: Tracking

@@ -171,6 +171,7 @@ da:
   address_information: "Address Information"
   adjustment: Adjustment
   administration: Administration
+  all: "All"
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
@@ -292,6 +293,7 @@ da:
   icons_by: "Icons by"
   image: Image
   images: Images
+  images_for: "Images for"
   in_progress: "In Progress"
   invalid_search:
   inventory: Inventory

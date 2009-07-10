@@ -171,6 +171,7 @@ nb-NO:
   address_information: "Adresseinformasjon"
   adjustment: Justering
   administration: Administrasjon
+  all: "All"
   allow_backorders: "Tillat restordre"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Tillat at SSL brukes i utviklings- og testmodus.
   allow_ssl_to_be_used_when_in_production_mode: Tillat at SSL brukes i produksjonsmodus.
@@ -292,6 +293,7 @@ nb-NO:
   icons_by: "Icons by"
   image: Bilde
   images: Bilder
+  images_for: "Images for"
   in_progress: "Pågår"
   invalid_search: "Ugyldig søkekriterie."
   inventory: Varelager

@@ -171,6 +171,7 @@ pt-BR:
   address_information: "Informação de Endereço"
   adjustment: Ajuste
   administration: Administração
+  all: "All"
   allow_backorders: "Permitir Devoluções"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir uso de SSL quando no modo de desenvolvimento e teste
   allow_ssl_to_be_used_when_in_production_mode: Permitir uso de SSL quando em modo de produção
@@ -292,6 +293,7 @@ pt-BR:
   icons_by: "Icons by"
   image: Imagem
   images: Imagens
+  images_for: "Images for"
   in_progress: "Em progresso"
   invalid_search: "Critério inválido de pesquisa."
   inventory: Inventário
