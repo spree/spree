@@ -1,15 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Spree</title>
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
- 
-  <%= stylesheet_link_tag 'compiled/screen' %>
- 
-  <%= javascript_include_tag 'jquery-1.3.2.min', 'jquery.validate.pack.js', :cache => 'jquery-and-plugins' %>
-  <%= meta_data_tags %> 
-  <%= yield :head %>
- 
+<%= render :partial => 'shared/head'%>
 </head>
 <%
 if @body_class.nil?
@@ -30,7 +22,7 @@ end
         <%= render 'shared/store_menu' %>
       <% end %>
     </ul>
-    <%= link_to image_tag('/images/admin/bg/spree_50.png'), root_path %> 
+	<%= logo %>
   </div>
   <div id="wrapper" class="container"> 
     <% if @content_for_sidebar %>
@@ -49,7 +41,7 @@ end
       <% end %>
       <%= yield %>
     </div>
-    <%= render :partial => 'shared/footer'%>    		
+    <%= render :partial => 'shared/footer'%>
   </div>
 </body>
 </html>
