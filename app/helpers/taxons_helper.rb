@@ -17,15 +17,15 @@ module TaxonsHelper
   # Retrieves the collection of products to display when "previewing" a taxon.  This is abstracted into a helper so 
   # that we can use configurations as well as make it easier for end users to override this determination.  One idea is
   # to show the most popular products for a particular taxon (that is an exercise left to the developer.) 
-  def taxon_preview(taxon)
-    products = taxon.products.active[0..4]
-    return products unless products.size < 5
-    if Spree::Config[:show_descendents]
+  def taxon_preview(taxon, max=5)
+    products = taxon.products.active.find(:all, :limit => max)
+    if (products.size < max) && Spree::Config[:show_descendents]
       taxon.descendents.each do |taxon|
-        products += taxon.products.active[0..4]
-        break if products.size >= 5
+        to_get = max - products.length
+        products += taxon.products.active.find(:all, :limit => to_get)
+        break if products.size >= max
       end
     end
-    products[0..4]
+    products
   end
 end
