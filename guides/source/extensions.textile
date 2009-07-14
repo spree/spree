@@ -5,6 +5,7 @@ This guide covers the use of extensions and their role in customizing and enhanc
 * The role extensions play in a Spree deployment
 * How to build a "site" extension to customize the look and feel of your store
 * How to write a custom extension
+* How to initialize an extension
 * Where to find existing extensions
 
 endprologue.
@@ -124,9 +125,9 @@ INFO. There are currently some known issues with migrating +DOWN+ using extensio
 
 NOTE. For more information on Rails migrations in general, please see the excellent "rails guide":http://guides.rubyonrails.org/migrations.html on this subject.
 
-h3. Extension Load Order
+h3. Extension Load Order and Initializers
 
-In the +environment.rb+ inside the initializer block put something like this:
+Put something like the following inside the initializer block in the file +config/environment.rb+:
 
 <shell>
 config.extensions = [:all, :site]
@@ -139,6 +140,19 @@ You can even make something be loaded first too:
 <shell>
 config.extensions = [:first_extension, :all, :site]
 </shell>
+
+h4. Extension initializers
+
+You can put initializers in extensions, and these are the recommended way to configure certain settings.
+
+Initializers go in the +config/initializers+ directory in an extension, and should be +.rb+ files.
+Such extensions are loaded in extension order (as above) then by alphabetical order within an extension - 
+and they will all be loaded after the main project initialization is done. 
+
+So, if the +site+ extension is loaded last, then +site/config/initializers/beta.rb" is run before 
++site/config/initializers/gamma.rb+, and +other_ext/config/initializers/alpha.rb+ will be loaded 
+before both of these (because it is from an earier extension). 
+
 
 h3. Creating Your Own Extension
 
