@@ -141,7 +141,7 @@ You can even make something be loaded first too:
 config.extensions = [:first_extension, :all, :site]
 </shell>
 
-h4. Extension initializers
+h4. Extension Initializers
 
 You can put initializers in extensions, and these are the recommended way to configure certain settings.
 
