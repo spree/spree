@@ -13,6 +13,8 @@ endprologue.
 
 h3. Overview
 
+INFO: this guide is slightly out of date now that we have a restful checkout mechanism.
+
 The Spree checkout page is designed as a series of self-contained units 
 which can be run in any order and individually over-ridden with 
 a customized style or contents. Stages can be disabled or new ones
