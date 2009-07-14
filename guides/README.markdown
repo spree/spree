@@ -15,3 +15,4 @@ Output will be generated in the `output` directory.
 
 Spree is a complete open source commerce solution for Ruby on Rails.  It was developed by Sean Schofield in an effort to build a superior ecommerce platform for the Rails community.
 
+
