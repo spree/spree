@@ -16,7 +16,7 @@ module Paperclip
     def self.from_file file
       file = file.path if file.respond_to? "path"
       geometry = begin
-                   Paperclip.run("identify", %Q[-format "%wx%h" "#{file}"])
+                   Paperclip.run("identify", %Q[-format "%wx%h" "#{file}"[0]])
                  rescue PaperclipCommandLineError
                    ""
                  end
@@ -26,7 +26,7 @@ module Paperclip
 
     # Parses a "WxH" formatted string, where W is the width and H is the height.
     def self.parse string
-      if match = (string && string.match(/\b(\d*)x?(\d*)\b([\>\<\#\@\%^!])?/))
+      if match = (string && string.match(/\b(\d*)x?(\d*)\b([\>\<\#\@\%^!])?/i))
         Geometry.new(*match[1,3])
       end
     end
@@ -65,7 +65,8 @@ module Paperclip
     def to_s
       s = ""
       s << width.to_i.to_s if width > 0
-      s << "x#{height.to_i}#{modifier}" if height > 0
+      s << "x#{height.to_i}" if height > 0
+      s << modifier.to_s
       s
     end
 

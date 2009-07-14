@@ -15,7 +15,7 @@ module Paperclip
     #   make a symlink to the capistrano-created system directory from inside your app's 
     #   public directory.
     #   See Paperclip::Attachment#interpolate for more information on variable interpolaton.
-    #     :path => "/var/app/attachments/:class/:id/:style/:filename"
+    #     :path => "/var/app/attachments/:class/:id/:style/:basename.:extension"
     module Filesystem
       def self.extended base
       end
@@ -31,30 +31,39 @@ module Paperclip
       # Returns representation of the data of the file assigned to the given
       # style, in the format most representative of the current storage.
       def to_file style = default_style
-        @queued_for_write[style] || (File.new(path(style)) if exists?(style))
+        @queued_for_write[style] || (File.new(path(style), 'rb') if exists?(style))
       end
       alias_method :to_io, :to_file
 
       def flush_writes #:nodoc:
-        logger.info("[paperclip] Writing files for #{name}")
         @queued_for_write.each do |style, file|
-          FileUtils.mkdir_p(File.dirname(path(style)))
-          logger.info("[paperclip] -> #{path(style)}")
-          result = file.stream_to(path(style))
           file.close
-          result.close
+          FileUtils.mkdir_p(File.dirname(path(style)))
+          log("saving #{path(style)}")
+          FileUtils.mv(file.path, path(style))
+          FileUtils.chmod(0644, path(style))
         end
         @queued_for_write = {}
       end
 
       def flush_deletes #:nodoc:
-        logger.info("[paperclip] Deleting files for #{name}")
         @queued_for_delete.each do |path|
           begin
-            logger.info("[paperclip] -> #{path}")
+            log("deleting #{path}")
             FileUtils.rm(path) if File.exist?(path)
           rescue Errno::ENOENT => e
             # ignore file-not-found, let everything else pass
+          end
+          begin
+            while(true)
+              path = File.dirname(path)
+              FileUtils.rmdir(path)
+            end
+          rescue Errno::EEXIST, Errno::ENOTEMPTY, Errno::ENOENT, Errno::EINVAL, Errno::ENOTDIR
+            # Stop trying to remove parent directories
+          rescue SystemCallError => e
+            log("There was an unexpected error while deleting directories: #{e.class}")
+            # Ignore it
           end
         end
         @queued_for_delete = []
@@ -91,14 +100,27 @@ module Paperclip
     # * +s3_protocol+: The protocol for the URLs generated to your S3 assets. Can be either 
     #   'http' or 'https'. Defaults to 'http' when your :s3_permissions are 'public-read' (the
     #   default), and 'https' when your :s3_permissions are anything else.
+    # * +s3_headers+: A hash of headers such as {'Expires' => 1.year.from_now.httpdate}
     # * +bucket+: This is the name of the S3 bucket that will store your files. Remember
     #   that the bucket must be unique across all of Amazon S3. If the bucket does not exist
     #   Paperclip will attempt to create it. The bucket name will not be interpolated.
-    # * +url+: There are two options for the S3 url. You can choose to have the bucket's name
+    #   You can define the bucket as a Proc if you want to determine it's name at runtime.
+    #   Paperclip will call that Proc with attachment as the only argument.
+    # * +s3_host_alias+: The fully-qualified domain name (FQDN) that is the alias to the
+    #   S3 domain of your bucket. Used with the :s3_alias_url url interpolation. See the
+    #   link in the +url+ entry for more information about S3 domains and buckets.
+    # * +url+: There are three options for the S3 url. You can choose to have the bucket's name
     #   placed domain-style (bucket.s3.amazonaws.com) or path-style (s3.amazonaws.com/bucket).
+    #   Lastly, you can specify a CNAME (which requires the CNAME to be specified as
+    #   :s3_alias_url. You can read more about CNAMEs and S3 at 
+    #   http://docs.amazonwebservices.com/AmazonS3/latest/index.html?VirtualHosting.html
     #   Normally, this won't matter in the slightest and you can leave the default (which is
     #   path-style, or :s3_path_url). But in some cases paths don't work and you need to use
     #   the domain-style (:s3_domain_url). Anything else here will be treated like path-style.
+    #   NOTE: If you use a CNAME for use with CloudFront, you can NOT specify https as your
+    #   :s3_protocol; This is *not supported* by S3/CloudFront. Finally, when using the host
+    #   alias, the :bucket parameter is ignored, as the hostname is used as the bucket name
+    #   by S3.
     # * +path+: This is the key under the bucket in which the file will be stored. The
     #   URL will be constructed from the bucket and the path. This is what you will want
     #   to interpolate. Keys should be unique, like filenames, and despite the fact that
@@ -109,19 +131,24 @@ module Paperclip
         require 'right_aws'
         base.instance_eval do
           @s3_credentials = parse_credentials(@options[:s3_credentials])
-          @bucket         = @options[:bucket] || @s3_credentials[:bucket]
-          @s3_options     = @options[:s3_options] || {}
+          @bucket         = @options[:bucket]         || @s3_credentials[:bucket]
+          @bucket         = @bucket.call(self) if @bucket.is_a?(Proc)
+          @s3_options     = @options[:s3_options]     || {}
           @s3_permissions = @options[:s3_permissions] || 'public-read'
-          @s3_protocol    = @options[:s3_protocol] || (@s3_permissions == 'public-read' ? 'http' : 'https')
+          @s3_protocol    = @options[:s3_protocol]    || (@s3_permissions == 'public-read' ? 'http' : 'https')
+          @s3_headers     = @options[:s3_headers]     || {}
+          @s3_host_alias  = @options[:s3_host_alias]
           @url            = ":s3_path_url" unless @url.to_s.match(/^:s3.*url$/)
         end
-        base.class.interpolations[:s3_path_url] = lambda do |attachment, style|
+        Paperclip.interpolates(:s3_alias_url) do |attachment, style|
+          "#{attachment.s3_protocol}://#{attachment.s3_host_alias}/#{attachment.path(style).gsub(%r{^/}, "")}"
+        end
+        Paperclip.interpolates(:s3_path_url) do |attachment, style|
           "#{attachment.s3_protocol}://s3.amazonaws.com/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/}, "")}"
         end
-        base.class.interpolations[:s3_domain_url] = lambda do |attachment, style|
+        Paperclip.interpolates(:s3_domain_url) do |attachment, style|
           "#{attachment.s3_protocol}://#{attachment.bucket_name}.s3.amazonaws.com/#{attachment.path(style).gsub(%r{^/}, "")}"
         end
-        ActiveRecord::Base.logger.info("[paperclip] S3 Storage Initalized.")
       end
 
       def s3
@@ -138,9 +165,13 @@ module Paperclip
         @bucket
       end
 
+      def s3_host_alias
+        @s3_host_alias
+      end
+
       def parse_credentials creds
         creds = find_credentials(creds).stringify_keys
-        (creds[ENV['RAILS_ENV']] || creds).symbolize_keys
+        (creds[RAILS_ENV] || creds).symbolize_keys
       end
       
       def exists?(style = default_style)
@@ -159,13 +190,12 @@ module Paperclip
       alias_method :to_io, :to_file
 
       def flush_writes #:nodoc:
-        logger.info("[paperclip] Writing files for #{name}")
         @queued_for_write.each do |style, file|
           begin
-            logger.info("[paperclip] -> #{path(style)}")
+            log("saving #{path(style)}")
             key = s3_bucket.key(path(style))
             key.data = file
-            key.put(nil, @s3_permissions)
+            key.put(nil, @s3_permissions, {'Content-type' => instance_read(:content_type)}.merge(@s3_headers))
           rescue RightAws::AwsError => e
             raise
           end
@@ -174,10 +204,9 @@ module Paperclip
       end
 
       def flush_deletes #:nodoc:
-        logger.info("[paperclip] Writing files for #{name}")
         @queued_for_delete.each do |path|
           begin
-            logger.info("[paperclip] -> #{path}")
+            log("deleting #{path}")
             if file = s3_bucket.key(path)
               file.delete
             end
@@ -190,11 +219,11 @@ module Paperclip
       
       def find_credentials creds
         case creds
-        when File:
+        when File
           YAML.load_file(creds.path)
-        when String:
+        when String
           YAML.load_file(creds)
-        when Hash:
+        when Hash
           creds
         else
           raise ArgumentError, "Credentials are not a path, file, or hash."

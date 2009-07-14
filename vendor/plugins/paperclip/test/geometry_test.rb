@@ -1,8 +1,4 @@
-require 'rubygems'
-require 'test/unit'
-require 'shoulda'
-
-require File.join(File.dirname(__FILE__), '..', 'lib', 'paperclip', 'geometry.rb')
+require 'test/helper'
 
 class GeometryTest < Test::Unit::TestCase
   context "Paperclip::Geometry" do
@@ -48,20 +44,33 @@ class GeometryTest < Test::Unit::TestCase
       assert_equal 0, @geo.height
     end
 
-    should "ensure the modifier is nil if only one dimension present" do
-      assert @geo = Paperclip::Geometry.parse("123x")
-      assert_nil @geo.modifier
-    end
-
     should "ensure the modifier is nil if not present" do
       assert @geo = Paperclip::Geometry.parse("123x456")
       assert_nil @geo.modifier
     end
 
-    ['>', '<', '#', '@', '%', '^', '!'].each do |mod|
-      should "ensure the modifier #{mod} is preserved" do
+    should "treat x and X the same in geometries" do
+      @lower = Paperclip::Geometry.parse("123x456")
+      @upper = Paperclip::Geometry.parse("123X456")
+      assert_equal 123, @lower.width
+      assert_equal 123, @upper.width
+      assert_equal 456, @lower.height
+      assert_equal 456, @upper.height
+    end
+
+    ['>', '<', '#', '@', '%', '^', '!', nil].each do |mod|
+      should "ensure the modifier #{mod.inspect} is preserved" do
         assert @geo = Paperclip::Geometry.parse("123x456#{mod}")
         assert_equal mod, @geo.modifier
+        assert_equal "123x456#{mod}", @geo.to_s
+      end
+    end
+    
+    ['>', '<', '#', '@', '%', '^', '!', nil].each do |mod|
+      should "ensure the modifier #{mod.inspect} is preserved with no height" do
+        assert @geo = Paperclip::Geometry.parse("123x#{mod}")
+        assert_equal mod, @geo.modifier
+        assert_equal "123#{mod}", @geo.to_s
       end
     end
 
@@ -93,7 +102,7 @@ class GeometryTest < Test::Unit::TestCase
 
     should "be generated from a file" do
       file = File.join(File.dirname(__FILE__), "fixtures", "5k.png")
-      file = File.new(file)
+      file = File.new(file, 'rb')
       assert_nothing_raised{ @geo = Paperclip::Geometry.from_file(file) }
       assert @geo.height > 0
       assert @geo.width > 0

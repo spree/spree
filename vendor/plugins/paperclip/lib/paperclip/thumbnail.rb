@@ -1,33 +1,28 @@
 module Paperclip
   # Handles thumbnailing images that are uploaded.
-  class Thumbnail
+  class Thumbnail < Processor
 
-    attr_accessor :file, :current_geometry, :target_geometry, :format, :whiny_thumbnails, :convert_options
+    attr_accessor :current_geometry, :target_geometry, :format, :whiny, :convert_options
 
     # Creates a Thumbnail object set to work on the +file+ given. It
     # will attempt to transform the image into one defined by +target_geometry+
     # which is a "WxH"-style string. +format+ will be inferred from the +file+
     # unless specified. Thumbnail creation will raise no errors unless
-    # +whiny_thumbnails+ is true (which it is, by default. If +convert_options+ is
+    # +whiny+ is true (which it is, by default. If +convert_options+ is
     # set, the options will be appended to the convert command upon image conversion 
-    def initialize file, target_geometry, format = nil, convert_options = nil, whiny_thumbnails = true
+    def initialize file, options = {}, attachment = nil
+      super
+      geometry          = options[:geometry]
       @file             = file
-      @crop             = target_geometry[-1,1] == '#'
-      @target_geometry  = Geometry.parse target_geometry
-      @current_geometry = Geometry.from_file file
-      @convert_options  = convert_options
-      @whiny_thumbnails = whiny_thumbnails
+      @crop             = geometry[-1,1] == '#'
+      @target_geometry  = Geometry.parse geometry
+      @current_geometry = Geometry.from_file @file
+      @convert_options  = options[:convert_options]
+      @whiny            = options[:whiny].nil? ? true : options[:whiny]
+      @format           = options[:format]
 
       @current_format   = File.extname(@file.path)
       @basename         = File.basename(@file.path, @current_format)
-      
-      @format = format
-    end
-
-    # Creates a thumbnail, as specified in +initialize+, +make+s it, and returns the
-    # resulting Tempfile.
-    def self.make file, dimensions, format = nil, convert_options = nil, whiny_thumbnails = true
-      new(file, dimensions, format, convert_options, whiny_thumbnails).make
     end
 
     # Returns true if the +target_geometry+ is meant to crop.
@@ -56,7 +51,7 @@ module Paperclip
       begin
         success = Paperclip.run("convert", command.gsub(/\s+/, " "))
       rescue PaperclipCommandLineError
-        raise PaperclipError, "There was an error processing the thumbnail for #{@basename}" if @whiny_thumbnails
+        raise PaperclipError, "There was an error processing the thumbnail for #{@basename}" if @whiny
       end
 
       dst
@@ -70,19 +65,6 @@ module Paperclip
       trans << " -crop \"#{crop}\" +repage" if crop
       trans << " #{convert_options}" if convert_options?
       trans
-    end
-  end
-
-  # Due to how ImageMagick handles its image format conversion and how Tempfile
-  # handles its naming scheme, it is necessary to override how Tempfile makes
-  # its names so as to allow for file extensions. Idea taken from the comments
-  # on this blog post:
-  # http://marsorange.com/archives/of-mogrify-ruby-tempfile-dynamic-class-definitions
-  class Tempfile < ::Tempfile
-    # Replaces Tempfile's +make_tmpname+ with one that honors file extensions.
-    def make_tmpname(basename, n)
-      extension = File.extname(basename)
-      sprintf("%s,%d,%d%s", File.basename(basename, extension), $$, n, extension)
     end
   end
 end
