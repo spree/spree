@@ -1,0 +1,204 @@
+h2. Products and Variants
+
+This guide explains the basic representation of products vs variants, and considers relevant management issues.
+After reading it you should know:
+* the overall design in Spree
+* how to add products and variants
+* how to configure and use options to distinguish variants
+
+
+endprologue.
+
+h3. Products vs Variants
+
+It will be handy to have the admin interface of the Spree demo site open as you go through this guide. 
+
+Products are the basic units in the system, and variants allow for representation of choices like
+color or size for a product.
+Available choices are represented by a system of option types and option values.
+
+
+NOTE: There's a special case of a product with no choices or options, i.e. the product is available in just one standard version. Spree will create an "empty" variant to store information like SKU and inventory levels for this product. 
+
+Products must have at least a name and a (master) price. Optionally, they can have:
+* a text description
+* an availability date
+* SEO-oriented metadata
+
+They can also have other data which are best explained elsewhere:
+* Zero or more "product properties":#properties
+* Zero or more "Taxons or categories":taxonomy.html
+* A "Shipping category":shipping.html
+* A "Tax category":taxation.html
+* And of course, zero or more "variants":#variants
+
+Additionally, a product may be withdrawn from sale by marking it as 'deleted' in the product listings
+admin page. Details are still kept on the system for reference, but will not be shown on the store pages.
+A similar mechanism exists for variants.
+
+Variants have
+* zero or more "option values":#option-values which distinguish them from other variants
+* an "inventory level":inventory.html
+* an SKU
+* a variant price (optional, which can be different from the master price)
+* dimensions and weight (optional, for "shipping purposes":shipping.html)
+
+For products with an "empty" variant, i.e. no choices like size or color (and hence no option values), 
+the admin interface provides
+convenient access to the following, with modifications actually happening to the empty variant underneath.
+* an inventory level":inventory.html
+* SKU code 
+* Price (which is set via the "master price")
+
+INFO: Extensions and customisations can easily add new fields to both classes: see the "extension guide":extension.html for more information.
+
+h3. Adding and Displaying Products
+
+The admin interface for basic product addition is fairly straightforward. 
+Remember to consult the other guides for detail on the advanced aspects like tax categories.
+The following concentrates on core product data.
+
+h4. Prototypes
+
+Spree provides prototypes as a kind of template for related products. Selecting a prototype at the 
+first stage of product creation associates the new product with certain properties and option types
+(explained soon). This is a useful time-saving measure and helps get consistency within groups of
+similar products. You can define new prototypes using the sub-tab under the main Products menu, 
+where you name a prototype and select the properties and option types to use. 
+
+
+h4. Images
+
+Images can be associated with a product by uploading a set of files. Spree (via the Paperclip plugin)
+handles creation and storage of several size versions of each image. The default is to create four
+styles according to the ImageMagick spec.
+
+<shell>
+:styles => { :mini => '48x48>', :small => '100x100>', :product => '240x240>', :large => '600x600>' },
+</shell>
+
+In views, you can generate an image's URL file with +image.attachment.url(:product)+, i.e. using the 
+name of the format as an argument. 
+You can change the sizes or add new formats by including a line like this in your +site_extension.rb+
+file:
+
+<shell>
+Image.attachment_definitions[:attachment][:styles] = {:thumb => '60x80', :mini => '100x100', :small => '175x175>', :product => '300x300>', :large => '720x720>'}
+</shell>
+
+
+h4. Properties
+
+Properties are simple key-value tables attached to a product, and they are displayed after the 
+description on the product's fly-page.
+Since certain keys will apply to many products, Spree manages a global set of properties. You can 
+control these via the sub-tab under the main Products menu.  Each key has a presentation (i.e. full) 
+name and an internal label. 
+Prototypes can be set up to include sets of these properties when a product is first created.
+You can also request a prototype from the value-filling page.
+
+For a given product, you can specify which 
+keys you want to associate and then give corresponding values via the "Product Properties" menu in the
+sidebar. If you selected a prototype when creating the product, certain keys may already be set up. 
+Else, type in the (internal) name of an existing property and a value. 
+
+NOTE: the property key must already exist - it is not automatically created.
+
+
+h4. Option Types
+
+Option types are the framework for classifying variants. An option type has:
+* an internal name
+* a presentation name (seen by customers)
+* a set of allowed values for that type, and each value has a long name and a short name
+
+So, you may have one option type for a product's colours, and another for its sizes. 
+
+NOTE: option types are tied to specific products, thus giving precise control over the options available for a particular product. For example, widgets may have one colour scheme, and gadgets a different one (or no colour scheme at all).
+
+You can quickly associate option types with products via the prototypes system: selecting a prototype 
+for your product means that the listed (already created) option types are attached. 
+
+NOTE: actual availability of options combinations is determined by how the variants are configured, and this is explained below. 
+
+
+h4. Product Pricing
+
+A master price must be assigned at the product level. For store owners who are creating products without variants, the master price serves as the price of the so called “empty variant” that is created for you behind the scenes. This empty variant also has an specified inventory quantity. (You can also set a specific price on the variant itself, but this will rarely be needed.)
+
+The master price is also useful for products with meaningful variants. One such use is to allow for the display of a single price in your store while users are “browsing” the general listing of your products. It might be preferable to list the most “common” price of a product even though for certain variants, you may charge a slightly different price. In this scenario the user can be initially presented with the master price and then shown the true variant price when they choose their variant and add it to their cart.
+
+h4. Deleted products
+
+A product may be withdrawn from sale by marking it as 'deleted' in the product listings admin page. 
+Details are still kept on the system for reference, but will not be shown on the store pages.
+
+
+
+h3. Variants
+
+h4. The "empty" variant
+
+This is a special case for a product which does not have "meaningful" variants, i.e. there are no
+options like colour or size for a customer to choose from, so the product comes in just one standard
+format. 
+
+When using the admin interface, products will be created 
+with an empty variant, and this variant is used until variant option types are created. 
+
+
+h4. Option Values
+
+Option values define or characterise a variant, and a variant must have one value for each 
+"option type":#option-types
+from the parent product, where the allowed values for each type come from the type definition. 
+For example, where size and colour options have been set up, one variant can be 'Small' and 'Red', or
+another could be 'Large' and 'Green'. 
+
+To create a variant, you just give a (not yet used) combination of the product's option types, and 
+enter any variant-specific information. See the "inventory guide":inventory.html for information
+on stock control issues.
+
+NOTE: to check - can any option type be left unspecified? are duplicates allowed?
+
+
+h4. Variant Pricing
+
+All variants must have a price, but Spree is flexible about how this is set. Each time a variant is saved, 
+the product's master price is used if no explicit price is given for the variant. This allows the merchant
+to leave the price field blank in forms, and so frees them from repeating the same price information.
+
+NOTE: If you later change the master price, then the variants that have already been created will _not_ change their price automatically. The new price will only appear when such variants are next updated or edited.
+
+Finally, when present, the master price can also be used to calculate a price differential for a 
+particular variation and so provide useful information when a user is selecting a variant. 
+For each variant, the default behaviour is to show how much extra or less that variant costs compared
+to the master price (usually shown above the variants list), and to show nothing if the differential is zero. 
+
+h4. Deleted variants
+
+Similarly to products, no longer available variants of a product can be marked as deleted. The information
+is retained for reference, but customers will no longer be offered that variant.
+
+
+h3. Programming interfaces
+
+h4. Pricing displays
+
+* the price for a product or variant can be obtained with +product_price+
+* by default, this returns a string formatted with the locale's currency settings, but this can be 
+	over-ridden with an option: +product_price(some_thing, :format_as_currency => false)+
+
+h4. Testing for variants
+
+* +variants?+ tests whether a product has meaningful variants (i.e. not empty and hence not characterised by a set of option values) 
+* +variant+ returns the empty variant for a product _only if_ it really is an empty variant
+* +variants+ returns the set of variants accessible through the +has_many+ association
+
+h4. Automatic uploading
+
+It can be tedious to add large numbers of products by hand. It is possible to write scripts to do
+the basic work, and some are starting to circulate. The "Spree wiki":http://wiki.github.com/railsdog/spree
+contains a collection of scripts you can download and adapt, plus other useful utilities. Look at
+the "Tricks and Tips section":http://wiki.github.com/railsdog/spree/developers-tricks-and-tips.
+

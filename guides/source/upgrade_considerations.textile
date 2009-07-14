@@ -1,3 +1,0 @@
-h2. Upgrade Considerations
-
-endprologue.

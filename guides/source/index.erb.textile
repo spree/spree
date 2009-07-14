@@ -34,6 +34,11 @@ h3. Start Here
 h3. Basic Configuration
 
 <dl>
+  <% guide('Products and Variants', 'products_and_variants.html') do %>
+    This guide covers the basic representation of products and their possible variants.
+  <% end %>
+</dl>
+<dl>
   <% guide('Zones', 'zones.html') do %>
     This guide covers how to configure a zone for shipping, taxation or other custom purposes.
   <% end %>
@@ -41,11 +46,6 @@ h3. Basic Configuration
 <dl>
   <% guide('Taxation', 'taxation.html') do %>
     Information on how to configure the tax calculations for your site (including Sales Tax and VAT.)
-  <% end %>
-</dl>
-<dl>
-  <% guide('Pricing', 'pricing.html') do %>
-    This guide covers how to configure pricing information for your store.
   <% end %>
 </dl>
 <dl>
@@ -72,17 +72,22 @@ h3. Basic Configuration
 h3. Customization
 
 <dl>
+  <% guide('Basic Customization Tutorial', 'customization_tutorial.html') do %>
+    This guide introduces the key ideas for customizing Spree to your site design.
+  <% end %>
+</dl>
+<dl>
   <% guide('Using Extensions', 'extensions.html') do %>
     This guide covers how to use the extension system to customize Spree to meet your exact needs.
   <% end %>
 </dl>
 <dl>
   <% guide('Extension Tutorial', 'extension_tutorial.html') do %>
-    This tutorial covers the basic steps of creating your own custom extension.
+    This tutorial covers the basic steps of creating your own custom extensions.
   <% end %>
 </dl>
 <dl>
-  <% guide('Checkout Process', 'checkout.html') do %>
+  <% guide('Customizing the Checkout Process', 'checkout.html') do %>
     This guide will show you how to customize the steps in your checkout process.
   <% end %>
 </dl>
@@ -110,11 +115,6 @@ h3. Digging Deeper
   <% end %>
 </dl>
 <dl>
-  <% guide('Customizing the Checkout Process', 'checkout.html') do %>
-    This guide covers how to customize the checkout process to meet your own requirements.
-  <% end %>
-</dl>
-<dl>
   <% guide('Preferences', 'preferences.html') do %>
     Information on how to administer the various preferences in Spree.
   <% end %>
@@ -127,13 +127,13 @@ h3. Digging Deeper
 h3. Best Practices   
 
 <dl>
-  <% guide('Upgrade Considerations', 'upgrade_considerations.html') do %>
-    This guide covers how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
+  <% guide('Developer Tips', 'developer_tips.html') do %>
+    This guide contains a miscellany of useful advice from Spree developers, including how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
   <% end %>
 </dl>
 <dl>
   <% guide('SEO Considerations', 'seo_considerations.html') do %>
-    Information on how to leverage the exisitng SEO features of Spree as well general SEO best practices.
+    Information on how to leverage the exisitng SEO features of Spree as well as on general SEO best practices.
   <% end %>
 </dl>
 

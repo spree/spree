@@ -1,3 +1,78 @@
 h2. Server Configuration
 
+Server Configuration is a difficult area to tackle since there are so many different types of server setups and ways in which people choose to deploy their sites. The beginning of this section will focus on the most general server configuration measures needed to deploy spree to a production environment. The latter part of this section will attempt to address specific deployment scenarios and the special considerations to take when deploying under these varying scenarios.
+
 endprologue.
+
+WARNING. This Guide is based on Spree 0.8.0. Some of the code shown here will not work in older versions of Spree.
+
+h3. This Guide Assumes
+
+Just like the the "getting started guide":../getting_started.html, this guide assumes a baisc working knowledge of Ruby on Rails. Also, on your production server, you need to have some prerequisites installed on said server:
+
+* The "Ruby":http://www.ruby-lang.org/en/downloads language
+* The "RubyGems":http://rubyforge.org/frs/?group_id=126 packaging system
+* The "Ruby on Rails":http://rubyonrails.org/download gems
+* A working installation of "SQLite":http://www.sqlite.org (preferred), "MySQL":http://www.mysql.com, or "PostgreSQL":http://www.postgresql.org
+
+General production deployment assumes that you have ssh and sudo rights to your production server. If you do not have such rights, see the Special Production Deployment section further down the page for assistance.
+
+h3. General Production Deployment
+
+First you are going to want to log into your production server via ssh.
+
+Once logged in install the spree gem to the machine, 
+
+<shell>gem install spree
+</shell>
+
+This is a good way to make sure all other required gems are installed on the production server since the gem requires the dependency of the other necessary gems.
+
+If you already have a locally working development version of the site you wish to put on the production server, you can upload that code to your production server to whatever folder you are using for site code. If you are starting with a fresh spree project instead, from within the folder you are using for site code on the production server, follow the "getting started guide":../getting_started.html steps 3.3 and 3.4., using production instead of development in the database configuration.
+
+Make sure that your production server is setup to use the public directory of the folder of the site code as the home directory for the site. Also, make sure that you have a database set up which matches the production environment you have set in your config/database.yml.
+
+From your ssh instance on the production server, make sure you are located in the folder your site code is located.
+
+<shell>rake gems:install
+</shell>
+
+This step will make sure any extra necessary gems are properly installed on the production server. Next, we will setup the database, assuming a clean database. 
+
+<shell>rake db:migrate
+rake db:admin:create
+</shell>
+
+Now the code and the database are ready for the site. All that is needed from here is to start the production server, which will vary depending on what you are using to serve the code.      
+
+h3. SSL Considerations
+
+h4. Default Settings
+
+Spree is configured with SSL enabled by default.  It is not enabled for development or test mode but if you deploy Spree in production, it will assume you have SSL configured.  SSL is only enabled for certain sensitive URL's (related to login and checkout.)  A modified version of the "ssl_requirement":http://github.com/rails/ssl_requirement/tree/master plugin is used to force redirects to SSL (or non-SSL) as approrpriate.
+
+h4. Changing the Default Settings
+
+If you do not wish to use SSL in production, or if you wish to enable SSL in development mode, you will have to change the +:allow_ssl_in_production+ configuration setting.  Generally this is done via the admin interface (+Configuration | General Settings+) as shown below.
+
+!images/server_configuration/change_ssl_setting.png(Changing SSL Setting)!
+
+There is also a technique for "using migrations to change configuration settings":extensions.html#using-migrationsfor-custom-configurations.
+
+h3. Special Production Deployment
+
+This section is for users who don't have certain rights on their production server or have alternate site deployment scenarios. If you have a specific need that is not addressed here, you can seek help at the irc channel #spree on irc.freenode.net or at our google group spree-user found at "http://groups.google.com/group/spree-user":http://groups.google.com/group/spree-user .
+
+h4. No sudo ability and unable to install gems without sudo
+
+Many shared hosting environment users have issues installing the spree gem to their production server because they do not have the proper rights. Usually searching through your hosts support or wiki pages will present you with workarounds to address these scenarios. If installing the gem is still not a possibility, the following workaround may be helpful.
+
+First, make sure you have a working local development version of your spree project. If you are not sure how to do this, consult the "getting started guide":../getting_started.html.
+
+<shell>sudo rake spree:freeze:gems 
+sudo rake rails:freeze:gems
+sudo rake gems:unpack:dependencies 
+</shell>
+
+These three tasks will freeze your project to its spree version, and all the gems required to run the project. Now when you upload the project to your production server, you should not have to install any additional gems onto the server in order to get it to work properly.
+

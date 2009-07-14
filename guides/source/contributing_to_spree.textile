@@ -4,6 +4,41 @@ Spree is an open source project.  Anyone can use the code, but more importantly,
 
 endprologue.
 
+h3. Types of Contributions
+* spree-core: Bug fixes, new features, test scripts
+* spree-documentation: Guides, tutorials, and other end-user or developer documentation
+* extensions:  specialized functionality such as shipping calculators or extended data modeling and viewing
+
+h3. For the impatient
+
+h4. One Time Setup
+
+* Fork "Spree":http://github.com/railsdog/spree in GitHub
+* Clone your new fork and add +railsdog+ as a remote reference
+
+<shell>
+git remote add railsdog git://github.com/railsdog/spree.git  
+</shell>
+
+h4. For Each Contribution
+
+* Create ticket for the issue/feature in "lighthouse":http://railsdog.lighthouseapp.com/projects/31096-spree/overview
+* Create branch for your ticket using ticket number and "title slug"
+
+<shell>
+git fetch railsdog  
+git checkout -b 525-add-thai-localization --track railsdog/master 
+</shell>
+	
+* Commit your changes to your branch.
+* Push your changes back to your fork
+
+<shell>
+git push origin 525-add-thai-localization   
+</shell>
+
+* Update ticket and include the URL for your commit that fixes the issue.
+
 h3. Before You Start Coding
 
 If you are planning on coding a major new feature or extension, you might want to post a quick message on "spree-user":http://groups.google.com/group/spree-user before you get started. Its possible that you may get some valuable feedback from the regular contributors to the project. This feedback may help improve the overall quality of your idea as well as to increase its chances of being adopted into the core project. You can use any email address to join the list, you don't need a gmail account to subscribe.
@@ -12,7 +47,7 @@ This is the suggested approach to making a contribution. Its not required that y
 
 h3. Git
 
-You'll need a "GitHub":http://github.com/ account in order to contribute to the Spree project in a meaningful way. Technically you can just clone the public URL from GitHub and submit a git patch to the issue tracker, but we prefer GitHub. Eventually we might encourage git patches (as opposed to Github forks) for contributions (like they do for the Rails core) but right now the project is a manageable size.
+Spree's code and documentation is kept at "GitHub":http://github.com/ and you will need an account (free) to begin contributing to the Spree project in a meaningful way. Technically you can just clone the public URL from GitHub and submit a git patch to the issue tracker, but we prefer submissions to come via GitHub. 
 
 h4. Creating a GitHub Fork
 
@@ -20,10 +55,22 @@ Create a fork in GitHub. A fork is not as extreme as it sounds. Its really just 
 
 h4. Git Branches
 
-Git branches are "cheap." There is really isn't any cost to creating them, so use them liberally. Unless its a minor bug fix, you should work on a separate branch (even in your own fork.) This will allow you to keep your master branch "clean" and make it easier to sync your local master with the "official master" upstream. It will also make it easy for you to submit quick bug fixes that you may discover while working on your other branches. Just switch back to the master and commit a quick change.
+Once you have your fork and your ticket number in hand, you are ready to branch and apply your contributions.  Git branches are "cheap." There is really isn't any cost to creating them, so use them liberally. Unless its a minor bug fix, you should work on a separate branch (even in your own fork). This will allow you to keep your master branch "clean" and make it easier to sync your local master with the "official master" upstream. It will also make it easy for you to submit quick bug fixes that you may discover while working on your other branches. Just switch back to the master and commit a quick change.
 
-h3. Issue Tracker
+h4. Track The Main Repository
 
-We are using Red Mine as an "issue tracker":http://support.spreehq.org/projects/spree/issues for tracking issues and feature requests. All changes to the core should flow through this system. Please file an issue before you commit your code and then reference the issue number in your commit. This helps the core team process your contribution because once you push your changes to your fork, we can quickly associate the commit with the relevant ticket. We also use these tickets to create release notes and to assist with upgrade documentation.
+The key to staying in sync and making it easier for the core maintainers to merge your contributions into the official master branch is establishing a track on railsdog.  This is done with:
 
-Take a look at "this commit":http://github.com/schof/spree/commit/f60f61926d2a14372f0c6a10530de730f79d240b for an example of how to reference the issue number in your commit. Please use #123 (or whatever your number is) in this exact format. We're planning on integrating the git commits with the actual ticket number in the future so this will help.  It also helps us to keep track of your contribution and make sure that it gets applied.
+<shell>
+git remote add railsdog
+</shell>
+
+You can also branch and track in one shot with the following:
+
+<shell>
+git checkout -b 525-add-thai-localization --track railsdog/origin 	
+</shell>
+
+h3. Light House Issue Tracker
+
+The Spree development team is using "Light House":http://railsdog.lighthouseapp.com/projects/31096-spree/overview for tracking all issue and feature requests. Use it to browse the existing tickets or to submit a new issue.  All changes to the core should flow through this system. Please file an issue before you commit your code and then reference the issue number in your commit. Always make your commit on an appropriately named branch that references the ticket number and the title of the ticket.  This helps the core team process your contribution because once you push your changes to your fork, we can quickly associate the commit with the relevant ticket. We also use these tickets to create release notes and to assist with upgrade documentation.

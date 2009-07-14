@@ -7,7 +7,7 @@ After reading it you should know:
 * the design used in Spree
 * how to specify your shipping structure
 * how to configure products for special shipping treatment
-* how to capture delivery instructions
+* how to capture shipping instructions
 
 endprologue.
 
@@ -38,7 +38,7 @@ are presented.
 The Customer must choose one before proceeding to the next stage. At 
 confirmation, the shipping cost has been added to the order total.
 
-NOTE. _what about special instructions?_ (I have a patch for this)
+NOTE. You can enable collection of extra _shipping instructions_ by setting the option +Spree::Config.set(:shipping_instructions => true)+. This is turned off by default. See "Shipping Instructions":#shipping-instructions below.
 
 h4. What the Orders Administrator Sees
 
@@ -48,9 +48,7 @@ can update the record with actual shipping cost and a tracking code, and
 may also (once only) confirm the despatch. This confirmation causes a 
 shipping date to be set as the time of confirmation. 
 
-NOTE. There is little support at present for split shipments. Spree allows multiple shipments for an order but uses only the last in calculations.
-
--- shipments
+NOTE. There is little support at present for split shipments. Spree allows representation of multiple shipments for an order but uses only the last in calculations.
 
 h4. Configuration Options
 
@@ -60,30 +58,58 @@ methods is also allowed.
 (Recall that administrators can freely create new zones to reflect 
 shipping constraints.)
 
-To customize how products are rated in shipping 
+Each product can also set a +ShippingCategory+, as explained below.
 
 
-h3. Adding New Methods
+h3. Adding New Shipping Methods
 
-NOTE. lib/spree/shipping_calculator is dead code now? seems like code in order.rb
+The main work is to provide a suitable calculator. You can write your own, but there
+are some existing ones which might be useful for simple pricing structures.
+
+NOTE. ******** lib/spree/shipping_calculator is dead code now? seems like code in order.rb
 
 h4. The FlatRate extension
 
+This calculator comes with Spree, and returns a fixed rate depending on the setting of 
+preference value +Spree::FlatRateShipping::Config[:flat_rate_amount]+.
+
 h4. Other useful extensions
+
+There are a few Spree extensions which provide additional shipping methods, including
+special support for the fees for common carriers, or support for bulk orders.
+See the "Spree Extension Registry":http://ext.spreecommerce.org for the latest 
+information.
+
+h4. Writing your own
+
+Your calculator should accept a shipment and return a cost. Your calculator can look at 
+any reachable data, but typically uses the address and order in a shipment, plus 
+the information from variants which are contained in the line_items.
 
 h3. Product Configuration
 
+Users can assign products to specific ShippingCategories or include extra information in 
+variants to enable the calculator to determine results.
+
+Each product has an (optional) +ShippingCategory+: this adds product-specific information
+to the calculations beyond the standard information from the shipment (which is
+destination address, variants and quantities, and possibly some weight and dimension 
+information if given for a variant). +ShippingCategory+ is basically a wrapper for
+a string. One use is to code up specific rates, eg "Fixed $20" or "Fixed $40", from 
+which a calculator could extract imposed prices (and not go through its other
+calculations).
+
 h4. Variant configuration
 
+Variants can be specified with weight and dimension information. Some shipping method
+calculators will use this information if it is present. 
 
-----------
+h3. Shipping Instructions
 
+The option +Spree::Config[:shipping_instructions]+ controls collection of additional
+_shipping instructions_. This is turned off by default. If an order has any shipping
+instructions attached, they will be shown in an order's shipment admin page and can
+also be edited at that stage. Observe that instructions are currently attached to
+the order and not to actual shipments.
 
-shipment is 
-Shipment(id: integer, order_id: integer, shipping_method_id: integer, tracking:string, created_at: datetime, updated_at: datetime, number: string, cost: decimal,shipped_at: datetime, address_id: integer)
-ShippingMethod(id: integer, zone_id: integer, shipping_calculator: string, name: string, created_at: datetime, updated_at: datetime)
-
-Category = id + name
-
-Order - usu one shipment (no split yet?)
 
