@@ -34,14 +34,12 @@ welcome.
 INFO. The "Spree Wiki":/wiki/scripts contains a few scripts to automate some of the checking.
 
 
-h3. Initializers
+h4. Initializers
 
-Initializers are run during startup, and are the recommended way to execute certain settings.
+Initializers are run during startup, and are the recommended way to execute certain settings. You can 
+put initializers in extensions, thus have a way to execute extension-specific configurations.
 
-NOTE. Initializers are run in alphabetical order. Most of the time this won't matter, but you probably want your site initializer to run last. I call mine +zzzzzzz.rb+. 
-
-NOTE. At the moment, initializers in extensions are ignored (but we are looking at this). For now, still put initializers in their extensions but use symbolic links in +config/initializers+ to point to them. 
-
+See the "extensions guide":extensions.html#extension-initializers for more information. 
 
 
 h3. Debugging techniques
@@ -67,6 +65,29 @@ end
 </shell>
 
 h3. Managing large projects
+
+h4. To fork or not to fork...
+
+Suppose there's a few details of Spree that you want to over-ride due to personal or client preference, 
+but which aren't the usual things that you'd over-ride (like views) - so something like tweaks to the
+models or controllers. 
+
+You could hide these away in your site extension, but they could get mixed up with your real site
+customizations. Your could also fork Spree and run your site on this forked version, but this can
+also be a headache to get right. There's also the hassle of tracking changes to +railsdog/master+ and 
+pulling them into your project at the right time. 
+
+So here's a compromise: have an extra extension, say +spree-tweaks+, to contain your small collection
+of modified files, which is loaded first in the extension order. The benefits are: it's clear what you
+are over-riding, and easier to check against core changes; you can base your project on an official
+gem release or a +railsdog/master+ commit stage; such tweaks can become part of your client site project 
+and be managed with SCM etc. 
+
+If you find yourself wanting extensive changes to core, this technique probably won't work so well. 
+But then again, if this is the case, then you probably want to look seriously at splitting some 
+code off into stand-alone extensions and then see whether any of the other code should be contributed 
+to the core. 
+
 
 h4. Setting up submodules
 
