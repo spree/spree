@@ -1,11 +1,4 @@
-require 'rubygems'
-require 'test/unit'
-require 'shoulda'
-require 'mocha'
-require 'tempfile'
-
-require File.join(File.dirname(__FILE__), '..', 'lib', 'paperclip', 'geometry.rb')
-require File.join(File.dirname(__FILE__), '..', 'lib', 'paperclip', 'thumbnail.rb')
+require 'test/helper'
 
 class ThumbnailTest < Test::Unit::TestCase
 
@@ -39,8 +32,10 @@ class ThumbnailTest < Test::Unit::TestCase
 
   context "An image" do
     setup do
-      @file = File.new(File.join(File.dirname(__FILE__), "fixtures", "5k.png"))
+      @file = File.new(File.join(File.dirname(__FILE__), "fixtures", "5k.png"), 'rb')
     end
+
+    teardown { @file.close }
 
     [["600x600>", "434x66"],
      ["400x400>", "400x61"],
@@ -48,11 +43,11 @@ class ThumbnailTest < Test::Unit::TestCase
     ].each do |args|
       context "being thumbnailed with a geometry of #{args[0]}" do
         setup do
-          @thumb = Paperclip::Thumbnail.new(@file, args[0])
+          @thumb = Paperclip::Thumbnail.new(@file, :geometry => args[0])
         end
 
         should "start with dimensions of 434x66" do
-          cmd = %Q[identify -format "%wx%h" #{@file.path}] 
+          cmd = %Q[identify -format "%wx%h" "#{@file.path}"] 
           assert_equal "434x66", `#{cmd}`.chomp
         end
 
@@ -66,7 +61,7 @@ class ThumbnailTest < Test::Unit::TestCase
           end
 
           should "be the size we expect it to be" do
-            cmd = %Q[identify -format "%wx%h" #{@thumb_result.path}] 
+            cmd = %Q[identify -format "%wx%h" "#{@thumb_result.path}"] 
             assert_equal args[1], `#{cmd}`.chomp
           end
         end
@@ -75,7 +70,7 @@ class ThumbnailTest < Test::Unit::TestCase
 
     context "being thumbnailed at 100x50 with cropping" do
       setup do
-        @thumb = Paperclip::Thumbnail.new(@file, "100x50#")
+        @thumb = Paperclip::Thumbnail.new(@file, :geometry => "100x50#")
       end
 
       should "report its correct current and target geometries" do
@@ -87,8 +82,8 @@ class ThumbnailTest < Test::Unit::TestCase
         assert_nil @thumb.format
       end
 
-      should "have whiny_thumbnails turned on by default" do
-        assert @thumb.whiny_thumbnails
+      should "have whiny turned on by default" do
+        assert @thumb.whiny
       end
       
       should "have convert_options set to nil by default" do
@@ -104,13 +99,15 @@ class ThumbnailTest < Test::Unit::TestCase
 
       should "create the thumbnail when sent #make" do
         dst = @thumb.make
-        assert_match /100x50/, `identify #{dst.path}`
+        assert_match /100x50/, `identify "#{dst.path}"`
       end
     end
     
     context "being thumbnailed with convert options set" do
       setup do
-        @thumb = Paperclip::Thumbnail.new(@file, "100x50#", format=nil, convert_options="-strip -depth 8", whiny_thumbnails=true)
+        @thumb = Paperclip::Thumbnail.new(@file,
+                                          :geometry        => "100x50#",
+                                          :convert_options => "-strip -depth 8")
       end
 
       should "have convert_options value set" do
@@ -126,12 +123,14 @@ class ThumbnailTest < Test::Unit::TestCase
 
       should "create the thumbnail when sent #make" do
         dst = @thumb.make
-        assert_match /100x50/, `identify #{dst.path}`
+        assert_match /100x50/, `identify "#{dst.path}"`
       end
       
       context "redefined to have bad convert_options setting" do
         setup do
-          @thumb = Paperclip::Thumbnail.new(@file, "100x50#", format=nil, convert_options="-this-aint-no-option", whiny_thumbnails=true)
+          @thumb = Paperclip::Thumbnail.new(@file,
+                                            :geometry => "100x50#",
+                                            :convert_options => "-this-aint-no-option")
         end
 
         should "error when trying to create the thumbnail" do
@@ -140,6 +139,39 @@ class ThumbnailTest < Test::Unit::TestCase
           end
         end
       end      
+    end
+  end
+
+  context "A multipage PDF" do
+    setup do
+      @file = File.new(File.join(File.dirname(__FILE__), "fixtures", "twopage.pdf"), 'rb')
+    end
+
+    teardown { @file.close }
+
+    should "start with two pages with dimensions 612x792" do
+      cmd = %Q[identify -format "%wx%h" "#{@file.path}"] 
+      assert_equal "612x792"*2, `#{cmd}`.chomp
+    end
+
+    context "being thumbnailed at 100x100 with cropping" do
+      setup do
+        @thumb = Paperclip::Thumbnail.new(@file, :geometry => "100x100#", :format => :png)
+      end
+
+      should "report its correct current and target geometries" do
+        assert_equal "100x100#", @thumb.target_geometry.to_s
+        assert_equal "612x792", @thumb.current_geometry.to_s
+      end
+
+      should "report its correct format" do
+        assert_equal :png, @thumb.format
+      end
+
+      should "create the thumbnail when sent #make" do
+        dst = @thumb.make
+        assert_match /100x100/, `identify "#{dst.path}"`
+      end
     end
   end
 end

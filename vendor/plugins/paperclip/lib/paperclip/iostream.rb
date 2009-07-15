@@ -30,7 +30,7 @@ module IOStream
   end
 end
 
-class IO
+class IO #:nodoc:
   include IOStream
 end
 
@@ -38,6 +38,21 @@ end
   if Object.const_defined? klass
     Object.const_get(klass).class_eval do
       include IOStream
+    end
+  end
+end
+
+# Corrects a bug in Windows when asking for Tempfile size.
+if defined? Tempfile
+  class Tempfile
+    def size
+      if @tmpfile
+        @tmpfile.fsync
+        @tmpfile.flush
+        @tmpfile.stat.size
+      else
+        0
+      end
     end
   end
 end

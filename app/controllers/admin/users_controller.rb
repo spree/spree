@@ -18,7 +18,7 @@ class Admin::UsersController < Admin::BaseController
     @search.order_by ||= :email
     @search.order_as ||= "ASC"
     #set results per page to default or form result
-    @search.per_page = Spree::Config[:admin_products_per_page]
+    @search.per_page ||= Spree::Config[:admin_products_per_page]
 
     @collection, @collection_count = @search.all, @search.count
 

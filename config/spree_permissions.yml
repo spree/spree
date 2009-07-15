@@ -55,13 +55,14 @@
       unless : "current_user.id == object.id"
 'OrdersController':
   permission1:
-    roles : [user]
-    options :
-      for : [checkout]   
-      unless : "Spree::Config[:allow_guest_checkout]"
-  permission2:
     # Users can only see their own orders
     roles : [admin]
     options :
       except : [new, create, cvv]   
       unless : can_access?  #orders_controller may grant access based on presence of token, etc.
+'CheckoutsController':
+  permission1:
+    roles : [user]
+    options :
+      for : [update]   
+      unless : "Spree::Config[:allow_guest_checkout]"

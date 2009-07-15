@@ -91,6 +91,7 @@ class Creditcard < ActiveRecord::Base
   # Validation logic ripped from ActiveMerchant's Creditcard model
   # http://github.com/Shopify/active_merchant/tree/master/lib/active_merchant/billing/credit_card.rb
   def filter_sensitive
+    self.display_number = ActiveMerchant::Billing::CreditCard.mask(number) if self.display_number.blank?
     self.number = nil unless Spree::Config[:store_cc]
     self.verification_value = nil unless Spree::Config[:store_cvv]
   end
@@ -99,7 +100,6 @@ class Creditcard < ActiveRecord::Base
     self.month = month.to_i
     self.year = year.to_i
     self.number = number.to_s.gsub(/[^\d]/, "")
-    self.display_number = ActiveMerchant::Billing::CreditCard.mask(number)
     self.cc_type.downcase! if cc_type.respond_to?(:downcase)
     self.cc_type = spree_cc_type if cc_type.blank?    
     self.first_name = address.firstname if address

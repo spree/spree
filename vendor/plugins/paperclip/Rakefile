@@ -1,7 +1,6 @@
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
-require 'rake/gempackagetask'
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
 require 'paperclip'
@@ -27,7 +26,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title    = 'Paperclip'
   rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README')
+  rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
@@ -43,46 +42,58 @@ task :clean do |t|
   FileUtils.rm_rf "pkg"
   FileUtils.rm "test/debug.log" rescue nil
   FileUtils.rm "test/paperclip.db" rescue nil
+  Dir.glob("paperclip-*.gem").each{|f| FileUtils.rm f }
 end
 
+include_file_globs = ["README*",
+                      "LICENSE",
+                      "Rakefile",
+                      "init.rb",
+                      "{generators,lib,tasks,test,shoulda_macros}/**/*"]
+exclude_file_globs = ["test/s3.yml",
+                      "test/debug.log",
+                      "test/paperclip.db",
+                      "test/doc",
+                      "test/doc/*",
+                      "test/pkg",
+                      "test/pkg/*",
+                      "test/tmp",
+                      "test/tmp/*"]
 spec = Gem::Specification.new do |s| 
-  s.rubygems_version  = "1.2.0"
   s.name              = "paperclip"
   s.version           = Paperclip::VERSION
   s.author            = "Jon Yurek"
   s.email             = "jyurek@thoughtbot.com"
-  s.homepage          = "http://www.thoughtbot.com/"
+  s.homepage          = "http://www.thoughtbot.com/projects/paperclip"
   s.platform          = Gem::Platform::RUBY
   s.summary           = "File attachments as attributes for ActiveRecord"
-  s.files             = FileList["README",
-                                 "LICENSE",
-                                 "Rakefile",
-                                 "init.rb",
-                                 "{generators,lib,tasks,test}/**/*"].to_a
+  s.files             = FileList[include_file_globs].to_a - FileList[exclude_file_globs].to_a
   s.require_path      = "lib"
   s.test_files        = FileList["test/**/test_*.rb"].to_a
   s.rubyforge_project = "paperclip"
   s.has_rdoc          = true
-  s.extra_rdoc_files  = ["README"]
+  s.extra_rdoc_files  = FileList["README*"].to_a
   s.rdoc_options << '--line-numbers' << '--inline-source'
   s.requirements << "ImageMagick"
-  s.add_runtime_dependency 'right_aws'
-  s.add_development_dependency 'Shoulda'
+  s.add_development_dependency 'thoughtbot-shoulda'
   s.add_development_dependency 'mocha'
 end
+
+desc "Print a list of the files to be put into the gem"
+task :manifest => :clean do
+  spec.files.each do |file|
+    puts file
+  end
+end
  
-Rake::GemPackageTask.new(spec) do |pkg| 
-  pkg.need_tar = true 
+desc "Generate a gemspec file for GitHub"
+task :gemspec => :clean do
+  File.open("#{spec.name}.gemspec", 'w') do |f|
+    f.write spec.to_ruby
+  end
 end 
 
-desc "Release new version"
-task :release => [:test, :sync_docs, :gem] do
-  require 'rubygems'
-  require 'rubyforge'
-  r = RubyForge.new
-  r.login
-  r.add_release spec.rubyforge_project,
-                spec.name,
-                spec.version,
-                File.join("pkg", "#{spec.name}-#{spec.version}.gem")
+desc "Build the gem into the current directory"
+task :gem => :gemspec do
+  `gem build #{spec.name}.gemspec`
 end

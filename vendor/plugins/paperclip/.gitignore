@@ -1,5 +1,5 @@
 *~
 *.swp
 tmp
-s3.yml
+test/s3.yml
 public

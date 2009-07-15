@@ -119,6 +119,7 @@ module Spree
 
     def after_initialize
       extension_loader.activate_extensions unless $rails_gem_installer
+      extension_loader.run_initializers #? conds?
       super
     end
 =begin

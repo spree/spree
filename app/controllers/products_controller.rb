@@ -42,7 +42,7 @@ class ProductsController < Spree::BaseController
       @search = Product.active.new_search(params[:search])
     end
 
-    @search.per_page = Spree::Config[:products_per_page]
+    @search.per_page ||= Spree::Config[:products_per_page]
     @search.include = :images
 
     @product_cols = 3

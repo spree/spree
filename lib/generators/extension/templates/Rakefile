@@ -22,4 +22,4 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
 end
 
 # Load any custom rakefiles for extension
-Dir[File.dirname(__FILE__) + '/tasks/*.rake'].sort.each { |f| require f }
+Dir[File.dirname(__FILE__) + '/lib/tasks/*.rake'].sort.each { |f| require f }
