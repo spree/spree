@@ -17,5 +17,5 @@ include a fake credit card number to use in test orders.
 10. If you get errors authorizing the transaction, use ruby-debug in the checkout_controller to get the full error message from Paypal. Future versions of Spree will log the full message.
 11. To use Paypal in production mode, you must have a valid SSL certificate and use https for all transactions. Active Merchant should handle this for you. Test this with real orders and real credit card numbers before launching. You must also sign up for a production Website Payments Pro account with Paypal which requires a check of your business and a contract for monthly fees.
 12. See http://www.paypal.com/IntegrationCenter/ic_pro_home.html for documentation.
-13. To use Paypal Website Payments Pro on a production site, you are required by Paypal to also use Express Checkout so that customers can checkout directly with their Paypal account. We are working on implementing this in Spree. Stay tuned.
+13. To use Paypal Website Payments Pro on a production site, you are required by Paypal to also use Express Checkout so that customers can checkout directly with their Paypal account. There is one extension which implements most of Paypal Express: see http://ext.spreecommerce.com/extensions/11-spree-paypal-express
 
