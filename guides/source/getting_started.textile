@@ -9,8 +9,6 @@ This guide covers getting up and running with Spree. After reading it, you shoul
 
 endprologue.
 
-WARNING. This Guide is based on Spree 0.8.0. Some of the code shown here will not work in older versions of Spree.
-
 h3. This Guide Assumes
 
 This guide is designed for beginners who want to get started with a Spree application from scratch. It assumes a basic working knowledge of Ruby on Rails.  To get the most out of this guide, you need to have some prerequisites installed:
