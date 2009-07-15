@@ -228,17 +228,45 @@ Refresh the site in your browser, and see that there is now a "Hello World" mess
 
 h3. Using Custom Javascript
 
-This final step of the tutorial describes how to add custom javascript to your site.
+This final step of the tutorial describes how to add custom javascript to your site by modifying the head partial template file.
 
-h4. Edit the Layout
+h4. Copy the head partial
 
-First, apply the following patch to SITE_EXTESION_DIR/app/views/layout/ to include site.js on all of your application pages. The rails helper will be used to consolidate and cache the three javascript files into one file to be included on all pages.
+We'll copy the existing head partial template to our site extension before we customize it.
+
+First, complete the following command to make a new directory: 
+
+<shell>
+mkdir SITE_EXTENSION_DIR/app/views/shared/
+</shell>
+
+h5. Spree Application Installation
+
+If you are running Spree as an application, copy the Spree +_head.html.erb+ partial to your extension +app/views/shared/+ directory.
+ 
+<shell>
+cp SPREE_ROOT/app/views/shared/_head.html.erb /
+  SITE_EXTENSION_DIR/app/views/shared/
+</shell>
+
+h5. Gem Installation
+
+If you are running Spree as a gem, copy the Spree gem +_head.html.erb+ partial to your extension +app/views/shared/+ directory.
+
+<shell>
+cp GEM_ROOT/app/views/shared/_head.html.erb /
+  SITE_EXTENSION_DIR/app/views/shared/
+</shell>
+
+h4. Edit the head partial
+
+Apply the following patch to +SITE_EXTENSION_DIR/app/views/shared/_head.html.erb+ to include +site.js+ on all of your application pages. The rails helper will be used to consolidate and cache the three javascript files into one file to be included on all pages.
  
 <code>
 - <%= javascript_include_tag 'jquery-1.3.2.min',
--   'jquery.validate.pack.js' :cache => 'jquery-and-plugins' %>
+-   'jquery.validate.min.js' :cache => 'jquery-and-plugins' %>
 + <%= javascript_include_tag 'jquery-1.3.2.min',
-+   'jquery.validate.pack.js', 'site.js'
++   'jquery.validate.min.js', 'site.js'
 +   :cache => 'jquery-and-site' %>
 </code>
 
@@ -253,7 +281,7 @@ mkdir public/javascripts/
 vi public/javascripts/site.js
 </shell>
 
-Add the following code to site.js:
+Add the following code to +site.js+:
 
 <code>
 $(function() {
@@ -263,7 +291,7 @@ $(function() {
 
 h4. Server Restart
 
-Again, restart the server to copy the public/ files over to the main application public/ directory with +script/server+, +touch tmp/restart+, etc. command.
+Again, restart the server to copy the +public/+ files over to the main application +public/ directory+ with +script/server+, +touch tmp/restart+, etc. command.
 
 h4. Results
 
@@ -273,7 +301,7 @@ Refresh your browser to see the new alert message on page load:
 
 h4. Another Iteration
 
-To complete another iteration of javascript changes, replace site.js with the following code:
+To complete another iteration of javascript changes, replace +site.js+ with the following code:
 
 <code>
 var are_you_sure = function() {
@@ -303,11 +331,11 @@ git status
 
 Your new site extension files will be identified as untracked files by git. These should be added to the main repository.
 
-Additionally, the files copied over from the SITE_EXTENSION_DIR/public/ directory will show as untracked files by git as well. These files can be ignored or added to the main repository.
+Additionally, the files copied over from the +SITE_EXTENSION_DIR/public/+ directory will show as untracked files by git as well. These files can be ignored or added to the main repository.
 
 h4. Deactivation
 
-At this point in time, to deactivate your site extension, move the SITE_EXTENSION_DIR out of vendor/extensions directory.
+At this point in time, to deactivate your site extension, move the +SITE_EXTENSION_DIR+ out of the +vendor/extensions+ directory.
 
 <shell>
 mv vendor/extensions/site/ ~/
