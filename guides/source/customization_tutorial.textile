@@ -10,7 +10,7 @@ endprologue.
 
 h3. Creating the Site Extension
 
-WARNING. You must understand the difference between running Spree as a gem and running it as a Rails application. Certain instructions below depend on how you are running Spree.
+WARNING. You must "understand the difference":boot_modes.html between running Spree as a gem and running it as a Rails application. Certain instructions below depend on how you are running Spree.
 
 h4. Site Extension with Spree Application
 

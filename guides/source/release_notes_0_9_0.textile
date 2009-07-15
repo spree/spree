@@ -1,0 +1,38 @@
+h2. Spree 0.9.0 Release Notes
+
+endprologue.
+
+h3. Improved Layout Customization
+
+h3. Flexible System of Charges and Credits
+
+Spree 0.9.0 provides a new flexible system of charges and credits associated with orders.  The  +orders+ table no longer has seperate columns for +tax_total+, +ship_total+, etc.  This information is now captured more generically as a +Charge+.  This allows a Spree application to add more then one tax or shipping charge per order as well as to support new types of charges that might be required.  For instance, some products for sale (like cell phones) require a seperate activation fee.
+
+Charges are added to the order in the +Checkout+ model.  Developers wishing to override the default behavior of Spree can now just override the +update_charges+ method to provide their own additional logic.  This snippet below shows how the Spree core adds tax related charges to an order.
+
+<shell>
+  def update_charges
+    ...
+
+    # update tax (if applicable)
+    tax_amount = order.calculate_tax
+    if tax_amount > 0                           
+      tax_charge = order.tax_charges.first
+      tax_charge ||= order.tax_charges.build(:description => I18n.t(:tax))
+      tax_charge.amount = tax_amount
+      tax_charge.save    
+    end
+
+    order.reload
+    order.update_totals
+    order.save 
+  end  
+</shell> 
+
+In addition to charges, credits are now supported.  Credits are the mirror image of charges and they serve to reduce the cost of the order.  The primary mechanism for adding a credit to an order is through the use of coupons.  Its possible, however, that developers may wish to build their own custom logic for creating credits.
+
+WARNING. There are significant changes to the database to support the new charge system.  The migrations should update your legacy data and create the necessary tax and shipping charges for existing orders but you should backup your database before running.
+
+h3. Coupons and Discounts
+
+h3. Improved Calculator Configuration
