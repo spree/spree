@@ -30,75 +30,23 @@ A site extension exists upon creation of an application using the Spree gem.
 ls vendor/extensions
 </shell>
 
-h4. Override the Layout
+h3. Add a Custom Stylesheet
 
-The first step is to override the standard Spree application layout to include your site stylesheet on all application pages.
+This part of the tutorial explains how to add a custom stylesheet to spree to change the look of your site.
 
-First, complete the following command to make a new directory: 
-
-<shell>
-mkdir SITE_EXTENSION_DIR/app/views/layouts/
-</shell>
-
-h5. Spree Application Installation
-
-If you are running Spree as an application, copy the Spree application.html.erb layout file to your extension app/views/layouts/ directory.
- 
-<shell>
-cp SPREE_ROOT/app/views/layouts/application.html.erb /
-  SITE_EXTENSION_DIR/app/views/layouts/
-</shell>
-
-h5. Gem Installation
-
-If you are running Spree as a gem, copy the Spree gem application.html.erb layout file to your extension app/views/layouts/ directory.
-
-<shell>
-cp GEM_ROOT/app/views/layouts/application.html.erb /
-  SITE_EXTENSION_DIR/app/views/layouts/
-</shell>
-
-h3. Adding a Custom Stylesheet
-
-This part of the tutorial explains how to add a custom stylesheet to change the look of your site.
-
-h4. Edit the Layout
+h4. Create the custom stylesheet
 
 WARNING. Spree uses SASS and Compass, a CSS framework that includes Blueprint. We recommend you become familiar with SASS. However, you may continue this tutorial without the knowlege of SASS.
 
-Next, include the stylesheet with one of the following steps.
-
 h5. SASS
 
-Perform the following patch to include your compiled site.css (built from site.sass) to SITE_EXTENSION_DIR/app/views/layouts/application.html.erb:
-
-<code>
-  <%= stylesheet_link_tag 'compiled/screen' %>
-+ <%= stylesheet_link_tag 'compiled/site' %>
-</code>
-
-h5. CSS
-
-Perform the following patch to include your site.css to SITE_EXTENSION_DIR/app/views/layouts/application.html.erb:
-
-<code>
-  <%= stylesheet_link_tag 'compiled/screen' %>
-+ <%= stylesheet_link_tag 'site' %>
-</code>
-
-h4. Create the Stylesheet
-
-h5. SASS
-
-To create the directories and stylesheet with SASS, complete the following:
+To create a stylesheet with SASS, complete the following:
 
 <shell>
 mkdir -p public/stylesheets/sass
-vi public/stylesheets/sass/site.sass
 </shell>
 
-Edit the site.sass file to contain the following:
-
+Inside this directory, create a file named +site.sass+.  Edit +site.sass+ to contain the following:
 <code>
 body
   :background #99CC99
@@ -106,30 +54,54 @@ body
 
 h5. CSS
 
-To create the directories and stylesheet without SASS, complete the following:
+To create a stylesheet without SASS, complete the following:
 
 <shell>
 mkdir public/stylesheets
-vi public/stylesheets/site.css
 </shell>
 
-Edit the site.css file to contain the following:
-
+Inside this directory, create a file named +site.css+. Edit +site.css+ to contain the following:
 <code>
 body {
   background: #99CC99;
 }
 </code>
 
-h4. Server Restart
+h4. Add the stylesheet to the default layout
 
-When any extension public/* files are modified, a server restart is required to copy the files over to the main app public/ directory.
+Now you'll tell Spree to include the custom stylesheet in the default layout by overriding the stylesheets preference.
+
+h5. SASS
+
+If you created a +site.sass+ file, edit the +SITE_EXTENSION_DIR/site_extension.rb+ file to change the existing +activate+ method to the following:
+<code>
+def activate
+  AppConfiguration.class_eval do
+    preference :stylesheets, :string, :default => 'compiled/screen,compiled/site'
+  end
+end
+</code>
+
+h5. CSS
+
+If you created a +site.css+ file, edit the +SITE_EXTENSION_DIR/site_extension.rb+ file to change the existing +activate+ method to the following:
+<code>
+def activate
+  AppConfiguration.class_eval do
+    preference :stylesheets, :string, :default => 'compiled/screen,stylesheets/site'
+  end
+end
+</code>
+
+h4. Restart server
+
+When any extension +public/*+ files are modified, a server restart is required to copy the files over to the main app +public/+ directory.
 
 Restart the server with the +script/server+, +touch tmp/restart.txt+, etc. command.
 
 h4. Results
 
-After the server has restarted, refresh your browser to verify the changes have taken affect.
+After the server has restarted, refresh your browser to verify the background colour changes have taken effect.
 
 !images/customize1.png(Custom CSS Part 1)!
 
@@ -139,7 +111,7 @@ Complete the following steps to perform another iteration of style changes:
 
 h5. SASS
 
-Apply the following patch on site.sass:
+Apply the following patch on +site.sass+:
  
 <code>
   body
@@ -153,7 +125,7 @@ Apply the following patch on site.sass:
 
 h5. CSS
 
-Apply the following patch on site.css:
+Apply the following patch on +site.css+:
 
 <code>
   body {
@@ -169,26 +141,25 @@ Apply the following patch on site.css:
 
 Restart the server with the +script/server+, +touch tmp/restart.txt+, etc. command.
 
-View the results: 
+View the results:
 
 !images/customize2.png(Custom CSS Part 2)!
 
-h3. Adding a Custom Image
+h3. Using Custom Logos
 
-The following describes how to add a custom logo to your site.
+The following describes how to use a custom logo on your site.
 
-h4. Edit the Layout
+h4. Override the default logo path
 
-First, apply the following patch to SITE_EXTENSION_DIR/app/views/layouts/application.html.erb to change the logo image used:
+Change the default path Spree uses for the logo image file by adding the following line to the +SITE_EXTENSION_DIR/site_extension.rb+ file. Add the line below the line where you specified the stylesheets preference earlier.
 
 <code>
-- <%= link_to image_tag('/images/admin/bg/spree_50.png'), root_path %>
-+ <%= link_to image_tag('/images/logo.png'), root_path %>
+    preference :logo, :string, :default => '/images/logo.png'
 </code>
 
-h4. Upload the Image
+h4. Upload the image
 
-Next, create a public/images directory with the following command:
+Next, create a +public/images+ directory with the following command:
 
 <shell>
 mkdir public/images
@@ -200,7 +171,7 @@ wget http://spreecommerce.com/guides/images/logo.png
 mv logo.png SITE_EXTENSION_DIR/public/images/logo.png
 </shell>
 
-h4. Server Restart
+h4. Server restart
 
 Finally, restart the server with the +script/server+, +touch tmp/restart.txt+, etc. command to copy the public directory contents to the main rails application public/ directory.
 
@@ -209,6 +180,51 @@ h4. Results
 View the results:
 
 !images/customize3.png(Custom Logo)!
+
+h3. Customizing the Layout
+
+If you need greater layout customization than changing the logo and stylesheets allow, then override the Spree layout template.
+
+To demonstrate we're just going to add a "Hello World" message to the layout.
+
+h4. Copy the layout template
+
+We'll copy the existing layout template to our site extension before we customize it.
+
+First, complete the following command to make a new directory: 
+
+<shell>
+mkdir SITE_EXTENSION_DIR/app/views/layouts/
+</shell>
+
+h5. Spree Application Installation
+
+If you are running Spree as an application, copy the Spree +application.html.erb+ layout file to your extension +app/views/layouts/+ directory.
+ 
+<shell>
+cp SPREE_ROOT/app/views/layouts/application.html.erb /
+  SITE_EXTENSION_DIR/app/views/layouts/
+</shell>
+
+h5. Gem Installation
+
+If you are running Spree as a gem, copy the Spree gem +application.html.erb+ layout file to your extension +app/views/layouts/+ directory.
+
+<shell>
+cp GEM_ROOT/app/views/layouts/application.html.erb /
+  SITE_EXTENSION_DIR/app/views/layouts/
+</shell>
+
+h4. Edit the layout template
+
+Edit the +SITE_EXTENSION_DIR/app/views/layouts/application.html.erb+ file to contain the following HTML between the opening +body+ tag and the first +div+ tag:
+<code>
+<h1>Hello World</h1>
+</code>
+
+h4. Results
+
+Refresh the site in your browser, and see that there is now a "Hello World" message that wasn't there before.  Now go back and delete +&lt;h1&gt;Hello World&lt;/h1&gt;+ from the file you edited in the previous step, you won't need it for the rest of the tutorial.  
 
 h3. Using Custom Javascript
 
