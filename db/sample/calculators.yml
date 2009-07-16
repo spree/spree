@@ -1,0 +1,12 @@
+ups_ground:
+  calculable: ups_ground
+  calculable_type: ShippingMethod
+  type: FlatRateShippingCalculator
+ups_two_day:
+  calculable: ups_two_day
+  calculable_type: ShippingMethod
+  type: FlatRateShippingCalculator
+ups_one_day:
+  calculable: ups_one_day
+  calculable_type: ShippingMethod
+  type: FlatRateShippingCalculator

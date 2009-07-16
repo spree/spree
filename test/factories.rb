@@ -21,7 +21,8 @@ Factory.define :user do |f|
 end
 
 Factory.define :shipment do |f|
-  f.association :shipping_method
+  f.association :shipping_method 
+  f.association :order
 end
 
 Factory.define :shipping_method do |f|
@@ -131,4 +132,13 @@ end
 Factory.define :credit do |f|
   f.amount 2.00
   f.description "20% Off"
+end                
+
+Factory.define :shipping_method do |f|
+  f.association :zone    
+  f.name { Factory.next(:name) }
+end
+
+Factory.define :calculator, :class => :flat_rate_shipping_calculator do |f|
+  f.association :calculable, :factory => :shipping_method
 end

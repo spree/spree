@@ -39,7 +39,6 @@ spree_dev
 spree_test
 tmp
 vendor/rails
-vendor/extensions
 public/images/reviews_ratings.png
 public/javascripts/jquery.lightbox.js
 public/javascripts/jquery.product_reviews_ratings.*

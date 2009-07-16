@@ -162,5 +162,14 @@ module Admin::BaseHelper
     out << fields.hidden_field(:_delete) unless fields.object.new_record?
     out << (link_to icon("delete"), "#", :class => "remove")
     out
-  end    
+  end  
+  
+  def preference_fields(calculator, form)
+    field_html = ""
+    calculator.preferences.keys.each do |key|
+      field_html += (form.label("preferred_#{key}", "#{t(key)}: "))
+      field_html += (form.text_field("preferred_#{key}")) 
+    end
+    field_html
+  end  
 end

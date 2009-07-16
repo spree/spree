@@ -18,7 +18,13 @@ ActionController::TestCase.class_eval do
       super action, @params.merge( params || {} ), *extras if @params
     end
   end
-end 
+end  
+
+class TestShippingCalc < ShippingCalculator  
+  def calculate_shipping(order)
+    5
+  end
+end
 
 def setup
   super

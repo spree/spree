@@ -9,6 +9,14 @@
   </tr>
 	<tr>
     <td><%=t("shipping_calculator")%>:</td>
-    <td><%= f.text_field :shipping_calculator, {"style" => "width:200px"} %></td>
+    <td><%= f.collection_select(:calculator_type, @shipping_calculators, :to_s, :to_s, {}, {:id=> "calc-type", "style" => "width:200px"}) %></td>
   </tr>
 </table>
+
+<h2><%= t('settings') %></h2>
+<div class="calculator-settings">
+  <% f.fields_for :calculator do |calculator_form| %>
+    <%= preference_fields(@shipping_method.calculator, calculator_form) %>
+  <% end %>
+</div>
+<div id="calculator-settings-warning"><%= t('calculator_settings_warning')%></div>

@@ -424,6 +424,10 @@ span.current_page {
 	border: 1px solid navy;
 	background-color: #2e6ab1;
 	color: #FFF;
+}                  
+
+div#calculator-settings-warning {
+ color: #f00;
 }
 #progress{
 	display:none;
