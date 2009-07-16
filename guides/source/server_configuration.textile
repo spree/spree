@@ -57,7 +57,17 @@ If you do not wish to use SSL in production, or if you wish to enable SSL in dev
 
 !images/server_configuration/change_ssl_setting.png(Changing SSL Setting)!
 
-There is also a technique for "using migrations to change configuration settings":extensions.html#using-migrationsfor-custom-configurations.
+There is also a technique for "using migrations to change configuration settings":extensions.html#using-migrationsfor-custom-configurations.       
+
+h4. SSL with Mongrel
+
+Mongrel relies on Apache to tell it which requests are HTTP and which are HTTPS.  If you do not set things up correctly you're likely to experience an infinite loop.  You will need to change the Port 443 configuration of your Apache virtual host (NOTE: Port 443 not Port 80) and add the following line:
+
+<shell>
+RequestHeader set X_FORWARDED_PROTO 'https' 
+</shell>
+
+You can read more about this topic (and more on testing SSL locally on your development machine) in Mike Subelsky’s excellent "blog post":http://www.subelsky.com/2007/11/testing-rails-ssl-requirements-on-your.html
 
 h3. Special Production Deployment
 
