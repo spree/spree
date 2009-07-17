@@ -4,6 +4,38 @@ endprologue.
 
 h3. Improved Layout Customization
 
+Work has been done to reduce the likelihood of new projects needing to override the default Spree layout template +application.html.erb+. The title, stylesheets, and logo now can all be customized without creating your own copy of the layout.
+
+h4. New title methods
+
+There are some new methods for manipulating the page title: the +title+ and +set_title+ helper methods in Spree::BaseController.
+
+Use +set_title+ to set a page title either from a controller method, or a view template.  You can also override the +default_title+ and +title+ methods in Spree::BaseController for further control.
+
+The +title+ method is used in +application.html.erb+ of the new release, however if you are upgrading and want to take advantage, use this in between your +&lt;title&gt;+ tags of your layout template:
+<code>
+<%= title %>
+</code>
+
+And to set the title in a view template:
+<code>
+<% set_title 'My custom title' %>
+</code>
+
+h4. Customize default stylesheets
+
++Spree::Config[:stylesheets]+ is a new config option for customizing the stylesheets used by the default application layout.
+
+The value of +Spree::Config[:stylesheets]+ is a comma-separated string of stylesheet names without the file extensions.  See the "customization tutorial":customization_tutorial.html for more information.
+
+If you are upgrading, to take advantage of this use the new +stylesheet_tags+ helper method.
+
+h4. Customize logo
+
++Spree::Config[:logo]+ is a new config option for customizing the logo image path.
+
+If you are upgrading, take advantage of this by using the new +logo+ helper method.
+
 h3. Flexible System of Charges and Credits
 
 Spree 0.9.0 provides a new flexible system of charges and credits associated with orders.  The  +orders+ table no longer has seperate columns for +tax_total+, +ship_total+, etc.  This information is now captured more generically as a +Charge+.  This allows a Spree application to add more then one tax or shipping charge per order as well as to support new types of charges that might be required.  For instance, some products for sale (like cell phones) require a seperate activation fee.
