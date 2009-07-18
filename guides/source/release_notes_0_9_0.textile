@@ -68,3 +68,7 @@ WARNING. There are significant changes to the database to support the new charge
 h3. Coupons and Discounts
 
 h3. Improved Calculator Configuration
+
+WARNING. If you are upgrading and existing application, the shipping methods will all be changed to +FlatRateShippingCalculator+.  After running the migrations you must use the admin configuration screen to select a different shipping calcualtor.  You can now also use the admin screen to configure the settings for your new calculator.  
+
+h3. Variant Images
