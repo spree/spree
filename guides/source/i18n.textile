@@ -84,7 +84,7 @@ This rake task will also remind you to download the relevant rails translation f
 
 h3. Internationalizing Extensions
 
-Spree extensions can contain their own *config/locale* directory where developers can include yaml files for each language they wish to support. 
+Spree extensions can contain their own *config/locales* directory where developers can include yaml files for each language they wish to support. 
 
 We strongly urge all extension developers to ensure all customer facing text is rendered via the *t()* helper method even if they only include a single default language locale file (as other users can simply include the required yaml file and translations in their site extension).
 
