@@ -1,3 +1,10 @@
+# Temporarily redefine the Order object so we can migrate legacy data without problems
+# class Order < ActiveRecord::Base  
+#   has_many :charges, :order => :position
+#   has_many :shipping_charges
+#   has_many :tax_charges
+# end  
+
 class CreateCharges < ActiveRecord::Migration
   def self.up
     create_table :charges do |t|
@@ -11,12 +18,18 @@ class CreateCharges < ActiveRecord::Migration
         
     change_table :orders do |t|
       t.decimal :charge_total, :precision => 8, :scale => 2, :default => 0.0, :null => false      
-    end
+    end    
 
     # create shipping and taxation charges for order, then drop columns
     Order.reset_column_information
+    
+    Order.class_eval do
+      def update_totals
+        # temporary hack to eliminate problems with migrating legacy data
+      end
+    end           
+    
     Order.all.each do |order|  
-      order.attributes
       ship_total = order.attributes["ship_amount"] || 0      
       tax_total = order.attributes["tax_amount"] || 0             
       order.shipping_charges.reset
