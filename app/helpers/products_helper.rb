@@ -1,14 +1,4 @@
 module ProductsHelper
-  # returns the price of the product to show for display purposes
-  def product_price(product_or_variant, options={})
-    options.assert_valid_keys(:format_as_currency)
-    options.reverse_merge! :format_as_currency => true
-    
-    amount = product_or_variant.is_a?(Product) ? product_or_variant.master_price : product_or_variant.price
-
-    options[:format_as_currency] ? format_price(amount, options) : amount
-  end
-  
   # returns the formatted change in price (from the master price) for the specified variant (or simply return 
   # the variant price if no master price was supplied)
   def variant_price_diff(variant)
@@ -22,13 +12,14 @@ module ProductsHelper
     end
   end
   
+  # returns the price of the product to show for display purposes
   def product_price(product_or_variant, options={})
     options.assert_valid_keys(:format_as_currency, :show_vat_text)
     options.reverse_merge! :format_as_currency => true, :show_vat_text => Spree::Config[:show_price_inc_vat]
 
     amount = product_or_variant.is_a?(Product) ? product_or_variant.master_price : product_or_variant.price
     amount += Spree::VatCalculator.calculate_tax_on(product_or_variant) if Spree::Config[:show_price_inc_vat]
-    options.delete(:format_as_currency) ? format_price(amount, options) : amount
+    options.delete(:format_as_currency) ? format_price(amount, options) : ("%0.2f" % amount).to_f
   end
   
   def format_price(price, options={})
