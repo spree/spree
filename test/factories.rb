@@ -1,3 +1,20 @@
+# special mock calculator needed for tests
+class TestCouponCalc < Calculator
+  def self.test_amount
+    0.99
+  end
+  def calculate_discount(checkout)    
+    self.class.test_amount
+  end
+end
+
+# special mock calculator needed for tests
+class TestShippingCalc < ShippingCalculator  
+  def calculate_shipping(order)
+    5
+  end
+end
+
 Factory.define :order do |f| 
   f.charges { [Factory(:ship_charge), Factory(:tax_charge)] } 
 end
@@ -139,6 +156,6 @@ Factory.define :shipping_method do |f|
   f.name { Factory.next(:name) }
 end
 
-Factory.define :calculator, :class => :flat_rate_shipping_calculator do |f|
+Factory.define :calculator, :class => TestShippingCalc do |f|
   f.association :calculable, :factory => :shipping_method
 end

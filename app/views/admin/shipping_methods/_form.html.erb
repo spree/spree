@@ -13,10 +13,12 @@
   </tr>
 </table>
 
-<h2><%= t('settings') %></h2>
-<div class="calculator-settings">
-  <% f.fields_for :calculator do |calculator_form| %>
-    <%= preference_fields(@shipping_method.calculator, calculator_form) %>
-  <% end %>
-</div>
-<div id="calculator-settings-warning"><%= t('calculator_settings_warning')%></div>
+<% unless @shipping_method.new_record? %> 
+  <h2><%= t('settings') %></h2>
+  <div class="calculator-settings">
+    <% f.fields_for :calculator do |calculator_form| %>
+      <%= preference_fields(@shipping_method.calculator, calculator_form) %>
+    <% end %>
+  </div>
+  <div id="calculator-settings-warning"><%= t('calculator_settings_warning')%></div>
+<% end %>

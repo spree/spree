@@ -33,7 +33,8 @@ class CheckoutsController < Spree::BaseController
     success.wants.js do   
       @order.reload
       render :json => { :order_total => number_to_currency(@order.total),
-                        :charges => charge_hash,
+                        :charges => charge_hash,  
+                        :credits => credit_hash,
                         :available_methods => rate_hash}.to_json,
              :layout => false
     end
@@ -79,5 +80,9 @@ class CheckoutsController < Spree::BaseController
   
   def charge_hash
     Hash[*@order.charges.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]    
-  end  
+  end           
+  
+  def credit_hash
+    Hash[*@order.credits.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]    
+  end
 end

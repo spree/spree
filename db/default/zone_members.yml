@@ -147,7 +147,7 @@ zone_members_028:
   zoneable_id: "214"
   created_at: 2009-06-04 17:22:41
   updated_at: 2009-06-04 17:22:41
-  zone_id: "690863446"
+  zone_id: "2"
   zoneable_type: Country
 zone_members_017: 
   zoneable_id: "125"
@@ -165,7 +165,7 @@ zone_members_029:
   zoneable_id: "35"
   created_at: 2009-06-04 17:22:41
   updated_at: 2009-06-04 17:22:41
-  zone_id: "690863446"
+  zone_id: "2"
   zoneable_type: Country
 zone_members_018: 
   zoneable_id: "142"

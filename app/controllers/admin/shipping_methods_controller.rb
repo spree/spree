@@ -1,16 +1,6 @@
-
-
 class Admin::ShippingMethodsController < Admin::BaseController    
   resource_controller
   before_filter :load_data
-  layout 'admin'
-       
-  update.before do
-    calc_type = params[:shipping_method][:calculator_type].constantize
-    next if calc_type == @shipping_method.calculator.class
-    @shipping_method.calculator = calc_type.new
-    @shipping_method.save
-  end
   
   update.response do |wants|
     wants.html { redirect_to collection_url }

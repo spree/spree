@@ -20,12 +20,6 @@ ActionController::TestCase.class_eval do
   end
 end  
 
-class TestShippingCalc < ShippingCalculator  
-  def calculate_shipping(order)
-    5
-  end
-end
-
 def setup
   super
   @params = {}

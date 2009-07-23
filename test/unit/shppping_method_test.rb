@@ -3,7 +3,7 @@ require 'test_helper'
 class ShippingMethodTest < ActiveSupport::TestCase
   context "instance" do
     setup do 
-      @calculator = TestShippingCalc.create #Factory(:calculator)
+      @calculator = Factory(:calculator)
       @shipping_method = Factory(:shipping_method, :calculator => @calculator)  
       @zone = @shipping_method.zone                 
       @shipment = Factory(:shipment)

@@ -1,6 +1,5 @@
 class Calculator < ActiveRecord::Base  
   belongs_to :calculable, :polymorphic => true     
-  validates_presence_of :calculable_id
     
   def self.shipping
     all.select { |c| c.is_a? ShippingCalculator }
