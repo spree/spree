@@ -69,6 +69,25 @@ h3. Coupons and Discounts
 
 h3. Improved Calculator Configuration
 
+Configuration for shipping calculators has been improved so that most shipping calculators can be easily configured in the admin interface.  The interfaces of your existing shipping calculators will continue to work as before but in order to configure your shipping calculators properly, you'll need to add the relevant "preferences":http://spreecommerce.com/documentation/preferences.html to your calculators.
+
+<shell>
+class FlatRateShippingCalculator < ShippingCalculator
+  preference :flat_rate_amount, :decimal, :default => 0  
+
+  def calculate_shipping(shipment)
+    return self.preferred_flat_rate_amount
+  end  
+end  
+</shell>
+
+[TODO - also mention extending Calculator or whatever depending on final implementation] 
+
+Since calculators are now instances of +ActiveRecord::Base+ they can be configured with preferences.  Each instance of +ShippingMethods+ is now stored in the database along with the configured values for its preferences.  This allows the same calculator (ex. +FlatRateShippingCalculator+) to be used with multiple shipping methods, and yet be configured with different values for each calcaultor (ex. different flat rates per calculator.) 
+
+[INSERT SNAPSHOT HERE]
+
+
 WARNING. If you are upgrading and existing application, the shipping methods will all be changed to +FlatRateShippingCalculator+.  After running the migrations you must use the admin configuration screen to select a different shipping calcualtor.  You can now also use the admin screen to configure the settings for your new calculator.  
 
 h3. Variant Images
