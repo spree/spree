@@ -9,7 +9,6 @@ module PropertySpecHelper
   end
 end
 
-
 describe Property do
   include PropertySpecHelper
 
@@ -24,7 +23,7 @@ describe Property do
   ['name', 'presentation'].each do |field|
     it "should require #{field}" do
       @property.should_not be_valid
-      @property.errors.full_messages.should include("#{field.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
+      @property.errors.full_messages.should include("#{I18n.translate("activerecord.attributes.property.#{field}")} #{I18n.translate("activerecord.errors.messages.blank")}")
     end
   end
 
@@ -34,5 +33,5 @@ describe Property do
   end
 
   it "should find all by prototype"
-  
+
 end

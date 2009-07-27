@@ -23,7 +23,7 @@ describe Prototype do
   ['name'].each do |field|
     it "should require #{field}" do
       @prototype.should_not be_valid
-      @prototype.errors.full_messages.should include("#{field.humanize} #{I18n.translate("activerecord.errors.messages.blank")}")
+      @prototype.errors.full_messages.should include("#{I18n.t("activerecord.attributes.prototype.#{field}")} #{I18n.t("activerecord.errors.messages.blank")}")
     end
   end
 
