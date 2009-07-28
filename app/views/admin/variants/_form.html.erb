@@ -32,7 +32,7 @@
   </div>
   <div class="yui-u">
 
-    <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
+    <% Variant.additional_fields.select{|af| af[:only].nil? || af[:only].include?(:variant) }.each do |field| %>
       <%= render :partial => "admin/shared/additional_field", :locals => {:field => field, :f => f} %>
     <% end %>
 

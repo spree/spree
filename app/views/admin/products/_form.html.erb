@@ -70,6 +70,6 @@
 
 <%#= render 'properties_form', :f => f %>
 
-<% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:product) }.each do |field| %>
+<% Variant.additional_fields.select{|af| af[:only].nil? || af[:only].include?(:product) }.each do |field| %>
   <%= render :partial => "admin/shared/additional_field", :locals => {:field => field, :f => f} %>
 <% end %>
