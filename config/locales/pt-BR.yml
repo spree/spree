@@ -196,6 +196,7 @@ pt-BR:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Endereço da Conta"
   billing_address: "Endereço de Cobrança"
+  calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Cancelar
   canceled: Cancelado
   capture: capturar
@@ -207,6 +208,7 @@ pt-BR:
   category: Categoria
   change: Mudar
   change_language: "Mudar Língua"
+  charge_total: Charge Total
   charged: Cobrado
   checkout: Finalizar
   city: Cidade
@@ -231,6 +233,7 @@ pt-BR:
   credit_card: "Cartão de Crédito"
   credit_card_capture_complete: "Cartão de Crédito foi Capturado"
   credit_card_payment: "Pagamento de Cartão de Crédito"
+  credit_total: Credit Total
   creditcard: Cartão de Crédito
   current: Atual
   customer: Cliente
@@ -271,6 +274,7 @@ pt-BR:
   filename: "Nome do arquivo"
   final_confirmation: "Confirmação Final"
   first_name: "Primeiro Nome"
+  flat_rate_amount: Amount
   forgot_password: "Esqueceu a senha"
   gateway: Gateway
   gateway_configuration: "Gateway configuration"
@@ -453,6 +457,7 @@ pt-BR:
   send_mails_as: Enviar Emails como
   send_order_mails_as: Enviar Emails de Pedidos como
   server_error: "The server returned an error"
+  settings: Settings
   ship: entregar
   ship_address: "Endereço da Entrega"
   shipment: Entrega

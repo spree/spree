@@ -46,10 +46,8 @@ nl-NL:
         ip_address: "IP Adres"
         item_total: "Product Totaal"
         number: Nummer
-        ship_amount: "Verzendkosten"
         special_instructions: "Bijkomende opmerkingen"
         state: Provincie
-        tax_amount: "BTW bedrag"
         total: Totaal
       product: 
         available_on: "Beschikbaar Op"
@@ -58,6 +56,7 @@ nl-NL:
         name: Naam
         on_hand: "Op Voorraad"
         shipping_category: "Verzend-categorie"
+        tax_category: "Tax Category"
       property: 
         name: Naam
         presentation: Presentatie
@@ -68,6 +67,11 @@ nl-NL:
       state: 
         abbr: Afkorting
         name: Naam
+      tax_category: 
+        description: Description
+        name: Name
+      tax_rate: 
+        amount: Rate        
       taxon: 
         name: Naam
         permalink: Permalink
@@ -132,6 +136,12 @@ nl-NL:
       state: 
         one: Status
         other: Statussen
+      tax_category: 
+        one: "Tax Category"
+        other: "Tax Categories"
+      tax_rate: 
+        one: "Tax Rate"
+        other: "Tax Rates"        
       taxon: 
         one: Taxon
         other: Taxons
@@ -161,10 +171,13 @@ nl-NL:
   address_information: "Adresgegevens"
   adjustment: Aanpassing
   administration: Administratie
+  all: "All"
   allow_backorders: "Nabestellingen toelaten"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "SSL gebruik toestaan in ontwikkel- en testomgevingen"
   allow_ssl_to_be_used_when_in_production_mode: "SSL gebruik toestaan in productie-omgeving"         
+  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Al geregistreerd?
+  alternative_phone: Alternative Phone
   amount: Bedrag
   are_you_sure: "Weet u het zeker"
   are_you_sure_category: "Wilt u deze categorie echt verwijderen?"
@@ -180,18 +193,22 @@ nl-NL:
   available_taxons: "Beschikbare taxons"
   back: Terug
   back_to_store: "Verder Winkelen"
+  backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Factuuradres"
   billing_address: "Factuuradres"
+  calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: annuleer
   canceled: Geannuleerd
   capture: "in rekening brengen"
   card_code: "Kaart Code"
   card_number: "Kaartnummer"
+  card_type_is: Card type is
   cart: Winkelwagen
   categories: Categorieën
   category: Categorie
   change: Wijzig
   change_language: "Taalkeuze"
+  charge_total: Charge Total
   charged: Afgeboekt
   checkout: Bestelling
   city: Stad
@@ -202,6 +219,7 @@ nl-NL:
   configuration_options: "Configuratie Opties"
   configurations: Configuraties
   confirm: Bevestig
+  confirm_delete: "Confirm Deletion"
   confirm_password: "Wachtwoord bevestiging"
   continue: "Ga Verder"
   continue_shopping: "Verder Winkelen"
@@ -215,6 +233,7 @@ nl-NL:
   credit_card: "Creditcard"
   credit_card_capture_complete: "Afboeking via creditcard voltooid"
   credit_card_payment: "Creditcard Betaling"
+  credit_total: Credit Total
   creditcard: Creditcard
   current: Huidige
   customer: Klant
@@ -235,6 +254,7 @@ nl-NL:
   editing_shipping_method: "Wijzigen verzendwijze"
   editing_state: "Wijzigen Status"
   editing_tax_category: "Wijzigen BTW categorie"
+  editing_tax_rate: "Editing Tax Rate"
   editing_user: "Gebruiker Wijzigen"   
   editing_zone: "Zone Wijzigen"
   email: E-mail
@@ -242,6 +262,7 @@ nl-NL:
   email_server_settings_description: "E-mail server installen."
   empty_cart: "Winkelwagen leegmaken"
   enable_mail_delivery: "Mail aflevering aanzetten"
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: fout
   event: Gebeurtenis
   existing_customer: "Bestaande Klant"
@@ -253,8 +274,10 @@ nl-NL:
   filename: Bestandsnaam
   final_confirmation: "Definitieve bevestiging"
   first_name: "Voornaam"
+  flat_rate_amount: Amount
   forgot_password: "Forgot Password"
   gateway: Gateway
+  gateway_configuration: "Gateway configuration"
   gateway_error: "Gateway Fout"
   gateway_setting_description: "Selecteer een betalings-gateway en stel deze in."
   general: "General"
@@ -271,14 +294,17 @@ nl-NL:
   hello_user: "Hallo Gebruiker"
   history: History
   home: "Home"
+  icons_by: "Icons by"
   image: Afbeelding
   images: Afbeeldingen
+  images_for: "Images for"
   in_progress: "Aan de gang"
   invalid_search: "Foute zoekcriteria."
   inventory: Voorraad
   inventory_adjustment: "Voorraad Aanpassing"
   inventory_setting_description: "Voorraad instellingen, Nabestellingen, Nul-Voorraad Weergave"
   inventory_settings: "Voorraad instellingen"
+  issue_number: Issue Number
   item: Products
   item_description: "Product Omschrijving"
   item_total: "Product Totaal"
@@ -290,6 +316,7 @@ nl-NL:
   listing_reports: "Lijst Rapporten"
   listing_tax_categories: "Lijst BTW categorieën"
   listing_users: "Lijst Gebruikers"
+  loading: Loading
   locale_changed: "Regionale Instellingen Gewijzigd"
   log_in: "Inloggen"
   logged_in_as: "Ingelogd als"
@@ -299,6 +326,7 @@ nl-NL:
   login_failed: "Inloggen mislukt."      
   login_name: Loginnaam
   logout: Uitloggen
+  maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail aflevering aangezet"
   mail_delivery_not_enabled: "Mail aflevering afgezet"
   mail_server_preferences: "Mail server Instellingen"
@@ -328,6 +356,7 @@ nl-NL:
   new_state: "Nieuwe Status"
   new_tax_category: "Nieuwe BTW Categorie"
   new_tax_rate: "Nieuw BTW Tarief"
+  new_taxon: "New Taxon"
   new_taxonomy: "Nieuwe Taxonomie"
   new_user: "Nieuwe Gebruiker"
   new_variant: "Nieuwe Variant"
@@ -338,6 +367,7 @@ nl-NL:
   no_user_found: "No user was found with that email address"
   none: Geen
   none_available: "Niet op voorraad"
+  not: not
   on_hand: "Op voorraad"
   operation: Operatie
   option_Values: "Waarden Opties"
@@ -350,6 +380,7 @@ nl-NL:
   order_date: "Besteldatum"
   order_details: "Bestelling Details"
   order_email_resent: "Order Email Herverzending"
+  order_not_in_system: That order number is not valid on this site.
   order_number: "Nummer Bestelling"
   order_operation_authorize: Autoriseren
   order_processed_successfully: "Uw bestelling is succesvol verwerkt"
@@ -374,6 +405,8 @@ nl-NL:
   payments: Betalingen
   phone: Telefoon
   place_order: Bestellen
+  please_create_user: "Please create a user account"     
+  powered_by: "Powered by"
   presentation: Presentatie
   previous: vorige
   price: Prijs
@@ -384,8 +417,10 @@ nl-NL:
   process: Verwerking
   product: Product
   product_details: "Product Details"
+  product_has_no_description: Product has not description
   product_properties: "Product Eigenschappen"
   products: Producten
+  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: Eigenschappen
   property: Eigenschap
   prototype: Prototype
@@ -398,6 +433,7 @@ nl-NL:
   remember_me: "Onthouden"
   remove: Verwijderen
   reports: Rapporten
+  required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: "Opnieuw verzenden"
   reset_password: "Reset my password"
   response_code: "Antwoord Code"  
@@ -420,6 +456,8 @@ nl-NL:
   send_copy_of_orders_mails_to: "Zend kopie van bestelmails naar"      
   send_mails_as: "Zend mail als"                    
   send_order_mails_as: "Zend bestelmaild als"
+  server_error: "The server returned an error"  
+  settings: Settings
   ship: Verzenden
   ship_address: "Afleveringssadres"
   shipment: Verzending
@@ -432,6 +470,7 @@ nl-NL:
   shipping_categories_description: "Beheer verzend-categorieën om duidelijk te maken op welke wijze producten verzonden kunnen worden"
   shipping_cost: Kosten
   shipping_error: "Fout bij aflevering"
+  shipping_instructions: "Shipping Instructions"
   shipping_method: "Verzendwijze"
   shipping_methods: "Verzendwijzen"
   shipping_methods_description: "Beheer verzendwijzen"
@@ -442,6 +481,7 @@ nl-NL:
   show_incomplete_orders: "Toon niet afgewerkte bestellingen"
   show_only_complete_orders: "Toon enkel afgewerkte bestellingen"
   show_out_of_stock_products: "Toon producten die niet voorradig zijn"
+  show_price_inc_vat: "Show price including VAT"
   sign_up: "Registreer"
   site_name: "Site naam"
   site_url: "Site URL"
@@ -452,11 +492,20 @@ nl-NL:
   smtp_mail_host: "SMTP Mail Host"
   smtp_password: "SMTP Wachtwoord"
   smtp_port: "SMTP Poort"
+  smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
+  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: "SMTP Gebruikersnaam"
   spree:
     date: Datum
     time: Tijd                                               
+  ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
+  ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
+  ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
+  ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   start: Start
+  start_date: Valid from
   state: Status
   state_based: "Status Gebaseerd"
   state_setting_description: "Beheer de lijst van staten/provincies die geassocieerd zijn met elk land."
@@ -473,14 +522,22 @@ nl-NL:
   tax_categories: "BTW Categorieën"
   tax_categories_setting_description: "Instellen BTW categorieën om aan te duiden welke producten onderhevig zijn aan BTW."
   tax_category: "BTW Categorie"
+  tax_rates: "Tax Rates"
+  tax_rates_description: Tax rates setup and configuration.
+  tax_settings: "Tax Settings"
+  tax_settings_description: Basic tax settings.
   tax_total: "BTW Totaal"
   tax_type: "BTW Type"
   taxon: Taxon
   taxonomies: Taxonomieën
   taxonomies_setting_description: "Aanmaken en wijzigen taxonomieën"
+  taxonomy_edit: "Edit taxonomy"
+  taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
+  taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Taxons
   thank_you_for_your_order: "Hartelijk dank voor uw bestelling. U kan deze pagina afdrukken als bewijs van bestelling."
   this_file_language: "Nederlands (NL)"
+  thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "To add variants, you must first define"
   total: Totaal
   tracking: Tracking
@@ -492,9 +549,11 @@ nl-NL:
   unable_to_authorize_credit_card: "Autorisatie van de creditcard mislukt"
   unable_to_capture_credit_card: "Afboeking via creditcard mislukt"
   unable_to_save_order: "Bestelling opslaan is mislukt"
+  unrecognized_card_type: Unrecognized card type
   update: Updaten
   update_password: "Update mijn wachtwoord en log mij in"                    
   updated_successfully: "Update gelukt"
+  updating: Updating
   use_as_shipping_address: "Gebruik als afleveringsadres"
   use_billing_address: "Gebruik als factuuradres"
   use_different_shipping_address: "Ander afleveringsadres gebruiken"

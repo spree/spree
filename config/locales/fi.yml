@@ -196,6 +196,7 @@ fi:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Laskun osoite"
   billing_address: Laskutusosoite
+  calculator_settings_warning: "Mikäli vaihdat laskimen tyyppiä, sinun täytyy ensin tallentaa ennen kuin voit muuttaa laskimen asetuksia"
   cancel: peruuta
   canceled: Peruutettu
   capture: kaappaa
@@ -207,6 +208,7 @@ fi:
   category: Kategoria
   change: Vaihda
   change_language: "Vaihda kieltä"
+  charge_total: Charge Total
   charged: Veloitettu
   checkout: Kassa
   city: Paikkakunta
@@ -231,6 +233,7 @@ fi:
   credit_card: Luottokortti
   credit_card_capture_complete: "Luottokortin tallentaminen onnistui"
   credit_card_payment: Luottokorttimaksu
+  credit_total: Credit Total
   creditcard: Luottokortti
   current: Nykyinen
   customer: Asiakas
@@ -455,7 +458,6 @@ fi:
   send_order_mails_as: Lähetä tilaussähköpostiviestit   
   server_error: "Palvelin palautti virheen"
   settings: Asetukset
-  calculator_settings_warning: "Mikäli vaihdat laskimen tyyppiä, sinun täytyy ensin tallentaa ennen kuin voit muuttaa laskimen asetuksia"
   ship: toimita
   ship_address: Toimitusosoite
   shipment: Toimitus

@@ -196,6 +196,7 @@ de-CH:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: Rechnungsadresse
   billing_address: Rechnungsadresse
+  calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Verwerfen
   canceled: Verworfen
   capture: capture
@@ -207,6 +208,7 @@ de-CH:
   category: Kategorie
   change: Ändern
   change_language: "Sprache ändern"
+  charge_total: Charge Total
   charged: geändert
   checkout: "Zur Kasse"
   city: Stadt
@@ -231,6 +233,7 @@ de-CH:
   credit_card: Kreditkarte
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: Kreditkartenzahlung
+  credit_total: Credit Total
   creditcard: Kreditkarte
   current: Stand
   customer: Kunde
@@ -271,6 +274,7 @@ de-CH:
   filename: Dateiname
   final_confirmation: "Endbestätigung"
   first_name: Vorname
+  flat_rate_amount: Amount
   forgot_password: "Passwort vergessen"
   gateway: Gateway
   gateway_configuration: "Gateway configuration"
@@ -453,6 +457,7 @@ de-CH:
   send_mails_as: "Mails schicken als"
   send_order_mails_as: "Bestellungs-Mails schicken als"
   server_error: "The server returned an error"
+  settings: Settings
   ship: ship
   ship_address: Lieferadresse
   shipment: Lieferung
