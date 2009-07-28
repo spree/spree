@@ -52,19 +52,19 @@
     <p><label><%= t("status") %></label><br />
     <%= f.select :state_equals, Order.state_machines['state'].states.collect {|status| [status.titleize, status]}, {:include_blank => true} %></p>
 
-    <p><label><%= "#{t 'order_number'} (#{t 'contains'})" %></label><br />
+    <p><label><%= t 'order_number' %></label><br />
     <%= f.text_field :number_contains, :size=>25 %></p>
 
     <p>
-      <label><%= "#{t 'email'} (#{t 'contains'})" %></label><br />
+      <label><%= t 'email' %></label><br />
       <%= f.text_field :checkout_email_contains, :size=>25 %>
     </p>
     <p>
-    <label><%= "#{t 'first_name'} (#{t 'contains'})" %></label><br />
+    <label><%= t 'first_name' %></label><br />
         <%= f.text_field :checkout_bill_address_firstname_contains, :size=>25 %>
     </p>
     <p>
-      <label><%= "#{t 'last_name'} (#{t 'contains'})" %></label><br />
+      <label><%= t 'last_name' %></label><br />
       <%= f.text_field :checkout_bill_address_lastname_contains, :size=>25 %>
     </p>
     <p>
