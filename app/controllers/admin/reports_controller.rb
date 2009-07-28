@@ -19,8 +19,8 @@ class Admin::ReportsController < Admin::BaseController
     @orders = @search.find(:all)    
 
     @item_total = @search.sum(:item_total)
-    @ship_total = @search.sum(:ship_amount)
-    @tax_total = @search.sum(:tax_amount)
+    @charge_total = @search.sum(:charge_total)
+    @credit_total = @search.sum(:credit_total)
     @sales_total = @search.sum(:total)
   end
 
