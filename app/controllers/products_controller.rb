@@ -34,16 +34,17 @@ class ProductsController < Spree::BaseController
   end
   
   def collection
-    if params[:taxon]
-      @taxon = Taxon.find(params[:taxon])
-      
-      @search = Product.active.scoped(:conditions =>
-                                        ["products.id in (select product_id from products_taxons where taxon_id in (" +
-                                          @taxon.descendents.inject( @taxon.id.to_s) { |clause, t| clause += ', ' + t.id.to_s} + "))"
-                                        ]).new_search(params[:search])
-    else
-      @search = Product.active.new_search(params[:search])
+    search_query = Product.active
+
+    if !params[:taxon].blank? && (@taxon = Taxon.find_by_id(params[:taxon]))
+      search_query = search_query.scoped({
+          :conditions => [
+            "products.id in (select product_id from products_taxons where taxon_id in (?))",
+            ([@taxon] + @taxon.descendents).map(&:id)
+          ]})
     end
+
+    @search = search_query.new_search(params[:search])
 
     @search.per_page ||= Spree::Config[:products_per_page]
     @search.include = {:variants => :images}
