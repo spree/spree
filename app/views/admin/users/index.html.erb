@@ -13,7 +13,7 @@
 
 <table class="index">
   <thead>
-    <th><%= order_by_link :email, :text => t("user") %></th>
+    <th><%= order @search, :by => :email, :as => t("user") %></th>
     <th><%= t("action") %></th>
   </thead>
   <tbody>
@@ -29,22 +29,20 @@
   </tbody>
 </table>
 
-<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
+<%= will_paginate(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") %>
 
 
 <% content_for :sidebar do %>
 
-  <% form_for [:admin, @search] do |f| %>
+  <% form_for @search do |f| %>
     <div class="box">
       <h3><%= t(:search) %></h3>
-    <% f.fields_for @search.conditions do |user| %>
       <p>
         <%= t("email") %><br />
-        <%= user.text_field :lower_of_email, :size=>18 %>
+        <%= f.text_field :email_contains, :size=>18 %>
       </p>
       <p><%= button t("search") %></p>
-  	<% end %>
-  	</div>
+    </div>
   <% end %>
 
 <% end %>

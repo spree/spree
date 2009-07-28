@@ -19,10 +19,10 @@ class Admin::ZonesController < Admin::BaseController
   end
 
   def collection
-    @search = end_of_association_chain.new_search(params[:search])
-    @search.order_by ||= :name
-    @search.per_page ||= Spree::Config[:orders_per_page]
-    @collection, @collection_count = @search.all, @search.count
+    @search = end_of_association_chain.search(params[:search])
+    @search.order ||= "ascend_by_name"
+    @collection_count = @search.count
+    @collection = @search.paginate(:per_page => Spree::Config[:orders_per_page], :page => params[:page])
   end  
 
   def load_data

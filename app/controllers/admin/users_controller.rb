@@ -13,14 +13,14 @@ class Admin::UsersController < Admin::BaseController
                 
   private
   def collection   
-    @search = User.new_search(params[:search])
-    #set order by to default or form result
-    @search.order_by ||= :email
-    @search.order_as ||= "ASC"
-    #set results per page to default or form result
-    @search.per_page ||= Spree::Config[:admin_products_per_page]
+    @search = User.search(params[:search])
 
-    @collection, @collection_count = @search.all, @search.count
+    #set order by to default or form result
+    @search.order ||= "ascend_by_email"
+
+    @collection_count = @search.count
+    @collection = @search.paginate(:per_page => Spree::Config[:admin_products_per_page],
+                                   :page     => params[:page])
 
     #scope = scope.conditions "lower(email) = ?", @filter.email.downcase unless @filter.email.blank?
   end

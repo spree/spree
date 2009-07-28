@@ -11,10 +11,10 @@ class Admin::ReportsController < Admin::BaseController
   
   def sales_total
 
-    @search = Order.new_search(params[:search])
+    @search = Order.search(params[:search])
+
     #set order by to default or form result
-    @search.order_by ||= :created_at
-    @search.order_as ||= "DESC"
+    @search.order ||= "descend_by_created_at"
     
     @orders = @search.find(:all)    
 
