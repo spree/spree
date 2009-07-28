@@ -1,3 +1,5 @@
+ANALYTICS_ID=ENV['ANALYTICS_ID']
+
 pwd = File.dirname(__FILE__)
 $: << pwd
 $: << File.join(pwd, "activesupport/lib")
