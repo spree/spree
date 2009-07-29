@@ -1,7 +1,7 @@
 --- 
 fi: 
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "Kopio kaikista viesteistä lähetetään seuraaviin osoitteisiin"
-  abbreviation: Lyhennös
+  abbreviation: Lyhenne
   access_denied: "Pääsy kielletty!"
   account: Tunnus
   account_updated: "Tunnus päivitetty!"        
@@ -11,7 +11,7 @@ fi:
     create: Luo
     destroy: Tuhoa
     list: Lista
-    listing: Listaus
+    listing: Listataan
     new: Uusi
     update: Päivitä
   activerecord: 
@@ -134,8 +134,8 @@ fi:
         one: Toimituskategoria
         other: Toimitukategoriat
       state: 
-        one: Lääni
-        other: Läänit   
+        one: Osavaltio
+        other: Osavaltiot
       tax_category: 
         one: Verotusluokka
         other: Verotusluokat
@@ -164,7 +164,7 @@ fi:
   add_option_types: "Lisää valintatyyppejä"
   add_option_value: "Lisää valinta-arvo"
   add_product_properties: "Lisää tuoteominaisuus"
-  add_state: "Lisää lääni"
+  add_state: "Lisää osavaltio"
   add_to_cart: "Lisää ostoskoriin"
   add_zone: "Lisää alue"
   address: Osoite
@@ -193,7 +193,7 @@ fi:
   available_taxons: "Käytettävissä olevat taksonit"
   back: Takaisin
   back_to_store: "Palaa kauppaan"
-  backordering_is_allowed: "Backordering {{not}} allowed"
+  backordering_is_allowed: "Jälkitoimittaminen {{not}} sallittu"
   bill_address: "Laskun osoite"
   billing_address: Laskutusosoite
   calculator_settings_warning: "Mikäli vaihdat laskimen tyyppiä, sinun täytyy ensin tallentaa ennen kuin voit muuttaa laskimen asetuksia"
@@ -207,8 +207,8 @@ fi:
   categories: Kategoriat
   category: Kategoria
   change: Vaihda
-  change_language: "Vaihda kieltä"
-  charge_total: Charge Total
+  change_language: "Vaihda kieli"
+  charge_total: "Veloitettu yhteensä"
   charged: Veloitettu
   checkout: Kassa
   city: Paikkakunta
@@ -225,7 +225,7 @@ fi:
   continue_shopping: "Jatka ostoksia"
   copy_all_mails_to: "Kopioi kaikki viestit"                                                                             
   country: Maa
-  country_based: "Country Based"
+  country_based: Sijaintimaa
   create: Luo
   create_a_new_account: "Luo uusi tunnus"
   create_user_account: "Luo käyttäjätunnus"
@@ -233,7 +233,7 @@ fi:
   credit_card: Luottokortti
   credit_card_capture_complete: "Luottokortin tallentaminen onnistui"
   credit_card_payment: Luottokorttimaksu
-  credit_total: Credit Total
+  credit_total: "Veloittamatta yhteensä"
   creditcard: Luottokortti
   current: Nykyinen
   customer: Asiakas
@@ -252,7 +252,7 @@ fi:
   editing_prototype: "Muokataan prototyyppiä"
   editing_shipping_category: "Muokataan toimituskategoriaa"
   editing_shipping_method: "Muokataan toimitustapaa"
-  editing_state: "Muokataan lääniä"
+  editing_state: "Muokataan osavaltiota"
   editing_tax_category: "Muokataan verotuskategoriaa"
   editing_tax_rate: "Muokataan veroprosenttia"
   editing_user: "Muokataan käyttäjää"
@@ -260,8 +260,8 @@ fi:
   email: Sähköposti
   email_address: Sähköpostiosoite
   email_server_settings_description: "Aseta sähköpostipalvelimen asetukset."
-  empty_cart: "Tyhjä ostoskori"
-  enable_mail_delivery: "Salli postitoimitus"
+  empty_cart: "Tyhjennä ostoskori"
+  enable_mail_delivery: "Salli sähköpostin toimitus"
   enter_exactly_as_shown_on_card: "Please enter exactly as shown on the card"
   error: virhe
   event: Tapahtuma
@@ -307,7 +307,7 @@ fi:
   issue_number: Issue Number
   item: Tuote
   item_description: Tuotekuvaus
-  item_total: Yhteensä
+  item_total: "Tuotteet yhteensä"
   last_name: Sukunimi
   list: Lista
   listing_categories: "Listataan kategoriat"
@@ -324,8 +324,8 @@ fi:
   logged_out: "Olet kirjautunut ulos." 
   login_as_existing: "Kirjaudu olemassaolevana asiakkaana" 
   login_failed: "Kirjautumisen autentikointi epäonnistui."
-  login_name: Kirjautumisnimi
-  logout: Uloskirjautuminen
+  login_name: Nimi
+  logout: "Kirjaudu ulos"
   maestro_or_solo_cards: "Maestro/Solo kortit"
   mail_delivery_enabled: "Sähköpostiviestien toimitus päällä"
   mail_delivery_not_enabled: "Sähköpostiviestien toimitus poissa päältä"
@@ -353,7 +353,7 @@ fi:
   new_shipment: "Uusi toimitus"
   new_shipping_category: "Uusi toimituskategoria"
   new_shipping_method: "Uusi toimitustapa"
-  new_state: "Uusi lääni"
+  new_state: "Uusi osavaltio"
   new_tax_category: "Uusi verotuskategoria"
   new_tax_rate: "Uusi veroprosentti"
   new_taxon: "Uusi taksoni"
@@ -420,7 +420,7 @@ fi:
   product_has_no_description: "Tuotteella ei tuotekuvausta"
   product_properties: "Tuotteen ominaisuudet"
   products: Tuotteet
-  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
+  products_with_zero_inventory_display: "Tuotteita, joden varastosaldo 0 {{not}} näytetä(än)"
   properties: Ominaisuudet
   property: Ominaisuus
   prototype: Prototyyppi
@@ -442,20 +442,20 @@ fi:
   return: palaa
   returned: Palattu
   roles: Roolit
-  sales_total: "Myynti yhteensä"
-  sales_total_for_all_orders: "Myynti yhteensä kaikilta tilauksilta"
-  sales_totals: "Myynnit yhteensä"
+  sales_total: "Liikevaihto"
+  sales_total_for_all_orders: "Liikevaihto kaikilta tilauksilta"
+  sales_totals: "Liikevaihdot"
   sales_totals_description: "Myynnit yhteensä kaikilta tilauksilta"
-  save_preferences: Tallenna asetukset
+  save_preferences: "Tallenna asetukset"
   search: Etsi
-  secure_connection_type: Turvallinen yhteystyyppi
+  secure_connection_type: "Turvallinen yhteystyyppi"
   select: Valitse
   select_from_prototype: "Valitse prototyypistä"
   select_preferred_shipping_option: "Valitse suositeltu toimitustyyppi"
-  send_copy_of_all_mails_to: Lähetä kopio kaikista sähköposteista
-  send_copy_of_orders_mails_to: Lähetä kopio tilaussähköposteista   
-  send_mails_as: Lähetä sähköpostiviestit
-  send_order_mails_as: Lähetä tilaussähköpostiviestit   
+  send_copy_of_all_mails_to: "Lähetä kopio kaikista sähköposteista"
+  send_copy_of_orders_mails_to: "Lähetä kopio tilaussähköposteista"
+  send_mails_as: "Lähetä sähköpostiviestit"
+  send_order_mails_as: "Lähetä tilaussähköpostiviestit"
   server_error: "Palvelin palautti virheen"
   settings: Asetukset
   ship: toimita
@@ -463,7 +463,7 @@ fi:
   shipment: Toimitus
   shipment_number: Toimitusnumero
   shipped: Toimitettu
-  shipping: Toimitettavana
+  shipping: Toimitus
   shipping_address: Toimitusosoite
   shipping_calculator: Laskin
   shipping_categories: Toimituskategoriat
@@ -487,15 +487,15 @@ fi:
   site_url: "Sivun URL"
   sku: Tuotetunnus
   smtp: SMTP
-  smtp_authentication_type: SMTP autentikointityyppi         
-  smtp_domain: SMTP domain
+  smtp_authentication_type: SMTP todennustyyppi         
+  smtp_domain: SMTP verkkotunnus
   smtp_mail_host: SMTP palvelin
   smtp_password: SMTP salasana
   smtp_port: SMTP portti  
-  smtp_send_all_emails_as_from_following_address: "Lähetä kaikki viestit seuraavasta osoitteesta."
+  smtp_send_all_emails_as_from_following_address: "Lähetä kaikki viestit tästä osoitteesta."
   smtp_send_copy_of_orders_to_this_addresses: "Lähetä kopio kaikista tilausviesteistä tähän osoitteeseen. Erottele useammat osoitteet pilkulla."
   smtp_send_copy_to_this_addresses: "Lähetä kopio kaikista lähtevistä viesteistä tähän osoitteeseen. Erottele useammat osoitteet pilkulla." 
-  smtp_send_order_mails_as_from_following_address: "Lähetä tilausviestit seuraavasta osoitteesta."
+  smtp_send_order_mails_as_from_following_address: "Lähetä tilausviestit tästä osoitteesta."
   smtp_username: SMTP käyttäjänimi
   spree:
     date: Päivämäärä
@@ -506,18 +506,18 @@ fi:
   ssl_will_not_be_used_in_production_mode: "SSL:ää ei käytetä tuotantoympäristössä"
   start: Alku
   start_date: Voimassa
-  state: Lääni
-  state_based: "State Based"
-  state_setting_description: "Hallinnoi maiden osavaltio-/läänilistaa."
-  states: Läänit
+  state: Osavaltio
+  state_based: "Sijaintiosavaltio"
+  state_setting_description: "Hallinnoi maiden osavaltiolistaa."
+  states: Osavaltiot
   status: Tila
-  stop: Pysäytä
+  stop: Loppu
   store: Kauppa
   street_address: Katuosoite
   street_address_2: "Katuosoite (jatkoa)"
   subtotal: Välisumma
   subtract: Vähennä
-  system: Järjestelmä
+  system: Luokitus
   tax: Vero
   tax_categories: Verokategoriat
   tax_categories_setting_description: "Aseta verokategoriat tunnistaaksesi verotettavat tuotteet."
@@ -539,7 +539,7 @@ fi:
   this_file_language: Finnish
   thumbnail: Näytekuva
   to_add_variants_you_must_first_define: "Lisättävä variantti täytyy ensin määritellä"
-  total: Yhteensä
+  total: Loppusumma
   tracking: Seuranta
   transaction: Tapahtuma
   tree: Puu
@@ -576,6 +576,6 @@ fi:
   your_cart_is_empty: "Ostoskorisi on tyhjä"
   zip: Postinumero
   zone: Alue
-  zone_based: "Sijaintialue"
+  zone_based: Sijaintialue
   zone_setting_description: "Lista maista, osavaltioista/lääneistä ja muista alueista käytettäväksi eri laskutoimituksissa."
   zones: Alueet
