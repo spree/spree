@@ -96,4 +96,4 @@ Customer.in_zone(zone).all
 Customer.recently_logged.spend_more_than_10000_eur.in_zone(zone)
 </shell>
 
-Alternatively, Spree uses the "searchlogic":http://github.com/binarylogic/searchlogic/tree/master gem to pull off much of its dynamic searching functionality.  The "README":http://github.com/binarylogic/searchlogic/blob/1472bf7793deebe3223b48814b334e4545dda674/README.rdoc is quite comprehensive and would give you some idea as the type of searches you could build that would leverage the power of zones.
+Alternatively, Spree uses the "searchlogic":http://github.com/binarylogic/searchlogic/tree/master gem to pull off much of its dynamic searching functionality.  The "README":http://rdoc.info/projects/binarylogic/searchlogic is quite comprehensive and would give you some idea as the type of searches you could build that would leverage the power of zones.
