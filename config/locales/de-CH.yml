@@ -196,6 +196,7 @@ de-CH:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: Rechnungsadresse
   billing_address: Rechnungsadresse
+  calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Verwerfen
   canceled: Verworfen
@@ -229,7 +230,6 @@ de-CH:
   country: Land
   country_based: "Basierend auf Land"
   coupon: Coupon                                                                             
-  coupon_calculator: Coupon Calculator
   coupons: Coupons
   coupons_description: Manage coupons
   create: Erstellen
@@ -283,7 +283,11 @@ de-CH:
   first_name: Vorname
   flat_percent: Flat Percent
   flat_rate_amount: Amount
+  flat_rate_per_item: "Flat Rate (per item)"
+  flat_rate_per_order: "Flat Rate (per order)"
+  flexible_rate: "Flexible Rate"
   forgot_password: "Passwort vergessen"
+  full_name: "Full Name"
   gateway: Gateway
   gateway_configuration: "Gateway configuration"
   gateway_error: "Gateway-Fehler"
@@ -452,6 +456,7 @@ de-CH:
   return: return
   returned: Returned
   roles: Rollen
+  sales_tax: "Sales Tax"
   sales_total: "Umsatz Gesamt"
   sales_total_for_all_orders: "Umsätze für alle Bestellungen"
   sales_totals: "Umsätze Gesamt"
@@ -475,7 +480,6 @@ de-CH:
   shipped: Ausgeliefert
   shipping: Lieferung
   shipping_address: Lieferadresse
-  shipping_calculator: Rechner
   shipping_categories: "Shipping Categories"
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
   shipping_cost: Cost
@@ -574,6 +578,7 @@ de-CH:
   users: Benutzer
   value: ""
   variants: Varianten
+  vat: "VAT"           
   version: Version
   website: Webseite
   weight: Gewicht

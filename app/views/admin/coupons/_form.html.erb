@@ -19,17 +19,6 @@
     <td><%=t("expiration")%>:</td>
     <td><%= date_select :coupon, :expires_at, :prompt => true, :use_month_numbers => true %></td>
   </tr>
-	<tr>
-    <td><%=t("coupon_calculator")%>:</td>
-    <td><%= f.collection_select(:calculator_type, @coupon_calculators, :to_s, :to_s, {}, {:id=> "calc-type", "style" => "width:200px"}) %></td>
-  </tr>
 </table>
-<% unless @coupon.new_record? %>
-  <h2><%= t('settings') %></h2>
-  <div class="calculator-settings">
-    <% f.fields_for :calculator do |calculator_form| %>
-      <%= preference_fields(@coupon.calculator, calculator_form) %>
-    <% end %>
-  </div>
-  <div id="calculator-settings-warning"><%= t('calculator_settings_warning')%></div>
-<% end %>  
+
+<%= render "admin/shared/calculator_fields", :f => f %>

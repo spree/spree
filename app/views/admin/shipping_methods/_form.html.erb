@@ -7,18 +7,6 @@
     <td><%=t("zone")%>:</td>
     <td><%= collection_select(:shipping_method, :zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"}) %></td>
   </tr>
-	<tr>
-    <td><%=t("shipping_calculator")%>:</td>
-    <td><%= f.collection_select(:calculator_type, @shipping_calculators, :to_s, :to_s, {}, {:id=> "calc-type", "style" => "width:200px"}) %></td>
-  </tr>
 </table>
 
-<% unless @shipping_method.new_record? %> 
-  <h2><%= t('settings') %></h2>
-  <div class="calculator-settings">
-    <% f.fields_for :calculator do |calculator_form| %>
-      <%= preference_fields(@shipping_method.calculator, calculator_form) %>
-    <% end %>
-  </div>
-  <div id="calculator-settings-warning"><%= t('calculator_settings_warning')%></div>
-<% end %>
+<%= render "admin/shared/calculator_fields", :f => f %>

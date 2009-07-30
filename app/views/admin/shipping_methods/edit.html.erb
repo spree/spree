@@ -1,6 +1,6 @@
 <h1><%= t("editing_shipping_method") %></h1>
 <%= error_messages_for :shipping_method %>
-<% form_for(:shipping_method, :url => object_url, :html => { :method => :put }) do |f| %>
+<% form_for(@shipping_method, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <p>
     <%=submit_tag t("update")%>

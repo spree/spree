@@ -196,6 +196,7 @@ fr-FR:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Adresse facturée"
   billing_address: "Adresse de facturation"
+  calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: annulé
   canceled: Annulé
@@ -229,7 +230,6 @@ fr-FR:
   country: Pays
   country_based: "Country Based"
   coupon: Coupon                                                                             
-  coupon_calculator: Coupon Calculator
   coupons: Coupons
   coupons_description: Manage coupons
   create: Créer
@@ -283,7 +283,11 @@ fr-FR:
   first_name: "Prenom"
   flat_percent: Flat Percent
   flat_rate_amount: Amount
+  flat_rate_per_item: "Flat Rate (per item)"
+  flat_rate_per_order: "Flat Rate (per order)"
+  flexible_rate: "Flexible Rate"
   forgot_password: "Forgot Password"
+  full_name: "Full Name"
   gateway: Passerelle
   gateway_configuration: "Gateway configuration"
   gateway_error: "Erreur de la passerelle"
@@ -452,6 +456,7 @@ fr-FR:
   return: retourner
   returned: Retourner
   roles: Rôles
+  sales_tax: "Sales Tax"
   sales_total: "Total de ventes"
   sales_total_for_all_orders: "Total des ventes pour toutes les commandes"
   sales_totals: "Total des ventes"
@@ -475,7 +480,6 @@ fr-FR:
   shipped: Livré
   shipping: Frais de livraison
   shipping_address: "Adresse de livraison"
-  shipping_calculator: Calculator
   shipping_categories: "Shipping Categories"
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
   shipping_cost: Cost
@@ -574,6 +578,7 @@ fr-FR:
   users: Utilisateurs
   value: Valeur
   variants: Gammes
+  vat: "VAT"           
   version: Version
   website: Site Web
   weight: Poids

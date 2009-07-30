@@ -1,17 +1,19 @@
 <h2><%= t("shipping_method") %></h2>
-<div class="inner">
-  <div id="methods"></div>
-  <div class="error">
-    <%= t('unable_ship_method') %>
-  </div>
-  <% if Spree::Config[:shipping_instructions] %>
-    <p id="minstrs">
-      <label for=""><%= t("shipping_instructions") %></label>
-      <%= checkout_form.text_area :special_instructions, :cols => 40, :rows => 7 -%>
-    </p>
-  <% end %>
+<% checkout_form.fields_for :shipment do |shipment| %>     
+  <div class="inner">
+    <div id="methods"></div>
+    <div class="error">
+      <%= t('unable_ship_method') %>
+    </div>
+    <% if Spree::Config[:shipping_instructions] %>
+      <p id="minstrs">
+        <label for=""><%= t("shipping_instructions") %></label>
+        <%= shipment.text_area :special_instructions, :cols => 40, :rows => 7 -%>
+      </p>
+    <% end %>
 
-  <div class="form-buttons">
-    <input id="continue_shipping_method" type="button" class="button primary" value="<%=t("continue")%>"/>
+    <div class="form-buttons">
+      <input id="continue_shipping_method" type="button" class="button primary" value="<%=t("continue")%>"/>
+    </div>
   </div>
-</div>
+<% end %>

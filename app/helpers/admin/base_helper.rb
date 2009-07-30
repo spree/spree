@@ -205,12 +205,14 @@ module Admin::BaseHelper
   end
 
   def preference_fields(object, form)
+    return unless object.respond_to?(:preferences)
     object.preferences.keys.map{ |key|
       definition = object.class.preference_definitions[key]
       type = definition.instance_eval{@type}.to_sym
       
       form.label("preferred_#{key}", t(key)+": ") +
         preference_field(form, "preferred_#{key}", :type => type)
-    }.join("")
+    }.join("<br />")
   end
+
 end

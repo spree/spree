@@ -1,0 +1,12 @@
+<table>
+  <tr>
+    <td><%=t("shipping_category")%>:</td>
+    <td><%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name) %></td>
+  </tr>
+  <tr>
+    <td><%=t("shipping_method")%>:</td>
+    <td><%= f.collection_select(:shipping_method_id, @shipping_methods, :id, :name) %></td>
+  </tr>
+</table>
+
+<%= calculator_fields(f) %>

@@ -1,23 +1,39 @@
-class Order < ActiveRecord::Base  
+class Order < ActiveRecord::Base
+  module Totaling
+    def total
+      map(&:amount).sum
+    end
+  end
+
   before_create :generate_token
   before_save :update_line_items, :update_totals
-  after_create :create_checkout
-  
-  has_many :line_items, :dependent => :destroy, :attributes => true
-  has_many :inventory_units
-  has_many :state_events
-  has_many :payments
-  has_many :creditcard_payments
+  after_create :create_checkout_and_shippment, :create_tax_charge
+
   belongs_to :user
-  has_many :shipments, :dependent => :destroy
+  has_many :state_events
+
+  has_many :line_items,   :extend => Totaling, :dependent => :destroy, :attributes => true
+  has_many :inventory_units
+
+  has_many :payments,            :extend => Totaling
+  has_many :creditcard_payments, :extend => Totaling
+
   has_one :checkout
   has_one :bill_address, :through => :checkout
-  has_one :ship_address, :through => :checkout   
-  has_many :charges, :order => :position
-  has_many :shipping_charges
-  has_many :tax_charges
-  has_many :credits, :order => :position
+  has_many :shipments, :dependent => :destroy
+
+  has_many :adjustments,      :extend => Totaling, :order => :position
+  has_many :charges,          :extend => Totaling, :order => :position
+  has_many :shipping_charges, :extend => Totaling, :order => :position,
+    :class_name => "Charge", :conditions => {:secondary_type => "ShippingCharge"}
+  has_many :tax_charges,      :extend => Totaling, :order => :position,
+    :class_name => "Charge", :conditions => {:secondary_type => "TaxCharge"}
+  has_many :credits,          :extend => Totaling, :order => :position
+
+  accepts_nested_attributes_for :checkout
   
+  def ship_address; shipment.address; end
+  delegate :shipping_method, :to =>:shipment
   delegate :email, :to => :checkout
   delegate :ip_address, :to => :checkout
   delegate :special_instructions, :to => :checkout 
@@ -126,24 +142,7 @@ class Order < ActiveRecord::Base
     end          
     self.number = random
   end          
-  
-  def payment_total
-    payments.map(&:amount).sum
-  end
-
-  # total of line items (no tax or shipping inc.)
-  def item_total
-    self.item_total = line_items.map{|line_item| line_item.price * line_item.quantity}.sum
-  end
-  
-  def ship_total
-    shipping_charges.map(&:amount).sum
-  end
-  
-  def tax_total
-    tax_charges.map(&:amount).sum
-  end
-  
+    
   # convenience method since many stores will not allow user to create multiple shipments
   def shipment
     shipments.last
@@ -174,36 +173,58 @@ class Order < ActiveRecord::Base
     ShippingMethod.all.select { |method| method.zone.include?(ship_address) && method.available?(self) }
   end
    
-  def update_totals                                 
-    self.charge_total = self.charges.map(&:amount).sum
-    self.credit_total = self.credits.map(&:amount).sum
-    self.total = self.item_total + self.charge_total - self.credit_total
-  end  
+  def payment_total
+    payments.reload.total
+  end
 
-  def calculate_tax      
-    # tax is zero if ship address does not match any existing tax zone
-    tax_rates = TaxRate.all.find_all { |rate| rate.zone.include?(ship_address) }
-    return 0 if tax_rates.empty?  
-    sales_tax_rates = tax_rates.find_all { |rate| rate.tax_type == TaxRate::TaxType::SALES_TAX }
-    vat_rates = tax_rates.find_all { |rate| rate.tax_type == TaxRate::TaxType::VAT }
+  def ship_total
+    shipping_charges.reload.total
+  end
 
-    # note we expect only one of these tax calculations to have a value but its technically possible to model
-    # both a sales tax and vat if you wanted to do that for some reason
-    sales_tax = Spree::SalesTaxCalculator.calculate_tax(self, sales_tax_rates)
-    vat_tax = Spree::VatCalculator.calculate_tax(self, vat_rates)
-    
-    sales_tax + vat_tax
+  def tax_total
+    tax_charges.reload.total
+  end
+
+  def credit_total
+    credits.reload.total.abs
+  end
+
+  def charge_total
+    charges.reload.total
+  end
+
+  def create_tax_charge
+    if tax_charges.empty?
+      tax_charges.create({
+          :order => self,
+          :description => I18n.t(:tax),
+          :adjustment_source => self,
+        })
+    end
+  end
+
+  def update_totals
+    charges.reload.each(&:update_amount)
+
+    self.item_total       = self.line_items.reload.total
+    self.adjustment_total = self.charge_total - self.credit_total
+    self.total            = self.item_total   + self.adjustment_total
+  end
+
+  def update_totals!
+    update_totals
+    save!
   end
 
   private
-  def complete_order  
-    shipments.build(:address => ship_address, :shipping_method => checkout.shipping_method)
+  
+  def complete_order
     checkout.update_attribute(:completed_at, Time.now)
     InventoryUnit.sell_units(self)
-    save_result = save! 
-    if email 
+    save_result = save!
+    if email
       OrderMailer.deliver_confirm(self)
-    end     
+    end
     save_result
   end
 
@@ -225,10 +246,11 @@ class Order < ActiveRecord::Base
   end
   
   def generate_token
-    self.token = Authlogic::Random.friendly_token    
+    self.token = Authlogic::Random.friendly_token
   end
   
-  def create_checkout
-    self.checkout = Checkout.create(:order => self) unless self.checkout
+  def create_checkout_and_shippment
+    self.shipments << Shipment.create(:order => self)
+    self.checkout ||= Checkout.create(:order => self)
   end
 end

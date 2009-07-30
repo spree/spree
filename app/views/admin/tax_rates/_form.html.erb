@@ -1,20 +1,16 @@
 <table>
   <tr>
     <td><%=t("zone")%>:</td>
-    <td><%= collection_select(:tax_rate, :zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"}) %></td>
+    <td><%= f.collection_select(:zone_id, @available_zones, :id, :name) %></td>
   </tr>
   <tr>
-    <td><%=t("category")%>:</td>
-    <td><%= collection_select(:tax_rate, 
-                              :tax_category_id, @available_categories, :id, :name, 
-                              {}, {"style" => "width:200px"}) %></td>
+    <td><%=t("tax_category")%>:</td>
+    <td><%= f.collection_select(:tax_category_id, @available_categories,:id, :name) %></td>
   </tr>
   <tr>
     <td><%=t("rate")%>:</td>
-    <td><%= f.text_field :amount, {"style" => "width:200px"} %></td>
-  </tr>
-  <tr>
-    <td><%=t("tax_type")%>:</td>
-    <td><%= f.collection_select :tax_type, TaxRate::TaxType.constants, :id, :title, {}, {:style => "width:200px"}%> </td>
-  </tr>
+    <td><%= f.text_field :amount %></td>
+  </tr>  
 </table>
+
+<%= render "admin/shared/calculator_fields", :f => f %>

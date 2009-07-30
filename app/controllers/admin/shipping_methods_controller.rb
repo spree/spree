@@ -2,23 +2,18 @@ class Admin::ShippingMethodsController < Admin::BaseController
   resource_controller
   before_filter :load_data
   
-  update.response do |wants|
-    wants.html { redirect_to collection_url }
-  end  
-  
-  create.response do |wants|
-    wants.html { redirect_to collection_url }
-  end
+  update.wants.html { redirect_to edit_object_url }
+  create.wants.html { redirect_to edit_object_url }
   
   private       
   def build_object
-    @object ||= end_of_association_chain.send parent? ? :build : :new, object_params 
+    @object ||= end_of_association_chain.send((parent? ? :build : :new), object_params)
     @object.calculator = params[:shipping_method][:calculator_type].constantize.new if params[:shipping_method]
+    @object
   end
   
-  def load_data     
+  def load_data
     @available_zones = Zone.find :all, :order => :name                      
-    # TODO - remove hard coded
-    @shipping_calculators = [FlatRateShippingCalculator]
+    @calculators = ShippingMethod.calculators
   end    
 end

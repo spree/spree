@@ -66,7 +66,7 @@ module Spree
         
     def gateway_options
       options = {:billing_address => generate_address_hash(checkout.bill_address), 
-                 :shipping_address => generate_address_hash(checkout.ship_address)}
+                 :shipping_address => generate_address_hash(checkout.shipment.address)}
       options.merge minimal_gateway_options
     end    
     

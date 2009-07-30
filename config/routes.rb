@@ -87,6 +87,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :shipments
     admin.resources :shipping_methods
     admin.resources :shipping_categories
+    admin.resources :shipping_rates
     admin.resources :tax_rates
     admin.resource  :tax_settings    
     admin.resources :calculators

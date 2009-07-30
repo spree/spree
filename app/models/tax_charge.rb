@@ -1,2 +1,0 @@
-class TaxCharge < Charge
-end

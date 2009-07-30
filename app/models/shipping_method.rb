@@ -1,24 +1,27 @@
 class ShippingMethod < ActiveRecord::Base
   belongs_to :zone
-  has_one :calculator, :as => :calculable, :dependent => :destroy
-                                    
-  accepts_nested_attributes_for :calculator
+  has_many :shipping_rates
+
+  has_calculator
    
-  def calculator_type
-    calculator.class.to_s if calculator
-  end
-  
-  def calculator_type=(calculator_type)
-    # does nothing - just here to satisfy the form
-  end
-  
-  def calculate_shipping(shipment)
-    return 0 unless zone.include?(shipment.address)
-    return calculator.calculate_shipping(shipment)
+  def calculate_cost(shipment)
+    rate_calculators = {}
+    shipping_rates.each do |sr|
+      rate_calculators[sr.shipping_category_id] = sr.caclualtor
+    end
+ 
+    calculated_costs = shipment.order.line_items.group_by{|li|
+      li.product.shipping_category_id
+    }.map{ |shipping_category_id, line_items|
+      calc = rate_calculators[shipping_category_id] || self.calculator
+      calc.compute(line_items)
+    }.sum
+ 
+    return(calculated_costs)
   end   
   
   def available?(order)
-    return true unless calculator.respond_to?(:available?)
-    calculator.available?(order)    
+    zone.include?(order.shipment.address) &&
+      calculator
   end
 end

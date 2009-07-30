@@ -1,6 +1,5 @@
 <% 1.upto(30) do |i| %>
 checkout_<%= i %>:
-  ship_address: frank_ship_address_<%= i %>
   bill_address: frank_bill_address_<%= i %>
   email: frank.foo@example.com 
   order: order_<%= i %>

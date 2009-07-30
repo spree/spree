@@ -2,13 +2,8 @@ class Admin::CouponsController < Admin::BaseController
   resource_controller         
   before_filter :load_data
 
-  update.response do |wants|
-    wants.html { redirect_to collection_url }
-  end  
-  
-  create.response do |wants|
-    wants.html { redirect_to edit_object_url }
-  end
+  update.wants.html { redirect_to edit_object_url }
+  create.wants.html { redirect_to edit_object_url }
 
   private       
   def build_object
@@ -17,7 +12,6 @@ class Admin::CouponsController < Admin::BaseController
   end
   
   def load_data     
-    # TODO - remove hard coded
-    @coupon_calculators = [FlatRateCouponCalculator, FlatPercentCouponCalculator]
+    @calculators = Coupon.calculators
   end  
 end

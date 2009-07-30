@@ -196,6 +196,7 @@ es:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Dirección de facturación"
   billing_address: "Dirección de facturación"
+  calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Cancelar
   canceled: Cancelado
@@ -229,7 +230,6 @@ es:
   country: País
   country_based: "Pais base"
   coupon: Coupon                                                                             
-  coupon_calculator: Coupon Calculator
   coupons: Coupons
   coupons_description: Manage coupons
   create: Crear
@@ -283,7 +283,11 @@ es:
   first_name: Nombre
   flat_percent: Flat Percent
   flat_rate_amount: Amount
+  flat_rate_per_item: "Flat Rate (per item)"
+  flat_rate_per_order: "Flat Rate (per order)"
+  flexible_rate: "Flexible Rate"
   forgot_password: "¿Olvidaste tu contraseña?"
+  full_name: "Full Name"
   gateway: "pasarela"
   gateway_configuration: "Gateway configuration"
   gateway_error: "Error en la pasarela"
@@ -452,6 +456,7 @@ es:
   return: volver
   returned: regresó
   roles: Funciones
+  sales_tax: "Sales Tax"
   sales_total: "Total de ventas"
   sales_total_for_all_orders: "Total de ventas para todos los pedidos"
   sales_totals: "Ventas Totales"
@@ -475,7 +480,6 @@ es:
   shipped: Enviado
   shipping: Envío
   shipping_address: "Dirección de envío"
-  shipping_calculator: Calculadora
   shipping_categories: "Categorias de envio"
   shipping_categories_description: "Gestionar las categorias de envio para determinar qué categorías de productos pueden ser transportados a través de qué método"
   shipping_cost: Costes de envio
@@ -574,6 +578,7 @@ es:
   users: Usuarios
   value: "valor"
   variants: Variantes
+  vat: "VAT"           
   version: Versión
   website: "Página web"
   weight: Peso

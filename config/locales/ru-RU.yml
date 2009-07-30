@@ -196,6 +196,7 @@ ru-RU:
   backordering_is_allowed: "Задолженные заказы {{not}} разрешены"
   bill_address: "Адрес фактурации"
   billing_address: "Адрес биллинга"
+  calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: "Отмена"
   canceled: "Отменен"
@@ -229,7 +230,6 @@ ru-RU:
   country: "Страна"
   country_based: "Страна"
   coupon: Coupon                                                                             
-  coupon_calculator: Coupon Calculator
   coupons: Coupons
   coupons_description: Manage coupons
   create: "Создать"
@@ -283,7 +283,11 @@ ru-RU:
   first_name: "Имя"
   flat_percent: Flat Percent
   flat_rate_amount: Amount
+  flat_rate_per_item: "Flat Rate (per item)"
+  flat_rate_per_order: "Flat Rate (per order)"
+  flexible_rate: "Flexible Rate"
   forgot_password: "Напомнить пароль"
+  full_name: "Full Name"
   gateway: "Платежный шлюз" 
   gateway_configuration: "Настройка платёжных шлюзов"
   gateway_error: "Ошибка платежного шлюза"
@@ -452,6 +456,7 @@ ru-RU:
   return: "возвратить"
   returned: "Возвращенные"
   roles: "Роли"
+  sales_tax: "Sales Tax"
   sales_total: "Итого"
   sales_total_for_all_orders: "Продажи итого по всем заказам"
   sales_totals: "Итоги продаж"
@@ -475,7 +480,6 @@ ru-RU:
   shipped: "Доставлено"
   shipping: "Доставка"
   shipping_address: "Адрес доставки"
-  shipping_calculator: "Калькулятор"
   shipping_categories: "Категории доставки"
   shipping_categories_description: "Настройка категорий доставки - укажите, какие продукты могут быть доставлены какими способами"
   shipping_cost: "Стоимость"
@@ -574,6 +578,7 @@ ru-RU:
   users: "Пользователи"
   value: "Значение"
   variants: "Варианты"
+  vat: "VAT"           
   version: "Версия"
   website: "Сайт"
   weight: "Вес"

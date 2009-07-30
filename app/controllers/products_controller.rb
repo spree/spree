@@ -38,7 +38,7 @@ class ProductsController < Spree::BaseController
 
     if !params[:taxon].blank? && (@taxon = Taxon.find_by_id(params[:taxon]))
       taxon_and_descendants = [@taxon] + @taxon.descendents
-      base_scope = base_scope.taxons_id_equals_any(taxon_and_descendants.map &:id)
+      base_scope = base_scope.taxons_id_equals_any(taxon_and_descendants.map(&:id))
     end
                 
     @search = base_scope.search(params[:search])

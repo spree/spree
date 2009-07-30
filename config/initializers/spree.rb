@@ -32,6 +32,8 @@ Spree::Preferences::MailSettings.init
 # Ryan Bates - http://railscasts.com/episodes/112
 class ActiveRecord::Base
   named_scope :conditions, lambda { |*args| {:conditions => args} }
+
+  include HasCalculator
 end
 
 
@@ -40,4 +42,3 @@ class String #:nodoc:
 end
 
 CalendarDateSelect.format = :american
-  

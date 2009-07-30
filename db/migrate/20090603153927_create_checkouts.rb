@@ -3,11 +3,6 @@ class Order < ActiveRecord::Base
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"  
   has_many :shipments
 end
-Checkout.class_eval do
-  # temporarily disable the charge stuff since its interfering with this migration
-  def update_charges
-  end
-end
 
 class CreateCheckouts < ActiveRecord::Migration
   def self.up
@@ -22,13 +17,20 @@ class CreateCheckouts < ActiveRecord::Migration
       t.datetime :completed_at
       t.timestamps
     end
+
     change_table :creditcards do |t|
       t.references :checkout
     end                     
 
     Checkout.reset_column_information
     Creditcard.reset_column_information
-    
+
+    Checkout.class_eval do
+      # temporarily disable the charge stuff since its interfering with this migration
+      def update_charges
+      end
+    end
+        
     # move address, etc. from order to checkout
     Order.all.each do |order|             
       shipping_method = order.shipments.last.shipping_method if order.shipments.present?  

@@ -6,8 +6,8 @@ class Address < ActiveRecord::Base
   validates_presence_of :lastname
   validates_presence_of :address1
   validates_presence_of :city
-  validates_presence_of :state, :unless => Proc.new { |address| address.country && address.country.states.length==0 }
-  validates_presence_of :state_name, :if => Proc.new { |address| address.country &&  address.country.states.length==0 }
+  validates_presence_of :state, :if => Proc.new { |address| address.state_name.blank? }
+  validates_presence_of :state_name, :if => Proc.new { |address| address.state.blank? }
   validates_presence_of :zipcode
   validates_presence_of :country
   validates_presence_of :phone
@@ -18,5 +18,14 @@ class Address < ActiveRecord::Base
 
   def state_text
     state.nil? ? state_name : (state.abbr.blank? ? state.name : state.abbr)
+  end
+
+  def zone
+    (state && state.zone) ||
+    (country && country.zone)
+  end
+
+  def zones
+
   end
 end

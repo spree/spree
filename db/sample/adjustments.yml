@@ -1,0 +1,20 @@
+<% 1.upto(30) do |i| %>
+tax_<%= i %>:
+  order: order_<%= i %>
+  amount: 2.78
+  type: Charge
+  secondary_type: TaxCharge
+  adjustment_source: order_<%= i %>
+  adjustment_source_type: Order
+  description: Tax
+<% end %>
+<% 1.upto(30) do |i| %>
+ship_<%= i %>:
+  order: order_<%= i %>
+  amount: 5
+  type: Charge
+  secondary_type: ShippingCharge
+  adjustment_source: shipment_<%= i %>
+  adjustment_source_type: Shipment
+  description: Shipping
+<% end %>

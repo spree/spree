@@ -44,12 +44,15 @@ class CheckoutsController < Spree::BaseController
     if params[:checkout] and params[:checkout][:bill_address_attributes]
       # prevent double creation of addresses if user is jumping back to address stup without refreshing page
       params[:checkout][:bill_address_attributes][:id] = @checkout.bill_address.id if @checkout.bill_address
-      params[:checkout][:ship_address_attributes][:id] = @checkout.ship_address.id if @checkout.ship_address
     end
     @checkout.ip_address ||= request.env['REMOTE_ADDR']
     @checkout.email = current_user.email if current_user && @checkout.email.blank?
     @order.update_attribute(:user, current_user) if current_user and @order.user.blank?
-  end    
+  end 
+  
+  update.after do
+    @order.save
+  end   
     
   private
   def object
@@ -58,7 +61,7 @@ class CheckoutsController < Spree::BaseController
     @object = parent_object.checkout                                                  
     unless params[:checkout] and params[:checkout][:coupon_code]
       # do not create these defaults if we're merely updating coupon code, otherwise we'll have a validation error
-      @object.ship_address ||= Address.new(:country => default_country)
+      @object.shipment.address ||= Address.new(:country => default_country)
       @object.bill_address ||= Address.new(:country => default_country)   
       @object.creditcard   ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
     end
@@ -77,7 +80,7 @@ class CheckoutsController < Spree::BaseController
     @order.shipping_methods.collect do |ship_method| 
       { :id   => ship_method.id, 
         :name => ship_method.name, 
-        :rate => number_to_currency(ship_method.calculate_shipping(fake_shipment)) }
+        :rate => number_to_currency(ship_method.calculate_cost(fake_shipment)) }
     end
   end
   

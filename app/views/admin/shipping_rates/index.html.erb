@@ -1,0 +1,32 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_shipping_rate"), new_object_url, :icon => 'add'  %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+<h1><%=t("shipping_rates") %></h1>
+<table class="index">
+  <thead>                        
+    <th><%=t("shipping_method")%></th>
+    <th><%=t("shipping_category")%></th>
+    <th><%=t("amount")%></th>
+    <th><%=t("calculator")%></th>
+    <th><%=t("action")%></th>
+  </thead>
+  <tbody>
+    <% @shipping_rates.each do |shipping_rate|%>
+    <tr id="<%= dom_id shipping_rate %>">
+      <td><%=shipping_rate.shipping_method.name %></td>
+      <td><%=shipping_rate.shipping_category.name %></td>
+      <td><%=shipping_rate.amount %></td>
+      <td><%=shipping_rate.calculator.description %></td>
+      <td>
+      	<%= link_to_edit shipping_rate %> &nbsp;
+      	<%= link_to_delete shipping_rate %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -196,7 +196,9 @@ en-US:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Bill Address"
   billing_address: "Billing Address"
+  calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
+  calculator: Calculator
   cancel: cancel
   canceled: Canceled
   capture: capture
@@ -229,7 +231,6 @@ en-US:
   country: Country
   country_based: "Country Based"
   coupon: Coupon                                                                             
-  coupon_calculator: Coupon Calculator
   coupons: Coupons
   coupons_description: Manage coupons
   create: Create
@@ -281,9 +282,13 @@ en-US:
   filename: Filename
   final_confirmation: "Final Confirmation"
   first_name: "First Name"                 
-  flat_percent: Flat Percent
+  flat_percent: "Flat Percent"                  
   flat_rate_amount: Amount
+  flat_rate_per_item: "Flat Rate (per item)"
+  flat_rate_per_order: "Flat Rate (per order)"
+  flexible_rate: "Flexible Rate"
   forgot_password: "Forgot Password"
+  full_name: "Full Name"
   gateway: Gateway
   gateway_configuration: "Gateway configuration"
   gateway_error: "Gateway Error"
@@ -452,6 +457,7 @@ en-US:
   return: return
   returned: Returned
   roles: Roles
+  sales_tax: "Sales Tax"
   sales_total: "Sales Total"
   sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Sales Totals"
@@ -475,7 +481,6 @@ en-US:
   shipped: Shipped
   shipping: Shipping
   shipping_address: "Shipping Address"
-  shipping_calculator: Calculator
   shipping_categories: "Shipping Categories"
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
   shipping_cost: Cost
@@ -574,6 +579,7 @@ en-US:
   users: Users
   value: Value
   variants: Variants
+  vat: "VAT"           
   version: Version
   website: Website
   weight: Weight
@@ -590,4 +596,4 @@ en-US:
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
-  zones: Zones              
+  zones: Zones 

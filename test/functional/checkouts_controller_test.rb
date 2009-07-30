@@ -18,10 +18,15 @@ class CheckoutsControllerTest < ActionController::TestCase
         @params = { :final_answer => true, :order_id => @order.number }
         @shipping_method = Factory(:shipping_method)               
         @params[:final_answer] = true
-        @params[:checkout] = {:bill_address_attributes => @address.attributes.symbolize_keys,
-                              :ship_address_attributes => @address.attributes.symbolize_keys,
-                              :shipping_method_id => @shipping_method.id,
-                              :creditcard => @creditcard.attributes.symbolize_keys}
+        @params[:checkout] = {
+          :bill_address_attributes => @address.attributes.symbolize_keys,
+          :shipment_attributes => {
+            :id => @order.shipment.id,
+            :address_attributes => @address.attributes.symbolize_keys,
+            :shipping_method_id => @shipping_method.id,
+          },
+          :creditcard => @creditcard.attributes.symbolize_keys,
+        }
         post :update 
       end
       should_change "Address.count", :by => 2
@@ -33,11 +38,14 @@ class CheckoutsControllerTest < ActionController::TestCase
         assert_equal "0.0.0.0", assigns(:checkout).ip_address
       end
       should "assign the requested shipping method" do
-        assert_equal @shipping_method, assigns(:checkout).shipping_method
+        assert_equal @shipping_method, assigns(:checkout).order.shipment.shipping_method
       end
       should "remove the order_id from the session" do
         assert_equal nil, session[:order_id]
-      end 
+      end
+      should "not have any errors" do
+        assert(assigns(:checkout).errors.empty?, "checkout has errors #{assigns(:checkout).errors.inspect}")
+      end
     end
     context "xhr put" do
       setup { xhr :put, :update }
@@ -61,7 +69,7 @@ class CheckoutsControllerTest < ActionController::TestCase
     context "xhr put with bill and ship address" do
       setup do 
         xhr :put, :update, :bill_address_attributes => Factory.build(:address).attributes.symbolize_keys,
-                           :ship_address_attributes => Factory.build(:address).attributes.symbolize_keys
+          :ship_address_attributes => Factory.build(:address).attributes.symbolize_keys
       end
       should_respond_with :success
     end  

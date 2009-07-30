@@ -14,9 +14,9 @@ class ProductTest < Test::Unit::TestCase
     end
     
     context "with product name of 'Foo Product Deluxe'" do
-      setup { @product = Factory(:product, :name => "Foo Product Deluxe") }
+      setup { @product = Factory(:product, :name => "Foo Product Deluxee") }
       should "have correct permalink" do
-        assert_equal "foo-product-deluxe", @product.permalink
+        assert_equal "foo-product-deluxee", @product.permalink
       end
     end
 
@@ -86,6 +86,7 @@ class ProductTest < Test::Unit::TestCase
   
   context "Product.available" do
     setup do
+      Product.destroy_all
       5.times { Factory(:product, :available_on => Time.now - 1.day) }
       @unavaiable = Factory(:product, :available_on => Time.now + 2.weeks) 
     end

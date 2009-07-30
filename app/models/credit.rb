@@ -1,9 +1,16 @@
-class Credit < ActiveRecord::Base
-  belongs_to :order
-  belongs_to :creditable, :polymorphic => true
-  acts_as_list :scope => :order 
-  
-  validates_presence_of :amount
-  validates_numericality_of :amount
-  validates_presence_of :description
+class Credit < Adjustment
+   before_save :inverse_amount
+
+  def inverse_amount
+    x = self.amount > 0 ? -1 : 1
+    self.amount = self.amount * x
+  end
+
+  def calculate_adjustment
+    adjustment = super
+    adjustment && (
+      x = adjustment > 0 ? -1 : 1
+      adjustment * x
+    )
+  end
 end

@@ -1,20 +1,20 @@
 flat_rate_ground:
-  attribute: flat_rate_amount
+  attribute: amount
   owner: ups_ground
   owner_type: Calculator
   value: 5
 flat_rate_two_day:
-  attribute: flat_rate_amount
+  attribute: amount
   owner: ups_two_day
   owner_type: Calculator
   value: 10
 flat_rate_one_day:
-  attribute: flat_rate_amount
+  attribute: amount
   owner: ups_one_day
   owner_type: Calculator
   value: 15     
 flat_rate_five_dollars:
-  attribute: flat_rate_amount
+  attribute: amount
   owner: flat_rate_coupon_calculator
   owner_type: Calculator
   value: 5     
