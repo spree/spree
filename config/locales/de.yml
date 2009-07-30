@@ -212,6 +212,8 @@ de:
   charged: geändert
   checkout: "Zur Kasse"
   city: Stadt
+  code: Code
+  combine: Combine
   comp_order: "Bestellung abbrechen"
   comp_order_confirmation: ""
   complete_list: "Complete List"
@@ -226,6 +228,10 @@ de:
   copy_all_mails_to: Copy All Mails To                                                                             
   country: Land
   country_based: "Country Based"
+  coupon: Coupon                                                                             
+  coupon_calculator: Coupon Calculator
+  coupons: Coupons
+  coupons_description: Manage coupons
   create: Erstellen
   create_a_new_account: "Neues Konto erstellen"
   create_user_account: Create User Account
@@ -245,6 +251,7 @@ de:
   display: Anzeigen
   edit: Bearbeiten
   editing_category: "Kategorie bearbeiten"
+  editing_coupon: Editing Coupon
   editing_option_type: "Optionstyp bearbeiten"
   editing_option_types: "Option bearbeiten"
   editing_product: "Produkt bearbeiten"
@@ -274,6 +281,7 @@ de:
   filename: Dateiname
   final_confirmation: "End Bestätigung"
   first_name: Vorname
+  flat_percent: Flat Percent
   flat_rate_amount: Amount
   forgot_password: "Forgot Password"
   gateway: Gateway
@@ -342,6 +350,7 @@ de:
   name: Name
   new: Neu
   new_category: "Neue Kategorie"
+  new_coupon: New Coupon
   new_credit_card_payment: "Neue Kreditkartenzahlung"
   new_customer: "Neuer Kunde"
   new_image: "Neues Bild"
@@ -362,6 +371,7 @@ de:
   new_variant: "Neue Variante"
   new_zone: "Neue Zone"
   next: weiter
+  no: "No"
   no_items_in_cart: "Keine Artikel im  Warenkorb"
   no_match_found: "Kein Treffer"
   no_user_found: "No user was found with that email address"
@@ -554,6 +564,7 @@ de:
   update_password: "Update my password and log me in"                    
   updated_successfully: "Erfolgreich aktualisiert"
   updating: Updating
+  usage_limit: Usage Limit
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
   use_different_shipping_address: "Andere Lieferaddresse verwenden"
@@ -572,6 +583,7 @@ de:
   whats_this: "What's this"
   width: Breite
   year: "Year"
+  yes: "Yes"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Ihr Warenkorb ist leer"
   zip: PLZ

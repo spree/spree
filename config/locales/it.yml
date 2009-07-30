@@ -212,6 +212,8 @@ it:
   charged: Charged
   checkout: Acquista
   city: Città
+  code: Code
+  combine: Combine
   comp_order: "Cancellare l'ordine"
   comp_order_confirmation: "Customer will not be charged.  Are you sure you want to comp this order?"
   complete_list: "Complete List"
@@ -226,6 +228,10 @@ it:
   copy_all_mails_to: Copy All Mails To                                                                             
   country: country
   country_based: "Country Based"
+  coupon: Coupon                                                                             
+  coupon_calculator: Coupon Calculator
+  coupons: Coupons
+  coupons_description: Manage coupons
   create: Inserire
   create_a_new_account: "Create a new account"
   create_user_account: Create User Account
@@ -245,6 +251,7 @@ it:
   display: Visualizza
   edit: editare
   editing_category: "Edita la categoria"
+  editing_coupon: Editing Coupon
   editing_option_type: "Editing Option Type"
   editing_option_types: "Edita l'opzione"
   editing_product: "Editing Product"
@@ -274,6 +281,7 @@ it:
   filename: file
   final_confirmation: "Conferma finale"
   first_name: nome
+  flat_percent: Flat Percent
   flat_rate_amount: Amount
   forgot_password: "Forgot Password"
   gateway: Gateway
@@ -342,6 +350,7 @@ it:
   name: Name
   new: New
   new_category: "Nuova categoria"
+  new_coupon: New Coupon
   new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
   new_image: "Nuova immagine"
@@ -362,6 +371,7 @@ it:
   new_variant: "Nuova variante"
   new_zone: "New Zone"
   next: continua
+  no: "No"
   no_items_in_cart: "Carrello vuoto"
   no_match_found: "No Match Found"
   no_user_found: "No user was found with that email address"
@@ -554,6 +564,7 @@ it:
   update_password: "Update my password and log me in"                    
   updated_successfully:
   updating: Updating
+  usage_limit: Usage Limit
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
   use_different_shipping_address: "Altro indirizzo di consegna"
@@ -572,6 +583,7 @@ it:
   whats_this: "What's this"
   width: Width
   year: "Year"
+  yes: "Yes"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: CAP

@@ -212,6 +212,8 @@ fi:
   charged: Veloitettu
   checkout: Kassa
   city: Paikkakunta
+  code: Code
+  combine: Combine
   comp_order: "Tilauksen keskeyttäminen"
   comp_order_confirmation: "Asiakasta ei veloiteta. Haluatko keskeyttää tilauksen?"
   complete_list: "Täydellinen lista"
@@ -226,6 +228,10 @@ fi:
   copy_all_mails_to: "Kopioi kaikki viestit"                                                                             
   country: Maa
   country_based: Sijaintimaa
+  coupon: Coupon                                                                             
+  coupon_calculator: Coupon Calculator
+  coupons: Coupons
+  coupons_description: Manage coupons
   create: Luo
   create_a_new_account: "Luo uusi tunnus"
   create_user_account: "Luo käyttäjätunnus"
@@ -245,6 +251,7 @@ fi:
   display: Näytä
   edit: Muokkaa
   editing_category: "Muokataan kategoriaa"
+  editing_coupon: Editing Coupon
   editing_option_type: "Muokataan valintatyyppiä"
   editing_option_types: "Muokataan valintatyyppejä"
   editing_product: "Muokataan tuotetta"
@@ -274,6 +281,7 @@ fi:
   filename: Tiedostonimi
   final_confirmation: "Lopullinen vahvistus"
   first_name: Etunimi
+  flat_percent: Flat Percent
   flat_rate_amount: Määrä
   forgot_password: "Salasanan unohtaminen"
   gateway: Yhdyskäytävä
@@ -342,6 +350,7 @@ fi:
   name: Nimi
   new: Uusi
   new_category: "Uusi kategoria"
+  new_coupon: New Coupon
   new_credit_card_payment: "Uusi luottokorttimaksutapa"
   new_customer: "Uusi asiakas"
   new_image: "Uusi kuva"
@@ -362,6 +371,7 @@ fi:
   new_variant: "Uusi variantti"
   new_zone: "Uusi alue"
   next: Seuraava
+  no: "No"
   no_items_in_cart: ""
   no_match_found: "Ei löytynyt vastaavia"
   no_user_found: "Ei löytnyt käyttäjää kyseisellä sähköpostiosoitteella"
@@ -554,6 +564,7 @@ fi:
   update_password: "Päivitä salasanani ja kirjaa minut sisään"
   updated_successfully: "Päivitetty onnistuneesti"
   updating: Päivitetään
+  usage_limit: Usage Limit
   use_as_shipping_address: "Käytä toimitusosoitteena"
   use_billing_address: "Käytä laskutusosoitetta"
   use_different_shipping_address: "Käytä eri toimitusosoitetta"
@@ -572,6 +583,7 @@ fi:
   whats_this: "Mikä tämä on"
   width: Leveys
   year: Vuosi
+  yes: "Yes"
   you_have_been_logged_out: "Olet kirjautunut ulos."
   your_cart_is_empty: "Ostoskorisi on tyhjä"
   zip: Postinumero

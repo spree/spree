@@ -212,6 +212,8 @@ fr-FR:
   charged: Débité
   checkout: Procéder au paiement
   city: Ville
+  code: Code
+  combine: Combine
   comp_order: "Commande complète"
   comp_order_confirmation: "Le client n'a pas été débité.  Êtes-vous sûr de vouloir valider cette commande ?"
   complete_list: "Complete List"
@@ -226,6 +228,10 @@ fr-FR:
   copy_all_mails_to: Copier tous les emails à
   country: Pays
   country_based: "Country Based"
+  coupon: Coupon                                                                             
+  coupon_calculator: Coupon Calculator
+  coupons: Coupons
+  coupons_description: Manage coupons
   create: Créer
   create_a_new_account: "Créer un nouveau compte"
   create_user_account: Create User Account
@@ -245,6 +251,7 @@ fr-FR:
   display: Afficher
   edit: Editer
   editing_category: "Edition de la catégorie"
+  editing_coupon: Editing Coupon
   editing_option_type: "Edition du type d'option"
   editing_option_types: "Edition des types d'options"
   editing_product: "Edition du produit"
@@ -274,6 +281,7 @@ fr-FR:
   filename: Nom du fichier
   final_confirmation: "Confirmation finale"
   first_name: "Prenom"
+  flat_percent: Flat Percent
   flat_rate_amount: Amount
   forgot_password: "Forgot Password"
   gateway: Passerelle
@@ -342,6 +350,7 @@ fr-FR:
   name: Nom
   new: Nouveau
   new_category: "Nouvelle categorie"
+  new_coupon: New Coupon
   new_credit_card_payment: "Nouveau mode de paiement par carte de crédit"
   new_customer: "Nouveau client"
   new_image: "Nouvelle image"
@@ -362,6 +371,7 @@ fr-FR:
   new_variant: "Nouvelle gamme"
   new_zone: "Nouvelle zone"
   next: Suivant
+  no: "No"
   no_items_in_cart: ""
   no_match_found: "Aucune correspondance trouvée"
   no_user_found: "No user was found with that email address"
@@ -554,6 +564,7 @@ fr-FR:
   update_password: "Update my password and log me in"                    
   updated_successfully: "Mise à jour effectuée avec succès"
   updating: Updating
+  usage_limit: Usage Limit
   use_as_shipping_address: Use as Shipping Address
   use_billing_address: Use Billing Address
   use_different_shipping_address: "Utiliser une adresse de facturation différente"
@@ -572,6 +583,7 @@ fr-FR:
   whats_this: "Qu'est ce que"
   width: Largeur
   year: "Year"
+  yes: "Yes"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Votre panier est vide"
   zip: Code postal

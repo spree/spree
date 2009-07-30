@@ -212,6 +212,8 @@ es:
   charged: Cargado
   checkout: Pagar
   city: Ciudad
+  code: Code
+  combine: Combine
   comp_order: "Pedido completado"
   comp_order_confirmation: "Confirmacion de pedido completado"
   complete_list: "Complete List"
@@ -226,6 +228,10 @@ es:
   copy_all_mails_to: Copiar todos los correos a
   country: País
   country_based: "Pais base"
+  coupon: Coupon                                                                             
+  coupon_calculator: Coupon Calculator
+  coupons: Coupons
+  coupons_description: Manage coupons
   create: Crear
   create_a_new_account: "Crear una nueva cuenta"
   create_user_account: Create User Account
@@ -245,6 +251,7 @@ es:
   display: Mostrar
   edit: Editar
   editing_category: "Editando categoría"
+  editing_coupon: Editing Coupon
   editing_option_type: "Editando tipo de opción"
   editing_option_types: "Editando tipos de opción"
   editing_product: "Editando Producto"
@@ -274,6 +281,7 @@ es:
   filename: "Nombre de archivo"
   final_confirmation: "Confirmación Final"
   first_name: Nombre
+  flat_percent: Flat Percent
   flat_rate_amount: Amount
   forgot_password: "¿Olvidaste tu contraseña?"
   gateway: "pasarela"
@@ -342,6 +350,7 @@ es:
   name: Nombre
   new: Nuevo
   new_category: "Nueva categoría"
+  new_coupon: New Coupon
   new_credit_card_payment: "Nuevo pago con tarjeta de credito"
   new_customer: "Nuevo cliente"
   new_image: "Nueva Imágen"
@@ -362,6 +371,7 @@ es:
   new_variant: "Nueva Variante"
   new_zone: "Nueva zona"
   next: próximo
+  no: "No"
   no_items_in_cart: "La cesta está vacía"
   no_match_found: "No se ha encontrado"
   no_user_found: "No se ha encontrado ningun usuario con esa direccion de correo"
@@ -554,6 +564,7 @@ es:
   update_password: "Actualiza mi contraseña y dejame entrar"                    
   updated_successfully: "Actualizado correctamente"
   updating: Updating
+  usage_limit: Usage Limit
   use_as_shipping_address: Usar como direccion de envio
   use_billing_address: Usar la direccion de facturacion
   use_different_shipping_address: "Usar una dirección de envío diferente"
@@ -572,6 +583,7 @@ es:
   whats_this: "¿Qué es esto?"
   width: Ancho
   year: "Año"
+  yes: "Yes"
   you_have_been_logged_out: "Se ha cerrado la sesión."
   your_cart_is_empty: "Su cesta está vacía"
   zip: "Código postal"

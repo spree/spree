@@ -212,6 +212,8 @@ th:
   charged: Charged
   checkout: สั่งซื้อ
   city: เขต หรือ อำเภอ
+  code: Code
+  combine: Combine
   comp_order: "Comp Order"
   comp_order_confirmation: "Customer will not be charged.  Are you sure you want to comp this order?"
   complete_list: รายการจัดการทั้งหมด
@@ -226,6 +228,10 @@ th:
   copy_all_mails_to: คัดลอกเมลทุกฉบับส่งไปที่
   country: ประเทศ
   country_based: ยืดประเทศเป็นหลัก
+  coupon: Coupon                                                                             
+  coupon_calculator: Coupon Calculator
+  coupons: Coupons
+  coupons_description: Manage coupons
   create: สร้าง
   create_a_new_account: สร้างบัญชีผู้ใช้ใหม่
   create_user_account: สร้างบัญชีผู้ใช้ใหม่
@@ -245,6 +251,7 @@ th:
   display: แสดง
   edit: แก้ไข
   editing_category: "แก้ไขหมวดหมู่"
+  editing_coupon: Editing Coupon
   editing_option_type: แก้ไขตัวเลือกนี้
   editing_option_types: แก้ไขตัวเลือก
   editing_product: แก้ไขสินค้า
@@ -274,6 +281,7 @@ th:
   filename: Filename
   final_confirmation: "การยืนยันขั้นสุดท้าย"
   first_name: ชื่อแรก
+  flat_percent: Flat Percent
   flat_rate_amount: Amount
   forgot_password: ลืมรหัสผ่าน
   gateway: ช่องทางจ่ายเงิน
@@ -342,6 +350,7 @@ th:
   name: ชื่อ
   new: New
   new_category: "New category"
+  new_coupon: New Coupon
   new_credit_card_payment: สร้างรายการจ่ายชำระผ่านบัตรเครดิต
   new_customer: สมัครสมาชิก
   new_image: เพิ่มภาพ
@@ -362,6 +371,7 @@ th:
   new_variant: "New Variant"
   new_zone: เพิ่มเขตใหม่
   next: หน้าถัดไป
+  no: "No"
   no_items_in_cart: ""
   no_match_found: "No Match Found"
   no_user_found: "No user was found with that email address"
@@ -554,6 +564,7 @@ th:
   update_password: "ใช้รหัสผ่านล่าสุด จากนั้นนำฉันเข้าสู่ระบบ"                
   updated_successfully: เสร็จสิ้นการปรับปรุงข้อมูล
   updating: กำลังปรุงปรุงตามข้อมูลล่าสุด
+  usage_limit: Usage Limit
   use_as_shipping_address: ใช้ที่อยู่ในการจัดส่ง
   use_billing_address: ใช้ที่อยู่ในใบเสร็จรับเงิน
   use_different_shipping_address: "ใช้ที่อยู่อื่นในการจัดส่ง"
@@ -572,6 +583,7 @@ th:
   whats_this: "นี่คืออะไร"
   width: ความกว้าง
   year: "ปี"
+  yes: "Yes"
   you_have_been_logged_out: "คุณออกจากระบบแล้ว"
   your_cart_is_empty: "ตะกร้าสินค้าของคุณว่างเปล่า"
   zip: รหัสไปรษณีย์

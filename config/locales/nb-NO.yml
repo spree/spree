@@ -212,6 +212,8 @@ nb-NO:
   charged: "Belastet"
   checkout: "Til kassen"
   city: Sted
+  code: Code
+  combine: Combine
   comp_order: "Kanseller ordre"
   comp_order_confirmation: "Kunden vil ikke bli belastet. Er du sikker på at du vil kansellere ordren?"
   complete_list: "Complete List"
@@ -226,6 +228,10 @@ nb-NO:
   copy_all_mails_to: Kopier alle eposter til
   country: Land
   country_based: "Land"
+  coupon: Coupon                                                                             
+  coupon_calculator: Coupon Calculator
+  coupons: Coupons
+  coupons_description: Manage coupons
   create: Opprett
   create_a_new_account: "Opprett ny konto"
   create_user_account: Create User Account
@@ -245,6 +251,7 @@ nb-NO:
   display: Vis
   edit: Endre
   editing_category: "Endre kategori"
+  editing_coupon: Editing Coupon
   editing_option_type: "Endre variasjonstype"
   editing_option_types: "Endre variasjonstyper"
   editing_product: "Endre produkt"
@@ -274,6 +281,7 @@ nb-NO:
   filename: Filnavn
   final_confirmation: "Endelig bekreftelse"
   first_name: "Fornavn"
+  flat_percent: Flat Percent
   flat_rate_amount: Amount
   forgot_password: "Forgot Password"
   gateway: "Tjeneste"
@@ -342,6 +350,7 @@ nb-NO:
   name: Navn
   new: Ny
   new_category: "Ny kategori"
+  new_coupon: New Coupon
   new_credit_card_payment: "Ny kortbetaling"
   new_customer: "Ny kunde"
   new_image: "Nytt bilde"
@@ -362,6 +371,7 @@ nb-NO:
   new_variant: "Ny variant"
   new_zone: "Ny sone"
   next: Neste
+  no: "No"
   no_items_in_cart: "Ingen artikler i handlekurven"
   no_match_found: "Ingen treff"
   no_user_found: "No user was found with that email address"
@@ -554,6 +564,7 @@ nb-NO:
   update_password: "Update my password and log me in"                    
   updated_successfully: "Oppdatert"  
   updating: Updating
+  usage_limit: Usage Limit
   use_as_shipping_address: "Bruk som leveringsadresse"
   use_billing_address: "Bruk fakturaadressen"
   use_different_shipping_address: "Bruk en annen leveringsadresse"
@@ -572,6 +583,7 @@ nb-NO:
   whats_this: "Hva er dette?"
   width: Bredde
   year: "Year"
+  yes: "Yes"
   you_have_been_logged_out: "Du har nå logget ut."
   your_cart_is_empty: "Din handlekurv er tom"
   zip: Postnummer
