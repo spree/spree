@@ -27,13 +27,22 @@ NOTE: This may take a while.  The gem has several dependencies.
 spree <app_name>
 </shell>
 
-3.) Create your database and edit the config/database.yml to taste.  You can skip this 
-step if using sqlite3 as your database.
+3.) Copy database.yml.example to database.yml.
+
+<shell>
+cd <app_name>
+cp config/database.yml.example config/database.yml
+</shell>
+
+The defaults should be ok if you use sqlite3 as your database, you can skip to the 
+next step.
+
+If you're not using sqlite3, edit config/database.yml to taste and create any 
+databases you need.
 
 4.) Bootstrap
 
 <shell>
-cd <app-name>
 rake db:bootstrap
 </shell>
 
@@ -52,13 +61,22 @@ git clone git://github.com/railsdog/spree.git spree
 </shell>
 
 
-3.) Create your database and edit the config/database.yml to taste.  You can skip this 
-step if using sqlite3 as your database.
+3.) Copy database.yml.example to database.yml.
+
+<shell>
+cd spree
+cp config/database.yml.example config/database.yml
+</shell>
+
+The defaults should be ok if you use sqlite3 as your database, you can skip to the 
+next step.
+
+If you're not using sqlite3, edit config/database.yml to taste and create any 
+databases you need.
 
 4.) Bootstrap
 
 <shell>
-cd <app-name>
 rake db:bootstrap
 </shell>
 
