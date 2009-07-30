@@ -26,30 +26,31 @@ class ProductsController < Spree::BaseController
   end
   
   def load_data  
-	    load_object  
-		@selected_variant = @product.variants.detect { |v| v.in_stock || Spree::Config[:allow_backorders] }
+    load_object  
+    @selected_variant = @product.variants.detect { |v| v.in_stock || Spree::Config[:allow_backorders] }
 		
     return unless permalink = params[:taxon_path]
     @taxon = Taxon.find_by_permalink(params[:taxon_path].join("/") + "/")	 
   end
   
   def collection
-    search_query = Product.active
+    base_scope = Product.active
 
     if !params[:taxon].blank? && (@taxon = Taxon.find_by_id(params[:taxon]))
-      search_query = search_query.scoped({
-          :conditions => [
-            "products.id in (select product_id from products_taxons where taxon_id in (?))",
-            ([@taxon] + @taxon.descendents).map(&:id)
-          ]})
+      taxon_and_descendants = [@taxon] + @taxon.descendents
+      base_scope = base_scope.taxons_id_equals_any(taxon_and_descendants.map &:id)
     end
+                
+    @search = base_scope.search(params[:search])
 
-    @search = search_query.new_search(params[:search])
+    # set on model basis (default 30)
+    # Product.per_page ||= Spree::Config[:products_per_page]
 
-    @search.per_page ||= Spree::Config[:products_per_page]
-    @search.include = {:variants => :images}
+    ## defunct?
+    @product_cols = 3 
 
-    @product_cols = 3
-    @products ||= @search.all
+    @products ||= @search.paginate(:include  => [:images, {:variants => :images}],
+                                   :per_page => Spree::Config[:products_per_page],
+                                   :page     => params[:page])
   end
 end

@@ -57,20 +57,20 @@ class Admin::ProductsController < Admin::BaseController
     end
     
     def collection
-      #use the active named scope only if the 'show deleted' checkbox is unchecked
-      if params[:search].nil? || params[:search][:conditions].nil? || params[:search][:conditions][:deleted_at_is_not_null].blank?
-        @search = end_of_association_chain.not_deleted.new_search(params[:search])
-      else
-        @search = end_of_association_chain.new_search(params[:search])
+      base_scope = end_of_association_chain
+
+      # Note: the SL scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
+      # QUERY - better as named scope or as SL scope?
+      if params[:search].nil? || params[:search][:deleted_at_not_null].blank?
+        base_scope = base_scope.not_deleted
       end
 
-      #set order by to default or form result
-      @search.order_by ||= :name
-      @search.order_as ||= "ASC"
-      #set results per page to default or form result
-      @search.per_page ||= Spree::Config[:admin_products_per_page]
-      @search.include = {:variants => :images}
-      @collection = @search.all
+      @search = base_scope.search(params[:search])
+      @search.order ||= "ascend_by_name"
+
+      @collection = @search.paginate(:include  => {:variants => :images},
+                                     :per_page => Spree::Config[:admin_products_per_page], 
+                                     :page     => params[:page])
     end
 
     # override rc_default build b/c we need to make sure there's an empty variant added to each product

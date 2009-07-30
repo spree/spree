@@ -9,17 +9,17 @@
 <table class="index">
   <thead>
     <tr>
-      <th><%= order_by_link :created_at, :text => t("order_date") %></th>
-      <th><%= order_by_link :number, :text => t("order_number") %></th>
-      <th><%= order_by_link :state, :text => t("status") %></th>
-      <th><%= order_by_link({:user => :email}, :text => t("customer")) %></th>
-      <th><%= order_by_link :total, :text =>t("total") %></th>
+      <th><%= order @search, :by => :created_at,       :as => t("order_date") %></th>
+      <th><%= order @search, :by => :number,           :as => t("order_number") %></th>
+      <th><%= order @search, :by => :state,            :as => t("status") %></th>
+      <th><%= order @search, :by => {:user => :email}, :as => t("customer") %></th>
+      <th><%= order @search, :by => :total,            :as => t("total") %></th>
     </tr>
   </thead>
   <tbody>
   <% @orders.each do |order| %>
     <tr>
-      <td><%=order.created_at.to_date%></td>
+      <td><%= order.created_at.to_date%></td>
       <td><%= link_to order.number, object_url(order) %></td>
       <td><%= t(order.state.downcase) %></td>
       <td><%= order.email %></td>
@@ -28,7 +28,7 @@
   <% end %>
   </tbody>
 </table>
-<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
+<%= will_paginate(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") %>
         
         
         
@@ -36,55 +36,45 @@
 <div class="box">
   <h3><%= t(:search) %></h3>
 
-  <% form_for [:admin, @search] do |f| %>
-  	<% f.fields_for @search.conditions do |orders| %>
-
-      <label><%= t("date_range") %></label><br />
-      <div class="yui-g date-range-filter">
-        <div class="yui-u sub-field first">
-          <%= orders.calendar_date_select :created_at_after %><br />
-          <label class="sub"><%= t("start") %></label>
-        </div>
-        <div class="yui-u sub-field">
-          <%= orders.calendar_date_select :created_at_before %><br />
-          <label><%= t("stop") %></label>
-        </div>
+  <% form_for @search do |f| %>
+    <label><%= t("date_range") %></label><br />
+    <div class="yui-g date-range-filter">
+      <div class="yui-u sub-field first">
+        <%= f.calendar_date_select :created_at_after %><br />
+        <label class="sub"><%= t("start") %></label>
       </div>
+      <div class="yui-u sub-field">
+        <%= f.calendar_date_select :created_at_before %><br />
+        <label><%= t("stop") %></label>
+      </div>
+    </div>
 
-      <p><label><%= t("order_number") %></label><br />
-      <%= orders.text_field :number, :size=>25 %></p>
+    <p><label><%= t("status") %></label><br />
+    <%= f.select :state_equals, Order.state_machines['state'].states.collect {|status| [status.titleize, status]}, {:include_blank => true} %></p>
 
-      <p><label><%= t("status") %></label><br />
-      <%= orders.select :state, Order.state_machines['state'].states.collect {|status| [status.titleize, status]}, {:include_blank => true} %></p>
+    <p><label><%= t 'order_number' %></label><br />
+    <%= f.text_field :number_contains, :size=>25 %></p>
 
-      <% orders.fields_for orders.object.checkout do |checkout| %>
-        <p>
-          <label><%= t("email") %></label><br />
-          <%= checkout.text_field :email, :size=>25 %>
-        </p>
-      	<% checkout.fields_for checkout.object.bill_address do |address| %>
-          <p>
-            <label><%= t("first_name") %></label><br />
-              <%= address.text_field :lower_of_firstname_contains, :size=>25 %>
-          </p>
-          <p>
-            <label><%= t("last_name") %></label><br />
-            <%= address.text_field :lower_of_lastname_contains, :size=>25 %>
-          </p>
-        <% end %>
-      <% end %>
-      <p>
-        <input type="checkbox" style="vertical-align:middle;" name="limit_complete" value="1" <%= "checked" if @limit_complete %> />
-        <label>
-          <%= t("show_only_complete_orders") %>
-        </label>
-      </p>
+    <p>
+      <label><%= t 'email' %></label><br />
+      <%= f.text_field :checkout_email_contains, :size=>25 %>
+    </p>
+    <p>
+    <label><%= t 'first_name' %></label><br />
+        <%= f.text_field :checkout_bill_address_firstname_contains, :size=>25 %>
+    </p>
+    <p>
+      <label><%= t 'last_name' %></label><br />
+      <%= f.text_field :checkout_bill_address_lastname_contains, :size=>25 %>
+    </p>
+    <p>
+      <%= f.check_box :checkout_completed_at_not_null, {:style => "vertical-align:middle;"} %>
+      <label>
+        <%= t("show_only_complete_orders") %>
+      </label>
+    </p>
 
-      <p><%= button t("search") %></p>
-
-    <% end %>
-
+    <p><%= button t("search") %></p>
   <% end %>
-
 </div>
 <% end %>

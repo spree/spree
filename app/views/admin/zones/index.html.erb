@@ -14,8 +14,8 @@
 <table class="index">
   <thead>
     <tr>
-      <th><%= order_by_link :name, :text => t("name") %></th>
-      <th><%= order_by_link :description, :text => t("description") %></th>
+      <th><%= order @search, :by => :name,        :as => t("name") %></th>
+      <th><%= order @search, :by => :description, :as => t("description") %></th>
       <th></th>
     </tr>
   </thead>
@@ -36,5 +36,5 @@
   </tbody>
 </table>
 
-<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
+<%= will_paginate(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") %>
 

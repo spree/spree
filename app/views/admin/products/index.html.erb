@@ -26,8 +26,8 @@
 <table class="index">
   <tr>
     <th><%= t("sku") %></td>
-    <th><%= order_by_link :name, :text => t("name") %></td>
-    <th><%= order_by_link :master_price, :text => t("master_price") %></td>
+    <th><%= order @search, :by => :name,         :as => t("name") %></td>
+    <th><%= order @search, :by => :master_price, :as => t("master_price") %></td>
     <th>&nbsp;</th>
   </tr>
 <% @collection.each do |product| %>
@@ -43,32 +43,27 @@
   </tr>
 <% end %>
 </table>
-<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>						
+<%= will_paginate (:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") %>						
 
 <% content_for :sidebar do %>
 
-  <% form_for [:admin, @search] do |f| %>
-
+  <% form_for @search do |f| %>
     <div class="box">
       <h3><%= t(:search) %></h3>
 
-      <% f.fields_for @search.conditions do |products| %>
       <p>
         <label><%= t("name") %></label><br />
-        <%= products.text_field :name_contains, :size => 15 %>
+        <%= f.text_field :name_contains, :size => 15 %>
       </p>
 
-      <% products.fields_for products.object.variants do |variants| %>
-        <p>
-          <label><%= t("sku") %></label><br />
-          <%= variants.text_field :sku_contains, :size => 15 %>
-        </p>
-      <% end %>                
+      <p>
+        <label><%= t("sku") %></label><br />
+        <%= f.text_field :variants_sku_contains, :size => 15 %>
+      </p>
       <p>
         <label><%= t("show_deleted") %></label><br />
-        <%= products.check_box :deleted_at_is_not_null, {}, "1", "" %>
+        <%= f.check_box :deleted_at_not_null, {}, "1", "" %>
       </p>
-      <%end%>
       <p class="form-buttons">
         <%= button t("search") %>
       </p>

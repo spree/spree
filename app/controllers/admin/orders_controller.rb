@@ -31,20 +31,20 @@ class Admin::OrdersController < Admin::BaseController
   private
 
   def collection
-    @search = Order.new_search(params[:search])
+    @search = Order.search(params[:search])
+    @search.order ||= "descend_by_created_at"
 
-    if params[:search].nil? || params[:limit_complete]
-      @search.conditions.checkout.completed_at_does_not_equal = nil
-      @limit_complete = true
+    # QUERY - get per_page from form ever???  maybe push into model
+    # @search.per_page ||= Spree::Config[:orders_per_page]
+
+    # turn on show-complete filter by default
+    unless params[:search] && params[:search][:checkout_completed_at_not_null]
+      @search.checkout_completed_at_not_null = true 
     end
     
-    #set order by to default or form result
-    @search.order_by ||= :created_at
-    @search.order_as ||= "DESC"
-    #set results per page to default or form result
-    @search.per_page ||= Spree::Config[:orders_per_page]
-
-    @collection = @search.find(:all, :include => [:user, :shipments, {:creditcard_payments => {:creditcard => :address}}])
+    @collection = @search.paginate(:include  => [:user, :shipments, {:creditcard_payments => {:creditcard => :address}}],
+                                   :per_page => Spree::Config[:orders_per_page], 
+                                   :page     => params[:page])
   end
 
   # Allows extensions to add new forms of payment to provide their own display of transactions
