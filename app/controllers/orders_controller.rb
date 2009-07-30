@@ -1,5 +1,5 @@
 class OrdersController < Spree::BaseController     
-    prepend_before_filter :reject_unknown_order
+  prepend_before_filter :reject_unknown_order
   before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]            
 
   ssl_required :show
@@ -44,10 +44,15 @@ class OrdersController < Spree::BaseController
   #override r_c default b/c we don't want to actually destroy, we just want to clear line items
   def destroy
     @order.line_items.clear
-    respond_to do |format| 
-      format.html { redirect_to(edit_object_url) } 
-    end
-  end  
+    @order.update_totals
+    after :destroy
+    set_flash :destroy
+    response_for :destroy
+  end
+
+  destroy.response do |wants|
+    wants.html { redirect_to(edit_object_url) } 
+  end
   
   def can_access?
     return true unless order = load_object    

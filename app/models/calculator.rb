@@ -1,10 +1,6 @@
 class Calculator < ActiveRecord::Base  
   belongs_to :calculable, :polymorphic => true     
-    
-  def self.shipping
-    all.select { |c| c.is_a? ShippingCalculator }
-  end
-  
+
   def available?(order)
     true
   end 

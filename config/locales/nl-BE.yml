@@ -196,6 +196,7 @@ nl-BE:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Factuuradres"
   billing_address: "Factuuradres"
+  calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: annuleer
   canceled: Geannuleerd
   capture: "in rekening brengen"
@@ -207,6 +208,7 @@ nl-BE:
   category: Categorie
   change: Wijzig
   change_language: "Taalkeuze"
+  charge_total: Charge Total
   charged: Aangere
   checkout: Bestelling
   city: Stad
@@ -231,6 +233,7 @@ nl-BE:
   credit_card: "Kredietkaart"
   credit_card_capture_complete: "Aanrekening via kredietkaart voltooid"
   credit_card_payment: "Kredietkaart Betaling"
+  credit_total: Credit Total
   creditcard: Kredietkaart
   current: Huidige
   customer: Klant
@@ -271,6 +274,7 @@ nl-BE:
   filename: Bestandsnaam
   final_confirmation: "Definitieve bevestiging"
   first_name: "Voornaam"
+  flat_rate_amount: Amount
   forgot_password: "Forgot Password"
   gateway: Gateway
   gateway_configuration: "Gateway configuration"
@@ -453,6 +457,7 @@ nl-BE:
   send_mails_as: "Zend mail als"                    
   send_order_mails_as: "Zend bestelmaild als"
   server_error: "The server returned an error"
+  settings: Settings
   ship: Verzenden
   ship_address: "Afleveringssadres"
   shipment: Verzending

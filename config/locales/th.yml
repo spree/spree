@@ -196,6 +196,7 @@ th:
   backordering_is_allowed: "({{not}} allowed) การซื้อเมื่อสินค้าหมด"
   bill_address: "ที่อยู่บนใบเสร็จรับเงิน"
   billing_address: ใบเสร็จรับเงิน
+  calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: ยกเลิก
   canceled: ยกเลิกแล้ว
   capture: capture
@@ -207,6 +208,7 @@ th:
   category: ชนิด
   change: เปลี่ยน
   change_language: เปลี่ยนภาษา
+  charge_total: Charge Total
   charged: Charged
   checkout: สั่งซื้อ
   city: เขต หรือ อำเภอ
@@ -231,6 +233,7 @@ th:
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  credit_total: Credit Total
   creditcard: Creditcard
   current: Current
   customer: ลูกค้า
@@ -271,6 +274,7 @@ th:
   filename: Filename
   final_confirmation: "การยืนยันขั้นสุดท้าย"
   first_name: ชื่อแรก
+  flat_rate_amount: Amount
   forgot_password: ลืมรหัสผ่าน
   gateway: ช่องทางจ่ายเงิน
   gateway_configuration: ข้อมูลช่องทางจ่ายเงิน
@@ -453,6 +457,7 @@ th:
   send_mails_as: ส่งเมลในชื่อ                    
   send_order_mails_as: ส่งเมลสั่งซื้อในชื่อ
   server_error: "เซิร์ฟเวอร์แจ้งการทำงานขัดข้อง"
+  settings: Settings
   ship: เรือ
   ship_address: "ที่อยู่ในการจัดส่ง"
   shipment: การขนส่งทางเรือ

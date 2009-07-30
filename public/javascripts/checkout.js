@@ -1,5 +1,6 @@
 //On page load
-$(function() {  
+$(function() {        
+  $('input#coupon-code').keydown(function(event) { if (event.keyCode == 13) { ajax_coupon(); } });
   $('#checkout_same_address').sameAddress();
   $('span#bcountry select').change(function() { update_state('b'); });
   $('span#scountry select').change(function() { update_state('s'); });
@@ -20,7 +21,7 @@ $(function() {
   }                          
   //disable submit
   $('div#checkout :submit').attr('disabled', 'disabled');
-
+  $('div#checkout-summary :submit').attr('disabled', 'disabled');
       
   // hookup the radio buttons for registration
   $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }); 
@@ -302,11 +303,36 @@ var update_shipping_methods = function(methods) {
 
 var update_confirmation = function(order) {
   var textToInsert = '';
+  var summaryText = '';
+  
+  for (var key in order.charges) {
+    textToInsert  += '<tr><td colspan="3"><strong>' + key + '</strong></td><td class="total_display"><span>' + order.charges[key] + '</span></td>';
+    summaryText  += '<tr><td>' + key + '</td><td>' + order.charges[key] + '</td>';
+  }
+  $('tbody#order-charges').html(textToInsert);          
+  $('tbody#summary-order-charges').html(summaryText);  
+    
+  textToInsert = '';                               
+  summaryText = '';
+  for (var key in order.credits) {
+    textToInsert  += '<tr><td colspan="3"><strong>' + key + '</strong></td><td class="total_display"><span>' + order.credits[key] + '</span></td>';
+    summaryText  += '<tr><td>' + key + '</td><td>(' + order.credits[key] + ')</td>';
+  }
+  $('tbody#order-credits').html(textToInsert);    
+  $('tbody#summary-order-credits').html(summaryText);    
+
+  $('span#order_total').html(order.order_total);
+  $('span#summary-order-total').html(order.order_total);
+};
+
+var update_summary = function(order) {
+  var textToInsert = '';
   for (var key in order.charges) {
     textToInsert  += '<tr><td colspan="3"><strong>' + key + '</strong></td><td class="total_display"><span>' + order.charges[key] + '</span></td>';
   }
-  $('tbody#order-charges').html(textToInsert); 
-  $('span#order_total').html(order.order_total);
+  $('tbody#summary-order-charges').html(textToInsert);  
+  $('tbody#summary-order-credits').html(textToInsert);    
+  $('span#summary-order-total').html(order.order_total);
 };      
 
 var submit_registration = function() {
@@ -474,4 +500,26 @@ var set_card_validation = function () {
     $('p#maestro_extra').hide('slow');
     $('p#maestro_extra input, p#maestro_extra select').val("")      // clear the values
   }
+};
+
+var ajax_coupon = function() {
+  $.ajax({
+    type: "POST",
+    url: '../checkout',                                
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');        
+      $('div#coupon-error').removeClass('error').html("");     
+      $('img#coupon_busy_indicator').show();
+    },      
+    dataType: "json",   
+    data: $('#checkout-summary-form').serialize(),    
+    complete: function() { $('img#coupon_busy_indicator').hide(); },
+    success: function(json) {  
+      // TODO - create new div for coupon messages and provide feedback that it was accepted       
+      update_confirmation(json);
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      $('div#coupon-error').addClass('error').html("Server Error: Unable to Process Coupon");
+    }
+  });  	
 };

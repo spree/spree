@@ -196,6 +196,7 @@ ru-RU:
   backordering_is_allowed: "Задолженные заказы {{not}} разрешены"
   bill_address: "Адрес фактурации"
   billing_address: "Адрес биллинга"
+  calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: "Отмена"
   canceled: "Отменен"
   capture: "capture"
@@ -207,6 +208,7 @@ ru-RU:
   category: "Категория"
   change: "Изменить"
   change_language: "Сменить язык"
+  charge_total: Charge Total
   charged: "Оплачено"
   checkout: "оформить заказ"
   city: "Город"
@@ -215,6 +217,7 @@ ru-RU:
   complete_list: "Список настроек"
   configuration: "Конфигурация"
   configuration_options: "Опции конфигурации"
+  configurations: Configurations
   confirm: Подтвердить
   confirm_delete: "Confirm Deletion"
   confirm_password: "Подтверждение пароля"
@@ -230,6 +233,7 @@ ru-RU:
   credit_card: "Кредитная карта"
   credit_card_capture_complete: "Credit Card Was Captured ??"
   credit_card_payment: "Платеж крелитной картой"
+  credit_total: Credit Total
   creditcard: "Кредитная карта"
   current: "Текущий"
   customer: "Пользователь"
@@ -270,6 +274,7 @@ ru-RU:
   filename: "Имя файла"
   final_confirmation: "Окончательное подтверждение"
   first_name: "Имя"
+  flat_rate_amount: Amount
   forgot_password: "Напомнить пароль"
   gateway: "Платежный шлюз" 
   gateway_configuration: "Настройка платёжных шлюзов"
@@ -452,6 +457,7 @@ ru-RU:
   send_mails_as: "Отсылать почту как"
   send_order_mails_as: "Отсылать почту с заказами как"
   server_error: "На сервере произошла ошибка"
+  settings: Settings
   ship: "доставка"
   ship_address: "Адрес доставки"
   shipment: "Доставка"
@@ -531,7 +537,6 @@ ru-RU:
   taxons: "Таксоны"
   thank_you_for_your_order: "Спасибо за покупку! Для сохранности, пожалуйста, рапспечатайте эту страницу."
   this_file_language: "Русский (RU)"
-  to_add_variants_you_must_first_define: "Перед добавлением вариантов, вы должны определить"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "Перед добавлением вариантов, вы должны определить"
   total: Итого

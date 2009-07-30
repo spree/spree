@@ -54,7 +54,8 @@ ActionController::Routing::Routes.draw do |map|
   #this route maybe removed in the near future (no longer used by core)
   map.resources :taxons
   
-  map.namespace :admin do |admin|
+  map.namespace :admin do |admin|          
+    admin.resources :coupons
     admin.resources :zones
     admin.resources :users
     admin.resources :countries, :has_many => :states

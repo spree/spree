@@ -1,0 +1,36 @@
+<h3>Order Summary</h3>                                                                                    
+<table>
+  <tbody>
+    <tr>
+      <td><strong><%= t('item_total') %>:</strong></td>
+      <td><strong><%= number_to_currency @order.item_total %></strong></td>
+    </tr> 
+    <tbody id="summary-order-charges">
+      <% @order.charges.each do |charge| %>
+        <tr>
+          <td><%= charge.description %>: </td>
+          <td><%= number_to_currency charge.amount -%></td>
+        </tr>
+      <% end %>  
+    </tbody>
+    <tbody id="summary-order-credits">
+      <% @order.credits.each do |credit| %>
+        <tr>
+          <td><%= credit.description %>: </td>
+          <td>(<%= number_to_currency credit.amount %>)</td>
+        </tr>
+      <% end %>  
+    </tbody>
+    <tr>
+      <td><strong><%= t('order_total') %>:</strong></td>
+      <td><strong><span id='summary-order-total'><%= number_to_currency @order.total %></span></strong></td>
+    </tr>
+  </tbody>
+</table>
+<% form_for @checkout, :url => object_url, :html => { :id => 'checkout-summary-form'} do |summary_form| %>  
+  <label>Coupon Code (Optional)</label>
+  <%= summary_form.text_field :coupon_code, :id => 'coupon-code', :size => 14 %>
+  <input id="post-summary" type="submit" style="display:none"/>
+  <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'coupon_busy_indicator' %>
+<% end %> 
+<div id="coupon-error"/>

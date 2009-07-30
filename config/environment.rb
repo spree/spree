@@ -75,6 +75,7 @@ Spree::Initializer.run do |config|
 end
 
 Time::DATE_FORMATS[:date_time24] = "%Y-%m-%d %H:%M"
+Time::DATE_FORMATS[:short_date] = "%Y-%m-%d"
 
 # Add new inflection rules using the following format 
 # (all these examples are active by default):

@@ -12,4 +12,9 @@ flat_rate_one_day:
   attribute: flat_rate_amount
   owner: ups_one_day
   owner_type: Calculator
-  value: 15      
+  value: 15     
+flate_rate_five_dollars:
+  attribute: flat_rate_amount
+  owner: flat_rate_coupon_calculator
+  owner_type: Calculator
+  value: 5     

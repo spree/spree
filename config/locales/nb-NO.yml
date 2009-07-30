@@ -196,6 +196,7 @@ nb-NO:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Fakturaadresse"
   billing_address: "Fakturaadresse"
+  calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Avbryt
   canceled: Avbrutt
   capture: capture
@@ -207,6 +208,7 @@ nb-NO:
   category: Kategori
   change: Endre
   change_language: "Endre språk"
+  charge_total: Charge Total
   charged: "Belastet"
   checkout: "Til kassen"
   city: Sted
@@ -231,6 +233,7 @@ nb-NO:
   credit_card: "Kredittkort"
   credit_card_capture_complete: "Kortopplysninger har blitt lagret"
   credit_card_payment: "Betaling med kort"
+  credit_total: Credit Total
   creditcard: Kredittkort
   current: "Nå"
   customer: Kunde
@@ -271,6 +274,7 @@ nb-NO:
   filename: Filnavn
   final_confirmation: "Endelig bekreftelse"
   first_name: "Fornavn"
+  flat_rate_amount: Amount
   forgot_password: "Forgot Password"
   gateway: "Tjeneste"
   gateway_configuration: "Gateway configuration"
@@ -453,6 +457,7 @@ nb-NO:
   send_mails_as: "Send epost som"
   send_order_mails_as: "Send ordre-epost som"
   server_error: "The server returned an error"
+  settings: Settings
   ship: send
   ship_address: "Leveringsadresse"
   shipment: Leveranse

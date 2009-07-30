@@ -10,3 +10,7 @@ ups_one_day:
   calculable: ups_one_day
   calculable_type: ShippingMethod
   type: FlatRateShippingCalculator
+flat_rate_coupon_calculator:
+  calculable: spree_coupon
+  calculable_type: Coupon
+  type: FlatRateCouponCalculator  

@@ -196,6 +196,7 @@ pl:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Adres billingowy"
   billing_address: "Adres billingowy"
+  calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: anuluj
   canceled: Canceled
   capture: przechwyć
@@ -207,6 +208,7 @@ pl:
   category: Kategoria
   change: Zmień
   change_language: "Zmień język"
+  charge_total: Charge Total
   charged: Charged
   checkout: "Do kasy"
   city: Miejscowość
@@ -231,6 +233,7 @@ pl:
   credit_card: "Karta kredytowa"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  credit_total: Credit Total
   creditcard: Creditcard
   current: Biężący
   customer: Klient
@@ -271,6 +274,7 @@ pl:
   filename: "Nazwa pliku"
   final_confirmation: "Ostateczne potwierdzenie"
   first_name: Imię
+  flat_rate_amount: Amount
   forgot_password: "Forgot Password"
   gateway: Brama
   gateway_configuration: "Gateway configuration"
@@ -453,6 +457,7 @@ pl:
   send_mails_as: Send Mails As                    
   send_order_mails_as: Send Order Mails As   
   server_error: "The server returned an error"
+  settings: Settings
   ship: wyślij
   ship_address: "Adres Dostawy"
   shipment: Shipment
