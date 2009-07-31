@@ -38,7 +38,7 @@ If you are upgrading, take advantage of this by using the new +logo+ helper meth
 
 h3. Flexible System of Charges and Credits
 
-Spree 0.9.0 provides a new flexible system of charges and credits associated with orders.  The  +orders+ table no longer has seperate columns for +tax_total+, +ship_total+, etc.  This information is now captured more generically as a +Charge+.  This allows a Spree application to add more then one tax or shipping charge per order as well as to support new types of charges that might be required.  For instance, some products for sale (like cell phones) require a seperate activation fee.
+Spree 0.9.0 provides a new flexible system of charges and credits associated with orders.  The  +orders+ table no longer has separate columns for +tax_total+, +ship_total+, etc.  This information is now captured more generically as a +Charge+.  This allows a Spree application to add more then one tax or shipping charge per order as well as to support new types of charges that might be required.  For instance, some products for sale (like cell phones) require a separate activation fee.
 
 Charges are added to the order in the +Checkout+ model.  Developers wishing to override the default behavior of Spree can now just override the +update_charges+ method to provide their own additional logic.  This snippet below shows how the Spree core adds tax related charges to an order.
 
@@ -88,6 +88,35 @@ Since calculators are now instances of +ActiveRecord::Base+ they can be configur
 [INSERT SNAPSHOT HERE]
 
 
-WARNING. If you are upgrading and existing application, the shipping methods will all be changed to +FlatRateShippingCalculator+.  After running the migrations you must use the admin configuration screen to select a different shipping calcualtor.  You can now also use the admin screen to configure the settings for your new calculator.  
+WARNING. If you are upgrading an existing application, the shipping methods will all be changed to +FlatRateShippingCalculator+.  After running the migrations you must use the admin configuration screen to select a different shipping calcualtor.  You can now also use the admin screen to configure the settings for your new calculator.  
 
 h3. Variant Images
+
+
+
+h3. Improvements to image handling
+
+We've upgraded the paperclip gem to take advantage of recent changes. Paperclip is the library which handles creation of and access to the various formats of image. On top of this, we're explicitly catching errors
+in the image creation stage and returning these via the validation mechanism - also adding a more 
+meaningful message in the +errors+ list. This will avoid the silent failures that some people have experienced when they don't have image magick installed correctly. 
+
+Another change is to store the original image's width and height: this info is sometimes useful when 
+working with a set of images with different 'shapes', e.g. where your images might all have a width of 240 but (minor) variation on height. Knowing the height of the original allows you to calculate the max height of your images and thus to create a suitable bounding box. 
+
+Finally, note that the processing tools behind paperclip can do many transformations on the images,
+such as cropping, colour adjustment, ... - and these can be requested by passing the options to 
+paperclip, or you can run the conversions on a batch of images in advance of loading into Spree. 
+Automatic cropping is particularly useful to make best use of screen area. 
+
+
+h3. Update to SearchLogic
+
+Spree now runs with version 2.1.13 of SearchLogic. It has meant some minor recoding of how searches 
+are set up and paginated, and allowed some of the existing forms to be simplified (by taking advantage 
+of new functionality) and opened the door to more sophistication in selecting products, e.g. for
+handling faceted search or product groups. 
+
+There's an overview of what the new SearchLogic offers on the 
+"Spree blog":http://spreecommerce.com/blog/2009/07/30/updating-searchlogic/, and full documentation 
+is at "rdoc.info":http://rdoc.info/projects/binarylogic/searchlogic.
+
