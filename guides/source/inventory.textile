@@ -119,7 +119,7 @@ h4. Useful extensions
 
 There are a few Spree extensions which provide XYZ 
 
-See the "Spree Extension Registry":http://ext.spreecommerce.org for the latest information.
+See the "Spree Extension Registry":http://ext.spreecommerce.com for the latest information.
 
 
 
