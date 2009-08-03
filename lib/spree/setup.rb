@@ -99,6 +99,12 @@ module Spree
           FileUtils.cp src_path, target_path
         end
       end
+      
+      # HACK - need to add all sample users to the 'user' role (can't do this in sample fixtures because user role is seed data)
+      user_role = Role.find_by_name "user"
+      if user_role
+        User.all.each { |u| u.roles << user_role unless u.has_role?("user") } 
+      end
 
       announce "Sample data has been loaded"
     end
