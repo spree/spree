@@ -1,7 +1,6 @@
 class Admin::CouponsController < Admin::BaseController
   resource_controller         
   before_filter :load_data
-  #layout 'admin'  
 
   update.response do |wants|
     wants.html { redirect_to collection_url }

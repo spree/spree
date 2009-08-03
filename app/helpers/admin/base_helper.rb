@@ -1,5 +1,4 @@
 module Admin::BaseHelper
-
   def link_to_new(resource)
     link_to_with_icon('add', t("new"), edit_object_url(resource))
   end
@@ -166,14 +165,52 @@ module Admin::BaseHelper
     out << fields.hidden_field(:_delete) unless fields.object.new_record?
     out << (link_to icon("delete"), "#", :class => "remove")
     out
-  end  
-  
-  def preference_fields(calculator, form)
-    field_html = ""
-    calculator.preferences.keys.each do |key|
-      field_html += (form.label("preferred_#{key}", "#{t(key)}: "))
-      field_html += (form.text_field("preferred_#{key}")) 
+  end
+
+  def preference_field(form, field, options)
+    case options[:type]
+    when :integer
+      form.text_field(field, {
+          :size => 10,
+          :class => 'input_integer',
+          :readonly => options[:readonly],
+          :disabled => options[:disabled]
+        }
+      )
+    when :boolean
+      form.check_box(field, {:readonly => options[:readonly],
+          :disabled => options[:disabled]})
+    when :string
+      form.text_field(field, {
+          :size => 10,
+          :class => 'input_string',
+          :readonly => options[:readonly],
+          :disabled => options[:disabled]
+        }
+      )
+    when :text
+      form.text_area(field,
+        {:rows => 15, :cols => 85, :readonly => options[:readonly],
+          :disabled => options[:disabled]}
+      )
+    else
+      form.text_field(field, {
+          :size => 10,
+          :class => 'input_string',
+          :readonly => options[:readonly],
+          :disabled => options[:disabled]
+        }
+      )
     end
-    field_html
-  end  
+  end
+
+  def preference_fields(object, form)
+    object.preferences.keys.map{ |key|
+      definition = object.class.preference_definitions[key]
+      type = definition.instance_eval{@type}.to_sym
+      
+      form.label("preferred_#{key}", t(key)+": ") +
+        preference_field(form, "preferred_#{key}", :type => type)
+    }.join("")
+  end
 end
