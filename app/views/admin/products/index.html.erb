@@ -26,15 +26,15 @@
 <table class="index">
   <tr>
     <th><%= t("sku") %></td>
-    <th><%= order @search, :by => :name,         :as => t("name") %></td>
-    <th><%= order @search, :by => :master_price, :as => t("master_price") %></td>
+	    <th><%= order @search, :by => :name, :as => t("name") %></td>
+	    <th><%= order @search, :by => :price, :as => t("master_price") %></td>
     <th>&nbsp;</th>
   </tr>
 <% @collection.each do |product| %>
   <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %> id="<%= dom_id product %>">
     <td><%= product.sku %></td>
     <td><%= product.name %></td>
-    <td><%= product.master_price %></td>
+    <td><%= product.price %></td>
     <td class="actions">
       <%= link_to_edit product if product.deleted_at.nil?  %>
       &nbsp;

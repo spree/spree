@@ -21,7 +21,7 @@ class InventoryUnit < ActiveRecord::Base
     # TODO: add backorder state and relevant transitions
   end
   
-  # destory the specified number of on hand inventory units 
+  # destroy the specified number of on hand inventory units 
   def self.destroy_on_hand(variant, quantity)
     inventory = self.retrieve_on_hand(variant, quantity)
     inventory.each do |unit|
@@ -29,7 +29,7 @@ class InventoryUnit < ActiveRecord::Base
     end                                          
   end
   
-  # destory the specified number of on hand inventory units
+  # create the specified number of on hand inventory units
   def self.create_on_hand(variant, quantity)
     quantity.times do
       self.create(:variant => variant, :state => 'on_hand')

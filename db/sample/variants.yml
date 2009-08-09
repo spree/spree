@@ -48,35 +48,48 @@ xlarge-green-baseball:
   option_values: xl, red
   sku: ROR-00010
   price: 21.99
+ror_baseball_jersey:
+  product: ror_baseball_jersey
+  sku: ROR-001
+  price: 19.99
+  is_master: true
 ror_tote_v:
   product: ror_tote
   sku: ROR-00011
   price: 15.99
+  is_master: true
 ror_bag_v:
   product: ror_bag
   sku: ROR-00012
   price: 22.99
+  is_master: true
 ror_jr_spaghetti_v:
   product: ror_jr_spaghetti
   sku: ROR-00013
   price: 19.99  
+  is_master: true
 ror_mug_v:
   product: ror_mug  
   sku: ROR-00014
   price: 13.99
+  is_master: true
 ror_ringer_v:
   product: ror_ringer  
   sku: ROR-00015
   price: 17.99
+  is_master: true
 ror_stein_v:
   product: ror_stein  
   sku: ROR-00016
   price: 16.99
+  is_master: true
 apache_baseball_v:
   product: apache_baseball_jersey
   sku: APC-00001
   price: 19.99
+  is_master: true
 ruby_baseball_v:
   product: ruby_baseball_jersey
   sku: RUB-00001
   price: 19.99
+  is_master: true

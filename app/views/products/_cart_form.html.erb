@@ -8,7 +8,7 @@
   </p>
   <% end %>
 
-  <% if @product.variants? %>
+  <% if @product.has_variants? %>
   <div id="product-variants">
     <h2><%= t('variants') %></h2>
     <ul>
@@ -63,7 +63,7 @@
   </div>
   <% end%>						
   <% if @product.has_stock? || Spree::Config[:allow_backorders] %>
-      <%= text_field_tag (@product.variants? ? :quantity : "variants[#{@product.variant.id}]"), 
+      <%= text_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"), 
                      1, :class => "title", :size => 3 %>
       &nbsp;
       <button type='submit' class='large primary'>

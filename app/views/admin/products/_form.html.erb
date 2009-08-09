@@ -20,10 +20,10 @@
   </div>
   <div class="yui-u">
         
-    <% f.field_container :master_price do %>
-      <%= f.label :master_price, t("master_price")%> <span class="required">*</span><br />
-      <%= f.text_field :master_price  %>
-      <%= f.error_message_on :master_price%>
+    <% f.field_container :price do %>
+      <%= f.label :price, t("master_price")%> <span class="required">*</span><br />
+      <%= f.text_field :price %>
+      <%= f.error_message_on :price %>
     <% end %>
 
     <p>
@@ -32,17 +32,16 @@
       <%= calendar_date_select :product, :available_on, :style=>"width:150px" %>
     </p>
 
-    <% if @product.variant %>
     <p>
       <%= f.label :sku, t("sku") %><br />
       <%= f.text_field :sku, :size => 16 %>
-    </p>
-    <p>
-      <%= f.label :on_hand, t("on_hand")%><br />
-      <%= f.text_field :on_hand, :size => 4 %>        
-    </p>
+    </p>   
+    <% unless @product.has_variants? %>
+      <p>
+        <%= f.label :on_hand, t("on_hand")%><br />
+        <%= f.text_field :on_hand, :size => 4 %>        
+      </p>
     <% end %>
-
     <p>
       <%= f.label :shipping_category_id, t("shipping_categories")%><br />    
       <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, {:include_blank => true}, {"style" => "width:200px"}) %>        

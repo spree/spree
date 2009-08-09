@@ -72,16 +72,5 @@ class Admin::ProductsController < Admin::BaseController
                                      :per_page => Spree::Config[:admin_products_per_page], 
                                      :page     => params[:page])
     end
-
-    # override rc_default build b/c we need to make sure there's an empty variant added to each product
-    def build_object
-      @object ||= Product.new params[:product]      
-      if @object.variants.empty?
-        @object.available_on = Time.now
-        @object.variants << Variant.new(:product => @object)
-      end
-      @object.variant.sku = params[:product] ? params[:product][:sku] : ""
-      @object
-    end   
   
 end

@@ -31,7 +31,7 @@
 	    </td>        
     </tr>
   <% end %>
-  <% unless @product.variants? %>
+  <% unless @product.has_variants? %>
     <tr><td colspan="5"><%= t("none") %>.</td></tr>
   <% end %>
 </table>

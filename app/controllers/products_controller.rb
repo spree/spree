@@ -21,7 +21,7 @@ class ProductsController < Spree::BaseController
   private
   def load_data  
     load_object  
-    @selected_variant = @product.variants.detect { |v| v.in_stock || Spree::Config[:allow_backorders] }
+    @selected_variant = @product.variants.detect { |v| v.available? }
 		
     return unless permalink = params[:taxon_path]
     @taxon = Taxon.find_by_permalink(params[:taxon_path].join("/") + "/")	 

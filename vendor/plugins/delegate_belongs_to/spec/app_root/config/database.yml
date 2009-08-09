@@ -1,0 +1,21 @@
+in_memory:
+  adapter: sqlite3
+  database: ":memory:"
+  verbosity: quiet
+sqlite:
+  adapter: sqlite
+  dbfile: plugin_test.sqlite.db
+sqlite3:
+  adapter: sqlite3
+  dbfile: plugin_test.sqlite3.db
+postgresql:
+  adapter: postgresql
+  username: postgres
+  password: postgres
+  database: plugin_test
+mysql:
+  adapter: mysql
+  host: localhost
+  username: root
+  password:
+  database: plugin_test

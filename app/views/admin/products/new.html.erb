@@ -15,7 +15,7 @@
   <div class="yui-gb">
     <div class="yui-u first">
     
-      <% if @product.variant %>
+      <% unless @product.has_variants? %>
       <% f.field_container :sku do %>
         <%= f.label :sku, t("sku") %><br />
         <%= f.text_field :sku, :size => 16 %>
@@ -31,10 +31,10 @@
     </div>
     <div class="yui-u">
         
-      <% f.field_container :master_price do %>
-        <%= f.label :master_price, t("master_price")%> <span class="required">*</span><br />
-        <%= f.text_field :master_price  %>
-        <%= f.error_message_on :master_price%>
+      <% f.field_container :price do %>
+        <%= f.label :price, t("master_price")%> <span class="required">*</span><br />
+        <%= f.text_field :price  %>
+        <%= f.error_message_on :price%>
       <% end %>
 
       <p>

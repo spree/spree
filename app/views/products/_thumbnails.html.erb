@@ -7,12 +7,12 @@
   </ul>
 <% end %>
 
-<% if @product.variants? 
+<% if @product.has_variants? 
   has_checked = false %>
   <h4 id="variant-images"><%= t('images_for') %>: <%= @selected_variant.options_text %></h4>
   <ul id="variant-thumbnails" class="thumbnails">
     <% product.variants.each do |v|
-        checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
+        checked = !has_checked && (v.available?)
    		  has_checked = true if checked
         
         if checked 

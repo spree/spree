@@ -1,0 +1,7 @@
+irb = RUBY_PLATFORM =~ /(:?mswin|mingw)/ ? 'irb.bat' : 'irb'
+libs =  " -r irb/completion"
+libs << " -r test/test_helper"
+libs << " -r console_app"
+libs << " -r console_with_helpers"
+libs << " -r console_with_fixtures"
+exec "#{irb} #{libs} --simple-prompt"

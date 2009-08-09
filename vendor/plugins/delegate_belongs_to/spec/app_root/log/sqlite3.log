@@ -1,0 +1,1420 @@
+# Logfile created on Fri Jan 02 02:53:31 -0800 2009  [4;36;1mSQL (0.3ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mselect sqlite_version(*)[0m
+  [4;36;1mSQL (3.2ms)[0m   [0;1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [4;35;1mSQL (2.3ms)[0m   [0mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (20090102102712)
+  [4;36;1mSQL (2.8ms)[0m   [0;1mCREATE TABLE "users" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(255), "password" varchar(255), "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (2.4ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090102102712')[0m
+Unable to load check, underlying cause no such file to load -- check.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load fund, underlying cause no such file to load -- fund.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load pipe, underlying cause no such file to load -- pipe.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load client, underlying cause no such file to load -- client.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load contact, underlying cause no such file to load -- contact.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load employee, underlying cause no such file to load -- employee.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load check, underlying cause no such file to load -- check.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load fund, underlying cause no such file to load -- fund.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load pipe, underlying cause no such file to load -- pipe.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load client, underlying cause no such file to load -- client.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load contact, underlying cause no such file to load -- contact.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load employee, underlying cause no such file to load -- employee.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load check, underlying cause no such file to load -- check.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load fund, underlying cause no such file to load -- fund.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load pipe, underlying cause no such file to load -- pipe.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load client, underlying cause no such file to load -- client.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load contact, underlying cause no such file to load -- contact.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load employee, underlying cause no such file to load -- employee.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load check, underlying cause no such file to load -- check.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load fund, underlying cause no such file to load -- fund.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load pipe, underlying cause no such file to load -- pipe.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load client, underlying cause no such file to load -- client.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load contact, underlying cause no such file to load -- contact.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load employee, underlying cause no such file to load -- employee.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load check, underlying cause no such file to load -- check.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load fund, underlying cause no such file to load -- fund.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load pipe, underlying cause no such file to load -- pipe.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load client, underlying cause no such file to load -- client.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load contact, underlying cause no such file to load -- contact.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load employee, underlying cause no such file to load -- employee.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load check, underlying cause no such file to load -- check.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load fund, underlying cause no such file to load -- fund.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load pipe, underlying cause no such file to load -- pipe.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load client, underlying cause no such file to load -- client.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load contact, underlying cause no such file to load -- contact.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load employee, underlying cause no such file to load -- employee.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load check, underlying cause no such file to load -- check.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load fund, underlying cause no such file to load -- fund.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load pipe, underlying cause no such file to load -- pipe.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load client, underlying cause no such file to load -- client.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load contact, underlying cause no such file to load -- contact.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+Unable to load employee, underlying cause no such file to load -- employee.rb 
+
+ /Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_without_new_constant_marking'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:382:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:521:in `new_constants_in'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:381:in `load_file'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:256:in `require_or_load'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:221:in `depend_on'
+/Library/Ruby/Gems/1.8/gems/activesupport-2.2.2/lib/active_support/dependencies.rb:133:in `require_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:856:in `try_to_load_dependency'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:871:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `each'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:868:in `require_fixture_classes'
+/Library/Ruby/Gems/1.8/gems/activerecord-2.2.2/lib/active_record/fixtures.rb:851:in `fixtures'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:60:in `global_fixtures='
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-rails-1.1.11/lib/spec/rails/extensions/spec/example/configuration.rb:59:in `global_fixtures='
+./spec/spec_helper.rb:47
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner.rb:184:in `configure'
+./spec/spec_helper.rb:29
+./spec/user_spec.rb:1:in `require'
+./spec/user_spec.rb:1
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:14:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `each'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/example_group_runner.rb:13:in `load_files'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/options.rb:98:in `run_examples'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/lib/spec/runner/command_line.rb:10:in `run'
+/Library/Ruby/Gems/1.8/gems/rspec-1.1.11/bin/spec:4
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (20090102102712)
+  [4;36;1mSQL (0.5ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (20090102102712)
+  [4;36;1mSQL (0.5ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (20090102102712)
+  [4;36;1mUser Create (0.6ms)[0m   [0;1mINSERT INTO "users" ("updated_at", "username", "password", "created_at") VALUES('2009-01-02 02:55:10', NULL, NULL, '2009-01-02 02:55:10')[0m
+  [4;36;1mSQL (0.5ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (20090102102712)
+  [4;36;1mUser Create (0.6ms)[0m   [0;1mINSERT INTO "users" ("updated_at", "username", "password", "created_at") VALUES('2009-01-02 02:55:44', NULL, NULL, '2009-01-02 02:55:44')[0m
+  [4;36;1mSQL (0.5ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (20090102102712)
+  [4;36;1mUser Create (0.5ms)[0m   [0;1mINSERT INTO "users" ("updated_at", "username", "password", "created_at") VALUES('2009-01-02 02:56:27', NULL, NULL, '2009-01-02 02:56:27')[0m
+  [4;36;1mSQL (0.5ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+  [4;36;1mSQL (0.1ms)[0m   [0;1mselect sqlite_version(*)[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mSQLite3::SQLException: table "users" already exists: CREATE TABLE "users" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(255), "password" varchar(255), "created_at" datetime, "updated_at" datetime) [0m
+  [4;36;1mSQL (0.3ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.1ms)[0m   [0mselect sqlite_version(*)[0m
+  [4;36;1mSQL (2.9ms)[0m   [0;1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [4;35;1mSQL (2.7ms)[0m   [0mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+  [4;36;1mSQL (3.3ms)[0m   [0;1mCREATE TABLE "users" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(255), "password" varchar(255), "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (2.9ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('1')[0m
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (2.8ms)[0m   [0;1mCREATE TABLE "contacts" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "firstname" varchar(255), "lastname" varchar(255), "street" varchar(255), "city" varchar(255), "state" varchar(255), "email" varchar(255), "parent_id" integer, "lft" integer) [0m
+  [4;35;1mSQL (2.6ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('2')[0m
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.4ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.3ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.3ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.3ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.3ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.3ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (0.3ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.1ms)[0m   [0mselect sqlite_version(*)[0m
+  [4;36;1mSQL (3.0ms)[0m   [0;1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [4;35;1mSQL (2.7ms)[0m   [0mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (1)
+  [4;36;1mSQL (2.8ms)[0m   [0;1mCREATE TABLE "user_defaults" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(255), "password" varchar(255), "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (2.5ms)[0m   [0mCREATE TABLE "user_no_defaults" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(255), "password" varchar(255), "created_at" datetime, "updated_at" datetime) [0m
+  [4;36;1mSQL (2.2ms)[0m   [0;1mCREATE TABLE "user_mixeds" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "username" varchar(255), "password" varchar(255), "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (2.4ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('1')[0m
+Migrating to CreateContacts (2)
+  [4;36;1mSQL (2.7ms)[0m   [0;1mCREATE TABLE "contacts" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "firstname" varchar(255), "lastname" varchar(255), "parent_id" integer, "lft" integer) [0m
+  [4;35;1mSQL (2.2ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('2')[0m

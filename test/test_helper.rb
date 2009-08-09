@@ -41,7 +41,8 @@ def create_complete_order
   @zone = Zone.global
   @order = Factory(:order)
   3.times do
-    variant = Factory(:product).variants.first
+    #variant = Factory(:product).variants.first
+    variant = Factory(:variant)
     Factory(:line_item, :variant => variant, :order => @order)
   end
 
