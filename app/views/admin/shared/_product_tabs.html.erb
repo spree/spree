@@ -9,6 +9,11 @@
     <li<%= ' class="active"' if current == "Product Details" %>>
       <%= link_to t("product_details"), edit_admin_product_url(@product) %>
     </li>
+    <% if url_options_authenticate?(:controller => 'admin/images') %>
+      <li<%= ' class="active"' if current == "Images" %>>
+        <%= link_to t("images"), admin_product_images_url(@product) %>
+      </li>
+    <% end %>
     <% if url_options_authenticate?(:controller => 'admin/variants') %>
       <li<%= ' class="active"' if current == "Variants" %>>
         <%= link_to t("variants"),  admin_product_variants_url(@product)  %>
