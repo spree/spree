@@ -9,7 +9,7 @@ class CreateCalculators < ActiveRecord::Migration
       t.remove :shipping_calculator
     end                                        
     ShippingMethod.all.each do |shipping_method|  
-      FlatRateShippingCalculator.create(:calculable => shipping_method)
+      Calculator::FlatRate.create(:calculable => shipping_method)
     end    
   end
 
