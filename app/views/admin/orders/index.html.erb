@@ -50,7 +50,7 @@
     </div>
 
     <p><label><%= t("status") %></label><br />
-    <%= f.select :state_equals, Order.state_machines['state'].states.collect {|status| [status.titleize, status]}, {:include_blank => true} %></p>
+    <%= f.select :state_equals, Order.state_machines['state'].states.collect {|status| [t(status), status]}, {:include_blank => true} %></p>
 
     <p><label><%= t 'order_number' %></label><br />
     <%= f.text_field :number_contains, :size=>25 %></p>
