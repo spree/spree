@@ -13,20 +13,18 @@ There are some new methods for manipulating the page title: the +title+ and +set
 Use +set_title+ to set a page title either from a controller method, or a view template.  You can also override the +default_title+ and +title+ methods in Spree::BaseController for further control.
 
 The +title+ method is used in +application.html.erb+ of the new release, however if you are upgrading and want to take advantage, use this in between your +&lt;title&gt;+ tags of your layout template:
-<code>
+<shell>
 <%= title %>
-</code>
+</shell>
 
 And to set the title in a view template:
-<code>
+<shell>
 <% set_title 'My custom title' %>
-</code>
+</shell>
 
 h4. Customize default stylesheets
 
-+Spree::Config[:stylesheets]+ is a new config option for customizing the stylesheets used by the default application layout.
-
-The value of +Spree::Config[:stylesheets]+ is a comma-separated string of stylesheet names without the file extensions.  See the "customization tutorial":customization_tutorial.html for more information.
++Spree::Config[:stylesheets]+ is a new config option for customizing the stylesheets used by the default application layout.  The value of +Spree::Config[:stylesheets]+ is a comma-separated string of stylesheet names without the file extensions.  See the "customization tutorial":customization_tutorial.html for more information.
 
 If you are upgrading, to take advantage of this use the new +stylesheet_tags+ helper method.
 
@@ -40,32 +38,68 @@ h3. Polymorphic Calculators
 
 There has been significant refactoring to the implementation of calculators.  Calculators are now polymorphic and belong to +calculable+.  This will have a non trivial impact on your existing store configuration.  After upgrading to Spree 0.9.0 you are likely going to have to make several manual adjustments to the existing tax and shipping configurations.  Ultimately we feel this is outweighed by the superior design of the new calculator system which will allow for a more modular design.
 
-WARNING. Many of the existing calculator extensions are not yet updated to support Spree 0.9.0.  Please check the extension registry to see which versions are supported.  Our goal is to backport most of the useful calculators out there shortly after the release.
+WARNING. Many of the existing calculator extensions are not yet updated to support Spree 0.9.0.  Please check the "extension registry":http://ext.spreecommerce.com/ to see which versions are supported.  Our goal is to backport most of the useful calculators out there shortly after the release.
 
 All calculators need to implement the following method
 
 <shell>
   def compute(something=nil)
-
+    ...
   end    
 </shell>
 
 The calculator is passed an optional "target" on which to base their calculation.  This method is expected to return a single numeric value when the calculation is complete.  A value of +nil+ should be returned in the event that a charge is not applicable.
 
-Calculators are also configurable thorugh Spree's flexible "preference system":preferences.html.  Default values for the preferences are configured through the class definition.  For example, the flat rate calculator class definition specifies an amount with a default value of 0.
+Since calculators are now instances of +ActiveRecord::Base+ they can be configured with preferences. Each instance of +ShippingMethod+ is now stored in the database along with the configured values for its preferences. This allows the same calculator (ex. +Calculator::FlatRate+) to be used with multiple +ShippingMethods+, and yet each can be configured with different values (ex. different amounts per calculator.)
+
+Calculators are configured using Spree's flexible "preference system":preferences.html.  Default values for the preferences are configured through the class definition.  For example, the flat rate calculator class definition specifies an amount with a default value of 0.
 
 <shell>
   class Calculator::FlatRate < Calculator
     preference :amount, :decimal, :default => 0
-    
     ...
-    
   end
 </shell>
 
 Spree now contains a standard mechanism by which calculator preferences can be editied.  The screenshot below shows how the amounts for the flat rate calculator are now editable directly in the admin interface.
 
-[INSERT SCREENSHOT HERE]
+!images/calculators/shipping_config.png(Changing Shipping Config)!     
+
+Calculators are now stored in a special +calculator+ directory located within +app/models+.  There are several calculators included that meet many of the standard store owner needs.  Developers are encouraged to write their own "extensions":extensions.html to supply additional functionality or to consider using a "third party extension":http://ext.spreecommerce.com written by members of the Spree community.
+
+Calculators need to be "registered" with Spree in order to be made available in the admin interface for various configuration options.  The recommended approach for doing this is via an extension.  Custom calculators will typically be written as extensions so you need to add some registration logic to the extension containing the calculator.  This will allow the calculator to do a one time registration during the standard extension activation process.
+
+The +CalculatorExtenion+ that is included in the Spree core is a good example of how you can achieve this in your own custom extensions.
+
+<shell>
+  def activate 
+    [
+      Calculator::FlatPercent,
+      Calculator::FlatRate,
+      Calculator::FlexiRate,
+      Calculator::PerItem,
+      Calculator::SalesTax,
+      Calculator::Vat,
+    ].each(&:register)
+  end  
+</shell>
+
+This calls the +register+ method on the calculators that we intend to register.  Spree provides a mechanism for extension authors to specify the operations for which the calculator is intended.  For example, a flat rate calculator might be useful for all operations but another calculator may be appropriate only for coupons and not shipping or taxes.  
+
+Models that are declared with +has_calculator+ maintains their own set of registered calculators.  Currently this includes +Coupons+, +ShippingMethods+, +ShippingRates+ and +TaxRates+.  The following example shows how to configure a calculator to make it available for use with +Coupons+. 
+
+<shell>
+def self.register
+  super                                
+  Coupon.register_calculator(self)
+end
+</shell>
+
+INFO. Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the desgin behind calculators. 
+
+Once your calculators have been registered correctly by your extensions, then they will become available as options in the appropriate admin screens.
+
+!images/calculators/choosing_calculator.png(Choosing a calculator)!
 
 h3. Simplified Tax Configuration
 
@@ -73,9 +107,15 @@ There are also minor changes to how taxes are configured.  You no longer need to
 
 WARNING. Your tax rates will be lost when you run the migrations.  You will have to recreate them manually in the admin interface.
 
-h3. Flexible System of Charges and Credits
+h3. Unified Adjustment Model
 
-Spree 0.9.0 provides a new flexible system of charges and credits associated with orders.  The  +orders+ table no longer has separate columns for +tax_total+, +ship_total+, etc.  This information is now captured more generically as a +Charge+.  This allows a Spree application to add more then one tax or shipping charge per order as well as to support new types of charges that might be required.  For instance, some products for sale (like cell phones) require a separate activation fee.
+Spree 0.9.0 provides a new flexible system of adjustments associated with orders.  The  +orders+ table no longer has separate columns for +tax_total+, +ship_total+, etc.  This information is now captured more generically as an +Adjustment+.  This allows a Spree application to add more then one tax or shipping charge per order as well as to support new types of charges that might be required.  For instance, some products for sale (like cell phones) require a separate activation fee.    
+
+Adjustments come in two basic flavors: +Charges+ and +Credits+.  From an impelmentation perspecive, they are both modeled in a single database table called +adjustments+ and use the single table inheritance mechanism of Rails.  Charges add to the order total, and credits work in the opposite direction.
+
+Orders have one or more adjustments associated with them and each adjustment also belongs to an adjustment source.  This allows charges and credits to recalculate themselves when requested.  Adjustments are always recalculated before they are saved which includes every time and order is updated.  This provides a very flexible system by which an adjustment can determine that it is no longer relevant based on changes in the order.  
+
+Consider a coupon that takes $5 off all orders over $20.  If the order exceeds the required amount during checkout the coupon will create the proper adjustment.  If the customer then decides to edit their cart (before completing checkout) then you will want to make sure that the coupon still qualifies.  If the order total drops below the required amount the source of the adjustment (in this case the coupon) will have the ability to remove the adjustment based on its own internal logic. 
 
 Charges are added to the order in the +Checkout+ model.  Developers wishing to override the default behavior of Spree can now just override the +update_charges+ method to provide their own additional logic.  This snippet below shows how the Spree core adds tax related charges to an order.
 
@@ -102,34 +142,11 @@ In addition to charges, credits are now supported.  Credits are the mirror image
 
 WARNING. There are significant changes to the database to support the new charge system.  The migrations should update your legacy data and create the necessary tax and shipping charges for existing orders but you should backup your database before running.
 
-h3. Coupons and Discounts
-
-h3. Improved Calculator Configuration
-
-Configuration for shipping calculators has been improved so that most shipping calculators can be easily configured in the admin interface.  The interfaces of your existing shipping calculators will continue to work as before but in order to configure your shipping calculators properly, you'll need to add the relevant "preferences":http://spreecommerce.com/documentation/preferences.html to your calculators.
-
-<shell>
-class FlatRateShippingCalculator < ShippingCalculator
-  preference :flat_rate_amount, :decimal, :default => 0  
-
-  def calculate_shipping(shipment)
-    return self.preferred_flat_rate_amount
-  end  
-end  
-</shell>
-
-[TODO - also mention extending Calculator or whatever depending on final implementation] 
-
-Since calculators are now instances of +ActiveRecord::Base+ they can be configured with preferences.  Each instance of +ShippingMethods+ is now stored in the database along with the configured values for its preferences.  This allows the same calculator (ex. +FlatRateShippingCalculator+) to be used with multiple shipping methods, and yet be configured with different values for each calcaultor (ex. different flat rates per calculator.) 
-
-[INSERT SNAPSHOT HERE]
+h3. Coupons and Discounts  
 
 
-WARNING. If you are upgrading an existing application, the shipping methods will all be changed to +FlatRateShippingCalculator+.  After running the migrations you must use the admin configuration screen to select a different shipping calcualtor.  You can now also use the admin screen to configure the settings for your new calculator.  
 
 h3. Variant Images
-
-
 
 h3. Improvements to image handling
 
