@@ -17,7 +17,7 @@ class Checkout < ActiveRecord::Base
   private
   def authorize_creditcard
     return unless process_creditcard? 
-    cc = Creditcard.new(creditcard.merge(:address => shipment.address, :checkout => self))
+    cc = Creditcard.new(creditcard.merge(:address => self.bill_address, :checkout => self))
     return unless cc.valid? and cc.authorize(order.total)
     order.complete
   end
