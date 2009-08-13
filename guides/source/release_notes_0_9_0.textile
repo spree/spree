@@ -36,6 +36,43 @@ h4. Customize logo
 
 If you are upgrading, take advantage of this by using the new +logo+ helper method.
 
+h3. Polymorphic Calculators
+
+There has been significant refactoring to the implementation of calculators.  Calculators are now polymorphic and belong to +calculable+.  This will have a non trivial impact on your existing store configuration.  After upgrading to Spree 0.9.0 you are likely going to have to make several manual adjustments to the existing tax and shipping configurations.  Ultimately we feel this is outweighed by the superior design of the new calculator system which will allow for a more modular design.
+
+WARNING. Many of the existing calculator extensions are not yet updated to support Spree 0.9.0.  Please check the extension registry to see which versions are supported.  Our goal is to backport most of the useful calculators out there shortly after the release.
+
+All calculators need to implement the following method
+
+<shell>
+  def compute(something=nil)
+
+  end    
+</shell>
+
+The calculator is passed an optional "target" on which to base their calculation.  This method is expected to return a single numeric value when the calculation is complete.  A value of +nil+ should be returned in the event that a charge is not applicable.
+
+Calculators are also configurable thorugh Spree's flexible "preference system":preferences.html.  Default values for the preferences are configured through the class definition.  For example, the flat rate calculator class definition specifies an amount with a default value of 0.
+
+<shell>
+  class Calculator::FlatRate < Calculator
+    preference :amount, :decimal, :default => 0
+    
+    ...
+    
+  end
+</shell>
+
+Spree now contains a standard mechanism by which calculator preferences can be editied.  The screenshot below shows how the amounts for the flat rate calculator are now editable directly in the admin interface.
+
+[INSERT SCREENSHOT HERE]
+
+h3. Simplified Tax Configuration
+
+There are also minor changes to how taxes are configured.  You no longer need to specify sales tax or VAT but you do need to choose a calculator type.  Tax rates are configured as prefefences for the calculator itself.  
+
+WARNING. Your tax rates will be lost when you run the migrations.  You will have to recreate them manually in the admin interface.
+
 h3. Flexible System of Charges and Credits
 
 Spree 0.9.0 provides a new flexible system of charges and credits associated with orders.  The  +orders+ table no longer has separate columns for +tax_total+, +ship_total+, etc.  This information is now captured more generically as a +Charge+.  This allows a Spree application to add more then one tax or shipping charge per order as well as to support new types of charges that might be required.  For instance, some products for sale (like cell phones) require a separate activation fee.
