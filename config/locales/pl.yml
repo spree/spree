@@ -235,7 +235,7 @@ pl:
   create: Utwórz
   create_a_new_account: "Utwórz nowe konto"
   create_user_account: Create User Account
-  created_successfully:
+  created_successfully: "Created Successfully"
   credit_card: "Karta kredytowa"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
@@ -263,7 +263,7 @@ pl:
   editing_tax_category: "Edycja kategorii podatkowej"
   editing_tax_rate: "Editing Tax Rate"
   editing_user: "Edycja użytkownika"
-  editing_zone:
+  editing_zone: "Editing Zone"
   email: Email
   email_address: "Adres email"
   email_server_settings_description: "Skonfiguruj ustawienia serwera pocztowego."
@@ -311,7 +311,7 @@ pl:
   images: Obrazki
   images_for: "Images for"
   in_progress: "W trakcie..."
-  invalid_search:
+  invalid_search: "Invalid search criteria."
   inventory: Zapasy
   inventory_adjustment: "Dostosowanie zapasów"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
@@ -339,8 +339,8 @@ pl:
   login_name: Login
   logout: Wyloguj
   maestro_or_solo_cards: Maestro/Solo cards
-  mail_delivery_enabled:
-  mail_delivery_not_enabled:
+  mail_delivery_enabled: "Mail delivery is enabled"
+  mail_delivery_not_enabled: "Mail delivery is not enabled"
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Ustawienia serwera pocztowego"
   mark_shipped: "Mark Shipped"
@@ -363,7 +363,7 @@ pl:
   new_product: "Nowy produkt"
   new_property: "Nowa właściwość"
   new_prototype: "Nowy prototyp"
-  new_shipment:
+  new_shipment: "New Shipment"
   new_shipping_category: "New Shipping Category"
   new_shipping_method: "New Shipping Method"
   new_state: "Nowy stan"
@@ -568,7 +568,7 @@ pl:
   unrecognized_card_type: Unrecognized card type
   update: Aktualizuj
   update_password: "Update my password and log me in"                    
-  updated_successfully:
+  updated_successfully: "Updated Successfully"
   updating: Updating
   usage_limit: Usage Limit
   use_as_shipping_address: Use as Shipping Address
