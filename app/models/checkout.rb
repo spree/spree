@@ -14,6 +14,8 @@ class Checkout < ActiveRecord::Base
   attr_accessor :creditcard    
   attr_accessor :coupon_code
 
+  validates_presence_of :order_id
+
   private
   def authorize_creditcard
     return unless process_creditcard? 

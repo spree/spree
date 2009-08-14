@@ -10,5 +10,8 @@ class State < ActiveRecord::Base
   def <=>(other)
     name <=> other.name
   end
-   
+
+  def to_s
+    name
+  end
 end
