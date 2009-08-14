@@ -2,7 +2,7 @@
 
 <% if @taxon.children.empty? %>
   <%= render :partial => "shared/products.html.erb", :locals => {:products => @products, :taxon => @taxon } %>
-  <%= will_paginate @products, :prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;" %> 
+  <%= will_paginate @products, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;" %> 
 <% else %>
   <%= render :partial => "taxon", :collection => @taxon.children %>
 <% end %>
