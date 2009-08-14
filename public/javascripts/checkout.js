@@ -55,15 +55,12 @@ jQuery.fn.sameAddress = function() {
 //Initial state mapper on page load
 var state_mapper;
 var get_states = function() {
-  $.getJSON('/states.js', function(json) {
-    state_mapper = json;
-    $('span#bcountry select').val($('input#hidden_bcountry').val());
-    update_state('b');
-    $('span#bstate :only-child').val($('input#hidden_bstate').val());
-    $('span#scountry select').val($('input#hidden_scountry').val());
-    update_state('s');
-    $('span#sstate :only-child').val($('input#hidden_sstate').val());
-  });
+  $('span#bcountry select').val($('input#hidden_bcountry').val());
+  update_state('b');
+  $('span#bstate :only-child').val($('input#hidden_bstate').val());
+  $('span#scountry select').val($('input#hidden_scountry').val());
+  update_state('s');
+  $('span#sstate :only-child').val($('input#hidden_sstate').val());
 };
 
 // replace the :only child of the parent with the given html, and transfer
