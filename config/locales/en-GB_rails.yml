@@ -1,4 +1,37 @@
 en-GB:
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      # When no format has been given, it uses default.
+      # You can provide other formats here if you like!
+      default: "%Y-%m-%d"
+      short: "%b %d"
+      long: "%B %d, %Y"
+
+    day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+    abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
+
+    # Don't forget the nil at the beginning; there's no such thing as a 0th month
+    month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
+    abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
+    # Used in date_select and datime_select.
+    order: [ :year, :month, :day ]
+
+  time:
+    formats:
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      short: "%d %b %H:%M"
+      long: "%B %d, %Y %H:%M"
+    am: "am"
+    pm: "pm"
+
+# Used in array.to_sentence.
+  support:
+    array:
+      words_connector: ", "
+      two_words_connector: " and "
+      last_word_connector: ", and "
+
   number:
     # Used in number_with_delimiter()
     # These are also the defaults for 'currency', 'percentage', 'precision', and 'human'
@@ -9,7 +42,7 @@ en-GB:
       delimiter: ","
       # Number of decimals, behind the separator (the number 1 with a precision of 2 gives: 1.00)
       precision: 3
-      
+
     # Used in number_to_currency()
     currency:
       format:
@@ -20,15 +53,15 @@ en-GB:
         separator: "."
         delimiter: ","
         precision: 2
-        
+
     # Used in number_to_percentage()
     percentage:
       format:
         # These three are to override number.format and are optional
-        # separator: 
+        # separator:
         delimiter: ""
-        # precision: 
-        
+        # precision:
+
     # Used in number_to_precision()
     precision:
       format:
@@ -36,15 +69,26 @@ en-GB:
         # separator:
         delimiter: ""
         # precision:
-        
+
     # Used in number_to_human_size()
     human:
       format:
         # These three are to override number.format and are optional
-        # separator: 
+        # separator:
         delimiter: ""
         precision: 1
-      storage_units: [Bytes, KB, MB, GB, TB]
+      storage_units:
+        # Storage units output formatting.
+        # %u is the storage unit, %n is the number (default: 2 MB)
+        format: "%n %u"
+        units:
+          byte:
+            one:   "Byte"
+            other: "Bytes"
+          kb: "KB"
+          mb: "MB"
+          gb: "GB"
+          tb: "TB"
 
   # Used in distance_of_time_in_words(), distance_of_time_in_words_to_now(), time_ago_in_words()
   datetime:
@@ -96,7 +140,7 @@ en-GB:
           other:  "{{count}} errors prohibited this {{model}} from being saved"
         # The variable :count is also available
         body: "There were problems with the following fields:"
-    
+
       # The values :model, :attribute and :value are always available for interpolation
       # The value :count is available when applicable. Can be used for pluralization.
       messages:
@@ -119,36 +163,34 @@ en-GB:
         less_than_or_equal_to: "must be less than or equal to {{count}}"
         odd: "must be odd"
         even: "must be even"
-    
-    date:
-      formats:
-        # Use the strftime parameters for formats.
-        # When no format has been given, it uses default.
-        # You can provide other formats here if you like!
-        default: "%Y-%m-%d"
-        short: "%b %d"
-        long: "%B %d, %Y"
 
-      day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
-      abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
+        # Append your own errors here or at the model/attributes scope.
 
-      # Don't forget the nil at the beginning; there's no such thing as a 0th month
-      month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
-      abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
-      # Used in date_select and datime_select.
-      order: [ :year, :month, :day ]
+      # You can define own errors for models or model attributes.
+      # The values :model, :attribute and :value are always available for interpolation.
+      #
+      # For example,
+      #   models:
+      #     user:
+      #       blank: "This is a custom blank message for {{model}}: {{attribute}}"
+      #       attributes:
+      #         login:
+      #           blank: "This is a custom blank message for User login"
+      # Will define custom blank validation message for User model and
+      # custom blank validation message for login attribute of User model.
+      #models:
 
-    time:
-      formats:
-        default: "%a, %d %b %Y %H:%M:%S %z"
-        short: "%d %b %H:%M"
-        long: "%B %d, %Y %H:%M"
-      am: "am"
-      pm: "pm"
+    # Translate model names. Used in Model.human_name().
+    #models:
+      # For example,
+      #   user: "Dude"
+      # will translate User model name to "Dude"
 
-  # Used in array.to_sentence.
-  support:
-    array:
-      words_connector: ", "
-      two_words_connector: " and "
-      last_word_connector: ", and "
+    # Translate model attribute names. Used in Model.human_attribute_name(attribute).
+    #attributes:
+      # For example,
+      #   user:
+      #     login: "Handle"
+      # will translate User attribute "login" as "Handle"
+
+
