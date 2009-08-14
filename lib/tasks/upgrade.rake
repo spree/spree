@@ -9,6 +9,7 @@ namespace :spree do
     FileUtils.cp("#{SPREE_ROOT}/config/spree_permissions.yml", "#{RAILS_ROOT}/config")
     FileUtils.cp("#{SPREE_ROOT}/config/routes.rb", "#{RAILS_ROOT}/config")
     FileUtils.cp("#{SPREE_ROOT}/config/boot.rb", "#{RAILS_ROOT}/config")    
+    sl = "#{RAILS_ROOT}/config/initializers/searchlogic.rb"; File.rename(sl, sl + '~') if File.exist?(sl)
   end
 end  
 
