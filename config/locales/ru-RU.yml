@@ -230,6 +230,7 @@ ru-RU:
   country: "Страна"
   country_based: "Страна"
   coupon: "Купон"                                                                             
+  coupon_code: Coupon Code
   coupons: "Купоны"
   coupons_description: "Управление купонами"
   create: "Создать"
@@ -400,6 +401,7 @@ ru-RU:
   order_number: "Заказ"
   order_operation_authorize: "Авторизовать"
   order_processed_successfully: "Ваш заказ был успешно обработан"
+  order_summary: Order Summary
   order_total: "Итого заказ"
   order_total_message: "Полная сумма, снятая с вашей карточки, составит"
   order_updated: "Заказ обновлен"

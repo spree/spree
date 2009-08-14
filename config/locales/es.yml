@@ -230,6 +230,7 @@ es:
   country: País
   country_based: "Pais base"
   coupon: Coupon                                                                             
+  coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
   create: Crear
@@ -400,6 +401,7 @@ es:
   order_number: "Pedido #"
   order_operation_authorize: "Autorizar"
   order_processed_successfully: "Su pedido se ha procesado correctamente"
+  order_summary: Order Summary
   order_total: "Total del pedido"
   order_total_message: "El importe total cargado a su tarjeta sera"
   order_updated: "Pedido actualizado"

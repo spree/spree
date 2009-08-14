@@ -230,6 +230,7 @@ it:
   country: country
   country_based: "Country Based"
   coupon: Coupon                                                                             
+  coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
   create: Inserire
@@ -400,6 +401,7 @@ it:
   order_number: "Ordine #"
   order_operation_authorize: ""
   order_processed_successfully: "L'ordine è terminato con successo"
+  order_summary: Order Summary
   order_total: Totale
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Order Updated"

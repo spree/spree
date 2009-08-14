@@ -230,6 +230,7 @@ nl-NL:
   country: Land
   country_based: "Gebaseerd op land"
   coupon: Coupon                                                                             
+  coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
   create: Aanmaken
@@ -400,6 +401,7 @@ nl-NL:
   order_number: "Nummer Bestelling"
   order_operation_authorize: Autoriseren
   order_processed_successfully: "Uw bestelling is succesvol verwerkt"
+  order_summary: Order Summary
   order_total: "Bestelling Totaal"
   order_total_message: "Het aan te rekenen totaalbedrag is"
   order_updated: "Bestelling gewijzigd"

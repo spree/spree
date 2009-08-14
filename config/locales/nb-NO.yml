@@ -230,6 +230,7 @@ nb-NO:
   country: Land
   country_based: "Land"
   coupon: Coupon                                                                             
+  coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
   create: Opprett
@@ -400,6 +401,7 @@ nb-NO:
   order_number: Ordrenummer
   order_operation_authorize: Autoriser
   order_processed_successfully: "Din ordre har blitt behandlet"
+  order_summary: Order Summary
   order_total: "Ordresum"
   order_total_message: "Beløpet som vil bli belastet ditt kort er"
   order_updated: "Ordre oppdatert"

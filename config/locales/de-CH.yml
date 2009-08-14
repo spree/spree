@@ -230,6 +230,7 @@ de-CH:
   country: Land
   country_based: "Basierend auf Land"
   coupon: Coupon                                                                             
+  coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
   create: Erstellen
@@ -400,6 +401,7 @@ de-CH:
   order_number: "Bestellnummer"
   order_operation_authorize: ""
   order_processed_successfully: "Ihre Bestellung wurde erfolgreich bearbeitet"
+  order_summary: Order Summary
   order_total: Gesamtsumme
   order_total_message: "Die Gesamtsumme, mit der Ihre Kreditkarte belastet wird"
   order_updated: "Bestellung aktualisiert"

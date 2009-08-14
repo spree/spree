@@ -230,6 +230,7 @@ il:
   country: ארץ
   country_based: "Country Based"
   coupon: Coupon                                                                             
+  coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
   create: Create
@@ -400,6 +401,7 @@ il:
   order_number: Order
   order_operation_authorize: Authorize
   order_processed_successfully: "Your order has been processed successfully"
+  order_summary: Order Summary
   order_total: "סכום כולל"
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Order Updated"

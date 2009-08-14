@@ -230,6 +230,7 @@ fr-FR:
   country: Pays
   country_based: "Country Based"
   coupon: Coupon                                                                             
+  coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
   create: Créer
@@ -400,6 +401,7 @@ fr-FR:
   order_number: Commande
   order_operation_authorize: Authorisation
   order_processed_successfully: "Votre commande a bien été traitée avec succès"
+  order_summary: Order Summary
   order_total: "Total de la commande"
   order_total_message: "Le total du montant débité sur votre carte va être de"
   order_updated: "Commande mise à jour"

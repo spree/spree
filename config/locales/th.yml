@@ -230,6 +230,7 @@ th:
   country: ประเทศ
   country_based: ยืดประเทศเป็นหลัก
   coupon: Coupon                                                                             
+  coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
   create: สร้าง
@@ -400,6 +401,7 @@ th:
   order_number: รหัสสั่งซื้อ
   order_operation_authorize: Authorize
   order_processed_successfully: "รายการสั่งซื้อของคุณถูกดำเนินการเรียบร้อยแล้ว"
+  order_summary: Order Summary
   order_total: ราคารวม
   order_total_message: "ยอดซื้อรวมจะเก็บจากบัตรเครดิตของคุณ"
   order_updated: "ปรับปรุงรายการสั่งซื้อ"

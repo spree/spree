@@ -1,4 +1,4 @@
-<h3>Order Summary</h3>                                                                                    
+<h3><%= t(:order_summary) %></h3>                                                                                    
 <table>
   <tbody>
     <tr>
@@ -28,9 +28,9 @@
   </tbody>
 </table>
 <% form_for @checkout, :url => object_url, :html => { :id => 'checkout-summary-form'} do |summary_form| %>  
-  <label>Coupon Code (Optional)</label>
+  <label><%= t(:coupon_code) %></label>
   <%= summary_form.text_field :coupon_code, :id => 'coupon-code', :size => 14 %>
   <input id="post-summary" type="submit" style="display:none"/>
   <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'coupon_busy_indicator' %>
 <% end %> 
-<div id="coupon-error"/>
+<div id="coupon-error"></div>
