@@ -39,8 +39,8 @@ end
 #
 class ActionView::Helpers::FormBuilder
   
-  def label(method, text = nil)
-    @template.label(@object_name,method,text)
+  def label(method, text = nil, options={})
+    @template.label(@object_name,method,text,options)
   end
 
   def field_container(method, options = {}, &block)
