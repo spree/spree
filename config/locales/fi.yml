@@ -488,6 +488,8 @@ fi:
   shipping_method: Toimitustapa
   shipping_methods: Toimitustavat
   shipping_methods_description: "Hallinnoi toimitustapoja"
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Toimitus yhteensä"
   shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: Ostoskori

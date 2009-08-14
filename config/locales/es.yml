@@ -488,6 +488,8 @@ es:
   shipping_method: Metodo de envio
   shipping_methods: "Metodos de envio"
   shipping_methods_description: "Manejar metodos de envio"
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Total de envío"
   shop_by_taxonomy: "Comprar por {{taxonomy}}"
   shopping_cart: "Cesta de compras"

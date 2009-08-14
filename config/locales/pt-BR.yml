@@ -488,6 +488,8 @@ pt-BR:
   shipping_method: Método
   shipping_methods: "Métodos de Entrega"
   shipping_methods_description: "Gerenciar Métodos de Entrega"
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Total de Entrega"
   shop_by_taxonomy: "Comprar por {{taxonomy}}"
   shopping_cart: "Carrinho de Compra"

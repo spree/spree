@@ -488,6 +488,8 @@ nl-NL:
   shipping_method: "Verzendwijze"
   shipping_methods: "Verzendwijzen"
   shipping_methods_description: "Beheer verzendwijzen"
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Verzending"
   shop_by_taxonomy: "Winkelen op {{taxonomy}}"
   shopping_cart: "Winkelwagen"

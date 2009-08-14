@@ -488,6 +488,8 @@ nb-NO:
   shipping_method: Leveransemåte
   shipping_methods: "Leveransemåter"
   shipping_methods_description: "Konfigurer leveransemåter."
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Fraktkostnader"
   shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Handlekurv"

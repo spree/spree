@@ -488,6 +488,8 @@ th:
   shipping_method: วิธีส่งของ
   shipping_methods: "วิธีการจัดส่ง"
   shipping_methods_description: "จัดการ การจัดส่งสินค้า"
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Shipping Total"
   shop_by_taxonomy: "เลือกตาม {{taxonomy}}"
   shopping_cart: สินค้าในตะกร้า

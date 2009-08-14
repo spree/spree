@@ -488,6 +488,8 @@ jp:
   shipping_method: 配送方法
   shipping_methods: 配送方法
   shipping_methods_description: 配送方法を管理します。
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: 配送料合計
   shop_by_taxonomy: "{{taxonomy}}"
   shopping_cart: ショッピングカート

@@ -488,6 +488,8 @@ fr-FR:
   shipping_method: "Méthode de livraison"
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Total de la livraison"
   shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Panier"

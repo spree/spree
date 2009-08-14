@@ -488,6 +488,8 @@ ru-RU:
   shipping_method: "Способ"
   shipping_methods: "Способы доставки"
   shipping_methods_description: "Управление методами доставки"
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Доставка"
   shop_by_taxonomy: "{{taxonomy}}"
   shopping_cart: "Корзина"

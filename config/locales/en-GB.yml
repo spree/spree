@@ -488,6 +488,8 @@ en-GB:
   shipping_method: "Delivery Method"
   shipping_methods: "Delivery Methods"
   shipping_methods_description: "Manage shipping methods"
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Delivery Total"
   shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Shopping Basket"
