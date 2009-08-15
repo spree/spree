@@ -115,36 +115,31 @@ Adjustments come in two basic flavors: +Charges+ and +Credits+.  From an impelme
 
 Orders have one or more adjustments associated with them and each adjustment also belongs to an adjustment source.  This allows charges and credits to recalculate themselves when requested.  Adjustments are always recalculated before they are saved which includes every time and order is updated.  This provides a very flexible system by which an adjustment can determine that it is no longer relevant based on changes in the order.  
 
-Consider a coupon that takes $5 off all orders over $20.  If the order exceeds the required amount during checkout the coupon will create the proper adjustment.  If the customer then decides to edit their cart (before completing checkout) then you will want to make sure that the coupon still qualifies.  If the order total drops below the required amount the source of the adjustment (in this case the coupon) will have the ability to remove the adjustment based on its own internal logic. 
+Consider a coupon that takes $5 off all orders over $20.  If the order exceeds the required amount during checkout the coupon will create the proper adjustment.  If the customer then decides to edit their cart (before completing checkout) then you will want to make sure that the coupon still qualifies.  If the order total drops below the required amount the source of the adjustment (in this case the coupon) will have the ability to remove the adjustment based on its own internal logic.
 
-Charges are added to the order in the +Checkout+ model.  Developers wishing to override the default behavior of Spree can now just override the +update_charges+ method to provide their own additional logic.  This snippet below shows how the Spree core adds tax related charges to an order.
-
-<shell>
-  def update_charges
-    ...
-
-    # update tax (if applicable)
-    tax_amount = order.calculate_tax
-    if tax_amount > 0                           
-      tax_charge = order.tax_charges.first
-      tax_charge ||= order.tax_charges.build(:description => I18n.t(:tax))
-      tax_charge.amount = tax_amount
-      tax_charge.save    
-    end
-
-    order.reload
-    order.update_totals
-    order.save 
-  end  
-</shell> 
-
-In addition to charges, credits are now supported.  Credits are the mirror image of charges and they serve to reduce the cost of the order.  The primary mechanism for adding a credit to an order is through the use of coupons.  Its possible, however, that developers may wish to build their own custom logic for creating credits.
-
-WARNING. There are significant changes to the database to support the new charge system.  The migrations should update your legacy data and create the necessary tax and shipping charges for existing orders but you should backup your database before running.
+WARNING. There are significant changes to the database to support the new adjustment system.  The migrations should update your legacy data and create the necessary tax and shipping adjustments for existing orders but you should backup your database before running.
 
 h3. Coupons and Discounts  
 
+Spree now supports a flexible coupon system.  Coupons in an online store are virtual and can be thought of as "codes" that must be entered during the checkout process.  Coupons serve two important functions.  First, they determine whether or not they are eligible to be used for the offer in question.  Second, they calculate the actual credit/discount that should be applied to the specific order (assuming that the eligibility requirement is satisfied.)
 
+h4. Eligibility
+
+Coupon eligibility is completely customizable on a per coupon basis.  Eligibility is determined by the following factors.
+
+* **Start Date** - coupons can be configured to be invalid before a specific date
+* **Expiration Date** - coupons can be configured so that they are not usable passed a certain date
+* **Expiration Date** - coupons can be configured so that they are not usable passed a certain date
+* **Number of Uses** - coupons can be restricted to an arbitrary number of uses (typically a single use if there's a limit at all)    
+* **Combination** - there is an option to restrict specific coupons so that they cannot be combined with other coupons in the same order.                                
+
+Any other restriction on eligibility is intended to be provided by custom calculators.  The +compute+ method has access to the complete order (including shipping and other related information) and can simply return +nil+ if the coupon is not to be applied in a specific situation  
+
+INFO. The next version of Spree will also provide built in filtering for coupons based on product properties and taxon information.  This will provide a standard way to restrict coupons to certain types of products.  As a workaround, you can accomplish this by hard coding restrictions in your calculator. 
+
+h4. Discount Calculation
+
+The +create_discount+ method in +Coupon+ is responsible for the actual calculation of the credit to be applied for the cooupon.  By default, Spree will not allow the credit amount to exceed the item total.    The credit adjustment associated with a coupon is subject to recalculation based on changes in the order.  This is no different then any other adjustment to the order total (such as shipping or tax charges.)
 
 h3. Variant Images
 
