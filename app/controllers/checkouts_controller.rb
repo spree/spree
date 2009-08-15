@@ -23,6 +23,10 @@ class CheckoutsController < Spree::BaseController
     flash nil
     
     success.wants.html do  
+      if current_user
+        current_user.update_attribute(:bill_address, @order.bill_address)
+        current_user.update_attribute(:ship_address, @order.ship_address)
+      end
       flash[:notice] = t('order_processed_successfully')
       order_params = {:checkout_complete => true}
       order_params[:order_token] = @order.token unless @order.user
@@ -41,29 +45,58 @@ class CheckoutsController < Spree::BaseController
   end
   
   update.before do
-    if params[:checkout] and params[:checkout][:bill_address_attributes]
-      # prevent double creation of addresses if user is jumping back to address stup without refreshing page
-      params[:checkout][:bill_address_attributes][:id] = @checkout.bill_address.id if @checkout.bill_address
+    # update user to current one if user has logged in
+    @order.update_attribute(:user, current_user) if current_user 
+
+    if checkout_info = params[:checkout] 
+      # overwrite any earlier guest checkout email if user has since logged in
+      checkout_info[:email] = current_user.email if current_user 
+
+      # and set the ip_address to the most recent one
+      checkout_info[:ip_address] = request.env['REMOTE_ADDR']
+
+      # check whether the bill address has changed, and start a fresh record if 
+      # we were using the address stored in the current user.
+      if checkout_info[:bill_address_attributes] and @checkout.bill_address
+        checkout_info[:bill_address_attributes].delete :id  
+        new_address = Address.new checkout_info[:bill_address_attributes]
+        if not @checkout.bill_address.same_as?(new_address) and
+             current_user and @checkout.bill_address == current_user.bill_address
+          # need to start a new record, so replace the existing one with a blank
+          @checkout.update_attribute(:bill_address, Address.new)
+        end
+      end
+
+      if checkout_info[:shipment_attributes][:address_attributes] and @order.shipment.address
+        checkout_info[:shipment_attributes][:address_attributes].delete :id
+        new_address = Address.new checkout_info[:shipment_attributes][:address_attributes]
+        if not @order.shipment.address.same_as?(new_address) and 
+             current_user and @order.shipment.address == current_user.ship_address 
+          # need to start a new record, so replace the existing one with a blank
+          @order.shipment.update_attribute(:address, Address.new)
+        end
+      end
+
     end
-    @checkout.ip_address ||= request.env['REMOTE_ADDR']
-    @checkout.email = current_user.email if current_user && @checkout.email.blank?
-    @order.update_attribute(:user, current_user) if current_user and @order.user.blank?
   end 
   
   update.after do
-    @order.save
+    @order.save!		# expect messages here
   end   
     
   private
   def object
     return @object if @object
-    default_country = Country.find Spree::Config[:default_country_id]
     @object = parent_object.checkout                                                  
     unless params[:checkout] and params[:checkout][:coupon_code]
       # do not create these defaults if we're merely updating coupon code, otherwise we'll have a validation error
-      @object.shipment.address ||= Address.new(:country => default_country)
-      @object.bill_address ||= Address.new(:country => default_country)   
-      @object.creditcard   ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
+      if user = parent_object.user || current_user
+        @object.shipment.address ||= user.ship_address 
+        @object.bill_address     ||= user.bill_address
+      end
+      @object.shipment.address ||= Address.default
+      @object.bill_address     ||= Address.default
+      @object.creditcard       ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
     end
     @object         
   end
@@ -71,13 +104,18 @@ class CheckoutsController < Spree::BaseController
   def load_data     
     @countries = Country.find(:all).sort  
     @shipping_countries = parent_object.shipping_countries.sort
-    default_country = Country.find Spree::Config[:default_country_id]
+    if current_user && current_user.bill_address
+      default_country = current_user.bill_address.country 
+    else
+      default_country = Country.find Spree::Config[:default_country_id]	
+    end 
     @states = default_country.states.sort
   end
   
   def rate_hash       
     fake_shipment = Shipment.new :order => @order, :address => @order.ship_address
-    @order.shipping_methods.collect do |ship_method| 
+    @order.shipping_methods.collect do |ship_method|
+      fake_shipment.shipping_method = ship_method
       { :id   => ship_method.id, 
         :name => ship_method.name, 
         :rate => number_to_currency(ship_method.calculate_cost(fake_shipment)) }
