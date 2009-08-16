@@ -10,7 +10,7 @@ $(function() {
   // hook up the continue buttons for each section
   for(var i=0; i < regions.length; i++) {     
     var section = regions[i];                          
-    $('#continue_' + section).click(function() { eval( "continue_button(this);") });   
+    $('#continue_' + section).click(function() { eval( "continue_button(this);"); return false; });
     
     // enter key should be same as continue button (don't submit form though)
     $('#' + section + ' input').bind("keyup", section, function(e) {
@@ -66,6 +66,8 @@ var get_states = function() {
 // replace the :only child of the parent with the given html, and transfer
 //   {name,id} attributes over, returning the new child
 var chg_state_input_element = function (parent, html) {
+  var errorlabel = parent.find('label');
+  errorlabel.remove();
   var child = parent.find(':only-child');
   var name = child.attr('name');
   var id = child.attr('id');
@@ -176,11 +178,11 @@ var shift_to_region = function(active) {
     }
   }                                                                         
   if (active == 'confirmation') {
+    // indicates order is ready to be processed (as opposed to simply updated)
     $("input#final_answer").attr("value", "yes");    
     $('#continue_confirmation').removeAttr('disabled', 'disabled'); 
     $('#post-final').removeAttr('disabled', 'disabled'); 
   } else {
-    // indicates order is ready to be processed (as opposed to simply updated)
     $("input#final_answer").attr("value", "");
     // disable form submit
     $('div#checkout :submit').attr('disabled', 'disabled');
@@ -363,6 +365,7 @@ var ajax_login = function() {
       if (result) {
         $('div#already_logged_in').show();
         $('div#register_or_guest').hide();
+        update_addresses(result);
         update_login();
       } else {
         registration_error("Invalid username or password.");
@@ -426,7 +429,7 @@ var update_login = function() {
     },      
     dataType: "html",
     success: function(result) {
-	 		$("div#login-bar").html(result);  
+      $("div#login-bar").html(result);
     },
     error: function (XMLHttpRequest, textStatus, errorThrown) {
       // TODO (maybe do nothing)
