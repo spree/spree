@@ -38,8 +38,29 @@ h3. Basic Configuration
   <% end %>
 </dl>
 <dl>
+  <% guide('Inventory', 'inventory.html') do %>
+    Information on the powerful inventory management system used by Spree.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Taxonomy/Categories', 'taxonomy.html') do %>
+    This guide covers various methods for categorizing your products.
+  <% end %>
+</dl>
+
+<dl>
+  <% guide('Payment Gateways', 'payment_gateways.html') do %>
+    This guide covers how to setup a payment gateway using ActiveMerchant or another gateway solution of your choice.
+  <% end %>
+</dl>
+<dl>
   <% guide('Zones', 'zones.html') do %>
     This guide covers how to configure a zone for shipping, taxation or other custom purposes.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Calculators', 'calculators.html') do %>
+    This guide covers the role that calculators play in various Spree operations.
   <% end %>
 </dl>
 <dl>
@@ -48,23 +69,13 @@ h3. Basic Configuration
   <% end %>
 </dl>
 <dl>
-  <% guide('Inventory', 'inventory.html') do %>
-    Information on the powerful inventory management system used by Spree.
-  <% end %>
-</dl>
-<dl>
-  <% guide('Payment Gateways', 'payment_gateways.html') do %>
-    This guide covers how to setup a payment gateway using ActiveMerchant or another gateway solution of your choice.
-  <% end %>
-</dl>
-<dl>
   <% guide('Shipping', 'shipping.html') do %>
     Information on how to configure shiping options as well as building your own shipping calculator.
   <% end %>
 </dl>
 <dl>
-  <% guide('Taxonomy/Categories', 'taxonomy.html') do %>
-    This guide covers various methods for categorizing your products.
+  <% guide('Coupons and Discounts', 'coupons_and_discounts.html') do %>
+    Information on how to configure your own coupons/discounts/gift certificates.
   <% end %>
 </dl>
           

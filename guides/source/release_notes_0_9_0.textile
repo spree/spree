@@ -38,7 +38,7 @@ h3. Polymorphic Calculators
 
 There has been significant refactoring to the implementation of calculators.  Calculators are now polymorphic and belong to +calculable+.  This will have a non trivial impact on your existing store configuration.  After upgrading to Spree 0.9.0 you are likely going to have to make several manual adjustments to the existing tax and shipping configurations.  Ultimately we feel this is outweighed by the superior design of the new calculator system which will allow for a more modular design.
 
-WARNING. Many of the existing calculator extensions are not yet updated to support Spree 0.9.0.  Please check the "extension registry":http://ext.spreecommerce.com/ to see which versions are supported.  Our goal is to backport most of the useful calculators out there shortly after the release.
+WARNING. Many of the existing calculator extensions are not yet updated to support Spree 0.9.0.  Please check the "extension registry":http://ext.spreecommerce.com/ to see which versions are supported.  Our goal is to back port most of the useful calculators out there shortly after the release.
 
 All calculators need to implement the following method
 
@@ -61,7 +61,7 @@ Calculators are configured using Spree's flexible "preference system":preference
   end
 </shell>
 
-Spree now contains a standard mechanism by which calculator preferences can be editied.  The screenshot below shows how the amounts for the flat rate calculator are now editable directly in the admin interface.
+Spree now contains a standard mechanism by which calculator preferences can be edited.  The screenshot below shows how the amounts for the flat rate calculator are now editable directly in the admin interface.
 
 !images/calculators/shipping_config.png(Changing Shipping Config)!     
 
@@ -103,7 +103,7 @@ Once your calculators have been registered correctly by your extensions, then th
 
 h3. Simplified Tax Configuration
 
-There are also minor changes to how taxes are configured.  You no longer need to specify sales tax or VAT but you do need to choose a calculator type.  Tax rates are configured as prefefences for the calculator itself.  
+There are also minor changes to how taxes are configured.  You no longer need to specify sales tax or VAT but you do need to choose a calculator type.  Tax rates are configured as preferences for the calculator itself.  
 
 WARNING. Your tax rates will be lost when you run the migrations.  You will have to recreate them manually in the admin interface.
 
@@ -111,7 +111,7 @@ h3. Unified Adjustment Model
 
 Spree 0.9.0 provides a new flexible system of adjustments associated with orders.  The  +orders+ table no longer has separate columns for +tax_total+, +ship_total+, etc.  This information is now captured more generically as an +Adjustment+.  This allows a Spree application to add more then one tax or shipping charge per order as well as to support new types of charges that might be required.  For instance, some products for sale (like cell phones) require a separate activation fee.    
 
-Adjustments come in two basic flavors: +Charges+ and +Credits+.  From an impelmentation perspecive, they are both modeled in a single database table called +adjustments+ and use the single table inheritance mechanism of Rails.  Charges add to the order total, and credits work in the opposite direction.
+Adjustments come in two basic flavors: +Charges+ and +Credits+.  From an implementation perspective, they are both modeled in a single database table called +adjustments+ and use the single table inheritance mechanism of Rails.  Charges add to the order total, and credits work in the opposite direction.
 
 Orders have one or more adjustments associated with them and each adjustment also belongs to an adjustment source.  This allows charges and credits to recalculate themselves when requested.  Adjustments are always recalculated before they are saved which includes every time and order is updated.  This provides a very flexible system by which an adjustment can determine that it is no longer relevant based on changes in the order.  
 
@@ -153,7 +153,7 @@ Another change is to store the original image's width and height: this info is s
 working with a set of images with different 'shapes', e.g. where your images might all have a width of 240 but (minor) variation on height. Knowing the height of the original allows you to calculate the max height of your images and thus to create a suitable bounding box. 
 
 Finally, note that the processing tools behind paperclip can do many transformations on the images,
-such as cropping, colour adjustment, ... - and these can be requested by passing the options to 
+such as cropping, color adjustment, ... - and these can be requested by passing the options to 
 paperclip, or you can run the conversions on a batch of images in advance of loading into Spree. 
 Automatic cropping is particularly useful to make best use of screen area. 
 
