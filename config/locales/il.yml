@@ -79,7 +79,7 @@ il:
       taxonomy: 
         name: Name
       user: 
-        email: Email
+        email: דואל
       variant: 
         depth: Depth
         height: Height
@@ -194,7 +194,7 @@ il:
   back: Back
   back_to_store: "Go Back To Store"
   backordering_is_allowed: "Backordering {{not}} allowed"
-  bill_address: "Bill Address"
+  bill_address: "כתובת למשלוח חבילה"
   billing_address: "כתובת למשלוח חשבונית"
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
@@ -203,7 +203,7 @@ il:
   capture: capture
   card_code: "קוד כרטיס"
   card_number: "מספר כרטיס"
-  card_type_is: Card type is
+  card_type_is: "כרטיס מסוג"
   cart: עגלה
   categories: Categories
   category: Category
@@ -234,8 +234,8 @@ il:
   coupons_description: Manage coupons
   create: Create
   create_a_new_account: "Create a new account"
-  create_user_account: Create User Account
-  created_successfully: "Created Successfully"
+  create_user_account: "יצירת חשבון משתמש"
+  created_successfully: "נוצר בהצלחה"
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
@@ -264,18 +264,18 @@ il:
   editing_tax_rate: "Editing Tax Rate"
   editing_user: "Editing User"   
   editing_zone: "Editing Zone"
-  email: Email
-  email_address: "Email Address"
+  email: דואל
+  email_address: "כתובת דואל"
   email_server_settings_description: "Set email server settings."
   empty_cart: "רוקן עגלה"
   enable_mail_delivery: Enable Mail Delivery      
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: error
   event: Event
-  existing_customer: "Existing Customer"
+  existing_customer: "משתמש קיים"
   expiration: "תאריך תפוגה"
-  expiration_month: "Expiration Month"
-  expiration_year: "Expiration Year"
+  expiration_month: "חודש תפוגה"
+  expiration_year: "שנת תפוגה"
   extension: Extension
   extensions: Extensions
   filename: Filename
@@ -286,7 +286,7 @@ il:
   flat_rate_per_item: "Flat Rate (per item)"
   flat_rate_per_order: "Flat Rate (per order)"
   flexible_rate: "Flexible Rate"
-  forgot_password: "Forgot Password"
+  forgot_password: "שכחתי סיסמה"
   full_name: "Full Name"
   gateway: Gateway
   gateway_configuration: "Gateway configuration"
@@ -318,7 +318,7 @@ il:
   inventory_settings: "Inventory Settings"
   issue_number: Issue Number
   item: פריט
-  item_description: "Item Description"
+  item_description: "תיאור הפריט"
   item_total: "Item Total"
   last_name: "שם משפחה"
   list: List
@@ -329,7 +329,7 @@ il:
   listing_tax_categories: "Listing Tax Categories"
   listing_users: "Listing Users"
   loading: Loading
-  locale_changed: "Locale Changed"
+  locale_changed: "שינוי שפה"
   log_in: "התחברות"
   logged_in_as: "Logged in as"
   logged_in_succesfully: "Logged in successfully"
@@ -406,8 +406,8 @@ il:
   overview: Overview
   paid: Paid
   parent_category: "Parent Category"
-  password: Password
-  password_reset_instructions: "Password Reset Instructions"
+  password: סיסמה
+  password_reset_instructions: "הוראות לחידוש סיסמה"
   password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
   password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."    
   password_updated: "Password successfully updated"  
@@ -427,7 +427,7 @@ il:
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
   problems_processing_order: "We had problems processing your order"
-  proceed_as_guest: "No Thanks, Proceed as Guest"
+  proceed_as_guest: "לא תודה, המשך כאורח"
   process: Process
   product: Product
   product_details: "Product Details"
@@ -441,13 +441,13 @@ il:
   prototypes: Prototypes
   qty: כמות
   rate: Rate
-  register: Register as a New User
-  register_or_guest: Checkout as Guest or Register
-  registration: Registration           
-  remember_me: "Remember me"
-  remove: Remove
-  reports: Reports
-  required_for_solo_and_maestro: Required for Solo and Maestro cards.
+  register: "הרשם כמשתמש חדש"
+  register_or_guest: "שלם כאורח או הרשם כמשתמש"
+  registration: הרשמה           
+  remember_me: "זכור אותי"
+  remove: הסר
+  reports: דוחות
+  required_for_solo_and_maestro: "חובה עבור כרטיסי סולו ומאסטרו."
   resend: Resend
   reset_password: "Reset my password"
   response_code: "Response Code"  
@@ -474,7 +474,7 @@ il:
   server_error: "The server returned an error"
   settings: Settings
   ship: ship
-  ship_address: "Ship Address"
+  ship_address: "כתובת למשלוח חבילה"
   shipment: Shipment
   shipment_number: "Shipment #"
   shipped: Shipped
