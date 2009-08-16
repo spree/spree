@@ -48,7 +48,7 @@ class CheckoutsController < Spree::BaseController
     # update user to current one if user has logged in
     @order.update_attribute(:user, current_user) if current_user 
 
-    if checkout_info = params[:checkout] 
+    if (checkout_info = params[:checkout]) and not checkout_info[:coupon_code]
       # overwrite any earlier guest checkout email if user has since logged in
       checkout_info[:email] = current_user.email if current_user 
 
