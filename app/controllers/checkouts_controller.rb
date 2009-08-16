@@ -58,22 +58,28 @@ class CheckoutsController < Spree::BaseController
       # check whether the bill address has changed, and start a fresh record if 
       # we were using the address stored in the current user.
       if checkout_info[:bill_address_attributes] and @checkout.bill_address
-        checkout_info[:bill_address_attributes].delete :id  
+        # always include the id of the record we must write to - ajax can't refresh the form
+        checkout_info[:bill_address_attributes][:id] = @checkout.bill_address.id
         new_address = Address.new checkout_info[:bill_address_attributes]
         if not @checkout.bill_address.same_as?(new_address) and
              current_user and @checkout.bill_address == current_user.bill_address
           # need to start a new record, so replace the existing one with a blank
-          @checkout.update_attribute(:bill_address, Address.new)
+          checkout_info[:bill_address_attributes].delete :id  
+          @checkout.bill_address = Address.new
         end
       end
 
+      # check whether the ship address has changed, and start a fresh record if 
+      # we were using the address stored in the current user.
       if checkout_info[:shipment_attributes][:address_attributes] and @order.shipment.address
-        checkout_info[:shipment_attributes][:address_attributes].delete :id
+        # always include the id of the record we must write to - ajax can't refresh the form
+        checkout_info[:shipment_attributes][:address_attributes][:id] = @order.shipment.address.id
         new_address = Address.new checkout_info[:shipment_attributes][:address_attributes]
         if not @order.shipment.address.same_as?(new_address) and 
              current_user and @order.shipment.address == current_user.ship_address 
           # need to start a new record, so replace the existing one with a blank
-          @order.shipment.update_attribute(:address, Address.new)
+          checkout_info[:shipment_attributes][:address_attributes].delete :id
+          @order.shipment.address = Address.new
         end
       end
 
