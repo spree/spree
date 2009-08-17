@@ -11,7 +11,6 @@
   <thead>                        
     <th><%=t("shipping_method")%></th>
     <th><%=t("shipping_category")%></th>
-    <th><%=t("amount")%></th>
     <th><%=t("calculator")%></th>
     <th><%=t("action")%></th>
   </thead>
@@ -20,7 +19,6 @@
     <tr id="<%= dom_id shipping_rate %>">
       <td><%=shipping_rate.shipping_method.name %></td>
       <td><%=shipping_rate.shipping_category.name %></td>
-      <td><%=shipping_rate.amount %></td>
       <td><%=shipping_rate.calculator.description %></td>
       <td>
       	<%= link_to_edit shipping_rate %> &nbsp;

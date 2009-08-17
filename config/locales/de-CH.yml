@@ -259,6 +259,7 @@ de-CH:
   editing_prototype: "Prototyp bearbeiten"
   editing_shipping_category: "Editiere Versandkategorien"
   editing_shipping_method: "Editiere Versandmethoden"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Kanton bearbeiten"
   editing_tax_category: "Steuer-Kategorie bearbeiten"
   editing_tax_rate: "Editing Tax Rate"
@@ -366,6 +367,7 @@ de-CH:
   new_shipment: "Neue Lieferung"
   new_shipping_category: "Neue Versandkategorie"
   new_shipping_method: "Neue Versandmethode"
+  new_shipping_rate: New Shipping Rate
   new_state: "Neuer Kanton"
   new_tax_category: "Neue Steuer-Kategorie"
   new_tax_rate: "Neuer Steuersatz"
@@ -482,6 +484,7 @@ de-CH:
   shipping_address: Lieferadresse
   shipping_categories: "Shipping Categories"
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_category: Shipping Category
   shipping_cost: Cost
   shipping_error: "Shipping Error"
   shipping_instructions: "Shipping Instructions"

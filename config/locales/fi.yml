@@ -259,6 +259,7 @@ fi:
   editing_prototype: "Muokataan prototyyppiä"
   editing_shipping_category: "Muokataan toimituskategoriaa"
   editing_shipping_method: "Muokataan toimitustapaa"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Muokataan osavaltiota"
   editing_tax_category: "Muokataan verotuskategoriaa"
   editing_tax_rate: "Muokataan veroprosenttia"
@@ -366,6 +367,7 @@ fi:
   new_shipment: "Uusi toimitus"
   new_shipping_category: "Uusi toimituskategoria"
   new_shipping_method: "Uusi toimitustapa"
+  new_shipping_rate: New Shipping Rate
   new_state: "Uusi osavaltio"
   new_tax_category: "Uusi verotuskategoria"
   new_tax_rate: "Uusi veroprosentti"
@@ -482,6 +484,7 @@ fi:
   shipping_address: Toimitusosoite
   shipping_categories: Toimituskategoriat
   shipping_categories_description: "Hallinnoi toimituskategorioita tunnistaaksesi mitä tuotteita voidaan toimittaa millä tavoilla"
+  shipping_category: Shipping Category
   shipping_cost: Toimituskulut
   shipping_error: Toimitusvirhe
   shipping_instructions: Toimitusohjeet

@@ -259,6 +259,7 @@ jp:
   editing_prototype: プロトタイプの編集
   editing_shipping_category: 配送カテゴリー編集
   editing_shipping_method: 配送方法編集
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: 都道府県（州）編集
   editing_tax_category: 税カテゴリー編集
   editing_tax_rate: "Editing Tax Rate"
@@ -366,6 +367,7 @@ jp:
   new_shipment: 新規配送
   new_shipping_category: 新規配送カテゴリー
   new_shipping_method: 新規配送方法
+  new_shipping_rate: New Shipping Rate
   new_state: 新規都道府県（州）
   new_tax_category: 新規税カテゴリー
   new_tax_rate: 新規税率
@@ -482,6 +484,7 @@ jp:
   shipping_address: 配送先
   shipping_categories: 配送カテゴリー
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_category: Shipping Category
   shipping_cost: Cost
   shipping_error: "Shipping Error"
   shipping_instructions: "Shipping Instructions"

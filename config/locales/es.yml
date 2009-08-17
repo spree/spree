@@ -259,6 +259,7 @@ es:
   editing_prototype: "Editando Prototipo"
   editing_shipping_category: "Editando Categoria de envío"
   editing_shipping_method: "Editando metodo de envío"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Editando provincia"
   editing_tax_category: "Editando Categoría fiscal"
   editing_tax_rate: "Editing Tax Rate"
@@ -366,6 +367,7 @@ es:
   new_shipment: "Nuevo envio"
   new_shipping_category: "Nueva categoria de envio"
   new_shipping_method: "Nueva forma de envio"
+  new_shipping_rate: New Shipping Rate
   new_state: "Nueva provincia"
   new_tax_category: "Nueva categoría"
   new_tax_rate: "Nuevo iipo impositivo"
@@ -482,6 +484,7 @@ es:
   shipping_address: "Dirección de envío"
   shipping_categories: "Categorias de envio"
   shipping_categories_description: "Gestionar las categorias de envio para determinar qué categorías de productos pueden ser transportados a través de qué método"
+  shipping_category: Shipping Category
   shipping_cost: Costes de envio
   shipping_error: "Error de envio"
   shipping_instructions: "Shipping Instructions"

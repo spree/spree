@@ -9,6 +9,7 @@ class Calculator::FlatRate < Calculator
     super                                
     Coupon.register_calculator(self)
     ShippingMethod.register_calculator(self)
+    ShippingRate.register_calculator(self)
   end  
   
   def compute(object=nil)

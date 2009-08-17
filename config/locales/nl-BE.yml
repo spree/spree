@@ -259,6 +259,7 @@ nl-BE:
   editing_prototype: "Prototype Wijzigen"
   editing_shipping_category: "Editing Shipping Category"
   editing_shipping_method: "Editing Shipping Method"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Wijzigen Status"
   editing_tax_category: "Wijzigen BTW categorie"
   editing_tax_rate: "Editing Tax Rate"
@@ -366,6 +367,7 @@ nl-BE:
   new_shipment: "Nieuwe Verzending"
   new_shipping_category: "New Shipping Category"
   new_shipping_method: "New Shipping Method"
+  new_shipping_rate: New Shipping Rate
   new_state: "Nieuwe Status"
   new_tax_category: "Nieuwe BTW Categorie"
   new_tax_rate: "Nieuw BTW Tarief"
@@ -482,6 +484,7 @@ nl-BE:
   shipping_address: "Afleveringsadres"
   shipping_categories: "Shipping Categories"
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_category: Shipping Category
   shipping_cost: Cost
   shipping_error: "Fout met aflevering"
   shipping_instructions: "Shipping Instructions"

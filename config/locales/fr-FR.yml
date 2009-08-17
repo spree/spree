@@ -259,6 +259,7 @@ fr-FR:
   editing_prototype: "Edition du prototype"
   editing_shipping_category: "Editing Shipping Category"
   editing_shipping_method: "Editing Shipping Method"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Edition de la région"
   editing_tax_category: "Edition de la catégorie de taxe"
   editing_tax_rate: "Editing Tax Rate"
@@ -366,6 +367,7 @@ fr-FR:
   new_shipment: "Nouvelle expédition"
   new_shipping_category: "New Shipping Category"
   new_shipping_method: "New Shipping Method"
+  new_shipping_rate: New Shipping Rate
   new_state: "Nouvelle région"
   new_tax_category: "Nouvelle catégorie de taxes"
   new_tax_rate: "Nouvelle taxe"
@@ -482,6 +484,7 @@ fr-FR:
   shipping_address: "Adresse de livraison"
   shipping_categories: "Shipping Categories"
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_category: Shipping Category
   shipping_cost: Cost
   shipping_error: "Erreur de livraison"
   shipping_instructions: "Shipping Instructions"

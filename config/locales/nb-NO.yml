@@ -259,6 +259,7 @@ nb-NO:
   editing_prototype: "Endre prototype"
   editing_shipping_category: Endre fraktkategori
   editing_shipping_method: "Endre leveransemåte"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Endre stat"
   editing_tax_category: "Endre momskategori"
   editing_tax_rate: "Editing Tax Rate"
@@ -366,6 +367,7 @@ nb-NO:
   new_shipment: "Ny leveranse"
   new_shipping_category: "Ny fraktkategori"
   new_shipping_method: "Ny leveransemåte"
+  new_shipping_rate: New Shipping Rate
   new_state: "Ny stat"
   new_tax_category: "Ny momskategori"
   new_tax_rate: "Nytt momsnivå"
@@ -482,6 +484,7 @@ nb-NO:
   shipping_address: "Leveringsadresse"
   shipping_categories: "Fraktkategorier"
   shipping_categories_description: "Konfigurer fraktkategorier for å styre hvilke produkter som kan bruke de ulike leveransemåtene."
+  shipping_category: Shipping Category
   shipping_cost: Kostnad
   shipping_error: "Feil i forbindelse med leveranse"
   shipping_instructions: "Shipping Instructions"

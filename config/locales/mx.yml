@@ -196,6 +196,7 @@ mx:
   backordering_is_allowed: "Devoluciones {{not}} permitidas"
   bill_address: "Dirección de facturación"
   billing_address: "Dirección de facturación"
+  calculator: Calculator
   calculator_settings_warning: "Si quieres cambiar el tipo de calculadora, debes guardar primero antes de poder editar las propiedades de la calculadora"
   cancel: Cancelar
   canceled: Cancelado
@@ -229,7 +230,6 @@ mx:
   country: "País"
   country_based: "País base"
   coupon: "Cupón"                                                                             
-  coupon_calculator: "Calculadora de cupón"
   coupons: Cupones
   coupons_description: "Administración de Cupones"
   create: Crear
@@ -259,6 +259,7 @@ mx:
   editing_prototype: "Editando Prototipo"
   editing_shipping_category: "Editando Categoria de envío"
   editing_shipping_method: "Editando metodo de envío"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Editando estado"
   editing_tax_category: "Editando categoría de impuesto"
   editing_tax_rate: "Editing cantidad de impuesto"
@@ -283,6 +284,9 @@ mx:
   first_name: Nombre
   flat_percent: "Porcentaje base"
   flat_rate_amount: "Cantidad inicial"
+  flat_rate_per_item: "Flat Rate (per item)"
+  flat_rate_per_order: "Flat Rate (per order)"
+  flexible_rate: "Flexible Rate"
   forgot_password: "¿Olvidaste tu contraseña?"
   full_name: "Nombre Completo"
   gateway: "Medio de pago"
@@ -363,6 +367,7 @@ mx:
   new_shipment: "Nuevo envío"
   new_shipping_category: "Nueva categoria de envío"
   new_shipping_method: "Nueva forma de envío"
+  new_shipping_rate: New Shipping Rate
   new_state: "Nuevo estado"
   new_tax_category: "Nuevo Impuesto"
   new_tax_rate: "Nueva valor de impuesto"
@@ -398,7 +403,6 @@ mx:
   order_total: "Total del pedido"
   order_total_message: "El importe total cargado a su tarjeta de crédito será"
   order_updated: "Pedido actualizado"
-  order_summary: "Resumen del Pedido"
   orders: Pedidos
   out_of_stock: "Sin existencia"
   overview: General
@@ -454,6 +458,7 @@ mx:
   return: volver
   returned: regresar
   roles: Funciones
+  sales_tax: "Sales Tax"
   sales_total: "Total de ventas"
   sales_total_for_all_orders: "Total de ventas para todos los pedidos"
   sales_totals: "Ventas Totales"
@@ -477,15 +482,17 @@ mx:
   shipped: "Enviado"
   shipping: "Envío"
   shipping_address: "Dirección de envío"
-  shipping_calculator: "Calculadora de Envío"
   shipping_categories: "Categorias de envío"
   shipping_categories_description: "Gestionar las categorias de envio para determinar qué categorías de productos pueden ser enviados a través de qué medio"
+  shipping_category: Shipping Category
   shipping_cost: "Costo de envío"
   shipping_error: "Error de envío"
   shipping_instructions: "Instrucciones de Envío"
   shipping_method: "Metodo de envío"
   shipping_methods: "Metodos de envío"
   shipping_methods_description: "Manejar metodos de envío"
+  shipping_rates: "Shipping Rates"
+  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Total del envío"
   shop_by_taxonomy: "Comprar por {{taxonomy}}"
   shopping_cart: "Carrito de compras"
@@ -576,6 +583,7 @@ mx:
   users: Usuarios
   value: "valor"
   variants: Variantes
+  vat: "VAT"           
   version: Versión
   website: "Página web"
   weight: Peso

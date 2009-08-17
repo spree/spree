@@ -259,6 +259,7 @@ th:
   editing_prototype: แก้ไขต้นแบบ
   editing_shipping_category: "แก้ไขกลุ่มวิธีการจัดส่ง"
   editing_shipping_method: "แก้ไขวิธีการจัดส่ง"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Editing State"
   editing_tax_category: แก้ไขแบบการคิดภาษี
   editing_tax_rate: "แก้ไขอัตราภาษี"
@@ -366,6 +367,7 @@ th:
   new_shipment: "New Shipment"
   new_shipping_category: "เพิ่มกลุ่มวิธีการจัดส่ง"
   new_shipping_method: "เพิ่มวิธีจัดส่ง"
+  new_shipping_rate: New Shipping Rate
   new_state: เพิ่มรัฐหรือจังหวัด
   new_tax_category: เพิ่มรูปแบบการคิดภาษี
   new_tax_rate: "เพิ่มอัตราการเก็บภาษี"
@@ -482,6 +484,7 @@ th:
   shipping_address: ที่อยู่สำหรับส่งของ
   shipping_categories: กลุ่มวิธีการจัดส่ง
   shipping_categories_description: "จัดการระบบจัดส่ง เพื่อระบุว่าสินค้าแต่ละชิ้นสามารถจัดส่งด้วยวิธีใด"
+  shipping_category: Shipping Category
   shipping_cost: ค่าจัดส่ง
   shipping_error: "การจัดส่งขัดข้อง"
   shipping_instructions: "ขั้นตอนการจัดส่ง"

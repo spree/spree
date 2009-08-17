@@ -259,6 +259,7 @@ pt-BR:
   editing_prototype: "Editando Protótipo"
   editing_shipping_category: "Editando Categoria de Entrega"
   editing_shipping_method: "Editando Método de Entrega"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Editando Estado"
   editing_tax_category: "Editando Categoria de Taxa"
   editing_tax_rate: "Editing Tax Rate"
@@ -366,6 +367,7 @@ pt-BR:
   new_shipment: "Novo Envio"
   new_shipping_category: "Nova Categoria de Entrega"
   new_shipping_method: "Novo Método de Entrega"
+  new_shipping_rate: New Shipping Rate
   new_state: "Novo Estado"
   new_tax_category: "Nova Categoria de Imposto"
   new_tax_rate: "Nova Taxa de Imposto"
@@ -482,6 +484,7 @@ pt-BR:
   shipping_address: "Endereço de Entrega"
   shipping_categories: "Categorias de Entrega"
   shipping_categories_description: "Gerencia categorias de entrega para identificar quais produtos podem ser enviados por qual método"
+  shipping_category: Shipping Category
   shipping_cost: Custo
   shipping_error: "Erro de Entrega"
   shipping_instructions: "Shipping Instructions"

@@ -250,7 +250,6 @@ ru-RU:
   destroy: "Удалить"
   display: "Показать"
   edit: "Редактировать"
-  "Edit Taxonomy": "Редактировать таксономию"
   editing_category: "Редактирование категории"
   editing_coupon: "Редактировать купон"
   editing_option_type: "Редактирование опции"
@@ -260,6 +259,7 @@ ru-RU:
   editing_prototype: "Редактирование прототипа"
   editing_shipping_category: "Редактировать категорию доставки"
   editing_shipping_method: "Редактировать способ доставки"
+  editing_shipping_rate: Editing Shipping Rate 
   editing_state: "Редактирование статуса"
   editing_tax_category: "Редактирование категории налога"
   editing_tax_rate: "Editing Tax Rate"
@@ -367,6 +367,7 @@ ru-RU:
   new_shipment: "Ноавя доставка"
   new_shipping_category: "Новая категория доставки"
   new_shipping_method: "Новый способ доставки"
+  new_shipping_rate: New Shipping Rate
   new_state: "Новая область"
   new_tax_category: "Новая категория налогов"
   new_tax_rate: "Новая ставка налога"
@@ -483,6 +484,7 @@ ru-RU:
   shipping_address: "Адрес доставки"
   shipping_categories: "Категории доставки"
   shipping_categories_description: "Настройка категорий доставки - укажите, какие продукты могут быть доставлены какими способами"
+  shipping_category: Shipping Category
   shipping_cost: "Стоимость"
   shipping_error: "Ошибка при доставке"
   shipping_instructions: "Иструкции по доставке"
