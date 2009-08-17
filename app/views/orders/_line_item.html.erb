@@ -1,7 +1,11 @@
 <% variant = line_item.variant -%>
 <tr class="<%= cycle('', 'alt') %>">
   <td>
-    <%= small_image(line_item.variant.product) %>
+    <% if variant.images.length == 0 %>
+      <%= small_image(variant.product) %>
+    <% else %>
+      <%=  image_tag variant.images.first.attachment.url(:small)   %>
+    <% end %>
   </td>
   <td>              
     <h4><%= link_to variant.product.name,  product_path(variant.product) %></h4>
