@@ -51,7 +51,8 @@ class Spree::BaseController < ApplicationController
     rescue Exception => e
       @object = nil
     end
-    if params[:id] && @object.nil? 
+    the_object = instance_variable_get "@#{object_name}"
+    if params[:id] && the_object.nil? 
       if self.respond_to? :object_missing
         self.object_missing(params[:id])
       else 
