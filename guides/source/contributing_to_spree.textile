@@ -18,14 +18,6 @@ h3. Contributing to the Core
 
 The core is the basic foundation of the Spree project.  It is maintained in Github under the "railsdog/spree":http://github.com/railsdog/spree/tree/master project.  There is a "core team":http://spreecommerce.com/core_team of developers who are responsible for maintaining the quality of the source code.  Your changes will ultimately need to be merged into the official project by a core member.  Thanks to "Github":http://github.com, however, you do not have to wait for a core member to get started with your fix.
 
-h4. Quick Overview
-
-# Create a ticket in Lighthouse
-# Create a branch for each ticket 
-# Note the ticket # in your commit
-# Push the commit to your remote branch
-# Merge the commit to your master and push to Github 
-
 h4. One Time Steps
 
 Please perform the following one time steps for your fork in Github.  
@@ -71,8 +63,8 @@ git checkout -b 525-add-thai-localization --track railsdog/master
 
 The +fetch+ command will grab all of the latest commits on railsdog.  Don't worry, it doesn't merge them into your current branch or anything.  This is just making sure that you have a complete copy of the railsdog source.  The commits will be stored behind the scenes, your local code will remain as it was.
 
-The +track+ part of the command will tell git that this branch should track with the remote version of railsdog master.  This is another way of saying that the branch should be based on a clean copy of the latest source code.  
-	
+The +track+ part of the command will tell git that this branch should track with the remote version of railsdog master.  This is another way of saying that the branch should be based on a clean copy of the latest source code.
+
 h5. Add the Issue Number to Your Commits
 
 When you're ready to commit be sure to add the issue number in your commit message.  It is suggested that you just use +git commit+ without the +-m+ option.  This will allow you to view the commit message in your editor and add some line spacing for readability.  Here's an example of a commit message.  
@@ -83,18 +75,62 @@ Provided a Thai localization.
 [#525]
 </shell>
 
-Please be sure to include the issue number inside of brackets.  This will make sure that Lighthouse will be notified of the changeset when you push to Github.  It will also automatically change the ticket state to "patched" which will help us to prioritize issues where users have supplied a fix.  Note also the blank line between the comment and the issue number.  This helps with readability.
+Please be sure to include the issue number inside of brackets.  This will make sure that Lighthouse will be notified of the changeset when you push to Github.  It will also automatically change the ticket state to "patched" which will help us to prioritize issues where users have supplied a fix.  Note also the blank line between the comment and the issue number.  This helps with readability. 
 
-h5. Push to a Remote Branch in Github 
+h5. Rebase if Necessary
+
+If you've been working on your fix for more then a few hours there is a good chance that you will need to rebase.  Git's rebase command is one of those scary sounding things that really isn't all that bad "once you understand it":http://www.gitready.com/intermediate/2009/01/31/intro-to-rebase.html.  
+
+So you can check to see if there have been any chances to railsdog since you created your branch.
+
+<shell>
+  git fetch railsdog
+</shell>
+
+If nothing comes back, then +railsdog/master+ is unchanged and there's nothing to do.  If you see a bunch of commits coming down, however, then its time to rebase.  Run the following command from your "issue branch" which you should still be on.
+
+<shell>
+  git rebase railsdog/master
+</shell>
+
+If you're lucky the command will run without incident.  If there are conflicts, you can resolve them manually (better you then us) and continue the rebase operation (+git rebase --continue).
+
+h5. Push to a Remote Branch in Github  
+
+Now all you have to do is push your changes to a remote branch in Git Hub.  
 
 <shell>
 git push origin 525-add-thai-localization   
-</shell>
+</shell>                               
 
+If you have set up the GitHub service hook as described earlier, the changes will automatically be reflected in the Lighthouse ticket once you push.
+
+WARNING. The Github team has confirmed that there is a bug in the service hooks when pushing to a branch other then master.  They've promised to expedite a fix for us.  Until then, you will also want to make sure to do the next step so that the notification works. 
+
+h5. Merge to Your Local Master and Push
+
+The final step is to make sure these changes are merged back into your own master branch.  This way they are available to you alongside your other changes that may or may not be slated to be merged into the core.
+
+So continuing with our previous example you should then do:
+
+<shell>
+  git checkout master
+  git merge 525-add-thai-localization
+  git push origin master
+</shell>        
+
+h5. Summary of Contribution Steps 
+
+# Create a ticket in Lighthouse
+# Create a branch for each ticket 
+# Note the ticket # in your commit     
+# Rebase against the latest railsdog/master
+# Push the commit to your remote branch
+# Merge the commit to your master and push to Github
 
 h3. Contributing to the Documentation
 
-Improvements to the documentation is encouraged.  The primary source of documentation are the guides (_HINT: You are reading them now._)  The documentation is in its own GitHub project called "spree-guides":http://github.com/railsdog/spree-guides/tree/master.  To build the documentation normally simply clone and install.
+Improvements to the documentation is encouraged.  The primary source of documentation are the guides (_HINT: You are reading one now._)  The documentation is in its own GitHub project called "spree-guides":http://github.com/railsdog/spree-guides/tree/master.  To build the documentation normally simply clone and install.
 
 <shell>
   $ git clone git://github.com/railsdog/spree-guides.git
