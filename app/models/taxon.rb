@@ -4,6 +4,19 @@ class Taxon < ActiveRecord::Base
   has_and_belongs_to_many :products
   before_save :set_permalink  
     
+
+  # indicate which filters should be used for a taxon
+  # this method should be customized to your own site
+  def applicable_filters
+    fs  = []
+    fs << ProductFilters.taxons_below(self)
+                          ## unless it's a root taxon? left open for demo purposes
+    fs += [ 
+            ProductFilters.price_filter,
+            ProductFilters.brand_filter,
+            ProductFilters.selective_brand_filter(self) ]
+  end
+
   private
 
   # Creates permalink based on .to_url method provided by stringx gem
