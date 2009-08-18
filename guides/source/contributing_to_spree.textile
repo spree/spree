@@ -142,6 +142,8 @@ INFO. You will also need to install the RedCloth gem (4.1.1 or greater) if you d
 
 You do not need to fork the spree-guides project in order to contribute.  Just send an email to "spree-user":http://groups.google.com/group/spree-user (be sure to include your github username) and say that you would like to contribute.  We'll add you to the list so you can commit directly to the guides project.  
 
+INFO. If you're uncomfortable using Git, etc. you can report a mistake in the Spree guides using Github's built in "issue tracker":http://github.com/railsdog/spree-guides/issues.  Please do **not** report issues with the documentation in the Lighthouse ticket system which is reserved for reporting bugs in the code.
+
 WARNING. Please be considerate when making changes to the spree-guides.  If you wish to make major changes to how the documentation is organized then you should use a GitHub fork and ask people to review your proposed changes instead.
 
 h3. Contributing to Extensions
