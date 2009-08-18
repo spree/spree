@@ -1,10 +1,10 @@
 module HasCalculator
-	module ClassMethods
-		def has_calculator(options = {})
+  module ClassMethods
+    def has_calculator(options = {})
       has_one   :calculator, :as => :calculable, :dependent => :destroy
       accepts_nested_attributes_for :calculator
       validates_presence_of(:calculator) if options[:require]
-      
+
       class_inheritable_accessor :calculators
       self.calculators = []
       # @available_calculators = []
@@ -14,7 +14,7 @@ module HasCalculator
       # def calculators
       #   @available_calculators
       # end
-      
+
       if options[:default]
         default_calculator_class = options[:default]
         #if default_calculator_class.available?(self.new)
@@ -30,12 +30,12 @@ module HasCalculator
           nil
         end
       end
-      
+
       include InstanceMethods
     end
-	end
+  end
 
-	module InstanceMethods     
+  module InstanceMethods
     def calculator_type
       calculator.class.to_s if calculator
     end
@@ -43,10 +43,10 @@ module HasCalculator
     def calculator_type=(calculator_type)
       clazz = calculator_type.constantize if calculator_type
       self.calculator = clazz.new if clazz and not self.calculator.is_a? clazz
-    end	  
-	end
+    end
+  end
 
-	def self.included(receiver)
-		receiver.extend  ClassMethods
-	end
+  def self.included(receiver)
+  	receiver.extend  ClassMethods
+  end
 end
