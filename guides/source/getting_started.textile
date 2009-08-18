@@ -256,7 +256,7 @@ Go ahead an navigate to +vendor/extensions/site/app/views+.
 
 <shell>
 $ mkdir shared
-$ vi _footer.html.erb
+$ vi shared/_footer.html.erb
 </shell>
 
 Now add the following contents to +_footer.html.erb+:
