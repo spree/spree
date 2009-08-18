@@ -7,7 +7,7 @@ class ShippingMethod < ActiveRecord::Base
   def calculate_cost(shipment)
     rate_calculators = {}
     shipping_rates.each do |sr|
-      rate_calculators[sr.shipping_category_id] = sr.caclualtor
+      rate_calculators[sr.shipping_category_id] = sr.calculator
     end
  
     calculated_costs = shipment.order.line_items.group_by{|li|
