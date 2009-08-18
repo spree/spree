@@ -37,20 +37,21 @@ class ProductsController < Spree::BaseController
     base_scope = Product.active
 
     if !params[:taxon].blank? && (@taxon = Taxon.find_by_id(params[:taxon]))
-      taxon_and_descendants = [@taxon] + @taxon.descendents
-      base_scope = base_scope.taxons_id_equals_any(taxon_and_descendants.map(&:id))
+      base_scope = base_scope.taxons_id_in_tree(@taxon)
     end
                 
     @search = base_scope.search(params[:search])
+    # might want to add .scoped(:select => "distinct on (products.id) products.*") here
+    # in case some filter goes astray with its joins
 
-    # set on model basis (default 30)
+    # this can now be set on a model basis 
     # Product.per_page ||= Spree::Config[:products_per_page]
 
     ## defunct?
     @product_cols = 3 
 
     @products ||= @search.paginate(:include  => [:images, {:variants => :images}],
-                                   :per_page => Spree::Config[:products_per_page],
+                                   :per_page => params[:per_page] || Spree::Config[:products_per_page],
                                    :page     => params[:page])
   end
 end
