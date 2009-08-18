@@ -1,4 +1,5 @@
 class ProductsController < Spree::BaseController
+  prepend_before_filter :reject_unknown_object
   before_filter(:setup_admin_user) unless RAILS_ENV == "test"
 
   resource_controller

@@ -1,5 +1,5 @@
 class OrdersController < Spree::BaseController     
-  prepend_before_filter :reject_unknown_order
+  prepend_before_filter :reject_unknown_object
   before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]            
 
   ssl_required :show
@@ -69,14 +69,6 @@ class OrdersController < Spree::BaseController
     return Order.find_by_number(params[:id]) if params[:id]
     find_order
   end   
-  
-  def reject_unknown_order
-    load_object
-    if (@order.nil?)
-      flash[:error] = t('order_not_in_system')
-      redirect_to products_path
-    end
-  end         
   
   def prevent_editing_complete_order      
     load_object

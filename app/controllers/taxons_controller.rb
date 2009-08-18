@@ -1,9 +1,10 @@
 class TaxonsController < Spree::BaseController
-  resource_controller
+  prepend_before_filter :reject_unknown_object
   before_filter :load_data, :only => :show
+  resource_controller
   actions :show
   helper :products
-  
+
   private
   def load_data
     @search = object.products.active.search(params[:search])
@@ -17,9 +18,8 @@ class TaxonsController < Spree::BaseController
     ## defunct?
     @product_cols = 3
   end
-  
+
   def object
     @object ||= end_of_association_chain.find_by_permalink(params[:id].join("/") + "/")
   end
- 
 end
