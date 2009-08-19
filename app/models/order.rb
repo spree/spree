@@ -204,10 +204,11 @@ class Order < ActiveRecord::Base
   end
 
   def update_totals
-    charges.reload.each(&:update_amount)
+    self.item_total       = self.line_items.total
 
-    self.item_total       = self.line_items.reload.total
+    charges.reload.each(&:update_amount)
     self.adjustment_total = self.charge_total - self.credit_total
+
     self.total            = self.item_total   + self.adjustment_total
   end
 
@@ -238,11 +239,11 @@ class Order < ActiveRecord::Base
       inventory_unit.restock! if inventory_unit.can_restock?
     end
   end
-  
+ 
   def update_line_items
-    self.line_items.each do |line_item|
-      LineItem.destroy(line_item.id) if line_item.quantity == 0
-    end
+    to_wipe = self.line_items.select {|li| 0 == li.quantity || li.quantity.nil? }
+    LineItem.destroy(to_wipe)
+    self.line_items -= to_wipe      # important: remove defunct items, avoid a reload
   end
   
   def generate_token
