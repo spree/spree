@@ -21,6 +21,7 @@ class OrderTest < ActiveSupport::TestCase
     end
 
     should "remove line items if quantity drops to 0" do
+      @order.save   # wipe any accidental zeros
       l = @order.line_items.length
       @order.line_items.first.update_attribute(:quantity, 0)
       @order.save
