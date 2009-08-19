@@ -6,9 +6,7 @@
       <%= button_link_to_remote t("new_property"),  {
                          :url => new_admin_property_url, 
                          :method => :get,
-                         :update => "properties",
-                         :before => "Element.hide('new_prop_link');Element.show('busy_indicator')", 
-                         :complete => "Element.hide('busy_indicator')"}, :icon => 'add' %>
+                         :update => "properties"}, :icon => 'add' %>
     </li>
   </ul>
   <br class='clear' />

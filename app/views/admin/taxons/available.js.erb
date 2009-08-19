@@ -23,9 +23,9 @@
           <%= image_tag "spinner.gif", :style => "display:none", :id => "#{dom_id(taxon, :spinner)}" %>		    
 		      <%= link_to_remote icon('add') + ' ' + t('select'), 
 		                         {:url => select_admin_product_taxon_path(@product, taxon),
-		                         :loading => "Element.show(#{dom_id(taxon, :spinner)})",
+		                         :loading => "jQuery('##{dom_id(taxon, :spinner)}').show()",
 		                         :update => 'selected-taxons',
-		                         :complete => "$('#{dom_id(taxon)}').remove(); Element.hide(#{dom_id(taxon, :spinner)});"}, :class => 'iconlink' %>
+		                         :complete => "jQuery('##{dom_id(taxon)}').remove(); jQuery('##{dom_id(taxon, :spinner)}').hide();"}, :class => 'iconlink' %>
 		    </td>        
       </tr>
     <% end %>

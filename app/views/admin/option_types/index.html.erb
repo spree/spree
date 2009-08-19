@@ -6,9 +6,7 @@
       <%= button_link_to_remote t("new_option_type"), 
                          {:url => new_admin_option_type_url, 
                          :method => :get,
-                         :update => "option-types",
-                         :before => "Element.hide('new_ot_link');Element.show('busy_indicator')", 
-                         :complete => "Element.hide('busy_indicator')"}, :icon => 'add' %>
+                         :update => "option-types"}, :icon => 'add' %>
     </li>
   </ul>
   <br class='clear' />

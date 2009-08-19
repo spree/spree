@@ -10,7 +10,7 @@
                                       },
                                       {:url => filtered_admin_properties_url,
                                        :method => :get,
-                                       :with => "Object.toQueryString({q: element.value})" 
+                                       :with => "jQuery.param({q: element.value})" 
                                       } %>  
   </td>
   <td>
@@ -20,6 +20,6 @@
                                       } %>
 	</td>	
   <td>
-  	<a href='#' onclick="$(this).up('.product_property').remove();" class="iconlink"><%= icon('delete') %> <%= t("remove") %></a>
+  	<a href='#' onclick="jQuery(this).parents('.product_property').remove();" class="iconlink"><%= icon('delete') %> <%= t("remove") %></a>
   </td>
 </tr>

@@ -12,14 +12,15 @@
 <% end %>
 
 <div id="searching" style="display:none">
-  Searching &nbsp; <%= image_tag "spinner.gif" %>  
+  <%= t(:searching) %> &nbsp; <%= image_tag "spinner.gif" %>
 </div>
 <%= observe_field(:searchtext,
                   :frequency => 0.75,
                   :update => :search_hits,
-                  :loading => "Element.show('searching')",
-                  :complete => "Element.hide('searching')",
+                  :loading => "jQuery('#searching').show()",
+                  :complete => "jQuery('#searching').hide()",
                   :url => available_admin_product_taxons_url(@product),
-                  :with => "'q=' + value") %>  
-<br/>                 
+                  :with => "'q=' + value") %>
+<br/>
 <div id="search_hits"></div>
+

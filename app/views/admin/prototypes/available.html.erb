@@ -13,8 +13,8 @@
 					<%= link_to_remote icon('add') + ' ' + t("select"), 
 		                         {:url => select_admin_prototype_url(prototype), 
 		                         :update => 'rjs-target',
-														 :before => "Element.show('busy_indicator')", 
-				                     :complete => "Element.hide('busy_indicator');Element.hide('row_#{prototype.id}');"}, :class => 'iconlink' %>
+														 :before => "jQuery('#busy_indicator').show()", 
+				                     :complete => "jQuery('#busy_indicator').hide(); jQuery('#row_#{prototype.id}').hide();"}, :class => 'iconlink' %>
 				</td>
       </tr>
     <% end %>

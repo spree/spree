@@ -31,8 +31,6 @@
     <%= link_to_remote icon('add') + ' ' + t("add_option_type"), 
                        {:url => available_admin_product_option_types_url(@product),
                        :method => :get,
-                       :update => "option-types",
-                       :before => "$('new_opt_link').hide();$('busy_indicator').show()", 
-                       :complete => "Element.hide('busy_indicator')"}, :class => 'iconlink' %>
+                       :update => "option-types"}, :class => 'iconlink' %>
   </span>
 </div>

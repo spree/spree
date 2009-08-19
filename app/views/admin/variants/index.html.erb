@@ -47,9 +47,7 @@
       <%= link_to_remote icon('add') + ' ' + t("new_variant"), 
                          {:url => new_admin_product_variant_url(@product), 
                          :method => :get,
-                         :update => "variants",
-                         :before => "Element.hide('new_var_link');Element.show('busy_indicator')", 
-                         :complete => "Element.hide('busy_indicator')"}, :class => 'iconlink' %>
+                         :update => "variants"}, :class => 'iconlink' %>
     </span>&nbsp;|&nbsp;<%= link_to @deleted.blank? ? t("show_deleted") : t("show_active"), admin_product_variants_url(@product, :deleted =>  @deleted.blank? ? "on" : "off") %>
   </p>
   <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>

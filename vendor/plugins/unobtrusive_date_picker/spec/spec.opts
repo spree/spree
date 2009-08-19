@@ -1,0 +1,12 @@
+-b
+--diff
+--color
+--format
+specdoc
+-rubygems
+--require
+active_support
+--require
+action_controller
+--require
+action_controller/vendor/html-scanner

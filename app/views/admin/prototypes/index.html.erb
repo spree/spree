@@ -6,9 +6,7 @@
       <%= button_link_to_remote t("new_prototype"), {
                          :url => new_admin_prototype_url, 
                          :method => :get,
-                         :update => "prototypes",
-                         :before => "Element.hide('new_proto_link');Element.show('busy_indicator')", 
-                         :complete => "Element.hide('busy_indicator')"}, :icon => 'add' %>
+                         :update => "prototypes"}, :icon => 'add' %>
     </li>
   </ul>
   <br class='clear' />

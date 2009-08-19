@@ -76,7 +76,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "infer the name of the current @object in fields_for" do
-        assert_match "$(this).up('.comment').remove()", @erbout
+        assert_match "$(this).parents('.comment').remove()", @erbout
       end
     end
     
@@ -86,7 +86,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "use the alternate selector" do
-        assert_match "$(this).up('.blah').remove()", @erbout
+        assert_match "$(this).parents('.blah').remove()", @erbout
       end
     end
     
@@ -97,7 +97,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "still infer the name of the current @object in fields_for, and create the function as usual" do
-        assert_match "$(this).up('.comment').remove()", @erbout
+        assert_match "$(this).parents('.comment').remove()", @erbout
       end
       
       should "append the secondary function" do
@@ -119,7 +119,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
     
     should "use placeholders instead of numbers" do
-      assert_match 'photo[comment_attributes][new][#{number}]', @erbout
+      assert_match 'photo[comment_attributes][new][${number}]', @erbout
     end
   end
   
@@ -141,12 +141,12 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
     
     should "insert into the bottom of the parent container by default" do
-      assert_match "Insertion.Bottom('comments'", @erbout
+      assert_match "$('#comments'", @erbout
     end
     
     should "wrap the partial in a prototype template" do
-      assert_match "new Template", @erbout
-      assert_match "evaluate", @erbout
+      assert_match "$.template", @erbout
+      assert_match "{ number:", @erbout
     end
     
     should "name the variable correctly" do
@@ -160,7 +160,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     should "produce the following link" do
       # this is a way of testing the whole link
       assert_equal %{
-        <a class=\"something\" href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('comments', new Template(null).evaluate({'number': --attribute_fu_comment_count}).gsub(/__number_/, attribute_fu_comment_count)); return false;\">Add Comment</a>
+        <a class=\"something\" href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0; \n                    $('#comments').append($.template(null), { number: --attribute_fu_comment_count});; return false;\">Add Comment</a>
       }.strip, @erbout
     end
   end
@@ -172,7 +172,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       _erbout = ''
       fields_for(:photo) do |f|
         f.stubs(:render_associated_form).with(comment, :fields_for => {:javascript => true}, :partial => 'some_other_partial')
-        _erbout.concat f.add_associated_link("Add Comment", comment, :container => 'something_comments', :partial => 'some_other_partial')
+        _erbout.concat f.add_associated_link("Add Comment", comment, :container => '#something_comments', :partial => 'some_other_partial')
       end
       
       @erbout = _erbout
@@ -183,12 +183,12 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
     
     should "insert into the bottom of the container specified" do
-      assert_match "Insertion.Bottom('something_comments'", @erbout
+      assert_match "$('#something_comments'", @erbout
     end
     
     should "wrap the partial in a prototype template" do
-      assert_match "new Template", @erbout
-      assert_match "evaluate", @erbout
+      assert_match "$.template", @erbout
+      assert_match "{ number:", @erbout
     end
     
     should "name the variable correctly" do
@@ -198,48 +198,46 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     should "produce the following link" do
       # this is a way of testing the whole link
       assert_equal %{
-        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('something_comments', new Template(null).evaluate({'number': --attribute_fu_comment_count}).gsub(/__number_/, attribute_fu_comment_count)); return false;\">Add Comment</a>
+        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0; \n                    $('#something_comments').append($.template(null), { number: --attribute_fu_comment_count});; return false;\">Add Comment</a>
       }.strip, @erbout
     end
   end
   
-  context "add associated link with expression parameter" do
-    setup do
-      comment = @photo.comments.build
-      
-      _erbout = ''
-      fields_for(:photo) do |f|
-        f.stubs(:render_associated_form).with(comment, :fields_for => {:javascript => true}, :partial => 'some_other_partial')
-        _erbout.concat f.add_associated_link("Add Comment", comment, :expression => '$(this).up(".something_comments")', :partial => 'some_other_partial')
-      end
-      
-      @erbout = _erbout
-    end
-
-    should "create link" do
-      assert_match ">Add Comment</a>", @erbout
-    end
-    
-    should "use the javascript expression provided instead of passing the ID in" do
-      assert_match "Insertion.Bottom($(this).up(&quot;.something_comments&quot;)", @erbout
-    end
-    
-    should "wrap the partial in a prototype template" do
-      assert_match "new Template", @erbout
-      assert_match "evaluate", @erbout
-    end
-    
-    should "name the variable correctly" do
-      assert_match "attribute_fu_comment_count", @erbout
-    end
-    
-    should "produce the following link" do
-      # this is a way of testing the whole link
-      assert_equal %{
-        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom($(this).up(&quot;.something_comments&quot;), new Template(null).evaluate({'number': --attribute_fu_comment_count}).gsub(/__number_/, attribute_fu_comment_count)); return false;\">Add Comment</a>
-      }.strip, @erbout
-    end    
-  end
+  #   setup do
+  #     comment = @photo.comments.build
+  #     
+  #     _erbout = ''
+  #     fields_for(:photo) do |f|
+  #       f.stubs(:render_associated_form).with(comment, :fields_for => {:javascript => true}, :partial => 'some_other_partial')
+  #       _erbout.concat f.add_associated_link("Add Comment", comment, :expression => '$(this).up(".something_comments")', :partial => 'some_other_partial')
+  #     end
+  #     
+  #     @erbout = _erbout
+  #   end
+  # 
+  #   should "create link" do
+  #     assert_match ">Add Comment</a>", @erbout
+  #   end
+  #   
+  #   should "use the javascript expression provided instead of passing the ID in" do
+  #     assert_match "$.template($(this).up(&quot;.something_comments&quot;)", @erbout
+  #   end
+  #   
+  #   should "wrap the partial in a JQ template" do
+  #     assert_match "$.template", @erbout
+  #   end
+  #   
+  #   should "name the variable correctly" do
+  #     assert_match "attribute_fu_comment_count", @erbout
+  #   end
+  #   
+  #   should "produce the following link" do
+  #     # this is a way of testing the whole link
+  #     assert_equal %{
+  #       <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom($(this).up(&quot;.something_comments&quot;), new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
+  #     }.strip, @erbout
+  #   end    
+  # end
   
   context "render_associated_form" do
     setup do

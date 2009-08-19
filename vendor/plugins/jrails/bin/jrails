@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'rake'
+
+RAILS_ROOT = Dir.pwd
+rakeapp = Rake.application
+fname =File.join(File.dirname(__FILE__), '..', 'tasks', 'jrails.rake')
+load fname
+
+task :help do
+  puts "jrails [command]\n\n"
+  rakeapp.options.show_task_pattern = Regexp.new('^[hius]')
+  rakeapp.display_tasks_and_comments
+end
+
+desc 'Installs the jQuery and jRails javascripts to public/javascripts'
+task :install do
+  Rake::Task['jrails:js:install'].invoke
+end
+
+desc 'Remove the prototype / script.aculo.us javascript files'
+task :scrub do
+  Rake::Task['jrails:js:scrub'].invoke
+end
+
+rakeapp.init("jrails")
+task :default => [:help]
+
+rakeapp.top_level

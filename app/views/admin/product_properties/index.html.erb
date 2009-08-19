@@ -25,15 +25,13 @@
 
   <p>
     <%= f.add_associated_link(icon('add') + ' ' + t("add_product_properties"), @product.product_properties.build, 
-                              {:onclick => "Element.hide('none');", :class => 'iconlink'}) %>
+                              {:onclick => "jQuery('#none').hide();", :class => 'iconlink'}) %>
     &nbsp;&nbsp;
   	<span id="new_ptype_link">
   	  <%= link_to_remote t("select_from_prototype"), 
   	                     :url => available_admin_prototypes_url, 
   	                     :method => :get,
-  	                     :update => "prototypes",
-  	                     :before => "Element.hide('new_ptype_link');Element.show('busy_indicator')", 
-  	                     :complete => "Element.hide('busy_indicator')" %>
+  	                     :update => "prototypes" %>
   	</span>
 	</p>
 	<div id="prototypes"></div>

@@ -1,7 +1,3 @@
-<% content_for :head do -%>
-  <%= calendar_date_select_includes %>
-<% end -%>
-
 <% render :partial => 'admin/shared/order_sub_menu' %>
 
 <h1><%= t("listing_orders") %></h1>
@@ -40,11 +36,11 @@
     <label><%= t("date_range") %></label><br />
     <div class="yui-g date-range-filter">
       <div class="yui-u sub-field first">
-        <%= f.calendar_date_select :created_at_after %><br />
+        <%= f.unobtrusive_date_picker :created_at_after %><br />
         <label class="sub"><%= t("start") %></label>
       </div>
       <div class="yui-u sub-field">
-        <%= f.calendar_date_select :created_at_before %><br />
+        <%= f.unobtrusive_date_picker :created_at_before %><br />
         <label><%= t("stop") %></label>
       </div>
     </div>

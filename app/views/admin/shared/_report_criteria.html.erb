@@ -1,16 +1,32 @@
+<<<<<<< HEAD:app/views/admin/shared/_report_criteria.html.erb
 <% content_for :head do %>
-  <%= calendar_date_select_includes %>
+  <%= unobtrusive_datepicker_includes %>
 <% end %>
+=======
+<% form_for [:admin, @search], :url => "" do |f| %> 
+	<% f.fields_for @search.conditions do |s| %>
+>>>>>>> Removed a lot of Prototype-traces.:app/views/admin/shared/_report_criteria.html.erb
 
+<<<<<<< HEAD:app/views/admin/shared/_report_criteria.html.erb
 <% form_for @search do |f| %> 
+=======
+>>>>>>> Removed a lot of Prototype-traces.:app/views/admin/shared/_report_criteria.html.erb
     <label><%= t("date_range") %></label><br />
     <div class="yui-g date-range-filter">
       <div class="yui-u sub-field first">
+<<<<<<< HEAD:app/views/admin/shared/_report_criteria.html.erb
         <%= f.calendar_date_select :created_at_after %><br />
+=======
+        <%= s.unobtrusive_date_picker :created_at_after %><br />
+>>>>>>> Remove calendar_date_select, add unobtrusive_date_picker instead it.:app/views/admin/shared/_report_criteria.html.erb
         <label class="sub"><%= t("start") %></label>
       </div>
       <div class="yui-u sub-field">
+<<<<<<< HEAD:app/views/admin/shared/_report_criteria.html.erb
         <%= f.calendar_date_select :created_at_before %><br />
+=======
+        <%= s.unobtrusive_date_picker :created_at_before %><br />
+>>>>>>> Remove calendar_date_select, add unobtrusive_date_picker instead it.:app/views/admin/shared/_report_criteria.html.erb
         <label><%= t("stop") %></label>
       </div>
     </div>

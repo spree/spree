@@ -1,7 +1,3 @@
-<% content_for :head do %>
-  <%= calendar_date_select_includes %>
-<% end %>
-
 <% render :partial => 'admin/shared/product_sub_menu' %>
 
 <div class='toolbar'>
@@ -10,9 +6,7 @@
       <%= button_link_to_remote t("new_product"), 
                          {:url => new_object_url, 
                          :method => :get,
-                         :update => "new-product",
-                         :before => "Element.hide('new_ot_link');Element.show('busy_indicator')", 
-                         :complete => "Element.hide('busy_indicator')"}, :icon => 'add' %>
+                         :update => "new-product"}, :icon => 'add' %>
     </li>
   </ul>
   <br class='clear' />

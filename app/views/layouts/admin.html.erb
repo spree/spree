@@ -7,19 +7,21 @@
 
   <%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', :cache => 'admin-all' %>
 
-  <%= javascript_include_tag :defaults %> <!-- TODO: Remove.  See Issue #320 -->
-  <%= javascript_include_tag 'jquery-1.3.2.min', 'spree', 'nested-attribute', 'zone', 'calculator', :cache => 'jquery-and-extras' %>
-  <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>   
-  <%= javascript_include_tag 'jquery.alerts/jquery.alerts.js' %>                                           
+  <%= javascript_include_tag 'jquery', 'jquery-ui', 'jrails', 'jquery.suggest', 'jrails.autocomplete', 'jquery.template', :cache => 'jquery-and-plugins' %>
+  <%= javascript_include_tag 'spree', 'nested-attribute', 'zone', 'calculator' %>
+  <%= javascript_tag "$ = jQuery;" %>
+  <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+  <%= javascript_include_tag 'jquery.alerts/jquery.alerts.js' %>
   
 	<%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.css' %>
 	<%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.spree.css' %>
-	
-	<%= javascript_tag "jQuery.alerts.dialogClass = 'spree';" %> 
+
+	<%= javascript_tag "jQuery.alerts.dialogClass = 'spree';" %>
+	<%= unobtrusive_datepicker_includes %>	
   <%= yield :head %>
 </head>
 <body class='yui-skin-sam admin'>
-<!--[if lte IE 7]>
+<!--[if IE 7]>
 <div id='IE7'>
 <![endif]-->
 <div id='wrapper'>
@@ -32,7 +34,7 @@
       <li><%= link_to t('logout'), logout_path %></li>
       <li><%= link_to t('store'), products_path %></li>
     </ul>
-    <% end -%>      
+    <% end -%>
     <h1 class='logo'><%= link_to t("administration"), admin_path %></h1>
     <div id="progress"><%= image_tag 'progress.gif' %> <%= t('loading') %>...</div>
   </div>
@@ -89,3 +91,4 @@
 
 </body>
 </html>
+
