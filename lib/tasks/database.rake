@@ -34,8 +34,12 @@ namespace :db do
        
   desc 'Load the seed data from db/seeds.rb'  
   task :seed => :environment do  
-    seed_file = File.join(SPREE_ROOT, 'db', 'seeds.rb')  
-    load(seed_file) if File.exist?(seed_file)  
+    seed_file = [RAILS_ROOT, SPREE_ROOT].map{|root| 
+      File.join(root, 'db', 'seeds.rb')
+    }.select{|path|
+      File.exist?(path)
+    }.first
+    load(seed_file) if seed_file
   end
 
   desc 'Load the sample fixture data from db/sample'  
