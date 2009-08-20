@@ -117,7 +117,9 @@ class Order < ActiveRecord::Base
       current_item.quantity = (current_item.quantity + quantity) if quantity > 1
       current_item.save
     else
-      current_item = LineItem.new(:quantity => quantity, :variant => variant, :price => variant.price)
+      current_item = LineItem.new(:quantity => quantity)
+      current_item.variant = variant
+      current_item.price   = variant.price
       self.line_items << current_item
     end
     

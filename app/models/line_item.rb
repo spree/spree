@@ -8,6 +8,8 @@ class LineItem < ActiveRecord::Base
   validates_presence_of :variant
   validates_numericality_of :quantity, :only_integer => true, :message => "must be an integer"
   validates_numericality_of :price
+
+  attr_accessible :quantity
   
   def validate
     unless quantity && quantity >= 0
