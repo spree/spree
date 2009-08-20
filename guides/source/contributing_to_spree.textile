@@ -79,7 +79,7 @@ Please be sure to include the issue number inside of brackets.  This will make s
 
 h5. Rebase if Necessary
 
-If you've been working on your fix for more then a few hours there is a good chance that you will need to rebase.  Git's rebase command is one of those scary sounding things that really isn't all that bad "once you understand it":http://www.gitready.com/intermediate/2009/01/31/intro-to-rebase.html.  
+If you've been working on your fix for more than a few hours there is a good chance that you will need to rebase.  Git's rebase command is one of those scary sounding things that really isn't all that bad "once you understand it":http://www.gitready.com/intermediate/2009/01/31/intro-to-rebase.html.  
 
 So you can check to see if there have been any chances to railsdog since you created your branch.
 
