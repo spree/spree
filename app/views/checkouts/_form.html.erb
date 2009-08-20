@@ -13,7 +13,8 @@
   </div>
 <% end %>
 
-<input type="hidden" id="hidden_bstate" name="hidden_bstate" value="<%= @checkout.bill_address.state_id || @checkout.bill_address.state_name %>" />
 <input type="hidden" id="hidden_bcountry" name="hidden_bcountry" value="<%= @checkout.bill_address.country_id %>" />
-<input type="hidden" id="hidden_sstate" name="hidden_sstate" value="<%= @checkout.shipment.address.state_id || @checkout.shipment.address.state_name %>" />
+<input type="hidden" id="hidden_bstate" name="hidden_bstate" value="<%= @checkout.bill_address.country.states.empty? ? @checkout.bill_address.state_name : @checkout.bill_address.state_id %>" />
+
 <input type="hidden" id="hidden_scountry" name="hidden_scountry" value="<%= @checkout.shipment.address.country_id %>" />
+<input type="hidden" id="hidden_sstate" name="hidden_sstate" value="<%= @checkout.shipment.address.country.states.empty? ? @checkout.shipment.address.state_name : @checkout.shipment.address.state_id %>" />

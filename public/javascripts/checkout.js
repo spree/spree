@@ -90,6 +90,9 @@ var chg_state_input_element = function (parent, html) {
 // TODO: better as sibling dummy state ?
 // Update the input method for address.state 
 var update_state = function(region) {
+  if ($('span#' + region + 'state').length == 0) { 
+    return;
+  } 
   var country        = $('span#' + region + 'country :only-child').val();
   var states         = state_mapper[country];
   var hidden_element = $('input#hidden_' + region + 'state');

@@ -23,19 +23,25 @@
     		<label for="<%= t("city") %>"><%= t("city") %></label>
     		<%= address.text_field :city, :class => 'required' -%><span class="req">*</span>
     	</p>    
-    	<p>
-    		<label for="<%= t("state") %>"><%= t("state") %></label>
-    		<span id="sstate">
-    			<%= collection_select("checkout[shipment_attributes][address_attributes]", 
-    			:state_id, 
-    			@states, 
-    			:id, 
-    			:name, 
-    			{:include_blank => true}, 
-    			{:style=> 'width:150px;'}) %>
-    		</span>
-    		<span class="req">*</span>
-    	</p>  
+        <% if Spree::Config[:address_requires_state] %>
+          <p>
+            <label for="<%= t("state") %>"><%= t("state") %></label>
+            <span id="sstate">
+              <% if @checkout.shipment.address.state.present? %>
+    		<%= collection_select("checkout[shipment_attributes][address_attributes]", 
+                                      :state_id, 
+                                      @states, 
+                                      :id, 
+                                      :name, 
+                                      {:include_blank => true}, 
+                                      {:style=> 'width:150px;'}) %>
+              <% else %>
+                <%= address.text_field :state_name, :class => 'required' -%>
+              <% end %>
+            </span>
+            <span class="req">*</span>
+          </p>
+        <% end %>
     	<p id="szip">
     		<label for="<%=t ("zip") %>"><%= t("zip") %></label>
     		<%= address.text_field :zipcode, :class => 'required' -%><span class="req">*</span>
