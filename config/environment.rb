@@ -71,7 +71,8 @@ Spree::Initializer.run do |config|
   # All files from config/locales/*.rb,yml are added automatically.
   #config.i18n.load_path << Dir[File.join(RAILS_ROOT, 'my', 'locales', '*.{rb,yml}')]
   config.i18n.default_locale = :'en-US'    
-    
+
+  config.active_record.observers = :order_observer
 end
 
 Time::DATE_FORMATS[:date_time24] = "%Y-%m-%d %H:%M"

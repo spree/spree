@@ -12,7 +12,6 @@ class Admin::OrdersController < Admin::BaseController
     # itself will make sure transitions are not applied in the wrong state)
     event = params[:e]
     Order.transaction do 
-      @order.state_events.create(:name => t(event), :user => current_user, :previous_state => @order.state)
       @order.send("#{event}!")
     end
     flash[:notice] = t('order_updated')

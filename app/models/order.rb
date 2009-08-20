@@ -258,3 +258,6 @@ class Order < ActiveRecord::Base
     self.checkout ||= Checkout.create(:order => self)
   end
 end
+
+# please don't remove it, it's needed to activite observer if user doesn't update environment.rb
+OrderObserver.instance
