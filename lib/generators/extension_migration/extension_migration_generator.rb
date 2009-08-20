@@ -16,9 +16,9 @@ class ExtensionMigrationGenerator < Rails::Generator::NamedBase
     []
   end
 
-  #def banner
-  #  "Usage: #{$0} extension_migration ExtensionName MigrationName"
-  #end
+  def banner
+    "Usage: #{$0} extension_migration ExtensionName MigrationName [options]"
+  end
 
   def manifest    
     record do |m|
