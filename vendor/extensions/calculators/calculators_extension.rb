@@ -14,7 +14,7 @@ class CalculatorsExtension < Spree::Extension
   
   def activate 
     [
-      Calculator::FlatPercent,
+      Calculator::FlatPercentItemTotal,
       Calculator::FlatRate,
       Calculator::FlexiRate,
       Calculator::PerItem,
