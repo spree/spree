@@ -48,9 +48,6 @@ class Shipment < ActiveRecord::Base
     order.shipments.each do |shipment|
       return unless shipment.shipped?
     end
-    current_user_session = UserSession.find   
-    current_user = current_user_session.user if current_user_session    
-    order.ship!                                        
-    order.state_events.create(:name => I18n.t('ship'), :user => current_user, :previous_state => order.state_was)
+    order.ship!
   end
 end
