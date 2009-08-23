@@ -52,7 +52,7 @@
     roles : [admin]
     options :
       except : [new, create]   
-      unless : "current_user.id == object.id"
+      unless : "current_user and current_user.id == object.id"
 'OrdersController':
   permission1:
     # Users can only see their own orders

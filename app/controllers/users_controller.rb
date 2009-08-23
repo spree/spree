@@ -35,10 +35,4 @@ class UsersController < Spree::BaseController
     end
   end
 
-
-  private
-    def object
-      @object ||= current_user
-    end
-
 end
