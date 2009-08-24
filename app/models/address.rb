@@ -48,11 +48,13 @@ class Address < ActiveRecord::Base
   end
 
   def zones
+    Zone.match(self)
   end
 
   def same_as?(other)
     attributes.except("id", "updated_at", "created_at") ==  other.attributes.except("id", "updated_at", "created_at")
   end
+  alias same_as same_as?
 
   def to_s
     "#{full_name}: #{address1}"
