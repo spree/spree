@@ -41,6 +41,10 @@ class OrdersController < Spree::BaseController
     wants.html {redirect_to edit_order_url(object)}
   end  
 
+  update.after do 
+    @order.update_totals!
+  end
+
   #override r_c default b/c we don't want to actually destroy, we just want to clear line items
   def destroy
     @order.line_items.clear
