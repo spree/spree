@@ -10,5 +10,6 @@ class StateEvent < ActiveRecord::Base
     if current_user_session = UserSession.find
       self.user_id ||= current_user_session.user.id
     end
+    true   # don't stop the filters
   end
 end
