@@ -217,6 +217,7 @@ fr-FR:
   combine: Combine
   comp_order: "Commande complète"
   comp_order_confirmation: "Le client n'a pas été débité.  Êtes-vous sûr de vouloir valider cette commande ?"
+  complete: complete
   complete_list: "Complete List"
   configuration: Configuration
   configuration_options: "Option configuration"

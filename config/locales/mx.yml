@@ -217,6 +217,7 @@ mx:
   combine: Combinar
   comp_order: "Pedido completado"
   comp_order_confirmation: "Confirmación de pedido completado"
+  complete: complete
   complete_list: "Lista Completa"
   configuration: "Configuración"
   configuration_options: "Opciones de configuración"

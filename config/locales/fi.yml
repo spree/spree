@@ -217,6 +217,7 @@ fi:
   combine: Combine
   comp_order: "Tilauksen keskeyttäminen"
   comp_order_confirmation: "Asiakasta ei veloiteta. Haluatko keskeyttää tilauksen?"
+  complete: complete
   complete_list: "Täydellinen lista"
   configuration: Asetus
   configuration_options: Asetusvaihteohdot

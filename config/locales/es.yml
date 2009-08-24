@@ -217,6 +217,7 @@ es:
   combine: Combine
   comp_order: "Pedido completado"
   comp_order_confirmation: "Confirmacion de pedido completado"
+  complete: complete
   complete_list: "Complete List"
   configuration: Configuracion
   configuration_options: "Opciones de configuracion"

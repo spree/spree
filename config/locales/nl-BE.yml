@@ -217,6 +217,7 @@ nl-BE:
   combine: Combine
   comp_order: "Afgebroken order"
   comp_order_confirmation: "De klant wordt niets aangerekend. Ben je zeker dat je het order wil onderbreken?"
+  complete: complete
   complete_list: "Complete List"
   configuration: Configuratie
   configuration_options: "Configuratie Opties"

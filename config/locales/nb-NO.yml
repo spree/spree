@@ -217,6 +217,7 @@ nb-NO:
   combine: Combine
   comp_order: "Kanseller ordre"
   comp_order_confirmation: "Kunden vil ikke bli belastet. Er du sikker på at du vil kansellere ordren?"
+  complete: complete
   complete_list: "Complete List"
   configuration: Konfigurasjon
   configuration_options: "Konfigurasjonsvalg"

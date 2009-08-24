@@ -217,6 +217,7 @@ pt-BR:
   combine: Combine
   comp_order: "Computar Pedido"
   comp_order_confirmation: "O cliente não será cobrado. Tem certeza que quer computar este pedido?"
+  complete: complete
   complete_list: "Lista Completa"
   configuration: Configuração
   configuration_options: "Opções de Configuração"

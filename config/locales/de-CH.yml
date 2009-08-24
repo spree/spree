@@ -217,6 +217,7 @@ de-CH:
   combine: Combine
   comp_order: "Bestellung abbrechen"
   comp_order_confirmation: ""
+  complete: complete
   complete_list: "Gesamtliste"
   configuration: Konfiguration
   configuration_options: "Konfigurations-Optionen"
