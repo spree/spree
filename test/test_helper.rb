@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
+require "authlogic/test_case" 
 
 class ActiveSupport::TestCase
   self.use_transactional_fixtures = true
@@ -60,3 +61,4 @@ def create_complete_order
   @order.save
   @order.reload
 end
+

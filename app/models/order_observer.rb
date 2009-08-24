@@ -8,7 +8,7 @@ class OrderObserver < ActiveRecord::Observer
     record.state_events.create({
         :previous_state => from_state,
         :name           => event_name,
-        :user_id        => author.id
+        :user_id        => author && author.id 
       })
     ActiveRecord::Base.logger.info("Order##{record.id}: #{from_state} => #{to_state}")
   end
