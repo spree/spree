@@ -60,7 +60,7 @@ class Zone < ActiveRecord::Base
     members.map {|zone_member|
       case zone_member.zoneable_type
       when "Zone"
-        zone_member.country_list
+        zone_member.zoneable.country_list
       when "Country"
         zone_member.zoneable
       else
