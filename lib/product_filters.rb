@@ -75,7 +75,7 @@ module ProductFilters
   #   being blank: note that this relies on with_property doing a left outer join 
   #   rather than an inner join. 
 
-  if @@brand_property = Property.find_by_name("brand")
+  if Property.table_exists? && @@brand_property = Property.find_by_name("brand")
     Product.named_scope :brand_any,
       lambda {|opts| 
         conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?} 
@@ -114,7 +114,7 @@ module ProductFilters
   #   The brand-finding code can be simplified if a few more named scopes were added to 
   #   the product properties model. 
 
-  if @@brand_property
+  if Property.table_exists? && @@brand_property 
     Product.named_scope :selective_brand_any, lambda {|opts| Product.brand_any(opts).scope(:find) }
 
     def ProductFilters.selective_brand_filter(taxon = nil)
