@@ -52,9 +52,11 @@ module Spree
         # Followed by the standard includes.
         paths.concat %w(
           app
+          app/metal
           app/models
           app/controllers
           app/helpers
+          app/services
           config
           lib
           vendor
