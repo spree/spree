@@ -16,7 +16,7 @@ config/*-public.asc
 config/database.yml
 config/mongrel_cluster.yml
 db/*.sql
-db/*.sqlite3
+db/*.sqlite3*
 db/schema.rb
 doc/**/*
 lib/products_index_profiler.rb
