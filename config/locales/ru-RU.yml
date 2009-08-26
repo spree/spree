@@ -219,6 +219,7 @@ ru-RU:
   charged: "Оплачено"
   checkout: "Оформление заказа"
   city: "Город"
+  clone: Clone
   code: "Кодовое слово"
   combine: "Разрешить комбинировать"
   comp_order: "(not used) Comp Order"

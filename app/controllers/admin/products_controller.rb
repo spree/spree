@@ -49,6 +49,19 @@ class Admin::ProductsController < Admin::BaseController
     
     redirect_to collection_url
   end
+
+  def clone
+    load_object
+    @new = @product.duplicate
+
+    if @new.save
+      flash[:notice] = "Product has been cloned"
+    else
+      flash[:notice] = "Product could not be cloned"
+    end
+
+    redirect_to edit_admin_product_url(@new)
+  end
   
   private
     def load_data

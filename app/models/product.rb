@@ -136,6 +136,37 @@ class Product < ActiveRecord::Base
     end
   end
 
+  # for adding products which are closely related to existing ones 
+  # define "duplicate_extra" for site-specific actions, eg for additional fields
+  def duplicate
+    p = self.clone
+    p.name = 'COPY OF ' + self.name
+    p.deleted_at = nil 
+    p.created_at = p.updated_at = nil
+    p.taxons = self.taxons
+
+    p.product_properties = self.product_properties.map {|q| r = q.clone; r.created_at = r.updated_at = nil; r}
+
+    image_clone = lambda {|i| j = i.clone; j.attachment = i.attachment.clone; j}
+    p.images = self.images.map {|i| image_clone.call i}
+
+    variant = self.master.clone
+    variant.sku = 'COPY OF ' + self.master.sku
+    variant.deleted_at = nil
+    variant.images = self.master.images.map {|i| image_clone.call i}
+    p.master = variant
+
+    if self.has_variants?
+      # don't clone the actual variants, just the characterising types
+      p.option_types = self.option_types
+    else
+    end
+    # allow site to do some customization
+    p.send(:duplicate_extra) if p.respond_to?(:duplicate_extra)
+    p.save!
+    p
+  end
+  
   private
 
   # the master on_hand is meaningless once a product has variants as the inventory

@@ -32,6 +32,8 @@
     <td class="actions">
       <%= link_to_edit product if product.deleted_at.nil?  %>
       &nbsp;
+      <%= link_to_clone product %>
+      &nbsp;
       <%= link_to_delete product if product.deleted_at.nil?  %>
     </td>
   </tr>

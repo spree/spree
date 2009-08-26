@@ -219,6 +219,7 @@ nb-NO:
   charged: "Belastet"
   checkout: "Til kassen"
   city: Sted
+  clone: Clone
   code: Code
   combine: Combine
   comp_order: "Kanseller ordre"

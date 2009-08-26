@@ -219,6 +219,7 @@ mx:
   charged: Cargado
   checkout: Pagar
   city: Ciudad
+  clone: Clone
   code: "Código"
   combine: Combinar
   comp_order: "Pedido completado"

@@ -219,6 +219,7 @@ fi:
   charged: Veloitettu
   checkout: Kassa
   city: Paikkakunta
+  clone: Clone
   code: Koodi
   combine: Yhdistä
   comp_order: "Tilauksen keskeyttäminen"

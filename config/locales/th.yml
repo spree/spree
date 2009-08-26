@@ -219,6 +219,7 @@ th:
   charged: Charged
   checkout: สั่งซื้อ
   city: เขต หรือ อำเภอ
+  clone: Clone
   code: Code
   combine: Combine
   comp_order: "Comp Order"

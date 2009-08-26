@@ -219,6 +219,7 @@ pl:
   charged: Charged
   checkout: "Do kasy"
   city: Miejscowość
+  clone: Clone
   code: Code
   combine: Combine
   comp_order: "Comp Order"

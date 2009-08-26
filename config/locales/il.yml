@@ -219,6 +219,7 @@ il:
   charged: Charged
   checkout: תשלום
   city: עיר
+  clone: Clone
   code: Code
   combine: Combine
   comp_order: "Comp Order"

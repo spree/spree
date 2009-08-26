@@ -219,6 +219,7 @@ it:
   charged: Charged
   checkout: Acquista
   city: Città
+  clone: Clone
   code: Code
   combine: Combine
   comp_order: "Cancellare l'ordine"

@@ -219,6 +219,7 @@ da:
   charged: Charged
   checkout: Checkout
   city: Town / City
+  clone: Clone
   code: Code
   combine: Combine
   comp_order: "Comp Order"

@@ -7,6 +7,10 @@ module Admin::BaseHelper
     link_to_with_icon('edit', t("edit"), edit_object_url(resource))
   end
   
+  def link_to_clone(resource)
+    link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource))
+  end
+  
   def link_to_delete(resource, options = {})
 	  options.assert_valid_keys(:url, :caption, :title)
 

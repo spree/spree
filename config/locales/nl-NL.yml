@@ -219,6 +219,7 @@ nl-NL:
   charged: Afgeboekt
   checkout: Bestelling
   city: Stad
+  clone: Clone
   code: Code
   combine: Combine
   comp_order: "Afgebroken order"
