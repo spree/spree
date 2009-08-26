@@ -7,7 +7,7 @@ class StateEvent < ActiveRecord::Base
   end
 
   def before_create
-    if current_user_session = UserSession.find
+    if UserSession.activated? && current_user_session = UserSession.find
       self.user_id ||= current_user_session.user.id
     end
     true   # don't stop the filters
