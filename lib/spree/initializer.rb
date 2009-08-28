@@ -6,6 +6,15 @@
 require 'initializer'
 require 'spree/extension_loader'
 
+# Small hack to make sure metal stuff inside Spree gem is also loaded
+Rails::Initializer.class_eval do
+  alias :initialize_metal_old :initialize_metal
+  def initialize_metal
+    Rails::Rack::Metal.metal_paths += ["#{SPREE_ROOT}/app/metal"]
+    initialize_metal_old
+  end
+end
+
 module Spree
 
   class Configuration < Rails::Configuration

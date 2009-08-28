@@ -1,6 +1,5 @@
 class ProductsController < Spree::BaseController
   prepend_before_filter :reject_unknown_object
-  before_filter(:setup_admin_user) unless RAILS_ENV == "test"
 
   resource_controller
   helper :taxons  
@@ -20,12 +19,6 @@ class ProductsController < Spree::BaseController
   end
 
   private
-  def setup_admin_user
-    return if admin_created?
-    flash[:notice] = I18n.t(:please_create_user)
-    redirect_to signup_url
-  end
-  
   def load_data  
     load_object  
     @selected_variant = @product.variants.detect { |v| v.in_stock || Spree::Config[:allow_backorders] }
