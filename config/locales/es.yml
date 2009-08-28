@@ -272,6 +272,7 @@ es:
   email_server_settings_description: "Configuración del servidor de correo electrónico"
   empty_cart: "Vaciar Cesta"
   enable_mail_delivery: Habilitar envio por correo      
+  enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: error
   event: Evento
@@ -344,6 +345,8 @@ es:
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "La entrega de correo está habilitada"
   mail_delivery_not_enabled: "La entrega de correo está deshabilitada"
+  mail_queue_enabled: "Mail queue is enabled"
+  mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: Preferencias del servidor de correo
   mail_server_settings: "Configuración del servidor de correo"
   mark_shipped: "Marcar como enviado"

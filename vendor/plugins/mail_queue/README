@@ -1,0 +1,40 @@
+MailQueue
+===========
+
+Want to send out your mail asynchronously without having to touch any code that uses the Action Mailer?  
+
+With the plugin installed, all mail send from Mailer gets put into a table called QueuedMails.  Here's my migration to add that table: 
+
+
+class AddQueuedMailTable < ActiveRecord::Migration
+  def self.up
+    create_table :queued_mails do |t|
+      t.column :object,     :text
+      t.column :mailer,     :string
+    end
+  end
+
+  def self.down
+    drop_table :queued_mails
+  end
+end
+
+
+Now everytime you call YouMailer.deliver_something(*params), that mail object will be stored in the QueuedMails table.  Just periodically call script/runner from a cron job to process your new mail queue: 
+
+"script/runner 'MailQueue.process' -e production"
+
+
+If you want to bypass the queue just called the deliver_method_name with an exclamation point at the end.  Like: 
+
+YouMailer.deliver_something!(*params)
+
+WARNING: 
+
+This feature to bypass the queue isn't the same way it was done in the original release of this plugin, so it isn't backwards compatible. Not a huge thing to change, and it probably wasn't a very popular thing used by people using this plugin anyways. 
+
+
+-Nate
+Inkling Inc. 
+http://www.inklingmarkets.com
+

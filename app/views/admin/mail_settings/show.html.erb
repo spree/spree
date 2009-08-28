@@ -12,6 +12,13 @@
       content_tag(:h4, t('mail_delivery_not_enabled'))
     end
   %>
+	<%= 
+    if Spree::Config[:use_mail_queue]
+      content_tag(:h4, t('mail_queue_enabled'))
+    else
+      content_tag(:h4, t('mail_queue_not_enabled'))
+    end
+  %>
 </div>
 
 <table>

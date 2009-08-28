@@ -272,6 +272,7 @@ de-CH:
   email_server_settings_description: "Mailserver-Einstellungen ändern"
   empty_cart: "Warenkorb leeren"
   enable_mail_delivery: "Mailversand einschalten"
+  enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: Fehler
   event: Ereignis
@@ -344,6 +345,8 @@ de-CH:
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mailversand aktiviert"
   mail_delivery_not_enabled: "Mailversand deaktiviert"
+  mail_queue_enabled: "Mail queue is enabled"
+  mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mailserver-Einstellungen"
   mark_shipped: "Als versandt kennzeichnen"

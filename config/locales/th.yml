@@ -272,6 +272,7 @@ th:
   email_server_settings_description: กำหนดค่าในการติดต่อกับเมลเซิร์ฟเวอร์
   empty_cart: ล้างตะกร้า
   enable_mail_delivery: เปิดระบบส่งเมล      
+  enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: "กรุณาใส่ข้อมูลทุกอย่างที่แสดงบนบัตร"
   error: ขัดข้อง
   event: Event
@@ -344,6 +345,8 @@ th:
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: ระบบส่งเมลเปิดการใช้งานแล้ว
   mail_delivery_not_enabled: ระบบส่งเมลปิดการใช้งานแล้ว
+  mail_queue_enabled: "Mail queue is enabled"
+  mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: ปรับแต่งเมลเซิร์ฟเวอร์
   mail_server_settings: เมลเซิร์ฟเวอร์ 
   mark_shipped: "Mark Shipped"

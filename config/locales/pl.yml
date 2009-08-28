@@ -272,6 +272,7 @@ pl:
   email_server_settings_description: "Skonfiguruj ustawienia serwera pocztowego."
   empty_cart: "Opróżnij koszyk"
   enable_mail_delivery: Enable Mail Delivery      
+  enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: błąd
   event: Event
@@ -344,6 +345,8 @@ pl:
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
+  mail_queue_enabled: "Mail queue is enabled"
+  mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Ustawienia serwera pocztowego"
   mark_shipped: "Mark Shipped"

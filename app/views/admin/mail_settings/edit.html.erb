@@ -19,6 +19,15 @@
         </label>
       </p>
 
+			 <p>
+	        <label>
+		      <input name="preferences[use_mail_queue]" type="hidden" value="0" />
+	          <%= check_box_tag('preferences[use_mail_queue]', "1", Spree::Config[:use_mail_queue]) %>
+	          <%= t('enable_mail_queue') %>
+	        </label>
+	      </p>
+
+
       <p>
         <label><%= t('send_mails_as') %></label><br />
         <%= text_field_tag('preferences[mails_from]', Spree::Config[:mails_from], :maxlength => 256)%>

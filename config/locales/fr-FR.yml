@@ -272,6 +272,7 @@ fr-FR:
   email_server_settings_description: "Définir les paramètres email du serveur."
   empty_cart: "Panier vide"
   enable_mail_delivery: Activation de la distribution des emails
+  enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: erreur
   event: Evenements
@@ -344,6 +345,8 @@ fr-FR:
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Distribution des emails activée"
   mail_delivery_not_enabled: "Distribution des emails est désactivée"
+  mail_queue_enabled: "Mail queue is enabled"
+  mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: Préférence du serveur de messagerie
   mail_server_settings: "Paramètres du serveur de messagerie"
   mark_shipped: "Mark Shipped"

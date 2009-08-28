@@ -272,6 +272,7 @@ nb-NO:
   email_server_settings_description: "Konfigurer epostserver."
   empty_cart: "Tøm handlekurv"
   enable_mail_delivery: "Skru på sending av epost"
+  enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: feil
   event: Hendelse
@@ -344,6 +345,8 @@ nb-NO:
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Sending av epost er skrudd på"
   mail_delivery_not_enabled: "Sending av epost er ikke skrudd på"
+  mail_queue_enabled: "Mail queue is enabled"
+  mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: "Preferanser for epostserver"
   mail_server_settings: "Innstillinger for epostserver"
   mark_shipped: "Merk som levert"

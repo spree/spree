@@ -272,6 +272,7 @@ fi:
   email_server_settings_description: "Aseta sähköpostipalvelimen asetukset."
   empty_cart: "Tyhjennä ostoskori"
   enable_mail_delivery: "Salli sähköpostin toimitus"
+  enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: "Please enter exactly as shown on the card"
   error: virhe
   event: Tapahtuma
@@ -344,6 +345,8 @@ fi:
   maestro_or_solo_cards: "Maestro/Solo kortit"
   mail_delivery_enabled: "Sähköpostiviestien toimitus päällä"
   mail_delivery_not_enabled: "Sähköpostiviestien toimitus poissa päältä"
+  mail_queue_enabled: "Mail queue is enabled"
+  mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: "Sähköpostipalvelimen asetukset"
   mail_server_settings: "Sähköpostipalvelimen asetukset"
   mark_shipped: "Merkitse toimitetuksi"
