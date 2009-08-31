@@ -196,7 +196,7 @@ fi:
   backordering_is_allowed: "Jälkitoimittaminen {{not}} sallittu"
   bill_address: "Laskun osoite"
   billing_address: Laskutusosoite
-  calculator: Calculator
+  calculator: Laskin
   calculator_settings_warning: "Mikäli vaihdat laskimen tyyppiä, sinun täytyy ensin tallentaa ennen kuin voit muuttaa laskimen asetuksia"
   cancel: peruuta
   canceled: Peruutettu
@@ -213,11 +213,11 @@ fi:
   charged: Veloitettu
   checkout: Kassa
   city: Paikkakunta
-  code: Code
-  combine: Combine
+  code: Koodi
+  combine: Yhdistä
   comp_order: "Tilauksen keskeyttäminen"
   comp_order_confirmation: "Asiakasta ei veloiteta. Haluatko keskeyttää tilauksen?"
-  complete: complete
+  complete: valmis
   complete_list: "Täydellinen lista"
   configuration: Asetus
   configuration_options: Asetusvaihteohdot
@@ -230,10 +230,10 @@ fi:
   copy_all_mails_to: "Kopioi kaikki viestit"                                                                             
   country: Maa
   country_based: Sijaintimaa
-  coupon: Coupon                                                                             
-  coupon_code: Coupon Code
-  coupons: Coupons
-  coupons_description: Manage coupons
+  coupon: Kuponki
+  coupon_code: Kuponkikoodi
+  coupons: Kupongit
+  coupons_description: "Hallinnoi kuponkeja"
   create: Luo
   create_a_new_account: "Luo uusi tunnus"
   create_user_account: "Luo käyttäjätunnus"
@@ -253,7 +253,7 @@ fi:
   display: Näytä
   edit: Muokkaa
   editing_category: "Muokataan kategoriaa"
-  editing_coupon: Editing Coupon
+  editing_coupon: "Muokataan kuponkia"
   editing_option_type: "Muokataan valintatyyppiä"
   editing_option_types: "Muokataan valintatyyppejä"
   editing_product: "Muokataan tuotetta"
@@ -261,7 +261,7 @@ fi:
   editing_prototype: "Muokataan prototyyppiä"
   editing_shipping_category: "Muokataan toimituskategoriaa"
   editing_shipping_method: "Muokataan toimitustapaa"
-  editing_shipping_rate: Editing Shipping Rate 
+  editing_shipping_rate: "Muokataan toimitushintaa" 
   editing_state: "Muokataan osavaltiota"
   editing_tax_category: "Muokataan verotuskategoriaa"
   editing_tax_rate: "Muokataan veroprosenttia"
@@ -272,8 +272,8 @@ fi:
   email_server_settings_description: "Aseta sähköpostipalvelimen asetukset."
   empty_cart: "Tyhjennä ostoskori"
   enable_mail_delivery: "Salli sähköpostin toimitus"
-  enable_mail_queue: "Enable Mail Queue"
-  enter_exactly_as_shown_on_card: "Please enter exactly as shown on the card"
+  enable_mail_queue: "Salli sähköpostijono"
+  enter_exactly_as_shown_on_card: "Kirjoita täsmälleen samoin kuin kortissa lukee"
   error: virhe
   event: Tapahtuma
   existing_customer: "Olemassaoleva asiakas"
@@ -285,13 +285,13 @@ fi:
   filename: Tiedostonimi
   final_confirmation: "Lopullinen vahvistus"
   first_name: Etunimi
-  flat_percent: Flat Percent
+  flat_percent: Tasaprosentti
   flat_rate_amount: Määrä
-  flat_rate_per_item: "Flat Rate (per item)"
-  flat_rate_per_order: "Flat Rate (per order)"
-  flexible_rate: "Flexible Rate"
+  flat_rate_per_item: "Tasahinta (per tuote)"
+  flat_rate_per_order: "Tasahinta (per tilaus)"
+  flexible_rate: "Joustava hinta"
   forgot_password: "Salasanan unohtaminen"
-  full_name: "Full Name"
+  full_name: "Koko nimi"
   gateway: Yhdyskäytävä
   gateway_configuration: "Yhdyskäytävän konfigurointi"
   gateway_error: "Virhe yhdyskäytävässä"
@@ -305,7 +305,7 @@ fi:
   google_analytics_id: "Analytics ID"
   google_analytics_new: "Uusi Google Analytics -tunnus"
   google_analytics_setting_description: "Hallinnoi Google Analytics ID:tä" 
-  guest_user_account: Checkout as a Guest
+  guest_user_account: "Tee tilaus vierailevana käyttäjänä"
   height: Korkeus
   hello_user: "Hei käyttäjä"
   history: Historia
@@ -320,7 +320,7 @@ fi:
   inventory_adjustment: "Varaston säätö"
   inventory_setting_description: "Varaston konfigurointi, jälkitoimitukset, loppuneet tuotteet"
   inventory_settings: Varastoasetukset
-  issue_number: Issue Number
+  issue_number: Jakelunumero
   item: Tuote
   item_description: Tuotekuvaus
   item_total: "Tuotteet yhteensä"
@@ -334,8 +334,8 @@ fi:
   listing_users: "Listing käyttäjät"
   loading: Ladataan
   locale_changed: "Lokalisointi vaihdettu"
-  log_in: "Kirjaudu"
-  logged_in_as: "Kirjauduttu"
+  log_in: Kirjaudu
+  logged_in_as: Kirjauduttu
   logged_in_succesfully: "Kirjauduttu onnistuneesti"
   logged_out: "Olet kirjautunut ulos." 
   login_as_existing: "Kirjaudu olemassaolevana asiakkaana" 
@@ -360,7 +360,7 @@ fi:
   name: Nimi
   new: Uusi
   new_category: "Uusi kategoria"
-  new_coupon: New Coupon
+  new_coupon: "Uusi kuponki"
   new_credit_card_payment: "Uusi luottokorttimaksutapa"
   new_customer: "Uusi asiakas"
   new_image: "Uusi kuva"
@@ -372,7 +372,7 @@ fi:
   new_shipment: "Uusi toimitus"
   new_shipping_category: "Uusi toimituskategoria"
   new_shipping_method: "Uusi toimitustapa"
-  new_shipping_rate: New Shipping Rate
+  new_shipping_rate: "Uusi toimitushinta"
   new_state: "Uusi osavaltio"
   new_tax_category: "Uusi verotuskategoria"
   new_tax_rate: "Uusi veroprosentti"
@@ -382,7 +382,7 @@ fi:
   new_variant: "Uusi variantti"
   new_zone: "Uusi alue"
   next: Seuraava
-  no: "No"
+  no: Ei
   no_items_in_cart: ""
   no_match_found: "Ei löytynyt vastaavia"
   no_user_found: "Ei löytnyt käyttäjää kyseisellä sähköpostiosoitteella"
@@ -405,7 +405,7 @@ fi:
   order_number: Tilaus
   order_operation_authorize: Valtuuta
   order_processed_successfully: "Tilauksenne käsitelty onnistuneesti"
-  order_summary: Order Summary
+  order_summary: Tilaustiivistelmä
   order_total: "Tilaus yhteensä"
   order_total_message: "Kortiltanne veloitettava kokonaissumma"
   order_updated: "Tilaus päivitetty"
@@ -464,7 +464,7 @@ fi:
   return: palaa
   returned: Palattu
   roles: Roolit
-  sales_tax: "Sales Tax"
+  sales_tax: "Liikevaihtovero"
   sales_total: "Liikevaihto"
   sales_total_for_all_orders: "Liikevaihto kaikilta tilauksilta"
   sales_totals: "Liikevaihdot"
@@ -490,17 +490,17 @@ fi:
   shipping_address: Toimitusosoite
   shipping_categories: Toimituskategoriat
   shipping_categories_description: "Hallinnoi toimituskategorioita tunnistaaksesi mitä tuotteita voidaan toimittaa millä tavoilla"
-  shipping_category: Shipping Category
+  shipping_category: Toimituskategoria
   shipping_cost: Toimituskulut
   shipping_error: Toimitusvirhe
   shipping_instructions: Toimitusohjeet
   shipping_method: Toimitustapa
   shipping_methods: Toimitustavat
   shipping_methods_description: "Hallinnoi toimitustapoja"
-  shipping_rates: "Shipping Rates"
-  shipping_rates_description: "Manage shipping rates"
+  shipping_rates: Toimitushinnat
+  shipping_rates_description: "Hallinnoi toimitushintoja"
   shipping_total: "Toimitus yhteensä"
-  shop_by_taxonomy: "Shop by {{taxonomy}}"
+  shop_by_taxonomy: "{{taxonomy}}"
   shopping_cart: Ostoskori
   show_deleted: "Näytä poistetut"
   show_incomplete_orders: "Näytä keskeneräiset tilaukset"
@@ -532,7 +532,7 @@ fi:
   start: Alku
   start_date: Voimassa
   state: Osavaltio
-  state_based: "Sijaintiosavaltio"
+  state_based: Sijaintiosavaltio
   state_setting_description: "Hallinnoi maiden osavaltiolistaa."
   states: Osavaltiot
   status: Tila
@@ -579,7 +579,7 @@ fi:
   update_password: "Päivitä salasanani ja kirjaa minut sisään"
   updated_successfully: "Päivitetty onnistuneesti"
   updating: Päivitetään
-  usage_limit: Usage Limit
+  usage_limit: Käyttöraja
   use_as_shipping_address: "Käytä toimitusosoitteena"
   use_billing_address: "Käytä laskutusosoitetta"
   use_different_shipping_address: "Käytä eri toimitusosoitetta"
@@ -589,9 +589,9 @@ fi:
   users: Käyttäjät
   value: Arvo
   variants: Variantit
-  vat: "VAT"           
+  vat: ALV           
   version: Versio
-  website: Websivu
+  website: Verkkosivu
   weight: Paino
   welcome_to_sample_store: "Tervetuloa esimerkkikauppaan"
   what_is_a_cvv: "Mikä on (CVV, Credit Card Code) luottokorttityyppi?"
@@ -599,7 +599,7 @@ fi:
   whats_this: "Mikä tämä on"
   width: Leveys
   year: Vuosi
-  yes: "Yes"
+  yes: Kyllä
   you_have_been_logged_out: "Olet kirjautunut ulos."
   your_cart_is_empty: "Ostoskorisi on tyhjä"
   zip: Postinumero
