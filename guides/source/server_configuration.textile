@@ -86,3 +86,49 @@ sudo rake gems:unpack:dependencies
 
 These three tasks will freeze your project to its spree version, and all the gems required to run the project. Now when you upload the project to your production server, you should not have to install any additional gems onto the server in order to get it to work properly.
 
+h3. Mail Server Setup
+
+Mail delivery in Spree is disabled by default. Enabling it is simple procedure that is generally done via the admin interface (+Configuration | Mail Server Settings) as shown below.
+
+!images/server_configuration/change_mail_server_settings.png(Changing Mail Server Setting)!
+
+To properly enable email delivery, you need to provide valid SMTP information. This includes the following:
+
+# SMTP Domain
+# SMTP Mail Host
+# SMTP Port
+# Secure Connection Type
+# SMTP Authentication Type
+# SMTP Username
+# SMTP Password
+
+Once enabled, you have 2 options to deliver email from your site. You can deliver the messages immediate (default behavior) or you can enable the optional mail queue. The mail queue will send your emails to a special database table and will deliver all pending messages in the background (this requires a simple cron job to be setup, a process that is described below.)
+
+With the mail queue enabled, you need to periodically call script/runner "MailQueue.process". That will send out all pending emails. The simplest way to handle this is by setting up a cron job. The *Whenever* gem now ships with Spree and provides a convenient way of creating cron jobs in pure Ruby code. "Ryan Bates has a great screencast that covers Whenever gem in more detail":http://railscasts.com/episodes/164-cron-in-ruby.
+
+You'll find the whenever configuration file in config/schedule.rb. By default, it will look something like this:
+
+<shell>
+	every 5.minutes do
+	  runner "MailQueue.process"
+	end
+
+	# Learn more: http://github.com/javan/whenever
+</shell>
+
+When enabled, this will cron will process your mail queue every five minutes. 
+
+You then need to ensure that your cron is updated with each deploy. The easiest way to accomplish this is add a task to your Capistrano deploy file. For example: 
+
+<shell>
+	namespace :deploy do
+		desc "Update the crontab file"
+		task :update_crontab, :roles => :db do
+		run "cd #{release_path} && whenever --update-crontab #{application}"
+		end
+	end
+	
+	after "deploy:symlink", "deploy:update_crontab"
+</shell>
+
+
