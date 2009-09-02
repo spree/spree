@@ -44,7 +44,8 @@ class InventoryUnit < ActiveRecord::Base
       # retrieve the requested number of on hand units (or as many as possible) - note: optimistic locking used here
       on_hand = self.retrieve_on_hand(variant, quantity)
       # mark all of these units as sold and associate them with this order 
-      on_hand.each do |unit|
+      on_hand.each do |unit|          
+        unit.order = order
         unit.sell!
       end
       # right now we always allow back ordering
