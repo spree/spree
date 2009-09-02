@@ -56,7 +56,7 @@ class Spree::BaseController < ApplicationController
       if self.respond_to? :object_missing
         self.object_missing(params[:id])
       else 
-        render_404(Exception.new "missing object in #{self.class.to_s}")
+        render_404 Exception.new("missing object in #{self.class.to_s}")
       end
     end
   end         
