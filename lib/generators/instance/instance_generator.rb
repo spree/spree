@@ -1,4 +1,4 @@
-#######################################################################################################
+######################################################################################################
 # Substantial portions of this code were adapted from the Radiant CMS project (http://radiantcms.org) #
 #######################################################################################################
 
@@ -120,6 +120,7 @@ class InstanceGenerator < Rails::Generator::Base
   
   def after_generate
     Rails::Generator::Scripts::Generate.new.run(%w{extension site}, :destination => "#{@destination_root}/")
+    File.rename("#{@destination_root}/config/initializers/session_store.rb", "#{@destination_root}/vendor/extensions/site/config/initializers/session_store.rb")
     puts File.read("#{@destination_root}/INSTALL") unless options[:pretend]
   end  
 
