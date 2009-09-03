@@ -2,8 +2,8 @@
 
 <h1><%= t("shopping_cart")%></h1>
 
-<% form_for(:order, :url => object_url, :html => { :method => :put, :id => 'updatecart' }) do |f| %>
-  <%= render :partial => 'form', :locals => {:f => f} %>
+<% form_for(@order, :url => object_url, :html => { :method => :put, :id => 'updatecart' }) do |order_form| %>
+  <%= render :partial => 'form', :locals => {:order_form => order_form} %>
   <% unless @order.line_items.empty? -%>
   <div id="subtotal">
     <h3><%= "#{t("subtotal")}: #{order_price(@order)}" %></h3>

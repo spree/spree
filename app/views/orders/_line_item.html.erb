@@ -1,4 +1,3 @@
-<% variant = line_item.variant -%>
 <tr class="<%= cycle('', 'alt') %>">
   <td>
     <% if variant.images.length == 0 %>
@@ -16,7 +15,7 @@
     <%= product_price(line_item) %>
   </td>
   <td>
-    <%= f.text_field :quantity, :size => 3 %>
+    <%= item_form.text_field :quantity, :size => 3 %>
   </td>
   <td>
     <%= format_price(product_price(line_item, :format_as_currency => false) * line_item.quantity) unless line_item.quantity.nil? %>

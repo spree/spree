@@ -12,7 +12,7 @@ class Order < ActiveRecord::Base
   belongs_to :user
   has_many :state_events
 
-  has_many :line_items,   :extend => Totaling, :dependent => :destroy, :attributes => true
+  has_many :line_items, :extend => Totaling, :dependent => :destroy
   has_many :inventory_units
 
   has_many :payments,            :extend => Totaling
@@ -31,7 +31,8 @@ class Order < ActiveRecord::Base
   has_many :credits,          :extend => Totaling, :order => :position
   has_many :coupon_credits, :class_name => "Credit", :extend => Totaling, :conditions => {:adjustment_source_type => "Coupon"}, :order => :position
 
-  accepts_nested_attributes_for :checkout
+  accepts_nested_attributes_for :checkout  
+  accepts_nested_attributes_for :line_items
   
   def ship_address; shipment.address; end
   delegate :shipping_method, :to =>:shipment

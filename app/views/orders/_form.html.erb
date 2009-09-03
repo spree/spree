@@ -8,7 +8,10 @@
     </tr>
   </thead>
   <tbody id="line_items">
-		<%= f.render_associated_form(@order.line_items) %>
+    <% order_form.fields_for :line_items do |item_form| %>
+      <%= render 'line_item', :variant => item_form.object.variant, :line_item => item_form.object, :item_form => item_form %>
+    <% end %>
+		
 		<tr id="none">
 		  <td colspan="5"><%= @order.line_items.empty? ? t("your_cart_is_empty.") : "" %></td>
 		</tr>
