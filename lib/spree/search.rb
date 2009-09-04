@@ -18,7 +18,8 @@ module Spree::Search
     
     params[:search] = @product_group.scopes_to_hash
 
-    @products_scope = @product_group.apply_on(Product.active)
+    base_scope = Spree::Config[:allow_backorders] ? Product.active : Product.active.on_hand
+    @products_scope = @product_group.apply_on(base_scope)
 
     @products = @products_scope.paginate({
         :per_page => params[:per_page],

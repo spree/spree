@@ -38,6 +38,7 @@ class Product < ActiveRecord::Base
 
   after_create :set_master_variant_defaults
   after_create :add_properties_and_option_types_from_prototype
+  before_save :recalculate_count_on_hand
   after_save :set_master_on_hand_to_zero_when_product_has_variants
   after_save :save_master
 
@@ -55,6 +56,12 @@ class Product < ActiveRecord::Base
   alias :options :product_option_types
 
   include Scopes::Product
+
+  # default product scope only lists available and non-deleted products
+  named_scope :active,      lambda { |*args| Product.not_deleted.available(args.first).scope(:find) }
+  named_scope :on_hand, { :conditions => "products.count_on_hand > 0" }
+  named_scope :not_deleted,                  { :conditions => "products.deleted_at is null" }
+  named_scope :available,   lambda { |*args| { :conditions => ["products.available_on <= ?", args.first || Time.zone.now] } }
 
   # ----------------------------------------------------------------------------------------------------------
   #
@@ -157,8 +164,15 @@ class Product < ActiveRecord::Base
     p.save!
     p
   end
-  
+
   private
+ 
+  def recalculate_count_on_hand
+    product_count_on_hand = has_variants? ?
+        variants.inject(0) {|acc, v| acc + v.count_on_hand} :
+        (master ? master.count_on_hand : 0)
+    self.count_on_hand = product_count_on_hand
+  end
 
   # the master on_hand is meaningless once a product has variants as the inventory
   # units are now "contained" within the product variants
@@ -174,6 +188,6 @@ class Product < ActiveRecord::Base
   # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
   # when saving so we force a save using a hook.
   def save_master
-    master.save if master
+    master.save if master && (master.changed? || master.new_record?)
   end
 end

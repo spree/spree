@@ -1,11 +1,11 @@
 class Variant < ActiveRecord::Base
-  belongs_to :product
+  belongs_to :product, :touch => true
   delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords
 
   has_many :inventory_units
   has_many :line_items
   has_and_belongs_to_many :option_values
-	has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
+  has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
 
   validate :check_price
   validates_presence_of :price
@@ -22,31 +22,23 @@ class Variant < ActiveRecord::Base
 
   # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
   def on_hand
-    new_record? ? inventory_units.size : inventory_units.with_state("on_hand").size
+    self.count_on_hand
   end
 
   # Adjusts the inventory units to match the given new level.
   def on_hand=(new_level)
     delta_units = new_level.to_i - on_hand
 
-    # decrease inventory
-    if delta_units < 0
-      inventory_units.with_state("on_hand").slice(0, delta_units.abs).each{|iu| iu.destroy}
-
-    # otherwise, increase Inventory when positive delta
-    elsif delta_units > 0
-
+    # increase Inventory when positive delta
+    if delta_units > 0
       # fill backordered orders before creating new units
       inventory_units.with_state("backordered").slice(0, delta_units).each do |iu|
         iu.fill_backorder
         delta_units -= 1
       end
-
-      # create new units
-      (delta_units).times do
-        new_record? ? inventory_units.build(:state => 'on_hand') : inventory_units.create(:state => 'on_hand') 
-      end
-    end      
+    end    
+   
+    self.count_on_hand += delta_units
   end
 
   # returns number of units currently on backorder for this variant.
@@ -70,12 +62,12 @@ class Variant < ActiveRecord::Base
 
   # returns true if this variant is allowed to be placed on a new order
   def available?
-    self.in_stock? || Spree::Config[:allow_backorders]
+    Spree::Config[:allow_backorders] || self.in_stock?
   end
 	
-	def options_text
-		self.option_values.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence({:words_connector => ", ", :two_words_connector => ", "})
-	end
+  def options_text
+    self.option_values.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence({:words_connector => ", ", :two_words_connector => ", "})
+  end
 
   private
 

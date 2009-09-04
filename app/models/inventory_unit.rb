@@ -6,17 +6,11 @@ class InventoryUnit < ActiveRecord::Base
 
   # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'on_hand' do    
-    event :sell do
-      transition :to => 'sold', :from => 'on_hand'
-    end
     event :fill_backorder do
       transition :to => 'sold', :from => 'backordered'
     end
     event :ship do
       transition :to => 'shipped', :if => :allow_ship? #, :from => 'sold'
-    end
-    event :restock do
-      transition :to => 'on_hand', :from => %w(sold shipped)
     end
     # TODO: add backorder state and relevant transitions
   end
@@ -35,26 +29,37 @@ class InventoryUnit < ActiveRecord::Base
       self.create(:variant => variant, :state => 'on_hand')
     end
   end
-  
+   
   # grab the appropriate units from inventory, mark as sold and associate with the order 
   def self.sell_units(order)
     order.line_items.each do |line_item|
       variant = line_item.variant
       quantity = line_item.quantity
-      # retrieve the requested number of on hand units (or as many as possible) - note: optimistic locking used here
-      on_hand = self.retrieve_on_hand(variant, quantity)
+      
       # mark all of these units as sold and associate them with this order 
-      on_hand.each do |unit|          
-        unit.order = order
-        unit.sell!
-      end
-      # right now we always allow back ordering
-      backorder = quantity - on_hand.size
-      backorder.times do 
-        order.inventory_units.create(:variant => variant, :state => "backordered")
-      end
+      remaining_quantity = variant.count_on_hand - quantity
+      if (remaining_quantity >= 0)
+        quantity.times do
+          order.inventory_units.create(:variant => variant, :state => "sold")
+        end
+        variant.update_attribute(:count_on_hand, remaining_quantity)
+      else
+        (quantity + remaining_quantity).times do
+          order.inventory_units.create(:variant => variant, :state => "sold")
+        end
+        # right now we always allow back ordering
+        (-remaining_quantity).times do 
+          order.inventory_units.create(:variant => variant, :state => "backordered")
+        end
+        variant.update_attribute(:count_on_hand, 0)
+      end  
     end
   end
+  
+  def restock!  
+    variant.update_attribute(:count_on_hand, variant.count_on_hand + 1)
+    delete
+  end    
   
   # find the specified quantity of units with the specified status
   def self.find_by_status(variant, quantity, status)
@@ -65,7 +70,7 @@ class InventoryUnit < ActiveRecord::Base
   
   private
   def allow_ship?
-    state == 'ready_to_ship' || Spree::Config[:allow_backorder_shipping]
+    Spree::Config[:allow_backorder_shipping] || (state == 'ready_to_ship')
   end
   
 end

@@ -26,7 +26,10 @@ class VariantTest < Test::Unit::TestCase
   end
 
   context "Variant.create" do
-    setup { @product = Factory(:product, :price => 10.99) }
+    setup do
+      @product = Factory(:product)
+      @product.master.price = 10.99
+    end
     teardown { @product.destroy }
     context "with price specified" do
       setup do
@@ -50,28 +53,27 @@ class VariantTest < Test::Unit::TestCase
     end
     context "with specified inventory level" do
       setup do
-        @variant = Variant.create(:product => @product, :on_hand => 3)
+        @variant = Variant.new(:on_hand => 3)
+        @product.variants << @variant
+        @product.save
       end
       teardown do
-        @variant.inventory_units.destroy_all
         @variant.destroy
       end
       should "adjust inventory levels" do
-        on_hand = @variant.on_hand
-        @variant.on_hand = 3
         assert_equal 3, @variant.on_hand
+        assert_equal 3, @variant.product.count_on_hand
       end
 
-      should_change("InventoryUnit.count", :by => 3) { InventoryUnit.count }
+      should_not_change("InventoryUnit.count") { InventoryUnit.count }
     end
   end
   context "Variant instance with 1 unit of inventory" do
     setup do
       @variant = Factory(:variant)
-      @variant.inventory_units << Factory(:inventory_unit)
+      @variant.on_hand = 1
     end
     teardown do
-      @variant.inventory_units.destroy_all
       @variant.destroy
     end
     should "return true for in_stock?" do
@@ -79,7 +81,8 @@ class VariantTest < Test::Unit::TestCase
     end
     context "when on_hand is increased" do
       setup { @variant.update_attribute("on_hand", 5) }
-      should_change("InventoryUnit.count", :by => 4) { InventoryUnit.count }
+      should_change("@variant.on_hand", :by => 4) { @variant.on_hand }
+      should_not_change("InventoryUnit.count") { InventoryUnit.count }
       should "return correct amount for on_hand" do
         assert_equal 5, @variant.on_hand
       end
@@ -93,7 +96,8 @@ class VariantTest < Test::Unit::TestCase
         @variant.inventory_units.destroy_all
         @variant.destroy
       end
-      should_change("InventoryUnit.count", :by => -1) { InventoryUnit.count }
+      should_change("@variant.on_hand", :by => -1) { @variant.on_hand }
+      should_not_change("InventoryUnit.count") { InventoryUnit.count }
       should "return correct amount for on_hand" do
         assert_equal 0, @variant.on_hand
       end
@@ -113,7 +117,8 @@ class VariantTest < Test::Unit::TestCase
         @variant.inventory_units.destroy_all
         @variant.destroy
       end
-      should_change("InventoryUnit.count", :by => -1) { InventoryUnit.count }
+      should_change("@variant.on_hand", :by => -1) { @variant.on_hand }
+      should_not_change("InventoryUnit.count") { InventoryUnit.count }
       should "return correct amount for on_hand" do
         assert_equal 0, @variant.on_hand
       end

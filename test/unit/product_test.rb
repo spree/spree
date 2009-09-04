@@ -176,10 +176,11 @@ class ProductTest < Test::Unit::TestCase
       @product = Product.create(:name => "fubaz", :price => "10.0", :on_hand => 7)
     end
     teardown do
-      @product.master.inventory_units.destroy_all
       @product.destroy
     end
-    should_change("InventoryUnit.count", :by => 7) { InventoryUnit.count }
+    should "have the specified on_hand" do
+      assert_equal 7, @product.on_hand
+    end
   end
 
   context_created_product do
@@ -188,8 +189,8 @@ class ProductTest < Test::Unit::TestCase
 
       end
       context "with inventory units" do
-        setup { @product.master.inventory_units << Factory(:inventory_unit) }
-        teardown { @product.master.inventory_units.destroy_all }
+        setup { @product.master.on_hand = 1 }
+        teardown { }
         should_pass_inventory_tests
         should "be true for has_stock?" do
           assert @product.has_stock?
@@ -197,14 +198,14 @@ class ProductTest < Test::Unit::TestCase
         end
         context "when on_hand is increased" do
           setup { @product.update_attribute("on_hand", 5) }
-          should_change("InventoryUnit.count", :by => 4) { InventoryUnit.count }
+          should_change("@product.on_hand", :by => 4) { @product.on_hand }
           should "have the specified on_hand" do
             assert_equal 5, @product.on_hand
           end
         end
         context "when on_hand is decreased" do
           setup { @product.on_hand = 3 }
-          should_change("InventoryUnit.count", :by => 2) { InventoryUnit.count }
+          should_change("@product.on_hand", :by => 2) { @product.on_hand }
           should "have the specified on_hand" do
             assert_equal 3, @product.on_hand
           end
@@ -218,9 +219,9 @@ class ProductTest < Test::Unit::TestCase
       context_without_inventory_units
       context "with inventory units" do
         setup do
-          @first_variant.inventory_units << Factory(:inventory_unit)
+          @first_variant.on_hand = 1
         end
-        teardown { @first_variant.inventory_units.destroy_all }
+        teardown { }
         should_pass_inventory_tests
         should "be true for has_stock?" do
           assert !@product.master.in_stock?
@@ -232,14 +233,14 @@ class ProductTest < Test::Unit::TestCase
         end
         context "when on_hand is increased" do
           setup { @first_variant.on_hand = 5 }
-          should_change("InventoryUnit.count", :by => 4) { InventoryUnit.count }
+          should_change("@product.on_hand", :by => 4) { @product.on_hand }
           should "have the specified on_hand" do
             assert_equal 5, @product.on_hand
           end
         end
         context "when on_hand is decreased" do
           setup { @first_variant.on_hand = 3 }
-          should_change("InventoryUnit.count", :by => 2) { InventoryUnit.count }
+          should_change("@product.on_hand", :by => 2) { @product.on_hand }
           should "have the specified on_hand" do
             assert_equal 3, @product.on_hand
           end
