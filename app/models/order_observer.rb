@@ -3,7 +3,7 @@ class OrderObserver < ActiveRecord::Observer
 
   # Generic transition callback *after* the transition is performed
   def after_transition(record, attribute_name, event_name, from_state, to_state)
-    current_user_session = UserSession.find rescue nil
+    current_user_session = UserSession.activated? ? UserSession.find : nil
     author = current_user_session ? current_user_session.user : record.user
     record.state_events.create({
         :previous_state => from_state,
