@@ -10,5 +10,19 @@ class FlatPercentItemTotalTest < ActiveSupport::TestCase
     should "not be available to TaxRate" do
       assert !TaxRate.calculators.include?(Calculator::FlatPercentItemTotal)
     end
+
+    context "compute" do
+      setup do
+        @order = Factory(:order)
+        @order.item_total = 123
+        @calculator = Calculator::FlatPercentItemTotal.new(:preferred_flat_percent => 10)
+      end
+
+      context "apply the percentage rate" do
+        should "compute ten percent" do
+          assert_equal (123 * 10 / 100.0), @calculator.compute(@order)
+        end
+      end       
+    end
   end
 end
