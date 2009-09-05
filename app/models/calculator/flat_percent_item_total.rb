@@ -14,6 +14,6 @@ class Calculator::FlatPercentItemTotal < Calculator
   
   def compute(order)
     return if order.nil?
-    order.item_total * self.preferred_flat_percent
+    order.item_total * self.preferred_flat_percent / 100.0
   end  
 end
