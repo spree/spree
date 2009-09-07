@@ -18,7 +18,7 @@ module ProductsHelper
     options.reverse_merge! :format_as_currency => true, :show_vat_text => Spree::Config[:show_price_inc_vat]
 
     amount = product_or_variant.price
-    amount += Spree::VatCalculator.calculate_tax_on(product_or_variant) if Spree::Config[:show_price_inc_vat]
+    amount += Calculator::Vat.calculate_tax_on(product_or_variant) if Spree::Config[:show_price_inc_vat]
     options.delete(:format_as_currency) ? format_price(amount, options) : ("%0.2f" % amount).to_f
   end
   

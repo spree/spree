@@ -38,7 +38,19 @@ class VatTaxCalculatorTest < ActiveSupport::TestCase
         should "tax only the taxable line items" do
           assert_equal 5, @calculator.compute(@order)
         end
+      end
+    end
+
+    context "calculate_tax_on" do
+      setup do
+        @zone = Zone.global   
+        @tax_category = TaxCategory.create(:name => "foo") 
+        @taxable = Factory(:product, :tax_category => @tax_category)
+        @calculator = Calculator::Vat.new(:calculable => TaxRate.new(:amount => 0.05, :tax_category => @tax_category, :zone => @zone))        
       end      
+      should "return non zero amount for a taxable item" do
+        assert_not_equal 0, Calculator::Vat.calculate_tax_on(@taxable)
+      end
     end
   end
 

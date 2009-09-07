@@ -15,8 +15,8 @@ class Charge < Adjustment
   end
 
   def calculate_tax_charge
+    return Calculator::Vat.calculate_tax(order) if order.shipment.address.blank? and Spree::Config[:show_price_inc_vat]
     return unless order.shipment.address
-    
     zones = Zone.match(order.shipment.address)
     tax_rates = zones.map{|zone| zone.tax_rates}.flatten.uniq
     calculated_taxes = tax_rates.map{|tax_rate| tax_rate.calculate_tax(order)}

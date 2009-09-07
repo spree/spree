@@ -9,6 +9,7 @@ class ActiveSupport::TestCase
 end
 
 I18n.locale = "en-US"
+Spree::Config.set(:default_country_id => Country.first.id) if Country.first
 
 ActionController::TestCase.class_eval do
   # special overload methods for "global"/nested params

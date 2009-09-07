@@ -10,15 +10,15 @@ class Calculator::Vat < Calculator
   end
 
   # list the vat rates for the default country
-  # TODO: Refactor this method after integrating #54 to use default address
-  def self.default_rates
-    return [] unless zone_member = ZoneMember.find(:first, :conditions => ["zoneable_id = #{Spree::Config[:default_country_id]} AND zoneable_type = 'Country'"])
-    TaxRate.find_all_by_zone_id_and_tax_type(zone_member.zone, TaxRate::TaxType::VAT)
+  def self.default_rates                                                                    
+    origin = Country.find(Spree::Config[:default_country_id])
+    calcs = Calculator::Vat.find(:all, :include => {:calculable => :zone}).select { 
+      |vat| vat.calculable.zone.country_list.include?(origin) 
+    }
+    calcs.collect { |calc| calc.calculable }
   end
 
   def self.calculate_tax(order, rates=default_rates)
-    ActiveSupport::Deprecation.warn("please use Calculator::Vat#compute instead", caller)
-
     return 0 if rates.empty?
     # note: there is a bug with associations in rails 2.1 model caching so we're using this hack
     # (see http://rails.lighthouseapp.com/projects/8994/tickets/785-caching-models-fails-in-development)
@@ -58,14 +58,6 @@ class Calculator::Vat < Calculator
     line_items = order.line_items.select { |i| i.product.tax_category == rate.tax_category }
     line_items.inject(0) {|sum, line_item|
       sum += (line_item.price * rate.amount * line_item.quantity)
-    }    
-    # rate = self.calculable
-    # line_items = LineItem.find(:all, {
-    #     :include => {:variant => :product},
-    #     :conditions => ["line_items.order_id = ? AND products.tax_category_id = ?", order.id, rate.tax_category_id]
-    # })
-    # line_items.inject(0) {|sum, line_item|
-    #   sum += line_item.total * rate.amount
-    # }
+    }
   end
 end
