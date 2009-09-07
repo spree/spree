@@ -9,3 +9,8 @@ Factory.define(:user) do |record|
 end
 
 ###### ADD YOUR CODE BELOW THIS LINE #####
+
+Factory.define(:admin_user, :parent => :user) do |u|
+  u.roles { [Role.find_by_name("admin") || Factory(:admin_role)]}
+end
+

@@ -1,8 +1,8 @@
 unless defined? SPEC_ROOT
   ENV["RAILS_ENV"] = "test"
-  
+
   SPEC_ROOT = File.expand_path(File.dirname(__FILE__))
-  
+
   unless defined? SPREE_ROOT
     if env_file = ENV["SPREE_ENV_FILE"]
       require env_file
@@ -12,9 +12,8 @@ unless defined? SPEC_ROOT
   end
   require 'spec'
   require 'spec/rails'
-#  require 'scenarios'
-  require File.expand_path(File.dirname(__FILE__) + "/preference_factory")
-  
+  # require 'scenarios'
+
   class Test::Unit::TestCase
     class << self
       # Class method for test helpers
@@ -34,22 +33,22 @@ unless defined? SPEC_ROOT
             retry
           end
         end
-      end    
+      end
       alias :test_helpers :test_helper
     end
   end
-  
+
   Dir[SPREE_ROOT + '/spec/matchers/*_matcher.rb'].each do |matcher|
     require matcher
   end
-  
+
 #  Scenario.load_paths.unshift "#{SPREE_ROOT}/spec/scenarios"
-  
+
   Spec::Runner.configure do |config|
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
-    
+
     # You can declare fixtures for each behaviour like this:
     #   describe "...." do
     #     fixtures :table_a, :table_b
