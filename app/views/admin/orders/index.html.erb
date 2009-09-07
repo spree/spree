@@ -12,7 +12,7 @@
       <th><%= order @search, :by => :created_at,       :as => t("order_date") %></th>
       <th><%= order @search, :by => :number,           :as => t("order_number") %></th>
       <th><%= order @search, :by => :state,            :as => t("status") %></th>
-      <th><%= order @search, :by => {:user => :email}, :as => t("customer") %></th>
+      <th><%= order @search, :by => :checkout_email,   :as => t("customer") %></th>
       <th><%= order @search, :by => :total,            :as => t("total") %></th>
     </tr>
   </thead>
