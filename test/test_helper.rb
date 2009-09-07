@@ -1,7 +1,7 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
-require "authlogic/test_case" 
+require "authlogic/test_case"
 
 class ActiveSupport::TestCase
   self.use_transactional_fixtures = true
@@ -10,6 +10,10 @@ end
 
 I18n.locale = "en-US"
 Spree::Config.set(:default_country_id => Country.first.id) if Country.first
+
+class ActionController::TestCase
+    setup :activate_authlogic
+end
 
 ActionController::TestCase.class_eval do
   # special overload methods for "global"/nested params
@@ -20,7 +24,7 @@ ActionController::TestCase.class_eval do
       super action, @params.merge( params || {} ), *extras if @params
     end
   end
-end  
+end
 
 def setup
   super
@@ -28,7 +32,7 @@ def setup
 end
 
 class TestCouponCalc
-  def self.calculate_discount(checkout)    
+  def self.calculate_discount(checkout)
     0.99
   end
 end
@@ -38,6 +42,7 @@ class Zone
     find_by_name("GlobalZone") || Factory(:global_zone)
   end
 end
+
 def create_complete_order
   @zone = Zone.global
   @order = Factory(:order)
@@ -53,6 +58,7 @@ def create_complete_order
   @order.shipment.shipping_method = @shipping_method
   @order.shipment.address = Factory(:address)
   @checkout.bill_address = Factory(:address)
+
   unless @zone.include?(@order.shipment.address)
     ZoneMember.create(:zone => Zone.global, :zoneable => @order.shipment.address.country)
     @zone.reload
@@ -63,4 +69,3 @@ def create_complete_order
   @order.save
   @order.reload
 end
-
