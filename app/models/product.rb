@@ -31,7 +31,7 @@ class Product < ActiveRecord::Base
   
   has_one :master, 
     :class_name => 'Variant', 
-    :conditions => ["is_master = ?", true], 
+    :conditions => ["is_master = ? AND deleted_at IS NULL", true], 
     :dependent => :destroy
   delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
   after_create :set_master_variant_defaults
@@ -39,7 +39,7 @@ class Product < ActiveRecord::Base
   after_save :save_master
   
   has_many :variants, 
-    :conditions => ["is_master = ?", false], 
+    :conditions => ["is_master = ? AND deleted_at IS NULL", false], 
     :dependent => :destroy
 
     validates_presence_of :name
