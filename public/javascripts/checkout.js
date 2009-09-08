@@ -526,3 +526,21 @@ var ajax_coupon = function() {
     }
   });  	
 };
+
+var update_addresses = function(addresses) {
+  fields = new Array('lastname', 'firstname', 'city', 'address1', 'zipcode', 'phone');
+  if (addresses.bill_address) {
+    for (x in fields) {
+      $('#checkout_bill_address_attributes_'+fields[x]).val(addresses.bill_address.address[fields[x]]);
+    }
+    $('#bstate select option[value=' + addresses.bill_address.address['state_id'] + ']').attr('selected', true);
+    $('#bcountry select option[value=' + addresses.bill_address.address['country_id'] + ']').attr('selected', true);
+  }
+  if (addresses.ship_address) {
+    for (x in fields) {
+      $('#checkout_shipment_attributes_address_attributes_'+fields[x]).val(addresses.ship_address.address[fields[x]]);      
+    }
+    $('#sstate select option[value=' + addresses.ship_address.address['state_id'] + ']').attr('selected', true);
+    $('#scountry select option[value=' + addresses.ship_address.address['country_id'] + ']').attr('selected', true);
+  }  
+}

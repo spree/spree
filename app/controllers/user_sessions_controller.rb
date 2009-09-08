@@ -22,7 +22,8 @@ class UserSessionsController < Spree::BaseController
         end
       }
       format.js {
-        render :js => success.to_json
+        user = success ? @user_session.record : nil
+        render :json => user ? {:ship_address => user.ship_address, :bill_address => user.bill_address}.to_json : success.to_json
       }
     end    
   end
