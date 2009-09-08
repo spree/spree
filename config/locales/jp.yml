@@ -412,6 +412,8 @@ jp:
   orders: 注文
   out_of_stock: 在庫切りです
   overview: 概要
+  page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
+  page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: 支払い済み
   parent_category: "Parent Category"
   password: パスワード

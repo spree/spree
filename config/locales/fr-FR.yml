@@ -412,6 +412,8 @@ fr-FR:
   orders: Commandes
   out_of_stock: "En rupture de stock"
   overview: Vue d'ensemble
+  page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
+  page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Payer
   parent_category: "Catégorie racine"
   password: Mot de passe
