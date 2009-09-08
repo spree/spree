@@ -3,6 +3,7 @@ require 'test_helper'
 class LineItemTest < Test::Unit::TestCase
   context "LineItem instance" do
     setup { @line_item = Factory.build(:line_item, :quantity => 2, :price => 15.00) }
+    subject { @line_item }
     should "be valid" do
       assert @line_item.valid?
     end
@@ -14,21 +15,21 @@ class LineItemTest < Test::Unit::TestCase
         assert !@line_item.valid?
       end
     end
-    
+
     context "increment_quantity call" do
       setup { @line_item.increment_quantity }
-      should_change "@line_item.quantity", :by => 1
-      #assert_equal 2, @line_item.quantity       
+      should_change("@line_item.quantity", :by => 1) { @line_item.quantity }
+      #assert_equal 2, @line_item.quantity
     end
-    
+
     should "return the correct total" do
       assert_in_delta @line_item.total, 30.00, 0.00001
-    end        
+    end
   end
-  
+
   context "when variant is out of stock" do
     setup { @line_item = Factory.build(:line_item, :quantity => 4) }
-
+    subject { @line_item }
     context "when backordering is allowed" do
       setup { Spree::Config.set(:allow_backorders => true) }
       should "not be valid" do
@@ -37,7 +38,7 @@ class LineItemTest < Test::Unit::TestCase
     end
 
     context "when backordering is disallowed" do
-      setup { Spree::Config.set(:allow_backorders => false) }    
+      setup { Spree::Config.set(:allow_backorders => false) }
       teardown { Spree::Config.set(:allow_backorders => true) }
       should "disallow creation for an out of stock variant" do
         assert !@line_item.valid?
@@ -50,6 +51,7 @@ class LineItemTest < Test::Unit::TestCase
       @line_item = Factory.build(:line_item, :variant => Factory(:variant, :on_hand => "1"), :quantity => 2)
     end
 
+    subject { @line_item }
     context "when backordering is allowed" do
       setup do
         Spree::Config.set(:allow_backorders => true)

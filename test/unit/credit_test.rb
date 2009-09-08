@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class CreditTest < ActiveSupport::TestCase
-  should_validate_presence_of :amount     
+  should_validate_presence_of :amount
   should_validate_numericality_of :amount
   should_validate_presence_of :description
   context "order instance with discounts" do
@@ -32,20 +32,20 @@ class CreditTest < ActiveSupport::TestCase
         Factory(:credit, :amount => 1.00, :order => @order)
         @order.save
       end
-      
-      should_change "@order.total", :by => BigDecimal("-1.00")
-      should_change "@order.credit_total", :by => BigDecimal("1.00")
-      should_not_change "@order.item_total"
+
+      should_change("@order.total", :by => BigDecimal("-1.00")) { @order.total }
+      should_change("@order.credit_total", :by => BigDecimal("1.00")) { @order.credit_total }
+      should_not_change("@order.item_total") { @order.item_total }
     end
-    
+
     context "when destroying a credit" do
-      setup do 
+      setup do
         @order.credits.destroy_all
         @order.save
       end
-      should_change "@order.total", :by => BigDecimal("2.00")
-      should_change "@order.credit_total", :by => BigDecimal("-2.00")
-      should_not_change "@order.item_total"
+      should_change("@order.total", :by => BigDecimal("2.00")) { @order.total }
+      should_change("@order.credit_total", :by => BigDecimal("-2.00")) { @order.credit_total }
+      should_not_change("@order.item_total") { @order.item_total }
     end
-  end  
+  end
 end

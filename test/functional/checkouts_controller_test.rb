@@ -2,9 +2,9 @@ require 'test_helper'
 
 class CheckoutsControllerTest < ActionController::TestCase
   fixtures :countries, :states, :gateways, :gateway_configurations
-  
+
   context "given current_user" do
-    setup do 
+    setup do
       @user = Factory(:user, :email => "test@example.com")
       @controller.stub!(:current_user, :return => @user)
       @order = Factory.create(:order)
@@ -16,7 +16,7 @@ class CheckoutsControllerTest < ActionController::TestCase
     context "post" do
       setup do
         @params = { :final_answer => true, :order_id => @order.number }
-        @shipping_method = Factory(:shipping_method)               
+        @shipping_method = Factory(:shipping_method)
         @params[:final_answer] = true
         @params[:checkout] = {
           :bill_address_attributes => @address.attributes.symbolize_keys,
@@ -27,10 +27,10 @@ class CheckoutsControllerTest < ActionController::TestCase
           },
           :creditcard => @creditcard.attributes.symbolize_keys,
         }
-        post :update 
+        post :update
       end
-      should_change "Address.count", :by => 2
-      should_redirect_to("order completion page") { order_url(@order, :checkout_complete => true) }    
+      should_change("Address.count", :by => 2) { Address.count }
+      should_redirect_to("order completion page") { order_url(@order, :checkout_complete => true) }
       should "assign the current_user email" do
         assert_equal "test@example.com", assigns(:checkout).email
       end
@@ -50,28 +50,28 @@ class CheckoutsControllerTest < ActionController::TestCase
     context "xhr put" do
       setup { xhr :put, :update }
       should_respond_with :success
-    end  
+    end
 
     context "xhr put with valid coupon code" do
       setup do
-        @coupon = Factory(:coupon, :code => "FOO") 
+        @coupon = Factory(:coupon, :code => "FOO")
         xhr :put, :update, :checkout => { :coupon_code => "FOO" }, :order_id => @order.id
       end
-      should_change "@order.credits.count", :by => 1
+      should_change("@order.credits.count", :by => 1) { @order.credits.count }
     end
 
     context "xhr put with invalid coupon code" do
       setup { xhr :put, :update, :coupon_code => "BOGUS", :order_id => @order.id }
       should_respond_with :success
-      should_not_change "@order.credits.count"
+      should_not_change("@order.credits.count") { @order.credits.count }
     end
-    
+
     context "xhr put with bill and ship address" do
-      setup do 
+      setup do
         xhr :put, :update, :bill_address_attributes => Factory.build(:address).attributes.symbolize_keys,
           :ship_address_attributes => Factory.build(:address).attributes.symbolize_keys
       end
       should_respond_with :success
-    end  
+    end
   end
 end
