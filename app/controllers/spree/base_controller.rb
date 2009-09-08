@@ -45,20 +45,21 @@ class Spree::BaseController < ApplicationController
  
   protected
   def reject_unknown_object
-    # workaround to catch problems with loading errors for permalink ids (reconsider RC hack elsewhere?)
+    # workaround to catch problems with loading errors for permalink ids (reconsider RC permalink hack elsewhere?)
     begin 
       load_object
     rescue Exception => e
       @object = nil
     end
     the_object = instance_variable_get "@#{object_name}"
-    if params[:id] && the_object.nil? 
+    if the_object.nil? 
       if self.respond_to? :object_missing
         self.object_missing(params[:id])
       else 
         render_404 Exception.new("missing object in #{self.class.to_s}")
       end
     end
+    return true 
   end         
   
   def render_404(exception)
