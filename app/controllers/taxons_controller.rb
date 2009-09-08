@@ -1,5 +1,5 @@
 class TaxonsController < Spree::BaseController
-  prepend_before_filter :reject_unknown_object
+  prepend_before_filter :reject_unknown_object, :only => [:show]
   before_filter :load_data, :only => :show
   resource_controller
   actions :show
