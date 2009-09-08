@@ -412,6 +412,8 @@ fi:
   orders: Tilaukset
   out_of_stock: "Ei saatavilla"
   overview: Yleiskuva
+  page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
+  page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Maksettu
   parent_category: Yläkategoria
   password: Salasana

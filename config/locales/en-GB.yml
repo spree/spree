@@ -412,6 +412,8 @@ en-GB:
   orders: Orders
   out_of_stock: "Out of Stock"
   overview: Overview
+  page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
+  page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Paid
   parent_category: "Parent Category"
   password: Password
