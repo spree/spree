@@ -10,10 +10,10 @@ class Calculator::Vat < Calculator
   end
 
   # list the vat rates for the default country
-  def self.default_rates                                                                    
+  def self.default_rates
     origin = Country.find(Spree::Config[:default_country_id])
-    calcs = Calculator::Vat.find(:all, :include => {:calculable => :zone}).select { 
-      |vat| vat.calculable.zone.country_list.include?(origin) 
+    calcs = Calculator::Vat.find(:all, :include => {:calculable => :zone}).select {
+      |vat| vat.calculable.zone.country_list.include?(origin)
     }
     calcs.collect { |calc| calc.calculable }
   end
@@ -23,7 +23,7 @@ class Calculator::Vat < Calculator
     # note: there is a bug with associations in rails 2.1 model caching so we're using this hack
     # (see http://rails.lighthouseapp.com/projects/8994/tickets/785-caching-models-fails-in-development)
     cache_hack = rates.first.respond_to?(:tax_category_id)
-  
+
     taxable_totals = {}
     order.line_items.each do |line_item|
       next unless tax_category = line_item.variant.product.tax_category
@@ -32,7 +32,7 @@ class Calculator::Vat < Calculator
       taxable_totals[tax_category] ||= 0
       taxable_totals[tax_category] += line_item.price * rate.amount * line_item.quantity
     end
-    
+
     return 0 if taxable_totals.empty?
     tax = 0
     taxable_totals.values.each do |total|
@@ -49,7 +49,7 @@ class Calculator::Vat < Calculator
     return 0 unless tax_category = product_or_variant.is_a?(Product) ? product_or_variant.tax_category : product_or_variant.product.tax_category
     return 0 unless rate = vat_rates.find { | vat_rate | vat_rate.tax_category_id = tax_category.id }
 
-    (product_or_variant.is_a?(Product) ? product_or_variant.master_price : product_or_variant.price) * rate.amount
+    (product_or_variant.is_a?(Product) ? product_or_variant.price : product_or_variant.price) * rate.amount
   end
 
   # computes vat for line_items associated with order, and tax rate

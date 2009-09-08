@@ -5,12 +5,12 @@ class AddressTest < ActiveSupport::TestCase
     should_validate_presence_of :firstname, :lastname, :address1,
       :city, :zipcode, :country, :phone
 
-    # this validation disabled for now 
+    # this validation disabled for now
     # should_not_allow_values_for :phone, "abcd", "1234"
 
     context "create from factory" do
       setup { Factory :address }
-      should_change "Address.count", :by => 1
+      should_change("Address.count", :by => 1) { Address.count }
     end
 
     context "instance" do
@@ -18,7 +18,7 @@ class AddressTest < ActiveSupport::TestCase
         @address = Factory(:address)
       end
 
-      # these two properties now under control of checkout controller 
+      # these two properties now under control of checkout controller
       # should "not be allowed to be changed when have checkout" do
       # should "not be allowed to be changed when have shippment" do
     end
