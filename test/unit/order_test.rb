@@ -53,7 +53,19 @@ class OrderTest < ActiveSupport::TestCase
       should "update checkout completed_at" do
         assert(@order.checkout.completed_at, "Checkout#completed_at was not updated")
       end
+
+      context "with empty stock" do
+        setup do
+          line_item = @order.line_items.first
+          num_left = line_item.variant.inventory_units.with_state("on_hand").count
+          InventoryUnit.destroy_on_hand(line_item.variant, num_left)
+        end
+        should "be able to save order when allow_backorders is off" do
+          Spree::Config.set(:allow_backorders => false)
+          assert(@order.save == true, "Completed order could not be saved")
+          Spree::Config.set(:allow_backorders => true)
+        end
+      end
     end
   end
-
 end
