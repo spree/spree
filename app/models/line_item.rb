@@ -15,7 +15,10 @@ class LineItem < ActiveRecord::Base
     unless quantity && quantity >= 0
       errors.add(:quantity, "must be a non-negative value")
     end
-    unless variant and quantity <= variant.on_hand || Spree::Config[:allow_backorders]
+    # avoid reload of order.inventory_units by using direct lookup
+    unless Spree::Config[:allow_backorders]                               ||
+           order   && InventoryUnit.order_id_equals(order).first.present? || 
+           variant && quantity <= variant.on_hand                         
       errors.add(:quantity, " is too large-- stock on hand cannot cover requested quantity!")
     end
   end
