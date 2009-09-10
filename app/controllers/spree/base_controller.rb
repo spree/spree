@@ -52,7 +52,7 @@ class Spree::BaseController < ApplicationController
       @object = nil
     end
     the_object = instance_variable_get "@#{object_name}"
-    if the_object.nil? 
+    unless params[:id].blank? || the_object
       if self.respond_to? :object_missing
         self.object_missing(params[:id])
       else 
