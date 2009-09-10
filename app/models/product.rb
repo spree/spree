@@ -35,6 +35,7 @@ class Product < ActiveRecord::Base
     :dependent => :destroy
   delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
   after_create :set_master_variant_defaults
+  after_create :add_properties_and_option_types_from_prototype
   after_save :set_master_on_hand_to_zero_when_product_has_variants    
   after_save :save_master
   
@@ -137,22 +138,22 @@ class Product < ActiveRecord::Base
   # ----------------------------------------------------------------------------------------------------------
   
   def master_price
-    warn "[DEPRECATION] `Product.master_price` is deprecated.  Please use `Product.price` instead." unless RAILS_ENV == 'test'
+    warn "[DEPRECATION] `Product.master_price` is deprecated.  Please use `Product.price` instead. (called from #{caller[0]}"
     self.price
   end
   
   def master_price=(value)
-    warn "[DEPRECATION] `Product.master_price=` is deprecated.  Please use `Product.price=` instead."
+    warn "[DEPRECATION] `Product.master_price=` is deprecated.  Please use `Product.price=` instead. (called from #{caller[0]}"
     self.price = value
   end
   
   def variants?
-    warn "[DEPRECATION] `Product.variants?` is deprecated.  Please use `Product.has_variants?` instead."
+    warn "[DEPRECATION] `Product.variants?` is deprecated.  Please use `Product.has_variants?` instead. (called from #{caller[0]})"
     self.has_variants?
   end
   
   def variant
-    warn "[DEPRECATION] `Product.variant` is deprecated.  Please use `Product.master` instead."
+    warn "[DEPRECATION] `Product.variant` is deprecated.  Please use `Product.master` instead. (called from #{caller[0]})"
     self.master
   end
 
@@ -187,7 +188,6 @@ class Product < ActiveRecord::Base
   def prototype_id=(value)
     @prototype_id = value.to_i
   end
-  after_create :add_properties_and_option_types_from_prototype
   
   def add_properties_and_option_types_from_prototype
     if prototype_id and prototype = Prototype.find_by_id(prototype_id)

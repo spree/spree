@@ -57,11 +57,7 @@ class Variant < ActiveRecord::Base
   def in_stock?
     on_hand > 0
   end
-
-  def in_stock
-    warn "[DEPRECATION] `Variant.in_stock` is deprecated.  Please use `Variant.in_stock?` instead."
-    self.in_stock?
-  end
+  alias in_stock in_stock?
   
   def self.additional_fields
     @fields
