@@ -1,7 +1,16 @@
+# Legacy version of model so migrations work with legacy Spree data
 class Order < ActiveRecord::Base  
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"  
   has_many :shipments
+end                           
+
+# Legacy version of model so migrations work with legacy Spree data
+class Checkout < ActiveRecord::Base
+  belongs_to :order
+  belongs_to :shipping_method
+  belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
+  belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"  
 end
 
 class CreateCheckouts < ActiveRecord::Migration
@@ -24,12 +33,6 @@ class CreateCheckouts < ActiveRecord::Migration
 
     Checkout.reset_column_information
     Creditcard.reset_column_information
-
-    Checkout.class_eval do
-      # temporarily disable the charge stuff since its interfering with this migration
-      def update_charges
-      end
-    end
         
     # move address, etc. from order to checkout
     Order.all.each do |order|             

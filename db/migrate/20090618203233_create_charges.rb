@@ -1,9 +1,23 @@
-# Temporarily redefine the Order object so we can migrate legacy data without problems
-# class Order < ActiveRecord::Base  
-#   has_many :charges, :order => :position
-#   has_many :shipping_charges
-#   has_many :tax_charges
-# end  
+# Legacy version of model so migrations work with legacy Spree data
+class Order < ActiveRecord::Base  
+  has_many :charges, :order => :position
+  has_many :shipping_charges
+  has_many :tax_charges
+end  
+   
+# Legacy version of model so migrations work with legacy Spree data
+class Charge < ActiveRecord::Base
+  belongs_to :order
+  acts_as_list :scope => :order
+end
+
+# Legacy version of model so migrations work with legacy Spree data
+class ShippingCharge < Charge
+end
+
+# Legacy version of model so migrations work with legacy Spree data
+class TaxCharge < Charge
+end
 
 class CreateCharges < ActiveRecord::Migration
   def self.up
