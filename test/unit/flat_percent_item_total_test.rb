@@ -20,7 +20,7 @@ class FlatPercentItemTotalTest < ActiveSupport::TestCase
 
       context "apply the percentage rate" do
         should "compute ten percent" do
-          assert_equal (123 * 10 / 100.0), @calculator.compute(@order)
+          assert_equal((123 * 10 / 100.0), @calculator.compute(@order))
         end
       end       
     end
