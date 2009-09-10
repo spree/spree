@@ -11,9 +11,14 @@ class Calculator::FlexiRate < Calculator
     true
   end
 
-  def compute(object = nil)
-    object ||= self.calculable
-    
+  def self.register
+    super
+    Coupon.register_calculator(self)
+    ShippingMethod.register_calculator(self)
+    ShippingRate.register_calculator(self)
+  end
+
+  def compute(object)
     sum = 0
     max = self.preferred_max_items
     object.length.times do |i|
