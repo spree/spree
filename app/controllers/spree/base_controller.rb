@@ -67,6 +67,7 @@ class Spree::BaseController < ActionController::Base
       @object = nil
     end
     the_object = instance_variable_get "@#{object_name}"
+    the_object = nil if (the_object.respond_to?(:deleted_at) && the_object.deleted_at)
     unless params[:id].blank? || the_object
       if self.respond_to? :object_missing
         self.object_missing(params[:id])
