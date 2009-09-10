@@ -1,18 +1,18 @@
 # Allow the metal piece to run in isolation
 require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Rails)
 
-class CreateAdminUser
+# note: we're not returning 404 in the usuaul sense - it actually just tells rails to continue metal chain
+class CreateAdminUser  
   
-  # note: this is not really a true 404 - it actually just tells rails to continue metal chain
-  CONTINUE_CHAIN = [404, {"Content-Type" => "text/html"}, ["Not Found"]]
-  
-  def self.call(env)
-    session = env["rack.session"]
-    return CONTINUE_CHAIN if env["PATH_INFO"] =~ /^\/users/ or session['admin-user'] or not User.table_exists?
-    session['admin-user'] = User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
-    return CONTINUE_CHAIN if session['admin-user'] 
-    # redirect to user creation
-    [302, {'Location'=> '/users/new' }, []]
+  def self.call(env)                
+    if env["PATH_INFO"] =~ /^\/users/ or @admin_defined or not User.table_exists?
+      @status = [404, {"Content-Type" => "text/html"}, "Not Found"]
+    else
+      @admin_defined = User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
+      @status = [404, {"Content-Type" => "text/html"}, "Not Found"] if @admin_defined
+    end
+    # redirect to user creation screen
+    return @status || [302, {'Location'=> '/users/new' }, []]
   ensure
     # Release the connections back to the pool.
     ActiveRecord::Base.clear_active_connections!
