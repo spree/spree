@@ -8,13 +8,13 @@ class PreferenceTest < ActiveSupport::TestCase
       end
 
       should "have empty values" do
-        assert_equal nil, @preference.attribute
-        assert_equal nil, @preference.owner
-        assert_equal nil, @preference.owner_type
-        assert_equal nil, @preference.group_id
-        assert_equal nil, @preference.group_type
-        assert_equal nil, @preference.value
-        assert_equal nil, @preference.definition
+        assert @preference.attribute.blank?
+        assert @preference.owner.blank?
+        assert @preference.owner_type.blank?
+        assert @preference.group_id.blank?
+        assert @preference.group_type.blank?
+        assert @preference.value.blank?
+        assert @preference.definition.blank?
       end
     end
 
