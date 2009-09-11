@@ -232,7 +232,8 @@ var submit_shipping = function() {
     dataType: "json",
     data: $('#checkout_form').serialize(),
     success: function(json) {  
-      update_shipping_methods(json.available_methods); 
+      update_shipping_methods(json.available_methods);            
+      update_confirmation(json);      
     },
     error: function (XMLHttpRequest, textStatus, errorThrown) {
       $('div#methods :child').remove();
@@ -326,16 +327,6 @@ var update_confirmation = function(order) {
   $('span#order_total').html(order.order_total);
   $('span#summary-order-total').html(order.order_total);
 };
-
-var update_summary = function(order) {
-  var textToInsert = '';
-  for (var key in order.charges) {
-    textToInsert  += '<tr><td colspan="3"><strong>' + key + '</strong></td><td class="total_display"><span>' + order.charges[key] + '</span></td>';
-  }
-  $('tbody#summary-order-charges').html(textToInsert);  
-  $('tbody#summary-order-credits').html(textToInsert);    
-  $('span#summary-order-total').html(order.order_total);
-};      
 
 var submit_registration = function() {
   // no need to do any ajax, user is already logged in
