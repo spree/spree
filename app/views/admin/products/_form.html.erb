@@ -36,11 +36,29 @@
       <%= f.label :sku, t("sku") %><br />
       <%= f.text_field :sku, :size => 16 %>
     </p>   
-    <% unless @product.has_variants? %>
+    <% unless @product.has_variants? %>    
       <p>
         <%= f.label :on_hand, t("on_hand")%><br />
-        <%= f.text_field :on_hand, :size => 4 %>        
+        <%= f.text_field :on_hand, :size => 4 %>      
       </p>
+      <ul id="shipping-specs">
+        <li>
+          <%= f.label :weight, t("weight")%>
+          <%= f.text_field :weight, :size => 4 %>        
+        </li>                        
+        <li>
+          <%= f.label :height, t("height")%>
+          <%= f.text_field :height, :size => 4 %>        
+        </li>
+        <li>
+          <%= f.label :width, t("width")%>
+          <%= f.text_field :width, :size => 4 %>        
+        </li>
+        <li>
+          <%= f.label :depth, t("depth")%>
+          <%= f.text_field :depth, :size => 4 %>        
+        </li>
+      </ul>
     <% end %>
     <p>
       <%= f.label :shipping_category_id, t("shipping_categories")%><br />    

@@ -448,3 +448,12 @@ div#calculator-settings-warning {
 	vertical-align:middle;
 	padding-right:10px;
 }
+ 
+ul#shipping-specs {
+  margin: 0;  
+  padding-bottom:10px;  
+}
+ul#shipping-specs li {
+  list-style-image:none;
+  display:inline;
+}
