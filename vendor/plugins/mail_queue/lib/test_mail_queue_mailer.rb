@@ -1,6 +1,6 @@
 
 
-class TestMailQueueMailer < ActionMailer::Base 
+class TestMailQueueMailer < ActionMailer::QueueMailer 
   
   def notify(sent_at = Time.now) 
     @subject = 'TestMailerClass#notify' 

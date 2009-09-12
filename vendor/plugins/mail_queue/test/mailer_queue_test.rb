@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../../../test/test_helper' 
 require 'test_mail_queue_mailer' 
-
+Spree::Config.set(:use_mail_queue => true)
 
 class MailQueueTest < Test::Unit::TestCase
   
