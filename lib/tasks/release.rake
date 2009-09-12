@@ -14,17 +14,17 @@ RELEASE_NAME  = PKG_VERSION
 RUBY_FORGE_GROUPID = '5614'
 RUBY_FORGE_PACKAGEID = '7123'
 
-RDOC_TITLE = "Spree -- Complete Commerce Solution for Ruby on Rails"
+RDOC_TITLE = "Spree: Complete E-Commerce Solution for Ruby on Rails"
 RDOC_EXTRAS = ["README.markdown", "CONTRIBUTORS", "CHANGELOG", "INSTALL", "LICENSE"]
 
 namespace 'spree' do
   spec = Gem::Specification.new do |s|
     s.name = PKG_NAME
     s.version = PKG_VERSION
-    s.summary = 'A complete commerce solution for Ruby on Rails.'
-    s.description = "Spree is a complete commerce solution designed for use by experienced Rails developers. No solution can possibly solve everyone’s needs perfectly. There are simply too many ways that people do business for us to model them all specifically. Rather then come up short (like so many projects before it), Spree’s approach is to simply accept this and not even try. Instead Spree tries to focus on solving the 90% of the problem that most commerce projects face and anticipate that the other 10% will need to be addressed by the end developer familiar with the client’s exact business requirements."
+    s.summary = 'A complete e-commerce solution for Ruby on Rails.'
+    s.description = "Spree is a complete e-commerce solution designed for use by experienced Rails developers. No solution can possibly solve everyone’s needs perfectly. There are simply too many ways that people do business for us to model them all specifically. Rather then come up short (like so many projects before it), Spree’s approach is to simply accept this and not even try. Instead Spree tries to focus on solving the 90% of the problem that most commerce projects face and anticipate that the other 10% will need to be addressed by the end developer familiar with the client’s exact business requirements."
     s.author = "Sean Schofield"
-    s.email = "sean.schofield@gmail.com"
+    s.email = "sean@railsdog.com"
     s.homepage = 'http://spreecommerce.com/'
     s.rubyforge_project = RUBY_FORGE_PROJECT
     s.platform = Gem::Platform::RUBY
@@ -32,15 +32,18 @@ namespace 'spree' do
     s.executables = ['spree']
     s.add_dependency 'rake', '>= 0.7.1'
     s.add_dependency 'highline', '>= 1.4.0'
-    s.add_dependency 'rails', '= 2.3.2'
-    s.add_dependency 'activemerchant', '>= 1.4.1'
-    s.add_dependency 'activerecord-tableless', '>= 0.1.0' 
+    s.add_dependency 'rails', '= 2.3.4'
+    s.add_dependency 'activemerchant', '= 1.4.1'
+    s.add_dependency 'activerecord-tableless', '>= 0.1.0'
+    #s.add_dependency 'authlogic', '>=2.0.11'  (For some reason including authlogic causes bug - see #433)
     s.add_dependency 'calendar_date_select', '= 1.15' 
+    s.add_dependency 'haml-edge', '>=2.1.37'
+    s.add_dependency 'chronic', '>=0.2.3'
     s.add_dependency 'tlsmail', '= 0.0.1' 
     s.add_dependency 'rspec', '>= 1.2.0'
-    s.add_dependency 'rspec-rails', '>= 1.2.0' 
-    # For some reason the authlogic dependency really screws things up (See Issue #433)
-    #s.add_dependency 'authlogic', '>= 2.0.11'
+    s.add_dependency 'rspec-rails', '>= 1.2.0'
+    s.add_dependency 'searchlogic', ">=2.1.13" 
+
     s.has_rdoc = true
     #s.rdoc_options << '--title' << RDOC_TITLE << '--line-numbers' << '--main' << 'README'
     rdoc_excludes = Dir["**"].reject { |f| !File.directory? f }
