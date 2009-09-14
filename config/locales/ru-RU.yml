@@ -167,6 +167,7 @@ ru-RU:
   add_state: "Добавить субъект федерации"
   add_to_cart: "Добавить в корзину"
   add_zone: "Добавить зону"
+  additional_item: Additional Item Cost
   address: "Адрес"
   address_information: "Адресная информация"
   adjustment: "Поправка(Adjustment)"
@@ -284,6 +285,7 @@ ru-RU:
   extensions: "Расширения"
   filename: "Имя файла"
   final_confirmation: "Окончательное подтверждение"
+  first_item: First Item Cost
   first_name: "Имя"
   flat_percent: "Фиксированный процент"
   flat_rate_amount: "Сумма фиксированной ставки"
@@ -351,6 +353,7 @@ ru-RU:
   mail_server_settings: "Установки почтового сервера"
   mark_shipped: "Отметить как доставленный"
   master_price: "Основная цена"
+  max_items: Max Items
   meta_description: "Описание"
   meta_keywords: "Ключевые слова"
   metadata: "Метаданные"

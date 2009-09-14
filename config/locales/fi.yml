@@ -167,6 +167,7 @@ fi:
   add_state: "Lisää osavaltio"
   add_to_cart: "Lisää ostoskoriin"
   add_zone: "Lisää alue"
+  additional_item: Additional Item Cost
   address: Osoite
   address_information: Osoitetiedot
   adjustment: Säätö
@@ -284,6 +285,7 @@ fi:
   extensions: Laajennukset
   filename: Tiedostonimi
   final_confirmation: "Lopullinen vahvistus"
+  first_item: First Item Cost
   first_name: Etunimi
   flat_percent: Tasaprosentti
   flat_rate_amount: Määrä
@@ -351,6 +353,7 @@ fi:
   mail_server_settings: "Sähköpostipalvelimen asetukset"
   mark_shipped: "Merkitse toimitetuksi"
   master_price: Toimitushinta
+  max_items: Max Items
   meta_description: Meta-kuvaus
   meta_keywords: Meta-avainsanat
   metadata: Metadata

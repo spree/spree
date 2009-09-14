@@ -167,6 +167,7 @@ de-CH:
   add_state: "Kanton hinzufügen"
   add_to_cart: "In den Warenkorb"
   add_zone: "Zone hinzufügen"
+  additional_item: Additional Item Cost
   address: Adresse
   address_information: "Adress-Information"
   adjustment: Anpassung
@@ -284,6 +285,7 @@ de-CH:
   extensions: Erweiterungen
   filename: Dateiname
   final_confirmation: "Endbestätigung"
+  first_item: First Item Cost
   first_name: Vorname
   flat_percent: Flat Percent
   flat_rate_amount: Amount
@@ -351,6 +353,7 @@ de-CH:
   mail_server_settings: "Mailserver-Einstellungen"
   mark_shipped: "Als versandt kennzeichnen"
   master_price: Grundpreis
+  max_items: Max Items
   meta_description: "Meta-Beschreibung"
   meta_keywords: "Meta-Schlüsselwörter"
   metadata: "Metadaten"

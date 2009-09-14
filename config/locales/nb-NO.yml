@@ -167,6 +167,7 @@ nb-NO:
   add_state: "Legg til tilstand"
   add_to_cart: "Legg i handlekurv"
   add_zone: "Legg til sone"
+  additional_item: Additional Item Cost
   address: Adresse
   address_information: "Adresseinformasjon"
   adjustment: Justering
@@ -284,6 +285,7 @@ nb-NO:
   extensions: Utvidelser
   filename: Filnavn
   final_confirmation: "Endelig bekreftelse"
+  first_item: First Item Cost
   first_name: "Fornavn"
   flat_percent: Flat Percent
   flat_rate_amount: Amount
@@ -351,6 +353,7 @@ nb-NO:
   mail_server_settings: "Innstillinger for epostserver"
   mark_shipped: "Merk som levert"
   master_price: "Ordinær pris"
+  max_items: Max Items
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
