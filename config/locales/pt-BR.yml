@@ -167,6 +167,7 @@ pt-BR:
   add_state: "Adicionar Estado"
   add_to_cart: "Adicionar ao Carrinho"
   add_zone: "Adicionar Zona"
+  additional_item: Additional Item Cost
   address: Endereço
   address_information: "Informação de Endereço"
   adjustment: Ajuste
@@ -284,6 +285,7 @@ pt-BR:
   extensions: Extensões
   filename: "Nome do arquivo"
   final_confirmation: "Confirmação Final"
+  first_item: First Item Cost
   first_name: "Primeiro Nome"
   flat_percent: Porcentagem Plana
   flat_rate_amount: Amount
@@ -351,6 +353,7 @@ pt-BR:
   mail_server_settings: "Configuração do Servidor de Email"
   mark_shipped: "Marcado como Enviado"
   master_price: "Preço Principal"
+  max_items: Max Items
   meta_description: "Meta Descrição"
   meta_keywords: "Meta Palavras-Chave"
   metadata: "Metadados"

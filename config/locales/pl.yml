@@ -167,6 +167,7 @@ pl:
   add_state: "Add State"
   add_to_cart: "Dodaj do koszyka"
   add_zone: "Add Zone"
+  additional_item: Additional Item Cost
   address: Adres
   address_information: "Address Information"
   adjustment: Dostosowanie
@@ -284,6 +285,7 @@ pl:
   extensions: Rozszerzenia
   filename: "Nazwa pliku"
   final_confirmation: "Ostateczne potwierdzenie"
+  first_item: First Item Cost
   first_name: Imię
   flat_percent: Flat Percent
   flat_rate_amount: Amount
@@ -351,6 +353,7 @@ pl:
   mail_server_settings: "Ustawienia serwera pocztowego"
   mark_shipped: "Mark Shipped"
   master_price: "Cena główna"
+  max_items: Max Items
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"

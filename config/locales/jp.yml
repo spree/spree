@@ -167,6 +167,7 @@ jp:
   add_state: 都道府県（州）の追加
   add_to_cart: カートに追加
   add_zone: "Add Zone"
+  additional_item: Additional Item Cost
   address: 住所
   address_information: 住所情報
   adjustment: 調整
@@ -284,6 +285,7 @@ jp:
   extensions: Extensions
   filename: ファイル名
   final_confirmation: 最終確認
+  first_item: First Item Cost
   first_name: 名前
   flat_percent: Flat Percent
   flat_rate_amount: Amount
@@ -351,6 +353,7 @@ jp:
   mail_server_settings: メールサーバ設定
   mark_shipped: "Mark Shipped"
   master_price: 定価
+  max_items: Max Items
   meta_description: メタ情報説明
   meta_keywords: メタキーワード
   metadata: メタデータ

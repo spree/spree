@@ -167,6 +167,7 @@ nl-NL:
   add_state: "Status Toevoegen"
   add_to_cart: "Toevoegen aan Winkelwagen"
   add_zone: "Zone toevoegen"
+  additional_item: Additional Item Cost
   address: Adres
   address_information: "Adresgegevens"
   adjustment: Aanpassing
@@ -284,6 +285,7 @@ nl-NL:
   extensions: Extensies
   filename: Bestandsnaam
   final_confirmation: "Definitieve bevestiging"
+  first_item: First Item Cost
   first_name: "Voornaam"
   flat_percent: Flat Percent
   flat_rate_amount: Amount
@@ -351,6 +353,7 @@ nl-NL:
   mail_server_settings: "Mail server Instellingen"
   mark_shipped: "Markeer verzonden"
   master_price: "Prijs"
+  max_items: Max Items
   meta_description: "Meta-beschrijving"
   meta_keywords: "Meta keywords"
   metadata: "Metadata"

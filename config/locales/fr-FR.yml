@@ -167,6 +167,7 @@ fr-FR:
   add_state: "Ajouter une région"
   add_to_cart: "Ajouter au panier"
   add_zone: "Ajouter une zone"
+  additional_item: Additional Item Cost
   address: Adresse
   address_information: "Informations complémentaire sur l'adresse"
   adjustment: Revalorisation
@@ -284,6 +285,7 @@ fr-FR:
   extensions: Prolongations
   filename: Nom du fichier
   final_confirmation: "Confirmation finale"
+  first_item: First Item Cost
   first_name: "Prenom"
   flat_percent: Flat Percent
   flat_rate_amount: Amount
@@ -351,6 +353,7 @@ fr-FR:
   mail_server_settings: "Paramètres du serveur de messagerie"
   mark_shipped: "Mark Shipped"
   master_price: "Prix de départ"
+  max_items: Max Items
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"

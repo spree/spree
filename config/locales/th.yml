@@ -167,6 +167,7 @@ th:
   add_state: "เพิ่มรัฐ"
   add_to_cart: เพิ่มลงตะกร้า
   add_zone: "Add Zone"
+  additional_item: Additional Item Cost
   address: ที่อยู่
   address_information: "Address Information"
   adjustment: Adjustment
@@ -284,6 +285,7 @@ th:
   extensions: Extensions
   filename: Filename
   final_confirmation: "การยืนยันขั้นสุดท้าย"
+  first_item: First Item Cost
   first_name: ชื่อแรก
   flat_percent: Flat Percent
   flat_rate_amount: Amount
@@ -351,6 +353,7 @@ th:
   mail_server_settings: เมลเซิร์ฟเวอร์ 
   mark_shipped: "Mark Shipped"
   master_price: ราคาหลัก
+  max_items: Max Items
   meta_description: รายละเอียด
   meta_keywords: คำสำคัญ
   metadata: ข้อมูลประกอบสินค้า

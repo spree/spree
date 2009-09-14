@@ -167,6 +167,7 @@ en-GB:
   add_state: "Add State"
   add_to_cart: "Add To Basket"
   add_zone: "Add Zone"
+  additional_item: Additional Item Cost
   address: Address
   address_information: "Address Information"
   adjustment: Adjustment
@@ -284,6 +285,7 @@ en-GB:
   extensions: Extensions
   filename: Filename
   final_confirmation: "Final Confirmation"
+  first_item: First Item Cost
   first_name: "First Name"
   flat_percent: Flat Percent
   flat_rate_amount: Amount
@@ -351,6 +353,7 @@ en-GB:
   mail_server_settings: "Mail Server Settings"
   mark_shipped: "Mark Shipped"
   master_price: "Master Price"
+  max_items: Max Items
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
