@@ -61,7 +61,7 @@ You may be asking yourself, "If the Product model doesn't have fields for price,
 
 The answer is through the use of a "Master Variant," which is generally <i>tucked away</i> as far as many site administrators are concerned.  This special variant record is always created with each new product record, so there is a direct one-to-one relationship between a product and a variant with the +is_master+ flag set to true.  
 
-NOTE: You only need to be cognizant about the master variant if you begin to manage products and inventory programatically. The administration interface keeps all this nitty gritty transparent to the end-user. If you're looking to get your store set up quickly through the administration interface, feel free to skip to the next section.
+NOTE: You only need to be cognizant about the master variant if you begin to manage products and inventory programatically. The administration interface keeps all this nitty gritty transparent to the end-user. If you're looking to get your store set up quickly through the administration interface, feel free to skip to the next section as it is not necessary to know how the master variants work to use the administration interface.
 
 The master variant will not show up in the +Product.variants+ array and plays no role in +Product.has_variants?+  For all intent and purposes, the master variant is transparent and you can access all the fields of the master variant instance as though it were a part of the Product model itself.  That is, 
 
