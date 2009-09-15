@@ -38,6 +38,15 @@ class OrderTest < ActiveSupport::TestCase
       assert_not_nil(@order.total)
     end
 
+    context "when line_items change" do
+      setup do 
+        @first_price = @order.line_items.first.price
+        @order.line_items.first.update_attribute(:quantity, @order.line_items.first.quantity + 1)
+        @order.save
+      end
+      should_change("item total", :by => @first_price) { @order.item_total }
+    end
+
     should "create default tax charge" do
       assert(@order.tax_charges.first, "Tax charge was not created")
     end
