@@ -44,7 +44,7 @@ class ChargeTest < ActiveSupport::TestCase
 
       should "have ship_address and at least one zone address belongs to" do
         assert(@order.shipment.address, "Ship_address is empty")
-        assert_not_nil(Zone.global.include?(@order.shipment.address), "Default zone doesn't include address. wierd")
+        assert_not_nil(Zone.global.include?(@order.shipment.address), "Default zone doesn't include address.")
         zones = Zone.match(@order.shipment.address)
         assert(!zones.empty?, "Zones are empty")
       end
@@ -67,12 +67,23 @@ class ChargeTest < ActiveSupport::TestCase
         assert_equal("10.0", @ship_charge.calculate_adjustment.to_s)
       end
 
-      should "recalculate tax_chare, to be 0.05 of item total" do
-        assert_not_nil(Zone.global.include?(@order.shipment.address), "Default zone doesn't include address. wierd")
+      should "recalculate tax_charge, to be 0.05 of item total" do
+        assert_not_nil(Zone.global.include?(@order.shipment.address), "Default zone doesn't include address.")
         assert_equal Zone.global, TaxRate.find(:first).zone
         assert(!Zone.global.tax_rates.empty?)
         tax = @order.line_items.reload.total * 0.05
         assert_equal(tax.to_s, @tax_charge.calculate_adjustment.to_s)
+      end
+
+      context "with line_items quantity changes" do
+        setup do 
+          @order.line_items.first.update_attribute(:quantity, @order.line_items.first.quantity + 1)
+          @order.save 
+          @tax_delta = @order.line_items.first.price * 0.05
+          @total_delta = @order.line_items.first.price + @tax_delta
+        end
+        should_change("tax charge",  :by => @tax_delta)   { @order.tax_charges.first.amount }
+        should_change("order total", :by => @total_delta) { @order.total }
       end
     end
   end
