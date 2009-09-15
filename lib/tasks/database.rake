@@ -30,17 +30,7 @@ namespace :db do
   end
   
   desc 'Create the database, load the schema, and initialize with the seed data'  
-  task :setup => [ 'db:create', 'db:schema:load', 'db:seed' ]  
-       
-  desc 'Load the seed data from db/seeds.rb'  
-  task :seed => :environment do  
-    seed_file = [RAILS_ROOT, SPREE_ROOT].map{|root| 
-      File.join(root, 'db', 'seeds.rb')
-    }.select{|path|
-      File.exist?(path)
-    }.first
-    load(seed_file) if seed_file
-  end
+  task :setup => [ 'db:create', 'db:schema:load', 'db:seed' ]         
 
   desc 'Load the sample fixture data from db/sample'  
   task :sample => :environment do  
