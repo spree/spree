@@ -42,7 +42,7 @@ namespace 'spree' do
     s.add_dependency 'tlsmail', '= 0.0.1' 
     s.add_dependency 'rspec', '>= 1.2.0'
     s.add_dependency 'rspec-rails', '>= 1.2.0'
-    s.add_dependency 'searchlogic', ">=2.1.13" 
+    s.add_dependency 'searchlogic', ">=2.3.5" 
 
     s.has_rdoc = true
     #s.rdoc_options << '--title' << RDOC_TITLE << '--line-numbers' << '--main' << 'README'
