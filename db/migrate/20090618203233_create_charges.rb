@@ -6,7 +6,7 @@ class Order < ActiveRecord::Base
 end  
    
 # Legacy version of model so migrations work with legacy Spree data
-class Charge < ActiveRecord::Base
+class Charge < Adjustment
   belongs_to :order
   acts_as_list :scope => :order
 end
