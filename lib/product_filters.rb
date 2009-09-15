@@ -19,7 +19,7 @@
 # but might be a useful reminder. 
 #
 # When creating a form, the name of the checkbox group for a filter F should be 
-# the name of F's scope with [] appended, eg "master_price_range_any[]", and for 
+# the name of F's scope with [] appended, eg "price_range_any[]", and for 
 # each label you should have a checkbox with the label as its value. On submission,
 # Rails will send the action a hash containing (among other things) an array named
 # after the scope whose values are the active labels. 
@@ -36,26 +36,26 @@
 
 module ProductFilters
 
-  # Example: filtering by master_price
+  # Example: filtering by price
   #   The named scope just maps incoming labels onto their conditions, and builds the conjunction
-  #   'master_price' is in the base scope's context (ie, "select foo from products where ...") so
+  #   'price' is in the base scope's context (ie, "select foo from products where ...") so
   #     we can access the field right away
   #   The filter identifies which scope to use, then sets the conditions for each price range
   #
-  Product.named_scope :master_price_range_any,
+  Product.named_scope :price_range_any,
     lambda {|opts| 
       conds = opts.map {|o| ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
-      Product.conditions_any(conds).scope :find
+      Product.scoped(:joins => :master).conditions_any(conds).scope :find
     }
 
   def ProductFilters.price_filter
-    conds = [ [ "Under $10",    "master_price             <= 10" ],
-              [ "$10 - $15",    "master_price between 10 and 15" ],
-              [ "$15 - $18",    "master_price between 15 and 18" ],
-              [ "$18 - $20",    "master_price between 18 and 20" ],
-              [ "$20 or over",  "master_price             >= 20" ] ]
+    conds = [ [ "Under $10",    "price             <= 10" ],
+              [ "$10 - $15",    "price between 10 and 15" ],
+              [ "$15 - $18",    "price between 15 and 18" ],
+              [ "$18 - $20",    "price between 18 and 20" ],
+              [ "$20 or over",  "price             >= 20" ] ]
     { :name   => "Price Range",
-      :scope  => :master_price_range_any,
+      :scope  => :price_range_any,
       :conds  => Hash[*conds.flatten],
       :labels => conds.map {|k,v| [k,k]}
     }
