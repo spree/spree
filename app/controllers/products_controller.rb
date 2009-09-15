@@ -40,12 +40,13 @@ class ProductsController < Spree::BaseController
 
     # this can now be set on a model basis 
     # Product.per_page ||= Spree::Config[:products_per_page]
+    per_page = params[:per_page].present? ? params[:per_page] : Spree::Config[:products_per_page]
 
     ## defunct?
     @product_cols = 3 
 
     @products ||= @search.paginate(:include  => [:images, {:variants => :images}],
-                                   :per_page => params[:per_page] || Spree::Config[:products_per_page],
+                                   :per_page => per_page,
                                    :page     => params[:page])
   end
 end
