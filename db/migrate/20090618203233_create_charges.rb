@@ -35,21 +35,15 @@ class CreateCharges < ActiveRecord::Migration
     end    
 
     # create shipping and taxation charges for order, then drop columns
-    Order.reset_column_information
-    
-    Order.class_eval do
-      def update_totals
-        # temporary hack to eliminate problems with migrating legacy data
-      end
-    end           
+    Order.reset_column_information       
     
     Order.all.each do |order|  
       ship_total = order.attributes["ship_amount"] || 0      
       tax_total = order.attributes["tax_amount"] || 0             
       order.shipping_charges.reset
-      order.shipping_charges.create(:amount => ship_total, :description => "Shipping") if ship_total > 0
-      order.tax_charges.create(:amount => tax_total, :description => "Tax") if tax_total > 0
-      order.update_attribute("charge_total", ship_total + tax_total)
+      execute "INSERT INTO charges ('order_id', 'amount', 'description', 'type') VALUES (#{order.id}, #{ship_total}, 'Shipping', 'Shipping')"
+      execute "INSERT INTO charges ('order_id', 'amount', 'description', 'type') VALUES (#{order.id}, #{tax_total}, 'Tax', 'Tax')"
+      execute "UPDATE orders SET charge_total = #{ship_total + tax_total} WHERE id = #{order.id}"
     end
 
     change_table :orders do |t|
