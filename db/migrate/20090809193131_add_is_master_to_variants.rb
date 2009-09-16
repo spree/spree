@@ -10,17 +10,29 @@ class AddIsMasterToVariants < ActiveRecord::Migration
       end
     end
     
-    ## Flag the first variant of each product as the "master" variant 
-    variants = Variant.all
-    unless variants.empty? 
-      # select first variant of each product as "master" and flag it in the database
-      sorted_variants = variants.sort{|a,b| a.product_id <=> b.product_id}.sort{|a,b| a.id <=> b.id}
-      master_variants = sorted_variants.inject([]) {|m, v| m << v unless m.detect{|d| d.product_id == v.product_id}; m}
-      master_variants.each{|v| v.update_attributes(:is_master => true, :price => v.product.attributes["master_price"])}
+    # Convert the old variant structure to the new one
+    Product.all(:include => {:variants => :option_values}).each do |p|
+      price = p.attributes["master_price"]
+    
+      master_variant = p.variants.detect{|v| v.option_values.empty?} 
+
+      # check for price anomalies
+      if master_variant && master_variant.price != price 
+          warn "[migration] single variant price doesn't match product master price #{price} for v = #{master_variant.inspect}"
+      end
+
+      master_variant ||= Variant.new(:product => p)
+      master_variant.update_attributes(:price => price, :is_master => true)
+      p.save                          # to trigger the consistency filters
     end
   end
 
   def self.down
+    Product.all(:include => :variants).each do |p| 
+      unless p.variants.empty?
+        p.master.delete
+      end
+    end
     change_table :variants do |t|
       t.remove "is_master"
     end
