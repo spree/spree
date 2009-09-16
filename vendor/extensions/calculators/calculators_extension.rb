@@ -20,6 +20,12 @@ class CalculatorsExtension < Spree::Extension
       Calculator::PerItem,
       Calculator::SalesTax,
       Calculator::Vat,
-    ].each(&:register)
+    ].each{|c_model|
+      begin
+        c_model.register if c_model.table_exists?
+      rescue Exception => e
+        $stderr.puts "Error registering calculator #{c_model}"
+      end
+    }
   end
 end
