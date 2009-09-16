@@ -45,7 +45,6 @@ class ActiveRecord::Base
   }
 
   include HasCalculator
-  include ProductFilters
 end
 
 
