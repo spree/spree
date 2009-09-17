@@ -8,13 +8,17 @@ class CheckoutsController < Spree::BaseController
   layout 'application'   
   ssl_required :update, :edit
 
-  # alias original r_c method so we can handle special gateway exception that might be thrown
+  # alias original r_c method so we can handle any (gateway) exceptions that might be thrown
   alias :rc_update :update
   def update 
     begin
       rc_update
     rescue Spree::GatewayError => ge
       flash[:error] = t("unable_to_authorize_credit_card") + ": #{ge.message}"
+      redirect_to edit_object_url and return
+    rescue Exception => oe
+      flash[:error] = t("unable_to_authorize_credit_card") + ": #{oe.message}"
+      logger.unknown "#{flash[:error]}  #{oe.backtrace.join("\n")}"
       redirect_to edit_object_url and return
     end
   end
@@ -23,15 +27,21 @@ class CheckoutsController < Spree::BaseController
     flash nil
     
     success.wants.html do  
-      if current_user
-        current_user.update_attribute(:bill_address, @order.bill_address)
-        current_user.update_attribute(:ship_address, @order.ship_address)
-      end
-      flash[:notice] = t('order_processed_successfully')
-      order_params = {:checkout_complete => true}
-      order_params[:order_token] = @order.token unless @order.user
-      session[:order_id] = nil if @order.checkout.completed_at
-      redirect_to order_url(@order, order_params) and next if params[:final_answer]
+      if @order.checkout_complete 
+        if current_user
+          current_user.update_attribute(:bill_address, @order.bill_address)
+          current_user.update_attribute(:ship_address, @order.ship_address)
+        end
+        flash[:notice] = t('order_processed_successfully')
+        order_params = {:checkout_complete => true}
+        order_params[:order_token] = @order.token unless @order.user
+        session[:order_id] = nil 
+        redirect_to order_url(@order, order_params) and next 
+      else
+        # this means a failed filter which should have thrown an exception
+        flash[:notice] = "Unexpected error condition -- please contact site support"
+        redirect_to edit_object_url and next
+      end 
     end 
 
     success.wants.js do   
@@ -41,6 +51,14 @@ class CheckoutsController < Spree::BaseController
                         :credits => credit_hash,
                         :available_methods => rate_hash}.to_json,
              :layout => false
+    end
+
+    failure.wants.html do
+      flash[:notice] = "Unexpected failure in card authorization -- please contact site support"
+      redirect_to edit_object_url and next
+    end
+    failure.wants.js do   
+      render :json => "Unexpected failure in card authorization -- please contact site support"
     end
   end
   
