@@ -41,8 +41,8 @@ class CreateCharges < ActiveRecord::Migration
       ship_total = order.attributes["ship_amount"] || 0      
       tax_total = order.attributes["tax_amount"] || 0             
       order.shipping_charges.reset
-      execute "INSERT INTO charges ('order_id', 'amount', 'description', 'type') VALUES (#{order.id}, #{ship_total}, 'Shipping', 'Shipping')"
-      execute "INSERT INTO charges ('order_id', 'amount', 'description', 'type') VALUES (#{order.id}, #{tax_total}, 'Tax', 'Tax')"
+      execute "INSERT INTO charges (`order_id`, `amount`, `description`, `type`) VALUES (#{order.id}, #{ship_total}, 'Shipping', 'Shipping')"
+      execute "INSERT INTO charges (`order_id`, `amount`, `description`, `type`) VALUES (#{order.id}, #{tax_total}, 'Tax', 'Tax')"
       execute "UPDATE orders SET charge_total = #{ship_total + tax_total} WHERE id = #{order.id}"
     end
 
