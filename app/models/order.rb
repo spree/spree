@@ -211,6 +211,10 @@ class Order < ActiveRecord::Base
   def update_totals
     self.item_total       = self.line_items.total
 
+    # save the items which might be changed by an order update, so that
+    # charges can be recalculated accurately.
+    self.line_items.map(&:save)
+
     charges.reload.each(&:update_amount)
     self.adjustment_total = self.charge_total - self.credit_total
 
