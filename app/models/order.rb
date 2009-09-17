@@ -223,15 +223,19 @@ class Order < ActiveRecord::Base
   end
 
   private
-  
+ 
   def complete_order
     checkout.update_attribute(:completed_at, Time.now)
-    InventoryUnit.sell_units(self)
-    save_result = save!
     if email
       OrderMailer.deliver_confirm(self)
     end
-    save_result
+    begin
+      InventoryUnit.sell_units(self)
+      save!
+    rescue Exception => e
+      logger.error "Problem saving authorized order: #{e.message}"
+      logger.error self.to_yaml
+    end
   end
 
   def cancel_order

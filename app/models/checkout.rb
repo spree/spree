@@ -18,17 +18,19 @@ class Checkout < ActiveRecord::Base
 
   private
   def authorize_creditcard
-    return unless process_creditcard? 
+    return unless process_creditcard?
     cc = Creditcard.new(creditcard.merge(:address => self.bill_address, :checkout => self))
-    return unless cc.valid? and cc.authorize(order.total)
-    order.complete
+    return false unless cc.valid? 
+    return false unless cc.authorize(order.total)
+    return false unless order.complete
   end
 
   def capture_creditcard
     return unless process_creditcard? 
     cc = Creditcard.new(creditcard.merge(:address => self.bill_address, :checkout => self))
-    return unless cc.valid? and cc.purchase(order.total)
-    order.complete
+    return false unless cc.valid?
+    return false unless cc.purchase(order.total)
+    return false unless order.complete
     order.pay
   end
 
