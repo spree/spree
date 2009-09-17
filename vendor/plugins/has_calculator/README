@@ -1,0 +1,7 @@
+adds calculator-using functionality to a model
+
+it's in a plugin to get round some loading issues with passenger and rails 2.3.4
+
+to activate, call "has_calculator" inside the model.
+
+
