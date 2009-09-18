@@ -143,6 +143,14 @@ The +create_discount+ method in +Coupon+ is responsible for the actual calculati
 
 h3. Variant Images
 
+Some changes have been made to allow you to attach images to both the Product model and each individual variant for a product. The Images administration has been relocated from the main product details form to it's own tab accessible via the right hand side bar on the product details screen. 
+
+!images/variant_images.png(New Images admin UI)!
+
+This new admin interface enables you to select from a drop-down list which object (product or variant) the image represents. Note if a product does not contain any variants then the drop-down is not displayed to ensure that basic implementations are not cluttered with unnecessary administration options.
+
+The front-end product details interface has also been updated to filter the displayed images depending on which variant is selected, and the cart view now displays the image of the selected variant.
+
 h3. Improvements to image handling
 
 We've upgraded the paperclip gem to take advantage of recent changes. Paperclip is the library which handles creation of and access to the various formats of image. On top of this, we're explicitly catching errors

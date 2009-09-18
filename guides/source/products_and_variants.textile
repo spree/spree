@@ -143,6 +143,20 @@ h4. Product Prototypes
 
 Spree provides prototypes as a kind of template for related products. Selecting a prototype at the first stage of product creation associates the new product with certain properties and option types. This is a useful time-saving measure and helps get consistency within groups of similar products. You can define new prototypes using the sub-tab under the main Products menu, where you name a prototype and select the properties and option types to use.
 
+h4. Images
+
+Images can be associated with a either a product or any of it's variants. When uploading an image for products that contain variants a drop-down menu allows you to select which object the image applies to. Note if a product does not contain any variants then the drop-down is not displayed to ensure that basic implementations are not cluttered with unnecessary administration options.
+
+Spree automatically handles creation and storage of several size versions of each image (via the Paperclip plugin). The default is to create four styles according to the ImageMagick spec.
+
+<shell>
+:styles => { 
+	:mini => '48x48>', 
+	:small => '100x100>', 
+	:product => '240x240>', 
+	:large => '600x600>' 
+	}
+</shell>
 
 
 h3. Going Deeper
@@ -254,19 +268,6 @@ new_variant.option_values << OptionValue.find_by_name("Large")
 </shell>
 
 Repeat as necessary for each Option Type that a given product has.
-
-h5. Images
-
-Images can be associated with a product by uploading apprpriate image files. Spree automatically handles creation and storage of several size versions of each image (via the Paperclip plugin). The default is to create four styles according to the ImageMagick spec.
-
-<shell>
-:styles => { 
-	:mini => '48x48>', 
-	:small => '100x100>', 
-	:product => '240x240>', 
-	:large => '600x600>' 
-	}
-</shell>
 
 In views, you can generate an image's URL file with +image.attachment.url(:product)+, i.e. using the name of the format as an argument. You can change the sizes or add new formats by including a line like this in your +site_extension.rb+ file:
 
