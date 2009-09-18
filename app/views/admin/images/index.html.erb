@@ -5,7 +5,7 @@
 <table class="index">
 	<tr>
 	  <th><%= t("thumbnail") %></th>
-    <% if @product.variants? %>
+    <% if @product.has_variants? %>
 	    <th><%= Variant.human_name %></th>
 	  <% end %>
 	  <th><%= t("action") %></th>
@@ -14,7 +14,7 @@
   <% @product.images.each do |image| %>
     <tr id="<%= dom_id(image) %>">
       <td><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
-      <% if @product.variants? %>
+      <% if @product.has_variants? %>
         <td><%= t('all') %></td>
       <% end %>
       <td class="actions">
@@ -29,7 +29,7 @@
     <% variant.images.each do |image| %>
       <tr id="<%= dom_id(image) %>">
         <td><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
-        <% if @product.variants? %>
+        <% if @product.has_variants? %>
           <td><%= variant.options_text %></td>
         <% end %>
         <td class="actions">

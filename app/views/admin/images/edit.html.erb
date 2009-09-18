@@ -4,7 +4,7 @@
 
 <%= error_messages_for :image %>
 
-<% form_for(:image, :url => admin_product_image_url(@product), :html => { :method => :put }) do |f| %>
+<% form_for(:image, :url => admin_product_image_url(@product), :html => { :method => :put, :multipart => true }) do |f| %>
   <table class="basic-table">
     <tr>
       <td><%= t("thumbnail") %>:</td>
@@ -12,4 +12,8 @@
     </tr>
     <%= render :partial => "form", :locals => { :f => f } %>
   </table>
+  <p class="form-buttons">
+    <%= button t("update") %>
+    or <%= link_to t("cancel"), admin_product_images_url(@product), :id => "cancel_link" %>
+  </p>
 <% end %>
