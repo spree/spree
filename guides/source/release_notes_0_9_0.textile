@@ -177,3 +177,80 @@ There's an overview of what the new SearchLogic offers on the
 "Spree blog":http://spreecommerce.com/blog/2009/07/30/updating-searchlogic/, and full documentation 
 is at "rdoc.info":http://rdoc.info/projects/binarylogic/searchlogic.
 
+h3. Some new named scopes for products 
+
+To make it easier to construct sets of products for various uses, we've added some more named scopes which 
+help with taxon, property, and availability of option values. The first kind (+taxons_id_in_tree+ and 
++taxons_id_in_tree_any+) allows restriction to a set of taxons and their combined descendents. The property
+scope +with_property+ takes a property object (or its id - the definition uses Rails' automatic conversion) 
+and an optional argument for uniquifying the table names in complex queries, eg where you are filtering by 
+two distinct properties. This scope does not take a property value: the design is that you add further 
+condition(s) on the value in a subsequent scope. It will handle cases where the property is absent or null 
+for a product.  There is a simpler scope +with_property_value+ for simpler cases. 
+The option type scope (+with_option+, with its prerequisite +with_variant_options+) follows the pattern
+of option type object or id, and an optional table name, and is intended as a basis for further conditions
+on the value of that option type. 
+See +lib/product_scopes.rb+ for the definitions, and see +lib/product_filters.rb+ for examples of 
+their use.
+
+h3. Basic support for filtering of results
+
+It is often useful to cut down the results in a taxon via certain criteria, such as products in a price 
+range or with certain properties, and sometimes you want a set of restrictions selectable via checkboxes
+etc.
+Using ideas from SearchLogic version 2, Spree now contains a basic framework for this kind of filtering.
+You can some basic filtering by visiting +/products?taxon=1000+ (unless you have overridden the products
+controller), where it allows you to select zero or more of a taxon's children and to select some price ranges and product brands. 
+
+File +lib/product_filters.rb+ explains the mechanism in detail, with several concrete examples. Basically,
+a filter definition associates a named scope with a mapping of human readable labels to internal labels.
+The named scope should be defined to test the relevant product attribute(s), and to convert a set of these 
+internal labels into tests on the attributes. For example, you may want to filter by price range, so 
+should set up labels for price ranges like 0-20, 20-50, 50-100, 100 or more; then define a named scope 
+which maps these into a combined test on the (master) price attribute of products.
+
+The partial +app/views/shared/_filters.html.erb+ displays a checkbox interface for the filters
+returned by the method +applicable_filters+ for the selected taxon. This method allows you to control
+which filters are used for some taxon, eg a filter on fabric type may be required for clothing taxons, 
+but not suitable for mugs etc.
+
+To use this framework, you should over-ride and extend +lib/product_filters.rb+ and define a suitable
++applicable_filters+ method for taxons. 
+The new named scopes (above) are useful building blocks for adding application-specific filters.
+
+
+h3. Miscellaneous improvements
+
+h4. Default ship and bill addresses 
+
+Spree now saves the last used bill and ship addresses for logged in users and uses these as the defaults 
+in their next checkout. If the ship or bill addresses are edited in checkout, then the old addresses are
+left unchanged and new addresses saved as the defaults. This is a very simple form of address book.
+
+h4. Extension initializers
+
+It is now possible to include initializers in your extensions. This makes it a lot easier to 
+configure extensions and to make site-specific customizations, and to keep them with the relevant 
+extension code. 
+
+h4. Improved handling of requests for invalid objects
+
+If a method +object_missing+ for a controller, Spree will pass all requests for invalid objects to
+this method. This provides an easy way for applications to add specific handlers for invalid requests.
+For example, you may wish to direct customers back to the front page.
+If no method has been defined, Spree will use its default 404 response. 
+
+h4. Reduced silent failures in checkout
+
+The checkout code is now more careful about returning and checking results from key operations, and
+a few more handlers for exceptions and invalid responses have been added. In normal use these should 
+not occur, but they may sometimes occur if you have an error in your database or configuration.
+
+h4. Improvements to upgrade process
+
+Upgrade now checks the content of files it needs to replace, and if the old version differs, it will be saved with a +~+ suffix. This makes it easier to see when and how some file has changed - which is often useful
+if you need to update a customized version. Upgrade will no longer copy the +routes.rb+ file - the original version just loads the core routes file, so has no need to change. (Recall that you can define new routes in your extensions.)
+
+
+
+
