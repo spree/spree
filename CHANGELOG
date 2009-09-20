@@ -1,3 +1,100 @@
+== 0.9.0
+
+* # - 137	Products without variants can't have a weight.
+* # - 143	Load initializers from extensions
+* # - 217	Remove Paperclip messages from log
+* # - 285	Problem with spree command in older versions of Ruby Gems. 
+* # - 477	Refactor checkout into its own model, view and controller
+* # - 480	Error when browsing to an invalid taxon
+* # - 488	Can't add new product with cyrrilic symbols in Name
+* # - 496	Record checkout completion timestamp
+* # - 498	Additional Translation Strings
+* # - 499	Refactor order totaling to use a system of charges
+* # - 502	Image upload not working....
+* # - 504	Handling requests for products/taxons not in the db
+* # - 508	Spree admin does not render well in IE
+* # - 518	SKU disappears when variants are added.
+* # - 519	Upgrade to newer version of compass
+* # - 521	Cannot checkout using IE6
+* # - 525	Latest master checkout resulted in migrations failing
+* # - 526	Tests failing with Russian and French locales
+* # - 531	Spree should not require exact haml-edge version
+* # - 532	Hebrew translation
+* # - 533	Thai localization
+* # - 536	Possible issue with i18n:sync
+* # - 543	Migration failure on newer versions of Postgres
+* # - 544	Improve efficient for product display
+* # - 545	Refactor order totaling to use a system of credits
+* # - 546	Allow configuration for automatic capture
+* # - 549	Spree is overwritting :per_page parameter
+* # - 557	Need to avoid silent failures in the checkout process
+* # - 558	Remove admin user check from products controller
+* # - 560	Allow admin view to display a customized order display
+* # - 561	Upgrade the vendored version of Paperclip?
+* # - 562	Removed favicon.ico file?
+* # - 564	Losses of confirmation emails for registered users
+* # - 565	Need access to image width and height
+* # - 567	Credit card type guessing in checkout has been disconnected
+* # - 569	Reduce application layout duplication
+* # - 572	Repeated saves of CC objects leaves XXXX-XXXX-XXXX- in display_number field
+* # - 577	Add Dutch translation files
+* # - 578	Support coupons and discounts
+* # - 579	Allow calculator configuration (shipping, coupons, etc.) via admin interface
+* # - 581	Password reset mails should come from the "generic" address
+* # - 582	Allow login bar to be called via https
+* # - 585	Support for variant images
+* # - 587	Upgrading to the new version of searchlogic
+* # - 589	Update locale translations
+* # - 590	Fixed confusing error message in UsersController
+* # - 593	InventoryUnit does not associate with an order when sold
+* # - 600	An alternative to spree:upgrade?
+* # - 601	Finnish localization
+* # - 603	Don't show restricted administrator tabs
+* # - 604	Several not translated strings
+* # - 605	update totals after removing line items
+* # - 606	Avoid clobbering formbuilder in product forms
+* # - 613	Rails 2.3.4 Compatibility
+* # - 615	Add Mexican Spanish localization files
+* # - 616	Protect cart for mass_assignement
+* # - 621	Provide type aware preference helper
+* # - 622	Sample users are not added to the 'user' role
+* # - 626	rake spree:upgrade doesn't delete initializers/searchlogic.rb
+* # - 627	Add some named scopes for common filtering operations
+* # - 629	Incomplete usage help text for script/generate extension_migration
+* # - 630	zone_members.yml contains unknown zone ids
+* # - 635	Mail templates have hard-coded $
+* # - 636	Bug when canceling/resuming orders with language other than en-US
+* # - 639	Jquery checkout bug
+* # - 645	state changesin order don't produce SteteEvents
+* # - 646	address model spec failing on missing state test
+* # - 649	Order summary partial don't supports I18n.
+* # - 650	Improvement to route upgrade process
+* # - 654	en_GB_rails is broken - fails to load up some translations
+* # - 655	Quantity field does not update in orders/edit
+* # - 660	addresses in checkout should default to the ones the customer last used
+* # - 661	Checkout address forms don't show state_name for state-less countries
+* # - 663	Show selected Variant image in cart
+* # - 668	Add support for faceted search / filtering
+* # - 674	Testing of orders is slow (and will fail around 1 time in 259)
+* # - 681	Improvements for zone handling
+* # - 682	Improve seeding code
+* # - 691	SMTP error during checkout prevents order from being properly completed
+* # - 693	Error on deploy edge version
+* # - 697	Rails Metal is not loaded properly
+* # - 698	LineItem validation needs more care with checking of stock levels
+* # - 709	update_addresses not defined in checkout.js
+* # - 718	Don't work sorting orders by email.
+* # - 720	Improve messages for require_{no_}user
+* # - 722	Unknown object case doesn't handle case where id parameter is empty
+* # - 723	Modify percentage calculator to use percentages
+* # - 726	product.variants contains deleted variants
+* # - 733	reject_unknown_object fails for collections
+* # - 736	Column deleted_at can be ambiguous in some cases.
+
+== 0.8.5
+
+Same as 0.8.4 (problem with release in 0.8.4)
+
 == 0.8.4
 
 * # 494 - There are no default states for United states when you don't load sample data
