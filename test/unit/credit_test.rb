@@ -48,4 +48,14 @@ class CreditTest < ActiveSupport::TestCase
       should_not_change("@order.item_total") { @order.item_total }
     end
   end
+  
+  context "Credit#calculate_adjustment" do
+    setup { @coupon_credit = Factory(:coupon_credit) }
+    context "with empty line items" do
+      setup { @coupon_credit.order.line_items.clear }
+      should "return nil" do
+        assert_equal 0, @coupon_credit.calculate_adjustment
+      end
+    end
+  end
 end
