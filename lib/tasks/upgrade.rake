@@ -18,8 +18,9 @@ namespace :spree do
               "/public/stylesheets", 
               "/public/images", 
               "/config/initializers", 
-              "/config/spree_permissions.yml", 
+              "/config/environments", 
               "/config/environment.rb", 
+              "/config/spree_permissions.yml", 
               "/config/boot.rb" ]
     items.each do |item|
       Spree::FileUtilz.mirror_with_backup(SPREE_ROOT + item, RAILS_ROOT + item)
