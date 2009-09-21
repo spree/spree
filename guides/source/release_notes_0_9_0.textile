@@ -246,11 +246,25 @@ The checkout code is now more careful about returning and checking results from 
 a few more handlers for exceptions and invalid responses have been added. In normal use these should 
 not occur, but they may sometimes occur if you have an error in your database or configuration.
 
-h4. Improvements to upgrade process
+h4. Improvements to Upgrade Process
 
-Upgrade now checks the content of files it needs to replace, and if the old version differs, it will be saved with a +~+ suffix. This makes it easier to see when and how some file has changed - which is often useful
-if you need to update a customized version. Upgrade will no longer copy the +routes.rb+ file - the original version just loads the core routes file, so has no need to change. (Recall that you can define new routes in your extensions.)
+The +rake spree:upgrade+ task has been eliminated.  It turns out there were some crucial flaws that caused issues when the older version of Spree used a different version of Rails or a different version of +upgrade.task+ than the newer version of Spree.  The rake task has been replaced by a new gem command:
 
+<shell>
+  spree --upgrade
+</shell>
+
+You can also use the abbreviated form:
+
+<shell>
+  spree --u
+</shell>
+
+After installing a new version of the Spree gem, simply run either one of these commands from inside +RAILS_ROOT+ (your application directory) and your application will be upgraded.
+
+The upgrade process is also now less "destructive" than in previous versions of Spree.  Instead of silently replacing crucial files in your application, Spree now checks the content of files it needs to replace, and if the old version differs, it will be saved with a +~+ suffix.  
+
+This makes it easier to see when and how some file has changed - which is often useful if you need to update a customized version. The upgrade command will also no longer copy the +routes.rb+ file - the original version just loads the core Spree routes file, so has no need to change. (Recall that you can define new routes in your extensions.)
 
 
 
