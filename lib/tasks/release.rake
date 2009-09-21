@@ -69,7 +69,10 @@ namespace 'spree' do
     files.exclude /^pkg/
     files.include 'public/.htaccess.example'
     files.exclude 'public/images/products'
+    files.exclude 'public/assets/products'
     files.exclude 'tmp/'
+    files.exclude 'vendor/plugins/delegate_belongs_to/spec/app_root/log/*.log'
+    files.exclude 'vendor/plugins/resource_controller/test/*'
     s.files = files.to_a
   end
 
