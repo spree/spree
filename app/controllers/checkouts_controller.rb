@@ -47,6 +47,8 @@ class CheckoutsController < Spree::BaseController
     success.wants.js do   
       @order.reload
       render :json => { :order_total => number_to_currency(@order.total),
+                        :charge_total => number_to_currency(@order.charge_total),
+                        :credit_total => number_to_currency(@order.credit_total),
                         :charges => charge_hash,  
                         :credits => credit_hash,
                         :available_methods => rate_hash}.to_json,
