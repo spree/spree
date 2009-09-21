@@ -151,6 +151,6 @@ class CheckoutsController < Spree::BaseController
   end           
   
   def credit_hash
-    Hash[*@order.credits.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]    
+    Hash[*@order.credits.select {|c| c.amount !=0 }.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]    
   end
 end
