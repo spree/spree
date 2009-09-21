@@ -9,7 +9,7 @@ class CheckoutsControllerTest < ActionController::TestCase
       @controller.stub!(:current_user, :return => @user)
       @order = Factory.create(:order)
       @params = { :order_id => @order.number }
-      session[:order_id] = @order.id
+      session[:order_id] = @order.id.to_s
       @address = Factory.build(:address)
       @creditcard = Factory.build(:creditcard)
     end
@@ -55,13 +55,13 @@ class CheckoutsControllerTest < ActionController::TestCase
     context "xhr put with valid coupon code" do
       setup do
         @coupon = Factory(:coupon, :code => "FOO")
-        xhr :put, :update, :checkout => { :coupon_code => "FOO" }, :order_id => @order.id
+        xhr :put, :update, :checkout => { :coupon_code => "FOO" }, :order_id => @order.id.to_s
       end
       should_change("@order.credits.count", :by => 1) { @order.credits.count }
     end
 
     context "xhr put with invalid coupon code" do
-      setup { xhr :put, :update, :coupon_code => "BOGUS", :order_id => @order.id }
+      setup { xhr :put, :update, :coupon_code => "BOGUS", :order_id => @order.id.to_s }
       should_respond_with :success
       should_not_change("@order.credits.count") { @order.credits.count }
     end

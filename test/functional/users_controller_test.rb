@@ -9,7 +9,7 @@ class UsersControllerTest < ActionController::TestCase
       @completed_order.send(:complete_order)
 
       @controller.stub!(:current_user, :return => user)
-      get :show, :id => user.id
+      get :show, :id => user.id.to_s
     end
     should_respond_with :success
     should_assign_to :orders
