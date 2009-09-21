@@ -10,8 +10,8 @@ Order Summary
 <% end -%>      
 ============================================================
 Subtotal: <%= number_to_currency @order.item_total %>
-<% @order.charges.each do |charge| %>
-<%= "#{charge.description}: #{number_to_currency charge.amount}"%>
+<% @order.adjustments.each do |adjustment| %>
+<%= "#{adjustment.description}: #{number_to_currency adjustment.amount}"%>
 <% end %>
 Order Total: <%= number_to_currency @order.total %>
 
