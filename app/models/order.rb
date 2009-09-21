@@ -215,7 +215,7 @@ class Order < ActiveRecord::Base
     # charges can be recalculated accurately.
     self.line_items.map(&:save)
 
-    charges.reload.each(&:update_amount)
+    adjustments.reload.each(&:update_amount)
     self.adjustment_total = self.charge_total - self.credit_total
 
     self.total            = self.item_total   + self.adjustment_total
