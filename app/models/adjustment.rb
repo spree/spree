@@ -31,7 +31,7 @@ class Adjustment < ActiveRecord::Base
   end
   
   def update_amount
-    new_amount = calculate_adjustment || 0
-    update_attribute(:amount, new_amount) 
+    new_amount = calculate_adjustment
+    update_attribute(:amount, new_amount) if new_amount
   end
 end

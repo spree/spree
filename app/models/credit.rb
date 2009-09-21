@@ -19,7 +19,7 @@ class Credit < Adjustment
   
   private 
   def calculate_coupon_credit
-    return nil if order.line_items.empty?
+    return 0 if order.line_items.empty?
     amount = adjustment_source.calculator.compute(order)
     amount = order.item_total if amount > order.item_total
     amount
