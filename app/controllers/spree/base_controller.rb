@@ -1,6 +1,21 @@
-class Spree::BaseController < ApplicationController
-  filter_parameter_logging :password, :number, :verification_value
-  helper_method :title, :set_title
+class Spree::BaseController < ActionController::Base
+  layout 'application'
+  helper :application
+  before_filter :instantiate_controller_and_action_names
+  filter_parameter_logging :password, :password_confirmation, :number, :verification_value
+  helper_method :current_user_session, :current_user, :title, :set_title
+
+  # Pick a unique cookie name to distinguish our session data from others'
+  session_options['session_key'] = '_spree_session_id'
+  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+
+  include RoleRequirementSystem
+  include EasyRoleRequirementSystem
+  include SslRequirement
+
+  def admin_created?
+    User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
+  end
 
   # retrieve the order_id from the session and then load from the database (or return a new order if no 
   # such id exists in the session)
@@ -68,4 +83,77 @@ class Spree::BaseController < ApplicationController
       type.all  { render :nothing => true,                            :status => "404 Not Found" }
     end
   end
+  
+  private  
+  def current_user_session
+    return @current_user_session if defined?(@current_user_session)
+    @current_user_session = UserSession.find
+  end
+
+  def current_user
+    return @current_user if defined?(@current_user)
+    @current_user = current_user_session && current_user_session.user
+  end
+
+  def require_user
+    unless current_user
+      store_location
+      flash[:notice] = I18n.t("page_only_viewable_when_logged_in")
+      redirect_to new_user_session_url
+      return false
+    end
+  end
+
+  def require_no_user
+    if current_user
+      store_location
+      flash[:notice] = I18n.t("page_only_viewable_when_logged_out")
+      redirect_to root_url
+      return false
+    end
+  end
+
+  def store_location
+    session[:return_to] = request.request_uri
+  end
+
+  def redirect_back_or_default(default)
+    redirect_to(session[:return_to] || default)
+    session[:return_to] = nil
+  end
+
+  # Redirect as appropriate when an access request fails.
+  #
+  # The default action is to redirect to the login screen.
+  #
+  # Override this method in your controllers if you want to have special
+  # behavior in case the user is not authorized
+  # to access the requested action.  For example, a popup window might
+  # simply close itself.
+  def access_denied
+    respond_to do |format|
+      format.html do    
+        if current_user
+          flash[:error] = t("authorization_failure")
+          redirect_to '/user_sessions/authorization_failure'
+          next
+        else
+          store_location
+          redirect_to login_path   
+          next
+        end
+      end
+      format.xml do
+        request_http_basic_authentication 'Web Password'
+      end
+    end
+  end
+
+  def instantiate_controller_and_action_names
+    @current_action = action_name
+    @current_controller = controller_name
+  
+    @taxonomies = Taxonomy.find(:all, :include => {:root => :children})
+  end
+  
 end
