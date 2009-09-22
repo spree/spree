@@ -4,16 +4,15 @@ This guide covers the design of the checkout process and how to modify it.
 After reading it, you should be familiar with:
 
 * The functionality provided by the checkout system
-* The role of the +lib/spree/checkout.rb+ file
+* Checkout as a RESTful resource
 * How to add or remove stages from the checkout process
 * Testing your modified checkout process 
 
-
 endprologue.
 
-h3. Overview
+INFO. The next version of Spree will contain additional improvements to simplify customization even further.  With each release and real world Spree deployment, we gain new insight into how to do things better.  
 
-INFO: this guide is slightly out of date now that we have a restful checkout mechanism.
+h3. Overview
 
 The Spree checkout page is designed as a series of self-contained units 
 which can be run in any order and individually over-ridden with 
@@ -22,16 +21,9 @@ added. It is also straightforward to modify the processing steps
 used in checkout, e.g. to update the checkout page mid-flow or 
 to change what information is stored from a transaction.
 
-h3. The general design
+h3. General Design
 
-Aspects of the checkout processing which developers may want to 
-change for client projects have been isolated in the file 
-+lib/spree/checkout.rb+. There is a partial view file for each
-of the standard stages in the checkout process, allowing individual
-modification. Flow on the checkout page is managed with 
-+public/javascripts/checkout.js+: this provides code to manage transition
-between stages (e.g. closing the completed tabs), plus some of the validation
-code, Ajax calls, and some interface augmentation.
+In Spree, the checkout is modeled as its own object which belongs to an +Order+.  If you have custom checkout logic, you are most likely going to need to provide custom logic in the +CheckoutsController+.  The idea behind the  design is to keep complicated business logic out of the controller.  For the most part, +CheckoutsController+ acts just like any other REST controller in Rails.  It populates resources, performs validation, etc.  It does not have any specific knowledge of which checkout steps are needed nor in what order they should be performed.
 
 h4. The +lib/spree/checkout.rb+ file
 

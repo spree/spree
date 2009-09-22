@@ -141,6 +141,23 @@ h4. Discount Calculation
 
 The +create_discount+ method in +Coupon+ is responsible for the actual calculation of the credit to be applied for the cooupon.  By default, Spree will not allow the credit amount to exceed the item total.    The credit adjustment associated with a coupon is subject to recalculation based on changes in the order.  This is no different then any other adjustment to the order total (such as shipping or tax charges.)
 
+h3. RESTful Checkout
+
+There have been several minor but crucial changes to the checkout process.  The primary motivation for these changes was to improve maintenance of the checkout process and to simplify checkout customization.  
+
+h4. Checkout Module has been Replaced by Controller
+
+Prior to the refactoring, much of the checkout logic was contained in +lib/checkout.rb+.  The idea was to isolate this logic from the +OrdersController+ and to make it easier to extend.  In this release we have just taken this another step further and made the checkout its own resource.  
+
+h4. Changes to the Checkout Partials
+
+The views have been shuffled around a bit due to this refactoring.  This shouldn't affect you too much unless you have an existing Spree application in which you customized some of the checkout partials.  For instance, +app/views/orders/_billing.html.erb+ has been moved to +app/views/checkouts/_billing.html.erb+.  So you may need to 
+rename your custom partials if you have any.
+
+h4. Additional Details
+
+For more detailed information on the nature of these changes, please see the "relevant commit":http://github.com/railsdog/spree/commit/ce1aad7bc25c15a794f8f5689efcdbf8c3311b7b in Github.
+
 h3. Variant Images
 
 Some changes have been made to allow you to attach images to both the Product model and each individual variant for a product. The Images administration has been relocated from the main product details form to it's own tab accessible via the right hand side bar on the product details screen. 
