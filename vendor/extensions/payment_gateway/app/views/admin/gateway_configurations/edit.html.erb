@@ -1,6 +1,6 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1>Gateway Configuration</h1>
+<h1><%= t(:gateway_configuration) %></h1>
 <%= error_messages_for :gateway_configuration %>
 <% form_for(:gateway_configuration, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>

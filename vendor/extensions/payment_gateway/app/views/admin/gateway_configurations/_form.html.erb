@@ -16,6 +16,6 @@
                   :url => admin_gateway_configuration_gateway_option_values_url(@gateway_configuration),
                   :with => 'gw_id',
                   :method => :get,
-                  :before => "Element.show('busy_indicator')",
-                  :after => "Element.hide('busy_indicator')",
+                  :before => "jQuery('#busy_indicator').show()",
+                  :after => "jQuery('#busy_indicator').hide()",
                   :update => "config-options" %>
