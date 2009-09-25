@@ -1,2 +1,0 @@
-class ToggleSwitch < Switch
-end
