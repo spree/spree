@@ -7,7 +7,7 @@ class LocalizationExtension < Spree::Extension
   url "http://support.spreecommerce.com/wiki/1/I18n"
 
   def activate
-    ApplicationController.class_eval do
+    Spree::BaseController.class_eval do
         before_filter :set_user_language
         
         private
