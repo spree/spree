@@ -1,5 +1,5 @@
 class Spree::BaseController < ActionController::Base
-  layout 'application'
+  layout 'spree_application'
   helper :application
   before_filter :instantiate_controller_and_action_names
   filter_parameter_logging :password, :password_confirmation, :number, :verification_value

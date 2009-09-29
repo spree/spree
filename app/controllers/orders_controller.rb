@@ -6,8 +6,6 @@ class OrdersController < Spree::BaseController
 
   resource_controller
   actions :all, :except => :index
-
-  layout 'application'
   
   helper :products
 
