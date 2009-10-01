@@ -1,7 +1,7 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li>
-      <%= button_link_to t("new_user"), new_object_url, :icon => 'add' %></p>
+      <p><%= button_link_to t("new_user"), new_object_url, :icon => 'add' %></p>
     </li>
   </ul>
   <br class='clear' />
@@ -13,8 +13,10 @@
 
 <table class="index">
   <thead>
-    <th><%= order @search, :by => :email, :as => t("user") %></th>
-    <th><%= t("action") %></th>
+	<tr>
+    	<th><%= order @search, :by => :email, :as => t("user") %></th>
+    	<th><%= t("action") %></th>
+	</tr>
   </thead>
   <tbody>
     <%- @collection.each do |user|%>

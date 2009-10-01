@@ -10,7 +10,7 @@ module TaxonsHelper
       crumbs << content_tag(:li, content_tag(:span, t('products')))
     end
     crumb_list = content_tag(:ul, crumbs)
-    content_tag(:div, crumb_list + content_tag(:br, nil, :class => 'clear'), :class => 'breadcrumbs')
+    content_tag(:div, crumb_list + tag(:br, {:class => 'clear'}, false, true), :class => 'breadcrumbs')
   end
 
   
