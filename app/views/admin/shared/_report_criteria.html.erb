@@ -1,6 +1,4 @@
-<% form_for @search do |f| %> 
-	<% f.fields_for @search.conditions do |s| %>
-
+<% form_for @search do |s| %> 
     <label><%= t("date_range") %></label><br />
     <div class="yui-g date-range-filter">
       <div class="yui-u sub-field first">
@@ -13,5 +11,5 @@
       </div>
     </div>
 
-		<p><%= button t("search") %></p>
+    <p><%= button t("search") %></p>
 <% end %>
