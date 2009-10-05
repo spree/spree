@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :email, :password, :password_confirmation
+  attr_accessible :email, :password, :password_confirmation, :login
 
   def deliver_password_reset_instructions!
     reset_perishable_token!
@@ -37,7 +37,7 @@ class User < ActiveRecord::Base
   private 
   def set_login
     # for now force login to be same as email, eventually we will make this configurable, etc.
-    self.login = email
+    self.login = email unless self.login
   end 
   
   def add_user_role
