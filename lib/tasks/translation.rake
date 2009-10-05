@@ -3,6 +3,7 @@ namespace :spree do
     #Define locales root
     language_root = "#{SPREE_ROOT}/config/locales/"
 
+    desc "Syncronize translation files with latest en-US"
     task :sync => :environment do
       words = get_translation_keys(language_root)
       Dir["#{language_root}*.yml"].each do |filename|
@@ -15,6 +16,7 @@ namespace :spree do
       end
     end
 
+    desc "Create a new translation file based on en-US"
     task :new => :environment do
       if !ENV['LOCALE'] || ENV['LOCALE'] == ''
         print "You must provide a valid LOCALE value, for example:\nrake spree:i18:new LOCALE=pt-PT\n"
