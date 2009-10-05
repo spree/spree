@@ -1,12 +1,12 @@
---- 
+---
 es: 
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: Una copia de todos los correos sera enviada a las siguientes direcciones
   abbreviation: Abreviatura
-  access_denied: "Acceso denegado"   
+  access_denied: "Acceso denegado"
   account: Cuenta
-  account_updated: "Cuenta actualizada!"        
+  account_updated: "Cuenta actualizada!"
   action: Acción
-  actions: 
+  actions:
     cancel: Cancelar
     create: Crear
     destroy: Eliminar
@@ -14,9 +14,9 @@ es:
     listing: Listado
     new: Nueva
     update: Actualizar
-  activerecord: 
-    attributes: 
-      address: 
+  activerecord:
+    attributes:
+      address:
         address1: Direccion
         address2: "Direccion (continuación)"
         city: Ciudad
@@ -24,24 +24,24 @@ es:
         lastname: "Apellidos"
         phone: Telefono
         zipcode: "Codigo postal"
-      country: 
+      country:
         iso: ISO
         iso3: ISO3
         iso_name: "Nombre ISO"
         name: Nombre
         numcode: "Codigo ISO"
-      creditcard: 
+      creditcard:
         cc_type: Tipo
         month: Mes
         number: Numero
         verification_value: "Codigo de verificacion"
         year: Año
-      inventory_unit: 
+      inventory_unit:
         state: Provincia
-      line_item: 
+      line_item:
         price: Precio
         quantity: Cantidad
-      order: 
+      order:
         checkout_complete: "Pedido completado"
         ip_address: "Direccion IP"
         item_total: "Total articulos"
@@ -49,7 +49,7 @@ es:
         special_instructions: "Instrucciones especiales"
         state: Provincia
         total: Total
-      product: 
+      product:
         available_on: "Disponible en"
         description: Descripción
         master_price: "Precio principal"
@@ -57,104 +57,104 @@ es:
         on_hand: "En mano"
         shipping_category: "Categoria de envio"
         tax_category: "Tax Category"
-      property: 
+      property:
         name: Nombre
         presentation: Presentacion
-      prototype: 
+      prototype:
         name: Nombre
-      role: 
+      role:
         name: Nombre
-      state: 
+      state:
         abbr: Abreviatura
         name: Nombre
-      tax_category: 
+      tax_category:
         description: Description
         name: Name
-      tax_rate: 
-        amount: Rate        
-      taxon: 
+      tax_rate:
+        amount: Rate
+      taxon:
         name: Nombre
         permalink: Enlace permanente
         position: Posicion
-      taxonomy: 
+      taxonomy:
         name: Nombre
-      user: 
+      user:
         email: Email
-      variant: 
+      variant:
         depth: Profundidad
         height: Altura
         price: Precio
         sku: SKU
         weight: Peso
         width: Ancho
-      zone: 
+      zone:
         description: Descripcion
         name: Nombre
-    models: 
-      address: 
+    models:
+      address:
         one: Direccion
         other: Direcciones
-      country: 
+      country:
         one: Pais
         other: Paises
-      creditcard: 
+      creditcard:
         one: "Tarjeta de credito"
         other: "Tarjetas de credito"
-      creditcard_payment: 
+      creditcard_payment:
         one: "Pago con Tarjeta de Crédito"
         other: "Pagos con Tarjeta de Crédito"
-      creditcard_txn: 
+      creditcard_txn:
         one: "Transaccion con Tarjeta de Crédito"
         other: "Transacciones con Tarjeta de Crédito"
-      inventory_unit: 
+      inventory_unit:
         one: "Unidad en inventario"
         other: "Unidades en inventario"
-      line_item: 
+      line_item:
         one: "Articulo"
         other: "Articulos"
-      order: 
+      order:
         one: Pedido
         other: Pedidos
-      payment: 
+      payment:
         one: Pago
         other: Pagos
-      product: 
+      product:
         one: Producto
         other: Productos
-      property: 
+      property:
         one: Propiedad
         other: Propiedades
-      prototype: 
+      prototype:
         one: Prototipo
         other: Prototipos
-      role: 
+      role:
         one: Funcion
         other: Funciones
-      shipping_category: 
+      shipping_category:
         one: "Categoría de envio"
         other: "Categorías de envio"
-      state: 
+      state:
         one: Provincia
         other: Provincias
-      tax_category: 
+      tax_category:
         one: "Tax Category"
         other: "Tax Categories"
-      tax_rate: 
+      tax_rate:
         one: "Tax Rate"
-        other: "Tax Rates"        
-      taxon: 
+        other: "Tax Rates"
+      taxon:
         one: Taxon
         other: Taxons
-      taxonomy: 
+      taxonomy:
         one: Taxonomia
         other: Taxonomias
-      user: 
+      user:
         one: Usuario
         other: Usuarios
-      variant: 
+      variant:
         one: Variante
         other: Variantes
-      zone: 
+      zone:
         one: Zona
         other: Zonas
   add: Añadir
@@ -175,7 +175,7 @@ es:
   all: "All"
   allow_backorders: "Permitir devoluciones"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir el uso de SSL en los modos de desarrollo y prueba
-  allow_ssl_to_be_used_when_in_production_mode: Permitir el uso de SSL en produccion        
+  allow_ssl_to_be_used_when_in_production_mode: Permitir el uso de SSL en produccion
   allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
@@ -188,7 +188,7 @@ es:
   are_you_sure_you_want_to_capture: "¿Estás seguro de que deseas capturar?"
   assign_taxon: "Asignar Taxon"
   assign_taxons: "Asignar Taxons"
-  authorization_failure: "Fallo de autorización"  
+  authorization_failure: "Fallo de autorización"
   authorized: Autorizado
   available_on: "Disponible en"
   available_taxons: "Taxons disponibles"
@@ -231,7 +231,7 @@ es:
   copy_all_mails_to: Copiar todos los correos a
   country: País
   country_based: "Pais base"
-  coupon: Coupon                                                                             
+  coupon: Coupon
   coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
@@ -262,7 +262,7 @@ es:
   editing_prototype: "Editando Prototipo"
   editing_shipping_category: "Editando Categoria de envío"
   editing_shipping_method: "Editando metodo de envío"
-  editing_shipping_rate: Editing Shipping Rate 
+  editing_shipping_rate: Editing Shipping Rate
   editing_state: "Editando provincia"
   editing_tax_category: "Editando Categoría fiscal"
   editing_tax_rate: "Editing Tax Rate"
@@ -272,7 +272,7 @@ es:
   email_address: "Dirección de Correo Electrónico"
   email_server_settings_description: "Configuración del servidor de correo electrónico"
   empty_cart: "Vaciar Cesta"
-  enable_mail_delivery: Habilitar envio por correo      
+  enable_mail_delivery: Habilitar envio por correo
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: error
@@ -306,7 +306,7 @@ es:
   google_analytics_create: "Crear nueva cuenta de Google Analytics"
   google_analytics_id: "Analytics ID"
   google_analytics_new: "Nueva cuenta de Google Analytics"
-  google_analytics_setting_description: "Gestionar Google Analytics ID" 
+  google_analytics_setting_description: "Gestionar Google Analytics ID"
   guest_user_account: Checkout as a Guest
   height: Altura
   hello_user: "Hola usuario"
@@ -339,9 +339,9 @@ es:
   log_in: "Iniciar sesión"
   logged_in_as: "Identificado como"
   logged_in_succesfully: "Conectado con éxito"
-  logged_out: "Se ha cerrado la sesión." 
-  login_as_existing: "Log In as Existing Customer" 
-  login_failed: "No se ha podido iniciar la sesion, error de autenticacion."      
+  logged_out: "Se ha cerrado la sesión."
+  login_as_existing: "Log In as Existing Customer"
+  login_failed: "No se ha podido iniciar la sesion, error de autenticacion."
   login_name: "Nombre de usuario"
   logout: "Cerrar sesión"
   maestro_or_solo_cards: Maestro/Solo cards
@@ -409,6 +409,7 @@ es:
   order_operation_authorize: "Autorizar"
   order_processed_successfully: "Su pedido se ha procesado correctamente"
   order_summary: Order Summary
+  order_sure_want_to: "¿Está seguro de quiere {{event}} este pedido?"
   order_total: "Total del pedido"
   order_total_message: "El importe total cargado a su tarjeta sera"
   order_updated: "Pedido actualizado"
@@ -422,8 +423,8 @@ es:
   password: Contraseña
   password_reset_instructions: "Instrucciones para recuperar la contraseña"
   password_reset_instructions_are_mailed: "Las instrucciones para recuperar su contraseña se le han enviado por email. Por favor revise su correo."
-  password_reset_token_not_found: "Lo sentimos, no podemos localizar su cuenta de usuario. Si tienes problemas, intenta copiar y pegar la URL desde el correo al navegador, o reinicia el proceso de recuperar la contraseña."    
-  password_updated: "Contraseña actualizada correctamente"  
+  password_reset_token_not_found: "Lo sentimos, no podemos localizar su cuenta de usuario. Si tienes problemas, intenta copiar y pegar la URL desde el correo al navegador, o reinicia el proceso de recuperar la contraseña."
+  password_updated: "Contraseña actualizada correctamente"
   path: Ruta
   pay: Pagar
   payment: Pago
@@ -432,11 +433,12 @@ es:
   payments: Pagos
   phone: Teléfono
   place_order: Hacer pedido
-  please_create_user: "Please create a user account"     
+  please_create_user: "Please create a user account"
   powered_by: "Powered by"
   presentation: Presentación
   previous: Anterior
   price: Precio
+  price_with_vat_included: "{{price}} (inc. IVA)"
   problem_authorizing_card: "Problema autorizando la tarjeta"
   problem_capturing_card: "Problema capturando la tarjeta"
   problems_processing_order: "Hemos tenido problemas al procesar su pedido"
@@ -456,7 +458,7 @@ es:
   rate: proporción
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
-  registration: Registration           
+  registration: Registration
   remember_me: "Recordarme en este equipo"
   remove: "Remover"
   reports: Reportes
@@ -465,7 +467,7 @@ es:
   reset_password: "Reinicia my contraseña"
   response_code: "Código de respuesta"
   resume: "Reanudar"
-  resumed: Reanudado 
+  resumed: Reanudado
   return: volver
   returned: regresó
   roles: Funciones
@@ -481,7 +483,7 @@ es:
   select_from_prototype: "Seleccionar desde prototipo"
   select_preferred_shipping_option: "Seleccionar la opcion de envio preferida"
   send_copy_of_all_mails_to: Envia una copia de todos los correos a
-  send_copy_of_orders_mails_to: Envia una copia de todos los correos de pedidos a         
+  send_copy_of_orders_mails_to: Envia una copia de todos los correos de pedidos a
   send_mails_as: Enviar correos como
   send_order_mails_as: Enviar correos de pedidos como
   server_error: "The server returned an error"
@@ -517,19 +519,19 @@ es:
   site_url: "URL del sitio"
   sku: Código
   smtp: SMTP
-  smtp_authentication_type: Tipo de autenticacion SMTP 
+  smtp_authentication_type: Tipo de autenticacion SMTP
   smtp_domain: Dominio SMTP
-  smtp_mail_host: SMTP Mail Host                       
+  smtp_mail_host: SMTP Mail Host
   smtp_password: contraseña SMTP
-  smtp_port: puerto SMTP          
+  smtp_port: puerto SMTP
   smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
   smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
-  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas."
   smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
-  smtp_username: nombre de usuario SMTP  
+  smtp_username: nombre de usuario SMTP
   spree:
-    date: Fecha 
-    time: Hora                                               
+    date: Fecha
+    time: Hora
   ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
   ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
   ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
@@ -581,7 +583,7 @@ es:
   unable_to_save_order: "No se ha podido guardar el pedido"
   unrecognized_card_type: Unrecognized card type
   update: Actualizar
-  update_password: "Actualiza mi contraseña y dejame entrar"                    
+  update_password: "Actualiza mi contraseña y dejame entrar"
   updated_successfully: "Actualizado correctamente"
   updating: Updating
   usage_limit: Usage Limit
@@ -594,7 +596,7 @@ es:
   users: Usuarios
   value: "valor"
   variants: Variantes
-  vat: "VAT"           
+  vat: "VAT"
   version: Versión
   website: "Página web"
   weight: Peso

@@ -409,6 +409,7 @@ it:
   order_operation_authorize: ""
   order_processed_successfully: "L'ordine è terminato con successo"
   order_summary: Order Summary
+  order_sure_want_to: "Are you sure you want to {{event}} this order?"
   order_total: Totale
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Order Updated"
@@ -437,6 +438,7 @@ it:
   presentation: Presentazione
   previous: Indietro
   price: Prezzo
+  price_with_vat_included: "{{price}} (inc. VAT)"
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: ""
   problems_processing_order: "Suo ordine non è stato elaborato"

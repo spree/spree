@@ -409,6 +409,7 @@ de-CH:
   order_operation_authorize: ""
   order_processed_successfully: "Ihre Bestellung wurde erfolgreich bearbeitet"
   order_summary: Order Summary
+  order_sure_want_to: "Are you sure you want to {{event}} this order?"
   order_total: Gesamtsumme
   order_total_message: "Die Gesamtsumme, mit der Ihre Kreditkarte belastet wird"
   order_updated: "Bestellung aktualisiert"
@@ -437,6 +438,7 @@ de-CH:
   presentation: Anzeige
   previous: zurück
   price: Preis
+  price_with_vat_included: "{{price}} (inc. VAT)"
   problem_authorizing_card: "Es gab ein Problem, Ihre Kreditkarte zu identifizieren"
   problem_capturing_card: "Es gab ein Problem beim Belasten Ihrer Kreditkarte"
   problems_processing_order: "Ihre Bestellung konnte nicht bearbetet werden"

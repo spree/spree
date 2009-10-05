@@ -1,12 +1,12 @@
---- 
+---
 en-US: 
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
   access_denied: "Access Denied"
   account: Account
-  account_updated: "Account updated!"        
+  account_updated: "Account updated!"
   action: Action
-  actions: 
+  actions:
     cancel: Cancel
     create: Create
     destroy: Destroy
@@ -14,9 +14,9 @@ en-US:
     listing: Listing
     new: New
     update: Update
-  activerecord: 
-    attributes: 
-      address: 
+  activerecord:
+    attributes:
+      address:
         address1: Address
         address2: "Address (contd.)"
         city: City
@@ -24,24 +24,24 @@ en-US:
         lastname: "Last Name"
         phone: Phone
         zipcode: "Zip Code"
-      country: 
+      country:
         iso: ISO
         iso3: ISO3
         iso_name: "ISO Name"
         name: Name
         numcode: "ISO Code"
-      creditcard: 
+      creditcard:
         cc_type: Type
         month: Month
         number: Number
         verification_value: "Verification Value"
         year: Year
-      inventory_unit: 
+      inventory_unit:
         state: State
-      line_item: 
+      line_item:
         price: Price
         quantity: Quantity
-      order: 
+      order:
         checkout_complete: "Checkout Complete"
         ip_address: "IP Address"
         item_total: "Item Total"
@@ -49,7 +49,7 @@ en-US:
         special_instructions: "Special Instructions"
         state: State
         total: Total
-      product: 
+      product:
         available_on: "Available On"
         description: Description
         master_price: "Master Price"
@@ -57,104 +57,104 @@ en-US:
         on_hand: "On Hand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
-      property: 
+      property:
         name: Name
         presentation: Presentation
-      prototype: 
+      prototype:
         name: Name
-      role: 
+      role:
         name: Name
-      state: 
+      state:
         abbr: Abbreviation
         name: Name
-      tax_category: 
+      tax_category:
         description: Description
         name: Name
-      tax_rate: 
-        amount: Rate        
-      taxon: 
+      tax_rate:
+        amount: Rate
+      taxon:
         name: Name
         permalink: Permalink
         position: Position
-      taxonomy: 
+      taxonomy:
         name: Name
-      user: 
+      user:
         email: Email
-      variant: 
+      variant:
         depth: Depth
         height: Height
         price: Price
         sku: SKU
         weight: Weight
         width: Width
-      zone: 
+      zone:
         description: Description
         name: Name
-    models: 
-      address: 
+    models:
+      address:
         one: Address
         other: Addresses
-      country: 
+      country:
         one: Country
         other: Countries
-      creditcard: 
+      creditcard:
         one: "Credit Card"
         other: "Credit Cards"
-      creditcard_payment: 
+      creditcard_payment:
         one: "Credit Card Payment"
         other: "Credit Card Payments"
-      creditcard_txn: 
+      creditcard_txn:
         one: "Credit Card Transaction"
         other: "Credit Card Transactions"
-      inventory_unit: 
+      inventory_unit:
         one: "Inventory Unit"
         other: "Inventory Units"
-      line_item: 
+      line_item:
         one: "Line Item"
         other: "Line Items"
-      order: 
+      order:
         one: Order
         other: Orders
-      payment: 
+      payment:
         one: Payment
         other: Payments
-      product: 
+      product:
         one: Product
         other: Products
-      property: 
+      property:
         one: Property
         other: Properties
-      prototype: 
+      prototype:
         one: Prototype
         other: Prototypes
-      role: 
+      role:
         one: Roles
         other: Roles
-      shipping_category: 
+      shipping_category:
         one: "Shipping Category"
         other: "Shipping Categories"
-      state: 
+      state:
         one: State
-        other: States   
-      tax_category: 
+        other: States
+      tax_category:
         one: "Tax Category"
         other: "Tax Categories"
-      tax_rate: 
+      tax_rate:
         one: "Tax Rate"
-        other: "Tax Rates"        
-      taxon: 
+        other: "Tax Rates"
+      taxon:
         one: Taxon
         other: Taxons
-      taxonomy: 
+      taxonomy:
         one: Taxonomy
         other: Taxonomies
-      user: 
+      user:
         one: User
         other: Users
-      variant: 
+      variant:
         one: Variant
         other: Variants
-      zone: 
+      zone:
         one: Zone
         other: Zones
   add: Add
@@ -175,7 +175,7 @@ en-US:
   all: "All"
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
-  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
+  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode
   allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
@@ -231,7 +231,7 @@ en-US:
   copy_all_mails_to: Copy All Mails To
   country: Country
   country_based: "Country Based"
-  coupon: Coupon                                                                             
+  coupon: Coupon
   coupon_code: Coupon Code
   coupons: Coupons
   coupons_description: Manage coupons
@@ -262,17 +262,17 @@ en-US:
   editing_prototype: "Editing Prototype"
   editing_shipping_category: "Editing Shipping Category"
   editing_shipping_method: "Editing Shipping Method"
-  editing_shipping_rate: Editing Shipping Rate 
+  editing_shipping_rate: Editing Shipping Rate
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
   editing_tax_rate: "Editing Tax Rate"
-  editing_user: "Editing User"   
+  editing_user: "Editing User"
   editing_zone: "Editing Zone"
   email: Email
   email_address: "Email Address"
   email_server_settings_description: "Set email server settings."
   empty_cart: "Empty Cart"
-  enable_mail_delivery: Enable Mail Delivery      
+  enable_mail_delivery: Enable Mail Delivery
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   error: error
@@ -286,8 +286,8 @@ en-US:
   filename: Filename
   final_confirmation: "Final Confirmation"
   first_item: First Item Cost
-  first_name: "First Name"                 
-  flat_percent: "Flat Percent"                  
+  first_name: "First Name"
+  flat_percent: "Flat Percent"
   flat_rate_amount: Amount
   flat_rate_per_item: "Flat Rate (per item)"
   flat_rate_per_order: "Flat Rate (per order)"
@@ -306,7 +306,7 @@ en-US:
   google_analytics_create: "Create New Google Analytics Account"
   google_analytics_id: "Analytics ID"
   google_analytics_new: "New Google Analytics Account"
-  google_analytics_setting_description: "Manage Google Analytics ID" 
+  google_analytics_setting_description: "Manage Google Analytics ID"
   guest_user_account: Checkout as a Guest
   height: Height
   hello_user: "Hello User"
@@ -339,11 +339,11 @@ en-US:
   log_in: "Log In"
   logged_in_as: "Logged in as"
   logged_in_succesfully: "Logged in successfully"
-  logged_out: "You have been logged out." 
-  login_as_existing: "Log In as Existing Customer" 
-  login_failed: "Login authentication failed."    
+  logged_out: "You have been logged out."
+  login_as_existing: "Log In as Existing Customer"
+  login_failed: "Login authentication failed."
   login_name: Login
-  logout: Logout  
+  logout: Logout
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
@@ -359,7 +359,7 @@ en-US:
   metadata: "Metadata"
   month: "Month"
   my_account: "My Account"
-  my_orders: "My Orders"    
+  my_orders: "My Orders"
   name: Name
   new: New
   new_category: "New category"
@@ -409,6 +409,7 @@ en-US:
   order_operation_authorize: Authorize
   order_processed_successfully: "Your order has been processed successfully"
   order_summary: Order Summary
+  order_sure_want_to: "Are you sure you want to {{event}} this order?"
   order_total: "Order Total"
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Order Updated"
@@ -422,21 +423,22 @@ en-US:
   password: Password
   password_reset_instructions: "Password Reset Instructions"
   password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
-  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."    
-  password_updated: "Password successfully updated"  
-  path: Path      
+  password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."
+  password_updated: "Password successfully updated"
+  path: Path
   pay: pay
   payment: Payment
   payment_gateway: "Payment Gateway"
   payment_information: "Payment Information"
   payments: Payments
   phone: Phone
-  place_order: Place Order        
-  please_create_user: "Please create a user account"     
+  place_order: Place Order
+  please_create_user: "Please create a user account"
   powered_by: "Powered by"
   presentation: Presentation
   previous: Previous
   price: Price
+  price_with_vat_included: "{{price}} (inc. VAT)"
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
   problems_processing_order: "We had problems processing your order"
@@ -456,14 +458,14 @@ en-US:
   rate: Rate
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
-  registration: Registration           
+  registration: Registration
   remember_me: "Remember me"
   remove: Remove
   reports: Reports
   required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: Resend
   reset_password: "Reset my password"
-  response_code: "Response Code"  
+  response_code: "Response Code"
   resume: "resume"
   resumed: Resumed
   return: return
@@ -474,17 +476,17 @@ en-US:
   sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Sales Totals"
   sales_totals_description: "Sales Total For All Orders"
-  save_preferences: Save Preferences           
+  save_preferences: Save Preferences
   search: Search
   secure_connection_type: Secure Connection Type
   select: Select
   select_from_prototype: "Select From Prototype"
   select_preferred_shipping_option: "Select preferred shipping option"
   send_copy_of_all_mails_to: Send Copy of All Mails To
-  send_copy_of_orders_mails_to: Send Copy of Order Mails To         
-  send_mails_as: Send Mails As                    
-  send_order_mails_as: Send Order Mails As   
-  server_error: "The server returned an error"  
+  send_copy_of_orders_mails_to: Send Copy of Order Mails To
+  send_mails_as: Send Mails As
+  send_order_mails_as: Send Order Mails As
+  server_error: "The server returned an error"
   settings: Settings
   ship: ship
   ship_address: "Ship Address"
@@ -517,19 +519,19 @@ en-US:
   site_url: "Site URL"
   sku: SKU
   smtp: SMTP
-  smtp_authentication_type: SMTP Authentication Type         
+  smtp_authentication_type: SMTP Authentication Type
   smtp_domain: SMTP Domain
-  smtp_mail_host: SMTP Mail Host                       
+  smtp_mail_host: SMTP Mail Host
   smtp_password: SMTP Password
-  smtp_port: SMTP Port          
+  smtp_port: SMTP Port
   smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
   smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
-  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
+  smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas."
   smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
-  smtp_username: SMTP Username  
+  smtp_username: SMTP Username
   spree:
     date: Date
-    time: Time                                               
+    time: Time
   ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
   ssl_will_be_used_in_production_mode: "SSL will be used in production mode"
   ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
@@ -573,7 +575,7 @@ en-US:
   tracking: Tracking
   transaction: Transaction
   tree: Tree
-  try_again: "Try Again"     
+  try_again: "Try Again"
   type: Type
   unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
@@ -581,7 +583,7 @@ en-US:
   unable_to_save_order: "Unable to Save Order"
   unrecognized_card_type: Unrecognized card type
   update: Update
-  update_password: "Update my password and log me in"                    
+  update_password: "Update my password and log me in"
   updated_successfully: "Updated Successfully"
   updating: Updating
   usage_limit: Usage Limit
@@ -594,7 +596,7 @@ en-US:
   users: Users
   value: Value
   variants: Variants
-  vat: "VAT"           
+  vat: "VAT"
   version: Version
   website: Website
   weight: Weight

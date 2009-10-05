@@ -409,6 +409,7 @@ da:
   order_operation_authorize: Authorize
   order_processed_successfully: "Your order has been processed successfully"
   order_summary: Order Summary
+  order_sure_want_to: "Are you sure you want to {{event}} this order?"
   order_total: "Order Total"
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Order Updated"
@@ -437,6 +438,7 @@ da:
   presentation: Presentation
   previous: Previous
   price: Price
+  price_with_vat_included: "{{price}} (inc. VAT)"
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
   problems_processing_order: "We had problems processing your order"
