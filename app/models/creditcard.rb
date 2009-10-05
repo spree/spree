@@ -21,7 +21,7 @@ class Creditcard < ActiveRecord::Base
     end
     
     def expiration #:nodoc:
-      Time.parse("#{month}/#{month_days}/#{year} 23:59:59") rescue Time.at(0)
+      Time.parse("#{year}-#{month}-#{month_days} 23:59:59") rescue Time.at(0)
     end
     
     private

@@ -33,7 +33,7 @@ private
     end
     if (dates.size > 0)
       dates.uniq.each do |date|
-        hash[date] = [hash.delete("#{date}(2i)"), hash.delete("#{date}(3i)"), hash.delete("#{date}(1i)")].join('/')
+        hash[date] = [hash.delete("#{date}(1i)"), hash.delete("#{date}(2i)"), hash.delete("#{date}(3i)")].join('-')
       end
     end
   end

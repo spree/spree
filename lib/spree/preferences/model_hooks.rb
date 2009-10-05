@@ -275,7 +275,12 @@ module Spree
                 attributes = {:attribute => attribute, :group_id => group_id, :group_type => group_type}
                 
                 # Find an existing preference or build a new one
-                preference = stored_preferences.find(:first, :conditions => attributes) ||  stored_preferences.build(attributes)
+                preference = stored_preferences.find(:first, :conditions => attributes)
+                if preference.nil?
+                  attribute = attributes.delete(:attribute)
+                  preference = stored_preferences.build(attributes)
+                  preference['attribute'] = attribute
+                end                
                 preference.value = value
                 preference.save!
               end

@@ -11,8 +11,8 @@ module ResourceController
         NAME_ACCESSORS.each { |accessor| send(accessor, controller_name.singularize.underscore) }
 
         ACTIONS.each do |action|
-          class_scoping_reader action, FAILABLE_ACTIONS.include?(action) ? FailableActionOptions.new : ActionOptions.new
-        end
+          class_scoping_reader action, FAILABLE_ACTIONS.include?(action) ? ResourceController::FailableActionOptions.new : ResourceController::ActionOptions.new
+         end
 
         self.helper_method :object_url, :edit_object_url, :new_object_url, :collection_url, :object, :collection,
                              :parent, :parent_type, :parent_object, :parent_model, :model_name, :model, :object_path,
