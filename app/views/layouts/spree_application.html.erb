@@ -14,14 +14,14 @@ end
  %>
 <body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
   <div id="header" class="container">                                                           
-    <ul id="nav-bar">
-      <div id="login-bar">
+    <div id="login-bar">
+      <ul id="nav-bar">
         <%= render 'shared/login_bar' %>
-      </div>
-      <% if store_menu? %>
-        <%= render 'shared/store_menu' %>
-      <% end %>
-    </ul>
+        <% if store_menu? %>
+          <%= render 'shared/store_menu' %>
+        <% end %>
+      </ul>
+    </div>
 	<%= logo %>
   </div>
   <div id="wrapper" class="container"> 
