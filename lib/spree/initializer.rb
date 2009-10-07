@@ -155,6 +155,9 @@ module Spree
     
       ActionMailer::Base.template_root = view_paths  if configuration.frameworks.include?(:action_mailer)        
       ActionController::Base.view_paths = view_paths if configuration.frameworks.include?(:action_controller)
+
+			if defined?(ActionMailer::QueueMailer)
+			ActionMailer::QueueMailer.template_root = view_paths if configuration.frameworks.include?(:action_mailer) end
     end
     
     def initialize_i18n
