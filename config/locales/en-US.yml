@@ -385,7 +385,7 @@ en-US:
   new_variant: "New Variant"
   new_zone: "New Zone"
   next: Next
-  no: "No"
+  'no': "No"
   no_items_in_cart: ""
   no_match_found: "No Match Found"
   no_user_found: "No user was found with that email address"
@@ -606,7 +606,7 @@ en-US:
   whats_this: "What's this"
   width: Width
   year: "Year"
-  yes: "Yes"
+  'yes': "Yes"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: Zip

@@ -214,6 +214,8 @@ module Admin::BaseHelper
   def preference_fields(object, form)
     return unless object.respond_to?(:preferences)
     object.preferences.keys.map{ |key|
+			next unless object.class.preference_definitions.has_key? key
+			
       definition = object.class.preference_definitions[key]
       type = definition.instance_eval{@type}.to_sym
       

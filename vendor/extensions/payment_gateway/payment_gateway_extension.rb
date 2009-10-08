@@ -11,5 +11,23 @@ class PaymentGatewayExtension < Spree::Extension
       # add gateway methods to the creditcard so we can authorize, capture, etc.
       include Spree::PaymentGateway
     end
+
+
+		#register all payment gateways
+		[
+			Gateway::Bogus,
+      Gateway::AuthorizeNet,
+      Gateway::Linkpoint,
+			Gateway::PayPal,
+			Gateway::Protx,
+			Gateway::Beanstream
+    ].each{|gw|
+      begin
+        gw.register  
+      rescue Exception => e
+        $stderr.puts "Error registering gateway #{c_model}"
+      end
+    }
+
   end
 end

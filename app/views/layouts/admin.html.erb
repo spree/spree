@@ -8,7 +8,7 @@
   <%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', :cache => 'admin-all' %>
 
   <%= javascript_include_tag 'jquery', 'jquery-ui', 'jrails', 'jquery.suggest', 'jrails.autocomplete', 'jquery.template', :cache => 'jquery-and-plugins' %>
-  <%= javascript_include_tag 'spree', 'nested-attribute', 'zone', 'calculator' %>
+  <%= javascript_include_tag 'spree', 'nested-attribute', 'zone', 'calculator', 'gateway' %>
   <%= javascript_tag "$ = jQuery;" %>
   <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
   <%= javascript_include_tag 'jquery.alerts/jquery.alerts.js' %>

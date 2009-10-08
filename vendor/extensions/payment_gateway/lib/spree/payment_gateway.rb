@@ -91,24 +91,13 @@ module Spree
     end
     
     def spree_cc_type
-      return "visa" if ENV['RAILS_ENV'] == "development" and Spree::Gateway::Config[:use_bogus]
+      return "visa" if ENV['RAILS_ENV'] == "development" 
       self.class.type?(number)
     end
 
     # instantiates the selected gateway and configures with the options stored in the database
     def payment_gateway
-      return Spree::BogusGateway.new if ENV['RAILS_ENV'] == "development" and Spree::Gateway::Config[:use_bogus]
-
-      # retrieve gateway configuration from the database
-      gateway_config = GatewayConfiguration.find :first
-      config_options = {}
-      gateway_config.gateway_option_values.each do |option_value|
-        key = option_value.gateway_option.name.to_sym
-        config_options[key] = option_value.value
-      end
-      gateway = gateway_config.gateway.clazz.constantize.new(config_options)
-
-      return gateway
+			Gateway.find(:first, :conditions => {:active => true, :environment => ENV['RAILS_ENV']}) 
     end  
   end
 end
