@@ -25,7 +25,7 @@
       <td><%= t("zone_setting_description") %></td>
     </tr>
     <tr>
-      <td><%= link_to t("states"), admin_country_states_path(214) %></td>
+      <td><%= link_to t("states"), admin_country_states_path(Spree::Config[:default_country_id]) %></td>
       <td><%= t("state_setting_description") %></td>
     </tr>
     <tr>
