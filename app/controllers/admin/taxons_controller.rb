@@ -14,13 +14,35 @@ class Admin::TaxonsController < Admin::BaseController
   
   update.before do
     parent_id = params[:taxon][:parent_id]
-    position = params[:taxon][:position]
+    new_position = params[:taxon][:position]
 
-    if parent_id || position #taxon is being moved
-      parent = parent_id.nil? ? @taxon.parent : Taxon.find(parent_id.to_i)
-      position = position.nil? ? -1 : position.to_i 
+    if parent_id || new_position #taxon is being moved
+      new_parent = parent_id.nil? ? @taxon.parent : Taxon.find(parent_id.to_i)
+      new_position = new_position.nil? ? -1 : new_position.to_i
 
-      @taxon.move_to(parent, position)
+      # Bellow is a very complicated way of finding where in nested set we
+      # should actually move the taxon to achieve sane results,
+      # JS is giving us the desired position, which was awesome for previous setup,
+      # but now it's quite complicated to find where we should put it as we have
+      # to differenciate between moving to the same branch, up down and into
+      # first position.
+      new_siblings = new_parent.children
+      if new_position <= 0 && new_siblings.empty?
+        @taxon.move_to_child_of(new_parent)
+      elsif new_parent.id != @taxon.parent_id
+        if new_position == 0
+          @taxon.move_to_left_of(new_siblings.first)
+        else
+          @taxon.move_to_right_of(new_siblings[new_position-1])
+        end
+      elsif new_position < new_siblings.index(@taxon)
+        @taxon.move_to_left_of(new_siblings[new_position]) # we move up
+      else
+        @taxon.move_to_right_of(new_siblings[new_position]) # we move down
+      end
+      # Reset legacy position, if any extensions still rely on it
+      new_parent.children.reload.each{|t| t.update_attribute(:position, t.position)}
+
       if parent_id
         @taxon.reload
         @taxon.permalink = nil
@@ -80,8 +102,8 @@ class Admin::TaxonsController < Admin::BaseController
   private 
   def reposition_taxons(taxons)
     taxons.each_with_index do |taxon, i|
-        taxon.position = i
-        taxon.save!
+      taxon.position = i
+      taxon.save!
     end
   end
 end

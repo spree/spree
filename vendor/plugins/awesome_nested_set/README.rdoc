@@ -1,0 +1,79 @@
+= AwesomeNestedSet
+
+Awesome Nested Set is an implementation of the nested set pattern for ActiveRecord models. It is replacement for acts_as_nested_set and BetterNestedSet, but awesomer. It supports Rails 2.1 and later.
+
+== What makes this so awesome?
+
+This is a new implementation of nested set based off of BetterNestedSet that fixes some bugs, removes tons of duplication, adds a few useful methods, and adds STI support.
+
+== Installation
+
+Install as a plugin:
+
+  script/plugin install git://github.com/collectiveidea/awesome_nested_set.git
+  
+== Usage
+
+To make use of awesome_nested_set, your model needs to have 3 fields: lft, rgt, and parent_id:
+
+  class CreateCategories < ActiveRecord::Migration
+    def self.up
+      create_table :categories do |t|
+        t.string :name
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+      end
+    end
+
+    def self.down
+      drop_table :categories
+    end
+  end
+
+Enable the nested set functionality by declaring acts_as_nested_set on your model
+
+  class Category < ActiveRecord::Base
+    acts_as_nested_set
+  end
+  
+Run `rake rdoc` to generate the API docs and see CollectiveIdea::Acts::NestedSet::SingletonMethods for more info.
+
+== View Helper
+
+The view helper is called #nested_set_options. 
+
+Example usage:
+
+  <%= f.select :parent_id, nested_set_options(Category, @category) {|i| "#{'-' * i.level} #{i.name}" } %>
+
+  <%= select_tag 'parent_id', options_for_select(nested_set_options(Category) {|i| "#{'-' * i.level} #{i.name}" } ) %>
+
+See CollectiveIdea::Acts::NestedSet::Helper for more information about the helpers.
+
+== References
+
+You can learn more about nested sets at:
+
+  http://www.dbmsmag.com/9603d06.html
+  http://threebit.net/tutorials/nestedset/tutorial1.html
+  http://api.rubyonrails.com/classes/ActiveRecord/Acts/NestedSet/ClassMethods.html
+  http://opensource.symetrie.com/trac/better_nested_set/
+
+== How to contribute
+
+If you find what you might think is a bug:
+
+1. Check the GitHub issue tracker to see if anyone else has had the same issue.
+   http://github.com/collectiveidea/awesome_nested_set/issues/
+2. If you don't see anything, create an issue with information on how to reproduce it.
+
+If you want to contribute an enhancement or a fix:
+
+1. Fork the project on github.
+   http://github.com/collectiveidea/awesome_nested_set/
+2. Make your changes with tests.
+3. Commit the changes without making changes to the Rakefile, VERSION, or any other files that aren't related to your enhancement or fix
+4. Send a pull request.
+
+Copyright ©2008 Collective Idea, released under the MIT license

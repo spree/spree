@@ -1,0 +1,13 @@
+Autotest.add_hook :initialize do |at|
+  at.clear_mappings
+
+  at.add_mapping %r%^lib/(.*)\.rb$% do |_, m|
+    at.files_matching %r%^test/#{m[1]}_test.rb$%
+  end
+
+  at.add_mapping(%r%^test/.*\.rb$%) {|filename, _| filename }
+
+  at.add_mapping %r%^test/fixtures/(.*)s.yml% do |_, _|
+    at.files_matching %r%^test/.*\.rb$%
+  end
+end

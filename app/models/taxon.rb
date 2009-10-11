@@ -1,5 +1,6 @@
 class Taxon < ActiveRecord::Base
-  acts_as_adjacency_list :foreign_key => 'parent_id', :order => 'position'
+  acts_as_nested_set :dependent => :destroy
+
   belongs_to :taxonomy
   has_and_belongs_to_many :products
   before_save :set_permalink  
@@ -11,13 +12,13 @@ class Taxon < ActiveRecord::Base
   def applicable_filters
     fs  = []
     fs << ProductFilters.taxons_below(self)
-                          ## unless it's a root taxon? left open for demo purposes
+    ## unless it's a root taxon? left open for demo purposes
     fs += [ 
-            ProductFilters.price_filter,
-            ProductFilters.brand_filter,
-            ProductFilters.selective_brand_filter(self) ]
+      ProductFilters.price_filter,
+      ProductFilters.brand_filter,
+      ProductFilters.selective_brand_filter(self) ]
   end
-
+  
   private
 
   # Creates permalink based on .to_url method provided by stringx gem
