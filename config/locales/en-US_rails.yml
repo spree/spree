@@ -132,6 +132,11 @@ en-US:
       minute: "Minute"
       second: "Seconds"
 
+  support:
+    select:
+      # default value for :prompt => true in FormOptionsHelper
+      prompt: "Please select"
+
   activerecord:
     errors:
       template:
@@ -140,7 +145,7 @@ en-US:
           other:  "{{count}} errors prohibited this {{model}} from being saved"
         # The variable :count is also available
         body: "There were problems with the following fields:"
-  
+
       # The values :model, :attribute and :value are always available for interpolation
       # The value :count is available when applicable. Can be used for pluralization.
       messages:
@@ -163,8 +168,12 @@ en-US:
         less_than_or_equal_to: "must be less than or equal to {{count}}"
         odd: "must be odd"
         even: "must be even"
+        record_invalid: "Validation failed: {{errors}}"
         # Append your own errors here or at the model/attributes scope.
-    
+
+      full_messages:
+        format: "{{attribute}} {{message}}"
+
       # You can define own errors for models or model attributes.
       # The values :model, :attribute and :value are always available for interpolation.
       #
@@ -178,18 +187,16 @@ en-US:
       # Will define custom blank validation message for User model and 
       # custom blank validation message for login attribute of User model.
       #models:
-    
+
     # Translate model names. Used in Model.human_name().
     #models:
       # For example,
       #   user: "Dude"
       # will translate User model name to "Dude"
-    
+
     # Translate model attribute names. Used in Model.human_attribute_name(attribute).
     #attributes:
       # For example,
       #   user:
       #     login: "Handle"
       # will translate User attribute "login" as "Handle"
-    
-    
