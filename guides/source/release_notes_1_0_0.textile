@@ -4,6 +4,16 @@ endprologue.
 
 h3. Miscellaneous improvements
 
+h4. Seed data in extensions
+
+Calling +rake db:seed+ or +rake db:bootstrap+ will run Spree's +db/seeds.rb+ and now it also runs the
+same named file in your extensions.
+
+To specify seed data in your extension directory, create a
++db/seeds.rb+ file and add any code in here you want. Often the code you write
+in +db/seeds.rb+ will load YAML fixtures into the database, see the +db/seeds.rb+
+file in Spree core for an example of this.
+
 h4. Sample product images in extensions
 
 For some time now you've been able to write sample data fixtures in extensions
