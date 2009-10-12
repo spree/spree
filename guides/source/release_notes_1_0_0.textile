@@ -1,0 +1,14 @@
+h2. Spree 1.0.0 Release Notes
+
+endprologue.
+
+h3. Miscellaneous improvements
+
+h4. Sample product images in extensions
+
+For some time now you've been able to write sample data fixtures in extensions
+that will get run when you load sample data with the +rake db:bootstrap+ task.
+
+Now you can also add sample product image files in your extensions in the 
+extensions own +lib/tasks/sample/products+ directory.  These images will be 
+copied to the +public/assets/products+ directory when the sample data is loaded.
