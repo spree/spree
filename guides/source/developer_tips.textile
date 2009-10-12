@@ -13,14 +13,15 @@ h4. The important commands
 will copy in any new "infrastructure" files, e.g. new configuration or javascript or 
 style files.
 
-I believe (can someone confirm?)  you will want to ensure the installed spree
+Before updating, you will want to ensure the installed spree
 gem is up-to-date.  For example, if you are using Spree edge, then get the 
 latest edge source, and run +rake spree:gem:install+.
 
-Run this command from inside RAILS_ROOT (your application directory) and your 
-application will be upgraded.
+Once you have the latest spree gem installed, run +spree --update+ from 
+inside RAILS_ROOT (your application directory) and your application will be
+upgraded.
 
-The update process is also now less “destructive” than in previous versions of Spree.
+The update process is less “destructive” than in previous versions of Spree.
 Instead of silently replacing crucial files in your application, Spree now checks
 the content of files it needs to replace, and if the old version differs, it
 will be saved with a ~ suffix.
