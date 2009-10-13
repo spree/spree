@@ -1,3 +1,8 @@
-bogus_gateway:
-  name: Bogus Gateway
-  clazz: Spree::BogusGateway
+bogus_test:
+  name: Bogus Test
+  description: Bogus payment gateway for test.
+  environment: test
+  server: test
+  test_mode: true
+  active: true
+  type: Gateway::Bogus

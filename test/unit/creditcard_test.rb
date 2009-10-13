@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class CreditcardTest < ActiveSupport::TestCase
-
+  fixtures :gateways
   context "authorization success" do
     setup do
       @creditcard = Factory.build(:creditcard, :checkout => Factory(:checkout))

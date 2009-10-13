@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class CheckoutTest < ActiveSupport::TestCase
-  fixtures :gateways, :gateway_configurations
+  fixtures :gateways
 
   should_belong_to :bill_address
 

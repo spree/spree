@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class IncompleteCheckoutTest < ActiveSupport::TestCase
-  fixtures :gateways, :gateway_configurations
+  fixtures :gateways	
   setup :activate_authlogic
 
   context "incomplete checkout" do

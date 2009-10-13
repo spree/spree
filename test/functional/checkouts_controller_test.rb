@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class CheckoutsControllerTest < ActionController::TestCase
-  fixtures :countries, :states, :gateways, :gateway_configurations
+  fixtures :countries, :states, :gateways
 
   context "given current_user" do
     setup do

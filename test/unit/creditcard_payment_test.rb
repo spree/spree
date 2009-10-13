@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class CreditcardPaymentTest < ActiveSupport::TestCase
-  fixtures :gateways, :gateway_configurations
+  fixtures :gateways
 
   context "instance" do
     setup do
