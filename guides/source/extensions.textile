@@ -41,6 +41,7 @@ app
 config
 db
   migrate
+  seeds.rb
 lib
 spec
   controllers
@@ -121,7 +122,13 @@ The standard rake command for running Rails migrations will run all of the Spree
   rake db:migrate
 </shell>
 
-INFO. There are currently some known issues with migrating +DOWN+ using extension migrations.  Since down migrations are rarely useful in the real world, this problem is likely to remain unresolved for a while.        
+INFO. There are currently some known issues with migrating +DOWN+ using extension migrations.  Since down migrations are rarely useful in the real world, this problem is likely to remain unresolved for a while.  
+
+Extensions can also populate seed data in a way similar to how a standard rails app.  Seed data is data that is needed by the application in order for it to work properly.  This is a fairly specialized case and it is not the same as sample data (which is optional.)
+
+<shell>
+  rake db:seed
+</shell>
 
 NOTE. For more information on Rails migrations in general, please see the excellent "rails guide":http://guides.rubyonrails.org/migrations.html on this subject.
 
