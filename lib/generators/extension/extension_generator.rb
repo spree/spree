@@ -24,7 +24,8 @@ class ExtensionGenerator < Rails::Generator::NamedBase
       m.template 'README.markdown',              "#{extension_path}/README.markdown"
       m.template 'extension.rb',        "#{extension_path}/#{extension_file_name}.rb"
       m.template 'tasks.rake',          "#{extension_path}/lib/tasks/#{extension_file_name}_tasks.rake"
-      m.template 'routes.rb',          "#{extension_path}/config/routes.rb"
+      m.template 'routes.rb',          "#{extension_path}/config/routes.rb"  
+      m.template 'seeds.rb', "#{extension_path}/db/seeds.rb"
 
       if options[:with_test_unit]
         m.directory "#{extension_path}/test/fixtures"
