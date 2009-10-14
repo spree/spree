@@ -15,6 +15,14 @@ module Spree
         return nil unless ActiveRecord::Base.connection.tables.include?('configurations')
         AppConfiguration.find_or_create_by_name("Default configuration")
       end
+      
+      def searcher
+        @searcher ||= Spree::Search::Base.new
+      end
+      
+      def searcher=(searcher_obj)
+        @searcher = searcher_obj  
+      end
     end
   end
 end

@@ -58,6 +58,8 @@ class Product < ActiveRecord::Base
   named_scope :not_deleted,                  { :conditions => "products.deleted_at is null" }
   named_scope :available,   lambda { |*args| { :conditions => ["products.available_on <= ?", args.first || Time.zone.now] } }
 
+  named_scope :query, lambda{|query| Spree::Config.searcher.get_products_conditions_for(query) }
+
   # other useful product scopes
   include ProductScopes
 

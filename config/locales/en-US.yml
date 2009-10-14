@@ -478,6 +478,7 @@ en-US:
   sales_totals_description: "Sales Total For All Orders"
   save_preferences: Save Preferences
   search: Search
+  search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Secure Connection Type
   select: Select
   select_from_prototype: "Select From Prototype"

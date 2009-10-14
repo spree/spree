@@ -1,3 +1,6 @@
+<% if params[:keywords] %>
+<h3><%= t(:search_results, :keywords => params[:keywords]) %></h3>
+<% end %>
 <ul class="product-listing">
   <% column_count = 0 %>
   <% products.each do |product| %>
