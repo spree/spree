@@ -1,16 +1,32 @@
 <p>
-  <label for="<%= t("email") %>"><%= t("email") %></label><br />
+  <%= f.label :email, t("email") %><br />
   <%= f.text_field :email, :class => 'title'  %>
 </p>
+<div id="password-credentials" style="<%=password_style(@user)%>">
+  <p>
+    <%= f.label :password, t("password") %><br />
+    <%= f.password_field :password, :class => 'title'  %>
+  </p>
 
-<p>
-  <label for="<%= t("password") %>"><%= t("password") %></label><br />
-  <%= f.password_field :password, :class => 'title'  %>
-</p>
+  <p>
+    <%= f.label :password_confirmation, t("password_confirmation", :default => t(:confirm)) %><br />
+    <%= f.password_field :password_confirmation, :class => 'title' %>
+  </p>
+</div>
 
-<p>
-  <label for="<%= t("password") %>"><%= t("confirm") %></label><br />
-  <%= f.password_field :password_confirmation, :class => 'title' %>
-</p>
+<% if Spree::Config[:allow_openid] %>
+  <div id="openid-credentials" style="<%=openid_style(@user)%>" >
+    <p>
+      <%= f.label :openid_identifier, t('OpenID', :default => 'OpenID') %><br />
+      <%= f.text_field :openid_identifier, :class => 'openid_url' %>
+    </p>
+  </div>
+<% end %>
+
+<% if Spree::Config[:allow_openid] %>
+  <p id='enable_login_via_openid' style="<%=password_style(@user)%>" ><a href='#'><%= t :enable_login_via_openid %></a></p>
+  <p id='enable_login_via_login_password' style="<%=openid_style(@user)%>" ><a href='#'><%= t :enable_login_via_login_password %></a></p>
+  <%= javascript_include_tag 'open_id' %>
+<% end %>
 
 <%= render_extra_partials f %>

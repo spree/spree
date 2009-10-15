@@ -1,0 +1,10 @@
+<% if Spree::Config[:allow_openid] %>
+  <%= stylesheet_link_tag "open_id.css" %>
+  <% unless params[:user] && params[:user][:openid_identifier] %>
+    <p><%= t(:or) %></p>
+  <% end %>  
+  <p>
+    <%= f.label :openid_identifier, t('OpenID', :default => 'OpenID') %><br />
+    <%= f.text_field :openid_identifier, :class => 'title openid_url' %>
+  </p>
+<% end %>

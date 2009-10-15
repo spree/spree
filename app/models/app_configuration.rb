@@ -43,7 +43,8 @@ class AppConfiguration < Configuration
   preference :show_price_inc_vat, :boolean, :default => false 
   preference :auto_capture, :boolean, :default => false # automatically capture the creditcard (as opposed to just authorize and capture later)
   preference :address_requires_state, :boolean, :default => true # should state/state_name be required
-  preference :use_mail_queue, :boolean, :default => false #send mail immediately or use a mail queue. 
+  preference :use_mail_queue, :boolean, :default => false #send mail immediately or use a mail queue.
+  preference :allow_openid, :boolean, :default => true # allow use OpenID for registrations 
   validates_presence_of :name
   validates_uniqueness_of :name
   
