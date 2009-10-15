@@ -45,15 +45,15 @@ class Creditcard < ActiveRecord::Base
   end
   
   def first_name?
-    !@first_name.blank?
+    !self.first_name.blank?
   end
   
   def last_name?
-    !@last_name.blank?
+    !self.last_name.blank?
   end
         
   def name
-    "#{@first_name} #{@last_name}"
+    "#{self.first_name} #{self.last_name}"
   end
         
   def verification_value?
