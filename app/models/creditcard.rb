@@ -33,7 +33,7 @@ class Creditcard < ActiveRecord::Base
   end
   
   def expiry_date
-    ExpiryDate.new(Time.now.month, Time.now.year)
+    ExpiryDate.new(self.month, self.year)
   end
 
   def expired?
