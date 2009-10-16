@@ -13,7 +13,7 @@ class Gateway::Beanstream < Gateway
   PROFILE_OPERATIONS = {:new => 'N', :modify => 'M'}
 	
 	ActiveMerchant::Billing::BeanstreamGateway.class_eval do
-
+		
 	  def store(credit_card, options = {})
 	    post = {}        
 	    add_address(post, options)

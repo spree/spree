@@ -457,3 +457,13 @@ ul#shipping-specs li {
   list-style-image:none;
   display:inline;
 }
+#preference-settings input, #preference-settings select, #preference-settings textarea{
+  float:left;
+ 
+}
+#preference-settings label{
+  clear:both;
+  display:block;
+  float:left;
+  width:170px;
+}

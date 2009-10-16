@@ -56,17 +56,16 @@
  
 <h2><%= t('settings') %></h2>
 
-<%= f.label(:type, t("provider")) %>
-<%= collection_select(:gateway, :type, @providers, :to_s, :name, {}, {:id => "gtwy-type"}) %>
+<div id="preference-settings">
+  <%= f.label(:type, t("provider")) %>
+  <%= collection_select(:gateway, :type, @providers, :to_s, :name, {}, {:id => "gtwy-type"}) %>
 
-<% unless @object.new_record? %>
+  <% unless @object.new_record? %>
  
-    <div class="gateway-settings">
-      <%= preference_fields(@object, f) %>
-    </div>
-  
-  <% if @object.respond_to?(:preferences) %>
-    <div id="gateway-settings-warning" style="color:#FF0000"><%= t('gateway_settings_warning')%></div>
-   <% end %>
-<% end %>
+    <%= preference_fields(@object, f) %>
  
+    <% if @object.respond_to?(:preferences) %>
+      <div id="gateway-settings-warning" style="color:#FF0000"><%= t('gateway_settings_warning')%></div>
+      <% end %>
+    <% end %>
+ </div>
