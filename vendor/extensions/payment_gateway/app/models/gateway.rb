@@ -25,7 +25,7 @@ class Gateway < ActiveRecord::Base
   end 
  
 	def validate
-		errors.add_to_base I18n.translate("only_one_active_gateway_per_environment") if self.active && Gateway.exists?(:active => true, :environment => self.environment) 
+		errors.add_to_base I18n.translate("only_one_active_gateway_per_environment") if self.active && Gateway.exists?(["active = ? AND environment = ? AND id <> ?" , true, self.environment, self.id])
 	end
  
 	def options

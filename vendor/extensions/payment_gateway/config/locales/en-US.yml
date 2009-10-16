@@ -16,3 +16,4 @@ en-US:
   only_one_active_gateway_per_environment: You can only have one Active gateway per environment.
   test: "Test"
   live: "Live"
+  secure_profile_api_key: Payment Profile API Key

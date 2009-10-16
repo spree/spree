@@ -2,6 +2,7 @@ class Gateway::Beanstream < Gateway
 	preference :login, :string
 	preference :user, :string
 	preference :password, :string
+	preference :secure_profile_api_key, :string
 	
   def provider_class
     ActiveMerchant::Billing::BeanstreamGateway
@@ -12,9 +13,6 @@ class Gateway::Beanstream < Gateway
   PROFILE_OPERATIONS = {:new => 'N', :modify => 'M'}
 	
 	ActiveMerchant::Billing::BeanstreamGateway.class_eval do
-		#SECURE_PROFILE_URL = 'https://www.beanstream.com/scripts/payment_profile.asp'
-	  #SP_SERVICE_VERSION = '1.1'
-	  #PROFILE_OPERATIONS = {:new => 'N', :modify => 'M'}
 
 	  def store(credit_card, options = {})
 	    post = {}        
@@ -75,7 +73,7 @@ class Gateway::Beanstream < Gateway
     end
 
     def post(data, use_profile_api)
-      response = parse(ssl_post((use_profile_api ? SECURE_PROFILE_URL : URL), data))
+      response = parse(ssl_post((use_profile_api ? SECURE_PROFILE_URL : ActiveMerchant::Billing::BeanstreamGateway::URL), data))
       response[:customer_vault_id] = response[:customerCode] if response[:customerCode]
       build_response(success?(response), message_from(response), response,
         :test => test? || response[:authCode] == "TEST",
@@ -118,9 +116,5 @@ class Gateway::Beanstream < Gateway
     end			
 	
 	end
-	
-		#ActiveMerchant::Billing::BeanstreamGateway.const_set('SECURE_PROFILE_URL', 'https://www.beanstream.com/scripts/payment_profile.asp')
-		#ActiveMerchant::Billing::BeanstreamGateway.const_set('SP_SERVICE_VERSION', '1.1')
-		#ActiveMerchant::Billing::BeanstreamGateway.const_set('PROFILE_OPERATIONS', {:new => 'N', :modify => 'M'})
 
 end
