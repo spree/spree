@@ -461,6 +461,10 @@ ul#shipping-specs li {
   float:left;
  
 }
+
+#preference-settings input[type=text] {
+  width: 250px;
+}
 #preference-settings label{
   clear:both;
   display:block;

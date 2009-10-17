@@ -614,4 +614,11 @@ en-US:
   zone: Zone
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
-  zones: Zones
+  zones: Zones                             
+  new_billing_integration: New Billing Integration
+  billing_integrations: Billing Integrations
+  billing_integration: Billing Integration
+  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
+  new_billing_integration: New Billing Integration
+  editing_billing_integration: Editing Billing Integration
+  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"

@@ -1,4 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
+
   # Loads all extension routes in the order they are specified.
   map.load_extension_routes
 
@@ -89,7 +90,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :shipping_rates
     admin.resources :tax_rates
     admin.resource  :tax_settings    
-    admin.resources :calculators
+    admin.resources :calculators           
+    admin.resources :billing_integrations
   end                   
 
   
