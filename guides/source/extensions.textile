@@ -89,7 +89,7 @@ INFO. If there is a translation error or missing translation information in one 
 
 h3. Tutorial
 
-There is a very detailed "extensions tutorial":extensions_tutorial.html that will go through a detailed example of how to create your own extension.
+There is a very detailed "extensions tutorial":extension_tutorial.html that will go through a detailed example of how to create your own extension.
 
 h3. Extensions Directory
 
