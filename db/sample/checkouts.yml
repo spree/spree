@@ -3,6 +3,6 @@ checkout_<%= i %>:
   bill_address: frank_bill_address_<%= i %>
   email: frank.foo@example.com 
   order: order_<%= i %>
-  completed_at: <%=Time.now%>
+  completed_at: <%=Time.now.to_s(:db)%>
   ip_address: 127.0.0.1
 <% end %>
