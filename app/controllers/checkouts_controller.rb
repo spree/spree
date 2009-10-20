@@ -1,6 +1,7 @@
 class CheckoutsController < Spree::BaseController 
   include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
   before_filter :load_data
+  before_filter :prevent_editing_complete_order, :only => [:edit, :update]
   
   resource_controller :singleton
   belongs_to :order             
@@ -154,4 +155,9 @@ class CheckoutsController < Spree::BaseController
   def credit_hash
     Hash[*@order.credits.select {|c| c.amount !=0 }.collect { |c| [c.description, number_to_currency(c.amount)] }.flatten]    
   end
+  
+  def prevent_editing_complete_order      
+    load_object
+    redirect_to order_url(parent_object) if @order.checkout_complete
+  end  
 end
