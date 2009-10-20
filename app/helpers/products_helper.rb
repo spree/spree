@@ -41,8 +41,21 @@ module ProductsHelper
   # generates nested url to product based on supplied taxon
   def seo_url(taxon, product = nil)
     return '/t/' + taxon.permalink if product.nil?
-
-    '/t/' + taxon.permalink + "p/" + product.permalink
+    warn "DEPRECATION: the /t/taxon-permalink/p/product-permalink urls are "+
+      "not used anymore. Use product_url instead. (called from #{caller[0]})"
+    return product_url(product)
   end
 
+  # Generate taxon breadcrumbs for searching related products
+  def taxon_crumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
+    crumbs = []
+
+    crumbs << taxon.ancestors.reverse.collect { |ancestor|
+      content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator)
+    } unless taxon.ancestors.empty?
+
+    crumbs << content_tag(:li, link_to(taxon.name , seo_url(taxon)))
+    crumb_list = content_tag(:ul, crumbs)
+    content_tag(:div, crumb_list + content_tag(:br, nil, :class => 'clear'), :class => 'breadcrumbs')
+  end
 end

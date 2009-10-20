@@ -7,7 +7,7 @@ Hopefully, this will evolve into a propper class.
 var spree;
 if (!spree) spree = {};
 
-jQuery.noConflict() 
+jQuery.noConflict() ;
 
 jQuery(document).ajaxStart(function(){
   jQuery("#progress").slideDown();

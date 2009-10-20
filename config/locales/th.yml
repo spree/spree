@@ -1,5 +1,7 @@
 --- 
 th: 
+  'no': "No"
+  'yes': "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "เมลที่ที่ถูกคัดลอกจะส่งไปยังที่อยู่นี้"
   abbreviation: คำย่อ
   access_denied: ไม่อนุญาตให้ผ่าน
@@ -197,6 +199,9 @@ th:
   backordering_is_allowed: "({{not}} allowed) การซื้อเมื่อสินค้าหมด"
   bill_address: "ที่อยู่บนใบเสร็จรับเงิน"
   billing_address: ใบเสร็จรับเงิน
+  billing_integration: Billing Integration
+  billing_integrations: Billing Integrations
+  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: ยกเลิก
@@ -253,6 +258,7 @@ th:
   destroy: ทำลาย
   display: แสดง
   edit: แก้ไข
+  editing_billing_integration: Editing Billing Integration
   editing_category: "แก้ไขหมวดหมู่"
   editing_coupon: Editing Coupon
   editing_option_type: แก้ไขตัวเลือกนี้
@@ -272,6 +278,8 @@ th:
   email_address: "Email Address"
   email_server_settings_description: กำหนดค่าในการติดต่อกับเมลเซิร์ฟเวอร์
   empty_cart: ล้างตะกร้า
+  enable_login_via_login_password: "Use standard email/password"  
+  enable_login_via_openid: "Use OpenID instead"
   enable_mail_delivery: เปิดระบบส่งเมล      
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: "กรุณาใส่ข้อมูลทุกอย่างที่แสดงบนบัตร"
@@ -317,6 +325,7 @@ th:
   images: รูปภาพ
   images_for: "Images for"
   in_progress: "In Progress"
+  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Invalid search criteria."
   inventory: คลัง
   inventory_adjustment: "ปรับแต่งคลังสินค้า"
@@ -344,6 +353,7 @@ th:
   login_failed: "Login authentication failed."    
   login_name: Login
   logout: ออกจากระบบ 
+  look_for_similar_items: Look for similar items
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: ระบบส่งเมลเปิดการใช้งานแล้ว
   mail_delivery_not_enabled: ระบบส่งเมลปิดการใช้งานแล้ว
@@ -357,11 +367,13 @@ th:
   meta_description: รายละเอียด
   meta_keywords: คำสำคัญ
   metadata: ข้อมูลประกอบสินค้า
+  missing_required_information: "Missing Required Information"
   month: "Month"
   my_account: บัญชีของท่าน
   my_orders: รายการสั่งซื้อ
   name: ชื่อ
   new: New
+  new_billing_integration: New Billing Integration
   new_category: "New category"
   new_coupon: New Coupon
   new_credit_card_payment: สร้างรายการจ่ายชำระผ่านบัตรเครดิต
@@ -385,7 +397,6 @@ th:
   new_variant: "New Variant"
   new_zone: เพิ่มเขตใหม่
   next: หน้าถัดไป
-  no: "No"
   no_items_in_cart: ""
   no_match_found: "No Match Found"
   no_user_found: "No user was found with that email address"
@@ -478,6 +489,7 @@ th:
   sales_totals_description: "ยอดขายรวมจากทุกการสั่งซื้อ"
   save_preferences: Save Preferences           
   search: ค้นหา
+  search_results: "Search results for '{{keywords}}'"
   secure_connection_type: การเชื่อมต่อแบบปลอดภัย
   select: เลือก
   select_from_prototype: เลือกจากต้นแบบ
@@ -592,6 +604,7 @@ th:
   use_different_shipping_address: "ใช้ที่อยู่อื่นในการจัดส่ง"
   user: ผู้ใช้
   user_account: "บัญชีผู้ใช้"
+  user_created_successfully: "User created successfully"
   user_details: "รายละเอียดผู้ใช้"
   users: ผู้ใช้
   value: ค่า
@@ -606,7 +619,6 @@ th:
   whats_this: "นี่คืออะไร"
   width: ความกว้าง
   year: "ปี"
-  yes: "Yes"
   you_have_been_logged_out: "คุณออกจากระบบแล้ว"
   your_cart_is_empty: "ตะกร้าสินค้าของคุณว่างเปล่า"
   zip: รหัสไปรษณีย์

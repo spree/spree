@@ -9,15 +9,8 @@
    %>
     <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
       <li id="product_<%= product.id %>">
-				<% if taxon.nil? %>
-			  	  <%= link_to small_image(product), product %>
-						<%= link_to product.name + "<span class='price selling'>#{product_price(product)}</span>", product, :class => 'info' %>
-			  <% else %>
-		     		<%= link_to small_image(product), seo_url(taxon, product) %>
-						<%= link_to product.name + "<span class='price selling'>#{product_price(product)}</span>", seo_url(taxon, product), :class => 'info' %>
-						
-				<% end %>
-        
+        <%= link_to small_image(product), product %>
+        <%= link_to product.name + "<span class='price selling'>#{product_price(product)}</span>", product, :class => 'info' %>
       </li>
     <% end %>
   <% end %>

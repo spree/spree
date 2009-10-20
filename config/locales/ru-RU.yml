@@ -1,5 +1,7 @@
 ---
 ru-RU: 
+  'no': "No"
+  'yes': "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "Копии всех писем будут отосланы на следующие адреса"
   abbreviation: "Аббревиатура"
   access_denied: "Доступ запрещен"
@@ -197,6 +199,9 @@ ru-RU:
   backordering_is_allowed: "Задолженные заказы {{not}} разрешены"
   bill_address: "Платёжный адрес"
   billing_address: "Платёжный адрес"
+  billing_integration: Billing Integration
+  billing_integrations: Billing Integrations
+  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   calculator: "Калькулятор"
   calculator_settings_warning: "При изменении типа калькулятора, вы должны сохранить это изменение, прежде чем вы сможете изменить настройки калькулятора."
   cancel: "Отмена"
@@ -253,6 +258,7 @@ ru-RU:
   destroy: "Удалить"
   display: "Показать"
   edit: "Редактировать"
+  editing_billing_integration: Editing Billing Integration
   editing_category: "Редактирование категории"
   editing_coupon: "Редактировать купон"
   editing_option_type: "Редактирование опции"
@@ -272,8 +278,8 @@ ru-RU:
   email_address: "Email адрес"
   email_server_settings_description: "Настройки сервера email."
   empty_cart: "Очистить корзину"
-  enable_login_via_openid: "Авторизоваться с помощью OpenID"
   enable_login_via_login_password: "Авторизоваться с помощью пары email/пароль"  
+  enable_login_via_openid: "Авторизоваться с помощью OpenID"
   enable_mail_delivery: "Включить доставку почты"
   enable_mail_queue: "Включить очередь почтовых сообщений"
   enter_exactly_as_shown_on_card: "Пожалуйста, введите точно как показано на карте"
@@ -319,6 +325,7 @@ ru-RU:
   images: "Картинки"
   images_for: "Картинки для"
   in_progress: "В процессе"
+  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Неверный критерий поиска."
   inventory: "Ассортимент "
   inventory_adjustment: "Управление ассортиментом"
@@ -346,6 +353,7 @@ ru-RU:
   login_failed: "Вход не выполнен."
   login_name: "Логин"
   logout: "Выйти"
+  look_for_similar_items: Look for similar items
   maestro_or_solo_cards: "Кредитные карты Maestro/Solo"
   mail_delivery_enabled: "Доставка почты включена"
   mail_delivery_not_enabled: "Доставка почты не включена"
@@ -359,11 +367,13 @@ ru-RU:
   meta_description: "Описание"
   meta_keywords: "Ключевые слова"
   metadata: "Метаданные"
+  missing_required_information: "Missing Required Information"
   month: "Месяц"
   my_account: "Моя учетная запись"
   my_orders: "Мои заказы"
   name: "Название"
   new: "Новый"
+  new_billing_integration: New Billing Integration
   new_category: "Новая категория"
   new_coupon: "Новый купон"
   new_credit_card_payment: "Новый платеж по кредитной карте"
@@ -387,7 +397,6 @@ ru-RU:
   new_variant: "Новый вариант"
   new_zone: "Новая зона"
   next: "след."
-  no: "Нет"
   no_items_in_cart: ""
   no_match_found: "Совпадений не найдено"
   no_user_found: "Пользователь с таким адресом email у нас не числится."
@@ -610,7 +619,6 @@ ru-RU:
   whats_this: "Что это"
   width: "Ширина"
   year: "Год"
-  yes: "Да"
   you_have_been_logged_out: "Вы вышли из системы. До свидания!"
   your_cart_is_empty: "Ваша корзина пуста"
   zip: "Индекс"

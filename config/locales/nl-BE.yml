@@ -1,5 +1,7 @@
 --- 
 nl-BE: 
+  'no': "No"
+  'yes': "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "Een kopie van alle mail wordt verzonden naar de volgende adressen"
   abbreviation: Afkorting
   access_denied: "Toegang geweigerd"
@@ -197,6 +199,9 @@ nl-BE:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Factuuradres"
   billing_address: "Factuuradres"
+  billing_integration: Billing Integration
+  billing_integrations: Billing Integrations
+  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: annuleer
@@ -253,6 +258,7 @@ nl-BE:
   destroy: Verwijder
   display: Weergeven
   edit: Wijzig
+  editing_billing_integration: Editing Billing Integration
   editing_category: "Wijzig Categorie"
   editing_coupon: Editing Coupon
   editing_option_type: "Optie Type Wijzigen"
@@ -272,6 +278,8 @@ nl-BE:
   email_address: "E-mail Adres"
   email_server_settings_description: "E-mail server installen."
   empty_cart: "Winkelmandje leegmaken"
+  enable_login_via_login_password: "Use standard email/password"  
+  enable_login_via_openid: "Use OpenID instead"
   enable_mail_delivery: "Mail aflevering aanzetten"
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
@@ -317,6 +325,7 @@ nl-BE:
   images: Afbeeldingen
   images_for: "Images for"
   in_progress: "Aan de gang"
+  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Foute zoekcriteria."
   inventory: Voorraad
   inventory_adjustment: "Voorraad Aanpassing"
@@ -344,6 +353,7 @@ nl-BE:
   login_failed: "Login authentication failed."      
   login_name: Login
   logout: Afmelden
+  look_for_similar_items: Look for similar items
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail aflevering aangezet"
   mail_delivery_not_enabled: "Mail aflevering afgezet"
@@ -357,11 +367,13 @@ nl-BE:
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
+  missing_required_information: "Missing Required Information"
   month: "Month"
   my_account: "Mijn Profiel"
   my_orders: "Mijn Bestellingen"    
   name: Naam
   new: Nieuw
+  new_billing_integration: New Billing Integration
   new_category: "Nieuwe categorie"
   new_coupon: New Coupon
   new_credit_card_payment: "Nieuwe Kredietkaart betaling"
@@ -385,7 +397,6 @@ nl-BE:
   new_variant: "Nieuwe Variant"
   new_zone: "Nieuwe Zone"
   next: Volgende
-  no: "No"
   no_items_in_cart: "Geen producten in Winkelmandje"
   no_match_found: "Geen gelijke gevonden"
   no_user_found: "No user was found with that email address"
@@ -478,6 +489,7 @@ nl-BE:
   sales_totals_description: "Omzet voor alle bestellingen"
   save_preferences: "Instellingen Opslaan"           
   search: Zoek
+  search_results: "Search results for '{{keywords}}'"
   secure_connection_type: "Secure Connection Type"
   select: Selecteer
   select_from_prototype: "Selecteer vanuit Prototype"
@@ -592,6 +604,7 @@ nl-BE:
   use_different_shipping_address: "Ander afleveringsadres gebruiken"
   user: Gebruiker
   user_account: "Account Gebruiker"
+  user_created_successfully: "User created successfully"
   user_details: "Details Gebruiker"
   users: Gebruikers
   value: Waarde
@@ -606,7 +619,6 @@ nl-BE:
   whats_this: "Wat is dit"
   width: Breedte
   year: "Year"
-  yes: "Yes"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Uw winkelmandje is leeg"
   zip: Postcode

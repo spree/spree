@@ -1,5 +1,7 @@
 --- 
 pt-PT: 
+  'no': "No"
+  'yes': "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abreviação
   access_denied: "Accesso Recusado"             
@@ -197,6 +199,9 @@ pt-PT:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Endereço da Conta"
   billing_address: "Endereço de Cobrança"
+  billing_integration: Billing Integration
+  billing_integrations: Billing Integrations
+  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Cancelar
@@ -253,6 +258,7 @@ pt-PT:
   destroy: Destruir
   display: Mostrar
   edit: Editar
+  editing_billing_integration: Editing Billing Integration
   editing_category: "Editando Categoria"
   editing_coupon: Editing Coupon
   editing_option_type: "Editando Tipo de Opção"
@@ -272,6 +278,8 @@ pt-PT:
   email_address: "Endereço de Email"
   email_server_settings_description: "Ajustar as configurações do servidor de email."
   empty_cart: "Esvaziar o Carro"
+  enable_login_via_login_password: "Use standard email/password"  
+  enable_login_via_openid: "Use OpenID instead"
   enable_mail_delivery: Enable Mail Delivery      
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
@@ -317,6 +325,7 @@ pt-PT:
   images: Imagens
   images_for: "Images for"
   in_progress: "Em Progresso"
+  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Procura Inválida"
   inventory: Inventário
   inventory_adjustment: "Acerto de Inventário"
@@ -344,6 +353,7 @@ pt-PT:
   login_failed: "Login authentication failed."      
   login_name: "Nome de Login"
   logout: Sair
+  look_for_similar_items: Look for similar items
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Envio de email permitido"
   mail_delivery_not_enabled: "Envio de email não permitido"
@@ -357,11 +367,13 @@ pt-PT:
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
+  missing_required_information: "Missing Required Information"
   month: "Month"
   my_account: "Minha Conta"
   my_orders: "As Minhas Encomendas"
   name: Name
   new: New
+  new_billing_integration: New Billing Integration
   new_category: "Nova categoria"
   new_coupon: New Coupon
   new_credit_card_payment: "Novo Pagamento por Cartão de Credito"
@@ -385,7 +397,6 @@ pt-PT:
   new_variant: "Nova Variante"
   new_zone: "Nova Zona"
   next: Próximo
-  no: "No"
   no_items_in_cart: "Nr. de itens no carro"
   no_match_found: "Não encontrado"
   no_user_found: "No user was found with that email address"
@@ -478,6 +489,7 @@ pt-PT:
   sales_totals_description: "Total de Vendas para todos os Pedidos"
   save_preferences: Save Preferences           
   search: Pesquisa
+  search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Secure Connection Type
   select: Selecionar
   select_from_prototype: "Selecionar a partir de Protótipo"
@@ -592,6 +604,7 @@ pt-PT:
   use_different_shipping_address: "Use um Endereço de Entrega Diferente"
   user: Utilizador
   user_account: User Account
+  user_created_successfully: "User created successfully"
   user_details: "Detalhes do Utilizador"
   users: Utilizador
   value: Valor
@@ -606,7 +619,6 @@ pt-PT:
   whats_this: "O que é isto?"
   width: Largura
   year: "Year"
-  yes: "Yes"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "O carro está vazio"
   zip: Codigo Postal

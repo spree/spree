@@ -1,10 +1,9 @@
 <% @body_id = 'product-details' %>
-
 <h1><%= @product.name %></h1>
 
 <div id="product-images">
   <div id="main-image">
-		<%= render 'image' -%>
+    <%= render 'image' -%>
   </div>
   <div id="thumbnails">
     <%= render 'thumbnails', :product => @product -%>
@@ -13,12 +12,12 @@
 
 <div id="product-description">
   <%= product_description(@product) rescue t("product_has_no_description") %>
-
   <%= render 'properties' %>
 </div>
 
 <div id="cart-form">
-
-<%= render 'cart_form' %>
-
+  <%= render 'cart_form' %>
 </div>
+
+<%= render 'taxons' %>
+

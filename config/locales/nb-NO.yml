@@ -1,5 +1,7 @@
 ---
 nb-NO: 
+  'no': "No"
+  'yes': "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: En kopi av all epost vil bli sendt til følgende adresser
   abbreviation: Fortkortelse
   access_denied: "Ikke tilgang"
@@ -197,6 +199,9 @@ nb-NO:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "Fakturaadresse"
   billing_address: "Fakturaadresse"
+  billing_integration: Billing Integration
+  billing_integrations: Billing Integrations
+  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Avbryt
@@ -253,6 +258,7 @@ nb-NO:
   destroy: Fjern
   display: Vis
   edit: Endre
+  editing_billing_integration: Editing Billing Integration
   editing_category: "Endre kategori"
   editing_coupon: Editing Coupon
   editing_option_type: "Endre variasjonstype"
@@ -272,6 +278,8 @@ nb-NO:
   email_address: "Epostadresse"
   email_server_settings_description: "Konfigurer epostserver."
   empty_cart: "Tøm handlekurv"
+  enable_login_via_login_password: "Use standard email/password"  
+  enable_login_via_openid: "Use OpenID instead"
   enable_mail_delivery: "Skru på sending av epost"
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
@@ -317,6 +325,7 @@ nb-NO:
   images: Bilder
   images_for: "Images for"
   in_progress: "Pågår"
+  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Ugyldig søkekriterie."
   inventory: Varelager
   inventory_adjustment: "Justering av varelager"
@@ -344,6 +353,7 @@ nb-NO:
   login_failed: "Login authentication failed."      
   login_name: Brukernavn
   logout: "Logg ut"
+  look_for_similar_items: Look for similar items
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Sending av epost er skrudd på"
   mail_delivery_not_enabled: "Sending av epost er ikke skrudd på"
@@ -357,11 +367,13 @@ nb-NO:
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
+  missing_required_information: "Missing Required Information"
   month: "Month"
   my_account: "Min konto"
   my_orders: "Mine ordrer"    
   name: Navn
   new: Ny
+  new_billing_integration: New Billing Integration
   new_category: "Ny kategori"
   new_coupon: New Coupon
   new_credit_card_payment: "Ny kortbetaling"
@@ -385,7 +397,6 @@ nb-NO:
   new_variant: "Ny variant"
   new_zone: "Ny sone"
   next: Neste
-  no: "No"
   no_items_in_cart: "Ingen artikler i handlekurven"
   no_match_found: "Ingen treff"
   no_user_found: "No user was found with that email address"
@@ -478,6 +489,7 @@ nb-NO:
   sales_totals_description: "Totale salg for alle ordrer"
   save_preferences: "Lagre preferanser"
   search: Søk
+  search_results: "Search results for '{{keywords}}'"
   secure_connection_type: "Kryptert forbindelse"
   select: Velg
   select_from_prototype: "Velg fra prototype"
@@ -592,6 +604,7 @@ nb-NO:
   use_different_shipping_address: "Bruk en annen leveringsadresse"
   user: Bruker
   user_account: Brukerkonto
+  user_created_successfully: "User created successfully"
   user_details: "Brukeropplysninger"
   users: Brukere
   value: Verdi
@@ -606,7 +619,6 @@ nb-NO:
   whats_this: "Hva er dette?"
   width: Bredde
   year: "Year"
-  yes: "Yes"
   you_have_been_logged_out: "Du har nå logget ut."
   your_cart_is_empty: "Din handlekurv er tom"
   zip: Postnummer

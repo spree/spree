@@ -1,5 +1,7 @@
 ---
 jp: 
+  'no': "No"
+  'yes': "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: 略語
   access_denied: "Access Denied"
@@ -197,6 +199,9 @@ jp:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: 請求先住所
   billing_address: 請求先住所
+  billing_integration: Billing Integration
+  billing_integrations: Billing Integrations
+  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: キャンセル
@@ -253,6 +258,7 @@ jp:
   destroy: 破壊する
   display: 表示
   edit: 編集
+  editing_billing_integration: Editing Billing Integration
   editing_category: カテゴリーの編集
   editing_coupon: Editing Coupon
   editing_option_type: "Editing Option Type"
@@ -272,6 +278,8 @@ jp:
   email_address: Eメールアドレス
   email_server_settings_description: メールサーバの設定をします。
   empty_cart: カートを空にする
+  enable_login_via_login_password: "Use standard email/password"  
+  enable_login_via_openid: "Use OpenID instead"
   enable_mail_delivery: Enable Mail Delivery
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
@@ -317,6 +325,7 @@ jp:
   images: 画像
   images_for: "Images for"
   in_progress: "In Progress"
+  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Invalid search criteria."
   inventory: 在庫
   inventory_adjustment: 在庫調整
@@ -344,6 +353,7 @@ jp:
   login_failed: "Login authentication failed."
   login_name: ログイン
   logout: ログアウト
+  look_for_similar_items: Look for similar items
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
@@ -357,11 +367,13 @@ jp:
   meta_description: メタ情報説明
   meta_keywords: メタキーワード
   metadata: メタデータ
+  missing_required_information: "Missing Required Information"
   month: "Month"
   my_account: アカウント情報
   my_orders: 注文情報
   name: 名称
   new: 新規
+  new_billing_integration: New Billing Integration
   new_category: 新規カテゴリー
   new_coupon: New Coupon
   new_credit_card_payment: 新規カード払い
@@ -385,7 +397,6 @@ jp:
   new_variant: 新規形式
   new_zone: 新規ゾーン
   next: 次へ
-  no: "No"
   no_items_in_cart: ""
   no_match_found: "No Match Found"
   no_user_found: "No user was found with that email address"
@@ -478,6 +489,7 @@ jp:
   sales_totals_description: 全ての注文の売上げ合計
   save_preferences: Save Preferences
   search: 検索
+  search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Secure Connection Type
   select: 選択
   select_from_prototype: "Select From Prototype"
@@ -592,6 +604,7 @@ jp:
   use_different_shipping_address: "Use Different Shipping Address"
   user: ユーザ
   user_account: ユーザアカウント
+  user_created_successfully: "User created successfully"
   user_details: ユーザ詳細
   users: ユーザ
   value: 値
@@ -606,7 +619,6 @@ jp:
   whats_this: "What's this"
   width: 横幅
   year: "Year"
-  yes: "Yes"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: カートは空です
   zip: 郵便番号

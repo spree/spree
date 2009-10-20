@@ -1,5 +1,7 @@
 --- 
 il: 
+  'no': "No"
+  'yes': "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
   access_denied: "Access Denied"
@@ -197,6 +199,9 @@ il:
   backordering_is_allowed: "Backordering {{not}} allowed"
   bill_address: "כתובת למשלוח חבילה"
   billing_address: "כתובת למשלוח חשבונית"
+  billing_integration: Billing Integration
+  billing_integrations: Billing Integrations
+  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: cancel
@@ -253,6 +258,7 @@ il:
   destroy: Destroy
   display: Display
   edit: Edit
+  editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"
   editing_coupon: Editing Coupon
   editing_option_type: "Editing Option Type"
@@ -272,6 +278,8 @@ il:
   email_address: "כתובת דואל"
   email_server_settings_description: "Set email server settings."
   empty_cart: "רוקן עגלה"
+  enable_login_via_login_password: "Use standard email/password"  
+  enable_login_via_openid: "Use OpenID instead"
   enable_mail_delivery: Enable Mail Delivery      
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
@@ -317,6 +325,7 @@ il:
   images: Images
   images_for: "Images for"
   in_progress: "In Progress"
+  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Invalid search criteria."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"
@@ -344,6 +353,7 @@ il:
   login_failed: "Login authentication failed."    
   login_name: Login
   logout: יציאה  
+  look_for_similar_items: Look for similar items
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
@@ -357,11 +367,13 @@ il:
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
+  missing_required_information: "Missing Required Information"
   month: "Month"
   my_account: "חשבון המשתמש שלי"
   my_orders: "My Orders"    
   name: Name
   new: New
+  new_billing_integration: New Billing Integration
   new_category: "New category"
   new_coupon: New Coupon
   new_credit_card_payment: "New Credit Card Payment"
@@ -385,7 +397,6 @@ il:
   new_variant: "New Variant"
   new_zone: "New Zone"
   next: Next
-  no: "No"
   no_items_in_cart: ""
   no_match_found: "No Match Found"
   no_user_found: "No user was found with that email address"
@@ -478,6 +489,7 @@ il:
   sales_totals_description: "Sales Total For All Orders"
   save_preferences: Save Preferences           
   search: Search
+  search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Secure Connection Type
   select: Select
   select_from_prototype: "Select From Prototype"
@@ -592,6 +604,7 @@ il:
   use_different_shipping_address: "Use Different Shipping Address"
   user: User
   user_account: User Account
+  user_created_successfully: "User created successfully"
   user_details: "User Details"
   users: Users
   value: Value
@@ -606,7 +619,6 @@ il:
   whats_this: "מה זה"
   width: Width
   year: "Year"
-  yes: "Yes"
   you_have_been_logged_out: "You have been logged out."
   your_cart_is_empty: "Your cart is empty"
   zip: מיקוד

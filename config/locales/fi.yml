@@ -1,5 +1,7 @@
 --- 
 fi: 
+  'no': "No"
+  'yes': "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "Kopio kaikista viesteistä lähetetään seuraaviin osoitteisiin"
   abbreviation: Lyhenne
   access_denied: "Pääsy kielletty!"
@@ -197,6 +199,9 @@ fi:
   backordering_is_allowed: "Jälkitoimittaminen {{not}} sallittu"
   bill_address: "Laskun osoite"
   billing_address: Laskutusosoite
+  billing_integration: Billing Integration
+  billing_integrations: Billing Integrations
+  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   calculator: Laskin
   calculator_settings_warning: "Mikäli vaihdat laskimen tyyppiä, sinun täytyy ensin tallentaa ennen kuin voit muuttaa laskimen asetuksia"
   cancel: peruuta
@@ -253,6 +258,7 @@ fi:
   destroy: Tuhoa
   display: Näytä
   edit: Muokkaa
+  editing_billing_integration: Editing Billing Integration
   editing_category: "Muokataan kategoriaa"
   editing_coupon: "Muokataan kuponkia"
   editing_option_type: "Muokataan valintatyyppiä"
@@ -272,6 +278,8 @@ fi:
   email_address: Sähköpostiosoite
   email_server_settings_description: "Aseta sähköpostipalvelimen asetukset."
   empty_cart: "Tyhjennä ostoskori"
+  enable_login_via_login_password: "Use standard email/password"  
+  enable_login_via_openid: "Use OpenID instead"
   enable_mail_delivery: "Salli sähköpostin toimitus"
   enable_mail_queue: "Salli sähköpostijono"
   enter_exactly_as_shown_on_card: "Kirjoita täsmälleen samoin kuin kortissa lukee"
@@ -317,6 +325,7 @@ fi:
   images: Kuvat
   images_for: Kuvia
   in_progress: Kesken
+  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Virheellinen haku."
   inventory: Varasto
   inventory_adjustment: "Varaston säätö"
@@ -344,6 +353,7 @@ fi:
   login_failed: "Kirjautumisen autentikointi epäonnistui."
   login_name: Nimi
   logout: "Kirjaudu ulos"
+  look_for_similar_items: Look for similar items
   maestro_or_solo_cards: "Maestro/Solo kortit"
   mail_delivery_enabled: "Sähköpostiviestien toimitus päällä"
   mail_delivery_not_enabled: "Sähköpostiviestien toimitus poissa päältä"
@@ -357,11 +367,13 @@ fi:
   meta_description: Meta-kuvaus
   meta_keywords: Meta-avainsanat
   metadata: Metadata
+  missing_required_information: "Missing Required Information"
   month: Kuukausi
   my_account: Tunnukseni
   my_orders: Tilaukseni
   name: Nimi
   new: Uusi
+  new_billing_integration: New Billing Integration
   new_category: "Uusi kategoria"
   new_coupon: "Uusi kuponki"
   new_credit_card_payment: "Uusi luottokorttimaksutapa"
@@ -385,7 +397,6 @@ fi:
   new_variant: "Uusi variantti"
   new_zone: "Uusi alue"
   next: Seuraava
-  no: Ei
   no_items_in_cart: ""
   no_match_found: "Ei löytynyt vastaavia"
   no_user_found: "Ei löytnyt käyttäjää kyseisellä sähköpostiosoitteella"
@@ -478,6 +489,7 @@ fi:
   sales_totals_description: "Myynnit yhteensä kaikilta tilauksilta"
   save_preferences: "Tallenna asetukset"
   search: Etsi
+  search_results: "Search results for '{{keywords}}'"
   secure_connection_type: "Turvallinen yhteystyyppi"
   select: Valitse
   select_from_prototype: "Valitse prototyypistä"
@@ -592,6 +604,7 @@ fi:
   use_different_shipping_address: "Käytä eri toimitusosoitetta"
   user: Käyttäjä
   user_account: Käyttäjätunnus
+  user_created_successfully: "User created successfully"
   user_details: Käyttäjätiedot
   users: Käyttäjät
   value: Arvo
@@ -606,7 +619,6 @@ fi:
   whats_this: "Mikä tämä on"
   width: Leveys
   year: Vuosi
-  yes: Kyllä
   you_have_been_logged_out: "Olet kirjautunut ulos."
   your_cart_is_empty: "Ostoskorisi on tyhjä"
   zip: Postinumero
