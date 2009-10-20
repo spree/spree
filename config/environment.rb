@@ -32,7 +32,7 @@ Spree::Initializer.run do |config|
   config.gem "activemerchant", :lib => "active_merchant", :version => '>=1.4.1'
   config.gem "tlsmail", :version => '0.0.1'
   config.gem 'activerecord-tableless', :lib => 'tableless', :version => '>=0.1.0'
-  config.gem 'haml', :version => '2.2.0'
+  config.gem 'haml', :version => '>=2.2.0'
   config.gem 'compass', :version => '0.8.17', :source => "http://gemcutter.org"
   config.gem 'calendar_date_select', :version => '1.15'
   config.gem 'rsl-stringex', :lib => 'stringex', :source => "http://gems.github.com"
