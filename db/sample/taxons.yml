@@ -3,6 +3,9 @@ mc_root:
   name: Categories
   taxonomy: master_categories
   permalink: categories/
+  position: 0
+  lft: 1
+  rgt: 12
 mc_l1_n1:
   id: 1002
   name: Bags
@@ -11,6 +14,8 @@ mc_l1_n1:
   position: 1
   products: ror_tote, ror_bag
   permalink: categories/bags/
+  lft: 8
+  rgt: 9
 mc_l1_n2:
   id: 1003
   name: Mugs
@@ -19,14 +24,17 @@ mc_l1_n2:
   position: 2
   products: ror_mug, ror_stein
   permalink: categories/mugs/
+  lft: 10
+  rgt: 11
 clothing:
   id: 1001
   name: Clothing
   taxonomy: master_categories
   parent_id: 1000
   #products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer
-  position: 0
   permalink: categories/clothing/
+  lft: 2
+  rgt: 7
 shirts:
   id: 2000
   name: Shirts
@@ -35,6 +43,8 @@ shirts:
   position: 0
   products: ror_jr_spaghetti
   permalink: categories/clothing/shirts/
+  lft: 3
+  rgt: 6
 t_shirts:
   id: 3000
   name: T-Shirts
@@ -43,11 +53,15 @@ t_shirts:
   products: ror_baseball_jersey, ror_ringer, apache_baseball_jersey, ruby_baseball_jersey
   position: 0
   permalink: categories/clothing/shirts/t-shirts/
+  lft: 4
+  rgt: 5
 brand_root:
   id: 20000
   name: Brands
   taxonomy: brand
   permalink: brands/
+  lft: 13
+  rgt: 20
 ruby:
   name: Ruby
   taxonomy: brand
@@ -55,6 +69,8 @@ ruby:
   position: 0
   products: ruby_baseball_jersey
   permalink: brands/ruby/
+  lft: 16
+  rgt: 17
 rails:
   name: Ruby on Rails
   taxonomy: brand
@@ -62,6 +78,8 @@ rails:
   position: 1
   products: ror_baseball_jersey, ror_jr_spaghetti, ror_ringer, ror_stein, ror_bag, ror_tote, ror_mug
   permalink: brands/ruby-on-rails/
+  lft: 14
+  rgt: 15
 apache:
   name: Apache
   taxonomy: brand
@@ -69,3 +87,5 @@ apache:
   position: 2
   products: apache_baseball_jersey
   permalink: brands/apache/
+  lft: 18
+  rgt: 19
