@@ -4,5 +4,6 @@ order_<%= i %>:
   number: <%= "R#{Array.new(9){rand(9)}.join}" %>
   state: new
   item_total: 37.97
+  completed_at: <%=Time.now%>
   total: 45.75
 <% end %>

@@ -16,6 +16,10 @@ class Checkout < ActiveRecord::Base
 
   validates_presence_of :order_id
 
+  def completed_at
+    order.completed_at
+  end
+
   private
   def authorize_creditcard
     return unless process_creditcard?
@@ -23,6 +27,7 @@ class Checkout < ActiveRecord::Base
     return false unless cc.valid? 
     return false unless cc.authorize(order.total)
     return false unless order.complete
+    true
   end
 
   def capture_creditcard

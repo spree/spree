@@ -1,0 +1,26 @@
+class ChargeRefactoring < ActiveRecord::Migration
+  def self.up
+    add_column :orders, :completed_at, :timestamp
+    Order.reset_column_information
+    Order.all.each{|o| o.update_attribute(:completed_at, o.checkout && o.checkout.completed_at)}
+    remove_column :checkouts, :completed_at
+
+    change_column :adjustments, :amount, :integer, :null => true, :defaul => nil
+    Adjustment.update_all "type = secondary_type"
+    Adjustment.update_all "type = 'CouponCredit'", "type = 'Credit'"
+    remove_column :adjustments, :secondary_type
+  end
+
+  def self.down
+    add_column :checkouts, :completed_at, :timestamp
+    Checkout.reset_column_information
+    Checkout.all.each{|c| c.update_attribute(:completed_at, c.order && c.order.completed_at)}
+    remove_column :orders, :completed_at
+
+    add_column :adjustments, :secondary_type, :string
+    Adjustment.update_all "secondary_type = type"
+    Adjustment.update_all "type = 'Charge'", "type like '%Charge'"
+    Adjustment.update_all "type = 'Credit'", "type like '%Credit'"
+    change_column :adjustments, :amount, :integer, :null => false, :defaul => 0
+  end
+end

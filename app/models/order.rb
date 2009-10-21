@@ -23,14 +23,15 @@ class Order < ActiveRecord::Base
   has_many :shipments, :dependent => :destroy
 
   has_many :adjustments,      :extend => Totaling, :order => :position
-  has_many :charges,          :extend => Totaling, :order => :position
-  has_many :shipping_charges, :extend => Totaling, :order => :position,
-    :class_name => "Charge", :conditions => {:secondary_type => "ShippingCharge"}
-  has_many :tax_charges,      :extend => Totaling, :order => :position,
-    :class_name => "Charge", :conditions => {:secondary_type => "TaxCharge"}
-  has_many :credits,          :extend => Totaling, :order => :position
-  has_many :coupon_credits, :class_name => "Credit", :extend => Totaling, :conditions => {:adjustment_source_type => "Coupon"}, :order => :position
-  has_many :non_zero_charges, :class_name => "Charge", :conditions => ["amount > 0"]
+  has_many :charges,          :extend => Totaling, :order => :position,
+           :conditions => "adjustments.type like '%Charge'"
+  has_many :credits,          :extend => Totaling, :order => :position,
+           :conditions => "adjustments.type like '%Credit'"
+  has_many :shipping_charges, :extend => Totaling, :order => :position
+  has_many :tax_charges,      :extend => Totaling, :order => :position
+  has_many :coupon_credits,   :extend => Totaling, :order => :position
+  has_many :non_zero_charges, :extend => Totaling, :order => :position,
+           :class_name => "Charge", :conditions => ["amount != 0"]
 
   accepts_nested_attributes_for :checkout  
   accepts_nested_attributes_for :line_items
@@ -49,11 +50,13 @@ class Order < ActiveRecord::Base
   named_scope :between, lambda {|*dates| {:conditions => ["orders.created_at between :start and :stop", {:start => dates.first.to_date, :stop => dates.last.to_date}]}}
   named_scope :by_customer, lambda {|customer| {:include => :user, :conditions => ["users.email = ?", customer]}}
   named_scope :by_state, lambda {|state| {:conditions => ["state = ?", state]}}
-  named_scope :checkout_complete, {:include => :checkout, :conditions => ["checkouts.completed_at IS NOT NULL"]}
+  named_scope :checkout_complete, {:include => :checkout, :conditions => ["orders.completed_at IS NOT NULL"]}
   make_permalink :field => :number
   
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
   attr_protected :charge_total, :item_total, :total, :user, :number, :state, :token
+
+  def checkout_complete; !!completed_at; end
 
   def to_param  
     self.number if self.number
@@ -61,9 +64,6 @@ class Order < ActiveRecord::Base
     self.number.parameterize.to_s.upcase
   end
 
-  def checkout_complete
-    checkout.completed_at
-  end
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'in_progress' do    
     after_transition :to => 'in_progress', :do => lambda {|order| order.update_attribute(:checkout_complete, false)}
@@ -137,6 +137,8 @@ class Order < ActiveRecord::Base
       end
       current_item.update_attribute(field[:name].gsub(" ", "_").downcase, value)
     end
+
+    current_item
   end
 
   def generate_order_number                
@@ -203,19 +205,24 @@ class Order < ActiveRecord::Base
       tax_charges.create({
           :order => self,
           :description => I18n.t(:tax),
-          :adjustment_source => self,
-        })
+          :adjustment_source => self
+      })
     end
   end
 
-  def update_totals
+  def update_totals(force_adjustment_recalculation=false)
     self.item_total       = self.line_items.total
 
     # save the items which might be changed by an order update, so that
     # charges can be recalculated accurately.
     self.line_items.map(&:save)
 
-    adjustments.reload.each(&:update_amount)
+    if !self.checkout_complete || force_adjustment_recalculation
+      applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
+      self.adjustments = applicable_adjustments
+      adjustments_to_destroy.each(&:destroy)
+    end
+    
     self.adjustment_total = self.charge_total - self.credit_total
 
     self.total            = self.item_total   + self.adjustment_total
@@ -226,10 +233,18 @@ class Order < ActiveRecord::Base
     save!
   end
 
+  def update_adjustments
+    self.adjustments.each(&:update_amount)
+    update_totals(:force_adjustment_update)
+    self
+  end
+   
   private
  
   def complete_order
-    checkout.update_attribute(:completed_at, Time.now)
+    self.adjustments.each(&:update_amount)
+    update_attribute(:completed_at, Time.now)
+
     if email
       OrderMailer.deliver_confirm(self)
     end

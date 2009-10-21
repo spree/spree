@@ -6,10 +6,10 @@ module HasCalculator
       validates_presence_of(:calculator) if options[:require]
 
       class_inheritable_accessor :calculators
-      self.calculators = []
+      self.calculators = Set.new
       # @available_calculators = []
       def register_calculator(calculator)
-        self.calculators << calculator
+        self.calculators.add(calculator)
       end
       # def calculators
       #   @available_calculators

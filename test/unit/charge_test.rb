@@ -1,5 +1,9 @@
 require 'test_helper'
 
+class TestCharge < Charge
+
+end
+
 class ChargeTest < ActiveSupport::TestCase
   should_validate_presence_of :amount
   should_validate_presence_of :description
@@ -13,6 +17,14 @@ class ChargeTest < ActiveSupport::TestCase
       assert_equal(1, @order.tax_charges.length)
       assert_equal(1, @order.charges.reload.length)
       assert_equal(0, @order.shipping_charges.length)
+    end
+
+    should "find all types of charges" do
+      Charge.create(:order => @order, :description => "TestCharge")
+      ShippingCharge.create(:order => @order, :description => "TestCharge")
+      TaxCharge.create(:order => @order, :description => "TestCharge")
+      TestCharge.create(:order => @order, :description => "TestCharge")
+      assert_equal(5, @order.reload.charges.length) # 4 + 1 default tax charge                   
     end
 
     context "TaxCharge" do
@@ -30,7 +42,7 @@ class ChargeTest < ActiveSupport::TestCase
       end
 
       should "have amount = 0" do
-        assert_equal("0.0", @tax_charge.amount.to_s)
+        assert_equal(0, @tax_charge.amount.to_f)
       end
     end
 
@@ -40,6 +52,8 @@ class ChargeTest < ActiveSupport::TestCase
         @ship_charge = @order.shipping_charges.first
         @tax_charge = @order.tax_charges.first
         assert(@ship_charge, "Shipping charge was not created")
+        assert_equal @order, @ship_charge.order
+        assert !@order.checkout_complete
       end
 
       should "have ship_address and at least one zone address belongs to" do
