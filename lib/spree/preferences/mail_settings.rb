@@ -32,6 +32,7 @@ module Spree
               # Enable TLS
               if Spree::Config[:secure_connection_type] == 'TLS'
                 Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
+                mail_server_settings[:enable_starttls_auto] = true
               end
 
               logger.info "INFO: Setting mails settings to #{mail_server_settings.inspect}"
