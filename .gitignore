@@ -24,6 +24,7 @@ log/*.log
 pkg
 public/assets
 public/attachments
+public/blank_iframe.html
 public/images/calendar_date_select
 public/images/flags
 public/images/products/*
