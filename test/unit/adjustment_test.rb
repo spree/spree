@@ -24,6 +24,13 @@ class AdjustmentTest < ActiveSupport::TestCase
       @adjustment = @order.reload.adjustments.select{|a| a.class==TestAdjustment}.first
     end
 
+    context "with non integer amount" do
+      setup {@adjustment = @order.adjustments.create(:amount => 19.95, :description => "Test Charge")}
+      should "create adjument with the correct amount" do
+        assert_equal 19.95, @adjustment.amount
+      end
+    end
+
     should "find all types of charges" do
       Charge.create(:order => @order, :description => "TestCharge")
       ShippingCharge.create(:order => @order, :description => "TestCharge")
