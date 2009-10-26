@@ -383,6 +383,7 @@ en-US:
   new_option_type: "New Option Type"
   new_option_value: "New Option Value"
   new_product: "New Product"
+  new_product_group: New Product Group
   new_property: "New Property"
   new_prototype: "New Prototype"
   new_shipment: "New Shipment"
@@ -449,6 +450,7 @@ en-US:
   powered_by: "Powered by"
   presentation: Presentation
   previous: Previous
+  preview: Preview
   price: Price
   price_with_vat_included: "{{price}} (inc. VAT)"
   problem_authorizing_card: "Problem authorizing credit card"
@@ -458,6 +460,8 @@ en-US:
   process: Process
   product: Product
   product_details: "Product Details"
+  product_group: Product Group
+  product_groups: Product Groups
   product_has_no_description: Product has not description
   product_properties: "Product Properties"
   products: Products
@@ -522,6 +526,7 @@ en-US:
   shipping_total: "Shipping Total"
   shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Shopping Cart"
+  show: Show
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"

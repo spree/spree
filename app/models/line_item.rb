@@ -5,11 +5,17 @@ class LineItem < ActiveRecord::Base
   
   has_one :product, :through => :variant
 
-  validates_presence_of :variant
+  before_validation :copy_price
+
+  validates_presence_of :variant, :order
   validates_numericality_of :quantity, :only_integer => true, :message => "must be an integer"
   validates_numericality_of :price
 
   attr_accessible :quantity
+
+  def copy_price
+    self.price = variant.price if variant && self.price.nil?
+  end
   
   def validate
     unless quantity && quantity >= 0

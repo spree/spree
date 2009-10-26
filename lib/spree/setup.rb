@@ -79,6 +79,10 @@ module Spree
         Fixtures.create_fixtures("#{SPREE_ROOT}/db/sample", File.basename(fixture_file, '.*'))
       end
 
+      # Fixtures were created for acts_as_adjency_list, but now we have nested set, so we need to rebuild it after import
+      Taxon.rebuild!
+      Taxon.all.each{|t| t.send(:set_permalink); t.save}
+
       # make product images available to the app
       target = "#{RAILS_ROOT}/public/assets/products/"
       source = "#{SPREE_ROOT}/lib/tasks/sample/products/"

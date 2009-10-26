@@ -1,0 +1,26 @@
+<% if @product_group.valid? %>
+  <% pg_products = @product_group.products.all %>
+  <h2><%= ProductGroup.human_attribute_name(:products) %>(<%= pg_products.length %>)</h2>
+  <div id="product-preview-products">
+    <table>
+      <thead>
+      <tr>
+        <th><%= Product.human_attribute_name(:name) %></th>
+        <th><%= t(:action) %></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% pg_products.each do |product| %>
+        <tr>
+          <td>
+            <%= link_to product.name, product_url(product) %>
+          </td>
+          <td>
+            <%= link_to t(:edit), edit_admin_product_path(product) %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

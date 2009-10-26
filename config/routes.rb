@@ -46,6 +46,18 @@ ActionController::Routing::Routes.draw do |map|
   end
   #map.resources :shipments, :member => {:shipping_method => :any}
 
+  # Search routes
+  map.simple_search '/s/*product_group_query', :controller => 'products', :action => 'index'
+  map.pg_search '/pg/:product_group_name', :controller => 'products', :action => 'index'
+  map.taxons_search '/t/*taxon_path/s/*product_group_query', {
+    :controller => 'taxons',
+    :action => 'show'
+  }
+  map.taxons_pg_search '/t/*taxon_path/pg/:product_group_name', {
+    :controller => 'taxons',
+    :action => 'show'
+  }
+
   # route globbing for pretty nested taxon and product paths
   map.nested_taxons '/t/*id', :controller => 'taxons', :action => 'show'
 
@@ -90,9 +102,9 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :tax_rates
     admin.resource  :tax_settings
     admin.resources :calculators
+    admin.resources :product_groups
     admin.resources :billing_integrations
   end
-
 
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'

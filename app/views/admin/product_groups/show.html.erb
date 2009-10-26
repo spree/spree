@@ -1,0 +1,31 @@
+<h2><%= ProductGroup.human_name %></h2>
+<p>
+  <%= ProductGroup.human_attribute_name(:name) %>: <%= @product_group.name %>
+</p>
+<p>
+  <%= ProductGroup.human_attribute_name(:url) %>: <%= link_to @product_group.permalink, "/pg/#{@product_group.permalink}" %>
+</p>
+
+<h2><%= ProductGroup.human_attribute_name(:product_scopes) %>(<%= @product_group.product_scopes.count %>)</h2>
+<table class="product-scopes">
+  <thead>
+    <tr>
+      <th><%= ProductScope.human_attribute_name(:description) %></th>
+      <th><%= ProductScope.human_attribute_name(:arguments) %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @product_group.product_scopes.each do |product_scope| %>
+      <tr <%= !product_scope.valid? ? "class='invalid'":'' %>>
+        <td>
+          <%= product_scope.to_sentence %>
+        </td>
+        <td>
+          <%= product_scope.arguments.join(", ") %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render :partial => 'preview.html' %>

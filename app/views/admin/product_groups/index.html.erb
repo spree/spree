@@ -1,0 +1,39 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_product_group"), new_object_url, :icon => 'add'  %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+<h1><%= t("listing", :scope => :actions) %> <%= ProductGroup.human_name %></h1>
+
+<table class="index">
+  <thead>
+    <tr>
+      <th><%= ProductGroup.human_attribute_name("name") %></th>
+      <th><%= ProductGroup.human_attribute_name("url") %></th>
+      <th><%= ProductGroup.human_attribute_name("product_scopes")  %></th>
+      <th><%= ProductGroup.human_attribute_name("product_count")  %></th>
+      <th><%= t(:action) %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @product_groups.each do |pg| %>
+      <tr>
+        <td><%= link_to pg.name, object_path(pg) %></td>
+        <td><%= link_to "/pg/#{pg.permalink}", "/pg/#{pg.permalink}" %></td>
+        <td><%= pg.product_scopes.map(&:to_sentence).join("<br />") %></td>
+        <td><%= pg.valid? ? pg.products.count : t("product group is invalid") %></td>
+        <td>
+          <%= link_to t(:show), object_path(pg) %>  &nbsp; | &nbsp;
+          <%= link_to t(:edit), edit_object_path(pg) %> &nbsp; | &nbsp;
+          <%= link_to t(:destroy), object_path(pg), :method => :delete %> &nbsp; | &nbsp;
+          <%= link_to t(:preview), "/pg/#{pg.permalink}" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") %>

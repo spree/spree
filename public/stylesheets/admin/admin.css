@@ -457,6 +457,22 @@ ul#shipping-specs li {
   list-style-image:none;
   display:inline;
 }
+
+.product-scopes ul > li {
+  float: left;
+  width: 220px;
+  margin-right: 20px;
+}
+
+.product-scopes .invalid {
+  background-color: red;
+}
+
+div.product-preview-products {
+  max-height: 200px;
+  overflow: auto;
+}
+
 #preference-settings input, #preference-settings select, #preference-settings textarea{
   float:left;
  

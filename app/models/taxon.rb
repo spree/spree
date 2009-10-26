@@ -8,7 +8,7 @@ class Taxon < ActiveRecord::Base
 
   # indicate which filters should be used for a taxon
   # this method should be customized to your own site
-  include ProductFilters  # for detailed defs of filters
+  include ::ProductFilters  # for detailed defs of filters
   def applicable_filters
     fs  = []
     fs << ProductFilters.taxons_below(self)

@@ -1,0 +1,6 @@
+<% form_for(@product_group, :url => object_url, :html => { :id => 'product-group-form', :method => :put, :multipart => true }) do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
+ <%=  button t("update") %>
+<% end %>
+
+

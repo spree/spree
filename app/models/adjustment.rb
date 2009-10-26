@@ -51,7 +51,7 @@ class Adjustment < ActiveRecord::Base
     amount && amount != 0
   end
 
-  # Retrives amount of adjustment, if order hasn't been completed and amount is not set tries to calculate new amount.
+  # Retrieves amount of adjustment, if order hasn't been completed and amount is not set tries to calculate new amount.
   def amount
     amnt = read_attribute(:amount)
     if order && order.checkout_complete

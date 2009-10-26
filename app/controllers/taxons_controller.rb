@@ -5,18 +5,11 @@ class TaxonsController < Spree::BaseController
   actions :show
   helper :products
 
+  include Spree::Search
+
   private
   def load_data
-    @search = object.products.active.search(params[:search])
-
-    ## push into model?
-    ## @search.per_page ||= Spree::Config[:products_per_page]
-    
-    @products ||= @search.paginate(:include  => [:images, {:variants => :images}],
-                                   :per_page => Spree::Config[:products_per_page],
-                                   :page     => params[:page])
-    ## defunct?
-    @product_cols = 3
+    retrieve_products
   end
 
   def object

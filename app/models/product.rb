@@ -54,16 +54,7 @@ class Product < ActiveRecord::Base
 
   alias :options :product_option_types
 
-  # default product scope only lists available and non-deleted products
-  named_scope :active,      lambda { |*args| Product.not_deleted.available(args.first).scope(:find) }
-
-  named_scope :not_deleted,                  { :conditions => "products.deleted_at is null" }
-  named_scope :available,   lambda { |*args| { :conditions => ["products.available_on <= ?", args.first || Time.zone.now] } }
-
-  named_scope :query, lambda{|query| Spree::Config.searcher.get_products_conditions_for(query) }
-
-  # other useful product scopes
-  include ProductScopes
+  include Scopes::Product
 
   # ----------------------------------------------------------------------------------------------------------
   #
