@@ -117,7 +117,7 @@ module Spree
 
       def load_paths_for(dir)
         if File.directory?(dir)
-          %w(lib app/models app/controllers app/helpers test/helpers).collect do |p|
+          %w(lib app/models app/controllers app/helpers app/metal test/helpers).collect do |p|
             path = "#{dir}/#{p}"
             path if File.directory?(path)
           end.compact << dir
