@@ -9,7 +9,10 @@
 
 <% if @product.has_variants?
   has_checked = false %>
-  <h4 id="variant-images"><%= t('images_for') %>: <%= @selected_variant.options_text %></h4>
+  <h4 id="variant-images">
+    <%= t('images_for') %>:
+    <span><%= @selected_variant.options_text %></span>
+  </h4>
   <ul id="variant-thumbnails" class="thumbnails">
     <% @variants.each do |v|
         checked = !has_checked && (v.available?)
@@ -26,33 +29,12 @@
 
 <% content_for :head do %>
   <script type="text/javascript" charset="utf-8">
- 
     var images = new Array();
     <% @variants.each do |v| %>
       images[<%= v.id.to_s %>] = new Array();
       <% v.images.each_with_index do |image, i| %>
-        images[<%= v.id.to_s %>][<%= i %>] = '<%= image.attachment.url(:mini) %>';
+        images[<%= v.id.to_s %>][<%= i %>] = <%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)).to_json %>;
       <% end %>
     <% end %>
- 
-    var add_image_handlers = function(){
-      $("#main-image").data('selectedThumb', $('#main-image img').attr('src'));
-      $('ul.thumbnails li').eq(0).addClass('selected');
-      $('ul.thumbnails li a').click(function() {
-        $("#main-image").data('selectedThumb', $(this).attr('href'));
-        $('ul.thumbnails li').removeClass('selected');
-        $(this).parent('li').addClass('selected');
-        return false;
-      }).hover(
-        function() {
-          $('#main-image img').attr('src', $(this).attr('href').replace('mini', 'product'));
-        },
-        function() {
-          $('#main-image img').attr('src', $("#main-image").data('selectedThumb'));
-        }
-      );
-    };
- 
-    jQuery(document).ready(function(){ add_image_handlers(); });
   </script>
 <% end %>

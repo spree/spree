@@ -1,78 +1,50 @@
 <% form_for :order, :url => orders_url do |f| %>
 
   <% if product_price(@product) %>
-  <p class="prices">
-    <%= t("price") %>
-    <br />
-    <span class="price selling"><%= product_price(@product) %></span>
-  </p>
+    <p class="prices">
+      <%= t("price") %>
+      <br />
+      <span class="price selling"><%= product_price(@product) %></span>
+    </p>
   <% end %>
 
   <% if @product.has_variants? %>
-  <div id="product-variants">
-    <h2><%= t('variants') %></h2>
-    <ul>
-      <%  has_checked = false
-          @variants.each do |v|
-         		next if v.option_values.empty? || (!Spree::Config[:show_zero_stock_products] && !v.in_stock?)
-         		checked = !has_checked && (Spree::Config[:allow_backorders] || v.in_stock?)
-         		has_checked = true if checked %>
-
-        <li>
-          <label>
-            <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !Spree::Config[:allow_backorders] && !v.in_stock? %>
-            <%= variant_options v %>
-            <% if variant_price_diff v %>
-              <span class="price diff"><%= variant_price_diff v %></span>
-            <% end %>
-          </label>
-        </li>
-        
-        <% content_for :head do %>
-          <script type="text/javascript">
-            jQuery(document).ready(function(){  
-
-              jQuery("#products_<%= @product.id %>_<%= v.id %>").click(function (event) { 
-                  jQuery("#variant-thumbnails").empty();
-                  
-                  jQuery("#variant-images").html('<%= t('images_for') %>: <%= v.options_text %>')
-                  
-                  if(images[<%= v.id %>].length > 0){
-                    <% v.images.each do |i| %>
-                       jQuery("#variant-thumbnails").append('<li><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>');
-                    <% end %>
-                    
-                    jQuery("#variant-images").show();
-                  }else{
-                    jQuery("#variant-images").hide();
-                  }
-                  
-                  add_image_handlers();
-                  
-                  var link = jQuery("#variant-thumbnails a")[0];
-  
-                  jQuery("#main-image img").attr({src: jQuery(link).attr('href')});  
-                  jQuery('ul.thumbnails li').removeClass('selected');
-                  jQuery(link).parent('li').addClass('selected');
-               });
-
-            });
-          </script>
-        <% end %>
-      <% end%>
-    </ul>
-  </div>
-  <% end%>						
-  <% if Spree::Config[:allow_backorders] || @product.has_stock?  %>
-      <%= text_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"), 
-                     1, :class => "title", :size => 3 %>
-      &nbsp;
-      <button type='submit' class='large primary'>
-        <%= image_tag('/images/add-to-cart.png') + t('add_to_cart') %>
-      </button>
+    <div id="product-variants">
+      <h2><%= t('variants') %></h2>
+      <ul>
+        <%  has_checked = false
+        @product.variants.active.each_with_index do |v,index|
+          next if v.option_values.empty? || (!v.in_stock && !Spree::Config[:show_zero_stock_products])
+          checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
+          has_checked = true if checked %>
+          <li>
+            <label>
+              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders] %>
+              <span class="variant-description">
+                <%= variant_options v %>
+              </span>
+              <% if variant_price_diff v %>
+                <span class="price diff"><%= variant_price_diff v %></span>
+              <% end %>
+            </label>
+          </li>
+        <% end%>
+      </ul>
+    </div>
+  <% end%>
+  <% if @product.has_stock? || Spree::Config[:allow_backorders] %>
+    <%= text_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
+      1, :class => "title", :size => 3 %>
+    &nbsp;
+    <button type='submit' class='large primary'>
+      <%= image_tag('/images/add-to-cart.png') + t('add_to_cart') %>
+    </button>
   <% else %>
-      <%= content_tag('strong', t('out_of_stock')) %>
+    <%= content_tag('strong', t('out_of_stock')) %>
   <% end %>
 <% end %>
 
 
+<% content_for :head do %>
+  <%= javascript_include_tag 'product' %>
+<% end %>
