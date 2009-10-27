@@ -383,6 +383,7 @@ fr-FR:
   new_option_type: "Nouveau type d'option"
   new_option_value: "Nouvelle valeure d'option"
   new_product: "Nouveau produit"
+  new_product_group: New Product Group
   new_property: "Nouvelle proprieté"
   new_prototype: "Nouveau prototype"
   new_shipment: "Nouvelle expédition"
@@ -448,6 +449,7 @@ fr-FR:
   please_create_user: "Please create a user account"     
   powered_by: "Powered by"
   presentation: Presentation
+  preview: Preview
   previous: Précédent
   price: Prix
   price_with_vat_included: "{{price}} (inc. VAT)"
@@ -458,8 +460,121 @@ fr-FR:
   process: Process
   product: Produit
   product_details: "Détails du produit"
+  product_group: Product Group
+  product_group_invalid: Product Group has invalid scopes
+  product_groups: Product Groups
   product_has_no_description: Product has not description
   product_properties: "Propriété du produit"
+  product_scopes:
+    groups:
+      price:
+        description: "Scopes for selecting products based on Price"
+        name: Price
+      search:
+        description: "Scopes for selecting products based on name, keywords and description of product"
+        name: "Text search"
+      taxon:
+        description: "Scopes for selecting products based on Taxons"
+        name: Taxon
+      values:
+        description: "Scopes for selecting products based on option and property values"
+        name: Values
+    scopes:
+      ascend_by_master_price:
+        name: Ascend by product master price
+      ascend_by_name:
+        name: Ascend by product name
+      ascend_by_updated_at:
+        name: Ascendy by actualization date
+      by_popularity:
+        name: Sort by popularity(most popular first)
+      descend_by_master_price:
+        name: Descend by product master price
+      descend_by_name:
+        name: Descend by product name
+      descend_by_updated_at:
+        name: Descend by actualization date
+      in_name:
+        args:
+          words: Words
+        description: "(separated by space or comma)"
+        name: "Product name have following"
+        sentence: product name contain <em>%s</em>
+      in_name_or_description:
+        args:
+          words: Words
+        description: "(separated by space or comma)"
+        name: "Product name or description have following"
+        sentence: name or description contain <em>%s</em>
+      in_name_or_keywords:
+        args:
+          words: Words
+        description: "(separated by space or comma)"
+        name: "Product name or meta heywords have following"
+        sentence: name or keywords contain <em>%s</em>
+      in_taxons:
+        args:
+          "taxon_names": "Taxon names"
+        description: "Taxon names have to be separated by comma or space(eg. adidas,shoes)"
+        name: "In taxons and all their descendants"
+        sentence: in <em>%s</em> and all their descendants
+      master_price_gte:
+        args:
+          amount: Amount
+        description: ""
+        name: "Master price greater or equal to"
+        sentence: price greater or equal to <em>%.2f</em>
+      master_price_lte:
+        args:
+          amount: Amount
+        description: ""
+        name: "Master price lesser or equal to"
+        sentence: price less or equal to <em>%.2f</em>
+      price_between:
+        args:
+          high: High
+          low: Low
+        description: ""
+        name: "Price between"
+        sentence: price between <em>%.2f</em> and <em>%.2f</em>
+      taxons_name_eq:
+        args:
+          taxon_name: "Taxon name"
+        description: "In specific taxon - without descendants"
+        name: "In Taxon(without descendants)"
+        sentence: in <em>%s</em>
+      with:
+        args:
+          value: Value
+        description: "Selects all products that have at least one variant that have specified value as either option or property (eg. red)"
+        name: With value
+        sentence: with value <em>%s</em>
+      with_option:
+        args:
+          option: Option
+        description: "Selects all products that have specified option(eg. color)"
+        name: "With option"
+        sentence: with option <em>%s</em>
+      with_option_value:
+        args:
+          option: Option
+          value: Value
+        description: "Selects all products that have at least one variant with specified option and value(eg. color:red)"
+        name: "With option and value"
+        sentence: with option <em>%s</em> and value <em>%s</em>
+      with_property:
+        args:
+          property: Property
+        description: "Selects all products that have specified property(eg. weight)"
+        name: "With property"
+        sentence: with property <em>%s</em>
+      with_property_value:
+        args:
+          property: Property
+          value: Value
+        description: "Selects all products that have at least one variant with specified property and value(eg. weight:10kg)"
+        name: "With property value"
+        sentence: with property <em>%s</em> and value <em>%s</em>
   products: Produits
   products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
   properties: Propriétés
@@ -522,6 +637,7 @@ fr-FR:
   shipping_total: "Total de la livraison"
   shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Panier"
+  show: Show
   show_deleted: "Afficher les commandes supprimées"
   show_incomplete_orders: "Afficher les commandes imcomplètes"
   show_only_complete_orders: "Afficher seulement les commandes complète"
