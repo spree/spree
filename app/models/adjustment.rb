@@ -30,7 +30,6 @@ class Adjustment < ActiveRecord::Base
   belongs_to :order
   belongs_to :adjustment_source, :polymorphic => true
 
-  validates_presence_of :amount
   validates_presence_of :description
   validates_numericality_of :amount, :allow_nil => true
 
@@ -54,10 +53,10 @@ class Adjustment < ActiveRecord::Base
   # Retrieves amount of adjustment, if order hasn't been completed and amount is not set tries to calculate new amount.
   def amount
     amnt = read_attribute(:amount)
-    if order && order.checkout_complete
+    if (amnt.to_i != 0) || order && order.checkout_complete
       amnt
     else
-      amnt == 0 ? (self.calculate_adjustment || 0) : amnt
+      self.calculate_adjustment || 0
     end
   end
 

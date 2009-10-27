@@ -5,7 +5,6 @@ class TestCharge < Charge
 end
 
 class ChargeTest < ActiveSupport::TestCase
-  should_validate_presence_of :amount
   should_validate_presence_of :description
 
   context "Order" do

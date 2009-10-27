@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class CreditTest < ActiveSupport::TestCase
-  should_validate_presence_of :amount
   should_validate_numericality_of :amount
   should_validate_presence_of :description
   context "order instance with discounts" do

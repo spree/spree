@@ -2,7 +2,8 @@ class Shipment < ActiveRecord::Base
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :address
-  has_one    :charge,   :as => :adjustment_source
+  has_one    :shipping_charge,   :as => :adjustment_source
+  alias charge shipping_charge
 
   before_create :generate_shipment_number
   after_save :transition_order
@@ -22,7 +23,7 @@ class Shipment < ActiveRecord::Base
 
   def create_shipping_charge
     if shipping_method
-      self.charge ||= ShippingCharge.create({
+      self.shipping_charge ||= ShippingCharge.create({
           :order => order,
           :description => "#{I18n.t(:shipping)} (#{shipping_method.name})",
           :adjustment_source => self,
