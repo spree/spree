@@ -13,7 +13,7 @@ class Admin::UsersController < Admin::BaseController
                 
   private
   def collection   
-    @search = User.search(params[:search])
+    @search = User.searchlogic(params[:search])
 
     #set order by to default or form result
     @search.order ||= "ascend_by_email"

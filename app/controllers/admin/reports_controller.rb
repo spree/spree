@@ -11,7 +11,7 @@ class Admin::ReportsController < Admin::BaseController
   
   def sales_total
 
-    @search = Order.search(params[:search])
+    @search = Order.searchlogic(params[:search])
 
     #set order by to default or form result
     @search.order ||= "descend_by_created_at"

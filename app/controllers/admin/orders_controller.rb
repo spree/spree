@@ -30,7 +30,7 @@ class Admin::OrdersController < Admin::BaseController
   private
 
   def collection
-    @search = Order.search(params[:search])
+    @search = Order.searchlogic(params[:search])
     @search.order ||= "descend_by_created_at"
 
     # QUERY - get per_page from form ever???  maybe push into model

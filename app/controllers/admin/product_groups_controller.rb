@@ -15,7 +15,7 @@ class Admin::ProductGroupsController < Admin::BaseController
   end
 
   def collection
-    @search = ProductGroup.search(params[:search])
+    @search = ProductGroup.searchlogic(params[:search])
 
     @collection = @search.paginate(
       :per_page => Spree::Config[:per_page],
