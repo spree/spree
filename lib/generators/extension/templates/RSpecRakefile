@@ -116,5 +116,22 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = true
 end
 
+namespace :test do
+  desc 'Functional test the <%= file_name %> extension.'
+  Rake::TestTask.new(:functionals) do |t|
+    t.libs << 'lib'
+    t.pattern = 'test/functional/*_test.rb'
+    t.verbose = true
+  end
+
+  desc 'Unit test the <%= file_name %> extension.'
+  Rake::TestTask.new(:units) do |t|
+    t.libs << 'lib'
+    t.pattern = 'test/unit/*_test.rb'
+    t.verbose = true
+  end
+end
+
+
 # Load any custom rakefiles for extension
 Dir[File.dirname(__FILE__) + '/tasks/*.rake'].sort.each { |f| require f }

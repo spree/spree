@@ -12,6 +12,22 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = true
 end
 
+namespace :test do
+  desc 'Functional test the <%= file_name %> extension.'
+  Rake::TestTask.new(:functionals) do |t|
+    t.libs << 'lib'
+    t.pattern = 'test/functional/*_test.rb'
+    t.verbose = true
+  end
+
+  desc 'Unit test the <%= file_name %> extension.'
+  Rake::TestTask.new(:units) do |t|
+    t.libs << 'lib'
+    t.pattern = 'test/unit/*_test.rb'
+    t.verbose = true
+  end
+end
+
 desc 'Generate documentation for the <%= file_name %> extension.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'

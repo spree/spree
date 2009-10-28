@@ -96,10 +96,7 @@ namespace :db do
 
 end
 
-namespace :spec do
-  desc "Runs specs on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"
-  task :extensions => "db:test:prepare" do
-    
+def find_extension_roots
     current_extensions_path = File.join(File.expand_path(Dir.pwd), 'vendor/extensions')
     all_extension_names = Spree::Extension.descendants
     all_extension_names.collect!{ |x| x.extension_name.tr(' ', '').underscore }
@@ -119,6 +116,14 @@ namespace :spec do
         puts "Sorry, that extension is not installed."
       end
     end
+    extension_roots
+end
+
+namespace :spec do
+  desc "Runs specs on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"
+  task :extensions => "db:test:prepare" do
+    
+    extension_roots = find_extension_roots
     extension_roots.each do |directory|
       if File.directory?(File.join(directory, 'spec'))
         chdir directory do
@@ -130,7 +135,51 @@ namespace :spec do
         end
       end
     end
+    
   end
+end
+
+
+namespace :extensions do
+  namespace :test do
+    desc "Runs functional tests on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"
+    task :functionals => "db:test:prepare" do
+      extension_roots = find_extension_roots
+      extension_roots.each do |directory|
+        if File.directory?(File.join(directory, 'test/functional'))
+          chdir directory do
+            system "rake test:functionals SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+          end
+        end
+      end
+    end
+
+    desc "Runs unit tests on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"    
+    task :units => "db:test:prepare" do
+      extension_roots = find_extension_roots
+      extension_roots.each do |directory|
+        if File.directory?(File.join(directory, 'test/unit'))
+          chdir directory do
+            system "rake test:units SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+          end
+        end
+      end
+    end 
+          
+  end
+
+    desc "Runs all tests on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"   
+    task :test => "db:test:prepare" do
+      extension_roots = find_extension_roots
+      extension_roots.each do |directory|
+        if File.directory?(File.join(directory, 'test'))
+          chdir directory do
+            system "rake test SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+          end
+        end
+      end
+    end  
+  
 end
 
 # Load any custom rakefiles from extensions
