@@ -55,4 +55,22 @@
   </div>
 </fieldset>
 
-<%= button t("preview"), nil, "submit", :onclick=>"jQuery.ajax({data:$('#product-group-form').serialize(), success:function(request){jQuery('#products-preview').html(request);}, type:'post', url:'/admin/product_groups/preview'});return(false)" %>
+<%= button t("preview"), nil, "submit", :id => "preview"  %>
+
+<% javascript_tag do %>
+  
+    jQuery("#preview").click(function(){
+    
+      jQuery.ajax({
+        data: $("#product-group-form :input[name!='_method']").serialize(), 
+        success: function(request){
+          jQuery('#products-preview').html(request);
+        }, 
+        type: 'post', 
+        url: '/admin/product_groups/preview'
+      });
+      
+      return(false)
+    });
+ 
+<% end %>
