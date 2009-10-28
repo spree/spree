@@ -175,8 +175,8 @@ class ProductGroupTest < Test::Unit::TestCase
       should "find products" do
         products = %w{three four five}.map{|name|
           Product.find(:all, :conditions => ["name LIKE ?", "%#{name}%"])
-        }.flatten.sort_by{|pr| pr.created_at}.reverse
-        assert_equal(products.map(&:name), @pg.products.map(&:name))
+        }.flatten.sort_by{|pr| pr.name}
+        assert_equal(products.map(&:name), @pg.products.map(&:name).sort)
       end
 
       should "have correct order" do
