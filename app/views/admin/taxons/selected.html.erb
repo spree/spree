@@ -11,16 +11,32 @@
   <input id="searchtext" size="25">
 <% end %>
 
-<div id="searching" style="display:none">
-  <%= t(:searching) %> &nbsp; <%= image_tag "spinner.gif" %>
-</div>
-<%= observe_field(:searchtext,
-                  :frequency => 0.75,
-                  :update => :search_hits,
-                  :loading => "jQuery('#searching').show()",
-                  :complete => "jQuery('#searching').hide()",
-                  :url => available_admin_product_taxons_url(@product),
-                  :with => "'q=' + value") %>
+<% javascript_tag do %>
+  function search_for_taxons(){
+    jQuery.ajax({
+     data: {q: jQuery("#searchtext").val() }, 
+     success: function(request){
+       jQuery('#search_hits').html(request);
+     }, 
+     type: 'post', 
+     url: '<%= available_admin_product_taxons_url(@product) %>'
+    });    
+  }
+  
+  jQuery("#searchtext").keypress(function (e) {  
+    if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {  
+      search_for_taxons();
+
+      return false;  
+    } else {  
+       return true;  
+    }  
+  });
+  
+  jQuery("#searchtext").delayedObserver(0.75, function(element, value) {
+    search_for_taxons();
+  })
+<% end %>
 <br/>
 <div id="search_hits"></div>
 
