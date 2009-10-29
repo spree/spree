@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
 
   extend AuthlogicOpenid::ActsAsAuthentic::Config
-  include AuthlogicOpenid::ActsAsAuthentic::Methods
+  include AuthlogicOpenid::ActsAsAuthentic::Methods if User.table_exists?
 
   acts_as_authentic do |c|
     c.transition_from_restful_authentication = true
