@@ -29,8 +29,7 @@ class UsersController < Spree::BaseController
   new_action.before { flash.now[:notice] = I18n.t(:please_create_user) unless admin_created? }
 
   def update
-    @user = @current_user  
-    @user.openid_identifier = nil
+    @user = current_user
     if @user.update_attributes(params[:user])
       flash[:notice] = t("account_updated")
       redirect_to account_url
@@ -42,10 +41,7 @@ class UsersController < Spree::BaseController
   private
 
     def object
-      @user = @current_user
-      @user ||= User.new(params[:user]) if params[:user]
-      @user ||= User.new
-      @user
+      @object ||= current_user
     end
 
 end
