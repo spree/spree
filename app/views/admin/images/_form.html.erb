@@ -2,7 +2,7 @@
   <td><%= t("filename") %>:</td>
   <td><%= f.file_field :attachment %></td>
 </tr>
-<% if @product.variants? %>
+<% if @product.has_variants? %>
   <tr>
     <td><%= Variant.human_name %>:</td>
     <td><%= f.select :viewable_id, @variants %></td>
