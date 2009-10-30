@@ -592,6 +592,11 @@ ru-RU:
   required_for_solo_and_maestro: "Обязательно для кредитных карт Solo и Maestro."
   resend: "Отослать повторно"
   reset_password: "Сбросить мой пароль"
+  resource_controller:
+    member_object_not_found: "Member object not found."
+    successfully_created: "Successfully created!"
+    successfully_removed: "Successfully removed!"
+    successfully_updated: "Successfully updated!"
   response_code: "Response Code"
   resume: "возобновить"
   resumed: "Возобновлен"

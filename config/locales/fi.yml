@@ -592,6 +592,11 @@ fi:
   required_for_solo_and_maestro: "Vaaditaan Solo- ja Maestro korteilta."
   resend: Uudelleenlähetä
   reset_password: "Palauta salasana"
+  resource_controller:
+    member_object_not_found: "Member object not found."
+    successfully_created: "Successfully created!"
+    successfully_removed: "Successfully removed!"
+    successfully_updated: "Successfully updated!"
   response_code: Vastauskoodi
   resume: jatka
   resumed: Jatkettu

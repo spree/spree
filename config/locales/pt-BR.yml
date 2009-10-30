@@ -592,6 +592,11 @@ pt-BR:
   required_for_solo_and_maestro: Requerido por cartões Solo e Maestro.
   resend: Reenviar
   reset_password: "Reiniciar minha senha"
+  resource_controller:
+    member_object_not_found: "Member object not found."
+    successfully_created: "Successfully created!"
+    successfully_removed: "Successfully removed!"
+    successfully_updated: "Successfully updated!"
   response_code: "Código de Resposta"
   resume: "continuar"
   resumed: Continuado
