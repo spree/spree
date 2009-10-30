@@ -105,6 +105,17 @@ class CheckoutsController < Spree::BaseController
         end
       end
 
+      # update description on shipping method
+      shipping_method_id = checkout_info[:shipment_attributes][:shipping_method_id]
+      if shipping_method_id
+        new_shipping_method = ShippingMethod.find(shipping_method_id)
+        if new_shipping_method
+          @order.shipping_charges.each do |shipping_charge|
+            shipping_charge.update_attribute(:description, new_shipping_method.name)
+          end
+        end
+      end
+
     end
 
 		#mark checkout as confirmed (if applicable)
