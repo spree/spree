@@ -8,7 +8,7 @@
 		<th><%= t("price") %></th>
 	  <th><%= t("sku") %></th>
 	  <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
-	    <th><%= field[:name].titleize %></th>
+	    <th><%= t("activerecord.attributes.variant." + field[:name].downcase, :default => field[:name].titleize) %></th>
 	  <% end %>
 	  <th><%= t("on_hand") %></th>
 		<th><%= t("action") %></th>
