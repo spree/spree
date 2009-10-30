@@ -66,7 +66,7 @@ module Scopes::Product
   #
   Product.named_scope :in_taxon, lambda {|taxon|
     taxon = get_taxons(taxon).first
-    {:joins => :taxons}.merge(taxon.self_and_descendants.scope(:find))
+    taxon ? {:joins => :taxons}.merge(taxon.self_and_descendants.scope(:find)) : {}
   }
 
   # This scope selects products in all taxons AND all it's ancestors
@@ -195,7 +195,11 @@ SQL
       case t
       when Integer then Taxon.find_by_id(t)
       when ActiveRecord::Base then t
-      when String then Taxon.find_by_name(t) || Taxon.find(:first, :conditions => ["taxons.permalink LIKE ?", "%/#{t}/"])
+      when String
+        Taxon.find_by_name(t) ||
+        Taxon.find(:first, :conditions => [
+          "taxons.permalink LIKE ? OR taxons.permalink = ?", "%/#{t}/", "#{t}/"
+        ])
       end
     }.compact.uniq
   end

@@ -49,11 +49,11 @@ ActionController::Routing::Routes.draw do |map|
   # Search routes
   map.simple_search '/s/*product_group_query', :controller => 'products', :action => 'index'
   map.pg_search '/pg/:product_group_name', :controller => 'products', :action => 'index'
-  map.taxons_search '/t/*taxon_path/s/*product_group_query', {
+  map.taxons_search '/t/*id/s/*product_group_query', {
     :controller => 'taxons',
     :action => 'show'
   }
-  map.taxons_pg_search '/t/*taxon_path/pg/:product_group_name', {
+  map.taxons_pg_search '/t/*id/pg/:product_group_name', {
     :controller => 'taxons',
     :action => 'show'
   }
