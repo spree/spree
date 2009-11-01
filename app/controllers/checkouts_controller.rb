@@ -104,7 +104,11 @@ class CheckoutsController < Spree::BaseController
       end
 
     end
-  end
+
+		#mark checkout as confirmed (if applicable)
+		@checkout.confirmed = (params[:final_answer] == "yes")
+ 
+   end
 
   update.after do
     @order.save!		# expect messages here

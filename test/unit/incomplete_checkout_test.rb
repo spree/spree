@@ -44,6 +44,19 @@ class IncompleteCheckoutTest < ActiveSupport::TestCase
         should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
         should_change("@checkout.order.state", :from => 'in_progress', :to => 'paid') { @checkout.order.state }
       end
+      context "save with confirmed = false" do
+        setup do
+          @checkout.confirmed = false
+          @checkout.save
+        end
+	      should_not_change("Creditcard.count") { Creditcard.count }
+	      should_not_change("CreditcardPayment.count") { CreditcardPayment.count }
+	      should_not_change("CreditcardTxn.count") { CreditcardTxn.count }
+	      should_not_change("@checkout.order.state") { @checkout.order.state }
+        should 'not require processing' do
+          assert !@checkout.send(:process_creditcard?)
+        end
+       end
     end
     context "save with declineable creditcard" do
       setup do

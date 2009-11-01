@@ -1,5 +1,6 @@
 Factory.define(:checkout) do |record|
   record.email { Faker::Internet.email }
+	record.confirmed true
   record.special_instructions { Faker::Lorem.paragraphs(rand(5)+1).join("\n") }
 
   # associations: 

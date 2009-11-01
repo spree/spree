@@ -15,9 +15,8 @@ class CheckoutsControllerTest < ActionController::TestCase
     end
     context "post" do
       setup do
-        @params = { :final_answer => true, :order_id => @order.number }
+        @params = { :final_answer => "yes", :order_id => @order.number }
         @shipping_method = Factory(:shipping_method)
-        @params[:final_answer] = true
         @params[:checkout] = {
           :bill_address_attributes => @address.attributes.symbolize_keys,
           :shipment_attributes => {
