@@ -14,9 +14,11 @@ class CheckoutsController < Spree::BaseController
     begin
       rc_update
     rescue Spree::GatewayError => ge
+      logger.debug("#{ge}:\n#{ge.backtrace.join("\n")}")
       flash[:error] = t("unable_to_authorize_credit_card") + ": #{ge.message}"
       redirect_to edit_object_url and return
     rescue Exception => oe
+      logger.debug("#{oe}:\n#{oe.backtrace.join("\n")}")
       flash[:error] = t("unable_to_authorize_credit_card") + ": #{oe.message}"
       logger.unknown "#{flash[:error]}  #{oe.backtrace.join("\n")}"
       redirect_to edit_object_url and return

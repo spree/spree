@@ -54,7 +54,7 @@ class Adjustment < ActiveRecord::Base
   def amount
     amnt = read_attribute(:amount)
     if (amnt.to_i != 0) || order && order.checkout_complete
-      amnt
+      amnt || 0
     else
       self.calculate_adjustment || 0
     end
