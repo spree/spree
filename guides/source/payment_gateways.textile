@@ -19,7 +19,7 @@ use and just need to be configured via the administrator interface.
 A large collection of other gateways can be added easily via Active Merchant.
 
 
-h3. Basic gateway functionality
+h3. Basic Gateway Functionality
 
 From a developer's viewpoint, a gateway supports five core operations or 
 transactions:
@@ -32,145 +32,132 @@ transactions:
 Note that +authorize+ and +capture+ are the main operations used in Spree at 
 present.
 
-
-
-h3. Configuring an existing gateway
+h3. Configuring an Existing Gateway
 
 Spree comes with several gateways ready for use. You can select and 
 configure the default gateway via the Gateways section of the Configuration
-menu. The first step is to choose the gateway from the drop-down menu. This 
-then causes a gateway-specific form to be shown where you can enter details 
-such as vendor identifier or account signature. These details will be used
-when Spree processes a customer payment, typically to allow connection
-to a gateway service.
-Clicking 'Update' sets the selected gateway as the default and saves the 
-associated details.
+menu. You are able to configure several different gateways at once.  The typical
+use case for this is when you would like to use your gateway with different 
+settings in development vs. production mode.  
+
+Each gateway comes with the following configuration options:
+
+|_.Configuration Option|_.Description|
+|Name|Human readable name of your choosing.  Helps you to identify the gateway in the index view.|
+|Description|Additional descriptive information about the configuration.|
+|Environment|The Rails environment for which this gateway will be used.  Typical choices are: +DEVELOPMENT+, +TEST+ and +PRODUCTION+|
+|Server|Which server the gateway should be connecting to (this is a reference to the gateway server, not the Spree server.)  Choices are: +live+ and +test+.|
+|Test Mode|Transactions should be processed in test mode (if such a mode is supported by your gateway.)|
+|Active|Whether or not the current gateway configuration is active.|
+
+Spree gives you the flexibility to specify the exact combination of gateways and settings that you would like.  You can have your development environment point to a "bogus gateway" or perhaps the test gateway environment for that particular gateway provider.  Most gateway providers also allow you do to test transactions against the live production server.  You can change the +server+ option to +live+ in order to achieve this set up.
+
+INFO. You do not need to configure the URL for your gateway.  The URL for your gateway provider is already known and the appropriate URL will be used based on the +server+ setting in your configuration.
+
+Most gateway providers require additional information to be provided during configuration.  The information typically includes an account identifier and API key.  Once you have chosen the gateway and the basic configuration values (environment, etc.) then you will also need to provide these gateway specific values.
+
+INFO. After you change the gateway (or assign one for the first time) you will need to save the configuration and click the link to edit it.  Only after a successful save will you see the configuration settings specific to the new gateway.
+
+Gateway configurations can also be temporarily deactivated.  This would allow you to configure a production environment gateway with all of the live settings and then disable it until your ready to launch.  Only one gateway can be active per environment.   
+
+h3. Available Gateways
 
 h4. The Bogus Gateway
 
 This gateway is provided for basic testing purposes, particularly in 
 development mode. It returns success responses for the main five 
 transactions if one of a test set of card numbers is used, else failure
-responses. "See below":#testingconsiderations for how to use it in testing. 
+responses. "See below":#testing-considerations for how to use it in testing. 
 Unsurprisingly, this gateway requires no configuration options.
 
-h4. Other gateways
+h4. Other Gateways
 
-Spree currently supports:
+Spree currently supports the following gateways:
+
 * Authorize.net
+* Beanstream
 * Linkpoint
 * Paypal - Website Payments Pro
 * Protx (without 3D secure)
 
-Gateways for the following are in preparation:
-* Paypal Express
-* Protx 3D secure / Sagepay
+Additional gateway support is fairly trivial.  Most of the functionality is provided by the "Active Merchant":http://www.activemerchant.org/ plugin so if your favorite gateway is supported by this plugin, it will not be difficult to get it working with Spree.
 
+h3. Adding a New Gateway
 
+Spree relies on the "Active Merchant":http://www.activemerchant.org/ plugin to provide the majority of its gateway functionality.  Spree introduces a thin wrapper, around the Active Merchant gateway implementation to assist with configuration and a few other conveniences.
 
-h3. Adding a new gateway
+Active Merchant currently supports around 40 payment gateways.  Most of not yet been officially implemented in Spree but this is just because the core team generally uses only a few of the popular choices and there's not yet been a need to support more.  It should be trivial to support an existing Active Merchant gateway if your gateway is not yet included.  The following sections will discuss in detail how to implement a gateway.  
 
-Spree assumes that gateway classes follow the interface and conventions
-of "Active Merchant":http://www.activemerchant.org/. 
-The first step is to provide a class which implements
-the five core operations, using information passed in the Active Merchant
-format. 
+INFO. If you implement a new gateway, we're interested in including it in the core.  You should read the "contribution guidelines":contributing_to_spree.html for more details on how to contribute code to Spree.
 
-Active Merchant currently supports around "40 payment gateways":http://activemerchant.rubyforge.org.
-One of these
-may meet your needs or can be adapted with a bit of work. You could also 
-look on the Active Merchant or Spree mailing lists or on GitHub to see 
-if people are developing other relevant gateways. Posting requests to 
-the mailing lists sometimes helps, e.g. to find someone to share the work
-with.
+h4. The Gateway Model
 
-h4. The +payment_gateway+ wrapper
+All gateway implementations inherit from the common +Gateway+ class which in turn extends +ActiveRecord::Base+.  The primary motivation for this is to take advantage of Spree's standard system for "configuration of preferences":preferences.html. 
 
-It's worth noting first how Spree interacts with underlying gateways.
-The +Creditcard+ model contains methods from the +Spree::PaymentGateway+
-module which roughly follow the ActiveMerchant interface. The high-level
-operations select the current gateway and create a new instance of the
-associated class. Next, the gateway-specific options (such as vendor 
-account name and password) are merged with the result of converting 
-Spree data (eg address objects) into the format used in Active Merchant. 
-The assembled data is then passed to the relevant method of the new
-gateway object. On return, relevant information is converted back into
-Spree objects (e.g. saving an authorised credit card transaction)
-or suitable exceptions raised.
+The +Gateway+ model provides the following public methods shared by all gateway implementations.
 
-h4. The ActiveMerchant interface
+|_.Method|_.Description|
+|+provider+|Returns a fully configured instance of the gateway.|
+|+provider_class+|The Active Merchant gateway class to be used.|
+|+authorize+|Authorize a new charge.|
+|+capture+|Capture a previously authorized charge.|
+|+purchase+|Perform a simultaneous authorization and capture of a new charge.|
+|+void+|Void a previously authorized charge. _(Not yet fully supported)_|
+|+credit+|Issue a credit. _(Not yet fully supported)_|
 
-Here is a summary of the key details.
-Consult "ActiveMerchant's documentation":http://activemerchant.rubyforge.org/
-for further information. 
+All new gateway implementations should extend +Gateway.+  By convention, they should also be part of the +Gateway+ namespace.  For example, the Authorize.net implementation is defined as +Gateway::AuthorizeNet+.
 
-The core functions expect the following arguments:
+h4. Implementing +provider_class+
 
-* +authorize(money, creditcard, options = {})+
-* +purchase(money, creditcard, options = {})+
-* +credit(money, ident, options = {})+
-* +capture(money, ident, options = {})+
-* +void(ident, options = {})+
+All gateway instances must implement the +provider_class+ method.  This is because the Spree wrapper used for gateway implementation is intended for providing a means to configure the gateway.  Most of the actual work is delegated to the an instance of +provider_class+.
 
-Note that ActiveMerchant expects amounts in cents or pennies and so Spree
-passes numbers already multiplied by 100, so if you are implementing a gateway
-from scratch you should be ready to handle such numbers.
+The +provider+ method of +Gateway+ is meant to be used internally.  It will return a new instance of +provider_class+ after configuring it with the specified settings.
 
-Creditcards can be objects that respond to requests for number, cvv code, 
-expiry date etc. See the "documentation":http://activemerchant.rubyforge.org/classes/ActiveMerchant/Billing/CreditCard.html for more detail.
+h4. Specifying Configuration Options
 
-Spree expects back an object in the "+ActiveMerchant::Billing::Response+":http://activemerchant.rubyforge.org/classes/ActiveMerchant/Billing/Response.html class.
+Gateway implementations will most likely need to specify configuration options.  Spree provides a standard method for the "configuration of preferences":preferences.html.  
 
-h4. Providing other information
+INFO. It is important that you use the exact spelling of the Active Merchant gateway option value that are trying to configure.
 
-Other information can be provided in the options hash, and it is up to 
-your gateway for what extra is required. Note that Spree's gateway wrapper
-converts and inserts much of the relevant information into this hash.
+If you examine the source code for the Active Merchant gateway that you are trying to configure, you will likely notice some specific options documented in the Active Merchant source code.  It is these options that you need to expose to the Spree system for configuration in the admin screen.
 
-h4. Setting up a gateway
+Lets take the Authorize.net implementation as an example.  The Active Merchant implementation reveals that there are two important configuration options: +login+ and +password+.
 
-This is generally done with a migration. See directory
-+vendor/extensions/payment_gateway/db/migrate+ for examples. 
-The gateway-specific fields are stored in the +GatewayOption+ table, with 
-each option having a name (used as the key in the options hash) and 
-an informative description:
+NOTE. You can ignore the +test+ option.  This is a standard preference for all gateways that is already provided for you by the base +Gateway+ class.
+
+In this case, you would expose these options as preferences in your +gateway/authorize_net.rb+ file:
 
 <shell>
-login = GatewayOption.create(:name => 'login',
-                             :description => 'Your login email.')
-signature = GatewayOption.create(:name => 'signature',
-                                 :textarea => true,
-                                 :description => 'Your Paypal API Credentials signature string.')
-</shell>
+preference :login, :string
+preference :password, :string
+</shell>  
 
-Specifying +:textarea => true+ means that a textarea rather than a textbox 
-will be provided to configure that field. 
+h4. Other Architecture Implications
 
-The actual gateway is specified like this:
-<shell>
-gateway = Gateway.create(:name => 'Paypal - Website Payments Pro",
-                         :clazz => 'ActiveMerchant::Billing::PaypalGateway",
-                         :description => 'Active Merchant's Paypal Website Payments Pro (US) Gateway.",
-                         :gateway_options => [login, password, signature])
-</shell>
+This approach to implementing and configuring gateways is extremely flexible.  It makes it trivial to implement a new gateway that is already supported by Active Merchant.  There are other useful benefits to this approach that a developer may be interested in knowing.
 
-The +clazz+ field names the class implementing your gateway. The 
-+gateway_options+ field sets the specific fields required for the 
-gateway. Remember that to activate the gateway, you need to select it
-as the default in the Configurations menu.
+h5. Support of Non Active Merchant Gateways
 
-INFO. Contributions of new gateways are always welcome. For flexibility, try to create a stand-alone extension which others can import into their projects. Please advertise new code or developments on the Spree mailing list (or the Active Merchant list). 
+This architecture allows Spree to support gateways that are not officially supported by Active Merchant.  Many times a new gateway is donated by someone in the community but its languishing in the queue waiting for someone to test and accept the patch.  You have the option of taking that code (or writing your own from scratch) and implementing it within Spree.  Instead of delegating to an Active Merchant class, you can simply implement that functionality yourself.  You could also include the new gateway code from an Active Merchant fork inside your implementation and delegate the standard authorize, capture, etc operations to it.
 
-h3. Testing considerations
+h5. Ability to "Patch" Active Merchant Gateways
+
+We've noticed that sometimes it takes a while for a crucial Active Merchant patch to be applied.  That's certainly understandable, the "Shopify":http://shopify.com guys have a business to run and its probably not a high priority for them to make sure that the latest obscure gateway patch is applied in a timely fashion.  Fortunately, the Spree approach to wrapping these gateways provides you with a convenient option.
+
+Lets say there is a bug with the +authorize+ method.  You could simply provide an implementation of the gateway that has the patched version of the +authorize+ method and then delegates to the Active Merchant class for everything else (since that works just fine.)
+
+h5. Additional Functionality Beyond Active Merchant
+
+Another benefit of the architecture is that it makes it possible for Spree to provide additional common functionality that was not envisioned by Active Merchant.  Specifically, it is possible to provide an abstraction for storing credit card profiles to be used with recurring payments.  There's a good reason for Active Merchant to not care about this functionality.  Its designed for people who just want to drop a single gateway provider into their application.  Most programmers don't need three different gateways at once.  Spree is a specialized use case.  Its providing multiple gateways for you to choose from and so its desirable to have a standard method for operations such as this.
+
+INFO. Recurring payments are not yet supported in Spree although they are plans to provide this in the near future.
+
+h3. Testing Considerations
 
 There's a range of testing options, from testing with the bogus gateway
 in development mode, to using a real gateway in test mode.
 
 h4. Using the Bogus Gateway
-
-Spree will use the bogus gateway if (a) you are in development mode and 
-have not changed +Spree::Gateway::Config[:use_bogus]+ to false; or (b) if
-you have not selected any other gateway yet.
 
 This gateway returns success for the five core operations on the following
 cards, else returns failure. It does not check CVV codes at present.
@@ -180,22 +167,7 @@ cards, else returns failure. It does not check CVV codes at present.
 * +TEST_AMEX = 340000000000009+
 * +TEST_DISC = 6011000000000004+
 
-
-h4. Putting a gateway into test mode
-
-Once you have selected a non-bogus gateway, you probably need to run it 
-in test mode before attempting live transactions.
-ActiveMerchant gateways can be put into test mode with the following line.
-You can add it at the end of +config/environments/production.rb+ (where it
-is commented out by default), or better to go in your application's
-initializer.
-
-<shell>
-ActiveMerchant::Billing::Base.gateway_mode = :test
-</shell>
-
-
-h3. Other useful information
+h3. Other Useful Information
 
 Whilst debugging, you may find the following options useful - but they must 
 be turned off in production use to comply with relevant card processing 
