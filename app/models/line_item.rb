@@ -11,7 +11,7 @@ class LineItem < ActiveRecord::Base
   validates_numericality_of :quantity, :only_integer => true, :message => "must be an integer"
   validates_numericality_of :price
 
-  attr_accessible :quantity
+  attr_accessible :quantity, :variant_id, :order_id
 
   def copy_price
     self.price = variant.price if variant && self.price.nil?

@@ -1,5 +1,7 @@
 <tr class="<%= cycle('', 'alt') %>">
   <td>
+    <%= item_form.hidden_field :variant_id %>
+    <%= item_form.hidden_field :order_id %>
     <% if variant.images.length == 0 %>
       <%= small_image(variant.product) %>
     <% else %>

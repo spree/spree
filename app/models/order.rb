@@ -41,8 +41,7 @@ class Order < ActiveRecord::Base
   delegate :email, :to => :checkout
   delegate :ip_address, :to => :checkout
   delegate :special_instructions, :to => :checkout 
-  
-  validates_associated :line_items, :message => "are not valid"
+
   validates_numericality_of :item_total
   validates_numericality_of :total
 

@@ -9,7 +9,7 @@ class OrdersController < Spree::BaseController
   
   helper :products
 
-  create.after do    
+  create.before do    
     params[:products].each do |product_id,variant_id|
       quantity = params[:quantity].to_i if !params[:quantity].is_a?(Array)
       quantity = params[:quantity][variant_id].to_i if params[:quantity].is_a?(Array)
@@ -20,9 +20,7 @@ class OrdersController < Spree::BaseController
       quantity = quantity.to_i
       @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
     end if params[:variants]
-    
-    @order.save
-    
+
     # store order token in the session
     session[:order_token] = @order.token
   end
@@ -30,15 +28,17 @@ class OrdersController < Spree::BaseController
   # override the default r_c behavior (remove flash - redirect to edit details instead of show)
   create do
     flash nil 
-    wants.html {redirect_to edit_order_url(@order)}
+		success.wants.html {redirect_to edit_order_url(@order)}
+		failure.wants.html { render :template => "orders/edit" }
   end     
-  
-  # override the default r_c flash behavior
-  update.flash nil
-  update.response do |wants| 
-    wants.html {redirect_to edit_order_url(object)}
-  end  
 
+  # override the default r_c flash behavior
+  update do  
+		flash nil
+		success.wants.html { redirect_to edit_order_url(object) }
+		failure.wants.html { render :template => "orders/edit" }
+  end  
+ 
   #override r_c default b/c we don't want to actually destroy, we just want to clear line items
   def destroy
     flash[:notice] = I18n.t(:basket_successfully_cleared)
@@ -60,13 +60,13 @@ class OrdersController < Spree::BaseController
   end
     
   private
-  def build_object        
+  def build_object
     @object ||= find_order
   end
   
   def object 
-    return Order.find_by_number(params[:id]) if params[:id]
-    find_order
+  	@object ||= Order.find_by_number(params[:id]) if params[:id]
+		return @object || find_order
   end   
   
   def prevent_editing_complete_order      
