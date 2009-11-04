@@ -4,9 +4,9 @@ endprologue.
 
 h3. Improvements to Payment Gateway Configuration
 
-This release contains significant improvements to how payment gateways are configured.  Gateways are no longer supported by database migrations, this scheme has been replaced by Active Record models that extend +Gateway+.  The configuration of gateways is now done through standard Spree +preference configuration+.  The documentation has also been updated and contains a detailed explanation of "payment gateways":payment_gateways 
+This release contains significant improvements to how payment gateways are configured.  Gateways are no longer supported by database migrations, this scheme has been replaced by Active Record models that extend +Gateway+.  The configuration of gateways is now done through standard Spree +preference configuration+.  The "documentation":payment_gateways.html has also been updated and contains a more detailed explanation. 
 
-One major improvement is that it is now possible to configure multiple gateways for each of your Rails environments.  Its also possible to use the live production server in development mode when previously, you were required to run in test mode.  One unfortunate side effect of this improvement is that your existing gateway configuraiton information will be lost and you will need to reconfigure your gateway in the admin interface.
+One major improvement is that it is now possible to configure multiple gateways for each of your Rails environments.  Its also possible to use the live production server in development mode when previously, you were required to run in test mode.  One unfortunate side effect of this improvement is that your existing gateway configuration information will be lost and you will need to reconfigure your gateway in the admin interface.
 
 INFO. You should make a note of your gateway configuration setting before upgrading since you will need to reconfigure your gateway when you're done.
 
