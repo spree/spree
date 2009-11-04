@@ -13,10 +13,11 @@
     <h2><%= t('variants') %></h2>
     <ul>
       <%  has_checked = false
-          @product.variants.active.each_with_index do |v,index|
+          @variants.each do |v|
          		next if v.option_values.empty? || (!Spree::Config[:show_zero_stock_products] && !v.in_stock?)
          		checked = !has_checked && (Spree::Config[:allow_backorders] || v.in_stock?)
          		has_checked = true if checked %>
+
         <li>
           <label>
             <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !Spree::Config[:allow_backorders] && !v.in_stock? %>

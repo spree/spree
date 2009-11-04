@@ -7,11 +7,11 @@
   </ul>
 <% end %>
 
-<% if @product.has_variants? 
+<% if @product.has_variants?
   has_checked = false %>
   <h4 id="variant-images"><%= t('images_for') %>: <%= @selected_variant.options_text %></h4>
   <ul id="variant-thumbnails" class="thumbnails">
-    <% product.variants.each do |v|
+    <% @variants.each do |v|
         checked = !has_checked && (v.available?)
    		  has_checked = true if checked
         
@@ -28,7 +28,7 @@
   <script type="text/javascript" charset="utf-8">
  
     var images = new Array();
-    <% product.variants.each do |v| %>
+    <% @variants.each do |v| %>
       images[<%= v.id.to_s %>] = new Array();
       <% v.images.each_with_index do |image, i| %>
         images[<%= v.id.to_s %>][<%= i %>] = '<%= image.attachment.url(:mini) %>';

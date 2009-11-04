@@ -22,6 +22,7 @@ module Spree::Search
     @products_scope = @product_group.apply_on(base_scope)
 
     @products = @products_scope.paginate({
+        :include  => [:images, {:variants => :images}],
         :per_page => params[:per_page],
         :page     => params[:page],
       })

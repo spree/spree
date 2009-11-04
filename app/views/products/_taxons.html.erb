@@ -2,9 +2,11 @@
 <div id="taxon-crumbs">
 <h3><%= t('look_for_similar_items') -%></h3>
   <div>
+    <ul id='similar_items_by_taxon'>
     <% @product.taxons.each do |taxon| -%>
-      <%= taxon_crumbs(taxon) -%>
+      <li><%= link_to taxon.name, "/t/#{taxon.permalink}" %></li>
     <% end -%>
+    </ul>
   </div>
 </div>
 <% end -%>
