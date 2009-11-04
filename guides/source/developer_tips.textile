@@ -9,12 +9,28 @@ h3. Upgrade Considerations
 
 h4. The important commands
 
-+rake spree:upgrade+ 
++spree --update+ 
 will copy in any new "infrastructure" files, e.g. new configuration or javascript or 
-style files. It saves you from needing to run the +spree+ command to get an empty project and then copying
-changes across.
+style files.
 
-NOTE. currently this over-writes existing files, so be careful if you have experimental changes. (IDEA: use +-b+ flag on the copies? it does help)
+Before updating, you will want to ensure the installed spree
+gem is up-to-date.  For example, if you are using Spree edge, then get the 
+latest edge source, and run +rake spree:gem:install+.
+
+Once you have the latest spree gem installed, run +spree --update+ from 
+inside RAILS_ROOT (your application directory) and your application will be
+upgraded.
+
+The update process is less “destructive” than in previous versions of Spree.
+Instead of silently replacing crucial files in your application, Spree now checks
+the content of files it needs to replace, and if the old version differs, it
+will be saved with a ~ suffix.
+
+This makes it easier to see when and how some file has changed – which is often
+useful if you need to update a customized version. The update command will also
+no longer copy the routes.rb file – the original version just loads the core
+Spree routes file, so has no need to change. (Recall that you can define new
+routes in your extensions.)
 
 
 h4. Dos and Don'ts
