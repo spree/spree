@@ -1,6 +1,32 @@
 h2. Spree 1.0.0 Release Notes
 
-endprologue.
+endprologue.     
+
+h3. Improvements to Payment Gateway Configuration
+
+This release contains significant improvements to how payment gateways are configured.  Gateways are no longer supported by database migrations, this scheme has been replaced by Active Record models that extend +Gateway+.  The configuration of gateways is now done through standard Spree +preference configuration+.  The documentation has also been updated and contains a detailed explanation of "payment gateways":payment_gateways 
+
+One major improvement is that it is now possible to configure multiple gateways for each of your Rails environments.  Its also possible to use the live production server in development mode when previously, you were required to run in test mode.  One unfortunate side effect of this improvement is that your existing gateway configuraiton information will be lost and you will need to reconfigure your gateway in the admin interface.
+
+INFO. You should make a note of your gateway configuration setting before upgrading since you will need to reconfigure your gateway when you're done.
+
+This approach to implementing and configuring gateways is extremely flexible.  It makes it trivial to implement a new gateway that is already supported by Active Merchant.  There are other useful benefits to this approach that a developer may be interested in knowing.
+
+h4. Support of Non Active Merchant Gateways
+
+This architecture allows Spree to support gateways that are not officially supported by Active Merchant.  Many times a new gateway is donated by someone in the community but its languishing in the queue waiting for someone to test and accept the patch.  You have the option of taking that code (or writing your own from scratch) and implementing it within Spree.  Instead of delegating to an Active Merchant class, you can simply implement that functionality yourself.  You could also include the new gateway code from an Active Merchant fork inside your implementation and delegate the standard authorize, capture, etc operations to it.
+
+h4. Ability to "Patch" Active Merchant Gateways
+
+We've noticed that sometimes it takes a while for a crucial Active Merchant patch to be applied.  That's certainly understandable, the "Shopify":http://shopify.com guys have a business to run and its probably not a high priority for them to make sure that the latest obscure gateway patch is applied in a timely fashion.  Fortunately, the Spree approach to wrapping these gateways provides you with a convenient option.
+
+Lets say there is a bug with the +authorize+ method.  You could simply provide an implementation of the gateway that has the patched version of the +authorize+ method and then delegates to the Active Merchant class for everything else (since that works just fine.)
+
+h4. Additional Functionality Beyond Active Merchant
+
+Another benefit of the architecture is that it makes it possible for Spree to provide additional common functionality that was not envisioned by Active Merchant.  Specifically, it is possible to provide an abstraction for storing credit card profiles to be used with recurring payments.  There's a good reason for Active Merchant to not care about this functionality.  Its designed for people who just want to drop a single gateway provider into their application.  Most programmers don't need three different gateways at once.  Spree is a specialized use case.  Its providing multiple gateways for you to choose from and so its desirable to have a standard method for operations such as this.
+
+INFO. Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
 
 h3. Miscellaneous improvements
 
