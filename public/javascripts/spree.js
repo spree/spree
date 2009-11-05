@@ -10,6 +10,8 @@ if (!spree) spree = {};
 jQuery.noConflict() ;
 
 jQuery(document).ajaxStart(function(){
+  width = jQuery(window).width() /3;
+  jQuery("#progress").css('width', width)
   jQuery("#progress").slideDown();
 });
 

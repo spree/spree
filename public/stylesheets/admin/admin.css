@@ -437,12 +437,14 @@ div#calculator-settings-warning {
 	height:25px;
 	left:33%;
 	padding:10px 0 15px;
-	position:absolute;
+	position:fixed;
 	text-align:center;
-	width:33%;
+	width:30%;
 	font-weight:bold;
 	-moz-border-radius-bottomleft:15px;
 	-moz-border-radius-bottomright:15px;
+	-webkit-border-bottom-left-radius: 15px;
+	-webkit-border-bottom-right-radius: 15px;
 }
 #progress img{
 	vertical-align:middle;
