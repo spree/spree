@@ -50,7 +50,7 @@ module ProductsHelper
   def taxon_crumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
     crumbs = []
 
-    crumbs << taxon.ancestors.reverse.collect { |ancestor|
+    crumbs << taxon.ancestors.collect { |ancestor|
       content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator)
     } unless taxon.ancestors.empty?
 
