@@ -420,13 +420,13 @@ var submit_confirmation = function() {
 // update login partial
 var update_login = function() {
   $.ajax({
-    url: '/user_session/login_bar',                                 
+    url: '/user_session/nav_bar',                                 
     beforeSend : function (xhr) {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
     },      
     dataType: "html",
     success: function(result) {
-      $("div#login-bar").html(result);
+      $("ul#nav-bar").html(result);
     },
     error: function (XMLHttpRequest, textStatus, errorThrown) {
       // TODO (maybe do nothing)

@@ -25,7 +25,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.root :controller => "products", :action => "index"
 
-  map.resource :user_session, :member => {:login_bar => :get}
+  map.resource :user_session, :member => {:nav_bar => :get}
   map.resource :account, :controller => "users"
   map.resources :password_resets
 
