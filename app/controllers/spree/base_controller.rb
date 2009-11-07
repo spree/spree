@@ -115,7 +115,12 @@ class Spree::BaseController < ActionController::Base
   end
 
   def store_location
-    session[:return_to] = request.request_uri
+    # disallow return to login, logout, signup pages
+    disallowed_urls = [signup_url, login_url, logout_url]
+    disallowed_urls.map!{|url| url[/\/\w+$/]}
+    unless disallowed_urls.include?(request.request_uri)
+      session[:return_to] = request.request_uri
+    end
   end
 
   def redirect_back_or_default(default)
