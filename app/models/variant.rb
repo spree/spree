@@ -1,5 +1,5 @@
 class Variant < ActiveRecord::Base
-  belongs_to :product, :touch => true
+  belongs_to :product
   delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords
 
   has_many :inventory_units
@@ -9,6 +9,8 @@ class Variant < ActiveRecord::Base
 
   validate :check_price
   validates_presence_of :price
+
+  before_save :touch_product
   
   # default variant scope only lists non-deleted variants
   named_scope :active, :conditions => "variants.deleted_at is null"
@@ -77,5 +79,9 @@ class Variant < ActiveRecord::Base
       raise "Must supply price for variant or master.price for product." if self == product.master
       self.price = product.master.price
     end
-  end    
+  end
+  
+  def touch_product
+    product.touch unless is_master?
+  end
 end

@@ -62,7 +62,7 @@ class VariantTest < Test::Unit::TestCase
       end
       should "adjust inventory levels" do
         assert_equal 3, @variant.on_hand
-        assert_equal 3, @variant.product.count_on_hand
+        assert_equal 3, @variant.product.reload.count_on_hand
       end
 
       should_not_change("InventoryUnit.count") { InventoryUnit.count }
