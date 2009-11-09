@@ -129,7 +129,7 @@ class ProductGroupTest < Test::Unit::TestCase
 
       should "have correct order" do
         assert_equal(@pg.order, nil)
-        assert_equal('"taxons"."lft"', @pg.products.scope(:find)[:order])
+        assert_equal('taxons.lft', @pg.products.scope(:find)[:order].gsub(/["'`]/, ''))
       end
     end
 
