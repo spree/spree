@@ -105,13 +105,15 @@ class CheckoutsController < Spree::BaseController
         end
       end
 
-      # update description on shipping method
+      # update description and amount on shipping method
       shipping_method_id = checkout_info[:shipment_attributes][:shipping_method_id]
       if shipping_method_id
         new_shipping_method = ShippingMethod.find(shipping_method_id)
         if new_shipping_method
           @order.shipping_charges.each do |shipping_charge|
-            shipping_charge.update_attribute(:description, new_shipping_method.name)
+            shipping_charge.update_attributes(
+              :description => new_shipping_method.name,
+              :amount => new_shipping_method.calculate_cost(@order.shipment))
           end
         end
       end
