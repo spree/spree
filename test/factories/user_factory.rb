@@ -1,3 +1,4 @@
+srand(Time.now.to_i)
 Factory.define(:user) do |record|
   record.email { Faker::Internet.email }
   record.login { Faker::Internet.user_name }
