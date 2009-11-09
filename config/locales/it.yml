@@ -401,6 +401,7 @@ it:
   next: continua
   no_items_in_cart: "Carrello vuoto"
   no_match_found: "No Match Found"
+  no_products_found: "No products found"
   no_user_found: "No user was found with that email address"
   none: ""
   none_available: "None Available"

@@ -199,11 +199,11 @@ fr-FR:
   backordering_is_allowed: "Rupture de stock {{not}} permise"
   bill_address: "Adresse facturée"
   billing_address: "Adresse de facturation"
-  calculator: Calculateur
-  calculator_settings_warning: "Si vous changez le type de calculateur, vous devez tout d'abord enregistrer avant de pouvoir modifier les paramètres du calculateur."
   billing_integration: Intégration de Facturation
   billing_integrations: Intégrations de Facturation
   billing_integrations_description: "Configurer vos paramètres pour l'intégration avec des systèmes de facturation tels Paypal, Google Checkout, etc."
+  calculator: Calculateur
+  calculator_settings_warning: "Si vous changez le type de calculateur, vous devez tout d'abord enregistrer avant de pouvoir modifier les paramètres du calculateur."
   cancel: annulé
   canceled: Annulé
   capture: accepté
@@ -368,8 +368,8 @@ fr-FR:
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
-  month: "Mois"
   missing_required_information: "Information requise manquante"
+  month: "Mois"
   my_account: "Mon compte"
   my_orders: "Mes commandes"
   name: Nom
@@ -401,6 +401,7 @@ fr-FR:
   next: Suivant
   no_items_in_cart: ""
   no_match_found: "Aucune correspondance trouvée"
+  no_products_found: "No products found"
   no_user_found: "Aucun utilisateur n'a été trouvé avec cette adresse email"
   none: Aucun
   none_available: "Aucun de disponible"
@@ -452,18 +453,18 @@ fr-FR:
   preview: Aperçu
   previous: Précédent
   price: Prix
-  problem_authorizing_card: "Problème d'autorization de votre carte de crédit"
   price_with_vat_included: "{{price}} (inc. VAT)"
+  problem_authorizing_card: "Problème d'autorization de votre carte de crédit"
   problem_capturing_card: "Impossible d'utiliser votre carte de crédit"
   problems_processing_order: "Impossible de traiter votre commande"
   proceed_as_guest: "Non Merci, Procéder en tant qu'invité"
   process: Processus
   product: Produit
   product_details: "Détails du produit"
-  product_has_no_description: "La produit n'a aucune description"
   product_group: Groupe de Produit
   product_group_invalid: Le groupe de produit a une étendue invalide
   product_groups: Groupes de Produits
+  product_has_no_description: "La produit n'a aucune description"
   product_properties: "Propriété du produit"
   product_scopes:
     groups:
@@ -741,7 +742,6 @@ fr-FR:
   whats_this: "Qu'est ce que"
   width: Largeur
   year: "Année"
-  yes: "Oui"
   you_have_been_logged_out: "Vous avez été déconnecté"
   your_cart_is_empty: "Votre panier est vide"
   zip: Code postal
@@ -749,5 +749,3 @@ fr-FR:
   zone_based: "Zone de base"
   zone_setting_description: "Liste des pays, régions ou autre zone, utilisé dans plusieurs calcul."
   zones: Zones
-
-

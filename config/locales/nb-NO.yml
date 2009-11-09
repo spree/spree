@@ -401,6 +401,7 @@ nb-NO:
   next: Neste
   no_items_in_cart: "Ingen artikler i handlekurven"
   no_match_found: "Ingen treff"
+  no_products_found: "No products found"
   no_user_found: "No user was found with that email address"
   none: Ingen
   none_available: "Ingen tilgjengelig"

@@ -401,6 +401,7 @@ fi:
   next: Seuraava
   no_items_in_cart: ""
   no_match_found: "Ei löytynyt vastaavia"
+  no_products_found: "No products found"
   no_user_found: "Ei löytnyt käyttäjää kyseisellä sähköpostiosoitteella"
   none: "Ei yhtäkään"
   none_available: "Ei yhtäkään saatavilla"
