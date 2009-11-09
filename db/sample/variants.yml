@@ -3,93 +3,112 @@ small-red-baseball:
   option_values: s, red
   sku: ROR-00001
   price: 19.99
+  count_on_hand: 10
 small-blue-baseball:
   product: ror_baseball_jersey
   option_values: s, blue
   sku: ROR-00002
   price: 19.99
+  count_on_hand: 10
 small-green-baseball:
   product: ror_baseball_jersey
   option_values: s, green
   sku: ROR-00003  
   price: 19.99
+  count_on_hand: 10
 med-red-baseball:
   product: ror_baseball_jersey
   option_values: m, red
   sku: ROR-00004
   price: 19.99
+  count_on_hand: 3
 med-blue-baseball:
   product: ror_baseball_jersey
   option_values: m, blue
   sku: ROR-00005
   price: 19.99
+  count_on_hand: 10
 med-green-baseball:
   product: ror_baseball_jersey
   option_values: m, green
   sku: ROR-00006
   price: 19.99
+  count_on_hand: 14
 large-red-baseball:
   product: ror_baseball_jersey
   option_values: l, red
   sku: ROR-00007
   price: 19.99
+  count_on_hand: 1  
 large-blue-baseball:
   product: ror_baseball_jersey
   option_values: l, blue
   sku: ROR-00008
   price: 19.99
+  count_on_hand: 10  
 large-green-baseball:
   product: ror_baseball_jersey
   option_values: l, green
   sku: ROR-00009
   price: 19.99
+  count_on_hand: 10
 xlarge-green-baseball:
   product: ror_baseball_jersey
   option_values: xl, red
   sku: ROR-00010
   price: 21.99
+  count_on_hand: 10
 ror_baseball_jersey:
   product: ror_baseball_jersey
   sku: ROR-001
   price: 19.99
   is_master: true
+  count_on_hand: 10
 ror_tote_v:
   product: ror_tote
   sku: ROR-00011
   price: 15.99
   is_master: true
+  count_on_hand: 10
 ror_bag_v:
   product: ror_bag
   sku: ROR-00012
   price: 22.99
   is_master: true
+  count_on_hand: 10
 ror_jr_spaghetti_v:
   product: ror_jr_spaghetti
   sku: ROR-00013
   price: 19.99  
   is_master: true
+  count_on_hand: 10
 ror_mug_v:
   product: ror_mug  
   sku: ROR-00014
   price: 13.99
   is_master: true
+  count_on_hand: 10
 ror_ringer_v:
   product: ror_ringer  
   sku: ROR-00015
   price: 17.99
   is_master: true
+  count_on_hand: 10
 ror_stein_v:
   product: ror_stein  
   sku: ROR-00016
   price: 16.99
   is_master: true
+  count_on_hand: 10
 apache_baseball_v:
   product: apache_baseball_jersey
   sku: APC-00001
   price: 19.99
   is_master: true
+  count_on_hand: 10
 ruby_baseball_v:
   product: ruby_baseball_jersey
   sku: RUB-00001
   price: 19.99
   is_master: true
+  count_on_hand: 10

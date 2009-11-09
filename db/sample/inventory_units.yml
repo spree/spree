@@ -1,93 +1,18 @@
-<% 1.upto(75) do |i| %>
-small-red-baseball_<%= i %>:
-  variant: small-red-baseball
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-small-blue-baseball_<%= i %>:
-  variant: small-blue-baseball
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-small-green-baseball_<%= i %>:
-  variant: small-green-baseball
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-med-red-baseball_<%= i %>:
-  variant: med-red-baseball
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-med-blue-baseball_<%= i %>:
-  variant: med-blue-baseball
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-med-green-baseball_<%= i %>:
-  variant: med-green-baseball
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-large-red-baseball_<%= i %>:
-  variant: large-red-baseball
-  state: on_hand
-<% end %>
 <% 1.upto(29) do |i| %>
 large-blue-baseball_<%= i %>:
   variant: large-blue-baseball
   state: sold
   order: order_<%= i %>  
 <% end %>
-<% 31.upto(75) do |i| %>
-large-blue-baseball_<%= i %>:
-  variant: large-blue-baseball
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-large-green-baseball_<%= i %>:
-  variant: large-green-baseball
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-xlarge-green-baseball_<%= i %>:
-  variant: xlarge-green-baseball
-  state: on_hand
-<% end %>
 <% 1.upto(30) do |i| %>
 ror_tote_v_<%= i %>:
   variant: ror_tote_v 
   order: order_<%= i %>
   state: sold
 <% end %>
-<% 31.upto(75) do |i| %>
-ror_tote_v_<%= i %>:
-  variant: ror_tote_v 
-  state: on_hand
-<% end %>
 <% 1.upto(30) do |i| %>
 ror_bag_v_<%= i %>:
   variant: ror_bag_v
   order: order_<%= i %>
   state: sold
-<% end %>
-<% 31.upto(75) do |i| %>
-ror_bag_v_<%= i %>:
-  variant: ror_bag_v
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-ror_jr_spaghetti_v_<%= i %>:
-  variant: ror_jr_spaghetti_v
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-ror_mug_v_<%= i %>:
-  variant: ror_mug_v
-  state: on_hand
-<% end %>
-<% 1.upto(75) do |i| %>
-ror_stein_v_<%= i %>:
-  variant: ror_stein_v
-  state: on_hand
 <% end %>
