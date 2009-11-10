@@ -1,9 +1,13 @@
 module Spree::Search
   def retrieve_products
-    Spree::Config.searcher.prepare(params)
     # taxon might be already set if this method is called from TaxonsController#show
     @taxon ||= params[:taxon] && Taxon.find_by_id(params[:taxon])
+    # add taxon id to params for searcher
+    params[:taxon] = @taxon.id if @taxon
     @keywords = params[:keywords]
+
+    # Prepare a search within the parameters
+    Spree::Config.searcher.prepare(params)
 
     if params[:product_group_name]
       @product_group = ProductGroup.find_by_permalink(params[:product_group_name])
