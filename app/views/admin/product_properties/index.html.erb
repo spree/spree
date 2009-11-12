@@ -24,7 +24,8 @@
   <input type="hidden" name="clear_product_properties" value="true">
 
   <p>
-    <%= f.add_associated_link(icon('add') + ' ' + t("add_product_properties"), @product.product_properties.build, 
+    <%= f.add_associated_link(icon('add') + ' ' + t("add_product_properties"),
+                              @product.product_properties.build, 
                               {:onclick => "jQuery('#none').hide();", :class => 'iconlink'}) %>
     &nbsp;&nbsp;
   	<span id="new_ptype_link">
@@ -39,4 +40,20 @@
 	<br/>
   <%= render :partial => 'admin/shared/edit_resource_links' %>
 <% end %>
+
+<% javascript_tag do %>
+  var properties = "<%=@properties%>".split(' ');
+  $("a.product_property_remove_link").live("click", function(){
+    jQuery(this).parents('.product_property').remove();  
+    return false;
+  });
+
+  $("#product_properties input.autocomplete").live("keydown", function(){
+    already_auto_completed = $(this).is('ac_input');
+    if (!already_auto_completed) { 
+      $(this).autocomplete(properties); 
+      $(this).focus();
+    }
+  });
+<% end -%>
 
