@@ -31,8 +31,7 @@ class Product < ActiveRecord::Base
 
   has_one :master,
     :class_name => 'Variant',
-    :conditions => ["variants.is_master = ? AND variants.deleted_at IS NULL", true],
-    :dependent => :destroy
+    :conditions => ["variants.is_master = ? AND variants.deleted_at IS NULL", true]
 
   delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
 
@@ -43,7 +42,12 @@ class Product < ActiveRecord::Base
   after_save :save_master
 
   has_many :variants,
-    :conditions => ["variants.is_master = ? AND variants.deleted_at IS NULL", false],
+    :conditions => ["variants.is_master = ? AND variants.deleted_at IS NULL", false]
+
+
+  has_many :variants_including_master,
+    :class_name => 'Variant',
+    :conditions => ["variants.deleted_at IS NULL"],
     :dependent => :destroy
 
   validates_presence_of :name
