@@ -6,8 +6,9 @@ class SeoAssist
   
   def self.call(env)
     request = Rack::Request.new(env)
-    params = request.params             
-    if !params['taxon'].blank? && @taxon = Taxon.find(params['taxon'])
+    params = request.params
+    taxon_id = params['taxon']      
+    if !taxon_id.blank? && !taxon_id.is_a?(Hash) && @taxon = Taxon.find(taxon_id)
       params.delete('taxon')
       get_query = params.map{|k,v| "#{k}=#{v}"}.join('&')
       return [301, {'Location'=> "/t/#{@taxon.permalink}?#{get_query}" }, []]
