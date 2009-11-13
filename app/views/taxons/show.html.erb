@@ -1,6 +1,6 @@
 <h1><%= @taxon.name %></h1>
 
-<% if @taxon.children.empty? %>
+<% if @taxon.children.empty? || !params[:keywords].blank? %>
   <%= render :partial => "shared/products.html.erb", :locals => {:products => @products, :taxon => @taxon } %>
   <%= will_paginate @products, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;" %> 
 <% else %>
