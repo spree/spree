@@ -39,7 +39,11 @@ module Spree
     def plugin_paths
       load_extension_roots.map {|extension| "#{extension}/vendor/plugins" }.select {|d| File.directory?(d) }
     end
-    
+
+    def db_paths dir
+      load_extension_roots.map {|extension| File.join(extension, "db", dir ) }.select {|d| File.directory?(d) }
+    end
+        
     def add_extension_paths
       extension_load_paths.reverse_each do |path|
         configuration.load_paths.unshift path

@@ -1,4 +1,5 @@
 require 'activerecord'              
+require 'custom_fixtures'
 
 namespace :db do
   desc "Migrate schema to version 0 and back up again. WARNING: Destroys all data in tables!!"
@@ -25,31 +26,65 @@ namespace :db do
     desc "Create admin username and password"
     task :create => :environment do
       require 'authlogic'     
-      Spree::Setup.create_admin_user      
+      require 'db/sample/users.rb'
     end
   end
-  
+
+  desc "Loading db/sample for spree and each extension"
+  task :sample => :environment do   # an invoke will not execute the task after defaults has already executed it
+    Rake::Task["db:load_dir"].execute( Rake::TaskArguments.new([:dir],  ["sample" ]) ) 
+    puts "Sample data has been loaded"
+  end
+
+  desc "Loading file for spree and each extension where you specify dir by rake db:load_file[filename.rb]"
+  task :load_file , [:file] => :environment do |t , args|
+    ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym) unless ActiveRecord::Base.connected?
+    file = args.file
+    puts "loading fixture " + file 
+    Fixtures.create_fixtures(File.dirname(file) , File.basename(file, '.*') )
+    rb = file.sub(".yml" , ".rb" ) 
+    rb = file.sub(".csv" , ".rb" ) unless rb# ok, this just shows my lack of regexp skill
+    if File.exists? rb
+      puts "loading ruby    " + rb 
+      require rb
+    end
+  end
+
+  desc "Dump a class to YML, give class name in square brackets, use rake -s for silent"
+  task :dump , [:clazz]  => :environment do  |t , args|
+    clazz = eval(args.clazz)
+    objects = {}
+    clazz.find( :all ).each do |obj|
+      attributes = obj.attributes
+      attributes.delete("created_at")   
+      attributes.delete("updated_at")   
+      name = attributes["name"] 
+      unless name
+        name = args.clazz 
+        name = name +   "_" + attributes["id"].to_s if attributes["id"]
+      end
+      name = name.gsub( " " , "_")
+      objects[name] = attributes
+    end
+    puts objects.to_yaml
+  end
+
   desc 'Create the database, load the schema, and initialize with the seed data'  
   task :setup => [ 'db:create', 'db:schema:load', 'db:seed' ]         
-
-  desc 'Load the sample fixture data from db/sample'  
-  task :sample => :environment do  
-    require 'spree/setup'
-    Spree::Setup.load_sample_data
-  end
     
-  desc "Bootstrap your database for Spree."
+  desc "Bootstrap is: migrating, loading defaults, sample data and seeding (for all extensions) invoking create_admin and load_products tasks"
   task :bootstrap  => :environment do
-    require 'highline/import'       
-    require 'authlogic'     
+    require 'highline/import' 
+    require 'authlogic'
 
     # remigrate unless production mode (as saftey check)
     if %w[demo development test].include? RAILS_ENV 
       if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
         ENV['SKIP_NAG'] = 'yes'
         Rake::Task["db:remigrate"].invoke
+        puts "remigrate"
       else
-        say "Task cancelled."
+        say "Task cancelled, exiting."
         exit
       end
     else 
@@ -57,16 +92,20 @@ namespace :db do
       Rake::Task["db:migrate"].invoke
     end
     
-    require 'spree/setup'
-    
-    attributes = {}
-    if ENV['AUTO_ACCEPT']
-      attributes = {
-        :admin_password => "spree",
-        :admin_email => "spree@example.com"          
-      }
+    load_defaults  = Country.count == 0
+    unless load_defaults    # ask if there are already Countries => default data hass been loaded
+      load_defaults = agree('Countries present, load sample data anyways? [y]: ')
     end
+    Rake::Task["db:seed"].invoke if load_defaults
     
-    Spree::Setup.bootstrap attributes
+    if RAILS_ENV == 'production' and Product.count > 0
+      load_sample = agree("WARNING: In Production and products exist in database, load sample data anyways? [y]:" )
+    else
+      load_sample = true if ENV['AUTO_ACCEPT'] 
+      load_sample = agree('Load Sample Data? [y]: ') unless load_sample    
+    end
+    Rake::Task["db:sample"].invoke if load_sample
+
+    puts "Bootstrap Complete.\n\n"
   end
 end

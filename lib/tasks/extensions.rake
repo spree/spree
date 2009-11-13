@@ -1,5 +1,6 @@
 require 'rake/testtask'
 require 'spree/extension'
+require 'custom_fixtures'
 
 namespace :db do
   desc "Migrate the database through scripts in db/migrate. Target specific version with VERSION=x. Turn off output with VERBOSE=false."
@@ -20,6 +21,27 @@ namespace :db do
       ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
     end    
     Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+  end
+
+  desc "Loading db/loadfrom for spree and each extension where you specify dir by rake db:load_dir[loadfrom]"
+  task :load_dir , [:dir] => :environment do |t , args|
+    ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
+    dir = args.dir
+    fixtures = {}
+    Dir.glob(File.join(SPREE_ROOT, "db", dir , '*.{yml,csv}')).each do |fixture_file|
+        #puts "spree " + fixture_file + " " + File.basename(fixture_file, '.*')
+        fixtures[File.basename(fixture_file, '.*')]  = fixture_file
+    end
+    Spree::ExtensionLoader.instance.db_paths(dir).each do |dir|
+      Dir.glob(File.join(dir, '*.{yml,csv}')).each do |fixture_file|
+          #puts "ext " + fixture_file + " " + File.basename(fixture_file, '.*')
+        fixtures[File.basename(fixture_file, '.*')]  = fixture_file
+      end
+    end
+    fixtures.each do |fixture , fixture_file|
+      # an invoke will only execute the task once
+      Rake::Task["db:load_file"].execute( Rake::TaskArguments.new([:file], [fixture_file]) )
+    end
   end
 
   namespace :migrate do
