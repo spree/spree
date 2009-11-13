@@ -1,4 +1,4 @@
-class <%= class_name %>Controller < ApplicationController
+class <%= class_name %>Controller < Spree::BaseController
 <% if options[:scaffold] -%>
   scaffold :<%= singular_name %>
 
