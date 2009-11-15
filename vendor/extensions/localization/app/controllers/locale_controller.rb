@@ -6,7 +6,7 @@ class LocaleController < ApplicationController
       session[:locale] = params[:locale]
       flash[:notice] = t("locale_changed")
     end
-    redirect_to (request.env['HTTP_REFERER'] or root_path)
+    redirect_back_or_default(root_path)
   end
 
 end
