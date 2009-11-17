@@ -1,0 +1,9 @@
+---
+product_groups_001:
+  name: Promotions for the Apache
+  permalink: promotions-for-the-apache
+  order:
+product_groups_002:
+  name: most popular rails items
+  permalink: most-popular-rails-items
+  order:

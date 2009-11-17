@@ -40,22 +40,22 @@ module Scopes::Product
   ]
 
   # default product scope only lists available and non-deleted products
-  Product.named_scope :active,      lambda { |*args|
+  ::Product.named_scope :active,      lambda { |*args|
     Product.not_deleted.available(args.first).scope(:find)
   }
 
-  Product.named_scope :not_deleted, {
+  ::Product.named_scope :not_deleted, {
     :conditions => "products.deleted_at is null"
   }
-  Product.named_scope :available,   lambda { |*args|
+  ::Product.named_scope :available,   lambda { |*args|
     { :conditions => ["products.available_on <= ?", args.first || Time.zone.now] }
   }
 
-  Product.named_scope :keywords, lambda{|query|
+  ::Product.named_scope :keywords, lambda{|query|
     Spree::Config.searcher.get_products_conditions_for(query)
   }
 
-  Product.named_scope :price_between, lambda {|low,high|
+  ::Product.named_scope :price_between, lambda {|low,high|
     { :joins => :master, :conditions => ["variants.price BETWEEN ? AND ?", low, high] }
   }
 
