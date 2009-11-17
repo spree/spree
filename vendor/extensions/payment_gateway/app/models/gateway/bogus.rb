@@ -6,6 +6,8 @@ class Gateway::Bogus < Gateway
   
   VALID_CCS = ["1", TEST_VISA, TEST_MC, TEST_AMEX, TEST_DISC]
 
+  attr_accessor :test
+  
   def provider_class
     self.class
   end
