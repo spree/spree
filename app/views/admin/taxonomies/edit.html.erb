@@ -9,15 +9,8 @@
 <% form_for(:taxon, :url => admin_taxonomy_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
 	  <div>
-	    <label><%= t("tree")%></label><br />
-      <div id="taxonomy_tree" class="tree">
-        <ul>
-          <li id="<%= @taxonomy.root.id %>" class="open" rel="root">
-            <a href="#"><%= @taxonomy.root.name %></a>
-            <%= render :partial => "taxon", :locals => {:taxon => @taxonomy.root} %>
-          </li>
-        </ul>
-      </div>
+	    <label><%= t("tree")%></label><br />	
+      <div id="taxonomy_tree" class="tree"></div>
   	</div>
   	<p id="progress" style="display:none;">
       <img src="/images/spinner.gif?1234540747" alt="Spinner" style="vertical-align:bottom;"/> <%= t('updating') %>..
@@ -27,4 +20,30 @@
 	<p class="form-buttons">
 	  <%= button t("update") %> <%= t("or") %> <%= link_to t("cancel"), admin_taxonomies_path %>
   </p>
+<% end %>
+
+
+<% content_for :head do %>
+  <script type="text/javascript">
+    var initial = [
+	   	{ attributes : 
+	   	  { "id" : "<%= @taxonomy.root.id %>" }, 
+			data : "<%= @taxonomy.root.name %>",
+			state : "open",
+			children : [
+				<% @taxonomy.root.children.each_with_index do |taxon,i| %>
+					{
+						attributes :
+						{ id : "<%= taxon.id %>"},
+						data : "<%= taxon.name %>"
+						<% unless taxon.children.empty? %>
+							,state : "closed"
+						<% end %>
+					}<%= "," if i < (@taxonomy.root.children.size - 1) %>
+				<% end %>
+			]
+      	}
+    ];
+    
+  </script>
 <% end %>

@@ -1,21 +1,12 @@
 var base_url = "/admin/taxonomies/" + taxonomy_id + "/taxons/";
+var child_url = "/admin/taxonomies/" + taxonomy_id + "/get_children.json"
 var creating = false;
 var delete_confirmed = false;
 var last_rollback = null;
 
-
-var show_progress = function(){
-	jQuery("#progress").show();
-	jQuery("#ajax_error").hide();
-}
-
-var hide_progress = function(){
-	jQuery("#progress").hide();
-}
-
 var handle_ajax_error = function(XMLHttpRequest, textStatus, errorThrown){
-	jQuery.tree_rollback(last_rollback);
-	jQuery("#progress").hide();
+	jQuery.tree.rollback(last_rollback);
+
 	jQuery("#ajax_error").show().html("<strong>" + server_error + "</strong><br/>" + taxonomy_tree_error);
 };
 
@@ -37,9 +28,7 @@ var handle_move = function(li, target, droppped, tree, rb) {
     type: "POST",
     url: base_url + li.id,
     data: ({_method: "put", "taxon[parent_id]": parent.id, "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
-		beforeSend: show_progress,
-    error: handle_ajax_error,
-		success: hide_progress
+    error: handle_ajax_error
   });
         
   return true
@@ -55,14 +44,13 @@ var handle_create = function(parent, sib, created, tree, rb){
 };
 
 var handle_created = function(id,result) {
-	hide_progress();
-	
-	jQuery.tree_reference('taxonomy_tree').selected.attr('id', id);
+	jQuery.tree.reference('taxonomy_tree').selected.attr('id', id);
 }
 
-var handle_rename = function(li, bl, tree, rb) {
-  var name = jQuery(li).children()[0].innerHTML;
-  
+var handle_rename = function(li, tree, rb) {
+  var name = jQuery(li).children()[0].textContent;
+  name = jQuery.trim(name);
+
 	if (creating){
 		//actually creating new
 		var position = jQuery(li).prevAll().length;
@@ -72,7 +60,6 @@ var handle_rename = function(li, bl, tree, rb) {
 	    type: "POST",
 	    url: base_url,
 	    data: ({"taxon[name]": name, "taxon[parent_id]": parent.id, "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
-	    beforeSend: show_progress,
 			error: handle_ajax_error,
 	  	success: handle_created
 	  });	
@@ -82,14 +69,12 @@ var handle_rename = function(li, bl, tree, rb) {
 		//just renaming
 		last_rollback = rb;
 		
-	  jQuery.ajax({
-	    type: "POST",
-	    url: base_url + li.id,
-	    data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
-	    beforeSend: show_progress,
-			error: handle_ajax_error,
-			success: hide_progress        
-	  });
+		jQuery.ajax({
+			type: "POST",
+			url: base_url + li.id,
+			data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
+			error: handle_ajax_error   
+		});
 	}
 };
 
@@ -98,7 +83,7 @@ var handle_before_delete = function(li){
 		jConfirm('Are you sure you want to delete this taxon?', 'Confirm Taxon Deletion', function(r) {
 			if(r){
 				delete_confirmed = true;
-				jQuery.tree_reference('taxonomy_tree').remove(li);
+				jQuery.tree.reference('taxonomy_tree').remove(li);
 			}
 		});
 	}
@@ -113,85 +98,88 @@ var handle_delete = function(li, tree, rb){
     type: "POST",
     url: base_url + li.id,
     data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
-   	beforeSend: show_progress,
-		error: handle_ajax_error,
-		success: hide_progress		
+		error: handle_ajax_error		
   });
 
 	delete_confirmed = false;
 };
 
-conf = { 
-  ui : {
-    theme_path  : "/javascripts/jsTree/source/themes/",
-		theme_name	: "spree",
-    context     : [ 
-        {
-            id      : "create",
-            label   : "Create", 
-            icon    : "create.png",
-            visible : function (NODE, TREE_OBJ) { if(NODE.length != 1) return false; return TREE_OBJ.check("creatable", NODE); }, 
-            action  : function (NODE, TREE_OBJ) { TREE_OBJ.create({ attributes : { 'rel' : 'taxon' } }, TREE_OBJ.get_node(NODE)); } 
-        },
-        "separator",
-        { 
-            id      : "rename",
-            label   : "Rename", 
-            icon    : "rename.png",
-            visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return TREE_OBJ.check("renameable", NODE); }, 
-            action  : function (NODE, TREE_OBJ) { jQuery.each(NODE, function () { TREE_OBJ.rename(this); }); } 
-        },
-        { 
-            id      : "delete",
-            label   : "Delete",
-            icon    : "remove.png",
-            visible : function (NODE, TREE_OBJ) { var ok = true; jQuery.each(NODE, function () { if(TREE_OBJ.check("deletable", this) == false || this.id == 'root') ok = false; return false; }); return ok; }, 
-            action  : function (NODE, TREE_OBJ) { jQuery.each(NODE, function () { TREE_OBJ.remove(this); }); } 
-        },
-        "separator",
-        { 
-            id      : "cut",
-            label   : "Cut",
-            icon    : "cut.png",
-            visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return true; }, 
-            action  : function (NODE, TREE_OBJ) { TREE_OBJ.cut(); jQuery(NODE).hide(); } 
-        },
-        { 
-            id      : "paste",
-            label   : "Paste",
-            icon    : "paste.png",
-            visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return true; }, 
-            action  : function (NODE, TREE_OBJ) { TREE_OBJ.open_branch(NODE); TREE_OBJ.paste(NODE); jQuery(NODE).children(":last").children(":last").show(); } 
-        }
-
-    ]
-  },
-  lang : {
-         new_node    : new_taxon,
-         loading     : loading + "..."
-  },
-  rules : {
-    droppable : [ "tree-drop" ],
-    multiple : true,
-    deletable : ["taxon"],
-    draggable : ["taxon"],
-	 	dragrules : [ "taxon * taxon", "taxon inside root", ],
-		renameable  : ["taxon"]
-  },
-  callback : {
-    onmove: handle_move,
-    ondblclk: handle_dblclick,
-    onrename: handle_rename,
-		oncreate: handle_create,
-		beforedelete: handle_before_delete,
-		ondelete: handle_delete
-  }
-};
-
 jQuery(document).ready(function(){
-	
-  tax_tree = jQuery.tree_create();
-  tax_tree.init(jQuery("#taxonomy_tree"), jQuery.extend({},conf));
+	conf = { 
+	  data : { 
+			type : "json",
+			async : true,
+			opts : {
+				method : "GET",
+				url : child_url
+			}
+		},
+		ui : {
+			theme_name : "apple"
+		},
+		lang : {
+		    new_node    : new_taxon,
+		    loading     : loading + "..."
+	  	},
+    plugins : {
+      contextmenu : { 
+        items : {
+        	// get rid of the remove item
+        	remove :{
+        	  visible : function (NODE, TREE_OBJ) { if(jQuery(NODE[0]).attr('rel')=="root") return false; return TREE_OBJ.check("renameable", NODE); },
+        	},
+        	rename :{
+        	  visible : function (NODE, TREE_OBJ) { if(jQuery(NODE[0]).attr('rel')=="root") return false; return TREE_OBJ.check("renameable", NODE); },
+        	},
+	        cut :{ 
+	            id      : "cut",
+	            label   : "Cut",
+	            visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return true; }, 
+	            action  : function (NODE, TREE_OBJ) { TREE_OBJ.cut(NODE); jQuery(NODE).hide(); },
+							separator_before : true
+	        },
+	        paste :{ 
+	            id      : "paste",
+	            label   : "Paste",
+	            visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return true; }, 
+	            action  : function (NODE, TREE_OBJ) { TREE_OBJ.open_branch(NODE); TREE_OBJ.paste(NODE, "inside"); jQuery(NODE).find("li").show(); } 
+	        }
+
+        }
+      }
+    },
+    rules : {
+			// only nodes of type root can be top level nodes
+			valid_children : [ "root" ]
+		},
+		types : {
+			// all node types inherit the "default" node type
+			"taxon" : {},
+			"root" : {
+			  deletable : false,
+				renameable : false,
+				draggable : false,
+				valid_children : [ "taxon" ]
+			}
+    },
+    callback : {
+      onmove: handle_move,
+      ondblclk: handle_dblclick,
+      onrename: handle_rename,
+  		oncreate: handle_create,
+  		beforedelete: handle_before_delete,
+  		ondelete: handle_delete,
+  		beforedata: function (n, t) { 
+				if(n == false) t.settings.data.opts.static = initial; 
+				else t.settings.data.opts.static = false; 
+
+				return { parent_id : $(n).attr("id") || 0 };
+				}
+
+    }   
+  }
+  
+  jQuery("#taxonomy_tree").tree(conf);
   
 	jQuery(document).keypress(function(e){
     //surpress form submit on enter/return

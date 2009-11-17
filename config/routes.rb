@@ -90,7 +90,7 @@ ActionController::Routing::Routes.draw do |map|
       order.resources :creditcard_payments, :member => {:capture => :get}
     end
     admin.resource :general_settings
-    admin.resources :taxonomies do |taxonomy|
+    admin.resources :taxonomies, :member => { :get_children => :get } do |taxonomy|
       taxonomy.resources :taxons
     end
     admin.resources :reports, :only => [:index, :show], :collection => {:sales_total => :get}

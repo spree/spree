@@ -10,4 +10,8 @@ class Admin::TaxonomiesController < Admin::BaseController
       render :partial => 'edit.html.erb'
     end
   end
+  
+  def get_children
+    @taxons = Taxon.find(params[:parent_id]).children
+  end
 end
