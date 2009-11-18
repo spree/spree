@@ -22,7 +22,7 @@
       <div id="login">
         <p>
           <%= label :user_session, :login, t("email") %>
-          <%= text_field :user_session, 'login', :class => 'required' %><span class="req">*</span>
+          <%= text_field :user_session, 'login', :class => 'required email' %><span class="req">*</span>
         </p>
         <p>
           <%= label :user_session, :password, t("password") %>
@@ -34,7 +34,7 @@
       <h3><%= t("create_user_account") %></h3>
     	<p>                                               
   	  <label for="<%= t("email") %>"><%= t("email") %></label> 
-      	  <%= text_field :user, 'email', :class => 'required' -%><span class="req">*</span>
+      	  <%= text_field :user, 'email', :class => 'required email' -%><span class="req">*</span>
       	</p>
       	<p>
       	  <label for="<%= t("password") %>"><%= t("password") %></label>
@@ -49,7 +49,7 @@
         <h3><%= t("guest_user_account") %></h3>
         <p>
           <label for="<%= t("email") %>"><%= t("email") %></label> 
-          <%= checkout_form.text_field :email, :class => 'required' -%><span class="req">*</span>
+          <%= checkout_form.text_field :email, :class => 'required email' -%><span class="req">*</span>
         </p>
       </div>
     </div>
