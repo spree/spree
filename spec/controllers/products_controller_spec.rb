@@ -12,15 +12,5 @@ describe ProductsController do
     end
 
   end
-  
-  describe "Nested taxons with products route recognition" do
-    it "should generate params { :controller => 'products', action => 'show', id => 'ruby-on-rails-jr-spaghetti', taxon_path=>['categories', 'clothing', 'shirts']} from GET /t/categories/clothing/shirts/p/ruby-on-rails-jr-spaghetti" do
-      params_from(:get, "/t/categories/clothing/shirts/p/ruby-on-rails-jr-spaghetti").should == {:controller => "products", :action => "show", :id => 'ruby-on-rails-jr-spaghetti', :taxon_path => ['categories', 'clothing', 'shirts']}
-    end
-    
-    it "should generate params { :controller => 'products', action => 'show', id => 'apache-baseball-jersey', taxon_path=>['categories', 'clothing', 'shirts']} from GET /t/categories/clothing/shirts/t-shirts/p/apache-baseball-jersey" do
-      params_from(:get, "/t/categories/clothing/shirts/t-shirts/p/apache-baseball-jersey").should == {:controller => "products", :action => "show", :id => 'apache-baseball-jersey', :taxon_path => ['categories', 'clothing', 'shirts', 't-shirts']}
-    end
- 
-  end
+
 end
