@@ -29,6 +29,13 @@ class Admin::ImagesController < Admin::BaseController
 		end
 	end
 	
+	update.before do
+	  if params[:image][:viewable_id] == "All"
+        object.viewable_type = 'Product'
+        object.viewable_id = @product.id
+    end
+  end
+	
   destroy.before do 
     @viewable = object.viewable
   end
