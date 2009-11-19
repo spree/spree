@@ -20,13 +20,13 @@ class <%= class_name %> < Spree::Extension
     # and that you mapped your admin in config/routes
 
     #Admin::BaseController.class_eval do
-    #  before_filter :add_yourextension_tab
+    #  before_filter :add_<%= file_name %>_tab
     #
-    #  def add_yourextension_tab
+    #  def add_<%= file_name %>_tab
     #    # add_extension_admin_tab takes an array containing the same arguments expected
     #    # by the tab helper method:
-    #    #   [ :extension_name, { :label => "Your Extension", :route => "/some/non/standard/route" } ]
-    #    add_extension_admin_tab [ :yourextension ]
+    #    #    :<%= file_name %>, { :label => "<%= class_name %>", :route => "/some/non/standard/route" }
+    #    add_extension_admin_tab :<%= file_name %>
     #  end
     #end
 
