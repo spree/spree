@@ -14,31 +14,9 @@ class Admin::ImagesController < Admin::BaseController
 		wants.html {redirect_to admin_product_images_url(@product)}
   end
 	
-	create.before do
-		if params[:image].has_key? :viewable_id
-			if params[:image][:viewable_id] == "All"
-				object.viewable_type = 'Product'
-				object.viewable_id = @product.id
-			else
-				object.viewable_type = 'Variant'
-				object.viewable_id = params[:image][:viewable_id]
-			end
-		else
-			object.viewable_type = 'Product'
-			object.viewable_id = @product.id
-		end
-	end
-	
-	update.before do
-	  if params[:image][:viewable_id] == "All"
-        object.viewable_type = 'Product'
-        object.viewable_id = @product.id
-    end
-  end
-	
-  destroy.before do 
-    @viewable = object.viewable
-  end
+	create.before :create_before
+	update.before :update_before
+	destroy.before :destroy_before
   
   destroy.response do |wants| 
     wants.html do
@@ -57,5 +35,30 @@ class Admin::ImagesController < Admin::BaseController
 		@variants.insert(0, "All")
   end
 
+  def create_before
+		if params[:image].has_key? :viewable_id
+			if params[:image][:viewable_id] == "All"
+				object.viewable_type = 'Product'
+				object.viewable_id = @product.id
+			else
+				object.viewable_type = 'Variant'
+				object.viewable_id = params[:image][:viewable_id]
+			end
+		else
+			object.viewable_type = 'Product'
+			object.viewable_id = @product.id
+		end
+	end
+	
+	def update_before
+	  if params[:image][:viewable_id] == "All"
+        object.viewable_type = 'Product'
+        object.viewable_id = @product.id
+    end
+  end
+  
+  def destroy_before 
+    @viewable = object.viewable
+  end
 
 end

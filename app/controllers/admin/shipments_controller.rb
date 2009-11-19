@@ -9,23 +9,13 @@ class Admin::ShipmentsController < Admin::BaseController
     failure.wants.html { redirect_to new_object_url }
   end
 
-  edit.before do # copy into instance variable before editing
-    @shipment.special_instructions = @order.checkout.special_instructions
-  end
+  edit.before :edit_before
 
-  update.after do # copy back to order if instructions are enabled
-    if Spree::Config[:shipping_instructions]
-      @order.checkout.special_instructions = object_params[:special_instructions] 
-      @order.save
-    end
-  end
+  update.after :update_after
 
   update do
     wants.html { redirect_to edit_object_url }
   end 
-  
-#  def country_changed
-#  end
   
   private
   def build_object
@@ -43,6 +33,17 @@ class Admin::ShipmentsController < Admin::BaseController
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')  
     @countries = @order.shipping_countries
     @countries = [Country.find(Spree::Config[:default_country_id])] if @countries.empty?
+  end
+  
+  def edit_before # copy into instance variable before editing
+    @shipment.special_instructions = @order.checkout.special_instructions
+  end
+  
+  def update_after # copy back to order if instructions are enabled
+    if Spree::Config[:shipping_instructions]
+      @order.checkout.special_instructions = object_params[:special_instructions] 
+      @order.save
+    end
   end
 
 end

@@ -8,11 +8,50 @@ class Admin::TaxonsController < Admin::BaseController
   update.wants.html {render :text => @taxon.name}
   destroy.wants.html {render :text => ""}
   
-  create.before do 
+  create.before :create_before
+  update.before :update_before
+  update.after :update_after
+
+  def selected 
+    @taxons = @product.taxons
+  end
+  
+  def available
+    if params[:q].blank?
+      @available_taxons = []
+    else
+      @available_taxons = Taxon.find(:all, :conditions => ['lower(name) LIKE ?', "%#{params[:q].downcase}%"])
+    end
+    @available_taxons.delete_if { |taxon| @product.taxons.include?(taxon) }
+    respond_to do |format|
+      format.html
+      format.js {render :layout => false}
+    end
+
+  end
+  
+  def remove
+    @product.taxons.delete(@taxon)
+    @product.save
+    @taxons = @product.taxons
+    render :layout => false
+  end  
+  
+  def select
+    @product = Product.find_by_param!(params[:product_id])
+    taxon = Taxon.find(params[:id])
+    @product.taxons << taxon
+    @product.save
+    @taxons = @product.taxons
+    render :layout => false
+  end
+  
+  private 
+  def create_before 
     @taxon.taxonomy_id = params[:taxonomy_id]
   end
   
-  update.before do
+  def update_before
     parent_id = params[:taxon][:parent_id]
     new_position = params[:taxon][:position]
 
@@ -54,7 +93,7 @@ class Admin::TaxonsController < Admin::BaseController
     @update_children = params[:taxon][:name] == @taxon.name ? false : true
   end
   
-  update.after do
+  def update_after
     #rename child taxons                  
     if @update_children
       @taxon.descendents.each do |taxon|
@@ -64,42 +103,7 @@ class Admin::TaxonsController < Admin::BaseController
       end
     end    
   end
-
-  def selected 
-    @taxons = @product.taxons
-  end
   
-  def available
-    if params[:q].blank?
-      @available_taxons = []
-    else
-      @available_taxons = Taxon.find(:all, :conditions => ['lower(name) LIKE ?', "%#{params[:q].downcase}%"])
-    end
-    @available_taxons.delete_if { |taxon| @product.taxons.include?(taxon) }
-    respond_to do |format|
-      format.html
-      format.js {render :layout => false}
-    end
-
-  end
-  
-  def remove
-    @product.taxons.delete(@taxon)
-    @product.save
-    @taxons = @product.taxons
-    render :layout => false
-  end  
-  
-  def select
-    @product = Product.find_by_param!(params[:product_id])
-    taxon = Taxon.find(params[:id])
-    @product.taxons << taxon
-    @product.save
-    @taxons = @product.taxons
-    render :layout => false
-  end
-  
-  private 
   def reposition_taxons(taxons)
     taxons.each_with_index do |taxon, i|
       taxon.position = i

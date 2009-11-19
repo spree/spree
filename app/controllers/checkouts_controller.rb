@@ -66,7 +66,38 @@ class CheckoutsController < Spree::BaseController
     end
   end
 
-  update.before do
+  update.before :update_before
+  update.after :update_after
+ 
+  private
+  def object
+    return @object if @object
+    @object = parent_object.checkout
+    unless params[:checkout] and params[:checkout][:coupon_code]
+      # do not create these defaults if we're merely updating coupon code, otherwise we'll have a validation error
+      if user = parent_object.user || current_user
+        @object.shipment.address ||= user.ship_address
+        @object.bill_address     ||= user.bill_address
+      end
+      @object.shipment.address ||= Address.default
+      @object.bill_address     ||= Address.default
+      @object.creditcard       ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
+    end
+    @object
+  end
+
+  def load_data
+    @countries = Country.find(:all).sort
+    @shipping_countries = parent_object.shipping_countries.sort
+    if current_user && current_user.bill_address
+      default_country = current_user.bill_address.country
+    else
+      default_country = Country.find Spree::Config[:default_country_id]
+    end
+    @states = default_country.states.sort
+  end
+
+  def update_before
     # update user to current one if user has logged in
     @order.update_attribute(:user, current_user) if current_user
 
@@ -120,43 +151,14 @@ class CheckoutsController < Spree::BaseController
 
     end
 
-		#mark checkout as confirmed (if applicable)
-		@checkout.confirmed = (params[:final_answer] == "yes")
- 
-   end
-
-  update.after do
-    @order.save!		# expect messages here
+    #mark checkout as confirmed (if applicable)
+    @checkout.confirmed = (params[:final_answer] == "yes")    
   end
-
-  private
-  def object
-    return @object if @object
-    @object = parent_object.checkout
-    unless params[:checkout] and params[:checkout][:coupon_code]
-      # do not create these defaults if we're merely updating coupon code, otherwise we'll have a validation error
-      if user = parent_object.user || current_user
-        @object.shipment.address ||= user.ship_address
-        @object.bill_address     ||= user.bill_address
-      end
-      @object.shipment.address ||= Address.default
-      @object.bill_address     ||= Address.default
-      @object.creditcard       ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
-    end
-    @object
+  
+  def update_after  
+     @order.save!		# expect messages here
   end
-
-  def load_data
-    @countries = Country.find(:all).sort
-    @shipping_countries = parent_object.shipping_countries.sort
-    if current_user && current_user.bill_address
-      default_country = current_user.bill_address.country
-    else
-      default_country = Country.find Spree::Config[:default_country_id]
-    end
-    @states = default_country.states.sort
-  end
-
+  
   def rate_hash
     fake_shipment = Shipment.new :order => @order, :address => @order.ship_address
     @order.shipping_methods.collect do |ship_method|

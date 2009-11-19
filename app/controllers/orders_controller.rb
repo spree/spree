@@ -9,21 +9,7 @@ class OrdersController < Spree::BaseController
   
   helper :products
 
-  create.before do    
-    params[:products].each do |product_id,variant_id|
-      quantity = params[:quantity].to_i if !params[:quantity].is_a?(Array)
-      quantity = params[:quantity][variant_id].to_i if params[:quantity].is_a?(Array)
-      @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
-    end if params[:products]
-    
-    params[:variants].each do |variant_id, quantity|
-      quantity = quantity.to_i
-      @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
-    end if params[:variants]
-
-    # store order token in the session
-    session[:order_token] = @order.token
-  end
+  create.before :create_before
 
   # override the default r_c behavior (remove flash - redirect to edit details instead of show)
   create do
@@ -68,6 +54,22 @@ class OrdersController < Spree::BaseController
   	@object ||= Order.find_by_number(params[:id]) if params[:id]
 		return @object || find_order
   end   
+  
+  def create_before
+    params[:products].each do |product_id,variant_id|
+      quantity = params[:quantity].to_i if !params[:quantity].is_a?(Array)
+      quantity = params[:quantity][variant_id].to_i if params[:quantity].is_a?(Array)
+      @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
+    end if params[:products]
+    
+    params[:variants].each do |variant_id, quantity|
+      quantity = quantity.to_i
+      @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
+    end if params[:variants]
+
+    # store order token in the session
+    session[:order_token] = @order.token
+  end
   
   def prevent_editing_complete_order      
     load_object

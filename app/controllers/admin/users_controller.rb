@@ -3,13 +3,8 @@ class Admin::UsersController < Admin::BaseController
   before_filter :initialize_extension_partials
   before_filter :load_roles, :only => [:edit, :new, :update, :create]
   
-  create.after do   
-    save_user_roles
-  end
-
-  update.before do
-    save_user_roles
-  end
+  create.after :save_user_roles
+  update.before :save_user_roles
                 
   private
   def collection   

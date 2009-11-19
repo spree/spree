@@ -2,22 +2,13 @@ class Admin::ProductsController < Admin::BaseController
   resource_controller
   before_filter :load_data
 
-  # set the default tax_category if applicable
-  new_action.before do
-    next unless Spree::Config[:default_tax_category]
-    @product.tax_category = TaxCategory.find_by_name Spree::Config[:default_tax_category]
-  end
+  new_action.before :new_action_before
   
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => false}
   end
 
-  update.before do
-    # note: we only reset the product properties if we're receiving a post from the form on that tab
-    next unless params[:clear_product_properties] 
-    params[:product] ||= {}
-    params[:product][:product_property_attributes] ||= {} if params[:product][:product_property_attributes].nil?
-  end
+  update.before :update_before
 
   create.response do |wants| 
     # go to edit form after creating as new product
@@ -84,6 +75,19 @@ class Admin::ProductsController < Admin::BaseController
       @collection = @search.paginate(:include  => {:variants => :images},
                                      :per_page => Spree::Config[:admin_products_per_page], 
                                      :page     => params[:page])
+    end
+    
+    # set the default tax_category if applicable
+    def new_action_before
+      return unless Spree::Config[:default_tax_category]
+      @product.tax_category = TaxCategory.find_by_name Spree::Config[:default_tax_category]
+    end
+    
+    def update_before
+      # note: we only reset the product properties if we're receiving a post from the form on that tab
+      return unless params[:clear_product_properties] 
+      params[:product] ||= {}
+      params[:product][:product_property_attributes] ||= {} if params[:product][:product_property_attributes].nil?
     end
   
 end

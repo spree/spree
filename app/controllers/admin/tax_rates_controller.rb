@@ -5,13 +5,8 @@ class Admin::TaxRatesController < Admin::BaseController
   create.success.wants.html { redirect_to collection_url }
   update.success.wants.html { redirect_to collection_url }
   
-  update.after do
-    Rails.cache.delete('vat_rates')
-  end
-
-  create.after do
-    Rails.cache.delete('vat_rates')
-  end
+  update.after :update_after
+  create.after :create_after
     
   private 
   def build_object
@@ -24,5 +19,13 @@ class Admin::TaxRatesController < Admin::BaseController
     @available_zones = Zone.find :all, :order => :name
     @available_categories = TaxCategory.find :all, :order => :name
     @calculators = TaxRate.calculators
+  end
+  
+  def update_after
+    Rails.cache.delete('vat_rates')
+  end
+  
+  def create_after
+    Rails.cache.delete('vat_rates')
   end
 end

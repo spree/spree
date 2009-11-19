@@ -29,9 +29,7 @@ class Admin::OptionTypesController < Admin::BaseController
     wants.html {redirect_to collection_url}
   end
 
-  update.before do 
-    params[:option_type][:option_value_attributes] ||= {}
-  end
+  update.before :update_before
 
   # redirect to index (instead of r_c default of show view)
   update.response do |wants| 
@@ -50,7 +48,10 @@ class Admin::OptionTypesController < Admin::BaseController
   end 
 
   private 
-  
+    def update_before 
+      params[:option_type][:option_value_attributes] ||= {}
+    end
+    
     def set_available_option_types
       @available_option_types = OptionType.all
       selected_option_types = []
