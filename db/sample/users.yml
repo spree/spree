@@ -1,5 +1,12 @@
-frank:
-  email: frank.foo@example.com  
-  login: frank.foo@example.com
+<% 
+require "Faker"
+1.upto(500) do |i| 
+email = Faker::Internet.email  
+%>
+user_<%= i %>:
+  email: <%= email %> 
+  login: <%= email %>
   salt: 54340fb3737c0d1af17fe73b02d50f4350618c76
   crypted_password: 5531faf8d0c82af323af307cf8aebcf4499af3a8
+  
+<% end %>

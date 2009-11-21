@@ -2,6 +2,7 @@
 nl-BE: 
   'no': "No"
   'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "Een kopie van alle mail wordt verzonden naar de volgende adressen"
   abbreviation: Afkorting
   access_denied: "Toegang geweigerd"
@@ -173,8 +174,10 @@ nl-BE:
   address: Adres
   address_information: "Adresgegevens"
   adjustment: Aanpassing
+  adjustments: Adjustments
   administration: Administratie
   all: "All"
+  all_departments: All departments
   allow_backorders: "Nabestellingen toelaten"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "SSL gebruik toestaan in ontwikkel- en testomgevingen"
   allow_ssl_to_be_used_when_in_production_mode: "SSL gebruik toestaan in productie-omgeving"         
@@ -197,11 +200,14 @@ nl-BE:
   back: Terug
   back_to_store: "Verder Winkelen"
   backordering_is_allowed: "Backordering {{not}} allowed"
+  best_selling_products: "Best Selling Products"
+  best_selling_taxons: "Best Selling Taxons"
   bill_address: "Factuuradres"
   billing_address: "Factuuradres"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
   billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
+  by_day: "by day"
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: annuleer
@@ -235,6 +241,7 @@ nl-BE:
   continue: "Ga Verder"
   continue_shopping: "Verder Winkelen"
   copy_all_mails_to: "Kopieer Alle Mails Naar"
+  count: Count
   country: Land
   country_based: "Gebaseerd op land"
   coupon: Coupon                                                                             
@@ -250,6 +257,7 @@ nl-BE:
   credit_card_payment: "Kredietkaart Betaling"
   credit_total: Credit Total
   creditcard: Kredietkaart
+  credits: Credits
   current: Huidige
   customer: Klant
   date_range: "Datum Bereik"
@@ -336,7 +344,13 @@ nl-BE:
   item: Products
   item_description: "Product Omschrijving"
   item_total: "Product Totaal"
+  items: "Items"
+  last_14_days: "Last 14 Days"
+  last_5_orders: "Last 5 Orders"
+  last_7_days: "Last 7 Days" 
+  last_month: "Last Month"
   last_name: "Achternaam"
+  last_year: "Last Year"
   list: Lijst
   listing_categories: "Lijst Categorieën"
   listing_option_types: "Lijst Optie Types"
@@ -413,6 +427,8 @@ nl-BE:
   option_values: "Waarden Opties"
   options: Opties
   or: of
+  ord_qty: "Ord. Qty"
+  ord_total: "Ord. Total"
   order: Bestelling
   order_confirmation_note: "Orderbevestiging"
   order_date: "Besteldatum"
@@ -429,7 +445,9 @@ nl-BE:
   order_updated: "Bestelling gewijzigd"
   orders: Bestellingen
   out_of_stock: "Niet op Voorraad"
+  out_of_stock_products: "Out of Stock Products"
   overview: Overzicht
+  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Betaald
@@ -583,6 +601,7 @@ nl-BE:
   prototype: Prototype
   prototypes: Prototypes
   qty: Aantal
+  range: "Range"
   rate: Tarief
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
@@ -704,8 +723,11 @@ nl-BE:
   taxons: Taxons
   thank_you_for_your_order: "Hartelijk dank voor uw bestelling. U kan deze pagina afdrukken als bewijs van bestelling."
   this_file_language: "Nederlands (BE)"
+  this_month: "This Month"
+  this_year: "This Year"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "To add variants, you must first define"
+  top_grossing_products: "Top Grossing Products"
   total: Totaal
   tracking: Tracking
   transaction: Transactie

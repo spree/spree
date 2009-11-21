@@ -1,4 +1,4 @@
-<% 1.upto(30) do |i| %>
+<% 1.upto(500) do |i| %>
 visa_<%= i %>:
   order: order_<%= i %>
   amount: 0

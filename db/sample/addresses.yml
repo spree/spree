@@ -1,24 +1,27 @@
-<% 1.upto(30) do |i| %>
-frank_ship_address_<%= i %>:
-  firstname: Betty
-  lastname: Bar
-  address1: 123 Foo St.
-  address2: Apt. F
-  city: Fooville
+<% 
+require "Faker"
+1.upto(500) do |i| 
+%>
+ship_address_<%= i %>:
+  firstname: <%= Faker::Name.first_name %>
+  lastname: <%= Faker::Name.last_name %>
+  address1: <%= Faker::Address.street_address %>
+  address2: <%= Faker::Address.secondary_address %>
+  city: <%= Faker::Address.city %>
   state: new_york
   zipcode: 16804
   country_id: 214
-  phone: 614-555-1212
+  phone: <%= Faker::PhoneNumber.phone_number %>
 <% end %>
-<% 1.upto(30) do |i| %>
-frank_bill_address_<%= i %>:
-  firstname: Frank
-  lastname: Foo
-  address1: 123 Foo St.
-  address2: Apt. F
-  city: Fooville
+<% 1.upto(500) do |i| %>
+bill_address_<%= i %>:
+  firstname: <%= Faker::Name.first_name %>
+  lastname: <%= Faker::Name.last_name %>
+  address1: <%= Faker::Address.street_address %>
+  address2: <%= Faker::Address.secondary_address %>
+  city: <%= Faker::Address.city %>
   state: new_york
   zipcode: 16804
   country_id: 214
-  phone: 614-555-1212
+  phone: <%= Faker::PhoneNumber.phone_number %>
 <% end %>

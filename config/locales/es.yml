@@ -2,6 +2,7 @@
 es: 
   'no': "No"
   'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: Una copia de todos los correos sera enviada a las siguientes direcciones
   abbreviation: Abreviatura
   access_denied: "Acceso denegado"
@@ -173,8 +174,10 @@ es:
   address: Dirección
   address_information: "Información de la Dirección"
   adjustment: Ajuste
+  adjustments: Adjustments
   administration: Administración
   all: "All"
+  all_departments: All departments
   allow_backorders: "Permitir devoluciones"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir el uso de SSL en los modos de desarrollo y prueba
   allow_ssl_to_be_used_when_in_production_mode: Permitir el uso de SSL en produccion
@@ -197,11 +200,14 @@ es:
   back: Atrás
   back_to_store: "Volver a la tienda"
   backordering_is_allowed: "Backordering {{not}} allowed"
+  best_selling_products: "Best Selling Products"
+  best_selling_taxons: "Best Selling Taxons"
   bill_address: "Dirección de facturación"
   billing_address: "Dirección de facturación"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
   billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
+  by_day: "by day"
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Cancelar
@@ -235,6 +241,7 @@ es:
   continue: Continuar
   continue_shopping: "Seguir comprando"
   copy_all_mails_to: Copiar todos los correos a
+  count: Count
   country: País
   country_based: "Pais base"
   coupon: Coupon
@@ -250,6 +257,7 @@ es:
   credit_card_payment: "Pago con tarjeta de credito"
   credit_total: Credit Total
   creditcard: "Tarjeta de credito"
+  credits: Credits
   current: Actual
   customer: Cliente
   date_range: "Rango de Fecha"
@@ -336,7 +344,13 @@ es:
   item: artículo
   item_description: "Descripción del artículo"
   item_total: "Total de artículos"
+  items: "Items"
+  last_14_days: "Last 14 Days"
+  last_5_orders: "Last 5 Orders"
+  last_7_days: "Last 7 Days" 
+  last_month: "Last Month"
   last_name: Apellidos
+  last_year: "Last Year"
   list: Lista
   listing_categories: "Listado de Categorías"
   listing_option_types: "Listado de tipos de opciones"
@@ -413,6 +427,8 @@ es:
   option_values: "Option Values"
   options: Opciones
   or: o
+  ord_qty: "Ord. Qty"
+  ord_total: "Ord. Total"
   order: Pedido
   order_confirmation_note: "Nota de confirmación de pedido"
   order_date: "Fecha de pedido"
@@ -429,7 +445,9 @@ es:
   order_updated: "Pedido actualizado"
   orders: Pedidos
   out_of_stock: "Sin stock"
+  out_of_stock_products: "Out of Stock Products"
   overview: General
+  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Pagado
@@ -583,6 +601,7 @@ es:
   prototype: Prototipo
   prototypes: "Prototipos"
   qty: Cant.
+  range: "Range"
   rate: proporción
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
@@ -704,8 +723,11 @@ es:
   taxons: Taxons
   thank_you_for_your_order: "Gracias por su pedido"
   this_file_language: "Español (España)"
+  this_month: "This Month"
+  this_year: "This Year"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "Para agregar variantes, primero debe definir"
+  top_grossing_products: "Top Grossing Products"
   total: Total
   tracking: Seguimiento
   transaction: Transacción

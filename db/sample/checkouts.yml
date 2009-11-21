@@ -1,7 +1,11 @@
-<% 1.upto(30) do |i| %>
+<% 
+require "Faker"
+1.upto(500) do |i| 
+email = Faker::Internet.email  
+%>
 checkout_<%= i %>:
-  bill_address: frank_bill_address_<%= i %>
-  email: frank.foo@example.com 
+  bill_address: bill_address_<%= i %>
+  email: <%= email %>
   order: order_<%= i %>
   ip_address: 127.0.0.1
 <% end %>

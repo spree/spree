@@ -2,6 +2,7 @@
 pt-BR: 
   'no': "No"
   'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: Uma cópia de todo email será enviado aos seguintes endereços
   abbreviation: Abreviação
   access_denied: "Acesso Negado"
@@ -173,8 +174,10 @@ pt-BR:
   address: Endereço
   address_information: "Informação de Endereço"
   adjustment: Ajuste
+  adjustments: Adjustments
   administration: Administração
   all: "All"
+  all_departments: All departments
   allow_backorders: "Permitir Devoluções"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permitir uso de SSL quando no modo de desenvolvimento e teste
   allow_ssl_to_be_used_when_in_production_mode: Permitir uso de SSL quando em modo de produção
@@ -197,11 +200,14 @@ pt-BR:
   back: Voltar
   back_to_store: "Voltar à Loja"
   backordering_is_allowed: "Devolução {{not}} permitida"
+  best_selling_products: "Best Selling Products"
+  best_selling_taxons: "Best Selling Taxons"
   bill_address: "Endereço da Conta"
   billing_address: "Endereço de Cobrança"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
   billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
+  by_day: "by day"
   calculator: Calculator
   calculator_settings_warning: "Se estiver mudando o tipo de calculador, você deve primeiro salvar antes de poder editar as configuração de calculador"
   cancel: Cancelar
@@ -235,6 +241,7 @@ pt-BR:
   continue: Continue
   continue_shopping: "Continue sua compra"
   copy_all_mails_to: Copiar todos os emails para
+  count: Count
   country: País
   country_based: "Baseado em País"
   coupon: Cupom
@@ -250,6 +257,7 @@ pt-BR:
   credit_card_payment: "Pagamento de Cartão de Crédito"
   credit_total: Credit Total
   creditcard: Cartão de Crédito
+  credits: Credits
   current: Atual
   customer: Cliente
   date_range: "Período de Data"
@@ -336,7 +344,13 @@ pt-BR:
   item: Ítem
   item_description: "Descrição de Item"
   item_total: "Total de Item"
+  items: "Items"
+  last_14_days: "Last 14 Days"
+  last_5_orders: "Last 5 Orders"
+  last_7_days: "Last 7 Days" 
+  last_month: "Last Month"
   last_name: "Último Nome"
+  last_year: "Last Year"
   list: Lista
   listing_categories: "Listando Categorias"
   listing_option_types: "Listando Tipos de Opções"
@@ -413,6 +427,8 @@ pt-BR:
   option_values: "Option Values"
   options: Opções
   or: ou
+  ord_qty: "Ord. Qty"
+  ord_total: "Ord. Total"
   order: Pedido
   order_confirmation_note: "Anotação de confirmação do pedido"
   order_date: "Data do Pedido"
@@ -429,7 +445,9 @@ pt-BR:
   order_updated: "Pedido Atualizado"
   orders: Pedidos
   out_of_stock: "Sem Estoque"
+  out_of_stock_products: "Out of Stock Products"
   overview: Resumo
+  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Pago
@@ -583,6 +601,7 @@ pt-BR:
   prototype: Protótipo
   prototypes: Protótipos
   qty: Qtde.
+  range: "Range"
   rate: Taxa
   register: Registrar como um Novo Usuário
   register_or_guest: Finalizar como Convidado ou Registrar
@@ -704,8 +723,11 @@ pt-BR:
   taxons: Grupos de Taxonomias
   thank_you_for_your_order: "Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle."
   this_file_language: "Português (Brasil)"
+  this_month: "This Month"
+  this_year: "This Year"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "Para adicionar variantes, primeiro você deve definir"
+  top_grossing_products: "Top Grossing Products"
   total: Total
   tracking: Rastreamento
   transaction: Transação

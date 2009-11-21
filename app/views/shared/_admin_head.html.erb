@@ -1,0 +1,20 @@
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<title><%= "Spree #{t('administration')}: #{controller.controller_name.titleize}" %></title>
+
+<%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', 'admin/jquery.jqplot.min.css', :cache => 'admin-all' %>
+
+<%= javascript_include_tag 'jquery', 'jquery-ui', 'jrails', 'jquery.suggest', 'jrails.autocomplete', :cache => 'jquery-and-plugins' %>
+<%= javascript_include_tag('jquery.template') unless controller.controller_name == "overview" %>
+<%= javascript_include_tag 'spree', 'nested-attribute', 'zone', 'calculator', 'gateway' %>
+<%= javascript_tag "$ = jQuery;" %>
+<%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+<%= javascript_include_tag 'jquery.alerts/jquery.alerts.js' %>
+<%= javascript_include_tag 'jquery.autocomplete.min.js' %>
+
+<%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.css' %>
+<%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.spree.css' %>
+<%= stylesheet_link_tag 'jquery.autocomplete.css' %>
+
+<%= javascript_tag "jQuery.alerts.dialogClass = 'spree';" %>
+<%= unobtrusive_datepicker_includes %>	
+<%= yield :head %>

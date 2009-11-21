@@ -2,6 +2,7 @@
 th: 
   'no': "No"
   'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "เมลที่ที่ถูกคัดลอกจะส่งไปยังที่อยู่นี้"
   abbreviation: คำย่อ
   access_denied: ไม่อนุญาตให้ผ่าน
@@ -173,8 +174,10 @@ th:
   address: ที่อยู่
   address_information: "Address Information"
   adjustment: Adjustment
+  adjustments: Adjustments
   administration: การจัดการ
   all: "All"
+  all_departments: All departments
   allow_backorders: "อนุญาติการสั่งซื้อ เมื่อสินค้าหมด"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
@@ -197,11 +200,14 @@ th:
   back: กลับ
   back_to_store: "กลับไปหน้าร้าน"
   backordering_is_allowed: "({{not}} allowed) การซื้อเมื่อสินค้าหมด"
+  best_selling_products: "Best Selling Products"
+  best_selling_taxons: "Best Selling Taxons"
   bill_address: "ที่อยู่บนใบเสร็จรับเงิน"
   billing_address: ใบเสร็จรับเงิน
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
   billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
+  by_day: "by day"
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: ยกเลิก
@@ -235,6 +241,7 @@ th:
   continue: ดำเนินการต่อ
   continue_shopping: เลือกสินค้าต่อ
   copy_all_mails_to: คัดลอกเมลทุกฉบับส่งไปที่
+  count: Count
   country: ประเทศ
   country_based: ยืดประเทศเป็นหลัก
   coupon: Coupon                                                                             
@@ -250,6 +257,7 @@ th:
   credit_card_payment: "Credit Card Payment"
   credit_total: Credit Total
   creditcard: Creditcard
+  credits: Credits
   current: Current
   customer: ลูกค้า
   date_range: ช่วงวันที่
@@ -336,7 +344,13 @@ th:
   item: สินค้า
   item_description: รายละเอียดสินค้า
   item_total: "Item Total"
+  items: "Items"
+  last_14_days: "Last 14 Days"
+  last_5_orders: "Last 5 Orders"
+  last_7_days: "Last 7 Days" 
+  last_month: "Last Month"
   last_name: นามสกุล
+  last_year: "Last Year"
   list: List
   listing_categories: "Listing Categories"
   listing_option_types: "Listing Option Types"
@@ -413,6 +427,8 @@ th:
   option_values: รายการตัวเลือก
   options: ตัวเลือก
   or: หรือ
+  ord_qty: "Ord. Qty"
+  ord_total: "Ord. Total"
   order: รายการ
   order_confirmation_note: ""
   order_date: "วันที่สั่งซื้อ"
@@ -429,7 +445,9 @@ th:
   order_updated: "ปรับปรุงรายการสั่งซื้อ"
   orders: รายการสั่งซื้อ
   out_of_stock: สินค้าหมด
+  out_of_stock_products: "Out of Stock Products"
   overview: ภาพรวม
+  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: จ่ายแล้ว
@@ -583,6 +601,7 @@ th:
   prototype: ต้นแบบ
   prototypes: ต้นแบบ
   qty: จำนวน
+  range: "Range"
   rate: "อัตรา(เปอร์เซ็น)"
   register: "ลงทะเบียนผู้ใช้ใหม่"
   register_or_guest: "สั่งซื้อแบบบุคคลทั่วไปหรือแบบสมาชิก"
@@ -704,8 +723,11 @@ th:
   taxons: ประเภทภาษี
   thank_you_for_your_order: "ขอบคุณสำหรับการสั่งซื้อ ท่านสามารถพิมพ์รายการยืนยันเพื่อเก็บเป็นหลักฐานได้"
   this_file_language: "English (US)"
+  this_month: "This Month"
+  this_year: "This Year"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "เพื่อเพิ่มความต่างในสินค้า ต้องเพิ่มรายการเพื่อเลือกก่อนเสมอ"
+  top_grossing_products: "Top Grossing Products"
   total: รวม
   tracking: ติดตาม
   transaction: การดำเนินงาน

@@ -35,6 +35,7 @@ public/stylesheets/calendar_date_select
 public/stylesheets/compiled
 public/stylesheets/language_chooser.css
 public/stylesheets/open_id.css
+public/stylesheets/admin/dashboard.css
 spree_dev
 spree_test
 tmp
@@ -44,6 +45,8 @@ public/javascripts/jquery.lightbox.js
 public/javascripts/jquery.product_reviews_ratings.*
 public/javascripts/jquery.tablesorter.min.js
 public/stylesheets/product_reviews_ratings.*
+public/javascripts/jqPlot/*
+public/javascripts/dashboard.js
 public/images/lightbox
 public/stylesheets/lightbox.css
 vendor/extensions/google_base

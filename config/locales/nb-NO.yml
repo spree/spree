@@ -2,6 +2,7 @@
 nb-NO: 
   'no': "No"
   'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: En kopi av all epost vil bli sendt til følgende adresser
   abbreviation: Fortkortelse
   access_denied: "Ikke tilgang"
@@ -173,8 +174,10 @@ nb-NO:
   address: Adresse
   address_information: "Adresseinformasjon"
   adjustment: Justering
+  adjustments: Adjustments
   administration: Administrasjon
   all: "All"
+  all_departments: All departments
   allow_backorders: "Tillat restordre"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Tillat at SSL brukes i utviklings- og testmodus.
   allow_ssl_to_be_used_when_in_production_mode: Tillat at SSL brukes i produksjonsmodus.
@@ -197,11 +200,14 @@ nb-NO:
   back: Tilbake
   back_to_store: "Tilbake til butikken"
   backordering_is_allowed: "Backordering {{not}} allowed"
+  best_selling_products: "Best Selling Products"
+  best_selling_taxons: "Best Selling Taxons"
   bill_address: "Fakturaadresse"
   billing_address: "Fakturaadresse"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
   billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
+  by_day: "by day"
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Avbryt
@@ -235,6 +241,7 @@ nb-NO:
   continue: Fortsett
   continue_shopping: "Fortsett å handle"
   copy_all_mails_to: Kopier alle eposter til
+  count: Count
   country: Land
   country_based: "Land"
   coupon: Coupon                                                                             
@@ -250,6 +257,7 @@ nb-NO:
   credit_card_payment: "Betaling med kort"
   credit_total: Credit Total
   creditcard: Kredittkort
+  credits: Credits
   current: "Nå"
   customer: Kunde
   date_range: "Datoområde"
@@ -336,7 +344,13 @@ nb-NO:
   item: Artikkel
   item_description: "Beskrivelse"
   item_total: "Solgte varer"
+  items: "Items"
+  last_14_days: "Last 14 Days"
+  last_5_orders: "Last 5 Orders"
+  last_7_days: "Last 7 Days" 
+  last_month: "Last Month"
   last_name: "Etternavn"
+  last_year: "Last Year"
   list: Liste
   listing_categories: "Kategorier"
   listing_option_types: "Variasjonstyper"
@@ -413,6 +427,8 @@ nb-NO:
   option_values: "Variasjonsverdier"
   options: Valg
   or: eller
+  ord_qty: "Ord. Qty"
+  ord_total: "Ord. Total"
   order: Ordre
   order_confirmation_note: ""
   order_date: "Ordredato"
@@ -429,7 +445,9 @@ nb-NO:
   order_updated: "Ordre oppdatert"
   orders: Ordrer
   out_of_stock: "Ikke på lager"
+  out_of_stock_products: "Out of Stock Products"
   overview: Oversikt
+  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Betalt
@@ -583,6 +601,7 @@ nb-NO:
   prototype: Prototype
   prototypes: Prototyper
   qty: Antall
+  range: "Range"
   rate: "Nivå"
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
@@ -704,8 +723,11 @@ nb-NO:
   taxons: Klasser
   thank_you_for_your_order: "Takk for bestillingen. Vennligst skriv ut og ta vare på denne bekreftelsen."
   this_file_language: "Norsk"
+  this_month: "This Month"
+  this_year: "This Year"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "To add variants, you must first define"
+  top_grossing_products: "Top Grossing Products"
   total: Total
   tracking: Sporing
   transaction: Transaksjon

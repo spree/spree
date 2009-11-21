@@ -2,6 +2,7 @@
 fi: 
   'no': "No"
   'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "Kopio kaikista viesteistä lähetetään seuraaviin osoitteisiin"
   abbreviation: Lyhenne
   access_denied: "Pääsy kielletty!"
@@ -173,8 +174,10 @@ fi:
   address: Osoite
   address_information: Osoitetiedot
   adjustment: Säätö
+  adjustments: Adjustments
   administration: Hallinnointi
   all: Kaikki
+  all_departments: All departments
   allow_backorders: "Salli jälkitoimitukset"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "Salli SSL:n käyttö kehitys- ja testiympäristöissä"
   allow_ssl_to_be_used_when_in_production_mode: "Salli SSL:n käyttö vain tuotantoympäristössä"
@@ -197,11 +200,14 @@ fi:
   back: Takaisin
   back_to_store: "Palaa kauppaan"
   backordering_is_allowed: "Jälkitoimittaminen {{not}} sallittu"
+  best_selling_products: "Best Selling Products"
+  best_selling_taxons: "Best Selling Taxons"
   bill_address: "Laskun osoite"
   billing_address: Laskutusosoite
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
   billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
+  by_day: "by day"
   calculator: Laskin
   calculator_settings_warning: "Mikäli vaihdat laskimen tyyppiä, sinun täytyy ensin tallentaa ennen kuin voit muuttaa laskimen asetuksia"
   cancel: peruuta
@@ -235,6 +241,7 @@ fi:
   continue: Jatka
   continue_shopping: "Jatka ostoksia"
   copy_all_mails_to: "Kopioi kaikki viestit"                                                                             
+  count: Count
   country: Maa
   country_based: Sijaintimaa
   coupon: Kuponki
@@ -250,6 +257,7 @@ fi:
   credit_card_payment: Luottokorttimaksu
   credit_total: "Veloittamatta yhteensä"
   creditcard: Luottokortti
+  credits: Credits
   current: Nykyinen
   customer: Asiakas
   date_range: "Päivämäärä (mistä mihin)"
@@ -336,7 +344,13 @@ fi:
   item: Tuote
   item_description: Tuotekuvaus
   item_total: "Tuotteet yhteensä"
+  items: "Items"
+  last_14_days: "Last 14 Days"
+  last_5_orders: "Last 5 Orders"
+  last_7_days: "Last 7 Days" 
+  last_month: "Last Month"
   last_name: Sukunimi
+  last_year: "Last Year"
   list: Lista
   listing_categories: "Listataan kategoriat"
   listing_option_types: "Listataan valintatyypit"
@@ -413,6 +427,8 @@ fi:
   option_values: Valinta-arvot
   options: Valinnat
   or: tai
+  ord_qty: "Ord. Qty"
+  ord_total: "Ord. Total"
   order: Tilaus
   order_confirmation_note: ""
   order_date: Tilauspäivämäärä
@@ -429,7 +445,9 @@ fi:
   order_updated: "Tilaus päivitetty"
   orders: Tilaukset
   out_of_stock: "Ei saatavilla"
+  out_of_stock_products: "Out of Stock Products"
   overview: Yleiskuva
+  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Maksettu
@@ -583,6 +601,7 @@ fi:
   prototype: Prototyyppi
   prototypes: Prototyypit
   qty: lkm
+  range: "Range"
   rate: Taso
   register: "Rekisteröidy uutena käyttäjänä"
   register_or_guest: "Jätä tilaus vierailijana tai rekisteröidy"
@@ -704,8 +723,11 @@ fi:
   taxons: Taksonit
   thank_you_for_your_order: "Kiitos kaupankäynnistä. Tulosta tarvittaessa kopio tästä vahvistuksesta."
   this_file_language: Finnish
+  this_month: "This Month"
+  this_year: "This Year"
   thumbnail: Näytekuva
   to_add_variants_you_must_first_define: "Lisättävä variantti täytyy ensin määritellä"
+  top_grossing_products: "Top Grossing Products"
   total: Loppusumma
   tracking: Seuranta
   transaction: Tapahtuma

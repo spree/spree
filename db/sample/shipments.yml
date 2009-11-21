@@ -1,7 +1,7 @@
-<% 1.upto(30) do |i| %>
+<% 1.upto(1000) do |i| %>
 shipment_<%= i %>:
   number: <%= Array.new(11){rand(11)}.join %>
   order: <%= "order_#{i}" %>
   shipping_method: ups_ground 
-  address: frank_ship_address_<%= i %>
+  address: ship_address_<%= i %>
 <% end %>

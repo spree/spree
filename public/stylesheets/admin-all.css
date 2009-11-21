@@ -1,0 +1,1188 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline; }
+
+div, span, object, iframe, h1, h2, h3, h4, h5, h6, p,
+pre, a, abbr, acronym, address, code, del, dfn, em, img,
+dl, dt, dd, ol, ul, li, fieldset, form, label, legend, caption, tbody, tfoot, thead, tr, hr {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline; }
+
+body { line-height: 1.5 }
+
+blockquote, q {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  quotes: "" ""; }
+  blockquote:before,
+  blockquote:after,   q:before,
+  q:after {
+    content: ""; }
+
+th, td, caption {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  text-align: left;
+  font-weight: normal;
+  vertical-align: top; }
+
+table {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  border-collapse: separate;
+  border-spacing: 0;
+  vertical-align: middle; }
+
+a img { border: none }
+
+
+
+/*
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.7.0
+*/
+/**
+ * YUI Grids
+ * @module grids
+ * @namespace yui-
+ * @requires reset, fonts
+ */
+
+/**  
+ * Note: Throughout this file, the *property (star-property) filter is used 
+ * to give a value to IE that other browsers do not see. _property is only seen 
+ * by IE7, so the combo of *prop and _prop can target between IE6 and IE7.
+ * 
+ * More information on these filters and related validation errors:
+ * http://tech.groups.yahoo.com/group/ydn-javascript/message/40059
+ */
+
+/**
+ * Section: General Rules
+ */
+
+/**
+ * Section: Page Width Rules (#doc, #doc2, #doc3, #doc4)
+ */
+
+.yui-g .yui-u .yui-g {
+	width: 100%;
+}
+
+/**
+ * Section: Grids and Nesting Grids
+ */
+
+/* Children generally take half the available space */
+.yui-gb .yui-u,
+.yui-g .yui-gb .yui-u,
+.yui-gb .yui-g,
+.yui-gb .yui-gb,
+.yui-gb .yui-gc,
+.yui-gb .yui-gd,
+.yui-gb .yui-ge,
+.yui-gb .yui-gf,
+.yui-gc .yui-u, 
+.yui-gc .yui-g,
+.yui-gd .yui-u {
+	float: left;
+}
+
+/* Float units (and sub grids) to the right */
+.yui-g .yui-u,
+.yui-g .yui-g,
+.yui-g .yui-gb, 
+.yui-g .yui-gc, 
+.yui-g .yui-gd, 
+.yui-g .yui-ge, 
+.yui-g .yui-gf, 
+.yui-gc .yui-u, 
+.yui-gd .yui-g,
+.yui-g .yui-gc .yui-u,
+.yui-ge .yui-u, 
+.yui-ge .yui-g, 
+.yui-gf .yui-g,
+.yui-gf .yui-u {
+	float: right;
+}
+
+/*Float units (and sub grids) to the left */
+.yui-g div.first, 
+.yui-gb div.first,
+.yui-gc div.first,
+.yui-gd div.first, 
+.yui-ge div.first, 
+.yui-gf div.first,
+.yui-g .yui-gc div.first,
+.yui-g .yui-ge div.first,
+.yui-gc div.first div.first {
+	float: left;
+}
+
+.yui-g .yui-u,
+.yui-g .yui-g,
+.yui-g .yui-gb,
+.yui-g .yui-gc,
+.yui-g .yui-gd,
+.yui-g .yui-ge,
+.yui-g .yui-gf {
+	width: 49.1%;
+}
+
+.yui-gb .yui-u,
+.yui-g .yui-gb .yui-u,
+.yui-gb .yui-g,
+.yui-gb .yui-gb,
+.yui-gb .yui-gc,
+.yui-gb .yui-gd,
+.yui-gb .yui-ge,
+.yui-gb .yui-gf,
+.yui-gc .yui-u, 
+.yui-gc .yui-g,
+.yui-gd .yui-u {
+	width: 32%;
+	margin-left: 1.99%;
+}
+
+/* Give IE some extra breathing room for 1/3-based rounding issues */
+.yui-gb .yui-u {
+	*margin-left: 1.9%;
+	*width: 31.9%;
+}
+
+.yui-gc div.first, 
+	.yui-gd .yui-u {
+	width: 66%;
+}
+
+.yui-gd div.first {
+	width: 32%;
+}
+
+.yui-ge div.first, 
+	.yui-gf .yui-u {
+	width: 74.2%;
+}
+
+.yui-ge .yui-u,
+	.yui-gf div.first {
+	width: 24%;
+}
+
+.yui-g .yui-gb div.first,
+.yui-gb div.first, 
+.yui-gc div.first, 
+.yui-gd div.first {
+	margin-left: 0;
+}
+
+/**
+ * Section: Deep Nesting 
+ */
+
+.yui-g .yui-g .yui-u,
+.yui-gb .yui-g .yui-u,
+.yui-gc .yui-g .yui-u,
+.yui-gd .yui-g .yui-u,
+.yui-ge .yui-g .yui-u,
+.yui-gf .yui-g .yui-u {
+	width: 49%;
+	*width: 48.1%;
+	*margin-left: 0;
+}
+
+.yui-g .yui-g .yui-u {
+	width: 48.1%;
+}
+
+/*SF 1927599 from 1.14 to 2.6.0*/
+.yui-g .yui-gb div.first,
+	.yui-gb .yui-gb div.first {
+	*margin-right: 0;
+	*width: 32%;
+	_width: 31.7%;
+}
+
+.yui-g .yui-gc div.first, 
+	.yui-gd .yui-g {
+	width: 66%;
+}
+
+.yui-gb .yui-g div.first {
+	*margin-right: 4%;
+	_margin-right: 1.3%;
+}
+
+.yui-gb .yui-gc div.first, 
+	.yui-gb .yui-gd div.first {
+	*margin-right: 0;
+}
+
+.yui-gb .yui-gb .yui-u,
+	.yui-gb .yui-gc .yui-u {
+	*margin-left: 1.8%;
+	_margin-left: 4%;
+}
+
+.yui-g .yui-gb .yui-u {
+	_margin-left: 1.0%;
+}
+
+.yui-gb .yui-gd .yui-u {
+	*width: 66%;
+	_width: 61.2%;
+}
+
+.yui-gb .yui-gd div.first {
+	*width: 31%;
+	_width: 29.5%;
+}
+
+.yui-g .yui-gc .yui-u, 
+	.yui-gb .yui-gc .yui-u {
+	width: 32%;
+	_float: right;
+	margin-right: 0;
+	_margin-left: 0;
+}
+
+.yui-gb .yui-gc div.first {
+	width: 66%;
+	*float: left;
+	*margin-left: 0;
+}
+
+.yui-gb .yui-ge .yui-u, 
+	.yui-gb .yui-gf .yui-u {
+	margin: 0;
+}
+
+.yui-gb .yui-gb .yui-u {
+	_margin-left: .7%;
+}
+
+.yui-gb .yui-g div.first, 
+	.yui-gb .yui-gb div.first {
+	*margin-left: 0;
+}
+
+.yui-gc .yui-g .yui-u,
+	.yui-gd .yui-g .yui-u {
+	*width: 48.1%;
+	*margin-left: 0;
+}
+
+.yui-gb .yui-gd div.first {
+	width: 32%;
+}
+
+.yui-g .yui-gd div.first {
+	_width: 29.9%;
+}
+
+.yui-ge .yui-g {
+	width: 24%;
+}
+
+.yui-gf .yui-g {
+	width: 74.2%;
+}
+
+.yui-gb .yui-ge div.yui-u,
+	.yui-gb .yui-gf div.yui-u {
+	float: right;
+}
+
+.yui-gb .yui-ge div.first,
+	.yui-gb .yui-gf div.first {
+	float: left;
+}
+
+/* Width Accommodation for Nested Contexts */
+.yui-gb .yui-ge .yui-u,
+	.yui-gb .yui-gf div.first {
+	*width: 24%;
+	_width: 20%;
+}
+
+/* Width Accommodation for Nested Contexts */
+.yui-gb .yui-ge div.first, 
+	.yui-gb .yui-gf .yui-u {
+	*width: 73.5%;
+	_width: 65.5%;
+}
+
+/* Patch for GD within GE */
+.yui-ge div.first .yui-gd .yui-u {
+	width: 65%;
+}
+
+.yui-ge div.first .yui-gd div.first {
+	width: 32%;
+}
+
+/* @group Clearing */
+#hd:after,
+#bd:after,
+#ft:after,
+.yui-g:after, 
+.yui-gb:after, 
+.yui-gc:after, 
+.yui-gd:after, 
+.yui-ge:after, 
+.yui-gf:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+#hd,
+#bd,
+#ft,
+.yui-g, 
+.yui-gb, 
+.yui-gc, 
+.yui-gd, 
+.yui-ge, 
+.yui-gf {
+	zoom: 1;
+}
+
+
+/* -------------------------------------------------------------- 
+   
+   typography.css
+   * Sets up some sensible default typography.
+   
+-------------------------------------------------------------- */
+
+/* Default font settings. 
+   The font-size percentage is of 16px. (0.75 * 16px = 12px) */
+body { 
+  font-size: 75%;
+  color: #222; 
+  font-family: "Helvetica Neue", Helvetica, Tahoma, Verdana, Arial, sans-serif;
+}
+
+/* Headings
+-------------------------------------------------------------- */
+
+h1,h2,h3,h4,h5,h6 { font-weight: bold; color: #111; }
+
+h1 { font-size: 2.5em; margin-bottom: 0.75em; line-height: 1em; }
+h2 { font-size: 1.5em; line-height: 1; margin-bottom: 0.6em; }
+h3 { font-size: 1.5em; line-height: 1.25; margin-bottom: 0.6em; }
+h4 { font-size: 1em; font-weight: bold; margin-bottom: 1.5em; }
+h5 { font-size: 1em; font-weight: bold; }
+h6 { font-weight: normal }
+
+h1 img, h2 img, h3 img, 
+h4 img, h5 img, h6 img { margin: 0 }
+
+
+h1, h2 { letter-spacing: -1px }
+
+
+/* Text elements
+-------------------------------------------------------------- */
+
+p           { margin: 0 0 1em; }
+p img.left  { float: left; margin: 1.5em 1.5em 1.5em 0; padding: 0; }
+p img.right { float: right; margin: 1.5em 0 1.5em 1.5em; }
+
+a:focus, 
+a:hover     { color: #000; }
+a           { color: #009; text-decoration: none; }
+
+blockquote  { margin: 1.5em; color: #666; font-style: italic; }
+strong      { font-weight: bold; }
+em,dfn      { font-style: italic; }
+dfn         { font-weight: bold; }
+sup, sub    { line-height: 0; }
+
+abbr, 
+acronym     { border-bottom: 1px dotted #666; }
+address     { margin: 0 0 1.5em; font-style: italic; }
+del         { color:#666; }
+
+pre 				{ margin: 1.5em 0; white-space: pre; }
+pre,code,tt { font: 1em 'andale mono', 'lucida console', monospace; line-height: 1.5; }
+
+
+/* Lists
+-------------------------------------------------------------- */
+
+li ul, 
+li ol       { margin:0 1.5em; }
+ul, ol      { margin: 0 1.5em 1.5em 1.5em; }
+
+ul          { list-style-type: disc; }
+ol          { list-style-type: decimal; }
+
+dl          { margin: 0 0 1.5em 0; }
+dl dt       { font-weight: bold; }
+dd          { margin-left: 1.5em;}
+
+
+/* Tables
+-------------------------------------------------------------- */
+
+table       { margin-bottom: 1.4em; width:100%; }
+th          { font-weight: bold; }
+thead th 		{ background: #c3d9ff; }
+th,td,caption { padding: 4px 10px 4px 5px; }
+tr.even td  { background: #e5ecf9; }
+tfoot       { font-style: italic; }
+caption     { background: #eee; }
+
+
+/* Misc
+-------------------------------------------------------------- */
+
+hr { clear: both; height:0; border:none}
+
+.small      { font-size: .8em; margin-bottom: 1.875em; line-height: 1.875em; }
+.large      { font-size: 1.2em; line-height: 2.5em; margin-bottom: 1.25em; }
+.hide       { display: none; }
+
+.quiet      { color: #666; }
+.loud       { color: #000; }
+.highlight  { background:#ff0; }
+.added      { background:#060; color: #fff; }
+.removed    { background:#900; color: #fff; }
+
+.first      { margin-left:0; padding-left:0; }
+.last       { margin-right:0; padding-right:0; }
+.top        { margin-top:0; padding-top:0; }
+.bottom     { margin-bottom:0; padding-bottom:0; }
+
+
+.clear { clear: both }
+.nowrap { white-space: nowrap }
+
+.clearfix {
+  overflow: auto;
+  overflow: -moz-scrollbars-none;
+  display: inline-block; }
+  .clearfix {
+    display: block; }
+
+
+/* -------------------------------------------------------------- 
+   
+   forms.css
+   * Sets up some default styling for forms
+   * Gives you classes to enhance your forms
+   
+   Usage:
+   * For text fields, use class .title or .text
+   
+-------------------------------------------------------------- */
+
+label       { font-weight: bold; }
+fieldset    { padding:1.4em; margin: 0 0 1.5em 0; border: 1px solid #ccc; }
+legend      { font-weight: bold; font-size:1.2em; margin:0; }
+
+
+/* Form fields
+-------------------------------------------------------------- */
+
+input.text, input.title,
+input, textarea, select {
+  margin:0.25em 0;
+  border:1px solid #bbb;
+}
+
+input.text:focus, input.title:focus,
+textarea:focus, select:focus {
+  border:1px solid #666;
+}
+
+input.text, 
+input.title   { padding:5px; }
+input.title   { font-size:1.5em; }
+textarea      { height: 250px; padding:5px; }
+
+.required { color:#f00; font-weight:bold; font-size:1.2em;}
+.fullwidth { width:98% }
+
+/* container that holds a field that's got a master label then labels under each sub field e.g. Name might have firstname, lastname */
+.sub-field { margin:0; padding:0; margin:0 0 0.25em 0 }
+.sub-field label, label.sub { font-weight:normal; color:#333; }
+.sub-field input { margin-bottom:0 }
+
+
+.date-range-filter {width:220px;}
+  .date-range-filter input {width:75px;}
+  .date-range-filter .yui-u { width:50% }
+
+
+/* Multi-column form layout
+-------------------------------------------------------------- */
+div.split {
+  background-color:#eee;
+}
+form div.left
+{
+	display:inline;
+	float:left;
+	width:48%;
+}
+
+form div.right
+{
+	display:inline;
+	float:right;
+	width:48%;
+}
+form p {
+  clear:both;
+}
+form div.left.w70 {
+  width:68%;
+}
+form div.right.w30 {
+  width:28%;
+}
+
+
+/* Flashes and error messages
+-------------------------------------------------------------- */
+
+.flash {
+  font-size:130%;font-weight:bold;
+  padding: .4em 0 .4em 38px; margin-bottom: 1em;
+  border:1px solid #c00;
+  border-left:none;border-right:none;
+}
+.flash.error {
+  background: #FDE4E4 url(../../images/admin/icons/exclamation.png) 10px center no-repeat;
+  color:#c00; border-color:#c00;
+}
+.flash.notice {
+  background: #E7F8D7 url(../../images/admin/icons/tick.png) 10px center no-repeat;
+  color:#59A151; border-color: #59A151;
+}
+
+.withError {
+  background-color:#FDE4E4;
+  background-image:url(../../images/admin/bg/red-stripes.png);
+}
+.formError {
+  color:#c00; font-weight:bold;
+  display:block;
+}
+
+
+.member-list {
+  list-style:none;margin:0;
+}
+
+
+.form-buttons {
+  margin-top: 1em;
+  clear: both;
+  }
+  .form-buttons a {
+    text-transform: lowercase; }
+
+.field {
+  margin-bottom: 1em;
+  clear: both;
+  position: relative; }
+  .field .formError {
+    color: #fff;
+    background: #f15700 url(../../images/admin/icons/fugue/exclamation_small.png) center left no-repeat;
+    padding: 3px 7px;
+    display: inline-block;
+    margin-bottom: 1em;
+    padding-left: 20px; }
+  .field.fluid {
+    clear: none;
+    float: left;
+    margin-right: 1em; }
+  .field label {
+    display: block; }
+    .field label span.label {
+      display: block; }
+      
+      
+
+
+
+
+fieldset {
+  margin-bottom: 1em;
+  padding: 1em;
+  border: solid 1px #ccc;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px; 
+  }
+  fieldset h1 {
+    font-size: 1.75em; }
+  fieldset table.index th:first-child {
+    -moz-border-radius-topleft: 5px;
+    -webkit-border-top-left-radius: 5px; }
+  fieldset table.index th:last-child {
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px; }
+
+
+
+table.index th {
+  background: #cdcdcd url(../../images/admin/bg/grid_header_back.png) top left repeat-x;
+  padding: 7px 10px;
+  border-left: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  text-shadow: #efefef 1px 1px 0px; }
+  table.index th.id-col {
+    text-align: center; }
+  table.index td {
+    border-bottom:1px solid #ddd;
+    padding: 3px 10px;
+  }
+table.index tr.alt td {
+  background-color: #efefef; }
+table.index.green th {
+  background: #cfefa7 url(/images/grid_header_back_green.png) top left repeat-x;
+  border-left: 1px solid #E4FDB4;
+  border-top: 1px solid #E4FDB4;
+  border-right: 1px solid #B7CB90;
+  border-bottom: 1px solid #B7CB90; }
+table.index.green td {
+  background-color: #efe; }
+table.index.order-summary {
+  clear: both; }
+  table.index.order-summary tr.totals th {
+    background: transparent;
+    text-align: right;
+    border: none; }
+table.index td.actions {text-align:right;}
+
+#language-bar,
+#login-nav,
+#store-nav {
+  float: right;
+ 	margin-top: 10px;}
+  #language-bar li,
+  #login-nav li,
+  #store-nav li {
+    float: left;
+    margin-right: 1em;
+    list-style: none; }
+
+.address-form label,
+#creditcard label {
+  width: 200px;
+  display: block;
+  float: left; }
+
+#creditcard label {
+  width: 150px; }
+
+input.default {
+  color: #999; }
+  input.default:focus {
+    color: inherit; }
+
+p.help-text {
+  font-style: italic;
+  font-weight: normal;
+  margin-bottom: 0;
+  color: #999; }
+
+
+
+
+body {
+  background-color: #162F54;
+  color: #476D9B; }
+  a {
+    color: #4884BD; }
+    a:active,
+    a:visited {
+      color: #4884BD; }
+  #header,
+  #footer {
+		position: relative;
+    clear: both; }
+  #content {
+    margin: 0em 1em 1em 1em;
+    padding: 1em;
+    background: #fff;
+    color: #111;
+    min-height: 500px; }
+    #content a {
+      color: #3C7DFB; }
+      #content a:active,
+      #content a:visited {
+        color: #3C7DFB; }
+    #content.with-sidebar {
+      background: #fff url(../../images/admin/bg/content-back.png) right top repeat-y;
+      padding-right: 340px;
+      position: relative; }
+      #sidebar {
+        position: absolute;
+        width: 305px;
+        top: 0; right: 0;
+        padding-top: 3em;
+        }
+        #sidebar .box {
+          padding:10px;
+        }
+        #sidebar .box h3 { margin: 0 0 10px 0; }
+        #sidebar h3 {
+          margin: 0 10px; }
+          #sidebar h3 a {
+            color: #111;
+            text-decoration: none; }
+        #sidebar span.sku {
+          display: block;
+          font-weight: normal; }
+        #sidebar img {
+          float: right;
+          margin-right: 1em; }
+          #sidebar img.calendar_date_select_popup_icon {
+            float: none; }
+        #sidebar .field {
+          padding: 0 1em; }
+        #sidebar .form-buttons {
+          padding: 0 1em; }
+        #sidebar h4 {
+          margin-left: 10px; }
+        #sidebar ul.sidebar {
+          clear: both;
+          position: relative;
+          margin: 0;
+          padding: 0; }
+          #sidebar ul.sidebar li {
+            list-style: none; }
+            #sidebar ul.sidebar li a {
+              display: block;
+              padding: 10px 20px 10px;
+              outline: none;
+              text-decoration: none;
+              color: #666 !important; }
+              #sidebar ul.sidebar li a:hover { background-color:#ddd }
+              #sidebar ul.sidebar li.active a {
+                font-weight: bold;
+                background: url(../../images/admin/bg/menu-current.png) left center no-repeat;
+                color: #363 !important;
+                margin-left: -20px;
+                padding-left: 30px; }
+        #sidebar .order-number,
+        #sidebar .order-status {
+          text-align: right;
+          margin-right: 20px; }
+        #sidebar .order-status {
+          padding: 7px 15px;
+          -moz-border-radius: 3px;
+          -webkit-border-radius: 3px;
+          float: right;
+          background-color: #999;
+          color: #111;
+          text-transform: uppercase; }
+          #sidebar .order-status.new {
+            background-color: #5D9C0F;
+            color: #fff; }
+          #sidebar .order-status.canceled {
+            background-color: #c00;
+            color: #fff; }
+  h1.logo {
+    float: left;
+    margin: 20px 10px 10px 10px;	 }
+    h1.logo a {
+      background: url(../../images/admin/bg/spree_50.png) left center no-repeat;
+      padding-left: 120px;
+      display: block;
+      height: 50px;
+      text-decoration: none;
+      line-height: 50px;
+      color: #BBDAFD; }
+  #admin-menu { clear: both; }
+  #admin-menu,
+  #sub-menu {
+    margin: 0 1em; 
+    }
+    #admin-menu li {
+
+    }
+    #admin-menu ul,
+    #sub-menu ul {
+      padding: 0;
+      margin: 0; }
+      #admin-menu ul li,
+      #sub-menu ul li {
+        float: left;
+        margin-right: 1em;
+        list-style: none; }
+      #admin-menu ul li,
+      #sub-menu ul li {
+        margin-right: 0; margin-bottom: -1px;}
+        #admin-menu ul li a,
+        #sub-menu ul li a {
+          display: block;
+          padding: 10px 20px;
+          color: #fff;
+          text-decoration: none;
+          outline: none; }
+        #admin-menu ul li.selected a,
+        #sub-menu ul li.selected a {
+          background-color: #0095da; 
+          }
+        #admin-menu ul li.selected {
+          border-bottom:1px solid #0095DA;
+        }
+  #IE7 #admin-menu {
+    height: 39px; }
+  #admin-menu {
+    background: #154e8c url(../../images/admin/bg/admin_tab_back.png) top left repeat-x;
+    border-top: 1px solid #4B83E2;
+    border-right: 1px solid #34599B;
+    border-bottom: 1px solid #41A6F0; 
+    }
+    #admin-menu ul {
+      margin-bottom: -1px; }
+      #admin-menu ul li:first-child {
+        border-left: 1px solid #34599B; }
+      #admin-menu ul li.selected {
+        background: #0095da url(../../images/admin/bg/admin_tab_selected_back.png) top left repeat-x;
+        border-left: 1px solid #41A6F0;
+        border-top: 1px solid #41A6F0;
+        border-right: 1px solid #4986BF;
+        height: 40px;
+        margin-top: -2px; }
+  #sub-menu {
+    background: #0095da;
+    border-left: 1px solid #41A6F0;
+    border-right: 1px solid #4986BF; }
+    #IE7 #sub-menu ul {
+      height: 26px; }
+    #sub-menu ul li a {
+      padding: 3px 7px;
+      margin: 10px 5px;
+      color: #154e8c;
+      background: none; }
+    #sub-menu ul li.selected a {
+      background: #154e8c;
+      color: #9BC3FC;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px; }
+  #slide-content {
+    margin: 0 1em;
+    background-color: #cdf; }
+  .toolbar {
+    float: right;
+    margin-bottom: 1em; }
+    .toolbar ul.actions {
+      margin: 0;
+      padding: 0;
+      float: right; }
+      .toolbar ul.actions li {
+        float: left;
+        margin-right: 1em;
+        list-style: none; }
+      .toolbar ul.actions li {
+        margin-right: 0; }
+    .toolbar.order-links a {
+      text-transform: capitalize; }
+  .search-form {
+    display: none;
+    padding: 1em; }
+    .search-form label {
+      display: block; }
+  a.button {
+    background: transparent url(../../images/admin/buttons/right_01.png) no-repeat scroll top right;
+    display: block;
+    float: left;
+    margin-right: 6px;
+    padding-right: 20px;
+    text-decoration: none;
+    color: #111 !important;
+    font-weight: bold;
+    outline: none; }
+    a.button span {
+      background: transparent url(../../images/admin/buttons/left_01.png) no-repeat;
+      display: block;
+      line-height: 22px;
+      padding: 7px 0 5px 14px;
+      text-shadow: #efefef 1px 1px 0px; }
+    a.button img {
+      vertical-align: middle;
+      margin: 0 3px 0 0; }
+    a.button.cancel span {
+      font-weight: normal; }
+    a.button.small {
+      font-size: 1em;
+      background: transparent url(../../images/admin/buttons/right_01_small.png) no-repeat scroll top right;
+      padding-right: 20px; }
+      a.button.small span {
+        background: transparent url(../../images/admin/buttons/left_01_small.png) no-repeat;
+        padding: 5px 0 3px 20px;
+        line-height: 21px; }
+    a.button.green {
+      background: transparent url(../../images/admin/buttons/green/right_01.png) no-repeat scroll top right;
+      color: #151 !important; }
+      a.button.green span {
+        background: transparent url(../../images/admin/buttons/green/left_01.png) no-repeat; }
+  button {
+    border: 0;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0 20px 0 0;
+    text-align: center;
+    background: url(../../images/admin/buttons/right_01.png) center right no-repeat;
+    font-size: 1.3em;
+    outline: none; }
+    button span {
+      position: relative;
+      display: block;
+      white-space: nowrap;
+      padding: 0 0 0 20px;
+      height: 35px;
+      line-height: 35px;
+      background: url(../../images/admin/buttons/left_01.png) center left no-repeat;
+      text-shadow: #efefef 1px 1px 0px; }
+      button span img {
+        vertical-align: middle;
+        margin: 0 3px 0 0; }
+    button:focus {
+      outline: none; }
+    button.tick {
+      background: none;
+      width: 24px; }
+  input.title,
+  textarea {
+    margin: 0; }
+  .errorExplanation {
+    border: solid 2px #f15700;
+    padding: 1em;
+    margin-bottom: 1em;
+    background: #cdf;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px; }
+    .errorExplanation ul {
+      color: #f15700;
+      list-style: square; }
+    .errorExplanation h2 {
+      font-size: 1.75em;
+      padding-left: 40px;
+      background: url(../../images/admin/icons/orb/32x32/3.png) center left no-repeat; }
+  ul.checkbox-list {
+    list-style: none; }
+    ul.checkbox-list li {
+      display: block;
+      float: left;
+      width: 200px; }
+      ul.checkbox-list li label {
+        font-weight: normal !important; }
+  #busy_indicator {
+    margin-bottom: 1em; }
+  select#filter_state {
+    font-size: 1.5em; }
+  h2.order-number {
+    margin-bottom: 0; }
+  h4.order-status {
+    display: block;
+    font-weight: normal; }
+  .adr {
+    float: left;
+    margin-right: 1em;
+    margin-bottom: 1em;
+    padding: 1em;
+    border: solid 1px #999;
+    -moz-border-radius: .5em;
+    -webkit-border-radius: .5em;
+    min-width: 200px; }
+    .adr .fn {
+      font-weight: bold; }
+    .adr h4 {
+      margin-bottom: 1em;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: .5em;
+      color: #666; }
+  ul.taxonomy-tree {
+    cursor: default;
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 35px;
+    min-height: 2em; }
+    ul.taxonomy-tree li.taxon {
+      clear: both;
+      padding: 5px; }
+      ul.taxonomy-tree li.taxon span,
+      ul.taxonomy-tree li.taxon input {
+        float: left;
+        margin-right: 1em; }
+      ul.taxonomy-tree li.taxon .name {
+        float: left;
+        cursor: move; }
+      ul.taxonomy-tree li.taxon.new ul.taxonomy-actions,
+      ul.taxonomy-tree li.taxon.editing ul.taxonomy-actions {
+        display: none; }
+      ul.taxonomy-tree li.taxon.to-destroy {
+        color: #900;
+        text-decoration: line-through; }
+        ul.taxonomy-tree li.taxon.to-destroy ul.taxonomy-actions {
+          display: none; }
+  .placeholder {
+    height: 30px;
+    clear: both;
+    border: dashed 2px #ddd; }
+  ul.taxonomy-actions {
+    float: left;
+    list-style: none;
+    margin: 0px 0px 10px 10px;
+    padding: 0; }
+    ul.taxonomy-actions li {
+      float: left;
+      margin-right: 5px; }
+      ul.taxonomy-actions li img {
+        vertical-align: text-top; }
+      ul.taxonomy-actions li.disabled {
+        opacity: .5; }
+  h3.warning {
+    background-image: url(../../images/admin/icons/fugue/exclamation.png);
+    background-position: 10px 15px;
+    background-repeat: no-repeat;
+    padding-left: 35px; }
+  #searching {
+    clear: both;
+    margin-top: 2em; }
+
+
+.pagination{
+	padding-top: 10px;
+	text-align: right;
+}
+a.page, span.page {  
+	padding: 0px 5px; 
+	margin: 0 3px;
+}
+a.page {  	  
+	text-decoration: none;  
+	border: 1px solid #9aafe5;
+	color: #2e6ab1;	
+}
+a.page:hover, a.page:active {  
+	border: 1px solid #2b66a5;
+	color: #000;
+	background-color: LightYellow;	
+} 
+
+a.next_page {
+	font-weight: bold;
+}
+
+
+span.disabled_page {  
+	border: 1px solid #929292;
+	color: #929292;
+} 
+
+span.current_page {  
+	font-weight: bold;
+	border: 1px solid navy;
+	background-color: #2e6ab1;
+	color: #FFF;
+}                  
+
+div#calculator-settings-warning {
+ color: #f00;
+}
+#progress{
+	display:none;
+	background:#154E8C url(../../images/admin/bg/admin_tab_back.png) repeat-x scroll left top;
+	color:#fff;
+	font-size:170%;
+	height:25px;
+	left:33%;
+	padding:10px 0 15px;
+	position:fixed;
+	text-align:center;
+	width:30%;
+	font-weight:bold;
+	-moz-border-radius-bottomleft:15px;
+	-moz-border-radius-bottomright:15px;
+	-webkit-border-bottom-left-radius: 15px;
+	-webkit-border-bottom-right-radius: 15px;
+}
+#progress img{
+	vertical-align:middle;
+	padding-right:10px;
+}
+ 
+ul#shipping-specs {
+  margin: 0;  
+  padding-bottom:10px;  
+}
+ul#shipping-specs li {
+  list-style-image:none;
+  display:inline;
+}
+
+.product-scopes ul > li {
+  float: left;
+  width: 220px;
+  margin-right: 20px;
+}
+
+.product-scopes .invalid {
+  background-color: red;
+}
+
+div.product-preview-products {
+  max-height: 200px;
+  overflow: auto;
+}
+
+#preference-settings input, #preference-settings select, #preference-settings textarea{
+  float:left;
+ 
+}
+
+#preference-settings input[type=text] {
+  width: 250px;
+}
+#preference-settings label{
+  clear:both;
+  display:block;
+  float:left;
+  width:170px;
+}

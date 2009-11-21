@@ -2,6 +2,7 @@
 fr-FR: 
   'no': "No"
   'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: Une copie du courrier sera envoyé aux adresses suivantes
   abbreviation: Abréviation
   access_denied: "Accès interdit"
@@ -173,8 +174,10 @@ fr-FR:
   address: Adresse
   address_information: "Informations complémentaire sur l'adresse"
   adjustment: Revalorisation
+  adjustments: Adjustments
   administration: Administration
   all: "All"
+  all_departments: All departments
   allow_backorders: "Permettre la rupture de stock"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Permettre l'utilisation du SSL lors des modes développement et test
   allow_ssl_to_be_used_when_in_production_mode: Permettre l'utilisation du SSL lors du mode production
@@ -197,11 +200,14 @@ fr-FR:
   back: Arrière
   back_to_store: "Retour sur les produits"
   backordering_is_allowed: "Rupture de stock {{not}} permise"
+  best_selling_products: "Best Selling Products"
+  best_selling_taxons: "Best Selling Taxons"
   bill_address: "Adresse facturée"
   billing_address: "Adresse de facturation"
   billing_integration: Intégration de Facturation
   billing_integrations: Intégrations de Facturation
   billing_integrations_description: "Configurer vos paramètres pour l'intégration avec des systèmes de facturation tels Paypal, Google Checkout, etc."
+  by_day: "by day"
   calculator: Calculateur
   calculator_settings_warning: "Si vous changez le type de calculateur, vous devez tout d'abord enregistrer avant de pouvoir modifier les paramètres du calculateur."
   cancel: annulé
@@ -235,6 +241,7 @@ fr-FR:
   continue: Continuer
   continue_shopping: "Continuer vos achats"
   copy_all_mails_to: Copier tous les emails à
+  count: Count
   country: Pays
   country_based: "Country Based"
   coupon: Coupon                                                                             
@@ -250,6 +257,7 @@ fr-FR:
   credit_card_payment: "Paiement par carte de crédit"
   credit_total: Credit Total
   creditcard: Carte de crédit
+  credits: Credits
   current: Actuellement
   customer: Client
   date_range: "Sélection de dates"
@@ -336,7 +344,13 @@ fr-FR:
   item: Article
   item_description: "Description de l'article"
   item_total: "Nombre total d'articles"
+  items: "Items"
+  last_14_days: "Last 14 Days"
+  last_5_orders: "Last 5 Orders"
+  last_7_days: "Last 7 Days" 
+  last_month: "Last Month"
   last_name: "Nom"
+  last_year: "Last Year"
   list: Liste
   listing_categories: "Liste des catégories"
   listing_option_types: "Liste des types d'option"
@@ -413,6 +427,8 @@ fr-FR:
   option_values: "Option Valeurs"
   options: Options
   or: ou
+  ord_qty: "Ord. Qty"
+  ord_total: "Ord. Total"
   order: Commande
   order_confirmation_note: ""
   order_date: "Date de la commande"
@@ -429,7 +445,9 @@ fr-FR:
   order_updated: "Commande mise à jour"
   orders: Commandes
   out_of_stock: "En rupture de stock"
+  out_of_stock_products: "Out of Stock Products"
   overview: Vue d'ensemble
+  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: "Vous avez tenté de visiter une page qui peut être vu qu'en étant connecté"
   page_only_viewable_when_logged_out: "Vous avez tenté de visiter une page qui peut être vu qu'en étant déconnecté"
   paid: Payer
@@ -583,6 +601,7 @@ fr-FR:
   prototype: Prototype
   prototypes: Prototypes
   qty: Qté
+  range: "Range"
   rate: Taux
   register: "Enregistrer en tant que Nouvel Utilisateur"
   register_or_guest: "Commander en tant qu'invité ou enregistrer"
@@ -704,8 +723,11 @@ fr-FR:
   taxons: Arborescence
   thank_you_for_your_order: "Merci de nous avoir fait confiance. Imprimez cette page de confirmation pour vos archives."
   this_file_language: "Français (FR)"
+  this_month: "This Month"
+  this_year: "This Year"
   thumbnail: "Vignette"
   to_add_variants_you_must_first_define: "Pour ajouter des gammes, vous devez premièrement définir"
+  top_grossing_products: "Top Grossing Products"
   total: Total
   tracking: Localiser
   transaction: Transaction

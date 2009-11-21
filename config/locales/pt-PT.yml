@@ -2,6 +2,7 @@
 pt-PT: 
   'no': "No"
   'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abreviação
   access_denied: "Accesso Recusado"             
@@ -173,8 +174,10 @@ pt-PT:
   address: Morada
   address_information: "Informação de Morada"
   adjustment: Acerto
+  adjustments: Adjustments
   administration: Administração
   all: "All"
+  all_departments: All departments
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode         
@@ -197,11 +200,14 @@ pt-PT:
   back: "Para Trás"
   back_to_store: "Voltar à Loja"
   backordering_is_allowed: "Backordering {{not}} allowed"
+  best_selling_products: "Best Selling Products"
+  best_selling_taxons: "Best Selling Taxons"
   bill_address: "Endereço da Conta"
   billing_address: "Endereço de Cobrança"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
   billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
+  by_day: "by day"
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Cancelar
@@ -235,6 +241,7 @@ pt-PT:
   continue: Continue
   continue_shopping: "Continue a sua compra"
   copy_all_mails_to: Copy All Mails To                                                                             
+  count: Count
   country: País
   country_based: "Baseado em País"
   coupon: Coupon                                                                             
@@ -250,6 +257,7 @@ pt-PT:
   credit_card_payment: "Pagamento com Cartão de Crédito"
   credit_total: Credit Total
   creditcard: Creditcard
+  credits: Credits
   current: Actual
   customer: Cliente
   date_range: "Entre as Datas"
@@ -336,7 +344,13 @@ pt-PT:
   item: Artigo
   item_description: "Descrição do Artigo"
   item_total: "Total do Artigo"
+  items: "Items"
+  last_14_days: "Last 14 Days"
+  last_5_orders: "Last 5 Orders"
+  last_7_days: "Last 7 Days" 
+  last_month: "Last Month"
   last_name: Apelido
+  last_year: "Last Year"
   list: Lista
   listing_categories: "Listando as Categorias"
   listing_option_types: "Listando Tipos de Opções"
@@ -413,6 +427,8 @@ pt-PT:
   option_values: "Valores Opcionais"
   options: Opções
   or: ou
+  ord_qty: "Ord. Qty"
+  ord_total: "Ord. Total"
   order: Encomenda
   order_confirmation_note: "Nota de confirmação da encomenda"
   order_date: "Data da Encomenda"
@@ -429,7 +445,9 @@ pt-PT:
   order_updated: "Encomenda Actualizada"
   orders: Encomendas
   out_of_stock: "sem Stock"
+  out_of_stock_products: "Out of Stock Products"
   overview: Resumo
+  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Paid
@@ -583,6 +601,7 @@ pt-PT:
   prototype: Prototype
   prototypes: Protótipos
   qty: Qt.
+  range: "Range"
   rate: Rate
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
@@ -704,8 +723,11 @@ pt-PT:
   taxons: Taxons
   thank_you_for_your_order: "Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle."
   this_file_language: "Português"
+  this_month: "This Month"
+  this_year: "This Year"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "To add variants, you must first define"
+  top_grossing_products: "Top Grossing Products"
   total: Total
   tracking: Tracking
   transaction: Transacção

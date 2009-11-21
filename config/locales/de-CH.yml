@@ -2,6 +2,7 @@
 de-CH: 
   'no': "No"
   'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: Eine Kopie aller E-Mails wird an folgende Adressen geschickt
   abbreviation: Abkürzung
   access_denied: "Zugriff verweigert"        
@@ -173,8 +174,10 @@ de-CH:
   address: Adresse
   address_information: "Adress-Information"
   adjustment: Anpassung
+  adjustments: Adjustments
   administration: Verwaltung
   all: "All"
+  all_departments: All departments
   allow_backorders: "Lieferrückstand erlauben"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "SSL in den Modi 'development' und 'test' erlauben"
   allow_ssl_to_be_used_when_in_production_mode: "SSL im Modus 'production' erlauben"
@@ -197,11 +200,14 @@ de-CH:
   back: Zurück
   back_to_store: "Zurück zum Shop"
   backordering_is_allowed: "Backordering {{not}} allowed"
+  best_selling_products: "Best Selling Products"
+  best_selling_taxons: "Best Selling Taxons"
   bill_address: Rechnungsadresse
   billing_address: Rechnungsadresse
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
   billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
+  by_day: "by day"
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Verwerfen
@@ -235,6 +241,7 @@ de-CH:
   continue: Weitermachen
   continue_shopping: "Weiter Einkaufen"
   copy_all_mails_to: "Kopien aller E-Mails an"                   
+  count: Count
   country: Land
   country_based: "Basierend auf Land"
   coupon: Coupon                                                                             
@@ -250,6 +257,7 @@ de-CH:
   credit_card_payment: Kreditkartenzahlung
   credit_total: Credit Total
   creditcard: Kreditkarte
+  credits: Credits
   current: Stand
   customer: Kunde
   date_range: "Datum (von/bis)"
@@ -336,7 +344,13 @@ de-CH:
   item: Artikel
   item_description: Artikelbeschreibung
   item_total: "Artikel Gesamt"
+  items: "Items"
+  last_14_days: "Last 14 Days"
+  last_5_orders: "Last 5 Orders"
+  last_7_days: "Last 7 Days" 
+  last_month: "Last Month"
   last_name: Nachname
+  last_year: "Last Year"
   list: Liste
   listing_categories: Kategorien
   listing_option_types: Optionen
@@ -413,6 +427,8 @@ de-CH:
   option_values: "Optionswalues"
   options: Optionen
   or: oder
+  ord_qty: "Ord. Qty"
+  ord_total: "Ord. Total"
   order: Bestellung
   order_confirmation_note: "Bestellbestätigungsnotiz"
   order_date: Bestelldatum
@@ -429,7 +445,9 @@ de-CH:
   order_updated: "Bestellung aktualisiert"
   orders: Bestellungen
   out_of_stock: "Ausverkauft"
+  out_of_stock_products: "Out of Stock Products"
   overview: Übersicht
+  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Bezahlt
@@ -583,6 +601,7 @@ de-CH:
   prototype: Prototype
   prototypes: "Prototyp"
   qty: Anz
+  range: "Range"
   rate: Rate
   register: "Als neuer Benutzer registrieren"
   register_or_guest: "Als Gast weitermachen oder registrieren"
@@ -704,8 +723,11 @@ de-CH:
   taxons: Taxons
   thank_you_for_your_order: "Vielen Dank für ihre Bestellung"
   this_file_language: Deutsch (Schweiz)
+  this_month: "This Month"
+  this_year: "This Year"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "To add variants, you must first define"
+  top_grossing_products: "Top Grossing Products"
   total: Gesamt
   tracking: Tracking
   transaction: Transaktion
