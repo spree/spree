@@ -6,6 +6,4 @@
   <% end %>
 <% end %>
 
-<%= render :partial => "shared/products.html.erb", :locals => {:products => @products, :taxon => @taxon } %>
-
-<%= will_paginate(:previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
+<%= render :partial => "shared/products", :locals => {:products => @products, :taxon => @taxon } %>
