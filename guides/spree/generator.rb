@@ -8,8 +8,11 @@ module Spree
       @guides_dir = File.join(File.dirname(__FILE__), '..')
 
       @output = output || File.join(@guides_dir, "output")
+      
+      @only = ENV["ONLY"]
+      @only = ARGV.join(",")if ARGV.length > 0
 
-      unless ENV["ONLY"]
+      unless @only
         FileUtils.rm_r(@output) if File.directory?(@output)
         FileUtils.mkdir(@output)
       end
@@ -20,8 +23,8 @@ module Spree
     def generate
       guides = Dir.entries(view_path).find_all {|g| g =~ /textile$/ }
 
-      if ENV["ONLY"]
-        only = ENV["ONLY"].split(",").map{|x| x.strip }.map {|o| "#{o}.textile" }
+      if @only
+        only = @only.split(",").map{|x| x.strip }.map {|o| "#{o}.textile" }
         guides = guides.find_all {|g| only.include?(g) }
         puts "GENERATING ONLY #{guides.inspect}"
       end
