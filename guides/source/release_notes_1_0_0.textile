@@ -28,19 +28,17 @@ Another benefit of the architecture is that it makes it possible for Spree to pr
 
 INFO. Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
 
+h3. Seed and Sample Data in Extensions
+
+Seed data is data that is needed by the application in order for it to work properly.  Seed data is not the same as sample data.  Instead of loading this type of data in a migration it is handled through the standard rails task through +rake db:seed+.  The rake task will first load the seed data in the spree core (ex. +db/default/countries.yml+.)  Spree will then load any fixtures found in the +db/default+ directory of your extensions.  If you wish to perform a seeding function other than simply loading fixtures, you can still do so in your extension's  +db/seeds.rb+ file.
+
+Sample data is data that is convenient to have when testing your code.  Its loaded with the +rake db:sample+ task.  The core sample data is loaded first, followed by any fixtures contained in the +db/sample+ directory of your extensions.  
+
+If you have fixtures in your extension with the same filename as those found in the core, they will be loaded instead of the core version.  This applies to both sample and seed fixtures.  This allows for fine grained control over the sample and seed data.  For example, you can create your own custom sample order data in your site extension instead of relying on the version provided by Spree.
+
 h3. Miscellaneous improvements
 
-h4. Seed data in extensions
-
-Calling +rake db:seed+ or +rake db:bootstrap+ will run Spree's +db/seeds.rb+ and now it also runs the
-same named file in your extensions.
-
-To specify seed data in your extension directory, create a
-+db/seeds.rb+ file and add any code in here you want. Often the code you write
-in +db/seeds.rb+ will load YAML fixtures into the database, see the +db/seeds.rb+
-file in Spree core for an example of this.
-
-h4. Sample product images in extensions
+h4. Sample Product Images in Extensions
 
 For some time now you've been able to write sample data fixtures in extensions
 that will get run when you load sample data with the +rake db:bootstrap+ task.
