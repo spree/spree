@@ -7,5 +7,7 @@ class Admin::TaxCategoriesController < Admin::BaseController
 
   update.response do |wants|
     wants.html { redirect_to collection_url }
-  end  
+  end
+  
+  destroy.success.wants.js { render_js_for_destroy }
 end

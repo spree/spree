@@ -3,7 +3,7 @@
 
 <%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', 'admin/jquery.jqplot.min.css', :cache => 'admin-all' %>
 
-<%= javascript_include_tag 'jquery-ui', 'jrails', 'jquery.suggest', 'jrails.autocomplete', :cache => 'jquery-admin-plugins' %>
+<%= javascript_include_tag 'jquery', 'jquery-ui', 'jrails', 'jquery.suggest', 'jrails.autocomplete', :cache => 'jquery-admin-plugins' %>
 <%= javascript_include_tag('jquery.template') unless controller.controller_name == "overview" %>
 <%= javascript_include_tag 'spree', 'nested-attribute', 'zone', 'calculator', 'gateway' %>
 <%= javascript_tag "$ = jQuery;" %>

@@ -8,6 +8,13 @@ class Admin::BaseController < Spree::BaseController
   before_filter :add_shipments_tab
   before_filter :parse_date_params
 
+protected
+
+  def render_js_for_destroy
+    render :js => "$('.flash.notice').html('#{flash[:notice]}'); $('.flash.notice').show();"
+    flash[:notice] = nil
+  end
+
 private
   def parse_date_params
     params.each do |k, v|

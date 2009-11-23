@@ -4,6 +4,7 @@ class Admin::ShippingRatesController < Admin::BaseController
 
   update.wants.html { redirect_to edit_object_url }
   create.wants.html { redirect_to edit_object_url }
+  destroy.success.wants.js { render_js_for_destroy }
     
   private 
   def build_object

@@ -7,6 +7,7 @@ class Admin::TaxonsController < Admin::BaseController
   create.wants.html {render :text => @taxon.id}
   update.wants.html {render :text => @taxon.name}
   destroy.wants.html {render :text => ""}
+  destroy.success.wants.js { render_js_for_destroy }
   
   create.before :create_before
   update.before :update_before

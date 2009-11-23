@@ -38,7 +38,10 @@ class Admin::ProductsController < Admin::BaseController
       flash[:notice] = "Product could not be deleted"
     end
     
-    redirect_to collection_url
+    respond_to do |format|
+      format.html { redirect_to collection_url }
+      format.js  { render_js_for_destroy }
+    end
   end
 
   def clone

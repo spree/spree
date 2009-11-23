@@ -29,6 +29,8 @@ class Admin::PrototypesController < Admin::BaseController
     wants.html {redirect_to collection_url}
   end
   
+  destroy.success.wants.js { render_js_for_destroy }
+  
   private
   def set_habtm_associations
     object.property_ids = params[:property][:id] if params[:property]

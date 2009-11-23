@@ -22,4 +22,6 @@ class Admin::PropertiesController < Admin::BaseController
   create.response do |wants| 
     wants.html {redirect_to collection_url}
   end
+
+  destroy.success.wants.js { render_js_for_destroy }
 end

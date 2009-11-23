@@ -35,6 +35,8 @@ class Admin::OptionTypesController < Admin::BaseController
   update.response do |wants| 
     wants.html {redirect_to collection_url}
   end
+  
+  destroy.success.wants.js { render_js_for_destroy }
 
   # AJAX method for selecting an existing option type and associating with the current product
   def select

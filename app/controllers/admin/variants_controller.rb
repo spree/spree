@@ -29,8 +29,11 @@ class Admin::VariantsController < Admin::BaseController
     else
       flash[:notice] = "Variant could not be deleted"
     end
-    
-    redirect_to admin_product_variants_url(params[:product_id])
+
+    respond_to do |format|
+      format.html { redirect_to admin_product_variants_url(params[:product_id]) }
+      format.js  { render_js_for_destroy }
+    end
   end
   
   private 

@@ -11,6 +11,8 @@ class Admin::ZonesController < Admin::BaseController
     wants.html { redirect_to collection_url }
   end
   
+  destroy.success.wants.js { render_js_for_destroy }
+  
   private
   def build_object
     @object ||= end_of_association_chain.send parent? ? :build : :new, object_params

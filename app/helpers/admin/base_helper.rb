@@ -25,6 +25,7 @@ module Admin::BaseHelper
           type: 'POST',
           url: '#{options[:url]}',
           data: ({_method: 'delete', authenticity_token: AUTH_TOKEN}),
+          dataType:'script',
           success: function(r){ jQuery('##{dom_id resource}').fadeOut('hide'); } 
         });
       }

@@ -3,7 +3,8 @@ class Admin::TaxRatesController < Admin::BaseController
   before_filter :load_data
                                                           
   create.success.wants.html { redirect_to collection_url }
-  update.success.wants.html { redirect_to collection_url }
+  update.success.wants.html { redirect_to collection_url }   
+  destroy.success.wants.js { render_js_for_destroy }
   
   update.after :update_after
   create.after :create_after
