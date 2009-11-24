@@ -11,9 +11,10 @@ class Calculator::FlatPercentItemTotal < Calculator
     ShippingMethod.register_calculator(self)
     ShippingRate.register_calculator(self)
   end
-  
-  def compute(order)
-    return if order.nil?
-    order.item_total * self.preferred_flat_percent / 100.0
-  end  
+
+  def compute(line_items)
+    return if line_items.nil?
+    item_total = line_items.inject(0) {|amount, li| amount + li.total } 
+    item_total * self.preferred_flat_percent / 100.0
+  end
 end
