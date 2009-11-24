@@ -1,5 +1,5 @@
 <% 
-require "Faker"
+require 'faker'
 1.upto(500) do |i| 
 email = Faker::Internet.email  
 %>
