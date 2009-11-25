@@ -61,9 +61,13 @@ class Admin::OverviewController < Admin::BaseController
   def orders_by_day(params)
  
     if params[:value] == "Count"
-      Order.count(:group => "strftime('%Y-%m-%d',completed_at)", :conditions => conditions(params))
+      orders = Order.find(:all, :select => 'created_at', :conditions => conditions(params))
+      orders = orders.group_by { |o| o.created_at.beginning_of_day }
+      orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].count ]}
     else
-      Order.sum("total", :group => "strftime('%Y-%m-%d',completed_at)", :conditions => conditions(params))
+      orders = Order.find(:all, :select => 'total, created_at', :conditions => conditions(params))
+      orders = orders.group_by { |o| o.created_at.beginning_of_day }
+      orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].inject(0){|s,o| s += o.total} ]}
     end
   end
   
@@ -105,10 +109,9 @@ class Admin::OverviewController < Admin::BaseController
 
   def best_selling_taxons
     taxonomy = Taxonomy.last
-    sql = ActiveRecord::Base.connection();
-    taxons = sql.execute("select t.name, count(li.quantity) from line_items li inner join variants v on 
-      li.variant_id = v.id inner join products p on v.product_id = p.id inner join products_taxons pt on p.id = pt.product_id 
-      inner join taxons t on pt.taxon_id = t.id where t.taxonomy_id = #{taxonomy.id} group by t.name order by count(li.quantity) desc limit 5;")
+    taxons =  Taxon.connection.select_rows("select t.name, count(li.quantity) from line_items li inner join variants v on
+           li.variant_id = v.id inner join products p on v.product_id = p.id inner join products_taxons pt on p.id = pt.product_id
+           inner join taxons t on pt.taxon_id = t.id where t.taxonomy_id = #{taxonomy.id} group by t.name order by count(li.quantity) desc limit 5;")
   end
 
   def last_five_orders
