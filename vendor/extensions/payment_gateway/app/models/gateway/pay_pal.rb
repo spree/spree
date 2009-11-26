@@ -1,6 +1,6 @@
 class Gateway::PayPal < Gateway
 	preference :login, :string
-	preference :password, :string
+	preference :password, :password
 	preference :signature, :string
 	preference :currency_code, :string
 

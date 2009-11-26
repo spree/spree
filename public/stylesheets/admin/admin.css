@@ -480,9 +480,14 @@ div.product-preview-products {
  
 }
 
-#preference-settings input[type=text] {
+#preference-settings input[type=text], #preference-settings input[type=password] {
   width: 250px;
 }
+
+#preference-settings input.input_integer[type=text] {
+  width: 100px;
+}
+
 #preference-settings label{
   clear:both;
   display:block;

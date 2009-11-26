@@ -1,7 +1,7 @@
 class Gateway::Beanstream < Gateway
 	preference :login, :string
 	preference :user, :string
-	preference :password, :string
+	preference :password, :password
 	preference :secure_profile_api_key, :string
 	
   def provider_class

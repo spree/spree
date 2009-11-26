@@ -200,6 +200,14 @@ module Admin::BaseHelper
           :disabled => options[:disabled]
         }
       )
+    when :password
+      form.password_field(field, {
+          :size => 10,
+          :class => 'password_string',
+          :readonly => options[:readonly],
+          :disabled => options[:disabled]
+        }
+      )
     when :text
       form.text_area(field,
         {:rows => 15, :cols => 85, :readonly => options[:readonly],

@@ -21,9 +21,8 @@ class Admin::GatewaysController < Admin::BaseController
   end
   
   def update_before
-		if params[:gateway] && params[:gateway][:type] && @object.type.to_s != params[:gateway][:type]
-			@object.type = params[:gateway][:type]
-			@object.save
+		if params[:gateway] && params[:gateway][:type] && @object['type'].to_s != params[:gateway][:type]
+			@object.update_attribute(:type, params[:gateway][:type])
 			
 			load_object			
 		end
