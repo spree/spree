@@ -63,7 +63,7 @@ class Admin::OverviewController < Admin::BaseController
     if params[:value] == "Count"
       orders = Order.find(:all, :select => 'created_at', :conditions => conditions(params))
       orders = orders.group_by { |o| o.created_at.beginning_of_day }
-      orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].count ]}
+      orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].size ]}
     else
       orders = Order.find(:all, :select => 'total, created_at', :conditions => conditions(params))
       orders = orders.group_by { |o| o.created_at.beginning_of_day }
