@@ -143,7 +143,7 @@ h3. Best Practices
 </dl>
 <dl>
   <% guide('SEO Considerations', 'seo_considerations.html') do %>
-    Information on how to leverage the exisitng SEO features of Spree as well as on general SEO best practices.
+    Information on how to leverage the existing SEO features of Spree as well as on general SEO best practices.
   <% end %>
 </dl>
 
