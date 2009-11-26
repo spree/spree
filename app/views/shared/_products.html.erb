@@ -16,8 +16,11 @@
   <% end %>
 </ul>
 <hr class="space" />
-<% if paginated_products.is_a?(WillPaginate::Collection) %>
-  <%= will_paginate(paginated_products, 
+<%  if paginated_products.is_a?(WillPaginate::Collection) 
+      params.delete(:search)
+      params.delete(:taxon)
+      
+%><%= will_paginate(paginated_products, 
                     :previous_label => "&#171; #{t('previous')}", 
                     :next_label => "#{t('next')} &#187;") %>
-<% end -%>
+<%  end -%>
