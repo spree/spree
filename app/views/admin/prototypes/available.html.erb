@@ -10,11 +10,8 @@
       <tr id="row_<%= prototype.id %>">
         <td><%= prototype.name %></td>
 		    <td class="actions">
-					<%= link_to_remote icon('add') + ' ' + t("select"), 
-		                         {:url => select_admin_prototype_url(prototype), 
-		                         :update => 'rjs-target',
-														 :before => "jQuery('#busy_indicator').show()", 
-				                     :complete => "jQuery('#busy_indicator').hide(); jQuery('#row_#{prototype.id}').hide();"}, :class => 'iconlink' %>
+		      <%= link_to icon('add') + ' ' + t("select"), select_admin_prototype_url(prototype), 
+		                  :class => 'ajax iconlink select_properties_from_prototype' %>
 				</td>
       </tr>
     <% end %>
@@ -23,5 +20,3 @@
     <% end %>
   </tbody>
 </table>
-
-<script id="rjs-target"></script>
