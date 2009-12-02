@@ -29,9 +29,9 @@ jQuery(document).ready(function() {
     jQuery("#variant-images span").html(text);
 
     if (images[vid].length > 0) {
-      $.each(imags[vid], function(i, link) {
+      $.each(images[vid], function(i, link) {
         jQuery("#variant-thumbnails").append('<li>' + link + '</li>');
-      }
+      });
 
       jQuery("#variant-images").show();
     } else {
