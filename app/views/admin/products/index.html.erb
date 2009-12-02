@@ -3,8 +3,8 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li id="new_ot_link">
-      <%= button_link_to_remote t("new_product"), 
-                         {:url => new_object_url, 
+      <%= button_link_to_remote t("new_product"),
+                         {:url => new_object_url,
                          :method => :get,
                          :update => "new-product"}, :icon => 'add' %>
     </li>
@@ -19,9 +19,9 @@
 
 <table class="index">
   <tr>
-    <th><%= t("sku") %></td>
-	    <th><%= order @search, :by => :name, :as => t("name") %></td>
-	    <th><%= order @search, :by => :price, :as => t("master_price") %></td>
+    <th><%= t("sku") %></th>
+      <th><%= order @search, :by => :name, :as => t("name") %></th>
+      <th><%= order @search, :by => :price, :as => t("master_price") %></th>
     <th>&nbsp;</th>
   </tr>
 <% @collection.each do |product| %>
