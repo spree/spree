@@ -355,6 +355,7 @@ module ActionView # :nodoc: all
       private
         def datepicker_selector(options, html_options)
           datetime = value(object) || default_datetime(options)
+          datetime = Time.zone.local_to_utc(datetime)
 
           options = options.dup
           options[:field_name]           = @method_name
