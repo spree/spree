@@ -56,10 +56,14 @@ class InventoryUnit < ActiveRecord::Base
     end
   end
   
+  def can_restock?
+    %w(sold shipped).include?(state)
+  end
+  
   def restock!  
     variant.update_attribute(:count_on_hand, variant.count_on_hand + 1)
     delete
-  end    
+  end
   
   # find the specified quantity of units with the specified status
   def self.find_by_status(variant, quantity, status)
