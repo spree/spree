@@ -59,6 +59,7 @@ begin
     files.exclude 'vendor/plugins/resource_controller/test/*'
     s.files = files.to_a
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install jeweler"
 end
