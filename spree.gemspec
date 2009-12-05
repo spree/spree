@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sean Schofield"]
-  s.date = %q{2009-12-04}
+  s.date = %q{2009-12-05}
   s.default_executable = %q{spree}
   s.description = %q{The most flexible commerce platform available - designed from the ground up to be as open and extensible as possible.}
   s.email = %q{sean@railsdog.com}
@@ -1422,7 +1422,6 @@ Gem::Specification.new do |s|
      "spec/spec.opts",
      "spec/spec_helper.rb",
      "spec/views/admin/configurations/index.html.erb_spec.rb",
-     "spree.gemspec",
      "test/factories/address_factory.rb",
      "test/factories/adjustments_factory.rb",
      "test/factories/checkout_factory.rb",
@@ -2152,7 +2151,8 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<treetop>, [">= 1.4.2"])
       s.add_runtime_dependency(%q<rake>, [">= 0.7.1"])
       s.add_runtime_dependency(%q<highline>, [">= 1.4.0"])
-      s.add_runtime_dependency(%q<rails>, ["= 2.3.4"])
+      s.add_runtime_dependency(%q<rails>, ["= 2.3.5"])
+      s.add_runtime_dependency(%q<rack>, [">= 1.0.1"])
       s.add_runtime_dependency(%q<activemerchant>, ["= 1.4.1"])
       s.add_runtime_dependency(%q<activerecord-tableless>, [">= 0.1.0"])
       s.add_runtime_dependency(%q<calendar_date_select>, ["= 1.15"])
@@ -2166,7 +2166,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<treetop>, [">= 1.4.2"])
       s.add_dependency(%q<rake>, [">= 0.7.1"])
       s.add_dependency(%q<highline>, [">= 1.4.0"])
-      s.add_dependency(%q<rails>, ["= 2.3.4"])
+      s.add_dependency(%q<rails>, ["= 2.3.5"])
+      s.add_dependency(%q<rack>, [">= 1.0.1"])
       s.add_dependency(%q<activemerchant>, ["= 1.4.1"])
       s.add_dependency(%q<activerecord-tableless>, [">= 0.1.0"])
       s.add_dependency(%q<calendar_date_select>, ["= 1.15"])
@@ -2181,7 +2182,8 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<treetop>, [">= 1.4.2"])
     s.add_dependency(%q<rake>, [">= 0.7.1"])
     s.add_dependency(%q<highline>, [">= 1.4.0"])
-    s.add_dependency(%q<rails>, ["= 2.3.4"])
+    s.add_dependency(%q<rails>, ["= 2.3.5"])
+    s.add_dependency(%q<rack>, [">= 1.0.1"])
     s.add_dependency(%q<activemerchant>, ["= 1.4.1"])
     s.add_dependency(%q<activerecord-tableless>, [">= 0.1.0"])
     s.add_dependency(%q<calendar_date_select>, ["= 1.15"])

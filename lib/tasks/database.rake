@@ -1,4 +1,4 @@
-require 'activerecord'              
+require 'active_record'              
 
 namespace :db do
   desc "Migrate schema to version 0 and back up again. WARNING: Destroys all data in tables!!"
