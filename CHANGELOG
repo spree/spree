@@ -1,3 +1,8 @@
+== 0.9.3
+
+* # - 947 Stylesheets broken when running under a sub uri 
+* # - 948 Updated to Rails 2.3.5 
+
 == 0.9.2
 
 * # - 837 Do not allow edit or update of completed checkout (SECURITY FIX)
