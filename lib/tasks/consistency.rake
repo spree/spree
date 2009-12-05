@@ -1,4 +1,4 @@
-require 'activerecord'              
+require 'active_record'              
 #require 'test/unit/testcase'
 
 def assert (bool,msg)

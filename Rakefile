@@ -26,7 +26,8 @@ begin
     s.version = Spree::Version
     s.add_dependency 'rake', '>= 0.7.1'
     s.add_dependency 'highline', '>= 1.4.0'
-    s.add_dependency 'rails', '= 2.3.4'
+    s.add_dependency 'rails', '= 2.3.5'
+    s.add_dependency 'rack', '>= 1.0.1'
     s.add_dependency 'activemerchant', '= 1.4.1'
     s.add_dependency 'activerecord-tableless', '>= 0.1.0'
     #s.add_dependency 'authlogic', '>=2.0.11'  (For some reason including authlogic causes bug - see #433)
@@ -54,6 +55,7 @@ begin
     files.include 'public/.htaccess.example'
     files.exclude 'public/images/products'
     files.exclude 'public/assets/products'
+    files.exclude 'spree.gemspec'
     files.exclude 'tmp/'
     files.exclude 'vendor/plugins/delegate_belongs_to/spec/app_root/log/*.log'
     files.exclude 'vendor/plugins/resource_controller/test/*'
