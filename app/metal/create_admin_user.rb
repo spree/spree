@@ -5,7 +5,7 @@ require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Ra
 class CreateAdminUser  
   
   def self.call(env)                
-    if env["PATH_INFO"] =~ /^\/users/ or @admin_defined or not User.table_exists?
+    if env["PATH_INFO"] =~ /^\/users|stylesheets/ or @admin_defined or not User.table_exists?
       @status = [404, {"Content-Type" => "text/html"}, "Not Found"]
     else
       @admin_defined = User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
