@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
 
 <h2><%= t("new_credit_card_payment")%></h2>
-                  
+
 <%=error_messages_for :creditcard_payment %>
 <% form_for @creditcard_payment, :url => collection_url do |payment_form| %>
   <h4><%= t("billing_address")%></h4>
@@ -11,5 +11,5 @@
   <p class="form-buttons">
     <%= button t('continue') %>
     <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_payments_url(@order) %>
-  </p>  
+  </p>
 <% end %>

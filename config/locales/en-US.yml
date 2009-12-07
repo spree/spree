@@ -1,11 +1,17 @@
 ---
-en-US: 
+en-US:
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
+  charges: Charges
+  balance_due: "Balance Due"
+  credit_owed: "Credit Owed"
+  under_paid: "Under Paid"
+  over_paid: "Over Paid"
   access_denied: "Access Denied"
+  new_adjustment: "New Adjustment"
   account: Account
   account_updated: "Account updated!"
   action: Action
@@ -347,7 +353,7 @@ en-US:
   items: "Items"
   last_14_days: "Last 14 Days"
   last_5_orders: "Last 5 Orders"
-  last_7_days: "Last 7 Days" 
+  last_7_days: "Last 7 Days"
   last_month: "Last Month"
   last_name: "Last Name"
   last_year: "Last Year"

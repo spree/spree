@@ -1,7 +1,12 @@
 require 'test_helper'
 
-class TestCharge < Charge
+class TestCharge < Charge; end
 
+Charge.class_eval do
+  private
+  def self.subclasses
+    self == Charge ? [TaxCharge, ShippingCharge, TestCharge] : []
+  end
 end
 
 class ChargeTest < ActiveSupport::TestCase
@@ -23,7 +28,7 @@ class ChargeTest < ActiveSupport::TestCase
       ShippingCharge.create(:order => @order, :description => "TestCharge")
       TaxCharge.create(:order => @order, :description => "TestCharge")
       TestCharge.create(:order => @order, :description => "TestCharge")
-      assert_equal(5, @order.reload.charges.length) # 4 + 1 default tax charge                   
+      assert_equal(5, @order.reload.charges.length) # 4 + 1 default tax charge
     end
 
     context "TaxCharge" do
@@ -89,9 +94,9 @@ class ChargeTest < ActiveSupport::TestCase
       end
 
       context "with line_items quantity changes" do
-        setup do 
+        setup do
           @order.line_items.first.update_attribute(:quantity, @order.line_items.first.quantity + 1)
-          @order.save 
+          @order.save
           @tax_delta = @order.line_items.first.price * 0.05
           @total_delta = @order.line_items.first.price + @tax_delta
         end

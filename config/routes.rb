@@ -84,8 +84,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :mail_settings
     admin.resource :inventory_settings
     admin.resources :google_analytics
-    admin.resources :orders, :has_many => :shipments
-    admin.resources :orders, :has_many => [:payments, :creditcards], :member => {:fire => :put, :resend => :post}
+    admin.resources :orders, :has_many => [:adjustments, :shipments, :payments, :creditcards], :member => {:fire => :put, :resend => :post}
     admin.resources :orders do |order|
       order.resources :creditcard_payments, :member => {:capture => :get}
     end

@@ -1,5 +1,5 @@
 Factory.define(:order) do |record|
-  # associations: 
+  # associations:
   record.association(:user, :factory => :user)
 end
 

@@ -8,9 +8,11 @@
     <li <%= ' class="active"' if current == "Order Details" %>>
       <%= link_to t("order_details"), admin_order_url(@order) %>
     </li>
+    <li <%= ' class="active"' if current == "Adjustments" %>>
+       <%= link_to t("adjustments"), admin_order_adjustments_url(@order) %>
+    </li>
     <li <%= ' class="active"' if current == "Payments" %>>
-       <%= link_to t("payments"),
-                      admin_order_payments_url(@order) %>
+       <%= link_to t("payments"), admin_order_payments_url(@order) %>
     </li>
     <% if @order_admin_tabs && @order_admin_tabs.size > 0 -%>
                 <% @order_admin_tabs.each do |extension| -%>

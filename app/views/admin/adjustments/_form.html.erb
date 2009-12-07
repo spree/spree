@@ -1,0 +1,21 @@
+<%= hidden_field :adjustment, :adjustment_source_id, :value => @order.id %>
+<%= hidden_field :adjustment, :adjustment_source_type, :value => @order.class %>
+
+<% f.field_container :amount do %>
+  <%= f.label :amount, t("amount")%> <span class="required">*</span><br />
+  <%= text_field :adjustment, :amount, {:style => "width:80px;"} %>
+  <%= f.error_message_on :amount %>
+<% end %>
+
+<% f.field_container :type do %>
+  <%= f.label :type, t("type")%> <span class="required">*</span><br />
+  <%= select_tag "adjustment[type]", grouped_options_for_select(@adjustment_types, @adjustment['type']),  { :disabled => (controller.action_name == 'edit')} %>
+  <%= f.error_message_on :description %>
+<% end %>
+
+<% f.field_container :description do %>
+  <%= f.label :description, t("description")%> <span class="required">*</span><br />
+  <%= text_area :adjustment, :description, {:style=> "height:100px;", :class => 'fullwidth'} %>
+  <%= f.error_message_on :description %>
+<% end %>
+

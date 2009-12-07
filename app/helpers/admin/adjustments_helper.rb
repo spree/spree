@@ -1,0 +1,2 @@
+module Admin::AdjustmentsHelper
+end

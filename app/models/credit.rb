@@ -5,4 +5,9 @@ class Credit < Adjustment
   def ensure_negative_amount
     self.amount = -1 * self.amount.abs if self.amount
   end
+
+  def self.subclasses
+    self == Credit ? [CouponCredit] : []
+  end
+
 end

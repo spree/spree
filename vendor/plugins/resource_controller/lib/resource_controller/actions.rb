@@ -1,12 +1,12 @@
 module ResourceController
   module Actions
-    
+
     def index
       load_collection
       before :index
       response_for :index
     end
-    
+
     def show
       load_object
       before :show
@@ -30,7 +30,7 @@ module ResourceController
       end
     end
 
-    def update  
+    def update
       load_object
       before :update
       if object.update_attributes object_params
@@ -70,6 +70,6 @@ module ResourceController
         response_for :destroy_fails
       end
     end
-    
+
   end
 end
