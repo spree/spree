@@ -28,7 +28,7 @@ end
 
 def create_admin_user
   if ENV['AUTO_ACCEPT']
-    password =  "spree",
+    password =  "spree"
     email =  "spree@example.com"          
   else
     require 'highline/import' 
@@ -48,12 +48,11 @@ def create_admin_user
     say "\nWARNING: There is already a user with the email: #{email}, so no account changes were made.  If you wish to create an additional admin user, please run rake db:admin:create again with a different email.\n\n"
   else
     admin = User.create(attributes)
-
-   # create an admin role and and assign the admin user to that role
-   role = Role.find_or_create_by_name "admin"
-   admin.roles << role
-   admin.save          
- end      
+    # create an admin role and and assign the admin user to that role
+    role = Role.find_or_create_by_name "admin"
+    admin.roles << role
+    admin.save
+  end      
 end
 
 create_admin_user unless User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])     
