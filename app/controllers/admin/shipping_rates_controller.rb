@@ -10,7 +10,7 @@ class Admin::ShippingRatesController < Admin::BaseController
   def build_object
     @object ||= end_of_association_chain.send((parent? ? :build : :new), object_params)
     @object.calculator = params[:tax_rate][:calculator_type].constantize.new if params[:tax_rate]
-    @object.calculator ||= ShippingRate.calculators.first.new
+    @object.calculator ||= ShippingRate.calculators.to_a.first.new
     @object
   end  
   def load_data
