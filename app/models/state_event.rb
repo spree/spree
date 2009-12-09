@@ -1,6 +1,6 @@
 class StateEvent < ActiveRecord::Base
   belongs_to :user
-  belongs_to :order
+  belongs_to :stateful, :polymorphic => true
   
   def <=>(other)
     created_at <=> other.created_at

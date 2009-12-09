@@ -76,5 +76,14 @@ class OrderTest < ActiveSupport::TestCase
         end
       end
     end
+    
+    context "ship!" do
+      should "make all shipments shipped" do
+        @order.update_attribute(:state, 'paid')
+        @order.ship!
+        assert @order.shipments.all?(&:shipped?)
+      end
+    end
+    
   end
 end

@@ -37,4 +37,21 @@ class StateEventTest < ActiveSupport::TestCase
       end
     end
   end
+  
+  context "Shipment" do
+    setup do
+      @shipment = Factory.create(:shipment)
+    end
+    
+    context "when completed" do
+      setup { @shipment.complete! }
+
+      should "create a state event with the correct stateful" do
+        assert_equal 1, @shipment.state_events.count
+        assert_equal @shipment, @shipment.state_events.first.stateful
+      end
+    end
+
+  end
+  
 end
