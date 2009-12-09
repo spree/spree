@@ -44,7 +44,7 @@ module ResourceController
             @object ||= end_of_association_chain.find(param) unless param.nil?
           else
             # hack by sean to allow permalink objects
-            @object = end_of_association_chain.find_by_param!(param)
+            @object ||= end_of_association_chain.find_by_param!(param)
           end
           @object          
           #@object ||= end_of_association_chain.find(param) unless param.nil?
