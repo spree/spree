@@ -1,28 +1,28 @@
 # Dutch translation in YML by Ariejan de Vroom <ariejan@ariejan.net>
 #  - Sponsored by Kabisa ICT - http://kabisa.nl
 #
-# Fully compatible with Translate (the Rails translation plugin) 
+# Fully compatible with Translate (the Rails translation plugin)
 #  - http://developer.newsdesk.se/2009/01/21/translate-new-rails-i18n-plugin-with-a-nice-web-ui/
---- 
-nl: 
-  number: 
-    format: 
+---
+nl-NL:
+  number:
+    format:
       separator: ","
       precision: 2
       delimiter: .
-    human: 
-      storage_units: 
+    human:
+      storage_units:
         format: "%n %u"
-        units: 
+        units:
           kb: KB
           tb: TB
           gb: GB
-          byte: 
+          byte:
             one: Byte
             other: Bytes
           mb: MB
-    currency: 
-      format: 
+    currency:
+      format:
         format: "%u %n"
         unit: !binary |
           4oKs
@@ -30,9 +30,9 @@ nl:
         separator: .
         precision: 2
         delimiter: .
-  activerecord: 
-    errors: 
-      messages: 
+  activerecord:
+    errors:
+      messages:
         greater_than_or_equal_to: moet groter of gelijk zijn aan {{count}}
         less_than_or_equal_to: moet minder of gelijk zijn aan {{count}}
         confirmation: komt niet met de bevestiging overeen
@@ -52,26 +52,26 @@ nl:
         taken: is niet beschikbaar
         inclusion: is niet in de lijst opgenomen
         not_a_number: is geen getal
-      template: 
+      template:
         body: "Controleer alstublieft de volgende velden:"
-        header: 
+        header:
           one: "Kon dit {{model}} object niet opslaan: 1 fout."
           other: "Kon dit {{model}} niet opslaan: {{count}} fouten."
-  time: 
+  time:
     am: "'s ochtends"
-    formats: 
+    formats:
       default: "%a %d %b %Y %H:%M:%S %Z"
       time: "%H:%M"
       short: "%d %b %H:%M"
       only_second: "%S"
-      datetime: 
-        formats: 
+      datetime:
+        formats:
           default: "%d-%m-%YT%H:%M:%S%Z"
       long: "%d %B %Y %H:%M"
     pm: "'s middages"
-  date: 
-    month_names: 
-    - 
+  date:
+    month_names:
+    -
     - Januari
     - Februari
     - Maart
@@ -84,7 +84,7 @@ nl:
     - Oktober
     - November
     - December
-    abbr_day_names: 
+    abbr_day_names:
     - Zon
     - Maa
     - Din
@@ -92,16 +92,16 @@ nl:
     - Don
     - Vri
     - Zat
-    order: 
+    order:
     - :day
     - :month
     - :year
-    formats: 
+    formats:
       only_day: "%e"
       default: "%d/%m/%Y"
       short: "%e %b"
       long: "%e %B %Y"
-    day_names: 
+    day_names:
     - Zondag
     - Maandag
     - Dinsdag
@@ -109,8 +109,8 @@ nl:
     - Donderdag
     - Vrijdag
     - Zaterdag
-    abbr_month_names: 
-    - 
+    abbr_month_names:
+    -
     - Jan
     - Feb
     - Mar
@@ -123,50 +123,50 @@ nl:
     - Okt
     - Nov
     - Dec
-  support: 
-    array: 
+  support:
+    array:
       words_connector: ","
       last_word_connector: ", en"
       two_words_connector: en
-  datetime: 
-    format: 
+  datetime:
+    format:
       default: "%Y-%m-%dT%H:%M:%S%Z"
-    prompts: 
+    prompts:
       minute: Minuut
       second: Seconden
       month: Maand
       hour: Uur
       day: Dag
       year: Jaar
-    distance_in_words: 
-      less_than_x_minutes: 
+    distance_in_words:
+      less_than_x_minutes:
         one: "minder dan \xC3\xA9\xC3\xA9n minuut"
         other: minder dan {{count}} minuten
-      x_days: 
+      x_days:
         one: 1 dag
         other: "{{count}} dagen"
-      x_seconds: 
+      x_seconds:
         one: 1 seconde
         other: "{{count}} seconden"
-      about_x_hours: 
+      about_x_hours:
         one: "ongeveer \xC3\xA9\xC3\xA9n uur"
         other: ongeveer {{count}} uur
-      less_than_x_seconds: 
+      less_than_x_seconds:
         one: "minder dan \xC3\xA9\xC3\xA9n seconde"
         other: minder dan {{count}} seconden
-      x_months: 
+      x_months:
         one: 1 maand
         other: "{{count}} maanden"
-      x_minutes: 
+      x_minutes:
         one: 1 minuut
         other: "{{count}} minuten"
-      about_x_years: 
+      about_x_years:
         one: "ongeveer \xC3\xA9\xC3\xA9n jaar"
         other: ongeveer {{count}} jaren
-      about_x_months: 
+      about_x_months:
         one: "ongeveer \xC3\xA9\xC3\xA9n maand"
         other: ongeveer {{count}} maanden
-      over_x_years: 
+      over_x_years:
         one: "langer dan \xC3\xA9\xC3\xA9n jaar"
         other: langer {{count}} jaar
       half_a_minute: halve minuut
