@@ -64,10 +64,12 @@ class Zone < ActiveRecord::Base
         zone_member.zoneable.country_list
       when "Country"
         zone_member.zoneable
+      when "State"
+        zone_member.zoneable.country
       else
         nil
       end
-    }.flatten.compact
+    }.flatten.compact.uniq
   end
   
   def <=>(other)
