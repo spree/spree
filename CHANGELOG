@@ -1,3 +1,7 @@
+== 0.9.4
+
+* # - 961 Fixed an issue with RDoc (which occured when installing the 0.9.3 gem)
+
 == 0.9.3
 
 * # - 947 Stylesheets broken when running under a sub uri 
