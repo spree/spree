@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{spree}
-  s.version = "0.9.3"
+  s.version = "0.9.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sean Schofield"]
-  s.date = %q{2009-12-05}
+  s.date = %q{2009-12-09}
   s.default_executable = %q{spree}
   s.description = %q{The most flexible commerce platform available - designed from the ground up to be as open and extensible as possible.}
   s.email = %q{sean@railsdog.com}
@@ -815,7 +815,6 @@ Gem::Specification.new do |s|
      "public/.htaccess.example",
      "public/404.html",
      "public/500.html",
-     "public/assets/layouts/6/original/Picture_1.png",
      "public/dispatch.cgi",
      "public/dispatch.fcgi",
      "public/dispatch.rb",
@@ -999,7 +998,6 @@ Gem::Specification.new do |s|
      "public/images/flags/de.png",
      "public/images/flags/de_CH.png",
      "public/images/flags/dj.png",
-     "public/images/flags/dk.png",
      "public/images/flags/dm.png",
      "public/images/flags/do.png",
      "public/images/flags/dz.png",
@@ -1200,6 +1198,7 @@ Gem::Specification.new do |s|
      "public/images/noimage/mini.jpg",
      "public/images/noimage/product.jpg",
      "public/images/noimage/small.jpg",
+     "public/images/openid-inputicon.gif",
      "public/images/orange/left_03.png",
      "public/images/orange/right_03.png",
      "public/images/progress.gif",
@@ -1249,10 +1248,19 @@ Gem::Specification.new do |s|
      "public/javascripts/calculator.js",
      "public/javascripts/calendar_date_select/calendar_date_select.js",
      "public/javascripts/calendar_date_select/format_american.js",
+     "public/javascripts/calendar_date_select/format_db.js",
      "public/javascripts/calendar_date_select/format_euro_24hr.js",
+     "public/javascripts/calendar_date_select/format_euro_24hr_ymd.js",
      "public/javascripts/calendar_date_select/format_finnish.js",
      "public/javascripts/calendar_date_select/format_hyphen_ampm.js",
+     "public/javascripts/calendar_date_select/format_iso_date.js",
      "public/javascripts/calendar_date_select/format_italian.js",
+     "public/javascripts/calendar_date_select/locale/de.js",
+     "public/javascripts/calendar_date_select/locale/fi.js",
+     "public/javascripts/calendar_date_select/locale/fr.js",
+     "public/javascripts/calendar_date_select/locale/pl.js",
+     "public/javascripts/calendar_date_select/locale/pt.js",
+     "public/javascripts/calendar_date_select/locale/ru.js",
      "public/javascripts/checkout.js",
      "public/javascripts/controls.js",
      "public/javascripts/dragdrop.js",
@@ -1323,21 +1331,8 @@ Gem::Specification.new do |s|
      "public/stylesheets/calendar_date_select/plain.css",
      "public/stylesheets/calendar_date_select/red.css",
      "public/stylesheets/calendar_date_select/silver.css",
-     "public/stylesheets/compiled/buttons.css",
-     "public/stylesheets/compiled/cart.css",
-     "public/stylesheets/compiled/checkout.css",
-     "public/stylesheets/compiled/colors.css",
-     "public/stylesheets/compiled/compare_products.css",
      "public/stylesheets/compiled/ie.css",
-     "public/stylesheets/compiled/layout.css",
-     "public/stylesheets/compiled/messages.css",
-     "public/stylesheets/compiled/mixins.css",
-     "public/stylesheets/compiled/navigation.css",
-     "public/stylesheets/compiled/prices.css",
      "public/stylesheets/compiled/print.css",
-     "public/stylesheets/compiled/product_detail.css",
-     "public/stylesheets/compiled/product_thumbnail.css",
-     "public/stylesheets/compiled/registration.css",
      "public/stylesheets/compiled/screen.css",
      "public/stylesheets/sass/_buttons.sass",
      "public/stylesheets/sass/_cart.sass",
@@ -2041,7 +2036,7 @@ Gem::Specification.new do |s|
      "vendor/plugins/state_machine/test/unit/transition_test.rb"
   ]
   s.homepage = %q{http://github.com/railsdog/spree}
-  s.rdoc_options = ["--charset=UTF-8"]
+  s.rdoc_options = ["--charset=UTF-8", "--exclude", "app", "--exclude", "bin", "--exclude", "config", "--exclude", "db", "--exclude", "lib", "--exclude", "log", "--exclude", "pkg", "--exclude", "public", "--exclude", "script", "--exclude", "spec", "--exclude", "test", "--exclude", "tmp", "--exclude", "vendor"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{spree}
   s.rubygems_version = %q{1.3.5}
