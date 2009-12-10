@@ -37,7 +37,12 @@ begin
     s.add_dependency 'tlsmail', '= 0.0.1' 
     s.add_dependency 'rspec', '>= 1.2.0'
     s.add_dependency 'rspec-rails', '>= 1.2.0'
-    s.add_dependency 'searchlogic', ">=2.3.5" 
+    s.add_dependency 'searchlogic', ">=2.3.5"
+    s.has_rdoc = true
+    rdoc_excludes = Dir["**"].reject { |f| !File.directory? f }
+    rdoc_excludes.each do |e|
+      s.rdoc_options << '--exclude' << e
+    end     
     files = FileList['**/*']
     files.exclude '**/._*'
     files.exclude '**/*.rej'
