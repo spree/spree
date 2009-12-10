@@ -9,13 +9,13 @@ This guide contains a tutorial for the development of an extension to customize 
 
 endprologue.
 
-h3. Creating the Theme Extension
+h3. Theme extensions
 
-Themes in Spree are implemented as "Extensions":extension_tutorial.html
+Themes in Spree are implemented as extensions. Please refer to the "extensions guide":extensions.html for full details on using Spree extensions. This guide is concerned with features of extensions specific to altering the appearance of your store.
 
-h4. MyTheme Extension with Spree Application
+h4. Creating an extension
 
-First, to generate the extension, run the following to create an extension by the name of 'MyTheme'.
+First, to generate the extension, run the following command:
 
 <shell>
 script/generate extension my_theme
@@ -31,11 +31,9 @@ config.extensions = [:all, :my_theme, :site]
 
 
 
-This command will create many files in the vendor/extensions/site/ directory that looks similar to a generic rails application.
-
 h3. Stylesheets
 
-This part of the tutorial explains how to add a custom stylesheet to spree to change the look of your site.
+This part of the guide explains how override Spree's default stylesheets or add your own.
 
 h4. Overriding Spree's stylesheets
 
@@ -90,6 +88,74 @@ end
 This would load screen.css first followed by my_theme.css.
 
 h3. Using Custom Logos
+
+h4. Override the default logo path
+
+If you're not overriding the application layout you can specify a different logo image for the site using preferences as follows:
+
+<code>
+  AppConfiguration.class_eval do
+    preference :logo, :string, :default => '/images/my_logo_.png'
+  end
+</code>
+
+h3. Hooks
+
+Hooks are a way of inserting your own content into many of Spree's default templates without having to make your own copy of those templates in your extension.
+
+h4. Available hooks
+
+A full list of available hooks is available "here":hooks.html
+
+h4. Using hooks
+
+In your extension directory you should find the file +my_theme_hooks.rb+.  Within this file you can specify which content should be inserted into which hooks.
+
+h5. Option 1
+
+Supply the hook name as a symbol followed by any arguments that are valid for 'render'
+
+To use contents of your own partial template:
+
+<shell>
+  render_on :homepage_above_products, 'shared/welcome'
+</shell>
+
+To just insert a small string:
+
+<shell>
+  render_on :homepage_above_products, :text => "<h1>Welcome!</h1>"
+</shell>
+
+h5. Option 2, block syntax
+
+You can suppy a block to +render_on+ which returns the string to be inserted. You can use any helpers you would
+use in your views in this block.
+
+The following would add a link below product details:
+
+<shell> 
+  render_on :product_below_description do
+    '<p>' + link_to('Back to products', products_path) + '</p>'
+   end
+</shell>
+
+This example would add a new tab to the admin navigation.
+
+<shell> 
+   render_on :admin_tabs do
+     tab(:taxonomies)
+   end
+</shell>
+
+h4. Defining your own hooks
+
+If you anticipate your theme being extended by other themes you can define your own hooks when overriding Spree's templates.
+
+<shell>
+  <%= call_hook :my_hook_name %>
+</shell>
+
 
 h3. Customizing views
 
