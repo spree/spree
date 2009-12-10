@@ -1,0 +1,95 @@
+h2. Theming
+
+This guide contains a tutorial for the development of an extension to customize the appearance of the standard Spree installation. After reading this guide you should learn:
+
+* How to build a "site" extension to customize the look of your store
+* How to include custom stylesheets, javascript, or images
+* How to override Spree's templates
+* How to insert content into Spree's templates using hooks
+
+endprologue.
+
+h3. Creating the Theme Extension
+
+Themes in Spree are implemented as "Extensions":extension_tutorial.html
+
+h4. MyTheme Extension with Spree Application
+
+First, to generate the extension, run the following to create an extension by the name of 'MyTheme'.
+
+<shell>
+script/generate extension my_theme
+</shell>
+
+h4. Load order
+
+Each extension loaded by Spree will override the views and styleshets of those that preceed so you will need to configure their load order. Put something like the following inside the initializer block in the file +config/environment.rb+:
+
+<shell>
+config.extensions = [:all, :my_theme, :site]
+</shell>
+
+
+
+This command will create many files in the vendor/extensions/site/ directory that looks similar to a generic rails application.
+
+h3. Stylesheets
+
+This part of the tutorial explains how to add a custom stylesheet to spree to change the look of your site.
+
+h4. Overriding Spree's stylesheets
+
+h5. Less CSS
+
+Spree uses "Less CSS":http://lesscss.org/ for its CSS. This adds features such as variables and mixins to CSS while still supporting standard CSS syntax. 
+
+Stylesheets are created in app/stylesheets with the extension ".less" and are then compiled into ".css" files automatically.
+
+Spree has a number of stylesheets for the from end of the site which are all compiled to the single file "screen.css" to improve site performance. These files are as follows:
+
+<shell>
+  _buttons.less
+  _cart.less
+  _checkout_progress.less
+  _checkout.less
+  _colors.less
+  _forms.less
+  _layout.less
+  _messages.less
+  _mixins.less
+  _navigation.less
+  _prices.less
+  _product_details.less
+  _product_lists.less
+  _registration.less
+  _reset.less
+  _typography.less
+  screen.less
+</shell>
+
+The "_" file prefix denotes a partial stylesheet. These are all included into the main stylesheet "screen.less" on compilation using the @import directive:
+
+<shell>
+  @import "_reset";
+</shell>
+
+To override any of these stylesheets, create a file of the same name within your extensions +app/stylesheets+ directory.
+
+h4. Custom stylesheets
+
+By default Spree will only load +/stylesheets/screen.css+ into the main layout. Rather than override the layout template you can load your custom stylesheet by editing +SITE_EXTENSION_DIR/my_theme_extension.rb+ and changing  the existing +activate+ method to the following:
+
+<code>
+def activate
+  AppConfiguration.class_eval do
+    preference :stylesheets, :string, :default => 'screen,my_theme'
+  end
+end
+</code>
+
+This would load screen.css first followed by my_theme.css.
+
+h3. Using Custom Logos
+
+h3. Customizing views
+

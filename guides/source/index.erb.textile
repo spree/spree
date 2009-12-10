@@ -97,6 +97,11 @@ h3. Customization
   <% end %>
 </dl>
 <dl>
+  <% guide('Theming', 'theming.html') do %>
+    Learn how to change the appearance of your store using a theme extension.
+  <% end %>
+</dl>
+<dl>
   <% guide('Customizing the Checkout Process', 'checkout.html') do %>
     This guide will show you how to customize the steps in your checkout process.
   <% end %>
