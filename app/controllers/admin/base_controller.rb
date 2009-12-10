@@ -6,6 +6,11 @@ class Admin::BaseController < Spree::BaseController
   before_filter :parse_date_params
 
   protected
+
+  def ssl_required?
+    ssl_supported?
+  end
+
   def render_js_for_destroy
     render :js => "$('.flash.notice').html('#{flash[:notice]}'); $('.flash.notice').show();"
     flash[:notice] = nil
