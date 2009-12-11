@@ -2,6 +2,28 @@ h2. Spree 1.0.0 Release Notes
 
 endprologue.     
 
+h3. Upgrade Notes
+
+(TODO - polish these rough notes later)
+
+Remove defunct contents of public dirs (unless you need something in there)
+
+<shell>
+rm -rf public/javascripts/
+rm -rf public/stylesheets/
+rm -rf public/images/
+</shell>
+
+<shell>
+spree --update
+</shell>
+
+h4. Deprecation Warnings
+
+DEPRECATION WARNING: require "activerecord" is deprecated and will be removed in Rails 3. Use require "active_record" instead.. (called from /usr/local/lib/ruby/gems/1.8/gems/activerecord-2.3.5/lib/activerecord.rb:2)
+
+Remove all instances of +require 'activerecord'+ from your +Rakefile+ (including site extensions, etc.)
+
 h3. Improvements to Payment Gateway Configuration
 
 This release contains significant improvements to how payment gateways are configured.  Gateways are no longer supported by database migrations, this scheme has been replaced by Active Record models that extend +Gateway+.  The configuration of gateways is now done through standard Spree +preference configuration+.  The "documentation":payment_gateways.html has also been updated and contains a more detailed explanation. 
