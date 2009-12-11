@@ -23,6 +23,7 @@ class Admin::ShipmentsController < Admin::BaseController
     @object ||= end_of_association_chain.send parent? ? :build : :new, object_params
     @object.address ||= @order.ship_address
     @object.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
+    @object.shipping_method ||= @order.shipping_method
     @object
   end
 

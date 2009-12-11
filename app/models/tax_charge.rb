@@ -5,6 +5,7 @@ class TaxCharge < Charge
 
   # Calculates taxation amountbased on Calculator::Vat or Calculator::SalesTax
   def calculate_tax_charge
+    return unless order.shipment
     return Calculator::Vat.calculate_tax(order) if order.shipment.address.blank? and Spree::Config[:show_price_inc_vat]
     return unless order.shipment.address
     zones = Zone.match(order.shipment.address)

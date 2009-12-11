@@ -44,7 +44,7 @@ class StateEventTest < ActiveSupport::TestCase
     end
     
     context "when completed" do
-      setup { @shipment.complete! }
+      setup { @shipment.ready! }
 
       should "create a state event with the correct stateful" do
         assert_equal 1, @shipment.state_events.count

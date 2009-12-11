@@ -78,83 +78,71 @@ div.inner input[type=text], div.inner select { width: 80%; }
   <% end %>
 </fieldset>
 <fieldset id='shipping'>
-  <% checkout_form.fields_for :shipment do |shipment| %>     
-    <% shipment.fields_for :address do |address| %>
-      <legend><%= t("shipping_address")%></legend>
-      <p class="field">
-        <%= label_tag 'checkout[use_billing]', t("use_billing_address"), :id => "use_billing" %>
-        <%= check_box_tag 'checkout[use_billing]', '1', @checkout.use_billing %>
-      </p> 
-      <div class="inner">
-        <p id="sfname" class="field">
-          <%= address.label :firstname, t(:first_name) %><br />
-          <%= address.text_field :firstname, :class => 'required' -%><span class="req">*</span>
-        </p>
-        <p id="slname" class="field">
-          <%= address.label :lastname, t(:last_name) %><br />
-          <%= address.text_field :lastname, :class => 'required' -%><span class="req">*</span>
-        </p>
-        <p id="saddress" class="field">
-          <%= address.label :address1, t(:street_address) %><br />
-          <%= address.text_field :address1, :class => 'required' -%><span class="req">*</span>
-        </p>
-        <p id="saddress2" class="field">
-          <%= address.label :address2, t(:street_address_2) %><br />
-          <%= address.text_field :address2 %>
-        </p>
-        <p id="scity" class="field">
-          <%= address.label :city %><br />
-          <%= address.text_field :city, :class => 'required' -%><span class="req">*</span>
-        </p>                        
+  <% checkout_form.fields_for :ship_address do |ship_form| %>     
+    <legend><%= t("shipping_address")%></legend>
+  	<p class="field">
+  	  <label for="checkout_same_address" id="use_billing">
+    	  <%= check_box_tag 'checkout[use_billing]', '1', @checkout.use_billing %> <%= t("use_billing_address") %>
+  	  </label>
+  	</p> 
+    <div class="inner">
+    	<p id="sfname" class="field">
+    		<label for="<%= t("first_name") %>"><%= t("first_name") %></label><br />
+    		<%= ship_form.text_field :firstname, :class => 'required' -%><span class="req">*</span>
+    	</p>
+    	<p id="slname" class="field">
+    		<label for="<%= t("last_name") %>"><%= t("last_name") %></label><br />
+    		<%= ship_form.text_field :lastname, :class => 'required' -%><span class="req">*</span>
+    	</p>
+    	<p id="saddress" class="field">
+    		<label for="<%= t("street_address") %>"><%= t("street_address") %></label><br />
+    		<%= ship_form.text_field :address1, :class => 'required' -%><span class="req">*</span>
+    	</p>
+    	<p id="saddress2" class="field">
+    		<label for="<%= t("street_address_2") %>"><%= t("street_address_2") %></label><br />
+    		<%= ship_form.text_field :address2 %>
+    	</p>
+    	<p id="scity" class="field">
+    		<label for="<%= t("city") %>"><%= t("city") %></label><br />
+    		<%= ship_form.text_field :city, :class => 'required' -%><span class="req">*</span>
+    	</p>    
         <% if Spree::Config[:address_requires_state] %>
           <p class="field">
+            <label for="<%= t("state") %>"><%= t("state") %></label><br />
             <span id="sstate">
-              <% have_states = @checkout.shipment.address.state.present? %>    
-              <%= address.label :state, t(:state) %><br /> 
-              <noscript>
-                <%= address.text_field :state_name, :class => 'required' -%>
-              </noscript>
-              <% state_elements = [ 
-                   address.collection_select(:state_id, @states, 
-                                      :id, :name, 
+              <% if @checkout.ship_address.state.present? %>
+    		<%= ship_form.collection_select(:state_id, 
+                                      @states, 
+                                      :id, 
+                                      :name, 
                                       {:include_blank => true}, 
-                                      {:class => have_states ? "required" : "hidden",
-                                      :disabled => !have_states}) + 
-                   address.text_field(:state_name, 
-                                      :class => !have_states ? "required" : "hidden", 
-                                      :disabled => have_states)
-                 ].join.gsub('"', "'").gsub("\n", "") 
-              -%>     
-              <script type="text/javascript" language="javascript" charset="utf-8">
-              // <![CDATA[
-              document.write("<%= state_elements %>");  
-              // ]]>
-              </script>
+                                      {:style=> 'width:150px;'}) %>
+              <% else %>
+                <%= ship_form.text_field :state_name, :class => 'required' -%>
+              <% end %>
             </span>
             <span class="req">*</span>
           </p>
         <% end %>
-        <p id="szip" class="field">
-          <%= address.label :zipcode, t(:zip) %><br />
-          <%= address.text_field :zipcode, :class => 'required' -%><span class="req">*</span>
-        </p>    
-        <p id="scountry" class="field">
-          <%= address.label :country_id, t(:country) %><br />
-          <span id="scountry"><%= address.collection_select :country_id, @countries, :id, :name, {}, {:class => 'required'} %></span>
+    	<p id="szip" class="field">
+    		<label for="<%=t ("zip") %>"><%= t("zip") %></label><br />
+    		<%= ship_form.text_field :zipcode, :class => 'required' -%><span class="req">*</span>
+    	</p>
+    	<p id="scountry" class="field">
+    		<label for="<%= t("country") %>"><%= t("country") %></label><br />
+    		<span id="scountry"><%= ship_form.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
+    	</p>
+    	<p id="sphone" class="field">
+    		<label for="<%= t("phone") %>"><%= t("phone") %></label><br />
+    		<%= ship_form.text_field :phone, :class => 'required' -%><span class="req">*</span>
+    	</p>
+    	<% if Spree::Config[:alternative_shipping_phone] %>
+        <p id="saltphone" class="field">
+          <label for=""><%= t("alternative_phone") %></label><br />
+          <%= ship_form.text_field :alternative_phone -%>
         </p>
-        <p id="sphone" class="field">
-          <%= address.label :phone %><br />
-          <%= address.text_field :phone, :class => 'required' -%><span class="req">*</span>
-            </p>
-            <% if Spree::Config[:alternative_shipping_phone] %>
-              <p id="saltphone">
-                <%= address.label :alternative_phone %><br />
-                <%= address.text_field :alternative_phone -%>
-              </p>
-            <% end %>
-        </p>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   <% end %>
 </fieldset>
 

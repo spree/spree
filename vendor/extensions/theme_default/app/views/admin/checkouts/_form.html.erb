@@ -7,10 +7,8 @@
   <%= render :partial => "address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
 <% end %>
 
-<% f.fields_for :shipment do |shipment_form|  %>
-  <% shipment_form.fields_for :address, @checkout.order.shipments[0].address do |ship_form|  %>
-    <%= render :partial => "address_form", :locals => {:f => ship_form, :name => t('shipping_address')} %>
-  <% end %>
+<% f.fields_for 'ship_address' do |sa_form|  %>
+  <%= render :partial => "address_form", :locals => {:f => sa_form, :name => t('shipping_address')} %>
 <% end %>
 
 <p class="form-buttons">

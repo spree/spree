@@ -29,7 +29,7 @@ class Shipment < ActiveRecord::Base
 
   # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'pending' do
-    event :complete do
+    event :ready do
       transition :from => 'pending', :to => 'ready_to_ship'
     end
     event :transmit do

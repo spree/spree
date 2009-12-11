@@ -41,7 +41,8 @@ class Admin::CheckoutsControllerTest < ActionController::TestCase
         @checkout.bill_address.state_name = nil
         @checkout.bill_address.state = @checkout.bill_address.country.states.last
 
-        @checkout.shipment.address.country = Factory.create(:country, :states => [])
+        @checkout.ship_address = Factory(:address)
+        @checkout.ship_address.country = Factory.create(:country, :states => [])
 
         @checkout.save
         get :edit
@@ -69,15 +70,15 @@ class Admin::CheckoutsControllerTest < ActionController::TestCase
 
         assert_select "table" do
           assert_select "th", :text => I18n.t("shipping_address")
-          assert_select "input[id='checkout_shipment_attributes_address_attributes_firstname'][value=?]", @checkout.shipment.address.firstname
-          assert_select "input[id='checkout_shipment_attributes_address_attributes_lastname'][value=?]", @checkout.shipment.address.lastname
-          assert_select "input[id='checkout_shipment_attributes_address_attributes_address1'][value=?]", @checkout.shipment.address.address1
-          assert_select "input[id='checkout_shipment_attributes_address_attributes_address2'][value=?]", @checkout.shipment.address.address2
-          assert_select "input[id='checkout_shipment_attributes_address_attributes_city'][value=?]", @checkout.shipment.address.city
-          assert_select "input[id='checkout_shipment_attributes_address_attributes_zipcode'][value=?]", @checkout.shipment.address.zipcode
+          assert_select "input[id='checkout_ship_address_attributes_firstname'][value=?]", @checkout.ship_address.firstname
+          assert_select "input[id='checkout_ship_address_attributes_lastname'][value=?]", @checkout.ship_address.lastname
+          assert_select "input[id='checkout_ship_address_attributes_address1'][value=?]", @checkout.ship_address.address1
+          assert_select "input[id='checkout_ship_address_attributes_address2'][value=?]", @checkout.ship_address.address2
+          assert_select "input[id='checkout_ship_address_attributes_city'][value=?]", @checkout.ship_address.city
+          assert_select "input[id='checkout_ship_address_attributes_zipcode'][value=?]", @checkout.ship_address.zipcode
 
-          assert_select "input[id='checkout_shipment_attributes_address_attributes_state_name'][value=?]", @checkout.shipment.address.state_name
-          assert_select "select[id='checkout_shipment_attributes_address_attributes_state_id'][disabled='disabled']"
+          assert_select "input[id='checkout_ship_address_attributes_state_name'][value=?]", @checkout.ship_address.state_name
+          assert_select "select[id='checkout_ship_address_attributes_state_id'][disabled='disabled']"
         end
       end
     end

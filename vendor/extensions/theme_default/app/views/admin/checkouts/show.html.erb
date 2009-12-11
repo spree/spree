@@ -69,44 +69,44 @@
     <td>
       <label><%= Address.human_attribute_name(:first_name) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.shipment.address.firstname %></td>
+    <td colspan="3"><%= @checkout.ship_address.firstname %></td>
     <td>
       <label><%= Address.human_attribute_name(:last_name) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.shipment.address.lastname %></td>
+    <td colspan="3"><%= @checkout.ship_address.lastname %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:address1) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.shipment.address.address1 %></td>
+    <td colspan="3"><%= @checkout.ship_address.address1 %></td>
     <td>
       <label><%= Address.human_attribute_name(:address2) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.shipment.address.address2 %></td>
+    <td colspan="3"><%= @checkout.ship_address.address2 %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:city) %>:</label>
     </td>
-    <td><%= @checkout.shipment.address.city %></td>
+    <td><%= @checkout.ship_address.city %></td>
     <td>
       <label><%= Address.human_attribute_name(:zipcode) %>:</label>
     </td>
-    <td><%= @checkout.shipment.address.zipcode %></td>
+    <td><%= @checkout.ship_address.zipcode %></td>
     <td>
       <label><%= Address.human_attribute_name(:state) %>:</label>
     </td>
-    <td><%= @checkout.shipment.address.state.nil? ? @checkout.shipment.address.state_name : @checkout.shipment.address.state.name %></td>
+    <td><%= @checkout.ship_address.state.nil? ? @checkout.ship_address.state_name : @checkout.ship_address.state.name %></td>
     <td>
       <label><%= Address.human_attribute_name(:country) %>:</label>
     </td>
-    <td><%= @checkout.shipment.address.country %></td>
+    <td><%= @checkout.ship_address.country %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:phone) %>:</label>
     </td>
-    <td colspan="7"><%= @checkout.shipment.address.phone %></td>
+    <td colspan="7"><%= @checkout.ship_address.phone %></td>
   </tr>
 </table>

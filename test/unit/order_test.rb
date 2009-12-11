@@ -57,6 +57,7 @@ class OrderTest < ActiveSupport::TestCase
 
       should "create shipment" do
         assert(@order.shipments.first, "Shipment was not created")
+        assert_equal 'pending', @order.shipments.first.state
       end
 
       should "update checkout completed_at" do
@@ -77,11 +78,18 @@ class OrderTest < ActiveSupport::TestCase
       end
     end
     
+    context "pay!" do
+      should "make all shipments ready" do
+        @order.pay!
+        assert @order.shipments.all?(&:ready_to_ship?), "shipments didn't all have state ready_to_ship"
+      end
+    end
+
     context "ship!" do
       should "make all shipments shipped" do
         @order.update_attribute(:state, 'paid')
         @order.ship!
-        assert @order.shipments.all?(&:shipped?)
+        assert @order.shipments.all?(&:shipped?), "shipments didn't all have state shipped"
       end
     end
     
