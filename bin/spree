@@ -38,10 +38,7 @@ if ARGV.any? { |arg| %w(--update -u).any? { |flag| arg == flag } }
   end
 
   # copy the "infrastructure" files 
-  items = [ "/public/javascripts", 
-            "/public/stylesheets", 
-            "/public/images", 
-            "/config/initializers", 
+  items = [ "/config/initializers", 
             "/config/environments", 
             "/config/environment.rb", 
             "/config/spree_permissions.yml", 
