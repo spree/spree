@@ -1,9 +1,0 @@
-<%= error_messages_for :user %>
-<h1><%= t("editing_user") %></h1>
-<br/>
-<% form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
-  <p>
-    <%=submit_tag t("update") %>
-  </p>
-<% end %>

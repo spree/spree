@@ -1,9 +1,0 @@
-<% content_for :sidebar do %>
-  <% if "products" == @current_controller && @taxon %>
-    <%= render :partial => "shared/filters" %>
-  <% else %>
-    <%= render :partial => "shared/taxonomies" %>
-  <% end %>
-<% end %>
-
-<%= render :partial => "shared/products", :locals => {:products => @products, :taxon => @taxon } %>

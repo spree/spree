@@ -1,0 +1,9 @@
+<h2><%= t(:guest_user_account) %></h2>
+<% form_for @checkout, :url => register_order_checkout_url(@order), 
+                       :html => { :method => :post, :id => "checkout_form_registration"} do |f| %>
+  <p>
+    <%= f.label :email, t("email") %><br />
+    <%= f.text_field :email, :class => 'title'  %>
+  </p>
+  <p><%= submit_tag t("continue"), :class => 'button primary' %></p>
+<% end %>

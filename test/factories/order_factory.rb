@@ -3,4 +3,6 @@ Factory.define(:order) do |record|
   record.association(:user, :factory => :user)
 end
 
-###### ADD YOUR CODE BELOW THIS LINE #####
+Factory.define :order_with_totals, :parent => :order do |f|
+  f.line_items { [Factory(:line_item)] }
+end

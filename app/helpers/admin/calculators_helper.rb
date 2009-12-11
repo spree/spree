@@ -1,2 +1,0 @@
-module Admin::CalculatorsHelper
-end

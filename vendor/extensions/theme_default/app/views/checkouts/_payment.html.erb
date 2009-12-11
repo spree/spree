@@ -1,0 +1,46 @@
+<fieldset id='payment'>
+  <% checkout_form.fields_for :creditcard do |creditcard_form| %> 
+    <legend><%= t("payment_information") %></legend>
+    <div class="inner">
+  		<%= image_tag "creditcard.gif", :id => 'creditcard-image' %>
+      <hr class="space" />
+    	<p class="field">
+    		<label for=""><%= t("card_number") %></label><br />
+  		<%= creditcard_form.text_field :number, :size=> 19, :max_length => 19, :class => 'required' -%><span class="req">*</span>
+                  &nbsp; 
+                  <span id="card_type" style="display:none;">
+                    ( <span id="looks_like" ><%= t('card_type_is') %> <span id="type"></span></span>
+                      <span id="unrecognized"><%= t('unrecognized_card_type') %></span>
+                    )
+                  </span>
+    	</p>
+    	<p class="field">
+    		<label for=""><%= t("expiration") %></label><br />	
+    		<%= select_month(Date.today, :prefix => 'checkout[creditcard_attributes]', :field_name => 'month', :use_month_numbers => true, :class => 'required') -%>
+    		<%= select_year(Date.today, :prefix => 'checkout[creditcard_attributes]', :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required') -%>
+    		<span class="req">*</span>
+    	</p>
+    	<p class="field">
+    		<label for=""><%= t("card_code") %></label><br />
+    		<%= creditcard_form.text_field :verification_value, {:style => 'width:40px', :class => 'required'} -%><span class="req">*</span>
+    		<a href="" onclick="window.open('/content/cvv','mywin','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false">
+    			(<%= t("whats_this") %>)
+    		</a>
+    	</p>
+    	<%= creditcard_form.hidden_field :first_name -%>
+      <%= creditcard_form.hidden_field :last_name -%>  	
+    </div>    
+  <% end %>
+</fieldset>
+
+<fieldset id="order_details">         
+	<div class="clear"></div>
+  <legend><%= t("confirm") %></legend>
+	<%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>      
+</fieldset>
+
+<hr />
+
+<div class="form-buttons">
+  <input type="submit" class="continue button primary" value="<%=t("save_and_continue") %>"/>
+</div>    

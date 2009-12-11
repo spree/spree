@@ -1,0 +1,39 @@
+@import "_colors";
+@import "_mixins";
+@import "_checkout_progress";
+
+div#checkout {
+  position: relative;
+  
+  .progress-steps {
+    position: absolute;
+    top: 0.5em;
+    right: 0;
+  }
+
+  form {
+    background-position: top right; background-repeat: no-repeat;
+  }
+    
+  #checkout_form_address {
+    background-image: url("../images/steps/2.png");
+
+    #billing { .column(8); }
+    #shipping {  .column-last(8); }    
+  }
+  
+  #checkout_form_delivery {
+    background-image: url("../images/steps/3.png");
+  }
+
+  #checkout_form_payment {
+
+    background-image: url("../images/steps/5.png");
+    select { width: 75px; }
+    
+    #payment { .column(8); }
+    #order_details { .column(12); }
+  }
+  
+
+}

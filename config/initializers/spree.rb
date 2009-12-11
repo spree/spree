@@ -50,3 +50,5 @@ class String #:nodoc:
   include Spree::Support::CoreExtensions::String
 end
 
+require 'spree/theme_support'
+

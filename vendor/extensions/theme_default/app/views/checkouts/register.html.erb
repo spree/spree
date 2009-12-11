@@ -1,0 +1,13 @@
+<%= error_messages_for :user %>
+<%= error_messages_for :checkout %>
+<h2><%= t("registration")%></h2>
+<div id="registration">
+  <div id="account">
+    <%= render :file => 'users/new' %>
+  </div>
+  <% if Spree::Config[:allow_guest_checkout] %>
+    <div id="guest_checkout">
+      <%= render 'guest_checkout' %>
+    </div>
+  <% end %>
+</div>

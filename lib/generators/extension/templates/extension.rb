@@ -14,22 +14,6 @@ class <%= class_name %> < Spree::Extension
   
   def activate
 
-    # Add your extension tab to the admin.
-    # Requires that you have defined an admin controller:
-    # app/controllers/admin/yourextension_controller
-    # and that you mapped your admin in config/routes
-
-    #Admin::BaseController.class_eval do
-    #  before_filter :add_<%= file_name %>_tab
-    #
-    #  def add_<%= file_name %>_tab
-    #    # add_extension_admin_tab takes an array containing the same arguments expected
-    #    # by the tab helper method:
-    #    #    :<%= file_name %>, { :label => "<%= class_name %>", :route => "/some/non/standard/route" }
-    #    add_extension_admin_tab :<%= file_name %>
-    #  end
-    #end
-
     # make your helper avaliable in all views
     # Spree::BaseController.class_eval do
     #   helper YourHelper

@@ -1,0 +1,130 @@
+@import "_colors";
+@import "_mixins";
+
+.navigation-list {
+  .no-bullets;
+  margin: 0 0 1.5em -15px;
+  li {
+    margin: 0;
+    a {
+      cursor: pointer!important;
+      text-decoration: none;
+      color: #333;
+      display: block;
+      line-height: 2.5em;
+      padding-left: 20px;
+      width: 170px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    a:hover {
+      background: url(../images/menu-hover.png) right center no-repeat;
+    }
+  }
+  li.current {
+    width: 200px;
+    a {
+      width: 180px;
+      background: url(../images/menu-current.png) right center no-repeat;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    a.root {
+      width: 183px;
+    }
+  }
+  a.root {
+    color: #222;
+    font-size: 1.5em;
+    text-indent: -5px;
+    line-height: 2.2em;
+  }
+}
+
+
+.breadcrumbs {
+  margin-bottom: 1em;
+  ul {
+    .inline-list;
+    .no_margin_or_padding;
+    overflow: auto;
+    li {
+      line-height: 20px;
+      color: #666;
+      a,span {
+        text-decoration: none;
+        padding: 5px 7px;
+        color: #666;
+      }
+      span { color: #333; }
+    }
+        
+  }
+}
+
+
+div#login-bar { display: inline; }
+
+
+ul#language-bar {
+  .inline-list;
+  strong { font-weight: normal; }
+}
+
+
+ul#nav-bar {
+  line-height: 50px;
+  float: right;
+  clear: both;
+  font-size: 1.2em;
+  list-style: none;
+  .no_margin_or_padding;
+  li {
+    float: left;
+    margin-left: 1em;
+  }
+  li.cart-indicator {
+    a {
+      padding-right: 40px;
+      background: transparent url(../images/cart-empty_x32.png) center right no-repeat;
+      display: block;
+    }
+    a.full {
+      background-image: url(../images/cart-full_x32.png);
+    }
+  }
+}
+
+
+
+.pagination {
+  padding-top: 10px;
+  text-align: right;
+  a.page, span.page {
+    padding: 0px 5px;
+    margin: 0px 3px;
+  }
+  a.page {
+    text-decoration: none;
+    border: 1px solid #9aafe5;
+    color: #2e6ab1;
+  }
+  a.page:hover, a.page:active {
+    border: 1px solid #2b66a5;
+    color: @black;
+  }
+  a.next_page {
+    font-weight: bold;
+  }
+  span.disabled_page {
+    border: 1px solid #929292;
+    color: #929292;
+  }
+  span.current_page {
+    font-weight: bold;
+    border: 1px solid;
+    border-color: @dark_blue;
+    background-color: @medium_blue;
+    color: @white;
+  }
+}

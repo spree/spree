@@ -3,7 +3,7 @@ class Spree::BaseController < ActionController::Base
   helper :application
   before_filter :instantiate_controller_and_action_names
   filter_parameter_logging :password, :password_confirmation, :number, :verification_value
-  helper_method :current_user_session, :current_user, :title, :set_title, :get_taxonomies
+  helper_method :current_user_session, :current_user, :title, :title=, :get_taxonomies
 
   # Pick a unique cookie name to distinguish our session data from others'
   session_options['session_key'] = '_spree_session_id'
@@ -11,7 +11,7 @@ class Spree::BaseController < ActionController::Base
 
   include RoleRequirementSystem
   include EasyRoleRequirementSystem
-  include SslRequirement
+  include SslRequirement  
 
   def admin_created?
     User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
@@ -34,15 +34,9 @@ class Spree::BaseController < ActionController::Base
     render :text => 'Access Forbidden', :layout => true, :status => 401
   end
 
-  # Used for pages which need to render certain partials in the middle
-  # of a view. Ex. Extra user form fields
-  def initialize_extension_partials
-    @extension_partials = []
-  end
-
-  # set_title can be used in views as well as controllers.
-  # e.g. <% set_title 'This is a custom title for this view' %>
-  def set_title(title)
+  # can be used in views as well as controllers.
+  # e.g. <% title = 'This is a custom title for this view' %>
+  def title=(title)
     @title = title
   end
 
@@ -164,6 +158,36 @@ class Spree::BaseController < ActionController::Base
     @taxonomies ||= Taxonomy.find(:all, :include => {:root => :children})
     @taxonomies
   end
+
+
+  # Helper module included in ApplicationHelper and ActionController so that
+  # hooks can be called in views like this:
+  # 
+  #   <%= call_hook(:some_hook) %>
+  #   <%= call_hook(:another_hook, :foo => 'bar' %>
+  # 
+  # Or in controllers like:
+  #   call_hook(:some_hook)
+  #   call_hook(:another_hook, :foo => 'bar')
+  # 
+  # Hooks added to views will be concatenated into a string.  Hooks added to
+  # controllers will return an array of results.
+  #
+  # Several objects are automatically added to the call context:
+  # 
+  # * request => Request instance
+  # * controller => current Controller instance
+  # 
+  def call_hook(hook, context={})
+    if is_a?(ActionController::Base)
+      default_context = {:controller => self, :request => request}
+      Spree::ThemeSupport::Hook.call_hook(hook, default_context.merge(context))
+    else
+      default_context = {:controller => controller, :request => request}
+      Spree::ThemeSupport::Hook.call_hook(hook, default_context.merge(context)).join(' ')
+    end        
+  end
+  helper_method :call_hook
   
 end
 

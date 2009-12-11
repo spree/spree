@@ -2,6 +2,42 @@ require 'test_helper'
 
 class CreditcardTest < ActiveSupport::TestCase
   fixtures :gateways
+  
+  context Creditcard do
+    # NOTE: We want to test a real creditcard so we can't use the factory directly since it uses a hacked model to make 
+    # testing easier.
+    setup { @creditcard = Creditcard.new(Factory.attributes_for(:creditcard)) }
+    context "save when configured to store credit card info" do
+      setup do 
+        Spree::Config.set(:store_cc => true, :store_cvv => true)
+        @creditcard.save
+      end
+      should "not save number" do
+        assert @creditcard.number
+      end
+      should "not save verification_value" do
+        assert @creditcard.verification_value
+      end
+    end
+    context "save (by default)" do
+      setup do 
+        @creditcard.save
+      end
+      should "not store number in memory" do
+        assert !@creditcard.number
+      end
+      should "not store verification_value in memory" do
+        assert !@creditcard.verification_value
+      end
+      should "not store number in database" do
+        assert !@creditcard.reload.number
+      end
+      should "not store verification_value in database" do
+        assert !@creditcard.reload.verification_value
+      end
+    end
+  end
+  
   context "authorization success" do
     setup do
       @creditcard = Factory.build(:creditcard, :checkout => Factory(:checkout))

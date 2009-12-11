@@ -1,0 +1,32 @@
+@import "_mixins";
+
+.flash {
+  .rounded_corners;
+  font-size: 1.3em;
+  margin-bottom: 1em;
+  padding: 0.8em;
+}
+.flash.notice {
+  .message_box(#CDF, #569, #9AC);
+}
+.flash.errors {
+  .message_box(#F4B4B4, #000, #000);
+}
+
+
+.formError, .errorExplanation {
+  font-size: 1.3em;
+  margin-bottom: 1em;
+  padding: 0.8em;
+  .rounded_corners;
+  .message_box(#F4B4B4, #000, #000);
+  p { margin: 0px; }
+  ul { margin-bottom: 0px; }
+  h2 {
+    font-weight: bold;
+    font-size: 1.0em;
+    margin: 0px;
+  }
+}
+
+.fieldWithErrors { clear: none; }

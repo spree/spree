@@ -124,14 +124,8 @@ module Spree
       extension_loader.run_initializers #? conds?
       super
     end
-=begin
-    def initialize_default_admin_tabs
-      admin.tabs.clear
-      admin.tabs.add "Pages",    "/admin/pages"
-      admin.tabs.add "Snippets", "/admin/snippets"
-      admin.tabs.add "Layouts",  "/admin/layouts", :visibility => [:admin, :developer]
-    end
-=end
+
+
     def initialize_framework_views
       view_paths = returning [] do |arr|
         # Add the singular view path if it's not in the list

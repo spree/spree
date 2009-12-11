@@ -1,0 +1,24 @@
+@import "_colors";
+@import "_mixins";
+
+#signup #new-customer, #login #existing-customer {
+  .column(12);
+  h2 { margin-bottom: .25em; }
+  p {
+    margin-bottom: 10px;
+    input.title {
+      padding: 3px;
+      margin: 0px;
+    }
+  }
+  input[type=checkbox] {
+    top: 0.0em;
+  }
+}
+      
+input.openid_url {
+  background: #FFFFFF url(../images/openid-inputicon.gif) no-repeat scroll 0pt 50%;
+  padding-left: 18px;
+  border: 1px solid #BBBBBB;
+  font-size: 1.5em;
+  }

@@ -1,0 +1,7 @@
+<%= tab :overview, :route => :admin %>
+<%= tab :orders, :payments, :creditcard_payments, :shipments %>
+<%= tab :products , :option_types, :properties, :prototypes, :variants, :product_properties, :taxons %>
+<%= tab :reports %>
+<%= tab :configurations, :general_settings, :mail_settings, :tax_categories, :zones, :states, :gateway_configurations, :inventory_settings, :taxonomies, :label => 'configuration' %>
+<%= tab :users %>
+<%= call_hook :admin_tabs %>

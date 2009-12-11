@@ -1,0 +1,62 @@
+/* 
+  Checkout Progress Indicator
+  current-last etc. required instead of "current last" because IE6 won't handle multiple classes
+ */
+ol.progress-steps {
+  list-style: none;
+  margin:0; padding:0;
+  line-height: 1em;
+  font-size: 12px;
+  
+}
+ol.progress-steps li {
+  margin:0; padding: 0;
+  list-style: none;
+  display: block;
+  float:left;
+  color: #999;
+  background-position: top left;
+  background-repeat: no-repeat;
+  background-image: url(../images/step-progress/incomplete-incomplete.gif);
+}
+ol.progress-steps li span {
+  padding: 5px 14px 7px 24px;
+  display: block;
+  float:left;
+  background-position: top right;
+  background-repeat: no-repeat;
+}
+ol.progress-steps li a {
+  text-decoration: none;
+  color: #333;
+}
+/* lefts */
+ol.progress-steps li.current-first span, ol.progress-steps li.completed-first span {
+  padding-left: 14px;
+}
+ol.progress-steps li.current-first {
+  background-image: url(../images/step-progress/current-first.gif);
+}
+ol.progress-steps li.completed-first {
+  background-image: url(../images/step-progress/completed-first.gif)!important;
+}
+/* middles */
+ol.progress-steps li.current, ol.progress-steps li.current-first, ol.progress-steps li.current-last  {
+  color: #fff;
+}
+ol.progress-steps li.completed {
+  background-image: url(../images/step-progress/completed-completed.gif);
+}
+ol.progress-steps li.current, ol.progress-steps li.current-last {
+  background-image: url(../images/step-progress/completed-current.gif);
+}
+ol.progress-steps li.next, ol.progress-steps li.next-last {
+  background-image: url(../images/step-progress/current-incomplete.gif);
+}
+/* rights */
+ol.progress-steps li.last span, ol.progress-steps li.next-last span {
+  background-image: url(../images/step-progress/incomplete-right.gif);
+}
+ol.progress-steps li.current-last span {
+  background-image: url(../images/step-progress/current-right.gif);
+}

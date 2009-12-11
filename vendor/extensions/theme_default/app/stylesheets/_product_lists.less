@@ -1,0 +1,66 @@
+@import "_colors";
+@import "_mixins";
+
+.product-listing {
+  .no-bullets;
+  margin: 2em 0px 0px 0px;
+  padding: 0px;
+  li {
+    .rounded_corners(3px);
+    height: 180px;
+    width: 140px;
+    text-align: center;
+    float: left;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    position: relative;
+    a {
+      display: block;
+      text-decoration: none;
+      color: #111;
+    }
+    a.info {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
+      padding: 5px;
+      width: 150px;
+      min-height: 60px;
+      background: #FFF url(../images/shadow_top.png) 0px -35px repeat-x;
+      border-top: 1px solid @white;
+      span { display: block; }
+    }
+  }
+  li:hover {
+    border-color: #1B1B1B;
+    a.info {
+      background: #1B1B1B url(../images/bottom_shine.png) bottom left repeat-x;
+      color: #fff;
+    }
+  }
+}
+
+ul.thumbnails {
+  .no_margin_or_padding;
+  list-style: none;
+  li {
+    float: left;
+    margin-right: 5px;
+    padding: 3px;
+    border: 1px solid @white;
+    min-height: 50px;
+    width: 50px;
+    position: relative;
+    img {
+      position :absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+    }
+  }
+  li:hover { border-color: #CCC; }
+  li.selected { border-color: #999; }
+}

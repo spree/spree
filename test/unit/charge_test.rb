@@ -53,6 +53,7 @@ class ChargeTest < ActiveSupport::TestCase
     context "with checkout, shipping method and addresses" do
       setup do
         create_complete_order
+        @order.update_attribute(:completed_at, nil)
         @ship_charge = @order.shipping_charges.first
         @tax_charge = @order.tax_charges.first
         assert(@ship_charge, "Shipping charge was not created")
@@ -74,6 +75,9 @@ class ChargeTest < ActiveSupport::TestCase
       end
 
       should "calculate value for ship charge" do
+        assert !@ship_charge.order.checkout_complete
+        assert_nil(@ship_charge.read_attribute(:amount))
+        assert_equal("10.0", @ship_charge.calculate_adjustment.to_s)
         assert_equal("10.0", @ship_charge.amount.to_s)
       end
 

@@ -75,6 +75,10 @@ module Spree
       extensions.map { |extension| "#{extension.root}/app/views" }.select { |d| File.directory?(d) }
     end
     
+    def stylesheet_source_paths
+      extensions.map { |extension| "#{extension.root}/app/stylesheets" }.select { |d| File.directory?(d) }
+    end
+
     # Load the extensions
     def load_extensions
       @observer ||= DependenciesObserver.new(configuration).observe(ActiveSupport::Dependencies)
@@ -93,7 +97,6 @@ module Spree
     end
     
     def activate_extensions
-#      initializer.initialize_default_admin_tabs
       # Reset the view paths after 
       initializer.initialize_framework_views
       extensions.each &:activate

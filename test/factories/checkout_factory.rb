@@ -1,11 +1,11 @@
 Factory.define(:checkout) do |record|
   record.email { Faker::Internet.email }
-	record.confirmed true
   record.special_instructions { Faker::Lorem.paragraphs(rand(5)+1).join("\n") }
 
   # associations: 
   record.association(:order)
   record.association(:bill_address, :factory => :address)
+  record.association(:creditcard)
 end
 
 ###### ADD YOUR CODE BELOW THIS LINE #####

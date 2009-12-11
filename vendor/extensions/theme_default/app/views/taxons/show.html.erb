@@ -1,0 +1,16 @@
+<h1><%= @taxon.name %></h1>
+
+<% if @taxon.children.empty? || !params[:keywords].blank? %>
+  <%= call_hook :taxon_above_products %>
+  <%= render :partial => "shared/products", :locals => {:products => @products, :taxon => @taxon } %>
+  <%= call_hook :taxon_below_products %>
+<% else %>
+  <%= call_hook :taxon_above_children %>
+  <%= render :partial => "taxon", :collection => @taxon.children %>
+  <%= call_hook :taxon_below_children %>
+<% end %>
+
+<% content_for :sidebar do %>
+	<%= render :partial => "shared/taxonomies" %>
+  <%= call_hook :taxon_sidebar_below_navigation %>
+<% end %>

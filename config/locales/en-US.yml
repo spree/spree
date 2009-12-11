@@ -33,6 +33,24 @@ en-US:
         lastname: "Last Name"
         phone: Phone
         zipcode: "Zip Code"
+      checkout:
+        bill_address: 
+          firstname: "Billing address first name"
+          lastname: "Billing address last name"
+          address1: "Billing address street"
+          city: "Billing address city"
+          state: "Billing address state"
+          zipcode: "Billing address zipcode"
+          phone: "Billing address phone"   
+        shipment:
+          address:
+            firstname: "Shipping address first name"
+            lastname: "Shipping address last name"
+            address1: "Shipping address street"
+            city: "Shipping address city"
+            state: "Shipping address state"
+            zipcode: "Shipping address zipcode"
+            phone: "Shipping address phone"   
       country:
         iso: ISO
         iso3: ISO3
@@ -139,6 +157,9 @@ en-US:
       role:
         one: Roles
         other: Roles
+      shipment:
+        one: Shipment
+        other: Shipments
       shipping_category:
         one: "Shipping Category"
         other: "Shipping Categories"
@@ -230,6 +251,12 @@ en-US:
   charge_total: Charge Total
   charged: Charged
   checkout: Checkout
+  checkout_steps:
+    # keys correspond to Checkout state names
+    address: Address
+    delivery: Delivery
+    payment: Payment
+    complete: Complete
   city: City
   clone: Clone
   code: Code
@@ -663,6 +690,8 @@ en-US:
   shipping_method: "Shipping Method"
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
+  shipments: "Shipments"
+  view_shipping_options: "View shipping options"
   shipping_rates: "Shipping Rates"
   shipping_rates_description: "Manage shipping rates"
   shipping_total: "Shipping Total"
@@ -777,3 +806,4 @@ en-US:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones
+  save_and_continue: Save and Continue

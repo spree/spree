@@ -1,0 +1,75 @@
+@import "_mixins";
+
+button, a.button, input.button {
+  .rounded_corners(0.3em);
+  background: #efefef url(../images/buttons/bg-button.png) center left repeat-x !important;
+  border-style: solid;
+  border-width: 1px !important;
+  border-color: #ddd #999 #999 #ddd !important;
+  -moz-outline-radius: .3em;
+  color: #111;
+  display: inline-block;
+  font-family: Helvetica Neue, Helvetica, Arial, Sans-serif;
+  font-size: 1.1em !important;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1.2em;
+  margin: 0px;
+  overflow: visible;
+  padding: 10px 17px;
+  text-decoration: none;
+  text-transform: lowercase;
+  width: auto;
+  height: auto;
+  cursor: pointer;
+}
+
+button.primary, a.button.primary, input.button.primary {
+  font-weight: bold;
+  color: #000; 
+}
+
+button:hover, a.button:hover, input.button:hover {
+  background-image: url(../images/buttons/bg-button-hover.png) !important;
+}
+
+button.large, a.button.large, input.button.large {
+  .rounded_corners(0.3em);
+  font-size: 1.4em !important;
+  line-height: 1.4em;
+}
+
+button.small, a.button.small, input.button.small {
+  .rounded_corners(4px);
+  font-size: .9em;
+  line-height: 1.4em;
+  padding: 5px 10px;
+}
+
+button.small img, a.button.small img, input.button.small img {
+  margin: 0 3px 0 0 !important;
+}
+
+button.update img, button.checkout img, a.button.update img, a.button.checkout img, input.button.update img, input.button.checkout img {
+  margin-right: 7px;
+}
+
+button img, a.button img, input.button img {
+  vertical-align: middle;
+}
+
+button:focus, a.button:focus, input.button:focus {
+  outline: none;
+}
+
+button::-moz-focus-inner {
+  padding: 0px;
+  border: none;
+}
+
+p a.button img, p button img {
+  margin: 0 5px 0 0; 
+}

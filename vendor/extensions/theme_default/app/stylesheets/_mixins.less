@@ -1,0 +1,71 @@
+.no_margin_or_padding {
+  margin: 0; padding: 0;
+}
+
+.leftie {
+  float: left;
+  width: 49%;
+}
+.rightie {
+  float: right;
+  width: 49%;
+}
+.rounded_corners (@radius: 5px) {
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+  border-radius: @radius;
+}
+
+.message_box (@bg_color: #ccddff, @color: #556699, @border_color: #99aacc) {
+  background: @bg_color url(../images/shadow_top.png) 0px -50px repeat-x;
+  color: @color;
+  border: 1px solid @border_color;
+}
+
+.clearfix {
+  overflow: hidden;
+  display: inline-block; }
+  .clearfix {
+    display: block; }
+
+.nowrap { white-space: nowrap; }
+
+.no-bullets {
+  list-style: none;
+}
+
+.inline-list {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+  display: inline;
+  li {
+    margin: 0px;
+    padding: 0px;
+    display: inline;
+  }
+}
+
+
+/* Compass/blueprint mixins for layout */
+
+@col_margin: 10px;
+@col_width: 30px;
+
+.column-last (@span: 1) {
+  display: inline;
+  float: left;
+  width: @col_width * @span + (@col_margin * (@span - 1));
+}
+.column (@span: 1) {
+  .column-last(@span);
+  margin-right: @col_margin;
+}
+
+.colborder {
+  padding-right: 24px;
+  margin-right: 25px;
+  border-right: 1px solid #eeeeee;  
+}
+
+    

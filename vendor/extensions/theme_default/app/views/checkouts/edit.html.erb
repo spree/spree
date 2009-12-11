@@ -1,0 +1,16 @@
+<% params[:step] ||= 'registration' %>
+<%- content_for :head do -%>
+  <%#= javascript_include_tag  'checkout', '/states' %>
+  <%= javascript_include_tag 'checkout.js'%>
+<%- end -%>
+<div id="checkout">
+  <h1><%= t("checkout")%></h1>
+  <%= checkout_progress %>
+
+  <%= error_messages_for :checkout %>
+  <% form_for @checkout, :url => object_url, :html => { :method => :put, :id => "checkout_form_#{@checkout.state}"} do |checkout_form| %>
+    <%= render @checkout.state, :checkout_form => checkout_form %>    
+    <input type="hidden" name="step" value="<%= @checkout.state %>">
+    <input id="post-final" type="submit" style="display:none"/>
+  <% end %>
+</div>

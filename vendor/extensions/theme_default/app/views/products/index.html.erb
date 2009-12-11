@@ -1,0 +1,15 @@
+<% content_for :sidebar do %>
+  <% if "products" == @current_controller && @taxon %>
+    <%= render :partial => "shared/filters" %>
+  <% else %>
+    <%= render :partial => "shared/taxonomies" %>
+  <% end %>
+  <%= call_hook :homepage_sidebar_below_navigation %>
+<% end %>
+
+<%= call_hook :homepage_above_products %>
+
+<%= render :partial => "shared/products", :locals => {:products => @products, :taxon => @taxon } %>
+<hr class="space" />
+
+<%= call_hook :homepage_below_products %>

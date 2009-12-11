@@ -106,7 +106,7 @@ class InstanceGenerator < Rails::Generator::Base
       m.template "../../../../config/environment.rb", "config/environment.rb", :assigns => { :app_name => @app_name, :app_secret_key_to_be_replaced_in_real_app_by_generator => secret }
       m.file "../../../../config/boot.rb", "config/boot.rb"
       m.template "session_store.rb", "config/initializers/session_store.rb", :assigns => { :app_name => @app_name, :app_secret_key_to_be_replaced_in_real_app_by_generator => secret }
-      %w{backtrace_silencers inflections locales mime_types new_rails_defaults paperclip spree compass}.each do |initializer|
+      %w{backtrace_silencers inflections locales mime_types new_rails_defaults paperclip spree}.each do |initializer|
         m.file "../../../../config/initializers/#{initializer}.rb", "config/initializers/#{initializer}.rb" 
       end
       m.file "../../../../config/spree_permissions.yml", "config/spree_permissions.yml"
