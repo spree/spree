@@ -8,6 +8,7 @@ h3. Public views
 
 h4. Layout (layouts/spree_application.html.erb)
 
+* head (lets you insert content into the head tag)
 * sidebar_bottom (at the bottom of any page that has a sidebar)
 
 h4. Homepage (products/index.html.erb)
