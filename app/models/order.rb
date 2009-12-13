@@ -183,11 +183,12 @@ class Order < ActiveRecord::Base
 
   # collection of available shipping countries
   def shipping_countries
+    return [] unless ShippingMethod.count > 0
     ShippingMethod.all.collect { |method| method.zone.country_list }.flatten.uniq.sort_by {|item| item.send 'name'}
   end
 
   def shipping_methods
-    return [] unless ship_address
+    return [] unless ship_address and ShippingMethod.count > 0
     ShippingMethod.all.select { |method| method.zone.include?(ship_address) && method.available?(self) }
   end
 

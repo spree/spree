@@ -73,6 +73,6 @@ end
 
 # useful method for functional tests that require an authenticated user
 def set_current_user
-  @user = Factory(:user, :email => "test@example.com")
+  @user = Factory(:user)
   @controller.stub!(:current_user, :return => @user)
 end
