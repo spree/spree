@@ -19,18 +19,23 @@ class CheckoutsController < Spree::BaseController
   edit.before :edit_hooks  
   delivery.edit_hook :load_available_methods 
   address.edit_hook :set_ip_address
-    
-  update.before :update_before
-  update.after :update_after
 
   # customized verison of the standard r_c update method (since we need to handle gateway errors, etc)
   def update  
     load_object
+
+    # call the edit hooks for the current step in case we experience validation failure and need to edit again      
+    edit_hooks
+    @checkout.enable_validation_group(@checkout.state.to_sym)
+    
     before :update
 
     begin
       if object.update_attributes object_params
+        update_hooks
+        @order.update_totals!
         after :update
+        next_step
         if @checkout.completed_at 
           return complete_checkout
         end    
@@ -60,17 +65,7 @@ class CheckoutsController < Spree::BaseController
   end
     
   private
-  def update_before
-    # call the edit hooks for the current step in case we experience validation failure and need to edit again      
-    edit_hooks
-    @checkout.enable_validation_group(@checkout.state.to_sym)
-  end
   
-  def update_after
-    update_hooks
-    next_step
-  end
-
   # Calls edit hooks registered for the current step  
   def edit_hooks  
     edit_hook @checkout.state.to_sym 
