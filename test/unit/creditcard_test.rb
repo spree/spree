@@ -12,22 +12,22 @@ class CreditcardTest < ActiveSupport::TestCase
         Spree::Config.set(:store_cc => true, :store_cvv => true)
         @creditcard.save
       end
-      should "not save number" do
-        assert @creditcard.number
+      should "save number" do
+        assert @creditcard.reload.number
       end
-      should "not save verification_value" do
-        assert @creditcard.verification_value
+      should "save verification_value" do
+        assert @creditcard.reload.verification_value
       end
     end
     context "save (by default)" do
       setup do 
         @creditcard.save
       end
-      should "not store number in memory" do
-        assert !@creditcard.number
+      should "store temporarily store number in memory" do
+        assert @creditcard.number
       end
-      should "not store verification_value in memory" do
-        assert !@creditcard.verification_value
+      should "store temporarily store verification_value in memory" do
+        assert @creditcard.verification_value
       end
       should "not store number in database" do
         assert !@creditcard.reload.number

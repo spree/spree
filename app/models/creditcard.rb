@@ -7,7 +7,6 @@ class Creditcard < ActiveRecord::Base
   validates_numericality_of :year, :integer => true   
   validates_presence_of :number
   validates_presence_of :verification_value
-  after_validation :remove_sensitive 
   
   def name?
     first_name? && last_name?
@@ -48,11 +47,22 @@ class Creditcard < ActiveRecord::Base
     #require_verification_value
   end
   
-  private
-  def remove_sensitive
-    self.number = nil unless Spree::Config[:store_cc]
-    self.verification_value = nil unless Spree::Config[:store_cvv]
-  end
   
+  alias :attributes_with_quotes_default :attributes_with_quotes
+  
+  private
+  # Override default behavior of Rails attr_readonly so that its never written to the database (not even on create)
+  def attributes_with_quotes(include_primary_key = true, include_readonly_attributes = true, attribute_names = @attributes.keys)
+    attributes_with_quotes_default(include_primary_key, false, attribute_names)
+  end
+
+  def remove_readonly_attributes(attributes)
+    if self.class.readonly_attributes.present?
+      attributes.delete_if { |key, value| self.class.readonly_attributes.include?(key.gsub(/\(.+/,"")) }
+    end
+    # extra logic for sanitizing the number and verification value based on preferences
+    attributes.delete_if { |key, value| key == "number" and !Spree::Config[:store_cc] } 
+    attributes.delete_if { |key, value| key == "verification_value" and !Spree::Config[:store_cvv] } 
+  end
 end
 
