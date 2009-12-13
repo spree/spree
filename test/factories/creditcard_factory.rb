@@ -1,6 +1,6 @@
 # allows creditcard info to be saved to the datbase which is needed for factories to work properly
 class TestCard < Creditcard
-  def remove_sensitive ; end
+  def remove_readonly_attributes(attributes) attributes; end
 end
 
 Factory.define(:creditcard, :class => TestCard) do |f|

@@ -35,6 +35,9 @@ class CreditcardTest < ActiveSupport::TestCase
       should "not store verification_value in database" do
         assert !@creditcard.reload.verification_value
       end
+      should "store a masked version of the number" do
+        assert @creditcard.reload.display_number.starts_with?("XXXX-XXXX-XXXX-")
+      end
     end
   end
   

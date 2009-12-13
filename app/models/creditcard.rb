@@ -1,13 +1,18 @@
-class Creditcard < ActiveRecord::Base 
-  # before_save :filter_sensitive 
+class Creditcard < ActiveRecord::Base         
   belongs_to :checkout
   has_many :creditcard_payments
+  
+  before_save :set_last_digits
   
   validates_numericality_of :month, :integer => true
   validates_numericality_of :year, :integer => true   
   validates_presence_of :number
   validates_presence_of :verification_value
   
+  def set_last_digits
+    self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1) 
+  end
+    
   def name?
     first_name? && last_name?
   end
@@ -29,24 +34,9 @@ class Creditcard < ActiveRecord::Base
   end
 
   # Show the card number, with all but last 4 numbers replace with "X". (XXXX-XXXX-XXXX-4338)
-  #def display_number
-  #  self.class.mask(number)
-  #end
-  
-  def last_digits
-    self.class.last_digits(number)
+  def display_number
+   "XXXX-XXXX-XXXX-#{last_digits}"
   end
-
-  # needed for some of the ActiveMerchant gateways (eg. Protx)
-  def brand
-    cc_type
-  end 
-  
-  def self.requires_verification_value?
-    true
-    #require_verification_value
-  end
-  
   
   alias :attributes_with_quotes_default :attributes_with_quotes
   
