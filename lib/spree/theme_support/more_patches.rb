@@ -53,15 +53,7 @@ class Less::More
       end
     end
     
-    def needs_recompiling?(source)
-      if source.extname == ".css"
-        return false
-      else
-        
-      end
-    end
-    
-            
+
     # Array of Pathname instances for all the less source files.
     def all_less_files
       #Dir[Less::More.source_path.join("**", "*.{css,less,lss}")].map! {|f| Pathname.new(f) }
@@ -120,4 +112,4 @@ class Less::More
 
 end
 
-Less.source_paths = Less::More.source_paths = Spree::ExtensionLoader.stylesheet_source_paths.reverse
+$LESS_LOAD_PATH = Less::More.source_paths = Spree::ExtensionLoader.stylesheet_source_paths.reverse

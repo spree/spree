@@ -6,6 +6,8 @@
   <br clear="clear" />
 
   <ul class="sidebar product-menu">
+    <% hook :admin_product_tabs do %>
+
     <li<%= ' class="active"' if current == "Product Details" %>>
       <%= link_to t("product_details"), edit_admin_product_url(@product) %>
     </li>
@@ -34,7 +36,8 @@
         <%= link_to t("taxons"), selected_admin_product_taxons_url(@product) %>
       </li>
     <% end %>
-    <%= call_hook :admin_product_tabs %>
+
+    <% end %>
   </ul>
   <br clear="clear" />
 

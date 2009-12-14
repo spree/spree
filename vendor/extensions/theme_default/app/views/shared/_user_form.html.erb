@@ -1,5 +1,3 @@
-<%= call_hook :signup_above_email_field %>
-
 <p>
   <%= f.label :email, t("email") %><br />
   <%= f.text_field :email, :class => 'title'  %>
@@ -16,7 +14,7 @@
   </p>
 </div>
 
-<%= call_hook :signup_below_password_fields %>
+<%= hook :signup_below_password_fields %>
 
 <% if Spree::Config[:allow_openid] %>
   <div id="openid-credentials" style="<%=openid_style(@user)%>" >

@@ -2,12 +2,13 @@
 
 <h1><%= t("shopping_cart")%></h1>
 
-<%= call_hook :cart_top %>
-
 <% form_for(@order, :url => object_url, :html => { :method => :put, :id => 'updatecart' }) do |order_form| %>
-  <%= call_hook :cart_above_items %>
-  <%= render :partial => 'form', :locals => {:order_form => order_form} %>
-  <%= call_hook :cart_below_items %>
+<% hook :inside_cart_form do %>
+
+  <% hook :cart_items do %>
+    <%= render :partial => 'form', :locals => {:order_form => order_form} %>
+  <% end %>
+
   <% unless @order.line_items.empty? -%>
   <div id="subtotal">
     <h3><%= "#{t("subtotal")}: #{order_price(@order)}" %></h3>
@@ -23,6 +24,6 @@
     <%= link_to t("empty_cart"), object_url, :method => :delete, :class => 'button empty'  %>
   </p>
   <% end -%>
-<% end -%>
 
-<%= call_hook :cart_bottom %>
+<% end %>
+<% end -%>

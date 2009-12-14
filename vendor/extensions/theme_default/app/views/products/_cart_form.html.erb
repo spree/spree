@@ -1,13 +1,14 @@
 <% form_for :order, :url => orders_url do |f| %>
+<% hook :inside_product_cart_form do %>
 
   <% if product_price(@product) %>
-    <%= call_hook :product_above_price %>
-    <p class="prices">
-      <%= t("price") %>
-      <br />
-      <span class="price selling"><%= product_price(@product) %></span>
-    </p>
-    <%= call_hook :product_below_price %>
+    <% hook :product_price do %>
+      <p class="prices">
+        <%= t("price") %>
+        <br />
+        <span class="price selling"><%= product_price(@product) %></span>
+      </p>
+    <% end %>
   <% end %>
 
   <% if @product.has_variants? %>
@@ -44,9 +45,10 @@
   <% else %>
     <%= content_tag('strong', t('out_of_stock')) %>
   <% end %>
+
+<% end %>
 <% end %>
 
 <% content_for :head do %>
   <%= javascript_include_tag 'product' %>
 <% end %>
-<%= call_hook :product_below_cart_form %>

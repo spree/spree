@@ -1,8 +1,8 @@
 <% @body_id = 'login' %>
 <div id="existing-customer">
   <h2><%= t("login_as_existing") %></h2>
-  <%= call_hook :login_top %>
-  <%= render :partial => 'shared/login' %>
-  <%= t("or") %> <%= link_to t("create_a_new_account"), signup_path %> | <%= link_to t("forgot_password"), new_password_reset_path %>
-  <%= call_hook :login_bottom %>
+  <% hook :login do %>
+    <%= render :partial => 'shared/login' %>
+    <%= t("or") %> <%= link_to t("create_a_new_account"), signup_path %> | <%= link_to t("forgot_password"), new_password_reset_path %>
+  <% end %>
 </div>

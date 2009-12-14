@@ -4,15 +4,19 @@
 
 <div id="new-customer">
   <h2><%= t("new_customer") %></h2>
-  
-  <%= call_hook :signup_top %>
 
-  <% form_for(@user) do |f| %>
-    <%= render 'shared/user_form', :f => f %>
-    <p><%= submit_tag t("create"), :class => 'button primary' %></p>
+  <% hook :signup do %>
+
+    <% form_for(@user) do |f| %>
+
+      <% hook :signup_inside_form do %>
+        <%= render 'shared/user_form', :f => f %>
+        <p><%= submit_tag t("create"), :class => 'button primary' %></p>
+      <% end %>
+
+    <% end %>
+    <%= t("or") %> <%= link_to t("login_as_existing"), login_path %>
+
   <% end %>
-  <%= t("or") %> <%= link_to t("login_as_existing"), login_path %>
-
-  <%= call_hook :signup_bottom %>
 
 </div>

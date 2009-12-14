@@ -1,6 +1,8 @@
 <% if !@product.taxons.blank? -%>
 <div id="taxon-crumbs">
   <h3><%= t('look_for_similar_items') -%></h3>
+
+  <% hook :product_taxons do %>
   <div>
     <ul id='similar_items_by_taxon'>
     <% @product.taxons.each do |taxon| -%>
@@ -8,6 +10,7 @@
     <% end -%>
     </ul>
   </div>
-  <%= call_hook :product_below_taxons %>
+  <% end %>
+
 </div>
 <% end -%>

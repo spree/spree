@@ -2,7 +2,9 @@
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<%= render :partial => "shared/admin_head" %>
+  <% hook :admin_inside_head do %>
+  	<%= render :partial => "shared/admin_head" %>
+	<% end %>
 </head>
 <body class='yui-skin-sam admin'>
 <!--[if IE 7]>
@@ -24,7 +26,9 @@
   </div>
     <div id="admin-menu">
       <ul>
-        <%= render 'admin/shared/tabs' %>
+        <% hook :admin_tabs do %>
+          <%= render 'admin/shared/tabs' %>
+        <% end %>
       </ul>
       <br class="clear" />
     </div>

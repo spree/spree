@@ -1,10 +1,11 @@
 <% content_for :sub_menu do %>
   <ul id="sub_nav">
-    <%= tab :products, :match_path => '/products' %>
-    <%= tab :option_types, :match_path => '/option_types' %>
-    <%= tab :properties %>
-    <%= tab :prototypes %>
-    <%= tab :product_groups, :match_path => '/product_groups', :css_class => 'last' %>
-    <%= call_hook :admin_product_sub_tabs %>
+    <% hook :admin_product_sub_tabs do %>
+      <%= tab :products, :match_path => '/products' %>
+      <%= tab :option_types, :match_path => '/option_types' %>
+      <%= tab :properties %>
+      <%= tab :prototypes %>
+      <%= tab :product_groups, :match_path => '/product_groups', :css_class => 'last' %>
+    <% end %>
   </ul>
 <% end %>

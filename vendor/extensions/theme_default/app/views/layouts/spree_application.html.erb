@@ -1,7 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<%= render :partial => 'shared/head'%>
+<% hook :inside_head do %>
+  <%= render :partial => 'shared/head'%>
+<% end %>
 </head>
 <%
 if @body_class.nil?
@@ -24,8 +26,9 @@ end
   <div id="wrapper" class="container"> 
     <% if @content_for_sidebar %>
     <div id="sidebar">
-      <%= yield :sidebar %>
-      <%= call_hook :sidebar_bottom %>
+      <% hook :sidebar do %>
+        <%= yield :sidebar %>
+      <% end %>
     </div>
     <% end %>
     

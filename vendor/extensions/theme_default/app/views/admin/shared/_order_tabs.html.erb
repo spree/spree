@@ -5,6 +5,7 @@
   <br clear="clear" />
 
   <ul class="sidebar">
+    <% hook :admin_order_tabs do %>
     <li <%= ' class="active"' if current == "Customer Details" %>>
       <%= link_to t("customer_details"), admin_order_checkout_url(@order) %>
     </li>
@@ -24,7 +25,7 @@
     <li <%= ' class="active"' if current == "History" %>>
        <%= link_to t("history"), history_admin_order_url(@order) %>
     </li>
-    <%= call_hook :admin_order_tabs %>
+    <% end %>
   </ul>
 
 <% end %>
