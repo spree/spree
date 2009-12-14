@@ -26,7 +26,7 @@ namespace :db do
     desc "Create admin username and password"
     task :create => :environment do
       require 'authlogic'     
-      require 'db/sample/users.rb'
+      require "#{SPREE_ROOT}/db/sample/users.rb" 
     end
   end
 
