@@ -131,54 +131,58 @@ h3. Hooks
 
 Hooks are a way of inserting your own content into pre-defined parts of Spree's default templates without having to make your own copy of those templates in your extension. 
 
+Multiple extensions can modify the same hook, the changes are applied cumulatively based on extension load order.
+
 h4. Available hooks
 
-Hooks are available to let you add content after product lists, within sidebars and other useful places.A full list of available hooks is available "here":hooks.html
+Hooks are available to let you add content after product lists, within sidebars and other useful places. A full list of available hooks is available "here":hooks.html
 
 h4. Using hooks
 
-In your extension directory you should find the file +my_theme_hooks.rb+.  Within this file you can specify which content should be inserted into which hooks.
+Most hooks are defined with blocks so they span a region of the template, allowing content
+to be replaced or removed as well as added to.
 
-h5. Option 1
+In your extension directory you should find the file +my_theme_hooks.rb+.  Within this file you can specify which content should be inserted into which hooks using the following 4 methods:
 
-Supply the hook name as a symbol followed by any arguments that are valid for 'render'
+* insert_before
+* insert_after
+* replace
+* remove
 
-To use contents of your own partial template:
+h5. Inserting and replacing content
+
+Supply a block name followed by any arguments you'd use with +render+
 
 <shell>
-  render_on :homepage_above_products, 'shared/welcome'
+  insert_before :homepage_products, :text => "<h1>Welcome!</h1>"
+
+  insert_after :homepage_products, 'shared/offers' # renders a partial
+
+  replace :taxon_sidebar_navigation, 'shared/my_sidebar
 </shell>
 
-To just insert a small string:
+h5. Using a block
+
+The block should return the string to be inserted. It has access to any methods or instance variables available in the view.
 
 <shell>
-  render_on :homepage_above_products, :text => "<h1>Welcome!</h1>"
-</shell>
-
-h5. Option 2, block syntax
-
-You can suppy a block to +render_on+ which returns the string to be inserted. You can use any helpers you would
-use in your views in this block.
-
-The following would add a link below product details:
-
-<shell> 
-  render_on :product_below_description do
+  # adding a link below product details:
+  insert_after :product_description do
     '<p>' + link_to('Back to products', products_path) + '</p>'
-   end
+  end
+
+  # adding a new tab to the admin navigation
+  insert_after :admin_tabs do
+    tab(:taxonomies)
+  end
 </shell>
 
-This example would add a new tab to the admin navigation.
-
-<shell> 
-   render_on :admin_tabs do
-     tab(:taxonomies)
-   end
-</shell>
+h5. Removing a hook's content
 
 <shell>
-  <%= call_hook :my_hook_name %>
+  remove :homepage_products
 </shell>
+
 
 
 h3. Customizing templates
@@ -191,10 +195,15 @@ For example, to override the main layout, create the file +SITE_EXTENSION_DIR/ap
 
 h4. Using hooks in your templates
 
-Since themes are just Spree extensions, one may be loaded after another, the modifications they make to the site's appearance being combined based on their load order.  If you anticipate your theme being extended by other themes you should make sure your templates maintain the standard hooks where possible so subsequently loaded extensions can make use of them. You may also define new hooks using the +call_hook+ helper like so:
+Since themes are just Spree extensions, one may be loaded after another, the modifications they make to the site's appearance being combined based on their load order.  If you anticipate your theme being extended by other themes you should make sure your templates maintain the standard hooks where possible so subsequently loaded extensions can make use of them. You may also define new hooks using the +hook+ helper like so:
 
 <shell>
-  <%= call_hook :my_hook_name %>
+  <%= hook :my_hook_name %>
+
+  # or with block
+  <% hook :my_hook_name do %>
+    <p>Default content</p>
+  <% end %>
 </shell>
 
 If your theme adds new hooks these should be documented in your theme's README.
