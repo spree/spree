@@ -4,7 +4,12 @@ endprologue.
 
 h3. Upgrade Notes
 
-(TODO - polish these rough notes later)
+(TODO - polish these rough notes later)              
+Remove obsolete initializers 
+
+<shell>
+rm -rf config/initializers/compass.rb
+</shell>
 
 Remove defunct contents of public dirs (unless you need something in there)
 
