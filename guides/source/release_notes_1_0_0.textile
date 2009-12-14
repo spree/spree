@@ -61,7 +61,9 @@ Seed data is data that is needed by the application in order for it to work prop
 
 Sample data is data that is convenient to have when testing your code.  Its loaded with the +rake db:sample+ task.  The core sample data is loaded first, followed by any fixtures contained in the +db/sample+ directory of your extensions.  
 
-If you have fixtures in your extension with the same filename as those found in the core, they will be loaded instead of the core version.  This applies to both sample and seed fixtures.  This allows for fine grained control over the sample and seed data.  For example, you can create your own custom sample order data in your site extension instead of relying on the version provided by Spree.
+If you have fixtures in your extension with the same filename as those found in the core, they will be loaded instead of the core version.  This applies to both sample and seed fixtures.  This allows for fine grained control over the sample and seed data.  For example, you can create your own custom sample order data in your site extension instead of relying on the version provided by Spree.           
+
+WARNING.  You should remove all +db:bootstrap+ tasks from your extensions.  The new bootstrap functionality in the core will automatically load any fixtures found in +db/sample+ of your extension.  Failing to remove this task from your extension will result in an attempt to create the fixtures twice.
 
 h3. Miscellaneous improvements
 
