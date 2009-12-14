@@ -3,7 +3,7 @@ tax_<%= i %>:
   order: order_<%= i %>
   amount: 2.78
   type: TaxCharge
-  adjustment_source_id: order_<%= i %>
+  adjustment_source: order_<%= i %>
   adjustment_source_type: Order
   description: Tax
 <% end %>
@@ -12,7 +12,7 @@ ship_<%= i %>:
   order: order_<%= i %>
   amount: 5
   type: ShippingCharge
-  adjustment_source_id: shipment_<%= i %>
+  adjustment_source: shipment_<%= i %>
   adjustment_source_type: Shipment
   description: Shipping
 <% end %>
