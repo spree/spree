@@ -4,4 +4,5 @@ shipment_<%= i %>:
   order: order_<%= i %>
   shipping_method: ups_ground 
   address: ship_address_<%= i %>
+  state: pending
 <% end %>
