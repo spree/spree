@@ -1,8 +1,8 @@
 module Admin::BaseHelper
 
   # receives a :controller, :action, and :params.  Finds the given controller and runs user_authorized_for? on it.
-  # This can be called in your views, and is for advanced users only.  If you are using :if / :unless eval expressions, 
-  #   then this may or may not work (eval strings use the current binding to execute, not the binding of the target 
+  # This can be called in your views, and is for advanced users only.  If you are using :if / :unless eval expressions,
+  #   then this may or may not work (eval strings use the current binding to execute, not the binding of the target
   #   controller)
   def url_options_authenticate?(params = {})
     params = params.symbolize_keys
@@ -14,10 +14,10 @@ module Admin::BaseHelper
     end
     klass.user_authorized_for?(current_user, params, binding)
   end
-  
+
   def field_container(model, method, options = {}, &block)
     unless error_message_on(model, method).blank?
-      css_class = 'withError' 
+      css_class = 'withError'
     end
     html = content_tag('p', capture(&block), :class => css_class)
     concat(html)
@@ -28,11 +28,11 @@ module Admin::BaseHelper
     end
   end
 
-  def get_additional_field_value(controller, field)  
+  def get_additional_field_value(controller, field)
     attribute = attribute_name_for(field[:name])
 
-    value = eval("@" + controller.controller_name.singularize + "." + attribute)  
-    
+    value = eval("@" + controller.controller_name.singularize + "." + attribute)
+
     if value.nil? && controller.controller_name == "variants"
       value = @variant.product.has_attribute?(attribute) ? @variant.product[attribute] : nil
     end
@@ -61,7 +61,7 @@ module Admin::BaseHelper
   def generate_html(form_builder, method, options = {})
     options[:object] ||= form_builder.object.class.reflect_on_association(method).klass.new
     options[:partial] ||= method.to_s.singularize
-    options[:form_builder_local] ||= :f  
+    options[:form_builder_local] ||= :f
 
     form_builder.fields_for(method, options[:object], :child_index => 'NEW_RECORD') do |f|
       render(:partial => options[:partial], :locals => { options[:form_builder_local] => f })
@@ -128,28 +128,28 @@ module Admin::BaseHelper
   def preference_fields(object, form)
     return unless object.respond_to?(:preferences)
     object.preferences.keys.map{ |key|
-			next unless object.class.preference_definitions.has_key? key
-			
+      next unless object.class.preference_definitions.has_key? key
+
       definition = object.class.preference_definitions[key]
       type = definition.instance_eval{@type}.to_sym
-      
+
       form.label("preferred_#{key}", t(key)+": ") +
         preference_field(form, "preferred_#{key}", :type => type)
     }.join("<br />")
   end
-  
+
   def additional_field_for(controller, field)
      field[:use] ||= 'text_field'
      options = field[:options] || {}
 
      object_name, method = controller.controller_name.singularize, attribute_name_for(field[:name])
 
-     case field[:use]    
+     case field[:use]
      when 'check_box'
        check_box(object_name, method, options, field[:checked_value] || 1, field[:unchecked_value] || 0)
      when 'radio_button'
        html = ''
-       field[:value].call(controller, field).each do |value| 
+       field[:value].call(controller, field).each do |value|
          html << radio_button(object_name, method, value, options)
          html << " #{value.to_s} "
        end
@@ -161,10 +161,10 @@ module Admin::BaseHelper
        __send__(field[:use], object_name, method, options.merge(:value => value))
      end # case
    end
-   
+
   private
   def attribute_name_for(field_name)
     field_name.gsub(' ', '_').downcase
   end
-  
+
 end

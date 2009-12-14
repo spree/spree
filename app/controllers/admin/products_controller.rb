@@ -1,43 +1,48 @@
 class Admin::ProductsController < Admin::BaseController
   resource_controller
-  before_filter :load_data
+  before_filter :load_data, :except => :index
+
+  index.response do |wants|
+    wants.html { render :action => :index }
+    wants.json { render :json => @collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, :images => {}}}, :images => {}, :master => {}})  }
+  end
 
   new_action.before :new_action_before
-  
+
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => false}
   end
 
   update.before :update_before
 
-  create.response do |wants| 
+  create.response do |wants|
     # go to edit form after creating as new product
     wants.html {redirect_to edit_admin_product_url(Product.find(@product.id)) }
   end
 
-  update.response do |wants| 
+  update.response do |wants|
     # override the default redirect behavior of r_c
     # need to reload Product in case name / permalink has changed
     wants.html {redirect_to edit_admin_product_url(Product.find(@product.id)) }
   end
-  
-  # override the destory method to set deleted_at value 
+
+  # override the destory method to set deleted_at value
   # instead of actually deleting the product.
   def destroy
     @product = Product.find_by_permalink(params[:id])
     @product.deleted_at = Time.now()
-    
-    @product.variants.each do |v|   
+
+    @product.variants.each do |v|
       v.deleted_at = Time.now()
       v.save
     end
-    
+
     if @product.save
       flash[:notice] = "Product has been deleted"
     else
       flash[:notice] = "Product could not be deleted"
     end
-    
+
     respond_to do |format|
       format.html { redirect_to collection_url }
       format.js  { render_js_for_destroy }
@@ -56,41 +61,54 @@ class Admin::ProductsController < Admin::BaseController
 
     redirect_to edit_admin_product_url(@new)
   end
-  
+
   private
     def load_data
-      @tax_categories = TaxCategory.find(:all, :order=>"name")  
-      @shipping_categories = ShippingCategory.find(:all, :order=>"name")  
+      @tax_categories = TaxCategory.find(:all, :order=>"name")
+      @shipping_categories = ShippingCategory.find(:all, :order=>"name")
     end
-    
-    def collection
-      base_scope = end_of_association_chain
 
-      # Note: the SL scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
-      # QUERY - better as named scope or as SL scope?
-      if params[:search].nil? || params[:search][:deleted_at_not_null].blank?
-        base_scope = base_scope.not_deleted
+    def collection
+      unless request.xhr?
+        base_scope = end_of_association_chain
+
+        # Note: the SL scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
+        # QUERY - better as named scope or as SL scope?
+        if params[:search].nil? || params[:search][:deleted_at_not_null].blank?
+          base_scope = base_scope.not_deleted
+        end
+
+        @search = base_scope.searchlogic(params[:search])
+        @search.order ||= "ascend_by_name"
+
+        @collection = @search.paginate(:include  => {:variants => [:images, :option_values]},
+                                       :per_page => Spree::Config[:admin_products_per_page],
+                                       :page     => params[:page])
+      else
+        @collection = Product.find( :all,
+                                    :conditions => ["name like ?", "%#{params[:q]}%"],
+                                    :include =>  [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images])
+
+        @collection.concat Product.find( :all,
+                                    :conditions => ["variants.sku like ?", "%#{params[:q]}%"],
+                                    :include =>  [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images])
+
+        @collection.uniq!
       end
 
-      @search = base_scope.searchlogic(params[:search])
-      @search.order ||= "ascend_by_name"
-
-      @collection = @search.paginate(:include  => {:variants => :images},
-                                     :per_page => Spree::Config[:admin_products_per_page], 
-                                     :page     => params[:page])
     end
-    
+
     # set the default tax_category if applicable
     def new_action_before
       return unless Spree::Config[:default_tax_category]
       @product.tax_category = TaxCategory.find_by_name Spree::Config[:default_tax_category]
     end
-    
+
     def update_before
       # note: we only reset the product properties if we're receiving a post from the form on that tab
-      return unless params[:clear_product_properties] 
+      return unless params[:clear_product_properties]
       params[:product] ||= {}
       params[:product][:product_property_attributes] ||= {} if params[:product][:product_property_attributes].nil?
     end
-  
+
 end

@@ -3,15 +3,15 @@ class Admin::OrdersController < Admin::BaseController
   resource_controller
   before_filter :initialize_txn_partials
   before_filter :initialize_order_events
-  before_filter :load_object, :only => [:fire, :resend]
+  before_filter :load_object, :only => [:fire, :resend, :history]
 
   in_place_edit_for :user, :email
 
-  def fire   
-    # TODO - possible security check here but right now any admin can before any transition (and the state machine 
+  def fire
+    # TODO - possible security check here but right now any admin can before any transition (and the state machine
     # itself will make sure transitions are not applied in the wrong state)
     event = params[:e]
-    Order.transaction do 
+    Order.transaction do
       @order.send("#{event}!")
     end
     flash[:notice] = t('order_updated')
@@ -20,13 +20,13 @@ class Admin::OrdersController < Admin::BaseController
   ensure
     redirect_to :back
   end
-  
+
   def resend
     OrderMailer.deliver_confirm(@order, true)
     flash[:notice] = t('order_email_resent')
     redirect_to :back
   end
-  
+
   private
 
   def collection
@@ -38,11 +38,11 @@ class Admin::OrdersController < Admin::BaseController
 
     # turn on show-complete filter by default
     unless params[:search] && params[:search][:completed_at_not_null]
-      @search.completed_at_not_null = true 
+      @search.completed_at_not_null = true
     end
-    
+
     @collection = @search.paginate(:include  => [:user, :shipments, {:creditcard_payments => :creditcard}],
-                                   :per_page => Spree::Config[:orders_per_page], 
+                                   :per_page => Spree::Config[:orders_per_page],
                                    :page     => params[:page])
   end
 
@@ -50,11 +50,11 @@ class Admin::OrdersController < Admin::BaseController
   def initialize_txn_partials
     @txn_partials = []
   end
-  
+
   # Used for extensions which need to provide their own custom event links on the order details view.
   def initialize_order_events
     @order_events = %w{cancel resume}
   end
-  
+
 
 end

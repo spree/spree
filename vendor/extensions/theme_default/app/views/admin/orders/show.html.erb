@@ -1,40 +1,30 @@
 <div class='toolbar order-links'>
-  <%= button_link_to t("resend"), resend_admin_order_url(@order), :method => :post, :icon => 'send-email' %>
-  <%= event_links %>
+  <%= button_link_to t("edit"), edit_admin_order_url(@order.number), :icon => 'edit' %>
 </div>
 
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
 
-<%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} -%>
-
 <% if @order.bill_address %>
   <div class='adr'>
     <h4>
-      <%= link_to t("bill_address"), edit_admin_order_creditcard_payment_url(@order, @order.creditcard_payments.last) if @order.creditcard_payments.present? %>
+      <%= link_to t("bill_address"), (@current_action=="edit" ? edit_admin_order_checkout_url(@order) : admin_order_checkout_url(@order)) %>
       <%= t("bill_address") if @order.creditcard_payments.empty? %>
     </h4>
-    <%= render :partial => 'admin/shared/address', :locals => {:address => @order.bill_address} %>      
+    <%= render :partial => 'admin/shared/address', :locals => {:address => @order.bill_address} %>
   </div>
-<% end %>                   
+<% end %>
 <% if @order.ship_address %>
   <div class='adr'>
     <h4>
-      <%= link_to t("ship_address"), edit_admin_order_shipment_url(@order, @order.shipments.last) if @order.shipments.present? %>
+      <%= link_to t("ship_address"), (@current_action=="edit" ? edit_admin_order_checkout_url(@order) : admin_order_checkout_url(@order)) %>
       <%= t("ship_address") if @order.shipments.empty? %>
     </h4>
-    <%= render :partial => 'admin/shared/address', :locals => {:address => @order.ship_address} %>      
+    <%= render :partial => 'admin/shared/address', :locals => {:address => @order.ship_address} %>
   </div>
   <% end %>
 <hr />
 
-<table class="index">
-  <tr>
-    <th><%= t("email") %></th>
-  </tr>
-  <tr>
-    <td><%= @order.email %></td>
-  </tr>
-</table>
+<%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} -%>
 
 <% unless @order.special_instructions.blank? %>
   <table class="index">
@@ -47,24 +37,4 @@
   </table>
 <% end %>
 
-<h4><%= t('history') %></h4>
-
-<table class="index">
-  <tr>
-    <th><%= t("event") %></th>
-    <th><%= t("user") %></th>
-    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-  </tr>
-  <% @order.state_events.sort.each do |event| %>
-    <tr>
-      <td><%=t("#{event.name}") %></td>
-      <td><%=event.user.email if event.user %></td>
-      <td><%=event.created_at.to_s(:date_time24) %></td>
-    </tr>
-  <% end %>
-  <% if @order.state_events.empty? %>
-    <tr>
-      <td colspan="3"><%= t("none_available") %></td>
-    </tr>
-  <% end %>
-</table>
+<%= button_link_to t('continue'), admin_orders_url %>

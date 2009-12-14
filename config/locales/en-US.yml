@@ -5,7 +5,10 @@ en-US:
   5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
+  billing: Billing
+  customer_details: "Customer Details"
   charges: Charges
+  add_product: "Add Product"
   balance_due: "Balance Due"
   credit_owed: "Credit Owed"
   under_paid: "Under Paid"

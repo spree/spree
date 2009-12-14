@@ -1,0 +1,112 @@
+<div class='toolbar order-links'>
+  <%= button_link_to t("edit"), edit_admin_order_checkout_url(@order.number), :icon => 'edit' %>
+</div>
+
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Customer Details"} %>
+
+<h2><%= t("customer_details")%></h2>
+
+<p>
+  <label>Email: </label><%= @checkout.email %>
+</p>
+
+<h3><%= Address.human_name(:count => 2) %></h3>
+<table class="index">
+  <tr>
+    <th colspan="8"><%= t("billing_address") %></th>
+  </tr>
+  <tr>
+    <td>
+      <label><%= Address.human_attribute_name(:first_name) %>:</label>
+    </td>
+    <td colspan="3"><%= @checkout.bill_address.firstname %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:last_name) %>:</label>
+    </td>
+    <td colspan="3"><%= @checkout.bill_address.lastname %></td>
+  </tr>
+  <tr>
+    <td>
+      <label><%= Address.human_attribute_name(:address1) %>:</label>
+    </td>
+    <td colspan="3"><%= @checkout.bill_address.address1 %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:address2) %>:</label>
+    </td>
+    <td colspan="3"><%= @checkout.bill_address.address2 %></td>
+  </tr>
+  <tr>
+    <td>
+      <label><%= Address.human_attribute_name(:city) %>:</label>
+    </td>
+    <td><%= @checkout.bill_address.city %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:zipcode) %>:</label>
+    </td>
+    <td><%= @checkout.bill_address.zipcode %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:state) %>:</label>
+    </td>
+    <td><%= @checkout.bill_address.state.nil? ? @checkout.bill_address.state_name : @checkout.bill_address.state.name %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:country) %>:</label>
+    </td>
+    <td><%= @checkout.bill_address.country %></td>
+  </tr>
+  <tr>
+    <td>
+      <label><%= Address.human_attribute_name(:phone) %>:</label>
+    </td>
+    <td colspan="7"><%= @checkout.bill_address.phone %></td>
+  </tr>
+</table>
+
+<table class="index">
+  <tr>
+    <th colspan="8"><%= t("shipping_address") %></th>
+  </tr>
+  <tr>
+    <td>
+      <label><%= Address.human_attribute_name(:first_name) %>:</label>
+    </td>
+    <td colspan="3"><%= @checkout.shipment.address.firstname %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:last_name) %>:</label>
+    </td>
+    <td colspan="3"><%= @checkout.shipment.address.lastname %></td>
+  </tr>
+  <tr>
+    <td>
+      <label><%= Address.human_attribute_name(:address1) %>:</label>
+    </td>
+    <td colspan="3"><%= @checkout.shipment.address.address1 %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:address2) %>:</label>
+    </td>
+    <td colspan="3"><%= @checkout.shipment.address.address2 %></td>
+  </tr>
+  <tr>
+    <td>
+      <label><%= Address.human_attribute_name(:city) %>:</label>
+    </td>
+    <td><%= @checkout.shipment.address.city %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:zipcode) %>:</label>
+    </td>
+    <td><%= @checkout.shipment.address.zipcode %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:state) %>:</label>
+    </td>
+    <td><%= @checkout.shipment.address.state.nil? ? @checkout.shipment.address.state_name : @checkout.shipment.address.state.name %></td>
+    <td>
+      <label><%= Address.human_attribute_name(:country) %>:</label>
+    </td>
+    <td><%= @checkout.shipment.address.country %></td>
+  </tr>
+  <tr>
+    <td>
+      <label><%= Address.human_attribute_name(:phone) %>:</label>
+    </td>
+    <td colspan="7"><%= @checkout.shipment.address.phone %></td>
+  </tr>
+</table>

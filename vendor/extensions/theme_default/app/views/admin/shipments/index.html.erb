@@ -1,3 +1,11 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_shipment"), new_object_url, :icon => 'add'  %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
 <table class="index">
   <tr>
@@ -20,3 +28,4 @@
   <% end %>
 </table>
 
+<%= button_link_to t('continue'), admin_orders_url %>

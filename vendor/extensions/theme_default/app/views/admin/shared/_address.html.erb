@@ -1,15 +1,5 @@
-<%
-# HACK - in_place_editor field works only with instance variables and not local variables  
-# See http://dev.rubyonrails.org/ticket/3094 for details
-
-@address = address 
-%>
-
-<p><%="#{address.firstname} #{address.lastname}" %><br />
- <%= address.address1 %><br />
-<%= "#{address.address2} <br />" unless address.address2.blank? %>
-<%= "#{address.city}, #{address.state_text} #{address.zipcode}" %><br />
-<%= address.country.name %><br />
-<%= address.phone %>
-<%= '<br/>' + address.alternative_phone unless address.alternative_phone.blank? %>
+<p>
+  <%="#{address.firstname} #{address.lastname} (#{address.phone}" %><%= address.alternative_phone unless address.alternative_phone.blank? %>)<br />
+  <%= address.address1 %> <%= ", #{address.address2}" unless address.address2.blank? %>
+  <%= ", #{address.city}, #{address.state_text}, #{address.zipcode}, #{address.country.name}" %>
 </p>

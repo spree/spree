@@ -2,7 +2,7 @@
 #login-nav,
 #store-nav {
   float: right;
- 	margin-top: 10px;}
+   margin-top: 10px;}
   #language-bar li,
   #login-nav li,
   #store-nav li {
@@ -43,7 +43,7 @@ body {
       color: #4884BD; }
   #header,
   #footer {
-		position: relative;
+    position: relative;
     clear: both; }
   #content {
     margin: 0em 1em 1em 1em;
@@ -129,7 +129,7 @@ body {
             color: #fff; }
   h1.logo {
     float: left;
-    margin: 20px 10px 10px 10px;	 }
+    margin: 20px 10px 10px 10px;   }
     h1.logo a {
       background: url(../../images/admin/bg/spree_50.png) left center no-repeat;
       padding-left: 120px;
@@ -141,7 +141,7 @@ body {
   #admin-menu { clear: both; }
   #admin-menu,
   #sub-menu {
-    margin: 0 1em; 
+    margin: 0 1em;
     }
     #admin-menu li {
 
@@ -167,7 +167,7 @@ body {
           outline: none; }
         #admin-menu ul li.selected a,
         #sub-menu ul li.selected a {
-          background-color: #0095da; 
+          background-color: #0095da;
           }
         #admin-menu ul li.selected {
           border-bottom:1px solid #0095DA;
@@ -178,7 +178,7 @@ body {
     background: #154e8c url(../../images/admin/bg/admin_tab_back.png) top left repeat-x;
     border-top: 1px solid #4B83E2;
     border-right: 1px solid #34599B;
-    border-bottom: 1px solid #41A6F0; 
+    border-bottom: 1px solid #41A6F0;
     }
     #admin-menu ul {
       margin-bottom: -1px; }
@@ -332,7 +332,7 @@ body {
     border: solid 1px #999;
     -moz-border-radius: .5em;
     -webkit-border-radius: .5em;
-    min-width: 200px; }
+    min-width: 46%; }
     .adr .fn {
       font-weight: bold; }
     .adr h4 {
@@ -391,69 +391,69 @@ body {
 
 
 .pagination{
-	padding-top: 10px;
-	text-align: right;
+  padding-top: 10px;
+  text-align: right;
 }
-a.page, span.page {  
-	padding: 0px 5px; 
-	margin: 0 3px;
+a.page, span.page {
+  padding: 0px 5px;
+  margin: 0 3px;
 }
-a.page {  	  
-	text-decoration: none;  
-	border: 1px solid #9aafe5;
-	color: #2e6ab1;	
+a.page {
+  text-decoration: none;
+  border: 1px solid #9aafe5;
+  color: #2e6ab1;
 }
-a.page:hover, a.page:active {  
-	border: 1px solid #2b66a5;
-	color: #000;
-	background-color: LightYellow;	
-} 
+a.page:hover, a.page:active {
+  border: 1px solid #2b66a5;
+  color: #000;
+  background-color: LightYellow;
+}
 
 a.next_page {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 
-span.disabled_page {  
-	border: 1px solid #929292;
-	color: #929292;
-} 
+span.disabled_page {
+  border: 1px solid #929292;
+  color: #929292;
+}
 
-span.current_page {  
-	font-weight: bold;
-	border: 1px solid navy;
-	background-color: #2e6ab1;
-	color: #FFF;
-}                  
+span.current_page {
+  font-weight: bold;
+  border: 1px solid navy;
+  background-color: #2e6ab1;
+  color: #FFF;
+}
 
 div#calculator-settings-warning {
  color: #f00;
 }
 #progress{
-	display:none;
-	background:#154E8C url(../../images/admin/bg/admin_tab_back.png) repeat-x scroll left top;
-	color:#fff;
-	font-size:170%;
-	height:25px;
-	left:33%;
-	padding:10px 0 15px;
-	position:fixed;
-	text-align:center;
-	width:30%;
-	font-weight:bold;
-	-moz-border-radius-bottomleft:15px;
-	-moz-border-radius-bottomright:15px;
-	-webkit-border-bottom-left-radius: 15px;
-	-webkit-border-bottom-right-radius: 15px;
+  display:none;
+  background:#154E8C url(../../images/admin/bg/admin_tab_back.png) repeat-x scroll left top;
+  color:#fff;
+  font-size:170%;
+  height:25px;
+  left:33%;
+  padding:10px 0 15px;
+  position:fixed;
+  text-align:center;
+  width:30%;
+  font-weight:bold;
+  -moz-border-radius-bottomleft:15px;
+  -moz-border-radius-bottomright:15px;
+  -webkit-border-bottom-left-radius: 15px;
+  -webkit-border-bottom-right-radius: 15px;
 }
 #progress img{
-	vertical-align:middle;
-	padding-right:10px;
+  vertical-align:middle;
+  padding-right:10px;
 }
- 
+
 ul#shipping-specs {
-  margin: 0;  
-  padding-bottom:10px;  
+  margin: 0;
+  padding-bottom:10px;
 }
 ul#shipping-specs li {
   list-style-image:none;
@@ -477,7 +477,7 @@ div.product-preview-products {
 
 #preference-settings input, #preference-settings select, #preference-settings textarea{
   float:left;
- 
+
 }
 
 #preference-settings input[type=text], #preference-settings input[type=password] {
@@ -493,4 +493,20 @@ div.product-preview-products {
   display:block;
   float:left;
   width:170px;
+}
+.index .price{
+  width: 50px;
+  text-align:center;
+}
+.index .qty{
+  width: 50px;
+  text-align:center;
+}
+.index .total{
+  width: 50px;
+  text-align:right;
+}
+.index .orders-actions{
+  width:40px;
+  padding-left:10px;
 }

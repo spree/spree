@@ -8,11 +8,11 @@ Factory.define(:address) do |record|
   record.phone      { Faker::PhoneNumber.phone_number }
   record.state_name  { Faker::Address.us_state }
   record.alternative_phone { Faker::PhoneNumber.phone_number }
-  
+
   #record.active true
 
-  # associations: 
-  record.country { 
+  # associations:
+  record.country {
     Country.find_by_id(Spree::Config[:default_country_id]) ||
       Country.find(:first) ||
       Factory(:country)

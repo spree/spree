@@ -10,6 +10,7 @@
       <th><%= order @search, :by => :state,            :as => t("status") %></th>
       <th><%= order @search, :by => :checkout_email,   :as => t("customer") %></th>
       <th><%= order @search, :by => :total,            :as => t("total") %></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -20,15 +21,16 @@
       <td><%= t(order.state.downcase) %></td>
       <td><%= order.email %></td>
       <td><%= number_to_currency order.total %></td>
+      <td><%= link_to_edit order %></td>
     </tr>
   <% end %>
   </tbody>
 </table>
 <%= will_paginate(:previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
-        
-        
-        
-<% content_for :sidebar do %>      
+
+
+
+<% content_for :sidebar do %>
 <div class="box">
   <h3><%= t(:search) %></h3>
 

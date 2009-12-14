@@ -1,0 +1,82 @@
+require 'test_helper'
+
+class Admin::CheckoutsControllerTest < ActionController::TestCase
+  context "given order" do
+    setup do
+      UserSession.create(Factory(:admin_user))
+      @order = create_complete_order
+    end
+
+    context "on GET to :show" do
+      setup do
+        @checkout =  @order.checkout
+        @params = { :id => @checkout.id, :order_id => @order.number, }
+        get :show
+      end
+
+      should_assign_to :order
+      should_assign_to :checkout
+      should_respond_with :success
+      should_render_template "show"
+
+      should "render address details" do
+        assert_select "table" do
+          assert_select "th", :text => I18n.t("billing_address")
+        end
+
+        assert_select "table" do
+          assert_select "th", :text => I18n.t("shipping_address")
+
+        end
+      end
+    end
+
+    context "on GET to :edit" do
+      setup do
+        @checkout =  @order.checkout
+        @params = { :id => @checkout.id, :order_id => @order.number, }
+
+        @checkout.bill_address.state = @checkout.bill_address.country.states.last
+
+        @checkout.shipment.address.country = Factory.create(:country, :states => []) #Ireland!
+
+        @checkout.save
+        get :edit
+      end
+
+      should_assign_to :order
+      should_assign_to :checkout
+      should_respond_with :success
+      should_render_template "edit"
+
+      should "render address details" do
+        assert_select "table" do
+          assert_select "th", :text => I18n.t("billing_address")
+          assert_select "input[id='checkout_bill_address_attributes_firstname'][value=?]", @checkout.bill_address.firstname
+          assert_select "input[id='checkout_bill_address_attributes_lastname'][value=?]", @checkout.bill_address.lastname
+          assert_select "input[id='checkout_bill_address_attributes_address1'][value=?]", @checkout.bill_address.address1
+          assert_select "input[id='checkout_bill_address_attributes_address2'][value=?]", @checkout.bill_address.address2
+          assert_select "input[id='checkout_bill_address_attributes_city'][value=?]", @checkout.bill_address.city
+          assert_select "input[id='checkout_bill_address_attributes_zipcode'][value=?]", @checkout.bill_address.zipcode
+
+          assert_select "input[id='checkout_bill_address_attributes_state_name'][disabled='disabled'][value=?]", @checkout.bill_address.state_name
+          assert_select "select[id='checkout_bill_address_attributes_state_id'] option[selected='selected'][value=?]", @checkout.bill_address.state.id.to_s
+
+        end
+
+        assert_select "table" do
+          assert_select "th", :text => I18n.t("shipping_address")
+          assert_select "input[id='checkout_shipment_attributes_address_attributes_firstname'][value=?]", @checkout.shipment.address.firstname
+          assert_select "input[id='checkout_shipment_attributes_address_attributes_lastname'][value=?]", @checkout.shipment.address.lastname
+          assert_select "input[id='checkout_shipment_attributes_address_attributes_address1'][value=?]", @checkout.shipment.address.address1
+          assert_select "input[id='checkout_shipment_attributes_address_attributes_address2'][value=?]", @checkout.shipment.address.address2
+          assert_select "input[id='checkout_shipment_attributes_address_attributes_city'][value=?]", @checkout.shipment.address.city
+          assert_select "input[id='checkout_shipment_attributes_address_attributes_zipcode'][value=?]", @checkout.shipment.address.zipcode
+
+          assert_select "input[id='checkout_shipment_attributes_address_attributes_state_name'][value=?]", @checkout.shipment.address.state_name
+          assert_select "select[id='checkout_shipment_attributes_address_attributes_state_id'][disabled='disabled']"
+        end
+      end
+    end
+  end
+end

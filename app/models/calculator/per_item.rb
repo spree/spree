@@ -6,7 +6,7 @@ class Calculator::PerItem < Calculator
   end
 
   def self.register
-    super                                
+    super
     Coupon.register_calculator(self)
     ShippingMethod.register_calculator(self)
     ShippingRate.register_calculator(self)
@@ -14,5 +14,5 @@ class Calculator::PerItem < Calculator
 
   def compute(object=nil)
     self.preferred_amount * object.length
-  end  
+  end
 end
