@@ -4,35 +4,35 @@
   </tr>
   <tr>
     <td>
-      <%= f.label :firstname, t(:first_name) %>
+      <%= f.label :firstname, t(:first_name)+':' %>
     </td>
     <td colspan="3"><%= f.text_field :firstname %></td>
     <td>
-      <%= f.label :last_name, t(:last_name) %>
+      <%= f.label :lastname, t(:last_name)+':' %>
     </td>
     <td colspan="3"><%= f.text_field :lastname %></td>
   </tr>
   <tr>
     <td>
-      <%= f.label :address1, t(:street_address) %>
+      <%= f.label :address1, t(:street_address)+':' %>
     </td>
     <td colspan="3"><%= f.text_field :address1, :class => "fullwidth" %></td>
     <td>
-     <%= f.label :address2, t(:street_address_2) %>
+      <%= f.label :address2, t(:street_address_2)+':' %>
     </td>
     <td colspan="3"><%= f.text_field :address2, :class => "fullwidth" %></td>
   </tr>
   <tr>
     <td>
-      <%= f.label :city, t(:city) %>
+      <%= f.label :city, t(:city)+':' %>
     </td>
     <td><%= f.text_field :city %></td>
     <td>
-      <%= f.label :zipcode, t(:zip) %>
+      <%= f.label :zipcode, t(:zip)+':' %>
     </td>
     <td><%= f.text_field :zipcode, :style => "width:100px;" %></td>
     <td>
-      <%= f.label :state, t(:state) %>
+      <%= f.label :state_id, t(:state)+':' %>
     </td>
     <td>
       <span id="<%= name==t('shipping_address') ? "s" : "b" %>state">
@@ -41,7 +41,7 @@
       </span>
     </td>
     <td>
-      <%= f.label :country_id, t(:country) %>
+      <%= f.label :country_id, t(:country)+':' %>
     </td>
     <td>
       <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %></span>
@@ -49,9 +49,8 @@
   </tr>
   <tr>
     <td>
-      <%= f.label :phone, t(:phone) %>
+      <%= f.label :phone, t(:phone)+':' %>
     </td>
     <td colspan="7"><%= f.text_field :phone %></td>
   </tr>
 </table>
-

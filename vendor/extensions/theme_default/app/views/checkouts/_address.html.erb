@@ -1,3 +1,7 @@
+<style>
+div.inner input[type=text], div.inner select { width: 80%; }
+.hidden { display: none; }
+</style>
 <fieldset id='billing'>
   <% checkout_form.fields_for :bill_address do |bill_form| %>
     <legend><%= t("billing_address")%></legend>
@@ -26,19 +30,27 @@
       <% if Spree::Config[:address_requires_state] %>
         <p class="field">
           <span id="bstate">
-            <% if @checkout.bill_address.country.states.empty? %>
-              <%= bill_form.label :state_name, t(:state) %><br />
+            <% have_states = !@checkout.bill_address.country.states.empty? %>
+            <%= bill_form.label :state, t(:state) %><br /> 
+            <noscript>
               <%= bill_form.text_field :state_name, :class => 'required' -%>
-            <% else %>
-              <%= bill_form.label :state_id, t(:state) %><br />
-              <%= bill_form.collection_select( 
-                                    :state_id, 
-                                    @states, 
-                                    :id, 
-                                    :name, 
-                                    {:include_blank => true}, 
-                                    {:style=> 'width:150px;'}) %>
-            <% end %>
+            </noscript>
+		        <% state_elements = [ 
+		           bill_form.collection_select(:state_id, @states, 
+                                  :id, :name, 
+                                  {:include_blank => true}, 
+                                  {:class => have_states ? "required" : "hidden",
+                                  :disabled => !have_states}) + 
+                bill_form.text_field(:state_name, 
+                                  :class => !have_states ? "required" : "hidden", 
+                                  :disabled => have_states)
+                ].join.gsub('"', "'").gsub("\n", "") 
+            -%>     
+            <script type="text/javascript" language="javascript" charset="utf-8">
+            // <![CDATA[
+            document.write("<%= state_elements %>");  
+            // ]]>
+            </script>            
           </span>
           <span class="req">*</span>
         </p>
@@ -49,7 +61,7 @@
       </p>    
       <p id="bcountry" class="field">
         <%= bill_form.label :country_id, t(:country) %><br />
-        <span id="bcountry"><%= bill_form.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
+        <span id="bcountry"><%= bill_form.collection_select :country_id, @countries, :id, :name, {}, {:class => 'required'} %></span>
       </p>
       <p id="bphone" class="field">
         <%= bill_form.label :phone %><br />
@@ -97,18 +109,27 @@
         <% if Spree::Config[:address_requires_state] %>
           <p class="field">
             <span id="sstate">
-              <% if @checkout.shipment.address.country.states.empty? %>
-                <%= address.label :state_name, t(:state) %><br />
+              <% have_states = @checkout.shipment.address.state.present? %>    
+              <%= address.label :state, t(:state) %><br /> 
+              <noscript>
                 <%= address.text_field :state_name, :class => 'required' -%>
-              <% else %>
-                <%= address.label :state_id, t(:state) %><br />
-                <%= address.collection_select(:state_id, 
-                                      @states, 
-                                      :id, 
-                                      :name, 
+              </noscript>
+              <% state_elements = [ 
+                   address.collection_select(:state_id, @states, 
+                                      :id, :name, 
                                       {:include_blank => true}, 
-                                      {:style=> 'width:150px;'}) %>
-              <% end %>
+                                      {:class => have_states ? "required" : "hidden",
+                                      :disabled => !have_states}) + 
+                   address.text_field(:state_name, 
+                                      :class => !have_states ? "required" : "hidden", 
+                                      :disabled => have_states)
+                 ].join.gsub('"', "'").gsub("\n", "") 
+              -%>     
+              <script type="text/javascript" language="javascript" charset="utf-8">
+              // <![CDATA[
+              document.write("<%= state_elements %>");  
+              // ]]>
+              </script>
             </span>
             <span class="req">*</span>
           </p>
@@ -119,7 +140,7 @@
         </p>    
         <p id="scountry" class="field">
           <%= address.label :country_id, t(:country) %><br />
-          <span id="scountry"><%= address.collection_select :country_id, @shipping_countries, :id, :name, {}, {:style => 'width:150px;', :class => 'required'} %></span>
+          <span id="scountry"><%= address.collection_select :country_id, @shipping_countries, :id, :name, {}, {:class => 'required'} %></span>
         </p>
         <p id="sphone" class="field">
           <%= address.label :phone %><br />
