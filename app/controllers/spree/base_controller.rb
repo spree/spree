@@ -23,7 +23,9 @@ class Spree::BaseController < ActionController::Base
     unless session[:order_id].blank?
       @order = Order.find_or_create_by_id(session[:order_id])
     else
-      @order = Order.create
+      @order = Order.new
+      @order.user = current_user
+      @order.save
     end
     session[:order_id]    = @order.id
     session[:order_token] = @order.token
