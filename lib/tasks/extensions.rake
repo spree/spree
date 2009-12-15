@@ -29,13 +29,13 @@ namespace :db do
     dir = args.dir
     fixtures = {}  
     unless ENV['SKIP_CORE'] and dir == "sample"
-      Dir.glob(File.join(SPREE_ROOT, "db", dir , '*.{yml,csv}')).each do |fixture_file|
+      Dir.glob(File.join(SPREE_ROOT, "db", dir , '*.{yml,csv,rb}')).each do |fixture_file|
           #puts "spree " + fixture_file + " " + File.basename(fixture_file, '.*')
           fixtures[File.basename(fixture_file, '.*')]  = fixture_file
       end
     end
     Spree::ExtensionLoader.instance.db_paths(dir).each do |dir|
-      Dir.glob(File.join(dir, '*.{yml,csv}')).each do |fixture_file|
+      Dir.glob(File.join(dir, '*.{yml,csv,rb}')).each do |fixture_file|
           #puts "ext " + fixture_file + " " + File.basename(fixture_file, '.*')
         fixtures[File.basename(fixture_file, '.*')]  = fixture_file
       end
