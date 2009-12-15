@@ -188,6 +188,9 @@ ru-RU:
         odd: "может иметь лишь четное значение"
         even: "может иметь лишь нечетное значение"
 
+      full_messages:
+        format: "{{attribute}} {{message}}"
+
   support:
     array:
       # Rails 2.2
@@ -198,3 +201,6 @@ ru-RU:
       words_connector: ", "
       two_words_connector: " и "
       last_word_connector: " и "
+    select:
+      # default value for :prompt => true in FormOptionsHelper
+      prompt: "Пожалуйста, выберите"      

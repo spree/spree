@@ -1,8 +1,8 @@
 ---
 ru-RU: 
-  'no': "No"
-  'yes': "Yes"
-  5_biggest_spenders: "5 Biggest Spenders"
+  'no': "Нет"
+  'yes': "Да"
+  5_biggest_spenders: "5 крупнейших покупателей"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "Копии всех писем будут отосланы на следующие адреса"
   abbreviation: "Аббревиатура"
   access_denied: "Доступ запрещен"
@@ -192,14 +192,14 @@ ru-RU:
   add_state: "Добавить субъект федерации"
   add_to_cart: "Добавить в корзину"
   add_zone: "Добавить зону"
-  additional_item: Additional Item Cost
+  additional_item: "Ставка для дополнительных наименований"
   address: "Адрес"
   address_information: "Адресная информация"
-  adjustment: "Поправка(Adjustment)"
-  adjustments: Adjustments
+  adjustment: "Надбавка"
+  adjustments: "Надбавки"
   administration: "Администрирование"
   all: "все"
-  all_departments: All departments
+  all_departments: "Все разделы"
   allow_backorders: "Разрешить задолженные заказы"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "Использовать SSL в development и test режимах"
   allow_ssl_to_be_used_when_in_production_mode: "Использовать SSL в production"
@@ -223,15 +223,15 @@ ru-RU:
   back_to_store: "Назад к списку"
   backordering_is_allowed: "Задолженные заказы {{not}} разрешены"
   balance_due: "Balance Due"
-  best_selling_products: "Best Selling Products"
-  best_selling_taxons: "Best Selling Taxons"
+  best_selling_products: "Товары - бестселлеры"
+  best_selling_taxons: "Таксоны - бестселлеры"
   bill_address: "Платёжный адрес"
   billing: Billing
   billing_address: "Платёжный адрес"
-  billing_integration: Billing Integration
-  billing_integrations: Billing Integrations
-  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
-  by_day: "by day"
+  billing_integration: "Интеграция с биллингом"
+  billing_integrations: "Интеграции с биллингом"
+  billing_integrations_description: "Настройте параметры для интеграции с платежными системами(биллингами), такими как PayPal, Google Checkout и т.д."
+  by_day: "за день"
   calculator: "Калькулятор"
   calculator_settings_warning: "При изменении типа калькулятора, вы должны сохранить это изменение, прежде чем вы сможете изменить настройки калькулятора."
   cancel: "Отмена"
@@ -256,7 +256,7 @@ ru-RU:
     delivery: Delivery
     payment: Payment
   city: "Город"
-  clone: Clone
+  clone: "Клонировать"
   code: "Кодовое слово"
   combine: "Разрешить комбинировать"
   comp_order: "(not used) Comp Order"
@@ -272,7 +272,7 @@ ru-RU:
   continue: "Продолжить"
   continue_shopping: "Продолжить покупки"
   copy_all_mails_to: "Копировать все письма на"
-  count: Count
+  count: "Количество"
   country: "Страна"
   country_based: "Страна"
   coupon: "Купон"
@@ -289,7 +289,7 @@ ru-RU:
   credit_owed: "Credit Owed"
   credit_total: "Итого по кредитным картам"
   creditcard: "Кредитная карта"
-  credits: Credits
+  credits: "Кредиты"
   current: "Текущий"
   customer: "Пользователь"
   customer_details: "Customer Details"
@@ -301,7 +301,7 @@ ru-RU:
   destroy: "Удалить"
   display: "Показать"
   edit: "Редактировать"
-  editing_billing_integration: Editing Billing Integration
+  editing_billing_integration: "Редактировать интеграцию с биллингом"
   editing_category: "Редактирование категории"
   editing_coupon: "Редактировать купон"
   editing_option_type: "Редактирование опции"
@@ -335,8 +335,9 @@ ru-RU:
   extension: "Расширение"
   extensions: "Расширения"
   filename: "Имя файла"
+  fill_email: "Укажите email"
   final_confirmation: "Окончательное подтверждение"
-  first_item: First Item Cost
+  first_item: "Начальная ставка"
   first_name: "Имя"
   flat_percent: "Фиксированный процент"
   flat_rate_amount: "Сумма фиксированной ставки"
@@ -368,23 +369,23 @@ ru-RU:
   images: "Картинки"
   images_for: "Картинки для"
   in_progress: "В процессе"
-  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
+  integration_settings_warning: "Если вы меняете платежную систему, то необходимо сохранить данное изменение, только после этого вы сможете редактировать параметры интеграции"
   invalid_search: "Неверный критерий поиска."
   inventory: "Ассортимент "
-  inventory_adjustment: "Управление ассортиментом"
+  inventory_adjustment: "Надбавки"
   inventory_setting_description: "Управление ассортиментом, задолженные заказы, отображение отсутствующих товаров"
   inventory_settings: "Настройки ассортимента"
   issue_number: "Номер проблемы ??"
   item: "Наименование"
   item_description: "Описание товара"
   item_total: "Продукция"
-  items: "Items"
-  last_14_days: "Last 14 Days"
-  last_5_orders: "Last 5 Orders"
-  last_7_days: "Last 7 Days" 
-  last_month: "Last Month"
+  items: "Наимено<wbr />вания"
+  last_14_days: "Последние 14 дней"
+  last_5_orders: "Последние 5 заказов"
+  last_7_days: "Последние 7 дней" 
+  last_month: "Последний месяц"
   last_name: "Фамилия"
-  last_year: "Last Year"
+  last_year: "Последний год"
   list: "Список"
   listing_categories: "Список категорий"
   listing_option_types: "Список опций"
@@ -402,7 +403,7 @@ ru-RU:
   login_failed: "Вход не выполнен."
   login_name: "Логин"
   logout: "Выйти"
-  look_for_similar_items: Look for similar items
+  look_for_similar_items: "Посмотрите похожие товары"
   maestro_or_solo_cards: "Кредитные карты Maestro/Solo"
   mail_delivery_enabled: "Доставка почты включена"
   mail_delivery_not_enabled: "Доставка почты не включена"
@@ -412,18 +413,18 @@ ru-RU:
   mail_server_settings: "Установки почтового сервера"
   mark_shipped: "Отметить как доставленный"
   master_price: "Основная цена"
-  max_items: Max Items
+  max_items: "Максимальное число наименований по начальной ставке"
   meta_description: "Описание"
   meta_keywords: "Ключевые слова"
   metadata: "Метаданные"
-  missing_required_information: "Missing Required Information"
+  missing_required_information: "Пропущена необходимая информация"
   month: "Месяц"
   my_account: "Моя учетная запись"
   my_orders: "Мои заказы"
   name: "Название"
   new: "Новый"
   new_adjustment: "New Adjustment"
-  new_billing_integration: New Billing Integration
+  new_billing_integration: "Новая интеграция с биллингом"
   new_category: "Новая категория"
   new_coupon: "Новый купон"
   new_credit_card_payment: "Новый платеж по кредитной карте"
@@ -433,7 +434,7 @@ ru-RU:
   new_option_value: "Новое значение опции"
   new_order: "New Order"
   new_product: "Новый продукт"
-  new_product_group: New Product Group
+  new_product_group: "Новая группа продуктов"
   new_property: "Новое свойство"
   new_prototype: "Новый прототип"
   new_shipment: "Новая доставка"
@@ -451,7 +452,7 @@ ru-RU:
   next: "след."
   no_items_in_cart: ""
   no_match_found: "Совпадений не найдено"
-  no_products_found: "No products found"
+  no_products_found: "Не найдено ни одного продукта"
   no_user_found: "Пользователь с таким адресом email у нас не числится."
   none: "Ни одного"
   none_available: "Нет в наличии"
@@ -463,8 +464,8 @@ ru-RU:
   option_values: "Возможные значения опции"
   options: "Опции"
   or: "или"
-  ord_qty: "Ord. Qty"
-  ord_total: "Ord. Total"
+  ord_qty: "Кол-во заказов"
+  ord_total: "Сумма заказа"
   order: "Заказ"
   order_confirmation_note: ""
   order_date: "Дата заказа"
@@ -481,10 +482,10 @@ ru-RU:
   order_updated: "Заказ обновлен"
   orders: "Заказы"
   out_of_stock: "Нет в наличии"
-  out_of_stock_products: "Out of Stock Products"
+  out_of_stock_products: "Закончились на складе"
   over_paid: "Over Paid"
   overview: "Обзор"
-  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
+  overview_welcome: "Добро пожаловать в панель администрирования вашего интернет-магазина, на данный момент у вас ещё не достаточно заказов, чтобы отобразить сводку по ним в графическом виде.<br/><br/> Диаграммы отобразятся автоматически как только ваш магазин наберёт достаточное количество заказов для генерации статистики."
   page_only_viewable_when_logged_in: "Запрошенную страницу могут посещать только авторизованные пользователи."
   page_only_viewable_when_logged_out: "Запрошенную страницу могут посещать только неавторизованные пользователи."
   paid: "Оплачен"
@@ -505,7 +506,7 @@ ru-RU:
   please_create_user: "Пожалуйста, создайте учётную запись."
   powered_by: "Работает на"
   presentation: "Отображение"
-  preview: Preview
+  preview: "Предпросмотр"
   previous: "пред."
   price: "Цена"
   price_with_vat_included: "{{price}} (вкл. НДС)"
@@ -516,121 +517,121 @@ ru-RU:
   process: "Обработать"
   product: "Продукт"
   product_details: "Описание продукта"
-  product_group: Product Group
-  product_group_invalid: Product Group has invalid scopes
-  product_groups: Product Groups
+  product_group: "Группа продуктов"
+  product_group_invalid: "Группа продуктов содержит некорректные фильтры"
+  product_groups: "Группы продуктов"
   product_has_no_description: "У данного продукта нет описания."
   product_properties: "Свойства продукта"
   product_scopes:
     groups:
       price:
-        description: "Scopes for selecting products based on Price"
-        name: Price
+        description: "Фильтры для выбора продуктов на основе цены"
+        name: "Цена"
       search:
-        description: "Scopes for selecting products based on name, keywords and description of product"
-        name: "Text search"
+        description: "Фильтры для выбора продуктов на основе названия продукта, его описания и ключевых слов"
+        name: "Тестовый поиск"
       taxon:
-        description: "Scopes for selecting products based on Taxons"
-        name: Taxon
+        description: "Фильтры для выбора продуктов на основе принадлежности к таксонам"
+        name: "Таксоны"
       values:
-        description: "Scopes for selecting products based on option and property values"
-        name: Values
+        description: "Фильтры для выбора продуктов на основе значений свойств и товарных опций продукта"
+        name: "Значения"
     scopes:
       ascend_by_master_price:
-        name: Ascend by product master price
+        name: "по основной цене продукта (по возрастанию)"
       ascend_by_name:
-        name: Ascend by product name
+        name: "по названию продукта (по алфавиту)"
       ascend_by_updated_at:
-        name: Ascendy by actualization date
+        name: "по дате обновления информации о продукте (прямой порядок)"
       by_popularity:
-        name: Sort by popularity(most popular first)
+        name: "По популярности (обратный порядок)"
       descend_by_master_price:
-        name: Descend by product master price
+        name: "по основной цене продукта (по убыванию)"
       descend_by_name:
-        name: Descend by product name
+        name: "по названию продукта (по алфавиту в обратном порядке)"
       descend_by_updated_at:
-        name: Descend by actualization date
+        name: "по дате обновления информации о продукте (обратный порядок)"
       in_name:
         args:
-          words: Words
-        description: "(separated by space or comma)"
-        name: "Product name have following"
-        sentence: product name contain <em>%s</em>
+          words: ""
+        description: "(разделённые пробелом или запятой)"
+        name: "Название продукта содержит следующие слова"
+        sentence: "Название продукта содержит '<em>%s</em>'"
       in_name_or_description:
         args:
-          words: Words
-        description: "(separated by space or comma)"
-        name: "Product name or description have following"
-        sentence: name or description contain <em>%s</em>
+          words: ""
+        description: "(разделённые пробелом или запятой)"
+        name: "Название продукта или его описание содержит следующие слова"
+        sentence: "Название продукта или его описание содержит '<em>%s</em>'"
       in_name_or_keywords:
         args:
-          words: Words
-        description: "(separated by space or comma)"
-        name: "Product name or meta heywords have following"
-        sentence: name or keywords contain <em>%s</em>
+          words: ""
+        description: "(разделённые пробелом или запятой)"
+        name: "Название продукта или его ключевые слова содержат следующие слова"
+        sentence: "Название продукта или его ключевые слова содержат '<em>%s</em>'"
       in_taxons:
         args:
-          "taxon_names": "Taxon names"
-        description: "Taxon names have to be separated by comma or space(eg. adidas,shoes)"
-        name: "In taxons and all their descendants"
-        sentence: in <em>%s</em> and all their descendants
+          "taxon_names": "названия таксонов"
+        description: "(разделённые пробелом или запятой)"
+        name: "Принадлежит следующим таксонам или их наследникам,"
+        sentence: "принадлежит таксону <em>%s</em> или его наследнику"
       master_price_gte:
         args:
-          amount: Amount
+          amount: ""
         description: ""
-        name: "Master price greater or equal to"
-        sentence: price greater or equal to <em>%.2f</em>
+        name: "Основная цена больше или равна"
+        sentence: "цена больше или равна <em>%.2f</em>"
       master_price_lte:
         args:
-          amount: Amount
+          amount: ""
         description: ""
-        name: "Master price lesser or equal to"
-        sentence: price less or equal to <em>%.2f</em>
+        name: "Основная цена меньше или равна"
+        sentence: "цена меньше или равна <em>%.2f</em>"
       price_between:
         args:
-          high: High
-          low: Low
+          high: "до"
+          low: "от"
         description: ""
-        name: "Price between"
-        sentence: price between <em>%.2f</em> and <em>%.2f</em>
+        name: "Основная цена находится в диапазоне"
+        sentence: "цена в диапазоне от <em>%.2f</em> до <em>%.2f</em>"
       taxons_name_eq:
         args:
-          taxon_name: "Taxon name"
-        description: "In specific taxon - without descendants"
-        name: "In Taxon(without descendants)"
-        sentence: in <em>%s</em>
+          taxon_name: "название таксона"
+        description: "принадлежит указанному таксону - без наследников"
+        name: "Принадлежит таксону (без наследников)"
+        sentence: "принадлежит таксону <em>%s</em>"
       with:
         args:
-          value: Value
-        description: "Selects all products that have at least one variant that have specified value as either option or property (eg. red)"
-        name: With value
-        sentence: with value <em>%s</em>
+          value: ""
+        description: "Выбирает все продукты, у которых есть хотя бы один вариант, для которого существует опция или свойство с указанным значением (например, красный)"
+        name: "Имеет следующее значение"
+        sentence: "со значением <em>%s</em>"
       with_option:
         args:
-          option: Option
-        description: "Selects all products that have specified option(eg. color)"
-        name: "With option"
-        sentence: with option <em>%s</em>
+          option: ""
+        description: "Выбирает все продукты, которые имеют указанную опцию (например, цвет)"
+        name: "Имеет следующую товарную опцию"
+        sentence: "с опцией <em>%s</em>"
       with_option_value:
         args:
-          option: Option
-          value: Value
-        description: "Selects all products that have at least one variant with specified option and value(eg. color:red)"
-        name: "With option and value"
-        sentence: with option <em>%s</em> and value <em>%s</em>
+          option: "Товарная опция"
+          value: "Значение"
+        description: "Выбирает все продукты, у которых есть хотя бы один вариант, для которого указанная опция имеет указанное значение(например, цвет:красный)"
+        name: "Имеет опцию с указанным значением"
+        sentence: "есть опция <em>%s</em> со значением <em>%s</em>"
       with_property:
         args:
-          property: Property
-        description: "Selects all products that have specified property(eg. weight)"
-        name: "With property"
-        sentence: with property <em>%s</em>
+          property: ""
+        description: "Выбирает все продукты, которые имеют указанное свойство (например, вес)"
+        name: "Имеет следующее свойство"
+        sentence: "со свойством <em>%s</em>"
       with_property_value:
         args:
-          property: Property
-          value: Value
-        description: "Selects all products that have at least one variant with specified property and value(eg. weight:10kg)"
-        name: "With property value"
-        sentence: with property <em>%s</em> and value <em>%s</em>
+          property: "Свойство продукта"
+          value: "Значение"
+        description: "Выбирает все продукты, у которых есть хотя бы один вариант, для которого указанное свойство имеет указанное значение(например, вес:10)"
+        name: "Имеет свойство с указанным значением  "
+        sentence: "есть свойство <em>%s</em> со значением <em>%s</em>"
   products: "Продукты"
   products_with_zero_inventory_display: "Отсутсвующие товары {{not}} будут отображаться"
   properties: "Свойства"
@@ -638,7 +639,7 @@ ru-RU:
   prototype: "Прототип"
   prototypes: "Прототипы"
   qty: "Кол-во"
-  range: "Range"
+  range: "Диапазон"
   rate: "Ставка"
   register: "Зарегистрироваться как новый пользователь"
   register_or_guest: "Оформить заказ как гость или зарегистрироваться"
@@ -650,11 +651,11 @@ ru-RU:
   resend: "Отослать повторно"
   reset_password: "Сбросить мой пароль"
   resource_controller:
-    member_object_not_found: "Member object not found."
-    successfully_created: "Successfully created!"
-    successfully_removed: "Successfully removed!"
-    successfully_updated: "Successfully updated!"
-  response_code: "Response Code"
+    member_object_not_found: "Запрашиваемая запись не найдена."
+    successfully_created: "Запись успешно создана!"
+    successfully_removed: "Запись успешно удалена!"
+    successfully_updated: "Запись успешно обновлена!"
+  response_code: "Код ответа"
   resume: "возобновить"
   resumed: "Возобновлен"
   return: "возвратить"
@@ -701,7 +702,7 @@ ru-RU:
   shipping_total: "Доставка"
   shop_by_taxonomy: "{{taxonomy}}"
   shopping_cart: "Корзина"
-  show: Show
+  show: "Показать"
   show_deleted: "Показать удаленные"
   show_incomplete_orders: "Показать необработанные заказы"
   show_only_complete_orders: "Показывать только обработанные заказы"
@@ -762,11 +763,11 @@ ru-RU:
   taxons: "Таксоны"
   thank_you_for_your_order: "Спасибо за покупку!"
   this_file_language: "Русский (RU)"
-  this_month: "This Month"
-  this_year: "This Year"
+  this_month: "Этот месяц"
+  this_year: "Этот год"
   thumbnail: "Миниатюра"
   to_add_variants_you_must_first_define: "Перед добавлением вариантов, вы должны определить"
-  top_grossing_products: "Top Grossing Products"
+  top_grossing_products: "Самые доходные товары"
   total: "Итого"
   tracking: "Отслеживание"
   transaction: "Транзакция"
