@@ -10,13 +10,13 @@
     </td>
   </tr>
 </table>
-<%= link_to t('edit'), edit_object_url %>
+<p><%= link_to t('edit'), edit_object_url %></p>
 
 <% end %>
 
 <% hook :account_my_orders do %>
 
-<h1><%= t("my_orders") %></h1>
+<h2><%= t("my_orders") %></h2>
  
 <table class="order-summary" width="545">
   <thead>

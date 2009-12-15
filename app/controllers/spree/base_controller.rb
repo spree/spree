@@ -1,6 +1,6 @@
 class Spree::BaseController < ActionController::Base
   layout 'spree_application'
-  helper :application
+  helper :application, :hook
   before_filter :instantiate_controller_and_action_names
   filter_parameter_logging :password, :password_confirmation, :number, :verification_value
   helper_method :current_user_session, :current_user, :title, :title=, :get_taxonomies

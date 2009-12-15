@@ -115,4 +115,12 @@ module Admin::NavigationHelper
     options = {:class => 'button'}.update(html_options)
   end
 
+  def configurations_menu_item(link_text, url, description = '')
+    %(<tr>
+      <td>#{link_to(link_text, url)}</td>
+      <td>#{description}</td>
+    </tr> 
+    )
+  end
+  
 end

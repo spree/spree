@@ -19,9 +19,11 @@
   <% end %>
 </div>
 
-<div id="cart-form">
-  <%= render 'cart_form' %>
-</div>
+<% hook :cart_form do %>
+  <div id="cart-form">
+    <%= render 'cart_form' %>
+  </div>
+<% end %>
 
 <%= render 'taxons' %>
 

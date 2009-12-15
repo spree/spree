@@ -1,4 +1,4 @@
-module Spree::ThemeSupport::HookHelper
+module HookHelper
   
   # Allow hooks to be used in views like this:
   # 

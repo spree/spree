@@ -4,6 +4,7 @@
   <br class="clear" />
   
   <ul class="sidebar">
+    <% hook :admin_configurations_sidebar_menu do %>
     <li<%= ' class="active"' if controller.controller_name == 'general_settings' %>><%= link_to t("general_settings"), admin_general_settings_path %></li>
     <li<%= ' class="active"' if controller.controller_name == 'mail_settings' %>><%= link_to t("mail_server_settings"), admin_mail_settings_path %></li>
     <li<%= ' class="active"' if controller.controller_name == 'tax_categories' %>><%= link_to t("tax_categories"), admin_tax_categories_path %></li>
@@ -13,6 +14,7 @@
     <li<%= ' class="active"' if controller.controller_name == 'billing_integrations' %>><%= link_to t("billing_integration"), admin_billing_integrations_path %></li>
     <li<%= ' class="active"' if controller.controller_name == 'taxonomies' %>><%= link_to t("taxonomies"), admin_taxonomies_path %></li>
     <li<%= ' class="active"' if controller.controller_name == 'inventory_settings' %>><%= link_to t("inventory_settings"), admin_inventory_settings_path %></li>
+    <% end %>
     <li<%= ' class="active"' if controller.controller_name == 'configurations' %>><%= link_to t("complete_list"), admin_configurations_path %></li>
   </ul>
 

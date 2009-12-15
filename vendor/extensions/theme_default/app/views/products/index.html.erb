@@ -1,16 +1,31 @@
 <% content_for :sidebar do %>
   <% hook :homepage_sidebar_navigation do %>
     <% if "products" == @current_controller && @taxon %>
-      <%= render :partial => "shared/filters" %>
+      <%= render "shared/filters" %>
     <% else %>
-      <%= render :partial => "shared/taxonomies" %>
+      <%= render "shared/taxonomies" %>
     <% end %>
   <% end %>
 <% end %>
 
-<% hook :homepage_products do %>
 
-  <%= render :partial => "shared/products", :locals => {:products => @products, :taxon => @taxon } %>
-  <hr class="space" />
+<% if params[:keywords] %>
+
+  <h1><%= t(:search_results, :keywords => h(params[:keywords])) %></h1>
+  <% hook :search_results do %>
+    <% if @products.empty? %>
+      <%= t(:no_products_found) %>
+    <% else %>
+      <%= render "shared/products", :locals => {:products => @products, :taxon => @taxon } %>
+    <% end %>
+  <% end %>
+
+<% else %>
+
+  <% hook :homepage_products do %>
+    <%= render "shared/products", :locals => {:products => @products, :taxon => @taxon } %>
+  <% end %>
+
 
 <% end %>
+

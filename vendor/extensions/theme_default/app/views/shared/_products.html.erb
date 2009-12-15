@@ -1,10 +1,6 @@
 <% paginated_products = Spree::Config.searcher.products || products %>
-<% if params[:keywords] %>
-<h3><%= t(:search_results, :keywords => h(params[:keywords])) %></h3>
-<% end %>
-<% if products.empty? %>
-  <%= t(:no_products_found) %>
-<% end %>
+
+<% if products.any? %>
 <ul class="product-listing">
   <% products.each do |product| %>
     <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
@@ -15,7 +11,10 @@
     <% end %>
   <% end %>
 </ul>
+<% end %>
+
 <hr class="space" />
+
 <%  if paginated_products.is_a?(WillPaginate::Collection) 
       params.delete(:search)
       params.delete(:taxon)
@@ -24,3 +23,5 @@
                     :previous_label => "&#171; #{t('previous')}", 
                     :next_label => "#{t('next')} &#187;") %>
 <%  end -%>
+
+<hr class="space" />

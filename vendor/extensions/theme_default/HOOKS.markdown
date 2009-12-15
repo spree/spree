@@ -12,6 +12,11 @@ Homepage (products/index.html.erb)
 * homepage_sidebar_navigation
 * homepage_products
 
+Product search (products/index.html.erb)
+----------------------------------------
+
+* search_results
+
 Taxon (taxons/show.html.erb)
 ----------------------------
 
@@ -26,6 +31,7 @@ View Product (products/show.html.erb products/_taxons.html.erb products/_cart_fo
 * product_properties
 * product_taxons ('Look for similar items')
 * product_price
+* product_cart_form
 * inside_product_cart_form
 
 Cart (orders/edit.html.erb)
@@ -74,4 +80,9 @@ The following hooks allow list items to be added to various admin menus.
 * admin_product_sub_tabs
 * admin_product_tabs (sidebar menu for individual product)
 * admin_order_tabs (sidebar menu for individual order)
+* admin_configurations_menu (within table for Configurations menu)
 
+Forms
+-----
+
+* admin_inside_taxonomy_form
