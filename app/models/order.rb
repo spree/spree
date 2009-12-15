@@ -33,6 +33,7 @@ class Order < ActiveRecord::Base
 
   accepts_nested_attributes_for :checkout
   accepts_nested_attributes_for :line_items
+  accepts_nested_attributes_for :shipments
 
   def ship_address; shipment.address; end
   delegate :shipping_method, :to =>:shipment
@@ -101,13 +102,13 @@ class Order < ActiveRecord::Base
     state_events.pop if state_events.last.name == "resume"
     update_attribute("state", state_events.last.previous_state)
   end
-  
+
   def make_shipments_shipped
     shipments.reject(&:shipped?).each do |shipment|
       shipment.update_attributes(:state => 'shipped', :shipped_at => Time.now)
     end
   end
-  
+
 
   def allow_cancel?
     self.state != 'canceled'

@@ -27,6 +27,24 @@ nb-NO:
         lastname: "Etternavn"
         phone: Telefon
         zipcode: "Postnummer"
+      checkout:
+        bill_address:
+          address1: "Billing address street"
+          city: "Billing address city"
+          firstname: "Billing address first name"
+          lastname: "Billing address last name"
+          phone: "Billing address phone"
+          state: "Billing address state"
+          zipcode: "Billing address zipcode"
+        shipment:
+          address:
+            address1: "Shipping address street"
+            city: "Shipping address city"
+            firstname: "Shipping address first name"
+            lastname: "Shipping address last name"
+            phone: "Shipping address phone"
+            state: "Shipping address state"
+            zipcode: "Shipping address zipcode"
       country: 
         iso: ISO
         iso3: ISO3
@@ -133,6 +151,9 @@ nb-NO:
       role: 
         one: Rolle
         other: Roller
+      shipment:
+        one: Shipment
+        other: Shipments
       shipping_category: 
         one: "Fraktkategori"
         other: "Fraktkategorier"
@@ -166,6 +187,7 @@ nb-NO:
   add_option_type: "Legg til variasjonstype"
   add_option_types: "Legg til variasjonstyper"
   add_option_value: "Legg til variasjonsverdi"
+  add_product: "Add Product"
   add_product_properties: "Legg til produktegenskaper"
   add_state: "Legg til tilstand"
   add_to_cart: "Legg i handlekurv"
@@ -200,9 +222,11 @@ nb-NO:
   back: Tilbake
   back_to_store: "Tilbake til butikken"
   backordering_is_allowed: "Backordering {{not}} allowed"
+  balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
   bill_address: "Fakturaadresse"
+  billing: Billing
   billing_address: "Fakturaadresse"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
@@ -223,7 +247,14 @@ nb-NO:
   change_language: "Endre språk"
   charge_total: Charge Total
   charged: "Belastet"
+  charges: Charges
   checkout: "Til kassen"
+  checkout_steps:
+    # keys correspond to Checkout state names:
+    address: Address
+    complete: Complete
+    delivery: Delivery
+    payment: Payment
   city: Sted
   clone: Clone
   code: Code
@@ -255,11 +286,14 @@ nb-NO:
   credit_card: "Kredittkort"
   credit_card_capture_complete: "Kortopplysninger har blitt lagret"
   credit_card_payment: "Betaling med kort"
+  credit_owed: "Credit Owed"
   credit_total: Credit Total
   creditcard: Kredittkort
   credits: Credits
   current: "Nå"
   customer: Kunde
+  customer_details: "Customer Details"
+  customer_search: "Customer Search"
   date_range: "Datoområde"
   delete: Slett
   depth: Dybde
@@ -388,6 +422,7 @@ nb-NO:
   my_orders: "Mine ordrer"    
   name: Navn
   new: Ny
+  new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration
   new_category: "Ny kategori"
   new_coupon: New Coupon
@@ -396,6 +431,7 @@ nb-NO:
   new_image: "Nytt bilde"
   new_option_type: "Ny variasjonstype"
   new_option_value: "Ny variasjonsverdi"
+  new_order: "New Order"
   new_product: "Nytt produkt"
   new_product_group: New Product Group
   new_property: "Ny egenskap"
@@ -446,6 +482,7 @@ nb-NO:
   orders: Ordrer
   out_of_stock: "Ikke på lager"
   out_of_stock_products: "Out of Stock Products"
+  over_paid: "Over Paid"
   overview: Oversikt
   overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
@@ -628,6 +665,7 @@ nb-NO:
   sales_total_for_all_orders: "Totale salg for alle ordrer"
   sales_totals: "Omsetning"
   sales_totals_description: "Totale salg for alle ordrer"
+  save_and_continue: Save and Continue
   save_preferences: "Lagre preferanser"
   search: Søk
   search_results: "Search results for '{{keywords}}'"
@@ -645,6 +683,7 @@ nb-NO:
   ship_address: "Leveringsadresse"
   shipment: Leveranse
   shipment_number: "Leveransenummer"
+  shipments: "Shipments"
   shipped: Sendt
   shipping: Frakt
   shipping_address: "Leveringsadresse"
@@ -738,6 +777,7 @@ nb-NO:
   unable_to_authorize_credit_card: "Kunne ikke autorisere kredittkortet"
   unable_to_capture_credit_card: "Kunne ikke lagre kortopplysningene"
   unable_to_save_order: "Kunne ikke lagre ordren"
+  under_paid: "Under Paid"
   unrecognized_card_type: Unrecognized card type
   update: Oppdater
   update_password: "Update my password and log me in"                    
@@ -756,6 +796,7 @@ nb-NO:
   variants: Varianter
   vat: "VAT"           
   version: Versjon
+  view_shipping_options: "View shipping options"
   website: Nettsted
   weight: Vekt
   welcome_to_sample_store: "Velkommen til eksempelbutikken"

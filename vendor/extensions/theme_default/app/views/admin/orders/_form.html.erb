@@ -12,7 +12,6 @@
       <% f.fields_for :line_items do |li_form| %>
         <%= render :partial => "admin/orders/line_item", :locals => { :f => li_form } %>
       <% end %>
-
     </tbody>
     <tbody id='subtotal'>
       <tr id="subtotal-row">

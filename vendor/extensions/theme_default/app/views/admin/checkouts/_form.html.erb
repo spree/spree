@@ -1,0 +1,55 @@
+<p>
+  <label>Email: </label><%= f.text_field :email %>
+</p>
+
+<h3><%= Address.human_name(:count => 2) %></h3>
+<% f.fields_for 'bill_address' do |ba_form|  %>
+  <%= render :partial => "address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
+<% end %>
+
+<% f.fields_for :shipment do |shipment_form|  %>
+  <% shipment_form.fields_for :address, @checkout.order.shipments[0].address do |ship_form|  %>
+    <%= render :partial => "address_form", :locals => {:f => ship_form, :name => t('shipping_address')} %>
+  <% end %>
+<% end %>
+
+<p class="form-buttons">
+  <%= button t('continue') %>
+</p>
+
+<% content_for :head do %>
+  <%= javascript_include_tag '/states' %>
+  <script type="text/javascript">
+
+    var update_state = function(region) {
+      var country        = $('span#' + region + 'country :only-child').val();
+      var states         = state_mapper[country];
+
+      var state_select = $('span#' + region + 'state select');
+      var state_input = $('span#' + region + 'state input');
+
+      if(states) {
+        state_select.html('');
+        var states_with_blank = [["",""]].concat(states);
+        $.each(states_with_blank, function(pos,id_nm) {
+          var opt = $(document.createElement('option'))
+                    .attr('value', id_nm[0])
+                    .html(id_nm[1]);
+          state_select.append(opt);
+        });
+        state_select.enable().show();;
+        state_input.hide().disable();
+
+      } else {
+        state_input.enable().show();
+        state_select.hide().disable();
+      }
+
+    };
+
+    jQuery(document).ready(function(){
+      $('span#bcountry select').change(function() { update_state('b'); });
+      $('span#scountry select').change(function() { update_state('s'); });
+    });
+  </script>
+<% end %>

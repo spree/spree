@@ -1,7 +1,7 @@
 class Address < ActiveRecord::Base
   belongs_to :country
   belongs_to :state
-  
+
   has_many :checkouts, :foreign_key => "bill_address_id"
   has_many :shipments
 

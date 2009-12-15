@@ -4,35 +4,35 @@
   </tr>
   <tr>
     <td>
-      <label><%= Address.human_attribute_name(:first_name) %>:</label>
+      <%= f.label :firstname, t(:first_name) %>
     </td>
     <td colspan="3"><%= f.text_field :firstname %></td>
     <td>
-      <label><%= Address.human_attribute_name(:last_name) %>:</label>
+      <%= f.label :last_name, t(:last_name) %>
     </td>
     <td colspan="3"><%= f.text_field :lastname %></td>
   </tr>
   <tr>
     <td>
-      <label><%= Address.human_attribute_name(:address1) %>:</label>
+      <%= f.label :address1, t(:street_address) %>
     </td>
     <td colspan="3"><%= f.text_field :address1, :class => "fullwidth" %></td>
     <td>
-      <label><%= Address.human_attribute_name(:address2) %>:</label>
+     <%= f.label :address2, t(:street_address_2) %>
     </td>
     <td colspan="3"><%= f.text_field :address2, :class => "fullwidth" %></td>
   </tr>
   <tr>
     <td>
-      <label><%= Address.human_attribute_name(:city) %>:</label>
+      <%= f.label :city, t(:city) %>
     </td>
     <td><%= f.text_field :city %></td>
     <td>
-      <label><%= Address.human_attribute_name(:zipcode) %>:</label>
+      <%= f.label :zipcode, t(:zip) %>
     </td>
     <td><%= f.text_field :zipcode, :style => "width:100px;" %></td>
     <td>
-      <label><%= Address.human_attribute_name(:state) %>:</label>
+      <%= f.label :state, t(:state) %>
     </td>
     <td>
       <span id="<%= name==t('shipping_address') ? "s" : "b" %>state">
@@ -41,7 +41,7 @@
       </span>
     </td>
     <td>
-      <label><%= Address.human_attribute_name(:country) %>:</label>
+      <%= f.label :country_id, t(:country) %>
     </td>
     <td>
       <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %></span>
@@ -49,7 +49,7 @@
   </tr>
   <tr>
     <td>
-      <label><%= Address.human_attribute_name(:phone) %>:</label>
+      <%= f.label :phone, t(:phone) %>
     </td>
     <td colspan="7"><%= f.text_field :phone %></td>
   </tr>

@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class Admin::CheckoutsControllerTest < ActionController::TestCase
+  fixtures :countries, :states
+
   context "given order" do
     setup do
       UserSession.create(Factory(:admin_user))
@@ -36,9 +38,10 @@ class Admin::CheckoutsControllerTest < ActionController::TestCase
         @checkout =  @order.checkout
         @params = { :id => @checkout.id, :order_id => @order.number, }
 
+        @checkout.bill_address.state_name = nil
         @checkout.bill_address.state = @checkout.bill_address.country.states.last
 
-        @checkout.shipment.address.country = Factory.create(:country, :states => []) #Ireland!
+        @checkout.shipment.address.country = Factory.create(:country, :states => [])
 
         @checkout.save
         get :edit
@@ -59,7 +62,7 @@ class Admin::CheckoutsControllerTest < ActionController::TestCase
           assert_select "input[id='checkout_bill_address_attributes_city'][value=?]", @checkout.bill_address.city
           assert_select "input[id='checkout_bill_address_attributes_zipcode'][value=?]", @checkout.bill_address.zipcode
 
-          assert_select "input[id='checkout_bill_address_attributes_state_name'][disabled='disabled'][value=?]", @checkout.bill_address.state_name
+          assert_select "input[id='checkout_bill_address_attributes_state_name'][disabled='disabled']"
           assert_select "select[id='checkout_bill_address_attributes_state_id'] option[selected='selected'][value=?]", @checkout.bill_address.state.id.to_s
 
         end

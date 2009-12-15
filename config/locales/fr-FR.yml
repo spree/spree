@@ -27,6 +27,24 @@ fr-FR:
         lastname: "Nom"
         phone: Téléphone
         zipcode: "Code Postal"
+      checkout:
+        bill_address:
+          address1: "Billing address street"
+          city: "Billing address city"
+          firstname: "Billing address first name"
+          lastname: "Billing address last name"
+          phone: "Billing address phone"
+          state: "Billing address state"
+          zipcode: "Billing address zipcode"
+        shipment:
+          address:
+            address1: "Shipping address street"
+            city: "Shipping address city"
+            firstname: "Shipping address first name"
+            lastname: "Shipping address last name"
+            phone: "Shipping address phone"
+            state: "Shipping address state"
+            zipcode: "Shipping address zipcode"
       country: 
         iso: ISO
         iso3: ISO3
@@ -133,6 +151,9 @@ fr-FR:
       role: 
         one: Rôles
         other: Rôles
+      shipment:
+        one: Shipment
+        other: Shipments
       shipping_category: 
         one: Catégorie de Livraison"
         other: "Catégories de Livraison"
@@ -166,6 +187,7 @@ fr-FR:
   add_option_type: "Ajouter un type d'option"
   add_option_types: "Ajouter des types d'options"
   add_option_value: "Ajouter des options valeurs"
+  add_product: "Add Product"
   add_product_properties: "Ajouter des propriété au produit"
   add_state: "Ajouter une région"
   add_to_cart: "Ajouter au panier"
@@ -200,9 +222,11 @@ fr-FR:
   back: Arrière
   back_to_store: "Retour sur les produits"
   backordering_is_allowed: "Rupture de stock {{not}} permise"
+  balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
   bill_address: "Adresse facturée"
+  billing: Billing
   billing_address: "Adresse de facturation"
   billing_integration: Intégration de Facturation
   billing_integrations: Intégrations de Facturation
@@ -223,7 +247,14 @@ fr-FR:
   change_language: "Changer la langue"
   charge_total: Charge Total
   charged: Débité
+  charges: Charges
   checkout: Procéder au paiement
+  checkout_steps:
+    # keys correspond to Checkout state names:
+    address: Address
+    complete: Complete
+    delivery: Delivery
+    payment: Payment
   city: Ville
   clone: Clone
   code: Code
@@ -255,11 +286,14 @@ fr-FR:
   credit_card: "Carte de crédit"
   credit_card_capture_complete: "La carte de crédit a été acceptée"
   credit_card_payment: "Paiement par carte de crédit"
+  credit_owed: "Credit Owed"
   credit_total: Credit Total
   creditcard: Carte de crédit
   credits: Credits
   current: Actuellement
   customer: Client
+  customer_details: "Customer Details"
+  customer_search: "Customer Search"
   date_range: "Sélection de dates"
   delete: Suppression
   depth: Profondeur
@@ -388,6 +422,7 @@ fr-FR:
   my_orders: "Mes commandes"
   name: Nom
   new: Nouveau
+  new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration
   new_category: "Nouvelle categorie"
   new_coupon: Nouveau Coupon
@@ -396,6 +431,7 @@ fr-FR:
   new_image: "Nouvelle image"
   new_option_type: "Nouveau type d'option"
   new_option_value: "Nouvelle valeure d'option"
+  new_order: "New Order"
   new_product: "Nouveau produit"
   new_product_group: New Product Group
   new_property: "Nouvelle proprieté"
@@ -446,6 +482,7 @@ fr-FR:
   orders: Commandes
   out_of_stock: "En rupture de stock"
   out_of_stock_products: "Out of Stock Products"
+  over_paid: "Over Paid"
   overview: Vue d'ensemble
   overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: "Vous avez tenté de visiter une page qui peut être vu qu'en étant connecté"
@@ -628,6 +665,7 @@ fr-FR:
   sales_total_for_all_orders: "Total des ventes pour toutes les commandes"
   sales_totals: "Total des ventes"
   sales_totals_description: "Total des ventes pour toutes les commandes"
+  save_and_continue: Save and Continue
   save_preferences: Sauvegarder les préférences
   search: Rechercher
   search_results: "Search results for '{{keywords}}'"
@@ -645,6 +683,7 @@ fr-FR:
   ship_address: "Adresse de livraison"
   shipment: Livraison
   shipment_number: "Livraison #"
+  shipments: "Shipments"
   shipped: Livré
   shipping: Frais de livraison
   shipping_address: "Adresse de livraison"
@@ -738,6 +777,7 @@ fr-FR:
   unable_to_authorize_credit_card: "Impossible d'autoriser la carte de crédit."
   unable_to_capture_credit_card: "Impossible de récupérer votre carte de crédit"
   unable_to_save_order: "Impossible d'enregistrer la commande"
+  under_paid: "Under Paid"
   unrecognized_card_type: "Le type de la carte n'est pas reconnu"
   update: Mise à jour
   update_password: "Mettre à jour mon mot de passe et me connecter"
@@ -756,6 +796,7 @@ fr-FR:
   variants: Gammes
   vat: "VAT"
   version: Version
+  view_shipping_options: "View shipping options"
   website: Site Web
   weight: Poids
   welcome_to_sample_store: "Bienvenue sur le magasin test"

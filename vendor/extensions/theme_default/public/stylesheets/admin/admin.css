@@ -439,7 +439,7 @@ div#calculator-settings-warning {
   padding:10px 0 15px;
   position:fixed;
   text-align:center;
-  width:30%;
+  width:320px;
   font-weight:bold;
   -moz-border-radius-bottomleft:15px;
   -moz-border-radius-bottomright:15px;

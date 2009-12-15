@@ -27,6 +27,24 @@ th:
         lastname: นามสกุล
         phone: โทรศัพท์
         zipcode: รหัสไปรษณีย์
+      checkout:
+        bill_address:
+          address1: "Billing address street"
+          city: "Billing address city"
+          firstname: "Billing address first name"
+          lastname: "Billing address last name"
+          phone: "Billing address phone"
+          state: "Billing address state"
+          zipcode: "Billing address zipcode"
+        shipment:
+          address:
+            address1: "Shipping address street"
+            city: "Shipping address city"
+            firstname: "Shipping address first name"
+            lastname: "Shipping address last name"
+            phone: "Shipping address phone"
+            state: "Shipping address state"
+            zipcode: "Shipping address zipcode"
       country: 
         iso: ISO
         iso3: ISO3
@@ -133,6 +151,9 @@ th:
       role: 
         one: Roles
         other: Roles
+      shipment:
+        one: Shipment
+        other: Shipments
       shipping_category: 
         one: "Shipping Category"
         other: "Shipping Categories"
@@ -166,6 +187,7 @@ th:
   add_option_type: เพิ่มรายการเพื่อเลือก
   add_option_types: เพิ่มรายการเพื่อเลือก
   add_option_value: เพิ่มรายการตัวเลือก
+  add_product: "Add Product"
   add_product_properties: เพิ่มสรรพคุณ
   add_state: "เพิ่มรัฐ"
   add_to_cart: เพิ่มลงตะกร้า
@@ -200,9 +222,11 @@ th:
   back: กลับ
   back_to_store: "กลับไปหน้าร้าน"
   backordering_is_allowed: "({{not}} allowed) การซื้อเมื่อสินค้าหมด"
+  balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
   bill_address: "ที่อยู่บนใบเสร็จรับเงิน"
+  billing: Billing
   billing_address: ใบเสร็จรับเงิน
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
@@ -223,7 +247,14 @@ th:
   change_language: เปลี่ยนภาษา
   charge_total: Charge Total
   charged: Charged
+  charges: Charges
   checkout: สั่งซื้อ
+  checkout_steps:
+    # keys correspond to Checkout state names:
+    address: Address
+    complete: Complete
+    delivery: Delivery
+    payment: Payment
   city: เขต หรือ อำเภอ
   clone: Clone
   code: Code
@@ -255,11 +286,14 @@ th:
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  credit_owed: "Credit Owed"
   credit_total: Credit Total
   creditcard: Creditcard
   credits: Credits
   current: Current
   customer: ลูกค้า
+  customer_details: "Customer Details"
+  customer_search: "Customer Search"
   date_range: ช่วงวันที่
   delete: ลบ
   depth: ลึก
@@ -388,6 +422,7 @@ th:
   my_orders: รายการสั่งซื้อ
   name: ชื่อ
   new: New
+  new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration
   new_category: "New category"
   new_coupon: New Coupon
@@ -396,6 +431,7 @@ th:
   new_image: เพิ่มภาพ
   new_option_type: เพิ่มรายการให้เลือก
   new_option_value: เพิ่มรายการให้ตัวเลือก
+  new_order: "New Order"
   new_product: เพิ่มสินค้า
   new_product_group: New Product Group
   new_property: เพิ่มคุณลักษณะ
@@ -446,6 +482,7 @@ th:
   orders: รายการสั่งซื้อ
   out_of_stock: สินค้าหมด
   out_of_stock_products: "Out of Stock Products"
+  over_paid: "Over Paid"
   overview: ภาพรวม
   overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
@@ -628,6 +665,7 @@ th:
   sales_total_for_all_orders: "ยอดขายรวมจากทุกการสั่งซื้อ"
   sales_totals: "ยอดขายรวม"
   sales_totals_description: "ยอดขายรวมจากทุกการสั่งซื้อ"
+  save_and_continue: Save and Continue
   save_preferences: Save Preferences           
   search: ค้นหา
   search_results: "Search results for '{{keywords}}'"
@@ -645,6 +683,7 @@ th:
   ship_address: "ที่อยู่ในการจัดส่ง"
   shipment: การขนส่งทางเรือ
   shipment_number: "รหัสส่งของ"
+  shipments: "Shipments"
   shipped: เสร็จสินการจัดส่ง
   shipping: "ค่าจัดส่ง"
   shipping_address: ที่อยู่สำหรับส่งของ
@@ -738,6 +777,7 @@ th:
   unable_to_authorize_credit_card: "ไม่สามารถยืนยันบัตรเครดิตได้"
   unable_to_capture_credit_card: "ไม่พบบัตรเครดิตดังกล่าว"
   unable_to_save_order: "ไม่สามารถบันทึกรายการซื้อได้"
+  under_paid: "Under Paid"
   unrecognized_card_type: ไม่รู้จักบัตรชนิดนี้
   update: ใช้ข้อมูลใหม่
   update_password: "ใช้รหัสผ่านล่าสุด จากนั้นนำฉันเข้าสู่ระบบ"                
@@ -756,6 +796,7 @@ th:
   variants: ความต่างในสินค้า
   vat: "VAT"           
   version: รุ่น
+  view_shipping_options: "View shipping options"
   website: เว็บไซต์
   weight: น้ำหนัก
   welcome_to_sample_store: "ยินดีต้อนรับสู่ร้านค้าตัวอย่าง"

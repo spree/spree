@@ -27,6 +27,24 @@ pt-BR:
         lastname: "Sobrenome"
         phone: Telefone
         zipcode: "CEP"
+      checkout:
+        bill_address:
+          address1: "Billing address street"
+          city: "Billing address city"
+          firstname: "Billing address first name"
+          lastname: "Billing address last name"
+          phone: "Billing address phone"
+          state: "Billing address state"
+          zipcode: "Billing address zipcode"
+        shipment:
+          address:
+            address1: "Shipping address street"
+            city: "Shipping address city"
+            firstname: "Shipping address first name"
+            lastname: "Shipping address last name"
+            phone: "Shipping address phone"
+            state: "Shipping address state"
+            zipcode: "Shipping address zipcode"
       country: 
         iso: ISO
         iso3: ISO3
@@ -133,6 +151,9 @@ pt-BR:
       role: 
         one: Papél
         other: Papéis
+      shipment:
+        one: Shipment
+        other: Shipments
       shipping_category: 
         one: "Categoria de Entrega"
         other: "Categorias de Entrega"
@@ -166,6 +187,7 @@ pt-BR:
   add_option_type: "Adicionar Tipo de Opção"
   add_option_types: "Adicionar Tipo de Opção"
   add_option_value: "Adicionar Valor de Opção"
+  add_product: "Add Product"
   add_product_properties: "Adicionar Propriedades de Produto"
   add_state: "Adicionar Estado"
   add_to_cart: "Adicionar ao Carrinho"
@@ -200,9 +222,11 @@ pt-BR:
   back: Voltar
   back_to_store: "Voltar à Loja"
   backordering_is_allowed: "Devolução {{not}} permitida"
+  balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
   bill_address: "Endereço da Conta"
+  billing: Billing
   billing_address: "Endereço de Cobrança"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
@@ -223,7 +247,14 @@ pt-BR:
   change_language: "Mudar Língua"
   charge_total: Total a cobrar
   charged: Cobrado
+  charges: Charges
   checkout: Finalizar
+  checkout_steps:
+    # keys correspond to Checkout state names:
+    address: Address
+    complete: Complete
+    delivery: Delivery
+    payment: Payment
   city: Cidade
   clone: Clone
   code: Code
@@ -255,11 +286,14 @@ pt-BR:
   credit_card: "Cartão de Crédito"
   credit_card_capture_complete: "Cartão de Crédito foi Capturado"
   credit_card_payment: "Pagamento de Cartão de Crédito"
+  credit_owed: "Credit Owed"
   credit_total: Credit Total
   creditcard: Cartão de Crédito
   credits: Credits
   current: Atual
   customer: Cliente
+  customer_details: "Customer Details"
+  customer_search: "Customer Search"
   date_range: "Período de Data"
   delete: Apagar
   depth: Profundidade
@@ -388,6 +422,7 @@ pt-BR:
   my_orders: "Meus Pedidos"
   name: Nome
   new: Novo
+  new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration
   new_category: "Nova categoria"
   new_coupon: Novo Cupom
@@ -396,6 +431,7 @@ pt-BR:
   new_image: "Nova Imagem"
   new_option_type: "Novo Tipo de Opção"
   new_option_value: "Nova Opção de Valor"
+  new_order: "New Order"
   new_product: "Novo Produto"
   new_product_group: New Product Group
   new_property: "Nova Propriedade"
@@ -446,6 +482,7 @@ pt-BR:
   orders: Pedidos
   out_of_stock: "Sem Estoque"
   out_of_stock_products: "Out of Stock Products"
+  over_paid: "Over Paid"
   overview: Resumo
   overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
@@ -628,6 +665,7 @@ pt-BR:
   sales_total_for_all_orders: "Total de Vendas para todos os pedidos"
   sales_totals: "Total de Vendas"
   sales_totals_description: "Total de Vendas para todos os Pedidos"
+  save_and_continue: Save and Continue
   save_preferences: Gravar Preferências           
   search: Pesquisa
   search_results: "Search results for '{{keywords}}'"
@@ -645,6 +683,7 @@ pt-BR:
   ship_address: "Endereço da Entrega"
   shipment: Entrega
   shipment_number: "Nr. de Entrega"
+  shipments: "Shipments"
   shipped: Entregue
   shipping: Entregando
   shipping_address: "Endereço de Entrega"
@@ -738,6 +777,7 @@ pt-BR:
   unable_to_authorize_credit_card: "Não foi possível Autorizar o Cartão de Crédito"
   unable_to_capture_credit_card: "Não foi possível Capturar o Cartão de Crédito"
   unable_to_save_order: "Não foi Possível gravar Pedido"
+  under_paid: "Under Paid"
   unrecognized_card_type: Tipo de cartão não reconhecido
   update: Atualizar
   update_password: "Atualizar minha senha e fazer meu login"
@@ -756,6 +796,7 @@ pt-BR:
   variants: Variantes
   vat: "VAT"           
   version: Versão
+  view_shipping_options: "View shipping options"
   website: Website
   weight: Peso
   welcome_to_sample_store: "Bem Vindo à Loja de Exemplo"

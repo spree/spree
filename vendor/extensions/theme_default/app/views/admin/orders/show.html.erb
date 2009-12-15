@@ -8,7 +8,6 @@
   <div class='adr'>
     <h4>
       <%= link_to t("bill_address"), (@current_action=="edit" ? edit_admin_order_checkout_url(@order) : admin_order_checkout_url(@order)) %>
-      <%= t("bill_address") if @order.creditcard_payments.empty? %>
     </h4>
     <%= render :partial => 'admin/shared/address', :locals => {:address => @order.bill_address} %>
   </div>

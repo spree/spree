@@ -27,6 +27,24 @@ mx:
         lastname: "Apellidos"
         phone: Teléfono
         zipcode: "Código postal"
+      checkout:
+        bill_address:
+          address1: "Billing address street"
+          city: "Billing address city"
+          firstname: "Billing address first name"
+          lastname: "Billing address last name"
+          phone: "Billing address phone"
+          state: "Billing address state"
+          zipcode: "Billing address zipcode"
+        shipment:
+          address:
+            address1: "Shipping address street"
+            city: "Shipping address city"
+            firstname: "Shipping address first name"
+            lastname: "Shipping address last name"
+            phone: "Shipping address phone"
+            state: "Shipping address state"
+            zipcode: "Shipping address zipcode"
       country: 
         iso: ISO
         iso3: ISO3
@@ -133,6 +151,9 @@ mx:
       role: 
         one: "Función"
         other: Funciones
+      shipment:
+        one: Shipment
+        other: Shipments
       shipping_category: 
         one: "Categoría de envio"
         other: "Categorías de envio"
@@ -166,6 +187,7 @@ mx:
   add_option_type: "Añadir tipo de opción"
   add_option_types: "Añadir tipos de opciones"
   add_option_value: "Añadir valor de opción"
+  add_product: "Add Product"
   add_product_properties: "Añadir propiedades de producto"
   add_state: "Añadir Estado"
   add_to_cart: "Añadir al carrito"
@@ -200,9 +222,11 @@ mx:
   back: "Atrás"
   back_to_store: "Volver a la tienda"
   backordering_is_allowed: "Devoluciones {{not}} permitidas"
+  balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
   bill_address: "Dirección de facturación"
+  billing: Billing
   billing_address: "Dirección de facturación"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
@@ -223,7 +247,14 @@ mx:
   change_language: "Cambiar Idioma"
   charge_total: "Cargo total"
   charged: Cargado
+  charges: Charges
   checkout: Pagar
+  checkout_steps:
+    # keys correspond to Checkout state names:
+    address: Address
+    complete: Complete
+    delivery: Delivery
+    payment: Payment
   city: Ciudad
   clone: Clone
   code: "Código"
@@ -255,11 +286,14 @@ mx:
   credit_card: "Tarjeta de credito"
   credit_card_capture_complete: "La tarjeta de crédito ha sido registrada"
   credit_card_payment: "Pago con tarjeta de crédito"
+  credit_owed: "Credit Owed"
   credit_total: "Credito Total"
   creditcard: "Tarjeta de crédito"
   credits: Credits
   current: Actual
   customer: Cliente
+  customer_details: "Customer Details"
+  customer_search: "Customer Search"
   date_range: "Rango de Fecha"
   delete: Eliminar
   depth: Profundidad
@@ -388,6 +422,7 @@ mx:
   my_orders: "Mis pedidos"
   name: Nombre
   new: Nuevo
+  new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration
   new_category: "Nueva categoría"
   new_coupon: "Nuevo Cupón"
@@ -396,6 +431,7 @@ mx:
   new_image: "Nueva Imágen"
   new_option_type: "Nuevo tipo de opción"
   new_option_value: "Nuevo valor de la opción"
+  new_order: "New Order"
   new_product: "Nuevo producto"
   new_product_group: New Product Group
   new_property: "Nueva propiedad"
@@ -446,6 +482,7 @@ mx:
   orders: Pedidos
   out_of_stock: "Sin existencia"
   out_of_stock_products: "Out of Stock Products"
+  over_paid: "Over Paid"
   overview: General
   overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
@@ -628,6 +665,7 @@ mx:
   sales_total_for_all_orders: "Total de ventas para todos los pedidos"
   sales_totals: "Ventas Totales"
   sales_totals_description: "Total de ventas para todos los pedidos"
+  save_and_continue: Save and Continue
   save_preferences: Guardar preferencias
   search: Buscar
   search_results: "Search results for '{{keywords}}'"
@@ -645,6 +683,7 @@ mx:
   ship_address: "Dirección de envio"
   shipment: "Envío"
   shipment_number: "Envío No."
+  shipments: "Shipments"
   shipped: "Enviado"
   shipping: "Envío"
   shipping_address: "Dirección de envío"
@@ -738,6 +777,7 @@ mx:
   unable_to_authorize_credit_card: "No se ha podido autorizar la tarjeta de credito"
   unable_to_capture_credit_card: "No se ha podido capturar la tarjeta de credito"
   unable_to_save_order: "No se ha podido guardar el pedido"
+  under_paid: "Under Paid"
   unrecognized_card_type: "No se ha podido reconocer el tipo de tarjeta"
   update: Actualizar
   update_password: "Actualiza mi contraseña y permiteme entrar"                    
@@ -756,6 +796,7 @@ mx:
   variants: Variantes
   vat: "VAT"           
   version: Versión
+  view_shipping_options: "View shipping options"
   website: "Página web"
   weight: Peso
   welcome_to_sample_store: "Bienvenido a la tienda de ejemplo"

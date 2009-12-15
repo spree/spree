@@ -5,7 +5,9 @@ class Admin::OrdersController < Admin::BaseController
   before_filter :initialize_order_events
   before_filter :load_object, :only => [:fire, :resend, :history]
 
-  in_place_edit_for :user, :email
+  def new
+    @order = Order.create
+  end
 
   def fire
     # TODO - possible security check here but right now any admin can before any transition (and the state machine
@@ -55,6 +57,5 @@ class Admin::OrdersController < Admin::BaseController
   def initialize_order_events
     @order_events = %w{cancel resume}
   end
-
 
 end

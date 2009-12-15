@@ -1,38 +1,60 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
-<br/>
+
 <h2><%= t("credit_card_payment")%></h2>
-<br/>
-<b><%= t("credit_card")%>: </b> &nbsp; #<%= @creditcard_payment.creditcard.display_number %><br/>
-<b><%= t("type")%> : </b> &nbsp; <%= @creditcard_payment.creditcard.cc_type.titleize %><br/>
-<br/>
+
 <%=error_messages_for :creditcard_payment %>
 <% form_for(@creditcard_payment, :url => object_url, :html => { :method => :put}) do |payment_form| %>
-  <h4><%= t("billing_address")%></h4>
-  <% payment_form.fields_for :creditcard do |creditcard_form| %>
-    <%= render :partial => 'admin/shared/form_address', :locals => {:f => creditcard_form} %>
-  <% end %>
-  <br/>
+
   <table class="index">
     <tr>
-      <th><%= t("transaction") %></th>
-      <th><%= t("amount") %></th>
-      <th><%= t("response_code") %></th>
-      <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
+      <th colspan="6"><%= t('payment_information') %>:</th>
     </tr>
-    <% @creditcard_payment.txns.each do |t| %>
-      <tr>
-        <td><%=CreditcardTxn::TxnType.from_value t.txn_type.to_i%></td>
-        <td><%=number_to_currency t.amount%></td>
-        <td><%=t.response_code%></td>
-        <td><%=t.created_at.to_s(:date_time24)%></td>
-      </tr>
-    <% end %>
+    <tr>
+      <td><label><%= t("amount") %>:</label></td>
+      <td colspan="5">
+        <%= @creditcard_payment.amount %>
+      </td>
+    </tr>
+    <tr>
+      <td><label><%= t("card_number") %>:</label></td>
+      <td>
+        XXXX-XXXX-XXXX-<%= @creditcard_payment.creditcard.last_digits %>
+      </td>
+      <td><label><%= t("expiration") %>:</label></td>
+      <td>
+        <%= @creditcard_payment.creditcard.month %>/<%= @creditcard_payment.creditcard.year %>
+      </td>
+      <td><label><%= t("card_code") %>:</label></td>
+      <td>
+        <%= @creditcard_payment.creditcard.verification_value %>
+      </td>
+    </tr>
+    <tr>
+      <td><label><%= t("maestro_or_solo_cards") %>:</label></td>
+      <td>
+        <%= @creditcard_payment.creditcard.issue_number %>
+      </td>
+      <td><label><%= t('start_date') %>:</label></td>
+      <td colspan="3">
+        <%= @creditcard_payment.creditcard.start_month %>/<%= @creditcard_payment.creditcard.start_year %>
+      </td>
+    </tr>
   </table>
 
+  <% payment_form.fields_for :order do |order_form|  %>
+    <% order_form.fields_for :checkout do |checkout_form|  %>
+
+      <% checkout_form.fields_for :bill_address do |ba_form|  %>
+        <%= render :partial => "admin/checkouts/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
+      <% end %>
+
+    <% end %>
+  <% end %>
+
   <p class="form-buttons">
-    <%= button t('update') %>
+    <%= button t('continue') %>
   </p>
 
 <% end %>
 <%= link_to t("capture").titleize, capture_admin_order_creditcard_payment_url(@order, @creditcard_payment), :confirm => t('are_you_sure_you_want_to_capture') if @creditcard_payment.can_capture?  %> &nbsp;
-<%= link_to t("list"), collection_url %>
+

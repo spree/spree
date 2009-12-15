@@ -1,5 +1,5 @@
 ---
-en-AU:
+en-AU: 
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
@@ -27,6 +27,24 @@ en-AU:
         lastname: "Last Name"
         phone: Phone
         zipcode: "Post Code"
+      checkout:
+        bill_address:
+          address1: "Billing address street"
+          city: "Billing address city"
+          firstname: "Billing address first name"
+          lastname: "Billing address last name"
+          phone: "Billing address phone"
+          state: "Billing address state"
+          zipcode: "Billing address zipcode"
+        shipment:
+          address:
+            address1: "Shipping address street"
+            city: "Shipping address city"
+            firstname: "Shipping address first name"
+            lastname: "Shipping address last name"
+            phone: "Shipping address phone"
+            state: "Shipping address state"
+            zipcode: "Shipping address zipcode"
       country:
         iso: ISO
         iso3: ISO3
@@ -133,6 +151,9 @@ en-AU:
       role:
         one: Roles
         other: Roles
+      shipment:
+        one: Shipment
+        other: Shipments
       shipping_category:
         one: "Shipping Category"
         other: "Shipping Categories"
@@ -166,6 +187,7 @@ en-AU:
   add_option_type: "Add Option Type"
   add_option_types: "Add Option Types"
   add_option_value: "Add Option Value"
+  add_product: "Add Product"
   add_product_properties: "Add Product Properties"
   add_state: "Add State"
   add_to_cart: "Add To Basket"
@@ -200,9 +222,11 @@ en-AU:
   back: Back
   back_to_store: "Go Back To Store"
   backordering_is_allowed: "Backordering {{not}} allowed"
+  balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
   bill_address: "Bill Address"
+  billing: Billing
   billing_address: "Billing Address"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
@@ -223,7 +247,14 @@ en-AU:
   change_language: "Change Language"
   charge_total: Charge Total
   charged: Charged
+  charges: Charges
   checkout: Checkout
+  checkout_steps:
+    # keys correspond to Checkout state names:
+    address: Address
+    complete: Complete
+    delivery: Delivery
+    payment: Payment
   city: Town / City
   clone: Clone
   code: Code
@@ -255,11 +286,14 @@ en-AU:
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  credit_owed: "Credit Owed"
   credit_total: Credit Total
   creditcard: Creditcard
   credits: Credits
   current: Current
   customer: Customer
+  customer_details: "Customer Details"
+  customer_search: "Customer Search"
   date_range: "Date Range"
   delete: Delete
   depth: Depth
@@ -388,6 +422,7 @@ en-AU:
   my_orders: "My Orders"
   name: Name
   new: New
+  new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration
   new_category: "New category"
   new_coupon: New Coupon
@@ -396,6 +431,7 @@ en-AU:
   new_image: "New Image"
   new_option_type: "New Option Type"
   new_option_value: "New Option Value"
+  new_order: "New Order"
   new_product: "New Product"
   new_product_group: New Product Group
   new_property: "New Property"
@@ -446,6 +482,7 @@ en-AU:
   orders: Orders
   out_of_stock: "Out of Stock"
   out_of_stock_products: "Out of Stock Products"
+  over_paid: "Over Paid"
   overview: Overview
   overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
@@ -628,6 +665,7 @@ en-AU:
   sales_total_for_all_orders: "Sales total for all orders"
   sales_totals: "Sales Totals"
   sales_totals_description: "Sales Total For All Orders"
+  save_and_continue: Save and Continue
   save_preferences: Save Preferences
   search: Search
   search_results: "Search results for '{{keywords}}'"
@@ -645,6 +683,7 @@ en-AU:
   ship_address: "Ship Address"
   shipment: Shipment
   shipment_number: "Shipment #"
+  shipments: "Shipments"
   shipped: Shipped
   shipping: Delivery
   shipping_address: "Delivery Address"
@@ -738,6 +777,7 @@ en-AU:
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_save_order: "Unable to Save Order"
+  under_paid: "Under Paid"
   unrecognized_card_type: Unrecognized card type
   update: Update
   update_password: "Update my password and log me in"
@@ -756,6 +796,7 @@ en-AU:
   variants: Variants
   vat: "GST"
   version: Version
+  view_shipping_options: "View shipping options"
   website: Website
   weight: Weight
   welcome_to_sample_store: "Welcome to the sample store"

@@ -27,6 +27,24 @@ ru-RU:
         lastname: "Фамилия"
         phone: "Телефон"
         zipcode: "Индекс"
+      checkout:
+        bill_address:
+          address1: "Billing address street"
+          city: "Billing address city"
+          firstname: "Billing address first name"
+          lastname: "Billing address last name"
+          phone: "Billing address phone"
+          state: "Billing address state"
+          zipcode: "Billing address zipcode"
+        shipment:
+          address:
+            address1: "Shipping address street"
+            city: "Shipping address city"
+            firstname: "Shipping address first name"
+            lastname: "Shipping address last name"
+            phone: "Shipping address phone"
+            state: "Shipping address state"
+            zipcode: "Shipping address zipcode"
       country:
         iso: "ISO"
         iso3: "ISO3"
@@ -133,6 +151,9 @@ ru-RU:
       role:
         one: "Роль"
         other: "Роли"
+      shipment:
+        one: Shipment
+        other: Shipments
       shipping_category:
         one: "Категория доставки"
         other: "Категории доставки"
@@ -166,6 +187,7 @@ ru-RU:
   add_option_type: "Добавить опцию"
   add_option_types: "Добавить опции"
   add_option_value: "Добавить значение опции"
+  add_product: "Add Product"
   add_product_properties: "Добавить свойства продукта"
   add_state: "Добавить субъект федерации"
   add_to_cart: "Добавить в корзину"
@@ -200,9 +222,11 @@ ru-RU:
   back: "Назад"
   back_to_store: "Назад к списку"
   backordering_is_allowed: "Задолженные заказы {{not}} разрешены"
+  balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
   bill_address: "Платёжный адрес"
+  billing: Billing
   billing_address: "Платёжный адрес"
   billing_integration: Billing Integration
   billing_integrations: Billing Integrations
@@ -223,7 +247,14 @@ ru-RU:
   change_language: "Сменить язык"
   charge_total: "Итого оплачено"
   charged: "Оплачено"
+  charges: Charges
   checkout: "Оформление заказа"
+  checkout_steps:
+    # keys correspond to Checkout state names:
+    address: Address
+    complete: Complete
+    delivery: Delivery
+    payment: Payment
   city: "Город"
   clone: Clone
   code: "Кодовое слово"
@@ -255,11 +286,14 @@ ru-RU:
   credit_card: "Кредитная карта"
   credit_card_capture_complete: "Платёж по кредитной карте завершён"
   credit_card_payment: "Платёж кредитной картой"
+  credit_owed: "Credit Owed"
   credit_total: "Итого по кредитным картам"
   creditcard: "Кредитная карта"
   credits: Credits
   current: "Текущий"
   customer: "Пользователь"
+  customer_details: "Customer Details"
+  customer_search: "Customer Search"
   date_range: "Период времени"
   delete: "Удалить"
   depth: "Глубина"
@@ -388,6 +422,7 @@ ru-RU:
   my_orders: "Мои заказы"
   name: "Название"
   new: "Новый"
+  new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration
   new_category: "Новая категория"
   new_coupon: "Новый купон"
@@ -396,6 +431,7 @@ ru-RU:
   new_image: "Новая картинка"
   new_option_type: "Новая опция"
   new_option_value: "Новое значение опции"
+  new_order: "New Order"
   new_product: "Новый продукт"
   new_product_group: New Product Group
   new_property: "Новое свойство"
@@ -446,6 +482,7 @@ ru-RU:
   orders: "Заказы"
   out_of_stock: "Нет в наличии"
   out_of_stock_products: "Out of Stock Products"
+  over_paid: "Over Paid"
   overview: "Обзор"
   overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
   page_only_viewable_when_logged_in: "Запрошенную страницу могут посещать только авторизованные пользователи."
@@ -628,6 +665,7 @@ ru-RU:
   sales_total_for_all_orders: "Продажи итого по всем заказам"
   sales_totals: "Итоги продаж"
   sales_totals_description: "итоги продаж для всех заказов."
+  save_and_continue: Save and Continue
   save_preferences: "Сохранить настройки"
   search: "Поиск"
   search_results: "Результаты поиска по запросу '{{keywords}}'"
@@ -645,6 +683,7 @@ ru-RU:
   ship_address: "Адрес доставки"
   shipment: "Доставка"
   shipment_number: "Доставка №"
+  shipments: "Shipments"
   shipped: "Доставлено"
   shipping: "Доставка"
   shipping_address: "Адрес доставки"
@@ -738,6 +777,7 @@ ru-RU:
   unable_to_authorize_credit_card: "Не удалось авторизировать кредитную карту"
   unable_to_capture_credit_card: "Не удалось совершить платёж по кредитной карте"
   unable_to_save_order: "Не удалось сохранить заказ"
+  under_paid: "Under Paid"
   unrecognized_card_type: "Неизвестный тип карты"
   update: "Изменить"
   update_password: "Обновить мой пароль и войти"
@@ -756,6 +796,7 @@ ru-RU:
   variants: "Варианты"
   vat: "НДС"
   version: "Версия"
+  view_shipping_options: "View shipping options"
   website: "Сайт"
   weight: "Вес"
   welcome_to_sample_store: "Добро пожаловать в тестовый магазин"

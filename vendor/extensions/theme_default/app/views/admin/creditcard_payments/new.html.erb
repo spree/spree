@@ -4,12 +4,21 @@
 
 <%=error_messages_for :creditcard_payment %>
 <% form_for @creditcard_payment, :url => collection_url do |payment_form| %>
-  <h4><%= t("billing_address")%></h4>
-  <% payment_form.fields_for :creditcard do |creditcard_form| %>
-    <%= render :partial => 'admin/shared/form_address', :locals => {:f => creditcard_form} %>
+
+  <%= render :partial => "form", :locals => {:f => payment_form} %>
+
+  <% payment_form.fields_for :order do |order_form|  %>
+    <% order_form.fields_for :checkout do |checkout_form|  %>
+
+      <% checkout_form.fields_for :bill_address do |ba_form|  %>
+        <%= render :partial => "admin/checkouts/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
+      <% end %>
+
+    <% end %>
   <% end %>
+
   <p class="form-buttons">
     <%= button t('continue') %>
-    <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_payments_url(@order) %>
   </p>
+
 <% end %>

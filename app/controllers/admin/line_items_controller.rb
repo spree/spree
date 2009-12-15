@@ -38,8 +38,10 @@ class Admin::LineItemsController < Admin::BaseController
   end
 
   def recalulate_totals
-    @order.shipping_charges.each do |shipping_charge|
-      shipping_charge.update_attributes(:amount => @order.shipping_method.calculate_cost(@order.shipment))
+    unless @order.shipping_method.nil?
+      @order.shipping_charges.each do |shipping_charge|
+        shipping_charge.update_attributes(:amount => @order.shipping_method.calculate_cost(@order.shipment))
+      end
     end
 
     @order.tax_charges.each do |tax_charge|
