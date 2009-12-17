@@ -40,5 +40,5 @@ public/template_google_base.xml
 coverage/*
 var
 TAGS
-nbprojecta
+nbproject
 vendor/extensions/theme_default/app/stylesheets/*.css
