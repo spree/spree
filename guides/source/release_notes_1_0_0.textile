@@ -63,7 +63,15 @@ Sample data is data that is convenient to have when testing your code.  Its load
 
 If you have fixtures in your extension with the same filename as those found in the core, they will be loaded instead of the core version.  This applies to both sample and seed fixtures.  This allows for fine grained control over the sample and seed data.  For example, you can create your own custom sample order data in your site extension instead of relying on the version provided by Spree.           
 
-WARNING.  You should remove all +db:bootstrap+ tasks from your extensions.  The new bootstrap functionality in the core will automatically load any fixtures found in +db/sample+ of your extension.  Failing to remove this task from your extension will result in an attempt to create the fixtures twice.
+WARNING.  You should remove all +db:bootstrap+ tasks from your extensions.  The new bootstrap functionality in the core will automatically load any fixtures found in +db/sample+ of your extension.  Failing to remove this task from your extension will result in an attempt to create the fixtures twice.       
+
+h3. Checkout Refactoring
+
+h4. Countries Available for Shipping and Billing 
+
+The mechanism for determining the list of billing and shipping countries has changed.  Prior to this release, there was no way to limit the billing countries and shipping countries were limited by the countries included in the shipping zones that were configured.  The new approach is to simply use all countries defined in the database by default.  
+
+The list can be limited to a specific set of countries by configuring the new +:checkout_zone+ preference and setting its value to the name of a "zone":/ones.html containing the countries you wish to use.  This should handle most cases where the list of billing and shipping countries are the same.  You can always customize the code via extension if this does not suit your needs.
 
 h3. Miscellaneous improvements
 
