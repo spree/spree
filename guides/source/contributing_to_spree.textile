@@ -30,17 +30,7 @@ You will need to create a fork of the Spree project in Github.  This is a pretty
 git remote add railsdog git://github.com/railsdog/spree.git  
 </shell>  
 
-WARNING. Its important that you add this reference.  Its a one time step that will allow you to easily create branches based on the most recent version of the official code. 
-
-h5. Add a Service Hook to Your Fork in Github
-
-Click the +Admin+ tab in your Github project and then click the +Service Hooks+ menu option.  Please add the following "Post-Receive URL"
-
-<shell>
-  http://github.spreecommerce.com
-</shell>
-
-This allows your fork to communicate your changes back to our Lighthouse issue tracker.  Later in this guide, we'll explain the Git commit message convention you need to follow in order to make this happen.
+WARNING. Its important that you add this reference.  Its a one time step that will allow you to easily create branches based on the most recent version of the official code.    
 
 h4. For Each Contribution
 
@@ -75,7 +65,9 @@ Provided a Thai localization.
 [#525]
 </shell>
 
-Please be sure to include the issue number inside of brackets.  This will make sure that Lighthouse will be notified of the changeset when you push to Github.  It will also automatically change the ticket state to "patched" which will help us to prioritize issues where users have supplied a fix.  Note also the blank line between the comment and the issue number.  This helps with readability. 
+Please be sure to include the issue number inside of brackets.  This will make sure that Lighthouse will be notified of the changeset when you push to Github.  It will also automatically change the ticket state to "patched" which will help us to prioritize issues where users have supplied a fix.  Note also the blank line between the comment and the issue number.  This helps with readability.   
+
+WARN. Lighthouse will not be notified of the fix automatically due to some technical problems with the hook.  Please continue to use this notation since the style will be compatible with the eventual new solution to this problem.
 
 h5. Rebase if Necessary
 
@@ -105,7 +97,7 @@ git push origin 525-add-thai-localization
 
 If you have set up the GitHub service hook as described earlier, the changes will automatically be reflected in the Lighthouse ticket once you push.
 
-WARNING. The Github team has confirmed that there is a bug in the service hooks when pushing to a branch other then master.  They've promised to expedite a fix for us.  Until then, you will also want to make sure to do the next step so that the notification works. 
+WARNING. In previous versions of this guide we encouraged you to create a "service hook" for your fork in Github.  Unfortunately we are expereincing technical problems processing these commit messages.  We're working on a new solution that will automatically detect your fixes in Github when using the proper notation in your commits.
 
 h5. Merge to Your Local Master and Push
 
