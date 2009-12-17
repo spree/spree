@@ -87,5 +87,11 @@ class Checkout < ActiveRecord::Base
     # recalculate order totals
     order.save
   end
+           
+  # list of countries available for checkout
+  def self.countries   
+    return Country.all unless zone = Zone.find_by_name(Spree::Config[:checkout_zone])
+    zone.country_list
+  end
 
 end

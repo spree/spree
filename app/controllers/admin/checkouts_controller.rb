@@ -9,7 +9,7 @@ class Admin::CheckoutsController  < Admin::BaseController
  private
  def load_data
    @countries = Country.find(:all).sort
-   @shipping_countries = parent_object.shipping_countries.sort
+   @shipping_countries = Checkout.countries.sort
    if current_user && current_user.bill_address
      default_country = current_user.bill_address.country
    else

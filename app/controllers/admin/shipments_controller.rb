@@ -34,7 +34,7 @@ class Admin::ShipmentsController < Admin::BaseController
     @shipping_methods = ShippingMethod.all
 
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')
-    @countries = @order.shipping_countries
+    @countries = Checkout.countries.sort
     @countries = [Country.find(Spree::Config[:default_country_id])] if @countries.empty?
   end
 

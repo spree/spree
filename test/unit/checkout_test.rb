@@ -48,4 +48,24 @@ class CheckoutTest < ActiveSupport::TestCase
       end
     end
   end
+  context "Checkout#countries" do 
+    setup do 
+      3.times { Factory(:country) } 
+      @country = Factory(:country)     
+      zone_member = ZoneMember.create(:zoneable => @country)
+      @zone = Zone.create(:name => Faker::Lorem.words, :description => Faker::Lorem.sentence, :zone_members => [zone_member])
+    end 
+    context "with no checkout zone defined" do
+      setup { Spree::Config.set(:checkout_zone => nil) }
+      should "return complete list of countries" do
+        assert_equal Country.count, Checkout.countries.size
+      end
+    end
+    context "with a checkout zone defined" do
+      setup { Spree::Config.set(:checkout_zone => @zone.name) }
+      should "return only the countries defined by the checkout zone" do
+        assert_equal [@country], Checkout.countries
+      end
+    end
+  end
 end
