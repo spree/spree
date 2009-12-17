@@ -1,4 +1,10 @@
-<% paginated_products = Spree::Config.searcher.products || products %>
+<% paginated_products = params.key?(:keywords) ? Spree::Config.searcher.products : products %>
+<% if params[:keywords] %>
+<h3><%= t(:search_results, :keywords => h(params[:keywords])) %></h3>
+<% end %>
+<% if products.empty? %>
+  <%= t(:no_products_found) %>
+<% end %>
 
 <% if products.any? %>
 <ul class="product-listing">

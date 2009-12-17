@@ -78,7 +78,7 @@ class Admin::ProductsController < Admin::BaseController
           base_scope = base_scope.not_deleted
         end
 
-        @search = base_scope.searchlogic(params[:search])
+        @search = base_scope.group_by_products_id.searchlogic(params[:search])
         @search.order ||= "ascend_by_name"
 
         @collection = @search.paginate(:include  => {:variants => [:images, :option_values]},
