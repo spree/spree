@@ -33,8 +33,8 @@ module Spree
         end
 
         # Take the content captured with a hook helper and modify with each HookModifier
-        def render_hook(hook_name, content, context)
-          modifiers_for_hook(hook_name).inject(content) { |result, modifier| modifier.apply_to(result, context) }
+        def render_hook(hook_name, content, context, locals = {})
+          modifiers_for_hook(hook_name).inject(content) { |result, modifier| modifier.apply_to(result, context, locals) }
         end
         
         # All the HookModifier instances that are associated with this hook_name in extension load order and order they were defined

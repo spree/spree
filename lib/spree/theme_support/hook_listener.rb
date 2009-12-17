@@ -41,15 +41,22 @@ module Spree
 
         def self.add_hook_modifier(hook_name, action, options = {}, &block)
           if block
-            renderer = lambda do |template|
-              template.instance_eval(&block)
+            renderer = lambda do |template, locals|
+              yield(template, locals)
             end
           else
             if options.empty?
               renderer = nil
             else
-              renderer = lambda do |template|
-                template.render(options)
+              renderer = lambda do |template, locals|
+                render_args = [options]
+                if options.is_a?(Hash)
+                  options[:locals] ||= {}
+                  options[:locals].merge!(locals)
+                else
+                  render_args << locals
+                end
+                template.render(*render_args)
               end
             end
           end

@@ -15,15 +15,15 @@ module Spree
         @renderer = renderer
       end
 
-      def apply_to(content, context)
+      def apply_to(content, context, locals = {})
         return '' if renderer.nil?
         case action
         when :insert_before
-          "#{renderer.call(context)}#{content}"
+          "#{renderer.call(context, locals)}#{content}"
         when :insert_after
-          "#{content}#{renderer.call(context)}"
+          "#{content}#{renderer.call(context, locals)}"
         when :replace
-          renderer.call(context).to_s
+          renderer.call(context, locals).to_s
         else
           ''
         end

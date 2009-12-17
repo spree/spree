@@ -8,10 +8,14 @@ module HookHelper
   #     <p>Some HTML</p>
   #   <% end %>
   # 
-  def hook(hook_name, &block)
+  def hook(hook_name, locals = {}, &block)
     content = block_given? ? capture(&block) : ''
-    result = Spree::ThemeSupport::Hook.render_hook(hook_name, content, self)
+    result = Spree::ThemeSupport::Hook.render_hook(hook_name, content, self, locals)
     block_given? ? concat(result) : result
+  end
+
+  def locals_hash(names, binding)
+    names.inject({}) {|memo, key| memo[key.to_sym] = eval(key, binding); memo}
   end
 
 end
