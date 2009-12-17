@@ -69,9 +69,4 @@ class Adjustment < ActiveRecord::Base
   end
 
   def secondary_type; type; end
-
-  private
-  def self.subclasses
-    self == Adjustment ? (Credit.subclasses + Charge.subclasses) : []
-  end
 end

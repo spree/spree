@@ -16,9 +16,4 @@ class Credit < Adjustment
       self.amount *= -1
     end
   end
-
-  def self.subclasses
-    self == Credit ? [CouponCredit] : []
-  end
-
 end
