@@ -63,7 +63,7 @@ class Less::More
     end
     
     def all_less_files_in_path(pathname)
-      Dir[pathname.join("**", "*.{css,less,lss}")].map! {|f| Pathname.new(f) }
+      Dir[pathname.join("**", "*.{css,less,lss}").to_s].map! {|f| Pathname.new(f) }
     end
 
 
