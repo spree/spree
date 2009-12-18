@@ -5,7 +5,7 @@
   <br clear="clear" />
 
   <ul class="sidebar">
-    <% hook :admin_order_tabs do %>
+    <% hook :admin_order_tabs, {:current => current} do %>
     <li <%= ' class="active"' if current == "Customer Details" %>>
       <% if @order.state == "in_progress" %>
         <%= link_to t("customer_details"), edit_admin_order_checkout_url(@order) %>

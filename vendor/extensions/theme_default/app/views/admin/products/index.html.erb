@@ -19,22 +19,31 @@
 
 <table class="index">
   <tr>
-    <th><%= t("sku") %></th>
+    <% hook :admin_products_index_headers do %>
+      <th><%= t("sku") %></th>
       <th><%= order @search, :by => :name, :as => t("name") %></th>
       <th><%= order @search, :by => :price, :as => t("master_price") %></th>
-    <th>&nbsp;</th>
+    <% end %>
+    <th>
+      <% hook :admin_products_index_header_actions %>
+    </th>
   </tr>
 <% @collection.each do |product| %>
   <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %> id="<%= dom_id product %>">
-    <td><%= product.sku %></td>
-    <td><%= product.name %></td>
-    <td><%= product.price %></td>
+    <%- locals = {:product => product} -%>
+    <% hook :admin_products_index_rows, locals do %>
+      <td><%= product.sku %></td>
+      <td><%= product.name %></td>
+      <td><%= product.price %></td>
+    <% end %>
     <td class="actions">
-      <%= link_to_edit product if product.deleted_at.nil?  %>
-      &nbsp;
-      <%= link_to_clone product %>
-      &nbsp;
-      <%= link_to_delete product if product.deleted_at.nil?  %>
+      <% hook :admin_orders_index_row_actions, locals do %>
+        <%= link_to_edit product if product.deleted_at.nil?  %>
+        &nbsp;
+        <%= link_to_clone product %>
+        &nbsp;
+        <%= link_to_delete product if product.deleted_at.nil?  %>
+      <% end %>
     </td>
   </tr>
 <% end %>
@@ -47,22 +56,28 @@
     <div class="box">
       <h3><%= t(:search) %></h3>
 
-      <p>
-        <label><%= t("name") %></label><br />
-        <%= f.text_field :name_contains, :size => 15 %>
-      </p>
+      <%- locals = {:f => f} -%>
+      <% hook :admin_products_index_search, locals do %>
+        <p>
+          <label><%= t("name") %></label><br />
+          <%= f.text_field :name_contains, :size => 15 %>
+        </p>
 
-      <p>
-        <label><%= t("sku") %></label><br />
-        <%= f.text_field :variants_including_master_sku_contains, :size => 15 %>
-      </p>
-      <p>
-        <label><%= t("show_deleted") %></label><br />
-        <%= f.check_box :deleted_at_not_null, {}, "1", "" %>
-      </p>
-      <p class="form-buttons">
-        <%= button t("search") %>
-      </p>
+        <p>
+          <label><%= t("sku") %></label><br />
+          <%= f.text_field :variants_including_master_sku_contains, :size => 15 %>
+        </p>
+        <p>
+          <label><%= t("show_deleted") %></label><br />
+          <%= f.check_box :deleted_at_not_null, {}, "1", "" %>
+        </p>
+      <% end %>
+
+      <% hook :admin_products_index_search_buttons, locals do %>
+        <p class="form-buttons">
+          <%= button t("search") %>
+        </p>
+      <% end %>
     </div>
   <% end %>
 

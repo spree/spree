@@ -14,23 +14,34 @@
 <table class="index">
   <thead>
     <tr>
-      <th><%= order @search, :by => :created_at,       :as => t("order_date") %></th>
-      <th><%= order @search, :by => :number,           :as => t("order_number") %></th>
-      <th><%= order @search, :by => :state,            :as => t("status") %></th>
-      <th><%= order @search, :by => :checkout_email,   :as => t("customer") %></th>
-      <th><%= order @search, :by => :total,            :as => t("total") %></th>
-      <th></th>
+      <% hook :admin_orders_index_headers do %>
+        <th><%= order @search, :by => :created_at,       :as => t("order_date") %></th>
+        <th><%= order @search, :by => :number,           :as => t("order_number") %></th>
+        <th><%= order @search, :by => :state,            :as => t("status") %></th>
+        <th><%= order @search, :by => :checkout_email,   :as => t("customer") %></th>
+        <th><%= order @search, :by => :total,            :as => t("total") %></th>
+      <% end %>
+      <th>
+        <% hook :admin_orders_index_header_actions %>
+      </th>
     </tr>
   </thead>
   <tbody>
   <% @orders.each do |order| %>
     <tr>
-      <td><%= order.created_at.to_date%></td>
-      <td><%= link_to order.number, object_url(order) %></td>
-      <td><%= t(order.state.downcase) %></td>
-      <td><%= order.email %></td>
-      <td><%= number_to_currency order.total %></td>
-      <td><%= link_to_edit order %></td>
+      <%- locals = {:order => order} -%>
+      <% hook :admin_orders_index_rows, locals do %>
+        <td><%= order.created_at.to_date%></td>
+        <td><%= link_to order.number, object_url(order) %></td>
+        <td><%= t(order.state.downcase) %></td>
+        <td><%= order.email %></td>
+        <td><%= number_to_currency order.total %></td>
+      <% end %>
+      <td>
+        <% hook :admin_orders_index_row_actions, locals do %>
+          <%= link_to_edit order %>
+        <% end %>
+      </td>
     </tr>
   <% end %>
   </tbody>
@@ -38,50 +49,53 @@
 <%= will_paginate(:previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
 
 
-
 <% content_for :sidebar do %>
 <div class="box">
   <h3><%= t(:search) %></h3>
 
   <% form_for @search do |f| %>
-    <label><%= t("date_range") %></label><br />
-    <div class="yui-g date-range-filter">
-      <div class="yui-u sub-field first">
-        <%= f.unobtrusive_date_picker :created_at_after %><br />
-        <label class="sub"><%= t("start") %></label>
+    <%- locals = {:f => f} -%>
+    <% hook :admin_orders_index_search, locals do %>
+      <label><%= t("date_range") %></label><br />
+      <div class="yui-g date-range-filter">
+        <div class="yui-u sub-field first">
+          <%= f.unobtrusive_date_picker :created_at_after %><br />
+          <label class="sub"><%= t("start") %></label>
+        </div>
+        <div class="yui-u sub-field">
+          <%= f.unobtrusive_date_picker :created_at_before %><br />
+          <label><%= t("stop") %></label>
+        </div>
       </div>
-      <div class="yui-u sub-field">
-        <%= f.unobtrusive_date_picker :created_at_before %><br />
-        <label><%= t("stop") %></label>
-      </div>
-    </div>
 
-    <p><label><%= t("status") %></label><br />
-    <%= f.select :state_equals, Order.state_machines[:state].states.collect {|s| [t(s.name), s.value]}, {:include_blank => true} %></p>
+      <p><label><%= t("status") %></label><br />
+      <%= f.select :state_equals, Order.state_machines[:state].states.collect {|s| [t(s.name), s.value]}, {:include_blank => true} %></p>
 
-    <p><label><%= t 'order_number' %></label><br />
-    <%= f.text_field :number_contains, :size=>25 %></p>
+      <p><label><%= t 'order_number' %></label><br />
+      <%= f.text_field :number_contains, :size=>25 %></p>
 
-    <p>
-      <label><%= t 'email' %></label><br />
-      <%= f.text_field :checkout_email_contains, :size=>25 %>
-    </p>
-    <p>
-    <label><%= t 'first_name' %></label><br />
-        <%= f.text_field :checkout_bill_address_firstname_contains, :size=>25 %>
-    </p>
-    <p>
-      <label><%= t 'last_name' %></label><br />
-      <%= f.text_field :checkout_bill_address_lastname_contains, :size=>25 %>
-    </p>
-    <p>
-      <%= f.check_box :completed_at_not_null, {:style => "vertical-align:middle;"} %>
-      <label>
-        <%= t("show_only_complete_orders") %>
-      </label>
-    </p>
-
-    <p><%= button t("search") %></p>
+      <p>
+        <label><%= t 'email' %></label><br />
+        <%= f.text_field :checkout_email_contains, :size=>25 %>
+      </p>
+      <p>
+      <label><%= t 'first_name' %></label><br />
+          <%= f.text_field :checkout_bill_address_firstname_contains, :size=>25 %>
+      </p>
+      <p>
+        <label><%= t 'last_name' %></label><br />
+        <%= f.text_field :checkout_bill_address_lastname_contains, :size=>25 %>
+      </p>
+      <p>
+        <%= f.check_box :completed_at_not_null, {:style => "vertical-align:middle;"} %>
+        <label>
+          <%= t("show_only_complete_orders") %>
+        </label>
+      </p>
+    <% end %>
+    <% hook :admin_orders_index_search_buttons, locals do %>
+      <p><%= button t("search") %></p>
+    <% end %>
   <% end %>
 </div>
 <% end %>
