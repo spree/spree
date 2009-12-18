@@ -13,9 +13,9 @@ jQuery(document).ready(function(){
 
       if(product['images'].length!=0){
         html = image_html(product);
-        html += "<div><h4>" + product['name'] + "</h4>";
       }
 
+      html += "<div><h4>" + product['name'] + "</h4>";
       html += "<span><strong>Sku: </strong>" + product['master']['sku'] + "</span>";
       html += "<span><strong>On Hand: </strong>" + product['count_on_hand'] + "</span></div>";
     }else{

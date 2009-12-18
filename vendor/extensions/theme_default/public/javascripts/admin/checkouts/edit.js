@@ -1,17 +1,19 @@
 jQuery(document).ready(function(){
   add_address = function(addr){
     var html = "";
-    html += addr['firstname'] + " " + addr['lastname'] + ", ";
-    html += addr['address1'] + ", " + addr['address2'] + ", ";
-    html += addr['city'] + ", ";
+    if(addr!=undefined){
+      html += addr['firstname'] + " " + addr['lastname'] + ", ";
+      html += addr['address1'] + ", " + addr['address2'] + ", ";
+      html += addr['city'] + ", ";
 
-    if(addr['state_id']!=null){
-      html += addr['state']['name'] + ", ";
-    }else{
-      html += addr['state_name'] + ", ";
+      if(addr['state_id']!=null){
+        html += addr['state']['name'] + ", ";
+      }else{
+        html += addr['state_name'] + ", ";
+      }
+
+      html += addr['country']['name'];
     }
-
-    html += addr['country']['name'];
     return html;
   }
 
@@ -47,26 +49,30 @@ jQuery(document).ready(function(){
     $('#checkout_email').val(data['email']);
 
     var addr = data['bill_address'];
-    $('#checkout_bill_address_attributes_firstname').val(addr['firstname']);
-    $('#checkout_bill_address_attributes_lastname').val(addr['lastname']);
-    $('#checkout_bill_address_attributes_address1').val(addr['address1']);
-    $('#checkout_bill_address_attributes_address2').val(addr['address2']);
-    $('#checkout_bill_address_attributes_city').val(addr['city']);
-    $('#checkout_bill_address_attributes_zipcode').val(addr['zipcode']);
-    $('#checkout_bill_address_attributes_state_id').val(addr['state_id']);
-    $('#checkout_bill_address_attributes_country_id').val(addr['country_id']);
-    $('#checkout_bill_address_attributes_phone').val(addr['phone']);
+    if(addr!=undefined){
+      $('#checkout_bill_address_attributes_firstname').val(addr['firstname']);
+      $('#checkout_bill_address_attributes_lastname').val(addr['lastname']);
+      $('#checkout_bill_address_attributes_address1').val(addr['address1']);
+      $('#checkout_bill_address_attributes_address2').val(addr['address2']);
+      $('#checkout_bill_address_attributes_city').val(addr['city']);
+      $('#checkout_bill_address_attributes_zipcode').val(addr['zipcode']);
+      $('#checkout_bill_address_attributes_state_id').val(addr['state_id']);
+      $('#checkout_bill_address_attributes_country_id').val(addr['country_id']);
+      $('#checkout_bill_address_attributes_phone').val(addr['phone']);
+    }
 
     var addr = data['ship_address'];
-    $('#checkout_shipment_attributes_address_attributes_firstname').val(addr['firstname']);
-    $('#checkout_shipment_attributes_address_attributes_lastname').val(addr['lastname']);
-    $('#checkout_shipment_attributes_address_attributes_address1').val(addr['address1']);
-    $('#checkout_shipment_attributes_address_attributes_address2').val(addr['address2']);
-    $('#checkout_shipment_attributes_address_attributes_city').val(addr['city']);
-    $('#checkout_shipment_attributes_address_attributes_zipcode').val(addr['zipcode']);
-    $('#checkout_shipment_attributes_address_attributes_state_id').val(addr['state_id']);
-    $('#checkout_shipment_attributes_address_attributes_country_id').val(addr['country_id']);
-    $('#checkout_shipment_attributes_address_attributes_phone').val(addr['phone']);
+    if(addr!=undefined){
+      $('#checkout_shipment_attributes_address_attributes_firstname').val(addr['firstname']);
+      $('#checkout_shipment_attributes_address_attributes_lastname').val(addr['lastname']);
+      $('#checkout_shipment_attributes_address_attributes_address1').val(addr['address1']);
+      $('#checkout_shipment_attributes_address_attributes_address2').val(addr['address2']);
+      $('#checkout_shipment_attributes_address_attributes_city').val(addr['city']);
+      $('#checkout_shipment_attributes_address_attributes_zipcode').val(addr['zipcode']);
+      $('#checkout_shipment_attributes_address_attributes_state_id').val(addr['state_id']);
+      $('#checkout_shipment_attributes_address_attributes_country_id').val(addr['country_id']);
+      $('#checkout_shipment_attributes_address_attributes_phone').val(addr['phone']);
+    }
   });
 
 });
