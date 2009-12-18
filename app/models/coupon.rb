@@ -14,7 +14,7 @@ class Coupon < ActiveRecord::Base
   end
     
   def create_discount(order)
-    if eligible?(order) and amount = calculator.compute(order)
+    if eligible?(order) and amount = calculator.compute(order.line_items)
       amount = order.item_total if amount > order.item_total
       order.coupon_credits.reload.clear unless combine? and order.coupon_credits.all? { |credit| credit.adjustment_source.combine? }
       order.save

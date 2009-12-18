@@ -16,7 +16,7 @@ class CouponCredit < Credit
   # Always returns negative non positive.
   def calculate_coupon_credit
     return 0 if order.line_items.empty?
-    amount = adjustment_source.calculator.compute(order).abs
+    amount = adjustment_source.calculator.compute(order.line_items).abs
     amount = order.item_total if amount > order.item_total
     -1 * amount
   end
