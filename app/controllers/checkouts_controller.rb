@@ -100,6 +100,8 @@ class CheckoutsController < Spree::BaseController
       @object.bill_address     ||= Address.default
       @object.creditcard       ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
     end
+    @object.email ||= params[:checkout][:email] if params[:checkout]
+    @object.email ||= current_user.email if current_user
     @object
   end
 
