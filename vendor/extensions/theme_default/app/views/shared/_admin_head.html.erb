@@ -1,7 +1,7 @@
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <title><%= "Spree #{t('administration')}: #{controller.controller_name.titleize}" %></title>
 
-<%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', 'admin/jquery.jqplot.min.css', :cache => 'admin-all' %>
+<%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', :cache => 'admin-all' %>
 
 <%= javascript_include_tag 'jquery', 'jquery-ui', 'jrails', 'jquery.suggest', 'jrails.autocomplete', :cache => 'jquery-admin-plugins' %>
 <%= javascript_include_tag('jquery.template') unless controller.controller_name == "overview" %>
