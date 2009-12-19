@@ -34,12 +34,12 @@ class SpreeZeroNineZero < ActiveRecord::Migration
 
     create_table "assets", :force => true do |t|
       t.integer  "viewable_id"
-      t.string   "viewable_type"
+      t.string   "viewable_type", :limit => 50
       t.string   "attachment_content_type"
       t.string   "attachment_file_name"
       t.integer  "attachment_size"
       t.integer  "position"
-      t.string   "type"
+      t.string   "type", :limit => 75
       t.datetime "attachment_updated_at"
       t.integer  "attachment_width"
       t.integer  "attachment_height"
@@ -68,7 +68,7 @@ class SpreeZeroNineZero < ActiveRecord::Migration
       t.string   "name"
       t.datetime "created_at"
       t.datetime "updated_at"
-      t.string   "type"
+      t.string   "type", :limit => 50
     end
 
     add_index "configurations", ["name", "type"], :name => "index_configurations_on_name_and_type"
@@ -227,11 +227,11 @@ class SpreeZeroNineZero < ActiveRecord::Migration
     end
 
     create_table "preferences", :force => true do |t|
-      t.string   "attribute",  :null => false
-      t.integer  "owner_id",   :null => false
-      t.string   "owner_type", :null => false
+      t.string   "attribute",  :null => false, :limit => 100
+      t.integer  "owner_id",   :null => false, :limit => 30
+      t.string   "owner_type", :null => false, :limit => 50
       t.integer  "group_id"
-      t.string   "group_type"
+      t.string   "group_type", :limit => 50
       t.string   "value"
       t.datetime "created_at"
       t.datetime "updated_at"
