@@ -5,6 +5,8 @@
 
 require 'initializer'
 require 'spree/extension_loader'
+require 'spree/extensions'
+
 
 module Spree
 
@@ -16,7 +18,7 @@ module Spree
     def initialize   
       self.view_paths = []
       self.extension_paths = default_extension_paths
-      self.extensions = [ :all ]
+      self.extensions = Spree::Extensions.load_order
       super
     end
 
