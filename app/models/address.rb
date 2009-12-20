@@ -52,6 +52,7 @@ class Address < ActiveRecord::Base
   end
 
   def same_as?(other)
+    return false if other.nil?
     attributes.except("id", "updated_at", "created_at") ==  other.attributes.except("id", "updated_at", "created_at")
   end
   alias same_as same_as?
@@ -59,4 +60,9 @@ class Address < ActiveRecord::Base
   def to_s
     "#{full_name}: #{address1}"
   end
+  
+  def clone
+    Address.new(self.attributes.except("id", "updated_at", "created_at"))
+  end
+  
 end
