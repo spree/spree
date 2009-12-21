@@ -269,6 +269,10 @@ class Order < ActiveRecord::Base
     "#{address.firstname} #{address.lastname}" if address
   end
 
+  def out_of_stock_items
+    @out_of_stock_items
+  end
+
   private
 
   def complete_order
@@ -277,10 +281,12 @@ class Order < ActiveRecord::Base
 
     if email
       OrderMailer.deliver_confirm(self)
-    end
-    begin
-      InventoryUnit.sell_units(self)
-      shipment.inventory_units = inventory_units
+    end                  
+    
+    begin      
+      @out_of_stock_items = InventoryUnit.sell_units(self)
+      update_totals unless @out_of_stock_items.empty?     
+      shipment.inventory_units = inventory_units        
       save!
     rescue Exception => e
       logger.error "Problem saving authorized order: #{e.message}"

@@ -33,6 +33,7 @@ class InventoryUnit < ActiveRecord::Base
    
   # grab the appropriate units from inventory, mark as sold and associate with the order 
   def self.sell_units(order)
+    out_of_stock_items = []
     order.line_items.each do |line_item|
       variant = line_item.variant
       quantity = line_item.quantity
@@ -48,13 +49,18 @@ class InventoryUnit < ActiveRecord::Base
         (quantity + remaining_quantity).times do
           order.inventory_units.create(:variant => variant, :state => "sold")
         end
-        # right now we always allow back ordering
-        (-remaining_quantity).times do 
-          order.inventory_units.create(:variant => variant, :state => "backordered")
+        if Spree::Config[:allow_backorders]
+          (-remaining_quantity).times do 
+            order.inventory_units.create(:variant => variant, :state => "backordered")
+          end
+        else
+          line_item.update_attribute(:quantity, quantity + remaining_quantity)
+          out_of_stock_items << {:line_item => line_item, :count => -remaining_quantity}
         end
         variant.update_attribute(:count_on_hand, 0)
-      end  
+      end
     end
+    out_of_stock_items
   end
   
   def can_restock?
