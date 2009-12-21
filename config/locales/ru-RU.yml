@@ -484,6 +484,7 @@ ru-RU:
   no_items_in_cart: ""
   no_match_found: "Совпадений не найдено"
   no_products_found: "Не найдено ни одного продукта"
+  no_shipping_methods_available: "No shipping methods available, please change your address and try again."
   no_user_found: "Пользователь с таким адресом email у нас не числится."
   none: "Ни одного"
   none_available: "Нет в наличии"
@@ -844,6 +845,10 @@ ru-RU:
   user_created_successfully: "Учётная запись успешно создана"
   user_details: "Дополнительно"
   users: "Пользователи"
+  validation:  
+    is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
+    must_be_int: "must be an integer"
+    must_be_non_negative: "must be a non-negative value"
   value: "Значение"
   variants: "Варианты"
   vat: "НДС"

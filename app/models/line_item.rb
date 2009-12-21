@@ -8,7 +8,7 @@ class LineItem < ActiveRecord::Base
   before_validation :copy_price
 
   validates_presence_of :variant, :order
-  validates_numericality_of :quantity, :only_integer => true, :message => "must be an integer"
+  validates_numericality_of :quantity, :only_integer => true, :message => I18n.t("validation.must_be_int")
   validates_numericality_of :price
 
   attr_accessible :quantity, :variant_id, :order_id
@@ -19,13 +19,13 @@ class LineItem < ActiveRecord::Base
   
   def validate
     unless quantity && quantity >= 0
-      errors.add(:quantity, "must be a non-negative value")
+      errors.add(:quantity, I18n.t("validation.must_be_non_negative"))
     end
     # avoid reload of order.inventory_units by using direct lookup
     unless Spree::Config[:allow_backorders]                               ||
            order   && InventoryUnit.order_id_equals(order).first.present? || 
            variant && quantity <= variant.on_hand                         
-      errors.add(:quantity, " is too large-- stock on hand cannot cover requested quantity!")
+      errors.add(:quantity, I18n.t("validation.is_too_large"))
     end
   end
   

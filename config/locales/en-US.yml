@@ -1,5 +1,5 @@
 ---
-en-US:
+en-US: 
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
@@ -7,7 +7,6 @@ en-US:
   abbreviation: Abbreviation
   access_denied: "Access Denied"
   account: Account
-  no_shipping_methods_available: "No shipping methods available, please change your address and try again."
   account_updated: "Account updated!"
   action: Action
   actions:
@@ -485,6 +484,7 @@ en-US:
   no_items_in_cart: ""
   no_match_found: "No Match Found"
   no_products_found: "No products found"
+  no_shipping_methods_available: "No shipping methods available, please change your address and try again."
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
@@ -845,6 +845,10 @@ en-US:
   user_created_successfully: "User created successfully"
   user_details: "User Details"
   users: Users
+  validation:  
+    is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
+    must_be_int: "must be an integer"
+    must_be_non_negative: "must be a non-negative value"
   value: Value
   variants: Variants
   vat: "VAT"

@@ -484,6 +484,7 @@ fr-FR:
   no_items_in_cart: ""
   no_match_found: "Aucune correspondance trouvée"
   no_products_found: "No products found"
+  no_shipping_methods_available: "No shipping methods available, please change your address and try again."
   no_user_found: "Aucun utilisateur n'a été trouvé avec cette adresse email"
   none: Aucun
   none_available: "Aucun de disponible"
@@ -844,6 +845,10 @@ fr-FR:
   user_created_successfully: "User created successfully"
   user_details: "Details de l'utilisateur"
   users: Utilisateurs
+  validation:  
+    is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
+    must_be_int: "must be an integer"
+    must_be_non_negative: "must be a non-negative value"
   value: Valeur
   variants: Gammes
   vat: "VAT"

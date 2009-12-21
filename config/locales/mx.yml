@@ -484,6 +484,7 @@ mx:
   no_items_in_cart: "El carrito está vacío"
   no_match_found: "No se ha encontrado"
   no_products_found: "No products found"
+  no_shipping_methods_available: "No shipping methods available, please change your address and try again."
   no_user_found: "No se ha encontrado ningun usuario con esa direccion de correo"
   none: "Ninguno"
   none_available: "No hay nada que mostrar"
@@ -844,6 +845,10 @@ mx:
   user_created_successfully: "User created successfully"
   user_details: "Detalles del usuario"
   users: Usuarios
+  validation:  
+    is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
+    must_be_int: "must be an integer"
+    must_be_non_negative: "must be a non-negative value"
   value: "valor"
   variants: Variantes
   vat: "VAT"           

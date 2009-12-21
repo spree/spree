@@ -484,6 +484,7 @@ pt-BR:
   no_items_in_cart: "Nr. de itens no carrinho"
   no_match_found: "Nada encontrado"
   no_products_found: "No products found"
+  no_shipping_methods_available: "No shipping methods available, please change your address and try again."
   no_user_found: "Nenhum usuário encontrado com esse endereço de email"
   none: Nenhum
   none_available: "Nenhum Disponível"
@@ -844,6 +845,10 @@ pt-BR:
   user_created_successfully: "User created successfully"
   user_details: "Detalhes do Usuário"
   users: Usuários
+  validation:  
+    is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
+    must_be_int: "must be an integer"
+    must_be_non_negative: "must be a non-negative value"
   value: Valor
   variants: Variantes
   vat: "VAT"           
