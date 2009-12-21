@@ -177,13 +177,14 @@ module Scopes::Product
       :order => <<SQL
          COALESCE((
            SELECT
-             COUNT(*)
+             COUNT(line_items.id)
            FROM
-             line_items, variants as popular_variants
-           GROUP BY
-             line_items.variant_id
-           HAVING
-             line_items.variant_id = popular_variants.id AND
+             line_items
+           JOIN
+             variants as popular_variants
+           ON
+             popular_variants.id = line_items.variant_id
+           WHERE
              popular_variants.product_id = products.id
          ), 0) DESC
 SQL
