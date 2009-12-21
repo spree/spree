@@ -51,7 +51,7 @@ class OrdersController < Spree::BaseController
   end
   
   def object 
-  	@object ||= Order.find_by_number(params[:id]) if params[:id]
+  	@object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
 		return @object || find_order
   end   
   
