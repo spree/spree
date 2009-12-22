@@ -17,8 +17,8 @@ class Admin::AdjustmentsController < Admin::BaseController
   private
   def list_adjustment_types
     @adjustment_types ||= [
-        [ 'Credits', Credit.subclasses.map {|c| c.to_s} ],
-        [ 'Charges', Charge.subclasses.map {|c| c.to_s} ]
+        [ 'Credits', ["CouponCredit"] ],
+        [ 'Charges', ["TaxCharge", "ShippingCharge"]]
       ]
   end
 
