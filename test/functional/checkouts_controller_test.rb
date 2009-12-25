@@ -11,7 +11,7 @@ class CheckoutsControllerTest < ActionController::TestCase
     context "with incomplete order" do
       setup do 
         @order = Factory(:order)
-        @params = { :order_id => @order.number } 
+        @params = { :order_id => @order.number, :order_token => @order.token } 
       end
       context "GET /show" do
         setup { get :show } 
@@ -24,11 +24,18 @@ class CheckoutsControllerTest < ActionController::TestCase
         end
         should_render_template :edit
       end
+      context "without an order token" do
+        setup do
+          @params = { :order_id => @order.number, :order_token => nil } 
+          get :edit
+        end
+        should_redirect_to_authorization_failure
+      end
     end
     context "complete order" do
       setup do 
         @order = create_complete_order
-        @params = { :order_id => @order.number } 
+        @params = { :order_id => @order.number, :order_token => @order.token } 
       end
       context "GET /checkout" do
         setup { get :show } 
@@ -52,7 +59,7 @@ class CheckoutsControllerTest < ActionController::TestCase
         Spree::Config.set({ :default_country_id => countries(:united_states).id })
         Spree::Config.set(:allow_anonymous_checkout => false) 
         @order = Factory(:order, :user => nil)
-        @params = { :order_id => @order.number } 
+        @params = { :order_id => @order.number, :order_token => @order.token } 
       end
       context "GET /show" do
         setup { get :show } 

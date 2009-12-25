@@ -63,6 +63,11 @@ class CheckoutsController < Spree::BaseController
       @checkout.errors.add t(:email) unless @checkout.email.present?
     end
   end
+
+  def can_access?
+    session[:order_token] ||= params[:order_token]
+    parent_object.grant_access?(session[:order_token])
+  end
     
   private
   
