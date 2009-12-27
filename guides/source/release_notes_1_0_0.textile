@@ -27,7 +27,7 @@ h4. Deprecation Warnings
 
 DEPRECATION WARNING: require "activerecord" is deprecated and will be removed in Rails 3. Use require "active_record" instead.. (called from /usr/local/lib/ruby/gems/1.8/gems/activerecord-2.3.5/lib/activerecord.rb:2)
 
-Remove all instances of +require 'activerecord'+ from your +Rakefile+ (including site extensions, etc.)
+Remove all instances of +require 'activerecord'+ from your +Rakefile+ (including those contained in site extensions, etc.)
 
 h3. Improvements to Payment Gateway Configuration
 
@@ -67,11 +67,112 @@ WARNING.  You should remove all +db:bootstrap+ tasks from your extensions.  The 
 
 h3. Checkout Refactoring
 
+Numerous changes have been made to the checkout process.  This is just a brief summary of some of the highlights.  For a more complete description of the checkout process please see the "checkout documentation":checkout.html
+
 h4. Countries Available for Shipping and Billing 
 
 The mechanism for determining the list of billing and shipping countries has changed.  Prior to this release, there was no way to limit the billing countries and shipping countries were limited by the countries included in the shipping zones that were configured.  The new approach is to simply use all countries defined in the database by default.  
 
-The list can be limited to a specific set of countries by configuring the new +:checkout_zone+ preference and setting its value to the name of a "zone":/ones.html containing the countries you wish to use.  This should handle most cases where the list of billing and shipping countries are the same.  You can always customize the code via extension if this does not suit your needs.
+The list can be limited to a specific set of countries by configuring the new +:checkout_zone+ preference and setting its value to the name of a "zone":/zones.html containing the countries you wish to use.  This should handle most cases where the list of billing and shipping countries are the same.  You can always customize the code via extension if this does not suit your needs.
+
+h4. State Machine
+
+The Checkout model now has its own "state machine":http://github.com/pluginaweek/state_machine.  This allows for easier customization of the checkout process.  It is now much simpler to add or remove a step to the default checkout process.
+
+<shell>
+class SiteExtension < Spree::Extension  
+  def activate
+    # customize the checkout state machine
+    Checkout.state_machines[:state] = StateMachine::Machine.new(Checkout, :initial => 'payment') do
+      after_transition :to => 'complete', :do => :complete_order
+      before_transition :to => 'complete', :do => :process_payment
+      event :next do
+        transition :to => 'complete', :from => 'payment'
+      end
+    end
+
+    # bypass creation of address objects in the checkouts controller (prevent validation errors)
+    CheckoutsController.class_eval do
+      def object
+        return @object if @object
+        @object = parent_object.checkout
+        unless params[:checkout] and params[:checkout][:coupon_code]
+          @object.creditcard ||= Creditcard.new(:month => Date.today.month, :year => Date.today.year)
+        end
+        @object
+      end
+    end  
+  end
+end
+</shell>
+
+h4. Controller Hooks
+
+The +CheckoutController+ now provides its own "hook mechanism" (not to be confused with theme hooks) which allow for the developer to perform additional logic (or to change the default) logic that is applied during the edit and/or update operation for a particular step.  The +Spree::Checkout::Hooks+ module provides this additional functionality and makes use of methods provided by the +resource_controller+ gem.  
+
+The +CheckoutsController+ will automatically call an +edit_hook+ (if one is defined) before moving on to the standard edit functionality for a particular step.  There is also a corresponding +update_hook+ that can be used to execute additional functionality during an update.  Both hooks can accept either a symbol (which is the name of a method) or a block.
+
+The +CheckoutsController+ itself makes limited use of these hooks - its expected that developers will add their own through a site extension.  Here's an example of an +edit_hook+ defined in +checkouts_controller.rb+:
+
+<shell>
+delivery.edit_hook :load_available_methods 
+</shell> 
+
+This tells the controller to call +load_available_methods+ before presenting the standard edit form for the delivery step.  The hook will be called only during the delivery step - it is ignored for all other steps.  This is necessary for the delivery step because we can't simply instantiate the +@checkout+ object and show the form.  We also need the list of available shipping methods for the specific address that is being requested.  The checkout hooks also support an alternate block syntax.  Using this syntax the same hook could have been defined as follows:
+
+<shell>
+delivery.edit_hook do
+  @available_methods = rate_hash
+  @checkout.shipment.shipping_method_id ||= @available_methods.first[:id]
+end
+</shell>
+
+Both +edit_hook+ and +update_hook+ can be overridden entirely using either the symbol or block syntax.  What is the use case for overriding a hook?  The most obvious scenario would be to negate or remove functionality provided by the Spree core (or perhaps an extension which does almost exactly what you want.)  For instance, if you did not want to record the ip address when entering the address step.
+
+<shell>
+# negate the default edit_hook functionality for the address step
+address.edit_hook {} 
+</shell>
+
+INFO. If you are skipping a step in the default checkout process the hooks will never be called for that step.  
+
+WARNING. Be sure to check the documentation for any third party extensions you are using.  These extensions may introduce new steps or hooks and/or make assumptions about the availability of specific steps or hooks.
+
+Perhaps more interestingly, hooks can also be appended to.  In other words, if you wanted to perform some additional logic before presenting the delivery form, you could add something like the following in your site extension.
+
+<shell>
+delivery.edit_hook << :perform_additional_logic
+</shell> 
+
+This is an argument for using the symbol approach instead of the block syntax.  It also makes it easier for extensions to work in tandem to customize the checkout process.  
+
+Finally, you can also use the standard resource_controller hook mechanism for adding general functionality to the checkout process on edit or update.  For example:
+
+<shell>
+edit.before << :something_before_editing_every_step
+</shell>
+
+or you can also use the block syntax version
+
+<shell>
+edit.before do
+  # do something useful here
+end
+</shell>
+
+WARNING. Using the block syntax to replace the +resource_controller+ before hook would also have the effect of removing the custom +edit_hook+ functionality.  This is not recommended unless you are planning on creating a total custom checkout solution and you are not relying on any third party extensions to modify your checkout process.
+
+Using the block syntax is destructive (it removes any previously defined hooks) and is suitable only in situations where you need to make drastic changes to the checkout process.
+
+INFO. If you are writing a third party extension, be sure to also see the documentation for "adding and removing steps":#addingor-removing-steps.  There is an extra step to ensure that any new checkout steps added by your extension are also able to handle the special +edit_hook+ and +update_hook+ calls.  This will allow developers to further customize the step from within their site extension.
+
+h4. Checkout Partials
+
+The default theme now contains several partials located within +vendor/extensions/theme_default/app/views/checkouts+.  Each checkout step automatically renders the +edit.html.erb+ view along with a corresponding partial based on the state associated with the current step.  For example, in the delivery step the +_delivery.html.erb+ partial is used.
+
+h4. Javascript
+
+Spree no longer require javascript for checkout but the user experience will be slightly more pleasing if they have javascript enabled in their browser.  Spree automatically includes the +checkout.js+ file located in the default theme.  This file can be replaced in its entirety through use of a site extension.
 
 h3. Miscellaneous improvements
 
