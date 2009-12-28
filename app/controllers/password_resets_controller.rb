@@ -40,5 +40,10 @@ class PasswordResetsController < Spree::BaseController
         flash[:notice] = t("password_reset_token_not_found")
         redirect_to root_url
       end
-    end      
+    end
+
+    def accurate_title
+      I18n.t(:forgot_password)
+    end
+
 end

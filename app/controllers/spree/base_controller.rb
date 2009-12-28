@@ -43,18 +43,28 @@ class Spree::BaseController < ActionController::Base
   end
 
   def title
-    if @title.blank?
+    title_string = @title.blank? ? accurate_title : @title
+    if title_string.blank?
       default_title
     else
-      @title
+      if Spree::Config[:always_put_site_name_in_title]
+        [default_title, title_string].join(' - ')
+      else
+        title_string
+      end
     end
   end
+
+  protected
 
   def default_title
     Spree::Config[:site_name]
   end
-
-  protected
+  
+  def accurate_title
+    return nil
+  end
+  
   def reject_unknown_object
     # workaround to catch problems with loading errors for permalink ids (reconsider RC permalink hack elsewhere?)
     begin

@@ -187,4 +187,8 @@ class CheckoutsController < Spree::BaseController
       object.order.save
     end
   end
+  
+  def accurate_title
+    I18n.t(:checkout)
+  end
 end

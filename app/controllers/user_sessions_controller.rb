@@ -82,5 +82,9 @@ class UserSessionsController < Spree::BaseController
       end
     end
   end
+
+  def accurate_title
+    I18n.t(:log_in)
+  end
   
 end

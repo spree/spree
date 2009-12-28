@@ -74,5 +74,9 @@ class OrdersController < Spree::BaseController
   def prevent_editing_complete_order      
     load_object
     redirect_to object_url if @order.checkout_complete
-  end         
+  end
+  
+  def accurate_title
+    I18n.t(:shopping_cart)
+  end
 end

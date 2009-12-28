@@ -56,4 +56,7 @@ class UsersController < Spree::BaseController
       flash.now[:notice] = I18n.t(:please_create_user) unless admin_created?
     end
 
+    def accurate_title
+      I18n.t(:account)
+    end
 end

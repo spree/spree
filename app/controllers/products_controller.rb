@@ -36,4 +36,8 @@ class ProductsController < Spree::BaseController
   def collection
     retrieve_products
   end
+  
+  def accurate_title
+    @product ? @product.name : nil
+  end
 end
