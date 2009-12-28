@@ -1,4 +1,4 @@
-<h1>Change My Password</h1>
+<h1><%= t(:change_my_password) %></h1>
  
 <% form_for @user, :url => password_reset_path, :method => :put do |f| %>
   <%= f.error_messages %>

@@ -31,8 +31,7 @@ class Admin::ImagesController < Admin::BaseController
 		@variants = @product.variants.collect do |variant| 
 			[variant.options_text, variant.id ]
 		end
-		
-		@variants.insert(0, "All")
+		@variants.insert(0, [I18n.t("all"), "All"])
   end
 
   def create_before

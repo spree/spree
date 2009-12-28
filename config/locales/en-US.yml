@@ -259,6 +259,7 @@ en-US:
   category: Category
   change: Change
   change_language: "Change Language"
+  change_my_password: "Change my password"
   charge_total: Charge Total
   charged: Charged
   charges: Charges
@@ -391,6 +392,7 @@ en-US:
   images: Images
   images_for: "Images for"
   in_progress: "In Progress"
+  instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Invalid search criteria."
   inventory: Inventory

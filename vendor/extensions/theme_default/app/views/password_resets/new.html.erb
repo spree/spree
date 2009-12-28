@@ -1,10 +1,11 @@
-<h1>Forgot Password</h1>
- 
-Fill out the form below and instructions to reset your password will be emailed to you:<br />
+<h1><%= t(:forgot_password) %></h1>
+
+<%= t(:instructions_to_reset_password) %>
+<br />
 <br />
  
 <% form_tag password_resets_path do %>
-  <label>Email:</label><br />
+  <label><%= t(:email) %>:</label><br />
   <%= text_field_tag "email" %><br />
   <br />
   <%= submit_tag t("reset_password") %>
