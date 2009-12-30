@@ -73,9 +73,9 @@ class Checkout < ActiveRecord::Base
       end
       if order.user.bill_address.nil?
         order.user.update_attribute(:bill_address, bill_address)
-      elsif bill_address.same_as?(order.user.bill_address)
+      elsif bill_address.nil? || bill_address.same_as?(order.user.bill_address)
         bill_address = order.user.bill_address
-      end      
+      end
     end
     true
   end
