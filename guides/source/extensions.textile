@@ -302,6 +302,7 @@ The array that is appended to the extension_tabs attribute is passed in the call
 
 Any option supported by the tabs helper can be passed in the hash argument.
 
+INFO. By default, the route is created by concatenating "admin_" with the first element of the array. However, if you override the route (as above) and are making use of the 'admin' namespace, you will need to include "admin_" as a part of your route argument.
 
 h4. Make your extension helper avaliable to all views (helpful if you're using it in a layout override)
 
