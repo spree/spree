@@ -46,9 +46,11 @@ class Less::More
 
         if !File.exists?(destination) || source.mtime > destination.mtime
           css = Less::More.generate_css(source)
-          File.open(destination, "w") {|f|
-            f.puts css
-          }
+          if page_cache?
+            File.open(destination, "w") {|f|
+              f.puts css
+            }
+          end
         end
       end
     end
