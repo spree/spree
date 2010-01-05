@@ -33,7 +33,7 @@ class Product < ActiveRecord::Base
     :class_name => 'Variant',
     :conditions => ["variants.is_master = ? AND variants.deleted_at IS NULL", true]
 
-  delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
+  delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price
 
   after_create :set_master_variant_defaults
   after_create :add_properties_and_option_types_from_prototype
@@ -139,12 +139,12 @@ class Product < ActiveRecord::Base
     end
   end
 
-  # for adding products which are closely related to existing ones 
+  # for adding products which are closely related to existing ones
   # define "duplicate_extra" for site-specific actions, eg for additional fields
   def duplicate
     p = self.clone
     p.name = 'COPY OF ' + self.name
-    p.deleted_at = nil 
+    p.deleted_at = nil
     p.created_at = p.updated_at = nil
     p.taxons = self.taxons
 
@@ -171,7 +171,7 @@ class Product < ActiveRecord::Base
   end
 
   private
- 
+
   def recalculate_count_on_hand
     product_count_on_hand = has_variants? ?
         variants.inject(0) {|acc, v| acc + v.count_on_hand} :

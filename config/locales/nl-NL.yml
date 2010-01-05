@@ -72,6 +72,7 @@ nl-NL:
         total: Totaal
       product: 
         available_on: "Beschikbaar Op"
+        cost_price: "Cost Price"
         description: Omschrijving
         master_price: "Prijs"
         name: Naam
@@ -102,6 +103,7 @@ nl-NL:
       user: 
         email: E-mail
       variant: 
+        cost_price: "Cost Price"
         depth: Diepte
         height: Hoogte
         price: Prijs
@@ -272,6 +274,7 @@ nl-NL:
   continue: "Ga Verder"
   continue_shopping: "Verder Winkelen"
   copy_all_mails_to: "Kopieer Alle Mails Naar"
+  cost_price: "Cost Price"
   count: Count
   country: Land
   country_based: "Gebaseerd op land"

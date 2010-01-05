@@ -72,6 +72,7 @@ de-CH:
         total: Gesamt
       product: 
         available_on: "Erhältlich ab"
+        cost_price: "Cost Price"
         description: Beschreibung
         master_price: Grundpreis
         name: Name
@@ -102,6 +103,7 @@ de-CH:
       user: 
         email: E-Mail
       variant: 
+        cost_price: "Cost Price"
         depth: Tiefe
         height: Höhe
         price: Preis
@@ -272,6 +274,7 @@ de-CH:
   continue: Weitermachen
   continue_shopping: "Weiter Einkaufen"
   copy_all_mails_to: "Kopien aller E-Mails an"                   
+  cost_price: "Cost Price"
   count: Count
   country: Land
   country_based: "Basierend auf Land"

@@ -72,6 +72,7 @@ nb-NO:
         total: Totalt
       product: 
         available_on: "Tilgjengelig"
+        cost_price: "Cost Price"
         description: Beskrivelse
         master_price: "Ordinær pris"
         name: Navn
@@ -102,6 +103,7 @@ nb-NO:
       user: 
         email: Epost
       variant: 
+        cost_price: "Cost Price"
         depth: Dybde
         height: Høyde
         price: Pris
@@ -272,6 +274,7 @@ nb-NO:
   continue: Fortsett
   continue_shopping: "Fortsett å handle"
   copy_all_mails_to: Kopier alle eposter til
+  cost_price: "Cost Price"
   count: Count
   country: Land
   country_based: "Land"

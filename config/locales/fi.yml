@@ -72,6 +72,7 @@ fi:
         total: Yhteensä
       product: 
         available_on: Tulossa
+        cost_price: "Cost Price"
         description: Tuotekuvaus
         master_price: Yksikköhinta
         name: Nimi
@@ -102,6 +103,7 @@ fi:
       user: 
         email: Sähköposti
       variant: 
+        cost_price: "Cost Price"
         depth: Syvyys
         height: Korkeus
         price: Hinta
@@ -272,6 +274,7 @@ fi:
   continue: Jatka
   continue_shopping: "Jatka ostoksia"
   copy_all_mails_to: "Kopioi kaikki viestit"                                                                             
+  cost_price: "Cost Price"
   count: Count
   country: Maa
   country_based: Sijaintimaa

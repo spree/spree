@@ -72,6 +72,7 @@ fr-FR:
         total: Total
       product: 
         available_on: "Disponible sur"
+        cost_price: "Cost Price"
         description: Description
         master_price: "Prix de départ"
         name: Nom
@@ -102,6 +103,7 @@ fr-FR:
       user: 
         email: Email
       variant: 
+        cost_price: "Cost Price"
         depth: Profondeur
         height: Taille
         price: Prix
@@ -272,6 +274,7 @@ fr-FR:
   continue: Continuer
   continue_shopping: "Continuer vos achats"
   copy_all_mails_to: Copier tous les emails à
+  cost_price: "Cost Price"
   count: Count
   country: Pays
   country_based: "Country Based"

@@ -72,6 +72,7 @@ jp:
         total: 合計
       product:
         available_on: "Available On"
+        cost_price: "Cost Price"
         description: 説明
         master_price: "Master Price"
         name: 氏名
@@ -102,6 +103,7 @@ jp:
       user:
         email: Eメール
       variant:
+        cost_price: "Cost Price"
         depth: 奥行き
         height: 高さ
         price: 価格
@@ -272,6 +274,7 @@ jp:
   continue: 続ける
   continue_shopping: ショッピングを続ける
   copy_all_mails_to: Copy All Mails To
+  cost_price: "Cost Price"
   count: Count
   country: 国名
   country_based: "Country Based"

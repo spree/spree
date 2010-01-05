@@ -9,14 +9,15 @@ class Variant < ActiveRecord::Base
 
   validate :check_price
   validates_presence_of :price
+  validates_numericality_of :cost_price, :allow_nil => true
 
   before_save :touch_product
-  
+
   # default variant scope only lists non-deleted variants
   named_scope :active, :conditions => "variants.deleted_at is null"
   named_scope :deleted, :conditions => "not variants.deleted_at is null"
- 
-  # default extra fields for shipping purposes 
+
+  # default extra fields for shipping purposes
   @fields = [ {:name => 'Weight', :only => [:variant], :format => "%.2f"},
               {:name => 'Height', :only => [:variant], :format => "%.2f"},
               {:name => 'Width',  :only => [:variant], :format => "%.2f"},
@@ -38,8 +39,8 @@ class Variant < ActiveRecord::Base
         iu.fill_backorder
         delta_units -= 1
       end
-    end    
-   
+    end
+
     self.count_on_hand += delta_units
   end
 
@@ -53,11 +54,11 @@ class Variant < ActiveRecord::Base
     on_hand > 0
   end
   alias in_stock in_stock?
-  
+
   def self.additional_fields
     @fields
   end
-  
+
   def self.additional_fields=(new_fields)
     @fields = new_fields
   end
@@ -66,9 +67,13 @@ class Variant < ActiveRecord::Base
   def available?
     Spree::Config[:allow_backorders] || self.in_stock?
   end
-	
+
   def options_text
     self.option_values.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence({:words_connector => ", ", :two_words_connector => ", "})
+  end
+
+  def gross_profit
+    self.cost_price.nil? ? 0 : (self.price - self.cost_price)
   end
 
   private
@@ -80,7 +85,7 @@ class Variant < ActiveRecord::Base
       self.price = product.master.price
     end
   end
-  
+
   def touch_product
     product.touch unless is_master?
   end

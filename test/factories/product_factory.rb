@@ -7,7 +7,8 @@ Factory.define :product do |f|
   # associations:
   f.tax_category {|r| TaxCategory.find(:first) || r.association(:tax_category)}
   f.shipping_category {|r| ShippingCategory.find(:first) || r.association(:shipping_category)}
-  
+
   f.price 19.99
+  f.cost_price 17.00
   f.sku "ABC"
 end

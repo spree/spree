@@ -72,6 +72,7 @@ ru-RU:
         total: "Итого"
       product:
         available_on: "Доступно с"
+        cost_price: "Cost Price"
         description: "Описание"
         master_price: "Основная цена"
         name: "Название"
@@ -102,6 +103,7 @@ ru-RU:
       user:
         email: "Email"
       variant:
+        cost_price: "Cost Price"
         depth: "Глубина"
         height: "Высота"
         price: "Цена"
@@ -272,6 +274,7 @@ ru-RU:
   continue: "Продолжить"
   continue_shopping: "Продолжить покупки"
   copy_all_mails_to: "Копировать все письма на"
+  cost_price: "Cost Price"
   count: "Количество"
   country: "Страна"
   country_based: "Страна"
@@ -335,7 +338,6 @@ ru-RU:
   extension: "Расширение"
   extensions: "Расширения"
   filename: "Имя файла"
-  fill_email: "Укажите email"
   final_confirmation: "Окончательное подтверждение"
   first_item: "Начальная ставка"
   first_name: "Имя"

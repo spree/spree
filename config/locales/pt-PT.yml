@@ -72,6 +72,7 @@ pt-PT:
         total: Total
       product: 
         available_on: "Disponivel Em"
+        cost_price: "Cost Price"
         description: Descrição
         master_price: "Preço Base"
         name: Nome
@@ -102,6 +103,7 @@ pt-PT:
       user: 
         email: Email
       variant: 
+        cost_price: "Cost Price"
         depth: Espessura
         height: Altura
         price: Preço
@@ -272,6 +274,7 @@ pt-PT:
   continue: Continue
   continue_shopping: "Continue a sua compra"
   copy_all_mails_to: Copy All Mails To                                                                             
+  cost_price: "Cost Price"
   count: Count
   country: País
   country_based: "Baseado em País"

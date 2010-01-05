@@ -72,6 +72,7 @@ pt-BR:
         total: Total
       product: 
         available_on: "Disponível em"
+        cost_price: "Cost Price"
         description: Descrição
         master_price: "Preço Mestre"
         name: Nome
@@ -102,6 +103,7 @@ pt-BR:
       user: 
         email: Email
       variant: 
+        cost_price: "Cost Price"
         depth: Profundidade
         height: Largura
         price: Preço
@@ -272,6 +274,7 @@ pt-BR:
   continue: Continue
   continue_shopping: "Continue sua compra"
   copy_all_mails_to: Copiar todos os emails para
+  cost_price: "Cost Price"
   count: Count
   country: País
   country_based: "Baseado em País"

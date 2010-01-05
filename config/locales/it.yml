@@ -72,6 +72,7 @@ it:
         total: Total
       product: 
         available_on: "Available On"
+        cost_price: "Cost Price"
         description: Description
         master_price: "Master Price"
         name: Name
@@ -102,6 +103,7 @@ it:
       user: 
         email: Email
       variant: 
+        cost_price: "Cost Price"
         depth: Depth
         height: Height
         price: Price
@@ -272,6 +274,7 @@ it:
   continue: Continue
   continue_shopping: "Continuare l'acquisto"
   copy_all_mails_to: Copy All Mails To                                                                             
+  cost_price: "Cost Price"
   count: Count
   country: country
   country_based: "Country Based"

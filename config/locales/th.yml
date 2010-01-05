@@ -72,6 +72,7 @@ th:
         total: รวม
       product: 
         available_on: พร้อมขายในวันที่
+        cost_price: "Cost Price"
         description: รายละเอียด
         master_price: ราคาหลัก
         name: ชื่อ
@@ -102,6 +103,7 @@ th:
       user: 
         email: อีเมล
       variant: 
+        cost_price: "Cost Price"
         depth: ความลึก
         height: ความสูง
         price: ราคา
@@ -272,6 +274,7 @@ th:
   continue: ดำเนินการต่อ
   continue_shopping: เลือกสินค้าต่อ
   copy_all_mails_to: คัดลอกเมลทุกฉบับส่งไปที่
+  cost_price: "Cost Price"
   count: Count
   country: ประเทศ
   country_based: ยืดประเทศเป็นหลัก
