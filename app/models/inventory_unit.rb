@@ -1,6 +1,7 @@
 class InventoryUnit < ActiveRecord::Base
   belongs_to :variant
   belongs_to :order
+  belongs_to :shipment
   
   named_scope :retrieve_on_hand, lambda {|variant, quantity| {:conditions => ["state = 'on_hand' AND variant_id = ?", variant], :limit => quantity}}
 

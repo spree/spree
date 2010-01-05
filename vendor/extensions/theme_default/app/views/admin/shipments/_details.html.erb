@@ -6,14 +6,14 @@
     <th><%= t('item_description') %></th>
     <th><%= t('qty') %></th>
   </tr>
-  <% @order.line_items.each do |item| %>
+  <% for item in @shipment.manifest %>
     <tr>
-      <td valign="top"><%=item.variant.sku %></td>
+      <td valign="top"><%= item.variant.sku %></td>
       <td width="300">
         <%=item.variant.product.name %> 
         <%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
       </td>
-      <td valign="top"><%=item.quantity %></td>
+      <td><%= item.quantity %></td>
     </tr>
   <% end %>      
 </table>

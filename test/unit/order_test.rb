@@ -63,7 +63,13 @@ class OrderTest < ActiveSupport::TestCase
       should "update checkout completed_at" do
         assert(@order.checkout.completed_at, "Checkout#completed_at was not updated")
       end
-
+      
+      should "create inventory units" do
+        total_quantity = @order.line_items.map(&:quantity).sum
+        assert_equal total_quantity, @order.inventory_units.count
+        assert_equal total_quantity, @order.shipment.inventory_units.count
+      end
+      
       context "with empty stock" do
         setup do
           line_item = @order.line_items.first

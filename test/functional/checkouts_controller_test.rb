@@ -35,6 +35,7 @@ class CheckoutsControllerTest < ActionController::TestCase
     context "complete order" do
       setup do 
         @order = create_complete_order
+        @order.complete
         @params = { :order_id => @order.number, :order_token => @order.token } 
       end
       context "GET /checkout" do

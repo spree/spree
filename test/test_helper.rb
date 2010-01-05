@@ -61,7 +61,6 @@ def create_complete_order
   
   @shipment = @order.shipment
 
-  @order.completed_at = Time.now
   @checkout.bill_address = Factory(:address)
 
   unless @zone.include?(@order.shipment.address)

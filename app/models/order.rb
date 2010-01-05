@@ -269,6 +269,7 @@ class Order < ActiveRecord::Base
     end
     begin
       InventoryUnit.sell_units(self)
+      shipment.inventory_units = inventory_units
       save!
     rescue Exception => e
       logger.error "Problem saving authorized order: #{e.message}"

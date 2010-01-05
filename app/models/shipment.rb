@@ -1,3 +1,4 @@
+require 'ostruct'
 class Shipment < ActiveRecord::Base        
   belongs_to :order
   belongs_to :shipping_method
@@ -5,7 +6,7 @@ class Shipment < ActiveRecord::Base
   has_one    :shipping_charge,   :as => :adjustment_source
   alias charge shipping_charge
   has_many :state_events, :as => :stateful
-
+  has_many :inventory_units
   before_create :generate_shipment_number
   after_save :create_shipping_charge
   
@@ -48,7 +49,20 @@ class Shipment < ActiveRecord::Base
     after_transition :to => 'shipped', :do => :transition_order
   end
   
-
+  def manifest
+    inventory_units.group_by(&:variant).map do |i|
+      OpenStruct.new(:variant => i.first, :quantity => i.last.length)
+    end
+  end
+  
+  def line_items
+    if order.checkout_complete
+      order.line_items.select {|li| inventory_units.map(&:variant_id).include?(li.variant_id)}
+    else
+      order.line_items
+    end
+  end
+  
   private
 
   def generate_shipment_number
