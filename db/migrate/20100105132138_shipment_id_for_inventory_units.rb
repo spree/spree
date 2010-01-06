@@ -1,6 +1,14 @@
 class ShipmentIdForInventoryUnits < ActiveRecord::Migration
   def self.up
     add_column "inventory_units", "shipment_id", :integer
+    add_index(:inventory_units, :shipment_id)    
+    
+    # migrate legacy shipments
+    Shipment.all.each do |shipment|
+      shipment.order.inventory_units.each do |unit|
+        unit.update_attribute("shipment_id", shipment.id)
+      end
+    end
   end
 
   def self.down
