@@ -119,7 +119,7 @@ class Admin::OverviewController < Admin::BaseController
     orders.map do |o|
       qty = o.line_items.inject(0) {|sum,li| sum + li.quantity}
       
-      [o.ship_address.firstname + " " + o.ship_address.lastname, qty, o.total]
+      [o.name, qty, o.total]
     end
   end
   
@@ -129,7 +129,7 @@ class Admin::OverviewController < Admin::BaseController
       orders = User.find(o[0]).orders
       qty = orders.size
       
-      [orders.first.ship_address.firstname + " " + orders.first.ship_address.lastname, qty, o[1]]
+      [orders.first.name, qty, o[1]]
       
     end
     

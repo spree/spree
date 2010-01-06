@@ -256,6 +256,11 @@ class Order < ActiveRecord::Base
     self.adjustments.each(&:update_amount)
     update_totals(:force_adjustment_update)
     self
+  end       
+  
+  def name
+    address = bill_address || ship_address
+    "#{address.firstname} #{address.lastname}" if address
   end
 
   private
