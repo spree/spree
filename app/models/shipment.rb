@@ -22,10 +22,14 @@ class Shipment < ActiveRecord::Base
     if shipping_method
       self.shipping_charge ||= ShippingCharge.create({
           :order => order,
-          :description => "#{I18n.t(:shipping)} (#{shipping_method.name})",
+          :description => description_for_shipping_charge,
           :adjustment_source => self,
         })
     end
+  end
+  
+  def cost
+    shipping_charge.amount if shipping_charge
   end
 
   # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
@@ -33,17 +37,8 @@ class Shipment < ActiveRecord::Base
     event :ready do
       transition :from => 'pending', :to => 'ready_to_ship'
     end
-    event :transmit do
-      transition :from => 'ready_to_ship', :to => 'transmitted'
-    end
-    event :acknowledge do
-      transition :from => 'transmitted', :to => 'acknowledged'
-    end
-    event :reject do
-      transition :from => 'acknowledged', :to => 'unable_to_ship'
-    end
     event :ship do
-      transition :from => 'acknowledged', :to => 'shipped'
+      transition :from => 'ready_to_ship', :to => 'shipped'
     end
 
     after_transition :to => 'shipped', :do => :transition_order
@@ -63,6 +58,16 @@ class Shipment < ActiveRecord::Base
     end
   end
   
+  def recalculate_needed?
+    changed? or !address.same_as?(Address.find(address.id))
+  end
+  
+  def recalculate_order
+    shipping_charge.update_attribute(:description, description_for_shipping_charge)
+    order.update_adjustments
+    order.save
+  end
+  
   private
 
   def generate_shipment_number
@@ -72,6 +77,10 @@ class Shipment < ActiveRecord::Base
       record = Shipment.find(:first, :conditions => ["number = ?", random])
     end
     self.number = random
+  end
+  
+  def description_for_shipping_charge
+    "#{I18n.t(:shipping)} (#{shipping_method.name})"
   end
   
   def transition_order

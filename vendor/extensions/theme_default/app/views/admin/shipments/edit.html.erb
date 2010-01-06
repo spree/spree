@@ -1,3 +1,15 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <% if @shipment.can_ship? %>
+        <%= button_link_to(t('ship'), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :confirm => t("are_you_sure")) %>
+      <% end %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
 <%= render :partial => "details" %>
 

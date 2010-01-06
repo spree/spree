@@ -643,6 +643,7 @@ en-US:
   qty: Qty
   range: "Range"
   rate: Rate
+  recalculate_order_total: "Recalculate order total"
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
   registration: Registration

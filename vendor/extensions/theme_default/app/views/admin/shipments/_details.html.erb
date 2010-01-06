@@ -1,5 +1,7 @@
-<h2><%= t('shipment') %> # <%=@shipment.number%></h2>
-
+<h2><%= t('shipment') %> #<%= @shipment.number%> (<%= @shipment.state.to_s.humanize %>)</h2>
+<% if @shipment.shipping_charge %>
+  <h3><%= t('charges') %> <%= number_to_currency @shipment.shipping_charge.amount %></h3>
+<% end %>
 <table class="index" style="width:100%;">
   <tr>
     <th><%= t('sku') %></th>

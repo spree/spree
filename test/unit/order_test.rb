@@ -86,6 +86,7 @@ class OrderTest < ActiveSupport::TestCase
     
     context "pay!" do
       should "make all shipments ready" do
+        @order.complete!
         @order.pay!
         assert @order.shipments.all?(&:ready_to_ship?), "shipments didn't all have state ready_to_ship"
       end

@@ -14,12 +14,6 @@
       </p>
       <p><%= shipment_form.label :tracking, t('tracking') %>:<br /><%= shipment_form.text_field :tracking %></p>
       <p><%= shipment_form.label :cost, t('shipping_cost') %>:<br /><%= shipment_form.text_field :cost %></p>
-      <p>
-        <label>
-          <%= shipment_form.check_box :shipped?, :disabled => (not @order.can_ship?) %></td>
-          <%= t('mark_shipped') %>
-        </label>
-      </p>
     </fieldset>
   </div>
   <% if Spree::Config[:shipping_instructions] %>
@@ -33,3 +27,10 @@
     </div>
   <% end %>
 </div>
+
+<p>
+  <label>
+    <%= check_box_tag :recalculate, true %>
+    <%= t('recalculate_order_total') %>
+  </label>
+</p>

@@ -1,6 +1,6 @@
 <% f.fields_for :address do |address_form| %>
   <div class="yui-g">
-    <label><%= t(:full_name) %></label>
+    <label><%= t(:full_name) %></label><br />
     <div class="yui-u sub-field first">
       <%= address_form.text_field :firstname, :class => 'fullwidth' %>
       <br/>
@@ -12,7 +12,7 @@
       <label for="<%= t("last_name") %>"><%= t("last_name") %></label>
     </div>
   </div>
-  <p>
+  <div>
     <label><%= t("address") %></label>
     <div class="sub-field">
       <%= address_form.label :address1, t("street_address") %><br />
@@ -22,7 +22,7 @@
       <%= address_form.label :address2, t("street_address") %><br />
       <%= address_form.text_field :address2, :class => 'fullwidth' %>
     </div>
-  </p>
+  </div>
   <div class="left sub-field">
     <%= address_form.label :city, t("city") %><br />
     <%= address_form.text_field :city, :size => 20 %>

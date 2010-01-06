@@ -1,10 +1,5 @@
-<div class='toolbar'>
-  <ul class='actions'>
-    <li>
-      <%= button_link_to t("new_order"), new_admin_order_url, :icon => 'add' %>
-    </li>
-  </ul>
-  <br class='clear' />
+<div class='toolbar order-links'>
+  <%= button_link_to t("new_order"), new_admin_order_url, :icon => 'add' %>
 </div>
 
 <% render :partial => 'admin/shared/order_sub_menu' %>

@@ -18,6 +18,12 @@ class Admin::ShipmentsController < Admin::BaseController
 
   destroy.success.wants.js { render_js_for_destroy }
 
+  def fire
+    @shipment.send("#{params[:e]}!")
+    flash[:notice] = t('shipment_updated')
+    redirect_to :back
+  end
+
   private
   def build_object
     @object ||= end_of_association_chain.send parent? ? :build : :new, object_params
@@ -48,6 +54,7 @@ class Admin::ShipmentsController < Admin::BaseController
       @order.checkout.special_instructions = object_params[:special_instructions]
       @order.save
     end
+    @shipment.recalculate_order if params[:recalculate]
   end
 
 end
