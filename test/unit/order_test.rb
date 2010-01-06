@@ -99,6 +99,15 @@ class OrderTest < ActiveSupport::TestCase
         assert @order.shipments.all?(&:shipped?), "shipments didn't all have state shipped"
       end
     end
+
+    context "under_paid!" do
+      should "make all shipments pending" do
+        @order.complete!
+        @order.pay!
+        @order.under_paid!
+        assert @order.shipments.all?(&:pending?), "shipments didn't all have state pending"
+      end
+    end
     
   end
 end

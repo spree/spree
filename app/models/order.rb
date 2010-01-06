@@ -71,6 +71,7 @@ class Order < ActiveRecord::Base
     after_transition :to => 'resumed', :do => :restore_state
     after_transition :to => 'paid', :do => :make_shipments_ready
     after_transition :to => 'shipped', :do => :make_shipments_shipped
+    after_transition :to => 'balance_due', :do => :make_shipments_pending
 
     event :complete do
       transition :to => 'new', :from => 'in_progress'
@@ -113,6 +114,11 @@ class Order < ActiveRecord::Base
   def make_shipments_ready
     shipments.each(&:ready)
   end
+  
+  def make_shipments_pending
+    shipments.each(&:pend)
+  end
+  
   
 
 

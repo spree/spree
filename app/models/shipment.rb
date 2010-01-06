@@ -1,5 +1,5 @@
 require 'ostruct'
-class Shipment < ActiveRecord::Base        
+class Shipment < ActiveRecord::Base
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :address
@@ -9,10 +9,10 @@ class Shipment < ActiveRecord::Base
   has_many :inventory_units
   before_create :generate_shipment_number
   after_save :create_shipping_charge
-  
-  attr_accessor :special_instructions 
+
+  attr_accessor :special_instructions
   accepts_nested_attributes_for :address
-     
+
   def shipped=(value)
     return unless value == "1" && shipped_at.nil?
     self.shipped_at = Time.now
@@ -27,7 +27,7 @@ class Shipment < ActiveRecord::Base
         })
     end
   end
-  
+
   def cost
     shipping_charge.amount if shipping_charge
   end
@@ -37,19 +37,22 @@ class Shipment < ActiveRecord::Base
     event :ready do
       transition :from => 'pending', :to => 'ready_to_ship'
     end
+    event :pend do
+      transition :from => 'ready_to_ship', :to => 'pending'
+    end
     event :ship do
       transition :from => 'ready_to_ship', :to => 'shipped'
     end
 
     after_transition :to => 'shipped', :do => :transition_order
   end
-  
+
   def manifest
     inventory_units.group_by(&:variant).map do |i|
       OpenStruct.new(:variant => i.first, :quantity => i.last.length)
     end
   end
-  
+
   def line_items
     if order.checkout_complete
       order.line_items.select {|li| inventory_units.map(&:variant_id).include?(li.variant_id)}
@@ -57,17 +60,17 @@ class Shipment < ActiveRecord::Base
       order.line_items
     end
   end
-  
+
   def recalculate_needed?
     changed? or !address.same_as?(Address.find(address.id))
   end
-  
+
   def recalculate_order
     shipping_charge.update_attribute(:description, description_for_shipping_charge)
     order.update_adjustments
     order.save
   end
-  
+
   private
 
   def generate_shipment_number
@@ -78,11 +81,11 @@ class Shipment < ActiveRecord::Base
     end
     self.number = random
   end
-  
+
   def description_for_shipping_charge
     "#{I18n.t(:shipping)} (#{shipping_method.name})"
   end
-  
+
   def transition_order
     update_attribute(:shipped_at, Time.now)
     # transition order to shipped if all shipments have been shipped
