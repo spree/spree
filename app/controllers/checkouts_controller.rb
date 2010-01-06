@@ -11,7 +11,7 @@ class CheckoutsController < Spree::BaseController
   actions :show, :edit, :update
   belongs_to :order
 
-  ssl_required :update, :edit
+  ssl_required :update, :edit, :register
 
   # GET /checkout is invalid but we'll assume a bookmark or user error and just redirect to edit (assuming checkout is still in progress)
   show.wants.html { redirect_to edit_object_url }
@@ -83,7 +83,7 @@ class CheckoutsController < Spree::BaseController
   def complete_checkout
     complete_order
     order_params = {:checkout_complete => true}
-    session[:order_id] = nil           
+    session[:order_id] = nil
     flash[:commerce_tracking] = "Track Me in GA"
     redirect_to order_url(@order, {:checkout_complete => true, :order_token => @order.token})
   end
@@ -145,9 +145,9 @@ class CheckoutsController < Spree::BaseController
     else
       flash[:notice] = t('order_processed_but_following_items_are_out_of_stock')
       flash[:notice] += '<ul>'
-      @checkout.order.out_of_stock_items.each do |item| 
-        flash[:notice] += '<li>' + t(:count_of_reduced_by, 
-                              :name => item[:line_item].variant.name, 
+      @checkout.order.out_of_stock_items.each do |item|
+        flash[:notice] += '<li>' + t(:count_of_reduced_by,
+                              :name => item[:line_item].variant.name,
                               :count => item[:count]) +
                           '</li>'
       end
