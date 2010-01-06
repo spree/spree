@@ -106,9 +106,9 @@ class Checkout < ActiveRecord::Base
   def process_payment
     begin
       if Spree::Config[:auto_capture]
-        creditcard.purchase(order.total)
+        creditcard.purchase(order.total.to_f)
       else
-        creditcard.authorize(order.total)
+        creditcard.authorize(order.total.to_f)
       end
     end
   end
