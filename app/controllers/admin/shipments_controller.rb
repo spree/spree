@@ -1,5 +1,6 @@
 class Admin::ShipmentsController < Admin::BaseController
   before_filter :load_data, :except => :country_changed
+  before_filter :require_object_editable_by_current_user, :only => [:update]
 
   resource_controller
   belongs_to :order
@@ -56,5 +57,5 @@ class Admin::ShipmentsController < Admin::BaseController
     end
     @shipment.recalculate_order if params[:recalculate]
   end
-
+  
 end

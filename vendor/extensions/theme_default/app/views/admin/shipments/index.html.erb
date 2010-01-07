@@ -13,6 +13,7 @@
     <th><%= t("shipping_method") %></th>
     <th><%= t("shipping_cost") %></th>
     <th><%= t("tracking") %></th>
+    <th><%= t("state") %></th>
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
     <th></th>
   </tr>
@@ -22,6 +23,7 @@
       <td><%= shipment.shipping_method.name if shipment.shipping_method %></td>
       <td><%= number_to_currency shipment.cost %></td>
       <td><%= shipment.tracking %></td>
+      <td><%= shipment.state.to_s.humanize %></td>
       <td><%= shipment.shipped_at.to_s(:date_time24) if shipment.shipped_at %></td>
       <td class="actions"><%= link_to_with_icon 'edit', t('edit'), edit_admin_order_shipment_url(@order, shipment) %></td>
     </tr>

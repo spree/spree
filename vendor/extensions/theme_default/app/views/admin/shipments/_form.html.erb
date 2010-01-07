@@ -13,7 +13,6 @@
         <%= shipment_form.collection_select :shipping_method_id, @shipping_methods, :id, :name %>
       </p>
       <p><%= shipment_form.label :tracking, t('tracking') %>:<br /><%= shipment_form.text_field :tracking %></p>
-      <p><%= shipment_form.label :cost, t('shipping_cost') %>:<br /><%= shipment_form.text_field :cost %></p>
     </fieldset>
   </div>
   <% if Spree::Config[:shipping_instructions] %>

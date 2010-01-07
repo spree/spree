@@ -150,5 +150,19 @@ class ShipmentTest < ActiveSupport::TestCase
     end
     
   end
+  
+  context "editable_by?" do
+    setup do
+      @shipment = Factory(:shipment)
+      @user = Factory(:admin_user)
+    end    
+    should "be true if shipment is not shipped" do
+      assert @shipment.editable_by?(@user)
+    end
+    should "be false if shipment is shipped" do
+      @shipment.update_attribute(:state, 'shipped')
+      assert !@shipment.editable_by?(@user)
+    end
+  end
 
 end

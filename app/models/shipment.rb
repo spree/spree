@@ -46,7 +46,11 @@ class Shipment < ActiveRecord::Base
 
     after_transition :to => 'shipped', :do => :transition_order
   end
-
+  
+  def editable_by?(user)
+    !shipped?
+  end
+  
   def manifest
     inventory_units.group_by(&:variant).map do |i|
       OpenStruct.new(:variant => i.first, :quantity => i.last.length)

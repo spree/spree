@@ -48,6 +48,16 @@ class Admin::ShipmentsControllerTest < ActionController::TestCase
         assert_equal 5.0, @order.ship_total.to_f
       end
     end    
+    
+    context "trying to update shipment that's already shipped" do
+      setup do
+        @order.shipment.update_attribute(:state, 'shipped')
+        put :update, :order_id => @order.id, :id => @order.shipment.id, 
+          :shipment => {:shipping_method_id => @new_shipping_method.id}
+        @order.reload
+      end
+      should_redirect_to_authorization_failure
+    end
   
   end
 end
