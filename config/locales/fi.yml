@@ -1,15 +1,15 @@
---- 
-fi: 
-  'no': "No"
-  'yes': "Yes"
-  5_biggest_spenders: "5 Biggest Spenders"
+---
+fi:
+  'no': Ei
+  'yes': Kyllä
+  5_biggest_spenders: "5 suurinta kuluttajaa"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: "Kopio kaikista viesteistä lähetetään seuraaviin osoitteisiin"
   abbreviation: Lyhenne
   access_denied: "Pääsy kielletty!"
   account: Tunnus
-  account_updated: "Tunnus päivitetty!"        
+  account_updated: "Tunnus päivitetty!"
   action: Toimenpide
-  actions: 
+  actions:
     cancel: Peruuta
     create: Luo
     destroy: Tuhoa
@@ -17,9 +17,9 @@ fi:
     listing: Listataan
     new: Uusi
     update: Päivitä
-  activerecord: 
-    attributes: 
-      address: 
+  activerecord:
+    attributes:
+      address:
         address1: Osoite
         address2: "Osoite (jatkoa)"
         city: Paikkakunta
@@ -29,40 +29,40 @@ fi:
         zipcode: Postinumero
       checkout:
         bill_address:
-          address1: "Billing address street"
-          city: "Billing address city"
-          firstname: "Billing address first name"
-          lastname: "Billing address last name"
-          phone: "Billing address phone"
-          state: "Billing address state"
-          zipcode: "Billing address zipcode"
+          address1: "Osoite (laskutus)"
+          city: "Paikkakunta (laskutus)"
+          firstname: "Etunimi (laskutus)"
+          lastname: "Sukunimi (laskutus)"
+          phone: "Puhelin (laskutus)"
+          state: "Lääni/osavaltio (laskutus)"
+          zipcode: "Postinumero (laskutus)"
         shipment:
           address:
-            address1: "Shipping address street"
-            city: "Shipping address city"
-            firstname: "Shipping address first name"
-            lastname: "Shipping address last name"
-            phone: "Shipping address phone"
-            state: "Shipping address state"
-            zipcode: "Shipping address zipcode"
-      country: 
+            address1: "Osoite (toimitus)"
+            city: "Paikkakunta (toimitus)"
+            firstname: "Etunimi (toimitus)"
+            lastname: "Sukunimi (toimitus)"
+            phone: "Puhelin (toimitus)"
+            state: "Lääni/osavaltio (toimitus)"
+            zipcode: "Postinumero (toimitus)"
+      country:
         iso: ISO
         iso3: ISO3
         iso_name: "ISO nimi"
         name: Nimi
         numcode: "ISO koodi"
-      creditcard: 
+      creditcard:
         cc_type: Korttityyppi
         month: Kuukausi
         number: Korttinumero
         verification_value: Vahvistustunnus
         year: Vuosi
-      inventory_unit: 
+      inventory_unit:
         state: Tila
-      line_item: 
+      line_item:
         price: Hinta
         quantity: Määrä
-      order: 
+      order:
         checkout_complete: "Tilaus lähetetty"
         ip_address: "IP-osoite"
         item_total: "Tuotteita yhteensä"
@@ -70,7 +70,7 @@ fi:
         special_instructions: Erikoisohjeet
         state: Tila
         total: Yhteensä
-      product: 
+      product:
         available_on: Tulossa
         cost_price: "Cost Price"
         description: Tuotekuvaus
@@ -79,32 +79,32 @@ fi:
         on_hand: Saatavilla
         shipping_category: Toimituskategoria
         tax_category: Verotusluokka
-      property: 
+      property:
         name: Nimi
         presentation: Esitys
-      prototype: 
+      prototype:
         name: Nimi
       return_authorization:
         amount: Amount
-      role: 
+      role:
         name: Nimi
-      state: 
+      state:
         abbr: Lyhennös
         name: Nimi
-      tax_category: 
+      tax_category:
         description: Kuvaus
         name: Nimi
-      tax_rate: 
+      tax_rate:
         amount: Veroprosentti
-      taxon: 
+      taxon:
         name: Nimi
         permalink: "Kiinteä linkki"
         position: Asema
-      taxonomy: 
+      taxonomy:
         name: Nimi
-      user: 
+      user:
         email: Sähköposti
-      variant: 
+      variant:
         cost_price: "Cost Price"
         depth: Syvyys
         height: Korkeus
@@ -112,80 +112,80 @@ fi:
         sku: Tuotetunnus
         weight: Paino
         width: Leveys
-      zone: 
+      zone:
         description: Kuvaus
         name: Nimi
-    models: 
-      address: 
+    models:
+      address:
         one: Osoite
         other: Osoitteet
-      country: 
+      country:
         one: Maa
         other: Maat
-      creditcard: 
+      creditcard:
         one: Luottokortti
         other: Luottokortit
-      creditcard_payment: 
+      creditcard_payment:
         one: Korttimaksu
         other: Korttimaksut
-      creditcard_txn: 
+      creditcard_txn:
         one: Korttitapahtuma
         other: Korttitapahtumat
-      inventory_unit: 
+      inventory_unit:
         one: Varastoyksikkö
         other: Varastoyksiköt
-      line_item: 
+      line_item:
         one: Tilaustuote
         other: Tilaustuotteet
-      order: 
+      order:
         one: Tilaus
         other: Tilaukset
-      payment: 
+      payment:
         one: Maksu
         other: Maksut
-      product: 
+      product:
         one: Tuote
         other: Tuotteet
-      property: 
+      property:
         one: Ominaisuus
         other: Ominaisuudet
-      prototype: 
+      prototype:
         one: Prototyyppi
         other: Prototyypit
       return_authorization:
         one: Return Authorization
         other: Return Authorizations
-      role: 
+      role:
         one: Rooli
         other: Roolit
       shipment:
-        one: Shipment
-        other: Shipments
-      shipping_category: 
+        one: Toimitus
+        other: Toimitukset
+      shipping_category:
         one: Toimituskategoria
         other: Toimitukategoriat
-      state: 
+      state:
         one: Osavaltio
         other: Osavaltiot
-      tax_category: 
+      tax_category:
         one: Verotusluokka
         other: Verotusluokat
-      tax_rate: 
+      tax_rate:
         one: Veroprosentti
-        other: Veroprosentit        
-      taxon: 
+        other: Veroprosentit
+      taxon:
         one: Taksoni
         other: Taksonit
-      taxonomy: 
+      taxonomy:
         one: Taksonomia
         other: Taksonomiat
-      user: 
+      user:
         one: Käyttäjä
         other: Käyttäjät
-      variant: 
+      variant:
         one: Variantti
         other: Variantit
-      zone: 
+      zone:
         one: Alue
         other: Alueet
   add: Lisää
@@ -194,23 +194,23 @@ fi:
   add_option_type: "Lisää valintatyyppi"
   add_option_types: "Lisää valintatyyppejä"
   add_option_value: "Lisää valinta-arvo"
-  add_product: "Add Product"
+  add_product: "Lisää tuote"
   add_product_properties: "Lisää tuoteominaisuus"
   add_state: "Lisää osavaltio"
   add_to_cart: "Lisää ostoskoriin"
   add_zone: "Lisää alue"
-  additional_item: Additional Item Cost
+  additional_item: "Ylimääräiset kulut"
   address: Osoite
   address_information: Osoitetiedot
   adjustment: Säätö
-  adjustments: Adjustments
+  adjustments: Säädöt
   administration: Hallinnointi
   all: Kaikki
-  all_departments: All departments
+  all_departments: "Kaikki osastot"
   allow_backorders: "Salli jälkitoimitukset"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: "Salli SSL:n käyttö kehitys- ja testiympäristöissä"
   allow_ssl_to_be_used_when_in_production_mode: "Salli SSL:n käyttö vain tuotantoympäristössä"
-  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
+  allowed_ssl_in_production_mode: "SSL:ää {{not}} käytetä/käytetään tuotannossa"
   already_registered: "Jo rekisteröitynyt?"
   alternative_phone: "Vaihtoehtoinen puhelin"
   amount: Määrä
@@ -231,16 +231,16 @@ fi:
   back: Takaisin
   back_to_store: "Palaa kauppaan"
   backordering_is_allowed: "Jälkitoimittaminen {{not}} sallittu"
-  balance_due: "Balance Due"
-  best_selling_products: "Best Selling Products"
-  best_selling_taxons: "Best Selling Taxons"
+  balance_due: "Erääntyvät"
+  best_selling_products: "Parhaiten myyvät tuotteet"
+  best_selling_taxons: "Parhaiten myyvät taksonit"
   bill_address: "Laskun osoite"
-  billing: Billing
+  billing: Laskutus
   billing_address: Laskutusosoite
-  billing_integration: Billing Integration
-  billing_integrations: Billing Integrations
-  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
-  by_day: "by day"
+  billing_integration: Laskutusintegrointi
+  billing_integrations: Laskutusintegroinnit
+  billing_integrations_description: "Aseta kolmansien tahojen laskutusintegrointien (kuten Paypal, Google Checkout) asetukset."
+  by_day: päivänä
   calculator: Laskin
   calculator_settings_warning: "Mikäli vaihdat laskimen tyyppiä, sinun täytyy ensin tallentaa ennen kuin voit muuttaa laskimen asetuksia"
   cancel: peruuta
@@ -257,16 +257,16 @@ fi:
   change_language: "Vaihda kieli"
   charge_total: "Veloitettu yhteensä"
   charged: Veloitettu
-  charges: Charges
+  charges: Veloitukset
   checkout: Kassa
   checkout_steps:
     # keys correspond to Checkout state names:
-    address: Address
-    complete: Complete
-    delivery: Delivery
-    payment: Payment
+    address: Osoite
+    complete: Valmis
+    delivery: Toimitus
+    payment: Maksu
   city: Paikkakunta
-  clone: Clone
+  clone: Klooni
   code: Koodi
   combine: Yhdistä
   comp_order: "Tilauksen keskeyttäminen"
@@ -281,9 +281,9 @@ fi:
   confirm_password: "Vahvista salasana"
   continue: Jatka
   continue_shopping: "Jatka ostoksia"
-  copy_all_mails_to: "Kopioi kaikki viestit"                                                                             
-  cost_price: "Cost Price"
-  count: Count
+  copy_all_mails_to: "Kopioi kaikki viestit"
+  cost_price: Kustannushinta
+  count: Määrä
   count_of_reduced_by: "count of '{{name}}' reduced by {{count}}"
   country: Maa
   country_based: Sijaintimaa
@@ -298,14 +298,14 @@ fi:
   credit_card: Luottokortti
   credit_card_capture_complete: "Luottokortin tallentaminen onnistui"
   credit_card_payment: Luottokorttimaksu
-  credit_owed: "Credit Owed"
+  credit_owed: Veloittamatta
   credit_total: "Veloittamatta yhteensä"
   creditcard: Luottokortti
-  credits: Credits
+  credits: Luotot
   current: Nykyinen
   customer: Asiakas
-  customer_details: "Customer Details"
-  customer_search: "Customer Search"
+  customer_details: Asiakastiedot
+  customer_search: Asiakashaku
   date_range: "Päivämäärä (mistä mihin)"
   delete: Poista
   depth: Syvyys
@@ -313,7 +313,7 @@ fi:
   destroy: Tuhoa
   display: Näytä
   edit: Muokkaa
-  editing_billing_integration: Editing Billing Integration
+  editing_billing_integration: "Muokataan laskutusintegrointia"
   editing_category: "Muokataan kategoriaa"
   editing_coupon: "Muokataan kuponkia"
   editing_option_type: "Muokataan valintatyyppiä"
@@ -323,7 +323,7 @@ fi:
   editing_prototype: "Muokataan prototyyppiä"
   editing_shipping_category: "Muokataan toimituskategoriaa"
   editing_shipping_method: "Muokataan toimitustapaa"
-  editing_shipping_rate: "Muokataan toimitushintaa" 
+  editing_shipping_rate: "Muokataan toimitushintaa"
   editing_state: "Muokataan osavaltiota"
   editing_tax_category: "Muokataan verotuskategoriaa"
   editing_tax_rate: "Muokataan veroprosenttia"
@@ -334,8 +334,8 @@ fi:
   email_address: Sähköpostiosoite
   email_server_settings_description: "Aseta sähköpostipalvelimen asetukset."
   empty_cart: "Tyhjennä ostoskori"
-  enable_login_via_login_password: "Use standard email/password"  
-  enable_login_via_openid: "Use OpenID instead"
+  enable_login_via_login_password: "Käytä standardimuotoista sähköpostia/salasanaa"
+  enable_login_via_openid: "Käytä OpenID:tä sen sijaan"
   enable_mail_delivery: "Salli sähköpostin toimitus"
   enable_mail_queue: "Salli sähköpostijono"
   enter_exactly_as_shown_on_card: "Kirjoita täsmälleen samoin kuin kortissa lukee"
@@ -349,7 +349,7 @@ fi:
   extensions: Laajennukset
   filename: Tiedostonimi
   final_confirmation: "Lopullinen vahvistus"
-  first_item: First Item Cost
+  first_item: "Ensimmäisen tuotteen kulut"
   first_name: Etunimi
   flat_percent: Tasaprosentti
   flat_rate_amount: Määrä
@@ -370,7 +370,7 @@ fi:
   google_analytics_create: "Luo uusi Google Analytics -tunnus"
   google_analytics_id: "Analytics ID"
   google_analytics_new: "Uusi Google Analytics -tunnus"
-  google_analytics_setting_description: "Hallinnoi Google Analytics ID:tä" 
+  google_analytics_setting_description: "Hallinnoi Google Analytics ID:tä"
   guest_user_account: "Tee tilaus vierailevana käyttäjänä"
   has_no_shipped_units: has no shipped units
   height: Korkeus
@@ -382,7 +382,7 @@ fi:
   images: Kuvat
   images_for: Kuvia
   in_progress: Kesken
-  integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
+  integration_settings_warning: "Jos vaihdat laskutusintegraatiota, sinun täytyy tallentaa ennen kuin muokkaat integraation asetuksia."
   invalid_search: "Virheellinen haku."
   inventory: Varasto
   inventory_adjustment: "Varaston säätö"
@@ -392,13 +392,13 @@ fi:
   item: Tuote
   item_description: Tuotekuvaus
   item_total: "Tuotteet yhteensä"
-  items: "Items"
-  last_14_days: "Last 14 Days"
-  last_5_orders: "Last 5 Orders"
-  last_7_days: "Last 7 Days" 
-  last_month: "Last Month"
+  items: Tuotteet
+  last_14_days: "Viimeiset 14 päivää"
+  last_5_orders: "Viimeiset 5 tilausta"
+  last_7_days: "Viimeiset 7 päivää"
+  last_month: "Viimeisin kuukausi"
   last_name: Sukunimi
-  last_year: "Last Year"
+  last_year: "Viime vuosi"
   list: Lista
   listing_categories: "Listataan kategoriat"
   listing_option_types: "Listataan valintatyypit"
@@ -411,8 +411,8 @@ fi:
   log_in: Kirjaudu
   logged_in_as: Kirjauduttu
   logged_in_succesfully: "Kirjauduttu onnistuneesti"
-  logged_out: "Olet kirjautunut ulos." 
-  login_as_existing: "Kirjaudu olemassaolevana asiakkaana" 
+  logged_out: "Olet kirjautunut ulos."
+  login_as_existing: "Kirjaudu olemassaolevana asiakkaana"
   login_failed: "Kirjautumisen autentikointi epäonnistui."
   login_name: Nimi
   logout: "Kirjaudu ulos"
@@ -420,24 +420,24 @@ fi:
   maestro_or_solo_cards: "Maestro/Solo kortit"
   mail_delivery_enabled: "Sähköpostiviestien toimitus päällä"
   mail_delivery_not_enabled: "Sähköpostiviestien toimitus poissa päältä"
-  mail_queue_enabled: "Mail queue is enabled"
-  mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
+  mail_queue_enabled: "Postin jonotus päällä"
+  mail_queue_not_enabled: "Postin jonotus poissa päältä (sähköpostiviestit toimitetaan heti)"
   mail_server_preferences: "Sähköpostipalvelimen asetukset"
   mail_server_settings: "Sähköpostipalvelimen asetukset"
   mark_shipped: "Merkitse toimitetuksi"
   master_price: Toimitushinta
-  max_items: Max Items
+  max_items: "Tuotteiden maksimimäärä"
   meta_description: Meta-kuvaus
   meta_keywords: Meta-avainsanat
   metadata: Metadata
-  missing_required_information: "Missing Required Information"
+  missing_required_information: "Vaadittuja tietoja puuttuu"
   month: Kuukausi
   my_account: Tunnukseni
   my_orders: Tilaukseni
   name: Nimi
   new: Uusi
-  new_adjustment: "New Adjustment"
-  new_billing_integration: New Billing Integration
+  new_adjustment: "Uusia muutoksia"
+  new_billing_integration: "Uusi laskutusintegraatio"
   new_category: "Uusi kategoria"
   new_coupon: "Uusi kuponki"
   new_credit_card_payment: "Uusi luottokorttimaksutapa"
@@ -445,9 +445,9 @@ fi:
   new_image: "Uusi kuva"
   new_option_type: "Uusi valintatyyppi"
   new_option_value: "Uusi valinta-arvo"
-  new_order: "New Order"
+  new_order: "Uusi tilaus"
   new_product: "Uusi tuote"
-  new_product_group: New Product Group
+  new_product_group: "Uusi tuoteryhmä"
   new_property: "Uusi ominaisuus"
   new_prototype: "Uusi prototyyppi"
   new_return_authorization: New Return Authorization
@@ -467,8 +467,8 @@ fi:
   next: Seuraava
   no_items_in_cart: ""
   no_match_found: "Ei löytynyt vastaavia"
-  no_products_found: "No products found"
-  no_user_found: "Ei löytnyt käyttäjää kyseisellä sähköpostiosoitteella"
+  no_products_found: "Ei löytynyt tuotteita"
+  no_user_found: "Ei löytynyt käyttäjää kyseisellä sähköpostiosoitteella"
   none: "Ei yhtäkään"
   none_available: "Ei yhtäkään saatavilla"
   not: ei
@@ -479,8 +479,8 @@ fi:
   option_values: Valinta-arvot
   options: Valinnat
   or: tai
-  ord_qty: "Ord. Qty"
-  ord_total: "Ord. Total"
+  ord_qty: Tilausmäärä
+  ord_total: "Tilaus yhteensä"
   order: Tilaus
   order_confirmation_note: ""
   order_date: Tilauspäivämäärä
@@ -492,25 +492,25 @@ fi:
   order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Tilauksenne käsitelty onnistuneesti"
   order_summary: Tilaustiivistelmä
-  order_sure_want_to: "Are you sure you want to {{event}} this order?"
+  order_sure_want_to: "Haluatko varmasti {{event}} tämän tilauksen?"
   order_total: "Tilaus yhteensä"
   order_total_message: "Kortiltanne veloitettava kokonaissumma"
   order_updated: "Tilaus päivitetty"
   orders: Tilaukset
   out_of_stock: "Ei saatavilla"
-  out_of_stock_products: "Out of Stock Products"
-  over_paid: "Over Paid"
+  out_of_stock_products: "Loppuneet tuotteet"
+  over_paid: "Maksettu yli"
   overview: Yleiskuva
-  overview_welcome: "Welcome to your store overview, currently we do not have enough data to display the Overiew Dashboard.<br/><br/> The dashboard will display automatically once the system has sufficent orders to allow generation of the statistics."
-  page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
-  page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
+  overview_welcome: "Tervetuloa kauppasi yleiskuvaan. Tällä hetkellä ei ole tarpeeksi dataa näyttääksemme yleiskuvan kojelautaa.<br/><br/> Kojelauta näytetään automaattisesti, kun järjestelmässä on riittävästi tilauksia tilastojen luomiseksi."
+  page_only_viewable_when_logged_in: "Yritit käydä sivulla, jonne pääsee vain sisäänkirjautuneena"
+  page_only_viewable_when_logged_out: "Yritit käydä sivulla, jonne pääsee vain uloskirjautuneena"
   paid: Maksettu
   parent_category: Yläkategoria
   password: Salasana
   password_reset_instructions: "Salasanan palauttamisen ohjeet"
   password_reset_instructions_are_mailed: "Ohjeet salasanan palauttamiseksi on lähetetty. Tarkista sähköpostisi."
-  password_reset_token_not_found: "Tunnuksesi paikantaminen epäonnistui. Kokeile leikata ja liittää URL suoraan sähköpostista selaimeen, tai aloita salasanan palauttaminen alusta."    
-  password_updated: "Salasana päivitetty"  
+  password_reset_token_not_found: "Tunnuksesi paikantaminen epäonnistui. Kokeile leikata ja liittää URL suoraan sähköpostista selaimeen, tai aloita salasanan palauttaminen alusta."
+  password_updated: "Salasana päivitetty"
   path: Polku
   pay: maksa
   payment: Maksu
@@ -518,14 +518,14 @@ fi:
   payment_information: "Maksun tiedot"
   payments: Maksut
   phone: Puhelin
-  place_order: "Aseta tilaus"        
-  please_create_user: "Luo käyttäjätunnus"     
-  powered_by: "Powered by"
+  place_order: "Aseta tilaus"
+  please_create_user: "Luo käyttäjätunnus"
+  powered_by: "Sivustoa pyörittää"
   presentation: Esitys
-  preview: Preview
+  preview: Esikatselu
   previous: Edellinen
   price: Hinta
-  price_with_vat_included: "{{price}} (inc. VAT)"
+  price_with_vat_included: "{{price}} (sisältää ALV:n)"
   problem_authorizing_card: "Ongelma luottokortin tunnistamisessa"
   problem_capturing_card: "Ongelma luottokortin kaappaamisessa"
   problems_processing_order: "Ongelmia tilauksen käsittelyssä"
@@ -533,121 +533,121 @@ fi:
   process: Prosessi
   product: Tuote
   product_details: Tuotetiedot
-  product_group: Product Group
-  product_group_invalid: Product Group has invalid scopes
-  product_groups: Product Groups
+  product_group: Tuoteryhmä
+  product_group_invalid: "Tuoteryhmällä on virheelliset laajuudet"
+  product_groups: Tuoteryhmät
   product_has_no_description: "Tuotteella ei tuotekuvausta"
   product_properties: "Tuotteen ominaisuudet"
   product_scopes:
     groups:
       price:
-        description: "Scopes for selecting products based on Price"
-        name: Price
+        description: "Laajuudet tuotteiden valitsemiseksi hinnan perusteella"
+        name: Hinta
       search:
-        description: "Scopes for selecting products based on name, keywords and description of product"
-        name: "Text search"
+        description: "Laajuudet tuotteiden valitsemiseksi nimen, avainsanojen ja kuvauksen perusteella"
+        name: Tekstihaku
       taxon:
-        description: "Scopes for selecting products based on Taxons"
-        name: Taxon
+        description: "Laajuudet tuotteiden valitsemiseksi taksonien perusteella"
+        name: Taksoni
       values:
-        description: "Scopes for selecting products based on option and property values"
-        name: Values
+        description: "Laajuudet tuotteiden valitsemiseksi valintojen ja ominaisuuksien arvojen perusteella"
+        name: Arvot
     scopes:
       ascend_by_master_price:
-        name: Ascend by product master price
+        name: "Nousevasti tuotteen hinnan mukaan"
       ascend_by_name:
-        name: Ascend by product name
+        name: "Nousevasti tuotteen nimen mukaan"
       ascend_by_updated_at:
-        name: Ascendy by actualization date
+        name: "Nousevasti toteutuksen päivämäärän mukaan"
       by_popularity:
-        name: Sort by popularity(most popular first)
+        name: "Lajittele suosion mukaan (suosituimmat ensin)"
       descend_by_master_price:
-        name: Descend by product master price
+        name: "Laskevasti tuotteen hinnan mukaan"
       descend_by_name:
-        name: Descend by product name
+        name: "Laskevasti tuotteen nimen mukaan"
       descend_by_updated_at:
-        name: Descend by actualization date
+        name: "Laskevasti toteutuksen päimärään mukaan"
       in_name:
         args:
-          words: Words
-        description: "(separated by space or comma)"
-        name: "Product name have following"
-        sentence: product name contain <em>%s</em>
+          words: Sanat
+        description: "(erotettu välillä tai pilkulla)"
+        name: "Tuotenimellä on seuraavia"
+        sentence: "tuotenimi sisältää <em>%s</em>"
       in_name_or_description:
         args:
-          words: Words
-        description: "(separated by space or comma)"
-        name: "Product name or description have following"
-        sentence: name or description contain <em>%s</em>
+          words: Sanat
+        description: "(erotettu välillä tai pilkulla)"
+        name: "Tuotenimellä tai -kuvauksella on seuraavia"
+        sentence: "nimi tai kuvaus sisältää <em>%s</em>"
       in_name_or_keywords:
         args:
-          words: Words
-        description: "(separated by space or comma)"
-        name: "Product name or meta heywords have following"
-        sentence: name or keywords contain <em>%s</em>
+          words: Sanat
+        description: "(erotettu välillä tai pilkulla)"
+        name: "Tuotenimellä tai meta-avainsanoilla on seuraavia"
+        sentence: "nimi tai avainsanat sisältävät <em>%s</em>"
       in_taxons:
         args:
-          "taxon_names": "Taxon names"
-        description: "Taxon names have to be separated by comma or space(eg. adidas,shoes)"
-        name: "In taxons and all their descendants"
-        sentence: in <em>%s</em> and all their descendants
+          taxon_names: "Taksonien nimet"
+        description: "Taksonien nimet on eroteltava välillä tai pilkulla (esim. adidas,shoes)"
+        name: "Taksoneissa ja kaikissa niiden jälkeläisissä"
+        sentence: "<em>%s</em>:ssa ja kaikissa niiden jälkeläisissä"
       master_price_gte:
         args:
-          amount: Amount
+          amount: Määrä
         description: ""
-        name: "Master price greater or equal to"
-        sentence: price greater or equal to <em>%.2f</em>
+        name: "Hinta suurempi tai yhtä suuri kuin"
+        sentence: "hinta suurempi tai yhtä suuri kuin <em>%.2f</em>"
       master_price_lte:
         args:
-          amount: Amount
+          amount: Määrä
         description: ""
-        name: "Master price lesser or equal to"
-        sentence: price less or equal to <em>%.2f</em>
+        name: "Hinta pienempi tai yhtä suuri kuin"
+        sentence: "hinta pienempi tai yhtä suuri kuin <em>%.2f</em>"
       price_between:
         args:
-          high: High
-          low: Low
+          high: Korkea
+          low: Matala
         description: ""
-        name: "Price between"
-        sentence: price between <em>%.2f</em> and <em>%.2f</em>
+        name: "Hinta välillä"
+        sentence: "hinta välillä <em>%.2f</em> ja <em>%.2f</em>"
       taxons_name_eq:
         args:
-          taxon_name: "Taxon name"
-        description: "In specific taxon - without descendants"
-        name: "In Taxon(without descendants)"
-        sentence: in <em>%s</em>
+          taxon_name: "Taksonin nimi"
+        description: "Tietyssä taksonissa - ilman jälkeläisiä?"
+        name: "Taksonissa(ilman jälkeläisiä)"
+        sentence: "<em>%s</em>:ssa"
       with:
         args:
-          value: Value
-        description: "Selects all products that have at least one variant that have specified value as either option or property (eg. red)"
-        name: With value
-        sentence: with value <em>%s</em>
+          value: Arvo
+        description: "Valitsee kaikki tuotteet joilla on vähintään yksi variantti jolle on määritetty arvo joko valinnalle tai ominaisuudelle (esim. punainen)"
+        name: Arvolla
+        sentence: "arvolla <em>%s</em>"
       with_option:
         args:
-          option: Option
-        description: "Selects all products that have specified option(eg. color)"
-        name: "With option"
-        sentence: with option <em>%s</em>
+          option: Valinta
+        description: "Valitsee kaikki tuotteet joilla on määritetty valinta (esim. väri)"
+        name: Valinnalla
+        sentence: "valinnalla <em>%s</em>"
       with_option_value:
         args:
-          option: Option
-          value: Value
-        description: "Selects all products that have at least one variant with specified option and value(eg. color:red)"
-        name: "With option and value"
-        sentence: with option <em>%s</em> and value <em>%s</em>
+          option: Valinta
+          value: Arvo
+        description: "Valitsee kaikki tuotteet, joilla vähintään yksi variantti, jolle on määritetty valinta ja arvo (esim. väri:punainen)"
+        name: "Valinnalla ja arvolla"
+        sentence: "valinnalla <em>%s</em> ja arvolla <em>%s</em>"
       with_property:
         args:
-          property: Property
-        description: "Selects all products that have specified property(eg. weight)"
-        name: "With property"
-        sentence: with property <em>%s</em>
+          property: Ominaisuus
+        description: "Valitsee kaikki tuotteet joilla on määritetty ominaisuus (esim. paino)"
+        name: Ominaisuudella
+        sentence: "ominaisuudella <em>%s</em>"
       with_property_value:
         args:
-          property: Property
-          value: Value
-        description: "Selects all products that have at least one variant with specified property and value(eg. weight:10kg)"
+          property: Ominaisuus
+          value: Arvo
+        description: "Valitsee kaikki tuotteet joilla on vähintään yksi variantti, jolla on määritetty ominaisuus ja arvo (esim. paino:10kg)"
         name: "With property value"
-        sentence: with property <em>%s</em> and value <em>%s</em>
+        sentence: "ominaisuudella <em>%s</em> ja arvolla <em>%s</em>"
   products: Tuotteet
   products_with_zero_inventory_display: "Tuotteita, joden varastosaldo 0 {{not}} näytetä(än)"
   properties: Ominaisuudet
@@ -656,7 +656,7 @@ fi:
   prototypes: Prototyypit
   qty: lkm
   quantity_shipped: Quantity Shipped
-  range: "Range"
+  range: Väli
   rate: Taso
   reason: Reason
   recalculate_order_total: "Recalculate order total"
@@ -672,10 +672,10 @@ fi:
   resend: Uudelleenlähetä
   reset_password: "Palauta salasana"
   resource_controller:
-    member_object_not_found: "Member object not found."
-    successfully_created: "Successfully created!"
-    successfully_removed: "Successfully removed!"
-    successfully_updated: "Successfully updated!"
+    member_object_not_found: "Jäsenolioa ei löydy."
+    successfully_created: "Luotu!"
+    successfully_removed: "Poistettu!"
+    successfully_updated: "Päivitetty!"
   response_code: Vastauskoodi
   resume: jatka
   resumed: Jatkettu
@@ -688,15 +688,15 @@ fi:
   rma_number: RMA Number
   rma_value: RMA Value
   roles: Roolit
-  sales_tax: "Liikevaihtovero"
-  sales_total: "Liikevaihto"
+  sales_tax: Liikevaihtovero
+  sales_total: Liikevaihto
   sales_total_for_all_orders: "Liikevaihto kaikilta tilauksilta"
-  sales_totals: "Liikevaihdot"
+  sales_totals: Liikevaihdot
   sales_totals_description: "Myynnit yhteensä kaikilta tilauksilta"
-  save_and_continue: Save and Continue
+  save_and_continue: "Tallenna ja jatka"
   save_preferences: "Tallenna asetukset"
   search: Etsi
-  search_results: "Search results for '{{keywords}}'"
+  search_results: "Etsi tuloksia avainsanoilla: '{{keywords}}'"
   secure_connection_type: "Turvallinen yhteystyyppi"
   select: Valitse
   select_from_prototype: "Valitse prototyypistä"
@@ -712,7 +712,7 @@ fi:
   shipment: Toimitus
   shipment_number: Toimitusnumero
   shipment_updated: Shipment Updated
-  shipments: "Shipments"
+  shipments: Toimitukset
   shipped: Toimitettu
   shipping: Toimitus
   shipping_address: Toimitusosoite
@@ -741,19 +741,19 @@ fi:
   site_url: "Sivun URL"
   sku: Tuotetunnus
   smtp: SMTP
-  smtp_authentication_type: SMTP todennustyyppi         
+  smtp_authentication_type: SMTP todennustyyppi
   smtp_domain: SMTP verkkotunnus
   smtp_mail_host: SMTP palvelin
   smtp_password: SMTP salasana
-  smtp_port: SMTP portti  
+  smtp_port: SMTP portti
   smtp_send_all_emails_as_from_following_address: "Lähetä kaikki viestit tästä osoitteesta."
   smtp_send_copy_of_orders_to_this_addresses: "Lähetä kopio kaikista tilausviesteistä tähän osoitteeseen. Erottele useammat osoitteet pilkulla."
-  smtp_send_copy_to_this_addresses: "Lähetä kopio kaikista lähtevistä viesteistä tähän osoitteeseen. Erottele useammat osoitteet pilkulla." 
+  smtp_send_copy_to_this_addresses: "Lähetä kopio kaikista lähtevistä viesteistä tähän osoitteeseen. Erottele useammat osoitteet pilkulla."
   smtp_send_order_mails_as_from_following_address: "Lähetä tilausviestit tästä osoitteesta."
   smtp_username: SMTP käyttäjänimi
   spree:
     date: Päivämäärä
-    time: Kellonaika                                         
+    time: Kellonaika
   ssl_will_be_used_in_development_and_test_modes: "SSL:ää käytetään tarvittaessa kehitys- ja testiympäristössä."
   ssl_will_be_used_in_production_mode: "SSL:ää käytetään tuotantoympäristössä"
   ssl_will_not_be_used_in_development_and_test_modes: "SSL:ää ei käytetä tarvittaessa kehitys- ja testiympäristössä."
@@ -790,12 +790,12 @@ fi:
   taxonomy_tree_instruction: "* Klikkaa lasta päästäksesi valikkoon, josta voit lisätä, poistaa ja järjestää lapsia."
   taxons: Taksonit
   thank_you_for_your_order: "Kiitos kaupankäynnistä. Tulosta tarvittaessa kopio tästä vahvistuksesta."
-  this_file_language: Finnish
-  this_month: "This Month"
-  this_year: "This Year"
+  this_file_language: Suomi
+  this_month: "Tässä kuussa"
+  this_year: "Tänä vuonna"
   thumbnail: Näytekuva
   to_add_variants_you_must_first_define: "Lisättävä variantti täytyy ensin määritellä"
-  top_grossing_products: "Top Grossing Products"
+  top_grossing_products: "Tuottoisimmat tuotteet"
   total: Loppusumma
   tracking: Seuranta
   transaction: Tapahtuma
@@ -806,7 +806,7 @@ fi:
   unable_to_authorize_credit_card: "Luottokortin valtuuttaminen ei onnistu"
   unable_to_capture_credit_card: "Luottokortin tallentaminen ei onnistu"
   unable_to_save_order: "Tilauksen tallentaminen ei onnistu"
-  under_paid: "Under Paid"
+  under_paid: Maksamatta
   unrecognized_card_type: "Tunnistamaton korttityyppi"
   update: Päivitä
   update_password: "Päivitä salasanani ja kirjaa minut sisään"
@@ -818,14 +818,14 @@ fi:
   use_different_shipping_address: "Käytä eri toimitusosoitetta"
   user: Käyttäjä
   user_account: Käyttäjätunnus
-  user_created_successfully: "User created successfully"
+  user_created_successfully: "Käyttäjä luotu onnistuneesti"
   user_details: Käyttäjätiedot
   users: Käyttäjät
   value: Arvo
   variants: Variantit
-  vat: ALV           
+  vat: ALV
   version: Versio
-  view_shipping_options: "View shipping options"
+  view_shipping_options: "Näytä toimitusvaihtoehdot"
   website: Verkkosivu
   weight: Paino
   welcome_to_sample_store: "Tervetuloa esimerkkikauppaan"
