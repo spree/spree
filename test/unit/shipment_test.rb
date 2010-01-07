@@ -19,7 +19,7 @@ class ShipmentTest < ActiveSupport::TestCase
       assert_equal 1, @shipment.state_events.count
       assert_equal 'pending', @shipment.state_events.first.previous_state
     end
-
+    
     context "when shipped" do    
       setup do
         @order = Factory(:order, :state => 'paid')
@@ -162,6 +162,13 @@ class ShipmentTest < ActiveSupport::TestCase
     should "be false if shipment is shipped" do
       @shipment.update_attribute(:state, 'shipped')
       assert !@shipment.editable_by?(@user)
+    end
+  end
+  
+  context "instance w/params" do
+    setup { @shipment = Shipment.create(:number => "CUSTOM-123") }
+    should "accept custom shipment number if one is provided" do
+      assert @shipment.number == "CUSTOM-123"
     end
   end
 

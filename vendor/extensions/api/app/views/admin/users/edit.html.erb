@@ -1,0 +1,26 @@
+<%= error_messages_for :user %>
+<h1><%= t("editing_user") %></h1>
+
+<% form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <p class="form-buttons">
+    <%= button t("update") %> <%= link_to t('cancel'), collection_url %>
+  </p>
+<% end %>
+
+<h2><%= t('api.access') %></h2>
+
+<% if @user.api_key.present? %>
+  <p><strong><%= t('api.key') %></strong> <%= @user.api_key %></p>
+  <% form_tag clear_api_key_admin_user_path(@user), :method => :put do %>
+    <%= button t("api.clear_key") %>
+  <% end %>
+  <% form_tag generate_api_key_admin_user_path(@user), :method => :put do %>
+    <%= button t("api.regenerate_key") %>
+  <% end %>
+<% else %>
+  <p><%= t('api.no_key') %></p>
+  <% form_tag generate_api_key_admin_user_path(@user), :method => :put do %>
+    <%= button t("api.generate_key") %>
+  <% end %>
+<% end %>

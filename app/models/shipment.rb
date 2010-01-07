@@ -78,6 +78,7 @@ class Shipment < ActiveRecord::Base
   private
 
   def generate_shipment_number
+    return self.number unless self.number.blank?
     record = true
     while record
       random = Array.new(11){rand(9)}.join
