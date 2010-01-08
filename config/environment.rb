@@ -38,6 +38,7 @@ Spree::Initializer.run do |config|
   config.gem 'searchlogic', :version => '>= 2.3.5'
   config.gem 'mislav-will_paginate', :version => '~> 2.3.11', :lib => 'will_paginate', :source => 'http://gems.github.com'
   config.gem 'pluginaweek-state_machine', :version => '0.8.0', :lib => 'state_machine', :source => 'http://gems.github.com'
+  config.gem "faker", :version => '0.3.1'
 
   # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
