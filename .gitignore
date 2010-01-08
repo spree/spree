@@ -28,7 +28,8 @@ public/blank_iframe.html
 public/images
 public/javascripts
 public/stylesheets
-public/ckeditor
+public/ckeditora
+spree.gemspec
 spree_dev
 spree_test
 tmp
