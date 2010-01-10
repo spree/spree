@@ -29,7 +29,7 @@
     </th>
   </tr>
 <% @collection.each do |product| %>
-  <tr <%= 'style="color:red;"' unless product.deleted_at.nil? %> id="<%= dom_id product %>">
+  <tr <%= 'style="color:red;"' if product.deleted? %> id="<%= dom_id product %>">
     <%- locals = {:product => product} -%>
     <% hook :admin_products_index_rows, locals do %>
       <td><%= product.sku %></td>
@@ -38,11 +38,11 @@
     <% end %>
     <td class="actions">
       <% hook :admin_orders_index_row_actions, locals do %>
-        <%= link_to_edit product if product.deleted_at.nil?  %>
+        <%= link_to_edit product unless product.deleted?  %>
         &nbsp;
         <%= link_to_clone product %>
         &nbsp;
-        <%= link_to_delete product if product.deleted_at.nil?  %>
+        <%= link_to_delete product unless product.deleted?  %>
       <% end %>
     </td>
   </tr>

@@ -11,6 +11,9 @@ class VariantTest < Test::Unit::TestCase
       should "on_hand should be zero" do
         assert 0, @variant.on_hand
       end
+      should "not be deleted" do
+        assert !@variant.deleted?
+      end
     end
 
     context "with specified on_hand" do
@@ -129,5 +132,10 @@ class VariantTest < Test::Unit::TestCase
         assert @variant.available?
       end
     end
+  end
+
+  should 'be deleted if deleted_at is set' do
+    @variant = Variant.new(:deleted_at => Time.now)
+    assert @variant.deleted?
   end
 end

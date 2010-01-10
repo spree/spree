@@ -76,6 +76,13 @@ class Variant < ActiveRecord::Base
     self.cost_price.nil? ? 0 : (self.price - self.cost_price)
   end
 
+  # use deleted? rather than checking the attribute directly. this
+  # allows extensions to override deleted? if they want to provide
+  # their own definition.
+  def deleted?
+    deleted_at
+  end
+
   private
 
   # Ensures a new variant takes the product master price when price is not supplied

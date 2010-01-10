@@ -174,6 +174,13 @@ class Product < ActiveRecord::Base
     p
   end
 
+  # use deleted? rather than checking the attribute directly. this
+  # allows extensions to override deleted? if they want to provide
+  # their own definition.
+  def deleted?
+    deleted_at
+  end
+
   private
 
   def recalculate_count_on_hand

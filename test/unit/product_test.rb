@@ -40,6 +40,9 @@ class ProductTest < Test::Unit::TestCase
     should "not obscure deleted_at" do
       assert true, @product.deleted_at.nil?
     end
+    should "not be deleted" do
+      assert !@product.deleted?
+    end
     should "have a price" do
       assert_equal 19.99, @product.price
     end
@@ -276,5 +279,10 @@ class ProductTest < Test::Unit::TestCase
         assert_equal BigDecimal.new("1.11"), @product.reload.price
       end
     end
+  end
+
+  should 'be deleted if deleted_at is set' do
+    @product = Factory.build(:product, :deleted_at => Time.now)
+    assert @product.deleted?
   end
 end
