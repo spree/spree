@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ProductGroupTest < Test::Unit::TestCase
+class ProductGroupTest < ActiveSupport::TestCase
   context "ProductGroup" do
     setup do
       [Taxonomy, Variant, Product, Variant].each(&:delete_all)

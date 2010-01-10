@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ProductScopeTest < Test::Unit::TestCase
+class ProductScopeTest < ActiveSupport::TestCase
   context "ProductScope" do
     setup do
       @numbers = %w{one two three four five six}

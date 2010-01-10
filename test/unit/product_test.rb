@@ -18,7 +18,7 @@
 #
 require 'test_helper'
 
-class ProductTest < Test::Unit::TestCase
+class ProductTest < ActiveSupport::TestCase
 
   def self.should_pass_basic_tests
     subject { @product }

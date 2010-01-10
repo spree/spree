@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class VariantTest < Test::Unit::TestCase
+class VariantTest < ActiveSupport::TestCase
 
   context "A new Variant" do
     context "without inventory units" do

@@ -1,4 +1,4 @@
-class Test::Unit::TestCase
+class ActiveSupport::TestCase
   def self.should_redirect_to_thanks
     should_redirect_to("thank you page") { order_url(@order) }
   end

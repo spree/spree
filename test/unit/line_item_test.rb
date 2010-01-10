@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class LineItemTest < Test::Unit::TestCase
+class LineItemTest < ActiveSupport::TestCase
   context "LineItem instance" do
     setup { @line_item = Factory.build(:line_item, :quantity => 2, :price => 15.00) }
     subject { @line_item }
