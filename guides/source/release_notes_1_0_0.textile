@@ -164,7 +164,7 @@ WARNING. Using the block syntax to replace the +resource_controller+ before hook
 
 Using the block syntax is destructive (it removes any previously defined hooks) and is suitable only in situations where you need to make drastic changes to the checkout process.
 
-INFO. If you are writing a third party extension, be sure to also see the documentation for "adding and removing steps":#addingor-removing-steps.  There is an extra step to ensure that any new checkout steps added by your extension are also able to handle the special +edit_hook+ and +update_hook+ calls.  This will allow developers to further customize the step from within their site extension.
+INFO. If you are writing a third party extension, be sure to also see the documentation for "adding and removing steps":checkout.html#addingor-removing-steps.  There is an extra step to ensure that any new checkout steps added by your extension are also able to handle the special +edit_hook+ and +update_hook+ calls.  This will allow developers to further customize the step from within their site extension.
 
 h4. Checkout Partials
 
