@@ -3,22 +3,17 @@ require 'test_helper'
 class ProductGroupTest < ActiveSupport::TestCase
   context "ProductGroup" do
     setup do
-      [Taxonomy, Variant, Product, Variant].each(&:delete_all)
       @numbers = %w{one two three four five six}
-      @taxonomy = Taxonomy.find_or_create_by_name("test_taxonomy")
+      @taxonomy = Taxonomy.create!(:name => "test_taxonomy")
       @taxons = (0..1).map{|x|
-        Taxon.find_by_name("test_taxon_#{x}") ||
-          Taxon.create(:name => "test_taxon_#{x}", :taxonomy_id => @taxonomy.id)
+        Taxon.create!(:name => "test_taxon_#{x}", :taxonomy_id => @taxonomy.id)
       }
       @products = (0..4).map do |x|
-        unless pr = Product.find_by_name("test product #{@numbers[x]}")
-          pr = Factory(:product,
-            :price => (x+1)*10,
-            :name => "test product #{@numbers[x]}"
-          )
-          pr.taxons << @taxons[x%2]
-          pr.save
-        end
+        pr = Factory(:product,
+                     :price => (x+1)*10,
+                     :name => "test product #{@numbers[x]}")
+        pr.taxons << @taxons[x%2]
+        pr.save!
         pr
       end
     end
@@ -54,7 +49,7 @@ class ProductGroupTest < ActiveSupport::TestCase
 
       should "generate correct scopes" do
         assert @pg.product_scopes
-        
+
         assert_equal([
             {
               "product_group_id"=>nil,
@@ -239,12 +234,6 @@ class ProductGroupTest < ActiveSupport::TestCase
         assert_equal(@pg.order, "descend_by_created_at")
         assert_equal("products.created_at DESC", @pg.products.scope(:find)[:order])
       end
-    end
-
-    teardown do
-      Taxonomy.delete_all "name like 'test_%'"
-      Taxon.delete_all "name like 'test_%'"
-      @products && @products.each(&:destroy)
     end
   end
 end
