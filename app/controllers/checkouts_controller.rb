@@ -6,28 +6,28 @@ class CheckoutsController < Spree::BaseController
   before_filter :set_state
   before_filter :enforce_registration, :except => :register
   helper :users
-  
+
   resource_controller :singleton
   actions :show, :edit, :update
   belongs_to :order
 
   ssl_required :update, :edit
-    
-  # GET /checkout is invalid but we'll assume a bookmark or user error and just redirect to edit (assuming checkout is still in progress)           
+
+  # GET /checkout is invalid but we'll assume a bookmark or user error and just redirect to edit (assuming checkout is still in progress)
   show.wants.html { redirect_to edit_object_url }
-  
-  edit.before :edit_hooks  
-  delivery.edit_hook :load_available_methods 
+
+  edit.before :edit_hooks, :set_user
+  delivery.edit_hook :load_available_methods
   address.edit_hook :set_ip_address
 
   # customized verison of the standard r_c update method (since we need to handle gateway errors, etc)
-  def update  
+  def update
     load_object
 
-    # call the edit hooks for the current step in case we experience validation failure and need to edit again      
+    # call the edit hooks for the current step in case we experience validation failure and need to edit again
     edit_hooks
     @checkout.enable_validation_group(@checkout.state.to_sym)
-    
+
     before :update
 
     begin
@@ -36,9 +36,9 @@ class CheckoutsController < Spree::BaseController
         @order.update_totals!
         after :update
         next_step
-        if @checkout.completed_at 
+        if @checkout.completed_at
           return complete_checkout
-        end    
+        end
       else
         after :update_fails
         set_flash :update_fails
@@ -50,7 +50,7 @@ class CheckoutsController < Spree::BaseController
 
     render 'edit'
   end
-  
+
   def register
     load_object
     @user = User.new
@@ -68,25 +68,25 @@ class CheckoutsController < Spree::BaseController
     session[:order_token] ||= params[:order_token]
     parent_object.grant_access?(session[:order_token])
   end
-    
+
   private
-  
-  # Calls edit hooks registered for the current step  
-  def edit_hooks  
-    edit_hook @checkout.state.to_sym 
+
+  # Calls edit hooks registered for the current step
+  def edit_hooks
+    edit_hook @checkout.state.to_sym
   end
-  # Calls update hooks registered for the current step  
+  # Calls update hooks registered for the current step
   def update_hooks
-    update_hook @checkout.state.to_sym 
+    update_hook @checkout.state.to_sym
   end
-  
+
   def complete_checkout
     complete_order
     order_params = {:checkout_complete => true}
     session[:order_id] = nil
     redirect_to order_url(@order, {:checkout_complete => true, :order_token => @order.token})
   end
-    
+
   def object
     return @object if @object
     @object = parent_object.checkout
@@ -112,35 +112,35 @@ class CheckoutsController < Spree::BaseController
     else
       default_country = Country.find Spree::Config[:default_country_id]
     end
-    @states = default_country.states.sort                                
+    @states = default_country.states.sort
 
-    # prevent editing of a complete checkout  
+    # prevent editing of a complete checkout
     redirect_to order_url(parent_object) if parent_object.checkout_complete
   end
 
   def set_state
     object.state = params[:step] || Checkout.state_machine.initial_state(nil).name
   end
-  
-  def next_step      
+
+  def next_step
     @checkout.next!
     # call edit hooks for this next step since we're going to just render it (instead of issuing a redirect)
     edit_hooks
   end
-  
-  def load_available_methods        
+
+  def load_available_methods
     @available_methods = rate_hash
     @checkout.shipping_method_id ||= @available_methods.first[:id]
   end
-  
+
   def set_ip_address
     @checkout.update_attribute(:ip_address, request.env['REMOTE_ADDR'])
   end
-  
+
   def complete_order
     flash[:notice] = t('order_processed_successfully')
   end
-  
+
   def rate_hash
     @checkout.shipping_methods.collect do |ship_method|
       @checkout.shipment.shipping_method = ship_method
@@ -149,11 +149,18 @@ class CheckoutsController < Spree::BaseController
         :rate => number_to_currency(ship_method.calculate_cost(@checkout.shipment)) }
     end
   end
-  
+
   def enforce_registration
     return if current_user or Spree::Config[:allow_anonymous_checkout]
     return if Spree::Config[:allow_guest_checkout] and object.email.present?
     store_location
     redirect_to register_order_checkout_url(parent_object)
+  end
+
+  def set_user
+    if object.order.user.nil? && current_user
+      object.order.user = current_user
+      object.order.save
+    end
   end
 end
