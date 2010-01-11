@@ -26,18 +26,18 @@ Spree::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
 
-  config.gem "highline", :version => '>=1.4.0'
-  config.gem 'authlogic', :version => '>=2.1.2'
-  config.gem 'authlogic-oid', :lib => "authlogic_openid"
-  config.gem "activemerchant", :lib => "active_merchant", :version => '>=1.4.2'
-  config.gem 'activerecord-tableless', :lib => 'tableless', :version => '>=0.1.0'
-  config.gem 'less', :version => '>=1.2.20', :source => "http://gemcutter.org"
-  config.gem 'rsl-stringex', :lib => 'stringex', :source => "http://gems.github.com"
-  config.gem 'chronic' #required for whenever
-  config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
-  config.gem 'searchlogic', :version => '>= 2.3.5'
-  config.gem 'mislav-will_paginate', :version => '~> 2.3.11', :lib => 'will_paginate', :source => 'http://gems.github.com'
-  config.gem 'pluginaweek-state_machine', :version => '0.8.0', :lib => 'state_machine', :source => 'http://gems.github.com'
+  config.gem "highline", :version => '1.5.1'
+  config.gem 'authlogic', :version => '2.1.2'
+  config.gem 'authlogic-oid', :lib => "authlogic_openid", :version => '1.0.4'
+  config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.2'
+  config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
+  config.gem 'less', :version => '1.2.20'
+  config.gem 'stringex', :lib => 'stringex', :version => '1.0.3'
+  config.gem 'chronic', :version => '0.2.3'
+  config.gem 'whenever', :lib => false, :version => '0.3.7'
+  config.gem 'searchlogic', :version => '2.3.5'
+  config.gem 'will_paginate', :lib => 'will_paginate', :version => '2.3.11'
+  config.gem 'state_machine', :lib => 'state_machine', :version => '0.8.0'
   config.gem "faker", :version => '0.3.1'
 
   # Only load the plugins named here, in the order given. By default, all plugins

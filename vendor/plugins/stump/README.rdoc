@@ -1,0 +1,118 @@
+= stump
+
+* http://www.github.com/jeremymcanally/stump
+
+== DESCRIPTION:
+
+Stubbing and mocking that isn't painful, fanciful, and doesn't inspire any sort of contempt or bitterness.
+
+== FEATURES/PROBLEMS:
+
+* Stubbing right on the object.
+
+    # Returns 'hey!'
+    MyClass.stub!(:thing, :return => "hey!")
+    # Returns nil
+    your_object.stub!(:hello)
+
+* Pure stub objects.
+
+    my_stub = stub(:thing, :return => "dude, a thing!")
+    my_stub.thing   # => "dude, a thing!"
+
+* Mocking right on the object.
+
+    my_object = "things are fun"
+    my_object.mock!(:fancy, "ooo fancy!")
+    my_object.fancy # => "ooo fancy!"
+
+* Pure mock objects.
+
+    my_mock = mock(:hello, :return => "what fun is this?")
+    my_mock.hello   # => "what fun is this?"
+
+* Proxying objects.
+
+    class Greeting
+      def bonjour
+        "Bonjour!"
+      end
+    end
+
+    greet_me = Greeting.new
+    greet_me.proxy!(:bonjour)
+    greet_me.bonjour  # => "Bonjour!"
+
+    greet_you = Greeting.new
+    greet_you.proxy!(:bonjour)
+    
+    # finish test...
+    # ! Unmet expectations: #<Greeting:0x371d24> expected hello
+
+== SYNOPSIS:
+
+    # Stub class methods
+    MyClass.stub!(:thing, :return => "hey!")
+    # Stub method on object
+    your_object.stub!(:my_method)
+    # Stub method on object, requiring parameters
+    my_object.stub!(:other_method) do |arg1, arg2|
+      puts arg1
+      puts arg2
+    end
+  
+    # Mock method on object
+    MyClass.mock!(:my_method, :return => "hehe")
+    # Mock method on object, requiring parameters
+    my_obj.mock!(:hehe, :return => nil) do |arg1, arg2, arg3|
+      # Fun party!
+    end
+  
+    # Sets expectation it will receive a method, calling the real method
+    MyClass.proxy!(:the_method)
+    # Returns static value but still has side effects of real method call
+    MyClass.proxy!(:that_method, :return => "poop")
+    
+== NOTES:
+
+* Be sure you call +super+ in +teardown+ if you create your own +teardown+ methods.  Otherwise your mocks won't get verified!
+
+== REQUIREMENTS:
+
+* Test::Unit (batteries included with Ruby)
+
+== INSTALL:
+
+    $ gem sources -a http://gems.github.com
+    $ sudo gem install jeremymcanally-stump
+
+
+== ACKNOWLEDGEMENTS:
+
+* Thanks to Jim Weirich for Flexmock, David Chelmisky et. al. for RSpec's mocking stuff, and Brian Takita for rr.  All of those things fed into stump.
+* BIG thanks to Nathan Sutton (fowlduck) for helping me work through how to get +proxy!+ to work with ActiveRecord/method_missing.
+
+== LICENSE:
+
+(The MIT License)
+
+Copyright (c) 2008 Jeremy McAnally
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
