@@ -23,7 +23,7 @@ Every store has something to sell. In Spree, that <i>something</i> is a product 
 
 h4. What is a Product?
 
-A Product describes something that is for sale, be it a physical item one ships, or instantly downloadable goods, or a service that is neither shipped nor downloaded. These are all collectively known as "Products" in the Spree world. Products can have variations such as different colors, styles, sizes, and sometimes a combination of two or more such varying factors. Sometimes its difficult for new shop administrators to determine what should be entered as a product and what should be keyed as a variation of a product. The best way to decide this is to ask yourself, "What are my unique goods irrespective of variations?" A Product in the spree store should represent something conceptually unique. A product has these key attributes
+A Product describes something that is for sale, be it a physical item one ships, or instantly downloadable goods, or a service that is neither shipped nor downloaded. These are all collectively known as "Products" in the Spree world. Products can have variations such as different colors, styles, sizes, and sometimes a combination of two or more such varying factors. Sometimes it's difficult for new shop administrators to determine what should be entered as a product and what should be keyed as a variation of a product. The best way to decide this is to ask yourself, "What are my unique goods irrespective of variations?" A Product in the spree store should represent something conceptually unique. A product has these key attributes
 
 |_. Attribute|_.Purpose|
 |Name|short name for the product|
@@ -61,17 +61,16 @@ You may be asking yourself, "If the Product model doesn't have fields for price,
 
 The answer is through the use of a "Master Variant," which is generally <i>tucked away</i> as far as many site administrators are concerned.  This special variant record is always created with each new product record, so there is a direct one-to-one relationship between a product and a variant with the +is_master+ flag set to true.  
 
-NOTE: You only need to be cognizant about the master variant if you begin to manage products and inventory programatically. The administration interface keeps all this nitty gritty transparent to the end-user. If you're looking to get your store set up quickly through the administration interface, feel free to skip to the next section as it is not necessary to know how the master variants work to use the administration interface.
+NOTE: You only need to be cognizant of the master variant if you begin to manage products and inventory programatically. The administration interface keeps all of this nitty-gritty transparent to the end-user. If you're looking to get your store set up quickly through the administration interface, feel free to skip to the next section as it is not necessary to know how the master variants work to use the administration interface.
 
-The master variant will not show up in the +Product.variants+ array and plays no role in +Product.has_variants?+  For all intent and purposes, the master variant is transparent and you can access all the fields of the master variant instance as though it were a part of the Product model itself.  That is, 
+The master variant will not show up in the +Product.variants+ array and plays no role in +Product.has_variants?+  For all intents and purposes, the master variant is transparent and you can access all the fields of the master variant instance as though it were a part of the Product model itself.  That is, 
 
 	+Product.price == Product.master.price => true+<br/>
 	+Product.sku == Product.master.sku => true+
 
-When a Product has no option types, values, and variants assigned to it, then the product's price, SKU, physical size and weight, and inventory units are all managed through this Master Variant.  As soon as the first variant with option values is assigned to a product, the +on_hand+ of the "master variant" is set to zero and henceforth, all inventory levels are managed within each Variant of the Product.
+When a Product has no option types, values, or variants assigned to it, then the product's price, SKU, physical size, weight, and inventory units are all managed through this Master Variant.  As soon as the first variant with option values is assigned to a product, the +on_hand+ of the "master variant" is set to zero and henceforth, all inventory levels are managed within each Variant of the Product.
 
-The other thing to note about the Master Variant.  When a new Variant is associated with a Product and the +Variant.price+ field is left blank, then the +Product.master.price+ will be assigned as the new Variant's price,
-thus reducing repetitive keying during data entry.
+The other thing to note about the Master Variant:  When a new Variant is associated with a Product and the +Variant.price+ field is left blank, the +Product.master.price+ will be assigned as the new Variant's price, thus reducing repetitive keying during data entry.
 
 
 h4. Inventory Units

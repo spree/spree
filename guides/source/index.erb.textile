@@ -3,12 +3,15 @@ h2. Spree guides
 
 These guides are designed to make you immediately productive with Spree, and to help you understand how all of the pieces fit together. They are written by the authors of Spree as well as members of the Spree community.
 
+* "Edge version":http://spreecommerce.com/documentation - based on the current Spree "master branch":http://github.com/railsdog/spree/tree/master
+* "Current Release version":http://spreecommerce.com/documentation/legacy/0_9_x - based on Spree 0.9.x
+
 <% end %>
 
 <% content_for :index_section do %>
 <div id="subCol">
   <dl>
-    <dd class="warning">This documentation is based on the "edge" version of Spree.  Some of the features described in this documentation are not yet available in an official Spree release (although they will likely be available soon in the next coming release.)</dd>
+    <dd class="warning">This documentation is for the "edge" version of Spree and may refer to features that are not currently available in an officially released version.  Please see the "legacy":http://spreecommerce.com/documentation/legacy/ documentation for officially released versions.</dd>
   </dl>
 </div>
 
