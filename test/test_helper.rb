@@ -2,6 +2,7 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
 require "authlogic/test_case"
+require File.expand_path(File.dirname(__FILE__) + "/../vendor/extensions/payment_gateway/test/mocks/authorize_net_cim_mock")
 
 class ActiveSupport::TestCase
   self.use_transactional_fixtures = true
@@ -83,6 +84,15 @@ def add_capturable_payment(order)
   CreditcardTxn.create(:creditcard_payment => payment, :amount => order.total, :txn_type => CreditcardTxn::TxnType::AUTHORIZE, :response_code => 12345)
 
   order.reload
+end
+
+# Sets up an order with state 'new' with completed checkout and authorized payment
+def create_new_order
+  create_complete_order
+  @checkout.next!
+  @checkout.next!
+  @checkout.creditcard_attributes = Factory.attributes_for(:creditcard)
+  @checkout.next!
 end
 
 # useful method for functional tests that require an authenticated user

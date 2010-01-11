@@ -119,6 +119,9 @@ en-US:
       address:
         one: Address
         other: Addresses
+      cheque_payment:
+        one: Cheque Payment
+        other: Cheque Payments
       country:
         one: Country
         other: Countries
@@ -248,6 +251,7 @@ en-US:
   cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: capture
   card_code: "Card Code"
+  card_details: "Card details"
   card_number: "Card Number"
   card_type_is: Card type is
   cart: Cart
@@ -265,6 +269,7 @@ en-US:
     complete: Complete
     delivery: Delivery
     payment: Payment
+  cheque: Cheque
   city: City
   clone: Clone
   code: Code
@@ -295,6 +300,7 @@ en-US:
   create_a_new_account: "Create a new account"
   create_user_account: Create User Account
   created_successfully: "Created Successfully"
+  credit: Credit
   credit_card: "Credit Card"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
@@ -307,6 +313,7 @@ en-US:
   customer_details: "Customer Details"
   customer_search: "Customer Search"
   date_range: "Date Range"
+  debit: Debit
   delete: Delete
   depth: Depth
   description: Description
@@ -440,12 +447,12 @@ en-US:
   new_billing_integration: New Billing Integration
   new_category: "New category"
   new_coupon: New Coupon
-  new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
   new_image: "New Image"
   new_option_type: "New Option Type"
   new_option_value: "New Option Value"
   new_order: "New Order"
+  new_payment: "New Payment"
   new_product: "New Product"
   new_product_group: New Product Group
   new_property: "New Property"

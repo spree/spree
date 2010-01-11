@@ -1,0 +1,68 @@
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
+
+<h2><%= t("activerecord.models.#{@object.class.to_s.underscore}.one") %></h2>
+
+<%=error_messages_for :creditcard_payment %>
+<% form_for(object, :url => object_url, :html => { :method => :put}) do |payment_form| %>
+<%= hidden_field_tag :payment_type, object.class.to_s.underscore %>
+
+  <p>
+    <label><%= t("amount") %>:</label></td>
+    <%= object.amount %>
+  </p>
+
+  <% if object.class == CreditcardPayment %>
+  <fieldset>
+    <legend><%= t('creditcard') %></legend>
+
+    <table class="index">
+      <tr>
+        <th colspan="6"><%= t('card_details') %></th>
+      </tr>
+      <tr>
+        <td><label><%= t("card_number") %>:</label></td>
+        <td>
+          XXXX-XXXX-XXXX-<%= object.creditcard.last_digits %>
+        </td>
+        <td><label><%= t("expiration") %>:</label></td>
+        <td>
+          <%= object.creditcard.month %>/<%= object.creditcard.year %>
+        </td>
+        <td><label><%= t("card_code") %>:</label></td>
+        <td>
+          <%= object.creditcard.verification_value %>
+        </td>
+      </tr>
+      <tr>
+        <td><label><%= t("maestro_or_solo_cards") %>:</label></td>
+        <td>
+          <%= object.creditcard.issue_number %>
+        </td>
+        <td><label><%= t('start_date') %>:</label></td>
+        <td colspan="3">
+          <%= object.creditcard.start_month %>/<%= object.creditcard.start_year %>
+        </td>
+      </tr>
+    </table>
+
+    <% payment_form.fields_for :order do |order_form|  %>
+      <% order_form.fields_for :checkout do |checkout_form|  %>
+
+        <% checkout_form.fields_for :bill_address do |ba_form|  %>
+          <%= render :partial => "admin/checkouts/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
+        <% end %>
+
+      <% end %>
+    <% end %>
+
+  </fieldset>
+  <% end %>
+  
+  <p class="form-buttons">
+    <%= button t('continue') %>
+  </p>
+
+<% end %>
+
+<%#= link_to t("capture").titleize, capture_admin_order_payment_url(@order, @creditcard_payment), :confirm => t('are_you_sure_you_want_to_capture') if object.can_capture?  %> &nbsp;
+

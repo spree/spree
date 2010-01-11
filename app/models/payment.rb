@@ -3,6 +3,8 @@ class Payment < ActiveRecord::Base
   after_update :check_payments
   after_destroy :check_payments
 
+  validate :amount_is_valid_for_outstanding_balance_or_credit
+
   private
   def check_payments
     return unless order.checkout_complete && can_capture?
@@ -23,4 +25,17 @@ class Payment < ActiveRecord::Base
       order.pay!
     end
   end
+  
+  def amount_is_valid_for_outstanding_balance_or_credit
+    if amount < 0
+      if amount.abs > order.outstanding_credit
+        errors.add(:amount, "Is greater than the credit owed (#{order.outstanding_credit})")
+      end
+    else
+      if amount > order.outstanding_balance
+        errors.add(:amount, "Is greater than the outstanding balance (#{order.outstanding_balance})")
+      end
+    end    
+  end
+  
 end

@@ -85,12 +85,12 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :mail_settings
     admin.resource :inventory_settings
     admin.resources :google_analytics
-    admin.resources :orders, :has_many => [:adjustments, :payments, :creditcards, :line_items], :has_one => :checkout, :member => {:fire => :put, :resend => :post, :history => :get} do |order|
+    admin.resources :orders, :has_many => [:adjustments, :creditcards, :line_items], :has_one => :checkout, :member => {:fire => :put, :resend => :post, :history => :get} do |order|
       order.resources :shipments, :member => {:fire => :put}
       order.resources :return_authorizations, :member => {:fire => :put}
     end
     admin.resources :orders do |order|
-      order.resources :creditcard_payments, :member => {:capture => :get}
+      order.resources :payments#, :member => {:capture => :get}
     end
     admin.resource :general_settings
     admin.resources :taxonomies, :member => { :get_children => :get } do |taxonomy|

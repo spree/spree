@@ -6,4 +6,12 @@ bogus_test:
   test_mode: true
   active: true
   type: Gateway::Bogus
+authorize_net_cim_test:
+  name: Authorize.net CIM Test
+  description: Authorize.net CIM Gateway for test.
+  environment: test
+  server: test
+  test_mode: true
+  active: false
+  type: Gateway::AuthorizeNetCim
  

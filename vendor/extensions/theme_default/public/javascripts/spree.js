@@ -16,3 +16,18 @@ jQuery(document).ajaxStart(function(){
 jQuery(document).ajaxStop(function(){
   jQuery("#progress").slideUp();
 });
+
+jQuery.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
+
+// Apply to individual radio button that makes another element visible when checked
+jQuery.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
+  if(!this.get(0)){ return  }
+  showValue = this.get(0).value;
+  radioGroup = $("input[name='" + this.get(0).name + "']");
+  radioGroup.each(function(){
+    $(this).click(function(){
+      $(dependentElementSelector).visible(this.checked && this.value == showValue)
+    });
+    if(this.checked){ this.click() }
+  });
+}

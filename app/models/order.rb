@@ -17,6 +17,7 @@ class Order < ActiveRecord::Base
 
   has_many :payments,            :extend => Totaling
   has_many :creditcard_payments, :extend => Totaling
+  has_many :creditcards, :through => :creditcard_payments, :uniq => true
 
   has_one :checkout
   has_one :bill_address, :through => :checkout
@@ -316,8 +317,25 @@ class Order < ActiveRecord::Base
     "#{address.firstname} #{address.lastname}" if address
   end
 
+
   def out_of_stock_items
     @out_of_stock_items
+  end
+
+  def outstanding_balance
+    [0, total - payments.total].max
+  end
+  
+  def has_balance_outstanding?
+    outstanding_balance > 0
+  end
+  
+  def outstanding_credit
+    [0, payments.total - total].max
+  end
+  
+  def has_credit_outstanding?
+    outstanding_credit > 0
   end
 
   private

@@ -1,0 +1,9 @@
+<% f.fields_for :order do |order_form|  %>
+  <% order_form.fields_for :checkout do |checkout_form|  %>
+
+    <% checkout_form.fields_for :bill_address do |ba_form|  %>
+      <%= render :partial => "admin/checkouts/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
+    <% end %>
+
+  <% end %>
+<% end %>

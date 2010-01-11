@@ -1,8 +1,10 @@
 <div class='toolbar'>
   <ul class='actions'>
+<% if @order.has_balance_outstanding? %>
     <li>
-      <%= button_link_to t("new_credit_card_payment"), new_admin_order_creditcard_payment_url(@order), :icon => 'add' %>
+      <%= button_link_to t("new_payment"), new_admin_order_payment_url(@order), :icon => 'add' %>
     </li>
+<% end %>
   </ul>
   <br class='clear' />
 </div>
@@ -20,10 +22,9 @@
     <tr>
       <td><%= payment.created_at.to_s(:date_time24) %></td>
       <td><%= number_to_currency(payment.amount) %></td>
-      <td><%= payment.class.to_s %></td>
-      <!-- TODO: don't assume credit card, make it possible to edit other kinds of payments -->
+      <td><%= payment.class.to_s.underscore.humanize %></td>
       <td>
-        <%= link_to_with_icon 'edit', t('edit'), edit_admin_order_creditcard_payment_url(@order, payment) %>
+        <%= link_to_with_icon 'edit', t('edit'), edit_admin_order_payment_url(@order, payment) %>
       </td>
     </tr>
   <% end %>

@@ -1,0 +1,2 @@
+class ChequePayment < Payment
+end

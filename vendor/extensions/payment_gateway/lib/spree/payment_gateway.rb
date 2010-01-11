@@ -1,9 +1,13 @@
 module Spree
   module PaymentGateway    
+    
+    def self.included(base)
+      base.named_scope :with_payment_profile, :conditions => "gateway_customer_profile_id IS NOT NULL AND gateway_payment_profile_id IS NOT NULL"
+    end
+    
     def authorize(amount)
-      gateway = payment_gateway       
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
-      response = gateway.authorize((amount * 100).to_i, self, gateway_options)      
+      response = payment_gateway.authorize((amount * 100).to_i, self, gateway_options)      
       gateway_error(response) unless response.success?
       
       # create a creditcard_payment for the amount that was authorized
@@ -17,8 +21,14 @@ module Spree
     end
 
     def capture(authorization)
-      gw = payment_gateway
-      response = gw.capture((authorization.amount * 100).to_i, authorization.response_code, minimal_gateway_options)
+      if payment_gateway.payment_profiles_supported?
+        # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
+        # so supply the authorization itself as well as the creditcard, rather than just the authorization code
+        response = payment_gateway.capture(authorization, self, minimal_gateway_options)
+      else
+        # Standard ActiveMerchant capture usage
+        response = payment_gateway.capture((authorization.amount * 100).to_i, authorization.response_code, minimal_gateway_options)
+      end
       gateway_error(response) unless response.success?          
       creditcard_payment = authorization.creditcard_payment
       # create a transaction to reflect the capture
@@ -31,8 +41,8 @@ module Spree
 
     def purchase(amount)
       #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
-      gateway = payment_gateway 
-      response = gateway.purchase((amount * 100).to_i, self, gateway_options) 
+      response = payment_gateway.purchase((amount * 100).to_i, self, gateway_options) 
+      
       gateway_error(response) unless response.success?
       
       
@@ -43,6 +53,20 @@ module Spree
         :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::PURCHASE
+      )
+    end
+    
+    def credit(amount, transaction)
+      response = payment_gateway.credit((amount * 100).to_i, transaction.response_code, minimal_gateway_options)
+      gateway_error(response) unless response.success?
+
+      # create a creditcard_payment for the amount that was purchased
+      creditcard_payment = checkout.order.creditcard_payments.create!(:amount => -amount, :creditcard => self)
+      # create a transaction to reflect the purchase
+      creditcard_payment.creditcard_txns << CreditcardTxn.new(
+        :amount => -amount,
+        :response_code => response.authorization,
+        :txn_type => CreditcardTxn::TxnType::CREDIT
       )
     end
 
@@ -95,9 +119,8 @@ module Spree
       self.class.type?(number)
     end
 
-    # instantiates the selected gateway and configures with the options stored in the database
     def payment_gateway
-			Gateway.find(:first, :conditions => {:active => true, :environment => ENV['RAILS_ENV']}) 
+      @payment_gateway ||= Gateway.current
     end  
   end
 end
