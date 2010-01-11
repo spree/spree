@@ -45,7 +45,7 @@ In order to create a new Spree application you will need to run +spree <app-name
 h4. Prerequisites
 
 # Rails 2.3.x 
-# Ruby Gems (1.2.0 is suggested, other earlier versions may or may not work)
+# Ruby Gems 1.3.5 or greater
 # Spree gem dependencies (run +rake gems+ to check, +rake gems:install+ to install)
 
 INFO. There are also a few gem dependencies needed to run the tests (which are automatically run when building the gem.)  Use +rake gems:install RAILS_ENV=test+ to install these.
@@ -62,17 +62,25 @@ The tests simply will not not run without these two databases configured and you
 
 h4. Performing the Actual Build
 
-Use the following command to build and install the gem
+First, you should create/update the gemspec
 
 <shell>
-rake spree:gem:install
+rake gemspec  
 </shell>
 
-If you are on a Unix style system you may need to use sudo instead
+Use the following command to build the gem
 
 <shell>
-sudo rake spree:gem:install
+rake build
 </shell>
+
+Now you can install the gem 
+
+<shell>
+sudo gem install pkg/spree-0.9.99.gem  
+</shell>
+
+_NOTE: The exact version of the gem will correspond to whatever version reflects the state of the edge code at the time you build it._
 
 h4. Considerations
 
