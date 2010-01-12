@@ -1,0 +1,295 @@
+h2. REST API
+
+This guide covers the inner working of Spree's RESTful API.  It assumes a basic understanding of the principles of "REST":http://en.wikipedia.org/wiki/Representational_State_Transfer. More specifically, the guide will provide information on the following:
+
+* The various resources available through the API
+* How to make a basic API call
+* Specific examples on how to access certain resources
+* Tools and other suggestions for working with the API
+
+endprologue.
+
+h3. Overview
+
+The REST API is designed to give developers a convenient way to access data contained within Spree.  With a standard read/write interface to store data, it is now very simple to write third party applications (ex. iPhone) that can talk to Spree.  It is also possible to build sophisticated "middleware":http://en.wikipedia.org/wiki/Middleware applications that can serve as a bridge between Spree and a warehouse or inventory system.   
+
+h3. Available Resources
+
+INFO. The API currently only supports a limited number of resources.  The current list reflects the needs of paying clients who funded the development of the API.  The list will be expanded soon to cover additional resources.  Adding more resources is simply a matter of making the time for testing and investigating possible security implications. 
+
+Spree currently supports RESTful access to the following resources:
+
+* +Order+
+* +LineItem+  
+* +Shipment+
+
+h3. Making an API Call
+
+h4. Authentication
+
+You will need an API key to authenticate. These keys can be generated on the user edit screen within the admin interface.
+Your requests should include this key in the +X-SpreeAPIKey+ header.
+
+<shell>
+curl -H "Content-Type:application/json" 
+-H "Accept:application/json" 
+-H "X-SpreeAPIKey: YOUR_KEY" http://example.com/api/orders  
+</shell>
+
+The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.  
+
+NOTE. The admin role is fairly "powerful" by default.  Consider creating a new role and assign a more limited set of permissions.  This way you can create a user and corresponding token that has more narrow permissions (ex. read only access to orders.)
+
+h4. HTTP Methods
+
+Your requests must use the correct HTTP method.
+
+* GET for listing and viewing individual resources
+* POST for creating resources
+* PUT for updating existing resources
+* DELETE for deleting resources
+
+h4. Supported Formats
+
+Currently the API supports only the "JSON":http://www.json.org/ format.  
+
+INFO. Supporting the XML format should not be difficult since Rails supports it out of the box.  Volunteers who are willing to provide a patch (and tests) for XML support are encouraged to do so.
+
+h4. Searching
+
+All list actions support filtering using Search Logic parameters. For example, to view all shipments that are ready to ship and that were created since the date 2010-01-01:
+
+<shell>
+/api/shipments?search[state]=ready_to_ship&search[created_at_greater_than]=2010-01-01
+</shell>
+
+NOTE: Use +--globoff+ when passing SL params through Curl to avoid syntax issues.
+
+For more details on parameters syntax please see the Search Logic "README":http://github.com/binarylogic/searchlogic.
+
+h4. Creating and Updating Resources
+
+Parameters should be supplied in the request body as a JSON encoded hash of attributes.
+
+Successfully creating a resource will result in a +201 Created+ response code while updating will result in +200 OK+.
+If creating or updating a resource fails the result will be a +422 Unprocessable Entity+ response and a list of errors.  For example:
+
+<shell>
+{"errors": ["First Name can't be blank","Last Name can't be blank"]}
+</shell>
+
+h3. API Reference
+
+h4. Orders
+
+h5. List Orders 
+
+*Request:* 
+
+<shell>GET /api/orders</shell>
+
+*Response:*
+
+<shell>
+[
+  { order: { ... } },
+  { order: { ... } },
+  ...
+]
+</shell>
+
+h5. View Order
+
+*Request:* 
+
+<shell>
+GET /api/orders/{order_id}
+</shell>
+
+*Response:*
+
+<shell>
+{
+  order: {
+    ...
+  }
+}
+</shell>
+
+h5. Line Items for an Order
+
+*Request:*
+
+<shell>
+GET /api/orders/{order_id}/line_items
+</shell>
+
+*Response:*
+
+<shell>
+[
+  { line_item: { ... } },
+  { line_item: { ... } },
+  ...
+]
+</shell>
+
+h5. Create a Line Item on an Order
+
+*Request:* 
+
+<shell>
+POST /api/orders/{order_id}/line_items
+...
+</shell>
+
+*Response:*
+
+<shell>
+HTTP Status: 201 Created
+Location: http://example.com/api/orders/{order_id}/line_items/{new_line_item_id}
+</shell>
+
+h5. Update a Line Item 
+
+*Request:* 
+
+<shell>
+PUT /api/orders/{order_id}/line_items/{line_item_id}
+...
+</shell>
+
+*Response:*
+
+<shell>
+HTTP Status: 200 OK
+</shell>
+
+h5. Shipments for an Order 
+
+*Request:* 
+
+<shell>
+GET /api/orders/{order_id}/shipments
+</shell>
+
+*Response:*
+
+<shell>
+[
+  { shipment: { ... } },
+  { shipment: { ... } },
+  ...
+]  
+</shell>
+
+h5. Create a Shipment for an Order
+
+*Request:* 
+
+<shell>
+POST /api/orders/{order_id}/shipments
+...
+</shell>
+
+*Response:*
+
+<shell>
+HTTP Status: 201 Created
+Location: http://example.com/api/orders/{order_id}/shipments/{new_shipment_id}  
+</shell>
+
+h5. Fire State Event 
+
+*Request:* 
+
+<shell>
+PUT /api/orders/{order_id}/event?e={event_name}
+</shell>
+
+*Response (success):*
+
+<shell>
+HTTP Status: 200 OK
+</shell>
+
+*Response (failure):*
+
+<shell>
+HTTP Status: 422
+</shell>
+
+h4. Shipments 
+
+h5. List Shipments
+
+*Request:* 
+
+<shell>
+GET /api/shipments
+</shell>
+
+*Response:*
+
+<shell>
+[
+  { shipment: { ... } },
+  { shipment: { ... } },
+  ...
+]
+</shell>
+
+h5. View Shipment
+
+*Request:* 
+
+<shell>
+GET /api/shipments/{shipment_id}
+</shell>
+
+*Response:*
+
+<shell>
+{
+  shipment: { ... }
+}  
+</shell>
+
+h5. Update Shipment
+
+*Request:* 
+
+<shell>
+PUT /api/shipments/{shipment_id}
+...
+</shell>
+
+*Response:*
+
+<shell>
+HTTP Status: 200 OK
+</shell>
+
+h5. Fire State Event 
+
+*Request:* 
+
+<shell>
+PUT /api/shipments/{shipment_id}/event?e={event_name}
+</shell>
+
+*Response (Success):*
+
+<shell>
+HTTP Status: 200 OK
+</shell>
+
+*Response (Failure):*
+
+<shell>
+HTTP Status: 422
+</shell>
+
+h3. Tools and Suggestions
+
+[TODO]
