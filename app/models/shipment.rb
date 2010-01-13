@@ -12,6 +12,7 @@ class Shipment < ActiveRecord::Base
 
   attr_accessor :special_instructions
   accepts_nested_attributes_for :address
+  accepts_nested_attributes_for :inventory_units
 
   def shipped=(value)
     return unless value == "1" && shipped_at.nil?

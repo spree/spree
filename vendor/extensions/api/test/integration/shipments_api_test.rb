@@ -33,13 +33,32 @@ class ShipmentsApiTest < ActionController::IntegrationTest
     context "update" do
       context "with valid attributes" do
         setup do
-          @shipment = Factory(:shipment)
-          put_with_key "/api/shipments/#{@shipment.id}", {:shipment => {:tracking => 'tracking-code'}}.to_json
+          #@shipment = Factory(:shipment)
+          create_complete_order
+          @order.complete!
+          @shipment = @order.shipment
+
+          @inventory_unit = @shipment.inventory_units.first
+          
+          attributes = {
+            :shipment => {
+              :tracking => 'tracking-code',
+              :inventory_units_attributes => [
+                { :id => @inventory_unit.id, :variant_id => 1, :state => 'shipped' }
+              ]
+            }
+          }
+          put_with_key "/api/shipments/#{@shipment.id}", attributes.to_json
         end
         should_respond_with :success
         should "update the tracking code" do
           @shipment.reload
           assert_equal 'tracking-code', @shipment.tracking
+        end
+        should "update the variant_id and state of the first inventory_unit" do
+          @inventory_unit.reload
+          assert_equal 1, @inventory_unit.variant_id
+          assert_equal 'shipped', @inventory_unit.state
         end
       end
       context "with invalid attributes" do
