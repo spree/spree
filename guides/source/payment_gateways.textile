@@ -159,11 +159,41 @@ We've noticed that sometimes it takes a while for a crucial Active Merchant patc
 
 Lets say there is a bug with the +authorize+ method.  You could simply provide an implementation of the gateway that has the patched version of the +authorize+ method and then delegates to the Active Merchant class for everything else (since that works just fine.)
 
+h5. Gateways supporting payment profiles
+
+Spree currently supports the Authorize.net CIM gateway or Customer Information Manager through ActiveMerchant.
+CIM allows card details to be stored securely on Authorize.net's servers along with other customer details. See "www.authorize.net/solutions/merchantsolutions/merchantservices/cim/":http://www.authorize.net/solutions/merchantsolutions/merchantservices/cim/
+ for details.
+ 
+Although CIM makes it possible for customers to not have to re-enter their card details on subsequent visits, this isn't supported in Spree yet. Spree does support taking additional payments from the card the customer used in the admin interface in the event there is an outstanding balance on the order. 
+
+The ActiveMerchant class AuthorizeNetCimGateway doesn't support the usual *authorise*, *purchase* and *capture* methods since with this gateway it is a 2 step process. Instead these methods are implemented in the corresponding Spree gateway class. First a customer profile is created and the id strings provided by the gateway are stored on the creditcard in the columns *gateway_customer_profile_id* and *gateway_payment_profile_id*. Then a transaction can be made using those ids rather than the the creditcard details.
+
+Gateways supporting payment profiles must override the following method:
+
+<shell>
+  def payment_profiles_supported?
+    true
+  end
+</shell>
+
+
+Note that capture is called differently for gateways supporting payment profiles since you will need access to the creditcard:
+
+<shell>
+  def capture(authorization, creditcard, gateway_options)
+    ...
+  end
+</shell>
+
 h5. Additional Functionality Beyond Active Merchant
 
 Another benefit of the architecture is that it makes it possible for Spree to provide additional common functionality that was not envisioned by Active Merchant.  Specifically, it is possible to provide an abstraction for storing credit card profiles to be used with recurring payments.  There's a good reason for Active Merchant to not care about this functionality.  Its designed for people who just want to drop a single gateway provider into their application.  Most programmers don't need three different gateways at once.  Spree is a specialized use case.  Its providing multiple gateways for you to choose from and so its desirable to have a standard method for operations such as this.
 
 INFO. Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
+
+h5. Ability to "Patch" Active Merchant Gateways
+
 
 h3. Testing Considerations
 
