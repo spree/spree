@@ -9,14 +9,15 @@ namespace :db do
     version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
     # spree 
     ActiveRecord::Migrator.migrate("#{SPREE_ROOT}/db/migrate/", version)
-    # extensions
+    # core extensions
     Spree::Extension.descendants.select{|ext| ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
       ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
-    end    
-    Spree::Extension.descendants.select{|ext| !ext.root.starts_with?(SPREE_ROOT)}.each do |extension|
+    end
+    # rest of extensions (except site)    
+    Spree::Extension.descendants.select{|ext| !ext.root.starts_with?(SPREE_ROOT) and not ext.name == "SiteExtension" }.each do |extension|
       ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
     end    
-    
+    # everything else (basically the site extension if any)
     Spree::Extension.descendants.each do |extension|
       ActiveRecord::Migrator.migrate("#{extension.root}/db/migrate/", version)
     end    
