@@ -66,8 +66,12 @@ class Product < ActiveRecord::Base
   named_scope :on_hand,     { :conditions => "products.count_on_hand > 0" }
   named_scope :not_deleted, { :conditions => "products.deleted_at is null" }
   named_scope :available,   lambda { |*args| { :conditions => ["products.available_on <= ?", args.first || Time.zone.now] } }
-  named_scope :group_by_products_id, { :group => "products.id" }
-
+  
+  if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
+    named_scope :group_by_products_id, { :group => "products." + Product.column_names.join(", products.") }
+  else
+    named_scope :group_by_products_id, { :group => "products.id" }
+  end
   # ----------------------------------------------------------------------------------------------------------
   #
   # The following methods are deprecated and will be removed in a future version of Spree
