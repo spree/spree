@@ -105,7 +105,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource  :tax_settings
     admin.resources :calculators
     admin.resources :product_groups
-    admin.resources :billing_integrations
+    admin.resources :billing_integrations    
+    admin.resources :trackers
   end
 
   map.connect ':controller/:action/:id.:format'

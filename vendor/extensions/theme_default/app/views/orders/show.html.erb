@@ -4,9 +4,6 @@
   <% if params.has_key? :checkout_complete %>
   	<br/><br/>
   	<h3><%= t('thank_you_for_your_order') %></h3>         
-  	<% if Spree::Config[:google_analytics_id] and not %w{development test}.include? RAILS_ENV %>
-  	  <%= render :partial => "orders/google_order", :locals => {:order => @order} %>
-  	<% end %>
   <% else %>
   	| <%= link_to t('my_account'), user_path(current_user) if current_user%>
   <% end %>

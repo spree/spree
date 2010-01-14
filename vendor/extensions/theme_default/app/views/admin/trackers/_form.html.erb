@@ -1,0 +1,26 @@
+<table>
+	<tr>
+    <td><label><%=t("google_analytics_id")%></label></td>
+    <td><%= text_field :tracker, :analytics_id, {"style" => "width:200px"} %></td>
+  </tr>
+  <tr>
+    <td><label><%=t("environment")%></label></td>
+    <td>
+      <%= collection_select(:tracker, :environment, Configuration.configurations.keys, :to_s, :titleize, {}, {:id => "tracker-env"}) %>
+    </td>
+  </tr>
+  <tr>
+    <td><label><%= t("active") %></label></td>
+    <td>
+      <label class="sub">
+        <%= radio_button(:tracker, :active, true ) %>
+        <%= t("yes") %>
+      </label> &nbsp; 
+      <label class="sub">
+        <%= radio_button(:tracker, :active, false ) %>
+        <%= t("no") %>
+      </label>
+    </td>
+  </tr>
+  <%= hook :additional_tracker_fields %>
+</table>

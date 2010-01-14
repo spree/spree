@@ -83,7 +83,8 @@ class CheckoutsController < Spree::BaseController
   def complete_checkout
     complete_order
     order_params = {:checkout_complete => true}
-    session[:order_id] = nil
+    session[:order_id] = nil           
+    flash[:commerce_tracking] = "Track Me in GA"
     redirect_to order_url(@order, {:checkout_complete => true, :order_token => @order.token})
   end
 
@@ -120,6 +121,7 @@ class CheckoutsController < Spree::BaseController
 
   def set_state
     object.state = params[:step] || Checkout.state_machine.initial_state(nil).name
+    flash[:analytics] = "/checkout/#{object.state}"
   end
 
   def next_step

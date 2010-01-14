@@ -1,0 +1,39 @@
+<%= render :partial => 'admin/shared/configuration_menu' %>
+
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_tracker"), new_object_url, :icon => 'add'  %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+<h1><%= t("analytics_trackers") %></h1>
+
+<table class="index">
+  <thead>
+    <% hook :admin_trackers_index_headers do %>         
+      <th><%= t(:google_analytics_id) %></th>
+      <th><%= t("environment") %></th>
+      <th><%= t("active") %></th>     
+    <% end %>
+    <th><%= t("action") %></th>
+  </thead>
+  <tbody>
+    <% @trackers.each do |tracker|%>
+      <tr id="<%= dom_id tracker %>">     
+        <%- locals = {:tracker => tracker} -%>
+        <% hook :admin_trackers_index_rows, locals do %>        
+          <td><%= tracker.analytics_id %></td>
+          <td><%= tracker.environment.to_s.titleize %></td>
+          <td><%= tracker.active.to_s.titleize %></td>
+        <% end %>
+        <td>
+        	<%= link_to_edit tracker %> &nbsp;
+        	<%= link_to_delete tracker %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
