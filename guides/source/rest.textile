@@ -22,6 +22,7 @@ Spree currently supports RESTful access to the following resources:
 * +Order+
 * +LineItem+  
 * +Shipment+
+* +InventoryUnit+
 
 h3. Making an API Call
 
@@ -289,6 +290,83 @@ HTTP Status: 200 OK
 <shell>
 HTTP Status: 422
 </shell>
+
+h4. Inventory Units
+
+h5. List Inventory Units
+
+Inventory units can be accessed by association to order or shipment. They can also be accessed independently.
+
+*Request:* 
+
+<shell>
+GET /inventory_units
+GET /orders/{order_id}/inventory_units
+GET /shipments/{shipment_id}/inventory_units
+</shell>
+
+*Response:*
+
+<shell>
+[
+  { inventory_unit_: { ... } },
+  { inventory_unit: { ... } },
+  ...
+]
+</shell>
+
+h5. View Inventory Unit
+
+*Request:* 
+
+<shell>
+GET /inventory_units/{inventory_unit_id}
+</shell>
+
+*Response:*
+
+<shell>
+{
+  inventory_unit: { ... }
+}  
+</shell>
+
+h5. Update an Inventory Unit
+
+*Request:* 
+
+<shell>
+PUT /inventory_units/{inventory_unit_id}
+...
+</shell>
+
+*Response:*
+
+<shell>
+HTTP Status: 200 OK
+</shell>
+
+h5. Fire State Event 
+
+*Request:* 
+
+<shell>
+PUT /inventory_units/{inventory_unit_id}/event/?e={event_name}
+...
+</shell>
+
+*Response (success):*
+
+<shell>
+HTTP Status: 200 OK
+</shell>
+
+*Response (failure):*
+
+<shell>
+HTTP Status: 422
+</shell>
+
 
 h3. Tools and Suggestions
 
