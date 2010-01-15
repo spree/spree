@@ -84,6 +84,8 @@ mx:
         presentation: "Presentación"
       prototype: 
         name: Nombre
+      return_authorization:
+        amount: Amount
       role: 
         name: Nombre
       state: 
@@ -150,6 +152,9 @@ mx:
       prototype: 
         one: Prototipo
         other: Prototipos
+      return_authorization:
+        one: Return Authorization
+        other: Return Authorizations
       role: 
         one: "Función"
         other: Funciones
@@ -209,6 +214,7 @@ mx:
   already_registered: "¿Ya estas registrado?"
   alternative_phone: "Teléfono alternativo"
   amount: Cantidad
+  analytics_trackers: Analytics Trackers
   are_you_sure: "¿Está seguro?"
   are_you_sure_category: "¿Está seguro de que quiere eliminar esta categoría?"
   are_you_sure_delete: "¿Está seguro de que quiere eliminar esta entrada?"
@@ -221,6 +227,7 @@ mx:
   authorized: Autorizado
   available_on: "Disponible desde"
   available_taxons: "Taxones disponibles"
+  awaiting_return: Awaiting Return
   back: "Atrás"
   back_to_store: "Volver a la tienda"
   backordering_is_allowed: "Devoluciones {{not}} permitidas"
@@ -238,6 +245,7 @@ mx:
   calculator_settings_warning: "Si quieres cambiar el tipo de calculadora, debes guardar primero antes de poder editar las propiedades de la calculadora"
   cancel: Cancelar
   canceled: Cancelado
+  cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: Cobrar
   card_code: "Código de la tarjeta"
   card_number: "Número de tarjeta"
@@ -276,6 +284,7 @@ mx:
   copy_all_mails_to: Copiar todos los correos a
   cost_price: "Cost Price"
   count: Count
+  count_of_reduced_by: "count of '{{name}}' reduced by {{count}}"
   country: "País"
   country_based: "País base"
   coupon: "Cupón"                                                                             
@@ -318,6 +327,7 @@ mx:
   editing_state: "Editando estado"
   editing_tax_category: "Editando categoría de impuesto"
   editing_tax_rate: "Editing cantidad de impuesto"
+  editing_tracker: Editing Tracker
   editing_user: "Editando usuario"
   editing_zone: "Editando zona"
   email: "Correo Electrónico"
@@ -362,6 +372,7 @@ mx:
   google_analytics_new: "Nueva cuenta de Google Analytics"
   google_analytics_setting_description: "Gestionar Google Analytics ID" 
   guest_user_account: "Paga sin registrarte"
+  has_no_shipped_units: has no shipped units
   height: Altura
   hello_user: "Hola usuario"
   history: Historia
@@ -439,6 +450,7 @@ mx:
   new_product_group: New Product Group
   new_property: "Nueva propiedad"
   new_prototype: "Nuevo prototipo"
+  new_return_authorization: New Return Authorization
   new_shipment: "Nuevo envío"
   new_shipping_category: "Nueva categoria de envío"
   new_shipping_method: "Nueva forma de envío"
@@ -448,6 +460,7 @@ mx:
   new_tax_rate: "Nueva valor de impuesto"
   new_taxon: "Nuevo Taxón"
   new_taxonomy: "Nueva Taxonomía"
+  new_tracker: New Tracker
   new_user: "Nuevo usuario"
   new_variant: "Nueva Variante"
   new_zone: "Nueva zona"
@@ -476,6 +489,7 @@ mx:
   order_not_in_system: "Ese numero de orden no es válido"
   order_number: "Pedido No."
   order_operation_authorize: "Autorizar"
+  order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Su pedido se ha procesado correctamente"
   order_summary: Order Summary
   order_sure_want_to: "Are you sure you want to {{event}} this order?"
@@ -641,8 +655,13 @@ mx:
   prototype: Prototipo
   prototypes: "Prototipos"
   qty: Cant.
+  quantity_shipped: Quantity Shipped
   range: "Range"
   rate: proporción
+  reason: Reason
+  recalculate_order_total: "Recalculate order total"
+  receive: receive
+  received: Received
   register: Registrarse como cliente Nuevo
   register_or_guest: "Pagar como Invitado ó Registrarse"
   registration: Registrarse
@@ -661,7 +680,13 @@ mx:
   resume: "Reanudar"
   resumed: Reanudado 
   return: volver
+  return_authorization: Return Authorization
+  return_authorization_updated: Return authorization updated
+  return_authorizations: Return Authorizations
+  return_quantity: Return Quantity
   returned: regresar
+  rma_number: RMA Number
+  rma_value: RMA Value
   roles: Funciones
   sales_tax: "Sales Tax"
   sales_total: "Total de ventas"
@@ -686,6 +711,7 @@ mx:
   ship_address: "Dirección de envio"
   shipment: "Envío"
   shipment_number: "Envío No."
+  shipment_updated: Shipment Updated
   shipments: "Shipments"
   shipped: "Enviado"
   shipping: "Envío"

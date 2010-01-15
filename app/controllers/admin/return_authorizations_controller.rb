@@ -3,8 +3,8 @@ class Admin::ReturnAuthorizationsController < Admin::BaseController
   belongs_to :order
   ssl_required
 
-  new_action.before :returnable_items
-  edit.before :returned_units
+  new_action.before :returnable_units
+  edit.before :returnable_units
 
   update.wants.html { redirect_to collection_url }
   create.wants.html { redirect_to collection_url }
@@ -21,16 +21,15 @@ class Admin::ReturnAuthorizationsController < Admin::BaseController
   end
 
   private
-  def returnable_items
-    @returnable_items = @return_authorization.order.returnable_units.map do |variant_id, quantity|
-      {:variant => Variant.find(variant_id), :shipped_quantity =>  @return_authorization.order.shipped_units[variant_id], :retunable_quantity => quantity}
-    end
+  def returnable_units
+    @returnable_units = @return_authorization.order.returnable_units
+    @returnable_units = {} if @returnable_units.nil?
+
+    @returned_units =  @return_authorization.inventory_units.group_by(&:variant_id)
+    puts @returned_units.empty?
   end
 
-  def returned_units
-    returnable_items
-    @returned_units =  @return_authorization.inventory_units.group_by(&:variant_id)
-  end
+
 
   def associate_inventory_units
     params[:return_quantity].each { |variant_id, qty| @return_authorization.add_variant(variant_id.to_i, qty.to_i) }

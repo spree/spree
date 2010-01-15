@@ -42,7 +42,7 @@ class ReturnAuthorization < ActiveRecord::Base
       end
     end
 
-    self.order.return_authorized! if self.inventory_units.reload.size > 0
+    self.order.return_authorized! if self.inventory_units.reload.size > 0 && !self.order.awaiting_return?
   end
 
   private

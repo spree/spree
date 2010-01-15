@@ -84,6 +84,8 @@ fi:
         presentation: Esitys
       prototype: 
         name: Nimi
+      return_authorization:
+        amount: Amount
       role: 
         name: Nimi
       state: 
@@ -150,6 +152,9 @@ fi:
       prototype: 
         one: Prototyyppi
         other: Prototyypit
+      return_authorization:
+        one: Return Authorization
+        other: Return Authorizations
       role: 
         one: Rooli
         other: Roolit
@@ -209,6 +214,7 @@ fi:
   already_registered: "Jo rekisteröitynyt?"
   alternative_phone: "Vaihtoehtoinen puhelin"
   amount: Määrä
+  analytics_trackers: Analytics Trackers
   are_you_sure: "Oletko varma?"
   are_you_sure_category: "Haluatko varmasti poistaa tämän kategorian?"
   are_you_sure_delete: "Haluatko varmasti poistaa tämän tallenteen?"
@@ -221,6 +227,7 @@ fi:
   authorized: Valtuutettu
   available_on: Käytettävissä
   available_taxons: "Käytettävissä olevat taksonit"
+  awaiting_return: Awaiting Return
   back: Takaisin
   back_to_store: "Palaa kauppaan"
   backordering_is_allowed: "Jälkitoimittaminen {{not}} sallittu"
@@ -238,6 +245,7 @@ fi:
   calculator_settings_warning: "Mikäli vaihdat laskimen tyyppiä, sinun täytyy ensin tallentaa ennen kuin voit muuttaa laskimen asetuksia"
   cancel: peruuta
   canceled: Peruutettu
+  cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: kaappaa
   card_code: "Kortin koodi"
   card_number: "Kortin numero"
@@ -276,6 +284,7 @@ fi:
   copy_all_mails_to: "Kopioi kaikki viestit"                                                                             
   cost_price: "Cost Price"
   count: Count
+  count_of_reduced_by: "count of '{{name}}' reduced by {{count}}"
   country: Maa
   country_based: Sijaintimaa
   coupon: Kuponki
@@ -318,6 +327,7 @@ fi:
   editing_state: "Muokataan osavaltiota"
   editing_tax_category: "Muokataan verotuskategoriaa"
   editing_tax_rate: "Muokataan veroprosenttia"
+  editing_tracker: Editing Tracker
   editing_user: "Muokataan käyttäjää"
   editing_zone: "Muokatan aluetta"
   email: Sähköposti
@@ -362,6 +372,7 @@ fi:
   google_analytics_new: "Uusi Google Analytics -tunnus"
   google_analytics_setting_description: "Hallinnoi Google Analytics ID:tä" 
   guest_user_account: "Tee tilaus vierailevana käyttäjänä"
+  has_no_shipped_units: has no shipped units
   height: Korkeus
   hello_user: "Hei käyttäjä"
   history: Historia
@@ -439,6 +450,7 @@ fi:
   new_product_group: New Product Group
   new_property: "Uusi ominaisuus"
   new_prototype: "Uusi prototyyppi"
+  new_return_authorization: New Return Authorization
   new_shipment: "Uusi toimitus"
   new_shipping_category: "Uusi toimituskategoria"
   new_shipping_method: "Uusi toimitustapa"
@@ -448,6 +460,7 @@ fi:
   new_tax_rate: "Uusi veroprosentti"
   new_taxon: "Uusi taksoni"
   new_taxonomy: "Uusi taksonomia"
+  new_tracker: New Tracker
   new_user: "Uusi käyttäjä"
   new_variant: "Uusi variantti"
   new_zone: "Uusi alue"
@@ -476,6 +489,7 @@ fi:
   order_not_in_system: "Kyseistä tilausnumeroa ei löytynyt järjestelmästä."
   order_number: Tilaus
   order_operation_authorize: Valtuuta
+  order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Tilauksenne käsitelty onnistuneesti"
   order_summary: Tilaustiivistelmä
   order_sure_want_to: "Are you sure you want to {{event}} this order?"
@@ -641,8 +655,13 @@ fi:
   prototype: Prototyyppi
   prototypes: Prototyypit
   qty: lkm
+  quantity_shipped: Quantity Shipped
   range: "Range"
   rate: Taso
+  reason: Reason
+  recalculate_order_total: "Recalculate order total"
+  receive: receive
+  received: Received
   register: "Rekisteröidy uutena käyttäjänä"
   register_or_guest: "Jätä tilaus vierailijana tai rekisteröidy"
   registration: Rekisteröityminen
@@ -661,7 +680,13 @@ fi:
   resume: jatka
   resumed: Jatkettu
   return: palaa
+  return_authorization: Return Authorization
+  return_authorization_updated: Return authorization updated
+  return_authorizations: Return Authorizations
+  return_quantity: Return Quantity
   returned: Palattu
+  rma_number: RMA Number
+  rma_value: RMA Value
   roles: Roolit
   sales_tax: "Liikevaihtovero"
   sales_total: "Liikevaihto"
@@ -686,6 +711,7 @@ fi:
   ship_address: Toimitusosoite
   shipment: Toimitus
   shipment_number: Toimitusnumero
+  shipment_updated: Shipment Updated
   shipments: "Shipments"
   shipped: Toimitettu
   shipping: Toimitus

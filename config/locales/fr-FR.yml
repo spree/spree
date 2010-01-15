@@ -84,6 +84,8 @@ fr-FR:
         presentation: "Présentation"
       prototype: 
         name: Nom
+      return_authorization:
+        amount: Amount
       role: 
         name: Nom
       state: 
@@ -150,6 +152,9 @@ fr-FR:
       prototype: 
         one: Prototype
         other: Prototypes
+      return_authorization:
+        one: Return Authorization
+        other: Return Authorizations
       role: 
         one: Rôles
         other: Rôles
@@ -209,6 +214,7 @@ fr-FR:
   already_registered: "Déjà inscrit?"
   alternative_phone: "Téléphone Secondaire"
   amount: Montant
+  analytics_trackers: Analytics Trackers
   are_you_sure: "Êtes-vous sûr ?"
   are_you_sure_category: "Êtes-vous sûr de vouloir supprimer cette catégorie ?"
   are_you_sure_delete: "Êtes-vous sûr de vouloir supprimer cet enregistrement ?"
@@ -221,6 +227,7 @@ fr-FR:
   authorized: Autorisé
   available_on: "Disponible sur"
   available_taxons: "Chemins disponible"
+  awaiting_return: Awaiting Return
   back: Arrière
   back_to_store: "Retour sur les produits"
   backordering_is_allowed: "Rupture de stock {{not}} permise"
@@ -238,6 +245,7 @@ fr-FR:
   calculator_settings_warning: "Si vous changez le type de calculateur, vous devez tout d'abord enregistrer avant de pouvoir modifier les paramètres du calculateur."
   cancel: annulé
   canceled: Annulé
+  cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: accepté
   card_code: "Code de la carte"
   card_number: "Numéro de carte"
@@ -276,6 +284,7 @@ fr-FR:
   copy_all_mails_to: Copier tous les emails à
   cost_price: "Cost Price"
   count: Count
+  count_of_reduced_by: "count of '{{name}}' reduced by {{count}}"
   country: Pays
   country_based: "Country Based"
   coupon: Coupon                                                                             
@@ -318,6 +327,7 @@ fr-FR:
   editing_state: "Edition de la région"
   editing_tax_category: "Edition de la catégorie de taxe"
   editing_tax_rate: "Édition du taux de taxe"
+  editing_tracker: Editing Tracker
   editing_user: "Edition d'un utilisateur"
   editing_zone: "Edition d'une zone"
   email: Email
@@ -362,6 +372,7 @@ fr-FR:
   google_analytics_new: "Nouveau compte Google Analytics"
   google_analytics_setting_description: "Gestion de l'ID Google Analytics"
   guest_user_account: "Commander en tant qu'invité"
+  has_no_shipped_units: has no shipped units
   height: Taille
   hello_user: "Bonjour utilisateur"
   history: Historique
@@ -439,6 +450,7 @@ fr-FR:
   new_product_group: New Product Group
   new_property: "Nouvelle proprieté"
   new_prototype: "Nouveau prototype"
+  new_return_authorization: New Return Authorization
   new_shipment: "Nouvelle expédition"
   new_shipping_category: "Nouvelle Catégorie de Livraison"
   new_shipping_method: "Nouvelles Méthode de Livraison"
@@ -448,6 +460,7 @@ fr-FR:
   new_tax_rate: "Nouvelle taxe"
   new_taxon: "Nouveau Taxon"
   new_taxonomy: "Nouvelle Taxonomie"
+  new_tracker: New Tracker
   new_user: "Nouvel utilisateur"
   new_variant: "Nouvelle gamme"
   new_zone: "Nouvelle zone"
@@ -476,6 +489,7 @@ fr-FR:
   order_not_in_system: "Ce numéro de commande n'est pas valide sur ce site."
   order_number: Commande
   order_operation_authorize: Authorisation
+  order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Votre commande a bien été traitée avec succès"
   order_summary: "Résume de la commande"
   order_sure_want_to: "Êtes-vous certain de vouloir {{event}} cette commande ?"
@@ -641,8 +655,13 @@ fr-FR:
   prototype: Prototype
   prototypes: Prototypes
   qty: Qté
+  quantity_shipped: Quantity Shipped
   range: "Range"
   rate: Taux
+  reason: Reason
+  recalculate_order_total: "Recalculate order total"
+  receive: receive
+  received: Received
   register: "Enregistrer en tant que Nouvel Utilisateur"
   register_or_guest: "Commander en tant qu'invité ou enregistrer"
   registration: Enregistrement
@@ -661,7 +680,13 @@ fr-FR:
   resume: "reprendre"
   resumed: repris
   return: retourner
+  return_authorization: Return Authorization
+  return_authorization_updated: Return authorization updated
+  return_authorizations: Return Authorizations
+  return_quantity: Return Quantity
   returned: Retourner
+  rma_number: RMA Number
+  rma_value: RMA Value
   roles: Rôles
   sales_tax: "Taxe de ventes"
   sales_total: "Total de ventes"
@@ -686,6 +711,7 @@ fr-FR:
   ship_address: "Adresse de livraison"
   shipment: Livraison
   shipment_number: "Livraison #"
+  shipment_updated: Shipment Updated
   shipments: "Shipments"
   shipped: Livré
   shipping: Frais de livraison

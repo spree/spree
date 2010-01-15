@@ -84,6 +84,8 @@ jp:
         presentation: Presentation
       prototype:
         name: 名称
+      return_authorization:
+        amount: Amount
       role:
         name: 名称
       state:
@@ -150,6 +152,9 @@ jp:
       prototype:
         one: Prototype
         other: Prototypes
+      return_authorization:
+        one: Return Authorization
+        other: Return Authorizations
       role:
         one: Roles
         other: Roles
@@ -209,6 +214,7 @@ jp:
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: 個数
+  analytics_trackers: Analytics Trackers
   are_you_sure: よろしいでしょうか
   are_you_sure_category: "Are you sure you want to delete this category?"
   are_you_sure_delete: "Are you sure you want to delete this record?"
@@ -221,6 +227,7 @@ jp:
   authorized: Authorized
   available_on: "Available On"
   available_taxons: 使用可能な分類
+  awaiting_return: Awaiting Return
   back: 戻る
   back_to_store: "Go Back To Store"
   backordering_is_allowed: "Backordering {{not}} allowed"
@@ -238,6 +245,7 @@ jp:
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: キャンセル
   canceled: キャンセル済み
+  cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: capture
   card_code: "Card Code"
   card_number: カード番号
@@ -276,6 +284,7 @@ jp:
   copy_all_mails_to: Copy All Mails To
   cost_price: "Cost Price"
   count: Count
+  count_of_reduced_by: "count of '{{name}}' reduced by {{count}}"
   country: 国名
   country_based: "Country Based"
   coupon: Coupon                                                                             
@@ -318,6 +327,7 @@ jp:
   editing_state: 都道府県（州）編集
   editing_tax_category: 税カテゴリー編集
   editing_tax_rate: "Editing Tax Rate"
+  editing_tracker: Editing Tracker
   editing_user: ユーザー編集
   editing_zone: ゾーン編集
   email: Eメール
@@ -362,6 +372,7 @@ jp:
   google_analytics_new: "New Google Analytics Account"
   google_analytics_setting_description: "Manage Google Analytics ID"
   guest_user_account: Checkout as a Guest
+  has_no_shipped_units: has no shipped units
   height: 高さ
   hello_user: "Hello User"
   history: 履歴
@@ -439,6 +450,7 @@ jp:
   new_product_group: New Product Group
   new_property: 新規属性
   new_prototype: 新規プロトタイプ
+  new_return_authorization: New Return Authorization
   new_shipment: 新規配送
   new_shipping_category: 新規配送カテゴリー
   new_shipping_method: 新規配送方法
@@ -448,6 +460,7 @@ jp:
   new_tax_rate: 新規税率
   new_taxon: "New Taxon"
   new_taxonomy: "新規分類"
+  new_tracker: New Tracker
   new_user: 新規ユーザ
   new_variant: 新規形式
   new_zone: 新規ゾーン
@@ -476,6 +489,7 @@ jp:
   order_not_in_system: That order number is not valid on this site.
   order_number: 注文
   order_operation_authorize: Authorize
+  order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Your order has been processed successfully"
   order_summary: Order Summary
   order_sure_want_to: "Are you sure you want to {{event}} this order?"
@@ -641,8 +655,13 @@ jp:
   prototype: プロトタイプ
   prototypes: プロトタイプ
   qty: 個数
+  quantity_shipped: Quantity Shipped
   range: "Range"
   rate: 比率
+  reason: Reason
+  recalculate_order_total: "Recalculate order total"
+  receive: receive
+  received: Received
   register: 新規ユーザとして登録
   register_or_guest: Checkout as Guest or Register
   registration: 登録
@@ -661,7 +680,13 @@ jp:
   resume: "resume"
   resumed: Resumed
   return: return
+  return_authorization: Return Authorization
+  return_authorization_updated: Return authorization updated
+  return_authorizations: Return Authorizations
+  return_quantity: Return Quantity
   returned: Returned
+  rma_number: RMA Number
+  rma_value: RMA Value
   roles: 役割
   sales_tax: "Sales Tax"
   sales_total: 売上げ合計
@@ -686,6 +711,7 @@ jp:
   ship_address: 配送先住所
   shipment: 発送
   shipment_number: "発送 #"
+  shipment_updated: Shipment Updated
   shipments: "Shipments"
   shipped: 発送済
   shipping: 送料

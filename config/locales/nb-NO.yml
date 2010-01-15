@@ -84,6 +84,8 @@ nb-NO:
         presentation: "Presentasjon"
       prototype: 
         name: Navn
+      return_authorization:
+        amount: Amount
       role: 
         name: Navn
       state: 
@@ -150,6 +152,9 @@ nb-NO:
       prototype: 
         one: Prototype
         other: Prototyper
+      return_authorization:
+        one: Return Authorization
+        other: Return Authorizations
       role: 
         one: Rolle
         other: Roller
@@ -209,6 +214,7 @@ nb-NO:
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: Beløp
+  analytics_trackers: Analytics Trackers
   are_you_sure: "Er du sikker"
   are_you_sure_category: "Er du sikker på at du vil slette denne kategorien?"
   are_you_sure_delete: "Er du sikker på at du vil slette denne?"
@@ -221,6 +227,7 @@ nb-NO:
   authorized: Autorisert
   available_on: "Tilgjengelig"
   available_taxons: "Tilgjengelige klasser"
+  awaiting_return: Awaiting Return
   back: Tilbake
   back_to_store: "Tilbake til butikken"
   backordering_is_allowed: "Backordering {{not}} allowed"
@@ -238,6 +245,7 @@ nb-NO:
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: Avbryt
   canceled: Avbrutt
+  cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: capture
   card_code: "CVV-kode"
   card_number: "Kortnummer"
@@ -276,6 +284,7 @@ nb-NO:
   copy_all_mails_to: Kopier alle eposter til
   cost_price: "Cost Price"
   count: Count
+  count_of_reduced_by: "count of '{{name}}' reduced by {{count}}"
   country: Land
   country_based: "Land"
   coupon: Coupon                                                                             
@@ -318,6 +327,7 @@ nb-NO:
   editing_state: "Endre stat"
   editing_tax_category: "Endre momskategori"
   editing_tax_rate: "Editing Tax Rate"
+  editing_tracker: Editing Tracker
   editing_user: "Endre bruker"   
   editing_zone: "Endre sone"
   email: Epost
@@ -362,6 +372,7 @@ nb-NO:
   google_analytics_new: "Ny Google Analytics-konto"
   google_analytics_setting_description: "Manage Google Analytics ID" 
   guest_user_account: Checkout as a Guest
+  has_no_shipped_units: has no shipped units
   height: Høyde
   hello_user: "Hallo, bruker"
   history: History
@@ -439,6 +450,7 @@ nb-NO:
   new_product_group: New Product Group
   new_property: "Ny egenskap"
   new_prototype: "Ny prototype"
+  new_return_authorization: New Return Authorization
   new_shipment: "Ny leveranse"
   new_shipping_category: "Ny fraktkategori"
   new_shipping_method: "Ny leveransemåte"
@@ -448,6 +460,7 @@ nb-NO:
   new_tax_rate: "Nytt momsnivå"
   new_taxon: "New Taxon"
   new_taxonomy: "Ny klassifikasjon"
+  new_tracker: New Tracker
   new_user: "Ny bruker"
   new_variant: "Ny variant"
   new_zone: "Ny sone"
@@ -476,6 +489,7 @@ nb-NO:
   order_not_in_system: That order number is not valid on this site.
   order_number: Ordrenummer
   order_operation_authorize: Autoriser
+  order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Din ordre har blitt behandlet"
   order_summary: Order Summary
   order_sure_want_to: "Are you sure you want to {{event}} this order?"
@@ -641,8 +655,13 @@ nb-NO:
   prototype: Prototype
   prototypes: Prototyper
   qty: Antall
+  quantity_shipped: Quantity Shipped
   range: "Range"
   rate: "Nivå"
+  reason: Reason
+  recalculate_order_total: "Recalculate order total"
+  receive: receive
+  received: Received
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
   registration: Registration           
@@ -661,7 +680,13 @@ nb-NO:
   resume: "fortsett"
   resumed: Fortsatt
   return: returner
+  return_authorization: Return Authorization
+  return_authorization_updated: Return authorization updated
+  return_authorizations: Return Authorizations
+  return_quantity: Return Quantity
   returned: Returnert
+  rma_number: RMA Number
+  rma_value: RMA Value
   roles: Roller
   sales_tax: "Sales Tax"
   sales_total: "Brutto omsetning"
@@ -686,6 +711,7 @@ nb-NO:
   ship_address: "Leveringsadresse"
   shipment: Leveranse
   shipment_number: "Leveransenummer"
+  shipment_updated: Shipment Updated
   shipments: "Shipments"
   shipped: Sendt
   shipping: Frakt

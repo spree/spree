@@ -4,16 +4,16 @@
     <th><%= t("quantity_shipped") %></th>
     <th><%= t("return_quantity") %></th>
   </tr>
-  <% @returnable_items.each do |returnable_item| %>
-    <tr id="<%= dom_id(returnable_item[:variant]) %>">
+  <% @return_authorization.order.shipped_units.each do |shipped_unit| %>
+    <tr id="<%= dom_id(shipped_unit[0]) %>">
       <td>
-        <h4 style="margin-bottom:0px;"><%= returnable_item[:variant].name %></h4>
-        <%= returnable_item[:variant].options_text %>
+        <h4 style="margin-bottom:0px;"><%= shipped_unit[0].name %></h4>
+        <%= shipped_unit[0].options_text %>
       </td>
-      <td><%= returnable_item[:shipped_quantity] %></td>
+      <td><%= shipped_unit[1] %></td>
       <td class="return_quantity">
-        <%= text_field_tag "return_quantity[#{returnable_item[:variant].id}]",
-              @returned_units.nil? ? returnable_item[:retunable_quantity] : (@returned_units[returnable_item[:variant].id].nil? ? 0 : @returned_units[returnable_item[:variant].id].size),
+        <%= text_field_tag "return_quantity[#{shipped_unit[0].id}]",
+              @returned_units.empty? ? 0 : (@returned_units[shipped_unit[0].id].nil? ? 0 : @returned_units[shipped_unit[0].id].size),
               {:style => "width:30px;"} %>
       </td>
     </tr>
@@ -36,8 +36,8 @@
 <% content_for :head do %>
   <script type="text/javascript">
     var variant_prices = new Array();
-    <% @returnable_items.each do |returnable_item| %>
-      variant_prices[<%= returnable_item[:variant].id.to_s %>] = <%= returnable_item[:variant].price %>;
+    <% @return_authorization.order.shipped_units.each do |shipped_unit| %>
+      variant_prices[<%= shipped_unit[0].id.to_s %>] = <%= shipped_unit[0].price %>;
     <% end %>
 
     function calculate_rma_price(object, value){

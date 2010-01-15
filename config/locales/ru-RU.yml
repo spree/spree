@@ -84,6 +84,8 @@ ru-RU:
         presentation: "Отображение"
       prototype:
         name: "Наименование"
+      return_authorization:
+        amount: Amount
       role:
         name: "Наименование"
       state:
@@ -150,6 +152,9 @@ ru-RU:
       prototype:
         one: "Прототип"
         other: "Прототипы"
+      return_authorization:
+        one: Return Authorization
+        other: Return Authorizations
       role:
         one: "Роль"
         other: "Роли"
@@ -209,6 +214,7 @@ ru-RU:
   already_registered: "Уже зарегистрированы"
   alternative_phone: "Дополнительный телефон"
   amount: "Сумма"
+  analytics_trackers: Analytics Trackers
   are_you_sure: "Вы уверены"
   are_you_sure_category: "Вы уверены, что хотите удалить эту категорию?"
   are_you_sure_delete: "Вы уверены, что хотите удалить эту запись?"
@@ -221,6 +227,7 @@ ru-RU:
   authorized: "Авторизован"
   available_on: "Доступно с"
   available_taxons: "Доступные таксоны"
+  awaiting_return: Awaiting Return
   back: "Назад"
   back_to_store: "Назад к списку"
   backordering_is_allowed: "Задолженные заказы {{not}} разрешены"
@@ -238,6 +245,7 @@ ru-RU:
   calculator_settings_warning: "При изменении типа калькулятора, вы должны сохранить это изменение, прежде чем вы сможете изменить настройки калькулятора."
   cancel: "Отмена"
   canceled: "Отменен"
+  cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: "Провести платёж по кредитной карте"
   card_code: "Код карты"
   card_number: "Номер карты"
@@ -276,6 +284,7 @@ ru-RU:
   copy_all_mails_to: "Копировать все письма на"
   cost_price: "Cost Price"
   count: "Количество"
+  count_of_reduced_by: "count of '{{name}}' reduced by {{count}}"
   country: "Страна"
   country_based: "Страна"
   coupon: "Купон"
@@ -318,6 +327,7 @@ ru-RU:
   editing_state: "Редактирование статуса"
   editing_tax_category: "Редактирование категории налога"
   editing_tax_rate: "Редактирование налоговой ставки"
+  editing_tracker: Editing Tracker
   editing_user: "Редактирование пользователя"
   editing_zone: "Редактирование зоны"
   email: "Email"
@@ -362,6 +372,7 @@ ru-RU:
   google_analytics_new: "Новая учетная запись Google Analytics"
   google_analytics_setting_description: "Управление Google Analytics ID"
   guest_user_account: "Оформить покупку как гость"
+  has_no_shipped_units: has no shipped units
   height: "Высота"
   hello_user: "Добро пожаловать"
   history: "История"
@@ -439,6 +450,7 @@ ru-RU:
   new_product_group: "Новая группа продуктов"
   new_property: "Новое свойство"
   new_prototype: "Новый прототип"
+  new_return_authorization: New Return Authorization
   new_shipment: "Новая доставка"
   new_shipping_category: "Новая категория доставки"
   new_shipping_method: "Новый способ доставки"
@@ -448,6 +460,7 @@ ru-RU:
   new_tax_rate: "Новая ставка налога"
   new_taxon: "Новый таксон"
   new_taxonomy: "Новая таксономия"
+  new_tracker: New Tracker
   new_user: "Новый пользователь"
   new_variant: "Новый вариант"
   new_zone: "Новая зона"
@@ -476,6 +489,7 @@ ru-RU:
   order_not_in_system: "Заказа с стаким номером у нас не существует."
   order_number: "Заказ"
   order_operation_authorize: "Авторизовать"
+  order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Ваш заказ был успешно обработан"
   order_summary: "Сводка по заказу"
   order_sure_want_to: "Вы уверены, что хотите {{event}} этот заказ?"
@@ -641,8 +655,13 @@ ru-RU:
   prototype: "Прототип"
   prototypes: "Прототипы"
   qty: "Кол-во"
+  quantity_shipped: Quantity Shipped
   range: "Диапазон"
   rate: "Ставка"
+  reason: Reason
+  recalculate_order_total: "Recalculate order total"
+  receive: receive
+  received: Received
   register: "Зарегистрироваться как новый пользователь"
   register_or_guest: "Оформить заказ как гость или зарегистрироваться"
   registration: "Регистрация"
@@ -661,7 +680,13 @@ ru-RU:
   resume: "возобновить"
   resumed: "Возобновлен"
   return: "возвратить"
+  return_authorization: Return Authorization
+  return_authorization_updated: Return authorization updated
+  return_authorizations: Return Authorizations
+  return_quantity: Return Quantity
   returned: "Возвращенные"
+  rma_number: RMA Number
+  rma_value: RMA Value
   roles: "Роли"
   sales_tax: "Налог с продаж"
   sales_total: "Итого"
@@ -686,6 +711,7 @@ ru-RU:
   ship_address: "Адрес доставки"
   shipment: "Доставка"
   shipment_number: "Доставка №"
+  shipment_updated: Shipment Updated
   shipments: "Shipments"
   shipped: "Доставлено"
   shipping: "Доставка"

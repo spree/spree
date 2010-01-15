@@ -84,6 +84,8 @@ il:
         presentation: Presentation
       prototype: 
         name: Name
+      return_authorization:
+        amount: Amount
       role: 
         name: Name
       state: 
@@ -150,6 +152,9 @@ il:
       prototype: 
         one: Prototype
         other: Prototypes
+      return_authorization:
+        one: Return Authorization
+        other: Return Authorizations
       role: 
         one: Roles
         other: Roles
@@ -209,6 +214,7 @@ il:
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: Amount
+  analytics_trackers: Analytics Trackers
   are_you_sure: "Are you sure"
   are_you_sure_category: "Are you sure you want to delete this category?"
   are_you_sure_delete: "Are you sure you want to delete this record?"
@@ -221,6 +227,7 @@ il:
   authorized: Authorized
   available_on: "Available On"
   available_taxons: "Available Taxons"
+  awaiting_return: Awaiting Return
   back: Back
   back_to_store: "Go Back To Store"
   backordering_is_allowed: "Backordering {{not}} allowed"
@@ -238,6 +245,7 @@ il:
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"
   cancel: cancel
   canceled: Canceled
+  cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: capture
   card_code: "קוד כרטיס"
   card_number: "מספר כרטיס"
@@ -276,6 +284,7 @@ il:
   copy_all_mails_to: Copy All Mails To                                                                             
   cost_price: "Cost Price"
   count: Count
+  count_of_reduced_by: "count of '{{name}}' reduced by {{count}}"
   country: ארץ
   country_based: "Country Based"
   coupon: Coupon                                                                             
@@ -318,6 +327,7 @@ il:
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
   editing_tax_rate: "Editing Tax Rate"
+  editing_tracker: Editing Tracker
   editing_user: "Editing User"   
   editing_zone: "Editing Zone"
   email: דואל
@@ -362,6 +372,7 @@ il:
   google_analytics_new: "New Google Analytics Account"
   google_analytics_setting_description: "Manage Google Analytics ID" 
   guest_user_account: Checkout as a Guest
+  has_no_shipped_units: has no shipped units
   height: Height
   hello_user: "Hello User"
   history: History
@@ -439,6 +450,7 @@ il:
   new_product_group: New Product Group
   new_property: "New Property"
   new_prototype: "New Prototype"
+  new_return_authorization: New Return Authorization
   new_shipment: "New Shipment"
   new_shipping_category: "New Shipping Category"
   new_shipping_method: "New Shipping Method"
@@ -448,6 +460,7 @@ il:
   new_tax_rate: "New Tax Rate"
   new_taxon: "New Taxon"
   new_taxonomy: "New Taxonomy"
+  new_tracker: New Tracker
   new_user: "New User"
   new_variant: "New Variant"
   new_zone: "New Zone"
@@ -476,6 +489,7 @@ il:
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
+  order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Your order has been processed successfully"
   order_summary: Order Summary
   order_sure_want_to: "Are you sure you want to {{event}} this order?"
@@ -641,8 +655,13 @@ il:
   prototype: Prototype
   prototypes: Prototypes
   qty: כמות
+  quantity_shipped: Quantity Shipped
   range: "Range"
   rate: Rate
+  reason: Reason
+  recalculate_order_total: "Recalculate order total"
+  receive: receive
+  received: Received
   register: "הרשם כמשתמש חדש"
   register_or_guest: "שלם כאורח או הרשם כמשתמש"
   registration: הרשמה           
@@ -661,7 +680,13 @@ il:
   resume: "resume"
   resumed: Resumed
   return: return
+  return_authorization: Return Authorization
+  return_authorization_updated: Return authorization updated
+  return_authorizations: Return Authorizations
+  return_quantity: Return Quantity
   returned: Returned
+  rma_number: RMA Number
+  rma_value: RMA Value
   roles: Roles
   sales_tax: "Sales Tax"
   sales_total: "Sales Total"
@@ -686,6 +711,7 @@ il:
   ship_address: "כתובת למשלוח חבילה"
   shipment: Shipment
   shipment_number: "Shipment #"
+  shipment_updated: Shipment Updated
   shipments: "Shipments"
   shipped: Shipped
   shipping: משלוח
