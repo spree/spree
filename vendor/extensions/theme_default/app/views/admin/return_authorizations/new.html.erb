@@ -1,0 +1,13 @@
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Return Authorizations"} %>
+
+<h2><%= t("new_return_authorization")%></h2>
+
+<%=error_messages_for :return_authorization %>
+<% form_for @return_authorization, :url => collection_url do |f| %>
+  <%= render :partial => "form", :locals => {:f => f} %>
+
+  <p class="form-buttons">
+    <%= button t('continue') %>
+    <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_return_authorizations_url(@order) %>
+  </p>
+<% end %>

@@ -54,11 +54,11 @@ def create_complete_order
 
   @shipping_method = Factory(:shipping_method)
   @checkout = @order.checkout
-  
+
   @checkout.ship_address = Factory(:address)
   @checkout.shipping_method = @shipping_method
   @checkout.save
-  
+
   @shipment = @order.shipment
 
   @checkout.bill_address = Factory(:address)
@@ -72,6 +72,17 @@ def create_complete_order
   @shipment.save
   @order.save
   @order.reload
+end
+
+def add_capturable_payment(order)
+  creditcard = Factory(:creditcard)
+  creditcard.update_attribute(:checkout, order.checkout)
+
+  Gateway::Bogus.create(:name => "Test Gateway", :active => true, :environment => "test")
+  payment = CreditcardPayment.create(:order => order, :amount => order.total, :creditcard => creditcard)
+  CreditcardTxn.create(:creditcard_payment => payment, :amount => order.total, :txn_type => CreditcardTxn::TxnType::AUTHORIZE, :response_code => 12345)
+
+  order.reload
 end
 
 # useful method for functional tests that require an authenticated user

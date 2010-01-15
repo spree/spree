@@ -27,8 +27,10 @@
        <%= link_to t("payments"), admin_order_payments_url(@order) %>
     </li>
     <li <%= ' class="active"' if current == "Shipments" %>>
-       <%= link_to t("shipments"),
-                      admin_order_shipments_url(@order) %>
+       <%= link_to t("shipments"), admin_order_shipments_url(@order) %>
+    </li>
+    <li <%= ' class="active"' if current == "Return Authorizations" %>>
+       <%= link_to t("return_authorizations"), admin_order_return_authorizations_url(@order) %>
     </li>
     <li <%= ' class="active"' if current == "History" %>>
        <%= link_to t("history"), history_admin_order_url(@order) %>

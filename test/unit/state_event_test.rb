@@ -30,19 +30,21 @@ class StateEventTest < ActiveSupport::TestCase
 
       context "then paid" do
         setup do
-          Payment.create!({:amount => @order.total, :order => @order})
+          add_capturable_payment(@order)
+          @order.payments.first.capture
+          @order.reload
         end
 
         should_change("@order.state", :from => "new", :to => "paid") { @order.state }
       end
     end
   end
-  
+
   context "Shipment" do
     setup do
       @shipment = Factory.create(:shipment)
     end
-    
+
     context "when completed" do
       setup { @shipment.ready! }
 
@@ -53,5 +55,5 @@ class StateEventTest < ActiveSupport::TestCase
     end
 
   end
-  
+
 end

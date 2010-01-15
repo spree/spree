@@ -22,6 +22,7 @@ class Order < ActiveRecord::Base
   has_one :bill_address, :through => :checkout
   has_one :ship_address, :through => :checkout
   has_many :shipments, :dependent => :destroy
+  has_many :return_authorizations, :dependent => :destroy
 
   has_many :adjustments,      :extend => Totaling, :order => :position
   has_many :charges,          :extend => Totaling, :order => :position
@@ -80,7 +81,7 @@ class Order < ActiveRecord::Base
       transition :to => 'canceled', :if => :allow_cancel?
     end
     event :return do
-      transition :to => 'returned', :from => 'shipped'
+      transition :to => 'returned', :from => 'credit_owed'
     end
     event :resume do
       transition :to => 'resumed', :from => 'canceled', :if => :allow_resume?
@@ -89,13 +90,16 @@ class Order < ActiveRecord::Base
       transition :to => 'paid', :if => :allow_pay?
     end
     event :under_paid do
-      transition :to => 'balance_due', :from => ['paid', 'new', 'credit_owed']
+      transition :to => 'balance_due', :from => ['paid', 'new', 'credit_owed', 'shipped', 'awaiting_return']
     end
     event :over_paid do
-      transition :to => 'credit_owed', :from => ['paid', 'new', 'balance_due']
+      transition :to => 'credit_owed', :from => ['paid', 'new', 'balance_due', 'shipped', 'awaiting_return']
     end
     event :ship do
       transition :to => 'shipped', :from  => 'paid'
+    end
+    event :return_authorized do
+      transition :to => 'awaiting_return', :from => 'shipped'
     end
   end
 
@@ -110,17 +114,51 @@ class Order < ActiveRecord::Base
       shipment.update_attributes(:state => 'shipped', :shipped_at => Time.now)
     end
   end
-  
+
   def make_shipments_ready
     shipments.each(&:ready)
   end
-  
+
   def make_shipments_pending
     shipments.each(&:pend)
   end
-  
-  
 
+  def shipped_units
+    shipped_units = shipments.inject([]) { |units, shipment| units << shipment.inventory_units if shipment.shipped? }
+
+    if shipped_units.nil?
+      return nil
+    else
+      shipped_units.flatten!
+    end
+
+    shipped = {}
+    shipped_units.group_by(&:variant_id).each do |variant_id, ship_units|
+      shipped[Variant.find(variant_id)] = ship_units.size
+    end
+    shipped
+  end
+
+  def returnable_units
+    returned_units = return_authorizations.inject([]) { |units, return_auth| units << return_auth.inventory_units}
+    returned_units.flatten! unless returned_units.nil?
+
+    returnable = shipped_units
+    return if returnable.nil?
+
+    returned_units.group_by(&:variant_id).each do |variant_id, returned_units|
+      variant = returnable.detect { |ru| ru.first.id == variant_id }[0]
+
+      count = returnable[variant] - returned_units.size
+      if count > 0
+        returnable[variant] = returnable[variant] - returned_units.size
+      else
+        returnable.delete variant
+      end
+    end
+
+    returnable.empty? ? nil : returnable
+  end
 
   def allow_cancel?
     self.state != 'canceled'
@@ -255,6 +293,15 @@ class Order < ActiveRecord::Base
 
   def update_totals!
     update_totals
+
+    if self.payments.total < self.total
+      #Total is higher so balance_due
+      self.under_paid
+    elsif self.payments.total > self.total
+      #Total is lower so credit_owed
+      self.over_paid
+    end
+
     save!
   end
 
@@ -262,8 +309,8 @@ class Order < ActiveRecord::Base
     self.adjustments.each(&:update_amount)
     update_totals(:force_adjustment_update)
     self
-  end       
-  
+  end
+
   def name
     address = bill_address || ship_address
     "#{address.firstname} #{address.lastname}" if address

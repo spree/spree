@@ -1,5 +1,5 @@
 ---
-en-US: 
+en-US:
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
@@ -51,6 +51,8 @@ en-US:
         iso_name: "ISO Name"
         name: Name
         numcode: "ISO Code"
+      return_authorization:
+        amount: Amount
       creditcard:
         cc_type: Type
         month: Month
@@ -114,6 +116,9 @@ en-US:
         description: Description
         name: Name
     models:
+      return_authorization:
+        one: Return Authorization
+        other: Return Authorizations
       address:
         one: Address
         other: Addresses
@@ -201,6 +206,20 @@ en-US:
   adjustments: Adjustments
   administration: Administration
   all: "All"
+  return_authorizations: Return Authorizations
+  new_return_authorization: New Return Authorization
+  reason: Reason
+  rma_value: RMA Value
+  return_authorization: Return Authorization
+  receive: receive
+  received: Received
+  has_no_shipped_units: has no shipped units
+  awaiting_return: Awaiting Return
+  cannot_create_returns: Cannot create returns as this order has not shipped yet.
+  return_authorization_updated: Return authorization updated
+  rma_number: RMA Number
+  quantity_shipped: Quantity Shipped
+  return_quantity: Return Quantity
   all_departments: All departments
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes

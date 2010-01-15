@@ -28,13 +28,5 @@ class Admin::AdjustmentsController < Admin::BaseController
 
   def update_totals
     @order.update_totals!
-
-    if @order.payments.total < @order.total
-      #Total is higher so balance_due
-      @order.under_paid
-    elsif @order.payments.total > @order.total
-      #Total is lower so credit_owed
-      @order.over_paid
-    end
   end
 end

@@ -6,3 +6,4 @@
 ::TaxCharge
 ::ShippingCharge
 ::CouponCredit
+::ReturnAuthorizationCredit

@@ -1,0 +1,64 @@
+<table class="index">
+  <tr>
+    <th><%= t("product") %></th>
+    <th><%= t("quantity_shipped") %></th>
+    <th><%= t("return_quantity") %></th>
+  </tr>
+  <% @returnable_items.each do |returnable_item| %>
+    <tr id="<%= dom_id(returnable_item[:variant]) %>">
+      <td>
+        <h4 style="margin-bottom:0px;"><%= returnable_item[:variant].name %></h4>
+        <%= returnable_item[:variant].options_text %>
+      </td>
+      <td><%= returnable_item[:shipped_quantity] %></td>
+      <td class="return_quantity">
+        <%= text_field_tag "return_quantity[#{returnable_item[:variant].id}]",
+              @returned_units.nil? ? returnable_item[:retunable_quantity] : (@returned_units[returnable_item[:variant].id].nil? ? 0 : @returned_units[returnable_item[:variant].id].size),
+              {:style => "width:30px;"} %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+<% f.field_container :amount do %>
+  <%= f.label :amount, t("amount")%> <span class="required">*</span><br />
+  <%= f.text_field :amount, {:style => "width:80px;"} %> <%= t("rma_value") %>: <span id="rma_value"></span>
+  <%= f.error_message_on :amount %>
+<% end %>
+
+<% f.field_container :reason do %>
+  <%= f.label :reason, t("reason")%>
+  <%= f.text_area :reason, {:style=> "height:100px;", :class => 'fullwidth'} %>
+  <%= f.error_message_on :reason %>
+<% end %>
+
+
+<% content_for :head do %>
+  <script type="text/javascript">
+    var variant_prices = new Array();
+    <% @returnable_items.each do |returnable_item| %>
+      variant_prices[<%= returnable_item[:variant].id.to_s %>] = <%= returnable_item[:variant].price %>;
+    <% end %>
+
+    function calculate_rma_price(object, value){
+      var rma_amount = 0;
+
+      $.each($("td.return_quantity input"), function(i, inpt){
+        var variant_id = $(inpt).attr('id').replace("return_quantity_", "");
+         rma_amount += variant_prices[variant_id] * $(inpt).val()
+      });
+
+      if(!isNaN(rma_amount)){
+        $("span#rma_value").html(rma_amount.toFixed(2));
+      }
+    }
+
+    jQuery(document).ready(function(){
+      $.each($("td.return_quantity input"), function(i, inpt){
+        $(inpt).delayedObserver(0.5, calculate_rma_price)
+      });
+
+      calculate_rma_price();
+    });
+  </script>
+<% end %>

@@ -1,0 +1,3 @@
+class ReturnAuthorizationCredit < Credit
+
+end
