@@ -307,11 +307,13 @@ en-US:
   credit_owed: "Credit Owed"
   credit_total: Credit Total
   creditcard: Creditcard
+  creditcards: Creditcards
   credits: Credits
   current: Current
   customer: Customer
   customer_details: "Customer Details"
   customer_search: "Customer Search"
+  date_created: Date created
   date_range: "Date Range"
   debit: Debit
   delete: Delete
@@ -424,6 +426,8 @@ en-US:
   login_name: Login
   logout: Logout
   look_for_similar_items: Look for similar items
+  make_refund: Make refund
+  make_refund_for_transaction: Make a refund for this transaction
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
@@ -806,6 +810,7 @@ en-US:
   total: Total
   tracking: Tracking
   transaction: Transaction
+  transactions: Transactions
   tree: Tree
   try_again: "Try Again"
   type: Type

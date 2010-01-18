@@ -49,6 +49,19 @@ class CreditcardTest < ActiveSupport::TestCase
     should_change("CreditcardPayment.count", :by => 1) { CreditcardPayment.count }
     should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
     should_not_change("Order.by_state('new').count") { Order.by_state('new').count }
+    should "store the avs_result" do
+      assert_equal 'A', CreditcardTxn.last.avs_response
+    end
+    context "followed by void" do
+      setup do
+        @creditcard.void(CreditcardTxn.last)
+        @void_txn = CreditcardTxn.last
+      end
+      should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
+      should "create new transaction with correct attributes" do
+        assert_equal CreditcardTxn::TxnType::VOID, @void_txn.txn_type
+      end
+    end
   end
   
   context "authorization failure" do

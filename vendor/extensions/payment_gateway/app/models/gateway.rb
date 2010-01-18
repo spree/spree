@@ -26,7 +26,7 @@ class Gateway < ActiveRecord::Base
     ActiveMerchant::Billing::Base.gateway_mode = server.to_sym
     gateway_options = options
     gateway_options[:test] = true if test_mode
-		@provider ||= provider_class.new(gateway_options)
+    @provider ||= provider_class.new(gateway_options)
   end 
  
 	def validate

@@ -81,7 +81,7 @@ class ShipmentsApiTest < Test::Unit::TestCase
       assert_equal "456", @creditcard.gateway_payment_profile_id
     end
     should "have authorization code in response" do
-      assert_equal 'XYZ', @response.authorization
+      assert_equal '123456', @response.authorization
     end
   end
 

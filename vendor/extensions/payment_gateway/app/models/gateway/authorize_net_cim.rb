@@ -1,23 +1,17 @@
 class Gateway::AuthorizeNetCim < Gateway
 	preference :login, :string
 	preference :password, :password
-	
+
   ActiveMerchant::Billing::Response.class_eval do
-    # response.authorization is nil when creating an authorize transaction, instead there's 'approval_code' in params['direct_response']
-    # for consistiency with other gateways, this value needs to be assigned to authorization so add the necessary attribute writer
     attr_writer :authorization
   end
-
-
 
   def provider_class
     self.class
   end	
 
   def authorize(amount, creditcard, gateway_options)
-    response = create_transaction(amount, creditcard, :auth_only)
-    response.authorization = response.params['direct_response']['approval_code']
-    response
+    create_transaction(amount, creditcard, :auth_only)
   end
   
   def purchase(amount, creditcard, gateway_options)
@@ -26,6 +20,10 @@ class Gateway::AuthorizeNetCim < Gateway
 
   def capture(authorization, creditcard, gateway_options)
     create_transaction((authorization.amount * 100).to_i, creditcard, :capture_only, :approval_code => authorization.response_code)
+  end
+  
+  def credit(amount, creditcard, response_code, gateway_options)
+    create_transaction(amount, creditcard, :refund, :trans_id => response_code)
   end
   
 	def payment_profiles_supported?

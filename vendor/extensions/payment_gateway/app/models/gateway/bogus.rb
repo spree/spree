@@ -18,7 +18,7 @@ class Gateway::Bogus < Gateway
 
   def authorize(money, creditcard, options = {})
     if VALID_CCS.include? creditcard.number
-      ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
+      ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345', :avs_result => {:code => 'A'})
     else
       ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", {:message => 'Bogus Gateway: Forced failure'}, :test => true)
     end
@@ -26,7 +26,7 @@ class Gateway::Bogus < Gateway
 
   def purchase(money, creditcard, options = {})
     if VALID_CCS.include? creditcard.number
-      ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
+      ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345', :avs_result => {:code => 'A'})
     else
       ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", :message => 'Bogus Gateway: Forced failure', :test => true)
     end

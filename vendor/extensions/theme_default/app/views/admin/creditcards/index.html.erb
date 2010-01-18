@@ -1,0 +1,26 @@
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Creditcards"} %>
+
+<h3><%= t('transactions') %></h3>
+
+<table class="index">
+  <tr>
+    <th><%= t("activerecord.attributes.creditcard.number") %></th>
+    <th><%= t('date_created') %></th>
+    <th><%= t('amount') %></th>
+    <th><%= t('response_code') %></th>
+    <th></th>
+  </tr>
+<% for creditcard in collection -%>
+  <% for txn in creditcard.creditcard_txns -%>
+      <tr>
+    <% for txn in creditcard.creditcard_txns -%>
+        <td><%= creditcard.display_number %></td>
+        <td><%= txn.created_at %></td>
+        <td><%= number_to_currency txn.amount %></td>
+        <td><%= txn.response_code %></td>
+        <td><%= link_to t('make_refund_for_transaction'), refund_admin_order_creditcard_path(@order, creditcard, :txn_id => txn.id) %></td>
+      </tr>
+    <% end -%>
+  <% end -%>
+<% end -%>
+</table>

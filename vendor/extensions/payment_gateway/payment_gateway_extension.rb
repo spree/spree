@@ -12,6 +12,7 @@ class PaymentGatewayExtension < Spree::Extension
       include Spree::PaymentGateway
     end
 
+    require 'active_merchant/billing/authorize_net_cim'
 
 		#register all payment gateways
 		[

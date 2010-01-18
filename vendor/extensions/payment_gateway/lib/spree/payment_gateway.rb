@@ -16,7 +16,8 @@ module Spree
       creditcard_payment.creditcard_txns << CreditcardTxn.new(
         :amount => amount,
         :response_code => response.authorization,
-        :txn_type => CreditcardTxn::TxnType::AUTHORIZE
+        :txn_type => CreditcardTxn::TxnType::AUTHORIZE,
+        :avs_response => response.avs_result['code']
       )
     end
 
@@ -39,6 +40,22 @@ module Spree
       )
     end
 
+    def void(authorization)
+      if payment_gateway.payment_profiles_supported?
+        response = payment_gateway.void(authorization.response_code, self, minimal_gateway_options)
+      else
+        response = payment_gateway.void(authorization.response_code, minimal_gateway_options)
+      end      
+      gateway_error(response) unless response.success?
+      creditcard_payment = authorization.creditcard_payment
+      # create a transaction to reflect the void
+      creditcard_payment.creditcard_txns << CreditcardTxn.new(
+        :amount => authorization.amount,
+        :response_code => response.authorization,
+        :txn_type => CreditcardTxn::TxnType::VOID
+      )
+    end
+
     def purchase(amount)
       #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
       response = payment_gateway.purchase((amount * 100).to_i, self, gateway_options) 
@@ -52,12 +69,17 @@ module Spree
       creditcard_payment.creditcard_txns << CreditcardTxn.new(
         :amount => amount,
         :response_code => response.authorization,
-        :txn_type => CreditcardTxn::TxnType::PURCHASE
+        :txn_type => CreditcardTxn::TxnType::PURCHASE,
+        :avs_response => response.avs_result['code']
       )
     end
     
     def credit(amount, transaction)
-      response = payment_gateway.credit((amount * 100).to_i, transaction.response_code, minimal_gateway_options)
+      if payment_gateway.payment_profiles_supported?
+        response = payment_gateway.credit((amount * 100).to_i, self, transaction.response_code, minimal_gateway_options)
+      else
+        response = payment_gateway.credit((amount * 100).to_i, transaction.response_code, minimal_gateway_options)
+      end
       gateway_error(response) unless response.success?
 
       # create a creditcard_payment for the amount that was purchased
@@ -68,15 +90,6 @@ module Spree
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::CREDIT
       )
-    end
-
-    def void
-=begin
-      authorization = find_authorization
-      response = payment_gateway.void(authorization.response_code, minimal_gateway_options)
-      gateway_error(response) unless response.success?
-      self.creditcard_txns.create(:amount => order.total, :response_code => response.authorization, :txn_type => CreditcardTxn::TxnType::CAPTURE)
-=end
     end
     
     def gateway_error(response)
