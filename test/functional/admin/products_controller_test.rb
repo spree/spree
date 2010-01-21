@@ -125,30 +125,42 @@ class Admin::ProductsControllerTest < ActionController::TestCase
           end
 
           assert_equal 1, count
-
         end
 
         should "contain 1 product with 3 variants" do
            count = 0
            @json.each do |record|
              if record['product']['variants'].size != 0
-
                assert_equal 3, record['product']['variants'].size
-
-
-
                count += 1
              end
            end
 
            assert_equal 1, count
-
          end
+      end
+    end
+  end
 
+  context "on POST to :create" do
+    setup do
+      UserSession.create(Factory(:admin_user))
+      @tax_category = Factory.create(:tax_category)
+      Spree::Config.set :default_tax_category => @tax_category.name
 
+      assert_difference "Product.count", 1 do
+        post :create, :product => {
+          :name  => "Test Product",
+          :price => "12.99"
+        }
       end
     end
 
+    should_respond_with :redirect
+    should_redirect_to("the product's edit page") { edit_admin_product_path(assigns(:product)) }
+    should_assign_to :product
+    should "set the default tax category" do
+      assert_equal @tax_category, assigns(:product).tax_category
+    end
   end
-
 end

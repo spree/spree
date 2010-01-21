@@ -7,13 +7,13 @@ class Admin::ProductsController < Admin::BaseController
     wants.json { render :json => @collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, :images => {}}}, :images => {}, :master => {}})  }
   end
 
-  new_action.before :new_action_before
-
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => false}
   end
 
   update.before :update_before
+
+  create.before :create_before
 
   create.response do |wants|
     # go to edit form after creating as new product
@@ -99,9 +99,9 @@ class Admin::ProductsController < Admin::BaseController
     end
 
     # set the default tax_category if applicable
-    def new_action_before
+    def create_before
       return unless Spree::Config[:default_tax_category]
-      @product.tax_category = TaxCategory.find_by_name Spree::Config[:default_tax_category]
+      @product.tax_category ||= TaxCategory.find_by_name Spree::Config[:default_tax_category]
     end
 
     def update_before
