@@ -429,7 +429,6 @@ en-US:
   logout: Logout
   look_for_similar_items: Look for similar items
   make_refund: Make refund
-  make_refund_for_transaction: Make a refund for this transaction
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
@@ -675,6 +674,7 @@ en-US:
   recalculate_order_total: "Recalculate order total"
   receive: receive
   received: Received
+  refund: Refund
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
   registration: Registration
@@ -840,6 +840,7 @@ en-US:
   vat: "VAT"
   version: Version
   view_shipping_options: "View shipping options"
+  void: Void
   website: Website
   weight: Weight
   welcome_to_sample_store: "Welcome to the sample store"

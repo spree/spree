@@ -6,19 +6,24 @@
   <tr>
     <th><%= t("activerecord.attributes.creditcard.number") %></th>
     <th><%= t('date_created') %></th>
+    <th><%= t('type') %></th>
     <th><%= t('amount') %></th>
     <th><%= t('response_code') %></th>
     <th></th>
   </tr>
 <% for creditcard in collection -%>
   <% for txn in creditcard.creditcard_txns -%>
-      <tr>
     <% for txn in creditcard.creditcard_txns -%>
+      <tr>
         <td><%= creditcard.display_number %></td>
-        <td><%= txn.created_at %></td>
+        <td><%= txn.created_at.to_date %></td>
+        <td><%= txn.txn_type_name %></td>
         <td><%= number_to_currency txn.amount %></td>
         <td><%= txn.response_code %></td>
-        <td><%= link_to t('make_refund_for_transaction'), refund_admin_order_creditcard_path(@order, creditcard, :txn_id => txn.id) %></td>
+        <td>
+          <%= link_to t('refund'), refund_admin_order_creditcard_path(@order, creditcard, :txn_id => txn.id) %> | 
+          <%= link_to t('void'), void_admin_order_creditcard_path(@order, creditcard, :txn_id => txn.id), :method => :post, :confirm => t('are_you_sure') %>
+        </td>
       </tr>
     <% end -%>
   <% end -%>

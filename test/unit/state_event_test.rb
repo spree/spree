@@ -30,8 +30,8 @@ class StateEventTest < ActiveSupport::TestCase
 
       context "then paid" do
         setup do
-          add_capturable_payment(@order)
-          @order.payments.first.capture
+          add_capturable_card(@order)
+          @creditcard.capture(@creditcard.authorization)
           @order.reload
         end
 

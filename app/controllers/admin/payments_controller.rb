@@ -93,7 +93,7 @@ class Admin::PaymentsController < Admin::BaseController
 
     if @object.class == CreditcardPayment
       if current_gateway.payment_profiles_supported? and !params[:card].blank? and params[:card] != 'new'
-        @object.creditcard = @order.creditcards.find_by_id(params[:card])
+        @object.creditcard = Creditcard.find_by_id(params[:card])
       else
         @object.creditcard ||= Creditcard.new(:checkout => @object.order.checkout)
       end

@@ -91,7 +91,7 @@ ActionController::Routing::Routes.draw do |map|
     end
     admin.resources :orders do |order|
       order.resources :payments#, :member => {:capture => :get}
-      order.resources :creditcards, :member => {:refund => [:get,:post]}
+      order.resources :creditcards, :member => {:refund => [:get,:post], :void => [:get,:post]}
     end
     admin.resource :general_settings
     admin.resources :taxonomies, :member => { :get_children => :get } do |taxonomy|

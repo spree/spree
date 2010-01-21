@@ -16,10 +16,6 @@ class Gateway::Bogus < Gateway
     {}
   end
   
-	def payment_profiles_supported?
-	  true
-  end
-    
   def create_profile(creditcard, options = {})
     # simulate the storage of credit card profile using remote service
     creditcard.gateway_customer_profile_id = generate_profile_id
@@ -45,8 +41,8 @@ class Gateway::Bogus < Gateway
     ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
   end
 
-  def capture(money, creditcard, options = {})
-    if creditcard.number == "12345"
+  def capture(money, ident, options = {})
+    if ident == "12345"
       ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
     else
       ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", :error => 'Bogus Gateway: Forced failure', :test => true)

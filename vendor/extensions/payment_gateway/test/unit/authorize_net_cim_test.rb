@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class ShipmentsApiTest < Test::Unit::TestCase
+class AuthorizeNetCimTest < Test::Unit::TestCase
 
   def setup
     @cim_gateway = ActiveMerchant::Billing::AuthorizeNetCimGateway.new(

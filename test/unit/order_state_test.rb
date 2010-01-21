@@ -6,9 +6,14 @@ class OrderStateTest < ActiveSupport::TestCase
         @order = create_complete_order
 
         #only want one line item for ease of testing
-        2.times { @order.line_items.last.destroy }
+        @order.line_items.destroy_all
+        Factory(:line_item, :order => @order, :variant => Factory(:variant), :quantity => 2, :price => 100.00)
+        
+        #make sure totals get recalculated
+        @order.reload
+        @order.save
 
-        add_capturable_payment(@order)
+        add_capturable_card(@order)
       end
 
       should "be in_progress initally" do
@@ -22,43 +27,44 @@ class OrderStateTest < ActiveSupport::TestCase
         end
 
         should_change("@order.state", :from => "in_progress", :to => "new") { @order.state }
-
+        
         should "not allow ship" do
           assert !@order.can_ship?
         end
-
+        
         should "allow cancel" do
           assert @order.can_cancel?
         end
-
+        
         should "not allow resume" do
           assert !@order.can_resume?
         end
-
+        
         context "when canceled" do
           setup do
             @order.cancel!
           end
-
+        
           should_change("@order.state", :from => "new", :to => "canceled") { @order.state }
-
+        
           should "allow resume" do
             assert @order.can_resume?
           end
-
+        
           context "and then resumed" do
             setup do
               @order.resume!
             end
-
+        
             should_change("@order.state", :from => "canceled", :to => "new") { @order.state }
           end
         end
 
         context "when full payment is captured" do
           setup do
-            @order.payments.first.capture
+            @creditcard.capture(@creditcard.authorization)
             @order.reload
+            @order.save
           end
 
           should_change("@order.state", :from => "new", :to => "paid") { @order.state }
@@ -71,18 +77,18 @@ class OrderStateTest < ActiveSupport::TestCase
             setup do
               @order.cancel!
             end
-
+          
             should_change("@order.state", :from => "paid", :to => "canceled") { @order.state }
-
+          
             should "allow resume" do
               assert @order.can_resume?
             end
-
+          
             context "and then resumed" do
               setup do
                 @order.resume!
               end
-
+          
               should_change("@order.state", :from => "canceled", :to => "paid") { @order.state }
             end
           end
@@ -95,7 +101,7 @@ class OrderStateTest < ActiveSupport::TestCase
             end
 
             should_change("@order.state", :from => "paid", :to => "shipped") { @order.state }
-
+            
             context "and a return_authorization with all inventory_units returned" do
               setup do
                 ra = ReturnAuthorization.new(:order => @order, :amount => 50.00)
@@ -103,31 +109,28 @@ class OrderStateTest < ActiveSupport::TestCase
                 ra.save!
                 @order.reload
               end
-
+            
               should_change("@order.state", :from => "shipped", :to => "awaiting_return") { @order.state }
-
+            
               context "and received" do
                 setup do
                   @order.return_authorizations.first.receive!
                   @order.reload
                 end
-
+            
                 should_change("@order.state", :from => "awaiting_return", :to => "credit_owed") { @order.state }
-
+            
                 context "and a negative payment is created" do
                   setup do
-                    payment = CreditcardPayment.create(:order => @order, :amount => -50.00, :creditcard => @order.checkout.creditcard)
-                    CreditcardTxn.create(:creditcard_payment => payment, :amount => -50.00, :txn_type => CreditcardTxn::TxnType::AUTHORIZE, :response_code => 12345)
-                    payment.capture
+                    @creditcard.credit(50.00, @creditcard.authorization)
                     @order.reload
-
                   end
-
+            
                   should_change("@order.state", :from => "credit_owed", :to => "returned") { @order.state }
                 end
-
+            
               end
-
+            
             end
 
             context "and a return_authorization with not all inventory_units are returned is created" do
@@ -137,54 +140,51 @@ class OrderStateTest < ActiveSupport::TestCase
                 ra.save!
                 @order.reload
               end
-
+            
               should_change("@order.state", :from => "shipped", :to => "awaiting_return") { @order.state }
-
+            
               context "and received" do
                 setup do
                   @order.return_authorizations.first.receive!
                   @order.reload
                 end
-
+            
                 should_change("@order.state", :from => "awaiting_return", :to => "credit_owed") { @order.state }
-
+            
                 context "and a negative payment is created" do
                   setup do
-                    payment = CreditcardPayment.create(:order => @order, :amount => -50.00, :creditcard => @order.checkout.creditcard)
-                    CreditcardTxn.create(:creditcard_payment => payment, :amount => -50.00, :txn_type => CreditcardTxn::TxnType::AUTHORIZE, :response_code => 12345)
-                    payment.capture
+                    @creditcard.credit(50.00, @creditcard.authorization)
                     @order.reload
                   end
-
+                
                   should_change("@order.state", :from => "credit_owed", :to => "shipped") { @order.state }
                 end
-
+            
               end
-
+            
             end
 
           end
 
           context "and an additional credit is added" do
-             setup do
-               @credit = Factory(:credit, :amount => 2.00, :order => @order)
-               @order.update_totals!
-               @order.reload
-             end
-
-             should_change("@order.state", :from => "paid", :to => "credit_owed") { @order.state }
-
-             context "and a negative payment is created" do
-               setup do
-                 payment = CreditcardPayment.create(:order => @order, :amount => -2.00, :creditcard => @order.checkout.creditcard)
-                 CreditcardTxn.create(:creditcard_payment => payment, :amount => -2.00, :txn_type => CreditcardTxn::TxnType::AUTHORIZE, :response_code => 12345)
-                 payment.capture
-               end
-
-               should_change("@order.state", :from => "credit_owed", :to => "paid") { @order.state }
-             end
-
-           end
+            setup do
+              @credit = Factory(:credit, :amount => 2.00, :order => @order)
+              @order.update_totals!
+              @order.reload
+            end
+          
+            should_change("@order.state", :from => "paid", :to => "credit_owed") { @order.state }
+          
+            context "and a negative payment is created" do
+              setup do
+                @creditcard.credit(2.00, @creditcard.authorization)
+                @order.reload
+              end
+          
+              should_change("@order.state", :from => "credit_owed", :to => "paid") { @order.state }
+            end
+          
+          end
 
           context "and an additional charge is added" do
             setup do
@@ -192,19 +192,17 @@ class OrderStateTest < ActiveSupport::TestCase
               @order.update_totals!
               @order.reload
             end
-
+          
             should_change("@order.state", :from => "paid", :to => "balance_due") { @order.state }
-
+          
             context "and a payment is created" do
               setup do
-                payment = CreditcardPayment.create(:order => @order, :amount => 3.00, :creditcard => @order.checkout.creditcard)
-                CreditcardTxn.create(:creditcard_payment => payment, :amount => 3.00, :txn_type => CreditcardTxn::TxnType::AUTHORIZE, :response_code => 12345)
-                payment.capture
+                CreditcardPayment.create(:order => @order, :amount => 3.00, :creditcard => @order.checkout.creditcard)
               end
-
+          
               should_change("@order.state", :from => "balance_due", :to => "paid") { @order.state }
             end
-
+          
           end
 
         end

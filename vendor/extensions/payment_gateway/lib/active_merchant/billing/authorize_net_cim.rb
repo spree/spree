@@ -775,7 +775,7 @@ module ActiveMerchant #:nodoc:
             response.authorization = response.params['direct_response']['transaction_id']
           end
         end
-                
+        
         response
       end
 

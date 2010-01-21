@@ -23,7 +23,7 @@ class CheckoutTest < ActiveSupport::TestCase
         should_change("@checkout.state", :to => "complete") { @checkout.state }
         should_change("@checkout.order.completed_at", :from => nil) { @checkout.order.completed_at }
         should_change("@checkout.order.state", :from => "in_progress", :to => "new") { @checkout.order.state }        
-        should_change("@checkout.order.creditcard_payments.count", :by => 1) { @checkout.order.creditcard_payments.count }
+        should_not_change("@checkout.order.creditcard_payments.count") { @checkout.order.creditcard_payments.count }
         should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       end
       context "next with declineable creditcard" do
