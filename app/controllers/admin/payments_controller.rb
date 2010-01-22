@@ -49,7 +49,7 @@ class Admin::PaymentsController < Admin::BaseController
         end
         redirect_to collection_path
       rescue Spree::GatewayError => e
-        flash.now[:error] = "Gateway error: #{e.message}"
+        flash.now[:error] = "#{e.message}"
         response_for :create_fails
       end
 

@@ -747,16 +747,22 @@ module ActiveMerchant #:nodoc:
       def commit(action, request)
         url = test? ? test_url : live_url
         xml = ssl_post(url, request, "Content-Type" => "text/xml")
-
         response_params = parse(action, xml)
+        message = response_params['messages']['message']
 
-        message = response_params['messages']['message']['text']
-        test_mode = test? || message =~ /Test Mode/
+        if message.class.is_a? Array
+          text = "#{message[0]['code']} - #{message[0]['text']}"
+        else
+          text = "#{message['code']} - #{message['text']}"
+        end
+        test_mode = test? || text =~ /Test Mode/
         success = response_params['messages']['result_code'] == 'Ok'
+
+        Rails.logger.error("Gateway Error: #{text}") unless success
 
         direct_response_params = parse_direct_response(response_params['direct_response'])
         
-        response = Response.new(success, message, response_params,
+        response = Response.new(success, text, response_params,
           :test => test_mode,
           :authorization => response_params['customer_profile_id'] || (response_params['profile'] ? response_params['profile']['customer_profile_id'] : direct_response_params['transaction_id']),
           :avs_result => {:code => direct_response_params['avs_response']}
