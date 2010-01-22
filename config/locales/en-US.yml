@@ -853,3 +853,4 @@ en-US:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones
+  unable_to_connect_to_gateway: "Unable to connect to gateway."
