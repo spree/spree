@@ -6,8 +6,8 @@ class Creditcard < ActiveRecord::Base
   
   validates_numericality_of :month, :integer => true
   validates_numericality_of :year, :integer => true   
-  validates_presence_of :number, :on => :create
-  validates_presence_of :verification_value, :on => :create
+  validates_presence_of :number, :unless => Proc.new{|c| c.gateway_customer_profile_id }
+  validates_presence_of :verification_value, :unless => Proc.new{|c| c.gateway_customer_profile_id }
   
   has_many :creditcard_txns, :through => :creditcard_payments
   

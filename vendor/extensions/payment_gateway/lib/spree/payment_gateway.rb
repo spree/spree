@@ -3,7 +3,7 @@ module Spree
     
     def self.included(base)
       base.named_scope :with_payment_profile, :conditions => "gateway_customer_profile_id IS NOT NULL AND gateway_payment_profile_id IS NOT NULL"
-      base.before_create :create_payment_profile
+      base.before_save :create_payment_profile
     end
     
     def authorize(amount)
