@@ -3,6 +3,7 @@ module Spree
     
     def self.included(base)
       base.named_scope :with_payment_profile, :conditions => "gateway_customer_profile_id IS NOT NULL AND gateway_payment_profile_id IS NOT NULL"
+      base.before_create :create_payment_profile
     end
     
     def authorize(amount)
@@ -135,5 +136,12 @@ module Spree
     def payment_gateway
       @payment_gateway ||= Gateway.current
     end  
+    
+    private
+    def create_payment_profile
+      return unless payment_gateway.payment_profiles_supported? and number and checkout
+      payment_gateway.create_profile(self, gateway_options)
+    end
+    
   end
 end

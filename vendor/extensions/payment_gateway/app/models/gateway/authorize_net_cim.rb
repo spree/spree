@@ -26,9 +26,19 @@ class Gateway::AuthorizeNetCim < Gateway
     create_transaction(amount, creditcard, :refund, :trans_id => response_code)
   end
   
+  
 	def payment_profiles_supported?
 	  true
   end
+
+  # Create a new CIM customer profile ready to accept a payment
+  def create_profile(creditcard, gateway_options)
+    if creditcard.gateway_customer_profile_id.nil?
+      profile_hash = create_customer_profile(creditcard, creditcard.gateway_options)
+      creditcard.update_attributes(:gateway_customer_profile_id => profile_hash[:customer_profile_id], :gateway_payment_profile_id => profile_hash[:customer_payment_profile_id])
+    end
+  end
+
 
   private
 
@@ -36,10 +46,8 @@ class Gateway::AuthorizeNetCim < Gateway
     # Set up a CIM profile for the card if one doesn't exist
     # Valid transaction_types are :auth_only, :capture_only and :auth_capture
     def create_transaction(amount, creditcard, transaction_type, options = {})
-      if creditcard.gateway_customer_profile_id.nil?
-        profile_hash = create_customer_profile(creditcard, creditcard.gateway_options)
-        creditcard.update_attributes!(:gateway_customer_profile_id => profile_hash[:customer_profile_id], :gateway_payment_profile_id => profile_hash[:customer_payment_profile_id])
-      end
+      create_profile(creditcard, creditcard.gateway_options)
+      creditcard.save
       amount = "%.2f" % (amount/100.0) # This gateway requires formated decimal, not cents
       transaction_options = {
         :type => transaction_type, 
