@@ -1,6 +1,6 @@
 class Gateway::AuthorizeNetCim < Gateway
 	preference :login, :string
-	preference :password, :password
+	preference :password, :string
 
   ActiveMerchant::Billing::Response.class_eval do
     attr_writer :authorization

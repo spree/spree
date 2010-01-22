@@ -1,6 +1,6 @@
 class Gateway::Protx < Gateway
 	preference :login, :string
-	preference :password, :password
+	preference :password, :string
 	preference :account, :string
 
   def provider_class
