@@ -15,8 +15,10 @@
       <%= render 'line_item', :variant => item_form.object.variant, :line_item => item_form.object, :item_form => item_form %>
     <% end %>
 
-    <tr id="none">
-      <td colspan="5"><%= @order.line_items.empty? ? t("your_cart_is_empty.") : "" %></td>
-    </tr>
+    <% if @order.line_items.empty? -%>
+      <tr id="none">
+        <td colspan="5"><%= t("your_cart_is_empty.") -%></td>
+      </tr>
+    <% end -%>
   </tbody>
 </table>
