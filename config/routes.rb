@@ -90,8 +90,10 @@ ActionController::Routing::Routes.draw do |map|
       order.resources :return_authorizations, :member => {:fire => :put}
     end
     admin.resources :orders do |order|
-      order.resources :payments#, :member => {:capture => :get}
-      order.resources :creditcards, :member => {:refund => [:get,:post], :void => [:get,:post]}
+      order.resources :payments
+      order.resources :creditcards do |creditcards|
+        creditcards.resources :creditcard_txns, :member => {:capture => :post, :void => :post, :refund => [:get,:post]}
+      end
     end
     admin.resource :general_settings
     admin.resources :taxonomies, :member => { :get_children => :get } do |taxonomy|

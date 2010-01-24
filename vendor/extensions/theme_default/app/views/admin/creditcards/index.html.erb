@@ -5,27 +5,41 @@
 <table class="index">
   <tr>
     <th><%= t("activerecord.attributes.creditcard.number") %></th>
-    <th><%= t('date_created') %></th>
-    <th><%= t('type') %></th>
-    <th><%= t('amount') %></th>
-    <th><%= t('response_code') %></th>
-    <th></th>
+    <th><%= t('transactions') %></th>
   </tr>
 <% for creditcard in collection -%>
-  <% for txn in creditcard.creditcard_txns -%>
-    <% for txn in creditcard.creditcard_txns -%>
-      <tr>
-        <td><%= creditcard.display_number %></td>
-        <td><%= txn.created_at.to_date %></td>
-        <td><%= txn.txn_type_name %></td>
-        <td><%= number_to_currency txn.amount %></td>
-        <td><%= txn.response_code %></td>
-        <td>
-          <%= link_to t('refund'), refund_admin_order_creditcard_path(@order, creditcard, :txn_id => txn.id) %> | 
-          <%= link_to t('void'), void_admin_order_creditcard_path(@order, creditcard, :txn_id => txn.id), :method => :post, :confirm => t('are_you_sure') %>
-        </td>
-      </tr>
-    <% end -%>
-  <% end -%>
+    <tr>
+      <td><%= creditcard.display_number %></td>
+      <td>
+        <% txns = creditcard.txns.original.map {|original_txn| [original_txn, original_txn.creditcard_txns] }.flatten.compact %>
+        <% if txns.any? %>
+        <table>
+          <tr>
+            <th><%= t('type') %></th>
+            <th><%= 'date' %></th>
+            <th><%= t('amount') %></th>
+            <th><%= t('response_code') %></th>
+            <th></th>
+          </tr>
+          <% for txn in txns %>
+          <tr>
+            <td>
+              <%= '&rarr;' if txn.original_txn %>
+              <%= txn.txn_type_name %>
+            </td>
+            <td><%= txn.created_at.to_date %></td>
+            <td><%= number_to_currency txn.amount %></td>
+            <td><%= txn.response_code %></td>
+            <td>
+              <%= link_to t('capture'), capture_admin_order_creditcard_creditcard_txn_path(@order, creditcard, txn), :method => :post, :confirm => t('are_you_sure') %> | 
+              <%= link_to t('void'), void_admin_order_creditcard_creditcard_txn_path(@order, creditcard, txn), :method => :post, :confirm => t('are_you_sure') %> | 
+              <%= link_to t('refund'), refund_admin_order_creditcard_creditcard_txn_path(@order, creditcard, txn) %>
+            </td>
+          </tr>
+          <% end %>
+        </table>
+        <% end %>
+      </td>
+    </tr>
 <% end -%>
 </table>

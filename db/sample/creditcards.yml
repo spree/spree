@@ -1,5 +1,6 @@
-<% 1.upto(30) do |i| %>
+<% 1.upto(50) do |i| %>
 card_<%= i %>:
+  checkout: checkout_<%= i %>
   cc_type: visa
   month: 12
   year: 2011

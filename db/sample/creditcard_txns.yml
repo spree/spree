@@ -1,7 +1,16 @@
-<% 1.upto(30) do |i| %>
-txn_<%= i %>:
+<% 1.upto(50) do |i| %>
+auth_txn_<%= i %>:
+  creditcard: card_<%= i %>
+  creditcard_payment: visa_<%= i %>
   amount: 45.75
   txn_type: <%=CreditcardTxn::TxnType::AUTHORIZE%>
+  response_code: 12345
+  creditcard_payment: visa_<%=i%>
+capture_txn_<%= i %>:
+  creditcard: card_<%= i %>
+  original_txn: auth_txn_<%= i %>
+  amount: 45.75
+  txn_type: <%=CreditcardTxn::TxnType::CAPTURE%>
   response_code: 12345
   creditcard_payment: visa_<%=i%>
 <% end %>

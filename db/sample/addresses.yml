@@ -1,6 +1,6 @@
 <%
 require 'faker'
-1.upto(500) do |i|
+1.upto(50) do |i|
 %>
 ship_address_<%= i %>:
   firstname: <%= Faker::Name.first_name %>
@@ -13,7 +13,7 @@ ship_address_<%= i %>:
   country_id: 214
   phone: <%= Faker::PhoneNumber.phone_number %>
 <% end %>
-<% 1.upto(500) do |i| %>
+<% 1.upto(50) do |i| %>
 bill_address_<%= i %>:
   firstname: <%= Faker::Name.first_name %>
   lastname: <%= Faker::Name.last_name %>

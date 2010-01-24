@@ -19,7 +19,7 @@ class Gateway::AuthorizeNetCim < Gateway
   end
 
   def capture(authorization, creditcard, gateway_options)
-    create_transaction((authorization.amount * 100).to_i, creditcard, :capture_only, :approval_code => authorization.response_code)
+    create_transaction((authorization.amount * 100).to_i, creditcard, :prior_auth_capture, :trans_id => authorization.response_code)
   end
   
   def credit(amount, creditcard, response_code, gateway_options)
@@ -59,7 +59,9 @@ class Gateway::AuthorizeNetCim < Gateway
         :customer_payment_profile_id => creditcard.gateway_payment_profile_id,
       }.update(options)
 
-      cim_gateway.create_customer_profile_transaction(:transaction => transaction_options)
+      r=cim_gateway.create_customer_profile_transaction(:transaction => transaction_options)
+      puts r.inspect
+      r
     end
   
     # Create a new CIM customer profile ready to accept a payment

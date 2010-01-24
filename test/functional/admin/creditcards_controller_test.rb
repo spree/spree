@@ -10,7 +10,7 @@ class Admin::CreditcardsControllerTest < ActionController::TestCase
       @order.reload
       @creditcard = @order.creditcards.first      
     end
-
+  
     context "GET index" do
       setup do
         get :index, :order_id => @order.id

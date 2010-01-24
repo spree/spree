@@ -7,19 +7,6 @@ class Admin::PaymentsController < Admin::BaseController
 
   update.wants.html { redirect_to edit_object_url }
 
-  def capture
-    if @creditcard_payment.can_capture?
-      #Creditcard.transaction do
-      #  @order.state_events.create(:name => t('pay'), :user => current_user, :previous_state => order.state)
-        @creditcard_payment.capture#(authorization)
-      #end
-      flash[:notice] = t("credit_card_capture_complete")
-    else
-      flash[:error] = t("unable_to_capture_credit_card")
-    end
-    redirect_to edit_object_url
-  end
-
   def create
     build_object
     load_object

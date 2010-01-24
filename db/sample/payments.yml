@@ -1,7 +1,7 @@
-<% 1.upto(500) do |i| %>
+<% 1.upto(50) do |i| %>
 visa_<%= i %>:
   order: order_<%= i %>
-  amount: 0
+  amount: 45.75
   creditcard: card_<%= i %>
   type: CreditcardPayment
 <% end %>

@@ -1,6 +1,6 @@
 <%
 require 'faker'
-1.upto(500) do |i|
+1.upto(50) do |i|
 email = Faker::Internet.email
 %>
 checkout_<%= i %>:
