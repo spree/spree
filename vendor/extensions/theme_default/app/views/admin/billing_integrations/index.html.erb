@@ -16,7 +16,9 @@
     <th><%= t("name") %></th>
     <th><%= t("provider") %></th>
     <th><%= t("environment") %></th>
-    <th><%= t("active") %></th>     
+    <th><%= t("server") %></th>
+    <th><%= t("test_mode") %></th>
+    <th><%= t("active") %></th>
     <th><%= t("action") %></th>
   </thead>
   <tbody>
@@ -25,10 +27,12 @@
         <td width="120px"><%= integration.name %></td>
         <td width="140px"><%= integration.type %></td>
         <td width="100px"><%= integration.environment.to_s.titleize %></td>
+        <td width="60px"><%= integration.server.to_s.titleize  %></td>
+        <td width="60px"><%= integration.test_mode.to_s.titleize %></td>
         <td width="60px"><%= integration.active.to_s.titleize %></td>
         <td width="140px">
-        	<%= link_to_edit integration %> &nbsp;
-        	<%= link_to_delete integration %>
+          <%= link_to_edit integration %> &nbsp;
+          <%= link_to_delete integration %>
         </td>
       </tr>
     <% end %>
