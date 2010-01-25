@@ -1,16 +1,18 @@
 jQuery(document).ready(function($){
-  
+
   $('input#checkout_use_billing').click(function() {
     show_billing(!this.checked);
   });
 
-  var show_billing = function(show) {   
+  var show_billing = function(show) {
     if(show) {
       $('#shipping .inner').show();
       $('#shipping .inner input').removeAttr('disabled', 'disabled');
+      $('#shipping .inner select').removeAttr('disabled', 'disabled');
     } else {
       $('#shipping .inner').hide();
       $('#shipping .inner input').attr('disabled', 'disabled');
+      $('#shipping .inner select').attr('disabled', 'disabled');
     }
   }
 
@@ -47,5 +49,5 @@ jQuery(document).ready(function($){
     update_state('b');
     update_state('s');
   });
-  
+
 });
