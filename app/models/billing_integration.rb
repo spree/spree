@@ -1,12 +1,12 @@
-class BillingIntegration < ActiveRecord::Base  
-  
+class BillingIntegration < ActiveRecord::Base
+
   def self.current
     self.first :conditions => ["environment = ? AND active = ?", RAILS_ENV, true]
   end
-    
-	validates_presence_of :name, :type
 
-	@provier = nil
+  validates_presence_of :name, :type
+
+  @provier = nil
   @@providers = Set.new
   def self.register
     @@providers.add(self)
@@ -14,5 +14,13 @@ class BillingIntegration < ActiveRecord::Base
 
   def self.providers
     @@providers.to_a
-  end  
+  end
+
+  def options
+    options_hash = {}
+    self.preferences.each do |key,value|
+      options_hash[key.to_sym] = value
+    end
+    options_hash
+  end
 end

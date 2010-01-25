@@ -26,7 +26,6 @@ class Admin::ReturnAuthorizationsController < Admin::BaseController
     @returnable_units = {} if @returnable_units.nil?
 
     @returned_units =  @return_authorization.inventory_units.group_by(&:variant_id)
-    puts @returned_units.empty?
   end
 
 

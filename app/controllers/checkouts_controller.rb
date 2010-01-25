@@ -19,6 +19,7 @@ class CheckoutsController < Spree::BaseController
   edit.before :edit_hooks, :set_user
   delivery.edit_hook :load_available_methods
   address.edit_hook :set_ip_address
+  payment.edit_hook :load_available_integrations
 
   # customized verison of the standard r_c update method (since we need to handle gateway errors, etc)
   def update
@@ -133,6 +134,10 @@ class CheckoutsController < Spree::BaseController
   def load_available_methods
     @available_methods = rate_hash
     @checkout.shipping_method_id ||= @available_methods.first[:id]
+  end
+
+  def load_available_integrations
+    @billing_integrations = BillingIntegration.find(:all, :conditions => {:active => true, :environment => ENV['RAILS_ENV']})
   end
 
   def set_ip_address
