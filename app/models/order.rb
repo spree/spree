@@ -325,15 +325,15 @@ class Order < ActiveRecord::Base
   def outstanding_balance
     [0, total - payments.total].max
   end
-  
+
   def has_balance_outstanding?
     outstanding_balance > 0
   end
-  
+
   def outstanding_credit
     [0, payments.total - total].max
   end
-  
+
   def has_credit_outstanding?
     outstanding_credit > 0
   end
@@ -346,12 +346,12 @@ class Order < ActiveRecord::Base
 
     if email
       OrderMailer.deliver_confirm(self)
-    end                  
-    
-    begin      
+    end
+
+    begin
       @out_of_stock_items = InventoryUnit.sell_units(self)
-      update_totals unless @out_of_stock_items.empty?     
-      shipment.inventory_units = inventory_units        
+      update_totals unless @out_of_stock_items.empty?
+      shipment.inventory_units = inventory_units
       save!
     rescue Exception => e
       logger.error "Problem saving authorized order: #{e.message}"

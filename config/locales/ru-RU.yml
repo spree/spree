@@ -119,6 +119,9 @@ ru-RU:
       address:
         one: "Адрес"
         other: "Адреса"
+      cheque_payment:
+        one: Cheque Payment
+        other: Cheque Payments
       country:
         one: "Страна"
         other: "Страны"
@@ -230,6 +233,7 @@ ru-RU:
   awaiting_return: Awaiting Return
   back: "Назад"
   back_to_store: "Назад к списку"
+  backordered: Backordered
   backordering_is_allowed: "Задолженные заказы {{not}} разрешены"
   balance_due: "Balance Due"
   best_selling_products: "Товары - бестселлеры"
@@ -248,6 +252,7 @@ ru-RU:
   cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: "Провести платёж по кредитной карте"
   card_code: "Код карты"
+  card_details: "Card details"
   card_number: "Номер карты"
   card_type_is: "Тип карты"
   cart: "Корзина"
@@ -255,6 +260,7 @@ ru-RU:
   category: "Категория"
   change: "Изменить"
   change_language: "Сменить язык"
+  change_my_password: "Change my password"
   charge_total: "Итого оплачено"
   charged: "Оплачено"
   charges: Charges
@@ -265,6 +271,7 @@ ru-RU:
     complete: Complete
     delivery: Delivery
     payment: Payment
+  cheque: Cheque
   city: "Город"
   clone: "Клонировать"
   code: "Кодовое слово"
@@ -295,18 +302,22 @@ ru-RU:
   create_a_new_account: "Создать новую учетную запись"
   create_user_account: "Создать нового пользователя"
   created_successfully: "Успешно создана"
+  credit: Credit
   credit_card: "Кредитная карта"
   credit_card_capture_complete: "Платёж по кредитной карте завершён"
   credit_card_payment: "Платёж кредитной картой"
   credit_owed: "Credit Owed"
   credit_total: "Итого по кредитным картам"
   creditcard: "Кредитная карта"
+  creditcards: Creditcards
   credits: "Кредиты"
   current: "Текущий"
   customer: "Пользователь"
   customer_details: "Customer Details"
   customer_search: "Customer Search"
+  date_created: Date created
   date_range: "Период времени"
+  debit: Debit
   delete: "Удалить"
   depth: "Глубина"
   description: "Описание"
@@ -382,6 +393,10 @@ ru-RU:
   images: "Картинки"
   images_for: "Картинки для"
   in_progress: "В процессе"
+  include_in_shipment: Include in Shipment
+  included_in_other_shipment: Included in another Shipment
+  included_in_this_shipment: Included in this Shipment
+  instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   integration_settings_warning: "Если вы меняете платежную систему, то необходимо сохранить данное изменение, только после этого вы сможете редактировать параметры интеграции"
   invalid_search: "Неверный критерий поиска."
   inventory: "Ассортимент "
@@ -424,6 +439,7 @@ ru-RU:
   mail_queue_not_enabled: "Очередь почтовых сообщений НЕ включена (email'ы доставляются немедленно)."
   mail_server_preferences: "Настройки почтового сервера"
   mail_server_settings: "Установки почтового сервера"
+  make_refund: Make refund
   mark_shipped: "Отметить как доставленный"
   master_price: "Основная цена"
   max_items: "Максимальное число наименований по начальной ставке"
@@ -440,12 +456,12 @@ ru-RU:
   new_billing_integration: "Новая интеграция с биллингом"
   new_category: "Новая категория"
   new_coupon: "Новый купон"
-  new_credit_card_payment: "Новый платеж по кредитной карте"
   new_customer: "Для новых пользователей"
   new_image: "Новая картинка"
   new_option_type: "Новая опция"
   new_option_value: "Новое значение опции"
   new_order: "New Order"
+  new_payment: "New Payment"
   new_product: "Новый продукт"
   new_product_group: "Новая группа продуктов"
   new_property: "Новое свойство"
@@ -472,6 +488,7 @@ ru-RU:
   none: "Ни одного"
   none_available: "Нет в наличии"
   not: "не"
+  note: Note
   on_hand: "В наличии"
   operation: "Операция"
   option_Values: "Значения опции"
@@ -497,6 +514,7 @@ ru-RU:
   order_total_message: "Полная сумма, снятая с вашей карточки, составит"
   order_updated: "Заказ обновлен"
   orders: "Заказы"
+  other_payment_options: Other Payment Options
   out_of_stock: "Нет в наличии"
   out_of_stock_products: "Закончились на складе"
   over_paid: "Over Paid"
@@ -662,6 +680,7 @@ ru-RU:
   recalculate_order_total: "Recalculate order total"
   receive: receive
   received: Received
+  refund: Refund
   register: "Зарегистрироваться как новый пользователь"
   register_or_guest: "Оформить заказ как гость или зарегистрироваться"
   registration: "Регистрация"
@@ -698,6 +717,7 @@ ru-RU:
   search: "Поиск"
   search_results: "Результаты поиска по запросу '{{keywords}}'"
   secure_connection_type: "Тип защищенного соединения"
+  secure_creditcard: Secure Creditcard
   select: "Выбрать"
   select_from_prototype: "Выбрать из прототипов"
   select_preferred_shipping_option: "Выберите предпочитаемый способ доставки"
@@ -751,6 +771,7 @@ ru-RU:
   smtp_send_copy_to_this_addresses: "Отправлять копии всех сообщений на этот адрес. Для использования нескольких адресов разделите их запятой."
   smtp_send_order_mails_as_from_following_address: "Отправлять уведомления о заказах от этого адреса."
   smtp_username: "Пользователь"
+  sold: Sold
   spree:
     date: "Дата"
     time: "Время"
@@ -799,12 +820,14 @@ ru-RU:
   total: "Итого"
   tracking: "Отслеживание"
   transaction: "Транзакция"
+  transactions: Transactions
   tree: "Дерево"
   try_again: "Попробуйте еще раз"
   type: "Тип"
   unable_ship_method: "Не удалось создать методы доставки из-за ошибки на сервере."
   unable_to_authorize_credit_card: "Не удалось авторизировать кредитную карту"
   unable_to_capture_credit_card: "Не удалось совершить платёж по кредитной карте"
+  unable_to_connect_to_gateway: "Unable to connect to gateway."
   unable_to_save_order: "Не удалось сохранить заказ"
   under_paid: "Under Paid"
   unrecognized_card_type: "Неизвестный тип карты"
@@ -826,6 +849,7 @@ ru-RU:
   vat: "НДС"
   version: "Версия"
   view_shipping_options: "View shipping options"
+  void: Void
   website: "Сайт"
   weight: "Вес"
   welcome_to_sample_store: "Добро пожаловать в тестовый магазин"

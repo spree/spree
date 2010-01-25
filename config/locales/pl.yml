@@ -119,6 +119,9 @@ pl:
       address: 
         one: Address
         other: Addresses
+      cheque_payment:
+        one: Cheque Payment
+        other: Cheque Payments
       country: 
         one: Country
         other: Countries
@@ -230,6 +233,7 @@ pl:
   awaiting_return: Awaiting Return
   back: Wstecz
   back_to_store: "Powrót do sklepu"
+  backordered: Backordered
   backordering_is_allowed: "Backordering {{not}} allowed"
   balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
@@ -248,6 +252,7 @@ pl:
   cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: przechwyć
   card_code: "Kod Karty"
+  card_details: "Card details"
   card_number: "Numer Karty"
   card_type_is: Card type is
   cart: Koszyk
@@ -255,6 +260,7 @@ pl:
   category: Kategoria
   change: Zmień
   change_language: "Zmień język"
+  change_my_password: "Change my password"
   charge_total: Charge Total
   charged: Charged
   charges: Charges
@@ -265,6 +271,7 @@ pl:
     complete: Complete
     delivery: Delivery
     payment: Payment
+  cheque: Cheque
   city: Miejscowość
   clone: Clone
   code: Code
@@ -295,18 +302,22 @@ pl:
   create_a_new_account: "Utwórz nowe konto"
   create_user_account: Create User Account
   created_successfully: "Created Successfully"
+  credit: Credit
   credit_card: "Karta kredytowa"
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
   credit_owed: "Credit Owed"
   credit_total: Credit Total
   creditcard: Creditcard
+  creditcards: Creditcards
   credits: Credits
   current: Biężący
   customer: Klient
   customer_details: "Customer Details"
   customer_search: "Customer Search"
+  date_created: Date created
   date_range: "Zakres czasu"
+  debit: Debit
   delete: Skasuj
   depth: Depth
   description: Opis
@@ -382,6 +393,10 @@ pl:
   images: Obrazki
   images_for: "Images for"
   in_progress: "W trakcie..."
+  include_in_shipment: Include in Shipment
+  included_in_other_shipment: Included in another Shipment
+  included_in_this_shipment: Included in this Shipment
+  instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Invalid search criteria."
   inventory: Zapasy
@@ -424,6 +439,7 @@ pl:
   mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Ustawienia serwera pocztowego"
+  make_refund: Make refund
   mark_shipped: "Mark Shipped"
   master_price: "Cena główna"
   max_items: Max Items
@@ -440,12 +456,12 @@ pl:
   new_billing_integration: New Billing Integration
   new_category: "Nowa kategoria"
   new_coupon: New Coupon
-  new_credit_card_payment: "New Credit Card Payment"
   new_customer: "New Customer"
   new_image: "Nowy obrazek"
   new_option_type: "Nowy typ opcji"
   new_option_value: "Nowa wartość opcji"
   new_order: "New Order"
+  new_payment: "New Payment"
   new_product: "Nowy produkt"
   new_product_group: New Product Group
   new_property: "Nowa właściwość"
@@ -472,6 +488,7 @@ pl:
   none: Żaden
   none_available: Niedostępne
   not: not
+  note: Note
   on_hand: "On Hand"
   operation: Operacja
   option_Values: "Wartości Opcji"
@@ -497,6 +514,7 @@ pl:
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Zamówienie uaktualnione"
   orders: Zamówienia
+  other_payment_options: Other Payment Options
   out_of_stock: "Out of Stock"
   out_of_stock_products: "Out of Stock Products"
   over_paid: "Over Paid"
@@ -662,6 +680,7 @@ pl:
   recalculate_order_total: "Recalculate order total"
   receive: receive
   received: Received
+  refund: Refund
   register: Register as a New User
   register_or_guest: Checkout as Guest or Register
   registration: Registration           
@@ -698,6 +717,7 @@ pl:
   search: Szukaj
   search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Secure Connection Type
+  secure_creditcard: Secure Creditcard
   select: Wybierz
   select_from_prototype: "Wybierz z prototypu"
   select_preferred_shipping_option: "Select preferred shipping option"
@@ -751,6 +771,7 @@ pl:
   smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
   smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTP Username  
+  sold: Sold
   spree:
     date: Data
     time: Czas                                               
@@ -799,12 +820,14 @@ pl:
   total: Łącznie
   tracking: Tracking
   transaction: Transakcja
+  transactions: Transactions
   tree: Tree
   try_again: "Spróbuj ponownie"
   type: Typ
   unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
+  unable_to_connect_to_gateway: "Unable to connect to gateway."
   unable_to_save_order: "Unable to Save Order"
   under_paid: "Under Paid"
   unrecognized_card_type: Unrecognized card type
@@ -826,6 +849,7 @@ pl:
   vat: "VAT"           
   version: Wersja
   view_shipping_options: "View shipping options"
+  void: Void
   website: "Strona www"
   weight: Weight
   welcome_to_sample_store: "Witamy w przykładowycm sklepie"

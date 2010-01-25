@@ -119,6 +119,9 @@ de-CH:
       address: 
         one: Adresse
         other: Adressen
+      cheque_payment:
+        one: Cheque Payment
+        other: Cheque Payments
       country: 
         one: Land
         other: Länder
@@ -230,6 +233,7 @@ de-CH:
   awaiting_return: Awaiting Return
   back: Zurück
   back_to_store: "Zurück zum Shop"
+  backordered: Backordered
   backordering_is_allowed: "Backordering {{not}} allowed"
   balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
@@ -248,6 +252,7 @@ de-CH:
   cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: capture
   card_code: "Kartenprüfnummer"
+  card_details: "Card details"
   card_number: "Kartennummer"
   card_type_is: Card type is
   cart: Warenkorb
@@ -255,6 +260,7 @@ de-CH:
   category: Kategorie
   change: Ändern
   change_language: "Sprache ändern"
+  change_my_password: "Change my password"
   charge_total: Charge Total
   charged: geändert
   charges: Charges
@@ -265,6 +271,7 @@ de-CH:
     complete: Complete
     delivery: Delivery
     payment: Payment
+  cheque: Cheque
   city: Stadt
   clone: Clone
   code: Code
@@ -295,18 +302,22 @@ de-CH:
   create_a_new_account: "Neues Konto erstellen"
   create_user_account: "Benutzerkonto erstellen"
   created_successfully: "Erfolgreich erstellt"
+  credit: Credit
   credit_card: Kreditkarte
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: Kreditkartenzahlung
   credit_owed: "Credit Owed"
   credit_total: Credit Total
   creditcard: Kreditkarte
+  creditcards: Creditcards
   credits: Credits
   current: Stand
   customer: Kunde
   customer_details: "Customer Details"
   customer_search: "Customer Search"
+  date_created: Date created
   date_range: "Datum (von/bis)"
+  debit: Debit
   delete: Löschen
   depth: Tiefe
   description: Beschreibung
@@ -382,6 +393,10 @@ de-CH:
   images: Bilder
   images_for: "Images for"
   in_progress: "In Bearbeitung"
+  include_in_shipment: Include in Shipment
+  included_in_other_shipment: Included in another Shipment
+  included_in_this_shipment: Included in this Shipment
+  instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Ungültige Suche"
   inventory: Lager
@@ -424,6 +439,7 @@ de-CH:
   mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mailserver-Einstellungen"
+  make_refund: Make refund
   mark_shipped: "Als versandt kennzeichnen"
   master_price: Grundpreis
   max_items: Max Items
@@ -440,12 +456,12 @@ de-CH:
   new_billing_integration: New Billing Integration
   new_category: "Neue Kategorie"
   new_coupon: New Coupon
-  new_credit_card_payment: "Neue Kreditkartenzahlung"
   new_customer: "Neuer Kunde"
   new_image: "Neues Bild"
   new_option_type: "Neue Option"
   new_option_value: "Neuer Optionswert"
   new_order: "New Order"
+  new_payment: "New Payment"
   new_product: "Neues Produkt"
   new_product_group: New Product Group
   new_property: "Neue Eigenschaft"
@@ -472,6 +488,7 @@ de-CH:
   none: kein
   none_available: "keine verfügbar"
   not: not
+  note: Note
   on_hand: "Auf Lager"
   operation: Operation
   option_Values: "Optionswerte"
@@ -497,6 +514,7 @@ de-CH:
   order_total_message: "Die Gesamtsumme, mit der Ihre Kreditkarte belastet wird"
   order_updated: "Bestellung aktualisiert"
   orders: Bestellungen
+  other_payment_options: Other Payment Options
   out_of_stock: "Ausverkauft"
   out_of_stock_products: "Out of Stock Products"
   over_paid: "Over Paid"
@@ -662,6 +680,7 @@ de-CH:
   recalculate_order_total: "Recalculate order total"
   receive: receive
   received: Received
+  refund: Refund
   register: "Als neuer Benutzer registrieren"
   register_or_guest: "Als Gast weitermachen oder registrieren"
   registration: Registration           
@@ -698,6 +717,7 @@ de-CH:
   search: Suchen
   search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Secure Connection Type
+  secure_creditcard: Secure Creditcard
   select: Auswählen
   select_from_prototype: ""
   select_preferred_shipping_option: "Select preferred shipping option"
@@ -751,6 +771,7 @@ de-CH:
   smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas." 
   smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTP Username  
+  sold: Sold
   spree:
     date: Datum
     time: Zeit                                               
@@ -799,12 +820,14 @@ de-CH:
   total: Gesamt
   tracking: Tracking
   transaction: Transaktion
+  transactions: Transactions
   tree: Baum
   try_again: "Erneut versuchen"
   type: Typ
   unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "Kreditkarte konnte nicht authorisiert werden"
   unable_to_capture_credit_card: "Kreditkarte konnte nicht erfasst werden"
+  unable_to_connect_to_gateway: "Unable to connect to gateway."
   unable_to_save_order: "Bestellung konnte nicht gespeichert werden"
   under_paid: "Under Paid"
   unrecognized_card_type: Unrecognized card type
@@ -826,6 +849,7 @@ de-CH:
   vat: "VAT"           
   version: Version
   view_shipping_options: "View shipping options"
+  void: Void
   website: Webseite
   weight: Gewicht
   welcome_to_sample_store: "Willkommen im Beispielshop"

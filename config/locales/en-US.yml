@@ -1,7 +1,5 @@
 ---
-en-US:
-  secure_creditcard: Secure Creditcard
-  other_payment_options: Other Payment Options
+en-US: 
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
@@ -235,6 +233,7 @@ en-US:
   awaiting_return: Awaiting Return
   back: Back
   back_to_store: "Go Back To Store"
+  backordered: Backordered
   backordering_is_allowed: "Backordering {{not}} allowed"
   balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
@@ -394,6 +393,9 @@ en-US:
   images: Images
   images_for: "Images for"
   in_progress: "In Progress"
+  include_in_shipment: Include in Shipment
+  included_in_other_shipment: Included in another Shipment
+  included_in_this_shipment: Included in this Shipment
   instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Invalid search criteria."
@@ -430,7 +432,6 @@ en-US:
   login_name: Login
   logout: Logout
   look_for_similar_items: Look for similar items
-  make_refund: Make refund
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
@@ -438,6 +439,7 @@ en-US:
   mail_queue_not_enabled: "Mail queue is not enabled (emails are delivered immediately)"
   mail_server_preferences: Mail Server Preferences
   mail_server_settings: "Mail Server Settings"
+  make_refund: Make refund
   mark_shipped: "Mark Shipped"
   master_price: "Master Price"
   max_items: Max Items
@@ -486,6 +488,7 @@ en-US:
   none: None
   none_available: "None Available"
   not: not
+  note: Note
   on_hand: "On Hand"
   operation: Operation
   option_Values: "Option Values"
@@ -511,6 +514,7 @@ en-US:
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Order Updated"
   orders: Orders
+  other_payment_options: Other Payment Options
   out_of_stock: "Out of Stock"
   out_of_stock_products: "Out of Stock Products"
   over_paid: "Over Paid"
@@ -713,6 +717,7 @@ en-US:
   search: Search
   search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Secure Connection Type
+  secure_creditcard: Secure Creditcard
   select: Select
   select_from_prototype: "Select From Prototype"
   select_preferred_shipping_option: "Select preferred shipping option"
@@ -766,6 +771,7 @@ en-US:
   smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas."
   smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTP Username
+  sold: Sold
   spree:
     date: Date
     time: Time
@@ -821,6 +827,7 @@ en-US:
   unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
+  unable_to_connect_to_gateway: "Unable to connect to gateway."
   unable_to_save_order: "Unable to Save Order"
   under_paid: "Under Paid"
   unrecognized_card_type: Unrecognized card type
@@ -858,4 +865,3 @@ en-US:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones
-  unable_to_connect_to_gateway: "Unable to connect to gateway."

@@ -11,7 +11,11 @@ class Admin::ShipmentsController < Admin::BaseController
 
   edit.before :edit_before
 
+  update.before :assign_inventory_units
   update.after :update_after
+
+  create.before :assign_inventory_units
+  create.after :recalculate_order
 
   update do
     wants.html { redirect_to edit_object_url }
@@ -55,7 +59,16 @@ class Admin::ShipmentsController < Admin::BaseController
       @order.checkout.special_instructions = object_params[:special_instructions]
       @order.save
     end
+  end
+
+  def assign_inventory_units
+    return unless params.has_key? :inventory_units
+
+    params[:inventory_units].each { |id, value| @shipment.inventory_units << InventoryUnit.find(id) }
+  end
+
+  def recalculate_order
     @shipment.recalculate_order if params[:recalculate]
   end
-  
+
 end

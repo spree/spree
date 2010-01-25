@@ -9,9 +9,12 @@
   <br class='clear' />
 </div>
 
-
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
-<%= render :partial => "details" %>
+
+<h2><%= t('shipment') %> #<%= @shipment.number%> (<%= @shipment.state.to_s.humanize %>)</h2>
+<% if @shipment.shipping_charge %>
+  <h3><%= t('charges') %> <%= number_to_currency @shipment.shipping_charge.amount %></h3>
+<% end %>
 
 <%= error_messages_for :shipment %>
 <% form_for(@shipment, :url => object_url, :html => { :method => :put }) do |shipment_form| %>

@@ -119,6 +119,9 @@ pt-BR:
       address: 
         one: Endereço
         other: Endereços
+      cheque_payment:
+        one: Cheque Payment
+        other: Cheque Payments
       country: 
         one: País
         other: Países
@@ -230,6 +233,7 @@ pt-BR:
   awaiting_return: Awaiting Return
   back: Voltar
   back_to_store: "Voltar à Loja"
+  backordered: Backordered
   backordering_is_allowed: "Devolução {{not}} permitida"
   balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
@@ -248,6 +252,7 @@ pt-BR:
   cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: capturar
   card_code: "Código do Cartão"
+  card_details: "Card details"
   card_number: "Número do Cartão"
   card_type_is: Tipo do cartão é
   cart: Carrinho
@@ -255,6 +260,7 @@ pt-BR:
   category: Categoria
   change: Mudar
   change_language: "Mudar Língua"
+  change_my_password: "Change my password"
   charge_total: Total a cobrar
   charged: Cobrado
   charges: Charges
@@ -265,6 +271,7 @@ pt-BR:
     complete: Complete
     delivery: Delivery
     payment: Payment
+  cheque: Cheque
   city: Cidade
   clone: Clone
   code: Code
@@ -295,18 +302,22 @@ pt-BR:
   create_a_new_account: "Crie uma nova conta"
   create_user_account: Criar Conta do Usuário
   created_successfully: "Criado com sucesso"
+  credit: Credit
   credit_card: "Cartão de Crédito"
   credit_card_capture_complete: "Cartão de Crédito foi Capturado"
   credit_card_payment: "Pagamento de Cartão de Crédito"
   credit_owed: "Credit Owed"
   credit_total: Credit Total
   creditcard: Cartão de Crédito
+  creditcards: Creditcards
   credits: Credits
   current: Atual
   customer: Cliente
   customer_details: "Customer Details"
   customer_search: "Customer Search"
+  date_created: Date created
   date_range: "Período de Data"
+  debit: Debit
   delete: Apagar
   depth: Profundidade
   description: Descrição
@@ -382,6 +393,10 @@ pt-BR:
   images: Imagens
   images_for: "Images for"
   in_progress: "Em progresso"
+  include_in_shipment: Include in Shipment
+  included_in_other_shipment: Included in another Shipment
+  included_in_this_shipment: Included in this Shipment
+  instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
   invalid_search: "Critério inválido de pesquisa."
   inventory: Inventário
@@ -424,6 +439,7 @@ pt-BR:
   mail_queue_not_enabled: "Fila de Email não está habilitado (emails serão entregues imediatamente)"
   mail_server_preferences: Preferências de Servidor de Email
   mail_server_settings: "Configuração do Servidor de Email"
+  make_refund: Make refund
   mark_shipped: "Marcado como Enviado"
   master_price: "Preço Principal"
   max_items: Max Items
@@ -440,12 +456,12 @@ pt-BR:
   new_billing_integration: New Billing Integration
   new_category: "Nova categoria"
   new_coupon: Novo Cupom
-  new_credit_card_payment: "Novo Pagamento de Cartão de Crédito"
   new_customer: "Novo Cliente"
   new_image: "Nova Imagem"
   new_option_type: "Novo Tipo de Opção"
   new_option_value: "Nova Opção de Valor"
   new_order: "New Order"
+  new_payment: "New Payment"
   new_product: "Novo Produto"
   new_product_group: New Product Group
   new_property: "Nova Propriedade"
@@ -472,6 +488,7 @@ pt-BR:
   none: Nenhum
   none_available: "Nenhum Disponível"
   not: não
+  note: Note
   on_hand: "Na Mão"
   operation: Operação
   option_Values: "Opção de Valores"
@@ -497,6 +514,7 @@ pt-BR:
   order_total_message: "O valor total cobrado no seu cartão será de"
   order_updated: "Pedido Atualizado"
   orders: Pedidos
+  other_payment_options: Other Payment Options
   out_of_stock: "Sem Estoque"
   out_of_stock_products: "Out of Stock Products"
   over_paid: "Over Paid"
@@ -662,6 +680,7 @@ pt-BR:
   recalculate_order_total: "Recalculate order total"
   receive: receive
   received: Received
+  refund: Refund
   register: Registrar como um Novo Usuário
   register_or_guest: Finalizar como Convidado ou Registrar
   registration: Registro
@@ -698,6 +717,7 @@ pt-BR:
   search: Pesquisa
   search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Tipo de Conexão Segura
+  secure_creditcard: Secure Creditcard
   select: Selecionar
   select_from_prototype: "Selecionar a partir de Protótipo"
   select_preferred_shipping_option: "Selecionar opção de entrega preferida"
@@ -751,6 +771,7 @@ pt-BR:
   smtp_send_copy_to_this_addresses: "Envia uma cópia de todos os e-mails enviados por este endereço. Para múltiplos endereços, separar com vírgula."
   smtp_send_order_mails_as_from_following_address: "Enviar e-mails de pedidos como se fosse o endereço seguinte."
   smtp_username: Usuário de SMTP
+  sold: Sold
   spree:
     date: Data
     time: Horário                                               
@@ -799,12 +820,14 @@ pt-BR:
   total: Total
   tracking: Rastreamento
   transaction: Transação
+  transactions: Transactions
   tree: Árvore
   try_again: "Tente novamente"
   type: Tipo
   unable_ship_method: "Não foi possível gerar métodos de entrega devido a um erro no servidor."
   unable_to_authorize_credit_card: "Não foi possível Autorizar o Cartão de Crédito"
   unable_to_capture_credit_card: "Não foi possível Capturar o Cartão de Crédito"
+  unable_to_connect_to_gateway: "Unable to connect to gateway."
   unable_to_save_order: "Não foi Possível gravar Pedido"
   under_paid: "Under Paid"
   unrecognized_card_type: Tipo de cartão não reconhecido
@@ -826,6 +849,7 @@ pt-BR:
   vat: "VAT"           
   version: Versão
   view_shipping_options: "View shipping options"
+  void: Void
   website: Website
   weight: Peso
   welcome_to_sample_store: "Bem Vindo à Loja de Exemplo"

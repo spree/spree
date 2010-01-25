@@ -1,5 +1,5 @@
 ---
-fi:
+fi: 
   'no': Ei
   'yes': Kyllä
   5_biggest_spenders: "5 suurinta kuluttajaa"
@@ -119,6 +119,9 @@ fi:
       address:
         one: Osoite
         other: Osoitteet
+      cheque_payment:
+        one: Cheque Payment
+        other: Cheque Payments
       country:
         one: Maa
         other: Maat
@@ -230,6 +233,7 @@ fi:
   awaiting_return: Awaiting Return
   back: Takaisin
   back_to_store: "Palaa kauppaan"
+  backordered: Backordered
   backordering_is_allowed: "Jälkitoimittaminen {{not}} sallittu"
   balance_due: "Erääntyvät"
   best_selling_products: "Parhaiten myyvät tuotteet"
@@ -248,6 +252,7 @@ fi:
   cannot_create_returns: Cannot create returns as this order has not shipped yet.
   capture: kaappaa
   card_code: "Kortin koodi"
+  card_details: "Card details"
   card_number: "Kortin numero"
   card_type_is: "Kortin tyyppi on"
   cart: Ostoskori
@@ -255,6 +260,7 @@ fi:
   category: Kategoria
   change: Vaihda
   change_language: "Vaihda kieli"
+  change_my_password: "Change my password"
   charge_total: "Veloitettu yhteensä"
   charged: Veloitettu
   charges: Veloitukset
@@ -265,6 +271,7 @@ fi:
     complete: Valmis
     delivery: Toimitus
     payment: Maksu
+  cheque: Cheque
   city: Paikkakunta
   clone: Klooni
   code: Koodi
@@ -295,18 +302,22 @@ fi:
   create_a_new_account: "Luo uusi tunnus"
   create_user_account: "Luo käyttäjätunnus"
   created_successfully: "Luominen onnistui"
+  credit: Credit
   credit_card: Luottokortti
   credit_card_capture_complete: "Luottokortin tallentaminen onnistui"
   credit_card_payment: Luottokorttimaksu
   credit_owed: Veloittamatta
   credit_total: "Veloittamatta yhteensä"
   creditcard: Luottokortti
+  creditcards: Creditcards
   credits: Luotot
   current: Nykyinen
   customer: Asiakas
   customer_details: Asiakastiedot
   customer_search: Asiakashaku
+  date_created: Date created
   date_range: "Päivämäärä (mistä mihin)"
+  debit: Debit
   delete: Poista
   depth: Syvyys
   description: Kuvaus
@@ -382,6 +393,10 @@ fi:
   images: Kuvat
   images_for: Kuvia
   in_progress: Kesken
+  include_in_shipment: Include in Shipment
+  included_in_other_shipment: Included in another Shipment
+  included_in_this_shipment: Included in this Shipment
+  instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   integration_settings_warning: "Jos vaihdat laskutusintegraatiota, sinun täytyy tallentaa ennen kuin muokkaat integraation asetuksia."
   invalid_search: "Virheellinen haku."
   inventory: Varasto
@@ -424,6 +439,7 @@ fi:
   mail_queue_not_enabled: "Postin jonotus poissa päältä (sähköpostiviestit toimitetaan heti)"
   mail_server_preferences: "Sähköpostipalvelimen asetukset"
   mail_server_settings: "Sähköpostipalvelimen asetukset"
+  make_refund: Make refund
   mark_shipped: "Merkitse toimitetuksi"
   master_price: Toimitushinta
   max_items: "Tuotteiden maksimimäärä"
@@ -440,12 +456,12 @@ fi:
   new_billing_integration: "Uusi laskutusintegraatio"
   new_category: "Uusi kategoria"
   new_coupon: "Uusi kuponki"
-  new_credit_card_payment: "Uusi luottokorttimaksutapa"
   new_customer: "Uusi asiakas"
   new_image: "Uusi kuva"
   new_option_type: "Uusi valintatyyppi"
   new_option_value: "Uusi valinta-arvo"
   new_order: "Uusi tilaus"
+  new_payment: "New Payment"
   new_product: "Uusi tuote"
   new_product_group: "Uusi tuoteryhmä"
   new_property: "Uusi ominaisuus"
@@ -472,6 +488,7 @@ fi:
   none: "Ei yhtäkään"
   none_available: "Ei yhtäkään saatavilla"
   not: ei
+  note: Note
   on_hand: Saatavilla
   operation: Operaatio
   option_Values: Valinta-arvot
@@ -497,6 +514,7 @@ fi:
   order_total_message: "Kortiltanne veloitettava kokonaissumma"
   order_updated: "Tilaus päivitetty"
   orders: Tilaukset
+  other_payment_options: Other Payment Options
   out_of_stock: "Ei saatavilla"
   out_of_stock_products: "Loppuneet tuotteet"
   over_paid: "Maksettu yli"
@@ -587,7 +605,7 @@ fi:
         sentence: "nimi tai avainsanat sisältävät <em>%s</em>"
       in_taxons:
         args:
-          taxon_names: "Taksonien nimet"
+          "taxon_names": "Taxon names"
         description: "Taksonien nimet on eroteltava välillä tai pilkulla (esim. adidas,shoes)"
         name: "Taksoneissa ja kaikissa niiden jälkeläisissä"
         sentence: "<em>%s</em>:ssa ja kaikissa niiden jälkeläisissä"
@@ -662,6 +680,7 @@ fi:
   recalculate_order_total: "Recalculate order total"
   receive: receive
   received: Received
+  refund: Refund
   register: "Rekisteröidy uutena käyttäjänä"
   register_or_guest: "Jätä tilaus vierailijana tai rekisteröidy"
   registration: Rekisteröityminen
@@ -698,6 +717,7 @@ fi:
   search: Etsi
   search_results: "Etsi tuloksia avainsanoilla: '{{keywords}}'"
   secure_connection_type: "Turvallinen yhteystyyppi"
+  secure_creditcard: Secure Creditcard
   select: Valitse
   select_from_prototype: "Valitse prototyypistä"
   select_preferred_shipping_option: "Valitse suositeltu toimitustyyppi"
@@ -751,6 +771,7 @@ fi:
   smtp_send_copy_to_this_addresses: "Lähetä kopio kaikista lähtevistä viesteistä tähän osoitteeseen. Erottele useammat osoitteet pilkulla."
   smtp_send_order_mails_as_from_following_address: "Lähetä tilausviestit tästä osoitteesta."
   smtp_username: SMTP käyttäjänimi
+  sold: Sold
   spree:
     date: Päivämäärä
     time: Kellonaika
@@ -799,12 +820,14 @@ fi:
   total: Loppusumma
   tracking: Seuranta
   transaction: Tapahtuma
+  transactions: Transactions
   tree: Puu
   try_again: "Yritä uudelleen"
   type: Tyyppi
   unable_ship_method: "Toimitustapojen generointi ei onnistu palvelinvirheen takia."
   unable_to_authorize_credit_card: "Luottokortin valtuuttaminen ei onnistu"
   unable_to_capture_credit_card: "Luottokortin tallentaminen ei onnistu"
+  unable_to_connect_to_gateway: "Unable to connect to gateway."
   unable_to_save_order: "Tilauksen tallentaminen ei onnistu"
   under_paid: Maksamatta
   unrecognized_card_type: "Tunnistamaton korttityyppi"
@@ -826,6 +849,7 @@ fi:
   vat: ALV
   version: Versio
   view_shipping_options: "Näytä toimitusvaihtoehdot"
+  void: Void
   website: Verkkosivu
   weight: Paino
   welcome_to_sample_store: "Tervetuloa esimerkkikauppaan"
