@@ -11,7 +11,21 @@ class Api::ShipmentsController < Api::BaseController
     end
 
     def object_serialization_options
-      collection_serialization_options
+      { :include =>  {
+        :shipping_method => {}, 
+        :address => {}, 
+        :inventory_units => {
+          :include => {
+            :variant => {
+              :include => {
+                :product => {:only => [:name]}
+                } 
+              }
+            }
+          }
+        },
+        :except => [:shipping_method_id, :address_id] 
+      }
     end
     
     def eager_load_associations
