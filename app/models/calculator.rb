@@ -1,4 +1,4 @@
-class Calculator < ActiveRecord::Base  
+class Calculator < ActiveRecord::Base
   belongs_to :calculable, :polymorphic => true
 
   # This method must be overriden in concrete calculator.
@@ -41,6 +41,6 @@ class Calculator < ActiveRecord::Base
   end
 
   def available?(object)
-    self.class.available?(object)
+    return true #should be overridden if needed
   end
 end

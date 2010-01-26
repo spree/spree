@@ -21,16 +21,16 @@ class ShippingMethod < ActiveRecord::Base
     return(calculated_costs)
   end
 
-  def available?
-    !! calculator
-  end
-  
-  def available_to_address?(address)
-    available? && zone.include?(address)
+  def available?(order)
+    calculator.available?(order)
   end
 
-  def self.all_available_to_address(address)
-    all.select { |method| method.available_to_address?(address)}
+  def available_to_order?(order)
+    available?(order) && zone.include?(order.ship_address)
+  end
+
+  def self.all_available(order)
+    all.select { |method| method.available_to_order?(order)}
   end
 
 end

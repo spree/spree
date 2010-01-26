@@ -72,7 +72,7 @@ class Checkout < ActiveRecord::Base
 
   def shipping_methods
     return [] unless ship_address
-    ShippingMethod.all_available_to_address(ship_address)
+    ShippingMethod.all_available(order)
   end
 
   private
