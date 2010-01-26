@@ -2,17 +2,21 @@ require 'test_helper'
 class ShipmentTest < ActiveSupport::TestCase
 
   context "State machine" do
-    setup { @shipment = Factory(:shipment) }
+    setup do
+      order = Factory(:order_with_totals)
+      order.complete!
+      @shipment = order.shipment      
+    end
 
     should "be pending initially" do
       assert Shipment.new.pending?
     end
-
+    
     should "change to ready_to_ship when completed" do
       @shipment.ready!
       assert @shipment.ready_to_ship?
     end
-
+    
     should "log events" do
       assert @shipment.state_events.empty?
       @shipment.ready!
@@ -22,22 +26,19 @@ class ShipmentTest < ActiveSupport::TestCase
 
     context "when shipped" do
       setup do
-        @order = Factory(:order, :state => 'paid')
-        @shipment = @order.shipment
-        @shipment.update_attribute(:state, 'ready_to_ship')
+        @shipment.order.reload.pay!
+        @shipment.reload
       end
 
       should "make order shipped when this is the only shipment" do
         @shipment.ship!
-        @order.reload
-        assert @order.shipped?
+        assert @shipment.order.shipped?
       end
       should "not make order shipped if order has another unshipped shipment" do
-        Factory(:shipment, :order => @order)
-
+        @shipment.order.shipments.create(:shipping_method => Factory(:shipping_method))
+      
         @shipment.ship!
-        @order.reload
-        assert !@order.shipped?
+        assert !@shipment.order.shipped?
       end
 
       should "set shipped_at" do
@@ -70,9 +71,9 @@ class ShipmentTest < ActiveSupport::TestCase
       assert_equal 2, @shipment.manifest.detect{|i| i.variant == @variant1}.quantity
       assert_equal 3, @shipment.manifest.detect{|i| i.variant == @variant2}.quantity
     end
-
+  
   end
-
+  
   context "line_items" do
     setup do
       create_complete_order
@@ -88,69 +89,68 @@ class ShipmentTest < ActiveSupport::TestCase
       assert_equal 3, @order.shipment.line_items.length
     end
     should "include only line items for each shipment when the order has multiple shipments" do
-      @new_shipment = @order.shipments.create(:shipping_method => @shipment.shipping_method, :address => @shipment.address)
-
       # move all inventory units for @line_item3 to the new shipment
-      inventory_units_to_move = @shipment.inventory_units.select{|iu| iu.variant == @line_item3.variant}
-      inventory_units_to_move.each {|iu| iu.update_attribute(:shipment, @new_shipment) }
+      units_to_move = @shipment.inventory_units.select{|iu| iu.variant == @line_item3.variant}
+      @new_shipment = @order.shipments.create(:shipping_method => Factory(:shipping_method), :inventory_units => units_to_move)
+  
       @shipment.reload
-
+      
       assert_equal 2, @shipment.line_items.length
       assert @shipment.line_items.include?(@line_item1)
       assert @shipment.line_items.include?(@line_item2)
-
+  
       assert_equal 1, @new_shipment.line_items.length
       assert @new_shipment.line_items.include?(@line_item3)
     end
   end
-
+  
   context "recalculate_needed?" do
     setup { @shipment = Factory(:shipment) }
-
+  
     should "be false if nothing has changed" do
       assert !@shipment.recalculate_needed?
     end
-
+  
     should "be true if shipping method has changed" do
       @new_shipping_method = Factory(:shipping_method)
       @shipment.shipping_method = @new_shipping_method
       assert @shipment.recalculate_needed?
     end
-
+  
     should "be true if address has changed" do
       @shipment.address.firstname = 'Newname'
       assert @shipment.recalculate_needed?
     end
-
+  
   end
-
+  
   context "recalculate_order after shipping_method change" do
     setup do
       create_complete_order
       @order.complete!
-
+  
       @new_shipping_method = Factory(:shipping_method)
       c = @new_shipping_method.calculator
       c.preferred_amount = 5.0
       c.save!
-
+  
       @shipment.shipping_method = @new_shipping_method
       @shipment.save!
       @shipment.reload
-
+  
       @shipment.recalculate_order
     end
-
+  
     should "result in updated ship_total on order" do
       assert_equal 5.0, @shipment.order.ship_total.to_f
     end
-
+  
     should "update description of shipping charge" do
       assert_equal "Shipping (#{@order.shipment.shipping_method.name})", @order.shipping_charges.first.description
     end
-
+  
   end
-
+  
   context "editable_by?" do
     setup do
       @shipment = Factory(:shipment)
@@ -164,9 +164,9 @@ class ShipmentTest < ActiveSupport::TestCase
       assert !@shipment.editable_by?(@user)
     end
   end
-
+  
   context "instance w/params" do
-    setup { @shipment = Shipment.create(:number => "CUSTOM-123") }
+    setup { @shipment = Shipment.create(:number => "CUSTOM-123", :order => Factory(:order_with_totals)) }
     should "accept custom shipment number if one is provided" do
       assert @shipment.number == "CUSTOM-123"
     end

@@ -3,7 +3,7 @@ require 'test_helper'
 class StateEventTest < ActiveSupport::TestCase
   context "Order" do
     setup do
-      @order = Factory(:order)
+      @order = Factory(:order_with_totals)
     end
 
     context "when completed" do
