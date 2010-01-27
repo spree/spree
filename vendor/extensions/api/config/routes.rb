@@ -11,4 +11,5 @@ map.namespace :api do |api|
     orders.resources :inventory_units, :except => [:new,:edit], :member => {:event => :put}
   end
   api.resources :inventory_units, :except => [:new,:edit], :member => {:event => :put}
+  api.resources :products, :except => [:new,:edit]
 end
