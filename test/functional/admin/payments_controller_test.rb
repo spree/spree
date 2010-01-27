@@ -7,7 +7,7 @@ class Admin::PaymentsControllerTest < ActionController::TestCase
     setup do
       Spree::Config.set(:auto_capture => true) 
       UserSession.create(Factory(:admin_user))
-      create_new_order
+      create_new_order_v2
       @order.reload
       # Add a charge to create an outstanding balance on the order so new payments will validate
       @charge = Factory(:charge, :amount => 2.99, :order => @order)
@@ -32,14 +32,14 @@ class Admin::PaymentsControllerTest < ActionController::TestCase
                 }
               }
             }
-          }
+          }         
           post :create, @params
         end
         should_create :creditcard_payment
         should_create :creditcard_txn
         should_respond_with :redirect
         should "create payment with the right attributes" do
-          assert_equal 2, @order.creditcard_payments.count
+          assert_equal 1, @order.creditcard_payments.count
           assert_equal 2.99, @order.creditcard_payments.last.txns.last.amount.to_f
         end
       end
@@ -66,7 +66,7 @@ class Admin::PaymentsControllerTest < ActionController::TestCase
         should_create :creditcard_payment
         should_respond_with :redirect
         should "create payment with the right attributes" do
-          assert_equal 2, @order.creditcard_payments.count
+          assert_equal 1, @order.creditcard_payments.count
           assert_equal 2.99, @order.creditcard_payments.last.txns.last.amount.to_f
         end
         should "create payment that's assigned to the existing card" do

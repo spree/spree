@@ -95,6 +95,14 @@ def create_new_order
   @checkout.creditcard_attributes = Factory.attributes_for(:creditcard)
   @checkout.next!
 end
+    
+def create_new_order_v2
+  create_complete_order
+  @checkout.creditcard = Factory(:creditcard)
+  @checkout.state = "complete"
+  @checkout.save
+  @order.complete!
+end
 
 # useful method for functional tests that require an authenticated user
 def set_current_user
