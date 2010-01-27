@@ -59,9 +59,7 @@ class Gateway::AuthorizeNetCim < Gateway
         :customer_payment_profile_id => creditcard.gateway_payment_profile_id,
       }.update(options)
 
-      r=cim_gateway.create_customer_profile_transaction(:transaction => transaction_options)
-      puts r.inspect
-      r
+      cim_gateway.create_customer_profile_transaction(:transaction => transaction_options)
     end
   
     # Create a new CIM customer profile ready to accept a payment

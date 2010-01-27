@@ -118,7 +118,7 @@ class Admin::ProductsControllerTest < ActionController::TestCase
 
               assert record['product']['master'].keys.include? 'is_master'
               assert record['product']['master']['is_master']
-              assert record['product'].keys.include? 'images'
+              assert record['product'].keys.include?('images')
 
               count += 1
             end

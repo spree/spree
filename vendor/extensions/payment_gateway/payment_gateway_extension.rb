@@ -10,8 +10,10 @@ class PaymentGatewayExtension < Spree::Extension
     Creditcard.class_eval do
       # add gateway methods to the creditcard so we can authorize, capture, etc.
       include Spree::PaymentGateway
-    end
-    require 'active_merchant/billing/authorize_net_cim'
+    end          
+    
+    silence_warnings { require 'active_merchant/billing/authorize_net_cim' }
+    
 		#register all payment gateways
 		[
 			Gateway::Bogus,
