@@ -59,6 +59,7 @@ class Admin::ShipmentsController < Admin::BaseController
       @order.checkout.special_instructions = object_params[:special_instructions]
       @order.save
     end
+    recalculate_order
   end
 
   def assign_inventory_units

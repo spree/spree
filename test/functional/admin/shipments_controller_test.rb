@@ -44,9 +44,7 @@ class Admin::ShipmentsControllerTest < ActionController::TestCase
           :recalculate => '1'
         @order.reload
       end
-      should "not change ship_total" do
-        assert_equal 5.0, @order.ship_total.to_f
-      end
+      should_change("@order.ship_total", :to => 5) { @order.ship_total }
     end    
     
     context "trying to update shipment that's already shipped" do
