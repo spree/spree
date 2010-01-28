@@ -39,6 +39,7 @@ Spree::Initializer.run do |config|
   config.gem 'will_paginate', :lib => 'will_paginate', :version => '2.3.11'
   config.gem 'state_machine', :lib => 'state_machine', :version => '0.8.0'
   config.gem "faker", :version => '0.3.1'
+  config.gem 'paperclip', :version => '>=2.3.1.1'
 
   # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.

@@ -1,5 +1,0 @@
-Usage:
-
-  script/generate paperclip Class attachment1 (attachment2 ...)
-  
-This will create a migration that will add the proper columns to your class's table.

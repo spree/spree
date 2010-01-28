@@ -38,6 +38,7 @@ begin
     s.add_dependency 'rspec', '>= 1.2.0'
     s.add_dependency 'rspec-rails', '>= 1.2.0'
     s.add_dependency 'searchlogic', ">=2.3.5"
+    s.add_dependency 'paperclip', "= 2.3.1.1"
     s.has_rdoc = true
     rdoc_excludes = Dir["**"].reject { |f| !File.directory? f }
     rdoc_excludes.each do |e|
