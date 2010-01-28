@@ -12,7 +12,7 @@
 <% end %>
 
 <p class="form-buttons">
-  <%= button t('continue') %>
+  <%= button @order.in_progress? ? t('continue') : t('update') %>
 </p>
 
 <% content_for :head do %>

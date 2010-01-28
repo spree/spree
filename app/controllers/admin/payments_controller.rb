@@ -12,13 +12,13 @@ class Admin::PaymentsController < Admin::BaseController
     load_object
 
     if object.class == CreditcardPayment
-      
+
       unless object.valid?
         response_for :create_fails
         return
       end
       # object doesn't get saved here, that happens in @creditcard.authorize/capture
-      begin 
+      begin
         if @order.checkout.state == "complete"
           #This is a second or subsequent payment
           @creditcard_payment.creditcard.checkout = @order.checkout
@@ -27,14 +27,20 @@ class Admin::PaymentsController < Admin::BaseController
           else
             @creditcard_payment.creditcard.authorize(@creditcard_payment.amount)
           end
+
+          redirect_to collection_path
         else
-          #This is the first payment
+          #This is the first payment (admin created order)
           @order.checkout.creditcard = @creditcard_payment.creditcard
           until @order.checkout.state == "complete"
             @order.checkout.next!
           end
+
+          flash = t('new_order_completed')
+          redirect_to admin_order_url(@order)
         end
-        redirect_to collection_path
+
+
       rescue Spree::GatewayError => e
         flash.now[:error] = "#{e.message}"
         response_for :create_fails
@@ -89,9 +95,9 @@ class Admin::PaymentsController < Admin::BaseController
   end
 
   def end_of_association_chain
-    parent_object.payments  
+    parent_object.payments
   end
-  
+
   # Set class for STI based on selected payment type
   def model_name
     return 'payment' if params[:action] == 'index'

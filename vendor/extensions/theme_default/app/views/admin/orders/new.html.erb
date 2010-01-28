@@ -6,14 +6,7 @@
 
 <%=error_messages_for :order %>
 <div id="order-form-wrapper">
-  <% form_for @order, :url => collection_url do |f| %>
-    <%= render :partial => "form", :locals => {:f => f} %>
-
-    <p class="form-buttons">
-      <%= button t('continue') %>
-      <%= t("or") %> <%= link_to t("actions.cancel"), admin_orders_url %>
-    </p>
-  <% end %>
+  <%= render :partial => "form" %>
 </div>
 
 <% content_for :head do %>

@@ -63,15 +63,15 @@ jQuery(document).ready(function(){
 
     var addr = data['ship_address'];
     if(addr!=undefined){
-      $('#checkout_shipment_attributes_address_attributes_firstname').val(addr['firstname']);
-      $('#checkout_shipment_attributes_address_attributes_lastname').val(addr['lastname']);
-      $('#checkout_shipment_attributes_address_attributes_address1').val(addr['address1']);
-      $('#checkout_shipment_attributes_address_attributes_address2').val(addr['address2']);
-      $('#checkout_shipment_attributes_address_attributes_city').val(addr['city']);
-      $('#checkout_shipment_attributes_address_attributes_zipcode').val(addr['zipcode']);
-      $('#checkout_shipment_attributes_address_attributes_state_id').val(addr['state_id']);
-      $('#checkout_shipment_attributes_address_attributes_country_id').val(addr['country_id']);
-      $('#checkout_shipment_attributes_address_attributes_phone').val(addr['phone']);
+      $('#checkout_ship_address_attributes_firstname').val(addr['firstname']);
+      $('#checkout_ship_address_attributes_lastname').val(addr['lastname']);
+      $('#checkout_ship_address_attributes_address1').val(addr['address1']);
+      $('#checkout_ship_address_attributes_address2').val(addr['address2']);
+      $('#checkout_ship_address_attributes_city').val(addr['city']);
+      $('#checkout_ship_address_attributes_zipcode').val(addr['zipcode']);
+      $('#checkout_ship_address_attributes_state_id').val(addr['state_id']);
+      $('#checkout_ship_address_attributes_country_id').val(addr['country_id']);
+      $('#checkout_ship_address_attributes_phone').val(addr['phone']);
     }
   });
 

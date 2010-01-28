@@ -5,6 +5,14 @@ class Admin::OrdersController < Admin::BaseController
   before_filter :initialize_order_events
   before_filter :load_object, :only => [:fire, :resend, :history]
 
+  update.wants.html do
+    if @order.bill_address.nil? || @order.ship_address.nil?
+      redirect_to edit_admin_order_checkout_url(@order)
+    else
+      redirect_to admin_order_url(@order)
+    end
+  end
+
   def new
     @order = Order.create
   end

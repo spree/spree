@@ -5,6 +5,14 @@ class Admin::ShipmentsController < Admin::BaseController
   resource_controller
   belongs_to :order
 
+  update.wants.html do
+    if @order.in_progress?
+      redirect_to new_admin_order_payment_url(@order)
+    else
+      redirect_to edit_object_url
+    end
+  end
+
   create do
     wants.html { redirect_to edit_object_url }
   end
@@ -16,10 +24,6 @@ class Admin::ShipmentsController < Admin::BaseController
 
   create.before :assign_inventory_units
   create.after :recalculate_order
-
-  update do
-    wants.html { redirect_to edit_object_url }
-  end
 
   destroy.success.wants.js { render_js_for_destroy }
 

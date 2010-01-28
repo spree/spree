@@ -12,8 +12,6 @@
   <%= render :partial => 'form', :locals => {:order => @order} -%>
 </div>
 
-<%= button_link_to t('continue'), admin_orders_url %>
-
 <% content_for :head do %>
   <%= javascript_include_tag 'admin/orders/edit.js' %>
   <%= stylesheet_link_tag 'admin/edit_orders.css' %>
