@@ -270,6 +270,24 @@ NOTE. If you're planning on removing the address step you'll want to also overri
 
 You can also easily modify the state machine in your extension in order to add a new checkout step.  For instance, maybe you want to ask your user to select a calling plan if they are purchasing a cell phone.
 
+h5. Registering new checkout steps
+
+If you've added a new state to the Checkout model you will probably see the following error before reaching that step in the checkout process:
+
+<shell>
+  NoMethodError in CheckoutsController#update
+  undefined method `my_step' for CheckoutsController:Class
+</shell>
+
+The solution is to register your step with CheckoutsController as follows. In future versions this shouldn't be necessary.
+
+<shell>
+  CheckoutsController.class_eval do
+    class_scoping_reader :my_step, Spree::Checkout::ActionOptions.new
+  end
+</shell>
+
+
 h5. The Checkout "Train"
 
 The Spree code automatically creates a progress "train" based on the available checkout states.  If you add a new state you'll want to add a translation for that state in the relevant translation file located in the +config/locales+ directory of your extension.
