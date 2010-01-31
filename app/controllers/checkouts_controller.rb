@@ -133,7 +133,7 @@ class CheckoutsController < Spree::BaseController
 
   def load_available_methods
     @available_methods = rate_hash
-    @checkout.shipping_method_id ||= @available_methods.first[:id]
+    @checkout.shipping_method_id ||= @available_methods.first[:id] unless @available_methods.empty?
   end
 
   def load_available_integrations
@@ -161,11 +161,16 @@ class CheckoutsController < Spree::BaseController
   end
 
   def rate_hash
-    @checkout.shipping_methods.collect do |ship_method|
-      @checkout.shipment.shipping_method = ship_method
-      { :id => ship_method.id,
-        :name => ship_method.name,
-        :rate => number_to_currency(ship_method.calculate_cost(@checkout.shipment)) }
+    begin
+      @checkout.shipping_methods.collect do |ship_method|
+        @checkout.shipment.shipping_method = ship_method
+        { :id => ship_method.id,
+          :name => ship_method.name,
+          :rate => number_to_currency(ship_method.calculate_cost(@checkout.shipment)) }
+      end
+    rescue Spree::ShippingError => ship_error
+      flash[:error] = ship_error.to_s
+      []
     end
   end
 

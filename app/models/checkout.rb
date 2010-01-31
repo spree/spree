@@ -20,7 +20,7 @@ class Checkout < ActiveRecord::Base
   attr_accessor :coupon_code
   attr_accessor :use_billing
 
-  validates_presence_of :order_id
+  validates_presence_of :order_id, :shipping_method_id
   validates_format_of :email, :with => /^\S+@\S+\.\S+$/, :allow_blank => true
 
   validation_group :register, :fields => ["email"]
@@ -32,7 +32,7 @@ class Checkout < ActiveRecord::Base
                                        "ship_address.zipcode", "ship_address.state", "ship_address.lastname",
                                        "ship_address.address1", "ship_address.city", "ship_address.statename",
                                        "ship_address.zipcode"]
-  validation_group :delivery, :fields => []
+  validation_group :delivery, :fields => ["shipping_method_id"]
 
   def completed_at
     order.completed_at

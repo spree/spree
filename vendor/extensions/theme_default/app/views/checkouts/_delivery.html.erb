@@ -1,18 +1,22 @@
 <fieldset id='shipping_method'>
   <legend><%= t("shipping_method") %></legend>
-  <% checkout_form.fields_for :ship_address do |ship_address_form| %>     
+  <% checkout_form.fields_for :ship_address do |ship_address_form| %>
     <div class="inner">
       <div id="methods">
-        
+
         <p class="field radios">
-        <% @available_methods.each do |shipping_method| %>
-          <label>
-            <%= radio_button(:checkout, :shipping_method_id, shipping_method[:id]) %>
-            <%= shipping_method[:name] %> <%= shipping_method[:rate] %>
-          </label><br />
-        <% end %>
+          <% if @available_methods.empty? %>
+            <%= t("no_shipping_methods_available") %>
+          <% else %>
+            <% @available_methods.each do |shipping_method| %>
+              <label>
+                <%= radio_button(:checkout, :shipping_method_id, shipping_method[:id]) %>
+                <%= shipping_method[:name] %> <%= shipping_method[:rate] %>
+              </label><br />
+            <% end %>
+          <% end %>
         </p>
-        
+
       </div>
       <% if Spree::Config[:shipping_instructions] %>
         <p id="minstrs">

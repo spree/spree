@@ -1,5 +1,5 @@
 ---
-en-US: 
+en-US:
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
@@ -7,6 +7,7 @@ en-US:
   abbreviation: Abbreviation
   access_denied: "Access Denied"
   account: Account
+  no_shipping_methods_available: "No shipping methods available, please change your address and try again."
   account_updated: "Account updated!"
   action: Action
   actions:

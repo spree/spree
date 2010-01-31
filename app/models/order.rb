@@ -381,7 +381,9 @@ class Order < ActiveRecord::Base
   end
 
   def create_checkout
-    self.checkout ||= Checkout.create(:order => self)
+    self.checkout ||= Checkout.new(:order => self)
+    self.checkout.enable_validation_group(:address)
+    self.checkout.save!
   end
 
   def create_shipment
