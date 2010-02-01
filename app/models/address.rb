@@ -1,7 +1,7 @@
 class Address < ActiveRecord::Base
   belongs_to :country
   belongs_to :state
-  
+
   has_many :checkouts, :foreign_key => "bill_address_id"
   has_many :shipments
 
@@ -25,7 +25,7 @@ class Address < ActiveRecord::Base
       errors.add(:phone, :invalid)
     end
   end
-  
+
   def state_name_validate
     return if country.blank? || country.states.empty?
     if state_name.blank? || country.states.name_or_abbr_equals(state_name).empty?
@@ -68,9 +68,19 @@ class Address < ActiveRecord::Base
   def to_s
     "#{full_name}: #{address1}"
   end
-  
+
   def clone
     Address.new(self.attributes.except("id", "updated_at", "created_at"))
   end
-  
+
+  def ==(other_address)
+    self_attrs = self.attributes
+    other_attrs = other_address.respond_to?(:attributes) ? other_address.attributes : {}
+
+    [self_attrs, other_attrs].each { |attrs| attrs.except!("id", "created_at", "updated_at", "order_id") }
+
+    self_attrs == other_attrs
+  end
+
+
 end

@@ -24,12 +24,16 @@ jQuery(document).ready(function($){
     var state_input = $('span#' + region + 'state input');
 
     if(states) {
+      var selected = state_select.val();
       state_select.html('');
       var states_with_blank = [["",""]].concat(states);
       $.each(states_with_blank, function(pos,id_nm) {
         var opt = $(document.createElement('option'))
                   .attr('value', id_nm[0])
                   .html(id_nm[1]);
+        if(selected==id_nm[0]){
+          opt.attr('selected', 'selected');
+        }
         state_select.append(opt);
       });
       state_select.removeAttr('disabled').show();;
