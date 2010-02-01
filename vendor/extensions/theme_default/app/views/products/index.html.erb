@@ -16,14 +16,14 @@
     <% if @products.empty? %>
       <%= t(:no_products_found) %>
     <% else %>
-      <%= render "shared/products", :locals => {:products => @products, :taxon => @taxon } %>
+      <%= render "shared/products", :products => @products, :taxon => @taxon %>
     <% end %>
   <% end %>
 
 <% else %>
 
   <% hook :homepage_products do %>
-    <%= render "shared/products", :locals => {:products => @products, :taxon => @taxon } %>
+    <%= render "shared/products", :products => @products, :taxon => @taxon %>
   <% end %>
 
 
