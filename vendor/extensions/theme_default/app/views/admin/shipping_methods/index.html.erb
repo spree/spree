@@ -1,3 +1,5 @@
+<%= render :partial => 'admin/shared/configuration_menu' %>
+
 <div class='toolbar'>
   <ul class='actions'>
     <li>
@@ -19,16 +21,15 @@
   <tbody>
     <% @shipping_methods.each do |shipping_method|%>
     <tr id="<%= dom_id shipping_method %>">
-      <td width="100px"><%= shipping_method.name %></td>
-      <td width="100px"><%= shipping_method.zone.name %></td>
-      <td width="100px"><%= shipping_method.calculator.to_s %></td>      
-      <td>
-      	<%= link_to_edit shipping_method %> &nbsp;
-      	<%= link_to_delete shipping_method %>
+      <td><%= shipping_method.name %></td>
+      <td><%= shipping_method.zone.name %></td>
+      <td><%= shipping_method.calculator.to_s %></td>
+      <td width="140px">
+        <%= link_to_edit shipping_method %> &nbsp;
+        <%= link_to_delete shipping_method %>
       </td>
     </tr>
     <% end %>
   </tbody>
 </table>
 
-      
