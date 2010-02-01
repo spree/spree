@@ -13,20 +13,29 @@
 
 <table class="index">
   <thead>
-	<tr>
-    	<th><%= order @search, :by => :email, :as => t("user") %></th>
-    	<th><%= t("action") %></th>
-	</tr>
+  <tr>
+    <% hook :admin_users_index_headers do %>
+      <th><%= order @search, :by => :email, :as => t("user") %></th>
+      <th>
+        <% hook :admin_users_index_header_actions %>
+      </th>
+    <% end %>
+  </tr>
   </thead>
   <tbody>
-    <%- @collection.each do |user|%>
-    <tr id="<%= dom_id user %>">
-      <td width="350px"><%=link_to user.email, object_url(user) %></td>
-      <td>
-      	<%= link_to_edit user %> &nbsp;
-      	<%= link_to_delete user %>
-      </td>
-    </tr>
+    <% @users.each do |user|%>
+      <tr id="<%= dom_id user %>">
+        <%- locals = {:users => @users} -%>
+        <% hook :admin_users_index_rows, locals do %>
+          <td width="350px"><%=link_to user.email, object_url(user) %></td>
+        <% end %>
+        <td>
+          <% hook :admin_users_index_row_actions, locals do %>
+            <%= link_to_edit user %> &nbsp;
+            <%= link_to_delete user %>
+          <% end %>
+        </td>
+      </tr>
     <% end %>
   </tbody>
 </table>
@@ -35,16 +44,19 @@
 
 
 <% content_for :sidebar do %>
-
-  <% form_for @search do |f| %>
-    <div class="box">
-      <h3><%= t(:search) %></h3>
-      <p>
-        <%= t("email") %><br />
-        <%= f.text_field :email_contains, :size=>18 %>
-      </p>
-      <p><%= button t("search") %></p>
-    </div>
-  <% end %>
-
+  <div class="box">
+    <h3><%= t(:search) %></h3>
+    <% form_for @search do |f| %>
+      <%- locals = {:f => f} -%>
+      <% hook :admin_users_index_search, locals do %>
+        <p>
+          <%= t("email") %><br />
+          <%= f.text_field :email_contains, :size=>18 %>
+        </p>
+      <% end %>
+      <% hook :admin_users_index_search_buttons, locals do %>
+        <p><%= button t("search") %></p>
+      <% end %>
+    <% end %>
+  </div>
 <% end %>

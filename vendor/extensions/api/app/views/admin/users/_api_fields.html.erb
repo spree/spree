@@ -1,13 +1,3 @@
-<%= error_messages_for :user %>
-<h1><%= t("editing_user") %></h1>
-
-<% form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
-  <p class="form-buttons">
-    <%= button t("update") %> <%= link_to t('cancel'), collection_url %>
-  </p>
-<% end %>
-
 <h2><%= t('api.access') %></h2>
 
 <% if @user.api_key.present? %>
