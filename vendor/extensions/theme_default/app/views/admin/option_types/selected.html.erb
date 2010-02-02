@@ -27,10 +27,12 @@
 
   <%= image_tag "spinner.gif", :style => "display:none", :id => 'busy_indicator' %>
   <div id="option-types"></div>
-  <span id="new_opt_link">
-    <%= link_to_remote icon('add') + ' ' + t("add_option_type"), 
-                       {:url => available_admin_product_option_types_url(@product),
-                       :method => :get,
-                       :update => "option-types"}, :class => 'iconlink' %>
-  </span>
+  <% if @product.variants.empty? %>
+    <span id="new_opt_link">
+      <%= link_to_remote icon('add') + ' ' + t("add_option_type"), 
+                         {:url => available_admin_product_option_types_url(@product),
+                         :method => :get,
+                         :update => "option-types"}, :class => 'iconlink' %>
+    </span>
+  <% end -%>
 </div>
