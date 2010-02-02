@@ -1,6 +1,6 @@
 <% 
 order_date = Time.now
-1.upto(50) do |i| 
+1.upto(100) do |i| 
   order_date -= rand(12).hours
   item_total =  "#{1 + rand(400)}.#{rand(100)}".to_f
   charges_total = "#{1 + rand(30)}.#{rand(100)}".to_f

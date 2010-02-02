@@ -1,4 +1,4 @@
-<% for i in 1..500 do%>
+<% for i in 1..100 do%>
 li_<%= i %>:
   order: order_<%= i %>
   variant: ror_tote_v
@@ -6,7 +6,7 @@ li_<%= i %>:
   price: 15.99
 <% end %>
 
-<% for i in 1..100 do%>
+<% for i in 1..10 do%>
 li_<%= i + 1000 %>:
   order: order_<%= i %>
   variant: ror_bag_v
@@ -14,7 +14,7 @@ li_<%= i + 1000 %>:
   price: 22.99
 <% end %>
 
-<% for i in 100..200 do%>
+<% for i in 10..20 do%>
 li_<%= i + 2000 %>:
   order: order_<%= i %>
   variant: large-blue-baseball
@@ -22,7 +22,7 @@ li_<%= i + 2000 %>:
   price: 19.99
 <% end %>
 
-<% for i in 100..300 do%>
+<% for i in 10..30 do%>
 li_<%= i + 3000 %>:
   order: order_<%= i %>
   variant: ror_stein_v
@@ -30,7 +30,7 @@ li_<%= i + 3000 %>:
   price: 16.99
 <% end %>
 
-<% for i in 300..500 do%>
+<% for i in 30..50 do%>
 li_<%= i + 4000 %>:
   order: order_<%= i %>
   variant: ror_mug_v
@@ -38,4 +38,3 @@ li_<%= i + 4000 %>:
   price: 13.99
 <% end %>
 
-  
