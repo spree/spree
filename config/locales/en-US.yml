@@ -1,11 +1,12 @@
 ---
-en-US: 
+en-US:
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
   access_denied: "Access Denied"
+  is_not_available_to_shipment_address: is not available to shipment address
   account: Account
   account_updated: "Account updated!"
   action: Action
@@ -845,7 +846,7 @@ en-US:
   user_created_successfully: "User created successfully"
   user_details: "User Details"
   users: Users
-  validation:  
+  validation:
     is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
     must_be_int: "must be an integer"
     must_be_non_negative: "must be a non-negative value"

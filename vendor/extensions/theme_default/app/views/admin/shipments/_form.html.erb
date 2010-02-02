@@ -29,34 +29,35 @@
   <% end %>
 </table>
 
-<div class="yui-g">
-  <div class="yui-u first">
-    <fieldset>
-      <legend><%= t("shipping_address")%></legend>
-      <%= render :partial => 'admin/shared/form_address', :locals => {:f => shipment_form} %>
-    </fieldset>
-  </div>
-  <div class="yui-u">
-    <fieldset>
-      <legend>&nbsp;</legend>
-      <p>
-        <%= shipment_form.label :shipping_method_id, t('shipping_method') %>:<br />
-        <%= shipment_form.collection_select :shipping_method_id, @shipping_methods, :id, :name %>
-      </p>
-      <p><%= shipment_form.label :tracking, t('tracking') %>:<br /><%= shipment_form.text_field :tracking %></p>
-    </fieldset>
-  </div>
+<% shipment_form.fields_for 'address' do |sa_form|  %>
+  <%= render :partial => 'admin/shared/address_form', :locals => {:f => sa_form, :name => t("shipping_address")} %>
+<% end %>
+
+<table class="index">
+  <tr>
+    <th colspan="8"><%= t("shipment_details") %></th>
+  </tr>
+  <tr>
+    <td>
+      <%= shipment_form.label :shipping_method_id, t('shipping_method') + ":" %>
+    </td>
+    <td><%= shipment_form.select :shipping_method_id, @shipping_methods.map {|sm| ["#{sm.name} - #{sm.zone.name}", sm.id] } %></td>
+    <td>
+      <%= shipment_form.label :tracking, t('tracking') + ":" %>
+    </td>
+    <td><%= shipment_form.text_field :tracking %></td>
+  </tr>
   <% if Spree::Config[:shipping_instructions] %>
-    <div class="yui-u">
-      <fieldset>
-        <legend> <%= t("shipping_instructions") %></legend>
-        <p>
+    <tr>
+      <td>
+        <%= shipment_form.label :special_instructions, t('special_instructions') + ":" %>
+      </td>
+      <td colspan="3">
           <%= shipment_form.text_area :special_instructions %>
-        </p>
-      </fieldset>
-    </div>
+      </td>
+    </tr>
   <% end %>
-</div>
+</table>
 
 <p>
   <label>

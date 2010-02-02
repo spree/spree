@@ -49,7 +49,7 @@
       <% order_form.fields_for :checkout do |checkout_form|  %>
 
         <% checkout_form.fields_for :bill_address do |ba_form|  %>
-          <%= render :partial => "admin/checkouts/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
+          <%= render :partial => "admin/shared/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
         <% end %>
 
       <% end %>
@@ -57,7 +57,7 @@
 
   </fieldset>
   <% end %>
-  
+
   <p class="form-buttons">
     <%= button t('continue') %>
   </p>

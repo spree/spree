@@ -101,4 +101,10 @@ class Shipment < ActiveRecord::Base
     order.ship! if order.shipments.all?(&:shipped?)
   end
 
+  def validate
+    unless shipping_method.nil?
+      errors.add :shipping_method, I18n.t("is_not_available_to_shipment_address") unless shipping_method.zone.include?(address)
+    end
+  end
+
 end

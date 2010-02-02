@@ -26,15 +26,17 @@
     <td>
       <%= f.label :city, t(:city)+':' %>
     </td>
-    <td><%= f.text_field :city %></td>
+    <td colspan="3"><%= f.text_field :city %></td>
     <td>
       <%= f.label :zipcode, t(:zip)+':' %>
     </td>
-    <td><%= f.text_field :zipcode, :style => "width:100px;" %></td>
+    <td colspan="3"><%= f.text_field :zipcode, :style => "width:100px;" %></td>
+  </tr>
+  <tr>
     <td>
       <%= f.label :state_id, t(:state)+':' %>
     </td>
-    <td>
+    <td colspan="3">
       <span id="<%= name==t('shipping_address') ? "s" : "b" %>state">
         <%= f.text_field :state_name, :style => "width:150px;display:#{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty? %>
         <%= f.collection_select :state_id, @states, :id, :name, {:include_blank => true}, {:style=> "width:150px;display:#{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
@@ -43,7 +45,7 @@
     <td>
       <%= f.label :country_id, t(:country)+':' %>
     </td>
-    <td>
+    <td colspan="3">
       <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %></span>
     </td>
   </tr>
@@ -54,3 +56,12 @@
     <td colspan="7"><%= f.text_field :phone %></td>
   </tr>
 </table>
+
+<% content_for :head do %>
+  <%= javascript_include_tag '/states', 'admin/address_states' %>
+  <script type="text/javascript">
+    jQuery(document).ready(function(){
+      $('span#<%= name==t('shipping_address') ? "s" : "b" %>country select').change(function() { update_state('<%= name==t('shipping_address') ? "s" : "b" %>'); });
+    });
+  </script>
+<% end %>

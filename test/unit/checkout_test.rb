@@ -8,14 +8,13 @@ class CheckoutTest < ActiveSupport::TestCase
 
   context Checkout do
     setup do
-      @checkout = Factory(:checkout)
-      @order = @checkout.order
-      @order.checkout = @checkout
-      @order.save
+      @checkout = Factory(:order_with_totals).checkout
+       @checkout.state = "payment"
+      @checkout.creditcard = Factory(:creditcard)
     end
     context "in payment state w/no auto capture" do
       setup do
-        @checkout.state = "payment"
+
         Spree::Config.set(:auto_capture => false)
       end
       context "next" do
@@ -39,10 +38,7 @@ class CheckoutTest < ActiveSupport::TestCase
     end
     context "in payment state w/auto capture" do
       setup do
-        @order = Factory(:order_with_totals)
-        @checkout = Factory(:checkout, :order => @order, :state => "payment")
-        @order.checkout = @checkout
-        @order.save!
+
         Spree::Config.set(:auto_capture => true)
       end
       context "next" do
