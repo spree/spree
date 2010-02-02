@@ -22,6 +22,10 @@ class OrderMailer < ActionMailer::QueueMailer
   
   private
   def order_bcc
-    [Spree::Config[:order_bcc], Spree::Config[:mail_bcc]].delete_if { |email| email.blank? }.uniq
+      bcc = [Spree::Config[:order_bcc] || "", Spree::Config[:mail_bcc] || ""]
+      bcc = bcc.inject([]){|array, config_string| array + config_string.split(",")}
+      bcc = bcc.collect{|email| email.strip}
+      bcc = bcc.uniq
+      bcc
   end
 end
