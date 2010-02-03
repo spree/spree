@@ -1,11 +1,18 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1><%= t("editing_shipping_method") %></h1>
-<%= error_messages_for :shipping_method %>
-<% form_for(@shipping_method, :url => object_url, :html => { :method => :put }) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
+<% hook :admin_shipping_method_edit_form_header do %>
+  <h1><%= t("editing_shipping_method") %></h1>
+  <%= error_messages_for :shipping_method %>
+<% end %>
 
-  <p class="form-buttons">
-    <%= button t("update") %> <%= t("or") %> <%= link_to t("cancel"), admin_shipping_methods_path %>
-  </p>
+<% hook :admin_shipping_method_edit_form do %>
+  <% form_for(@shipping_method, :url => object_url, :html => { :method => :put }) do |f| %>
+    <%= render :partial => "form", :locals => { :f => f } %>
+
+    <% hook :admin_shipping_method_edit_form_buttons do %>
+      <p class="form-buttons">
+        <%= button t("update") %> <%= t("or") %> <%= link_to t("cancel"), admin_shipping_methods_path %>
+      </p>
+    <% end %>
+  <% end %>
 <% end %>

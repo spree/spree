@@ -1,12 +1,18 @@
-<table>
-	<tr>
-    <td><%=t("name")%>:</td>
-    <td><%= f.text_field :name, {"style" => "width:200px"} %></td>
-  </tr>
-  <tr>
-    <td><%=t("zone")%>:</td>
-    <td><%= collection_select(:shipping_method, :zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"}) %></td>
-  </tr>
-</table>
+<%- locals = {:f => f} -%>
+<% hook :admin_shipping_method_form_fields, locals do %>
+  <table>
+    <tr>
+      <td><%=t("name")%>:</td>
+      <td><%= f.text_field :name, {"style" => "width:200px"} %></td>
+    </tr>
+    <tr>
+      <td><%=t("zone")%>:</td>
+      <td><%= collection_select(:shipping_method, :zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"}) %></td>
+    </tr>
+  </table>
+<% end %>
 
-<%= render "admin/shared/calculator_fields", :f => f %>
+<% hook :admin_shipping_method_form_calculator_fields, locals do %>
+  <%= render "admin/shared/calculator_fields", :f => f %>
+<% end %>
+
