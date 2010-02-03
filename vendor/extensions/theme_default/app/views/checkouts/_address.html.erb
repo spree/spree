@@ -82,7 +82,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
     <legend><%= t("shipping_address")%></legend>
     <p class="field">
       <label for="checkout_same_address" id="use_billing">
-        <%= check_box_tag 'checkout[use_billing]', '1', @checkout.bill_address.eql?(@checkout.ship_address) %> <%= t("use_billing_address") %>
+        <%= check_box_tag 'checkout[use_billing]', '1', (!(@checkout.bill_address.empty? && @checkout.ship_address.empty?) && @checkout.bill_address.eql?(@checkout.ship_address)) %> <%= t("use_billing_address") %>
       </label>
     </p>
     <div class="inner">

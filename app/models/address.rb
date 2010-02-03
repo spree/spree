@@ -82,5 +82,7 @@ class Address < ActiveRecord::Base
     self_attrs == other_attrs
   end
 
-
+  def empty?
+    attributes.except("id", "created_at", "updated_at", "order_id", "country_id").all? {|k,v| v.nil?}
+  end
 end
