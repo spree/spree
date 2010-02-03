@@ -25,7 +25,7 @@
   <tbody>
     <% @users.each do |user|%>
       <tr id="<%= dom_id user %>">
-        <%- locals = {:users => @users} -%>
+        <%- locals = {:user => user} -%>
         <% hook :admin_users_index_rows, locals do %>
           <td width="350px"><%=link_to user.email, object_url(user) %></td>
         <% end %>

@@ -3,32 +3,39 @@
   <table class="index">
     <tbody id='line-items'>
       <tr>
-        <th><%= t('item_description') %></th>
-        <th class="price"><%= t('price') %></th>
-        <th class="qty"><%= t('qty') %></th>
-        <th class="total"><span><%= t('total') %></span></th>
-        <th class="orders-actions"></th>
+        <% hook :admin_order_form_line_items_headers do %>
+          <th><%= t('item_description') %></th>
+          <th class="price"><%= t('price') %></th>
+          <th class="qty"><%= t('qty') %></th>
+          <th class="total"><span><%= t('total') %></span></th>
+        <% end %>
+        <th class="orders-actions"><% hook :admin_order_form_line_items_header_actions %></th>
       </tr>
       <% f.fields_for :line_items do |li_form| %>
         <%= render :partial => "admin/orders/line_item", :locals => { :f => li_form } %>
       <% end %>
     </tbody>
-    <tbody id='subtotal'>
-      <tr id="subtotal-row">
-        <td colspan="3"><b><%= t('subtotal') %>:</b></td>
-        <td class="total"><span><%= number_to_currency @order.item_total -%></span></td>
-        <td></td>
-      </tr>
-    </tbody>
-    <tbody id="order-charges">
-      <% @order.charges.each do |charge| %>
-        <tr>
-          <td colspan="3"><strong><%= charge.description %></strong></td>
-          <td class="total"><span><%= number_to_currency charge.amount -%></span></td>
+    <% hook :admin_order_form_subtotal do %>
+      <tbody id='subtotal'>
+        <tr id="subtotal-row">
+          <td colspan="3"><b><%= t('subtotal') %>:</b></td>
+          <td class="total"><span><%= number_to_currency @order.item_total -%></span></td>
           <td></td>
         </tr>
-      <% end %>
-    </tbody>
+      </tbody>
+    <% end %>
+    <% hook :admin_order_form_charges do %>
+      <tbody id="order-charges">
+        <% @order.charges.each do |charge| %>
+          <tr>
+            <td colspan="3"><strong><%= charge.description %></strong></td>
+            <td class="total"><span><%= number_to_currency charge.amount -%></span></td>
+            <td></td>
+          </tr>
+        <% end %>
+      </tbody>
+    <% end %>
+    <% hook :admin_order_form_credits do %>
     <tbody id="order-credits">
       <% @order.credits.each do |credit| %>
         <tr>
@@ -38,19 +45,24 @@
         </tr>
       <% end %>
     </tbody>
-    <tbody id='order-total'>
-      <tr>
-        <td colspan="3"><b><%= t('order_total') %>:</b></td>
-        <td class="total"><span id="order_total"><%= number_to_currency @order.total -%></span></td>
-        <td></td>
-      </tr>
-    </tbody>
+    <% end %>
+    <% hook :admin_order_form_total do %>
+      <tbody id='order-total'>
+        <tr>
+          <td colspan="3"><b><%= t('order_total') %>:</b></td>
+          <td class="total"><span id="order_total"><%= number_to_currency @order.total -%></span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    <% end %>
   </table>
 
-  <p class="form-buttons">
-    <%= button @order.in_progress? ? t('continue') : t('update') %>
-    <%= t("or") %> <%= link_to t("actions.cancel"), admin_orders_url %>
-  </p>
+  <% hook :admin_order_form_buttons do %>
+    <p class="form-buttons">
+      <%= button @order.in_progress? ? t('continue') : t('update') %>
+      <%= t("or") %> <%= link_to t("actions.cancel"), admin_orders_url %>
+    </p>
+  <% end %>
 
 <% end %>
 
