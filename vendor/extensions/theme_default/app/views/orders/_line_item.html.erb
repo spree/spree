@@ -28,9 +28,16 @@
       <%= item_form.text_field :quantity, :size => 3 %>
     <% end %>
   </td>
+
   <td>
     <% hook :cart_item_total, locals do %>
       <%= format_price(product_price(line_item, :format_as_currency => false) * line_item.quantity) unless line_item.quantity.nil? %>
     <% end %>
   </td>
+  <td>
+    <% hook :cart_item_delete, locals do %>
+      <%= link_to image_tag('/images/admin/icons/delete.png'), order_line_item_path(@order, line_item), :method => :delete %>
+    <% end %>
+  </td>
+
 </tr>
