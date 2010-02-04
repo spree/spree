@@ -1,32 +1,40 @@
 <div class='toolbar'>
   <ul class='actions'>
-    <li>
-      <% if @shipment.can_ship? %>
-        <%= button_link_to(t('ship'), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :confirm => t("are_you_sure")) %>
-      <% end %>
-    </li>
+    <% hook :admin_shipment_edit_buttons do %>
+      <li>
+        <% if @shipment.can_ship? %>
+          <%= button_link_to(t('ship'), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :confirm => t("are_you_sure")) %>
+        <% end %>
+      </li>
+    <% end %>
   </ul>
   <br class='clear' />
 </div>
 
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
 
-<h2><%= t('shipment') %> #<%= @shipment.number%> (<%= @shipment.state.to_s.humanize %>)</h2>
-<% if @shipment.shipping_charge %>
-  <h3><%= t('charges') %> <%= number_to_currency @shipment.shipping_charge.amount %></h3>
+<% hook :admin_shipment_edit_header do %>
+  <h2><%= t('shipment') %> #<%= @shipment.number%> (<%= @shipment.state.to_s.humanize %>)</h2>
+  <% if @shipment.shipping_charge %>
+    <h3><%= t('charges') %> <%= number_to_currency @shipment.shipping_charge.amount %></h3>
+  <% end %>
+
+  <%= error_messages_for :shipment %>
 <% end %>
 
-<%= error_messages_for :shipment %>
-<% form_for(@shipment, :url => object_url, :html => { :method => :put }) do |shipment_form| %>
+<% hook :admin_shipment_edit_form do %>
+  <% form_for(@shipment, :url => object_url, :html => { :method => :put }) do |shipment_form| %>
+      <%= render :partial => "form", :locals => { :shipment_form => shipment_form } %>
 
-    <%= render :partial => "form", :locals => { :shipment_form => shipment_form } %>
-    <p class="form-buttons">
-      <% if @shipment.editable_by?(current_user) %>
-        <%= button @order.in_progress? ? t('continue') : t('update') %>
-        <%= t("or") %> <%= link_to t("cancel"), collection_url %>
-      <% else %>
-        <%= link_to "&laquo; #{t("back")}", collection_url %>
+      <% hook :admin_shipment_edit_form_buttons do %>
+        <p class="form-buttons">
+          <% if @shipment.editable_by?(current_user) %>
+            <%= button @order.in_progress? ? t('continue') : t('update') %>
+            <%= t("or") %> <%= link_to t("cancel"), collection_url %>
+          <% else %>
+            <%= link_to "&laquo; #{t("back")}", collection_url %>
+          <% end %>
+        </p>
       <% end %>
-    </p>
+  <% end %>
 <% end %>
-
