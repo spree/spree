@@ -732,6 +732,7 @@ en-US:
   ship: ship
   ship_address: "Ship Address"
   shipment: Shipment
+  shipment_details: Shipment Details
   shipment_number: "Shipment #"
   shipment_updated: Shipment Updated
   shipments: "Shipments"

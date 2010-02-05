@@ -5,6 +5,7 @@ email = Faker::Internet.email
 %>
 checkout_<%= i %>:
   bill_address: bill_address_<%= i %>
+  ship_address: ship_address_<%= i %>
   email: <%= email %>
   order: order_<%= i %>
   ip_address: 127.0.0.1
