@@ -2,21 +2,24 @@ class Admin::TaxonsController < Admin::BaseController
   include Railslove::Plugins::FindByParam::SingletonMethods
   resource_controller
   before_filter :load_object, :only => [:selected, :available, :remove]
-  belongs_to :product
-  
+  before_filter :load_permalink_part, :only => :edit
+  belongs_to :product, :taxonomy
+
   create.wants.html {render :text => @taxon.id}
-  update.wants.html {render :text => @taxon.name}
+  update.wants.html {redirect_to edit_admin_taxonomy_url(@taxonomy)}
+  update.wants.json {render :json => @taxon.to_json()}
+
   destroy.wants.html {render :text => ""}
   destroy.success.wants.js { render_js_for_destroy }
-  
+
   create.before :create_before
   update.before :update_before
   update.after :update_after
 
-  def selected 
+  def selected
     @taxons = @product.taxons
   end
-  
+
   def available
     if params[:q].blank?
       @available_taxons = []
@@ -30,14 +33,14 @@ class Admin::TaxonsController < Admin::BaseController
     end
 
   end
-  
+
   def remove
     @product.taxons.delete(@taxon)
     @product.save
     @taxons = @product.taxons
     render :layout => false
-  end  
-  
+  end
+
   def select
     @product = Product.find_by_param!(params[:product_id])
     taxon = Taxon.find(params[:id])
@@ -46,12 +49,12 @@ class Admin::TaxonsController < Admin::BaseController
     @taxons = @product.taxons
     render :layout => false
   end
-  
-  private 
-  def create_before 
+
+  private
+  def create_before
     @taxon.taxonomy_id = params[:taxonomy_id]
   end
-  
+
   def update_before
     parent_id = params[:taxon][:parent_id]
     new_position = params[:taxon][:position]
@@ -85,30 +88,40 @@ class Admin::TaxonsController < Admin::BaseController
 
       if parent_id
         @taxon.reload
-        @taxon.permalink = nil
+        @taxon.set_permalink
         @taxon.save!
         @update_children = true
       end
     end
-    #check if we need to rename child taxons if parent name changes
-    @update_children = params[:taxon][:name] == @taxon.name ? false : true
+
+    if params.key? "permalink_part"
+      parent_permalink = @taxon.permalink.split("/")[0...-1].join("/")
+      parent_permalink += "/" unless parent_permalink.blank?
+      params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
+    end
+    #check if we need to rename child taxons if parent name or permalink changes
+    @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
   end
-  
+
   def update_after
-    #rename child taxons                  
+    #rename child taxons
     if @update_children
       @taxon.descendents.each do |taxon|
         taxon.reload
-        taxon.permalink = nil
+        taxon.set_permalink
         taxon.save!
       end
-    end    
+    end
   end
-  
+
   def reposition_taxons(taxons)
     taxons.each_with_index do |taxon, i|
       taxon.position = i
       taxon.save!
     end
+  end
+
+  def load_permalink_part
+    @permalink_part = object.permalink.split("/").last
   end
 end

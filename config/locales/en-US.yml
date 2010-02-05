@@ -150,7 +150,7 @@ en-US:
       product:
         one: Product
         other: Products
-      property:
+      productty:
         one: Property
         other: Properties
       prototype:
@@ -325,6 +325,7 @@ en-US:
   destroy: Destroy
   display: Display
   edit: Edit
+  taxon_edit: Edit Taxon
   editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"
   editing_coupon: Editing Coupon
@@ -533,6 +534,7 @@ en-US:
   password_updated: "Password successfully updated"
   path: Path
   pay: pay
+  permalink: Permalink
   payment: Payment
   payment_gateway: "Payment Gateway"
   payment_information: "Payment Information"

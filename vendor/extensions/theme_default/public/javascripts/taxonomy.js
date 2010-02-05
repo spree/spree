@@ -26,7 +26,7 @@ var handle_move = function(li, target, droppped, tree, rb) {
 
   jQuery.ajax({
     type: "POST",
-    url: base_url + li.id,
+    url: base_url + li.id + ".json",
     data: ({_method: "put", "taxon[parent_id]": parent.id, "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error
   });
@@ -71,7 +71,7 @@ var handle_rename = function(li, tree, rb) {
 
     jQuery.ajax({
       type: "POST",
-      url: base_url + li.id,
+      url: base_url + li.id + ".json",
       data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
       error: handle_ajax_error
     });
@@ -143,6 +143,12 @@ jQuery(document).ready(function(){
               label   : "Paste",
               visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return true; },
               action  : function (NODE, TREE_OBJ) { TREE_OBJ.open_branch(NODE); TREE_OBJ.paste(NODE, "inside"); jQuery(NODE).find("li").show(); }
+          },
+          edit :{
+              id      : "edit",
+              label   : "Edit",
+              visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return TREE_OBJ.check("renameable", NODE); },
+              action  : function (NODE, TREE_OBJ) { jQuery.each(NODE, function () { window.location = base_url + this.id + "/edit/"; }); }
           }
 
         }

@@ -8,6 +8,12 @@
         <%= f.error_message_on :name %>
       <% end %>
 
+      <% f.field_container :permalink do %>
+        <%= f.label :permalink, t("permalink") %> <span class="required">*</span><br />
+        <%= f.text_field :permalink, :class => 'fullwidth title'  %>
+        <%= f.error_message_on :permalink %>
+      <% end %>
+
       <% f.field_container :description do %>
         <%= f.label :description, t("description")%><br />
         <%= f.text_area :description, {:cols => 60, :rows => 4, :class => 'fullwidth'} %>

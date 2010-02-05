@@ -1,0 +1,13 @@
+<% hook :admin_inside_taxon_form do %>
+  <% f.field_container :name do %>
+    <%= f.label :name, t("name") %> <span class="required">*</span><br />
+    <%= error_message_on :taxon, :name, :class => 'fullwidth title'  %>
+    <%= text_field :taxon, :name  %>
+  <% end %>
+
+  <% f.field_container :permalink_part do %>
+    <%= f.label :permalink_part, t("permalink") %><span class="required">*</span><br />
+    <%= @taxon.permalink.split("/")[0...-1].join("/") + "/" %><%= text_field_tag :permalink_part, @permalink_part  %>
+
+  <% end %>
+<% end %>
