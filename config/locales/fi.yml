@@ -403,6 +403,7 @@ fi:
   inventory_adjustment: "Varaston säätö"
   inventory_setting_description: "Varaston konfigurointi, jälkitoimitukset, loppuneet tuotteet"
   inventory_settings: Varastoasetukset
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Jakelunumero
   item: Tuote
   item_description: Tuotekuvaus
@@ -536,6 +537,7 @@ fi:
   payment_gateway: "Maksun yhdyskäytävä"
   payment_information: "Maksun tiedot"
   payments: Maksut
+  permalink: Permalink
   phone: Puhelin
   place_order: "Aseta tilaus"
   please_create_user: "Luo käyttäjätunnus"
@@ -731,6 +733,7 @@ fi:
   ship: toimita
   ship_address: Toimitusosoite
   shipment: Toimitus
+  shipment_details: Shipment Details
   shipment_number: Toimitusnumero
   shipment_updated: Shipment Updated
   shipments: Toimitukset
@@ -805,6 +808,7 @@ fi:
   tax_total: "Vero yhteensä"
   tax_type: "Veron tyyppi"
   taxon: Taksoni
+  taxon_edit: Edit Taxon
   taxonomies: Taksonomiat
   taxonomies_setting_description: "Luo ja hallinnoi taksonomioita"
   taxonomy_edit: "Muokkaa taksonomiaa"

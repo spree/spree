@@ -403,6 +403,7 @@ es:
   inventory_adjustment: "Ajuste de inventario"
   inventory_setting_description: "Configuracion del inventario, Devoluciones, mostrar articulos sin stock"
   inventory_settings: "Configuracion del inventario"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: artículo
   item_description: "Descripción del artículo"
@@ -536,6 +537,7 @@ es:
   payment_gateway: "Pasarela de pago"
   payment_information: "Informacion del pago"
   payments: Pagos
+  permalink: Permalink
   phone: Teléfono
   place_order: Hacer pedido
   please_create_user: "Please create a user account"
@@ -731,6 +733,7 @@ es:
   ship: enviar
   ship_address: "Direccion de envio"
   shipment: Envio
+  shipment_details: Shipment Details
   shipment_number: "Envio #"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ es:
   tax_total: "Total impuestos"
   tax_type: "Tipo de impuesto"
   taxon: Taxon
+  taxon_edit: Edit Taxon
   taxonomies: Taxonomias
   taxonomies_setting_description: "Crear y manejar taxonomias"
   taxonomy_edit: "Edit taxonomy"

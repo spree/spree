@@ -403,6 +403,7 @@ nb-NO:
   inventory_adjustment: "Justering av varelager"
   inventory_setting_description: "Konfigurer varelager og restordre."
   inventory_settings: "Varelagerinnstillinger"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: Artikkel
   item_description: "Beskrivelse"
@@ -536,6 +537,7 @@ nb-NO:
   payment_gateway: "Betalingstjeneste"
   payment_information: "Betalingsinformasjon"
   payments: Betalinger
+  permalink: Permalink
   phone: Telefon
   place_order: "Bekreft ordre"
   please_create_user: "Please create a user account"     
@@ -731,6 +733,7 @@ nb-NO:
   ship: send
   ship_address: "Leveringsadresse"
   shipment: Leveranse
+  shipment_details: Shipment Details
   shipment_number: "Leveransenummer"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ nb-NO:
   tax_total: "Moms"
   tax_type: "Momstype"
   taxon: Klasse
+  taxon_edit: Edit Taxon
   taxonomies: Klassifikasjoner
   taxonomies_setting_description: "Konfigurer klassifikasjoner."
   taxonomy_edit: "Edit taxonomy"

@@ -403,6 +403,7 @@ il:
   inventory_adjustment: "Inventory Adjustment"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
   inventory_settings: "Inventory Settings"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: פריט
   item_description: "תיאור הפריט"
@@ -536,6 +537,7 @@ il:
   payment_gateway: "Payment Gateway"
   payment_information: "פרטי התשלום"
   payments: Payments
+  permalink: Permalink
   phone: טלפון
   place_order: הזמן
   please_create_user: "Please create a user account"     
@@ -731,6 +733,7 @@ il:
   ship: ship
   ship_address: "כתובת למשלוח חבילה"
   shipment: Shipment
+  shipment_details: Shipment Details
   shipment_number: "Shipment #"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ il:
   tax_total: "Tax Total"
   tax_type: "Tax Type"
   taxon: Taxon
+  taxon_edit: Edit Taxon
   taxonomies: Taxonomies
   taxonomies_setting_description: "Create and manage taxonomies"
   taxonomy_edit: "Edit taxonomy"

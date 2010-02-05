@@ -403,6 +403,7 @@ th:
   inventory_adjustment: "ปรับแต่งคลังสินค้า"
   inventory_setting_description: "จัดการคลังสินค้า การสั่งสินค้า และ การแสดงผลเมื่อของหมด"
   inventory_settings: "จัดการคลังสินค้า"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: สินค้า
   item_description: รายละเอียดสินค้า
@@ -536,6 +537,7 @@ th:
   payment_gateway: ช่องทางจ่ายเงิน
   payment_information: ข้อมูลการจ่ายเงิน
   payments: รายการจ่าย
+  permalink: Permalink
   phone: เบอร์โทรศัพท์
   place_order: Place Order        
   please_create_user: "Please create a user account"     
@@ -731,6 +733,7 @@ th:
   ship: เรือ
   ship_address: "ที่อยู่ในการจัดส่ง"
   shipment: การขนส่งทางเรือ
+  shipment_details: Shipment Details
   shipment_number: "รหัสส่งของ"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ th:
   tax_total: "รวมภาษี"
   tax_type: ชนิดของภาษี
   taxon: Taxon
+  taxon_edit: Edit Taxon
   taxonomies: หมวดหมู่
   taxonomies_setting_description: เพิ่ม ลบ แก้ไข หมวดหมู่
   taxonomy_edit: แก้ไขหมวดหมู่นี้

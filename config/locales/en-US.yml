@@ -1,12 +1,11 @@
 ---
-en-US:
+en-US: 
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
   access_denied: "Access Denied"
-  is_not_available_to_shipment_address: is not available to shipment address
   account: Account
   account_updated: "Account updated!"
   action: Action
@@ -150,7 +149,7 @@ en-US:
       product:
         one: Product
         other: Products
-      productty:
+      property:
         one: Property
         other: Properties
       prototype:
@@ -325,7 +324,6 @@ en-US:
   destroy: Destroy
   display: Display
   edit: Edit
-  taxon_edit: Edit Taxon
   editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"
   editing_coupon: Editing Coupon
@@ -405,6 +403,7 @@ en-US:
   inventory_adjustment: "Inventory Adjustment"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
   inventory_settings: "Inventory Settings"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: Item
   item_description: "Item Description"
@@ -534,11 +533,11 @@ en-US:
   password_updated: "Password successfully updated"
   path: Path
   pay: pay
-  permalink: Permalink
   payment: Payment
   payment_gateway: "Payment Gateway"
   payment_information: "Payment Information"
   payments: Payments
+  permalink: Permalink
   phone: Phone
   place_order: Place Order
   please_create_user: "Please create a user account"
@@ -809,6 +808,7 @@ en-US:
   tax_total: "Tax Total"
   tax_type: "Tax Type"
   taxon: Taxon
+  taxon_edit: Edit Taxon
   taxonomies: Taxonomies
   taxonomies_setting_description: "Create and manage taxonomies"
   taxonomy_edit: "Edit taxonomy"

@@ -403,6 +403,7 @@ jp:
   inventory_adjustment: 在庫調整
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
   inventory_settings: 在庫設定
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: 品目
   item_description: 品目説明
@@ -536,6 +537,7 @@ jp:
   payment_gateway: "Payment Gateway"
   payment_information: 支払い情報
   payments: 支払い方法
+  permalink: Permalink
   phone: 電話番号
   place_order: Place Order
   please_create_user: "Please create a user account"     
@@ -731,6 +733,7 @@ jp:
   ship: 配送
   ship_address: 配送先住所
   shipment: 発送
+  shipment_details: Shipment Details
   shipment_number: "発送 #"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ jp:
   tax_total: 税合計
   tax_type: 税種別
   taxon: 分類単位
+  taxon_edit: Edit Taxon
   taxonomies: 分類単位
   taxonomies_setting_description: "Create and manage taxonomies"
   taxonomy_edit: "Edit taxonomy"

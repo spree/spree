@@ -403,6 +403,7 @@ it:
   inventory_adjustment: "Edita magazzino"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
   inventory_settings: "Inventory Settings"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: Articolo
   item_description: "Descrizione articolo"
@@ -536,6 +537,7 @@ it:
   payment_gateway: "Payment Gateway"
   payment_information: "Payment Information"
   payments: Payments
+  permalink: Permalink
   phone: Telefono
   place_order: Place Order        
   please_create_user: "Please create a user account"     
@@ -731,6 +733,7 @@ it:
   ship: ship
   ship_address: "Indirizzo di consegna"
   shipment: Shipment
+  shipment_details: Shipment Details
   shipment_number: "Shipment #"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ it:
   tax_total: "Piva. Totale"
   tax_type: "Tax Type"
   taxon: Taxon
+  taxon_edit: Edit Taxon
   taxonomies: Taxonomies
   taxonomies_setting_description: "Create and manage taxonomies"
   taxonomy_edit: "Edit taxonomy"

@@ -403,6 +403,7 @@ fr-FR:
   inventory_adjustment: "Ajustement de l'inventaire"
   inventory_setting_description: "Configuration de l'inventaire, livraison remise à plus tard, affichage du stock à zéro"
   inventory_settings: "Paramètres de l'inventaire"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: "Numéro de problème"
   item: Article
   item_description: "Description de l'article"
@@ -536,6 +537,7 @@ fr-FR:
   payment_gateway: "Passerelle de paiement"
   payment_information: "Information sur le paiement"
   payments: Paiements
+  permalink: Permalink
   phone: Téléphone
   place_order: Place Order        
   please_create_user: "Prière de créer un compte d'utilisateur"
@@ -731,6 +733,7 @@ fr-FR:
   ship: livraison
   ship_address: "Adresse de livraison"
   shipment: Livraison
+  shipment_details: Shipment Details
   shipment_number: "Livraison #"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ fr-FR:
   tax_total: "Total des Taxes"
   tax_type: "Type de taxe"
   taxon: Taxon
+  taxon_edit: Edit Taxon
   taxonomies: Arborescence
   taxonomies_setting_description: "Création et gestion des Arborescence"
   taxonomy_edit: "Modifier la taxonomie"

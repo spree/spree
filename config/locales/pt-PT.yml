@@ -403,6 +403,7 @@ pt-PT:
   inventory_adjustment: "Acerto de Inventário"
   inventory_setting_description: "Configuação do Inventario - Descrição"
   inventory_settings: "Configuração de Settings"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: Artigo
   item_description: "Descrição do Artigo"
@@ -536,6 +537,7 @@ pt-PT:
   payment_gateway: "Gateway de Pagamento"
   payment_information: "Dados do Pagamento"
   payments: Pagamentos
+  permalink: Permalink
   phone: Telefone
   place_order: Place Order        
   please_create_user: "Please create a user account"     
@@ -731,6 +733,7 @@ pt-PT:
   ship: ship
   ship_address: "Endereço da Entrega"
   shipment: Distribuição
+  shipment_details: Shipment Details
   shipment_number: "Shipment #"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ pt-PT:
   tax_total: "Taxa Total"
   tax_type: "Tax Type"
   taxon: Taxon
+  taxon_edit: Edit Taxon
   taxonomies: Taxonomias
   taxonomies_setting_description: "Criar e gerir taxonomias"
   taxonomy_edit: "Edit taxonomy"

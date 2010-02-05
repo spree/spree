@@ -403,6 +403,7 @@ nl-BE:
   inventory_adjustment: "Voorraad Aanpassing"
   inventory_setting_description: "Voorraad instellingen, Nabestellingen, Nul-Voorraad Weergave"
   inventory_settings: "Voorraad instellingen"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: Products
   item_description: "Product Omschrijving"
@@ -536,6 +537,7 @@ nl-BE:
   payment_gateway: "Betalings-Gateway"
   payment_information: "Informatie Betaling"
   payments: Betalingen
+  permalink: Permalink
   phone: Telefoon
   place_order: Bestellen
   please_create_user: "Please create a user account"     
@@ -731,6 +733,7 @@ nl-BE:
   ship: Verzenden
   ship_address: "Afleveringssadres"
   shipment: Verzending
+  shipment_details: Shipment Details
   shipment_number: "Shipment #"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ nl-BE:
   tax_total: "BTW Totaal"
   tax_type: "BTW Type"
   taxon: Taxon
+  taxon_edit: Edit Taxon
   taxonomies: Taxonomieën
   taxonomies_setting_description: "Aanmaken en wijzigen taxonomieën"
   taxonomy_edit: "Edit taxonomy"

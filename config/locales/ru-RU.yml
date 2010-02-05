@@ -403,6 +403,7 @@ ru-RU:
   inventory_adjustment: "Надбавки"
   inventory_setting_description: "Управление ассортиментом, задолженные заказы, отображение отсутствующих товаров"
   inventory_settings: "Настройки ассортимента"
+  is_not_available_to_shipment_address: is not available to shipment address
   issue_number: "Номер проблемы ??"
   item: "Наименование"
   item_description: "Описание товара"
@@ -536,6 +537,7 @@ ru-RU:
   payment_gateway: "Платежный шлюз"
   payment_information: "Информация о платеже"
   payments: "Платежи"
+  permalink: Permalink
   phone: "Телефон"
   place_order: "Разместить заказ"
   please_create_user: "Пожалуйста, создайте учётную запись."
@@ -731,6 +733,7 @@ ru-RU:
   ship: "доставка"
   ship_address: "Адрес доставки"
   shipment: "Доставка"
+  shipment_details: Shipment Details
   shipment_number: "Доставка №"
   shipment_updated: Shipment Updated
   shipments: "Shipments"
@@ -805,6 +808,7 @@ ru-RU:
   tax_total: "Налоги"
   tax_type: "Тип налога"
   taxon: "Таксон"
+  taxon_edit: Edit Taxon
   taxonomies: "Таксономии"
   taxonomies_setting_description: "Создание и редактирование таксономий"
   taxonomy_edit: "Редактирование таксономии"
