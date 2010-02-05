@@ -8,7 +8,7 @@ module Spree
     
     def authorize(amount)
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
-      response = payment_gateway.authorize((amount * 100).to_i, self, gateway_options)      
+      response = payment_gateway.authorize((amount * 100).to_s.to_i, self, gateway_options)      
       gateway_error_from_response(response) unless response.success?
       
       # create a transaction to reflect the authorization
@@ -30,7 +30,7 @@ module Spree
         response = payment_gateway.capture(authorization, self, minimal_gateway_options)
       else
         # Standard ActiveMerchant capture usage
-        response = payment_gateway.capture((authorization.amount * 100).to_i, authorization.response_code, minimal_gateway_options)
+        response = payment_gateway.capture((authorization.amount * 100).to_s.to_i, authorization.response_code, minimal_gateway_options)
       end
       gateway_error_from_response(response) unless response.success?          
 
@@ -48,7 +48,7 @@ module Spree
 
     def void(authorization)
       if payment_gateway.payment_profiles_supported?
-        response = payment_gateway.credit((authorization.amount * 100).to_i, self, authorization.response_code, minimal_gateway_options)
+        response = payment_gateway.credit((authorization.amount * 100).to_s.to_i, self, authorization.response_code, minimal_gateway_options)
       else
         response = payment_gateway.void(authorization.response_code, minimal_gateway_options)
       end      
@@ -66,7 +66,7 @@ module Spree
 
     def purchase(amount)
       #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
-      response = payment_gateway.purchase((amount * 100).to_i, self, gateway_options) 
+      response = payment_gateway.purchase((amount * 100).to_s.to_i, self, gateway_options) 
       
       gateway_error_from_response(response) unless response.success?
 
@@ -84,9 +84,9 @@ module Spree
     
     def credit(amount, transaction)
       if payment_gateway.payment_profiles_supported?
-        response = payment_gateway.credit((amount * 100).to_i, self, transaction.response_code, minimal_gateway_options)
+        response = payment_gateway.credit((amount * 100).to_s.to_i, self, transaction.response_code, minimal_gateway_options)
       else
-        response = payment_gateway.credit((amount * 100).to_i, transaction.response_code, minimal_gateway_options)
+        response = payment_gateway.credit((amount * 100).to_s.to_i, transaction.response_code, minimal_gateway_options)
       end
       gateway_error_from_response(response) unless response.success?
 
