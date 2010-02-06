@@ -68,7 +68,10 @@
 <!--[if IE]>
 </div>
 <![endif]-->
-<%= javascript_include_tag 'admin/unobtrusive_handlers' %>
+
+<% hook :admin_footer_scripts do -%>
+  <%= javascript_include_tag 'admin/unobtrusive_handlers' %>
+<% end -%>
 </body>
 </html>
 
