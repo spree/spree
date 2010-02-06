@@ -16,7 +16,7 @@ module Spree::BaseHelper
   def link_to_cart(text=t('cart'))
     path = cart_path
     order = Order.find_or_create_by_id(session[:order_id]) unless session[:order_id].blank?
-    css_class = ''
+    css_class = nil
     unless order.nil?
       item_count = order.line_items.inject(0) { |kount, line_item| kount + line_item.quantity }
       return "" if current_page?(path)
