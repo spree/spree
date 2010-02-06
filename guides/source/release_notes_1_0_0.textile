@@ -307,6 +307,11 @@ GET /api/orders/R664048424
 }
 </shell>
 
+h3. Inventory
+
+Inventory modeling has been modified to improve performance.  Spree now uses a hybrid approach where on-hand inventory is stored as a count in +Variant#on_hand+, but back-ordered, sold or shipped products are stored as individual +InventoryUnits+ so they can be tracked.  
+
+This improves the performance of stores with large inventories.  When the +on_hand+ count is increased using +Variant#on_hand=+, Spree will first fill back-orders, converting them to +InventoryItems+, then place the remaining new inventory as a count on the +Variant+ model. A migration is in place that will convert on-hand +InventoryItems+ to a simple count during upgrade.  Due to an issue with the sample data, demo stores cannot be upgraded in this fashion and should be re-bootstrapped.
 
 h3. Miscellaneous improvements
 
