@@ -19,7 +19,7 @@
 # have #in_taxon or #taxons_name_eq scope defined, result should combine both
 # and return products that exist in both taxons.
 #
-# ProductGroup#products returns chain of named scopes generated from order and
+# ProductGroup#dynamic_products returns chain of named scopes generated from order and
 # product scopes. So you can do counting, calculations etc, on resulted set of products,
 # without retriving all records.
 #
@@ -31,7 +31,9 @@ class ProductGroup < ActiveRecord::Base
   validates_associated :product_scopes
 
   before_save :set_permalink
+  before_save :update_memberships
 
+  has_and_belongs_to_many :cached_products, :class_name => "Product"
   # name
   has_many :product_scopes
   accepts_nested_attributes_for :product_scopes 
@@ -121,8 +123,21 @@ class ProductGroup < ActiveRecord::Base
   end
 
   # returns chain of named scopes generated from order scope and product scopes.
-  def products
+  def dynamic_products
     apply_on(Product)
+  end
+
+  def products
+    if cached_products.size > 0 
+      cached_products
+    else
+      dynamic_products
+    end
+  end
+
+  def include?(product)
+    res = apply_on(Product.id_equals(product.id))
+    res.count > 0
   end
 
   def scopes_to_hash
@@ -151,8 +166,12 @@ class ProductGroup < ActiveRecord::Base
   def set_permalink
     self.permalink = self.name.to_url
   end
+  
+  def update_memberships
+    self.cached_products =  dynamic_products
+  end
 
   def to_s
-    "<ProductGroup#{id && "[#{id}]"}:'#{to_url}'>"
+    "<ProductGroup" + (id && "[#{id}]").to_s + ":'#{to_url}'>"
   end
 end

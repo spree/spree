@@ -1,5 +1,5 @@
 <% if @product_group.valid? %>
-  <% pg_products = @product_group.products.all %>
+  <% pg_products = @product_group.dynamic_products.all %>
   <h2><%= ProductGroup.human_attribute_name(:products) %>(<%= pg_products.length %>)</h2>
   <div id="product-preview-products">
     <table>

@@ -24,7 +24,7 @@ class Product < ActiveRecord::Base
   has_many :product_properties, :dependent => :destroy, :attributes => true
   has_many :properties, :through => :product_properties
   has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
-
+  has_and_belongs_to_many :product_groups
   belongs_to :tax_category
   has_and_belongs_to_many :taxons
   belongs_to :shipping_category
@@ -38,6 +38,7 @@ class Product < ActiveRecord::Base
   after_create :set_master_variant_defaults
   after_create :add_properties_and_option_types_from_prototype
   before_save :recalculate_count_on_hand
+  after_save :update_memberships
   after_save :set_master_on_hand_to_zero_when_product_has_variants
   after_save :save_master
 
@@ -206,4 +207,8 @@ class Product < ActiveRecord::Base
   def save_master
     master.save if master && (master.changed? || master.new_record?)
   end
+
+  def update_memberships
+    self.product_groups = ProductGroup.all.select{|pg| pg.include?(self)}
+  end  
 end

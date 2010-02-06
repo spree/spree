@@ -9,7 +9,7 @@
   <% end %>
 
   <% f.field_container :order_scope do %>
-    <%= f.label :order_scope, t("order") %>
+    <%= f.label :order_scope, t("sort_ordering") %>
     <%= select_tag("order_scope", options_for_select(
             Scopes::Product::ORDERING.collect{|p| [ t(:name, :scope =>[:product_scopes, :scopes, p]), p ] }, order_scope
     )) %>
