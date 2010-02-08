@@ -19,21 +19,21 @@
 <div id="prototypes"></div>
 
 <table class="index">
-	<thead>
-		<tr>
-			<th><%= t("name") %></th>
-			<th><%= t("action") %></th>
-		</tr>
-	</thead>
-	<tbody>
+  <thead>
+    <tr>
+      <th><%= t("name") %></th>
+      <th><%= t("action") %></th>
+    </tr>
+  </thead>
+  <tbody>
     <% @prototypes.each do |prototype| %>
       <tr id="<%= dom_id prototype %>">
         <td><%= prototype.name %></td>
-		    <td class="actions">
-		      <%= link_to_edit(prototype) %>
-		      &nbsp;
-		      <%= link_to_delete(prototype) %>
-		    </td>        
+        <td class="actions">
+          <%= link_to_edit(prototype) %>
+          &nbsp;
+          <%= link_to_delete(prototype) %>
+        </td>        
       </tr>
     <% end %>
   </tbody>

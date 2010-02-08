@@ -13,14 +13,16 @@
 
 <table class="index">
   <thead>
+    <tr>
     <% hook :admin_shipping_methods_index_headers do %>
       <th><%= t("name") %></th>
       <th><%= t("zone") %></th>
       <th><%= t("calculator") %></th>
     <% end %>
-    <th>
-      <% hook :admin_shipping_methods_index_header_actions %>
-    </th>
+      <th>
+        <% hook :admin_shipping_methods_index_header_actions %>
+      </th>
+    </tr>
   </thead>
   <tbody>
     <% @shipping_methods.each do |shipping_method|%>

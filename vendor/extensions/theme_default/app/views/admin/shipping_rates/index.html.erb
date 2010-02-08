@@ -8,11 +8,13 @@
 </div>
 <h1><%=t("shipping_rates") %></h1>
 <table class="index">
-  <thead>                        
-    <th><%=t("shipping_method")%></th>
-    <th><%=t("shipping_category")%></th>
-    <th><%=t("calculator")%></th>
-    <th><%=t("action")%></th>
+  <thead>
+    <tr>
+      <th><%=t("shipping_method")%></th>
+      <th><%=t("shipping_category")%></th>
+      <th><%=t("calculator")%></th>
+      <th><%=t("action")%></th>
+    </tr>
   </thead>
   <tbody>
     <% @shipping_rates.each do |shipping_rate|%>

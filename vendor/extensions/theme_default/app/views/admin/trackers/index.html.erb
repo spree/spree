@@ -13,12 +13,14 @@
 
 <table class="index">
   <thead>
+    <tr>
     <% hook :admin_trackers_index_headers do %>         
       <th><%= t(:google_analytics_id) %></th>
       <th><%= t("environment") %></th>
       <th><%= t("active") %></th>     
     <% end %>
-    <th><%= t("action") %></th>
+      <th><%= t("action") %></th>
+    </tr>
   </thead>
   <tbody>
     <% @trackers.each do |tracker|%>

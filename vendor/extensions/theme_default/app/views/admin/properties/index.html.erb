@@ -19,23 +19,23 @@
 <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 
 <table class="index">
-	<thead>
-		<tr>
-			<th><%= t("name") %></th>
-			<th><%= t("presentation") %></th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
+  <thead>
+    <tr>
+      <th><%= t("name") %></th>
+      <th><%= t("presentation") %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
     <% @properties.each do |property| %>
       <tr id="<%= dom_id property %>">
         <td><%= property.name %></td>
         <td><%= property.presentation %></td>
-		    <td class="actions">
-		      <%= link_to_edit(property) %>
-		      &nbsp;
-		      <%= link_to_delete(property) %>
-		    </td>        
+        <td class="actions">
+          <%= link_to_edit(property) %>
+          &nbsp;
+          <%= link_to_delete(property) %>
+        </td>        
       </tr>
     <% end %>
   </tbody>

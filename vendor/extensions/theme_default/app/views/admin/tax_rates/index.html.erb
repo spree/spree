@@ -8,12 +8,14 @@
 </div>
 <h1><%=t("tax_rates") %></h1>
 <table class="index">
-  <thead>                        
-    <th><%=t("zone")%></th>
-    <th><%=t("category")%></th>
-    <th><%=t("amount")%></th>
-    <th><%=t("calculator")%></th>
-    <th><%=t("action")%></th>
+  <thead>
+    <tr>
+      <th><%=t("zone")%></th>
+      <th><%=t("category")%></th>
+      <th><%=t("amount")%></th>
+      <th><%=t("calculator")%></th>
+      <th><%=t("action")%></th>
+    </tr>
   </thead>
   <tbody>
     <% @tax_rates.each do |tax_rate|%>

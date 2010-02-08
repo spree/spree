@@ -13,13 +13,15 @@
 
 <table class="index">
   <thead>
-    <th><%= t("name") %></th>
-    <th><%= t("provider") %></th>
-    <th><%= t("environment") %></th>
-    <th><%= t("server") %></th>
-    <th><%= t("test_mode") %></th>
-    <th><%= t("active") %></th>
-    <th><%= t("action") %></th>
+    <tr>
+      <th><%= t("name") %></th>
+      <th><%= t("provider") %></th>
+      <th><%= t("environment") %></th>
+      <th><%= t("server") %></th>
+      <th><%= t("test_mode") %></th>
+      <th><%= t("active") %></th>
+      <th><%= t("action") %></th>
+    </tr>
   </thead>
   <tbody>
     <% @billing_integrations.each do |integration|%>
