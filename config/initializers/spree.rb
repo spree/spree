@@ -51,4 +51,5 @@ class String #:nodoc:
 end
 
 require 'spree/theme_support'
-
+require 'state_machine'
+require 'stringex'
