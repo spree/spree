@@ -6,38 +6,49 @@
 
   <ul class="sidebar">
     <% hook :admin_order_tabs, {:current => current} do %>
-    <li <%= ' class="active"' if current == "Customer Details" %>>
       <% if @order.state == "in_progress" %>
-        <%= link_to t("customer_details"), edit_admin_order_checkout_url(@order) %>
+        <li <%= ' class="active"' if current == "Order Details" %>>
+          <%= link_to t("order_details"), edit_admin_order_url(@order) %>
+        </li>
+        <li <%= ' class="active"' if current == "Customer Details" %>>
+            <%= link_to t("customer_details"), edit_admin_order_checkout_url(@order) %>
+        </li>
+        <li <%= ' class="active"' if current == "Shipments" %>>
+           <%= link_to t("shipment"), edit_admin_order_shipment_url(@order, @order.shipment) %>
+        </li>
+        <li <%= ' class="active"' if current == "Payments" %>>
+           <%= link_to t("payment"),  new_admin_order_payment_url(@order) %>
+        </li>
+
       <% else %>
-        <%= link_to t("customer_details"), admin_order_checkout_url(@order) %>
+        <li <%= ' class="active"' if current == "Order Details" %>>
+          <%= link_to t("order_details"), admin_order_url(@order) %>
+        </li>
+        <li <%= ' class="active"' if current == "Customer Details" %>>
+          <%= link_to t("customer_details"), admin_order_checkout_url(@order) %>
+        </li>
+        <li <%= ' class="active"' if current == "Adjustments" %>>
+           <%= link_to t("adjustments"), admin_order_adjustments_url(@order) %>
+        </li>
+        <li <%= ' class="active"' if current == "Payments" %>>
+           <%= link_to t("payments"), admin_order_payments_url(@order) %>
+        </li>
+        <li <%= ' class="active"' if current == "Creditcards" %>>
+           <%= link_to t("creditcards"), admin_order_creditcards_url(@order) %>
+        </li>
+        <li <%= ' class="active"' if current == "Shipments" %>>
+           <%= link_to t("shipments"), admin_order_shipments_url(@order) %>
+        </li>
+        <li <%= ' class="active"' if current == "Return Authorizations" %>>
+           <%= link_to t("return_authorizations"), admin_order_return_authorizations_url(@order) %>
+        </li>
+        <li <%= ' class="active"' if current == "History" %>>
+           <%= link_to t("history"), history_admin_order_url(@order) %>
+        </li>
       <% end %>
-    </li>
-    <li <%= ' class="active"' if current == "Order Details" %>>
-      <% if @order.state == "in_progress" %>
-        <%= link_to t("order_details"), edit_admin_order_url(@order) %>
-      <% else %>
-        <%= link_to t("order_details"), admin_order_url(@order) %>
-      <% end %>
-    </li>
-    <li <%= ' class="active"' if current == "Adjustments" %>>
-       <%= link_to t("adjustments"), admin_order_adjustments_url(@order) %>
-    </li>
-    <li <%= ' class="active"' if current == "Payments" %>>
-       <%= link_to t("payments"), admin_order_payments_url(@order) %>
-    </li>
-    <li <%= ' class="active"' if current == "Creditcards" %>>
-       <%= link_to t("creditcards"), admin_order_creditcards_url(@order) %>
-    </li>
-    <li <%= ' class="active"' if current == "Shipments" %>>
-       <%= link_to t("shipments"), admin_order_shipments_url(@order) %>
-    </li>
-    <li <%= ' class="active"' if current == "Return Authorizations" %>>
-       <%= link_to t("return_authorizations"), admin_order_return_authorizations_url(@order) %>
-    </li>
-    <li <%= ' class="active"' if current == "History" %>>
-       <%= link_to t("history"), history_admin_order_url(@order) %>
-    </li>
+
+
+
     <% end %>
   </ul>
 
