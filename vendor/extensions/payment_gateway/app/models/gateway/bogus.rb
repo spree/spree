@@ -18,11 +18,13 @@ class Gateway::Bogus < Gateway
   
   def create_profile(creditcard, options = {})
     # simulate the storage of credit card profile using remote service
-    creditcard.gateway_customer_profile_id = generate_profile_id
+    success = VALID_CCS.include? creditcard.number
+    creditcard.gateway_customer_profile_id = generate_profile_id(success)
   end
 
   def authorize(money, creditcard, options = {})
-    if VALID_CCS.include? creditcard.number
+    profile_id = creditcard.gateway_customer_profile_id
+    if VALID_CCS.include? creditcard.number or (profile_id and profile_id.starts_with? "BGS-") 
       ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345', :avs_result => {:code => 'A'})
     else
       ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", {:message => 'Bogus Gateway: Forced failure'}, :test => true)
@@ -30,7 +32,8 @@ class Gateway::Bogus < Gateway
   end
 
   def purchase(money, creditcard, options = {})
-    if VALID_CCS.include? creditcard.number
+    profile_id = creditcard.gateway_customer_profile_id
+    if VALID_CCS.include? creditcard.number  or (profile_id and profile_id.starts_with? "BGS-")
       ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345', :avs_result => {:code => 'A'})
     else
       ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", :message => 'Bogus Gateway: Forced failure', :test => true)
@@ -41,12 +44,13 @@ class Gateway::Bogus < Gateway
     ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
   end
 
-  def capture(money, ident, options = {})
-    if ident == "12345"
-      ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
+  def capture(authorization, creditcard, gateway_options)
+    if authorization.response_code == "12345"
+      ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '67890')
     else
       ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", :error => 'Bogus Gateway: Forced failure', :test => true)
     end
+
   end
 
   def void(response_code, creditcard, options = {})
@@ -58,10 +62,16 @@ class Gateway::Bogus < Gateway
     true
   end
   
-  def generate_profile_id
+  def payment_profiles_supported?  
+    true
+  end
+  
+  private
+  def generate_profile_id(success)
     record = true
+    prefix = success ? "BGS-" : "FAIL-"
     while record
-      random = "BGS-#{Array.new(6){rand(6)}.join}"
+      random = "#{prefix}-#{Array.new(6){rand(6)}.join}"
       record = Creditcard.find(:first, :conditions => ["gateway_customer_profile_id = ?", random])
     end
     random

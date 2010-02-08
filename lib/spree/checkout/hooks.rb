@@ -18,7 +18,7 @@ module Spree::Checkout::Hooks
       end
 
       # register edit_hook and update_hook for each of the checkout states
-      [:address, :payment, :delivery, :complete].each do |state|
+      [:address, :payment, :delivery, :complete, :confirm].each do |state|
         class_scoping_reader state, Spree::Checkout::ActionOptions.new
       end     
 

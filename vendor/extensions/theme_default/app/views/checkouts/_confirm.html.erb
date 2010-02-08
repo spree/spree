@@ -1,0 +1,11 @@
+<fieldset id="order_details">
+  <div class="clear"></div>
+  <legend><%= t("confirm") %></legend>
+  <%= render :partial => 'shared/order_details', :locals => {:order => @order} -%>
+</fieldset>
+
+<hr />
+
+<div class="form-buttons">
+  <input type="submit" class="continue button primary" value="<%=t("save_and_continue") %>"/>
+</div>

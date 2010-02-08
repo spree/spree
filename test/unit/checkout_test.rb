@@ -9,10 +9,10 @@ class CheckoutTest < ActiveSupport::TestCase
   context Checkout do
     setup do
       @checkout = Factory(:order_with_totals).checkout
-       @checkout.state = "payment"
+       @checkout.state = "confirm"
       @checkout.creditcard = Factory(:creditcard)
     end
-    context "in payment state w/no auto capture" do
+    context "in confirm state w/no auto capture" do
       setup do
 
         Spree::Config.set(:auto_capture => false)
@@ -28,6 +28,7 @@ class CheckoutTest < ActiveSupport::TestCase
       context "next with declineable creditcard" do
         setup do
           @checkout.creditcard.number = "4111111111111110"
+          @checkout.creditcard.save
           begin @checkout.next! rescue Spree::GatewayError end
         end
         should_not_change("Creditcard.count") { Creditcard.count }

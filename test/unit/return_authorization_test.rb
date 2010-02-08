@@ -6,10 +6,8 @@ class ReturnAuthorizationTest < ActiveSupport::TestCase
       create_complete_order
 
       #complete order / checkout
-      add_capturable_card(@order)
-      3.times { @order.checkout.next! }
-      @order.reload
-      @creditcard.capture(@creditcard.authorization)
+      @order.complete!
+      @order.payments.create(:amount => @order.total)
 
       #force shipment to ready_to_ship
       shipment = @order.shipment

@@ -267,6 +267,7 @@ en-US:
   checkout_steps:
     # keys correspond to Checkout state names:
     address: Address
+    confirm: Confirm
     complete: Complete
     delivery: Delivery
     payment: Payment

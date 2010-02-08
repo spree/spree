@@ -63,7 +63,8 @@ class Checkout < ActiveRecord::Base
     event :next do
       transition :to => 'delivery', :from  => 'address'
       transition :to => 'payment', :from => 'delivery'
-      transition :to => 'complete', :from => 'payment'
+      transition :to => 'confirm', :from => 'payment'
+      transition :to => 'complete', :from => 'confirm'
     end
   end
   def self.state_names
