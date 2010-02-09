@@ -2,7 +2,7 @@
 
 <% content_for :sidebar do %>
   <h3 class="name"><%= t(:order) + " ##{@order.number} (#{t(@order.state)})" %></h3>
-  <br clear="clear" />
+  <br class="clear" />
 
   <ul class="sidebar">
     <% hook :admin_order_tabs, {:current => current} do %>

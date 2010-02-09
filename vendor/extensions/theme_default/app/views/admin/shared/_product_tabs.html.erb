@@ -3,7 +3,7 @@
 <% content_for :sidebar do %>
 
   <h3 class="name"><%= @product.name %><span class='sku'><%= @product.sku %></span></h3>
-  <br clear="clear" />
+  <br class="clear" />
 
   <ul class="sidebar product-menu">
     <% hook :admin_product_tabs, {:current => current} do %>
@@ -39,6 +39,6 @@
 
     <% end %>
   </ul>
-  <br clear="clear" />
+  <br class="clear" />
 
 <% end %>
