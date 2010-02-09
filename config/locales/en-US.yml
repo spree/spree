@@ -875,3 +875,17 @@ en-US:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones
+  editing_payment_method: Editing Payment Method
+  payment_methods: Payment Methods
+  new_payment_method: New Payment Method
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
+  active: "Active"
+  provider: "Provider"
+  configured: Configured
+  server: Server
+  test_mode: Test Mode
+  environment: "Environment"
+  test: "Test"
+  live: "Live"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
+  

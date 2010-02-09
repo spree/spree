@@ -1,9 +1,9 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1><%= t("new_gateway") %></h1>
-<%= error_messages_for :gateway %>
+<h1><%= t("new_payment_method") %></h1>
+<%= error_messages_for :payment_method %>
 
-<% form_for(:gateway, :url => collection_url) do |f| %>
+<% form_for(:payment_method, :url => collection_url) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <p>
     <%= submit_tag t("create") %>

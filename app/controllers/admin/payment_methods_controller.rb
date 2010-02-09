@@ -1,4 +1,4 @@
-class Admin::GatewaysController < Admin::BaseController
+class Admin::PaymentMethodsController < Admin::BaseController
   resource_controller
   before_filter :load_data
 
@@ -9,8 +9,8 @@ class Admin::GatewaysController < Admin::BaseController
 
   private       
   def build_object
-		if params[:gateway] && params[:gateway][:type]
-			@object ||= params[:gateway][:type].constantize.send parent? ? :build : :new, object_params 
+		if params[:payment_method] && params[:payment_method][:type]
+			@object ||= params[:payment_method][:type].constantize.send parent? ? :build : :new, object_params 
 		else
 			@object ||= end_of_association_chain.send parent? ? :build : :new, object_params 
 		end
@@ -21,8 +21,8 @@ class Admin::GatewaysController < Admin::BaseController
   end
   
   def update_before
-		if params[:gateway] && params[:gateway][:type] && @object['type'].to_s != params[:gateway][:type]
-			@object.update_attribute(:type, params[:gateway][:type])
+		if params[:payment_method] && params[:payment_method][:type] && @object['type'].to_s != params[:payment_method][:type]
+			@object.update_attribute(:type, params[:payment_method][:type])
 			
 			load_object			
 		end

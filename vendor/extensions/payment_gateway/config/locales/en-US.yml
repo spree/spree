@@ -1,19 +1,6 @@
 en-US:
-  gateways: "Gateways"
-  new_gateway: "New Gateway"
-  editing_gateway: "Editing Gateway"
-  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   login: Login
-  active: "Active"
-  provider: "Provider"
-  configured: Configured
-  server: Server
-  test_mode: Test Mode
   signature: Signature
   currency_code: "Currency Code"
   pem: PEM
-  environment: "Environment"
-  only_one_active_gateway_per_environment: You can only have one Active gateway per environment.
-  test: "Test"
-  live: "Live"
   secure_profile_api_key: Payment Profile API Key

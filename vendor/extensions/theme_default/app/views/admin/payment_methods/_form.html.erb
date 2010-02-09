@@ -1,0 +1,45 @@
+<table>
+	<tr>
+    <td><label><%=t("name")%></label></td>
+    <td><%= text_field :payment_method, :name, {"style" => "width:200px"} %></td>
+  </tr>
+	<tr>
+    <td><label><%=t("description")%></label></td>
+    <td><%= text_area :payment_method, :description, {:cols => 60, :rows => 4} %></td>
+  </tr>
+  <tr>
+    <td><label><%=t("environment")%></label></td>
+    <td>
+      <%= collection_select(:payment_method, :environment, Configuration.configurations.keys, :to_s, :titleize, {}, {:id => "gtwy-env"}) %>
+    </td>
+  </tr>
+  <tr>
+    <td><label><%= t("active") %></label></td>
+    <td>
+      <label class="sub">
+        <%= radio_button(:payment_method, :active, true ) %>
+        <%= t("yes") %>
+      </label> &nbsp; 
+      <label class="sub">
+        <%= radio_button(:payment_method, :active, false ) %>
+        <%= t("no") %>
+      </label>
+    </td>
+  </tr>
+</table>
+ 
+<h2><%= t('settings') %></h2>
+
+<div id="preference-settings">
+  <%= f.label(:type, t("provider")) %>
+  <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => "gtwy-type"}) %>
+
+  <% unless @object.new_record? %>
+ 
+    <%= preference_fields(@object, f) %>
+ 
+    <% if @object.respond_to?(:preferences) %>
+      <div id="gateway-settings-warning" style="color:#FF0000"><%= t('provider_settings_warning')%></div>
+      <% end %>
+    <% end %>
+ </div>

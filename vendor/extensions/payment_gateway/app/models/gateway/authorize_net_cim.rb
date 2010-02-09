@@ -92,9 +92,8 @@ class Gateway::AuthorizeNetCim < Gateway
     end
 
     def cim_gateway
-      ActiveMerchant::Billing::Base.gateway_mode = server.to_sym
+      ActiveMerchant::Billing::Base.gateway_mode = preferred_server.to_sym
       gateway_options = options
-      gateway_options[:test] = true if test_mode
   		ActiveMerchant::Billing::AuthorizeNetCimGateway.new(gateway_options)
     end 
     
