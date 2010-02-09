@@ -10,7 +10,7 @@ class ProductScope < ActiveRecord::Base
   belongs_to :product_group
   serialize :arguments
 
-  extend Scopes::Dynamic
+  extend ::Scopes::Dynamic
 
   # Get all products with this scope
   def products

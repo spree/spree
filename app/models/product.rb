@@ -60,7 +60,7 @@ class Product < ActiveRecord::Base
 
   alias :options :product_option_types
 
-  include Scopes::Product
+  include ::Scopes::Product
 
   # default product scope only lists available and non-deleted products
   named_scope :active,      lambda { |*args| Product.not_deleted.available(args.first).scope(:find) }
