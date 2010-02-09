@@ -14,7 +14,9 @@ module Spree::Search
     # Prepare a search within the parameters
     Spree::Config.searcher.prepare(params)
 
-    if params[:product_group_name]
+    if !params[:order_by_price].blank?
+      @product_group = ProductGroup.new.from_route([params[:order_by_price]+"_by_master_price"])
+    elsif params[:product_group_name]
       @cached_product_group = ProductGroup.find_by_permalink(params[:product_group_name])
       @product_group = ProductGroup.new
     elsif params[:product_group_query]
