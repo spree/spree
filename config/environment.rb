@@ -47,7 +47,11 @@ Spree::Initializer.run do |config|
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
   config.plugins = [ :all, :resource_controller, :extension_patches ]
 
-  config.extensions = [:theme_default, :all]
+  # Define SPREE_EXTENSIONS_LOAD_ORDER in config/preinitializer.rb if you want to
+  # specify a custom extension load order.  You may have to create preinitializer.rb
+  # yourself, this is an optional Spree file. For example:
+  # SPREE_EXTENSIONS_LOAD_ORDER = [:theme_default, :all, :site]
+  # For more details see http://railsdog.lighthouseapp.com/projects/31096/tickets/595
   
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
