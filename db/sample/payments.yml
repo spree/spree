@@ -1,7 +1,9 @@
 <% 1.upto(50) do |i| %>
 visa_<%= i %>:
-  order: order_<%= i %>
+  payable: order_<%= i %>
+  payable_type: Order
   amount: 45.75
-  creditcard: card_<%= i %>
-  type: CreditcardPayment
+  source: card_<%= i %>
+  source_type: Creditcard
+  payment_method: Gateway::Bogus
 <% end %>

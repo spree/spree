@@ -1,9 +1,12 @@
 class Payment < ActiveRecord::Base
-  belongs_to :order
-
+  belongs_to :payable, :polymorphic => true
+  belongs_to :source, :polymorphic => true
+  
   after_save :check_payments
   after_destroy :check_payments
 
+  accepts_nested_attributes_for :source
+  
   validate :amount_is_valid_for_outstanding_balance_or_credit
 
   private

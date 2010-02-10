@@ -14,7 +14,7 @@ class PaymentGatewayExtension < Spree::Extension
     
     silence_warnings { require 'active_merchant/billing/authorize_net_cim' }
     
-		#register all payment gateways
+		#register all payment methods
 		[
 			Gateway::Bogus,
       Gateway::AuthorizeNet,
@@ -22,12 +22,13 @@ class PaymentGatewayExtension < Spree::Extension
       Gateway::Linkpoint,
 			Gateway::PayPal,
 			Gateway::Protx,
-			Gateway::Beanstream
+			Gateway::Beanstream,
+			PaymentMethod::Check
     ].each{|gw|
       begin
         gw.register  
       rescue Exception => e
-        $stderr.puts "Error registering gateway #{c_model}"
+        $stderr.puts "Error registering gateway #{gw}: #{e}"
       end
     }
 

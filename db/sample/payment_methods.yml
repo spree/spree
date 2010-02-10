@@ -6,6 +6,11 @@ bogus_dev:
   #test_mode: true
   active: true
   type: Gateway::Bogus
+check_method:
+  name: Check
+  description: Pay by check.
+  active: true
+  type: PaymentMethod::Check
 bogus_test:
   name: Bogus Test
   description: Bogus payment gateway for test.

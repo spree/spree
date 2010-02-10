@@ -1,49 +1,18 @@
 <fieldset id='payment' style="width:70%;">
-
-  <% checkout_form.fields_for :creditcard do |creditcard_form| %>
-    <legend><%= t("payment_information") %></legend>
-
-    <div class="payment_option">
-      <h3><%= t("secure_creditcard") %></h3>
-
-      <%= image_tag "creditcard.gif", :id => 'creditcard-image' %>
-      <hr class="space" />
-      <p class="field">
-        <label for=""><%= t("card_number") %></label><br />
-      <%= creditcard_form.text_field :number, :size=> 19, :max_length => 19, :class => 'required' -%><span class="req">*</span>
-                  &nbsp;
-                  <span id="card_type" style="display:none;">
-                    ( <span id="looks_like" ><%= t('card_type_is') %> <span id="type"></span></span>
-                      <span id="unrecognized"><%= t('unrecognized_card_type') %></span>
-                    )
-                  </span>
-      </p>
-      <p class="field">
-        <label for=""><%= t("expiration") %></label><br />
-        <%= select_month(Date.today, :prefix => 'checkout[creditcard_attributes]', :field_name => 'month', :use_month_numbers => true, :class => 'required') -%>
-        <%= select_year(Date.today, :prefix => 'checkout[creditcard_attributes]', :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required') -%>
-        <span class="req">*</span>
-      </p>
-      <p class="field">
-        <label for=""><%= t("card_code") %></label><br />
-        <%= creditcard_form.text_field :verification_value, {:style => 'width:40px', :class => 'required'} -%><span class="req">*</span>
-        <a href="" onclick="window.open('/content/cvv','mywin','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false">
-          (<%= t("whats_this") %>)
-        </a>
-      </p>
-      <%= creditcard_form.hidden_field :first_name -%>
-      <%= creditcard_form.hidden_field :last_name -%>
-    </div>
-  <% end %>
-
-  <% if @billing_integrations.size > 0 %>
-    <div class="wpayment_option">
-      <h3><%= t("other_payment_options") %></h3>
-      <% @billing_integrations.each do |integration| %>
-        <%= render :partial => "shared/#{integration.class.to_s.demodulize.underscore}_payment", :locals => {:integration => integration} %>
-      <% end %>
-    </div>
-  <% end %>
+  <legend><%= t("payment_information") %></legend>
+  <ul id="payment-methods">
+    <% @payment_methods.each do |method| %>
+      <li>
+        <span class="payment-radio">
+          <input type="radio" name="method_type" value="<%= method.method_type %>" />
+          <label><%= method.name %></label>
+          <ul class="nested">
+            <li><%= render "checkouts/payment/#{method.method_type}", :method_type => method.method_type%></li>
+          </ul>
+        </span>
+      </li>
+    <% end %>  
+  </ul>
 </fieldset>
 
 <hr class="space" />

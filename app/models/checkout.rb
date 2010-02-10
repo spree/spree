@@ -9,13 +9,12 @@ class Checkout < ActiveRecord::Base
   belongs_to :order
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
-  belongs_to :shipping_method
-
-  has_one :creditcard
+  belongs_to :shipping_method  
+  has_many :payments, :as => :payable
 
   accepts_nested_attributes_for :bill_address
   accepts_nested_attributes_for :ship_address
-  accepts_nested_attributes_for :creditcard
+  accepts_nested_attributes_for :payments
 
   attr_accessor :coupon_code
   attr_accessor :use_billing
@@ -109,14 +108,14 @@ class Checkout < ActiveRecord::Base
   end
 
   def process_payment
-    return if order.payments.total == order.total
-    begin
-      if Spree::Config[:auto_capture]
-        creditcard.purchase(order.total.to_f)
-      else
-        creditcard.authorize(order.total.to_f)
-      end
-    end
+    # return if order.payments.total == order.total
+    # begin
+    #   if Spree::Config[:auto_capture]
+    #     creditcard.purchase(order.total.to_f)
+    #   else
+    #     creditcard.authorize(order.total.to_f)
+    #   end
+    # end  
   end
 
   def process_coupon_code

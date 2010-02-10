@@ -1,6 +1,5 @@
 class Creditcard < ActiveRecord::Base         
-  belongs_to :checkout
-  has_many :creditcard_payments
+  has_many :payments, :as => :source
   has_many :creditcard_txns
   alias :txns :creditcard_txns
   
