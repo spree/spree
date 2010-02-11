@@ -152,11 +152,18 @@ module Spree
     
     private
     def create_payment_profile      
-      return unless payment_gateway.payment_profiles_supported? and number and checkout
-      payment_gateway.create_profile(self, gateway_options)
+      return unless payment_gateway.payment_profiles_supported? and number# and checkout
+      payment_gateway.create_profile(self, {})
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)
     end
+    
+    #temporary workaround for the fact that creditcard used to be associated with checkout
+    # def checkout
+    #   payable = payment.payable
+    #   return payable if payable.is_a? Checkout
+    #   payable.checkout
+    # end
     
   end
 end

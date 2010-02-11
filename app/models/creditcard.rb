@@ -1,5 +1,5 @@
 class Creditcard < ActiveRecord::Base         
-  has_many :payments, :as => :source
+  has_one :payment, :as => :source
   has_many :creditcard_txns
   alias :txns :creditcard_txns
   

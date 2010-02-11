@@ -2,13 +2,14 @@ class Payment < ActiveRecord::Base
   belongs_to :payable, :polymorphic => true
   belongs_to :source, :polymorphic => true
   
-  after_save :check_payments
-  after_destroy :check_payments
+  after_save :check_payments, :if => :order_payment?
+  after_destroy :check_payments, :if => :order_payment?
 
   accepts_nested_attributes_for :source
   
-  validate :amount_is_valid_for_outstanding_balance_or_credit
-
+  validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment? 
+  validates_presence_of :payment_method
+  
   private
   def check_payments
     return unless order.checkout_complete
@@ -41,5 +42,9 @@ class Payment < ActiveRecord::Base
       end
     end    
   end
+  
+  def order_payment?
+    payable_type == "Order"
+  end 
   
 end

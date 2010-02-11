@@ -19,5 +19,6 @@ class PaymentMethod < ActiveRecord::Base
 
   def method_type
     type.demodulize.downcase
-  end
+  end     
+  
 end

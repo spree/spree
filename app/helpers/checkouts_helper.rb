@@ -24,4 +24,9 @@ module CheckoutsHelper
     content_tag('ol', steps.join("\n"), :class => 'progress-steps', :id => "checkout-step-#{@checkout.state}") + '<br clear="left" />'
   end
   
+  def payment_radio(method)#, payment)
+    selected = false #payment.payment_method == method.class.to_s
+    tag("input", { :type => 'radio', :checked => selected, :name => "checkout[payments_attributes][payment_method]", :value => method.name })
+  end
+  
 end

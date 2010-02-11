@@ -74,6 +74,16 @@ class Checkout < ActiveRecord::Base
     return [] unless ship_address
     ShippingMethod.all_available(order)
   end
+  
+  # overload standard nested attributes functionality to allow for creation of polymorphic payment source, etc
+  def payments_attributes=(params)
+debugger
+    source_type = params[:source_type]                                       
+    amount = params[:amount] || order.outstanding_balance
+    source = source_type ? source_type.constantize.new(params[:source]) : nil 
+
+    payments.create :amount => amount, :source => source, :payment_method => params[:payment_method]
+  end
 
   private
 

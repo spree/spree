@@ -1,10 +1,10 @@
 <fieldset id='payment' style="width:70%;">
   <legend><%= t("payment_information") %></legend>
-  <ul id="payment-methods">
+  <ul id="payment-methods">              
     <% @payment_methods.each do |method| %>
       <li>
         <span class="payment-radio">
-          <input type="radio" name="method_type" value="<%= method.method_type %>" />
+          <%= payment_radio(method)%>
           <label><%= method.name %></label>
           <ul class="nested">
             <li><%= render "checkouts/payment/#{method.method_type}", :method_type => method.method_type%></li>

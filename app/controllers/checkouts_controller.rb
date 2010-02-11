@@ -138,7 +138,7 @@ class CheckoutsController < Spree::BaseController
   end
 
   def load_available_payment_methods 
-    @payment_methods = PaymentMethod.available
+    @payment_methods = PaymentMethod.available   
   end
 
   def set_ip_address
