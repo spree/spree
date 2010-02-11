@@ -31,6 +31,9 @@ en-US:
       words_connector: ", "
       two_words_connector: " and "
       last_word_connector: ", and "
+    select:
+      # default value for :prompt => true in FormOptionsHelper
+      prompt: "Please select"
 
   number:
     # Used in number_with_delimiter()
@@ -131,11 +134,6 @@ en-US:
       hour:   "Hour"
       minute: "Minute"
       second: "Seconds"
-
-  support:
-    select:
-      # default value for :prompt => true in FormOptionsHelper
-      prompt: "Please select"
 
   activerecord:
     errors:
