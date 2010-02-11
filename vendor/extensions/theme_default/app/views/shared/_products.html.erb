@@ -21,7 +21,7 @@
  
 <hr class="space" />
  
-<% if paginated_products.respond_to?(:paginate)
+<% if paginated_products.respond_to?(:total_pages)
       params.delete(:search)
       params.delete(:taxon)
       
