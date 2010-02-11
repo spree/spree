@@ -17,20 +17,37 @@ div#checkout {
 
   #checkout_form_address {
     background-image: url("../images/steps/2.png");
-
-    #billing { .column(8); }
-    #shipping {  .column-last(8); }
   }
-
   #checkout_form_delivery {
     background-image: url("../images/steps/3.png");
   }
+  #checkout_form_address #billing label, #checkout_form_address #shipping label {
+    width:190px;
+    float: left;
+    padding-right: 10px;
+    text-align: right;
+  }
+  #checkout_form_address #billing input, #checkout_form_address #shipping input, 
+  #checkout_form_address #billing select, #checkout_form_address #shipping select {
+    width:304px;
+  }
+  #checkout_form_address #billing p.checkbox, 
+  #checkout_form_address #shipping p.checkbox,
+  #checkout_form_address .form-buttons {
+    padding-left:200px;
+  }
+
+  #checkout_form_address #billing p.checkbox label, #checkout_form_address #shipping p.checkbox label {
+    width: auto!important;
+    float: none!important;
+  }
+  #checkout_form_address #billing p.checkbox input, #checkout_form_address #shipping p.checkbox input {
+    width: auto!important;
+  }
 
   #checkout_form_payment {
-
     background-image: url("../images/steps/5.png");
     select { width: 75px; }
-
     #payment { .column(8); }
     #order_details { .column(12); }
   }
