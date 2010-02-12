@@ -7,10 +7,18 @@ class Payment < ActiveRecord::Base
 
   accepts_nested_attributes_for :source
   
+  validates_presence_of :source
   validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment? 
-  validates_presence_of :payment_method
   
+
+  # With nested attributes, Rails calls build_[association_name] for the nested model which won't work for a polymorphic association
+  def build_source(params)
+    self.source = source_type.classify.constantize.new(params)
+  end
+
+
   private
+  
   def check_payments
     return unless order.checkout_complete
     #sorting by created_at.to_f to ensure millisecond percsision, plus ID - just in case

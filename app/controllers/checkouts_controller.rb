@@ -22,7 +22,7 @@ class CheckoutsController < Spree::BaseController
   payment.edit_hook :load_available_payment_methods
 
   # customized verison of the standard r_c update method (since we need to handle gateway errors, etc)
-  def update
+  def update      
     load_object
 
     # call the edit hooks for the current step in case we experience validation failure and need to edit again
@@ -71,6 +71,14 @@ class CheckoutsController < Spree::BaseController
   end
 
   private
+
+  def object_params
+    # For payment step, filter checkout parameters to produce the expected nested attributes for a single payment and its source, discarding attributes for payment methods other than the one selected
+    if object.payment?
+      params[:checkout][:payments_attributes].first[:source_attributes] = params.delete(:payment_source)[params[:checkout][:payments_attributes].first[:source_type].underscore]
+    end
+    params[:checkout]
+  end
 
   # Calls edit hooks registered for the current step
   def edit_hooks

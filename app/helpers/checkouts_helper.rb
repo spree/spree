@@ -26,7 +26,7 @@ module CheckoutsHelper
   
   def payment_radio(method)#, payment)
     selected = false #payment.payment_method == method.class.to_s
-    tag("input", { :type => 'radio', :checked => selected, :name => "checkout[payments_attributes][payment_method]", :value => method.name })
+    radio_button_tag "checkout[payments_attributes][][source_type]", method.payment_source_class.name, selected
   end
   
 end

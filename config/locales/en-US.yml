@@ -877,6 +877,7 @@ en-US:
   zones: Zones
   editing_payment_method: Editing Payment Method
   payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   new_payment_method: New Payment Method
   gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   active: "Active"

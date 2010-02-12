@@ -1,21 +1,24 @@
-<fieldset id='payment' style="width:70%;">
+<fieldset id="payment">
   <legend><%= t("payment_information") %></legend>
+
+  <%= debug @checkout.payments %>
+
   <ul id="payment-methods">              
     <% @payment_methods.each do |method| %>
-      <li>
-        <span class="payment-radio">
-          <%= payment_radio(method)%>
-          <label><%= method.name %></label>
-          <ul class="nested">
-            <li><%= render "checkouts/payment/#{method.method_type}", :method_type => method.method_type%></li>
-          </ul>
-        </span>
+      <li<%= ' class="last"' if method == @payment_methods.last %>>
+        <label><%= payment_radio(method)%> <%= method.name %></label>
+        <fieldset>
+          <%= render "checkouts/payment/#{method.method_type}", :method_type => method.method_type%>
+        </fieldset>
       </li>
     <% end %>  
   </ul>
+
 </fieldset>
 
 <hr class="space" />
+
 <div class="form-buttons">
   <input type="submit" class="continue button primary" value="<%=t("save_and_continue") %>" onclick="$('#checkout_form_address').validate();" />
 </div>
+

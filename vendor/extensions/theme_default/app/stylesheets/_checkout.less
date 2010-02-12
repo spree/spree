@@ -52,10 +52,17 @@ div#checkout {
     #order_details { .column(12); }
   }
 
-  .payment_option {
-    margin-left: 20px;
-    width: 46%;
-    float: left;
+  #payment-methods {
+    list-style: none;
+    display:block;
+    padding: 0; margin: 0;
+    li {
+        display:block;
+        .column(5);
+    }
+    li.last {
+      .column-last(5);
+    }
   }
 
 }
