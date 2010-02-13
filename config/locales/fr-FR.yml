@@ -776,6 +776,7 @@ fr-FR:
   smtp_send_order_mails_as_from_following_address: "Envoyer les emails de commandes comme provenant de cette adresse."
   smtp_username: Identifiant SMTP
   sold: Sold
+  sort_ordering: "Sort ordering"
   spree:
     date: Date
     time: Heure

@@ -557,7 +557,7 @@ en-US:
   product_group: Product Group
   product_group_invalid: Product Group has invalid scopes
   product_groups: Product Groups
-  product_has_no_description: Product has not description
+  product_has_no_description: This product has no description
   product_properties: "Product Properties"
   product_scopes:
     groups:

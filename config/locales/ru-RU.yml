@@ -776,6 +776,7 @@ ru-RU:
   smtp_send_order_mails_as_from_following_address: "Отправлять уведомления о заказах от этого адреса."
   smtp_username: "Пользователь"
   sold: Sold
+  sort_ordering: "Sort ordering"
   spree:
     date: "Дата"
     time: "Время"

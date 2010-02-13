@@ -776,6 +776,7 @@ fi:
   smtp_send_order_mails_as_from_following_address: "Lähetä tilausviestit tästä osoitteesta."
   smtp_username: SMTP käyttäjänimi
   sold: Sold
+  sort_ordering: "Sort ordering"
   spree:
     date: Päivämäärä
     time: Kellonaika

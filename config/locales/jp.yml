@@ -776,6 +776,7 @@ jp:
   smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTPユーザ名
   sold: Sold
+  sort_ordering: "Sort ordering"
   spree:
     date: 日付
     time: 時間

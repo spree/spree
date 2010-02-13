@@ -776,6 +776,7 @@ pl:
   smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTP Username  
   sold: Sold
+  sort_ordering: "Sort ordering"
   spree:
     date: Data
     time: Czas                                               

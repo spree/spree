@@ -1,5 +1,5 @@
 ---
-cs-CZ:
+cs-CZ: 
   'no': "Ne"
   'yes': "Ano"
   5_biggest_spenders: "5 Nejvíce utrácejících"
@@ -243,7 +243,6 @@ cs-CZ:
   billing_address: "Fakturační adresa"
   billing_integration: "Začlenění fakturace"
   billing_integrations: "Začlenění fakturací"
-  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   billing_integrations_description: "Nastavit pro začlenění fakturací se systémy Paypal, Google Checkout atd."
   by_day: "po dni"
   calculator: "Kalkulátor"
