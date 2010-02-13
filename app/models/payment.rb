@@ -1,6 +1,7 @@
 class Payment < ActiveRecord::Base
   belongs_to :payable, :polymorphic => true
   belongs_to :source, :polymorphic => true
+  belongs_to :payment_method
   
   after_save :check_payments, :if => :order_payment?
   after_destroy :check_payments, :if => :order_payment?
@@ -9,11 +10,13 @@ class Payment < ActiveRecord::Base
   
   validates_presence_of :source
   validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment? 
-  
+  validates_presence_of :payment_method
 
   # With nested attributes, Rails calls build_[association_name] for the nested model which won't work for a polymorphic association
   def build_source(params)
-    self.source = source_type.classify.constantize.new(params)
+    if payment_method and payment_method.payment_source_class
+      self.source = payment_method.payment_source_class.new(params)
+    end
   end
 
 

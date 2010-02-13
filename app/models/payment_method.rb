@@ -15,6 +15,7 @@ class PaymentMethod < ActiveRecord::Base
   
   # The class that will process payments for this payment type, used for @payment.source
   # e.g. Creditcard in the case of a the Gateway payment type
+  # nil means the payment method doesn't require a source e.g. check
   def payment_source_class
     raise "You must implement payment_source_class method for this gateway."
   end

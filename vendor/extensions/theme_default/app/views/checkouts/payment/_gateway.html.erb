@@ -1,6 +1,5 @@
 <%= image_tag "creditcard.gif", :id => 'creditcard-image' %>
-<%# param_prefix = "checkout[payments_attributes][source][creditcard]" %>
-<% param_prefix = "payment_source[creditcard]" %>
+<% param_prefix = "payment_source[#{payment_method.id}]" %>
 
 <p class="field">
   <label for=""><%= t("card_number") %></label><br />
