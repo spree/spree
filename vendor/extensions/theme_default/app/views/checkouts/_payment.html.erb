@@ -1,12 +1,17 @@
 <fieldset id="payment">
   <legend><%= t("payment_information") %></legend>
 
+  <%= debug @payment_method %>
   <%= debug @checkout.payments %>
 
   <ul id="payment-methods">              
     <% @payment_methods.each do |method| %>
       <li<%= ' class="last"' if method == @payment_methods.last %>>
-        <label><%= payment_radio(method)%> <%= method.name %></label>
+        <label>
+          <%= radio_button_tag "checkout[payments_attributes][][payment_method_id]", method.id, method == @payment_method %> 
+          <%= method.name %>
+          <%= method == @payment_method %>
+        </label>
         <fieldset>
           <%= render "checkouts/payment/#{method.method_type}", :payment_method => method %>
         </fieldset>

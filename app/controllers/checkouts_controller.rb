@@ -20,6 +20,7 @@ class CheckoutsController < Spree::BaseController
   delivery.edit_hook :load_available_methods
   address.edit_hook :set_ip_address
   payment.edit_hook :load_available_payment_methods
+  update.before :clear_payments_if_in_payment_state
 
   # customized verison of the standard r_c update method (since we need to handle gateway errors, etc)
   def update      
@@ -74,8 +75,8 @@ class CheckoutsController < Spree::BaseController
 
   def object_params
     # For payment step, filter checkout parameters to produce the expected nested attributes for a single payment and its source, discarding attributes for payment methods other than the one selected
-    if object.payment?
-      params[:checkout][:payments_attributes].first[:source_attributes] = params.delete(:payment_source)[params[:checkout][:payments_attributes].first[:payment_method_id].underscore]
+    if object.payment? and source_params = params.delete(:payment_source)[params[:checkout][:payments_attributes].first[:payment_method_id].underscore]
+      params[:checkout][:payments_attributes].first[:source_attributes] = source_params
     end
     params[:checkout]
   end
@@ -145,8 +146,21 @@ class CheckoutsController < Spree::BaseController
     @checkout.shipping_method_id ||= @available_methods.first[:id] unless @available_methods.empty?
   end
 
+  def clear_payments_if_in_payment_state
+    if @checkout.payment?
+      puts ' - Clearing payments - '
+      @checkout.payments.clear
+      puts @checkout.payments.inspect
+    end
+  end
+  
   def load_available_payment_methods 
     @payment_methods = PaymentMethod.available   
+    if @checkout.payment and @checkout.payment.payment_method
+      @payment_method = @checkout.payment.payment_method
+    else
+      @payment_method = @payment_methods.first
+    end
   end
 
   def set_ip_address

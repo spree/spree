@@ -75,6 +75,10 @@ class Checkout < ActiveRecord::Base
     ShippingMethod.all_available(order)
   end
   
+  def payment
+    payments.first
+  end
+  
   private
 
   def check_addresses_on_duplication

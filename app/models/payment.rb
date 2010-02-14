@@ -8,7 +8,6 @@ class Payment < ActiveRecord::Base
 
   accepts_nested_attributes_for :source
   
-  validates_presence_of :source
   validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment? 
   validates_presence_of :payment_method
 
