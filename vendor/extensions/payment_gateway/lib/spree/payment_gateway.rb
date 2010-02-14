@@ -3,7 +3,7 @@ module Spree
     
     def self.included(base)
       base.named_scope :with_payment_profile, :conditions => "gateway_customer_profile_id IS NOT NULL AND gateway_payment_profile_id IS NOT NULL"
-      base.before_save :create_payment_profile
+      base.after_save :create_payment_profile
     end
     
     def authorize(amount)
@@ -13,7 +13,8 @@ module Spree
       
       # create a transaction to reflect the authorization
       save
-      creditcard_txns.create(
+      
+      payment.creditcard_txns.create(
         :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::AUTHORIZE,
@@ -36,7 +37,7 @@ module Spree
 
       # create a transaction to reflect the capture
       save
-      creditcard_txns.create(
+      payment.creditcard_txns.create(
         :amount => authorization.amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::CAPTURE,
@@ -56,7 +57,7 @@ module Spree
 
       # create a transaction to reflect the void
       save
-      creditcard_txns.create(
+      payment.creditcard_txns.create(
         :amount => authorization.amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::VOID,
@@ -72,7 +73,7 @@ module Spree
 
       # create a transaction to reflect the purchase
       save
-      creditcard_txns.create(
+      payment.creditcard_txns.create(
         :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::PURCHASE,
@@ -92,7 +93,7 @@ module Spree
 
       # create a transaction to reflect the purchase
       save
-      txn = creditcard_txns.create(
+      payment.creditcard_txns.create(
         :amount => -amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::CREDIT,
@@ -116,8 +117,8 @@ module Spree
     end
         
     def gateway_options
-      options = {:billing_address  => generate_address_hash(checkout.bill_address), 
-                 :shipping_address => generate_address_hash(checkout.shipment.address)}
+      options = {:billing_address  => generate_address_hash(payment.order.bill_address), 
+                 :shipping_address => generate_address_hash(payment.order.shipment.address)}
       options.merge minimal_gateway_options
     end    
     
@@ -132,13 +133,13 @@ module Spree
     # a billing address when authorizing/voiding a previously captured transaction.  So omits these 
     # options in this case since they aren't necessary.  
     def minimal_gateway_options
-      {:email => checkout.email, 
-       :customer => checkout.email, 
-       :ip => checkout.ip_address, 
-       :order_id => checkout.order.number,
-       :shipping => checkout.order.ship_total * 100,
-       :tax => checkout.order.tax_total * 100, 
-       :subtotal => checkout.order.item_total * 100}  
+      {:email    => payment.order.email, 
+       :customer => payment.order.email, 
+       :ip       => payment.order.ip_address, 
+       :order_id => payment.order.number,
+       :shipping => payment.order.ship_total * 100,
+       :tax      => payment.order.tax_total * 100, 
+       :subtotal => payment.order.item_total * 100}  
     end
     
     def spree_cc_type
@@ -151,19 +152,15 @@ module Spree
     end  
     
     private
+    # TODO: Want to do this after_save but there is a possible danger of infinite loop which number_changed? check is intended to prevent. 
     def create_payment_profile      
-#      return unless payment_gateway.payment_profiles_supported? and number# and checkout
-#      payment_gateway.create_profile(self, {})
-#    rescue ActiveMerchant::ConnectionError => e
-#      gateway_error I18n.t(:unable_to_connect_to_gateway)
+      return unless payment_gateway.payment_profiles_supported? and number and number_changed?
+      if number_changed?
+        payment_gateway.create_profile(self, {})
+      end
+    rescue ActiveMerchant::ConnectionError => e
+      gateway_error I18n.t(:unable_to_connect_to_gateway)
     end
-    
-    #temporary workaround for the fact that creditcard used to be associated with checkout
-    # def checkout
-    #   payable = payment.payable
-    #   return payable if payable.is_a? Checkout
-    #   payable.checkout
-    # end
-    
+
   end
 end

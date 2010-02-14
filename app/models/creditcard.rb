@@ -10,6 +10,18 @@ class Creditcard < ActiveRecord::Base
   validates_presence_of :number, :unless => :has_payment_profile?, :on => :create
   validates_presence_of :verification_value, :unless => :has_payment_profile?, :on => :create
   
+  
+  def process!
+    begin
+      if Spree::Config[:auto_capture]
+        purchase(payment.amount.to_f)
+      else
+        authorize(payment.amount.to_f)
+      end
+    end
+  end
+  
+  
   def has_payment_profile?
     gateway_customer_profile_id.present?
   end

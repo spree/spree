@@ -2,6 +2,8 @@ class Payment < ActiveRecord::Base
   belongs_to :payable, :polymorphic => true
   belongs_to :source, :polymorphic => true
   belongs_to :payment_method
+
+  has_many :creditcard_txns
   
   after_save :check_payments, :if => :order_payment?
   after_destroy :check_payments, :if => :order_payment?
@@ -17,7 +19,18 @@ class Payment < ActiveRecord::Base
       self.source = payment_method.payment_source_class.new(params)
     end
   end
+  
+  def process!
+    source.process! if source and source.respond_to?(:process!)
+  end
+  
+  def order
+    payable.is_a?(Order) ? Order : payable.order
+  end
 
+  def move_to_order
+    update_attribute(:payable, payable.order) if payable.is_a?(Checkout)
+  end
 
   private
   

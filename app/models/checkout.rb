@@ -112,14 +112,8 @@ class Checkout < ActiveRecord::Base
   end
 
   def process_payment
-    # return if order.payments.total == order.total
-    # begin
-    #   if Spree::Config[:auto_capture]
-    #     creditcard.purchase(order.total.to_f)
-    #   else
-    #     creditcard.authorize(order.total.to_f)
-    #   end
-    # end  
+    return if order.payments.total == order.total
+    payments.each(&:process!)
   end
 
   def process_coupon_code
