@@ -148,9 +148,7 @@ class CheckoutsController < Spree::BaseController
 
   def clear_payments_if_in_payment_state
     if @checkout.payment?
-      puts ' - Clearing payments - '
       @checkout.payments.clear
-      puts @checkout.payments.inspect
     end
   end
   

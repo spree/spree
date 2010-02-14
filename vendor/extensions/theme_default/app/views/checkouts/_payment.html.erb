@@ -1,9 +1,6 @@
 <fieldset id="payment">
   <legend><%= t("payment_information") %></legend>
 
-  <%= debug @payment_method %>
-  <%= debug @checkout.payments %>
-
   <ul id="payment-methods">              
     <% @payment_methods.each do |method| %>
       <li<%= ' class="last"' if method == @payment_methods.last %>>
