@@ -72,7 +72,7 @@ class Creditcard < ActiveRecord::Base
   end
 
   def can_capture?
-    authorization.present? && txns.count(:conditions => {:txn_type => CreditcardTxn::TxnType::CAPTURE}) == 0
+    authorization.present? && txns.count(:conditions => {:txn_type => [CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::PURCHASE]}) == 0
   end
   
   private
