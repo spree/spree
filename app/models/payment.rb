@@ -24,8 +24,18 @@ class Payment < ActiveRecord::Base
     source.process! if source and source.respond_to?(:process!)
   end
   
+  def finalize!
+    source.finalize! if source and source.respond_to?(:finalize!)
+    if payable.is_a?(Checkout)
+      self.payable = payable.order
+      save!
+      payable.save!
+    end
+  end
+
+
   def order
-    payable.is_a?(Order) ? Order : payable.order
+    payable.is_a?(Order) ? payable : payable.order
   end
 
   def move_to_order

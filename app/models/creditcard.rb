@@ -15,12 +15,19 @@ class Creditcard < ActiveRecord::Base
     begin
       if Spree::Config[:auto_capture]
         purchase(payment.amount.to_f)
+        payment.finalize!
       else
         authorize(payment.amount.to_f)
       end
     end
   end
   
+  def finalize!
+    if can_capture?
+      capture(authorization)
+    end
+  end
+      
   
   def has_payment_profile?
     gateway_customer_profile_id.present?
