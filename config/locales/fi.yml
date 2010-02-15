@@ -36,15 +36,14 @@ fi:
           phone: "Puhelin (laskutus)"
           state: "Lääni/osavaltio (laskutus)"
           zipcode: "Postinumero (laskutus)"
-        shipment:
-          address:
-            address1: "Osoite (toimitus)"
-            city: "Paikkakunta (toimitus)"
-            firstname: "Etunimi (toimitus)"
-            lastname: "Sukunimi (toimitus)"
-            phone: "Puhelin (toimitus)"
-            state: "Lääni/osavaltio (toimitus)"
-            zipcode: "Postinumero (toimitus)"
+        ship_address:
+          address1: "Osoite (toimitus)"
+          city: "Paikkakunta (toimitus)"
+          firstname: "Etunimi (toimitus)"
+          lastname: "Sukunimi (toimitus)"
+          phone: "Puhelin (toimitus)"
+          state: "Lääni/osavaltio (toimitus)"
+          zipcode: "Postinumero (toimitus)"
       country:
         iso: ISO
         iso3: ISO3

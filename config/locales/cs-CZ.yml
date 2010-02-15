@@ -36,15 +36,14 @@ cs-CZ:
           phone: "Telefon (fakturační adresa)"
           state: "Stát (fakturační adresa)"
           zipcode: "PSČ (fakturační adresa)"
-        shipment:
-          address:
-            address1: "Ulice (dodací adresa)"
-            city: "Město (dodací adresa)"
-            firstname: "Křestní jméno (dodací adresa)"
-            lastname: "Příjmení (dodací adresa)"
-            phone: "Telefon (dodací adresa)"
-            state: "Stát (dodací adresa)"
-            zipcode: "PSČ (dodací adresa)"
+        ship_address:
+          address1: "Ulice (dodací adresa)"
+          city: "Město (dodací adresa)"
+          firstname: "Křestní jméno (dodací adresa)"
+          lastname: "Příjmení (dodací adresa)"
+          phone: "Telefon (dodací adresa)"
+          state: "Stát (dodací adresa)"
+          zipcode: "PSČ (dodací adresa)"
       country:
         iso: ISO
         iso3: ISO3

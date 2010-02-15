@@ -36,15 +36,14 @@ pl:
           phone: "Billing address phone"
           state: "Billing address state"
           zipcode: "Billing address zipcode"
-        shipment:
-          address:
-            address1: "Shipping address street"
-            city: "Shipping address city"
-            firstname: "Shipping address first name"
-            lastname: "Shipping address last name"
-            phone: "Shipping address phone"
-            state: "Shipping address state"
-            zipcode: "Shipping address zipcode"
+        ship_address:
+          address1: "Shipping address street"
+          city: "Shipping address city"
+          firstname: "Shipping address first name"
+          lastname: "Shipping address last name"
+          phone: "Shipping address phone"
+          state: "Shipping address state"
+          zipcode: "Shipping address zipcode"
       country: 
         iso: ISO
         iso3: ISO3
