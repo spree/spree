@@ -176,7 +176,7 @@ Spree no longer require javascript for checkout but the user experience will be 
 
 h3. RESTful API
 
-[ todo ]
+See the "REST API section":rest.html for full details.
 
 *Request:* 
 
