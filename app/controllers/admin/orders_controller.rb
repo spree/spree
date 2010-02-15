@@ -39,6 +39,11 @@ class Admin::OrdersController < Admin::BaseController
 
   private
 
+  def object
+    @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
+    return @object || find_order
+  end
+
   def collection
     @search = Order.searchlogic(params[:search])
     @search.order ||= "descend_by_created_at"

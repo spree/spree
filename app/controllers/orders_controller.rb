@@ -50,10 +50,10 @@ class OrdersController < Spree::BaseController
     @object ||= find_order
   end
   
-  def object 
-  	@object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
-		return @object || find_order
-  end   
+  def object
+    @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
+    return @object || find_order
+  end
   
   def create_before
     params[:products].each do |product_id,variant_id|
