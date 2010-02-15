@@ -146,6 +146,18 @@ h3. Digging Deeper
   <% guide('Contributing to Spree', 'contributing_to_spree.html') do %>
     Do you enjoy Spree and want to "give something back?"  This guide contains information on how to contribute to the Spree project.  
   <% end %>
+</dl>
+<dl>
+  <% guide('Release notes for 0_9_0', 'release_notes_0_9_0.html') do %>
+    Overview documentation for the main changes to the 0.9.x releases.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Release notes for 1_0_0', 'release_notes_1_0_0.html') do %>
+    Overview documentation for the main changes to the 1.0.x releases.
+  <% end %>
+</dl>
+
 
 h3. Best Practices   
 
