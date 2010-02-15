@@ -578,7 +578,7 @@ it:
       ascend_by_name:
         name: Ascend by product name
       ascend_by_updated_at:
-        name: Ascendy by actualization date
+        name: Ascend by actualization date
       by_popularity:
         name: Sort by popularity(most popular first)
       descend_by_master_price:
