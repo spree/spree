@@ -94,7 +94,11 @@ class Checkout < ActiveRecord::Base
   end
 
   def clone_billing_address
-    self.ship_address = bill_address.clone
+    if self.ship_address.nil?
+      self.ship_address = bill_address.clone
+    else
+      self.ship_address.attributes = bill_address.attributes.except("id", "updated_at", "created_at")
+    end
     true
   end
 
@@ -130,7 +134,7 @@ class Checkout < ActiveRecord::Base
   def update_order_shipment
     if order.shipment
       order.shipment.shipping_method = shipping_method
-      order.shipment.address = ship_address
+      order.shipment.address_id = ship_address.id unless ship_address.nil?
       order.shipment.save
     end
   end
