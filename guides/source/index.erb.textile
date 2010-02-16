@@ -143,6 +143,11 @@ h3. Digging Deeper
   <% end %>
 </dl>
 <dl>
+  <% guide('Product Groups and Scopes', 'scopes_and_groups.html') do %>
+    Information on how to define groups of products by various criteria.
+  <% end %>
+</dl>
+<dl>
   <% guide('Contributing to Spree', 'contributing_to_spree.html') do %>
     Do you enjoy Spree and want to "give something back?"  This guide contains information on how to contribute to the Spree project.  
   <% end %>
