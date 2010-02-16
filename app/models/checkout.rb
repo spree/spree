@@ -79,18 +79,20 @@ class Checkout < ActiveRecord::Base
 
   def check_addresses_on_duplication
     if order.user
-      if ship_address and order.user.ship_address.nil?
+      if order.user.ship_address.nil?
         order.user.update_attribute(:ship_address, ship_address)
-      elsif order.user.ship_address and ship_address.nil?
+      elsif ship_address.nil? || ship_address.same_as?(order.user.ship_address)
         self.ship_address = order.user.ship_address
+        puts self.ship_address.id.inspect
       end
-
-      if bill_address and order.user.bill_address.nil?
+      if order.user.bill_address.nil?
         order.user.update_attribute(:bill_address, bill_address)
-      elsif order.user.bill_address and bill_address.nil?
-        self.bill_address = order.user.ship_address
+      elsif bill_address.nil? || bill_address.same_as?(order.user.bill_address)
+        self.bill_address = order.user.bill_address
+        puts self.bill_address.id.inspect
       end
     end
+    true
   end
 
   def clone_billing_address
