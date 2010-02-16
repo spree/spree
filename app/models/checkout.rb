@@ -83,13 +83,11 @@ class Checkout < ActiveRecord::Base
         order.user.update_attribute(:ship_address, ship_address)
       elsif ship_address.nil? || ship_address.same_as?(order.user.ship_address)
         self.ship_address = order.user.ship_address
-        puts self.ship_address.id.inspect
       end
       if order.user.bill_address.nil?
         order.user.update_attribute(:bill_address, bill_address)
       elsif bill_address.nil? || bill_address.same_as?(order.user.bill_address)
         self.bill_address = order.user.bill_address
-        puts self.bill_address.id.inspect
       end
     end
     true
