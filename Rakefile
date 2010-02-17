@@ -29,7 +29,7 @@ begin
     s.add_dependency 'highline', '= 1.5.1'
     s.add_dependency 'authlogic', '>=2.1.2'
     s.add_dependency 'authlogic-oid', "1.0.4"
-    s.add_dependency 'activemerchant', '= 1.5.0'
+    s.add_dependency 'activemerchant', '= 1.5.1'
     s.add_dependency 'activerecord-tableless', '= 0.1.0'
     s.add_dependency 'less', "1.2.20"
     s.add_dependency 'stringex', "1.0.3"
