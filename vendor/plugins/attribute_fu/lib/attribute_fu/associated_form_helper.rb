@@ -89,7 +89,7 @@ module AttributeFu
       
       function = "if (typeof #{variable} == 'undefined') #{variable} = 0; 
                     $(#{container}).append($.template("+[self.render_associated_form(object, :fields_for => { :javascript => true }, :partial => partial)].flatten.first.to_json+"), { number: --#{variable}});"
-                    
+
       @template.link_to_function(name, function, opts)
     end
     
@@ -119,11 +119,12 @@ module AttributeFu
         partial           = opts[:partial] || name
         local_assign_name = partial.split('/').last.split('.').first
 
-        associated.map do |element|
+        array_of_associated_html = associated.map do |element|
           fields_for_associated(element, (opts[:fields_for] || {}).merge(:name => name)) do |f|
             @template.render({:partial => "#{partial}", :locals => {local_assign_name.to_sym => element, :f => f}.merge(opts[:locals] || {})}.merge(opts[:render] || {}))
           end
         end
+        @template.render :text => array_of_associated_html.join
       end
     end
     
