@@ -26,7 +26,7 @@ class ShippingMethod < ActiveRecord::Base
   end
 
   def available_to_order?(order)
-    available?(order) && zone.include?(order.ship_address)
+    available?(order) && zone && zone.include?(order.ship_address)
   end
 
   def self.all_available(order)

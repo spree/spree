@@ -5,7 +5,6 @@ Factory.define(:checkout) do |record|
   # associations:
   record.association(:order, :factory => :order_with_totals)
   record.association(:bill_address, :factory => :address)
-  record.association(:creditcard)
   record.association(:shipping_method)
 end
 

@@ -13,7 +13,7 @@ I18n.locale = "en-US"
 Spree::Config.set(:default_country_id => Country.first.id) if Country.first
 
 class ActionController::TestCase
-    setup :activate_authlogic
+  setup :activate_authlogic
 end
 
 ActionController::TestCase.class_eval do
@@ -30,6 +30,9 @@ end
 def setup
   super
   @params = {}
+  
+  puts '-shared setup-'
+  
 end
 
 class TestCouponCalc
