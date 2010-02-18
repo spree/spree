@@ -6,7 +6,5 @@
 
 <% form_for(:state, :url => collection_url) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <p class="form-buttons">
-    <%= button t("create") %>
-  </p>
+  <%= render :partial => "admin/shared/new_resource_links" %>
 <% end %>

@@ -4,7 +4,5 @@
 
 <% form_for(:shipping_category, :url => collection_url) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <p>
-    <%= submit_tag t("create") %>
-  </p>
+  <%= render :partial => "admin/shared/new_resource_links" %>
 <% end %>

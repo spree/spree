@@ -11,9 +11,7 @@
     <%= render :partial => "form", :locals => { :f => f } %>
 
     <% hook :admin_shipping_method_new_form_buttons do %>
-      <p class="form-buttons">
-        <%= button t("create") %> <%= t("or") %> <%= link_to t("cancel"), admin_shipping_methods_path %>
-      </p>
+      <%= render :partial => "admin/shared/new_resource_links" %>
     <% end %>
   <% end %>
 <% end %>

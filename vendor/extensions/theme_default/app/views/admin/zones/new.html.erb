@@ -6,7 +6,5 @@
 
 <% form_for(@zone, :url => collection_url) do |zone_form| %>
   <%= render "form", :zone_form => zone_form %>
-  <p class="form-buttons">
-    <span id="create-zone"><%= button t("create") %></span>
-  </p>
+  <%= render :partial => "admin/shared/new_resource_links" %>
 <% end %>

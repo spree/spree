@@ -6,7 +6,5 @@
 
 <% form_for(:state, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <p class="form-buttons">
-    <%= button t("update") %>
-  </p>
+  <%= render :partial => "admin/shared/edit_resource_links" %>
 <% end %>
