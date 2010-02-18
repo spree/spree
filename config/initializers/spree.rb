@@ -53,3 +53,4 @@ end
 require 'spree/theme_support'
 require 'state_machine'
 require 'stringex'
+require 'will_paginate'
