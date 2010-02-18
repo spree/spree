@@ -2,11 +2,11 @@ bogus_test:
   name: Bogus Test
   description: Bogus payment gateway for test.
   environment: test
-  active: false
+  active: true
   type: Gateway::Bogus
 authorize_net_cim_test:
   name: Authorize.net CIM Test
   description: Authorize.net CIM Gateway for test.
   environment: test
-  active: true
+  active: false
   type: Gateway::AuthorizeNetCim
