@@ -30,9 +30,6 @@ end
 def setup
   super
   @params = {}
-  
-  puts '-shared setup-'
-  
 end
 
 class TestCouponCalc
@@ -61,6 +58,8 @@ def create_complete_order
 
   @checkout.ship_address = Factory(:address)
   @checkout.shipping_method = @shipping_method
+
+  @checkout.payments = [Factory(:payment, :amount => @order.total)]
   @checkout.save
 
   @shipment = @order.shipment
