@@ -117,7 +117,7 @@ class OrderTest < ActiveSupport::TestCase
       Factory(:line_item, :variant => Factory(:variant, :price => 5.00), :order => @order, :quantity => 1, :price => 5.00)
       @order.reload
       @order.save
-      Factory(:creditcard_payment, :order => @order, :amount => 2.50)
+      Factory(:payment, :payable => @order, :amount => 2.50)
       @order.reload
       @order.save
     end
