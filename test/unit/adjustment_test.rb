@@ -15,6 +15,8 @@ class TestAdjustment < Adjustment
 end
 
 class AdjustmentTest < ActiveSupport::TestCase
+  fixtures :payment_methods
+  
   should_validate_presence_of :description
 
   context "Adjustment with order" do

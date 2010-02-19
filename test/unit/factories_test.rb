@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class FactoriesTest < ActiveSupport::TestCase
-  fixtures :countries
+  fixtures :payment_methods, :countries
 
   (Factory.factories.keys - [:global_zone]).each do |factory|
     context factory.to_s do

@@ -10,6 +10,8 @@ Charge.class_eval do
 end
 
 class ChargeTest < ActiveSupport::TestCase
+  fixtures :payment_methods
+
   should_validate_presence_of :description
 
   context "Order" do

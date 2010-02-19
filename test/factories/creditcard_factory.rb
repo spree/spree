@@ -9,7 +9,3 @@ Factory.define(:creditcard, :class => TestCard) do |f|
   f.year 2013
   f.number "4111111111111111"
 end
-
-Factory.define :authorized_creditcard, :parent => :creditcard do |f|
-  f.creditcard_payments { [Factory(:creditcard_payment)] }
-end

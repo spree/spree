@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class CreditcardPaymentTest < ActiveSupport::TestCase
-  fixtures :gateways
+  fixtures :payment_methods
 
   context "validation" do
     setup do           
@@ -10,7 +10,7 @@ class CreditcardPaymentTest < ActiveSupport::TestCase
 
     context "when amount is positive but exceeds outstanding balance" do
       setup do
-        @payment = @order.payments.new(:amount => 3.00)
+        @payment = @order.payments.new(:amount => 3.00, :payment_method => Gateway.current)
         @payment.order.stub!(:outstanding_balance, :return => 2.00)
       end
       should "be invalid with error on amount" do
@@ -21,7 +21,7 @@ class CreditcardPaymentTest < ActiveSupport::TestCase
 
     context "when amount is negative payment but exceeds credit owed" do
       setup do
-        @payment = @order.payments.new(:amount => -5.00)
+        @payment = @order.payments.new(:amount => -5.00, :payment_method => Gateway.current)
         @payment.order.stub!(:outstanding_credit, :return => 2.50)
       end
       should "be invalid with error on amount" do
@@ -32,7 +32,7 @@ class CreditcardPaymentTest < ActiveSupport::TestCase
 
     context "when amount is positive and equal to outstanding balance" do
       setup do
-        @payment = @order.payments.new(:amount => 5.00)
+        @payment = @order.payments.new(:amount => 5.00, :payment_method => Gateway.current)
         @payment.order.stub!(:outstanding_balance, :return => 5.00)
       end
       should "be valid" do
@@ -42,7 +42,7 @@ class CreditcardPaymentTest < ActiveSupport::TestCase
 
     context "when amount is negative and equal to credit owed" do
       setup do
-        @payment = @order.payments.new(:amount => -5.00)
+        @payment = @order.payments.new(:amount => -5.00, :payment_method => Gateway.current)
         @payment.order.stub!(:outstanding_credit, :return => 5.00)
       end
       should "be valid" do
