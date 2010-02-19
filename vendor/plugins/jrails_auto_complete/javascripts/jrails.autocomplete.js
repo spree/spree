@@ -106,7 +106,7 @@
 
             this.changed = this.hasFocus = true;
             if (this.observer) clearTimeout(this.observer);
-            this.observer = setTimeout(function() { autocomplete.onObserverEvent(); }, this.frequency * 1000);
+            this.observer = setTimeout(function() { autocomplete.onObserverEvent(); }, this.options.frequency * 1000);
         },
         activate: function() {
             this.changed = false;
