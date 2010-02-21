@@ -1,14 +1,19 @@
-require 'test_helper'
+require 'test_helper.rb'
 
 class ReturnAuthorizationTest < ActiveSupport::TestCase
+  fixtures :payment_methods
+  
   context "ReturnAuthorization" do
     setup do
       create_complete_order
 
       #complete order / checkout
       @order.complete!
-      @order.payments.create(:amount => @order.total)
+      @order.payments.create!(:amount => @order.total, :payment_method => Gateway.current)
 
+      #@order.pay!
+      @order.update_attribute(:state, 'paid')
+      
       #force shipment to ready_to_ship
       shipment = @order.shipment
       shipment.ready!
@@ -29,17 +34,16 @@ class ReturnAuthorizationTest < ActiveSupport::TestCase
         assert_not_nil @return_authorization.errors.on(:order)
       end
     end
-
+    
     context "with an order that has shipped units" do
       setup do
-        @return_authorization.order.shipment.order.reload
-
+        @return_authorization.order.shipment.order.reload    
         @shipment = @return_authorization.order.shipment
-
+    
         @return_authorization.order.shipment.ship!
         @return_authorization.order.reload
       end
-
+    
       should "be valid" do
         assert @return_authorization.valid?
         assert_nil @return_authorization.errors.on(:order)
@@ -50,7 +54,7 @@ class ReturnAuthorizationTest < ActiveSupport::TestCase
           assert !@return_authorization.can_receive?
         end
       end
-    
+      
       context "with inventory_units" do
         setup do
           @return_authorization.add_variant(@line_item.variant_id, @line_item.quantity)
@@ -64,29 +68,29 @@ class ReturnAuthorizationTest < ActiveSupport::TestCase
         should "increase inventory_units.size" do
           assert_equal @line_item.quantity, @return_authorization.inventory_units.size
         end
-      
+        
         should "decrease order.returnable_units count for returned variant" do
           assert_equal nil, @return_authorization.order.returnable_units[@line_item.variant]
         end
-      
+        
         should "change order state to awaiting_return" do
           assert_equal "awaiting_return", @return_authorization.order.state
         end
-      
+        
         context "that have been recieved" do
           setup do
             ::ReturnAuthorizationCredit
             @return_authorization.receive!
             @return_authorization.order.reload
           end
-      
+        
           should_change("@return_authorization.order.adjustments.size", :by => 1) { @return_authorization.order.adjustments.size }
           should_change("@return_authorization.order.credits.size", :by => 1) { @return_authorization.order.credits.size }
-      
+        
           should "change state to received" do
             assert @return_authorization.received?
           end
-      
+        
           should "change order state to credit_owed" do
             assert @return_authorization.order.credit_owed?
           end
