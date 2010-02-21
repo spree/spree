@@ -79,16 +79,6 @@ def create_complete_order
   @order
 end
 
-def add_capturable_card(order)
-  @creditcard = Factory(:creditcard)
-  @creditcard.update_attribute(:checkout, order.checkout)
-
-  Gateway::Bogus.create(:name => "Test Gateway", :active => true, :environment => "test")
-  @creditcard.txns.create(:amount => order.total, :txn_type => CreditcardTxn::TxnType::AUTHORIZE, :response_code => 12345)
-
-  order.reload
-end
-
 # Sets up an order with state 'new' with completed checkout and authorized payment
 def create_new_order
   create_complete_order
