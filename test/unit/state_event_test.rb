@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class StateEventTest < ActiveSupport::TestCase
+  fixtures :payment_methods
+  
   context "Order" do
     setup do
       @order = Factory(:order_with_totals)
@@ -26,16 +28,6 @@ class StateEventTest < ActiveSupport::TestCase
           should_change("StateEvent.count", :by => 1) { StateEvent.count }
           should_change("@order.state", :from => "canceled", :to => "new") { @order.state }
         end
-      end
-
-      context "then paid" do
-        setup do
-          add_capturable_card(@order)
-          @creditcard.capture(@creditcard.authorization)
-          @order.reload
-        end
-
-        should_change("@order.state", :from => "new", :to => "paid") { @order.state }
       end
     end
   end
