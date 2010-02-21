@@ -1,5 +1,11 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
 
+<div class='toolbar'>
+  <% if @payment.can_finalize? %>
+    <%= button_link_to t("finalize.#{@payment.payment_method.method_type}"), finalize_admin_order_payment_path(@order, @payment), :method => :put %>
+  <% end %>
+</div>
+
 <h2><%= t("activerecord.models.#{@object.class.to_s.underscore}.one") %></h2>
 
 <%=error_messages_for :creditcard_payment %>
@@ -11,7 +17,7 @@
     <%= object.amount %>
   </p>
 
-  <% if object.class == CreditcardPayment %>
+  <% if object.source.is_a? Creditcard %>
   <fieldset>
     <legend><%= t('creditcard') %></legend>
 
@@ -22,36 +28,35 @@
       <tr>
         <td><label><%= t("card_number") %>:</label></td>
         <td>
-          XXXX-XXXX-XXXX-<%= object.creditcard.last_digits %>
+          XXXX-XXXX-XXXX-<%= object.source.display_number %>
         </td>
         <td><label><%= t("expiration") %>:</label></td>
         <td>
-          <%= object.creditcard.month %>/<%= object.creditcard.year %>
+          <%= object.source.month %>/<%= object.source.year %>
         </td>
         <td><label><%= t("card_code") %>:</label></td>
         <td>
-          <%= object.creditcard.verification_value %>
+          <%= object.source.verification_value %>
         </td>
       </tr>
       <tr>
         <td><label><%= t("maestro_or_solo_cards") %>:</label></td>
         <td>
-          <%= object.creditcard.issue_number %>
+          <%= object.source.issue_number %>
         </td>
         <td><label><%= t('start_date') %>:</label></td>
         <td colspan="3">
-          <%= object.creditcard.start_month %>/<%= object.creditcard.start_year %>
+          <%= object.source.start_month %>/<%= object.source.start_year %>
         </td>
       </tr>
     </table>
 
     <% payment_form.fields_for :order do |order_form|  %>
       <% order_form.fields_for :checkout do |checkout_form|  %>
-
         <% checkout_form.fields_for :bill_address do |ba_form|  %>
+          address form builder object: <%= ba_form.object.class  %>
           <%= render :partial => "admin/shared/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
         <% end %>
-
       <% end %>
     <% end %>
 

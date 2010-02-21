@@ -90,7 +90,7 @@ ActionController::Routing::Routes.draw do |map|
       order.resources :return_authorizations, :member => {:fire => :put}
     end
     admin.resources :orders do |order|
-      order.resources :payments
+      order.resources :payments, :member => {:finalize => :put}
       order.resources :creditcards do |creditcards|
         creditcards.resources :creditcard_txns, :member => {:capture => :post, :void => :post, :refund => [:get,:post]}
       end

@@ -27,12 +27,15 @@ class Payment < ActiveRecord::Base
   end
   
   def finalize!
+    return unless can_finalize?
     source.finalize! if source and source.respond_to?(:finalize!)
-    if payable.is_a?(Checkout)
-      self.payable = payable.order
-      save!
-      payable.save!
-    end
+    self.payable = payable.order
+    save!
+    payable.save!
+  end
+  
+  def can_finalize?
+    payable.is_a?(Checkout)
   end
 
 

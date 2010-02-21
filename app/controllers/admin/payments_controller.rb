@@ -59,7 +59,11 @@ class Admin::PaymentsController < Admin::BaseController
     end
   end
 
-
+  def finalize
+    object.finalize!
+    redirect_to edit_object_path
+  end
+  
 
   private
   def load_data
@@ -84,13 +88,14 @@ class Admin::PaymentsController < Admin::BaseController
     @object.order = parent_object
     @payment = @object
 
-    if @object.class == CreditcardPayment
-      if current_gateway.payment_profiles_supported? and !params[:card].blank? and params[:card] != 'new'
-        @object.creditcard = Creditcard.find_by_id(params[:card])
-      else
-        @object.creditcard ||= Creditcard.new(:checkout => @object.order.checkout)
-      end
-    end
+    #if @object.class == CreditcardPayment
+    #  if current_gateway.payment_profiles_supported? and !params[:card].blank? and params[:card] != 'new'
+    #    @object.creditcard = Creditcard.find_by_id(params[:card])
+    #  else
+    #    @object.creditcard ||= Creditcard.new(:checkout => @object.order.checkout)
+    #  end
+    #end
+
     @object
   end
 

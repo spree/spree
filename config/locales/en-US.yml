@@ -360,6 +360,9 @@ en-US:
   extensions: Extensions
   filename: Filename
   final_confirmation: "Final Confirmation"
+  finalize:
+    gateway: Capture payment
+    check: Recieve check
   first_item: First Item Cost
   first_name: "First Name"
   flat_percent: "Flat Percent"
