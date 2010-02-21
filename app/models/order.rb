@@ -16,7 +16,6 @@ class Order < ActiveRecord::Base
   has_many :inventory_units
 
   has_many :payments, :as => :payable, :extend => Totaling
-  #has_many :creditcards, :through => :creditcard_payments, :uniq => true
 
   has_one :checkout
   has_one :bill_address, :through => :checkout
@@ -335,6 +334,12 @@ class Order < ActiveRecord::Base
 
   def has_credit_outstanding?
     outstanding_credit > 0
+  end
+
+
+  def creditcards
+    creditcard_ids = (payments.from_creditcard + checkout.payments.from_creditcard).map(&:source_id).uniq
+    Creditcard.scoped(:conditions => {:id => creditcard_ids})
   end
 
   private

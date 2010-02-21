@@ -13,6 +13,8 @@ class Payment < ActiveRecord::Base
   validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment? 
   validates_presence_of :payment_method
 
+  named_scope :from_creditcard, :conditions => {:source_type => 'Creditcard'}
+
   # With nested attributes, Rails calls build_[association_name] for the nested model which won't work for a polymorphic association
   def build_source(params)
     if payment_method and payment_method.payment_source_class

@@ -33,9 +33,6 @@
         <li <%= ' class="active"' if current == "Payments" %>>
            <%= link_to t("payments"), admin_order_payments_url(@order) %>
         </li>
-        <li <%= ' class="active"' if current == "Creditcards" %>>
-           <%= link_to t("creditcards"), admin_order_creditcards_url(@order) %>
-        </li>
         <li <%= ' class="active"' if current == "Shipments" %>>
            <%= link_to t("shipments"), admin_order_shipments_url(@order) %>
         </li>
