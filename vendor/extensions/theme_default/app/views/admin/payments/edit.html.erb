@@ -54,7 +54,6 @@
     <% payment_form.fields_for :order do |order_form|  %>
       <% order_form.fields_for :checkout do |checkout_form|  %>
         <% checkout_form.fields_for :bill_address do |ba_form|  %>
-          address form builder object: <%= ba_form.object.class  %>
           <%#= render :partial => "admin/shared/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
         <% end %>
       <% end %>
@@ -63,11 +62,13 @@
   </fieldset>
   <% end %>
 
+  <% if @payment.source.is_a?(Creditcard) and @payment.source.txns.any? %>
+    <%= render 'transaction_list', :txns => @payment.source.txns %>
+  <% end %>
+
   <p class="form-buttons">
     <%= button t('continue') %>
   </p>
 
 <% end %>
-
-<%#= link_to t("capture").titleize, capture_admin_order_payment_url(@order, @creditcard_payment), :confirm => t('are_you_sure_you_want_to_capture') if object.can_capture?  %> &nbsp;
 

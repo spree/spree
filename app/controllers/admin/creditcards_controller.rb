@@ -4,7 +4,7 @@ class Admin::CreditcardsController < Admin::BaseController
   
   # temporary, creditcards should be assigned to order
   def collection
-    [@order.checkout.creditcard]
+    @order.creditcards
   end
   
 end

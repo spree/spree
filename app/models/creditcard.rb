@@ -71,11 +71,35 @@ class Creditcard < ActiveRecord::Base
               :order => 'created_at DESC')
   end
 
+  
   def can_capture?
-    authorization.present? && txns.count(:conditions => {:txn_type => [CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::PURCHASE]}) == 0
+    has_transaction_of_types?(CreditcardTxn::TxnType::AUTHORIZE) &&
+    has_no_transaction_of_types?(CreditcardTxn::TxnType::CAPTURE)
+  end
+
+  def can_void?
+    has_transaction_of_types?(CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
+    has_no_transaction_of_types?(CreditcardTxn::TxnType::VOID)
+  end
+
+  # Can only refund a captured transaction but if transaction hasn't been cleared by merchant, refund may still fail
+  def can_refund?
+    has_transaction_of_types?(CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) && 
+    has_no_transaction_of_types?(CreditcardTxn::TxnType::VOID)
   end
   
+  
   private
+  
+  def has_transaction_of_types?(*types)
+    (txns.map(&:txn_type) & types).any?
+  end
+
+  def has_no_transaction_of_types?(*types)
+    (txns.map(&:txn_type) & types).none?
+  end
+  
+  
   # Override default behavior of Rails attr_readonly so that its never written to the database (not even on create)
   def attributes_with_quotes(include_primary_key = true, include_readonly_attributes = true, attribute_names = @attributes.keys)
     attributes_with_quotes_default(include_primary_key, false, attribute_names)

@@ -1,0 +1,25 @@
+<fieldset>
+  
+  <legend><%= t('transactions') %></legend>
+
+  <table class="index">
+    <tr>
+      <th><%= t('type') %></th>
+      <th><%= 'date' %></th>
+      <th><%= t('amount') %></th>
+      <th><%= t('response_code') %></th>
+    </tr>
+    <% for txn in txns %>
+    <tr>
+      <td>
+        <%= '&rarr;' if txn.original_txn %>
+        <%= txn.txn_type_name %>
+      </td>
+      <td><%= txn.created_at.to_date %></td>
+      <td><%= number_to_currency txn.amount %></td>
+      <td><%= txn.response_code %></td>
+    </tr>
+    <% end %>
+  </table>
+
+</fieldset>
