@@ -9,14 +9,6 @@ $j(function() {
   $j('#country_based').click(function() { show_country();} );
   $j('#state_based').click(function() { show_state();} );
   $j('#zone_based').click(function() { show_zone();} ); 
-  $j('#create-zone button,#update-zone button').click(function() {
-    $j('#ul-nested-country li input[name*=zoneable_type]').val('Country');
-    $j('#ul-nested-state li input[name*=zoneable_type]').val('State');
-    $j('#ul-nested-zone li input[name*=zoneable_type]').val('Zone');
-  //  $j('#ul-nested-country li input').val('Country');
-  //  $j('#ul-nested-state li input').val('State');
-  //  $j('#ul-nested-zone li input').val('Zone');
-  } );  
 })   
                                                         
 var show_country = function() {
