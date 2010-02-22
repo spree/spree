@@ -49,7 +49,7 @@ class CreditcardTest < ActiveSupport::TestCase
       @creditcard = @payment.source
       @order.checkout.payments << @payment
 
-      @creditcard.authorize(100)
+      @creditcard.authorize(100, @payment)
       @authorization = @creditcard.authorization
     end
     should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
@@ -59,24 +59,23 @@ class CreditcardTest < ActiveSupport::TestCase
     end
     context "followed by capture" do
       setup do
-        @creditcard.capture(@authorization)
+        @creditcard.capture(@authorization, @payment)
       end
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       should "have authorization transaction assigned as original_txn on the new transaction" do
-        assert_equal @authorization, @payment.creditcard_txns.first(:order => 'id DESC').original_txn
+        assert_equal @authorization, @creditcard.creditcard_txns.first(:order => 'id DESC').original_txn
       end
       context "followed by void" do
         setup do
-          @creditcard.void(@authorization)
+          @creditcard.void(@authorization, @payment)
         end
-        #should_change("CreditcardPayment.count", :by => -1) { CreditcardPayment.count }
         should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       end
     end
     context "followed by void" do
       setup do
-        @creditcard.void(@creditcard.authorization)
-        @void_txn = @payment.creditcard_txns.first(:order => 'id DESC')
+        @creditcard.void(@creditcard.authorization, @payment)
+        @void_txn = @creditcard.creditcard_txns.first(:order => 'id DESC')
       end
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       should "create new transaction with correct attributes" do
@@ -87,10 +86,10 @@ class CreditcardTest < ActiveSupport::TestCase
   
   context "authorization failure" do
     setup do
+      @payment = Factory(:payment)
       @creditcard = Factory.build(:creditcard, :number => "4111111111111999")
-      begin @creditcard.authorize(100) rescue Spree::GatewayError end
+      begin @creditcard.authorize(100, @payment) rescue Spree::GatewayError end
     end
-    should_not_change("CreditcardPayment.count") { CreditcardPayment.count }
     should_not_change("CreditcardTxn.count") { CreditcardTxn.count }
     should_not_change("Order.by_state('new').count") { Order.by_state('new').count }
   end
@@ -101,7 +100,7 @@ class CreditcardTest < ActiveSupport::TestCase
       @payment = Factory(:payment)
       @creditcard = @payment.source
       @order.checkout.payments << @payment
-      @creditcard.purchase(100)
+      @creditcard.purchase(100, @payment)
     end
     should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
     should_not_change("Order.by_state('paid').count") { Order.by_state('paid').count }
@@ -110,13 +109,13 @@ class CreditcardTest < ActiveSupport::TestCase
         @order.line_items.first.update_attribute(:price, 75)
         @order.reload
         @order.save
-        @txn = @payment.creditcard_txns.first(:order => 'id DESC')
-        @creditcard.credit(25, @txn)
+        @txn = @creditcard.creditcard_txns.first(:order => 'id DESC')
+        @creditcard.credit(25, @txn, @payment)
       end
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       
       should "create a new payment with negative amount" do
-        @new_transaction = @payment.creditcard_txns.first(:order => 'id DESC')
+        @new_transaction = @creditcard.creditcard_txns.first(:order => 'id DESC')
         assert_equal -25.00, @new_transaction.amount.to_f
         assert_equal CreditcardTxn::TxnType::CREDIT, @new_transaction.txn_type
       end
@@ -126,9 +125,9 @@ class CreditcardTest < ActiveSupport::TestCase
   context "purchase failure" do
     setup do
       @creditcard = Factory.build(:creditcard, :number => "4111111111111999")
-      begin @creditcard.purchase(100) rescue Spree::GatewayError end
+      @payment = Factory(:payment, :source => @creditcard)
+      begin @creditcard.purchase(100, @payment) rescue Spree::GatewayError end
     end
-    should_not_change("CreditcardPayment.count") { CreditcardPayment.count }
     should_not_change("CreditcardTxn.count") { CreditcardTxn.count }
     should_not_change("Order.by_state('paid').count") { Order.by_state('paid').count }
   end

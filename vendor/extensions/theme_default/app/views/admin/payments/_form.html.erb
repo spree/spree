@@ -3,21 +3,18 @@
   <%= f.text_field :amount, :size=> 8, :value => @order.outstanding_balance %>
 </p>  
 
-<% if @object.class == CreditcardPayment %>
-<fieldset>
-  <legend><%= t('creditcard') %></legend>
-  <% if current_gateway.payment_profiles_supported? and @previous_cards.any? %>
-  <p class="field">
-    <% for card in @previous_cards %>
-      <label><%= radio_button_tag :card, card.id, card == @previous_cards.first %> <%= card.display_number %><br /></label>
-    <% end %>
-    <label><%= radio_button_tag :card, 'new' %> Use a new card</label>
-  </p>
+<% @payment_methods.each do |method| %>
+
+  <% for card in @previous_cards %>
+    <label><%= radio_button_tag :card, card.id, card == @previous_cards.first %> <%= card.display_number %><br /></label>
   <% end %>
 
-  <div id="card_form"<%= ' style="display:none"' if current_gateway.payment_profiles_supported? and @previous_cards.any? %>>
-    <%= render 'card_form', :f => f %>
-    <%= render 'bill_address_form', :f => f %>
-  </div>
-</fieldset>
-<% end %>
+    <label>
+      <%= radio_button_tag "payment[payment_method_id]", method.id, method == @payment_method %> 
+      <%= method.name %>
+    </label>
+    <fieldset>
+      <%= render "admin/payments/source_forms/#{method.method_type}", :payment_method => method %>
+    </fieldset>
+
+<% end %>  

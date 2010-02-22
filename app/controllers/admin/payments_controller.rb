@@ -11,51 +11,29 @@ class Admin::PaymentsController < Admin::BaseController
     build_object
     load_object
 
-    if object.class == CreditcardPayment
+    unless object.valid?
+      response_for :create_fails
+      return
+    end
+    
+    begin 
 
-      unless object.valid?
-        response_for :create_fails
-        return
-      end
-      # object doesn't get saved here, that happens in @creditcard.authorize/capture
-      begin
-        if @order.checkout.state == "complete"
-          #This is a second or subsequent payment
-          @creditcard_payment.creditcard.checkout = @order.checkout
-          if Spree::Config[:auto_capture]
-            @creditcard_payment.creditcard.purchase(@creditcard_payment.amount)
-          else
-            @creditcard_payment.creditcard.authorize(@creditcard_payment.amount)
-          end
-
-          redirect_to collection_path
-        else
-          #This is the first payment (admin created order)
-          @order.checkout.creditcard = @creditcard_payment.creditcard
-          until @order.checkout.state == "complete"
-            @order.checkout.next!
-          end
-
-          flash = t('new_order_completed')
-          redirect_to admin_order_url(@order)
-        end
-
-
-      rescue Spree::GatewayError => e
-        flash.now[:error] = "#{e.message}"
-        response_for :create_fails
-      end
-
-    else
-
-      if object.save
+      if @order.checkout.state == "complete"
+        object.process!
         set_flash :create
         redirect_to collection_path
       else
-        set_flash :create_fails
-        response_for :create_fails
+        #This is the first payment (admin created order)
+        until @order.checkout.state == "complete"
+          @order.checkout.next!
+        end
+        flash = t('new_order_completed')
+        redirect_to admin_order_url(@order)
       end
 
+    rescue Spree::GatewayError => e
+      flash.now[:error] = "#{e.message}"
+      response_for :create_fails
     end
   end
 
@@ -66,8 +44,17 @@ class Admin::PaymentsController < Admin::BaseController
   
 
   private
+
+  def object_params
+    if source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
+      params[:payment][:source_attributes] = source_params
+    end
+    params[:payment]
+  end
+
   def load_data
     load_object
+    @payment_methods = PaymentMethod.available   
     @previous_cards = @order.creditcards.with_payment_profile
     @countries = Country.find(:all).sort
     @shipping_countries = Checkout.countries.sort
@@ -85,7 +72,7 @@ class Admin::PaymentsController < Admin::BaseController
 
   def build_object
     @object = model.new(object_params)
-    @object.order = parent_object
+    @object.payable = parent_object.checkout
     @payment = @object
 
     #if @object.class == CreditcardPayment
@@ -97,25 +84,6 @@ class Admin::PaymentsController < Admin::BaseController
     #end
 
     @object
-  end
-
-  def end_of_association_chain
-    parent_object.payments
-  end
-
-  # Set class for STI based on selected payment type
-  def model_name
-    return 'payment' if params[:action] == 'index'
-    if %w(cheque_payment creditcard_payment).include?(params[:payment_type])
-      params[:payment_type]
-    elsif params[:action] == 'new'
-      'creditcard_payment'
-    else
-      'payment'
-    end
-  end
-  def object_name
-    model_name
   end
 
 end

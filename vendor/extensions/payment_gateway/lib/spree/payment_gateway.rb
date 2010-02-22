@@ -6,15 +6,15 @@ module Spree
       base.after_save :create_payment_profile
     end
     
-    def authorize(amount)
+    def authorize(amount, payment)
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
-      response = payment_gateway.authorize((amount * 100).round, self, gateway_options)      
+      response = payment_gateway.authorize((amount * 100).round, self, gateway_options(payment))      
       gateway_error_from_response(response) unless response.success?
       
       # create a transaction to reflect the authorization
       save
       
-      payment.creditcard_txns.create(
+      creditcard_txns.create(
         :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::AUTHORIZE,
@@ -24,20 +24,20 @@ module Spree
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
     end
 
-    def capture(authorization)
+    def capture(authorization, payment)
       if payment_gateway.payment_profiles_supported?
         # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
         # so supply the authorization itself as well as the creditcard, rather than just the authorization code
-        response = payment_gateway.capture(authorization, self, minimal_gateway_options)
+        response = payment_gateway.capture(authorization, self, minimal_gateway_options(payment))
       else
         # Standard ActiveMerchant capture usage
-        response = payment_gateway.capture((authorization.amount * 100).round, authorization.response_code, minimal_gateway_options)
+        response = payment_gateway.capture((authorization.amount * 100).round, authorization.response_code, minimal_gateway_options(payment))
       end
       gateway_error_from_response(response) unless response.success?          
 
       # create a transaction to reflect the capture
       save
-      payment.creditcard_txns.create(
+      creditcard_txns.create(
         :amount => authorization.amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::CAPTURE,
@@ -47,17 +47,17 @@ module Spree
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
     end
 
-    def void(authorization)
+    def void(authorization, payment)
       if payment_gateway.payment_profiles_supported?
-        response = payment_gateway.credit((authorization.amount * 100).round, self, authorization.response_code, minimal_gateway_options)
+        response = payment_gateway.credit((authorization.amount * 100).round, self, authorization.response_code, minimal_gateway_options(payment))
       else
-        response = payment_gateway.void(authorization.response_code, minimal_gateway_options)
+        response = payment_gateway.void(authorization.response_code, minimal_gateway_options(payment))
       end      
       gateway_error_from_response(response) unless response.success?
 
       # create a transaction to reflect the void
       save
-      payment.creditcard_txns.create(
+      creditcard_txns.create(
         :amount => authorization.amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::VOID,
@@ -65,15 +65,15 @@ module Spree
       )
     end
 
-    def purchase(amount)
+    def purchase(amount, payment)
       #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
-      response = payment_gateway.purchase((amount * 100).round, self, gateway_options) 
+      response = payment_gateway.purchase((amount * 100).round, self, gateway_options(payment)) 
       
       gateway_error_from_response(response) unless response.success?
 
       # create a transaction to reflect the purchase
       save
-      payment.creditcard_txns.create(
+      creditcard_txns.create(
         :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::PURCHASE,
@@ -83,17 +83,17 @@ module Spree
       gateway_error t(:unable_to_connect_to_gateway)
     end
     
-    def credit(amount, transaction)
+    def credit(amount, transaction, payment)
       if payment_gateway.payment_profiles_supported?
-        response = payment_gateway.credit((amount * 100).round, self, transaction.response_code, minimal_gateway_options)
+        response = payment_gateway.credit((amount * 100).round, self, transaction.response_code, minimal_gateway_options(payment))
       else
-        response = payment_gateway.credit((amount * 100).round, transaction.response_code, minimal_gateway_options)
+        response = payment_gateway.credit((amount * 100).round, transaction.response_code, minimal_gateway_options(payment))
       end
       gateway_error_from_response(response) unless response.success?
 
       # create a transaction to reflect the purchase
       save
-      payment.creditcard_txns.create(
+      creditcard_txns.create(
         :amount => -amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::CREDIT,
@@ -116,10 +116,10 @@ module Spree
       raise Spree::GatewayError.new(msg)
     end
         
-    def gateway_options
+    def gateway_options(payment)
       options = {:billing_address  => generate_address_hash(payment.order.bill_address), 
                  :shipping_address => generate_address_hash(payment.order.shipment.address)}
-      options.merge minimal_gateway_options
+      options.merge minimal_gateway_options(payment)
     end    
     
     # Generates an ActiveMerchant compatible address hash from one of Spree's address objects
@@ -132,7 +132,7 @@ module Spree
     # Generates a minimal set of gateway options.  There appears to be some issues with passing in 
     # a billing address when authorizing/voiding a previously captured transaction.  So omits these 
     # options in this case since they aren't necessary.  
-    def minimal_gateway_options
+    def minimal_gateway_options(payment)
       {:email    => payment.order.email, 
        :customer => payment.order.email, 
        :ip       => payment.order.ip_address, 

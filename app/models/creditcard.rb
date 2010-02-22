@@ -1,5 +1,5 @@
 class Creditcard < ActiveRecord::Base         
-  has_one :payment, :as => :source
+  has_many :payments, :as => :source
   has_many :creditcard_txns
   alias :txns :creditcard_txns
   
@@ -11,20 +11,20 @@ class Creditcard < ActiveRecord::Base
   validates_presence_of :verification_value, :unless => :has_payment_profile?, :on => :create
   
   
-  def process!
+  def process!(payment)
     begin
       if Spree::Config[:auto_capture]
-        purchase(payment.amount.to_f)
+        purchase(payment.amount.to_f, payment)
         payment.finalize!
       else
-        authorize(payment.amount.to_f)
+        authorize(payment.amount.to_f, payment)
       end
     end
   end
   
-  def finalize!
+  def finalize!(payment)
     if can_capture?
-      capture(authorization)
+      capture(authorization, payment)
     end
   end
       
@@ -66,7 +66,7 @@ class Creditcard < ActiveRecord::Base
   
   def authorization
     #find the transaction associated with the original authorization/capture
-    payment.creditcard_txns.find(:first,
+    creditcard_txns.find(:first,
               :conditions => ["txn_type = ? AND response_code IS NOT NULL", CreditcardTxn::TxnType::AUTHORIZE.to_s],
               :order => 'created_at DESC')
   end

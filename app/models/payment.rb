@@ -3,8 +3,6 @@ class Payment < ActiveRecord::Base
   belongs_to :source, :polymorphic => true
   belongs_to :payment_method
 
-  has_many :creditcard_txns
-  
   after_save :check_payments, :if => :order_payment?
   after_destroy :check_payments, :if => :order_payment?
 
@@ -23,12 +21,12 @@ class Payment < ActiveRecord::Base
   end
   
   def process!
-    source.process! if source and source.respond_to?(:process!)
+    source.process!(self) if source and source.respond_to?(:process!)
   end
   
   def finalize!
     return unless can_finalize?
-    source.finalize! if source and source.respond_to?(:finalize!)
+    source.finalize!(self) if source and source.respond_to?(:finalize!)
     self.payable = payable.order
     save!
     payable.save!

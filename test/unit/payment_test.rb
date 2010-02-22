@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CreditcardPaymentTest < ActiveSupport::TestCase
+class PaymentTest < ActiveSupport::TestCase
   fixtures :payment_methods
 
   context "validation" do
