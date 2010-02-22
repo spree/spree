@@ -1,2 +1,0 @@
-class ChequePayment < Payment
-end
