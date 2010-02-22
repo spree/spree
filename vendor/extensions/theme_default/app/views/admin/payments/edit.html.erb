@@ -55,7 +55,7 @@
       <% order_form.fields_for :checkout do |checkout_form|  %>
         <% checkout_form.fields_for :bill_address do |ba_form|  %>
           address form builder object: <%= ba_form.object.class  %>
-          <%= render :partial => "admin/shared/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
+          <%#= render :partial => "admin/shared/address_form", :locals => {:f => ba_form, :name => t('billing_address')} %>
         <% end %>
       <% end %>
     <% end %>

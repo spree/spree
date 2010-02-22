@@ -45,8 +45,13 @@ class Admin::PaymentsController < Admin::BaseController
 
   private
 
+  def object    
+    @object ||= Payment.find(param) unless param.nil?
+    @object
+  end
+
   def object_params
-    if params[:payment] and source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
+    if params[:payment] and params[:payment_source] and source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
       params[:payment][:source_attributes] = source_params
     end
     params[:payment]
@@ -79,6 +84,9 @@ class Admin::PaymentsController < Admin::BaseController
     @object = model.new(object_params)
     @object.payable = parent_object.checkout
     @payment = @object
+    if current_gateway.payment_profiles_supported? and params[:card].present? and params[:card] != 'new'
+      @object.source = Creditcard.find_by_id(params[:card])
+    end
     @object
   end
 

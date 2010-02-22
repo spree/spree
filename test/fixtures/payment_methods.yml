@@ -10,3 +10,9 @@ authorize_net_cim_test:
   environment: test
   active: false
   type: Gateway::AuthorizeNetCim
+check_payment_method:
+  name: Check Payment Type
+  description: Check Payment Type for test.
+  environment: test
+  active: false
+  type: PaymentMethod::Check

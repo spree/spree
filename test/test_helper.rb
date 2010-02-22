@@ -90,7 +90,7 @@ end
     
 def create_new_order_v2
   create_complete_order
-  @checkout.creditcard = Factory(:creditcard)
+  @checkout.payments = [Factory(:payment)]
   @checkout.state = "complete"
   @checkout.save
   @order.complete!
