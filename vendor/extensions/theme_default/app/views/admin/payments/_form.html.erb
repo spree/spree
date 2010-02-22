@@ -5,16 +5,11 @@
 
 <% @payment_methods.each do |method| %>
 
-  <% for card in @previous_cards %>
-    <label><%= radio_button_tag :card, card.id, card == @previous_cards.first %> <%= card.display_number %><br /></label>
-  <% end %>
+  <label>
+    <%= radio_button_tag "payment[payment_method_id]", method.id, method == @payment_method %> 
+    <%= method.name %>
+  </label>
 
-    <label>
-      <%= radio_button_tag "payment[payment_method_id]", method.id, method == @payment_method %> 
-      <%= method.name %>
-    </label>
-    <fieldset>
-      <%= render "admin/payments/source_forms/#{method.method_type}", :payment_method => method %>
-    </fieldset>
+  <%= render "admin/payments/source_forms/#{method.method_type}", :payment_method => method %>
 
 <% end %>  

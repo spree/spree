@@ -1,0 +1,18 @@
+<table class="index">
+  <tr>
+    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
+    <th><%= t("amount") %></th>
+    <th><%= t("payment_method") %></th>
+    <th></th>
+  </tr>
+  <% payments.each do |payment| %>
+    <tr>
+      <td><%= payment.created_at.to_s(:date_time24) %></td>
+      <td><%= number_to_currency(payment.amount) %></td>
+      <td><%= payment.payment_method.name %></td>
+      <td>
+        <%= link_to_with_icon 'edit', t('edit'), edit_admin_order_payment_url(@order, payment) %>
+      </td>
+    </tr>
+  <% end %>
+</table>

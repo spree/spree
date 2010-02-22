@@ -11,11 +11,11 @@ class Admin::PaymentsController < Admin::BaseController
     build_object
     load_object
 
-    unless object.valid?
+    unless object.save
       response_for :create_fails
       return
     end
-    
+
     begin 
 
       if @order.checkout.state == "complete"
@@ -46,7 +46,7 @@ class Admin::PaymentsController < Admin::BaseController
   private
 
   def object_params
-    if source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
+    if params[:payment] and source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
       params[:payment][:source_attributes] = source_params
     end
     params[:payment]
@@ -55,6 +55,11 @@ class Admin::PaymentsController < Admin::BaseController
   def load_data
     load_object
     @payment_methods = PaymentMethod.available   
+    if object and object.payment_method
+      @payment_method = object.payment_method
+    else
+      @payment_method = @payment_methods.first
+    end
     @previous_cards = @order.creditcards.with_payment_profile
     @countries = Country.find(:all).sort
     @shipping_countries = Checkout.countries.sort
@@ -74,15 +79,6 @@ class Admin::PaymentsController < Admin::BaseController
     @object = model.new(object_params)
     @object.payable = parent_object.checkout
     @payment = @object
-
-    #if @object.class == CreditcardPayment
-    #  if current_gateway.payment_profiles_supported? and !params[:card].blank? and params[:card] != 'new'
-    #    @object.creditcard = Creditcard.find_by_id(params[:card])
-    #  else
-    #    @object.creditcard ||= Creditcard.new(:checkout => @object.order.checkout)
-    #  end
-    #end
-
     @object
   end
 

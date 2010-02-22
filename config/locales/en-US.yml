@@ -363,6 +363,7 @@ en-US:
   finalize:
     gateway: Capture payment
     check: Recieve check
+  finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: "First Name"
   flat_percent: "Flat Percent"
@@ -539,7 +540,9 @@ en-US:
   payment: Payment
   payment_gateway: "Payment Gateway"
   payment_information: "Payment Information"
+  payment_method: Payment Method
   payments: Payments
+  pending_payments: Pending Payments
   permalink: Permalink
   phone: Phone
   place_order: Place Order

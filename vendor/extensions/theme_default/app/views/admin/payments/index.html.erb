@@ -9,25 +9,12 @@
   <br class='clear' />
 </div>
 
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
+<%= render 'admin/shared/order_tabs', :current => "Payments" %>
 
-<table class="index">
-  <tr>
-    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-    <th><%= t("amount") %></th>
-    <th><%= t("type") %></th>
-    <th></th>
-  </tr>
-  <% @payments.each do |payment| %>
-    <tr>
-      <td><%= payment.created_at.to_s(:date_time24) %></td>
-      <td><%= number_to_currency(payment.amount) %></td>
-      <td><%= payment.class.to_s.underscore.humanize %></td>
-      <td>
-        <%= link_to_with_icon 'edit', t('edit'), edit_admin_order_payment_url(@order, payment) %>
-      </td>
-    </tr>
-  <% end %>
-</table>
+<h2><%= t("finalized_payments") %></h2>
+<%= render 'list', :payments => @payments %>
+
+<h2><%= t("pending_payments") %></h2>
+<%= render 'list', :payments => @order.checkout.payments %>
 
 <%= button_link_to t('continue'), admin_orders_url %>
