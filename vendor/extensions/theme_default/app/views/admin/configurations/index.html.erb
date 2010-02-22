@@ -40,26 +40,38 @@
       <tr>
         <td><%= link_to t("taxonomies"), admin_taxonomies_path %></td>
         <td><%= t("taxonomies_setting_description") %></td>
-  		</tr> 
+      </tr> 
       <tr>
         <td><%= link_to t("shipping_methods"), admin_shipping_methods_path %></td>
         <td><%= t("shipping_methods_description") %></td>
-  		</tr>  		
-  		<tr>
+      </tr>
+      <tr>
+        <td><%= link_to t("shipping_categories"), admin_shipping_categories_path %></td>
+        <td><%= t("shipping_categories_description") %></td>
+      </tr>
+      <tr>
+        <td><%= link_to t("shipping_rates"), admin_shipping_rates_path %></td>
+        <td><%= t("shipping_rates_description") %></td>
+      </tr>
+      <tr>
         <td><%= link_to t("inventory_settings"), admin_inventory_settings_path %></td>
         <td><%= t("inventory_setting_description") %></td>
       </tr>
-  		<tr>
+      <tr>
         <td><%= link_to t("tax_rates"), admin_tax_rates_path %></td>
         <td><%= t("tax_rates_description") %></td>
       </tr>
-  		<tr>
+      <tr>
         <td><%= link_to t("tax_settings"), admin_tax_settings_path %></td>
         <td><%= t("tax_settings_description") %></td>
-      </tr> 
-  		<tr>
+      </tr>
+      <tr>
         <td><%= link_to t("coupons"), admin_coupons_path %></td>
         <td><%= t("coupons_description") %></td>
+      </tr>
+      <tr>
+        <td><%= link_to t("analytics_trackers"), admin_trackers_path %></td>
+        <td><%= t("google_analytics_setting_description") %></td>
       </tr>
     <% end %>
   </tbody>
