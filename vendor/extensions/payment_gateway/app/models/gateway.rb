@@ -46,7 +46,6 @@ class Gateway < ActiveRecord::Base
   end
   
   def method_missing(method, *args)
-    @provider ||= provider
      if @provider.nil?
       super
     else
