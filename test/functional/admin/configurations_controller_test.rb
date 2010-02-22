@@ -29,8 +29,8 @@ class Admin::ConfigurationsControllerTest < ActionController::TestCase
       assert_select 'a[href=?]', admin_country_states_path(214)
     end
 
-    should "display a Gateway link" do
-      assert_select 'a[href=?]', admin_gateways_path
+    should "display a Payment Methods link" do
+      assert_select 'a[href=?]', admin_payment_methods_path
     end
 
     should "display an Inventory Settings link" do
