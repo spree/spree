@@ -240,9 +240,6 @@ mx:
   bill_address: "Dirección de facturación"
   billing: Billing
   billing_address: "Dirección de facturación"
-  billing_integration: Billing Integration
-  billing_integrations: Billing Integrations
-  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   by_day: "by day"
   calculator: Calculator
   calculator_settings_warning: "Si quieres cambiar el tipo de calculadora, debes guardar primero antes de poder editar las propiedades de la calculadora"

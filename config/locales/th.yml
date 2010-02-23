@@ -240,9 +240,6 @@ th:
   bill_address: "ที่อยู่บนใบเสร็จรับเงิน"
   billing: Billing
   billing_address: ใบเสร็จรับเงิน
-  billing_integration: Billing Integration
-  billing_integrations: Billing Integrations
-  billing_integrations_description: "Configure your settings for third party billing integrations such as Paypal, Google Checkout, etc."
   by_day: "by day"
   calculator: Calculator
   calculator_settings_warning: "If you are changing the calculator type, you must save first before you can edit the calculator settings"

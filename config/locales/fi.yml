@@ -240,9 +240,6 @@ fi:
   bill_address: "Laskun osoite"
   billing: Laskutus
   billing_address: Laskutusosoite
-  billing_integration: Laskutusintegrointi
-  billing_integrations: Laskutusintegroinnit
-  billing_integrations_description: "Aseta kolmansien tahojen laskutusintegrointien (kuten Paypal, Google Checkout) asetukset."
   by_day: päivänä
   calculator: Laskin
   calculator_settings_warning: "Mikäli vaihdat laskimen tyyppiä, sinun täytyy ensin tallentaa ennen kuin voit muuttaa laskimen asetuksia"

@@ -11,7 +11,6 @@
     <li<%= ' class="active"' if controller.controller_name == 'zones' %>><%= link_to t("zones"), admin_zones_path %></li>
     <li<%= ' class="active"' if controller.controller_name == 'states' %>><%= link_to t("states"), admin_country_states_path(Spree::Config[:default_country_id]) %></li>
     <li<%= ' class="active"' if controller.controller_name == 'payment_methods' %>><%= link_to t("payment_methods"), admin_payment_methods_path %></li>
-    <li<%= ' class="active"' if controller.controller_name == 'billing_integrations' %>><%= link_to t("billing_integration"), admin_billing_integrations_path %></li>
     <li<%= ' class="active"' if ['taxonomies', 'taxons'].include? controller.controller_name %>><%= link_to t("taxonomies"), admin_taxonomies_path %></li>
     <li<%= ' class="active"' if controller.controller_name == 'shipping_methods' %>><%= link_to t("shipping_methods"), admin_shipping_methods_path %></li>
     <li<%= ' class="active"' if controller.controller_name == 'inventory_settings' %>><%= link_to t("inventory_settings"), admin_inventory_settings_path %></li>
