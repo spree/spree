@@ -62,8 +62,8 @@
   </fieldset>
   <% end %>
 
-  <% if @payment.source.is_a?(Creditcard) and @payment.source.txns.any? %>
-    <%= render 'transaction_list', :txns => @payment.source.txns %>
+  <% if @payment.source.is_a?(Creditcard) and @payment.txns.any? %>
+    <%= render 'transaction_list', :txns => @payment.txns %>
   <% end %>
 
   <p class="form-buttons">

@@ -15,6 +15,7 @@ module Spree
       save
       
       creditcard_txns.create(
+        :payment => payment,
         :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::AUTHORIZE,
@@ -38,6 +39,7 @@ module Spree
       # create a transaction to reflect the capture
       save
       creditcard_txns.create(
+        :payment => payment,
         :amount => authorization.amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::CAPTURE,
@@ -45,24 +47,6 @@ module Spree
       )
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
-    end
-
-    def void(authorization, payment)
-      if payment_gateway.payment_profiles_supported?
-        response = payment_gateway.credit((authorization.amount * 100).round, self, authorization.response_code, minimal_gateway_options(payment))
-      else
-        response = payment_gateway.void(authorization.response_code, minimal_gateway_options(payment))
-      end      
-      gateway_error_from_response(response) unless response.success?
-
-      # create a transaction to reflect the void
-      save
-      creditcard_txns.create(
-        :amount => authorization.amount,
-        :response_code => response.authorization,
-        :txn_type => CreditcardTxn::TxnType::VOID,
-        :original_txn => authorization
-      )
     end
 
     def purchase(amount, payment)
@@ -74,6 +58,7 @@ module Spree
       # create a transaction to reflect the purchase
       save
       creditcard_txns.create(
+        :payment => payment,
         :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::PURCHASE,
@@ -83,6 +68,25 @@ module Spree
       gateway_error t(:unable_to_connect_to_gateway)
     end
     
+    def void(authorization, payment)
+      if payment_gateway.payment_profiles_supported?
+        response = payment_gateway.credit((authorization.amount * 100).round, self, authorization.response_code, minimal_gateway_options(payment))
+      else
+        response = payment_gateway.void(authorization.response_code, minimal_gateway_options(payment))
+      end      
+      gateway_error_from_response(response) unless response.success?
+
+      # create a transaction to reflect the void
+      save
+      creditcard_txns.create(
+        :payment => payment,
+        :amount => authorization.amount,
+        :response_code => response.authorization,
+        :txn_type => CreditcardTxn::TxnType::VOID,
+        :original_txn => authorization
+      )
+    end
+
     def credit(amount, transaction, payment)
       if payment_gateway.payment_profiles_supported?
         response = payment_gateway.credit((amount * 100).round, self, transaction.response_code, minimal_gateway_options(payment))
@@ -94,6 +98,7 @@ module Spree
       # create a transaction to reflect the purchase
       save
       creditcard_txns.create(
+        :payment => payment,
         :amount => -amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::CREDIT,
@@ -102,6 +107,36 @@ module Spree
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
     end
+
+    def authorization
+      #find the transaction associated with the original authorization/capture
+      creditcard_txns.find(:first,
+                :conditions => ["txn_type = ? AND response_code IS NOT NULL", CreditcardTxn::TxnType::AUTHORIZE.to_s],
+                :order => 'created_at DESC')
+    end
+
+
+    def can_capture?(payment)
+      authorization.present? &&
+      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::CAPTURE)
+    end
+
+    def can_void?(payment)
+      has_transaction_of_types?(payment, CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
+      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID)
+    end
+
+    # Can only refund a captured transaction but if transaction hasn't been cleared by merchant, refund may still fail
+    def can_credit?(payment)
+      has_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) && 
+      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID)
+    end
+
+    def has_payment_profile?
+      gateway_customer_profile_id.present?
+    end
+
+
     
     def gateway_error_from_response(response)
       text = response.params['message'] || 
@@ -151,16 +186,27 @@ module Spree
       @payment_gateway ||= Gateway.current
     end  
     
+
+
     private
-    # TODO: Want to do this after_save but there is a possible danger of infinite loop which number_changed? check is intended to prevent. 
-    def create_payment_profile      
-      return unless payment_gateway.payment_profiles_supported? and number and number_changed?
-      if number_changed?
-        payment_gateway.create_profile(self, {})
+
+      def has_transaction_of_types?(payment, *types)
+        (payment.txns.map(&:txn_type) & types).any?
       end
-    rescue ActiveMerchant::ConnectionError => e
-      gateway_error I18n.t(:unable_to_connect_to_gateway)
-    end
+
+      def has_no_transaction_of_types?(payment, *types)
+        (payment.txns.map(&:txn_type) & types).none?
+      end
+
+      # TODO: Want to do this after_save but there is a possible danger of infinite loop which number_changed? check is intended to prevent. 
+      def create_payment_profile      
+        return unless payment_gateway.payment_profiles_supported? and number and number_changed?
+        if number_changed?
+          payment_gateway.create_profile(self, {})
+        end
+      rescue ActiveMerchant::ConnectionError => e
+        gateway_error I18n.t(:unable_to_connect_to_gateway)
+      end
 
   end
 end
