@@ -1,0 +1,14 @@
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Creditcards"} %>
+
+<% form_tag do %>
+  <h3><%= t('refund') %></h3>
+  <fieldset>
+    <p>
+      <label for="amount"><%= t("amount") %></label>
+      <%= text_field_tag :amount, @payment.amount %>
+    </p>
+    <p class="form-buttons">
+      <%= button t("make_refund") %>
+    </p>    
+  </fieldset>
+<% end %>

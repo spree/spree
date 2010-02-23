@@ -4,7 +4,7 @@
     <% for card in @previous_cards %>
       <label><%= radio_button_tag :card, card.id, card == @previous_cards.first %> <%= card.display_number %><br /></label>
     <% end %>
-    <label><%= radio_button_tag :card, 'new' %> Use a new card</label>
+    <label><%= radio_button_tag :card, 'new', @previous_cards.none? %> Use a new card</label>
   </p>
   
   <div id="card_form">

@@ -67,14 +67,14 @@ class CreditcardTest < ActiveSupport::TestCase
       end
       context "followed by void" do
         setup do
-          @creditcard.void(@authorization, @payment)
+          @creditcard.void(@payment)
         end
         should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       end
     end
     context "followed by void" do
       setup do
-        @creditcard.void(@creditcard.authorization, @payment)
+        @creditcard.void(@payment)
         @void_txn = @creditcard.creditcard_txns.first(:order => 'id DESC')
       end
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
@@ -110,7 +110,7 @@ class CreditcardTest < ActiveSupport::TestCase
         @order.reload
         @order.save
         @txn = @creditcard.creditcard_txns.first(:order => 'id DESC')
-        @creditcard.credit(25, @txn, @payment)
+        @creditcard.credit(25, @payment)
       end
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       

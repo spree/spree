@@ -68,11 +68,13 @@ module Spree
       gateway_error t(:unable_to_connect_to_gateway)
     end
     
-    def void(authorization, payment)
+    def void(payment)
+      return unless transaction = purchase_or_authorize_transaction_for_payment(payment)
+
       if payment_gateway.payment_profiles_supported?
-        response = payment_gateway.credit((authorization.amount * 100).round, self, authorization.response_code, minimal_gateway_options(payment))
+        response = payment_gateway.credit((transaction.amount * 100).round, self, transaction.response_code, minimal_gateway_options(payment))
       else
-        response = payment_gateway.void(authorization.response_code, minimal_gateway_options(payment))
+        response = payment_gateway.void(transaction.response_code, minimal_gateway_options(payment))
       end      
       gateway_error_from_response(response) unless response.success?
 
@@ -80,14 +82,16 @@ module Spree
       save
       creditcard_txns.create(
         :payment => payment,
-        :amount => authorization.amount,
+        :amount => transaction.amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::VOID,
-        :original_txn => authorization
+        :original_txn => transaction
       )
     end
 
-    def credit(amount, transaction, payment)
+    def credit(amount, payment)
+      return unless transaction = purchase_or_authorize_transaction_for_payment(payment)
+
       if payment_gateway.payment_profiles_supported?
         response = payment_gateway.credit((amount * 100).round, self, transaction.response_code, minimal_gateway_options(payment))
       else
@@ -108,13 +112,17 @@ module Spree
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
     end
 
+    # find the transaction associated with the original authorization/capture
     def authorization
-      #find the transaction associated with the original authorization/capture
       creditcard_txns.find(:first,
                 :conditions => ["txn_type = ? AND response_code IS NOT NULL", CreditcardTxn::TxnType::AUTHORIZE.to_s],
                 :order => 'created_at DESC')
     end
 
+    # find a transaction that can be used to void or credit
+    def purchase_or_authorize_transaction_for_payment(payment)
+      payment.txns.detect {|txn| [CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE].include?(txn.txn_type) and txn.response_code.present?}
+    end
 
     def can_capture?(payment)
       authorization.present? &&

@@ -42,7 +42,28 @@ class Admin::PaymentsController < Admin::BaseController
     redirect_to edit_object_path
   end
   
-
+  def credit
+    load_object
+    if request.post?
+      begin
+        @payment.credit(params[:amount].to_f)
+      rescue Spree::GatewayError
+        flash[:error] = t('gateway_error')
+      end
+      redirect_to collection_path
+    end
+  end
+  
+  def void
+    load_object
+    begin
+      @payment.void
+    rescue Spree::GatewayError
+      flash[:error] = t('gateway_error')
+    end
+    redirect_to collection_path
+  end
+  
   private
 
   def object    
