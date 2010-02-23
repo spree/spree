@@ -33,7 +33,9 @@ module Spree
         base_target_dir = File.dirname base_target_dir unless File.directory? base_target_dir
         FileUtils.mkdir_p(base_target_dir)
       end
-    
+      
+      base_target_dir ||= File.join(destination)
+      
       source_dirs.each do |dir|
         # strip down these paths so we have simple, relative paths we can
         # add to the destination
