@@ -12,7 +12,6 @@
     <% for txn in txns %>
     <tr>
       <td>
-        <%= '&rarr;' if txn.original_txn %>
         <%= txn.txn_type_name %>
       </td>
       <td><%= txn.created_at.to_date %></td>

@@ -1,8 +1,6 @@
 class Creditcard < ActiveRecord::Base         
   has_many :payments, :as => :source
-  has_many :creditcard_txns
-  alias :txns :creditcard_txns
-  
+
   before_save :set_last_digits
   
   validates_numericality_of :month, :integer => true
@@ -24,7 +22,7 @@ class Creditcard < ActiveRecord::Base
   
   def finalize!(payment)
     if can_capture?(payment)
-      capture(authorization, payment)
+      capture(payment)
     end
   end
   

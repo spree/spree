@@ -3,8 +3,8 @@ class Payment < ActiveRecord::Base
   belongs_to :source, :polymorphic => true
   belongs_to :payment_method
 
-  has_many :creditcard_txns
-  alias :txns :creditcard_txns
+  has_many :transactions
+  alias :txns :transactions
   
   after_save :check_payments, :if => :order_payment?
   after_destroy :check_payments, :if => :order_payment?

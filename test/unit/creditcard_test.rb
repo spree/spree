@@ -50,7 +50,7 @@ class CreditcardTest < ActiveSupport::TestCase
       @order.checkout.payments << @payment
 
       @creditcard.authorize(100, @payment)
-      @authorization = @creditcard.authorization
+      @authorization = @creditcard.authorization(@payment)
     end
     should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
     should_not_change("Order.by_state('new').count") { Order.by_state('new').count }
@@ -59,12 +59,9 @@ class CreditcardTest < ActiveSupport::TestCase
     end
     context "followed by capture" do
       setup do
-        @creditcard.capture(@authorization, @payment)
+        @creditcard.capture(@payment)
       end
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
-      should "have authorization transaction assigned as original_txn on the new transaction" do
-        assert_equal @authorization, @creditcard.creditcard_txns.first(:order => 'id DESC').original_txn
-      end
       context "followed by void" do
         setup do
           @creditcard.void(@payment)
@@ -75,7 +72,7 @@ class CreditcardTest < ActiveSupport::TestCase
     context "followed by void" do
       setup do
         @creditcard.void(@payment)
-        @void_txn = @creditcard.creditcard_txns.first(:order => 'id DESC')
+        @void_txn = @payment.transactions.first(:order => 'id DESC')
       end
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       should "create new transaction with correct attributes" do
@@ -109,13 +106,13 @@ class CreditcardTest < ActiveSupport::TestCase
         @order.line_items.first.update_attribute(:price, 75)
         @order.reload
         @order.save
-        @txn = @creditcard.creditcard_txns.first(:order => 'id DESC')
+        @txn = @payment.transactions.first(:order => 'id DESC')
         @creditcard.credit(25, @payment)
       end
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       
       should "create a new payment with negative amount" do
-        @new_transaction = @creditcard.creditcard_txns.first(:order => 'id DESC')
+        @new_transaction = @payment.transactions.first(:order => 'id DESC')
         assert_equal -25.00, @new_transaction.amount.to_f
         assert_equal CreditcardTxn::TxnType::CREDIT, @new_transaction.txn_type
       end

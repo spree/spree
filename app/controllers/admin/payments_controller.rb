@@ -5,8 +5,6 @@ class Admin::PaymentsController < Admin::BaseController
   belongs_to :order
   ssl_required
 
-  update.wants.html { redirect_to edit_object_url }
-
   def create
     build_object
     load_object

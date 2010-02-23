@@ -13,9 +13,7 @@ module Spree
       
       # create a transaction to reflect the authorization
       save
-      
-      creditcard_txns.create(
-        :payment => payment,
+      payment.txns << CreditcardTxn.create(
         :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::AUTHORIZE,
@@ -25,25 +23,24 @@ module Spree
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
     end
 
-    def capture(authorization, payment)
+    def capture(payment)
+      return unless transaction = authorization(payment)
       if payment_gateway.payment_profiles_supported?
         # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
         # so supply the authorization itself as well as the creditcard, rather than just the authorization code
-        response = payment_gateway.capture(authorization, self, minimal_gateway_options(payment))
+        response = payment_gateway.capture(transaction, self, minimal_gateway_options(payment))
       else
         # Standard ActiveMerchant capture usage
-        response = payment_gateway.capture((authorization.amount * 100).round, authorization.response_code, minimal_gateway_options(payment))
+        response = payment_gateway.capture((transaction.amount * 100).round, transaction.response_code, minimal_gateway_options(payment))
       end
       gateway_error_from_response(response) unless response.success?          
 
       # create a transaction to reflect the capture
       save
-      creditcard_txns.create(
-        :payment => payment,
-        :amount => authorization.amount,
+      payment.txns << CreditcardTxn.create(
+        :amount => transaction.amount,
         :response_code => response.authorization,
-        :txn_type => CreditcardTxn::TxnType::CAPTURE,
-        :original_txn => authorization
+        :txn_type => CreditcardTxn::TxnType::CAPTURE
       )
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
@@ -57,8 +54,7 @@ module Spree
 
       # create a transaction to reflect the purchase
       save
-      creditcard_txns.create(
-        :payment => payment,
+      payment.txns << CreditcardTxn.create(
         :amount => amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::PURCHASE,
@@ -80,12 +76,10 @@ module Spree
 
       # create a transaction to reflect the void
       save
-      creditcard_txns.create(
-        :payment => payment,
+      payment.txns << CreditcardTxn.create(
         :amount => transaction.amount,
         :response_code => response.authorization,
-        :txn_type => CreditcardTxn::TxnType::VOID,
-        :original_txn => transaction
+        :txn_type => CreditcardTxn::TxnType::VOID
       )
     end
 
@@ -101,21 +95,19 @@ module Spree
 
       # create a transaction to reflect the purchase
       save
-      creditcard_txns.create(
-        :payment => payment,
+      payment.txns << CreditcardTxn.create(
         :amount => -amount,
         :response_code => response.authorization,
-        :txn_type => CreditcardTxn::TxnType::CREDIT,
-        :original_txn => transaction
+        :txn_type => CreditcardTxn::TxnType::CREDIT
       )
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
     end
 
     # find the transaction associated with the original authorization/capture
-    def authorization
-      creditcard_txns.find(:first,
-                :conditions => ["txn_type = ? AND response_code IS NOT NULL", CreditcardTxn::TxnType::AUTHORIZE.to_s],
+    def authorization(payment)
+      payment.txns.find(:first,
+                :conditions => ["type = 'CreditcardTxn' AND txn_type = ? AND response_code IS NOT NULL", CreditcardTxn::TxnType::AUTHORIZE.to_s],
                 :order => 'created_at DESC')
     end
 
@@ -125,7 +117,7 @@ module Spree
     end
 
     def can_capture?(payment)
-      authorization.present? &&
+      authorization(payment).present? &&
       has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::CAPTURE)
     end
 

@@ -36,7 +36,7 @@ class Admin::PaymentsControllerTest < ActionController::TestCase
         should_respond_with :redirect
         should "create payment with the right attributes" do
           assert_equal 1, @order.payments.count
-          assert_equal 2.99, @order.payments.last.source.txns.last.amount.to_f
+          assert_equal 2.99, @order.payments.last.txns.last.amount.to_f
         end
       end
 
@@ -61,7 +61,7 @@ class Admin::PaymentsControllerTest < ActionController::TestCase
         should_respond_with :redirect
         should "create payment with the right attributes" do
           assert_equal @creditcard.id, @payment.source.id
-          assert_equal 2.99, @payment.source.txns.last.amount.to_f
+          assert_equal 2.99, @payment.txns.last.amount.to_f
         end
       end
       
