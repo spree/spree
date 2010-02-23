@@ -39,7 +39,7 @@ class Admin::PaymentsController < Admin::BaseController
 
   def finalize
     object.finalize!
-    redirect_to edit_object_path
+    redirect_to collection_path
   end
   
   def credit

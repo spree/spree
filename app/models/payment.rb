@@ -66,7 +66,7 @@ class Payment < ActiveRecord::Base
   def void
     return unless can_void?
     if source.void(self)
-      destroy
+      update_attribute(:amount, 0)
       order.update_totals!
     end
   end
