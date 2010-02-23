@@ -8,12 +8,14 @@ unless defined? Spree::Version
   module Spree
     module Version
       Major = '0'
-      Minor = '9'
-      Tiny  = '99'
+      Minor = '10'
+      Tiny  = '0'  
+      Pre   = nil # 'beta'
 
       class << self
         def to_s
-          [Major, Minor, Tiny].join('.')
+          v = "#{Major}.#{Minor}.#{Tiny}"
+          Pre ? "#{v}.#{Pre}" : v
         end
         alias :to_str :to_s
       end
