@@ -1,5 +1,5 @@
 # create payments based on the totals since they can't be known in YAML (quantities are random)
-method = PaymentMethod.create :name => "Credit Card", :description => "Foo", :active => true, :type => "Gateway::Bogus"
+method = Gateway::Bogus.create :name => "Credit Card", :description => "Foo", :active => true
 
 # Hack the current method so we're able to return a gateway without a RAILS_ENV
 Gateway.class_eval do
