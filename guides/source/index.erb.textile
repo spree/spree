@@ -153,13 +153,8 @@ h3. Digging Deeper
   <% end %>
 </dl>
 <dl>
-  <% guide('Release notes for 0_9_0', 'release_notes_0_9_0.html') do %>
-    Overview documentation for the main changes to the 0.9.x releases.
-  <% end %>
-</dl>
-<dl>
-  <% guide('Release notes for 1_0_0', 'release_notes_1_0_0.html') do %>
-    Overview documentation for the main changes to the 1.0.x releases.
+  <% guide('Release notes', 'release_notes.html') do %>
+    Overview documentation for the recent releases
   <% end %>
 </dl>
 
