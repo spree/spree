@@ -1,9 +1,7 @@
 bogus_dev:
-  name: Bogus Development
+  name: Credit Card
   description: Bogus payment gateway for development.
   environment: development
-  #server: test
-  #test_mode: true
   active: true
   type: Gateway::Bogus
 check_method:
@@ -12,18 +10,14 @@ check_method:
   active: true
   type: PaymentMethod::Check
 bogus_test:
-  name: Bogus Test
+  name: Credit Card
   description: Bogus payment gateway for test.
   environment: test
-  #server: test
-  #test_mode: true
   active: true
   type: Gateway::Bogus
 bogus_prod:
-  name: Bogus Production
+  name: Credit Card
   description: Bogus payment gateway for production.
   environment: production
-  #server: live
-  #test_mode: true
   active: true
   type: Gateway::Bogus
