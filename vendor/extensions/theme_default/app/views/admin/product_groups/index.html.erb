@@ -1,3 +1,4 @@
+<% render 'admin/shared/product_sub_menu' %>
 <div class='toolbar'>
   <ul class='actions'>
     <li>
@@ -21,17 +22,12 @@
   </thead>
   <tbody>
     <% @product_groups.each do |pg| %>
-      <tr>
+      <tr id="<%= dom_id pg %>">
         <td><%= link_to pg.name, object_path(pg) %></td>
-        <td><%= link_to "/pg/#{pg.permalink}", "/pg/#{pg.permalink}" %></td>
+        <td><%= link_to pg_search_path(:product_group_name => pg.permalink), pg_search_path(:product_group_name => pg.permalink) %></td>
         <td><%= pg.product_scopes.map(&:to_sentence).join("<br />") %></td>
-        <td><%= pg.valid? ? pg.products.count : t("product group is invalid") %></td>
-        <td>
-          <%= link_to t(:show), object_path(pg) %>  &nbsp; | &nbsp;
-          <%= link_to t(:edit), edit_object_path(pg) %> &nbsp; | &nbsp;
-          <%= link_to t(:destroy), object_path(pg), :method => :delete %> &nbsp; | &nbsp;
-          <%= link_to t(:preview), "/pg/#{pg.permalink}" %>
-        </td>
+        <td><%= pg.products.count %></td>
+        <td><%= link_to_edit pg %> &nbsp; <%= link_to_delete pg %></td>
       </tr>
     <% end %>
   </tbody>

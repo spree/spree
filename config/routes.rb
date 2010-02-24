@@ -105,7 +105,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :tax_rates
     admin.resource  :tax_settings
     admin.resources :calculators
-    admin.resources :product_groups
+    admin.resources :product_groups, :has_many => :product_scopes
     admin.resources :trackers
     admin.resources :payment_methods
   end

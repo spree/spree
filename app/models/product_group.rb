@@ -31,7 +31,7 @@ class ProductGroup < ActiveRecord::Base
   validates_associated :product_scopes
 
   before_save :set_permalink
-  before_save :update_memberships
+  before_update :update_memberships
 
   has_and_belongs_to_many :cached_products, :class_name => "Product"
   # name
@@ -174,4 +174,19 @@ class ProductGroup < ActiveRecord::Base
   def to_s
     "<ProductGroup" + (id && "[#{id}]").to_s + ":'#{to_url}'>"
   end
+  
+  
+  def order_scope
+    if scope = product_scopes.ordering.first
+      scope.name
+    end
+  end
+  def order_scope=(scope_name)
+    if scope = product_scopes.ordering.first
+      scope.update_attribute(:name, scope_name)
+    else
+      product_scopes.build(:name => scope_name, :arguments => [])
+    end    
+  end
+  
 end

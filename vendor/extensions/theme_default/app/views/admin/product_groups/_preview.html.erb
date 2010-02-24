@@ -1,26 +1,34 @@
-<% if @product_group.valid? %>
-  <% pg_products = @product_group.dynamic_products.all %>
-  <h2><%= ProductGroup.human_attribute_name(:products) %>(<%= pg_products.length %>)</h2>
-  <div id="product-preview-products">
-    <table>
-      <thead>
+<% count = @product_group.dynamic_products.count %>
+
+<h2><%= ProductGroup.human_attribute_name(:products) %> (<%= count %>)</h2>
+
+<% if count == 0 %>
+  <p><%= t('no_match_found') %></p>
+<% else %>
+
+  <% if @product_group.dynamic_products.count > 10 %>
+    <p><%= t('showing_first_n', :n => 10) %></p>
+  <% end %>
+
+  <table class="index">
+    <thead>
+    <tr>
+      <th><%= Product.human_attribute_name(:name) %></th>
+      <th><%= t(:action) %></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @product_group.dynamic_products.limit(10).each do |product| %>
       <tr>
-        <th><%= Product.human_attribute_name(:name) %></th>
-        <th><%= t(:action) %></th>
+        <td>
+          <%= link_to product.name, product_url(product) %>
+        </td>
+        <td>
+          <%= link_to t(:edit), edit_admin_product_path(product) %>
+        </td>
       </tr>
-      </thead>
-      <tbody>
-      <% pg_products.each do |product| %>
-        <tr>
-          <td>
-            <%= link_to product.name, product_url(product) %>
-          </td>
-          <td>
-            <%= link_to t(:edit), edit_admin_product_path(product) %>
-          </td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-  </div>
+    <% end %>
+    </tbody>
+  </table>
 <% end %>
+

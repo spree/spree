@@ -510,3 +510,47 @@ div.product-preview-products {
   width:40px;
   padding-left:10px;
 }
+
+
+
+
+
+
+
+/* Product Groups */
+
+table#product_scopes tr {
+	background-color: #eee;
+	
+}
+table#product_scopes tr td {
+	border-top: 4px solid #fff;
+	border-bottom: 1px solid #bbb;
+	padding: 5px 10px;
+}
+table#product_scopes tr td.actions {
+  vertical-align: middle;
+  text-align: right;
+}
+table#product_scopes tr td table {
+	margin: 0;
+	width: auto;
+}
+table#product_scopes tr td table tr td {
+	padding: 0;
+	border:  none;
+	padding-right: 5px;
+}
+
+#product_group_forms_container {
+  position: relative;
+}
+#new_product_group_form {
+  position: absolute;
+  right: 25px;
+  bottom: 0;  
+}
+#new_product_group_form p {
+  text-align: right;
+  margin: 0;
+}

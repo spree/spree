@@ -25,9 +25,29 @@ jQuery.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
   showValue = this.get(0).value;
   radioGroup = $("input[name='" + this.get(0).name + "']");
   radioGroup.each(function(){
-    $(this).click(function(){
-      $(dependentElementSelector).visible(this.checked && this.value == showValue)
+    jQuery(this).click(function(){
+      jQuery(dependentElementSelector).visible(this.checked && this.value == showValue)
     });
     if(this.checked){ this.click() }
   });
 }
+
+var request = function(options) {
+  jQuery.ajax(jQuery.extend({ dataType: 'script', url: options.url, type: 'get' }, options));
+  return false;
+};
+ 
+// remote links handler
+jQuery('a[data-remote=true]').live('click', function() {
+  if(method = jQuery(this).attr("data-method")){
+    return request({ url: this.href, type: 'POST', data: {'_method': method} });
+  } else {
+    return request({ url: this.href });
+  }
+});
+ 
+// remote forms handler
+jQuery('form[data-remote=true]').live('submit', function() {
+  return request({ url : this.action, type : this.method, data : jQuery(this).serialize() });
+});
+
