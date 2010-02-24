@@ -8,7 +8,9 @@ Gateway.class_eval do
   end
 end
 
-Order.all.each do |order|
+orders = Order.find(:all, :include => [{:line_items => [:variant]}, :adjustments, {:shipments => [{:address => [:state, :country]}, :inventory_units]}, :checkout])
+
+orders.each do |order|
   order.update_totals!
   creditcard = Creditcard.create(:cc_type => "visa", 
                                  :month => 12, 
@@ -20,4 +22,6 @@ Order.all.each do |order|
   payment = order.checkout.payments.create(:amount => order.outstanding_balance, :source => creditcard, :payment_method => method)
   payment.process!
   order.update_attribute("state", "new")
-end
+end  
+
+method.destroy

@@ -1,4 +1,6 @@
 class PaymentMethod < ActiveRecord::Base
+  default_scope :conditions => {:deleted_at => nil}
+
 	@provier = nil
   @@providers = Set.new
   def self.register
@@ -27,6 +29,13 @@ class PaymentMethod < ActiveRecord::Base
   def method_type
     type.demodulize.downcase
   end
-  
+
+  def destroy
+    self.update_attribute(:deleted_at, Time.now.utc)
+  end
+
+  def self.find_with_destroyed *args
+    self.with_exclusive_scope { find(*args) }
+  end
 
 end

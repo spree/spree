@@ -9,7 +9,7 @@
     <tr>
       <td><%= payment.created_at.to_s(:date_time24) %></td>
       <td><%= number_to_currency(payment.amount) %></td>
-      <td><%= payment.payment_method.name %></td>
+      <td><%= payment_method_name payment %></td>
       <td>
         <%= link_to t('show'), admin_order_payment_path(@order, payment) %>
         <% if payment.can_credit? %>
