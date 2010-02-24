@@ -40,13 +40,15 @@ namespace :db do
   task :load_file , [:file] => :environment do |t , args|
     ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym) unless ActiveRecord::Base.connected?
     file = args.file
-    puts "loading fixture " + file 
-    Fixtures.create_fixtures(File.dirname(file) , File.basename(file, '.*') )
-    rb = file.sub(".yml" , ".rb" ) 
-    rb = file.sub(".csv" , ".rb" ) unless rb# ok, this just shows my lack of regexp skill
-    if File.exists? rb
-      puts "loading ruby    " + rb 
-      require rb
+    ext = File.extname file
+    if ext == ".csv" or ext == ".yml"
+      puts "loading fixture " + file
+      Fixtures.create_fixtures(File.dirname(file) , File.basename(file, '.*') )
+    else
+      if File.exists? file
+        puts "loading ruby    " + file 
+        require file
+      end
     end
   end
 

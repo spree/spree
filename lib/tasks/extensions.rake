@@ -29,21 +29,34 @@ namespace :db do
     ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
     dir = args.dir
     fixtures = {}  
+    ruby_files = {}
     unless ENV['SKIP_CORE'] and dir == "sample"
       Dir.glob(File.join(SPREE_ROOT, "db", dir , '*.{yml,csv,rb}')).each do |fixture_file|
-          #puts "spree " + fixture_file + " " + File.basename(fixture_file, '.*')
+        ext = File.extname fixture_file
+        if ext == ".rb"
+          ruby_files[File.basename(fixture_file, '.*')]  = fixture_file
+        else
           fixtures[File.basename(fixture_file, '.*')]  = fixture_file
+        end
       end
     end
     Spree::ExtensionLoader.instance.db_paths(dir).each do |dir|
       Dir.glob(File.join(dir, '*.{yml,csv,rb}')).each do |fixture_file|
-          #puts "ext " + fixture_file + " " + File.basename(fixture_file, '.*')
-        fixtures[File.basename(fixture_file, '.*')]  = fixture_file
+        ext = File.extname fixture_file
+        if ext == ".rb"
+          ruby_files[File.basename(fixture_file, '.*')]  = fixture_file
+        else
+          fixtures[File.basename(fixture_file, '.*')]  = fixture_file
+        end
       end
     end
     fixtures.each do |fixture , fixture_file|
       # an invoke will only execute the task once
       Rake::Task["db:load_file"].execute( Rake::TaskArguments.new([:file], [fixture_file]) )
+    end
+    ruby_files.each do |fixture , ruby_file|
+      # an invoke will only execute the task once
+      Rake::Task["db:load_file"].execute( Rake::TaskArguments.new([:file], [ruby_file]) )
     end
   end
 
