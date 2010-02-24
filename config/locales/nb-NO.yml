@@ -17,6 +17,7 @@ nb-NO:
     listing: "Viser"
     new: Ny
     update: Oppdater
+  active: "Active"
   activerecord: 
     attributes: 
       address: 
@@ -265,6 +266,7 @@ nb-NO:
     # keys correspond to Checkout state names:
     address: Address
     complete: Complete
+    confirm: Confirm
     delivery: Delivery
     payment: Payment
   cheque: Cheque
@@ -279,6 +281,7 @@ nb-NO:
   configuration: Konfigurasjon
   configuration_options: "Konfigurasjonsvalg"
   configurations: Konfigurasjoner
+  configured: Configured
   confirm: Bekreft
   confirm_delete: "Confirm Deletion"
   confirm_password: "Bekreft passord"
@@ -325,6 +328,7 @@ nb-NO:
   editing_coupon: Editing Coupon
   editing_option_type: "Endre variasjonstype"
   editing_option_types: "Endre variasjonstyper"
+  editing_payment_method: Editing Payment Method
   editing_product: "Endre produkt"
   editing_property: "Endre egenskap"
   editing_prototype: "Endre prototype"
@@ -346,6 +350,7 @@ nb-NO:
   enable_mail_delivery: "Skru på sending av epost"
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
+  environment: "Environment"
   error: feil
   event: Hendelse
   existing_customer: "Eksisterende kunde"
@@ -356,6 +361,10 @@ nb-NO:
   extensions: Utvidelser
   filename: Filnavn
   final_confirmation: "Endelig bekreftelse"
+  finalize:
+    check: Recieve check
+    gateway: Capture payment
+  finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: "Fornavn"
   flat_percent: Flat Percent
@@ -369,6 +378,7 @@ nb-NO:
   gateway_configuration: "Gateway configuration"
   gateway_error: "Feil oppstått i tjeneste"
   gateway_setting_description: "Velg en betalingstjeneste og konfigurer den."
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "General"
   general_settings: "Generelle innstillinger"
   general_settings_description: "Konfigurer generelle innstillinger."
@@ -418,6 +428,7 @@ nb-NO:
   listing_reports: "Rapporter"
   listing_tax_categories: "Momskategorier"
   listing_users: "Brukere"
+  live: "Live"
   loading: Loading
   locale_changed: "Endret språk"
   log_in: "Logg inn"
@@ -459,6 +470,7 @@ nb-NO:
   new_option_value: "Ny variasjonsverdi"
   new_order: "New Order"
   new_payment: "New Payment"
+  new_payment_method: New Payment Method
   new_product: "Nytt produkt"
   new_product_group: New Product Group
   new_property: "Ny egenskap"
@@ -532,7 +544,11 @@ nb-NO:
   payment: Betaling
   payment_gateway: "Betalingstjeneste"
   payment_information: "Betalingsinformasjon"
+  payment_method: Payment Method
+  payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   payments: Betalinger
+  pending_payments: Pending Payments
   permalink: Permalink
   phone: Telefon
   place_order: "Bekreft ordre"
@@ -671,6 +687,8 @@ nb-NO:
   property: Egenskap
   prototype: Prototype
   prototypes: Prototyper
+  provider: "Provider"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: Antall
   quantity_shipped: Quantity Shipped
   range: "Range"
@@ -724,6 +742,7 @@ nb-NO:
   send_copy_of_orders_mails_to: "Send kopi av alle ordre-eposter til"
   send_mails_as: "Send epost som"
   send_order_mails_as: "Send ordre-epost som"
+  server: Server
   server_error: "The server returned an error"
   settings: Settings
   ship: send
@@ -812,6 +831,8 @@ nb-NO:
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Klasser
+  test: "Test"
+  test_mode: Test Mode
   thank_you_for_your_order: "Takk for bestillingen. Vennligst skriv ut og ta vare på denne bekreftelsen."
   this_file_language: "Norsk"
   this_month: "This Month"

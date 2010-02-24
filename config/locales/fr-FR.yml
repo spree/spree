@@ -17,6 +17,7 @@ fr-FR:
     listing: Lister
     new: Nouveau
     update: Mise à jour
+  active: "Active"
   activerecord: 
     attributes: 
       address: 
@@ -265,6 +266,7 @@ fr-FR:
     # keys correspond to Checkout state names:
     address: Address
     complete: Complete
+    confirm: Confirm
     delivery: Delivery
     payment: Payment
   cheque: Cheque
@@ -279,6 +281,7 @@ fr-FR:
   configuration: Configuration
   configuration_options: "Option configuration"
   configurations: Configurations
+  configured: Configured
   confirm: Confirmation
   confirm_delete: "Confirmation de la suppression"
   confirm_password: "Confirmation du mot de passe"
@@ -325,6 +328,7 @@ fr-FR:
   editing_coupon: "Edition du coupon"
   editing_option_type: "Edition du type d'option"
   editing_option_types: "Edition des types d'options"
+  editing_payment_method: Editing Payment Method
   editing_product: "Edition du produit"
   editing_property: "Edition de la propriété"
   editing_prototype: "Edition du prototype"
@@ -346,6 +350,7 @@ fr-FR:
   enable_mail_delivery: Activation de la distribution des emails
   enable_mail_queue: "Activation de la file de courriel"
   enter_exactly_as_shown_on_card: "Prière d'entrer exactement comme affiché sur la carte"
+  environment: "Environment"
   error: erreur
   event: Événements
   existing_customer: "Client existant"
@@ -356,6 +361,10 @@ fr-FR:
   extensions: Prolongations
   filename: Nom du fichier
   final_confirmation: "Confirmation finale"
+  finalize:
+    check: Recieve check
+    gateway: Capture payment
+  finalized_payments: Finalized Payments
   first_item: "Coût du premier item"
   first_name: "Prénom"
   flat_percent: Flat Percent
@@ -369,6 +378,7 @@ fr-FR:
   gateway_configuration: "Configuration de la passerelle"
   gateway_error: "Erreur de la passerelle"
   gateway_setting_description: "Sélectionner une passerelle de paiement et configurez ses paramètres."
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "General"
   general_settings: "Paramètres généraux"
   general_settings_description: "Configuration générale des paramètres Spree."
@@ -418,6 +428,7 @@ fr-FR:
   listing_reports: "Liste des statistiques"
   listing_tax_categories: "Liste des catégories de taxes"
   listing_users: "Liste des utilisateurs"
+  live: "Live"
   loading: Loading
   locale_changed: "Locale changée"
   log_in: "S'identifier"
@@ -459,6 +470,7 @@ fr-FR:
   new_option_value: "Nouvelle valeure d'option"
   new_order: "New Order"
   new_payment: "New Payment"
+  new_payment_method: New Payment Method
   new_product: "Nouveau produit"
   new_product_group: New Product Group
   new_property: "Nouvelle proprieté"
@@ -532,7 +544,11 @@ fr-FR:
   payment: Paiement
   payment_gateway: "Passerelle de paiement"
   payment_information: "Information sur le paiement"
+  payment_method: Payment Method
+  payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   payments: Paiements
+  pending_payments: Pending Payments
   permalink: Permalink
   phone: Téléphone
   place_order: Place Order        
@@ -671,6 +687,8 @@ fr-FR:
   property: Propriété
   prototype: Prototype
   prototypes: Prototypes
+  provider: "Provider"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: Qté
   quantity_shipped: Quantity Shipped
   range: "Range"
@@ -724,6 +742,7 @@ fr-FR:
   send_copy_of_orders_mails_to: Envoyer une copie des commandes email à
   send_mails_as: Envoyer des mails en tant que
   send_order_mails_as: Envoyer des commandes email en tant que
+  server: Server
   server_error: "Le serveur a retourné un erreur"
   settings: Paramètres
   ship: livraison
@@ -812,6 +831,8 @@ fr-FR:
   taxonomy_tree_error: "La modification demandée n'a pas été acceptée et l'arbre a été retourné à son état antérieur, s'il vous plaît essayer de nouveau."
   taxonomy_tree_instruction: "Cliquer dans l'arbre avec le bouton droit pour accéder au menu pour ajouter, supprimer et trier une feuille."
   taxons: Arborescence
+  test: "Test"
+  test_mode: Test Mode
   thank_you_for_your_order: "Merci de nous avoir fait confiance. Imprimez cette page de confirmation pour vos archives."
   this_file_language: "Français (FR)"
   this_month: "This Month"

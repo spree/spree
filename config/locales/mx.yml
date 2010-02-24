@@ -17,6 +17,7 @@ mx:
     listing: Listado
     new: Nueva
     update: Actualizar
+  active: "Active"
   activerecord: 
     attributes: 
       address: 
@@ -265,6 +266,7 @@ mx:
     # keys correspond to Checkout state names:
     address: Address
     complete: Complete
+    confirm: Confirm
     delivery: Delivery
     payment: Payment
   cheque: Cheque
@@ -279,6 +281,7 @@ mx:
   configuration: "Configuración"
   configuration_options: "Opciones de configuración"
   configurations: Configuraciones
+  configured: Configured
   confirm: Confirmar
   confirm_delete: "Confirmación de borrado"
   confirm_password: "Confirme la contraseña"
@@ -325,6 +328,7 @@ mx:
   editing_coupon: "Editar Cupón"
   editing_option_type: "Editando tipo de opción"
   editing_option_types: "Editando tipos de opción"
+  editing_payment_method: Editing Payment Method
   editing_product: "Editando Producto"
   editing_property: "Editando Propiedad"
   editing_prototype: "Editando Prototipo"
@@ -346,6 +350,7 @@ mx:
   enable_mail_delivery: "Habilitar envío por correo" 
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: "Por favor ingrese los numeros exactamente como se encuentran en la tarjeta"
+  environment: "Environment"
   error: error
   event: Evento
   existing_customer: "Cliente existente"
@@ -356,6 +361,10 @@ mx:
   extensions: Extensiones
   filename: "Nombre de archivo"
   final_confirmation: "Confirmación Final"
+  finalize:
+    check: Recieve check
+    gateway: Capture payment
+  finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: Nombre
   flat_percent: "Porcentaje base"
@@ -369,6 +378,7 @@ mx:
   gateway_configuration: "Configuración del medio de pago"
   gateway_error: "Error en el medio de pago"
   gateway_setting_description: "Descripción de las características del medio de pago"
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "General"
   general_settings: "Configuracion general"
   general_settings_description: "Configurar los ajustes generales de Spree."
@@ -418,6 +428,7 @@ mx:
   listing_reports: "Listado de reportes"
   listing_tax_categories: "Listado de Impuestos"
   listing_users: "Lista de usuarios"
+  live: "Live"
   loading: "Cargando"
   locale_changed: "Se ha cambiado el idioma"
   log_in: "Iniciar sesión"
@@ -459,6 +470,7 @@ mx:
   new_option_value: "Nuevo valor de la opción"
   new_order: "New Order"
   new_payment: "New Payment"
+  new_payment_method: New Payment Method
   new_product: "Nuevo producto"
   new_product_group: New Product Group
   new_property: "Nueva propiedad"
@@ -532,7 +544,11 @@ mx:
   payment: Pago
   payment_gateway: "Medio de pago"
   payment_information: "Información del pago"
+  payment_method: Payment Method
+  payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   payments: Pagos
+  pending_payments: Pending Payments
   permalink: Permalink
   phone: Teléfono
   place_order: Realizar pedido
@@ -671,6 +687,8 @@ mx:
   property: "Propiedad"
   prototype: Prototipo
   prototypes: "Prototipos"
+  provider: "Provider"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: Cant.
   quantity_shipped: Quantity Shipped
   range: "Range"
@@ -724,6 +742,7 @@ mx:
   send_copy_of_orders_mails_to: Envia una copia de todos los correos de pedidos a         
   send_mails_as: Enviar correos como
   send_order_mails_as: Enviar correos de pedidos como
+  server: Server
   server_error: "El servidor a marcado un error"
   settings: Configuraciones
   ship: "Enviar"
@@ -812,6 +831,8 @@ mx:
   taxonomy_tree_error: "La solicitud no ha podido ser aceptada y la configuración ha sido de vuelta a su estado original, por favor intenta nuevamente."
   taxonomy_tree_instruction: "* Click derecho una para agregar una subsección en la configuración, para agregar al menu, borrar u ordenar."
   taxons: Taxons
+  test: "Test"
+  test_mode: Test Mode
   thank_you_for_your_order: "Gracias por su pedido"
   this_file_language: "Español (México)"
   this_month: "This Month"

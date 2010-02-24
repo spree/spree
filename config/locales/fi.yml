@@ -17,6 +17,7 @@ fi:
     listing: Listataan
     new: Uusi
     update: Päivitä
+  active: "Active"
   activerecord:
     attributes:
       address:
@@ -265,6 +266,7 @@ fi:
     # keys correspond to Checkout state names:
     address: Osoite
     complete: Valmis
+    confirm: Confirm
     delivery: Toimitus
     payment: Maksu
   cheque: Cheque
@@ -279,6 +281,7 @@ fi:
   configuration: Asetus
   configuration_options: Asetusvaihteohdot
   configurations: Asetukset
+  configured: Configured
   confirm: Vahvista
   confirm_delete: "Vahvista poistaminen"
   confirm_password: "Vahvista salasana"
@@ -325,6 +328,7 @@ fi:
   editing_coupon: "Muokataan kuponkia"
   editing_option_type: "Muokataan valintatyyppiä"
   editing_option_types: "Muokataan valintatyyppejä"
+  editing_payment_method: Editing Payment Method
   editing_product: "Muokataan tuotetta"
   editing_property: "Muokataan ominaisuutta"
   editing_prototype: "Muokataan prototyyppiä"
@@ -346,6 +350,7 @@ fi:
   enable_mail_delivery: "Salli sähköpostin toimitus"
   enable_mail_queue: "Salli sähköpostijono"
   enter_exactly_as_shown_on_card: "Kirjoita täsmälleen samoin kuin kortissa lukee"
+  environment: "Environment"
   error: virhe
   event: Tapahtuma
   existing_customer: "Olemassaoleva asiakas"
@@ -356,6 +361,10 @@ fi:
   extensions: Laajennukset
   filename: Tiedostonimi
   final_confirmation: "Lopullinen vahvistus"
+  finalize:
+    check: Recieve check
+    gateway: Capture payment
+  finalized_payments: Finalized Payments
   first_item: "Ensimmäisen tuotteen kulut"
   first_name: Etunimi
   flat_percent: Tasaprosentti
@@ -369,6 +378,7 @@ fi:
   gateway_configuration: "Yhdyskäytävän konfigurointi"
   gateway_error: "Virhe yhdyskäytävässä"
   gateway_setting_description: "Valitse ja konfiguroi maksuyhdyskäytävä."
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "Yleistä"
   general_settings: "Yleiset asetukset"
   general_settings_description: "Aseta Spreen yleiset asetukset."
@@ -418,6 +428,7 @@ fi:
   listing_reports: "Listataan raportit"
   listing_tax_categories: "Listataan verotuskategoriat"
   listing_users: "Listing käyttäjät"
+  live: "Live"
   loading: Ladataan
   locale_changed: "Lokalisointi vaihdettu"
   log_in: Kirjaudu
@@ -459,6 +470,7 @@ fi:
   new_option_value: "Uusi valinta-arvo"
   new_order: "Uusi tilaus"
   new_payment: "New Payment"
+  new_payment_method: New Payment Method
   new_product: "Uusi tuote"
   new_product_group: "Uusi tuoteryhmä"
   new_property: "Uusi ominaisuus"
@@ -532,7 +544,11 @@ fi:
   payment: Maksu
   payment_gateway: "Maksun yhdyskäytävä"
   payment_information: "Maksun tiedot"
+  payment_method: Payment Method
+  payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   payments: Maksut
+  pending_payments: Pending Payments
   permalink: Permalink
   phone: Puhelin
   place_order: "Aseta tilaus"
@@ -671,6 +687,8 @@ fi:
   property: Ominaisuus
   prototype: Prototyyppi
   prototypes: Prototyypit
+  provider: "Provider"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: lkm
   quantity_shipped: Quantity Shipped
   range: Väli
@@ -724,6 +742,7 @@ fi:
   send_copy_of_orders_mails_to: "Lähetä kopio tilaussähköposteista"
   send_mails_as: "Lähetä sähköpostiviestit"
   send_order_mails_as: "Lähetä tilaussähköpostiviestit"
+  server: Server
   server_error: "Palvelin palautti virheen"
   settings: Asetukset
   ship: toimita
@@ -812,6 +831,8 @@ fi:
   taxonomy_tree_error: "Vaadittua muutosta ei hyväksytty. Puu on palautettu edelliseen tilaansa. Yritä uudelleen."
   taxonomy_tree_instruction: "* Klikkaa lasta päästäksesi valikkoon, josta voit lisätä, poistaa ja järjestää lapsia."
   taxons: Taksonit
+  test: "Test"
+  test_mode: Test Mode
   thank_you_for_your_order: "Kiitos kaupankäynnistä. Tulosta tarvittaessa kopio tästä vahvistuksesta."
   this_file_language: Suomi
   this_month: "Tässä kuussa"

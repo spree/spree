@@ -17,6 +17,7 @@ nl-BE:
     listing: Lijst
     new: Nieuw
     update: Update
+  active: "Active"
   activerecord: 
     attributes: 
       address: 
@@ -265,6 +266,7 @@ nl-BE:
     # keys correspond to Checkout state names:
     address: Address
     complete: Complete
+    confirm: Confirm
     delivery: Delivery
     payment: Payment
   cheque: Cheque
@@ -279,6 +281,7 @@ nl-BE:
   configuration: Configuratie
   configuration_options: "Configuratie Opties"
   configurations: Configuraties
+  configured: Configured
   confirm: Bevestig
   confirm_delete: "Confirm Deletion"
   confirm_password: "Wachtwoord bevestiging"
@@ -325,6 +328,7 @@ nl-BE:
   editing_coupon: Editing Coupon
   editing_option_type: "Optie Type Wijzigen"
   editing_option_types: "Optie Types Wijzigen"
+  editing_payment_method: Editing Payment Method
   editing_product: "Product Wijzigen"
   editing_property: "Eigenschap Wijzigen"
   editing_prototype: "Prototype Wijzigen"
@@ -346,6 +350,7 @@ nl-BE:
   enable_mail_delivery: "Mail aflevering aanzetten"
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
+  environment: "Environment"
   error: fout
   event: Gebeurtenis
   existing_customer: "Bestaande Klant"
@@ -356,6 +361,10 @@ nl-BE:
   extensions: Extensies
   filename: Bestandsnaam
   final_confirmation: "Definitieve bevestiging"
+  finalize:
+    check: Recieve check
+    gateway: Capture payment
+  finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: "Voornaam"
   flat_percent: Flat Percent
@@ -369,6 +378,7 @@ nl-BE:
   gateway_configuration: "Gateway configuration"
   gateway_error: "Gateway Fout"
   gateway_setting_description: "Selecteer een betalings-gateway en stel deze in."
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "General"
   general_settings: "Algemene Instellingen"
   general_settings_description: "Algemene Spree Instellingen."
@@ -418,6 +428,7 @@ nl-BE:
   listing_reports: "Lijst Rapporten"
   listing_tax_categories: "Lijst BTW categorieën"
   listing_users: "Lijst Gebruikers"
+  live: "Live"
   loading: Loading
   locale_changed: "Regionale Instellingen Gewijzigd"
   log_in: "Aanmelden"
@@ -459,6 +470,7 @@ nl-BE:
   new_option_value: "Nieuwe Optie Waarde"
   new_order: "New Order"
   new_payment: "New Payment"
+  new_payment_method: New Payment Method
   new_product: "Nieuw Product"
   new_product_group: New Product Group
   new_property: "Nieuwe Eigenschap"
@@ -532,7 +544,11 @@ nl-BE:
   payment: Betaling
   payment_gateway: "Betalings-Gateway"
   payment_information: "Informatie Betaling"
+  payment_method: Payment Method
+  payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   payments: Betalingen
+  pending_payments: Pending Payments
   permalink: Permalink
   phone: Telefoon
   place_order: Bestellen
@@ -671,6 +687,8 @@ nl-BE:
   property: Eigenschap
   prototype: Prototype
   prototypes: Prototypes
+  provider: "Provider"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: Aantal
   quantity_shipped: Quantity Shipped
   range: "Range"
@@ -724,6 +742,7 @@ nl-BE:
   send_copy_of_orders_mails_to: "Zend kopie van bestelmails naar"      
   send_mails_as: "Zend mail als"                    
   send_order_mails_as: "Zend bestelmaild als"
+  server: Server
   server_error: "The server returned an error"
   settings: Settings
   ship: Verzenden
@@ -812,6 +831,8 @@ nl-BE:
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Taxons
+  test: "Test"
+  test_mode: Test Mode
   thank_you_for_your_order: "Hartelijk dank voor uw bestelling. U kan deze pagina afdrukken als bewijs van bestelling."
   this_file_language: "Nederlands (BE)"
   this_month: "This Month"

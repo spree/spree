@@ -17,6 +17,7 @@ th:
     listing: รายการ
     new: สร้าง
     update: ปรับปรุง
+  active: "Active"
   activerecord: 
     attributes: 
       address: 
@@ -265,6 +266,7 @@ th:
     # keys correspond to Checkout state names:
     address: Address
     complete: Complete
+    confirm: Confirm
     delivery: Delivery
     payment: Payment
   cheque: Cheque
@@ -279,6 +281,7 @@ th:
   configuration: จัดการระบบ
   configuration_options: ข้อมูลตัวเลือก
   configurations: รายการจัดการ
+  configured: Configured
   confirm: ยืนยันรหัสผ่าน
   confirm_delete: "Confirm Deletion"
   confirm_password: ยืนยันรหัสผ่าน
@@ -325,6 +328,7 @@ th:
   editing_coupon: Editing Coupon
   editing_option_type: แก้ไขตัวเลือกนี้
   editing_option_types: แก้ไขตัวเลือก
+  editing_payment_method: Editing Payment Method
   editing_product: แก้ไขสินค้า
   editing_property: แก้ไขคุณลักษณะ
   editing_prototype: แก้ไขต้นแบบ
@@ -346,6 +350,7 @@ th:
   enable_mail_delivery: เปิดระบบส่งเมล      
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: "กรุณาใส่ข้อมูลทุกอย่างที่แสดงบนบัตร"
+  environment: "Environment"
   error: ขัดข้อง
   event: Event
   existing_customer: "เป็นลูกค้าเดิม"
@@ -356,6 +361,10 @@ th:
   extensions: Extensions
   filename: Filename
   final_confirmation: "การยืนยันขั้นสุดท้าย"
+  finalize:
+    check: Recieve check
+    gateway: Capture payment
+  finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: ชื่อแรก
   flat_percent: Flat Percent
@@ -369,6 +378,7 @@ th:
   gateway_configuration: ข้อมูลช่องทางจ่ายเงิน
   gateway_error: "Gateway Error"
   gateway_setting_description: "เลือกช่องทางจ่ายเงิน และ ใส่รายละเอียด"
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: เบื้องต้น
   general_settings: ข้อมูลเบื้องต้น
   general_settings_description: กำหนดค่าข้อมูลเบื้องต้นให้ Spree
@@ -418,6 +428,7 @@ th:
   listing_reports: รายงานทั้งหมด
   listing_tax_categories: "รายการ แบบการคิดภาษี"
   listing_users: รายชื่อผู้ใช้
+  live: "Live"
   loading: Loading
   locale_changed: "Locale Changed"
   log_in: "เข้าสู่ระบบ"
@@ -459,6 +470,7 @@ th:
   new_option_value: เพิ่มรายการให้ตัวเลือก
   new_order: "New Order"
   new_payment: "New Payment"
+  new_payment_method: New Payment Method
   new_product: เพิ่มสินค้า
   new_product_group: New Product Group
   new_property: เพิ่มคุณลักษณะ
@@ -532,7 +544,11 @@ th:
   payment: Payment
   payment_gateway: ช่องทางจ่ายเงิน
   payment_information: ข้อมูลการจ่ายเงิน
+  payment_method: Payment Method
+  payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   payments: รายการจ่าย
+  pending_payments: Pending Payments
   permalink: Permalink
   phone: เบอร์โทรศัพท์
   place_order: Place Order        
@@ -671,6 +687,8 @@ th:
   property: สรรพคุณ
   prototype: ต้นแบบ
   prototypes: ต้นแบบ
+  provider: "Provider"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: จำนวน
   quantity_shipped: Quantity Shipped
   range: "Range"
@@ -724,6 +742,7 @@ th:
   send_copy_of_orders_mails_to: คัดลอกทุกเมลสั่งซื้อไปที่
   send_mails_as: ส่งเมลในชื่อ                    
   send_order_mails_as: ส่งเมลสั่งซื้อในชื่อ
+  server: Server
   server_error: "เซิร์ฟเวอร์แจ้งการทำงานขัดข้อง"
   settings: Settings
   ship: เรือ
@@ -812,6 +831,8 @@ th:
   taxonomy_tree_error: "คำขอเปลี่ยนไม่ผ่าน ทำให้แผนภูมิต้นไม้กลับเป็นแบบเดิม โปรดทดลองทำอีกครั้ง"
   taxonomy_tree_instruction: "* คลิกขวาบนกิ่ง เพื่อเปิดเมนู สำหรับ เพิ่ม ลบ หรือเรียงลำดับกิ่ง"
   taxons: ประเภทภาษี
+  test: "Test"
+  test_mode: Test Mode
   thank_you_for_your_order: "ขอบคุณสำหรับการสั่งซื้อ ท่านสามารถพิมพ์รายการยืนยันเพื่อเก็บเป็นหลักฐานได้"
   this_file_language: "ภาษาไทย (TH)"
   this_month: "This Month"

@@ -17,6 +17,7 @@ pt-PT:
     listing: Listagem
     new: Nova
     update: Actualizar
+  active: "Active"
   activerecord: 
     attributes: 
       address: 
@@ -265,6 +266,7 @@ pt-PT:
     # keys correspond to Checkout state names:
     address: Address
     complete: Complete
+    confirm: Confirm
     delivery: Delivery
     payment: Payment
   cheque: Cheque
@@ -279,6 +281,7 @@ pt-PT:
   configuration: Configuração
   configuration_options: "Opções de Configuração"
   configurations: Configurações
+  configured: Configured
   confirm: Confirme
   confirm_delete: "Confirm Deletion"
   confirm_password: "Confirmação da palavra passe"
@@ -325,6 +328,7 @@ pt-PT:
   editing_coupon: Editing Coupon
   editing_option_type: "Editando Tipo de Opção"
   editing_option_types: "Editando Tipos de Opção"
+  editing_payment_method: Editing Payment Method
   editing_product: "Editando Produto"
   editing_property: "Editando Propriedade"
   editing_prototype: "Editando Prototipo"
@@ -346,6 +350,7 @@ pt-PT:
   enable_mail_delivery: Enable Mail Delivery      
   enable_mail_queue: "Enable Mail Queue"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
+  environment: "Environment"
   error: erro
   event: Evento
   existing_customer: "Cliente Existente"
@@ -356,6 +361,10 @@ pt-PT:
   extensions: Extensões
   filename: "Nome do ficheiro"
   final_confirmation: "Confirmação Final"
+  finalize:
+    check: Recieve check
+    gateway: Capture payment
+  finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: Nome
   flat_percent: Flat Percent
@@ -369,6 +378,7 @@ pt-PT:
   gateway_configuration: "Gateway configuration"
   gateway_error: "Erro na Gateway"
   gateway_setting_description: "Selecionar um gateway de pagamento e ajustar suas configurações."
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "General"
   general_settings: "Configurações Gerais"
   general_settings_description: "Configuração Geral de Spree."
@@ -418,6 +428,7 @@ pt-PT:
   listing_reports: "Listando Relatórios"
   listing_tax_categories: "Listando Categorias de IVA"
   listing_users: "Listando Utilizadores"
+  live: "Live"
   loading: Loading
   locale_changed: "Localização Alterada"
   log_in: Entre
@@ -459,6 +470,7 @@ pt-PT:
   new_option_value: "Nova Opção de Valor"
   new_order: "New Order"
   new_payment: "New Payment"
+  new_payment_method: New Payment Method
   new_product: "Novo Produto"
   new_product_group: New Product Group
   new_property: "Nova Propriedade"
@@ -532,7 +544,11 @@ pt-PT:
   payment: Pagamento
   payment_gateway: "Gateway de Pagamento"
   payment_information: "Dados do Pagamento"
+  payment_method: Payment Method
+  payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   payments: Pagamentos
+  pending_payments: Pending Payments
   permalink: Permalink
   phone: Telefone
   place_order: Place Order        
@@ -671,6 +687,8 @@ pt-PT:
   property: Propriedade
   prototype: Prototype
   prototypes: Protótipos
+  provider: "Provider"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: Qt.
   quantity_shipped: Quantity Shipped
   range: "Range"
@@ -724,6 +742,7 @@ pt-PT:
   send_copy_of_orders_mails_to: Send Copy of Order Mails To         
   send_mails_as: Send Mails As                    
   send_order_mails_as: Send Order Mails As   
+  server: Server
   server_error: "The server returned an error"
   settings: Settings
   ship: ship
@@ -812,6 +831,8 @@ pt-PT:
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
   taxons: Taxons
+  test: "Test"
+  test_mode: Test Mode
   thank_you_for_your_order: "Obrigado por sua compra. Por favor, imprima uma cópia desta página de confirmação para seu controle."
   this_file_language: "Português"
   this_month: "This Month"

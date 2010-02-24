@@ -17,6 +17,7 @@ cs-CZ:
     listing: "Výpis"
     new: "Nový"
     update: "Uložit"
+  active: "Active"
   activerecord:
     attributes:
       address:
@@ -265,6 +266,7 @@ cs-CZ:
     # keys correspond to Checkout state names:
     address: "Adresa"
     complete: "Dokončeno"
+    confirm: Confirm
     delivery: "Dodávka"
     payment: Platba
   cheque: "Šek"
@@ -279,6 +281,7 @@ cs-CZ:
   configuration: Konfigurace
   configuration_options: "Možnosti konfigurace"
   configurations: Konfigurace
+  configured: Configured
   confirm: Potvrdit
   confirm_delete: "Potvrdit vymazání"
   confirm_password: "Potvrzení hesla"
@@ -325,6 +328,7 @@ cs-CZ:
   editing_coupon: "Úprava kupónu"
   editing_option_type: "Úprava typu volby"
   editing_option_types: "Úprava typů volby"
+  editing_payment_method: Editing Payment Method
   editing_product: "Úprava výrobku"
   editing_property: "Úprava vlastnosti"
   editing_prototype: "Úprava šablony"
@@ -346,6 +350,7 @@ cs-CZ:
   enable_mail_delivery: "Povolit doručování emailů"
   enable_mail_queue: "Neposílat emaily okamžitě, řadit do fronty"
   enter_exactly_as_shown_on_card: "Zadejte prosím přesně tak, jak je napsáno na kartě"
+  environment: "Environment"
   error: Chyba
   event: "Událost"
   existing_customer: "Stávající zákazník"
@@ -356,6 +361,10 @@ cs-CZ:
   extensions: "Rozměry"
   filename: "Název souboru"
   final_confirmation: "Závěrečné potvrzení"
+  finalize:
+    check: Recieve check
+    gateway: Capture payment
+  finalized_payments: Finalized Payments
   first_item: "Cena první položky"
   first_name: "Křestní jméno"
   flat_percent: "Paušál (procent)"
@@ -369,6 +378,7 @@ cs-CZ:
   gateway_configuration: "Nastavení platební brány"
   gateway_error: "Chyba platební brány"
   gateway_setting_description: "Vybrat a nastavit platební bránu"
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "Obecné"
   general_settings: "Obecná nastavení"
   general_settings_description: "Nastavit obecné volby Spree"
@@ -418,6 +428,7 @@ cs-CZ:
   listing_reports: "Výpis zpráv"
   listing_tax_categories: "Výpis daňových kategorií"
   listing_users: "Výpis uživatelů"
+  live: "Live"
   loading: "Nahrávání"
   locale_changed: "Nastavení jazyka změněno"
   log_in: "Přihlásit se"
@@ -459,6 +470,7 @@ cs-CZ:
   new_option_value: "Nová hodnota volby"
   new_order: "Nová objednávka"
   new_payment: "Nová platba"
+  new_payment_method: New Payment Method
   new_product: "Nový výrobek"
   new_product_group: "Nová skupina výrobků"
   new_property: "Nová vlastnost"
@@ -532,7 +544,11 @@ cs-CZ:
   payment: Platba
   payment_gateway: "Platební brána"
   payment_information: "Informace o platbě"
+  payment_method: Payment Method
+  payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   payments: Platby
+  pending_payments: Pending Payments
   permalink: "Stálý odkaz"
   phone: Telefon
   place_order: "Objednat"
@@ -671,6 +687,8 @@ cs-CZ:
   property: Vlastnost
   prototype: "Šablona"
   prototypes: "Šablony"
+  provider: "Provider"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: "Množství"
   quantity_shipped: "Odeslané množství"
   range: Rozsah
@@ -724,6 +742,7 @@ cs-CZ:
   send_copy_of_orders_mails_to: "Zasílat kopie všech objednávek na emailovou adresu"
   send_mails_as: "Posílat emaily jako"
   send_order_mails_as: "Posílat emaily s objednávkami jako"
+  server: Server
   server_error: "Server nahlásil chybu"
   settings: "Nastavení"
   ship: vypravit
@@ -812,6 +831,8 @@ cs-CZ:
   taxonomy_tree_error: "Požadovaná změna nabyla přijata a větev byla vrácena do předchozího stavu, zkuste prosím změnu provést znovu."
   taxonomy_tree_instruction: "* Pro přidání, odstranění a uspořádání potomka klikněte na větev pravým tlačítkem."
   taxons: Taxony
+  test: "Test"
+  test_mode: Test Mode
   thank_you_for_your_order: "Děkujeme za Váš nákup. Doporučujeme Vám vytisknout si kopii této stránky."
   this_file_language: "Čeština (CS)"
   this_month: "Tento měsíc"

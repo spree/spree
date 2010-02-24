@@ -17,6 +17,7 @@ ru-RU:
     listing: "Список"
     new: "Новый"
     update: "Изменить"
+  active: "Active"
   activerecord:
     attributes:
       address:
@@ -265,6 +266,7 @@ ru-RU:
     # keys correspond to Checkout state names:
     address: "Адрес"
     complete: "Завершение"
+    confirm: Confirm
     delivery: "Доставка"
     payment: "Оплата"
   cheque: "Чек"
@@ -279,6 +281,7 @@ ru-RU:
   configuration: "Конфигурация"
   configuration_options: "Опции конфигурации"
   configurations: "Конфигурация"
+  configured: Configured
   confirm: "Подтвердить"
   confirm_delete: "Подтверждение удаления"
   confirm_password: "Подтверждение пароля"
@@ -325,6 +328,7 @@ ru-RU:
   editing_coupon: "Редактировать купон"
   editing_option_type: "Редактирование опции"
   editing_option_types: "Редактирование опций"
+  editing_payment_method: Editing Payment Method
   editing_product: "Редактирование товара"
   editing_property: "Редактирование свойства"
   editing_prototype: "Редактирование прототипа"
@@ -346,6 +350,7 @@ ru-RU:
   enable_mail_delivery: "Включить доставку почты"
   enable_mail_queue: "Включить очередь почтовых сообщений"
   enter_exactly_as_shown_on_card: "Пожалуйста, введите точно как показано на карте"
+  environment: "Environment"
   error: "ошибка"
   event: "Событие"
   existing_customer: "Для зарегистрированных пользователей"
@@ -356,6 +361,10 @@ ru-RU:
   extensions: "Расширения"
   filename: "Имя файла"
   final_confirmation: "Окончательное подтверждение"
+  finalize:
+    check: Recieve check
+    gateway: Capture payment
+  finalized_payments: Finalized Payments
   first_item: "Начальная ставка"
   first_name: "Имя"
   flat_percent: "Фиксированный процент"
@@ -369,6 +378,7 @@ ru-RU:
   gateway_configuration: "Настройка платёжных шлюзов"
   gateway_error: "Ошибка платежного шлюза"
   gateway_setting_description: "Выберите платежный шлюз и настройте его."
+  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "Основные"
   general_settings: "Общие настройки"
   general_settings_description: "Общие настройки магазина."
@@ -418,6 +428,7 @@ ru-RU:
   listing_reports: "Список отчетов"
   listing_tax_categories: "Список категорий налогов"
   listing_users: "Список пользователей"
+  live: "Live"
   loading: "Загружается"
   locale_changed: "Язык изменён"
   log_in: "Вход для клиентов"
@@ -459,6 +470,7 @@ ru-RU:
   new_option_value: "Новое значение опции"
   new_order: "Новый заказ"
   new_payment: "Новый платёж"
+  new_payment_method: New Payment Method
   new_product: "Новый товар"
   new_product_group: "Новая группа товаров"
   new_property: "Новое свойство"
@@ -532,7 +544,11 @@ ru-RU:
   payment: "Платеж"
   payment_gateway: "Платежный шлюз"
   payment_information: "Информация о платеже"
+  payment_method: Payment Method
+  payment_methods: Payment Methods
+  payment_methods_setting_description: Configure methods customers can use to pay
   payments: "Платежи"
+  pending_payments: Pending Payments
   permalink: "Постоянная ссылка"
   phone: "Телефон"
   place_order: "Разместить заказ"
@@ -671,6 +687,8 @@ ru-RU:
   property: "Свойство"
   prototype: "Прототип"
   prototypes: "Прототипы"
+  provider: "Provider"
+  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: "Кол-во"
   quantity_shipped: "Отправленное количество"
   range: "Диапазон"
@@ -724,6 +742,7 @@ ru-RU:
   send_copy_of_orders_mails_to: "Отсылать копии всех писем с заказами на"
   send_mails_as: "Отсылать почту как"
   send_order_mails_as: "Отсылать почту с заказами как"
+  server: Server
   server_error: "На сервере произошла ошибка"
   settings: "Настройки"
   ship: "доставка"
@@ -812,6 +831,8 @@ ru-RU:
   taxonomy_tree_error: "Запрашиваемое изменение не было осуществленно и дерево возвращено в предыдущее состояние. Пожалуйста, попытайтесь снова."
   taxonomy_tree_instruction: "* Щёлкните правой кнопкой мыши на элеменете дерева для добавления, удаления или сортировки таксонов."
   taxons: "Таксоны"
+  test: "Test"
+  test_mode: Test Mode
   thank_you_for_your_order: "Спасибо за покупку!"
   this_file_language: "Русский (RU)"
   this_month: "Этот месяц"
