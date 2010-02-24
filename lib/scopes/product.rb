@@ -217,6 +217,7 @@ SQL
 
     {
       :joins => :taxons,
+      :order => taxons.empty? ? nil : taxons.first.self_and_descendants.scope(:find)[:order],
       :conditions => conditions,
     }
   end
