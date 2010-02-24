@@ -5,6 +5,7 @@ After reading it you should know:
 * the scopes provided for filtering lists of products
 * about the concept of product groups
 * how to use product groups.
+* how to configure and use the search API.
  
 endprologue.
 
@@ -16,7 +17,7 @@ all products in taxon X, or all products costing less than $20, or composite cri
 products costing more than $100 that have brand Y. 
 
 This chapter first covers the available *named scopes* in the Spree core which provide filtering
-by various aspects of the basic data, and some of these can be chained or composed together 
+by various aspects of the basic data, some of which can be chained or composed together 
 for more complex filters.
 
 The second part explains the facilities for *defining and naming* groups of products for
@@ -26,7 +27,7 @@ which is the sub-list of the above limited to items in the Clothing taxon. Produ
 can also take price ranges, product properties, and variant options into account. It is possible
 to add your own filters by defining new named scopes too. 
 
-This chapter is mainly aimed at developers - who will usually create and hard-code definitions 
+This chapter is mainly aimed at developers, who will usually create and hard-code definitions 
 and access to certain groups, but administrators will sometimes want to edit the criteria for 
 these existing groups. The "admin interface editing facilities":#administrationinterface is
 explained below.
@@ -34,18 +35,34 @@ explained below.
 
 h3. Product Scopes
 
-The main primitive scopes are
+h4. Primitive selection scopes
 
-* name / description
-* taxon
-* product property
-* (has a) variant option
+* +active(optional_date)+ - this is the key scope for selecting listable products, and is the combination of 
++available(optional_date)+ (the product's availability date is not later than the given date or the default current date)  and +not_deleted+ (not marked as deleted in the database)
 
-The ordering scopes are
+* +keywords+ - defaults to search in the product names and descriptions, though you can modify or extend this via the "Searcher API":#searcher-api
 
-* date updated
-* price
-* popularity
+* +in_name(words)+, +in_name_or_keywords(words)+, +in_name_or_description(words)+ - testing for any of a list of strings passed as a space or comma separated string, appearing in the product database
+
+* +price_between(low,high)+ - selects for a master price being in the limits (using SQL's +BETWEEN+ operator)
+
+* +in_taxon(thing)+ and +in_taxon(thing1,thing2,...)+ - selects products in the given taxon(s) _and their descendants_. The arguments can be taxon ids, taxon objects, names of taxons, or (suffixes of) permalinks.
+
+* _having_ a product property (+with_property(thing)+) or option type (+with_option(thing)+) associated with the product - but not checking for actual values, where +thing+ can be a string, id, or property/option_type object
+
+* +with_property_value(thing,value)+ - testing for a product having the given value. +thing+ is as above, and +value+ is a string (or convertible to a string). Note that this can't test for a product lacking a property
+ (ie no database row), but can test for a property that is explicitly set to NULL. 
+
+* +with_option_value(option,value)+ - selects for a product having a variant with the given value for the option (but does not consider whether the variant is deleted or not)
+
+* +with(value)+ - selects products having either a property value or having a variant with an option value which is equal to the given value
+
+You can also use the scopes available via SearchLogic. These follow the pattern of field plus a test, e.g. +master_price_lte(100)+ or +taxons_name_eq("foo")+ (note the easy access across associations). 
+
+h4. Primitive ordering scopes
+
+SearchLogic is used to produce most of the commonly used ordering scopes, e.g. +ascend_by_updated_at+.
+There is a scope +by_popularity+ which orders by the number of orders a product appears in.
 
 
 h4. Chaining scopes together
@@ -58,6 +75,7 @@ work" or return an empty list:
 * some combinations of scopes are of course contradictory, e.g. selecting scope price less than $10 and price greater than $15
 * for efficiency reasons (balanced against typical use), it is not possible to filter by more than one property test or by more than one option value at a time (the subsequent tests would clash with the first one)
 
+Of course, developers are free to add more complex scopes should they wish to undertake more complex chaining. 
 
 So called "order scopes" should not change the number of items displayed, just the order in which 
 items appear in the list.
@@ -75,7 +93,8 @@ also a scope).
 Extensive low level documentation can be found in source code of the +ProductGroup+
 and +ProductScope+ models.
 
-QUERY: definitely limited to available products ??
+INFO: product groups do not automatically include the +active+ scope, so may return out of date products.
+
 
 h4. Administration interface
 
@@ -87,8 +106,6 @@ or delete groups from this page.
 
 
 h5. Creating a new scope
-
-LATER !images/product_groups/new_product_group.jpg(Creating new product group)!
 
 When creating a new product group, you need:
 
@@ -104,6 +121,30 @@ if the result is what you would expect.
 
 After you create the product group, you'll be presented with information about the new group,
 including bookmarkable (permalink) URL, current product count, and other useful information.
+
+h4. Access via URLs
+
+You can access named product groups via URLS of the following format. 
+
+*   +/t/*taxons/pg/named_product_group+ - list a product group after restricting to a particular taxon
+*   +*/pg/named_product_group+ - list a product group
+
+There's also _nameless_ versions of the above, where the URL encodes the required scopes and their
+arguments. After +s/+, there should be a sequence of scope-argument pairs followed by an optional
+ordering scope. Scope arguments should be comma-separated. 
+Example: +/s/master_price_gte/10/taxons_name_like_any/pach,uby/ascend_by_master_price+
+
+* +/t/*taxons/s/name_of_scope/comma_separated_arguments/name_of_scope_that_doesn_take_any//order+
+* +*/s/name_of_scope/comma_separated_arguments/name_of_scope_that_doesn_take_any//order+
+
+
+
+h4. Implementation overview
+
+Product groups are effectively a representation of a set of scopes. The API is similar to standard product scope values.
+
+For efficiency, all named product groups are memoized - retrieval (via the overloaded +products+ method) just
+consults a single database table. The memoization is updated when a product group or product is saved.
 
 
 h3. Customization guide
@@ -159,14 +200,18 @@ Remember also to provide translations for your new scopes; there's a
 +Scopes.generate_translation+ method that can be helpful here.
 
 
-h4. Implementation overview
 
-Product groups are effectively a representation of a set of scopes. The API is similar to standard product scope values.
+h3. Searcher API
 
-h5. Memoization of groups 
+This is a related issue, for providing powerful full-text searching and facets on the product database.
+There are several possible search engines to use, such as Xapian, Solr, Sphinx. Spree interfaces for these are being developed as extensions, and the code should be consulted for useful examples. 
+The Spree core contains an API and a simple base implementation which accesses the main database directly.
 
-For efficiency, all new product groups are memoized - retrieval (via the overloaded +products+ method) just
-consults a single database table.
+To set the current searcher implementation, assign a suitable object to +Spree::Config.searcher+. The default is the simple base implementation.
 
-query - check synchro options
+TODO. document the main methods and integration
+
+
+
+
 
