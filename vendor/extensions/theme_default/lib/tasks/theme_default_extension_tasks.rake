@@ -26,3 +26,28 @@ namespace :spree do
     end
   end
 end
+
+namespace :spree do
+  namespace :dev do
+    desc "Compile the screen.less for theme_default before committing."
+    task :less do
+      require 'less'
+      #less_files = "#{SPREE_ROOT}/vendor/extensions/theme_default/app/stylesheets/"
+      #destination = "#{SPREE_ROOT}/vendor/extensions/theme_default/public/stylesheets/"
+      
+      source = "#{SPREE_ROOT}/vendor/extensions/theme_default/app/stylesheets/screen.less"
+      destination = "#{SPREE_ROOT}/vendor/extensions/theme_default/public/stylesheets/screen.css"
+      #stylesheets = Dir.entries(less_files)
+      f = File.new(destination, File::CREAT|File::TRUNC|File::RDWR, 0644)
+      f.write Less::Engine.new(File.new(source)).to_css
+
+      
+      # stylesheets.select{|s| File.extname(s) == ".less"}.each do |sheet|
+      #   f = File.new("#{destination}#{File.basename(sheet, ".less")}.css", File::CREAT|File::TRUNC|File::RDWR, 0644)
+      #     f.write Less::Engine.new(File.new(less_files + sheet)).to_css
+      # end
+    end
+  end
+end
+
+
