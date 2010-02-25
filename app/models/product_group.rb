@@ -56,7 +56,7 @@ class ProductGroup < ActiveRecord::Base
     else                        return(nil)
     end
 
-    if pg_name && opg = ProductGroup.find_by_name(pg_name)
+    if pg_name && opg = ProductGroup.find_by_permalink(pg_name)
       pg = new.from_product_group(opg)
     elsif attrs
       attrs = url.split("/")
