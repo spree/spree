@@ -1,0 +1,35 @@
+<fieldset>
+  <legend><%= t('creditcard') %></legend>
+
+  <table class="index">
+    <tr>
+      <th colspan="6"><%= t('card_details') %></th>
+    </tr>
+    <tr>
+      <td><label><%= t("card_number") %>:</label></td>
+      <td>
+        XXXX-XXXX-XXXX-<%= payment.source.display_number %>
+      </td>
+      <td><label><%= t("expiration") %>:</label></td>
+      <td>
+        <%= payment.source.month %>/<%= payment.source.year %>
+      </td>
+      <td><label><%= t("card_code") %>:</label></td>
+      <td>
+        <%= payment.source.verification_value %>
+      </td>
+    </tr>
+    <tr>
+      <td><label><%= t("maestro_or_solo_cards") %>:</label></td>
+      <td>
+        <%= payment.source.issue_number %>
+      </td>
+      <td><label><%= t('start_date') %>:</label></td>
+      <td colspan="3">
+        <%= payment.source.start_month %>/<%= payment.source.start_year %>
+      </td>
+    </tr>
+  </table>
+</fieldset>
+
+<%= render 'transaction_list', :txns => payment.txns %>
