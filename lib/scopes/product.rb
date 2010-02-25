@@ -93,7 +93,7 @@ module Scopes::Product
     }
   }
 
-  # a scope that finds all products having property specified by name, object or id
+  # a scope that finds all products having an option_type specified by name, object or id
   Product.named_scope :with_option, lambda {|option|
     conditions = case option
     when String     then ["option_types.name = ?", option]
@@ -108,7 +108,7 @@ module Scopes::Product
   }
 
   # a simple test for product with a certain property-value pairing
-  # it can't test for NULLs and can't be cascaded - see :with_property
+  # note that it can test for properties with NULL values, but not for absent values
   Product.named_scope :with_property_value, lambda { |property, value|
     conditions = case property
     when String   then ["properties.name = ?", property]
@@ -121,9 +121,9 @@ module Scopes::Product
       :joins => :properties,
       :conditions => conditions
     }
-  }   # coded this way to demonstrate composition
+  } 
 
-  # a scope that finds all products having property specified by name, object or id
+  # a scope that finds all products having an option value specified by name, object or id
   Product.named_scope :with_option_value, lambda {|option, value|
     option_type_id = case option
     when String     then OptionType.find_by_name(option).id
