@@ -132,7 +132,7 @@ class ProductGroupTest < ActiveSupport::TestCase
     context "from another product group" do
       setup do
         ProductGroup.create!({
-            :name => "test_pg",
+            :name => "test pg",
             :order => "descend_by_created_at",
             :product_scopes_attributes => [
               {
@@ -141,7 +141,7 @@ class ProductGroupTest < ActiveSupport::TestCase
               }
             ]
           })
-        @pg = ProductGroup.from_url('/pg/test_pg')
+        @pg = ProductGroup.from_url('/pg/test-pg')
       end
 
       should "not be saved and have sane defaults" do
@@ -184,7 +184,7 @@ class ProductGroupTest < ActiveSupport::TestCase
     context "from another product group with taxon" do
       setup do
         ProductGroup.create!({
-            :name => "test_pg",
+            :name => "test pg",
             :order => "descend_by_created_at",
             :product_scopes_attributes => [
               {
@@ -193,7 +193,7 @@ class ProductGroupTest < ActiveSupport::TestCase
               }
             ]
           })
-        @pg =  ProductGroup.from_url('/t/test_taxon_1/pg/test_pg')
+        @pg = ProductGroup.from_url('/t/test_taxon_1/pg/test-pg')
       end
 
       should "not be saved and have sane defaults" do
