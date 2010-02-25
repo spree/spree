@@ -203,7 +203,7 @@ From your extension class you can add to the variant and / or product models by 
   Variant.additional_fields += [
     {:name => 'Foo', :only => [:variant], :format => "%.2f"},
     {:name => 'Bar', :only => [:product], :format => "%.2f"},
-    {:name => 'Buzz', :populate => [:line_items]}
+    {:name => 'Buzz', :populate => [:line_item]}
   ]
 </shell>
 
@@ -218,7 +218,7 @@ The supported parameters for the config hash are:
 * *:name* - The name of the field to be added, this should match the column added to table (column name will be lowercase)
 * *:only* - Defines which models the field has been added to. If no +:only+ key is present it's presumed to be added to both Variant and Product
 * *:format* - An sprintf compatible string to be used to format the value.
-* *:populate* - If +[:line_items]+ is passed to the +:populate key+, the value will be updated on the line_item when the product / variant is added to an order (i.e. cart). This can be helpful if your field changes frequently, but you'd like to record the value at the time of purchase (like cost price for example).
+* *:populate* - If +[:line_item]+ is passed to the +:populate key+, the value will be updated on the line_item when the product / variant is added to an order (i.e. cart). This can be helpful if your field changes frequently, but you'd like to record the value at the time of purchase (like cost price for example).
 
 h4. Modifying the Checkout Workflow
 
