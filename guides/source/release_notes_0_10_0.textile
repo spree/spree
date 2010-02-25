@@ -1,4 +1,6 @@
-h2. Spree 1.0.0 Release Notes
+h2. Spree 0.10.0 Release Notes
+
+WARNING. Some of the information here could be made redundant by later changes.
 
 endprologue.     
 

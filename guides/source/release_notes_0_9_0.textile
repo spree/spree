@@ -1,5 +1,7 @@
 h2. Spree 0.9.0 Release Notes
 
+WARNING. Some of the information here has been made redundant by later changes.
+
 endprologue.
 
 h3. Improved Layout Customization
