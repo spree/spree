@@ -361,9 +361,6 @@ jp:
   extensions: Extensions
   filename: ファイル名
   final_confirmation: 最終確認
-  finalize:
-    check: Recieve check
-    gateway: Capture payment
   finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: 名前
@@ -547,6 +544,7 @@ jp:
   payment_method: Payment Method
   payment_methods: Payment Methods
   payment_methods_setting_description: Configure methods customers can use to pay
+  payment_updated: Payment Updated
   payments: 支払い方法
   pending_payments: Pending Payments
   permalink: Permalink

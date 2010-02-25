@@ -107,7 +107,7 @@ class CreditcardTest < ActiveSupport::TestCase
         @order.reload
         @order.save
         @txn = @payment.transactions.first(:order => 'id DESC')
-        @creditcard.credit(25, @payment)
+        @creditcard.credit(@payment, 25)
       end
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       

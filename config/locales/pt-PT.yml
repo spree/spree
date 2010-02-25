@@ -361,9 +361,6 @@ pt-PT:
   extensions: Extensões
   filename: "Nome do ficheiro"
   final_confirmation: "Confirmação Final"
-  finalize:
-    check: Recieve check
-    gateway: Capture payment
   finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: Nome
@@ -547,6 +544,7 @@ pt-PT:
   payment_method: Payment Method
   payment_methods: Payment Methods
   payment_methods_setting_description: Configure methods customers can use to pay
+  payment_updated: Payment Updated
   payments: Pagamentos
   pending_payments: Pending Payments
   permalink: Permalink

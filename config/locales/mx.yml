@@ -361,9 +361,6 @@ mx:
   extensions: Extensiones
   filename: "Nombre de archivo"
   final_confirmation: "Confirmación Final"
-  finalize:
-    check: Recieve check
-    gateway: Capture payment
   finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: Nombre
@@ -547,6 +544,7 @@ mx:
   payment_method: Payment Method
   payment_methods: Payment Methods
   payment_methods_setting_description: Configure methods customers can use to pay
+  payment_updated: Payment Updated
   payments: Pagos
   pending_payments: Pending Payments
   permalink: Permalink

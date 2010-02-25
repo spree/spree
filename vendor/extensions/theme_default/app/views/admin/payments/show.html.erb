@@ -1,11 +1,5 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
 
-<div class='toolbar'>
-  <% if @payment.can_finalize? %>
-    <%= button_link_to t("finalize.#{@payment.payment_method.method_type}"), finalize_admin_order_payment_path(@order, @payment), :method => :put %>
-  <% end %>
-</div>
-
 <h2><%= t("activerecord.models.#{@object.class.to_s.underscore}.one") %></h2>
 
 <p>

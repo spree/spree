@@ -361,9 +361,6 @@ fi:
   extensions: Laajennukset
   filename: Tiedostonimi
   final_confirmation: "Lopullinen vahvistus"
-  finalize:
-    check: Recieve check
-    gateway: Capture payment
   finalized_payments: Finalized Payments
   first_item: "Ensimmäisen tuotteen kulut"
   first_name: Etunimi
@@ -547,6 +544,7 @@ fi:
   payment_method: Payment Method
   payment_methods: Payment Methods
   payment_methods_setting_description: Configure methods customers can use to pay
+  payment_updated: Payment Updated
   payments: Maksut
   pending_payments: Pending Payments
   permalink: Permalink

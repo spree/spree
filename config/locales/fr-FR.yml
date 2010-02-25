@@ -361,9 +361,6 @@ fr-FR:
   extensions: Prolongations
   filename: Nom du fichier
   final_confirmation: "Confirmation finale"
-  finalize:
-    check: Recieve check
-    gateway: Capture payment
   finalized_payments: Finalized Payments
   first_item: "Coût du premier item"
   first_name: "Prénom"
@@ -547,6 +544,7 @@ fr-FR:
   payment_method: Payment Method
   payment_methods: Payment Methods
   payment_methods_setting_description: Configure methods customers can use to pay
+  payment_updated: Payment Updated
   payments: Paiements
   pending_payments: Pending Payments
   permalink: Permalink

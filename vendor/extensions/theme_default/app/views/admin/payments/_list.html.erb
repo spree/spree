@@ -12,11 +12,8 @@
       <td><%= payment_method_name payment %></td>
       <td>
         <%= link_to t('show'), admin_order_payment_path(@order, payment) %>
-        <% if payment.can_credit? %>
-          | <%= link_to t('refund'), credit_admin_order_payment_path(@order, payment) %>
-        <% end %>
-        <% if payment.can_void? %>
-          | <%= link_to t('void'), void_admin_order_payment_path(@order, payment), :method => :post, :confirm => t('are_you_sure') %>
+        <% payment.actions.each do |action| %>
+          <%= link_to t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put, :confirm => t('are_you_sure') %>
         <% end %>
       </td>
     </tr>

@@ -42,6 +42,7 @@ module Spree
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::CAPTURE
       )
+      payment.finalize!
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
     end
@@ -77,15 +78,18 @@ module Spree
       # create a transaction to reflect the void
       save
       payment.txns << CreditcardTxn.create(
-        :amount => transaction.amount,
+        :amount => -transaction.amount,
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::VOID
       )
+      payment.finalize!
     end
 
-    def credit(amount, payment)
+    def credit(payment, amount=nil)      
       return unless transaction = purchase_or_authorize_transaction_for_payment(payment)
 
+      amount ||= payment.order.outstanding_credit
+      
       if payment_gateway.payment_profiles_supported?
         response = payment_gateway.credit((amount * 100).round, self, transaction.response_code, minimal_gateway_options(payment))
       else
@@ -116,9 +120,13 @@ module Spree
       payment.txns.detect {|txn| [CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE].include?(txn.txn_type) and txn.response_code.present?}
     end
 
+    def actions
+      %w{capture void credit}
+    end
+
     def can_capture?(payment)
       authorization(payment).present? &&
-      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::CAPTURE)
+      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::VOID)
     end
 
     def can_void?(payment)
@@ -129,7 +137,7 @@ module Spree
     # Can only refund a captured transaction but if transaction hasn't been cleared by merchant, refund may still fail
     def can_credit?(payment)
       has_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) && 
-      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID)
+      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID) and payment.order.credit_owed?
     end
 
     def has_payment_profile?

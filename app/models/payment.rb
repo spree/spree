@@ -12,7 +12,7 @@ class Payment < ActiveRecord::Base
   accepts_nested_attributes_for :source
   
   validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment? 
-  validates_presence_of :payment_method
+  validates_presence_of :payment_method, :if => Proc.new { |payable| payable.is_a? Checkout }
 
   named_scope :from_creditcard, :conditions => {:source_type => 'Creditcard'}
 
@@ -27,11 +27,9 @@ class Payment < ActiveRecord::Base
     end
   end
   
-
   def process!
     source.process!(self) if source and source.respond_to?(:process!)
-  end
-  
+  end  
   
   def can_finalize?
     payable.is_a?(Checkout)
@@ -45,33 +43,10 @@ class Payment < ActiveRecord::Base
     payable.save!
   end
 
-
-  def can_credit?
-    source and source.respond_to?(:can_credit?) and source.can_credit?(self)
+  def actions
+    return [] unless source and source.respond_to? :actions
+    source.actions.select { |action| !source.respond_to?("can_#{action}?") or source.send("can_#{action}?", self) }
   end
-  
-  def credit(credit_amount)
-    return unless can_credit?
-    if source.credit(credit_amount, self)
-      update_attribute(:amount, amount - credit_amount)
-      order.update_totals!
-    end
-  end
-
-
-  def can_void?
-    source and source.respond_to?(:can_void?) and source.can_void?(self)
-  end
-  
-  def void
-    return unless can_void?
-    if source.void(self)
-      update_attribute(:amount, 0)
-      order.update_totals!
-    end
-  end
-
-
 
   private
   

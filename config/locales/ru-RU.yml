@@ -361,9 +361,6 @@ ru-RU:
   extensions: "Расширения"
   filename: "Имя файла"
   final_confirmation: "Окончательное подтверждение"
-  finalize:
-    check: Recieve check
-    gateway: Capture payment
   finalized_payments: Finalized Payments
   first_item: "Начальная ставка"
   first_name: "Имя"
@@ -547,6 +544,7 @@ ru-RU:
   payment_method: Payment Method
   payment_methods: Payment Methods
   payment_methods_setting_description: Configure methods customers can use to pay
+  payment_updated: Payment Updated
   payments: "Платежи"
   pending_payments: Pending Payments
   permalink: "Постоянная ссылка"

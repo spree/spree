@@ -361,9 +361,6 @@ nl-BE:
   extensions: Extensies
   filename: Bestandsnaam
   final_confirmation: "Definitieve bevestiging"
-  finalize:
-    check: Recieve check
-    gateway: Capture payment
   finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: "Voornaam"
@@ -547,6 +544,7 @@ nl-BE:
   payment_method: Payment Method
   payment_methods: Payment Methods
   payment_methods_setting_description: Configure methods customers can use to pay
+  payment_updated: Payment Updated
   payments: Betalingen
   pending_payments: Pending Payments
   permalink: Permalink

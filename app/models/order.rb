@@ -324,7 +324,7 @@ class Order < ActiveRecord::Base
     [0, total - payments.total].max
   end
 
-  def has_balance_outstanding?
+  def outstanding_balance?
     outstanding_balance > 0
   end
 
@@ -332,7 +332,7 @@ class Order < ActiveRecord::Base
     [0, payments.total - total].max
   end
 
-  def has_credit_outstanding?
+  def outstanding_credit?
     outstanding_credit > 0
   end
 

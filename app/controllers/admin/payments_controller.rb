@@ -35,30 +35,22 @@ class Admin::PaymentsController < Admin::BaseController
     end
   end
 
+  def fire
+    # TODO - possible security check here
+    load_object
+    return unless event = params[:e]
+    Payment.transaction do
+      @payment.source.send("#{event}", @payment)
+    end
+    flash[:notice] = t('payment_updated')
+  rescue Spree::GatewayError => ge
+    flash[:error] = "#{ge.message}"
+  ensure
+    redirect_to collection_path
+  end  
+
   def finalize
     object.finalize!
-    redirect_to collection_path
-  end
-  
-  def credit
-    load_object
-    if request.post?
-      begin
-        @payment.credit(params[:amount].to_f)
-      rescue Spree::GatewayError
-        flash[:error] = t('gateway_error')
-      end
-      redirect_to collection_path
-    end
-  end
-  
-  def void
-    load_object
-    begin
-      @payment.void
-    rescue Spree::GatewayError
-      flash[:error] = t('gateway_error')
-    end
     redirect_to collection_path
   end
   

@@ -1,6 +1,6 @@
 <div class='toolbar'>
   <ul class='actions'>
-<% if @order.has_balance_outstanding? %>
+<% if @order.outstanding_balance? %>
     <li>
       <%= button_link_to t("new_payment"), new_admin_order_payment_url(@order), :icon => 'add' %>
     </li>
