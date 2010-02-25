@@ -69,4 +69,8 @@ class Adjustment < ActiveRecord::Base
   end
 
   def secondary_type; type; end
+
+  class << self
+    public :subclasses
+  end
 end
