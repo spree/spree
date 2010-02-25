@@ -266,7 +266,7 @@ ru-RU:
     # keys correspond to Checkout state names:
     address: "Адрес"
     complete: "Завершение"
-    confirm: Confirm
+    confirm: "Подтверждение"
     delivery: "Доставка"
     payment: "Оплата"
   cheque: "Чек"
@@ -281,7 +281,7 @@ ru-RU:
   configuration: "Конфигурация"
   configuration_options: "Опции конфигурации"
   configurations: "Конфигурация"
-  configured: Configured
+  configured: "Сконфигурировано"
   confirm: "Подтвердить"
   confirm_delete: "Подтверждение удаления"
   confirm_password: "Подтверждение пароля"
@@ -311,7 +311,7 @@ ru-RU:
   creditcards: "Кредитнык карты"
   credits: "Кредиты"
   current: "Текущий"
-  customer: "Пользователь"
+  customer: "Клиент"
   customer_details: "Реквизиты клиента"
   customer_search: "Поиск клиента"
   date_created: "Дата создания"
@@ -328,7 +328,7 @@ ru-RU:
   editing_coupon: "Редактировать купон"
   editing_option_type: "Редактирование опции"
   editing_option_types: "Редактирование опций"
-  editing_payment_method: Editing Payment Method
+  editing_payment_method: "Редактирование способа оплаты"
   editing_product: "Редактирование товара"
   editing_property: "Редактирование свойства"
   editing_prototype: "Редактирование прототипа"
@@ -350,7 +350,7 @@ ru-RU:
   enable_mail_delivery: "Включить доставку почты"
   enable_mail_queue: "Включить очередь почтовых сообщений"
   enter_exactly_as_shown_on_card: "Пожалуйста, введите точно как показано на карте"
-  environment: "Environment"
+  environment: "Среда окружения"
   error: "ошибка"
   event: "Событие"
   existing_customer: "Для зарегистрированных пользователей"
@@ -361,7 +361,7 @@ ru-RU:
   extensions: "Расширения"
   filename: "Имя файла"
   final_confirmation: "Окончательное подтверждение"
-  finalized_payments: Finalized Payments
+  finalized_payments: "Завершённые платежи"
   first_item: "Начальная ставка"
   first_name: "Имя"
   flat_percent: "Фиксированный процент"
@@ -375,7 +375,7 @@ ru-RU:
   gateway_configuration: "Настройка платёжных шлюзов"
   gateway_error: "Ошибка платежного шлюза"
   gateway_setting_description: "Выберите платежный шлюз и настройте его."
-  gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
+  gateway_settings_warning: "Если вы меняете тип шлюза, вы должны сохранить это изменение, прежде чем вы сможете изменить настройки шлюза."
   general: "Основные"
   general_settings: "Общие настройки"
   general_settings_description: "Общие настройки магазина."
@@ -467,7 +467,7 @@ ru-RU:
   new_option_value: "Новое значение опции"
   new_order: "Новый заказ"
   new_payment: "Новый платёж"
-  new_payment_method: New Payment Method
+  new_payment_method: "Новый способ оплаты"
   new_product: "Новый товар"
   new_product_group: "Новая группа товаров"
   new_property: "Новое свойство"
@@ -541,12 +541,12 @@ ru-RU:
   payment: "Платеж"
   payment_gateway: "Платежный шлюз"
   payment_information: "Информация о платеже"
-  payment_method: Payment Method
-  payment_methods: Payment Methods
-  payment_methods_setting_description: Configure methods customers can use to pay
-  payment_updated: Payment Updated
+  payment_method: "Способ оплаты"
+  payment_methods: "Способы оплаты"
+  payment_methods_setting_description: "Настройка способов оплаты, которые может использовать клиент"
+  payment_updated: "Платёж обновлён"
   payments: "Платежи"
-  pending_payments: Pending Payments
+  pending_payments: "Незавершённые платежи"
   permalink: "Постоянная ссылка"
   phone: "Телефон"
   place_order: "Разместить заказ"
@@ -685,8 +685,8 @@ ru-RU:
   property: "Свойство"
   prototype: "Прототип"
   prototypes: "Прототипы"
-  provider: "Provider"
-  provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
+  provider: "Провайдер"
+  provider_settings_warning: "Если вы меняете провайдера, вы должны сохранить это изменение, прежде чем вы сможете изменить настройки провайдера."
   qty: "Кол-во"
   quantity_shipped: "Отправленное количество"
   range: "Диапазон"
@@ -740,7 +740,7 @@ ru-RU:
   send_copy_of_orders_mails_to: "Отсылать копии всех писем с заказами на"
   send_mails_as: "Отсылать почту как"
   send_order_mails_as: "Отсылать почту с заказами как"
-  server: Server
+  server: "Сервер"
   server_error: "На сервере произошла ошибка"
   settings: "Настройки"
   ship: "доставка"
@@ -805,7 +805,7 @@ ru-RU:
   states: "Субъекты федерации"
   status: "Статус"
   stop: "Конец"
-  store: "Сохранить"
+  store: "В магазин"
   street_address: "Адрес"
   street_address_2: "Адрес (строка 2)"
   subtotal: "Подитог"
@@ -830,7 +830,7 @@ ru-RU:
   taxonomy_tree_instruction: "* Щёлкните правой кнопкой мыши на элеменете дерева для добавления, удаления или сортировки таксонов."
   taxons: "Таксоны"
   test: "Test"
-  test_mode: Test Mode
+  test_mode: "Тестовый режим"
   thank_you_for_your_order: "Спасибо за покупку!"
   this_file_language: "Русский (RU)"
   this_month: "Этот месяц"
