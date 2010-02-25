@@ -174,23 +174,48 @@ tfoot { font-style: italic; }
 caption { background: #eeeeee; }
 .quiet { color: #666666; }
 .loud { color: #111111; }
-form p.field { margin-bottom: 0.5em; }
+form p.field {
+  margin-bottom: 0.5em;
+  clear: both;
+}
 form p.field span.req {
   color: red;
+  float: left;
   margin-left: 2px;
   position: relative;
   top: -3px;
 }
+form p.field input[type=text] {
+  float: left;
+  margin: 0 5px 7px 0;
+}
+form p.field select {
+  float: left;
+  margin: 0 5px 7px 0;
+}
 form p.field.radios { line-height: 150%; }
 label { font-weight: bold; }
-label.error {
+div#checkout #checkout_form_address #billing label.error {
   color: red;
-  clear: both;
+  float: left;
+  text-align: left;
   display: inline-block;
   top: 0px;
   font-size: 11px;
   border: none;
   padding: 0px;
+  width: auto;
+}
+div#checkout #checkout_form_address #shipping label.error {
+  color: red;
+  float: left;
+  text-align: left;
+  display: inline-block;
+  top: 0px;
+  font-size: 11px;
+  border: none;
+  padding: 0px;
+  width: auto;
 }
 fieldset { margin-bottom: 1em; }
 legend {
