@@ -28,6 +28,8 @@ class Shipment < ActiveRecord::Base
           :description => description_for_shipping_charge,
           :adjustment_source => self,
         })
+
+      self.shipping_charge.update_attribute(:description, description_for_shipping_charge) unless self.shipping_charge.description == description_for_shipping_charge
     end
   end
 
