@@ -211,10 +211,8 @@ module Spree
 
       # TODO: Want to do this after_save but there is a possible danger of infinite loop which number_changed? check is intended to prevent. 
       def create_payment_profile      
-        return unless payment_gateway.payment_profiles_supported? and number and number_changed?
-        if number_changed?
-          payment_gateway.create_profile(self, {})
-        end
+        return unless payment_gateway.payment_profiles_supported? and number and number_changed? and !has_payment_profile?
+        payment_gateway.create_profile(self, {})
       rescue ActiveMerchant::ConnectionError => e
         gateway_error I18n.t(:unable_to_connect_to_gateway)
       end
