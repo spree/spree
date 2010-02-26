@@ -82,6 +82,7 @@ module Spree
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::VOID
       )
+      payment.update_attribute(:amount, 0.00)
       payment.finalize!
     end
 
@@ -104,6 +105,8 @@ module Spree
         :response_code => response.authorization,
         :txn_type => CreditcardTxn::TxnType::CREDIT
       )
+      payment.update_attribute(:amount, payment.amount - amount)
+      payment.order.update_totals!
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)      
     end
@@ -126,7 +129,7 @@ module Spree
 
     def can_capture?(payment)
       authorization(payment).present? &&
-      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::VOID)
+      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::VOID)
     end
 
     def can_void?(payment)

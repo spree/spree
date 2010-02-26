@@ -38,7 +38,7 @@ class Admin::PaymentsController < Admin::BaseController
   def fire
     # TODO - possible security check here
     load_object
-    return unless event = params[:e]
+    return unless event = params[:e] and @payment.source
     Payment.transaction do
       @payment.source.send("#{event}", @payment)
     end

@@ -99,5 +99,22 @@ class Admin::PaymentsControllerTest < ActionController::TestCase
       end
     end
 
+    context "on PUT to :fire for capture event" do
+      setup do
+        @payment = Factory(:payment, :source => Factory(:creditcard), :payment_method => Gateway.current)
+        @payment.process!
+        put :fire, {
+          :order_id => @order.id,
+          :id => @payment.id,
+          :e => 'capture'
+        }
+        @payment.reload
+      end
+
+      should "move payment from checkout to order" do
+        assert_equal Order, @payment.payable.class
+      end
+    end
+
   end
 end

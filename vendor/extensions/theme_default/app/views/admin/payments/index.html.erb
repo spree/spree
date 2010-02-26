@@ -11,6 +11,13 @@
 
 <%= render 'admin/shared/order_tabs', :current => "Payments" %>
 
+<% if @order.outstanding_credit? %>
+  <p><%= t('credit_owed') %> <strong><%= number_to_currency @order.outstanding_credit %></strong></p>
+<% end %>
+<% if @order.outstanding_balance? %>
+  <p><%= t('balance_due') %> <strong><%= number_to_currency @order.outstanding_balance %></strong></p>
+<% end %>
+
 <h2><%= t("finalized_payments") %></h2>
 <%= render 'list', :payments => @payments %>
 

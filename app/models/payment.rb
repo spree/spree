@@ -32,7 +32,7 @@ class Payment < ActiveRecord::Base
   end  
   
   def can_finalize?
-    payable.is_a?(Checkout)
+    !finalized?
   end
   
   def finalize!
@@ -41,6 +41,10 @@ class Payment < ActiveRecord::Base
     self.payable = payable.order
     save!
     payable.save!
+  end
+  
+  def finalized?
+    payable.is_a?(Order)
   end
 
   def actions
