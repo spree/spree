@@ -2,6 +2,7 @@ class Spree::BaseController < ActionController::Base
   layout 'spree_application'
   helper :application, :hook
   before_filter :instantiate_controller_and_action_names
+  before_filter :touch_sti_subclasses
   filter_parameter_logging :password, :password_confirmation, :number, :verification_value
   helper_method :current_user_session, :current_user, :title, :title=, :get_taxonomies, :current_gateway
 
@@ -173,6 +174,13 @@ class Spree::BaseController < ActionController::Base
 
   def current_gateway
     @current_gateway ||= Gateway.current
+  end
+
+  # Load all models using STI to fix associations such as @order.credits giving no results and resulting in incorrect order totals
+  def touch_sti_subclasses
+    if RAILS_ENV == 'development'
+      load(File.join(SPREE_ROOT,'config/initializers/touch.rb'))
+    end
   end
 
 end
