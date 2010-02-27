@@ -48,7 +48,7 @@ jQuery(document).ready(function($){
 
 
   // Show fields for the selected payment method
-  $("input[name='checkout[payments_attributes][][payment_method_id]']").click(function(){
+  $("input[type='radio'][name='checkout[payments_attributes][][payment_method_id]']").click(function(){
     $('#payment-methods li').hide();
     if(this.checked){ $('#payment_method_'+this.value).show(); }
   }).triggerHandler('click');
