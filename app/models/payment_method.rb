@@ -1,7 +1,7 @@
 class PaymentMethod < ActiveRecord::Base
   default_scope :conditions => {:deleted_at => nil}
 
-	@provier = nil
+  @provider = nil
   @@providers = Set.new
   def self.register
     @@providers.add(self)
@@ -24,7 +24,11 @@ class PaymentMethod < ActiveRecord::Base
 
   def self.available    
     PaymentMethod.all.select { |p| p.active and (p.environment == ENV['RAILS_ENV'] or p.environment.blank?) }
-	end    
+  end
+  
+  def self.active?
+    self.count(:conditions => {:type => self.to_s, :environment => RAILS_ENV, :active => true}) > 0
+  end
 
   def method_type
     type.demodulize.downcase
