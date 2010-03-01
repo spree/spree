@@ -1,5 +1,6 @@
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-<title><%= "Spree #{t('administration')}: #{controller.controller_name.titleize}" %></title>
+<title><%= "Spree #{t('administration')}: " -%>
+<%= t(controller.controller_name, :default => controller.controller_name.titleize) %></title>
 
 <%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', :cache => 'admin-all' %>
 
