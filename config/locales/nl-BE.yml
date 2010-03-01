@@ -181,7 +181,7 @@ nl-BE:
         other: Taxons
       taxonomy: 
         one: Taxonomie
-        other: TaxonomieКn
+        other: Taxonomieën
       user: 
         one: Gebruiker
         other: Gebruikers
@@ -253,7 +253,7 @@ nl-BE:
   card_number: "Kaartnummer"
   card_type_is: Card type is
   cart: Winkelmandje
-  categories: CategorieКn
+  categories: Categorieën
   category: Categorie
   change: Wijzig
   change_language: "Taalkeuze"
@@ -420,11 +420,11 @@ nl-BE:
   last_name: "Achternaam"
   last_year: "Last Year"
   list: Lijst
-  listing_categories: "Lijst CategorieКn"
+  listing_categories: "Lijst Categorieën"
   listing_option_types: "Lijst Optie Types"
   listing_orders: "Lijst Bestellingen"
   listing_reports: "Lijst Rapporten"
-  listing_tax_categories: "Lijst BTW categorieКn"
+  listing_tax_categories: "Lijst BTW categorieën"
   listing_users: "Lijst Gebruikers"
   live: "Live"
   loading: Loading
@@ -816,8 +816,8 @@ nl-BE:
   subtract: Verreken
   system: Systeem
   tax: BTW
-  tax_categories: "BTW CategorieКn"
-  tax_categories_setting_description: "Instellen BTW categorieКn om aan te duiden welke producten onderhevig zijn aan BTW."
+  tax_categories: "BTW Categorieën"
+  tax_categories_setting_description: "Instellen BTW categorieën om aan te duiden welke producten onderhevig zijn aan BTW."
   tax_category: "BTW Categorie"
   tax_rates: "Tax Rates"
   tax_rates_description: Tax rates setup and configuration.
@@ -827,8 +827,8 @@ nl-BE:
   tax_type: "BTW Type"
   taxon: Taxon
   taxon_edit: Edit Taxon
-  taxonomies: TaxonomieКn
-  taxonomies_setting_description: "Aanmaken en wijzigen taxonomieКn"
+  taxonomies: Taxonomieën
+  taxonomies_setting_description: "Aanmaken en wijzigen taxonomieën"
   taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
