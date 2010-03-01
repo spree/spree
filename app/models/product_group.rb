@@ -124,7 +124,7 @@ class ProductGroup < ActiveRecord::Base
 
   # returns chain of named scopes generated from order scope and product scopes.
   def dynamic_products
-    apply_on(Product)
+    apply_on(Product.scoped(nil))
   end
 
   def products
