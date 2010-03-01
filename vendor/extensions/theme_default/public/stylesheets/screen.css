@@ -314,9 +314,9 @@ body.two-col #content {
   padding-top: 2em;
   clear: both;
 }
-#footer div.left { width: 40%; }
+#footer div.left { width: 37%; }
 #footer div.right {
-  width: 60%;
+  width: 63%;
   text-align: right;
 }
 h1 { font-size: 2.5em; }

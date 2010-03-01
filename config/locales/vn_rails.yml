@@ -1,0 +1,202 @@
+vn:
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      # When no format has been given, it uses default.
+      # You can provide other formats here if you like!
+      default: "%d-%m-%Y"
+      short: "%d %b"
+      long: "%d %B, %Y"
+
+    day_names: ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"]
+    abbr_day_names: ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"]
+
+    # Don't forget the nil at the beginning; there's no such thing as a 0th month
+    month_names: [~, "Tháng một", "Tháng hai", "Tháng ba", "Tháng tư", "Tháng năm", "Tháng sáu", "Tháng bảy", "Tháng tám", "Tháng chín", "Tháng mười", "Tháng mười một", "Tháng mười hai"]
+    abbr_month_names: [~, "Tháng một", "Tháng hai", "Tháng ba", "Tháng tư", "Tháng năm", "Tháng sáu", "Tháng bảy", "Tháng tám", "Tháng chín", "Tháng mười", "Tháng mười một", "Tháng mười hai"]
+    # Used in date_select and datime_select.
+    order: [ :day, :month, :year ]
+
+  time:
+    formats:
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      short: "%d %b %H:%M"
+      long: "%B %d, %Y %H:%M"
+    am: "am"
+    pm: "pm"
+
+# Used in array.to_sentence.
+  support:
+    array:
+      words_connector: ", "
+      two_words_connector: " và "
+      last_word_connector: ", và "
+
+  number:
+    # Used in number_with_delimiter()
+    # These are also the defaults for 'currency', 'percentage', 'precision', and 'human'
+    format:
+      # Sets the separator between the units, for more precision (e.g. 1.0 / 2.0 == 0.5)
+      separator: ","
+      # Delimets thousands (e.g. 1,000,000 is a million) (always in groups of three)
+      delimiter: "."
+      # Number of decimals, behind the separator (the number 1 with a precision of 2 gives: 1.00)
+      precision: 3
+
+    # Used in number_to_currency()
+    currency:
+      format:
+        # Where is the currency sign? %u is the currency unit, %n the number (default: $5.00)
+        format: "%n %u"
+        unit: "₫"
+        # These three are to override number.format and are optional
+        separator: ","
+        delimiter: "."
+        precision: 2
+
+    # Used in number_to_percentage()
+    percentage:
+      format:
+        # These three are to override number.format and are optional
+        # separator:
+        delimiter: ""
+        # precision:
+
+    # Used in number_to_precision()
+    precision:
+      format:
+        # These three are to override number.format and are optional
+        # separator:
+        delimiter: ""
+        # precision:
+
+    # Used in number_to_human_size()
+    human:
+      format:
+        # These three are to override number.format and are optional
+        # separator:
+        delimiter: ""
+        precision: 1
+      storage_units:
+        # Storage units output formatting.
+        # %u is the storage unit, %n is the number (default: 2 MB)
+        format: "%n %u"
+        units:
+          byte:
+            one:   "Byte"
+            other: "Bytes"
+          kb: "KB"
+          mb: "MB"
+          gb: "GB"
+          tb: "TB"
+
+  # Used in distance_of_time_in_words(), distance_of_time_in_words_to_now(), time_ago_in_words()
+  datetime:
+    distance_in_words:
+      half_a_minute: "30 giây"
+      less_than_x_seconds:
+        one:   "chưa tới 1 giây"
+        other: "chưa tới {{count}} giây"
+      x_seconds:
+        one:   "1 giây"
+        other: "{{count}} giây"
+      less_than_x_minutes:
+        one:   "chưa tới 1 phút"
+        other: "chưa tới {{count}} phút"
+      x_minutes:
+        one:   "1 phút"
+        other: "{{count}} phút"
+      about_x_hours:
+        one:   "khoảng 1 giờ"
+        other: "khoảng {{count}} giờ"
+      x_days:
+        one:   "1 ngày"
+        other: "{{count}} ngày"
+      about_x_months:
+        one:   "khoảng 1 tháng"
+        other: "khoảng {{count}} tháng"
+      x_months:
+        one:   "1 tháng"
+        other: "{{count}} tháng"
+      about_x_years:
+        one:   "khoảng 1 năm"
+        other: "khoảng {{count}} năm"
+      over_x_years:
+        one:   "hơn 1 năm"
+        other: "hơn {{count}} năm"
+    prompts:
+      year:   "Năm"
+      month:  "Tháng"
+      day:    "Ngày"
+      hour:   "Giờ"
+      minute: "Phút"
+      second: "Giây"
+
+  support:
+    select:
+      # default value for :prompt => true in FormOptionsHelper
+      prompt: "Xin chọn"
+
+  activerecord:
+    errors:
+      template:
+        header:
+          one:    "1 lỗi ngăn không cho lưu {{model}} này"
+          other:  "{{count}} lỗi ngăn không cho lưu {{model}} này"
+        # The variable :count is also available
+        body: "Có lỗi với các mục sau:"
+
+      # The values :model, :attribute and :value are always available for interpolation
+      # The value :count is available when applicable. Can be used for pluralization.
+      messages:
+        inclusion: "không có trong danh sách"
+        exclusion: "đã được giành trước"
+        invalid: "không hợp lệ"
+        confirmation: "không khớp với xác nhận"
+        accepted: "phải được đồng ý"
+        empty: "không thể rỗng"
+        blank: "không thể để trắng"
+        too_long: "quá dài (tối đa {{count}} ký tự)"
+        too_short: "quá ngắn (tối thiểu {{count}} ký tự)"
+        wrong_length: "độ dài không đúng (phải là {{count}} ký tự)"
+        taken: "đã có"
+        not_a_number: "không phải là số"
+        greater_than: "phải lớn hơn {{count}}"
+        greater_than_or_equal_to: "phải lớn hơn hoặc bằng {{count}}"
+        equal_to: "phải bằng {{count}}"
+        less_than: "phải nhỏ hơn {{count}}"
+        less_than_or_equal_to: "phải nhỏ hơn hoặc bằng {{count}}"
+        odd: "phải là số lẻ"
+        even: "phải là số chẵn"
+        record_invalid: "Lỗi chứng nhận: {{errors}}"
+        # Append your own errors here or at the model/attributes scope.
+
+      full_messages:
+        format: "{{attribute}} {{message}}"
+
+      # You can define own errors for models or model attributes.
+      # The values :model, :attribute and :value are always available for interpolation.
+      #
+      # For example,
+      #   models:
+      #     user:
+      #       blank: "This is a custom blank message for {{model}}: {{attribute}}"
+      #       attributes:
+      #         login:
+      #           blank: "This is a custom blank message for User login"
+      # Will define custom blank validation message for User model and
+      # custom blank validation message for login attribute of User model.
+      #models:
+
+    # Translate model names. Used in Model.human_name().
+    #models:
+      # For example,
+      #   user: "Dude"
+      # will translate User model name to "Dude"
+
+    # Translate model attribute names. Used in Model.human_attribute_name(attribute).
+    #attributes:
+      # For example,
+      #   user:
+      #     login: "Handle"
+      # will translate User attribute "login" as "Handle"
