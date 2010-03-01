@@ -128,8 +128,11 @@ class ProductGroup < ActiveRecord::Base
   end
 
   def products
-    if cached_products.size > 0 
-      cached_products
+    if cached_products.size > 0
+      order_scopes = self.product_scopes.map{|scope| scope.name.to_sym} & Scopes::Product::ORDERING
+      res = cached_products
+      order_scopes.each{|scope| res = res.__send__(scope)}
+      res
     else
       dynamic_products
     end

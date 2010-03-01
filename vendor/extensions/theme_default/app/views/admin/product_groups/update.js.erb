@@ -1,1 +1,7 @@
 jQuery('#preview_container').html('<%= escape_javascript( render('admin/product_groups/preview') ) %>');
+flash_notice = jQuery('.flash.notice');
+if (flash_notice) {
+  flash_notice.html('<%= flash[:notice] %>');
+} else {
+  jQuery('#content').prepend('<div class="flash notice"><%= flash[:notice] %></div>');
+}
