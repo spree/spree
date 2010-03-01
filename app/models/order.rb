@@ -293,10 +293,11 @@ class Order < ActiveRecord::Base
   def update_totals!
     update_totals
 
-    if self.payments.total < self.total
+    payments_total = self.payments.total
+    if payments_total < self.total
       #Total is higher so balance_due
       self.under_paid
-    elsif self.payments.total > self.total
+    elsif payments_total > self.total
       #Total is lower so credit_owed
       self.over_paid
     end

@@ -8,18 +8,17 @@ Gateway.class_eval do
   end
 end
 
-orders = Order.find(:all, :include => [{:line_items => [:variant]}, :adjustments, {:shipments => [{:address => [:state, :country]}, :inventory_units]}, :checkout])
+creditcard = Creditcard.create(:cc_type => "visa", :month => 12, :year => 2014, :last_digits => "1111",
+                               :first_name => "Sean", :last_name => "Schofield",
+                               :gateway_customer_profile_id => "BGS-1234")
 
-orders.each do |order|
+Order.all.each_with_index do |order,index|
+  printf "\rProcessing order #{index}"
+  STDOUT.flush 
   order.update_totals!
-  creditcard = Creditcard.create(:cc_type => "visa",
-                                 :month => 12,
-                                 :year => 2014,
-                                 :last_digits => "1111",
-                                 :first_name => "Sean",
-                                 :last_name => "Schofield",
-                                 :gateway_customer_profile_id => "BGS-1234")
-  payment = order.checkout.payments.create(:amount => order.outstanding_balance, :source => creditcard, :payment_method => method)
+  payment = order.checkout.payments.create(:amount => order.outstanding_balance, 
+                                           :source => creditcard.clone, 
+                                           :payment_method => method)
   payment.process!
   order.update_attribute("state", "new")
 end
