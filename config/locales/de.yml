@@ -490,6 +490,7 @@ de:
   next: weiter
   no_items_in_cart: "Keine Artikel im Warenkorb"
   no_match_found: "Kein Treffer"
+  no_payment_methods_available: "Can't check out, no payment methods are configured for this environment"
   no_products_found: "Keine Produkte gefunden"
   no_shipping_methods_available: "No shipping methods available, please change your address and try again."
   no_user_found: "Es wurde kein Kunde mit dieser E-Mail-Adresse gefunden"

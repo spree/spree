@@ -490,6 +490,7 @@ ru-RU:
   next: "след."
   no_items_in_cart: "нет товаров к корзине"
   no_match_found: "Совпадений не найдено"
+  no_payment_methods_available: "Can't check out, no payment methods are configured for this environment"
   no_products_found: "Не найдено ни одного товара"
   no_shipping_methods_available: "Нет доступных методов доставки, пожалуйста, смените ваш адрес доставки и попробуйте ещё раз."
   no_user_found: "Пользователь с таким адресом email у нас не числится."

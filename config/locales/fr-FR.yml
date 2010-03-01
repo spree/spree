@@ -490,6 +490,7 @@ fr-FR:
   next: Suivant
   no_items_in_cart: "Pas d'article dans le panier"
   no_match_found: "Aucune correspondance trouvée"
+  no_payment_methods_available: "Can't check out, no payment methods are configured for this environment"
   no_products_found: "Aucun article trouvé"
   no_shipping_methods_available: "Aucune methode de livraison disponible, changer votre adresse et réessayer s'il vous plaît."
   no_user_found: "Aucun utilisateur n'a été trouvé avec cette adresse email"

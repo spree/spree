@@ -490,6 +490,7 @@ cs-CZ:
   next: "Další"
   no_items_in_cart: "V košíku není žádné zboží"
   no_match_found: "Nebyla nalezena žádná shoda"
+  no_payment_methods_available: "Can't check out, no payment methods are configured for this environment"
   no_products_found: "Nebyly nalezeny žádné výrobky"
   no_shipping_methods_available: "Nebyly nalezeny žádné možnosti dopravy, změňte prosím adresu a zkuste to znova."
   no_user_found: "Nebyl nalezen žádný uživatel s touto emailovou adresou"
