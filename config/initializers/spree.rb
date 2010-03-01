@@ -43,6 +43,9 @@ class ActiveRecord::Base
     raise "non-strings in conditions_any" unless args.all? {|s| s.is_a? String}
     { :conditions => args.map {|c| "(#{c})"}.join(" OR ") }
   }
+
+  # truncate a list of results
+  named_scope :limit, lambda {|n| {:limit => n}}
 end
 
 
