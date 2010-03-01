@@ -1,84 +1,111 @@
 == Founder
 
-Sean Schofield is the founder of the Spree project. It was originally started in July 2007 as 
+Sean Schofield is the creator of the Spree project. It was originally started in July 2007 as 
 a Google Code project with the name Rails Cart. The name of the project was changed to Spree 
 in March 2008 in order to avoid any confusion about it being endorsed by the Ruby on Rails team.
 
-== Contributors (Alphabetical)
+== Core
+
+Spree is maintained by the following core team members (in the order in which they joined):
+
+Sean Schofield
+Paul Callaghan
+Brian Quinn
+Jorge Calas
+David North
+Roman Smirnov
+
+== Contributors 
 
 The following people have submitted changes which have been applied to the
-core:
+core (in alphabetical order by first name):
 
-Bernd Ahlers
-Fabio Akita
-Peter Berkenbosch
-Eric Budd
-Ramon Cahenzli
-Jorge Calás
-Paul Callaghan
-Sonny Cook
-Joren De Groof
-Yves Dufour
-Caius Durling
-Will Emerson
-Maxim Filatov
-Bo Frederiksen
-Chris Gaskett
-Gustavo Gonzalez
-Dale Hofkens
-Tor Hovland
-Jon Jensen
-Petri Kivikangas
-Robert Kuhr
-Michael Lang
-Bryan Mahoney
-Ben Marini
-Christopher Maujean
-Tomasz Mazur
-Ryan McGeary
-Hirotaka Mizutani
-Nate Murray
-Wynn Netherland
-David North
-Joshua Nussbaum
-Tony Pelaez
-Claudio Perez Gamayo
-Michael Pirogov
-Gregg Pollack
-Stephanie Powell
-Brian Quinn
-Marcin Raczkowski
-Melvin Ram
-Simon Robson
-Ethan Rowe
-Paul Saieg
-Bobby Santiago
-Sean Schofield
-Jeff Seibert
-Jason Seifer
-Dmitry Shaposhnik
-Ricardo Shiota Yasuda
-Roman Smirnov
-Manuel Stuefer
-Eliot Sykes
-Michael Torfs
-Jonathan Tron
-Edmundo Valle Neto
-Adam Vollrath
-spariev 
-pierre 
-ran 
-mjwall 
-paul 
-max 
-ran 
+Adam Vollrath 
 barbecues 
-ron 
-mwestover 
-yitzhakbg 
+Ben Marini 
+Bernd Ahlers 
+Bo Frederiksen 
+Bobby Santiago 
+Bradley Grzesiak and Nick Karpenske 
 brandon 
+Brian Quinn 
+Bryan Mahoney 
+Caius Durling 
+Chris Gaskett 
+Chris Jones 
+Christopher Maujean 
+Claudio Perez Gamayo 
+Dale Hofkens 
+David Li 
+David North 
+Davor Ocelic 
+Dmitry Shaposhnik 
+dru 
+Edmundo Valle Neto 
+Eliot Sykes 
+Eric Budd 
+Ethan Rowe 
+Fabio Akita 
+Gregg Pollack 
+Gustavo Gonzalez 
+Hirotaka Mizutani 
+Jason Seifer 
+Jeff Seibert 
+Jon Jensen 
+Jonathan Tron 
+Jones Lee 
+Joren De Groof 
+Jorge Calas Lozano 
+Joshua Nussbaum 
+Manuel Stuefer 
+Marcin Raczkowski 
+max@endpoint.com 
+Maxim Filatov 
+Melvin Ram 
+Michael Guterl 
+Michael Lang 
+Michael Pirogov 
+Michael Torfs 
+mjwall 
+mwestover 
+Nate Murray 
+paul 
+Paul Saieg 
+paulcc 
+Peter Berkenbosch 
+Petri Kivikangas 
+pierre 
+Ramon Cahenzli 
+ran 
+Remy Giard 
+Ricardo Shiota Yasuda 
+Richard Piacentini 
+Robert Kuhr 
+Roman Smirnov 
+ron 
+Rune Botten 
+Ryan McGeary 
+Scott Jacobsen 
+Sean Schofield 
+Simon Robson 
+Sonny Cook 
+spariev 
+Stephanie Powell 
+Stephen Anderson and Nick Karpenske 
+Steve Hoeksema 
+Tee Parham 
+Tim Case 
 tom 
-dru
+Tomasz Mazur 
+Tony Pelaez 
+Tor Hovland 
+Torsten R√ºger 
+Trung LE 
+unknown 
+Will Emerson 
+Wynn Netherland 
+yitzhakbg 
+Yves Dufour
 
 == Legacy Contributors
 
