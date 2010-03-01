@@ -361,6 +361,7 @@ fi:
   extensions: Laajennukset
   filename: Tiedostonimi
   final_confirmation: "Lopullinen vahvistus"
+  finalize: Finalize
   finalized_payments: Finalized Payments
   first_item: "Ensimmäisen tuotteen kulut"
   first_name: Etunimi
@@ -729,6 +730,8 @@ fi:
   sales_totals_description: "Myynnit yhteensä kaikilta tilauksilta"
   save_and_continue: "Tallenna ja jatka"
   save_preferences: "Tallenna asetukset"
+  scope: Scope
+  scopes: Scopes
   search: Etsi
   search_results: "Etsi tuloksia avainsanoilla: '{{keywords}}'"
   secure_connection_type: "Turvallinen yhteystyyppi"
@@ -773,6 +776,7 @@ fi:
   show_only_complete_orders: "Näytä vain valmiit tilaukset"
   show_out_of_stock_products: "Näytä loppuneet tuotteet"
   show_price_inc_vat: "Näytä hinta sisältäen ALV:n"
+  showing_first_n: "Showing first {{n}}"
   sign_up: Kirjaudu
   site_name: "Sivun nimi"
   site_url: "Sivun URL"

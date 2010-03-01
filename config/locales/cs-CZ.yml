@@ -361,6 +361,7 @@ cs-CZ:
   extensions: "Rozměry"
   filename: "Název souboru"
   final_confirmation: "Závěrečné potvrzení"
+  finalize: Finalize
   finalized_payments: Finalized Payments
   first_item: "Cena první položky"
   first_name: "Křestní jméno"
@@ -729,6 +730,8 @@ cs-CZ:
   sales_totals_description: "Prodej celkem pro všechny objednávky"
   save_and_continue: "Uložit a pokračovat"
   save_preferences: "Uložit nastavení"
+  scope: Scope
+  scopes: Scopes
   search: Hledat
   search_results: "Výsledky vyhledávání pro '{{keywords}}'"
   secure_connection_type: "Typ bezpečného připojení"
@@ -773,6 +776,7 @@ cs-CZ:
   show_only_complete_orders: "Zobrazit pouze dokončené objednávky"
   show_out_of_stock_products: "Zobrazit zboží, které není skladem"
   show_price_inc_vat: "Zobrazit ceny včetně DPH"
+  showing_first_n: "Showing first {{n}}"
   sign_up: "Přihlásit se"
   site_name: "Název stránky"
   site_url: "Adresa stránky (URL)"

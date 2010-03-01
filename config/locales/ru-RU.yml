@@ -361,6 +361,7 @@ ru-RU:
   extensions: "Расширения"
   filename: "Имя файла"
   final_confirmation: "Окончательное подтверждение"
+  finalize: Finalize
   finalized_payments: "Завершённые платежи"
   first_item: "Начальная ставка"
   first_name: "Имя"
@@ -729,6 +730,8 @@ ru-RU:
   sales_totals_description: "итоги продаж для всех заказов."
   save_and_continue: "Сохранить и продолжить"
   save_preferences: "Сохранить настройки"
+  scope: Scope
+  scopes: Scopes
   search: "Поиск"
   search_results: "Результаты поиска по запросу '{{keywords}}'"
   secure_connection_type: "Тип защищенного соединения"
@@ -773,6 +776,7 @@ ru-RU:
   show_only_complete_orders: "Показывать только обработанные заказы"
   show_out_of_stock_products: "Показать товары, которых нет в наличии"
   show_price_inc_vat: "Показывать цену с налогом"
+  showing_first_n: "Showing first {{n}}"
   sign_up: "Регистрация"
   site_name: "Название магазина"
   site_url: "Адрес магазина URL"

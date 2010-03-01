@@ -1,5 +1,5 @@
 --- 
-de:
+de: 
   'no': "Nein"
   'yes': "Ja"
   5_biggest_spenders: "5 Biggest Spenders"
@@ -232,18 +232,15 @@ de:
   available_taxons: "Available Taxons"
   awaiting_return: Awaiting Return
   back: Zurück
+  back_to_store: "Zurück zum Shop"
   backordered: Backordered
   backordering_is_allowed: "Lieferrückstand ist {{not}} erlaubt"
-  back_to_store: "Zurück zum Shop"
   balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
   bill_address: Rechnungsadresse
   billing: Billing
   billing_address: Rechnungsadresse
-  billing_integration: Bezahlmodul
-  billing_integrations: Bezahlmodule
-  billing_integrations_description: "Konfiguration externer Bezahlmodule für PayPal, Google Checkout etc."
   by_day: "by day"
   calculator: Rechner
   calculator_settings_warning: "Wenn Sie den Rechner-Typ ändern, müssen Sie erst speichern, bevor Sie die Rechner-Einstellungen bearbeiten können"
@@ -364,6 +361,7 @@ de:
   extensions: Erweiterungen
   filename: Dateiname
   final_confirmation: "Abschließende Bestätigung"
+  finalize: Finalize
   finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: Vorname
@@ -375,7 +373,6 @@ de:
   forgot_password: "Passwort vergessen?"
   full_name: "Vollständiger Name"
   gateway: "Gateway"
-  gateways: "Gateways"
   gateway_configuration: "Gateway-Konfiguration"
   gateway_error: "Gateway-Fehler"
   gateway_setting_description: "Gateway-Einstellungen ändern"
@@ -413,9 +410,9 @@ de:
   is_not_available_to_shipment_address: is not available to shipment address
   issue_number: "Fall-Nummer"
   item: Artikel
-  items: "Items"
   item_description: Artikelbeschreibung
   item_total: "Artikel gesamt"
+  items: "Items"
   last_14_days: "Last 14 Days"
   last_5_orders: "Last 5 Orders"
   last_7_days: "Last 7 Days" 
@@ -465,9 +462,7 @@ de:
   new_billing_integration: "Neues Bezahlmodul"
   new_category: "Neue Kategorie"
   new_coupon: "Neuer Gutschein"
-  new_credit_card_payment: "Neue Kreditkartenzahlung"
   new_customer: "Neuer Kunde"
-  new_gateway: "Neues Gateway"
   new_image: "Neues Bild"
   new_option_type: "Neue Option"
   new_option_value: "Neuer Optionswert"
@@ -693,8 +688,8 @@ de:
   prototypes: "Prototypen"
   provider: "Provider"
   provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
-  quantity_shipped: Quantity Shipped
   qty: Anzahl
+  quantity_shipped: Quantity Shipped
   range: "Range"
   rate: Rate
   reason: Reason
@@ -735,6 +730,8 @@ de:
   sales_totals_description: ""
   save_and_continue: Save and Continue
   save_preferences: Save Preferences           
+  scope: Scope
+  scopes: Scopes
   search: Suchen
   search_results: "Search results for '{{keywords}}'"
   secure_connection_type: "Sicherer Verbindungstyp"
@@ -750,12 +747,12 @@ de:
   server_error: "Der Server hat einen Fehler gemeldet"
   settings: Einstellungen
   ship: verschicken
-  shipment: "Sendung"
-  shipments: "Shipments"
   ship_address: Lieferadresse
+  shipment: "Sendung"
   shipment_details: Shipment Details
   shipment_number: "Sendungsnummer"
   shipment_updated: Shipment Updated
+  shipments: "Shipments"
   shipped: Ausgeliefert
   shipping: Lieferung
   shipping_address: Lieferadresse
@@ -779,6 +776,7 @@ de:
   show_only_complete_orders: "Nur komplette Bestellungen anzeigen"
   show_out_of_stock_products: "Ausverkaufte Produkte anzeigen"
   show_price_inc_vat: "Zeige Preis inkl. Zoll"
+  showing_first_n: "Showing first {{n}}"
   sign_up: "Anmelden"
   site_name: "Seitenname"
   site_url: "Seiten-URL"
@@ -828,6 +826,7 @@ de:
   tax_total: "MwSt. Gesamt"
   tax_type: "Steuerart"
   taxon: Taxon
+  taxon_edit: Edit Taxon
   taxonomies: Klassifikationen
   taxonomies_setting_description: Erzeugen und Verwalten von Klassifikationen"
   taxonomy_edit: "Klassifikation bearbeiten"
@@ -837,12 +836,12 @@ de:
   test: "Test"
   test_mode: "Test-Modus"
   thank_you_for_your_order: "Vielen Dank für ihre Bestellung"
+  this_file_language: "Deutsch (DE)"
   this_month: "This Month"
   this_year: "This Year"
-  this_file_language: "Deutsch (DE)"
   thumbnail: "Miniaturansicht"
-  top_grossing_products: "Top Grossing Products"
   to_add_variants_you_must_first_define: "Um Varianten hinzuzufügen, müssen Sie sie erst definieren."
+  top_grossing_products: "Top Grossing Products"
   total: Gesamt
   tracking: Tracking
   transaction: Transaktion

@@ -361,6 +361,7 @@ pt-BR:
   extensions: Extensões
   filename: "Nome do arquivo"
   final_confirmation: "Confirmação Final"
+  finalize: Finalize
   finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: "Primeiro Nome"
@@ -729,6 +730,8 @@ pt-BR:
   sales_totals_description: "Total de Vendas para todos os Pedidos"
   save_and_continue: Save and Continue
   save_preferences: Gravar Preferências           
+  scope: Scope
+  scopes: Scopes
   search: Pesquisa
   search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Tipo de Conexão Segura
@@ -773,6 +776,7 @@ pt-BR:
   show_only_complete_orders: "Apenas mostre pedidos completos"
   show_out_of_stock_products: "Mostre produtos sem estoque"
   show_price_inc_vat: "Mostrar preço incluindo VAT"
+  showing_first_n: "Showing first {{n}}"
   sign_up: Cadastrar
   site_name: "Nome do Site"
   site_url: "URL do Site"

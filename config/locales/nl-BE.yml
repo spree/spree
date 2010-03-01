@@ -1,4 +1,4 @@
---- 
+---
 nl-BE: 
   'no': "No"
   'yes': "Yes"
@@ -181,7 +181,7 @@ nl-BE:
         other: Taxons
       taxonomy: 
         one: Taxonomie
-        other: Taxonomieën
+        other: TaxonomieÐšn
       user: 
         one: Gebruiker
         other: Gebruikers
@@ -253,7 +253,7 @@ nl-BE:
   card_number: "Kaartnummer"
   card_type_is: Card type is
   cart: Winkelmandje
-  categories: Categorieën
+  categories: CategorieÐšn
   category: Categorie
   change: Wijzig
   change_language: "Taalkeuze"
@@ -361,6 +361,7 @@ nl-BE:
   extensions: Extensies
   filename: Bestandsnaam
   final_confirmation: "Definitieve bevestiging"
+  finalize: Finalize
   finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: "Voornaam"
@@ -419,11 +420,11 @@ nl-BE:
   last_name: "Achternaam"
   last_year: "Last Year"
   list: Lijst
-  listing_categories: "Lijst Categorieën"
+  listing_categories: "Lijst CategorieÐšn"
   listing_option_types: "Lijst Optie Types"
   listing_orders: "Lijst Bestellingen"
   listing_reports: "Lijst Rapporten"
-  listing_tax_categories: "Lijst BTW categorieën"
+  listing_tax_categories: "Lijst BTW categorieÐšn"
   listing_users: "Lijst Gebruikers"
   live: "Live"
   loading: Loading
@@ -729,6 +730,8 @@ nl-BE:
   sales_totals_description: "Omzet voor alle bestellingen"
   save_and_continue: Save and Continue
   save_preferences: "Instellingen Opslaan"           
+  scope: Scope
+  scopes: Scopes
   search: Zoek
   search_results: "Search results for '{{keywords}}'"
   secure_connection_type: "Secure Connection Type"
@@ -773,6 +776,7 @@ nl-BE:
   show_only_complete_orders: "Toon enkel afgewerkte bestellingen"
   show_out_of_stock_products: "Toon producten die niet voorradig zijn"
   show_price_inc_vat: "Show price including VAT"
+  showing_first_n: "Showing first {{n}}"
   sign_up: "Registreer"
   site_name: "Site Name"
   site_url: "Site URL"
@@ -812,8 +816,8 @@ nl-BE:
   subtract: Verreken
   system: Systeem
   tax: BTW
-  tax_categories: "BTW Categorieën"
-  tax_categories_setting_description: "Instellen BTW categorieën om aan te duiden welke producten onderhevig zijn aan BTW."
+  tax_categories: "BTW CategorieÐšn"
+  tax_categories_setting_description: "Instellen BTW categorieÐšn om aan te duiden welke producten onderhevig zijn aan BTW."
   tax_category: "BTW Categorie"
   tax_rates: "Tax Rates"
   tax_rates_description: Tax rates setup and configuration.
@@ -823,8 +827,8 @@ nl-BE:
   tax_type: "BTW Type"
   taxon: Taxon
   taxon_edit: Edit Taxon
-  taxonomies: Taxonomieën
-  taxonomies_setting_description: "Aanmaken en wijzigen taxonomieën"
+  taxonomies: TaxonomieÐšn
+  taxonomies_setting_description: "Aanmaken en wijzigen taxonomieÐšn"
   taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."

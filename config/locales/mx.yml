@@ -361,6 +361,7 @@ mx:
   extensions: Extensiones
   filename: "Nombre de archivo"
   final_confirmation: "Confirmación Final"
+  finalize: Finalize
   finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: Nombre
@@ -729,6 +730,8 @@ mx:
   sales_totals_description: "Total de ventas para todos los pedidos"
   save_and_continue: Save and Continue
   save_preferences: Guardar preferencias
+  scope: Scope
+  scopes: Scopes
   search: Buscar
   search_results: "Search results for '{{keywords}}'"
   secure_connection_type: "Conexión segura"
@@ -773,6 +776,7 @@ mx:
   show_only_complete_orders: "Mostrar solo los pedidos completados"
   show_out_of_stock_products: "Mostrar productos sin existencía"
   show_price_inc_vat: "Ver precios incluyendo el VAT"
+  showing_first_n: "Showing first {{n}}"
   sign_up: Registrarme
   site_name: "Nombre del sitio"
   site_url: "URL del sitio"

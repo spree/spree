@@ -361,6 +361,7 @@ da:
   extensions: Extensions
   filename: Filename
   final_confirmation: "Final Confirmation"
+  finalize: Finalize
   finalized_payments: Finalized Payments
   first_item: First Item Cost
   first_name: "First Name"
@@ -729,6 +730,8 @@ da:
   sales_totals_description: "Sales Total For All Orders"
   save_and_continue: Save and Continue
   save_preferences: Save Preferences           
+  scope: Scope
+  scopes: Scopes
   search: Search
   search_results: "Search results for '{{keywords}}'"
   secure_connection_type: Secure Connection Type
@@ -773,6 +776,7 @@ da:
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
   show_price_inc_vat: "Show price including VAT"
+  showing_first_n: "Showing first {{n}}"
   sign_up: "Sign up"
   site_name: "Site Name"
   site_url: "Site URL"

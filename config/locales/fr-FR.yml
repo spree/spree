@@ -241,9 +241,6 @@ fr-FR:
   bill_address: "Adresse facturée"
   billing: Facturation
   billing_address: "Adresse de facturation"
-  billing_integration: Intégration de Facturation
-  billing_integrations: Intégrations de Facturation
-  billing_integrations_description: "Configurer vos paramètres pour l'intégration avec des systèmes de facturation tels Paypal, Google Checkout, etc."
   by_day: "par jour"
   calculator: Calculateur
   calculator_settings_warning: "Si vous changez le type de calculateur, vous devez tout d'abord enregistrer avant de pouvoir modifier les paramètres du calculateur."
@@ -268,8 +265,8 @@ fr-FR:
   checkout_steps:
     # keys correspond to Checkout state names:
     address: Adresse
-    confirm: Confirmation
     complete: Complète
+    confirm: Confirmation
     delivery: Livraison
     payment: Paiement    
   cheque: Chèque
@@ -364,6 +361,7 @@ fr-FR:
   extensions: Prolongations
   filename: Nom du fichier
   final_confirmation: "Confirmation finale"
+  finalize: Finalize
   finalized_payments: Finalized Payments
   first_item: "Coût du premier item"
   first_name: "Prénom"
@@ -732,6 +730,8 @@ fr-FR:
   sales_totals_description: "Total des ventes pour toutes les commandes"
   save_and_continue: Sauver et continuer
   save_preferences: Sauvegarder les préférences
+  scope: Scope
+  scopes: Scopes
   search: Rechercher
   search_results: "Résultats de la recherche pour '{{keywords}}'"
   secure_connection_type: Connection de type sécurisée
@@ -776,6 +776,7 @@ fr-FR:
   show_only_complete_orders: "Afficher seulement les commandes complètes"
   show_out_of_stock_products: "Afficher les produits en rupture de stock"
   show_price_inc_vat: "Affiché le prix incluant la TVA"
+  showing_first_n: "Showing first {{n}}"
   sign_up: "S'inscrire"
   site_name: "Nom du site"
   site_url: "URL du site"
