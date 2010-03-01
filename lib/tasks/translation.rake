@@ -25,6 +25,35 @@ namespace :spree do
       write_file("#{language_root}/#{ENV['LOCALE']}.yml", "#{ENV['LOCALE']}", '---', get_translation_keys(language_root))
       print "Also, download the rails translation from: http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale\n"
     end
+    
+    desc "Show translation status for all supported languages, except dialects of English."
+    task :stats => :environment do
+      words = get_translation_keys(language_root)
+      results = ActiveSupport::OrderedHash.new
+      locale = ENV['LOCALE'] || ''
+      Dir["#{language_root}*.yml"].each do |filename|
+        next if filename.match('_rails')
+        basename = File.basename(filename, '.yml')
+        next if basename.starts_with?('en')
+        (comments, other) = read_file(filename, basename)
+        words.each { |k,v| other[k] ||= words[k] } #Initializing hash variable as empty if it does not exist
+        other.delete_if { |k,v| !words[k] } #Remove if not defined in en-US.yml
+        
+        untranslated_values = (other.values & words.values).delete_if {|v| !v.match(/\w+/)}
+        translation_status = 100*(1 - untranslated_values.size / words.values.size.to_f)
+        results[basename] = translation_status
+        if locale == basename
+          puts "Following phrases need to be translated into #{locale}:"
+          untranslated_values.each { |v| puts v }
+          puts
+        end
+      end      
+      puts "Translation status:"
+      results.sort.each do |basename, translation_status|
+        puts basename + "\t-    #{translation_status.round(1)}%"
+      end
+      puts
+    end
   end
 end
 

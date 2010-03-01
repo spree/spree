@@ -17,7 +17,7 @@ ru-RU:
     listing: "Список"
     new: "Новый"
     update: "Изменить"
-  active: "Active"
+  active: "Активен"
   activerecord:
     attributes:
       address:
@@ -361,7 +361,7 @@ ru-RU:
   extensions: "Расширения"
   filename: "Имя файла"
   final_confirmation: "Окончательное подтверждение"
-  finalize: Finalize
+  finalize: "Завершить"
   finalized_payments: "Завершённые платежи"
   first_item: "Начальная ставка"
   first_name: "Имя"
@@ -490,7 +490,7 @@ ru-RU:
   next: "след."
   no_items_in_cart: "нет товаров к корзине"
   no_match_found: "Совпадений не найдено"
-  no_payment_methods_available: "Can't check out, no payment methods are configured for this environment"
+  no_payment_methods_available: "Невозможно оформить заказ, так как отстуствуют способы оплаты."
   no_products_found: "Не найдено ни одного товара"
   no_shipping_methods_available: "Нет доступных методов доставки, пожалуйста, смените ваш адрес доставки и попробуйте ещё раз."
   no_user_found: "Пользователь с таким адресом email у нас не числится."
@@ -731,8 +731,8 @@ ru-RU:
   sales_totals_description: "итоги продаж для всех заказов."
   save_and_continue: "Сохранить и продолжить"
   save_preferences: "Сохранить настройки"
-  scope: Scope
-  scopes: Scopes
+  scope: "Фильтр"
+  scopes: "Фильтры"
   search: "Поиск"
   search_results: "Результаты поиска по запросу '{{keywords}}'"
   secure_connection_type: "Тип защищенного соединения"
@@ -777,7 +777,7 @@ ru-RU:
   show_only_complete_orders: "Показывать только обработанные заказы"
   show_out_of_stock_products: "Показать товары, которых нет в наличии"
   show_price_inc_vat: "Показывать цену с налогом"
-  showing_first_n: "Showing first {{n}}"
+  showing_first_n: "Показаны первые {{n}}"
   sign_up: "Регистрация"
   site_name: "Название магазина"
   site_url: "Адрес магазина URL"
