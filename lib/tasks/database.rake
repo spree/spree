@@ -38,7 +38,6 @@ namespace :db do
 
   desc "Loading file for spree and each extension where you specify dir by rake db:load_file[filename.rb]"
   task :load_file , [:file] => :environment do |t , args|
-    ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym) unless ActiveRecord::Base.connected?
     file = args.file
     ext = File.extname file
     if ext == ".csv" or ext == ".yml"

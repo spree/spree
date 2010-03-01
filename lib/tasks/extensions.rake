@@ -26,7 +26,6 @@ namespace :db do
 
   desc "Loading db/loadfrom for spree and each extension where you specify dir by rake db:load_dir[loadfrom]"
   task :load_dir , [:dir] => :environment do |t , args|
-    ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
     dir = args.dir
     fixtures = {}  
     ruby_files = {}
