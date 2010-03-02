@@ -1,13 +1,13 @@
-<% 1.upto(1000) do |i| %>
+<% 1.upto(100) do |i| %>
 tax_<%= i %>:
   order: order_<%= i %>
-  amount: 2.78
+  amount: 0
   type: TaxCharge
   adjustment_source: order_<%= i %>
   adjustment_source_type: Order
   description: Tax
 <% end %>
-<% 1.upto(1000) do |i| %>
+<% 1.upto(100) do |i| %>
 ship_<%= i %>:
   order: order_<%= i %>
   amount: 5
