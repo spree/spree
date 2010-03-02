@@ -23,21 +23,19 @@ class Admin::ProductGroupsControllerTest < ActionController::TestCase
       should_respond_with :success
     end
 
+    # TODO: test the addition of non-ordering scopes
     context "on POST to :create" do
       setup do
         post :create, {
-            "product_group"=>{"name"=>"TestableProductGroup"},
-            "order_scope"=>"by_popularity",
-            "product_scope"=>{
-                "price_between"=>{"arguments"=>["10", "20"], "active" => true},
-                "in_name"=>{"arguments"=>["Ruby"], "active" => true},
+            "product_group"=>{ "name"=>"TestableProductGroup", 
+                               "order_scope"=>"by_popularity" 
             }
         }
       end
 
       should_respond_with :redirect
       should_change("ProductGroup.count", :by => 1) { ProductGroup.count }
-      should_change("ProductScope.count", :by => 3) { ProductScope.count }
+      should_change("ProductScope.count", :by => 1) { ProductScope.count }
     end
   end
 end

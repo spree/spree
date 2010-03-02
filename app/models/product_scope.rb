@@ -35,12 +35,12 @@ class ProductScope < ActiveRecord::Base
     end
   end
   
-  # checks validity of the named scope (if it's safe and can be applied on Product)
+  # checks validity of the named scope (if its safe and can be applied on Product)
   def validate
-    errors.add(:name, "is not propper scope name") unless Product.condition?(self.name)
+    errors.add(:name, "is not a valid scope name") unless Product.condition?(self.name)
     apply_on(Product).inspect
   rescue Exception
-    errors.add(:arguments, "arguments are incorrect")
+    errors.add(:arguments, "are incorrect")
   end
 
 
