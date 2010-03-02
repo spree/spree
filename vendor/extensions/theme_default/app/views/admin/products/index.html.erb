@@ -25,7 +25,7 @@
       <th><%= order @search, :by => :master_price, :as => t("master_price") %></th>
     <% end %>
     <th>
-      <% hook :admin_products_index_header_actions %>
+      <%= hook :admin_products_index_header_actions %>
     </th>
   </tr>
 <% @collection.each do |product| %>
