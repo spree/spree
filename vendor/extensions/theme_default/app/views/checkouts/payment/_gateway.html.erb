@@ -26,3 +26,5 @@
     (<%= t("whats_this") %>)
   </a>
 </p>
+<%= hidden_field param_prefix, 'first_name', :value => h(billing_firstname) -%>
+<%= hidden_field param_prefix, 'last_name',  :value => h(billing_lastname) -%>
