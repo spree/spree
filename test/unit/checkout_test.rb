@@ -55,7 +55,6 @@ class CheckoutTest < ActiveSupport::TestCase
        setup do
          @checkout.state = 'confirm'
          @payment = Factory(:payment, :payable => @checkout)
-         @payment.amount = [@payment.amount, @checkout.order.outstanding_balance].min
          @checkout.next! 
        end
        should_change("@checkout.state", :to => "complete") { @checkout.state }
