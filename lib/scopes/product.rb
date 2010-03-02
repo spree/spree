@@ -60,7 +60,7 @@ module Scopes::Product
     { :joins => :master, :conditions => ["variants.price BETWEEN ? AND ?", low, high] }
   }
 
-  # This scope selects products in taxon AND all it's ancestors
+  # This scope selects products in taxon AND all its ancestors
   # If you need products only within one taxon use
   #
   #   Product.taxons_id_eq(x)
@@ -70,7 +70,7 @@ module Scopes::Product
     taxon ? {:joins => :taxons}.merge(taxon.self_and_descendants.scope(:find)) : {}
   }
 
-  # This scope selects products in all taxons AND all it's ancestors
+  # This scope selects products in all taxons AND all its ancestors
   # If you need products only within one taxon use
   #
   #   Product.taxons_id_eq([x,y])
@@ -79,6 +79,14 @@ module Scopes::Product
     taxons = get_taxons(taxons)
     taxons.first ? prepare_taxon_conditions(taxons) : {}
   }
+
+  # for quick access to products in a group, WITHOUT using the association mechanism
+  Product.named_scope :in_cached_group, lambda {|product_group| 
+    { :joins => "JOIN product_groups_products ON products.id = product_groups_products.product_id", 
+      :conditions => ["product_groups_products.product_group_id = ?", product_group] 
+    }
+  }
+
 
   # a scope that finds all products having property specified by name, object or id
   Product.named_scope :with_property, lambda {|property|

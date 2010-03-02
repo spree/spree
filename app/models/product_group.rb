@@ -31,21 +31,16 @@ class ProductGroup < ActiveRecord::Base
   validates_associated :product_scopes
 
   before_save :set_permalink
-  before_update :update_memberships
+  before_save :update_memberships
 
   has_and_belongs_to_many :cached_products, :class_name => "Product"
   # name
   has_many :product_scopes
   accepts_nested_attributes_for :product_scopes 
-  # Creates new *ProductGroup* from search permalink url.
-  #
-  # Group can be then named acordingly and called using /pg/name
-  # Right now this method assumes that the format of url is one of following:
-  #
-  #   /t/*taxons/s/name_of_scope/comma_separated_arguments/name_of_scope_that_doesn_take_any//order
-  #   */s/name_of_scope/comma_separated_arguments/name_of_scope_that_doesn_take_any//order
-  #   /t/*taxons/pg/named_product_group
-  #   */pg/named_product_group
+  #attr_accessible :order_scope
+
+  # Testing utility: creates new *ProductGroup* from search permalink url.
+  # Follows conventions for accessing PGs from URLs, as decoded in routes
   def self.from_url(url)
     pg = nil;
     case url
@@ -128,13 +123,11 @@ class ProductGroup < ActiveRecord::Base
   end
 
   def products
-    if cached_products.size > 0
-      order_scopes = self.product_scopes.map{|scope| scope.name.to_sym} & Scopes::Product::ORDERING
-      res = cached_products
-      order_scopes.each{|scope| res = res.__send__(scope)}
-      res
-    else
+    cached_group = Product.in_cached_group(self)
+    if cached_group.limit(1).blank?
       dynamic_products
+    else
+      product_scopes.ordering.inject(cached_group) {|res,order| order.apply_on(res)}
     end
   end
 
@@ -171,7 +164,7 @@ class ProductGroup < ActiveRecord::Base
   end
   
   def update_memberships
-    self.cached_products =  dynamic_products
+    self.cached_products = dynamic_products
   end
 
   def to_s
