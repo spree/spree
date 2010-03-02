@@ -38,7 +38,7 @@ class ProductScope < ActiveRecord::Base
   # checks validity of the named scope (if its safe and can be applied on Product)
   def validate
     errors.add(:name, "is not a valid scope name") unless Product.condition?(self.name)
-    apply_on(Product).inspect
+    apply_on(Product).limit(1) != nil
   rescue Exception
     errors.add(:arguments, "are incorrect")
   end
