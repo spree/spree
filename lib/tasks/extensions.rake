@@ -159,7 +159,7 @@ end
 namespace :spec do
   desc "Runs specs on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"
   task :extensions => "db:test:prepare" do
-    
+    result = 0
     extension_roots = find_extension_roots
     extension_roots.each do |directory|
       if File.directory?(File.join(directory, 'spec'))
@@ -169,10 +169,11 @@ namespace :spec do
           else
             system "rake spec SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
           end
+          result += $?.exitstatus
         end
       end
     end
-    
+    raise "Extension specs failed" if result != 0
   end
 end
 
@@ -181,40 +182,49 @@ namespace :extensions do
   namespace :test do
     desc "Runs functional tests on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"
     task :functionals => "db:test:prepare" do
+      result = 0
       extension_roots = find_extension_roots
       extension_roots.each do |directory|
         if File.directory?(File.join(directory, 'test/functional'))
           chdir directory do
             system "rake test:functionals SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+            result += $?.exitstatus
           end
         end
       end
+      raise "Extension functional tests failed" if result != 0
     end
 
     desc "Runs unit tests on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"    
     task :units => "db:test:prepare" do
+      result = 0
       extension_roots = find_extension_roots
       extension_roots.each do |directory|
         if File.directory?(File.join(directory, 'test/unit'))
           chdir directory do
             system "rake test:units SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+            result += $?.exitstatus
           end
         end
       end
+      raise "Extension unit tests failed" if result != 0
     end 
           
   end
 
     desc "Runs all tests on all available extensions in the current /vendor/extensions directory, pass EXT=extension_name to test a single extension"   
     task :test => "db:test:prepare" do
+      result = 0
       extension_roots = find_extension_roots
       extension_roots.each do |directory|
         if File.directory?(File.join(directory, 'test'))
           chdir directory do
             system "rake test SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+            result += $?.exitstatus
           end
         end
       end
+      raise "Extension tests failed" if result != 0
     end  
   
 end
