@@ -115,7 +115,7 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def last_five_orders
-    orders = Order.find(:all, :order => :completed_at, :limit => 5, :include => :line_items, :conditions => "completed_at is not null")
+    orders = Order.find(:all, :order => "completed_at DESC", :limit => 5, :include => :line_items, :conditions => "completed_at is not null")
     orders.map do |o|
       qty = o.line_items.inject(0) {|sum,li| sum + li.quantity}
 
