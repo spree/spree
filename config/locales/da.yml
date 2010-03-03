@@ -213,6 +213,7 @@ da:
   add_option_value: "Add Option Value"
   add_product: "Add Product"
   add_product_properties: "Add Product Properties"
+  add_scope: "Add a scope"
   add_state: "Add State"
   add_to_cart: "Add To Basket"
   add_zone: "Add Zone"
@@ -344,6 +345,7 @@ da:
   editing_option_types: "Editing Option Types"
   editing_payment_method: Editing Payment Method
   editing_product: "Editing Product"
+  editing_product_group: "Editing Product Group"
   editing_property: "Editing Property"
   editing_prototype: "Editing Prototype"
   editing_shipping_category: "Editing Shipping Category"

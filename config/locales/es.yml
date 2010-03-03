@@ -213,6 +213,7 @@ es:
   add_option_value: "Añadir valor de opcion"
   add_product: "Add Product"
   add_product_properties: "Añadir propiedades de producto"
+  add_scope: "Add a scope"
   add_state: "Añadir provincia"
   add_to_cart: "Añadir a la cesta"
   add_zone: "Añadir zona"
@@ -344,6 +345,7 @@ es:
   editing_option_types: "Editando tipos de opción"
   editing_payment_method: Editing Payment Method
   editing_product: "Editando Producto"
+  editing_product_group: "Editing Product Group"
   editing_property: "Editando Propiedad"
   editing_prototype: "Editando Prototipo"
   editing_shipping_category: "Editando Categoria de envío"

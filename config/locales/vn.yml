@@ -213,6 +213,7 @@ vn:
   add_option_value: "Thêm giá trị của tùy chọn"
   add_product: "Thêm sản phẩm"
   add_product_properties: "Thêm đặc tính sản phẩm"
+  add_scope: "Add a scope"
   add_state: "Thêm bang"
   add_to_cart: "Mua hàng"
   add_zone: "Thêm vùng"
@@ -344,6 +345,7 @@ vn:
   editing_option_types: "Sửa đổi Kiểu tùy chọn"
   editing_payment_method: Sửa đổi Phương thức Thanh toán
   editing_product: "Sửa đổi sản phẩm"
+  editing_product_group: "Editing Product Group"
   editing_property: "Sửa đổi đặc tính"
   editing_prototype: "Sửa đổi nguyên mẫu"
   editing_shipping_category: "Sửa đổi loại chuyển phát"

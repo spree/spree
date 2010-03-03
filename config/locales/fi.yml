@@ -213,6 +213,7 @@ fi:
   add_option_value: "Lisää valinta-arvo"
   add_product: "Lisää tuote"
   add_product_properties: "Lisää tuoteominaisuus"
+  add_scope: "Add a scope"
   add_state: "Lisää osavaltio"
   add_to_cart: "Lisää ostoskoriin"
   add_zone: "Lisää alue"
@@ -344,6 +345,7 @@ fi:
   editing_option_types: "Muokataan valintatyyppejä"
   editing_payment_method: Editing Payment Method
   editing_product: "Muokataan tuotetta"
+  editing_product_group: "Editing Product Group"
   editing_property: "Muokataan ominaisuutta"
   editing_prototype: "Muokataan prototyyppiä"
   editing_shipping_category: "Muokataan toimituskategoriaa"

@@ -213,6 +213,7 @@ nl-BE:
   add_option_value: "Optie Waarde Toevoegen"
   add_product: "Add Product"
   add_product_properties: "Add Product Properties"
+  add_scope: "Add a scope"
   add_state: "Status Toevoegen"
   add_to_cart: "Toevoegen aan Winkelmandje"
   add_zone: "Zone toevoegen"
@@ -344,6 +345,7 @@ nl-BE:
   editing_option_types: "Optie Types Wijzigen"
   editing_payment_method: Editing Payment Method
   editing_product: "Product Wijzigen"
+  editing_product_group: "Editing Product Group"
   editing_property: "Eigenschap Wijzigen"
   editing_prototype: "Prototype Wijzigen"
   editing_shipping_category: "Editing Shipping Category"

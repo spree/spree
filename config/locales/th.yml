@@ -213,6 +213,7 @@ th:
   add_option_value: เพิ่มรายการตัวเลือก
   add_product: "Add Product"
   add_product_properties: เพิ่มสรรพคุณ
+  add_scope: "Add a scope"
   add_state: "เพิ่มรัฐ"
   add_to_cart: เพิ่มลงตะกร้า
   add_zone: "Add Zone"
@@ -344,6 +345,7 @@ th:
   editing_option_types: แก้ไขตัวเลือก
   editing_payment_method: Editing Payment Method
   editing_product: แก้ไขสินค้า
+  editing_product_group: "Editing Product Group"
   editing_property: แก้ไขคุณลักษณะ
   editing_prototype: แก้ไขต้นแบบ
   editing_shipping_category: "แก้ไขกลุ่มวิธีการจัดส่ง"

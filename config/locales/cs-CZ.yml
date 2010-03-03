@@ -213,6 +213,7 @@ cs-CZ:
   add_option_value: "Přidat hodnotu volby"
   add_product: "Přidat výrobek"
   add_product_properties: "Přidat vlastnosti výrobku"
+  add_scope: "Add a scope"
   add_state: "Přidat stát"
   add_to_cart: "Přidat do košíku"
   add_zone: "Přidat zónu"
@@ -344,6 +345,7 @@ cs-CZ:
   editing_option_types: "Úprava typů volby"
   editing_payment_method: Editing Payment Method
   editing_product: "Úprava výrobku"
+  editing_product_group: "Editing Product Group"
   editing_property: "Úprava vlastnosti"
   editing_prototype: "Úprava šablony"
   editing_shipping_category: "Úprava kategorie dopravy"

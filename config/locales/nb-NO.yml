@@ -213,6 +213,7 @@ nb-NO:
   add_option_value: "Legg til variasjonsverdi"
   add_product: "Add Product"
   add_product_properties: "Legg til produktegenskaper"
+  add_scope: "Add a scope"
   add_state: "Legg til tilstand"
   add_to_cart: "Legg i handlekurv"
   add_zone: "Legg til sone"
@@ -344,6 +345,7 @@ nb-NO:
   editing_option_types: "Endre variasjonstyper"
   editing_payment_method: Editing Payment Method
   editing_product: "Endre produkt"
+  editing_product_group: "Editing Product Group"
   editing_property: "Endre egenskap"
   editing_prototype: "Endre prototype"
   editing_shipping_category: Endre fraktkategori

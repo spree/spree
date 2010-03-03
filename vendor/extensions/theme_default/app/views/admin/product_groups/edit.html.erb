@@ -1,6 +1,6 @@
 <% render 'admin/shared/product_sub_menu' %>
 
-<h1><%= t('edit') %> <%= t(:product_group) %></h1>
+<h1><%= t('editing_product_group') %></h1>
 
 <fieldset id="product_group_forms_container">
 
@@ -41,7 +41,7 @@
     ) 
     %>
     <p>
-      <label for="product_scope_name">Add a scope</label>
+      <label for="product_scope_name"><%= t('add_scope') %></label>
       <%= select_tag("product_scope[name]", options) %>
       <input type="submit" value="<%= t('add') %>" />
     </p>
