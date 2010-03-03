@@ -1,6 +1,6 @@
 h2. Spree 0.10.0 Release Notes
 
-WARNING. Some of the information here could be made redundant by later changes.
+WARNING: Some of the information here could be made redundant by later changes.
 
 endprologue.     
 
@@ -27,9 +27,9 @@ spree --update
 
 h4. Deprecation Warnings
 
-DEPRECATION WARNING: require "activerecord" is deprecated and will be removed in Rails 3. Use require "active_record" instead.. (called from /usr/local/lib/ruby/gems/1.8/gems/activerecord-2.3.5/lib/activerecord.rb:2)
+WARNING. DEPRECATION -- +require "activerecord"+ is deprecated and will be removed in Rails 3. Use +require "active_record"+ instead. 
 
-Remove all instances of +require 'activerecord'+ from your +Rakefile+ (including those contained in site extensions, etc.)
+Remove all instances of +require 'activerecord'+ from your +Rakefile+ (including those contained in your extensions, including the site extension, etc.)
 
 h3. Improvements to Payment Gateway Configuration
 
