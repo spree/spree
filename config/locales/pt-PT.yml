@@ -24,9 +24,11 @@ pt-PT:
         address1: Morada
         address2: "Morada (contd.)"
         city: Cidade
-        firstname: "Nome"
-        lastname: "Apelido"
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Telefone
+        state: "State"
         zipcode: "Codigo Postal"
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ pt-PT:
         on_hand: "Em Stock"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property: 
         name: Nome
         presentation: Apresentação
@@ -149,6 +160,9 @@ pt-PT:
       product: 
         one: Produto
         other: Produtos
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property: 
         one: Propriedade
         other: Propriedades
@@ -423,6 +437,7 @@ pt-PT:
   listing_categories: "Listando as Categorias"
   listing_option_types: "Listando Tipos de Opções"
   listing_orders: "Listando Encomendas"
+  listing_product_groups: "Listing Product Groups"
   listing_reports: "Listando Relatórios"
   listing_tax_categories: "Listando Categorias de IVA"
   listing_users: "Listando Utilizadores"

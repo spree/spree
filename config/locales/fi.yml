@@ -24,9 +24,11 @@ fi:
         address1: Osoite
         address2: "Osoite (jatkoa)"
         city: Paikkakunta
-        firstname: Etunimi
-        lastname: Sukunimi
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Puhelin
+        state: "State"
         zipcode: Postinumero
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ fi:
         on_hand: Saatavilla
         shipping_category: Toimituskategoria
         tax_category: Verotusluokka
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property:
         name: Nimi
         presentation: Esitys
@@ -149,6 +160,9 @@ fi:
       product:
         one: Tuote
         other: Tuotteet
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property:
         one: Ominaisuus
         other: Ominaisuudet
@@ -423,6 +437,7 @@ fi:
   listing_categories: "Listataan kategoriat"
   listing_option_types: "Listataan valintatyypit"
   listing_orders: "Listataan tilaukset"
+  listing_product_groups: "Listing Product Groups"
   listing_reports: "Listataan raportit"
   listing_tax_categories: "Listataan verotuskategoriat"
   listing_users: "Listing käyttäjät"

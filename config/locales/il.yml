@@ -24,9 +24,11 @@ il:
         address1: Address
         address2: "Address (contd.)"
         city: עיר
-        firstname: "שם פרטי"
-        lastname: "שם משפחה"
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Phone
+        state: "State"
         zipcode: "Zip Code"
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ il:
         on_hand: "On Hand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property: 
         name: Name
         presentation: Presentation
@@ -149,6 +160,9 @@ il:
       product: 
         one: Product
         other: Products
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property: 
         one: Property
         other: Properties
@@ -423,6 +437,7 @@ il:
   listing_categories: "Listing Categories"
   listing_option_types: "Listing Option Types"
   listing_orders: "Listing Orders"
+  listing_product_groups: "Listing Product Groups"
   listing_reports: "Listing Reports"
   listing_tax_categories: "Listing Tax Categories"
   listing_users: "Listing Users"

@@ -24,9 +24,11 @@ fr-FR:
         address1: Adresse
         address2: "Adresse complémentaire"
         city: Ville
-        firstname: "Prénom"
-        lastname: "Nom"
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Téléphone
+        state: "State"
         zipcode: "Code Postal"
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ fr-FR:
         on_hand: "En Stock"
         shipping_category: "Catégorie de Livraison"
         tax_category: "Catégorie de Taxe"
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property: 
         name: Nom
         presentation: "Présentation"
@@ -149,6 +160,9 @@ fr-FR:
       product: 
         one: Produit
         other: Produits
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property: 
         one: Proprieté
         other: Proprietés
@@ -423,6 +437,7 @@ fr-FR:
   listing_categories: "Liste des catégories"
   listing_option_types: "Liste des types d'options"
   listing_orders: "Liste des commandes"
+  listing_product_groups: "Listing Product Groups"
   listing_reports: "Liste des statistiques"
   listing_tax_categories: "Liste des catégories de taxes"
   listing_users: "Liste des utilisateurs"

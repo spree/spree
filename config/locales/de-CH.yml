@@ -24,9 +24,11 @@ de-CH:
         address1: Adresse
         address2: "Adresse (weiter)"
         city: Stadt
-        firstname: Vorname
-        lastname: Nachname
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Telefonnummer
+        state: "State"
         zipcode: PLZ
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ de-CH:
         on_hand: verfügbar
         shipping_category: "Versandkategorie"
         tax_category: "Tax Category"
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property: 
         name: Name
         presentation: Darstellung
@@ -149,6 +160,9 @@ de-CH:
       product: 
         one: Produkt
         other: Produkte
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property: 
         one: Eigenschaft
         other: Eigenschaften
@@ -423,6 +437,7 @@ de-CH:
   listing_categories: Kategorien
   listing_option_types: Optionen
   listing_orders: Bestellungen
+  listing_product_groups: "Listing Product Groups"
   listing_reports: Berichte
   listing_tax_categories: "Liste Steuerkategorien"
   listing_users: Benutzer

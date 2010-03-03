@@ -24,9 +24,11 @@ vn:
         address1: Địa chỉ
         address2: "Địa chỉ (tiếp)"
         city: Thành phố
-        firstname: "Tên"
-        lastname: "Họ"
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Điện thoại
+        state: "State"
         zipcode: "Mã Zip"
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ vn:
         on_hand: "Có hàng"
         shipping_category: "Loại hình vận chuyển"
         tax_category: "Biểu thuế"
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property:
         name: Tên
         presentation: Trình bày
@@ -149,6 +160,9 @@ vn:
       product:
         one: Sản phẩm
         other: Sản phẩm
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property:
         one: Đặc tính
         other: Đặc tính
@@ -423,6 +437,7 @@ vn:
   listing_categories: "Liệt kê Phân loại"
   listing_option_types: "Liệt kê Kiểu tùy chọn"
   listing_orders: "Liệt kê Đơn hàng"
+  listing_product_groups: "Listing Product Groups"
   listing_reports: "Liệt kê Báo cáo"
   listing_tax_categories: "Liệt kê Biểu thuế"
   listing_users: "Danh sách người dùng"

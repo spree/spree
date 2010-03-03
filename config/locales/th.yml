@@ -24,9 +24,11 @@ th:
         address1: ที่อยู่
         address2: "ที่อยู่ (เพิ่มเติม)"
         city: จังหวัด
-        firstname: ชื่อแรก
-        lastname: นามสกุล
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: โทรศัพท์
+        state: "State"
         zipcode: รหัสไปรษณีย์
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ th:
         on_hand: สินค้าในคลัง
         shipping_category: กลุ่มวิธีการจัดส่ง
         tax_category: กลุ่มการเก็บภาษี
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property: 
         name: ชื่อ
         presentation: ชื่อที่แสดง
@@ -149,6 +160,9 @@ th:
       product: 
         one: Product
         other: Products
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property: 
         one: สรรพคุณ
         other: สรรพคุณอื่นๆ
@@ -423,6 +437,7 @@ th:
   listing_categories: "Listing Categories"
   listing_option_types: "Listing Option Types"
   listing_orders: รายการสั่งสินค้า
+  listing_product_groups: "Listing Product Groups"
   listing_reports: รายงานทั้งหมด
   listing_tax_categories: "รายการ แบบการคิดภาษี"
   listing_users: รายชื่อผู้ใช้

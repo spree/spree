@@ -24,9 +24,11 @@ it:
         address1: Address
         address2: "Address (contd.)"
         city: City
-        firstname: "First Name"
-        lastname: "Last Name"
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Phone
+        state: "State"
         zipcode: "Zip Code"
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ it:
         on_hand: "On Hande"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property: 
         name: Name
         presentation: Presentation
@@ -149,6 +160,9 @@ it:
       product: 
         one: Product
         other: Products
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property: 
         one: Property
         other: Properties
@@ -423,6 +437,7 @@ it:
   listing_categories: Categorie
   listing_option_types: Opzioni
   listing_orders: Ordini
+  listing_product_groups: "Listing Product Groups"
   listing_reports: Report
   listing_tax_categories: "Listing Tax Categories"
   listing_users: Utente

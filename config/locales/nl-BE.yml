@@ -24,9 +24,11 @@ nl-BE:
         address1: "Adres lijn 1"
         address2: "Adres lijn 2"
         city: Gemeente
-        firstname: Voornaam
-        lastname: Achternaam
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Telefoon
+        state: "State"
         zipcode: Postcode
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ nl-BE:
         on_hand: "Op Voorraad"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property: 
         name: Naam
         presentation: Presentatie
@@ -149,6 +160,9 @@ nl-BE:
       product: 
         one: Product
         other: Producten
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property: 
         one: Eigenschap
         other: Eigenschappen
@@ -423,6 +437,7 @@ nl-BE:
   listing_categories: "Lijst Categorieën"
   listing_option_types: "Lijst Optie Types"
   listing_orders: "Lijst Bestellingen"
+  listing_product_groups: "Listing Product Groups"
   listing_reports: "Lijst Rapporten"
   listing_tax_categories: "Lijst BTW categorieën"
   listing_users: "Lijst Gebruikers"

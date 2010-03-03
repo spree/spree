@@ -24,9 +24,11 @@ nb-NO:
         address1: Adresse
         address2: "Adresse (forts.)"
         city: Sted
-        firstname: "Fornavn"
-        lastname: "Etternavn"
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Telefon
+        state: "State"
         zipcode: "Postnummer"
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ nb-NO:
         on_hand: "På lager"
         shipping_category: "Fraktkategori"
         tax_category: "Momskategori"
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property: 
         name: Navn
         presentation: "Presentasjon"
@@ -149,6 +160,9 @@ nb-NO:
       product: 
         one: Produkt
         other: Produkter
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property: 
         one: Egenskap
         other: Egenskaper
@@ -423,6 +437,7 @@ nb-NO:
   listing_categories: "Kategorier"
   listing_option_types: "Variasjonstyper"
   listing_orders: "Ordrer"
+  listing_product_groups: "Listing Product Groups"
   listing_reports: "Rapporter"
   listing_tax_categories: "Momskategorier"
   listing_users: "Brukere"

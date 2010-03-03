@@ -24,9 +24,11 @@ ru-RU:
         address1: "Адрес"
         address2: "Адрес (2я строка)"
         city: "Город"
-        firstname: "Имя"
-        lastname: "Фамилия"
+        country: "Страна"
+        first_name: "Имя"
+        last_name: "Фамилия"
         phone: "Телефон"
+        state: "Регион/Область"
         zipcode: "Индекс"
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ ru-RU:
         on_hand: "В наличии"
         shipping_category: "Категория доставки"
         tax_category: "Налоговая категория"
+      product_group:
+        name: "Название"
+        product_count: "Кол-во товаров"
+        product_scopes: "Фильрты"
+        products: "Товары"
+        url: "URL"
+      product_scope:
+        arguments: "Аргументы"
+        description: "Описание"
       property:
         name: "Наименование"
         presentation: "Отображение"
@@ -149,6 +160,9 @@ ru-RU:
       product:
         one: "Товар"
         other: "Товары"
+      product_group:
+        one: "Группа товаров"
+        other: "Группы товаров"
       property:
         one: "Свойство"
         other: "Свойства"
@@ -423,6 +437,7 @@ ru-RU:
   listing_categories: "Список категорий"
   listing_option_types: "Список опций"
   listing_orders: "Список заказов"
+  listing_product_groups: "Список групп товаров"
   listing_reports: "Список отчетов"
   listing_tax_categories: "Список категорий налогов"
   listing_users: "Список пользователей"

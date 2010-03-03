@@ -24,9 +24,11 @@ mx:
         address1: Dirección
         address2: "Dirección (continuación)"
         city: Ciudad
-        firstname: "Nombre"
-        lastname: "Apellidos"
+        country: "Country"
+        first_name: "First Name"
+        last_name: "Last Name"
         phone: Teléfono
+        state: "State"
         zipcode: "Código postal"
       checkout:
         bill_address:
@@ -79,6 +81,15 @@ mx:
         on_hand: "Disponible"
         shipping_category: "Categoría de envío"
         tax_category: "Categoría de impuesto"
+      product_group:
+        name: "Name"
+        product_count: "Product count"
+        product_scopes: "Product scopes"
+        products: "Products"
+        url: "URL"
+      product_scope:
+        arguments: "Arguments"
+        description: "Description"
       property: 
         name: Nombre
         presentation: "Presentación"
@@ -149,6 +160,9 @@ mx:
       product: 
         one: Producto
         other: Productos
+      product_group:
+        one: "Product group"
+        other: "Product groups"
       property: 
         one: Propiedad
         other: Propiedades
@@ -423,6 +437,7 @@ mx:
   listing_categories: "Listado de Categorías"
   listing_option_types: "Listado de tipos de opciones"
   listing_orders: "Listado de pedidos"
+  listing_product_groups: "Listing Product Groups"
   listing_reports: "Listado de reportes"
   listing_tax_categories: "Listado de Impuestos"
   listing_users: "Lista de usuarios"
