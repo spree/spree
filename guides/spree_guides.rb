@@ -20,7 +20,8 @@ end
                  
 require 'action_controller'
 require 'action_view'
-require 'redcloth'
+require 'redcloth'     
+require 'fileutils'
 
 module Spree
   autoload :Generator, "spree/generator"
