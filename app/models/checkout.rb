@@ -1,7 +1,7 @@
 class Checkout < ActiveRecord::Base
   extend ValidationGroup::ActiveRecord::ActsMethods
 
-  #before_save :check_addresses_on_duplication
+  before_update :check_addresses_on_duplication, :if => "!ship_address.nil? && !bill_address.nil?"
   after_save :process_coupon_code
   after_save :update_order_shipment
   before_validation :clone_billing_address, :if => "@use_billing"
@@ -85,13 +85,13 @@ class Checkout < ActiveRecord::Base
     if order.user
       if order.user.ship_address.nil?
         order.user.update_attribute(:ship_address, ship_address)
-      elsif ship_address.nil? || ship_address.same_as?(order.user.ship_address)
-        self.ship_address = order.user.ship_address
+      elsif ship_address.same_as?(order.user.ship_address)
+        #self.ship_address = order.user.ship_address
       end
       if order.user.bill_address.nil?
         order.user.update_attribute(:bill_address, bill_address)
-      elsif bill_address.nil? || bill_address.same_as?(order.user.bill_address)
-        self.bill_address = order.user.bill_address
+      elsif bill_address.same_as?(order.user.bill_address)
+        #self.bill_address = order.user.bill_address
       end
     end
     true
