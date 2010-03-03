@@ -73,6 +73,11 @@ class Product < ActiveRecord::Base
   else
     named_scope :group_by_products_id, { :group => "products.id" }
   end
+
+
+  # truncate a list of results (TODO: move this into a superclass)
+  named_scope :limit, lambda {|n| {:limit => n}}
+
   # ----------------------------------------------------------------------------------------------------------
   #
   # The following methods are deprecated and will be removed in a future version of Spree
