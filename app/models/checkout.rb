@@ -1,7 +1,7 @@
 class Checkout < ActiveRecord::Base
   extend ValidationGroup::ActiveRecord::ActsMethods
 
-  before_save :check_addresses_on_duplication
+  #before_save :check_addresses_on_duplication
   after_save :process_coupon_code
   after_save :update_order_shipment
   before_validation :clone_billing_address, :if => "@use_billing"

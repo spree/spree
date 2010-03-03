@@ -112,7 +112,7 @@ class CheckoutsController < Spree::BaseController
         @object.bill_address ||= user.bill_address.clone unless user.bill_address.nil?
       end
       @object.ship_address ||= Address.default
-      @object.bill_address     ||= Address.default
+      @object.bill_address ||= Address.default
     end
     @object.email ||= params[:checkout][:email] if params[:checkout]
     @object.email ||= current_user.email if current_user
