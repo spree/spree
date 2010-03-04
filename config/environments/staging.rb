@@ -1,13 +1,18 @@
-# This is just used for performance testing
+# Settings specified here will take precedence over those in config/environment.rb
+
+# The production environment is meant for finished, "live" apps.
+# Code is not reloaded between requests
 config.cache_classes = true
+
+# Use a different logger for distributed setups
+# config.logger = SyslogLogger.new
+
+# Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
-config.action_view.cache_template_loading            = true
 
-config.log_level = :debug
+# Enable serving of images, stylesheets, and javascripts from an asset server
+# config.action_controller.asset_host                  = "http://assets.example.com"
 
-config.action_controller.session = { :session_key => "_myapp_session", :secret => "f83596f6af70839845325108d3d4f42df4c64a605a4d805ecb636ba4dc42d41b1f7b179d47aaf1c3a4993f0941908b0d7c6e8d214578a0d9b77a30a9a8657ed5" }
-
-# prevents rails 2.1 from complaining about protect_from_forgery while profiling
-config.action_controller.allow_forgery_protection = false 
-
+# Disable delivery errors, bad email addresses will be ignored
+# config.action_mailer.raise_delivery_errors = false
