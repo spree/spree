@@ -29,7 +29,7 @@
         <% hook :admin_trackers_index_rows, locals do %>        
           <td><%= tracker.analytics_id %></td>
           <td><%= tracker.environment.to_s.titleize %></td>
-          <td><%= tracker.active.to_s.titleize %></td>
+          <td><%= tracker.active ? t(:yes) : t(:no) %></td>
         <% end %>
         <td>
         	<%= link_to_edit tracker %> &nbsp;

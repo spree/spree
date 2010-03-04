@@ -25,7 +25,7 @@
         <td width="120px"><%= method.name %></td>
         <td width="140px"><%= method.type %></td>
         <td width="100px"><%= method.environment.to_s.titleize %></td>
-        <td width="60px"><%= method.active.to_s.titleize %></td>
+        <td width="60px"><%= method.active ? t(:yes) : t(:no) %></td>
         <td width="140px">
         	<%= link_to_edit method %> &nbsp;
         	<%= link_to_delete method %>
