@@ -101,3 +101,10 @@ def set_current_user
   @user = Factory(:user)
   @controller.stub!(:current_user, :return => @user)
 end
+
+def sort_list_hash(thing)
+  thing.map(&:sort).sort
+end
+def assert_equal_list_hash(alpha,beta)
+  assert_equal(sort_list_hash(alpha), sort_list_hash(beta))
+end

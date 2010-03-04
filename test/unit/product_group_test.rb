@@ -51,7 +51,7 @@ class ProductGroupTest < ActiveSupport::TestCase
       should "generate correct scopes" do
         assert @pg.product_scopes
 
-        assert_equal([
+        assert_equal_list_hash([
             {
               "product_group_id"=>nil,
               "name"=>"descend_by_name",
@@ -104,7 +104,7 @@ class ProductGroupTest < ActiveSupport::TestCase
       should "generate correct scopes" do
         assert @pg.product_scopes
 
-        assert_equal([
+        assert_equal_list_hash([
             {
               "product_group_id"=>nil,
               "name"=>"name_like_any",
@@ -167,7 +167,7 @@ class ProductGroupTest < ActiveSupport::TestCase
       should "generate correct scopes" do
         assert @pg.product_scopes
 
-        assert_equal([
+        assert_equal_list_hash([
             {
               "product_group_id"=>nil,
               "name"=>"descend_by_updated_at",
@@ -225,7 +225,7 @@ class ProductGroupTest < ActiveSupport::TestCase
       should "generate correct scopes" do
         assert @pg.product_scopes
 
-        assert_equal([
+        assert_equal_list_hash([
             {
               "product_group_id"=>nil,
               "name"=>"descend_by_updated_at",
