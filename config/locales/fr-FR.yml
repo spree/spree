@@ -609,7 +609,7 @@ fr-FR:
         name: Par nom croissant
       ascend_by_updated_at:
         name: Par date d'actualisation croissante
-      by_popularity:
+      descend_by_popularity:
         name: Trier par popularité(le plus populaire en premier)
       descend_by_master_price:
         name: Par prix décroissant

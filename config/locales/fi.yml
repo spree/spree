@@ -609,7 +609,7 @@ fi:
         name: "Nousevasti tuotteen nimen mukaan"
       ascend_by_updated_at:
         name: "Nousevasti toteutuksen päivämäärän mukaan"
-      by_popularity:
+      descend_by_popularity:
         name: "Lajittele suosion mukaan (suosituimmat ensin)"
       descend_by_master_price:
         name: "Laskevasti tuotteen hinnan mukaan"

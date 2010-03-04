@@ -609,7 +609,7 @@ vn:
         name: Xếp ngược thứ tự theo tên sản phẩm
       ascend_by_updated_at:
         name: Xếp ngược thứ tự theo ngày thật
-      by_popularity:
+      descend_by_popularity:
         name: Sắp xếp theo tính phổ biến (phổ biến nhất trước)
       descend_by_master_price:
         name: Xếp xuôi theo giá chủ của sản phẩm

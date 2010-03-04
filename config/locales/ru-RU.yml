@@ -609,7 +609,7 @@ ru-RU:
         name: "по названию товара (по алфавиту)"
       ascend_by_updated_at:
         name: "по дате обновления информации о товаре (прямой порядок)"
-      by_popularity:
+      descend_by_popularity:
         name: "По популярности (обратный порядок)"
       descend_by_master_price:
         name: "по основной цене товара (по убыванию)"

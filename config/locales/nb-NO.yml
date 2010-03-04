@@ -609,7 +609,7 @@ nb-NO:
         name: Ascend by product name
       ascend_by_updated_at:
         name: Ascend by actualization date
-      by_popularity:
+      descend_by_popularity:
         name: Sort by popularity(most popular first)
       descend_by_master_price:
         name: Descend by product master price
@@ -633,7 +633,7 @@ nb-NO:
         args:
           words: Words
         description: "(separated by space or comma)"
-        name: "Product name or meta heywords have following"
+        name: "Product name or meta keywords have following"
         sentence: name or keywords contain <em>%s</em>
       in_taxons:
         args:

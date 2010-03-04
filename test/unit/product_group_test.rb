@@ -20,13 +20,14 @@ class ProductGroupTest < ActiveSupport::TestCase
 
     context "scope merging" do
       setup do
-        @pg = ProductGroup.new
+        @pg = ProductGroup.new :name => "foo"
+        @pg.save!
       end
 
       should "use last order passed" do
         @pg.add_scope("descend_by_name")
-        @pg.add_scope("ascend_by_created_at")
-        assert_equal("ascend_by_created_at", @pg.order)
+        @pg.add_scope("ascend_by_updated_at")
+        assert_equal("ascend_by_updated_at", @pg.order_scope)
       end
     end
 
@@ -44,7 +45,7 @@ class ProductGroupTest < ActiveSupport::TestCase
         assert(@pg.name.blank?,
           "ProductGroup.name is not blank but #{@pg.name}")
         assert(@pg.permalink.blank?,
-          "ProductGroup.name is not blank but #{@pg.permalink}")
+          "ProductGroup.permalink is not blank but #{@pg.permalink}")
       end
 
       should "generate correct scopes" do
@@ -52,6 +53,10 @@ class ProductGroupTest < ActiveSupport::TestCase
 
         assert_equal([
             {
+              "product_group_id"=>nil,
+              "name"=>"descend_by_name",
+              "arguments"=>[]
+            },{
               "product_group_id"=>nil,
               "name"=>"name_like_any",
               "arguments"=>["one", "two", "five"]
@@ -64,16 +69,18 @@ class ProductGroupTest < ActiveSupport::TestCase
       end
 
       should "find products" do
+        @pg.update_attribute(:name, 'foo')
         products = %w{one two five}.map{|name|
           Product.find(:all, :conditions => ["name LIKE ?", "%#{name}%"])
         }.flatten.reject{|pr| pr.master.price >= 30}.sort_by{|pr| pr.name}.reverse
-        assert_equal(products.map(&:name), @pg.products.map(&:name))
+        assert_equal(products.map(&:name), @pg.dynamic_products.map(&:name))
 
       end
 
       should "have correct order" do
-        assert_equal(@pg.order, "descend_by_name")
-        assert_equal("products.name DESC", @pg.products.scope(:find)[:order])
+        @pg.update_attribute(:name, 'foo')
+        assert_equal(@pg.order_scope, "descend_by_name")
+        assert_equal("products.name DESC", @pg.dynamic_products.scope(:find)[:order])
       end
     end
 
@@ -91,7 +98,7 @@ class ProductGroupTest < ActiveSupport::TestCase
         assert(@pg.name.blank?,
           "ProductGroup.name is not blank but #{@pg.name}")
         assert(@pg.permalink.blank?,
-          "ProductGroup.name is not blank but #{@pg.permalink}")
+          "ProductGroup.permalink is not blank but #{@pg.permalink}")
       end
 
       should "generate correct scopes" do
@@ -115,16 +122,18 @@ class ProductGroupTest < ActiveSupport::TestCase
       end
 
       should "find products" do
+        @pg.update_attribute(:name, 'foo')
         products = %w{one five}.map{|name|
           Product.find(:all, :conditions => ["name LIKE ?", "%#{name}%"])
         }.flatten.reject{|pr| pr.master.price >= 30}
-        assert_equal(products.map(&:name), @pg.products.map(&:name))
+        assert_equal(products.map(&:name), @pg.dynamic_products.map(&:name))
 
       end
 
       should "have correct order" do
-        assert_equal(@pg.order, nil)
-        assert_equal('taxons.lft', @pg.products.scope(:find)[:order].gsub(/["'`]/, ''))
+        @pg.update_attribute(:name, 'foo')
+        assert_equal(@pg.order_scope, nil)
+        assert_equal('taxons.lft', @pg.dynamic_products.scope(:find)[:order].gsub(/["'`]/, ''))
       end
     end
 
@@ -133,7 +142,7 @@ class ProductGroupTest < ActiveSupport::TestCase
       setup do
         ProductGroup.create!({
             :name => "test pg",
-            :order => "descend_by_created_at",
+            :order_scope => "descend_by_updated_at",
             :product_scopes_attributes => [
               {
                 "name"=>"name_like_any",
@@ -152,7 +161,7 @@ class ProductGroupTest < ActiveSupport::TestCase
         assert(@pg.name.blank?,
           "ProductGroup.name is not blank but #{@pg.name}")
         assert(@pg.permalink.blank?,
-          "ProductGroup.name is not blank but #{@pg.permalink}")
+          "ProductGroup.permalink is not blank but #{@pg.permalink}")
       end
 
       should "generate correct scopes" do
@@ -161,6 +170,10 @@ class ProductGroupTest < ActiveSupport::TestCase
         assert_equal([
             {
               "product_group_id"=>nil,
+              "name"=>"descend_by_updated_at",
+              "arguments"=>[]
+            },{
+              "product_group_id"=>nil,
               "name"=>"name_like_any",
               "arguments"=>["three", "four", "five"]
             }
@@ -168,15 +181,17 @@ class ProductGroupTest < ActiveSupport::TestCase
       end
 
       should "find products" do
+        @pg.update_attribute(:name, 'foo')
         products = %w{three four five}.map{|name|
           Product.find(:all, :conditions => ["name LIKE ?", "%#{name}%"])
         }.flatten.sort_by{|pr| pr.name}
-        assert_equal(products.map(&:name), @pg.products.map(&:name).sort)
+        assert_equal(products.map(&:name), @pg.dynamic_products.map(&:name).sort)
       end
 
       should "have correct order" do
-        assert_equal(@pg.order, "descend_by_created_at")
-        assert_equal("products.created_at DESC", @pg.products.scope(:find)[:order])
+        @pg.update_attribute(:name, 'foo')
+        assert_equal(@pg.order_scope, "descend_by_updated_at")
+        assert_equal("products.updated_at DESC", @pg.dynamic_products.scope(:find)[:order])
       end
     end
 
@@ -185,7 +200,7 @@ class ProductGroupTest < ActiveSupport::TestCase
       setup do
         ProductGroup.create!({
             :name => "test pg",
-            :order => "descend_by_created_at",
+            :order_scope => "descend_by_updated_at",
             :product_scopes_attributes => [
               {
                 "name"=>"name_like_any",
@@ -204,7 +219,7 @@ class ProductGroupTest < ActiveSupport::TestCase
         assert(@pg.name.blank?,
           "ProductGroup.name is not blank but #{@pg.name}")
         assert(@pg.permalink.blank?,
-          "ProductGroup.name is not blank but #{@pg.permalink}")
+          "ProductGroup.permalink is not blank but #{@pg.permalink}")
       end
 
       should "generate correct scopes" do
@@ -212,6 +227,10 @@ class ProductGroupTest < ActiveSupport::TestCase
 
         assert_equal([
             {
+              "product_group_id"=>nil,
+              "name"=>"descend_by_updated_at",
+              "arguments"=>[]
+            },{
               "product_group_id"=>nil,
               "name"=>"name_like_any",
               "arguments"=>["three", "four", "five"]
@@ -224,15 +243,17 @@ class ProductGroupTest < ActiveSupport::TestCase
       end
 
       should "find products" do
+        @pg.update_attribute(:name, 'foo')
         products = %w{four}.map{|name|
           Product.find(:all, :conditions => ["name LIKE ?", "%#{name}%"])
-        }.flatten.sort_by{|pr| pr.created_at}.reverse
-        assert_equal(products.map(&:name), @pg.products.map(&:name))
+        }.flatten.sort_by{|pr| pr.updated_at}.reverse
+        assert_equal(products.map(&:name), @pg.dynamic_products.map(&:name))
       end
 
       should "have correct order" do
-        assert_equal(@pg.order, "descend_by_created_at")
-        assert_equal("products.created_at DESC", @pg.products.scope(:find)[:order])
+        @pg.update_attribute(:name, 'foo')
+        assert_equal(@pg.order_scope, "descend_by_updated_at")
+        assert_equal("products.updated_at DESC", @pg.dynamic_products.scope(:find)[:order])
       end
     end
   end

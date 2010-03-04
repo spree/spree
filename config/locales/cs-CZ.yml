@@ -609,7 +609,7 @@ cs-CZ:
         name: "Vzestupně podle názvu výrobku"
       ascend_by_updated_at:
         name: "Vzestupně podle data poslední změny"
-      by_popularity:
+      descend_by_popularity:
         name: "Řadit podle popularity, nejvíce populární na začátek"
       descend_by_master_price:
         name: "Sestupně podle základní ceny"

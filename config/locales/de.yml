@@ -609,7 +609,7 @@ de:
         name: "Aufsteigend nach Produktname"
       ascend_by_updated_at:
         name: "Aufsteigend nach Bearbeitungsdatum"
-      by_popularity:
+      descend_by_popularity:
         name: "Nach Beliebtheit sortieren (beliebteste zuerst)"
       descend_by_master_price:
         name: "Absteigend nach Grundpreis"
@@ -633,7 +633,7 @@ de:
         args:
           words: Begriffe
         description: "(separated by space or comma)"
-        name: "Product name or meta heywords have following"
+        name: "Product name or meta keywords have following"
         sentence: name or keywords contain <em>%s</em>
       in_taxons:
         args:

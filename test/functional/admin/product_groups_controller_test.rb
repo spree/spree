@@ -28,7 +28,7 @@ class Admin::ProductGroupsControllerTest < ActionController::TestCase
       setup do
         post :create, {
             "product_group"=>{ "name"=>"TestableProductGroup", 
-                               "order_scope"=>"by_popularity" 
+                               "order_scope"=>"descend_by_popularity" 
             }
         }
       end

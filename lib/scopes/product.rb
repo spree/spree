@@ -36,7 +36,7 @@ module Scopes::Product
     :descend_by_name,
     :ascend_by_master_price,
     :descend_by_master_price,
-    :by_popularity,
+    :descend_by_popularity,
   ]
   
   # default product scope only lists available and non-deleted products
@@ -179,7 +179,7 @@ module Scopes::Product
   # there is alternative faster and more elegant solution, it has small drawback though,
   # it doesn stack with other scopes :/
   #
-  Product.named_scope :by_popularity, lambda{
+  Product.named_scope :descend_by_popularity, lambda{
     # :joins => "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
     # :order => 'COALESCE(cnt, 0) DESC'
     {

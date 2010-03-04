@@ -1,4 +1,4 @@
-<% count = @product_group.dynamic_products.count %>
+<% count, preview = @product_group.generate_preview(Spree::Config[:admin_pgroup_preview_size]) %>
 
 <h2><%= ProductGroup.human_attribute_name(:products) %> (<%= count %>)</h2>
 
@@ -6,8 +6,8 @@
   <p><%= t('no_match_found') %></p>
 <% else %>
 
-  <% if @product_group.dynamic_products.count > 10 %>
-    <p><%= t('showing_first_n', :n => 10) %></p>
+  <% if count > Spree::Config[:admin_pgroup_preview_size] %>
+    <p><%= t('showing_first_n', :n => Spree::Config[:admin_pgroup_preview_size]) %></p>
   <% end %>
 
   <table class="index">
@@ -18,7 +18,7 @@
     </tr>
     </thead>
     <tbody>
-    <% @product_group.dynamic_products.limit(10).each do |product| %>
+    <% preview.each do |product| %>
       <tr>
         <td>
           <%= link_to product.name, product_url(product) %>
