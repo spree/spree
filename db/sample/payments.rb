@@ -22,3 +22,4 @@ Order.all.each_with_index do |order,index|
   payment.process!
   order.update_attribute("state", "new")
 end
+puts

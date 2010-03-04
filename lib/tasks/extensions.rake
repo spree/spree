@@ -27,8 +27,8 @@ namespace :db do
   desc "Loading db/loadfrom for spree and each extension where you specify dir by rake db:load_dir[loadfrom]"
   task :load_dir , [:dir] => :environment do |t , args|
     dir = args.dir
-    fixtures = {}  
-    ruby_files = {}
+    fixtures = ActiveSupport::OrderedHash.new  
+    ruby_files = ActiveSupport::OrderedHash.new
     unless ENV['SKIP_CORE'] and dir == "sample"
       Dir.glob(File.join(SPREE_ROOT, "db", dir , '*.{yml,csv,rb}')).each do |fixture_file|
         ext = File.extname fixture_file
@@ -49,11 +49,11 @@ namespace :db do
         end
       end
     end
-    fixtures.each do |fixture , fixture_file|
+    fixtures.sort.each do |fixture , fixture_file|
       # an invoke will only execute the task once
       Rake::Task["db:load_file"].execute( Rake::TaskArguments.new([:file], [fixture_file]) )
     end
-    ruby_files.each do |fixture , ruby_file|
+    ruby_files.sort.each do |fixture , ruby_file|
       # an invoke will only execute the task once
       Rake::Task["db:load_file"].execute( Rake::TaskArguments.new([:file], [ruby_file]) )
     end
