@@ -1,0 +1,16 @@
+ru-RU:
+  api: "API"
+  api:
+    access: "API доступ"
+    clear_key: "Удалить ключ API"
+    errors:
+      invalid_event: "Недопустимое действие, допустимые действия: {{events}}"
+      invalid_event_for_object: "Допустимое действие, но не разрешённое для заданного объекта, разрешённые действия: {{events}}"
+      missing_event: "Действие не указано"
+    generate_key: "Сгенирировать ключ API"
+    key: "Ключ API"
+    regenerate_key: "Перегенерировать ключ API"
+    no_key: "Ключ не определён"
+    key_generated: "Ключ API сгенерирован"
+    key_cleared: "Ключ API удалён"
+      
