@@ -116,7 +116,7 @@ class Admin::ProductsControllerTest < ActionController::TestCase
           @json.each do |record|
             if record['product']['variants'].size == 0
 
-              assert record['product']['master'].keys.include? 'is_master'
+              assert record['product']['master'].keys.include?('is_master')
               assert record['product']['master']['is_master']
               assert record['product'].keys.include?('images')
 
