@@ -8,13 +8,13 @@ product_scopes_007:
 
 product_scopes_008:
   product_group: product_groups_001
-  name: by_popularity
+  name: descend_by_popularity
   arguments: |+
     --- []
 
 product_scopes_010:
   product_group: product_groups_002
-  name: by_popularity
+  name: descend_by_popularity
   arguments: |+
     --- []
 
