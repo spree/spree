@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class ShipmentsApiTest < ActionController::IntegrationTest
   include ApiIntegrationHelper
+  fixtures :payment_methods
   
   context "shipments" do
     setup { setup_user }

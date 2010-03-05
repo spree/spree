@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class InventoryUnitsApiTest < ActionController::IntegrationTest
   include ApiIntegrationHelper
+  fixtures :payment_methods
   
   context "inventory units" do
     setup do
