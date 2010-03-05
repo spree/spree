@@ -1,17 +1,20 @@
 h2. Boot Modes
 
-This guide covers the different modes in which you can run Spree. After reading it, you should be familiar with:
+This guide covers the different modes in which you can run Spree, which are Gem Mode and Vendor 
+Mode. Most users will only need to run in the simplest mode which is the Gem Mode.  The gem installation process will also make sure you have all of the required gem dependencies.
+The Vendor mode gives you increased flexibility and control, particularly if you are working
+with non-release versions of Spree. There is also an Instance mode, mainly for developers
+working directly on the core. After reading the guide, you should be familiar with:
 
-* The differences between source mode and gem mode
+* The differences between vendor mode and gem mode 
 * How to run a frozen/vendored instance of Spree
 
 endprologue.   
 
-h3. Multiple "Boot" Modes
+h3. Gem Mode
 
-Spree currently runs in two different modes: Gem Mode and Instance Mode.  This gives you increased flexibility when deploying your application and it also simplifies development.  Most users will only need to run in the simplest mode which is the Gem Mode.  The gem installation process will also make sure you have all of the required gem dependencies.
-
-h4. Gem Mode
+This is the simplest mode to start with. 
+Most of the code necessary to run the application is hidden away inside the Spree gem. 
 
 1.) Install spree Gem 
 
@@ -37,8 +40,8 @@ cp config/database.yml.example config/database.yml
 The defaults should be ok if you use sqlite3 as your database, you can skip to the 
 next step.
 
-If you're not using sqlite3, edit config/database.yml to taste and create any 
-databases you need.
+If you're not using sqlite3, edit config/database.yml as needed and create any 
+databases you listed.
 
 4.) Bootstrap
 
@@ -46,18 +49,50 @@ databases you need.
 rake db:bootstrap
 </shell>
 
-This creates your application and sets up your database.  Most of the code necessary to run the application is hidden away inside the Spree gem.    
+This creates your application and sets up your database.  
 
-h4. Instance Mode
+Now create some "extensions":extensions.html and work on your "theming":theming.html.
+
+
+h4. Vendor Mode
+
+Spree can also be run by copying the Spree source into @#{RAILS_ROOT}/vendor/spree of a Spree 
+application directory.  Spree will be loaded from this directory instead of your gem. This
+allows you to package the right version of Spree inside your application, and allows experimenting
+with non-gem versions.
+
+There's several ways you can set this up. See the "developers' guide":developers_guide.html
+for more detail and tips.
+
+* clone a git repo from Github and symlink it to +vendor/spree+:  this way you can just do a +git pull+ to grab the latest code. 
+
+* add the repo as a git submodule (assuming your application is managed by git too): this way allows precise control over versions 
+
+* another option is to freeze the gem version of Spree into +vendor/spree+.  Use the following command to freeze your locally installed Spree gem into your Spree application.
+
+<shell>
+rake spree:freeze:gems
+</shell>
+
+Please note that Spree must be frozen in +vendor/spree+.  It cannot be frozen into +vendor/gems+ (unlike most gems)  There are some technical reasons for this having to do with custom initializers and the load path.
+
+
+
+h3. Instance Mode
 
 Instance mode is primarily intended for developers who are working on the Spree codebase.  This mode essentially allows you to run Spree directly on your machine after cloning the git repository.
 
-1.) Install the gem dependencies mentioned earlier.
+See the "Contributions Guide":contributing_to_spree.html for details about setting up your own
+GitHub fork.
 
-2.) Clone the git repository.  
+
+1.) Install the gem dependencies as mentioned above.
+
+2.) Clone the git repository, replacing SOMEONE with +railsdog+ or your own user id if you have a fork of Spree. You can also change the target directory name, e.g. could use +my-spree+
 
 <shell>
-git clone git://github.com/railsdog/spree.git spree
+git clone git://github.com/SOMEONE/spree.git spree
+cd spree
 </shell>
 
 
@@ -71,8 +106,8 @@ cp config/database.yml.example config/database.yml
 The defaults should be ok if you use sqlite3 as your database, you can skip to the 
 next step.
 
-If you're not using sqlite3, edit config/database.yml to taste and create any 
-databases you need.
+If you're not using sqlite3, edit config/database.yml as needed and create any 
+databases you listed.
 
 4.) Bootstrap
 
@@ -80,18 +115,5 @@ databases you need.
 rake db:bootstrap
 </shell>
 
-NOTE: If you are planning on contributing source code to the Spree project you should change the git repository location in Step 2 to reflect your forked "Github":http://github.com/railsdog/spree/tree/master repository.
 
 Now you can run Spree just like any normal Rails application.  You have full access to the console, migrations, etc.
-
-h4. Vendor Mode
-
-Spree can also be run by copying the Spree source into @#{RAILS_ROOT}/vendor/spree.  Spree will be loaded from this directory instead of your gem.  There are two different ways this is envisioned.  The first is to clone the git repo from Github and symlink it to vendor/spree.  This way you can just go git pull and grab the latest code. 
-
-Another option is to freeze the gem version of Spree into vendor/spree.  Use the following command to freeze your locally installed Spree gem into your Spree application.
-
-<shell>
-rake spree:freeze:gems
-</shell>
-
-Please note that Spree must be frozen in vendor/spree.  It cannot be frozen into vendor/gems (unlike most gems)  There are some technical reasons for this having to do with custom initializers and the load path.
