@@ -1,5 +1,5 @@
 h2. Extension Tutorial
 
-This will be updated soon. For now, please see the "wiki extension tutorial":http://wiki.github.com/railsdog/spree/extension-tutorial
+This will be updated soon. For now, please see the (very out of date) "wiki extension tutorial":http://wiki.github.com/railsdog/spree/extension-tutorial
 
 endprologue.

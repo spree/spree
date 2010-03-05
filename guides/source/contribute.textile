@@ -1,3 +1,0 @@
-h2. Contribute to the Spree Guides
-
-endprologue.

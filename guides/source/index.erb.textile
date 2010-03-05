@@ -85,23 +85,28 @@ h3. Basic Configuration
 h3. Customization
 
 <dl>
-  <% guide('Basic Customization Tutorial', 'customization_tutorial.html') do %>
+  <% guide('Customization Overview', 'customization_overview.html') do %>
     This guide introduces the key ideas for customizing Spree to your site design.
   <% end %>
 </dl>
 <dl>
   <% guide('Using Extensions', 'extensions.html') do %>
-    This guide covers how to use the extension system to customize Spree to meet your exact needs.
-  <% end %>
-</dl>
-<dl>
-  <% guide('Extension Tutorial', 'extension_tutorial.html') do %>
-    This tutorial covers the basic steps of creating your own custom extensions.
+    This guide covers the technical details of the extension system.
   <% end %>
 </dl>
 <dl>
   <% guide('Theming', 'theming.html') do %>
     Learn how to change the appearance of your store using a theme extension.
+  <% end %>
+</dl>
+<dl>
+  <% guide('Theme Customization Tutorial', 'customization_tutorial.html') do %>
+    This guide is a walkthrough of how to create a new theme
+  <% end %>
+</dl>
+<dl>
+  <% guide('Extension Tutorial', 'extension_tutorial.html') do %>
+    This tutorial covers the basic steps of creating your own functionality extensions.
   <% end %>
 </dl>
 <dl>

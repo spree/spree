@@ -1,35 +1,139 @@
 h2. Extensions
 
-This guide covers the use of extensions and their role in customizing and enhancing the standard Spree installation.  After reading this guide you should learn:
+This guide covers the technical details of extensions and is oriented towards developers.
+See the "customization overview":customization_overview.html for basic information.
+By reading this guide you should learn:
 
 * The role extensions play in a Spree deployment
-* How to build a "site" extension to customize the look and feel of your store
+* How to build a "theme" extension to customize the look and feel of your store
+* How to build a "site" extension to tie everything together
 * How to write a custom extension
 * How to initialize an extension
-* Where to find existing extensions
 
 endprologue.
 
 h3. Overview
 
-Spree supports a powerful extension mechanism.  This allows us to focus on our mission of building a solid foundation that addresses 90% of the commerce problem.  Extensions address the remaining 10%.  Extensions provide a logical and consistent way for Spree users to supply any missing functionality in their application.  Extensions are designed in a way that should be highly intuitive to the experienced Rails programmer.  They also provide a convenient way for users to develop and share extensions with other members of the Spree community.
+Extensions are the main mechanism for extending and customizing Spree-based sites.
 
-The Spree extension mechanism was based extensively on the work of the "Radiant":http://radiantcms.org community.  The Radiant CMS project has a very similar design philosophy ("no fluff") and has already solved the problem in a very elegant fashion.
+If your primary goal is to simply customize Spree for a specific business then you could 
+just create a single extension and put all of your custom stuff in there.  If you would like 
+to reuse stuff between your own projects, or even share them with the Spree community, then 
+it's a good idea to organize your work logically into several self-contained extensions.
+Spree supports this way of working, and indeed, you can no doubt benefit from the good 
+collection of 3rd party extensions already on offer.
 
-h3. Overriding the Spree Defaults
+Custom extensions should be placed in the @vendor/extensions@ directory of your project.  
+Extensions placed in this directory will be automatically available to your application. 
+They are loaded and take precedence according to the "load_order":customization_overview.html#loadorder
+you set for the app. Recall that the loading mechanism means that the last-loaded version
+of any file is the one that Spree will use, hence you can use extensions to change 
+pretty much everything in Spree.
 
-Custom extensions should be placed in the @vendor/extensions@ directory of your project.  Extensions placed in this directory will be automatically available to your application. What does an extension allow you to customize?  The short answer is pretty much everything.
+Possibilities include (but are not limited to!):
 
-* Models
-* Views
-* Controllers
-* Routes
-* Migrations
-* Rake tasks
+* over-ride of standard views
+* adding or removing columns 
+* replacing existing migrations with custom versions
+* replacing or extending a controller or model
+* changing system settings
 
-Some of the more obvious possibilities would be to override the default view or controller used by Spree.  Most stores will need to customize the UI and you can use extensions to do this.  You can also use an extension to mixin functionality into an existing controller or view.  Since extensions have their own migrations you can modify existing Spree tables or create new ones in your database. The possibilities are almost endless.
+A good way to learn is to see an example: try the "Spree Demo":http://github.com/railsdog/spree-demo
+first.
 
-h3. Directory Structure
+
+h4. The "site" extension
+
+When you use the +spree+ command to create a new application, it will
+automatically create a +site+ extension for you.  This is where you
+should put all of the highly site-specific code (like mail settings
+and site branding). 
+
+The "site" name is not important: it is just a recommended convention. 
+You can change the name to anything you choose - as long as you update
+your extension load order appropriately.
+
+It may seem a little bit strange to put this kind of content into an 
+extension (as opposed to a top level directory) but this setup  makes 
+upgrading to newer versions of Spree considerably easier.
+
+
+
+h3. Creating Your Own Extension
+
+h4. Tutorial
+
+There is a very detailed "extensions tutorial":extension_tutorial.html that will go through a detailed example of how to create your own extension.
+
+
+
+h4. Generate the Extension
+
+NOTE. Before you start work, please do consider mailing spree-user with your ideas or plans - you may find that someone else wants to collaborate or has some of the code you need. Also feel free to adapt existing code.
+
+Spree comes with a handy generator so you can easily create your own custom extension.  Suppose we want to create a "Foo" extension.
+
+<shell>
+  script/generate extension Foo
+</shell>
+
+This will create a series of folders and files, including +foo_extension.rb+, which will 
+define a +FooExtension+ class.
+
+INFO. Do not use spaces or dashes when creating a new extension.  If there is more then one word to the extension (such as "Foo Bar") use +script/generate extension FooBar+ instead.
+
+
+IMPORTANT.  You may need your extension to be loaded at a particular point. See "load_order":customization_overview.html#loadorder for details.
+
+
+h4. Making the Extension Available on GitHub
+
+You can share your work with others through "GitHub":http://github.com. GitHub is also useful for
+managing and archiving projects. You could use other versioning systems and repositories, but 
+GitHub is the one we support.
+There is a simple naming convention that helps people to find and install your work easily.
+
+If your extension class is named  +FooBar+ and it is defined in +foo_bar_extension.rb+, you should name your GitHub project +spree-foo-bar+.  Notice how there are no spaces or underscores in the GitHub project name and that it is prefixed with +spree+.  The underscores in the filename are replaced with '-' and the word 'extension' does not appear anywhere in the GitHub project name.
+
+INFO. Adopting the suggested naming conventions when adding your extension to GitHub allows people to automatically install it with the special +script/extension install+ command.
+
+
+
+h4. Publishing Your Extension in the Spree Extension Registry
+
+Once your extension is doing something useful and you have published it to GitHub, it's time to 
+let everyone else know about it.  The best way to do this is to add your extension to Spree's 
+"official extension registry":http://ext.spreecommerce.com. This site helps track things like
+code versions and updates, and Spree version compatibility. 
+There's a tag system and searching to help find relevant extensions.
+
+Announcements on spree-user are also welcome. 
+
+NOTE. GitHub lists about 140 unique Spree-related repositories, but we've only got 50 or so extensions in the registry... Please?
+
+
+h4. Extending and Collaborating 
+
+You're very welcome to reuse and extend existing code on GitHub, or to offer to collaborate on
+existing extension projects. Quite a few high-quality extensions have been developed in these
+ways. Try mailing spree-user with your ideas, or try contacting the original developer on GitHub. 
+
+One thing to keep in mind is that extensions are often the result of
+a generous donation from one or more of our users.  A typical extension
+reflects the code needed to make the extension work at a particular moment
+(and for a particular version of Spree.)  Consequently, not all extensions
+will work with all versions of Spree.  These extensions are still often
+very useful starting points for addressing your own specific needs.
+Many times the extension requires only a minor tweak to make it working
+with the latest version of Spree.  Other times, the extension is not
+listed as being compatible with a particular version of Spree only
+because it has yet to be tested.  There may not even be any issues at all - just try it!
+
+
+
+h3. Technical Details
+
+h4. Directory structure
 
 Extensions have a directory structure that should look very familiar to you.  They follow essentially the same layout as a standard Rails app.  
 <shell>
@@ -52,142 +156,116 @@ spec
   views
 </shell>
 
-So even though your Spree application will not have an +app+ directory, your extensions will.  If your primary goal is to simply customize Spree for a specific business then you could just create a single extension and put all of your custom stuff in there.  If you would like to reuse stuff between your own projects, or even share them with the Spree community, then you will want to organize your work logically into multiple self-contained extensions. 
+So even though your Spree application will not have an +app+ directory, your extensions will.  
 
-h3. Site Extension
+NOTE. Reminder on load order and find-last-mentioned?
 
-When you use the +spree+ command to create a new application (a gem installation), it will automatically create a +site+ extension for you.  This is where you should put all of the code to customize your site views, etc. This is essentially what you would normally put into the +app+ directory of a standard Rails application.  It may seem a little bit strange to put this type of content into an extension (as opposed to a top level directory) but this process makes upgrading to newer versions of Spree considerably easier.
+h4. Extension initializers
 
-Technically there is nothing special about the site extension.  It is just a naming convention.  Every Spree application will likely need one so we have come up with a standard name for this concept.  You could call this extension whatever you wish.  You could also break the contents of the site extension into as many extensions as you wish (although there aren't many usecases for this.)
+You can put initializers in extensions, and these are the recommended way to configure certain settings. For example, an initializer in your site extension can set site email addresses and other important Spree settings. The following is the pattern for making the settings: the wrapper copes with the first-run case, before the database is set up, and note the use of +.set+ to update settings.
 
-h3. I18n
-
-Extensions can be used to provide custom locales for your extension.  For instance, if you wanted to use the +en-GB+ locale but there were a few translations that you disagreed with and wanted to change.  You could createa a new locale called +en-GB-custom+ and start by copying over the existing locale files.  
-
-<shell>
-app
-config
-  locales
-    en-GB-custom.yml
-    en-GB-custom_rails.yml
-db
-lib
-spec
-</shell>
-
-Suppose you wanted to change the appearance of the term "City / Town" to "Hamlet."  Simply edit your custom locale file in your extension as follows
-
-<shell>
-...
-city: Hamlet  
-...
-</shell>  
-
-Typically you would save your custom locales in the site extension but you might also want to create it as its own extension if you were planning on building more then one Spree store and you wished to reuse your custom locale.
-
-INFO. If there is a translation error or missing translation information in one of the existing Spree locales, you should fork the Spree project in GitHub and provide a patch.  See "contributing to spree":contributing_to_spree.html for more details.
-
-h3. Tutorial
-
-There is a very detailed "extensions tutorial":extension_tutorial.html that will go through a detailed example of how to create your own extension.
-
-h3. Extensions Directory
-
-There are numerous extensions that have been written for Spree.  We've attempted to consolidate the list of known extensions in the "extensions directory":http://ext.spreecommerce.com for your convenience.  Extensions are listed by author, tag as well as supported Spree versions.  
-
-One thing to keep in mind is that extensions are often the result of a generous donation from one or more of our users.  A typical extension reflects the code needed to make the extension work at a particular moment (and for a particular version of Spree.)  Consequently, not all extensions will work with all versions of Spree.  These extensions are still often very useful starting points for addressing your own specific needs.  Many times the extension requires only a minor tweak to make it working with the latest version of Spree.  Other times, the extension is not listed as being compatible with a particular version of Spree only because it has yet to be tested.  There may not even be any issues at all.
-
-h3. Installing an Existing Extension
-
-Installing extensions is simple enough since they are typically stored in GitHub.  The command is similar to that for installing a Rails plugin: 
-
-<shell>
-  script/extension install git://github.com/developer/whatever.git
-</shell>
-
-You need to replace +developer+ and +whatever+ with the actual extension author and name respectively.
-
-h3. Extension Migrations
-
-Extensions have a special migration script that allows you to add migrations with the appropriate timestamp to your extension.
-
-<shell>
-script/generate extension_migration <extension_name> 
-<migration_name>
-</shell>
-
-The standard rake command for running Rails migrations will run all of the Spree migrations as well your extension migrations. 
-
-<shell>
-  rake db:migrate
-</shell>
-
-INFO. There are currently some known issues with migrating +DOWN+ using extension migrations.  Since down migrations are rarely useful in the real world, this problem is likely to remain unresolved for a while.  
-
-Extensions can also populate seed data in a way similar to how a standard rails app.  Seed data is data that is needed by the application in order for it to work properly.  This is a fairly specialized case and it is not the same as sample data (which is optional.)
-
-<shell>
-  rake db:seed
-</shell>
-
-NOTE. For more information on Rails migrations in general, please see the excellent "rails guide":http://guides.rubyonrails.org/migrations.html on this subject.
-
-h3. Extension Load Order and Initializers
-
-Put something like the following inside the initializer block in the file +config/environment.rb+:
-
-<shell>
-config.extensions = [:all, :site]
-</shell>
-
-Where +:all+ means all extensions available and not specified in that array. Those "all" extensions will follow a predefined order then, first Spree's internal extensions will be loaded in alphabetical order then external extensions will be loaded in alphabetical order.
-
-You can even make something be loaded first too:
-
-<shell>
-config.extensions = [:first_extension, :all, :site]
-</shell>
-
-h4. Extension Initializers
-
-You can put initializers in extensions, and these are the recommended way to configure certain settings.
+<code>
+if Spree::Config.instance
+  Spree::Config.set(:products_per_page => 9)
+  Spree::Config.set(:site_name => "Widget Store")
+end
+</code>
 
 Initializers go in the +config/initializers+ directory in an extension, and should be +.rb+ files.
-Such extensions are loaded in extension order (as above) then by alphabetical order within an extension - 
-and they will all be loaded after the main project initialization is done. 
+Such extensions are loaded in extension order (as above) then by alphabetical order within an extension - and they will all be loaded after the main project initialization is done. 
 
 So, if the +site+ extension is loaded last, then +site/config/initializers/beta.rb" is run before 
 +site/config/initializers/gamma.rb+, and +other_ext/config/initializers/alpha.rb+ will be loaded 
 before both of these (because it is from an earier extension). 
 
 
-h3. Creating Your Own Extension
+h4. Set up routes 
 
-h4. Generate the Extension
-
-Spree comes with a handy generator so you can easily create your own custom extension.  Lets suppose we want to create a "Foo" extension.
+The extension contains a file called +config/routes.rb+. Like the locales files, this file is 
+loaded additively at startup, so you can add extension-specific routes here. For example,
 
 <shell>
-  script/generate extension Foo
+map.resources :products do |product|
+  product.resources :reviews 
+end
 </shell>
 
-This will create a series of folders and files, including +test_extension.rb+, which will define a +FooExtension+ class.
 
-INFO. Do not use spaces or dashes when creating a new extension.  If there is more then one word to the extension (such as "Foo Bar") use +script/generate extension FooBar+ instead.
 
-h4. Making the Extension Available on GitHub
+h4. I18n
 
-Once you are satisfied that your extension is running properly, feel free to share it with others through "GitHub":http://github.com.  There is just a simple naming convention that you should follow in order to make things easier for everyone to use it.  
+Extensions can be used to extend or over-ride the I18n translations. Any YML files in the 
++config/locales+ directory will be loaded at startup. 
 
-If your extension class is named  +FooBar+ and it is defined in +foo_bar_extension.rb+, you should name your GitHub project +spree-foo-bar+.  Notice how there are no spaces or underscores in the GitHub project name and that it is prefixed with +spree+.  The underscores in the filename are replaced with '-' and the word 'extension' does not appear anywhere in the GitHub project name.
+NOTE. All locale files are loaded - not just the last one in the load order. This allows each extension to add new vocabulary etc. However, over-riding does occur at the hash table level: an entry for label X in the core files will be replaced if there's an entry for X in an extension.
 
-INFO. It is important that you observe the suggested naming conventions when adding your extension to GitHub, otherwise, people will not be able to automatically install it with the special +script/extension install+ command.
+Suppose you wanted to change the translation of the +city+ label from term "City / Town" 
+to "Hamlet" in the +en-GB+ locale.
+Simply add (or edit) the locale file called +config/locale/en-GB.yml+ in your extension to
+look like the following. The important first line identifies the particular locale, and
+subsequent indented lines give new translations. 
 
-h4. Publishing Your Extension in the Spree Extension Registry
+<shell>
+en-GB:
+  city: Hamlet  
+</shell>  
 
-Once your extension is complete and you have published it to GitHub, its time to let everyone else know about it.  The best way to do this is to add your extension to the "official extension registry":http://ext.spreecommerce.com.
+Remember that compound keys (like +actions.new+) need tree-like indentation. See the original 
+locale files for examples.
+
+Typically you would save your custom locales in the site extension but you might also want to create a stand-alone extension if you were planning on building more then one Spree store and you wished to reuse your custom locale.
+
+INFO. If there is a translation error or missing translation information in one of the existing Spree locales, you should fork the Spree project in GitHub and provide a patch.  See "contributing to spree":contributing_to_spree.html for more details.
+
+
+h4. Extension models and migrations
+
+Spree can generate models and migrations for your extension. See the usage info by running 
+@script/generate extension_model -h@ or @script/generate extension_migration -h@ in your 
+application root directory.
+
+<shell>
+script/generate extension_migration <extension_name> <migration_arguments...>
+<migration_name>
+</shell>
+
+TIP. +rake db:migrate+ will examine/run all of the extension migrations, as well as the core migrations.
+
+INFO. There are currently some known issues with migrating +DOWN+ using extension migrations.  Since down migrations are rarely useful in the real world, this problem is likely to remain unresolved for a while.  
+
+NOTE. For more information on Rails migrations in general, please see the excellent "rails guide":http://guides.rubyonrails.org/migrations.html on this subject.
+
+h4. Extension controllers
+
+Similarly, you can generate vanilla and admin controllers too. See 
+@script/generate extension_controller -h@ for more detail and some examples.
+
+
+h4. Extension models and migrations
+
+Extensions can also populate seed data in a way similar to a standard rails app.  Seed data is data that is needed by the application in order for it to work properly.  This is a fairly specialized case and it is not the same as sample data (which is optional). Each extension is created with a file +db/seeds.rb+ which should be modified to load the required data. See Spree's core +db/seeds.rb+
+file for an example. 
+
+<shell>
+  rake db:seed
+</shell>
+
+
+
+
 
 h3. Tips and Tricks
+
+h4. Make your extension helper avaliable to all views (helpful if you're using it in a layout override)
+
+Edit the following into +activate+ in @foo_extension.rb@
+
+<shell>
+  Spree::BaseController.class_eval do
+    helper FooHelper
+  end
+</shell>
+
 
 h4. Adding Fields to Product or Variants
 
@@ -224,28 +302,11 @@ h4. Modifying the Checkout Workflow
 
 You may wish to change the checkout workflow for your specific application.  Extensions are a logical place to do this.  Typically you would override the +checkout+ in your site extension.  Please see the guide on the "checkout process":checkout.html for more detailed information.
 
-h4. Using Migrations for Custom Configurations
-
-Spree comes with all sorts of default configurations that you will likely want to customize.  Many of these values can be changed now through admin screens (those that can't be changed will be able to shortly once those screens are written.)  Once a preference is changed from its default, the value is stored in the database.
-
-It is possible to use a migration to setup these preferences so that you can set the preferences of your site automatically.  This is handy when migrating a new series of configurations from a tested development environment to production.  You no longer have to remember to manually change these settings, just run the migrations like normal.
-
-For example, the default country in Spree is United States.  If you wanted the default country to be Ireland you could add the following to your site extension:
-
-<shell>
-class AddCustomConfigurations < ActiveRecord::Migration
-  def self.up
-    Spree::Config.set(:default_country_id => 96)
-  end
-
-  def self.down
-  end
-end
-</shell>
+WARNING. TODO - merge this into the tutorial, extract the highlights
 
 h4. Adding a tab to the Admin screens
 
-If your extension needs to have a section in the admin screens, you can add a tab to the admin panel from the activate method in your extension file. 
+If your extension needs to have a section in the admin screens, you can add a tab to the admin panel from the +activate+ method in your +foo_extension.rb+ file. 
 
 *Generate an extension admin controller:*
 
@@ -253,7 +314,7 @@ If your extension needs to have a section in the admin screens, you can add a ta
 script/generate extension_controller foo admin/foos
 </shell>
 
-*Add a route to your config/routes.rb file:*
+*Add a route to your +config/routes.rb+ file:*
 
 <shell>
 map.namespace :admin do |admin|
@@ -273,10 +334,10 @@ en-US:
   foos: "Foos"
   delete_foo: "Delete Foo"
   edit_foo: "Edit Foo"
-  transmorgify_foo: "Turn Foo into a T-Rex"
+  transmogrify_foo: "Turn Foo into a T-Rex"
 </shell>
 
-Once you've got the parts you need set up, you can tie your admin screen into the main panel by editing foo_extension.rb and adding the following to the activate method:
+Once you've got the parts you need set up, you can tie your admin screen into the main panel by editing +foo_extension.rb+ and adding the following to the +activate+ method:
 
 @foo_extension.rb@
 
@@ -304,16 +365,3 @@ Any option supported by the tabs helper can be passed in the hash argument.
 
 INFO. By default, the route is created by concatenating "admin_" with the first element of the array. However, if you override the route (as above) and are making use of the 'admin' namespace, you will need to include "admin_" as a part of your route argument.
 
-h4. Make your extension helper avaliable to all views (helpful if you're using it in a layout override)
-
-@foo_extension.rb@
-
-<shell>
-def activate
-
-  Spree::BaseController.class_eval do
-    helper FooHelper
-  end
-
-end
-</shell>
