@@ -30,7 +30,7 @@ Google Analytics has been integrated into the spree core and can be managed by a
 
 h3. Planned Search Engine Optimization Features
 
-Although several common search engine optimization issues have been addressed, remaining known issues are discussed in Chapter 2. While solutions for several of the issues are in development, contributions are appreciated to address the other issues. Visit the <a href="contribute.html">contributing to spree section</a> to learn more about contributing.
+Although several common search engine optimization issues have been addressed, remaining known issues are discussed in Chapter 2. While solutions for several of the issues are in development, contributions to address the other issues will be very welcome. Visit the <a href="contributing_to_spree.html">contributing to spree section</a> to learn more about contributing.
 
 h4. Product and Taxonomy Page Title Enhancements
 
