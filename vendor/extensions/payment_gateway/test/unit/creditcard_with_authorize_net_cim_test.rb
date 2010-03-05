@@ -24,7 +24,6 @@ class CreditcardWithAuthorizeNetCimTest < ActiveSupport::TestCase
       
       @creditcard.authorize(100, @payment)
     end
-    should_not_change("Payment.count") { Payment.count }
     should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
     should_not_change("Order.by_state('new').count") { Order.by_state('new').count }
 
@@ -42,7 +41,6 @@ class CreditcardWithAuthorizeNetCimTest < ActiveSupport::TestCase
       setup do
         @creditcard.capture(@payment)
       end
-      should_change("Payment.count", :by => 1) { Payment.count }
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
     end
     
@@ -60,7 +58,6 @@ class CreditcardWithAuthorizeNetCimTest < ActiveSupport::TestCase
       rescue Spree::GatewayError
       end
     end
-    should_not_change("Payment.count") { Payment.count }
     should_not_change("CreditcardTxn.count") { CreditcardTxn.count }
     should_not_change("Order.by_state('new').count") { Order.by_state('new').count }
   end
