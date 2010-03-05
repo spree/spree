@@ -141,7 +141,7 @@ module Commands
         o.separator "GENERAL OPTIONS"
         
         o.on("-r", "--root=DIR", String,
-             "Set an explicit Spree vendor/extensions directory.",
+             "Set a different Spree application directory.",
              "Default: #{@spree_root}") { |spree_root| self.environment = SpreeEnvironment.new(spree_root) }
         o.on("-v", "--verbose", "Turn on verbose output.") { |verbose| $verbose = verbose }
         o.on("-h", "--help", "Show this help message.") { puts o; exit }
