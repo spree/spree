@@ -1,6 +1,28 @@
+<%# git log | grep Author | sed -e 's/^Author: /* /;s/ <[^ ]*>//' | sort | uniq %>
+
 <% content_for :header_section do %>
+
 h2. Credits
 
-p. We'd like to thank the following people for their documentation contributions to this project.
+p. We'd like to thank the following people for their documentation contributions to this project (in alphabetical order).
+
+* Andrew O'Brien
+* Brian Quinn
+* Bryan Mahoney
+* Christopher Maujean
+* David North
+* Eliot Sykes
+* Jay Mendoza
+* Michael Lang
+* Mike Enriquez
+* Misha Rabinovich
+* Paul Callaghan
+* Sam Pierson
+* Sean Schofield
+* Stephanie Powell
+* Steph Powell
+* Steven Jenkins
+* Torsten Rüger
+* William H. Harle Jr
 
 <% end %>
