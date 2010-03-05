@@ -25,8 +25,8 @@ class ProductGroupTest < ActiveSupport::TestCase
       end
 
       should "use last order passed" do
-        @pg.add_scope("descend_by_name")
-        @pg.add_scope("ascend_by_updated_at")
+        @pg.order_scope = "descend_by_name"
+        @pg.order_scope = "ascend_by_updated_at"
         assert_equal("ascend_by_updated_at", @pg.order_scope)
       end
     end
@@ -79,7 +79,7 @@ class ProductGroupTest < ActiveSupport::TestCase
 
       should "have correct order" do
         @pg.update_attribute(:name, 'foo')
-        assert_equal(@pg.order_scope, "descend_by_name")
+        assert_equal("descend_by_name",    @pg.order_scope)
         assert_equal("products.name DESC", @pg.dynamic_products.scope(:find)[:order])
       end
     end
@@ -132,8 +132,8 @@ class ProductGroupTest < ActiveSupport::TestCase
 
       should "have correct order" do
         @pg.update_attribute(:name, 'foo')
-        assert_equal(@pg.order_scope, nil)
-        assert_equal('taxons.lft', @pg.dynamic_products.scope(:find)[:order].gsub(/["'`]/, ''))
+        assert_equal(nil, @pg.order_scope)
+        assert_equal(nil, @pg.dynamic_products.scope(:find)[:order])
       end
     end
 
@@ -190,7 +190,7 @@ class ProductGroupTest < ActiveSupport::TestCase
 
       should "have correct order" do
         @pg.update_attribute(:name, 'foo')
-        assert_equal(@pg.order_scope, "descend_by_updated_at")
+        assert_equal("descend_by_updated_at",    @pg.order_scope)
         assert_equal("products.updated_at DESC", @pg.dynamic_products.scope(:find)[:order])
       end
     end
@@ -252,7 +252,7 @@ class ProductGroupTest < ActiveSupport::TestCase
 
       should "have correct order" do
         @pg.update_attribute(:name, 'foo')
-        assert_equal(@pg.order_scope, "descend_by_updated_at")
+        assert_equal("descend_by_updated_at",    @pg.order_scope)
         assert_equal("products.updated_at DESC", @pg.dynamic_products.scope(:find)[:order])
       end
     end

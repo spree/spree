@@ -66,8 +66,7 @@ module Scopes::Product
   #   Product.taxons_id_eq(x)
   #
   Product.named_scope :in_taxon, lambda {|taxon|
-    taxon = get_taxons(taxon).first
-    taxon ? {:joins => :taxons}.merge(taxon.self_and_descendants.scope(:find)) : {}
+    Product.in_taxons(taxon).scope :find
   }
 
   # This scope selects products in all taxons AND all its ancestors
@@ -227,6 +226,7 @@ SQL
     }.compact.uniq
   end
 
+  # specifically avoid having an order for taxon search (conflicts with main order)
   def self.prepare_taxon_conditions(taxons)
     conditions = taxons.map{|taxon|
       taxon.self_and_descendants.scope(:find)[:conditions]
@@ -239,7 +239,7 @@ SQL
 
     {
       :joins => :taxons,
-      :order => taxons.empty? ? nil : taxons.first.self_and_descendants.scope(:find)[:order],
+      ## :order => taxons.empty? ? nil : taxons.first.self_and_descendants.scope(:find)[:order],
       :conditions => conditions,
     }
   end

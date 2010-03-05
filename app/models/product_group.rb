@@ -94,9 +94,6 @@ class ProductGroup < ActiveRecord::Base
         :name => scope_name.to_s,
         :arguments => [*arguments]
       })
-    if scope_name =~ /^(ascend_by|descend_by)/
-      self.order_scope = scope_name
-    end
     self
   end
 
@@ -109,9 +106,11 @@ class ProductGroup < ActiveRecord::Base
       base_product_scope = base_product_scope.send(self.order_scope)
     end
 
-    return self.product_scopes.not_ordering.inject(base_product_scope){|result, scope|
-      scope.apply_on(result)
-    }
+    return self.product_scopes.reject {|s|
+             s.is_ordering?
+           }.inject(base_product_scope){|result, scope|
+             scope.apply_on(result)
+           }
   end
 
   # returns chain of named scopes generated from order scope and product scopes.
@@ -128,7 +127,11 @@ class ProductGroup < ActiveRecord::Base
     elsif !use_order
       cached_group
     else
-      product_scopes.ordering.inject(cached_group) {|res,order| order.apply_on(res)}  
+      product_scopes.select {|s| 
+        s.is_ordering?
+      }.inject(cached_group) {|res,order| 
+        order.apply_on(res)
+      }
     end
   end
 
@@ -183,12 +186,12 @@ class ProductGroup < ActiveRecord::Base
   end
   
   def order_scope
-    if scope = product_scopes.ordering.first
+    if scope = product_scopes.detect {|s| s.is_ordering?}
       scope.name
     end
   end
   def order_scope=(scope_name)
-    if scope = product_scopes.ordering.first
+    if scope = product_scopes.detect {|s| s.is_ordering?}
       scope.update_attribute(:name, scope_name)
     else
       self.product_scopes.build(:name => scope_name, :arguments => [])

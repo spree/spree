@@ -10,10 +10,6 @@ class ProductScope < ActiveRecord::Base
   belongs_to :product_group
   serialize :arguments
 
-  named_scope :ordering, :conditions => ["name IN (?)", Scopes::Product::ORDERING.map(&:to_s)]
-  named_scope :not_ordering, :conditions => ["name NOT IN (?)", Scopes::Product::ORDERING.map(&:to_s)]
-  
-  
   extend ::Scopes::Dynamic
 
   # Get all products with this scope
@@ -43,6 +39,10 @@ class ProductScope < ActiveRecord::Base
     errors.add(:arguments, "are incorrect")
   end
 
+  # test ordering scope by looking for name pattern or :order clause
+  def is_ordering?
+    name =~ /^(ascend_by|descend_by)/ || apply_on(Product).scope(:find)[:order].present?
+  end
 
   def to_sentence
     result = I18n.t(:sentence, :scope => [:product_scopes, :scopes, self.name], :default => "")
