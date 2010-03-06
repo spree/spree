@@ -36,6 +36,10 @@ module Spree
   module RubyGemsLoader
     def load_rubygems
       require 'rubygems'
+               
+      # Temporary workaround for annoying RubyGems warning.  This can be removed once Rails 2.3.6 is released.  
+      # See http://railsdog.lighthouseapp.com/projects/31096-spree/tickets/1209
+      Gem::Dependency.warned_version_requirement = true
 
       unless rubygems_version >= '1.3.6'
         $stderr.puts %(Spree requires RubyGems >= 1.3.6 (you have #{rubygems_version}). Please `gem update --system` and try again.)
