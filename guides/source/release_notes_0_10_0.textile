@@ -6,14 +6,17 @@ endprologue.
 
 h3. Upgrade Notes
 
-(TODO - polish these rough notes later)              
-Remove obsolete initializers 
+h5. Perform the standard upgrade command
+<shell> 
+spree --update
+</shell>
 
+h5. Remove obsolete initializers 
 <shell>
 rm -rf config/initializers/compass.rb
 </shell>
 
-Remove defunct contents of public dirs (unless you need something in there)
+h5. Remove defunct contents of public dirs (unless you need something in there)
 
 <shell>
 rm -rf public/javascripts/
@@ -21,9 +24,12 @@ rm -rf public/stylesheets/
 rm -rf public/images/
 </shell>
 
-<shell>
-spree --update
-</shell>
+h5. Run the migrations
+<shell> 
+rake db:migrate
+</shell>       
+
+h5. Configure a payment method  (See additional information later in the release notes)
 
 h4. Deprecation Warnings
 
