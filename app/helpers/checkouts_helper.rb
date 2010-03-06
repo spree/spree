@@ -1,7 +1,7 @@
 module CheckoutsHelper
 
   def checkout_progress
-    steps = Checkout.state_names.map do |state|
+    steps = Checkout.state_names.reject { |n| n == "complete" }.map do |state|
       text = t("checkout_steps.#{state}")
 
       css_classes = []
