@@ -1,8 +1,6 @@
 class FixByPopularity < ActiveRecord::Migration
   def self.up
-    ProductScope.all.each do |s| 
-      s.update_attribute(:name, "descend_by_popularity") if "by_popularity" == s.name
-    end
+    ProductScope.update_all("name='descend_by_popularity'", "name='by_popularity'")
   end
 
   def self.down
