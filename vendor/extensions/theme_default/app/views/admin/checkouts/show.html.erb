@@ -14,7 +14,8 @@
 <table class="index">
   <tr>
     <th colspan="8"><%= t("billing_address") %></th>
-  </tr>
+  </tr>  
+  <% if @checkout.bill_address %>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:first_name) %>:</label>
@@ -60,13 +61,15 @@
       <label><%= Address.human_attribute_name(:phone) %>:</label>
     </td>
     <td colspan="7"><%= @checkout.bill_address.phone %></td>
-  </tr>
+  </tr> 
+  <% end %>
 </table>
 
 <table class="index">
   <tr>
     <th colspan="8"><%= t("shipping_address") %></th>
-  </tr>
+  </tr> 
+  <% if @checkout.ship_address %>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:first_name) %>:</label>
@@ -113,4 +116,5 @@
     </td>
     <td colspan="7"><%= @checkout.ship_address.phone %></td>
   </tr>
+  <% end %>
 </table>
