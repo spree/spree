@@ -6,13 +6,6 @@ endprologue.
 
 h3. Upgrade Notes
 
-h4. Upgrading from 0.9.4 to 0.10.0
-
-* @taxonomies used to always be set.  You may have to call get_taxonomies explicitly now to retrieve the site configured @taxonomies within a view
-* Spree::BaseController inherits directly from ActionController::Base changed from ApplicationController, if you had an app/views/application.html.erb in your site extension, you have to set the layout explicitly in your site_extension.rb as Spree::BaseController.class_eval { layout 'application' }
-* Using @extension_tabs to create an admin tab no longer works, instead use theme hooks.
-
-
 h5. Perform the standard upgrade command
 <shell> 
 spree --update
@@ -43,6 +36,26 @@ h4. Deprecation Warnings
 WARNING. DEPRECATION -- +require "activerecord"+ is deprecated and will be removed in Rails 3. Use +require "active_record"+ instead. 
 
 Remove all instances of +require 'activerecord'+ from your +Rakefile+ (including those contained in your extensions, including the site extension, etc.)
+
+h4. API Changes
+
+h5. Accessing taxonomies
+
+@taxonomies used to be set in most shared views. Instead when you need the site configured taxonomies call get_taxonomies.
+
+h5. Spree Base Controller and Layouts
+
+Spree::BaseController inherits directly from ActionController::Base changed from ApplicationController,
+if you had an app/views/application.html.erb in your site extension. e.g.
+<shell>
+Spree::BaseController.class_eval { layout 'application' }
+</shell>
+
+h5. Adding admin tabs changed
+
+@extension_tabs is no longer used, instead use theme "hooks":hooks.html.
+
+
 
 h3. Improvements to Payment Gateway Configuration
 
