@@ -24,12 +24,12 @@ vn:
         address1: Địa chỉ
         address2: "Địa chỉ (tiếp)"
         city: Thành phố
-        country: "Country"
-        first_name: "First Name"
-        last_name: "Last Name"
+        country: "Quốc gia"
+        first_name: "Tên"
+        last_name: "Họ"
         phone: Điện thoại
-        state: "State"
-        zipcode: "Mã Zip"
+        state: "Bang"
+        zipcode: "Mã bưu điện"
       checkout:
         bill_address:
           address1: "Địa chỉ thanh toán"
@@ -38,7 +38,7 @@ vn:
           lastname: "Họ"
           phone: "Điện thoại"
           state: "Bang"
-          zipcode: "Mã Zip"
+          zipcode: "Mã bưu điện"
         ship_address:
           address1: "Địa chỉ"
           city: "Thành phố"
@@ -82,14 +82,14 @@ vn:
         shipping_category: "Loại hình vận chuyển"
         tax_category: "Biểu thuế"
       product_group:
-        name: "Name"
-        product_count: "Product count"
-        product_scopes: "Product scopes"
-        products: "Products"
+        name: "Tên"
+        product_count: "Số lượng sản phẩm"
+        product_scopes: "Phạm vi sản phẩm"
+        products: "Sản phẩm"
         url: "URL"
       product_scope:
-        arguments: "Arguments"
-        description: "Description"
+        arguments: "Tham số"
+        description: "Chú thích"
       property:
         name: Tên
         presentation: Trình bày
@@ -213,7 +213,7 @@ vn:
   add_option_value: "Thêm giá trị của tùy chọn"
   add_product: "Thêm sản phẩm"
   add_product_properties: "Thêm đặc tính sản phẩm"
-  add_scope: "Add a scope"
+  add_scope: "Thêm phạm vi"
   add_state: "Thêm bang"
   add_to_cart: "Mua hàng"
   add_zone: "Thêm vùng"
@@ -231,7 +231,7 @@ vn:
   allowed_ssl_in_production_mode: "SSL sẽ {{not}} được dùng trong sản xuất"
   already_registered: Đã đăng kí?
   alternative_phone: Điện thoại khác
-  amount: Số lượng
+  amount: Giá trị
   analytics_trackers: Analytics Trackers
   are_you_sure: "Bạn có chắn chắn không?"
   are_you_sure_category: "Bạn có chắc bạn muốn xóa loại mặt hàng này không?"
@@ -243,7 +243,7 @@ vn:
   assign_taxons: "Ấn định đơn vị phân loại"
   authorization_failure: "Không được ủy quyền truy cập"
   authorized: Được ủy quyền
-  available_on: "Có hàng vào"
+  available_on: "Có hàng vào ngày"
   available_taxons: "Đơn vị phân loại hiện có"
   awaiting_return: Đang đợi trả về
   back: Quay lại
@@ -251,7 +251,7 @@ vn:
   backordered: Đã đặt hàng trước
   backordering_is_allowed: "Đã đặt hàng trước {{not}} được cho phép"
   balance_due: "Tiền cần thanh toán"
-  best_selling_products: "Sản phầm bán chạy nhất"
+  best_selling_products: "Sản phẩm bán chạy nhất"
   best_selling_taxons: "Đơn vị phân loại hàng bán chạy nhất"
   bill_address: "Địa chỉ thanh toán"
   billing: Thanh Toán
@@ -262,7 +262,7 @@ vn:
   cancel: Hủy
   canceled: Đã hủy
   cannot_create_returns: Không thể trả hàng vì đơn hàng chưa được gửi.
-  capture: bắt
+  capture: Lấy tiền
   card_code: "Mã thẻ"
   card_details: "Thông tin thẻ"
   card_number: "Số thẻ"
@@ -281,12 +281,12 @@ vn:
     # keys correspond to Checkout state names:
     address: Địa chỉ
     complete: Hoàn tất
-    confirm: Confirm
+    confirm: Xác nhận
     delivery: Vận chuyển
     payment: Thanh toán
   cheque: Séc
   city: Thành phố
-  clone: Sao y
+  clone: Tạo bản sao
   code: Mã
   combine: Nhập vào
   comp_order: "Đơn hàng kép"
@@ -296,7 +296,7 @@ vn:
   configuration: Cấu hình
   configuration_options: "Tùy chọn cấu hình"
   configurations: Cấu hình
-  configured: Configured
+  configured: Đã được cấu hình
   confirm: Xác nhận
   confirm_delete: "Xác nhận xóa"
   confirm_password: "Xác nhận mật khẩu"
@@ -330,7 +330,7 @@ vn:
   customer_details: "Thông tin khách hàng"
   customer_search: "Tìm kiếm khách hàng"
   date_created: Ngày tạo
-  date_range: "Chuỗi ngày"
+  date_range: "Giới hạn ngày"
   debit: Nợ
   delete: Xóa
   depth: Sâu
@@ -345,7 +345,7 @@ vn:
   editing_option_types: "Sửa đổi Kiểu tùy chọn"
   editing_payment_method: Sửa đổi Phương thức Thanh toán
   editing_product: "Sửa đổi sản phẩm"
-  editing_product_group: "Editing Product Group"
+  editing_product_group: "Sửa đổi Nhóm sản phẩm"
   editing_property: "Sửa đổi đặc tính"
   editing_prototype: "Sửa đổi nguyên mẫu"
   editing_shipping_category: "Sửa đổi loại chuyển phát"
@@ -377,7 +377,7 @@ vn:
   extensions: Gói mở rộng
   filename: Tên tệp tin
   final_confirmation: "Chứng thực cuối cùng"
-  finalize: Finalize
+  finalize: Hoành thành
   finalized_payments: Thanh toán đã hoàn tất
   first_item: Món hàng đầu tiên giá
   first_name: "Tên"
@@ -428,9 +428,9 @@ vn:
   item: Món
   item_description: "Miêu tả món hàng"
   item_total: "Tổng số món"
-  items: "Món"
+  items: "Số lượng"
   last_14_days: "14 ngày trước"
-  last_5_orders: "5 đơn hàng cuối"
+  last_5_orders: "5 đơn hàng gần đây nhất"
   last_7_days: "7 ngày trước"
   last_month: "Tháng trước"
   last_name: "Họ"
@@ -532,7 +532,7 @@ vn:
   options: Tùy chọn
   or: hoặc
   ord_qty: "Số lượng"
-  ord_total: "Tổng số"
+  ord_total: "Giá trị"
   order: Đơn hàng
   order_confirmation_note: ""
   order_date: "Ngày đặt hàng"
@@ -545,7 +545,7 @@ vn:
   order_processed_successfully: "Đơn đặt hàng của bạn đã được xử lý thành công"
   order_summary: Tóm tắt đơn đặt hàng
   order_sure_want_to: "Bạn có chắc bạn muốn {{event}} đơn hàng này?"
-  order_total: "Tổng đơn hàng"
+  order_total: "Tổng giá sau thuế"
   order_total_message: "Tổng số tiền sẽ được rút từ thẻ của bạn là"
   order_updated: "Đơn hàng được cập nhật"
   orders: Đơn hàng
@@ -553,7 +553,7 @@ vn:
   out_of_stock: "Hết hàng"
   out_of_stock_products: "Sản phẩm đã hết hàng"
   over_paid: "Trả lố"
-  overview: Tồng kết
+  overview: Tổng kết
   overview_welcome: "Chào mừng bạn đến với phần tổng quan, hiện không đủ thông tin để hiển thị Bảng điều khiển tổng quan.<br/><br/> Bảng điều khiển sẽ tự động hiện ra khi hệ thống đã thu thập đủ số liệu thông kê."
   page_only_viewable_when_logged_in: Trang này chỉ xem được sau khi đã đăng nhập
   page_only_viewable_when_logged_out: Trang này chỉ xem được sau khi đã đăng xuất
@@ -646,7 +646,7 @@ vn:
         sentence: tên hay từ khóa có chứa <em>%s</em>
       in_taxons:
         args:
-          "taxon_names": "Tên Taxon"
+          "taxon_names": "Tên phân loại"
         description: "Tên đơn vị phân loại phải được tách ra với dấu phẩy hoặc chỗ trống (vd: adidas,shoes)"
         name: "Trong các đơn vị phân loại và tất cả đơn vị phân loại con"
         sentence: trong <em>%s</em> và tất cả hậu duệ của chúng
@@ -835,11 +835,11 @@ vn:
   state_setting_description: "Quản lý danh sách các bang và quận huyện của từng quốc gia."
   states: Bang
   status: Tình trạng
-  stop: Tạm ngừng
+  stop: Kết thúc
   store: Cửa hàng
   street_address: "Địa chỉ"
   street_address_2: "Địa chỉ (tiếp)"
-  subtotal: Tổng cộng
+  subtotal: Tổng giá trước thuế
   subtract: Trừ đi
   system: Hệ thống
   tax: Thuế
@@ -860,8 +860,8 @@ vn:
   taxonomy_tree_error: "Thay đồi theo yêu cầu không được chấp nhận và hệ cây đã quay trở về trạng thái như trước, xin hay thử lại lần nữa."
   taxonomy_tree_instruction: "* Nhấp chuột phải vào 1 phần tử con trong hệ cây để truy cập thực đơn để thêm, xóa và sắp xếp một phần tử con."
   taxons: Đơn vị phân loại
-  test: "Test"
-  test_mode: Test Mode
+  test: "Kiểm tra"
+  test_mode: Chế độ kiểm tra
   thank_you_for_your_order: "Cảm ơn đã mua hàng. Xin hãy in ra một bản của trang này để tiện cho việc chứng thực nếu cần."
   this_file_language: "tiếng Việt (VN)"
   this_month: "Tháng này"
@@ -869,7 +869,7 @@ vn:
   thumbnail: "Hình nhỏ"
   to_add_variants_you_must_first_define: "Để thêm biến thể, bạn phải định nghĩa trước"
   top_grossing_products: "Sản phẩm lãi nhiều nhất"
-  total: Tổng
+  total: Giá trị
   tracking: Theo dõi
   transaction: Giao dịch
   transactions: Giao dịch
@@ -906,7 +906,7 @@ vn:
   vat: "VAT"
   version: Phiên bản
   view_shipping_options: "Xem các lựa chọn dịch vụ chuyển phát"
-  void: Hết bảo hành
+  void: Vô hiệu hóa
   website: Trang web
   weight: Khối lượng
   welcome_to_sample_store: "Chào mừng đến cửa hàng mẫu"
@@ -917,7 +917,7 @@ vn:
   year: "Năm"
   you_have_been_logged_out: "Bạn vừa đăng xuất."
   your_cart_is_empty: "Sọt hàng rỗng"
-  zip: Zip
+  zip: Mã bưu điện
   zone: Vùng
   zone_based: "Dựa trên vùng"
   zone_setting_description: "Danh sách các quốc gia, bang hoặc vùng khác được dùng trong nhiều tính toán khác nhau."
