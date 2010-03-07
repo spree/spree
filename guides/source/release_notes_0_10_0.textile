@@ -6,6 +6,13 @@ endprologue.
 
 h3. Upgrade Notes
 
+h4. Upgrading from 0.9.4 to 0.10.0
+
+* @taxonomies used to always be set.  You may have to call get_taxonomies explicitly now to retrieve the site configured @taxonomies within a view
+* Spree::BaseController inherits directly from ActionController::Base changed from ApplicationController, if you had an app/views/application.html.erb in your site extension, you have to set the layout explicitly in your site_extension.rb as Spree::BaseController.class_eval { layout 'application' }
+* Using @extension_tabs to create an admin tab no longer works, instead use theme hooks.
+
+
 h5. Perform the standard upgrade command
 <shell> 
 spree --update
