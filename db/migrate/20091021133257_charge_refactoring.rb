@@ -7,8 +7,8 @@ class ChargeRefactoring < ActiveRecord::Migration
   
   def self.up
     add_column :orders, :completed_at, :timestamp
-    Order.reset_column_information
-    Order.all.each{|o| o.update_attribute(:completed_at, o.checkout && o.checkout.completed_at)}
+    Order.reset_column_information   
+    Order.all.each {|o| o.update_attribute(:completed_at, o.checkout && o.checkout.read_attribute(:completed_at)) }
     remove_column :checkouts, :completed_at
     
     change_column :adjustments, :amount, :decimal, :null => true, :default => nil, :precision => 8, :scale => 2
