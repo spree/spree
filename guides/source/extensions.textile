@@ -32,7 +32,7 @@ pretty much everything in Spree.
 
 Possibilities include (but are not limited to!):
 
-* over-ride of standard views
+* over-riding of standard views
 * adding or removing columns 
 * replacing existing migrations with custom versions
 * replacing or extending a controller or model
@@ -160,6 +160,15 @@ So even though your Spree application will not have an +app+ directory, your ext
 
 NOTE. Reminder on load order and find-last-mentioned?
 
+h4. The activation file
+
+Each extension has a file which 'activates' the extension. A skeleton file is created automatically
+as @foo_extension.rb@, with an empty method called +activate+. This method is called when the 
+extension is loaded, and can be used to monkey-patch or configure other parts of Spree. For 
+example, you can replace methods in a model with your own versions, or extend models with new
+associations, or alter a controller's behaviour.
+
+
 h4. Extension initializers
 
 You can put initializers in extensions, and these are the recommended way to configure certain settings. For example, an initializer in your site extension can set site email addresses and other important Spree settings. The following is the pattern for making the settings: the wrapper copes with the first-run case, before the database is set up, and note the use of +.set+ to update settings.
@@ -241,20 +250,25 @@ Similarly, you can generate vanilla and admin controllers too. See
 @script/generate extension_controller -h@ for more detail and some examples.
 
 
-h4. Extension models and migrations
+h4. Extension seed data
 
 Extensions can also populate seed data in a way similar to a standard rails app.  Seed data is data that is needed by the application in order for it to work properly.  This is a fairly specialized case and it is not the same as sample data (which is optional). Each extension is created with a file +db/seeds.rb+ which should be modified to load the required data. See Spree's core +db/seeds.rb+
-file for an example. 
-
-<shell>
-  rake db:seed
-</shell>
+file for an example. Extension seed files (in the declared load order) are executed when 
+you run +rake db:seed+
 
 
 
 
 
 h3. Tips and Tricks
+
+Here's some of the techniques you may need from time to time. Also look at the
+"extension tutorial":extension_tutorial.html and "theming tutorial":theming_tutorial.html
+for more examples.
+
+Extensions can also modify the checkout workflow.  Please see the guide on the "checkout 
+process":checkout.html for detailed information.
+
 
 h4. Make your extension helper avaliable to all views (helpful if you're using it in a layout override)
 
@@ -269,11 +283,9 @@ Edit the following into +activate+ in @foo_extension.rb@
 
 h4. Adding Fields to Product or Variants
 
-You may be interested in adding one or more fields to variant and / or product models using an extension. The Variant model has a class method called +additional_fields+ which exposes an array of hash objects, which you can add to from your extension to provide any extra fields that you might need. It's important to note that you should always _append_ or _add_ to this array as you might overwrite fields added from another extension. 
+You may want to add one or more fields to variant and / or product models using an extension. The Variant model has a class method called +additional_fields+ which exposes an array of hash objects, which you can add to from your extension to provide any extra fields that you might need. It's important to note that you should always _append_ or _add_ to this array as you might overwrite fields added from another extension. 
 
 Each field added to this array automatically gets presented on the relevant add / edit admin interfaces, but *you still need to create a migration to added these fields to the relevant tables*.  This is a better approach to simply overriding the admin views in your extension, because it enables multiple extensions to add columns to the product/variant model without having the clash of views.
-
-h4. Variant#additional_fields 
 
 From your extension class you can add to the variant and / or product models by adding a hash for each value, like:
 
@@ -297,71 +309,4 @@ The supported parameters for the config hash are:
 * *:only* - Defines which models the field has been added to. If no +:only+ key is present it's presumed to be added to both Variant and Product
 * *:format* - An sprintf compatible string to be used to format the value.
 * *:populate* - If +[:line_item]+ is passed to the +:populate key+, the value will be updated on the line_item when the product / variant is added to an order (i.e. cart). This can be helpful if your field changes frequently, but you'd like to record the value at the time of purchase (like cost price for example).
-
-h4. Modifying the Checkout Workflow
-
-You may wish to change the checkout workflow for your specific application.  Extensions are a logical place to do this.  Typically you would override the +checkout+ in your site extension.  Please see the guide on the "checkout process":checkout.html for more detailed information.
-
-WARNING. TODO - merge this into the tutorial, extract the highlights
-
-h4. Adding a tab to the Admin screens
-
-If your extension needs to have a section in the admin screens, you can add a tab to the admin panel from the +activate+ method in your +foo_extension.rb+ file. 
-
-*Generate an extension admin controller:*
-
-<shell>
-script/generate extension_controller foo admin/foos
-</shell>
-
-*Add a route to your +config/routes.rb+ file:*
-
-<shell>
-map.namespace :admin do |admin|
-  admin.resources :foos
-end
-</shell>
-
-*Add your localization file*
-
-You'll need to create at the least, a localization file for en-US that contains your extension name. A minimal locale file would contain the string the tab helper will use to render the tab label.  You may want to include other translations for your particular admin needs. 
-
-@config/locales/en-US.yml@
-
-<shell>
----
-en-US:
-  foos: "Foos"
-  delete_foo: "Delete Foo"
-  edit_foo: "Edit Foo"
-  transmogrify_foo: "Turn Foo into a T-Rex"
-</shell>
-
-Once you've got the parts you need set up, you can tie your admin screen into the main panel by editing +foo_extension.rb+ and adding the following to the +activate+ method:
-
-@foo_extension.rb@
-
-<shell>
-def activate
-  Admin::BaseController.class_eval do
-    before_filter :add_foos_tab
-
-    def add_foos_tab
-      @extension_tabs << [ :foos ]
-    end
-  end
-end
-</shell>
-
-The array that is appended to the extension_tabs attribute is passed in the call to the tab helper. You can pass in options to the tab helper like:
-
-<shell>
-...
-@extension_tabs << [ :foos, { :label => "Some other tab label", :route => :mapped_path_name } ]
-...
-</shell>
-
-Any option supported by the tabs helper can be passed in the hash argument.
-
-INFO. By default, the route is created by concatenating "admin_" with the first element of the array. However, if you override the route (as above) and are making use of the 'admin' namespace, you will need to include "admin_" as a part of your route argument.
 
