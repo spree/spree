@@ -1,5 +1,326 @@
 h2. Extension Tutorial
 
-This will be updated soon. For now, please see the (very out of date) "wiki extension tutorial":http://wiki.github.com/railsdog/spree/extension-tutorial
+This tutorial shows the main steps for creating a simple 'promotions' tutorial.
+Don't let the length of this very detailed tutorial discourage you.  
+The later part of the tutorial is dedicated to showing the specific code for our example extension.
+It goes way beyond the knowledge necessary to create a simple extension.
+
 
 endprologue.
+
+
+h3. Generating an Extension
+
+We're assuming you have already created a new Spree application and run the migrations.  If you haven't done so, create a simple application now.
+<pre>
+spree tutorial
+cd tutorial
+rake db:bootstrap
+</pre>
+
+Let's start by building a simple extension.  Let's pretend we want the ability to mark certain products as part of a promotion.  We'd like to add an admin interface for marking certain items as being part of the promotion.  We'd also like to highlight these products in our store view.  This is a great example of how an extension can be used to build on the solid Spree foundation.  We'll be adding our own custom models, views and controllers through the new extension.
+
+Spree comes with generators for creating your new extensions.  To create a new extension use
+<pre>$ script/generate extension &lt;extension_name&gt;</pre>
+
+So in the case of our Promotion Manager extension we type
+<pre>$ script/generate extension PromotionManager</pre>
+
+This command generates something like the following output
+<pre>
+create  vendor/extensions/promotion_manager/app/controllers
+create  vendor/extensions/promotion_manager/app/helpers
+create  vendor/extensions/promotion_manager/app/models
+create  vendor/extensions/promotion_manager/app/views
+create  vendor/extensions/promotion_manager/db/migrate
+create  vendor/extensions/promotion_manager/lib/tasks
+create  vendor/extensions/promotion_manager/<span class="caps">README</span>
+create  vendor/extensions/promotion_manager/promotion_manager_extension.rb
+create  vendor/extensions/promotion_manager/lib/tasks/promotion_manager_extension_tasks.rake
+create  vendor/extensions/promotion_manager/spec/controllers
+create  vendor/extensions/promotion_manager/spec/models
+create  vendor/extensions/promotion_manager/spec/views
+create  vendor/extensions/promotion_manager/spec/helpers
+create  vendor/extensions/promotion_manager/Rakefile
+create  vendor/extensions/promotion_manager/spec/spec_helper.rb
+create  vendor/extensions/promotion_manager/spec/spec.opts
+</pre>
+
+This creates the promotion manager extension in <code>vendor/extensions</code>.  The extension is entirely self contained in that directory.  Once we're done, we can reuse this extension in other Spree applications by simply copying the <code>promotion_manager</code> folder and dropping it into another application's <code>vendor/extensions</code> directory. We can also publish the code on GitHub to allow others to use it or collaborate on it.
+
+
+h3. Generating a Model
+
+Extensions allow you to add your own models to the application.  You can also use extensions to mixin additional functionality into the existing models.  For our promotion extension let's create a brand new promotion model.  Note that the field names are optional but if we provide them they will be automatically added to the migration.
+
+<shell>
+$ script/generate extension_model PromotionManager promotion name:string start:date stop:date
+</shell>
+
+This command generates the following output
+<pre>
+exists  app/models/
+exists  spec/models/
+create  app/models/promotion.rb
+create  spec/models/promotion_spec.rb
+create  vendor/extensions/promotion_manager/db/migrate
+create  db/migrate/20100310010101_create_promotions.rb
+</pre>
+Reviewing the output of this command you can see that the generator produced the following:
+<ul>
+	<li>Model file</li>
+	<li>RSpec test</li>
+	<li>Database migration</li>
+</ul>
+
+NOTE. The RSpec tests will soon be replaced in favour of Shoulda tests.
+
+Let's examine the contents of the migration in our favorite text editor.
+<pre>
+class CreatePromotions &lt; ActiveRecord::Migration
+  def self.up
+    create_table :promotions do |t|
+      t.string :name
+      t.date :start
+      t.date :stop
+
+      t.timestamps
+    end
+  end
+
+  def self.down
+    drop_table :promotions
+  end
+end
+</pre>
+So we now can see that Spree extensions support their own migrations and the extension_model generator will even help us to create them.  Let's run the migrations.  Just run the regular migration task to migrate your project and all of your extensions.  This is made possible by the <span class="caps">UTC</span> based migration system introduced by Rails 2.1
+<pre>rake db:migrate</pre>
+This should output something like
+<pre>
+== 20100310010101 CreatePromotions: migrating ==============================================
+-- create_table(:promotions)
+   -&gt; 0.0025s
+== 20100310010101 CreatePromotions: migrated (0.0030s) =====================================
+</pre>
+Of course you can have more then one model in your extension.  If we had additional models their migrations would have been run at this point as well.  If you decide to make your extension available to the public (via Github or some other mechanism) you can write additional migrations to support new features for your extension in subsequent versions using the command:
+<pre>
+script/generate extension_migration &lt;extension_name&gt; &lt;migration_name&gt;
+</pre>
+As we mentioned, the previous command migrates all of your extensions.  If you want to migrate your extension to a specific version use something like this:
+<pre>rake spree:extensions:promotion_manager:migrate VERSION=0</pre>
+Note the use of the familiar <code>VERSION</code> environment variable to specify the version.  The version number corresponds to the number of your <em>extension's</em> migration (file) and not the number in the <code>schema info</code> table.  You can also use <code>RAILS_ENV</code> to specify an environment other then the default (which is development.)
+
+
+h3. Generating a Controller
+
+Now that we have the model setup for our extension we can move onto the controller.  
+To generate a controller use the following command:
+<pre>script/generate extension_controller PromotionManager admin/promotions</pre>
+
+This should generate the following output:
+<pre><code>create  app/controllers/admin
+create  app/helpers/admin
+create  app/views/admin/promotions
+create  spec/controllers/admin
+create  spec/helpers/admin
+create  spec/views/admin/promotions
+create  spec/controllers/admin/promotions_controller_spec.rb
+create  spec/helpers/admin/promotions_helper_spec.rb
+create  app/controllers/admin/promotions_controller.rb
+create  app/helpers/admin/promotions_helper.rb
+</code></pre>
+Reviewing this output we see that it generated
+<ul>
+	<li>Admin::PromotionsController</li>
+	<li>Helper for the controller</li>
+	<li>RSpec test for the controller</li>
+	<li>Folder for the promotion controller views</li>
+</ul>
+
+INFO. You can create non-admin controllers too - just leave out the +admin/+ part in the command.
+
+
+h3. Routing
+
+Spree extensions have the ability to configure their own routes.  Let's open <code>vendor/extensions/promotion_manager/config/routes.rb</code> and take a closer look.
+<pre>
+# Put your extension routes here.
+
+# map.namespace :admin do |admin|
+#   admin.resources :whatever
+# end 
+</pre>
+
+Notice how the generator created a placeholder for you to add your routes.  Go ahead an uncomment that block of code and change :whatever to :promotions.
+<pre>
+  map.namespace :admin do |admin|
+    admin.resources :promotions
+  end  
+</pre>
+
+This allows use of REST-style URLs based on +/admin/promotions+, e.g. URL +/admin/promotions/1+ would show you the details of a promotion with ID=1. 
+
+You can also extend existing routes in this file. The following could be used to access the
+promotions of a certain product (given a suitable controller).
+
+<pre>
+map.resources :products do |product|
+  product.resources :promotions 
+end
+</pre>
+
+
+h3. Internationalization
+
+TIP. We encourage people to set their extensions up for multi-lingual use. (MORE)
+
+You'll need to create at the least a localization file for +en-US+ that contains your 
+extension name. A minimal locale file would contain the string the tab helper will use to render the tab label.  You may want to include other translations for your particular admin needs. 
+
+@config/locales/en-US.yml@
+
+<shell>
+---
+en-US:
+  foos: "Foos"
+  delete_foo: "Delete Foo"
+  edit_foo: "Edit Foo"
+  transmogrify_foo: "Turn Foo into a T-Rex"
+</shell>
+
+
+h3. Implementing a Controller
+
+h4. Add <span class="caps">REST</span> Actions to the Controller
+
+TODO. Update this!
+
+If you run 
+Let's add some <span class="caps">REST</span> actions to the controller.  If you are not already aware of the excellent <a href="http://jamesgolick.com/2007/10/19/introducing-resource_controller-focus-on-what-makes-your-controller-special">resource_controller</a> plugin, then you should take a look at it when you get a chance.  It will save you a massive amount of tedious typing.  For now though, we'll create our <span class="caps">REST</span> actions the old fashioned way.
+Go ahead and add the <span class="caps">REST</span> methods to the controller.
+<pre>
+class Admin::PromotionsController &lt; Admin::BaseController
+
+  # GET /promotions
+  # GET /promotions.xml
+  def index
+    @promotions = Promotion.find(:all)
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml =&gt; @promotions }
+    end
+  end
+
+  # GET /promotions/1
+  # GET /promotions/1.xml
+  def show
+    @promotion = Promotion.find(params[:id])
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml  { render :xml =&gt; @promotion }
+    end
+  end
+
+  # GET /promotions/new
+  # GET /promotions/new.xml
+  def new
+    @promotion = Promotion.new
+
+    respond_to do |format|
+      format.html # new.html.erb
+      format.xml  { render :xml =&gt; @promotion }
+    end
+  end
+
+  # GET /promotions/1/edit
+  def edit
+    @promotion = Promotion.find(params[:id])
+  end
+
+  # POST /promotions
+  # POST /promotions.xml
+  def create
+    @promotion = Promotion.new(params[:promotion])
+
+    respond_to do |format|
+      if @promotion.save
+        flash[:notice] = 'Promotion was successfully created.'
+        format.html { redirect_to collection_url }
+        format.xml  { render :xml =&gt; @promotion, :status =&gt; :created, :location =&gt; @promotion }
+      else
+        format.html { render :action =&gt; "new" }
+        format.xml  { render :xml =&gt; @promotion.errors, :status =&gt; :unprocessable_entity }
+      end
+    end
+  end
+
+  # PUT /promotions/1
+  # PUT /promotions/1.xml
+  def update
+    @promotion = Promotion.find(params[:id])
+
+    respond_to do |format|
+      if @promotion.update_attributes(params[:promotion])
+        flash[:notice] = 'Promotion was successfully updated.'
+        format.html { redirect_to collection_url }
+        format.xml  { head :ok }
+      else
+        format.html { render :action =&gt; "edit" }
+        format.xml  { render :xml =&gt; @promotion.errors, :status =&gt; :unprocessable_entity }
+      end
+    end
+  end
+
+  # DELETE /promotions/1
+  # DELETE /promotions/1.xml
+  def destroy
+    @promotion = Promotion.find(params[:id])
+    @promotion.destroy
+
+    respond_to do |format|
+      format.html { redirect_to(promotions_url) }
+      format.xml  { head :ok }
+    end
+  end
+ 
+end
+</pre>
+
+h3. Modifying the Views
+
+TODO. Add some concrete examples
+
+h4. Overview
+
+Recall the "various mechanisms":customization_overview.html#hooksandover-rides provided: 
+over-riding and hooks. It's best to use hooks for most of your simpler changes, such as 
+showing an extra element on the product page. The mechanism is quite flexible, and 
+saves the headache of over-riding key view files and keeping those modified versions
+in sync with Spree's originals when you upgrade.
+
+However, there's a third option which will occur regularly in extensions: that you
+provide _partials_ for displaying the extension's objects, which other developers 
+will use in their own hooks etc when they use your extension on their site.
+
+h4. Style issues
+
+See the "theming guide":themes.html for details of how stylesheets are handled. 
+
+h4. Using hooks
+
+The "customization tutorial":customization_tutorial.html explains this quite well.
+
+h4. Over-riding 
+
+This is just a case of copying Spree's original file into your extension and modifying it.
+Note that you must preserve the hierarchical naming, e.g. Spree core's 
++vendor/extensions/theme_default/app/views/shared/_foo.html.erb+ must be copied to 
++app/views/shared/_foo.html.erb+ in your extension. 
+
+h4. Adding a tab to the admin screens
+
+To allow adminstrators to control the extension, we can add a tab to the 
+admin panel via the +admin_tabs+ hook (see "hooks":theming.html#hooks for an example).
+
