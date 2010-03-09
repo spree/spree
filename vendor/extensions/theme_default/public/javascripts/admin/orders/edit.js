@@ -50,7 +50,7 @@ jQuery(document).ready(function(){
 
       var product = row['product'];
 
-      if(product['variants'].length>0){
+      if(product['variants'].length>0 && expand_variants){
         //variants
         return $.map(product['variants'], function(variant){
 
