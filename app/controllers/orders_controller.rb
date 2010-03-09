@@ -1,6 +1,7 @@
 class OrdersController < Spree::BaseController     
   prepend_before_filter :reject_unknown_object,  :only => [:show, :edit, :update, :checkout]
   before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]            
+  before_filter :set_user
 
   ssl_required :show
 
@@ -74,6 +75,16 @@ class OrdersController < Spree::BaseController
   def prevent_editing_complete_order      
     load_object
     redirect_to object_url if @order.checkout_complete
+  end
+  
+  def set_user
+    if @order.user != current_user
+      if @order.checkout 
+        @order.checkout.update_attribute(:email, current_user && current_user.email)
+      end
+      @order.update_attribute(:user, current_user)
+    end
+
   end
   
   def accurate_title
