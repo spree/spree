@@ -27,7 +27,7 @@ Creating and installing extensions is simple. All extensions live in +vendor/ext
 in your project directory. There's a generator for creating a new extension, and a mechanism
 for installing existing extensions from the internet, or you can copy extensions manually.
 
-TIP. A very good way to learn about these ideas is to experiment with real code! The "Spree Demo":http://github.com/railsdog/spree-demo is a good place to start (wait for updates)
+NOTE. A very good way to learn about these ideas is to experiment with real code! The "Spree Demo":http://github.com/railsdog/spree-demo is a good place to start (wait for updates)
 
 
 h3. What is an extension?
@@ -44,8 +44,7 @@ h4. Extension load order
 
 Extensions are loaded in a particular order. This is essential so that over-rides work in a 
 predictable way. The default order is to load the +:localization+ and +:theme_default+ 
-core extensions first, and the +:site+ extension last, and everything else inbetween in alphabetical
-order. 
+core extensions first, then all other extensions (core and local) in alphabetical order. 
 
 You can modify this order by adding a file +config/preinitializer.rb+ containing something like the
 following.
@@ -56,9 +55,9 @@ So this example loads the default theme first, the site extension last, and load
 extension 'foo' before the remainder. (This pattern is useful if 'foo' sets up something
 that a later extension requires.)
 
-<code>
-SPREE_EXTENSIONS_LOAD_ORDER = [:theme_default, :foo, :all, :site]
-</code>
+<ruby>
+SPREE_EXTENSIONS_LOAD_ORDER = [:localization, :theme_default, :foo, :all, :site]
+</ruby>
 
 
 h4. Hooks and over-rides
@@ -71,7 +70,8 @@ When Spree needs a file, e.g. +app/views/products/show.html+ (which controls pre
 single product's information), it looks for the file in the Spree core directory then in the
 extension directories _in the declared load order_. It uses the file which is latest in the 
 load order. So, if there was a version of this file in the +:site+ extension, it would mask
-or take priority over any other versions. 
+or take priority over any other versions. (Note: some kinds of file don't over-ride like 
+this - we'll explain the special cases in the "extension guide":extensions.html)
 In this way, later-loaded extensions can take control of most aspects of an application, and 
 make unlimited changes to the default functionality or appearance of results.
 
@@ -79,8 +79,9 @@ However, replacing whole files just to change a small number of lines is not goo
 It can lead to a maintenance nightmare, for one thing. We also find that developers often
 want to make just minor changes or additions to certain components of Spree, e.g. small tweaks
 to how a product is described. To support this, Spree has a 'hook' system. This allows
-developers to implement their changes just by supplying small blocks of code, so removes the
-need to duplicate whole files. 
+developers to implement their changes just by supplying small blocks of code. When a hook
+is rendered in a view, the attached code blocks are run (in order of declaration) and the 
+results inserted into the result. This removes the need to duplicate whole files. 
 
 
 h4. Core extensions
@@ -114,17 +115,18 @@ make their themes available (for free or otherwise), as is done with other tools
 
 h4. The 'site' extension
 
-Each Spree project is created with a 'site' extension. This extension is intended to pull together
-elements of the other extensions and provide highly site-specific functionality - mail settings
-and site 'brand' elements are good examples.
+Each Spree project is created with a 'site' extension. 
+This extension is often used to pull together elements of the other extensions and provide 
+highly site-specific functionality - mail settings and site 'brand' elements are good examples.
 To promote reuse and simplify maintenance, we suggest that you keep the site extensions 
 simple, e.g. doing most of the customization in your own theme extension. 
 
-See the "Spree Demo":http://github.com/railsdog/spree-demo/tree for a good example.
-
 Technically, there is nothing special about the site extension. It is just a naming convention.
 Every Spree application will probably need one so we have provided a convenient default.
-You can rename this extension whatever you wish - just adjust the load order correspondingly.
+You can rename this extension to whatever you wish or even remove it - 
+just remember to adjust the load order if needed.
+
+NOTE. See the "Spree Demo":http://github.com/railsdog/spree-demo/tree for a good example of using several extensions and integrating them in the site extension.
 
 
 h3. Installing an Existing Extension
@@ -143,3 +145,5 @@ The "Spree Extension Registry":http://ext.spreecommerce.com/ contains several us
 You can also "search +github+":http://github.com/search?q=spree- - notice the convention that
 extensions names follow the pattern 'spree-FOO'.
 
+You can also copy the source code for an extension directly into place (inside +vendor/extensions+).
+Symbolic links can also be used if you want to share a single code instance: this can be useful for testing an extension over several sites.
