@@ -33,5 +33,5 @@ end
 RedCloth.send(:include, Spree::TextileExtensions)
 
 if $0 == __FILE__
-  Spree::Generator.new.generate
+  Spree::Generator.new(ENV['OUTPUT_DIR']).generate
 end
