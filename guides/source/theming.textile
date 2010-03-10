@@ -32,11 +32,10 @@ script/extension install git://github.com/username/your-theme.git
 
 h4. Load order
 
-Each extension loaded by Spree will override the views and styleshets of those that preceed so you will need to configure their load order. Put something like the following inside the initializer block in the file +config/environment.rb+:
-
-<shell>
-config.extensions = [:all, :my_theme, :site]
-</shell>
+Each extension loaded by Spree will override the views and stylesheets of those that preceed so you will need to configure their load order. 
+This was covered in the "customization overview":customization_overview.html#extensionloadorder.
+You will want to load your extension after, or instead of, the +:theme_default+ that comes 
+with Spree. The exact order may depend on the other extensions you are using. 
 
 
 
@@ -81,7 +80,7 @@ The "_" file prefix denotes a partial stylesheet. These are all included into th
   @import "_reset";
 </shell>
 
-To override any of these stylesheets, create a file of the same name within your extensions +app/stylesheets+ directory. For example, if you just wanted to change some of the colours used in the default theme you would just create a copy of +_colors.less+ in your +app/stylesheets+ directory.
+To override any of these stylesheets, create a file of the same name within your extension's +app/stylesheets+ directory. For example, if you just wanted to change some of the colours used in the default theme you would just create a copy of +_colors.less+ in your +app/stylesheets+ directory.
 
 
 
@@ -89,24 +88,23 @@ h4. Custom stylesheets
 
 h5. Using preferences to specify stylesheets to load
 
-By default Spree will only load +/stylesheets/screen.css+ into the main layout. Rather than override the layout template you can load your custom stylesheet by editing +SITE_EXTENSION_DIR/my_theme_extension.rb+ and changing  the existing +activate+ method to the following:
+By default Spree will only load +/stylesheets/screen.css+ into the main layout. Rather than 
+override the layout template you can load your custom stylesheet by setting the +:stylesheets+
+option in an extension initializer, e.g. add the following to 
++SITE_EXTENSION_DIR/config/my_theme.rb+.
+This would load +screen.css+ first followed by +my_theme.css+.
 
-<shell>
-def activate
-  AppConfiguration.class_eval do
-    preference :stylesheets, :string, :default => 'screen,my_theme'
-  end
-end
-</shell>
+<ruby>
+Spree::Config.set(:stylesheets => 'screen,my_theme')
+</ruby>
 
-This would load screen.css first followed by my_theme.css.
 
 
 h5. Customizing the contents of the head tag
 
 To have full control over the stylesheets used in your theme, as well as JavaScripts, you can override the template +app/views/shared/_head.html.erb+ which includes all the contents of the head tag. See "Customizing Templates":#customizingtemplates
 
-If you just need to add your own content to what the head already contains, you can use the theme hook "head". See "Hooks":#hooks for details.
+If you just need to add your own content to what the head already contains, you can use the theme hook +:head+. See "Hooks":#hooks for details.
 
 
 h3. Images and other assets
@@ -117,13 +115,12 @@ Any static asset your theme requires should be placed in +SITE_EXTENSION_DIR/pub
 
 h4. Using a Custom Logo
 
-If you're overriding the main application layout (+spree_application.html.erb+) you can place your logo image in there. However it is possible  to change the logo without overriding this template using preferences as follows:
+If you're overriding the main application layout (+spree_application.html.erb+) you can place your logo image in there. However it is possible  to change the logo just by changing a preference value,
+e.g. the following in an initializer:
 
-<code>
-  AppConfiguration.class_eval do
-    preference :logo, :string, :default => '/images/my_logo_.png'
-  end
-</code>
+<ruby>
+Spree::Config.set(:logo => '/images/my_logo_.png')
+</ruby>
 
 
 
@@ -131,11 +128,12 @@ h3. Hooks
 
 Hooks are a way of inserting your own content into pre-defined parts of Spree's default templates without having to make your own copy of those templates in your extension. 
 
-Multiple extensions can modify the same hook, the changes are applied cumulatively based on extension load order.
+Multiple extensions can modify the same hook: the changes are applied cumulatively based on extension load order.
 
 h4. Available hooks
 
-Hooks are available to let you add content after product lists, within sidebars and other useful places. A full list of available hooks is available "here":hooks.html
+Hooks are available to let you add content after product lists, within sidebars and other 
+useful places. There is a full list of "available hooks":hooks.html.
 
 h4. Using hooks
 
@@ -158,7 +156,7 @@ Supply a block name followed by any arguments you'd use with +render+
 
   insert_after :homepage_products, 'shared/offers' # renders a partial
 
-  replace :taxon_sidebar_navigation, 'shared/my_sidebar
+  replace :taxon_sidebar_navigation, 'shared/my_sidebar'
 </shell>
 
 h5. Using a block
