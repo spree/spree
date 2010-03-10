@@ -1,12 +1,11 @@
 h2. Tutorial: A Customization Extension
 
-TODO. update to theme details, less about 'site'
-
 This guide contains a tutorial for the development of an extension to customize the appearance of the standard Spree installation. After reading this guide you should learn:
 
-* How to build a "site" extension to customize the look of your store
+* How to build a "theme" extension to customize the look of your store
+* How to build a "site" extension to integrate your customization
 * How to include custom stylesheets, javascript, or images
-* How to deactivate the "site" extension
+* How to deactivate an extension
 
 endprologue.
 
