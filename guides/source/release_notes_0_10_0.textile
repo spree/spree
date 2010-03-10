@@ -2,6 +2,8 @@ h2. Spree 0.10.0 Release Notes
 
 WARNING. Some of the information here could be made redundant by later changes.
 
+Also check Spree's +CHANGELOG+ file and the ticket system for detailed information of changes.
+
 endprologue.     
 
 h3. Upgrade Notes
