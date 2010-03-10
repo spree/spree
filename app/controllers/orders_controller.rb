@@ -84,7 +84,6 @@ class OrdersController < Spree::BaseController
       end
       @order.update_attribute(:user, current_user)
     end
-
   end
   
   def accurate_title
