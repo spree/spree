@@ -13,13 +13,24 @@ h3. Theme extensions
 
 Themes in Spree are implemented as extensions. Please refer to the "extensions guide":extensions.html for full details on using Spree extensions. This guide is concerned with features of extensions specific to altering the appearance of your store.
 
+
 h4. Creating a theme extension
 
-First, to generate the extension, run the following command:
+Theme extensions have particular features, so Spree provides a specific generator.
+To generate a theme extension, run the following command:
 
 <shell>
-script/generate extension my_theme
+script/generate theme my_theme
 </shell>
+
+The generator takes a theme name (no other options), and produces its results in
++vendor/extensions/theme_my_theme+, i.e. gives the theme name a +theme_+ prefix.
+It produces a number of directories and files which are likely to be useful
+for a new theme, and omits the extension files which aren't useful, e.g. the +db+ directory.
+
+IMPORTANT. The generator copies in the +screen.css+ file compiled from the Less files in the core. Developers can modify this directly if they want. If you want to use Less, you will have to set up the recompilation yourself. We expect to provide more support in the next release.
+
+
 
 h4. Installing an existing extension
 
@@ -44,17 +55,60 @@ h3. Stylesheets
 
 This part of the guide explains how override Spree's default stylesheets or add your own.
 
-h4. Overriding Spree's stylesheets
+Spree's core uses "Less CSS":http://lesscss.org/ for its CSS. Less makes your CSS more maintainable with features such as variables and mixins while still supporting standard CSS syntax. 
 
-h5. Less CSS
+However, compiling the Less files into CSS in development mode proves too expensive for most 
+users, so the current release does not contain direct Less support in extensions. Each new theme 
+extension has a copy of the compiled CSS file at +public/stylesheets/screen.css+ instead,
+in case it is needed for minor changes. 
 
-Spree uses "Less CSS":http://lesscss.org/ for its CSS. Less makes your CSS more maintainable with features such as variables and mixins while still supporting standard CSS syntax. 
+If you want to use Less, see below for further details of Spree's setup.
 
-Stylesheets are created in +app/stylesheets+ with the extension ".less" and are then compiled into ".css" files automatically.
 
-Spree has a number of stylesheets for the front end of the site which are all compiled to the single file "screen.css" to improve site performance. These files are as follows:
+h4. Options with custom stylesheets
+
+You can modify or extend the standard +screen.css+ file, but the following options
+support more maintainable working.
+
+h5. Using preferences to specify stylesheets to load
+
+By default Spree will only load +public/stylesheets/screen.css+ into the main layout. Rather than 
+override the layout template you can load your custom stylesheet by setting the +:stylesheets+
+option in an extension initializer, e.g. add the following to +config/my_theme.rb+ inside your
+theme. This would load +screen.css+ first followed by +my_theme.css+.
+
+<ruby>
+Spree::Config.set(:stylesheets => 'screen,my_theme')
+</ruby>
+
+
+h5. Customizing the contents of the head tag
+
+To have full control over the stylesheets used in your theme, as well as JavaScripts, you can override the template +app/views/shared/_head.html.erb+ which includes all the contents of the head tag. See "Customizing Templates":#customizingtemplates
+
+If you just need to add your own content to what the head already contains, you can use the theme hook +:head+. See "Hooks":#hooks for details.
+
+
+
+h4. Less CSS 
+
+h5. Development options
+
+By default, there is no automatic support for recompilation of Less files. Developers can still
+use Less files in their extension, and can manually trigger recompilation with the following 
++rake+ task. 
 
 <shell>
+rake spree:dev:less
+</shell>
+
+
+h5. How the core uses Less
+
+Stylesheets are created in +app/stylesheets+ with the extension ".less" and are then compiled into ".css" files automatically.
+Spree has a number of stylesheets for the front end of the site which are all compiled to the single file +screen.css+ to improve site performance. These files are as follows:
+
+<plain>
   _buttons.less
   _cart.less
   _checkout_progress.less
@@ -72,9 +126,9 @@ Spree has a number of stylesheets for the front end of the site which are all co
   _reset.less
   _typography.less
   screen.less
-</shell>
+</plain>
 
-The "_" file prefix denotes a partial stylesheet. These are all included into the main stylesheet "screen.less" on compilation using the +@import+ directive:
+The "_" file prefix denotes a partial stylesheet. These are all included into the main stylesheet +screen.less+ on compilation using the +@import+ directive:
 
 <shell>
   @import "_reset";
@@ -84,34 +138,11 @@ To override any of these stylesheets, create a file of the same name within your
 
 
 
-h4. Custom stylesheets
-
-h5. Using preferences to specify stylesheets to load
-
-By default Spree will only load +/stylesheets/screen.css+ into the main layout. Rather than 
-override the layout template you can load your custom stylesheet by setting the +:stylesheets+
-option in an extension initializer, e.g. add the following to 
-+SITE_EXTENSION_DIR/config/my_theme.rb+.
-This would load +screen.css+ first followed by +my_theme.css+.
-
-<ruby>
-Spree::Config.set(:stylesheets => 'screen,my_theme')
-</ruby>
-
-
-
-h5. Customizing the contents of the head tag
-
-To have full control over the stylesheets used in your theme, as well as JavaScripts, you can override the template +app/views/shared/_head.html.erb+ which includes all the contents of the head tag. See "Customizing Templates":#customizingtemplates
-
-If you just need to add your own content to what the head already contains, you can use the theme hook +:head+. See "Hooks":#hooks for details.
-
-
 h3. Images and other assets
 
 h4. Adding your own images, JavaScripts and other assets
 
-Any static asset your theme requires should be placed in +SITE_EXTENSION_DIR/public+. These will be copied into +RAILS_ROOT/public+ when you start the application.
+Any static asset your theme requires should be placed in +THEME_EXTENSION_DIR/public+. These will be copied into +RAILS_ROOT/public+ when you start the application.
 
 h4. Using a Custom Logo
 
@@ -140,7 +171,7 @@ h4. Using hooks
 Most hooks are defined with blocks so they span a region of the template, allowing content
 to be replaced or removed as well as added to.
 
-In your extension directory you should find the file +my_theme_hooks.rb+.  Within this file you can specify which content should be inserted into which hooks using the following 4 methods:
+In your theme directory you should find the file +my_theme_hooks.rb+.  Within this file you can specify which content should be inserted into which hooks using the following 4 methods:
 
 * insert_before
 * insert_after
@@ -187,21 +218,21 @@ h3. Customizing templates
 
 h4. Overriding Spree default views
 
-To override any of of Spree's default views, including those for the admin interface, simply create a file with the same filename in your extensions +views+ directory.
+To override any of of Spree's default views, including those for the admin interface, simply create a file with the same filename in your theme's +app/views+ directory.
 
-For example, to override the main layout, create the file +SITE_EXTENSION_DIR/app/views/layouts/spree_application.html.erb+
+For example, to override the main layout, create the file +THEME_EXTENSION_DIR/app/views/layouts/spree_application.html.erb+
 
 h4. Using hooks in your templates
 
 Since themes are just Spree extensions, one may be loaded after another, the modifications they make to the site's appearance being combined based on their load order.  If you anticipate your theme being extended by other themes you should make sure your templates maintain the standard hooks where possible so subsequently loaded extensions can make use of them. You may also define new hooks using the +hook+ helper like so:
 
-<shell>
+<erb>
   <%= hook :my_hook_name %>
 
   # or with block
   <% hook :my_hook_name do %>
     <p>Default content</p>
   <% end %>
-</shell>
+</erb>
 
 If your theme adds new hooks these should be documented in your theme's README.
