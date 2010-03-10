@@ -21,9 +21,11 @@ class UserSessionsController < Spree::BaseController
     end
     
     if @user_session.record
-      order = Order.last(:conditions => {:user_id => @user_session.record, :completed_at => nil})
-      session[:order_token] = order.token
-      session[:order_id] = order.id
+      order = @user_session.record.orders.last(:conditions => {:completed_at => nil})
+      if order
+        session[:order_token] = order.token
+        session[:order_id] = order.id
+      end
     end
   end
 
