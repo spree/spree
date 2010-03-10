@@ -1,10 +1,16 @@
 h2. Spree 0.10.0 Release Notes
 
-WARNING: Some of the information here could be made redundant by later changes.
+WARNING. Some of the information here could be made redundant by later changes.
 
 endprologue.     
 
 h3. Upgrade Notes
+
+h4. General upgrade process
+
+h5. Back up your database and code
+
+Always advisable! 
 
 h5. Perform the standard upgrade command
 <shell> 
@@ -24,36 +30,48 @@ rm -rf public/stylesheets/
 rm -rf public/images/
 </shell>
 
+h5. Take note of existing payment gateway settings
+
+The new payment gateway implementation will remove existing settings, and these need to be added again using the new interface.
+
 h5. Run the migrations
 <shell> 
 rake db:migrate
 </shell>       
 
-h5. Configure a payment method  (See additional information later in the release notes)
+h5. Configure a payment method  
 
-h4. Deprecation Warnings
+See the "additional information":#improvementsto-payment-gateway-configuration  later in the 
+release notes.
 
-WARNING. DEPRECATION -- +require "activerecord"+ is deprecated and will be removed in Rails 3. Use +require "active_record"+ instead. 
 
-Remove all instances of +require 'activerecord'+ from your +Rakefile+ (including those contained in your extensions, including the site extension, etc.)
+h5. Deprecation Warnings
 
-h4. API Changes
+DEPRECATION: +require "activerecord"+ is deprecated and will be removed in Rails 3. Use +require "active_record"+ instead. 
 
-h5. Accessing taxonomies
+Remove all instances of +require 'activerecord'+ from your +Rakefile+s (including those contained in your extensions, including the site extension, etc.)
 
-@taxonomies used to be set in most shared views. Instead when you need the site configured taxonomies call get_taxonomies.
+h4. API Changes 
+
+h5. Change to +@taxonomies+ variable
+
++@taxonomies+ used to be set in most shared views. Now, it is only set after calling 
++get_taxonomies+ (inherited from Spree's base controller).
 
 h5. Spree Base Controller and Layouts
 
-Spree::BaseController inherits directly from ActionController::Base changed from ApplicationController,
-if you had an app/views/application.html.erb in your site extension. e.g.
++Spree::BaseController+ inherits directly from +ActionController::Base+, rather than
+from +ApplicationController+ (which itself is now an empty class to help interaction with
+other Rails apps). 
+If you used +app/views/layout/application.html.erb+ in an extension. e.g.
 <shell>
 Spree::BaseController.class_eval { layout 'application' }
 </shell>
+... then you will need to rename it to +spree_application.html.erb+ and update the occurrences.
 
 h5. Adding admin tabs changed
 
-@extension_tabs is no longer used, instead use theme "hooks":hooks.html.
++@extension_tabs+ is no longer used, instead use theme "hooks":hooks.html.
 
 
 
@@ -105,7 +123,7 @@ The list can be limited to a specific set of countries by configuring the new +:
 
 h4. State Machine
 
-The Checkout model now has its own "state machine":http://github.com/pluginaweek/state_machine.  This allows for easier customization of the checkout process.  It is now much simpler to add or remove a step to the default checkout process.
+The Checkout model now has its own "state machine":http://github.com/pluginaweek/state_machine.  This allows for easier customization of the checkout process.  It is now much simpler to add or remove a step to the default checkout process. Here's an example which avoids the address step in checkout.
 
 <shell>
 class SiteExtension < Spree::Extension  
@@ -137,62 +155,7 @@ end
 h4. Controller Hooks
 
 The +CheckoutController+ now provides its own "hook mechanism" (not to be confused with theme hooks) which allow for the developer to perform additional logic (or to change the default) logic that is applied during the edit and/or update operation for a particular step.  The +Spree::Checkout::Hooks+ module provides this additional functionality and makes use of methods provided by the +resource_controller+ gem.  
-
-The +CheckoutsController+ will automatically call an +edit_hook+ (if one is defined) before moving on to the standard edit functionality for a particular step.  There is also a corresponding +update_hook+ that can be used to execute additional functionality during an update.  Both hooks can accept either a symbol (which is the name of a method) or a block.
-
-The +CheckoutsController+ itself makes limited use of these hooks - its expected that developers will add their own through a site extension.  Here's an example of an +edit_hook+ defined in +checkouts_controller.rb+:
-
-<shell>
-delivery.edit_hook :load_available_methods 
-</shell> 
-
-This tells the controller to call +load_available_methods+ before presenting the standard edit form for the delivery step.  The hook will be called only during the delivery step - it is ignored for all other steps.  This is necessary for the delivery step because we can't simply instantiate the +@checkout+ object and show the form.  We also need the list of available shipping methods for the specific address that is being requested.  The checkout hooks also support an alternate block syntax.  Using this syntax the same hook could have been defined as follows:
-
-<shell>
-delivery.edit_hook do
-  @available_methods = rate_hash
-  @checkout.shipment.shipping_method_id ||= @available_methods.first[:id]
-end
-</shell>
-
-Both +edit_hook+ and +update_hook+ can be overridden entirely using either the symbol or block syntax.  What is the use case for overriding a hook?  The most obvious scenario would be to negate or remove functionality provided by the Spree core (or perhaps an extension which does almost exactly what you want.)  For instance, if you did not want to record the ip address when entering the address step.
-
-<shell>
-# negate the default edit_hook functionality for the address step
-address.edit_hook {} 
-</shell>
-
-INFO. If you are skipping a step in the default checkout process the hooks will never be called for that step.  
-
-WARNING. Be sure to check the documentation for any third party extensions you are using.  These extensions may introduce new steps or hooks and/or make assumptions about the availability of specific steps or hooks.
-
-Perhaps more interestingly, hooks can also be appended to.  In other words, if you wanted to perform some additional logic before presenting the delivery form, you could add something like the following in your site extension.
-
-<shell>
-delivery.edit_hook << :perform_additional_logic
-</shell> 
-
-This is an argument for using the symbol approach instead of the block syntax.  It also makes it easier for extensions to work in tandem to customize the checkout process.  
-
-Finally, you can also use the standard resource_controller hook mechanism for adding general functionality to the checkout process on edit or update.  For example:
-
-<shell>
-edit.before << :something_before_editing_every_step
-</shell>
-
-or you can also use the block syntax version
-
-<shell>
-edit.before do
-  # do something useful here
-end
-</shell>
-
-WARNING. Using the block syntax to replace the +resource_controller+ before hook would also have the effect of removing the custom +edit_hook+ functionality.  This is not recommended unless you are planning on creating a total custom checkout solution and you are not relying on any third party extensions to modify your checkout process.
-
-Using the block syntax is destructive (it removes any previously defined hooks) and is suitable only in situations where you need to make drastic changes to the checkout process.
-
-INFO. If you are writing a third party extension, be sure to also see the documentation for "adding and removing steps":checkout.html#addingor-removing-steps.  There is an extra step to ensure that any new checkout steps added by your extension are also able to handle the special +edit_hook+ and +update_hook+ calls.  This will allow developers to further customize the step from within their site extension.
+See the "checkout documentation":checkout.html#controller-logic for further details and examples.
 
 h4. Checkout Partials
 
@@ -200,140 +163,13 @@ The default theme now contains several partials located within +vendor/extension
 
 h4. Javascript
 
-Spree no longer require javascript for checkout but the user experience will be slightly more pleasing if they have javascript enabled in their browser.  Spree automatically includes the +checkout.js+ file located in the default theme.  This file can be replaced in its entirety through use of a site extension.
+Spree no longer requires javascript for checkout but the user experience will be slightly more pleasing if they have javascript enabled in their browser.  Spree automatically includes the +checkout.js+ file located in the default theme.  This file can be replaced in its entirety through use of a site extension.
 
 h3. RESTful API
 
+The REST API is designed to give developers a convenient way to access data contained within Spree.  With a standard read/write interface to store data, it is now very simple to write third party applications (ex. iPhone) that can talk to Spree.  The API currently only supports a limited number of resources.  
+The list will be expanded soon to cover additional resources.  Adding more resources is simply a matter of making the time for testing and investigating possible security implications. 
 See the "REST API section":rest.html for full details.
-
-*Request:* 
-
-<shell>
-GET /api/orders/R664048424
-</shell>
-
-*Response:*
-
-<shell>
-{
-  "order": {
-    "number": "R664048424",
-    "completed_at": "2010-01-11T02:07:43-05:00",
-    "adjustment_total": 11.37,
-    "created_at": "2010-01-11T02:07:43-05:00",
-    "shipments": [
-      {
-        "number": "1284318100104",
-        "created_at": "2010-01-11T12:07:40-05:00",
-        "shipping_method": {
-          "name": "UPS Ground",
-          "created_at": "2010-01-11T12:07:30-05:00",
-          "updated_at": "2010-01-11T12:07:30-05:00",
-          "zone_id": 2,
-          "id": 574015644
-        },
-        "shipped_at": null,
-        "cost": 5.0,
-        "updated_at": "2010-01-11T12:07:40-05:00",
-        "tracking": null,
-        "order_id": 1035625630,
-        "id": 1002961742,
-        "address_id": 607887544,
-        "shipping_method_id": 574015644,
-        "address": {
-          "city": "North Serenahaven",
-          "address1": "6957 Alyce Wells",
-          "created_at": "2010-01-11T12:07:39-05:00",
-          "address2": "Apt. 741",
-          "zipcode": "16804",
-          "updated_at": "2010-01-11T12:07:39-05:00",
-          "country_id": 214,
-          "state_name": null,
-          "lastname": "Nikolaus",
-          "id": 607887544,
-          "phone": "502-510-7481 x3973",
-          "firstname": "Vallie",
-          "state_id": 889445952,
-          "alternative_phone": null
-        },
-        "state": "pending"
-      }
-    ],
-    "updated_at": "2010-01-11T12:07:43-05:00",
-    "token": null,
-    "total": 153.68,
-    "item_total": 142.31,
-    "id": 1035625630,
-    "bill_address": {
-      "city": "Goyettebury",
-      "address1": "628 Eleanora Ferry",
-      "created_at": "2010-01-11T12:07:39-05:00",
-      "address2": "Apt. 655",
-      "zipcode": "16804",
-      "updated_at": "2010-01-11T12:07:39-05:00",
-      "country_id": 214,
-      "state_name": null,
-      "lastname": "Hammes",
-      "id": 1046447419,
-      "phone": "1-160-338-6820",
-      "firstname": "Kathlyn",
-      "state_id": 889445952,
-      "alternative_phone": null
-    },
-    "user_id": 607882993,
-    "line_items": [
-      {
-        "price": 22.99,
-        "variant": {
-          "price": 22.99,
-          "count_on_hand": 10,
-          "product_id": 723959550,
-          "is_master": true,
-          "depth": null,
-          "deleted_at": null,
-          "cost_price": 21.0,
-          "weight": null,
-          "id": 504220342,
-          "sku": "ROR-00012",
-          "height": null,
-          "width": null
-        },
-        "created_at": "2010-01-11T12:07:30-05:00",
-        "quantity": 1,
-        "updated_at": "2010-01-11T12:07:30-05:00",
-        "order_id": 1035625630,
-        "id": 648459260,
-        "variant_id": 504220342
-      },
-      {
-        "price": 15.99,
-        "variant": {
-          "price": 15.99,
-          "count_on_hand": 10,
-          "product_id": 459084718,
-          "is_master": true,
-          "depth": null,
-          "deleted_at": null,
-          "cost_price": 13.0,
-          "weight": null,
-          "id": 215054540,
-          "sku": "ROR-00011",
-          "height": null,
-          "width": null
-        },
-        "created_at": "2010-01-11T12:07:30-05:00",
-        "quantity": 2,
-        "updated_at": "2010-01-11T12:07:30-05:00",
-        "order_id": 1035625630,
-        "id": 995042986,
-        "variant_id": 215054540
-      }
-    ],
-    "state": "new",
-    "credit_total": 0
-  }
-}
-</shell>
 
 h3. Inventory
 
