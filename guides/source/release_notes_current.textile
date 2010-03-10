@@ -2,7 +2,14 @@ h2. Spree X.Y.Z Release Notes
 
 This document summarises the main changes in release X.Y.Z
 
+Also check Spree's +CHANGELOG+ file and the ticket system for detailed information of changes.
+
 endprologue.
+
+h3. Upgrade procedure
+
+INFO. see the version in the last release notes
+
 
 h3. Improved Blah
 
