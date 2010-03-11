@@ -230,7 +230,7 @@ INFO. If there is a translation error or missing translation information in one 
 h4. Extension models and migrations
 
 Spree can generate models and migrations for your extension. See the usage info by running 
-@script/generate extension_model -h@ or @script/generate extension_migration -h@ in your 
++script/generate extension_model -h+ or +script/generate extension_migration -h+ in your 
 application root directory.
 
 <shell>
