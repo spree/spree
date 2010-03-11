@@ -515,6 +515,15 @@ vn:
   none_available: "Không có hàng nào"
   not: không
   note: Ghi chú
+  notice_messages:
+    option_type_removed: "Succesfully removed option type."
+    product_cloned: "Product has been cloned"
+    product_deleted: "Product has been deleted"
+    product_not_cloned: "Product could not be cloned"
+    product_not_deleted: "Product could not be deleted"
+    track_me_in_GA: "Track Me in GA"
+    variant_deleted: "Variant has been deleted"
+    variant_not_deleted: "Variant could not be deleted"    
   on_hand: "Có hàng"
   operation: Hoạt động
   option_Values: "Giá trị tùy chọn"
@@ -609,12 +618,12 @@ vn:
         name: Xếp ngược thứ tự theo tên sản phẩm
       ascend_by_updated_at:
         name: Xếp ngược thứ tự theo ngày thật
-      descend_by_popularity:
-        name: Sắp xếp theo tính phổ biến (phổ biến nhất trước)
       descend_by_master_price:
         name: Xếp xuôi theo giá chủ của sản phẩm
       descend_by_name:
         name: Xếp xuôi theo tên sản phẩm
+      descend_by_popularity:
+        name: Sắp xếp theo tính phổ biến (phổ biến nhất trước)
       descend_by_updated_at:
         name: Xếp xuôi theo ngày thật
       in_name:
@@ -882,6 +891,7 @@ vn:
   use_as_shipping_address: Dùng như địa chỉ giao hàng
   use_billing_address: Dùng địa chỉ thanh toán
   use_different_shipping_address: "Dùng như địa chỉ giao hàng"
+  use_new_cc: "Use a new card"
   user: Người dùng
   user_account: Tài khoản người dùng
   user_created_successfully: "Tạo người dùng thành công"

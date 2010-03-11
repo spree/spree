@@ -515,6 +515,15 @@ ru-RU:
   none_available: "Нет в наличии"
   not: "не"
   note: "Примечание"
+  notice_messages:
+    option_type_removed: "Товарная опция успешно убрана."
+    product_cloned: "Копия товара создана"
+    product_deleted: "Товар успешно удалён"
+    product_not_cloned: "Товар не может быть клонирован"
+    product_not_deleted: "Товар не может быть удалён"
+    track_me_in_GA: "Отслеживай меня в Google Analytics"
+    variant_deleted: "Вариант успешно удалён"
+    variant_not_deleted: "Вариант не может быть удален"  
   on_hand: "В наличии"
   operation: "Операция"
   option_Values: "Значения опции"
@@ -609,12 +618,12 @@ ru-RU:
         name: "по названию товара (по алфавиту)"
       ascend_by_updated_at:
         name: "по дате обновления информации о товаре (прямой порядок)"
-      descend_by_popularity:
-        name: "По популярности (обратный порядок)"
       descend_by_master_price:
         name: "по основной цене товара (по убыванию)"
       descend_by_name:
         name: "по названию товара (по алфавиту в обратном порядке)"
+      descend_by_popularity:
+        name: "По популярности (обратный порядок)"
       descend_by_updated_at:
         name: "по дате обновления информации о товаре (обратный порядок)"
       in_name:
@@ -882,6 +891,7 @@ ru-RU:
   use_as_shipping_address: "Использовать как адрес доставки"
   use_billing_address: "Использовать адрес для фактурации"
   use_different_shipping_address: "использовать другой адрес доставки"
+  use_new_cc: "Использовать новую карту"
   user: "Пользователь"
   user_account: "Учетная запись пользователя"
   user_created_successfully: "Учётная запись успешно создана"

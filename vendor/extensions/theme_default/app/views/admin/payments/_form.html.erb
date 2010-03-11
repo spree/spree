@@ -7,7 +7,7 @@
 
   <label>
     <%= radio_button_tag "payment[payment_method_id]", method.id, method == @payment_method %> 
-    <%= method.name %>
+    <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
   </label>
 
   <%= render "admin/payments/source_forms/#{method.method_type}", :payment_method => method %>

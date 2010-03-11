@@ -23,7 +23,7 @@
 		<% end %>
 		<% if @product.selected_options.empty? %>
 			<tr>
-				<td colspan="3">None Selected.</td>
+				<td colspan="3"><%= t(:none) %></td>
 			</tr>
 		<% end %>
 	</tbody>

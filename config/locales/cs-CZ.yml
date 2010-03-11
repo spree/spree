@@ -515,6 +515,15 @@ cs-CZ:
   none_available: "Žádný dostupný"
   not: ne
   note: "Poznámka"
+  notice_messages:
+    option_type_removed: "Succesfully removed option type."
+    product_cloned: "Product has been cloned"
+    product_deleted: "Product has been deleted"
+    product_not_cloned: "Product could not be cloned"
+    product_not_deleted: "Product could not be deleted"
+    track_me_in_GA: "Track Me in GA"
+    variant_deleted: "Variant has been deleted"
+    variant_not_deleted: "Variant could not be deleted"    
   on_hand: "Dostupný"
   operation: Operace
   option_Values: "Hodnoty volby"
@@ -609,12 +618,12 @@ cs-CZ:
         name: "Vzestupně podle názvu výrobku"
       ascend_by_updated_at:
         name: "Vzestupně podle data poslední změny"
-      descend_by_popularity:
-        name: "Řadit podle popularity, nejvíce populární na začátek"
       descend_by_master_price:
         name: "Sestupně podle základní ceny"
       descend_by_name:
         name: "Sestupně podle názvu výrobku"
+      descend_by_popularity:
+        name: "Řadit podle popularity, nejvíce populární na začátek"
       descend_by_updated_at:
         name: "Sestupně podle data poslední změny"
       in_name:
@@ -882,6 +891,7 @@ cs-CZ:
   use_as_shipping_address: "Použít jako doručovací adresu"
   use_billing_address: "Použít fakturační adresu"
   use_different_shipping_address: "Použít jinou doručovací adresu"
+  use_new_cc: "Use a new card"
   user: "Uživatel"
   user_account: "Uživatelský účet"
   user_created_successfully: "Uživatel byl úspěšně vytvořen"
