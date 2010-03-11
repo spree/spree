@@ -23,7 +23,7 @@ it's a good idea to organize your work logically into several self-contained ext
 Spree supports this way of working, and indeed, you can no doubt benefit from the good 
 collection of 3rd party extensions already on offer.
 
-Custom extensions should be placed in the @vendor/extensions@ directory of your project.  
+Custom extensions should be placed in the +vendor/extensions+ directory of your project.  
 Extensions placed in this directory will be automatically available to your application. 
 They are loaded and take precedence according to the "load_order":customization_overview.html#loadorder
 you set for the app. Recall that the loading mechanism means that the last-loaded version
