@@ -19,14 +19,6 @@ class UserSessionsController < Spree::BaseController
     else
       create_user(params[:user_session])
     end
-    
-    if @user_session.record
-      order = @user_session.record.orders.last(:conditions => {:completed_at => nil})
-      if order
-        session[:order_token] = order.token
-        session[:order_id] = order.id
-      end
-    end
   end
 
   def destroy
@@ -55,6 +47,21 @@ class UserSessionsController < Spree::BaseController
     @user_session = UserSession.new(data)
     @user_session.save do |result|
       if result
+        # Should restore last uncompleted order and add current(guest) order to it, if exists.
+        order = @user_session.record.orders.last(:conditions => {:completed_at => nil})
+        if order
+          if (session[:order_token] && guest_order = Order.find_by_token(session[:order_token]))
+            guest_order.line_items.each do |line_item|
+              order.add_variant(line_item.variant, line_item.quantity)
+            end  
+            order.save
+            session[:return_to].gsub!(guest_order.number, order.number) if session[:return_to]
+            guest_order.destroy
+          end
+          session[:order_token] = order.token
+          session[:order_id] = order.id
+        end
+        
         respond_to do |format|
           format.html {
             flash[:notice] = t("logged_in_succesfully") unless session[:return_to]
