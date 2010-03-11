@@ -36,9 +36,8 @@ class User < ActiveRecord::Base
 
   # has_role? simply needs to return true or false whether a user has a role or not.  
   def has_role?(role_in_question)
-    @_list ||= self.roles.collect(&:name)
-    (@_list.include?(role_in_question.to_s) )
-  end 
+    roles.any? { |role| role.name == role_in_question.to_s }
+  end
   
   private
   def password_required?
