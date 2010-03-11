@@ -95,11 +95,6 @@ h3. Customization
   <% end %>
 </dl>
 <dl>
-  <% guide('Theme Customization Tutorial', 'customization_tutorial.html') do %>
-    This guide is a walkthrough of how to create a new theme
-  <% end %>
-</dl>
-<dl>
   <% guide('Extension Tutorial', 'extension_tutorial.html') do %>
     This tutorial covers the basic steps of creating your own functionality extensions.
   <% end %>
