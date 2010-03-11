@@ -56,8 +56,7 @@ extension 'foo' before the remainder. (This pattern is useful if 'foo' sets up s
 that a later extension requires.)
 
 <ruby>
-SPREE_EXTENSIONS_LOAD_ORDER = [:localization, :theme_default, 
-:foo, :all, :site]
+SPREE_EXTENSIONS_LOAD_ORDER = [:localization, :theme_default, :foo, :all, :site]
 </ruby>
 
 
