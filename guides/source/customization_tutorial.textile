@@ -3,65 +3,51 @@ h2. Tutorial: A Customization Extension
 This guide contains a tutorial for the development of an extension to customize the appearance of the standard Spree installation. After reading this guide you should learn:
 
 * How to build a "theme" extension to customize the look of your store
-* How to build a "site" extension to integrate your customization
+* How to use a "site" extension to integrate your customization
 * How to include custom stylesheets, javascript, or images
+* How to add in new functionality with other extensions
 * How to deactivate an extension
 
 endprologue.
 
-h3. Creating the Site Extension
+h3. Preliminaries
 
-WARNING. You must "understand the difference":boot_modes.html between running Spree as a gem and running it as a Rails application. Certain instructions below depend on how you are running Spree.
+We assume that you are running Spree from an installed gem, and have created a new project
+using the +spree+ command. This is the easiest mode to start with. Configure the database(s)
+as you wish and run the server.
 
-h4. Site Extension with Spree Application
+The new project will already have a site extension created by default, located in
++vendor/extensions/site+. It should contain a few skeleton files already. We will create 
+a new theme to hold the changed views templatew
 
-First, to generate the extension, run the following to create an extension by the name of 'site'.
+NOTE. When any files in an extension's +public/*+ directories are modified, such as CSS or JS files, a server restart is required to copy these files over to the main app +public/+ directory. Kill and rerun +script/server+, or if using Apache + Passenger, use +touch tmp/restart.txt+, etc. 
+
+
+h3. Creating a Theme Extension
+
+First, run the following to create a theme extension by the name of 'my_theme'.
 
 <shell>
-script/generate extension site
+script/generate theme my_theme
 </shell>
 
-This command will create many files in the vendor/extensions/site/ directory that looks similar to a generic rails application.
+This command will create several files in the +vendor/extensions/my_theme+ directory. The 
+contents will look similar to a generic rails application - it's the subset of files needed
+in extension, restricted to the files that are useful for view changes.
 
-h4. Site Extension with Spree Gem Install
+Now change into this new directory. 
 
-A site extension exists upon creation of an application using the Spree gem.
 
-<shell>
-ls vendor/extensions
-</shell>
+h3. Add a Custom CSS Stylesheet
 
-h3. Add a Custom Stylesheet
-
-This part of the tutorial explains how to add a custom stylesheet to spree to change the look of your site.
+New themes contain a copy of the core Spree style file (called +screen.css+). 
+You can edit this if you wish, or add some new files. 
+This part of the tutorial explains how to add a custom CSS stylesheet to change the 
+look of your site.
 
 h4. Create the custom stylesheet
 
-WARNING. Spree uses SASS and Compass, a CSS framework that includes Blueprint. We recommend you become familiar with SASS. However, you may continue this tutorial without the knowlege of SASS.
-
-h5. SASS
-
-To create a stylesheet with SASS, complete the following:
-
-<shell>
-mkdir -p public/stylesheets/sass
-</shell>
-
-Inside this directory, create a file named +site.sass+.  Edit +site.sass+ to contain the following:
-<code>
-body
-  :background #99CC99
-</code>
-
-h5. CSS
-
-To create a stylesheet without SASS, complete the following:
-
-<shell>
-mkdir public/stylesheets
-</shell>
-
-Inside this directory, create a file named +site.css+. Edit +site.css+ to contain the following:
+Create a file named +public/stylesheets/my_theme.css+. Edit this + to contain the following:
 <code>
 body {
   background: #99CC99;
@@ -70,35 +56,13 @@ body {
 
 h4. Add the stylesheet to the default layout
 
-Now you'll tell Spree to include the custom stylesheet in the default layout by overriding the stylesheets preference.
+Now you'll tell Spree to include the custom stylesheet in the default layout by 
+changing the stylesheets preference.
 
-h5. SASS
-
-If you created a +site.sass+ file, edit the +SITE_EXTENSION_DIR/site_extension.rb+ file to change the existing +activate+ method to the following:
-<code>
-def activate
-  AppConfiguration.class_eval do
-    preference :stylesheets, :string, :default => 'compiled/screen,compiled/site'
-  end
-end
-</code>
-
-h5. CSS
-
-If you created a +site.css+ file, edit the +SITE_EXTENSION_DIR/site_extension.rb+ file to change the existing +activate+ method to the following:
-<code>
-def activate
-  AppConfiguration.class_eval do
-    preference :stylesheets, :string, :default => 'compiled/screen,site'
-  end
-end
-</code>
-
-h4. Restart server
-
-When any extension +public/*+ files are modified, a server restart is required to copy the files over to the main app +public/+ directory.
-
-Restart the server with the +script/server+, +touch tmp/restart.txt+, etc. command.
+Put this code in an initializer, e.g. in +config/initializers/my_theme.rb+.
+<ruby>
+Spree::Config.set(:stylesheets => 'screen,my_theme')
+</ruby>
 
 h4. Results
 
@@ -110,23 +74,7 @@ h4. Another Iteration
 
 Complete the following steps to perform another iteration of style changes:
 
-h5. SASS
-
-Apply the following patch on +site.sass+:
- 
-<code>
-  body
-   :background #99CC99
-+ body.two-col div#wrapper
-+   :background-image none
-+   :background #FFF
-+   :-moz-border-radius 10px
-+   :-webkit-border-radius 10px
-</code>
-
-h5. CSS
-
-Apply the following patch on +site.css+:
+Apply the following patch on +my_theme.css+ and restart the server.
 
 <code>
   body {
@@ -140,7 +88,6 @@ Apply the following patch on +site.css+:
 + }
 </code>
 
-Restart the server with the +script/server+, +touch tmp/restart.txt+, etc. command.
 
 View the results:
 
@@ -152,12 +99,11 @@ The following describes how to use a custom logo on your site.
 
 h4. Override the default logo path
 
-Change the default path Spree uses for the logo image file by adding the following line to the +SITE_EXTENSION_DIR/site_extension.rb+ file. Add the line below the line where you specified the stylesheets preference earlier.
-
-TODO. just .set is ok, this overkill
+Change the default path Spree uses for the logo image file by adding the following line to 
+an initializer (see above).
 
 <code>
-    preference :logo, :string, :default => '/images/logo.png'
+Spree::Config.set(:logo => '/images/logo.png')
 </code>
 
 h4. Upload the image
@@ -168,15 +114,12 @@ Next, create a +public/images+ directory with the following command:
 mkdir public/images
 </shell>
 
-Then, retrieve "this image":images/logo.png and save it to your SITE_EXTENSION_DIR/public/images/ directory.
+Then, retrieve "this image":images/logo.png and save it to your SITE_EXTENSION_DIR/public/images/ directory, then restart.
 <shell>
 wget http://spreecommerce.com/guides/images/logo.png
 mv logo.png SITE_EXTENSION_DIR/public/images/logo.png
 </shell>
 
-h4. Server restart
-
-Finally, restart the server with the +script/server+, +touch tmp/restart.txt+, etc. command to copy the public directory contents to the main rails application public/ directory.
 
 h4. Results
 
@@ -200,27 +143,15 @@ First, complete the following command to make a new directory:
 mkdir SITE_EXTENSION_DIR/app/views/layouts/
 </shell>
 
-h5. Spree Application Installation
-
-If you are running Spree as an application, copy the Spree +application.html.erb+ layout file to your extension +app/views/layouts/+ directory.
- 
-<shell>
-cp SPREE_ROOT/app/views/layouts/application.html.erb /
-  SITE_EXTENSION_DIR/app/views/layouts/
-</shell>
-
-h5. Gem Installation
-
-If you are running Spree as a gem, copy the Spree gem +application.html.erb+ layout file to your extension +app/views/layouts/+ directory.
+Copy the Spree gem's +spree_application.html.erb+ layout file to your extension +app/views/layouts/+ directory.
 
 <shell>
-cp GEM_ROOT/app/views/layouts/application.html.erb /
-  SITE_EXTENSION_DIR/app/views/layouts/
+cp GEM_ROOT/app/views/layouts/spree_application.html.erb SITE_EXTENSION_DIR/app/views/layouts/
 </shell>
 
 h4. Edit the layout template
 
-Edit the +SITE_EXTENSION_DIR/app/views/layouts/application.html.erb+ file to contain the following HTML between the opening +body+ tag and the first +div+ tag:
+Edit the +SITE_EXTENSION_DIR/app/views/layouts/spree_application.html.erb+ file to contain the following HTML between the opening +body+ tag and the first +div+ tag:
 <code>
 <h1>Hello World</h1>
 </code>
@@ -284,17 +215,13 @@ mkdir public/javascripts/
 vi public/javascripts/site.js
 </shell>
 
-Add the following code to +site.js+:
+Add the following code to +site.js+ and restart:
 
 <code>
 $(function() {
   alert('hi');
 })
 </code>
-
-h4. Server Restart
-
-Again, restart the server to copy the +public/+ files over to the main application +public/ directory+ with +script/server+, +touch tmp/restart+, etc. command.
 
 h4. Results
 
@@ -334,7 +261,7 @@ git status
 
 Your new site extension files will be identified as untracked files by git. These should be added to the main repository.
 
-Additionally, the files copied over from the +SITE_EXTENSION_DIR/public/+ directory will show as untracked files by git as well. These files can be ignored or added to the main repository.
+Additionally, the files copied over from the +SITE_EXTENSION_DIR/public/+ directory will show as untracked files by git as well. These files can be ignored (by modifying +.gitignore) or added to the main repository.
 
 h4. Deactivation
 
