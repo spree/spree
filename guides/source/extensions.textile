@@ -309,3 +309,11 @@ The supported parameters for the config hash are:
 * *:format* - An sprintf compatible string to be used to format the value.
 * *:populate* - If +[:line_item]+ is passed to the +:populate key+, the value will be updated on the line_item when the product / variant is added to an order (i.e. cart). This can be helpful if your field changes frequently, but you'd like to record the value at the time of purchase (like cost price for example).
 
+
+h3. Further Reading
+
+"Steph Powell":http://github.com/stephp has an interesting post in the 
+"Endpoint blog":http://blog.endpoint.com/ which discusses 
+"shopping cart customization":http://blog.endpoint.com/2009/10/rails-approach-to-spree-shopping-cart.html.
+Steph has written several extensions for Spree, many of which are on 
+"GitHub":http://github.com/stephp.

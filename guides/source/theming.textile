@@ -74,8 +74,8 @@ h5. Using preferences to specify stylesheets to load
 
 By default Spree will only load +public/stylesheets/screen.css+ into the main layout. Rather than 
 override the layout template you can load your custom stylesheet by setting the +:stylesheets+
-option in an extension initializer, e.g. add the following to +config/my_theme.rb+ inside your
-theme. This would load +screen.css+ first followed by +my_theme.css+.
+option in an extension initializer, e.g. add the following to +config/initializers/my_theme.rb+ 
+inside your theme. This would load +screen.css+ first followed by +my_theme.css+.
 
 <ruby>
 Spree::Config.set(:stylesheets => 'screen,my_theme')
@@ -236,3 +236,12 @@ Since themes are just Spree extensions, one may be loaded after another, the mod
 </erb>
 
 If your theme adds new hooks these should be documented in your theme's README.
+
+h3. Further Reading
+
+"Steph Powell":http://github.com/stephp has produced an excellent 
+"tutorial on using hooks":http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-tutorial.html
+in the "Endpoint blog":http://blog.endpoint.com/, and a related post discussing the 
+"design of the theme mechanisms":http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-comments.html.
+Steph has written several extensions for Spree, many of which are on 
+"GitHub":http://github.com/stephp.

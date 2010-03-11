@@ -287,3 +287,10 @@ the basic work, and some are starting to circulate. The "Spree wiki":http://wiki
 contains a collection of scripts you can download and adapt, plus other useful utilities. Look at
 the "Tricks and Tips section":http://wiki.github.com/railsdog/spree/developers-tricks-and-tips.
 
+
+"Steph Powell":http://github.com/stephp has produced a useful blog post on 
+"product optioning":http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-comments.html.
+This discusses how the variant option representation works and how she used it to build an
+extension for enhanced product option selection. 
+The blog post appeared in the "Endpoint blog":http://blog.endpoint.com/.
+
