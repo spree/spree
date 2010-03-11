@@ -7,6 +7,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../vendor/extensions/payment
 class ActiveSupport::TestCase
   self.use_transactional_fixtures = true
   self.use_instantiated_fixtures  = false
+  fixtures :all
 end
 
 I18n.locale = "en-US"
