@@ -32,7 +32,7 @@ pretty much everything in Spree.
 
 Possibilities include (but are not limited to!):
 
-* over-riding of standard views
+* overriding of standard views
 * adding or removing columns 
 * replacing existing migrations with custom versions
 * replacing or extending a controller or model
@@ -203,10 +203,10 @@ end
 
 h4. I18n
 
-Extensions can be used to extend or over-ride the I18n translations. Any YML files in the 
+Extensions can be used to extend or override the I18n translations. Any YML files in the 
 +config/locales+ directory will be loaded at startup. 
 
-NOTE. All locale files are loaded - not just the last one in the load order. This allows each extension to add new vocabulary etc. However, over-riding does occur at the hash table level: an entry for label X in the core files will be replaced if there's an entry for X in an extension.
+NOTE. All locale files are loaded - not just the last one in the load order. This allows each extension to add new vocabulary etc. However, overriding does occur at the hash table level: an entry for label X in the core files will be replaced if there's an entry for X in an extension.
 
 Suppose you wanted to change the translation of the +city+ label from term "City / Town" 
 to "Hamlet" in the +en-GB+ locale.

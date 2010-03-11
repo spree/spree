@@ -101,8 +101,8 @@ h3. Managing large projects
 
 h4. To fork or not to fork...
 
-Suppose there's a few details of Spree that you want to over-ride due to personal or client preference, 
-but which aren't the usual things that you'd over-ride (like views) - so something like tweaks to the
+Suppose there's a few details of Spree that you want to override due to personal or client preference, 
+but which aren't the usual things that you'd override (like views) - so something like tweaks to the
 models or controllers. 
 
 You could hide these away in your site extension, but they could get mixed up with your real site
@@ -112,7 +112,7 @@ pulling them into your project at the right time.
 
 So here's a compromise: have an extra extension, say +spree-tweaks+, to contain your small collection
 of modified files, which is loaded first in the extension order. The benefits are: it's clear what you
-are over-riding, and easier to check against core changes; you can base your project on an official
+are overriding, and easier to check against core changes; you can base your project on an official
 gem release or a +railsdog/master+ commit stage; such tweaks can become part of your client site project 
 and be managed with SCM etc. 
 

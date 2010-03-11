@@ -33,7 +33,7 @@ NOTE. A very good way to learn about these ideas is to experiment with real code
 h3. What is an extension?
 
 Each extension is like a mini Rails project, with similar directory structure, which allows you 
-to add new files OR to over-ride existing files. You can add or over-ride pretty much anything.
+to add new files OR to override existing files. You can add or override pretty much anything.
 
 In fact, part of Spree is itself implemented with extensions (which we call _core extensions_):
 this is functionality that we've been able to abstract out of the 'kernel', such as the payment 
@@ -42,7 +42,7 @@ gateway support.
 
 h4. Extension load order
 
-Extensions are loaded in a particular order. This is essential so that over-rides work in a 
+Extensions are loaded in a particular order. This is essential so that overrides work in a 
 predictable way. The default order is to load the +:localization+ and +:theme_default+ 
 core extensions first, then all other extensions (core and local) in alphabetical order. 
 
@@ -56,11 +56,12 @@ extension 'foo' before the remainder. (This pattern is useful if 'foo' sets up s
 that a later extension requires.)
 
 <ruby>
-SPREE_EXTENSIONS_LOAD_ORDER = [:localization, :theme_default, :foo, :all, :site]
+SPREE_EXTENSIONS_LOAD_ORDER = [:localization, :theme_default, 
+:foo, :all, :site]
 </ruby>
 
 
-h4. Hooks and over-rides
+h4. Hooks and overrides
 
 It's important to understand the key principles of these ideas in order to appreciate how 
 extensions work together and what they might contain. Further detail is given in the
@@ -70,7 +71,7 @@ When Spree needs a file, e.g. +app/views/products/show.html+ (which controls pre
 single product's information), it looks for the file in the Spree core directory then in the
 extension directories _in the declared load order_. It uses the file which is latest in the 
 load order. So, if there was a version of this file in the +:site+ extension, it would mask
-or take priority over any other versions. (Note: some kinds of file don't over-ride like 
+or take priority over any other versions. (Note: some kinds of file don't override like 
 this - we'll explain the special cases in the "extension guide":extensions.html)
 In this way, later-loaded extensions can take control of most aspects of an application, and 
 make unlimited changes to the default functionality or appearance of results.
@@ -98,6 +99,7 @@ The current extensions shipped with Spree are:
 * +:api+ - allows secure remote access to some of the site's information
 * +:payment_gateway+ - supports processing of payments through a number of gateways
 
+NOTE. The core extensions are included in the Spree gem.  They are organized as extensions for those developers wishing to use the Spree source code as a starting point and remove functionality that is not needed.  We have a long term goal of making Spree more modular in a way that similar is similar to how Rails does things now with ActiveRecord, etc.) 
 
 h4. A 'theme' extension
 
@@ -106,7 +108,7 @@ The default content and appearance of Spree pages is entirely provided by a core
 We've pulled this code into an extension to make it clear which files control the presentation,
 and to encourage development of alternative themes.
 
-Developers can modify the appearance by over-riding the theme files in their own extensions. If
+Developers can modify the appearance by overriding the theme files in their own extensions. If
 extensive modifications are required, we suggest that the view files and related components
 should be packaged into a stand-alone theme extension. We hope that developers will, in time,
 make their themes available (for free or otherwise), as is done with other tools.

@@ -233,7 +233,7 @@ returned by the method +applicable_filters+ for the selected taxon. This method 
 which filters are used for some taxon, eg a filter on fabric type may be required for clothing taxons, 
 but not suitable for mugs etc.
 
-To use this framework, you should over-ride and extend +lib/product_filters.rb+ and define a suitable
+To use this framework, you should override and extend +lib/product_filters.rb+ and define a suitable
 +applicable_filters+ method for taxons. 
 The new named scopes (above) are useful building blocks for adding application-specific filters.
 

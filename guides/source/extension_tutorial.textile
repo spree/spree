@@ -160,7 +160,7 @@ Yes, that's it. Spree currently makes extensive use of the excellent
 taking time to learn how to use it. (Also see an earlier "blog post":http://jamesgolick.com/2007/10/19/introducing-resource_controller-focus-on-what-makes-your-controller-special.html) 
 This plug frees us from a lot of standard, repetitive code: instead, we only have to code 
 up the non-standard behaviour and extra actions, and the plugin allows us a mix of hooks 
-and over-rideable methods to help with this. Resource-controller also helps with nested 
+and overrideable methods to help with this. Resource-controller also helps with nested 
 resources, e.g. to handle URLs like +/orders/R100153/payment/203+.
 
 For more examples, try looking at some recent/active extensions on GitHub, e.g. +spree-wishlist+. 
@@ -219,10 +219,10 @@ h3. Modifying the Views
 
 h4. Overview
 
-Recall the "various mechanisms":customization_overview.html#hooksandover-rides provided: 
-over-riding and hooks. It's best to use hooks for most of your simpler changes, such as 
+Recall the "various mechanisms":customization_overview.html#hooksandoverrides provided: 
+overriding and hooks. It's best to use hooks for most of your simpler changes, such as 
 showing an extra element on the product page. The mechanism is quite flexible, and 
-saves the headache of over-riding key view files and keeping those modified versions
+saves the headache of overriding key view files and keeping those modified versions
 in sync with Spree's originals when you upgrade.
 
 However, there's a third option which will occur regularly in extensions: that you
@@ -241,7 +241,7 @@ h4. Using hooks
 
 The "theming guide":theming.html#hooks explains this quite well.
 
-h4. Over-riding 
+h4. Overriding 
 
 This is just a case of copying Spree's original file into your extension and modifying it.
 Note that you must preserve the hierarchical naming, e.g. Spree core's 
