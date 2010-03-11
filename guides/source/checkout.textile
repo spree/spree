@@ -41,14 +41,14 @@ Prior to beginning the checkout process, the customer will be prompted to create
 
 The registration step is not actually part of the checkout "state machine."  The +enforce_registration+ method of the  +CheckoutsController+ provides this functionality:
 
-<shell>
+<ruby>
 def enforce_registration
   return if current_user or Spree::Config[:allow_anonymous_checkout]
   return if Spree::Config[:allow_guest_checkout] and object.email.present?
   store_location
   redirect_to register_order_checkout_url(parent_object)
 end  
-</shell>
+</ruby>
 
 The configuration of the guest and anonymous checkout options is done via "preferences":preferences.html.  Spree will allow guest checkout and disallow anonymous checkout (which is typically not needed) by default. Use the +allow_guest_checkout+ and +allow_anonymous_checkout+ preferences to change the default settings.
 
@@ -96,7 +96,7 @@ The state machine is the foundation of the checkout process.  Spree makes use of
 
 The default state machine is defined in +checkout.rb+ as follows:
 
-<shell>
+<ruby>
 state_machine :initial => 'address' do
   after_transition :to => 'complete', :do => :complete_order
   before_transition :to => 'complete', :do => :process_payment
@@ -106,7 +106,7 @@ state_machine :initial => 'address' do
     transition :to => 'complete', :from => 'payment'
   end
 end
-</shell>
+</ruby>
 
 INFO. For more information on the state machine gem please see the "README":http://github.com/pluginaweek/state_machine
 
@@ -120,25 +120,25 @@ The +CheckoutsController+ will automatically call an +edit_hook+ (if one is defi
 
 The +CheckoutsController+ itself makes limited use of these hooks - its expected that developers will add their own through a site extension.  Here's an example of an +edit_hook+ defined in +checkouts_controller.rb+:
 
-<shell>
+<ruby>
 delivery.edit_hook :load_available_methods 
-</shell> 
+</ruby> 
 
 This tells the controller to call +load_available_methods+ before presenting the standard edit form for the delivery step.  The hook will be called only during the delivery step - it is ignored for all other steps.  This is necessary for the delivery step because we can't simply instantiate the +@checkout+ object and show the form.  We also need the list of available shipping methods for the specific address that is being requested.  The checkout hooks also support an alternate block syntax.  Using this syntax the same hook could have been defined as follows:
 
-<shell>
+<ruby>
 delivery.edit_hook do
   @available_methods = rate_hash
   @checkout.shipment.shipping_method_id ||= @available_methods.first[:id]
 end
-</shell>
+</ruby>
 
 Both +edit_hook+ and +update_hook+ can be overridden entirely using either the symbol or block syntax.  What is the use case for overriding a hook?  The most obvious scenario would be to negate or remove functionality provided by the Spree core (or perhaps an extension which does almost exactly what you want.)  For instance, if you did not want to record the ip address when entering the address step.
 
-<shell>
+<ruby>
 # negate the default edit_hook functionality for the address step
 address.edit_hook {} 
-</shell>
+</ruby>
 
 INFO. If you are skipping a step in the default checkout process the hooks will never be called for that step.  
 
@@ -146,25 +146,25 @@ WARNING. Be sure to check the documentation for any third party extensions you a
 
 Perhaps more interestingly, hooks can also be appended to.  In other words, if you wanted to perform some additional logic before presenting the delivery form, you could add something like the following in your site extension.
 
-<shell>
+<ruby>
 delivery.edit_hook << :perform_additional_logic
-</shell> 
+</ruby> 
 
 This is an argument for using the symbol approach instead of the block syntax.  It also makes it easier for extensions to work in tandem to customize the checkout process.  
 
 Finally, you can also use the standard resource_controller hook mechanism for adding general functionality to the checkout process on edit or update.  For example:
 
-<shell>
+<ruby>
 edit.before << :something_before_editing_every_step
-</shell>
+</ruby>
 
 or you can also use the block syntax version
 
-<shell>
+<ruby>
 edit.before do
   # do something useful here
 end
-</shell>
+</ruby>
 
 WARNING. Using the block syntax to replace the +resource_controller+ before hook would also have the effect of removing the custom +edit_hook+ functionality.  This is not recommended unless you are planning on creating a total custom checkout solution and you are not relying on any third party extensions to modify your checkout process.
 
@@ -199,11 +199,11 @@ Spree allows you to add logic in your controller before displaying the view/form
 
 Lets say your payment view required that you populate an instance view in the controller before rendering.  You could do the following:
 
-<shell>
+<ruby>
 payment.edit_before do
   @foo = Foo.new(:bar => params[:bar])
 end_
-</shell>
+</ruby>
 
 INFO. See the "controller logic":#controller-logic section for more details on the checkout hooks.
 
@@ -219,15 +219,15 @@ h4. Validation Logic
 
 Spree allows partial validation of the +Checkout+ model (including associations) thanks to the concept of "validation groups".  This is a crucial addition to normal Rails validation because it allows Spree to validate only the pieces necessary for the current step (yet also validate the entire +Checkout+ when done.  The following is an example of a validation group defined in +checkout.rb+:
 
-<shell>
+<ruby>
 validation_group :register, :fields => ["email"]
-</shell>
+</ruby>
 
 This code tells Rails to only pay attention to validation errors related to the email field when processing the registration step.  By default, the +Checkout+ model will perform the standard Rails validation and report all errors.  You need to explicitly tell an instance of the checkout model which group to validate if you want only partial validation.  This is done in the +CheckoutsController+ as follows:
 
-<shell>
+<ruby>
 @checkout.enable_validation_group(@checkout.state.to_sym)
-</shell>
+</ruby>
 
 Its important to understand that the +Checkout+ model still works with regular Rails validation rules.  You can therefore add standard validation logic (typically through a site extension) for existing or additional fields.
 
@@ -239,7 +239,7 @@ h5. Changing the State Machine
 
 Spree comes with a predefined series of checkout steps.  To make changes to this default flow you will need to alter the state machine for +Checkout+.  State machines are tricky to modify - the recommended approach is to simply define an entirely new state machine in your site extension.  
 
-<shell>
+<ruby>
 class SiteExtension < Spree::Extension  
   def activate
     # customize the checkout state machine
@@ -264,7 +264,7 @@ class SiteExtension < Spree::Extension
     end  
   end
 end
-</shell>
+</ruby>
 
 NOTE. If you're planning on removing the address step you'll want to also override the +CheckoutsController+ (shown above) so that it does not create default +Address+ objects that will ultimately cause a failure during the final checkout validation.
 
@@ -274,31 +274,31 @@ h5. Registering new checkout steps
 
 If you've added a new state to the Checkout model you will probably see the following error before reaching that step in the checkout process:
 
-<shell>
+<ruby>
   NoMethodError in CheckoutsController#update
   undefined method `my_step' for CheckoutsController:Class
-</shell>
+</ruby>
 
 The solution is to register your step with CheckoutsController as follows. In future versions this shouldn't be necessary.
 
-<shell>
+<ruby>
   CheckoutsController.class_eval do
     class_scoping_reader :my_step, Spree::Checkout::ActionOptions.new
   end
-</shell>
+</ruby>
 
 
 h5. The Checkout "Train"
 
 The Spree code automatically creates a progress "train" based on the available checkout states.  If you add a new state you'll want to add a translation for that state in the relevant translation file located in the +config/locales+ directory of your extension.
 
-<shell>
+<ruby>
 ---
 en-US:   
   checkout_steps:
     # keys correspond to Checkout state names:
     new_step: New Step
-</shell>
+</ruby>
 
 INFO. The default use of the progress train is entirely optional.  It does not need to correspond to checkout states, nor does every state need to be represented.  Feel free to customize this behavior to meet your exact requirements.
 
@@ -306,9 +306,9 @@ h3. Coupons
 
 Spree allows you to apply a coupon at any time during the checkout.  In order to process a coupon code during checkout you simply need to post a value for the +coupon_code+ attribute.  Spree does this by default in its checkout forms.
 
-<shell>
+<html>
 <input name="checkout[coupon_code]"/>  
-</shell>
+</html>
 
 INFO. If you need information on how to configure coupons please the detailed section on "coupons and discounts":coupons_and_discounts.html.
 

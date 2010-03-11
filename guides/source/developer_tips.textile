@@ -37,9 +37,9 @@ h4. Dos and Don'ts
 
 NOTE. Try to avoid modifying +config/boot.rb+ and +config/environment.rb+: use "initializers":#initializers instead.
 
-h4. Tracking changes for over-ridden code
+h4. Tracking changes for overridden code
 
-Be aware that core changes might have an impact on the components you have over-ridden in your project. 
+Be aware that core changes might have an impact on the components you have overridden in your project. 
 You might need to patch your local copies, or ensure that such copies interact correctly with changed
 code (e.g. using appropriate ids in Html to allow the javascript to work).
 

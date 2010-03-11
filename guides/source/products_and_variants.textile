@@ -225,7 +225,7 @@ new_product.save!
 
 h5. product_price helper
 
-The price for a product or variant can be obtained using +product_price+ helper method. By default, this returns a string formatted with the locale's currency settings, but this can be over-ridden with an option: +product_price(some_thing, :format_as_currency => false)+
+The price for a product or variant can be obtained using +product_price+ helper method. By default, this returns a string formatted with the locale's currency settings, but this can be overridden with an option: +product_price(some_thing, :format_as_currency => false)+
 
 h4. The Variant Model
 
