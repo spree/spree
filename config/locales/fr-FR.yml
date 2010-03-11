@@ -515,6 +515,15 @@ fr-FR:
   none_available: "Aucun de disponible"
   not: pas
   note: Note
+  notice_messages:
+    option_type_removed: "Succesfully removed option type."
+    product_cloned: "Product has been cloned"
+    product_deleted: "Product has been deleted"
+    product_not_cloned: "Product could not be cloned"
+    product_not_deleted: "Product could not be deleted"
+    track_me_in_GA: "Track Me in GA"
+    variant_deleted: "Variant has been deleted"
+    variant_not_deleted: "Variant could not be deleted"    
   on_hand: "Disponible"
   operation: Opération
   option_Values: "Option valeurs"
@@ -609,12 +618,12 @@ fr-FR:
         name: Par nom croissant
       ascend_by_updated_at:
         name: Par date d'actualisation croissante
-      by_popularity:
-        name: Trier par popularité(le plus populaire en premier)
       descend_by_master_price:
         name: Par prix décroissant
       descend_by_name:
         name: Par nom décroissant
+      descend_by_popularity:
+        name: Sort by popularity(most popular first)
       descend_by_updated_at:
         name: Par date d'actualisation décroissante
       in_name:
@@ -882,6 +891,7 @@ fr-FR:
   use_as_shipping_address: "Utiliser en tant qu'adresse de livraison"
   use_billing_address: "Utiliser l'adresse de facturation"
   use_different_shipping_address: "Utiliser une adresse de facturation différente"
+  use_new_cc: "Use a new card"
   user: Utilisateur
   user_account: Compte utilisateur
   user_created_successfully: "Utilisateur créé avec succès"

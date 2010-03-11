@@ -29,7 +29,7 @@
         <td><%= shipment.shipping_method.name if shipment.shipping_method %></td>
         <td><%= number_to_currency shipment.cost %></td>
         <td><%= shipment.tracking %></td>
-        <td><%= shipment.state.to_s.humanize %></td>
+        <td><%= t(shipment.state.to_sym, :scope => :state_names, :default => shipment.state.to_s.humanize) %></td>
         <td><%= shipment.shipped_at.to_s(:date_time24) if shipment.shipped_at %></td>
       <% end %>
       <td class="actions">

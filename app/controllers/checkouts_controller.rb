@@ -99,7 +99,7 @@ class CheckoutsController < Spree::BaseController
     complete_order
     order_params = {:checkout_complete => true}
     session[:order_id] = nil
-    flash[:commerce_tracking] = "Track Me in GA"
+    flash[:commerce_tracking] = I18n.t("notice_messages.track_me_in_GA")
     redirect_to order_url(@order, {:checkout_complete => true, :order_token => @order.token})
   end
 

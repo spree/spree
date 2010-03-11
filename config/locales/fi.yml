@@ -515,6 +515,15 @@ fi:
   none_available: "Ei yhtäkään saatavilla"
   not: ei
   note: Note
+  notice_messages:
+    option_type_removed: "Succesfully removed option type."
+    product_cloned: "Product has been cloned"
+    product_deleted: "Product has been deleted"
+    product_not_cloned: "Product could not be cloned"
+    product_not_deleted: "Product could not be deleted"
+    track_me_in_GA: "Track Me in GA"
+    variant_deleted: "Variant has been deleted"
+    variant_not_deleted: "Variant could not be deleted"    
   on_hand: Saatavilla
   operation: Operaatio
   option_Values: Valinta-arvot
@@ -609,12 +618,12 @@ fi:
         name: "Nousevasti tuotteen nimen mukaan"
       ascend_by_updated_at:
         name: "Nousevasti toteutuksen päivämäärän mukaan"
-      descend_by_popularity:
-        name: "Lajittele suosion mukaan (suosituimmat ensin)"
       descend_by_master_price:
         name: "Laskevasti tuotteen hinnan mukaan"
       descend_by_name:
         name: "Laskevasti tuotteen nimen mukaan"
+      descend_by_popularity:
+        name: "Lajittele suosion mukaan (suosituimmat ensin)"
       descend_by_updated_at:
         name: "Laskevasti toteutuksen päimärään mukaan"
       in_name:
@@ -882,6 +891,7 @@ fi:
   use_as_shipping_address: "Käytä toimitusosoitteena"
   use_billing_address: "Käytä laskutusosoitetta"
   use_different_shipping_address: "Käytä eri toimitusosoitetta"
+  use_new_cc: "Use a new card"
   user: Käyttäjä
   user_account: Käyttäjätunnus
   user_created_successfully: "Käyttäjä luotu onnistuneesti"

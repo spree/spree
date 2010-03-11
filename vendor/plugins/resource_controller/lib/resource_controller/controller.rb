@@ -40,21 +40,21 @@ module ResourceController
           end
 
           create do
-            flash I18n.t('resource_controller.successfully_created')
+            flash { I18n.t('resource_controller.successfully_created') }
             wants.html { redirect_to object_url }
 
             failure.wants.html { render :action => "new" }
           end
 
           update do
-            flash I18n.t('resource_controller.successfully_updated')
+            flash { I18n.t('resource_controller.successfully_updated') }
             wants.html { redirect_to object_url }
 
             failure.wants.html { render :action => "edit" }
           end
 
           destroy do
-            flash I18n.t('resource_controller.successfully_removed')
+            flash { I18n.t('resource_controller.successfully_removed') }
             wants.html { redirect_to collection_url }
           end
 
