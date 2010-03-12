@@ -66,10 +66,11 @@ class Admin::PaymentsControllerTest < ActionController::TestCase
       end
       
 
-      context "for cheque payment" do
+      context "for check payment" do
         setup do
           @params = {
             :order_id => @order.id, 
+            :card => Factory(:creditcard).id,
             :payment => {
               :payment_method_id => payment_methods(:check_payment_method).id.to_s, 
               :amount => '1.99'
@@ -79,6 +80,11 @@ class Admin::PaymentsControllerTest < ActionController::TestCase
         end
         should_create :payment
         should_respond_with :redirect
+        should "not be a check payment with no source" do
+          payment = Payment.first(:order => 'id DESC')
+          assert payment.source.nil?
+          assert payment.payment_method.is_a?(PaymentMethod::Check)
+        end
       end
 
     end
