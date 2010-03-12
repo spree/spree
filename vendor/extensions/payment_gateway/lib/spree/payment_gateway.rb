@@ -82,6 +82,7 @@ module Spree
         :txn_type => CreditcardTxn::TxnType::VOID
       )
       payment.update_attribute(:amount, 0.00)
+      payment.order.update_totals!
       payment.finalize!
     end
 
