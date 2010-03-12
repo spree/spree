@@ -11,7 +11,7 @@ require "action_view"
 # Require rubygems after loading Action View
 require 'rubygems'
 begin
-  gem 'RedCloth', '>= 4.1.1'# Need exactly 4.1.1  
+  gem 'RedCloth', '>= 4.2.3'
   #gem ''
 rescue Gem::LoadError
   $stderr.puts %(Missing the RedCloth 4.1.1 gem.\nPlease `gem install -v=4.1.1 RedCloth` to generate the guides.)
