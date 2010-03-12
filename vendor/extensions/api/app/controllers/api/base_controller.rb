@@ -3,6 +3,7 @@ class Api::BaseController < Spree::BaseController
 
   def self.resource_controller_for_api
     resource_controller
+    skip_before_filter :verify_authenticity_token, :if => lambda { admin_token_passed_in_headers }
 
     index.response do |wants|
       wants.json { render :json => collection.to_json(collection_serialization_options) }
@@ -20,6 +21,13 @@ class Api::BaseController < Spree::BaseController
     update do
       wants.json { render :nothing => true }
       failure.wants.json { render :json => object_errors.to_json, :status => 422 }
+    end
+
+    define_method :admin_token_passed_in_headers do
+      token = request.headers['X-SpreeAPIKey']
+      return false unless token
+      @current_user = User.find_by_api_key(token)
+      @current_user.has_role? 'admin'
     end
 
     define_method :end_of_association_chain do
