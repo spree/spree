@@ -67,6 +67,9 @@ class CreditcardTest < ActiveSupport::TestCase
           @creditcard.void(@payment)
         end
         should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
+        should "update payment amount to zero" do
+          assert_equal 0.00, @payment.amount.to_f
+        end
       end
     end
     context "followed by void" do
@@ -77,6 +80,9 @@ class CreditcardTest < ActiveSupport::TestCase
       should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
       should "create new transaction with correct attributes" do
         assert_equal CreditcardTxn::TxnType::VOID, @void_txn.txn_type
+      end
+      should "update payment amount to zero" do
+        assert_equal 0.00, @payment.amount.to_f
       end
     end
   end
