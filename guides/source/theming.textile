@@ -57,13 +57,14 @@ This part of the guide explains how override Spree's default stylesheets or add 
 
 Spree's core uses "Less CSS":http://lesscss.org/ for its CSS. Less makes your CSS more maintainable with features such as variables and mixins while still supporting standard CSS syntax. 
 
+INFO. You do not need to use or even understand Less CSS in order to create a Spree theme.  Less CSS support is provided strictly as a convenience to developers who find it useful.
+
 However, compiling the Less files into CSS in development mode proves too expensive for most 
 users, so the current release does not contain direct Less support in extensions. Each new theme 
 extension has a copy of the compiled CSS file at +public/stylesheets/screen.css+ instead,
 in case it is needed for minor changes. 
 
 If you want to use Less, see below for further details of Spree's setup.
-
 
 h4. Options with custom stylesheets
 
@@ -185,7 +186,7 @@ Supply a block name followed by any arguments you'd use with +render+
 <shell>
   insert_before :homepage_products, :text => "<h1>Welcome!</h1>"
 
-  insert_after :homepage_products, 'shared/offers' # renders a partial
+  insert_after :homepage_products, 'shared/offers' # render partial
 
   replace :taxon_sidebar_navigation, 'shared/my_sidebar'
 </shell>

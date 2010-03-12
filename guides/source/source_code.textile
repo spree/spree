@@ -16,7 +16,7 @@ git clone git://github.com/railsdog/spree.git spree
 
 INFO. If you are planning on contributing to Spree you should create a fork through Git Hub and push fixes to clearly labelled branches (see the "Contributors Guide":contributing_to_spree.html for details.)
 
-INFO. If the official GitHub repo is down you can try our mirror at "repo.or.cz":http://repo.or.cz
+NOTE. If the official GitHub repo is down you can try our mirror at "repo.or.cz":http://repo.or.cz
 
 h4. Browsing the Repository and/or Downloading the Source Code
 
@@ -60,10 +60,6 @@ h4. Performing the Actual Build
 
 First, you should create/update the gemspec. You must have the Jeweler gem installed for this.
 
-<shell>
-rake gemspec  
-</shell>
-
 Use the following command to build the gem
 
 <shell>
@@ -76,7 +72,7 @@ Now you can install the gem, replacing X,Y,Z with the appropriate numbers
 sudo gem install pkg/spree-X.Y.Z.gem  
 </shell>
 
-_NOTE: The exact version of the gem will correspond to whatever version reflects the state of the edge code at the time you build it._
+NOTE. The exact version of the gem will correspond to whatever version reflects the state of the edge code at the time you build it._
 
 h4. Considerations
 

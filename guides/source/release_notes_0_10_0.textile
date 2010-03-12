@@ -1,9 +1,5 @@
 h2. Spree 0.10.0 Release Notes
 
-WARNING. Some of the information here could be made redundant by later changes.
-
-Also check Spree's +CHANGELOG+ file and the ticket system for detailed information of changes.
-
 endprologue.     
 
 h3. Upgrade Notes
@@ -49,7 +45,9 @@ release notes.
 
 h5. Deprecation Warnings
 
-DEPRECATION: +require "activerecord"+ is deprecated and will be removed in Rails 3. Use +require "active_record"+ instead. 
+The newer version of Rails used by Spree generates a lot of deprecation warnings.  You may see the following message in your console:
+
+DEPRECATION: +require "activerecord"+ is deprecated and will be removed in Rails 3. Use +require "active_record"+ instead.
 
 Remove all instances of +require 'activerecord'+ from your +Rakefile+s (including those contained in your extensions, including the site extension, etc.)
 
@@ -57,14 +55,11 @@ h4. API Changes
 
 h5. Change to +@taxonomies+ variable
 
-+@taxonomies+ used to be set in most shared views. Now, it is only set after calling 
-+get_taxonomies+ (inherited from Spree's base controller).
++@taxonomies+ used to be set in most shared views. Now, it is only set after calling +get_taxonomies+ (inherited from Spree's base controller).
 
 h5. Spree Base Controller and Layouts
 
-+Spree::BaseController+ inherits directly from +ActionController::Base+, rather than
-from +ApplicationController+ (which itself is now an empty class to help interaction with
-other Rails apps). 
++Spree::BaseController+ inherits directly from +ActionController::Base+, rather than from +ApplicationController+ (which itself is now an empty class to help interaction with other Rails apps). 
 If you used +app/views/layout/application.html.erb+ in an extension. e.g.
 <shell>
 Spree::BaseController.class_eval { layout 'application' }
@@ -83,7 +78,7 @@ This release contains significant improvements to how payment gateways are confi
 
 One major improvement is that it is now possible to configure multiple gateways for each of your Rails environments.  Its also possible to use the live production server in development mode when previously, you were required to run in test mode.  One unfortunate side effect of this improvement is that your existing gateway configuration information will be lost and you will need to reconfigure your gateway in the admin interface.
 
-INFO. You should make a note of your gateway configuration setting before upgrading since you will need to reconfigure your gateway when you're done.
+WARNING. You should make a note of your gateway configuration setting before upgrading since you will need to reconfigure your gateway when you're done.
 
 This approach to implementing and configuring gateways is extremely flexible.  It makes it trivial to implement a new gateway that is already supported by Active Merchant.  There are other useful benefits to this approach that a developer may be interested in knowing.
 
@@ -189,3 +184,6 @@ that will get run when you load sample data with the +rake db:bootstrap+ task.
 Now you can also add sample product image files in your extensions in the 
 extensions own +lib/tasks/sample/products+ directory.  These images will be 
 copied to the +public/assets/products+ directory when the sample data is loaded.
+
+INFO. Additional information on the release can be found in the +CHANGELOG+ file as well as the [official ticket system](http://railsdog.lighthouseapp.com/projects/31096-spree/milestones/45833-10).
+
