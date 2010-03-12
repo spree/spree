@@ -1,17 +1,13 @@
 <fieldset id="payment">
   <legend><%= t("payment_information") %></legend>
 
-  <% if @payment_methods.many? %>
-    <% @payment_methods.each do |method| %>
-    <p>
-      <label>
-        <%= radio_button_tag "checkout[payments_attributes][][payment_method_id]", method.id, method == @payment_method %> 
-        <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
-      </label>
-    </p>
-    <% end %>
-  <% else %>
-    <%= hidden_field_tag "checkout[payments_attributes][][payment_method_id]", @payment_method.id %> 
+  <% @payment_methods.each do |method| %>
+  <p>
+    <label>
+      <%= radio_button_tag "checkout[payments_attributes][][payment_method_id]", method.id, method == @payment_method %> 
+      <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
+    </label>
+  </p>
   <% end %>
 
   <ul id="payment-methods">              
