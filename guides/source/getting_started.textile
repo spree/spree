@@ -210,7 +210,7 @@ h3. Hello, Spree!
 
 h4. Starting up Spree
 
-You actually have a functional Spree application already - after running only two commands! In fact the same as the spree demo that runs on demo.spreecommerce.com. To see it, you need to start a web server on your development machine. You can do this by running another command:
+You actually have a functional Spree application already - after running only two commands! In fact the same as the Spree demo that runs on +demo.spreecommerce.com+. To see it, you need to start a web server on your development machine. You can do this by running another command:
 
 <shell>
 $ script/server
@@ -230,11 +230,11 @@ Upon successful authentication you should see the admin screen:
 
 !images/admin_welcome.png(Admin welcome screenshot)! 
 
-Explore it to your hearts desire and read the other guides that cover how spree actually works.
+Explore it to your hearts desire and read the other guides that cover how Spree actually works.
 
 h3. Towards a production enviroment
 
-Once you have explored spree and are certain that you will want to build your store using it, you will want to do the following steps:
+Once you have explored Spree and are certain that you will want to build your store using it, you will want to do the following steps:
 * Modify the look
 * Add functionality
 * Configure payments, tax, shipment ..
@@ -243,7 +243,10 @@ Once you have explored spree and are certain that you will want to build your st
 
 h4. Modifying the Look of your Application
 
-One of the first steps is to customize the look and feel of the store you just built.  We're going to add some text to the footer just to give you a sense of how such things are done in Spree.  Modifications to Spree are best achieved through extensions.  Extensions enable you to add custom functionality to your application.  Spree also supports the notion of third party extensions which allow developers to share useful functionality with each other across applications.  There is an extension guide to give the detailed picture, here we just give you an idea of what is possible.
+One of the first steps is to customize the look and feel of the store you just built.  We're going to add some text to the footer just to give you a sense of how such things are done in Spree.  Modifications to Spree are best achieved through extensions.  Extensions enable you to add custom functionality to your application.  Spree also supports the notion of third party extensions which allow developers to share useful functionality with each other across applications.  
+There are several guides covering aspects of theming and extensions, and these provide a more
+detailed picture. Start with the "Customization Overview":customization_overview.html when you
+are ready. Here we just give you an idea of what is possible.
 
 h5. The Site Extension
 
@@ -264,7 +267,7 @@ h5. Overriding a View
 
 One of the things extensions allows you to do is to override a view that is normally supplied by Spree.  
 
-Go ahead an navigate to +vendor/extensions/site/app/views+.  
+Go ahead and navigate to +vendor/extensions/site/app/views+.  
 
 <shell>
 $ mkdir shared
@@ -283,32 +286,35 @@ If you return to your browser and navigate to +http://localhost:3000+ you will s
 
 h5. Using Stylesheets and Images
 
-Spree uses Compass, which defines sass, a css meta-language. Similarly to erb files, you can copy and modify sass files to change the css your application uses. If you study the sass files you'll soon get the hang of it and will be able to change colours or fonts very quickly.
-
-Background images are found in public/images and admin images in the admin subfolder. While you may be tempted to override these, it is advised you create same named versions in your site extension. Spree will copy the contents of your extensions public folder to the public folder.  
-
-There is a separate guide on the topic of "view extension":customization_tutorial.html 
+Spree uses Less to define its default styles, but provides various support for adding your own
+CSS files or to extending the default Less files. Such files should go in +public/stylesheets+
+in your extension. Similarly, images are found in +public/images+ and admin images in the 
+admin subfolder. When Spree starts, it copies all of these resources to the master +public+
+directory. See the "theming guide":theming.html for more information.
 
 h4. Add functionality
 
-As we've seen you can change the spree views to add your own functionality. You can create helper function (usually in app/helpers), new views (in app/views), and add to existing models/conrollers/helpers via the Ruby class_eval mechanism.
-To create new models or extend existing ones, use the site migrations. All this is explained in detail in the "extension tuturial":http://wiki.github.com/railsdog/spree/extension-tutorial
+As we've seen you can change the Spree views to add your own functionality. You can create helper function (usually in app/helpers), new views (in app/views), and add to existing models/controllers/helpers via the Ruby class_eval mechanism.
+To create new models or extend existing ones, use the site migrations. All this is explained in detail in the "extension tutorial":extension_tutorial.html, with reference material in the 
+"extension guide":extensions.html.
 
 h4. Configure payments, tax, shipment ..
 
-The spree model (in spree/app/models) is large, and will take some time to explore fully. Read the other guides and use the demo. Alas, not everything can be edited using the admin interface (yet), and even so, you will probably want a way to reproduce the settings you have added.
+The Spree data model (in +spree/app/models+) is large, and will take some time to explore fully. Read the other guides and use the demo. Most settings and content can be edited using the admin 
+interface, but some aspects are best configured as initializer code or seed data - e.g. it 
+avoids the need to re-enter data after each bootstrap. 
 
-In fact a good way towards a first production system is to  add more and more sample (configuration data) to your application, thus overwriting the spree defaults. So we go back to where you typed %rake db:bootstrap% and examine that in detail 
+In fact a good way towards a first production system is to  add more and more sample (configuration data) to your application, thus overwriting the Spree defaults. So we go back to where you typed %rake db:bootstrap% and examine that in detail.
 
 h5. The bootstrap process
 
-During the  bootstrapping process spree:
+During the  bootstrapping process Spree:
 # Creates and migrates the database. This also applies all migrations from extensions.
-# Loads default/seed data. This includes eg. a country list and is found in spree/db/default/ . You can provide your own versions in your extension under the same name.
+# Loads default/seed data. This includes eg. a country list and is found in +spree/db/default+ . You can override this with your own versions by adding a file to your extension with the same name.
 # Lets extensions load seed data by calling db/seeds.rb for each extension
-# Loads sample data from db/sample/ . This includes data for the rest of the spree model and is what makes up the demo store.
+# Loads sample data from db/sample/ . This includes data for the rest of the Spree model and is what makes up the demo store.
 
-If you add your own versions of the sample data into your extension, the bootstrap process will load those instead of the spree ones. Thus you can slowly replace the spree data with your own.
+If you add your own versions of the sample data into your extension, the bootstrap process will load those instead of the Spree ones. Thus you can slowly replace the Spree data with your own.
 
 You can also  use the admin interface to make changes to the data, and then use the following rake task to inspect the data changes in the db
 @rake db:dump[clazz]@ 
@@ -319,21 +325,24 @@ You can also do the reverse of the db:dump , which is  +db:load_file[file]+.
 This will load a single yml file into the db. The file must include the path, and remember the file name is the table name (whereas the dump takes a class name).
 
 If you look at the sample data, you will see that there is not only a db/sample/products.yml , but also a db/sample/products.rb . Generally if a same named ruby file exists it will be loaded after the yml file has been loaded.
-From the products.rb you can see how spree uses this to copy the pictures of the products to the assets folder.
+From the products.rb you can see how Spree uses this to copy the pictures of the products to the assets folder.
 
-h4. Add Products
+h4. Adding Products
 
-At the moment there are no tools to add products programatically. You either use the admin interface or write your own import script. Some scripts are github, and as many face the same issue, it's always worth asking on the spree list.
+At the moment there are no 'official' tools to add products/variants programatically. 
+Several scripts have been mentioned in the "Spree-user mailing list":http://groups.google.com/group/spree-user (feel free to ask if you need help), and a few are listed in the "development tips 
+wiki":http://wiki.github.com/railsdog/spree/developers-tricks-and-tips.
 
 h4. Summary
 
-We have seen how to create a spree application, how to bootstrap it to use demo data. We have show briefly how you can use extensions to localize your changes to spree or add own or extra functionality to spree. Lastly we showed how you can keep using the bootstrap process to get your first working system.
+We have seen how to create a Spree application, how to bootstrap it to use demo data. We have shown briefly how you can use extensions to localize your changes to Spree or add own or extra functionality to Spree. Lastly we showed how you can keep using the bootstrap process to get your first working system.
 
 Next you will want to :
 * Read the basic section of the guides on Products, Taxonomies, Tax, Shipping and Payment before doing anything.
-* Decide whether to use "gem or source":boot_modes.html mode (rule of thumb: source if you plan to contribute to spree, gem otherwise).
-* customize your views and add extensions as needed
-* look at the "extension directory":http://ext.spreecommerce.com/
-* plan your deployment
-* possibly conribute
-* definitely enjoy!
+* Decide whether to use "gem or vendor boot mode":boot_modes.html 
+* Customize your views and add extensions as needed
+* Look at the "extension directory":http://ext.spreecommerce.com/
+* Plan your deployment
+* Possibly contribute
+* Definitely enjoy!
+
