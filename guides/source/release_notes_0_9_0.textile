@@ -26,7 +26,7 @@ And to set the title in a view template:
 
 h4. Customize default stylesheets
 
-+Spree::Config[:stylesheets]+ is a new config option for customizing the stylesheets used by the default application layout.  The value of +Spree::Config[:stylesheets]+ is a comma-separated string of stylesheet names without the file extensions.  See the "customization tutorial":customization_tutorial.html for more information.
++Spree::Config[:stylesheets]+ is a new config option for customizing the stylesheets used by the default application layout.  The value of +Spree::Config[:stylesheets]+ is a comma-separated string of stylesheet names without the file extensions.  See the "theming guide":theming.html for more information.
 
 If you are upgrading, to take advantage of this use the new +stylesheet_tags+ helper method.
 
