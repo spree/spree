@@ -14,7 +14,7 @@ The authoritative git repository is hosted by "GitHub":http://github.com/ and is
 git clone git://github.com/railsdog/spree.git spree 
 </shell>
 
-INFO. If you are planning on contributing to Spree you should create a fork through Git Hub and initiate a pull request when you're done. (See the Contributors Guide for details.)
+INFO. If you are planning on contributing to Spree you should create a fork through Git Hub and push fixes to clearly labelled branches (see the "Contributors Guide":contributing_to_spree.html for details.)
 
 INFO. If the official GitHub repo is down you can try our mirror at "repo.or.cz":http://repo.or.cz
 
@@ -26,43 +26,39 @@ h4. Git on Windows
 
 There are some well developed Git clients for Windows now. If you are on a Windows box you might want to check out the "msygit":http://code.google.com/p/msysgit/ project. There is also a "screencast":http://gitcasts.com/posts/git-on-windows available.
 
-h3. SVN
+h4. SVN
 
 There are no immediate plans to support SVN clients. Given that most of the Rails world is moving to git (including the RoR project itself) maybe this is the time for you to jump on the bandwagon.
 
-h3. Monitoring Changes in the Source
+h4. Monitoring Changes in the Source
 
-If you would like to keep up to date on changes to the source you can subscribe to the github "RSS":http://github.com/feeds/railsdog/commits/spree/master feed and you will be notified of all the commits.
+If you would like to keep up to date on changes to the source you can subscribe to the github 
+"RSS feed":http://github.com/feeds/railsdog/commits/spree/master and you will be notified of all the commits.
 
 h3. Building the Gem from the Source
 
 h4. Motivation
 
-Why bother building the Spree gem from the source?  The primary answer is that it allows you to take advantage of all of those great "edge" features without having to wait for the next official release of Spree.  Its true that you can always run the latest source by cloning from "github":http://github.com/railsdog/spree/tree/master but this method has its limitations.  
+Why bother building the Spree gem from the source?  The primary answer is that it allows you to take advantage of all of those great "edge" features without having to wait for the next official release of Spree, and to have this same version of Spree running in all of your projects.
 
-In order to create a new Spree application you will need to run +spree <app-name>+ which is invoked using the currently installed Spree gem.  The +spree+ command is also responsible for setting up your applications environment settings, etc. so if you're trying to build a new store with the cutting edge features, you'll want to build the gem locally.
+In order to create a new Spree application you will need to run +spree <app-name>+ which is invoked using the currently installed Spree gem.  The +spree+ command is also responsible for setting up your applications' environment settings, etc. so if you're trying to build a new store with the cutting edge features, you'll want to build the gem locally.
+
+INFO. Another possibility is "vendor" mode, where a copy of Spree is stored inside your app at location +vendor/spree+. You can install specific versions or revisions of Spree here: many people use the git submodule feature to track a precise version of Spree inside their projects. The disadvantage is that two projects may not be running the exact same version, i.e. you have to check manually.
 
 h4. Prerequisites
 
 # Rails 2.3.x 
-# Ruby Gems 1.3.5 or greater
+# Ruby Gems 1.3.6 or greater
 # Spree gem dependencies (run +rake gems+ to check, +rake gems:install+ to install)
+# The Jeweler gem (which pulls in a Git gem and Gemcutter too - use +(sudo) gem install jeweler+)
 
-INFO. There are also a few gem dependencies needed to run the tests (which are automatically run when building the gem.)  Use +rake gems:install RAILS_ENV=test+ to install these.
+INFO. Gem building no longer runs all of the tests.
 
 NOTE. It is suggested that you get Spree up and running using the source first before attempting to build the gem.  This will be the easiest way to make sure you have all of the correct dependencies, etc.
 
-h4. Database Requirements
-
-The gem build process requires that the tests are able to run successfully.  This is turn requires that both a test and development database need to be configured in +config/database.yml+.  
-
-Why are both of these databases needed?  Some of the tests require fixtures which are created in the test database.  Most of the tests use the RSpec +mock_model+ helper which requires access to the database so that the mock can learn the dynamic database attributes of the model class (even though no data is written to the database in these cases.)  Still other tests are using "Factory Girl":http://thoughtbot.com/projects/factory_girl whic also reqiures access to the database.
-
-The tests simply will not not run without these two databases configured and you will not be able to install the gem without passing the tests.  So trust us on this one.
-
 h4. Performing the Actual Build
 
-First, you should create/update the gemspec
+First, you should create/update the gemspec. You must have the Jeweler gem installed for this.
 
 <shell>
 rake gemspec  
@@ -74,19 +70,19 @@ Use the following command to build the gem
 rake build
 </shell>
 
-Now you can install the gem 
+Now you can install the gem, replacing X,Y,Z with the appropriate numbers
 
 <shell>
-sudo gem install pkg/spree-0.9.99.gem  
+sudo gem install pkg/spree-X.Y.Z.gem  
 </shell>
 
 _NOTE: The exact version of the gem will correspond to whatever version reflects the state of the edge code at the time you build it._
 
 h4. Considerations
 
-* The gem will have a x.y.99 version number.  This denotes an "edge" version.  You will need to uninstall the edge version later if you want to work with the x.y.z gem once its released.
+* An edge gem will have a x.y.99 version number.  This denotes an "edge" version.  You may need to uninstall the edge gem later if you want to work with the x.y.z gem once it is released.
 
-* If you want to deploy the gem on multiple machines: the built gem is in the spree source directory, in +pkg+. Just copy it and install it, eg +sudo gem install spree-0.8.99.gem+
+* If you want to deploy the gem on multiple machines: the built gem is in the spree source directory, in +pkg/+. Just copy it and install it, eg +sudo gem install spree-0.8.99.gem+
 
 * You may want to do  +rm -rf pkg+ to clean things up from previous build attempts before building the gem again.
 
