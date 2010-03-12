@@ -79,23 +79,6 @@ Spree::BaseController.class_eval do
 end
 </shell>
 
-h4. Editing stylesheets - Compass and SASS
-
-To avoid having to restart the web server to see changes to SASS stylesheets, use
-a compass watcher:
-
-<shell>
-compass --watch --sass-dir path/to/sass --css-dir ./path/to/compiled
-</shell>
-
-The compass watcher will compile any changed files and write them to the css-dir.
-
-When editing my site extension's sass, I use these paths, if you use the gem spree boot mode
-it may be different for you:
-
-<shell>
-compass --watch --sass-dir vendor/extensions/site/public/stylesheets/sass --css-dir ./public/stylesheets/compiled
-</shell>
 
 h3. Managing large projects
 
