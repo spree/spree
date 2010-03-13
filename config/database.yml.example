@@ -16,3 +16,7 @@ production:
 demo:
   adapter: sqlite3
   database: db/production.sqlite3
+  
+cucumber:
+  adapter: sqlite3
+  database: db/test.sqlite3

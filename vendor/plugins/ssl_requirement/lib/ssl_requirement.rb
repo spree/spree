@@ -34,32 +34,32 @@ module SslRequirement
       write_inheritable_array(:ssl_allowed_actions, actions)
     end
   end
-  
+
   protected
     # Returns true if the current action is supposed to run as SSL
     def ssl_required?
       (self.class.read_inheritable_attribute(:ssl_required_actions) || []).include?(action_name.to_sym)
     end
-    
+
     def ssl_allowed?
       (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).include?(action_name.to_sym)
     end
 
   private
     def dvp_mode?
-      ENV['RAILS_ENV'] == 'development' ? true : false
+      ENV['RAILS_ENV'] == 'development'
     end
 
     def test_mode?
-      ENV['RAILS_ENV'] == 'test' ? true : false
+      ENV['RAILS_ENV'] == 'test' || ENV['RAILS_ENV'] == 'cucumber'
     end
 
-    # don't require ssl in development or test mode 
+    # don't require ssl in development or test mode
     def ssl_supported?
       ((dvp_mode? || test_mode?) && Spree::Config[:allow_ssl_in_development_and_test]) ||
       (!dvp_mode? && !test_mode? && Spree::Config[:allow_ssl_in_production]) ? true : false
     end
-  
+
     def ensure_proper_protocol
       return true if ssl_allowed?
 
