@@ -23,10 +23,10 @@ class Spree::BaseController < ActionController::Base
   def find_order
     if !session[:order_id].blank?
       @order = Order.find_or_create_by_id(session[:order_id])
-    elsif params[:authenticity_token]
-      @order = Order.create(:user => current_user)
-    else
+    elsif request.get?
       @order = Order.new(:user => current_user)
+    else
+      @order = Order.create(:user => current_user)
     end
     session[:order_id]    = @order.id
     session[:order_token] = @order.token
