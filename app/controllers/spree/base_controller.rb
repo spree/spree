@@ -21,12 +21,12 @@ class Spree::BaseController < ActionController::Base
   # retrieve the order_id from the session and then load from the database (or return a new order if no
   # such id exists in the session)
   def find_order
-    unless session[:order_id].blank?
+    if !session[:order_id].blank?
       @order = Order.find_or_create_by_id(session[:order_id])
+    elsif params[:authenticity_token]
+      @order = Order.create(:user => current_user)
     else
-      @order = Order.new
-      @order.user = current_user
-      @order.save
+      @order = Order.new(:user => current_user)
     end
     session[:order_id]    = @order.id
     session[:order_token] = @order.token
