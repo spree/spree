@@ -10,12 +10,6 @@ class ProductsController < Spree::BaseController
 
   include Spree::Search
 
-  def change_image
-    @product = Product.available.find_by_param(params[:id])
-    img = Image.find(params[:image_id])
-    render :partial => 'image', :locals => {:image => img}
-  end
-
   private
 
   def load_data
