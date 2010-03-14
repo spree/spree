@@ -46,16 +46,4 @@ module ProductsHelper
     return product_url(product)
   end
 
-  # Generate taxon breadcrumbs for searching related products
-  def taxon_crumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
-    crumbs = []
-
-    crumbs << taxon.ancestors.collect { |ancestor|
-      content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator)
-    } unless taxon.ancestors.empty?
-
-    crumbs << content_tag(:li, link_to(taxon.name , seo_url(taxon)))
-    crumb_list = content_tag(:ul, crumbs)
-    content_tag(:div, crumb_list + content_tag(:br, nil, :class => 'clear'), :class => 'breadcrumbs')
-  end
 end

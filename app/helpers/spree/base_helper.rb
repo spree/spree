@@ -39,24 +39,6 @@ module Spree::BaseHelper
     options.delete(:format_as_currency) ? number_to_currency(amount) : amount
   end
 
-
-  def add_product_link(text, product)
-    link_to_remote text, {:url => {:controller => "cart",
-              :action => "add", :id => product}},
-              {:title => "Add to Cart",
-               :href => url_for( :controller => "cart",
-                          :action => "add", :id => product)}
-  end
-
-  def remove_product_link(text, product)
-    link_to_remote text, {:url => {:controller => "cart",
-                       :action => "remove",
-                       :id => product}},
-                       {:title => "Remove item",
-                         :href => url_for( :controller => "cart",
-                                     :action => "remove", :id => product)}
-  end
-
   def todays_short_date
     utc_to_local(Time.now.utc).to_ordinalized_s(:stub)
   end
@@ -73,30 +55,17 @@ module Spree::BaseHelper
     list
   end
 
-  def mini_image(product, options={})
-    if product.images.empty?
-      image_tag "noimage/mini.jpg", options
-    else
-      image_tag product.images.first.attachment.url(:mini), options
+  [:mini, :small, :product, :large].each do |style|
+    define_method "#{style}_image" do |product, *options|
+      options = options.first || {}
+      if product.images.empty?
+        image_tag "noimage/#{style}.jpg", options
+      else
+        image_tag product.images.first.attachment.url(style), options
+      end    
     end
   end
-
-  def small_image(product, options={})
-    if product.images.empty?
-      image_tag "noimage/small.jpg", options
-    else
-      image_tag product.images.first.attachment.url(:small), options
-    end
-  end
-
-  def product_image(product, options={})
-    if product.images.empty?
-      image_tag "noimage/product.jpg", options
-    else
-      image_tag product.images.first.attachment.url(:product), options
-    end
-  end
-
+  
   def meta_data_tags
     return unless self.respond_to?(:object) && object
     "".tap do |tags|
