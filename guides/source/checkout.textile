@@ -22,16 +22,35 @@ In Spree, the +Checkout+ is modeled as its own object which belongs to an +Order
 
 The +CheckoutsController+ takes advantage of the "resource_controller":http://github.com/jamesgolick/resource_controller plugin (just like most of the controllers in Spree.)  It has been designed so that you can provide your own controller logic without overriding the entire class.  Please see the later section on customization for further details.
 
-Multi step checkout also poses some technical challenges when it comes to validation.  By default, Rails will validate your model objects every time they are saved.  In the checkout case, however, you are basically updating a +Checkout+ model one page at a time so you do not expect to have a "valid" model until the very last step.  We solve this problem by introducing the concept of a +ValidationGroup+ which allows you to define a series of fields that need to validated for any one particular step.
+Multi step checkout also poses some technical challenges when it comes to validation.  By default, Rails will validate your model objects every time they are saved.  In the checkout case, however, you are basically updating a +Checkout+ model one page at a time so you do not expect to have a "valid" model until the very last step.  We solve this problem by introducing the concept of a +ValidationGroup+ which allows you to define a series of fields that need to validated for any one particular step.   
+
+h3. Payment Profiles
+
+The default checkout process in Spree assumes a gateway that allows for some form of third party support for payment profiles.  An example of such a service would be "Authorize.net CIM":http://www.authorize.net/solutions/merchantsolutions/merchantservices/cim/.  Such a service allows for a secure and PCI compliant means of storing the users credit card information.  This allows merchants to issue refunds to the credit card or to make changes to an existing order without having to leave Spree and use the gateway provider's website.  More importantly, it allows us to have a final "confirmation" step before the order is processed since the number is stored securely on the payment step and can still be used to perform the standard authorization/capture via the secure token provided by the gateway.
+
+Spree provides a wrapper around the standard active merchant API in order to provide a common abstraction for dealing with payment profiles.  All +Gateway+ classes now have a +payment_profiles_supported?+ method which indicates whether or not payment profiles are supported.  If you are adding Spree support to a +Gateway+ you should also implement the +create_profile+ method.  The following is an example of the implementation of +create_profile+ used in the +AuthorizeNetCim+ class:
+
+<shell>
+# Create a new CIM customer profile ready to accept a payment
+def create_profile(creditcard, gateway_options)
+  if creditcard.gateway_customer_profile_id.nil?
+    profile_hash = create_customer_profile(creditcard, gateway_options)
+    creditcard.update_attributes(:gateway_customer_profile_id => profile_hash[:customer_profile_id], :gateway_payment_profile_id => profile_hash[:customer_payment_profile_id])
+  end
+end
+</shell>  
+
+WARNING. Most gateways do not yet support payment profiles but the default checkout process of Spree assumes that you have selected a gateway that supports this feature.  This allows users to enter credit card information during the checkout withou having to store it in the database.  Spree has never stored credit card information in the database but prior to the use of profiles, the only safe way to handle this was to post the credit card information in the final step.  It should be possible to customize the checkout so that the credit card information is entered on the final step and then you can authorize the card before Spree automatically discards the sensitive bits before saving.  
 
 h3. Default Checkout Process
 
 The Spree checkout process consists of the following steps:
 
-* Registration
+* Registration (Optinal - can be changed through configuration setting)
 * Address Information
 * Delivery Options (Shipping Method)
-* Payment 
+* Payment           
+* Confirmation
 
 There is also a default progress "train" which shows the current step and allows you to jump back to a previous step by clicking on it.
 
@@ -82,7 +101,17 @@ INFO. Spree stores only the last four digits of the credit card number along wit
 
 The payment step is the final opportunity to make changes to the order before it is submitted for processing.  This step also provides a summary of the order including "charges and other adjustments":coupons_and_discounts.html so the user can review this information before completing the transaction.
 
-NOTE. Several gateways such as ActiveMerchant and Beanstream provide a secure method for storing a credit card "profile" in your database.  This approach typically involves the use of a "token" which can be used for subsequent purchases but only with your merchant account.  If you are using a secure payment profile it would then be possible to show a final "confirmation" step after payment information is entered.
+NOTE. Several gateways such as ActiveMerchant and Beanstream provide a secure method for storing a credit card "profile" in your database.  This approach typically involves the use of a "token" which can be used for subsequent purchases but only with your merchant account.  If you are using a secure payment profile it would then be possible to show a final "confirmation" step after payment information is entered.  
+
+WARNING. Spree automatically discards the credit card number after this step is processed.  If you do not have a gateway with payment profiles enabled then your card information will be lost before its time to authorize the card (which is done after the "Confirmation" step.)  
+
+NOTE. If you do not want to use a gateway with payment profiles then you will need to customize the checkout process so that your final step submits the credit card information.  You can then peform an authorization before the +Checkout+ is saved.  This is perfectly secure because the credit card information is not ever saved.  Its transmitted to the gateway and then discarded like normal.  
+
+INFO. The advantage of using a credit card profile is that you can ask for confirmation in a separate step without sacrificing security.
+
+h4. Confirmation
+
+This is the final opportunity for the customer to review their order before submitting it to be processed.  Users have the opportunity to return to any step in the process using either the back button or by clicking on the appropriate step in the "progress train."  
 
 h3. Customizing the Steps
 

@@ -49,7 +49,7 @@ The newer version of Rails used by Spree generates a lot of deprecation warnings
 
 DEPRECATION: +require "activerecord"+ is deprecated and will be removed in Rails 3. Use +require "active_record"+ instead.
 
-Remove all instances of +require 'activerecord'+ from your +Rakefile+s (including those contained in your extensions, including the site extension, etc.)
+Remove all instances of +require 'activerecord'+ from your +Rakefile+s (including those contained in your extensions, including the site extension, etc.)  
 
 h4. API Changes 
 
@@ -70,7 +70,32 @@ h5. Adding admin tabs changed
 
 +@extension_tabs+ is no longer used, instead use theme "hooks":hooks.html.
 
+h3. Theme Support
 
+Spree now has basic support for theming.  Themes in Spree are implemented as "extensions":extensions.html.  All of the default views in Spree have now been abstracted into a default theme.  You can override all or parts of the default theme in a new theme.  Themes have their own generator and are created as follows:
+
+<shell>
+script/generate theme foo  
+</shell> 
+
+You can read more about themes in the very extensive "theme guide":theming.html
+
+INFO. Don't panic if you have already customized Spree views in your site extension for a previous release of Spree.  These view customizations should continue to work as long as they are loaded after the default theme extension.    
+
+h3. Named Scopes and Product Groups
+
+In various applications, we need to create lists of products according to various criteria, e.g. all products in taxon X, or all products costing less than $20, or composite criteria like all products costing more than $100 that have brand Y.  Spree provides several so-called named scopes, which provide filtering by various aspects of the basic data, some of which can be chained or composed together for more complex filters.
+
+Named scopes can also be combined.  The following chain of scopes lists the products that are active and with a price between $18 and $20.
+
+<shell>
+Product.active.price_between(18,20)
+</shell>
+
+Product groups allow for the defining and naming groups of products for various purposes in an application. For example, you can define a group called Ruby products which contains everything with Ruby in the product name, or another group called Ruby clothing which is the sub-list of the above limited to items in the Clothing taxon. Product group definitions can also take price ranges, product properties, and variant options into account. It is possible to add your own filters by defining new named scopes too.      
+
+Please see the documentaiton for a more complete explanation of "named scopes and product groups":scopes_and_groups.html.
+   
 
 h3. Improvements to Payment Gateway Configuration
 
@@ -98,19 +123,23 @@ Another benefit of the architecture is that it makes it possible for Spree to pr
 
 INFO. Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
 
-h3. Seed and Sample Data in Extensions
+h3. Multi Step Checkout
+                                                                                                          
+h4. Checkout Steps
 
-Seed data is data that is needed by the application in order for it to work properly.  Seed data is not the same as sample data.  Instead of loading this type of data in a migration it is handled through the standard rails task through +rake db:seed+.  The rake task will first load the seed data in the spree core (ex. +db/default/countries.yml+.)  Spree will then load any fixtures found in the +db/default+ directory of your extensions.  If you wish to perform a seeding function other than simply loading fixtures, you can still do so in your extension's  +db/seeds.rb+ file.
+Spree has returned to a multi step checkout process.  The following checkout steps are defined by default.
 
-Sample data is data that is convenient to have when testing your code.  Its loaded with the +rake db:sample+ task.  The core sample data is loaded first, followed by any fixtures contained in the +db/sample+ directory of your extensions.  
+* Registration (Optional)
+* Address Information
+* Delivery Options (Shipping Method)
+* Payment
+* Confirm 
 
-If you have fixtures in your extension with the same filename as those found in the core, they will be loaded instead of the core version.  This applies to both sample and seed fixtures.  This allows for fine grained control over the sample and seed data.  For example, you can create your own custom sample order data in your site extension instead of relying on the version provided by Spree.           
+There is also a default progress "train" which shows the current step and allows you to jump back to a previous step by clicking on it.
 
-WARNING.  You should remove all +db:bootstrap+ tasks from your extensions.  The new bootstrap functionality in the core will automatically load any fixtures found in +db/sample+ of your extension.  Failing to remove this task from your extension will result in an attempt to create the fixtures twice.       
+WARNING. If you have a site running on a previous verison of Spree, your checkout process will likely need to be upgraded.  The good news is the new approach is much easier to customize.
 
-h3. Checkout Refactoring
-
-Numerous changes have been made to the checkout process.  This is just a brief summary of some of the highlights.  For a more complete description of the checkout process please see the "checkout documentation":checkout.html
+The checkout process is highly customizable - in fact, this is the reasoning behind moving away from the single step checkout.  There is far less code hidden in javascript and each checkout step has its own partial.  See the "checkout documentation":checkout.html for mor information on how to customize the checkout.   
 
 h4. Countries Available for Shipping and Billing 
 
@@ -162,6 +191,34 @@ h4. Javascript
 
 Spree no longer requires javascript for checkout but the user experience will be slightly more pleasing if they have javascript enabled in their browser.  Spree automatically includes the +checkout.js+ file located in the default theme.  This file can be replaced in its entirety through use of a site extension.
 
+h4. Payment Profiles
+
+The default checkout process in Spree assumes a gateway that allows for some form of third party support for payment profiles.  An example of such a service would be "Authorize.net CIM":http://www.authorize.net/solutions/merchantsolutions/merchantservices/cim/.  Such a service allows for a secure and PCI compliant means of storing the users credit card information.  This allows merchants to issue refunds to the credit card or to make changes to an existing order without having to leave Spree and use the gateway provider's website.  More importantly, it allows us to have a final "confirmation" step before the order is processed since the number is stored securely on the payment step and can still be used to perform the standard authorization/capture via the secure token provided by the gateway.
+
+Spree provides a wrapper around the standard active merchant API in order to provide a common abstraction for dealing with payment profiles.  All +Gateway+ classes now have a +payment_profiles_supported?+ method which indicates whether or not payment profiles are supported.  If you are adding Spree support to a +Gateway+ you should also implement the +create_profile+ method.  The following is an example of the implementation of +create_profile+ used in the +AuthorizeNetCim+ class:
+
+<shell>
+# Create a new CIM customer profile ready to accept a payment
+def create_profile(creditcard, gateway_options)
+  if creditcard.gateway_customer_profile_id.nil?
+    profile_hash = create_customer_profile(creditcard, gateway_options)
+    creditcard.update_attributes(:gateway_customer_profile_id => profile_hash[:customer_profile_id], :gateway_payment_profile_id => profile_hash[:customer_payment_profile_id])
+  end
+end
+</shell>   
+
+WARNING. Most gateways do not yet support payment profiles but the default checkout process of Spree assumes that you have selected a gateway that supports this feature.  This allows users to enter credit card information during the checkout withou having to store it in the database. Spree has never stored credit card information in the database but prior to the use of profiles, the only safe way to handle this was to post the credit card information in the final step.  It should be possible to customize the checkout so that the credit card information is entered on the final step and then you can authorize the card before Spree automatically discards the number while saving the +Creditcard+ object.
+
+h3. Seed and Sample Data in Extensions
+
+Seed data is data that is needed by the application in order for it to work properly.  Seed data is not the same as sample data.  Instead of loading this type of data in a migration it is handled through the standard rails task through +rake db:seed+.  The rake task will first load the seed data in the spree core (ex. +db/default/countries.yml+.)  Spree will then load any fixtures found in the +db/default+ directory of your extensions.  If you wish to perform a seeding function other than simply loading fixtures, you can still do so in your extension's  +db/seeds.rb+ file.
+
+Sample data is data that is convenient to have when testing your code.  Its loaded with the +rake db:sample+ task.  The core sample data is loaded first, followed by any fixtures contained in the +db/sample+ directory of your extensions.  
+
+If you have fixtures in your extension with the same filename as those found in the core, they will be loaded instead of the core version.  This applies to both sample and seed fixtures.  This allows for fine grained control over the sample and seed data.  For example, you can create your own custom sample order data in your site extension instead of relying on the version provided by Spree.           
+
+WARNING.  You should remove all +db:bootstrap+ tasks from your extensions.  The new bootstrap functionality in the core will automatically load any fixtures found in +db/sample+ of your extension.  Failing to remove this task from your extension will result in an attempt to create the fixtures twice.       
+
 h3. RESTful API
 
 The REST API is designed to give developers a convenient way to access data contained within Spree.  With a standard read/write interface to store data, it is now very simple to write third party applications (ex. iPhone) that can talk to Spree.  The API currently only supports a limited number of resources.  
@@ -172,7 +229,7 @@ h3. Inventory
 
 Inventory modeling has been modified to improve performance.  Spree now uses a hybrid approach where on-hand inventory is stored as a count in +Variant#on_hand+, but back-ordered, sold or shipped products are stored as individual +InventoryUnits+ so they can be tracked.  
 
-This improves the performance of stores with large inventories.  When the +on_hand+ count is increased using +Variant#on_hand=+, Spree will first fill back-orders, converting them to +InventoryItems+, then place the remaining new inventory as a count on the +Variant+ model. A migration is in place that will convert on-hand +InventoryItems+ to a simple count during upgrade.  Due to an issue with the sample data, demo stores cannot be upgraded in this fashion and should be re-bootstrapped.
+This improves the performance of stores with large inventories.  When the +on_hand+ count is increased using +Variant#on_hand=+, Spree will first fill back-orders, converting them to +InventoryItems+, then place the remaining new inventory as a count on the +Variant+ model. A migration is in place that will convert on-hand +InventoryItems+ to a simple count during upgrade.  Due to an issue with the sample data, demo stores cannot be upgraded in this fashion and should be re-bootstrapped.   
 
 h3. Miscellaneous improvements
 
@@ -185,5 +242,45 @@ Now you can also add sample product image files in your extensions in the
 extensions own +lib/tasks/sample/products+ directory.  These images will be 
 copied to the +public/assets/products+ directory when the sample data is loaded.
 
-INFO. Additional information on the release can be found in the +CHANGELOG+ file as well as the [official ticket system](http://railsdog.lighthouseapp.com/projects/31096-spree/milestones/45833-10).
+INFO. Additional information on the release can be found in the +CHANGELOG+ file as well as the "official ticket system":http://railsdog.lighthouseapp.com/projects/31096-spree/milestones/45833-10.
 
+h4. Ruby 1.9 Support
+
+Spree is now 100% Ruby 1.9 compatible.  There are a few workarounds needed to achieve this and those are consolidated in a custom initializer appropriately named +workarounds_for_ruby19+.
+
+h4. Sales Overview
+
+The default admin screen now shows a series of tables and graphs related to recent sales activity.  By consulting this screen you can now see the following information
+
+* Best Selling Products
+* Top Grossing Products
+* Best Selling Taxons
+* Information on the Last 5 Orders
+* Biggest Spenders 
+* Out of Stock Products
+* Order Count by Day        
+
+h4. Extension Load Order
+
+It is now recommended to define the extension load order outside of the +environment.rb+ file.  This makes it easier for you to use the standard +environment.rb+ file that comes with Spree and thus easier to upgrade.  To define the extension load order inside of an initializer you can use the following line of code:
+
+<shell>
+SPREE_EXTENSIONS_LOAD_ORDER = [:theme_default, :all, :site]  
+</shell> 
+
+h4. SEO Improvements
+
+Products and taxons are now available by a single URL only.  Prior to this release both of these URL's returned the same result: 
+
+* http://localhost:3000/products/ruby-on-rails-ringer-t-shirt/
+* http://localhost:3000/products/ruby-on-rails-ringer-t-shirt       
+
+Now we are returning a +301+ redirect for the version of the URL without the trailing '/' character.  Some SEO experts seem to feel that inconsistent links and "links without a trailing slash can be penalized":http://www.ragepank.com/articles/68/that-trailing-slash-does-matter/  We've been asked by one of our clients to fix this.  We're passing on the SEO improvements to you!
+
+h4. Multiple Forms of Payment
+
+Spree now supports multiple forms of payment.  This support is in the early stages but the basic build blocks are now present so that it should be quite easy to allow additional forms of payment.  More documentation and improvements in this area are coming.
+
+h4. Refunds and Credits
+  
+Spree now has explicit support for refunds and credits.  More details to follow.
