@@ -188,6 +188,13 @@ class Product < ActiveRecord::Base
     deleted_at
   end
 
+  # split variants list into hash which shows mapping of opt value onto matching variants
+  # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
+  def categorise_variants_from_option(opt_type)
+    return {} unless option_types.include?(opt_type)
+    variants.active.group_by {|v| v.option_values.detect {|o| o.option_type == opt_type} }
+  end
+
   private
 
   def recalculate_count_on_hand
