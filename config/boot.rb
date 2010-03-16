@@ -37,8 +37,8 @@ module Spree
     def load_rubygems
       require 'rubygems'
                
-      unless rubygems_version >= '1.3.5'
-        $stderr.puts %(Spree requires RubyGems >= 1.3.5 (you have #{rubygems_version}). Please `gem update --system` and try again.)
+      unless rubygems_version >= '1.3.6'
+        $stderr.puts %(Spree requires RubyGems >= 1.3.6 (you have #{rubygems_version}). Please `gem update --system` and try again.)
         exit 1
       end
 
@@ -47,7 +47,7 @@ module Spree
       Gem::Dependency.warned_version_requirement = true
 
     rescue LoadError
-      $stderr.puts %(Spree requires RubyGems >= 1.3.5. Please install RubyGems and try again: http://rubygems.rubyforge.org)
+      $stderr.puts %(Spree requires RubyGems >= 1.3.6. Please install RubyGems and try again: http://rubygems.rubyforge.org)
       exit 1
     end
     
