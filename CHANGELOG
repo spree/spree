@@ -1,3 +1,8 @@
+== 0.10.1
+
+* # - 1209 Ruby Gems Warning (reverted this fix - RubyGems 1.3.6 is now required again)
+* # - 1245 payment_gateway extension fails to load in production when spree is gemified
+* # -  759 Error with creating admin user during bootstrap: unknown attribute: password_confirmation (Fixed in production mode)
  
 == 0.10.0
 
