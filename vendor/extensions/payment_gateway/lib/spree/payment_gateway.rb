@@ -67,11 +67,7 @@ module Spree
     def void(payment)
       return unless transaction = purchase_or_authorize_transaction_for_payment(payment)
 
-      if payment_gateway.payment_profiles_supported?
-        response = payment_gateway.credit((transaction.amount * 100).round, self, transaction.response_code, minimal_gateway_options(payment))
-      else
-        response = payment_gateway.void(transaction.response_code, minimal_gateway_options(payment))
-      end      
+      response = payment_gateway.void(transaction.response_code, self, minimal_gateway_options(payment))
       gateway_error_from_response(response) unless response.success?
 
       # create a transaction to reflect the void

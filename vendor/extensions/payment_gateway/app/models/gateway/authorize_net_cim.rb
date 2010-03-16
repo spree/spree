@@ -27,8 +27,8 @@ class Gateway::AuthorizeNetCim < Gateway
     create_transaction(amount, creditcard, :refund, :trans_id => response_code)
   end
   
-  def void(amount, creditcard, response_code, gateway_options)
-    create_transaction(amount, creditcard, :void, :trans_id => response_code)
+  def void(response_code, creditcard, gateway_options)
+    create_transaction(nil, creditcard, :void, :trans_id => response_code)
   end
   
   def payment_profiles_supported?
@@ -52,7 +52,9 @@ class Gateway::AuthorizeNetCim < Gateway
     def create_transaction(amount, creditcard, transaction_type, options = {})
       #create_profile(creditcard, creditcard.gateway_options)
       creditcard.save
-      amount = "%.2f" % (amount/100.0) # This gateway requires formated decimal, not cents
+      if amount
+        amount = "%.2f" % (amount/100.0) # This gateway requires formated decimal, not cents
+      end
       transaction_options = {
         :type => transaction_type, 
         :amount => amount,
