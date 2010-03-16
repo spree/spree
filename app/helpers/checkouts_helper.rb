@@ -2,6 +2,7 @@ module CheckoutsHelper
 
   def checkout_progress
     steps = Checkout.state_names.reject { |n| n == "complete" }.map do |state|
+      next if state == "confirm" and not Gateway.current.payment_profiles_supported?
       text = t("checkout_steps.#{state}")
 
       css_classes = []
