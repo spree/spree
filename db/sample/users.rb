@@ -43,7 +43,9 @@ def create_admin_user
     :email => email,
     :login => email
   }
-  require File.join(SPREE_ROOT, 'app/models/user.rb')
+
+  load 'user.rb'
+  
   if User.find_by_login(email)
     say "\nWARNING: There is already a user with the email: #{email}, so no account changes were made.  If you wish to create an additional admin user, please run rake db:admin:create again with a different email.\n\n"
   else
