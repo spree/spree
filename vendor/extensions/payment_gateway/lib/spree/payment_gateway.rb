@@ -196,15 +196,6 @@ module Spree
     def payment_gateway
       @payment_gateway ||= Gateway.current
     end  
-    
-    # TODO: Want to do this after_save but there is a possible danger of infinite loop which number_changed? check is intended to prevent.
-    # Removed the check to number_changed? and relying on the !has_payment_profile? to not re-create if we have a profile
-    def create_payment_profile
-      return unless payment_gateway.payment_profiles_supported? and number and !has_payment_profile?
-      payment_gateway.create_profile(self, {})
-    rescue ActiveMerchant::ConnectionError => e
-      gateway_error I18n.t(:unable_to_connect_to_gateway)
-    end
 
     private
 

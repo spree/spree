@@ -16,10 +16,10 @@ class Gateway::Bogus < Gateway
     {}
   end
   
-  def create_profile(creditcard, options = {})
+  def create_profile(payment)
     # simulate the storage of credit card profile using remote service
-    success = VALID_CCS.include? creditcard.number
-    creditcard.update_attributes(:gateway_customer_profile_id => generate_profile_id(success))
+    success = VALID_CCS.include? payment.source.number
+    payment.source.update_attributes(:gateway_customer_profile_id => generate_profile_id(success))
   end
 
   def authorize(money, creditcard, options = {})
