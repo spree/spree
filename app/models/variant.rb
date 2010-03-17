@@ -9,7 +9,7 @@ class Variant < ActiveRecord::Base
 
   validate :check_price
   validates_presence_of :price
-  validates_numericality_of :cost_price, :allow_nil => true if Variant.column_names.include? "cost_price"
+  validates_numericality_of :cost_price, :allow_nil => true if Variant.table_exists? && Variant.column_names.include?("cost_price")
 
   before_save :touch_product
 
