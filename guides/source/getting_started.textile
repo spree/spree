@@ -312,16 +312,17 @@ During the  bootstrapping process Spree:
 # Creates and migrates the database. This also applies all migrations from extensions.
 # Loads default/seed data. This includes eg. a country list and is found in +spree/db/default+ . You can override this with your own versions by adding a file to your extension with the same name.
 # Lets extensions load seed data by calling db/seeds.rb for each extension
-# Loads sample data from db/sample/ . This includes data for the rest of the Spree model and is what makes up the demo store.
+# Loads sample data. By default, this includes data for the rest of the Spree model and is what makes up the demo store.
 
-If you add your own versions of the sample data into your extension, the bootstrap process will load those instead of the Spree ones. Thus you can slowly replace the Spree data with your own.
+If you add your own versions of the sample data into your extension, in directory +db/sample+, the bootstrap process will load those instead of the Spree ones. (It won't work if you put files in +RAILS_ROOT/db/sample+.) Thus you can gradually replace the Spree data with your own.
 
-You can also  use the admin interface to make changes to the data, and then use the following rake task to inspect the data changes in the db
-@rake db:dump[clazz]@ 
+You can also  use the admin interface to make changes to the data, and then use the task 
++rake db:dump[clazz]+, e.g. +rake db:dump[Product]+ for the Product model, 
+to inspect the current data state for that model in the database. 
 
-This will dump all instances of that class as yml to the screen. If you pipe the output into the relevant yml file, you have effectively copied that part of your database into your sample data.
+This will dump all instances of that model as yml to the screen. If you pipe the output into the relevant yml file, you have effectively copied that part of your database into your sample data.
 
-You can also do the reverse of the db:dump , which is  +db:load_file[file]+.
+You can also do the reverse of the +db:dump+ , which is  +db:load_file[file]+.
 This will load a single yml file into the db. The file must include the path, and remember the file name is the table name (whereas the dump takes a class name).
 
 If you look at the sample data, you will see that there is not only a db/sample/products.yml , but also a db/sample/products.rb . Generally if a same named ruby file exists it will be loaded after the yml file has been loaded.
