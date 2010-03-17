@@ -61,11 +61,13 @@ module Spree::BaseHelper
       if product.images.empty?
         image_tag "noimage/#{style}.jpg", options
       else
-        image_tag product.images.first.attachment.url(style), options
-      end    
+        image = product.images.first
+        options.reverse_merge! :alt => image.alt.blank? ? product.name : image.alt
+        image_tag image.attachment.url(style), options
+      end
     end
   end
-  
+
   def meta_data_tags
     return unless self.respond_to?(:object) && object
     "".tap do |tags|

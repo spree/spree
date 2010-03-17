@@ -10,3 +10,7 @@
 <% else %>
   <%= hidden_field_tag :product_id, @product.id %>
 <% end %>
+<tr>
+  <td><%= t("alt_text") %>:</td>
+  <td><%= f.text_area :alt %></td>
+</tr>

@@ -1,5 +1,5 @@
 ---
-en-US: 
+en-US:
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
@@ -9,6 +9,7 @@ en-US:
   account: Account
   account_updated: "Account updated!"
   action: Action
+  alt_text: Alternative Text
   actions:
     cancel: Cancel
     create: Create
@@ -521,7 +522,7 @@ en-US:
     product_not_deleted: "Product could not be deleted"
     track_me_in_GA: "Track Me in GA"
     variant_deleted: "Variant has been deleted"
-    variant_not_deleted: "Variant could not be deleted"    
+    variant_not_deleted: "Variant could not be deleted"
   on_hand: "On Hand"
   operation: Operation
   option_Values: "Option Values"

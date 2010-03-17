@@ -3,20 +3,22 @@
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Images"} %>
 
 <table class="index">
-	<tr>
-	  <th><%= t("thumbnail") %></th>
+  <tr>
+    <th><%= t("thumbnail") %></th>
     <% if @product.has_variants? %>
-	    <th><%= Variant.human_name %></th>
-	  <% end %>
-	  <th><%= t("action") %></th>
-	</tr>
- 
+      <th><%= Variant.human_name %></th>
+    <% end %>
+    <th><%= t("alt_text") %></th>
+    <th><%= t("action") %></th>
+  </tr>
+
   <% @product.images.each do |image| %>
     <tr id="<%= dom_id(image) %>">
       <td><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
       <% if @product.has_variants? %>
         <td><%= t('all') %></td>
       <% end %>
+      <td><%= image.alt %></td>
       <td class="actions">
         <%= link_to_with_icon('edit', t("edit"), edit_admin_product_image_url(@product, image)) %>
         &nbsp;
@@ -24,14 +26,15 @@
       </td>
     </tr>
   <% end %>
- 
-	<% @product.variants.each do |variant| %>
+
+  <% @product.variants.each do |variant| %>
     <% variant.images.each do |image| %>
       <tr id="<%= dom_id(image) %>">
         <td><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
         <% if @product.has_variants? %>
           <td><%= variant.options_text %></td>
         <% end %>
+        <td><%= image.alt %></td>
         <td class="actions">
           <%= link_to_with_icon('edit', t("edit"), edit_admin_product_image_url(@product, image)) %>
           &nbsp;
@@ -50,14 +53,14 @@
 
 <% content_for :head do %>
   <script type="text/javascript">
-    jQuery(document).ready(function(){  
-      
-      jQuery('#new_image_link').click(function (event) { 
+    jQuery(document).ready(function(){
+
+      jQuery('#new_image_link').click(function (event) {
         event.preventDefault();
         jQuery(this).hide();
         jQuery.ajax({type: 'GET', url: this.href, data: ({authenticity_token: AUTH_TOKEN}), success: function(r){ jQuery('#images').html(r);} });
       });
-      
+
     });
   </script>
 <% end %>
