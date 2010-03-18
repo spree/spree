@@ -14,7 +14,7 @@ module Spree
 
       unless @only
         FileUtils.rm_r(@output) if File.directory?(@output)
-        FileUtils.mkdir(@output)
+        FileUtils.mkdir_p(@output)
       end
 
       @view_path = File.join(@guides_dir, "source")
@@ -34,8 +34,8 @@ module Spree
       end
 
       # Copy images and css files to html directory
-      FileUtils.cp_r File.join(guides_dir, 'images'), File.join(output, 'images')
-      FileUtils.cp_r File.join(guides_dir, 'files'), File.join(output, 'files')
+      FileUtils.cp_r File.join(guides_dir, 'images'), File.join(@output, 'images')
+      FileUtils.cp_r File.join(guides_dir, 'files'), File.join(@output, 'files')
     end
 
     def generate_guide(guide)
