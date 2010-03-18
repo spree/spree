@@ -99,4 +99,29 @@ if RUBY_VERSION.to_f >= 1.9
     end
   end
 
+  module I18n
+    module Backend
+      class Simple
+        protected
+        
+        def lookup(locale, key, scope = [])
+          return unless key
+          init_translations unless initialized?
+          keys = I18n.send(:normalize_translation_keys, locale, key, scope)
+          begin
+            keys.inject(translations) do |result, k|
+              if (x = result[k.to_sym]).nil?
+                return nil
+              else
+                x
+              end
+            end
+          rescue
+            return nil
+          end
+        end
+      end
+    end
+  end
+  
 end
