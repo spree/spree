@@ -59,10 +59,9 @@ class Admin::ShipmentsController < Admin::BaseController
   end
 
   def update_after # copy back to order if instructions are enabled
-    if Spree::Config[:shipping_instructions]
-      @order.checkout.special_instructions = object_params[:special_instructions]
-      @order.save
-    end
+    @order.checkout.special_instructions = object_params[:special_instructions] if Spree::Config[:shipping_instructions]
+    @order.checkout.shipping_method = @order.shipment.shipping_method
+    @order.save
     recalculate_order
   end
 
