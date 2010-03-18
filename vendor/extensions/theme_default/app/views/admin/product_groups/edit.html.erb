@@ -18,7 +18,7 @@
       <% end %>
 
       <table id="product_scopes">
-        <%= render :partial => 'product_scope', :collection => @product_group.product_scopes.not_ordering %>
+        <%= render :partial => 'product_scope', :collection => @product_group.product_scopes.reject {|s| s.is_ordering? } %>
       </table>
 
     <%=  button t("update") %>
