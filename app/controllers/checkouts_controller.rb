@@ -24,20 +24,20 @@ class CheckoutsController < Spree::BaseController
   update.before :clear_payments_if_in_payment_state
 
   # customized verison of the standard r_c update method (since we need to handle gateway errors, etc)
-  def update      
+  def update
     load_object
 
     # call the edit hooks for the current step in case we experience validation failure and need to edit again
     edit_hooks
     @checkout.enable_validation_group(@checkout.state.to_sym)
     @prev_state = @checkout.state
-    
+
     before :update
 
     begin
-      if object.update_attributes object_params
+      if @checkout.update_attributes object_params
         update_hooks
-        @order.update_totals!
+        @checkout.order.update_totals!
         after :update
         next_step
         if @checkout.completed_at
@@ -156,9 +156,9 @@ class CheckoutsController < Spree::BaseController
       @checkout.payments.clear
     end
   end
-  
-  def load_available_payment_methods 
-    @payment_methods = PaymentMethod.available   
+
+  def load_available_payment_methods
+    @payment_methods = PaymentMethod.available
     if @checkout.payment and @checkout.payment.payment_method
       @payment_method = @checkout.payment.payment_method
     else
@@ -210,7 +210,7 @@ class CheckoutsController < Spree::BaseController
   def accurate_title
     I18n.t(:checkout)
   end
-  
+
   def ensure_payment_methods
     if PaymentMethod.available.none?
       flash[:error] = t(:no_payment_methods_available)
@@ -218,5 +218,5 @@ class CheckoutsController < Spree::BaseController
       false
     end
   end
-  
+
 end
