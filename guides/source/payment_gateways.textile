@@ -18,6 +18,7 @@ payment information. Some gateways are already set up in Spree for immediate
 use and just need to be configured via the administrator interface. 
 A large collection of other gateways can be added easily via Active Merchant.
 
+For information on implementing payment methods that don't communicate with a payment gateway, see the "payments guide.":payments.html
 
 h3. Basic Gateway Functionality
 

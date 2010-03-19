@@ -1,0 +1,185 @@
+h2. Payments
+
+This guide covers how Spree handles payments and how you can configure available payment methods or define your own.
+After reading, you should be familiar with:
+
+* How to configure payment methods
+* How payments are processed
+* Gateway payment methods and payment source
+* Custom payment actions
+* Creating your own payment methods
+
+endprologue.
+
+
+h3. Overview
+
+Spree has a highly flexible payments model which allows multiple multiple payment methods to be available during checkout. The logic for processing payments is decoupled from the checkout making it easy to define custom payment methods with their own processing logic. Additional payments may be created in the admin interface if  You can define your own payment methods       methods to be available to customers during checkout and for different methods to be available based on the current Rails environment.
+
+Payment methods typically represent a payment gateway which will process card payments but may also include non-gateway
+methods of payment such as Check which is provided in Spree by default.
+
+For more information specific to gateway payments, see the "Payment Gateways guide":payment_gateways.html_.
+
+h3. Configuring payment methods
+
+Payment methods are configured in the admin interface in the "Payment Methods" section under "Configuration". 
+
+Each payment method has the following configuration options:
+
+|_.Configuration Option |_.Description |
+| Name                  | The name for the method shown to the customer during checkout e.g. "Creditcard" |
+| Description           | Additional descriptive information about the configuration, not visible to customer |
+| Environment           | The Rails environment for which this payment method will be used.  This is the same as specifying the RAILS_ENV for this configuration (ie. +development+, +test+ or +production+.)|
+| Provider              | The Class which handles the processing of this payment method |
+
+Once created, additional options may now be seen that are specific to the selected provider. For example, all gateway type methods have the following options:
+
+|_.Configuration Option |_.Description |
+| Server                | Which server the gateway should be connecting to (this is a reference to the gateway server, not the Spree server.)  Choices are: +live+ and +test+.|
+| Test Mode             | Transactions should be processed in test mode (if such a mode is supported by your gateway.)|
+| Active                | Whether or not the current gateway configuration is active.|
+
+
+h3. Managing payments
+
+To view and manage payments for an order, click the 'Payments' link in the sidebar sub-menu when viewing the order. 
+
+h4. Pending and finalized payments
+
+The list of payments is split into Pending an Finalized. Pending payments require finalizing before the order will be updated to paid. For creditcard payments, that would mean capturing the payment with the gateway. If *auto_capture* is enabled, creditcard payments will already be in the finalized list on checkout completion.
+
+h4. Payment actions
+
+Depending on the status of a payment, additional actions may be available such as *void* or *credit*.
+
+h4. Creating a new payment
+
+The 'New payment' button will only be available if the order has an outstanding balance. 
+You can enter an amount for the new payment, this will default to the outstanding balance on the order and must not exceed that amount. As with checkout, a payment method is selected (if there's more than one available) and any other details are entered that the selected method requires. 
+
+
+
+h3. Creating your own payment methods
+
+
+h4. Extending the right class
+
+The class hierarchy for payment methods is as follows:
+
+* PaymentMethod
+** Gateway
+*** Gateway::AuthorizeNet
+*** Other ActiveMerchant gateways
+** BillingIntegration
+** Check
+
+Card payment methods using regular ActiveMerchant gateway classes should extend *Gateway*. Payment methods making use of classes in the ActiveMerchant::Billing::Integrations module should extend *BillingIntegration*.
+Payment methods not making use of any ActiveMerchant services should extend PaymentMethod directly.
+
+h4. Registering your payment method
+
+Your payment method class must be registered before it will be available to select as a provider during configuration. Add the following to your extension file:
+
+<shell>
+  class MyPaymentMethodExtension < Spree::Extension
+    def activate
+      PaymentMethod::MyMethod.register
+    end
+  end
+</shell>
+
+h4. Payment source
+
+Payment methods can optionally specify a source class which will be assigned to a payment's *source* association on creation. For example, for Gateway payments, the source is an instance of Creditcard. 
+For the "Paypal Express extension":http://github.com/railsdog/spree-paypal-express the source class is PaypalAccount. It is the source class that will implement any custom logic required for processing a payment and "define additional actions":#custompaymentactions that can be performed.
+
+To specify a source, override the *payment_source_class* method in your payment method's class to return the source class itself:
+
+<shell>
+  def payment_source_class
+    MyPaymentSourceClass
+  end
+</shell>
+
+By default, this method returns nil, indicating that the payment method doesn't use a payment source. 
+
+h4. Processing payments
+
+During checkout, a payment record is created which is associated to the selected payment method. 
+When checkout is complete, *process!* is called on the payment. *process!* is delegated to the payment's source, if the payment has one and it supports that method. This is where you should implement the logic required to receive the payment by this method.
+
+Because an instance of a payment source may be associated to more than one payment (e.g. a Creditcard with a payment profile which can be reused) the payment is passed to the *process!*.  The same applies to "finalize!":#finalizingpayments and "custom actions":#custompaymentactions. This allows the payment to be inspected and modified as needed. For instance, you may want to  for credit-cards, *capture!* will add a transaction to the payment and call its *finalize!* method.forYou can access the order through *payment.order*
+
+<shell>
+  def process!(payment)
+    # your processing logic
+  end
+</shell>
+
+
+h4. Finalizing payments
+
+Payments are associated polymorphicaly to a "payable". Initially the payable is the checkout, indicating that the payment is in a pending state. Finalizing a payment changes the payable to the order so the payment amount is included in the order's payment total. Next, the order is recalculated and its state updated to *paid* if the finalized payment clears the outstanding balance on the order.
+
+If your payment method requires a source, finalizing the payment will also call *finalize!*  
+on the source if supports that method. With credit-card payments for example, *finalize!* will capture 
+the payment with the gateway service.
+
+h4. Custom payment actions
+
+Your payment method may require other actions to be performed after checkout is complete in 
+the admin interface. For gateway payments, these actions include *capture*, *credit* and *void*.
+These actions are defined on the payment source class. Along with a method for each action you must define a "can_...?" method to indicate if that particular action is possible based on the state of the payment or other rules. 
+
+Both your custom action methods and their "can_" predicates must be defined with a payment parameter.
+
+<shell>
+  def actions
+    %w{refund}
+  end
+
+  def can_refund?(payment)
+    # is it possible to make a refund for this payment?
+  end
+
+  def refund(payment)
+    # update the payment amount and recalculate the order
+  end
+</shell>
+
+h4. Transactions
+
+Some payment methods may need to keep a record of transactions. The class *CreditcardTxn* is used for gateway payments. For a non-gateway payment type you should create your own sub-class of *Transaction*.  Transactions are associated to a payment. These would be created by your payment source's *process!* method or custom actions. 
+
+h4. Preferences
+
+If your payment method requires preferences, add them to your class and they will be available in the payment method edit form. Gateway payment methods will inherit the preferences *server* and *test_mode* from the Gateway class.
+
+<shell>
+  class PaymentMethod::MyMethod
+    preference :login, :string
+  	preference :password, :string	
+  end
+</shell>
+
+h4. Views
+
+h5. Checkout
+
+You must create a partial template that provides the interface users will see during checkout when your payment method
+is selected. This partial may be blank as with Check. 
+
+The partial name should be the same as *method_type* for your payment method class, by default this is the underscored name of your class without any preceding modules. So if your class is PaymentMethod::MyMethod, the partial would be located here:
+
+*app/views/checkouts/payment/_my_method.html.erb*
+
+This partial may just contain information you want to show to the customer about the method they have selected. 
+If your payment method requires a source, the partial should include the necessary form fields to produce a params hash with the key *payment_source*.  When the payment is created, this hash will be used to build the source record for the payment.
+
+h5. Admin
+
+You must create 2 partials for your payment method, 
+
+# *app/views/admin/payments/source_views/_my_method.html.erb* - Used on the show action for a payment:
+# *app/views/admin/payments/source_forms/_my_method.html.erb* - Used when creating a new payment, this partial should include form fields that match those used in the checkout partial:
