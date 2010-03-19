@@ -13,3 +13,17 @@ INFO. see the version in the last release notes
 
 h3. Improved Blah
 
+
+
+
+h3. Known Issues
+
+The "ticket system":http://railsdog.lighthouseapp.com/projects/31096-spree/ lists all known 
+outstanding issues with the Spree core. Some issues have a release target (_milestone_)
+attached: this is an indication of how soon an issue will be tackled. 
+
+WARNING. There are some problems which we have traced to other projects. We list a few significant ones here.
+
+h4. Something
+
+
