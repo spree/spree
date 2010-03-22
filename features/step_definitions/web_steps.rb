@@ -101,7 +101,12 @@ Then /^(?:|I )should see "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, selector|
     if defined?(Spec::Rails::Matchers)
       page.should have_content(text)
     else
-      assert page.has_content?(text)
+      begin
+        assert page.has_content?(text)
+      rescue Exception => ex
+        puts page.body
+        raise ex
+      end
     end
   end
 end

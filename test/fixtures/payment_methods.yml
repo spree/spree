@@ -16,3 +16,15 @@ check_payment_method:
   environment: test
   active: false
   type: PaymentMethod::Check
+check_payment_method_cucumber:
+  name: Check Payment Type
+  description: Check Payment Type for test.
+  environment: cucumber
+  active: true
+  type: PaymentMethod::Check
+bogus_cucumber:
+  name: Bogus Test
+  description: Bogus payment gateway for test.
+  environment: cucumber
+  active: true
+  type: Gateway::Bogus

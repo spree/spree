@@ -14,7 +14,8 @@ module NavigationHelpers
       signup_path
     when /the sign in page/
       login_path
-
+    when /the products page/
+      products_path
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #

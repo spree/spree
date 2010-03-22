@@ -11,7 +11,6 @@
 
 <% if params[:keywords] %>
 
-  <h1><%= t(:search_results, :keywords => h(params[:keywords])) %></h1>
   <% hook :search_results do %>
     <% if @products.empty? %>
       <%= t(:no_products_found) %>
