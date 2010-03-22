@@ -6,26 +6,42 @@ class VariantTest < ActiveSupport::TestCase
     context "without inventory units" do
       setup { @variant = Variant.new }
       should "not have inventory units" do
-        assert 0, @variant.inventory_units.size
+        assert_equal 0, @variant.inventory_units.size
       end
       should "on_hand should be zero" do
-        assert 0, @variant.on_hand
+        assert_equal 0, @variant.on_hand
       end
       should "not be deleted" do
         assert !@variant.deleted?
       end
     end
 
-    context "with specified on_hand" do
-      setup { @variant = Variant.new(:on_hand => 5) }
-      should "have inventory units" do
-        assert 5, @variant.inventory_units.size
+    context "when tracking inventory levels" do
+      setup { Spree::Config.set(:track_inventory_levels => true) }
+
+      context "with specified on_hand" do
+        setup { @variant = Variant.new(:on_hand => 5) }
+        should "on_hand should match specified units" do
+          assert_equal 5, @variant.on_hand
+        end
+        should_not_change("InventoryUnit.count") { InventoryUnit.count }
       end
-      should "on_hand should match specified units" do
-        assert 5, @variant.on_hand
-      end
-      should_not_change("InventoryUnit.count") { InventoryUnit.count }
     end
+
+    context "when not tracking inventory levels" do
+      setup { Spree::Config.set(:track_inventory_levels => false) }
+      teardown { Spree::Config.set(:track_inventory_levels => true) }
+      should "raise exception when setting on_hand" do
+        assert_raise RuntimeError do
+          @variant = Variant.new(:on_hand => 5)
+        end
+        assert_raise RuntimeError do
+          @variant = Variant.new()
+          @variant.on_hand = 5
+        end
+      end
+    end
+
   end
 
   context "Variant.create" do
@@ -54,25 +70,45 @@ class VariantTest < ActiveSupport::TestCase
       end
       should_not_change("InventoryUnit.count") { InventoryUnit.count }
     end
-    context "with specified inventory level" do
-      setup do
-        @variant = Variant.new(:on_hand => 3)
-        @product.variants << @variant
-        @product.save
-      end
-      teardown do
-        @variant.destroy
-      end
-      should "adjust inventory levels" do
-        assert_equal 3, @variant.on_hand
-        assert_equal 3, @variant.product.reload.count_on_hand
-      end
+    context "when tracking inventory levels" do
+      setup { Spree::Config.set(:track_inventory_levels => true) }
 
-      should_not_change("InventoryUnit.count") { InventoryUnit.count }
+      context "with specified inventory level" do
+        setup do
+          @variant = Variant.new(:on_hand => 3)
+          @product.variants << @variant
+          @product.save
+        end
+        teardown do
+          @variant.destroy
+        end
+        should "adjust inventory levels" do
+          assert_equal 3, @variant.on_hand
+          assert_equal 3, @variant.product.reload.count_on_hand
+        end
+
+        should_not_change("InventoryUnit.count") { InventoryUnit.count }
+      end
     end
+    context "when not tracking inventory levels" do
+      setup { Spree::Config.set(:track_inventory_levels => false) }
+      teardown { Spree::Config.set(:track_inventory_levels => true) }
+      should "raise exception when setting on_hand" do
+        assert_raise RuntimeError do
+          @variant = Variant.new(:on_hand => 5)
+        end
+        assert_raise RuntimeError do
+          @variant = Variant.new()
+          @variant.on_hand = 5
+        end
+      end
+    end
+
   end
-  context "Variant instance with 1 unit of inventory" do
+
+  context "Variant instance with 1 unit of inventory and when tracking inventory levels" do
     setup do
+      Spree::Config.set(:track_inventory_levels => true)
       @variant = Factory(:variant)
       @variant.on_hand = 1
     end
@@ -128,10 +164,50 @@ class VariantTest < ActiveSupport::TestCase
       should "return false for in_stock?" do
         assert !@variant.in_stock?
       end
-      should "return false for available?" do
+      should "return true for available?" do
         assert @variant.available?
       end
     end
+  end
+
+  context "Variant instance when not tracking inventory levels" do
+    setup do
+      Spree::Config.set(:track_inventory_levels => false)
+      @variant = Factory(:variant)
+    end
+    teardown do
+      Spree::Config.set(:track_inventory_levels => true)
+      @variant.destroy
+    end
+    should "raise exception when setting on_hand" do
+      assert_raise RuntimeError do
+        @variant.on_hand = 5
+      end
+    end
+
+    context "when backordering is allowed" do
+      setup do
+        Spree::Config.set(:allow_backorders => true)
+      end
+      should "return true for in_stock?" do
+        assert @variant.in_stock?
+      end
+      should "return true for available?" do
+        assert @variant.available?
+      end
+    end
+
+    context "when backordering is disallowed" do
+      setup { Spree::Config.set(:allow_backorders => false) }
+      teardown { Spree::Config.set(:allow_backorders => true) }
+      should "return true for in_stock?" do
+        assert @variant.in_stock?
+      end
+      should "return true for available?" do
+        assert @variant.available?
+      end
+    end
+
   end
 
   should 'be deleted if deleted_at is set' do

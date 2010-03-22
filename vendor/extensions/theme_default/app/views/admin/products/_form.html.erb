@@ -46,10 +46,12 @@
         <%= f.text_field :sku, :size => 16 %>
       </p>
       <% unless @product.has_variants? %>
-        <p>
-          <%= f.label :on_hand, t("on_hand")%><br />
-          <%= f.text_field :on_hand, :size => 4 %>
-        </p>
+        <% if Spree::Config[:track_inventory_levels] %>
+          <p>
+            <%= f.label :on_hand, t("on_hand")%><br />
+            <%= f.text_field :on_hand, :size => 4 %>
+          </p>
+        <% end %>
         <ul id="shipping-specs">
           <li>
             <%= f.label :weight, t("weight")%>

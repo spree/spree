@@ -25,23 +25,27 @@ class Variant < ActiveRecord::Base
 
   # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
   def on_hand
-    self.count_on_hand
+    Spree::Config[:track_inventory_levels] ? self.count_on_hand : nil
   end
 
   # Adjusts the inventory units to match the given new level.
   def on_hand=(new_level)
-    delta_units = new_level.to_i - on_hand
+    if Spree::Config[:track_inventory_levels]
+      delta_units = new_level.to_i - on_hand
 
-    # increase Inventory when positive delta
-    if delta_units > 0
-      # fill backordered orders before creating new units
-      inventory_units.with_state("backordered").slice(0, delta_units).each do |iu|
-        iu.fill_backorder
-        delta_units -= 1
+      # increase Inventory when positive delta
+      if delta_units > 0
+        # fill backordered orders before creating new units
+        inventory_units.with_state("backordered").slice(0, delta_units).each do |iu|
+          iu.fill_backorder
+          delta_units -= 1
+        end
       end
-    end
 
-    self.count_on_hand += delta_units
+      self.count_on_hand += delta_units
+    else
+      raise "Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false"
+    end
   end
 
   # returns number of units currently on backorder for this variant.
@@ -51,7 +55,7 @@ class Variant < ActiveRecord::Base
 
   # returns true if at least one inventory unit of this variant is "on_hand"
   def in_stock?
-    on_hand > 0
+    Spree::Config[:track_inventory_levels] ? on_hand > 0 : true
   end
   alias in_stock in_stock?
 
@@ -65,7 +69,7 @@ class Variant < ActiveRecord::Base
 
   # returns true if this variant is allowed to be placed on a new order
   def available?
-    Spree::Config[:allow_backorders] || self.in_stock?
+    Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || self.in_stock?) : true
   end
 
   def options_text

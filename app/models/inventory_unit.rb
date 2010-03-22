@@ -39,26 +39,33 @@ class InventoryUnit < ActiveRecord::Base
       variant = line_item.variant
       quantity = line_item.quantity
 
-      # mark all of these units as sold and associate them with this order
-      remaining_quantity = variant.count_on_hand - quantity
-      if (remaining_quantity >= 0)
+      if Spree::Config[:track_inventory_levels]
+        # mark all of these units as sold and associate them with this order
+        remaining_quantity = variant.count_on_hand - quantity
+        if (remaining_quantity >= 0)
+          quantity.times do
+            order.inventory_units.create(:variant => variant, :state => "sold")
+          end
+          variant.update_attribute(:count_on_hand, remaining_quantity)
+        else
+          (quantity + remaining_quantity).times do
+            order.inventory_units.create(:variant => variant, :state => "sold")
+          end
+          if Spree::Config[:allow_backorders]
+            (-remaining_quantity).times do
+              order.inventory_units.create(:variant => variant, :state => "backordered")
+            end
+          else
+            line_item.update_attribute(:quantity, quantity + remaining_quantity)
+            out_of_stock_items << {:line_item => line_item, :count => -remaining_quantity}
+          end
+          variant.update_attribute(:count_on_hand, 0)
+        end
+      else
+        # not tracking stock levels, so just create all inventory_units as sold (for shipping purposes)
         quantity.times do
           order.inventory_units.create(:variant => variant, :state => "sold")
         end
-        variant.update_attribute(:count_on_hand, remaining_quantity)
-      else
-        (quantity + remaining_quantity).times do
-          order.inventory_units.create(:variant => variant, :state => "sold")
-        end
-        if Spree::Config[:allow_backorders]
-          (-remaining_quantity).times do
-            order.inventory_units.create(:variant => variant, :state => "backordered")
-          end
-        else
-          line_item.update_attribute(:quantity, quantity + remaining_quantity)
-          out_of_stock_items << {:line_item => line_item, :count => -remaining_quantity}
-        end
-        variant.update_attribute(:count_on_hand, 0)
       end
     end
     out_of_stock_items

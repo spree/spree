@@ -44,6 +44,21 @@ class LineItemTest < ActiveSupport::TestCase
         assert !@line_item.valid?
       end
     end
+
+    context "when tracking inventory levels" do
+      setup { Spree::Config.set(:track_inventory_levels => true) }
+      should "not be valid" do
+        assert @line_item.valid?
+      end
+    end
+
+    context "when not tracking inventory levels" do
+      setup { Spree::Config.set(:track_inventory_levels => false) }
+      teardown { Spree::Config.set(:track_inventory_levels => true) }
+      should "be valid" do
+        assert @line_item.valid?
+      end
+    end
   end
 
   context "when variant is in stock but insufficient to cover the requested quantity" do
@@ -66,6 +81,21 @@ class LineItemTest < ActiveSupport::TestCase
       teardown { Spree::Config.set(:allow_backorders => true) }
       should "disallow creation for an out of stock variant" do
         assert !@line_item.valid?
+      end
+    end
+
+    context "when tracking inventory levels" do
+      setup { Spree::Config.set(:track_inventory_levels => true) }
+      should "not be valid" do
+        assert @line_item.valid?
+      end
+    end
+
+    context "when not tracking inventory levels" do
+      setup { Spree::Config.set(:track_inventory_levels => false) }
+      teardown { Spree::Config.set(:track_inventory_levels => true) }
+      should "be valid" do
+        assert @line_item.valid?
       end
     end
   end
