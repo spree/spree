@@ -1,12 +1,14 @@
 require 'test_helper'
 
 class CreditcardTest < ActiveSupport::TestCase
-  fixtures :payment_methods
   
   context Creditcard do
     # NOTE: We want to test a real creditcard so we can't use the factory directly since it uses a hacked model to make 
     # testing easier.
-    setup { @creditcard = Creditcard.new(Factory.attributes_for(:creditcard)) }
+    setup do
+      Gateway.stub!(:current, :return => Gateway::Bogus.new) 
+      @creditcard = Creditcard.new(Factory.attributes_for(:creditcard))
+    end
   
     context "save when configured to store credit card info" do
       setup do 
