@@ -31,7 +31,7 @@ There are also some good free resources on the internet for learning Ruby, inclu
 
 * "Mr. Neighborly’s Humble Little Ruby Book":http://www.humblelittlerubybook.com
 * "Programming Ruby":http://www.rubycentral.com/book
-* "Why’s (Poignant) Guide to Ruby":http://poignantguide.net/ruby
+* "Why’s (Poignant) Guide to Ruby":http://mislav.uniqpath.com/poignant-guide/
 
 h3. What is Spree?
 
