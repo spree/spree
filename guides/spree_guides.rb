@@ -14,7 +14,7 @@ begin
   gem 'RedCloth', '>= 4.2.3'
   #gem ''
 rescue Gem::LoadError
-  $stderr.puts %(Missing the RedCloth 4.1.1 gem.\nPlease `gem install -v=4.1.1 RedCloth` to generate the guides.)
+  $stderr.puts %(Missing the RedCloth 4.2.3 gem.\nPlease `gem install -v=4.2.3 RedCloth` to generate the guides.)
   exit 1
 end
                  
