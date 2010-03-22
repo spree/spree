@@ -62,7 +62,7 @@ class Checkout < ActiveRecord::Base
     event :next do
       transition :to => 'delivery', :from  => 'address'
       transition :to => 'payment', :from => 'delivery'
-      transition :to => 'confirm', :from => 'payment', :if => Proc.new { Gateway.current.payment_profiles_supported? }
+      transition :to => 'confirm', :from => 'payment', :if => Proc.new { Gateway.current and Gateway.current.payment_profiles_supported? }
       transition :to => 'complete', :from => 'confirm'
       transition :to => 'complete', :from => 'payment'
     end

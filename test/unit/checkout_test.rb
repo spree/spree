@@ -102,5 +102,17 @@ class CheckoutTest < ActiveSupport::TestCase
        assert_equal [@country], Checkout.countries
      end
    end
+ end       
+ context "Checkout state machine with no Gateway configured" do
+   setup do 
+     Gateway.stub!(:current, :return => nil)
+     @order = Factory(:order_with_totals)
+     @checkout = @order.checkout
+     @checkout.state = 'payment'
+     @checkout.next!
+   end
+   should "transition to complete" do
+     assert_equal @checkout.state, "complete"
+   end
  end
 end
