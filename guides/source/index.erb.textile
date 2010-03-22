@@ -47,10 +47,17 @@ h3. Basic Configuration
 </dl>
 
 <dl>
+  <% guide('Payments', 'payments.html') do %>
+    This guide explains how Spree's payment system works and how to implement your own payment methods.
+  <% end %>
+</dl>
+
+<dl>
   <% guide('Payment Gateways', 'payment_gateways.html') do %>
     This guide covers how to setup a payment gateway using ActiveMerchant or another gateway solution of your choice.
   <% end %>
 </dl>
+
 <dl>
   <% guide('Zones', 'zones.html') do %>
     This guide covers how to configure a zone for shipping, taxation or other custom purposes.

@@ -181,7 +181,7 @@ In your theme directory you should find the file +my_theme_hooks.rb+.  Within th
 
 h5. Inserting and replacing content
 
-Supply a block name followed by any arguments you'd use with +render+
+Supply a hook name followed by any arguments you'd use with +render+
 
 <shell>
   insert_before :homepage_products, :text => "<h1>Welcome!</h1>"
@@ -193,17 +193,17 @@ Supply a block name followed by any arguments you'd use with +render+
 
 h5. Using a block
 
-The block should return the string to be inserted. It has access to any methods or instance variables available in the view.
+The block should return an erb string to be evaluated. It has access to any methods or instance variables available in the view. Certain local variables are also available.
 
 <shell>
   # adding a link below product details:
   insert_after :product_description do
-    '<p>' + link_to('Back to products', products_path) + '</p>'
+    '<p><%= link_to("Back to products", products_path) %></p>'
   end
 
   # adding a new tab to the admin navigation
   insert_after :admin_tabs do
-    tab(:taxonomies)
+    "<%= tab(:taxonomies) %>"
   end
 </shell>
 
@@ -232,6 +232,15 @@ Since themes are just Spree extensions, one may be loaded after another, the mod
 
   # or with block
   <% hook :my_hook_name do %>
+    <p>Default content</p>
+  <% end %>
+</erb>
+
+If you want to make locals available when using your hook, supply them as a hash:
+
+<erb>
+  <% local_var = 'value' %>
+  <% hook :my_hook_name, :local_var => local_var do %>
     <p>Default content</p>
   <% end %>
 </erb>
