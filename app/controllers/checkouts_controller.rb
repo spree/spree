@@ -81,7 +81,9 @@ class CheckoutsController < Spree::BaseController
       if params[:payment_source].present? && source_params = params.delete(:payment_source)[params[:checkout][:payments_attributes].first[:payment_method_id].underscore]
         params[:checkout][:payments_attributes].first[:source_attributes] = source_params
       end
-      params[:checkout][:payments_attributes].first[:amount] = @order.total
+      if (params[:checkout][:payments_attributes])
+        params[:checkout][:payments_attributes].first[:amount] = @order.total
+      end
     end
     params[:checkout]
   end
