@@ -75,5 +75,22 @@ jQuery(document).ready(function(){
     }
   });
 
+
+  $('input#checkout_use_billing').click(function() {
+    show_billing(!this.checked);
+  });
+
+  var show_billing = function(show) {
+    if(show) {
+      $('#shipping').show();
+      $('#shipping input').removeAttr('disabled', 'disabled');
+      $('#shipping select').removeAttr('disabled', 'disabled');
+    } else {
+      $('#shipping').hide();
+      $('#shipping input').attr('disabled', 'disabled');
+      $('#shipping select').attr('disabled', 'disabled');
+    }
+  }
+
 });
 

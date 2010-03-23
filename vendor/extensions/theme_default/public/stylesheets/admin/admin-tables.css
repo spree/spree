@@ -6,6 +6,10 @@ table.index th {
   border-right: 1px solid #aaa;
   border-bottom: 1px solid #aaa;
   text-shadow: #efefef 1px 1px 0px; }
+  table.index th .right {
+    float:right;
+    font-weight:normal;
+  }
   table.index th.id-col {
     text-align: center; }
   table.index td {

@@ -55,7 +55,6 @@ class Admin::CheckoutsControllerTest < ActionController::TestCase
 
       should "render address details" do
         assert_select "table" do
-          assert_select "th", :text => I18n.t("billing_address")
           assert_select "input[id='checkout_bill_address_attributes_firstname'][value=?]", @checkout.bill_address.firstname
           assert_select "input[id='checkout_bill_address_attributes_lastname'][value=?]", @checkout.bill_address.lastname
           assert_select "input[id='checkout_bill_address_attributes_address1'][value=?]", @checkout.bill_address.address1
@@ -69,7 +68,6 @@ class Admin::CheckoutsControllerTest < ActionController::TestCase
         end
 
         assert_select "table" do
-          assert_select "th", :text => I18n.t("shipping_address")
           assert_select "input[id='checkout_ship_address_attributes_firstname'][value=?]", @checkout.ship_address.firstname
           assert_select "input[id='checkout_ship_address_attributes_lastname'][value=?]", @checkout.ship_address.lastname
           assert_select "input[id='checkout_ship_address_attributes_address1'][value=?]", @checkout.ship_address.address1

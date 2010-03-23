@@ -1,60 +1,69 @@
 <table class="index">
-  <tr>
-    <th colspan="8"><%= name %></th>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :firstname, t(:first_name)+':' %>
-    </td>
-    <td colspan="3"><%= f.text_field :firstname %></td>
-    <td>
-      <%= f.label :lastname, t(:last_name)+':' %>
-    </td>
-    <td colspan="3"><%= f.text_field :lastname %></td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :address1, t(:street_address)+':' %>
-    </td>
-    <td colspan="3"><%= f.text_field :address1, :class => "fullwidth" %></td>
-    <td>
-      <%= f.label :address2, t(:street_address_2)+':' %>
-    </td>
-    <td colspan="3"><%= f.text_field :address2, :class => "fullwidth" %></td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :city, t(:city)+':' %>
-    </td>
-    <td colspan="3"><%= f.text_field :city %></td>
-    <td>
-      <%= f.label :zipcode, t(:zip)+':' %>
-    </td>
-    <td colspan="3"><%= f.text_field :zipcode, :style => "width:100px;" %></td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :state_id, t(:state)+':' %>
-    </td>
-    <td colspan="3">
-      <span id="<%= name==t('shipping_address') ? "s" : "b" %>state">
-        <%= f.text_field :state_name, :style => "width:150px;display:#{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty? %>
-        <%= f.collection_select :state_id, @states, :id, :name, {:include_blank => true}, {:style=> "width:150px;display:#{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
+  <thead>
+    <th colspan="8">
+      <%= name %>
+      <span class="right">
+        <% if use_billing %>
+          <%= check_box_tag 'checkout[use_billing]', '1', (!(@checkout.bill_address.empty? && @checkout.ship_address.empty?) && @checkout.bill_address.eql?(@checkout.ship_address)) %> <%= t("use_billing_address") %>
+        <% end %>
       </span>
-    </td>
-    <td>
-      <%= f.label :country_id, t(:country)+':' %>
-    </td>
-    <td colspan="3">
-      <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %></span>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :phone, t(:phone)+':' %>
-    </td>
-    <td colspan="7"><%= f.text_field :phone %></td>
-  </tr>
+    </th>
+  </thead>
+  <tbody id="<%= name == t('shipping_address') ? "shipping" : "billing" %>" style="display:<%= (use_billing && (!(@checkout.bill_address.empty? && @checkout.ship_address.empty?) && @checkout.bill_address.eql?(@checkout.ship_address))) ? "none" : "" %>">
+    <tr>
+      <td>
+        <%= f.label :firstname, t(:first_name)+':' %>
+      </td>
+      <td colspan="3"><%= f.text_field :firstname %></td>
+      <td>
+        <%= f.label :lastname, t(:last_name)+':' %>
+      </td>
+      <td colspan="3"><%= f.text_field :lastname %></td>
+    </tr>
+    <tr>
+      <td>
+        <%= f.label :address1, t(:street_address)+':' %>
+      </td>
+      <td colspan="3"><%= f.text_field :address1, :class => "fullwidth" %></td>
+      <td>
+        <%= f.label :address2, t(:street_address_2)+':' %>
+      </td>
+      <td colspan="3"><%= f.text_field :address2, :class => "fullwidth" %></td>
+    </tr>
+    <tr>
+      <td>
+        <%= f.label :city, t(:city)+':' %>
+      </td>
+      <td colspan="3"><%= f.text_field :city %></td>
+      <td>
+        <%= f.label :zipcode, t(:zip)+':' %>
+      </td>
+      <td colspan="3"><%= f.text_field :zipcode, :style => "width:100px;" %></td>
+    </tr>
+    <tr>
+      <td>
+        <%= f.label :state_id, t(:state)+':' %>
+      </td>
+      <td colspan="3">
+        <span id="<%= name==t('shipping_address') ? "s" : "b" %>state">
+          <%= f.text_field :state_name, :style => "width:150px;display:#{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty? %>
+          <%= f.collection_select :state_id, @states, :id, :name, {:include_blank => true}, {:style=> "width:150px;display:#{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
+        </span>
+      </td>
+      <td>
+        <%= f.label :country_id, t(:country)+':' %>
+      </td>
+      <td colspan="3">
+        <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %></span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <%= f.label :phone, t(:phone)+':' %>
+      </td>
+      <td colspan="7"><%= f.text_field :phone %></td>
+    </tr>
+  </tbody>
 </table>
 
 <% content_for :head do %>
