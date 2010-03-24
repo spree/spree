@@ -37,7 +37,7 @@ h3. What is Spree?
 
 Spree is a full featured commerce platform written for the Ruby on Rails framework. It is designed to make programming commerce applications easier by making several assumptions about what most developers needs to get started. Spree is a production ready store that can be used "out of the box", but more importantly, it is also a developer tool that can be used as a solid foundation for a more sophisticated application then what is generally possible with traditional open source offerings.
 
-Spree is "open source":http://en.wikipedia.org/wiki/Open_source.  It is licensed under the very permissive "New BSD License":http://spreehq.org/license.  You are free to use the software as you see fit, at no charge.  Perhaps more important than the cost, Spree is a true open source community.  Spree has dozens of contributors who have used and improved it while building their own commerce solutions.  
+Spree is "open source":http://en.wikipedia.org/wiki/Open_source.  It is licensed under the very permissive "New BSD License":http://spreecommerce.com/overview/license.  You are free to use the software as you see fit, at no charge.  Perhaps more important than the cost, Spree is a true open source community.  Spree has dozens of contributors who have used and improved it while building their own commerce solutions.  
 
 h4. Motivation
 
