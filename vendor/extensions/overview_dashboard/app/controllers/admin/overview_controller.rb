@@ -57,16 +57,26 @@ class Admin::OverviewController < Admin::BaseController
         ["completed_at >= ?", params[:from]]
       end
   end
+  
+  def fill_empty_entries(orders, params)
+    from_date = params[:from].to_date
+    to_date = (params[:to] || Time.now).to_date
+    (from_date..to_date).each do |date|
+      orders[date] ||= []
+    end
+  end
 
   def orders_by_day(params)
 
     if params[:value] == "Count"
       orders = Order.find(:all, :select => 'created_at', :conditions => conditions(params))
-      orders = orders.group_by { |o| o.created_at.beginning_of_day }
+      orders = orders.group_by { |o| o.created_at.to_date }
+      fill_empty_entries(orders, params)
       orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].size ]}
     else
       orders = Order.find(:all, :select => 'total, created_at', :conditions => conditions(params))
-      orders = orders.group_by { |o| o.created_at.beginning_of_day }
+      orders = orders.group_by { |o| o.created_at.to_date }
+      fill_empty_entries(orders, params)
       orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].inject(0){|s,o| s += o.total} ]}
     end
   end

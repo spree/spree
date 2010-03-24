@@ -64,7 +64,7 @@ jQuery(document).ready(function(){
 					fontSize: '10pt',
 					textColor: '#476D9B'
 				},
-				min: 1
+				min: 0
 			},	
 			xaxis:{	 
 				renderer:$.jqplot.DateAxisRenderer,
