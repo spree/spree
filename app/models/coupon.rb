@@ -21,7 +21,6 @@ class Coupon < ActiveRecord::Base
       order.save
       coupon_credits.create({
           :order => order, 
-          :amount => amount,
           :description => "#{I18n.t(:coupon)} (#{code})"
         })
     end
