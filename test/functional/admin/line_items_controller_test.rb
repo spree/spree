@@ -22,7 +22,6 @@ class Admin::LineItemsControllerTest < ActionController::TestCase
       end
 
       should_assign_to :order
-      should_assign_to :line_item
       should_respond_with :success
 
       should_change("Order.line_items.size", :by => 1) { @order.line_items.size }

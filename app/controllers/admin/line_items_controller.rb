@@ -4,7 +4,27 @@ class Admin::LineItemsController < Admin::BaseController
   ssl_required
   actions :all, :except => :index
 
-  before_filter :check_order_contains, :only => :create
+
+  #override r_c create action as we want to use order#add_variant instead of creating line_item
+  def create
+    load_object
+    variant = Variant.find(params[:line_item][:variant_id])
+
+    before :create
+
+    @order.add_variant(variant, params[:line_item][:quantity].to_i)
+
+    if @order.save
+      after :create
+      set_flash :create
+      response_for :create
+    else
+      after :create_fails
+      set_flash :create_fails
+      response_for :create_fails
+    end
+
+  end
 
   destroy.success.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false }
 
@@ -25,18 +45,6 @@ class Admin::LineItemsController < Admin::BaseController
   create.after :recalulate_totals
 
   private
-  def check_order_contains
-    variant = Variant.find(params[:line_item][:variant_id])
-    @order = Order.find_by_number(params[:order_id])
-
-    if @order.contains?(variant)
-      @order.add_variant(variant, params[:line_item][:quantity].to_i)
-      @order.save
-
-      render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false
-    end
-  end
-
   def recalulate_totals
     unless @order.shipping_method.nil?
       @order.shipping_charges.each do |shipping_charge|
