@@ -13,28 +13,159 @@ endprologue.
 
 h3. Overview
 
-Spree uses a flexible system which allows you to specify a range of shipping 
-options for zones, and supports precise calculation of shipping options. A 
-key concept is the 'calculator' - a class which _you_ supply to calculate 
-the total shipping cost from a shipment (and the products and quantities it 
-contains).
+Spree uses a very flexible and effective system to calculate shipping, accomodating
+the full range of shippment pricing: from simple flat rate to complex product-type and 
+weight dependent calculations.
+
+Explaining each piece separately and how they fit together can be a cumbersome task.
+Fortunately, using a few simple examples makes it much easier to grasp.
+
+In that spirit, the examples are shown first in this guide.
+
+h3. Examples
+
+h4. Simple setup
+
+Consider you sell t-shirts to US and Europe
+
+And you work with 2 deliverers:
+* USPS Ground (to US)
+* FedEx (to EU)
+
+And their pricing is as follow:
+
+* USPS charges $5 for one t-shirt and $2 for each additional one
+* FedEx charges $10 each, regardless of the quantity
+
+To achieve this setup you need the following configuration:
+
+* Shipping Categories: All your products are the same, so you don't need any.
+* 2 Shipping Methods (Configuration->Shipping Methods):
+
+|Name|Zone|Calculator|
+|USPS Ground|US|Flexi Rate($5,$2)|
+|FedEx|EU_VAT|FlatRate-per-item($10)|
+
+h4. Advanced setup
+
+Consider you sell products to a single zone (US)
+
+And you work with 3 deliverers (Shipping Methods):
+* FedEx
+* DHL
+* US postal service.
+
+And your products can be classified into 3 Shipping Categories:
+* Light
+* Regular
+* Heavy
+
+And their pricing is as follow:
+
+FedEx charges:
+* $10 for all light items regardles of how many you have
+* $2 per regular item
+* $20 for first heavy item and $15 for each next one.
+
+DHL charges:
+* $5 per item if it's light or regular
+* $50 per item if it's heavy.
+
+US Postal Service always charge based on the package weight.
+
+To achieve this setup you need the following Calculators mapping
+(Configuration->Shipping Rates):
+
+|~S.Category~ \ ^S.Method^|*DHL*|*FedEx*|*USPS*|
+|_Default (*)_|Per Item($5)|-|Weight Bucket|
+|*Light*|-|Flat Rate($10)|-|
+|*Regular*|-|Per Item($2)|-|
+|*Heavy*|Per Item($50)|Flexi Rate($20,$15)|-|
+
+p. (*) The default calcultor is the one defined on the Shipping Method 
+configuration (Configuration->Shipping Methods) and it's used when no 
+mapping exists for a specific Shipping Category &#8596; Shipping Method pair.
+
+
+For US Postal Service we define only the default calculator for shipping
+method, since we don't care about shipping category, and we assign it
+a custom calculator.
+
 
 h3. Design and functionality
 
-Rather than try to have a prescriptive general design for shipping possibilities, 
-Spree uses a flexible system
-based on 'calculators' - objects that perform specific computations from
-any information accessible from the whole order. Such calculators have a 
-name and a "zone":zones.html of applicability. 
-The calculators are called in turn to cost up each applicable option.
+To properly leverage Spree's shipping system's flexibility you must
+understand a few key concepts:
+
+* Shipping Methods
+* Zones
+* Shipping Categories
+* Calculators (through Shipping Rates)
+
+h4. Shipping Methods
+
+Shipping methods are the actual service used to send the product.  
+For example:
+* UPS Ground
+* UPS One Day
+* FedEx 2Day
+* FedEx Overnight
+* DHL International
+
+Each shipping method is only applicable to an specific Zone as, for example, you can't ship internationally using a local postal service.
+
+Ie. you can't ship from Dallas, USA to Rio de Janeiro, Brazil using UPS Ground.
+
+h4. Zones
+
+Zones serve as a mechanism for grouping geographic areas together into a single entity.
+You can read all about how to configure and use Zones in the "Zones Guide":zones.html
+
+The Shipping Address entered during checkout will define the zone the customer is in
+and limit the Shipping Methods available to him.
+
+h4. Shipping Category
+
+Shipping category is useful if you sell products whose shipping pricing varies greatly (TVs and Mugs, for instance).
+
+bq. For simple setups, where shipping for all products are priced the same (ie. t-shirt only shop), there is no need to setup categories.
+
+p. An example of Shipping Categories would be:
+* light
+* regular
+* heavy
+
+Shipping Categories are created in the admin interface (Configuration -> Shipping Categories) and then assigned to products (Products->Products->edit->Product Details pane).
+
+During checkout, the shipping category of the product will determine which calculator will be used to price its shipping for each Shipping Method.
+
+h4. Calculators
+
+A calculator is the component responsible for calculating the shipping price for each available Shipment Method.
+
+Spree ships with 4 default calculators:
+* Flat rate (per order)
+* Flat rate (per item/product)
+* Flat percent
+* Flexible rate
+
+bq. Flexible rate: Flat rate for the first product + Flat rate for each additional product.
+
+You can define your own calculator if you have more complex needs. In that case, check out the "Calculators Guide":calculators.html
+
+h3. UI
 
 h4. What the Customer Sees
 
 In the standard system, there is no mention of shipping until the 
-checkout phase. After entering a shipping address, the system displays 
-all relevant shipping options and their costs for the whole order. 
+checkout phase.
+
+After entering a shipping address, the system displays
+the available shipping options and their costs for the whole order.
+
 Only the shipping options whose zones include the _shipping_ address 
 are presented. 
+
 The Customer must choose one before proceeding to the next stage. At 
 confirmation, the shipping cost has been added to the order total.
 
@@ -45,45 +176,31 @@ h4. What the Orders Administrator Sees
 A shipment object is created at checkout time for the order. Initially it 
 records just the shipping method and the order it applies to. The administrator
 can update the record with actual shipping cost and a tracking code, and 
-may also (once only) confirm the despatch. This confirmation causes a 
+may also (once only) confirm the dispatch. This confirmation causes a
 shipping date to be set as the time of confirmation. 
 
-NOTE. There is little support at present for split shipments. Spree allows representation of multiple shipments for an order but uses only the last in calculations.
 
-h4. Configuration Options
+h3. Advanced Shipping Methods
 
-Administrators may create new shipping methods by specifying a descriptive
-name, the name of a suitable calculator class, and a zone. Editing of existing
-methods is also allowed.
-(Recall that administrators can freely create new zones to reflect 
-shipping constraints.)
-
-Each product can also set a +ShippingCategory+, as explained below.
+The main work is to provide a suitable calculator. If the calculators that
+comes with Spree are not enough for your needs, you might want to use an
+extension, if one exists, or create a custom one.
 
 
-h3. Adding New Shipping Methods
+h4. Extensions
 
-The main work is to provide a suitable calculator. You can write your own, but there
-are some existing ones which might be useful for simple pricing structures.
-
-
-h4. The FlatRate extension
-
-This calculator comes with Spree, and returns a fixed rate depending on the setting of 
-preference value +Spree::FlatRateShipping::Config[:flat_rate_amount]+.
-
-h4. Other useful extensions
-
-There are a few Spree extensions which provide additional shipping methods, including
+There are a few Spree extensions which provides additional shipping methods, including
 special support for the fees for common carriers, or support for bulk orders.
-See the "Spree Extension Registry":http://ext.spreecommerce.org for the latest 
+See the "Spree Extension Registry":http://ext.spreecommerce.com for the latest 
 information.
 
 h4. Writing your own
 
-Your calculator should accept a shipment and return a cost. Your calculator can look at 
-any reachable data, but typically uses the address and order in a shipment, plus 
-the information from variants which are contained in the line_items.
+For more detailed information, check out the "Calculators Guide":calculators.html
+
+Your calculator should accept an Array of LineItems and return a cost.
+It can look at any reachable data, but typically uses the address, the order and the 
+information from variants which are contained in the line_items.
 
 h3. Product Configuration
 
