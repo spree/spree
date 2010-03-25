@@ -1,3 +1,25 @@
+== 0.10.2
+
+* # - 1215 Update Vietnamese translation
+* # - 1230 Product#recalculate_count_on_hand migration from 0.9.4 to 0.10.0
+* # - 1234 Billing address not accepting UK state
+* # - 1238 Should not create empty order in db for orders/new action
+* # - 1240 Add test-unit to gem dependency
+* # - 1249 Authorize.net CIM does not work with live account
+* # - 1251 Skip confirmation step if payment profiles are not available
+* # - 1253 Table variants doesn't exist when bootstrapping with extensions installed that modify the Variant model
+* # - 1255 Products groups edit error
+* # - 1257 Coupons do not recalculate credit after redeemed 
+* # - 1261 Type Error when Checkout
+* # - 1263 Submitting a coupon during the checkout confirmation fails
+* # - 1269 Orders Overview page breaks when there are no orders in the last 7 days
+* # - 1276 Product Images not updating properly
+
+== 0.10.1
+
+* # - 1209 Ruby Gems Warning (reverted this fix - RubyGems 1.3.6 is now required again)
+* # - 1245 payment_gateway extension fails to load in production when spree is gemified
+* # -  759 Error with creating admin user during bootstrap: unknown attribute: password_confirmation (Fixed in production mode)
  
 == 0.10.0
 
