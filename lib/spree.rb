@@ -9,7 +9,7 @@ unless defined? Spree::Version
     module Version
       Major = '0'
       Minor = '10'
-      Tiny  = '1'  
+      Tiny  = '2'  
       Pre   = nil
 
       class << self
