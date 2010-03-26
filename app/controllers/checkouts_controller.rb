@@ -5,6 +5,7 @@ class CheckoutsController < Spree::BaseController
   before_filter :load_data
   before_filter :set_state
   before_filter :enforce_registration, :except => :register
+  before_filter :ensure_order_assigned_to_user, :except => :register
   before_filter :ensure_payment_methods
   helper :users
 
@@ -220,5 +221,13 @@ class CheckoutsController < Spree::BaseController
       false
     end
   end
-
+  
+  # Make sure that the order is assigned to the current user if logged in
+  def ensure_order_assigned_to_user
+    load_object
+    if current_user and @order.user != current_user
+      @order.update_attribute(:user, current_user)
+    end
+  end
+  
 end
