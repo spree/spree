@@ -29,7 +29,11 @@ class PaymentMethod < ActiveRecord::Base
   def self.active?
     self.count(:conditions => {:type => self.to_s, :environment => RAILS_ENV, :active => true}) > 0
   end
-
+  
+  def self.current
+    PaymentMethod.find(:first, :conditions => {:active => true, :environment => ENV['RAILS_ENV']}) 
+  end
+  
   def method_type
     type.demodulize.downcase
   end
@@ -40,6 +44,10 @@ class PaymentMethod < ActiveRecord::Base
 
   def self.find_with_destroyed *args
     self.with_exclusive_scope { find(*args) }
+  end
+  
+  def payment_profiles_supported?
+    false
   end
 
 end

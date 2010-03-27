@@ -12,7 +12,7 @@ class Gateway < PaymentMethod
   
   # instantiates the selected gateway and configures with the options stored in the database
   def self.current
-    Gateway.find(:first, :conditions => {:active => true, :environment => ENV['RAILS_ENV']}) 
+    super
 	end	
   
   def provider
