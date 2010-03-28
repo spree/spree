@@ -15,6 +15,13 @@ class Shipment < ActiveRecord::Base
   accepts_nested_attributes_for :inventory_units
 
   validates_presence_of :inventory_units, :if => Proc.new { |unit| !unit.order.in_progress? }
+  make_permalink :field => :number
+
+  def to_param
+    self.number if self.number
+    generate_shipment_number unless self.number
+    self.number.parameterize.to_s.upcase
+  end
 
   def shipped=(value)
     return unless value == "1" && shipped_at.nil?
@@ -87,7 +94,7 @@ class Shipment < ActiveRecord::Base
     return self.number unless self.number.blank?
     record = true
     while record
-      random = Array.new(11){rand(9)}.join
+      random = "H" + Array.new(11){rand(9)}.join
       record = Shipment.find(:first, :conditions => ["number = ?", random])
     end
     self.number = random

@@ -1,8 +1,8 @@
 <% 1.upto(100) do |i| %>
 shipment_<%= i %>:
-  number: <%= Array.new(11){rand(11)}.join %>
+  number: H<%= Array.new(11){rand(11)}.join %>
   order: order_<%= i %>
-  shipping_method: ups_ground 
+  shipping_method: ups_ground
   address: ship_address_<%= i %>
   state: pending
 <% end %>
