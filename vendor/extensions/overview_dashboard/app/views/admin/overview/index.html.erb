@@ -79,7 +79,7 @@
             <%= select_tag "orders_by_day_reports", options_for_select([[t('last_7_days'), "7_days"], [t('last_14_days'), "14_days"], [t('this_month'), "this_month"],
                                                     [t('last_month'), "last_month"], [t('this_year'), "this_year"], [t('last_year'), "last_year"] ], "7_days") %>
             <label><%= t('value') %>:</label>
-            <%= select_tag "orders_by_day_value", options_for_select([t('count'), t('value')], t('count')) %>
+            <%= select_tag "orders_by_day_value", options_for_select({t('count') => 'Count', t('value') => 'Value'}, 'Count') %>
           </div>
         </div>
       </div>
