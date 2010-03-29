@@ -117,7 +117,7 @@ The basic command to set up a submodule is this. Call it for each of the submodu
 For Spree, you want to use the path +vendor/spree+.
 
 <shell>
-git submodule add some_repo [-b branch] vendor/extension/some_ext
+git submodule add some_repo [-b branch] vendor/extensions/some_ext
 </shell>
 
 If your project is public, then you probably want to give the public version of your repo so
