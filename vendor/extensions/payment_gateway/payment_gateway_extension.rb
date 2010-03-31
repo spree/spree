@@ -16,16 +16,16 @@ class PaymentGatewayExtension < Spree::Extension
     
     silence_warnings { require 'active_merchant/billing/authorize_net_cim' }
     
-		#register all payment methods
-		[
-			Gateway::Bogus,
+    #register all payment methods
+    [
+      Gateway::Bogus,
       Gateway::AuthorizeNet,
-			Gateway::AuthorizeNetCim,
+      Gateway::AuthorizeNetCim,
       Gateway::Linkpoint,
-			Gateway::PayPal,
-			Gateway::Protx,
-			Gateway::Beanstream,
-			PaymentMethod::Check
+      Gateway::PayPal,
+      Gateway::SagePay,
+      Gateway::Beanstream,
+      PaymentMethod::Check
     ].each{|gw|
       begin
         gw.register  

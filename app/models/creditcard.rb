@@ -50,8 +50,12 @@ class Creditcard < ActiveRecord::Base
   end
   
   alias :attributes_with_quotes_default :attributes_with_quotes
-  
 
+  
+  # needed for some of the ActiveMerchant gateways (eg. SagePay)
+  def brand
+    cc_type
+  end
   
   
   private
