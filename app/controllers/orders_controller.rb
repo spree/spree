@@ -6,7 +6,6 @@ class OrdersController < Spree::BaseController
   ssl_required :show
 
   resource_controller
-  actions :all, :except => :index
   
   helper :products
 
