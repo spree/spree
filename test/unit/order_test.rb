@@ -4,157 +4,178 @@ require 'test_helper'
 # check seslling units / restocking
 
 class OrderTest < ActiveSupport::TestCase
-  context "create" do
-    setup { Order.create }
-    should_change("Checkout.count", :by => 1) { Checkout.count }
-  end
-  
   context "Order" do
-    setup { create_complete_order }
-  
-    should "have line_items" do
-      assert @order.line_items.length > 0
-    end
-  
-    should "have token generated" do
-      assert(@order.token, "Token was not generated")
-    end
-  
-    should "remove line items if quantity drops to 0" do
-      @order.save   # wipe any accidental zeros
-      l = @order.line_items.length
-      @order.line_items.first.update_attribute(:quantity, 0)
-      @order.save
-      assert_equal(l-1, @order.line_items.length)
-    end
-  
-    should "update totals" do
-      @order.item_total = nil
-      @order.adjustment_total = nil
-      @order.total = nil
-      @order.update_totals
-      assert_not_nil(@order.item_total)
-      assert_not_nil(@order.charge_total)
-      assert_not_nil(@order.total)
-    end
-  
-    context "when line_items change" do
-      setup do 
-        @first_price = @order.line_items.first.price
-        @order.line_items.first.update_attribute(:quantity, @order.line_items.first.quantity + 1)
-        @order.save
+    should_have_many :line_items
+
+    context "#create" do
+      setup { @order = Order.create! }
+      should_change("Checkout.count", :by => 1) { Checkout.count }
+      should "generate token" do
+        assert !@order.token.blank?
       end
-      should_change("item total", :by => @first_price) { @order.item_total }
+      should "create default tax charge" do
+        assert !@order.tax_charges.empty?
+      end
     end
-  
-    should "create default tax charge" do
-      assert(@order.tax_charges.first, "Tax charge was not created")
+
+    context "#update_totals" do
+      should "update totals" do
+        order = Order.create!
+        order.item_total = nil
+        order.adjustment_total = nil
+        order.total = nil
+        order.update_totals
+        assert_not_nil order.item_total
+        assert_not_nil order.charge_total
+        assert_not_nil order.total
+      end
     end
-  
-    context "complete" do
-      setup { @order.complete }
-      should_change("@order.state", :from => "in_progress", :to => "new") { @order.state }
-  
-      should "create shipment" do
-        assert(@order.shipments.first, "Shipment was not created")
-        assert_equal 'pending', @order.shipments.first.state
+
+    context "#save" do
+      should "remove line items if quantity drops to 0" do
+        order = Order.create!
+        order.line_items << [Factory(:line_item, :order=>order),Factory(:line_item, :order=>order)]
+        assert order.line_items.length == 2
+        order.line_items.first.quantity = 0
+        order.save!
+        assert order.line_items.length == 1
       end
-  
-      should "update checkout completed_at" do
-        assert(@order.checkout.completed_at, "Checkout#completed_at was not updated")
+      should "update item_total when line_item quantity changes" do
+        order = Order.create!
+        line_item = Factory(:line_item, :price=>111, :quantity=>1, :order=>order)
+        order.line_items << line_item
+        order.save!
+        assert_equal 111,order.item_total
+
+        line_item.quantity = 2
+        order.save!
+        assert_equal 222, order.item_total
       end
-      
-      should "create inventory units" do
-        total_quantity = @order.line_items.map(&:quantity).sum
-        assert_equal total_quantity, @order.inventory_units.count
-        assert_equal total_quantity, @order.shipment.inventory_units.count
+      should "create shipment with pending state" do
+        order = Order.new
+        assert order.shipments.empty?
+        order.save!
+        assert !order.shipments.empty?
+        assert_equal 'pending', order.shipments.first.state
       end
-      
       context "with empty stock" do
-        setup do
-          line_item = @order.line_items.first
-          num_left = line_item.variant.inventory_units.with_state("on_hand").count
-          InventoryUnit.destroy_on_hand(line_item.variant, num_left)
-        end
         should "be able to save order when allow_backorders is off" do
+          order = Order.create!
+          line_item = Factory(:line_item,:order => order)
+          order.line_items << line_item
+          order.complete 
+          #let's clear our stock..
+          on_stock_count = line_item.variant.inventory_units.with_state("on_hand").count
+          InventoryUnit.destroy_on_hand(line_item.variant, on_stock_count)
+          #.. and turn backorders off
           Spree::Config.set(:allow_backorders => false)
-          assert(@order.save == true, "Completed order could not be saved")
+          assert order.save!
           Spree::Config.set(:allow_backorders => true)
         end
       end
     end
-    
-    context "pay!" do
+    context "#complete" do
+      should "change state from in_progress to new" do
+        order = Order.create!
+        assert_equal "in_progress", order.state
+        order.complete!
+        assert_equal "new", order.state
+      end
+      should "update checkout completed_at" do
+        order = Order.create!
+        assert order.completed_at.nil?
+        order.complete!
+        assert !order.completed_at.nil?
+        assert !order.checkout.completed_at.nil?
+      end
+      should "create inventory units" do
+        order = Order.create!
+        order.line_items <<
+                [Factory.build(:line_item, :quantity=>1, :order=>order),
+                 Factory.build(:line_item, :quantity=>2, :order=>order)]
+        assert_equal 0, order.inventory_units.count
+        assert_equal 0, order.shipment.inventory_units.count
+        order.complete!
+        assert_equal 3, order.inventory_units.count
+        assert_equal 3, order.shipment.inventory_units.count
+      end
+    end
+    context "#pay!" do
       should "make all shipments ready" do
-        @order.complete!
-        @order.pay!
-        assert @order.shipments.all?(&:ready_to_ship?), "shipments didn't all have state ready_to_ship"
+        order = Order.create!
+        order.line_items << Factory(:line_item, :order=>order)
+        order.complete!
+        assert !order.shipments.empty?
+        assert !order.shipments.all?(&:ready_to_ship?)
+        order.pay!
+        assert order.shipments.all?(&:ready_to_ship?)
       end
     end
-  
-    context "ship!" do
+    context "#ship!" do
       should "make all shipments shipped" do
-        @order.update_attribute(:state, 'paid')
-        @order.ship!
-        assert @order.shipments.all?(&:shipped?), "shipments didn't all have state shipped"
+        order = Order.create!
+        order.line_items << Factory(:line_item, :order=>order)
+        order.complete!
+        order.pay!
+        assert !order.shipments.empty?
+        assert !order.shipments.all?(&:shipped?)
+        order.ship!
+        assert order.shipments.all?(&:shipped?)
       end
     end
-  
-    context "under_paid!" do
+    context "#under_paid!" do
       should "make all shipments pending" do
-        @order.complete!
-        @order.pay!
-        @order.under_paid!
-        assert @order.shipments.all?(&:pending?), "shipments didn't all have state pending"
+        order = Order.create!
+        order.line_items << Factory(:line_item, :order=>order)
+        order.complete!
+        order.pay!
+        assert !order.shipments.empty?
+        assert !order.shipments.all?(&:pending?)
+        order.under_paid!
+        assert order.shipments.all?(&:pending?)
       end
     end
-    
-  end
-
-  context "outstanding_balance and outstanding_credit" do
-    setup do
-      @order = Factory(:order)
-      Factory(:line_item, :variant => Factory(:variant, :price => 5.00), :order => @order, :quantity => 1, :price => 5.00)
-      @order.reload
-      @order.save
-      Factory(:payment, :payable => @order, :amount => 2.50)
-      @order.reload
-      @order.save
-    end
-    
-    context "with outstanding balance of 2.50" do
-      should "be have outstanding_balance of 2.50" do
-        assert_equal 2.50, @order.outstanding_balance.to_f
-      end
-      should "be have outstanding_credit of 0.00" do
-        assert_equal 0.00, @order.outstanding_credit.to_f
-      end
-    end
-
-    context "with outstanding credit of 2.50" do
+    context "" do
       setup do
-        @order.payments.first.update_attribute(:amount, 8.00)
+        @order = Factory(:line_item, :quantity => 1, :price => 5.00).order
+        @order.reload
+        @order.save
+        Factory(:payment, :payable => @order, :amount => 2.50)
+        @order.reload
       end
-      should "be have outstanding_balance of 0.00" do
-        assert_equal 0.00, @order.outstanding_balance.to_f
+
+      context "with partial payment" do
+        should "have #outstanding_balance" do
+          assert_equal 2.50, @order.outstanding_balance.to_f
+        end
+        should "have no #outstanding_credit" do
+          assert_equal 0.00, @order.outstanding_credit.to_f
+        end
       end
-      should "be have outstanding_credit of 2.50" do
-        assert_equal 3.00, @order.outstanding_credit.to_f
+
+      context "with extra payment" do
+        setup do
+          @order.payments.first.update_attribute(:amount, 8.00)
+        end
+        should "have no #outstanding_balance" do
+          assert_equal 0.00, @order.outstanding_balance.to_f
+        end
+        should "have #outstanding_credit" do
+          assert_equal 3.00, @order.outstanding_credit.to_f
+        end
+      end
+
+      context "with exact (full) payment" do
+        setup do
+          @order.payments.first.update_attribute(:amount, 5.00)
+        end
+        should "have no #outstanding_balance" do
+          assert_equal 0.00, @order.outstanding_balance.to_f
+        end
+        should "have no #outstanding_credit" do
+          assert_equal 0.00, @order.outstanding_credit.to_f
+        end
       end
     end
-
-    context "with no outstanding balance or credit" do
-      setup do
-        @order.payments.first.update_attribute(:amount, 5.00)
-      end
-      should "be have outstanding_balance of 0.00" do
-        assert_equal 0.00, @order.outstanding_balance.to_f
-      end
-      should "be have outstanding_credit of 0.00" do
-        assert_equal 0.00, @order.outstanding_credit.to_f
-      end
-    end
-
   end
-
 end

@@ -1,26 +1,17 @@
  require 'test_helper'
 
 class OrderStateTest < ActiveSupport::TestCase
+  should "be in_progress initially" do
+    assert Order.new.in_progress?
+  end
   context "Order" do
-     setup do
-        @order = create_complete_order    
-        @order.checkout.update_attribute("state", "complete")
-
-        #only want one line item for ease of testing
-        @order.line_items.destroy_all
-        Factory(:line_item, :order => @order, :variant => Factory(:variant), :quantity => 2, :price => 100.00)
-        @order.reload
-        @order.save
-        
-        @checkout.payment.update_attributes(:payable => @order, :amount => @order.total)
-
-        #make sure totals get recalculated
-        @order.reload
-        @order.save
-      end
-
-      should "be in_progress initally" do
-        assert @order.in_progress?
+      setup do
+        @order = Order.create!
+        @order.line_items << Factory(:line_item,:order=>@order,:price=>100, :quantity=>5)
+        @order.checkout.shipping_method = Factory(:shipping_method)
+        @order.update_totals
+        @order.payments = [Factory(:payment, :payable=>@order, :amount=>500)]
+        @order.save!
       end
 
       context "with a complete checkout and payment" do
