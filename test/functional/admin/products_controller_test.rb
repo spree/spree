@@ -46,7 +46,7 @@ class Admin::ProductsControllerTest < ActionController::TestCase
     context "and format = html" do
       setup do
         get :index, "search" => {
-            "name_contains" => "rails",
+            "name_contains" => "Rails",
             "order" => "ascend_by_name",
             "deleted_at_not_null" => ""}
       end
@@ -72,7 +72,7 @@ class Admin::ProductsControllerTest < ActionController::TestCase
       should "render sibebar search" do
         assert_select "div#sidebar" do
            assert_select "form[action='/admin/products']" do
-             assert_select "input[id='search_name_contains'][value=?]", "rails"
+             assert_select "input[id='search_name_contains'][value=?]", "Rails"
              assert_select "input[id='search_variants_including_master_sku_contains']"
              assert_select "input[id='search_deleted_at_not_null'][type='checkbox']"
              assert_select "button[type='submit']", :text => I18n.t('search')
@@ -88,7 +88,7 @@ class Admin::ProductsControllerTest < ActionController::TestCase
         get :index,
           "format" => "json",
           "search" => {
-            "name_contains" => "rails",
+            "name_contains" => "Rails",
             "order" => "ascend_by_name",
             "deleted_at_not_null" => ""}
 
