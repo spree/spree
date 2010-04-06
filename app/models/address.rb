@@ -18,7 +18,7 @@ class Address < ActiveRecord::Base
   validate :state_name_validate, :if => Proc.new { |address| address.state.blank? && Spree::Config[:address_requires_state] }
 
   def checkouts
-    billing_checkouts.concat(shipping_checkouts).uniq
+    (billing_checkouts + shipping_checkouts).uniq
   end
 
   # disconnected since there's no code to display error messages yet OR matching client-side validation
