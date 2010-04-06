@@ -2,7 +2,8 @@ class Address < ActiveRecord::Base
   belongs_to :country
   belongs_to :state
 
-  has_many :checkouts, :foreign_key => "bill_address_id"
+  has_many :billing_checkouts, :foreign_key => "bill_address_id", :class_name => "Checkout"
+  has_many :shipping_checkouts, :foreign_key => "ship_address_id", :class_name => "Checkout"
   has_many :shipments
 
   validates_presence_of :firstname
@@ -15,6 +16,10 @@ class Address < ActiveRecord::Base
   validates_presence_of :country
   validates_presence_of :phone
   validate :state_name_validate, :if => Proc.new { |address| address.state.blank? && Spree::Config[:address_requires_state] }
+
+  def checkouts
+    billing_checkouts.concat(shipping_checkouts).uniq
+  end
 
   # disconnected since there's no code to display error messages yet OR matching client-side validation
   def phone_validate
