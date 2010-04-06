@@ -13,6 +13,7 @@ class Variant < ActiveRecord::Base
 
   before_save :touch_product
 
+  include ::Scopes::Variant
   # default variant scope only lists non-deleted variants
   named_scope :active, :conditions => "variants.deleted_at is null"
   named_scope :deleted, :conditions => "not variants.deleted_at is null"

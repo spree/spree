@@ -51,9 +51,8 @@ class ShipmentTest < ActiveSupport::TestCase
 
   context "manifest" do
     setup do
-      create_complete_order
+      @order = Order.create!
 
-      @order.line_items.clear
       @variant1 = Factory(:variant)
       @variant2 = Factory(:variant)
       Factory(:line_item, :variant => @variant1, :order => @order, :quantity => 2)
@@ -76,8 +75,7 @@ class ShipmentTest < ActiveSupport::TestCase
 
   context "line_items" do
     setup do
-      create_complete_order
-      @order.line_items.clear
+      @order = Order.create!
       @line_item1 = Factory(:line_item, :variant => Factory(:variant), :order => @order, :quantity => 2)
       @line_item2 = Factory(:line_item, :variant => Factory(:variant), :order => @order, :quantity => 3)
       @line_item3 = Factory(:line_item, :variant => Factory(:variant), :order => @order, :quantity => 4)
@@ -126,7 +124,9 @@ class ShipmentTest < ActiveSupport::TestCase
 
   context "recalculate_order after shipping_method change" do
     setup do
-      create_complete_order
+      @order = Order.create!
+      @order.line_items << Factory(:line_item, :order=>@order)
+      @order.checkout.shipping_method = Factory(:shipping_method)
       @order.complete!
 
       @new_shipping_method = Factory(:shipping_method)
@@ -134,10 +134,10 @@ class ShipmentTest < ActiveSupport::TestCase
       c.preferred_amount = 5.0
       c.save!
 
+      @shipment = @order.shipment
       @shipment.shipping_method = @new_shipping_method
+      @shipment.shipping_method.zone.stub!(:include?) {true}
       @shipment.save!
-      @shipment.reload
-
       @shipment.recalculate_order
     end
 

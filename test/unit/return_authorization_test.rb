@@ -2,10 +2,14 @@ require 'test_helper.rb'
 
 class ReturnAuthorizationTest < ActiveSupport::TestCase
   fixtures :payment_methods
-  
+  should "be authorized initially" do
+    assert ReturnAuthorization.new.authorized?
+  end
+
   context "ReturnAuthorization" do
     setup do
-      create_complete_order
+      @order = Order.create!
+      @order.line_items << [Factory(:line_item, :order=>@order),Factory(:line_item, :order=>@order)]
 
       #complete order / checkout
       @order.complete!
@@ -15,17 +19,13 @@ class ReturnAuthorizationTest < ActiveSupport::TestCase
       @order.update_attribute(:state, 'paid')
       
       #force shipment to ready_to_ship
-      shipment = @order.shipment
-      shipment.ready!
+      @order.shipment.ready!
 
       @order.reload
+      @order.shipment.reload #hack for the @order.shipment caching
       
       @line_item = @order.line_items.first
-      @return_authorization = ReturnAuthorization.create(:order => @order, :amount => @line_item.total)
-    end
-
-    should "be authorized initally" do
-      assert ReturnAuthorization.new.authorized?
+      @return_authorization = ReturnAuthorization.new(:order => @order, :amount => @line_item.total)
     end
 
     context "with an order that has no shipped units" do
@@ -37,9 +37,6 @@ class ReturnAuthorizationTest < ActiveSupport::TestCase
     
     context "with an order that has shipped units" do
       setup do
-        @return_authorization.order.shipment.order.reload    
-        @shipment = @return_authorization.order.shipment
-    
         @return_authorization.order.shipment.ship!
         @return_authorization.order.reload
       end

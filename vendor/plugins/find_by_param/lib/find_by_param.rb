@@ -57,16 +57,18 @@ module Railslove
         protected        
         def save_permalink
           return unless self.class.column_names.include?(permalink_options[:field].to_s)
-          counter = 0
-          permalink_value = self.to_param
+          base_value = self.to_param
+          permalink_value = base_value
           
           conditions = ["#{self.class.table_name}.#{permalink_options[:field]} = ?", permalink_value]
           unless new_record?
             conditions.first << " and #{self.class.table_name}.#{self.class.primary_key} != ?"
             conditions       << self.send(self.class.primary_key.to_sym)
           end
-          while self.class.count(:all, :conditions => conditions) > 0
-            permalink_value = "#{permalink_value}-#{counter += 1}"
+
+          counter = 0
+          while self.class.first(:all, :conditions => conditions).present?
+            permalink_value = "#{base_value}-#{counter += 1}"
             conditions[1] = permalink_value
           end
           write_attribute(permalink_options[:field], permalink_value)

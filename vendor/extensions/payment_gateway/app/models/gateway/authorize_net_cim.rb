@@ -76,7 +76,7 @@ class Gateway::AuthorizeNetCim < Gateway
         { :customer_profile_id => response.params["customer_profile_id"], 
           :customer_payment_profile_id => response.params["customer_payment_profile_id_list"].values.first }
       else
-        payment.source.gateway_error(response)
+        payment.source.gateway_error(response.message)
       end
     end
 
