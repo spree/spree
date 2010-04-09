@@ -22,7 +22,7 @@
     </th>
   </tr>
   <% @shipments.each do |shipment| %>
-    <tr>
+    <tr id="<%= dom_id shipment %>">
       <%- locals = {:shipment => shipment} -%>
       <% hook :admin_shipments_index_rows, locals do %>
         <td><%= shipment.number %></td>
@@ -35,6 +35,7 @@
       <td class="actions">
         <% hook :admin_shipments_index_row_actions, locals do %>
           <%= link_to_with_icon 'edit', t('edit'), edit_admin_order_shipment_url(@order, shipment) %>
+          <%= link_to_delete shipment, :url => admin_order_shipment_url(@order, shipment) %>
         <% end %>
       </td>
     </tr>
