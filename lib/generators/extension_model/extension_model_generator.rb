@@ -5,7 +5,7 @@ require 'rails_generator/generators/components/model/model_generator'
 class Rails::Generator::Commands::Base
   protected
     def migration_directory(relative_path)
-      directory(@migration_directory = "#{extension_path}/db/migrate")
+      directory(@migration_directory = relative_path)
     end
 end
 
@@ -24,15 +24,15 @@ class Rails::Generator::Commands::Destroy
 end
 
 class ExtensionModelGenerator < ModelGenerator
-  
+
   attr_accessor :extension_name
-  
+
   def initialize(runtime_args, runtime_options = {})
     runtime_args = runtime_args.dup
     @extension_name = runtime_args.shift
     super(runtime_args, runtime_options)
   end
-  
+
   def manifest
     if extension_uses_rspec?
       rspec_manifest
@@ -40,7 +40,7 @@ class ExtensionModelGenerator < ModelGenerator
       super
     end
   end
-  
+
   def rspec_manifest
     record do |m|
       # Check for class naming collisions.
@@ -63,19 +63,19 @@ class ExtensionModelGenerator < ModelGenerator
       end
     end
   end
-  
+
   def banner
     "Usage: #{$0} extension_model ExtensionName ModelName [field:type, field:type]"
   end
-  
+
   def extension_path
     File.join('vendor', 'extensions', @extension_name.underscore)
   end
-  
+
   def destination_root
     File.join(RAILS_ROOT, extension_path)
   end
-  
+
   def extension_uses_rspec?
     File.exists?(File.join(destination_root, 'spec'))
   end
