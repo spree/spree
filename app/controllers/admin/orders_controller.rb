@@ -68,7 +68,7 @@ class Admin::OrdersController < Admin::BaseController
       @search.completed_at_not_null = true
     end
 
-    @collection = @search.paginate(:include  => [:user, :shipments, :payments],
+    @collection = @search.paginate(:include  => [:user, :shipments, :payments, :checkout],
                                    :per_page => Spree::Config[:orders_per_page],
                                    :page     => params[:page])
   end
