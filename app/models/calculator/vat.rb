@@ -47,7 +47,7 @@ class Calculator::Vat < Calculator
 
     return 0 if vat_rates.nil?
     return 0 unless tax_category = product_or_variant.is_a?(Product) ? product_or_variant.tax_category : product_or_variant.product.tax_category
-    return 0 unless rate = vat_rates.find { | vat_rate | vat_rate.tax_category_id = tax_category.id }
+    return 0 unless rate = vat_rates.find { | vat_rate | vat_rate.tax_category_id == tax_category.id }
 
     (product_or_variant.is_a?(Product) ? product_or_variant.price : product_or_variant.price) * rate.amount
   end
