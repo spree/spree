@@ -1,8 +1,0 @@
-<ul id="language-bar">
-  <li><strong><%= t('change_language') %></strong></li>
-  <% AVAILABLE_LOCALES.each do |locale| -%>
-    <li>
-      <%=link_to(image_tag("flags/#{flag_image(locale[0])}",{:alt => locale[1], :title => locale[1]}), set_locale_path(:locale => locale[0])) %>
-    </li>
-  <% end -%>
-</ul>

@@ -1,11 +1,13 @@
 <div id="footer">
   <div class="left">
+    <% hook :footer_left do -%>
     <p>
       <%= t("powered_by") %> <a href="http://spreecommerce.com/">Spree</a>
     </p>
+    <% end -%>
   </div>
   <div class="right">
-    <%= render 'shared/language_bar' if Spree::Config[:allow_locale_switching] %>
+    <%= hook :footer_right %>
   </div>
 </div>   
 <%= render 'shared/google_analytics' %>

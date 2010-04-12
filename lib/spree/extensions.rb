@@ -18,7 +18,7 @@ module Spree
         ext_order = YAML.load_file(File.join(SPREE_ROOT, 'config', 'extensions.yml'))['order'] 
         ext_order.split(/,\s*/).map { |ext| ext.to_sym }
       rescue
-        [:localization, :theme_default, :all]
+        [:theme_default, :all]
       end
     end
   end

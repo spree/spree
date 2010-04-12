@@ -3,6 +3,7 @@ class Spree::BaseController < ActionController::Base
   helper :application, :hook
   before_filter :instantiate_controller_and_action_names
   before_filter :touch_sti_subclasses
+  before_filter :set_user_language
   filter_parameter_logging :password, :password_confirmation, :number, :verification_value
   helper_method :current_user_session, :current_user, :title, :title=, :get_taxonomies, :current_gateway
 
@@ -181,6 +182,12 @@ class Spree::BaseController < ActionController::Base
     if RAILS_ENV == 'development'
       load(File.join(SPREE_ROOT,'config/initializers/touch.rb'))
     end
+  end
+
+  def set_user_language
+    locale = session[:locale] || Spree::Config[:default_locale] || I18n.default_locale
+    locale = AVAILABLE_LOCALES.keys.include?(locale) ? locale : I18n.default_locale
+    I18n.locale = locale
   end
 
 end

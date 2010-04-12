@@ -34,6 +34,7 @@ ActionController::Routing::Routes.draw do |map|
   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'
+  map.set_locale '/locale/set', :controller => 'locale', :action => 'set', :method => :get
 
   map.resources :tax_categories
   map.resources :countries, :has_many => :states, :only => :index
