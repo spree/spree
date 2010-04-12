@@ -39,7 +39,8 @@ begin
     s.add_dependency 'will_paginate', "2.3.11"
     s.add_dependency 'state_machine', "0.8.0"
     s.add_dependency 'faker', "0.3.1"
-    s.add_dependency 'paperclip', "= 2.3.1.1"
+    s.add_dependency 'paperclip', "= 2.3.1.1"    
+    s.add_dependency 'ruby-openid', '>= 2.0.4'
     
     s.has_rdoc = true
     rdoc_excludes = Dir["**"].reject { |f| !File.directory? f }
