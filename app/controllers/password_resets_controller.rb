@@ -13,7 +13,7 @@ class PasswordResetsController < Spree::BaseController
       flash[:notice] = t("password_reset_instructions_are_mailed")
       redirect_to root_url
     else
-      flash[:notice] = t("no_user_found")
+      flash[:error] = t("no_user_found")
       render :action => :new
     end
   end
