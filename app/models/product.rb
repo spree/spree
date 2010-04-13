@@ -126,7 +126,7 @@ class Product < ActiveRecord::Base
 
   # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
   def on_hand=(new_level)
-    raise "cannot set on_hand of product with variants" if has_variants?
+    raise "cannot set on_hand of product with variants" if has_variants? && Spree::Config[:track_inventory_levels]
     master.on_hand = new_level
   end
 
@@ -207,7 +207,7 @@ class Product < ActiveRecord::Base
   # the master on_hand is meaningless once a product has variants as the inventory
   # units are now "contained" within the product variants
   def set_master_on_hand_to_zero_when_product_has_variants
-    master.on_hand = 0 if has_variants?
+    master.on_hand = 0 if has_variants? && Spree::Config[:track_inventory_levels]
   end
 
   # ensures the master variant is flagged as such
