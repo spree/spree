@@ -12,4 +12,9 @@ map.namespace :api do |api|
   end
   api.resources :inventory_units, :except => [:new,:edit], :member => {:event => :put}
   api.resources :products, :except => [:new,:edit]
+
+  api.resources :countries, :except => [:new,:edit] do |countries|
+    countries.resources :states, :except => [:new,:edit]
+  end
+  api.resources :states, :except => [:new,:edit]
 end

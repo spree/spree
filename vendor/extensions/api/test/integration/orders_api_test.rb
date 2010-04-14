@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class OrdersApiTest < ActionController::IntegrationTest
   include ApiIntegrationHelper
   fixtures :payment_methods
-  
+
   context "orders" do
     setup do
       setup_user
@@ -45,7 +45,7 @@ class OrdersApiTest < ActionController::IntegrationTest
         end
       end
       context "create" do
-        setup do          
+        setup do
           @attributes = {
             :shipment => {
               :shipping_method_id => @order.shipment.shipping_method_id,
@@ -65,7 +65,7 @@ class OrdersApiTest < ActionController::IntegrationTest
         end
       end
     end
-    
+
     context "line_items" do
       context "list" do
         setup do
@@ -119,7 +119,7 @@ class OrdersApiTest < ActionController::IntegrationTest
         end
       end
     end
-      
+
   end
 
 end
