@@ -1,14 +1,14 @@
-class Creditcard < ActiveRecord::Base         
+class Creditcard < ActiveRecord::Base
   has_many :payments, :as => :source
 
   before_save :set_last_digits
-  
+
   validates_numericality_of :month, :integer => true
-  validates_numericality_of :year, :integer => true   
+  validates_numericality_of :year, :integer => true
   validates_presence_of :number, :unless => :has_payment_profile?, :on => :create
   validates_presence_of :verification_value, :unless => :has_payment_profile?, :on => :create
-  
-  
+
+
   def process!(payment)
     begin
       if Spree::Config[:auto_capture]
@@ -19,27 +19,29 @@ class Creditcard < ActiveRecord::Base
       end
     end
   end
-  
+
   def set_last_digits
-    self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1) 
+    number.to_s.strip! unless number.nil?
+    verification_value.to_s.strip! unless number.nil?
+    self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
   end
-    
+
   def name?
     first_name? && last_name?
   end
-  
+
   def first_name?
     !self.first_name.blank?
   end
-  
+
   def last_name?
     !self.last_name.blank?
   end
-        
+
   def name
     "#{self.first_name} #{self.last_name}"
   end
-        
+
   def verification_value?
     !verification_value.blank?
   end
@@ -48,19 +50,19 @@ class Creditcard < ActiveRecord::Base
   def display_number
    "XXXX-XXXX-XXXX-#{last_digits}"
   end
-  
+
   alias :attributes_with_quotes_default :attributes_with_quotes
 
-  
+
   # needed for some of the ActiveMerchant gateways (eg. SagePay)
   def brand
     cc_type
   end
-  
-  
+
+
   private
-  
-  
+
+
   # Override default behavior of Rails attr_readonly so that its never written to the database (not even on create)
   def attributes_with_quotes(include_primary_key = true, include_readonly_attributes = true, attribute_names = @attributes.keys)
     attributes_with_quotes_default(include_primary_key, false, attribute_names)
@@ -71,8 +73,8 @@ class Creditcard < ActiveRecord::Base
       attributes.delete_if { |key, value| self.class.readonly_attributes.include?(key.gsub(/\(.+/,"")) }
     end
     # extra logic for sanitizing the number and verification value based on preferences
-    attributes.delete_if { |key, value| key == "number" and !Spree::Config[:store_cc] } 
-    attributes.delete_if { |key, value| key == "verification_value" and !Spree::Config[:store_cvv] } 
+    attributes.delete_if { |key, value| key == "number" and !Spree::Config[:store_cc] }
+    attributes.delete_if { |key, value| key == "verification_value" and !Spree::Config[:store_cvv] }
   end
 end
 
