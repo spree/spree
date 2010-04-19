@@ -52,12 +52,12 @@ When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method$/ do |s
   When %{I choose "#{shiping_method}"}
   And %{press "Save and Continue"}
   Then %{I should see "Payment Information" within "legend"}
-  
+
   When %{I choose "#{payment_method}"}
   And %{press "Save and Continue"}
   Then %{I should see "Confirm" within "legend"}
-  
-  When %{I press "Save and Continue"}
+
+  When %{I press "Place Order"}
 end
 
 Then /^cart should be empty$/ do
