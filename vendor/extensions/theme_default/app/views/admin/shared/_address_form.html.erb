@@ -11,37 +11,37 @@
   </thead>
   <tbody id="<%= name == t('shipping_address') ? "shipping" : "billing" %>" style="display:<%= (use_billing && (!(@checkout.bill_address.empty? && @checkout.ship_address.empty?) && @checkout.bill_address.eql?(@checkout.ship_address))) ? "none" : "" %>">
     <tr>
-      <td>
+      <td class="lbl-col">
         <%= f.label :firstname, t(:first_name)+':' %>
       </td>
-      <td colspan="3"><%= f.text_field :firstname %></td>
-      <td>
+      <td class="val-col" colspan="3"><%= f.text_field :firstname %></td>
+      <td class="lbl-col">
         <%= f.label :lastname, t(:last_name)+':' %>
       </td>
-      <td colspan="3"><%= f.text_field :lastname %></td>
+      <td class="val-col" colspan="3"><%= f.text_field :lastname %></td>
     </tr>
     <tr>
-      <td>
+      <td class="lbl-col">
         <%= f.label :address1, t(:street_address)+':' %>
       </td>
       <td colspan="3"><%= f.text_field :address1, :class => "fullwidth" %></td>
-      <td>
+      <td class="lbl-col">
         <%= f.label :address2, t(:street_address_2)+':' %>
       </td>
       <td colspan="3"><%= f.text_field :address2, :class => "fullwidth" %></td>
     </tr>
     <tr>
-      <td>
+      <td class="lbl-col">
         <%= f.label :city, t(:city)+':' %>
       </td>
       <td colspan="3"><%= f.text_field :city %></td>
-      <td>
+      <td class="lbl-col">
         <%= f.label :zipcode, t(:zip)+':' %>
       </td>
       <td colspan="3"><%= f.text_field :zipcode, :style => "width:100px;" %></td>
     </tr>
     <tr>
-      <td>
+      <td class="lbl-col">
         <%= f.label :state_id, t(:state)+':' %>
       </td>
       <td colspan="3">
@@ -50,7 +50,7 @@
           <%= f.collection_select :state_id, @states, :id, :name, {:include_blank => true}, {:style=> "width:150px;display:#{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
         </span>
       </td>
-      <td>
+      <td class="lbl-col">
         <%= f.label :country_id, t(:country)+':' %>
       </td>
       <td colspan="3">
@@ -58,7 +58,7 @@
       </td>
     </tr>
     <tr>
-      <td>
+      <td class="lbl-col">
         <%= f.label :phone, t(:phone)+':' %>
       </td>
       <td colspan="7"><%= f.text_field :phone %></td>

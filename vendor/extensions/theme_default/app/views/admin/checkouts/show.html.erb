@@ -4,27 +4,38 @@
 
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Customer Details"} %>
 
-<h2><%= t("customer_details")%></h2>
-
-<p>
-  <label>Email: </label><%= @checkout.email %>
-</p>
+<h3><%= t("customer_details") %></h3>
+<table class="index">
+  <thead>
+    <th colspan="8"><%= t('account') %></th>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="lbl-col"><label><%= t(:email) %>:</label></td>
+      <td class="val-col" colspan="3"><%= @checkout.email %></td>
+      <td class="lbl-col"><label><%= t('guest_checkout') %>:</label></td>
+      <td class="val-col" colspan="3">
+        <%= @checkout.order.user.nil? ? "Yes" : "No" %>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <h3><%= Address.human_name(:count => 2) %></h3>
 <table class="index">
   <tr>
     <th colspan="8"><%= t("billing_address") %></th>
-  </tr>  
+  </tr>
   <% if @checkout.bill_address %>
   <tr>
-    <td>
+    <td  class="lbl-col">
       <label><%= Address.human_attribute_name(:first_name) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.bill_address.firstname %></td>
-    <td>
+    <td class="val-col" colspan="3"><%= @checkout.bill_address.firstname %></td>
+    <td class="lbl-col">
       <label><%= Address.human_attribute_name(:last_name) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.bill_address.lastname %></td>
+    <td class="val-col" colspan="3"><%= @checkout.bill_address.lastname %></td>
   </tr>
   <tr>
     <td>
@@ -61,24 +72,24 @@
       <label><%= Address.human_attribute_name(:phone) %>:</label>
     </td>
     <td colspan="7"><%= @checkout.bill_address.phone %></td>
-  </tr> 
+  </tr>
   <% end %>
 </table>
 
 <table class="index">
   <tr>
     <th colspan="8"><%= t("shipping_address") %></th>
-  </tr> 
+  </tr>
   <% if @checkout.ship_address %>
   <tr>
-    <td>
+    <td class="lbl-col">
       <label><%= Address.human_attribute_name(:first_name) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.ship_address.firstname %></td>
-    <td>
+    <td class="val-col" colspan="3"><%= @checkout.ship_address.firstname %></td>
+    <td class="lbl-col">
       <label><%= Address.human_attribute_name(:last_name) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.ship_address.lastname %></td>
+    <td class="val-col" colspan="3"><%= @checkout.ship_address.lastname %></td>
   </tr>
   <tr>
     <td>

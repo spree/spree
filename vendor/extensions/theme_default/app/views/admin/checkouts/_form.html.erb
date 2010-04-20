@@ -1,6 +1,32 @@
-<p>
-  <label>Email: </label><%= f.text_field :email %>
-</p>
+
+<h3><%= t("customer_details") %></h3>
+<table class="index">
+  <thead>
+    <th colspan="8"><%= t('account') %></th>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="lbl-col"><%= f.label :email, t(:email)+':' %></td>
+      <td class="val-col" colspan="3"><%= f.text_field :email, :class => "fullwidth" %></td>
+      <td class="lbl-col"><label><%= t('guest_checkout') %>:</label></td>
+      <td class="val-col" colspan="3">
+        <% if @order.state == "in_progress" %>
+          <label class="sub">
+            <%= radio_button_tag :guest_checkout, true, @checkout.order.user.nil? %>
+            <%= t("yes") %>
+          </label> &nbsp;
+          <label class="sub">
+            <%= radio_button_tag :guest_checkout, false, !@checkout.order.user.nil?, :disabled => @checkout.order.state == "in_progress" %>
+            <%= t("no") %>
+          </label>
+          <%= hidden_field_tag :user_id, @checkout.order.user_id %>
+        <% else %>
+          <%= @checkout.order.user.nil? ? "Yes" : "No" %>
+        <% end %>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <h3><%= Address.human_name(:count => 2) %></h3>
 <% f.fields_for 'bill_address' do |ba_form|  %>

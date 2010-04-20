@@ -1,5 +1,6 @@
 class Admin::CheckoutsController  < Admin::BaseController
   resource_controller :singleton
+  actions :edit, :update, :show
   belongs_to :order
   before_filter :load_data
   ssl_required
@@ -38,8 +39,9 @@ class Admin::CheckoutsController  < Admin::BaseController
   end
 
   def update_before
-
     @checkout.enable_validation_group(:address)
 
+    #assign order to existing user
+    @checkout.order.update_attribute(:user_id, params[:user_id]) unless params[:user_id].blank?
   end
 end

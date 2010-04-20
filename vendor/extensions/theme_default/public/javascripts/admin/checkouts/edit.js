@@ -46,6 +46,10 @@ jQuery(document).ready(function(){
       return format_autocomplete(item);
     }
   }).result(function(event, data, formatted) {
+    $('#user_id').val(data['id']);
+    $('#guest_checkout_true').removeAttr("checked");
+    $('#guest_checkout_false').attr("checked", "checked");
+    $('#guest_checkout_false').removeAttr("disabled");
     $('#checkout_email').val(data['email']);
 
     var addr = data['bill_address'];
@@ -78,6 +82,33 @@ jQuery(document).ready(function(){
 
   $('input#checkout_use_billing').click(function() {
     show_billing(!this.checked);
+  });
+
+  $('#guest_checkout_true').change(function() {
+    $('#customer_search').val("");
+    $('#user_id').val("");
+    $('#checkout_email').val("");
+    $('#guest_checkout_false').attr("disabled", "true");
+
+    $('#checkout_bill_address_attributes_firstname').val("");
+    $('#checkout_bill_address_attributes_lastname').val("");
+    $('#checkout_bill_address_attributes_address1').val("");
+    $('#checkout_bill_address_attributes_address2').val("");
+    $('#checkout_bill_address_attributes_city').val("");
+    $('#checkout_bill_address_attributes_zipcode').val("");
+    $('#checkout_bill_address_attributes_state_id').val("");
+    $('#checkout_bill_address_attributes_country_id').val("");
+    $('#checkout_bill_address_attributes_phone').val("");
+
+    $('#checkout_ship_address_attributes_firstname').val("");
+    $('#checkout_ship_address_attributes_lastname').val("");
+    $('#checkout_ship_address_attributes_address1').val("");
+    $('#checkout_ship_address_attributes_address2').val("");
+    $('#checkout_ship_address_attributes_city').val("");
+    $('#checkout_ship_address_attributes_zipcode').val("");
+    $('#checkout_ship_address_attributes_state_id').val("");
+    $('#checkout_ship_address_attributes_country_id').val("");
+    $('#checkout_ship_address_attributes_phone').val("");
   });
 
   var show_billing = function(show) {

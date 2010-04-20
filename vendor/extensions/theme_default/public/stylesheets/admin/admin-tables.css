@@ -16,6 +16,10 @@ table.index th {
     border-bottom:1px solid #ddd;
     padding: 3px 10px;
   }
+  table.index td.lbl-col {
+    width: 12%; }
+   table.index td.val-col {
+    width: 38%; }
 table.index tr.alt td {
   background-color: #efefef; }
 table.index.green th {
