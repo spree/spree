@@ -9,13 +9,22 @@ This guide covers how Spree uses Rails' internationalization features, and how y
 
 endprologue.
 
-h3. How Spree is internationalized
+h3. How Spree i18n works
 
-Spree uses the standard Rails approach to internationalization so we suggest take some time to review the "official Rails i18n guide":http://guides.rubyonrails.org/i18n.html and the "rails-i18n.org wiki":http://rails-i18n.org/wiki to help you get started.
+Spree uses the standard Rails approach to internationalization so we suggest take some time to review the "official Rails i18n guide":http://guides.rubyonrails.org/i18n.html and the "rails-i18n.org wiki":http://rails-i18n.org/wiki to help you get started.     
 
-h4. Locating Translations
+h4. The spree-i18n project
 
-Each language is stored in one or more yaml files located in *config/locales*. Each yaml file contains one top level key which is the language code for the translations contained within that file:
+Spree now stores all of the translation information in a separate Github project known as "spree-i18n":http://github.com/railsdog/spree-i18n.  This is a stand alone project with a large number of volunteer committers who maintain the locale files.  This is basically the same approach
+followed by the Rails project which keeps their localizations in "rails-i18n":http://github.com/svenfuchs/i18n.
+
+The project is actually a Spree extension.  This extension contains translations only.  The rest of code needed to support the i18n features is part of the Spree core.
+
+WARNING. You will need to install the "spree-i18n":http://guides.rubyonrails.org/i18n.html extension if you want to use any of the community supplied translations of Spree.  
+
+h4. Translation files
+
+Each language is stored in one or more YAML files located in +config/locales*. Each YAML file contains one top level key which is the language code for the translations contained within that file:
 
 <shell>en-US: 
   abbreviation: Abbreviation
@@ -24,17 +33,20 @@ Each language is stored in one or more yaml files located in *config/locales*. E
   account_updated: "Account updated!"
 </shell>
 
-Within Spree, each language is maintained in two separate files:
+h5. Spree translations
 
-h5. Spree Specific Translations
+Spree maintains its localizaiton information in a YAML file using a naming convention similar to that of the Rails project.  Each of the localization files ends with +_spree.yml+.  This is to prevent it from being confused with the Rails localizations.  The file prefix represents the language code of the locale.
+ 
+For example, the Russian translation is contained in +ru-RU_spree.yml+.
 
-These files are normally named after the language code, ie: *en-US.yaml* or *de.yaml* and contain translations specific to Spree.
+h5. Required files
 
-h5. Rails Generic Translations
+Each locale that you wish to support will require both a Rails and Spree translation.  The required Spree translation files are available automatically when you install the spree-i18n extension.  The Rails translation files should be added manually to your application's +config/locales* directory.
 
-These are usually named with the language code followed by *_rails*, ie: *en-US_rails.yaml* or *de_rails.yaml* and these contain generic Rails internationalization options like currency, dates / times, ActiveRecord validation error messages, etc.
+So for example, if you wanted to provide a Russian translation, you would install the spree-i18n extension and then copy the +ru-Ru.yml+ file from rails-i18n into +#{RAILS_ROOT}/config/locales+.
 
-These translations are kindly maintained by Sven Fuchs in his GitHub project "rails-i18n":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale .
+NOTE. If you do not need all of the localizations for your project you can skip installation of the spree-i18n extension and just copy the needed Spree translations to +#{RAILS_ROOT}/config/locales+. 
+
 
 h4. Translating Views
 
@@ -54,39 +66,85 @@ The *t()* helper method looks up the currently configured locale and retrieves t
 => "Preis"
 </shell>
 
-
-h4. Setting the Default Locale
+h4. Setting the default Locale
 
 The default locale for Spree is en-US. This can be changed by editing the :default_locale setting in the AppConfiguration model. In the future we hope to add a localization settings page that will allow you to set the default locale from the admin screen [#35].
 
-h3. Adding translations
+h3. Maintaing the translations
 
-Spree has two rake tasks that help ease the pain of adding translations:
+Spree has several rake tasks that facilitate the maintanence of translations.  These rake tasks are included as part of the spree-i18n extension.
+
+WARNING. The following instructions require that you have the spree-i18n extension installed.  The rake tasks will only run if executed inside of the Spree source code.
+
+h4. Refreshing the en-US localizaiton
+
+Before you run any of the other rake tasks, its a good idea to "refresh" the localization information for +en_US_spree.yml+.  
+
+<shell>
+rake spree:i18n:refresh
+</shell>
+
+This updates the +en_US_spree.yml+ localization with the latest information from the Spree project.  Since this file is the basis for most other commands, its a good idea to refresh it before doing anything else.  If you have commit rights to the +spree-i18n+ project, feel free to commit the changes as well.
+
+h4. Adding a new translation
+                                          
+When adding a new language all you need to do is copy the en-US.yml file and rename it to whatever language code you require, you must also change the top level element of this new file to the same language code. 
+
+You can do this automatically by running the following rake task (where *et* is the new language you want to add):
+
+<shell>$ rake spree:i18n:new LOCALE=et</shell>
+
+This will create a new +et_spree.yml+ localization based on the default english locale.
+
+<shell>
+---
+et: 
+  'no': "No"
+  'yes': "Yes"
+  5_biggest_spenders: "5 Biggest Spenders"
+  a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
+  abbreviation: Abbreviation
+  access_denied: "Access Denied"
+  account: Account
+  account_updated: "Account updated!"
+  action: Action
+  actions:
+    cancel: Cancel
+    create: Create
+    destroy: Destroy  
+    
+  ...
+</shell>
+
+Simply edit the new Spree localizaiton you just created by replacing the english translations with that of your new chosen locale.  You will also need to grab a copy of the corresponding Rails localization.  So in the case of estonian, you would grab "+et.yml+":http://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/et.yml from the "rails-i18n":http://github.com/svenfuchs/rails-i18n project.     
+
+To use the translation in your project you should copy both +et.yml+ and +et_spree.yml+ into +#{RAILS_ROOT}/config/locales+ in your application.  The Spree translations in spree-i18n are automatically available so technically you can rely on the extension and not copy +et_spree.yml+ anywhere but its probably a good idea to not use the entire spree-i18n extension and just copy the localizations you need.
 
 h4. Adding a new string to all translations
 
-If you're working on a patch for Spree it's vital that you ensure any interface text is present in all translation yaml files and that you use the helper methods to display the relevant translation on all views (or helper methods). to add a new string to all translations you must first add it to the default en-US.yaml file, they run the following rake task to copy it out into the rest of the translation files.
+If you're working on a patch for Spree it's vital that you ensure any interface text is present in all translation yaml files and that you use the helper methods to display the relevant translation on all views (or helper methods).  Once the key has been added to the default (english) translation you wil want to add a place holder value for the rest of the translation files.
 
 <shell>$ rake spree:i18n:sync</shell>
 
-This task simply ensures that you're new string is included in all translations (with the US English value as the default value), and it also alphabetizes all strings in the YAML files!
+This task simply ensures that you're new string is included in all translations (with the US English value as the default value), and it also alphabetizes all strings in the YAML files!    
 
+h4. Checking the status of a translation
 
-h4. Adding a new language
+You can get a rough approximation of the completion percentage for a translation file based on the number of entries that have not changed from their english default.
 
-When adding a new language all you need to do is copy the en-US.yml file and rename it to whatever language code you require, you must also change the top level element of this new file to the same language code. 
+<shell>
+rake spree:i18n:stats
+</shell> 
 
-You can do this automatically by running the following rake task (where *ja* is the new language you want to add):
+h3. Localizing Extensions
 
-<shell>$ rake spree:i18n:new LOCALE=ja</shell>
+Spree extensions can contain their own +config/locales* directory where developers can include yaml files for each language they wish to support. 
 
-This rake task will also remind you to download the relevant rails translation file from "rails-i18n":http://github.com/svenfuchs/rails-i18n/tree/master/rails/locale , which in this example should be saved as *ja_rails.yaml*.
+We strongly urge all extension developers to ensure all customer facing text is rendered via the +t()+ helper method even if they only include a single default language locale file (as other users can simply include the required yaml file and translations in their site extension).    
 
-h3. Internationalizing Extensions
+WARNING.
 
-Spree extensions can contain their own *config/locales* directory where developers can include yaml files for each language they wish to support. 
-
-We strongly urge all extension developers to ensure all customer facing text is rendered via the *t()* helper method even if they only include a single default language locale file (as other users can simply include the required yaml file and translations in their site extension).
+You should create your own "namespace" for extension locales.  This will prevent issues with conflicting filenames in future releases where we plan to automatically copy locale information out of extensions and into the main application space.  For instance, the api extension has a locale named +en_US_api.yml+. 
 
 h3. Disabling Internationalization
 
