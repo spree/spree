@@ -98,27 +98,42 @@ base implementation).
 h5. The base implementation
 
 The most notable point is the implementation of +get_products_conditions_for+: it just uses a named
-scope (+Product.name_or_description_like_any+) provided by SearchLogic, to search for a substring in 
+scope (+Product.name_or_description_like_any+, provided by SearchLogic) to search for a substring in 
 the name or description fields. 
 
 
 h4. The Solr instance
 
-Roman Smirnov has produced an extension "spree-solr-search":http://github.com/romul/spree-solr-search.
+"Solr":http://lucene.apache.org/solr/ is an industrial-scale search platform, with many features and 
+settings. 
 
-h5. Overview of Solr 
+Roman Smirnov has produced an extension "spree-solr-search":http://github.com/romul/spree-solr-search
+for a direct connection into Spree. It contains a +searcher+ instance, and configures Solr for 
+indexing on certain attributes of the +Product+ model. There is also code for declaring facets
+and for enabling drill-down by those facets (with the +_facets+ partial).
+The +acts_as_solr+ plugin is used to handle low-level communication. 
 
-"Solr":http://lucene.apache.org/solr/ is an industrial-scale search platform. 
 
 h5. Installation 
 
-* get the extension, copy the config file
-* grab jetty proj and run
-* test in console
+1. +script/extension install git://github.com/romul/spree-solr-search.git+ to install the extension
+1. Copy +solr_search/config/solr.yml+ to +RAILS_ROOT/config/solr.yml+, and edit if you need to change host names or port numbers.
+1. Check that you have all required gems/plugins, e.g. using +rake gems:install+ 
+
+You also need a running Solr server (or several, if you want to isolate development/testing work 
+from production data). There are several options for this. For development and testing, we recommend
+Diego Carrion's "jetty-solr":http://github.com/dcrec1/jetty-solr project (NB he also wrote the 
++acts-as-solr-reloaded+ plugin). Once you have cloned the project, just run +./start+ in the 
+base directory to run a development server on port 8982. Other options and configurations are given
+in the documentation. You can also start the server from your rails project via 
++rake solr:start SOLR_PATH=XYZ+ (replacing +XYZ+ with the base of your jetty-solr installation), 
+and stop it with +rake solr:stop+. 
+
+Jetty-solr can be used for _production_ use too, though the 
+"Solr documentation":http://wiki.apache.org/solr/FAQ#Solr_Comes_with_Jetty.2C_is_Jetty_the_recommended_Servlet_Container_to_use_when_running_Solr.3F advises exploring other options and experimenting with the 
+various configuration parameters to get best performance in high-traffic scenarios.
 
 h5. How Solr is tied to Spree
-
-The +acts_as_solr+ plugin is used to handle low-level communication. 
 
 The first step is to declare which 'attributes' of which models should be indexed, and of these, which
 should be treated as facets. The attributes can  be conventional model attributes, or the names
@@ -135,29 +150,38 @@ the type as done for +:price+.
 
 </pre>
 
-The second step is to format the query in +get_product_conditions_for+. 
+The second step is to format the query in +get_product_conditions_for+. The current code sets the 
+appropriate sort order and injects taxon constraints, if relevant. In particular, a request within
+a particular taxon is expanded to include all of the taxon's descendents. The final step is to 
+set up the pagination.
 
-NOTE. needs more detail, check prepare() ticket
+NOTE. Some of the query parameters are derived from the information registered in the +prepare()+ call.
 
 
 h5. Indexing and reindexing
 
-* rake tasks
-* reindexing = an advantage of solr?
+Creating the index and updating it is done with the same command: +rake solr:reindex+
 
+The underlying plugin recognises several options, e.g. +BATCH=500+ to submit new products to the 
+Solr server in batches of 500 (the default is currently 300).
 
 h5. Solr tuning and configuration
 
-* the default options (spelling etc etc) - via the plugin? (YES)
+There are many settings to control the behaviour of Solr instances. See the documentation and 
+config files in Jetty-solr for basic information, or the official Solr documentation. 
 
 
 h4. Facet support
 
-NOTE. Document in detail since it's important/useful? NB seems to support multiples, so maybe just a style thing
+Facets allow large search results to be filtered according to properties a user may be interested in.
+For example, we can search for +rails+ and then select the clothing taxon(s) and a certain price range
+to end up with a small number of products.
 
-
-
-
+Solr can index facets alongside the conventional information, and both include facet constraints in 
+the query and return information about facets that can be used to drill down in a given query. This
+makes it very easy to incorporate facet functionality into Spree. Smirnov's extension gives one 
+implementation of faceting (look for the +_facets+ partial), but other forms of interaction are 
+possible. 
 
 
 
