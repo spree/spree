@@ -1,0 +1,164 @@
+h2. Searching for products
+
+This section explains Spree's support for product search and selection. 
+After reading it you should know:
+* how the +Searcher+ API works
+* how to install and configure a searcher instance
+* WHAT?
+
+This guide is aimed at developers. 
+ 
+endprologue.
+
+h3. Overview
+
+Searching for products is a key operation for commerce sites, where we need both speed and flexibility. 
+Spree supports this by providing an API that allows plug-in and configuration of a variety of specialized, 
+high-performance search platforms. Furthermore, the core team maintains instances of this API for a few
+of the current top platforms, such as "Solr":http://lucene.apache.org/solr/ and
+"Sphinx":http://www.sphinxsearch.com/. 
+
+The primary use of these platforms in Spree is to provide flexible full-text searching of product 
+details. Spree submits a query and then paginates the result. 
+
+Depending on the exact platform in use, Spree may also advise on searches with alternative spellings,
+or support refinement or drilling down in the search result via 
+"facets":http://en.wikipedia.org/wiki/Faceted_search.
+
+
+h3. Searcher API
+
+h4. Configuration
+
+You can set the current search implementation by assigning a suitable object to 
++Spree::Config.searcher+. 
+If it is not set, the searcher defaults to an instance of the base implementation. 
+
+h4. Integration with Spree
+
+The primary modification is to override the named scope for general keyword lookup. 
+Thus +Product.keywords("foo")+ will use the configured search implementation, and return
+a new scope which limits its result to products which match the query. 
+
+One standard use of the +keywords+ scope is to implement the default Spree search box. 
+The method +retrieve_products+ (now in +lib/spree/search.rb+) handles display of product 
+lists based on a mix of keywords, taxon selections, product group(s) and facets. 
+It uses the searcher API to set up searches, then the actual search occurs via (indirect)
+calls to the +keywords+ scope, e.g. as a clause in a product group or in response to 
+presence of a keyword parameter in the query.
+Note that +retrieve_products+ is used to generate listings in the +Product+ and +Taxon+ 
+controllers: you'll probably need to use it if generating similar listings.
+
+
+h4. Standard interface 
+
+See the existing search implementations for concrete examples, e.g.
+the "base implementation":http://github.com/romul/spree-solr-search or 
+"spree-solr-search":http://github.com/romul/spree-solr-search.
+
+
+h5. +new+
+
+The API is managed through a class, so if you are replacing the default instance, you need to create
+a new instance of your search class. 
+
+
+h5. +get_products_conditions_for(query)+
+
+This is the main call. Its purpose is to format the query appropriately and retrieve information from 
+the search platform, then return it in the form of a named scope. 
+Typically, you will retrieve a list of product ids +i1, i2, ...+ 
+from the platform and produce the result +{:conditions => "products.id IN (i1, i2, ...)"}+ (though
+you are free to include other scope elements too).
+
+The format of input +query+ is not fixed, though you should expect to be able to handle a string or
+a list of strings. 
+
+
+h5. +prepare(params)+
+
+This call is intended to set up the context for complex calls to the search platform, e.g. to allow 
+for pagination or faceting. It is normally called in +retrieve_products+, with (some of) the parameters
+from a product display query. 
+
+IMPORTANT: it seems that +prepare()+ should act more like a wrapper around restricted calls, and clear the (modified) properties after the important call - else subsequent calls WILL be affected by old (or a previous request's) data.
+
+
+h5. +manage_pagination+
+
+This should return +true+ if the search platform can manage its own pagination of results. 
+
+
+h5. +method_missing+
+
+The base implemementation defines this to provide easy access to the properties stored with +prepare+ or
+added during +get_products_conditions_for+, such as the pagination flag above (which is nil/absent for the 
+base implementation).
+
+h5. The base implementation
+
+The most notable point is the implementation of +get_products_conditions_for+: it just uses a named
+scope (+Product.name_or_description_like_any+) provided by SearchLogic, to search for a substring in 
+the name or description fields. 
+
+
+h4. The Solr instance
+
+Roman Smirnov has produced an extension "spree-solr-search":http://github.com/romul/spree-solr-search.
+
+h5. Overview of Solr 
+
+"Solr":http://lucene.apache.org/solr/ is an industrial-scale search platform. 
+
+h5. Installation 
+
+* get the extension, copy the config file
+* grab jetty proj and run
+* test in console
+
+h5. How Solr is tied to Spree
+
+The +acts_as_solr+ plugin is used to handle low-level communication. 
+
+The first step is to declare which 'attributes' of which models should be indexed, and of these, which
+should be treated as facets. The attributes can  be conventional model attributes, or the names
+of methods which generate appropriate result strings. If non-string values are needed, then indicate
+the type as done for +:price+. 
+
+<pre>
+    Product.class_eval do
+      acts_as_solr  :fields => [:name, :description, :is_active, {:price => :float},
+                                :taxon_ids, :price_range, :taxon_names,
+                                :brand_property, :color_option, :size_option],
+                    :facets=>[:price_range, :taxon_names,
+                              :brand_property, :color_option, :size_option]
+
+</pre>
+
+The second step is to format the query in +get_product_conditions_for+. 
+
+NOTE. needs more detail, check prepare() ticket
+
+
+h5. Indexing and reindexing
+
+* rake tasks
+* reindexing = an advantage of solr?
+
+
+h5. Solr tuning and configuration
+
+* the default options (spelling etc etc) - via the plugin? (YES)
+
+
+h4. Facet support
+
+NOTE. Document in detail since it's important/useful? NB seems to support multiples, so maybe just a style thing
+
+
+
+
+
+
+
+
