@@ -40,7 +40,7 @@ h4. Primitive selection scopes
 * +active(optional_date)+ - this is the key scope for selecting listable products, and is the combination of 
 +available(optional_date)+ (the product's availability date is not later than the given date or the default current date)  and +not_deleted+ (not marked as deleted in the database)
 
-* +keywords+ - defaults to search in the product names and descriptions, though you can modify or extend this via the "Searcher API":#searcher-api
+* +keywords+ - defaults to SQL text search in the product names and descriptions, though you can modify or extend this via the "Searcher API":searching.html#searcher-api
 
 * +in_name(words)+, +in_name_or_keywords(words)+, +in_name_or_description(words)+ - testing for any of a list of strings passed as a space or comma separated string, appearing in the product database
 
@@ -199,17 +199,6 @@ If you plan to provide your own custom scope make sure to check that:
 Remember also to provide translations for your new scopes; there's a 
 +Scopes.generate_translation+ method that can be helpful here.
 
-
-
-h3. Searcher API
-
-This is a related issue, for providing powerful full-text searching and facets on the product database.
-There are several possible search engines to use, such as Xapian, Solr, Sphinx. Spree interfaces for these are being developed as extensions, and the code should be consulted for useful examples. 
-The Spree core contains an API and a simple base implementation which accesses the main database directly.
-
-To set the current searcher implementation, assign a suitable object to +Spree::Config.searcher+. The default is the simple base implementation.
-
-TODO. document the main methods and integration
 
 
 
