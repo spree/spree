@@ -26,7 +26,7 @@ class LineItem < ActiveRecord::Base
            Spree::Config[:allow_backorders]                               ||
            order   && InventoryUnit.order_id_equals(order).first.present? ||
            variant && quantity <= variant.on_hand
-      errors.add(:quantity, I18n.t("validation.is_too_large"))
+      errors.add(:quantity, I18n.t("validation.is_too_large") + " (#{self.variant.name})")
     end
   end
 
