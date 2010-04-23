@@ -25,7 +25,7 @@ class Admin::PaymentsController < Admin::BaseController
         until @order.checkout.state == "complete"
           @order.checkout.next!
         end
-        flash = t('new_order_completed')
+        flash[:notice] = t('new_order_completed')
         redirect_to admin_order_url(@order)
       end
 
