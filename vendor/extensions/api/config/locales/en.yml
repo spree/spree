@@ -1,4 +1,4 @@
-en-US:
+en:
   api: "API"
   api:
     access: "API Access"
@@ -13,4 +13,4 @@ en-US:
     no_key: "No key defined"
     key_generated: "API key generated"
     key_cleared: "API key cleared"
-      
+
