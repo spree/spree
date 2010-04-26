@@ -142,10 +142,6 @@ Spree extensions can contain their own +config/locales* directory where develope
 
 We strongly urge all extension developers to ensure all customer facing text is rendered via the +t()+ helper method even if they only include a single default language locale file (as other users can simply include the required yaml file and translations in their site extension).    
 
-WARNING.
-
-You should create your own "namespace" for extension locales.  This will prevent issues with conflicting filenames in future releases where we plan to automatically copy locale information out of extensions and into the main application space.  For instance, the api extension has a locale named +en_US_api.yml+. 
-
 h3. Disabling Internationalization
 
 If you don't want to allow users to change the language / locale you can disable locale switching by changing the :allow_locale_switching setting to false in the AppConfiguration model.
