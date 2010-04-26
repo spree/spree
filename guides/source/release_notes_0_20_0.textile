@@ -1,0 +1,7 @@
+h2. Spree 0.20.0 Release Notes
+
+endprologue.     
+
+h3. Upgrade Notes
+
+h3. i18n Changes
