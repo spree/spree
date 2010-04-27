@@ -193,7 +193,6 @@ Another benefit of the architecture is that it makes it possible for Spree to pr
 
 INFO. Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
 
-h5. Ability to "Patch" Active Merchant Gateways
 
 
 h3. Testing Considerations

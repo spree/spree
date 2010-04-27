@@ -5,7 +5,6 @@ After reading it you should know:
 * the design used in Spree
 * which aspects of inventory control are seen by customers
 * how to manage stock in the administration
- 
 
 endprologue.
 

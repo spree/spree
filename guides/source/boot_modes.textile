@@ -56,9 +56,9 @@ Now create some "extensions":extensions.html and work on your "theming":theming.
 
 h4. Vendor Mode
 
-Spree can also be run by copying the Spree source into @#{RAILS_ROOT}/vendor/spree of a Spree 
+Spree can also be run by copying the Spree source into +#{RAILS_ROOT}/vendor/spree+ of a Spree 
 application directory.  Spree will be loaded from this directory instead of your gem. This
-allows you to package the right version of Spree inside your application, and allows experimenting
+allows you to package a specific version of Spree inside your application, and allows experimenting
 with non-gem versions.
 
 There's several ways you can set this up. See the "developers' guide":developers_guide.html
@@ -74,7 +74,7 @@ for more detail and tips.
 rake spree:freeze:gems
 </shell>
 
-Please note that Spree must be frozen in +vendor/spree+.  It cannot be frozen into +vendor/gems+ (unlike most gems)  There are some technical reasons for this having to do with custom initializers and the load path.
+Please note that Spree must be frozen into the directory +vendor/spree+.  It cannot be frozen into +vendor/gems+ (unlike most gems)  There are some technical reasons for this having to do with custom initializers and the load path.
 
 
 
@@ -103,10 +103,8 @@ cd spree
 cp config/database.yml.example config/database.yml
 </shell>
 
-The defaults should be ok if you use sqlite3 as your database, you can skip to the 
-next step.
-
-If you're not using sqlite3, edit config/database.yml as needed and create any 
+The defaults assume sqlite3 as the database, so no further change is needed if you want to use sqlite3.
+If you're not using sqlite3, edit +config/database.yml+ as needed and create any 
 databases you listed.
 
 4.) Bootstrap

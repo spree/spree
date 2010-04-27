@@ -325,8 +325,10 @@ This will dump all instances of that model as yml to the screen. If you pipe the
 You can also do the reverse of the +db:dump+ , which is  +db:load_file[file]+.
 This will load a single yml file into the db. The file must include the path, and remember the file name is the table name (whereas the dump takes a class name).
 
-If you look at the sample data, you will see that there is not only a db/sample/products.yml , but also a db/sample/products.rb . Generally if a same named ruby file exists it will be loaded after the yml file has been loaded.
-From the products.rb you can see how Spree uses this to copy the pictures of the products to the assets folder.
+If you look at the sample data, you will see that there is not only a +db/sample/products.yml+, but also a 
++db/sample/products.rb+. Generally if a same named ruby file exists it will be loaded after the YML file 
+has been loaded.
+From +products.rb+ you can see how Spree uses this to copy the pictures of the products to the assets folder.
 
 h4. Adding Products
 

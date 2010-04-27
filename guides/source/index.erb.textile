@@ -131,7 +131,7 @@ h3. Digging Deeper
 </dl>
 <dl>
   <% guide('Securing Spree Applications', 'security.html') do %>
-    Information on how to secure your Spree application (including roles and permisions settings.)
+    Information on how to secure your Spree application (including roles and permissions settings.)
   <% end %>
 </dl>
 <dl>

@@ -53,11 +53,10 @@ Spree is configured with SSL enabled by default.  It is not enabled for developm
 
 h4. Changing the Default Settings
 
-If you do not wish to use SSL in production, or if you wish to enable SSL in development mode, you will have to change the +:allow_ssl_in_production+ configuration setting.  Generally this is done via the admin interface (+Configuration | General Settings+) as shown below.
+If you do not wish to use SSL in production, or if you wish to enable SSL in development mode, you will have to change the +:allow_ssl_in_production+ configuration setting.  This can be done via the admin interface (+Configuration | General Settings+) as shown below, but it is usually better to use an initializer (see the "Extensions guide":extensions.html#extensioninitializers).
 
 !images/server_configuration/change_ssl_setting.png(Changing SSL Setting)!
 
-There is also a technique for "using migrations to change configuration settings":extensions.html#using-migrationsfor-custom-configurations.       
 
 h4. SSL with Mongrel
 

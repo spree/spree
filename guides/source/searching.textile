@@ -53,8 +53,8 @@ controllers: you'll probably need to use it if generating similar listings.
 h4. Standard interface 
 
 See the existing search implementations for concrete examples, e.g.
-the "base implementation":http://github.com/romul/spree-solr-search or 
-"spree-solr-search":http://github.com/romul/spree-solr-search.
+the "base implementation":http://github.com/railsdog/spree/blob/master/lib/spree/search/base.rb 
+or "spree-solr-search":http://github.com/romul/spree-solr-search.
 
 
 h5. +new+
