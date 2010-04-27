@@ -11,7 +11,7 @@ endprologue.
 
 h3. Overview
 
-The Spree preference system adds support for easily creating custom preferences for models. It's simply an adoption of the "preferences plugin":http://github.com/pluginaweek/preferences/tree/master
+The Spree preference system adds support for easily creating custom preferences for models. It's simply an adoption of the "preferences plugin":http://github.com/pluginaweek/preferences/tree/master, and much of the following material is derived from that plugin's documentation.
 
 This original preferences plugin required another plugin (plugins_plus), which was something like the Spree extensions system. So we just added the preferences functionality to the Spree core, and it can now be used by both the Spree core as well as extensions to store preferences.
 
@@ -24,6 +24,15 @@ Preferences for models within an application, such as for users, represent a com
 Generally, basic preferences can be accomplished through simple designs, such as additional columns or a bit vector such as that described and implemented by "preference_fu":http://agilewebdevelopment.com/plugins/preferencefu.
 
 However, as you find the need for non-binary preferences and the number of preferences becomes unmanageable as individual columns in the database, the next step is often to create a separate +preferences+ table. This is where a more sophisticated preferences system comes in.  Spree encapsulates this design by hiding the fact that preferences are stored in a separate table and making it dead-simple to define and manage preferences.
+
+h3. Persisting Modifications to Preferences
+
+Although you can change settings from +script/console+ or from the admin interface, you should realize 
+that these settings will be lost should you decide to rebuild your database. You might also be missing 
+these settings in your production server once you promote your code.  
+
+IMPORTANT. You should consider using seed data or initializers to configure your application and to enforce important settings.  See the "Extensions guide":extensions.html#extensioninitializers for more details.
+
 
 h3. Usage
 
@@ -177,7 +186,7 @@ Preferences are stored in a separate table called +preferences+.
 
 h3. Configuring Spree Preferences
 
-Up until now we've been discussing the general preference system that was adapted to Spree.  This has given you a general idea of what types of preference features are theoretically supported.  Now, lets start to look specifically at how Spree is using these preferences for configuration.
+Up until now we've been discussing the general preference system that was adapted to Spree.  This has given you a general idea of what types of preference features are theoretically supported.  Now, let's start to look specifically at how Spree is using these preferences for configuration.
 
 h4. Reading the Current Preferences
 
@@ -204,7 +213,7 @@ The above examples show the default configuration values for these preferences. 
   end
 </shell>
 
-If you are using the default preferences without any modifications, then there is actually nothing to store in the +preferences+ table of the database.  Lets verify that its empty.
+If you are using the default preferences without any modifications, then there is actually nothing to store in the +preferences+ table of the database.  Let's verify that it is empty.
 
 <shell>
   $ script/dbconsole
@@ -213,7 +222,7 @@ If you are using the default preferences without any modifications, then there i
   
 h4. Overriding the Default Preferences
 
-The default Spree preferences in +AppConfiguration+ can be overridden using the +set+ method of the +Spree::Config+ module.  For example to set the default locale for Spain we could do the following:
+The default Spree preferences in +AppConfiguration+ can be changed using the +set+ method of the +Spree::Config+ module.  For example to set the default locale for Spain we could do the following:
 
 <shell>
   $ script/console
@@ -223,7 +232,7 @@ The default Spree preferences in +AppConfiguration+ can be overridden using the 
   => "es"  
 </shell>
 
-Here we are changing a preference to something other then the default as specified in +AppConfiguration+. In this case the preference system will be persisting the overridden value in the +preferences+ table.
+Here we are changing a preference to something other then the default as specified in +AppConfiguration+. In this case the preference system will persist the new value in the +preferences+ table.
 
 <shell>
   $ script/dbconsole
@@ -231,12 +240,12 @@ Here we are changing a preference to something other then the default as specifi
   1|default_locale|1|Configuration|||es|2009-05-04 22:30:17|2009-05-04 22:30:17
 </shell>
 
-INFO. Most sites are going to require at least some custom preferences.  It is recommended that you do this by creating a migration for your site extension.  See the "Extensions guide":extensions.html#using-migrationsfor-custom-configurations for more details.
+INFO. Console settings may be lost if the database is rebuilt. See the "advice above":#persisting-modificationsto-preferences about preservation of settings.
 
 h4. Configuration Through the Admin Interface
 
 The Spree admin interface has several different screens where various settings can be configured.  For instance, the +admin/general_settings+ URL in your Spree application can be used to configure the values for the site name and the site URL.  This is basically equivalent to calling +Spree::Config.set(:site_name => "Whatever", :site_url => "http://whatever.com")+ directly in your Ruby code.
 
-Many of the configuration settings are not editable from an admin screen.  This was basically put on hold during the refactoring of the admin interface.  Now that things have stabilized we'll be adding the missing settings in the near future.  The most important thing is to allow the settings to at least be changed through Ruby code which we currently support.
+Many of the configuration settings are not editable from an admin screen.  This was basically put on hold during the refactoring of the admin interface.  Now that things have stabilized we'll be adding the missing settings in the near future.  However, all of the settings can be changed through Ruby code (e.g. in initializers).
 
-INFO. Even though you can change many settings in the admin interface, you should realize that these settings will be lost should you decide to rebuild your database.  You'll also be missing these settings in your production server once you promote your code.  You should consider using a migration to set these values instead.  See the "Extensions guide":extensions.html#using-migrationsfor-custom-configurations for more details.
+INFO. Admin interface settings may be lost if the database is rebuilt. See the "advice above":#persisting-modificationsto-preferences about preservation of settings. However, you may want to make an exception for sensitive data, i.e. to enter gateway passwords directly and not store them in the code repository.
