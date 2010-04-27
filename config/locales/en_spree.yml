@@ -248,12 +248,14 @@ en:
   available_taxons: "Available Taxons"
   awaiting_return: Awaiting Return
   back: Back
+  back_end: Back End
   back_to_store: "Go Back To Store"
   backordered: Backordered
   backordering_is_allowed: "Backordering {{not}} allowed"
   balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
+  both: Both
   bill_address: "Bill Address"
   billing: Billing
   billing_address: "Billing Address"
@@ -374,6 +376,7 @@ en:
   expiration_year: "Expiration Year"
   extension: Extension
   extensions: Extensions
+  front_end: Front End
   filename: Filename
   final_confirmation: "Final Confirmation"
   finalize: Finalize

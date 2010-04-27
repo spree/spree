@@ -14,7 +14,7 @@ class Admin::PaymentsController < Admin::BaseController
       return
     end
 
-    begin 
+    begin
 
       if @order.checkout.state == "complete"
         object.process!
@@ -47,16 +47,16 @@ class Admin::PaymentsController < Admin::BaseController
     flash[:error] = "#{ge.message}"
   ensure
     redirect_to collection_path
-  end  
+  end
 
   def finalize
     object.finalize!
     redirect_to collection_path
   end
-  
+
   private
 
-  def object    
+  def object
     @object ||= Payment.find(param) unless param.nil?
     @object
   end
@@ -70,7 +70,7 @@ class Admin::PaymentsController < Admin::BaseController
 
   def load_data
     load_object
-    @payment_methods = PaymentMethod.available   
+    @payment_methods = PaymentMethod.available(:back_end)
     if object and object.payment_method
       @payment_method = object.payment_method
     else

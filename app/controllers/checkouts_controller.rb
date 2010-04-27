@@ -161,7 +161,7 @@ class CheckoutsController < Spree::BaseController
   end
 
   def load_available_payment_methods
-    @payment_methods = PaymentMethod.available
+    @payment_methods = PaymentMethod.available(:front_end)
     if @checkout.payment and @checkout.payment.payment_method
       @payment_method = @checkout.payment.payment_method
     else
@@ -215,13 +215,13 @@ class CheckoutsController < Spree::BaseController
   end
 
   def ensure_payment_methods
-    if PaymentMethod.available.none?
+    if PaymentMethod.available(:front_end).none?
       flash[:error] = t(:no_payment_methods_available)
       redirect_to edit_order_path(params[:order_id])
       false
     end
   end
-  
+
   # Make sure that the order is assigned to the current user if logged in
   def ensure_order_assigned_to_user
     load_object
@@ -229,5 +229,5 @@ class CheckoutsController < Spree::BaseController
       @order.update_attribute(:user, current_user)
     end
   end
-  
+
 end
