@@ -1,0 +1,376 @@
+h2. Migrating to Spree
+
+This section explains how to convert existing sites or data sets for use 
+with Spree. It is a mix of tips and information about the relevant APIs, 
+and so is definitely intended for developers. After reading it you should 
+know:
+* techniques for programmatic import of products
+* tips for migrating themes 
+* WHAT?
+
+ 
+endprologue.
+
+h3. Overview
+
+This guide is a mix of tips and information about the relevant APIs, 
+intended to help simplify the process of getting a new site set up - 
+whether you're developing a fresh site or moving from an existing 
+commerce platform.
+
+The first section discusses various formats of data. Then we look in 
+detail at import of the product catalogue. Sometimes you may want to 
+import legacy order details, so there's a short discussion on this.
+
+Finally, there are some tips about how to ease the theme development 
+process.
+
+
+h3. Data Import Format
+
+This part discusses some options for getting data into the system, 
+including some discussion of using relevant formats.
+
+
+h4. Direct SQL import
+
+Can we just format our data as SQL tables and import it directly? In 
+principle yes, but it takes effort to get the format right, particularly 
+when dealing with associations between tables, and you need to ensure 
+that the new data meets the system's validation rules. It's probably 
+easier to go the code route.
+
+There are cases where direct import is useful. One key case is when 
+moving between hosting platforms. Another is when cloning some project: 
+collaborators can just import a database dump prepared by someone else, 
+and save the time of the code import.
+
+NOTE. Spree has database consistency checker Rake tasks - try +rake db:consistency+ or +rake db:consistency:products+. These do basic checks on information structure. They aren't a full check, but do help to pick up serious problems.
+
+
+h4. Rails Fixtures
+
+Spree uses fixtures to load up the sample data. It's a convenient format 
+for small collections of data, but can be tricky when working with large 
+data sets, especially if there are many interconnections and if you need 
+to be careful with validation.
+
+Note that Rails can dump slices of the database in fixture format. This 
+is sometimes useful.
+
+
+h4. SQL or XML legacy data
+
+This is the case where you are working with legacy data in formats like 
+SQL or XML, and the question is more how to get the useful data out.
+
+Some systems may be able to export their data in various standard 
+spreadsheet formats - it's worth checking for this.
+
+Tools like REXML or Nokogiri can be used to parse XML and either build 
+a spreadsheet representation or execute product-building actions directly. 
+
+For SQL, you can try to build a Rails interface to the data (eg. search 
+for help with legacy mappings) and dump a simplified format. It might help
+to use views or complex queries to flatten multi-table data into a 
+single table - which can then be treated like a spreadsheet.
+
+
+h4. Spreadsheet format
+
+Most of the information about products can be flattened into spreadsheet 
+form, and a 2D table is convenient to work with. Clients are often 
+comfortable with the format too, and able to supply their inventories in 
+this format.
+
+For example, your spreadsheet could have the following columns:
+* fixed details:
+** product name
+** master price
+** master sku (if applicable)
+** taxon membership
+** shipping category 
+** tax category 
+** dimensions and weight
+** list of images
+** description (useful at the end since it's often the longest field)
+
+* several properties:
+** one column for each property type used in your catalogue
+
+* variant specifications:
+** option types for the product
+** one variant per column, each listing the option values and the price/sku
+
+
+Note that if you know how many fixed columns and properties to expect, then it's easy to determine which columns represent variants etc. 
+
+Some of these columns might have simple punctuation etc to add structure 
+to the field. For example, we've used:
+* Html tags in the description
+* WxHxD for a shorthand for the dimensions
+* +"green & small = small_green_shirt @ $10.00"+ to code up a variant which is small and green, has sku +small_green_shirt+ and costs $10. 
+* +"foo & bar"+ in the taxons column to encode membership of two taxons
+* +"alpha > beta > gamma"+ in the taxons column to encode membership a particular nesting.
+
+The taxon nesting notation is useful for when 'gamma' doesn't uniquely 
+identify a taxon (and so you need some context, ie a few ancestor taxons), 
+or for when the taxon structure isn't fixed in advance and so is dynamically 
+created as the products are entered.
+
+Another possibility for coding variants is to have each variant on a separate 
+row, and to leave the fixed fields empty when a row is a variant of the 
+last-introduced product. This is easier to read.
+
+
+
+h4. Seed code 
+
+This is more a technique for getting the data loaded at the right time. 
+Technically, the product catalogue is _seed data_, standard data which 
+is needed for the app to work properly. 
+
+Spree has several options for loading seed data, but perhaps the easiest to
+use here is to put ruby files in +site/db/default/+. These files are processed
+when +rake db:seed+ is called, and will be processed in the current 
+"extension load order:customization_overview.html#extensionloadorder.
+
+Your ruby script can use one of the XLS or CSV format reading libraries 
+to read an external file, or if the data set is not too big, you could embed
+the CSV text in the script itself, eg. using the +__END__+ convention. 
+
+NOTE. If the order of loading is important, choose names for the files so that alphabetical order gives the correct load order...
+
+
+h4. Important system-wide settings
+
+A related but important topic is the Spree core settings that your app 
+will need to function correctly, eg to disable backordering or to configure
+the mail subsystem. You can (mostly) set these from the admin interface, 
+but we recommend using initializers for these. See the "preferences 
+guide":preferences.html#persisting-modificationsto-preferences for more 
+info.
+
+
+h3. Catalog creation
+
+This section covers everything relating to import of a product set, 
+including the product details, variants, properties and options, images, 
+and taxons.
+
+h4. Preliminaries
+
+Let's assume that you are working from a CSV-compatible format, and so are 
+reading one product per row, and each row contains values for the fixed details, 
+properties, and variants configuration.
+
+We won't always explicitly save changes to records: we assume that your upload
+scripts will call +save+ at appropriate times or use +update_attribute(s)+ 
+etc. 
+
+h4. Products
+
+Products must have at least a name and a price in order to pass validation,
+and we set the description too. 
+<ruby>
+p = Product.create :name => "some product", :price => 10.0, :description => "some text here"
+</ruby>
+
+Observe that the +permalink+ and timestamps are added automatically. 
+You may want to set the 'meta' fields for SEO purposes.
+
+NOTE. It's important to set the +available_on+ field. Without this being a date in the past, the product won't be listed in the standard displays. 
+
+<ruby>
+p.available_on = Time.now
+</ruby>
+
+h5. The Master variant
+
+Every product has a master variant, and this is created automatically when the 
+product is created. It is accessible via +p.master+, but note that many of its
+fields are accessible through the product via delegation. Example: +p.price+
+does the same as +p.master.price+. Delegation also allows field modification,
+so +p.price = 2 * p.price+ doubles the product's (master) price. 
+
+The dimensions and weight fields should be self-explanatory. 
+If you want to distinguish between a _sale_ price and a RRP, you can assign the
+latter to +p.cost_price+ (some partials will show both prices). 
+The +sku+ field holds the product's stock code, and you will want to set this
+if the product does not have option variants. 
+
+h5. Stock levels
+
+If you don't have option variants, then you may also need to register
+some stock for the master variant. The exact steps depend on how you have 
+configured Spree's "inventory system":inventory.html, but most sites 
+will just need to assign to +p.on_hand+, eg +p.on_hand = 100+.
+
+h5. Shipping category
+
+A product's "shipping category":shipping.html#shipping-category field 
+provides product-specific information for the shipping 
+calculators, eg to indicate that a product requires additional insurance or
+can only be surface shipped. If no special conditions are needed, you can
+leave this field as nil. 
+The +ShippingCategory+ model is effectively a wrapper for a string. 
+You can either generate the list of categories in advance, or use 
++find_or_create_by_XYZ+ to reuse previous objects or create new ones when
+required.
+
+<ruby>
+p.shipping_category = ShippingCategory.find_or_create_by_name("Type A")
+</ruby>
+
+h5. Tax category
+
+This is a similar idea to the shipping category, and guides the calculation 
+of product taxes, eg to distinguish clothing items from electrical goods.
+The model wraps a name _and_ a description (both strings), and you can 
+leave the field as nil if no special treatment is needed. 
+
+You can use the +find_or_create+ technique, though you probably want to 
+set up the entire "tax configuration":taxation.html before you start 
+loading products. 
+
+You can also fill in this information automatically at a _later_ date, 
+e.g. use the taxon information to decide which tax categories something
+belongs in. 
+
+h4. Taxons
+
+Adding a product to a particular taxon is easy: just add the taxon to the 
+list of taxons for a product. 
+<ruby>
+p.taxons << some_taxon
+</ruby>
+
+Recall that taxons work like subclassing in OO languages, so a product in taxon
+T is also contained in T's ancestors, so you should usually assign a product
+to the most specific applicable taxon - and do not need to assign it to all 
+of the taxon's ancestors. 
+However, you can assign products to as many taxons as you want, including
+ancestor taxons. This feature is more useful with sibling taxons, e.g. 
+assigning a red and green shirt to both 'red clothes' and 'green clothes'.
+(Yes, this also means that child taxons don't have to be distinct, ie they
+can overlap.)
+
+When uploading from a spreadsheet, you might have one or more taxons 
+listed for a product, and these taxons will be identified by name. 
+Individual taxon names don't have to be unique, e.g. you could have 
+'shirts' under 'male clothing', and 'shirts' under 'female clothing'.
+In this case, you need some context, eg 'male clothing > shirts' vs 
+'female clothing > shirts'.
+
+Do you need to create the taxon structure in advance? Not always: as the code
+below shows, it is possible to create taxons as and when they are needed,
+but this can be cumbersome for deep hierarchies. One compromise is to 
+create the top levels (say the top 2 or 3 levels) in advance, then use 
+the taxon information column to do some product-specific fine tuning. 
+
+The following code uses a list of (newline-separated) taxon descriptions -
+possibly using 'A > B > C'-style of context - 
+to assign the taxons for a product. Notice the use of +find_or_create+.
+
+<ruby>
+# create outside of loop
+main_taxonomy = Taxonomy.find_or_create_by_name "Products"
+
+# ... inside of main loop
+  the_taxons = []
+  taxon_col.split(/[\r\n]+/).each do |chain|
+    taxon = main_taxonomy.root
+    names = chain.split(/\s*>\s*/).
+    first_name = names.shift
+    taxon = Taxon.find_or_create_by_name_and_taxonomy_id(name, main_taxonomy.id)
+    names.each do |name|
+      taxon = Taxon.find_or_create_by_name_and_parent_id_and_taxonomy_id(name, taxon.id, main_taxonomy.id)
+    end
+    the_taxons << taxon
+  end
+  p.taxons = the_taxons
+</ruby>
+
+You can use similar code to set up other taxonomies, e.g. to have a taxonomy 
+for brands and product ranges, like 'Fender' with child 'Acoustic'. 
+You could use various property or option values to drive the creation of 
+such taxonomies.
+
+NOTE. We intend to provide automatic support for this in the near future, via "product groups":scopes_and_groups.html.
+
+
+h4. Product Properties
+
+The first step is to create the property 'types'. These should be known in 
+advance so you can define these at the start of the script. You should give the 
+internal name and presentation name. For simplicity, the code examples 
+have these names as the same string.
+
+<ruby>
+size_prop = Property.find_or_create_by_name_and_presentation("Size", "Size")
+</ruby>
+
+Then you just set the value for the property-product pair. 
+Assuming value +size_info+ which is derived from the relevant column, this
+means: 
+<ruby>
+ProductProperty.create :property => size_prop, :product => p, :value => size_info
+</ruby>
+
+
+
+h4. Variants
+
+h5. Option types
+
+Set of types specific to a product, need assign
+
+<ruby>
+p.option_types = option_names.map do |name|
+  OptionType.find_or_create_by_name_and_presentation(name, name)
+end
+</ruby>
+
+h5. Option values 
+
+<ruby>
+options.each_with_index do |info,index|
+  vsku = p.psku + code_map[info.first.gsub(/\s+/,'')]   
+
+  ## v = add_variant(p, vsku)
+
+  unless info.last == 0.0               # add on extra cost
+    v.price      = v.price      + info.last
+  end
+
+  v.option_values.build :option_type => option_type, :name => info.first, :presentation => info.first, :position => index
+</ruby>
+
+h5. Creating variants
+
+todo
+
+
+h4. Product and Variant images
+
+
+from recent thread
+
+
+
+h3. Order migration
+
+Sometimes want to transfer a legacy order record too, eg statistics or 
+because Spree is much better.
+
+Query - Data protection issues?
+
+something about order structure, what is needed and what is not. 
+
+
+h3. Theme migration
+
+wget and +diff -b+
+
+
+
