@@ -4,7 +4,7 @@ This section explains Spree's support for product search and selection.
 After reading it you should know:
 * how the +Searcher+ API works
 * how to install and configure a searcher instance
-* WHAT?
+* how to configure and use faceted search 
 
 This guide is aimed at developers. 
  
@@ -171,18 +171,86 @@ There are many settings to control the behaviour of Solr instances. See the docu
 config files in Jetty-solr for basic information, or the official Solr documentation. 
 
 
-h4. Facet support
+h3. Facet support
 
 Facets allow large search results to be filtered according to properties a user may be interested in.
 For example, we can search for +rails+ and then select the clothing taxon(s) and a certain price range
-to end up with a small number of products.
+to end up with a more manageable number of products.
 
-Solr can index facets alongside the conventional information, and both include facet constraints in 
-the query and return information about facets that can be used to drill down in a given query. This
-makes it very easy to incorporate facet functionality into Spree. Smirnov's extension gives one 
-implementation of faceting (look for the +_facets+ partial), but other forms of interaction are 
-possible. 
+h4. Faceting with Solr
+
+Solr directly supports faceting, and can index declared facets alongside the conventional data. You can 
+include facet constraints in a Solr query, and can obtain information about the available facets 
+that can be used to drill down in a given query. 
+
+"Smirnov's extension":http://github.com/romul/spree-solr-search makes it easy to incorporate facet 
+functionality into Spree. By default it generates facets for the following:
+
+* product brand (via a "brand" property)
+* colors of a product's variants (via the variant options)
+* sizes of a product's variants (via the variant options)
+* 'primary' taxons - the taxons to which the product is explicitly assigned (not the implicit descendants)
+* price range, in bands of 0-25, 25-50, 50-100,100-200,200 and over. 
+
+The extension also includes a basic partial for displaying and requesting facet results, which you can
+include or replace in your own site theme.
+
+WARNING. The price range code does not work at the moment.
+
+NOTE. The description text of the price bands will need modification if used in non-US locales. The text is held in +Spree::Config[:product_price_ranges]+.
 
 
+h5. Declaration of facets
+
+Facet declaration requires two steps. First, to declare the facet as an indexable field of the 
+product, and second, to declare that the field is a facet. 
+
+<pre>
+Product.class_eval do
+  acts_as_solr :fields => [:name, :description, :is_active, {:price => :float}, :taxon_ids, 
+                           :price_range, :taxon_names, :brand_property, :color_option, :size_option],
+               :facets => [:price_range, :taxon_names, :brand_property, :color_option, :size_option]
+</pre>
+
+Field names should be methods of the object being indexed. For the default facets, we have methods
+which return a product's brand (as a string), or return the colors of any variants (as a list of strings). 
+If you need other return types, they should be declared as shown for +:price+. 
+
+To add a new facet based on some other property or option value, you should just provide a method 
+which generates the relevant information and include it in the lists above. You could also override
+the provided methods if you need more specialized treatment of brand etc. 
+
+If you have changed or added to the facets, then you will need to "reindex the 
+database":#indexingandreindexing.
+
+h5. Query processing
+
+There are several options to include in the Solr query when using facets, including which facet (if any)
+is being requested and limits on result size. The only part a developer may usually want to change is 
+the list of facet results being requested: this is currently set near the top of file 
++solr_search/lib/spree/search/solr.rb+.
+
+Solr returns the requested facet information as a nested hash, and the Solr extension converts this to a 
+list of +Spree::Search::Facet+ values, each containing a facet name and a list of facet options. Each
++Spree::Search::FacetOption+ value contains an option string (eg a specific color) and the count of 
+matched products. This information can be used to generate links.
+
+
+h5. Display and selection of options
+
+The partial +app/views/products/_facets.html.erb+ provides a basic interface to the facets in a format
+suitable for inclusion in a sidebar, using the list of +Spree::Search::Facet+ values returned by the 
+most recent query. Each non-empty facet is mapped to a title and unordered list of links. 
+A helper function +link_to_facet+ will generate links which add a facet option to the currently 
+active constraints (and in turn, this can be decoded by the solr query generation). 
+
+Note that you can pick several options from certain facets (based on variants or taxons), eg you can 
+select color 'Red' and on the resulting page, select 'Green'. The effect is to return only the products 
+whose color values include both red and green, or more precisely, only the products which have 
+variants whose colour option is either red or green. 
+
+Technically speaking, this means that the standard behaviour with Solr is to produce an _intersection_ 
+of constraints, not a _union_. So if you want to allow display of products whose brand is A _or_ B,
+then some custom programming will be required. 
 
 
