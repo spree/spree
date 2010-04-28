@@ -141,13 +141,10 @@ of methods which generate appropriate result strings. If non-string values are n
 the type as done for +:price+. 
 
 <pre>
-    Product.class_eval do
-      acts_as_solr  :fields => [:name, :description, :is_active, {:price => :float},
-                                :taxon_ids, :price_range, :taxon_names,
-                                :brand_property, :color_option, :size_option],
-                    :facets=>[:price_range, :taxon_names,
-                              :brand_property, :color_option, :size_option]
-
+Product.class_eval do
+  acts_as_solr :fields => [:name, :description, :is_active, {:price => :float}, :taxon_ids, 
+                           :price_range, :taxon_names, :brand_property, :color_option, :size_option],
+               :facets => [:price_range, :taxon_names, :brand_property, :color_option, :size_option]
 </pre>
 
 The second step is to format the query in +get_product_conditions_for+. The current code sets the 
