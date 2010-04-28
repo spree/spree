@@ -140,12 +140,12 @@ should be treated as facets. The attributes can  be conventional model attribute
 of methods which generate appropriate result strings. If non-string values are needed, then indicate
 the type as done for +:price+. 
 
-<pre>
+<ruby>
 Product.class_eval do
   acts_as_solr :fields => [:name, :description, :is_active, {:price => :float}, :taxon_ids, 
                            :price_range, :taxon_names, :brand_property, :color_option, :size_option],
                :facets => [:price_range, :taxon_names, :brand_property, :color_option, :size_option]
-</pre>
+</ruby>
 
 The second step is to format the query in +get_product_conditions_for+. The current code sets the 
 appropriate sort order and injects taxon constraints, if relevant. In particular, a request within
@@ -202,12 +202,12 @@ h5. Declaration of facets
 Facet declaration requires two steps. First, to declare the facet as an indexable field of the 
 product, and second, to declare that the field is a facet. 
 
-<pre>
+<ruby>
 Product.class_eval do
   acts_as_solr :fields => [:name, :description, :is_active, {:price => :float}, :taxon_ids, 
                            :price_range, :taxon_names, :brand_property, :color_option, :size_option],
                :facets => [:price_range, :taxon_names, :brand_property, :color_option, :size_option]
-</pre>
+</ruby>
 
 Field names should be methods of the object being indexed. For the default facets, we have methods
 which return a product's brand (as a string), or return the colors of any variants (as a list of strings). 
