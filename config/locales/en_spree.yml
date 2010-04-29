@@ -801,6 +801,7 @@ en:
   shop_by_taxonomy: "Shop by {{taxonomy}}"
   shopping_cart: "Shopping Cart"
   show: Show
+  show_active: "Show Active"
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"
