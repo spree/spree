@@ -154,6 +154,22 @@ e.g. the following in an initializer:
 Spree::Config.set(:logo => '/images/my_logo_.png')
 </ruby>
 
+h4. Configuring your theme's image sizes
+
+Spree uses "paperclip":http://github.com/thoughtbot/paperclip to manage image
+attachments in various sizes. 
+You can change the sizes or add new formats by including a line like this in 
+your theme's +FOO_extension.rb+ file:
+
+<shell>
+Image.attachment_definitions[:attachment][:styles] = {
+	:thumb => '60x80', 
+	:mini => '100x100', 
+	:small => '175x175>', 
+	:product => '300x300>', 
+	:large => '720x720>'
+	}
+</shell>
 
 
 h3. Hooks

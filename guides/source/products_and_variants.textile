@@ -206,26 +206,14 @@ h5. has_stock?
 
 Returns true if there are inventory units (any variant) with "on_hand" state for this product
 
-h5. Add Products Programatically 
-
-To create a new product programatically, you need to supply at least the name of the product and the price for the product.
-
-<shell>
-new_product = Product.new(:name => "foobar", :price => 5.0)
-</shell>
-
-Both the product and the master variant record are created with the above.  You do not have to programatically manage the master variant.  Simply create the product and supply the attributes for both the Product and the master variant.  Additionally all of the fields of the master variant are available directly off the Product model:
-
-<shell>
-new_product.sku = 'FB-001'
-new_product.on_hand = 5 
-new_product.weight = 25.0
-new_product.save!
-</shell>
-
 h5. product_price helper
 
 The price for a product or variant can be obtained using +product_price+ helper method. By default, this returns a string formatted with the locale's currency settings, but this can be overridden with an option: +product_price(some_thing, :format_as_currency => false)+
+
+h5. Product images
+
+In views, you can generate an image's URL file with +image.attachment.url(:product)+, i.e. using the name of a declared image format as an argument. 
+
 
 h4. The Variant Model
 
@@ -249,43 +237,16 @@ h5. available?
 
 Returns true if this variant is allowed to be placed on a new order.
 
-h5. Adding Variants to Products Programatically
-
-Because Variants must be valid and unique combinations of the given product's Option Types, variants require at least a two step process to correctly add a new variant to a product:
-
-<shell>
-my_product = Product.first
-
-my_variant = my_product.variants.create(:sku => "FB-01A", 
-	:price => 15.95)	
-</shell>
-
-And then add the Option Values to the newly created variant with:
-
-<shell>
-new_variant.option_values << OptionValue.find_by_name("Large")
-</shell>
-
-Repeat as necessary for each Option Type that a given product has.
-
-In views, you can generate an image's URL file with +image.attachment.url(:product)+, i.e. using the name of the format as an argument. You can change the sizes or add new formats by including a line like this in your +site_extension.rb+ file:
-
-<shell>
-Image.attachment_definitions[:attachment][:styles] = {
-	:thumb => '60x80', 
-	:mini => '100x100', 
-	:small => '175x175>', 
-	:product => '300x300>', 
-	:large => '720x720>'
-	}
-</shell>
 
 h3. Further Reading
 
-It can be tedious to add large numbers of products by hand. It is possible to write scripts to do
-the basic work, and some are starting to circulate. The "Spree wiki":http://wiki.github.com/railsdog/spree
+It can be tedious to add large numbers of products by hand. It is possible to write 
+scripts to do the basic work, and some are starting to circulate. 
+The "Spree wiki":http://wiki.github.com/railsdog/spree
 contains a collection of scripts you can download and adapt, plus other useful utilities. Look at
 the "Tricks and Tips section":http://wiki.github.com/railsdog/spree/developers-tricks-and-tips.
+
+NOTE. The "migration section":migration.html of the guides gives an overview on how to import data programmatically into Spree. 
 
 
 "Steph Powell":http://github.com/stephp has produced a useful blog post on 
