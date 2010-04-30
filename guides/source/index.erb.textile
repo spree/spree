@@ -111,6 +111,11 @@ h3. Customization
     This guide will show you how to customize the steps in your checkout process.
   <% end %>
 </dl>
+<dl>
+  <% guide('Migrating Data to Spree', 'migration.html') do %>
+    Some tips on how to transfer large amounts of data into Spree.
+  <% end %>
+</dl>
                                                                    
 h3. Digging Deeper
 
