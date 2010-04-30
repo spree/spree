@@ -8,22 +8,21 @@ endprologue.
 
 h3. Upgrade procedure
 
-INFO. see the version in the last release notes
+TODO
+
+h3. I18n Changes
+
+Spree now stores all of the translation information in a separate Github project known as "spree-i18n":http://github.com/railsdog/spree-i18n.  This is a stand alone project with a large number of volunteer committers who maintain the locale files.  This is basically the same approach
+followed by the Rails project which keeps their localizations in "rails-i18n":http://github.com/svenfuchs/i18n.
+
+The project is actually a Spree extension.  This extension contains translations only.  The rest of code needed to support the i18n features is part of the Spree core.
+
+WARNING. You will need to install the "spree-i18n":http://guides.rubyonrails.org/i18n.html extension if you want to use any of the community supplied translations of Spree.
+
+See the "i18n":i18n.html guide for further details.
 
 
-h3. Improved Blah
 
 
-
-
-h3. Known Issues
-
-The "ticket system":http://railsdog.lighthouseapp.com/projects/31096-spree/ lists all known 
-outstanding issues with the Spree core. Some issues have a release target (_milestone_)
-attached: this is an indication of how soon an issue will be tackled. 
-
-WARNING. There are some problems which we have traced to other projects. We list a few significant ones here.
-
-h4. Something
 
 
