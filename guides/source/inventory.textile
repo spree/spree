@@ -3,6 +3,7 @@ h2. Inventory
 This section explains how Spree represents stock levels and how it can be managed.
 After reading it you should know:
 * the design used in Spree
+* the flags which govern stock control
 * which aspects of inventory control are seen by customers
 * how to manage stock in the administration
 
@@ -11,9 +12,9 @@ endprologue.
 
 h3. Overview
 
-Spree uses a hybrid approach for tracking inventory: On-hand inventory is stored as a count on the product +Variant+. This gives good performance for stores with large inventories. Back-ordered, sold or shipped products are stored as individual +InventoryUnits+ so the can have relevant information attached to them.
+Spree uses a hybrid approach for tracking inventory: On-hand inventory is stored as a count on the product +Variant+. This gives good performance for stores with large inventories. Back-ordered, sold or shipped products are stored as individual +InventoryUnit+ objects so they can have relevant information attached to them, e.g. tracking information.
 
-What if you don’t need to track inventory? We have come up with a design that basically shields the simple store user from much of this complexity. Simply leave the inventory fields blank and you never have to worry about it.
+What if you don’t need to track inventory? We have come up with a design that basically shields users of simple stores from much of this complexity. Simply leave the inventory fields blank and you never have to worry about it.
 
 New products created in the system can be given a starting “on hand” inventory level.  You can subsequently set new inventory levels and the correct things will happen, e.g. adding new on-hand inventory to an out-of-stock product that has some backorders will first fill the backorders then update the product with the remaining inventory count.
 
@@ -22,43 +23,57 @@ We’ve also done a great deal of improvement with variants. Every line item in 
 
 h3. Design and functionality
 
-On-hand inventory is stored as attribute on_hand in the Variant model.  The on-hand inventory level is adjusted using +Variant#on_hand=()+.  If +on_hand=+ is given a new stock level that is below the current on_hand inventory count, it will just store this new level.  When given a new on-hand stock level for a product that was out of stock in a store that allows backorders, +on_hand=+ will first create new +InventoryItems+ for the backordered product and mark it "sold".  The remaining delta in inventory is then stored in the on_hand column.
+On-hand inventory is stored as attribute +count_on_hand+ in the Variant model.  The on-hand inventory level is adjusted using +Variant#on_hand=()+.  If +on_hand=+ is given a new stock level that is below the current on_hand inventory count, it will just store this new level.  When given a new on-hand stock level for a variant that was out of stock in a store that allows backorders, +on_hand=+ will first create new +InventoryItem+ objects for the backordered variant and mark them as "sold".  The remaining delta in inventory is then stored in the on_hand column.
 
 
 h4. Relevant settings
 
 Behaviour of the inventory system is governed by these settings:
 
-* +show_zero_stock_products+ - usually, Spree shows products in listings if it has some stock (which means at least one of its variants has stock), and this setting disregards the result of that test and so allows such products' details to be viewed.
+* +:track_inventory_levels+ (default: +true+) - enables/disables inventory management.  When disabled, Spree will not use/change stock levels and (as a consequence) will not create backorders - so effectively behaves as if there was infinite stock for everything.
 
-* +allow_backorders+ - similarly, Spree usually only accepts orders for a variant if there is some stock, and this setting overrides that condition. The default behavior, when the setting is false and there is no stock in any variant, is to show an "Out of stock" message; or when just some of the variants are unavailable, to disable the relevant radio buttons.
+* +:show_zero_stock_products+ (default: +true+) - when this is set to +false+, Spree will only show products when at least one of its variants has stock (or if stock checking has been disabled, as above). The default is to show all products.
+
+* +:allow_backorders+ (default: +true+) - when this is +false+, Spree will only allow items to be added to orders when there is stock. This occurs both in the views (the controls for adding out of stock variants are disabled) and in the underlying models (a variant is only added to an order when there is sufficient stock). When it is true, stock deficiencies are converted to backordered +InventoryUnit+ objects and the user is informed of the shortfall. 
+
 
 One other flag is relevant:
 
-* +allow_backorder_shipping+ - allows inventory in the backorder state to be marked as shipped. You may need to do this in certain cases, eg if your backorders are handled by a 3rd party fulfillment house and they have agreed to ship an item once stock is available again.
+* +:allow_backorder_shipping+ (default: +false+) - allows inventory in the backorder state to be marked as shipped. You may need to do this in certain cases, e.g. if your backorders are handled by a 3rd party fulfillment house and they have agreed to ship an item once stock is available again.
 
 
 h4. What the customer sees
 
 Generally, the settings above are the most significant. Customizations can also access details of stock levels for each variant via the +on_hand+ method, e.g. to show the current level on the cart page.
 
-NOTE: stock levels will of course change over time, and there is no locking of requested inventory to orders until the very last stage of checkout. If insufficient stock is available, the deficit is marked up as being in a back-ordered state, _irrespective of the +allow_backorders+ flag_
+NOTE: stock levels will of course change over time, and there is *no locking* of requested inventory to orders until the very last stage of checkout. If stock checking is enabled and insufficient stock is available at checkout, the shortfall is reported to the user (there is no compulsory back-ordering).
 
 
 h4. What the orders administrator sees
 
-As mentioned above, the admin interface hides some of the complexity of the full system. When adding or editing a variants of a product, the merchant can set or alter the stock level for that variant through a single number. If the product has no variants (rather, it has an "empty" variant which Spree doesn't show explicitly), then this stock level can be set on the product details page.
+As mentioned above, the admin interface hides some of the complexity of the full system. 
+When adding or editing the variants of a product, the merchant can set or alter the stock 
+level for each variant by changing a single number. If the product has no variants (apart 
+from the master variant), then the product's stock level can be set on the product 
+details page.
+
+Every sold (or backordered) item is represented by its own +InventoryUnit+ object, and 
+these can be assigned to multiple shipments and/or returned by the customer. 
 
 NOTE: the admin interface currently doesn't explicitly highlight when a shipment contains back-orders. However, if you try to mark such a shipment as being shipped, an error message will appear - unless you have +allow_backorder_shipping+ set, that is.
 
 
-h3. Site Customizations
+h5. Return authorizations
+
+This is a new feature. Administrators can approve the return of some part (maybe all) of
+an order. When the returned stock is received, the system can credit the customer's 
+account. 
 
 
-h4. Programming interface
+h3. Programming interface
 
-Here's a summary of methods you might use in a customization (+v+ is a variant, +p+ is
-a product):
+Here's a summary of methods you might use in an extension or replacement theme 
+(+v+ is a variant, +p+ is a product):
 
 * +v.on_hand+ - returns how many inventory items a variant has with the "on_hand" state
 
@@ -69,7 +84,3 @@ a product):
 * +p.has_stock?+ - returns true if any variant of the product is "on_hand"
 
 
-h4. More sophisticated inventory management
-
-It's straightforward to add new fields to inventory units, eg to record a unit's location
-or some tracking information
