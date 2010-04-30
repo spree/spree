@@ -167,6 +167,11 @@ We won't always explicitly save changes to records: we assume that your upload
 scripts will call +save+ at appropriate times or use +update_attribute(s)+ 
 etc. 
 
+Note that Spree has support for easy addition of new fields to products and variants,
+through the "additional fields":extensions.html#adding-fieldsto-productor-variants
+mechanism. This reduces the work for including extra information in these objects.
+
+
 h4. Products
 
 Products must have at least a name and a price in order to pass validation,
