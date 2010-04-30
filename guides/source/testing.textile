@@ -1,3 +1,142 @@
 h2. Testing
 
+This guide covers the test strategies and test support for Spree. 
+After reading it you should know:
+* how Spree core is tested
+* how to add your own tests to extensions
+* what our future plans are for testing
+
+Before you dive into the detail, it's worth reviewing the "Rails guide on
+testing":http://guides.rubyonrails.org/testing.html for background information.
+
 endprologue.
+
+h3. Overview
+
+Spree core comes with a set of tests written with 
+"+Test::Unit+":http://ruby-doc.org/stdlib/libdoc/test/unit/rdoc/ and 
+"Shoulda":http://github.com/thoughtbot/shoulda. These tests are stored
+in +RAILS_ROOT/test/+, and can be run with rake tasks.
+
+NOTE. It is the core team's standard practice for all code changes in Spree to be tested by running the full suite, unless the change is really trivial. We also run a continuous integration server, and there's a mailing list for test failure notifications. However, we do find that occasional problems slip through, mostly to do with different versions of SQL or migration from older data.
+
+Earlier versions of Spree (including version 0.10.x) also contains some 
+tests written with RSpec. This is legacy code, and we do not expect all 
+of the RSpec tests to work still. 
+
+There is agreement in the Spree community that we need to extend and develop
+our tests, and this effort is likely to be a keystone of the next release. 
+We are working towards migrating the legacy RSpec tests to Shoulda, 
+and towards making much more use of Cucumber, particularly for integration
+testing.
+
+
+h3. Testing the core
+
+h4. The standard Rake tasks
+
+Rails provides a few standard tasks, all of which work on the Spree core tests. 
+<shell>
+rake test              # Run all unit, functional and integration tests
+rake test:units     
+rake test:functionals  # Run the functional tests in test/functional
+rake test:integration  # Run the integration tests in test/integration
+</shell>
+
+
+h4. Running a subset of tests
+
+The tests can take a few minutes to run. As well as running the main subsets, Rails
+also supports these:
+<shell>
+rake test:recent       # Test recent changes
+rake test:uncommitted  # Test changes since last checkin (only Subversion and Git)
+</shell>
+
+Sometimes you will want to run just one test file at a time, particularly when testing 
+whether you have fixed a broken test. You can run any test file with +ruby+ - it is 
+stand-alone Ruby code after all! For most of Spree's tests, you also need some imports
+too, hence:
+<shell>
+ruby -Ilib:test test/unit/foo_test.rb
+</shell>
+
+
+h4. Unit tests
+
+These are in +test/unit/*_test.rb+ in the Spree directory, and use +Test::Unit+ 
+conventions supplemented by convenient Shoulda macros. This is the best-developed
+part of the Spree test suite: almost all of the models have non-trivial unit tests
+
+h4. Functional tests
+
+These are in +test/functional/*_test.rb+ in the Spree directory, and again use
+the +Test::Unit+/Shoulda framework. There are some tests for checkout and order
+behavior, and for some of the admin functionality, but plenty of scope for more 
+testing. 
+
+h4. Integration tests
+
+There are two files in +test/integration+. We plan to extend this aspect of testing
+soon, with Cucumber. 
+
+h4. Test resources
+
+The +test/fixtures+ and +test/factories+ directories provide test data for the 
+various tests. Factories are a technique for generating random - but valid - 
+test objects in various classes. 
+
+h4. Extension tests
+
+Spree provides tasks to run tests in extension directories. All of these tasks act 
+on all of the extensions in the *immediate* +./vendor/extensions+ directory, unless
+you specify a particular extension with +EXT=extension_name+.
+<shell>
+rake extensions:test              # Runs all tests on the selected extension(s)
+rake extensions:test:units        # Runs unit tests on the selected extension(s)
+rake extensions:test:functionals  # Runs functional tests on the selected extension(s)
+</shell>
+
+Note that all selected extensions will be tested, and the results collated. It won't 
+exit after the first group of failing tests. 
+
+h5. Core extensions
+
+To test the core extensions, run the rake commands from +SPREE_ROOT+. Note that most 
+of the core extensions get tested through the main test suite anyway, and so the 
+tests in the actual extensions themselves are relatively specialized.
+
+h5. Application extensions
+
+To test the extension(s) in your application, run the rake commands above from 
++RAILS_ROOT+. (This will not test any of the core extensions - it only looks at
++./vendor/extensions+)
+
+
+h4. Miscellaneous 
+
+Rails can test installed plugins in +vendor/plugins/+ with +rake test:plugins+. 
+To test a specific plugin, say 'foo', then specify it with +PLUGIN=foo+ at the end
+of the command. 
+
+
+h3. Cucumber
+
+"Cucumber":http://cukes.info/ makes it easier to write and maintain tests, and there 
+is strong interest in making more use of it in Spree. The following example specifies 
+a test on cart behavior.
+
+<ruby>
+Scenario: Visitor can work with cart
+  When I add a product with name: "RoR Mug", price: "15" to cart
+  Then I should see "Shopping Cart" within "h1"
+  And I should see "RoR Mug" within "#line_items h4 a"
+  And I should see "$15" within "#line_items td"
+  And I should see "$15" within "#subtotal"
+</ruby>
+
+You can run tests with +rake cucumber+ 
+
+Some initial tests have been coded in +SPREE_ROOT/features+, and more are in the 
+pipeline. Stay tuned!
+
