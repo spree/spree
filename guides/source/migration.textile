@@ -6,8 +6,7 @@ and so is definitely intended for developers. After reading it you should
 know:
 * techniques for programmatic import of products
 * tips for migrating themes 
-* WHAT?
-
+* examples of the API in use.
  
 endprologue.
 
@@ -110,7 +109,7 @@ to the field. For example, we've used:
 * Html tags in the description
 * WxHxD for a shorthand for the dimensions
 * +"green & small = small_green_shirt @ $10.00"+ to code up a variant which is small and green, has sku +small_green_shirt+ and costs $10. 
-* +"foo & bar"+ in the taxons column to encode membership of two taxons
+* +"foo\\nbar"+ in the taxons column to encode membership of two taxons
 * +"alpha > beta > gamma"+ in the taxons column to encode membership a particular nesting.
 
 The taxon nesting notation is useful for when 'gamma' doesn't uniquely 
@@ -317,60 +316,159 @@ means:
 ProductProperty.create :property => size_prop, :product => p, :value => size_info
 </ruby>
 
+h5. Product prototypes
+
+The admin interface uses a system of 'prototypes' to speed up data entry, 
+which seeds a product with a given set of option types and (empty) 
+property values. It probably isn't so useful when creating products 
+programmatically, since the code will need to do the hard work of 
+creating variants and setting properties anyway. However, we mention it
+here for completeness.
 
 
 h4. Variants
 
-h5. Option types
+Variants allow different versions of a product to be offered, e.g. allowing 
+variations in size and color for clothing. If a product comes in only one 
+configuration, you don't need to use variants - the master variant, already
+created, is sufficient.
 
-Set of types specific to a product, need assign
+Otherwise, you need to declare what the allowed option types are (e.g. size, 
+color, quality rating, etc) for your product, and then create variants which 
+(usually) have a single option value for each of the product's option types
+(e.g. 'small' and 'red' etc).
+
+NOTE. Spree's core generally assumes that each variant has exactly one option value for each of the product's option types, but the current code is tolerant of missing values. Certain extensions may be more strict, e.g. ones for providing advanced variant selection.  
+
+
+h5. Creating variants
+
+New variants require only a product to be associated with, but it is useful to set an
+identifying +sku+ code too. The price field is optional: if it is not explicitly set,
+the new variant will use the master variant's price (the same applies to +cost_price+
+too). You can also set the +weight+, +width+, +height+, and +depth+ too. 
 
 <ruby>
-p.option_types = option_names.map do |name|
+v = Variant.create :product => p, :sku => "some_sku_code", :price => NNNN
+</ruby>
+
+NOTE. The price is only copied at creation, so any subsequent changes to a product's price will need to be copied to all of its variants.
+
+Next, you may also want to register some stock for this variant. 
+The exact steps depend on how you have configured Spree's 
+"inventory system":inventory.html, but most sites 
+will just need to assign to +v.on_hand+, eg +v.on_hand = 100+.
+
+You now need to set some option types and values, so customers can choose between 
+the variants.
+
+
+h5. Option types
+
+The option types to use will vary from product to product, so you will 
+need to give this information for each product - or assume a default and 
+only use different names when this column is empty.
+
+You can probably declare most of the option types in advance, and so 
+just look up the names when required, though for fine control, you can
+use the +find_or_create+ technique, with something like this:
+
+<ruby>
+p.option_types = option_names_col.map do |name|
   OptionType.find_or_create_by_name_and_presentation(name, name)
 end
 </ruby>
 
+
 h5. Option values 
 
+Option values represent the choices possible for some option type. Again, you could
+declare them in advance, or use +find_or_create+. You'll probably find it easier to 
+create/retrieve the option values as you create each variant.
+
+Suppose you are using a notation like +"Green & Small = small_green_shirt @ $10.00"+
+to encode each variant in the spreadsheet, and this is stored in the variable
++opt_info+. The following extracts the three key pieces of information and sets
+the option values for the new variant (see below for variant creation).
+
 <ruby>
-options.each_with_index do |info,index|
-  vsku = p.psku + code_map[info.first.gsub(/\s+/,'')]   
+_,opts,sku,price = opt_info.match(/(.*?)\s*=\s*(.*?)\s*@.*?(\d+([.]\d*))/).to_a
 
-  ## v = add_variant(p, vsku)
+v = Variant.create :product => p, :sku => sku, :price => price
 
-  unless info.last == 0.0               # add on extra cost
-    v.price      = v.price      + info.last
-  end
-
-  v.option_values.build :option_type => option_type, :name => info.first, :presentation => info.first, :position => index
+v.option_values = opts.split(/\s*&\s*/).map do |nm| 
+  OptionValue.find_or_create_by_name_and_presentation_and_option_type_id(nm,nm, color_type.id)
+end
 </ruby>
 
-h5. Creating variants
+Note that you don't have to stick with system-wide option types: you can create 
+types (and associated values) specifically for groups of products such 
+as a product range from a single
+manufacturer. In such cases, the range might have a particular color scheme
+and there can be advantages to isolating the scheme's options in its own
+type and set of values, rather than trying to work with a more general 
+setup. It also avoids filling up a type with lots of similar options - and so
+reduces the number of options when using faceted search etc. You can also
+attach resources like color swatches to the more specific values.
 
-todo
+h5. Ordering of option values
+
+You might want option values to appear in a certain order, such as by increasing size
+or by alphabetical order. The +OptionValue+ model uses +acts_as_list+ for setting the 
+order, and option types will use the +position+ field when retrieving their associated 
+values. The position is scoped to the relevant option type. 
+
+If you create option values in advance, just create them in the required order and 
+the plugin will set the +position+ automatically.  
+
+<ruby> 
+color_type = OptionType.create :name => "Color", :presentation => "Color"
+color_options = %w[Red Blue Green].split.map {|n| OptionValue.create :name => n, :presentatiopn => n, :option_type => color_type}
+</ruby>
+
+Otherwise, you could enforce the ordering _after_ loading up all of the variants, 
+using something like this:
+
+<ruby>
+color_type.option_values.sort_by(&:name).each_with_index do |val,pos| 
+  val.update_attribute(:position, pos + 1)
+end
+</ruby>
+
+
+h5. Further reading
+
+"Steph Powell":http://github.com/stephp has produced a useful blog post on
+"product optioning":http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-comments.html.
+This discusses how the variant option representation works and how she used it to build an
+extension for enhanced product option selection.
 
 
 h4. Product and Variant images
 
+Spree uses "paperclip":http://github.com/thoughtbot/paperclip to manage image 
+attachments and their various size formats.  (See the "theming 
+guide":theming.html#configuringyourthemesimagesizes for info on altering the image formats.)
+You can attach images to products and to variants - the mechanism is polymorphic.
+Given some local image file, the following will associate the image and create 
+all of the size formats. 
 
-from recent thread
+<ruby>
+#for image for product (all variants)
+img = Image.create(:attachment => File.open(path), :viewable => product)
 
+#for image for single variant
+img = Image.create(:attachment => File.open(path), :viewable => variant)
+</ruby>
 
-
-h3. Order migration
-
-Sometimes want to transfer a legacy order record too, eg statistics or 
-because Spree is much better.
-
-Query - Data protection issues?
-
-something about order structure, what is needed and what is not. 
+Paperclip also supports external "storage of images in 
+S3":http://github.com/thoughtbot/paperclip/blob/master/lib/paperclip/storage.rb
 
 
 h3. Theme migration
 
-wget and +diff -b+
+NOTE. To be written.
+
 
 
 
