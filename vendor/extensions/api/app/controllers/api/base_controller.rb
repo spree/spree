@@ -35,7 +35,7 @@ class Api::BaseController < Spree::BaseController
     end
 
     define_method :collection do
-      @collection = search.all(:limit => 100)
+      @collection ||= search.all(:limit => 100)
     end
   end
 
@@ -78,7 +78,7 @@ class Api::BaseController < Spree::BaseController
       @search.order ||= "descend_by_created_at"
       @search
     end
-  
+
     def collection_serialization_options
       {}
     end
@@ -86,13 +86,13 @@ class Api::BaseController < Spree::BaseController
     def object_serialization_options
       {}
     end
-  
+
     def eager_load_associations
       nil
     end
-    
+
     def object_errors
       {:errors => object.errors.full_messages}
     end
-  
+
 end
