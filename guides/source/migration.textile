@@ -132,7 +132,7 @@ is needed for the app to work properly.
 Spree has several options for loading seed data, but perhaps the easiest to
 use here is to put ruby files in +site/db/default/+. These files are processed
 when +rake db:seed+ is called, and will be processed in the current 
-"extension load order:customization_overview.html#extensionloadorder.
+"extension load order":customization_overview.html#extensionloadorder.
 
 Your ruby script can use one of the XLS or CSV format reading libraries 
 to read an external file, or if the data set is not too big, you could embed
@@ -146,8 +146,8 @@ h4. Important system-wide settings
 A related but important topic is the Spree core settings that your app 
 will need to function correctly, eg to disable backordering or to configure
 the mail subsystem. You can (mostly) set these from the admin interface, 
-but we recommend using initializers for these. See the "preferences 
-guide":preferences.html#persisting-modificationsto-preferences for more 
+but we recommend using initializers for these. See the 
+"preferences guide":preferences.html#persisting-modificationsto-preferences for more 
 info.
 
 
@@ -283,12 +283,10 @@ main_taxonomy = Taxonomy.find_or_create_by_name "Products"
 # ... inside of main loop
   the_taxons = []
   taxon_col.split(/[\r\n]+/).each do |chain|
-    taxon = main_taxonomy.root
-    names = chain.split(/\s*>\s*/).
-    first_name = names.shift
-    taxon = Taxon.find_or_create_by_name_and_taxonomy_id(name, main_taxonomy.id)
+    taxon = nil
+    names = chain.split(/\s*>\s*/)
     names.each do |name|
-      taxon = Taxon.find_or_create_by_name_and_parent_id_and_taxonomy_id(name, taxon.id, main_taxonomy.id)
+      taxon = Taxon.find_or_create_by_name_and_parent_id_and_taxonomy_id(name, taxon && taxon.id, main_taxonomy.id)
     end
     the_taxons << taxon
   end
@@ -296,7 +294,7 @@ main_taxonomy = Taxonomy.find_or_create_by_name "Products"
 </ruby>
 
 You can use similar code to set up other taxonomies, e.g. to have a taxonomy 
-for brands and product ranges, like 'Fender' with child 'Acoustic'. 
+for brands and product ranges, like 'Guitars' with child 'Acoustic'. 
 You could use various property or option values to drive the creation of 
 such taxonomies.
 
@@ -428,14 +426,14 @@ the plugin will set the +position+ automatically.
 
 <ruby> 
 color_type = OptionType.create :name => "Color", :presentation => "Color"
-color_options = %w[Red Blue Green].split.map {|n| OptionValue.create :name => n, :presentatiopn => n, :option_type => color_type}
+color_options = %w[Red Blue Green].split.map {|n| OptionValue.create :name => n, :presentation => n, :option_type => color_type}
 </ruby>
 
 Otherwise, you could enforce the ordering _after_ loading up all of the variants, 
 using something like this:
 
 <ruby>
-color_type.option_values.sort_by(&:name).each_with_index do |val,pos| 
+color_type.option_values.sort_by {|o| o.name}.each_with_index do |val,pos| 
   val.update_attribute(:position, pos + 1)
 end
 </ruby>
