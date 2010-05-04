@@ -31,7 +31,7 @@ class Admin::UsersController < Admin::BaseController
                                             OR addresses.firstname like :search
                                             OR addresses.lastname like :search
                                             OR ship_addresses_users.firstname like :search
-                                            OR ship_addresses_users.lastname like :search", {:search => "%#{params[:q]}%"}])
+                                            OR ship_addresses_users.lastname like :search", {:search => "#{params[:q].strip}%"}], :limit => 20)
     end
   end
 

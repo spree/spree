@@ -41,6 +41,8 @@ jQuery(document).ready(function(){
   }
 
   $("#customer_search").autocomplete("/admin/users.json", {
+    minChars: 5,
+    delay: 1500,
     parse: prep_autocomplete_data,
     formatItem: function(item) {
       return format_autocomplete(item);
