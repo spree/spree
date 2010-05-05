@@ -1179,3 +1179,10 @@ div#checkout #payment-methods li.last {
   float: left;
   width: 190px;
 }
+div#checkout #checkout-summary {
+  background-color: #c3c9df;
+  float: right;
+  margin-top: 10px;
+  padding: 20px;
+  width: 180px;
+}
