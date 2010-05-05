@@ -9,6 +9,7 @@ class Shipment < ActiveRecord::Base
   has_many :inventory_units
   before_create :generate_shipment_number
   after_save :create_shipping_charge
+  after_destroy :release_inventory_units
 
   attr_accessor :special_instructions
   accepts_nested_attributes_for :address
@@ -114,6 +115,10 @@ class Shipment < ActiveRecord::Base
     unless shipping_method.nil?
       errors.add :shipping_method, I18n.t("is_not_available_to_shipment_address") unless shipping_method.zone.include?(address)
     end
+  end
+
+  def release_inventory_units
+    inventory_units.each {|unit| unit.update_attribute(:shipment_id, nil)}
   end
 
 end
