@@ -7,7 +7,7 @@ class Admin::ShipmentsController < Admin::BaseController
 
   update.wants.html do
     if @order.in_progress?
-      redirect_to new_admin_order_payment_url(@order)
+      redirect_to admin_order_adjustments_url(@order)
     else
       redirect_to edit_object_url
     end

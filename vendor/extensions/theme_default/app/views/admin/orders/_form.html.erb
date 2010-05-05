@@ -66,5 +66,13 @@
 
 <% end %>
 
+<% if @order.in_progress? %>
+  <script type="text/javascript">
+    jQuery(document).ready(function(){
+      $('#order_tab_summary h5#order_total').html('<%= "Total: #{number_to_currency(@order.total)}" %>');
+    });
+  </script>
+<% end %>
+
 <%= javascript_include_tag 'admin/orders/edit_form.js' %>
 

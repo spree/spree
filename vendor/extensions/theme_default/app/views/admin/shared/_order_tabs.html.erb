@@ -1,7 +1,12 @@
 <h1><%= t(:order) + " #{@order.number}" %></h1>
 
 <% content_for :sidebar do %>
-  <h3 class="name"><%= t(:order) + " ##{@order.number} (#{t(@order.state)})" %></h3>
+  <div id="order_tab_summary">
+    <h3 id="order_number"><%= t(:order) + " ##{@order.number} " %></h3>
+    <h5 id="order_status">Status: <%= t(@order.state) %></h5>
+    <h5 id="order_total">Total: <%= number_to_currency(@order.total) %></h5>
+    <br class="clear" />
+  </div>
   <br class="clear" />
 
   <ul class="sidebar">
@@ -14,10 +19,13 @@
             <%= link_to t("customer_details"), edit_admin_order_checkout_url(@order) %>
         </li>
         <li <%= ' class="active"' if current == "Shipments" %>>
-           <%= link_to t("shipment"), edit_admin_order_shipment_url(@order, @order.shipment) %>
+           <%= link_to t("shipment"), @order.line_items.empty? || !@order.checkout.valid? ? "javascript:$('form').submit();" : edit_admin_order_shipment_url(@order, @order.shipment) %>
+        </li>
+        <li <%= ' class="active"' if current == "Adjustments" %>>
+           <%= link_to t("adjustments"), @order.line_items.empty? || !@order.checkout.valid? ? "javascript:$('form').submit();" : admin_order_adjustments_url(@order) %>
         </li>
         <li <%= ' class="active"' if current == "Payments" %>>
-           <%= link_to t("payment"),  new_admin_order_payment_url(@order) %>
+           <%= link_to t("payment"), @order.line_items.empty? || !@order.checkout.valid? ? "javascript:$('form').submit();" : new_admin_order_payment_url(@order) %>
         </li>
 
       <% else %>

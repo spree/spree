@@ -4,6 +4,9 @@ class Admin::LineItemsController < Admin::BaseController
   ssl_required
   actions :all, :except => :index
 
+  create.flash nil
+  update.flash nil
+  destroy.flash nil
 
   #override r_c create action as we want to use order#add_variant instead of creating line_item
   def create

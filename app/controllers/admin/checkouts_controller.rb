@@ -5,6 +5,9 @@ class Admin::CheckoutsController  < Admin::BaseController
   before_filter :load_data
   ssl_required
 
+  create.flash nil
+  update.flash nil
+
   edit.before :edit_before
   update.before :update_before
 

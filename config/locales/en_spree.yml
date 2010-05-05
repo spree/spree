@@ -487,6 +487,7 @@ en:
   new_option_type: "New Option Type"
   new_option_value: "New Option Value"
   new_order: "New Order"
+  new_order_completed: "New Order Completed"
   new_payment: "New Payment"
   new_payment_method: New Payment Method
   new_product: "New Product"

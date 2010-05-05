@@ -4,12 +4,16 @@ class Admin::OrdersController < Admin::BaseController
   before_filter :initialize_txn_partials
   before_filter :initialize_order_events
   before_filter :load_object, :only => [:fire, :resend, :history]
+  before_filter :ensure_line_items, :only => [:update]
 
-  update.wants.html do
-    if @order.bill_address.nil? || @order.ship_address.nil?
-      redirect_to edit_admin_order_checkout_url(@order)
-    else
-      redirect_to admin_order_url(@order)
+  update do
+    flash nil
+    wants.html do
+      if @order.bill_address.nil? || @order.ship_address.nil?
+        redirect_to edit_admin_order_checkout_url(@order)
+      else
+        redirect_to admin_order_url(@order)
+      end
     end
   end
 
@@ -69,6 +73,15 @@ class Admin::OrdersController < Admin::BaseController
   # Used for extensions which need to provide their own custom event links on the order details view.
   def initialize_order_events
     @order_events = %w{cancel resume}
+  end
+
+  def ensure_line_items
+    load_object
+    if @order.line_items.empty?
+      @order.errors.add(:line_items, t('activerecord.errors.messages.blank'))
+      @order.update_totals
+      render :edit
+    end
   end
 
 end

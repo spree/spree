@@ -75,6 +75,9 @@ body {
           #sidebar h3 a {
             color: #111;
             text-decoration: none; }
+        #sidebar h5 {
+          margin: 0 10px;
+           float: left;}
         #sidebar span.sku {
           display: block;
           font-weight: normal; }
@@ -520,26 +523,26 @@ div.product-preview-products {
 /* Product Groups */
 
 table#product_scopes tr {
-	background-color: #eee;
-	
+  background-color: #eee;
+
 }
 table#product_scopes tr td {
-	border-top: 4px solid #fff;
-	border-bottom: 1px solid #bbb;
-	padding: 5px 10px;
+  border-top: 4px solid #fff;
+  border-bottom: 1px solid #bbb;
+  padding: 5px 10px;
 }
 table#product_scopes tr td.actions {
   vertical-align: middle;
   text-align: right;
 }
 table#product_scopes tr td table {
-	margin: 0;
-	width: auto;
+  margin: 0;
+  width: auto;
 }
 table#product_scopes tr td table tr td {
-	padding: 0;
-	border:  none;
-	padding-right: 5px;
+  padding: 0;
+  border:  none;
+  padding-right: 5px;
 }
 
 #product_group_forms_container {
@@ -548,7 +551,7 @@ table#product_scopes tr td table tr td {
 #new_product_group_form {
   position: absolute;
   right: 25px;
-  bottom: 0;  
+  bottom: 0;
 }
 #new_product_group_form p {
   text-align: right;
