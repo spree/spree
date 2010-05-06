@@ -8,6 +8,16 @@
   <% f.field_container :permalink_part do %>
     <%= f.label :permalink_part, t("permalink") %><span class="required">*</span><br />
     <%= @taxon.permalink.split("/")[0...-1].join("/") + "/" %><%= text_field_tag :permalink_part, @permalink_part  %>
-
   <% end %>
+
+  <% f.field_container :icon do %>
+    <%= f.label :icon, t('icon') %><br />
+    <%= f.file_field :icon %>
+  <% end %>
+
+  <% f.field_container :icon do %>
+    <%= f.label :description, t(:description) %><br />
+    <%= f.text_area :description %></p>
+  <% end %>
+
 <% end %>

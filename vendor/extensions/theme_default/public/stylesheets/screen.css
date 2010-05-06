@@ -378,15 +378,16 @@ p img {
   color: #333333;
   display: block;
   line-height: 2.5em;
-  padding-left: 20px;
-  width: 170px;
+  margin-left: 42px;
+  padding-left: 5px;
+  width: 143px;
   white-space: nowrap;
   overflow: hidden;
 }
 .navigation-list li a:hover { background: url(../images/menu-hover.png) right center no-repeat; }
 .navigation-list li.current { width: 200px; }
 .navigation-list li.current a {
-  width: 180px;
+  width: 153px;
   background: url(../images/menu-current.png) right center no-repeat;
   white-space: nowrap;
   overflow: hidden;
@@ -397,6 +398,9 @@ p img {
   font-size: 1.5em;
   text-indent: -5px;
   line-height: 2.2em;
+  margin-left: 0px;
+  padding-left: 15px;
+  width: 175px;
 }
 .breadcrumbs { margin-bottom: 1em; }
 .breadcrumbs ul {
