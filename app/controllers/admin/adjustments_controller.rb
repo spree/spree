@@ -10,7 +10,7 @@ class Admin::AdjustmentsController < Admin::BaseController
   destroy.success.wants.js { render_js_for_destroy }
 
   create.before :set_type
-  create.after :update_totals
+  create.after :update_totals_and_complete_free_order
   update.after :update_totals
   destroy.after :update_totals
 
@@ -31,4 +31,15 @@ class Admin::AdjustmentsController < Admin::BaseController
   def update_totals
     @order.update_totals!
   end
+
+  # Automatically complete and order where no payment is necessary because adjustments cancel out the total
+  def update_totals_and_complete_free_order
+    @order.update_totals!
+    if @order.in_progress? and @order.item_total > 0 and @order.total == 0 and @order.payments.total == 0
+      until @order.checkout.complete?
+        @order.checkout.next!
+      end
+    end
+  end
+  
 end
