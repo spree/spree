@@ -107,6 +107,17 @@ Spork.prefork do
     @checkout.save
     @order.complete!
   end
+  
+  def create_paid_order
+    create_complete_order
+    @order.payments = [Factory(:payment, :amount => @order.total, :payable => @order)]
+    until @order.checkout.complete?
+      @order.checkout.next!
+    end
+    @order.payments.first.finalize!
+    @order.reload
+    @order.pay!
+  end
 
 # useful method for functional tests that require an authenticated user
   def set_current_user

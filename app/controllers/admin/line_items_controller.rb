@@ -59,7 +59,7 @@ class Admin::LineItemsController < Admin::BaseController
       tax_charge.update_attributes(:amount => tax_charge.calculate_tax_charge)
     end
 
-    @order.update_totals(true)
+    @order.update_totals!
     @order.save
 
   end
