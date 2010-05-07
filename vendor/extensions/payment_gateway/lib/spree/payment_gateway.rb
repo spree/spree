@@ -136,7 +136,7 @@ module Spree
     # Can only refund a captured transaction but if transaction hasn't been cleared by merchant, refund may still fail
     def can_credit?(payment)
       has_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) && 
-      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID) and payment.order.credit_owed?
+      has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID) and payment.order.outstanding_credit?
     end
 
     def has_payment_profile?
