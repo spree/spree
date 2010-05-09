@@ -66,13 +66,10 @@
 
 <% end %>
 
-<% if @order.in_progress? %>
-  <script type="text/javascript">
-    jQuery(document).ready(function(){
-      $('#order_tab_summary h5#order_total').html('<%= "Total: #{number_to_currency(@order.total)}" %>');
-    });
-  </script>
-<% end %>
+<script type="text/javascript">
+  $('#order_tab_summary h5#order_total').html('<%= "#{t('total')}: #{number_to_currency(@order.total)}" %>');
+  $('#order_tab_summary h5#order_status').html('<%= "#{t('status')}: #{t(@order.state)}" %>');
+</script>
 
 <%= javascript_include_tag 'admin/orders/edit_form.js' %>
 

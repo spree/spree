@@ -39,7 +39,8 @@ class Admin::AdjustmentsController < Admin::BaseController
       until @order.checkout.complete?
         @order.checkout.next!
       end
+      @order.reload.pay!
     end
   end
-  
+
 end
