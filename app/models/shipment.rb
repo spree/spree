@@ -15,7 +15,7 @@ class Shipment < ActiveRecord::Base
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :inventory_units
 
-  validates_presence_of :inventory_units, :if => Proc.new { |unit| !unit.order.in_progress? }
+  validates_presence_of :inventory_units, :if => Proc.new { |unit| !%w(in_progress canceled).include?(unit.order.state) }
   make_permalink :field => :number
 
   def to_param

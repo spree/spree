@@ -88,6 +88,23 @@ class CreditcardTest < ActiveSupport::TestCase
         assert_equal 0.00, @payment.amount.to_f
       end
     end
+    context "after cancelation and no inventory units in the shipment" do
+      setup do
+        @order.checkout.shipping_method = Factory(:shipping_method)
+        @order.complete!
+        @order.cancel!
+        @order.shipments.first.inventory_units.clear
+        @order.reload
+      end
+      context "followed by void" do
+        setup do
+          @creditcard.void(@payment)
+        end
+        should "update the payments" do
+          assert_equal 0.00, @order.payments.total.to_f
+        end
+      end
+    end
   end
   
   context "authorization failure" do
@@ -106,7 +123,7 @@ class CreditcardTest < ActiveSupport::TestCase
       @order.line_items << Factory(:line_item,:order=>@order,:price=>100, :quantity=>1)
       @order.checkout.shipping_method = Factory(:shipping_method)
       @order.save!
-
+  
       @payment = Factory(:payment, :payable=>@order, :amount=>100)
       @creditcard = @payment.source
       @creditcard.purchase(100, @payment)
