@@ -12,6 +12,13 @@ class InventoryUnitTest < ActiveSupport::TestCase
       end
 
       should_change("InventoryUnit.count", :by => 5) { InventoryUnit.count }
+      context "when sold (again - b/c of unexpected error) " do
+        setup do 
+          @order.state = "in_progress"
+          InventoryUnit.sell_units(@order)          
+        end
+        should_not_change("InventoryUnit.count") { InventoryUnit.count }
+      end
 
     end
   end   

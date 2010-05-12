@@ -33,7 +33,11 @@ class InventoryUnit < ActiveRecord::Base
   end
 
   # grab the appropriate units from inventory, mark as sold and associate with the order
-  def self.sell_units(order)
+  def self.sell_units(order)    
+    
+    # we should not already have inventory associated with the order at this point but we should clear to be safe (#1394)
+    order.inventory_units.destroy_all
+    
     out_of_stock_items = []
     order.line_items.each do |line_item|
       variant = line_item.variant
