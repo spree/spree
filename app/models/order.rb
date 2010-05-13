@@ -106,6 +106,13 @@ class Order < ActiveRecord::Base
     # pop the resume event so we can see what the event before that was
     state_events.pop if state_events.last.name == "resume"
     update_attribute("state", state_events.last.previous_state)
+
+    if paid?
+      InventoryUnit.sell_units(self) if inventory_units.empty?
+      shipment.inventory_units = inventory_units
+      shipment.ready!
+    end
+
   end
 
   def make_shipments_shipped
@@ -365,6 +372,7 @@ class Order < ActiveRecord::Base
   end
 
   def cancel_order
+    make_shipments_pending
     restock_inventory
     OrderMailer.deliver_cancel(self)
   end
@@ -373,6 +381,8 @@ class Order < ActiveRecord::Base
     inventory_units.each do |inventory_unit|
       inventory_unit.restock! if inventory_unit.can_restock?
     end
+
+    inventory_units.reload
   end
 
   def update_line_items
