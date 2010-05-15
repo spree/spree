@@ -6,8 +6,6 @@ class PaymentGatewayExtension < Spree::Extension
   def activate  
     require 'active_merchant'
 
-    # Set the global "gateway mode" for active merchant (depending on what environment we're in)
-    ActiveMerchant::Billing::Base.gateway_mode = :test unless ENV['RAILS_ENV'] == "production"
     # Mixin the payment_gateway method into the base controller so it can be accessed by the checkout process, etc.
     Creditcard.class_eval do
       # add gateway methods to the creditcard so we can authorize, capture, etc.

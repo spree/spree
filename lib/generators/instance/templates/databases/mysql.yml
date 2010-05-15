@@ -35,6 +35,17 @@ test:
   host: localhost
 <% end -%>
 
+staging:
+  adapter: mysql
+  database: <%= app_name %>_staging
+  username: root
+  password: 
+<% if socket -%>
+  socket: <%= socket %>
+<% else -%>
+  host: localhost
+<% end -%>
+
 production:
   adapter: mysql
   database: <%= app_name %>
