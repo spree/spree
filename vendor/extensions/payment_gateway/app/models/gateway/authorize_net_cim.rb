@@ -91,7 +91,7 @@ class Gateway::AuthorizeNetCim < Gateway
 
     def options_for_create_customer_profile(payment)
       if payment.is_a? Creditcard
-        info = { :bill_to => payment.address, :payment => { :credit_card => payment } }
+        info = { :bill_to => generate_address_hash(payment.address), :payment => { :credit_card => payment } }
       else
         info = { :bill_to => generate_address_hash(payment.order.bill_address),
                  :payment => { :credit_card => payment.source } }
