@@ -69,9 +69,9 @@ class Admin::ProductsController < Admin::BaseController
     end
 
     def collection
-      unless request.xhr?
-        base_scope = end_of_association_chain
+      base_scope = end_of_association_chain
 
+      unless request.xhr?
         # Note: the SL scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
         # QUERY - better as named scope or as SL scope?
         if params[:search].nil? || params[:search][:deleted_at_not_null].blank?
@@ -81,17 +81,14 @@ class Admin::ProductsController < Admin::BaseController
         @search = base_scope.group_by_products_id.searchlogic(params[:search])
         @search.order ||= "ascend_by_name"
 
-        @collection = @search.paginate(:include  => {:variants => [:images, :option_values]},
-                                       :per_page => Spree::Config[:admin_products_per_page],
-                                       :page     => params[:page])
+        @collection = @search.paginate(:include   => {:variants => [:images, :option_values]},
+                                       :per_page  => Spree::Config[:admin_products_per_page],
+                                       :page      => params[:page])
       else
-        @collection = Product.find( :all,
-                                    :conditions => ["name like ?", "%#{params[:q]}%"],
-                                    :include =>  [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images])
+        includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
-        @collection.concat Product.find( :all,
-                                    :conditions => ["variants.sku like ?", "%#{params[:q]}%"],
-                                    :include =>  [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images])
+        @collection = base_scope.name_contains(params[:q]).all(:include => includes, :limit => 10)
+        @collection.concat base_scope.group_by_products_id.variants_including_master_sku_contains(params[:q]).all(:include => includes, :limit => 10)
 
         @collection.uniq!
       end

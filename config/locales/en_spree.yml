@@ -481,6 +481,7 @@ en:
   my_account: "My Account"
   my_orders: "My Orders"
   name: Name
+  name_or_sku: "Name or SKU"
   new: New
   new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration
