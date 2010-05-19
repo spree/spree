@@ -30,6 +30,7 @@ class Admin::LineItemsController < Admin::BaseController
   end
 
   destroy.success.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false }
+  destroy.failure.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false }
 
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => false}
@@ -39,9 +40,8 @@ class Admin::LineItemsController < Admin::BaseController
     wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false}
   end
 
-  update.response do |wants|
-    wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false}
-  end
+  update.success.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false}
+  update.failure.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false}
 
   destroy.after :recalulate_totals
   update.after :recalulate_totals
@@ -61,5 +61,9 @@ class Admin::LineItemsController < Admin::BaseController
 
     @order.checkout.enable_validation_group(@order.checkout.state.to_sym)
     @order.update_totals!
+
+    unless @order.in_progress?
+      InventoryUnit.adjust_units(@order)
+    end
   end
 end

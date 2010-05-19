@@ -1,3 +1,5 @@
+<%=error_messages_for :line_item %>
+
 <% form_for(@order, :url => admin_order_url(@order), :html => { :method => :put}) do |f| %>
   <%= f.hidden_field :number %>
   <table class="index">

@@ -25,6 +25,10 @@ class LineItemTest < ActiveSupport::TestCase
     should "return the correct total" do
       assert_in_delta @line_item.total, 30.00, 0.00001
     end
+
+    should "allow line item to be destroyed" do
+      assert @line_item.destroy
+    end
   end
 
   context "when variant is out of stock" do
@@ -71,7 +75,7 @@ class LineItemTest < ActiveSupport::TestCase
       setup do
         Spree::Config.set(:allow_backorders => true)
       end
-      should "not be valid" do
+      should "be valid" do
         assert @line_item.valid?
       end
     end
@@ -100,4 +104,29 @@ class LineItemTest < ActiveSupport::TestCase
     end
   end
 
+  context "when order is completely shipped" do
+    setup do
+      @order = Order.create!
+      @line_item = Factory.build(:line_item, :quantity => 2, :price => 15.00, :order => @order)
+      @order.line_items << @line_item
+      @order.complete!
+      @order.pay!
+      @order.ship!
+    end
+
+    should "not allow line item to be destroyed" do
+      assert !@line_item.destroy
+    end
+
+    context "and line_item quantity is decreased" do
+      setup do
+        @line_item.quantity = 1
+      end
+
+      should "not be valid" do
+        assert !@line_item.valid?
+      end
+
+    end
+  end
 end

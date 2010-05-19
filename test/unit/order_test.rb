@@ -63,7 +63,7 @@ class OrderTest < ActiveSupport::TestCase
           order = Order.create!
           line_item = Factory(:line_item,:order => order)
           order.line_items << line_item
-          order.complete 
+          order.complete
           #let's clear our stock..
           on_stock_count = line_item.variant.inventory_units.with_state("on_hand").count
           InventoryUnit.destroy_on_hand(line_item.variant, on_stock_count)

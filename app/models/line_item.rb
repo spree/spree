@@ -6,6 +6,7 @@ class LineItem < ActiveRecord::Base
   has_one :product, :through => :variant
 
   before_validation :copy_price
+  before_destroy :ensure_not_shipped
 
   validates_presence_of :variant, :order
   validates_numericality_of :quantity, :only_integer => true, :message => I18n.t("validation.must_be_int")
@@ -28,6 +29,10 @@ class LineItem < ActiveRecord::Base
            variant && quantity <= variant.on_hand
       errors.add(:quantity, I18n.t("validation.is_too_large") + " (#{self.variant.name})")
     end
+
+    if shipped_count = order.shipped_units.nil? ? nil : order.shipped_units[variant]
+      errors.add(:quantity, I18n.t("validation.cannot_be_less_than_shipped_units") ) if quantity < shipped_count
+    end
   end
 
   def increment_quantity
@@ -45,6 +50,14 @@ class LineItem < ActiveRecord::Base
 
   def adjust_quantity
     self.quantity = 0 if self.quantity.nil? || self.quantity < 0
+  end
+
+  private
+  def ensure_not_shipped
+    if shipped_count = order.shipped_units.nil? ? nil : order.shipped_units[variant]
+      errors.add_to_base I18n.t("cannot_destory_line_item_as_inventory_units_have_shipped")
+      return false
+    end
   end
 end
 

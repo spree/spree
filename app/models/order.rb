@@ -98,7 +98,7 @@ class Order < ActiveRecord::Base
       transition :to => 'shipped', :from  => 'paid'
     end
     event :return_authorized do
-      transition :to => 'awaiting_return', :from => 'shipped'
+      transition :to => 'awaiting_return'
     end
   end
 
@@ -130,13 +130,8 @@ class Order < ActiveRecord::Base
   end
 
   def shipped_units
-    shipped_units = shipments.inject([]) { |units, shipment| units << shipment.inventory_units if shipment.shipped? }
-
-    if shipped_units.nil?
-      return nil
-    else
-      shipped_units.flatten!
-    end
+    shipped_units = shipments.inject([]) { |units, shipment| units.concat(shipment.shipped? ? shipment.inventory_units : []) }
+    return nil if shipped_units.empty?
 
     shipped = {}
     shipped_units.group_by(&:variant_id).each do |variant_id, ship_units|

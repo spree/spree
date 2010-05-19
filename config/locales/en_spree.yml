@@ -267,6 +267,7 @@ en:
   cancel: cancel
   canceled: Canceled
   cannot_create_returns: Cannot create returns as this order has not shipped yet.
+  cannot_destory_line_item_as_inventory_units_have_shipped: Cannot destory line item as some inventory units have shipped.
   capture: Capture
   card_code: "Card Code"
   card_details: "Card details"
@@ -911,6 +912,7 @@ en:
     is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
     must_be_int: "must be an integer"
     must_be_non_negative: "must be a non-negative value"
+    cannot_be_less_than_shipped_units: "cannot be less than the number of shipped units."
   value: Value
   variants: Variants
   vat: "VAT"
