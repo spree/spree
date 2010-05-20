@@ -49,6 +49,14 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def collection
+    if params[:search] && !params[:search][:created_at_after].empty?
+      params[:search][:created_at_after] = Time.zone.parse(params[:search][:created_at_after]).beginning_of_day rescue ""
+    end
+
+    if params[:search] && !params[:search][:created_at_before].empty?
+      params[:search][:created_at_before] = Time.zone.parse(params[:search][:created_at_before]).end_of_day rescue ""
+    end
+
     @search = Order.searchlogic(params[:search])
     @search.order ||= "descend_by_created_at"
 
