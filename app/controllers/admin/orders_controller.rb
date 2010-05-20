@@ -49,11 +49,11 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def collection
-    if params[:search] && !params[:search][:created_at_after].empty?
+    if params[:search] && !params[:search][:created_at_after].blank?
       params[:search][:created_at_after] = Time.zone.parse(params[:search][:created_at_after]).beginning_of_day rescue ""
     end
 
-    if params[:search] && !params[:search][:created_at_before].empty?
+    if params[:search] && !params[:search][:created_at_before].blank?
       params[:search][:created_at_before] = Time.zone.parse(params[:search][:created_at_before]).end_of_day rescue ""
     end
 
