@@ -3,19 +3,19 @@ class UserSessionsController < Spree::BaseController
   before_filter :require_user, :only => :destroy
   ssl_required :new, :create, :destroy, :update
   ssl_allowed :login_bar
-    
+
   def new
     @user_session = UserSession.new
   end
 
   def create
-    not_need_user_auto_creation = 
+    not_need_user_auto_creation =
         user_without_openid(params[:user_session]) ||
         user_with_openid_exists?(:openid_identifier => params['openid.identity']) ||
-        user_with_openid_exists?(params[:user_session]) 
+        user_with_openid_exists?(params[:user_session])
 
     if not_need_user_auto_creation
-      create_user_session(params[:user_session])   
+      create_user_session(params[:user_session])
     else
       create_user(params[:user_session])
     end
@@ -27,22 +27,22 @@ class UserSessionsController < Spree::BaseController
     flash[:notice] = t("logged_out")
     redirect_to products_path
   end
-  
+
   def nav_bar
     render :partial => "shared/nav_bar"
   end
-  
+
   private
-  
+
   def user_with_openid_exists?(data)
     data && !data[:openid_identifier].blank? &&
       !!User.find(:first, :conditions => ["openid_identifier LIKE ?", "%#{data[:openid_identifier]}%"])
   end
-  
+
   def user_without_openid(data)
     data && data[:openid_identifier].blank?
   end
-  
+
   def create_user_session(data)
     @user_session = UserSession.new(data)
     @user_session.save do |result|
@@ -50,10 +50,10 @@ class UserSessionsController < Spree::BaseController
         # Should restore last uncompleted order and add current(guest) order to it, if exists.
         order = @user_session.record.orders.last(:conditions => {:completed_at => nil})
         if order
-          if (session[:order_token] && guest_order = Order.find_by_token(session[:order_token]))
+          if (session[:order_token] && guest_order = Order.find(:first, :conditions => {:token => session[:order_token], :user_id => nil, :completed_at => nil}))
             guest_order.line_items.each do |line_item|
               order.add_variant(line_item.variant, line_item.quantity)
-            end  
+            end
             order.save
             session[:return_to].gsub!(guest_order.number, order.number) if session[:return_to]
             guest_order.destroy
@@ -61,7 +61,7 @@ class UserSessionsController < Spree::BaseController
           session[:order_token] = order.token
           session[:order_id] = order.id
         end
-        
+
         respond_to do |format|
           format.html {
             flash[:notice] = t("logged_in_succesfully") unless session[:return_to]
@@ -84,7 +84,7 @@ class UserSessionsController < Spree::BaseController
     end
     redirect_back_or_default(products_path) unless performed?
   end
-  
+
   def create_user(data)
     @user = User.new(data)
 
@@ -102,5 +102,5 @@ class UserSessionsController < Spree::BaseController
   def accurate_title
     I18n.t(:log_in)
   end
-  
+
 end
