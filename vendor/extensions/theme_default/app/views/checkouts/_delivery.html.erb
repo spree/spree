@@ -11,7 +11,7 @@
             <% @available_methods.each do |shipping_method| %>
               <label>
                 <%= radio_button(:checkout, :shipping_method_id, shipping_method[:id]) %>
-                <%= shipping_method[:name] %> <%= shipping_method[:rate] %>
+                <%= shipping_method[:name] %> <%= number_to_currency shipping_method[:cost] %>
               </label><br />
             <% end %>
           <% end %>

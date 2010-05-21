@@ -195,8 +195,9 @@ class CheckoutsController < Spree::BaseController
         @checkout.shipment.shipping_method = ship_method
         { :id => ship_method.id,
           :name => ship_method.name,
-          :rate => number_to_currency(ship_method.calculate_cost(@checkout.shipment)) }
-      end
+          :cost => ship_method.calculate_cost(@checkout.shipment)
+        }
+      end.sort_by{|r| r[:cost]}
     rescue Spree::ShippingError => ship_error
       flash[:error] = ship_error.to_s
       []
