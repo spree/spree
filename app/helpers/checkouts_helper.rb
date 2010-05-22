@@ -1,7 +1,8 @@
 module CheckoutsHelper
 
   def checkout_progress
-    steps = Checkout.state_names.reject { |n| n == "complete" }.map do |state|
+    steps = Checkout.state_names.reject { |n| n == "complete" }
+    items = steps.map do |state|
       next if state == "confirm" and not Gateway.current.payment_profiles_supported?
       text = t("checkout_steps.#{state}")
 
@@ -17,14 +18,13 @@ module CheckoutsHelper
       css_classes << 'next' if state_index == current_index + 1
       css_classes << 'current' if state == @checkout.state
       css_classes << 'first' if state_index == 0
-      css_classes << 'last' if state_index == Checkout.state_names.length - 1
-
+      css_classes << 'last' if state_index == steps.length - 1
       # It'd be nice to have separate classes but combining them with a dash helps out for IE6 which only sees the last class
       content_tag('li', content_tag('span', text), :class => css_classes.join('-'))
     end
-    content_tag('ol', steps.join("\n"), :class => 'progress-steps', :id => "checkout-step-#{@checkout.state}") + '<br clear="left" />'
+    content_tag('ol', items.join("\n"), :class => 'progress-steps', :id => "checkout-step-#{@checkout.state}") + '<br clear="left" />'
   end
-  
+    
   def billing_firstname
     @checkout.bill_address.firstname  rescue ''
   end
