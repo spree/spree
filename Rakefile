@@ -24,8 +24,8 @@ begin
     s.rubyforge_project = 'spree'
     s.version = Spree::Version
     s.add_dependency 'rake', '>= 0.7.1'
-    s.add_dependency 'rails', '= 2.3.5'
-    s.add_dependency 'rack', '>= 1.0.1' # only here b/c rails 2.3.5 lamely forgets to require it
+    s.add_dependency 'rails', '= 2.3.8'
+    s.add_dependency 'rack', '>= 1.1.0'
     s.add_dependency 'highline', '= 1.5.1'
     s.add_dependency 'authlogic', '2.1.3'
     s.add_dependency 'authlogic-oid', "1.0.4"
