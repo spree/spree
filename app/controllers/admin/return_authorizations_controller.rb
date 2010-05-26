@@ -16,7 +16,7 @@ class Admin::ReturnAuthorizationsController < Admin::BaseController
   def fire
     load_object
     @return_authorization.send("#{params[:e]}!")
-    flash[:notice] = t('return_authorization_updated')
+    self.notice = t('return_authorization_updated')
     redirect_to :back
   end
 

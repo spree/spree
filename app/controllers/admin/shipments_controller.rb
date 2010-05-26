@@ -29,7 +29,7 @@ class Admin::ShipmentsController < Admin::BaseController
 
   def fire
     @shipment.send("#{params[:e]}!")
-    flash[:notice] = t('shipment_updated')
+    self.notice = t('shipment_updated')
     redirect_to :back
   end
 

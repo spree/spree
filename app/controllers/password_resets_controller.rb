@@ -10,7 +10,7 @@ class PasswordResetsController < Spree::BaseController
     @user = User.find_by_email(params[:email])
     if @user
       @user.deliver_password_reset_instructions!
-      flash[:notice] = t("password_reset_instructions_are_mailed")
+      self.notice = t("password_reset_instructions_are_mailed")
       redirect_to root_url
     else
       flash[:error] = t("no_user_found")
@@ -26,7 +26,7 @@ class PasswordResetsController < Spree::BaseController
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     if @user.save
-      flash[:notice] = t("password_updated")
+      self.notice = t("password_updated")
       redirect_to account_url
     else
       render :action => :edit
@@ -37,7 +37,7 @@ class PasswordResetsController < Spree::BaseController
     def load_user_using_perishable_token
       @user = User.find_using_perishable_token(params[:id])
       unless @user
-        flash[:notice] = t("password_reset_token_not_found")
+        self.notice = t("password_reset_token_not_found")
         redirect_to root_url
       end
     end

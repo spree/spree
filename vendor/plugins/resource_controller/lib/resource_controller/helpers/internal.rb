@@ -39,11 +39,11 @@ module ResourceController
           set_flash_now(action)
         end
   
-        # Sets the regular flash (i.e. flash[:notice] = '...')
+        # Sets the regular flash (i.e. self.notice = '...')
         #
         def set_normal_flash(action)
           if f = options_for(action).flash
-            flash[:notice]     = f.is_a?(Proc) ? instance_eval(&f) : options_for(action).flash
+            self.notice     = f.is_a?(Proc) ? instance_eval(&f) : options_for(action).flash
           end
         end
   

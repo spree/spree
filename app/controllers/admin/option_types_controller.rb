@@ -16,7 +16,7 @@ class Admin::OptionTypesController < Admin::BaseController
   def remove
     @product.option_types.delete(@option_type)
     @product.save
-    flash[:notice] = I18n.t("notice_messages.option_type_removed")
+    self.notice = I18n.t("notice_messages.option_type_removed")
     redirect_to selected_admin_product_option_types_url(@product)
   end
 

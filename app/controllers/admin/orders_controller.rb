@@ -28,7 +28,7 @@ class Admin::OrdersController < Admin::BaseController
     Order.transaction do
       @order.send("#{event}!")
     end
-    flash[:notice] = t('order_updated')
+    self.notice = t('order_updated')
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
   ensure
@@ -37,7 +37,7 @@ class Admin::OrdersController < Admin::BaseController
 
   def resend
     OrderMailer.deliver_confirm(@order, true)
-    flash[:notice] = t('order_email_resent')
+    self.notice = t('order_email_resent')
     redirect_to :back
   end
 

@@ -34,8 +34,8 @@ end
     
     <div id="content">
       <%= breadcrumbs(@taxon) if @taxon %>
-      <% if flash[:notice] %>
-      <div class="flash notice"><%= flash[:notice] %></div>
+      <% if self.notice %>
+      <div class="flash notice"><%= self.notice %></div>
       <% end %>
       <% if flash[:error] %>
       <div class="flash errors"><%= flash[:error] %></div>

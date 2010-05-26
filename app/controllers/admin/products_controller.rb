@@ -38,9 +38,9 @@ class Admin::ProductsController < Admin::BaseController
     end
 
     if @product.save
-      flash[:notice] = I18n.t("notice_messages.product_deleted")
+      self.notice = I18n.t("notice_messages.product_deleted")
     else
-      flash[:notice] = I18n.t("notice_messages.product_not_deleted")
+      self.notice = I18n.t("notice_messages.product_not_deleted")
     end
 
     respond_to do |format|
@@ -54,9 +54,9 @@ class Admin::ProductsController < Admin::BaseController
     @new = @product.duplicate
 
     if @new.save
-      flash[:notice] = I18n.t("notice_messages.product_cloned")
+      self.notice = I18n.t("notice_messages.product_cloned")
     else
-      flash[:notice] = I18n.t("notice_messages.product_not_cloned")
+      self.notice = I18n.t("notice_messages.product_not_cloned")
     end
 
     redirect_to edit_admin_product_url(@new)

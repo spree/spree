@@ -25,7 +25,7 @@ class Admin::PaymentsController < Admin::BaseController
         until @order.checkout.state == "complete"
           @order.checkout.next!
         end
-        flash[:notice] = t('new_order_completed')
+        self.notice = t('new_order_completed')
         redirect_to admin_order_url(@order)
       end
 
@@ -42,7 +42,7 @@ class Admin::PaymentsController < Admin::BaseController
     Payment.transaction do
       @payment.source.send("#{event}", @payment)
     end
-    flash[:notice] = t('payment_updated')
+    self.notice = t('payment_updated')
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
   ensure
