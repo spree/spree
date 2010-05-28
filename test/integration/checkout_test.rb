@@ -3,6 +3,7 @@ require 'test_helper'
 class CheckoutTest < ActionController::IntegrationTest
   context "Checkout" do                                  
     setup do 
+      Spree::Config.set(:allow_anonymous_checkout => false)
       @user = Factory(:admin_user, :password=>'test', :password_confirmation=>'test')
       @product = Factory(:product)
     end
