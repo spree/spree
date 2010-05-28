@@ -5,7 +5,7 @@
 <div id="checkout">
   <h1><%= t("checkout")%></h1>
   <%= checkout_progress %>
-
+  <br clear="left" />
   <%= error_messages_for :checkout %>
   <% hook :checkout_summary_box do %>
     <div id="checkout-summary">

@@ -22,7 +22,7 @@ module CheckoutsHelper
       # It'd be nice to have separate classes but combining them with a dash helps out for IE6 which only sees the last class
       content_tag('li', content_tag('span', text), :class => css_classes.join('-'))
     end
-    content_tag('ol', items.join("\n"), :class => 'progress-steps', :id => "checkout-step-#{@checkout.state}") + '<br clear="left" />'
+    content_tag('ol', items.join("\n"), :class => 'progress-steps', :id => "checkout-step-#{@checkout.state}")
   end
     
   def billing_firstname
