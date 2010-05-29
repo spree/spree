@@ -27,7 +27,10 @@ module Admin::BaseHelper
     if error_message_on :product, :name
     end
   end
-
+  
+  #You can add additional_fields to the product and variant models. See section 4.2 here: http://spreecommerce.com/documentation/extensions.html 
+  #If you do choose to add additional_fields, you can utilize the :use parameter to set the input type for any such fields. For example, :use => 'check_box'
+  #In the event that you add this functionality, the following method takes care of rendering the proper input type and logic for the supported input-types, which are text_field, check_box, radio_button, and select.
   def get_additional_field_value(controller, field)
     attribute = attribute_name_for(field[:name])
 
