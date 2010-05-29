@@ -6,6 +6,14 @@ class Taxon < ActiveRecord::Base
   before_create :set_permalink
   before_save :ensure_trailing_slash
 
+  validates_presence_of :name
+  has_attached_file :icon,
+                :styles => { :mini => '32x32>', :normal => '128x128>' },
+                :default_style => :mini,
+                :url => "/assets/taxons/:id/:style/:basename.:extension",
+                :path => ":rails_root/public/assets/taxons/:id/:style/:basename.:extension",
+                :default_url => "/images/default_taxon.png"
+
   # indicate which filters should be used for a taxon
   # this method should be customized to your own site
   include ::ProductFilters  # for detailed defs of filters
