@@ -52,7 +52,7 @@ class Order < ActiveRecord::Base
   make_permalink :field => :number
 
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
-  attr_protected :charge_total, :item_total, :total, :user, :number, :state, :token
+  attr_protected :charge_total, :item_total, :total, :user, :user_id, :number, :state, :token
 
   def checkout_complete; !!completed_at; end
 
