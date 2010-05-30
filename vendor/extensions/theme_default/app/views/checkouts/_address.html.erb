@@ -36,7 +36,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
               <%= bill_form.text_field :state_name, :class => 'required' -%>
             </noscript>
             <% state_elements = [
-               bill_form.collection_select(:state_id, @states,
+               bill_form.collection_select(:state_id, @bill_states,
                                   :id, :name,
                                   {:include_blank => true},
                                   {:class => have_states ? "required" : "hidden",
@@ -115,7 +115,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
               <%= ship_form.text_field :state_name, :class => 'required' -%>
             </noscript>
             <% state_elements = [
-                  ship_form.collection_select(:state_id, @states,
+                  ship_form.collection_select(:state_id, @ship_states,
                                     :id, :name,
                                     {:include_blank => true},
                                     {:class => have_states ? "required" : "hidden",
