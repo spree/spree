@@ -106,7 +106,7 @@ module Admin::NavigationHelper
   def text_for_button_link(text, html_options)
     s = ''
     if html_options[:icon]
-      s << icon(html_options.delete(:icon)) + ' &nbsp; '
+      s << icon(html_options.delete(:icon)) + ' '
     end
     s << text
     content_tag('span', s)
