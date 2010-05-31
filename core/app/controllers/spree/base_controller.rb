@@ -168,7 +168,7 @@ class Spree::BaseController < ActionController::Base
 
   def get_taxonomies
     @taxonomies ||= Taxonomy.find(:all, :include => {:root => :children})
-    @taxonomies
+    @taxonomies.reject { |t| t.root.nil? }
   end
 
   def current_gateway
