@@ -228,4 +228,179 @@ instructions attached, they will be shown in an order's shipment admin page and 
 also be edited at that stage. Observe that instructions are currently attached to
 the order and not to actual shipments.
 
+h3. The Active Shipping Extension
 
+The popular active_shipping extension harnesses the active_shipping gem to interface with carrier APIs such as USPS, Fedex and UPS, ultimately providing Spree-compatible calculators for the different delivery services of those carriers.
+
+NOTE. To install the spree-active-shipping extension run this command at the root of your project: +$ script/extension install http://github.com/railsdog/spree-active-shipping.git+
+
+As an example of how to use the active_shipping extension we'll demonstrate how to configure it to work with the USPS API. The other carriers follow a very similar pattern.
+
+For each USPS delivery service you want to offer (e.g. “USPS Media Mail”), you will need a Shipping Method with a descriptive name (recall that shipping methods are set up through the admin panel) and a calculator (registered in the active_shipping extension) that ties the delivery service and the shipping method together.
+
+h4. Default Calculators
+
+The active_shipping extension comes with several pre-configured calculators out of the box. For example here are the ones provided for the USPS carrier:
+
+<shell>
+  #in vendor/extensions/active_shipping/active_shipping_extension.rb 
+  def activate
+    [ 
+    #... calculators for Fedex and UPS not shown ...
+        Calculator::Usps::MediaMail,
+        Calculator::Usps::ExpressMail,
+        Calculator::Usps::PriorityMail,
+        Calculator::Usps::PriorityMailSmallFlatRateBox,
+        Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes,
+        Calculator::Usps::PriorityMailLargeFlatRateBox
+      ].each(&:register)
+  end
+</shell>
+
+Each USPS delivery service you want to make available at checkout has to be associated with a corresponding shipping method. Which shipping methods are made available at checkout is ultimately determined by the zone of the customer's shipping address. The USPS' basic shipping categories are domestic and international, so we'll set up zones to mimic this distinction. We need to set up two zones then, a domestic one, consisting of the USA and its territories and another international one, consisting of all other countries.
+
+With zones in place we can now start adding some shipping methods through the admin panel. The only other essential requirement to calculate the shipping total at checkout is that each product and variant be assigned a weight.
+
+The active_shipping gem needs some configuration variables set in order to consume the carrier web service. Among other things, it needs the API username and the origin location:
+
+<shell>
+  # these can be set in an initializer in your site extension
+  Spree::ActiveShipping::Config.set(:usps_login => "YOUR_USPS_LOGIN")
+  Spree::ActiveShipping::Config.set(:origin_country => "US")
+  Spree::ActiveShipping::Config.set(:origin_state => "HI")
+  Spree::ActiveShipping::Config.set(:origin_city => "Pahoa")
+  Spree::ActiveShipping::Config.set(:origin_zip => "96778")
+</shell>
+
+h4. Adding Additional Calculators
+
+Additional delivery services, that is not pre-configured as a calculator in the active_shipping extension, can be easily added. Say, for example, you need First Class International Parcels.
+
+First create a calculator class that inherits from Calculator::Usps::Base and implements a description class method:
+
+<shell>
+  #in vendor/extensions/site/app/models/calculator/usps/first_class_mail_international_parcels.rb
+  class Calculator::Usps::FirstClassMailInternationalParcels < Calculator::Usps::Base
+    def self.description
+      "USPS First-Class Mail International Package"
+    end
+  end
+</shell>
+
+NOTE. Note that unlike calculators that you write yourself, these calculators do not have to implement a #compute instance method that returns a shipping amount. The superclasses take care of that requirement.
+
+There is one gotcha to bear in mind. The string returned by the description method must <em>exactly</em> match the name of the USPS delivery service. To determine the exact spelling of the delivery service you'll need to examine what gets returned from the API:
+
+<shell>
+  #vendor/extensions/active_shipping/app/models/calculator/active_shipping.rb  
+  class Calculator::ActiveShipping < Calculator
+    def compute(line_items)
+     #....  
+     rates = retrieve_rates(origin, destination, packages(order))
+     # the key of this hash is the name you need to match 
+     # raise rates.inspect
+
+     return nil unless rates
+     rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
+     return nil unless rate
+     # divide by 100 since active_shipping rates are expressed as cents
+
+     return rate/100.0
+    end  
+
+    def retrieve_rates(origin, destination, packages)
+     #....
+     # carrier is an instance of ActiveMerchant::Shipping::USPS
+     response = carrier.find_rates(origin, destination, packages)
+     # turn this beastly array into a nice little hash
+     h = Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
+     #....
+    end
+  end
+</shell>
+
+As you can see in the code above, the active_shipping gem returns an array of services with their corresponding prices, which the #retrieve_rates method converts into a hash. Below is what would get returned for an order with an international destination:
+
+<shell>
+  {"USPS Priority Mail International Flat Rate Envelope"=>1345, 
+  "USPS First-Class Mail International Large Envelope"=>376, 
+  "USPS USPS GXG Envelopes"=>4295, 
+  "USPS Express Mail International Flat Rate Envelope"=>2895, 
+  "USPS First-Class Mail International Package"=>396, 
+  "USPS Priority Mail International Medium Flat Rate Box"=>4345, 
+  "USPS Priority Mail International"=>2800, 
+  "USPS Priority Mail International Large Flat Rate Box"=>5595, 
+  "USPS Global Express Guaranteed Non-Document Non-Rectangular"=>4295, 
+  "USPS Global Express Guaranteed Non-Document Rectangular"=>4295, 
+  "USPS Global Express Guaranteed (GXG)"=>4295, 
+  "USPS Express Mail International"=>2895, 
+  "USPS Priority Mail International Small Flat Rate Box"=>1345}
+</shell>
+
+From all the viable shipping services in this hash, the #compute method selects the one that matches the description of the calculator. At this point an optional flat handling fee (set via preferences) can be added:
+
+<shell>
+  rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0) 
+</shell>
+
+Finally, don’t forget to register the calculator you added. In extensions, this is accomplished in the activate method:
+
+<shell>
+  def activate
+    Calculator::Usps::FirstClassMailInternationalParcels.register
+  end
+</shell>
+
+h4. Filtering Shipping Methods On Criteria Other Than the Zone
+
+Ordinarily it is the zone of the shipping address that determines which shipping methods are displayed to a customer at checkout. Here is how the availability of a shipping method is determined:
+
+<shell>
+  class Checkout < ActiveRecord::Base
+    #...
+    def shipping_methods 
+      return [] unless ship_address
+      ShippingMethod.all_available(order)
+    end
+    #...
+  end
+
+  class ShippingMethod < ActiveRecord::Base
+  #.....
+    def available?(order)
+      calculator.available?(order)
+    end
+
+    def available_to_order?(order)
+      available?(order) && zone && zone.include?(order.ship_address)
+    end
+
+    def self.all_available(order)
+      all.select { |method| method.available_to_order?(order)}
+    end
+  end
+</shell>
+
+Unless overridden, the calculator’s #available? method returns true by default. It is therefore the zone of the destination address that filters out the shipping methods. However, in some circumstances it may be necessary to filter out additional shipping methods.
+
+Consider the case of the USPS First Class domestic shipping service, which is not offered if the weight of the package is greater than 13oz. Even though the USPS API does not return the option for First Class in this instance, nonetheless First Class will appear as an option in the checkout view with an unfortunate value of 0, since it has been set as a Shipping Method.
+
+To ensure that First Class shipping is not available for orders that weigh more than 13oz, the calculator's #available method must be overridden as follows:
+
+<shell>
+  #in vendor/extensions/site/app/models/calculator/usps/first_class_mail_parcels.rb
+  class Calculator::Usps::FirstClassMailParcels < Calculator::Usps::Base
+    def self.description
+      "USPS First-Class Mail Parcel"
+    end
+
+    def available?(order)
+      multiplier = Spree::ActiveShipping::Config[:unit_multiplier]
+      weight = order.line_items.inject(0) do |weight, line_item|
+        weight + (line_item.variant.weight ? (line_item.quantity * line_item.variant.weight * multiplier) : 0)
+      end
+      #if weight in ounces > 13, then First Class Mail is not available for the order
+      weight > 13 ? false : true
+    end
+  end
+</shell>
