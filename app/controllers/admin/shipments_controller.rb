@@ -35,10 +35,11 @@ class Admin::ShipmentsController < Admin::BaseController
 
   private
   def build_object
-    @object ||= end_of_association_chain.send parent? ? :build : :new, object_params
+    @object ||= end_of_association_chain.send parent? ? :build : :new
     @object.address ||= @order.ship_address
     @object.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
     @object.shipping_method ||= @order.shipping_method
+    @object.attributes = object_params
     @object
   end
 
@@ -67,8 +68,8 @@ class Admin::ShipmentsController < Admin::BaseController
 
   def assign_inventory_units
     return unless params.has_key? :inventory_units
-
-    params[:inventory_units].each { |id, value| @shipment.inventory_units << InventoryUnit.find(id) }
+    #params[:inventory_units].each { |id, value| @shipment.inventory_units << InventoryUnit.find(id) }
+    @shipment.inventory_unit_ids = params[:inventory_units].keys
   end
 
   def recalculate_order
