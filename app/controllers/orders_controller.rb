@@ -18,6 +18,11 @@ class OrdersController < Spree::BaseController
     failure.wants.html { render :template => "orders/edit" }
   end
 
+  update.before do
+    # Temporary workaround for problem in Rails 2.3.8 where updating with nested attributes doesn't work if the collection isn't loaded
+    object.line_items(true)
+  end
+
   # override the default r_c flash behavior
   update do
     flash nil
