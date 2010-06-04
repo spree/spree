@@ -18,9 +18,6 @@ class ReturnAuthorizationTest < ActiveSupport::TestCase
       #@order.pay!
       @order.update_attribute(:state, 'paid')
 
-      #force shipment to ready_to_ship
-      @order.shipment.ready!
-
       @order.reload
       @order.shipment.reload #hack for the @order.shipment caching
 

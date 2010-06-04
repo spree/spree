@@ -8,6 +8,7 @@ class Shipment < ActiveRecord::Base
   has_many :state_events, :as => :stateful
   has_many :inventory_units
   before_create :generate_shipment_number
+  after_create :set_correct_state
   after_save :create_shipping_charge
   after_destroy :release_inventory_units
 
@@ -99,6 +100,12 @@ class Shipment < ActiveRecord::Base
       record = Shipment.find(:first, :conditions => ["number = ?", random])
     end
     self.number = random
+  end
+  
+  def set_correct_state
+    if pending? and order.checkout_complete and !order.outstanding_balance?
+      ready
+    end
   end
 
   def description_for_shipping_charge

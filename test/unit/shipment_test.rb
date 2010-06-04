@@ -23,6 +23,18 @@ class ShipmentTest < ActiveSupport::TestCase
       assert_equal 1, @shipment.state_events.count
       assert_equal 'pending', @shipment.state_events.first.previous_state
     end
+    
+    context "with paid order" do
+      setup do
+        create_paid_order
+        @shipment = Factory(:shipment, :order => @order, :inventory_unit_ids => @order.inventory_unit_ids)
+        @shipment.inventory_units << Factory(:inventory_unit)
+        @shipment.save!
+      end
+      should "be ready_to_ship" do
+        assert @shipment.ready_to_ship?
+      end
+    end
 
     context "when shipped" do
       setup do
