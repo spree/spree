@@ -144,7 +144,8 @@ class CheckoutsController < Spree::BaseController
   end
 
   def next_step
-    @checkout.next!
+    @checkout.next! 
+    flash[:analytics] = "/checkout/#{object.state}"
     # call edit hooks for this next step since we're going to just render it (instead of issuing a redirect)
     edit_hooks
   end
