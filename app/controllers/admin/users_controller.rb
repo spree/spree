@@ -9,6 +9,8 @@ class Admin::UsersController < Admin::BaseController
     wants.html { render :action => :index }
     wants.json { render :json => @collection.to_json(:include => {:bill_address => {:include => [:state, :country]}, :ship_address => {:include => [:state, :country]}}) }
   end
+  
+  destroy.success.wants.js { render_js_for_destroy }
 
   private
   def collection
