@@ -154,6 +154,27 @@ class ProductTest < ActiveSupport::TestCase
     should "not have a product id" do
       assert @product.id.nil?
     end
+
+    context "when a default tax category is defined" do
+      setup do
+        @tax_category = Factory(:tax_category, :is_default => true)
+      end
+
+      should "return associated tax category" do
+        assert_equal @product.tax_category, TaxCategory.first
+      end
+
+      context "and produt has no tax category" do
+        setup do
+          @product.tax_category = nil
+          @product.save
+        end
+
+        should "return default tax category" do
+          assert_equal @product.tax_category, TaxCategory.find(:first, :conditions => {:is_default => true})
+        end
+      end
+    end
   end
 
   context "New Product instantiated with on_hand" do

@@ -2,8 +2,11 @@
   <%= f.label :name, t("name")%><br />
   <%=f.text_field :name %>
 <% end %>
-<p>
+<% f.field_container :description do %>
   <%= f.label :description, t("description")%><br />
   <%=f.text_field :description %>
-</p>
-
+<% end %>
+<% f.field_container :is_default do %>
+  <%= f.label :is_default, t("default")%><br />
+  <%=f.check_box :is_default %>
+<% end %>

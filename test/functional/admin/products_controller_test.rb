@@ -145,8 +145,7 @@ class Admin::ProductsControllerTest < ActionController::TestCase
   context "on POST to :create" do
     setup do
       UserSession.create(Factory(:admin_user))
-      @tax_category = Factory.create(:tax_category)
-      Spree::Config.set :default_tax_category => @tax_category.name
+      @tax_category = Factory.create(:tax_category, :is_default => true)
 
       assert_difference "Product.count", 1 do
         post :create, :product => {

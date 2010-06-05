@@ -13,8 +13,6 @@ class Admin::ProductsController < Admin::BaseController
 
   update.before :update_before
 
-  create.before :create_before
-
   create.response do |wants|
     # go to edit form after creating as new product
     wants.html {redirect_to edit_admin_product_url(Product.find(@product.id)) }
@@ -93,12 +91,6 @@ class Admin::ProductsController < Admin::BaseController
         @collection.uniq!
       end
 
-    end
-
-    # set the default tax_category if applicable
-    def create_before
-      return unless Spree::Config[:default_tax_category]
-      @product.tax_category ||= TaxCategory.find_by_name Spree::Config[:default_tax_category]
     end
 
     def update_before
