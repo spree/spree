@@ -1,5 +1,5 @@
-# copy the assets from extensions public dir into #{RAILS_ROOT}/public
-destination = "#{RAILS_ROOT}/public"
+# copy the assets from extensions public dir into #{Rails.root}/public
+destination = "#{Rails.root}/public"
 paths_to_mirror = Spree::ExtensionLoader.instance.load_extension_roots
 
 paths_to_mirror.each do |extension_path|

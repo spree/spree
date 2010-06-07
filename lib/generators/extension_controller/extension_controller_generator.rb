@@ -67,7 +67,7 @@ class ExtensionControllerGenerator < ControllerGenerator
   end
 
   def destination_root
-    File.join(RAILS_ROOT, extension_path)
+    Rails.root.join(extension_path)
   end
 
   def extension_uses_rspec?

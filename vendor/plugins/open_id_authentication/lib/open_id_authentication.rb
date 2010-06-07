@@ -10,7 +10,7 @@ require File.dirname(__FILE__) + '/open_id_authentication/request'
 require File.dirname(__FILE__) + '/open_id_authentication/timeout_fixes' if OpenID::VERSION == "2.0.4"
 
 module OpenIdAuthentication
-  OPEN_ID_AUTHENTICATION_DIR = RAILS_ROOT + "/tmp/openids"
+  OPEN_ID_AUTHENTICATION_DIR = Rails.root + "/tmp/openids"
 
   def self.store
     @@store

@@ -50,7 +50,7 @@ module Spec
         load File.dirname(__FILE__) + '/../spec/spec_helper.rb'
 
         if in_memory_database?
-          load "#{RAILS_ROOT}/db/schema.rb" # use db agnostic schema by default
+          load "#{Rails.root}/db/schema.rb" # use db agnostic schema by default
           ActiveRecord::Migrator.up('db/migrate') # use migrations
         end
 
@@ -89,7 +89,7 @@ def daemonize(pid_file = nil)
   return yield if $DEBUG
   pid = Process.fork{
     Process.setsid
-    Dir.chdir(RAILS_ROOT)
+    Dir.chdir(Rails.root)
     trap("SIGINT"){ exit! 0 }
     trap("SIGTERM"){ exit! 0 }
     trap("SIGHUP"){ restart_test_server }

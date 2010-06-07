@@ -24,7 +24,7 @@ module Spree
 
     def default_extension_paths
       env = ENV["RAILS_ENV"] || RAILS_ENV
-      paths = [SPREE_ROOT + '/vendor/extensions', RAILS_ROOT + '/vendor/extensions'].uniq
+      paths = [SPREE_ROOT + '/vendor/extensions', Rails.root + '/vendor/extensions'].uniq
       # There's no other way it will work, config/environments/test.rb loads too late
       # TODO: Should figure out how to include this extension path only for the tests that need it
       paths.unshift(SPREE_ROOT + "/test/fixtures/extensions") if env == "test"
@@ -38,7 +38,7 @@ module Spree
       end
 
       def framework_root_path   
-        RAILS_ROOT + '/vendor/rails'
+        Rails.root + '/vendor/rails'
       end
 
       # Provide the load paths for the Spree installation
@@ -70,7 +70,7 @@ module Spree
 
       def default_plugin_paths
         [
-          "#{RAILS_ROOT}/vendor/plugins",
+          "#{Rails.root}/vendor/plugins",
           "#{SPREE_ROOT}/lib/plugins",
           "#{SPREE_ROOT}/vendor/plugins"
         ]

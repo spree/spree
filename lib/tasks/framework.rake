@@ -4,7 +4,7 @@ namespace :spree do
     task :gems do
       
       # Do not allow freeze and unfreeze tasks in instance mode
-      if File.directory? "#{RAILS_ROOT}/app"
+      if File.directory? "#{Rails.root}/app"
         puts "Spree cannot be frozen in instance mode.  Spree is meant to be frozen in a deployed Spree application only."
         return
       end

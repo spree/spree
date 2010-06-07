@@ -9,8 +9,8 @@ namespace :spree do
           path = file.sub(PaymentGatewayExtension.root, '')
           directory = File.dirname(path)
           puts "Copying #{path}..."
-          mkdir_p RAILS_ROOT + directory
-          cp file, RAILS_ROOT + path
+          mkdir_p Rails.root + directory
+          cp file, Rails.root + path
         end
       end  
     end

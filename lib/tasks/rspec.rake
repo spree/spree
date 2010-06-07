@@ -1,6 +1,6 @@
 rspec_gem_dir = nil
-Dir["#{RAILS_ROOT}/vendor/gems/*"].each do |subdir|
-  rspec_gem_dir = subdir if subdir.gsub("#{RAILS_ROOT}/vendor/gems/","") =~ /^(\w+-)?rspec-(\d+)/ && File.exist?("#{subdir}/lib/spec/rake/spectask.rb")
+Dir["#{Rails.root}/vendor/gems/*"].each do |subdir|
+  rspec_gem_dir = subdir if subdir.gsub("#{Rails.root}/vendor/gems/","") =~ /^(\w+-)?rspec-(\d+)/ && File.exist?("#{subdir}/lib/spec/rake/spectask.rb")
 end
 rspec_plugin_dir = File.expand_path(File.dirname(__FILE__) + '/../../vendor/plugins/rspec')
 
@@ -47,7 +47,7 @@ end
 
 # Rake.application.instance_variable_get('@tasks').delete('default')
 
-spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? "db:test:prepare" : :noop
+spec_prereq = File.exist?(Rails.root.join('config', 'database.yml')) ? "db:test:prepare" : :noop
 task :noop do
 end
 
@@ -63,11 +63,11 @@ end
 namespace :spec do
   desc "Run all specs in spec directory with RCov (excluding plugin specs)"
   Spec::Rake::SpecTask.new(:rcov) do |t|
-    t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+    t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
     t.spec_files = FileList['spec/**/*_spec.rb']
     t.rcov = true
     t.rcov_opts = lambda do
-      IO.readlines("#{RAILS_ROOT}/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
+      IO.readlines("#{Rails.root}/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
     end
   end
 
@@ -93,14 +93,14 @@ namespace :spec do
 
   desc "Run the code examples in vendor/plugins (except RSpec's own)"
   Spec::Rake::SpecTask.new(:plugins => spec_prereq) do |t|
-    t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+    t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
     t.spec_files = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec-rails/*")
   end
 
   namespace :plugins do
     desc "Runs the examples for rspec_on_rails"
     Spec::Rake::SpecTask.new(:rspec_on_rails) do |t|
-      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
       t.spec_files = FileList['vendor/plugins/rspec-rails/spec/**/*_spec.rb']
     end
   end
@@ -141,7 +141,7 @@ namespace :spec do
   end
 
   namespace :server do
-    daemonized_server_pid = File.expand_path("#{RAILS_ROOT}/tmp/pids/spec_server.pid")
+    daemonized_server_pid = File.expand_path("#{Rails.root}/tmp/pids/spec_server.pid")
 
     desc "start spec_server."
     task :start do

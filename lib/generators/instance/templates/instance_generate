@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require File.dirname(__FILE__) + '/../config/boot'
-require "#{RAILS_ROOT}/config/environment"
+require "#{Rails.root}/config/environment"
 require 'rails_generator'
 require 'rails_generator/scripts/generate'
 

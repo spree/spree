@@ -165,9 +165,9 @@ namespace :spec do
       if File.directory?(File.join(directory, 'spec'))
         chdir directory do
           if RUBY_PLATFORM =~ /win32/
-            system "rake.cmd spec SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+            system "rake.cmd spec SPREE_ENV_FILE=#{Rails.root}/config/environment"
           else
-            system "rake spec SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+            system "rake spec SPREE_ENV_FILE=#{Rails.root}/config/environment"
           end
           result += $?.exitstatus
         end
@@ -187,7 +187,7 @@ namespace :extensions do
       extension_roots.each do |directory|
         if File.directory?(File.join(directory, 'test/functional'))
           chdir directory do
-            system "rake test:functionals SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+            system "rake test:functionals SPREE_ENV_FILE=#{Rails.root}/config/environment"
             result += $?.exitstatus
           end
         end
@@ -202,7 +202,7 @@ namespace :extensions do
       extension_roots.each do |directory|
         if File.directory?(File.join(directory, 'test/unit'))
           chdir directory do
-            system "rake test:units SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+            system "rake test:units SPREE_ENV_FILE=#{Rails.root}/config/environment"
             result += $?.exitstatus
           end
         end
@@ -219,7 +219,7 @@ namespace :extensions do
       extension_roots.each do |directory|
         if File.directory?(File.join(directory, 'test'))
           chdir directory do
-            system "rake test SPREE_ENV_FILE=#{RAILS_ROOT}/config/environment"
+            system "rake test SPREE_ENV_FILE=#{Rails.root}/config/environment"
             result += $?.exitstatus
           end
         end
@@ -230,6 +230,6 @@ namespace :extensions do
 end
 
 # Load any custom rakefiles from extensions
-[RAILS_ROOT, SPREE_ROOT].uniq.each do |root|
+[Rails.root, SPREE_ROOT].uniq.each do |root|
   Dir[root + '/vendor/extensions/*/lib/tasks/*.rake'].sort.each { |ext| load ext }
 end

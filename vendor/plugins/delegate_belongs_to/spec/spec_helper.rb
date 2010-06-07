@@ -51,7 +51,7 @@ Spec::Runner.configure do |config|
   #
   # You can also declare which fixtures to use (for example fixtures for test/fixtures):
   #
-  # config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+  # config.fixture_path = Rails.root + '/spec/fixtures/'
   #
   # == Mock Framework
   #
