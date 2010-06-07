@@ -193,7 +193,7 @@ class Product < ActiveRecord::Base
   # allows extensions to override deleted? if they want to provide
   # their own definition.
   def deleted?
-    deleted_at
+    !!deleted_at
   end
 
   # split variants list into hash which shows mapping of opt value onto matching variants
