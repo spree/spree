@@ -1,3 +1,80 @@
+== 0.11.0
+
+* # - 728  ProductsController::change_image method is not in use
+* # - 1170 Support EWay payment gateway (AU)
+* # - 1194 Improve confirmation button text for checkout steps
+* # - 1232 user.has_role? should respect changes to roles and reloads
+* # - 1235 Explicitly define the @orders collection on which to paginate in the admin/orders/index view
+* # - 1236 Improve API for products.
+* # - 1239 Introduce support of Cucumber
+* # - 1256 Add alternative text to product images
+* # - 1259 Admin orders shipping method not saving
+* # - 1266 Ensure CheckoutsController#update uses consistent variable names
+* # - 1268 Allow disabling of inventory level management
+* # - 1277 Add "Use Billing Address" tickbox to admin checkouts
+* # - 1288 Add ruby-openid into gem dependency
+* # - 1290 missing 'show_active' in translation yml
+* # - 1294 undefined method `payment_profiles_supported?' for nil:NilClass
+* # - 1297 Button for applying coupon/discount codes
+* # - 1299 Wrong usage of I18n in dashboard
+* # - 1305 Protx gateway needs updating
+* # - 1307 Do not restrict index action for OrdersController
+* # - 1311 [patch] Making unit tests faster
+* # - 1312 Inline Styles in theme_default/app/views/checkouts/edit.html
+* # - 1313 Taxon rename through admin interface sends wrong new name in ajax request
+* # - 1314 Potential vulnerability after overriding OrdersController actions
+* # - 1318 permalink handling of non-unique strings is broken
+* # - 1321 Address model's checkouts association does not return all checkouts
+* # - 1325 Coupons with lower-case characters fail - With Fix
+* # - 1327 Content controller should have option to skip cacheing
+* # - 1328 Extraneous migration folder with script/generate extension_model
+* # - 1329 Allow admin to delete shipments
+* # - 1331 Sample Data
+* # - 1333 Error in vat calculation
+* # - 1337 Remove white-space from creditcard fields
+* # - 1338 States / Countries info should be returned by API
+* # - 1341 Ensure admin orders are associated to user
+* # - 1343 Failed cucumber features caused by fixing ticket #1194
+* # - 1346 Taxons need Description and Image
+* # - 1352 Bug when Backordering is FALSE and user adds product to cart
+* # - 1354 Rails scripts are not up-to-date
+* # - 1358 Move translations into new extension
+* # - 1361 Wrong translation used to confirm password
+* # - 1365 Allow specifying where payment methods are displayed
+* # - 1374 Shipment API calls are not eagerly loading 
+* # - 1376 Searching for user during admin order can be slow with large datasets
+* # - 1377 Delete shipment does not unassign inventory units
+* # - 1378 Allow adjustments to be added to new admin orders
+* # - 1383 Checkout test fails when anonymous checkout is enabled in an extension
+* # - 1384 [PATCH] Migration that add a description and an icon to taxons created with wrong date
+* # - 1388 Improve performance of admin order search
+* # - 1393 Improve GatewayError logging
+* # - 1394 Inventory can be double counted if order completion fails unexpectedly
+* # - 1399 Order#cancel is not updating shipments
+* # - 1403 Completed orders can be incorrectly reassigned
+* # - 1405 Improved staging environment
+* # - 1406 Improve product search for admin orders
+* # - 1409 Inventory units are not created / destroyed on admin order edit
+* # - 1410 Dates change when searching for orders by date ranges 
+* # - 1412 Document code in app/helpers/admin/base_helper.rb
+* # - 1413 Upgrade to Rails 2.3.8
+* # - 1415 Remove RubyGems deprecation warning workaround
+* # - 1417 Spree could not use AuthLogic 2.1.4
+* # - 1421 Error while deleting an user in admin backend
+* # - 1425 Promote new Rails2.3.6 way for Flash alert and notice
+* # - 1430 Add tags, *.swp and rerun.txt to Gitignore
+* # - 1432 Error when emptying the cart
+* # - 1434 Escape issues with Rails 2.3.8 
+* # - 1435 Remove deprecation warnings caused by rake tasks
+* # - 1436 ruby 1.9.1 i18n wrong argument issue
+* # - 1438 Cucumber tests can fail with RoR 2.3.8
+* # - 1443 Escape issues with breadcrumb
+* # - 1445 Problem when submitting a coupon code
+* # - 1446 Rake task for i18n:sync not work
+* # - 1447 Analytics showing incorrect checkout step
+* # - 1448 Allow setting default tax category for all products via UI
+
+
 == 0.10.2
 
 * # - 1215 Update Vietnamese translation
@@ -26,7 +103,7 @@
 * # - 16	Add Robots.txt file
 * # - 188	Allow admin to create new shipments
 * # - 247	Restrict shipping methods based on order contents
-* # - 301	Limit billing and shipping addres to the same list of countries.
+* # - 301	Limit billing and shipping address to the same list of countries.
 * # - 316	Relation between option_types and product_option_types can break
 * # - 320	Remove all traces of Prototype 
 * # - 361	Drop tlsmail dependency
@@ -43,7 +120,7 @@
 * # - 624	link_to_delete, ajax request missing datatype
 * # - 637	Translation of helpers and confirmation messages
 * # - 638	Property and Prototype specs fails when spree is running in language other than en-US
-* # - 651	Use I18n to display order statuses in combobox.
+* # - 651	Use I18n to display order statuses in com bobox.
 * # - 652	Calls will_paginate helper with wrong attributes.
 * # - 667	jQuery.validate plugin should support internationalization.
 * # - 675	Remove calendar_date_select
@@ -98,7 +175,7 @@
 * # - 851	Guest account email on registration
 * # - 852	Missing  strings  localizations
 * # - 853	Issue with Shipping Address On Multiple Checkouts From Single User
-* # - 858	Integration tests failing becouse of Metal
+* # - 858	Integration tests failing because of Metal
 * # - 860	Checkout can prematurely process creditcard
 * # - 862	Errors when adding item to order are never displayed
 * # - 863	Improve performance of displaying of products.
@@ -196,7 +273,7 @@
 * # - 1162	rake db:load_file, db:load_dir unnecessarily establishes connection (?)
 * # - 1166	City and phone not translated in checkout edit address view
 * # - 1168	Need to recreate reduced BillingIntegration class
-* # - 1171	Local change sudently when browsing into admin overview
+* # - 1171	Local change suddenly when browsing into admin overview
 * # - 1172	Payments admin views should use partials for each payment_method
 * # - 1173	CSS problem with js-validation of address
 * # - 1182	Beanstream Secure Payment profile support
