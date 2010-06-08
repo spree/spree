@@ -12,7 +12,8 @@
 <![endif]-->
 <div id='wrapper'>
 
-  <div id="header">
+  <div id="header" class="admin_header_bg">
+
     <% if current_user -%>
     <ul id="login-nav">
       <li><%= t('logged_in_as') %>: <%= current_user.email %></li>
@@ -24,6 +25,7 @@
     <h1 class='logo'><%= link_to t("administration"), admin_path %></h1>
     <div id="progress"><%= image_tag 'progress.gif' %> <%= t('loading') %>...</div>
   </div>
+<div class='tile_bg_img'>
     <div id="admin-menu">
       <ul>
         <% hook :admin_tabs do %>
@@ -38,7 +40,7 @@
       <br class="clear" />
     </div>
 
-    <div class="<%= 'with-sidebar ' unless @content_for_sidebar.blank? %> clear" id="content">
+    <div class="<%= 'with-sidebar ' unless @content_for_sidebar.blank? %> clear tile_bg" id="content">
 
 
       <% if flash[:error] %>
@@ -63,7 +65,7 @@
     <div id="footer">
       <p><%= t("icons_by") %> <a href='http://pinvoke.com'>pInvoke</a></p>
     </div>
-
+</div>
 </div>
 <!--[if IE]>
 </div>
