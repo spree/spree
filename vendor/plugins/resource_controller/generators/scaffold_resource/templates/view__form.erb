@@ -1,6 +1,0 @@
-<%- for attribute in attributes -%>
-<p>
-  <label for="<%= singular_name %>_<%= attribute.name %>"><%= attribute.column.human_name %>:</label>
-  <%%= f.<%= attribute.field_type %> :<%= attribute.name %> %>
-</p>
-<% end -%>

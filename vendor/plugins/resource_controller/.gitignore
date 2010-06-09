@@ -1,8 +1,0 @@
-test/log/*.log
-pkg
-test/tmp
-test/nbproject
-nbproject/*
-.gitignore~
-rdoc
-test/db/test.sqlite3

@@ -1,18 +1,17 @@
 source :gemcutter
 
 gem 'rails', '3.0.0.beta4'
-gem 'mysql'
+gem 'mysql'                                                
 
 gem 'highline', '1.5.1'
-gem 'authlogic','2.1.3'
+gem 'authlogic','>=2.1.5'
 gem 'authlogic-oid', '1.0.4', :require => 'authlogic_openid'
-gem 'activemerchant', '1.5.1', :require => 'active_merchant'
+gem "activemerchant", :require => 'active_merchant', :git => "git://github.com/railsjedi/active_merchant.git"
 gem 'activerecord-tableless', '0.1.0', :require => 'tableless'
 gem 'less', '1.2.20'
 gem 'stringex', '1.0.3', :require => 'stringex'
 gem 'chronic', '0.2.3'
 gem 'whenever', '0.3.7', :require => false
-gem 'searchlogic', '2.3.5'
 gem 'will_paginate', '2.3.14', :require => 'will_paginate'
 gem 'state_machine', '0.8.0', :require => 'state_machine'
 gem 'faker', '0.3.1'

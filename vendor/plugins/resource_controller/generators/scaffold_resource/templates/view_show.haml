@@ -1,9 +1,0 @@
-<% for attribute in attributes -%>
-%p
-  %strong <%= attribute.column.human_name %>:
-  =h @<%= singular_name %>.<%= attribute.name %>
-<% end -%>
-
-= link_to 'Edit', edit_object_url
-|
-= link_to 'Back', collection_url
