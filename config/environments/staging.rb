@@ -16,3 +16,6 @@ config.action_controller.perform_caching             = true
 
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
+
+# Don't send emails in staging mode
+config.action_mailer.delivery_method = :test
