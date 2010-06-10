@@ -1,0 +1,15 @@
+# Default database configuration
+
+development:
+  adapter: mysql
+  database: spree_dev
+  username: root
+  
+test:
+  adapter: mysql
+  database: spree_test
+  username: root  
+  
+cucumber:
+  adapter: sqlite3
+  database: db/test.sqlite3
