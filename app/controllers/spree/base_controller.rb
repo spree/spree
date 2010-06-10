@@ -2,13 +2,12 @@ class Spree::BaseController < ActionController::Base
   layout 'spree_application'
   helper :application, :hook
   before_filter :instantiate_controller_and_action_names
-  before_filter :touch_sti_subclasses
+  #RAILS 3 TODO
+  #before_filter :touch_sti_subclasses
   before_filter :set_user_language
   filter_parameter_logging :password, :password_confirmation, :number, :verification_value
   helper_method :current_user_session, :current_user, :title, :title=, :get_taxonomies, :current_gateway
 
-  # Pick a unique cookie name to distinguish our session data from others'
-  session_options['session_key'] = '_spree_session_id'
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   include RoleRequirementSystem
@@ -62,11 +61,11 @@ class Spree::BaseController < ActionController::Base
   def default_title
     Spree::Config[:site_name]
   end
-  
+
   def accurate_title
     return nil
   end
-  
+
   def reject_unknown_object
     # workaround to catch problems with loading errors for permalink ids (reconsider RC permalink hack elsewhere?)
     begin
@@ -87,10 +86,11 @@ class Spree::BaseController < ActionController::Base
   end
 
   def render_404(exception)
-    respond_to do |type|
-      type.html { render :file    => "#{Rails.root}/public/404.html", :status => "404 Not Found" }
-      type.all  { render :nothing => true,                            :status => "404 Not Found" }
-    end
+    #RAILS 3 TODO
+    # respond_to do |type|
+    #   type.html { render :file    => "#{RAILS_ROOT}/public/404.html", :status => "404 Not Found" }
+    #   type.all  { render :nothing => true,                            :status => "404 Not Found" }
+    # end
   end
 
   private
@@ -177,17 +177,21 @@ class Spree::BaseController < ActionController::Base
     @current_gateway ||= Gateway.current
   end
 
-  # Load all models using STI to fix associations such as @order.credits giving no results and resulting in incorrect order totals
-  def touch_sti_subclasses
-    if RAILS_ENV == 'development'
-      load(File.join(SPREE_ROOT,'config/initializers/touch.rb'))
-    end
-  end
+  #RAILS 3 TODO
+  # # Load all models using STI to fix associations such as @order.credits giving no results and resulting in incorrect order totals
+  # def touch_sti_subclasses
+  #   if RAILS_ENV == 'development'
+  #     load(File.join(SPREE_ROOT,'config/initializers/touch.rb'))
+  #   end
+  # end
 
   def set_user_language
-    locale = session[:locale] || Spree::Config[:default_locale] || I18n.default_locale
-    locale = AVAILABLE_LOCALES.keys.include?(locale) ? locale : I18n.default_locale
-    I18n.locale = locale
+    #RAILS 3 TODO
+    # locale = session[:locale] || Spree::Config[:default_locale] || I18n.default_locale
+    # locale = AVAILABLE_LOCALES.keys.include?(locale) ? locale : I18n.default_locale
+    # I18n.locale = locale
+
+    I18n.locale = :en
   end
 
 end

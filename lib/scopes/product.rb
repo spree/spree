@@ -160,17 +160,18 @@ module Scopes::Product
     }
   }
 
-  Product.scope_procedure :in_name, lambda{|words|
-    Product.name_like_any(prepare_words(words))
-  }
-
-  Product.scope_procedure :in_name_or_keywords, lambda{|words|
-    Product.name_or_meta_keywords_like_any(prepare_words(words))
-  }
-
-  Product.scope_procedure :in_name_or_description, lambda{|words|
-    Product.name_or_description_or_meta_description_or_meta_keywords_like_any(prepare_words(words))
-  }
+  # Rails 3 TODO
+  # Product.scope_procedure :in_name, lambda{|words|
+  #   Product.name_like_any(prepare_words(words))
+  # }
+  # 
+  # Product.scope_procedure :in_name_or_keywords, lambda{|words|
+  #   Product.name_or_meta_keywords_like_any(prepare_words(words))
+  # }
+  # 
+  # Product.scope_procedure :in_name_or_description, lambda{|words|
+  #   Product.name_or_description_or_meta_description_or_meta_keywords_like_any(prepare_words(words))
+  # }  
 
   # Sorts products from most popular (poularity is extracted from how many
   # times use has put product in cart, not completed orders)

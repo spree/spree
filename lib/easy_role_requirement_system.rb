@@ -134,7 +134,7 @@ module EasyRoleRequirementSystem
         rescue
           raise "#{__FILE__ }: #{__LINE__}: in 'all_permissions': YAML Could not load role pemissions file at '#{role_permissions_file_path}', check the file location and YAML formatting. Duplicate YAML nodes may have been deleted during serialization."
       end
-      load_extension_permissions_files(permissions_file)
+      #load_extension_permissions_files(permissions_file)
     end
     
     def load_extension_permissions_files(permissions_file)

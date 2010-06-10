@@ -28,8 +28,9 @@ module Spree::Search
     @product_group.add_scope('in_taxon', @taxon) unless @taxon.blank?
     @product_group.add_scope('keywords', @keywords) unless @keywords.blank?
     @product_group = @product_group.from_search(params[:search]) if params[:search]
-
-    base_scope = @cached_product_group ? @cached_product_group.products.active : Product.active
+    
+    base_scope = Product.active
+    #base_scope = @cached_product_group ? @cached_product_group.products.active : Product.active
     base_scope = base_scope.on_hand unless Spree::Config[:show_zero_stock_products]
     @products_scope = @product_group.apply_on(base_scope)
 

@@ -61,8 +61,9 @@ module Scopes
   end
 end
 
-ActiveRecord::NamedScope::Scope.class_eval do
-  def to_sql
-    construct_finder_sql({})
-  end
-end
+# Rails 3 TODO
+# ActiveRecord::NamedScope::Scope.class_eval do
+#   def to_sql
+#     construct_finder_sql({})
+#   end
+# end     

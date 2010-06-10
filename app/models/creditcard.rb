@@ -50,8 +50,9 @@ class Creditcard < ActiveRecord::Base
   def display_number
    "XXXX-XXXX-XXXX-#{last_digits}"
   end
-
-  alias :attributes_with_quotes_default :attributes_with_quotes
+   
+  #RAILS 3 TODO
+  #alias :attributes_with_quotes_default :attributes_with_quotes
 
 
   # needed for some of the ActiveMerchant gateways (eg. SagePay)
@@ -62,11 +63,11 @@ class Creditcard < ActiveRecord::Base
 
   private
 
-
-  # Override default behavior of Rails attr_readonly so that its never written to the database (not even on create)
-  def attributes_with_quotes(include_primary_key = true, include_readonly_attributes = true, attribute_names = @attributes.keys)
-    attributes_with_quotes_default(include_primary_key, false, attribute_names)
-  end
+  #RAILS 3 TODO 
+  # # Override default behavior of Rails attr_readonly so that its never written to the database (not even on create)
+  # def attributes_with_quotes(include_primary_key = true, include_readonly_attributes = true, attribute_names = @attributes.keys)
+  #   attributes_with_quotes_default(include_primary_key, false, attribute_names)
+  # end  
 
   def remove_readonly_attributes(attributes)
     if self.class.readonly_attributes.present?
