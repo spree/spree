@@ -1,14 +1,14 @@
-require(File.join(File.dirname(__FILE__), 'config', 'boot'))
+# Add your own tasks in files placed in lib/tasks ending in .rake,
+# for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
+require File.expand_path('../config/application', __FILE__)
 require 'rake'
-require 'rake/testtask'
-require 'rake/rdoctask'
 
-require 'tasks/rails'
+Rails::Application.load_tasks
 
-unless Rake::Task.task_defined? "db:sample"
-  Dir["#{SPREE_ROOT}/lib/tasks/**/*.rake"].sort.each { |ext| load ext }
-end
+# unless Rake::Task.task_defined? "db:sample"
+#   Dir["#{SPREE_ROOT}/lib/tasks/**/*.rake"].sort.each { |ext| load ext }
+# end
 
 begin
   require 'jeweler'
