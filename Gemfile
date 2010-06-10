@@ -17,6 +17,7 @@ gem 'state_machine', '0.8.0', :require => 'state_machine'
 gem 'faker', '0.3.1'
 gem 'paperclip', '>=2.3.1.1'
 gem 'ruby-openid', '>=2.0.4', :require => 'openid'
+gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
 
 group :test do
   gem 'shoulda', '2.10.2', :require => 'shoulda'
