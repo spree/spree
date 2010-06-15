@@ -74,3 +74,7 @@ Running from edge sources (latest and greatest features)
         script/server
 
 
+Contributing
+============
+           
+Spree is an open source project.  We encourage contributions.  Please see the [contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html) before contributing.  **Do not send a Github pull request - it will be ignored.**
