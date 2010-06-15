@@ -15,18 +15,18 @@ if @body_class.nil?
 end
  %>
 <body class="<%= @body_class %>"<%= %( id="#{@body_id}") if @body_id %>>
-  <div id="header" class="container_bg">                                                          
+  <div id="header" class="container_bg">
     <div class="container">
-		<div id="login-bar">          
+    <div id="login-bar">
       <ul id="nav-bar">
         <%= render 'shared/nav_bar' %>
       </ul>
     </div>
-	<%= logo %>
-	</div>
+  <%= logo %>
+  </div>
   </div>
 
-  <div id="wrapper" class="container"> 
+  <div id="wrapper" class="container">
     <% if @content_for_sidebar %>
     <div id="sidebar">
       <% hook :sidebar do %>
@@ -34,7 +34,7 @@ end
       <% end %>
     </div>
     <% end %>
-    
+
     <div id="content">
       <%= breadcrumbs(@taxon) if @taxon %>
       <% if self.notice %>
