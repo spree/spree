@@ -13,8 +13,7 @@ class ProductsController < Spree::BaseController
   private
 
   def load_data
-    # load_object  
-    debugger        
+    # load_object        
     @product = Product.find(params[:id])
 
     @variants = Variant.active.find_all_by_product_id(@product.id, 
