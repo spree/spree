@@ -1,8 +1,7 @@
 source :gemcutter
 
 gem 'rails', '3.0.0.beta4'
-#gem 'mysql'          
-gem 'sqlite3-ruby', :require => 'sqlite3'                                      
+gem 'mysql'          
 
 gem 'highline', '1.5.1'
 gem 'authlogic','>=2.1.5'
