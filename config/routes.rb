@@ -49,8 +49,14 @@ Spree::Application.routes.draw do |map|
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   # root :to => "welcome#index"
+   
+  match 'login' => 'users_sessions#new'
+  match 'logout' => 'users_sessions#destroy'
+  match 'signup' => 'users#new'
+  root :to => 'products#index'
 
   resources :products
+  resources :orders
 
   # See how all your routes lay out with "rake routes"
 
@@ -59,42 +65,20 @@ Spree::Application.routes.draw do |map|
   # match ':controller(/:action(/:id(.:format)))'
 end
 
+#RAILS3 TODO - make sure all of the original routes are remapped the rails3 way.  Remove them from below once they've been ported
 
 # ActionController::Routing::Routes.draw do |map|
 # 
 #   # Loads all extension routes in the order they are specified.
 #   map.load_extension_routes
 # 
-#   # The priority is based upon order of creation: first created -> highest priority.
 # 
-#   # Sample of regular route:
-#   # map.connect 'products/:id', :controller => 'catalog', :action => 'view'
-#   # Keep in mind you can assign values other than :controller and :action
-# 
-#   # Sample of named route:
-#   # map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
-#   # This route can be invoked with purchase_url(:id => product.id)
-# 
-#   # You can have the root of your site routed by hooking up ''
-#   # -- just remember to delete public/index.html.
-#   # map.connect '', :controller => "welcome"
-# 
-#   # Allow downloading Web Service WSDL as a file with an extension
-#   # instead of a file named 'wsdl'
-#   #map.connect ':controller/service.wsdl', :action => 'wsdl'
-# 
-#   # map.connect '/locale/:new_locale', :controller => 'locale', :action => 'set_session_locale'
-# 
-#   map.root :controller => "products", :action => "index"
 # 
 #   map.resource :user_session, :member => {:nav_bar => :get}
 #   map.resource :account, :controller => "users"
 #   map.resources :password_resets
 # 
 #   # login mappings should appear before all others
-#   map.login '/login', :controller => 'user_sessions', :action => 'new'
-#   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
-#   map.signup '/signup', :controller => 'users', :action => 'new'
 #   map.admin '/admin', :controller => 'admin/overview', :action => 'index'
 #   map.set_locale '/locale/set', :controller => 'locale', :action => 'set', :method => :get
 # 
@@ -102,7 +86,6 @@ end
 #   map.resources :countries, :has_many => :states, :only => :index
 #   map.resources :states, :only => :index
 #   map.resources :users
-#   map.resources :products
 #   map.resources :orders, :member => {:address_info => :get}, :has_many => [:line_items, :creditcards, :creditcard_payments]
 #   map.resources :orders, :member => {:fatal_shipping => :get} do |order|
 #     order.resources :shipments, :member => {:shipping_method => :get}
