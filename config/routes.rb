@@ -56,6 +56,8 @@ Spree::Application.routes.draw do |map|
   match 'signup' => 'users#new'
   root :to => 'products#index'
 
+  resources :products
+
   #   # Loads all extension routes in the order they are specified.
   #TODO   map.load_extension_routes
 
