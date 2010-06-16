@@ -2,9 +2,9 @@
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <% hook :admin_inside_head do %>
-  	<%= render :partial => "shared/admin_head" %>
-	<% end %>
+  <%= hook :admin_inside_head do %>
+    <%= render :partial => "shared/admin_head" %>
+  <% end %>
 </head>
 <body class='yui-skin-sam admin'>
 <!--[if IE 7]>
@@ -12,7 +12,8 @@
 <![endif]-->
 <div id='wrapper'>
 
-  <div id="header">
+  <div id="header" class="admin_header_bg">
+
     <% if current_user -%>
     <ul id="login-nav">
       <li><%= t('logged_in_as') %>: <%= current_user.email %></li>
@@ -21,60 +22,57 @@
       <li><%= link_to t('store'), products_path %></li>
     </ul>
     <% end -%>
-    <a href="<%= admin_path %>"><%= image_tag 'admin/bg/spree_50.png', :id => 'logo' %></a>
-    <h1><%= link_to t("administration"), admin_path %></h1>
+    <h1 class='logo'><%= link_to t("administration"), admin_path %></h1>
     <div id="progress"><%= image_tag 'progress.gif' %> <%= t('loading') %>...</div>
   </div>
+<div class='tile_bg_img'>
+    <div id="admin-menu">
+      <ul>
+        <%= hook :admin_tabs do %>
+          <%= render 'admin/shared/tabs' %>
+        <% end %>
+      </ul>
+      <br class="clear" />
+    </div>
 
-  <div id="admin-menu">
-    <ul>
-      <% hook :admin_tabs do %>
-        <%= render 'admin/shared/tabs' %>
+    <div id="sub-menu">
+      <%= yield :sub_menu %>
+      <br class="clear" />
+    </div>
+
+    <div class="<%= 'with-sidebar ' unless @content_for_sidebar.blank? %> clear tile_bg" id="content">
+
+
+      <% if flash[:error] %>
+      <div class="flash error"><%= flash[:error] %></div>
       <% end %>
-    </ul>
-    <br class="clear" />
-  </div>
-
-  <div id="sub-menu">
-    <%= yield :sub_menu %>
-    <br class="clear" />
-  </div>
-
-  <div class="<%= 'with-sidebar ' unless @content_for_sidebar.blank? %> clear tile_bg" id="content">
+      <% if self.notice %>
+      <div class="flash notice"><%= self.notice %></div>
+      <% end %>
 
 
-    <% if flash[:error] %>
-    <div class="flash error"><%= flash[:error] %></div>
-    <% end %>
-    <% if self.notice %>
-    <div class="flash notice"><%= self.notice %></div>
-    <% end %>
+      <%= yield %>
 
+      <% unless @content_for_sidebar.blank? %>
+        <br class='clear' />
+        <div id="sidebar">
+            <%= yield :sidebar %>
+        </div>
+      <% end %>
 
-    <%= yield %>
+    </div>
 
-    <% unless @content_for_sidebar.blank? %>
-      <br class='clear' />
-      <div id="sidebar">
-          <%= yield :sidebar %>
-      </div>
-    <% end %>
-
-  </div>
-
-  <div id="footer">
-    <p><%= t("icons_by") %> <a href='http://pinvoke.com'>pInvoke</a></p>
-  </div>
-
-
+    <div id="footer">
+      <p><%= t("icons_by") %> <a href='http://pinvoke.com'>pInvoke</a></p>
+    </div>
+</div>
 </div>
 <!--[if IE]>
 </div>
 <![endif]-->
 
-<% hook :admin_footer_scripts do -%>
+<%= hook :admin_footer_scripts do -%>
   <%= javascript_include_tag 'admin/unobtrusive_handlers' %>
 <% end -%>
 </body>
 </html>
-

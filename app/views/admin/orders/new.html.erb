@@ -1,13 +1,13 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
 
-<% hook :admin_order_new_header do %>
+<%= hook :admin_order_new_header do %>
   <h2><%= t("new_order")%></h2>
   <%=error_messages_for :order %>
 <% end %>
 
 <%= render :partial => "add_product" %>
 
-<% hook :admin_order_new_form do %>
+<%= hook :admin_order_new_form do %>
   <div id="order-form-wrapper">
     <%= render :partial => "form" %>
   </div>

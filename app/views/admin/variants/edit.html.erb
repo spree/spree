@@ -5,7 +5,7 @@
 <%= error_messages_for :variant %>
 
 <% form_for(@variant, :url => object_url, :html => { :method => :put }) do |f| %>
-  <% hook :admin_variant_edit_form, {:f => f} do %>
+  <%= hook :admin_variant_edit_form, {:f => f} do %>
     <%= render :partial => "form", :locals => { :f => f } %>
   <% end %>
 

@@ -1,10 +1,10 @@
 <h1><%= t("overview") %></h1>
 
-<% hook :admin_dashboard do %>
+<%= hook :admin_dashboard do %>
   <% if @show_dashboard %>
     <div class="dashboard">
       <div class="dashboard_left">
-      <% hook :admin_dashboard_left do %>
+      <%= hook :admin_dashboard_left do %>
         <div class="dashboard_small_wrapper">
           <h2><%= t('best_selling_products') %></h2>
           <div id="best_selling_products" style="width:50%;height:170px;float:left"></div>
@@ -39,7 +39,7 @@
         </div>
       </div>
     <% end %>
-    <% hook :admin_dashboard_center do %>
+    <%= hook :admin_dashboard_center do %>
       <div class="dashboard_main">
         <div class="dashboard_main_wrapper">
           <h2 id="order_by_day_title"><%= t('orders') %> <%= t('count') %> <%= t('by_day') %> (<%= t('last_7_days') %>)</h2>
@@ -84,7 +84,7 @@
         </div>
       </div>
     <% end %>
-    <% hook :admin_dashboard_right do %>
+    <%= hook :admin_dashboard_right do %>
       <div class="dashboard_right">
           <h2><%= t('last_5_orders') %></h2>
           <table>
@@ -140,14 +140,14 @@
     <% end %>
     <p style="clear:both;">&nbsp;</p>
   <% else %>
-    <% hook :admin_dashboard_welcome do %>
+    <%= hook :admin_dashboard_welcome do %>
       <%= t('overview_welcome') %>
     <% end %>
   <% end %>
 <% end %>
 
 <% content_for :head do %>
-  <% hook :admin_dashboard_javascript do %>
+  <%= hook :admin_dashboard_javascript do %>
     <% if @show_dashboard %>
        <script type="text/javascript">
          var orders_by_day_points = [[<%= @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
@@ -168,7 +168,7 @@
     <!--[if IE]><%= javascript_include_tag 'jqPlot/excanvas.min.js' %><![endif]-->
   <% end %>
 
-  <% hook :admin_dashboard_stylesheet do %>
+  <%= hook :admin_dashboard_stylesheet do %>
      <%= stylesheet_link_tag 'admin/dashboard.css' %>
   <% end %>
 <% end %>

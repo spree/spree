@@ -1,8 +1,8 @@
 <% form_for :order, :url => orders_url do |f| %>
-<% hook :inside_product_cart_form do %>
+<%= hook :inside_product_cart_form do %>
 
   <% if product_price(@product) %>
-    <% hook :product_price do %>
+    <%= hook :product_price do %>
       <p class="prices">
         <%= t("price") %>
         <br />

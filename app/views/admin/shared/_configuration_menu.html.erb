@@ -4,7 +4,7 @@
   <br class="clear" />
 
   <ul class="sidebar">
-    <% hook :admin_configurations_sidebar_menu do %>
+    <%= hook :admin_configurations_sidebar_menu do %>
     <li<%= ' class="active"' if controller.controller_name == 'general_settings' %>><%= link_to t("general_settings"), admin_general_settings_path %></li>
     <li<%= ' class="active"' if controller.controller_name == 'mail_settings' %>><%= link_to t("mail_server_settings"), admin_mail_settings_path %></li>
     <li<%= ' class="active"' if controller.controller_name == 'tax_categories' %>><%= link_to t("tax_categories"), admin_tax_categories_path %></li>

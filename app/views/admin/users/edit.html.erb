@@ -1,13 +1,13 @@
-<% hook :admin_user_edit_form_header do %>
+<%= hook :admin_user_edit_form_header do %>
   <%= error_messages_for :user %>
   <h1><%= t("editing_user") %></h1>
 <% end %>
 
-<% hook :admin_user_edit_form do %>
+<%= hook :admin_user_edit_form do %>
   <% form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
 
-    <% hook :admin_user_edit_form_buttons do %>
+    <%= hook :admin_user_edit_form_buttons do %>
       <p class="form-buttons">
         <%= button t("update") %> <%= link_to t('cancel'), collection_url %>
       </p>

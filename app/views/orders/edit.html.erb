@@ -3,9 +3,9 @@
 <h1><%= t("shopping_cart")%></h1>
 
 <% form_for(@order, :url => object_url, :html => { :method => :put, :id => 'updatecart' }) do |order_form| %>
-<% hook :inside_cart_form do %>
+<%= hook :inside_cart_form do %>
 
-  <% hook :cart_items do %>
+  <%= hook :cart_items do %>
     <%= render :partial => 'form', :locals => {:order_form => order_form} %>
   <% end %>
 

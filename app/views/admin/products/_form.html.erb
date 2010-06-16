@@ -1,7 +1,7 @@
 <div class="yui-gc">
   <div class="yui-u first">
     <%- locals = {:f => f} -%>
-    <% hook :admin_product_form_left, locals do %>
+    <%= hook :admin_product_form_left, locals do %>
       <% f.field_container :name do %>
         <%= f.label :name, t("name") %> <span class="required">*</span><br />
         <%= f.text_field :name, :class => 'fullwidth title'  %>
@@ -22,7 +22,7 @@
     <% end %>
   </div>
   <div class="yui-u">
-    <% hook :admin_product_form_right, locals do %>
+    <%= hook :admin_product_form_right, locals do %>
       <% f.field_container :price do %>
         <%= f.label :price, t("master_price")%> <span class="required">*</span><br />
         <%= f.text_field :price, :value => number_with_precision(@product.price, :precision => 2)  %>
@@ -87,7 +87,7 @@
 </div>
 
 <h2><%= t("metadata") %></h2>
-<% hook :admin_product_form_meta, locals do %>
+<%= hook :admin_product_form_meta, locals do %>
   <p>
     <%= f.label :meta_keywords, t("meta_keywords")%><br />
     <%= f.text_field :meta_keywords, :class => 'fullwidth' %>
@@ -99,7 +99,7 @@
 <% end %>
 
 
-<% hook :admin_product_form_additional_fields, locals do %>
+<%= hook :admin_product_form_additional_fields, locals do %>
   <% Variant.additional_fields.select{|af| af[:only].nil? || af[:only].include?(:product) }.each do |field| %>
     <%= render :partial => "admin/shared/additional_field", :locals => {:field => field, :f => f} %>
   <% end %>

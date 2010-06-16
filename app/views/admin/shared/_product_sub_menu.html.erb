@@ -1,6 +1,6 @@
 <% content_for :sub_menu do %>
   <ul id="sub_nav">
-    <% hook :admin_product_sub_tabs do %>
+    <%= hook :admin_product_sub_tabs do %>
       <%= tab :products, :match_path => '/products' %>
       <%= tab :option_types, :match_path => '/option_types' %>
       <%= tab :properties %>

@@ -2,7 +2,7 @@
 <table id="cart-detail">
   <thead>
     <tr>
-      <% hook :cart_items_headers do %>
+      <%= hook :cart_items_headers do %>
         <th colspan="2"><%= t("item") %></th>
         <th><%= t("price") %></th>
         <th><%= t("qty") %></th>

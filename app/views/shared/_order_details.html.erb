@@ -1,7 +1,7 @@
 <table class="index">
   <tbody id='line-items'>
     <tr>
-      <% hook :order_details_line_items_headers do %>
+      <%= hook :order_details_line_items_headers do %>
         <th><%= t('item_description') %></th>
         <th class="price"><%= t('price') %></th>
         <th class="qty"><%= t('qty') %></th>
@@ -12,7 +12,7 @@
     <% @order.line_items.each do |item| %>
       <tr>
         <%- locals = {:item => item} -%>
-        <% hook :order_details_line_item_row, locals do %>
+        <%= hook :order_details_line_item_row, locals do %>
           <td width="300"><%=item.variant.product.name-%> <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %></td>
           <td class="price"><%= number_to_currency item.price -%></td>
           <td class="qty"><%=item.quantity-%></td>
@@ -21,7 +21,7 @@
       </tr>
     <% end %>
   </tbody>
-  <% hook :order_details_subtotal do %>
+  <%= hook :order_details_subtotal do %>
     <tbody id='subtotal'>
       <tr class="total" id="subtotal-row">
         <td colspan="3"><b><%= t('subtotal') %>:</b></td>
@@ -29,7 +29,7 @@
       </tr>
     </tbody>
   <% end %>
-  <% hook :order_details_charges do %>
+  <%= hook :order_details_charges do %>
     <tbody id="order-charges">
       <% @order.charges.each do |charge| %>
         <tr class="total">
@@ -39,7 +39,7 @@
       <% end %>
     </tbody>
   <% end %>
-  <% hook :order_details_credits do %>
+  <%= hook :order_details_credits do %>
     <tbody id="order-credits">
       <% @order.credits.each do |credit| %>
         <tr class="total">
@@ -49,7 +49,7 @@
       <% end %>
     </tbody>
   <% end %>
-  <% hook :order_details_total do %>
+  <%= hook :order_details_total do %>
     <tbody id='order-total'>
       <tr class="total">
         <td colspan="3"><b><%= t('order_total') %>:</b></td>

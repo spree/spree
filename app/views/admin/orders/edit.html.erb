@@ -1,5 +1,5 @@
 <div class='toolbar order-links'>
-  <% hook :admin_order_edit_buttons do %>
+  <%= hook :admin_order_edit_buttons do %>
     <%= button_link_to t("resend"), resend_admin_order_url(@order), :method => :post, :icon => 'send-email' %>
     <%= event_links %>
   <% end %>
@@ -9,11 +9,11 @@
 
 <%= render :partial => "add_product" %>
 
-<% hook :admin_order_edit_header do %>
+<%= hook :admin_order_edit_header do %>
   <%=error_messages_for :order %>
 <% end %>
 
-<% hook :admin_order_edit_form do %>
+<%= hook :admin_order_edit_form do %>
   <div id="order-form-wrapper">
     <%= render :partial => 'form', :locals => {:order => @order} -%>
   </div>

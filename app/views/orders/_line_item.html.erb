@@ -1,7 +1,7 @@
 <tr class="<%= cycle('', 'alt') %>">
   <td>
     <%- locals = {:item_form => item_form, :variant => variant, :line_item => line_item} -%>
-    <% hook :cart_item_image, locals do %>
+    <%= hook :cart_item_image, locals do %>
       <%= item_form.hidden_field :variant_id %>
       <%= item_form.hidden_field :order_id %>
       <% if variant.images.length == 0 %>
@@ -12,30 +12,30 @@
     <% end %>
   </td>
   <td>
-    <% hook :cart_item_description, locals do %>
+    <%= hook :cart_item_description, locals do %>
       <h4><%= link_to variant.product.name,  product_path(variant.product) %></h4>
       <%= variant_options variant %>
       <%= truncate(variant.product.description, :length => 100, :omission => "...") %>
     <% end %>
   </td>
   <td>
-    <% hook :cart_item_price, locals do %>
+    <%= hook :cart_item_price, locals do %>
       <%=  product_price(line_item) %>
     <% end %>
   </td>
   <td>
-    <% hook :cart_item_quantity, locals do %>
+    <%= hook :cart_item_quantity, locals do %>
       <%= item_form.text_field :quantity, :size => 3 %>
     <% end %>
   </td>
 
   <td>
-    <% hook :cart_item_total, locals do %>
+    <%= hook :cart_item_total, locals do %>
       <%= format_price(product_price(line_item, :format_as_currency => false) * line_item.quantity) unless line_item.quantity.nil? %>
     <% end %>
   </td>
   <td>
-    <% hook :cart_item_delete, locals do %>
+    <%= hook :cart_item_delete, locals do %>
       <%= link_to(image_tag('/images/admin/icons/delete.png'), order_line_item_path(@order, line_item), :method => :delete) unless line_item.new_record? %>
     <% end %>
   </td>

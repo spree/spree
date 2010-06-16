@@ -4,7 +4,7 @@ module HookHelper
   # 
   #   <%= hook :some_hook %>
   #
-  #   <% hook :some_hook do %>
+  #   <%= hook :some_hook do %>
   #     <p>Some HTML</p>
   #   <% end %>
   # 

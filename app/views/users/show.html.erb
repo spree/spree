@@ -1,6 +1,6 @@
 <h1><%= t("my_account") %></h1>
 
-<% hook :account_summary do %>
+<%= hook :account_summary do %>
 
 <table>
   <tr>
@@ -14,7 +14,7 @@
 
 <% end %>
 
-<% hook :account_my_orders do %>
+<%= hook :account_my_orders do %>
 
 <h2><%= t("my_orders") %></h2>
  

@@ -9,7 +9,7 @@
 <table class="index">
   <thead>
     <tr>
-      <% hook :admin_orders_index_headers do %>
+      <%= hook :admin_orders_index_headers do %>
         <th><%= order @search, :by => :created_at,       :as => t("order_date") %></th>
         <th><%= order @search, :by => :number,           :as => t("order_number") %></th>
         <th><%= order @search, :by => :state,            :as => t("status") %></th>
@@ -17,7 +17,7 @@
         <th><%= order @search, :by => :total,            :as => t("total") %></th>
       <% end %>
       <th>
-        <% hook :admin_orders_index_header_actions %>
+        <%= hook :admin_orders_index_header_actions %>
       </th>
     </tr>
   </thead>
@@ -25,7 +25,7 @@
   <% @orders.each do |order| %>
     <tr>
       <%- locals = {:order => order} -%>
-      <% hook :admin_orders_index_rows, locals do %>
+      <%= hook :admin_orders_index_rows, locals do %>
         <td><%= order.created_at.to_date%></td>
         <td><%= link_to order.number, object_url(order) %></td>
         <td><%= t(order.state.downcase) %></td>
@@ -33,7 +33,7 @@
         <td><%= number_to_currency order.total %></td>
       <% end %>
       <td>
-        <% hook :admin_orders_index_row_actions, locals do %>
+        <%= hook :admin_orders_index_row_actions, locals do %>
           <%= link_to_edit order %>
         <% end %>
       </td>
@@ -50,7 +50,7 @@
 
   <% form_for @search do |f| %>
     <%- locals = {:f => f} -%>
-    <% hook :admin_orders_index_search, locals do %>
+    <%= hook :admin_orders_index_search, locals do %>
       <label><%= t("date_range") %></label><br />
       <div class="yui-g date-range-filter">
         <div class="yui-u sub-field first">
@@ -88,7 +88,7 @@
         </label>
       </p>
     <% end %>
-    <% hook :admin_orders_index_search_buttons, locals do %>
+    <%= hook :admin_orders_index_search_buttons, locals do %>
       <p><%= button t("search") %></p>
     <% end %>
   <% end %>

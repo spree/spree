@@ -6,7 +6,7 @@
   <br class="clear" />
 
   <ul class="sidebar product-menu">
-    <% hook :admin_product_tabs, {:current => current} do %>
+    <%= hook :admin_product_tabs, {:current => current} do %>
 
     <li<%= ' class="active"' if current == "Product Details" %>>
       <%= link_to t("product_details"), edit_admin_product_url(@product) %>

@@ -1,12 +1,12 @@
 <div class='toolbar order-links'>
-  <% hook :admin_order_show_buttons do %>
+  <%= hook :admin_order_show_buttons do %>
     <%= button_link_to t("edit"), edit_admin_order_url(@order.number), :icon => 'edit' %>
   <% end %>
 </div>
 
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
 
-<% hook :admin_order_show_addresses do %>
+<%= hook :admin_order_show_addresses do %>
   <% if @order.bill_address %>
     <div class='adr'>
       <h4>
@@ -27,11 +27,11 @@
   <hr />
 <% end %>
 
-<% hook :admin_order_show_details do %>
+<%= hook :admin_order_show_details do %>
   <%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} -%>
 <% end %>
 
-<% hook :admin_order_show_other do %>
+<%= hook :admin_order_show_other do %>
   <% unless @order.special_instructions.blank? %>
     <table class="index">
       <tr>

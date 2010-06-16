@@ -1,7 +1,7 @@
 <%- locals = {:shipment_form => shipment_form} -%>
 
 <% unless @shipment.order.in_progress? %>
-  <% hook :admin_shipment_form_inventory_units, locals do %>
+  <%= hook :admin_shipment_form_inventory_units, locals do %>
     <table class="index" style="width:100%;">
       <tr>
         <th width="130px"><%= t('include_in_shipment') %></th>
@@ -35,13 +35,13 @@
   <% end %>
 <% end %>
 
-<% hook :admin_shipment_form_address, locals do %>
+<%= hook :admin_shipment_form_address, locals do %>
   <% shipment_form.fields_for 'address' do |sa_form|  %>
     <%= render :partial => 'admin/shared/address_form', :locals => {:f => sa_form, :name => t("shipping_address"), :use_billing => false} %>
   <% end %>
 <% end %>
 
-<% hook :admin_shipment_form_details, locals do %>
+<%= hook :admin_shipment_form_details, locals do %>
   <table class="index">
     <tr>
       <th colspan="8"><%= t("shipment_details") %></th>
@@ -69,7 +69,7 @@
   </table>
 <% end %>
 
-<% hook :admin_shipment_form_recalculate, locals do %>
+<%= hook :admin_shipment_form_recalculate, locals do %>
   <p>
     <label>
       <%= check_box_tag :recalculate, true, true %>

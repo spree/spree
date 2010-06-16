@@ -19,7 +19,7 @@
 
 <table class="index">
   <tr>
-    <% hook :admin_products_index_headers do %>
+    <%= hook :admin_products_index_headers do %>
       <th><%= t("sku") %></th>
       <th><%= order @search, :by => :name, :as => t("name") %></th>
       <th><%= order @search, :by => :master_price, :as => t("master_price") %></th>
@@ -31,13 +31,13 @@
 <% @collection.each do |product| %>
   <tr <%= 'style="color:red;"' if product.deleted? %> id="<%= dom_id product %>">
     <%- locals = {:product => product} -%>
-    <% hook :admin_products_index_rows, locals do %>
+    <%= hook :admin_products_index_rows, locals do %>
       <td><%= product.sku %></td>
       <td><%= product.name %></td>
       <td><%= product.price %></td>
     <% end %>
     <td class="actions">
-      <% hook :admin_products_index_row_actions, locals do %>
+      <%= hook :admin_products_index_row_actions, locals do %>
         <%= link_to_edit product unless product.deleted?  %>
         &nbsp;
         <%= link_to_clone product %>
@@ -57,7 +57,7 @@
       <h3><%= t(:search) %></h3>
 
       <%- locals = {:f => f} -%>
-      <% hook :admin_products_index_search, locals do %>
+      <%= hook :admin_products_index_search, locals do %>
         <p>
           <label><%= t("name") %></label><br />
           <%= f.text_field :name_contains, :size => 15 %>
@@ -73,7 +73,7 @@
         </p>
       <% end %>
 
-      <% hook :admin_products_index_search_buttons, locals do %>
+      <%= hook :admin_products_index_search_buttons, locals do %>
         <p class="form-buttons">
           <%= button t("search") %>
         </p>

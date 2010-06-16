@@ -14,14 +14,14 @@
 <table class="index">
   <thead>
     <tr>
-    <% hook :admin_shipping_methods_index_headers do %>
+    <%= hook :admin_shipping_methods_index_headers do %>
       <th><%= t("name") %></th>
       <th><%= t("zone") %></th>
       <th><%= t("calculator") %></th>
       <th><%= t("display") %></th>
     <% end %>
       <th>
-        <% hook :admin_shipping_methods_index_header_actions %>
+        <%= hook :admin_shipping_methods_index_header_actions %>
       </th>
     </tr>
   </thead>
@@ -29,14 +29,14 @@
     <% @shipping_methods.each do |shipping_method|%>
       <tr id="<%= dom_id shipping_method %>">
         <%- locals = {:shipping_method => shipping_method} -%>
-        <% hook :admin_shipping_methods_index_rows, locals do %>
+        <%= hook :admin_shipping_methods_index_rows, locals do %>
           <td><%= shipping_method.name %></td>
           <td><%= shipping_method.zone.name %></td>
           <td><%= shipping_method.calculator.description %></td>
           <td><%= shipping_method.display_on.blank? ? "Both" : t(shipping_method.display_on) %></td>
         <% end %>
         <td width="140px">
-          <% hook :admin_shipping_methods_index_row_actions, locals do %>
+          <%= hook :admin_shipping_methods_index_row_actions, locals do %>
             <%= link_to_edit shipping_method %> &nbsp;
             <%= link_to_delete shipping_method %>
           <% end %>

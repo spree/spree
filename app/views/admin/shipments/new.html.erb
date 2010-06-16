@@ -1,15 +1,15 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
 
-<% hook :admin_shipment_new_header do %>
+<%= hook :admin_shipment_new_header do %>
   <h1><%= t('new_shipment')%></h1>
   <%=error_messages_for :shipment %>
 <% end %>
 
-<% hook :admin_shipment_new_form do %>
+<%= hook :admin_shipment_new_form do %>
   <% form_for(@shipment, :url => collection_url) do |shipment_form| %>
     <%= render :partial => "form", :locals => { :shipment_form => shipment_form } %>
 
-    <% hook :admin_shipment_new_form_buttons do %>
+    <%= hook :admin_shipment_new_form_buttons do %>
       <p class="form-buttons">
         <%= button t('create') %>
       </p>

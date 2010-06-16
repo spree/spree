@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<% hook :inside_head do %>
+<%= hook :inside_head do %>
   <%= render :partial => 'shared/head'%>
 <% end %>
 </head>
@@ -29,7 +29,7 @@ end
   <div id="wrapper" class="container">
     <% if @content_for_sidebar %>
     <div id="sidebar">
-      <% hook :sidebar do %>
+      <%= hook :sidebar do %>
         <%= yield :sidebar %>
       <% end %>
     </div>

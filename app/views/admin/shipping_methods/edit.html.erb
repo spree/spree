@@ -1,15 +1,15 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<% hook :admin_shipping_method_edit_form_header do %>
+<%= hook :admin_shipping_method_edit_form_header do %>
   <h1><%= t("editing_shipping_method") %></h1>
   <%= error_messages_for :shipping_method %>
 <% end %>
 
-<% hook :admin_shipping_method_edit_form do %>
+<%= hook :admin_shipping_method_edit_form do %>
   <% form_for(@shipping_method, :url => object_url, :html => { :method => :put }) do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
 
-    <% hook :admin_shipping_method_edit_form_buttons do %>
+    <%= hook :admin_shipping_method_edit_form_buttons do %>
       <%= render :partial => "admin/shared/edit_resource_links" %>
     <% end %>
   <% end %>

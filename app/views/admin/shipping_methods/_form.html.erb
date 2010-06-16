@@ -1,5 +1,5 @@
 <%- locals = {:f => f} -%>
-<% hook :admin_shipping_method_form_fields, locals do %>
+<%= hook :admin_shipping_method_form_fields, locals do %>
   <% f.field_container :name do %>
     <%= f.label :name, t("name") %><br />
     <%= f.text_field :name  %>
@@ -19,7 +19,7 @@
   <% end %>
 <% end %>
 
-<% hook :admin_shipping_method_form_calculator_fields, locals do %>
+<%= hook :admin_shipping_method_form_calculator_fields, locals do %>
   <%= render "admin/shared/calculator_fields", :f => f %>
 <% end %>
 
