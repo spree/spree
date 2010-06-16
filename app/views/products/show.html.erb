@@ -2,24 +2,26 @@
 <h1><%= @product.name %></h1>
 
 <div id="product-images">
+  <%= hook :product_images do %>
   <div id="main-image">
     <%= render 'image' -%>
   </div>
   <div id="thumbnails">
     <%= render 'thumbnails', :product => @product -%>
   </div>
+  <% end %>
 </div>
 
 <div id="product-description">
-  <% hook :product_description do %>
+  <%= hook :product_description do %>
     <%= product_description(@product) rescue t("product_has_no_description") %>
   <% end %>
-  <% hook :product_properties do %>
+  <%= hook :product_properties do %>
     <%= render 'properties' %>
   <% end %>
 </div>
 
-<% hook :cart_form do %>
+<%= hook :cart_form do %>
   <div id="cart-form">
     <%= render 'cart_form' %>
   </div>
