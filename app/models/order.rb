@@ -289,8 +289,6 @@ class Order < ActiveRecord::Base
 
     self.adjustment_total = self.charge_total - self.credit_total
     self.total            = self.item_total   + self.adjustment_total
-    
-    self.checkout.enable_validation_group(:register) unless self.checkout.nil?
   end
 
   def update_totals!

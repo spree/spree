@@ -67,7 +67,7 @@ Spork.prefork do
 
     @shipping_method = Factory(:shipping_method)
     @checkout = @order.checkout
-
+    @checkout.email = Faker::Internet.email
     @checkout.ship_address = Factory(:address)
     @checkout.shipping_method = @shipping_method
 

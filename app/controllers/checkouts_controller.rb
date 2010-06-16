@@ -30,7 +30,6 @@ class CheckoutsController < Spree::BaseController
 
     # call the edit hooks for the current step in case we experience validation failure and need to edit again
     edit_hooks
-    @checkout.enable_validation_group(@checkout.state.to_sym)
     @prev_state = @checkout.state
 
     before :update

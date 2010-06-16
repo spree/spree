@@ -59,7 +59,6 @@ class Admin::LineItemsController < Admin::BaseController
       tax_charge.update_attributes(:amount => tax_charge.calculate_tax_charge)
     end
 
-    @order.checkout.enable_validation_group(@order.checkout.state.to_sym)
     @order.update_totals!
 
     unless @order.in_progress?

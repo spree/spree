@@ -4,15 +4,24 @@ class CheckoutTest < ActiveSupport::TestCase
   fixtures :payment_methods
 
   should_belong_to :bill_address
-  should_not_allow_values_for :email, "blah", "b lah", "blah@blah"
-  
- context Checkout do 
+
+ context Checkout do
    setup do
      @order = Factory(:order_with_totals)
      @checkout = @order.checkout
+     @checkout.email = Faker::Internet.email
      @checkout.shipping_method = Factory(:shipping_method)
      @checkout.state = "confirm"
      @checkout.save!
+   end
+
+   context "with :register as current validation group" do
+     setup do
+       @checkout.enable_validation_group(:register)
+     end
+     subject { @checkout }
+
+     should_not_allow_values_for :email, "blah", "b lah", "blah@blah"
    end
 
    context "in confirm state w/no auto capture" do
@@ -22,7 +31,7 @@ class CheckoutTest < ActiveSupport::TestCase
      end
      context "next" do
        setup do
-         @checkout.next! 
+         @checkout.next!
         end
        should_change("@checkout.state", :to => "complete") { @checkout.state }
        should_change("@checkout.order.completed_at", :from => nil) { @checkout.order.completed_at }
@@ -30,7 +39,7 @@ class CheckoutTest < ActiveSupport::TestCase
        should_change("CreditcardTxn.count", :by => 1) { CreditcardTxn.count }
      end
    end
-   
+
    context "in payment state w/no auto capture" do
     context "next with declineable creditcard" do
       setup do
@@ -46,7 +55,7 @@ class CheckoutTest < ActiveSupport::TestCase
       should_not_change("@checkout.state") { @checkout.state }
     end
    end
-   
+
    context "in confirm state w/auto capture" do
      setup do
        Spree::Config.set(:auto_capture => true)
@@ -55,7 +64,7 @@ class CheckoutTest < ActiveSupport::TestCase
        setup do
          @checkout.state = 'confirm'
          @payment = Factory(:payment, :payable => @checkout)
-         @checkout.next! 
+         @checkout.next!
        end
        should_change("@checkout.state", :to => "complete") { @checkout.state }
        should_change("@checkout.order.completed_at", :from => nil) { @checkout.order.completed_at }
@@ -102,9 +111,9 @@ class CheckoutTest < ActiveSupport::TestCase
        assert_equal [@country], Checkout.countries
      end
    end
- end       
+ end
  context "Checkout state machine with no Gateway configured" do
-   setup do 
+   setup do
      Gateway.stub!(:current, :return => nil)
      @order = Factory(:order_with_totals)
      @checkout = @order.checkout

@@ -39,12 +39,20 @@ class Admin::CheckoutsController  < Admin::BaseController
   def edit_before
     @checkout.build_bill_address(:country_id => Spree::Config[:default_country_id]) if @checkout.bill_address.nil?
     @checkout.build_ship_address(:country_id => Spree::Config[:default_country_id]) if @checkout.ship_address.nil?
+    set_validations
   end
 
   def update_before
-    @checkout.enable_validation_group(:address)
-
     #assign order to existing user
     @checkout.order.update_attribute(:user_id, params[:user_id]) unless params[:user_id].blank?
+    set_validations
+  end
+
+  def set_validations
+    @checkout.enable_validation_group(:address) #force validation group here as checkout state could be different
+
+    #need to add email to current validation fields as admin checkout
+    #is handling to validation groups at once register/address
+    @checkout.current_validation_fields << "email"
   end
 end

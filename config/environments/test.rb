@@ -23,5 +23,5 @@ config.action_controller.allow_forgery_protection = false
 
 config.gem "shoulda", :lib => "shoulda", :version => "2.10.2"
 config.gem "factory_girl", :lib => "factory_girl", :version => "1.2.3"
-config.gem 'test-unit', :lib => 'test/unit', :version => '~>2.0.9' if RUBY_VERSION.to_f >= 1.9       
+config.gem 'test-unit', :lib => 'test/unit', :version => '~>2.0.9' if RUBY_VERSION.to_f >= 1.9
 config.gem "rspec"
