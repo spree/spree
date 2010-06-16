@@ -1,4 +1,5 @@
 Spree::Application.routes.draw do |map|
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -55,111 +56,200 @@ Spree::Application.routes.draw do |map|
   match 'signup' => 'users#new'
   root :to => 'products#index'
 
-  resources :products
-  resources :orders
+  #   # Loads all extension routes in the order they are specified.
+  #TODO   map.load_extension_routes
 
-  # See how all your routes lay out with "rake routes"
+  resources :user_session do
+    member do
+      get :nav_bar
+    end
+  end
+  
+  match '/account' => 'users#show'
+   
+  resources :password_resets
 
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id(.:format)))'
+  #   # login mappings should appear before all others
+  match '/admin' => 'admin/overview#index', :as => :admin
+  
+  match '/locale/set' => 'locale#set'
+
+  resources :tax_categories
+
+  resources :countries, :only => :index do
+    resources :states
+  end
+
+  resources :states, :only => :index
+  
+  resources :users
+  
+  
+  resources :orders do
+    resources :line_items
+    resources :creditcards
+    resources :creditcard_payments
+    member do
+      get :address_info
+    end 
+  end
+
+  resources :orders do
+    member do
+      get :fatal_shipping
+    end
+    resources :shipments do
+      member do
+        get :shipping_method
+      end
+    end
+    resources :checkout do
+      member do
+        get :register
+        put :register
+      end
+    end
+  end
+
+  resources :shipments do
+    member do
+      get :shipping_method
+      put :shipping_method
+    end
+  end
+  
+  #   # Search routes
+  match 's/:product_group_query' => 'products#index', :as => :simple_search
+  match '/pg/:product_group_name' => 'products#index', :as => :pg_search
+  match '/t/*id/s/*product_group_query' => 'taxons#show', :as => :taxons_search
+  match 't/*id/pg/:product_group_name' => 'taxons#show', :as => :taxons_pg_search
+
+  #   # route globbing for pretty nested taxon and product paths
+  match '/t/*id' => 'taxons#show', :as => :nested_taxons
+  # 
+  #   #moved old taxons route to after nested_taxons so nested_taxons will be default route
+  #   #this route maybe removed in the near future (no longer used by core)
+  #   map.resources :taxons
+  #
+  
+  
+   
+  namespace :admin do
+    resources :coupons
+    resources :zones
+    resources :users
+    resources :countries do
+      resources :states
+    end
+    resources :states
+    resources :tax_categories
+    resources :configurations
+    resources :products do
+      resources :product_properties
+      resources :image
+      member do
+        get :clone
+      end 
+      resources :variants
+      resources :options_types do
+        member do
+          get :select
+          get :remove
+        end
+        collection do
+          get :available
+          get :selected
+        end
+      end
+      resources :taxons do
+        member do
+          post :select
+          post :remove
+        end
+        collection do
+          post :available
+          get  :selected
+        end
+      end
+    end
+    resources :option_types
+    resources :properties do
+      collection do
+        get :filtered
+      end
+    end
+    
+    resources :prototypes do
+      member do
+        post :select
+      end
+
+      collection do
+        get :available
+      end
+    end
+
+    resource :mail_settings
+    resource :inventory_settings
+    resources :google_analytics
+
+    resources :orders do
+      resources :adjustments
+      resources :line_items
+      resource :checkout
+      resources :shipments do
+        member do
+          put :fire
+        end
+      end
+      resources :return_authorizations do
+        member do
+          put :fire
+        end
+      end
+      resources :payments do
+        member do
+          put :fire
+          put :finalize
+        end
+      end
+    end  
+
+    resource :general_settings
+
+    resources :taxonomies do
+      member do
+        get :get_children
+      end
+      
+      resources :taxons
+    end
+
+    resources :reports, :only => [:index, :show] do
+      collection do
+        get :sales_total
+      end
+    end
+
+    resources :shipments
+    resources :shipping_methods
+    resources :shipping_categories
+    resources :shipping_rates
+    resources :tax_rates
+    resource  :tax_settings
+    resources :calculators
+    resources :product_groups do
+      resources :product_scopes
+    end
+    
+  
+    resources :trackers
+    resources :payment_methods
+  end
+
+  match '/:controller(/:action(/:id(.:format)))'
+  
+  #   # a catchall route for "static" content
+  match '*path' => 'content#show'
+
 end
-
-#RAILS3 TODO - make sure all of the original routes are remapped the rails3 way.  Remove them from below once they've been ported
-
-# ActionController::Routing::Routes.draw do |map|
-# 
-#   # Loads all extension routes in the order they are specified.
-#   map.load_extension_routes
-# 
-# 
-# 
-#   map.resource :user_session, :member => {:nav_bar => :get}
-#   map.resource :account, :controller => "users"
-#   map.resources :password_resets
-# 
-#   # login mappings should appear before all others
-#   map.admin '/admin', :controller => 'admin/overview', :action => 'index'
-#   map.set_locale '/locale/set', :controller => 'locale', :action => 'set', :method => :get
-# 
-#   map.resources :tax_categories
-#   map.resources :countries, :has_many => :states, :only => :index
-#   map.resources :states, :only => :index
-#   map.resources :users
-#   map.resources :orders, :member => {:address_info => :get}, :has_many => [:line_items, :creditcards, :creditcard_payments]
-#   map.resources :orders, :member => {:fatal_shipping => :get} do |order|
-#     order.resources :shipments, :member => {:shipping_method => :get}
-#     order.resource :checkout, :member => {:register => :any}
-#   end
-#   #map.resources :shipments, :member => {:shipping_method => :any}
-# 
-#   # Search routes
-#   map.simple_search '/s/*product_group_query', :controller => 'products', :action => 'index'
-#   map.pg_search '/pg/:product_group_name', :controller => 'products', :action => 'index'
-#   map.taxons_search '/t/*id/s/*product_group_query', {
-#     :controller => 'taxons',
-#     :action => 'show'
-#   }
-#   map.taxons_pg_search '/t/*id/pg/:product_group_name', {
-#     :controller => 'taxons',
-#     :action => 'show'
-#   }
-# 
-#   # route globbing for pretty nested taxon and product paths
-#   map.nested_taxons '/t/*id', :controller => 'taxons', :action => 'show'
-# 
-#   #moved old taxons route to after nested_taxons so nested_taxons will be default route
-#   #this route maybe removed in the near future (no longer used by core)
-#   map.resources :taxons
-# 
-#   map.namespace :admin do |admin|
-#     admin.resources :coupons
-#     admin.resources :zones
-#     admin.resources :users
-#     admin.resources :countries, :has_many => :states
-#     admin.resources :states
-#     admin.resources :tax_categories
-#     admin.resources :configurations
-#     admin.resources :products, :member => {:clone => :get}, :has_many => [:product_properties, :images] do |product|
-#       product.resources :variants
-#       product.resources :option_types, :member => { :select => :get, :remove => :get}, :collection => {:available => :get, :selected => :get}
-#       product.resources :taxons, :member => {:select => :post, :remove => :post}, :collection => {:available => :post, :selected => :get}
-#     end
-#     admin.resources :option_types
-#     admin.resources :properties, :collection => {:filtered => :get}
-#     admin.resources :prototypes, :member => {:select => :post}, :collection => {:available => :get}
-#     admin.resource :mail_settings
-#     admin.resource :inventory_settings
-#     admin.resources :google_analytics
-#     admin.resources :orders, :has_many => [:adjustments, :line_items], :has_one => :checkout, :member => {:fire => :put, :resend => :post, :history => :get} do |order|
-#       order.resources :shipments, :member => {:fire => :put}
-#       order.resources :return_authorizations, :member => {:fire => :put}
-#     end
-#     admin.resources :orders do |order|
-#       order.resources :payments, :member => {:fire => :put, :finalize => :put}
-#     end
-#     admin.resource :general_settings
-#     admin.resources :taxonomies, :member => { :get_children => :get } do |taxonomy|
-#       taxonomy.resources :taxons
-#     end
-#     admin.resources :reports, :only => [:index, :show], :collection => {:sales_total => :get}
-# 
-#     admin.resources :shipments
-#     admin.resources :shipping_methods
-#     admin.resources :shipping_categories
-#     admin.resources :shipping_rates
-#     admin.resources :tax_rates
-#     admin.resource  :tax_settings
-#     admin.resources :calculators
-#     admin.resources :product_groups, :has_many => :product_scopes
-#     admin.resources :trackers
-#     admin.resources :payment_methods
-#   end
-# 
-#   map.connect ':controller/:action/:id.:format'
-#   map.connect ':controller/:action/:id'
-# 
-#   # a catchall route for "static" content
-#   map.connect '*path', :controller => 'content', :action => 'show'
-# 
-# end
