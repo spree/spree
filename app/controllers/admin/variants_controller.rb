@@ -25,9 +25,9 @@ class Admin::VariantsController < Admin::BaseController
       
     @variant.deleted_at = Time.now()
     if @variant.save
-      self.notice = I18n.t("notice_messages.variant_deleted")
+      flash.notice = I18n.t("notice_messages.variant_deleted")
     else
-      self.notice = I18n.t("notice_messages.variant_not_deleted")
+      flash.notice = I18n.t("notice_messages.variant_not_deleted")
     end
 
     respond_to do |format|

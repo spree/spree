@@ -12,8 +12,8 @@ class Admin::BaseController < Spree::BaseController
   end
 
   def render_js_for_destroy
-    render :js => "$('.flash.notice').html('#{self.notice}'); $('.flash.notice').show();"
-    self.notice = nil
+    render :js => "$('.flash.notice').html('#{flash.notice}'); $('.flash.notice').show();"
+    flash.notice = nil
   end
 
   def require_object_editable_by_current_user

@@ -173,17 +173,17 @@ class CheckoutsController < Spree::BaseController
 
   def complete_order
     if @checkout.order.out_of_stock_items.empty?
-      self.notice = t('order_processed_successfully')
+      flash.notice = t('order_processed_successfully')
     else
-      self.notice = t('order_processed_but_following_items_are_out_of_stock')
-      self.notice += '<ul>'
+      flash.notice = t('order_processed_but_following_items_are_out_of_stock')
+      flash.notice += '<ul>'
       @checkout.order.out_of_stock_items.each do |item|
-        self.notice += '<li>' + t(:count_of_reduced_by,
+        flash.notice += '<li>' + t(:count_of_reduced_by,
                               :name => item[:line_item].variant.name,
                               :count => item[:count]) +
                           '</li>'
       end
-      self.notice += '<ul>'
+      flash.notice += '<ul>'
     end
   end
 

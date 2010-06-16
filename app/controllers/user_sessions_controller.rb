@@ -24,7 +24,7 @@ class UserSessionsController < Spree::BaseController
   def destroy
     current_user_session.destroy
     session.clear
-    self.notice = t("logged_out")
+    flash.notice = t("logged_out")
     redirect_to products_path
   end
 
@@ -64,7 +64,7 @@ class UserSessionsController < Spree::BaseController
 
         respond_to do |format|
           format.html {
-            self.notice = t("logged_in_succesfully") unless session[:return_to]
+            flash.notice = t("logged_in_succesfully") unless session[:return_to]
             redirect_back_or_default products_path
           }
           format.js {
@@ -90,10 +90,10 @@ class UserSessionsController < Spree::BaseController
 
     @user.save do |result|
       if result
-        self.notice = t(:user_created_successfully) unless session[:return_to]
+        flash.notice = t(:user_created_successfully) unless session[:return_to]
         redirect_back_or_default products_url
       else
-        self.notice = t(:missing_required_information)
+        flash.notice = t(:missing_required_information)
         redirect_to :controller => :users, :action => :new, :user => {:openid_identifier => @user.openid_identifier}
       end
     end

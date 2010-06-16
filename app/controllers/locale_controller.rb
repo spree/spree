@@ -7,7 +7,7 @@ class LocaleController < ApplicationController
     if params[:locale] && AVAILABLE_LOCALES.include?(params[:locale])
       I18n.locale = params[:locale]
       session[:locale] = params[:locale]
-      self.notice = t("locale_changed")
+      flash.notice = t("locale_changed")
     else
       flash[:error] = t("locale_not_changed")
     end
