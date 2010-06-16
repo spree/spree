@@ -51,8 +51,8 @@ Spree::Application.routes.draw do |map|
   # just remember to delete public/index.html.
   # root :to => "welcome#index"
    
-  match 'login' => 'users_sessions#new'
-  match 'logout' => 'users_sessions#destroy'
+  match 'login' => 'user_sessions#new'
+  match 'logout' => 'user_sessions#destroy'
   match 'signup' => 'users#new'
   root :to => 'products#index'
 
@@ -61,7 +61,7 @@ Spree::Application.routes.draw do |map|
   #   # Loads all extension routes in the order they are specified.
   #TODO   map.load_extension_routes
 
-  resources :user_session do
+  resource :user_session do
     member do
       get :nav_bar
     end
@@ -85,7 +85,6 @@ Spree::Application.routes.draw do |map|
   resources :states, :only => :index
   
   resources :users
-  
   
   resources :orders do
     resources :line_items
