@@ -7,7 +7,7 @@
 </head>
 <%
 if @body_class.nil?
-  if @content_for_sidebar
+  if content_for?(:sidebar)
     @body_class = 'two-col'
   else
     @body_class = 'one-col'
@@ -27,7 +27,7 @@ end
   </div>
 
   <div id="wrapper" class="container">
-    <% if @content_for_sidebar %>
+    <% if content_for?(:sidebar) %>
     <div id="sidebar">
       <%= hook :sidebar do %>
         <%= yield :sidebar %>
