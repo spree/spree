@@ -41,13 +41,13 @@ module Scopes::Product
 
   #RAILS3 TODO - scopes are duplicated here and in model/product.rb - can we DRY it up?
   # default product scope only lists available and non-deleted products
-  ::Product.scope :not_deleted, lambda { where("products.deleted_at is null") }
-  ::Product.scope :available,   lambda { |*args|
-     where("products.available_on <= ?", args.first || Time.zone.now)
-  }
-  ::Product.scope :active,      lambda { |*args|
-    Product.not_deleted.available(args.first).scope(:find)
-  }
+  # ::Product.scope :not_deleted, lambda { where("products.deleted_at is null") }
+  # ::Product.scope :available,   lambda { |*args|
+  #    where("products.available_on <= ?", args.first || Time.zone.now)
+  # }
+  # ::Product.scope :active,      lambda { |*args|
+  #   Product.not_deleted.available(args.first).scope(:find)
+  # }
 
   ::Product.scope :keywords, lambda{|query|
     return {} if query.blank?
