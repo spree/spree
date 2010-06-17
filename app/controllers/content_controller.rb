@@ -3,7 +3,7 @@ class ContentController < Spree::BaseController
   caches_page :show, :index, :if => Proc.new { Spree::Config[:cache_static_content] }
 
   def show
-    render :action => params[:path].join('/')
+    render :action => params[:path]
   end
   
   def cvv
