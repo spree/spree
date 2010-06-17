@@ -38,15 +38,15 @@ module Scopes::Product
     :descend_by_master_price,
     :descend_by_popularity,
   ]
-  
-  # default product scope only lists available and non-deleted products
-  ::Product.scope :active,      lambda { |*args|
-    Product.not_deleted.available(args.first).scope(:find)
-  }
 
-  ::Product.scope :not_deleted, { where("products.deleted_at is null") }
+  #RAILS3 TODO - scopes are duplicated here and in model/product.rb - can we DRY it up?
+  # default product scope only lists available and non-deleted products
+  ::Product.scope :not_deleted, lambda { where("products.deleted_at is null") }
   ::Product.scope :available,   lambda { |*args|
      where("products.available_on <= ?", args.first || Time.zone.now)
+  }
+  ::Product.scope :active,      lambda { |*args|
+    Product.not_deleted.available(args.first).scope(:find)
   }
 
   ::Product.scope :keywords, lambda{|query|
@@ -78,9 +78,9 @@ module Scopes::Product
   }
 
   # for quick access to products in a group, WITHOUT using the association mechanism
-  Product.scope :in_cached_group, lambda {|product_group| 
-    { :joins => "JOIN product_groups_products ON products.id = product_groups_products.product_id", 
-      :conditions => ["product_groups_products.product_group_id = ?", product_group] 
+  Product.scope :in_cached_group, lambda {|product_group|
+    { :joins => "JOIN product_groups_products ON products.id = product_groups_products.product_id",
+      :conditions => ["product_groups_products.product_group_id = ?", product_group]
     }
   }
 
@@ -127,7 +127,7 @@ module Scopes::Product
       :joins => :properties,
       :conditions => conditions
     }
-  } 
+  }
 
   # a scope that finds all products having an option value specified by name, object or id
   Product.scope :with_option_value, lambda {|option, value|
@@ -162,14 +162,14 @@ module Scopes::Product
   # Product.scope_procedure :in_name, lambda{|words|
   #   Product.name_like_any(prepare_words(words))
   # }
-  # 
+  #
   # Product.scope_procedure :in_name_or_keywords, lambda{|words|
   #   Product.name_or_meta_keywords_like_any(prepare_words(words))
   # }
-  # 
+  #
   # Product.scope_procedure :in_name_or_description, lambda{|words|
   #   Product.name_or_description_or_meta_description_or_meta_keywords_like_any(prepare_words(words))
-  # }  
+  # }
 
   # Sorts products from most popular (poularity is extracted from how many
   # times use has put product in cart, not completed orders)
@@ -204,7 +204,7 @@ SQL
     a = words.split(/[,\s]/).map(&:strip)
     a.any? ? a : ['']
   end
-  
+
   def self.arguments_for_scope_name(name)
     if group = Scopes::Product::SCOPES.detect{|k,v| v[name.to_sym]}
       group[1][name.to_sym]

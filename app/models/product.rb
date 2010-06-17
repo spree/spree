@@ -63,11 +63,14 @@ class Product < ActiveRecord::Base
 
   include ::Scopes::Product
 
+  #RAILS3 TODO -  scopes are duplicated here and in scopres/product.rb - can we DRY it up?
   # default product scope only lists available and non-deleted products
-  scope :active,          not_deleted.available #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
-  scope :on_hand,         where("products.count_on_hand > 0")
   scope :not_deleted,     where(:deleted_at => nil)
   scope :available,       lambda { |on| where("products.available_on <= ?", Time.zone.now || on) }
+  scope :active,          not_deleted.available #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
+  scope :on_hand,         where("products.count_on_hand > 0")
+
+
 
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
     scope :group_by_products_id, { :group => "products." + Product.column_names.join(", products.") } if ActiveRecord::Base.connection.tables.include?("products")
