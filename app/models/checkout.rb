@@ -50,9 +50,10 @@ class Checkout < ActiveRecord::Base
 
 
   alias :ar_valid? :valid?
-  def valid?
+  def valid?(context=nil)
     # will perform partial validation when @checkout.enabled_validation_group :step is called
-    result = ar_valid?
+    result = ar_valid?(context)
+    return result unless validation_group_enabled?
 
     relevant_errors = errors.select { |attr, msg| @current_validation_fields.include?(attr) }
     errors.clear
