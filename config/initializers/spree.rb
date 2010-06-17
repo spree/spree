@@ -29,21 +29,22 @@ Spree::Preferences::MailSettings.init
 #  include Spree::Support::CoreExtensions::Array
 #end
 
-class ActiveRecord::Base
-  # Ryan Bates - http://railscasts.com/episodes/112
-  named_scope :conditions, lambda { |*args| {:conditions => args} }
-
-  # general merging of conditions, names following the searchlogic pattern
-  # conditions_all is a more descriptively named enhancement of the above
-  named_scope :conditions_all, lambda { |*args| {:conditions => [args].flatten} }
-
-  # forming the disjunction of a list of conditions (as strings)
-  named_scope :conditions_any, lambda { |*args| 
-    args = [args].flatten
-    raise "non-strings in conditions_any" unless args.all? {|s| s.is_a? String}
-    { :conditions => args.map {|c| "(#{c})"}.join(" OR ") }
-  }
-end
+#RAILS3 TODO
+# class ActiveRecord::Base
+#   # Ryan Bates - http://railscasts.com/episodes/112
+#   scope :conditions, lambda { |*args| where(args)}
+# 
+#   # general merging of conditions, names following the searchlogic pattern
+#   # conditions_all is a more descriptively named enhancement of the above
+#   scope :conditions_all, lambda { |*args| where([args].flatten)}
+# 
+#   # forming the disjunction of a list of conditions (as strings)
+#   scope :conditions_any, lambda { |*args| 
+#     args = [args].flatten
+#     raise "non-strings in conditions_any" unless args.all? {|s| s.is_a? String}
+#     { where(args.map {|c| "(#{c})"}.join(" OR ")) }
+#   }
+# end
 
 
 class String #:nodoc:

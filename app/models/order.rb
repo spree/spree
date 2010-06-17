@@ -44,11 +44,12 @@ class Order < ActiveRecord::Base
   validates_numericality_of :item_total
   validates_numericality_of :total
 
-  scope :by_number, lambda {|number| where("orders.number = ?", number) }
-  scope :between, lambda {|*dates| where("orders.created_at between ? and ?", dates.first.to_date, dates.last.to_date) }
-  scope :by_customer, lambda {|customer| joins(:user).where("users.email = ?", customer)}
-  scope :by_state, lambda {|state| where("state = ?", state) }
-  scope :checkout_complete, joins(:checkout).where("orders.completed_at IS NOT NULL")
+  scope :by_number, lambda {|number| where("orders.number = ?", number)}
+  scope :between, lambda {|*dates| where("orders.created_at between :start and :stop").where(:start, dates.first.to_date).where(:stop, dates.last.to_date)}
+  scope :by_customer, lambda {|customer| where("uses.email =?", customer).includes(:user)}
+  scope :by_state, lambda {|state| where("state = ?", state)}
+  scope :checkout_complete, where("orders.completed_at IS NOT NULL").includes(:checkout)
+
   make_permalink :field => :number
 
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.

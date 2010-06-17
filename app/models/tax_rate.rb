@@ -6,7 +6,7 @@ class TaxRate < ActiveRecord::Base
   validates_numericality_of :amount
   
   has_calculator
-  named_scope :by_zone, lambda { |zone| { :conditions => ["zone_id = ?", zone] } }
+  scope :by_zone, lambda { |zone| where("zone_id = ?", zone)}
 
   def calculate_tax(order)
     calculator.compute(order)

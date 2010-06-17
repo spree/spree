@@ -42,7 +42,7 @@ module ProductFilters
   #     we can access the field right away
   #   The filter identifies which scope to use, then sets the conditions for each price range
   #
-  Product.named_scope :price_range_any,
+  Product.scope :price_range_any,
     lambda {|opts| 
       conds = opts.map {|o| ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
       Product.scoped(:joins => :master).conditions_any(conds).scope :find
@@ -76,7 +76,7 @@ module ProductFilters
   #   rather than an inner join. 
 
   if Property.table_exists? && @@brand_property = Property.find_by_name("brand")
-    Product.named_scope :brand_any,
+    Product.scope :brand_any,
       lambda {|opts| 
         conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?} 
         Product.with_property(@@brand_property, "p_brand").conditions_any(conds).scope(:find)
@@ -115,7 +115,7 @@ module ProductFilters
   #   the product properties model. 
 
   if Property.table_exists? && @@brand_property 
-    Product.named_scope :selective_brand_any, lambda {|opts| Product.brand_any(opts).scope(:find) }
+    Product.scope :selective_brand_any, lambda {|opts| Product.brand_any(opts).scope(:find) }
 
     def ProductFilters.selective_brand_filter(taxon = nil)
       if taxon.nil? 

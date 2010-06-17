@@ -15,7 +15,7 @@ class Payment < ActiveRecord::Base
   validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment? 
   validates_presence_of :payment_method, :if => Proc.new { |payable| payable.is_a? Checkout }
 
-  named_scope :from_creditcard, :conditions => {:source_type => 'Creditcard'}
+  scope :from_creditcard, where(:source_type,'Creditcard')
 
   def order
     payable.is_a?(Order) ? payable : payable.order

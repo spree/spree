@@ -70,9 +70,9 @@ class Product < ActiveRecord::Base
   scope :available,       lambda { |on| where("products.available_on <= ?", Time.zone.now || on) }
 
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-    named_scope :group_by_products_id, { :group => "products." + Product.column_names.join(", products.") } if ActiveRecord::Base.connection.tables.include?("products")
+    scope :group_by_products_id, { :group => "products." + Product.column_names.join(", products.") } if ActiveRecord::Base.connection.tables.include?("products")
   else
-    named_scope :group_by_products_id, { :group => "products.id" }
+    scope :group_by_products_id, { :group => "products.id" }
   end
 
 
