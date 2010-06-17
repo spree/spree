@@ -26,7 +26,7 @@ module Admin::NavigationHelper
     selected = if options[:match_path]
       request.request_uri.starts_with?("/admin#{options[:match_path]}")
     else
-      args.include?(@controller.controller_name.to_sym)
+      args.include?(controller.controller_name.to_sym)
     end
     css_classes << 'selected' if selected
 
@@ -109,7 +109,7 @@ module Admin::NavigationHelper
       s << icon(html_options.delete(:icon)) + ' '
     end
     s << text
-    content_tag('span', s)
+    content_tag('span', raw(s))
   end
 
   def html_options_for_button_link(html_options)
