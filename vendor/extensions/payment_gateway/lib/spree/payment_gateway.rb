@@ -2,7 +2,7 @@ module Spree
   module PaymentGateway
 
     def self.included(base)
-      base.named_scope :with_payment_profile, :conditions => "gateway_customer_profile_id IS NOT NULL"
+      base.scope :with_payment_profile, where("gateway_customer_profile_id IS NOT NULL")
     end
 
     def authorize(amount, payment)
