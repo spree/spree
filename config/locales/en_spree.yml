@@ -231,7 +231,7 @@ en:
   allow_backorders: "Allow Backorders"
   allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
   allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode
-  allowed_ssl_in_production_mode: "SSL will {{not}} be used in production"
+  allowed_ssl_in_production_mode: "SSL will %{not} be used in production"
   already_registered: Already Registered?
   alternative_phone: Alternative Phone
   amount: Amount
@@ -253,7 +253,7 @@ en:
   back_end: Back End
   back_to_store: "Go Back To Store"
   backordered: Backordered
-  backordering_is_allowed: "Backordering {{not}} allowed"
+  backordering_is_allowed: "Backordering %{not} allowed"
   balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
@@ -309,7 +309,7 @@ en:
   copy_all_mails_to: Copy All Mails To
   cost_price: "Cost Price"
   count: Count
-  count_of_reduced_by: "count of '{{name}}' reduced by {{count}}"
+  count_of_reduced_by: "count of '%{name}' reduced by %{count}"
   country: Country
   country_based: "Country Based"
   coupon: Coupon
@@ -556,7 +556,7 @@ en:
   order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Your order has been processed successfully"
   order_summary: Order Summary
-  order_sure_want_to: "Are you sure you want to {{event}} this order?"
+  order_sure_want_to: "Are you sure you want to %{event} this order?"
   order_total: "Order Total"
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Order Updated"
@@ -596,7 +596,7 @@ en:
   preview: Preview
   previous: Previous
   price: Price
-  price_with_vat_included: "{{price}} (inc. VAT)"
+  price_with_vat_included: "%{price} (inc. VAT)"
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
   problems_processing_order: "We had problems processing your order"
@@ -720,7 +720,7 @@ en:
         name: "With property value"
         sentence: with property <em>%s</em> and value <em>%s</em>
   products: Products
-  products_with_zero_inventory_display: "Products with a zero inventory will {{not}} be displayed"
+  products_with_zero_inventory_display: "Products with a zero inventory will %{not} be displayed"
   properties: Properties
   property: Property
   prototype: Prototype
@@ -772,7 +772,7 @@ en:
   scope: Scope
   scopes: Scopes
   search: Search
-  search_results: "Search results for '{{keywords}}'"
+  search_results: "Search results for '%{keywords}'"
   secure_connection_type: Secure Connection Type
   secure_creditcard: Secure Creditcard
   select: Select
@@ -807,7 +807,7 @@ en:
   shipping_rates: "Shipping Rates"
   shipping_rates_description: "Manage shipping rates"
   shipping_total: "Shipping Total"
-  shop_by_taxonomy: "Shop by {{taxonomy}}"
+  shop_by_taxonomy: "Shop by %{taxonomy}"
   shopping_cart: "Shopping Cart"
   show: Show
   show_active: "Show Active"
@@ -816,7 +816,7 @@ en:
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
   show_price_inc_vat: "Show price including VAT"
-  showing_first_n: "Showing first {{n}}"
+  showing_first_n: "Showing first %{n}"
   sign_up: "Sign up"
   site_name: "Site Name"
   site_url: "Site URL"

@@ -4,8 +4,8 @@ en:
     access: "API Access"
     clear_key: "Clear API key"
     errors:
-      invalid_event: "Invalid event name, valid names are {{events}}"
-      invalid_event_for_object: "Valid event name but not allowed for this object, valid names are {{events}}"
+      invalid_event: "Invalid event name, valid names are %{events}"
+      invalid_event_for_object: "Valid event name but not allowed for this object, valid names are %{events}"
       missing_event: "No event name supplied"
     generate_key: "Generate API key"
     key: "API Key"
