@@ -1,8 +1,8 @@
-<% render 'admin/shared/product_sub_menu' %>
-<% form_for(:product_group,  :url => collection_url, :html => { :id => 'product-group-form', :multipart => true }) do |f| %>
+<%= render 'admin/shared/product_sub_menu' %>
+<%= form_for(:product_group,  :url => collection_url, :html => { :id => 'product-group-form', :multipart => true }) do |f| %>
   <fieldset>
     <legend><%= t(:product_group) %></legend>
-    <% f.field_container :name do %>
+    <%= f.field_container :name do %>
       <%= f.label :name, t("name") %>
       <%= f.text_field :name %>
       <%= f.error_message_on :name %>

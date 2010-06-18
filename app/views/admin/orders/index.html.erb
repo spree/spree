@@ -2,7 +2,7 @@
   <%= button_link_to t("new_order"), new_admin_order_url, :icon => 'add' %>
 </div>
 
-<% render :partial => 'admin/shared/order_sub_menu' %>
+<%= render :partial => 'admin/shared/order_sub_menu' %>
 
 <h1><%= t("listing_orders") %></h1>
 
@@ -48,7 +48,7 @@
 <div class="box">
   <h3><%= t(:search) %></h3>
 
-  <% form_for @search do |f| %>
+  <%= form_for @search do |f| %>
     <%- locals = {:f => f} -%>
     <%= hook :admin_orders_index_search, locals do %>
       <label><%= t("date_range") %></label><br />

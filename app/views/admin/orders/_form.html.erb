@@ -1,6 +1,6 @@
 <%= render 'shared/error_messages', :target => @line_item %>
 
-<% form_for(@order, :url => admin_order_url(@order), :html => { :method => :put}) do |f| %>
+<%= form_for(@order, :url => admin_order_url(@order), :html => { :method => :put}) do |f| %>
   <%= f.hidden_field :number %>
   <table class="index">
     <tbody id='line-items'>

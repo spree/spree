@@ -54,7 +54,7 @@ module Admin::BaseHelper
   # This specific example creates a link which uses javascript to add a new
   # form partial to the DOM.
   #
-  #   <% form_for @project do |project_form| -%>
+  #   <%= form_for @project do |project_form| -%>
   #     <div id="tasks">
   #       <% project_form.fields_for :tasks do |task_form| %>
   #         <%= render :partial => 'task', :locals => { :f => task_form } %>

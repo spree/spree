@@ -2,7 +2,7 @@
 
 <h1><%= t("shopping_cart")%></h1>
 
-<% form_for(@order, :html=>{:id=>'updatecart'}) do |order_form| %>
+<%= form_for(@order, :html=>{:id=>'updatecart'}) do |order_form| %>
 <%= hook :inside_cart_form do %>
 
   <%= hook :cart_items do %>

@@ -19,7 +19,7 @@
   </ul>
 </div>
 
-<% form_for :search do |f| %>
+<%= form_for :search do |f| %>
   <% params[:search] ||= {} %>
   <input type="hidden" name="taxon"    value="<%= @taxon.id %>"/>
   <input type="hidden" name="per_page" value="<%= params[:per_page] %>"/>

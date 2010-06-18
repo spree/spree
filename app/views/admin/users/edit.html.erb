@@ -4,7 +4,7 @@
 <% end %>
 
 <%= hook :admin_user_edit_form do %>
-  <% form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
 
     <%= hook :admin_user_edit_form_buttons do %>

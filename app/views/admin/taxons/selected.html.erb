@@ -6,12 +6,12 @@
 </div>
 
 
-<% form_tag('#') do %>
+<%= form_tag('#') do %>
   <label><%= t('search') %>:</label>
   <input id="searchtext" size="25">
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   function search_for_taxons(){
     jQuery.ajax({
      data: {q: jQuery("#searchtext").val() }, 

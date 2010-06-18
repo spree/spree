@@ -12,7 +12,7 @@
       <%= render :partial => "summary" %>
     </div>
   <% end %>
-  <% form_for @checkout, :url => object_url, :html => { :method => :put, :id => "checkout_form_#{@checkout.state}"} do |checkout_form| %>
+  <%= form_for @checkout, :url => object_url, :html => { :method => :put, :id => "checkout_form_#{@checkout.state}"} do |checkout_form| %>
     <%= render @checkout.state, :checkout_form => checkout_form %>
     <input type="hidden" name="step" value="<%= @checkout.state %>">
     <input id="post-final" type="submit" style="display:none"/>

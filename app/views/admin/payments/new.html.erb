@@ -4,7 +4,7 @@
 
 <%= render "shared/error_messages", :target => @payment %>
 
-<% form_for @payment, :url => collection_url do |f| %>
+<%= form_for @payment, :url => collection_url do |f| %>
 
   <%= render "form", :f => f %>
 

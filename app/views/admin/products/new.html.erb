@@ -2,10 +2,10 @@
 
 <%= render "shared/error_messages", :target => @product %>
 
-<% form_for(:product,  :url => collection_url, :html => { :multipart => true }) do |f| %>
+<%= form_for(:product,  :url => collection_url, :html => { :multipart => true }) do |f| %>
 <fieldset>
 
-  <% f.field_container :name do %>
+  <%= f.field_container :name do %>
     <%= f.label :name, t("name") %> <span class="required">*</span><br />
     <%= f.text_field :name, :class => 'fullwidth title'  %>
     <%= f.error_message_on :name %>
@@ -15,7 +15,7 @@
     <div class="yui-u first">
 
       <% unless @product.has_variants? %>
-      <% f.field_container :sku do %>
+      <%= f.field_container :sku do %>
         <%= f.label :sku, t("sku") %><br />
         <%= f.text_field :sku, :size => 16 %>
         <%= f.error_message_on :sku %>
@@ -30,7 +30,7 @@
     </div>
     <div class="yui-u">
 
-      <% f.field_container :price do %>
+      <%= f.field_container :price do %>
         <%= f.label :price, t("master_price")%> <span class="required">*</span><br />
         <%= f.text_field :price  %>
         <%= f.error_message_on :price%>

@@ -2,7 +2,7 @@
 
 <%= render "shared/error_messages", :target => @variant %>
 
-<% form_for(@variant, :url => collection_url) do |f| %>
+<%= form_for(@variant, :url => collection_url) do |f| %>
   <%= hook :admin_variant_new_form, {:f => f} do %>
    <%= render :partial => "form", :locals => { :f => f } %>
   <% end %>

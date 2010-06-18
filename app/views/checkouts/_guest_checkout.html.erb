@@ -1,5 +1,5 @@
 <h2><%= t(:guest_user_account) %></h2>
-<% form_for @checkout, :url => register_order_checkout_url(@order), 
+<%= form_for @checkout, :url => register_order_checkout_url(@order), 
                        :html => { :method => :post, :id => "checkout_form_registration"} do |f| %>
   <p>
     <%= f.label :email, t("email") %><br />

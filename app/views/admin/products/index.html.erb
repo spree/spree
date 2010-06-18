@@ -1,4 +1,4 @@
-<% render :partial => 'admin/shared/product_sub_menu' %>
+<%= render :partial => 'admin/shared/product_sub_menu' %>
 
 <div class='toolbar'>
   <ul class='actions'>
@@ -52,7 +52,7 @@
 
 <% content_for :sidebar do %>
 
-  <% form_for @search do |f| %>
+  <%= form_for @search do |f| %>
     <div class="box">
       <h3><%= t(:search) %></h3>
 

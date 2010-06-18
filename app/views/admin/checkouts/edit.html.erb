@@ -11,7 +11,7 @@
 <% end %>
 
 <%= render "shared/error_messages", :target => @checkout %>
-<% form_for(@checkout, :url => admin_order_checkout_url(@order), :html => { :method => :put}) do |f| %>
+<%= form_for(@checkout, :url => admin_order_checkout_url(@order), :html => { :method => :put}) do |f| %>
   <%= render :partial => "form", :locals => {:f => f} %>
 <% end %>
 

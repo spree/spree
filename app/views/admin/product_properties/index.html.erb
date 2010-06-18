@@ -4,7 +4,7 @@
 
 <%= render "shared/error_messages", :target => @product %>
 
-<% form_for(:product, :url => admin_product_url(@product), :html => { :method => :put }) do |f| %>
+<%= form_for(:product, :url => admin_product_url(@product), :html => { :method => :put }) do |f| %>
   <table class="index">
     <thead>
       <tr>
@@ -41,7 +41,7 @@
   <%= render :partial => 'admin/shared/edit_resource_links' %>
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   var properties = "<%=@properties%>".split(' ');
   $("a.product_property_remove_link").live("click", function(){
     jQuery(this).parents('.product_property').remove();  

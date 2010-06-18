@@ -4,7 +4,7 @@
 <% end %>
 
 <%= hook :admin_user_new_form do %>
-  <% form_for(:user, :url => collection_url) do |f| %>
+  <%= form_for(:user, :url => collection_url) do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
 
     <%= hook :admin_user_new_form_buttons do %>

@@ -3,7 +3,7 @@
 
 <%= error_messages_for :prototype %>
 
-<% form_for(:prototype, :url => object_url, :html => { :method => :put }) do |f| %>
+<%= form_for(:prototype, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <%= render :partial => 'admin/shared/edit_resource_links' %>
 <% end %>
