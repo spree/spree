@@ -2,7 +2,7 @@
 
 <h1><%=t("editing_tax_category")%></h1>
 
-<%= error_messages_for :tax_category %>
+<%= render 'shared/error_messages', :target => @tax_category %>
 
 <% form_for(:tax_category, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>

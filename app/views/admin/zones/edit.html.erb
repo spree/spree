@@ -2,7 +2,7 @@
 
 <h1><%= t("editing_zone") %></h1>
 
-<%= error_messages_for :zone %>
+<%= render "shared/error_messages", :target => @zone %>
 
 <% form_for(@zone, :url => object_url, :html => { :method => :put }) do |zone_form| %>
   <%= render :partial => "form", :locals => { :zone_form => zone_form } %>

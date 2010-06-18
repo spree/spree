@@ -1,6 +1,6 @@
 <h1><%= t("new_shipping_rate") %></h1>
 
-<%= error_messages_for :shipping_rate %>
+<%= render "shared/error_messages", :target => @shipping_rate %>
 
 <% form_for(@shipping_rate, :url => collection_url) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>

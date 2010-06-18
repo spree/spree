@@ -2,7 +2,7 @@
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Variants"} %>
 
-<%= error_messages_for :variant %>
+<%= render "shared/error_messages", :target => @variant %>
 
 <% form_for(@variant, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= hook :admin_variant_edit_form, {:f => f} do %>

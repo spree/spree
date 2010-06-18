@@ -2,7 +2,7 @@
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Images"} %>
 
-<%= error_messages_for :image %>
+<%= render "shared/error_messages", :target => @image %>
 
 <% form_for(:image, :url => admin_product_image_url(@product), :html => { :method => :put, :multipart => true }) do |f| %>
   <table class="basic-table">

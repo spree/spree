@@ -1,6 +1,6 @@
 <h2><%= t("new_configuration_template") %></h2>
 
-<%= error_messages_for :app_configuration %>
+<%= render "shared/error_messages", :target => @app_configuration %>
 
 <% form_for @app_configuration, :url => admin_configurations_path do |f| -%>
   <p>

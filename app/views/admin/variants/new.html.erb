@@ -1,6 +1,6 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<%= error_messages_for :variant %>
+<%= render "shared/error_messages", :target => @variant %>
 
 <% form_for(@variant, :url => collection_url) do |f| %>
   <%= hook :admin_variant_new_form, {:f => f} do %>

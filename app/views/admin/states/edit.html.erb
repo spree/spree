@@ -2,7 +2,7 @@
 
 <h1><%= t("editing_state") %></h1>
 
-<%= error_messages_for :state %>
+<%= render 'shared/error_messages', :target => @state %>
 
 <% form_for(:state, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>

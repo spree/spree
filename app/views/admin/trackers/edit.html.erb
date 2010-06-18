@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
 <h1><%= t("editing_tracker") %></h1>
-<%= error_messages_for :tracker %>
+<%= render "shared/error_messages", :target => @tracker %>
 <% form_for(@tracker, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <%= render :partial => "admin/shared/edit_resource_links" %>

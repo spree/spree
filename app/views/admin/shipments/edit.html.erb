@@ -19,7 +19,7 @@
     <h3><%= t('charges') %> <%= number_to_currency @shipment.shipping_charge.amount %></h3>
   <% end %>
 
-  <%= error_messages_for :shipment %>
+  <%= render "shared/error_messages", :target => @shipment %>
 <% end %>
 
 <%= hook :admin_shipment_edit_form do %>

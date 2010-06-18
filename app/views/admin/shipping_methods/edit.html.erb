@@ -2,7 +2,7 @@
 
 <%= hook :admin_shipping_method_edit_form_header do %>
   <h1><%= t("editing_shipping_method") %></h1>
-  <%= error_messages_for :shipping_method %>
+  <%= render "shared/error_messages", :target => @shipping_method %>
 <% end %>
 
 <%= hook :admin_shipping_method_edit_form do %>

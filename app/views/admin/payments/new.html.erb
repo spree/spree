@@ -2,7 +2,7 @@
 
 <h2><%= t('new') %> <%= t("activerecord.models.#{@object.class.to_s.underscore}.one") %></h2>
 
-<%= error_messages_for :payment %>
+<%= render "shared/error_messages", :target => @payment %>
 
 <% form_for @payment, :url => collection_url do |f| %>
 

@@ -1,6 +1,6 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<%= error_messages_for :option_type %>
+<%= render 'shared/error_messages', :target => @option_type %>
 
 <% form_for(:option_type, :url => collection_url) do |f| %>
   <fieldset>

@@ -2,7 +2,7 @@
 
 <h2><%= t("new_return_authorization")%></h2>
 
-<%=error_messages_for :return_authorization %>
+<%= render "shared/error_messages", :target => @return_authorization %>
 <% form_for @return_authorization, :url => collection_url do |f| %>
   <%= render :partial => "form", :locals => {:f => f} %>
 

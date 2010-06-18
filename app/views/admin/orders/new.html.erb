@@ -2,7 +2,7 @@
 
 <%= hook :admin_order_new_header do %>
   <h2><%= t("new_order")%></h2>
-  <%=error_messages_for :order %>
+  <%= render 'shared/error_messages', :target => @order %>
 <% end %>
 
 <%= render :partial => "add_product" %>

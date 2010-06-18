@@ -2,7 +2,7 @@
 
 <h2><%= t("new_adjustment")%></h2>
 
-<%=error_messages_for :adjustment %>
+<%= render "shared/error_messages", :target => @adjustment %>
 <% form_for @adjustment, :url => collection_url do |f| %>
   <%= render :partial => "form", :locals => {:f => f} %>
 

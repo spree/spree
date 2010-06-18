@@ -10,7 +10,7 @@
 <%= render :partial => "add_product" %>
 
 <%= hook :admin_order_edit_header do %>
-  <%=error_messages_for :order %>
+  <%= render "shared/error_messages", :target => @order %>
 <% end %>
 
 <%= hook :admin_order_edit_form do %>

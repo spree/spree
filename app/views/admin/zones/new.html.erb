@@ -2,7 +2,7 @@
 
 <h1><%= t("new_zone") %></h1>
 
-<%= error_messages_for :zone %>
+<%= render "shared/error_messages", :target => @zone %>
 
 <% form_for(@zone, :url => collection_url) do |zone_form| %>
   <%= render "form", :zone_form => zone_form %>

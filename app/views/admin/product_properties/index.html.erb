@@ -2,7 +2,7 @@
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Product Properties"} %>
 
-<%= error_messages_for :product %>
+<%= render "shared/error_messages", :target => @product %>
 
 <% form_for(:product, :url => admin_product_url(@product), :html => { :method => :put }) do |f| %>
   <table class="index">

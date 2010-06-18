@@ -1,6 +1,6 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<%= error_messages_for :product %>
+<%= render "shared/error_messages", :target => @product %>
 
 <% form_for(:product,  :url => collection_url, :html => { :multipart => true }) do |f| %>
 <fieldset>
