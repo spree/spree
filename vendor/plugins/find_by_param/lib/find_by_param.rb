@@ -21,7 +21,7 @@ module Railslove
           
           if self.column_names.include?(options[:field].to_s)
             options[:param] = options[:field]
-            before_save :save_permalink
+            before_validation(:on => :create){ save_permalink }
           end
     
           self.permalink_options = options
@@ -56,26 +56,18 @@ module Railslove
 
         protected        
         def save_permalink 
-          #RAILS 3 TODO 
-          # return unless self.class.column_names.include?(permalink_options[:field].to_s)
-          # return if !changed?
-          # 
-          # base_value = self.to_param
-          # permalink_value = base_value
-          # 
-          # conditions = ["#{self.class.table_name}.#{permalink_options[:field]} = ?", permalink_value]
-          # unless new_record?
-          #   conditions.first << " and #{self.class.table_name}.#{self.class.primary_key} != ?"
-          #   conditions       << self.send(self.class.primary_key.to_sym)
-          # end
-          # 
-          # counter = 0 
-          # debugger
-          # while self.class.first(:all, :conditions => conditions).present?
-          #   permalink_value = "#{base_value}-#{counter += 1}"
-          #   conditions[1] = permalink_value
-          # end
-          # write_attribute(permalink_options[:field], permalink_value)
+          return unless self.class.column_names.include?(permalink_options[:field].to_s)
+          return if !changed?
+          
+          base_value = to_param
+          permalink_value = base_value
+          query = self.class.send("where", "#{permalink_options[:field]} = ?", permalink_value)
+          counter = 0 
+          unless query.limit(1).empty?
+            permalink_value = "#{base_value}-#{counter += 1}"
+            query = self.class.send("where", "#{permalink_options[:field]} = ?", permalink_value)
+          end
+          write_attribute(permalink_options[:field], permalink_value)
           true    
          
         end
