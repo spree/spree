@@ -3,7 +3,7 @@ class Coupon < ActiveRecord::Base
   has_calculator
   alias credits coupon_credits
 
-  validates_presence_of :code
+  validates :code, :presence => true
   
   def eligible?(order)
     return false if expires_at and Time.now > expires_at

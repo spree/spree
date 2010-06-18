@@ -3,7 +3,7 @@ module HasCalculator
     def has_calculator(options = {})
       has_one   :calculator, :as => :calculable, :dependent => :destroy
       accepts_nested_attributes_for :calculator
-      validates_presence_of(:calculator) if options[:require]
+      validates :calculator, :presence => true if options[:require]
 
       class_inheritable_accessor :calculators
       self.calculators = Set.new

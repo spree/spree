@@ -52,8 +52,7 @@ class Product < ActiveRecord::Base
     :conditions => ["variants.deleted_at IS NULL"],
     :dependent => :destroy
 
-  validates_presence_of :name
-  validates_presence_of :price
+  validates :name, :price, :presence => true
 
   accepts_nested_attributes_for :product_properties
 

@@ -198,9 +198,10 @@ class ActiveRecord::Base
   
     unless options[:no_validation]
       class_eval <<-EOF  
-        validates_presence_of :#{attribute_name.to_s}, 
+        validates :#{attribute_name.to_s}, :presence => {
           :in => #{set_name}::values, 
           :message => "should be #{should_be_in_text}"
+          }
       EOF
     end
   end

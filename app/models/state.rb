@@ -5,7 +5,7 @@ class State < ActiveRecord::Base
   has_one     :zone_member, :as => :zoneable
   has_one     :zone,        :through => :zone_member
   
-  validates_presence_of [:country, :name]
+  validates [:country, :name], :presence => true
   
   def <=>(other)
     name <=> other.name

@@ -1,6 +1,6 @@
 class BillingIntegration < PaymentMethod
 
-  validates_presence_of :name, :type
+  validates :name, :type, :presence => true
 
   preference :server, :string, :default => 'test'
   preference :test_mode, :boolean, :default => true

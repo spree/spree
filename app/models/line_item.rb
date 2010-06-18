@@ -8,9 +8,9 @@ class LineItem < ActiveRecord::Base
   before_validation :copy_price
   before_destroy :ensure_not_shipped
 
-  validates_presence_of :variant, :order
-  validates_numericality_of :quantity, :only_integer => true, :message => I18n.t("validation.must_be_int")
-  validates_numericality_of :price
+  validates :variant, :order, :presence => true
+  validates :quantity, :numericality => {:only_integer => true, :message => I18n.t("validation.must_be_int")}
+  validates :price, :numericality => true
 
   attr_accessible :quantity, :variant_id, :order_id
 

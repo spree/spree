@@ -30,8 +30,8 @@ class Adjustment < ActiveRecord::Base
   belongs_to :order
   belongs_to :adjustment_source, :polymorphic => true
 
-  validates_presence_of :description
-  validates_numericality_of :amount, :allow_nil => true
+  validates :description, :presence => true
+  validates :amount, :numericality => true
 
   # Tries to calculate the adjustment, returns nil if adjustment could not be calculated.
   # raises RuntimeError if adjustment source didn't provide the caculator.

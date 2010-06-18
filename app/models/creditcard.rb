@@ -3,11 +3,9 @@ class Creditcard < ActiveRecord::Base
 
   before_save :set_last_digits
 
-  validates_numericality_of :month, :only_integer => true
-  validates_numericality_of :year, :only_integer => true
-  validates_presence_of :number, :unless => :has_payment_profile?, :on => :create
-  validates_presence_of :verification_value, :unless => :has_payment_profile?, :on => :create
-
+  validates :month, :year, :numericality => {:only_integer => true}
+  validates :number, :presence => {:unless => :has_payment_profile?, :on => :create}
+  validates :verification_value, :presence => {:unless => :has_payment_profile?, :on => :create}
 
   def process!(payment)
     begin
@@ -50,7 +48,7 @@ class Creditcard < ActiveRecord::Base
   def display_number
    "XXXX-XXXX-XXXX-#{last_digits}"
   end
-   
+
   #RAILS 3 TODO
   #alias :attributes_with_quotes_default :attributes_with_quotes
 
@@ -63,11 +61,11 @@ class Creditcard < ActiveRecord::Base
 
   private
 
-  #RAILS 3 TODO 
+  #RAILS 3 TODO
   # # Override default behavior of Rails attr_readonly so that its never written to the database (not even on create)
   # def attributes_with_quotes(include_primary_key = true, include_readonly_attributes = true, attribute_names = @attributes.keys)
   #   attributes_with_quotes_default(include_primary_key, false, attribute_names)
-  # end  
+  # end
 
   def remove_readonly_attributes(attributes)
     if self.class.readonly_attributes.present?
