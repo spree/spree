@@ -3,8 +3,8 @@ class Creditcard < ActiveRecord::Base
 
   before_save :set_last_digits
 
-  validates_numericality_of :month, :integer => true
-  validates_numericality_of :year, :integer => true
+  validates_numericality_of :month, :only_integer => true
+  validates_numericality_of :year, :only_integer => true
   validates_presence_of :number, :unless => :has_payment_profile?, :on => :create
   validates_presence_of :verification_value, :unless => :has_payment_profile?, :on => :create
 
