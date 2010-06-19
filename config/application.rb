@@ -42,7 +42,7 @@ module Spree
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password]   
+    config.filter_parameters += [:password, :password_confirmation, :number, :verification_value]
     
     config.secret_token = "fb30f7ce80457288ede17e5382fbbbaa"
   end

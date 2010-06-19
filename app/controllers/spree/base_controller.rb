@@ -5,7 +5,6 @@ class Spree::BaseController < ActionController::Base
   #RAILS 3 TODO
   #before_filter :touch_sti_subclasses
   before_filter :set_user_language
-  filter_parameter_logging :password, :password_confirmation, :number, :verification_value
   helper_method :current_user_session, :current_user, :title, :title=, :get_taxonomies, :current_gateway
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
