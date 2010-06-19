@@ -84,7 +84,7 @@ class Less::More
 
           # Store CSS
           path_as_array[-1] = path_as_array[-1] + ".css"
-          destination = Pathname.new(File.join(Rails.root, "public", Less::More.destination_path)).join(*path_as_array)
+          destination = Pathname.new(Rails.root.join(, "public", Less::More.destination_path)).join(*path_as_array)
           destination.dirname.mkpath
 
           File.open(destination, "w") {|f|

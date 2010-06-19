@@ -47,7 +47,7 @@ end
 
 # Rake.application.instance_variable_get('@tasks').delete('default')
 
-spec_prereq = File.exist?(File.join(Rails.root, 'config', 'database.yml')) ? "db:test:prepare" : :noop
+spec_prereq = File.exist?(Rails.root.join(, 'config', 'database.yml')) ? "db:test:prepare" : :noop
 task :noop do
 end
 
@@ -129,7 +129,7 @@ namespace :spec do
       desc "Load fixtures (from spec/fixtures) into the current environment's database. Load specific fixtures using FIXTURES=x,y. Load from subdirectory in test/fixtures using FIXTURES_DIR=z."
       task :load => :environment do
         ActiveRecord::Base.establish_connection(Rails.env)
-        base_dir = File.join(Rails.root, 'spec', 'fixtures')
+        base_dir = Rails.root.join(, 'spec', 'fixtures')
         fixtures_dir = ENV['FIXTURES_DIR'] ? File.join(base_dir, ENV['FIXTURES_DIR']) : base_dir
 
         require 'active_record/fixtures'
