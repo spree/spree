@@ -1,5 +1,5 @@
-<%= error_messages_for :user %>
-<%= error_messages_for :checkout %>
+<%= render "shared/error_messages", :target => @user %>
+<%= render "shared/error_messages", :target => @checkout %>
 <h2><%= t("registration")%></h2>
 <div id="registration">
   <div id="account">

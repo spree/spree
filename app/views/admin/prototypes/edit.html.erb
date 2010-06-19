@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 <h1><%= t("editing_prototype") %></h1>
 
-<%= error_messages_for :prototype %>
+<%= render "shared/error_messages", :target => @prototype %>
 
 <%= form_for(:prototype, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
