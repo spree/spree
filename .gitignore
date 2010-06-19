@@ -26,9 +26,6 @@ pkg
 public/assets
 public/attachments
 public/blank_iframe.html
-public/images
-public/javascripts
-public/stylesheets
 public/ckeditora
 spree.gemspec
 spree_dev

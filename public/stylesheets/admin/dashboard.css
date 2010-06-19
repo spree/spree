@@ -1,0 +1,143 @@
+.dashboard h2{
+  padding-bottom:5px;
+  color: #476D9B;
+  clear:both;
+}
+
+.dashboard_left{
+  width:25%;
+  float:left;
+}
+
+.dashboard_main{
+  width:55%;
+  float:left;
+}
+
+.dashboard_main #orders_by_day_options{
+  background-color:#0095DA;
+  -moz-border-radius-bottomleft:10px;
+  -moz-border-radius-bottomright:10px;
+  -moz-border-radius-topleft:10px;
+  -moz-border-radius-topright:10px;
+  -webkit-border-bottom-left-radius: 10px 10px;
+  -webkit-border-bottom-right-radius: 10px 10px;
+  -webkit-border-top-left-radius: 10px 10px;
+  -webkit-border-top-right-radius: 10px 10px;
+  color:#fff;
+  margin-top:10px;
+  padding:5px;
+  text-align:center;
+}
+
+#order_by_day_title{
+  padding-bottom:5px;
+  color: #476D9B;
+  clear:both;
+}
+
+#order_totals{
+  background:#154E8C url(../../images/admin/bg/admin_tab_back.png) repeat-x scroll left top;
+  -moz-border-radius-bottomleft:10px;
+  -moz-border-radius-bottomright:10px;
+  -moz-border-radius-topleft:10px;
+  -moz-border-radius-topright:10px;
+  -webkit-border-bottom-left-radius: 10px 10px;
+  -webkit-border-bottom-right-radius: 10px 10px;
+  -webkit-border-top-left-radius: 10px 10px;
+  -webkit-border-top-right-radius: 10px 10px;
+  color:#fff;
+   height:62px;
+  padding:0 10px;
+  margin-bottom:20px;
+}
+
+#order_totals hr{
+  background-color:#fff;
+  clear:none;
+  float:left;
+  height:80%;
+  margin-top:6px;
+  width:3px;
+}
+
+#order_totals .spacer{
+  padding: 0px 10px;
+  font-size: 50px;
+  line-height: 60px;
+  color: #476D9B;
+}
+
+#order_totals p{
+  float:left;
+  font-size:420%;
+  font-weight:bold;
+  line-height:60px;
+  margin:0 5px 0 0;
+}
+
+#order_totals label{
+  font-size:200%;
+  line-height:50px;
+}
+
+#order_totals span{
+  display:block;
+  font-size:90%;
+  font-weight:bold;
+  margin-top: -10px;
+}
+
+.dashboard_main #orders_by_day_options label{
+  padding: 0px 10px;
+}
+
+.dashboard_right{
+  width:20%;
+  float:left;
+}
+
+.dashboard table th{
+  background-color: #0095DA;
+  color: #fff;
+}
+
+.dashboard_small_wrapper{
+  padding: 0px 20px 0px 0px;
+}
+
+.dashboard_main_wrapper{
+  padding: 0px 30px 10px 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#pie_legend{
+  width:50%;
+  float:left;
+  font-size: 80%;
+}
+
+#pie_legend span{
+  line-height:15px;
+  width:15px;
+  float:left;
+}
+
+#pie_legend label{
+  margin-left:5px;
+  float:left;
+}
+
+#pie_legend div{
+  clear:both;
+  text-align:right;
+}
+
+.text-right{
+  text-align:right;
+}
+
+.jqplot-table-legend{
+  width:60px;
+}
