@@ -3,7 +3,7 @@
 #ActiveRecord::Base.class_eval { include AttributeFu::Associations }
 #ActionView::Helpers::FormBuilder.class_eval { include AttributeFu::AssociatedFormHelper }
 
-unless defined?('RAILS_ROOT')
+unless defined?('Rails.root')
   # copy the required javascript file (if it hasn't been copied already)
   target_dir = "#{Rails.root}/public/javascripts"
   FileUtils.mkdir_p(target_dir) unless File.directory?(target_dir)

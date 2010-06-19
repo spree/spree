@@ -4,7 +4,7 @@ RAILS_FRAMEWORK_ROOT = (ENV['RAILS_FRAMEWORK_ROOT'] || "#{File.dirname(__FILE__)
 # Don't change this file!
 # Configure your app in config/environment.rb and config/environments/*.rb
 
-RAILS_ROOT = "#{File.dirname(__FILE__)}/.." unless defined?(RAILS_ROOT)
+Rails.root = "#{File.dirname(__FILE__)}/.." unless defined?(Rails.root)
 
 module Rails
   class << self
@@ -32,7 +32,7 @@ module Rails
     end
 
     def preinitializer_path
-      "#{RAILS_ROOT}/config/preinitializer.rb"
+      "#{Rails.root}/config/preinitializer.rb"
     end
   end
 
@@ -102,7 +102,7 @@ module Rails
 
       private
         def read_environment_rb
-          environment_rb = "#{RAILS_ROOT}/config/environment.rb"
+          environment_rb = "#{Rails.root}/config/environment.rb"
           environment_rb = "#{HELPER_RAILS_ROOT}/config/environment.rb" unless File.exists?(environment_rb)
           File.read(environment_rb)
         end

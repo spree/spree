@@ -1,6 +1,6 @@
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 plugin_test_dir = File.dirname(__FILE__)
-RAILS_ROOT = plugin_test_dir
+Rails.root = plugin_test_dir
 
 require 'rubygems'
 require 'test/unit'

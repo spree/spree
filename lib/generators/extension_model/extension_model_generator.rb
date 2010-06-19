@@ -73,7 +73,7 @@ class ExtensionModelGenerator < ModelGenerator
   end
 
   def destination_root
-    Rails.root.join(extension_path)
+    File.join(Rails.root, extension_path)
   end
 
   def extension_uses_rspec?

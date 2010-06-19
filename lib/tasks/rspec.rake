@@ -47,7 +47,7 @@ end
 
 # Rake.application.instance_variable_get('@tasks').delete('default')
 
-spec_prereq = File.exist?(Rails.root.join('config', 'database.yml')) ? "db:test:prepare" : :noop
+spec_prereq = File.exist?(File.join(Rails.root, 'config', 'database.yml')) ? "db:test:prepare" : :noop
 task :noop do
 end
 
@@ -56,7 +56,7 @@ end
 
 desc "Run all specs in spec directory (excluding plugin specs)"
 Spec::Rake::SpecTask.new(:spec => spec_prereq) do |t|
-  t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+  t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
   t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
@@ -86,7 +86,7 @@ namespace :spec do
   [:models, :controllers, :views, :helpers, :lib, :integration].each do |sub|
     desc "Run the code examples in spec/#{sub}"
     Spec::Rake::SpecTask.new(sub => spec_prereq) do |t|
-      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
       t.spec_files = FileList["spec/#{sub}/**/*_spec.rb"]
     end
   end
