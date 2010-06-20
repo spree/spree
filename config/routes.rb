@@ -50,7 +50,7 @@ Spree::Application.routes.draw do |map|
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   # root :to => "welcome#index"
-   
+
   match 'login' => 'user_sessions#new'
   match 'logout' => 'user_sessions#destroy'
   match 'signup' => 'users#new'
@@ -66,14 +66,14 @@ Spree::Application.routes.draw do |map|
       get :nav_bar
     end
   end
-  
+
   match '/account' => 'users#show'
-   
+
   resources :password_resets
 
   #   # login mappings should appear before all others
   match '/admin' => 'admin/overview#index', :as => :admin
-  
+
   match '/locale/set' => 'locale#set'
 
   resources :tax_categories
@@ -83,16 +83,16 @@ Spree::Application.routes.draw do |map|
   end
 
   resources :states, :only => :index
-  
+
   resources :users
-  
+
   resources :orders do
     resources :line_items
     resources :creditcards
     resources :creditcard_payments
     member do
       get :address_info
-    end 
+    end
   end
 
   resources :orders do
@@ -104,7 +104,7 @@ Spree::Application.routes.draw do |map|
         get :shipping_method
       end
     end
-    resources :checkout do
+    resource :checkout do
       member do
         get :register
         put :register
@@ -118,7 +118,7 @@ Spree::Application.routes.draw do |map|
       put :shipping_method
     end
   end
-  
+
   #   # Search routes
   match 's/:product_group_query' => 'products#index', :as => :simple_search
   match '/pg/:product_group_name' => 'products#index', :as => :pg_search
@@ -127,14 +127,14 @@ Spree::Application.routes.draw do |map|
 
   #   # route globbing for pretty nested taxon and product paths
   match '/t/*id' => 'taxons#show', :as => :nested_taxons
-  # 
+  #
   #   #moved old taxons route to after nested_taxons so nested_taxons will be default route
   #   #this route maybe removed in the near future (no longer used by core)
   #   map.resources :taxons
   #
-  
-  
-   
+
+
+
   namespace :admin do
     resources :coupons
     resources :zones
@@ -150,7 +150,7 @@ Spree::Application.routes.draw do |map|
       resources :image
       member do
         get :clone
-      end 
+      end
       resources :variants
       resources :options_types do
         member do
@@ -179,7 +179,7 @@ Spree::Application.routes.draw do |map|
         get :filtered
       end
     end
-    
+
     resources :prototypes do
       member do
         post :select
@@ -214,7 +214,7 @@ Spree::Application.routes.draw do |map|
           put :finalize
         end
       end
-    end  
+    end
 
     resource :general_settings
 
@@ -222,7 +222,7 @@ Spree::Application.routes.draw do |map|
       member do
         get :get_children
       end
-      
+
       resources :taxons
     end
 
@@ -242,14 +242,14 @@ Spree::Application.routes.draw do |map|
     resources :product_groups do
       resources :product_scopes
     end
-    
-  
+
+
     resources :trackers
     resources :payment_methods
   end
 
   match '/:controller(/:action(/:id(.:format)))'
-  
+
   #   # a catchall route for "static" content
   match '*path' => 'content#show'
 

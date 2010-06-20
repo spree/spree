@@ -1,12 +1,12 @@
 # Patches for the 'more' plugin which adds LessCSS Support to Rails
 # We need more to be able to load stylesheets from app/stylesheets in
 # each extension then write them to the same destination. Where stylesheets
-# of the same name exist in different extensions, the file in the last 
+# of the same name exist in different extensions, the file in the last
 # extension to be loaded takes precedence allowing them to be overriden
 # in the same manner as views
 
 class Less::More
-  
+
   class << self
 
     def source_paths
@@ -27,7 +27,7 @@ class Less::More
       end
       css
     end
-    
+
     def generate_css(source)
       engine = File.open(source) {|f| Less::Engine.new(f) }
       css = engine.to_css
@@ -54,7 +54,7 @@ class Less::More
         end
       end
     end
-    
+
 
     # Array of Pathname instances for all the less source files.
     def all_less_files
@@ -63,7 +63,7 @@ class Less::More
         all_less_files_in_path(pathname)
       end.flatten
     end
-    
+
     def all_less_files_in_path(pathname)
       Dir[pathname.join("**", "*.{css,less,lss}").to_s].map! {|f| Pathname.new(f) }
     end
@@ -84,7 +84,7 @@ class Less::More
 
           # Store CSS
           path_as_array[-1] = path_as_array[-1] + ".css"
-          destination = Pathname.new(Rails.root.join(, "public", Less::More.destination_path)).join(*path_as_array)
+          destination = Pathname.new(Rails.root.join("public", Less::More.destination_path)).join(*path_as_array)
           destination.dirname.mkpath
 
           File.open(destination, "w") {|f|
@@ -108,7 +108,7 @@ class Less::More
       self.source_paths.map do |source_path|
         Pathname.glob(File.join(source_path.to_s, filename))[0]
       end.compact.first
-    end  
+    end
 
   end
 

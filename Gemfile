@@ -1,7 +1,7 @@
 source :gemcutter
 
 gem 'rails', '3.0.0.beta4'
-gem 'mysql'          
+gem 'mysql'
 
 gem 'highline', '1.5.1'
 gem 'authlogic','>=2.1.5'
@@ -12,7 +12,7 @@ gem 'less', '1.2.20'
 gem 'stringex', '1.0.3', :require => 'stringex'
 gem 'chronic', '0.2.3'
 gem 'whenever', '0.3.7', :require => false
-gem 'will_paginate', '2.3.14', :require => 'will_paginate'
+gem "will_paginate", :git => "git://github.com/mislav/will_paginate.git", :branch => "rails3"
 gem 'state_machine', '0.9.2', :require => 'state_machine'
 gem 'faker', '0.3.1'
 gem 'paperclip', '>=2.3.1.1'
