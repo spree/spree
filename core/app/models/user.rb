@@ -7,9 +7,10 @@ class User < ActiveRecord::Base
 
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
-
-  extend AuthlogicOpenid::ActsAsAuthentic::Config
-  include AuthlogicOpenid::ActsAsAuthentic::Methods if User.table_exists?
+  
+  #RAILS3 TODO
+  #extend AuthlogicOpenid::ActsAsAuthentic::Config
+  #include AuthlogicOpenid::ActsAsAuthentic::Methods if User.table_exists?
 
   acts_as_authentic do |c|
     c.transition_from_restful_authentication = true
@@ -22,12 +23,13 @@ class User < ActiveRecord::Base
     #for more defaults check the AuthLogic documentation
   end
   
-  openid_required_fields [:email]
-  openid_optional_fields [:nickname]
+  #RAILS3 TODO
+  #openid_required_fields [:email]
+  #openid_optional_fields [:nickname]
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :email, :password, :password_confirmation, :login, :openid_identifier
+  attr_accessible :email, :password, :password_confirmation, :login#, :openid_identifier
 
   def deliver_password_reset_instructions!
     reset_perishable_token!
