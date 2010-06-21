@@ -3,7 +3,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
 .hidden { display: none; }
 </style>
 <fieldset id='billing'>
-  <% checkout_form.fields_for :bill_address do |bill_form| %>
+  <%= checkout_form.fields_for :bill_address do |bill_form| %>
     <legend><%= t("billing_address")%></legend>
     <div class="inner">
       <p class="field">&nbsp;</p>
@@ -48,7 +48,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
             -%>
             <script type="text/javascript" language="javascript" charset="utf-8">
             // <![CDATA[
-            document.write("<%= state_elements %>");
+            document.write("<%= raw state_elements %>");
             // ]]>
             </script>
           </span>
@@ -78,7 +78,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
   <% end %>
 </fieldset>
 <fieldset id='shipping'>
-  <% checkout_form.fields_for :ship_address do |ship_form| %>
+  <%= checkout_form.fields_for :ship_address do |ship_form| %>
     <legend><%= t("shipping_address")%></legend>
     <p class="field checkbox">
       <label for="checkout_same_address" id="use_billing">
@@ -127,7 +127,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
             -%>
             <script type="text/javascript" language="javascript" charset="utf-8">
             // <![CDATA[
-            document.write("<%= state_elements %>");
+            document.write("<%= raw state_elements %>");
             // ]]>
             </script>
           </span>

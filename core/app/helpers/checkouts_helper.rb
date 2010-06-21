@@ -14,7 +14,7 @@ module CheckoutsHelper
         css_classes << 'completed'
         text = link_to text, edit_order_checkout_url(@order, :step => state)
       end
-      
+
       css_classes << 'next' if state_index == current_index + 1
       css_classes << 'current' if state == @checkout.state
       css_classes << 'first' if state_index == 0
@@ -22,9 +22,9 @@ module CheckoutsHelper
       # It'd be nice to have separate classes but combining them with a dash helps out for IE6 which only sees the last class
       content_tag('li', content_tag('span', text), :class => css_classes.join('-'))
     end
-    content_tag('ol', items.join("\n"), :class => 'progress-steps', :id => "checkout-step-#{@checkout.state}")
+    content_tag('ol', raw(items.join("\n")), :class => 'progress-steps', :id => "checkout-step-#{@checkout.state}")
   end
-    
+
   def billing_firstname
     @checkout.bill_address.firstname  rescue ''
   end
