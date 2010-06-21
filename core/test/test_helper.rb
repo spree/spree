@@ -6,18 +6,22 @@ Spork.prefork do
   # if you change any configuration or code from libraries loaded here, you'll
   # need to restart spork for it take effect.
 
-  ENV["RAILS_ENV"] = "test"
-  require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-  require 'test_help'
-  require "authlogic/test_case"
-  require File.expand_path(File.dirname(__FILE__) + "/../vendor/extensions/payment_gateway/test/mocks/authorize_net_cim_mock")
+  ENV["RAILS_ENV"] = "test"    
+  #RAILS3 TODO
+  require File.expand_path('../../../config/environment', __FILE__)
+  require 'rails'
+  require 'rails/test_help'  
+  #require "authlogic/test_case"
+  #RAILS3 TODO
+  #require File.expand_path(File.dirname(__FILE__) + "/../vendor/extensions/payment_gateway/test/mocks/authorize_net_cim_mock")
 
   # BENCHMARK=[true|full] to use test_benchmark
   require 'test_benchmark' if ENV["BENCHMARK"]
 
   class ActiveSupport::TestCase
-    self.use_transactional_fixtures = true
-    self.use_instantiated_fixtures  = false
+    #RAILS3 TODO
+    #self.use_transactional_fixtures = true
+    #self.use_instantiated_fixtures  = false
     fixtures :all
   end
 

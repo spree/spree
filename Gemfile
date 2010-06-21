@@ -10,6 +10,7 @@ gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git
 gem 'mysql'
 gem 'sqlite3-ruby'
 gem 'ruby-debug'
+gem "rdoc",  "2.2"
 
 # group :test do
 #   gem 'shoulda', '2.10.2', :require => 'shoulda'
