@@ -58,7 +58,7 @@ class CheckoutsController < Spree::BaseController
   def register
     load_object
     @user = User.new
-    if request.method == :post
+    if request.method == "POST"
       @checkout.email = params[:checkout][:email]
       @checkout.enable_validation_group(:register)
       if @checkout.email.present? and @checkout.save

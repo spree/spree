@@ -37,27 +37,30 @@ Spree::Application.routes.draw do |map|
   resources :users
 
   resources :orders do
+
     resources :line_items
     resources :creditcards
     resources :creditcard_payments
+
     member do
       get :address_info
     end
-  end
 
-  resources :orders do
     member do
       get :fatal_shipping
     end
+
     resources :shipments do
       member do
         get :shipping_method
       end
     end
+
     resource :checkout do
       member do
-        get :register
-        put :register
+        get  :register
+        put  :register
+        post :register
       end
     end
   end
