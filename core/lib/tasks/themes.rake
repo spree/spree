@@ -6,10 +6,10 @@ namespace :spree do
 
       #RAILS 3 TODO - figure out final resting place for less
       #$LESS_LOAD_PATH = Spree::ExtensionLoader.stylesheet_source_paths.reverse
-      $LESS_LOAD_PATH = [Rails.root.join(, "app", "stylesheets")]
+      $LESS_LOAD_PATH = [Rails.root.join("core", "app", "stylesheets")]
 
       # css files are written to the last loaded theme extension's public/stylesheets directory
-      output_path = $LESS_LOAD_PATH.first.gsub("app/stylesheets", "public/stylesheets")
+      output_path = $LESS_LOAD_PATH.first.to_s.gsub("app/stylesheets", "public/stylesheets")
       FileUtils.mkpath(output_path)
 
       # Build a list of all unique non-partial .less files to compile

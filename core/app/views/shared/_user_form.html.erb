@@ -15,18 +15,3 @@
 </div>
 
 <%= hook :signup_below_password_fields %>
-
-<% if Spree::Config[:allow_openid] %>
-  <div id="openid-credentials" style="<%=openid_style(@user)%>" >
-    <p>
-      <%= f.label :openid_identifier, t('OpenID', :default => 'OpenID') %><br />
-      <%= f.text_field :openid_identifier, :class => 'openid_url' %>
-    </p>
-  </div>
-<% end %>
-
-<% if Spree::Config[:allow_openid] %>
-  <p id='enable_login_via_openid' style="<%=password_style(@user)%>" ><a href='#'><%= t :enable_login_via_openid %></a></p>
-  <p id='enable_login_via_login_password' style="<%=openid_style(@user)%>" ><a href='#'><%= t :enable_login_via_login_password %></a></p>
-  <%= javascript_include_tag 'open_id' %>
-<% end %>

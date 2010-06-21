@@ -259,8 +259,8 @@ legend {
   border-right: 1px solid #eeeeee;
 }
 body {
-  margin-top: 0px;
-  background: #ffffff url(../images/tile-slider.png) top left repeat-x;
+  margin-top: 10px;
+  background: #ffffff url(../images/body-back.png) top left repeat-x;
 }
 div.left {
   float: left;
@@ -283,12 +283,6 @@ body.two-col #wrapper { background-image: url(../images/wrapper-back-2.png); }
   overflow: hidden;
   display: block;
 }
-
-.container_bg{
-	width:100%;
-	background:url(../images/tile-header.png) top left repeat-x;
-}
-
 #sidebar {
   display: inline;
   float: left;
@@ -315,7 +309,7 @@ body.two-col #content {
   clear: both;
 }
 #header a { color: #2e6ab1; }
-#header a:hover { color: #3C7DFB; }
+#header a:hover { color: #eeeeee; }
 #footer {
   padding-top: 2em;
   clear: both;
