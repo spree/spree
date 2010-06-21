@@ -30,11 +30,12 @@ namespace :db do
     end
   end
 
-  desc "Loading db/sample for spree and each extension"
-  task :sample => :environment do   # an invoke will not execute the task after defaults has already executed it
-    Rake::Task["db:load_dir"].execute( Rake::TaskArguments.new([:dir],  ["sample" ]) )
-    puts "Sample data has been loaded"
-  end
+  # Todo : Bring back this feature
+  #desc "Loading db/sample for spree and each extension"
+  #task :sample => :environment do   # an invoke will not execute the task after defaults has already executed it
+    #Rake::Task["db:load_dir"].execute( Rake::TaskArguments.new([:dir],  ["sample" ]) )
+    #puts "Sample data has been loaded"
+  #end
 
   desc "Loading file for spree and each extension where you specify dir by rake db:load_file[filename.rb]"
   task :load_file , [:file] => :environment do |t , args|
@@ -79,7 +80,7 @@ namespace :db do
     require 'authlogic'
 
     # remigrate unless production mode (as saftey check)
-    if %w[demo development test].include? RAILS_ENV
+    if %w[demo development test].include? Rails.env
       if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
         ENV['SKIP_NAG'] = 'yes'
         Rake::Task["db:remigrate"].invoke
@@ -99,7 +100,7 @@ namespace :db do
     end
     Rake::Task["db:seed"].invoke if load_defaults
 
-    if RAILS_ENV == 'production' and Product.count > 0
+    if Rails.env == 'production' and Product.count > 0
       load_sample = agree("WARNING: In Production and products exist in database, load sample data anyways? [y/n]:" )
     else
       load_sample = true if ENV['AUTO_ACCEPT']

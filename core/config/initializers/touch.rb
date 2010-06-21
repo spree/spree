@@ -1,9 +1,14 @@
 # Touches all classes that should be initialized when spree starts
+# Surrounded with exception handling because when bootstrapping a vanilla app, bootstrap breaks if model tables don't exist
 
-::Adjustment
-::Charge
-::Credit
-::TaxCharge
-::ShippingCharge
-::CouponCredit
-::ReturnAuthorizationCredit
+begin
+  ::Adjustment
+  ::Charge
+  ::Credit
+  ::TaxCharge
+  ::ShippingCharge
+  ::CouponCredit
+  ::ReturnAuthorizationCredit
+rescue
+  nil
+end
