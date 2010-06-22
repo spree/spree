@@ -2,7 +2,7 @@ version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree-core'
+  s.name        = 'spree_core'
   s.version     = version
   #s.summary     = 'Email composition, delivery, and receiving framework (part of Rails).'
   #s.description = 'Email on Rails. Compose, deliver, receive, and test emails using the familiar controller/view pattern. First-class support for multipart email and attachments.'

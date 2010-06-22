@@ -1,6 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 
-require 'spree/all'
+require 'spree_core/all'
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.

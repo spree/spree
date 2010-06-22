@@ -1,7 +1,7 @@
 require "spree"
 
 %w(
-  core
+  spree_core
   spree_payment_gateway
 ).each do |extension|
   begin

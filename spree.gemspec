@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.executables        = ['spree']
   s.default_executable = 'spree'
 
-  s.add_dependency('spree-core',                version)
+  s.add_dependency('spree_core',                version)
   s.add_dependency('spree_payment_gateway',     version)
   # RAILS3 TODO - add more of the core extensions, etc.
   s.add_dependency('bundler',        '>= 0.9.26')
