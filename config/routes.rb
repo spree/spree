@@ -21,9 +21,6 @@ Spree::Application.routes.draw do |map|
 
   resources :password_resets
 
-  #   # login mappings should appear before all others
-  match '/admin' => 'admin/overview#index', :as => :admin
-
   match '/locale/set' => 'locale#set'
 
   resources :tax_categories
@@ -201,9 +198,11 @@ Spree::Application.routes.draw do |map|
     resources :payment_methods
   end
 
-  match '/:controller(/:action(/:id(.:format)))'
+  #RAILS3 TODO - we should disable this by default
+  #match '/:controller(/:action(/:id(.:format)))'
 
-  #   # a catchall route for "static" content
-  match '*path' => 'content#show'
+  #RAILS3 ROOT - this is interfering with routes in other extensions - we need to make sure it loads after everything else (if possible)
+  # a catchall route for "static" content
+  #match '*path' => 'content#show'
 
 end
