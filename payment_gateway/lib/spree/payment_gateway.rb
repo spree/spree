@@ -1,9 +1,10 @@
 module Spree
   module PaymentGateway
 
-    def self.included(base)
-      base.scope :with_payment_profile, where("gateway_customer_profile_id IS NOT NULL")
-    end
+    #RAILS3 TODO
+    # def self.included(base)
+    #   base.scope :with_payment_profile, where("gateway_customer_profile_id IS NOT NULL")
+    # end
 
     def authorize(amount, payment)
       # ActiveMerchant is configured to use cents so we need to multiply order total by 100
