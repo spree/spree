@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 Fixtures.create_fixtures("test/fixtures", %w(countries states))
 
 class AddressTest < ActiveSupport::TestCase

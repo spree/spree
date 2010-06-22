@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 # TODO: check logic of state machine (mayby separate test case?
 # check seslling units / restocking
