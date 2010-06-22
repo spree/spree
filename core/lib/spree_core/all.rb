@@ -3,6 +3,7 @@ require "spree"
 %w(
   spree_core
   spree_payment_gateway
+  spree_api
 ).each do |extension|
   begin
     require "#{extension}/engine"
