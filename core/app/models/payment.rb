@@ -13,7 +13,7 @@ class Payment < ActiveRecord::Base
   accepts_nested_attributes_for :source
   
   validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment? 
-  validates :payment_method, :presence => true, :if => Proc.new { |payable| payable.is_a? Checkout }
+  validates_presence_of :payment_method, :if => Proc.new { |payable| payable.is_a? Checkout }
 
   scope :from_creditcard, where(:source_type,'Creditcard')
 

@@ -6,7 +6,7 @@ class Taxon < ActiveRecord::Base
   before_create :set_permalink
   before_save :ensure_trailing_slash
 
-  validates :name, :presence => true
+  validates_presence_of :name
   has_attached_file :icon,
                 :styles => { :mini => '32x32>', :normal => '128x128>' },
                 :default_style => :mini,

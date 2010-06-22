@@ -16,8 +16,9 @@ class Shipment < ActiveRecord::Base
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :inventory_units
 
-  validates :inventory_units, :presence => true, :if => Proc.new { |unit| !%w(in_progress canceled).include?(unit.order.state) }
+  validates_presence_of :inventory_units, :if => Proc.new { |unit| !%w(in_progress canceled).include?(unit.order.state) }
   make_permalink :field => :number
+  validate :shipping_method
 
   def to_param
     self.number if self.number
@@ -118,7 +119,7 @@ class Shipment < ActiveRecord::Base
     order.ship! if order.shipments.all?(&:shipped?)
   end
 
-  def validate
+  def validate_shipping_method
     unless shipping_method.nil?
       errors.add :shipping_method, I18n.t("is_not_available_to_shipment_address") unless shipping_method.zone.include?(address)
     end

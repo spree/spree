@@ -1,6 +1,6 @@
 class Transaction < ActiveRecord::Base
   belongs_to :payment
 
-  validates :amount, :numericality => true
+  validates_numericality_of :amount
 
 end

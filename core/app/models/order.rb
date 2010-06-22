@@ -41,7 +41,7 @@ class Order < ActiveRecord::Base
   delegate :ip_address, :to => :checkout
   delegate :special_instructions, :to => :checkout
 
-  validates :item_total, :total, :numericality => true
+  validates_numericality_of:item_total, :total
 
   scope :by_number, lambda {|number| where("orders.number = ?", number)}
   scope :between, lambda {|*dates| where("orders.created_at between :start and :stop").where(:start, dates.first.to_date).where(:stop, dates.last.to_date)}

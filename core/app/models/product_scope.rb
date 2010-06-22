@@ -10,6 +10,8 @@ class ProductScope < ActiveRecord::Base
   belongs_to :product_group
   serialize :arguments
 
+  validate :check_validity_of_scope
+
   extend ::Scopes::Dynamic
 
   # Get all products with this scope
@@ -32,7 +34,7 @@ class ProductScope < ActiveRecord::Base
   end
   
   # checks validity of the named scope (if its safe and can be applied on Product)
-  def validate
+  def check_validity_of_scope
     errors.add(:name, "is not a valid scope name") unless Product.condition?(self.name)
     apply_on(Product).limit(0) != nil
   rescue Exception

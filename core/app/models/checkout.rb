@@ -18,9 +18,9 @@ class Checkout < ActiveRecord::Base
 
   attr_accessor :coupon_code
   attr_accessor :use_billing
-  attr_accessor :current_validation_fields
 
-  validates :email, :format => {:with => /^\S+@\S+\.\S+$/}
+  validates_presence_of :order_id, :shipping_method_id
+  validates_format_of :email, :with => /^\S+@\S+\.\S+$/
 
   validation_group :register, :fields => ["email"]
 
@@ -32,11 +32,6 @@ class Checkout < ActiveRecord::Base
                                        "ship_address.address1", "ship_address.city", "ship_address.statename",
                                        "ship_address.zipcode"]
   validation_group :delivery, :fields => ["shipping_method_id"]
-
-
-  def after_initialize
-    enable_validation_group(state.to_sym)
-  end
 
   def completed_at
     order.completed_at
@@ -76,9 +71,9 @@ class Checkout < ActiveRecord::Base
     state_machine.states.by_priority.map(&:name)
   end
 
-  def shipping_methods(display_on=nil)
+  def shipping_methods
     return [] unless ship_address
-    ShippingMethod.all_available(order,display_on)
+    ShippingMethod.all_available(order)
   end
 
   def payment

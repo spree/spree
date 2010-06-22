@@ -2,7 +2,7 @@ class ProductProperty < ActiveRecord::Base
   belongs_to :product
   belongs_to :property
   
-  validates :property, :presence => true 
+  validates_presence_of :property
   
   # virtual attributes for use with AJAX completion stuff
   def property_name

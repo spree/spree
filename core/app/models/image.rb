@@ -1,4 +1,5 @@
 class Image < Asset
+  validate :no_attachement_errors
   has_attached_file :attachment, 
                     :styles => { :mini => '48x48>', :small => '100x100>', :product => '240x240>', :large => '600x600>' }, 
                     :default_style => :product,
@@ -18,7 +19,7 @@ class Image < Asset
   end
 
   # if there are errors from the plugin, then add a more meaningful message
-  def validate
+  def no_attachement_errors
     unless attachment.errors.empty?
       # uncomment this to get rid of the less-than-useful interrim messages
       # errors.clear 

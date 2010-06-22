@@ -50,6 +50,7 @@ class AppConfiguration < Configuration
   preference :always_put_site_name_in_title, :boolean, :default => true
   preference :cache_static_content, :boolean, :default => true
 
-  validates :name, :presence => true, :uniqueness => true
+  validates_presence_of :name
+  validates_uniqueness_of :name
 
 end

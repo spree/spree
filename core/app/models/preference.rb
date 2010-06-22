@@ -11,8 +11,8 @@ class Preference < ActiveRecord::Base
   belongs_to  :owner, :polymorphic => true
   belongs_to  :group, :polymorphic => true
   
-  validates :attribute, :owner_id, :owner_type, :presence => true
-  validates :group_type, :presence => {:if => :group_id?}
+  validates_presence_of :attribute, :owner_id, :owner_type
+  validates_presence_of :group_type, :if => :group_id?
   
   class << self
     # Splits the given group into its corresponding id and type

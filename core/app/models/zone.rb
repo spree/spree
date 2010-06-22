@@ -3,7 +3,8 @@ class Zone < ActiveRecord::Base
   has_many :tax_rates
   has_many :shipping_methods
 
-  validates :name, :presence => true, :uniqueness => true
+  validates_presence_of :name
+  validates_uniqueness_of :name
   after_save :remove_defunct_members
 
   alias :members :zone_members
