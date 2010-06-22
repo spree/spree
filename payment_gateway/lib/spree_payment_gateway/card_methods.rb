@@ -1,5 +1,5 @@
-module Spree
-  module PaymentGateway
+module SpreePaymentGateway
+  module CardMethods
 
     #RAILS3 TODO
     # def self.included(base)

@@ -2,7 +2,7 @@ require "spree"
 
 %w(
   core
-  payment_gateway
+  spree_payment_gateway
 ).each do |extension|
   begin
     require "#{extension}/engine"

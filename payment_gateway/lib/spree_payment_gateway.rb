@@ -5,7 +5,7 @@ ActiveSupport.on_load(:after_initialize) do
   # Mixin the payment_gateway method into the base controller so it can be accessed by the checkout process, etc.
   Creditcard.class_eval do
     # add gateway methods to the creditcard so we can authorize, capture, etc.
-    include Spree::PaymentGateway
+    include SpreePaymentGateway::CardMethods
   end
 
   silence_warnings { require 'active_merchant/billing/authorize_net_cim' }
