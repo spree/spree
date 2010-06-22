@@ -12,11 +12,11 @@ gem 'sqlite3-ruby'
 gem 'ruby-debug'
 gem "rdoc",  "2.2"
 
-# group :test do
-#   gem 'shoulda', '2.10.2', :require => 'shoulda'
-#   gem 'factory_girl', '1.2.3', :require => 'factory_girl'
-#   gem 'test-unit', '~>2.0.5', :require => 'test/unit' if RUBY_VERSION.to_f >= 1.9
-# end
+group :test do
+  gem 'shoulda', :git => "http://github.com/thoughtbot/shoulda.git"
+  gem 'factory_girl', :git => "http://github.com/thoughtbot/factory_girl.git", :require => 'factory_girl'
+  gem 'test-unit', '~>2.0.5', :require => 'test/unit' if RUBY_VERSION.to_f >= 1.9
+end
 
 # group :cucumber do
 #   gem 'cucumber-rails', '>=0.2.4', :require => false
