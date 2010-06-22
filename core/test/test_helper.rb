@@ -1,19 +1,20 @@
 require 'rubygems'
 require 'spork'
-require 'factory_girl'
 
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,
   # if you change any configuration or code from libraries loaded here, you'll
   # need to restart spork for it take effect.
-  factories_path = File.expand_path('../factories', __FILE__)
-  Dir[factories_path+"/*.rb"].each {|file| require file }
 
   ENV["RAILS_ENV"] = "test"    
   #RAILS3 TODO
   require File.expand_path('../../../config/environment', __FILE__)
   require 'rails'
   require 'rails/test_help'  
+  require 'factory_girl'
+  factories_path = File.expand_path('../factories', __FILE__)
+  models_in_core_path = File.expand_path('../../app/models', __FILE__)
+  Dir[models_in_core_path+"/*.rb",  factories_path+"/*.rb"].each {|file| require file }
   #require "authlogic/test_case"
   #RAILS3 TODO
   #require File.expand_path(File.dirname(__FILE__) + "/../vendor/extensions/payment_gateway/test/mocks/authorize_net_cim_mock")
