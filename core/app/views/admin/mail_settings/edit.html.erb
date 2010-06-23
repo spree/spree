@@ -13,20 +13,11 @@
 
       <p>
         <label>
-	      <input name="preferences[enable_mail_delivery]" type="hidden" value="0" />
+        <input name="preferences[enable_mail_delivery]" type="hidden" value="0" />
           <%= check_box_tag('preferences[enable_mail_delivery]', "1", Spree::Config[:enable_mail_delivery]) %>
           <%= t('enable_mail_delivery') %>
         </label>
       </p>
-
-			 <p>
-	        <label>
-		      <input name="preferences[use_mail_queue]" type="hidden" value="0" />
-	          <%= check_box_tag('preferences[use_mail_queue]', "1", Spree::Config[:use_mail_queue]) %>
-	          <%= t('enable_mail_queue') %>
-	        </label>
-	      </p>
-
 
       <p>
         <label><%= t('send_mails_as') %></label><br />
@@ -42,7 +33,7 @@
         <%= text_field_tag('preferences[mail_bcc]', Spree::Config[:mail_bcc], :size => 40, :maxlength => 256)%>
         <br/>
         <span class="info">
-          <%= t("smtp_send_copy_to_this_addresses") %> 
+          <%= t("smtp_send_copy_to_this_addresses") %>
         </span>
       </p>
 
@@ -94,13 +85,13 @@
         <label><%= t('secure_connection_type')  %></label><br />
         <%= select_tag('preferences[secure_connection_type]',
         options_for_select(
-        AppConfiguration::SECURE_CONNECTION_TYPES, 
+        AppConfiguration::SECURE_CONNECTION_TYPES,
         Spree::Config[:secure_connection_type])) %>
       </p>
       <p>
         <label><%= t('smtp_authentication_type') %></label><br />
         <%= select_tag('preferences[mail_auth_type]',
-        options_for_select(AppConfiguration::MAIL_AUTH, 
+        options_for_select(AppConfiguration::MAIL_AUTH,
         Spree::Config[:mail_auth_type])) %>
       </p>
 

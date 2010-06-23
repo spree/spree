@@ -32,8 +32,6 @@ Gem::Specification.new do |s|
   s.add_dependency('activerecord-tableless', '>= 0.1.0')
   s.add_dependency('less', '>= 1.2.20')
   s.add_dependency('stringex',       '>= 1.0.3')
-  s.add_dependency('chronic',        '>= 0.2.3')
-  s.add_dependency('whenever',       '>= 0.3.7')
   s.add_dependency('will_paginate')
   s.add_dependency('state_machine',  '>= 0.9.2')
   s.add_dependency('faker',          '>= 0.3.1')

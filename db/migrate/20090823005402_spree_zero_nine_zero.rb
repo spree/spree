@@ -300,11 +300,6 @@ class SpreeZeroNineZero < ActiveRecord::Migration
       t.datetime "updated_at"
     end
 
-    create_table "queued_mails", :force => true do |t|
-      t.text   "object"
-      t.string "mailer"
-    end
-
     create_table "roles", :force => true do |t|
       t.string "name"
     end

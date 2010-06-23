@@ -5,41 +5,34 @@
 
 <%# TODO: move this code to a helper? %>
 <div id="mail_delivery_status" class="error-or-notice">
-  <%= 
+  <%=
     if Spree::Config[:enable_mail_delivery]
       content_tag(:h4, t('mail_delivery_enabled'))
     else
       content_tag(:h4, t('mail_delivery_not_enabled'))
     end
   %>
-	<%= 
-    if Spree::Config[:use_mail_queue]
-      content_tag(:h4, t('mail_queue_enabled'))
-    else
-      content_tag(:h4, t('mail_queue_not_enabled'))
-    end
-  %>
 </div>
 
 <table>
   <tr>
-    <th scope="row"><%= t("smtp_domain") %>:</th> 
+    <th scope="row"><%= t("smtp_domain") %>:</th>
     <td><%=  Spree::Config[:mail_domain] %></td>
   </tr>
   <tr>
-    <th scope="row"><%= t('smtp_mail_host') %>:</th> 
+    <th scope="row"><%= t('smtp_mail_host') %>:</th>
     <td><%= Spree::Config[:mail_host] %></td>
   </tr>
   <tr>
-    <th scope="row"><%= t('smtp_port') %>:</th> 
+    <th scope="row"><%= t('smtp_port') %>:</th>
     <td><%= Spree::Config[:mail_port] %></td>
   </tr>
   <tr>
-    <th scope="row"><%= t('secure_connection_type')  %>:</th> 
+    <th scope="row"><%= t('secure_connection_type')  %>:</th>
     <td><%= Spree::Config[:secure_connection_type] %></td>
   </tr>
   <tr>
-    <th scope="row"><%= t('smtp_authentication_type') %>:</th> 
+    <th scope="row"><%= t('smtp_authentication_type') %>:</th>
     <td><%= Spree::Config[:mail_auth_type] %></td>
   </tr>
 
