@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.has_rdoc = true
 
   s.add_dependency('acts_as_list',             '>= 0.1.2')
+  s.add_dependency('awesome_nested_set',       '>= 1.4.3')
   # s.add_dependency('actionpack',  version)
   # s.add_dependency('mail',        '~> 2.2.3')
 end
