@@ -202,8 +202,7 @@ Spree::Application.routes.draw do |map|
   #match '/:controller(/:action(/:id(.:format)))'
 
   # a catchall route for "static" content (except paths with explicit extensions: .html, .ico, etc)
-  #RAILS3 TODO - once preferences are working we can make this route conditional (nice!)
-  #if Spree::Config.instance && Spree::Config.get(:use_content_controller)
+  if Spree::Config.instance && Spree::Config.get(:use_content_controller)
     match '/*path' => 'content#show', :constraints => { :fullpath => /^\/([^.]+)$/ }
-  #end
+  end
 end
