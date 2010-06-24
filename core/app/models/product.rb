@@ -21,7 +21,7 @@ class Product < ActiveRecord::Base
   has_many :product_option_types, :dependent => :destroy
   has_many :option_types, :through => :product_option_types
   has_many :variants, :dependent => :destroy
-  has_many :product_properties, :dependent => :destroy, :attributes => true
+  has_many :product_properties, :dependent => :destroy
   has_many :properties, :through => :product_properties
   has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
   has_and_belongs_to_many :product_groups

@@ -4,21 +4,11 @@ SESSION_KEY = '_spree_session_id'
 
 # TODO - Add the lib/plugins stuff maybe?
 
-# Initialize preference system (and attribute_fu)
-#
-# We need to hand-load attribute_fu stuff here because we call
-# ActiveRecord#has_many method before the attribute_fu plugin is
-# completely loaded.
+# Initialize preference system
 ActiveRecord::Base.class_eval do
-  include AttributeFu::Associations
   include Spree::Preferences
   include Spree::Preferences::ModelHooks
 end
-
-ActionView::Helpers::FormBuilder.class_eval do
-  include AttributeFu::AssociatedFormHelper
-end
-
 
 # Initialize mail server settings
 Spree::Preferences::MailSettings.init
