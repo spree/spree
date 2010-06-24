@@ -1,8 +1,8 @@
-class OrderMailer < ActionMailer::QueueMailer
+class OrderMailer < ActionMailer::Base
   helper "spree/base"
-  
+
   def confirm(order, resend = false)
-    @subject    = (resend ? "[RESEND] " : "") 
+    @subject    = (resend ? "[RESEND] " : "")
     @subject    += Spree::Config[:site_name] + ' ' + 'Order Confirmation #' + order.number
     @body       = {"order" => order}
     @recipients = order.email
@@ -10,7 +10,7 @@ class OrderMailer < ActionMailer::QueueMailer
     @bcc        = order_bcc
     @sent_on    = Time.now
   end
-  
+
   def cancel(order)
     @subject    = '[CANCEL]' + Spree::Config[:site_name] + ' Order Confirmation #' + order.number
     @body       = {"order" => order}
@@ -18,8 +18,8 @@ class OrderMailer < ActionMailer::QueueMailer
     @from       = Spree::Config[:order_from]
     @bcc        = order_bcc
     @sent_on    = Time.now
-  end  
-  
+  end
+
   private
   def order_bcc
       bcc = [Spree::Config[:order_bcc] || "", Spree::Config[:mail_bcc] || ""]
