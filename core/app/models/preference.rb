@@ -11,7 +11,7 @@ class Preference < ActiveRecord::Base
   belongs_to  :owner, :polymorphic => true
   belongs_to  :group, :polymorphic => true
   
-  validates_presence_of :attribute, :owner_id, :owner_type
+  validates_presence_of :name, :owner_id, :owner_type
   validates_presence_of :group_type, :if => :group_id?
   
   class << self
@@ -28,7 +28,7 @@ class Preference < ActiveRecord::Base
   
   # The definition for the attribute
   def definition
-    owner.preference_definitions[attribute] unless owner_type.blank?
+    owner.preference_definitions[name] unless owner_type.blank?
   end
   
   # Typecasts the value depending on the preference definition's declared type

@@ -96,7 +96,7 @@ module Spree
         #   user.prefers_color?(car)            # => true
         #   
         #   user.save!  # => true
-        def preference(attribute, *args)
+        def preference(name, *args)
           unless included_modules.include?(InstanceMethods)
             class_inheritable_hash :preference_definitions
             self.preference_definitions = {}
@@ -112,29 +112,29 @@ module Spree
           end
           
           # Create the definition
-          attribute = attribute.to_s
-          definition = PreferenceDefinition.new(attribute, *args)
-          self.preference_definitions[attribute] = definition
-          self.default_preferences[attribute] = definition.default_value
+          name = name.to_s
+          definition = PreferenceDefinition.new(name, *args)
+          self.preference_definitions[name] = definition
+          self.default_preferences[name] = definition.default_value
           
           # Create short-hand helper methods, making sure that the attribute
           # is method-safe in terms of what characters are allowed
-          attribute = attribute.gsub(/[^A-Za-z0-9_-]/, '').underscore
+          name = name.gsub(/[^A-Za-z0-9_-]/, '').underscore
           
           # Query lookup
-          define_method("prefers_#{attribute}?") do |*group|
-            prefers?(attribute, group.first)
+          define_method("prefers_#{name}?") do |*group|
+            prefers?(name, group.first)
           end
           
           # Writer
-          define_method("prefers_#{attribute}=") do |*args|
-            set_preference(*([attribute] + [args].flatten))
+          define_method("prefers_#{name}=") do |*args|
+            set_preference(*([name] + [args].flatten))
           end
-          alias_method "preferred_#{attribute}=", "prefers_#{attribute}="
+          alias_method "preferred_#{name}=", "prefers_#{name}="
           
           # Reader
-          define_method("preferred_#{attribute}") do |*group|
-            preferred(attribute, group.first)
+          define_method("preferred_#{name}") do |*group|
+            preferred(name, group.first)
           end
           
           definition
@@ -192,7 +192,7 @@ module Spree
               preferences = all_preferences
             end
             
-            preferences[preference.attribute] = preference.value
+            preferences[preference.name] = preference.value
             all_preferences
           end
         end
@@ -209,11 +209,11 @@ module Spree
         #   
         #   newsgroup = Newsgroup.find(:first)
         #   user.prefers?(:notifications, newsgroup)  # => false
-        def prefers?(attribute, group = nil)
-          attribute = attribute.to_s
+        def prefers?(name, group = nil)
+          name = name.to_s
           
-          value = preferred(attribute, group)
-          preference_definitions[attribute].query(value)
+          value = preferred(name, group)
+          preference_definitions[name].query(value)
         end
         
         # Gets the preferred value for the given attribute.
@@ -227,15 +227,15 @@ module Spree
         #   
         #   car = Car.find(:first)
         #   user.preferred(:color, car)     # => 'black'
-        def preferred(attribute, group = nil)
-          attribute = attribute.to_s
+        def preferred(name, group = nil)
+          name = name.to_s
           
-          if @preference_values && @preference_values[attribute] && @preference_values[attribute].include?(group)
-            value = @preference_values[attribute][group]
+          if @preference_values && @preference_values[name] && @preference_values[name].include?(group)
+            value = @preference_values[name][group]
           else
             group_id, group_type = Preference.split_group(group)
-            preference = stored_preferences.find(:first, :conditions => {:attribute => attribute, :group_id => group_id, :group_type => group_type})
-            value = preference ? preference.value : preference_definitions[attribute].default_value
+            preference = stored_preferences.find(:first, :conditions => {:name => name, :group_id => group_id, :group_type => group_type})
+            value = preference ? preference.value : preference_definitions[name].default_value
           end
           
           value
@@ -253,12 +253,12 @@ module Spree
         #   newsgroup = Newsgroup.find(:first)
         #   user.set_preference(:notifications, true, newsgroup)  # => true
         #   user.save!
-        def set_preference(attribute, value, group = nil)
-          attribute = attribute.to_s
+        def set_preference(name, value, group = nil)
+          name = name.to_s
           
           @preference_values ||= {}
-          @preference_values[attribute] ||= {}
-          @preference_values[attribute][group] = value
+          @preference_values[name] ||= {}
+          @preference_values[name][group] = value
           
           value
         end
@@ -269,10 +269,10 @@ module Spree
         # was last saved
         def update_preferences
           if @preference_values
-            @preference_values.each do |attribute, grouped_records|
+            @preference_values.each do |name, grouped_records|
               grouped_records.each do |group, value|
                 group_id, group_type = Preference.split_group(group)
-                attributes = {:attribute => attribute, :group_id => group_id, :group_type => group_type}
+                attributes = {:name => name, :group_id => group_id, :group_type => group_type}
                 
                 # Find an existing preference or build a new one
                 preference = stored_preferences.find(:first, :conditions => attributes)

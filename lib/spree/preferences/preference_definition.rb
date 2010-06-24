@@ -6,18 +6,18 @@ module Spree
   module Preferences
     # Represents the definition of a preference for a particular model
     class PreferenceDefinition
-      def initialize(attribute, *args) #:nodoc:
+      def initialize(name, *args) #:nodoc:
         options = args.extract_options!
         options.assert_valid_keys(:default)
         
         @type = args.first ? args.first.to_s : 'boolean'
         
         # Create a column that will be responsible for typecasting
-        @column = ActiveRecord::ConnectionAdapters::Column.new(attribute.to_s, options[:default], @type == 'any' ? nil : @type)
+        @column = ActiveRecord::ConnectionAdapters::Column.new(name.to_s, options[:default], @type == 'any' ? nil : @type)
       end
       
       # The attribute which is being preferenced
-      def attribute
+      def name
         @column.name
       end
       
