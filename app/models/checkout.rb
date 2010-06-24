@@ -76,9 +76,9 @@ class Checkout < ActiveRecord::Base
     state_machine.states.by_priority.map(&:name)
   end
 
-  def shipping_methods
+  def shipping_methods(display_on=nil)
     return [] unless ship_address
-    ShippingMethod.all_available(order)
+    ShippingMethod.all_available(order,display_on)
   end
 
   def payment

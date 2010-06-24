@@ -16,7 +16,7 @@
   <tr>
     <td><label><%=t("display")%></label></td>
     <td>
-      <%= select(:payment_method, :display, PaymentMethod::DISPLAY.collect {|display| [t(display), display == :both ? nil : display.to_s]}) %>
+      <%= select(:payment_method, :display_on, PaymentMethod::DISPLAY.collect {|display| [t(display), display == :both ? nil : display.to_s]}) %>
     </td>
   </tr>
   <tr>
@@ -41,11 +41,10 @@
   <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => "gtwy-type"}) %>
 
   <% unless @object.new_record? %>
-
     <%= preference_fields(@object, f) %>
 
     <% if @object.respond_to?(:preferences) %>
       <div id="gateway-settings-warning" style="color:#FF0000"><%= t('provider_settings_warning')%></div>
-      <% end %>
     <% end %>
- </div>
+  <% end %>
+</div>
