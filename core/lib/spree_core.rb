@@ -1,5 +1,5 @@
 #++
-# Copyright (c) 2007-2010, Sean Schofield and other contributors
+# Copyright (c) 2007-2010, Rails Dog LLC and other contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -36,3 +36,6 @@ require 'authlogic'
 require 'spree_core/theme_support'
 require 'spree_core/validation_group'
 require 'spree_core/enumerable_constants'
+require 'spree_core/has_calculator'
+
+ActiveRecord::Base.class_eval { include HasCalculator }
