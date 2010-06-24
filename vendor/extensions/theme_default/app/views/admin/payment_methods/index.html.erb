@@ -32,7 +32,7 @@
           <td width="120px"><%= method.name %></td>
           <td width="140px"><%= method.type %></td>
           <td width="100px"><%= method.environment.to_s.titleize %></td>
-          <td width="60px"><%= method.display.blank? ? "Both" : t(method.display) %></td>
+          <td width="60px"><%= method.display_on.blank? ? "Both" : t(method.display_on) %></td>
           <td width="60px"><%= method.active ? t(:yes) : t(:no) %></td>
         <% end %>
         <td width="140px">

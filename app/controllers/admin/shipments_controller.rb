@@ -48,7 +48,7 @@ class Admin::ShipmentsController < Admin::BaseController
     @selected_country_id = params[:shipment_presenter][:address_country_id].to_i if params.has_key?('shipment_presenter')
     @selected_country_id ||= @order.bill_address.country_id unless @order.nil? || @order.bill_address.nil?
     @selected_country_id ||= Spree::Config[:default_country_id]
-    @shipping_methods = ShippingMethod.all
+    @shipping_methods = ShippingMethod.all_available(@order, :back_end)
 
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')
     @countries = Checkout.countries.sort

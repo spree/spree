@@ -141,7 +141,7 @@ class CheckoutsController < Spree::BaseController
   end
 
   def next_step
-    @checkout.next! 
+    @checkout.next!
     flash[:analytics] = "/checkout/#{object.state}"
     # call edit hooks for this next step since we're going to just render it (instead of issuing a redirect)
     edit_hooks
@@ -189,7 +189,8 @@ class CheckoutsController < Spree::BaseController
 
   def rate_hash
     begin
-      @checkout.shipping_methods.collect do |ship_method|
+
+      @checkout.shipping_methods(:front_end).collect do |ship_method|
         @checkout.shipment.shipping_method = ship_method
         { :id => ship_method.id,
           :name => ship_method.name,
