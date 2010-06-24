@@ -13,8 +13,8 @@ gem 'ruby-debug'
 gem "rdoc",  "2.2"
 
 group :test do
-  gem 'shoulda', :git => "http://github.com/thoughtbot/shoulda.git"
-  gem 'factory_girl', :git => "http://github.com/thoughtbot/factory_girl.git", :require => 'factory_girl'
+  gem 'shoulda', :git => "git://github.com/thoughtbot/shoulda.git"
+  gem 'factory_girl', :git => "git://github.com/thoughtbot/factory_girl.git", :require => 'factory_girl'
   gem 'test-unit', '~>2.0.5', :require => 'test/unit' if RUBY_VERSION.to_f >= 1.9
   gem 'faker'
 end
