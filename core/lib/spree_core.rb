@@ -33,9 +33,23 @@ require 'stringex'
 require 'will_paginate'
 require 'less'
 require 'authlogic'
+require 'awesome_nested_set'
+require 'acts_as_list'
 require 'spree_core/theme_support'
 require 'spree_core/validation_group'
 require 'spree_core/enumerable_constants'
 require 'spree_core/has_calculator'
+require 'spree_core/find_by_param'
 
 ActiveRecord::Base.class_eval { include HasCalculator }
+
+ActiveRecord::Base.class_eval do
+  include CollectiveIdea::Acts::NestedSet
+end
+
+if defined?(ActionView)
+  require 'awesome_nested_set/helper'
+  ActionView::Base.class_eval do
+    include CollectiveIdea::Acts::NestedSet::Helper
+  end
+end
