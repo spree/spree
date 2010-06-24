@@ -41,6 +41,7 @@ require 'spree_core/validation_group'
 require 'spree_core/enumerable_constants'
 require 'spree_core/has_calculator'
 require 'spree_core/find_by_param'
+require 'spree_core/ssl_requirement'
 
 ActiveRecord::Base.class_eval { include HasCalculator }
 
