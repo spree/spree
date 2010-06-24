@@ -85,11 +85,10 @@ class Spree::BaseController < ActionController::Base
   end
 
   def render_404(exception)
-    #RAILS 3 TODO
-    # respond_to do |type|
-    #   type.html { render :file    => "#{Rails.root}/public/404.html", :status => "404 Not Found" }
-    #   type.all  { render :nothing => true,                            :status => "404 Not Found" }
-    # end
+    respond_to do |type|
+      type.html { render :status => :not_found, :file    => "#{Rails.root}/public/404.html", :layout=>nil}
+      type.all  { render :status => :not_found, :nothing => true }
+    end
   end
 
   private

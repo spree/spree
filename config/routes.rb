@@ -201,8 +201,9 @@ Spree::Application.routes.draw do |map|
   #RAILS3 TODO - we should disable this by default
   #match '/:controller(/:action(/:id(.:format)))'
 
-  #RAILS3 ROOT - this is interfering with routes in other extensions - we need to make sure it loads after everything else (if possible)
-  # a catchall route for "static" content
-  #match '*path' => 'content#show'
-
+  # a catchall route for "static" content (except paths with explicit extensions: .html, .ico, etc)
+  #RAILS3 TODO - once preferences are working we can make this route conditional (nice!)
+  #if Spree::Config.instance && Spree::Config.get(:use_content_controller)
+    match '/*path' => 'content#show', :constraints => { :fullpath => /^\/([^.]+)$/ }
+  #end
 end
