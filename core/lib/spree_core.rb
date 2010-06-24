@@ -42,6 +42,9 @@ require 'spree_core/enumerable_constants'
 require 'spree_core/has_calculator'
 require 'spree_core/find_by_param'
 require 'spree_core/ssl_requirement'
+require 'spree_core/preferences/mail_settings'
+require 'spree_core/preferences/model_hooks'
+require 'spree_core/preferences/preference_definition'
 
 ActiveRecord::Base.class_eval { include HasCalculator }
 

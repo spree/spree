@@ -36,6 +36,6 @@ Spree::Preferences::MailSettings.init
 # end
 
 
-class String #:nodoc:
-  include Spree::Support::CoreExtensions::String
+String.class_eval do
+  include SpreeCore::Ext::String
 end
