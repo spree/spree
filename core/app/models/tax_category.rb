@@ -3,8 +3,9 @@ class TaxCategory < ActiveRecord::Base
   validates_uniqueness_of :name
 
   has_many :tax_rates
+  before_save :set_default_category
 
-  def before_save
+  def set_default_category
     #set existing default tax category to false if this one has been marked as default
 
     if is_default && tax_category = TaxCategory.find(:first, :conditions => {:is_default => true})

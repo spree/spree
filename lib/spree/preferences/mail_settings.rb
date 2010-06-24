@@ -8,7 +8,7 @@ module Spree
         # When loading from config/initializers/spree.rb the logger
         # variable is not available yet, so defining it here.
         def logger
-          RAILS_DEFAULT_LOGGER
+          Rails.logger
         end
 
         def init
@@ -50,7 +50,7 @@ module Spree
             logger.error "       Verify you created a default configuration in admin/configurations"
             logger.error "========================================================================="
           end
-        end 
+        end
       end
     end
   end

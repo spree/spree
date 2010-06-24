@@ -1,8 +1,10 @@
 class Taxonomy < ActiveRecord::Base
-  has_many :taxons, :dependent => :destroy    
+  has_many :taxons, :dependent => :destroy
   has_one :root, :class_name => 'Taxon', :conditions => "parent_id is null"
 
-  def after_save
+  after_save :set_name
+
+  def set_name
     if self.root
       self.root.update_attribute(:name, self.name)
     else
