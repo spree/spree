@@ -26,26 +26,25 @@ Spork.prefork do
     #RAILS3 TODO
     #self.use_transactional_fixtures = true
     #self.use_instantiated_fixtures  = false
-    fixtures :all
   end
 
   I18n.locale = "en"
-  Spree::Config.set(:default_country_id => Country.first.id) if Country.first
+  #Spree::Config.set(:default_country_id => Country.first.id) if Country.first
 
   class ActionController::TestCase
     setup :activate_authlogic
   end
 
-  ActionController::TestCase.class_eval do
-    # special overload methods for "global"/nested params
-    [ :get, :post, :put, :delete ].each do |overloaded_method|
-      define_method overloaded_method do |*args|
-        action,params,extras = *args
-        super action, params || {}, *extras unless @params
-        super action, @params.merge( params || {} ), *extras if @params
-      end
-    end
-  end
+  #ActionController::TestCase.class_eval do
+    ## special overload methods for "global"/nested params
+    #[ :get, :post, :put, :delete ].each do |overloaded_method|
+      #define_method overloaded_method do |*args|
+        #action,params,extras = *args
+        #super action, params || {}, *extras unless @params
+        #super action, @params.merge( params || {} ), *extras if @params
+      #end
+    #end
+  #end
 
   def setup
     super
@@ -73,13 +72,15 @@ Spork.prefork do
       Factory(:line_item, :variant => variant, :order => @order)
     end
 
-    @shipping_method = Factory(:shipping_method)
+    @shipping_method = ShippingMethod.new(:name => 'fedex')
     @checkout = @order.checkout
     @checkout.email = Faker::Internet.email
     @checkout.ship_address = Factory(:address)
     @checkout.shipping_method = @shipping_method
 
-    @checkout.payments = [Factory(:payment, :amount => @order.total)]
+    @calculator = Calculator::FlexiRate.new
+    @shipping_method.calculator = @calculator
+
     @checkout.save
 
     @shipment = @order.shipment

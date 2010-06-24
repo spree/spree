@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class TestAdjustment < Adjustment
   attr_accessor :applicable
@@ -15,7 +15,6 @@ class TestAdjustment < Adjustment
 end
 
 class AdjustmentTest < ActiveSupport::TestCase
-  fixtures :payment_methods
   
   should_validate_presence_of :description
 
