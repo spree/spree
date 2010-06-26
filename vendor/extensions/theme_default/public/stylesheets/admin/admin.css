@@ -34,25 +34,22 @@ p.help-text {
 
 
 body {
-	margin-top: 0px;
-	  /*background: #ffffff;*/
-  /*background-color: #162F54;*/
-  color: #476D9B; }
-.tile_bg_img{
-width:100%;
-		 background: #ffffff url(../../images/tile-slider.png) top left repeat-x;
-}
-.admin_header_bg{
-	width:100%;
+  margin-top: 0px;
+  color: #476D9B; 
+  background: #0B72C1 url(../../images/admin/bg/header.png) top left repeat-x;
+ }
 
-height:95px;
-	background:url(../../images/tile-header.png) top left repeat-x;
-}
   a {
     color: #4884BD; }
     a:active,
     a:visited {
       color: #4884BD; }
+      
+  #header {
+	height:95px;
+	position: relative;
+	margin-bottom: 13px;
+  }
   #header,
   #footer {
     position: relative;
@@ -142,17 +139,25 @@ height:95px;
           #sidebar .order-status.canceled {
             background-color: #c00;
             color: #fff; }
-  h1.logo {
-    float: left;
-    margin: 10px 10px 10px 10px;   }
-    h1.logo a {
-      background: url(../../images/admin/bg/spree_50.png) left center no-repeat;
-      padding-left: 190px;
-      display: block;
-      height: 82px;
-      text-decoration: none;
-      line-height: 82px;
-      color: #BBDAFD; }
+
+  #header #logo {
+	position: absolute;
+	top: 0;
+	left: 10px;
+}
+  #header h1 {
+	position: absolute;
+	left: 200px;
+	bottom: 19px;
+    margin: 10px 10px 10px 10px;   
+    display: block;
+    text-decoration: none;
+    line-height: 100%;
+	
+  }
+  #header h1 a {
+	color: #8CB952;
+	}
   #admin-menu { clear: both; }
   #admin-menu,
   #sub-menu {
