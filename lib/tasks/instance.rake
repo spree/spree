@@ -2,7 +2,7 @@
 unless File.directory? "#{Rails.root}/app"
   require 'rake/testtask'
   
-  ENV['SPREE_ENV_FILE'] = Rails.root.join('config', 'environment')
+  ENV['SPREE_ENV_FILE'] = Rails.root.join('config', 'environment').to_s
   
   [Dir["#{SPREE_ROOT}/vendor/rails/railties/lib/tasks/*.rake"], Dir["#{SPREE_ROOT}/vendor/plugins/rspec_on_rails/tasks/*.rake"]].flatten.each do |rake|
     lines = IO.readlines(rake)
