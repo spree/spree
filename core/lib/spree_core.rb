@@ -45,6 +45,8 @@ require 'spree_core/ssl_requirement'
 require 'spree_core/preferences/mail_settings'
 require 'spree_core/preferences/model_hooks'
 require 'spree_core/preferences/preference_definition'
+require 'spree_core/role_requirement_system'
+require 'spree_core/easy_role_requirement_system'
 
 ActiveRecord::Base.class_eval { include HasCalculator }
 
