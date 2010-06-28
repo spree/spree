@@ -1,23 +1,16 @@
 class OrderMailer < ActionMailer::Base
   helper "spree/base"
+  default :from => Spree::Config[:order_from]
 
   def confirm(order, resend = false)
     @subject    = (resend ? "[RESEND] " : "")
     @subject    += Spree::Config[:site_name] + ' ' + 'Order Confirmation #' + order.number
-    @body       = {"order" => order}
-    @recipients = order.email
-    @from       = Spree::Config[:order_from]
-    @bcc        = order_bcc
-    @sent_on    = Time.now
+    mail(:subject => @subject, :body =>  {"order" => order}, :to => order.email, :bcc => order_bcc)
   end
 
   def cancel(order)
     @subject    = '[CANCEL]' + Spree::Config[:site_name] + ' Order Confirmation #' + order.number
-    @body       = {"order" => order}
-    @recipients = order.email
-    @from       = Spree::Config[:order_from]
-    @bcc        = order_bcc
-    @sent_on    = Time.now
+    mail(:subject => @subject, :body =>  {"order" => order}, :to => order.email, :bcc => order_bcc)
   end
 
   private

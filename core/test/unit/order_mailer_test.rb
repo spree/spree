@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 class OrderMailerTest < ActionMailer::TestCase
   tests OrderMailer
   
@@ -9,22 +9,22 @@ class OrderMailerTest < ActionMailer::TestCase
 
     context "confirm email" do    
       setup do
-        OrderMailer.deliver_confirm!(@order)
+        OrderMailer.confirm(@order).deliver
       end
       
       should "can be successfully sent" do
-        assert_sent_email
+        assert have_sent_email
       end
       
     end
 
     context "cancel email" do    
       setup do
-        OrderMailer.deliver_cancel!(@order)
+        OrderMailer.cancel(@order).deliver
       end
       
       should "can be successfully sent" do
-        assert_sent_email
+        assert have_sent_email
       end
     end
     

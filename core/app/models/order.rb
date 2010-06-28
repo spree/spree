@@ -351,7 +351,7 @@ class Order < ActiveRecord::Base
     update_attribute(:completed_at, Time.now)
 
     if email
-      OrderMailer.deliver_confirm(self)
+      OrderMailer.confirm(self).deliver
     end
 
     begin
@@ -368,7 +368,7 @@ class Order < ActiveRecord::Base
   def cancel_order
     make_shipments_pending
     restock_inventory
-    OrderMailer.deliver_cancel(self)
+    OrderMailer.cancel(self).deliver
   end
 
   def restock_inventory
