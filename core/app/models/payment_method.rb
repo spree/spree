@@ -1,6 +1,6 @@
 class PaymentMethod < ActiveRecord::Base
   DISPLAY =  [:both, :front_end, :back_end]
-  default_scope :conditions => {:deleted_at => nil}
+  default_scope where(:deleted_at => nil)
 
   @provider = nil
   @@providers = Set.new

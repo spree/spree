@@ -26,32 +26,20 @@ ROBOTS
 
 database = <<-DATABASE
 development:
-  adapter: mysql
-  database: spree_development
-  username: root
-  password:
-  host: localhost
+  adapter: sqlite3
+  database: db/development.sqlite3
 
 test:
-  adapter: mysql
-  database: spree_test
-  username: root
-  password:
-  host: localhost
+  adapter: sqlite3
+  database: db/test.sqlite3
 
 cucumber:
-  adapter: mysql
-  database: spree_test
-  username: root
-  password:
-  host: localhost
+  adapter: sqlite3
+  database: db/cucumber.sqlite3
 
 production:
-  adapter: mysql
-  database: spree_development
-  username: root
-  password:
-  host: localhost
+  adapter: sqlite3
+  database: db/production.sqlite3
 DATABASE
 
 remove_file "config/database.yml"
