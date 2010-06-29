@@ -1,7 +1,7 @@
-require "rails/all" 
+require "rails/all"
 require "spree_core"
 
 module SpreeCore
-  class Engine < Rails::Engine   
+  class Engine < Rails::Engine
   end
 end
