@@ -129,4 +129,11 @@ permissions = <<-PERMISSIONS
 PERMISSIONS
 
 create_file "config/spree_permissions.yml", permissions
+
+append_file "db/seeds.rb", <<-SEEDS
+Rake::Task["db:load_dir"].invoke( "default" )
+puts "Default data has been loaded"
+SEEDS
+
 run "mkdir -p db/migrate"
+run "mkdir -p db/default"
