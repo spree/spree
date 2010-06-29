@@ -48,6 +48,7 @@ require 'spree_core/preferences/preference_definition'
 require 'spree_core/role_requirement_system'
 require 'spree_core/easy_role_requirement_system'
 require 'store_helpers'
+require 'spree/file_utilz'
 
 ActiveRecord::Base.class_eval { include HasCalculator }
 
