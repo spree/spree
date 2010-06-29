@@ -9,6 +9,8 @@ gem "activemerchant", :require => 'active_merchant', :git => "git://github.com/r
 gem "will_paginate", :git => "git://github.com/mislav/will_paginate.git", :branch => "rails3"
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
 
+gem "spree_sample", :path => File.dirname(__FILE__), :require => ['spree_sample','spree_sample/engine']
+
 application "require 'spree_core/all'"
 remove_file "public/index.html"
 
@@ -125,3 +127,4 @@ SEEDS
 
 run "mkdir -p db/migrate"
 run "mkdir -p db/default"
+run "mkdir -p db/sample/assets"

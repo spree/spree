@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency('spree_payment_gateway',     version)
   s.add_dependency('spree_api',                 version)
   s.add_dependency('spree_dashboard',           version)
+  s.add_dependency('spree_sample',              version)
   # RAILS3 TODO - add more of the core extensions, etc.
   s.add_dependency('bundler',        '>= 0.9.26')
   s.add_dependency('rails',          '= 3.0.0.beta4')

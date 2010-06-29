@@ -37,14 +37,12 @@ namespace :db do
     dir = args.dir
     fixtures = ActiveSupport::OrderedHash.new
     ruby_files = ActiveSupport::OrderedHash.new
-    unless ENV['SKIP_CORE'] and dir == "sample"
-      Dir.glob(File.join(Rails.root, "db", dir , '*.{yml,csv,rb}')).each do |fixture_file|
-        ext = File.extname fixture_file
-        if ext == ".rb"
-          ruby_files[File.basename(fixture_file, '.*')]  = fixture_file
-        else
-          fixtures[File.basename(fixture_file, '.*')]  = fixture_file
-        end
+    Dir.glob(File.join(Rails.root, "db", dir , '*.{yml,csv,rb}')).each do |fixture_file|
+      ext = File.extname fixture_file
+      if ext == ".rb"
+        ruby_files[File.basename(fixture_file, '.*')]  = fixture_file
+      else
+        fixtures[File.basename(fixture_file, '.*')]  = fixture_file
       end
     end
     fixtures.sort.each do |fixture , fixture_file|
