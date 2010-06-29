@@ -128,7 +128,5 @@ permissions = <<-PERMISSIONS
       unless : can_access?  #checkouts_controller may grant access based on presence of token, etc.
 PERMISSIONS
 
-remove_file "config/spree_permissions.yml"
 create_file "config/spree_permissions.yml", permissions
-
-
+run "mkdir -p db/migrate"
