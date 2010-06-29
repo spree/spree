@@ -12,6 +12,18 @@ gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git
 application "require 'spree_core/all'"
 remove_file "public/index.html"
 
+append_file "public/robots.txt", <<-ROBOTS
+User-agent: *
+Disallow: /checkouts
+Disallow: /orders
+Disallow: /countries
+Disallow: /line_items
+Disallow: /password_resets
+Disallow: /states
+Disallow: /user_sessions
+Disallow: /users
+ROBOTS
+
 database = <<-DATABASE
 development:
   adapter: mysql

@@ -1,6 +1,6 @@
 class Spree::BaseController < ActionController::Base
   layout 'spree_application'
-  helper :application, :hook
+  helper :hook
   before_filter :instantiate_controller_and_action_names
   #RAILS 3 TODO
   #before_filter :touch_sti_subclasses
