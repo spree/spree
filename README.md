@@ -45,18 +45,20 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
         bundle install
 
-2. Create a sanbox rails application for testing purposes
+3. Create a sanbox rails application for testing purposes
 
         rails g app sandbox -m sandbox_template.rb
         cd sandbox
 
-TODO - describe additional steps to sync migrations, etc.
+4. Sync the migrations and other assets in your new sandbox app
 
-3. Bootstrap the database (run the migrations, create admin account, optionally load sample data.)
+        rake spree:sync
+
+5. Bootstrap the database (run the migrations, create admin account, optionally load sample data.)
 
         rake db:bootstrap
 
-4. Start the server
+6. Start the server
 
         rails server
 
