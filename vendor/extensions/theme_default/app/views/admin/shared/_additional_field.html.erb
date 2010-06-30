@@ -1,5 +1,5 @@
 <p>
-  <%= label controller.controller_name.singularize, t("activerecord.attributes.variant." + field[:name].downcase, :default => field[:name].titleize)%><br />
+  <%= label controller.controller_name.singularize, field[:name], t("activerecord.attributes.variant." + field[:name].downcase, :default => field[:name].titleize)%><br />
   <%= additional_field_for(controller, field) %>
   <%= error_message_on controller.controller_name.singularize, attribute_name_for(field[:name]) %>
 </p>
