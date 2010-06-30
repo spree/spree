@@ -3,10 +3,10 @@
   <tbody>
     <tr>
       <td><strong><%= t('item_total') %>:</strong></td>
-      <td><strong><%= number_to_currency @order.item_total %></strong></td>
+      <td><strong><%= number_to_currency @checkout.order.item_total %></strong></td>
     </tr>
     <tbody id="summary-order-charges">
-      <% @order.charges.each do |charge| %>
+      <% @checkout.order.charges.each do |charge| %>
         <tr>
           <td><%= charge.description %>: </td>
           <td><%= number_to_currency charge.amount -%></td>
@@ -14,7 +14,7 @@
       <% end %>
     </tbody>
     <tbody id="summary-order-credits">
-      <% @order.credits.each do |credit| %>
+      <% @checkout.order.credits.each do |credit| %>
         <tr>
           <td><%= credit.description %>: </td>
           <td>(<%= number_to_currency credit.amount %>)</td>
@@ -23,7 +23,7 @@
     </tbody>
     <tr>
       <td><strong><%= t('order_total') %>:</strong></td>
-      <td><strong><span id='summary-order-total'><%= number_to_currency @order.total %></span></strong></td>
+      <td><strong><span id='summary-order-total'><%= number_to_currency @checkout.order.total %></span></strong></td>
     </tr>
   </tbody>
 </table>
