@@ -102,7 +102,7 @@ Rails.application.routes.draw do |map|
         get :clone
       end
       resources :variants
-      resources :options_types do
+      resources :option_types do
         member do
           get :select
           get :remove
