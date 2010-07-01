@@ -15,7 +15,7 @@ module Spree
     attr_accessor :extensions
     attr_accessor :view_paths
 
-    def initialize   
+    def initialize
       self.view_paths = []
       self.extension_paths = default_extension_paths
       self.extensions = Spree::Extensions.load_order
@@ -24,10 +24,10 @@ module Spree
 
     def default_extension_paths
       env = ENV["RAILS_ENV"] || RAILS_ENV
-      paths = [SPREE_ROOT + '/vendor/extensions', Rails.root + '/vendor/extensions'].uniq
+      paths = [File.join(File.expand_path(SPREE_ROOT), 'vendor', 'extensions'), File.join(File.expand_path(Rails.root) ,'vendor', 'extensions')].uniq
       # There's no other way it will work, config/environments/test.rb loads too late
       # TODO: Should figure out how to include this extension path only for the tests that need it
-      paths.unshift(SPREE_ROOT + "/test/fixtures/extensions") if env == "test"
+      paths.unshift(File.join(File.expand_path(SPREE_ROOT) , "test", "fixtures" ,"extensions")) if env == "test"
       paths
     end
 
@@ -37,12 +37,12 @@ module Spree
         Dir["#{SPREE_ROOT}/vendor/*/lib"]
       end
 
-      def framework_root_path   
+      def framework_root_path
         Rails.root + '/vendor/rails'
       end
 
       # Provide the load paths for the Spree installation
-      def default_load_paths       
+      def default_load_paths
         paths = ["#{SPREE_ROOT}/test/mocks/#{environment}"]
 
         # Add the app's controller directory
@@ -65,7 +65,7 @@ module Spree
         ).map { |dir| "#{SPREE_ROOT}/#{dir}" }.select { |dir| File.directory?(dir) }
 
         paths.concat builtin_directories
-        paths.concat library_directories 
+        paths.concat library_directories
       end
 
       def default_plugin_paths
@@ -97,7 +97,7 @@ module Spree
     def install_gem_spec_stubs
       #TODO - provide meaningful implementation (commented out for now so we can start server)
     end
-        
+
     def set_autoload_paths
       extension_loader.add_extension_paths
       super
@@ -135,18 +135,19 @@ module Spree
         # Add the default view paths
         arr.concat configuration.view_paths
         # Add the extension view paths
-        arr.concat extension_loader.view_paths     
+        arr.concat extension_loader.view_paths
         # Reverse the list so extensions come first
         arr.reverse!
       end
-    
-      ActionMailer::Base.template_root = view_paths  if configuration.frameworks.include?(:action_mailer)        
+
+      ActionMailer::Base.template_root = view_paths  if configuration.frameworks.include?(:action_mailer)
       ActionController::Base.view_paths = view_paths if configuration.frameworks.include?(:action_controller)
 
-			if defined?(ActionMailer::QueueMailer)
-			ActionMailer::QueueMailer.template_root = view_paths if configuration.frameworks.include?(:action_mailer) end
+      if defined?(ActionMailer::QueueMailer)
+        ActionMailer::QueueMailer.template_root = view_paths if configuration.frameworks.include?(:action_mailer)
+      end
     end
-    
+
     def initialize_i18n
       extension_loader.add_locale_paths
       spree_locale_paths = Dir[File.join(SPREE_ROOT, 'config', 'locales', '*.{rb,yml}')]
@@ -174,7 +175,7 @@ module Spree
     def extension_loader
       ExtensionLoader.instance {|l| l.initializer = self }
     end
-    
+
   end
 
 end
