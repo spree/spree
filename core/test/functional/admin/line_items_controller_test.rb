@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
 
 class Admin::LineItemsControllerTest < ActionController::TestCase
   context "given order" do
@@ -6,19 +6,15 @@ class Admin::LineItemsControllerTest < ActionController::TestCase
       UserSession.create(Factory(:admin_user))
       @order = Factory(:order)
       @order.checkout.shipping_method = Factory(:shipping_method)
-      @order.checkout.save
-      @order.shipment.reload
+      #@order.checkout.save
+      #@order.shipment.reload
       @variant = Factory(:variant)
     end
   
     context "on POST to :create" do
       setup do
-        post :create, {
-             "order_id" => @order.number,
-             "line_item" => { "quantity" => 3,
-                               "variant_id" => @variant.id}
-        }
-        @order.reload
+        post :create, { "order_id" => @order.number, "line_item" => { "quantity" => 3, "variant_id" => @variant.id} }
+        #@order.reload
       end
   
       should_assign_to :order
@@ -204,7 +200,7 @@ class Admin::LineItemsControllerTest < ActionController::TestCase
           @order.reload
         end
         should "update the order total" do
-          assert_equal 20.0, @order.total.to_f
+          assert equal 20.0, @order.total.to_f
         end
         should "change order state to balance_due" do
           assert @order.balance_due?

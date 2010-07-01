@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
 
 class Admin::CheckoutsControllerTest < ActionController::TestCase
   fixtures :countries, :states
@@ -16,10 +16,10 @@ class Admin::CheckoutsControllerTest < ActionController::TestCase
         get :show
       end
 
-      should_assign_to :order
-      should_assign_to :checkout
-      should_respond_with :success
-      should_render_template "show"
+      should assign_to :order
+      should assign_to :checkout
+      should respond_with :success
+      should render_template "show"
 
       should "render address details" do
         assert_select "table" do
@@ -48,10 +48,10 @@ class Admin::CheckoutsControllerTest < ActionController::TestCase
         get :edit
       end
 
-      should_assign_to :order
-      should_assign_to :checkout
-      should_respond_with :success
-      should_render_template "edit"
+      should assign_to :order
+      should assign_to :checkout
+      should respond_with :success
+      should render_template "edit"
 
       should "render address details" do
         assert_select "table" do

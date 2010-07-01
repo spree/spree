@@ -6,6 +6,9 @@ gem "spree", :path => File.dirname(__FILE__)
 gem "activemerchant", :require => 'active_merchant', :git => "git://github.com/railsjedi/active_merchant.git"
 gem "will_paginate", :git => "git://github.com/mislav/will_paginate.git", :branch => "rails3"
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
+gem "authlogic", :git => 'http://github.com/binarylogic/authlogic.git'
+
+gem 'searchlogic', :git => 'http://github.com/jeffp/searchlogic.git'
 
 gem 'mysql'
 gem 'sqlite3-ruby'
@@ -14,9 +17,9 @@ gem "rdoc",  "2.2"
 
 group :test do
   gem 'shoulda', :git => "git://github.com/thoughtbot/shoulda.git"
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', :git => "http://github.com/thoughtbot/factory_girl_rails.git"
 	gem 'spork'
-  gem 'test-unit', '~>2.0.5', :require => 'test/unit' if RUBY_VERSION.to_f >= 1.9
+  #gem 'test-unit', '~>2.0.5', :require => 'test/unit' if RUBY_VERSION.to_f >= 1.9
   gem 'faker'
 end
 

@@ -8,10 +8,11 @@ Spork.prefork do
 
   ENV["RAILS_ENV"] = "test"    
   #RAILS3 TODO
-  require File.expand_path('../../../config/environment', __FILE__)
+  require File.expand_path('../../config/environment', __FILE__)
   require 'rails'
   require 'rails/test_help'  
   require 'factory_girl'
+  #require 'authlogic/test_case'
   factories_path = File.expand_path('../factories', __FILE__)
   models_in_core_path = File.expand_path('../../app/models', __FILE__)
   Dir[models_in_core_path+"/*.rb",  factories_path+"/*.rb"].each {|file| require file }
@@ -32,7 +33,7 @@ Spork.prefork do
   #Spree::Config.set(:default_country_id => Country.first.id) if Country.first
 
   class ActionController::TestCase
-    setup :activate_authlogic
+    #setup :activate_authlogic
   end
 
   #ActionController::TestCase.class_eval do

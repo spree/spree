@@ -6,8 +6,8 @@ require 'rake/rdoctask'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
-require File.expand_path('../../config/application', __FILE__)
 
+require File.expand_path('../config/environment', __FILE__)
 Rails::Application.load_tasks
 
 desc "Default Task"

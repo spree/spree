@@ -1,10 +1,12 @@
 require File.expand_path('../boot', __FILE__)
+require File.expand_path('../../../load_spree_paths', __FILE__)
+require File.expand_path('../../lib/spree_core/all', __FILE__)
 
-require 'spree_core/all'
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env) if defined?(Bundler)
+
 
 module Spree
   class Application < Rails::Application
