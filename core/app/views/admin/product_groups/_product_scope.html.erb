@@ -12,7 +12,7 @@
         <td>
           <label><%= t(argument, :scope => [:product_scopes, :scopes, product_scope.name, :args]) %></label><br />
           <%= hidden_field_tag "product_group[product_scopes_attributes][][id]", product_scope.id %>
-          <%= text_field_tag "product_group[product_scopes_attributes][][arguments][]", (product_scope.arguments || [])[i] %>
+          <%= product_scope_field product_scope, i %>
         </td>
       <% end %>
       </tr></table>

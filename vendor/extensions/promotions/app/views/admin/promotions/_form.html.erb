@@ -1,0 +1,45 @@
+<fieldset id="general_fields">
+  <legend>General</legend>
+  <% f.field_container :name do %>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  <% end %>
+
+  <% f.field_container :description do %>
+    <%= f.label :description %><br />
+    <%= f.text_area :description, :style => "height:50px" %>
+  <% end %>
+
+  <% f.field_container :code do %>
+    <%= f.label :code %><br />
+    <%= f.text_field :code %>
+  <% end %>
+
+  <% f.field_container :combine do %>
+    <label>
+      <%= f.check_box :combine %> 
+      May be combined with other promotions
+    </label>
+  <% end %>
+
+</fieldset>
+
+<fieldset id="expiry_fields">
+  <legend>Expiry</legend>
+  <% f.field_container :usage_limit do %>
+    <%= f.label :usage_limit %><br />
+    <%= f.text_field :usage_limit %>
+  <% end %>
+
+  <p id="starts_at_field">
+    <%= f.label :starts_at %>
+    <%= date_select :promotion, :starts_at, :prompt => true, :use_month_numbers => true %>
+  </p>
+  <p id="expires_at_field">
+    <%= f.label :expires_at %>
+    <%= date_select :promotion, :expires_at, :prompt => true, :use_month_numbers => true %>
+  </p>
+</fieldset>
+
+<hr />
+<%= render "admin/shared/calculator_fields", :f => f %>

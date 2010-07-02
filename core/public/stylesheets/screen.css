@@ -1186,3 +1186,10 @@ div#checkout #checkout-summary {
   padding: 20px;
   width: 180px;
 }
+div#checkout #checkout-summary {
+  background-color: #c3c9df;
+  float: right;
+  margin-top: 10px;
+  padding: 20px;
+  width: 180px;
+}

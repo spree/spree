@@ -12,5 +12,5 @@ ups_one_day:
   type: Calculator::FlatRate
 flat_rate_coupon_calculator:
   calculable: spree_coupon
-  calculable_type: Coupon
+  calculable_type: Promotion
   type: Calculator::FlatRate

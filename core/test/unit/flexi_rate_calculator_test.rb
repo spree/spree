@@ -2,7 +2,7 @@ require 'test_helper'
 
 class FlexiRateCalculatorTest < ActiveSupport::TestCase
   context "Calculator::FlexiRate" do
-    [Coupon, ShippingMethod, ShippingRate].each do |calculable|
+    [Promotion, ShippingMethod, ShippingRate].each do |calculable|
       should "be available to #{calculable.to_s}" do
        assert calculable.calculators.include?(Calculator::FlexiRate)
       end

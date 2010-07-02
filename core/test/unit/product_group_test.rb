@@ -255,6 +255,18 @@ class ProductGroupTest < ActiveSupport::TestCase
         assert_equal("descend_by_updated_at",    @pg.order_scope)
         assert_equal("products.updated_at DESC", @pg.dynamic_products.scope(:find)[:order])
       end
+    end  
+
+    context "new_from_products" do
+      setup do
+        @products = Product.limit(2)
+        @pg = ProductGroup.new_from_products(@products, :name => 'With 2 products')
+      end
+      should "contain the correct products" do
+        assert_equal 2, @pg.products.length
+        assert_equal @products.map(&:id).sort, @pg.products.map(&:id).sort
+      end
     end
+
   end
 end

@@ -312,12 +312,9 @@ en:
   count_of_reduced_by: "count of '%{name}' reduced by %{count}"
   country: Country
   country_based: "Country Based"
-  coupon: Coupon
-  coupon_code: Coupon Code
-  coupons: Coupons
-  coupons_description: Manage coupons
   create: Create
   create_a_new_account: "Create a new account"
+  create_product_group_from_products: Create a new product group from these products
   create_user_account: Create User Account
   created_successfully: "Created Successfully"
   credit: Credit
@@ -345,7 +342,6 @@ en:
   edit: Edit
   editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"
-  editing_coupon: Editing Coupon
   editing_option_type: "Editing Option Type"
   editing_option_types: "Editing Option Types"
   editing_payment_method: Editing Payment Method
@@ -486,7 +482,6 @@ en:
   new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration
   new_category: "New category"
-  new_coupon: New Coupon
   new_customer: "New Customer"
   new_image: "New Image"
   new_option_type: "New Option Type"
@@ -518,6 +513,7 @@ en:
   no_match_found: "No Match Found"
   no_payment_methods_available: "Can't check out, no payment methods are configured for this environment"
   no_products_found: "No products found"
+  no_results: "No results"
   no_shipping_methods_available: "No shipping methods available, please change your address and try again."
   no_user_found: "No user was found with that email address"
   none: None
@@ -690,6 +686,12 @@ en:
         description: "Selects all products that have at least one variant that have specified value as either option or property (eg. red)"
         name: With value
         sentence: with value <em>%s</em>
+      with_ids:
+        args:
+          ids: IDs
+        description: "Select specific products"
+        name: Products with IDs
+        sentence: with IDs <em>%s</em>
       with_option:
         args:
           option: Option
@@ -770,6 +772,7 @@ en:
   scopes: Scopes
   search: Search
   search_results: "Search results for '%{keywords}'"
+  searching: Searching
   secure_connection_type: Secure Connection Type
   secure_creditcard: Secure Creditcard
   select: Select
@@ -886,6 +889,7 @@ en:
   tree: Tree
   try_again: "Try Again"
   type: Type
+  type_to_search: Type to search
   unable_ship_method: "Unable to generate shipping methods due to a server error."
   unable_to_authorize_credit_card: "Unable to Authorize Credit Card"
   unable_to_capture_credit_card: "Unable to Capture Credit Card"

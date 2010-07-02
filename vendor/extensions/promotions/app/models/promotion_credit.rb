@@ -1,5 +1,5 @@
-class CouponCredit < Credit
-  scope :with_order, where("order_id IS NOT NULL")
+class PromotionCredit < ::Credit
+  named_scope :with_order, :conditions => "order_id IS NOT NULL"
 
   def calculate_adjustment
     adjustment_source && calculate_coupon_credit

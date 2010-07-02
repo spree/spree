@@ -1,0 +1,40 @@
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_promotion"), new_object_url, :icon => 'add'  %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+<h1><%= t("promotions") %></h1>
+
+<table class="index">
+  <thead>
+    <tr>
+      <th><%= t("code") %></th>
+      <th><%= t("description") %></th>
+      <th><%= t("combine") %></th>
+      <th><%= t("usage_limit") %></th>
+      <th><%= t("expiration") %></th>
+      <th><%= t("calculator") %></th>     
+      <th width="150"><%= t("action") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for promotion in @promotions %>
+      <tr id="<%= dom_id promotion %>">
+        <td><%= promotion.code %></td>
+        <td><%= promotion.description %></td>
+        <td><%= promotion.combine ? t(:yes) : t(:no) %></td>
+        <td><%= promotion.usage_limit %></td>
+        <td><%= promotion.expires_at.to_s(:short_date) if promotion.expires_at %></td>
+        <td><%= promotion.calculator.description if promotion.calculator %></td>
+        <td>
+        	<%= link_to_edit promotion %> &nbsp;
+        	<%= link_to_delete promotion %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

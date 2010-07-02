@@ -28,7 +28,6 @@ class Order < ActiveRecord::Base
   has_many :credits,          :extend => Totaling, :order => :position
   has_many :shipping_charges, :extend => Totaling, :order => :position
   has_many :tax_charges,      :extend => Totaling, :order => :position
-  has_many :coupon_credits,   :extend => Totaling, :order => :position
   has_many :non_zero_charges, :extend => Totaling, :order => :position,
            :class_name => "Charge", :conditions => ["amount != 0"]
 

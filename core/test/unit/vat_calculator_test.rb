@@ -5,9 +5,9 @@ class VatTaxCalculatorTest < ActiveSupport::TestCase
       assert TaxRate.calculators.include?(Calculator::Vat)
     end
     should "not be available to ShippingMethod" do
-      assert !Coupon.calculators.include?(Calculator::Vat)
+      assert !Promotion.calculators.include?(Calculator::Vat)
     end
-    should "not be available to Coupon" do
+    should "not be available to Promotion" do
       assert !ShippingMethod.calculators.include?(Calculator::Vat)
     end
 

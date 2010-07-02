@@ -165,6 +165,12 @@ module Admin::BaseHelper
      end # case
    end
 
+  def product_picker_field(name, value)
+    products = Product.with_ids(value)
+    product_names_hash = products.inject({}){|memo,item| memo[item.id] = item.name; memo}
+    %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names_hash.to_json}' />)
+  end
+
   private
   def attribute_name_for(field_name)
     field_name.gsub(' ', '_').downcase

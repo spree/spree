@@ -1,0 +1,7 @@
+<p class="field">
+  <label>
+    <%= t('user_rule.choose_users') %><br />
+    <% user_names_hash = promotion_rule.users.inject({}){|memo,item| memo[item.id] = item.email; memo} %>
+    <input type="text" name="<%= param_prefix %>[user_ids_string]" value="<%= promotion_rule.user_ids_string %>" class="tokeninput users" data-names='<%= user_names_hash.to_json %>' />
+  </label>
+</p>

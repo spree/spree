@@ -1,7 +1,0 @@
-<h1><%= t("new_coupon") %></h1>
-<%= render "shared/error_messages", :target => @coupon %>
-
-<%= form_for(:coupon, :url => collection_url) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
-  <%= render :partial => "admin/shared/new_resource_links" %>
-<% end %>

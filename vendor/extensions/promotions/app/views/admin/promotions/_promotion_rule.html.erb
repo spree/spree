@@ -1,0 +1,8 @@
+<div class="promotion-rule" id="<%= dom_id promotion_rule %>">
+  <span class="delete"><%= link_to_with_icon 'cross', '', admin_promotion_promotion_rule_path(@promotion, promotion_rule), 'data-remote' => true, 'data-method' => 'delete' %></span>
+  <% type_name = promotion_rule.class.name.demodulize.underscore %>
+  <% param_prefix = "promotion[promotion_rules_attributes][#{promotion_rule.id}]" %>
+  <%= hidden_field_tag "#{param_prefix}[id]", promotion_rule.id %>
+  <p><%= t "promotion_rule_types.#{type_name}.description" %></p>
+  <%= render "admin/promotions/rules/#{type_name}", :promotion_rule => promotion_rule, :param_prefix => param_prefix %>
+</div>

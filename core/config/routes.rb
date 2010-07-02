@@ -86,7 +86,6 @@ Rails.application.routes.draw do |map|
 
 
   namespace :admin do
-    resources :coupons
     resources :zones
     resources :users
     resources :countries do

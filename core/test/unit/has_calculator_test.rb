@@ -7,11 +7,11 @@ require 'test_helper'
 class HasCalculatorTest < ActiveSupport::TestCase
   context "has_calculator" do
     setup do         
-      @object = Coupon.new
+      @object = Promotion.new
     end
 
     should "add calculator as has_one association" do
-      assert Coupon.reflect_on_all_associations(:has_one).map(&:name).include?(:calculator)
+      assert Promotion.reflect_on_all_associations(:has_one).map(&:name).include?(:calculator)
     end
 
     # should "add default calculator" do

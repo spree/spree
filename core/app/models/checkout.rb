@@ -118,7 +118,7 @@ class Checkout < ActiveRecord::Base
   end
 
   def process_coupon_code
-    return unless @coupon_code and coupon = Coupon.find(:first, :conditions => ["UPPER(code) = ?",@coupon_code.upcase])
+    return unless @coupon_code and coupon = Promotion.find(:first, :conditions => ["UPPER(code) = ?",@coupon_code.upcase])
     coupon.create_discount(order)
     # recalculate order totals
     order.save

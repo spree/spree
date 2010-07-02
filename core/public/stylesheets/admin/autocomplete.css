@@ -1,6 +1,8 @@
+/* @override http://localhost:3000/stylesheets/admin/edit_orders.css */
+
 .ac_results {
   padding: 0px;
-  border: 1px solid black;
+  border: 1px solid #666;
   background-color: white;
   overflow: hidden;
   z-index: 99999;
@@ -32,16 +34,21 @@
   */
   line-height: 16px;
   overflow: hidden;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid #666;
   color: #000;
   cursor: pointer;
 }
+
 .ac_results li img{
   float:left;
   padding-right: 5px;
+  width: 30px;
 }
 .ac_results li h4 {
   margin-bottom: 3px;
+  width: 330px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .ac_results li div{
   float:left;
@@ -58,8 +65,10 @@
   background-color: #fff;
 }
 .ac_over {
-  background-color: #fff;
+  background-color: #41A6F0;
+  color: #fff!important;
 }
-.ac_over h4{
-  text-decoration: underline;
+.ac_over h4 {
+	color: #fff;
 }
+

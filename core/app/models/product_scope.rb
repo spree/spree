@@ -28,7 +28,7 @@ class ProductScope < ActiveRecord::Base
 
   def before_validation_on_create
     # Add default empty arguments so scope validates and errors aren't caused when previewing it
-    if args = Scopes::Product.arguments_for_scope_name(name)
+     if name && args = Scopes::Product.arguments_for_scope_name(name)
       self.arguments ||= ['']*args.length
     end
   end

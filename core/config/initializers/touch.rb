@@ -7,7 +7,7 @@ begin
   ::Credit
   ::TaxCharge
   ::ShippingCharge
-  ::CouponCredit
+  ::PromotionCredit
   ::ReturnAuthorizationCredit
 rescue
   nil

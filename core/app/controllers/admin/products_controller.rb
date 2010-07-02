@@ -4,7 +4,7 @@ class Admin::ProductsController < Admin::BaseController
 
   index.response do |wants|
     wants.html { render :action => :index }
-    wants.json { render :json => @collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, :images => {}}}, :images => {}, :master => {}})  }
+    wants.json { render :json => json_data }
   end
 
   new_action.response do |wants|
@@ -61,12 +61,25 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   private
+
+    # Allow different formats of json data to suit different ajax calls
+    def json_data
+      json_format = params[:json_format] or 'default'
+      case json_format
+      when 'basic'
+        collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
+      else
+        collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, :images => {}}}, :images => {}, :master => {}})
+      end
+    end
+  
     def load_data
       @tax_categories = TaxCategory.find(:all, :order=>"name")
       @shipping_categories = ShippingCategory.find(:all, :order=>"name")
     end
 
     def collection
+      return @collection if @collection.present?
       base_scope = end_of_association_chain
 
       unless request.xhr?
@@ -85,10 +98,10 @@ class Admin::ProductsController < Admin::BaseController
       else
         includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
-        @collection = base_scope.name_contains(params[:q]).all(:include => includes, :limit => 10)
-        @collection.concat base_scope.group_by_products_id.variants_including_master_sku_contains(params[:q]).all(:include => includes, :limit => 10)
+        @collection = base_scope.name_contains(params[:q]).all(:include => includes, :limit => (params[:limit] || 10))
+        @collection.concat base_scope.group_by_products_id.variants_including_master_sku_contains(params[:q]).all(:include => includes, :limit => (params[:limit] || 10))
 
-        @collection.uniq!
+        @collection.uniq
       end
 
     end

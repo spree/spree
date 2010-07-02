@@ -1,7 +1,7 @@
 require 'test_helper'
 class FlatRateCalculatorTest < ActiveSupport::TestCase
   context "Calculator::FlatRate" do
-    [Coupon, ShippingMethod].each do |calculable| 
+    [Promotion, ShippingMethod].each do |calculable| 
       should "be available to #{calculable.to_s}" do
        assert calculable.calculators.include?(Calculator::FlatRate)
       end

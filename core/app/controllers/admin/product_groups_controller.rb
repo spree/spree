@@ -19,12 +19,15 @@ class Admin::ProductGroupsController < Admin::BaseController
   private
 
     # Consolidate argument arrays for nested product_scope attributes
+    # Necessary for product scopes with multiple arguments
     def object_params
       if params["product_group"] and params["product_group"]["product_scopes_attributes"].is_a?(Array)
         params["product_group"]["product_scopes_attributes"] = params["product_group"]["product_scopes_attributes"].group_by {|a| a["id"]}.map do |scope_id, attrs| 
-          { "id" => scope_id, 
-            "arguments" => attrs.map{|a| a["arguments"] }.flatten
-          }
+          a = { "id" => scope_id, "arguments" => attrs.map{|a| a["arguments"] }.flatten }
+          if name = attrs.first["name"]
+            a["name"] = name
+          end
+          a
         end
       end
       params["product_group"]

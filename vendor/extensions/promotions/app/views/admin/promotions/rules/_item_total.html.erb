@@ -1,0 +1,7 @@
+<p class="field">
+  <label>
+    Item total must be
+    <%= select_tag "#{param_prefix}[preferred_operator]", options_for_select(Promotion::Rules::ItemTotal::OPERATORS.map{|o| [t("item_total_rule.operators.#{o}"),o]}, promotion_rule.preferred_operator) %>
+    <%= text_field_tag "#{param_prefix}[preferred_amount]", promotion_rule.preferred_amount, :size => 10 %>
+  </label>
+</p>

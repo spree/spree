@@ -2,11 +2,23 @@
 <title><%= "Spree #{t('administration')}: " -%>
 <%= t(controller.controller_name, :default => controller.controller_name.titleize) %></title>
 
-<%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', :cache => 'admin-all' %>
+<% javascript_tag do %>
+  ajax_urls = <%= {
+    :product_search_json       => admin_products_url(:format => 'json'),
+    :product_search_basic_json => admin_products_url(:format => 'json', :json_format => 'basic', :limit => 10),
+    :user_search_basic_json    => admin_users_url(:format => 'json', :json_format => 'basic', :limit => 10)
+  }.to_json %>;
+  
+  strings = <%=
+    [:no_results, :type_to_search, :searching].
+    inject({}){|memo, item| {item => t(item) }}.to_json
+  %>
+<% end %>
 
-<%= javascript_include_tag 'jquery', 'jquery-ui', 'jrails', 'jquery.suggest', 'jrails.autocomplete', :cache => 'jquery-admin-plugins' %>
+<%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', 'admin/autocomplete', 'admin/token-input', :cache => 'admin-all' %>
+<%= javascript_include_tag 'jquery-1.4.2.min.js', 'jquery-ui', 'jrails', 'jquery.suggest', 'jrails.autocomplete', 'jquery.tokeninput.js', :cache => 'jquery-admin-plugins' %>
 <%= javascript_include_tag('jquery.template') unless controller.controller_name == "overview" %>
-<%= javascript_include_tag 'spree', 'nested-attribute', 'zone', 'calculator', 'gateway' %>
+<%= javascript_include_tag 'admin', 'nested-attribute', 'zone', 'calculator', 'gateway' %>
 <%= javascript_tag "$ = jQuery;" %>
 <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
 <%= javascript_include_tag 'jquery.alerts/jquery.alerts.js' %>
@@ -14,7 +26,8 @@
 
 <%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.css' %>
 <%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.spree.css' %>
-<%= stylesheet_link_tag 'jquery.autocomplete.css' %>
+<%#= stylesheet_link_tag 'jquery.autocomplete.css' 
+%>
 
 <%= javascript_tag "jQuery.alerts.dialogClass = 'spree';" %>
 <!-- RAILS 3 TODO - this method is undefined -->

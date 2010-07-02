@@ -1,4 +1,5 @@
 class Admin::ProductScopesController < Admin::BaseController
+  helper 'admin/product_groups'
 
   resource_controller
   

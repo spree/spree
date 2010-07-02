@@ -1,0 +1,54 @@
+.promotion-rule {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  padding: 8px 40px 8px 10px;
+  background-color: #eee;
+  border-bottom: 1px solid #bbb;
+  margin-bottom: 4px;
+  position: relative;
+}
+.promotion-rule .delete {
+  display: block;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+
+.products_rule_products_source_field label {
+  display: inline;
+}
+
+
+
+.edit_promotion #general_fields, .edit_promotion #expiry_fields {
+	float: left;
+	width: 46%;
+}
+
+.edit_promotion #general_fields {
+	margin-right: 10px;
+}
+
+.edit_promotion #expiry_fields {
+
+}
+
+.edit_promotion #starts_at_field, .edit_promotion #expires_at_field {
+	width: 200px;
+	float: left;
+	clear: none;
+}
+.edit_promotion #starts_at_field label, .edit_promotion #expires_at_field label{
+	display: block;
+}
+#rule_fields {
+	position: relative;
+}
+#new_product_rule_form {
+	position: absolute;
+	text-align:right;
+	width: 300px;
+	right: 30px;
+	bottom: 20px;
+}
