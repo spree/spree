@@ -1,12 +1,6 @@
-# Uncomment this if you reference any of your controllers in activate
-# require_dependency 'application'
+require 'spree_core'
 
-class PromotionsExtension < Spree::Extension
-  version "1.0"
-  description "Describe your extension here"
-  url "http://yourwebsite.com/promotions"
-
-  def activate
+ActiveSupport.on_load(:after_initialize) do
 
     Order.class_eval do
       has_many :promotion_credits, :extend => Order::Totaling, :order => :position
@@ -76,5 +70,4 @@ class PromotionsExtension < Spree::Extension
 
     [Calculator::FreeShipping].each(&:register)
 
-  end
 end

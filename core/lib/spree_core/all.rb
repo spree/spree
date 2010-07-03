@@ -5,6 +5,7 @@ require "spree"
   spree_payment_gateway
   spree_api
   spree_dashboard
+  spree_promotions
 ).each do |extension|
   begin
     require "#{extension}/engine"
