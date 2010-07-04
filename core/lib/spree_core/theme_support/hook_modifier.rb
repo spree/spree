@@ -19,11 +19,11 @@ module Spree
         return '' if renderer.nil?
         case action
         when :insert_before
-          "#{renderer.call(context, locals)}#{content}"
+          "#{renderer.call(context, locals)}#{content}".html_safe
         when :insert_after
-          "#{content}#{renderer.call(context, locals)}"
+          "#{content}#{renderer.call(context, locals)}".html_safe
         when :replace
-          renderer.call(context, locals).to_s
+          renderer.call(context, locals).to_s.html_safe
         else
           ''
         end

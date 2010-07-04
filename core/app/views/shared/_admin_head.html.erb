@@ -2,16 +2,16 @@
 <title><%= "Spree #{t('administration')}: " -%>
 <%= t(controller.controller_name, :default => controller.controller_name.titleize) %></title>
 
-<% javascript_tag do %>
-  ajax_urls = <%= {
+<%= javascript_tag do %>
+  ajax_urls = <%= raw({
     :product_search_json       => admin_products_url(:format => 'json'),
     :product_search_basic_json => admin_products_url(:format => 'json', :json_format => 'basic', :limit => 10),
     :user_search_basic_json    => admin_users_url(:format => 'json', :json_format => 'basic', :limit => 10)
-  }.to_json %>;
+  }.to_json) %>;
   
-  strings = <%=
+  strings = <%= raw(
     [:no_results, :type_to_search, :searching].
-    inject({}){|memo, item| {item => t(item) }}.to_json
+    inject({}){|memo, item| {item => t(item) }}.to_json )
   %>
 <% end %>
 
