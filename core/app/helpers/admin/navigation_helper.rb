@@ -14,7 +14,7 @@ module Admin::NavigationHelper
 
     destination_url = send("#{options[:route]}_path")
 
-    return("") unless url_options_authenticate?(ActionController::Routing::Routes.recognize_path(destination_url))
+    return("") unless url_options_authenticate?(Rails.application.routes.recognize_path(destination_url))
 
     ## if more than one form, it'll capitalize all words
     label_with_first_letters_capitalized = t(options[:label]).gsub(/\b\w/){$&.upcase}
