@@ -1,35 +1,36 @@
+<%= f.error_messages %>
 <fieldset id="general_fields">
   <legend>General</legend>
-  <% f.field_container :name do %>
+  <p>
     <%= f.label :name %><br />
     <%= f.text_field :name %>
-  <% end %>
+  </p>
 
-  <% f.field_container :description do %>
+  <p>
     <%= f.label :description %><br />
     <%= f.text_area :description, :style => "height:50px" %>
-  <% end %>
+  </p>
 
-  <% f.field_container :code do %>
+  <p>
     <%= f.label :code %><br />
     <%= f.text_field :code %>
-  <% end %>
+  </p>
 
-  <% f.field_container :combine do %>
+  <p>
     <label>
       <%= f.check_box :combine %> 
       May be combined with other promotions
     </label>
-  <% end %>
+  </p>
 
 </fieldset>
 
 <fieldset id="expiry_fields">
   <legend>Expiry</legend>
-  <% f.field_container :usage_limit do %>
+  <p>
     <%= f.label :usage_limit %><br />
     <%= f.text_field :usage_limit %>
-  <% end %>
+  </p>
 
   <p id="starts_at_field">
     <%= f.label :starts_at %>

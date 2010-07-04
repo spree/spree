@@ -1,15 +1,14 @@
 <h1><%= t("editing_promotion") %></h1>
 
-<%= error_messages_for :promotion %>
-<% form_for(@promotion, :url => object_url, :html => { :method => :put }) do |f| %>
+<%= form_for(@promotion, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <%= render :partial => "admin/shared/edit_resource_links" %>
+  <%= render "admin/shared/edit_resource_links" %>
 <% end %>
 
 <fieldset id="rule_fields">
   <legend>Rules</legend>
     
-  <% form_for(@promotion, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= form_for(@promotion, :url => object_url, :html => { :method => :put }) do |f| %>
     <p>
       <% for policy in Promotion::MATCH_POLICIES %>
         <label><%= f.radio_button :match_policy, policy %> <%= t "promotion_form.match_policies.#{policy}" %></label> &nbsp;
@@ -27,7 +26,7 @@
     </p>
   <% end %>
 
-  <% form_tag(admin_promotion_promotion_rules_path(@promotion), 'data-remote' => true, :id => 'new_product_rule_form') do |f| %>
+  <%= form_tag(admin_promotion_promotion_rules_path(@promotion), 'data-remote' => true, :id => 'new_product_rule_form') do |f| %>
     <% options = options_for_select( PromotionRule.rule_class_names.map {|name| [ t("promotion_rule_types.#{name.demodulize.underscore}.name"), name] } ) %>
     <p>
       <label for="promotion_rule_type"><%= t('add_rule_of_type') %></label>
