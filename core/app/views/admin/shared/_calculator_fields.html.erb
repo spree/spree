@@ -5,9 +5,8 @@
       <%= f.label(:calc_type, t("calculator")) %>
       <%= f.collection_select(:calculator_type, @calculators, :to_s, :description, {}, {:id => "calc-type"}) %>
     </p>
-
     <% if !@object.new_record? %>
-      <% f.fields_for :calculator do |calculator_form| %>
+      <%= f.fields_for :calculator do |calculator_form| %>
         <div class="calculator-settings">
           <%= preference_fields(@object.calculator, calculator_form) %>
         </div>

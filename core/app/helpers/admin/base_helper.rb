@@ -138,7 +138,7 @@ module Admin::BaseHelper
 
       form.label("preferred_#{key}", t(key)+": ") +
         preference_field(form, "preferred_#{key}", :type => type)
-    }.join("<br />")
+    }.join("<br />").html_safe
   end
 
   def additional_field_for(controller, field)

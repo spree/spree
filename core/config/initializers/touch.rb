@@ -12,3 +12,18 @@ begin
 rescue
   nil
 end
+
+[
+  Calculator::FlatPercentItemTotal,
+  Calculator::FlatRate,
+  Calculator::FlexiRate,
+  Calculator::PerItem,
+  Calculator::SalesTax,
+  Calculator::Vat,
+].each{|c_model|
+  begin
+    c_model.register if c_model.table_exists?
+  rescue Exception => e
+    $stderr.puts "Error registering calculator #{c_model}"
+  end
+}
