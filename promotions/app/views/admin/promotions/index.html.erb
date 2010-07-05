@@ -28,7 +28,7 @@
         <td><%= promotion.description %></td>
         <td><%= promotion.combine ? t(:yes) : t(:no) %></td>
         <td><%= promotion.usage_limit %></td>
-        <td><%= promotion.expires_at.to_s(:short_date) if promotion.expires_at %></td>
+        <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
         <td><%= promotion.calculator.description if promotion.calculator %></td>
         <td>
         	<%= link_to_edit promotion %> &nbsp;

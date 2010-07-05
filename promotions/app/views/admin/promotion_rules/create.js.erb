@@ -1,4 +1,4 @@
-jQuery('#rules').append('<%= escape_javascript( render('admin/promotions/promotion_rule', :rule => object) ) %>');
+jQuery('#rules').append('<%= escape_javascript( render(:partial => 'admin/promotions/promotion_rule', :object => object) ) %>');
 jQuery('#<%= dom_id object %>').hide();
 jQuery('#<%= dom_id object %>').fadeIn();
 initProductRuleSourceField();

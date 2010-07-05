@@ -168,7 +168,7 @@ module Admin::BaseHelper
   def product_picker_field(name, value)
     products = Product.with_ids(value)
     product_names_hash = products.inject({}){|memo,item| memo[item.id] = item.name; memo}
-    %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names_hash.to_json}' />)
+    %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names_hash.to_json}' />).html_safe
   end
 
   private

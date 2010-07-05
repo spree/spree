@@ -13,6 +13,6 @@
 </p>
 <p>
   <label>
-    <%= t("product_rule.label", :select => select_tag("#{param_prefix}[preferred_match_policy]", options_for_select(Promotion::Rules::Product::MATCH_POLICIES.map{|s| [t("product_rule.match_#{s}"),s] }, promotion_rule.preferred_match_policy))) %>
+    <%= t("product_rule.label", :select => select_tag("#{param_prefix}[preferred_match_policy]", options_for_select(Promotion::Rules::Product::MATCH_POLICIES.map{|s| [t("product_rule.match_#{s}"),s] }, promotion_rule.preferred_match_policy))).html_safe %>
   </label>
 </p>
