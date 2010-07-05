@@ -98,8 +98,8 @@ class Admin::ProductsController < Admin::BaseController
       else
         includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
-        @collection = base_scope.name_contains(params[:q]).all(:include => includes, :limit => (params[:limit] || 10))
-        @collection.concat base_scope.group_by_products_id.variants_including_master_sku_contains(params[:q]).all(:include => includes, :limit => (params[:limit] || 10))
+        @collection = base_scope.where(["name LIKE ?", "%#{params[:q]}%"]).includes(includes).limit(params[:limit] || 10)
+        @collection.concat base_scope.where(["variants.sku LIKE ?", "%#{params[:q]}%"]).includes(:variants_including_master).limit(params[:limit] || 10)
 
         @collection.uniq
       end
