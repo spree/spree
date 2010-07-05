@@ -19,8 +19,7 @@ module Admin::BaseHelper
     unless error_message_on(model, method).blank?
       css_class = 'withError'
     end
-    html = content_tag('p', capture(&block), :class => css_class)
-    concat(html)
+    content_tag('p', capture(&block), :class => css_class)
   end
 
   def class_for_error(model, method)
