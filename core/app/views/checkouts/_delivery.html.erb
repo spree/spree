@@ -1,6 +1,6 @@
 <fieldset id='shipping_method'>
   <legend><%= t("shipping_method") %></legend>
-  <% checkout_form.fields_for :ship_address do |ship_address_form| %>
+  <%= checkout_form.fields_for :ship_address do |ship_address_form| %>
     <div class="inner">
       <div id="methods">
 
