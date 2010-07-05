@@ -24,12 +24,14 @@ ActiveSupport.on_load(:after_initialize) do
         end
 
         self.adjustment_total = self.charge_total - self.credit_total
-
         self.total            = self.item_total   + self.adjustment_total
+        
+        self.checkout.enable_validation_group(:register) unless self.checkout.nil?
       end
 
+
       def process_automatic_promotions
-        promotion_credits.reload.clear
+        #promotion_credits.reload.clear
         eligible_automatic_promotions.each do |coupon|
           # can't use coupon.create_discount as it re-saves the order causing an infinite loop
           if amount = coupon.calculator.compute(line_items)

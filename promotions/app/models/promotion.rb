@@ -9,7 +9,7 @@ class Promotion < ActiveRecord::Base
 
   MATCH_POLICIES = %w(all any)
 
-  named_scope :automatic, :conditions => "code IS NULL OR code = ''"
+  scope :automatic, where("code IS NULL OR code = ''")
 
 
   def eligible?(order)
@@ -38,7 +38,7 @@ class Promotion < ActiveRecord::Base
       order.promotion_credits.reload.clear unless combine? and order.promotion_credits.all? { |credit| credit.adjustment_source.combine? }
       order.save
       promotion_credits.create({
-          :order => order, 
+          :order_id => order.id, 
           :description => "#{I18n.t(:coupon)} (#{code})"
         })
     end

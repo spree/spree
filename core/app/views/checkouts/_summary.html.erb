@@ -23,7 +23,7 @@
     </tbody>
     <tr>
       <td><strong><%= t('order_total') %>:</strong></td>
-      <td><strong><span id='summary-order-total'><%= number_to_currency @checkout.order.total %></span></strong></td>
+      <td><strong><span id='summary-order-total'><%= number_to_currency @checkout.order.reload.total %></span></strong></td>
     </tr>
   </tbody>
 </table>
