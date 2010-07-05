@@ -42,7 +42,7 @@ module Spree
         def self.add_hook_modifier(hook_name, action, options = {}, &block)
           if block
             renderer = lambda do |template, locals|
-              template.render(:inline => yield, :locals => locals)
+              template.controller.render_to_string(:inline => yield, :locals => locals)
             end
           else
             if options.empty?
