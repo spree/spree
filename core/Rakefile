@@ -1,4 +1,5 @@
-gem 'rdoc', '= 2.2'
+require File.expand_path('../config/environment', __FILE__)
+
 require 'rdoc'
 require 'rake'
 require 'rake/testtask'
@@ -6,8 +7,6 @@ require 'rake/rdoctask'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
-
-require File.expand_path('../config/environment', __FILE__)
 Rails::Application.load_tasks
 
 desc "Default Task"
@@ -28,7 +27,7 @@ Rake::TestTask.new { |t|
 #     end or raise "Failures"
 #   end
 # end
-# 
+#
 # # Generate the RDoc documentation
 # Rake::RDocTask.new { |rdoc|
 #   rdoc.rdoc_dir = 'doc'
@@ -41,20 +40,20 @@ Rake::TestTask.new { |t|
 #   rdoc.rdoc_files.include('lib/action_mailer/*.rb')
 #   rdoc.rdoc_files.include('lib/action_mailer/delivery_method/*.rb')
 # }
-# 
+#
 # spec = eval(File.read('actionmailer.gemspec'))
-# 
+#
 # Rake::GemPackageTask.new(spec) do |p|
 #   p.gem_spec = spec
 # end
-# 
+#
 # desc "Release to gemcutter"
 # task :release => :package do
 #   require 'rake/gemcutter'
 #   Rake::Gemcutter::Tasks.new(spec).define
 #   Rake::Task['gem:push'].invoke
 # end
-# 
+#
 # desc "Publish the API documentation"
 # task :pdoc => [:rdoc] do
 #   require 'rake/contrib/sshpublisher'
