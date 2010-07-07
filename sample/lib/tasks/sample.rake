@@ -13,6 +13,7 @@ end
 namespace :db do
   desc "Loads sample data into the store"
   task :sample do   # an invoke will not execute the task after defaults has already executed it
+    Rake::Task['db:load_dir'].reenable
     Rake::Task["db:load_dir"].invoke( "sample" )
     puts "Sample data has been loaded"
   end
