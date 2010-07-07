@@ -236,6 +236,7 @@ en:
   alternative_phone: Alternative Phone
   amount: Amount
   analytics_trackers: Analytics Trackers
+  apply: "Apply"
   are_you_sure: "Are you sure?"
   are_you_sure_category: "Are you sure you want to delete this category?"
   are_you_sure_delete: "Are you sure you want to delete this record?"
@@ -834,6 +835,7 @@ en:
   smtp_username: SMTP Username
   sold: Sold
   sort_ordering: "Sort ordering"
+  special_instructions: "Special Instructions"
   spree:
     date: Date
     time: Time

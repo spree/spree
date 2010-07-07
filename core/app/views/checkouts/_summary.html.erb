@@ -31,7 +31,7 @@
   <%= form_for @checkout, :url => object_url, :html => { :id => 'checkout-summary-form'} do |summary_form| %>
     <label><%= t(:coupon_code) %></label>
     <%= summary_form.text_field :coupon_code, :id => 'coupon-code', :size => 14 %>
-    <input id="post-summary" type="submit" value="Apply"/>
+    <input id="post-summary" type="submit" value="<%=t("apply") %>"/>
     <input type="hidden" name="step" value="<%= @prev_state %>"/>
     <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'coupon_busy_indicator' %>
   <% end -%>
