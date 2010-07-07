@@ -3,7 +3,7 @@ class PromotionRule < ActiveRecord::Base
 
   belongs_to :promotion
   
-  named_scope :of_type, lambda {|t| {:conditions => {:type => t}}}
+  scope :of_type, lambda {|t| {:conditions => {:type => t}}}
   
   def eligible?(order)
     raise 'eligible? should be implemented in a sub-class of Promotion::PromotionRule'
