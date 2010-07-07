@@ -1,7 +1,7 @@
 <% params[:step] ||= 'registration' %>
-<%- content_for :head do -%>
+<% content_for :head do %>
   <%= javascript_include_tag  'checkout', '/states' %>
-<%- end -%>
+<% end %>
 <div id="checkout">
   <h1><%= t("checkout")%></h1>
   <%= checkout_progress %>
