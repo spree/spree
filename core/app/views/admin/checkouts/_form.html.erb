@@ -29,11 +29,11 @@
 </table>
 
 <h3><%= Address.human_name(:count => 2) %></h3>
-<% f.fields_for 'bill_address' do |ba_form|  %>
+<%= f.fields_for 'bill_address' do |ba_form|  %>
   <%= render :partial => "admin/shared/address_form", :locals => {:f => ba_form, :name => t('billing_address'), :use_billing => false} %>
 <% end %>
 
-<% f.fields_for 'ship_address' do |sa_form|  %>
+<%= f.fields_for 'ship_address' do |sa_form|  %>
   <%= render :partial => "admin/shared/address_form", :locals => {:f => sa_form, :name => t('shipping_address'), :use_billing => true} %>
 <% end %>
 

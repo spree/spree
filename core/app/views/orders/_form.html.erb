@@ -12,7 +12,7 @@
     </tr>
   </thead>
   <tbody id="line_items">
-    <% order_form.fields_for :line_items do |item_form| %>
+    <%= order_form.fields_for :line_items do |item_form| %>
       <%= render 'line_item', :variant => item_form.object.variant, :line_item => item_form.object, :item_form => item_form %>
     <% end %>
 

@@ -55,7 +55,7 @@ module Admin::BaseHelper
   #
   #   <%= form_for @project do |project_form| -%>
   #     <div id="tasks">
-  #       <% project_form.fields_for :tasks do |task_form| %>
+  #       <%= project_form.fields_for :tasks do |task_form| %>
   #         <%= render :partial => 'task', :locals => { :f => task_form } %>
   #       <% end %>
   #     </div>
