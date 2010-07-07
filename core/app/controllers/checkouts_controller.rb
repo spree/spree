@@ -190,7 +190,7 @@ class CheckoutsController < Spree::BaseController
 
   def rate_hash
     begin
-      @checkout.shipping_methods.collect do |ship_method|
+      @checkout.shipping_methods(:front_end).collect do |ship_method|
         @checkout.shipment.shipping_method = ship_method
         { :id => ship_method.id,
           :name => ship_method.name,
