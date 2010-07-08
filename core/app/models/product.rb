@@ -39,7 +39,8 @@ class Product < ActiveRecord::Base
   after_create :set_master_variant_defaults
   after_create :add_properties_and_option_types_from_prototype
   before_save :recalculate_count_on_hand
-  after_save :update_memberships if ProductGroup.table_exists?
+  #RAILS3 TODO (restore this once SL stuff is sorted)
+  #after_save :update_memberships if ProductGroup.table_exists?
   after_save :set_master_on_hand_to_zero_when_product_has_variants
   after_save :save_master
 
