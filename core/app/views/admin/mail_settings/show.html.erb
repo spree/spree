@@ -36,16 +36,16 @@
     <td><%= Spree::Config[:mail_auth_type] %></td>
   </tr>
 
-  <% unless Spree::Config[:mail_auth_type] == "none" -%>
+  <% unless Spree::Config[:mail_auth_type] == "none" %>
     <tr>
       <th><%= t('smtp_username') %>:</th>
       <td><%= Spree::Config[:smtp_username] %></td>
     </tr>
     <tr>
       <th><%= t('smtp_password') %>:</th>
-      <td><%= t("not_shown") unless Spree::Config[:smtp_password].blank? -%></td>
+      <td><%= t("not_shown") unless Spree::Config[:smtp_password].blank? %></td>
     </tr>
-  <% end -%>
+  <% end %>
 
   <tr>
     <th><%= t('copy_all_mails_to') %>:</th>

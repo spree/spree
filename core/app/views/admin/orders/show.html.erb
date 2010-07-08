@@ -28,7 +28,7 @@
 <% end %>
 
 <%= hook :admin_order_show_details do %>
-  <%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} -%>
+  <%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} %>
 <% end %>
 
 <%= hook :admin_order_show_other do %>

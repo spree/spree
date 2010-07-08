@@ -25,7 +25,7 @@
   <tbody>
     <% @trackers.each do |tracker|%>
       <tr id="<%= dom_id tracker %>">     
-        <%- locals = {:tracker => tracker} -%>
+        <%- locals = {:tracker => tracker} %>
         <%= hook :admin_trackers_index_rows, locals do %>        
           <td><%= tracker.analytics_id %></td>
           <td><%= tracker.environment.to_s.titleize %></td>

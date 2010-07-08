@@ -21,7 +21,7 @@
       <tbody id='subtotal'>
         <tr id="subtotal-row">
           <td colspan="3"><b><%= t('subtotal') %>:</b></td>
-          <td class="total"><span><%= number_to_currency @order.item_total -%></span></td>
+          <td class="total"><span><%= number_to_currency @order.item_total %></span></td>
           <td></td>
         </tr>
       </tbody>
@@ -31,7 +31,7 @@
         <% @order.charges.each do |charge| %>
           <tr>
             <td colspan="3"><strong><%= charge.description %></strong></td>
-            <td class="total"><span><%= number_to_currency charge.amount -%></span></td>
+            <td class="total"><span><%= number_to_currency charge.amount %></span></td>
             <td></td>
           </tr>
         <% end %>
@@ -42,7 +42,7 @@
       <% @order.credits.each do |credit| %>
         <tr>
           <td colspan="3"><%= credit.description %></td>
-          <td class="total"><span><%= number_to_currency credit.amount -%></span></td>
+          <td class="total"><span><%= number_to_currency credit.amount %></span></td>
           <td></td>
         </tr>
       <% end %>
@@ -52,7 +52,7 @@
       <tbody id='order-total'>
         <tr>
           <td colspan="3"><b><%= t('order_total') %>:</b></td>
-          <td class="total"><span id="order_total"><%= number_to_currency @order.total -%></span></td>
+          <td class="total"><span id="order_total"><%= number_to_currency @order.total %></span></td>
           <td></td>
         </tr>
       </tbody>

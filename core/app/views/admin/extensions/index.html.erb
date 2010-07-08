@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    <% for extension in @extensions -%>
+    <% for extension in @extensions %>
     <tr class="node level-1">
       <td class="extension">
 	<h4><%= extension.extension_name %></h4>
@@ -18,6 +18,6 @@
       <td class="website"><%= link_to t("website"), extension.url, :target => "_blank" unless extension.url.blank? %></td>
       <td class="version"><%= extension.version %></td>
     </tr>
-    <% end -%>
+    <% end %>
   </tbody>
 </table>

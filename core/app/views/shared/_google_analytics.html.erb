@@ -28,10 +28,10 @@
       "",		//State
       ""		//Country
       );
-      <% @order.line_items.each do |line_item| -%>
+      <% @order.line_items.each do |line_item| %>
       pageTracker._addItem("<%= @order.number %>", "<%= line_item.variant.sku %>", "<%= line_item.variant.product.name %>", 
         "" /*Product Category*/, "<%= line_item.price %>", "<%= line_item.quantity %>");
-      <% end -%>
+      <% end %>
       pageTracker._trackTrans();
 
     <% end %>  

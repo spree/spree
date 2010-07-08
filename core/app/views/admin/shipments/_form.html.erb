@@ -1,4 +1,4 @@
-<%- locals = {:shipment_form => shipment_form} -%>
+<%- locals = {:shipment_form => shipment_form} %>
 
 <% unless @shipment.order.in_progress? %>
   <%= hook :admin_shipment_form_inventory_units, locals do %>

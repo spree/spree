@@ -30,7 +30,7 @@
   </tr>
 <% @collection.each do |product| %>
   <tr <%= 'style="color:red;"' if product.deleted? %> id="<%= dom_id product %>">
-    <%- locals = {:product => product} -%>
+    <%- locals = {:product => product} %>
     <%= hook :admin_products_index_rows, locals do %>
       <td><%= product.sku %></td>
       <td><%= product.name %></td>
@@ -56,7 +56,7 @@
     <div class="box">
       <h3><%= t(:search) %></h3>
 
-      <%- locals = {:f => f} -%>
+      <%- locals = {:f => f} %>
       <%= hook :admin_products_index_search, locals do %>
         <p>
           <label><%= t("name") %></label><br />

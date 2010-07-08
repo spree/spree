@@ -1,10 +1,10 @@
 <tr id="<%= dom_id(f.object) %>">
-  <%- locals = {:f => f} -%>
+  <%- locals = {:f => f} %>
   <%= hook :admin_order_form_line_item_row, locals do %>
-    <td width="300"><%=f.object.variant.product.name-%> <%= "(" + variant_options(f.object.variant) + ")" unless f.object.variant.option_values.empty? %></td>
-    <td valign="top" class="price"><%= number_to_currency f.object.price -%></td>
+    <td width="300"><%=f.object.variant.product.name%> <%= "(" + variant_options(f.object.variant) + ")" unless f.object.variant.option_values.empty? %></td>
+    <td valign="top" class="price"><%= number_to_currency f.object.price %></td>
     <td valign="top" class="qty"><%=f.text_field :quantity, :style => "width:30px;", :class => "qty" %></td>
-    <td valign="top" class="total"><%= number_to_currency (f.object.price * f.object.quantity)-%></td>
+    <td valign="top" class="total"><%= number_to_currency (f.object.price * f.object.quantity)%></td>
   <% end %>
   <td>
     <%= hook :admin_order_form_line_item_actions, locals do %>

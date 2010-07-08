@@ -15,11 +15,11 @@ development:
   database: <%= app_name %>_dev
   username: root
   password:
-<% if socket -%>
+<% if socket %>
   socket: <%= socket %>
-<% else -%>
+<% else %>
   host: localhost
-<% end -%>
+<% end %>
 
 # Warning: The database defined as 'test' will be erased and
 # re-generated from your development database when you run 'rake'.
@@ -29,30 +29,30 @@ test:
   database: <%= app_name %>_test
   username: root
   password:
-<% if socket -%>
+<% if socket %>
   socket: <%= socket %>
-<% else -%>
+<% else %>
   host: localhost
-<% end -%>
+<% end %>
 
 staging:
   adapter: mysql
   database: <%= app_name %>_staging
   username: root
   password: 
-<% if socket -%>
+<% if socket %>
   socket: <%= socket %>
-<% else -%>
+<% else %>
   host: localhost
-<% end -%>
+<% end %>
 
 production:
   adapter: mysql
   database: <%= app_name %>
   username: root
   password: 
-<% if socket -%>
+<% if socket %>
   socket: <%= socket %>
-<% else -%>
+<% else %>
   host: localhost
-<% end -%>
+<% end %>

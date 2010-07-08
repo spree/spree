@@ -9,7 +9,7 @@
       <% @checkout.order.charges.each do |charge| %>
         <tr>
           <td><%= charge.description %>: </td>
-          <td><%= number_to_currency charge.amount -%></td>
+          <td><%= number_to_currency charge.amount %></td>
         </tr>
       <% end %>
     </tbody>
@@ -34,6 +34,6 @@
     <input id="post-summary" type="submit" value="<%=t("apply") %>"/>
     <input type="hidden" name="step" value="<%= @prev_state %>"/>
     <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'coupon_busy_indicator' %>
-  <% end -%>
-<% end -%>
+  <% end %>
+<% end %>
 <div id="coupon-error"></div>

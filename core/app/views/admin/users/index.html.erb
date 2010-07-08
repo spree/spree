@@ -25,7 +25,7 @@
   <tbody>
     <% @users.each do |user|%>
       <tr id="<%= dom_id user %>">
-        <%- locals = {:user => user} -%>
+        <%- locals = {:user => user} %>
         <%= hook :admin_users_index_rows, locals do %>
           <td width="350px"><%=link_to user.email, object_url(user) %></td>
         <% end %>
@@ -47,7 +47,7 @@
   <div class="box">
     <h3><%= t(:search) %></h3>
     <%= form_for @search do |f| %>
-      <%- locals = {:f => f} -%>
+      <%- locals = {:f => f} %>
       <%= hook :admin_users_index_search, locals do %>
         <p>
           <%= t("email") %><br />

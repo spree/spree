@@ -24,7 +24,7 @@
   <tbody>
   <% @orders.each do |order| %>
     <tr>
-      <%- locals = {:order => order} -%>
+      <%- locals = {:order => order} %>
       <%= hook :admin_orders_index_rows, locals do %>
         <td><%= order.created_at.to_date%></td>
         <td><%= link_to order.number, object_url(order) %></td>
@@ -49,7 +49,7 @@
   <h3><%= t(:search) %></h3>
 
   <%= form_for @search do |f| %>
-    <%- locals = {:f => f} -%>
+    <%- locals = {:f => f} %>
     <%= hook :admin_orders_index_search, locals do %>
       <label><%= t("date_range") %></label><br />
       <div class="yui-g date-range-filter">

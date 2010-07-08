@@ -2,12 +2,12 @@
 
 <%= render "shared/error_messages", :target => @app_configuration %>
 
-<%= form_for @app_configuration, :url => admin_configurations_path do |f| -%>
+<%= form_for @app_configuration, :url => admin_configurations_path do |f| %>
   <p>
     <strong><%= t("name") %></strong><br />
     <%= f.text_field :name %>
   </p>
   <p>
     <%= f.submit t("create") %>
-<% end -%>
+<% end %>
 

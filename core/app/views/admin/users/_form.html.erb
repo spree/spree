@@ -1,4 +1,4 @@
-<%- locals = {:f => f} -%>
+<%- locals = {:f => f} %>
 <%= hook :admin_user_form_fields, locals do %>
   <% f.field_container :email do %>
     <%= f.label :email, t("email") %><br />

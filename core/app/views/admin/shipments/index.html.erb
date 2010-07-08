@@ -23,7 +23,7 @@
   </tr>
   <% @shipments.each do |shipment| %>
     <tr id="<%= dom_id shipment %>">
-      <%- locals = {:shipment => shipment} -%>
+      <%- locals = {:shipment => shipment} %>
       <%= hook :admin_shipments_index_rows, locals do %>
         <td><%= shipment.number %></td>
         <td><%= shipment.shipping_method.name if shipment.shipping_method %></td>

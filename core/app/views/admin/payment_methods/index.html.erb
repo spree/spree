@@ -27,7 +27,7 @@
   <tbody>
     <% @payment_methods.each do |method|%>
       <tr id="<%= dom_id method %>">
-        <%- locals = {:method => method} -%>
+        <%- locals = {:method => method} %>
         <%= hook :admin_payment_methods_index_rows, locals do %>
           <td width="120px"><%= method.name %></td>
           <td width="140px"><%= method.type %></td>

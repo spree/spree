@@ -1,6 +1,6 @@
-<% if current_user -%>
+<% if current_user %>
   <li><%= link_to t('my_account'), user_path(current_user) %></li>
   <li><%= link_to t('logout'), logout_path %></li>
 <% else %>
   <li><%= link_to t('log_in'), login_path %></li>
-<% end -%>
+<% end %>

@@ -1,6 +1,6 @@
 <div class="yui-gc">
   <div class="yui-u first">
-    <%- locals = {:f => f} -%>
+    <%- locals = {:f => f} %>
     <% hook :admin_product_form_left, locals do %>
       <% f.field_container :name do %>
         <%= f.label :name, t("name") %> <span class="required">*</span><br />

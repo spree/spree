@@ -9,15 +9,15 @@ div.inner input[type=text], div.inner select { width: 80%; }
       <p class="field">&nbsp;</p>
       <p id="bfname" class="field">
         <%= bill_form.label :firstname, t(:first_name) %>
-        <%= bill_form.text_field :firstname, :class => 'required' -%><span class="req">*</span>
+        <%= bill_form.text_field :firstname, :class => 'required' %><span class="req">*</span>
       </p>
       <p id="blname" class="field">
         <%= bill_form.label :lastname, t(:last_name) %>
-        <%= bill_form.text_field :lastname, :class => 'required' -%><span class="req">*</span>
+        <%= bill_form.text_field :lastname, :class => 'required' %><span class="req">*</span>
       </p>
       <p id="baddress" class="field">
         <%= bill_form.label :address1, t(:street_address) %>
-        <%= bill_form.text_field :address1, :class => 'required' -%><span class="req">*</span>
+        <%= bill_form.text_field :address1, :class => 'required' %><span class="req">*</span>
       </p>
       <p id="baddress2" class="field">
         <%= bill_form.label :address2, t(:street_address_2) %>
@@ -25,7 +25,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
       </p>
       <p id="bcity" class="field">
         <%= bill_form.label :city, t(:city) %>
-        <%= bill_form.text_field :city, :class => 'required' -%><span class="req">*</span>
+        <%= bill_form.text_field :city, :class => 'required' %><span class="req">*</span>
       </p>
       <% if Spree::Config[:address_requires_state] %>
         <p class="field">
@@ -33,7 +33,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
             <% have_states = !@checkout.bill_address.country.states.empty? %>
             <%= bill_form.label :state, t(:state) %>
             <noscript>
-              <%= bill_form.text_field :state_name, :class => 'required' -%>
+              <%= bill_form.text_field :state_name, :class => 'required' %>
             </noscript>
             <% state_elements = [
                bill_form.collection_select(:state_id, @bill_states,
@@ -45,7 +45,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
                                   :class => !have_states ? "required" : "hidden",
                                   :disabled => have_states)
                 ].join.gsub('"', "'").gsub("\n", "")
-            -%>
+            %>
             <script type="text/javascript" language="javascript" charset="utf-8">
             // <![CDATA[
             document.write("<%= raw state_elements %>");
@@ -57,7 +57,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
       <% end %>
       <p id="bzip" class="field">
         <%= bill_form.label :zipcode, t(:zip) %>
-        <%= bill_form.text_field :zipcode, :class => 'required' -%><span class="req">*</span>
+        <%= bill_form.text_field :zipcode, :class => 'required' %><span class="req">*</span>
       </p>
       <p id="bcountry" class="field">
         <%= bill_form.label :country_id, t(:country) %>
@@ -65,12 +65,12 @@ div.inner input[type=text], div.inner select { width: 80%; }
       </p>
       <p id="bphone" class="field">
         <%= bill_form.label :phone, t(:phone) %>
-        <%= bill_form.text_field :phone, :class => 'required' -%><span class="req">*</span>
+        <%= bill_form.text_field :phone, :class => 'required' %><span class="req">*</span>
           </p>
           <% if Spree::Config[:alternative_billing_phone] %>
             <p id="baltphone">
               <%= bill_form.label :alternative_phone, t(:alternative_phone) %>
-              <%= bill_form.text_field :alternative_phone -%>
+              <%= bill_form.text_field :alternative_phone %>
             </p>
           <% end %>
     </div>
@@ -87,15 +87,15 @@ div.inner input[type=text], div.inner select { width: 80%; }
     <div class="inner">
       <p id="sfname" class="field">
         <%= ship_form.label :firstname, t(:first_name) %>
-        <%= ship_form.text_field :firstname, :class => 'required' -%><span class="req">*</span>
+        <%= ship_form.text_field :firstname, :class => 'required' %><span class="req">*</span>
       </p>
       <p id="slname" class="field">
         <%= ship_form.label :lastname, t(:last_name) %>
-        <%= ship_form.text_field :lastname, :class => 'required' -%><span class="req">*</span>
+        <%= ship_form.text_field :lastname, :class => 'required' %><span class="req">*</span>
       </p>
       <p id="saddress" class="field">
         <%= ship_form.label :address1, t(:street_address) %>
-        <%= ship_form.text_field :address1, :class => 'required' -%><span class="req">*</span>
+        <%= ship_form.text_field :address1, :class => 'required' %><span class="req">*</span>
       </p>
       <p id="saddress2" class="field">
         <%= ship_form.label :address2, t(:street_address_2) %>
@@ -103,7 +103,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
       </p>
       <p id="scity" class="field">
         <%= ship_form.label :city, t(:city) %>
-        <%= ship_form.text_field :city, :class => 'required' -%><span class="req">*</span>
+        <%= ship_form.text_field :city, :class => 'required' %><span class="req">*</span>
       </p>
       <% if Spree::Config[:address_requires_state] %>
         <p class="field">
@@ -111,7 +111,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
             <% have_states = !@checkout.ship_address.country.states.empty? %>
             <%= ship_form.label :state, t(:state) %>
             <noscript>
-              <%= ship_form.text_field :state_name, :class => 'required' -%>
+              <%= ship_form.text_field :state_name, :class => 'required' %>
             </noscript>
             <% state_elements = [
                   ship_form.collection_select(:state_id, @ship_states,
@@ -123,7 +123,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
                                     :class => !have_states ? "required" : "hidden",
                                     :disabled => have_states)
                 ].join.gsub('"', "'").gsub("\n", "")
-            -%>
+            %>
             <script type="text/javascript" language="javascript" charset="utf-8">
             // <![CDATA[
             document.write("<%= raw state_elements %>");
@@ -135,7 +135,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
       <% end %>
       <p id="szip" class="field">
         <%= ship_form.label :zipcode, t(:zip) %>
-        <%= ship_form.text_field :zipcode, :class => 'required' -%><span class="req">*</span>
+        <%= ship_form.text_field :zipcode, :class => 'required' %><span class="req">*</span>
       </p>
       <p id="scountry" class="field">
         <%= ship_form.label :country_id, t(:country) %>
@@ -143,12 +143,12 @@ div.inner input[type=text], div.inner select { width: 80%; }
       </p>
       <p id="sphone" class="field">
         <%= ship_form.label :phone, t(:phone) %>
-        <%= ship_form.text_field :phone, :class => 'required' -%><span class="req">*</span>
+        <%= ship_form.text_field :phone, :class => 'required' %><span class="req">*</span>
           </p>
           <% if Spree::Config[:alternative_shipping_phone] %>
             <p id="saltphone">
               <%= ship_form.label :alternative_phone, t(:alternative_phone) %>
-              <%= ship_form.text_field :alternative_phone -%>
+              <%= ship_form.text_field :alternative_phone %>
             </p>
           <% end %>
     </div>

@@ -15,8 +15,8 @@
 </p>
 <p class="field">
   <label for=""><%= t("expiration") %></label><br />
-  <%= select_month(Date.today, :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true, :class => 'required') -%>
-  <%= select_year(Date.today, :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required') -%>
+  <%= select_month(Date.today, :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true, :class => 'required') %>
+  <%= select_year(Date.today, :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required') %>
   <span class="req">*</span>
 </p>
 <p class="field">           
@@ -27,5 +27,5 @@
     (<%= t("whats_this") %>)
   </a>
 </p>
-<%= hidden_field param_prefix, 'first_name', :value => h(billing_firstname) -%>
-<%= hidden_field param_prefix, 'last_name',  :value => h(billing_lastname) -%>
+<%= hidden_field param_prefix, 'first_name', :value => h(billing_firstname) %>
+<%= hidden_field param_prefix, 'last_name',  :value => h(billing_lastname) %>

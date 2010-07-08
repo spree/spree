@@ -13,14 +13,14 @@
 <div id='wrapper'>
 
   <div id="header">
-    <% if current_user -%>
+    <% if current_user %>
     <ul id="login-nav">
       <li><%= t('logged_in_as') %>: <%= current_user.email %></li>
       <li><%= link_to t('account'), user_path(current_user) %></li>
       <li><%= link_to t('logout'), logout_path %></li>
       <li><%= link_to t('store'), products_path %></li>
     </ul>
-    <% end -%>
+    <% end %>
     <a href="<%= admin_path %>"><%= image_tag 'admin/bg/spree_50.png', :id => 'logo' %></a>
     <h1><%= link_to t("administration"), admin_path %></h1>
     <div id="progress"><%= image_tag 'progress.gif' %> <%= t('loading') %>...</div>
@@ -72,8 +72,8 @@
 </div>
 <![endif]-->
 
-<%= hook :admin_footer_scripts do -%>
+<%= hook :admin_footer_scripts do %>
   <%= javascript_include_tag 'admin/unobtrusive_handlers' %>
-<% end -%>
+<% end %>
 </body>
 </html>

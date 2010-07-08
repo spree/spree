@@ -30,20 +30,20 @@
       <%= cc_form.label :issue_number, t(:maestro_or_solo_cards) %>
     </td>
     <td>
-      <%= cc_form.text_field :issue_number, {:style => 'width:40px', :title => t('enter_exactly_as_shown_on_card') + ', e.g. 2, 01.' } -%>
+      <%= cc_form.text_field :issue_number, {:style => 'width:40px', :title => t('enter_exactly_as_shown_on_card') + ', e.g. 2, 01.' } %>
     </td>
     <td>
       <%= cc_form.label :start_month, t(:start_date) %>
     </td>
     <td colspan="3">
-      <%= select_month(@date, :prefix => 'creditcard', :field_name => 'start_month', :use_month_numbers => true, :include_blank => true) -%>
-      <%= select_year(@date, :prefix => 'creditcard', :field_name => 'start_year', :start_year => Date.today.year - 15, :end_year => Date.today.year, :include_blank => true) -%>
+      <%= select_month(@date, :prefix => 'creditcard', :field_name => 'start_month', :use_month_numbers => true, :include_blank => true) %>
+      <%= select_year(@date, :prefix => 'creditcard', :field_name => 'start_year', :start_year => Date.today.year - 15, :end_year => Date.today.year, :include_blank => true) %>
     </td>
   </tr>
 </table>
 
-<%= cc_form.hidden_field :address_id, :value => @payment.order.checkout.bill_address.id -%>
-<%= cc_form.hidden_field :first_name, :value => @payment.order.checkout.bill_address.firstname -%>
-<%= cc_form.hidden_field :last_name, :value => @payment.order.checkout.bill_address.lastname -%>
+<%= cc_form.hidden_field :address_id, :value => @payment.order.checkout.bill_address.id %>
+<%= cc_form.hidden_field :first_name, :value => @payment.order.checkout.bill_address.firstname %>
+<%= cc_form.hidden_field :last_name, :value => @payment.order.checkout.bill_address.lastname %>
 
 <% end %>
