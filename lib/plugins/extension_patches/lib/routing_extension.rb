@@ -40,7 +40,7 @@ module Spree
         source = "#{routes_path}/config/routes.rb"
         if File.directory?("#{routes_path}/config")
           begin
-            RAILS_DEFAULT_LOGGER.info "INFO: Loading routes from #{source}"
+            Rails.logger.info "INFO: Loading routes from #{source}"
             eval File.read(source) if File.file?(source)
           rescue LoadError, NameError => e
             $stderr.puts "Could not load routes from : #{source}.\n#{e.inspect}"

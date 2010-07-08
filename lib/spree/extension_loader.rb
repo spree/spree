@@ -106,7 +106,7 @@ module Spree
     def run_initializers
       load_extension_roots.each do |extension_path|
         Dir["#{extension_path}/config/initializers/**/*.rb"].sort.each do |initializer|
-          RAILS_DEFAULT_LOGGER.info "INFO: Loading initializer #{initializer}"
+          Rails.logger.info "INFO: Loading initializer #{initializer}"
           load(initializer)
         end
       end
