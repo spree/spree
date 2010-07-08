@@ -40,7 +40,7 @@
     <br class="clear" />
   </div>
 
-  <div class="<%= 'with-sidebar ' unless @content_for_sidebar.blank? %> clear tile_bg" id="content">
+  <div class="<%= 'with-sidebar ' if content_for?(:sidebar) %> clear tile_bg" id="content">
 
 
     <% if flash[:error] %>
@@ -53,7 +53,7 @@
 
     <%= yield %>
 
-    <% unless @content_for_sidebar.blank? %>
+    <% if content_for?(:sidebar) %>
       <br class='clear' />
       <div id="sidebar">
           <%= yield :sidebar %>
