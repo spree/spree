@@ -28,7 +28,7 @@ class ReturnAuthorizationTest < ActiveSupport::TestCase
     context "with an order that has no shipped units" do
       should "not be valid" do
         assert !@return_authorization.valid?
-        assert_not_nil @return_authorization.errors.on(:order)
+        assert_not_nil @return_authorization.errors[:order]
       end
     end
 
@@ -40,7 +40,7 @@ class ReturnAuthorizationTest < ActiveSupport::TestCase
 
       should "be valid" do
         assert @return_authorization.valid?
-        assert_nil @return_authorization.errors.on(:order)
+        assert_nil @return_authorization.errors[:order]
       end
 
       context "with no inventory_units" do

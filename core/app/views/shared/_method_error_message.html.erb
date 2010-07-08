@@ -1,4 +1,4 @@
-<% errors = obj.errors.on(method) %>
+<% errors = obj.errors[method] %>
 <% unless errors.blank? %>
   <span class="formError"><%= errors.is_a?(Array) ? errors.first : errors %></span>
 <% end %>

@@ -57,14 +57,14 @@ class PreferenceTest < ActiveSupport::TestCase
       should "require an attribute" do
         preference = Factory.build(:preference, :attribute => nil)
         assert(!preference.valid?)
-        assert_not_nil preference.errors.on(:attribute)
+        assert_not_nil preference.errors[:attribute]
       end
 
       should "have an owner_id and owner_type" do
         preference = Factory.build(:preference, :owner => nil)
         assert(!preference.valid?)
-        assert_not_nil preference.errors.on(:owner_id)
-        assert_not_nil preference.errors.on(:owner_type)
+        assert_not_nil preference.errors[:owner_id]
+        assert_not_nil preference.errors[:owner_type]
       end
 
       should "not require a group" do
@@ -81,7 +81,7 @@ class PreferenceTest < ActiveSupport::TestCase
         preference = Factory.build(:preference, :group => nil)
         preference.group_id = 1
         assert(!preference.valid?)
-        assert_not_nil preference.errors.on(:group_type)
+        assert_not_nil preference.errors[:group_type]
       end
     end
 

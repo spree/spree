@@ -19,7 +19,7 @@ module ActionView::Helpers::ActiveRecordHelper
     options.reverse_merge!(:prepend_text => '', :append_text => '', :css_class => 'formError')
 
     if (obj = (object.respond_to?(:errors) ? object : instance_variable_get("@#{object}"))) &&
-      (errors = obj.errors.on(method))
+      (errors = obj.errors[method])
       content_tag("span",
         "#{options[:prepend_text]}#{errors.is_a?(Array) ? errors.first : errors}#{options[:append_text]}",
         :class => options[:css_class]

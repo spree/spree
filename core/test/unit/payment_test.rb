@@ -15,7 +15,7 @@ class PaymentTest < ActiveSupport::TestCase
       end
       should "be invalid with error on amount" do
         assert !@payment.valid?
-        assert @payment.errors.on(:amount)
+        assert @payment.errors[:amount]
       end
     end
 
@@ -26,7 +26,7 @@ class PaymentTest < ActiveSupport::TestCase
       end
       should "be invalid with error on amount" do
         assert !@payment.valid?
-        assert @payment.errors.on(:amount)
+        assert @payment.errors[:amount]
       end
     end
 
