@@ -86,7 +86,7 @@ class Admin::OrdersController < Admin::BaseController
   def ensure_line_items
     load_object
     if @order.line_items.empty?
-      @order.errors.add(:line_items, t('activerecord.errors.messages.blank'))
+      @order.errors.add(:line_items, t('errors.messages.blank'))
       @order.update_totals
       render :edit
     end
