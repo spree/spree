@@ -15,9 +15,9 @@ Gem::Specification.new do |s|
   s.homepage          = 'http://spreecommerce.com'
   s.rubyforge_project = 'spree'
 
-  s.bindir             = 'bin'
-  s.executables        = ['spree']
-  s.default_executable = 'spree'
+  #s.bindir             = 'bin'
+  #s.executables        = ['spree']
+  #s.default_executable = 'spree'
 
   s.add_dependency('spree_core',                version)
   s.add_dependency('spree_payment_gateway',     version)

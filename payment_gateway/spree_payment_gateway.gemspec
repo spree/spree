@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_payment_gateway'
   s.version     = version
-  #s.summary     = 'Email composition, delivery, and receiving framework (part of Rails).'
+  s.summary     = 'Payment gateway implementation for Spree with gateway implementations for most popular choices via active_merchant.'
   #s.description = 'Email on Rails. Compose, deliver, receive, and test emails using the familiar controller/view pattern. First-class support for multipart email and attachments.'
   s.required_ruby_version = '>= 1.8.7'
 

@@ -4,8 +4,8 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_sample'
   s.version     = version
-  s.summary     = 'TODO'
-  s.description = 'TODO'
+  s.summary     = 'Sample data (including images) for use in a Spree store.'
+  #s.description = 'TODO'
   s.required_ruby_version = '>= 1.8.7'
 
   # s.author            = 'David Heinemeier Hansson'
