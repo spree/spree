@@ -1,15 +1,24 @@
-gem "spree", :path => File.dirname(__FILE__)
+File.open("Gemfile", 'w') { |f| }
+gem 'rails', '>=3.0.0.beta4'
+# IMPORTANT: __FILE__ refer to (eval), not to sandbox_template.rb !!!
+gem "spree", :path => ".."
 
 gem 'mysql'
 gem 'sqlite3-ruby'
 gem 'ruby-debug'
+
+# Use unicorn as the web server
+# gem 'unicorn'
 
 # eventually these can be dropped and replaced by spree.gemspec dependencies but we need the edge versions for now
 gem "activemerchant", :require => 'active_merchant', :git => "git://github.com/railsjedi/active_merchant.git"
 gem "will_paginate", :git => "git://github.com/mislav/will_paginate.git", :branch => "rails3"
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
 
-gem "spree_sample", :path => File.dirname(__FILE__), :require => ['spree_sample','spree_sample/engine']
+gem "spree_sample", :path => "../sample", :require => ['spree_sample','spree_sample/engine']
+
+gem "authlogic", '>= 2.1.5'
+gem 'searchlogic', :git => 'git://github.com/jeffp/searchlogic.git'
 
 application "require 'spree_core/all'"
 remove_file "public/index.html"
