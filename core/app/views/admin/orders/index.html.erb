@@ -54,11 +54,11 @@
       <label><%= t("date_range") %></label><br />
       <div class="yui-g date-range-filter">
         <div class="yui-u sub-field first">
-          <%= f.unobtrusive_date_text_picker :created_at_after %><br />
+          <%= f.unobtrusive_date_text_picker :created_at_greater_than %><br />
           <label class="sub"><%= t("start") %></label>
         </div>
         <div class="yui-u sub-field">
-          <%= f.unobtrusive_date_text_picker :created_at_before %><br />
+          <%= f.unobtrusive_date_text_picker :created_at_less_than %><br />
           <label><%= t("stop") %></label>
         </div>
       </div>
@@ -67,11 +67,11 @@
       <%= f.select :state_equals, Order.state_machines[:state].states.collect {|s| [t(s.name), s.value]}, {:include_blank => true} %></p>
 
       <p><label><%= t 'order_number' %></label><br />
-      <%= f.text_field :number_contains, :size=>25 %></p>
+      <%= f.text_field :number_like, :size=>25 %></p>
 
       <p>
         <label><%= t 'email' %></label><br />
-        <%= f.text_field :checkout_email_contains, :size=>25 %>
+        <%= f.text_field :checkout_email_like, :size=>25 %>
       </p>
       <p>
       <label><%= t 'first_name_begins_with' %></label><br />

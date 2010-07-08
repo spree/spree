@@ -92,7 +92,7 @@ class Admin::ProductsController < Admin::BaseController
         @search = base_scope.group_by_products_id.searchlogic(params[:search])
         @search.order ||= "ascend_by_name"
 
-        @collection = @search.paginate(:include   => {:variants => [:images, :option_values]},
+        @collection = @search.do_search.paginate(:include   => {:variants => [:images, :option_values]},
                                        :per_page  => Spree::Config[:admin_products_per_page],
                                        :page      => params[:page])
       else
