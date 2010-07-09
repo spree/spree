@@ -1,4 +1,4 @@
-<h1><%= t("editing_product") + " &ldquo;#{@product.name}&rdquo;" %></h1>
+<h1><%= raw(t("editing_product") + " &ldquo;#{@product.name}&rdquo;") %></h1>
 
 <% content_for :sidebar do %>
 
