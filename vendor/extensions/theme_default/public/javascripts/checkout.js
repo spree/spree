@@ -1,4 +1,4 @@
-jQuery(document).ready(function($){
+$(document).ready(function($){
 
   $('input#checkout_use_billing').click(function() {
     show_billing(!this.checked);
@@ -46,20 +46,21 @@ jQuery(document).ready(function($){
 
   };
 
-
   // Show fields for the selected payment method
   $("input[type='radio'][name='checkout[payments_attributes][][payment_method_id]']").click(function(){
     $('#payment-methods li').hide();
     if(this.checked){ $('#payment_method_'+this.value).show(); }
   }).triggerHandler('click');
 
+  $('span#bcountry select').change(function() { update_state('b'); });
+  $('span#scountry select').change(function() { update_state('s'); });
+  show_billing(!$('input#checkout_use_billing').attr('checked'));
+  update_state('b');
+  update_state('s');
 
-  jQuery(document).ready(function(){
-    $('span#bcountry select').change(function() { update_state('b'); });
-    $('span#scountry select').change(function() { update_state('s'); });
-    show_billing(!$('input#checkout_use_billing').attr('checked'));
-    update_state('b');
-    update_state('s');
+  $('form.edit_checkout').submit(function() {
+    $(this).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass('disabled');
   });
+
 
 });
