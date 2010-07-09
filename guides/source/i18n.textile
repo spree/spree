@@ -68,7 +68,28 @@ The *t()* helper method looks up the currently configured locale and retrieves t
 
 h4. Setting the default Locale
 
-The default locale for Spree is en-US. This can be changed by editing the :default_locale setting in the AppConfiguration model. In the future we hope to add a localization settings page that will allow you to set the default locale from the admin screen [#35].
+The default locale for Spree is en-US. This can be changed by editing the :default_locale setting in the AppConfiguration model. This setting is ignored unless the relevant translation file is within +#{RAILS_ROOT}/config/locales+. In the future we hope to add a localization settings page that will allow you to set the default locale from the admin screen [#35].
+
+h4. Setting the default Currency
+
+Spee makes use of the rails NumberHelper module to format numbers into the form of currency, otherwise prices within spree are simply regarded as numbers with no special properties. Currency formatting is therefore dictated by the current user locale (if locale is allowed to change) or the default locale (as above) if locale is fixed. To specify a currency format therefore you should do the following:
+
+For each locale you support (just the default if you don't allow locale switching) you must make a file, in the style +<locale>_numbers.yml+, within +#{RAILS_ROOT}/config/locales+ following the format:
+
+<shell>
+---
+en-GB:
+  number:
+    currency:
+      format:
+        format: "%u%n"
+        unit: "£"
+        precision: 2
+        separator: '.'
+        delimiter: ','
+</shell>
+
+To ensure that currency stays consistent when a user changes there locale the +same+ currency details should be provided for each of the supported locales.
 
 h3. Maintaing the translations
 
