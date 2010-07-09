@@ -68,8 +68,8 @@ module Scopes::Product
   #
   #   Product.taxons_id_eq(x)
   #
-  Product.scope :in_taxon, lambda {|taxon|
-    Product.in_taxons(taxon).scope :find
+  ::Product.scope :in_taxon, lambda {|taxon|
+    { :joins => :taxons, :conditions => ["taxons.id IN (?) ", taxon.self_and_descendants.map(&:id)]}
   }
 
   # This scope selects products in all taxons AND all its ancestors
@@ -238,7 +238,7 @@ SQL
   # specifically avoid having an order for taxon search (conflicts with main order)
   def self.prepare_taxon_conditions(taxons)
     conditions = taxons.map{|taxon|
-      taxon.self_and_descendants.scope(:find)[:conditions]
+      taxon.self_and_descendants.scope(:find)[:conditions].map(&:id)
     }.inject([[]]){|result, scope|
       result.first << scope.shift
       result +=  scope;

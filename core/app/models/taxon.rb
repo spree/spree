@@ -24,7 +24,8 @@ class Taxon < ActiveRecord::Base
     fs += [
       ProductFilters.price_filter,
       ProductFilters.brand_filter,
-      ProductFilters.selective_brand_filter(self) ]
+      #ProductFilters.selective_brand_filter(self) 
+      ]
   end
 
   # Creates permalink based on .to_url method provided by stringx gem
