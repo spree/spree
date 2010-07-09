@@ -8,7 +8,7 @@ gem "will_paginate", :git => "git://github.com/mislav/will_paginate.git", :branc
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
 gem "authlogic", '>= 2.1.5'
 
-gem 'searchlogic', :git => 'git://github.com/jeffp/searchlogic.git'
+gem 'searchlogic', :git => 'git://github.com/romul/searchlogic.git'
 
 gem 'mysql'
 gem 'sqlite3-ruby'

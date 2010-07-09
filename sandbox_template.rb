@@ -18,7 +18,7 @@ gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git
 gem "spree_sample", :path => "../sample", :require => ['spree_sample','spree_sample/engine']
 
 gem "authlogic", '>= 2.1.5'
-gem 'searchlogic', :git => 'git://github.com/jeffp/searchlogic.git'
+gem 'searchlogic', :git => 'git://github.com/romul/searchlogic.git'
 
 application "require 'spree_core/all'"
 remove_file "public/index.html"
