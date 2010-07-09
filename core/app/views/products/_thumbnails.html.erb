@@ -33,7 +33,7 @@
     <% @variants.each do |v| %>
       images[<%= v.id.to_s %>] = new Array();
       <% v.images.each_with_index do |image, i| %>
-        images[<%= v.id.to_s %>][<%= i %>] = <%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)).to_json %>;
+        images[<%= v.id.to_s %>][<%= i %>] = <%= raw link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)).to_json %>;
       <% end %>
     <% end %>
   </script>
