@@ -28,7 +28,7 @@ class PaymentMethod < ActiveRecord::Base
   end
 
   def self.active?
-    self.count(:conditions => {:type => self.to_s, :environment => RAILS_ENV, :active => true}) > 0
+    self.count(:conditions => {:type => self.to_s, :environment => Rails.env, :active => true}) > 0
   end
 
   def self.current

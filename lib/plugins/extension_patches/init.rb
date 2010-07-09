@@ -4,5 +4,5 @@
 
 require 'routing_extension'
 require 'mailer_hack'
-require 'fixture_loading_extension' if RAILS_ENV == 'test'
+require 'fixture_loading_extension' if Rails.env == 'test'
 require 'asset_copy'

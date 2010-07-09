@@ -178,7 +178,7 @@ class Spree::BaseController < ActionController::Base
   #RAILS 3 TODO
   # # Load all models using STI to fix associations such as @order.credits giving no results and resulting in incorrect order totals
   # def touch_sti_subclasses
-  #   if RAILS_ENV == 'development'
+  #   if Rails.env == 'development'
   #     load(File.join(SPREE_ROOT,'config/initializers/touch.rb'))
   #   end
   # end
