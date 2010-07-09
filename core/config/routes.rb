@@ -41,9 +41,6 @@ Rails.application.routes.draw do |map|
 
     member do
       get :address_info
-    end
-
-    member do
       get :fatal_shipping
     end
 
@@ -144,6 +141,12 @@ Rails.application.routes.draw do |map|
     resources :google_analytics
 
     resources :orders do
+      member do
+        put :fire
+        post :resend
+        get :history
+      end
+      
       resources :adjustments
       resources :line_items
       resource :checkout
