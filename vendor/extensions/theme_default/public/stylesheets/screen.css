@@ -262,6 +262,10 @@ body {
   margin-top: 0px;
   background: #ffffff url(../images/tile-slider.png) top left repeat-x;
 }
+.container_bg {
+  width: 100%;
+  background: url(../images/tile-header.png) top left repeat-x;
+}
 div.left {
   float: left;
   width: 49%;
@@ -283,12 +287,6 @@ body.two-col #wrapper { background-image: url(../images/wrapper-back-2.png); }
   overflow: hidden;
   display: block;
 }
-
-.container_bg{
-	width:100%;
-	background:url(../images/tile-header.png) top left repeat-x;
-}
-
 #sidebar {
   display: inline;
   float: left;
@@ -315,7 +313,7 @@ body.two-col #content {
   clear: both;
 }
 #header a { color: #2e6ab1; }
-#header a:hover { color: #3C7DFB; }
+#header a:hover { color: #3c7dfb; }
 #footer {
   padding-top: 2em;
   clear: both;
@@ -659,6 +657,10 @@ button, a.button, input.button {
 button.primary, a.button.primary, input.button.primary {
   font-weight: bold;
   color: #000000;
+}
+button.disabled, a.button.disabled, input.button.disabled {
+  font-weight: bold;
+  color: #999999;
 }
 button:hover { background-image: url(../images/buttons/bg-button-hover.png) !important; }
 a.button:hover { background-image: url(../images/buttons/bg-button-hover.png) !important; }
