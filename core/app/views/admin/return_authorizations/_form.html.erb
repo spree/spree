@@ -20,13 +20,13 @@
   <% end %>
 </table>
 
-<% f.field_container :amount do %>
+<%= f.field_container :amount do %>
   <%= f.label :amount, t("amount")%> <span class="required">*</span><br />
   <%= f.text_field :amount, {:style => "width:80px;"} %> <%= t("rma_value") %>: <span id="rma_value"></span>
   <%= f.error_message_on :amount %>
 <% end %>
 
-<% f.field_container :reason do %>
+<%= f.field_container :reason do %>
   <%= f.label :reason, t("reason")%>
   <%= f.text_area :reason, {:style=> "height:100px;", :class => 'fullwidth'} %>
   <%= f.error_message_on :reason %>
