@@ -3,8 +3,7 @@ class ShippingCharge < Charge
     adjustment_source && calculate_shipping_charge
   end
 
-  # Calculates shipping cost using calculators from shipping_rates and shipping_method
-  # shipping_method calculator is used when there's no corresponding shipping_rate calculator
+  # Calculates shipping cost using calculators from shipping_method
   #
   # shipping costs are calculated for each shipping_category - so if order have items
   # from 3 shipping categories, shipping cost will triple.

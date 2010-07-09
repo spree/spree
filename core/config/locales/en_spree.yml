@@ -352,7 +352,6 @@ en:
   editing_prototype: "Editing Prototype"
   editing_shipping_category: "Editing Shipping Category"
   editing_shipping_method: "Editing Shipping Method"
-  editing_shipping_rate: Editing Shipping Rate
   editing_state: "Editing State"
   editing_tax_category: "Editing Tax Category"
   editing_tax_rate: "Editing Tax Rate"
@@ -499,7 +498,6 @@ en:
   new_shipment: "New Shipment"
   new_shipping_category: "New Shipping Category"
   new_shipping_method: "New Shipping Method"
-  new_shipping_rate: New Shipping Rate
   new_state: "New State"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
@@ -805,8 +803,6 @@ en:
   shipping_method: "Shipping Method"
   shipping_methods: "Shipping Methods"
   shipping_methods_description: "Manage shipping methods"
-  shipping_rates: "Shipping Rates"
-  shipping_rates_description: "Manage shipping rates"
   shipping_total: "Shipping Total"
   shop_by_taxonomy: "Shop by %{taxonomy}"
   shopping_cart: "Shopping Cart"

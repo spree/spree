@@ -1,16 +1,12 @@
 class ShippingMethod < ActiveRecord::Base
   DISPLAY =  [:both, :front_end, :back_end]
   belongs_to :zone
-  has_many :shipping_rates
   has_many :shipments
 
   has_calculator
 
   def calculate_cost(shipment)
     rate_calculators = {}
-    shipping_rates.each do |sr|
-      rate_calculators[sr.shipping_category_id] = sr.calculator
-    end
 
     calculated_costs = shipment.line_items.group_by{|li|
       li.product.shipping_category_id

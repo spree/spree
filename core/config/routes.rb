@@ -187,7 +187,6 @@ Rails.application.routes.draw do |map|
     resources :shipments
     resources :shipping_methods
     resources :shipping_categories
-    resources :shipping_rates
     resources :tax_rates
     resource  :tax_settings
     resources :calculators

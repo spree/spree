@@ -337,11 +337,6 @@ class SpreeZeroNineZero < ActiveRecord::Migration
       t.datetime "updated_at"
     end
 
-    create_table "shipping_rates", :force => true do |t|
-      t.integer "shipping_category_id"
-      t.integer "shipping_method_id"
-    end
-
     create_table "state_events", :force => true do |t|
       t.integer  "order_id"
       t.integer  "user_id"
