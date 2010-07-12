@@ -8,8 +8,8 @@ class Variant < ActiveRecord::Base
   has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
 
   validate :check_price
-  validates_presence_of :price
-  validates_numericality_of :cost_price, :allow_nil => true if Variant.table_exists? && Variant.column_names.include?("cost_price")
+  validates :price, :presence => true
+  validates :cost_price, :numericality => true, :allow_nil => true if Variant.table_exists? && Variant.column_names.include?("cost_price")
 
   before_save :touch_product
 

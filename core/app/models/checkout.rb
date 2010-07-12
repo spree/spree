@@ -19,8 +19,8 @@ class Checkout < ActiveRecord::Base
   attr_accessor :coupon_code
   attr_accessor :use_billing
 
-  validates_presence_of :order_id, :shipping_method_id
-  validates_format_of :email, :with => /^\S+@\S+\.\S+$/
+  validates :order_id, :shipping_method_id, :presence => true
+  validates :email, :format => { :with => /^\S+@\S+\.\S+$/ }
 
   validation_group :register, :fields => ["email"]
 

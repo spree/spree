@@ -3,8 +3,8 @@ class ReturnAuthorization < ActiveRecord::Base
   has_many :inventory_units
   before_save :generate_number
 
-  validates_presence_of :order
-  validates_numericality_of :amount
+  validates :order, :presence => true
+  validates :amount, :numericality => true
   validate :must_have_shipped_units
 
   state_machine :initial => 'authorized' do

@@ -3,9 +3,9 @@ class Creditcard < ActiveRecord::Base
 
   before_save :set_last_digits
 
-  validates_numericality_of :month, :year, :only_integer => true
-  validates_presence_of :number, :unless => :has_payment_profile?, :on => :create
-  validates_presence_of :verification_value, :unless => :has_payment_profile?, :on => :create
+  validates :month, :year, :numericality => { :only_integer => true }
+  validates :number, :presence => true, :unless => :has_payment_profile?, :on => :create
+  validates :verification_value, :presence => true, :unless => :has_payment_profile?, :on => :create
 
   def process!(payment)
     begin
