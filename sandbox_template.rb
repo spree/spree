@@ -5,7 +5,7 @@ gem "spree", :path => ".."
 
 gem 'mysql'
 gem 'sqlite3-ruby'
-gem 'ruby-debug' if RUBY_VERSION.to_f >= 1.9
+gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 
 # Use unicorn as the web server
 # gem 'unicorn'
