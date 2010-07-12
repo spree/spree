@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class AuthorizeNetCimTest < Test::Unit::TestCase
 
   def setup
+    Gateway.update_all(:active => false)
     @cim_gateway = ActiveMerchant::Billing::AuthorizeNetCimGateway.new(
       :login => 'x',
       :password => 'y'
@@ -25,7 +26,7 @@ class AuthorizeNetCimTest < Test::Unit::TestCase
     @checkout = Factory(:checkout, :bill_address => @address, :ship_address => @address)
     @payment = Factory(:payment, :source => @creditcard, :payable => @checkout)
     @checkout.payments << @payment
-    @gateway = Gateway::AuthorizeNetCim.create!(:name => 'Authorize.net CIM Gateway')
+    @gateway = Gateway::AuthorizeNetCim.create!(:name => 'Authorize.net CIM Gateway', :active => true)
     @creditcard.reload
     
     @address_options = { 

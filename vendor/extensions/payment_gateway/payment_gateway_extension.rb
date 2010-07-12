@@ -19,6 +19,7 @@ class PaymentGatewayExtension < Spree::Extension
       Gateway::Bogus,
       Gateway::AuthorizeNet,
 			Gateway::AuthorizeNetCim,
+			Gateway::Braintree,
 			Gateway::Eway,
       Gateway::Linkpoint,
       Gateway::PayPal,
