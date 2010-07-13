@@ -7,12 +7,15 @@ namespace :spree do
     public_dir = File.join(File.dirname(__FILE__), '..', '..', 'public')
     migration_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'migrate')
     default_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'default')
+    sample_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample')
     puts "Mirror: #{public_dir}"
     Spree::FileUtilz.mirror_with_backup(public_dir, File.join(Rails.root, 'public'))
     puts "Mirror: #{migration_dir}"
     Spree::FileUtilz.mirror_with_backup(migration_dir, File.join(Rails.root, 'db', 'migrate'))
     puts "Mirror: #{default_dir}"
     Spree::FileUtilz.mirror_with_backup(default_dir, File.join(Rails.root, 'db', 'default'))
+    puts "Mirror: #{sample_dir}"
+    Spree::FileUtilz.mirror_with_backup(sample_dir, File.join(Rails.root, 'db', 'sample'))
   end
 end
 
@@ -109,6 +112,21 @@ namespace :db do
     Rake::Task["db:sample"].invoke if load_sample
 
     puts "Bootstrap Complete.\n\n"
+  end
+
+  namespace :admin do
+    desc "Create admin username and password"
+    task :create => :environment do
+      require 'authlogic'
+      require File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample', 'users.rb')
+    end
+  end
+
+  desc "Loads sample data into the store"
+  task :sample do   # an invoke will not execute the task after defaults has already executed it
+    Rake::Task['db:load_dir'].reenable
+    Rake::Task["db:load_dir"].invoke( "sample" )
+    puts "Sample data has been loaded"
   end
 
 end
