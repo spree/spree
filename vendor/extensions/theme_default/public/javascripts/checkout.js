@@ -54,12 +54,18 @@ $(document).ready(function($){
 
   $('span#bcountry select').change(function() { update_state('b'); });
   $('span#scountry select').change(function() { update_state('s'); });
-  show_billing(!$('input#checkout_use_billing').attr('checked'));
+
   update_state('b');
   update_state('s');
+  show_billing(!$('input#checkout_use_billing').attr('checked'));
 
   $('form.edit_checkout').submit(function() {
-    $(this).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass('disabled');
+    var form = $(this);
+    if(form.valid()){
+      form.find(':submit, :image').attr('disabled', true).removeClass('primary').addClass('disabled');
+    }else{
+      return false;
+    }
   });
 
 

@@ -17,6 +17,8 @@ class Address < ActiveRecord::Base
   validates_presence_of :phone
   validate :state_name_validate, :if => Proc.new { |address| address.state.blank? && Spree::Config[:address_requires_state] }
 
+  before_save :clear_invalid_state
+
   def checkouts
     (billing_checkouts + shipping_checkouts).uniq
   end
@@ -90,5 +92,12 @@ class Address < ActiveRecord::Base
 
   def empty?
     attributes.except("id", "created_at", "updated_at", "order_id", "country_id").all? {|k,v| v.nil?}
+  end
+
+  private
+
+  def clear_invalid_state #reset state to nil if it's not from selected country
+    return unless self.state
+    self.state = nil unless self.state.country_id == self.country_id
   end
 end
