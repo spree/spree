@@ -109,7 +109,7 @@ module Admin::NavigationHelper
       s << icon(html_options.delete(:icon)) + ' '
     end
     s << text
-    content_tag('span', s)
+    content_tag('span', raw(s))
   end
 
   def html_options_for_button_link(html_options)
