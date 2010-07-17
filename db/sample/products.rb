@@ -4,7 +4,7 @@ FileUtils.mkdir_p "#{Rails.root}/public/assets/products/"
 
 # make product images available to the app
 target = "#{Rails.root}/public/assets/products/"
-source = "#{Rails.root}/lib/tasks/sample/products/"
+source = "#{SPREE_ROOT}/lib/tasks/sample/products/"
 
 Find.find(source) do |f|
   # omit hidden directories (SVN, etc.)
