@@ -15,7 +15,6 @@ class Calculator::FlexiRate < Calculator
     super
     Promotion.register_calculator(self)
     ShippingMethod.register_calculator(self)
-    ShippingRate.register_calculator(self)
   end
 
   def compute(object)

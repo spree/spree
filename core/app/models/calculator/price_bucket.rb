@@ -8,13 +8,12 @@ class Calculator::PriceBucket < Calculator
   end
 
   def self.register
-    super                                
+    super
     Promotion.register_calculator(self)
     ShippingMethod.register_calculator(self)
-    ShippingRate.register_calculator(self)
   end
 
-  # as object we always get line items, as calculable we have Coupon, ShippingMethod or ShippingRate
+  # as object we always get line items, as calculable we have Coupon, ShippingMethod
   def compute(object)
     if object.is_a?(Array)
       base = object.map{ |o| o.respond_to?(:amount) ? o.amount : o.to_d }.sum
