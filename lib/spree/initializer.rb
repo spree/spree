@@ -38,7 +38,7 @@ module Spree
       end
 
       def framework_root_path
-        Rails.root + '/vendor/rails'
+        File.join(Rails.root, '/vendor/extensions')
       end
 
       # Provide the load paths for the Spree installation
