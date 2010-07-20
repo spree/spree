@@ -39,10 +39,10 @@ div.inner input[type=text], div.inner select { width: 80%; }
                bill_form.collection_select(:state_id, @states,
                                   :id, :name,
                                   {:include_blank => true},
-                                  {:class => have_states ? "required" : "hidden",
+                                  {:class => have_states ? "required" : "required hidden",
                                   :disabled => !have_states}) +
                 bill_form.text_field(:state_name,
-                                  :class => !have_states ? "required" : "hidden",
+                                  :class => !have_states ? "required" : "required hidden",
                                   :disabled => have_states)
                 ].join.gsub('"', "'").gsub("\n", "")
             -%>
@@ -118,10 +118,10 @@ div.inner input[type=text], div.inner select { width: 80%; }
                   ship_form.collection_select(:state_id, @states,
                                     :id, :name,
                                     {:include_blank => true},
-                                    {:class => have_states ? "required" : "hidden",
+                                    {:class => have_states ? "required" : "required hidden",
                                     :disabled => !have_states}) +
                   ship_form.text_field(:state_name,
-                                    :class => !have_states ? "required" : "hidden",
+                                    :class => !have_states ? "required" : "required hidden",
                                     :disabled => have_states)
                 ].join.gsub('"', "'").gsub("\n", "")
             -%>

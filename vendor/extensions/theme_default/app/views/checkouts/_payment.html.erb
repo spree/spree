@@ -4,20 +4,20 @@
   <% @payment_methods.each do |method| %>
   <p>
     <label>
-      <%= radio_button_tag "checkout[payments_attributes][][payment_method_id]", method.id, method == @payment_method %> 
+      <%= radio_button_tag "checkout[payments_attributes][][payment_method_id]", method.id, method == @payment_method %>
       <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
     </label>
   </p>
   <% end %>
 
-  <ul id="payment-methods">              
+  <ul id="payment-methods">
     <% @payment_methods.each do |method| %>
       <li id="payment_method_<%= method.id %>"<%= ' class="last"' if method == @payment_methods.last %>>
         <fieldset>
           <%= render "checkouts/payment/#{method.method_type}", :payment_method => method %>
         </fieldset>
       </li>
-    <% end %>  
+    <% end %>
   </ul>
 
 </fieldset>
@@ -25,5 +25,5 @@
 <hr class="space" />
 
 <div class="form-buttons">
-  <input type="submit" class="continue button primary" value="<%=t("save_and_continue") %>" onclick="$('#checkout_form_address').validate();" />
+  <input type="submit" class="continue button primary" value="<%=t("save_and_continue") %>" />
 </div>

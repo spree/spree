@@ -7,18 +7,30 @@ $(document).ready(function($){
   var show_billing = function(show) {
     if(show) {
       $('#shipping .inner').show();
-      $('#shipping .inner input').removeAttr('disabled', 'disabled');
-      $('#shipping .inner select').removeAttr('disabled', 'disabled');
+      $('#shipping .inner select').removeAttr('disabled');
+      $('#shipping .inner input').removeAttr('disabled');
+
+      //only want to enable relevant field
+      if(get_states('s')){
+        $('span#sstate input').attr('disabled', true);
+      }else{
+        $('span#sstate select').attr('disabled', true);
+      }
+
     } else {
       $('#shipping .inner').hide();
-      $('#shipping .inner input').attr('disabled', 'disabled');
-      $('#shipping .inner select').attr('disabled', 'disabled');
+      $('#shipping .inner select').attr('disabled', true);
+      $('#shipping .inner input').attr('disabled', true);
     }
   }
 
-  var update_state = function(region) {
+  var get_states = function(region){
     var country        = $('span#' + region + 'country :only-child').val();
-    var states         = state_mapper[country];
+    return state_mapper[country];
+  }
+
+  var update_state = function(region) {
+    var states         = get_states(region);
 
     var state_select = $('span#' + region + 'state select');
     var state_input = $('span#' + region + 'state input');
@@ -37,19 +49,26 @@ $(document).ready(function($){
         state_select.append(opt);
       });
       state_select.removeAttr('disabled').show();;
-      state_input.hide().attr('disabled', 'disabled');
+      state_input.hide().attr('disabled', true);
 
     } else {
       state_input.removeAttr('disabled').show();
-      state_select.hide().attr('disabled', 'disabled');
+      state_select.hide().attr('disabled', true);
     }
 
   };
 
   // Show fields for the selected payment method
   $("input[type='radio'][name='checkout[payments_attributes][][payment_method_id]']").click(function(){
-    $('#payment-methods li').hide();
-    if(this.checked){ $('#payment_method_'+this.value).show(); }
+    var payment_method_li = $('#payment-methods li:visible');
+    payment_method_li.hide();
+    payment_method_li.find('input,select').attr('disabled', true);
+
+    if(this.checked){
+      payment_method_li = $('#payment_method_'+this.value);
+      payment_method_li.find('input,select').removeAttr('disabled');
+      payment_method_li.show();
+    }
   }).triggerHandler('click');
 
   $('span#bcountry select').change(function() { update_state('b'); });
