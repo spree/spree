@@ -8,7 +8,7 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   new_action.response do |wants|
-    wants.html {render :action => :new, :layout => false}
+    wants.js {render :action => :new, :layout => false}
   end
 
   update.before :update_before
@@ -72,7 +72,7 @@ class Admin::ProductsController < Admin::BaseController
         collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, :images => {}}}, :images => {}, :master => {}})
       end
     end
-  
+
     def load_data
       @tax_categories = TaxCategory.find(:all, :order=>"name")
       @shipping_categories = ShippingCategory.find(:all, :order=>"name")

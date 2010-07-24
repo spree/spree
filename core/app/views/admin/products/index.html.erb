@@ -2,11 +2,8 @@
 
 <div class='toolbar'>
   <ul class='actions'>
-    <li id="new_ot_link">
-      <%= button_link_to_remote t("new_product"),
-                         {:url => new_object_url,
-                         :method => :get,
-                         :update => "new-product"}, :icon => 'add' %>
+    <li id="new_product_link">
+      <%= button_link_to t("new_product"), new_object_url, {:remote => true, :icon => 'add'} %>
     </li>
   </ul>
   <br class='clear' />
@@ -14,7 +11,6 @@
 
 <h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
 
-<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 <div id="new-product"></div>
 
 <table class="index">
