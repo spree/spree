@@ -1,0 +1,26 @@
+<table class="index">
+  <tr>
+    <th><%= t("name") %></th>
+    <th><%= t("presentation") %></th>
+    <th>&nbsp;</th>
+  </tr>
+  <% @option_types.each do |option_type| %>
+    <tr>
+      <td><%= option_type.name %></td>
+      <td><%= option_type.presentation %></td>
+      <td class="actions">
+      <%= link_to_with_icon 'delete',  t("remove"), remove_admin_product_option_type_url(@product, option_type) %>
+      </td>
+    </tr>
+  <% end %>
+  <% if @option_types.empty? %>
+   <tr><td colspan="3"><%= t(:none) %></td></tr>
+  <% end %>
+</table>
+
+<div id="option-types"></div>
+<% if @product.variants.empty? %>
+  <span id="new_opt_link">
+    <%= link_to icon('add') + ' ' + t("add_option_type"), available_admin_product_option_types_url(@product), :remote => :true, :class => 'iconlink' %>
+  </span>
+<% end %>

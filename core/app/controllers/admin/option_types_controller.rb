@@ -44,7 +44,6 @@ class Admin::OptionTypesController < Admin::BaseController
     @product.reload
     @option_types = @product.option_types
     set_available_option_types
-    render :template => "admin/option_types/selected.html.erb", :layout => false
   end
 
   private
