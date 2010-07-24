@@ -3,32 +3,32 @@
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Variants"} %>
 
 <table class="index">
-	<tr>
-		<th><%= t("options") %></th>
-		<th><%= t("price") %></th>
-	  <th><%= t("sku") %></th>
-	  <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
-	    <th><%= t("activerecord.attributes.variant." + field[:name].downcase, :default => field[:name].titleize) %></th>
-	  <% end %>
-	  <th><%= t("on_hand") %></th>
-		<th><%= t("action") %></th>
-	</tr>
+  <tr>
+    <th><%= t("options") %></th>
+    <th><%= t("price") %></th>
+    <th><%= t("sku") %></th>
+    <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
+      <th><%= t("activerecord.attributes.variant." + field[:name].downcase, :default => field[:name].titleize) %></th>
+    <% end %>
+    <th><%= t("on_hand") %></th>
+    <th><%= t("action") %></th>
+  </tr>
   <% @variants.each do |variant| %>
     <!-- you can skip variant with no options: that's just the default variant that all products have -->
     <% next if variant.option_values.empty? %>
     <tr id="<%= dom_id(variant) %>" <%= 'style="color:red;"' if variant.deleted? %>>
-    	<td><%= variant_options variant %></td>
-    	<td><%= variant.price %></td>
+      <td><%= variant_options variant %></td>
+      <td><%= variant.price %></td>
       <td><%= variant.sku %></td>
       <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
-		    <td><%= variant[field[:name].gsub(" ", "_").downcase] %></td>
-		  <% end %>
+        <td><%= variant[field[:name].gsub(" ", "_").downcase] %></td>
+      <% end %>
       <td><%= variant.on_hand %></td>
-	    <td valign="top">
-	      <%= link_to_edit(variant) unless variant.deleted? %>
-	      &nbsp;
-	      <%= link_to_delete(variant) unless variant.deleted? %>
-	    </td>
+      <td valign="top">
+        <%= link_to_edit(variant) unless variant.deleted? %>
+        &nbsp;
+        <%= link_to_delete(variant) unless variant.deleted? %>
+      </td>
     </tr>
   <% end %>
   <% unless @product.has_variants? %>
@@ -44,10 +44,7 @@
   <div id="variants"></div>
   <br/>
   <p id="new_var_link">
-      <%= link_to_remote icon('add') + ' ' + t("new_variant"),
-                         {:url => new_admin_product_variant_url(@product),
-                         :method => :get,
-                         :update => "variants"}, :class => 'iconlink' %>
+      <%= link_to icon('add') + ' ' + t("new_variant"), new_admin_product_variant_url(@product), :remote => :true, :class => 'iconlink' %>
     </span>&nbsp;|&nbsp;<%= link_to @deleted.blank? ? t("show_deleted") : t("show_active"), admin_product_variants_url(@product, :deleted =>  @deleted.blank? ? "on" : "off") %>
   </p>
   <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
