@@ -3,10 +3,7 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li id="new_ot_link">
-      <%= button_link_to_remote t("new_option_type"), 
-                         {:url => new_admin_option_type_url, 
-                         :method => :get,
-                         :update => "option-types"}, :icon => 'add' %>
+      <%= button_link_to t("new_option_type"), new_admin_option_type_url, {:remote => true, :icon => 'add'} %>
     </li>
   </ul>
   <br class='clear' />
@@ -14,24 +11,23 @@
 
 <h1><%= t("option_types") %></h1>
 
-<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 <div id="option-types"></div>
 
 <table class="index">
-	<tr>
-		<th><%= t("name") %></th>
-		<th><%= t("presentation") %></th>
+  <tr>
+    <th><%= t("name") %></th>
+    <th><%= t("presentation") %></th>
     <th></th>
-	</tr>
+  </tr>
   <% @option_types.each do |option_type| %>
     <tr id="<%= dom_id option_type %>">
       <td><%= option_type.name %></td>
       <td><%= option_type.presentation %></td>
-	    <td class="actions">
-	      <%= link_to_edit(option_type) %>
-	      &nbsp;
-	      <%= link_to_delete(option_type) %>
-	    </td>        
+      <td class="actions">
+        <%= link_to_edit(option_type) %>
+        &nbsp;
+        <%= link_to_delete(option_type) %>
+      </td>
     </tr>
   <% end %>
 </table>

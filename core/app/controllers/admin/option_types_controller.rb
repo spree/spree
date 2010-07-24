@@ -1,18 +1,18 @@
 class Admin::OptionTypesController < Admin::BaseController
   resource_controller
-  
+
   before_filter :load_object, :only => [:selected, :available, :remove]
   belongs_to :product
-  
+
   def available
     set_available_option_types
     render :layout => false
   end
-  
-  def selected 
+
+  def selected
     @option_types = @product.option_types
   end
-  
+
   def remove
     @product.option_types.delete(@option_type)
     @product.save
@@ -21,21 +21,19 @@ class Admin::OptionTypesController < Admin::BaseController
   end
 
   new_action.response do |wants|
-    wants.html {render :action => :new, :layout => false}
+    wants.js
   end
-    
+
   # redirect to index (instead of r_c default of show view)
-  create.response do |wants| 
+  create.response do |wants|
+    wants.html {redirect_to edit_object_url}
+  end
+
+  # redirect to index (instead of r_c default of show view)
+  update.response do |wants|
     wants.html {redirect_to collection_url}
   end
 
-  update.before :update_before
-
-  # redirect to index (instead of r_c default of show view)
-  update.response do |wants| 
-    wants.html {redirect_to collection_url}
-  end
-  
   destroy.success.wants.js { render_js_for_destroy }
 
   # AJAX method for selecting an existing option type and associating with the current product
@@ -47,17 +45,13 @@ class Admin::OptionTypesController < Admin::BaseController
     @option_types = @product.option_types
     set_available_option_types
     render :template => "admin/option_types/selected.html.erb", :layout => false
-  end 
+  end
 
-  private 
-    def update_before 
-      params[:option_type][:option_value_attributes] ||= {}
-    end
-    
+  private
     def set_available_option_types
       @available_option_types = OptionType.all
       selected_option_types = []
-      @product.options.each do |option| 
+      @product.options.each do |option|
         selected_option_types << option.option_type
       end
       @available_option_types.delete_if {|ot| selected_option_types.include? ot}

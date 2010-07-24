@@ -9,25 +9,3 @@
   <%= f.text_field :presentation %>
   <%= f.error_message_on :presentation %>
 <% end %>
-
-<h3><%= t("option_values") %></h3>
-<table class="index">
-  <thead>
-    <tr>
-      <th><%= t("name") %></th>
-      <th><%= t("display") %></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="option_values">
-		<%= f.render_associated_form(@option_type.option_values) %>
-		<tr id="none">
-		  <td colspan="3"><%= @option_type.option_values.empty? ? t("none") : "" %></td>
-		</tr>
-	</tbody>
-</table>
-
-<p>
-<%= f.add_associated_link( icon('add') + ' ' + t("add_option_value"), @option_type.option_values.build, 
-                         {:onclick => "jQuery('#none').hide();", :class => 'iconlink'}) %>
-</p>

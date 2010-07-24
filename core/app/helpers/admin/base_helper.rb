@@ -26,8 +26,8 @@ module Admin::BaseHelper
     if error_message_on :product, :name
     end
   end
-  
-  #You can add additional_fields to the product and variant models. See section 4.2 here: http://spreecommerce.com/documentation/extensions.html 
+
+  #You can add additional_fields to the product and variant models. See section 4.2 here: http://spreecommerce.com/documentation/extensions.html
   #If you do choose to add additional_fields, you can utilize the :use parameter to set the input type for any such fields. For example, :use => 'check_box'
   #In the event that you add this functionality, the following method takes care of rendering the proper input type and logic for the supported input-types, which are text_field, check_box, radio_button, and select.
   def get_additional_field_value(controller, field)
@@ -168,6 +168,20 @@ module Admin::BaseHelper
     products = Product.with_ids(value)
     product_names_hash = products.inject({}){|memo,item| memo[item.id] = item.name; memo}
     %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names_hash.to_json}' />).html_safe
+  end
+
+  # renders set of hidden fields and button to add new record using nested_attributes
+  def link_to_add_fields(name, append_to_selector, f, association)
+    new_object = f.object.class.reflect_on_association(association).klass.new
+    fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
+      render(association.to_s.singularize + "_fields", :f => builder)
+    end
+    link_to_function(name, h("add_fields(\"#{append_to_selector}\", \"#{association}\", \"#{escape_javascript(fields)}\")"))
+  end
+
+  # renders hidden field and link to remove record using nested_attributes
+  def link_to_remove_fields(name, hide_selector, f)
+    f.hidden_field(:_destroy) + link_to_function(name, "remove_fields(this, \"#{hide_selector}\")")
   end
 
   private

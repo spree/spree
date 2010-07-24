@@ -1,10 +1,30 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 <h1><%= t("editing_option_type") %></h1>
 <%= render 'shared/error_messages', :target => @option_type %>
-<%= form_for(:option_type, :url => object_url, :html => { :method => :put }) do |f| %>
+<%= form_for(@option_type, :url => object_url, :html => { :method => :put }) do |f| %>
 <fieldset>
   <legend><%= t("editing_option_type") %></legend>
   <%= render :partial => "form", :locals => { :f => f } %>
+  <h3><%= t("option_values") %></h3>
+  <table class="index">
+    <thead>
+      <tr>
+        <th><%= t("name") %></th>
+        <th><%= t("display") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="option_values">
+      <tr id="none">
+        <td colspan="3"><%= @option_type.option_values.empty? ? t("none") : "" %></td>
+      </tr>
+      <% f.fields_for :option_values do |option_value_form| %>
+        <%= render "option_value_fields", :f => option_value_form %>
+      <% end %>
+    </tbody>
+  </table>
+  <%= link_to_add_fields t("add_option_value"), "tbody#option_values", f, :option_values %>
+
   <%= render :partial => 'admin/shared/edit_resource_links' %>
 </fieldset>
 <% end %>

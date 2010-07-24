@@ -93,15 +93,17 @@ module Admin::NavigationHelper
     link_to_function(text_for_button_link(text, html_options), function, html_options_for_button_link(html_options))
   end
 
-  def button_link_to_remote(text, options, html_options = {})
-    link_to_remote(text_for_button_link(text, html_options), options, html_options_for_button_link(html_options))
-  end
-
-  def link_to_remote(name, options = {}, html_options = {})
-    options[:before] ||= "jQuery(this).parent().hide(); jQuery('#busy_indicator').show();"
-    options[:complete] ||= "jQuery('#busy_indicator').hide()"
-    link_to_function(name, remote_function(options), html_options || options.delete(:html))
-  end
+  # RAILS 3 TODO - no longer needed
+  # def button_link_to_remote(text, url, html_options = {})
+  #   html_options.reverse_merge! :remote => true
+  #   link_to(text_for_button_link(text, html_options), url, html_options_for_button_link(html_options))
+  # end
+  #
+  # def link_to_remote(name, options = {}, html_options = {})
+  #   options[:before] ||= "jQuery(this).parent().hide(); jQuery('#busy_indicator').show();"
+  #   options[:complete] ||= "jQuery('#busy_indicator').hide()"
+  #   link_to_function(name, remote_function(options), html_options || options.delete(:html))
+  # end
 
   def text_for_button_link(text, html_options)
     s = ''
@@ -120,8 +122,8 @@ module Admin::NavigationHelper
     %(<tr>
       <td>#{link_to(link_text, url)}</td>
       <td>#{description}</td>
-    </tr> 
+    </tr>
     )
   end
-  
+
 end
