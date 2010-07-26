@@ -518,6 +518,7 @@ en:
   none: None
   none_available: "None Available"
   not: not
+  not_shown: "Not Shown"
   note: Note
   notice_messages:
     option_type_removed: "Succesfully removed option type."
