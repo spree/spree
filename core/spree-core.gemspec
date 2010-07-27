@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency('rd_stump',                   '>= 0.0.2')
   s.add_dependency('rd_unobtrusive_date_picker', '>= 0.1.0')
   s.add_dependency('bundler',        '>= 0.9.26')
-  s.add_dependency('rails',          '= 3.0.0.beta4')
+  s.add_dependency('rails',          '>= 3.0.0.rc')
   s.add_dependency('highline',       '>= 1.5.1')
   s.add_dependency('authlogic',      '>= 2.1.5')
   s.add_dependency('activerecord-tableless', '>= 0.1.0')

@@ -1,5 +1,5 @@
 File.open("Gemfile", 'w') { |f| }
-gem 'rails', '>=3.0.0.beta4'
+gem 'rails', '>=3.0.0.rc'
 # IMPORTANT: __FILE__ refer to (eval), not to sandbox_template.rb !!!
 gem "spree", :path => ".."
 
