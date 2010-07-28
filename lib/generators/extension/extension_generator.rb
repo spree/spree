@@ -1,6 +1,4 @@
 class ExtensionGenerator < Rails::Generator::NamedBase
-  default_options :with_test_unit => false
-
   attr_reader :extension_path, :extension_file_name
 
   def initialize(runtime_args, runtime_options = {})
@@ -25,27 +23,16 @@ class ExtensionGenerator < Rails::Generator::NamedBase
       m.template 'extension.rb',        "#{extension_path}/#{extension_file_name}.rb"
       m.template 'extension_hooks.rb',        "#{extension_path}/#{file_name}_hooks.rb"
       m.template 'tasks.rake',          "#{extension_path}/lib/tasks/#{extension_file_name}_tasks.rake"
-      m.template 'routes.rb',          "#{extension_path}/config/routes.rb"  
+      m.template 'routes.rb',          "#{extension_path}/config/routes.rb"
       m.template 'seeds.rb', "#{extension_path}/db/seeds.rb"
 
-      if options[:with_test_unit]
-        m.directory "#{extension_path}/test/fixtures"
-        m.directory "#{extension_path}/test/functional"
-        m.directory "#{extension_path}/test/unit"
+      m.directory "#{extension_path}/test/fixtures"
+      m.directory "#{extension_path}/test/functional"
+      m.directory "#{extension_path}/test/unit"
 
-        m.template 'Rakefile',            "#{extension_path}/Rakefile"
-        m.template 'test_helper.rb',      "#{extension_path}/test/test_helper.rb"
-        m.template 'functional_test.rb',  "#{extension_path}/test/functional/#{extension_file_name}_test.rb"
-      else
-        m.directory "#{extension_path}/spec/controllers"
-        m.directory "#{extension_path}/spec/models"
-        m.directory "#{extension_path}/spec/views"
-        m.directory "#{extension_path}/spec/helpers"
-
-        m.template 'RSpecRakefile',       "#{extension_path}/Rakefile"
-        m.template 'spec_helper.rb',      "#{extension_path}/spec/spec_helper.rb"
-        m.file     'spec.opts',           "#{extension_path}/spec/spec.opts"
-      end
+      m.template 'Rakefile',            "#{extension_path}/Rakefile"
+      m.template 'test_helper.rb',      "#{extension_path}/test/test_helper.rb"
+      m.template 'functional_test.rb',  "#{extension_path}/test/functional/#{extension_file_name}_test.rb"
     end
   end
 
@@ -60,7 +47,5 @@ class ExtensionGenerator < Rails::Generator::NamedBase
   def add_options!(opt)
     opt.separator ''
     opt.separator 'Options:'
-    opt.on("--with-test-unit",
-           "Use Test::Unit for this extension instead of RSpec") { |v| options[:with_test_unit] = v }
   end
 end
