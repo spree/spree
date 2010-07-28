@@ -38,8 +38,7 @@ class Product < ActiveRecord::Base
   after_create :set_master_variant_defaults
   after_create :add_properties_and_option_types_from_prototype
   before_save :recalculate_count_on_hand
-  #RAILS3 TODO (restore this once SL stuff is sorted)
-  #after_save :update_memberships if ProductGroup.table_exists?
+  after_save :update_memberships if ProductGroup.table_exists?
   after_save :set_master_on_hand_to_zero_when_product_has_variants
   after_save :save_master
 
@@ -200,6 +199,12 @@ class Product < ActiveRecord::Base
   def categorise_variants_from_option(opt_type)
     return {} unless option_types.include?(opt_type)
     variants.active.group_by {|v| v.option_values.detect {|o| o.option_type == opt_type} }
+  end
+
+  def self.like_any(fields, values)
+    like = ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' ? 'ILIKE' : 'LIKE'
+    where_str = fields.map{|field| Array.new(values.size, "#{field} #{like} ?").join(' OR ') }.join(' OR ')
+    self.where([where_str, values.map{|value| "%#{value}%"} * fields.size].flatten)
   end
 
   private
