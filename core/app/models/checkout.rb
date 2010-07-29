@@ -85,12 +85,12 @@ class Checkout < ActiveRecord::Base
   def check_addresses_on_duplication
     if order.user
       if order.user.ship_address.nil?
-        order.user.update_attribute(:ship_address, ship_address)
+        order.user.ship_address = ship_address
       elsif ship_address.same_as?(order.user.ship_address)
         #self.ship_address = order.user.ship_address
       end
       if order.user.bill_address.nil?
-        order.user.update_attribute(:bill_address, bill_address)
+        order.user.bill_address = bill_address
       elsif bill_address.same_as?(order.user.bill_address)
         #self.bill_address = order.user.bill_address
       end
