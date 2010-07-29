@@ -115,13 +115,13 @@ class ProductGroup < ActiveRecord::Base
 
   # returns chain of named scopes generated from order scope and product scopes.
   def dynamic_products(use_order = true)
-    apply_on(Product.scoped(nil), use_order)
+    apply_on(Product.group_by_products_id, use_order)
   end
 
   # Does the final ordering if requested
   # TODO: move the order stuff out of the above - is superfluous now
   def products(use_order = true)
-    cached_group = Product.in_cached_group(self)	
+    cached_group = Product.in_cached_group(self)
     if cached_group.limit(1).blank?
       dynamic_products(use_order)
     elsif !use_order

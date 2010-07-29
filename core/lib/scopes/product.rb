@@ -63,7 +63,7 @@ module Scopes::Product
     { :joins => :master, :conditions => ["variants.price BETWEEN ? AND ?", low, high] }
   }
 
-  # This scope selects products in taxon AND all its ancestors
+  # This scope selects products in taxon AND all its descendants
   # If you need products only within one taxon use
   #
   #   Product.taxons_id_eq(x)
@@ -72,7 +72,7 @@ module Scopes::Product
     { :joins => :taxons, :conditions => ["taxons.id IN (?) ", taxon.self_and_descendants.map(&:id)]}
   }
 
-  # This scope selects products in all taxons AND all its ancestors
+  # This scope selects products in all taxons AND all its descendants
   # If you need products only within one taxon use
   #
   #   Product.taxons_id_eq([x,y])
@@ -236,19 +236,7 @@ SQL
 
   # specifically avoid having an order for taxon search (conflicts with main order)
   def self.prepare_taxon_conditions(taxons)
-    conditions = taxons.map{|taxon|
-      taxon.self_and_descendants.scope(:find)[:conditions].map(&:id)
-    }.inject([[]]){|result, scope|
-      result.first << scope.shift
-      result +=  scope;
-      result
-    }
-    conditions[0] = "("+conditions[0].join(") OR (")+")"
-
-    {
-      :joins => :taxons,
-      ## :order => taxons.empty? ? nil : taxons.first.self_and_descendants.scope(:find)[:order],
-      :conditions => conditions,
-    }
+    ids = taxons.map{|taxon| taxon.self_and_descendants.map(&:id)}.flatten.uniq
+    { :joins => :taxons, :conditions => ["taxons.id IN (?)", ids] }
   end
 end

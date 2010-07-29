@@ -26,12 +26,12 @@ class ProductScope < ActiveRecord::Base
     another_scope.send(self.name, *self.arguments)
   end
 
-  def before_validation_on_create
+  before_validation(:on => :create) {
     # Add default empty arguments so scope validates and errors aren't caused when previewing it
      if name && args = Scopes::Product.arguments_for_scope_name(name)
       self.arguments ||= ['']*args.length
     end
-  end
+  }
   
   # checks validity of the named scope (if its safe and can be applied on Product)
   def check_validity_of_scope
@@ -41,9 +41,9 @@ class ProductScope < ActiveRecord::Base
     errors.add(:arguments, "are incorrect")
   end
 
-  # test ordering scope by looking for name pattern or :order clause
+  # test ordering scope by looking for name pattern or missed arguments
   def is_ordering?
-    name =~ /^(ascend_by|descend_by)/ || apply_on(Product).scope(:find)[:order].present?
+    name =~ /^(ascend_by|descend_by)/ || arguments.blank?
   end
 
   def to_sentence
