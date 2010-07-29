@@ -15,5 +15,5 @@ require "spree"
 end
 
 Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
-  Spree::ThemeSupport::Hook.add_listener(hook_class.constantize)
+  Spree::ThemeSupport::Hook.add_listener(hook_class)
 end
