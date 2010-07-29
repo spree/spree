@@ -73,7 +73,7 @@ Spree::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
-  config.active_record.observers = :state_monitor
+  config.active_record.observers = :state_monitor, :model_cache_cleaner
 
   # The internationalization framework can be changed to have another default locale (standard is :en) or more load paths.
   # All files from config/locales/*.rb,yml are added automatically.

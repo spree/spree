@@ -27,11 +27,20 @@ class ShippingMethod < ActiveRecord::Base
   end
 
   def available_to_order?(order, display_on=nil)
-    available?(order,display_on) && zone && zone.include?(order.ship_address)
+    _zone = Zone.cached.detect {|zone| zone.id == self.zone_id }
+    available?(order, display_on) && _zone && _zone.include?(order.ship_address)
   end
 
   def self.all_available(order, display_on=nil)
-    all.select { |method| method.available_to_order?(order,display_on)}
+    cached.select { |method| method.available_to_order?(order,display_on)}
+  end
+
+  def self.cached
+    if Rails.configuration.cache_classes
+      Rails.cache.fetch("ShippingMethod.all") { ShippingMethod.all(:include => :calculator) }
+    else
+      ShippingMethod.all(:include => :calculator)
+    end
   end
 
 end
