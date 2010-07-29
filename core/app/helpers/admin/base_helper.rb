@@ -21,7 +21,19 @@ module Admin::BaseHelper
     end
     content_tag('p', capture(&block), :class => css_class)
   end
-
+  
+  def error_message_on(object, method, options = {})
+    object = convert_to_model(object)
+    obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")
+    
+    if obj.errors[method].present?
+      errors = obj.errors[method].map{|err| h(err)}.join('<br/>').html_safe
+      content_tag(:span, errors, :class => 'formError')
+    else
+      ''
+    end
+  end
+  
   def class_for_error(model, method)
     if error_message_on :product, :name
     end

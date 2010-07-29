@@ -10,13 +10,10 @@ class ActionView::Helpers::FormBuilder
     @template.field_container(@object_name,method,options,&block)
   end
 
-  %w(error_message_on).each do |selector|
-    src = <<-end_src
-      def #{selector}(method, options = {})
-        @template.send(#{selector.inspect}, @object_name, method, objectify_options(options))
-      end
-    end_src
-    class_eval src, __FILE__, __LINE__
+  def error_message_on(method, options = {})
+    @template.error_message_on(@object_name, method, objectify_options(options))
   end
-
 end
+
+ActionView::Base.field_error_proc = Proc.new{ |html_tag, instance| "<span class=\"field_with_errors\">#{html_tag}</span>".html_safe }
+
