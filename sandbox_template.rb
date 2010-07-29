@@ -11,11 +11,11 @@ gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 # gem 'unicorn'
 
 # eventually these can be dropped and replaced by spree.gemspec dependencies but we need the edge versions for now
-gem 'activemerchant', :git => 'git://github.com/Shopify/active_merchant.git'
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
-gem 'searchlogic', :git => 'git://github.com/romul/searchlogic.git'
+gem 'searchlogic', :git => 'git://github.com/schof/searchlogic.git'
+gem 'activemerchant', :git => 'git://github.com/Shopify/active_merchant.git'
 
-#gem "spree_sample", :path => "../sample", :require => ['spree_sample','spree_sample/engine']
+gem "spree_sample", :path => "../sample", :require => ['spree_sample','spree_sample/engine']
 
 application "require 'spree_core/all'"
 remove_file "public/index.html"
