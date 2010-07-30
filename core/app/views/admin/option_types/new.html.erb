@@ -1,0 +1,11 @@
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+
+<%= render 'shared/error_messages', :target => @option_type%>
+
+<% form_for(:option_type, :url => collection_url) do |f| %>
+  <fieldset>
+    <legend><%= t("new_option_type") %></legend>
+    <%= render :partial => "form", :locals => { :f => f } %>
+    <%= render :partial => 'admin/shared/new_resource_links' %>
+  </fieldset>
+<% end %>

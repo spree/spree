@@ -3,7 +3,7 @@ class Admin::VariantsController < Admin::BaseController
   belongs_to :product
 
   new_action.response do |wants|
-    wants.js
+    wants.html {render :action => :new, :layout => !request.xhr?}
   end
 
   create.before :create_before
