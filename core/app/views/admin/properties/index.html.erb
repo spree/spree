@@ -2,11 +2,8 @@
 
 <div class='toolbar'>
   <ul class='actions'>
-    <li id="new_prop_link">
-      <%= button_link_to_remote t("new_property"),  {
-                         :url => new_admin_property_url, 
-                         :method => :get,
-                         :update => "properties"}, :icon => 'add' %>
+    <li id="new_property_link">
+      <%= button_link_to t("new_property"), new_admin_property_url, {:remote => true, :icon => 'add', 'data-update' => 'new_property'} %>
     </li>
   </ul>
   <br class='clear' />
@@ -14,7 +11,7 @@
 
 <h1><%= t("properties") %></h1>
 
-<div id="properties"></div>
+<div id="new_property"></div>
 
 <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 

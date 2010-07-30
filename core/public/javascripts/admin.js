@@ -42,7 +42,27 @@ jQuery('a[data-remote=true]').live('click', function() {
   if(method = jQuery(this).attr("data-method")){
     return request({ url: this.href, type: 'POST', data: {'_method': method} });
   } else {
-    return request({ url: this.href });
+    update_target = jQuery(this).attr("data-update");
+    link_container = jQuery(this).parent();
+    if (update_target) {
+      if ($("#"+update_target).length == 0) {
+        if ($("#"+update_target.replace('_', '-')).length > 0) {
+          update_target = update_target.replace('_', '-')
+        } else {
+          alert("<div id="+update_target+"></div> not found, add it to view to allow AJAX request.");
+          return true;
+        }
+      }
+    }
+    jQuery.ajax({ dataType: 'script', url: this.href, type: 'get',
+        success: function(data){
+          if (update_target) {
+            $("#"+update_target).html(data);
+            link_container.hide();
+          }
+        }
+    });
+    return false;
   }
 });
  

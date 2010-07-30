@@ -86,6 +86,10 @@ module Admin::NavigationHelper
   end
 
   def button_link_to(text, url, html_options = {})
+    unless html_options['data-update']
+      object_name, action = url.split('/')[-2..-1]
+      html_options['data-update'] = [action, object_name.singularize].join('_')
+    end
     link_to(text_for_button_link(text, html_options), url, html_options_for_button_link(html_options))
   end
 

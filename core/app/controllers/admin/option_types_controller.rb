@@ -21,7 +21,7 @@ class Admin::OptionTypesController < Admin::BaseController
   end
 
   new_action.response do |wants|
-    wants.js
+    wants.html {render :action => :new, :layout => !request.xhr?}
   end
 
   # redirect to index (instead of r_c default of show view)

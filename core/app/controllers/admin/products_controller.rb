@@ -8,7 +8,7 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   new_action.response do |wants|
-    wants.js {render :action => :new, :layout => false}
+    wants.html {render :action => :new, :layout => !request.xhr?}
   end
 
   update.before :update_before
