@@ -26,7 +26,7 @@ module Admin::BaseHelper
     object = convert_to_model(object)
     obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")
     
-    if obj.errors[method].present?
+    if obj && obj.errors[method].present?
       errors = obj.errors[method].map{|err| h(err)}.join('<br/>').html_safe
       content_tag(:span, errors, :class => 'formError')
     else
