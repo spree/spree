@@ -9,7 +9,7 @@ class Calculator::PriceBucket < Calculator
 
   def self.register
     super
-    Promotion.register_calculator(self)
+    #Promotion.register_calculator(self)
     ShippingMethod.register_calculator(self)
   end
 
@@ -26,5 +26,5 @@ class Calculator::PriceBucket < Calculator
     else
       self.preferred_discount_amount
     end
-  end  
+  end
 end

@@ -7,13 +7,12 @@ class Calculator::FlatPercentItemTotal < Calculator
 
   def self.register
     super
-    Promotion.register_calculator(self)
     ShippingMethod.register_calculator(self)
   end
 
   def compute(line_items)
     return if line_items.nil?
-    item_total = line_items.inject(0) {|amount, li| amount + li.total } 
+    item_total = line_items.inject(0) {|amount, li| amount + li.total }
     item_total * self.preferred_flat_percent / 100.0
   end
 end

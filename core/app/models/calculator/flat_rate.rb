@@ -7,11 +7,10 @@ class Calculator::FlatRate < Calculator
 
   def self.register
     super
-    Promotion.register_calculator(self)
     ShippingMethod.register_calculator(self)
-  end  
-  
+  end
+
   def compute(object=nil)
     self.preferred_amount
-  end  
+  end
 end

@@ -7,7 +7,6 @@ class Calculator::PerItem < Calculator
 
   def self.register
     super
-    Promotion.register_calculator(self)
     ShippingMethod.register_calculator(self)
   end
 
