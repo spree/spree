@@ -83,9 +83,10 @@ class OrdersController < Spree::BaseController
 
   def set_user
     #only if the user is blank and the order is in_progress
-    if @order && @order.user.nil? && @order.in_progress?
-      @order.checkout.update_attribute(:email, current_user && current_user.email) if @order.checkout
-      @order.update_attribute(:user, current_user)
+    if @order && @order.user.nil? && @order.in_progress? && current_user
+      @order.checkout.update_attribute(:email, current_user.email) if @order.checkout
+      @order.user = current_user
+      @order.save
     end
   end
 
