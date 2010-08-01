@@ -14,11 +14,11 @@ module ValidationGroup
           def self.validation_groups(all_classes = false)
             return (self.validation_group_classes[self] || {}) unless all_classes
             klasses = ValidationGroup::Util.current_and_ancestors(self).reverse
-            returning Hash.new do |hash|
-              klasses.each do |klass|
-                hash.merge! self.validation_group_classes[klass]
-              end
+            hash = Hash.new
+            klasses.each do |klass|
+              hash.merge! self.validation_group_classes[klass]
             end
+            hash
           end
         end
       end
@@ -129,14 +129,14 @@ end
     # Return array consisting of current and its superclasses down to and
     # including base_class.
     def self.current_and_ancestors(current)
-      returning [] do |klasses|
+      klasses = []
+      klasses << current
+      root = current.base_class
+      until current == root
+        current = current.superclass
         klasses << current
-        root = current.base_class
-        until current == root
-          current = current.superclass
-          klasses << current
-        end
       end
+      klasses
     end
   end
 end
