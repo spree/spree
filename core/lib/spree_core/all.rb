@@ -7,11 +7,7 @@ require "spree"
   spree_dashboard
   spree_promotions
 ).each do |extension|
-  begin
-    require "#{extension}/engine"
-    #require "#{framework}/railtie"
-  rescue LoadError
-  end
+  require "#{extension}/engine"
 end
 
 Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
