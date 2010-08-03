@@ -182,12 +182,8 @@ class Spree::BaseController < ActionController::Base
   # end
 
   def set_user_language
-    #RAILS 3 TODO
-    # locale = session[:locale] || Spree::Config[:default_locale] || I18n.default_locale
-    # locale = AVAILABLE_LOCALES.keys.include?(locale) ? locale : I18n.default_locale
-    # I18n.locale = locale
-
-    I18n.locale = :en
+    locale = session[:locale] || Spree::Config[:default_locale]
+    locale = I18n.default_locale unless I18n.available_locales.include?(locale.to_sym)
+    I18n.locale = locale.to_sym
   end
-
 end
