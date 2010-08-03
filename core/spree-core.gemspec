@@ -30,11 +30,11 @@ Gem::Specification.new do |s|
   s.add_dependency('activerecord-tableless', '>= 0.1.0')
   s.add_dependency('less', '>= 1.2.20')
   s.add_dependency('stringex',       '>= 1.0.3')
-  s.add_dependency('state_machine',  '>= 0.9.2')
+  s.add_dependency('state_machine',  '>= 0.9.4')
   s.add_dependency('faker',          '>= 0.3.1')
   s.add_dependency('paperclip',      '>= 2.3.1.1')
   s.add_dependency('resource_controller')
-  #s.add_dependency('activemerchant', '>= 1.7.0')
+  s.add_dependency('activemerchant', '>= 1.7.1')
   s.add_dependency('will_paginate', '>= 3.0.pre')
 
   # s.add_dependency('actionpack',  version)

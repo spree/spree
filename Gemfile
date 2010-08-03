@@ -5,10 +5,6 @@ gem "spree", :path => File.dirname(__FILE__)
 # eventually these can be dropped and replaced by spree.gemspec dependencies but we need the edge versions for now
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
 gem 'searchlogic', :git => 'git://github.com/schof/searchlogic.git'
-gem 'activemerchant', :git => 'git://github.com/Shopify/active_merchant.git'
-
-# Temporary fix until new gem (http://pluginaweek.lighthouseapp.com/projects/13288/tickets/55)
-gem 'state_machine', :git => 'git://github.com/pluginaweek/state_machine.git'
 
 gem 'mysql'
 gem 'sqlite3-ruby'

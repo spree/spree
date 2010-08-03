@@ -5,12 +5,6 @@ GIT
     resource_controller (0.6.6)
 
 GIT
-  remote: git://github.com/pluginaweek/state_machine.git
-  revision: 4718436
-  specs:
-    state_machine (0.9.3)
-
-GIT
   remote: git://github.com/schof/searchlogic.git
   revision: 705566c
   specs:
@@ -50,7 +44,7 @@ PATH
       rd_stump (>= 0.0.2)
       rd_unobtrusive_date_picker (>= 0.1.0)
       resource_controller
-      state_machine (>= 0.9.2)
+      state_machine (>= 0.9.4)
       stringex (>= 1.0.3)
       will_paginate (>= 3.0.pre)
     spree_dashboard (0.30.0)
@@ -162,6 +156,7 @@ GEM
       linecache (>= 0.3)
     spork (0.8.4)
     sqlite3-ruby (1.3.1)
+    state_machine (0.9.4)
     stringex (1.1.0)
     thor (0.14.0)
     treetop (1.4.8)
@@ -184,4 +179,3 @@ DEPENDENCIES
   spork
   spree!
   sqlite3-ruby
-  state_machine!
