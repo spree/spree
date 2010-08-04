@@ -189,18 +189,13 @@ class CheckoutsController < Spree::BaseController
   end
 
   def rate_hash
-    begin
-      @checkout.shipping_methods(:front_end).collect do |ship_method|
-        @checkout.shipment.shipping_method = ship_method
-        { :id => ship_method.id,
-          :name => ship_method.name,
-          :cost => ship_method.calculate_cost(@checkout.shipment)
-        }
-      end.sort_by{|r| r[:cost]}
-    rescue Spree::ShippingError => ship_error
-      flash[:error] = ship_error.to_s
-      []
-    end
+    @checkout.shipping_methods(:front_end).collect do |ship_method|
+      @checkout.shipment.shipping_method = ship_method
+      { :id => ship_method.id,
+        :name => ship_method.name,
+        :cost => ship_method.calculate_cost(@checkout.shipment)
+      }
+    end.sort_by{|r| r[:cost]}
   end
 
   def enforce_registration
