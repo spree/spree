@@ -1,1 +1,0 @@
-So-called "standard extensions" that ship with Spree go in this directory.  Application specific extensions go in #{Rails.root}/vendor/extensions.
