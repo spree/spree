@@ -11,9 +11,9 @@ gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 # gem 'unicorn'
 
 # eventually these can be dropped and replaced by spree.gemspec dependencies but we need the edge versions for now
-gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
-gem 'searchlogic', :git => 'git://github.com/schof/searchlogic.git'
-gem 'awesome_nested_set', :git => 'git://github.com/galetahub/awesome_nested_set.git'
+gem 'rd_resource_controller', :require => ["resource_controller"]
+gem 'rd_searchlogic', :require => ["searchlogic"]
+gem 'rd_awesome_nested_set', :require => ["awesome_nested_set"]
 
 gem "spree_sample", :path => "../sample", :require => ['spree_sample','spree_sample/engine']
 

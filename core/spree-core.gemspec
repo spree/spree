@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.has_rdoc = true
 
   s.add_dependency('acts_as_list',             '>= 0.1.2')
-  s.add_dependency('awesome_nested_set',       '>= 1.4.3')
+  s.add_dependency('rd_awesome_nested_set',       '>= 1.4.4')
   s.add_dependency('rd_stump',                   '>= 0.0.2')
   s.add_dependency('rd_unobtrusive_date_picker', '>= 0.1.0')
   s.add_dependency('bundler',        '>= 0.9.26')
@@ -33,7 +33,8 @@ Gem::Specification.new do |s|
   s.add_dependency('state_machine',  '>= 0.9.4')
   s.add_dependency('faker',          '>= 0.3.1')
   s.add_dependency('paperclip',      '>= 2.3.1.1')
-  s.add_dependency('resource_controller')
+  s.add_dependency('rd_resource_controller')
+  s.add_dependency('rd_searchlogic')
   s.add_dependency('activemerchant', '>= 1.7.1')
   s.add_dependency('will_paginate', '>= 3.0.pre')
 

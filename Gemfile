@@ -2,11 +2,6 @@ source :gemcutter
 
 gem "spree", :path => File.dirname(__FILE__)
 
-# eventually these can be dropped and replaced by spree.gemspec dependencies but we need the edge versions for now
-gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
-gem 'searchlogic', :git => 'git://github.com/schof/searchlogic.git'
-gem 'awesome_nested_set', :git => 'git://github.com/galetahub/awesome_nested_set.git'
-
 gem 'mysql'
 gem 'sqlite3-ruby'
 gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
