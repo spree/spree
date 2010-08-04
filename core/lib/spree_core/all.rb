@@ -1,5 +1,3 @@
-require "spree"
-
 %w(
   spree_core
   spree_payment_gateway
