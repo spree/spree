@@ -21,7 +21,7 @@ module TaxonsHelper
   def taxon_preview(taxon, max=5)
     products = taxon.products.active.find(:all, :limit => max)
     if (products.size < max) && Spree::Config[:show_descendents]
-      taxon.descendents.each do |taxon|
+      taxon.descendants.each do |taxon|
         to_get = max - products.length
         products += taxon.products.active.find(:all, :limit => to_get)
         break if products.size >= max
