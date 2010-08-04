@@ -1,4 +1,4 @@
-source :gemcutter
+source 'http://rubygems.org'
 
 gem "spree", :path => File.dirname(__FILE__)
 
