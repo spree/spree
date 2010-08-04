@@ -31,7 +31,7 @@ require 'state_machine'
 require 'paperclip'
 require 'stringex'
 require 'will_paginate'
-require 'less'
+require 'less' #TODO RAILS3: consider making this optional
 require 'authlogic'
 require 'awesome_nested_set'
 require 'acts_as_list'
@@ -65,4 +65,10 @@ end
 
 ActiveSupport.on_load(:action_view) do
   include StoreHelpers
+end
+
+module Spree
+  def self.version
+    "0.30.0.beta1"
+  end
 end
