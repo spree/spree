@@ -1,4 +1,4 @@
-Rails.application.routes.draw do |map|
+Rails.application.routes.draw do
 
   root :to => 'products#index'
 
@@ -146,7 +146,7 @@ Rails.application.routes.draw do |map|
         post :resend
         get :history
       end
-      
+
       resources :adjustments
       resources :line_items
       resource :checkout
