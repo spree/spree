@@ -61,7 +61,7 @@ class Admin::OrdersController < Admin::BaseController
     if params[:search].delete(:completed_at_not_null) == "1"
       params[:search][:completed_at_not_null] = true
     end
-    
+
     params[:search][:order] ||= "descend_by_created_at"
     @search = Order.searchlogic(params[:search])
 

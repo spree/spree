@@ -58,10 +58,26 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
         rake db:bootstrap
 
-6. Start the server
+6. Prepare the test database (optional - only if you're going to run the tests)
+
+        rake db:test:prepare
+
+7. Start the server
 
         rails server
 
+Running Tests
+-------------
+
+Once you have the edge source working (see above) you can run the tests as follows
+
+1. Change to the directory containing the engine/gem to test
+
+        cd core
+
+2. Run the tests
+
+        rspec spec
 
 Contributing
 ============

@@ -2,18 +2,18 @@ source 'http://rubygems.org'
 
 gem "spree", :path => File.dirname(__FILE__)
 
-gem 'mysql'
+# gem 'mysql'
 gem 'sqlite3-ruby'
 gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 gem "rdoc",  "2.2"
 
-group :test do
-  gem 'shoulda', :git => "git://github.com/thoughtbot/shoulda.git"
-  gem 'factory_girl_rails', '>= 1.0.0'
-  gem 'spork'
-  gem 'test-unit', '~>2.0.5', :require => 'test/unit' if RUBY_VERSION.to_f >= 1.9
-  gem 'faker'
-end
+# group :test do
+#   gem 'shoulda', :git => "git://github.com/thoughtbot/shoulda.git"
+#   gem 'factory_girl_rails', '>= 1.0.0'
+#   gem 'spork'
+#   gem 'test-unit', '~>2.0.5', :require => 'test/unit' if RUBY_VERSION.to_f >= 1.9
+#   gem 'faker'
+# end
 
 # group :cucumber do
 #   gem 'cucumber-rails', '>=0.2.4', :require => false

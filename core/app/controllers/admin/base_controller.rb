@@ -16,10 +16,10 @@ class Admin::BaseController < Spree::BaseController
     flash.notice = nil
   end
 
-  def require_object_editable_by_current_user
-    return access_denied unless object.editable_by?(current_user)
-    true
-  end
+  # def require_object_editable_by_current_user
+  #   return access_denied unless object.editable_by?(current_user)
+  #   true
+  # end
 
   private
   def parse_date_params

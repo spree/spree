@@ -11,6 +11,9 @@ class Spree::BaseController < ActionController::Base
 
   include SslRequirement
 
+  # graceful error handling for cancan authorization exceptions
+  rescue_from CanCan::AccessDenied, :with => :access_denied
+
   def admin_created?
     User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
   end
