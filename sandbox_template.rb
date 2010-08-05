@@ -3,7 +3,6 @@ gem 'rails', '>=3.0.0.rc'
 # IMPORTANT: __FILE__ refer to (eval), not to sandbox_template.rb !!!
 gem "spree", :path => ".."
 
-gem 'mysql'
 gem 'sqlite3-ruby'
 gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 
@@ -31,27 +30,6 @@ Disallow: /states
 Disallow: /user_sessions
 Disallow: /users
 ROBOTS
-
-database = <<-DATABASE
-development:
-  adapter: sqlite3
-  database: db/development.sqlite3
-
-test:
-  adapter: sqlite3
-  database: db/test.sqlite3
-
-cucumber:
-  adapter: sqlite3
-  database: db/cucumber.sqlite3
-
-production:
-  adapter: sqlite3
-  database: db/production.sqlite3
-DATABASE
-
-remove_file "config/database.yml"
-create_file "config/database.yml", database
 
 permissions = <<-PERMISSIONS
 # Add to this this file to define the role(s) needed to process an action.
