@@ -8,6 +8,12 @@ namespace :spree do
     migration_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'migrate')
     default_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'default')
     sample_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample')
+
+    # create destination directories in case they are not present (as in the case of new rails app)
+    FileUtils.mkdir_p(File.join(Rails.root, 'db', 'migrate'))
+    FileUtils.mkdir_p(File.join(Rails.root, 'db', 'default'))
+    FileUtils.mkdir_p(File.join(Rails.root, 'db', 'sample'))
+
     puts "Mirror: #{public_dir}"
     Spree::FileUtilz.mirror_with_backup(public_dir, File.join(Rails.root, 'public'))
     puts "Mirror: #{migration_dir}"
