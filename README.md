@@ -50,9 +50,9 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
         rails new sandbox -m sandbox_template.rb
         cd sandbox
 
-4. Sync the migrations and other assets in your new sandbox app
+4. Generate the necessary Spree files
 
-        rake spree:sync
+        rails g spree:site
 
 5. Bootstrap the database (run the migrations, create admin account, optionally load sample data.)
 
@@ -65,5 +65,5 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
 Contributing
 ============
-           
+
 Spree is an open source project.  We encourage contributions.  Please see the [contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html) before contributing.  **Do not send a Github pull request - it will be ignored.**
