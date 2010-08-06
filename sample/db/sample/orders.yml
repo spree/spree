@@ -1,6 +1,6 @@
-<% 
+<%
 order_date = Time.now
-1.upto(100) do |i| 
+1.upto(100) do |i|
   order_date -= rand(12).hours
   item_total =  "#{1 + rand(400)}.#{rand(100)}".to_f
   charges_total = "#{1 + rand(30)}.#{rand(100)}".to_f
@@ -8,7 +8,7 @@ order_date = Time.now
 order_<%= i %>:
   user: user_<%= rand(500) + 1%>
   number: <%= "R#{Array.new(9){rand(9)}.join}" %>
-  state: paid
+  state: in_progress
   item_total: <%= item_total %>
   created_at: <%=order_date.to_s(:db)%>
   completed_at: <%=order_date.to_s(:db)%>
