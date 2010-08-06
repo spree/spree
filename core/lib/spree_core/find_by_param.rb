@@ -52,7 +52,7 @@ module Railslove
           extend Railslove::Plugins::FindByParam::SingletonMethods
           include Railslove::Plugins::FindByParam::InstanceMethods
         rescue
-          puts "[find_by_param error] database not available?"
+          # Database is not available (not a problem if we're running rake db:create or rake db:bootstrap)
         end
       end
 
