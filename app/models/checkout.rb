@@ -53,6 +53,7 @@ class Checkout < ActiveRecord::Base
   def valid?
     # will perform partial validation when @checkout.enabled_validation_group :step is called
     result = ar_valid?
+    return result if @current_validation_fields.nil?
 
     relevant_errors = errors.select { |attr, msg| @current_validation_fields.include?(attr) }
     errors.clear
