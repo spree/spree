@@ -35,6 +35,8 @@ require 'less' #TODO RAILS3: consider making this optional
 require 'authlogic'
 require 'awesome_nested_set'
 require 'acts_as_list'
+require 'resource_controller'
+
 require 'spree_core/delegate_belongs_to'
 require 'spree_core/theme_support'
 require 'spree_core/validation_group'

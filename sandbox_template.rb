@@ -9,11 +9,6 @@ gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 # Use unicorn as the web server
 # gem 'unicorn'
 
-# eventually these can be dropped and replaced by spree.gemspec dependencies but we need the edge versions for now
-gem 'rd_resource_controller', :require => ["resource_controller"]
-gem 'rd_searchlogic', :require => ["searchlogic"]
-gem 'rd_awesome_nested_set', :require => ["awesome_nested_set"]
-
 gem "spree_sample", :path => "../sample", :require => ['spree_sample','spree_sample/engine']
 
 application "require 'spree_core/all'"
