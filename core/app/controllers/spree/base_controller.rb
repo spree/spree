@@ -9,8 +9,6 @@ class Spree::BaseController < ActionController::Base
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
-  include RoleRequirementSystem
-  include EasyRoleRequirementSystem
   include SslRequirement
 
   def admin_created?

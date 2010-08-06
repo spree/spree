@@ -1,31 +1,16 @@
 module Admin::BaseHelper
 
-  # receives a :controller, :action, and :params.  Finds the given controller and runs user_authorized_for? on it.
-  # This can be called in your views, and is for advanced users only.  If you are using :if / :unless eval expressions,
-  #   then this may or may not work (eval strings use the current binding to execute, not the binding of the target
-  #   controller)
-  def url_options_authenticate?(params = {})
-    params = params.symbolize_keys
-    if params[:controller]
-      # find the controller class
-      klass = eval("#{params[:controller]}_controller".classify)
-    else
-      klass = self.class
-    end
-    klass.user_authorized_for?(current_user, params, binding)
-  end
-
   def field_container(model, method, options = {}, &block)
     unless error_message_on(model, method).blank?
       css_class = 'withError'
     end
     content_tag('p', capture(&block), :class => css_class)
   end
-  
+
   def error_message_on(object, method, options = {})
     object = convert_to_model(object)
     obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")
-    
+
     if obj && obj.errors[method].present?
       errors = obj.errors[method].map{|err| h(err)}.join('<br/>').html_safe
       content_tag(:span, errors, :class => 'formError')
@@ -33,7 +18,7 @@ module Admin::BaseHelper
       ''
     end
   end
-  
+
   def class_for_error(model, method)
     if error_message_on :product, :name
     end
