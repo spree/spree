@@ -1,5 +1,4 @@
 class Api::BaseController < Spree::BaseController
-  require_role 'admin'
 
   def self.resource_controller_for_api
     resource_controller
