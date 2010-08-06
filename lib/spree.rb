@@ -1,4 +1,8 @@
-require 'spree_core/all'
+require 'spree_core'
+require 'spree_api'
+require 'spree_dashboard'
+require 'spree_payment_gateway'
+require 'spree_promotions'
 require 'spree_sample'
 
 begin

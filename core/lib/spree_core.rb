@@ -26,6 +26,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #--
+require "rails/all"
 
 require 'state_machine'
 require 'paperclip'
@@ -51,6 +52,18 @@ require 'spree_core/preferences/preference_definition'
 require 'store_helpers'
 require 'spree/file_utilz'
 
+module Spree
+  def self.version
+    "0.30.0.beta1"
+  end
+end
+
+module SpreeCore
+  class Engine < Rails::Engine
+    config.autoload_paths += %W(#{config.root}/lib)
+  end
+end
+
 ActiveRecord::Base.class_eval { include HasCalculator }
 
 ActiveRecord::Base.class_eval do
@@ -66,10 +79,4 @@ end
 
 ActiveSupport.on_load(:action_view) do
   include StoreHelpers
-end
-
-module Spree
-  def self.version
-    "0.30.0.beta1"
-  end
 end
