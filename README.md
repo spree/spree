@@ -47,7 +47,7 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
 3. Create a sanbox rails application for testing purposes
 
-        rails new sandbox -m sandbox_template.rb
+        rails new sandbox -m sample/sandbox_template.rb
         cd sandbox
 
 4. Generate the necessary Spree files
