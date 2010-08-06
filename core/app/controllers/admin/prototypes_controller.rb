@@ -6,7 +6,9 @@ class Admin::PrototypesController < Admin::BaseController
   
   def available
     @prototypes = Prototype.all
-    render :layout => false
+    respond_to do |wants|
+      wants.js { render :layout => false }
+    end
   end
   
   def select

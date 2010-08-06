@@ -110,7 +110,6 @@ class Admin::ProductsController < Admin::BaseController
       # note: we only reset the product properties if we're receiving a post from the form on that tab
       return unless params[:clear_product_properties]
       params[:product] ||= {}
-      params[:product][:product_property_attributes] ||= {} if params[:product][:product_property_attributes].nil?
     end
 
 end
