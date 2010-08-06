@@ -5,14 +5,14 @@ class Payment < ActiveRecord::Base
 
   has_many :transactions
   alias :txns :transactions
-  
+
   after_save :create_payment_profile, :if => :payment_profiles_supported?
   after_save :check_payments, :if => :order_payment?
   after_destroy :check_payments, :if => :order_payment?
 
   accepts_nested_attributes_for :source
-  
-  validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment? 
+
+  validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment?
   validates :payment_method, :presence => true, :if => Proc.new { |payable| payable.is_a? Checkout }
 
   scope :from_creditcard, where(:source_type,'Creditcard')
@@ -27,15 +27,15 @@ class Payment < ActiveRecord::Base
       self.source = payment_method.payment_source_class.new(params)
     end
   end
-  
+
   def process!
     source.process!(self) if source and source.respond_to?(:process!)
-  end  
-  
+  end
+
   def can_finalize?
     !finalized?
   end
-  
+
   def finalize!
     return unless can_finalize?
     source.finalize!(self) if source and source.respond_to?(:finalize!)
@@ -43,7 +43,7 @@ class Payment < ActiveRecord::Base
     save!
     payable.save!
   end
-  
+
   def finalized?
     payable.is_a?(Order)
   end
@@ -54,19 +54,20 @@ class Payment < ActiveRecord::Base
   end
 
   private
-  
+
     def check_payments
       return unless order.checkout_complete
       #sorting by created_at.to_f to ensure millisecond percsision, plus ID - just in case
       events = order.state_events.sort_by { |e| [e.created_at.to_f, e.id] }.reverse
 
-      
+
       if order.returnable_units.nil? && order.return_authorizations.size >0
         order.return!
       elsif events.present? and %w(over_paid under_paid).include?(events.first.name)
         events.each do |event|
           if %w(shipped paid new).include?(event.previous_state)
-            order.update_attribute("state", event.previous_state)
+            order.pay!
+            order.update_attribute("state", event.previous_state) if %w(shipped returned).include?(event.previous_state)
             return
           end
         end
@@ -74,7 +75,7 @@ class Payment < ActiveRecord::Base
         order.pay!
       end
     end
-  
+
     def amount_is_valid_for_outstanding_balance_or_credit
       if amount < 0
         if amount.abs > order.outstanding_credit
@@ -84,12 +85,12 @@ class Payment < ActiveRecord::Base
         if amount > order.outstanding_balance
           errors.add(:amount, "Is greater than the outstanding balance (#{order.outstanding_balance})")
         end
-      end    
+      end
     end
-  
+
     def order_payment?
       payable_type == "Order"
-    end 
+    end
 
     def payment_profiles_supported?
       source && source.payment_gateway && source.payment_gateway.payment_profiles_supported?
@@ -101,5 +102,5 @@ class Payment < ActiveRecord::Base
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)
     end
-  
+
 end
