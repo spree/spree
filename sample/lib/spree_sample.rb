@@ -1,1 +1,1 @@
-# TODO
+require 'spree_sample/engine'
