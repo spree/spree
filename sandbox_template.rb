@@ -11,7 +11,6 @@ gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 
 gem "spree_sample", :path => "../sample", :require => ['spree_sample','spree_sample/engine']
 
-application "require 'spree_core/all'"
 remove_file "public/index.html"
 
 append_file "public/robots.txt", <<-ROBOTS
