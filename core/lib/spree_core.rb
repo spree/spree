@@ -80,3 +80,7 @@ end
 ActiveSupport.on_load(:action_view) do
   include StoreHelpers
 end
+
+Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
+  Spree::ThemeSupport::Hook.add_listener(hook_class)
+end
