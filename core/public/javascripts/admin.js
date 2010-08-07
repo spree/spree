@@ -196,8 +196,8 @@ jQuery(document).ready(function() {
 
 });
 
-function add_fields(link, association, content) {  
+function add_fields(target, association, content) {  
   var new_id = new Date().getTime();  
   var regexp = new RegExp("new_" + association, "g");  
-  $('#'+association).append(content.replace(regexp, new_id));  
+  $(target).append(content.replace(regexp, new_id));  
 }  

@@ -23,7 +23,7 @@
   <input type="hidden" name="clear_product_properties" value="true">
 
   <p>
-    <%= link_to_add_fields icon('add') + ' ' + t("add_product_properties"), f, :product_properties %>
+    <%= link_to_add_fields icon('add') + ' ' + t("add_product_properties"), "tbody#product_properties", f, :product_properties %>
     &nbsp;&nbsp;
   	<span id="new_ptype_link">
   	  <%= link_to t("select_from_prototype"), available_admin_prototypes_url, 
