@@ -200,4 +200,11 @@ function add_fields(target, association, content) {
   var new_id = new Date().getTime();  
   var regexp = new RegExp("new_" + association, "g");  
   $(target).append(content.replace(regexp, new_id));  
-}  
+}
+
+jQuery('a.remove_fields').live('click', function() {
+  $(this).prev("input[type=hidden]").val("1");
+  $(this).closest(".fields").hide();
+  return false;
+});
+

@@ -7,12 +7,13 @@ class Admin::PrototypesController < Admin::BaseController
   def available
     @prototypes = Prototype.all
     respond_to do |wants|
-      wants.js { render :layout => false }
+      wants.html { render :layout => !request.xhr? }
     end
   end
   
   def select
     load_object
+    @prototype_properties = @prototype.properties
   end
   
   new_action.response do |wants|

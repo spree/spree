@@ -1,14 +1,11 @@
-<tr class="product_property">
+<tr class="product_property fields">
   <td>
     <%= f.text_field :property_name, :class => "autocomplete" %>
   </td>
   <td>
     <%= f.text_field :value, :class => "autocomplete" %>
   </td>	
-  <td>
-    <% unless f.object.new_record? %>
-      <%= f.check_box '_destroy' %>
-      <%= f.label '_destroy', 'Remove' %>
-    <% end %>
+  <td class="actions">
+    <%= link_to_remove_fields t("remove"), f %>
   </td>
 </tr>

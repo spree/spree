@@ -1,0 +1,4 @@
+<% @prototype_properties.each do |prop| %>
+  $("a.add_fields").click();
+  $(".product_property.fields:last input:first").val("<%= prop.name %>");
+<% end %>

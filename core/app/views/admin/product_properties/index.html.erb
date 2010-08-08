@@ -38,10 +38,6 @@
 
 <%= javascript_tag do %>
   var properties = "<%=@properties%>".split(' ');
-  $("a.product_property_remove_link").live("click", function(){
-    jQuery(this).parents('.product_property').remove();  
-    return false;
-  });
 
   $("#product_properties input.autocomplete").live("keydown", function(){
     already_auto_completed = $(this).is('ac_input');

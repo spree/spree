@@ -128,7 +128,7 @@ Rails.application.routes.draw do
 
     resources :prototypes do
       member do
-        post :select
+        get :select
       end
 
       collection do
