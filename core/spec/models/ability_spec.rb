@@ -65,4 +65,16 @@ describe Ability do
     end
   end
 
+  context "for Order" do
+    let(:resource) { Order.new }
+    context "requested by same user" do
+      before(:each) { resource.user = user }
+      it_should_behave_like "access granted"
+    end
+    context "requested by other user" do
+      before(:each) { resource.user = User.new }
+      it_should_behave_like "create only"
+    end
+  end
+
 end
