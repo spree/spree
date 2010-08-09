@@ -38,8 +38,6 @@ end
           # jeffp: added reader for current_validation_fields
           attr_reader :current_validation_group, :current_validation_fields
           include InstanceMethods
-          # jeffp: add valid?(group = nil), see definition below
-          alias_method_chain :valid?, :validation_group
         end
       end
     end
