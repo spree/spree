@@ -44,11 +44,11 @@ class OrdersController < Spree::BaseController
     wants.html { redirect_to(edit_object_url) }
   end
 
-  def can_access?
-    return true unless order = load_object
-    session[:order_token] ||= params[:order_token]
-    order.grant_access?(session[:order_token])
-  end
+  # def can_access?
+  #   return true unless order = load_object
+  #   session[:order_token] ||= params[:order_token]
+  #   order.grant_access?(session[:order_token])
+  # end
 
   private
   def build_object
