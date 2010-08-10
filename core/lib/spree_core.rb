@@ -61,6 +61,13 @@ end
 module SpreeCore
   class Engine < Rails::Engine
     config.autoload_paths += %W(#{config.root}/lib)
+
+    def self.activate
+      Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
+        Spree::ThemeSupport::Hook.add_listener(hook_class)
+      end
+    end
+    config.to_prepare &method(:activate).to_proc
   end
 end
 
@@ -79,8 +86,4 @@ end
 
 ActiveSupport.on_load(:action_view) do
   include StoreHelpers
-end
-
-Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
-  Spree::ThemeSupport::Hook.add_listener(hook_class)
 end
