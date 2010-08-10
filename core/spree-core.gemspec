@@ -37,5 +37,4 @@ Gem::Specification.new do |s|
   s.add_dependency('rd_searchlogic')
   s.add_dependency('activemerchant', '>= 1.7.1')
   s.add_dependency('will_paginate', '>= 3.0.pre')
-  s.add_dependency('cancan', '>= 1.3.0')
 end

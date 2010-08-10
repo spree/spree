@@ -1,4 +1,5 @@
 require 'spree_core'
+require 'cancan'
 
 module SpreeAuth
   class Engine < Rails::Engine
