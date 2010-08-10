@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   #s.default_executable = 'spree'
 
   s.add_dependency('spree_core',                version)
+  s.add_dependency('spree_auth',                version)
   s.add_dependency('spree_payment_gateway',     version)
   s.add_dependency('spree_api',                 version)
   s.add_dependency('spree_dashboard',           version)

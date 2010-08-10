@@ -7,19 +7,19 @@ class Ability
       can :manage, :all
     else
       #############################
-      can :read, User do |resource, token|
+      can :read, User do |resource|
         resource == user
       end
-      can :update, User do |resource, token|
+      can :update, User do |resource|
         resource == user
       end
       can :create, User
       #############################
-      can :read, Order do |order, token|
-        order.user == user || (order.token == token && token)
+      can :read, Order do |order|
+        order.user == user
       end
-      can :update, Order do |order, token|
-        order.user == user || (order.token == token && token)
+      can :update, Order do |order|
+        order.user == user
       end
       can :create, Order
       #############################

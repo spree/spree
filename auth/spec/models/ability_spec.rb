@@ -9,49 +9,49 @@ describe Ability do
 
   shared_examples_for "access granted" do
     it "should allow read" do
-      ability.should be_able_to(:read, resource, token)
+      ability.should be_able_to(:read, resource)
     end
     it "should allow create" do
-      ability.should be_able_to(:create, resource, token)
+      ability.should be_able_to(:create, resource)
     end
     it "should allow update" do
-      ability.should be_able_to(:update, resource, token)
+      ability.should be_able_to(:update, resource)
     end
   end
 
   shared_examples_for "access denied" do
     it "should not allow read" do
-      ability.should_not be_able_to(:read, resource, token)
+      ability.should_not be_able_to(:read, resource)
     end
     it "should not allow create" do
-      ability.should_not be_able_to(:create, resource, token)
+      ability.should_not be_able_to(:create, resource)
     end
     it "should not allow update" do
-      ability.should_not be_able_to(:update, resource, token)
+      ability.should_not be_able_to(:update, resource)
     end
   end
 
   shared_examples_for "create only" do
     it "should allow create" do
-      ability.should be_able_to(:create, resource, token)
+      ability.should be_able_to(:create, resource)
     end
     it "should not allow read" do
-      ability.should_not be_able_to(:read, resource, token)
+      ability.should_not be_able_to(:read, resource)
     end
     it "should not allow update" do
-      ability.should_not be_able_to(:update, resource, token)
+      ability.should_not be_able_to(:update, resource)
     end
   end
 
   shared_examples_for "read only" do
     it "should not allow create" do
-      ability.should_not be_able_to(:create, resource, token)
+      ability.should_not be_able_to(:create, resource)
     end
     it "should allow read" do
-      ability.should be_able_to(:read, resource, token)
+      ability.should be_able_to(:read, resource)
     end
     it "should not allow update" do
-      ability.should_not be_able_to(:update, resource, token)
+      ability.should_not be_able_to(:update, resource)
     end
   end
 
@@ -81,11 +81,6 @@ describe Ability do
     let(:resource) { Order.new }
     context "requested by same user" do
       before(:each) { resource.user = user }
-      it_should_behave_like "access granted"
-    end
-    context "requested by same user (with token)" do
-      let(:token) { "foo-token" }
-      before(:each) { resource.token = "foo-token" }
       it_should_behave_like "access granted"
     end
     context "requested by other user" do
