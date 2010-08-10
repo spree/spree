@@ -33,7 +33,9 @@ module Spree
         SEEDS
       end
 
-      # TODO:RAILS3 - generate a default set of permissions
+      def require_site
+        application "require 'spree_site'"
+      end
 
       def sync_spree_files
         rake 'spree:sync'
