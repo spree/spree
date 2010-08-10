@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  before_validation :set_login  
+  before_validation :set_login
   before_save :add_user_role
 
   has_many :orders
@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
 
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
-  
+
   #RAILS3 TODO
   #extend AuthlogicOpenid::ActsAsAuthentic::Config
   #include AuthlogicOpenid::ActsAsAuthentic::Methods if User.table_exists?
@@ -15,14 +15,14 @@ class User < ActiveRecord::Base
   acts_as_authentic do |c|
     c.transition_from_restful_authentication = true
     #AuthLogic defaults
-    #c.validate_email_field = true
+    c.validate_email_field = false
     #c.validates_length_of_email_field_options = {:within => 6..100}
     #c.validates_format_of_email_field_options = {:with => email_regex, :message => I18n.t(‘error_messages.email_invalid’, :default => “should look like an email address.”)}
-    #c.validate_password_field = true
+    c.validate_password_field = false
     #c.validates_length_of_password_field_options = {:minimum => 4, :if => :require_password?}
     #for more defaults check the AuthLogic documentation
   end
-  
+
   #RAILS3 TODO
   #openid_required_fields [:email]
   #openid_optional_fields [:nickname]
@@ -36,17 +36,25 @@ class User < ActiveRecord::Base
     UserMailer.deliver_password_reset_instructions(self)
   end
 
-  # has_role? simply needs to return true or false whether a user has a role or not.  
+  # has_role? simply needs to return true or false whether a user has a role or not.
   def has_role?(role_in_question)
     roles.any? { |role| role.name == role_in_question.to_s }
   end
-  
+
+  def self.guest!
+    User.create(:email => "foo@bar.com", :password => "secret", :password_confirmation => "secret")
+  end
+
+  def guest?
+    self.email.blank?
+  end
+
   private
   def password_required?
     return false if openid_identifier
     crypted_password.blank? || !password.blank?
   end
-   
+
   # fetch persona from openid.sreg parameters returned by openid server if supported
   # http://openid.net/specs/openid-simple-registration-extension-1_0.html
   def map_openid_registration(registration)
@@ -61,12 +69,12 @@ class User < ActiveRecord::Base
       send("#{key}=", value)
     end
   end
-   
+
   def set_login
     # for now force login to be same as email, eventually we will make this configurable, etc.
     self.login ||= self.email if self.email
-  end 
-  
+  end
+
   def add_user_role
     user_role = Role.find_by_name("user")
     self.roles << user_role if user_role and self.roles.empty?

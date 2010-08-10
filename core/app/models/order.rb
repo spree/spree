@@ -5,7 +5,7 @@ class Order < ActiveRecord::Base
     end
   end
 
-  before_create :generate_token
+  before_create :create_user
   before_save :update_line_items, :update_totals
   after_create :create_checkout, :create_shipment, :create_tax_charge
 
@@ -373,8 +373,8 @@ class Order < ActiveRecord::Base
     self.line_items -= to_wipe      # important: remove defunct items, avoid a reload
   end
 
-  def generate_token
-    self.token = Authlogic::Random.friendly_token
+  def create_user
+    self.user = User.new
   end
 
   def create_checkout
