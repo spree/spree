@@ -8,7 +8,7 @@ module Spree::Search
 
     # method should return hash with conditions {:conditions=> "..."} for Product model
     def get_products_conditions_for(query)
-      {:conditions => ["products.name LIKE ? OR products.description LIKE ?", "%#{query}%", "%#{query}%"]}
+      Product.like_any([:name, :description], query.split)
     end
 
     def prepare(params)
