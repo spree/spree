@@ -28,7 +28,7 @@ class Address < ActiveRecord::Base
   def state_name_validate
     country = country_id ? Country.find(country_id) : nil
     return if country.blank? || country.states.empty?
-    if state_name.blank? || country.states.name_or_abbr_equals(state_name).empty?
+    if state_name.blank? || country.states.where(["name = ? OR abbr = ?", state_name, state_name]).empty?
       errors.add(:state, :invalid)
     end
   end
