@@ -1,5 +1,5 @@
-<li> 
-  <%= f.hidden_field :zoneable_type, :value => "Country" %> 
+<li>
+  <%= f.hidden_field :zoneable_type, :value => "Country" %>
   <%= f.collection_select(:zoneable_id, @countries, :id, :name, :include_blank => true) %>
-  <%= remove_nested f %>   
+  <%= remove_nested f %>
 </li>

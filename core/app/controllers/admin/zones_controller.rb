@@ -21,10 +21,10 @@ class Admin::ZonesController < Admin::BaseController
   end
 
   def collection
+    params[:search] ||= {}
+    params[:search][:order] ||= "ascend_by_name"
     @search = end_of_association_chain.searchlogic(params[:search])
-    @search.order ||= "ascend_by_name"
-    @collection_count = @search.count
-    @collection = @search.paginate(:per_page => Spree::Config[:orders_per_page], :page => params[:page])
+    @collection = @search.do_search.paginate(:per_page => Spree::Config[:orders_per_page], :page => params[:page])
   end  
 
   def load_data

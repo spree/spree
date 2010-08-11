@@ -21,5 +21,6 @@ var update_remove_links = function() {
   $j('.remove').click(function() {
     $j(this).prevAll(':first').val(1);
     $j(this).parent().hide();
+    return false;
   });  
 };  

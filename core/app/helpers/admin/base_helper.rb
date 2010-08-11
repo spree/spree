@@ -76,7 +76,7 @@ module Admin::BaseHelper
     out = ''
     out << fields.hidden_field(:_destroy) unless fields.object.new_record?
     out << (link_to icon("delete"), "#", :class => "remove")
-    out
+    out.html_safe
   end
 
   def preference_field(form, field, options)
