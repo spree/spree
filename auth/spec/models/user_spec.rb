@@ -8,4 +8,10 @@ describe User do
       user.authentication_token.should_not be_nil
     end
   end
+  context "guest!" do
+    let(:user) { User.guest! }
+    it "should return a newly created user" do
+      user.new_record?.should be_false
+    end
+  end
 end

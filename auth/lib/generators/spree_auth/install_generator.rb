@@ -13,6 +13,10 @@ module SpreeAuth
         template "devise.rb", "config/initializers/devise.rb"
       end
 
+      def copy_migrations
+        directory "db"
+      end
+
       # def show_readme
       #   readme "README" if behavior == :invoke
       # end

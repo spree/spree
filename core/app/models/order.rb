@@ -332,6 +332,19 @@ class Order < ActiveRecord::Base
     Creditcard.scoped(:conditions => {:id => creditcard_ids})
   end
 
+  # Indicates whether a guest user is associated with the order
+  def guest?
+    user && user.guest?
+  end
+
+  # Associates the order with a registered user (replacing the previously associated guest user)
+  #
+  # throws an Exception if there is already a registered user associated with the order
+  def register!(user)
+    raise "Already registred" if user and not user.guest?
+    self.user = user and save!
+  end
+
   private
 
   def complete_order
@@ -374,7 +387,7 @@ class Order < ActiveRecord::Base
   end
 
   def create_user
-    self.user = User.new
+    self.user ||= User.guest!
   end
 
   def create_checkout
