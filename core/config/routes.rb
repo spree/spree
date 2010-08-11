@@ -16,14 +16,16 @@ Rails.application.routes.draw do
 
   resources :orders do
 
+    get :populate, :on => :collection
+
     resources :line_items
     resources :creditcards
     resources :creditcard_payments
 
-    member do
-      get :address_info
-      get :fatal_shipping
-    end
+    # member do
+    #   get :address_info
+    #   get :fatal_shipping
+    # end
 
     resources :shipments do
       member do

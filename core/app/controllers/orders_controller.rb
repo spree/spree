@@ -1,7 +1,8 @@
 class OrdersController < Spree::BaseController
-  prepend_before_filter :reject_unknown_object,  :only => [:show, :edit, :update, :checkout]
-  before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]
-  before_filter :set_user
+  # prepend_before_filter :reject_unknown_object,  :only => [:show, :edit, :update, :checkout]
+  # before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]
+  # before_filter :set_user
+  before_filter :load_object, :only => :populate
 
   ssl_required :show
 
@@ -9,7 +10,7 @@ class OrdersController < Spree::BaseController
 
   helper :products
 
-  create.before :create_before
+  #create.before :create_before
 
   # override the default r_c behavior (remove flash - redirect to edit details instead of show)
   create do
@@ -44,23 +45,13 @@ class OrdersController < Spree::BaseController
     wants.html { redirect_to(edit_object_url) }
   end
 
-  # def can_access?
-  #   return true unless order = load_object
-  #   session[:order_token] ||= params[:order_token]
-  #   order.grant_access?(session[:order_token])
-  # end
+  # Adds a new item to the order (creating a new order if none already exists)
+  def populate
+    unless @order
+      @order = Order.create
+      session[:order_id] = @order.id
+    end
 
-  private
-  def build_object
-    @object ||= find_order
-  end
-
-  def object
-    @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
-    return @object || find_order
-  end
-
-  def create_before
     params[:products].each do |product_id,variant_id|
       quantity = params[:quantity].to_i if !params[:quantity].is_a?(Array)
       quantity = params[:quantity][variant_id].to_i if params[:quantity].is_a?(Array)
@@ -72,9 +63,20 @@ class OrdersController < Spree::BaseController
       @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
     end if params[:variants]
 
-    # store order token in the session
-    session[:order_token] = @order.token
+    render :edit
   end
+
+  private
+  def object
+    @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
+    @object ||= Order.find_by_id(session[:order_id])
+  end
+
+  # def create_before
+  #
+  #   # store order token in the session
+  #   session[:order_token] = @order.token
+  # end
 
   def prevent_editing_complete_order
     load_object

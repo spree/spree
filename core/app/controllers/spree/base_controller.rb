@@ -5,7 +5,7 @@ class Spree::BaseController < ActionController::Base
   #RAILS 3 TODO
   #before_filter :touch_sti_subclasses
   before_filter :set_user_language
-  helper_method :current_user_session, :current_user, :title, :title=, :get_taxonomies, :current_gateway
+  helper_method :title, :title=, :get_taxonomies, :current_gateway
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
@@ -16,21 +16,6 @@ class Spree::BaseController < ActionController::Base
 
   def admin_created?
     User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
-  end
-
-  # retrieve the order_id from the session and then load from the database (or return a new order if no
-  # such id exists in the session)
-  def find_order
-    if !session[:order_id].blank?
-      @order = Order.find_or_create_by_id(session[:order_id])
-    elsif request.get?
-      @order = Order.new(:user => current_user)
-    else
-      @order = Order.create(:user => current_user)
-    end
-    session[:order_id]    = @order.id
-    session[:order_token] = @order.token
-    @order
   end
 
   def access_forbidden
@@ -66,24 +51,24 @@ class Spree::BaseController < ActionController::Base
     return nil
   end
 
-  def reject_unknown_object
-    # workaround to catch problems with loading errors for permalink ids (reconsider RC permalink hack elsewhere?)
-    begin
-      load_object
-    rescue Exception => e
-      @object = nil
-    end
-    the_object = instance_variable_get "@#{object_name}"
-    the_object = nil if (the_object.respond_to?(:deleted?) && the_object.deleted?)
-    unless params[:id].blank? || the_object
-      if self.respond_to? :object_missing
-        self.object_missing(params[:id])
-      else
-        render_404(Exception.new("missing object in #{self.class.to_s}"))
-      end
-    end
-    true
-  end
+  # def reject_unknown_object
+  #   # workaround to catch problems with loading errors for permalink ids (reconsider RC permalink hack elsewhere?)
+  #   begin
+  #     load_object
+  #   rescue Exception => e
+  #     @object = nil
+  #   end
+  #   the_object = instance_variable_get "@#{object_name}"
+  #   the_object = nil if (the_object.respond_to?(:deleted?) && the_object.deleted?)
+  #   unless params[:id].blank? || the_object
+  #     if self.respond_to? :object_missing
+  #       self.object_missing(params[:id])
+  #     else
+  #       render_404(Exception.new("missing object in #{self.class.to_s}"))
+  #     end
+  #   end
+  #   true
+  # end
 
   def render_404(exception)
     respond_to do |type|
