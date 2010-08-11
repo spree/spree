@@ -87,7 +87,6 @@ namespace :db do
   desc "Bootstrap is: migrating, loading defaults, sample data and seeding (for all extensions) invoking create_admin and load_products tasks"
   task :bootstrap  do
     require 'highline/import'
-    require 'authlogic'
 
     # remigrate unless production mode (as saftey check)
     if %w[demo development test].include? Rails.env

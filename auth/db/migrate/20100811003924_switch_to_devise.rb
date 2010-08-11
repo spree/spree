@@ -21,11 +21,11 @@ class SwitchToDevise < ActiveRecord::Migration
     drop_table :open_id_authentication_associations
     drop_table :open_id_authentication_nonces
 
-    add_index :devise_users, :email,                :unique => true
-    add_index :devise_users, :reset_password_token, :unique => true
+    add_index :users, :email,                :unique => true
+    add_index :users, :reset_password_token, :unique => true
   end
 
   def self.down
-    drop_table :devise_users
+    # no going back!
   end
 end
