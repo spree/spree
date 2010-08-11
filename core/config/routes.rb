@@ -16,7 +16,7 @@ Rails.application.routes.draw do
 
   resources :orders do
 
-    get :populate, :on => :collection
+    post :populate, :on => :collection
 
     resources :line_items
     resources :creditcards
