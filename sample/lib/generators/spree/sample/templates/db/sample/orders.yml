@@ -6,7 +6,6 @@ order_date = Time.now
   charges_total = "#{1 + rand(30)}.#{rand(100)}".to_f
 %>
 order_<%= i %>:
-  user: user_<%= rand(500) + 1%>
   number: <%= "R#{Array.new(9){rand(9)}.join}" %>
   state: in_progress
   item_total: <%= item_total %>
