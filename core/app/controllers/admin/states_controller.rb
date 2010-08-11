@@ -10,6 +10,10 @@ class Admin::StatesController < Admin::BaseController
       render :partial => 'state_list.html.erb'
     end
   end
+
+  new_action.response do |wants|
+    wants.html {render :layout => !request.xhr?}
+  end
   
   create.wants.html { redirect_to admin_country_states_url(@country) } 
   update.wants.html { redirect_to admin_country_states_url(@country) } 

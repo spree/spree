@@ -1,7 +1,5 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1><%= t("new_state")%></h1>
-
 <%= render 'shared/error_messages', :target => @state %>
 
 <%= form_for(:state, :url => collection_url) do |f| %>

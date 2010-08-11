@@ -22,7 +22,7 @@
     <% end %>
   </tbody>
 </table>
-
+<div id="new_state"></div>
 <p>
-  <%= button_link_to t("new_state"), new_admin_country_state_url(@country), :icon => 'add' %>
+  <%= button_link_to t("new_state"), new_admin_country_state_url(@country), {:remote => true, :icon => 'add'} %>
 </p>

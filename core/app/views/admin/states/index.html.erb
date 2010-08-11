@@ -4,19 +4,10 @@
 
 <p>
   <label for="country"><%= t('country') %></label>
-  <select id="country">
+  <select id="country" class='observe_field' data-base-url="<%=admin_states_path(:format => :js)%>?country_id=" data-update="#state-list">
   <%= options_from_collection_for_select(@countries, :id, :name, @country.id) %>
   </select>
 </p>
-
-<%= observe_field :country,
-                  :update => 'state-list',
-                  :url => admin_states_path,
-                  :before => "jQuery('#state-list').hide(); jQuery('#busy_indicator').show()", 
-                  :complete => "jQuery('#busy_indicator').hide(); jQuery('#state-list').show()",
-                  :method => :get,
-                  :with => "'country_id='+encodeURIComponent(value)",
-                  :update => 'state-list' %>                  
 
 <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 

@@ -208,3 +208,16 @@ jQuery('a.remove_fields').live('click', function() {
   return false;
 });
 
+jQuery(".observe_field").live('change', function() {
+  target = $(this).attr("data-update");
+  ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
+  $(target).hide(); 
+  $(ajax_indicator).show();
+  $.get($(this).attr("data-base-url")+encodeURIComponent($(this).val()), 
+    function(data) {
+      $(target).html(data);
+      $(ajax_indicator).hide(); 
+      $(target).show();
+    }
+  );
+});
