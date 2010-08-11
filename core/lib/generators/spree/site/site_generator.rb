@@ -37,6 +37,10 @@ module Spree
         application "require 'spree_site'"
       end
 
+      def install_spree_auth
+        generate 'spree_auth:install'
+      end
+
       def sync_spree_files
         rake 'spree:sync'
       end

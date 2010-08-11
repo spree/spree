@@ -1,5 +1,9 @@
 class User < ActiveRecord::Base
 
+  has_many :orders
+  belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
+  belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable and :timeoutable
   devise :database_authenticatable, :registerable, :token_authenticatable,
@@ -7,13 +11,6 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me
-
-  has_many :orders
-  has_and_belongs_to_many :roles
-
-  belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
-  belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
-
   after_save :ensure_authentication_token!
 
   # has_role? simply needs to return true or false whether a user has a role or not.
