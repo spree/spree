@@ -5,7 +5,6 @@ describe Ability do
 
   let(:user) { User.new }
   let(:ability) { Ability.new(user) }
-  let(:token) { "" }
 
   shared_examples_for "access granted" do
     it "should allow read" do

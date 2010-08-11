@@ -2,24 +2,7 @@ Rails.application.routes.draw do
 
   root :to => 'products#index'
 
-  match 'login' => 'user_sessions#new'
-  match 'logout' => 'user_sessions#destroy'
-  match 'signup' => 'users#new'
-
   resources :products
-
-  #   # Loads all extension routes in the order they are specified.
-  #TODO   map.load_extension_routes
-
-  resource :user_session do
-    member do
-      get :nav_bar
-    end
-  end
-
-  match '/account' => 'users#show'
-
-  resources :password_resets
 
   match '/locale/set' => 'locale#set'
 
@@ -30,8 +13,6 @@ Rails.application.routes.draw do
   end
 
   resources :states, :only => :index
-
-  resources :users
 
   resources :orders do
 
@@ -84,7 +65,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :zones
-    resources :users
+    #resources :users
     resources :countries do
       resources :states
     end

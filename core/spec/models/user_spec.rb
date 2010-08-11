@@ -15,8 +15,4 @@ describe User do
     user = User.new
     user.guest?.should be_true
   end
-  it "can be created without email or passwords" do
-    user = User.new
-    user.valid?.should be_true
-  end
 end

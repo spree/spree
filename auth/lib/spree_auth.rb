@@ -1,4 +1,5 @@
 require 'spree_core'
+require 'devise'
 require 'cancan'
 
 module SpreeAuth
