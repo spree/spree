@@ -24,7 +24,8 @@ module Spree
         source_files  = [source]
         source        = File.dirname source
       else
-        raise "Could not mirror #{source} - entity does not exist"
+        puts "Could not mirror #{source} - entity does not exist"
+        return
       end
 
       unless source_files.empty?
