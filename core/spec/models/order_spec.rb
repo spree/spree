@@ -12,7 +12,7 @@ describe Order do
     end
     it "should not remove the registered user" do
       order = Order.new
-      reg_user = User.create(:email => "spree@example.com", :password => 'changeme2', :password_confirmation => 'changeme2')
+      reg_user = mock_model(User)#User.create(:email => "spree@example.com", :password => 'changeme2', :password_confirmation => 'changeme2')
       order.user = reg_user
       order.save
       order.user.should == reg_user

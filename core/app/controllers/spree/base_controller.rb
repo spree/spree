@@ -11,9 +11,6 @@ class Spree::BaseController < ActionController::Base
 
   include SslRequirement
 
-  # graceful error handling for cancan authorization exceptions
-  rescue_from CanCan::AccessDenied, :with => :access_denied
-
   def admin_created?
     User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
   end
@@ -78,45 +75,18 @@ class Spree::BaseController < ActionController::Base
   end
 
   private
-  def store_location
-    # disallow return to login, logout, signup pages
-    disallowed_urls = [signup_url, login_url, logout_url]
-    disallowed_urls.map!{|url| url[/\/\w+$/]}
-    unless disallowed_urls.include?(request.fullpath)
-      session[:return_to] = request.fullpath
-    end
-  end
+  # def store_location
+  #   # disallow return to login, logout, signup pages
+  #   disallowed_urls = [signup_url, login_url, logout_url]
+  #   disallowed_urls.map!{|url| url[/\/\w+$/]}
+  #   unless disallowed_urls.include?(request.fullpath)
+  #     session[:return_to] = request.fullpath
+  #   end
+  # end
 
   def redirect_back_or_default(default)
     redirect_to(session[:return_to] || default)
     session[:return_to] = nil
-  end
-
-  # Redirect as appropriate when an access request fails.
-  #
-  # The default action is to redirect to the login screen.
-  #
-  # Override this method in your controllers if you want to have special
-  # behavior in case the user is not authorized
-  # to access the requested action.  For example, a popup window might
-  # simply close itself.
-  def access_denied
-    respond_to do |format|
-      format.html do
-        if current_user
-          flash[:error] = t("authorization_failure")
-          redirect_to '/user_sessions/authorization_failure'
-          next
-        else
-          store_location
-          redirect_to login_path
-          next
-        end
-      end
-      format.xml do
-        request_http_basic_authentication 'Web Password'
-      end
-    end
   end
 
   def instantiate_controller_and_action_names
