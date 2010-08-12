@@ -7,12 +7,12 @@ class Payment < ActiveRecord::Base
   alias :txns :transactions
 
   after_save :create_payment_profile, :if => :payment_profiles_supported?
-  after_save :check_payments, :if => :order_payment?
-  after_destroy :check_payments, :if => :order_payment?
+  after_save :check_payments
+  after_destroy :check_payments
 
   accepts_nested_attributes_for :source
 
-  validate :amount_is_valid_for_outstanding_balance_or_credit, :if => :order_payment?
+  validate :amount_is_valid_for_outstanding_balance_or_credit
   validates :payment_method, :presence => true, :if => Proc.new { |payable| payable.is_a? Checkout }
 
   scope :from_creditcard, where(:source_type,'Creditcard')
@@ -29,7 +29,7 @@ class Payment < ActiveRecord::Base
 
     # When processing during checkout fails
     event :fail do
-      transition :from 'processing', :to => 'failed'
+      transition :from => 'processing', :to => 'failed'
     end
 
     event :authorized do
@@ -114,10 +114,6 @@ class Payment < ActiveRecord::Base
           errors.add(:amount, "Is greater than the outstanding balance (#{order.outstanding_balance})")
         end
       end
-    end
-
-    def order_payment?
-      payable_type == "Order"
     end
 
     def payment_profiles_supported?
