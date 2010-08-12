@@ -60,7 +60,7 @@ class ReturnAuthorization < ActiveRecord::Base
   end
 
   def add_credit
-    credit = ReturnAuthorizationCredit.create(:adjustment_source => self, :order_id => self.order.id, :amount => self.amount, :description => "RMA Credit")
+    credit = ReturnAuthorizationCredit.create(:adjustment_source => self, :order_id => self.order.id, :amount => self.amount, :description => I18n.t("rma_credit"))
     self.order.update_totals!
   end
 

@@ -15,7 +15,7 @@
       <td class="val-col" colspan="3"><%= @checkout.email %></td>
       <td class="lbl-col"><label><%= t('guest_checkout') %>:</label></td>
       <td class="val-col" colspan="3">
-        <%= @checkout.order.user.nil? ? "Yes" : "No" %>
+        <%= @checkout.order.user.nil? ? t('yes') : t('no') %>
       </td>
     </tr>
   </tbody>

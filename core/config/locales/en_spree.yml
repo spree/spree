@@ -760,6 +760,7 @@ en:
   returned: Returned
   rma_number: RMA Number
   rma_value: RMA Value
+  rma_credit: RMA Credit
   roles: Roles
   sales_tax: "Sales Tax"
   sales_total: "Sales Total"

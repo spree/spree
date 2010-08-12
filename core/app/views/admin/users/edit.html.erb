@@ -8,9 +8,7 @@
     <%= render :partial => "form", :locals => { :f => f } %>
 
     <%= hook :admin_user_edit_form_buttons do %>
-      <p class="form-buttons">
-        <%= button t("update") %> <%= link_to t('cancel'), collection_url %>
-      </p>
+      <%= render :partial => "admin/shared/edit_resource_links" %>
     <% end %>
   <% end %>
 <% end %>

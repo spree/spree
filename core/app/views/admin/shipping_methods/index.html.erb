@@ -33,7 +33,7 @@
           <td><%= shipping_method.name %></td>
           <td><%= shipping_method.zone.name %></td>
           <td><%= shipping_method.calculator.description %></td>
-          <td><%= shipping_method.display_on.blank? ? "Both" : t(shipping_method.display_on) %></td>
+          <td><%= shipping_method.display_on.blank? ? t('both') : t(shipping_method.display_on) %></td>
         <% end %>
         <td width="140px">
           <%= hook :admin_shipping_methods_index_row_actions, locals do %>
