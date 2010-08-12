@@ -37,7 +37,7 @@ class Payment < ActiveRecord::Base
     end
 
     event :finalize do
-      transition :from => ['processing', 'authorized'], :to => 'finalized', :if => :can_finalize?
+      transition :from => ['processing', 'authorized'], :to => 'finalized'
     end
 
     before_transition :to => 'finalized', :do => :finalize_source
@@ -58,22 +58,18 @@ class Payment < ActiveRecord::Base
   def process!
     if !processing? and source and source.respond_to?(:process!)
       started_processing!
-      source.process!(self) 
+      source.process!(self) # source is responsible for updating the payment state when it's done processing
     end
   end
 
   def can_finalize?
-    !finalized?
+    processing? or authorized?
   end
 
   def finalize_source
     source.finalize!(self) if source and source.respond_to?(:finalize!)
     save!
     payable.save!
-  end
-
-  def finalized?
-    payable.is_a?(Order)
   end
 
   def actions
