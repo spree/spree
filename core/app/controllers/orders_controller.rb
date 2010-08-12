@@ -13,37 +13,37 @@ class OrdersController < Spree::BaseController
   #create.before :create_before
 
   # override the default r_c behavior (remove flash - redirect to edit details instead of show)
-  create do
-    flash nil
-    success.wants.html {redirect_to edit_order_url(@order)}
-    failure.wants.html { render :template => "orders/edit" }
-  end
-
-  update.before do
-    # Temporary workaround for problem in Rails 2.3.8 where updating with nested attributes doesn't work if the collection isn't loaded
-    object.line_items(true)
-  end
-
-  # override the default r_c flash behavior
-  update do
-    flash nil
-    success.wants.html { redirect_to edit_order_url(object) }
-    failure.wants.html { render :template => "orders/edit" }
-  end
+  # create do
+  #   flash nil
+  #   success.wants.html {redirect_to edit_order_url(@order)}
+  #   failure.wants.html { render :template => "orders/edit" }
+  # end
+  #
+  # update.before do
+  #   # Temporary workaround for problem in Rails 2.3.8 where updating with nested attributes doesn't work if the collection isn't loaded
+  #   object.line_items(true)
+  # end
+  #
+  # # override the default r_c flash behavior
+  # update do
+  #   flash nil
+  #   success.wants.html { redirect_to edit_order_url(object) }
+  #   failure.wants.html { render :template => "orders/edit" }
+  # end
 
   #override r_c default b/c we don't want to actually destroy, we just want to clear line items
-  def destroy
-    flash.notice = I18n.t(:basket_successfully_cleared)
-    @order.line_items.clear
-    @order.update_totals!
-    after :destroy
-    set_flash :destroy
-    response_for :destroy
-  end
-
-  destroy.response do |wants|
-    wants.html { redirect_to(edit_object_url) }
-  end
+  # def destroy
+  #   flash.notice = I18n.t(:basket_successfully_cleared)
+  #   @order.line_items.clear
+  #   @order.update_totals!
+  #   after :destroy
+  #   set_flash :destroy
+  #   response_for :destroy
+  # end
+  #
+  # destroy.response do |wants|
+  #   wants.html { redirect_to(edit_object_url) }
+  # end
 
   # Adds a new item to the order (creating a new order if none already exists)
   #

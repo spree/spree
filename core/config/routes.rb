@@ -14,6 +14,10 @@ Rails.application.routes.draw do
 
   resources :states, :only => :index
 
+  match '/checkout/update/:state' => 'checkout#update', :as => :update_checkout
+  match '/checkout/:state' => 'checkout#edit', :as => :checkout_state
+  match '/checkout' => 'checkout#start', :as => :checkout
+
   resources :orders do
 
     post :populate, :on => :collection
@@ -22,24 +26,12 @@ Rails.application.routes.draw do
     resources :creditcards
     resources :creditcard_payments
 
-    # member do
-    #   get :address_info
-    #   get :fatal_shipping
-    # end
-
     resources :shipments do
       member do
         get :shipping_method
       end
     end
 
-    resource :checkout do
-      member do
-        get  :register
-        put  :register
-        post :register
-      end
-    end
   end
 
   resources :shipments do

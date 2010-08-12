@@ -1,3 +1,3 @@
-module OrdersHelper  
+module OrdersHelper
 
 end

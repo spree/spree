@@ -36,11 +36,27 @@ describe Order do
     #TODO think about expected behavior for guest credit cards when changing to registered user, etc.
   end
 
+  context "#next!" do
+    it "should complete order when state is complete" do
+      order.state = "confirm"
+      order.next!
+      order.complete?.should be_true
+    end
+  end
+
   it "should indicate whether its user is a guest" do
     order.user = mock_model(User, :guest? => true)
     order.should be_guest
     order.user = mock_model(User, :guest? => false)
     order.should_not be_guest
+  end
+
+  it "should indicate if order is complete" do
+    order.completed_at = nil
+    order.complete?.should be_false
+
+    order.completed_at = Time.now
+    order.complete?.should be_true
   end
 
 end

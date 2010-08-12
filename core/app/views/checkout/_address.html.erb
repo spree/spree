@@ -3,7 +3,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
 .hidden { display: none; }
 </style>
 <fieldset id='billing'>
-  <%= checkout_form.fields_for :bill_address do |bill_form| %>
+  <%= form.fields_for :bill_address do |bill_form| %>
     <legend><%= t("billing_address")%></legend>
     <div class="inner">
       <p class="field">&nbsp;</p>
@@ -30,13 +30,13 @@ div.inner input[type=text], div.inner select { width: 80%; }
       <% if Spree::Config[:address_requires_state] %>
         <p class="field">
           <span id="bstate">
-            <% have_states = !@checkout.bill_address.country.states.empty? %>
+            <% have_states = !@order.bill_address.country.states.empty? %>
             <%= bill_form.label :state, t(:state) %>
             <noscript>
               <%= bill_form.text_field :state_name, :class => 'required' %>
             </noscript>
             <% state_elements = [
-               bill_form.collection_select(:state_id, @bill_states,
+               bill_form.collection_select(:state_id, @order.bill_address.country.states,
                                   :id, :name,
                                   {:include_blank => true},
                                   {:class => have_states ? "required" : "hidden",
@@ -61,7 +61,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
       </p>
       <p id="bcountry" class="field">
         <%= bill_form.label :country_id, t(:country) %>
-        <span id="bcountry"><%= bill_form.collection_select :country_id, @countries, :id, :name, {}, {:class => 'required'} %></span>
+        <span id="bcountry"><%= bill_form.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required'} %></span>
       </p>
       <p id="bphone" class="field">
         <%= bill_form.label :phone, t(:phone) %>
@@ -77,11 +77,11 @@ div.inner input[type=text], div.inner select { width: 80%; }
   <% end %>
 </fieldset>
 <fieldset id='shipping'>
-  <%= checkout_form.fields_for :ship_address do |ship_form| %>
+  <%= form.fields_for :ship_address do |ship_form| %>
     <legend><%= t("shipping_address")%></legend>
     <p class="field checkbox">
       <label for="checkout_same_address" id="use_billing">
-        <%= check_box_tag 'checkout[use_billing]', '1', (!(@checkout.bill_address.empty? && @checkout.ship_address.empty?) && @checkout.bill_address.eql?(@checkout.ship_address)) %> <%= t("use_billing_address") %>
+        <%= check_box_tag 'checkout[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address)) %> <%= t("use_billing_address") %>
       </label>
     </p>
     <div class="inner">
@@ -108,13 +108,13 @@ div.inner input[type=text], div.inner select { width: 80%; }
       <% if Spree::Config[:address_requires_state] %>
         <p class="field">
           <span id="sstate">
-            <% have_states = !@checkout.ship_address.country.states.empty? %>
+            <% have_states = !@order.ship_address.country.states.empty? %>
             <%= ship_form.label :state, t(:state) %>
             <noscript>
               <%= ship_form.text_field :state_name, :class => 'required' %>
             </noscript>
             <% state_elements = [
-                  ship_form.collection_select(:state_id, @ship_states,
+                  ship_form.collection_select(:state_id, @order.bill_address.country.states,
                                     :id, :name,
                                     {:include_blank => true},
                                     {:class => have_states ? "required" : "hidden",
@@ -139,7 +139,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
       </p>
       <p id="scountry" class="field">
         <%= ship_form.label :country_id, t(:country) %>
-        <span id="scountry"><%= ship_form.collection_select :country_id, @countries, :id, :name, {}, {:class => 'required'} %></span>
+        <span id="scountry"><%= ship_form.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required'} %></span>
       </p>
       <p id="sphone" class="field">
         <%= ship_form.label :phone, t(:phone) %>
