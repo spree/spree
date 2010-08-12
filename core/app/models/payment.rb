@@ -1,5 +1,5 @@
 class Payment < ActiveRecord::Base
-  belongs_to :payable, :polymorphic => true
+  belongs_to :order
   belongs_to :source, :polymorphic => true
   belongs_to :payment_method
 
@@ -17,9 +17,36 @@ class Payment < ActiveRecord::Base
 
   scope :from_creditcard, where(:source_type,'Creditcard')
 
-  def order
-    payable.is_a?(Order) ? payable : payable.order
+
+
+  # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
+  state_machine :initial => 'new' do
+
+    # With card payments, happens before purchase or authorization happens
+    event :started_processing do
+      transition :from => 'new', :to => 'processing'
+    end
+
+    # When processing during checkout fails
+    event :fail do
+      transition :from 'processing', :to => 'failed'
+    end
+
+    event :authorized do
+      transition :from => 'processing', :to => 'authorized' 
+    end
+
+    event :finalize do
+      transition :from => ['processing', 'authorized'], :to => 'finalized', :if => :can_finalize?
+    end
+
+    before_transition :to => 'finalized', :do => :finalize_source
+
   end
+
+
+
+
 
   # With nested attributes, Rails calls build_[association_name] for the nested model which won't work for a polymorphic association
   def build_source(params)
@@ -29,17 +56,18 @@ class Payment < ActiveRecord::Base
   end
 
   def process!
-    source.process!(self) if source and source.respond_to?(:process!)
+    if !processing? and source and source.respond_to?(:process!)
+      started_processing!
+      source.process!(self) 
+    end
   end
 
   def can_finalize?
     !finalized?
   end
 
-  def finalize!
-    return unless can_finalize?
+  def finalize_source
     source.finalize!(self) if source and source.respond_to?(:finalize!)
-    self.payable = payable.order
     save!
     payable.save!
   end

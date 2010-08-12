@@ -19,7 +19,9 @@ module SpreePaymentGateway
         :txn_type => CreditcardTxn::TxnType::AUTHORIZE,
         :avs_response => response.avs_result['code']
       )
+      payment.authorize!
     rescue ActiveMerchant::ConnectionError => e
+      payment.fail!
       gateway_error I18n.t(:unable_to_connect_to_gateway)
     end
 
@@ -62,6 +64,7 @@ module SpreePaymentGateway
         :avs_response => response.avs_result['code']
       )
     rescue ActiveMerchant::ConnectionError => e
+      payment.fail!
       gateway_error t(:unable_to_connect_to_gateway)
     end
 

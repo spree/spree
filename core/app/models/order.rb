@@ -15,7 +15,7 @@ class Order < ActiveRecord::Base
   has_many :state_events, :as => :stateful
   has_many :line_items, :extend => Totaling, :dependent => :destroy
   has_many :inventory_units
-  has_many :payments, :as => :payable, :extend => Totaling
+  has_many :payments, :extend => Totaling
   has_many :shipments, :dependent => :destroy
   has_many :return_authorizations, :dependent => :destroy
 
