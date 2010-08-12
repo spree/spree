@@ -1,10 +1,10 @@
-# Allow the metal piece to run in isolation
-require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Rails)
-
 # Make redirects for SEO needs
 class SeoAssist
+  def initialize(app)
+    @app = app
+  end
 
-  def self.call(env)
+  def call(env)
     request = Rack::Request.new(env)
     params = request.params
     taxon_id = params['taxon']
@@ -20,12 +20,12 @@ class SeoAssist
       new_location += '?' + query unless query.blank?
       return [301, { 'Location'=> new_location }, []]
     end
-    [404, {"Content-Type" => "text/html"}, "Not Found"]
+    @app.call(env)
   end
 
   private
 
-  def self.build_query(params)
+  def build_query(params)
     params.map { |k, v|
       if v.class == Array
         build_query(v.map { |x| ["#{k}[]", x] })

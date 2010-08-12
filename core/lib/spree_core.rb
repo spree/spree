@@ -59,7 +59,7 @@ end
 
 module SpreeCore
   class Engine < Rails::Engine
-    config.autoload_paths += %W(#{config.root}/lib)
+    config.autoload_paths += %W(#{config.root}/lib #{config.root}/app/metals)
 
     def self.activate
       Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
