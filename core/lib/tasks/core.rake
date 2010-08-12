@@ -1,30 +1,6 @@
 require 'active_record'
 require 'custom_fixtures'
 
-namespace :spree do
-  desc "Synchronize public assets, migrations, seed and sample data from the Spree gems"
-  task :sync do
-    public_dir = File.join(File.dirname(__FILE__), '..', '..', 'public')
-    migration_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'migrate')
-    default_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'default')
-    sample_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample')
-
-    # create destination directories in case they are not present (as in the case of new rails app)
-    FileUtils.mkdir_p(File.join(Rails.root, 'db', 'migrate'))
-    FileUtils.mkdir_p(File.join(Rails.root, 'db', 'default'))
-    FileUtils.mkdir_p(File.join(Rails.root, 'db', 'sample'))
-
-    puts "Mirror: #{public_dir}"
-    Spree::FileUtilz.mirror_with_backup(public_dir, File.join(Rails.root, 'public'))
-    puts "Mirror: #{migration_dir}"
-    Spree::FileUtilz.mirror_with_backup(migration_dir, File.join(Rails.root, 'db', 'migrate'))
-    puts "Mirror: #{default_dir}"
-    Spree::FileUtilz.mirror_with_backup(default_dir, File.join(Rails.root, 'db', 'default'))
-    puts "Mirror: #{sample_dir}"
-    Spree::FileUtilz.mirror_with_backup(sample_dir, File.join(Rails.root, 'db', 'sample'))
-  end
-end
-
 namespace :db do
   desc "Loads a specified fixture using rake db:load_file[filename.rb]"
   task :load_file , [:file] => :environment do |t , args|

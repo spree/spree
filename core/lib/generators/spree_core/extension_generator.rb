@@ -1,10 +1,7 @@
-require 'generators/spree_core'
-require 'rails/generators/named_base'
-
-module Spree
+module SpreeCore
   module Generators
     class ExtensionGenerator < Rails::Generators::NamedBase
-      extend Spree::Generators::TemplatePath
+      source_root File.expand_path("../../templates", __FILE__)
 
       desc "Creates a new extension with the name you specify."
       check_class_collision

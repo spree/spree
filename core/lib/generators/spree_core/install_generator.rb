@@ -1,10 +1,7 @@
-require 'generators/spree_core'
-require 'rails/generators/named_base'
-
-module Spree
+module SpreeCore
   module Generators
-    class SiteGenerator < Rails::Generators::Base
-      extend Spree::Generators::TemplatePath
+    class InstallGenerator < Rails::Generators::Base
+      source_root File.expand_path("../../templates", __FILE__)
 
       desc "Configures an existing Rails application to use Spree."
 
@@ -37,13 +34,15 @@ module Spree
         application "require 'spree_site'"
       end
 
-      def install_spree_auth
-        generate 'spree_auth:install'
+      def copy_migrations
+        directory "db"
+        create_file ".rspec", "--colour"
       end
 
-      def sync_spree_files
-        rake 'spree:sync'
+      def copy_public
+        directory "public"
       end
+
     end
   end
 end
