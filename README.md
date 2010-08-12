@@ -52,9 +52,16 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
 4. Generate the necessary Spree files
 
+NOTE: We'll soon have a single convenience generator for running each of these
+
         rails g spree_core:install
+        rails g spree_api:install
         rails g spree_auth:install
+        rails g spree_dashboard:install
+        rails g spree_payment_gateway:install
+        rails g spree_promotions:install
         rails g spree_sample:install
+
 
 5. Bootstrap the database (run the migrations, create admin account, optionally load sample data.)
 

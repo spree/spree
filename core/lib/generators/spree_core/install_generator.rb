@@ -25,6 +25,7 @@ module SpreeCore
         ROBOTS
 
         append_file "db/seeds.rb", <<-SEEDS
+        \n
         Rake::Task["db:load_dir"].invoke( "default" )
         puts "Default data has been loaded"
         SEEDS
