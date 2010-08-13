@@ -15,7 +15,9 @@ class Payment < ActiveRecord::Base
   validate :amount_is_valid_for_outstanding_balance_or_credit
   validates :payment_method, :presence => true, :if => Proc.new { |payable| payable.is_a? Checkout }
 
-  scope :from_creditcard, where(:source_type,'Creditcard')
+  scope :from_creditcard, where(:source_type => 'Creditcard')
+  scope :with_state, lambda {|s| where(:state => s)}
+  scope :finalized, with_state('finalized')
 
 
 
@@ -80,7 +82,7 @@ class Payment < ActiveRecord::Base
   private
 
     def check_payments
-      return unless order.checkout_complete
+      return unless order and order.complete?
       #sorting by created_at.to_f to ensure millisecond percsision, plus ID - just in case
       events = order.state_events.sort_by { |e| [e.created_at.to_f, e.id] }.reverse
 
@@ -101,6 +103,7 @@ class Payment < ActiveRecord::Base
     end
 
     def amount_is_valid_for_outstanding_balance_or_credit
+      return unless order
       if amount < 0
         if amount.abs > order.outstanding_credit
           errors.add(:amount, "Is greater than the credit owed (#{order.outstanding_credit})")
