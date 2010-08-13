@@ -60,7 +60,7 @@ class Order < ActiveRecord::Base
   # end
 
   def complete?
-    completed_at
+    !! completed_at
   end
 
   def item_count
