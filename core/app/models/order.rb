@@ -315,6 +315,35 @@ class Order < ActiveRecord::Base
   #   self
   # end
 
+  def calculate_totals
+    update_adjustments
+    self.payment_total = payments..total
+    self.item_total = line_items.total
+    self.adjustment_total = adjustments..total
+    self.total = item_total + adjustment_total
+    # self.outstanding_balance = total - payment_total
+  end
+
+  def update_adjustments
+    destroy_inapplicable_adjustments
+    adjustments.each(&:update_amount)
+  end
+
+
+  def destroy_inapplicable_adjustments
+    applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
+    self.adjustments = applicable_adjustments
+    adjustments_to_destroy.each(&:destroy)
+  end
+
+  def update_totals!
+    calculate_totals
+    # then commit to db without callbacks etc.
+  end
+
+
+
+
   def name
     address = bill_address || ship_address
     "#{address.firstname} #{address.lastname}" if address

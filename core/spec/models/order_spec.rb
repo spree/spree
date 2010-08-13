@@ -54,19 +54,55 @@ describe Order do
     end
   end
 
-  it "should indicate whether its user is a guest" do
-    order.user = mock_model(User, :guest? => true)
-    order.should be_guest
-    order.user = mock_model(User, :guest? => false)
-    order.should_not be_guest
+  context "#guest?" do
+    it "should indicate whether its user is a guest" do
+      order.user = mock_model(User, :guest? => true)
+      order.should be_guest
+      order.user = mock_model(User, :guest? => false)
+      order.should_not be_guest
+    end
   end
 
-  it "should indicate if order is complete" do
-    order.completed_at = nil
-    order.complete?.should be_false
+  context "#complete?" do
+    it "should indicate if order is complete" do
+      order.completed_at = nil
+      order.complete?.should be_false
 
-    order.completed_at = Time.now
-    order.complete?.should be_true
+      order.completed_at = Time.now
+      order.complete?.should be_true
+    end
+  end
+
+
+
+
+
+  context "Totaling" do
+
+    context "#calculate_totals" do
+      it "should call update_adjustments"
+      it "should set item_total to the sum of line_item amounts"
+      it "should set payments_total to the sum of payment amounts"
+      it "should set adjustment_total to the sum of adjustment amounts"
+      it "should set the total to the sum of item and adjustment totals"
+      it "should set outstanding_balance to the difference between the total and payment_total"
+    end
+
+    context "#update_adjustments" do
+      it "should destroy inapplicatable adjustments"
+      it "should force the adjustments to recalculate their amounts"
+    end
+
+    context "#update_totals" do
+      it "should update the relevant database columns sucessfully"
+      it "should not save associated objects"
+    end
+
+    context "#destroy_inapplicable_adjustments" do
+      it "should destroy adjustments for which applicable? is false"
+      it "should remove the destroyed adjustments from the association collection"
+    end
+
   end
 
 end
