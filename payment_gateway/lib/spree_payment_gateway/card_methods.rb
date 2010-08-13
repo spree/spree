@@ -82,7 +82,6 @@ module SpreePaymentGateway
         :txn_type => CreditcardTxn::TxnType::VOID
       )
       payment.update_attribute(:amount, 0.00)
-      payment.order.update_totals!
       payment.finalize!
     end
 
@@ -106,7 +105,6 @@ module SpreePaymentGateway
         :txn_type => CreditcardTxn::TxnType::CREDIT
       )
       payment.update_attribute(:amount, payment.amount - amount)
-      payment.order.update_totals!
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)
     end

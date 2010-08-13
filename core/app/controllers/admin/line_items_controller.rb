@@ -43,26 +43,27 @@ class Admin::LineItemsController < Admin::BaseController
   update.success.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false}
   update.failure.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false}
 
-  destroy.after :recalulate_totals
-  update.after :recalulate_totals
-  create.after :recalulate_totals
+  # destroy.after :recalulate_totals
+  # update.after :recalulate_totals
+  # create.after :recalulate_totals
 
   private
-  def recalulate_totals
-    unless @order.shipping_method.nil?
-      @order.shipping_charges.each do |shipping_charge|
-        shipping_charge.update_attributes(:amount => @order.shipping_method.calculate_cost(@order.shipment))
-      end
-    end
+  # TODO: Order model should look after this
+  # def recalulate_totals
+  #   unless @order.shipping_method.nil?
+  #     @order.shipping_charges.each do |shipping_charge|
+  #       shipping_charge.update_attributes(:amount => @order.shipping_method.calculate_cost(@order.shipment))
+  #     end
+  #   end
 
-    @order.tax_charges.each do |tax_charge|
-      tax_charge.update_attributes(:amount => tax_charge.calculate_tax_charge)
-    end
+  #   @order.tax_charges.each do |tax_charge|
+  #     tax_charge.update_attributes(:amount => tax_charge.calculate_tax_charge)
+  #   end
 
-    @order.update_totals!
+  #   @order.update_totals!
 
-    unless @order.in_progress?
-      InventoryUnit.adjust_units(@order)
-    end
-  end
+  #   unless @order.in_progress?
+  #     InventoryUnit.adjust_units(@order)
+  #   end
+  # end
 end

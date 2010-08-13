@@ -86,9 +86,7 @@ class Shipment < ActiveRecord::Base
 
   def recalculate_order
     shipping_charge.update_attribute(:description, description_for_shipping_charge)
-    order.update_adjustments
     order.update_totals!
-    order.save
   end
 
   private
