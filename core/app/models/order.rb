@@ -314,12 +314,19 @@ class Order < ActiveRecord::Base
   #   update_totals(:force_adjustment_update)
   #   self
   # end
+  #
+  
+
+  # TODO: Not sure on method vs db column for this
+  def outstanding_balance
+    total - payment_total
+  end
 
   def calculate_totals
-    update_adjustments
-    self.payment_total = payments..total
+    # update_adjustments
+    self.payment_total = payments.total
     self.item_total = line_items.total
-    self.adjustment_total = adjustments..total
+    self.adjustment_total = adjustments.total
     self.total = item_total + adjustment_total
     # self.outstanding_balance = total - payment_total
   end

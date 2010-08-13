@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+
 describe Order do
 
   let(:order) { Order.new }
@@ -78,14 +79,35 @@ describe Order do
 
 
   context "Totaling" do
+    before(:all) do
+      order.save
+      # add line items
+      3.times { Fabricate(:line_item, :price => 100, :order => order) }
+      # payments
+      payment = order.payments.build(:amount => 300)
+      payment.order.stub!(:outstanding_balance).and_return(300) # so payment will validate
+      payment.save!
+      # and adjustments
+      order.tax_charges.create!(:description => 'tax', :adjustment_source => order, :amount => 10)
+      order.shipping_charges.create!(:description => 'shipping', :amount => 20)
+      order.reload
 
+      order.calculate_totals
+    end
     context "#calculate_totals" do
-      it "should call update_adjustments"
-      it "should set item_total to the sum of line_item amounts"
-      it "should set payments_total to the sum of payment amounts"
-      it "should set adjustment_total to the sum of adjustment amounts"
-      it "should set the total to the sum of item and adjustment totals"
-      it "should set outstanding_balance to the difference between the total and payment_total"
+      it "should set item_total to the sum of line_item amounts" do
+        order.item_total.to_i.should == 300
+      end
+      it "should set payments_total to the sum of payment amounts" do
+        order.payment_total.to_i.should == 300
+      end
+      it "should set adjustment_total to the sum of adjustment amounts" do
+        order.adjustment_total.to_i.should == 30
+      end
+      it "should set the total to the sum of item and adjustment totals" do
+        order.total.to_i.should == 330
+      end
+      # it "should set outstanding_balance to the difference between the total and payment_total"
     end
 
     context "#update_adjustments" do

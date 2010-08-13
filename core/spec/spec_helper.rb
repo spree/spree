@@ -3,6 +3,7 @@
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../sandbox/config/environment", __FILE__)
 require 'rspec/rails'
+require 'fabrication'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
