@@ -33,7 +33,7 @@ class AppConfiguration < Configuration
   preference :products_per_page, :integer, :default => 10
   preference :logo, :string, :default => '/images/admin/bg/spree_50.png'
   preference :stylesheets, :string, :default => 'screen' # Comma separate multiple stylesheets, e.g. 'screen,mystyle'
-  preference :admin_interface_logo, :string, :default => "spree/spree.jpg"
+  preference :admin_interface_logo, :string, :default => "admin/bg/spree_50.png"
   preference :allow_ssl_in_production, :boolean, :default => true
   preference :allow_ssl_in_development_and_test, :boolean, :default => false
   preference :allow_guest_checkout, :boolean, :default => true
