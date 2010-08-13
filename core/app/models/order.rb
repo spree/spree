@@ -34,6 +34,7 @@ class Order < ActiveRecord::Base
 
   before_create :create_user
 
+
   #delegate :shipping_method, :to => :checkout
   #delegate :email, :to => :checkout
   #delegate :ip_address, :to => :checkout
@@ -107,6 +108,21 @@ class Order < ActiveRecord::Base
     end
 
   end
+
+
+  before_validation :clone_billing_address, :if => "@use_billing"
+  attr_accessor :use_billing
+
+  def clone_billing_address
+    if bill_address and self.ship_address.nil?
+      self.ship_address = bill_address.clone
+    else
+      self.ship_address.attributes = bill_address.attributes.except("id", "updated_at", "created_at")
+    end
+    true
+  end
+
+
 
   # def make_shipments_shipped
   #   shipments.reject(&:shipped?).each do |shipment|

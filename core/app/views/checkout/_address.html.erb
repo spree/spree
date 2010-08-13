@@ -80,8 +80,8 @@ div.inner input[type=text], div.inner select { width: 80%; }
   <%= form.fields_for :ship_address do |ship_form| %>
     <legend><%= t("shipping_address")%></legend>
     <p class="field checkbox">
-      <label for="checkout_same_address" id="use_billing">
-        <%= check_box_tag 'checkout[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address)) %> <%= t("use_billing_address") %>
+      <label for="order_use_billing" id="use_billing">
+        <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address)) %> <%= t("use_billing_address") %>
       </label>
     </p>
     <div class="inner">
