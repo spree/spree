@@ -345,7 +345,12 @@ class Order < ActiveRecord::Base
 
   def update_totals!
     calculate_totals
-    # then commit to db without callbacks etc.
+    changes =  {
+      :item_total => item_total,
+      :adjustment_total => adjustment_total,
+      :payment_total => payment_total
+    }
+    self.class.update_all(changes, { :id => id }) == 1
   end
 
 

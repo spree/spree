@@ -81,20 +81,24 @@ describe Order do
   context "Totaling" do
     before(:all) do
       order.save
-      # add line items
-      3.times { Fabricate(:line_item, :price => 100, :order => order) }
-      # payments
-      payment = order.payments.build(:amount => 300)
-      payment.order.stub!(:outstanding_balance).and_return(300) # so payment will validate
-      payment.save!
-      # and adjustments
-      order.tax_charges.create!(:description => 'tax', :adjustment_source => order, :amount => 10)
-      order.shipping_charges.create!(:description => 'shipping', :amount => 20)
-      order.reload
-
-      order.calculate_totals
     end
+
     context "#calculate_totals" do
+      before(:all) do
+        # add line items
+        3.times { Fabricate(:line_item, :price => 100, :order => order) }
+        # payments
+        payment = order.payments.build(:amount => 300)
+        payment.order.stub!(:outstanding_balance).and_return(300) # so payment will validate
+        payment.save!
+        # and adjustments
+        order.tax_charges.create!(:description => 'tax', :adjustment_source => order, :amount => 10)
+        order.shipping_charges.create!(:description => 'shipping', :amount => 20)
+        order.reload
+
+        order.calculate_totals
+      end
+
       it "should set item_total to the sum of line_item amounts" do
         order.item_total.to_i.should == 300
       end
@@ -116,8 +120,17 @@ describe Order do
     end
 
     context "#update_totals" do
-      it "should update the relevant database columns sucessfully"
-      it "should not save associated objects"
+      it "should update the relevant database columns sucessfully" do
+        order.stub!(:calculate_totals)
+        order.item_total = 1
+        order.adjustment_total = 2
+        order.payment_total = 3
+        order.update_totals!
+        order.reload
+        order.item_total.to_i.should == 1
+        order.adjustment_total.to_i.should == 2
+        order.payment_total.to_i.should == 3 
+      end
     end
 
     context "#destroy_inapplicable_adjustments" do
