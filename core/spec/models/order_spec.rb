@@ -134,24 +134,22 @@ describe Order do
     end
 
     context "#destroy_inapplicable_adjustments" do
-      it "should destroy adjustments for which applicable? is false" do
-        
+      before(:all) do
         order.adjustments.clear 
         order.tax_charges.create!(:description => 'tax', :adjustment_source => order, :amount => 10)
         order.shipping_charges.create!(:description => 'shipping', :amount => 20)
         order.adjustments.reload 
-
-        order.adjustments.length.should == 2
-        inapplicable = order.adjustments.first 
-        inapplicable.stub!(:applicable?).and_return(false)
-
+        @inapplicable = order.adjustments.first 
+        @inapplicable.stub!(:applicable?).and_return(false)
         order.destroy_inapplicable_adjustments
-        Adjustment.exists?(inapplicable.id).should be_false
-        order.adjustments.length.should == 1
-        order.adjustments.include?(inapplicable).should be_false
-
       end
-      it "should remove the destroyed adjustments from the association collection"
+      it "should destroy adjustments for which applicable? is false" do
+        Adjustment.exists?(@inapplicable.id).should be_false
+      end
+      it "should remove the destroyed adjustments from the association collection" do
+        order.adjustments.length.should == 1
+        order.adjustments.include?(@inapplicable).should be_false
+      end
     end
 
   end
