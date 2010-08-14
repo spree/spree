@@ -88,7 +88,7 @@ describe Order do
         # add line items
         3.times { Fabricate(:line_item, :price => 100, :order => order) }
         # payments
-        payment = order.payments.build(:amount => 300)
+        payment = order.payments.build(:amount => 300, :state => 'finalized')
         payment.order.stub!(:outstanding_balance).and_return(300) # so payment will validate
         payment.save!
         # and adjustments
@@ -150,6 +150,20 @@ describe Order do
         order.adjustments.length.should == 1
         order.adjustments.include?(@inapplicable).should be_false
       end
+    end
+
+    context "adding a line item" do
+      it "should increase the item_total"
+    end
+    
+    context "#payment_state" do
+      it "should return :credit_owed if finalized payments total is more than order total"
+      it "should return :balance_due if finalized payments total is less than order total"
+      it "should return :paid if finalized payments total matches order total"
+    end
+
+    context "#shipment-state" do
+      it "should return :shipped if all shipments are shipped"
     end
 
   end

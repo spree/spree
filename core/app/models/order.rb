@@ -190,10 +190,6 @@ class Order < ActiveRecord::Base
     true
   end
 
-  # def allow_pay?
-  #   checkout_complete
-  # end
-
   def add_variant(variant, quantity = 1)
     current_item = contains?(variant)
     if current_item
@@ -238,7 +234,7 @@ class Order < ActiveRecord::Base
   end
 
   def contains?(variant)
-    line_items.select { |line_item| line_item.variant == variant }.first
+    line_items.detect{|line_item| line_item.variant_id = variant.id}
   end
 
   # def mark_shipped
@@ -324,7 +320,7 @@ class Order < ActiveRecord::Base
 
   def calculate_totals
     # update_adjustments
-    self.payment_total = payments.total
+    self.payment_total = payments.finalized.map(&:amount).sum
     self.item_total = line_items.total
     self.adjustment_total = adjustments.total
     self.total = item_total + adjustment_total
