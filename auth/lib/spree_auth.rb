@@ -1,5 +1,6 @@
 require 'spree_core'
 require 'devise'
+require 'devise/orm/active_record'
 require 'cancan'
 
 module SpreeAuth
