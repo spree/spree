@@ -9,11 +9,7 @@ class CheckoutController < Spree::BaseController
   def start
     @order.checkout!
     default_data
-    render :state
-  end
-
-  def edit
-    render :state
+    render :edit
   end
 
   # Updates the order and advances to the next state (when possible.)
@@ -28,7 +24,7 @@ class CheckoutController < Spree::BaseController
         redirect_to checkout_state_path(@order.state) and return
       end
     end
-    render :state
+    render :edit
   end
 
   private

@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe CheckoutController do
 
-  let(:order) { mock_model Order, :complete? => false, :state => "confirm", :can_next? => true, :next! => true,
-                                  :bill_address => mock_model(Address), :ship_address => mock_model(Address) }
+  let(:order) { mock_model Order, :complete? => false, :empty? => false, :state => "confirm", :state= => nil, :can_next? => true,
+                                  :payment? => false, :next! => true, :bill_address => mock_model(Address), :ship_address => mock_model(Address) }
   before { Order.stub!(:find_by_id).and_return order }
 
   it "should understand checkout routes" do
@@ -29,7 +29,7 @@ describe CheckoutController do
       order.stub(:checkout!)
       order.stub(:state).and_return("address")
       get :start
-      response.should render_template :state
+      response.should render_template :edit
     end
   end
 
@@ -46,15 +46,9 @@ describe CheckoutController do
       get :edit, { :state => "payment" }
     end
 
-    it "should render the current state" do
-      order.stub(:state=)
-      order.stub(:state).and_return("address")
-      get :edit, { :state => "payment" }
-      response.should render_template :state
-    end
   end
 
-  context "#update via /checkout/confirm" do
+  context "#update" do
 
     it "should remove completed order from the session" do
       order.stub(:complete?).and_return(true)
@@ -102,7 +96,7 @@ describe CheckoutController do
 
         it "should render the current state" do
           post :update, {:state => "confirm"}
-          response.should render_template :state
+          response.should render_template :edit
         end
       end
     end
@@ -120,9 +114,9 @@ describe CheckoutController do
         post :update, { :state => 'confirm' }
       end
 
-      it "should render the current state" do
+      it "should render the edit template" do
         post :update, { :state => 'confirm' }
-        response.should render_template :state
+        response.should render_template :edit
       end
     end
 
