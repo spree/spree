@@ -6,17 +6,10 @@ class CheckoutController < Spree::BaseController
   before_filter :load_order
   after_filter :cleanup_session
 
-  def start
-    @order.checkout!
-    default_data
-    render :edit
-  end
-
   # Updates the order and advances to the next state (when possible.)
   #
   # If the order is complete then user will be redirected to the :show view for the order.
   def update
-    default_data
     if @order.update_attributes(object_params)
       @order.update_attribute("state", params[:state])
       if @order.can_next?
@@ -50,11 +43,6 @@ class CheckoutController < Spree::BaseController
     redirect_to cart_path if @order.empty?
   end
 
-  def default_data
-    @order.bill_address ||= Address.new(:country => default_country)
-    @order.ship_address ||= Address.new(:country => default_country)
-  end
-
   def cleanup_session
     session[:order_id] = nil if @order.complete?
   end
@@ -66,6 +54,11 @@ class CheckoutController < Spree::BaseController
 
   def before_payment
     current_order.payments.destroy_all if request.put?
+  end
+
+  def before_address
+    @order.bill_address ||= Address.new(:country => default_country)
+    @order.ship_address ||= Address.new(:country => default_country)
   end
 
   # before_filter :load_data

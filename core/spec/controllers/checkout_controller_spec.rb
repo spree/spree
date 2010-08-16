@@ -9,28 +9,6 @@ describe CheckoutController do
   it "should understand checkout routes" do
     assert_routing("/checkout/delivery", {:controller => "checkout", :action => "edit", :state => "delivery"})
     assert_routing("/checkout/update/delivery", {:controller => "checkout", :action => "update", :state => "delivery"})
-    assert_routing("/checkout", {:controller => "checkout", :action => "start"})
-  end
-
-  context "#start" do
-
-    it "should redirect to the order_path if order.complete?" do
-      order.stub(:complete?).and_return true
-      get :start
-      response.should redirect_to order_path(assigns[:order])
-    end
-
-    it "should advance the state using checkout!" do
-      order.should_receive(:checkout!)
-      get :start
-    end
-
-    it "should render the current state" do
-      order.stub(:checkout!)
-      order.stub(:state).and_return("address")
-      get :start
-      response.should render_template :edit
-    end
   end
 
   context "#edit" do

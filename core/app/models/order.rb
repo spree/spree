@@ -78,10 +78,6 @@ class Order < ActiveRecord::Base
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'cart', :use_transactions => false do
 
-    event :checkout do
-      transition :to => 'address'
-    end
-
     event :next do
       transition :to => 'delivery', :from => 'address'
       transition :to => 'payment', :from => 'delivery'
@@ -314,7 +310,7 @@ class Order < ActiveRecord::Base
   #   self
   # end
   #
-  
+
 
   # TODO: Not sure on method vs db column for this
   def outstanding_balance
