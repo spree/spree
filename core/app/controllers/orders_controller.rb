@@ -9,26 +9,12 @@ class OrdersController < Spree::BaseController
 
   helper :products
 
-  #create.before :create_before
-
-  # override the default r_c behavior (remove flash - redirect to edit details instead of show)
-  # create do
-  #   flash nil
-  #   success.wants.html {redirect_to edit_order_url(@order)}
-  #   failure.wants.html { render :template => "orders/edit" }
-  # end
-  #
-  # update.before do
-  #   # Temporary workaround for problem in Rails 2.3.8 where updating with nested attributes doesn't work if the collection isn't loaded
-  #   object.line_items(true)
-  # end
-  #
-  # # override the default r_c flash behavior
-  # update do
-  #   flash nil
-  #   success.wants.html { redirect_to edit_order_url(object) }
-  #   failure.wants.html { render :template => "orders/edit" }
-  # end
+  #override the default r_c flash behavior and redirect to edit (instead of show)
+  update do
+    flash nil
+    success.wants.html { render :edit }
+    failure.wants.html { render :edit }
+  end
 
   #override r_c default b/c we don't want to actually destroy, we just want to clear line items
   # def destroy
@@ -45,7 +31,7 @@ class OrdersController < Spree::BaseController
   # end
 
   # Shows the current incomplete order from the session
-  def cart
+  def edit
     @order = current_order
   end
 
@@ -70,7 +56,7 @@ class OrdersController < Spree::BaseController
   private
 
   def object
-    @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
+    @object ||= current_order(false)
     @object
   end
 

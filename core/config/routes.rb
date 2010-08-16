@@ -32,7 +32,8 @@ Rails.application.routes.draw do
     end
 
   end
-  match '/cart', :to => 'orders#cart', :as => :cart
+  match '/cart', :to => 'orders#edit', :via => :get, :as => :cart
+  match '/cart', :to => 'orders#update', :via => :put, :as => :update_cart
 
   resources :shipments do
     member do

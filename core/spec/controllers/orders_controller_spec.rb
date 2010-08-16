@@ -24,6 +24,26 @@ describe OrdersController do
     it "should handle multiple variant/quantity pairs"
   end
 
+  context "#update" do
+    before {
+      order.stub(:update_attributes).and_return true
+      Order.stub(:find_by_id).and_return(order)
+    }
+    it "should not result in a flash notice" do
+      put :update, {}, {:order_id => 1}
+      flash[:notice].should be_nil
+    end
+    it "should render the edit view" do
+      put :update, {}, {:order_id => 1}
+      response.should render_template :edit
+    end
+    it "should render the edit view (on failure)" do
+      order.stub(:update_attributes).and_return false
+      put :update, {}, {:order_id => 1}
+      response.should render_template :edit
+    end
+  end
+
   context "#add variant" do
     it "should create a new line item (when appropriate)"
     it "should modify a line item (when appropriate)"
