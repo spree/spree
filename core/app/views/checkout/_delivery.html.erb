@@ -3,7 +3,7 @@
   <div class="inner">
     <div id="methods">
       <p class="field radios">
-        <% available_shipping(@order).each do |shipping_method| %>
+        <% @order.available_shipping_methods.each do |shipping_method| %>
           <label>
             <%= radio_button(:order, :shipping_method_id, shipping_method[:id]) %>
             <%= shipping_method[:name] %> <%= number_to_currency shipping_method[:cost] %>

@@ -29,16 +29,4 @@ module CheckoutHelper
     zone.country_list
   end
 
-  def available_shipping(order)
-    # TODO implement this helper
-    []
-    # ShippingMethod.all_available(order, :front_end).collect do |ship_method|
-    #   # @order.shipment.shipping_method = ship_method
-    #   # { :id => ship_method.id,
-    #   #   :name => ship_method.name,
-    #   #   :cost => ship_method.calculate_cost(order.shipment)
-    #   # }
-    # end.sort_by{|r| r[:cost]}
-  end
-
 end

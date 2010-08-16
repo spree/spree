@@ -404,6 +404,11 @@ class Order < ActiveRecord::Base
 
   # Helper methods for checkout steps
 
+  def available_shipping_methods(display_on = nil)
+    return [] unless ship_address
+    ShippingMethod.all_available(self, display_on)
+  end
+
   def payment
     payments.first
   end
