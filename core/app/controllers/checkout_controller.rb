@@ -63,20 +63,14 @@ class CheckoutController < Spree::BaseController
     session[:order_id] = nil if @order.complete?
   end
 
-
-
   def state_callback(before_or_after = :before)
     method_name = :"#{before_or_after}_#{@order.state}"
-    send(method_name) if respond_to?(method_name, true) 
+    send(method_name) if respond_to?(method_name, true)
   end
 
   def before_payment
     current_order.payments.destroy_all if request.put?
   end
-
-
-  #include Spree::Checkout::Hooks
-  #include ActionView::Helpers::NumberHelper # Needed for JS usable rate information
 
   # before_filter :load_data
   # before_filter :set_state
