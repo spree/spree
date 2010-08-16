@@ -153,9 +153,15 @@ describe Order do
     end
 
     context "adding a line item" do
-      it "should increase the item_total"
+      it "should increase the item_total" do
+        order.reload
+        old_total = order.item_total.to_i
+        Fabricate(:line_item, :quantity => 1, :price => 100, :order => order)
+        order.reload
+        order.item_total.to_i.should == old_total + 100
+      end
     end
-    
+
     context "#payment_state" do
       it "should return :credit_owed if finalized payments total is more than order total"
       it "should return :balance_due if finalized payments total is less than order total"
