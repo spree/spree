@@ -2,7 +2,6 @@ class OrdersController < Spree::BaseController
   # prepend_before_filter :reject_unknown_object,  :only => [:show, :edit, :update, :checkout]
   # before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]
   # before_filter :set_user
-  before_filter :load_object, :only => :populate
 
   ssl_required :show
 
@@ -34,7 +33,7 @@ class OrdersController < Spree::BaseController
   #override r_c default b/c we don't want to actually destroy, we just want to clear line items
   # def destroy
   #   flash.notice = I18n.t(:basket_successfully_cleared)
-  #   @order.line_items.clear
+  #   @order.line_items.clear\t
   #   @order.update_totals!
   #   after :destroy
   #   set_flash :destroy
@@ -44,6 +43,11 @@ class OrdersController < Spree::BaseController
   # destroy.response do |wants|
   #   wants.html { redirect_to(edit_object_url) }
   # end
+
+  # Shows the current incomplete order from the session
+  def cart
+    @order = current_order
+  end
 
   # Adds a new item to the order (creating a new order if none already exists)
   #
@@ -56,30 +60,16 @@ class OrdersController < Spree::BaseController
   # +:products => {product_id => {variant_id => {:quantity => quantity}, variant_id => {:quantity => quantity}, ...} +
   # +:products => {product_id => {variant_id => {:quantity => [:variant_id => quantity, :variant_id => quantity, ...] }+
   def populate
-
-    if params[:id] or session[:order_id]
-      render_404 and return unless @order
-    else
-      @order = Order.create
-      session[:order_id] = @order.id
-    end
-    # params[:products].each do |product_id,variant_id|
-    #   quantity = params[:quantity].to_i if !params[:quantity].is_a?(Array)
-    #   quantity = params[:quantity][variant_id].to_i if params[:quantity].is_a?(Array)
-    #   @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
-    # end if params[:products]
-
+    @order = current_order(true)
     params[:variants].each do |variant_id, quantity|
-      #quantity = quantity.to_i
-      @order.add_variant(Variant.find(variant_id), quantity) #if quantity > 0
+      @order.add_variant(Variant.find(variant_id), quantity.to_i) #if quantity > 0
     end if params[:variants]
-
-    render :edit
+    redirect_to cart_path
   end
 
   private
+
   def object
-    @object ||= Order.find_by_id(session[:order_id], :include => :adjustments) if session[:order_id]
     @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
     @object
   end

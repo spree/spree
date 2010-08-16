@@ -1,29 +1,15 @@
 module Spree::BaseHelper
 
-  # this should be cart_path since it returns path only
-  # didn't wan't to change until we know what breaks so
-  # I named new helpers differently below - WN
-  def cart_link
-    return new_order_url if session[:order_id].blank?
-    return edit_order_url(Order.find_or_create_by_id(session[:order_id]))
-  end
-
-  def cart_path
-    cart_link
-  end
-
-
-  def link_to_cart(text=t('cart'))
-    path = cart_path
-    order = Order.find_or_create_by_id(session[:order_id]) unless session[:order_id].blank?
+  def link_to_cart(text = t('cart'))
+    return "" if current_page?(cart_path)
     css_class = nil
-    unless order.nil?
-      item_count = order.line_items.inject(0) { |kount, line_item| kount + line_item.quantity }
-      return "" if current_page?(path)
-      text = "#{text}: (#{item_count}) #{order_price(order)}"
-      css_class = 'full' if item_count > 0
+    if current_order.nil? or current_order.empty?
+      text = "#{text}: (#{t('empty')})"
+      css_class = 'empty'
+    else
+      text = "#{text}: (#{current_order.item_count}) #{order_price(current_order)}"
     end
-    link_to text, path, :class => css_class
+    link_to text, cart_path, :class => css_class
   end
 
   def order_price(order, options={})

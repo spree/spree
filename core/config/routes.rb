@@ -19,7 +19,6 @@ Rails.application.routes.draw do
   match '/checkout' => 'checkout#start', :as => :checkout
 
   resources :orders do
-
     post :populate, :on => :collection
 
     resources :line_items
@@ -33,6 +32,7 @@ Rails.application.routes.draw do
     end
 
   end
+  match '/cart', :to => 'orders#cart', :as => :cart
 
   resources :shipments do
     member do

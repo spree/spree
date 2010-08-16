@@ -63,6 +63,16 @@ class Order < ActiveRecord::Base
     completed_at
   end
 
+  def item_count
+    line_items.map(&:quantity).sum
+  end
+
+  def empty?
+    item_count == 0
+  end
+
+
+
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'cart', :use_transactions => false do
 
@@ -184,7 +194,7 @@ class Order < ActiveRecord::Base
   #   checkout_complete
   # end
 
-  def add_variant(variant, quantity=1)
+  def add_variant(variant, quantity = 1)
     current_item = contains?(variant)
     if current_item
       current_item.increment_quantity unless quantity > 1

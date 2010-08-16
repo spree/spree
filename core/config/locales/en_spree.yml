@@ -361,6 +361,7 @@ en:
   email: Email
   email_address: "Email Address"
   email_server_settings_description: "Set email server settings."
+  empty: "Empty"
   empty_cart: "Empty Cart"
   enable_login_via_login_password: "Use standard email/password"
   enable_login_via_openid: "Use OpenID instead"
