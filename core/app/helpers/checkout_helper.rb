@@ -40,12 +40,5 @@ module CheckoutHelper
     #   # }
     # end.sort_by{|r| r[:cost]}
   end
-  # def billing_firstname
-  #   @checkout.bill_address.firstname  rescue ''
-  # end
-  #
-  # def billing_lastname
-  #   @checkout.bill_address.lastname  rescue ''
-  # end
 
 end

@@ -21,25 +21,37 @@ class CheckoutController < Spree::BaseController
   #
   # If the order is complete then user will be redirected to the :show view for the order.
   def update
-
+    state_callback :before_update
     default_data
-
-    if @order.update_attributes(params[:order])
+    if @order.update_attributes(object_params)
       @order.update_attribute("state", params[:state])
       if @order.can_next?
         @order.next!
         redirect_to checkout_state_path(@order.state) and return
       end
     end
-
     render :state
   end
 
   private
+
+  def object_params
+    # For payment step, filter order parameters to produce the expected nested attributes for a single payment and its source, discarding attributes for payment methods other than the one selected
+    if @order.payment?
+      if params[:payment_source].present? && source_params = params.delete(:payment_source)[params[:order][:payments_attributes].first[:payment_method_id].underscore]
+        params[:order][:payments_attributes].first[:source_attributes] = source_params
+      end
+      if (params[:order][:payments_attributes])
+        params[:order][:payments_attributes].first[:amount] = @order.total
+      end
+    end
+    params[:order]
+  end
+
   def load_order
-    # checkout can only be accessed after an order is created and stored in the session
-    @order ||= Order.find_by_id(session[:order_id], :include => :adjustments)
+    @order = current_order
     redirect_to order_path(@order) if @order.complete?
+    redirect_to cart_path if @order.empty?
   end
 
   def default_data
@@ -50,6 +62,18 @@ class CheckoutController < Spree::BaseController
   def cleanup_session
     session[:order_id] = nil if @order.complete?
   end
+
+
+
+  def state_callback(name)
+    before_update_method = "#{name}_in_#{@order.state}_state".to_sym
+    send(before_update_method) if respond_to?(before_update_method, true) 
+  end
+
+  def before_update_in_payment_state
+    current_order.payments.destroy_all
+  end
+
 
   #include Spree::Checkout::Hooks
   #include ActionView::Helpers::NumberHelper # Needed for JS usable rate information

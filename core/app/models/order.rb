@@ -20,9 +20,10 @@ class Order < ActiveRecord::Base
   has_many :return_authorizations, :dependent => :destroy
 
   accepts_nested_attributes_for :line_items
-  accepts_nested_attributes_for :shipments
   accepts_nested_attributes_for :bill_address
   accepts_nested_attributes_for :ship_address
+  accepts_nested_attributes_for :payments
+  accepts_nested_attributes_for :shipments
 
   has_many :adjustments,      :extend => Totaling, :order => :position
   has_many :charges,          :extend => Totaling, :order => :position
@@ -102,6 +103,7 @@ class Order < ActiveRecord::Base
     end
 
     after_transition :to => 'complete', :do => :finalize!
+
   end
 
 
@@ -398,6 +400,34 @@ class Order < ActiveRecord::Base
   def finalize!
     update_attribute(:completed_at, Time.now)
   end
+
+
+  # Helper methods for checkout steps
+
+  def payment
+    payments.first
+  end
+
+  def available_payment_methods
+    @available_payment_methods ||= PaymentMethod.available(:front_end)
+  end
+
+  def payment_method
+    if payment and payment.payment_method
+      payment.payment_method
+    else
+      available_payment_methods.first
+    end
+  end
+
+  def billing_firstname
+    bill_address.try(:firstname)
+  end
+
+  def billing_lastname
+    bill_address.try(:lastname)
+  end
+
 
   private
   # def complete_order
