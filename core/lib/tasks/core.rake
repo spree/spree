@@ -98,7 +98,6 @@ namespace :db do
   namespace :admin do
     desc "Create admin username and password"
     task :create => :environment do
-      require 'authlogic'
       require File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample', 'users.rb')
     end
   end
