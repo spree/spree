@@ -13,7 +13,6 @@ class CheckoutController < Spree::BaseController
   end
 
   def edit
-    @order.state = params[:state]
     render :state
   end
 
@@ -21,7 +20,6 @@ class CheckoutController < Spree::BaseController
   #
   # If the order is complete then user will be redirected to the :show view for the order.
   def update
-    state_callback :before_update
     default_data
     if @order.update_attributes(object_params)
       @order.update_attribute("state", params[:state])
@@ -50,6 +48,8 @@ class CheckoutController < Spree::BaseController
 
   def load_order
     @order = current_order
+    @order.state = params[:state] if params[:state]
+    state_callback(:before)
     redirect_to order_path(@order) if @order.complete?
     redirect_to cart_path if @order.empty?
   end
@@ -65,13 +65,13 @@ class CheckoutController < Spree::BaseController
 
 
 
-  def state_callback(name)
-    before_update_method = "#{name}_in_#{@order.state}_state".to_sym
-    send(before_update_method) if respond_to?(before_update_method, true) 
+  def state_callback(before_or_after = :before)
+    method_name = :"#{before_or_after}_#{@order.state}"
+    send(method_name) if respond_to?(method_name, true) 
   end
 
-  def before_update_in_payment_state
-    current_order.payments.destroy_all
+  def before_payment
+    current_order.payments.destroy_all if request.put?
   end
 
 
