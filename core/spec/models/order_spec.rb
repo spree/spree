@@ -37,10 +37,20 @@ describe Order do
   end
 
   context "#next!" do
-    it "should complete order when state is complete" do
+    it "should finalize order when transitioning to complete state" do
       order.state = "confirm"
+      order.should_receive(:finalize!)
       order.next!
-      order.complete?.should be_true
+    end
+  end
+
+  context "#finalize!" do
+    it "should set completed_at" do
+      order.finalize!
+      order.completed_at.should_not be_nil
+    end
+    pending "should create a new shipment" do
+      expect { order.finalize! }.to change{ order.shipments.count }.to(1)
     end
   end
 

@@ -101,7 +101,7 @@ class Order < ActiveRecord::Base
       transition :to => 'awaiting_return'
     end
 
-    #after_transition :to => 'complete', :do => lambda {|order| order.update_attribute(:completed_at, Time.now)}
+    after_transition :to => 'complete', :do => :finalize!
   end
 
 
@@ -358,8 +358,13 @@ class Order < ActiveRecord::Base
     self.user = user and save!
   end
 
-  private
+  # Finalizes an in progress order after checkout is complete.  This method is intended to be called automatically by the
+  # state machine when the order transitions to the 'complete' state.
+  def finalize!
+    update_attribute(:completed_at, Time.now)
+  end
 
+  private
   # def complete_order
   #   self.adjustments.each(&:update_amount)
   #   update_attribute(:completed_at, Time.now)
