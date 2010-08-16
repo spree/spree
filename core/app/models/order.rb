@@ -82,7 +82,7 @@ class Order < ActiveRecord::Base
       transition :to => 'canceled', :if => :allow_cancel?
     end
     event :return do
-      transition :to => 'returned', :from => 'awaiting_returnß'
+      transition :to => 'returned', :from => 'awaiting_return'
     end
     event :resume do
       transition :to => 'resumed', :from => 'canceled', :if => :allow_resume?
