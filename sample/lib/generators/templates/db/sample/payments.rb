@@ -15,12 +15,7 @@ creditcard = Creditcard.create(:cc_type => "visa", :month => 12, :year => 2014, 
 Order.all.each_with_index do |order,index|
   printf "\rProcessing order #{index}"
   STDOUT.flush
-  order.update_totals!
-  payment = order.checkout.payments.create(:amount => order.outstanding_balance,
-                                           :source => creditcard.clone,
-                                           :payment_method => method)
-
-  order.checkout.state = 'confirm'
-  order.checkout.next
+  order.update!
+  payment = order.payments.create(:amount => order.total, :source => creditcard.clone, :payment_method => method)
 end
 puts

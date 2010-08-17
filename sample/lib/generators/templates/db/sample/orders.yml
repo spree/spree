@@ -7,7 +7,7 @@ order_date = Time.now
 %>
 order_<%= i %>:
   number: <%= "R#{Array.new(9){rand(9)}.join}" %>
-  state: in_progress
+  state: complete
   item_total: <%= item_total %>
   created_at: <%=order_date.to_s(:db)%>
   completed_at: <%=order_date.to_s(:db)%>

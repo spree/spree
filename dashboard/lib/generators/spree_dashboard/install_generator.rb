@@ -5,10 +5,6 @@ module SpreeDashboard
 
       desc "Configures an existing Rails application to use spree_dashboard"
 
-      def copy_migrations
-        directory "db"
-      end
-
       def copy_public
         directory "public"
       end
