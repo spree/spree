@@ -20,6 +20,9 @@ class Shipment < ActiveRecord::Base
   make_permalink :field => :number
   validate :shipping_method
 
+  scope :shipped, where(:state => 'shipped')
+  scope :ready, where(:state => 'ready')
+
   def to_param
     self.number if self.number
     generate_shipment_number unless self.number
@@ -48,18 +51,18 @@ class Shipment < ActiveRecord::Base
   end
 
   # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-  state_machine :initial => 'pending' do
+  state_machine :initial => 'ready', :use_transactions => false do
     event :ready do
-      transition :from => 'pending', :to => 'ready_to_ship'
+      transition :from => 'pending', :to => 'ready'
     end
     event :pend do
-      transition :from => 'ready_to_ship', :to => 'pending'
+      transition :from => 'ready', :to => 'pending'
     end
     event :ship do
-      transition :from => 'ready_to_ship', :to => 'shipped'
+      transition :from => 'ready', :to => 'shipped'
     end
 
-    after_transition :to => 'shipped', :do => :transition_order
+    #after_transition :to => 'shipped', :do => :transition_order
   end
 
   def editable_by?(user)
@@ -100,7 +103,7 @@ class Shipment < ActiveRecord::Base
     end
     self.number = random
   end
-  
+
   def set_correct_state
     if pending? and order.checkout_complete and !order.outstanding_balance?
       ready

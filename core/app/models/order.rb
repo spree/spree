@@ -73,8 +73,6 @@ class Order < ActiveRecord::Base
     item_count == 0
   end
 
-
-
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'cart', :use_transactions => false do
 
@@ -106,6 +104,17 @@ class Order < ActiveRecord::Base
   # Indicates whether there are any backordered InventoryUnits associated with the Order.
   def backordered?
     inventory_units.backorder.present?
+  end
+
+  # This is a multi-purpose method for processing logic related to changes in the Order.  It is meant to be called from
+  # various observers so that the Order is aware of changes that affect totals and other values stored in the Order.
+  # This method should never do anything to the Order that results in a save call on the object (otherwise you will end
+  # up in an infinite recursion as the associations try to save and then in turn try to call +update!+ again.)
+  def update!
+    #update_totals! - uncomment once we review that method and check with David North
+    update_shipment_state
+    update_payment_state
+    self.class.update_all "payment_state = '#{payment_state}', shipment_state = '#{shipment_state}'", :id => self.id
   end
 
   def restore_state
@@ -477,6 +486,47 @@ class Order < ActiveRecord::Base
 
   def create_user
     self.user ||= User.guest!
+  end
+
+  # Updates the +shipment_state+ attribute according to the following logic:
+  #
+  # shipped   when all Shipments are in the "shipped" state
+  # partial   when at least one Shipment has a state of "shipped" and there is another Shipment with a state other than "shipped"
+  #           or there are InventoryUnits associated with the order that have a state of "sold" but are not associated with a Shipment.
+  # ready     when all Shipments are in the "ready" state
+  # backorder when there is backordered inventory associated with an order
+  #
+  # The +shipment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
+  def update_shipment_state
+    self.shipment_state =
+    case shipments.count
+    when 0
+      nil
+    when shipments.shipped.count
+      "shipped"
+    when shipments.ready.count
+      "ready"
+    else
+      "partial"
+    end
+    self.shipment_state = "backorder" if backordered?
+  end
+
+  # Updates the +payment_state+ attribute according to the following logic:
+  #
+  # paid          when +payment_total+ is equal to +total+
+  # balance_due   when +payment_total+ is less than +total+
+  # credit_owed   when +payment_total+ is greater than +total+
+  #
+  # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
+  def update_payment_state
+    if payment_total < total
+      self.payment_state = "balance_due"
+    elsif payment_total > total
+      self.payment_state = "credit_owed"
+    else
+      self.payment_state = "paid"
+    end
   end
 
   # def create_shipment

@@ -87,6 +87,60 @@ describe Order do
     end
   end
 
+  context "#update!" do
+    before { Order.should_receive :update_all }
+    context "when there are payments" do
+      before { order.stub(:total => 100) }
+      it "should set the correct payment_state (when payments are sufficient)" do
+        order.stub(:payment_total => 100)
+        order.update!
+        order.payment_state.should == "paid"
+      end
+      it "should set the correct payment_state (when payments are insufficient)" do
+        order.stub(:payment_total => 50)
+        order.update!
+        order.payment_state.should == "balance_due"
+      end
+      it "should set the correct payment_state (when payments are more than sufficient)" do
+        order.stub(:payment_total => 150)
+        order.update!
+        order.payment_state.should == "credit_owed"
+      end
+    end
+    context "when there are shipments" do
+      before { order.stub_chain(:shipments, :count).and_return 2 }
+      it "should set the correct shipment_state (when all shipments are shipped)" do
+        order.shipments.stub_chain(:shipped, :count => 2)
+        order.shipments.stub_chain(:ready, :count => 0)
+        order.update!
+        order.shipment_state.should == "shipped"
+      end
+      it "should set the correct shipment_state (when some units are backordered)" do
+        order.shipments.stub_chain(:shipped, :count => 1)
+        order.shipments.stub_chain(:ready, :count => 0)
+        order.stub(:backordered?).and_return true
+        order.update!
+        order.shipment_state.should == "backorder"
+      end
+      it "should set the correct shipment_state (when some of the shipments have shipped)" do
+        order.shipments.stub_chain(:shipped, :count => 1)
+        order.shipments.stub_chain(:ready, :count => 1)
+        order.update!
+        order.shipment_state.should == "partial"
+      end
+      it "should set the correct shipment_state (when some of the shipments are ready)" do
+        order.shipments.stub_chain(:shipped, :count => 0)
+        order.shipments.stub_chain(:ready, :count => 2)
+        order.update!
+        order.shipment_state.should == "ready"
+      end
+    end
+    it "should set the correct shipment_state (when there are no shipments)" do
+      order.update!
+      order.shipment_state.should == nil
+    end
+  end
+
   context "Totaling" do
     before(:all) do
       order.save
@@ -169,16 +223,6 @@ describe Order do
           order.reload
         end.should change(order, :item_total).by(100)
       end
-    end
-
-    context "#payment_state" do
-      it "should return :credit_owed if finalized payments total is more than order total"
-      it "should return :balance_due if finalized payments total is less than order total"
-      it "should return :paid if finalized payments total matches order total"
-    end
-
-    context "#shipment-state" do
-      it "should return :shipped if all shipments are shipped"
     end
 
   end
