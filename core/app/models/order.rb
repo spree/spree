@@ -103,7 +103,10 @@ class Order < ActiveRecord::Base
 
   end
 
-
+  # Indicates whether there are any backordered InventoryUnits associated with the Order.
+  def backordered?
+    inventory_units.backorder.present?
+  end
 
   def restore_state
     # pop the resume event so we can see what the event before that was

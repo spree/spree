@@ -78,9 +78,14 @@ describe Order do
     end
   end
 
-
-
-
+  context "#backordered?" do
+    it "should indicate whether any units in the order are backordered" do
+      order.stub_chain(:inventory_units, :backorder).and_return []
+      order.backordered?.should be_false
+      order.stub_chain(:inventory_units, :backorder).and_return [mock_model(InventoryUnit)]
+      order.backordered?.should be_true
+    end
+  end
 
   context "Totaling" do
     before(:all) do

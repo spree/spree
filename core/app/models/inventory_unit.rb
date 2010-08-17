@@ -4,6 +4,7 @@ class InventoryUnit < ActiveRecord::Base
   belongs_to :shipment
   belongs_to :return_authorization
 
+  scope :backorder, where(:state => 'backordered')
   scope :retrieve_on_hand, lambda {|variant, quantity| {:conditions => ["state = 'on_hand' AND variant_id = ?", variant], :limit => quantity}}
 
   # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
