@@ -75,11 +75,15 @@ class Order < ActiveRecord::Base
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'cart', :use_transactions => false do
 
+    state :payment do
+      validates_presence_of :shipping_method
+    end
+
     event :next do
-      transition :to => 'delivery', :from => 'address'
-      transition :to => 'payment', :from => 'delivery'
-      transition :to => 'confirm', :from => 'payment'
-      transition :to => 'complete', :from => 'confirm'
+      transition :from => 'address', :to => 'delivery' 
+      transition :from => 'delivery', :to => 'payment'
+      transition :from => 'payment', :to => 'confirm'
+      transition :from => 'confirm', :to => 'complete'
     end
     #TODO - add conditional confirmation step (only when gateway supports it, etc.)
 

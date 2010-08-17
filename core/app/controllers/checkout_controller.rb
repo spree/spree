@@ -12,8 +12,7 @@ class CheckoutController < Spree::BaseController
   def update
     if @order.update_attributes(object_params)
       @order.update_attribute("state", params[:state])
-      if @order.can_next?
-        @order.next!
+      if @order.can_next? and @order.next
         redirect_to checkout_state_path(@order.state) and return
       end
     end
@@ -36,7 +35,7 @@ class CheckoutController < Spree::BaseController
   end
 
   def load_order
-    @order = current_order
+    @order = params[:token] ? Order.find_by_token(params[:token]) : current_order
     @order.state = params[:state] if params[:state]
     state_callback(:before)
     redirect_to order_path(@order) if @order.complete?
