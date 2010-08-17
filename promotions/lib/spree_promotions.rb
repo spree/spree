@@ -22,31 +22,31 @@ module SpreePromotions
         end
 
         Order.class_eval do
-          has_many :promotion_credits, :extend => Order::Totaling, :order => :position
+          #has_many :promotion_credits, :extend => Order::Totaling, :order => :position
           def products
             line_items.map {|li| li.variant.product}
           end
 
-          def update_totals(force_adjustment_recalculation=false)
-            self.item_total       = self.line_items.total
-
-            # save the items which might be changed by an order update, so that
-            # charges can be recalculated accurately.
-            self.line_items.map(&:save)
-
-            process_automatic_promotions
-
-            if !self.checkout_complete || force_adjustment_recalculation
-              applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
-              self.adjustments = applicable_adjustments
-              adjustments_to_destroy.each(&:destroy)
-            end
-
-            self.adjustment_total = self.charge_total - self.credit_total
-            self.total            = self.item_total   + self.adjustment_total
-
-            self.checkout.enable_validation_group(:register) unless self.checkout.nil?
-          end
+          # def update_totals(force_adjustment_recalculation=false)
+          #   self.item_total       = self.line_items.total
+          #
+          #   # save the items which might be changed by an order update, so that
+          #   # charges can be recalculated accurately.
+          #   self.line_items.map(&:save)
+          #
+          #   process_automatic_promotions
+          #
+          #   if !self.checkout_complete || force_adjustment_recalculation
+          #     applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
+          #     self.adjustments = applicable_adjustments
+          #     adjustments_to_destroy.each(&:destroy)
+          #   end
+          #
+          #   self.adjustment_total = self.charge_total - self.credit_total
+          #   self.total            = self.item_total   + self.adjustment_total
+          #
+          #   self.checkout.enable_validation_group(:register) unless self.checkout.nil?
+          # end
 
 
           def process_automatic_promotions
