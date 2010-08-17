@@ -17,7 +17,7 @@ module Spree
 
         # Returns all the listerners instances.
         def listeners
-          @@listeners ||= @@listener_classes.collect {|listener| listener.instance}
+          @@listeners ||= @@listener_classes.uniq.collect {|listener| listener.instance}
         end
 
         # Clears all the listeners.
