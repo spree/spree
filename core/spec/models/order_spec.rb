@@ -155,10 +155,10 @@ describe Order do
     context "adding a line item" do
       it "should increase the item_total" do
         order.reload
-        old_total = order.item_total.to_i
-        Fabricate(:line_item, :quantity => 1, :price => 100, :order => order)
-        order.reload
-        order.item_total.to_i.should == old_total + 100
+        lambda do
+          order.line_items.create Fabricate.attributes_for(:line_item, :quantity => 1, :price => 100)
+          order.reload
+        end.should change(order, :item_total).by(100)
       end
     end
 
