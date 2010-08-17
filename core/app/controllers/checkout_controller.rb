@@ -4,7 +4,6 @@
 class CheckoutController < Spree::BaseController
 
   before_filter :load_order
-  after_filter :cleanup_session
 
   # Updates the order and advances to the next state (when possible.)
   #
@@ -35,15 +34,10 @@ class CheckoutController < Spree::BaseController
   end
 
   def load_order
-    @order = params[:token] ? Order.find_by_token(params[:token]) : current_order
+    @order = current_order
+    redirect_to cart_path and return if @order.nil? or @order.empty?
     @order.state = params[:state] if params[:state]
     state_callback(:before)
-    redirect_to order_path(@order) if @order.complete?
-    redirect_to cart_path if @order.empty?
-  end
-
-  def cleanup_session
-    session[:order_id] = nil if @order.complete?
   end
 
   def state_callback(before_or_after = :before)
@@ -53,6 +47,10 @@ class CheckoutController < Spree::BaseController
 
   def before_payment
     current_order.payments.destroy_all if request.put?
+  end
+
+  def before_complete
+    session[:order_id] = nil
   end
 
   def before_address
