@@ -48,6 +48,7 @@ class Order < ActiveRecord::Base
   scope :by_customer, lambda {|customer| where("uses.email =?", customer).includes(:user)}
   scope :by_state, lambda {|state| where("state = ?", state)}
   scope :complete, where("orders.completed_at IS NOT NULL")
+  scope :incomplete, where("orders.completed_at IS NULL")
 
   make_permalink :field => :number
 
