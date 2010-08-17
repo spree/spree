@@ -1,9 +1,9 @@
 class Order < ActiveRecord::Base
-  module Totaling
-    def total
-      map(&:amount).sum
-    end
-  end
+  # module Totaling
+  #   def total
+  #     map(&:amount).sum
+  #   end
+  # end
 
   attr_accessible :line_items, :bill_address, :ship_address
   #attr_protected :charge_total, :item_total, :total, :user, :user_id, :number, :token
@@ -14,9 +14,9 @@ class Order < ActiveRecord::Base
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
   belongs_to :shipping_method
   has_many :state_events, :as => :stateful
-  has_many :line_items, :extend => Totaling, :dependent => :destroy
+  has_many :line_items, :dependent => :destroy
   has_many :inventory_units
-  has_many :payments, :dependent => :destroy, :extend => Totaling
+  has_many :payments, :dependent => :destroy#, :extend => Totaling
   has_many :shipments, :dependent => :destroy
   has_many :return_authorizations, :dependent => :destroy
 
@@ -26,12 +26,12 @@ class Order < ActiveRecord::Base
   accepts_nested_attributes_for :payments
   accepts_nested_attributes_for :shipments
 
-  has_many :adjustments,      :extend => Totaling, :order => :position
-  has_many :charges,          :extend => Totaling, :order => :position
-  has_many :credits,          :extend => Totaling, :order => :position
-  has_many :shipping_charges, :extend => Totaling, :order => :position
-  has_many :tax_charges,      :extend => Totaling, :order => :position
-  has_many :non_zero_charges, :extend => Totaling, :order => :position,
+  has_many :adjustments,      :order => :position
+  has_many :charges,          :order => :position
+  has_many :credits,          :order => :position
+  has_many :shipping_charges, :order => :position
+  has_many :tax_charges,      :order => :position
+  has_many :non_zero_charges, :order => :position,
            :class_name => "Charge", :conditions => ["amount != 0"]
 
   before_create :create_user
@@ -111,10 +111,17 @@ class Order < ActiveRecord::Base
   # This method should never do anything to the Order that results in a save call on the object (otherwise you will end
   # up in an infinite recursion as the associations try to save and then in turn try to call +update!+ again.)
   def update!
-    #update_totals! - uncomment once we review that method and check with David North
+    update_totals
     update_shipment_state
     update_payment_state
-    self.class.update_all "payment_state = '#{payment_state}', shipment_state = '#{shipment_state}'", :id => self.id
+    changes =  {
+      :payment_state => payment_state,
+      :shipment_state => shipment_state,
+      :item_total => item_total,
+      :adjustment_total => adjustment_total,
+      :payment_total => payment_total
+    }
+    self.class.update_all(changes, { :id => id })
   end
 
   def restore_state
@@ -329,15 +336,6 @@ class Order < ActiveRecord::Base
     total - payment_total
   end
 
-  def calculate_totals
-    # update_adjustments
-    self.payment_total = payments.finalized.map(&:amount).sum
-    self.item_total = line_items.total
-    self.adjustment_total = adjustments.total
-    self.total = item_total + adjustment_total
-    # self.outstanding_balance = total - payment_total
-  end
-
   def update_adjustments
     destroy_inapplicable_adjustments
     adjustments.each(&:update_amount)
@@ -347,19 +345,6 @@ class Order < ActiveRecord::Base
     destroyed = adjustments.reject(&:applicable?).map(&:destroy)
     adjustments.reload if destroyed.any?
   end
-
-  def update_totals!
-    calculate_totals
-    changes =  {
-      :item_total => item_total,
-      :adjustment_total => adjustment_total,
-      :payment_total => payment_total
-    }
-    self.class.update_all(changes, { :id => id }) == 1
-  end
-
-
-
 
   def name
     address = bill_address || ship_address
@@ -527,6 +512,20 @@ class Order < ActiveRecord::Base
     else
       self.payment_state = "paid"
     end
+  end
+
+  # Updates the following Order total values:
+  #
+  # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)
+  # +item_total+         The total value of all LineItems
+  # +adjustment_total+   The total value of all adjustments (promotions, credits, etc.)
+  # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
+  def update_totals
+    # update_adjustments
+    self.payment_total = payments.finalized.map(&:amount).sum
+    self.item_total = line_items.map(&:amount).sum
+    self.adjustment_total = adjustments.map(&:amount).sum
+    self.total = item_total + adjustment_total
   end
 
   # def create_shipment

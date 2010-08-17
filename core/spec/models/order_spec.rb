@@ -139,6 +139,39 @@ describe Order do
       order.update!
       order.shipment_state.should == nil
     end
+    it "should call update_totals" do
+      order.should_receive(:update_totals)
+      order.update!
+    end
+  end
+
+  context "#update_totals" do
+    it "should set item_total to the sum of line_item amounts" do
+      line_items = [ mock_model(LineItem, :amount => 100), mock_model(LineItem, :amount => 50) ]
+      order.stub(:line_items => line_items)
+      order.update!
+      order.item_total.should == 150
+    end
+    it "should set payments_total to the sum of finalized payment amounts" do
+      payments = [ mock_model(Payment, :amount => 100), mock_model(Payment, :amount => -10) ]
+      order.stub_chain(:payments, :finalized => payments)
+      order.update!
+      order.payment_total.should == 90
+    end
+    it "should set adjustment_total to the sum of adjustment amounts" do
+      adjustments = [ mock_model(Adjustment, :amount => 10), mock_model(Adjustment, :amount => 5), mock_model(Adjustment, :amount => -2) ]
+      order.stub(:adjustments => adjustments)
+      order.update!
+      order.adjustment_total.should == 13
+    end
+    it "should set the total to the sum of item and adjustment totals" do
+      line_items = [ mock_model(LineItem, :amount => 100), mock_model(LineItem, :amount => 50) ]
+      order.stub(:line_items => line_items)
+      adjustments = [ mock_model(Adjustment, :amount => 10), mock_model(Adjustment, :amount => 5), mock_model(Adjustment, :amount => -2) ]
+      order.stub(:adjustments => adjustments)
+      order.update!
+      order.total.should == 163
+    end
   end
 
   context "Totaling" do
@@ -146,54 +179,9 @@ describe Order do
       order.save
     end
 
-    context "#calculate_totals" do
-      before(:all) do
-        # add line items
-        3.times { Fabricate(:line_item, :price => 100, :order => order) }
-        # payments
-        payment = order.payments.build(:amount => 300, :state => 'finalized')
-        payment.order.stub!(:outstanding_balance).and_return(300) # so payment will validate
-        payment.save!
-        # and adjustments
-        order.tax_charges.create!(:description => 'tax', :adjustment_source => order, :amount => 10)
-        order.shipping_charges.create!(:description => 'shipping', :amount => 20)
-        order.reload
-
-        order.calculate_totals
-      end
-
-      it "should set item_total to the sum of line_item amounts" do
-        order.item_total.to_i.should == 300
-      end
-      it "should set payments_total to the sum of payment amounts" do
-        order.payment_total.to_i.should == 300
-      end
-      it "should set adjustment_total to the sum of adjustment amounts" do
-        order.adjustment_total.to_i.should == 30
-      end
-      it "should set the total to the sum of item and adjustment totals" do
-        order.total.to_i.should == 330
-      end
-      # it "should set outstanding_balance to the difference between the total and payment_total"
-    end
-
     context "#update_adjustments" do
       it "should destroy inapplicatable adjustments"
       it "should force the adjustments to recalculate their amounts"
-    end
-
-    context "#update_totals" do
-      it "should update the relevant database columns sucessfully" do
-        order.stub!(:calculate_totals)
-        order.item_total = 1
-        order.adjustment_total = 2
-        order.payment_total = 3
-        order.update_totals!
-        order.reload
-        order.item_total.to_i.should == 1
-        order.adjustment_total.to_i.should == 2
-        order.payment_total.to_i.should == 3
-      end
     end
 
     context "#destroy_inapplicable_adjustments" do
