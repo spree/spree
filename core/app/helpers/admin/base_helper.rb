@@ -19,6 +19,11 @@ module Admin::BaseHelper
     end
   end
 
+  def spree_date_picker(object, method, options = {}, html_options = {})
+    options.merge!(:format => "y-m-d")
+    unobtrusive_date_text_picker(object, method, options, html_options)
+  end
+
   def class_for_error(model, method)
     if error_message_on :product, :name
     end
