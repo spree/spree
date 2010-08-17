@@ -396,6 +396,7 @@ class Order < ActiveRecord::Base
   # state machine when the order transitions to the 'complete' state.
   def finalize!
     update_attribute(:completed_at, Time.now)
+    InventoryUnit.sell_units(self)
   end
 
 

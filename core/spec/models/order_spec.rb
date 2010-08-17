@@ -50,6 +50,10 @@ describe Order do
       order.finalize!
       order.completed_at.should_not be_nil
     end
+    it "should sell inventory units" do
+      InventoryUnit.should_receive(:sell_units).with(order)
+      order.finalize!
+    end
     pending "should create a new shipment" do
       expect { order.finalize! }.to change{ order.shipments.count }.to(1)
     end
@@ -129,17 +133,17 @@ describe Order do
         order.reload
         order.item_total.to_i.should == 1
         order.adjustment_total.to_i.should == 2
-        order.payment_total.to_i.should == 3 
+        order.payment_total.to_i.should == 3
       end
     end
 
     context "#destroy_inapplicable_adjustments" do
       before(:all) do
-        order.adjustments.clear 
+        order.adjustments.clear
         order.tax_charges.create!(:description => 'tax', :adjustment_source => order, :amount => 10)
         order.shipping_charges.create!(:description => 'shipping', :amount => 20)
-        order.adjustments.reload 
-        @inapplicable = order.adjustments.first 
+        order.adjustments.reload
+        @inapplicable = order.adjustments.first
         @inapplicable.stub!(:applicable?).and_return(false)
         order.destroy_inapplicable_adjustments
       end
