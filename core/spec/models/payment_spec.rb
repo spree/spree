@@ -5,7 +5,7 @@ describe Payment do
   # let(:payment) { Payment.new }
   before(:each) do
     @payment = Payment.new
-    @payment.source = Creditcard.new
+    @payment.source = mock_model(Creditcard, :save => true, :payment_gateway => nil, :process => nil)
     @payment.stub!(:valid?).and_return(true)
     @payment.stub!(:check_payments).and_return(nil)
   end
