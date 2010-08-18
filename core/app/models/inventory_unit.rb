@@ -36,14 +36,9 @@ class InventoryUnit < ActiveRecord::Base
   # grab the appropriate units from inventory, mark as sold and associate with the order
   def self.sell_units(order)
     return if order.complete?
-    out_of_stock_items = []
-    order.line_items.each do |line_item|
-      variant = line_item.variant
-      quantity = line_item.quantity
-
-      out_of_stock_items.concat create_units(order, variant, quantity)
-    end
-    out_of_stock_items
+    order.line_items.map do |line_item|
+      create_units(order, line_item, line_item.quantity)
+    end.flatten
   end
 
   def self.adjust_units(order)
@@ -57,7 +52,7 @@ class InventoryUnit < ActiveRecord::Base
       unit_count = units_by_variant.key?(variant.id) ? units_by_variant[variant.id].size : 0
 
       if unit_count < quantity
-        out_of_stock_items.concat create_units(order, variant, (quantity - unit_count))
+        out_of_stock_items.concat create_units(order, line_item, (quantity - unit_count))
       elsif  unit_count > quantity
         (unit_count - quantity).times do
           inventory_unit = units_by_variant[variant.id].pop
@@ -98,7 +93,9 @@ class InventoryUnit < ActiveRecord::Base
     Spree::Config[:allow_backorder_shipping] || (state == 'ready_to_ship')
   end
 
-  def self.create_units(order, variant, quantity)
+  def self.create_units(order, line_item, quantity)
+    variant = line_item.variant
+
     out_of_stock_items = []
 
     if Spree::Config[:track_inventory_levels]
@@ -118,7 +115,7 @@ class InventoryUnit < ActiveRecord::Base
             order.inventory_units.create(:variant => variant, :state => "backordered")
           end
         else
-          line_item.update_attribute(:quantity, quantity + remaining_quantity)
+          # line_item.update_attribute(:quantity, quantity + remaining_quantity)
           out_of_stock_items << {:line_item => line_item, :count => -remaining_quantity}
         end
         variant.update_attribute(:count_on_hand, 0)

@@ -35,6 +35,14 @@ describe InventoryUnit do
       order.inventory_units.should_not_receive(:create)
       InventoryUnit.sell_units(order)
     end
+    it "should return array of out of stock items" do
+      Spree::Config.set :allow_backorders => false
+      order.line_items.first.variant.stub!(:count_on_hand).and_return(0)
+      order.inventory_units.should_receive(:create).exactly(5).times
+      out_of_stock_items = InventoryUnit.sell_units(order)
+      out_of_stock_items.length.should == 1 
+      out_of_stock_items.first[:line_item].should == order.line_items.first
+    end
     it "should correctly set the state of in-stock units"
     it "should correctly set the state of out-of-stock units"
     it "should do nothing if all units in the order were already sold (saftey check for unexpected condition)"
