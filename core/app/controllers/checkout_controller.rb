@@ -10,7 +10,6 @@ class CheckoutController < Spree::BaseController
   # If the order is complete then user will be redirected to the :show view for the order.
   def update
     if @order.update_attributes(object_params)
-      # @order.update_attribute("state", params[:state])
       if @order.can_next? and @order.next
         redirect_to checkout_state_path(@order.state) and return
       end
@@ -36,6 +35,7 @@ class CheckoutController < Spree::BaseController
   def load_order
     @order = current_order
     redirect_to cart_path and return if @order.nil? or @order.empty?
+    redirect_to order_path(@order) if @order.complete?
     @order.state = params[:state] if params[:state]
     state_callback(:before)
   end
