@@ -76,7 +76,7 @@ class Shipment < ActiveRecord::Base
   end
 
   def line_items
-    if order.checkout_complete
+    if order.complete?
       order.line_items.select {|li| inventory_units.map(&:variant_id).include?(li.variant_id)}
     else
       order.line_items
