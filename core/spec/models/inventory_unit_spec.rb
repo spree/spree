@@ -19,9 +19,25 @@ describe InventoryUnit do
   end
 
   context "sell_units" do
-    it "should increase the number of inventory units by the expected amount"
+    let(:line_items){
+      (1..3).map do |n| 
+        line_item = mock_model(LineItem, :variant => mock_model(Variant, :count_on_hand => n, :update_attribute => true), :quantity => n)
+      end
+    }
+    let(:order) { mock_model(Order, :line_items => line_items, :inventory_units => mock('inventory-units'), :complete? => false) }
+
+    it "should increase the number of inventory units by the expected amount" do
+      order.inventory_units.should_receive(:create).exactly(6).times
+      InventoryUnit.sell_units(order)
+    end
+    it "should not increase the number of inventory units if the order is completed" do
+      order.stub!(:complete?).and_return(true)
+      order.inventory_units.should_not_receive(:create)
+      InventoryUnit.sell_units(order)
+    end
     it "should correctly set the state of in-stock units"
     it "should correctly set the state of out-of-stock units"
     it "should do nothing if all units in the order were already sold (saftey check for unexpected condition)"
   end
+
 end
