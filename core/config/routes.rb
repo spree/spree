@@ -69,7 +69,7 @@ Rails.application.routes.draw do
     resources :configurations
     resources :products do
       resources :product_properties
-      resources :image
+      resources :images
       member do
         get :clone
       end

@@ -106,7 +106,7 @@ class Admin::TaxonsController < Admin::BaseController
   def update_after
     #rename child taxons
     if @update_children
-      @taxon.descendents.each do |taxon|
+      @taxon.descendants.each do |taxon|
         taxon.reload
         taxon.set_permalink
         taxon.save!
