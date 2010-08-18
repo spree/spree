@@ -65,12 +65,11 @@ class Order < ActiveRecord::Base
     !! completed_at
   end
 
-  def item_count
-    line_items.map(&:quantity).sum
-  end
-
-  def empty?
-    item_count == 0
+  # Indicates whether or not the user is allowed to proceed to checkout.  Currently this is implemented as a
+  # check for whether or not there is at least one LineItem in the Order.  Feel free to override this logic
+  # in your own application if you require additional steps before allowing a checkout.
+  def checkout_allowed?
+    line_items.count > 0
   end
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
@@ -81,7 +80,7 @@ class Order < ActiveRecord::Base
     end
 
     event :next do
-      transition :from => 'address', :to => 'delivery' 
+      transition :from => 'address', :to => 'delivery'
       transition :from => 'delivery', :to => 'payment'
       transition :from => 'payment', :to => 'confirm'
       transition :from => 'confirm', :to => 'complete'

@@ -196,4 +196,15 @@ describe Order do
     end
   end
 
+  context "#allow_checkout?" do
+    it "should be true if there are line_items in the order" do
+      order.stub_chain(:line_items, :count => 1)
+      order.checkout_allowed?.should be_true
+    end
+    it "should be false if there are no line_items in the order" do
+      order.stub_chain(:line_items, :count => 0)
+      order.checkout_allowed?.should be_false
+    end
+  end
+
 end
