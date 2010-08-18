@@ -2,14 +2,8 @@ require 'spec_helper'
 
 describe CheckoutController do
 
-  # let(:order) { mock_model Order, :complete? => false, :empty? => false, :state => "confirm", :state= => nil, :can_next? => true, :update_attribute => true, :update_attributes => true, :
-  #                                 :payment? => false, :next! => true, :bill_address => mock_model(Address), :ship_address => mock_model(Address) }
-  let(:order) { Order.create }
-  before do
-    order.stub!(:empty?).and_return(false)
-    # Order.stub!(:find_by_id).and_return order
-    controller.stub!(:current_order).and_return(order)
-  end
+  let(:order) { mock_model(Order, :checkout_allowed? => true, :update_attributes => true, :payment? => false).as_null_object }
+  before { controller.stub :current_order => order }
 
   it "should understand checkout routes" do
     assert_routing("/checkout/delivery", {:controller => "checkout", :action => "edit", :state => "delivery"})
@@ -18,13 +12,13 @@ describe CheckoutController do
 
   context "#edit" do
 
-    it "should redirect to the cart path if order.empty?" do
-      order.stub(:empty?).and_return true
+    it "should redirect to the cart path unless checkout_allowed?" do
+      order.stub :checkout_allowed? => false
       get :edit, { :state => "delivery" }
       response.should redirect_to cart_path
     end
 
-    it "should redirect to the cart path if current incompelte order can't be found" do
+    it "should redirect to the cart path if current_order is nil" do
       controller.stub!(:current_order).and_return(nil)
       get :edit, { :state => "delivery" }
       response.should redirect_to cart_path
@@ -40,8 +34,8 @@ describe CheckoutController do
   context "#update" do
 
     it "should remove completed order from the session" do
-      order.stub(:complete?).and_return(true)
-      post :update, {:state => "confirm"}
+      order.stub(:complete? => true, :state => 'complete')
+      get :edit, {:state => "complete"}, {:order_id => 1}
       session[:order_id].should be_nil
     end
 
@@ -57,12 +51,12 @@ describe CheckoutController do
       end
 
       it "should change to requested state" do
-        order.should_receive(:update_attribute).with('state', 'confirm')
+        order.should_receive(:state=).with('confirm')
         post :update, {:state => "confirm"}
       end
 
       context "with next state" do
-        before { order.stub(:state).and_return("delivery") }
+        before { order.stub :can_next? => true }
 
         it "should advance the state" do
           order.should_receive(:next).and_return true
@@ -70,7 +64,7 @@ describe CheckoutController do
         end
 
         it "should redirect the next state" do
-          order.update_attribute(:state, 'confirm')
+          order.stub :state => "complete"
           post :update, {:state => "confirm"}
           response.should redirect_to checkout_state_path("complete")
         end
@@ -110,7 +104,7 @@ describe CheckoutController do
       end
     end
 
-    context "when order is complete" do
+    context "when current_order is nil" do
       before { controller.stub! :current_order => nil }
       it "should not change the state if order is completed" do
         order.should_not_receive(:update_attribute)
