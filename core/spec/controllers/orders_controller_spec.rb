@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe OrdersController do
 
-  let(:order) { mock_model(Order, :number => "R123") }
+  let(:order) { mock_model(Order, :number => "R123", :reload => nil) }
   before { Order.stub(:find).with(1).and_return(order) }
 
   context "#populate" do

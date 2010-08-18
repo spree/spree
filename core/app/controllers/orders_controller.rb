@@ -1,19 +1,16 @@
 class OrdersController < Spree::BaseController
-  # prepend_before_filter :reject_unknown_object,  :only => [:show, :edit, :update, :checkout]
   # before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]
   # before_filter :set_user
 
   ssl_required :show
 
-  resource_controller
-
   helper :products
 
-  #override the default r_c flash behavior and redirect to edit (instead of show)
-  update do
-    flash nil
-    success.wants.html { render :edit }
-    failure.wants.html { render :edit }
+  def update
+    @order = current_order
+    @order.update_attributes(params[:order])
+    @order.reload
+    render :edit
   end
 
   #override r_c default b/c we don't want to actually destroy, we just want to clear line items
@@ -51,13 +48,6 @@ class OrdersController < Spree::BaseController
       @order.add_variant(Variant.find(variant_id), quantity.to_i) #if quantity > 0
     end if params[:variants]
     redirect_to cart_path
-  end
-
-  private
-
-  def object
-    @object ||= current_order(false)
-    @object
   end
 
   # def create_before
