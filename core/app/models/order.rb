@@ -291,38 +291,6 @@ class Order < ActiveRecord::Base
   #   end
   # end
   #
-  # def update_totals(force_adjustment_recalculation=false)
-  #   self.item_total       = self.line_items.total
-  #
-  #   # save the items which might be changed by an order update, so that
-  #   # charges can be recalculated accurately.
-  #   self.line_items.map(&:save)
-  #
-  #   if !self.checkout_complete || force_adjustment_recalculation
-  #     applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
-  #     self.adjustments = applicable_adjustments
-  #     adjustments_to_destroy.each(&:destroy)
-  #   end
-  #
-  #   self.adjustment_total = self.charge_total - self.credit_total
-  #   self.total            = self.item_total   + self.adjustment_total
-  # end
-  #
-  # def update_totals!
-  #   update_totals
-  #
-  #   payments_total = self.payments.total
-  #   if payments_total < self.total
-  #     #Total is higher so balance_due
-  #     self.under_paid
-  #   elsif payments_total > self.total
-  #     #Total is lower so credit_owed
-  #     self.over_paid
-  #   end
-  #
-  #   save!
-  # end
-  #
   # def update_adjustments
   #   self.adjustments.each(&:update_amount)
   #   update_totals(:force_adjustment_update)

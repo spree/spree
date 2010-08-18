@@ -18,19 +18,6 @@ class OrderTest < ActiveSupport::TestCase
       end
     end
 
-    context "#update_totals" do
-      should "update totals" do
-        order = Order.create!
-        order.item_total = nil
-        order.adjustment_total = nil
-        order.total = nil
-        order.update_totals
-        assert_not_nil order.item_total
-        assert_not_nil order.charge_total
-        assert_not_nil order.total
-      end
-    end
-
     context "#save" do
       should "remove line items if quantity drops to 0" do
         order = Order.create!
@@ -72,32 +59,6 @@ class OrderTest < ActiveSupport::TestCase
           assert order.save!
           Spree::Config.set(:allow_backorders => true)
         end
-      end
-    end
-    context "#complete" do
-      should "change state from in_progress to new" do
-        order = Order.create!
-        assert_equal "in_progress", order.state
-        order.complete!
-        assert_equal "new", order.state
-      end
-      should "update checkout completed_at" do
-        order = Order.create!
-        assert order.completed_at.nil?
-        order.complete!
-        assert !order.completed_at.nil?
-        assert !order.checkout.completed_at.nil?
-      end
-      should "create inventory units" do
-        order = Order.create!
-        order.line_items <<
-                [Factory.build(:line_item, :quantity=>1, :order=>order),
-                 Factory.build(:line_item, :quantity=>2, :order=>order)]
-        assert_equal 0, order.inventory_units.count
-        assert_equal 0, order.shipment.inventory_units.count
-        order.complete!
-        assert_equal 3, order.inventory_units.count
-        assert_equal 3, order.shipment.inventory_units.count
       end
     end
     context "#pay!" do
