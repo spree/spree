@@ -1,6 +1,8 @@
 (function($){
   $(document).ready(function(){
 
+    $('#checkout_form_address').validate();
+
     $('input#order_use_billing').click(function() {
       if(this.checked) {
         $('#shipping .inner').hide();
