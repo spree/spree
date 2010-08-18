@@ -140,7 +140,25 @@ describe Order do
       order.shipment_state.should == nil
     end
     it "should call update_totals" do
-      order.should_receive(:update_totals)
+      order.should_receive(:update_totals).twice
+      order.update!
+    end
+    it "should call adjustemnt#update on every adjustment}" do
+      adjustment = mock_model(Adjustment, :amount => 5, :applicable? => true)
+      order.stub(:adjustments => [adjustment])
+      adjustment.should_receive(:update_amount)
+      order.update!
+    end
+    it "should destroy adjustments that no longer apply" do
+      adjustment = mock_model(Adjustment, :amount => 10, :update_amount => nil, :applicable? => false)
+      adjustment.should_receive(:destroy)
+      order.stub(:adjustments => [adjustment])
+      order.update!
+    end
+    it "should not destroy adjustments that still apply" do
+      adjustment = mock_model(Adjustment, :amount => 10, :update_amount => nil, :applicable? => true)
+      adjustment.should_not_receive(:destroy)
+      order.stub(:adjustments => [adjustment])
       order.update!
     end
   end
@@ -158,51 +176,24 @@ describe Order do
       order.update!
       order.payment_total.should == 90
     end
-    it "should set adjustment_total to the sum of adjustment amounts" do
-      adjustments = [ mock_model(Adjustment, :amount => 10), mock_model(Adjustment, :amount => 5), mock_model(Adjustment, :amount => -2) ]
-      order.stub(:adjustments => adjustments)
-      order.update!
-      order.adjustment_total.should == 13
-    end
-    it "should set the total to the sum of item and adjustment totals" do
-      line_items = [ mock_model(LineItem, :amount => 100), mock_model(LineItem, :amount => 50) ]
-      order.stub(:line_items => line_items)
-      adjustments = [ mock_model(Adjustment, :amount => 10), mock_model(Adjustment, :amount => 5), mock_model(Adjustment, :amount => -2) ]
-      order.stub(:adjustments => adjustments)
-      order.update!
-      order.total.should == 163
-    end
-  end
-
-  context "Totaling" do
-    before(:all) do
-      order.save
-    end
-
-    context "#update_adjustments" do
-      it "should destroy inapplicatable adjustments"
-      it "should force the adjustments to recalculate their amounts"
-    end
-
-    context "#destroy_inapplicable_adjustments" do
-      before(:all) do
-        order.adjustments.clear
-        order.tax_charges.create!(:description => 'tax', :adjustment_source => order, :amount => 10)
-        order.shipping_charges.create!(:description => 'shipping', :amount => 20)
-        order.adjustments.reload
-        @inapplicable = order.adjustments.first
-        @inapplicable.stub!(:applicable?).and_return(false)
-        order.destroy_inapplicable_adjustments
+    context "with adjustments" do
+      let(:adjustments) {
+        [ mock_model(Adjustment, :amount => 10, :update_amount => nil, :applicable? => true),
+          mock_model(Adjustment, :amount => 5,  :update_amount => nil, :applicable? => true),
+          mock_model(Adjustment, :amount => -2, :update_amount => nil, :applicable? => true) ]
+      }
+      before { order.stub(:adjustments => adjustments) }
+      it "should set adjustment_total to the sum of adjustment amounts" do
+        order.update!
+        order.adjustment_total.should == 13
       end
-      it "should destroy adjustments for which applicable? is false" do
-        Adjustment.exists?(@inapplicable.id).should be_false
-      end
-      it "should remove the destroyed adjustments from the association collection" do
-        order.adjustments.length.should == 1
-        order.adjustments.include?(@inapplicable).should be_false
+      it "should set the total to the sum of item and adjustment totals" do
+        line_items = [ mock_model(LineItem, :amount => 100), mock_model(LineItem, :amount => 50) ]
+        order.stub(:line_items => line_items)
+        order.update!
+        order.total.should == 163
       end
     end
-
   end
 
 end

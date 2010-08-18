@@ -36,7 +36,6 @@ class Order < ActiveRecord::Base
 
   before_create :create_user
 
-
   #delegate :shipping_method, :to => :checkout
   #delegate :email, :to => :checkout
   #delegate :ip_address, :to => :checkout
@@ -114,6 +113,9 @@ class Order < ActiveRecord::Base
     update_totals
     update_shipment_state
     update_payment_state
+    update_adjustments
+    # update totals a second time in case updated adjustments have an effect on the total
+    update_totals
     changes =  {
       :payment_state => payment_state,
       :shipment_state => shipment_state,
@@ -136,7 +138,6 @@ class Order < ActiveRecord::Base
     end
 
   end
-
 
   before_validation :clone_billing_address, :if => "@use_billing"
   attr_accessor :use_billing
@@ -494,6 +495,16 @@ class Order < ActiveRecord::Base
     self.item_total = line_items.map(&:amount).sum
     self.adjustment_total = adjustments.map(&:amount).sum
     self.total = item_total + adjustment_total
+  end
+
+  # Updates each of the Order adjustments.  This is intended to be called from an Observer so that the Order can
+  # respond to external changes to LineItem, Shipment, other Adjustments, etc.  Adjustments that are no longer
+  # applicable will be removed from the association and destroyed.
+  def update_adjustments
+    # separate into adjustments to keep and adjustements to toss
+    obsolete_adjustments = adjustments.select{|adjustment| !adjustment.applicable?}
+    obsolete_adjustments.each(&:destroy)
+    self.adjustments.each(&:update_amount)
   end
 
   # def create_shipment
