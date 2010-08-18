@@ -46,7 +46,10 @@ describe Order do
   end
 
   context "#finalize!" do
+    let(:order) { Order.create }
+
     it "should set completed_at" do
+      order.save!
       order.finalize!
       order.completed_at.should_not be_nil
     end
@@ -54,8 +57,17 @@ describe Order do
       InventoryUnit.should_receive(:sell_units).with(order)
       order.finalize!
     end
-    pending "should create a new shipment" do
+    it "should create a new shipment" do
+      line_items = (1..3).map do 
+        mock_model(LineItem, :amount => 100, :quantity => 1, :variant => mock_model(Variant, :update_attribute => true, :count_on_hand => 100)) 
+      end
+      order.stub(:line_items => line_items)
       expect { order.finalize! }.to change{ order.shipments.count }.to(1)
+    end
+    it "should process the payments" do
+      order.stub!(:payments).and_return([mock(Payment)])
+      order.payment.should_receive(:process!)
+      order.finalize!
     end
   end
 

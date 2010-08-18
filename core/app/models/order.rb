@@ -55,6 +55,8 @@ class Order < ActiveRecord::Base
   # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
   attr_protected :charge_total, :item_total, :total, :user, :user_id, :number, :token #,:state
 
+  attr_accessor :out_of_stock_items
+
   # def to_param
   #   self.number if self.number
   #   generate_order_number unless self.number
@@ -365,8 +367,10 @@ class Order < ActiveRecord::Base
   # Finalizes an in progress order after checkout is complete.  This method is intended to be called automatically by the
   # state machine when the order transitions to the 'complete' state.
   def finalize!
+    self.out_of_stock_items = InventoryUnit.sell_units(self)
+    shipments.create(:inventory_units => inventory_units.reload)
+    payments.each(&:process!)
     update_attribute(:completed_at, Time.now)
-    InventoryUnit.sell_units(self)
   end
 
 
