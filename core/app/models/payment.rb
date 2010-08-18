@@ -7,12 +7,16 @@ class Payment < ActiveRecord::Base
   alias :txns :transactions
 
   after_save :create_payment_profile, :if => :payment_profiles_supported?
-  after_save :check_payments
-  after_destroy :check_payments
+
+  # update the order totals, etc.
+  after_save {order.update!}
+
+  #after_save :check_payments
+  #after_destroy :check_payments
 
   accepts_nested_attributes_for :source
 
-  validate :amount_is_valid_for_outstanding_balance_or_credit
+  #validate :amount_is_valid_for_outstanding_balance_or_credit
   validates :payment_method, :presence => true, :if => Proc.new { |payable| payable.is_a? Checkout }
 
   scope :from_creditcard, where(:source_type => 'Creditcard')
@@ -35,7 +39,7 @@ class Payment < ActiveRecord::Base
     end
 
     event :authorized do
-      transition :from => 'processing', :to => 'authorized' 
+      transition :from => 'processing', :to => 'authorized'
     end
 
     event :finalize do
@@ -81,25 +85,25 @@ class Payment < ActiveRecord::Base
 
   private
 
-    def check_payments
-      return unless order and order.complete?
-      #sorting by created_at.to_f to ensure millisecond percsision, plus ID - just in case
-      events = order.state_events.sort_by { |e| [e.created_at.to_f, e.id] }.reverse
-      # TODO: think the below implementation will need replacing
-      # if order.returnable_units.nil? && order.return_authorizations.size >0
-      #   order.return!
-      # elsif events.present? and %w(over_paid under_paid).include?(events.first.name)
-      #   events.each do |event|
-      #     if %w(shipped paid new).include?(event.previous_state)
-      #       order.pay!
-      #       order.update_attribute("state", event.previous_state) if %w(shipped returned).include?(event.previous_state)
-      #       return
-      #     end
-      #   end
-      # elsif order.payment_total >= order.total
-      #   order.pay!
-      # end
-    end
+    # def check_payments
+    #   return unless order and order.complete?
+    #   #sorting by created_at.to_f to ensure millisecond percsision, plus ID - just in case
+    #   events = order.state_events.sort_by { |e| [e.created_at.to_f, e.id] }.reverse
+    #   # TODO: think the below implementation will need replacing
+    #   # if order.returnable_units.nil? && order.return_authorizations.size >0
+    #   #   order.return!
+    #   # elsif events.present? and %w(over_paid under_paid).include?(events.first.name)
+    #   #   events.each do |event|
+    #   #     if %w(shipped paid new).include?(event.previous_state)
+    #   #       order.pay!
+    #   #       order.update_attribute("state", event.previous_state) if %w(shipped returned).include?(event.previous_state)
+    #   #       return
+    #   #     end
+    #   #   end
+    #   # elsif order.payment_total >= order.total
+    #   #   order.pay!
+    #   # end
+    # end
 
     def amount_is_valid_for_outstanding_balance_or_credit
       return unless order

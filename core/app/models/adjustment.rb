@@ -33,6 +33,9 @@ class Adjustment < ActiveRecord::Base
   validates :description, :presence => true
   validates :amount, :numericality => true
 
+  # update the order totals, etc.
+  after_save {order.update!}
+
   # Tries to calculate the adjustment, returns nil if adjustment could not be calculated.
   # raises RuntimeError if adjustment source didn't provide the caculator.
   def calculate_adjustment
@@ -51,17 +54,17 @@ class Adjustment < ActiveRecord::Base
   end
 
   # Retrieves amount of adjustment, if order hasn't been completed and amount is not set tries to calculate new amount.
-  def amount
-    db_amount = read_attribute(:amount)
-    if (order && order.complete?)
-      result = db_amount
-    elsif db_amount && db_amount != 0
-      result = db_amount
-    else
-      result = self.calculate_adjustment
-    end
-    return(result || 0)
-  end
+  # def amount
+  #   db_amount = read_attribute(:amount)
+  #   if (order && order.complete?)
+  #     result = db_amount
+  #   elsif db_amount && db_amount != 0
+  #     result = db_amount
+  #   else
+  #     result = self.calculate_adjustment
+  #   end
+  #   return(result || 0)
+  # end
 
   def update_amount
     new_amount = calculate_adjustment

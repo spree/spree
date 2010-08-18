@@ -60,7 +60,7 @@ end
 module SpreeCore
   class Engine < Rails::Engine
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/app/metals)
-    config.active_record.observers = :order_totals_observer#, :state_monitor
+    # TODO - register state monitor observer?
 
     def self.activate
       Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|

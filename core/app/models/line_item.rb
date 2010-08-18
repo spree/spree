@@ -15,6 +15,9 @@ class LineItem < ActiveRecord::Base
 
   attr_accessible :quantity, :variant_id, :order_id
 
+  # update the order totals, etc.
+  after_save {order.update!}
+
   def copy_price
     self.price = variant.price if variant && self.price.nil?
   end

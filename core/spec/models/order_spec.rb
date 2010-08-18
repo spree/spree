@@ -203,16 +203,6 @@ describe Order do
       end
     end
 
-    context "adding a line item" do
-      it "should increase the item_total" do
-        order.reload
-        lambda do
-          order.line_items.create Fabricate.attributes_for(:line_item, :quantity => 1, :price => 100)
-          order.reload
-        end.should change(order, :item_total).by(100)
-      end
-    end
-
   end
 
 end
