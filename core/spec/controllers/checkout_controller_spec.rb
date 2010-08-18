@@ -111,16 +111,15 @@ describe CheckoutController do
     end
 
     context "when order is complete" do
-      before(:each) { order.stub(:complete?).and_return true }
-
+      before { controller.stub! :current_order => nil }
       it "should not change the state if order is completed" do
         order.should_not_receive(:update_attribute)
         post :update, {:state => "confirm"}
       end
 
-      it "should redirect to the order_path" do
+      it "should redirect to the cart_path" do
         post :update, {:state => "confirm"}
-        response.should redirect_to order_path(assigns[:order])
+        response.should redirect_to cart_path
       end
     end
 

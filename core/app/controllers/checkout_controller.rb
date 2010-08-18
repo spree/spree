@@ -35,7 +35,6 @@ class CheckoutController < Spree::BaseController
   def load_order
     @order = current_order
     redirect_to cart_path and return if @order.nil? or @order.empty?
-    redirect_to order_path(@order) if @order.complete?
     @order.state = params[:state] if params[:state]
     state_callback(:before)
   end
