@@ -1,65 +1,42 @@
-# *Adjustment* model is a super class of all models that change order total.
+# Adjustments represent a change to the +item_total+ of an Order.  Each adjustment has an +amount+ that be either
+# positive or negative.  Adjustments have two useful boolean flags
 #
-# All adjustments associated with order are added to _item_total_.
-# charges always have positive amount (they increase total),
-# credits always have negative totals as they decrease the order total.
+# +mandatory+
 #
-# h3. Basic usage
+# The charge is required and will not be removed from the order, even if the amount is zero.  This is
+# useful for representing things such as shipping and tax charges where you may want to make it explicitly
+# clear that no charge was made for such things.
 #
-# Before checkout is completed, adjustments are recalculated each time #amount is called, after checkout
-# all adjustments are frozen, and can be later modified, but will not be automatically recalculated.
-# When displaying or using Adjustments #amount method should be always used, #update_adjustment
-# and #calculate_adjustment should be considered private, and might be subject to change before 1.0.
+# +frozen+
 #
-# h3. Creating new Charge and Credit types
-#
-# When creating new type of Charge or Credit, you can either use default behaviour of Adjustment
-# or override #calculate_adjustment and #applicable? to provide your own custom behaviour.
-#
-# All custom credits and charges should inherit either from Charge or Credit classes,
-# and they name *MUST* end with either _Credit_ or _Charge_, so allowed names are for example:
-# _CouponCredit_, _WholesaleCredit_ or _CodCharge_.
-#
-# By default Adjustment expects _adjustment_source_ to provide #calculator method
-# to which _adjustment_source_ will be passed as parameter (this way adjustment source can provide
-# calculator instance that is shared with other adjustment sources, or even singleton calculator).
-#
+# The charge is never to be udpated.  Typically you would want to freeze certain adjustments after checkout.
+# One use case for this is if you want to freeze a shipping adjustment so that its value does not change
+# in the future when making other trivial edits to the order (like an email change).
 class Adjustment < ActiveRecord::Base
-  acts_as_list :scope => :order
-
   belongs_to :order
-  belongs_to :adjustment_source, :polymorphic => true
+  belongs_to :source, :polymorphic => true
+  belongs_to :originator, :polymorphic => true
 
-  validates :description, :presence => true
+  validates :label, :presence => true
   validates :amount, :numericality => true
 
   # update the order totals, etc.
   after_save {order.update!}
 
-  # Tries to calculate the adjustment, returns nil if adjustment could not be calculated.
-  # raises RuntimeError if adjustment source didn't provide the caculator.
-  def calculate_adjustment
-    if adjustment_source
-      calc = adjustment_source.respond_to?(:calculator) && adjustment_source.calculator
-      calc.compute(adjustment_source) if calc
-    end
-  end
-
-  # Checks if adjustment is applicable for the order.
-  # Should return _true_ if adjustment should be preserved and _false_ if removed.
-  # Default behaviour is to preserve adjustment if amount is present and non 0.
-  # Might (and should) be overriden in descendant classes, to provide adjustment specific behaviour.
+  # Checks if adjustment is applicable for the order. Should return _true_ if adjustment should be preserved and
+  # _false_ if removed. Default behaviour is to preserve adjustment if amount is present and non 0.  Exceptions
+  # are made if the adjustment is considered +mandatory+.
   def applicable?
-    amount && amount != 0
+    mandatory || amount != 0
   end
 
-  def update_amount
-    self.amount = calculate_adjustment
-  end
-
-  def secondary_type; type; end
-
-  class << self
-    public :subclasses
+  # Tells the adjustment that its time to update itself.  Adjustments will delegate this request to their Originator
+  # when present, but only if +frozen+ is false.  Adjustments that are +frozen+ will never change their amount.
+  # The new adjustment amount will be set by by the +originator+ and is not automatically saved.  This makes it save
+  # to use this method in an after_save hook for other models without causing an infinite recursion problem.  If there
+  # is no +originator+ then this method will have no effect.
+  def update
+    return if frozen? or originator.nil?
+    originator.update_adjustment(self, source)
   end
 end

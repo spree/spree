@@ -1,8 +1,8 @@
 class Promotion < ActiveRecord::Base
   has_many  :promotion_credits,    :as => :adjustment_source
-  has_calculator
+  creates_adjustment
   alias credits promotion_credits
-  
+
   has_many :promotion_rules
   accepts_nested_attributes_for :promotion_rules
   alias_method :rules, :promotion_rules
@@ -15,10 +15,10 @@ class Promotion < ActiveRecord::Base
   def eligible?(order)
     !expired? && rules_are_eligible?(order)
   end
-  
+
   def expired?
     starts_at && Time.now < starts_at ||
-    expires_at && Time.now > expires_at || 
+    expires_at && Time.now > expires_at ||
     usage_limit && promotion_credits.with_order.count >= usage_limit
   end
 
@@ -38,12 +38,12 @@ class Promotion < ActiveRecord::Base
       order.promotion_credits.reload.clear unless combine? and order.promotion_credits.all? { |credit| credit.adjustment_source.combine? }
       order.save
       promotion_credits.create({
-          :order_id => order.id, 
+          :order_id => order.id,
           :description => "#{I18n.t(:coupon)} (#{code})"
         })
     end
   end
-  
+
 
 
   # Products assigned to all product rules

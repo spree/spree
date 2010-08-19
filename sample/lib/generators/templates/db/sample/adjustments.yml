@@ -2,17 +2,23 @@
 tax_<%= i %>:
   order: order_<%= i %>
   amount: 0
-  type: TaxCharge
-  adjustment_source: order_<%= i %>
-  adjustment_source_type: Order
-  description: Tax
+  source: order_<%= i %>
+  source_type: Order
+  originator:
+  originator_type:
+  label: Tax
+  frozen: false
+  mandatory: true
 <% end %>
 <% 1.upto(100) do |i| %>
 ship_<%= i %>:
   order: order_<%= i %>
   amount: 5
-  type: ShippingCharge
-  adjustment_source: shipment_<%= i %>
-  adjustment_source_type: Shipment
-  description: Shipping
+  source: shipment_<%= i %>
+  source_type: Shipment
+  originator:
+  originator_type:
+  label: Shipping
+  frozen: true
+  mandatory: true
 <% end %>

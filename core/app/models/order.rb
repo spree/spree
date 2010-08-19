@@ -26,13 +26,7 @@ class Order < ActiveRecord::Base
   accepts_nested_attributes_for :payments
   accepts_nested_attributes_for :shipments
 
-  has_many :adjustments,      :order => :position
-  has_many :charges,          :order => :position
-  has_many :credits,          :order => :position
-  has_many :shipping_charges, :order => :position
-  has_many :tax_charges,      :order => :position
-  has_many :non_zero_charges, :order => :position,
-           :class_name => "Charge", :conditions => ["amount != 0"]
+  has_many :adjustments
 
   before_create :create_user
 
@@ -514,7 +508,7 @@ class Order < ActiveRecord::Base
     # separate into adjustments to keep and adjustements to toss
     obsolete_adjustments = adjustments.select{|adjustment| !adjustment.applicable?}
     obsolete_adjustments.each(&:destroy)
-    self.adjustments.each(&:update_amount)
+    self.adjustments.each(&:update)
   end
 
   # def create_shipment

@@ -37,12 +37,12 @@ require 'awesome_nested_set'
 require 'acts_as_list'
 require 'resource_controller'
 require 'searchlogic'
+require 'active_merchant'
 
 require 'spree_core/delegate_belongs_to'
 require 'spree_core/theme_support'
 require 'spree_core/validation_group'
 require 'spree_core/enumerable_constants'
-require 'spree_core/has_calculator'
 require 'spree_core/find_by_param'
 require 'spree_core/ssl_requirement'
 require 'spree_core/preferences/mail_settings'
@@ -50,7 +50,7 @@ require 'spree_core/preferences/model_hooks'
 require 'spree_core/preferences/preference_definition'
 require 'store_helpers'
 require 'spree/file_utilz'
-require 'active_merchant'
+require 'spree/create_adjustments'
 
 module Spree
   def self.version
@@ -98,7 +98,7 @@ module SpreeCore
   end
 end
 
-ActiveRecord::Base.class_eval { include HasCalculator }
+ActiveRecord::Base.class_eval { include Spree::CreateAdjustments }
 
 ActiveRecord::Base.class_eval do
   include CollectiveIdea::Acts::NestedSet

@@ -3,7 +3,7 @@ class ShippingMethod < ActiveRecord::Base
   belongs_to :zone
   has_many :shipments
 
-  has_calculator
+  create_adjustments
 
   def calculate_cost(shipment)
     rate_calculators = {}

@@ -1,6 +1,6 @@
-module HasCalculator
+module Spree::CreateAdjustments
   module ClassMethods
-    def has_calculator(options = {})
+    def create_adjustments(options = {})
       has_one   :calculator, :as => :calculable, :dependent => :destroy
       accepts_nested_attributes_for :calculator
       validates :calculator, :presence => true if options[:require]
@@ -44,9 +44,22 @@ module HasCalculator
       clazz = calculator_type.constantize if calculator_type
       self.calculator = clazz.new if clazz and not self.calculator.is_a? clazz
     end
+
+    # Creates a new adjustment for the target object (which is any class that has_many :adjustments) and
+    # sets amount based on the calculator as applied to the calculable argument (Order, LineItems[], Shipment, etc.)
+    def create_adjustment(target, calculable)
+      amount = self.calculator.compute(calculable)
+      target.adjustments.create(:amount => amount, :source => calculable, :originator => self)
+    end
+
+    # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+
+    # referenced passed to the method.
+    def update_adjustment(adjustment, calculable)
+      adjustment.amount = self.calculator.compute(calculable)
+    end
   end
 
   def self.included(receiver)
-  	receiver.extend  ClassMethods
+    receiver.extend Spree::CreateAdjustments::ClassMethods
   end
 end

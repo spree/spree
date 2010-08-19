@@ -167,17 +167,17 @@ describe Order do
     it "should call adjustemnt#update on every adjustment}" do
       adjustment = mock_model(Adjustment, :amount => 5, :applicable? => true)
       order.stub(:adjustments => [adjustment])
-      adjustment.should_receive(:update_amount)
+      adjustment.should_receive(:update)
       order.update!
     end
     it "should destroy adjustments that no longer apply" do
-      adjustment = mock_model(Adjustment, :amount => 10, :update_amount => nil, :applicable? => false)
+      adjustment = mock_model(Adjustment, :amount => 10, :update => nil, :applicable? => false)
       adjustment.should_receive(:destroy)
       order.stub(:adjustments => [adjustment])
       order.update!
     end
     it "should not destroy adjustments that still apply" do
-      adjustment = mock_model(Adjustment, :amount => 10, :update_amount => nil, :applicable? => true)
+      adjustment = mock_model(Adjustment, :amount => 10, :update => nil, :applicable? => true)
       adjustment.should_not_receive(:destroy)
       order.stub(:adjustments => [adjustment])
       order.update!
@@ -199,9 +199,9 @@ describe Order do
     end
     context "with adjustments" do
       let(:adjustments) {
-        [ mock_model(Adjustment, :amount => 10, :update_amount => nil, :applicable? => true),
-          mock_model(Adjustment, :amount => 5,  :update_amount => nil, :applicable? => true),
-          mock_model(Adjustment, :amount => -2, :update_amount => nil, :applicable? => true) ]
+        [ mock_model(Adjustment, :amount => 10, :update => nil, :applicable? => true),
+          mock_model(Adjustment, :amount => 5,  :update => nil, :applicable? => true),
+          mock_model(Adjustment, :amount => -2, :update => nil, :applicable? => true) ]
       }
       before { order.stub(:adjustments => adjustments) }
       it "should set adjustment_total to the sum of adjustment amounts" do
