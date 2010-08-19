@@ -78,11 +78,12 @@ describe Order do
       order.stub(:line_items => line_items)
       expect { order.finalize! }.to change{ order.shipments.count }.to(1)
     end
-    it "should process the payments" do
-      order.stub!(:payments).and_return([mock(Payment)])
-      order.payment.should_receive(:process!)
-      order.finalize!
-    end
+    # TODO: this should happen before transition to complete instead
+    # it "should process the payments" do
+    #   order.stub!(:payments).and_return([mock(Payment)])
+    #   order.payment.should_receive(:process!)
+    #   order.finalize!
+    # end
   end
 
   context "#guest?" do

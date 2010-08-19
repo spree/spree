@@ -37,9 +37,22 @@ describe Payment do
 
   end
 
-  context "#credit_payment" do
-    it "should return first payment on same order that has this payment as its source"
-    it "should return nil if order has no payments with this payment as its source"
+  context "#credit_allowed" do
+    it "is the difference between offsets total and payment amount"
+  end
+
+  context "#can_credit?" do
+    it "is true if credit_allowed > 0"
+  end
+
+  context "#credit" do
+    context "when amount <= credit_allowed" do
+      it "makes the state processing"
+      it "calls credit on the source with the amount"
+    end
+    context "when amount > credit_allowed" do
+      it "should not call credit on the source"
+    end
   end
 
   context "#save" do

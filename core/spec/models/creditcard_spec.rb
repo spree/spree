@@ -41,14 +41,18 @@ describe Creditcard do
 
   context "#void" do
     it "should call payment_gateway.void with the payment's response_code"
-    it "should update the response_code with the authorization from the gateway"
-    it "should void the payment"
+    context "if sucessfull" do
+      it "should update the response_code with the authorization from the gateway"
+      it "should void the payment"
+    end
+    context "if unsucesfull" do
+    end
   end
 
   context "#credit" do
     context "if payment hasn't already been credited" do
       it "should call credit on the gateway with the amount and response_code"
-      context "negative payment" do
+      context "when sucessfull" do
         it "should be created if credit transaction is sucessfull"
         it "should have original payment amount but negative"
         it "should have the original payment as its source"
@@ -60,6 +64,21 @@ describe Creditcard do
       it "should not create another payment"
     end
   end
+
+  context "#credit" do
+    it "should call credit on the gateway with the amount and response_code"
+    context "when response is sucesssful" do
+      context "resulting payment" do
+        it "should be the supplied amount"
+        it "should be in the complete state"
+        it "has response_code from the transaction"
+        it "has original payment as its source"
+      end
+    end
+    context "when response is unsucessfull" do
+      it "should not create a payment"
+    end
+  end   
 
 end
 
