@@ -50,6 +50,7 @@ require 'spree_core/preferences/model_hooks'
 require 'spree_core/preferences/preference_definition'
 require 'store_helpers'
 require 'spree/file_utilz'
+require 'active_merchant'
 
 module Spree
   def self.version
@@ -67,12 +68,6 @@ module SpreeCore
 
       Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
         Spree::ThemeSupport::Hook.add_listener(hook_class)
-      end
-
-      # Mixin the payment_gateway method into the base controller so it can be accessed by the checkout process, etc.
-      Creditcard.class_eval do
-        # add gateway methods to the creditcard so we can authorize, capture, etc.
-        include SpreePaymentGateway::CardMethods
       end
 
       #register all payment methods (unless we're in middle of rake task since migrations cannot be run for this first time without this check)
