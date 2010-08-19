@@ -223,8 +223,7 @@ class Order < ActiveRecord::Base
   def add_variant(variant, quantity = 1)
     current_item = contains?(variant)
     if current_item
-      current_item.increment_quantity unless quantity > 1
-      current_item.quantity = (current_item.quantity + quantity) if quantity > 1
+      current_item.quantity += quantity
       current_item.save
     else
       current_item = LineItem.new(:quantity => quantity)
@@ -264,7 +263,7 @@ class Order < ActiveRecord::Base
   end
 
   def contains?(variant)
-    line_items.detect{|line_item| line_item.variant_id = variant.id}
+    line_items.detect{|line_item| line_item.variant_id == variant.id}
   end
 
   # def mark_shipped
