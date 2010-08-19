@@ -6,7 +6,7 @@ describe Payment do
   # let(:payment) { Payment.new }
   before(:each) do
     @payment = Payment.new(:order => order)
-    @payment.source = mock_model(Creditcard, :save => true, :payment_gateway => nil, :process => nil)
+    @payment.source = mock_model(Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil)
     @payment.stub!(:valid?).and_return(true)
     @payment.stub!(:check_payments).and_return(nil)
   end
@@ -38,20 +38,48 @@ describe Payment do
   end
 
   context "#credit_allowed" do
-    it "is the difference between offsets total and payment amount"
+    it "is the difference between offsets total and payment amount" do
+      @payment.amount = 100
+      @payment.stub(:offsets_total).and_return(0)
+      @payment.credit_allowed.should == 100
+      @payment.stub(:offsets_total).and_return(80)
+      @payment.credit_allowed.should == 20
+    end
   end
 
   context "#can_credit?" do
-    it "is true if credit_allowed > 0"
+    it "is true if credit_allowed > 0" do
+      @payment.stub(:credit_allowed).and_return(100)
+      @payment.can_credit?.should be_true
+    end
+    it "is false if credit_allowed is 0" do
+      @payment.stub(:credit_allowed).and_return(0)
+      @payment.can_credit?.should be_false
+    end
   end
 
   context "#credit" do
     context "when amount <= credit_allowed" do
-      it "makes the state processing"
-      it "calls credit on the source with the amount"
+      it "makes the state processing" do
+        @payment.state = 'completed'
+        @payment.stub(:credit_allowed).and_return(10)
+        @payment.credit(10)
+        @payment.should be_processing
+      end
+      it "calls credit on the source with the payment and amount" do
+        @payment.state = 'completed'
+        @payment.stub(:credit_allowed).and_return(10)
+        @payment.source.should_receive(:credit).with(@payment, 10)
+        @payment.credit(10)
+      end
     end
     context "when amount > credit_allowed" do
-      it "should not call credit on the source"
+      it "should not call credit on the source" do
+        @payment.state = 'completed'
+        @payment.stub(:credit_allowed).and_return(10)
+        @payment.credit(20)
+        @payment.should be_completed
+      end
     end
   end
 

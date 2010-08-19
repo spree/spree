@@ -5,6 +5,7 @@ class Payment < ActiveRecord::Base
 
   has_many :transactions
   alias :txns :transactions
+  has_many :offsets, :class_name => 'Payment', :foreign_key => 'source_id', :conditions => "source_type = 'Payment' AND amount < 0"
 
   after_save :create_payment_profile, :if => :payment_profiles_supported?
 
@@ -30,7 +31,7 @@ class Payment < ActiveRecord::Base
 
     # With card payments, happens before purchase or authorization happens
     event :started_processing do
-      transition :from => 'checkout', :to => 'processing'
+      transition :from => ['checkout', 'pending', 'completed'], :to => 'processing'
     end
 
     # When processing during checkout fails
@@ -50,8 +51,23 @@ class Payment < ActiveRecord::Base
 
   end
 
-  # Find a payment on the same order which is a credit for this payment
-  def credit_payment
+
+  def offsets_total
+    offsets.map(&:amount).sum
+  end
+
+  def credit_allowed
+    amount - offsets_total
+  end
+
+  def can_credit?
+    credit_allowed > 0
+  end
+
+  def credit(amount)
+    return if amount > credit_allowed
+    started_processing! 
+    source.credit(self, amount)
   end
 
   # With nested attributes, Rails calls build_[association_name] for the nested model which won't work for a polymorphic association
