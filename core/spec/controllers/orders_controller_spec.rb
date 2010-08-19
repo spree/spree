@@ -58,11 +58,5 @@ describe OrdersController do
     end
   end
 
-  context "#add variant" do
-    it "should create a new line item (when appropriate)"
-    it "should modify a line item (when appropriate)"
-    it "should remove a line item (when appropriate)"
-  end
-
   #TODO - move some of the assigns tests based on session, etc. into a shared example group once new block syntax released
 end
