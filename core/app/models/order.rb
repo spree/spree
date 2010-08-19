@@ -57,11 +57,9 @@ class Order < ActiveRecord::Base
 
   attr_accessor :out_of_stock_items
 
-  # def to_param
-  #   self.number if self.number
-  #   generate_order_number unless self.number
-  #   self.number.parameterize.to_s.upcase
-  # end
+  def to_param
+    number.to_s.parameterize.upcase
+  end
 
   def complete?
     !! completed_at
@@ -250,7 +248,7 @@ class Order < ActiveRecord::Base
       random = "R#{Array.new(9){rand(9)}.join}"
       record = Order.find(:first, :conditions => ["number = ?", random])
     end
-    self.number = random
+    random
   end
 
   # convenience method since many stores will not allow user to create multiple shipments
@@ -306,7 +304,6 @@ class Order < ActiveRecord::Base
   #
 
 
-  # TODO: Not sure on method vs db column for this
   def outstanding_balance
     total - payment_total
   end
@@ -326,14 +323,6 @@ class Order < ActiveRecord::Base
     "#{address.firstname} #{address.lastname}" if address
   end
 
-  # def out_of_stock_items
-  #   @out_of_stock_items
-  # end
-  #
-  # def outstanding_balance
-  #   [0, total - payments.total].max
-  # end
-  #
   # def outstanding_balance?
   #   outstanding_balance > 0
   # end
@@ -370,6 +359,7 @@ class Order < ActiveRecord::Base
     self.out_of_stock_items = InventoryUnit.sell_units(self)
     shipments.create(:inventory_units => inventory_units.reload)
     payments.each(&:process!)
+    update_attribute(:number, generate_order_number)
     update_attribute(:completed_at, Time.now)
   end
 

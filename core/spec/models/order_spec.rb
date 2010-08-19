@@ -45,13 +45,21 @@ describe Order do
     end
   end
 
+  context "#generate_order_number" do
+    it "should generate a random string" do
+      order.generate_order_number.is_a?(String).should be_true
+      (order.generate_order_number.to_s.length > 0).should be_true
+    end
+  end
+
   context "#finalize!" do
     let(:order) { Order.create }
 
-    it "should set completed_at" do
+    it "should set completed_at and number" do
       order.save!
       order.finalize!
       order.completed_at.should_not be_nil
+      order.number.should_not be_empty
     end
     it "should sell inventory units" do
       InventoryUnit.should_receive(:sell_units).with(order)
