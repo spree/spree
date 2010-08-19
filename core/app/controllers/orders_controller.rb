@@ -8,9 +8,11 @@ class OrdersController < Spree::BaseController
 
   def update
     @order = current_order
-    @order.update_attributes(params[:order])
-    @order.reload
-    render :edit
+    if @order.update_attributes(params[:order])
+      redirect_to cart_path
+    else
+      render :edit
+    end
   end
 
   #override r_c default b/c we don't want to actually destroy, we just want to clear line items
@@ -47,6 +49,14 @@ class OrdersController < Spree::BaseController
     params[:variants].each do |variant_id, quantity|
       @order.add_variant(Variant.find(variant_id), quantity.to_i) #if quantity > 0
     end if params[:variants]
+    redirect_to cart_path
+  end
+
+
+  def empty
+    if @order = current_order
+      @order.line_items.destroy_all
+    end
     redirect_to cart_path
   end
 

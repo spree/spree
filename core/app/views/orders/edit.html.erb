@@ -2,7 +2,7 @@
 
 <h1><%= t("shopping_cart")%></h1>
 
-<% if @order.nil? or @order.empty? %>
+<% if @order.nil? or @order.line_items.empty? %>
 
   <%= hook :empty_cart do %>
     <p><%= t("your_cart_is_empty.") %></p>
@@ -27,12 +27,14 @@
     </div>
 
     <p><%=link_to t("continue_shopping"), products_path, :class => 'button continue' %></p>
+
+  <% end %>
+  <% end %>
+
+  <%= form_tag empty_cart_path, :method => :put do %>
     <p id="clear_cart_link">
-      <%= link_to t('empty_cart'), @order, :method => :delete, :class => 'button empty' %>
+      <input type="submit" value="<%= t('empty_cart') %>" class="button" />
     </p>
-
   <% end %>
-  <% end %>
-
 
 <% end %>

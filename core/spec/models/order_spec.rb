@@ -18,6 +18,7 @@ describe Order do
       order.save
       order.user.should == reg_user
     end
+    it "should destroy any line_items with zero quantity"
   end
 
   context "#register!" do
