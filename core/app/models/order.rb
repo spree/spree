@@ -36,9 +36,11 @@ class Order < ActiveRecord::Base
 
   before_create :create_user
 
-  #delegate :shipping_method, :to => :checkout
-  #delegate :email, :to => :checkout
+  delegate :email, :to => :user
   #delegate :ip_address, :to => :checkout
+  def ip_address
+    '192.168.1.100'
+  end
   #delegate :special_instructions, :to => :checkout
 
   #validates :item_total, :total, :numericality => true
@@ -274,23 +276,27 @@ class Order < ActiveRecord::Base
   # def payment_total
   #   payments.reload.total
   # end
-  #
-  # def ship_total
-  #   shipping_charges.reload.total
-  # end
-  #
-  # def tax_total
-  #   tax_charges.reload.total
-  # end
-  #
-  # def credit_total
-  #   credits.reload.total.abs
-  # end
-  #
-  # def charge_total
-  #   charges.reload.total
-  # end
-  #
+  
+  
+  def ship_total
+    shipping_charges.reload.map(&:amount).sum
+  end
+  
+  def tax_total
+    tax_charges.reload.map(&:amount).sum
+  end
+  
+  def credit_total
+    credits.reload.map(&:amount).sum.abs
+  end
+  
+  def charge_total
+    charges.reload.map(&:amount).sum
+  end
+
+
+
+  
   # def create_tax_charge
   #   if tax_charges.empty?
   #     tax_charges.create({
@@ -399,6 +405,8 @@ class Order < ActiveRecord::Base
   def billing_lastname
     bill_address.try(:lastname)
   end
+
+
 
 
   private
