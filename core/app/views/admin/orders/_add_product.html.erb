@@ -11,13 +11,8 @@
       <%= text_field_tag :add_quantity,  1 , :class => 'fullwidth title'  %>
     </div>
     <div style="float: left; width: 15%; padding-top: 17px;">
-      <%= button_link_to_remote t("add"),
-                         {:url => admin_order_line_items_url(@order),
-                         :method => :post,
-                         :with => "'line_item[variant_id]=' + $('#add_variant_id').val() + '&line_item[quantity]=' + $('#add_quantity').val()",
-                         :before => "if($('#add_variant_id').val()==''){ return false; }",
-                         :after => "$('#add_product_name').val('');$('#add_variant_id').val('');$('#add_quantity').val(1)",
-                         :update => "order-form-wrapper"}, :icon => 'add' %>
+      <%= button_link_to t("add"), admin_order_line_items_url(@order),
+            {:id => 'add_line_item_to_order', :method => :post, :icon => 'add', 'data-update' => 'order-form-wrapper'} %>
     </div>
 
   </fieldset>

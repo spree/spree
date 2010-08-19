@@ -39,6 +39,9 @@ var request = function(options) {
  
 // remote links handler
 jQuery('a[data-remote=true]').live('click', function() {
+  if(confirm_msg = jQuery(this).attr("data-confirm")){
+    if (!confirm(confirm_msg)) return false;
+  }
   if(method = jQuery(this).attr("data-method")){
     return request({ url: this.href, type: 'POST', data: {'_method': method} });
   } else {

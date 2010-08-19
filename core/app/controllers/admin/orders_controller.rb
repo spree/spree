@@ -45,7 +45,7 @@ class Admin::OrdersController < Admin::BaseController
 
   def object
     @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
-    return @object || find_order
+    return @object || current_order
   end
 
   def collection

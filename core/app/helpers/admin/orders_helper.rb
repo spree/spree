@@ -16,7 +16,7 @@ module Admin::OrdersHelper
                                 { :method => :put, :confirm => t("order_sure_want_to", :event => t(event)) })
       end
     end
-    links.join('&nbsp;')
+    links.join('&nbsp;').html_safe
   end
 
 end

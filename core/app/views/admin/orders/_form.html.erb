@@ -61,7 +61,7 @@
 
   <%= hook :admin_order_form_buttons do %>
     <p class="form-buttons">
-      <%= button @order.in_progress? ? t('continue') : t('update') %>
+      <%= button @order.complete? ? t('update') : t('continue') %>
       <%= t("or") %> <%= link_to t("actions.cancel"), admin_orders_url %>
     </p>
   <% end %>
