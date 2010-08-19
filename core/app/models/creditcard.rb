@@ -77,7 +77,7 @@ class Creditcard < ActiveRecord::Base
       :txn_type => CreditcardTxn::TxnType::AUTHORIZE,
       :avs_response => response.avs_result['code']
     )
-    payment.authorize!
+    payment.pend
   rescue ActiveMerchant::ConnectionError => e
     payment.fail!
     gateway_error I18n.t(:unable_to_connect_to_gateway)
@@ -102,7 +102,7 @@ class Creditcard < ActiveRecord::Base
       :response_code => response.authorization,
       :txn_type => CreditcardTxn::TxnType::CAPTURE
     )
-    payment.finalize!
+    payment.complete
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
@@ -121,6 +121,7 @@ class Creditcard < ActiveRecord::Base
       :txn_type => CreditcardTxn::TxnType::PURCHASE,
       :avs_response => response.avs_result['code']
     )
+    payment.complete
   rescue ActiveMerchant::ConnectionError => e
     payment.fail!
     gateway_error t(:unable_to_connect_to_gateway)
@@ -140,7 +141,7 @@ class Creditcard < ActiveRecord::Base
       :txn_type => CreditcardTxn::TxnType::VOID
     )
     payment.update_attribute(:amount, 0.00)
-    payment.finalize!
+    payment.void
   end
 
   def credit(payment, amount=nil)

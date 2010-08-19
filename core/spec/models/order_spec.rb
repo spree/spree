@@ -191,9 +191,9 @@ describe Order do
       order.update!
       order.item_total.should == 150
     end
-    it "should set payments_total to the sum of finalized payment amounts" do
+    it "should set payments_total to the sum of completed payment amounts" do
       payments = [ mock_model(Payment, :amount => 100), mock_model(Payment, :amount => -10) ]
-      order.stub_chain(:payments, :finalized => payments)
+      order.stub_chain(:payments, :completed => payments)
       order.update!
       order.payment_total.should == 90
     end
