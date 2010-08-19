@@ -67,8 +67,8 @@ describe Order do
       order.finalize!
     end
     it "should create a new shipment" do
-      line_items = (1..3).map do 
-        mock_model(LineItem, :amount => 100, :quantity => 1, :variant => mock_model(Variant, :update_attribute => true, :count_on_hand => 100)) 
+      line_items = (1..3).map do
+        mock_model(LineItem, :amount => 100, :quantity => 1, :variant => mock_model(Variant, :update_attribute => true, :count_on_hand => 100))
       end
       order.stub(:line_items => line_items)
       expect { order.finalize! }.to change{ order.shipments.count }.to(1)
@@ -228,4 +228,11 @@ describe Order do
     end
   end
 
+  context "item_count" do
+    it "should return the correct number of items" do
+      line_items = [ mock_model(LineItem, :quantity => 2), mock_model(LineItem, :quantity => 1) ]
+      order.stub :line_items => line_items
+      order.item_count.should == 3
+    end
+  end
 end

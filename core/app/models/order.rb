@@ -72,6 +72,11 @@ class Order < ActiveRecord::Base
     line_items.count > 0
   end
 
+  # Indicates the number of items in the order
+  def item_count
+    line_items.map(&:quantity).sum
+  end
+
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'cart', :use_transactions => false do
 
