@@ -1,6 +1,0 @@
-ru-RU:
-  login: "Логин"
-  signature: "Подпись"
-  currency_code: "Код валюты"
-  pem: "PEM"
-  secure_profile_api_key: "Payment Profile API Key"

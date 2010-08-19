@@ -21,16 +21,16 @@ class Payment < ActiveRecord::Base
 
   scope :from_creditcard, where(:source_type => 'Creditcard')
   scope :with_state, lambda {|s| where(:state => s)}
-  scope :finalized, with_state('finalized')
+  scope :completed, with_state('completed')
 
 
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-  state_machine :initial => 'new' do
+  state_machine :initial => 'checkout' do
 
     # With card payments, happens before purchase or authorization happens
     event :started_processing do
-      transition :from => 'new', :to => 'processing'
+      transition :from => 'checkout', :to => 'processing'
     end
 
     # When processing during checkout fails
@@ -38,15 +38,15 @@ class Payment < ActiveRecord::Base
       transition :from => 'processing', :to => 'failed'
     end
 
-    event :authorized do
-      transition :from => 'processing', :to => 'authorized'
+    # With card payments this represents authorizing the payment
+    event :pend do
+      transition :from => 'processing', :to => 'pending'
     end
 
-    event :finalize do
-      transition :from => ['processing', 'authorized'], :to => 'finalized'
+    # With card payments this represents completing a purchase or capture transaction
+    event :complete do
+      transition :from => ['processing', 'pending'], :to => 'completed'
     end
-
-    before_transition :to => 'finalized', :do => :finalize_source
 
   end
 

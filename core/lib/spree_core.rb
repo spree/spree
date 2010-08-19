@@ -50,6 +50,7 @@ require 'spree_core/preferences/model_hooks'
 require 'spree_core/preferences/preference_definition'
 require 'store_helpers'
 require 'spree/file_utilz'
+require 'active_merchant'
 
 module Spree
   def self.version
@@ -59,15 +60,41 @@ end
 
 module SpreeCore
   class Engine < Rails::Engine
+
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/app/metals)
     # TODO - register state monitor observer?
 
     def self.activate
+
       Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
         Spree::ThemeSupport::Hook.add_listener(hook_class)
       end
+
+      #register all payment methods (unless we're in middle of rake task since migrations cannot be run for this first time without this check)
+      if File.basename( $0 ) != "rake"
+        [
+          Gateway::Bogus,
+          Gateway::AuthorizeNet,
+          Gateway::AuthorizeNetCim,
+          Gateway::Eway,
+          Gateway::Linkpoint,
+          Gateway::PayPal,
+          Gateway::SagePay,
+          Gateway::Beanstream,
+          PaymentMethod::Check
+        ].each{|gw|
+          begin
+            gw.register
+          rescue Exception => e
+            $stderr.puts "Error registering gateway #{gw}: #{e}"
+          end
+        }
+      end
+
     end
+
     config.to_prepare &method(:activate).to_proc
+
   end
 end
 
