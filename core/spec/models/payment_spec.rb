@@ -13,7 +13,7 @@ describe Payment do
 
   context "#process!" do
 
-    context "when state is new" do
+    context "when state is checkout" do
       before(:each) do
         @payment.source.stub!(:process!).and_return(nil)
       end
@@ -35,6 +35,11 @@ describe Payment do
       end
     end
 
+  end
+
+  context "#credit_payment" do
+    it "should return first payment on same order that has this payment as its source"
+    it "should return nil if order has no payments with this payment as its source"
   end
 
   context "#save" do

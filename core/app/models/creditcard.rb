@@ -11,7 +11,6 @@ class Creditcard < ActiveRecord::Base
     begin
       if Spree::Config[:auto_capture]
         purchase(payment.amount.to_f, payment)
-        payment.finalize!
       else
         authorize(payment.amount.to_f, payment)
       end
@@ -140,7 +139,6 @@ class Creditcard < ActiveRecord::Base
       :response_code => response.authorization,
       :txn_type => CreditcardTxn::TxnType::VOID
     )
-    payment.update_attribute(:amount, 0.00)
     payment.void
   end
 

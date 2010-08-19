@@ -50,9 +50,9 @@ class Payment < ActiveRecord::Base
 
   end
 
-
-
-
+  # Find a payment on the same order which is a credit for this payment
+  def credit_payment
+  end
 
   # With nested attributes, Rails calls build_[association_name] for the nested model which won't work for a polymorphic association
   def build_source(params)
@@ -66,16 +66,6 @@ class Payment < ActiveRecord::Base
       started_processing!
       source.process!(self) # source is responsible for updating the payment state when it's done processing
     end
-  end
-
-  def can_finalize?
-    processing? or authorized?
-  end
-
-  def finalize_source
-    source.finalize!(self) if source and source.respond_to?(:finalize!)
-    save!
-    payable.save!
   end
 
   def actions
