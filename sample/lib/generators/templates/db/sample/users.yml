@@ -1,0 +1,6 @@
+<%
+1.upto(100) do |i|
+%>
+user_<%= i %>:
+  email: <%= Faker::Internet.email %>
+<% end %>
