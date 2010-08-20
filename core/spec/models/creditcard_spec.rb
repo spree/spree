@@ -4,10 +4,16 @@ describe Creditcard do
 
   before(:each) do
     @creditcard = Creditcard.new
-    @payment = mock_model(Payment, :source => @creditcard, :amount => 100, :pend => true, :fail => true, :complete => true, :void => true)
-    @payment_gateway = mock('payment_gateway')
-    @payment_gateway.stub!(:authorize).and_return(mock('gateway_response', :success? => true, :response_code => '123', :avs_result => {'code' => 'avs-code'}))
+    @payment = Payment.new(:amount => 100)
+
+    @success_response = mock('gateway_response', :success? => true, :response_code => '123', :avs_result => {'code' => 'avs-code'})
+    @fail_response = mock('gateway_response', :success? => false)
+
+    @payment_gateway = mock('payment_gateway', :authorize => @success_response)
+
+
     @creditcard.stub!(:payment_gateway).and_return(@payment_gateway)
+    # TODO: don't want to always stub this method since it should also be tested
     @creditcard.stub!(:gateway_options).and_return({})
   end
 
@@ -30,12 +36,25 @@ describe Creditcard do
       @creditcard.authorize(100, @payment) 
     end
     context "if sucesssfull" do
-      it "should store the response_code"
-      it "should store the avs_response"
-      it "should make payment pending"
+      it "should store the response_code and avs_response" do
+        @creditcard.authorize(100, @payment) 
+        @payment.response_code.should == '123'
+        @payment.avs_response.should == 'avs-code'
+      end
+      it "should make payment pending" do
+        @payment.should_receive(:pend)
+        @creditcard.authorize(100, @payment) 
+      end
     end
     context "if unsucessfull" do
-      it "should make payment failed"
+      it "should make payment failed" do
+        @payment_gateway.stub(:authorize).and_return(@fail_response)
+        @payment.should_receive(:fail)
+        @payment.should_not_receive(:pend)
+        lambda{
+          @creditcard.authorize(100, @payment) 
+        }.should raise_error(Spree::GatewayError)
+      end
     end
   end
 

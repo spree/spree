@@ -66,10 +66,17 @@ class Creditcard < ActiveRecord::Base
   def authorize(amount, payment)
     # ActiveMerchant is configured to use cents so we need to multiply order total by 100
     response = payment_gateway.authorize((amount * 100).round, self, gateway_options(payment))
-    gateway_error(response) unless response.success?
-    payment.pend
+    if response.success?
+      puts '  response.success?'
+      puts response.inspect
+      payment.response_code = response.response_code
+      payment.avs_response = response.avs_result['code']
+      payment.pend
+    else
+      payment.fail
+      gateway_error(response)
+    end
   rescue ActiveMerchant::ConnectionError => e
-    payment.fail!
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
