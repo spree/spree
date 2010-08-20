@@ -109,7 +109,6 @@ describe Creditcard do
       end
       context "if sucessfull" do
         it "should make payment complete" do
-          puts '='*100
           @payment.should_receive(:complete)
           @creditcard.capture(@payment) 
         end
@@ -141,12 +140,29 @@ describe Creditcard do
   end
 
   context "#void" do
-    it "should call payment_gateway.void with the payment's response_code"
+    before do
+      @payment.response_code = '123'
+      @payment.state = 'pending'
+    end
+    it "should call payment_gateway.void with the payment's response_code" do
+      @creditcard.payment_gateway.should_receive(:void).with('123', @creditcard, {})
+      @creditcard.void(@payment) 
+    end
     context "if sucessfull" do
       it "should update the response_code with the authorization from the gateway"
-      it "should void the payment"
+      it "should void the payment" do
+        @creditcard.should_receive(:void)
+        @creditcard.void(@payment)
+      end
     end
     context "if unsucesfull" do
+      it "should not void the payment" do
+        @payment_gateway.stub(:void).and_return(@fail_response)
+        @payment.should_not_receive(:void)
+        lambda {
+          @creditcard.void(@payment) 
+        }.should raise_error(Spree::GatewayError)
+      end
     end
   end
 

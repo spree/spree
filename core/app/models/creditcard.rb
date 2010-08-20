@@ -115,14 +115,15 @@ class Creditcard < ActiveRecord::Base
   end
 
   def void(payment)
-    return unless transaction = purchase_or_authorize_transaction_for_payment(payment)
-
-    response = payment_gateway.void(transaction.response_code, self, minimal_gateway_options(payment))
-    gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the void
-    save
-    payment.void
+    response = payment_gateway.void(payment.response_code, self, minimal_gateway_options(payment))
+    if response.success?
+      payment.response_code = response.response_code
+      payment.void
+    else
+      gateway_error(response)
+    end
+  rescue ActiveMerchant::ConnectionError => e
+    gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
   def credit(payment, amount=nil)

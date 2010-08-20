@@ -10,7 +10,7 @@ class Payment < ActiveRecord::Base
   after_save :create_payment_profile, :if => :payment_profiles_supported?
 
   # update the order totals, etc.
-  after_save {order.update!}
+  after_save {order.try(:update!)}
 
   #after_save :check_payments
   #after_destroy :check_payments
@@ -28,27 +28,25 @@ class Payment < ActiveRecord::Base
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'checkout' do
-
     # With card payments, happens before purchase or authorization happens
     event :started_processing do
       transition :from => ['checkout', 'pending', 'completed'], :to => 'processing'
     end
-
     # When processing during checkout fails
     event :fail do
       transition :from => 'processing', :to => 'failed'
     end
-
     # With card payments this represents authorizing the payment
     event :pend do
       transition :from => 'processing', :to => 'pending'
     end
-
     # With card payments this represents completing a purchase or capture transaction
     event :complete do
       transition :from => ['processing', 'pending'], :to => 'completed'
     end
-
+    event :void do
+      transition :from => ['pending', 'complete'], :to => 'void'
+    end
   end
 
 
