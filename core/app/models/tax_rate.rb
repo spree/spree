@@ -7,4 +7,7 @@ class TaxRate < ActiveRecord::Base
   calculated_adjustments
   scope :by_zone, lambda { |zone| where("zone_id = ?", zone)}
 
+  def self.match
+
+  end
 end
