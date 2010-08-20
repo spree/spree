@@ -30,16 +30,3 @@
 <%= hook :admin_order_show_details do %>
   <%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} %>
 <% end %>
-
-<%= hook :admin_order_show_other do %>
-  <% unless @order.special_instructions.blank? %>
-    <table class="index">
-      <tr>
-        <th><%= t("shipping_instructions") %></th>
-      </tr>
-      <tr>
-        <td><pre><%= @order.special_instructions %></pre></td>
-      </tr>
-    </table>
-  <% end %>
-<% end %>

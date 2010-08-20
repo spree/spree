@@ -26,27 +26,16 @@
         </tr>
       </tbody>
     <% end %>
-    <%= hook :admin_order_form_charges do %>
+    <%= hook :admin_order_form_adjustments do %>
       <tbody id="order-charges">
-        <% @order.charges.each do |charge| %>
+        <% @order.adjustments.each do |adjustment| %>
           <tr>
-            <td colspan="3"><strong><%= charge.description %></strong></td>
-            <td class="total"><span><%= number_to_currency charge.amount %></span></td>
+            <td colspan="3"><strong><%= adjustment.label %></strong></td>
+            <td class="total"><span><%= number_to_currency adjustment.amount %></span></td>
             <td></td>
           </tr>
         <% end %>
       </tbody>
-    <% end %>
-    <%= hook :admin_order_form_credits do %>
-    <tbody id="order-credits">
-      <% @order.credits.each do |credit| %>
-        <tr>
-          <td colspan="3"><%= credit.description %></td>
-          <td class="total"><span><%= number_to_currency credit.amount %></span></td>
-          <td></td>
-        </tr>
-      <% end %>
-    </tbody>
     <% end %>
     <%= hook :admin_order_form_total do %>
       <tbody id='order-total'>
