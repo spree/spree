@@ -13,15 +13,13 @@
   <tr>
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
     <th><%= t("description") %></th>
-    <th><%= t("type") %></th>
     <th><%= t("amount") %></th>
     <th></th>
   </tr>
   <% @adjustments.each do |adjustment| %>
     <tr id="<%= dom_id(adjustment) %>">
       <td><%= adjustment.created_at.to_s(:date_time24) %></td>
-      <td><%= adjustment.description %></td>
-      <td><%= adjustment.class.to_s %></td>
+      <td><%= adjustment.label %></td>
       <td><%= number_to_currency(adjustment.amount) %></td>
       <td>
         <%= link_to_edit adjustment %>
@@ -33,4 +31,4 @@
   <% end %>
 </table>
 
-<%= button_link_to t('continue'), @order.in_progress? ? new_admin_order_payment_url(@order) : admin_orders_url %>
+<%= button_link_to t('continue'), @order.cart? ? new_admin_order_payment_url(@order) : admin_orders_url %>

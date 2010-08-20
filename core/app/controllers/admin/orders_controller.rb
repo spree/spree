@@ -10,7 +10,7 @@ class Admin::OrdersController < Admin::BaseController
     flash nil
     wants.html do
       if @order.bill_address.nil? || @order.ship_address.nil?
-        redirect_to edit_admin_order_checkout_url(@order)
+        redirect_to edit_admin_order_url(@order)
       else
         redirect_to admin_order_url(@order)
       end
