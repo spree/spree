@@ -9,12 +9,18 @@ describe Creditcard do
     @success_response = mock('gateway_response', :success? => true, :response_code => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
 
-    @payment_gateway = mock('payment_gateway', :authorize => @success_response, :purchase => @success_response)
-
+    @payment_gateway = mock('payment_gateway', 
+      :payment_profiles_supported? => true, 
+      :authorize => @success_response,
+      :purchase => @success_response,
+      :capture => @success_response,
+      :void => @success_response
+    )
 
     @creditcard.stub!(:payment_gateway).and_return(@payment_gateway)
-    # TODO: don't want to always stub this method since it should also be tested
+
     @creditcard.stub!(:gateway_options).and_return({})
+    @creditcard.stub!(:minimal_gateway_options).and_return({})
   end
 
   context "#process!" do
@@ -85,6 +91,51 @@ describe Creditcard do
         lambda{
           @creditcard.purchase(100, @payment) 
         }.should raise_error(Spree::GatewayError)
+      end
+    end
+  end
+
+  context "#capture" do
+    before do
+      @payment.stub(:complete).and_return(true)
+    end
+    context "when payment is pending" do
+      before do
+        @payment.state = 'pending'
+      end
+      it "should call capture on the gateway with the self as the authorization" do
+        @creditcard.payment_gateway.should_receive(:capture).with(@payment, @creditcard, {})
+        @creditcard.capture(@payment) 
+      end
+      context "if sucessfull" do
+        it "should make payment complete" do
+          puts '='*100
+          @payment.should_receive(:complete)
+          @creditcard.capture(@payment) 
+        end
+        it "should store the response_code" do
+          @creditcard.capture(@payment) 
+          @payment.response_code.should == '123'
+        end
+      end
+      context "if unsucessfull" do
+        pending "should not make payment complete" do
+          @payment_gateway.stub(:capture).and_return(@fail_response)
+          @payment.should_receive(:fail)
+          @payment.should_not_receive(:complete)
+          lambda{
+            @creditcard.capture(@payment) 
+          }.should raise_error(Spree::GatewayError)
+        end
+      end
+    end
+    context "when payment is not pending" do
+      before do
+        @payment.state = 'checkout'
+      end
+      it "should not call capture on the gateway" do
+        @creditcard.payment_gateway.should_not_receive(:capture).with(@payment, @creditcard, {})
+        @creditcard.capture(@payment) 
       end
     end
   end

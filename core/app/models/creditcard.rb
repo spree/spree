@@ -94,17 +94,22 @@ class Creditcard < ActiveRecord::Base
   end
 
   def capture(payment)
-    return unless transaction = authorization(payment)
+    return unless payment.pending?
     if payment_gateway.payment_profiles_supported?
       # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
       # so supply the authorization itself as well as the creditcard, rather than just the authorization code
-      response = payment_gateway.capture(transaction, self, minimal_gateway_options(payment))
+      response = payment_gateway.capture(payment, self, minimal_gateway_options(payment))
     else
       # Standard ActiveMerchant capture usage
-      response = payment_gateway.capture((transaction.amount * 100).round, transaction.response_code, minimal_gateway_options(payment))
+      response = payment_gateway.capture((payment.amount * 100).round, payment.response_code, minimal_gateway_options(payment))
     end
-    gateway_error(response) unless response.success?
-    payment.complete
+    if response.success?
+      payment.response_code = response.response_code
+      payment.complete
+    else
+      payment.fail
+      gateway_error(response)
+    end
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
