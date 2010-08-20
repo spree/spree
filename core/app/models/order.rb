@@ -29,6 +29,7 @@ class Order < ActiveRecord::Base
   has_many :adjustments
 
   before_create :create_user
+  before_create :generate_order_number
 
   delegate :email, :to => :user
   #delegate :ip_address, :to => :checkout
@@ -248,7 +249,7 @@ class Order < ActiveRecord::Base
       random = "R#{Array.new(9){rand(9)}.join}"
       record = Order.find(:first, :conditions => ["number = ?", random])
     end
-    random
+    self.number = random
   end
 
   # convenience method since many stores will not allow user to create multiple shipments
@@ -363,7 +364,6 @@ class Order < ActiveRecord::Base
     self.out_of_stock_items = InventoryUnit.sell_units(self)
     shipments.create(:inventory_units => inventory_units.reload)
     payments.each(&:process!)
-    update_attribute(:number, generate_order_number)
     update_attribute(:completed_at, Time.now)
   end
 
