@@ -14,7 +14,8 @@ describe Creditcard do
       :authorize => @success_response,
       :purchase => @success_response,
       :capture => @success_response,
-      :void => @success_response
+      :void => @success_response,
+      :credit => @success_response
     )
 
     @creditcard.stub!(:payment_gateway).and_return(@payment_gateway)
@@ -167,33 +168,46 @@ describe Creditcard do
   end
 
   context "#credit" do
-    context "if payment hasn't already been credited" do
-      it "should call credit on the gateway with the amount and response_code"
-      context "when sucessfull" do
-        it "should be created if credit transaction is sucessfull"
-        it "should have original payment amount but negative"
-        it "should have the original payment as its source"
-        it "should be complete"
-      end
+    before do
+      @payment.state = 'complete'
+      @payment.response_code = '123'
     end
-    context "if payment already has been credited" do
-      it "should not call credit on the gateway"
-      it "should not create another payment"
+    it "should call credit on the gateway with the amount and response_code" do
+      @creditcard.payment_gateway.should_receive(:credit).with(1000, @creditcard, '123', {})
+      @creditcard.credit(@payment, 10)
     end
-  end
-
-  context "#credit" do
-    it "should call credit on the gateway with the amount and response_code"
     context "when response is sucesssful" do
+      it "should create an offsetting payment" do
+        Payment.should_receive(:create)
+        @creditcard.credit(@payment, 10)
+        # TODO: move creation of payment offset into Payment
+      end
       context "resulting payment" do
-        it "should be the supplied amount"
-        it "should be in the complete state"
-        it "has response_code from the transaction"
-        it "has original payment as its source"
+        before do
+          @offsetting_payment = @creditcard.credit(@payment, 10)
+        end
+        it "should be the supplied amount" do
+          @offsetting_payment.amount.should == -10
+        end
+        it "should be in the complete state" do
+          @offsetting_payment.should be_completed
+        end
+        it "has response_code from the transaction" do
+          @offsetting_payment.response_code.should == '123'
+        end
+        it "has original payment as its source" do
+          @offsetting_payment.source.should == @payment
+        end
       end
     end
     context "when response is unsucessfull" do
-      it "should not create a payment"
+      it "should not create a payment" do
+        @payment_gateway.stub(:credit).and_return(@fail_response)
+        Payment.should_not_receive(:create)
+        lambda {
+          @creditcard.credit(@payment, 10) 
+        }.should raise_error(Spree::GatewayError)
+      end
     end
   end   
 

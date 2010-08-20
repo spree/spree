@@ -126,56 +126,41 @@ class Creditcard < ActiveRecord::Base
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
-  def credit(payment, amount=nil)
-    return unless transaction = purchase_or_authorize_transaction_for_payment(payment)
-
-    amount ||= payment.order.outstanding_credit
-
+  def credit(payment, amount)
     if payment_gateway.payment_profiles_supported?
-      response = payment_gateway.credit((amount * 100).round, self, transaction.response_code, minimal_gateway_options(payment))
+      response = payment_gateway.credit((amount * 100).round, self, payment.response_code, minimal_gateway_options(payment))
     else
-      response = payment_gateway.credit((amount * 100).round, transaction.response_code, minimal_gateway_options(payment))
+      response = payment_gateway.credit((amount * 100).round, payment.response_code, minimal_gateway_options(payment))
     end
-    gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the purchase
-    save
-    payment.update_attribute(:amount, payment.amount - amount)
+    if response.success?
+      Payment.create(:source => payment, :amount => amount.abs * -1, :response_code => response.response_code, :state => 'completed')
+    else
+      gateway_error(response)
+    end
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
-  # find the transaction associated with the original authorization/capture
-  def authorization(payment)
-    payment.txns.find(:first,
-              :conditions => ["type = 'CreditcardTxn' AND txn_type = ? AND response_code IS NOT NULL", CreditcardTxn::TxnType::AUTHORIZE.to_s],
-              :order => 'created_at DESC')
-  end
-
-  # find a transaction that can be used to void or credit
-  def purchase_or_authorize_transaction_for_payment(payment)
-    payment.txns.detect {|txn| [CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE].include?(txn.txn_type) and txn.response_code.present?}
-  end
 
   def actions
     %w{capture void credit}
   end
 
-  def can_capture?(payment)
-    authorization(payment).present? &&
-    has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::VOID)
-  end
+  # def can_capture?(payment)
+  #   authorization(payment).present? &&
+  #   has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::VOID)
+  # end
 
-  def can_void?(payment)
-    has_transaction_of_types?(payment, CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
-    has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID)
-  end
+  # def can_void?(payment)
+  #   has_transaction_of_types?(payment, CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
+  #   has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID)
+  # end
 
-  # Can only refund a captured transaction but if transaction hasn't been cleared by merchant, refund may still fail
-  def can_credit?(payment)
-    has_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
-    has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID) and payment.order.outstanding_credit?
-  end
+  # # Can only refund a captured transaction but if transaction hasn't been cleared by merchant, refund may still fail
+  # def can_credit?(payment)
+  #   has_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
+  #   has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID) and payment.order.outstanding_credit?
+  # end
 
   def has_payment_profile?
     gateway_customer_profile_id.present?
@@ -183,13 +168,10 @@ class Creditcard < ActiveRecord::Base
 
   def gateway_error(error)
     if error.is_a? ActiveMerchant::Billing::Response
-      text = error.params['message'] ||
-             error.params['response_reason_text'] ||
-             error.message
+      text = error.params['message'] || error.params['response_reason_text'] || error.message
     else
       text = error.to_s
     end
-
     logger.error(I18n.t('gateway_error'))
     logger.error("  #{error.to_yaml}")
     raise Spree::GatewayError.new(text)

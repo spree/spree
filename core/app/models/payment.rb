@@ -123,7 +123,7 @@ class Payment < ActiveRecord::Base
     end
 
     def payment_profiles_supported?
-      source && source.payment_gateway && source.payment_gateway.payment_profiles_supported?
+      source && source.respond_to?(:payment_gateway) && source.payment_gateway && source.payment_gateway.payment_profiles_supported?
     end
 
     def create_payment_profile
