@@ -67,15 +67,6 @@ class Creditcard < ActiveRecord::Base
     # ActiveMerchant is configured to use cents so we need to multiply order total by 100
     response = payment_gateway.authorize((amount * 100).round, self, gateway_options(payment))
     gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the authorization
-    save
-    payment.txns << CreditcardTxn.create(
-      :amount => amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::AUTHORIZE,
-      :avs_response => response.avs_result['code']
-    )
     payment.pend
   rescue ActiveMerchant::ConnectionError => e
     payment.fail!
@@ -93,14 +84,6 @@ class Creditcard < ActiveRecord::Base
       response = payment_gateway.capture((transaction.amount * 100).round, transaction.response_code, minimal_gateway_options(payment))
     end
     gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the capture
-    save
-    payment.txns << CreditcardTxn.create(
-      :amount => transaction.amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::CAPTURE
-    )
     payment.complete
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
@@ -114,12 +97,6 @@ class Creditcard < ActiveRecord::Base
 
     # create a transaction to reflect the purchase
     save
-    payment.txns << CreditcardTxn.create(
-      :amount => amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::PURCHASE,
-      :avs_response => response.avs_result['code']
-    )
     payment.complete
   rescue ActiveMerchant::ConnectionError => e
     payment.fail!
@@ -134,11 +111,6 @@ class Creditcard < ActiveRecord::Base
 
     # create a transaction to reflect the void
     save
-    payment.txns << CreditcardTxn.create(
-      :amount => -transaction.amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::VOID
-    )
     payment.void
   end
 
@@ -156,11 +128,6 @@ class Creditcard < ActiveRecord::Base
 
     # create a transaction to reflect the purchase
     save
-    payment.txns << CreditcardTxn.create(
-      :amount => -amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::CREDIT
-    )
     payment.update_attribute(:amount, payment.amount - amount)
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
