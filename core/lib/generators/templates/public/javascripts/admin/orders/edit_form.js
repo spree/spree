@@ -1,4 +1,3 @@
-jQuery(document).ready(function(){
   $.each($('td.qty input'), function(i, inpt){
     $(inpt).delayedObserver(0.5, function(object, value) {
 
@@ -14,4 +13,3 @@ jQuery(document).ready(function(){
 
     });
   });
-});
