@@ -53,14 +53,19 @@ describe Order do
     end
   end
 
-  context "#finalize!" do
-    let(:order) { Order.create }
+  context "#create" do
+    it "should assign an order number" do
+      order = Order.create
+      order.number.should_not be_nil
+    end
+  end
 
-    it "should set completed_at and number" do
-      order.save!
+  context "#finalize!" do
+
+    let(:order) { Order.create }
+    it "should set completed_at" do
+      order.should_receive :completed_at=
       order.finalize!
-      order.completed_at.should_not be_nil
-      order.number.should_not be_empty
     end
     it "should sell inventory units" do
       InventoryUnit.should_receive(:sell_units).with(order)
