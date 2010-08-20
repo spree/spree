@@ -127,7 +127,8 @@ class Order < ActiveRecord::Base
       :shipment_state => shipment_state,
       :item_total => item_total,
       :adjustment_total => adjustment_total,
-      :payment_total => payment_total
+      :payment_total => payment_total,
+      :total => total
     }
     self.class.update_all(changes, { :id => id })
   end
@@ -270,27 +271,27 @@ class Order < ActiveRecord::Base
   # def payment_total
   #   payments.reload.total
   # end
-  
-  
+
+
   def ship_total
     shipping_charges.reload.map(&:amount).sum
   end
-  
+
   def tax_total
     tax_charges.reload.map(&:amount).sum
   end
-  
+
   def credit_total
     credits.reload.map(&:amount).sum.abs
   end
-  
+
   def charge_total
     charges.reload.map(&:amount).sum
   end
 
 
 
-  
+
   # def create_tax_charge
   #   if tax_charges.empty?
   #     tax_charges.create({
