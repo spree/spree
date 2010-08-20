@@ -3,20 +3,7 @@ class ShippingMethod < ActiveRecord::Base
   belongs_to :zone
   has_many :shipments
 
-  create_adjustments
-
-  def calculate_cost(shipment)
-    rate_calculators = {}
-
-    calculated_costs = shipment.line_items.group_by{|li|
-      li.product.shipping_category_id
-    }.map{ |shipping_category_id, line_items|
-      calc = rate_calculators[shipping_category_id] || self.calculator
-      calc.compute(line_items)
-    }.sum
-
-    return(calculated_costs)
-  end
+  calculated_adjustments
 
   def available?(order, display_on=nil)
     (self.display_on == display_on.to_s || self.display_on.blank?) && calculator.available?(order)

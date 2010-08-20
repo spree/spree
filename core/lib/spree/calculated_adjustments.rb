@@ -1,6 +1,6 @@
-module Spree::CreateAdjustments
+module Spree::CalculatedAdjustments
   module ClassMethods
-    def create_adjustments(options = {})
+    def calculated_adjustments(options = {})
       has_one   :calculator, :as => :calculable, :dependent => :destroy
       accepts_nested_attributes_for :calculator
       validates :calculator, :presence => true if options[:require]
@@ -47,9 +47,9 @@ module Spree::CreateAdjustments
 
     # Creates a new adjustment for the target object (which is any class that has_many :adjustments) and
     # sets amount based on the calculator as applied to the calculable argument (Order, LineItems[], Shipment, etc.)
-    def create_adjustment(target, calculable)
+    def create_adjustment(label, target, calculable)
       amount = self.calculator.compute(calculable)
-      target.adjustments.create(:amount => amount, :source => calculable, :originator => self)
+      target.adjustments.create(:amount => amount, :source => calculable, :originator => self, :label => label)
     end
 
     # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+
@@ -60,6 +60,6 @@ module Spree::CreateAdjustments
   end
 
   def self.included(receiver)
-    receiver.extend Spree::CreateAdjustments::ClassMethods
+    receiver.extend Spree::CalculatedAdjustments::ClassMethods
   end
 end

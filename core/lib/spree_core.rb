@@ -50,7 +50,7 @@ require 'spree_core/preferences/model_hooks'
 require 'spree_core/preferences/preference_definition'
 require 'store_helpers'
 require 'spree/file_utilz'
-require 'spree/create_adjustments'
+require 'spree/calculated_adjustments'
 
 module Spree
   def self.version
@@ -98,7 +98,7 @@ module SpreeCore
   end
 end
 
-ActiveRecord::Base.class_eval { include Spree::CreateAdjustments }
+ActiveRecord::Base.class_eval { include Spree::CalculatedAdjustments }
 
 ActiveRecord::Base.class_eval do
   include CollectiveIdea::Acts::NestedSet

@@ -3,7 +3,7 @@ require "spec_helper"
 # Its pretty difficult to test this module in isolation b/c it needs to work in conjunction with an actual class that
 # extends ActiveRecord::Base and has a corresponding table in the database.  So we'll just test it using Order and
 # ShippingMethod instead since those classes are including the module.
-describe Spree::CreateAdjustments do
+describe Spree::CalculatedAdjustments do
 
   let(:calculator) { mock_model(Calculator, :compute => 10, :[]= => nil) }
 
@@ -18,17 +18,17 @@ describe Spree::CreateAdjustments do
 
   let(:tax_rate) { TaxRate.new(:calculator => calculator) }
 
-  context "#create_adjustment and the resulting adjustment" do
+  context "#create_adjustment and its resulting adjustment" do
     let(:order) { Order.create }
     let(:target) { order }
 
     it "should be associated with the target" do
       target.adjustments.should_receive(:create)
-      tax_rate.create_adjustment(target, order)
+      tax_rate.create_adjustment("foo", target, order)
     end
 
     it "should have the correct originator and an amount derived from the calculator and supplied calculable" do
-      adjustment = tax_rate.create_adjustment(target, order)
+      adjustment = tax_rate.create_adjustment("foo", target, order)
       adjustment.should_not be_nil
       adjustment.amount.should == 10
       adjustment.source.should == order
