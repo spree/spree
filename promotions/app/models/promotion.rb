@@ -1,6 +1,6 @@
 class Promotion < ActiveRecord::Base
   has_many  :promotion_credits,    :as => :adjustment_source
-  creates_adjustment
+  create_adjustments
   alias credits promotion_credits
 
   has_many :promotion_rules
