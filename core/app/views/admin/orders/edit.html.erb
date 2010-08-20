@@ -1,7 +1,11 @@
-<div class='toolbar order-links'>
+<div class='order-links'>
   <%= hook :admin_order_edit_buttons do %>
-    <%= button_link_to t("resend"), resend_admin_order_url(@order), :method => :post, :icon => 'send-email' %>
-    <%= event_links %>
+    <div class='toolbar'>
+      <%= event_links %>
+    </div>
+    <div class='toolbar'>
+      <%= button_link_to(t("resend"), resend_admin_order_url(@order), :method => :post, :icon => 'send-email') if @order.user %>
+    </div>
   <% end %>
 </div>
 

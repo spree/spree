@@ -76,19 +76,28 @@ module Admin::NavigationHelper
   end
   
   def icon(icon_name)
-    image_tag("/images/admin/icons/#{icon_name}.png")
+    icon_name ? image_tag("/images/admin/icons/#{icon_name}.png") : ''
   end
 
-  def button(text, icon = nil, button_type = 'submit', options={})
-    content_tag('button', content_tag('span', text), options.merge(:type => button_type))
+  def button(text, icon_name = nil, button_type = 'submit', options={})
+    content_tag('button', content_tag('span', icon(icon_name) + ' ' + text), options.merge(:type => button_type))
   end
 
   def button_link_to(text, url, html_options = {})
-    if !html_options['data-update'] && html_options[:remote]
-      object_name, action = url.split('/')[-2..-1]
-      html_options['data-update'] = [action, object_name.singularize].join('_')
+    if (html_options[:method] && 
+        html_options[:method].to_s.downcase != 'get' && 
+        !html_options[:remote])
+      form_tag(url, :method => html_options[:method]) do
+        button(text, html_options[:icon])
+      end
+    else
+      if html_options['data-update'].nil? && html_options[:remote]
+        object_name, action = url.split('/')[-2..-1]
+        html_options['data-update'] = [action, object_name.singularize].join('_')
+      end
+      html_options.delete('data-update') unless html_options['data-update']
+      link_to(text_for_button_link(text, html_options), url, html_options_for_button_link(html_options))
     end
-    link_to(text_for_button_link(text, html_options), url, html_options_for_button_link(html_options))
   end
 
   def button_link_to_function(text, function, html_options = {})
