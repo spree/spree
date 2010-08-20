@@ -9,7 +9,7 @@ describe Creditcard do
     @success_response = mock('gateway_response', :success? => true, :response_code => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
 
-    @payment_gateway = mock('payment_gateway', :authorize => @success_response)
+    @payment_gateway = mock('payment_gateway', :authorize => @success_response, :purchase => @success_response)
 
 
     @creditcard.stub!(:payment_gateway).and_return(@payment_gateway)
@@ -59,14 +59,33 @@ describe Creditcard do
   end
 
   context "#purchase" do
-    it "should call purchase on the gateway with the payment amount"
+    it "should call purchase on the gateway with the payment amount" do
+      @creditcard.payment_gateway.should_receive(:purchase).with(10000, @creditcard, {})
+      @creditcard.purchase(100, @payment) 
+    end
     context "if sucessfull" do
-      it "should store the response_code"
-      it "should store the avs_response"
-      it "should make payment complete"
+      before do
+        @payment_gateway.stub(:purchase).and_return(@success_response)
+      end
+      it "should store the response_code and avs_response" do
+        @creditcard.purchase(100, @payment) 
+        @payment.response_code.should == '123'
+        @payment.avs_response.should == 'avs-code'
+      end
+      it "should make payment complete" do
+        @payment.should_receive(:complete)
+        @creditcard.purchase(100, @payment) 
+      end
     end
     context "if unsucessfull" do
-      it "should make payment failed"
+      it "should make payment failed" do
+        @payment_gateway.stub(:purchase).and_return(@fail_response)
+        @payment.should_receive(:fail)
+        @payment.should_not_receive(:pend)
+        lambda{
+          @creditcard.purchase(100, @payment) 
+        }.should raise_error(Spree::GatewayError)
+      end
     end
   end
 

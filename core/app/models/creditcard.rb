@@ -67,8 +67,6 @@ class Creditcard < ActiveRecord::Base
     # ActiveMerchant is configured to use cents so we need to multiply order total by 100
     response = payment_gateway.authorize((amount * 100).round, self, gateway_options(payment))
     if response.success?
-      puts '  response.success?'
-      puts response.inspect
       payment.response_code = response.response_code
       payment.avs_response = response.avs_result['code']
       payment.pend
@@ -78,6 +76,21 @@ class Creditcard < ActiveRecord::Base
     end
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
+  end
+
+  def purchase(amount, payment)
+    #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
+    response = payment_gateway.purchase((amount * 100).round, self, gateway_options(payment))
+    if response.success?
+      payment.response_code = response.response_code
+      payment.avs_response = response.avs_result['code']
+      payment.complete
+    else
+      payment.fail
+      gateway_error(response) unless response.success?
+    end
+  rescue ActiveMerchant::ConnectionError => e
+    gateway_error t(:unable_to_connect_to_gateway)
   end
 
   def capture(payment)
@@ -94,20 +107,6 @@ class Creditcard < ActiveRecord::Base
     payment.complete
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
-  end
-
-  def purchase(amount, payment)
-    #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
-    response = payment_gateway.purchase((amount * 100).round, self, gateway_options(payment))
-
-    gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the purchase
-    save
-    payment.complete
-  rescue ActiveMerchant::ConnectionError => e
-    payment.fail!
-    gateway_error t(:unable_to_connect_to_gateway)
   end
 
   def void(payment)
