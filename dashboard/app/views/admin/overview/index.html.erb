@@ -12,7 +12,7 @@
             <% @best_selling_variants.each_with_index do |v,i| %>
               <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
               <label><%= truncate v[0], :length => 27 %></label>
-              <div><%= number_with_delimiter v[1] %> Units</div>
+              <div><%= number_with_delimiter v[1] %> <%= t(:units) %></div>
             <% end %>
           </div>
 
@@ -32,7 +32,7 @@
             <% @best_selling_taxons.each_with_index do |t,i| %>
               <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
               <label><%= truncate t[0], :length => 27 %></label>
-              <div><%= number_with_delimiter t[1] %> Units</div>
+              <div><%= number_with_delimiter t[1] %> <%= t(:units) %></div>
             <% end %>
           </div>
 
