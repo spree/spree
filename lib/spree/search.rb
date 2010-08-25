@@ -12,7 +12,7 @@ module Spree::Search
     params[:page] = 1 if (params[:page].to_i <= 0)
     
     # Prepare a search within the parameters
-    Spree::Config.searcher.prepare(params)
+    Spree::Config.searcher.prepare(params) unless @keywords.blank?
 
     if !params[:order_by_price].blank?
       @product_group = ProductGroup.new.from_route([params[:order_by_price]+"_by_master_price"])
