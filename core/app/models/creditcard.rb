@@ -66,42 +66,14 @@ class Creditcard < ActiveRecord::Base
   def authorize(amount, payment)
     # ActiveMerchant is configured to use cents so we need to multiply order total by 100
     response = payment_gateway.authorize((amount * 100).round, self, gateway_options(payment))
-    gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the authorization
-    save
-    payment.txns << CreditcardTxn.create(
-      :amount => amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::AUTHORIZE,
-      :avs_response => response.avs_result['code']
-    )
-    payment.pend
-  rescue ActiveMerchant::ConnectionError => e
-    payment.fail!
-    gateway_error I18n.t(:unable_to_connect_to_gateway)
-  end
-
-  def capture(payment)
-    return unless transaction = authorization(payment)
-    if payment_gateway.payment_profiles_supported?
-      # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
-      # so supply the authorization itself as well as the creditcard, rather than just the authorization code
-      response = payment_gateway.capture(transaction, self, minimal_gateway_options(payment))
+    if response.success?
+      payment.response_code = response.authorization
+      payment.avs_response = response.avs_result['code']
+      payment.pend
     else
-      # Standard ActiveMerchant capture usage
-      response = payment_gateway.capture((transaction.amount * 100).round, transaction.response_code, minimal_gateway_options(payment))
+      payment.fail
+      gateway_error(response)
     end
-    gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the capture
-    save
-    payment.txns << CreditcardTxn.create(
-      :amount => transaction.amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::CAPTURE
-    )
-    payment.complete
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
@@ -109,94 +81,86 @@ class Creditcard < ActiveRecord::Base
   def purchase(amount, payment)
     #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
     response = payment_gateway.purchase((amount * 100).round, self, gateway_options(payment))
-
-    gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the purchase
-    save
-    payment.txns << CreditcardTxn.create(
-      :amount => amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::PURCHASE,
-      :avs_response => response.avs_result['code']
-    )
-    payment.complete
+    if response.success?
+      payment.response_code = response.authorization
+      payment.avs_response = response.avs_result['code']
+      payment.complete
+    else
+      payment.fail
+      gateway_error(response) unless response.success?
+    end
   rescue ActiveMerchant::ConnectionError => e
-    payment.fail!
     gateway_error t(:unable_to_connect_to_gateway)
   end
 
-  def void(payment)
-    return unless transaction = purchase_or_authorize_transaction_for_payment(payment)
-
-    response = payment_gateway.void(transaction.response_code, self, minimal_gateway_options(payment))
-    gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the void
-    save
-    payment.txns << CreditcardTxn.create(
-      :amount => -transaction.amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::VOID
-    )
-    payment.void
-  end
-
-  def credit(payment, amount=nil)
-    return unless transaction = purchase_or_authorize_transaction_for_payment(payment)
-
-    amount ||= payment.order.outstanding_credit
-
+  def capture(payment)
+    return unless payment.pending?
     if payment_gateway.payment_profiles_supported?
-      response = payment_gateway.credit((amount * 100).round, self, transaction.response_code, minimal_gateway_options(payment))
+      # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
+      # so supply the authorization itself as well as the creditcard, rather than just the authorization code
+      response = payment_gateway.capture(payment, self, minimal_gateway_options(payment))
     else
-      response = payment_gateway.credit((amount * 100).round, transaction.response_code, minimal_gateway_options(payment))
+      # Standard ActiveMerchant capture usage
+      response = payment_gateway.capture((payment.amount * 100).round, payment.response_code, minimal_gateway_options(payment))
     end
-    gateway_error(response) unless response.success?
-
-    # create a transaction to reflect the purchase
-    save
-    payment.txns << CreditcardTxn.create(
-      :amount => -amount,
-      :response_code => response.authorization,
-      :txn_type => CreditcardTxn::TxnType::CREDIT
-    )
-    payment.update_attribute(:amount, payment.amount - amount)
+    if response.success?
+      payment.response_code = response.authorization
+      payment.complete
+    else
+      payment.fail
+      gateway_error(response)
+    end
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
-  # find the transaction associated with the original authorization/capture
-  def authorization(payment)
-    payment.txns.find(:first,
-              :conditions => ["type = 'CreditcardTxn' AND txn_type = ? AND response_code IS NOT NULL", CreditcardTxn::TxnType::AUTHORIZE.to_s],
-              :order => 'created_at DESC')
+  def void(payment)
+    response = payment_gateway.void(payment.response_code, self, minimal_gateway_options(payment))
+    if response.success?
+      payment.response_code = response.authorization
+      payment.void
+    else
+      gateway_error(response)
+    end
+  rescue ActiveMerchant::ConnectionError => e
+    gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
-  # find a transaction that can be used to void or credit
-  def purchase_or_authorize_transaction_for_payment(payment)
-    payment.txns.detect {|txn| [CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE].include?(txn.txn_type) and txn.response_code.present?}
+  def credit(payment, amount)
+    if payment_gateway.payment_profiles_supported?
+      response = payment_gateway.credit((amount * 100).round, self, payment.response_code, minimal_gateway_options(payment))
+    else
+      response = payment_gateway.credit((amount * 100).round, payment.response_code, minimal_gateway_options(payment))
+    end
+    if response.success?
+      Payment.create(:source => payment, :amount => amount.abs * -1, :response_code => response.authorization, :state => 'completed')
+    else
+      gateway_error(response)
+    end
+  rescue ActiveMerchant::ConnectionError => e
+    gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
+
 
   def actions
     %w{capture void credit}
   end
 
-  def can_capture?(payment)
-    authorization(payment).present? &&
-    has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::VOID)
-  end
+  # def can_capture?(payment)
+  #   authorization(payment).present? &&
+  #   has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::VOID)
+  # end
 
-  def can_void?(payment)
-    has_transaction_of_types?(payment, CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
-    has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID)
-  end
+  # def can_void?(payment)
+  #   has_transaction_of_types?(payment, CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
+  #   has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID)
+  # end
 
-  # Can only refund a captured transaction but if transaction hasn't been cleared by merchant, refund may still fail
-  def can_credit?(payment)
-    has_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
-    has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID) and payment.order.outstanding_credit?
-  end
+  # # Can only refund a captured transaction but if transaction hasn't been cleared by merchant, refund may still fail
+  # def can_credit?(payment)
+  #   has_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
+  #   has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID) and payment.order.outstanding_credit?
+  # end
 
   def has_payment_profile?
     gateway_customer_profile_id.present?
@@ -204,13 +168,10 @@ class Creditcard < ActiveRecord::Base
 
   def gateway_error(error)
     if error.is_a? ActiveMerchant::Billing::Response
-      text = error.params['message'] ||
-             error.params['response_reason_text'] ||
-             error.message
+      text = error.params['message'] || error.params['response_reason_text'] || error.message
     else
       text = error.to_s
     end
-
     logger.error(I18n.t('gateway_error'))
     logger.error("  #{error.to_yaml}")
     raise Spree::GatewayError.new(text)
