@@ -61,7 +61,6 @@ describe Order do
   end
 
   context "#finalize!" do
-
     let(:order) { Order.create }
     it "should set completed_at" do
       order.should_receive :completed_at=
@@ -78,12 +77,14 @@ describe Order do
       order.stub(:line_items => line_items)
       expect { order.finalize! }.to change{ order.shipments.count }.to(1)
     end
-    # TODO: this should happen before transition to complete instead
-    # it "should process the payments" do
-    #   order.stub!(:payments).and_return([mock(Payment)])
-    #   order.payment.should_receive(:process!)
-    #   order.finalize!
-    # end
+  end
+
+  context "#process_payments!" do
+    it "should process the payments" do
+      order.stub!(:payments).and_return([mock(Payment)])
+      order.payment.should_receive(:process!)
+      order.process_payments!
+    end
   end
 
   context "#guest?" do

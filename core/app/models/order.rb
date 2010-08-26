@@ -102,6 +102,7 @@ class Order < ActiveRecord::Base
       transition :to => 'awaiting_return'
     end
 
+    before_transition :to => 'complete', :do => :process_payments!
     after_transition :to => 'complete', :do => :finalize!
 
   end
@@ -359,12 +360,15 @@ class Order < ActiveRecord::Base
     self.user = user and save!
   end
 
-  # Finalizes an in progress order after checkout is complete.  This method is intended to be called automatically by the
-  # state machine when the order transitions to the 'complete' state.
+  def process_payments!
+    payments.each(&:process!)
+  end
+
+  # Finalizes an in progress order after checkout is complete. 
+  # Called after transition to complete state when payments will have been processed
   def finalize!
     self.out_of_stock_items = InventoryUnit.sell_units(self)
     shipments.create(:inventory_units => inventory_units.reload)
-    payments.each(&:process!)
     update_attribute(:completed_at, Time.now)
   end
 
