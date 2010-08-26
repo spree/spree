@@ -20,6 +20,8 @@ class Adjustment < ActiveRecord::Base
   validates :label, :presence => true
   validates :amount, :numericality => true
 
+  scope :tax, lambda { where(:label => I18n.t(:tax)) }
+
   # update the order totals, etc.
   after_save {order.update!}
 

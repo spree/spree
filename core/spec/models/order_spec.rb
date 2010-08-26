@@ -39,10 +39,52 @@ describe Order do
   end
 
   context "#next!" do
-    it "should finalize order when transitioning to complete state" do
-      order.state = "confirm"
-      order.should_receive(:finalize!)
-      order.next!
+    context "when current state is confirm" do
+      before { order.state = "confirm" }
+      it "should finalize order when transitioning to complete state" do
+        order.should_receive(:finalize!)
+        order.next!
+      end
+    end
+    context "when current state is address" do
+      let(:rate) { mock_model TaxRate, :amount => 10 }
+#      let(:old_rate) { mock_model TaxRate }
+#      let(:old_charge) { mock_model Adjustment, :originator => old_rate }
+
+      before do
+        order.state = "address"
+        TaxRate.stub :match => rate
+      end
+
+      it "should create a tax charge when transitioning to delivery state" do
+        rate.should_receive(:create_adjustment).with(I18n.t(:tax), order, order, true)
+        order.next!
+      end
+
+      context "when a tax charge already exists" do
+        let(:old_charge) { mock_model Adjustment }
+        before { order.stub_chain :adjustments, :tax => [old_charge] }
+
+        it "should not create a second tax charge (for the same rate)" do
+          old_charge.stub :originator => rate
+          rate.should_not_receive :create_adjustment
+          order.next!
+        end
+
+        it "should remove an existing tax charge (for the old rate)" do
+          old_charge.stub :originator => mock_model(TaxRate)
+          old_charge.should_receive :destroy
+          order.next
+        end
+
+        it "should remove an existing tax charge if there is no longer a relevant tax rate" do
+          TaxRate.stub :match => nil
+          old_charge.stub :originator => mock_model(TaxRate)
+          old_charge.should_receive :destroy
+          order.next
+        end
+      end
+
     end
   end
 

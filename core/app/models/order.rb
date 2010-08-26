@@ -104,6 +104,7 @@ class Order < ActiveRecord::Base
 
     before_transition :to => 'complete', :do => :process_payments!
     after_transition :to => 'complete', :do => :finalize!
+    after_transition :to => 'delivery', :do => :create_tax_charge!
 
   end
 
@@ -269,10 +270,6 @@ class Order < ActiveRecord::Base
   #   end
   # end
 
-  # def payment_total
-  #   payments.reload.total
-  # end
-
   # TODO: Re-implement these 4 methods
   def ship_total
     # shipping_charges.reload.map(&:amount).sum
@@ -294,26 +291,23 @@ class Order < ActiveRecord::Base
     0
   end
 
+  # Creates a new tax charge if applicable.  Uses the highest possible matching rate and destroys any previous
+  # tax charges if they were created by rates that no longer apply.
+  def create_tax_charge!
+    return unless rate = TaxRate.match(bill_address) or adjustments.tax.present?
+    if old_charge = adjustments.tax.first
+      old_charge.destroy unless old_charge.originator == rate
+      return
+    end
+    rate.create_adjustment(I18n.t(:tax), self, self, true)
+  end
 
-
-
-  # def create_tax_charge
-  #   if tax_charges.empty?
-  #     tax_charges.create({
-  #         :order => self,
-  #         :description => I18n.t(:tax),
-  #         :adjustment_source => self
-  #     })
-  #   end
-  # end
-  #
   # def update_adjustments
   #   self.adjustments.each(&:update_amount)
   #   update_totals(:force_adjustment_update)
   #   self
   # end
   #
-
 
   def outstanding_balance
     total - payment_total
@@ -368,7 +362,7 @@ class Order < ActiveRecord::Base
     payments.each(&:process!)
   end
 
-  # Finalizes an in progress order after checkout is complete. 
+  # Finalizes an in progress order after checkout is complete.
   # Called after transition to complete state when payments will have been processed
   def finalize!
     self.out_of_stock_items = InventoryUnit.sell_units(self)

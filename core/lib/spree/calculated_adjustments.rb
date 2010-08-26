@@ -47,7 +47,8 @@ module Spree::CalculatedAdjustments
 
     # Creates a new adjustment for the target object (which is any class that has_many :adjustments) and
     # sets amount based on the calculator as applied to the calculable argument (Order, LineItems[], Shipment, etc.)
-    def create_adjustment(label, target, calculable)
+    # By default the adjustment will not be considered mandatory
+    def create_adjustment(label, target, calculable, mandatory=false)
       amount = self.calculator.compute(calculable)
       target.adjustments.create(:amount => amount, :source => calculable, :originator => self, :label => label)
     end
