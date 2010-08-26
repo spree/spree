@@ -376,6 +376,20 @@ class Order < ActiveRecord::Base
     ShippingMethod.all_available(self, display_on)
   end
 
+  def rate_hash
+    begin
+      available_shipping_methods(:front_end).collect do |ship_method|
+        { :id => ship_method.id,
+          :name => ship_method.name,
+          :cost => ship_method.calculator.compute(self)
+        }
+      end.sort_by{|r| r[:cost]}
+    rescue Spree::ShippingError => ship_error
+      flash[:error] = ship_error.to_s
+      []
+    end
+  end
+
   def payment
     payments.first
   end

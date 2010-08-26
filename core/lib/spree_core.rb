@@ -81,7 +81,12 @@ module SpreeCore
           Gateway::PayPal,
           Gateway::SagePay,
           Gateway::Beanstream,
-          PaymentMethod::Check
+          PaymentMethod::Check,
+
+          Calculator::FlatPercentItemTotal,
+          Calculator::FlexiRate,
+          Calculator::PerItem,
+          Calculator::PriceBucket
         ].each{|gw|
           begin
             gw.register
