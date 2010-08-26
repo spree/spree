@@ -179,7 +179,7 @@ class Creditcard < ActiveRecord::Base
 
   def gateway_options(payment)
     options = {:billing_address  => generate_address_hash(payment.order.bill_address),
-               :shipping_address => generate_address_hash(payment.order.shipment.address)}
+               :shipping_address => generate_address_hash(payment.order.ship_address)}
     options.merge minimal_gateway_options(payment)
   end
 

@@ -273,21 +273,25 @@ class Order < ActiveRecord::Base
   #   payments.reload.total
   # end
 
-
+  # TODO: Re-implement these 4 methods
   def ship_total
-    shipping_charges.reload.map(&:amount).sum
+    # shipping_charges.reload.map(&:amount).sum
+    0
   end
 
   def tax_total
-    tax_charges.reload.map(&:amount).sum
+    # tax_charges.reload.map(&:amount).sum
+    0
   end
 
   def credit_total
-    credits.reload.map(&:amount).sum.abs
+    # credits.reload.map(&:amount).sum.abs
+    0
   end
 
   def charge_total
-    charges.reload.map(&:amount).sum
+    # charges.reload.map(&:amount).sum
+    0
   end
 
 
