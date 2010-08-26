@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe CheckoutController do
 
-  let(:order) { mock_model(Order, :checkout_allowed? => true, :update_attributes => true, :payment? => false).as_null_object }
+  let(:order) { mock_model(Order, :checkout_allowed? => true, :complete? => false, :update_attributes => true, :payment? => false).as_null_object }
   before { controller.stub :current_order => order }
 
   it "should understand checkout routes" do

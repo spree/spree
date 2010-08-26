@@ -6,8 +6,6 @@ class CheckoutController < Spree::BaseController
   before_filter :load_order
 
   # Updates the order and advances to the next state (when possible.)
-  #
-  # If the order is complete then user will be redirected to the :show view for the order.
   def update
     if @order.update_attributes(object_params)
       if @order.can_next? and @order.next
@@ -35,6 +33,12 @@ class CheckoutController < Spree::BaseController
   def load_order
     @order = current_order
     redirect_to cart_path and return unless @order and @order.checkout_allowed?
+    if @order.complete?
+      session[:order_id] = nil
+      unless params[:state] == 'complete'
+        redirect_to cart_path and return
+      end
+    end
     @order.state = params[:state] if params[:state]
     state_callback(:before)
   end
@@ -46,10 +50,6 @@ class CheckoutController < Spree::BaseController
 
   def before_payment
     current_order.payments.destroy_all if request.put?
-  end
-
-  def before_complete
-    session[:order_id] = nil
   end
 
   def before_address
