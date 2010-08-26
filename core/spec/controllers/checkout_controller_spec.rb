@@ -29,15 +29,21 @@ describe CheckoutController do
       get :edit, { :state => "payment" }
     end
 
-  end
-
-  context "#update" do
-
     it "should remove completed order from the session" do
       order.stub(:complete? => true, :state => 'complete')
       get :edit, {:state => "complete"}, {:order_id => 1}
       session[:order_id].should be_nil
     end
+
+    it "should redirect to cart if order is completed" do
+      order.stub(:complete? => true)
+      get :edit, {:state => "address"}
+      response.should redirect_to(cart_path)
+    end
+
+  end
+
+  context "#update" do
 
     context "save successful" do
       before do
