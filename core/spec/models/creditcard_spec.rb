@@ -6,7 +6,7 @@ describe Creditcard do
     @creditcard = Creditcard.new
     @payment = Payment.new(:amount => 100)
 
-    @success_response = mock('gateway_response', :success? => true, :response_code => '123', :avs_result => {'code' => 'avs-code'})
+    @success_response = mock('gateway_response', :success? => true, :authorization => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
 
     @payment_gateway = mock('payment_gateway', 
@@ -119,7 +119,7 @@ describe Creditcard do
         end
       end
       context "if unsucessfull" do
-        pending "should not make payment complete" do
+        it "should not make payment complete" do
           @payment_gateway.stub(:capture).and_return(@fail_response)
           @payment.should_receive(:fail)
           @payment.should_not_receive(:complete)
@@ -150,7 +150,11 @@ describe Creditcard do
       @creditcard.void(@payment) 
     end
     context "if sucessfull" do
-      it "should update the response_code with the authorization from the gateway"
+      it "should update the response_code with the authorization from the gateway" do
+        @payment.response_code = 'abc'
+        @creditcard.void(@payment)
+        @payment.response_code.should == '123'
+      end
       it "should void the payment" do
         @creditcard.should_receive(:void)
         @creditcard.void(@payment)
@@ -180,7 +184,6 @@ describe Creditcard do
       it "should create an offsetting payment" do
         Payment.should_receive(:create)
         @creditcard.credit(@payment, 10)
-        # TODO: move creation of payment offset into Payment
       end
       context "resulting payment" do
         before do

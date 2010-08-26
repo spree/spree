@@ -67,7 +67,7 @@ class Creditcard < ActiveRecord::Base
     # ActiveMerchant is configured to use cents so we need to multiply order total by 100
     response = payment_gateway.authorize((amount * 100).round, self, gateway_options(payment))
     if response.success?
-      payment.response_code = response.response_code
+      payment.response_code = response.authorization
       payment.avs_response = response.avs_result['code']
       payment.pend
     else
@@ -82,7 +82,7 @@ class Creditcard < ActiveRecord::Base
     #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
     response = payment_gateway.purchase((amount * 100).round, self, gateway_options(payment))
     if response.success?
-      payment.response_code = response.response_code
+      payment.response_code = response.authorization
       payment.avs_response = response.avs_result['code']
       payment.complete
     else
@@ -104,7 +104,7 @@ class Creditcard < ActiveRecord::Base
       response = payment_gateway.capture((payment.amount * 100).round, payment.response_code, minimal_gateway_options(payment))
     end
     if response.success?
-      payment.response_code = response.response_code
+      payment.response_code = response.authorization
       payment.complete
     else
       payment.fail
@@ -117,7 +117,7 @@ class Creditcard < ActiveRecord::Base
   def void(payment)
     response = payment_gateway.void(payment.response_code, self, minimal_gateway_options(payment))
     if response.success?
-      payment.response_code = response.response_code
+      payment.response_code = response.authorization
       payment.void
     else
       gateway_error(response)
@@ -133,7 +133,7 @@ class Creditcard < ActiveRecord::Base
       response = payment_gateway.credit((amount * 100).round, payment.response_code, minimal_gateway_options(payment))
     end
     if response.success?
-      Payment.create(:source => payment, :amount => amount.abs * -1, :response_code => response.response_code, :state => 'completed')
+      Payment.create(:source => payment, :amount => amount.abs * -1, :response_code => response.authorization, :state => 'completed')
     else
       gateway_error(response)
     end
