@@ -2,6 +2,7 @@ class Gateway::AuthorizeNetCim < Gateway
   preference :login, :string
   preference :password, :string
   preference :test_mode, :boolean, :default => false
+  preference :validate_on_profile_create, :boolean, :default => false
 
   ActiveMerchant::Billing::Response.class_eval do
     attr_writer :authorization
@@ -96,10 +97,12 @@ class Gateway::AuthorizeNetCim < Gateway
         info = { :bill_to => generate_address_hash(payment.order.bill_address),
                  :payment => { :credit_card => payment.source } }
       end
+      validation_mode = preferred_validate_on_profile_create ? preferred_server.to_sym : :none
+
       { :profile => { :merchant_customer_id => "#{Time.now.to_f}",
                       #:ship_to_list => generate_address_hash(creditcard.checkout.ship_address),
-                      :payment_profiles => info }
-      }
+                      :payment_profiles => info },
+        :validation_mode => validation_mode }
     end
 
     # As in PaymentGateway but with separate name fields

@@ -465,6 +465,8 @@ module ActiveMerchant #:nodoc:
       def build_create_customer_profile_request(xml, options)
         add_profile(xml, options[:profile])
 
+        xml.tag!('validationMode',CIM_VALIDATION_MODES[options[:validation_mode]]) if options[:validation_mode]
+
         xml.target!
       end
 
@@ -761,7 +763,7 @@ module ActiveMerchant #:nodoc:
         Rails.logger.error("Gateway Error: #{text}") unless success
 
         direct_response_params = parse_direct_response(response_params['direct_response'])
-        
+
         response = Response.new(success, text, response_params,
           :test => test_mode,
           :authorization => response_params['customer_profile_id'] || (response_params['profile'] ? response_params['profile']['customer_profile_id'] : direct_response_params['transaction_id']),
@@ -775,7 +777,7 @@ module ActiveMerchant #:nodoc:
             response.authorization = response.params['direct_response']['transaction_id']
           end
         end
-        
+
         response
       end
 
