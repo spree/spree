@@ -4,3 +4,4 @@ en:
   currency_code: "Currency Code"
   pem: PEM
   secure_profile_api_key: Payment Profile API Key
+  validate_on_profile_create: Validate card 
