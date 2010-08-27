@@ -34,7 +34,7 @@ Spree::BaseController.class_eval do
   # when available.  This assists in providing authorization to guest users who may wish to create a new user
   # account at some point during the checkout (and thus, we cannot just log them in using the session token)
   def auth_user
-    current_user || User.find_by_access_token(session[:guest_token])
+    current_user || User.find_by_authentication_token(session[:guest_token])
   end
 
 end

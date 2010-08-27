@@ -24,7 +24,7 @@ describe Spree::BaseController do
       end
 
       it "should return the user matching the token" do
-        User.stub :find_by_access_token => user
+        User.stub :find_by_authentication_token => user
         session[:guest_user] = "foo"
         controller.auth_user.should == user
       end
