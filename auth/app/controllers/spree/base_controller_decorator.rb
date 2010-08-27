@@ -1,4 +1,5 @@
 Spree::BaseController.class_eval do
+
   # graceful error handling for cancan authorization exceptions
   rescue_from CanCan::AccessDenied, :with => :access_denied
 
@@ -28,4 +29,12 @@ Spree::BaseController.class_eval do
       end
     end
   end
+
+  # Returns the currently authenticated user or the user associated with the guest_token stored in the session
+  # when available.  This assists in providing authorization to guest users who may wish to create a new user
+  # account at some point during the checkout (and thus, we cannot just log them in using the session token)
+  def auth_user
+    current_user || User.find_by_access_token(session[:guest_token])
+  end
+
 end

@@ -15,15 +15,4 @@ describe OrdersController do
     end
   end
 
-  context "#token" do
-    pending it "should return the user associated with the session token" do
-      user = mock_model(User)
-      session[:guest_token] = "foo"
-      User.should_receive(:find_by_access_token).and_return user
-      controller.token_user.should == user
-    end
-    it "should return nil if there is no token in the session"
-    it "should return nil if there is no user corresponding for the session token"
-  end
-
 end
