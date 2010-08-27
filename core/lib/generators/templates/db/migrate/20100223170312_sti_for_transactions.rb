@@ -3,7 +3,7 @@ class StiForTransactions < ActiveRecord::Migration
     rename_table "creditcard_txns", "transactions"
     add_column "transactions", "type", :string
     remove_column "transactions", "creditcard_id"
-    Transaction.update_all(:type => 'CreditcardTxn')
+    Transaction.update_all(:type => 'CreditcardTxn') if defined? Transaction
   end
 
   def self.down
