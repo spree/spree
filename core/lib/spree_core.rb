@@ -51,6 +51,7 @@ require 'spree_core/preferences/preference_definition'
 require 'store_helpers'
 require 'spree/file_utilz'
 require 'spree/calculated_adjustments'
+require 'spree/current_order'
 
 module Spree
   def self.version
