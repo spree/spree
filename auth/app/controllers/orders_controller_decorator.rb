@@ -1,9 +1,18 @@
 OrdersController.class_eval do
-  after_filter :associate_user, :only => :populate
+  after_filter :store_guest, :only => :populate
+  before_filter :check_authorization
 
   private
-  def associate_user
+  def store_guest
     return if current_user
-    session[:guest_token] ||= @order.token
+    session[:guest_token] ||= @order.user.authentication_token
+  end
+
+  def check_authorization
+    if current_order
+      authorize! :edit, current_order
+    else
+      authorize! :create, Order
+    end
   end
 end

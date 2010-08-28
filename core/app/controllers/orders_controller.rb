@@ -1,7 +1,4 @@
 class OrdersController < Spree::BaseController
-  # before_filter :prevent_editing_complete_order, :only => [:edit, :update, :checkout]
-  # before_filter :set_user
-
   ssl_required :show
 
   helper :products
@@ -14,20 +11,6 @@ class OrdersController < Spree::BaseController
       render :edit
     end
   end
-
-  #override r_c default b/c we don't want to actually destroy, we just want to clear line items
-  # def destroy
-  #   flash.notice = I18n.t(:basket_successfully_cleared)
-  #   @order.line_items.clear\t
-  #   @order.update_totals!
-  #   after :destroy
-  #   set_flash :destroy
-  #   response_for :destroy
-  # end
-  #
-  # destroy.response do |wants|
-  #   wants.html { redirect_to(edit_object_url) }
-  # end
 
   # Shows the current incomplete order from the session
   def edit
@@ -52,7 +35,6 @@ class OrdersController < Spree::BaseController
     redirect_to cart_path
   end
 
-
   def empty
     if @order = current_order
       @order.line_items.destroy_all
@@ -60,25 +42,6 @@ class OrdersController < Spree::BaseController
     redirect_to cart_path
   end
 
-  # def create_before
-  #
-  #   # store order token in the session
-  #   session[:order_token] = @order.token
-  # end
-
-  # def prevent_editing_complete_order
-  #   load_object
-  #   redirect_to object_url if @order.checkout_complete
-  # end
-
-  # def set_user
-  #   #only if the user is blank and the order is in_progress
-  #   if @order && @order.user.nil? && @order.in_progress? && current_user
-  #     @order.checkout.update_attribute(:email, current_user.email) if @order.checkout
-  #     @order.user = current_user
-  #     @order.save
-  #   end
-  # end
   #
   # def accurate_title
   #   I18n.t(:shopping_cart)
