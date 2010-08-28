@@ -95,6 +95,23 @@ module SpreeCore
             $stderr.puts "Error registering gateway #{gw}: #{e}"
           end
         }
+        
+        #register all calculators
+        [
+          Calculator::FlatPercentItemTotal,
+          Calculator::FlatRate,
+          Calculator::FlexiRate,
+          Calculator::PerItem,
+          Calculator::SalesTax,
+          Calculator::Vat,
+        ].each{|c_model|
+          begin
+            c_model.register if c_model.table_exists?
+          rescue Exception => e
+            $stderr.puts "Error registering calculator #{c_model}"
+          end
+        }
+          
       end
 
     end

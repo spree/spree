@@ -6,6 +6,8 @@ class Promotion < ActiveRecord::Base
   has_many :promotion_rules
   accepts_nested_attributes_for :promotion_rules
   alias_method :rules, :promotion_rules
+  
+  validates :name, :code, :presence => true
 
   MATCH_POLICIES = %w(all any)
 

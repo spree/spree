@@ -1,27 +1,27 @@
-<%= f.error_messages %>
+<%= render "shared/error_messages", :target => @promotion %>
 <fieldset id="general_fields">
   <legend>General</legend>
-  <p>
+  <%= f.field_container :name do %>
     <%= f.label :name %><br />
     <%= f.text_field :name %>
-  </p>
+  <% end %>
 
-  <p>
+  <%= f.field_container :description do %>
     <%= f.label :description %><br />
     <%= f.text_area :description, :style => "height:50px" %>
-  </p>
+  <% end %>
 
-  <p>
+  <%= f.field_container :code do %>
     <%= f.label :code %><br />
     <%= f.text_field :code %>
-  </p>
+  <% end %>
 
-  <p>
+  <%= f.field_container :combine do %>
     <label>
       <%= f.check_box :combine %> 
       May be combined with other promotions
     </label>
-  </p>
+  <% end %>
 
 </fieldset>
 
