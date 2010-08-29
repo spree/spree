@@ -20,6 +20,6 @@ Gem::Specification.new do |s|
   s.has_rdoc = true
 
   s.add_dependency('spree_core',  version)
-  s.add_dependency('devise', '>= 1.1.1')
-  s.add_dependency('cancan', '>= 1.3.0')
+  s.add_dependency('devise', '>= 1.1.2')
+  s.add_dependency('cancan', '>= 1.3.3')
 end
