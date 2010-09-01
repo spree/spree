@@ -3,18 +3,19 @@ Spree::BaseController.class_eval do
   include Spree::AuthUser
 
   # graceful error handling for cancan authorization exceptions
-  rescue_from CanCan::AccessDenied, :with => :access_denied
+  rescue_from CanCan::AccessDenied, :with => :unauthorized
 
   private
 
   # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
   # Override this method in your controllers if you want to have special behavior in case the user is not authorized
   # to access the requested action.  For example, a popup window might simply close itself.
-  def access_denied
+  def unauthorized
     respond_to do |format|
       format.html do
         if current_user
-          render :text => I18n.t(:authorization_failure) and return
+          flash.now[:error] = I18n.t(:authorization_failure)
+          render 'shared/unauthorized', :layout => 'spree_application'
         else
           store_location
           redirect_to new_user_session_path and return

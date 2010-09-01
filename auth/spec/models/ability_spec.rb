@@ -30,6 +30,18 @@ describe Ability do
     end
   end
 
+  shared_examples_for "index allowed" do
+    it "should allow index" do
+      ability.should be_able_to(:index, resource)
+    end
+  end
+
+  shared_examples_for "no index allowed" do
+    it "should not allow index" do
+      ability.should_not be_able_to(:index, resource)
+    end
+  end
+
   shared_examples_for "create only" do
     it "should allow create" do
       ability.should be_able_to(:create, resource)
@@ -39,6 +51,9 @@ describe Ability do
     end
     it "should not allow update" do
       ability.should_not be_able_to(:update, resource)
+    end
+    it "should not allow index" do
+      ability.should_not be_able_to(:index, resource)
     end
   end
 
@@ -52,6 +67,9 @@ describe Ability do
     it "should not allow update" do
       ability.should_not be_able_to(:update, resource)
     end
+    it "should allow index" do
+      ability.should be_able_to(:index, resource)
+    end
   end
 
   context "for general resource" do
@@ -59,9 +77,26 @@ describe Ability do
     context "with admin user" do
       before(:each) { user.stub(:has_role?).and_return(true) }
       it_should_behave_like "access granted"
+      it_should_behave_like "index allowed"
     end
     context "with customer" do
       it_should_behave_like "access denied"
+      it_should_behave_like "no index allowed"
+    end
+  end
+
+  context "for admin protected resources" do
+    let(:resource) { Object.new }
+    context "with admin user" do
+      before(:each) { user.stub(:has_role?).and_return(true) }
+      it "should be able to admin" do
+        ability.should be_able_to :admin, resource
+      end
+    end
+    context "with customer" do
+      it "should not be able to admin" do
+        ability.should_not be_able_to :admin, resource
+      end
     end
   end
 
@@ -69,6 +104,7 @@ describe Ability do
     context "requested by same user" do
       let(:resource) { user }
       it_should_behave_like "access granted"
+      it_should_behave_like "no index allowed"
     end
     context "requested by other user" do
       let(:resource) { User.new }
@@ -81,6 +117,7 @@ describe Ability do
     context "requested by same user" do
       before(:each) { resource.user = user }
       it_should_behave_like "access granted"
+      it_should_behave_like "no index allowed"
     end
     context "requested by other user" do
       before(:each) { resource.user = User.new }

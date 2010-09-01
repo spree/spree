@@ -2,6 +2,13 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+    self.clear_aliased_actions
+
+    # override cancan default aliasing (we don't want to differentiate between read and index)
+    alias_action :edit, :to => :update
+    alias_action :new, :to => :create
+    alias_action :show, :to => :read
+
     user ||= User.new
     if user.has_role? 'admin'
       can :manage, :all
@@ -24,8 +31,10 @@ class Ability
       can :create, Order
       #############################
       can :read, Product
+      can :index, Product
       #############################
       can :read, Taxon
+      can :index, Taxon
       #############################
     end
   end
