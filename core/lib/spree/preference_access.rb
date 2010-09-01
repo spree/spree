@@ -1,8 +1,8 @@
-module PreferenceAccess
-  
+module Spree::PreferenceAccess
+
   def self.included(base)
     class << base
-      def get(key = nil)          
+      def get(key = nil)
         key = key.to_s if key.is_a?(Symbol)
         return nil unless config = self.instance
         # preferences will be cached under the name of the class including this module (ex. Spree::Config)

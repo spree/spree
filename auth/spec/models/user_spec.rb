@@ -10,11 +10,21 @@ describe User do
   end
   context "anonymous!" do
     let(:user) { User.anonymous! }
-    it "should return a newly created user" do
+
+    it "should create a new user" do
       user.new_record?.should be_false
     end
+
     it "should be anonymous" do
       user.should be_anonymous
     end
+
+    context "#email=" do
+      it "should set anonymous to false" do
+        user.email = "jobs@railsdog.com"
+        user.should_not be_anonymous
+      end
+    end
+
   end
 end

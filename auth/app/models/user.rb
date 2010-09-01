@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :guest
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :anonymous
   after_save :ensure_authentication_token!
 
   alias_attribute :token, :authentication_token
@@ -23,9 +23,11 @@ class User < ActiveRecord::Base
 
   def self.anonymous!
     token = User.generate_token(:authentication_token)
-    User.create(:email => "#{token}@spree.com", :password => token, :password_confirmation => token) do |user|
-      user.anonymous = true
-    end
+    User.create(:email => "#{token}@example.com", :password => token, :password_confirmation => token, :anonymous => true)
   end
 
+  def email=(email)
+    self.anonymous = false unless email.include?("example.com")
+    write_attribute :email, email
+  end
 end

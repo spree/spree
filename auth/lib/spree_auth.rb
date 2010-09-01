@@ -1,8 +1,11 @@
 require 'spree_core'
-require 'spree/auth_user'
+
 require 'devise'
 require 'devise/orm/active_record'
 require 'cancan'
+
+require 'spree/auth_user'
+require 'spree/auth/config'
 
 module SpreeAuth
   class Engine < Rails::Engine

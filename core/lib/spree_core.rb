@@ -52,6 +52,8 @@ require 'store_helpers'
 require 'spree/file_utilz'
 require 'spree/calculated_adjustments'
 require 'spree/current_order'
+require 'spree/preference_access'
+require 'spree/config'
 
 module Spree
   def self.version
@@ -95,7 +97,7 @@ module SpreeCore
             $stderr.puts "Error registering gateway #{gw}: #{e}"
           end
         }
-        
+
         #register all calculators
         [
           Calculator::FlatPercentItemTotal,
@@ -111,7 +113,7 @@ module SpreeCore
             $stderr.puts "Error registering calculator #{c_model}"
           end
         }
-          
+
       end
 
     end

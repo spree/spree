@@ -9,8 +9,8 @@ module Spree
   #   Spree::Config.searcher/searcher=     # get/set the default product search implementation
   class Config
     include Singleton
-    include PreferenceAccess
-    
+    include Spree::PreferenceAccess
+
     class << self
       def instance
         return @configuration if @configuration
@@ -18,13 +18,13 @@ module Spree
         @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
         @configuration
       end
-      
+
       def searcher
         @searcher ||= Spree::Search::Base.new
       end
-      
+
       def searcher=(searcher_obj)
-        @searcher = searcher_obj  
+        @searcher = searcher_obj
       end
     end
   end

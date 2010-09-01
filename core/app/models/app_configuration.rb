@@ -44,7 +44,6 @@ class AppConfiguration < Configuration
   preference :show_price_inc_vat, :boolean, :default => false
   preference :auto_capture, :boolean, :default => false # automatically capture the creditcard (as opposed to just authorize and capture later)
   preference :address_requires_state, :boolean, :default => true # should state/state_name be required
-  preference :allow_openid, :boolean, :default => false # allow use OpenID for registrations
   preference :checkout_zone, :string, :default => nil # replace with the name of a zone if you would like to limit the countries
   preference :always_put_site_name_in_title, :boolean, :default => true
   preference :cache_static_content, :boolean, :default => true
