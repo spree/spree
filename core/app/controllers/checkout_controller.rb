@@ -48,13 +48,17 @@ class CheckoutController < Spree::BaseController
     send(method_name) if respond_to?(method_name, true)
   end
 
-  def before_payment
-    current_order.payments.destroy_all if request.put?
-  end
-
   def before_address
     @order.bill_address ||= Address.new(:country => default_country)
     @order.ship_address ||= Address.new(:country => default_country)
+  end
+
+  def before_delivery
+    @order.shipping_method ||= (@order.rate_hash.first && @order.rate_hash.first[:shipping_method])
+  end
+
+  def before_payment
+    current_order.payments.destroy_all if request.put?
   end
 
   def default_country

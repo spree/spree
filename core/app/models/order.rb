@@ -77,10 +77,6 @@ class Order < ActiveRecord::Base
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'cart', :use_transactions => false do
 
-    state :payment do
-      validates_presence_of :shipping_method
-    end
-
     event :next do
       transition :from => 'address', :to => 'delivery'
       transition :from => 'delivery', :to => 'payment'
@@ -380,8 +376,9 @@ class Order < ActiveRecord::Base
 
   def rate_hash
     begin
-      available_shipping_methods(:front_end).collect do |ship_method|
+      @rate_hash ||= available_shipping_methods(:front_end).collect do |ship_method|
         { :id => ship_method.id,
+          :shipping_method => ship_method,
           :name => ship_method.name,
           :cost => ship_method.calculator.compute(self)
         }
