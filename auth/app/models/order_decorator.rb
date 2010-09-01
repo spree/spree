@@ -7,6 +7,6 @@ Order.class_eval do
   end
 
   def token
-    user.token if user.guest?
+    user.token if user.anonymous?
   end
 end

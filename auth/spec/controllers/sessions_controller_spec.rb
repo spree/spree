@@ -9,7 +9,7 @@ describe Devise::SessionsController do
   context "#create" do
     context "when current_order is associated with a guest user" do
       let(:user) { mock_model User, :has_role? => false }
-      let(:order) { mock_model Order, :guest? => true, :user => user }
+      let(:order) { mock_model Order, :anonynmous? => true, :user => user }
 
       before do
         controller.stub :authorize! => true

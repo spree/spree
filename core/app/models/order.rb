@@ -345,16 +345,16 @@ class Order < ActiveRecord::Base
   #   Creditcard.scoped(:conditions => {:id => creditcard_ids})
   # end
 
-  # Indicates whether a guest user is associated with the order
-  def guest?
-    user && user.guest?
+  # Indicates whether order has a real user associated with it or just a placeholder anonymous user
+  def anonymous?
+    user && user.anonymous?
   end
 
   # Associates the order with a registered user (replacing the previously associated guest user)
   #
   # throws an Exception if there is already a registered user associated with the order
   def register!(user)
-    raise "Already registred" if user and not user.guest?
+    raise "Already registred" if user and not user.anonymous?
     self.user = user and save!
   end
 
@@ -460,7 +460,7 @@ class Order < ActiveRecord::Base
   # end
 
   def create_user
-    self.user ||= User.guest!
+    self.user ||= User.anonymous!
   end
 
   # Updates the +shipment_state+ attribute according to the following logic:

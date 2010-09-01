@@ -9,7 +9,7 @@ describe Order do
     it "should create guest user (when no user assigned)" do
       order.save
       order.user.should_not be_nil
-      order.user.should be_guest
+      order.user.should be_anonymous
     end
     it "should not remove the registered user" do
       order = Order.new
@@ -24,12 +24,12 @@ describe Order do
   context "#register!" do
     it "should change its user to the specified user" do
       order.save
-      user = mock_model(User, :guest? => true)
+      user = mock_model(User, :anonymous? => true)
       order.register!(user)
       order.user.should == user
     end
     it "should fail if it already has a registered user" do
-      user = mock_model(User, :guest? => false)
+      user = mock_model(User, :anonymous? => false)
       order.save
       expect {
         order.register!(user)
@@ -129,12 +129,12 @@ describe Order do
     end
   end
 
-  context "#guest?" do
+  context "#anonymous?" do
     it "should indicate whether its user is a guest" do
-      order.user = mock_model(User, :guest? => true)
-      order.should be_guest
-      order.user = mock_model(User, :guest? => false)
-      order.should_not be_guest
+      order.user = mock_model(User, :anonymous? => true)
+      order.should be_anonymous
+      order.user = mock_model(User, :anonymous? => false)
+      order.should_not be_anonymous
     end
   end
 

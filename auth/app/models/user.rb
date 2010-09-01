@@ -21,9 +21,9 @@ class User < ActiveRecord::Base
     roles.any? { |role| role.name == role_in_question.to_s }
   end
 
-  def self.guest!
+  def self.anonymous!
     token = User.generate_token(:authentication_token)
-    User.create(:email => "#{token}@spree.com", :password => token, :password_confirmation => token, :guest => true)
+    User.create(:email => "#{token}@spree.com", :password => token, :password_confirmation => token, :anonymous => true)
   end
 
 end
