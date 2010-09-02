@@ -23,7 +23,9 @@ class User < ActiveRecord::Base
 
   def self.anonymous!
     token = User.generate_token(:authentication_token)
-    User.create(:email => "#{token}@spree.com", :password => token, :password_confirmation => token, :anonymous => true)
+    User.create(:email => "#{token}@spree.com", :password => token, :password_confirmation => token) do |user|
+      user.anonymous = true
+    end
   end
 
 end

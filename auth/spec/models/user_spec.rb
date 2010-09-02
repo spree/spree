@@ -13,5 +13,8 @@ describe User do
     it "should return a newly created user" do
       user.new_record?.should be_false
     end
+    it "should be anonymous" do
+      user.should be_anonymous
+    end
   end
 end
