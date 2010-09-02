@@ -18,14 +18,12 @@ Running Tests
 
 You need to do a quick one-time creation of a test application and then you can use it to run the tests.
 
-    rails new testapp -m spec/test_template.rb -T -J
-    cd testapp
-    rails g spree_core:install
-    rake db:migrate db:seed db:test:prepare
+    rake regenerate_test_app
+    rake test_app:rebuild_dbs
 
 Then run the tests
 
-    rspec spec
+    rake spec
 
 Misc
 ----

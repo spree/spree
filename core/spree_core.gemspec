@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency('acts_as_list', '>= 0.1.2')
   s.add_dependency('rd_awesome_nested_set', '>= 1.4.4')
   s.add_dependency('rd_unobtrusive_date_picker', '>= 0.1.0')
+
   s.add_dependency('highline', '>= 1.5.1')
   #s.add_dependency('less', '>= 1.2.20')
   s.add_dependency('stringex', '>= 1.0.3')

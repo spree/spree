@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'rake'
 require 'rake/testtask'
 require 'rake/packagetask'
@@ -14,4 +15,47 @@ task :release => :package do
   require 'rake/gemcutter'
   Rake::Gemcutter::Tasks.new(spec).define
   Rake::Task['gem:push'].invoke
+end
+
+desc "Default Task"
+task :default => [ :spec ]
+
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new
+
+require 'cucumber/rake/task'
+Cucumber::Rake::Task.new do |t|
+  t.cucumber_opts = %w{--format pretty}
+end
+
+desc "Regenerates a rails 3 app for testing"
+task :regenerate_test_app do
+  require 'lib/test_helpers/test_app/test_app_generator'
+  class CoreTestAppGenerator < TestAppGenerator
+    def install_auth
+      inside "" do
+        run "rails generate spree_auth:install --force"
+      end
+    end
+
+    def tweak_gemfile
+      append_file 'Gemfile' do
+        "gem 'spree_core', :path => '../..'"
+      end
+      # inside "" do
+      # end
+    end
+
+    def migrate_db
+      run_migrations
+    end
+  end
+  CoreTestAppGenerator.start
+end
+
+namespace :test_app do
+  desc 'Rebuild test and cucumber databases'
+  task :rebuild_dbs do
+    system("cd spec/test_app && rake db:drop db:migrate RAILS_ENV=test && rake db:drop db:migrate RAILS_ENV=cucumber")
+  end
 end

@@ -1,3 +1,5 @@
+require 'fabrication'
+
 Fabricator(:product) do
   name { Fabricate.sequence(:product_name){|n| "Product ##{n}"} }
   description 'Description'

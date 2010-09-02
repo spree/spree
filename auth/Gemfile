@@ -1,0 +1,31 @@
+source 'http://rubygems.org'
+
+gem 'rails', '3.0.0'
+gem 'sqlite3-ruby', :require => 'sqlite3'
+path '..' do
+  gem 'spree_core'
+end
+gem 'devise', '>= 1.1.2'
+gem 'cancan', '>= 1.3.3'
+
+group :development do
+  gem 'rake'
+end
+
+group :test do
+  gem 'rspec-rails', '2.0.0.beta.19'
+  gem 'fabrication'
+  gem 'thor'
+  gem 'machinist', '~> 2.0.0.beta2'
+  gem 'launchy'
+end
+
+group :cucumber do
+  gem 'cucumber-rails', '~> 0.3.2'
+  gem 'database_cleaner', '~> 0.5.2'
+  gem 'capybara', '~> 0.3.9', :require => false
+end
+
+group :test_rails_app do
+  gem 'spree_auth', :path => '..'
+end
