@@ -19,7 +19,6 @@ module SpreeCore
         empty_directory extension_dir('app')
         empty_directory extension_dir('app/controllers')
         empty_directory extension_dir('app/helpers')
-        empty_directory extension_dir('app/metal')
         empty_directory extension_dir('app/models')
         empty_directory extension_dir('app/views')
       end
