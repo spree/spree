@@ -5,16 +5,17 @@ Gem::Specification.new do |s|
   s.name        = 'spree_dash'
   s.version     = version
   s.summary     = 'Overview dashboard for use with Spree.'
-  #s.description = ''
+  s.description = 'Required dependancy for Spree'
+
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'Brian Quinn'
+  s.email       = 'brian@railsdog.com'
   s.homepage    = 'http://spreecommerce.com'
+  s.rubyforge_project = 'spree_dash'
 
   s.files        = Dir['CHANGELOG', 'README', 'MIT-LICENSE', 'lib/**/*']
   s.require_path = 'lib'
   s.requirements << 'none'
-
-  s.has_rdoc = true
 
   s.add_dependency('spree_core',  version)
 end

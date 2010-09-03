@@ -32,7 +32,7 @@ require 'state_machine'
 require 'paperclip'
 require 'stringex'
 require 'will_paginate'
-require 'less' #TODO RAILS3: consider making this optional
+#require 'less' #TODO RAILS3: consider making this optional
 require 'awesome_nested_set'
 require 'acts_as_list'
 require 'resource_controller'

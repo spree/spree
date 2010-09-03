@@ -4,20 +4,18 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_auth'
   s.version     = version
-  s.summary     = 'Provides authentication and authorization services for a Spree store.'
-  #s.description = 'Email on Rails. Compose, deliver, receive, and test emails using the familiar controller/view pattern. First-class support for multipart email and attachments.'
-  s.required_ruby_version = '>= 1.8.7'
+  s.summary     = 'Provides authentication and authorization services for use with Spree.'
+  s.description = 'Required dependancy for Spree'
 
-  # s.author            = 'David Heinemeier Hansson'
-  # s.email             = 'david@loudthinking.com'
-  # s.homepage          = 'http://www.rubyonrails.org'
-  # s.rubyforge_project = 'actionmailer'
+  s.required_ruby_version = '>= 1.8.7'
+  s.author      = 'Sean Schofield'
+  s.email       = 'sean@railsdog.com'
+  s.homepage    = 'http://spreecommerce.com'
+  s.rubyforge_project = 'spree_auth'
 
   s.files        = Dir['README', 'LICENSE', 'lib/**/*']
   s.require_path = 'lib'
   s.requirements << 'none'
-
-  s.has_rdoc = true
 
   s.add_dependency('spree_core',  version)
   s.add_dependency('devise', '>= 1.1.2')

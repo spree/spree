@@ -5,7 +5,11 @@ Gem::Specification.new do |s|
   s.name        = 'spree'
   s.version     = version
   s.summary     = 'Full-stack e-commerce framework for Ruby on Rails.'
-  s.description = ''
+  s.description = 'Spree is an open source e-commerce framework for Ruby on Rails.  Join us on the spree-user google group or in #spree on IRC'
+
+  s.files        = Dir['README.md', 'lib/**/*']
+  s.require_path = 'lib'
+  s.requirements << 'none'
 
   s.required_ruby_version     = '>= 1.8.7'
   s.required_rubygems_version = ">= 1.3.6"
@@ -19,7 +23,7 @@ Gem::Specification.new do |s|
   #s.executables        = ['spree']
   #s.default_executable = 'spree'
 
-  s.add_dependency('rails', '3.0.0')
+  #s.add_dependency('rails', '3.0.0')
   s.add_dependency('spree_core',  version)
   s.add_dependency('spree_auth', version)
   s.add_dependency('spree_api', version)

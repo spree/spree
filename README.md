@@ -12,8 +12,7 @@ automatically require all of the necessary dependency gems.  Those gems are as f
 * spree_api
 * spree_auth
 * spree_core
-* spree_dashboard
-* spree\_payment_gateway
+* spree_dash
 * spree_promotions
 * spree_sample
 
@@ -27,6 +26,10 @@ Using the Gem
 Start by adding the gem to your existing Rails 3.x application's Gemfile
 
     gem 'spree'
+
+Update your bundle
+
+    bundle install
 
 Then use the install generator to install all of the necessary migrations, assets, etc.
 
