@@ -39,6 +39,7 @@ require 'resource_controller'
 require 'searchlogic'
 require 'active_merchant'
 
+require 'spree_core/ext/active_record'
 require 'spree_core/delegate_belongs_to'
 require 'spree_core/theme_support'
 require 'spree_core/validation_group'

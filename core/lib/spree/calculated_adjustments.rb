@@ -56,7 +56,7 @@ module Spree::CalculatedAdjustments
     # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+
     # referenced passed to the method.
     def update_adjustment(adjustment, calculable)
-      adjustment.amount = self.calculator.compute(calculable)
+      adjustment.update_attribute_without_callbacks(:amount, self.calculator.compute(calculable))
     end
   end
 

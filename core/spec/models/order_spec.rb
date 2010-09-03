@@ -86,6 +86,31 @@ describe Order do
       end
 
     end
+
+
+    context "when current state is delivery" do
+      let(:shipping_method) { mock_model(ShippingMethod).as_null_object }
+      before do
+        Shipment.stub(:create).and_return(mock_model(Shipment).as_null_object)
+        order.state = "delivery"
+        order.stub :shipping_method => shipping_method
+      end
+      context "when transitioning to payment state" do
+        before do
+        end
+        it "should create a shipment" do
+          Shipment.should_receive(:create).with(:shipping_method => order.shipping_method, :order => order)
+          order.next!
+        end
+        it "should create a shipping charge" do
+          order.stub(:shipment).and_return(mock_model(Shipment).as_null_object)
+          order.shipping_method.should_receive(:create_adjustment).with(I18n.t(:shipping), order, order.shipment, true) 
+          order.next!
+        end
+      end
+    end
+
+
   end
 
   context "#generate_order_number" do
@@ -214,21 +239,24 @@ describe Order do
       order.update!
     end
     it "should call adjustemnt#update on every adjustment}" do
-      adjustment = mock_model(Adjustment, :amount => 5, :applicable? => true)
+      adjustment = mock_model(Adjustment, :amount => 5, :applicable? => true, :update! => true)
       order.stub(:adjustments => [adjustment])
-      adjustment.should_receive(:update)
+      order.adjustments.stub(:reload).and_return([adjustment])
+      adjustment.should_receive(:update!)
       order.update!
     end
     it "should destroy adjustments that no longer apply" do
-      adjustment = mock_model(Adjustment, :amount => 10, :update => nil, :applicable? => false)
+      adjustment = mock_model(Adjustment, :amount => 10, :update! => true, :applicable? => false)
       adjustment.should_receive(:destroy)
       order.stub(:adjustments => [adjustment])
+      order.adjustments.stub(:reload).and_return([adjustment])
       order.update!
     end
     it "should not destroy adjustments that still apply" do
-      adjustment = mock_model(Adjustment, :amount => 10, :update => nil, :applicable? => true)
+      adjustment = mock_model(Adjustment, :amount => 10, :update! => true, :applicable? => true)
       adjustment.should_not_receive(:destroy)
       order.stub(:adjustments => [adjustment])
+      order.adjustments.stub(:reload).and_return([adjustment])
       order.update!
     end
   end
@@ -248,11 +276,14 @@ describe Order do
     end
     context "with adjustments" do
       let(:adjustments) {
-        [ mock_model(Adjustment, :amount => 10, :update => nil, :applicable? => true),
-          mock_model(Adjustment, :amount => 5,  :update => nil, :applicable? => true),
-          mock_model(Adjustment, :amount => -2, :update => nil, :applicable? => true) ]
+        [ mock_model(Adjustment, :amount => 10, :update! => true, :applicable? => true),
+          mock_model(Adjustment, :amount => 5,  :update! => true, :applicable? => true),
+          mock_model(Adjustment, :amount => -2, :update! => true, :applicable? => true) ]
       }
-      before { order.stub(:adjustments => adjustments) }
+      before do
+        order.stub(:adjustments => adjustments)
+        order.adjustments.stub(:reload).and_return(adjustments)
+      end
       it "should set adjustment_total to the sum of adjustment amounts" do
         order.update!
         order.adjustment_total.should == 13

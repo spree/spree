@@ -9,14 +9,14 @@ class Shipment < ActiveRecord::Base
   has_many :inventory_units
   before_create :generate_shipment_number
   after_create :set_correct_state
-  after_save :create_shipping_charge
+  # after_save :create_shipping_charge
   after_destroy :release_inventory_units
 
   attr_accessor :special_instructions
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :inventory_units
 
-  validates :inventory_units, :presence => true, :if => Proc.new { |unit| !%w(in_progress canceled).include?(unit.order.state) }
+  validates :inventory_units, :presence => true, :if => Proc.new { |shipment| shipment.order.complete? && !shipment.order.canceled? }
   make_permalink :field => :number
   validate :shipping_method
 
@@ -34,17 +34,17 @@ class Shipment < ActiveRecord::Base
     self.shipped_at = Time.now
   end
 
-  def create_shipping_charge
-    if shipping_method
-      self.shipping_charge ||= ShippingCharge.create({
-          :order => order,
-          :description => description_for_shipping_charge,
-          :adjustment_source => self,
-        })
+  # def create_shipping_charge
+  #   if shipping_method
+  #     self.shipping_charge ||= ShippingCharge.create({
+  #         :order => order,
+  #         :description => description_for_shipping_charge,
+  #         :adjustment_source => self,
+  #       })
 
-      self.shipping_charge.update_attribute(:description, description_for_shipping_charge) unless self.shipping_charge.description == description_for_shipping_charge
-    end
-  end
+  #     self.shipping_charge.update_attribute(:description, description_for_shipping_charge) unless self.shipping_charge.description == description_for_shipping_charge
+  #   end
+  # end
 
   def cost
     shipping_charge.amount if shipping_charge

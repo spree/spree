@@ -21,9 +21,11 @@ class Adjustment < ActiveRecord::Base
   validates :amount, :numericality => true
 
   scope :tax, lambda { where(:label => I18n.t(:tax)) }
+  scope :shipping, lambda { where(:label => I18n.t(:shipping)) }
 
   # update the order totals, etc.
   after_save {order.update!}
+  after_destroy {order.update!}
 
   # Checks if adjustment is applicable for the order. Should return _true_ if adjustment should be preserved and
   # _false_ if removed. Default behaviour is to preserve adjustment if amount is present and non 0.  Exceptions
@@ -37,7 +39,7 @@ class Adjustment < ActiveRecord::Base
   # The new adjustment amount will be set by by the +originator+ and is not automatically saved.  This makes it save
   # to use this method in an after_save hook for other models without causing an infinite recursion problem.  If there
   # is no +originator+ then this method will have no effect.
-  def update
+  def update!
     return if frozen? or originator.nil?
     originator.update_adjustment(self, source)
   end

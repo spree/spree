@@ -101,6 +101,7 @@ class Order < ActiveRecord::Base
     before_transition :to => 'complete', :do => :process_payments!
     after_transition :to => 'complete', :do => :finalize!
     after_transition :to => 'delivery', :do => :create_tax_charge!
+    after_transition :to => 'payment', :do => :create_shipment_and_shipping_charge!
 
   end
 
@@ -120,15 +121,14 @@ class Order < ActiveRecord::Base
     update_adjustments
     # update totals a second time in case updated adjustments have an effect on the total
     update_totals
-    changes =  {
+    update_attributes_without_callbacks({
       :payment_state => payment_state,
       :shipment_state => shipment_state,
       :item_total => item_total,
       :adjustment_total => adjustment_total,
       :payment_total => payment_total,
       :total => total
-    }
-    self.class.update_all(changes, { :id => id })
+    })
   end
 
   def restore_state
@@ -298,20 +298,24 @@ class Order < ActiveRecord::Base
     rate.create_adjustment(I18n.t(:tax), self, self, true)
   end
 
-  # def update_adjustments
-  #   self.adjustments.each(&:update_amount)
-  #   update_totals(:force_adjustment_update)
-  #   self
-  # end
-  #
+  def create_shipment_and_shipping_charge!
+    shipping_method.reload
+    if shipment.present?
+      shipment.update_attributes(:shipping_method => shipping_method)
+    else
+      self.shipments << Shipment.create(:order => self, :shipping_method => shipping_method)
+    end
+    if shipping_charge = adjustments.shipping.first
+      # shipping_charge.update_attributes(:originator_id => shipping_method.id)
+      shipping_charge.originator = shipping_method
+      shipping_charge.save
+    else
+      shipping_method.create_adjustment(I18n.t(:shipping), self, shipment, true)
+    end
+  end
 
   def outstanding_balance
     total - payment_total
-  end
-
-  def update_adjustments
-    destroy_inapplicable_adjustments
-    adjustments.each(&:update_amount)
   end
 
   def destroy_inapplicable_adjustments
@@ -522,7 +526,7 @@ class Order < ActiveRecord::Base
     # separate into adjustments to keep and adjustements to toss
     obsolete_adjustments = adjustments.select{|adjustment| !adjustment.applicable?}
     obsolete_adjustments.each(&:destroy)
-    self.adjustments.each(&:update)
+    self.adjustments.reload.each(&:update!)
   end
 
   # def create_shipment
