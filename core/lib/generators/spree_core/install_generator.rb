@@ -8,7 +8,7 @@ module SpreeCore
       def create_lib_files
         template 'spree_site.rb', "lib/spree_site.rb"
       end
-      
+
       def configure_application_controller
         template 'application_controller.rb', 'app/controllers/application_controller.rb'
         remove_file 'app/views/layouts/application.html.erb'
@@ -36,10 +36,6 @@ module SpreeCore
         SEEDS
       end
 
-      def require_site
-        application "require 'spree_site'"
-      end
-
       def copy_migrations
         directory "db"
         create_file ".rspec", "--colour"
@@ -47,6 +43,16 @@ module SpreeCore
 
       def copy_public
         directory "public"
+      end
+
+      def config_middleware
+        application 'config.middleware.use "SeoAssist"'
+        application 'config.middleware.use "RedirectLegacyProductUrl"'
+        application 'config.middleware.use "CreateAdminUser"'
+      end
+
+      def require_site
+        application "require 'spree_site'"
       end
 
     end

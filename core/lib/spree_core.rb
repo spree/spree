@@ -55,6 +55,9 @@ require 'spree/calculated_adjustments'
 require 'spree/current_order'
 require 'spree/preference_access'
 require 'spree/config'
+require 'create_admin_user'
+require 'redirect_legacy_product_url'
+require 'seo_assist'
 
 module Spree
   def self.version
@@ -65,7 +68,7 @@ end
 module SpreeCore
   class Engine < Rails::Engine
 
-    config.autoload_paths += %W(#{config.root}/lib #{config.root}/app/metals)
+    config.autoload_paths += %W(#{config.root}/lib)
     # TODO - register state monitor observer?
 
     def self.activate

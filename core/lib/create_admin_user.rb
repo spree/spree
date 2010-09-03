@@ -3,16 +3,17 @@ class CreateAdminUser
   def initialize(app)
     @app = app
   end
-  
-  def call(env)                
+
+  def call(env)
     if env["PATH_INFO"] =~ /^\/users|stylesheets/ or @admin_defined or not User.table_exists?
-      @status = @app.call(env)
+      @app.call(env)
     else
-      @admin_defined = User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
-      @status = @app.call(env) if @admin_defined
+      if User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
+        @app.call(env)
+      else
+        [302, {'Location'=> 'users/sign_up' }, []]
+      end
     end
-    # redirect to user creation screen
-    return @status || [302, {'Location'=> '/users/new' }, []]
   ensure
     # Release the connections back to the pool.
     ActiveRecord::Base.clear_active_connections!

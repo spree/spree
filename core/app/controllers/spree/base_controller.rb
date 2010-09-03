@@ -12,10 +12,6 @@ class Spree::BaseController < ActionController::Base
   include SslRequirement
   include Spree::CurrentOrder
 
-  def admin_created?
-    User.first(:include => :roles, :conditions => ["roles.name = 'admin'"])
-  end
-
   def access_forbidden
     render :text => 'Access Forbidden', :layout => true, :status => 401
   end

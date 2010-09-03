@@ -19,10 +19,11 @@ Gem::Specification.new do |s|
   #s.executables        = ['spree']
   #s.default_executable = 'spree'
 
-  s.add_dependency('spree_core',                version)
-  s.add_dependency('spree_auth',                version)
-  s.add_dependency('spree_api',                 version)
-  s.add_dependency('spree_dashboard',           version)
-  s.add_dependency('spree_sample',              version)
-  s.add_dependency('spree_promotions',          version)
+  s.add_dependency('rails', '3.0.0')
+  s.add_dependency('spree_core',  version)
+  s.add_dependency('spree_auth', version)
+  s.add_dependency('spree_api', version)
+  s.add_dependency('spree_dashboard', version)
+  s.add_dependency('spree_sample', version)
+  s.add_dependency('spree_promotions', version)
 end
