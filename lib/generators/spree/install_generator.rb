@@ -9,7 +9,7 @@ module Spree
         generate 'spree_core:install', '-f'
         generate 'spree_api:install', '-f'
         generate 'spree_auth:install', '-f'
-        generate 'spree_dashboard:install', '-f'
+        generate 'spree_dash:install', '-f'
         generate 'spree_promotions:install', '-f'
         generate 'spree_sample:install', '-f'
       end

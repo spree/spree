@@ -1,6 +1,6 @@
 require 'spree_core'
 
-module SpreeDashboard
+module SpreeDash
   class Engine < Rails::Engine
   end
 end
