@@ -48,7 +48,6 @@ module SpreeCore
       def config_middleware
         application 'config.middleware.use "SeoAssist"'
         application 'config.middleware.use "RedirectLegacyProductUrl"'
-        application 'config.middleware.use "CreateAdminUser"'
       end
 
       def require_site
