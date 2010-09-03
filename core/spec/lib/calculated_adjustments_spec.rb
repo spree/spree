@@ -34,6 +34,12 @@ describe Spree::CalculatedAdjustments do
       adjustment.source.should == order
       adjustment.originator.should == tax_rate
     end
+
+    it "should be mandatory if true is supplied for that parameter" do
+      adjustment = tax_rate.create_adjustment("foo", target, order, true)
+      adjustment.should be_mandatory
+    end
+
   end
 
   context "#update_adjustment" do
