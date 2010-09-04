@@ -35,8 +35,8 @@ p.help-text {
 
 body {
   margin-top: 0px;
-  color: #476D9B; 
-  background: #0B72C1 url(../../images/admin/bg/header.png) top left repeat-x;
+  background-color: #162F54;
+  color: #476D9B;
  }
 
   a {
@@ -44,11 +44,11 @@ body {
     a:active,
     a:visited {
       color: #4884BD; }
-      
+
   #header {
-	height:95px;
-	position: relative;
-	margin-bottom: 13px;
+  height:95px;
+  position: relative;
+  margin-bottom: 13px;
   }
   #header,
   #footer {
@@ -141,23 +141,23 @@ body {
             color: #fff; }
 
   #header #logo {
-	position: absolute;
-	top: 0;
-	left: 10px;
+  position: absolute;
+  top: 0;
+  left: 10px;
 }
   #header h1 {
-	position: absolute;
-	left: 200px;
-	bottom: 19px;
-    margin: 10px 10px 10px 10px;   
+  position: absolute;
+  left: 200px;
+  bottom: 19px;
+    margin: 10px 10px 10px 10px;
     display: block;
     text-decoration: none;
     line-height: 100%;
-	
+
   }
   #header h1 a {
-	color: #8CB952;
-	}
+  color: #8CB952;
+  }
   #admin-menu { clear: both; }
   #admin-menu,
   #sub-menu {
