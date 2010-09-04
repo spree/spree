@@ -3,13 +3,10 @@ class Shipment < ActiveRecord::Base
   belongs_to :order
   belongs_to :shipping_method
   belongs_to :address
-  has_one    :shipping_charge,   :as => :adjustment_source
-  alias charge shipping_charge
   has_many :state_events, :as => :stateful
   has_many :inventory_units
   before_create :generate_shipment_number
   after_create :set_correct_state
-  # after_save :create_shipping_charge
   after_destroy :release_inventory_units
 
   attr_accessor :special_instructions
@@ -34,20 +31,11 @@ class Shipment < ActiveRecord::Base
     self.shipped_at = Time.now
   end
 
-  # def create_shipping_charge
-  #   if shipping_method
-  #     self.shipping_charge ||= ShippingCharge.create({
-  #         :order => order,
-  #         :description => description_for_shipping_charge,
-  #         :adjustment_source => self,
-  #       })
-
-  #     self.shipping_charge.update_attribute(:description, description_for_shipping_charge) unless self.shipping_charge.description == description_for_shipping_charge
-  #   end
-  # end
-
+  # The adjustment amount associated with this shipment (if any.)  Returns only the first adjustment to match
+  # the shipment but there should never really be more than one.
   def cost
-    shipping_charge.amount if shipping_charge
+    adjustment = order.adjustments.shipping.detect { |adjustment| adjustment.source == self }
+    adjustment ? adjustment.amount : 0
   end
 
   # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
