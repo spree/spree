@@ -9,11 +9,6 @@ module SpreeCore
         template 'spree_site.rb', "lib/spree_site.rb"
       end
 
-      def configure_application_controller
-        template 'application_controller.rb', 'app/controllers/application_controller.rb'
-        remove_file 'app/views/layouts/application.html.erb'
-      end
-
       def additional_tweaks
         remove_file "public/index.html"
 

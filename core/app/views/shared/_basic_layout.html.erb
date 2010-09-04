@@ -1,0 +1,44 @@
+<%
+if @body_class.nil?
+  if content_for?(:sidebar)
+    @body_class = 'two-col'
+  else
+    @body_class = 'one-col'
+  end
+end
+ %>
+<body class="<%= @body_class %>" id="<%= @body_id %>">
+  <div id="header" class="container_bg">
+    <div class="container">
+    <div id="login-bar">
+      <ul id="nav-bar">
+        <%= render 'shared/nav_bar' %>
+      </ul>
+    </div>
+  <%= logo %>
+  </div>
+  </div>
+
+  <div id="wrapper" class="container">
+    <% if content_for?(:sidebar) %>
+    <div id="sidebar">
+      <%= hook :sidebar do %>
+        <%= yield :sidebar %>
+      <% end %>
+    </div>
+    <% end %>
+
+    <div id="content">
+      <%= breadcrumbs(@taxon) if @taxon %>
+      <% if flash.notice %>
+      <div class="flash notice"><%= flash.notice %></div>
+      <% end %>
+      <% if flash[:error] %>
+      <div class="flash errors"><%= flash[:error] %></div>
+      <% end %>
+      <%= yield %>
+    </div>
+    <%= render :partial => 'shared/footer'%>
+  </div>
+
+</body>
