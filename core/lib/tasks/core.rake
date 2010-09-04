@@ -95,13 +95,6 @@ namespace :db do
     puts "Bootstrap Complete.\n\n"
   end
 
-  namespace :admin do
-    desc "Create admin username and password"
-    task :create => :environment do
-      require File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample', 'users.rb')
-    end
-  end
-
   desc "Loads sample data into the store"
   task :sample do   # an invoke will not execute the task after defaults has already executed it
     Rake::Task['db:load_dir'].reenable
