@@ -17,7 +17,7 @@ en:
     user:
       name: User
       description: Available only to the specified users
-    product: 
+    product:
       name: Product(s)
       description: Order includes specified product(s)
     item_total:
