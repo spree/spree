@@ -60,7 +60,7 @@ require 'seo_assist'
 
 module Spree
   def self.version
-    "0.30.0.beta1"
+    "0.30.0.beta2"
   end
 end
 
