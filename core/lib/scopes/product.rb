@@ -54,11 +54,6 @@ module Scopes::Product
   #   Product.not_deleted.available(args.first).scope(:find)
   # }
 
-  ::Product.scope :keywords, lambda{|query|
-    return {} if query.blank?
-    Spree::Config.searcher.get_products_conditions_for(query)
-  }
-
   ::Product.scope :price_between, lambda {|low,high|
     { :joins => :master, :conditions => ["variants.price BETWEEN ? AND ?", low, high] }
   }

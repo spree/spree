@@ -19,12 +19,12 @@ module Spree
         @configuration
       end
 
-      def searcher
-        @searcher ||= Spree::Search::Base.new
+      def searcher_class
+        @searcher_class ||= Spree::Search::Base
       end
 
-      def searcher=(searcher_obj)
-        @searcher = searcher_obj
+      def searcher_class=(sclass)
+        @searcher_class = sclass
       end
     end
   end

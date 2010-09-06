@@ -8,8 +8,6 @@ class ProductsController < Spree::BaseController
   helper :taxons
   actions :show, :index
 
-  include Spree::Search
-
   private
 
   def load_data
@@ -29,7 +27,8 @@ class ProductsController < Spree::BaseController
   end
 
   def collection
-    retrieve_products
+    @searcher = Spree::Config.searcher_class.new(params)
+    @products = @searcher.retrieve_products
   end
 
   def accurate_title

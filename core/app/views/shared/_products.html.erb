@@ -1,5 +1,5 @@
 <%
-  paginated_products = Spree::Config.searcher.products if params.key?(:keywords)
+  paginated_products = @searcher.products if params.key?(:keywords)
   paginated_products ||= products
 %>
 <% if products.empty? %>

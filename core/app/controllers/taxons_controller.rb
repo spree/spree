@@ -1,16 +1,16 @@
 class TaxonsController < Spree::BaseController
-  prepend_before_filter :reject_unknown_object, :only => [:show]
+  #prepend_before_filter :reject_unknown_object, :only => [:show]
   before_filter :load_data, :only => :show
   resource_controller
   actions :show
   helper :products
 
-  include Spree::Search
-
   private
   def load_data
     @taxon ||= object
-    retrieve_products
+    params[:taxon] = @taxon.id
+    @searcher = Spree::Config.searcher_class.new(params)
+    @products = @searcher.retrieve_products
   end
 
   def object
