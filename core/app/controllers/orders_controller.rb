@@ -6,6 +6,7 @@ class OrdersController < Spree::BaseController
   def update
     @order = current_order
     if @order.update_attributes(params[:order])
+      @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
       redirect_to cart_path
     else
       render :edit
@@ -42,8 +43,7 @@ class OrdersController < Spree::BaseController
     redirect_to cart_path
   end
 
-  #
-  # def accurate_title
-  #   I18n.t(:shopping_cart)
-  # end
+  def accurate_title
+    I18n.t(:shopping_cart)
+  end
 end
