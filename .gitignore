@@ -44,3 +44,4 @@ vendor/extensions/theme_default/app/stylesheets/*.css
 tags
 *.swp
 rerun.txt
+test_app

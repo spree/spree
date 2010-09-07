@@ -29,21 +29,17 @@ Cucumber::Rake::Task.new do |t|
 end
 
 desc "Regenerates a rails 3 app for testing"
-task :regenerate_test_app do
-  require 'lib/test_helpers/test_app/test_app_generator'
-  class CoreTestAppGenerator < TestAppGenerator
-    def install_auth
-      inside "" do
-        run "rails generate spree_auth:install --force"
-      end
-    end
-
+task :test_app do
+  require '../lib/generators/spree/test_app_generator'
+  class CoreTestAppGenerator < Spree::Generators::TestAppGenerator
     def tweak_gemfile
       append_file 'Gemfile' do
         "gem 'spree_core', :path => '../..'"
       end
-      # inside "" do
-      # end
+    end
+
+    def install_spree_core
+      generate 'spree_core:install -f'
     end
 
     def migrate_db

@@ -1,3 +1,5 @@
+require 'rails/generators'
+
 module SpreeCore
   module Generators
     class ExtensionGenerator < Rails::Generators::NamedBase

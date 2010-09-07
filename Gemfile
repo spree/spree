@@ -1,7 +1,11 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.0.0'
-gem 'sqlite3-ruby', :require => 'sqlite3'
+gem "spree", :path => File.dirname(__FILE__)
+
+# gem 'mysql'
+gem 'sqlite3-ruby'
+gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
+gem "rdoc",  "2.2"
 
 gemspec
 
@@ -15,9 +19,4 @@ group :cucumber do
   gem 'cucumber-rails', '~> 0.3.2'
   gem 'database_cleaner', '~> 0.5.2'
   gem 'capybara', '~> 0.3.9', :require => false
-end
-
-group :test_rails_app do
-  gem 'spree_core', :path => '.'
-  gem 'spree_auth', :path => '../auth'
 end

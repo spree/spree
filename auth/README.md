@@ -18,8 +18,7 @@ Running Tests
 
 You need to do a quick one-time creation of a test application and then you can use it to run the tests.
 
-    rake regenerate_test_app
-    rake test_app:rebuild_dbs
+    rake test_app
 
 Then run the tests
 
