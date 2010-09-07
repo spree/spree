@@ -584,6 +584,7 @@ en:
   payment_method: Payment Method
   payment_methods: Payment Methods
   payment_methods_setting_description: Configure methods customers can use to pay
+  payment_processing_failed: "Payment could not be processed, please check the details you entered"
   payment_updated: Payment Updated
   payments: Payments
   pending_payments: Pending Payments
