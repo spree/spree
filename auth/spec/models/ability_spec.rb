@@ -1,10 +1,32 @@
 require 'spec_helper'
 require 'cancan/matchers'
 
+# Fake ability for testing registration of additional abilities
+class FooAbility
+  include CanCan::Ability
+
+  def initialize(user)
+    # allow anyone to perform index on Order
+    can :index, Order
+  end
+end
+
 describe Ability do
 
   let(:user) { User.new }
   let(:ability) { Ability.new(user) }
+
+  after(:each) { Ability.abilities = Set.new }
+  context "register_ability" do
+    it "should add the ability to the list of abilties" do
+      Ability.register_ability(FooAbility)
+      Ability.new(user).abilities.should_not be_empty
+    end
+    it "should apply the registered abilities permissions" do
+      Ability.register_ability(FooAbility)
+      Ability.new(user).can?(:index, Order).should be_true
+    end
+  end
 
   shared_examples_for "access granted" do
     it "should allow read" do
