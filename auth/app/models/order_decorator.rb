@@ -3,6 +3,7 @@ Order.class_eval do
   # necessary.
   def associate_user!(user)
     self.user = user
+    self.email = user.email
     save!
   end
 

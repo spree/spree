@@ -15,12 +15,17 @@ describe Order do
     end
   end
   context "#associate_user!" do
-    let(:user) { mock_model User, :anonymous? => false }
+    let(:user) { mock_model User, :anonymous? => false, :email => 'spree@example.com' }
     before { order.stub(:save! => true) }
 
     it "should associate the order with the specified user" do
       order.associate_user! user
       order.user.should == user
+    end
+
+    it "should set the order's email attribute to that of the specified user" do
+      order.associate_user! user
+      order.email.should == user.email
     end
 
     it "should destroy any previous association with a guest user" do
