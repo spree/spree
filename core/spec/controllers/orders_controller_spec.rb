@@ -15,18 +15,35 @@ describe OrdersController do
       post :populate, {}, {}
       session[:order_id].should == order.id
     end
-    it "should handle single variant/quantity pair" do
-      variant = mock_model(Variant)
-      Variant.should_receive(:find).and_return variant
-      order.should_receive(:add_variant).with(variant, 2)
-      post :populate, {:order_id => 1, :variants => {variant.id => 2}}
+
+    context "with Variant" do
+      before do
+        @variant = mock_model(Variant)
+        Variant.should_receive(:find).and_return @variant
+      end
+
+      it "should handle single variant/quantity pair" do
+        order.should_receive(:add_variant).with(@variant, 2)
+        post :populate, {:order_id => 1, :variants => {@variant.id => 2}}
+      end
+      it "should handle multiple variant/quantity pairs with shared quantity" do
+        @variant.stub(:product_id).and_return(10)
+        order.should_receive(:add_variant).with(@variant, 1)
+        post :populate, {:order_id => 1, :products => {@variant.product_id => @variant.id}, :quantity => 1}
+      end
+      it "should handle multiple variant/quantity pairs with specific quantity" do
+        @variant.stub(:product_id).and_return(10)
+        order.should_receive(:add_variant).with(@variant, 3)
+        post :populate, {:order_id => 1, :products => {@variant.product_id => @variant.id}, :quantity => {@variant.id => 3}}
+      end
     end
-    it "should handle multiple variant/quantity pairs"
   end
 
   context "#update" do
     before {
       order.stub(:update_attributes).and_return true
+      order.stub(:line_items).and_return([])
+      order.stub(:line_items=).with([])
       Order.stub(:find_by_id).and_return(order)
     }
     it "should not result in a flash notice" do
