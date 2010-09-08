@@ -23,7 +23,7 @@ class PaymentMethod < ActiveRecord::Base
     raise "You must implement payment_source_class method for this gateway."
   end
 
-  def self.available(display_on=nil)
+  def self.available(display_on='both')
     PaymentMethod.all.select { |p| p.active && (p.display_on == display_on.to_s || p.display_on.blank?) &&  (p.environment == Rails.env || p.environment.blank?) }
   end
 

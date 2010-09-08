@@ -14,3 +14,8 @@ end
 Fabricator(:order) do
 end
 
+Fabricator(:payment_method) do
+  active true
+  environment 'test'
+  description 'Payment Method'
+end
