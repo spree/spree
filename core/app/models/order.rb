@@ -350,14 +350,6 @@ class Order < ActiveRecord::Base
     user && user.anonymous?
   end
 
-  # Associates the order with a registered user (replacing the previously associated guest user)
-  #
-  # throws an Exception if there is already a registered user associated with the order
-  def register!(registered_user)
-    raise "Already registred" if user and not user.anonymous?
-    self.user = registered_user and save!
-  end
-
   def process_payments!
     payments.each(&:process!)
   end

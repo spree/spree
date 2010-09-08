@@ -21,23 +21,6 @@ describe Order do
     it "should destroy any line_items with zero quantity"
   end
 
-  context "#register!" do
-    it "should change its user to the specified user" do
-      order.save
-      user = mock_model(User, :anonymous? => true)
-      order.register!(user)
-      order.user.should == user
-    end
-    it "should fail if it already has a registered user" do
-      user = mock_model(User, :anonymous? => false)
-      order.save
-      expect {
-        order.register!(user)
-      }.to raise_error
-    end
-    #TODO think about expected behavior for guest credit cards when changing to registered user, etc.
-  end
-
   context "#next!" do
     context "when current state is confirm" do
       before { order.state = "confirm" }
@@ -104,7 +87,7 @@ describe Order do
         end
         it "should create a shipping charge" do
           order.stub(:shipment).and_return(mock_model(Shipment).as_null_object)
-          order.shipping_method.should_receive(:create_adjustment).with(I18n.t(:shipping), order, order.shipment, true) 
+          order.shipping_method.should_receive(:create_adjustment).with(I18n.t(:shipping), order, order.shipment, true)
           order.next!
         end
       end
