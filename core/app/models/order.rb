@@ -58,7 +58,7 @@ class Order < ActiveRecord::Base
     number.to_s.parameterize.upcase
   end
 
-  def complete?
+  def completed?
     !! completed_at
   end
 

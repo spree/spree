@@ -152,7 +152,7 @@ describe Order do
       order.complete?.should be_false
 
       order.completed_at = Time.now
-      order.complete?.should be_true
+      order.completed?.should be_true
     end
   end
 
