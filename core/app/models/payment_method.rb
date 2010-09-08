@@ -24,7 +24,7 @@ class PaymentMethod < ActiveRecord::Base
   end
 
   def self.available(display_on=nil)
-    PaymentMethod.all.select { |p| p.active && (p.display_on == display_on.to_s || p.display_on.blank?) &&  (p.environment == ENV['RAILS_ENV'] || p.environment.blank?) }
+    PaymentMethod.all.select { |p| p.active && (p.display_on == display_on.to_s || p.display_on.blank?) &&  (p.environment == Rails.env || p.environment.blank?) }
   end
 
   def self.active?
@@ -32,7 +32,7 @@ class PaymentMethod < ActiveRecord::Base
   end
 
   def self.current
-    PaymentMethod.find(:first, :conditions => {:active => true, :environment => ENV['RAILS_ENV']})
+    PaymentMethod.find(:first, :conditions => {:active => true, :environment => Rails.env})
   end
 
   def method_type
