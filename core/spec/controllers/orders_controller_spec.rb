@@ -2,16 +2,16 @@ require 'spec_helper'
 
 describe OrdersController do
 
-  let(:order) { mock_model(Order, :number => "R123", :reload => nil) }
+  let(:order) { mock_model(Order, :number => "R123", :reload => nil, :save! => true) }
   before { Order.stub(:find).with(1).and_return(order) }
 
   context "#populate" do
     before do
       Order.stub(:new).and_return(order)
-      Order.stub(:create).and_return(order)
+      Order.stub(:create!).and_return(order)
     end
     it "should create a new order when none specified" do
-      Order.should_receive(:create).and_return order
+      Order.should_receive(:create!).and_return order
       post :populate, {}, {}
       session[:order_id].should == order.id
     end

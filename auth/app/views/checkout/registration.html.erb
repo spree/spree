@@ -6,8 +6,12 @@
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout">
+      Order id = <%= @order.id %>
+      Order email = <%= @order.email %>
+
+      <%= render "shared/error_messages", :target => @order %>
       <h2><%= t(:guest_user_account) %></h2>
-      <%= form_for :user, :url => update_checkout_registration_path, :html => { :method => :put, :id => "checkout_form_registration"} do |f| %>
+      <%= form_for @order, :url => update_checkout_registration_path, :html => { :method => :put, :id => "checkout_form_registration"} do |f| %>
         <p>
           <%= f.label :email, t("email") %><br />
           <%= f.text_field :email, :class => 'title'  %>

@@ -87,17 +87,17 @@ describe CheckoutController do
 
     it "should not check registration" do
       controller.should_not_receive :check_registration
-      put :update_registration, { :user => {:email => "jobs@railsdog.com"} }
+      put :update_registration, { :order => {:email => "jobs@railsdog.com"} }
     end
 
     it "should render the registration view if unable to save" do
-      user.should_receive(:save).and_return false
-      put :update_registration, { :user => {:email => "jobs@railsdog.com"} }
+      order.should_receive(:update_attributes).with("email" => "invalid").and_return false
+      put :update_registration, { :order => {:email => "invalid"} }
       response.should render_template :registration
     end
 
-    it "shoudl redirect to the checkout_path after saving" do
-      put :update_registration, { :user => {:email => "jobs@railsdog.com"} }
+    it "should redirect to the checkout_path after saving" do
+      put :update_registration, { :order => {:email => "jobs@railsdog.com"} }
       response.should redirect_to checkout_path
     end
   end

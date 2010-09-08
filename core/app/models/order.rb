@@ -31,7 +31,6 @@ class Order < ActiveRecord::Base
   before_create :create_user
   before_create :generate_order_number
 
-  delegate :email, :to => :user
   #delegate :ip_address, :to => :checkout
   def ip_address
     '192.168.1.100'
