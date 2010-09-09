@@ -5,7 +5,7 @@ OrdersController.class_eval do
   private
   def store_guest
     return if current_user
-    session[:guest_token] ||= @order.user.authentication_token
+    session[:guest_token] ||= @order.user.persistence_token
   end
 
   def check_authorization

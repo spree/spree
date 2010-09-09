@@ -1,9 +1,7 @@
 require 'spec_helper'
 
-describe Devise::SessionsController do
+describe UserSessionsController do
   before(:each) do
-    # apparently this is needed to test devise with rspec
-    controller.request.env["devise.mapping"] = Devise.mappings[:user]
   end
 
   context "#create" do
@@ -13,7 +11,6 @@ describe Devise::SessionsController do
 
       before do
         controller.stub :authorize! => true
-        controller.stub_chain :warden, :authenticated? => true
         controller.stub :current_order => order
         controller.stub :current_user => user
       end

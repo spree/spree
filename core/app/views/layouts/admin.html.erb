@@ -16,8 +16,8 @@
     <% if current_user %>
     <ul id="login-nav">
       <li><%= t('logged_in_as') %>: <%= current_user.email %></li>
-      <li><%= link_to t('account'), edit_user_registration_path(current_user) %></li>
-      <li><%= link_to t('logout'), destroy_user_session_path %></li>
+      <li><%= link_to t('account'), edit_user_path(current_user) %></li>
+      <li><%= link_to t('logout'), logout_path %></li>
       <li><%= link_to t('store'), products_path %></li>
     </ul>
     <% end %>

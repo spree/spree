@@ -6,11 +6,9 @@ module SpreeAuth
       desc "Configures your Rails application for use with spree_auth."
 
       def setup_routes
-        route 'devise_for :users'
       end
 
       def copy_initializer
-        template "devise.rb", "config/initializers/devise.rb"
       end
 
       def copy_migrations

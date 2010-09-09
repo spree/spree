@@ -22,6 +22,7 @@ class Ability
     # override cancan default aliasing (we don't want to differentiate between read and index)
     alias_action :edit, :to => :update
     alias_action :new, :to => :create
+    alias_action :new_action, :to => :create
     alias_action :show, :to => :read
 
     user ||= User.new

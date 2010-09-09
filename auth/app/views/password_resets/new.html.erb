@@ -1,0 +1,13 @@
+<h1><%= t(:forgot_password) %></h1>
+
+<p><%= t(:instructions_to_reset_password) %></p>
+ 
+<%= form_tag password_resets_path do %>
+  <p>
+    <label><%= t(:email) %>:</label><br />
+    <%= text_field_tag "email", params[:email], :size => 30 %>
+  </p>
+  <p>
+    <%= submit_tag t("reset_password") %>
+  </p>
+<% end %>

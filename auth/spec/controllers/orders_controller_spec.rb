@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe OrdersController do
 
-  let(:user) { mock_model User, :authentication_token => "foo" }
+  let(:user) { mock_model User, :persistence_token => "foo" }
   let(:order) { mock_model(Order, :user => user).as_null_object }
 
   context "for a new order" do

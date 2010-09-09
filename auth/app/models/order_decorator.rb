@@ -12,6 +12,6 @@ Order.class_eval do
   end
 
   validates_presence_of :email, :on => :update
-  validates_format_of :email, :with => Devise.email_regexp, :on => :update
+  validates_format_of :email, :with => Authlogic::Regex.email, :on => :update
 
 end

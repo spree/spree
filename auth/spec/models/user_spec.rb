@@ -8,7 +8,7 @@ describe User do
 
     it "should create a token when saving" do
       user.save!
-      user.authentication_token.should_not be_nil
+      user.persistence_token.should_not be_nil
     end
 
     it "should have an admin role if no admin users exist yet" do
