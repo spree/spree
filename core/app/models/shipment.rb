@@ -80,6 +80,10 @@ class Shipment < ActiveRecord::Base
     order.update_totals!
   end
 
+  def update!
+    update_attribute_without_callbacks "state", determine_state
+  end
+
   private
 
   def generate_shipment_number
@@ -118,4 +122,13 @@ class Shipment < ActiveRecord::Base
     inventory_units.each {|unit| unit.update_attribute(:shipment_id, nil)}
   end
 
+  # Determines the appropriate +state+ according to the following logic:
+  #
+  # pending    unless +order.payment_state+ is +paid+
+  # shipped    if already shipped (ie. does not change the state)
+  # ready      all other cases
+  def determine_state
+    return "shipped" if state == "shipped"
+    order.payment_state == "balance_due" ? "pending" : "ready"
+  end
 end

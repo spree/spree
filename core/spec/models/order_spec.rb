@@ -186,13 +186,18 @@ describe Order do
       end
     end
     context "when there are shipments" do
-      before { order.stub_chain(:shipments, :count).and_return 2 }
+      before do
+        order.stub_chain :shipments, :count => 2
+        order.shipments.stub :each => nil
+      end
+
       it "should set the correct shipment_state (when all shipments are shipped)" do
         order.shipments.stub_chain(:shipped, :count => 2)
         order.shipments.stub_chain(:ready, :count => 0)
         order.update!
         order.shipment_state.should == "shipped"
       end
+
       it "should set the correct shipment_state (when some units are backordered)" do
         order.shipments.stub_chain(:shipped, :count => 1)
         order.shipments.stub_chain(:ready, :count => 0)
@@ -200,12 +205,14 @@ describe Order do
         order.update!
         order.shipment_state.should == "backorder"
       end
+
       it "should set the correct shipment_state (when some of the shipments have shipped)" do
         order.shipments.stub_chain(:shipped, :count => 1)
         order.shipments.stub_chain(:ready, :count => 1)
         order.update!
         order.shipment_state.should == "partial"
       end
+
       it "should set the correct shipment_state (when some of the shipments are ready)" do
         order.shipments.stub_chain(:shipped, :count => 0)
         order.shipments.stub_chain(:ready, :count => 2)
@@ -213,14 +220,17 @@ describe Order do
         order.shipment_state.should == "ready"
       end
     end
+
     it "should set the correct shipment_state (when there are no shipments)" do
       order.update!
       order.shipment_state.should == nil
     end
+
     it "should call update_totals" do
       order.should_receive(:update_totals).twice
       order.update!
     end
+
     it "should call adjustemnt#update on every adjustment}" do
       adjustment = mock_model(Adjustment, :amount => 5, :applicable? => true, :update! => true)
       order.stub(:adjustments => [adjustment])
@@ -228,6 +238,7 @@ describe Order do
       adjustment.should_receive(:update!)
       order.update!
     end
+
     it "should destroy adjustments that no longer apply" do
       adjustment = mock_model(Adjustment, :amount => 10, :update! => true, :applicable? => false)
       adjustment.should_receive(:destroy)
@@ -235,11 +246,19 @@ describe Order do
       order.adjustments.stub(:reload).and_return([adjustment])
       order.update!
     end
+
     it "should not destroy adjustments that still apply" do
       adjustment = mock_model(Adjustment, :amount => 10, :update! => true, :applicable? => true)
       adjustment.should_not_receive(:destroy)
       order.stub(:adjustments => [adjustment])
       order.adjustments.stub(:reload).and_return([adjustment])
+      order.update!
+    end
+
+    it "should call update! on every shipment" do
+      shipment = mock_model Shipment
+      order.shipments = [shipment]
+      shipment.should_receive(:update!)
       order.update!
     end
   end

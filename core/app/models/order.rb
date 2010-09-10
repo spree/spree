@@ -116,6 +116,8 @@ class Order < ActiveRecord::Base
   def update!
     update_totals
     update_shipment_state
+    # give each of the shipments a chance to update themselves
+    shipments.each(&:update!)
     update_payment_state
     update_adjustments
     # update totals a second time in case updated adjustments have an effect on the total
