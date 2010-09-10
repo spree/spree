@@ -61,7 +61,7 @@ module Spree
         :avs_response => response.avs_result['code']
       )
     rescue ActiveMerchant::ConnectionError => e
-      gateway_error t(:unable_to_connect_to_gateway)
+      gateway_error I18n.t(:unable_to_connect_to_gateway)
     end
 
     def void(payment)
