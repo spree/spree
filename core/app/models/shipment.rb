@@ -13,7 +13,7 @@ class Shipment < ActiveRecord::Base
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :inventory_units
 
-  validates :inventory_units, :presence => true, :if => Proc.new { |shipment| shipment.order.complete? && !shipment.order.canceled? }
+  validates :inventory_units, :presence => true, :if => Proc.new { |shipment| shipment.order.completed? && !shipment.order.canceled? }
   make_permalink :field => :number
   validate :shipping_method
 

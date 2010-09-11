@@ -20,18 +20,18 @@ describe InventoryUnit do
 
   context "sell_units" do
     let(:line_items){
-      (1..3).map do |n| 
+      (1..3).map do |n|
         line_item = mock_model(LineItem, :variant => mock_model(Variant, :count_on_hand => n, :update_attribute => true), :quantity => n)
       end
     }
-    let(:order) { mock_model(Order, :line_items => line_items, :inventory_units => mock('inventory-units'), :complete? => false) }
+    let(:order) { mock_model(Order, :line_items => line_items, :inventory_units => mock('inventory-units'), :completed? => false) }
 
     it "should increase the number of inventory units by the expected amount" do
       order.inventory_units.should_receive(:create).exactly(6).times
       InventoryUnit.sell_units(order)
     end
     it "should not increase the number of inventory units if the order is completed" do
-      order.stub!(:complete?).and_return(true)
+      order.stub!(:completed?).and_return(true)
       order.inventory_units.should_not_receive(:create)
       InventoryUnit.sell_units(order)
     end
@@ -40,7 +40,7 @@ describe InventoryUnit do
       order.line_items.first.variant.stub!(:count_on_hand).and_return(0)
       order.inventory_units.should_receive(:create).exactly(5).times
       out_of_stock_items = InventoryUnit.sell_units(order)
-      out_of_stock_items.length.should == 1 
+      out_of_stock_items.length.should == 1
       out_of_stock_items.first[:line_item].should == order.line_items.first
     end
     it "should correctly set the state of in-stock units"

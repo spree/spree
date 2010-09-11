@@ -35,7 +35,7 @@ class InventoryUnit < ActiveRecord::Base
 
   # grab the appropriate units from inventory, mark as sold and associate with the order
   def self.sell_units(order)
-    return if order.complete?
+    return if order.completed?
     order.line_items.map do |line_item|
       create_units(order, line_item, line_item.quantity)
     end.flatten
