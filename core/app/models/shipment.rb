@@ -6,7 +6,6 @@ class Shipment < ActiveRecord::Base
   has_many :state_events, :as => :stateful
   has_many :inventory_units
   before_create :generate_shipment_number
-  after_create :set_correct_state
   after_destroy :release_inventory_units
 
   attr_accessor :special_instructions
@@ -39,7 +38,7 @@ class Shipment < ActiveRecord::Base
   end
 
   # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-  state_machine :initial => 'ready', :use_transactions => false do
+  state_machine :initial => 'pending', :use_transactions => false do
     event :ready do
       transition :from => 'pending', :to => 'ready'
     end
@@ -96,21 +95,15 @@ class Shipment < ActiveRecord::Base
     self.number = random
   end
 
-  def set_correct_state
-    if pending? and order.checkout_complete and !order.outstanding_balance?
-      ready
-    end
-  end
-
   def description_for_shipping_charge
     "#{I18n.t(:shipping)} (#{shipping_method.name})"
   end
 
-  def transition_order
-    update_attribute(:shipped_at, Time.now)
-    # transition order to shipped if all shipments have been shipped
-    order.ship! if order.shipments.all?(&:shipped?)
-  end
+  # def transition_order
+  #   update_attribute(:shipped_at, Time.now)
+  #   # transition order to shipped if all shipments have been shipped
+  #   order.ship! if order.shipments.all?(&:shipped?)
+  # end
 
   def validate_shipping_method
     unless shipping_method.nil?
