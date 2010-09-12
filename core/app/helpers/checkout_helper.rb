@@ -3,7 +3,7 @@ module CheckoutHelper
   def checkout_progress
     states = %w(address delivery payment confirm complete)
     items = states.map do |state|
-      text = t("checkout_steps.#{state}")
+      text = t("order_state.#{state}").titleize
 
       css_classes = []
       current_index = states.index(@order.state)

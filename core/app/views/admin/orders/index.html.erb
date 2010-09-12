@@ -28,7 +28,7 @@
       <%= hook :admin_orders_index_rows, locals do %>
         <td><%= order.created_at.to_date%></td>
         <td><%= link_to order.number, object_url(order) %></td>
-        <td><%= t(order.state.downcase) %></td>
+        <td><%= t("order_state.#{order.state.downcase}") %></td>
         <td><%= order.email %></td>
         <td><%= number_to_currency order.total %></td>
       <% end %>
@@ -64,7 +64,7 @@
       </div>
 
       <p><label><%= t("status") %></label><br />
-      <%= f.select :state_equals, Order.state_machines[:state].states.collect {|s| [t(s.name), s.value]}, {:include_blank => true} %></p>
+      <%= f.select :state_equals, Order.state_machines[:state].states.collect {|s| [t("order_state.#{s.name}"), s.value]}, {:include_blank => true} %></p>
 
       <p><label><%= t 'order_number' %></label><br />
       <%= f.text_field :number_like, :size=>25 %></p>
