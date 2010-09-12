@@ -1,32 +1,26 @@
 class Order < ActiveRecord::Base
-  # module Totaling
-  #   def total
-  #     map(&:amount).sum
-  #   end
-  # end
 
-  attr_accessible :line_items, :bill_address, :ship_address
-  #attr_protected :charge_total, :item_total, :total, :user, :user_id, :number, :token
+  attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :ship_address, :line_items_attributes,
+                  :shipping_method_id, :email
 
   belongs_to :user
-
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
   belongs_to :shipping_method
+
   has_many :state_events, :as => :stateful
   has_many :line_items, :dependent => :destroy
   has_many :inventory_units
-  has_many :payments, :dependent => :destroy#, :extend => Totaling
+  has_many :payments, :dependent => :destroy
   has_many :shipments, :dependent => :destroy
   has_many :return_authorizations, :dependent => :destroy
+  has_many :adjustments
 
   accepts_nested_attributes_for :line_items
   accepts_nested_attributes_for :bill_address
   accepts_nested_attributes_for :ship_address
   accepts_nested_attributes_for :payments
   accepts_nested_attributes_for :shipments
-
-  has_many :adjustments
 
   before_create :create_user
   before_create :generate_order_number
@@ -35,9 +29,6 @@ class Order < ActiveRecord::Base
   def ip_address
     '192.168.1.100'
   end
-  #delegate :special_instructions, :to => :checkout
-
-  #validates :item_total, :total, :numericality => true
 
   scope :by_number, lambda {|number| where("orders.number = ?", number)}
   scope :between, lambda {|*dates| where("orders.created_at between :start and :stop").where(:start, dates.first.to_date).where(:stop, dates.last.to_date)}
@@ -47,9 +38,6 @@ class Order < ActiveRecord::Base
   scope :incomplete, where("orders.completed_at IS NULL")
 
   make_permalink :field => :number
-
-  # attr_accessible is a nightmare with attachment_fu, so use attr_protected instead.
-  attr_protected :charge_total, :item_total, :total, :user, :user_id, :number, :token #,:state
 
   attr_accessor :out_of_stock_items
 
