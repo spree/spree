@@ -58,6 +58,7 @@ class Admin::OrdersController < Admin::BaseController
       params[:search][:created_at_less_than] = Time.zone.parse(params[:search][:created_at_less_than]).end_of_day rescue ""
     end
 
+    params[:search][:completed_at_not_null] ||= "1"
     if params[:search].delete(:completed_at_not_null) == "1"
       params[:search][:completed_at_not_null] = true
     end
