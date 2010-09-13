@@ -121,6 +121,7 @@ class Shipment < ActiveRecord::Base
   # shipped    if already shipped (ie. does not change the state)
   # ready      all other cases
   def determine_state
+    return "pending" if order.backordered?
     return "shipped" if state == "shipped"
     order.payment_state == "balance_due" ? "pending" : "ready"
   end

@@ -88,7 +88,7 @@ class Order < ActiveRecord::Base
     before_transition :to => 'complete', :do => :process_payments!
     after_transition :to => 'complete', :do => :finalize!
     after_transition :to => 'delivery', :do => :create_tax_charge!
-    after_transition :to => 'payment', :do => :create_shipment_and_shipping_charge!
+    after_transition :to => 'payment', :do => :create_shipment!
 
   end
 
@@ -287,12 +287,13 @@ class Order < ActiveRecord::Base
     rate.create_adjustment(I18n.t(:tax), self, self, true)
   end
 
-  def create_shipment_and_shipping_charge!
+  # Creates a new shipment and shipping adjustment (if applicable.)
+  def create_shipment!
     shipping_method.reload
     if shipment.present?
       shipment.update_attributes(:shipping_method => shipping_method)
     else
-      self.shipments << Shipment.create(:order => self, :shipping_method => shipping_method)
+      self.shipments << Shipment.create(:order => self, :shipping_method => shipping_method, :inventory_units => inventory_units)
     end
     if shipping_charge = adjustments.shipping.first
       # shipping_charge.update_attributes(:originator_id => shipping_method.id)
@@ -347,7 +348,6 @@ class Order < ActiveRecord::Base
   # Called after transition to complete state when payments will have been processed
   def finalize!
     self.out_of_stock_items = InventoryUnit.sell_units(self)
-    shipments.create(:inventory_units => inventory_units.reload)
     update_attribute(:completed_at, Time.now)
   end
 

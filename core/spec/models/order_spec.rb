@@ -73,16 +73,19 @@ describe Order do
 
     context "when current state is delivery" do
       let(:shipping_method) { mock_model(ShippingMethod).as_null_object }
+      let(:units) { [mock_model(InventoryUnit)] }
+
       before do
         Shipment.stub(:create).and_return(mock_model(Shipment).as_null_object)
         order.state = "delivery"
         order.stub :shipping_method => shipping_method
+        order.stub :inventory_units => units
       end
       context "when transitioning to payment state" do
         before do
         end
         it "should create a shipment" do
-          Shipment.should_receive(:create).with(:shipping_method => order.shipping_method, :order => order)
+          Shipment.should_receive(:create).with(:shipping_method => order.shipping_method, :order => order, :inventory_units => units)
           order.next!
         end
         it "should create a shipping charge" do
@@ -120,13 +123,7 @@ describe Order do
       InventoryUnit.should_receive(:sell_units).with(order)
       order.finalize!
     end
-    it "should create a new shipment" do
-      line_items = (1..3).map do
-        mock_model(LineItem, :amount => 100, :quantity => 1, :variant => mock_model(Variant, :update_attribute => true, :count_on_hand => 100))
-      end
-      order.stub(:line_items => line_items)
-      expect { order.finalize! }.to change{ order.shipments.count }.to(1)
-    end
+    it "should change the shipment state to ready if order is paid"
   end
 
   context "#process_payments!" do
