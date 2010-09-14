@@ -3,6 +3,10 @@ class OrdersController < Spree::BaseController
 
   helper :products
 
+  def show
+    @order = Order.find_by_number(params[:id])
+  end
+
   def update
     @order = current_order
     if @order.update_attributes(params[:order])
