@@ -14,7 +14,7 @@ class Order < ActiveRecord::Base
   has_many :payments, :dependent => :destroy
   has_many :shipments, :dependent => :destroy
   has_many :return_authorizations, :dependent => :destroy
-  has_many :adjustments
+  has_many :adjustments, :dependent => :destroy
 
   accepts_nested_attributes_for :line_items
   accepts_nested_attributes_for :bill_address
