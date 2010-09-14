@@ -13,7 +13,7 @@
         <th><%= order @search, :by => :created_at,       :as => t("order_date") %></th>
         <th><%= order @search, :by => :number,           :as => t("order_number") %></th>
         <th><%= order @search, :by => :state,            :as => t("status") %></th>
-        <th><%= order @search, :by => :checkout_email,   :as => t("customer") %></th>
+        <th><%= order @search, :by => :email,            :as => t("customer") %></th>
         <th><%= order @search, :by => :total,            :as => t("total") %></th>
       <% end %>
       <th>
@@ -71,7 +71,7 @@
 
       <p>
         <label><%= t 'email' %></label><br />
-        <%= f.text_field :user_email_like, :size=>25 %>
+        <%= f.text_field :email_like, :size=>25 %>
       </p>
       <p>
       <label><%= t 'first_name_begins_with' %></label><br />
