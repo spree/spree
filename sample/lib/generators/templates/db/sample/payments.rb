@@ -17,5 +17,6 @@ Order.all.each_with_index do |order,index|
   STDOUT.flush
   order.update!
   payment = order.payments.create(:amount => order.total, :source => creditcard.clone, :payment_method => method)
+  payment.update_attribute_without_callbacks("state", "pending")
 end
 puts
