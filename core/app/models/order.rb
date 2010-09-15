@@ -25,6 +25,8 @@ class Order < ActiveRecord::Base
   before_create :create_user
   before_create :generate_order_number
 
+  validates_presence_of :email, :if => :require_email
+
   #delegate :ip_address, :to => :checkout
   def ip_address
     '192.168.1.100'
@@ -510,8 +512,9 @@ class Order < ActiveRecord::Base
     self.adjustments.reload.each(&:update!)
   end
 
-  # def create_shipment
-  #   self.shipments << Shipment.create(:order => self)
-  # end
+  # Determine if email is required (we don't want validation errors before we hit the checkout)
+  def require_email
+    return true unless new_record? or state == 'cart'
+  end
 
 end

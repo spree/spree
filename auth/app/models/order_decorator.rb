@@ -11,7 +11,6 @@ Order.class_eval do
     user.token if user.anonymous?
   end
 
-  validates_presence_of :email, :on => :update
-  validates_format_of :email, :with => Authlogic::Regex.email, :on => :update
+  validates_format_of :email, :with => Authlogic::Regex.email, :if => :require_email
 
 end
