@@ -320,17 +320,17 @@ class Order < ActiveRecord::Base
     "#{address.firstname} #{address.lastname}" if address
   end
 
-  # def outstanding_balance?
-  #   outstanding_balance > 0
-  # end
-  #
-  # def outstanding_credit
-  #   [0, payments.total - total].max
-  # end
-  #
-  # def outstanding_credit?
-  #   outstanding_credit > 0
-  # end
+  def outstanding_balance?
+    self.outstanding_balance > 0
+  end
+  
+   def outstanding_credit
+     [0, payment_total - total].max
+   end
+
+   def outstanding_credit?
+     outstanding_credit > 0
+   end
 
    def creditcards
      creditcard_ids = payments.from_creditcard.map(&:source_id).uniq
