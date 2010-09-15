@@ -1,7 +1,7 @@
 class Order < ActiveRecord::Base
 
   attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :ship_address, :line_items_attributes,
-                  :shipping_method_id, :email
+                  :shipping_method_id, :email, :use_billing
 
   belongs_to :user
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
