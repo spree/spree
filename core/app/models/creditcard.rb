@@ -57,11 +57,7 @@ class Creditcard < ActiveRecord::Base
     cc_type
   end
 
-
-
-
-  #RAILS3 TODO
-  # scope :with_payment_profile, where("gateway_customer_profile_id IS NOT NULL")
+  scope :with_payment_profile, where("gateway_customer_profile_id IS NOT NULL")
 
   def authorize(amount, payment)
     # ActiveMerchant is configured to use cents so we need to multiply order total by 100

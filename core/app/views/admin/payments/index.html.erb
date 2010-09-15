@@ -18,10 +18,8 @@
   <p><%= t('balance_due') %> <strong><%= number_to_currency @order.outstanding_balance %></strong></p>
 <% end %>
 
-<h2><%= t("finalized_payments") %></h2>
+<h2><%= t("payments") %></h2>
 <%= render 'list', :payments => @payments %>
 
-<h2><%= t("pending_payments") %></h2>
-<%= render 'list', :payments => @order.checkout.payments %>
 
 <%= button_link_to t('continue'), admin_orders_url %>
