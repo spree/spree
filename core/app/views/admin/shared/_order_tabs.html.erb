@@ -11,12 +11,12 @@
 
   <ul class="sidebar">
     <%= hook :admin_order_tabs, {:current => current} do %>
-      <% if @order.state == "in_progress" %>
+      <% if @order.state == "cart" %>
         <li <%= ' class="active"' if current == "Order Details" %>>
           <%= link_to t("order_details"), edit_admin_order_url(@order) %>
         </li>
         <li <%= ' class="active"' if current == "Customer Details" %>>
-            <%= link_to t("customer_details"), edit_admin_order_checkout_url(@order) %>
+            <%= link_to t("customer_details"), admin_checkout_url(@order) %>
         </li>
         <li <%= ' class="active"' if current == "Shipments" %>>
            <%= link_to t("shipment"), @order.line_items.empty? || !@order.checkout.valid? ? "javascript:$('form').submit();" : edit_admin_order_shipment_url(@order, @order.shipment) %>
@@ -33,7 +33,7 @@
           <%= link_to t("order_details"), admin_order_url(@order) %>
         </li>
         <li <%= ' class="active"' if current == "Customer Details" %>>
-          <%= link_to t("customer_details"), admin_order_checkout_url(@order) %>
+          <%= link_to t("customer_details"), admin_checkout_url(@order) %>
         </li>
         <li <%= ' class="active"' if current == "Adjustments" %>>
            <%= link_to t("adjustments"), admin_order_adjustments_url(@order) %>

@@ -1,5 +1,5 @@
 <div class='toolbar order-links'>
-  <%= button_link_to t("edit"), edit_admin_order_checkout_url(@order.number), :icon => 'edit' %>
+  <%= button_link_to t("edit"), edit_admin_checkout_url(@order.number), :icon => 'edit' %>
 </div>
 
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Customer Details"} %>
@@ -12,10 +12,10 @@
   <tbody>
     <tr>
       <td class="lbl-col"><label><%= t(:email) %>:</label></td>
-      <td class="val-col" colspan="3"><%= @checkout.email %></td>
+      <td class="val-col" colspan="3"><%= @order.email %></td>
       <td class="lbl-col"><label><%= t('guest_checkout') %>:</label></td>
       <td class="val-col" colspan="3">
-        <%= @checkout.order.user.nil? ? t('yes') : t('no') %>
+        <%= @order.user.nil? ? t('yes') : t('no') %>
       </td>
     </tr>
   </tbody>
@@ -26,52 +26,52 @@
   <tr>
     <th colspan="8"><%= t("billing_address") %></th>
   </tr>
-  <% if @checkout.bill_address %>
+  <% if @order.bill_address %>
   <tr>
     <td  class="lbl-col">
       <label><%= Address.human_attribute_name(:first_name) %>:</label>
     </td>
-    <td class="val-col" colspan="3"><%= @checkout.bill_address.firstname %></td>
+    <td class="val-col" colspan="3"><%= @order.bill_address.firstname %></td>
     <td class="lbl-col">
       <label><%= Address.human_attribute_name(:last_name) %>:</label>
     </td>
-    <td class="val-col" colspan="3"><%= @checkout.bill_address.lastname %></td>
+    <td class="val-col" colspan="3"><%= @order.bill_address.lastname %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:address1) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.bill_address.address1 %></td>
+    <td colspan="3"><%= @order.bill_address.address1 %></td>
     <td>
       <label><%= Address.human_attribute_name(:address2) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.bill_address.address2 %></td>
+    <td colspan="3"><%= @order.bill_address.address2 %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:city) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.bill_address.city %></td>
+    <td colspan="3"><%= @order.bill_address.city %></td>
     <td>
       <label><%= Address.human_attribute_name(:zipcode) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.bill_address.zipcode %></td>
+    <td colspan="3"><%= @order.bill_address.zipcode %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:state) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.bill_address.state.nil? ? @checkout.bill_address.state_name : @checkout.bill_address.state.name %></td>
+    <td colspan="3"><%= @order.bill_address.state.nil? ? @order.bill_address.state_name : @order.bill_address.state.name %></td>
     <td>
       <label><%= Address.human_attribute_name(:country) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.bill_address.country %></td>
+    <td colspan="3"><%= @order.bill_address.country %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:phone) %>:</label>
     </td>
-    <td colspan="7"><%= @checkout.bill_address.phone %></td>
+    <td colspan="7"><%= @order.bill_address.phone %></td>
   </tr>
   <% end %>
 </table>
@@ -80,52 +80,52 @@
   <tr>
     <th colspan="8"><%= t("shipping_address") %></th>
   </tr>
-  <% if @checkout.ship_address %>
+  <% if @order.ship_address %>
   <tr>
     <td class="lbl-col">
       <label><%= Address.human_attribute_name(:first_name) %>:</label>
     </td>
-    <td class="val-col" colspan="3"><%= @checkout.ship_address.firstname %></td>
+    <td class="val-col" colspan="3"><%= @order.ship_address.firstname %></td>
     <td class="lbl-col">
       <label><%= Address.human_attribute_name(:last_name) %>:</label>
     </td>
-    <td class="val-col" colspan="3"><%= @checkout.ship_address.lastname %></td>
+    <td class="val-col" colspan="3"><%= @order.ship_address.lastname %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:address1) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.ship_address.address1 %></td>
+    <td colspan="3"><%= @order.ship_address.address1 %></td>
     <td>
       <label><%= Address.human_attribute_name(:address2) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.ship_address.address2 %></td>
+    <td colspan="3"><%= @order.ship_address.address2 %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:city) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.ship_address.city %></td>
+    <td colspan="3"><%= @order.ship_address.city %></td>
     <td>
       <label><%= Address.human_attribute_name(:zipcode) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.ship_address.zipcode %></td>
+    <td colspan="3"><%= @order.ship_address.zipcode %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:state) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.ship_address.state.nil? ? @checkout.ship_address.state_name : @checkout.ship_address.state.name %></td>
+    <td colspan="3"><%= @order.ship_address.state.nil? ? @order.ship_address.state_name : @order.ship_address.state.name %></td>
     <td>
       <label><%= Address.human_attribute_name(:country) %>:</label>
     </td>
-    <td colspan="3"><%= @checkout.ship_address.country %></td>
+    <td colspan="3"><%= @order.ship_address.country %></td>
   </tr>
   <tr>
     <td>
       <label><%= Address.human_attribute_name(:phone) %>:</label>
     </td>
-    <td colspan="7"><%= @checkout.ship_address.phone %></td>
+    <td colspan="7"><%= @order.ship_address.phone %></td>
   </tr>
   <% end %>
 </table>

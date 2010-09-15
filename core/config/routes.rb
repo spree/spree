@@ -14,9 +14,15 @@ Rails.application.routes.draw do
 
   resources :states, :only => :index
 
+  # non-restful checkout stuff
   match '/checkout/update/:state' => 'checkout#update', :as => :update_checkout
   match '/checkout/:state' => 'checkout#edit', :as => :checkout_state
   match '/checkout' => 'checkout#edit', :state => 'address', :as => :checkout
+
+  # non-restful admin checkout stuff
+  match '/admin/orders/:number/checkout' => 'admin/checkout#show', :via => :get, :as => :admin_checkout
+  match '/admin/orders/:number/checkout' => 'admin/checkout#update', :via => :put, :as => :update_admin_checkout
+  match '/admin/orders/:number/checkout/edit' => 'admin/checkout#edit', :as => :edit_admin_checkout
 
   resources :orders do
     post :populate, :on => :collection
@@ -126,7 +132,6 @@ Rails.application.routes.draw do
 
       resources :adjustments
       resources :line_items
-      resource :checkout
       resources :shipments do
         member do
           put :fire

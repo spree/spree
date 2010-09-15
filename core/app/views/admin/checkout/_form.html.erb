@@ -12,16 +12,16 @@
       <td class="val-col" colspan="3">
         <% if @order.state == "in_progress" %>
           <label class="sub">
-            <%= radio_button_tag :guest_checkout, true, @checkout.order.user.nil? %>
+            <%= radio_button_tag :guest_checkout, true, @order.order.user.nil? %>
             <%= t("yes") %>
           </label> &nbsp;
           <label class="sub">
-            <%= radio_button_tag :guest_checkout, false, !@checkout.order.user.nil?, :disabled => @checkout.order.state == "in_progress" %>
+            <%= radio_button_tag :guest_checkout, false, !@order.user.nil?, :disabled => @order.state == "in_progress" %>
             <%= t("no") %>
           </label>
-          <%= hidden_field_tag :user_id, @checkout.order.user_id %>
+          <%= hidden_field_tag :user_id, @order.user_id %>
         <% else %>
-          <%= @checkout.order.user.nil? ? "Yes" : "No" %>
+          <%= @order.user.nil? ? "Yes" : "No" %>
         <% end %>
       </td>
     </tr>
@@ -30,13 +30,13 @@
 
 <h3><%= Address.human_name(:count => 2) %></h3>
 <%= f.fields_for 'bill_address' do |ba_form|  %>
-  <%= render :partial => "admin/shared/address_form", :locals => {:f => ba_form, :name => t('billing_address'), :use_billing => false} %>
+  <%= render "admin/shared/address_form", {:f => ba_form, :name => t('billing_address'), :use_billing => false} %>
 <% end %>
 
 <%= f.fields_for 'ship_address' do |sa_form|  %>
-  <%= render :partial => "admin/shared/address_form", :locals => {:f => sa_form, :name => t('shipping_address'), :use_billing => true} %>
+  <%= render "admin/shared/address_form", {:f => sa_form, :name => t('shipping_address'), :use_billing => true} %>
 <% end %>
 
 <p class="form-buttons">
-  <%= button @order.in_progress? ? t('continue') : t('update') %>
+  <%= button @order.completed? ? t('update') : t('continue') %>
 </p>

@@ -4,12 +4,12 @@
       <%= name %>
       <span class="right">
         <% if use_billing %>
-          <%= check_box_tag 'checkout[use_billing]', '1', (!(@checkout.bill_address.empty? && @checkout.ship_address.empty?) && @checkout.bill_address.eql?(@checkout.ship_address)) %> <%= t("use_billing_address") %>
+          <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address)) %> <%= t("use_billing_address") %>
         <% end %>
       </span>
     </th>
   </thead>
-  <tbody id="<%= name == t('shipping_address') ? "shipping" : "billing" %>" style="display:<%= (use_billing && (!(@checkout.bill_address.empty? && @checkout.ship_address.empty?) && @checkout.bill_address.eql?(@checkout.ship_address))) ? "none" : "" %>">
+  <tbody id="<%= name == t('shipping_address') ? "shipping" : "billing" %>" style="display:<%= (use_billing && (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address))) ? "none" : "" %>">
     <tr>
       <td class="lbl-col">
         <%= f.label :firstname, t(:first_name)+':' %>
@@ -46,15 +46,16 @@
       </td>
       <td colspan="3">
         <span id="<%= name==t('shipping_address') ? "s" : "b" %>state">
+
           <%= f.text_field :state_name, :style => "width:150px;display:#{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty? %>
-          <%= f.collection_select :state_id, @states, :id, :name, {:include_blank => true}, {:style=> "width:150px;display:#{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
+          <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:style=> "width:150px;display:#{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
         </span>
       </td>
       <td class="lbl-col">
         <%= f.label :country_id, t(:country)+':' %>
       </td>
       <td colspan="3">
-        <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, @countries, :id, :name, {}, {:style => 'width:150px;'} %></span>
+        <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, {:style => 'width:150px;'} %></span>
       </td>
     </tr>
     <tr>
