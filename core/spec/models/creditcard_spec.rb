@@ -9,8 +9,8 @@ describe Creditcard do
     @success_response = mock('gateway_response', :success? => true, :authorization => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
 
-    @payment_gateway = mock('payment_gateway', 
-      :payment_profiles_supported? => true, 
+    @payment_gateway = mock('payment_gateway',
+      :payment_profiles_supported? => true,
       :authorize => @success_response,
       :purchase => @success_response,
       :capture => @success_response,
@@ -40,17 +40,17 @@ describe Creditcard do
   context "#authorize" do
     it "should call authorize on the gateway with the payment amount" do
       @creditcard.payment_gateway.should_receive(:authorize).with(10000, @creditcard, {})
-      @creditcard.authorize(100, @payment) 
+      @creditcard.authorize(100, @payment)
     end
     context "if sucesssfull" do
       it "should store the response_code and avs_response" do
-        @creditcard.authorize(100, @payment) 
+        @creditcard.authorize(100, @payment)
         @payment.response_code.should == '123'
         @payment.avs_response.should == 'avs-code'
       end
       it "should make payment pending" do
         @payment.should_receive(:pend)
-        @creditcard.authorize(100, @payment) 
+        @creditcard.authorize(100, @payment)
       end
     end
     context "if unsucessfull" do
@@ -59,7 +59,7 @@ describe Creditcard do
         @payment.should_receive(:fail)
         @payment.should_not_receive(:pend)
         lambda{
-          @creditcard.authorize(100, @payment) 
+          @creditcard.authorize(100, @payment)
         }.should raise_error(Spree::GatewayError)
       end
     end
@@ -68,20 +68,20 @@ describe Creditcard do
   context "#purchase" do
     it "should call purchase on the gateway with the payment amount" do
       @creditcard.payment_gateway.should_receive(:purchase).with(10000, @creditcard, {})
-      @creditcard.purchase(100, @payment) 
+      @creditcard.purchase(100, @payment)
     end
     context "if sucessfull" do
       before do
         @payment_gateway.stub(:purchase).and_return(@success_response)
       end
       it "should store the response_code and avs_response" do
-        @creditcard.purchase(100, @payment) 
+        @creditcard.purchase(100, @payment)
         @payment.response_code.should == '123'
         @payment.avs_response.should == 'avs-code'
       end
       it "should make payment complete" do
         @payment.should_receive(:complete)
-        @creditcard.purchase(100, @payment) 
+        @creditcard.purchase(100, @payment)
       end
     end
     context "if unsucessfull" do
@@ -90,7 +90,7 @@ describe Creditcard do
         @payment.should_receive(:fail)
         @payment.should_not_receive(:pend)
         lambda{
-          @creditcard.purchase(100, @payment) 
+          @creditcard.purchase(100, @payment)
         }.should raise_error(Spree::GatewayError)
       end
     end
@@ -106,15 +106,15 @@ describe Creditcard do
       end
       it "should call capture on the gateway with the self as the authorization" do
         @creditcard.payment_gateway.should_receive(:capture).with(@payment, @creditcard, {})
-        @creditcard.capture(@payment) 
+        @creditcard.capture(@payment)
       end
       context "if sucessfull" do
         it "should make payment complete" do
           @payment.should_receive(:complete)
-          @creditcard.capture(@payment) 
+          @creditcard.capture(@payment)
         end
         it "should store the response_code" do
-          @creditcard.capture(@payment) 
+          @creditcard.capture(@payment)
           @payment.response_code.should == '123'
         end
       end
@@ -124,7 +124,7 @@ describe Creditcard do
           @payment.should_receive(:fail)
           @payment.should_not_receive(:complete)
           lambda{
-            @creditcard.capture(@payment) 
+            @creditcard.capture(@payment)
           }.should raise_error(Spree::GatewayError)
         end
       end
@@ -135,7 +135,7 @@ describe Creditcard do
       end
       it "should not call capture on the gateway" do
         @creditcard.payment_gateway.should_not_receive(:capture).with(@payment, @creditcard, {})
-        @creditcard.capture(@payment) 
+        @creditcard.capture(@payment)
       end
     end
   end
@@ -147,7 +147,7 @@ describe Creditcard do
     end
     it "should call payment_gateway.void with the payment's response_code" do
       @creditcard.payment_gateway.should_receive(:void).with('123', @creditcard, {})
-      @creditcard.void(@payment) 
+      @creditcard.void(@payment)
     end
     context "if sucessfull" do
       it "should update the response_code with the authorization from the gateway" do
@@ -165,7 +165,7 @@ describe Creditcard do
         @payment_gateway.stub(:void).and_return(@fail_response)
         @payment.should_not_receive(:void)
         lambda {
-          @creditcard.void(@payment) 
+          @creditcard.void(@payment)
         }.should raise_error(Spree::GatewayError)
       end
     end
@@ -208,11 +208,11 @@ describe Creditcard do
         @payment_gateway.stub(:credit).and_return(@fail_response)
         Payment.should_not_receive(:create)
         lambda {
-          @creditcard.credit(@payment, 10) 
+          @creditcard.credit(@payment, 10)
         }.should raise_error(Spree::GatewayError)
       end
     end
-  end   
+  end
 
   context "#credit" do
     it "should call credit on the gateway with the amount and response_code"
@@ -227,7 +227,72 @@ describe Creditcard do
     context "when response is unsucessfull" do
       it "should not create a payment"
     end
-  end   
+  end
+
+  PENDING = 'pending'
+  PROCESSING = 'processing'
+  FAILED = 'failed'
+  COMPLETED = 'completed'
+  VOID = 'void'
+  CHECKOUT = 'checkout'
+
+  PAYMENT_STATES = [CHECKOUT, PROCESSING, FAILED, COMPLETED, VOID, PENDING]
+
+  let(:creditcard) { Creditcard.new }
+
+  context "#can_capture?" do
+    it "should be true if payment state is pending" do
+      payment = mock_model(Payment, :state => 'pending', :created_at => Time.now)
+      creditcard.can_capture?(payment).should be_true
+    end
+
+    (PAYMENT_STATES - [PENDING]).each do |state|
+      it "should be false if payment state is #{state}" do
+        payment = mock_model(Payment, :state => state, :created_at => Time.now)
+        creditcard.can_capture?(payment).should be_false
+      end
+    end
+  end
+
+  context "#can_credit?" do
+    context "when payment state is completed" do
+      it "should be true when transaction is more than 12 hours old" do
+        payment = mock_model(Payment, :state => 'completed', :created_at => Time.now - 14.hours)
+        creditcard.can_credit?(payment).should be_true
+      end
+    end
+
+    (PAYMENT_STATES - [COMPLETED]).each do |state|
+      it "should be false if payment state is #{state}" do
+        payment = mock_model(Payment, :state => state, :created_at => Time.now)
+        creditcard.can_credit?(payment).should be_false
+      end
+    end
+
+    context "when transaction is less than 12 hours old" do
+      PAYMENT_STATES.each do |state|
+        it "should be false if payment state is #{state}" do
+          payment = mock_model(Payment, :state => state, :created_at => Time.now)
+          creditcard.can_credit?(payment).should be_false
+        end
+      end
+    end
+
+  end
+
+  context "#can_void?" do
+    it "should be true if payment state is completed" do
+      payment = mock_model(Payment, :state => 'completed', :created_at => Time.now)
+      creditcard.can_void?(payment).should be_true
+    end
+
+    (PAYMENT_STATES - [COMPLETED]).each do |state|
+      it "should be false if payment state is #{state}" do
+        payment = mock_model(Payment, :state => state, :created_at => Time.now)
+        creditcard.can_void?(payment).should be_false
+      end
+    end
+  end
 
 end
 

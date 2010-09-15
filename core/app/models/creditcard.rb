@@ -146,21 +146,21 @@ class Creditcard < ActiveRecord::Base
     %w{capture void credit}
   end
 
-  # def can_capture?(payment)
-  #   authorization(payment).present? &&
-  #   has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE, CreditcardTxn::TxnType::VOID)
-  # end
+  # Indicates whether its possible to capture the payment
+  def can_capture?(payment)
+    payment.state == "pending"
+  end
 
-  # def can_void?(payment)
-  #   has_transaction_of_types?(payment, CreditcardTxn::TxnType::AUTHORIZE, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
-  #   has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID)
-  # end
+  # Indicates whether its possible to void the payment
+  def can_void?(payment)
+    payment.state == "completed"
+  end
 
-  # # Can only refund a captured transaction but if transaction hasn't been cleared by merchant, refund may still fail
-  # def can_credit?(payment)
-  #   has_transaction_of_types?(payment, CreditcardTxn::TxnType::PURCHASE, CreditcardTxn::TxnType::CAPTURE) &&
-  #   has_no_transaction_of_types?(payment, CreditcardTxn::TxnType::VOID) and payment.order.outstanding_credit?
-  # end
+  # Indicates whether its possible to credit the payment
+  def can_credit?(payment)
+    return false unless (Time.now - 12.hours) > payment.created_at
+    payment.state == "completed"
+  end
 
   def has_payment_profile?
     gateway_customer_profile_id.present?
