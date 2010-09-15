@@ -332,10 +332,10 @@ class Order < ActiveRecord::Base
   #   outstanding_credit > 0
   # end
 
-  # def creditcards
-  #   creditcard_ids = (payments.from_creditcard + checkout.payments.from_creditcard).map(&:source_id).uniq
-  #   Creditcard.scoped(:conditions => {:id => creditcard_ids})
-  # end
+   def creditcards
+     creditcard_ids = payments.from_creditcard.map(&:source_id).uniq
+     Creditcard.scoped(:conditions => {:id => creditcard_ids})
+   end
 
   # Indicates whether order has a real user associated with it or just a placeholder anonymous user
   def anonymous?

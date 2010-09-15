@@ -57,9 +57,6 @@ class Creditcard < ActiveRecord::Base
     cc_type
   end
 
-
-
-
   #RAILS3 TODO
   # scope :with_payment_profile, where("gateway_customer_profile_id IS NOT NULL")
 
