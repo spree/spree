@@ -12,7 +12,6 @@ gemspec
 group :test do
   gem 'rspec-rails', '2.0.0.beta.19'
   gem 'fabrication'
-  gem 'thor'
 end
 
 group :cucumber do
