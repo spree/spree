@@ -13,6 +13,8 @@
         <th><%= order @search, :by => :created_at,       :as => t("order_date") %></th>
         <th><%= order @search, :by => :number,           :as => t("order_number") %></th>
         <th><%= order @search, :by => :state,            :as => t("status") %></th>
+        <th><%= order @search, :by => :payment_state,    :as => t("payment_state") %></th>
+        <th><%= order @search, :by => :shipment_state,   :as => t("shipment_state") %></th>
         <th><%= order @search, :by => :email,            :as => t("customer") %></th>
         <th><%= order @search, :by => :total,            :as => t("total") %></th>
       <% end %>
@@ -29,6 +31,8 @@
         <td><%= order.created_at.to_date%></td>
         <td><%= link_to order.number, object_url(order) %></td>
         <td><%= t("order_state.#{order.state.downcase}") %></td>
+        <td><%= t("payment_states.#{order.payment_state.downcase}") %></td>
+        <td><%= t("shipment_states.#{order.shipment_state.downcase}") %></td>
         <td><%= order.email %></td>
         <td><%= number_to_currency order.total %></td>
       <% end %>
