@@ -21,7 +21,7 @@ PATH
       paperclip (>= 2.3.1.1)
       rd_awesome_nested_set (>= 1.4.4)
       rd_resource_controller
-      rd_searchlogic (>= 3.0.0.rc2)
+      rd_searchlogic (>= 3.0.0.rc3)
       rd_unobtrusive_date_picker (>= 0.1.0)
       state_machine (>= 0.9.4)
       stringex (>= 1.0.3)
@@ -34,7 +34,7 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    activemerchant (1.7.2)
+    activemerchant (1.7.3)
       activesupport (>= 2.3.2)
       braintree (>= 2.0.0)
       builder (>= 2.0.0)
@@ -98,7 +98,7 @@ GEM
     rd_awesome_nested_set (1.4.4)
       activerecord (>= 1.1)
     rd_resource_controller (1.0.0.rc)
-    rd_searchlogic (3.0.0.rc2)
+    rd_searchlogic (3.0.0.rc3)
       activerecord (>= 3.0.0)
     rd_unobtrusive_date_picker (0.1.0)
     rdoc (2.2.0)
