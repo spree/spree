@@ -40,7 +40,7 @@ class User < ActiveRecord::Base
   end
 
   def self.admin_created?
-    Role.find_by_name('admin').users.count > 0
+    Role.where(:name => "admin").includes(:users).count > 0
   end
 
   def deliver_password_reset_instructions!
@@ -51,16 +51,14 @@ class User < ActiveRecord::Base
   private
 
   def check_admin
-    unless self.class.admin_created?
-      self.roles << Role.find_by_name("admin")
-    end
-    true
+    return if self.class.admin_created? or Role.where(:name => 'admin').count == 0
+    self.roles << Role.find_by_name("admin")
   end
 
   def set_login
     # for now force login to be same as email, eventually we will make this configurable, etc.
     self.login ||= self.email if self.email
-  end 
+  end
 
   # Generate a friendly string randomically to be used as token.
   def self.friendly_token
