@@ -51,8 +51,9 @@ class User < ActiveRecord::Base
   private
 
   def check_admin
-    return if self.class.admin_created? or Role.where(:name => 'admin').count == 0
-    self.roles << Role.find_by_name("admin")
+    return if self.class.admin_created?
+    admin_role = Role.find_or_create_by_name "admin"
+    self.roles << admin_role
   end
 
   def set_login

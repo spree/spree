@@ -11,6 +11,10 @@ describe User do
       user.persistence_token.should_not be_nil
     end
 
+    before do
+      User.delete_all
+      Role.delete_all
+    end
     it "should have an admin role if no admin users exist yet" do
       user.save!
       user.has_role?('admin').should be_true
