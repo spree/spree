@@ -96,6 +96,7 @@ class Order < ActiveRecord::Base
 
   # Indicates whether there are any backordered InventoryUnits associated with the Order.
   def backordered?
+    return false unless Spree::Config[:track_inventory_levels]
     inventory_units.backorder.present?
   end
 

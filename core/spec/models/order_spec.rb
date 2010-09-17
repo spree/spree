@@ -210,6 +210,12 @@ describe Order do
       order.stub_chain(:inventory_units, :backorder).and_return [mock_model(InventoryUnit)]
       order.backordered?.should be_true
     end
+
+    it "should always be false when inventory tracking is disabled" do
+      Spree::Config.set :track_inventory_levels => false
+      order.stub_chain(:inventory_units, :backorder).and_return [mock_model(InventoryUnit)]
+      order.backordered?.should be_false
+    end
   end
 
   context "#update!" do
