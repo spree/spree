@@ -350,7 +350,7 @@ class Order < ActiveRecord::Base
   # Finalizes an in progress order after checkout is complete.
   # Called after transition to complete state when payments will have been processed
   def finalize!
-    self.out_of_stock_items = InventoryUnit.sell_units(self)
+    self.out_of_stock_items = InventoryUnit.sell_units(self) if Spree::Config[:track_inventory_levels]
     update_attribute(:completed_at, Time.now)
   end
 

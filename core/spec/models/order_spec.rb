@@ -122,6 +122,13 @@ describe Order do
       order.finalize!
     end
     it "should change the shipment state to ready if order is paid"
+
+    after { Spree::Config.set :track_inventory_levels => true }
+    it "should not sell inventory units if track_inventory_levels is false" do
+      Spree::Config.set :track_inventory_levels => false
+      InventoryUnit.should_not_receive(:sell_units)
+      order.finalize!
+    end
   end
 
   context "#process_payments!" do

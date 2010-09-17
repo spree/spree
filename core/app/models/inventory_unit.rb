@@ -41,36 +41,36 @@ class InventoryUnit < ActiveRecord::Base
     end.flatten
   end
 
-  def self.adjust_units(order)
-    units_by_variant = order.inventory_units.group_by(&:variant_id)
-    out_of_stock_items = []
-
-    #check line items quantities match
-    order.line_items.each do |line_item|
-      variant = line_item.variant
-      quantity = line_item.quantity
-      unit_count = units_by_variant.key?(variant.id) ? units_by_variant[variant.id].size : 0
-
-      if unit_count < quantity
-        out_of_stock_items.concat create_units(order, line_item, (quantity - unit_count))
-      elsif  unit_count > quantity
-        (unit_count - quantity).times do
-          inventory_unit = units_by_variant[variant.id].pop
-          inventory_unit.restock!
-        end
-      end
-
-      #remove it from hash as it's up-to-date
-      units_by_variant.delete(variant.id)
-    end
-
-    #check for deleted line items (if theres anything left in units_by_variant its' extra)
-    units_by_variant.each do |variant_id, units|
-      units.each {|unit| unit.restock!}
-    end
-
-    out_of_stock_items
-  end
+  # def self.adjust_units(order)
+  #   units_by_variant = order.inventory_units.group_by(&:variant_id)
+  #   out_of_stock_items = []
+  #
+  #   #check line items quantities match
+  #   order.line_items.each do |line_item|
+  #     variant = line_item.variant
+  #     quantity = line_item.quantity
+  #     unit_count = units_by_variant.key?(variant.id) ? units_by_variant[variant.id].size : 0
+  #
+  #     if unit_count < quantity
+  #       out_of_stock_items.concat create_units(order, line_item, (quantity - unit_count))
+  #     elsif  unit_count > quantity
+  #       (unit_count - quantity).times do
+  #         inventory_unit = units_by_variant[variant.id].pop
+  #         inventory_unit.restock!
+  #       end
+  #     end
+  #
+  #     #remove it from hash as it's up-to-date
+  #     units_by_variant.delete(variant.id)
+  #   end
+  #
+  #   #check for deleted line items (if theres anything left in units_by_variant its' extra)
+  #   units_by_variant.each do |variant_id, units|
+  #     units.each {|unit| unit.restock!}
+  #   end
+  #
+  #   out_of_stock_items
+  # end
 
   def can_restock?
     %w(sold shipped backordered).include?(state)

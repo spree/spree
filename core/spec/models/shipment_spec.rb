@@ -1,7 +1,10 @@
 require 'spec_helper'
 
 describe Shipment do
-  let(:shipment) { Shipment.new }
+  # let(:shipment) { Shipment.new }
+  let(:order) { mock_model Order, :backordered? => false }
+  let(:shipment) { Shipment.new :order => order, :state => 'pending' }
+
   let(:charge) { mock_model Adjustment, :amount => 10, :source => shipment }
 
   context "#cost" do
@@ -17,8 +20,6 @@ describe Shipment do
   end
 
   context "#update!" do
-    let(:order) { mock_model Order, :backordered? => false }
-    let(:shipment) { Shipment.new :order => order, :state => 'pending' }
 
     shared_examples_for "immutable once shipped" do
       it "should remain in shipped state once shipped" do
@@ -65,5 +66,19 @@ describe Shipment do
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"
     end
+  end
+
+  context "when track_inventory is false" do
+
+    before { Spree::Config.set :track_inventory_levels => false }
+    after { Spree::Config.set :track_inventory_levels => true }
+
+    it "should not use the line items from order when track_inventory_levels is false" do
+      line_items = [mock_model LineItem]
+      order.stub :complete? => true
+      order.stub :line_items => line_items
+      shipment.line_items.should == line_items
+    end
+
   end
 end
