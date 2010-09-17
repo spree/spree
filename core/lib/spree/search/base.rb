@@ -8,11 +8,7 @@ module Spree::Search
     end
 
     def retrieve_products
-      base_scope = @cached_product_group ? @cached_product_group.products.active : Product.active
-      base_scope = base_scope.in_taxon(taxon) unless taxon.blank? 
-      base_scope = get_products_conditions_for(base_scope, keywords) unless keywords.blank?
-
-      base_scope = base_scope.on_hand unless Spree::Config[:show_zero_stock_products]
+      base_scope = get_base_scope
       @products_scope = @product_group.apply_on(base_scope)
 
       curr_page = manage_pagination && keywords ? 1 : page
@@ -30,6 +26,15 @@ module Spree::Search
     end
 
     protected
+    def get_base_scope
+      base_scope = @cached_product_group ? @cached_product_group.products.active : Product.active
+      base_scope = base_scope.in_taxon(taxon) unless taxon.blank? 
+      base_scope = get_products_conditions_for(base_scope, keywords) unless keywords.blank?
+
+      base_scope = base_scope.on_hand unless Spree::Config[:show_zero_stock_products]
+      base_scope
+    end
+    
     # method should return new scope based on base_scope
     def get_products_conditions_for(base_scope, query)
       base_scope.like_any([:name, :description], query.split)
