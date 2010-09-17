@@ -134,7 +134,7 @@ module Admin::NavigationHelper
       <td>#{link_to(link_text, url)}</td>
       <td>#{description}</td>
     </tr>
-    )
+    ).html_safe
   end
 
 end
