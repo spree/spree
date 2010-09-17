@@ -18,6 +18,7 @@ class Shipment < ActiveRecord::Base
 
   scope :shipped, where(:state => 'shipped')
   scope :ready, where(:state => 'ready')
+  scope :pending, where(:state => 'pending')
 
   def to_param
     self.number if self.number

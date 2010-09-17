@@ -31,8 +31,6 @@ describe Order do
     end
     context "when current state is address" do
       let(:rate) { mock_model TaxRate, :amount => 10 }
-#      let(:old_rate) { mock_model TaxRate }
-#      let(:old_charge) { mock_model Adjustment, :originator => old_rate }
 
       before do
         order.state = "address"
@@ -237,25 +235,26 @@ describe Order do
     context "when there are shipments" do
       before do
         order.stub_chain :shipments, :count => 2
+        order.shipments.stub_chain(:shipped, :count => 0)
+        order.shipments.stub_chain(:ready, :count => 0)
+        order.shipments.stub_chain(:pending, :count => 0)
         order.shipments.stub :each => nil
       end
 
       it "should set the correct shipment_state (when all shipments are shipped)" do
         order.shipments.stub_chain(:shipped, :count => 2)
-        order.shipments.stub_chain(:ready, :count => 0)
         order.update!
         order.shipment_state.should == "shipped"
       end
 
       it "should set the correct shipment_state (when some units are backordered)" do
         order.shipments.stub_chain(:shipped, :count => 1)
-        order.shipments.stub_chain(:ready, :count => 0)
         order.stub(:backordered?).and_return true
         order.update!
         order.shipment_state.should == "backorder"
       end
 
-      it "should set the correct shipment_state (when some of the shipments have shipped)" do
+      it "should set the shipment_state to partial (when some of the shipments have shipped)" do
         order.shipments.stub_chain(:shipped, :count => 1)
         order.shipments.stub_chain(:ready, :count => 1)
         order.update!
@@ -263,10 +262,15 @@ describe Order do
       end
 
       it "should set the correct shipment_state (when some of the shipments are ready)" do
-        order.shipments.stub_chain(:shipped, :count => 0)
         order.shipments.stub_chain(:ready, :count => 2)
         order.update!
         order.shipment_state.should == "ready"
+      end
+
+      it "should set the shipment_state to pending (when all shipments are pending)" do
+        order.shipments.stub_chain(:pending, :count => 2)
+        order.update!
+        order.shipment_state.should == "pending"
       end
     end
 

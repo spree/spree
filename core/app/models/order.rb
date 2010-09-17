@@ -323,7 +323,7 @@ class Order < ActiveRecord::Base
   def outstanding_balance?
     self.outstanding_balance > 0
   end
-  
+
    def outstanding_credit
      [0, payment_total - total].max
    end
@@ -454,6 +454,7 @@ class Order < ActiveRecord::Base
   #           or there are InventoryUnits associated with the order that have a state of "sold" but are not associated with a Shipment.
   # ready     when all Shipments are in the "ready" state
   # backorder when there is backordered inventory associated with an order
+  # pending   when all Shipments are in the "pending" state
   #
   # The +shipment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
   def update_shipment_state
@@ -465,6 +466,8 @@ class Order < ActiveRecord::Base
       "shipped"
     when shipments.ready.count
       "ready"
+    when shipments.pending.count
+      "pending"
     else
       "partial"
     end
