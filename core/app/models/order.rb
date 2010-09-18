@@ -197,7 +197,8 @@ class Order < ActiveRecord::Base
   # end
 
   def allow_cancel?
-    self.state != 'canceled'
+    return false unless state == "complete"
+    %w{ready backorder pending}.include? shipment_state
   end
 
   def allow_resume?

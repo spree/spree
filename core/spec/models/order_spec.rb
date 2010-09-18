@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-
 describe Order do
 
   let(:order) { Order.new }
@@ -390,5 +389,25 @@ describe Order do
       order.email = nil
       order.should be_valid
     end
+  end
+
+  context "#can_cancel?" do
+
+    [PENDING, BACKORDER, READY].each do |shipment_state|
+      it "should be true if shipment_state is #{shipment_state}" do
+        order.state = COMPLETE
+        order.shipment_state = shipment_state
+        order.can_cancel?.should be_true
+      end
+    end
+
+    (SHIPMENT_STATES - [PENDING, BACKORDER, READY]).each do |shipment_state|
+      it "should be false if shipment_state is #{shipment_state}" do
+        order.state = COMPLETE
+        order.shipment_state = shipment_state
+        order.can_cancel?.should be_false
+      end
+    end
+
   end
 end

@@ -229,15 +229,6 @@ describe Creditcard do
     end
   end
 
-  PENDING = 'pending'
-  PROCESSING = 'processing'
-  FAILED = 'failed'
-  COMPLETED = 'completed'
-  VOID = 'void'
-  CHECKOUT = 'checkout'
-
-  PAYMENT_STATES = [CHECKOUT, PROCESSING, FAILED, COMPLETED, VOID, PENDING]
-
   let(:creditcard) { Creditcard.new }
 
   context "#can_capture?" do
