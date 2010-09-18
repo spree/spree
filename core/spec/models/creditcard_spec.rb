@@ -254,42 +254,56 @@ describe Creditcard do
     end
   end
 
-  context "#can_credit?" do
-    context "when payment state is completed" do
-      it "should be true when transaction is more than 12 hours old" do
-        payment = mock_model(Payment, :state => 'completed', :created_at => Time.now - 14.hours)
+  context "when transaction is more than 12 hours old" do
+    let(:payment) { mock_model(Payment, :state => 'completed', :created_at => Time.now - 14.hours) }
+
+    context "#can_credit?" do
+      it "should be true if payment state is completed" do
         creditcard.can_credit?(payment).should be_true
       end
-    end
 
-    (PAYMENT_STATES - [COMPLETED]).each do |state|
-      it "should be false if payment state is #{state}" do
-        payment = mock_model(Payment, :state => state, :created_at => Time.now)
-        creditcard.can_credit?(payment).should be_false
-      end
-    end
-
-    context "when transaction is less than 12 hours old" do
-      PAYMENT_STATES.each do |state|
+      (PAYMENT_STATES - [COMPLETED]).each do |state|
         it "should be false if payment state is #{state}" do
-          payment = mock_model(Payment, :state => state, :created_at => Time.now)
+          payment.stub :state => state
           creditcard.can_credit?(payment).should be_false
         end
       end
     end
 
+    context "#can_void?" do
+      PAYMENT_STATES.each do |state|
+        it "should be false if payment state is #{state}" do
+          payment.stub :state => state
+          creditcard.can_void?(payment).should be_false
+        end
+      end
+    end
   end
 
-  context "#can_void?" do
-    it "should be true if payment state is completed" do
-      payment = mock_model(Payment, :state => 'completed', :created_at => Time.now)
-      creditcard.can_void?(payment).should be_true
+  context "when transaction is less than 12 hours old" do
+    let(:payment) { mock_model(Payment, :state => 'completed', :created_at => Time.now - 1.hour) }
+
+    context "#can_credit?" do
+      PAYMENT_STATES.each do |state|
+        it "should be false if payment state is #{state}" do
+          creditcard.can_credit?(payment).should be_false
+        end
+      end
     end
 
-    (PAYMENT_STATES - [COMPLETED]).each do |state|
-      it "should be false if payment state is #{state}" do
-        payment = mock_model(Payment, :state => state, :created_at => Time.now)
-        creditcard.can_void?(payment).should be_false
+    context "#can_void?" do
+      [PENDING, COMPLETED].each do |state|
+        it "should be true if payment state is #{state}" do
+          payment.stub :state => state
+          creditcard.can_void?(payment).should be_true
+        end
+      end
+
+      (PAYMENT_STATES - [PENDING, COMPLETED]).each do |state|
+        it "should be false if payment state is #{state}" do
+          payment.stub :state => state
+          creditcard.can_void?(payment).should be_false
+        end
       end
     end
   end
