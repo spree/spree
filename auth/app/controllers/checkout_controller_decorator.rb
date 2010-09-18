@@ -3,6 +3,7 @@ CheckoutController.class_eval do
   before_filter :check_registration, :except => [:registration, :update_registration]
 
   def registration
+    @user = User.new
   end
 
   def update_registration

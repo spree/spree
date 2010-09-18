@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
 
   acts_as_authentic do |c|
     c.transition_from_restful_authentication = true
+    c.maintain_sessions = false
     #AuthLogic defaults
     #c.validate_email_field = true
     #c.validates_length_of_email_field_options = {:within => 6..100}
