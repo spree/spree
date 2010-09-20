@@ -37,7 +37,7 @@ class Admin::PaymentsController < Admin::BaseController
   end
 
   def fire
-    # TODO - possible security check here
+    # TODO: consider finer-grained control for this type of action (right now anyone in admin role can perform)
     load_object
     return unless event = params[:e] and @payment.source
     if @payment.source.send("#{event}", @payment)
@@ -50,11 +50,6 @@ class Admin::PaymentsController < Admin::BaseController
   ensure
     redirect_to collection_path
   end
-
-  # def finalize
-  #   object.finalize!
-  #   redirect_to collection_path
-  # end
 
   private
 
