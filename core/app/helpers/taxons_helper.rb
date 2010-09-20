@@ -1,11 +1,11 @@
 module TaxonsHelper
-  def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
+  def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;", linked = true)
     return "" if current_page?("/")
     separator = raw(separator)
-    crumbs = [content_tag(:li, link_to(t(:home) , root_path) + separator)]
+    crumbs = [content_tag(:li, breadcrumb(t(:home) , root_path, linked) + separator)]
     if taxon
-      crumbs << content_tag(:li, link_to(t('products') , products_path) + separator)
-      crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator) } unless taxon.ancestors.empty?
+      crumbs << content_tag(:li, breadcrumb(t('products') , products_path, linked) + separator)
+      crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, breadcrumb(ancestor.name , seo_url(ancestor), linked) + separator) } unless taxon.ancestors.empty?
       crumbs << content_tag(:li, content_tag(:span, taxon.name))
     else
       crumbs << content_tag(:li, content_tag(:span, t('products')))
@@ -28,5 +28,10 @@ module TaxonsHelper
       end
     end
     products
+  end
+
+  private
+  def breadcrumb( text, link_path, linked = true )
+    linked  ? link_to(text, link_path)  : text
   end
 end
