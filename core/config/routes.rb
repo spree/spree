@@ -145,7 +145,6 @@ Rails.application.routes.draw do
       resources :payments do
         member do
           put :fire
-          put :finalize
         end
       end
     end

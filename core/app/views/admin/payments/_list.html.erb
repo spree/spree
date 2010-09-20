@@ -14,10 +14,7 @@
       <td><%= payment.state.capitalize %></td>
       <td>
         <% payment.actions.each do |action| %>
-          <%= link_to t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put, :confirm => t('are_you_sure') %>
-        <% end %>
-        <% if payment.actions.empty? and !payment.finalized? %>
-          <%= link_to t(:finalize), finalize_admin_order_payment_path(@order, payment), :method => :put, :confirm => t('are_you_sure') %>
+          <%= button_to t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put %>
         <% end %>
       </td>
     </tr>

@@ -45,7 +45,7 @@ class Payment < ActiveRecord::Base
       transition :from => ['processing', 'pending'], :to => 'completed'
     end
     event :void do
-      transition :from => ['pending', 'complete'], :to => 'void'
+      transition :from => ['pending', 'completed'], :to => 'void'
     end
   end
 
@@ -64,7 +64,7 @@ class Payment < ActiveRecord::Base
 
   def credit(amount)
     return if amount > credit_allowed
-    started_processing! 
+    started_processing!
     source.credit(self, amount)
   end
 

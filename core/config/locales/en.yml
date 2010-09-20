@@ -271,6 +271,7 @@ en:
   canceled: Canceled
   cannot_create_returns: Cannot create returns as this order has not shipped yet.
   cannot_destory_line_item_as_inventory_units_have_shipped: Cannot destory line item as some inventory units have shipped.
+  cannot_perform_operation: "Cannot perform requested operation"
   capture: Capture
   card_code: "Card Code"
   card_details: "Card details"
@@ -455,6 +456,7 @@ en:
   logged_in_as: "Logged in as"
   logged_in_succesfully: "Logged in successfully"
   logged_out: "You have been logged out."
+  login: Login
   login_as_existing: "Log In as Existing Customer"
   login_failed: "Login authentication failed."
   login_name: Login
@@ -940,6 +942,7 @@ en:
   user_created_successfully: "User created successfully"
   user_details: "User Details"
   users: Users
+  validate_on_profile_create: Validate on profile create
   validation:
     cannot_be_less_than_shipped_units: "cannot be less than the number of shipped units."
     is_too_large: "is too large -- stock on hand cannot cover requested quantity!"

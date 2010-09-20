@@ -40,20 +40,21 @@ class Admin::PaymentsController < Admin::BaseController
     # TODO - possible security check here
     load_object
     return unless event = params[:e] and @payment.source
-    Payment.transaction do
-      @payment.source.send("#{event}", @payment)
+    if @payment.source.send("#{event}", @payment)
+      flash.notice = t('payment_updated')
+    else
+      flash[:error] = t('cannot_perform_operation')
     end
-    flash.notice = t('payment_updated')
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
   ensure
     redirect_to collection_path
   end
 
-  def finalize
-    object.finalize!
-    redirect_to collection_path
-  end
+  # def finalize
+  #   object.finalize!
+  #   redirect_to collection_path
+  # end
 
   private
 
