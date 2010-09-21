@@ -5,7 +5,7 @@ module TaxonsHelper
     crumbs = [content_tag(:li, breadcrumb(t(:home) , root_path, linked) + separator)]
     if taxon
       crumbs << content_tag(:li, breadcrumb(t('products') , products_path, linked) + separator)
-      crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, breadcrumb(ancestor.name , seo_url(ancestor), linked) + separator) } unless taxon.ancestors.empty?
+      crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, breadcrumb(ancestor.name || name, seo_url(ancestor), linked) + separator) } unless taxon.ancestors.empty?
       crumbs << content_tag(:li, content_tag(:span, taxon.name))
     else
       crumbs << content_tag(:li, content_tag(:span, t('products')))
