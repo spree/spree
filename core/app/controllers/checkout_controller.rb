@@ -9,8 +9,14 @@ class CheckoutController < Spree::BaseController
   def update
     begin
       if @order.update_attributes(object_params)
-        if @order.can_next? and @order.next
-          redirect_to checkout_state_path(@order.state) and return
+        if @order.next
+          state_callback(:after)
+          if @order.state == "complete"
+            flash[:notice] = I18n.t(:order_processed_successfully)
+            redirect_to order_path(@order) and return
+          else
+            redirect_to checkout_state_path(@order.state) and return
+          end
         end
       end
     rescue Spree::GatewayError
@@ -39,12 +45,7 @@ class CheckoutController < Spree::BaseController
   def load_order
     @order = current_order
     redirect_to cart_path and return unless @order and @order.checkout_allowed?
-    if @order.complete?
-      session[:order_id] = nil
-      unless params[:state] == 'complete'
-        redirect_to cart_path and return
-      end
-    end
+    redirect_to cart_path and return if @order.completed?
     @order.state = params[:state] if params[:state]
     state_callback(:before)
   end
@@ -65,6 +66,10 @@ class CheckoutController < Spree::BaseController
 
   def before_payment
     current_order.payments.destroy_all if request.put?
+  end
+
+  def after_complete
+    session[:order_id] = nil
   end
 
   def default_country

@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe CheckoutController do
-
-  let(:order) { mock_model(Order, :checkout_allowed? => true, :complete? => false, :update_attributes => true, :payment? => false).as_null_object }
+  let(:order) { mock_model(Order, :checkout_allowed? => true, :completed? => false, :update_attributes => true, :payment? => false).as_null_object }
   before { controller.stub :current_order => order }
 
   it "should understand checkout routes" do
@@ -29,14 +28,8 @@ describe CheckoutController do
       get :edit, { :state => "payment" }
     end
 
-    it "should remove completed order from the session" do
-      order.stub(:complete? => true, :state => 'complete')
-      get :edit, {:state => "complete"}, {:order_id => 1}
-      session[:order_id].should be_nil
-    end
-
     it "should redirect to cart if order is completed" do
-      order.stub(:complete? => true)
+      order.stub(:completed? => true)
       get :edit, {:state => "address"}
       response.should redirect_to(cart_path)
     end
@@ -62,7 +55,7 @@ describe CheckoutController do
       end
 
       context "with next state" do
-        before { order.stub :can_next? => true }
+        before { order.stub :next => true }
 
         it "should advance the state" do
           order.should_receive(:next).and_return true
@@ -70,19 +63,35 @@ describe CheckoutController do
         end
 
         it "should redirect the next state" do
-          order.stub :state => "complete"
-          post :update, {:state => "confirm"}
-          response.should redirect_to checkout_state_path("complete")
+          order.stub :state => "payment"
+          post :update, {:state => "delivery"}
+          response.should redirect_to checkout_state_path("payment")
         end
+
+        context "when in the confirm state" do
+          before { order.stub :state => "complete" }
+
+          it "should redirect to the order view" do
+            post :update, {:state => "confirm"}
+            response.should redirect_to order_path(order)
+          end
+
+          it "should populate the flash message" do
+            post :update, {:state => "confirm"}
+            flash[:notice].should == I18n.t(:order_processed_successfully)
+          end
+
+          it "should remove completed order from the session" do
+            post :update, {:state => "confirm"}, {:order_id => "foofah"}
+            session[:order_id].should be_nil
+          end
+
+        end
+
       end
 
       context "with no more steps (would only happen on refresh)" do
-        before { order.stub(:can_next?).and_return false }
-
-        it "should not advance the next state" do
-          order.should_not_receive(:next)
-          post :update, {:state => "confirm"}
-        end
+        before { order.stub :next => false }
 
         it "should render the current state" do
           post :update, {:state => "confirm"}
