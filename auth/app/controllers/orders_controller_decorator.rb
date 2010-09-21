@@ -9,10 +9,13 @@ OrdersController.class_eval do
   end
 
   def check_authorization
-    if current_order
-      authorize! :edit, current_order
+    session[:guest_token] ||= params[:token]
+    order = current_order || Order.find_by_number(params[:id])
+    if order
+      authorize! :edit, order
     else
       authorize! :create, Order
     end
   end
+
 end

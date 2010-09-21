@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   match '/logout', :to => 'user_sessions#destroy', :as => :logout
   match '/signup', :to => 'users#new', :as => :signup
 
+  match '/orders/:id/token/:token' => 'orders#show', :via => :get, :as => :token_order
+
   resource :user_session do
     member do
       get :nav_bar

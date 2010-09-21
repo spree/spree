@@ -102,4 +102,57 @@ describe CheckoutController do
     end
   end
 
+  context "#update" do
+
+    context "save successful" do
+      before do
+        controller.stub :current_order => order
+        order.stub(:update_attribute).and_return true
+        order.should_receive(:update_attributes).and_return true
+      end
+
+      context "when in the confirm state" do
+        before do
+          order.stub :next => true
+          order.stub :state => "complete"
+          order.stub :number => "R123"
+        end
+
+        context "with an anonymous user" do
+          before do
+            user.stub :token => "ABC"
+            user.stub :anonymous? => true
+            user.stub :has_role? => true
+            controller.stub :current_user => user
+          end
+
+          it "should redirect to the tokenized order view" do
+            post :update, {:state => "confirm"}
+            response.should redirect_to token_order_path("R123", "ABC")
+          end
+
+          it "should populate the flash message" do
+            post :update, {:state => "confirm"}
+            flash[:notice].should == I18n.t(:order_processed_successfully)
+          end
+        end
+
+        context "with a registered user" do
+          before do
+            user.stub :anonymous? => false
+            user.stub :has_role? => true
+            controller.stub :current_user => mock_model(User, :has_role? => true)
+          end
+
+          it "should redirect to the standard order view" do
+            post :update, {:state => "confirm"}
+            response.should redirect_to order_path("R123")
+          end
+        end
+
+      end
+    end
+
+  end
+
 end

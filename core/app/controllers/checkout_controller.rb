@@ -13,7 +13,7 @@ class CheckoutController < Spree::BaseController
           state_callback(:after)
           if @order.state == "complete"
             flash[:notice] = I18n.t(:order_processed_successfully)
-            redirect_to order_path(@order) and return
+            redirect_to completion_route and return
           else
             redirect_to checkout_state_path(@order.state) and return
           end
@@ -28,6 +28,11 @@ class CheckoutController < Spree::BaseController
   end
 
   private
+
+  # Provides a route to redirect after order completion
+  def completion_route
+    order_path(@order)
+  end
 
   def object_params
     # For payment step, filter order parameters to produce the expected nested attributes for a single payment and its source, discarding attributes for payment methods other than the one selected

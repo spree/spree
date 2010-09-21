@@ -5,8 +5,14 @@ describe OrdersController do
   let(:user) { mock_model User, :persistence_token => "foo" }
   let(:order) { mock_model(Order, :user => user).as_null_object }
 
+  it "should understand order routes with token" do
+    assert_routing("/orders/R123456/token/ABCDEF", {:controller => "orders", :action => "show", :id => "R123456", :token => "ABCDEF"})
+    token_order_path("R123456", "ABCDEF").should == "/orders/R123456/token/ABCDEF"
+  end
+
   context "for a new order" do
     context "#populate" do
+
       before do
         controller.stub :authorize! => true
         Order.stub :create => order
@@ -68,6 +74,31 @@ describe OrdersController do
       end
     end
 
+  end
+
+  context "when no authenticated user" do
+    context "#show" do
+      before { Order.stub :find_by_number => order }
+
+      context "when token parameter present" do
+        it "should store as guest_token in session" do
+          get :show, {:id => "R123", :token => "ABC"}
+          session[:guest_token].should == "ABC"
+        end
+      end
+
+      context "when no token present" do
+        it "should not store a guest_token in the session" do
+          get :show, {:id => "R123"}
+          session[:guest_token].should be_nil
+        end
+
+        it "should redirect to login_path" do
+          get :show, {:id => "R123"}
+          response.should redirect_to login_path
+        end
+      end
+    end
   end
 
 end
