@@ -21,31 +21,38 @@ module SpreePromotions
       end
 
       Order.class_eval do
-        #has_many :promotion_credits, :extend => Order::Totaling, :order => :position
+        has_many :promotion_credits
+        
+        attr_accessible :coupon_code
+        attr_accessor :coupon_code
+        before_save :process_coupon_code, :if => "@coupon_code"
+        
+        def process_coupon_code
+          coupon = Promotion.find(:first, :conditions => ["UPPER(code) = ?", @coupon_code.upcase])          
+          if coupon
+            coupon.create_discount(self)
+          end
+        end
+
         def products
           line_items.map {|li| li.variant.product}
         end
 
-        # def update_totals(force_adjustment_recalculation=false)
-        #   self.item_total       = self.line_items.total
-        #
-        #   # save the items which might be changed by an order update, so that
-        #   # charges can be recalculated accurately.
-        #   self.line_items.map(&:save)
-        #
-        #   process_automatic_promotions
-        #
-        #   if !self.checkout_complete || force_adjustment_recalculation
-        #     applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
-        #     self.adjustments = applicable_adjustments
-        #     adjustments_to_destroy.each(&:destroy)
-        #   end
-        #
-        #   self.adjustment_total = self.charge_total - self.credit_total
-        #   self.total            = self.item_total   + self.adjustment_total
-        #
-        #   self.checkout.enable_validation_group(:register) unless self.checkout.nil?
-        # end
+        def update_totals(force_adjustment_recalculation=false)
+          self.payment_total = payments.completed.map(&:amount).sum
+          self.item_total = line_items.map(&:amount).sum
+        
+          process_automatic_promotions
+        
+          if !self.completed_at || force_adjustment_recalculation
+            applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
+            self.adjustments = applicable_adjustments
+            adjustments_to_destroy.each(&:destroy)
+          end
+        
+          self.adjustment_total = self.charge_total - self.credit_total
+          self.total            = self.item_total   + self.adjustment_total
+        end
 
 
         def process_automatic_promotions
@@ -69,25 +76,25 @@ module SpreePromotions
         end
       end
 
-      # if File.basename( $0 ) != "rake"
-      #   # register promotion rules
-      #   [Promotion::Rules::ItemTotal, Promotion::Rules::Product, Promotion::Rules::User, Promotion::Rules::FirstOrder].each &:register
-      #
-      #   # register default promotion calculators
-      #   [
-      #     Calculator::FlatPercentItemTotal,
-      #     Calculator::FlatRate,
-      #     Calculator::FlexiRate,
-      #     Calculator::PerItem,
-      #     Calculator::FreeShipping
-      #   ].each{|c_model|
-      #     begin
-      #       Promotion.register_calculator(c_model) if c_model.table_exists?
-      #     rescue Exception => e
-      #       $stderr.puts "Error registering promotion calculator #{c_model}"
-      #     end
-      #   }
-      # end
+      if File.basename( $0 ) != "rake"
+        # register promotion rules
+        [Promotion::Rules::ItemTotal, Promotion::Rules::Product, Promotion::Rules::User, Promotion::Rules::FirstOrder].each &:register
+      
+        # register default promotion calculators
+        [
+          Calculator::FlatPercentItemTotal,
+          Calculator::FlatRate,
+          Calculator::FlexiRate,
+          Calculator::PerItem,
+          Calculator::FreeShipping
+        ].each{|c_model|
+          begin
+            Promotion.register_calculator(c_model) if c_model.table_exists?
+          rescue Exception => e
+            $stderr.puts "Error registering promotion calculator #{c_model}"
+          end
+        }
+      end
     end
 
     config.autoload_paths += %W(#{config.root}/lib)

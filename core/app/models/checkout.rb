@@ -2,7 +2,6 @@ class Checkout < ActiveRecord::Base
   extend ValidationGroup::ActiveRecord::ActsMethods
 
   before_update :check_addresses_on_duplication, :if => "!ship_address.nil? && !bill_address.nil?"
-  after_save :process_coupon_code
   after_save :update_order_shipment
   before_validation :clone_billing_address, :if => "@use_billing"
 
@@ -15,8 +14,7 @@ class Checkout < ActiveRecord::Base
   accepts_nested_attributes_for :bill_address
   accepts_nested_attributes_for :ship_address
   accepts_nested_attributes_for :payments
-
-  attr_accessor :coupon_code
+  
   attr_accessor :use_billing
 
   validates :order_id, :shipping_method_id, :presence => true
@@ -115,13 +113,6 @@ class Checkout < ActiveRecord::Base
   def process_payment
     return if order.payments.total == order.total
     payments.each(&:process!)
-  end
-
-  def process_coupon_code
-    return unless @coupon_code and coupon = Promotion.find(:first, :conditions => ["UPPER(code) = ?",@coupon_code.upcase])
-    coupon.create_discount(order)
-    # recalculate order totals
-    order.save
   end
 
   # list of countries available for checkout

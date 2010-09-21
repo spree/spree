@@ -1,5 +1,5 @@
 class Promotion < ActiveRecord::Base
-  has_many  :promotion_credits,    :as => :adjustment_source
+  has_many  :promotion_credits,    :as => :source
   calculated_adjustments
   alias credits promotion_credits
 
@@ -34,14 +34,13 @@ class Promotion < ActiveRecord::Base
   end
 
   def create_discount(order)
-    return if order.promotion_credits.reload.detect { |credit| credit.adjustment_source_id == self.id }
+    return if order.promotion_credits.reload.detect { |credit| credit.source_id == self.id }
     if eligible?(order) and amount = calculator.compute(order.line_items)
       amount = order.item_total if amount > order.item_total
-      order.promotion_credits.reload.clear unless combine? and order.promotion_credits.all? { |credit| credit.adjustment_source.combine? }
-      order.save
+      order.promotion_credits.reload.clear unless combine? and order.promotion_credits.all? { |credit| credit.source.combine? }
       promotion_credits.create({
           :order_id => order.id,
-          :description => "#{I18n.t(:coupon)} (#{code})"
+          :label => "#{I18n.t(:coupon)} (#{code})"
         })
     end
   end
