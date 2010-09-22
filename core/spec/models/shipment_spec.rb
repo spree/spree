@@ -25,7 +25,7 @@ describe Shipment do
       it "should remain in shipped state once shipped" do
         shipment.state = "shipped"
         shipment.should_receive(:update_attribute_without_callbacks).with("state", "shipped")
-        shipment.update!
+        shipment.update!(order)
       end
     end
 
@@ -33,7 +33,7 @@ describe Shipment do
       it "should have a state of pending if backordered" do
         order.stub :backordered? => true
         shipment.should_receive(:update_attribute_without_callbacks).with("state", "pending")
-        shipment.update!
+        shipment.update!(order)
       end
     end
 
@@ -41,27 +41,29 @@ describe Shipment do
       before { order.stub :payment_state => 'paid' }
       it "should result in a 'ready' state" do
         shipment.should_receive(:update_attribute_without_callbacks).with("state", "ready")
-        shipment.update!
+        shipment.update!(order)
       end
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"
     end
+
     context "when order has balance due" do
       before { order.stub :payment_state => 'balance_due' }
       it "should result in a 'pending' state" do
         shipment.state = 'ready'
         shipment.should_receive(:update_attribute_without_callbacks).with("state", "pending")
-        shipment.update!
+        shipment.update!(order)
       end
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"
     end
+
     context "when order has a credit owed" do
       before { order.stub :payment_state => 'credit_owed' }
       it "should result in a 'ready' state" do
         shipment.state = 'pending'
         shipment.should_receive(:update_attribute_without_callbacks).with("state", "ready")
-        shipment.update!
+        shipment.update!(order)
       end
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"

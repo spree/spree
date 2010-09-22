@@ -106,13 +106,15 @@ class Order < ActiveRecord::Base
   # up in an infinite recursion as the associations try to save and then in turn try to call +update!+ again.)
   def update!
     update_totals
-    update_shipment_state
-    # give each of the shipments a chance to update themselves
-    shipments.each(&:update!)
     update_payment_state
+
+    # give each of the shipments a chance to update themselves
+    shipments.each { |shipment| shipment.update!(self) }#(&:update!)
+    update_shipment_state
     update_adjustments
     # update totals a second time in case updated adjustments have an effect on the total
     update_totals
+
     update_attributes_without_callbacks({
       :payment_state => payment_state,
       :shipment_state => shipment_state,

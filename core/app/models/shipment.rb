@@ -80,8 +80,11 @@ class Shipment < ActiveRecord::Base
     order.update_totals!
   end
 
-  def update!
-    update_attribute_without_callbacks "state", determine_state
+  # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
+  # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
+  # yield the correct results.
+  def update!(order)
+    update_attribute_without_callbacks "state", determine_state(order)
   end
 
   private
@@ -121,7 +124,7 @@ class Shipment < ActiveRecord::Base
   # pending    unless +order.payment_state+ is +paid+
   # shipped    if already shipped (ie. does not change the state)
   # ready      all other cases
-  def determine_state
+  def determine_state(order)
     return "pending" if order.backordered?
     return "shipped" if state == "shipped"
     order.payment_state == "balance_due" ? "pending" : "ready"
