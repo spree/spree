@@ -83,4 +83,37 @@ describe Shipment do
     end
 
   end
+
+  context "when order is completed" do
+    after { Spree::Config.set :track_inventory_levels => true }
+
+    before do
+      order.stub :completed? => true
+      order.stub :canceled? => false
+    end
+
+
+    context "with inventory tracking" do
+      before { Spree::Config.set :track_inventory_levels => true }
+
+      it "should not validate without inventory" do
+        shipment.valid?.should be_false
+      end
+
+      it "should validate with inventory" do
+        shipment.inventory_units = [mock_model(InventoryUnit)]
+        shipment.valid?.should be_true
+      end
+
+    end
+
+    context "without inventory tracking" do
+      before { Spree::Config.set :track_inventory_levels => false }
+
+      it "should validate with no inventory" do
+        shipment.valid?.should be_true
+      end
+    end
+
+  end
 end

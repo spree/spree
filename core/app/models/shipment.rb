@@ -12,7 +12,7 @@ class Shipment < ActiveRecord::Base
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :inventory_units
 
-  validates :inventory_units, :presence => true, :if => Proc.new { |shipment| shipment.order.completed? && !shipment.order.canceled? }
+  validates :inventory_units, :presence => true, :if => :require_inventory
   make_permalink :field => :number
   validate :shipping_method
 
@@ -128,5 +128,13 @@ class Shipment < ActiveRecord::Base
     return "pending" if order.backordered?
     return "shipped" if state == "shipped"
     order.payment_state == "balance_due" ? "pending" : "ready"
+  end
+
+  # Determines whether or not inventory units should be associated with the shipment.  This is always +false+ when
+  # +Spree::Config[:track_inventory_levels]+ is set to +false.+  Otherwise its +true+ whenever the order is completed
+  # (and not canceled.)
+  def require_inventory
+    return false unless Spree::Config[:track_inventory_levels]
+    order.completed? && !order.canceled?
   end
 end
