@@ -21,7 +21,6 @@ module SpreePromotions
       end
 
       Order.class_eval do
-        has_many :promotion_credits
         
         attr_accessible :coupon_code
         attr_accessor :coupon_code
@@ -32,6 +31,10 @@ module SpreePromotions
           if coupon
             coupon.create_discount(self)
           end
+        end
+        
+        def promotion_credits
+          adjustments.where("source_type='Promotion'")
         end
 
         def products
@@ -44,13 +47,13 @@ module SpreePromotions
         
           process_automatic_promotions
         
-          if !self.completed_at || force_adjustment_recalculation
+          if force_adjustment_recalculation
             applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
             self.adjustments = applicable_adjustments
             adjustments_to_destroy.each(&:destroy)
           end
         
-          self.adjustment_total = self.charge_total - self.credit_total
+          self.adjustment_total = self.adjustments.map(&:amount).sum
           self.total            = self.item_total   + self.adjustment_total
         end
 

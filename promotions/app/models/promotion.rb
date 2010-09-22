@@ -38,10 +38,12 @@ class Promotion < ActiveRecord::Base
     if eligible?(order) and amount = calculator.compute(order.line_items)
       amount = order.item_total if amount > order.item_total
       order.promotion_credits.reload.clear unless combine? and order.promotion_credits.all? { |credit| credit.source.combine? }
-      promotion_credits.create({
-          :order_id => order.id,
-          :label => "#{I18n.t(:coupon)} (#{code})"
+      order.promotion_credits.create({
+          :label => "#{I18n.t(:coupon)} (#{code})",
+          :source => self,
+          :amount => amount
         })
+      order.update!
     end
   end
 
