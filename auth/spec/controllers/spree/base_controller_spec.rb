@@ -9,7 +9,13 @@ describe Spree::BaseController do
       before { controller.stub :current_user => user }
 
       it "should return the authenticated user" do
-        User.stub(:find_by_persistence_token).with(nil).and_return mock_model(User)
+        #User.stub(:find_by_persistence_token).with(nil).and_return mock_model(User)
+        controller.auth_user.should == user
+      end
+
+      it "should return the authenticated user (even if guest_token present)" do
+        session[:guest_token] = "foo"
+        User.stub :find_by_persistence_token => mock_model(User)
         controller.auth_user.should == user
       end
 

@@ -7,8 +7,7 @@ module Spree
     # without requiring that user to be signed in.  This means the guest can later sign up for
     # an acccount (or log in to an existing account.)
     def auth_user
-      return current_user unless session[:guest_token]
-      User.find_by_persistence_token(session[:guest_token])
+      return current_user || User.find_by_persistence_token(session[:guest_token])
     end
 
     # Overrides the default method used by Cancan so that we can use the guest_token in addition to current_user.
