@@ -23,7 +23,7 @@ class Payment < ActiveRecord::Base
   scope :from_creditcard, where(:source_type => 'Creditcard')
   scope :with_state, lambda {|s| where(:state => s)}
   scope :completed, with_state('completed')
-
+  scope :pending, with_state('pending')
 
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
