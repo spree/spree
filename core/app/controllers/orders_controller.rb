@@ -9,6 +9,7 @@ class OrdersController < Spree::BaseController
 
   def update
     @order = current_order
+    @order.user = current_user
     if @order.update_attributes(params[:order])
       @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
       redirect_to cart_path
