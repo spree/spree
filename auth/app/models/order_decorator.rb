@@ -2,10 +2,10 @@ Order.class_eval do
   # Associates the specified user with the order and destroys any previous association with guest user if
   # necessary.
   def associate_user!(user)
-    update_attributes_without_callbacks({
-      :user_id => user,
-      :email => user.email
-    })
+    self.user = user
+    self.email = user.email
+    # disable validations since this can cause issues when associating an incomplete address during the address step
+    save(:validate => false)
   end
 
   def token
