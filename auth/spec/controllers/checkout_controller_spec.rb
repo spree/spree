@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe CheckoutController do
   let(:order) { Order.new }
-  let(:user) { mock_model User, :anonymous? => true }
+  let(:user) { mock_model User, :anonymous? => true, :email => "foo@example.com" }
 
   before do
     order.stub :checkout_allowed? => true
@@ -25,21 +25,28 @@ describe CheckoutController do
     end
 
     context "authenticated user checkout" do
+      before do
+        user.stub :anonymous? => false
+        controller.stub :current_user => user
+      end
+
       it "should proceed to the first checkout step" do
-        controller.stub :current_user => mock_model(User)
+        order.stub :associate_user!
         get :edit, { :state => "confirm" }
         response.should render_template :edit
       end
     end
 
-    context "guest user checkout" do
-      it "should proceed to the first checkout step" do
-        controller.stub :current_user => nil
-        user.stub :anonymous? => false
-        get :edit, { :state => "confirm" }
-        #response.should redirect_to checkout_registration_path
-        response.should render_template :edit
-      end
+  end
+
+  context "with authenticated user" do
+    let(:reg_user) { mock_model(User, :anonymous? => false) }
+    before { controller.stub :current_user => reg_user }
+
+    it "should associate the user with the order" do
+      controller.stub :check_authorization => true
+      order.should_receive(:associate_user!).with(reg_user)
+      get :edit, { :state => "address" }
     end
   end
 
@@ -78,7 +85,7 @@ describe CheckoutController do
   end
 
   context "#update_registration" do
-    let(:user) { user = mock_model(User, :save => true, :email= => nil) }
+    let(:user) { user = mock_model(User, :save => true, :email= => nil, :anonymous? => true) }
 
     before do
       controller.stub :check_authorization => true

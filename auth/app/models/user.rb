@@ -30,6 +30,9 @@ class User < ActiveRecord::Base
     roles.any? { |role| role.name == role_in_question.to_s }
   end
 
+  # Creates an anonymous user.  An anonymous user is basically an auto-generated +User+ account that is created for the customer
+  # behind the scenes and its completely transparently to the customer.  All +Orders+ must have a +User+ so this is necessary
+  # when adding to the "cart" (which is really an order) and before the customer has a chance to provide an email or to register.
   def self.anonymous!
     token = User.generate_token(:persistence_token)
     User.create(:email => "#{token}@example.com", :password => token, :password_confirmation => token, :anonymous => true)

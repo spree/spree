@@ -1,4 +1,5 @@
 CheckoutController.class_eval do
+  before_filter :associate_user
   before_filter :check_authorization
   before_filter :check_registration, :except => [:registration, :update_registration]
 
@@ -17,6 +18,14 @@ CheckoutController.class_eval do
   private
   def check_authorization
     authorize!(:edit, current_order)
+  end
+
+  # Associates the order with the current_user when applicable.  This would only occur if user authenticated before starting
+  # the order (since the authentication process also automatically assigns the newly authenticated user to the order.)
+  def associate_user
+    if current_order.user.anonymous? and current_user
+      current_order.associate_user!(current_user)
+    end
   end
 
   # Introduces a registration step whenever the +registration_step+ preference is true.
