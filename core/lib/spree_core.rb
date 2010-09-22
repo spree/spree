@@ -87,12 +87,7 @@ module SpreeCore
           Gateway::PayPal,
           Gateway::SagePay,
           Gateway::Beanstream,
-          PaymentMethod::Check,
-
-          Calculator::FlatPercentItemTotal,
-          Calculator::FlexiRate,
-          Calculator::PerItem,
-          Calculator::PriceBucket
+          PaymentMethod::Check
         ].each{|gw|
           begin
             gw.register
@@ -109,6 +104,7 @@ module SpreeCore
           Calculator::PerItem,
           Calculator::SalesTax,
           Calculator::Vat,
+          Calculator::PriceBucket
         ].each{|c_model|
           begin
             c_model.register if c_model.table_exists?
