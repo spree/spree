@@ -9,10 +9,14 @@ class Admin::OrdersController < Admin::BaseController
   update do
     flash nil
     wants.html do
-      if @order.bill_address.nil? || @order.ship_address.nil?
-        redirect_to edit_admin_order_url(@order)
+      if !@order.line_items.empty?
+        unless @order.complete?
+          redirect_to admin_orders_checkout_path(@order.number, 'cart')
+        else
+          redirect_to admin_order_path(@order)
+        end
       else
-        redirect_to admin_order_url(@order)
+        render :action => :new
       end
     end
   end

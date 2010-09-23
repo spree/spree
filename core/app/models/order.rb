@@ -75,6 +75,7 @@ class Order < ActiveRecord::Base
   state_machine :initial => 'cart', :use_transactions => false do
 
     event :next do
+      transition :from => 'cart', :to => 'address'
       transition :from => 'address', :to => 'delivery'
       transition :from => 'delivery', :to => 'payment'
       transition :from => 'payment', :to => 'confirm'

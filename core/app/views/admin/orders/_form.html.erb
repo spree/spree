@@ -13,7 +13,7 @@
         <% end %>
         <th class="orders-actions"><%= hook :admin_order_form_line_items_header_actions %></th>
       </tr>
-      <% f.fields_for :line_items do |li_form| %>
+      <%= f.fields_for :line_items do |li_form| %>
         <%= render :partial => "admin/orders/line_item", :locals => { :f => li_form } %>
       <% end %>
     </tbody>

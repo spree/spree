@@ -3,51 +3,54 @@
 <% content_for :sidebar do %>
   <div id="order_tab_summary">
     <h3 id="order_number"><%= t(:order) + " ##{@order.number} " %></h3>
-    <h5 id="order_status">Status: <%= t(@order.state) %></h5>
+    <h5 id="order_status">Status: <%= t("order_state.#{@order.state}") %></h5>
     <h5 id="order_total">Total: <%= number_to_currency(@order.total) %></h5>
     <br class="clear" />
   </div>
   <br class="clear" />
 
   <ul class="sidebar">
-    <%= hook :admin_order_tabs, {:current => current} do %>
-      <% if @order.state == "cart" %>
-        <li <%= ' class="active"' if current == "Order Details" %>>
+    <%= hook :admin_order_tabs do %>
+      <% unless @order.completed? %>
+        <li <%= ' class=active' if @order.state == "cart" && controller.controller_name == "orders" %>>
           <%= link_to t("order_details"), edit_admin_order_url(@order) %>
         </li>
-        <li <%= ' class="active"' if current == "Customer Details" %>>
-            <%= link_to t("customer_details"), admin_checkout_url(@order) %>
+        <li <%= 'class=active' if @order.state == "cart" && controller.controller_name == "checkout" %>>
+          <%= link_to t("email_address"), admin_orders_checkout_path(@order.number, 'cart') %>
         </li>
-        <li <%= ' class="active"' if current == "Shipments" %>>
-           <%= link_to t("shipment"), @order.line_items.empty? || !@order.checkout.valid? ? "javascript:$('form').submit();" : edit_admin_order_shipment_url(@order, @order.shipment) %>
+        <li <%= 'class=active' if @order.state == "address" %>>
+            <%= link_to t("customer_details"), admin_orders_checkout_path(@order.number, 'address') %>
         </li>
-        <li <%= ' class="active"' if current == "Adjustments" %>>
-           <%= link_to t("adjustments"), @order.line_items.empty? || !@order.checkout.valid? ? "javascript:$('form').submit();" : admin_order_adjustments_url(@order) %>
+        <li <%= 'class=active' if @order.state == "delivery" %>>
+           <%= link_to t("shipping_method"), @order.line_items.empty? || @order.shipment.nil? ? "javascript:$('form').submit();" : admin_orders_checkout_path(@order.number, 'delivery') %>
         </li>
-        <li <%= ' class="active"' if current == "Payments" %>>
-           <%= link_to t("payment"), @order.line_items.empty? || !@order.checkout.valid? ? "javascript:$('form').submit();" : new_admin_order_payment_url(@order) %>
+        <li <%= 'class=active' if @order.state == "payment" %>>
+           <%= link_to t("payment"), @order.line_items.empty? ? "javascript:$('form').submit();" : admin_orders_checkout_path(@order.number, 'payment') %>
+        </li>
+        <li <%= 'class=active' if @order.state == "confirm" %>>
+           <%= link_to t("confirm"), @order.line_items.empty? ? "javascript:$('form').submit();" : admin_orders_checkout_path(@order.number, 'confirm') %>
         </li>
 
       <% else %>
-        <li <%= ' class="active"' if current == "Order Details" %>>
+        <li <%= ' class=active' if current == "Order Details" %>>
           <%= link_to t("order_details"), admin_order_url(@order) %>
         </li>
-        <li <%= ' class="active"' if current == "Customer Details" %>>
-          <%= link_to t("customer_details"), admin_checkout_url(@order) %>
+        <li <%= ' class=active' if current == "Customer Details" %>>
+          <%= link_to t("customer_details"), admin_orders_checkout_url(@order) %>
         </li>
-        <li <%= ' class="active"' if current == "Adjustments" %>>
+        <li <%= ' class=active' if current == "Adjustments" %>>
            <%= link_to t("adjustments"), admin_order_adjustments_url(@order) %>
         </li>
-        <li <%= ' class="active"' if current == "Payments" %>>
+        <li <%= ' class=active' if current == "Payments" %>>
            <%= link_to t("payments"), admin_order_payments_url(@order) %>
         </li>
-        <li <%= ' class="active"' if current == "Shipments" %>>
+        <li <%= ' class=active' if current == "Shipments" %>>
            <%= link_to t("shipments"), admin_order_shipments_url(@order) %>
         </li>
-        <li <%= ' class="active"' if current == "Return Authorizations" %>>
+        <li <%= ' class=active' if current == "Return Authorizations" %>>
            <%= link_to t("return_authorizations"), admin_order_return_authorizations_url(@order) %>
         </li>
-        <li <%= ' class="active"' if current == "History" %>>
+        <li <%= ' class=active' if current == "History" %>>
            <%= link_to t("history"), history_admin_order_url(@order) %>
         </li>
       <% end %>

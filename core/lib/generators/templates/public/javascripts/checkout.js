@@ -1,14 +1,14 @@
 (function($){
   $(document).ready(function(){
 
-    $('#checkout_form_address').validate();
+    //$('#checkout_form_address').validate();
 
     $('input#order_use_billing').click(function() {
       if(this.checked) {
-        $('#shipping .inner').hide();
+        $('.shipping-row').hide();
         $('#shipping .inner input, #shipping .inner select').attr('disabled', 'disabled');
       } else {
-        $('#shipping .inner').show();
+        $('.shipping-row').show();
         $('#shipping .inner input, #shipping .inner select').removeAttr('disabled', 'disabled');
       }
     }).triggerHandler('click');

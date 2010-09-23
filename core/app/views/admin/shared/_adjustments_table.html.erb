@@ -1,0 +1,21 @@
+<table class="index">
+  <tr>
+    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
+    <th><%= t("description") %></th>
+    <th><%= t("amount") %></th>
+    <th></th>
+  </tr>
+  <% @order.adjustments.each do |adjustment| %>
+    <tr id="<%= dom_id(adjustment) %>">
+      <td><%= adjustment.created_at.to_s(:date_time24) %></td>
+      <td><%= adjustment.label %></td>
+      <td><%= number_to_currency(adjustment.amount) %></td>
+      <td>
+        <%= link_to "Edit", edit_admin_order_adjustment_path(@order, adjustment) %>
+        &nbsp;
+        <%= link_to "Delete", admin_order_adjustment_path(@order, adjustment) %>
+      </td>
+
+    </tr>
+  <% end %>
+</table>

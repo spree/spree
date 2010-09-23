@@ -1,0 +1,33 @@
+
+<h3><%= t("customer_details") %></h3>
+<fieldset>
+  <legend><%= t('account') %></legend>
+  <table class="index">
+    <tbody>
+      <tr>
+        <td class="lbl-col"><%= f.label :email, t(:email)+':' %></td>
+        <td class="val-col" colspan="3"><%= f.text_field :email, :class => "fullwidth" %></td>
+        <td class="lbl-col"><label><%= t('guest_checkout') %>:</label></td>
+        <td class="val-col" colspan="3">
+          <% unless @order.state == "complete" %>
+            <label class="sub">
+              <%= radio_button_tag :guest_checkout, true, @order.user.nil? %>
+              <%= t("yes") %>
+            </label> &nbsp;
+            <label class="sub">
+              <%= radio_button_tag :guest_checkout, false, !@order.user.nil?, :disabled => @order.state == "in_progress" %>
+              <%= t("no") %>
+            </label>
+            <%= hidden_field_tag :user_id, @order.user_id %>
+          <% else %>
+            <%= @order.user.nil? ? "Yes" : "No" %>
+          <% end %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</fieldset>
+
+<p class="form-buttons">
+  <%= button t('continue') %>
+</p>

@@ -1,0 +1,24 @@
+<fieldset id="payment">
+  <legend><%= t("payment_information") %></legend>
+
+  <% @order.available_payment_methods.each do |method| %>
+  <p>
+    <label>
+      <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.payment_method %> 
+      <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
+    </label>
+  </p>
+  <% end %>
+
+  <ul>
+    <% @order.available_payment_methods.each do |method| %>
+      <li>
+        <%= render "checkout/payment/#{method.method_type}", :payment_method => method %>
+      </li>
+    <% end %>  
+  </ul>
+</fieldset>
+
+<p class="form-buttons">
+  <%= button t('continue') %>
+</p>

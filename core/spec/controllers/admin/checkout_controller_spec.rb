@@ -2,12 +2,15 @@ require 'spec_helper'
 
 describe Admin::CheckoutController do
 
-  let(:order) { mock_model(Order, :checkout_allowed? => true, :complete? => false, :update_attributes => true, :payment? => false).as_null_object }
-  before { Order.stub :find_by_number => order }
+  let(:order) { Order.create :checkout_allowed? => true, :complete? => false, :update_attributes => true, :payment? => false, :state => 'cart', :number => '123', :email => 'test@spree.com' }
+  before do 
+    Order.stub :find_by_number => order
+    controller.stub :current_order => order
+  end
 
   it "should understand checkout routes" do
-    assert_routing("/admin/orders/R123/checkout", {:controller => "admin/checkout", :action => "show", :number => "R123"})
-    assert_routing("/admin/orders/R123/checkout/edit", {:controller => "admin/checkout", :action => "edit", :number => "R123"})
+    assert_routing("/admin/orders/123/checkout", {:controller => "admin/checkout", :action => "update", :order_number => "123", :method => :post})
+    assert_routing("/admin/orders/123/checkout/cart", {:controller => "admin/checkout", :action => "edit", :order_number => "123", :state => "cart", :method => :get})
   end
 
 
@@ -16,15 +19,15 @@ describe Admin::CheckoutController do
       before { order.stub :update_attributes => true }
 
       it "should assign order" do
-        put :update, {:number => "123"}
+        post :update, {:order_number => order.number, :method => :post}
         assigns[:order].should_not be_nil
       end
 
       context "when completed" do
         before { order.stub :completed? => true }
-        it "should redirect to the checkout details" do
-          put :update, {:number => "123"}
-          response.should redirect_to admin_checkout_path(order)
+        it "should redirect to the order details" do
+          post :update, {:order_number => order.number, :method => :post}
+          response.should redirect_to admin_order_path(order)
         end
       end
 
@@ -33,17 +36,19 @@ describe Admin::CheckoutController do
           order.stub :completed? => false, :shipment => mock_model(Shipment)
         end
         it "should redirect to the shipment details" do
-          put :update, {:number => "123"}
-          response.should redirect_to edit_admin_order_shipment_url(order, order.shipment)
+          post :update, {:order_number => order.number, :method => :post}
+          response.should redirect_to admin_orders_checkout_path(order.number, order.state)
         end
       end
     end
 
     context "save unsuccessful" do
-      before { order.stub :update_attributes => false }
+      before do 
+        order.stub :update_attributes => false
+      end
 
       it "should render the checkout form" do
-        put :update, {:number => "123"}
+        post :update, {:order_number => order.number, :method => :post}
         response.should render_template :edit
       end
     end
