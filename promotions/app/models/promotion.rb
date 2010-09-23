@@ -41,7 +41,7 @@ class Promotion < ActiveRecord::Base
       order.promotion_credits.create({
           :label => "#{I18n.t(:coupon)} (#{code})",
           :source => self,
-          :amount => amount
+          :amount => -amount.abs
         })
       order.update!
     end

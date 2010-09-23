@@ -66,9 +66,9 @@ module SpreePromotions
               amount = item_total if amount > item_total
               promotion_credits.reload.clear unless coupon.combine? and promotion_credits.all? { |credit| credit.adjustment_source.combine? }
               promotion_credits.create!({
-                  :adjustment_source => coupon,
-                  :amount => amount,
-                  :description => coupon.description
+                  :source => coupon,
+                  :amount => -amount.abs,
+                  :label => coupon.description
                 })
             end
           end.compact
