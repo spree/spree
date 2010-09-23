@@ -19,7 +19,11 @@
       </li>
     <% end %>  
   </ul>
-
+  <br style='clear:both;' />
+  <p>
+    <label><%= t(:coupon_code) %></label><br />
+    <%= form.text_field :coupon_code, :size => 19 %>
+  </p>
 </fieldset>
 
 <hr class="space" />
