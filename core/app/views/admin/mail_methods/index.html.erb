@@ -1,0 +1,41 @@
+<%= render :partial => 'admin/shared/configuration_menu' %>
+
+<div class='toolbar'>
+  <ul class='actions'>
+    <li>
+      <%= button_link_to t("new_mail_method"), new_object_url, :icon => 'add'  %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+<h1><%= t("mail_methods") %></h1>
+
+<table class="index">
+  <thead>
+    <%= hook :admin_mail_methods_index_headers do %>
+      <th><%= t("environment") %></th>
+      <th><%= t("active") %></th>
+    <% end %>
+    <th>
+      <%= hook :admin_mail_methods_index_header_actions %>
+    </th>
+  </thead>
+  <tbody>
+    <% @mail_methods.each do |method|%>
+      <tr id="<%= dom_id method %>">
+        <%- locals = {:method => method} %>
+        <%= hook :admin_mail_methods_index_rows, locals do %>
+          <td width="100px"><%= method.environment.to_s.titleize %></td>
+          <td width="60px"><%= method.active ? t(:yes) : t(:no) %></td>
+        <% end %>
+        <td width="140px">
+          <%= hook :admin_mail_methods_index_row_actions, locals do %>
+            <%= link_to_edit method %> &nbsp;
+            <%= link_to_delete method %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

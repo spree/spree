@@ -466,7 +466,6 @@ en:
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
   mail_server_preferences: Mail Server Preferences
-  mail_server_settings: "Mail Server Settings"
   make_refund: Make refund
   mark_shipped: "Mark Shipped"
   master_price: "Master Price"
@@ -969,3 +968,6 @@ en:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones
+  new_mail_method: New Mail Method
+  editing_mail_method: Editing Mail Method
+  mail_methods: Mail Methods

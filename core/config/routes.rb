@@ -119,7 +119,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resource :mail_settings
     resource :inventory_settings
     resources :google_analytics
 
@@ -178,6 +177,7 @@ Rails.application.routes.draw do
 
     resources :trackers
     resources :payment_methods
+    resources :mail_methods
   end
 
   #RAILS3 TODO - we should disable this by default

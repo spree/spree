@@ -10,9 +10,6 @@ ActiveRecord::Base.class_eval do
   include Spree::Preferences::ModelHooks
 end
 
-# Initialize mail server settings
-Spree::Preferences::MailSettings.init
-
 # Add extra support goodies (similar to rails active support)
 #class Array #:nodoc:
 #  include Spree::Support::CoreExtensions::Array
