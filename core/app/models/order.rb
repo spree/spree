@@ -48,7 +48,7 @@ class Order < ActiveRecord::Base
   end
 
   def completed?
-    !! completed_at
+    complete?
   end
 
   # Indicates whether or not the user is allowed to proceed to checkout.  Currently this is implemented as a
@@ -67,6 +67,7 @@ class Order < ActiveRecord::Base
   state_machine :initial => 'cart', :use_transactions => false do
 
     event :next do
+      transition :from => 'cart', :to => 'address'
       transition :from => 'address', :to => 'delivery'
       transition :from => 'delivery', :to => 'payment'
       transition :from => 'payment', :to => 'confirm'

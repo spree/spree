@@ -1,4 +1,4 @@
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Customer Details"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipment"} %>
 
 <% if @order.state == "in_progress" %>
   <div id="add-line-item">
@@ -11,8 +11,8 @@
 <% end %>
 
 <%= render "shared/error_messages", :target => @order %>
-<%= form_for(@order, :url => update_admin_checkout_url(@order), :html => { :method => :put}) do |f| %>
-  <%= render :partial => "form", :locals => {:f => f} %>
+<%= form_for(@order, :url => update_admin_checkout_url(@order.state), :html => { :method => :put}) do |f| %>
+  <%= render @order.state, :form => f %>
 <% end %>
 
 <% content_for :head do %>

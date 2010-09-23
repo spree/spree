@@ -20,9 +20,9 @@ Rails.application.routes.draw do
   match '/checkout' => 'checkout#edit', :state => 'address', :as => :checkout
 
   # non-restful admin checkout stuff
-  match '/admin/orders/:number/checkout' => 'admin/checkout#show', :via => :get, :as => :admin_checkout
-  match '/admin/orders/:number/checkout' => 'admin/checkout#update', :via => :put, :as => :update_admin_checkout
-  match '/admin/orders/:number/checkout/edit' => 'admin/checkout#edit', :as => :edit_admin_checkout
+  match '/admin/checkout/update/:state' => 'admin/checkout#update', :as => :update_admin_checkout
+  match '/admin/checkout/:state' => 'admin/checkout#edit', :as => :admin_checkout_state
+  match '/admin/checkout' => 'admin/checkout#edit', :as => :admin_checkout
 
   resources :orders do
     post :populate, :on => :collection
