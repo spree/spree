@@ -37,13 +37,18 @@ From your ssh instance on the production server, make sure you are located in th
 <shell>rake gems:install
 </shell>
 
-This step will make sure any extra necessary gems are properly installed on the production server. Next, we will setup the database, assuming a clean database. 
+This step will make sure any extra necessary gems are properly installed on the production server. Next, we will setup the database, assuming a clean database. To specify the Ruby on Rails environment, append the RAILS_ENV variable to your Rake tasks, e.g., RAILS_ENV=production.
 
 <shell>rake db:migrate
 rake db:admin:create
 </shell>
 
-Now the code and the database are ready for the site. All that is needed from here is to start the production server, which will vary depending on what you are using to serve the code.      
+Now the code and the database are ready for the site. All that is needed from here is to start the production server, which will vary depending on what you are using to serve the code.
+
+You can load the seed data (like countries, etc.) into your database.
+
+<shell>rake db:seed
+</shell>
 
 h3. SSL Considerations
 
