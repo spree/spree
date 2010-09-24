@@ -54,6 +54,7 @@ require 'spree/calculated_adjustments'
 require 'spree/current_order'
 require 'spree/preference_access'
 require 'spree/config'
+require 'spree/mail_settings'
 require 'redirect_legacy_product_url'
 require 'seo_assist'
 
