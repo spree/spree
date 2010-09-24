@@ -15,14 +15,13 @@ Rails.application.routes.draw do
   resources :states, :only => :index
 
   # non-restful checkout stuff
-  match '/checkout/update/:state' => 'checkout#update', :as => :update_checkout
+  match '/checkout/:state' => 'checkout#update', :as => :update_checkout
   match '/checkout/:state' => 'checkout#edit', :as => :checkout_state
   match '/checkout' => 'checkout#edit', :state => 'address', :as => :checkout
 
   # non-restful admin checkout stuff
-  match '/admin/checkout/update/:state' => 'admin/checkout#update', :as => :update_admin_checkout
-  match '/admin/checkout/:state' => 'admin/checkout#edit', :as => :admin_checkout_state
-  match '/admin/checkout' => 'admin/checkout#edit', :as => :admin_checkout
+  match '/admin/orders/:order_number/checkout' => 'admin/checkout#update', :method => :post, :as => :admin_orders_checkout
+  match '/admin/orders/:order_number/checkout/(:state)' => 'admin/checkout#edit', :method => :get, :as => :admin_orders_checkout
 
   resources :orders do
     post :populate, :on => :collection

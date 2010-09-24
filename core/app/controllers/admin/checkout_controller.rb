@@ -10,18 +10,27 @@ class Admin::CheckoutController  < Admin::BaseController
           state_callback(:after)
           if @order.state == "complete"
             flash[:notice] = I18n.t(:order_processed_successfully)
-            redirect_to admin_order_path(@order) and return
+            redirect_to admin_order_path(@order.number) and return
           else
-            redirect_to admin_checkout_state_path(@order.state) and return
+            redirect_to admin_orders_checkout_path(@order.number, @order.state) and return
           end
         end
       end
     rescue Spree::GatewayError
       flash[:error] = I18n.t(:payment_processing_failed)
-      redirect_to admin_checkout_state_path('payment')
+      redirect_to admin_orders_checkout_path(@order.number, 'payment')
       return
     end
     render :edit
+  end
+  
+  def edit
+    @order.state = params[:state] || @order.state
+    unless @order.changed.empty?
+      unless @order.save
+        redirect_to admin_checkout_state_path(@order.number, @order.state) and return
+      end
+    end
   end
   
   private
@@ -40,8 +49,8 @@ class Admin::CheckoutController  < Admin::BaseController
   end
   
   def load_order
-    @order = current_order
-    @order.state = params[:state] if params[:state]
+    @order = Order.find_by_number(params[:order_number])
+    #order.state = params[:state] if params[:state]
     state_callback(:before)
   end
   
@@ -55,7 +64,7 @@ class Admin::CheckoutController  < Admin::BaseController
   end
 
   def before_payment
-    current_order.payments.destroy_all if request.put?
+    @order.payments.destroy_all if request.put?
   end
 
   def after_complete

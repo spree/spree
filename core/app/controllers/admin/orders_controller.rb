@@ -11,7 +11,7 @@ class Admin::OrdersController < Admin::BaseController
     wants.html do
       if !@order.line_items.empty?
         unless @order.complete?
-          redirect_to admin_checkout_path
+          redirect_to admin_orders_checkout_path(@order.number, 'cart')
         else
           redirect_to admin_order_path(@order)
         end
@@ -22,7 +22,7 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def new
-    @order = current_order(true)
+    @order = Order.create
   end
 
   def fire
