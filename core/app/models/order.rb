@@ -48,7 +48,7 @@ class Order < ActiveRecord::Base
   end
 
   def completed?
-    complete?
+    !! completed_at
   end
 
   # Indicates whether or not the user is allowed to proceed to checkout.  Currently this is implemented as a
