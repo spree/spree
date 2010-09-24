@@ -856,9 +856,7 @@ en:
   smtp_password: SMTP Password
   smtp_port: SMTP Port
   smtp_send_all_emails_as_from_following_address: "Send all mails as from the following address."
-  smtp_send_copy_of_orders_to_this_addresses: "Sends a copy of all order's mails to this address. For multiple addresses, separate with commas."
   smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas."
-  smtp_send_order_mails_as_from_following_address: "Send orders mails as from the following address."
   smtp_username: SMTP Username
   sold: Sold
   sort_ordering: "Sort ordering"

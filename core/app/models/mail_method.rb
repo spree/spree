@@ -11,10 +11,8 @@ class MailMethod < ActiveRecord::Base
   preference :smtp_username, :string
   preference :smtp_password, :string
   preference :secure_connection_type, :string, :default => MailMethod::SECURE_CONNECTION_TYPES[0]
-  preference :mails_from, :string
-  preference :mail_bcc, :string
-  preference :order_from, :string, :default => "orders@example.com"
-  preference :order_bcc, :string
+  preference :mails_from, :string, :default => "no-reply@example.com"
+  preference :mail_bcc, :string, :default => "spree@example.com"
 
   validates :environment, :presence => true
 
