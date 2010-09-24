@@ -125,6 +125,7 @@ Rails.application.routes.draw do
     resources :orders do
       member do
         put :fire
+        get :fire
         post :resend
         get :history
       end

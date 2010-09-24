@@ -91,6 +91,7 @@ class Order < ActiveRecord::Base
     after_transition :to => 'complete', :do => :finalize!
     after_transition :to => 'delivery', :do => :create_tax_charge!
     after_transition :to => 'payment', :do => :create_shipment!
+    after_transition :to => 'canceled', :do => :after_cancel
 
   end
 
@@ -355,6 +356,7 @@ class Order < ActiveRecord::Base
   def finalize!
     self.out_of_stock_items = InventoryUnit.sell_units(self) if Spree::Config[:track_inventory_levels]
     update_attribute(:completed_at, Time.now)
+    OrderMailer.confirm_email(self).deliver
   end
 
 
@@ -412,10 +414,6 @@ class Order < ActiveRecord::Base
   #   self.adjustments.each(&:update_amount)
   #   update_attribute(:completed_at, Time.now)
   #
-  #   if email
-  #     OrderMailer.confirm(self).deliver
-  #   end
-  #
   #   begin
   #     @out_of_stock_items = InventoryUnit.sell_units(self)
   #     update_totals unless @out_of_stock_items.empty?
@@ -425,12 +423,6 @@ class Order < ActiveRecord::Base
   #     logger.error "Problem saving authorized order: #{e.message}"
   #     logger.error self.to_yaml
   #   end
-  # end
-  #
-  # def cancel_order
-  #   make_shipments_pending
-  #   restock_inventory
-  #   OrderMailer.cancel(self).deliver
   # end
   #
   # def restock_inventory
@@ -522,6 +514,12 @@ class Order < ActiveRecord::Base
   # Determine if email is required (we don't want validation errors before we hit the checkout)
   def require_email
     return true unless new_record? or state == 'cart'
+  end
+
+  def after_cancel
+    # TODO: make_shipments_pending
+    # TODO: restock_inventory
+    OrderMailer.cancel_email(self).deliver
   end
 
 end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Shipment do
-  # let(:shipment) { Shipment.new }
   let(:order) { mock_model Order, :backordered? => false }
   let(:shipment) { Shipment.new :order => order, :state => 'pending' }
 
@@ -68,6 +67,15 @@ describe Shipment do
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"
     end
+
+    context "when shipment state changes to shipped" do
+      it "should call after_ship" do
+        shipment.state = "pending"
+        shipment.should_receive :after_ship
+        shipment.stub :determine_state => 'shipped'
+        shipment.update!(order)
+      end
+    end
   end
 
   context "when track_inventory is false" do
@@ -113,6 +121,21 @@ describe Shipment do
       it "should validate with no inventory" do
         shipment.valid?.should be_true
       end
+    end
+
+  end
+
+  context "#ship" do
+    before do
+      shipment.state = 'ready'
+      shipment.stub :require_inventory => false
+    end
+
+    it "should send a shipment email" do
+      mail_message = mock "Mail::Message"
+      ShipmentMailer.should_receive(:shipped_email).with(shipment).and_return mail_message
+      mail_message.should_receive :deliver
+      shipment.ship!
     end
 
   end

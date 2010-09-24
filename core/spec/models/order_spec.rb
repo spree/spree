@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Order do
 
-  let(:order) { Order.new }
+  let(:order) { Order.new(:email => "foo@example.com") }
 
   context "#save" do
     it "should create guest user (when no user assigned)" do
@@ -126,6 +126,13 @@ describe Order do
     it "should not sell inventory units if track_inventory_levels is false" do
       Spree::Config.set :track_inventory_levels => false
       InventoryUnit.should_not_receive(:sell_units)
+      order.finalize!
+    end
+
+    it "should send an order confirmation email" do
+      mail_message = mock "Mail::Message"
+      OrderMailer.should_receive(:confirm_email).with(order).and_return mail_message
+      mail_message.should_receive :deliver
       order.finalize!
     end
   end
@@ -409,5 +416,20 @@ describe Order do
       end
     end
 
+  end
+
+  context "#cancel" do
+    before do
+      order.state = 'complete'
+      order.stub :allow_cancel? => true
+    end
+    it "should send a cancel email" do
+      mail_message = mock "Mail::Message"
+      OrderMailer.should_receive(:cancel_email).with(order).and_return mail_message
+      mail_message.should_receive :deliver
+      order.cancel!
+    end
+    it "should restock inventory"
+    it "should change shipment status (unless shipped)"
   end
 end

@@ -50,7 +50,7 @@ class Shipment < ActiveRecord::Base
       transition :from => 'ready', :to => 'shipped'
     end
 
-    #after_transition :to => 'shipped', :do => :transition_order
+    after_transition :to => 'shipped', :do => :after_ship
   end
 
   def editable_by?(user)
@@ -84,7 +84,10 @@ class Shipment < ActiveRecord::Base
   # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
   # yield the correct results.
   def update!(order)
+    old_state = self.state
+    new_state = determine_state(order)
     update_attribute_without_callbacks "state", determine_state(order)
+    after_ship if new_state == 'shipped' and old_state != 'shipped'
   end
 
   private
@@ -136,5 +139,9 @@ class Shipment < ActiveRecord::Base
   def require_inventory
     return false unless Spree::Config[:track_inventory_levels]
     order.completed? && !order.canceled?
+  end
+
+  def after_ship
+    ShipmentMailer.shipped_email(self).deliver
   end
 end
