@@ -26,7 +26,7 @@ class Api::BaseController < Spree::BaseController
       token = request.headers['X-SpreeAPIKey']
       return false unless token
       @current_user = User.find_by_api_key(token)
-      @current_user.has_role? 'admin'
+      #@current_user.has_role? 'admin'
     end
 
     define_method :end_of_association_chain do
@@ -34,7 +34,7 @@ class Api::BaseController < Spree::BaseController
     end
 
     define_method :collection do
-      @collection ||= search.all(:limit => 100)
+      @collection ||= search.do_search.all(:limit => 100)
     end
   end
 
