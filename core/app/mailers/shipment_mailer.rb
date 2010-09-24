@@ -1,7 +1,6 @@
 class ShipmentMailer < ActionMailer::Base
   helper "spree/base"
 
-  #TODO fix default email
   default :from => "sean@railsdog.com"#Spree::Config[:order_from]
 
   def shipped_email(shipment, resend=false)
@@ -11,5 +10,4 @@ class ShipmentMailer < ActionMailer::Base
     mail(:to => shipment.order.email,
          :subject => subject)
   end
-  # TODO -bcc stuff
 end

@@ -13,6 +13,7 @@ class MailMethod < ActiveRecord::Base
   preference :secure_connection_type, :string, :default => MailMethod::SECURE_CONNECTION_TYPES[0]
   preference :mails_from, :string, :default => "no-reply@example.com"
   preference :mail_bcc, :string, :default => "spree@example.com"
+  preference :intercept_email, :default => nil
 
   validates :environment, :presence => true
 

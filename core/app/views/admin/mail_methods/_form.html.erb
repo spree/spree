@@ -39,6 +39,15 @@
         </span>
       </p>
 
+      <p>
+        <label><%= t('intercept_email_address') %></label><br />
+        <%= f.text_field :preferred_intercept_email, :size => 40, :maxlength => 256 %>
+        <br/>
+        <span class="info">
+          <%= t("intercept_email_instructions") %>
+        </span>
+      </p>
+
     </fieldset>
 
   </div>

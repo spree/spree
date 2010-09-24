@@ -1,9 +1,6 @@
 class OrderMailer < ActionMailer::Base
   helper "spree/base"
 
-  #TODO fix default email
-  default :from => "sean@railsdog.com"#Spree::Config[:order_from]
-
   def confirm_email(order, resend=false)
     @order = order
     subject = (resend ? "[RESEND] " : "")
@@ -19,5 +16,4 @@ class OrderMailer < ActionMailer::Base
     mail(:to => order.email,
          :subject => subject)
   end
-  # TODO -bcc stuff
 end

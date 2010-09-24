@@ -1,3 +1,5 @@
+require 'mail'
+
 # Spree Configuration
 SESSION_KEY = '_spree_session_id'
 #require 'spree/support/core_ext/array/conversions'
@@ -11,6 +13,9 @@ ActiveRecord::Base.class_eval do
 end
 
 Spree::MailSettings.init
+
+Mail.register_interceptor(Spree::MailInterceptor)
+
 # Add extra support goodies (similar to rails active support)
 #class Array #:nodoc:
 #  include Spree::Support::CoreExtensions::Array

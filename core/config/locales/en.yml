@@ -1,5 +1,5 @@
 ---
-en:
+en: 
   'no': "No"
   'yes': "Yes"
   5_biggest_spenders: "5 Biggest Spenders"
@@ -9,7 +9,7 @@ en:
   account: Account
   account_updated: "Account updated!"
   action: Action
-  actions:
+  actions: 
     cancel: Cancel
     create: Create
     destroy: Destroy
@@ -18,9 +18,9 @@ en:
     new: New
     update: Update
   active: "Active"
-  activerecord:
-    attributes:
-      address:
+  activerecord: 
+    attributes: 
+      address: 
         address1: Address
         address2: "Address (contd.)"
         city: City
@@ -32,8 +32,8 @@ en:
         phone: Phone
         state: "State"
         zipcode: "Zip Code"
-      checkout:
-        bill_address:
+      checkout: 
+        bill_address: 
           address1: "Billing address street"
           city: "Billing address city"
           firstname: "Billing address first name"
@@ -41,7 +41,7 @@ en:
           phone: "Billing address phone"
           state: "Billing address state"
           zipcode: "Billing address zipcode"
-        ship_address:
+        ship_address: 
           address1: "Shipping address street"
           city: "Shipping address city"
           firstname: "Shipping address first name"
@@ -49,24 +49,24 @@ en:
           phone: "Shipping address phone"
           state: "Shipping address state"
           zipcode: "Shipping address zipcode"
-      country:
+      country: 
         iso: ISO
         iso3: ISO3
         iso_name: "ISO Name"
         name: Name
         numcode: "ISO Code"
-      creditcard:
+      creditcard: 
         cc_type: Type
         month: Month
         number: Number
         verification_value: "Verification Value"
         year: Year
-      inventory_unit:
+      inventory_unit: 
         state: State
-      line_item:
+      line_item: 
         price: Price
         quantity: Quantity
-      order:
+      order: 
         checkout_complete: "Checkout Complete"
         ip_address: "IP Address"
         item_total: "Item Total"
@@ -74,7 +74,7 @@ en:
         special_instructions: "Special Instructions"
         state: State
         total: Total
-      product:
+      product: 
         available_on: "Available On"
         cost_price: "Cost Price"
         description: Description
@@ -83,41 +83,41 @@ en:
         on_hand: "On Hand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
-      product_group:
+      product_group: 
         name: Name
         product_count: "Product count"
         product_scopes: "Product scopes"
         products: "Products"
         url: URL
-      product_scope:
+      product_scope: 
         arguments: "Arguments"
         description: "Description"
-      property:
+      property: 
         name: Name
         presentation: Presentation
-      prototype:
+      prototype: 
         name: Name
-      return_authorization:
+      return_authorization: 
         amount: Amount
-      role:
+      role: 
         name: Name
-      state:
+      state: 
         abbr: Abbreviation
         name: Name
-      tax_category:
+      tax_category: 
         description: Description
         name: Name
-      tax_rate:
+      tax_rate: 
         amount: Rate
-      taxon:
+      taxon: 
         name: Name
         permalink: Permalink
         position: Position
-      taxonomy:
+      taxonomy: 
         name: Name
-      user:
+      user: 
         email: Email
-      variant:
+      variant: 
         cost_price: "Cost Price"
         depth: Depth
         height: Height
@@ -125,86 +125,86 @@ en:
         sku: SKU
         weight: Weight
         width: Width
-      zone:
+      zone: 
         description: Description
         name: Name
-    models:
-      address:
+    models: 
+      address: 
         one: Address
         other: Addresses
-      cheque_payment:
+      cheque_payment: 
         one: Cheque Payment
         other: Cheque Payments
-      country:
+      country: 
         one: Country
         other: Countries
-      creditcard:
+      creditcard: 
         one: "Credit Card"
         other: "Credit Cards"
-      creditcard_payment:
+      creditcard_payment: 
         one: "Credit Card Payment"
         other: "Credit Card Payments"
-      creditcard_txn:
+      creditcard_txn: 
         one: "Credit Card Transaction"
         other: "Credit Card Transactions"
-      inventory_unit:
+      inventory_unit: 
         one: "Inventory Unit"
         other: "Inventory Units"
-      line_item:
+      line_item: 
         one: "Line Item"
         other: "Line Items"
-      order:
+      order: 
         one: Order
         other: Orders
-      payment:
+      payment: 
         one: Payment
         other: Payments
-      product:
+      product: 
         one: Product
         other: Products
-      product_group:
+      product_group: 
         one: "Product group"
         other: "Product groups"
-      property:
+      property: 
         one: Property
         other: Properties
-      prototype:
+      prototype: 
         one: Prototype
         other: Prototypes
-      return_authorization:
+      return_authorization: 
         one: Return Authorization
         other: Return Authorizations
-      role:
+      role: 
         one: Roles
         other: Roles
-      shipment:
+      shipment: 
         one: Shipment
         other: Shipments
-      shipping_category:
+      shipping_category: 
         one: "Shipping Category"
         other: "Shipping Categories"
-      state:
+      state: 
         one: State
         other: States
-      tax_category:
+      tax_category: 
         one: "Tax Category"
         other: "Tax Categories"
-      tax_rate:
+      tax_rate: 
         one: "Tax Rate"
         other: "Tax Rates"
-      taxon:
+      taxon: 
         one: Taxon
         other: Taxons
-      taxonomy:
+      taxonomy: 
         one: Taxonomy
         other: Taxonomies
-      user:
+      user: 
         one: User
         other: Users
-      variant:
+      variant: 
         one: Variant
         other: Variants
-      zone:
+      zone: 
         one: Zone
         other: Zones
   add: Add
@@ -341,6 +341,7 @@ en:
   edit: Edit
   editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"
+  editing_mail_method: Editing Mail Method
   editing_option_type: "Editing Option Type"
   editing_option_types: "Editing Option Types"
   editing_payment_method: Editing Payment Method
@@ -422,6 +423,8 @@ en:
   included_in_this_shipment: Included in this Shipment
   instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
+  intercept_email_address: Intercept Email Address
+  intercept_email_instructions: "Override email recipient and replace with this address."
   invalid_search: "Invalid search criteria."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"
@@ -465,6 +468,7 @@ en:
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
   mail_delivery_not_enabled: "Mail delivery is not enabled"
+  mail_methods: Mail Methods
   mail_server_preferences: Mail Server Preferences
   make_refund: Make refund
   mark_shipped: "Mark Shipped"
@@ -485,6 +489,7 @@ en:
   new_category: "New category"
   new_customer: "New Customer"
   new_image: "New Image"
+  new_mail_method: New Mail Method
   new_option_type: "New Option Type"
   new_option_value: "New Option Value"
   new_order: "New Order"
@@ -521,7 +526,7 @@ en:
   not: not
   not_shown: "Not Shown"
   note: Note
-  notice_messages:
+  notice_messages: 
     option_type_removed: "Succesfully removed option type."
     product_cloned: "Product has been cloned"
     product_deleted: "Product has been deleted"
@@ -549,8 +554,8 @@ en:
   order_operation_authorize: Authorize
   order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Your order has been processed successfully"
-  order_state:
-    # keys correspond to Checkout state names:
+  order_state: 
+    # keys correspond to Checkout state names: 
     address: address
     awaiting_return: awaiting return
     canceled: canceled
@@ -592,7 +597,7 @@ en:
   payment_methods_setting_description: Configure methods customers can use to pay
   payment_processing_failed: "Payment could not be processed, please check the details you entered"
   payment_state: Payment State
-  payment_states:
+  payment_states: 
     balance_due: balance due
     credit_owed: credit owed
     paid: paid
@@ -621,117 +626,117 @@ en:
   product_groups: Product Groups
   product_has_no_description: This product has no description
   product_properties: "Product Properties"
-  product_scopes:
-    groups:
-      price:
+  product_scopes: 
+    groups: 
+      price: 
         description: "Scopes for selecting products based on Price"
         name: Price
-      search:
+      search: 
         description: "Scopes for selecting products based on name, keywords and description of product"
         name: "Text search"
-      taxon:
+      taxon: 
         description: "Scopes for selecting products based on Taxons"
         name: Taxon
-      values:
+      values: 
         description: "Scopes for selecting products based on option and property values"
         name: Values
-    scopes:
-      ascend_by_master_price:
+    scopes: 
+      ascend_by_master_price: 
         name: Ascend by product master price
-      ascend_by_name:
+      ascend_by_name: 
         name: Ascend by product name
-      ascend_by_updated_at:
+      ascend_by_updated_at: 
         name: Ascend by actualization date
-      descend_by_master_price:
+      descend_by_master_price: 
         name: Descend by product master price
-      descend_by_name:
+      descend_by_name: 
         name: Descend by product name
-      descend_by_popularity:
+      descend_by_popularity: 
         name: Sort by popularity(most popular first)
-      descend_by_updated_at:
+      descend_by_updated_at: 
         name: Descend by actualization date
-      in_name:
-        args:
+      in_name: 
+        args: 
           words: Words
         description: "(separated by space or comma)"
         name: "Product name have following"
         sentence: product name contain <em>%s</em>
-      in_name_or_description:
-        args:
+      in_name_or_description: 
+        args: 
           words: Words
         description: "(separated by space or comma)"
         name: "Product name or description have following"
         sentence: name or description contain <em>%s</em>
-      in_name_or_keywords:
-        args:
+      in_name_or_keywords: 
+        args: 
           words: Words
         description: "(separated by space or comma)"
         name: "Product name or meta keywords have following"
         sentence: name or keywords contain <em>%s</em>
-      in_taxons:
-        args:
+      in_taxons: 
+        args: 
           "taxon_names": "Taxon names"
         description: "Taxon names have to be separated by comma or space(eg. adidas,shoes)"
         name: "In taxons and all their descendants"
         sentence: in <em>%s</em> and all their descendants
-      master_price_gte:
-        args:
+      master_price_gte: 
+        args: 
           amount: Amount
         description: ""
         name: "Master price greater or equal to"
         sentence: price greater or equal to <em>%.2f</em>
-      master_price_lte:
-        args:
+      master_price_lte: 
+        args: 
           amount: Amount
         description: ""
         name: "Master price lesser or equal to"
         sentence: price less or equal to <em>%.2f</em>
-      price_between:
-        args:
+      price_between: 
+        args: 
           high: High
           low: Low
         description: ""
         name: "Price between"
         sentence: price between <em>%.2f</em> and <em>%.2f</em>
-      taxons_name_eq:
-        args:
+      taxons_name_eq: 
+        args: 
           taxon_name: "Taxon name"
         description: "In specific taxon - without descendants"
         name: "In Taxon(without descendants)"
         sentence: in <em>%s</em>
-      with:
-        args:
+      with: 
+        args: 
           value: Value
         description: "Selects all products that have at least one variant that have specified value as either option or property (eg. red)"
         name: With value
         sentence: with value <em>%s</em>
-      with_ids:
-        args:
+      with_ids: 
+        args: 
           ids: IDs
         description: "Select specific products"
         name: Products with IDs
         sentence: with IDs <em>%s</em>
-      with_option:
-        args:
+      with_option: 
+        args: 
           option: Option
         description: "Selects all products that have specified option(eg. color)"
         name: "With option"
         sentence: with option <em>%s</em>
-      with_option_value:
-        args:
+      with_option_value: 
+        args: 
           option: Option
           value: Value
         description: "Selects all products that have at least one variant with specified option and value(eg. color:red)"
         name: "With option and value"
         sentence: with option <em>%s</em> and value <em>%s</em>
-      with_property:
-        args:
+      with_property: 
+        args: 
           property: Property
         description: "Selects all products that have specified property(eg. weight)"
         name: "With property"
         sentence: with property <em>%s</em>
-      with_property_value:
-        args:
+      with_property_value: 
+        args: 
           property: Property
           value: Value
         description: "Selects all products that have at least one variant with specified property and value(eg. weight:10kg)"
@@ -765,7 +770,7 @@ en:
   resend_confirmation_instructions: "Resend confirmation instructions"
   resend_unlock_instructions: "Resend unlock instructions"
   reset_password: "Reset my password"
-  resource_controller:
+  resource_controller: 
     member_object_not_found: "Member object not found."
     successfully_created: "Successfully created!"
     successfully_removed: "Successfully removed!"
@@ -814,7 +819,7 @@ en:
   shipment_details: Shipment Details
   shipment_number: "Shipment #"
   shipment_state: Shipment State
-  shipment_states:
+  shipment_states: 
     backorder: backorder
     partial: partial
     pending: pending
@@ -861,7 +866,7 @@ en:
   sold: Sold
   sort_ordering: "Sort ordering"
   special_instructions: "Special Instructions"
-  spree:
+  spree: 
     date: Date
     time: Time
   ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
@@ -940,7 +945,7 @@ en:
   user_details: "User Details"
   users: Users
   validate_on_profile_create: Validate on profile create
-  validation:
+  validation: 
     cannot_be_less_than_shipped_units: "cannot be less than the number of shipped units."
     is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
     must_be_int: "must be an integer"
@@ -966,6 +971,3 @@ en:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones
-  new_mail_method: New Mail Method
-  editing_mail_method: Editing Mail Method
-  mail_methods: Mail Methods
