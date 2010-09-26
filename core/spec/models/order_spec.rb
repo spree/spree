@@ -293,6 +293,15 @@ describe Order do
       end
     end
 
+    context "when there are update hooks" do
+      before { Order.register_update_hook :foo }
+      after { Order.update_hooks.clear }
+      it "should call each of the update hooks" do
+        order.should_receive :foo
+        order.update!
+      end
+    end
+
     it "should set the correct shipment_state (when there are no shipments)" do
       order.update!
       order.shipment_state.should == nil
