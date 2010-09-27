@@ -11,8 +11,7 @@ class CheckoutController < Spree::BaseController
       if @order.update_attributes(object_params)
         if @order.next
           state_callback(:after)
-          @order.next if @order.state == "adjustments"
-          if @order.state == "complete"
+          if @order.state == "complete" or @order.completed?
             flash[:notice] = I18n.t(:order_processed_successfully)
             redirect_to completion_route and return
           else
