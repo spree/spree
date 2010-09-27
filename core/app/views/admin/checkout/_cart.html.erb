@@ -5,8 +5,8 @@
   <table class="index">
     <tbody>
       <tr>
-        <td class="lbl-col"><%= form.label :email, t(:email)+':' %></td>
-        <td class="val-col" colspan="3"><%= form.text_field :email, :class => "fullwidth" %></td>
+        <td class="lbl-col"><%= f.label :email, t(:email)+':' %></td>
+        <td class="val-col" colspan="3"><%= f.text_field :email, :class => "fullwidth" %></td>
         <td class="lbl-col"><label><%= t('guest_checkout') %>:</label></td>
         <td class="val-col" colspan="3">
           <% unless @order.state == "complete" %>

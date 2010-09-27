@@ -563,6 +563,7 @@ en:
     complete: complete
     confirm: confirm
     delivery: delivery
+    adjustments: adjustments
     payment: payment
     resumed : resumed
     returned: returned

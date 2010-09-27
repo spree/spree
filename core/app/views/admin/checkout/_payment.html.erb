@@ -10,16 +10,13 @@
   </p>
   <% end %>
 
-  <ul >
+  <ul>
     <% @order.available_payment_methods.each do |method| %>
       <li>
-
-          <%= render "checkout/payment/#{method.method_type}", :payment_method => method %>
-
+        <%= render "checkout/payment/#{method.method_type}", :payment_method => method %>
       </li>
     <% end %>  
   </ul>
-
 </fieldset>
 
 <p class="form-buttons">

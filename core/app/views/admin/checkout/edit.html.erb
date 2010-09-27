@@ -1,4 +1,4 @@
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipment"} %>
+<%= render :partial => 'admin/shared/order_tabs' %>
 
 <% if @order.state == "in_progress" %>
   <div id="add-line-item">
@@ -12,10 +12,9 @@
 
 <%= render "shared/error_messages", :target => @order %>
 <%= form_for(@order, :url => admin_orders_checkout_path(@order.number)) do |f| %>
-  <%= render @order.state, :form => f %>
+  <%= render @order.state, :f => f %>
 <% end %>
 
 <% content_for :head do %>
-  <%= javascript_include_tag 'admin/checkouts/edit.js' %>
-  <%= stylesheet_link_tag 'admin/edit_checkouts.css' %>
+  <%= javascript_include_tag  'checkout', '/states' %>
 <% end %>

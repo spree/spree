@@ -1,34 +1,4 @@
-<div class='toolbar'>
-  <ul class='actions'>
-    <li>
-      <%= button_link_to t("new_adjustment"), new_admin_order_adjustment_url(@order), :icon => 'add' %>
-    </li>
-  </ul>
-  <br class='clear' />
-</div>
-
+<%= render 'admin/shared/new_adjustment_button' %>
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Adjustments"} %>
-
-<table class="index">
-  <tr>
-    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-    <th><%= t("description") %></th>
-    <th><%= t("amount") %></th>
-    <th></th>
-  </tr>
-  <% @adjustments.each do |adjustment| %>
-    <tr id="<%= dom_id(adjustment) %>">
-      <td><%= adjustment.created_at.to_s(:date_time24) %></td>
-      <td><%= adjustment.label %></td>
-      <td><%= number_to_currency(adjustment.amount) %></td>
-      <td>
-        <%= link_to_edit adjustment %>
-        &nbsp;
-        <%= link_to_delete adjustment %>
-      </td>
-
-    </tr>
-  <% end %>
-</table>
-
+<%= render 'admin/shared/adjustments_table' %>
 <%= button_link_to t('continue'), @order.cart? ? new_admin_order_payment_url(@order) : admin_orders_url %>
