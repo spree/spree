@@ -74,7 +74,7 @@ describe Order do
 
       before do
         Shipment.stub(:create).and_return(mock_model(Shipment).as_null_object)
-        order.state = "delivery"
+        order.state = "adjustments"
         order.stub :shipping_method => shipping_method
         order.stub :inventory_units => units
       end

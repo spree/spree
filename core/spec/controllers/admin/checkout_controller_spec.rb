@@ -9,9 +9,8 @@ describe Admin::CheckoutController do
   end
 
   it "should understand checkout routes" do
-    assert_routing("/admin/checkout", {:controller => "admin/checkout", :action => "edit"})
-    assert_routing("/admin/checkout/cart", {:controller => "admin/checkout", :action => "edit", :state => 'cart'})
-    assert_routing("/admin/checkout/update/cart", {:controller => "admin/checkout", :action => "update", :state => 'cart'})
+    assert_routing("/admin/orders/123/checkout", {:controller => "admin/checkout", :action => "update", :order_number => "123", :method => :post})
+    assert_routing("/admin/orders/123/checkout/cart", {:controller => "admin/checkout", :action => "edit", :order_number => "123", :state => "cart", :method => :get})
   end
 
 
@@ -20,14 +19,14 @@ describe Admin::CheckoutController do
       before { order.stub :update_attributes => true }
 
       it "should assign order" do
-        put :update, {:state => "cart"}
+        post :update, {:order_number => order.number, :method => :post}
         assigns[:order].should_not be_nil
       end
 
       context "when completed" do
         before { order.stub :completed? => true }
         it "should redirect to the order details" do
-          put :update, {:state => "confirm"}
+          post :update, {:order_number => order.number, :method => :post}
           response.should redirect_to admin_order_path(order)
         end
       end
@@ -37,8 +36,8 @@ describe Admin::CheckoutController do
           order.stub :completed? => false, :shipment => mock_model(Shipment)
         end
         it "should redirect to the shipment details" do
-          put :update, {:state => "cart"}
-          response.should redirect_to admin_checkout_state_path(order.state)
+          post :update, {:order_number => order.number, :method => :post}
+          response.should redirect_to admin_orders_checkout_path(order.number, order.state)
         end
       end
     end
@@ -49,7 +48,7 @@ describe Admin::CheckoutController do
       end
 
       it "should render the checkout form" do
-        put :update, {:state => "cart"}
+        post :update, {:order_number => order.number, :method => :post}
         response.should render_template :edit
       end
     end

@@ -8,7 +8,7 @@ class Admin::CheckoutController  < Admin::BaseController
       if @order.update_attributes(object_params)
         if @order.next
           state_callback(:after)
-          if @order.state == "complete"
+          if @order.completed?
             flash[:notice] = I18n.t(:order_processed_successfully)
             redirect_to admin_order_path(@order.number) and return
           else
