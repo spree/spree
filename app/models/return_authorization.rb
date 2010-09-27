@@ -1,7 +1,7 @@
 class ReturnAuthorization < ActiveRecord::Base
   belongs_to :order
   has_many :inventory_units
-  before_save :generate_number
+  before_create :generate_number
 
   validates_presence_of :order
   validates_numericality_of :amount
@@ -51,6 +51,8 @@ class ReturnAuthorization < ActiveRecord::Base
   end
 
   def generate_number
+    return if self.number
+
     record = true
     while record
       random = "RMA#{Array.new(9){rand(9)}.join}"
