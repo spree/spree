@@ -21,7 +21,9 @@ module SpreePromotions
       end
 
       Order.class_eval do
-        
+
+        has_many :promotion_credits, :conditions => "source_type='Promotion'"
+
         attr_accessible :coupon_code
         attr_accessor :coupon_code
         before_save :process_coupon_code, :if => "@coupon_code"
@@ -31,10 +33,6 @@ module SpreePromotions
           if coupon
             coupon.create_discount(self)
           end
-        end
-        
-        def promotion_credits
-          adjustments.where("source_type='Promotion'")
         end
 
         def products

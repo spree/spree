@@ -293,6 +293,15 @@ describe Order do
       end
     end
 
+    context "when there are update hooks" do
+      before { Order.register_update_hook :foo }
+      after { Order.update_hooks.clear }
+      it "should call each of the update hooks" do
+        order.should_receive :foo
+        order.update!
+      end
+    end
+
     it "should set the correct shipment_state (when there are no shipments)" do
       order.update!
       order.shipment_state.should == nil
@@ -402,7 +411,7 @@ describe Order do
 
     [PENDING, BACKORDER, READY].each do |shipment_state|
       it "should be true if shipment_state is #{shipment_state}" do
-        order.state = COMPLETE
+        order.stub :completed? => true
         order.shipment_state = shipment_state
         order.can_cancel?.should be_true
       end
@@ -410,7 +419,7 @@ describe Order do
 
     (SHIPMENT_STATES - [PENDING, BACKORDER, READY]).each do |shipment_state|
       it "should be false if shipment_state is #{shipment_state}" do
-        order.state = COMPLETE
+        order.stub :completed? => true
         order.shipment_state = shipment_state
         order.can_cancel?.should be_false
       end
@@ -420,7 +429,7 @@ describe Order do
 
   context "#cancel" do
     before do
-      order.state = 'complete'
+      order.stub :completed? => true
       order.stub :allow_cancel? => true
     end
     it "should send a cancel email" do

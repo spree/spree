@@ -1,4 +1,4 @@
-class PromotionCredit < ::Credit
+class PromotionCredit < ::Adjustment
   belongs_to :order
   scope :with_order, :conditions => "order_id IS NOT NULL"
 

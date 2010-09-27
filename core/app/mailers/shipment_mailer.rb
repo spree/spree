@@ -1,8 +1,6 @@
 class ShipmentMailer < ActionMailer::Base
   helper "spree/base"
 
-  default :from => "sean@railsdog.com"#Spree::Config[:order_from]
-
   def shipped_email(shipment, resend=false)
     @shipment = shipment
     subject = (resend ? "[RESEND] " : "")

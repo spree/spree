@@ -43,6 +43,14 @@ class Order < ActiveRecord::Base
 
   attr_accessor :out_of_stock_items
 
+  class_inheritable_accessor :update_hooks
+  self.update_hooks = Set.new
+
+  # Use this method in other gems that wish to register their own custom logic that should be called after Order#updat
+  def self.register_update_hook(hook)
+    self.update_hooks.add(hook)
+  end
+
   def to_param
     number.to_s.parameterize.upcase
   end
@@ -125,6 +133,8 @@ class Order < ActiveRecord::Base
       :payment_total => payment_total,
       :total => total
     })
+
+    update_hooks.each { |hook| self.send hook }
   end
 
   def restore_state
@@ -201,7 +211,7 @@ class Order < ActiveRecord::Base
   # end
 
   def allow_cancel?
-    return false unless state == "complete"
+    return false unless completed?
     %w{ready backorder pending}.include? shipment_state
   end
 

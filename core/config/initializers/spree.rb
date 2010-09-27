@@ -12,9 +12,10 @@ ActiveRecord::Base.class_eval do
   include Spree::Preferences::ModelHooks
 end
 
-Spree::MailSettings.init
-
-Mail.register_interceptor(Spree::MailInterceptor)
+if MailMethod.table_exists?
+  Spree::MailSettings.init
+  Mail.register_interceptor(Spree::MailInterceptor)
+end
 
 # Add extra support goodies (similar to rails active support)
 #class Array #:nodoc:
