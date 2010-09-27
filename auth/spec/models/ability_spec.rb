@@ -6,8 +6,13 @@ class FooAbility
   include CanCan::Ability
 
   def initialize(user)
+
     # allow anyone to perform index on Order
     can :index, Order
+    # allow anyone to update an Order with id of 1
+    can :update, Order do |order|
+      order.id == 1
+    end
   end
 end
 
@@ -24,7 +29,7 @@ describe Ability do
     end
     it "should apply the registered abilities permissions" do
       Ability.register_ability(FooAbility)
-      Ability.new(user).can?(:index, Order).should be_true
+      Ability.new(user).can?(:update, mock_model(Order, :id => 1)).should be_true
     end
   end
 
