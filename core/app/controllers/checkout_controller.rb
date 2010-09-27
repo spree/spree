@@ -11,6 +11,7 @@ class CheckoutController < Spree::BaseController
       if @order.update_attributes(object_params)
         if @order.next
           state_callback(:after)
+          @order.next if @order.state == "adjustments"
           if @order.state == "complete"
             flash[:notice] = I18n.t(:order_processed_successfully)
             redirect_to completion_route and return
@@ -40,7 +41,7 @@ class CheckoutController < Spree::BaseController
       if params[:payment_source].present? && source_params = params.delete(:payment_source)[params[:order][:payments_attributes].first[:payment_method_id].underscore]
         params[:order][:payments_attributes].first[:source_attributes] = source_params
       end
-      if (params[:order][:payments_attributes])
+      if (params[:order][:payments_attributes]) 
         params[:order][:payments_attributes].first[:amount] = @order.total
       end
     end
