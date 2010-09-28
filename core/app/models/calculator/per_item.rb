@@ -10,7 +10,7 @@ class Calculator::PerItem < Calculator
     ShippingMethod.register_calculator(self)
   end
 
-  def compute(line_items=nil)
-    self.preferred_amount * line_items.length
+  def compute(object=nil)
+    self.preferred_amount * object.line_items.length
   end
 end
