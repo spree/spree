@@ -77,8 +77,7 @@ class Order < ActiveRecord::Base
     event :next do
       transition :from => 'cart', :to => 'address'
       transition :from => 'address', :to => 'delivery'
-      transition :from => 'delivery', :to => 'adjustments'
-      transition :from => 'adjustments', :to => 'payment'
+      transition :from => 'delivery', :to => 'payment'
       transition :from => 'payment', :to => 'confirm'
       transition :from => 'confirm', :to => 'complete'
     end
