@@ -1,5 +1,5 @@
 <% if current_user %>
-  <li><%= link_to t('my_account'), edit_user_path(current_user) %></li>
+  <li><%= link_to t('my_account'), account_path %></li>
   <li><%= link_to t('logout'), logout_path %></li>
 <% else %>
   <li><%= link_to t('log_in'), login_path %></li>
