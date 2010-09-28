@@ -1,4 +1,5 @@
 Spree::BaseController.class_eval do
+  before_filter :check_guest
 
   include Spree::AuthUser
 
@@ -6,7 +7,10 @@ Spree::BaseController.class_eval do
   rescue_from CanCan::AccessDenied, :with => :unauthorized
 
   private
-
+  # authorize the user as a guest if the have a valid token
+  def check_guest
+    session[:guest_token] ||= params[:token]
+  end
 
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
