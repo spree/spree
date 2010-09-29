@@ -22,6 +22,7 @@ class Adjustment < ActiveRecord::Base
 
   scope :tax, lambda { where(:label => I18n.t(:tax)) }
   scope :shipping, lambda { where(:label => I18n.t(:shipping)) }
+  scope :optional, where(:mandatory => false)
 
   # update the order totals, etc.
   after_save {order.update!}
@@ -35,12 +36,12 @@ class Adjustment < ActiveRecord::Base
   end
 
   # Tells the adjustment that its time to update itself.  Adjustments will delegate this request to their Originator
-  # when present, but only if +frozen+ is false.  Adjustments that are +frozen+ will never change their amount.
+  # when present, but only if +locked+ is false.  Adjustments that are +locked+ will never change their amount.
   # The new adjustment amount will be set by by the +originator+ and is not automatically saved.  This makes it save
   # to use this method in an after_save hook for other models without causing an infinite recursion problem.  If there
   # is no +originator+ then this method will have no effect.
   def update!
-    return if frozen? or originator.nil?
+    return if locked? or originator.nil?
     originator.update_adjustment(self, source)
   end
 end

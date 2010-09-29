@@ -366,6 +366,8 @@ class Order < ActiveRecord::Base
   def finalize!
     self.out_of_stock_items = InventoryUnit.sell_units(self) if Spree::Config[:track_inventory_levels]
     update_attribute(:completed_at, Time.now)
+    # lock any optional adjustments (coupon promotions, etc.)
+    adjustments.optional.each { |adjustment| adjustment.update_attribute("locked", true) }
     OrderMailer.confirm_email(self).deliver
   end
 

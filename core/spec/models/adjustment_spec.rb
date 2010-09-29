@@ -24,8 +24,8 @@ describe Adjustment do
         originator.stub :update_amount => true
         adjustment.stub :originator => originator
       end
-      it "should do nothing when frozen" do
-        adjustment.frozen = true
+      it "should do nothing when locked" do
+        adjustment.locked = true
         originator.should_not_receive(:update_adjustment)
         adjustment.update!
       end

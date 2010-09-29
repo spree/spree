@@ -135,6 +135,14 @@ describe Order do
       mail_message.should_receive :deliver
       order.finalize!
     end
+
+    it "should freeze optional adjustments" do
+      OrderMailer.stub_chain :confirm_email, :deliver
+      adjustment = mock_model(Adjustment)
+      order.stub_chain :adjustments, :optional => [adjustment]
+      adjustment.should_receive(:update_attribute).with("locked", true)
+      order.finalize!
+    end
   end
 
   context "#process_payments!" do
