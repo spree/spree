@@ -294,7 +294,7 @@ class Order < ActiveRecord::Base
   def update_totals!
     update_totals
 
-    payments_total = self.payments.total
+    payments_total = self.payments.reload.total
     if payments_total < self.total
       #Total is higher so balance_due
       self.under_paid
