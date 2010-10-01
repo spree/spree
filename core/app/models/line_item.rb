@@ -13,7 +13,7 @@ class LineItem < ActiveRecord::Base
   validates :price, :numericality => true
   # validate :meta_validation_of_quantities
 
-  attr_accessible :quantity, :variant_id, :order_id
+  attr_accessible :quantity
 
   # update the order totals, etc.
   after_save {order.update!}

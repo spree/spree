@@ -2,8 +2,6 @@
   <td>
     <%- locals = {:item_form => item_form, :variant => variant, :line_item => line_item} %>
     <%= hook :cart_item_image, locals do %>
-      <%= item_form.hidden_field :variant_id %>
-      <%= item_form.hidden_field :order_id %>
       <% if variant.images.length == 0 %>
         <%= small_image(variant.product) %>
       <% else %>
@@ -25,7 +23,7 @@
   </td>
   <td>
     <%= hook :cart_item_quantity, locals do %>
-      <%= item_form.text_field :quantity, :size => 3 %>
+      <%= item_form.text_field :quantity, :size => 3, :class => "line_item_quantity" %>
     <% end %>
   </td>
 
