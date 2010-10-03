@@ -9,7 +9,7 @@ class OrderMailerTest < ActionMailer::TestCase
 
     context "confirm email" do    
       setup do
-        OrderMailer.confirm(@order).deliver
+        OrderMailer.confirm_email(@order).deliver
       end
       
       should "can be successfully sent" do
