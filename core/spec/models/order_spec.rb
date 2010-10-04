@@ -3,6 +3,9 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Order do
 
   let(:order) { Order.new(:email => "foo@example.com") }
+  let(:gateway) { Gateway::Bogus.new(:name => "Credit Card", :active => true) }
+
+  before { Gateway.stub :current => gateway }
 
   context "#save" do
     it "should create guest user (when no user assigned)" do
@@ -27,6 +30,36 @@ describe Order do
         order.should_receive(:finalize!)
         order.next!
       end
+
+       context "when credit card payment fails" do
+         before do
+           order.stub(:process_payments!).and_raise(Spree::GatewayError)
+         end
+
+         context "when not configured to allow failed payments" do
+            before do
+              Spree::Config.set :allow_checkout_on_gateway_error => false
+            end
+
+            it "should not complete the order" do
+               order.next
+               order.state.should == "confirm"
+             end
+          end
+
+         context "when configured to allow failed payments" do
+           before do
+             Spree::Config.set :allow_checkout_on_gateway_error => true
+           end
+
+           it "should complete the order" do
+              order.next
+              order.state.should == "complete"
+            end
+
+         end
+
+       end
     end
     context "when current state is address" do
       let(:rate) { mock_model TaxRate, :amount => 10 }
