@@ -89,15 +89,6 @@ describe CheckoutController do
         end
 
       end
-
-      context "with no more steps (would only happen on refresh)" do
-        before { order.stub :next => false }
-
-        it "should render the current state" do
-          post :update, {:state => "confirm"}
-          response.should render_template :edit
-        end
-      end
     end
 
     context "save unsuccessful" do

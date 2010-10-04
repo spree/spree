@@ -33,6 +33,7 @@ class AppConfiguration < Configuration
   preference :always_put_site_name_in_title, :boolean, :default => true
   preference :cache_static_content, :boolean, :default => true
   preference :use_content_controller, :boolean, :default => true
+  preference :allow_checkout_on_gateway_error, :boolean, :default => false
 
   validates :name, :presence => true, :uniqueness => true
 

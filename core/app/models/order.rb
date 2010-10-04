@@ -21,7 +21,7 @@ class Order < ActiveRecord::Base
   accepts_nested_attributes_for :ship_address
   accepts_nested_attributes_for :payments
   accepts_nested_attributes_for :shipments
-
+  
   before_create :create_user
   before_create :generate_order_number
 
@@ -96,7 +96,18 @@ class Order < ActiveRecord::Base
       transition :to => 'awaiting_return'
     end
 
-    before_transition :to => 'complete', :do => :process_payments!
+    before_transition :to => 'complete' do |order|
+      begin
+        order.process_payments!
+      rescue Spree::GatewayError
+        if Spree::Config[:allow_checkout_on_gateway_error]
+          true
+        else
+          false
+        end
+      end
+    end
+    
     after_transition :to => 'complete', :do => :finalize!
     after_transition :to => 'delivery', :do => :create_tax_charge!
     after_transition :to => 'payment', :do => :create_shipment!
@@ -359,7 +370,7 @@ class Order < ActiveRecord::Base
   end
 
   def process_payments!
-    payments.each(&:process!)
+    ret = payments.each(&:process!)
   end
 
   # Finalizes an in progress order after checkout is complete.

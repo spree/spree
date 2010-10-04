@@ -7,24 +7,24 @@ class CheckoutController < Spree::BaseController
 
   # Updates the order and advances to the next state (when possible.)
   def update
-    begin
-      if @order.update_attributes(object_params)
-        if @order.next
-          state_callback(:after)
-          if @order.state == "complete" or @order.completed?
-            flash[:notice] = I18n.t(:order_processed_successfully)
-            redirect_to completion_route and return
-          else
-            redirect_to checkout_state_path(@order.state) and return
-          end
-        end
+    if @order.update_attributes(object_params)
+      if @order.next
+        state_callback(:after)
+      else
+        flash[:error] = I18n.t(:payment_processing_failed)
+        redirect_to checkout_state_path(@order.state) and return
       end
-    rescue Spree::GatewayError
-      flash[:error] = I18n.t(:payment_processing_failed)
-      redirect_to checkout_state_path('payment')
-      return
+      
+      if @order.state == "complete" or @order.completed?
+        flash[:notice] = I18n.t(:order_processed_successfully)
+        redirect_to completion_route
+      else
+        redirect_to checkout_state_path(@order.state)
+      end
+      
+    else
+      render :edit
     end
-    render :edit
   end
 
   private
