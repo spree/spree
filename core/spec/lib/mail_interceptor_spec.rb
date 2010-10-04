@@ -20,6 +20,14 @@ describe OrderMailer do
       @email = ActionMailer::Base.deliveries.first
       @email.from.should == ["no-reply@foobar.com"]
     end
+    
+    it "should use the provided from address" do
+      mail_method.stub :preferred_mails_from => "preference@foobar.com"
+      message = ActionMailer::Base.mail(:from => "override@foobar.com", :to => "test@test.com")
+      message.deliver
+      @email = ActionMailer::Base.deliveries.first
+      @email.from.should == ["override@foobar.com"]
+    end
 
     it "should add the bcc email when provided"
 
