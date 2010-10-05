@@ -26,11 +26,10 @@ class Api::BaseController < Spree::BaseController
       token = request.headers['X-SpreeAPIKey']
       return false unless token
       @current_user = User.find_by_api_key(token)
-      #@current_user.has_role? 'admin'
     end
 
     define_method :end_of_association_chain do
-      (parent? ? parent_association : model).scoped(:include  => eager_load_associations)
+      parent? ? parent_association.scoped : model.scoped(:include  => eager_load_associations)
     end
 
     define_method :collection do
