@@ -23,6 +23,7 @@ class CheckoutsController < Spree::BaseController
   address.edit_hook :set_ip_address
   payment.edit_hook :load_available_payment_methods
   update.before :clear_payments_if_in_payment_state
+  update.after :update_payment_if_order_total_has_changed
 
   # customized verison of the standard r_c update method (since we need to handle gateway errors, etc)
   def update
@@ -155,9 +156,19 @@ class CheckoutsController < Spree::BaseController
   end
 
   def clear_payments_if_in_payment_state
-    if @checkout.payment?
-      @checkout.payments.clear
+    # lets clear payments only if we actually are receiving a payment. Otherwise the payment can get cleared
+    # if we are submitting a blank coupon anytime after the payment has been received. 
+    if @checkout.payment? && params[:checkout] && params[:checkout][:payments_attributes]
+      @checkout.payments.destroy_all
     end
+  end
+  
+  def update_payment_if_order_total_has_changed
+     if @checkout.payment
+       @order.reload
+       logger.debug "CHECKOUT PAYMENT #{@checkout.payment.amount.to_s}, ORDER TOTAL: #{@order.total.to_s}"
+       @checkout.payment.update_attribute(:amount, @order.total) if @checkout.payment.amount != @order.total
+     end
   end
 
   def load_available_payment_methods
