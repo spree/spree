@@ -71,39 +71,30 @@ module SslRequirement
   protected
     # Returns true if the current action is supposed to run as SSL
     def ssl_required?
-      (self.class.read_inheritable_attribute(:ssl_required_actions) || []).include?(action_name.to_sym)
+      actions = self.class.read_inheritable_attribute(:ssl_required_actions)
+      actions.nil? || actions.empty? || actions.include?(action_name.to_sym)
     end
 
     def ssl_allowed?
-      (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).include?(action_name.to_sym)
+      actions = self.class.read_inheritable_attribute(:ssl_allowed_actions)
+      actions.nil? || actions.empty? || actions.include?(action_name.to_sym)
     end
 
   private
-    def dvp_mode?
-      ENV['RAILS_ENV'] == 'development'
-    end
 
-    def test_mode?
-      ENV['RAILS_ENV'] == 'test' || ENV['RAILS_ENV'] == 'cucumber'
-    end
-
-    # don't require ssl in development or test mode
     def ssl_supported?
-      ((dvp_mode? || test_mode?) && Spree::Config[:allow_ssl_in_development_and_test]) ||
-      (!dvp_mode? && !test_mode? && Spree::Config[:allow_ssl_in_production]) ? true : false
+      return true if (Rails.env.development? or Rails.env.test?) and Spree::Config[:allow_ssl_in_development_and_test]
+      (Rails.env.staging? or Rails.env.production?) and Spree::Config[:allow_ssl_in_production]
     end
 
     def ensure_proper_protocol
-      return true if ssl_allowed?
-
       if ssl_required? && !request.ssl? && ssl_supported?
         redirect_to "https://" + request.host + request.fullpath
         flash.keep
-        return false
       elsif request.ssl? && !ssl_required?
         redirect_to "http://" + request.host + request.fullpath
         flash.keep
-        return false
       end
+
     end
 end

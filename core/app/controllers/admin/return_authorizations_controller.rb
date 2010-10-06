@@ -1,7 +1,6 @@
 class Admin::ReturnAuthorizationsController < Admin::BaseController
   resource_controller
   belongs_to :order
-  ssl_required
 
   new_action.before :returnable_units
   edit.before :returnable_units

@@ -2,6 +2,7 @@
 # Checkout object.  There's enough distinct logic specific to checkout which has nothing to do with updating an
 # order that this approach is waranted.
 class CheckoutController < Spree::BaseController
+  ssl_required
 
   before_filter :load_order
 
@@ -14,14 +15,14 @@ class CheckoutController < Spree::BaseController
         flash[:error] = I18n.t(:payment_processing_failed)
         redirect_to checkout_state_path(@order.state) and return
       end
-      
+
       if @order.state == "complete" or @order.completed?
         flash[:notice] = I18n.t(:order_processed_successfully)
         redirect_to completion_route
       else
         redirect_to checkout_state_path(@order.state)
       end
-      
+
     else
       render :edit
     end

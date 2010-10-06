@@ -1,7 +1,6 @@
 class Admin::AdjustmentsController < Admin::BaseController
   resource_controller
   belongs_to :order
-  ssl_required
 
   update.wants.html { redirect_to collection_url }
   create.wants.html { redirect_to collection_url }

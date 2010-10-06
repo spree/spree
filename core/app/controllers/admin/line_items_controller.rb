@@ -1,7 +1,7 @@
 class Admin::LineItemsController < Admin::BaseController
   resource_controller
   belongs_to :order
-  ssl_required
+
   actions :all, :except => :index
 
   create.flash nil

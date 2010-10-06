@@ -3,7 +3,6 @@ class Admin::PaymentsController < Admin::BaseController
   before_filter :load_amount, :except => :country_changed
   resource_controller
   belongs_to :order
-  ssl_required
 
   def create
     build_object

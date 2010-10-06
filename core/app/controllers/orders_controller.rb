@@ -1,5 +1,4 @@
 class OrdersController < Spree::BaseController
-  ssl_required :show
 
   helper :products
 
