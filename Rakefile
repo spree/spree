@@ -1,5 +1,6 @@
 require 'rake'
 require 'rake/gempackagetask'
+require 'thor/group'
 
 PROJECTS = %w(core api auth dash sample)  #TODO - spree_promotions
 
@@ -15,6 +16,50 @@ task :release => :release_projects do
   Rake::Task['gem:push'].invoke
 end
 
+desc "Creates a sandbox application for testing your Spree code"
+task :sandbox do
+
+  class SandboxGenerator < Thor::Group
+    include Thor::Actions
+
+    def generate_app
+      remove_directory_if_exists("sandbox")
+      run "rails new sandbox -GJT"
+    end
+
+    def append_gemfile
+      inside "sandbox" do
+        append_file "Gemfile" do
+          "gem 'spree', :path => '../' "
+        end
+      end
+    end
+
+    def install_generators
+      inside "sandbox" do
+        run 'rails g spree_core:install -f'
+        run 'rails g spree_auth:install -f'
+        run 'rails g spree_api:install -f'
+        run 'rails g spree_dash:install -f'
+        run 'rails g spree_promotions:install -f'
+        run 'rails g spree_sample:install -f'
+      end
+    end
+
+    def run_bootstrap
+      inside "sandbox" do
+        run 'rake db:bootstrap AUTO_ACCEPT=true'
+      end
+    end
+
+    private
+    def remove_directory_if_exists(path)
+      run "rm -r #{path}" if File.directory?(path)
+    end
+  end
+
+  SandboxGenerator.start
+end
 # desc "Release all components to gemcutter."
 # task :release_projects => :package do
 #   errors = []
