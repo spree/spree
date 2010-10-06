@@ -1,6 +1,5 @@
 class Api::InventoryUnitsController < Api::BaseController
-  resource_controller_for_api
-  actions :index, :show, :update, :create
+  resource_controller_for_api :index, :show, :update, :create
   belongs_to :shipment, :order
 
   private

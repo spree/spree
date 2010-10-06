@@ -1,6 +1,5 @@
 class Api::ProductsController < Api::BaseController
-  resource_controller_for_api
-  actions :index, :show, :create, :update
+  resource_controller_for_api :index, :show, :create, :update
   include Spree::Search
 
   private
