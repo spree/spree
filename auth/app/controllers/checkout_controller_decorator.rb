@@ -3,6 +3,8 @@ CheckoutController.class_eval do
   before_filter :check_authorization
   before_filter :check_registration, :except => [:registration, :update_registration]
 
+  helper :users
+
   def registration
     @user = User.new
   end
@@ -33,6 +35,7 @@ CheckoutController.class_eval do
     return unless Spree::Auth::Config[:registration_step]
     return if Spree::Config[:allow_guest_checkout] and current_order.email.present?
     return if current_user or not current_order.user.anonymous?
+    store_location
     redirect_to checkout_registration_path
   end
 
