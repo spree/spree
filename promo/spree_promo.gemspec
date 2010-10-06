@@ -2,7 +2,7 @@ version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree_promotions'
+  s.name        = 'spree_promo'
   s.version     = version
   s.summary     = 'Promotion functionality for use with Spree.'
   s.description = 'Required dependancy for Spree'

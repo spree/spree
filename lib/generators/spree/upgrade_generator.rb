@@ -8,7 +8,7 @@ module Spree
         generate 'spree_api:update', '-f'
         generate 'spree_auth:update', '-f'
         generate 'spree_dash:update', '-f'
-        #generate 'spree_promotions:update', '-f'
+        generate 'spree_promo:update', '-f'
         generate 'spree_sample:update', '-f'
       end
 

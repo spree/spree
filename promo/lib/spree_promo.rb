@@ -1,7 +1,7 @@
 require 'spree_core'
-require 'spree_promotions_hooks'
+require 'spree_promo_hooks'
 
-module SpreePromotions
+module SpreePromo
   class Engine < Rails::Engine
     def self.activate
       # put class_eval and other logic that depends on classes outside of the engine inside this block
@@ -27,9 +27,9 @@ module SpreePromotions
         attr_accessible :coupon_code
         attr_accessor :coupon_code
         before_save :process_coupon_code, :if => "@coupon_code"
-        
+
         def process_coupon_code
-          coupon = Promotion.find(:first, :conditions => ["UPPER(code) = ?", @coupon_code.upcase])          
+          coupon = Promotion.find(:first, :conditions => ["UPPER(code) = ?", @coupon_code.upcase])
           if coupon
             coupon.create_discount(self)
           end
@@ -42,15 +42,15 @@ module SpreePromotions
         def update_totals(force_adjustment_recalculation=false)
           self.payment_total = payments.completed.map(&:amount).sum
           self.item_total = line_items.map(&:amount).sum
-        
+
           process_automatic_promotions
-        
+
           if force_adjustment_recalculation
             applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
             self.adjustments = applicable_adjustments
             adjustments_to_destroy.each(&:destroy)
           end
-        
+
           self.adjustment_total = self.adjustments.map(&:amount).sum
           self.total            = self.item_total   + self.adjustment_total
         end
@@ -80,7 +80,7 @@ module SpreePromotions
       if File.basename( $0 ) != "rake"
         # register promotion rules
         [Promotion::Rules::ItemTotal, Promotion::Rules::Product, Promotion::Rules::User, Promotion::Rules::FirstOrder].each &:register
-      
+
         # register default promotion calculators
         [
           Calculator::FlatPercentItemTotal,

@@ -1,4 +1,4 @@
-module SpreePromotions
+module SpreePromo
   module Generators
     class UpgradeGenerator < Rails::Generators::Base
       source_root File.expand_path("../../templates", __FILE__)

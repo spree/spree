@@ -6,6 +6,7 @@ PATH
       spree_auth (= 0.30.0.beta2)
       spree_core (= 0.30.0.beta2)
       spree_dash (= 0.30.0.beta2)
+      spree_promo (= 0.30.0.beta2)
       spree_sample (= 0.30.0.beta2)
     spree_api (0.30.0.beta2)
       spree_core (= 0.30.0.beta2)
@@ -27,6 +28,8 @@ PATH
       stringex (>= 1.0.3)
       will_paginate (>= 3.0.pre)
     spree_dash (0.30.0.beta2)
+      spree_core (= 0.30.0.beta2)
+    spree_promo (0.30.0.beta2)
       spree_core (= 0.30.0.beta2)
     spree_sample (0.30.0.beta2)
       spree_core (= 0.30.0.beta2)
@@ -151,5 +154,6 @@ DEPENDENCIES
   spree_auth (= 0.30.0.beta2)
   spree_core (= 0.30.0.beta2)
   spree_dash (= 0.30.0.beta2)
+  spree_promo (= 0.30.0.beta2)
   spree_sample (= 0.30.0.beta2)
   sqlite3-ruby

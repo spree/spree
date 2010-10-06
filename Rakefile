@@ -41,7 +41,7 @@ task :sandbox do
         run 'rails g spree_auth:install -f'
         run 'rails g spree_api:install -f'
         run 'rails g spree_dash:install -f'
-        run 'rails g spree_promotions:install -f'
+        run 'rails g spree_promo:install -f'
         run 'rails g spree_sample:install -f'
       end
     end
