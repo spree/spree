@@ -255,17 +255,21 @@ admin panel via the +admin_tabs+ hook (see "hooks":theming.html for more informa
 
 Example:
 
+# adding a new tab to the admin navigation, e.g. in your extension to your_extension_hook.rb
 <shell>
-  # adding a new tab to the admin navigation, e.g. in your extension to your_extension_hook.rb
-  insert_after :admin_tabs do
-    "<%= tab(:taxonomies) %>"
-  end
+insert_after :admin_tabs do
+  "<%= tab(:taxonomies) %>"
+end
+</shell>
 
-  ## adding routes for your admin controller, e.g., for the taxonomies controller to config/routes.rb
-  map.namespace :admin do |admin|
-    admin.resources :taxonomies
-  end
+# adding routes for your admin controller, e.g., for the taxonomies controller to config/routes.rb
+<shell>
+map.namespace :admin do |admin|
+  admin.resources :taxonomies
+end
+</shell>
 
-  ### adding locales in config/locales to, e.g., en_spree.yml
-  taxonomies: "Taxonomies"
+# adding locales in config/locales to, e.g., en_spree.yml
+<shell>
+taxonomies: "Taxonomies"
 </shell>
