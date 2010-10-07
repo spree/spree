@@ -11,7 +11,7 @@ module SpreeCore
       def create_root_files
         empty_directory file_name
         template "LICENSE", "#{file_name}/LICENSE"
-        template "Rakefile", "#{file_name}/Rakefile"
+        template "Rakefile.tt", "#{file_name}/Rakefile"
         template "README.md", "#{file_name}/README.md"
         template ".gitignore", "#{file_name}/.gitignore"
         template "extension.gemspec.tt", "#{file_name}/#{file_name.dasherize}.gemspec"
@@ -32,12 +32,11 @@ module SpreeCore
 
       def create_lib_files
         directory "lib", "#{file_name}/lib"
-        template 'extension/engine.rb.tt', "#{file_name}/lib/#{file_name}/engine.rb"
         template 'extension/extension.rb.tt', "#{file_name}/lib/#{file_name}.rb"
       end
 
       def update_gemfile
-        gem file_name.dasherize, :path => file_name, :require => [file_name, "#{file_name}/engine"], :group => "extensions"
+        gem file_name.dasherize, :path => file_name, :require => file_name
       end
 
       protected

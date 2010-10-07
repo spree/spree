@@ -1,1 +1,15 @@
-# require necessary libraries files, etc. (ex. require 'extension_name/some_lib')
+require 'spree_core'
+
+module <%=class_name%>
+  class Engine < Rails::Engine
+
+    config.autoload_paths += %W(#{config.root}/lib)
+
+    def self.activate
+      # Activation logic goes here.  A good use for this is performing class_eval on classes that are defined
+      # outside of the extension (so that monkey patches are not lost on subsequent requests in development mode.)
+    end
+
+    config.to_prepare &method(:activate).to_proc
+  end
+end

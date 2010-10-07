@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = %q{<%= file_name %>}
+  s.name        = '<%= file_name %>'
   s.version     = '1.0.0'
   s.summary     = 'Add gem summary here'
   #s.description = 'Add (optional) gem description here'
