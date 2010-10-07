@@ -1,6 +1,6 @@
-module SpreeCore
+module Spree
   module Generators
-    class InstallGenerator < Rails::Generators::Base
+    class SiteGenerator < Rails::Generators::Base
       source_root File.expand_path("../../templates", __FILE__)
 
       desc "Configures an existing Rails application to use Spree."
@@ -29,15 +29,6 @@ module SpreeCore
         Rake::Task["db:load_dir"].invoke( "default" )
         puts "Default data has been loaded"
         SEEDS
-      end
-
-      def copy_migrations
-        directory "db"
-        create_file ".rspec", "--colour"
-      end
-
-      def copy_public
-        directory "public"
       end
 
       def config_middleware

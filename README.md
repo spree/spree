@@ -13,7 +13,7 @@ automatically require all of the necessary dependency gems.  Those gems are as f
 * spree_auth
 * spree_core
 * spree_dash
-* spree_promotions
+* spree_promo
 * spree_sample
 
 All of the gems are designed to work together to provide a fully functional e-commerce platform.  It is also possible,
@@ -31,12 +31,17 @@ Update your bundle
 
     bundle install
 
-Then use the install generator to install all of the necessary migrations, assets, etc.
+Then use the install generator to do the basic setup (add Spree to Gemfile, etc.)
 
-    rails g spree:install
+    rails g spree:site
 
-*NOTE: This takes a while since its actually calling several generators (one for each of the dependencies) and
-apparently Rails generators are quite slow.*
+Now its time to install all of the necessary migrations, assets, etc.
+
+    rake spree:install
+
+If you'd like to also install sample data and images you can follow up the above command with:
+
+    rake spree_sample:install
 
 Now you just need to run the new migrations
 

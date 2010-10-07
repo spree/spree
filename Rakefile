@@ -37,12 +37,9 @@ task :sandbox do
 
     def install_generators
       inside "sandbox" do
-        run 'rails g spree_core:install -f'
-        run 'rails g spree_auth:install -f'
-        run 'rails g spree_api:install -f'
-        run 'rails g spree_dash:install -f'
-        run 'rails g spree_promo:install -f'
-        run 'rails g spree_sample:install -f'
+        run 'rails g spree:site -f'
+        run 'rake spree:install'
+        run 'rake spree_sample:install'
       end
     end
 
