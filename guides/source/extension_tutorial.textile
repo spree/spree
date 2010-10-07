@@ -251,5 +251,21 @@ Note that you must preserve the hierarchical naming, e.g. Spree core's
 h4. Adding a tab to the admin screens
 
 To allow adminstrators to control the extension, we can add a tab to the 
-admin panel via the +admin_tabs+ hook (see "hooks":theming.html#usingablock for an example).
+admin panel via the +admin_tabs+ hook (see "hooks":theming.html for more information).
 
+Example:
+
+<shell>
+  # adding a new tab to the admin navigation, e.g. in your extension to your_extension_hook.rb
+  insert_after :admin_tabs do
+    "<%= tab(:taxonomies) %>"
+  end
+
+  # adding routes for your admin controller, e.g., for the taxonomies controller to config/routes.rb
+  map.namespace :admin do |admin|
+    admin.resources :taxonomies
+  end
+
+  # adding locales in config/locales to, e.g., en_spree.yml
+  taxonomies: "Taxonomies"
+</shell>
