@@ -1,6 +1,6 @@
 require 'rails/generators'
 
-module SpreeCore
+module Spree
   module Generators
     class ExtensionGenerator < Rails::Generators::NamedBase
       source_root File.expand_path("../../templates", __FILE__)
@@ -27,7 +27,6 @@ module SpreeCore
 
       def create_config_files
         directory "config", "#{file_name}/config"
-        #empty_directory extension_dir('config/initializers')
       end
 
       def create_lib_files
