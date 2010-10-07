@@ -261,11 +261,11 @@ Example:
     "<%= tab(:taxonomies) %>"
   end
 
-  # adding routes for your admin controller, e.g., for the taxonomies controller to config/routes.rb
+  ## adding routes for your admin controller, e.g., for the taxonomies controller to config/routes.rb
   map.namespace :admin do |admin|
     admin.resources :taxonomies
   end
 
-  # adding locales in config/locales to, e.g., en_spree.yml
+  ### adding locales in config/locales to, e.g., en_spree.yml
   taxonomies: "Taxonomies"
 </shell>
