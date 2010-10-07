@@ -57,7 +57,7 @@ class Admin::OverviewController < Admin::BaseController
         ["completed_at >= ?", params[:from]]
       end
   end
-  
+
   def fill_empty_entries(orders, params)
     from_date = params[:from].to_date
     to_date = (params[:to] || Time.now).to_date
@@ -129,7 +129,7 @@ class Admin::OverviewController < Admin::BaseController
     orders.map do |o|
       qty = o.line_items.inject(0) {|sum,li| sum + li.quantity}
 
-      [o.name, qty, o.total]
+      [o.email, qty, o.total]
     end
   end
 
@@ -139,7 +139,7 @@ class Admin::OverviewController < Admin::BaseController
       orders = User.find(o[0]).orders
       qty = orders.size
 
-      [orders.first.name, qty, o[1]]
+      [orders.first.email, qty, o[1]]
 
     end
 

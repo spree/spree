@@ -97,7 +97,7 @@
             </thead>
             <% @last_five_orders.each do |order| %>
               <tr>
-                <td><%= order[0] %></td>
+                <td><%= truncate order[0], :length => 18 %></td>
                 <td class="text-right"><%= order[1] %></td>
                 <td class="text-right"><%= number_to_currency order[2] %></td>
               </tr>
