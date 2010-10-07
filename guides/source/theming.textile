@@ -214,9 +214,11 @@ The block should return an erb string to be evaluated. It has access to any meth
 <shell>
   # adding a link below product details:
   insert_after :product_description do
-    '<p><%= link_to("Back to products", products_path) %></p>'
+    "<p><%= link_to("Back to products", products_path) %></p>"
   end
+</shell>
 
+<shell>
   # adding a new tab to the admin navigation
   insert_after :admin_tabs do
     "<%= tab(:taxonomies) %>"
