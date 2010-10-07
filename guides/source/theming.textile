@@ -212,17 +212,17 @@ h5. Using a block
 The block should return an erb string to be evaluated. It has access to any methods or instance variables available in the view. Certain local variables are also available.
 
 <shell>
-  # adding a link below product details:
-  insert_after :product_description do
-    "<p><%= link_to("Back to products", products_path) %></p>"
-  end
+# adding a link below product details:
+insert_after :product_description do
+  "<p><%= link_to("Back to products", products_path) %></p>"
+end
 </shell>
 
 <shell>
-  # adding a new tab to the admin navigation
-  insert_after :admin_tabs do
-    "<%= tab(:taxonomies) %>"
-  end
+# adding a new tab to the admin navigation
+insert_after :admin_tabs do
+  "<%= tab(:taxonomies) %>"
+end
 </shell>
 
 h5. Removing a hook's content
