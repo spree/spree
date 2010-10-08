@@ -15,7 +15,7 @@ class UsersController < Spree::BaseController
     UserSession.create session_params
   end
 
-  create.flash.nil
+  create.flash nil
   create.wants.html { redirect_back_or_default(root_url) }
 
   new_action.before do
