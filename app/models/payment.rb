@@ -65,9 +65,9 @@ class Payment < ActiveRecord::Base
         order.return!
       elsif events.present? and %w(over_paid under_paid).include?(events.first.name)
         events.each do |event|
-          if %w(shipped paid new).include?(event.previous_state)
+          if %w(shipped canceled paid new).include?(event.previous_state)
             order.pay!
-            order.update_attribute("state", event.previous_state) if %w(shipped returned).include?(event.previous_state)
+            order.update_attribute("state", event.previous_state) if %w(shipped canceled returned).include?(event.previous_state)
             return
           end
         end

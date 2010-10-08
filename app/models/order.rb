@@ -89,10 +89,10 @@ class Order < ActiveRecord::Base
       transition :to => 'paid', :if => :allow_pay?
     end
     event :under_paid do
-      transition :to => 'balance_due', :from => ['paid', 'new', 'credit_owed', 'shipped', 'awaiting_return']
+      transition :to => 'balance_due', :from => ['paid', 'new', 'credit_owed', 'shipped', 'awaiting_return', 'canceled']
     end
     event :over_paid do
-      transition :to => 'credit_owed', :from => ['paid', 'new', 'balance_due', 'shipped', 'awaiting_return']
+     transition :to => 'credit_owed', :from => ['paid', 'new', 'balance_due', 'shipped', 'awaiting_return', 'canceled']
     end
     event :ship do
       transition :to => 'shipped', :from  => 'paid'
