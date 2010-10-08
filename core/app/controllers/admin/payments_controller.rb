@@ -8,12 +8,11 @@ class Admin::PaymentsController < Admin::BaseController
     build_object
     load_object
 
-    unless object.save
-      response_for :create_fails
-      return
-    end
-
     begin
+      unless object.save
+        response_for :create_fails
+        return
+      end
 
       if @order.checkout.state == "complete"
         object.process!
