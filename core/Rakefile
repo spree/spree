@@ -42,7 +42,9 @@ task :test_app do
     end
 
     def install_spree_core
-      generate 'spree_core:install -f'
+      inside "test_app" do
+        run 'rake spree_core:install'
+      end
     end
 
     def migrate_db
