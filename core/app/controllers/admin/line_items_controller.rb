@@ -62,8 +62,5 @@ class Admin::LineItemsController < Admin::BaseController
 
   #   @order.update_totals!
 
-  #   unless @order.in_progress?
-  #     InventoryUnit.adjust_units(@order)
-  #   end
   # end
 end

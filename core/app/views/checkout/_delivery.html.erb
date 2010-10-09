@@ -11,10 +11,10 @@
         <% end %>
       </p>
     </div>
-    <% if Spree::Config[:shipping_instructions] && @available_methods.present? %>
+    <% if Spree::Config[:shipping_instructions] && @order.rate_hash.present? %>
       <p id="minstrs">
-        <%= checkout_form.label :special_instructions, t("shipping_instructions") %><br />
-        <%= checkout_form.text_area :special_instructions, :cols => 40, :rows => 7 %>
+        <%= form.label :special_instructions, t("shipping_instructions") %><br />
+        <%= form.text_area :special_instructions, :cols => 40, :rows => 7 %>
       </p>
     <% end %>
   </div>

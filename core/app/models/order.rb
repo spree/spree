@@ -1,7 +1,7 @@
 class Order < ActiveRecord::Base
 
   attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes, :ship_address, :line_items_attributes,
-                  :shipping_method_id, :email, :use_billing
+                  :shipping_method_id, :email, :use_billing, :special_instructions
 
   belongs_to :user
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
@@ -21,7 +21,7 @@ class Order < ActiveRecord::Base
   accepts_nested_attributes_for :ship_address
   accepts_nested_attributes_for :payments
   accepts_nested_attributes_for :shipments
-  
+
   before_create :create_user
   before_create :generate_order_number
 
@@ -107,7 +107,7 @@ class Order < ActiveRecord::Base
         end
       end
     end
-    
+
     after_transition :to => 'complete', :do => :finalize!
     after_transition :to => 'delivery', :do => :create_tax_charge!
     after_transition :to => 'payment', :do => :create_shipment!

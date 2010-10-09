@@ -1,6 +1,5 @@
 class Admin::ShipmentsController < Admin::BaseController
   before_filter :load_data, :except => :country_changed
-  before_filter :require_object_editable_by_current_user, :only => [:update]
 
   resource_controller
   belongs_to :order
@@ -45,7 +44,6 @@ class Admin::ShipmentsController < Admin::BaseController
 
   def load_data
     load_object
-    @selected_country_id = params[:shipment_presenter][:address_country_id].to_i if params.has_key?('shipment_presenter')
     @selected_country_id ||= @order.bill_address.country_id unless @order.nil? || @order.bill_address.nil?
     @selected_country_id ||= Spree::Config[:default_country_id]
     @shipping_methods = ShippingMethod.all_available(@order, :back_end)
@@ -56,19 +54,18 @@ class Admin::ShipmentsController < Admin::BaseController
   end
 
   def edit_before # copy into instance variable before editing
-    @shipment.special_instructions = @order.checkout.special_instructions
+    @shipment.special_instructions = @order.special_instructions
   end
 
   def update_after # copy back to order if instructions are enabled
-    @order.checkout.special_instructions = object_params[:special_instructions] if Spree::Config[:shipping_instructions]
-    @order.checkout.shipping_method = @order.shipment.shipping_method
+    @order.special_instructions = object_params[:special_instructions] if Spree::Config[:shipping_instructions]
+    @order.shipping_method = @order.shipment.shipping_method
     @order.save
     recalculate_order
   end
 
   def assign_inventory_units
     return unless params.has_key? :inventory_units
-    #params[:inventory_units].each { |id, value| @shipment.inventory_units << InventoryUnit.find(id) }
     @shipment.inventory_unit_ids = params[:inventory_units].keys
   end
 
