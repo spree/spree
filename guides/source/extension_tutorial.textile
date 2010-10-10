@@ -1,256 +1,169 @@
 h2. Extension Tutorial
 
-This tutorial shows the main steps for creating a simple 'promotions' tutorial.
-Don't let the length of this very detailed tutorial discourage you.  
-The later part of the tutorial is dedicated to showing the specific code for our example extension.
-It goes way beyond the knowledge necessary to create a simple extension.
-
+This tutorial shows the main steps for creating a simple 'extradata' tutorial.
+It will be a very basic tutorial, covering only the first steps and introduction to philosophy of writing Spree extensions. Which are now basically Rails 3 engines, so you should feel at home if you tried creating one already.
 
 endprologue.
 
 
 h3. Generating an Extension
 
-We're assuming you have already created a new Spree application and run the migrations.  If you haven't done so, create a simple application now.
-<ruby>
-spree tutorial
-cd tutorial
-rake db:bootstrap
-</ruby>
+We're assuming you have already created a new Spree application and run the migrations.  If you haven't done so, create a simple application now. Remember about rake db:seed and, maybe, rake db:sample tasks.
 
-Let's start by building a simple extension.  Let's pretend we want the ability to mark certain products as part of a promotion.  We'd like to add an admin interface for marking certain items as being part of the promotion.  We'd also like to highlight these products in our store view.  This is a great example of how an extension can be used to build on the solid Spree foundation.  We'll be adding our own custom models, views and controllers through the new extension.
+Every extension should start with an idea. Let's say we want a very simple extension adding "extradata" text field to main Spree models (Product, Order, Taxon) that will be serialized. I like having a column like that, especially in transitory periods where I need to keep some data relevant to migration from other systems, but don't want to pollute DB schema with many unnecessary (in the long run) fields.
 
 Spree comes with generators for creating your new extensions.  To create a new extension use
-<ruby>$ script/generate extension <extension_name></ruby>
+<shell>rails g spree:extension <extension_name></shell>
 
-So in the case of our Promotion Manager extension we type
-<ruby>$ script/generate extension PromotionManager</ruby>
+So in the case of our Extradata extension we type
+<shell>rails g spree:extension Extradata</shell>
 
 This command generates something like the following output
 <ruby>
-create  vendor/extensions/promotion_manager/app/controllers
-create  vendor/extensions/promotion_manager/app/helpers
-create  vendor/extensions/promotion_manager/app/models
-create  vendor/extensions/promotion_manager/app/views
-create  vendor/extensions/promotion_manager/db/migrate
-create  vendor/extensions/promotion_manager/lib/tasks
-create  vendor/extensions/promotion_manager/<span class="caps">README</span>
-create  vendor/extensions/promotion_manager/promotion_manager_extension.rb
-create  vendor/extensions/promotion_manager/lib/tasks/promotion_manager_extension_tasks.rake
-create  vendor/extensions/promotion_manager/spec/controllers
-create  vendor/extensions/promotion_manager/spec/models
-create  vendor/extensions/promotion_manager/spec/views
-create  vendor/extensions/promotion_manager/spec/helpers
-create  vendor/extensions/promotion_manager/Rakefile
-create  vendor/extensions/promotion_manager/spec/spec_helper.rb
-create  vendor/extensions/promotion_manager/spec/spec.opts
+  create  extradata
+  create  extradata/LICENSE
+  create  extradata/Rakefile
+  create  extradata/README.md
+  create  extradata/.gitignore
+  create  extradata/extradata.gemspec
+  create  extradata/app
+  create  extradata/app/controllers
+  create  extradata/app/helpers
+  create  extradata/app/models
+  create  extradata/app/views
+  create  extradata/config
+  create  extradata/config/database.yml
+  create  extradata/config/environments/cucumber.rb
+  create  extradata/lib
+  create  extradata/lib/tasks/extradata.rake
+  create  extradata/lib/extradata.rb
+ gemfile  extradata
 </ruby>
 
-This creates the promotion manager extension in +vendor/extensions+.  The extension is entirely self contained in that directory.  Once we're done, we can reuse this extension in other Spree applications by simply copying the +promotion_manager+ folder and dropping it into another application's +vendor/extensions+ directory. We can also publish the code on GitHub to allow others to use it or collaborate on it.
-
-
-h3. Generating a Model
-
-Extensions allow you to add your own models to the application.  You can also use extensions to mixin additional functionality into the existing models.  For our promotion extension let's create a brand new promotion model.  Note that the field names are optional but if we provide them they will be automatically added to the migration.
-
-<shell>
-$ script/generate extension_model PromotionManager promotion name:string start:date stop:date
-</shell>
-
-This command generates the following output
+This creates the Extradata extension gem within +extradata+ subdirectory of your application and one new line within the Gemfile that should look like this
 <ruby>
-exists  app/models/
-exists  spec/models/
-create  app/models/promotion.rb
-create  spec/models/promotion_spec.rb
-create  vendor/extensions/promotion_manager/db/migrate
-create  db/migrate/20100310010101_create_promotions.rb
+gem "extradata", :path => "extradata", :require => "extradata"
 </ruby>
-Reviewing the output of this command you can see that the generator produced the following:
-<ul>
-	<li>Model file</li>
-	<li>RSpec test</li>
-	<li>Database migration</li>
-</ul>
 
-NOTE. The RSpec tests will soon be replaced in favour of Shoulda tests.
+The extension is a first-class gem (and a Rails engine at the same time), residing within app's subdirectory only because it's been generated there. The extension gem is entirely self contained in its directory. Once we're done, we can reuse this gem in other Spree applications by simply copying the +extradata+ folder or (the preferred and "rails" way) publishing it as a gem and then (regardless of the path taken) simply adding a relevant entry in Gemfile pointing to our extension gem.
 
-Let's examine the contents of the migration in our favorite text editor.
+You can now take some time to take a look through the extension gem's directory. Feel free to amend extradata.gemspec, README.md and LICENSE to your liking.
+
+h3. Extending a model
+
+Extensions allow you to add your own models, controllers, views and helpers to the application. These just go to extradata/app and it's just a matter of loading them (see lib/extradata.rb). However we want something different: we want to extend existing models with some new functionality.
+
+h4. Migration
+
+Let's start with a migration
+
+<shell>rails g migration AddExtradata</shell>
+
+NOTE. This generator should be run within application root, thus creating migration file in +RAILS_ROOT/db/migrate+. Currently (Rails 3.0) Rails Engines don't have their own migrations ran during "master" application's rake db:migrate, but they will soon (Rails 3.1 Mountable Apps). Because of that and for the sake of easy redistribution we will copy the migration file to +RAILS_ROOT/extradata/db/migrate/ for easy redistribution.
+
+Let's edit the contents of the migration file in our favorite text editor. Time to add some columns!
 <ruby>
-class CreatePromotions < ActiveRecord::Migration
+class AddExtradata < ActiveRecord::Migration
   def self.up
-    create_table :promotions do |t|
-      t.string :name
-      t.date :start
-      t.date :stop
-
-      t.timestamps
-    end
+    add_column :products, :extradata, :text
+    add_column :orders, :extradata, :text
+    add_column :taxons, :extradata, :text
   end
 
   def self.down
-    drop_table :promotions
+    remove_column :products, :extradata
+    remove_column :orders, :extradata
+    remove_column :taxons, :extradata
   end
 end
 </ruby>
-So we now can see that Spree extensions support their own migrations and the extension_model generator will even help us to create them.  Let's run the migrations.  Just run the regular migration task to migrate your project and all of your extensions.  This is made possible by the <span class="caps">UTC</span> based migration system introduced by Rails 2.1
-<ruby>rake db:migrate</ruby>
-This should output something like
+
+After saving that file and making sure it applies cleanly (+rake db:migrate+) it's time to copy it into extension's db/migrate
+
 <ruby>
-== 20100310010101 CreatePromotions: migrating ==============================================
--- create_table(:promotions)
-   -> 0.0025s
-== 20100310010101 CreatePromotions: migrated (0.0030s) =====================================
+mkdir -p extradata/db/migrate
+cp db/migrate/timestamp_add_extradata_to_models.rb extradata/db/migrate/
 </ruby>
-Of course you can have more then one model in your extension.  If we had additional models their migrations would have been run at this point as well.  If you decide to make your extension available to the public (via Github or some other mechanism) you can write additional migrations to support new features for your extension in subsequent versions using the command:
+
+h4. Model decorator
+
+For the sake of simplicity and not dwelling too deep into Ruby module system, we're going to create files extending relevant Spree models with +Class.class_eval+.
+
+We only need one line in each of Order, Product, Taxon: +serialize :extradata+, so that whatever we set it to (Hash, Array, other objects) Rails will handle (de-)serialization for us transparently. Because our decorators are going to change models, it's a good idea to keep them within +extradata/app/models+ directory.
+
++extradata/app/models/order_decorator.rb+
 <ruby>
-script/generate extension_migration <extension_name> <migration_name>
-</ruby>
-As we mentioned, the previous command migrates all of your extensions.  If you want to migrate your extension to a specific version use something like this:
-<ruby>rake spree:extensions:promotion_manager:migrate VERSION=0</ruby>
-Note the use of the familiar +VERSION+ environment variable to specify the version.  The version number corresponds to the number of your <em>extension's</em> migration (file) and not the number in the +schema info+ table.  You can also use +RAILS_ENV+ to specify an environment other then the default (which is development.)
-
-
-h3. Generating a Controller
-
-Now that we have the model setup for our extension we can move onto an admin controller.  
-To generate this controller use the following command:
-<ruby>script/generate extension_controller PromotionManager admin/promotions</ruby>
-
-
-This command will generate the following output:
-<plain>
-create  app/controllers/admin
-create  app/helpers/admin
-create  app/views/admin/promotions
-create  spec/controllers/admin
-create  spec/helpers/admin
-create  spec/views/admin/promotions
-create  spec/controllers/admin/promotions_controller_spec.rb
-create  spec/helpers/admin/promotions_helper_spec.rb
-create  app/controllers/admin/promotions_controller.rb
-create  app/helpers/admin/promotions_helper.rb
-</plain>
-
-INFO. You can create non-admin controllers too - just leave out the +admin/+ part in the command.
-
-Reviewing this output we see that it generated
-<ul>
-	<li>Admin::PromotionsController</li>
-	<li>Helper for the controller</li>
-	<li>RSpec test for the controller</li>
-	<li>Folder for the promotion controller views</li>
-</ul>
-
-
-h3. Implementing a Controller
-
-h4. Add <span class="caps">REST</span> Actions to the Controller
-
-Here's our implementation of the usual CRUD operations.
-
-<ruby>
-class Admin::PromotionsController < Admin::BaseController
-  resource_controller
+Order.class_eval do
+  serialize :extradata
 end
 </ruby>
 
-Yes, that's it. Spree currently makes extensive use of the excellent 
-"resource_controller":http://github.com/jamesgolick/resource_controller plugin, and it's worth
-taking time to learn how to use it. (Also see an earlier "blog post":http://jamesgolick.com/2007/10/19/introducing-resource_controller-focus-on-what-makes-your-controller-special.html) 
-This plug frees us from a lot of standard, repetitive code: instead, we only have to code 
-up the non-standard behaviour and extra actions, and the plugin allows us a mix of hooks 
-and overrideable methods to help with this. Resource-controller also helps with nested 
-resources, e.g. to handle URLs like +/orders/R100153/payment/203+.
-
-For more examples, try looking at some recent/active extensions on GitHub, e.g. +spree-wishlist+. 
-
-
-h3. Routing
-
-Spree extensions have the ability to configure their own routes.  Let's open +vendor/extensions/promotion_manager/config/routes.rb+ and take a closer look.
++extradata/app/models/product_decorator.rb+
 <ruby>
-# Put your extension routes here.
-
-# map.namespace :admin do |admin|
-#   admin.resources :whatever
-# end 
+Product.class_eval do
+  serialize :extradata
+end
 </ruby>
 
-Notice how the generator created a placeholder for you to add your routes.  Go ahead an uncomment that block of code and change :whatever to :promotions.
++extradata/app/models/taxon_decorator.rb+
 <ruby>
-  map.namespace :admin do |admin|
-    admin.resources :promotions
-  end  
+Taxon.class_eval do
+  serialize :extradata
+end
 </ruby>
 
-This allows use of REST-style URLs based on +/admin/promotions+, e.g. URL +/admin/promotions/1+ would show you the details of a promotion with ID=1. 
+Our decorators are ready, but we still need them to be loaded when the master application starts. Or, to be precise: when the gem is loaded and engine is being registered within Rails application.
 
-You can also extend existing routes in this file. The following could be used to access the
-promotions of a certain product (given a suitable controller).
+h3. Loading the engine
+
+Open +extradata/lib/extradata.rb+ and add the lines responsible for loading all decorators within +app/models/+ directory:
 
 <ruby>
-map.resources :products do |product|
-  product.resources :promotions 
+require 'spree_core'
+
+module Extradata
+  class Engine < Rails::Engine
+
+    config.autoload_paths += %W(#{config.root}/lib)
+
+    def self.activate
+      # Activation logic goes here.  A good use for this is performing class_eval on classes that are defined
+      # outside of the extension (so that monkey patches are not lost on subsequent requests in development mode.)
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+        Rails.env == "production" ? require(c) : load(c)
+      end
+    end
+
+    config.to_prepare &method(:activate).to_proc
+  end
 end
 </ruby>
 
 
-h3. Internationalization
+h3. Bundling our gem
 
+Run +bundle install+ to make Gem Bundler aware of our extension gem.
 
-You'll need to create at the least a localization file for +en-US+ that contains your 
-extension name, which should be stored at +config/locales/en-US.yml+.
-A minimal locale file would contain the string the tab helper will use to render the tab label.  You may want to include other translations for your particular admin needs. 
+h3. Firing it up
 
-<yaml>
----
-en-US:
-  foos: "Foos"
-  delete_foo: "Delete Foo"
-  edit_foo: "Edit Foo"
-  transmogrify_foo: "Turn Foo into a T-Rex"
-</yaml>
+Open Rails console (+rails c+) and try it!
 
-NOTE. We encourage people to set their extensions up for multi-lingual use. Typically, this means avoiding the hard-coding of phrases in the code, and instead storing those phrases in the mapping format shown above. Inside code, you can access the translation using +t+, e.g. +t(:transmogrify_foo)+. This makes it easier for other people to add their own translations later, and quite often, they will post the translations on GitHub.
+<ruby>
+$ rails c
+Loading development environment (Rails 3.0.0)
+ruby-1.9.2-head >   p = Product.first
+ => #<Product id: 187438981, name: "Ruby on Rails Ringer T-Shirt", description: "Lorem ipsum dolor sit amet, consectetuer adipiscing...", created_at: "2010-10-07 18:27:38", updated_at: "2010-10-07 18:27:38", permalink: "ruby-on-rails-ringer-t-shirt", available_on: "2010-10-07 18:27:38", tax_category_id: nil, shipping_category_id: nil, deleted_at: nil, meta_description: nil, meta_keywords: nil, count_on_hand: 75, extradata: nil>
+ruby-1.9.2-head > p.extradata
+ => nil
+ruby-1.9.2-head > p.extradata = {"old_id" => 123, "old_category_ids" => [16, 43, 111]}
+ => {"old_id"=>123, "old_category_ids"=>[16, 43, 111]}
+ruby-1.9.2-head > p.save
+ => true
+ruby-1.9.2-head > p.extradata
+ => {"old_id"=>123, "old_category_ids"=>[16, 43, 111]}
+</ruby>
 
-
-h3. Modifying the Views
-
-h4. Overview
-
-Recall the "various mechanisms":customization_overview.html#hooksandoverrides provided: 
-overriding and hooks. It's best to use hooks for most of your simpler changes, such as 
-showing an extra element on the product page. The mechanism is quite flexible, and 
-saves the headache of overriding key view files and keeping those modified versions
-in sync with Spree's originals when you upgrade.
-
-However, there's a third option which will occur regularly in extensions: that you
-provide _partials_ for displaying the extension's objects, which other developers 
-will use in their own hooks etc when they use your extension on their site.
-
-NOTE. Again, read some of the more recent extensions for good examples.
-
-
-h4. Stylesheets 
-
-See the "theming guide":theming.html#stylesheets for details of how stylesheets are handled 
-and how to extend them.
-
-h4. Using hooks
-
-The "theming guide":theming.html#hooks explains this quite well.
-
-h4. Overriding 
-
-This is just a case of copying Spree's original file into your extension and modifying it.
-Note that you must preserve the hierarchical naming, e.g. Spree core's 
-+vendor/extensions/theme_default/app/views/shared/_foo.html.erb+ must be copied to 
-+app/views/shared/_foo.html.erb+ in your extension. 
-
-h4. Adding a tab to the admin screens
-
-To allow adminstrators to control the extension, we can add a tab to the 
+To allow adminstrators to control the extension, we can add a tab to the
 admin panel via the +admin_tabs+ hook (see "hooks":theming.html for more information).
 
 Example:
@@ -273,3 +186,7 @@ end
 <ruby>
 taxonomies: "Taxonomies"
 </ruby>
+
+h3. Releasing the extension
+
+If it works, it's time to release it on Github and submit into Spree Extension Directory.
