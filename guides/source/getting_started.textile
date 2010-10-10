@@ -200,10 +200,17 @@ h4. Installing the Migrations and Other Assets
 Spree is actually what is known as a Rails Engine.  As of Rails 3.0 Rails Engines do not automatically copy their migrations or public assets into your Rails application.  Once you've added the Spree gem to the +Gemfile+ you can accomplish this by running the following command:
 
 <shell>
-rails g spree:install
+rails g spree:site
+rake spree:install
 </shell>
 
-INFO. If you have an existing Rails application with customizations (as opposed to just the starter app that we've shown here) you will want to make a note of any files that this generator changes.  Its possible that it may alter your javascript or stylesheet files in undesirable ways.  You should check the differences via +git diff+ or some other process and manually merge the needed changes if necessary.
+INFO. If you have an existing Rails application with customizations (as opposed to just the starter app that we've shown here) you will want to make a note of any files that this task changes.  Its possible that it may alter your javascript or stylesheet files in undesirable ways.  You should check the differences via +git diff+ or some other process and manually merge the needed changes if necessary.
+
+Spree also comes with sample data (products, orders, etc.)  If you'd like to install the migrations and assets associated with the sample data then you can run this additional rake task.
+
+<shell>
+rake spree_sample:install
+</shell>
 
 h4. Populating the Database
 
