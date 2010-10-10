@@ -1,4 +1,5 @@
 ANALYTICS_ID=ENV['ANALYTICS_ID']
+EDGE = ENV['EDGE']
 
 pwd = File.dirname(__FILE__)
 $: << pwd
@@ -17,10 +18,10 @@ rescue Gem::LoadError
   $stderr.puts %(Missing the RedCloth 4.2.3 gem.\nPlease `gem install -v=4.2.3 RedCloth` to generate the guides.)
   exit 1
 end
-                 
+
 require 'action_controller'
 require 'action_view'
-require 'redcloth'     
+require 'redcloth'
 require 'fileutils'
 
 module Spree

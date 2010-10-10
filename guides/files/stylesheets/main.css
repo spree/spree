@@ -126,3 +126,11 @@ code { font-family: monaco, "Bitstream Vera Sans Mono", "Courier New", courier, 
 intermediate whitespace looks uniform. */
 div.code_container, div.important, div.caution, div.warning, div.note, div.info { margin-bottom: 1.5em; }
 div.important p, div.caution p, div.warning p, div.note p, div.info p { margin-bottom: 0px; }
+
+#edge-badge {
+border: none;
+position: fixed;
+right: 0px;
+top: 0px;
+z-index: 100;
+}
