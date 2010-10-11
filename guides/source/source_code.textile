@@ -1,6 +1,10 @@
 h2. Working with the Source Code
 
-This guide covers obtaining and running the source code.  This is primarily for developers who are interested in contributing code to the Spree project or fixing the source code themselves.  It is not necessary to have a copy of the source code to run Spree.  
+This guide covers obtaining and running the source code.  This is primarily for developers who are interested in contributing code to the Spree project or fixing the source code themselves.  It is not necessary to have a copy of the source code to run Spree.  This guide covers the following topics:
+
+* How Spree uses Git and Github to manage source code
+* The various gems that comprise the Spree source code
+* Building the gem from the source
 
 endprologue.
 
@@ -8,10 +12,10 @@ h3. Git
 
 The Spree source code is currently maintained in a "Git":http://git.or.cz/ repository. Git is a distributed version control system (DVCS) and it allows us to do things never before possible with SVN. If you're skeptical of Git just remember how skeptical you were of SVN when you were using CVS. The differences are subtle but important and they are best understood by hands on use.
 
-The authoritative git repository is hosted by "GitHub":http://github.com/ and is located "here":http://github.com/railsdog/spree/tree/master. You can clone the git repository using the following command:
+The authoritative git repository is hosted by "GitHub":http://github.com/ and is located in the  "railsdog":http://github.com/railsdog/spree/tree/master repository. You can clone the git repository using the following command:
 
 <shell>
-git clone git://github.com/railsdog/spree.git spree 
+git clone git://github.com/railsdog/spree.git
 </shell>
 
 INFO. If you are planning on contributing to Spree you should create a fork through Git Hub and push fixes to clearly labelled branches (see the "Contributors Guide":contributing_to_spree.html for details.)
@@ -28,12 +32,27 @@ There are some well developed Git clients for Windows now. If you are on a Windo
 
 h4. SVN
 
-There are no immediate plans to support SVN clients. Given that most of the Rails world is moving to git (including the RoR project itself) maybe this is the time for you to jump on the bandwagon.
+There are no immediate plans to support SVN clients. Since most of the Rails community is using git SVN support is not really a priority.
 
 h4. Monitoring Changes in the Source
 
-If you would like to keep up to date on changes to the source you can subscribe to the github 
+If you would like to keep up to date on changes to the source you can subscribe to the github
 "RSS feed":http://github.com/feeds/railsdog/commits/spree/master and you will be notified of all the commits.
+
+h3. Bundler
+
+Spree uses the very excellent "bundler":http://gembundler.com/ gem to manage its dependencies.  We are assuming you have basic familiarity with bundler.  A detailed explanation of bundler is beyond the scope of this guide.
+
+You can install the gem dependencies using bundler as follows:
+
+<shell>
+  bundle install
+</shell>
+
+The standard +Gemfile.lock+ is also included in the source so you can be sure that you're using the exact same versions of the gem dependencies used by the core team.
+
+h3. Organization of the Source Code
+
 
 h3. Building the Gem from the Source
 
@@ -47,7 +66,7 @@ INFO. Another possibility is "vendor" mode, where a copy of Spree is stored insi
 
 h4. Prerequisites
 
-# Rails 2.3.x 
+# Rails 2.3.x
 # Ruby Gems 1.3.6 or greater
 # Spree gem dependencies (run +rake gems+ to check, +rake gems:install+ to install)
 # The Jeweler gem (which pulls in a Git gem and Gemcutter too - use +(sudo) gem install jeweler+)
@@ -69,7 +88,7 @@ rake build
 Now you can install the gem, replacing X,Y,Z with the appropriate numbers
 
 <shell>
-sudo gem install pkg/spree-X.Y.Z.gem  
+sudo gem install pkg/spree-X.Y.Z.gem
 </shell>
 
 NOTE. The exact version of the gem will correspond to whatever version reflects the state of the edge code at the time you build it._
