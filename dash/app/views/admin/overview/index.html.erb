@@ -149,8 +149,9 @@
 <% content_for :head do %>
   <%= hook :admin_dashboard_javascript do %>
     <% if @show_dashboard %>
+       <%= javascript_include_tag 'dashboard.js' -%>
        <script type="text/javascript">
-         var orders_by_day_points = [[<%= raw @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
+        var orders_by_day_points = [[<%= raw @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
         var best_selling_variants_points = [<%= raw @best_selling_variants.map { |v| "[\"#{v[0]}\",#{v[1]}]" }.join(",") %>];
         var top_grossing_variants_points = [<%= raw @top_grossing_variants.map { |v| "[\"#{v[0]}\",#{v[1]}]" }.join(",") %>];
         var best_selling_taxons_points = [<%= raw @best_selling_taxons.map { |t| "[\"#{t[0]}\",#{t[1]}]" }.join(",") %>];
@@ -164,7 +165,7 @@
 
     <%= javascript_include_tag 'jqPlot/jquery.jqplot.min.js', 'jqPlot/plugins/jqplot.dateAxisRenderer.min.js', 'jqPlot/plugins/jqplot.highlighter.min.js',
         'jqPlot/plugins/jqplot.canvasAxisTickRenderer.min.js', 'jqPlot/plugins/jqplot.canvasTextRenderer.min.js', 'jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js',
-        'jqPlot/plugins/jqplot.pieRenderer.min.js', 'dashboard.js' %>
+        'jqPlot/plugins/jqplot.pieRenderer.min.js' %>
     <!--[if IE]><%= javascript_include_tag 'jqPlot/excanvas.min.js' %><![endif]-->
   <% end %>
 
