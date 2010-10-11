@@ -15,7 +15,7 @@ The Spree source code is currently maintained in a "Git":http://git.or.cz/ repos
 The authoritative git repository is hosted by "GitHub":http://github.com/ and is located in the  "railsdog":http://github.com/railsdog/spree/tree/master repository. You can clone the git repository using the following command:
 
 <shell>
-git clone git://github.com/railsdog/spree.git
+$ git clone git://github.com/railsdog/spree.git
 </shell>
 
 INFO. If you are planning on contributing to Spree you should create a fork through Git Hub and push fixes to clearly labelled branches (see the "Contributors Guide":contributing_to_spree.html for details.)
@@ -46,58 +46,113 @@ Spree uses the very excellent "bundler":http://gembundler.com/ gem to manage its
 You can install the gem dependencies using bundler as follows:
 
 <shell>
-  bundle install
+  $ bundle install
 </shell>
 
 The standard +Gemfile.lock+ is also included in the source so you can be sure that you're using the exact same versions of the gem dependencies used by the core team.
 
-h3. Organization of the Source Code
+h3. Layout and Structure
 
+h4. Collection of Gems
+
+The Spree gem itself is very minimal and consists mostly as a collection of gems.  These gems are maintained together in a single Github repository and new versions of the gems are shipped with each new Spree release.  The official documentation (which you are reading now) covers functionality provided by each of these gems.|
+
+Within the Spree source, each of the gems is organized into subdirectories as follows:
+
+|_<.Gem|_.Directory|_.Description|
+|spree_api|api|Provides REST API access|
+|spree_auth|auth|Provides authentication and authorization (via authlogic and cancan gems)|
+|spree-core|core|Core functionality - all other gems depend on this gem|
+|spree_dash|dash|Simple overview dashboard|
+|spree_promo|promo|Coupons and promotions|
+|spree_sample|sample|Sample data and images|
+
+h4. Use of Rails Engines
+
+Each of the gems in Spree makes use of Rails Engines.  This functionality was introduced in Rails 3.0 and allows Engines to behave in a manner similar to fully-functional applications.  Relying on this mechanism provides several advantages:
+
+h5. An Intuitive Mechanism for Customization
+
+Default Spree functionality is provided via the Rails engine gems.  Engines can provides several aspects traditionally associated with a Rails application including (but not limited to):
+
+* Models, views and controllers
+* Routes
+* Helpers
+* Rake tasks
+* Generators
+* Locales
+
+All of these elements can be overridden in the main Rails application.  Therefore, it is relatively simple to add Spree to your Rails application and then customize it further by supplying your own elements in that same application. A full discussion of Rails Engines is not appropriate here.  Please consult the Rails Guides for more information.
+
+h5. Simple Distribution and Installation as Gems
+
+Using a Spree gem is as simple as adding it to your +Gemfile+ (ie. very simple)
+
+<shell>
+  gem 'spree-core', '0.30.0'
+</shell>
+
+Distribution of Spree (and its extensions) is also consistent with Rails standards and modularity (see next.)
+
+h5. Consistency With a Rails Standard
+
+Prior to version 0.30.0, Spree used a complex custom mechanism for implementing "engine-like" functionality.  While it was difficult to strip this functionality out of Spree the benefits are well worth it.  Spree will now receive all of the massive testing and attention to detail that comes for free when using the Rails core.
+
+h5. Modularity
+
+There are differing opinions on what belongs in the "core."  People are often expressing their opinion that Spree is either "getting too fat" or "lacks basic features."  By relying on these engines (and distributing them as gems), developers are free to use only the parts of Spree that they find useful.  For instance, this would allow you to omit promotions functionality or to replace the authentication mechanism.
+
+WARNING. The engine architecture is a work in progress.  Some of the modularity described above is theoretical and yet to be tested in a real world application.  Expect minor difficulties if you decide to use a subset of the Spree gems (although we would gladly work with you to resolve them.)
+
+h3. Building a Sandbox Application
+
+When working with the Spree source you may find yourself wanting to see how the code performs in the context of an actual application.  This is due to the fact that Spree is intended to be distributed as a gem and is not designed to be run as a standalone application.  Spree includes a helpful rake task for setting up such a test application.
+
+<shell>
+  $ rake sandbox
+</shell>
+
+This will create a barebones rails application configured with the Spree gem.  It runs the migrations for you and sets up the sample data.  The resulting +sandbox+ folder is already ignored by +.gitignore+ and it is deleted and rebuilt from scratch each time the rake task runs.
 
 h3. Building the Gem from the Source
 
-h4. Motivation
-
-Why bother building the Spree gem from the source?  The primary answer is that it allows you to take advantage of all of those great "edge" features without having to wait for the next official release of Spree, and to have this same version of Spree running in all of your projects.
-
-In order to create a new Spree application you will need to run +spree <app-name>+ which is invoked using the currently installed Spree gem.  The +spree+ command is also responsible for setting up your applications' environment settings, etc. so if you're trying to build a new store with the cutting edge features, you'll want to build the gem locally.
-
-INFO. Another possibility is "vendor" mode, where a copy of Spree is stored inside your app at location +vendor/spree+. You can install specific versions or revisions of Spree here: many people use the git submodule feature to track a precise version of Spree inside their projects. The disadvantage is that two projects may not be running the exact same version, i.e. you have to check manually.
-
-h4. Prerequisites
-
-# Rails 2.3.x
-# Ruby Gems 1.3.6 or greater
-# Spree gem dependencies (run +rake gems+ to check, +rake gems:install+ to install)
-# The Jeweler gem (which pulls in a Git gem and Gemcutter too - use +(sudo) gem install jeweler+)
-
-INFO. Gem building no longer runs all of the tests.
-
-NOTE. It is suggested that you get Spree up and running using the source first before attempting to build the gem.  This will be the easiest way to make sure you have all of the correct dependencies, etc.
-
-h4. Performing the Actual Build
-
-First, you should create/update the gemspec. You must have the Jeweler gem installed for this.
-
-Use the following command to build the gem
+The Spree gem can easily be built from the source.
 
 <shell>
-rake build
+  $ rake gem
 </shell>
 
-Now you can install the gem, replacing X,Y,Z with the appropriate numbers
+Currently there is no shortcut for building all of the Spree gems from source with a single command (contributions welcome).  Therefore, you will need to build them individually.  For example:
 
 <shell>
-sudo gem install pkg/spree-X.Y.Z.gem
+  $ cd core
+  $ rake gem
 </shell>
 
-NOTE. The exact version of the gem will correspond to whatever version reflects the state of the edge code at the time you build it._
+h3. Tips for Working with the Source
 
-h4. Considerations
+h4. Using the "Edge" Code
 
-* An edge gem will have a x.y.99 version number.  This denotes an "edge" version.  You may need to uninstall the edge gem later if you want to work with the x.y.z gem once it is released.
+If you are interested in simply using the latest edge code (as opposed to contributing to it) then the simplest thing to do is add a +:git+ directive to your +Gemfile+ and point it at the master branch.
 
-* If you want to deploy the gem on multiple machines: the built gem is in the spree source directory, in +pkg/+. Just copy it and install it, eg +sudo gem install spree-0.8.99.gem+
+<ruby>
+  gem 'spree', :git => 'git://github.com/railsdog/spree.git'
+</ruby>
 
-* You may want to do  +rm -rf pkg+ to clean things up from previous build attempts before building the gem again.
+This will effectively use the latest code from the Git repository at the time you run +bundle install+.  This version of the code will be "frozen" in your +Gemfile.lock+ and will ensure that anyone else using your project code is using the exact same version of the Spree code as you are.  You will need to update the bundle if you want to update to code that is newer since the last time you updated.
 
+<shell>
+  $ bundle update
+</shell>
+
+NOTE. Heroku now supports "git-based" gems.  This means you can work with the latest version of Spree without having to build a gem or use git submodules (which were not supported.)
+
+h4. Developing on the "Edge"
+
+If you plan on using the edge code but also contributing back to Spree, then you may be interested in the following approach.  Create your Rails app that will be using the Spree gem in a directory that has the same parent as a locally cloned version of the Spree source.  Then simply use the following in your Gemfile.
+
+<ruby>
+  gem 'spree', :path => '../spree'
+</ruby>
+
+NOTE. See the excellent "bundler documentation":http://gembundler.com for more details.
