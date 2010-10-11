@@ -2,8 +2,6 @@ class UserSessionsController < Spree::BaseController
   include Spree::CurrentOrder
   include Spree::AuthUser
 
-  after_filter :associate_user, :only => :create
-
   ssl_required :new, :create, :destroy, :update
   ssl_allowed :login_bar
 
@@ -38,12 +36,6 @@ class UserSessionsController < Spree::BaseController
 
   private
 
-  def associate_user
-    return unless current_user and current_order
-    current_order.associate_user!(current_user) if can? :edit, current_order
-    session[:guest_token] = nil
-  end
-
   def user_with_openid_exists?(data)
     data && !data[:openid_identifier].blank? &&
       !!User.find(:first, :conditions => ["openid_identifier LIKE ?", "%#{data[:openid_identifier]}%"])
@@ -54,13 +46,14 @@ class UserSessionsController < Spree::BaseController
   end
 
   def create_user_session(data)
+    guest_order = current_order
     @user_session = UserSession.new(data)
     @user_session.save do |result|
       if result
         # Should restore last uncompleted order and add current(guest) order to it, if exists.
         order = @user_session.record.orders.last(:conditions => {:completed_at => nil})
         if order
-          if (session[:order_token] && guest_order = Order.find(:first, :conditions => {:token => session[:order_token], :user_id => nil, :completed_at => nil}))
+          if guest_order
             guest_order.line_items.each do |line_item|
               order.add_variant(line_item.variant, line_item.quantity)
             end
@@ -70,6 +63,7 @@ class UserSessionsController < Spree::BaseController
           end
           session[:order_token] = order.token
           session[:order_id] = order.id
+          session[:guest_token] = nil
         end
 
         respond_to do |format|
