@@ -24,9 +24,4 @@ module CheckoutHelper
     content_tag('ol', raw(items.join("\n")), :class => 'progress-steps', :id => "checkout-step-#{@order.state}")
   end
 
-  def available_countries
-    return Country.all unless zone = Zone.find_by_name(Spree::Config[:checkout_zone])
-    zone.country_list
-  end
-
 end
