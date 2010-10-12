@@ -10,9 +10,7 @@ class UsersController < Spree::BaseController
   end
 
   create.after do
-    session_params = params[:user]
-    session_params[:login] = session_params[:email]
-    UserSession.create session_params
+    create_session
   end
 
   create.flash nil
@@ -22,15 +20,13 @@ class UsersController < Spree::BaseController
     flash.now[:notice] = I18n.t(:please_create_user) unless User.admin_created?
   end
 
-  def update
-    @user = current_user
-    if @user.update_attributes(params[:user])
-      flash[:notice] = t("account_updated")
-      redirect_to account_url
-    else
-      render :action => :edit
-    end
+  update.wants.html { redirect_to account_url }
+
+  update.after do
+    create_session
   end
+
+  update.flash I18n.t("account_updated")
 
   private
 
@@ -40,6 +36,12 @@ class UsersController < Spree::BaseController
 
     def accurate_title
       I18n.t(:account)
+    end
+    
+    def create_session
+      session_params = params[:user]
+      session_params[:login] = session_params[:email]
+      UserSession.create session_params
     end
 
 end
