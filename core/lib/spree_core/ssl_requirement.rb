@@ -90,6 +90,7 @@ module SslRequirement
     end
 
     def ensure_proper_protocol
+      return true if ssl_allowed?
       if ssl_required? && !request.ssl? && ssl_supported?
         redirect_to "https://" + request.host + request.fullpath
         flash.keep
