@@ -54,13 +54,14 @@ class UserSessionsController < Spree::BaseController
   end
 
   def create_user_session(data)
+    guest_order = current_order
     @user_session = UserSession.new(data)
     @user_session.save do |result|
       if result
         # Should restore last uncompleted order and add current(guest) order to it, if exists.
         order = @user_session.record.orders.last(:conditions => {:completed_at => nil})
         if order
-          if (session[:order_token] && guest_order = Order.find(:first, :conditions => {:token => session[:order_token], :user_id => nil, :completed_at => nil}))
+          if guest_order
             guest_order.line_items.each do |line_item|
               order.add_variant(line_item.variant, line_item.quantity)
             end
@@ -70,6 +71,7 @@ class UserSessionsController < Spree::BaseController
           end
           session[:order_token] = order.token
           session[:order_id] = order.id
+          session[:guest_token] = nil
         end
 
         respond_to do |format|
