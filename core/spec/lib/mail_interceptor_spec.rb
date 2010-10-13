@@ -20,7 +20,7 @@ describe OrderMailer do
       @email = ActionMailer::Base.deliveries.first
       @email.from.should == ["no-reply@foobar.com"]
     end
-    
+
     it "should use the provided from address" do
       mail_method.stub :preferred_mails_from => "preference@foobar.com"
       message = ActionMailer::Base.mail(:from => "override@foobar.com", :to => "test@test.com")
@@ -50,6 +50,13 @@ describe OrderMailer do
     end
 
     context "when intercept_mode is not provided" do
+      before { mail_method.stub :preferred_intercept_email => "" }
+
+      it "should not modify the recipient" do
+        message.deliver
+        @email = ActionMailer::Base.deliveries.first
+        @email.to.should == ["customer@example.com"]
+      end
       it "should bcc the address specified in the preference"
       it "should not change the recipient"
     end
