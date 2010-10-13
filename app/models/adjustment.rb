@@ -30,6 +30,8 @@ class Adjustment < ActiveRecord::Base
   belongs_to :order
   belongs_to :adjustment_source, :polymorphic => true
 
+  before_save :ensure_correct_sign
+
   validates_presence_of :description
   validates_numericality_of :amount, :allow_nil => true
 
@@ -73,4 +75,22 @@ class Adjustment < ActiveRecord::Base
   class << self
     public :subclasses
   end
+
+  private
+    # Ensure correct sign for amount field here.  Moved from seperate filters on
+    # Credit / Charge as object is an Adjustment on create, so it wasn't firing
+    #
+    def ensure_correct_sign
+      return true if self.type.blank? #is an Adjustment
+
+      if self.type.constantize.new.is_a? Credit
+        if (db_amount = read_attribute(:amount)) && db_amount > 0
+          self.amount *= -1
+        end
+      elsif self.type.constantize.new.is_a? Charge
+        if (db_amount = read_attribute(:amount)) && db_amount < 0
+          self.amount *= -1
+        end
+      end
+    end
 end

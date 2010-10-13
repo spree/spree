@@ -113,7 +113,7 @@ class Admin::AdjustmentsControllerTest < ActionController::TestCase
       should_respond_with :redirect
 
       should_change("@order.total", :by => -5.00) { @order.total.to_f }
-      should_change("@order.credits.total", :by => 5.00) { @order.credits.total.to_f }
+      should_change("@order.credits.total", :by => -5.00) { @order.credits.total.to_f }
       should_change("Adjustment.count", :by => 1) { Adjustment.count }
       should_change("Credit.count", :by => 1) { Credit.count }
     end
