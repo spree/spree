@@ -154,9 +154,10 @@ class Order < ActiveRecord::Base
     update_attribute("state", state_events.last.previous_state)
 
     if paid?
-      InventoryUnit.sell_units(self) if inventory_units.empty?
-      shipment.inventory_units = inventory_units
-      shipment.ready!
+      raise "do something with inventory"
+      #InventoryUnit.assign_opening_inventory(self) if inventory_units.empty?
+      #shipment.inventory_units = inventory_units
+      #shipment.ready!
     end
 
   end
@@ -376,8 +377,8 @@ class Order < ActiveRecord::Base
   # Finalizes an in progress order after checkout is complete.
   # Called after transition to complete state when payments will have been processed
   def finalize!
-    self.out_of_stock_items = InventoryUnit.sell_units(self) if Spree::Config[:track_inventory_levels]
     update_attribute(:completed_at, Time.now)
+    self.out_of_stock_items = InventoryUnit.assign_opening_inventory(self)
     # lock any optional adjustments (coupon promotions, etc.)
     adjustments.optional.each { |adjustment| adjustment.update_attribute("locked", true) }
     OrderMailer.confirm_email(self).deliver

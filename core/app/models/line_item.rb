@@ -15,8 +15,11 @@ class LineItem < ActiveRecord::Base
 
   attr_accessible :quantity
 
-  after_save :adjust_units_and_update_order
-  after_destroy :adjust_units_and_update_order
+  before_save :update_inventory
+  before_destroy :remove_inventory
+
+  after_save :update_order
+  after_destroy :update_order
 
   def copy_price
     self.price = variant.price if variant && self.price.nil?
@@ -57,11 +60,28 @@ class LineItem < ActiveRecord::Base
   end
 
   private
-    def adjust_units_and_update_order
-      #only adjust units for completed orders (being edited by admin)
-      #cart? orders don't have units until completed?
-      InventoryUnit.adjust_units(order) if order.completed?
+    def update_inventory
+      return true unless self.order.completed?
 
+      if self.new_record?
+        InventoryUnit.increase(self.order, self.variant, self.quantity)
+      elsif old_quantity = self.changed_attributes["quantity"]
+        if old_quantity < self.quantity
+          InventoryUnit.increase(self.order, self.variant, (self.quantity - old_quantity))
+        elsif old_quantity > self.quantity
+          InventoryUnit.decrease(self.order, self.variant, (old_quantity - self.quantity))
+        end
+      end
+
+    end
+
+    def remove_inventory
+      return true unless self.order.completed?
+
+      InventoryUnit.decrease(self.order, self.variant, self.quantity)
+    end
+
+    def update_order
       # update the order totals, etc.
       order.update!
     end

@@ -150,7 +150,7 @@ describe Order do
       order.finalize!
     end
     it "should sell inventory units" do
-      InventoryUnit.should_receive(:sell_units).with(order)
+      InventoryUnit.should_receive(:assign_opening_inventory).with(order)
       order.finalize!
     end
     it "should change the shipment state to ready if order is paid"

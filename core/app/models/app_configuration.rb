@@ -9,7 +9,8 @@ class AppConfiguration < Configuration
   preference :default_country_id, :integer, :default => 214
   preference :allow_backorders, :boolean, :default => true
   preference :allow_backorder_shipping, :boolean, :default => false # should only be true if you don't need to track inventory
-  preference :track_inventory_levels, :boolean, :default => true #
+  preference :track_inventory_levels, :boolean, :default => true # will not track on_hand values for variants /products
+  preference :create_inventory_units, :boolean, :default => true # should only be false when track_inventory_levels is false, also disables RMA's
   preference :show_descendents, :boolean, :default => true
   preference :show_zero_stock_products, :boolean, :default => true
   preference :orders_per_page, :integer, :default => 15

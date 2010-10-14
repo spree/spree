@@ -1,77 +1,230 @@
 require 'spec_helper'
 
 describe InventoryUnit do
-  let(:variant) { mock_model(Variant, :count_on_hand => 99) }
-  let(:line_items){
-    (1..3).map do |n|
-      line_item = mock_model(LineItem, :variant => mock_model(Variant, :count_on_hand => n, :update_attribute => true), :quantity => n)
-    end
-  }
+  let(:variant) { mock_model(Variant, :count_on_hand => 95) }
+  let(:line_item) { mock_model(LineItem, :variant => variant, :quantity => 5) }
+  let(:order) { mock_model(Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true) }
 
-  context "#fill_backorder (when in backordered state)" do
-    it "should change state to sold" do
-      unit = InventoryUnit.new(:variant => variant, :state => "backordered")
-      unit.fill_backorder
-      unit.state.should == "sold"
-    end
-  end
+  context "#assign_opening_inventory" do
+    context "when order is complete" do
 
-  let(:shipment) { mock_model(Shipment, :shipped? => false) }
-
-  context "adjust_units" do
-    before do
-      Spree::Config.set :track_inventory_levels => true
-    end
-    let(:line_item) { mock_model(LineItem, :variant => variant, :quantity => 1) }
-    let(:inventory_unit) { InventoryUnit.new(:variant => variant, :shipment => shipment, :state => "sold") }
-    let(:order) { mock_model(Order, :line_items => [line_item], :inventory_units => [inventory_unit], :shipments => [shipment], :completed? => true) }
-
-    it "should restock units if a line item is removed from the order" do
-      order.stub(:line_items).and_return([])
-      variant.should_receive(:update_attribute).with(:count_on_hand, variant.count_on_hand + 1)
-      inventory_unit.should_receive(:delete)
-      InventoryUnit.adjust_units(order)
-    end
-
-    it "should sell more units if a line item has an increased in quantity" do
-      line_item.stub :quantity => 2
-      order.inventory_units.should_receive(:create).with(:state => "sold", :variant => line_item.variant, :shipment => shipment).exactly(1).times
-      variant.should_receive(:update_attribute).with(:count_on_hand, variant.count_on_hand - 1)
-      InventoryUnit.adjust_units(order)
-    end
-
-    it "should restock units if a line item has an decreased in quantity"
-  end
-
-  context "sell_units" do
-    let(:order) { mock_model(Order, :line_items => line_items, :inventory_units => mock('inventory-units'), :shipments => [shipment], :completed? => false) }
-
-    it "should create correct number of inventory units for each variant" do
-      (1..3).map do |n|
-        order.inventory_units.should_receive(:create).with(:state => "sold", :variant => line_items[n-1].variant, :shipment => shipment).exactly(n).times
+      it "should increase inventory" do
+        InventoryUnit.should_receive(:increase).with(order, variant, 5).and_return([])
+        InventoryUnit.assign_opening_inventory(order)
       end
 
-      InventoryUnit.sell_units(order)
     end
 
-    it "should not increase the number of inventory units if the order is completed" do
-      order.stub!(:completed?).and_return(true)
-      order.inventory_units.should_not_receive(:create)
-      InventoryUnit.sell_units(order)
+    context "when order is not complete" do
+      before { order.stub(:completed?).and_return(false) }
+
+      it "should not do anything" do
+        InventoryUnit.should_not_receive(:increase)
+        InventoryUnit.assign_opening_inventory(order).should == []
+      end
+
+    end
+  end
+
+  context "#increase" do
+    context "when :track_inventory_levels is true" do
+      before do
+        Spree::Config.set :track_inventory_levels => true
+        InventoryUnit.stub(:create_units)
+      end
+
+      it "should decrement count_on_hand" do
+        variant.should_receive(:decrement!).with(:count_on_hand, 5)
+        InventoryUnit.increase(order, variant, 5)
+      end
+
     end
 
-    it "should return array of out of stock items" do
-      Spree::Config.set :allow_backorders => false
-      order.line_items.first.variant.stub!(:count_on_hand).and_return(0)
-      order.inventory_units.should_receive(:create).exactly(5).times
-      out_of_stock_items = InventoryUnit.sell_units(order)
-      out_of_stock_items.length.should == 1
-      out_of_stock_items.first[:line_item].should == order.line_items.first
+    context "when :track_inventory_levels is false" do
+      before do
+        Spree::Config.set :track_inventory_levels => false
+        InventoryUnit.stub(:create_units)
+      end
+
+      it "should decrement count_on_hand" do
+        variant.should_not_receive(:decrement!)
+        InventoryUnit.increase(order, variant, 5)
+      end
+
     end
 
-    it "should correctly set the state of in-stock units"
-    it "should correctly set the state of out-of-stock units"
-    it "should do nothing if all units in the order were already sold (saftey check for unexpected condition)"
+    context "when :create_inventory_units is true" do
+      before do
+        Spree::Config.set :create_inventory_units => true
+        variant.stub(:decrement!)
+      end
+
+      context "and all units are in stock" do
+        it "should create units as sold" do
+          InventoryUnit.should_receive(:create_units).with(order, variant, 5, 0)
+          InventoryUnit.increase(order, variant, 5)
+        end
+      end
+
+      context "and partial units are in stock" do
+        before { variant.stub(:count_on_hand).and_return(2) }
+
+        it "should create units as sold and backordered" do
+          InventoryUnit.should_receive(:create_units).with(order, variant, 2, 3)
+          InventoryUnit.increase(order, variant, 5)
+        end
+      end
+
+      context "and zero units are in stock" do
+        before { variant.stub(:count_on_hand).and_return(0) }
+
+        it "should create units as  backordered" do
+          InventoryUnit.should_receive(:create_units).with(order, variant, 0, 5)
+          InventoryUnit.increase(order, variant, 5)
+        end
+      end
+
+      context "and less than zero units are in stock" do
+        before { variant.stub(:count_on_hand).and_return(-9) }
+
+        it "should create units as  backordered" do
+          InventoryUnit.should_receive(:create_units).with(order, variant, 0, 5)
+          InventoryUnit.increase(order, variant, 5)
+        end
+      end
+
+
+    end
+
+    context "when :create_inventory_units is false" do
+      before do
+        Spree::Config.set :create_inventory_units => false
+        variant.stub(:decrement!)
+      end
+
+      it "should not create units" do
+        InventoryUnit.should_not_receive(:create_units)
+        InventoryUnit.increase(order, variant, 5)
+      end
+
+    end
+
+  end
+
+  context "#decrease" do
+    context "when :track_inventory_levels is true" do
+      before do
+        Spree::Config.set :track_inventory_levels => true
+        InventoryUnit.stub(:destroy_units)
+      end
+
+      it "should decrement count_on_hand" do
+        variant.should_receive(:increment!).with(:count_on_hand, 5)
+        InventoryUnit.decrease(order, variant, 5)
+      end
+
+    end
+
+    context "when :track_inventory_levels is false" do
+      before do
+        Spree::Config.set :track_inventory_levels => false
+        InventoryUnit.stub(:destroy_units)
+      end
+
+      it "should decrement count_on_hand" do
+        variant.should_not_receive(:increment!)
+        InventoryUnit.decrease(order, variant, 5)
+      end
+
+    end
+
+    context "when :create_inventory_units is true" do
+      before do
+        Spree::Config.set :create_inventory_units => true
+        variant.stub(:increment!)
+      end
+
+      it "should destroy units" do
+        InventoryUnit.should_receive(:destroy_units).with(order, variant, 5)
+        InventoryUnit.decrease(order, variant, 5)
+      end
+
+    end
+
+    context "when :create_inventory_units is false" do
+      before do
+        Spree::Config.set :create_inventory_units => false
+        variant.stub(:increment!)
+      end
+
+      it "should destroy units" do
+        InventoryUnit.should_not_receive(:destroy_units)
+        InventoryUnit.decrease(order, variant, 5)
+      end
+
+    end
+
+  end
+
+  context "#create_units" do
+    let(:shipment) { mock_model(Shipment) }
+    before { order.stub_chain(:shipments, :detect => shipment) }
+
+    context "when :allow_backorders is true" do
+      before { Spree::Config.set :allow_backorders => true }
+
+      it "should create both sold and backordered units" do
+        order.inventory_units.should_receive(:create).with(:variant => variant, :state => "sold", :shipment => shipment).exactly(2).times
+        order.inventory_units.should_receive(:create).with(:variant => variant, :state => "backordered", :shipment => shipment).exactly(3).times
+        InventoryUnit.create_units(order, variant, 2, 3)
+      end
+
+      it "should return hash of backorders items" do
+        order.inventory_units.should_receive(:create).exactly(5).times
+        InventoryUnit.create_units(order, variant, 2, 3).should == [{:variant => variant, :count => 3}]
+      end
+
+    end
+
+    context "when :allow_backorders is false" do
+      before { Spree::Config.set :allow_backorders => false }
+
+      it "should create sold units and not backordered units" do
+        order.inventory_units.should_receive(:create).with(:variant => variant, :state => "sold", :shipment => shipment).exactly(2).times
+        order.inventory_units.should_not_receive(:create).with(:variant => variant, :state => "backordered", :shipment => shipment)
+        InventoryUnit.create_units(order, variant, 2, 3)
+      end
+
+      it "should return hash of backorders items" do
+        order.inventory_units.should_receive(:create).exactly(2).times
+        InventoryUnit.create_units(order, variant, 2, 3).should == [{:variant => variant, :count => 3}]
+      end
+
+    end
+
+  end
+
+  context "#destroy_units" do
+    before { order.stub(:inventory_units => [mock_model(InventoryUnit, :variant_id => variant.id, :state => "sold")]) }
+
+    it "should call destroy correct number of units" do
+      order.inventory_units.each { |unit| unit.should_receive(:destroy) }
+      InventoryUnit.destroy_units(order, variant, 1)
+    end
+
+    context "when inventory_units contains backorders" do
+      before { order.stub(:inventory_units => [ mock_model(InventoryUnit, :variant_id => variant.id, :state => 'backordered'),
+                                                mock_model(InventoryUnit, :variant_id => variant.id, :state => 'sold'),
+                                                mock_model(InventoryUnit, :variant_id => variant.id, :state => 'backordered') ]) }
+
+      it "should destroy backordered units first" do
+        order.inventory_units[0].should_receive(:destroy)
+        order.inventory_units[1].should_not_receive(:destroy)
+        order.inventory_units[2].should_receive(:destroy)
+        InventoryUnit.destroy_units(order, variant, 2)
+      end
+    end
+
   end
 
 end
