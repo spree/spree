@@ -1,130 +1,88 @@
 h2. Testing
 
-This guide covers the test strategies and test support for Spree. 
-After reading it you should know:
-* how Spree core is tested
-* how to add your own tests to extensions
-* what our future plans are for testing
+This guide covers the test strategies and test support for Spree. After reading it you should be familiar with:
 
-Before you dive into the detail, it's worth reviewing the "Rails guide on
-testing":http://guides.rubyonrails.org/testing.html for background information.
+* How to run the tests for the Spree code
+* How to test extensions to the Spree code
+
+Before you dive into the detail, it's worth reviewing the "Rails guide on testing":http://guides.rubyonrails.org/testing.html for background information.
 
 endprologue.
 
 h3. Overview
 
-Spree core comes with a set of tests written with 
-"+Test::Unit+":http://ruby-doc.org/stdlib/libdoc/test/unit/rdoc/ and 
-"Shoulda":http://github.com/thoughtbot/shoulda. These tests are stored
-in +RAILS_ROOT/test/+, and can be run with rake tasks.
+The Spree project currently uses "RSpec":http://rspec.info for all of its tests.  Each of the gems that makes up Spree has a test suite that can be run to verify the code base.
 
-NOTE. It is the core team's standard practice for all code changes in Spree to be tested by running the full suite, unless the change is really trivial. We also run a continuous integration server, and there's a mailing list for test failure notifications. However, we do find that occasional problems slip through, mostly to do with different versions of SQL or migration from older data.
+The Spree test code is an evolving story.  We started out with RSpec, then switched to Shoulda and now we're back to RSpec.  RSpec has evolved considerably since we first tried it.  When looking to improve the test coverage of Spree we took another look at RSpec and it was the clear winner in terms of strength of community and documentation.
 
-Earlier versions of Spree (including version 0.10.x) also contains some 
-tests written with RSpec. This is legacy code, and we do not expect all 
-of the RSpec tests to work still. 
+INFO. You may notice some leftover Shoulda tests in the source code.  These are being kept in place for reference as we continue to migrate the tests to RSpec.  Do not expect them to run or to be in any way useful.
 
-There is agreement in the Spree community that we need to extend and develop
-our tests, and this effort is likely to be a keystone of the next release. 
-We are working towards migrating the legacy RSpec tests to Shoulda, 
-and towards making much more use of Cucumber, particularly for integration
-testing.
+h3. Running the Tests
 
+h4. Building a Test App
 
-h3. Testing the core
+Spree consists of several different gems (see the "Source Code Guide":/source_code.html for more details.)  Each of these gems has its own test suite which can be found in the +spec+ directory.  Since these gems are also Rails engines, they can't really be tested in complete isolation - they need to be tested within the context of a Rails application.
 
-h4. The standard Rake tasks
+You can easily build such an application by using the Rake task designed for this purpose.
 
-Rails provides a few standard tasks, all of which work on the Spree core tests. 
 <shell>
-rake test              # Run all unit, functional and integration tests
-rake test:units     
-rake test:functionals  # Run the functional tests in test/functional
-rake test:integration  # Run the integration tests in test/integration
+  $ rake test_app
 </shell>
 
+This will build the appropriate test application inside of your +spec+ directory.  It will also add the gem under test to your +Gemfile+ along with the +spree_core+ gem as well (since all of the gems depend on this.)
 
-h4. Running a subset of tests
+NOTE. This rake task will regenerate the application (after deleting the existing one) each time you run it.  It will also run the migrations for you automatically so that your test database is ready to go.
 
-The tests can take a few minutes to run. As well as running the main subsets, Rails
-also supports these:
+h4. Running the Specs
+
+Once your test application has been built, you can then run the specs in the standard RSpec manner:
+
 <shell>
-rake test:recent       # Test recent changes
-rake test:uncommitted  # Test changes since last checkin (only Subversion and Git)
+  $ rake spec
 </shell>
 
-Sometimes you will want to run just one test file at a time, particularly when testing 
-whether you have fixed a broken test. You can run any test file with +ruby+ - it is 
-stand-alone Ruby code after all! For most of Spree's tests, you also need some imports
-too, hence:
+h3. Testing Your Extensions
+
+The generator used by Spree to create new extensions will do all of the work to get your extension ready for testing.  There are some cases, however, where you may wish to maintain an extension in its own repository as a standalone gem (so you can redistribute and share the code.)  In these cases there is a little more work to be done before you can start testing.  We'll cover both scenarios here.
+
+h4. Testing Within Your Rails Application.
+
+When you first start out coding a new extension, its a good idea to work with it right alongside the Spree project that you plan to use it in.  Even if you're eventually planning to break it out into a gem and share the source code its much easier to develop with it side by side with your application.
+
+If you've read the "Extensions Guide":/extensions.html you know by now how easy it is to create a Spree extension within the context of a Rails/Spree application:
+
 <shell>
-ruby -Ilib:test test/unit/foo_test.rb
+  $ rails g spree:extension foofah
 </shell>
 
+This generator automatically creates a +spec+ directory along with a +spec_helper.rb+ file.  If you're not a fan of RSpec you can feel free to switch to a test framework of your choosing.
 
-h4. Unit tests
+You'll then want to prepare your test database if you have not already done so.
 
-These are in +test/unit/*_test.rb+ in the Spree directory, and use +Test::Unit+ 
-conventions supplemented by convenient Shoulda macros. This is the best-developed
-part of the Spree test suite: almost all of the models have non-trivial unit tests
-
-h4. Functional tests
-
-These are in +test/functional/*_test.rb+ in the Spree directory, and again use
-the +Test::Unit+/Shoulda framework. There are some tests for checkout and order
-behavior, and for some of the admin functionality, but plenty of scope for more 
-testing. 
-
-h4. Integration tests
-
-There are two files in +test/integration+. We plan to extend this aspect of testing
-soon, with Cucumber. 
-
-h4. Test resources
-
-The +test/fixtures+ and +test/factories+ directories provide test data for the 
-various tests. Factories are a technique for generating random - but valid - 
-test objects in various classes. 
-
-h4. Extension tests
-
-Spree provides tasks to run tests in extension directories. All of these tasks act 
-on all of the extensions in the *immediate* +./vendor/extensions+ directory, unless
-you specify a particular extension with +EXT=extension_name+.
 <shell>
-rake extensions:test              # Runs all tests on the selected extension(s)
-rake extensions:test:units        # Runs unit tests on the selected extension(s)
-rake extensions:test:functionals  # Runs functional tests on the selected extension(s)
+  $ rake db:prepare
 </shell>
 
-Note that all selected extensions will be tested, and the results collated. It won't 
-exit after the first group of failing tests. 
+Then its time to write some specs/tests for your extension.  We're not going to cover how to write tests here - there's already plenty of resources that cover this topic in depth.  Once your tests are written you simply use the standard rake task to verify them.
 
-h5. Core extensions
+<shell>
+  $ cd foofah
+  $ rake spec
+</shell>
 
-To test the core extensions, run the rake commands from +SPREE_ROOT+. Note that most 
-of the core extensions get tested through the main test suite anyway, and so the 
-tests in the actual extensions themselves are relatively specialized.
+h4. Testing When Isolated From Your Rails Application
 
-h5. Application extensions
+The title of this section is a bit misleading.  There's not actually any way to test an extension outside the context of a Rails application.  This does not mean, however, that you need to create a Rails application and carry that around in your source code repository.  Instead, you can write a Rake task to create a new test application for yourself on demand.
 
-To test the extension(s) in your application, run the rake commands above from 
-+RAILS_ROOT+. (This will not test any of the core extensions - it only looks at
-+./vendor/extensions+)
+[TODO: Instructions on rake task]
 
+NOTE. There's no need to check in test_app hosting your extension for testing purposes.  Make sure you ignore +spec/test_app+ in your +.gitignore+ file.
 
-h4. Miscellaneous 
-
-Rails can test installed plugins in +vendor/plugins/+ with +rake test:plugins+. 
-To test a specific plugin, say 'foo', then specify it with +PLUGIN=foo+ at the end
-of the command. 
-
+[TODO: More information on Rake task once its fully developed.]
 
 h3. Cucumber
 
-"Cucumber":http://cukes.info/ makes it easier to write and maintain tests, and there 
-is strong interest in making more use of it in Spree. The following example specifies 
-a test on cart behavior.
+"Cucumber":http://cukes.info/ makes it easier to write and maintain tests, and there is strong interest in making more use of it in Spree. The following example specifies a test on cart behavior.
 
 <ruby>
 Scenario: Visitor can work with cart
@@ -135,8 +93,4 @@ Scenario: Visitor can work with cart
   And I should see "$15" within "#subtotal"
 </ruby>
 
-You can run tests with +rake cucumber+ 
-
-Some initial tests have been coded in +SPREE_ROOT/features+, and more are in the 
-pipeline. Stay tuned!
-
+INFO. The cucumber features have been temporarily disabled in Spree due to the Rails 3.0 update.  We're looking for volunteers to help us update our features and get us back on track with Cucumber.  If you're interested, please send an email to the spree-user mailing list.
