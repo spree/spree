@@ -23,15 +23,16 @@ module Spree
         empty_directory extension_dir('app/helpers')
         empty_directory extension_dir('app/models')
         empty_directory extension_dir('app/views')
-      end
-
-      def create_config_files
-        directory "config", "#{file_name}/config"
+        empty_directory extension_dir('spec')
       end
 
       def create_lib_files
         directory "lib", "#{file_name}/lib"
         template 'extension/extension.rb.tt', "#{file_name}/lib/#{file_name}.rb"
+      end
+
+      def create_spec_helper
+        template "spec_helper.rb", "#{file_name}/spec/spec_helper.rb"
       end
 
       def update_gemfile
