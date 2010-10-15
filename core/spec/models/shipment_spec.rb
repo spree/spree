@@ -30,7 +30,7 @@ describe Shipment do
 
     shared_examples_for "pending if backordered" do
       it "should have a state of pending if backordered" do
-        order.stub :backordered? => true
+        shipment.stub(:inventory_units => [mock_model(InventoryUnit, :backordered? => true)] )
         shipment.should_receive(:update_attribute_without_callbacks).with("state", "pending")
         shipment.update!(order)
       end

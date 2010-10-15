@@ -32,18 +32,18 @@ class Variant < ActiveRecord::Base
   # Adjusts the inventory units to match the given new level.
   def on_hand=(new_level)
     if Spree::Config[:track_inventory_levels]
-      delta_units = new_level.to_i - on_hand
+      new_level = new_level.to_i
 
-      # increase Inventory when positive delta
-      if delta_units > 0
+      # increase Inventory when
+      if new_level > on_hand
         # fill backordered orders before creating new units
-        inventory_units.with_state("backordered").slice(0, delta_units).each do |iu|
+        inventory_units.with_state("backordered").slice(0, new_level).each do |iu|
           iu.fill_backorder
-          delta_units -= 1
+          new_level -= 1
         end
       end
 
-      self.count_on_hand += delta_units
+      self.count_on_hand = new_level
     else
       raise "Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false"
     end

@@ -78,7 +78,7 @@ describe InventoryUnit do
       context "and zero units are in stock" do
         before { variant.stub(:count_on_hand).and_return(0) }
 
-        it "should create units as  backordered" do
+        it "should create units as backordered" do
           InventoryUnit.should_receive(:create_units).with(order, variant, 0, 5)
           InventoryUnit.increase(order, variant, 5)
         end
@@ -87,7 +87,7 @@ describe InventoryUnit do
       context "and less than zero units are in stock" do
         before { variant.stub(:count_on_hand).and_return(-9) }
 
-        it "should create units as  backordered" do
+        it "should create units as backordered" do
           InventoryUnit.should_receive(:create_units).with(order, variant, 0, 5)
           InventoryUnit.increase(order, variant, 5)
         end

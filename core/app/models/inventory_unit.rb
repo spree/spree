@@ -14,7 +14,8 @@ class InventoryUnit < ActiveRecord::Base
     event :ship do
       transition :to => 'shipped', :if => :allow_ship? #, :from => 'sold'
     end
-    # TODO: add backorder state and relevant transitions
+
+    after_transition :on => :fill_backorder, :do => :update_order
   end
 
   # method deprecated in favour of adjust_units (which creates & destroys units as needed).
@@ -110,6 +111,10 @@ class InventoryUnit < ActiveRecord::Base
     end
 
     back_order == 0 ? [] : [{:variant => variant, :count => back_order}]
+  end
+
+  def update_order
+    self.order.update!
   end
 
 end
