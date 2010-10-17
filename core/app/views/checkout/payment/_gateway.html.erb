@@ -3,7 +3,7 @@
 
 <p class="field">
   <label for=""><%= t("card_number") %></label><br />
-  <% options_hash = Rails.env == 'production' ? {:autocomplete => "off"} : {} %>
+  <% options_hash = Rails.env.production? ? {:autocomplete => "off"} : {} %>
   <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(:class => 'required', :size => 19, :maxlength => 19) %>
   <span class="req">*</span>
   &nbsp;

@@ -84,7 +84,7 @@ namespace :db do
     end
     Rake::Task["db:seed"].invoke if load_defaults
 
-    if Rails.env == 'production' and Product.count > 0
+    if Rails.env.production? and Product.count > 0
       load_sample = agree("WARNING: In Production and products exist in database, load sample data anyways? [y/n]:" )
     else
       load_sample = true if ENV['AUTO_ACCEPT']
