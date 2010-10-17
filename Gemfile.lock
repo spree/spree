@@ -19,7 +19,7 @@ PATH
       acts_as_list (>= 0.1.2)
       faker (>= 0.3.1)
       highline (>= 1.5.1)
-      paperclip (>= 2.3.1.1)
+      paperclip (2.3.4)
       rd_awesome_nested_set (>= 1.4.4)
       rd_resource_controller
       rd_searchlogic (>= 3.0.0.rc3)
@@ -91,7 +91,7 @@ GEM
     linecache (0.43)
     mime-types (1.16)
     nokogiri (1.4.3.1)
-    paperclip (2.3.3)
+    paperclip (2.3.4)
       activerecord
       activesupport
     rack (1.2.1)
