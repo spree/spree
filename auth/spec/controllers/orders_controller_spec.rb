@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe OrdersController do
 
-  let(:user) { mock_model User, :persistence_token => "foo" }
+  let(:user) { mock_model User, :persistence_token => "foo", :has_role? => false }
   let(:order) { mock_model(Order, :user => user).as_null_object }
 
   it "should understand order routes with token" do
@@ -57,6 +57,13 @@ describe OrdersController do
       it "should check if user is authorized for :edit" do
         controller.should_receive(:authorize!).with(:edit, order)
         get :edit
+      end
+      context "when order is anonymous" do
+        it "should associate the order with an authenticated user" do
+          user.stub :anonymous? => true
+          order.should_receive(:associate_user!).with(user)
+          get :edit
+        end
       end
     end
 
