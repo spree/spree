@@ -9,7 +9,7 @@
   <%= render "form", :f => f %>
 
   <p class="form-buttons">
-    <%= button @order.in_progress? ? t('continue') : t('update') %>
+    <%= button @order.cart? ? t('continue') : t('update') %>
   </p>
 
 <% end %>

@@ -29,38 +29,18 @@ class Admin::LineItemsController < Admin::BaseController
 
   end
 
-  destroy.success.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false }
-  destroy.failure.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false }
+  destroy.success.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false }
+  destroy.failure.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false }
 
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => false}
   end
 
   create.response do |wants|
-    wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false}
+    wants.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false}
   end
 
-  update.success.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false}
-  update.failure.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order}, :layout => false}
+  update.success.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false}
+  update.failure.wants.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false}
 
-  # destroy.after :recalulate_totals
-  # update.after :recalulate_totals
-  # create.after :recalulate_totals
-
-  private
-  # TODO: Order model should look after this
-  # def recalulate_totals
-  #   unless @order.shipping_method.nil?
-  #     @order.shipping_charges.each do |shipping_charge|
-  #       shipping_charge.update_attributes(:amount => @order.shipping_method.calculate_cost(@order.shipment))
-  #     end
-  #   end
-
-  #   @order.tax_charges.each do |tax_charge|
-  #     tax_charge.update_attributes(:amount => tax_charge.calculate_tax_charge)
-  #   end
-
-  #   @order.update_totals!
-
-  # end
 end

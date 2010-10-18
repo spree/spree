@@ -9,19 +9,19 @@ class Admin::PaymentsController < Admin::BaseController
     load_object
 
     begin
-      unless object.save
+      unless @payment.save
         response_for :create_fails
         return
       end
 
-      if @order.checkout.state == "complete"
-        object.process!
+      if @order.completed?
+        @payment.process!
         set_flash :create
         redirect_to collection_path
       else
         #This is the first payment (admin created order)
-        until @order.checkout.state == "complete"
-          @order.checkout.next!
+        until @order.completed?
+          @order.next!
         end
         flash.notice = t('new_order_completed')
         redirect_to admin_order_url(@order)
@@ -29,7 +29,6 @@ class Admin::PaymentsController < Admin::BaseController
 
     rescue Spree::GatewayError => e
       flash[:error] = "#{e.message}"
-      @payment.destroy
       redirect_to new_object_path
     end
   end
@@ -88,8 +87,7 @@ class Admin::PaymentsController < Admin::BaseController
 
   def build_object
     @object = model.new(object_params)
-    @object.payable = parent_object.checkout
-    @payment = @object
+    @object.order = parent_object
     if @object.payment_method.is_a?(Gateway) and @object.payment_method.payment_profiles_supported? and params[:card].present? and params[:card] != 'new'
       @object.source = Creditcard.find_by_id(params[:card])
     end

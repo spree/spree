@@ -9,7 +9,7 @@ class Admin::BaseController < Spree::BaseController
 
   protected
   def render_js_for_destroy
-    render :js => "$('.flash.notice').html('#{flash.notice}'); $('.flash.notice').show();"
+    render :partial => "/admin/shared/destroy"
     flash.notice = nil
   end
 
