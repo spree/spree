@@ -4,7 +4,7 @@ h2. Spree guides
 These guides are designed to make you immediately productive with Spree, and to help you understand how all of the pieces fit together. They are written by the authors of Spree as well as members of the Spree community.
 
 * "Current Release version":http://spreecommerce.com/documentation - based on the last stable release of Spree
-* "Edge version":http://spreecommerce.com/documentation/edge - for unreleased code in current Spree "master branch":http://github.com/railsdog/spree/tree/master
+* "Edge version":http://edgeguides.spreecommerce.com - for unreleased code in current Spree "master branch":http://github.com/railsdog/spree/tree/master
 
 <% end %>
 
@@ -15,12 +15,12 @@ h3. Start Here
 <dl>
   <% guide('Getting Started with Spree', 'getting_started.html') do %>
     Everything you need to know to install Spree and create your first application.
-  <% end %>       
-</dl>    
+  <% end %>
+</dl>
 <dl>
   <% guide('Working With the Source Code', 'source_code.html') do %>
     An introduction to working with the source code..
-  <% end %>       
+  <% end %>
 </dl>
 <dl>
   <% guide('Server Configuration', 'server_configuration.html') do %>
@@ -83,27 +83,17 @@ h3. Basic Configuration
     Information on how to configure your own coupons/discounts/gift certificates.
   <% end %>
 </dl>
-          
-h3. Customization
+
+h3. Digging Deeper
 
 <dl>
-  <% guide('Customization Overview', 'customization_overview.html') do %>
+  <% guide('Customization', 'customization.html') do %>
     This guide introduces the key ideas for customizing Spree to your site design.
   <% end %>
 </dl>
 <dl>
   <% guide('Using Extensions', 'extensions.html') do %>
     This guide covers the technical details of the extension system.
-  <% end %>
-</dl>
-<dl>
-  <% guide('Theming', 'theming.html') do %>
-    Learn how to change the appearance of your store using a theme extension.
-  <% end %>
-</dl>
-<dl>
-  <% guide('Extension Tutorial', 'extension_tutorial.html') do %>
-    This tutorial covers the basic steps of creating your own functionality extensions.
   <% end %>
 </dl>
 <dl>
@@ -116,8 +106,6 @@ h3. Customization
     Some tips on how to transfer large amounts of data into Spree.
   <% end %>
 </dl>
-                                                                   
-h3. Digging Deeper
 
 <dl>
   <% guide('Internationalization/Localization', 'i18n.html') do %>
@@ -131,7 +119,7 @@ h3. Digging Deeper
 </dl>
 <dl>
   <% guide('Testing Spree Applications', 'testing.html') do %>
-    This guide covers how to test the Spree source code as well as how to write new tests. 
+    This guide covers how to test the Spree source code as well as how to write new tests.
   <% end %>
 </dl>
 <dl>
@@ -161,7 +149,7 @@ h3. Digging Deeper
 </dl>
 <dl>
   <% guide('Contributing to Spree', 'contributing_to_spree.html') do %>
-    Do you enjoy Spree and want to "give something back?"  This guide contains information on how to contribute to the Spree project.  
+    Do you enjoy Spree and want to "give something back?"  This guide contains information on how to contribute to the Spree project.
   <% end %>
 </dl>
 <dl>
@@ -171,7 +159,7 @@ h3. Digging Deeper
 </dl>
 
 
-h3. Best Practices   
+h3. Best Practices
 
 <dl>
   <% guide('Developer Tips', 'developer_tips.html') do %>
