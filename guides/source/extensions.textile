@@ -95,9 +95,42 @@ After you've added the extension to your +Gemfile+ (using one of the techniques 
 
 h4. Third-party Extensions
 
+Most extensions are so-called "third party" extensions.  They are written by a party other than the developer working on a particular Spree site and they are intended to be shared with other developers.  Many (but not all) extensions are listed in the "Spree Extension Registry":http://spreecommerce.com/extensions.  This is an excellent source of information on which extensions are available and which versions of Spree they are known (or suspected) to be compatible with.
+
 h4. Creating an Extension
 
+Spree comes with a handy generator for creating a new Spree application.  If you are creating the extension within the context of a Rails application with the Spree gem enabled then this is a breeze.  If you wanted to create a new extension called "foofah" you would create as follows:
+
+<shell>
+  $ rails g spree:extension foofah
+</shell>
+
+This creates a directory named +foofah+ with all of the necessary files.  It will also automatically modify your +Gemfile+ so that its including the newly created engine/gem.
+
+INFO. For information on testing your extension, please see the "Testing Guide":http://localhost:3000/testing.html#testing-your-extensions.
+
 h4. Sharing Your Extension
+
+h5. Publishing Your Source
+
+The first order of business is to get your extension on "Github":http://github.com where everybody can see it.  Most importantly, you will want to allow others to have access to the source code.  Github provides a convenient (and free) place to store your source code along with the ability to track issues and accept code patches.
+
+INFO. It is convention to use the +spree-+ naming convention for your Github repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the Github project would be named +spree-foofah+ and the gem would be +spree_fofoah+.
+
+h5. Publishing Your Gem
+
+If your extension is ready to be released into the wild you can publish it as a gem on "RubyGems.org":http://rubygems.org.  Assuming you used the extension generator to build your extension, its already a gem and ready to be published.  You'll just want to edit a few details before you proceed.
+
+s.name        = 'foofah'
+s.version     = '1.0.0'
+s.summary     = 'Add gem summary here'
+#s.description = 'Add (optional) gem description here'
+s.required_ruby_version = '>= 1.8.7'
+
+# s.author            = 'David Heinemeier Hansson'
+# s.email             = 'david@loudthinking.com'
+# s.homepage          = 'http://www.rubyonrails.org'
+# s.rubyforge_project = 'actionmailer'
 
 h3. Extension Tutorial
 
