@@ -47,11 +47,11 @@ module SslRequirement
 
   private
     def dvp_mode?
-      ENV['RAILS_ENV'] == 'development'
+      Rails.env.development?
     end
 
     def test_mode?
-      ENV['RAILS_ENV'] == 'test' || ENV['RAILS_ENV'] == 'cucumber'
+      Rails.env.test? || Rails.env.cucumber?
     end
 
     # don't require ssl in development or test mode
