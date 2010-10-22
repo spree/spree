@@ -22,9 +22,9 @@ OrdersController.class_eval do
   # Associate the user with the order when appropriate.  Orders that are created after a user has registered/authenticated need
   # to be associated correctly with this user (we can't rely on the authentication process after the fact.)
   def associate_user
-    order = current_order
-    return unless order.anonymous? and current_user
-    order.associate_user!(current_user) #if session[:guest_token] == @order.user.persistence_token
+    if order = current_order and order.anonymous? and current_user
+      order.associate_user!(current_user) #if session[:guest_token] == @order.user.persistence_token
+    end
   end
 
 end

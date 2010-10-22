@@ -2,7 +2,7 @@
 
 <h1><%= t("shopping_cart")%></h1>
 
-<% if @order.nil? or @order.line_items.empty? %>
+<% if @order.line_items.empty? %>
 
   <%= hook :empty_cart do %>
     <p><%= t("your_cart_is_empty.") %></p>

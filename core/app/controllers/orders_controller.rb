@@ -18,7 +18,7 @@ class OrdersController < Spree::BaseController
 
   # Shows the current incomplete order from the session
   def edit
-    @order = current_order
+    @order = current_order(true)
   end
 
   # Adds a new item to the order (creating a new order if none already exists)
