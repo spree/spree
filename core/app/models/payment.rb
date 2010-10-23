@@ -24,6 +24,7 @@ class Payment < ActiveRecord::Base
   scope :with_state, lambda {|s| where(:state => s)}
   scope :completed, with_state('completed')
   scope :pending, with_state('pending')
+  scope :failed, with_state('failed')
 
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)

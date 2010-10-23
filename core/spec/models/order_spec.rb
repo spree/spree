@@ -274,24 +274,44 @@ describe Order do
 
   context "#update!" do
     before { Order.should_receive :update_all }
-    context "when there are payments" do
-      before { order.stub(:total => 100) }
-      it "should set the correct payment_state (when payments are sufficient)" do
-        order.stub(:payment_total => 100)
+
+    context "when payments are sufficient" do
+      it "should set payment_state to paid" do
+        order.stub(:total => 100, :payment_total => 100)
         order.update!
         order.payment_state.should == "paid"
       end
-      it "should set the correct payment_state (when payments are insufficient)" do
-        order.stub(:payment_total => 50)
-        order.update!
-        order.payment_state.should == "balance_due"
+    end
+
+    context "when payments are insufficient" do
+      let(:payments) { mock "payments", :completed => [] }
+      before { order.stub :total => 100, :payment_total => 50, :payments => payments }
+
+      context "when last payment did not fail" do
+        before { payments.stub :last => mock("payment", :state => 'pending') }
+        it "should set payment_state to balance_due" do
+          order.update!
+          order.payment_state.should == "balance_due"
+        end
       end
-      it "should set the correct payment_state (when payments are more than sufficient)" do
-        order.stub(:payment_total => 150)
+
+      context "when last payment failed" do
+        before { payments.stub :last => mock("payment", :state => 'failed') }
+        it "should set the payment_state to failed" do
+          order.update!
+          order.payment_state.should == "failed"
+        end
+      end
+    end
+
+    context "when payments are more than sufficient" do
+      it "should set the payment_state to credit_owed" do
+        order.stub(:total => 100, :payment_total => 150)
         order.update!
         order.payment_state.should == "credit_owed"
       end
     end
+
     context "when there are shipments" do
       before do
         order.stub_chain :shipments, :count => 2
