@@ -3,9 +3,13 @@
 
     $('#checkout_form_address').validate();
 
-    var update_state = function(region) {
+    var get_states = function(region){
       var country        = $('span#' + region + 'country :only-child').val();
-      var states         = state_mapper[country];
+      return state_mapper[country];
+    }
+    
+    var update_state = function(region) {
+      var states         = get_states(region);
 
       var state_select = $('span#' + region + 'state select');
       var state_input = $('span#' + region + 'state input');
@@ -23,7 +27,7 @@
           }
           state_select.append(opt);
         });
-        state_select.removeAttr('disabled').show();;
+        state_select.removeAttr('disabled').show();
         state_input.hide().attr('disabled', 'disabled');
 
       } else {
@@ -45,12 +49,20 @@
     update_state('s');
 
     $('input#order_use_billing').click(function() {
-      if(this.checked) {
-        $('#shipping .inner input, #shipping .inner select, #shipping .inner label, , #shipping .inner .req').hide();
+      if($(this).is(':checked')) {
+        $('#shipping .inner input, #shipping .inner select, #shipping .inner label, #shipping .inner .req').hide();
         $('#shipping .inner input, #shipping .inner select').attr('disabled', 'disabled');
       } else {
         $('#shipping .inner input, #shipping .inner select, #shipping .inner label, #shipping .inner .req').show();
         $('#shipping .inner input, #shipping .inner select').removeAttr('disabled', 'disabled');
+
+        //only want to enable relevant field
+        if(get_states('s')){
+          $('span#sstate input').hide().attr('disabled', 'disabled');
+        }else{
+          $('span#sstate select').hide().attr('disabled', 'disabled');
+        }
+
       }
     }).triggerHandler('click');
 
