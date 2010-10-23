@@ -176,6 +176,7 @@ caption { background: #eeeeee; }
 .loud { color: #111111; }
 form p.field {
   margin-bottom: 0.5em;
+  overflow: auto;
   clear: both;
 }
 form p.field span.req {
@@ -207,6 +208,17 @@ div#checkout #checkout_form_address #billing label.error {
   width: auto;
 }
 div#checkout #checkout_form_address #shipping label.error {
+  color: red;
+  float: left;
+  text-align: left;
+  display: inline-block;
+  top: 0px;
+  font-size: 11px;
+  border: none;
+  padding: 0px;
+  width: auto;
+}
+div#guest_checkout label.error {
   color: red;
   float: left;
   text-align: left;
