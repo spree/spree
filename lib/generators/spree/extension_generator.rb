@@ -14,7 +14,7 @@ module Spree
         template "Rakefile.tt", "#{file_name}/Rakefile"
         template "README.md", "#{file_name}/README.md"
         template ".gitignore", "#{file_name}/.gitignore"
-        template "extension.gemspec.tt", "#{file_name}/#{file_name.dasherize}.gemspec"
+        template "extension.gemspec.tt", "#{file_name}/#{file_name.tableize}.gemspec"
       end
 
       def create_app_dirs
