@@ -1,7 +1,7 @@
 class ReturnAuthorization < ActiveRecord::Base
   belongs_to :order
   has_many :inventory_units
-  before_save :generate_number
+  before_create :generate_number
 
   validates :order, :presence => true
   validates :amount, :numericality => true
@@ -42,7 +42,7 @@ class ReturnAuthorization < ActiveRecord::Base
       end
     end
 
-    self.order.return_authorized! if self.inventory_units.reload.size > 0 && !self.order.awaiting_return?
+    self.order.authorize_return! if self.inventory_units.reload.size > 0 && !self.order.awaiting_return?
   end
 
   private
@@ -51,6 +51,8 @@ class ReturnAuthorization < ActiveRecord::Base
   end
 
   def generate_number
+    return if self.number
+
     record = true
     while record
       random = "RMA#{Array.new(9){rand(9)}.join}"
@@ -60,8 +62,10 @@ class ReturnAuthorization < ActiveRecord::Base
   end
 
   def add_credit
-    credit = ReturnAuthorizationCredit.create(:adjustment_source => self, :order_id => self.order.id, :amount => self.amount, :description => I18n.t("rma_credit"))
-    self.order.update_totals!
+    inventory_units.each &:return!
+
+    credit = Adjustment.create(:source => self, :order_id => self.order.id, :amount => (self.amount > 0 ? self.amount * -1 : self.amount), :label => I18n.t("rma_credit"))
+    self.order.update!
   end
 
   def allow_receive?

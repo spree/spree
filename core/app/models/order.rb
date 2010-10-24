@@ -174,53 +174,35 @@ class Order < ActiveRecord::Base
     true
   end
 
+  def shipped_units
+    shipped_units = inventory_units.select(&:shipped?)
+    return nil if shipped_units.empty?
 
+    shipped = {}
+    shipped_units.group_by(&:variant).each do |variant, ship_units|
+      shipped[variant] = ship_units.size
+    end
+    shipped
+  end
 
-  # def make_shipments_shipped
-  #   shipments.reject(&:shipped?).each do |shipment|
-  #     shipment.update_attributes(:state => 'shipped', :shipped_at => Time.now)
-  #   end
-  # end
-  #
-  # def make_shipments_ready
-  #   shipments.each(&:ready)
-  # end
-  #
-  # def make_shipments_pending
-  #   shipments.each(&:pend)
-  # end
-  #
-  # def shipped_units
-  #   shipped_units = shipments.inject([]) { |units, shipment| units.concat(shipment.shipped? ? shipment.inventory_units : []) }
-  #   return nil if shipped_units.empty?
-  #
-  #   shipped = {}
-  #   shipped_units.group_by(&:variant_id).each do |variant_id, ship_units|
-  #     shipped[Variant.find(variant_id)] = ship_units.size
-  #   end
-  #   shipped
-  # end
+  def returnable_units
+    returned_units = inventory_units.select { |unit| unit.returned? }
 
-  # def returnable_units
-  #   returned_units = return_authorizations.inject([]) { |units, return_auth| units << return_auth.inventory_units}
-  #   returned_units.flatten! unless returned_units.nil?
-  #
-  #   returnable = shipped_units
-  #   return if returnable.nil?
-  #
-  #   returned_units.group_by(&:variant_id).each do |variant_id, returned_units|
-  #     variant = returnable.detect { |ru| ru.first.id == variant_id }[0]
-  #
-  #     count = returnable[variant] - returned_units.size
-  #     if count > 0
-  #       returnable[variant] = returnable[variant] - returned_units.size
-  #     else
-  #       returnable.delete variant
-  #     end
-  #   end
-  #
-  #   returnable.empty? ? nil : returnable
-  # end
+    returnable = shipped_units
+    return if returnable.nil?
+
+    returned_units.group_by(&:variant).each do |variant, returned_units|
+      count = returnable.key?(variant) ? (returnable[variant] - returned_units.size) : 0
+
+      if count > 0
+        returnable[variant] = returnable[variant] - returned_units.size
+      else
+        returnable.delete variant
+      end
+    end
+
+    returnable.empty? ? nil : returnable
+  end
 
   def allow_cancel?
     return false unless completed?

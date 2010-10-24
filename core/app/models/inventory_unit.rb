@@ -12,7 +12,10 @@ class InventoryUnit < ActiveRecord::Base
       transition :to => 'sold', :from => 'backordered'
     end
     event :ship do
-      transition :to => 'shipped', :if => :allow_ship? #, :from => 'sold'
+      transition :to => 'shipped', :if => :allow_ship?
+    end
+    event :return do
+      transition :to => 'returned', :from => 'shipped'
     end
 
     after_transition :on => :fill_backorder, :do => :update_order
@@ -87,7 +90,7 @@ class InventoryUnit < ActiveRecord::Base
 
   private
   def allow_ship?
-    Spree::Config[:allow_backorder_shipping] || (state == 'ready_to_ship')
+    Spree::Config[:allow_backorder_shipping] || self.sold?
   end
 
   def self.destroy_units(order, variant, quantity)

@@ -142,6 +142,7 @@ class Shipment < ActiveRecord::Base
   end
 
   def after_ship
+    inventory_units.each &:ship!
     ShipmentMailer.shipped_email(self).deliver
   end
 end
