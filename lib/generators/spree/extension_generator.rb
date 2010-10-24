@@ -10,11 +10,17 @@ module Spree
 
       def create_root_files
         empty_directory file_name
+        empty_directory "#{file_name}/db"
+        empty_directory "#{file_name}/public"
         template "LICENSE", "#{file_name}/LICENSE"
         template "Rakefile.tt", "#{file_name}/Rakefile"
         template "README.md", "#{file_name}/README.md"
         template ".gitignore", "#{file_name}/.gitignore"
         template "extension.gemspec.tt", "#{file_name}/#{file_name.tableize}.gemspec"
+      end
+
+      def install_rake
+        template "install.rake.tt", "#{file_name}/lib/tasks/install.rake"
       end
 
       def create_app_dirs
@@ -36,7 +42,7 @@ module Spree
       end
 
       def update_gemfile
-        gem file_name.dasherize, :path => file_name, :require => file_name
+        gem file_name.tableize, :path => file_name, :require => file_name
       end
 
       protected
