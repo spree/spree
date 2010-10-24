@@ -4,6 +4,7 @@ class Taxon < ActiveRecord::Base
   belongs_to :taxonomy
   has_and_belongs_to_many :products
   before_save :set_permalink
+  after_save :update_children_permalinks
   before_save :ensure_trailing_slash
 
   validates_presence_of :name
@@ -34,6 +35,12 @@ class Taxon < ActiveRecord::Base
     else
       parent_taxon = Taxon.find(parent_id)
       self.permalink = parent_taxon.permalink + name.to_url + "/"
+    end
+  end
+
+  def update_children_permalinks
+    self.children.each do |child|
+      child.save!
     end
   end
 
