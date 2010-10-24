@@ -10,6 +10,7 @@ module Spree
 
       def create_root_files
         empty_directory file_name
+        empty_directory "#{file_name}/config"
         empty_directory "#{file_name}/db"
         empty_directory "#{file_name}/public"
         template "LICENSE", "#{file_name}/LICENSE"
@@ -17,6 +18,10 @@ module Spree
         template "README.md", "#{file_name}/README.md"
         template ".gitignore", "#{file_name}/.gitignore"
         template "extension.gemspec.tt", "#{file_name}/#{file_name.tableize}.gemspec"
+      end
+
+      def config_routes
+        template "routes.rb", "#{file_name}/config/routes.rb"
       end
 
       def install_rake
