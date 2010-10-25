@@ -31,8 +31,8 @@ task :test_app do
     def tweak_gemfile
       append_file 'Gemfile' do
 <<-gems
-        gem 'spree_core', :path => '../../../core'
-        gem 'spree_api', :path => '../..'
+        gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
+        gem 'spree_api', :path => \'#{File.dirname(__FILE__)}\'
 gems
       end
     end

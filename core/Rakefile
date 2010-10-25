@@ -37,7 +37,7 @@ task :test_app do
   class CoreTestAppGenerator < Spree::Generators::TestAppGenerator
     def tweak_gemfile
       append_file 'Gemfile' do
-        "gem 'spree_core', :path => '../..'"
+        "gem 'spree_core', :path => '#{File.dirname(__FILE__)}'"
       end
     end
 
