@@ -40,6 +40,7 @@ module Spree
       def create_lib_files
         directory "lib", "#{file_name}/lib"
         template 'extension/extension.rb.tt', "#{file_name}/lib/#{file_name}.rb"
+        template 'hooks.rb.tt', "#{file_name}/lib/#{file_name}_hooks.rb"
       end
 
       def create_spec_helper

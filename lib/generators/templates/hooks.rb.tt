@@ -1,0 +1,3 @@
+class <%=class_name%>Hooks < Spree::ThemeSupport::HookListener
+  # custom hooks go here
+end

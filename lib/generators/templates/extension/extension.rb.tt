@@ -1,4 +1,5 @@
 require 'spree_core'
+require '<%=file_name%>_hooks'
 
 module <%=class_name%>
   class Engine < Rails::Engine
