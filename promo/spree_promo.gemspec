@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://spreecommerce.com'
   s.rubyforge_project = 'spree_promotions'
 
-  s.files        = Dir['CHANGELOG', 'README', 'MIT-LICENSE', 'lib/**/*']
+  s.files        = Dir['CHANGELOG', 'README', 'MIT-LICENSE', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'public/**/*']
   s.require_path = 'lib'
   s.requirements << 'none'
 
