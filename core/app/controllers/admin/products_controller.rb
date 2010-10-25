@@ -1,5 +1,6 @@
 class Admin::ProductsController < Admin::BaseController
   resource_controller
+  before_filter :check_json_authenticity, :only => :index
   before_filter :load_data, :except => :index
 
   index.response do |wants|
@@ -60,56 +61,54 @@ class Admin::ProductsController < Admin::BaseController
     redirect_to edit_admin_product_url(@new)
   end
 
-  private
-
-    # Allow different formats of json data to suit different ajax calls
-    def json_data
-      json_format = params[:json_format] or 'default'
-      case json_format
-      when 'basic'
-        collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
-      else
-        collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, :images => {}}}, :images => {}, :master => {}})
-      end
+  # Allow different formats of json data to suit different ajax calls
+  def json_data
+    json_format = params[:json_format] or 'default'
+    case json_format
+    when 'basic'
+      collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
+    else
+      collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, :images => {}}}, :images => {}, :master => {}})
     end
+  end
 
-    def load_data
-      @tax_categories = TaxCategory.find(:all, :order=>"name")
-      @shipping_categories = ShippingCategory.find(:all, :order=>"name")
-    end
+  def load_data
+    @tax_categories = TaxCategory.find(:all, :order=>"name")
+    @shipping_categories = ShippingCategory.find(:all, :order=>"name")
+  end
 
-    def collection
-      return @collection if @collection.present?
-      base_scope = end_of_association_chain
+  def collection
+    return @collection if @collection.present?
+    base_scope = end_of_association_chain
 
-      unless request.xhr?
-        # Note: the SL scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
-        # QUERY - better as named scope or as SL scope?
-        if params[:search].nil? || params[:search][:deleted_at_not_null].blank?
-          base_scope = base_scope.not_deleted
-        end
-
-        @search = base_scope.group_by_products_id.searchlogic(params[:search])
-        @search.order ||= "ascend_by_name"
-
-        @collection = @search.do_search.paginate(:include   => {:variants => [:images, :option_values]},
-                                       :per_page  => Spree::Config[:admin_products_per_page],
-                                       :page      => params[:page])
-      else
-        includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
-
-        @collection = base_scope.where(["name LIKE ?", "%#{params[:q]}%"]).includes(includes).limit(params[:limit] || 10)
-        @collection.concat base_scope.where(["variants.sku LIKE ?", "%#{params[:q]}%"]).includes(:variants_including_master).limit(params[:limit] || 10)
-
-        @collection.uniq
+    unless request.xhr?
+      # Note: the SL scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
+      # QUERY - better as named scope or as SL scope?
+      if params[:search].nil? || params[:search][:deleted_at_not_null].blank?
+        base_scope = base_scope.not_deleted
       end
 
+      @search = base_scope.group_by_products_id.searchlogic(params[:search])
+      @search.order ||= "ascend_by_name"
+
+      @collection = @search.do_search.paginate(:include   => {:variants => [:images, :option_values]},
+                                     :per_page  => Spree::Config[:admin_products_per_page],
+                                     :page      => params[:page])
+    else
+      includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
+
+      @collection = base_scope.where(["name LIKE ?", "%#{params[:q]}%"]).includes(includes).limit(params[:limit] || 10)
+      @collection.concat base_scope.where(["variants.sku LIKE ?", "%#{params[:q]}%"]).includes(:variants_including_master).limit(params[:limit] || 10)
+
+      @collection.uniq
     end
 
-    def update_before
-      # note: we only reset the product properties if we're receiving a post from the form on that tab
-      return unless params[:clear_product_properties]
-      params[:product] ||= {}
-    end
+  end
+
+  def update_before
+    # note: we only reset the product properties if we're receiving a post from the form on that tab
+    return unless params[:clear_product_properties]
+    params[:product] ||= {}
+  end
 
 end

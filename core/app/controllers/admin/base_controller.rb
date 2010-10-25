@@ -13,6 +13,12 @@ class Admin::BaseController < Spree::BaseController
     flash.notice = nil
   end
 
+  # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
+  def check_json_authenticity
+    return unless request.format.js? or request.format.json?
+    form_authenticity_token == params[request_forgery_protection_token] || raise(ActionController::InvalidAuthenticityToken)
+  end
+
   # def require_object_editable_by_current_user
   #   return access_denied unless object.editable_by?(current_user)
   #   true

@@ -36,7 +36,7 @@ var request = function(options) {
   jQuery.ajax(jQuery.extend({ dataType: 'script', url: options.url, type: 'get' }, options));
   return false;
 };
- 
+
 // remote links handler
 jQuery('a[data-remote=true]').live('click', function() {
   if(confirm_msg = jQuery(this).attr("data-confirm")){
@@ -68,7 +68,7 @@ jQuery('a[data-remote=true]').live('click', function() {
     return false;
   }
 });
- 
+
 // remote forms handler
 jQuery('form[data-remote=true]').live('submit', function() {
   return request({ url : this.action, type : this.method, data : jQuery(this).serialize() });
@@ -155,7 +155,7 @@ prep_autocomplete_data = function(data){
 }
 
 jQuery.fn.product_autocomplete = function(){
-  $(this).autocomplete("/admin/products.json", {
+  $(this).autocomplete("/admin/products.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content"), {
       parse: prep_autocomplete_data,
       formatItem: function(item) {
         return format_autocomplete(item);
@@ -199,10 +199,10 @@ jQuery(document).ready(function() {
 
 });
 
-function add_fields(target, association, content) {  
-  var new_id = new Date().getTime();  
-  var regexp = new RegExp("new_" + association, "g");  
-  $(target).append(content.replace(regexp, new_id));  
+function add_fields(target, association, content) {
+  var new_id = new Date().getTime();
+  var regexp = new RegExp("new_" + association, "g");
+  $(target).append(content.replace(regexp, new_id));
 }
 
 jQuery('a.remove_fields').live('click', function() {
@@ -214,12 +214,12 @@ jQuery('a.remove_fields').live('click', function() {
 jQuery(".observe_field").live('change', function() {
   target = $(this).attr("data-update");
   ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
-  $(target).hide(); 
+  $(target).hide();
   $(ajax_indicator).show();
-  $.get($(this).attr("data-base-url")+encodeURIComponent($(this).val()), 
+  $.get($(this).attr("data-base-url")+encodeURIComponent($(this).val()),
     function(data) {
       $(target).html(data);
-      $(ajax_indicator).hide(); 
+      $(ajax_indicator).hide();
       $(target).show();
     }
   );
