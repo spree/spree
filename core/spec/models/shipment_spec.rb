@@ -129,6 +129,7 @@ describe Shipment do
     before do
       shipment.state = 'ready'
       shipment.stub :require_inventory => false
+      shipment.stub :update_order => true
     end
 
     it "should send a shipment email" do
@@ -139,4 +140,20 @@ describe Shipment do
     end
 
   end
+
+  context "#save" do
+    
+    before do
+      shipment.state = 'ready'
+      shipment.stub :require_inventory => false
+    end
+    
+    it "should call order#update!" do
+      order = Order.create
+      shipment = Shipment.create(:order => order)
+      order.should_receive(:update!)
+      shipment.save
+    end
+  end
+  
 end

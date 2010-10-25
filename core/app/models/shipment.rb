@@ -7,6 +7,7 @@ class Shipment < ActiveRecord::Base
   has_many :inventory_units
   before_create :generate_shipment_number
   after_destroy :release_inventory_units
+  after_save :update_order
 
   attr_accessor :special_instructions
   accepts_nested_attributes_for :address
@@ -144,5 +145,9 @@ class Shipment < ActiveRecord::Base
   def after_ship
     inventory_units.each &:ship!
     ShipmentMailer.shipped_email(self).deliver
+  end
+  
+  def update_order
+    order.update!
   end
 end
