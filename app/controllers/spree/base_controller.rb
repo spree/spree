@@ -59,14 +59,20 @@ class Spree::BaseController < ActionController::Base
 
   protected
 
+  # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
+  def check_json_authenticity
+    return unless request.format.js? or request.format.json?
+    form_authenticity_token == params[request_forgery_protection_token] || raise(ActionController::InvalidAuthenticityToken)
+  end
+
   def default_title
     Spree::Config[:site_name]
   end
-  
+
   def accurate_title
     return nil
   end
-  
+
   def reject_unknown_object
     # workaround to catch problems with loading errors for permalink ids (reconsider RC permalink hack elsewhere?)
     begin

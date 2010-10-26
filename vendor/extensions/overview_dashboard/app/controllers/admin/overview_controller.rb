@@ -1,6 +1,8 @@
 # this clas was inspired (heavily) from the mephisto admin architecture
 
 class Admin::OverviewController < Admin::BaseController
+  before_filter :check_json_authenticity, :only => :get_report_data
+
   #todo, add rss feed of information that is happening
 
   def index
@@ -57,7 +59,7 @@ class Admin::OverviewController < Admin::BaseController
         ["completed_at >= ?", params[:from]]
       end
   end
-  
+
   def fill_empty_entries(orders, params)
     from_date = params[:from].to_date
     to_date = (params[:to] || Time.now).to_date

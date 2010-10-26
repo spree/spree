@@ -95,15 +95,15 @@ jQuery(document).ready(function(){
 	
 		jQuery.ajax({
 	       type: 'GET',
-	       url: 'admin/overview/get_report_data',
-	       data: ({report: 'orders_by_day', name: report, value: value, authenticity_token: AUTH_TOKEN}),
+	       url: 'admin/overview/get_report_data?authenticity_token=' + AUTH_TOKEN,
+	       data: ({report: 'orders_by_day', name: report, value: value}),
 	       success: handle_orders_by_day
 		});
 		
 		jQuery.ajax({
 	       type: 'GET',
-	       url: 'admin/overview/get_report_data',
-	       data: ({report: 'orders_totals', name: report, authenticity_token: AUTH_TOKEN}),
+	       url: 'admin/overview/get_report_data?authenticity_token=' + AUTH_TOKEN,
+	       data: ({report: 'orders_totals', name: report}),
 	       success: handle_orders_total
 		});
 

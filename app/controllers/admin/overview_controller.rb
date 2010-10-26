@@ -8,7 +8,7 @@ class Admin::OverviewController < Admin::BaseController
     #@users = User.find_with_deleted(:all, :order => 'updated_at desc')
 #  going to list today's orders, yesterday's orders, older orders
 # have a filter / search at the top
-    # @orders, @ 
+    # @orders, @
   end
 
 end

@@ -1,5 +1,6 @@
 class Admin::ProductsController < Admin::BaseController
   resource_controller
+  before_filter :check_json_authenticity, :only => :index
   before_filter :load_data, :except => :index
 
   index.response do |wants|

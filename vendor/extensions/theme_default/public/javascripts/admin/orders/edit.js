@@ -75,7 +75,7 @@ jQuery(document).ready(function(){
     });
   }
 
-  $("#add_product_name").autocomplete("/admin/products.json", {
+  $("#add_product_name").autocomplete("/admin/products.json?authenticity_token=" + AUTH_TOKEN, {
       parse: prep_autocomplete_data,
       formatItem: function(item) {
         return format_autocomplete(item);
