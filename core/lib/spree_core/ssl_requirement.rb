@@ -78,7 +78,7 @@ module SslRequirement
 
     def ssl_allowed?
       actions = self.class.read_inheritable_attribute(:ssl_allowed_actions)
-      return true if actions.nil?
+      return false if actions.nil?
       actions.empty? || actions.include?(action_name.to_sym)
     end
 
