@@ -72,15 +72,6 @@ class Shipment < ActiveRecord::Base
     end
   end
 
-  def recalculate_needed?
-    changed? or !address.same_as?(Address.find(address.id))
-  end
-
-  def recalculate_order
-    shipping_charge.update_attribute(:description, description_for_shipping_charge)
-    order.update_totals!
-  end
-
   # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
   # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
   # yield the correct results.
@@ -146,7 +137,7 @@ class Shipment < ActiveRecord::Base
     inventory_units.each &:ship!
     ShipmentMailer.shipped_email(self).deliver
   end
-  
+
   def update_order
     order.update!
   end

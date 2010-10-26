@@ -68,12 +68,3 @@
     <% end %>
   </table>
 <% end %>
-
-<%= hook :admin_shipment_form_recalculate, locals do %>
-  <p>
-    <label>
-      <%= check_box_tag :recalculate, true, true %>
-      <%= t('recalculate_order_total') %>
-    </label>
-  </p>
-<% end %>

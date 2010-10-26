@@ -127,6 +127,7 @@ Rails.application.routes.draw do
         get :fire
         post :resend
         get :history
+        get :user
       end
 
       resources :adjustments
@@ -179,7 +180,7 @@ Rails.application.routes.draw do
     resources :payment_methods
     resources :mail_methods
   end
-  
+
   match '/content/cvv' => 'content#cvv'
 
   #RAILS3 TODO - we should disable this by default

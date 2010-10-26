@@ -305,7 +305,7 @@ class Order < ActiveRecord::Base
     if shipment.present?
       shipment.update_attributes(:shipping_method => shipping_method)
     else
-      self.shipments << Shipment.create(:order => self, :shipping_method => shipping_method, :inventory_units => inventory_units)
+      self.shipments << Shipment.create(:order => self, :shipping_method => shipping_method, :address => self.ship_address)
     end
     if shipping_charge = adjustments.shipping.first
       # shipping_charge.update_attributes(:originator_id => shipping_method.id)

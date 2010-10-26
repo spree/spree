@@ -115,7 +115,7 @@ describe Order do
         before do
         end
         it "should create a shipment" do
-          Shipment.should_receive(:create).with(:shipping_method => order.shipping_method, :order => order, :inventory_units => units)
+          Shipment.should_receive(:create).with(:shipping_method => order.shipping_method, :order => order, :address => order.ship_address)
           order.next!
         end
         it "should create a shipping charge" do

@@ -5,10 +5,10 @@ class Admin::ShipmentsController < Admin::BaseController
   belongs_to :order
 
   update.wants.html do
-    if @order.in_progress?
-      redirect_to admin_order_adjustments_url(@order)
-    else
+    if @order.completed?
       redirect_to edit_object_url
+    else
+      redirect_to admin_order_adjustments_url(@order)
     end
   end
 
@@ -22,7 +22,6 @@ class Admin::ShipmentsController < Admin::BaseController
   update.after :update_after
 
   create.before :assign_inventory_units
-  create.after :recalculate_order
 
   destroy.success.wants.js { render_js_for_destroy }
 
@@ -61,16 +60,11 @@ class Admin::ShipmentsController < Admin::BaseController
     @order.special_instructions = object_params[:special_instructions] if Spree::Config[:shipping_instructions]
     @order.shipping_method = @order.shipment.shipping_method
     @order.save
-    recalculate_order
   end
 
   def assign_inventory_units
     return unless params.has_key? :inventory_units
     @shipment.inventory_unit_ids = params[:inventory_units].keys
-  end
-
-  def recalculate_order
-    @shipment.recalculate_order if params[:recalculate]
   end
 
 end

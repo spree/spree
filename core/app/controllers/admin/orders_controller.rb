@@ -3,7 +3,7 @@ class Admin::OrdersController < Admin::BaseController
   resource_controller
   before_filter :initialize_txn_partials
   before_filter :initialize_order_events
-  before_filter :load_object, :only => [:fire, :resend, :history]
+  before_filter :load_object, :only => [:fire, :resend, :history, :user]
   before_filter :ensure_line_items, :only => [:update]
 
   update do
@@ -11,7 +11,15 @@ class Admin::OrdersController < Admin::BaseController
     wants.html do
       if !@order.line_items.empty?
         unless @order.complete?
-          redirect_to admin_orders_checkout_path(@order.number, 'cart')
+
+          if params[:order].key?(:use_billing)
+            @order.shipping_method = @order.available_shipping_methods(:front_end).first
+            @order.create_shipment!
+            redirect_to edit_admin_order_shipment_path(@order, @order.shipment)
+          else
+            redirect_to user_admin_order_path(@order)
+          end
+
         else
           redirect_to admin_order_path(@order)
         end
@@ -22,7 +30,7 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def new
-    @order = Order.create
+    @order = @object = Order.create
   end
 
   def fire
@@ -43,6 +51,11 @@ class Admin::OrdersController < Admin::BaseController
     OrderMailer.confirm_email(@order, true).deliver
     flash.notice = t('order_email_resent')
     redirect_to :back
+  end
+
+  def user
+    @order.build_bill_address(:country_id => Spree::Config[:default_country_id]) if @order.bill_address.nil?
+    @order.build_ship_address(:country_id => Spree::Config[:default_country_id]) if @order.ship_address.nil?
   end
 
   private

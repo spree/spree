@@ -1,6 +1,6 @@
-<%= render :partial => 'admin/shared/order_tabs' %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Customer Details"} %>
 
-<% if @order.state == "in_progress" %>
+<% if @order.cart? %>
   <div id="add-line-item">
     <fieldset>
       <legend><%= t('customer_search') %></legend>
@@ -11,10 +11,13 @@
 <% end %>
 
 <%= render "shared/error_messages", :target => @order %>
-<%= form_for(@order, :url => admin_orders_checkout_path(@order.number)) do |f| %>
-  <%= render @order.state, :f => f %>
+
+<%= form_for(@order, :url => admin_order_url(@order), :html => { :method => :put}) do |f| %>
+  <%= f.hidden_field :number %>
+  <%= render :partial => "user_form", :locals => {:f => f} %>
 <% end %>
 
 <% content_for :head do %>
-  <%= javascript_include_tag  'checkout', '/states' %>
+  <%= javascript_include_tag 'admin/checkouts/edit.js' %>
+
 <% end %>
