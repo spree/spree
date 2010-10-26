@@ -532,4 +532,24 @@ describe Order do
     end
 
   end
+
+  context "with adjustments" do
+    let(:adjustment1) { mock_model(Adjustment, :amount => 5) }
+    let(:adjustment2) { mock_model(Adjustment, :amount => 10) }
+
+    context "#ship_total" do
+      it "should return the correct amount" do
+        order.stub_chain :adjustments, :shipping => [adjustment1, adjustment2]
+        order.ship_total.should == 15
+      end
+    end
+
+    context "#tax_total" do
+      it "should return the correct amount" do
+        order.stub_chain :adjustments, :tax => [adjustment1, adjustment2]
+        order.tax_total.should == 15
+      end
+    end
+  end
+
 end

@@ -24,16 +24,15 @@ class Admin::ReportsController < Admin::BaseController
 
 
     @search = Order.searchlogic(params[:search])
-    @search.checkout_complete = true
+    @search.completed_at_not_null
     #set order by to default or form result
     @search.order ||= "descend_by_created_at"
 
-    @orders = @search.find(:all)
+    @orders = @search.do_search
 
-    @item_total = @search.sum(:item_total)
-    @charge_total = @search.sum(:adjustment_total)
-    @credit_total = @search.sum(:credit_total)
-    @sales_total = @search.sum(:total)
+    @item_total = @search.do_search.sum(:item_total)
+    @adjustment_total = @search.do_search.sum(:adjustment_total)
+    @sales_total = @search.do_search.sum(:total)
   end
 
   private

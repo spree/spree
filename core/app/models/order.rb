@@ -267,25 +267,12 @@ class Order < ActiveRecord::Base
   #   end
   # end
 
-  # TODO: Re-implement these 4 methods
   def ship_total
-    # shipping_charges.reload.map(&:amount).sum
-    0
+    adjustments.shipping.map(&:amount).sum
   end
 
   def tax_total
-    # tax_charges.reload.map(&:amount).sum
-    0
-  end
-
-  def credit_total
-    # credits.reload.map(&:amount).sum.abs
-    0
-  end
-
-  def charge_total
-    # charges.reload.map(&:amount).sum
-    0
+    adjustments.tax.map(&:amount).sum
   end
 
   # Creates a new tax charge if applicable.  Uses the highest possible matching rate and destroys any previous
