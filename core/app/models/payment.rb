@@ -3,8 +3,6 @@ class Payment < ActiveRecord::Base
   belongs_to :source, :polymorphic => true
   belongs_to :payment_method
 
-  has_many :transactions
-  alias :txns :transactions
   has_many :offsets, :class_name => 'Payment', :foreign_key => 'source_id', :conditions => "source_type = 'Payment' AND amount < 0"
 
   after_save :create_payment_profile, :if => :payment_profiles_supported?
@@ -18,7 +16,7 @@ class Payment < ActiveRecord::Base
   accepts_nested_attributes_for :source
 
   #validate :amount_is_valid_for_outstanding_balance_or_credit
-  validates :payment_method, :presence => true, :if => Proc.new { |payable| payable.is_a? Checkout }
+  #validates :payment_method, :presence => true, :if => Proc.new { |payable| payable.is_a? Checkout }
 
   scope :from_creditcard, where(:source_type => 'Creditcard')
   scope :with_state, lambda {|s| where(:state => s)}

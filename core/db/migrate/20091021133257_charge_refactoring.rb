@@ -1,16 +1,19 @@
 class ChargeRefactoring < ActiveRecord::Migration
-  
+
+  class Checkout < ActiveRecord::Base
+  end
+
   # Hack to prevent issues with legacy migrations
   class Order < ActiveRecord::Base
     has_one :checkout
   end
-  
+
   def self.up
     add_column :orders, :completed_at, :timestamp
-    Order.reset_column_information   
+    Order.reset_column_information
     Order.all.each {|o| o.update_attribute(:completed_at, o.checkout && o.checkout.read_attribute(:completed_at)) }
     remove_column :checkouts, :completed_at
-    
+
     change_column :adjustments, :amount, :decimal, :null => true, :default => nil, :precision => 8, :scale => 2
     Adjustment.update_all "type = secondary_type"
     Adjustment.update_all "type = 'CouponCredit'", "type = 'Credit'"
