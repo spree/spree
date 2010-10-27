@@ -223,6 +223,7 @@ en:
   address: Address
   address_information: "Address Information"
   adjustment: Adjustment
+  adjustment_total: Adjustment Total
   adjustments: Adjustments
   administration: Administration
   all: "All"
@@ -556,13 +557,13 @@ en:
   order_state:
     # keys correspond to Checkout state names:
     address: address
+    adjustments: adjustments
     awaiting_return: awaiting return
     canceled: canceled
     cart: cart
     complete: complete
     confirm: confirm
     delivery: delivery
-    adjustments: adjustments
     payment: payment
     resumed : resumed
     returned: returned
