@@ -1,5 +1,5 @@
 class Admin::ShipmentsController < Admin::BaseController
-  before_filter :load_data, :except => :country_changed
+  before_filter :load_data, :except => [:country_changed, :index]
 
   resource_controller
   belongs_to :order
@@ -48,8 +48,7 @@ class Admin::ShipmentsController < Admin::BaseController
     @shipping_methods = ShippingMethod.all_available(@order, :back_end)
 
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')
-    @countries = Checkout.countries.sort
-    @countries = [Country.find(Spree::Config[:default_country_id])] if @countries.empty?
+    @countries = (zone = Zone.find_by_name(Spree::Config[:checkout_zone]) ? zone.country_list : Country.all)
   end
 
   def edit_before # copy into instance variable before editing

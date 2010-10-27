@@ -71,14 +71,6 @@ class Admin::PaymentsController < Admin::BaseController
       @payment_method = @payment_methods.first
     end
     @previous_cards = @order.creditcards.with_payment_profile
-    @countries = Country.find(:all).sort
-    @shipping_countries = Checkout.countries.sort
-    if current_user && current_user.bill_address
-      default_country = current_user.bill_address.country
-    else
-      default_country = Country.find Spree::Config[:default_country_id]
-    end
-    @states = default_country.states.sort
   end
 
   def load_amount
