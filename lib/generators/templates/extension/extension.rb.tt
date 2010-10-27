@@ -7,8 +7,9 @@ module <%=class_name%>
     config.autoload_paths += %W(#{config.root}/lib)
 
     def self.activate
-      # Activation logic goes here.  A good use for this is performing class_eval on classes that are defined
-      # outside of the extension (so that monkey patches are not lost on subsequent requests in development mode.)
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+        Rails.env.production? ? require(c) : load(c)
+      end
     end
 
     config.to_prepare &method(:activate).to_proc
