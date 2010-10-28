@@ -196,25 +196,31 @@ describe Order do
   end
 
   context "#outstanding_balance" do
-    it "should return the value total - payment_total" do
+    it "should return positive amount when payment_total is less than total" do
       order.payment_total = 20.20
       order.total = 30.30
       order.outstanding_balance.should == 10.10
     end
+    it "should return negative amount when payment_total is greater than total" do
+      order.total = 8.20
+      order.payment_total = 10.20
+      order.outstanding_balance.should == -2.00
+    end
+
   end
 
   context "#outstanding_balance?" do
-    it "should return true when total greater than payment_total" do
+    it "should be true when total greater than payment_total" do
       order.total = 10.10
       order.payment_total = 9.50
       order.outstanding_balance?.should be_true
     end
-    it "should return false when total less than payment_total" do
+    it "should be true when total less than payment_total" do
       order.total = 8.25
       order.payment_total = 10.44
-      order.outstanding_balance?.should be_false
+      order.outstanding_balance?.should be_true
     end
-    it "should return false when total equals payment_total" do
+    it "should be false when total equals payment_total" do
       order.total = 10.10
       order.payment_total = 10.10
       order.outstanding_balance?.should be_false
@@ -222,29 +228,6 @@ describe Order do
   end
 
   context "#outstanding_credit" do
-    it "should return 0 when payment_total is less than total" do
-      order.total = 10.10
-      order.payment_total = 8.52
-      order.outstanding_credit.should == 0
-    end
-    it "should return payment_total - total when payment_total is greater than total" do
-      order.total = 8.20
-      order.payment_total = 10.20
-      order.outstanding_credit.should == 2.00
-    end
-  end
-
-  context "#outstanding_credit?" do
-    it "should be true when there's outstanding credit" do
-      order.total = 2.50
-      order.payment_total = 8.20
-      order.outstanding_credit?.should be_true
-    end
-    it "should be false when there's no outstanding credit" do
-      order.total = 11.20
-      order.payment_total = 8.20
-      order.outstanding_credit?.should be_false
-    end
   end
 
   context "#complete?" do

@@ -64,6 +64,8 @@ class Creditcard < ActiveRecord::Base
   def authorize(amount, payment)
     # ActiveMerchant is configured to use cents so we need to multiply order total by 100
     response = payment_gateway.authorize((amount * 100).round, self, gateway_options(payment))
+    record_log payment, response
+
     if response.success?
       payment.response_code = response.authorization
       payment.avs_response = response.avs_result['code']
@@ -79,6 +81,8 @@ class Creditcard < ActiveRecord::Base
   def purchase(amount, payment)
     #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
     response = payment_gateway.purchase((amount * 100).round, self, gateway_options(payment))
+    record_log payment, response
+
     if response.success?
       payment.response_code = response.authorization
       payment.avs_response = response.avs_result['code']
@@ -101,6 +105,9 @@ class Creditcard < ActiveRecord::Base
       # Standard ActiveMerchant capture usage
       response = payment_gateway.capture((payment.amount * 100).round, payment.response_code, minimal_gateway_options(payment))
     end
+
+    record_log payment, response
+
     if response.success?
       payment.response_code = response.authorization
       payment.complete
@@ -114,6 +121,8 @@ class Creditcard < ActiveRecord::Base
 
   def void(payment)
     response = payment_gateway.void(payment.response_code, self, minimal_gateway_options(payment))
+    record_log payment, response
+
     if response.success?
       payment.response_code = response.authorization
       payment.void
@@ -124,20 +133,32 @@ class Creditcard < ActiveRecord::Base
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
-  def credit(payment, amount)
+  def credit(payment)
+    amount = payment.credit_allowed >= payment.order.outstanding_balance.abs ? payment.order.outstanding_balance : payment.credit_allowed
+
     if payment_gateway.payment_profiles_supported?
       response = payment_gateway.credit((amount * 100).round, self, payment.response_code, minimal_gateway_options(payment))
     else
       response = payment_gateway.credit((amount * 100).round, payment.response_code, minimal_gateway_options(payment))
     end
+
+    record_log payment, response
+
     if response.success?
-      Payment.create(:source => payment, :amount => amount.abs * -1, :response_code => response.authorization, :state => 'completed')
+      Payment.create(:order => payment.order,
+                    :source => payment,
+                    :payment_method => payment.payment_method,
+                    :amount => amount.abs * -1,
+                    :response_code => response.authorization,
+                    :state => 'completed')
     else
       gateway_error(response)
     end
   rescue ActiveMerchant::ConnectionError => e
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
+
+
 
 
   def actions
@@ -163,11 +184,17 @@ class Creditcard < ActiveRecord::Base
   # behavior of Spree is to disallow credit operations until the payment is at least 12 hours old.
   def can_credit?(payment)
     return false unless (Time.now - 12.hours) > payment.created_at
-    payment.state == "completed"
+    return false unless payment.state == "completed"
+    return false unless payment.order.payment_state == "credit_owed"
+    payment.credit_allowed > 0
   end
 
   def has_payment_profile?
     gateway_customer_profile_id.present?
+  end
+
+  def record_log(payment, response)
+    payment.log_entries.create(:details => response.to_yaml)
   end
 
   def gateway_error(error)

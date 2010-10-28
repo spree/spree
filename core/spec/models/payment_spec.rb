@@ -2,13 +2,14 @@ require 'spec_helper'
 
 describe Payment do
 
-  let(:order) { mock_model(Order, :update! => nil) }
-  # let(:payment) { Payment.new }
+  let(:order) { mock_model(Order, :update! => nil, :payments => []) }
   before(:each) do
     @payment = Payment.new(:order => order)
     @payment.source = mock_model(Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil)
     @payment.stub!(:valid?).and_return(true)
     @payment.stub!(:check_payments).and_return(nil)
+
+    order.payments.stub!(:reload).and_return([@payment])
   end
 
   context "#process!" do

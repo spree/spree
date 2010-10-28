@@ -3,12 +3,13 @@ class Payment < ActiveRecord::Base
   belongs_to :source, :polymorphic => true
   belongs_to :payment_method
 
-  has_many :offsets, :class_name => 'Payment', :foreign_key => 'source_id', :conditions => "source_type = 'Payment' AND amount < 0"
+  has_many :offsets, :class_name => 'Payment', :foreign_key => 'source_id', :conditions => "source_type = 'Payment' AND amount < 0 AND state = 'completed'"
+  has_many :log_entries, :as => :source
 
   after_save :create_payment_profile, :if => :payment_profiles_supported?
 
   # update the order totals, etc.
-  after_save {order.try(:update!)}
+  after_save :update_order
 
   #after_save :check_payments
   #after_destroy :check_payments
@@ -82,8 +83,12 @@ class Payment < ActiveRecord::Base
   end
 
   def actions
-    return [] unless source and source.respond_to? :actions
-    source.actions.select { |action| !source.respond_to?("can_#{action}?") or source.send("can_#{action}?", self) }
+    return [] unless payment_source and payment_source.respond_to? :actions
+    payment_source.actions.select { |action| !payment_source.respond_to?("can_#{action}?") or payment_source.send("can_#{action}?", self) }
+  end
+
+  def payment_source
+    source.is_a?(Payment) ? source.source : source
   end
 
   private
@@ -110,14 +115,8 @@ class Payment < ActiveRecord::Base
 
     def amount_is_valid_for_outstanding_balance_or_credit
       return unless order
-      if amount < 0
-        if amount.abs > order.outstanding_credit
-          errors.add(:amount, "Is greater than the credit owed (#{order.outstanding_credit})")
-        end
-      else
-        if amount > order.outstanding_balance
-          errors.add(:amount, "Is greater than the outstanding balance (#{order.outstanding_balance})")
-        end
+      if amount != order.outstanding_balance
+        errors.add(:amount, "does not match outstanding balance (#{order.outstanding_balance})")
       end
     end
 
@@ -130,6 +129,11 @@ class Payment < ActiveRecord::Base
       source.payment_gateway.create_profile(self)
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)
+    end
+
+    def update_order
+      order.payments.reload
+      order.update!
     end
 
 end

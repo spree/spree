@@ -36,8 +36,8 @@ class Admin::PaymentsController < Admin::BaseController
   def fire
     # TODO: consider finer-grained control for this type of action (right now anyone in admin role can perform)
     load_object
-    return unless event = params[:e] and @payment.source
-    if @payment.source.send("#{event}", @payment)
+    return unless event = params[:e] and @payment.payment_source
+    if @payment.payment_source.send("#{event}", @payment)
       flash.notice = t('payment_updated')
     else
       flash[:error] = t('cannot_perform_operation')

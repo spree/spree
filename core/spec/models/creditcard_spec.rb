@@ -2,10 +2,13 @@ require 'spec_helper'
 
 describe Creditcard do
   let(:valid_creditcard_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }
+  let(:order) { mock_model(Order, :update! => nil, :payments => []) }
 
   before(:each) do
+    order.stub_chain(:payments, :reload => [])
+
     @creditcard = Creditcard.new
-    @payment = Payment.new(:amount => 100)
+    @payment = Payment.create(:amount => 100, :order => order)
 
     @success_response = mock('gateway_response', :success? => true, :authorization => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
@@ -43,6 +46,12 @@ describe Creditcard do
       @creditcard.payment_gateway.should_receive(:authorize).with(10000, @creditcard, {})
       @creditcard.authorize(100, @payment)
     end
+
+    it "should log the response" do
+      @payment.log_entries.should_receive(:create).with(:details => anything)
+      @creditcard.authorize(100, @payment)
+    end
+
     context "if sucesssfull" do
       it "should store the response_code and avs_response" do
         @creditcard.authorize(100, @payment)
@@ -69,6 +78,10 @@ describe Creditcard do
   context "#purchase" do
     it "should call purchase on the gateway with the payment amount" do
       @creditcard.payment_gateway.should_receive(:purchase).with(10000, @creditcard, {})
+      @creditcard.purchase(100, @payment)
+    end
+    it "should log the response" do
+      @payment.log_entries.should_receive(:create).with(:details => anything)
       @creditcard.purchase(100, @payment)
     end
     context "if sucessfull" do
@@ -107,6 +120,10 @@ describe Creditcard do
       end
       it "should call capture on the gateway with the self as the authorization" do
         @creditcard.payment_gateway.should_receive(:capture).with(@payment, @creditcard, {})
+        @creditcard.capture(@payment)
+      end
+      it "should log the response" do
+        @payment.log_entries.should_receive(:create).with(:details => anything)
         @creditcard.capture(@payment)
       end
       context "if sucessfull" do
@@ -150,6 +167,10 @@ describe Creditcard do
       @creditcard.payment_gateway.should_receive(:void).with('123', @creditcard, {})
       @creditcard.void(@payment)
     end
+    it "should log the response" do
+      @payment.log_entries.should_receive(:create).with(:details => anything)
+      @creditcard.void(@payment)
+    end
     context "if sucessfull" do
       it "should update the response_code with the authorization from the gateway" do
         @payment.response_code = 'abc'
@@ -176,19 +197,51 @@ describe Creditcard do
     before do
       @payment.state = 'complete'
       @payment.response_code = '123'
+      @payment.stub(:order).and_return(mock_model(Order, :outstanding_balance => 10))
     end
-    it "should call credit on the gateway with the amount and response_code" do
-      @creditcard.payment_gateway.should_receive(:credit).with(1000, @creditcard, '123', {})
-      @creditcard.credit(@payment, 10)
+
+    context "when outstanding_balance is less than payment amount" do
+
+      it "should call credit on the gateway with the credit amount and response_code" do
+        @creditcard.payment_gateway.should_receive(:credit).with(1000, @creditcard, '123', {})
+        @creditcard.credit(@payment)
+      end
+
     end
+
+    context "when outstanding_balance is equal to payment amount" do
+      before {  @payment.stub(:order).and_return(mock_model(Order, :outstanding_balance => 100)) }
+
+      it "should call credit on the gateway with the credit amount and response_code" do
+        @creditcard.payment_gateway.should_receive(:credit).with(10000, @creditcard, '123', {})
+        @creditcard.credit(@payment)
+      end
+
+    end
+
+    context "when outstanding_balance is greater than payment amount" do
+      before {  @payment.stub(:order).and_return(mock_model(Order, :outstanding_balance => 101)) }
+
+      it "should call credit on the gateway with the original payment amount and response_code" do
+        @creditcard.payment_gateway.should_receive(:credit).with(10000, @creditcard, '123', {})
+        @creditcard.credit(@payment)
+      end
+
+    end
+
+    it "should log the response" do
+      @payment.log_entries.should_receive(:create).with(:details => anything)
+      @creditcard.credit(@payment)
+    end
+
     context "when response is sucesssful" do
       it "should create an offsetting payment" do
         Payment.should_receive(:create)
-        @creditcard.credit(@payment, 10)
+        @creditcard.credit(@payment)
       end
       context "resulting payment" do
         before do
-          @offsetting_payment = @creditcard.credit(@payment, 10)
+          @offsetting_payment = @creditcard.credit(@payment)
         end
         it "should be the supplied amount" do
           @offsetting_payment.amount.should == -10
@@ -209,24 +262,9 @@ describe Creditcard do
         @payment_gateway.stub(:credit).and_return(@fail_response)
         Payment.should_not_receive(:create)
         lambda {
-          @creditcard.credit(@payment, 10)
+          @creditcard.credit(@payment)
         }.should raise_error(Spree::GatewayError)
       end
-    end
-  end
-
-  context "#credit" do
-    it "should call credit on the gateway with the amount and response_code"
-    context "when response is sucesssful" do
-      context "resulting payment" do
-        it "should be the supplied amount"
-        it "should be in the complete state"
-        it "has response_code from the transaction"
-        it "has original payment as its source"
-      end
-    end
-    context "when response is unsucessfull" do
-      it "should not create a payment"
     end
   end
 
@@ -247,11 +285,22 @@ describe Creditcard do
   end
 
   context "when transaction is more than 12 hours old" do
-    let(:payment) { mock_model(Payment, :state => 'completed', :created_at => Time.now - 14.hours) }
+    let(:payment) { mock_model(Payment, :state => "completed", :created_at => Time.now - 14.hours, :amount => 99.00, :credit_allowed => 100.00, :order => mock_model(Order, :payment_state => 'credit_owed')) }
 
     context "#can_credit?" do
-      it "should be true if payment state is completed" do
+
+      it "should be true when payment state is 'completed' and order payment_state is 'credit_owed' and credit_allowed is greater than amount" do
         creditcard.can_credit?(payment).should be_true
+      end
+
+      it "should be false when order payment_state is not 'credit_owed'" do
+        payment.order.stub(:payment_state => 'paid')
+        creditcard.can_credit?(payment).should be_false
+      end
+
+      it "should be false when credit_allowed is zero" do
+        payment.stub(:credit_allowed => 0)
+        creditcard.can_credit?(payment).should be_false
       end
 
       (PAYMENT_STATES - [COMPLETED]).each do |state|
@@ -260,6 +309,7 @@ describe Creditcard do
           creditcard.can_credit?(payment).should be_false
         end
       end
+
     end
 
     context "#can_void?" do

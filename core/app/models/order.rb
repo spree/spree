@@ -307,6 +307,10 @@ class Order < ActiveRecord::Base
     total - payment_total
   end
 
+  def outstanding_balance?
+   self.outstanding_balance != 0
+  end
+
   def destroy_inapplicable_adjustments
     destroyed = adjustments.reject(&:applicable?).map(&:destroy)
     adjustments.reload if destroyed.any?
@@ -317,22 +321,10 @@ class Order < ActiveRecord::Base
     "#{address.firstname} #{address.lastname}" if address
   end
 
-  def outstanding_balance?
-    self.outstanding_balance > 0
+  def creditcards
+    creditcard_ids = payments.from_creditcard.map(&:source_id).uniq
+    Creditcard.scoped(:conditions => {:id => creditcard_ids})
   end
-
-   def outstanding_credit
-     [0, payment_total - total].max
-   end
-
-   def outstanding_credit?
-     outstanding_credit > 0
-   end
-
-   def creditcards
-     creditcard_ids = payments.from_creditcard.map(&:source_id).uniq
-     Creditcard.scoped(:conditions => {:id => creditcard_ids})
-   end
 
   # Indicates whether order has a real user associated with it or just a placeholder anonymous user
   def anonymous?
