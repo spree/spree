@@ -59,6 +59,10 @@ require 'spree/mail_interceptor'
 require 'redirect_legacy_product_url'
 require 'seo_assist'
 
+silence_warnings do
+  require 'spree_core/authorize_net_cim_hack'
+end
+
 module Spree
   def self.version
     "0.30.0.beta2"
