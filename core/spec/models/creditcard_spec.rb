@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Creditcard do
+  let(:valid_creditcard_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }
 
   before(:each) do
     @creditcard = Creditcard.new
@@ -296,6 +297,43 @@ describe Creditcard do
           creditcard.can_void?(payment).should be_false
         end
       end
+    end
+  end
+
+  context "#valid?" do
+    it "should validate presence of number" do
+      @creditcard.attributes = valid_creditcard_attributes.except(:number)
+      @creditcard.should_not be_valid
+      @creditcard.errors[:number].should == ["can't be blank"]
+    end
+
+    it "should validate presence of security code" do
+      @creditcard.attributes = valid_creditcard_attributes.except(:verification_value)
+      @creditcard.should_not be_valid
+      @creditcard.errors[:verification_value].should == ["can't be blank"]
+    end
+
+    it "should only validate on create" do
+      @creditcard.attributes = valid_creditcard_attributes
+      @creditcard.save
+      @creditcard = Creditcard.find(@creditcard.id)
+      @creditcard.should be_valid
+    end
+  end
+
+  context "#save" do
+    before do
+      @creditcard.attributes = valid_creditcard_attributes
+      @creditcard.save
+      @creditcard = Creditcard.find(@creditcard.id)
+    end
+
+    it "should not actually store the number" do
+      @creditcard.number.should be_blank
+    end
+
+    it "should not actually store the security code"  do
+      @creditcard.verification_value.should be_blank
     end
   end
 

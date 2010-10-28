@@ -3,6 +3,8 @@ class Creditcard < ActiveRecord::Base
 
   before_save :set_last_digits
 
+  attr_accessor :number, :verification_value
+
   validates :month, :year, :numericality => { :only_integer => true }
   validates :number, :presence => true, :unless => :has_payment_profile?, :on => :create
   validates :verification_value, :presence => true, :unless => :has_payment_profile?, :on => :create
@@ -215,28 +217,12 @@ class Creditcard < ActiveRecord::Base
   end
 
   private
+  def has_transaction_of_types?(payment, *types)
+    (payment.txns.map(&:txn_type) & types).any?
+  end
 
-    def has_transaction_of_types?(payment, *types)
-      (payment.txns.map(&:txn_type) & types).any?
-    end
-
-    def has_no_transaction_of_types?(payment, *types)
-      (payment.txns.map(&:txn_type) & types).none?
-    end
-
-    #RAILS 3 TODO
-    # # Override default behavior of Rails attr_readonly so that its never written to the database (not even on create)
-    # def attributes_with_quotes(include_primary_key = true, include_readonly_attributes = true, attribute_names = @attributes.keys)
-    #   attributes_with_quotes_default(include_primary_key, false, attribute_names)
-    # end
-
-    def remove_readonly_attributes(attributes)
-      if self.class.readonly_attributes.present?
-        attributes.delete_if { |key, value| self.class.readonly_attributes.include?(key.gsub(/\(.+/,"")) }
-      end
-      # extra logic for sanitizing the number and verification value based on preferences
-      attributes.delete_if { |key, value| key == "number" and !Spree::Config[:store_cc] }
-      attributes.delete_if { |key, value| key == "verification_value" and !Spree::Config[:store_cvv] }
-    end
+  def has_no_transaction_of_types?(payment, *types)
+    (payment.txns.map(&:txn_type) & types).none?
+  end
 
 end
