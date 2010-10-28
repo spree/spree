@@ -216,13 +216,4 @@ class Creditcard < ActiveRecord::Base
     @payment_gateway ||= Gateway.current
   end
 
-  private
-  def has_transaction_of_types?(payment, *types)
-    (payment.txns.map(&:txn_type) & types).any?
-  end
-
-  def has_no_transaction_of_types?(payment, *types)
-    (payment.txns.map(&:txn_type) & types).none?
-  end
-
 end
