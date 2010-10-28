@@ -2,11 +2,11 @@
     <label><%= t("date_range") %></label><br />
     <div class="yui-g date-range-filter">
       <div class="yui-u sub-field first">
-        <%= s.spree_date_picker :created_at_after %><br />
+        <%= s.spree_date_picker :created_at_greater_than %><br />
         <label class="sub"><%= t("start") %></label>
       </div>
       <div class="yui-u sub-field">
-        <%= s.spree_date_picker :created_at_before %><br />
+        <%= s.spree_date_picker :created_at_less_than %><br />
         <label><%= t("stop") %></label>
       </div>
     </div>
