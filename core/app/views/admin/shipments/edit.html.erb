@@ -32,7 +32,7 @@
             <%= button @order.cart? ? t('continue') : t('update') %>
             <%= t("or") %> <%= link_to t("cancel"), collection_url %>
           <% else %>
-            <%= link_to "&laquo; #{t("back")}", collection_url %>
+            <%= link_to raw("&laquo; #{t("back")}"), collection_url %>
           <% end %>
         </p>
       <% end %>
