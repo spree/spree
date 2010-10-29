@@ -17,7 +17,7 @@ module Spree
         template "Rakefile.tt", "#{file_name}/Rakefile"
         template "README.md", "#{file_name}/README.md"
         template ".gitignore", "#{file_name}/.gitignore"
-        template "extension.gemspec.tt", "#{file_name}/#{file_name.tableize}.gemspec"
+        template "extension.gemspec.tt", "#{file_name}/#{file_name}.gemspec"
       end
 
       def config_routes
@@ -48,7 +48,7 @@ module Spree
       end
 
       def update_gemfile
-        gem file_name.tableize, :path => file_name, :require => file_name
+        gem file_name, :path => file_name, :require => file_name
       end
 
       protected

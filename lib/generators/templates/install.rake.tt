@@ -1,8 +1,8 @@
-namespace :<%= file_name.tableize %> do
+namespace :<%= file_name %> do
   desc "Copies all migrations and assets (NOTE: This will be obsolete with Rails 3.1)"
   task :install do
-    Rake::Task['<%= file_name.tableize %>:install:migrations'].invoke
-    Rake::Task['<%= file_name.tableize %>:install:assets'].invoke
+    Rake::Task['<%= file_name %>:install:migrations'].invoke
+    Rake::Task['<%= file_name %>:install:assets'].invoke
   end
 
   namespace :install do
