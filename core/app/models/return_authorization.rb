@@ -2,6 +2,7 @@ class ReturnAuthorization < ActiveRecord::Base
   belongs_to :order
   has_many :inventory_units
   before_create :generate_number
+  before_save :ensure_correct_sign
 
   validates :order, :presence => true
   validates :amount, :numericality => true
@@ -48,6 +49,12 @@ class ReturnAuthorization < ActiveRecord::Base
   private
   def must_have_shipped_units
     errors.add(:order, I18n.t("has_no_shipped_units")) if order.nil? || order.shipped_units.nil?
+  end
+
+  def ensure_correct_sign
+    if self.amount < 0
+      self.amount *= -1
+    end
   end
 
   def generate_number
