@@ -141,7 +141,7 @@
     <p style="clear:both;">&nbsp;</p>
   <% else %>
     <%= hook :admin_dashboard_welcome do %>
-      <%= t('overview_welcome') %>
+      <%= raw t('overview_welcome') %>
     <% end %>
   <% end %>
 <% end %>
