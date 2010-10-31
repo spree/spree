@@ -338,6 +338,7 @@ en:
   destroy: Destroy
   didnt_receive_confirmation_instructions: "Didn't receive confirmation instructions?"
   didnt_receive_unlock_instructions: "Didn't receive unlock instructions?"
+  discount_amount: "Discount Amount"
   display: Display
   edit: Edit
   editing_billing_integration: Editing Billing Integration
@@ -479,6 +480,7 @@ en:
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
   missing_required_information: "Missing Required Information"
+  minimal_amount: "Minimal Amount"
   month: "Month"
   my_account: "My Account"
   my_orders: "My Orders"
@@ -524,6 +526,7 @@ en:
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
+  normal_amount: "Normal Amount"
   not: not
   not_shown: "Not Shown"
   note: Note
