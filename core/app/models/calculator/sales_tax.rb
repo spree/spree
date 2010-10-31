@@ -33,7 +33,7 @@ class Calculator::SalesTax < Calculator
       tax_category = rate.tax_category unless cache_hack
       tax_category = TaxCategory.find(rate.tax_category_id) if cache_hack
       next unless taxable_total = taxable_totals[tax_category]
-      tax += taxable_total * rate.amount
+      tax += taxable_total * (rate.amount / 100.0)
     end
     tax
   end
@@ -42,7 +42,7 @@ class Calculator::SalesTax < Calculator
     rate = self.calculable
     line_items = order.line_items.select { |i| i.product.tax_category == rate.tax_category }
     line_items.inject(0) {|sum, line_item|
-      sum += line_item.total * rate.amount
+      sum += line_item.total * (rate.amount / 100.0)
     }
   end
 end

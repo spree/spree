@@ -30,7 +30,7 @@ class Calculator::Vat < Calculator
       next unless rate = rates.find { | vat_rate | vat_rate.tax_category_id == tax_category.id } if cache_hack
       next unless rate = rates.find { | vat_rate | vat_rate.tax_category == tax_category } unless cache_hack
       taxable_totals[tax_category] ||= 0
-      taxable_totals[tax_category] += line_item.price * rate.amount * line_item.quantity
+      taxable_totals[tax_category] += line_item.price * (rate.amount / 100.0) * line_item.quantity
     end
 
     return 0 if taxable_totals.empty?
@@ -49,7 +49,7 @@ class Calculator::Vat < Calculator
     return 0 unless tax_category = product_or_variant.is_a?(Product) ? product_or_variant.tax_category : product_or_variant.product.tax_category
     return 0 unless rate = vat_rates.find { | vat_rate | vat_rate.tax_category_id == tax_category.id }
 
-    (product_or_variant.is_a?(Product) ? product_or_variant.price : product_or_variant.price) * rate.amount
+    (product_or_variant.is_a?(Product) ? product_or_variant.price : product_or_variant.price) * (rate.amount / 100.0)
   end
 
   # computes vat for line_items associated with order, and tax rate
@@ -57,7 +57,7 @@ class Calculator::Vat < Calculator
     rate = self.calculable
     line_items = order.line_items.select { |i| i.product.tax_category == rate.tax_category }
     line_items.inject(0) {|sum, line_item|
-      sum += (line_item.price * rate.amount * line_item.quantity)
+      sum += (line_item.price * (rate.amount / 100.0) * line_item.quantity)
     }
   end
 end
