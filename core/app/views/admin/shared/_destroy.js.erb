@@ -1,3 +1,3 @@
-$('.flash.notice').html('#{flash.notice}');
+$('.flash.notice').html('<%= flash.notice %>');
 $('.flash.notice').show();
 <%= render(:partial => "/admin/shared/update_order_state") if @order %>
