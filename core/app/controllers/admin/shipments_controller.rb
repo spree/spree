@@ -48,7 +48,7 @@ class Admin::ShipmentsController < Admin::BaseController
     @shipping_methods = ShippingMethod.all_available(@order, :back_end)
 
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')
-    @countries = (zone = Zone.find_by_name(Spree::Config[:checkout_zone]) ? zone.country_list : Country.all)
+    @countries = available_countries
   end
 
   def edit_before # copy into instance variable before editing
