@@ -7,7 +7,7 @@
 
   <%= hook :signup do %>
 
-    <%= form_for(@user) do |f| %>
+    <%= form_for(:user, :url => registration_path(@user)) do |f| %>
 
       <%= hook :signup_inside_form do %>
         <%= render 'shared/user_form', :f => f %>

@@ -1,5 +1,5 @@
 require 'spree_core'
-require 'authlogic'
+require 'devise'
 require 'cancan'
 
 require 'spree/auth_user'

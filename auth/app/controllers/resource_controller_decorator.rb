@@ -5,8 +5,8 @@ module ResourceController
     module Internal
       protected
       # Calls the before block for the action, if one is present.
-      #
       def before(action)
+
         resource = case action
         when :index, :new, :create
           model

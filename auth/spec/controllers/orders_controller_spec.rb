@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe OrdersController do
-
   let(:user) { mock_model User, :persistence_token => "foo", :has_role? => false, :email => "user@example.com" }
   let(:guest_user) { mock_model User, :persistence_token => "guest_token", :has_role? => false, :email => "user@example.com" }
 
@@ -9,6 +8,8 @@ describe OrdersController do
     assert_routing("/orders/R123456/token/ABCDEF", {:controller => "orders", :action => "show", :id => "R123456", :token => "ABCDEF"})
     token_order_path("R123456", "ABCDEF").should == "/orders/R123456/token/ABCDEF"
   end
+
+  before { controller.stub :current_user => nil }
 
   context "when no order exists in the session" do
     let(:order) { Order.new }

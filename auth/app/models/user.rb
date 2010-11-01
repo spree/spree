@@ -1,5 +1,8 @@
 class User < ActiveRecord::Base
 
+  devise :database_authenticatable, :registerable, :lockable, :recoverable,
+         :rememberable, :trackable, :validatable, :token_authenticatable, :encryptable
+
   has_many :orders
   has_and_belongs_to_many :roles
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
@@ -8,20 +11,8 @@ class User < ActiveRecord::Base
   before_save :check_admin
   before_validation :set_login
 
-  acts_as_authentic do |c|
-    c.transition_from_restful_authentication = true
-    c.maintain_sessions = false
-    #AuthLogic defaults
-    #c.validate_email_field = true
-    #c.validates_length_of_email_field_options = {:within => 6..100}
-    #c.validates_format_of_email_field_options = {:with => email_regex, :message => I18n.t(‘error_messages.email_invalid’, :default => “should look like an email address.”)}
-    #c.validate_password_field = true
-    #c.validates_length_of_password_field_options = {:minimum => 4, :if => :require_password?}
-    #for more defaults check the AuthLogic documentation
-  end
-
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :persistence_token
 
   alias_attribute :token, :persistence_token
 
@@ -35,7 +26,7 @@ class User < ActiveRecord::Base
   # when adding to the "cart" (which is really an order) and before the customer has a chance to provide an email or to register.
   def self.anonymous!
     token = User.generate_token(:persistence_token)
-    User.create(:email => "#{token}@example.net", :password => token, :password_confirmation => token)
+    User.create(:email => "#{token}@example.net", :password => token, :password_confirmation => token, :persistence_token => token)
   end
 
   def self.admin_created?
@@ -45,6 +36,11 @@ class User < ActiveRecord::Base
   def deliver_password_reset_instructions!
     reset_perishable_token!
     UserMailer.password_reset_instructions(self).deliver
+  end
+
+  protected
+  def password_required?
+    !persisted? || password.present? || password_confirmation.present?
   end
 
   private

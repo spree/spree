@@ -106,7 +106,7 @@ Then run the tests
     rspec spec
 
 Note that each project has its own generator for "installing."  This basically sets up the test
-app with what it needs to run (primarily migrations.)  So for the spree_auth gme, for example,
+app with what it needs to run (primarily migrations.)  So for the spree_auth gem, for example,
 you would use the following
 
     rails g spree_auth:install
