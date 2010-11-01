@@ -90,8 +90,4 @@ module Spree::BaseHelper
     link_to image_tag(image_path), root_path
   end
   
-  def available_countries
-    return Country.all unless zone = Zone.find_by_name(Spree::Config[:checkout_zone])
-    zone.country_list
-  end
 end
