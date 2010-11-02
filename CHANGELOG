@@ -1,3 +1,7 @@
+== 0.11.2
+
+* # - 1683 Credits / Charges not setting sign correctly
+
 == 0.11.1
 
 * # -  818 Migrate taxons to nested set for major performance boost
