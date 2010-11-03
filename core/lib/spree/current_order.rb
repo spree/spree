@@ -13,7 +13,7 @@ module Spree
       if create_order_if_necessary and (@current_order.nil? or @current_order.completed?)
         @current_order = Order.new
         before_save_new_order
-        @current_order.save #create!
+        @current_order.save!
       end
       session[:order_id] = @current_order ? @current_order.id : nil
       @current_order
