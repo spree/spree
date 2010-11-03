@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe OrdersController do
 
-  let(:user) { mock_model User, :persistence_token => "foo", :has_role? => false }
-  let(:guest_user) { mock_model User, :persistence_token => "guest_token", :has_role? => false }
+  let(:user) { mock_model User, :persistence_token => "foo", :has_role? => false, :email => "user@example.com" }
+  let(:guest_user) { mock_model User, :persistence_token => "guest_token", :has_role? => false, :email => "user@example.com" }
 
   it "should understand order routes with token" do
     assert_routing("/orders/R123456/token/ABCDEF", {:controller => "orders", :action => "show", :id => "R123456", :token => "ABCDEF"})

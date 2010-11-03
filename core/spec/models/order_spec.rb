@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Order do
 
-  let(:order) { Order.new(:email => "foo@example.com") }
+  let(:order) { Order.new }
   let(:gateway) { Gateway::Bogus.new(:name => "Credit Card", :active => true) }
 
   before { Gateway.stub :current => gateway }
@@ -11,15 +11,23 @@ describe Order do
     it "should create guest user (when no user assigned)" do
       order.save
       order.user.should_not be_nil
-      order.user.should be_anonymous
     end
-    it "should not remove the registered user" do
-      order = Order.new
-      reg_user = mock_model(User)#User.create(:email => "spree@example.com", :password => 'changeme2', :password_confirmation => 'changeme2')
-      order.user = reg_user
-      order.save
-      order.user.should == reg_user
+
+    context "when associated with a registered user" do
+      let(:user) { mock_model(User, :email => "user@example.com") }
+      before { order.user = user }
+
+      it "should not remove the user" do
+        order.save
+        order.user.should == user
+      end
+
+      it "should assign the email address of the user" do
+        order.save
+        order.email.should == user.email
+      end
     end
+
     it "should destroy any line_items with zero quantity"
   end
 
@@ -178,15 +186,6 @@ describe Order do
       order.stub!(:payments).and_return([mock(Payment)])
       order.payment.should_receive(:process!)
       order.process_payments!
-    end
-  end
-
-  context "#anonymous?" do
-    it "should indicate whether its user is a guest" do
-      order.user = mock_model(User, :anonymous? => true)
-      order.should be_anonymous
-      order.user = mock_model(User, :anonymous? => false)
-      order.should_not be_anonymous
     end
   end
 

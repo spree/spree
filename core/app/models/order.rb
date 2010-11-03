@@ -320,11 +320,6 @@ class Order < ActiveRecord::Base
     Creditcard.scoped(:conditions => {:id => creditcard_ids})
   end
 
-  # Indicates whether order has a real user associated with it or just a placeholder anonymous user
-  def anonymous?
-    user && user.anonymous?
-  end
-
   def process_payments!
     ret = payments.each(&:process!)
   end
@@ -420,6 +415,7 @@ class Order < ActiveRecord::Base
   # end
 
   def create_user
+    self.email = user.email if self.user and user.email !~ /example.com/
     self.user ||= User.anonymous!
   end
 
