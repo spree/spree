@@ -3,43 +3,70 @@ require 'spec_helper'
 describe OrdersController do
 
   let(:user) { mock_model User, :persistence_token => "foo", :has_role? => false }
-  let(:order) { mock_model(Order, :user => user).as_null_object }
+  let(:guest_user) { mock_model User, :persistence_token => "guest_token", :has_role? => false }
 
   it "should understand order routes with token" do
     assert_routing("/orders/R123456/token/ABCDEF", {:controller => "orders", :action => "show", :id => "R123456", :token => "ABCDEF"})
     token_order_path("R123456", "ABCDEF").should == "/orders/R123456/token/ABCDEF"
   end
 
-  context "for a new order" do
+  context "when no order exists in the session" do
+    let(:order) { Order.new }
+
+    before { Order.stub :new => order }
+
     context "#populate" do
 
-      before do
-        controller.stub :authorize! => true
-        Order.stub :create => order
+      context "when authenticated as a guest" do
+        before { controller.stub :auth_user => guest_user }
+
+        it "should not create an anonymous user" do
+          User.should_not_receive :anonymous!
+          post :populate
+        end
+
+        it "should associate the new order with the registered user" do
+          post :populate
+          order.user.should == guest_user
+        end
       end
 
-      it "should check if user is authorized for :create" do
-        controller.stub :current_user => user
-        controller.should_receive(:authorize!).with(:create, Order)
-        post :populate
+      context "when authenticated as a registered user" do
+        before { controller.stub :current_user => user }
+
+        it "should not create an anonymous user" do
+          User.should_not_receive :anonymous!
+          post :populate
+          session[:guest_token].should be_nil
+        end
+
+        it "should associate the new order with the registered user" do
+          post :populate
+          order.user.should == user
+        end
       end
 
-      it "should store a guest token (for new guest order)" do
-        controller.should_receive(:current_user).and_return(nil)
-        post :populate
-        session[:guest_token].should_not be_nil
-      end
+      context "when not authenticated" do
+        it "should create an anonymous user" do
+          User.should_receive(:anonymous!).and_return guest_user
+          post :populate
+          session[:guest_token].should == "guest_token"
+        end
 
-      it "should not store a guest token (for new registered user order)" do
-        controller.stub :current_user => user
-        post :populate
-        session[:guest_token].should be_nil
+        it "should associate the new order with the anonymous user" do
+          User.stub :anonymous! => guest_user
+          #User.stub(:find_by_persistence_token).with('guest_token').and_return guest_user
+          #controller.stub :check_authorization => true
+          post :populate
+          order.user.should == guest_user
+        end
       end
 
     end
   end
 
-  context "for an existing order" do
+  context "when an order exists in the session" do
+    let(:order) { mock_model(Order, :user => user).as_null_object }
 
     before do
       controller.stub :current_order => order
@@ -57,13 +84,6 @@ describe OrdersController do
       it "should check if user is authorized for :edit" do
         controller.should_receive(:authorize!).with(:edit, order)
         get :edit
-      end
-      context "when order is anonymous" do
-        it "should associate the order with an authenticated user" do
-          user.stub :anonymous? => true
-          order.should_receive(:associate_user!).with(user)
-          get :edit
-        end
       end
     end
 
@@ -84,6 +104,8 @@ describe OrdersController do
   end
 
   context "when no authenticated user" do
+    let(:order) { mock_model(Order, :user => user).as_null_object }
+
     context "#show" do
       before { Order.stub :find_by_number => order }
 

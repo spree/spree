@@ -118,11 +118,6 @@ describe Order do
           Shipment.should_receive(:create).with(:shipping_method => order.shipping_method, :order => order, :address => order.ship_address)
           order.next!
         end
-        it "should create a shipping charge" do
-          order.stub(:shipment).and_return(mock_model(Shipment).as_null_object)
-          order.shipping_method.should_receive(:create_adjustment).with(I18n.t(:shipping), order, order.shipment, true)
-          order.next!
-        end
       end
     end
 

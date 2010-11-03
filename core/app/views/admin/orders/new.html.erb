@@ -1,4 +1,5 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
+<%= csrf_meta_tag %>
 
 <%= hook :admin_order_new_header do %>
   <h2><%= t("new_order")%></h2>

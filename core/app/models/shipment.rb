@@ -5,17 +5,20 @@ class Shipment < ActiveRecord::Base
   belongs_to :address
   has_many :state_events, :as => :stateful
   has_many :inventory_units
+  has_one :adjustment, :as => :source
+
   before_create :generate_shipment_number
   after_destroy :release_inventory_units
-  after_save :update_order
+  after_save :ensure_correct_adjustment, :update_order
 
   attr_accessor :special_instructions
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :inventory_units
 
   validates :inventory_units, :presence => true, :if => :require_inventory
+  validates :shipping_method, :presence => true
+
   make_permalink :field => :number
-  validate :shipping_method
 
   scope :shipped, where(:state => 'shipped')
   scope :ready, where(:state => 'ready')
@@ -35,7 +38,6 @@ class Shipment < ActiveRecord::Base
   # The adjustment amount associated with this shipment (if any.)  Returns only the first adjustment to match
   # the shipment but there should never really be more than one.
   def cost
-    adjustment = order.adjustments.shipping.detect { |adjustment| adjustment.source == self }
     adjustment ? adjustment.amount : 0
   end
 
@@ -63,6 +65,7 @@ class Shipment < ActiveRecord::Base
       OpenStruct.new(:variant => i.first, :quantity => i.last.length)
     end
   end
+
 
   def line_items
     if order.complete? and Spree::Config[:track_inventory_levels]
@@ -136,6 +139,16 @@ class Shipment < ActiveRecord::Base
   def after_ship
     inventory_units.each &:ship!
     ShipmentMailer.shipped_email(self).deliver
+  end
+
+  def ensure_correct_adjustment
+    if adjustment
+      adjustment.originator = shipping_method
+      adjustment.save
+    else
+      shipping_method.create_adjustment(I18n.t(:shipping), order, self, true)
+      reload #ensure adjustment is present on later saves
+    end
   end
 
   def update_order

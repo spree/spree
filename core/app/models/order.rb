@@ -286,7 +286,7 @@ class Order < ActiveRecord::Base
     rate.create_adjustment(I18n.t(:tax), self, self, true)
   end
 
-  # Creates a new shipment and shipping adjustment (if applicable.)
+  # Creates a new shipment (adjustment is created by shipment model)
   def create_shipment!
     shipping_method.reload
     if shipment.present?
@@ -294,13 +294,7 @@ class Order < ActiveRecord::Base
     else
       self.shipments << Shipment.create(:order => self, :shipping_method => shipping_method, :address => self.ship_address)
     end
-    if shipping_charge = adjustments.shipping.first
-      # shipping_charge.update_attributes(:originator_id => shipping_method.id)
-      shipping_charge.originator = shipping_method
-      shipping_charge.save
-    else
-      shipping_method.create_adjustment(I18n.t(:shipping), self, shipment, true)
-    end
+
   end
 
   def outstanding_balance

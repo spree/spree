@@ -4,9 +4,15 @@ OrdersController.class_eval do
   before_filter :check_authorization
 
   private
+
   def store_guest
     return if current_user
     session[:guest_token] ||= @order.user.persistence_token
+  end
+
+  # Associate the new order with the currently authenticated user before saving
+  def before_save_new_order
+    @current_order.user = auth_user
   end
 
   def check_authorization
