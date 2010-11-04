@@ -1,4 +1,0 @@
-spree_coupon:
-  code: SPREE
-  description: $5 off any order
-  combine: false
