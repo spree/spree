@@ -9,11 +9,6 @@ OrdersController.class_eval do
     session[:guest_token] ||= @order.user.persistence_token
   end
 
-  # Associate the new order with the currently authenticated user before saving
-  def before_save_new_order
-    @current_order.user = auth_user
-  end
-
   def check_authorization
     session[:guest_token] ||= params[:token]
     order = current_order || Order.find_by_number(params[:id])
