@@ -11,6 +11,7 @@ class UsersController < Spree::BaseController
 
   create.after do
     create_session
+    associate_user
   end
 
   create.flash nil
@@ -29,20 +30,25 @@ class UsersController < Spree::BaseController
   update.flash I18n.t("account_updated")
 
   private
+  def object
+    @object ||= current_user
+  end
 
-    def object
-      @object ||= current_user
-    end
+  def accurate_title
+    I18n.t(:account)
+  end
 
-    def accurate_title
-      I18n.t(:account)
-    end
-    
-    def create_session
-      session_params = params[:user]
-      session_params[:login] = session_params[:email]
-      UserSession.create session_params
-    end
+  def associate_user
+    return unless current_order and @user.valid?
+    current_order.associate_user!(@user)
+    session[:guest_token] = nil
+  end
+
+  def create_session
+    session_params = params[:user]
+    session_params[:login] = session_params[:email]
+    UserSession.create session_params
+  end
 
 end
 
