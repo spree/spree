@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   end
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :anonymous
+  attr_accessible :email, :password, :password_confirmation, :remember_me
 
   alias_attribute :token, :persistence_token
 
@@ -35,12 +35,7 @@ class User < ActiveRecord::Base
   # when adding to the "cart" (which is really an order) and before the customer has a chance to provide an email or to register.
   def self.anonymous!
     token = User.generate_token(:persistence_token)
-    User.create(:email => "#{token}@example.com", :password => token, :password_confirmation => token, :anonymous => true)
-  end
-
-  def email=(email)
-    self.anonymous = false unless email.include?("example.com")
-    write_attribute :email, email
+    User.create(:email => "#{token}@example.com", :password => token, :password_confirmation => token)
   end
 
   def self.admin_created?

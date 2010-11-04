@@ -27,17 +27,5 @@ describe User do
     it "should create a new user" do
       user.new_record?.should be_false
     end
-
-    it "should be anonymous" do
-      user.should be_anonymous
-    end
-
-    context "#email=" do
-      it "should set anonymous to false" do
-        user.email = "jobs@railsdog.com"
-        user.should_not be_anonymous
-      end
-    end
-
   end
 end

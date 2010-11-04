@@ -30,7 +30,7 @@ task :sandbox do
     def append_gemfile
       inside "sandbox" do
         append_file "Gemfile" do
-          "gem 'spree', :path => '../' "
+          "gem 'spree', :path => '../' \n"
         end
       end
     end

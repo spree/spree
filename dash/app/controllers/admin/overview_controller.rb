@@ -1,6 +1,7 @@
 # this clas was inspired (heavily) from the mephisto admin architecture
 
 class Admin::OverviewController < Admin::BaseController
+  before_filter :check_json_authenticity, :only => :get_report_data
   #todo, add rss feed of information that is happening
 
   def index

@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
 
   # Creates an anonymous user
   def self.anonymous!
-    User.create(:anonymous => true)
+    User.create
   end
 
 end

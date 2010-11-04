@@ -108,4 +108,12 @@ class Spree::BaseController < ActionController::Base
     locale = I18n.default_locale unless I18n.available_locales.include?(locale.to_sym)
     I18n.locale = locale.to_sym
   end
+  
+  helper_method :available_countries
+  
+  def available_countries
+    return Country.all unless zone = Zone.find_by_name(Spree::Config[:checkout_zone])
+    zone.country_list
+  end
+  
 end

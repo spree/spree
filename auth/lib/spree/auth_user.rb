@@ -7,7 +7,9 @@ module Spree
     # without requiring that user to be signed in.  This means the guest can later sign up for
     # an acccount (or log in to an existing account.)
     def auth_user
-      return current_user || User.find_by_persistence_token(session[:guest_token])
+      return current_user if current_user
+      return nil if session[:guest_token].blank?
+      User.find_by_persistence_token(session[:guest_token])
     end
 
   end

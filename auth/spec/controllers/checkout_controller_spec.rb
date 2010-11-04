@@ -2,118 +2,85 @@ require 'spec_helper'
 
 describe CheckoutController do
   let(:order) { Order.new }
-  let(:user) { mock_model User, :anonymous? => true, :email => "foo@example.com" }
+  let(:user) { mock_model User } #, :email => "foo@example.com" }
 
   before do
-    order.stub :checkout_allowed? => true
+    order.stub :checkout_allowed? => true, :user => user, :new_record? => false
     controller.stub :current_order => order
-    order.stub :user => user
   end
 
-  context "with registration step enabled" do
-    before do
-      controller.stub :check_authorization => true
-      Spree::Auth::Config.set(:registration_step => true)
-    end
 
-    context "anoymous checkout" do
-      it "should redirect to the registration step" do
-        controller.stub :current_user => nil
-        get :edit, { :state => "confirm" }
-        response.should redirect_to checkout_registration_path
-      end
-    end
-
-    context "authenticated user checkout" do
+  context "#edit" do
+    context "when registration step enabled" do
       before do
-        user.stub :anonymous? => false
-        controller.stub :current_user => user
+        controller.stub :check_authorization
+        Spree::Auth::Config.set(:registration_step => true)
       end
 
-      it "should proceed to the first checkout step" do
-        order.stub :associate_user!
-        get :edit, { :state => "confirm" }
-        response.should render_template :edit
+      context "when authenticated as registered user" do
+        before { controller.stub :current_user => user }
+
+        it "should proceed to the first checkout step" do
+          get :edit, { :state => "confirm" }
+          response.should render_template :edit
+        end
       end
+
+      context "when authenticated as guest" do
+        before { controller.stub :auth_user => user }
+
+        it "should redirect to registration step" do
+          get :edit, { :state => "confirm" }
+          response.should redirect_to checkout_registration_path
+        end
+      end
+
+    end
+
+    context "when registration step disabled" do
+      before do
+        Spree::Auth::Config.set(:registration_step => false)
+        controller.stub :check_authorization
+      end
+
+      context "when authenticated as registered" do
+        before { controller.stub :current_user => user }
+
+        it "should proceed to the first checkout step" do
+          get :edit, { :state => "confirm" }
+          response.should render_template :edit
+        end
+      end
+
+      context "when authenticated as guest" do
+        before { controller.stub :auth_user => user }
+
+        it "should proceed to the first checkout step" do
+          get :edit, { :state => "confirm" }
+          response.should render_template :edit
+        end
+      end
+
+    end
+
+    it "should check if the user is authorized for :edit" do
+      controller.should_receive(:authorize!).with(:edit, order)
+      get :edit, { :state => "confirm" }
     end
 
   end
 
-  context "with authenticated user" do
-    let(:reg_user) { mock_model(User, :anonymous? => false) }
-    before { controller.stub :current_user => reg_user }
-
-    it "should associate the user with the order" do
-      controller.stub :check_authorization => true
-      order.should_receive(:associate_user!).with(reg_user)
-      get :edit, { :state => "address" }
-    end
-  end
-
-  context "with registration step disabled" do
-    before { Spree::Auth::Config.set(:registration_step => false) }
-    context "#update" do
-      it "should check if user is authorized for :edit" do
-        controller.should_receive(:authorize!).with(:edit, order)
-        post :update, { :state => "confirm", :order => {} }
-      end
-    end
-
-    context "#edit" do
-      it "should check if user is authorized for :edit" do
-        controller.should_receive(:authorize!).with(:edit, order)
-        get :edit, { :state => "confirm", :order => {} }
-      end
-    end
-
-    context "anonymous checkout" do
-      it "should not redirect to the registration step" do
-        controller.stub :check_authorization => true
-        get :edit, { :state => "confirm" }
-        response.should_not redirect_to checkout_registration_path
-      end
-    end
-  end
-
-  context "#registration" do
-    before { controller.stub :check_authorization => true }
-
-    it "should not check registration" do
-      controller.should_not_receive :check_registration
-      get :registration
-    end
-  end
-
-  context "#update_registration" do
-    let(:user) { user = mock_model(User, :save => true, :email= => nil, :anonymous? => true) }
-
-    before do
-      controller.stub :check_authorization => true
-      order.stub :user => user
-    end
-
-    it "should not check registration" do
-      controller.should_not_receive :check_registration
-      put :update_registration, { :order => {:email => "jobs@railsdog.com"} }
-    end
-
-    it "should render the registration view if unable to save" do
-      order.should_receive(:update_attributes).with("email" => "invalid").and_return false
-      put :update_registration, { :order => {:email => "invalid"} }
-      response.should render_template :registration
-    end
-
-    it "should redirect to the checkout_path after saving" do
-      put :update_registration, { :order => {:email => "jobs@railsdog.com"} }
-      response.should redirect_to checkout_path
-    end
-  end
 
   context "#update" do
 
-    context "save successful" do
+    it "should check if the user is authorized for :edit" do
+      controller.should_receive(:authorize!).with(:edit, order)
+      post :update, {:state => "confirm"}
+    end
+
+    context "when save successful" do
       before do
-        controller.stub :current_order => order
+        controller.stub :check_authorization
         order.stub(:update_attribute).and_return true
         order.should_receive(:update_attributes).and_return true
       end
@@ -125,12 +92,11 @@ describe CheckoutController do
           order.stub :number => "R123"
         end
 
-        context "with an anonymous user" do
+        context "with a guest user" do
           before do
             user.stub :token => "ABC"
-            user.stub :anonymous? => true
             user.stub :has_role? => true
-            controller.stub :current_user => user
+            controller.stub :current_user => nil
           end
 
           it "should redirect to the tokenized order view" do
@@ -146,7 +112,6 @@ describe CheckoutController do
 
         context "with a registered user" do
           before do
-            user.stub :anonymous? => false
             user.stub :has_role? => true
             controller.stub :current_user => mock_model(User, :has_role? => true)
           end
@@ -158,6 +123,52 @@ describe CheckoutController do
         end
 
       end
+    end
+
+
+  end
+
+  context "#registration" do
+
+    it "should not check registration" do
+      controller.stub :check_authorization
+      controller.should_not_receive :check_registration
+      get :registration
+    end
+
+    it "should check if the user is authorized for :edit" do
+      controller.should_receive(:authorize!).with(:edit, order)
+      get :registration
+    end
+
+  end
+
+  context "#update_registration" do
+    let(:user) { user = mock_model User }
+
+    it "should not check registration" do
+      controller.stub :check_authorization
+      order.stub :update_attributes => true
+      controller.should_not_receive :check_registration
+      put :update_registration
+    end
+
+    it "should render the registration view if unable to save" do
+      controller.stub :check_authorization
+      order.should_receive(:update_attributes).with("email" => "invalid").and_return false
+      put :update_registration, { :order => {:email => "invalid"} }
+      response.should render_template :registration
+    end
+
+    it "should redirect to the checkout_path after saving" do
+      controller.stub :check_authorization
+      put :update_registration, { :order => {:email => "jobs@railsdog.com"} }
+      response.should redirect_to checkout_path
+    end
+
+    it "should check if the user is authorized for :edit" do
+      controller.should_receive(:authorize!).with(:edit, order)
+      put :update_registration, { :order => {:email => "jobs@railsdog.com"} }
     end
 
   end
