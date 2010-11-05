@@ -168,11 +168,31 @@ $ rake spree_i18n:update_default
 
 This updates the localization files in the +default+ directory with the latest information from the Spree project.
 
+h4. Checking the Translation Progress
+
+The Spree localization files are essentially a continual work in progress.  Over time new localization entries are added to the default locale and the translation files need to be updated.  You can get a sense for how much translation work is needed using the rake task designed for this purpose.
+
+<shell>
+$ rake spree_i18n:stats
+</shell>
+
+This will list all of the available locales and give you the percentage of completion for each.
+
+NOTE. Some of the older translation files may overstate their completion percentage.  Until recently it wasn't possible to have default locales and so we used English translation values (with no comments) instead.  In these cases the English values are counted as "translated".
+
+h4. Syncing the Locales
+
+As new translation strings are added to Spree you will want to resync the locale files so that they provide "stub" entries for these strings which will help to identify them as needing translation.  There is a special Rake task that will resync all of the locale files with the latest values from the Spree project.  The Rake task will also reorder the translations alphabetically.
+
+<shell>
+$ rake spree_i18n:sync
+</shell>
+
+NOTE. Remember to run +rake spree_i18n:update_default+ first if you haven't done so already.
+
 h4. Adding a New Locale
 
-h5. Create a Locale Using Rake
-
-Its simple to add a new locale using the appropriate rake task.
+Its simple enought to add a new locale using the appropriate Rake task.
 
 <shell>
 $ rake spree_i18n:new LOCALE=es-PE
@@ -203,9 +223,9 @@ es-PE:
 
 WARNING. Remember that you will also need the corresponding Rails locale information in your applications +Rails.root+ directory.  So in order to get your locale to work with both Spree and Rials you will also need the correct locale file from +rails_i18n+.
 
-h5. Default Values
+h4. Default Values
 
-You will notice in your newly created locale that there are default values in English that are commented out.  These commented values are provided as a guide to help people performing the translations since the translation key does not always give you the best idea of the complete English phrase in question.
+You will notice in some of the locales (especially newly created ones), that there are default values in English that are commented out.  These commented values are provided as a guide to help people performing the translations since the translation key does not always give you the best idea of the complete English phrase in question.
 
 Lets fire up the Rails console and test our new locale.
 
@@ -218,31 +238,13 @@ Lets fire up the Rails console and test our new locale.
 
 You'll notice that there's actually a translated value even though we did not set one explicitly in our locale.  This is because the +spree_i18n+ gem has instructed Rails to use "fallback locales":https://github.com/svenfuchs/i18n/wiki/Fallbacks in an attempt to provide a value where translations are otherwise missing.  So in the case of the +es-PE+ locale, the +es+ locale is consulted.  If there were no value found in that locale it would have defaulted to the value specified in the default +en+ locale.
 
-
-
-
-
-h4. Adding a new string to all translations
-
-If you're working on a patch for Spree it's vital that you ensure any interface text is present in all translation yaml files and that you use the helper methods to display the relevant translation on all views (or helper methods).  Once the key has been added to the default (english) translation you wil want to add a place holder value for the rest of the translation files.
-
-<shell>$ rake spree:i18n:sync</shell>
-
-This task simply ensures that you're new string is included in all translations (with the US English value as the default value), and it also alphabetizes all strings in the YAML files!
-
-h4. Checking the status of a translation
-
-You can get a rough approximation of the completion percentage for a translation file based on the number of entries that have not changed from their english default.
-
-<shell>
-rake spree:i18n:stats
-</shell>
-
 h3. Localizing Extensions
 
 Spree extensions can contain their own +config/locales* directory where developers can include yaml files for each language they wish to support.
 
 We strongly urge all extension developers to ensure all customer facing text is rendered via the +t()+ helper method even if they only include a single default language locale file (as other users can simply include the required yaml file and translations in their site extension).
+
+INFO. Since Spree extensions are equivalent to Rails Engines they can provide localization information automatically (just like a standalone Rails application.)
 
 h3. Disabling Internationalization
 
