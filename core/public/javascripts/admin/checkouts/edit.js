@@ -82,8 +82,8 @@ jQuery(document).ready(function(){
   });
 
 
-  $('input#checkout_use_billing').click(function() {
-    show_billing(!this.checked);
+  $('input#order_use_billing').click(function() {
+    show_billing(!$(this).is(':checked'));
   });
 
   $('#guest_checkout_true').change(function() {
