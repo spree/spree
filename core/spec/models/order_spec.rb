@@ -14,7 +14,7 @@ describe Order do
     end
 
     context "when associated with a registered user" do
-      let(:user) { mock_model(User, :email => "user@example.com") }
+      let(:user) { mock_model(User, :email => "user@registered.com") }
       before { order.user = user }
 
       it "should not remove the user" do
