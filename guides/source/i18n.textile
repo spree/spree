@@ -20,7 +20,7 @@ followed by the Rails project which keeps their localizations in "rails-i18n":ht
 
 The project is actually a Spree extension.  This extension contains translations only.  The rest of code needed to support the i18n features is part of the Spree core.
 
-WARNING. You will need to install the "spree-i18n":http://guides.rubyonrails.org/i18n.html extension if you want to use any of the community supplied translations of Spree.
+WARNING. You will need to install the "spree-i18n":https://github.com/spree/spree_i18n gem if you want to use any of the community supplied translations of Spree.
 
 h4. Translation Files
 
