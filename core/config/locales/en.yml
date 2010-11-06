@@ -270,7 +270,7 @@ en:
   cancel_my_account: Cancel my account
   cancel_my_account_description: "Unhappy?"
   canceled: Canceled
-  cannot_create_returns: Cannot create returns as this order has not shipped yet.
+  cannot_create_returns: Cannot create returns as this order no shipped units.
   cannot_destory_line_item_as_inventory_units_have_shipped: Cannot destory line item as some inventory units have shipped.
   cannot_perform_operation: "Cannot perform requested operation"
   capture: Capture
@@ -757,6 +757,7 @@ en:
   provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: Qty
   quantity_shipped: Quantity Shipped
+  quantity_returned: Quantity Returned
   range: "Range"
   rate: Rate
   reason: Reason
