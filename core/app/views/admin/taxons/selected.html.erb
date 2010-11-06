@@ -12,6 +12,16 @@
 <% end %>
 
 <%= javascript_tag do %>
+
+  $('table tr td a.iconlink').live('click', function(evt) {
+	  evt.preventDefault();	 
+	  var tr = $(this).hide().siblings('img.spinner').show().parents('tr');
+	  $.post(this.rel, function(res) {
+  	  tr.remove();
+	    $('#selected-taxons').html(res);
+	  });
+	});
+
   function search_for_taxons(){
     jQuery.ajax({
      data: {q: jQuery("#searchtext").val() }, 
