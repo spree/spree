@@ -176,7 +176,7 @@ jQuery.fn.product_autocomplete = function(){
 
 
 jQuery.fn.objectPicker = function(url){
-  jQuery(this).tokenInput(url, {
+  jQuery(this).tokenInput(url + "&authenticity_token=" + AUTH_TOKEN, {
     searchDelay          : 600,
     hintText             : strings.type_to_search,
     noResultsText        : strings.no_results,
