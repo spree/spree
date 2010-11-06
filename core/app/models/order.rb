@@ -174,35 +174,7 @@ class Order < ActiveRecord::Base
     true
   end
 
-  def shipped_units
-    shipped_units = inventory_units.select(&:shipped?)
-    return nil if shipped_units.empty?
 
-    shipped = {}
-    shipped_units.group_by(&:variant).each do |variant, ship_units|
-      shipped[variant] = ship_units.size
-    end
-    shipped
-  end
-
-  def returnable_units
-    returned_units = inventory_units.select { |unit| unit.returned? }
-
-    returnable = shipped_units
-    return if returnable.nil?
-
-    returned_units.group_by(&:variant).each do |variant, returned_units|
-      count = returnable.key?(variant) ? (returnable[variant] - returned_units.size) : 0
-
-      if count > 0
-        returnable[variant] = returnable[variant] - returned_units.size
-      else
-        returnable.delete variant
-      end
-    end
-
-    returnable.empty? ? nil : returnable
-  end
 
   def allow_cancel?
     return false unless completed?

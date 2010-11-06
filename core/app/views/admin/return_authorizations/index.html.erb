@@ -1,4 +1,4 @@
-<% unless @order.returnable_units.nil? %>
+<% if @order.inventory_units.any? &:shipped? %>
   <div class='toolbar'>
     <ul class='actions'>
       <li>
@@ -27,13 +27,15 @@
       <td><%= return_authorization.created_at.to_s(:date_time24) %></td>
       <td>
         <%= link_to_edit return_authorization %>
-        &nbsp;
-        <%= link_to_delete return_authorization %>
+        <% unless return_authorization.received? %>
+          &nbsp;
+          <%= link_to_delete return_authorization %>
+        <% end %>
       </td>
 
     </tr>
   <% end %>
-  <% if @order.shipped_units.nil? %>
+  <% unless @order.inventory_units.any? &:shipped? %>
     <tr>
       <td colspan="5"><%= t("cannot_create_returns") %></td>
     </tr>

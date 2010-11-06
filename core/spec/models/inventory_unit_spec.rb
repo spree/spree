@@ -227,5 +227,14 @@ describe InventoryUnit do
 
   end
 
+  context "return!" do
+    let(:inventory_unit) { InventoryUnit.create(:state => "shipped", :variant => mock_model(Variant, :on_hand => 95)) }
+
+    it "should update on_hand for variant" do
+      inventory_unit.variant.should_receive(:on_hand=).with(96)
+      inventory_unit.variant.should_receive(:save)
+      inventory_unit.return!
+    end
+  end
 end
 
