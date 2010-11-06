@@ -14,7 +14,10 @@
       <% @shipment.order.inventory_units.each do |inventory_unit| %>
         <tr>
           <td style="text-align:center;">
-            <%= check_box_tag "inventory_units[#{inventory_unit.id}]", :true, (inventory_unit.shipment == @shipment),{:disabled => %w(shipped backordered).include?(inventory_unit.state)} %>
+            <%= check_box_tag "inventory_units[#{inventory_unit.id}]",
+                              :true,
+                              (inventory_unit.shipment == @shipment),
+                              {:disabled => %w(shipped backordered returned).include?(inventory_unit.state)} %>
           </td>
           <td valign="top" width="120px;"><%= inventory_unit.variant.sku %></td>
           <td width="300">

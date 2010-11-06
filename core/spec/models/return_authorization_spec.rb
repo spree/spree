@@ -2,12 +2,14 @@ require 'spec_helper'
 
 describe ReturnAuthorization do
   let(:inventory_unit) { InventoryUnit.create(:variant => mock_model(Variant)) }
-  let(:order) { mock_model(Order, :inventory_units => [inventory_unit], :shipped_units => [inventory_unit], :awaiting_return? => false) }
+  let(:order) { mock_model(Order, :inventory_units => [inventory_unit], :awaiting_return? => false) }
   let(:return_authorization) { ReturnAuthorization.new(:order => order) }
+
+  before { inventory_unit.stub(:shipped?).and_return(true) }
 
   context "save" do
     it "should be invalid when order has no inventory units" do
-      order.stub(:shipped_units => nil)
+      inventory_unit.stub(:shipped?).and_return(false)
       return_authorization.save
       return_authorization.errors[:order].should == ["has no shipped units"]
     end
@@ -66,7 +68,7 @@ describe ReturnAuthorization do
 
   context "receive!" do
     before  do
-      inventory_unit.stub(:state => "shipped")
+      inventory_unit.stub(:state => "shipped", :return! => true)
       return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
       Adjustment.stub(:create)
       order.stub(:update!)
