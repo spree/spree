@@ -604,6 +604,7 @@ en:
   payment_states:
     balance_due: balance due
     credit_owed: credit owed
+    failed: failed
     paid: paid
   payment_updated: Payment Updated
   payments: Payments
