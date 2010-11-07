@@ -2,18 +2,18 @@ require 'spec_helper'
 
 describe Shipment do
   let(:order) { mock_model Order, :backordered? => false }
-  let(:shipment) { Shipment.new :order => order, :state => 'pending' }
+  let(:shipping_method) { mock_model ShippingMethod, :calculator => mock('calculator') }
+  let(:shipment) { Shipment.new :order => order, :state => 'pending', :shipping_method => shipping_method }
 
   let(:charge) { mock_model Adjustment, :amount => 10, :source => shipment }
 
   context "#cost" do
     it "should return the amount of any shipping charges that it originated" do
-      shipment.stub_chain :order, :adjustments, :shipping => [charge]
+      shipment.stub_chain :adjustment, :amount => 10
       shipment.cost.should == 10
     end
 
     it "should return 0 if there are no relevant shipping adjustments" do
-      shipment.stub_chain :order, :adjustments, :shipping => []
       shipment.cost.should == 0
     end
   end
@@ -127,9 +127,9 @@ describe Shipment do
 
   context "#ship" do
     before do
-      shipment.state = 'ready'
-      shipment.stub :require_inventory => false
-      shipment.stub :update_order => true
+      order.stub(:update!)
+      shipment.stub(:require_inventory => false, :update_order => true, :state => 'ready')
+      shipping_method.stub(:create_adjustment)
     end
 
     it "should send a shipment email" do
@@ -141,19 +141,34 @@ describe Shipment do
 
   end
 
-  context "#save" do
-    
-    before do
-      shipment.state = 'ready'
-      shipment.stub :require_inventory => false
+  context "ensure_correct_adjustment" do
+    before { shipment.stub(:reload) }
+
+    it "should create adjustment when not present" do
+      shipping_method.should_receive(:create_adjustment).with(I18n.t(:shipping), order, shipment, true)
+      shipment.send(:ensure_correct_adjustment)
     end
-    
-    it "should call order#update!" do
-      order = Order.create
-      shipment = Shipment.create(:order => order)
-      order.should_receive(:update!)
-      shipment.save
+
+    it "should update originator when adjustment is present" do
+      shipment.stub_chain(:adjustment, :originator)
+      shipment.adjustment.should_receive(:originator=).with(shipping_method)
+      shipment.adjustment.should_receive(:save)
+      shipment.send(:ensure_correct_adjustment)
     end
   end
-  
+
+  context "update_order" do
+    it "should update order" do
+      order.should_receive(:update!)
+      shipment.send(:update_order)
+    end
+  end
+
+  context "after_save" do
+    it "should run correct callbacks" do
+      shipment.should_receive(:ensure_correct_adjustment)
+      shipment.should_receive(:update_order)
+      shipment.run_callbacks(:save, :after)
+    end
+  end
 end

@@ -24,7 +24,7 @@ class Api::BaseController < Spree::BaseController
 
     define_method :admin_token_passed_in_headers do
       token = request.headers['X-SpreeAPIKey']
-      return false unless token
+      return access_denied unless token
       @current_user = User.find_by_api_key(token)
     end
 

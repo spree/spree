@@ -174,35 +174,7 @@ class Order < ActiveRecord::Base
     true
   end
 
-  def shipped_units
-    shipped_units = inventory_units.select(&:shipped?)
-    return nil if shipped_units.empty?
 
-    shipped = {}
-    shipped_units.group_by(&:variant).each do |variant, ship_units|
-      shipped[variant] = ship_units.size
-    end
-    shipped
-  end
-
-  def returnable_units
-    returned_units = inventory_units.select { |unit| unit.returned? }
-
-    returnable = shipped_units
-    return if returnable.nil?
-
-    returned_units.group_by(&:variant).each do |variant, returned_units|
-      count = returnable.key?(variant) ? (returnable[variant] - returned_units.size) : 0
-
-      if count > 0
-        returnable[variant] = returnable[variant] - returned_units.size
-      else
-        returnable.delete variant
-      end
-    end
-
-    returnable.empty? ? nil : returnable
-  end
 
   def allow_cancel?
     return false unless completed?
@@ -286,7 +258,7 @@ class Order < ActiveRecord::Base
     rate.create_adjustment(I18n.t(:tax), self, self, true)
   end
 
-  # Creates a new shipment and shipping adjustment (if applicable.)
+  # Creates a new shipment (adjustment is created by shipment model)
   def create_shipment!
     shipping_method.reload
     if shipment.present?
@@ -294,13 +266,7 @@ class Order < ActiveRecord::Base
     else
       self.shipments << Shipment.create(:order => self, :shipping_method => shipping_method, :address => self.ship_address)
     end
-    if shipping_charge = adjustments.shipping.first
-      # shipping_charge.update_attributes(:originator_id => shipping_method.id)
-      shipping_charge.originator = shipping_method
-      shipping_charge.save
-    else
-      shipping_method.create_adjustment(I18n.t(:shipping), self, shipment, true)
-    end
+
   end
 
   def outstanding_balance
@@ -324,11 +290,6 @@ class Order < ActiveRecord::Base
   def creditcards
     creditcard_ids = payments.from_creditcard.map(&:source_id).uniq
     Creditcard.scoped(:conditions => {:id => creditcard_ids})
-  end
-
-  # Indicates whether order has a real user associated with it or just a placeholder anonymous user
-  def anonymous?
-    user && user.anonymous?
   end
 
   def process_payments!
@@ -426,6 +387,7 @@ class Order < ActiveRecord::Base
   # end
 
   def create_user
+    self.email = user.email if self.user and user.email !~ /example.com/
     self.user ||= User.anonymous!
   end
 

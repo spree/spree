@@ -66,7 +66,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :zones
-    #resources :users
+    resources :users
     resources :countries do
       resources :states
     end

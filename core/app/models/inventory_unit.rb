@@ -19,6 +19,7 @@ class InventoryUnit < ActiveRecord::Base
     end
 
     after_transition :on => :fill_backorder, :do => :update_order
+    after_transition :to => 'returned', :do => :restock_variant
   end
 
   # method deprecated in favour of adjust_units (which creates & destroys units as needed).
@@ -118,6 +119,11 @@ class InventoryUnit < ActiveRecord::Base
 
   def update_order
     self.order.update!
+  end
+
+  def restock_variant
+    self.variant.on_hand = (self.variant.on_hand + 1)
+    self.variant.save
   end
 
 end

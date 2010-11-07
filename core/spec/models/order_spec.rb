@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Order do
 
-  let(:order) { Order.new(:email => "foo@example.com") }
+  let(:order) { Order.new }
   let(:gateway) { Gateway::Bogus.new(:name => "Credit Card", :active => true) }
 
   before { Gateway.stub :current => gateway }
@@ -11,15 +11,23 @@ describe Order do
     it "should create guest user (when no user assigned)" do
       order.save
       order.user.should_not be_nil
-      order.user.should be_anonymous
     end
-    it "should not remove the registered user" do
-      order = Order.new
-      reg_user = mock_model(User)#User.create(:email => "spree@example.com", :password => 'changeme2', :password_confirmation => 'changeme2')
-      order.user = reg_user
-      order.save
-      order.user.should == reg_user
+
+    context "when associated with a registered user" do
+      let(:user) { mock_model(User, :email => "user@registered.com") }
+      before { order.user = user }
+
+      it "should not remove the user" do
+        order.save
+        order.user.should == user
+      end
+
+      it "should assign the email address of the user" do
+        order.save
+        order.email.should == user.email
+      end
     end
+
     it "should destroy any line_items with zero quantity"
   end
 
@@ -118,11 +126,6 @@ describe Order do
           Shipment.should_receive(:create).with(:shipping_method => order.shipping_method, :order => order, :address => order.ship_address)
           order.next!
         end
-        it "should create a shipping charge" do
-          order.stub(:shipment).and_return(mock_model(Shipment).as_null_object)
-          order.shipping_method.should_receive(:create_adjustment).with(I18n.t(:shipping), order, order.shipment, true)
-          order.next!
-        end
       end
     end
 
@@ -183,15 +186,6 @@ describe Order do
       order.stub!(:payments).and_return([mock(Payment)])
       order.payment.should_receive(:process!)
       order.process_payments!
-    end
-  end
-
-  context "#anonymous?" do
-    it "should indicate whether its user is a guest" do
-      order.user = mock_model(User, :anonymous? => true)
-      order.should be_anonymous
-      order.user = mock_model(User, :anonymous? => false)
-      order.should_not be_anonymous
     end
   end
 
@@ -484,36 +478,6 @@ describe Order do
     end
     it "should restock inventory"
     it "should change shipment status (unless shipped)"
-  end
-
-  context "#shipped_units" do
-    let(:unit_1) { InventoryUnit.create(:variant => mock_model(Variant), :state => "shipped") }
-    let(:unit_2) { InventoryUnit.create(:variant => mock_model(Variant), :state => "shipped") }
-    let(:unit_3) { InventoryUnit.create(:variant => mock_model(Variant), :state => "sold") }
-
-    before do
-      order.stub(:inventory_units => [unit_1, unit_2, unit_1, unit_3])
-    end
-
-    it "should return shipped unit count grouped by variant" do
-      order.shipped_units.should == {unit_1.variant => 2, unit_2.variant => 1}
-    end
-
-  end
-
-  context "#returnable_units" do
-    let(:unit_1) { InventoryUnit.create(:variant => mock_model(Variant), :variant_id => 1, :state => "shipped") }
-    let(:unit_2) { InventoryUnit.create(:variant => mock_model(Variant), :variant_id => 2, :state => "returned") }
-    let(:unit_3) { InventoryUnit.create(:variant => mock_model(Variant), :variant_id => 3, :state => "sold") }
-
-    before do
-      order.stub(:inventory_units => [unit_1, unit_2, unit_1, unit_3])
-    end
-
-    it "should list all returnable units" do
-      order.returnable_units.should == { unit_1.variant => 2 }
-    end
-
   end
 
   context "with adjustments" do

@@ -270,7 +270,7 @@ en:
   cancel_my_account: Cancel my account
   cancel_my_account_description: "Unhappy?"
   canceled: Canceled
-  cannot_create_returns: Cannot create returns as this order has not shipped yet.
+  cannot_create_returns: Cannot create returns as this order no shipped units.
   cannot_destory_line_item_as_inventory_units_have_shipped: Cannot destory line item as some inventory units have shipped.
   cannot_perform_operation: "Cannot perform requested operation"
   capture: Capture
@@ -338,6 +338,7 @@ en:
   destroy: Destroy
   didnt_receive_confirmation_instructions: "Didn't receive confirmation instructions?"
   didnt_receive_unlock_instructions: "Didn't receive unlock instructions?"
+  discount_amount: "Discount Amount"
   display: Display
   edit: Edit
   editing_billing_integration: Editing Billing Integration
@@ -479,6 +480,7 @@ en:
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
   missing_required_information: "Missing Required Information"
+  minimal_amount: "Minimal Amount"
   month: "Month"
   my_account: "My Account"
   my_orders: "My Orders"
@@ -524,6 +526,7 @@ en:
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
+  normal_amount: "Normal Amount"
   not: not
   not_shown: "Not Shown"
   note: Note
@@ -614,6 +617,7 @@ en:
   preview: Preview
   previous: Previous
   price: Price
+  price_bucket: Price Bucket
   price_with_vat_included: "%{price} (inc. VAT)"
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
@@ -753,6 +757,7 @@ en:
   provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: Qty
   quantity_shipped: Quantity Shipped
+  quantity_returned: Quantity Returned
   range: "Range"
   rate: Rate
   reason: Reason
