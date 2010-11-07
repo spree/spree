@@ -9,8 +9,8 @@ After reading it you should know:
 * how to programatically create and manage products and variants
 
 This guide does not cover:
-* "managing stock/inventory":inventory.html 
-* "categorizing/organizing":taxonomy.html 
+* "managing stock/inventory":inventory.html
+* "categorizing/organizing":taxonomy.html
 
 endprologue.
 
@@ -57,16 +57,16 @@ When Variants are associated with a Product, they are distinguished from each ot
 
 h4. The Master Variant
 
-You may be asking yourself, "If the Product model doesn't have fields for price, weight, height, etc., then how do we associate those values to a product that has no variants?"  
+You may be asking yourself, "If the Product model doesn't have fields for price, weight, height, etc., then how do we associate those values to a product that has no variants?"
 
-The answer is through the use of a "Master Variant," which is generally <i>tucked away</i> as far as many site administrators are concerned.  This special variant record is always created with each new product record, so there is a direct one-to-one relationship between a product and a variant with the +is_master+ flag set to true.  
+The answer is through the use of a "Master Variant," which is generally <i>tucked away</i> as far as many site administrators are concerned.  This special variant record is always created with each new product record, so there is a direct one-to-one relationship between a product and a variant with the +is_master+ flag set to true.
 
 NOTE: You only need to be cognizant of the master variant if you begin to manage products and inventory programatically. The administration interface keeps all of this nitty-gritty transparent to the end-user. If you're looking to get your store set up quickly through the administration interface, feel free to skip to the next section as it is not necessary to know how the master variants work to use the administration interface.
 
-The master variant will not show up in the +Product.variants+ array and plays no role in +Product.has_variants?+  For all intents and purposes, the master variant is transparent and you can access all the fields of the master variant instance as though it were a part of the Product model itself.  That is, 
+The master variant will not show up in the +Product.variants+ array and plays no role in +Product.has_variants?+  For all intents and purposes, the master variant is transparent and you can access all the fields of the master variant instance as though it were a part of the Product model itself.  That is,
 
-	+Product.price == Product.master.price => true+<br/>
-	+Product.sku == Product.master.sku => true+
+  +Product.price == Product.master.price => true+<br/>
+  +Product.sku == Product.master.sku => true+
 
 When a Product has no option types, values, or variants assigned to it, then the product's price, SKU, physical size, weight, and inventory units are all managed through this Master Variant.  As soon as the first variant with option values is assigned to a product, the +on_hand+ of the "master variant" is set to zero and henceforth, all inventory levels are managed within each Variant of the Product.
 
@@ -120,7 +120,7 @@ Once you have defined a Property, you can then associate that Property with a gi
 
 NOTE: The Option Type must already exist - it is not automatically created.
 
-INFO: Product Properties are implemented using the Entity/Attribute/Value (EAV) design pattern.  If your implementation needs require new fields to be added directly to the Product or Variant tables, then see the "extension guide":extension_tutorial.html guide for more information on easily extending the Spree core system. 
+INFO: Product Properties are implemented using the Entity/Attribute/Value (EAV) design pattern.  If your implementation needs require new fields to be added directly to the Product or Variant tables, then see the "extension guide":/extensions.html guide for more information on easily extending the Spree core system.
 
 
 h4. Product Option Types
@@ -149,12 +149,12 @@ Images can be associated with a either a product or any of it's variants. When u
 Spree automatically handles creation and storage of several size versions of each image (via the Paperclip plugin). The default is to create four styles according to the ImageMagick spec.
 
 <shell>
-:styles => { 
-	:mini => '48x48>', 
-	:small => '100x100>', 
-	:product => '240x240>', 
-	:large => '600x600>' 
-	}
+:styles => {
+  :mini => '48x48>',
+  :small => '100x100>',
+  :product => '240x240>',
+  :large => '600x600>'
+  }
 </shell>
 
 
@@ -166,7 +166,7 @@ h4. The Ground Rules
 
 h5. Product
 
-*  Products may or may not have variants. 
+*  Products may or may not have variants.
 *  Every product has one master variant, which stores price and sku, size and weight, etc.
 *  The master variant attributes are directly accessible on the Product model (via delegation)
 
@@ -212,7 +212,7 @@ The price for a product or variant can be obtained using +product_price+ helper 
 
 h5. Product images
 
-In views, you can generate an image's URL file with +image.attachment.url(:product)+, i.e. using the name of a declared image format as an argument. 
+In views, you can generate an image's URL file with +image.attachment.url(:product)+, i.e. using the name of a declared image format as an argument.
 
 
 h4. The Variant Model
@@ -240,18 +240,18 @@ Returns true if this variant is allowed to be placed on a new order.
 
 h3. Further Reading
 
-It can be tedious to add large numbers of products by hand. It is possible to write 
-scripts to do the basic work, and some are starting to circulate. 
+It can be tedious to add large numbers of products by hand. It is possible to write
+scripts to do the basic work, and some are starting to circulate.
 The "Spree wiki":http://wiki.github.com/railsdog/spree
 contains a collection of scripts you can download and adapt, plus other useful utilities. Look at
 the "Tricks and Tips section":http://wiki.github.com/railsdog/spree/developers-tricks-and-tips.
 
-NOTE. The "migration section":migration.html of the guides gives an overview on how to import data programmatically into Spree. 
+NOTE. The "migration section":migration.html of the guides gives an overview on how to import data programmatically into Spree.
 
 
-"Steph Powell":http://github.com/stephp has produced a useful blog post on 
+"Steph Powell":http://github.com/stephp has produced a useful blog post on
 "product optioning":http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-comments.html.
 This discusses how the variant option representation works and how she used it to build an
-extension for enhanced product option selection. 
+extension for enhanced product option selection.
 The blog post appeared in the "Endpoint blog":http://blog.endpoint.com/.
 
