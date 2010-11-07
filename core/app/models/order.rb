@@ -174,7 +174,13 @@ class Order < ActiveRecord::Base
     true
   end
 
-
+  def shipped_units
+    shipped_units = self.inventory_units.select(&:shipped?)
+    return [] if shipped_units.empty?
+    
+    shipped_units.group_by(&:variant)
+  end
+ 
 
   def allow_cancel?
     return false unless completed?
