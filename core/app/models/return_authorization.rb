@@ -14,7 +14,7 @@ class ReturnAuthorization < ActiveRecord::Base
       transition :to => 'received', :from => 'authorized', :if => :allow_receive?
     end
     event :cancel do
-      transition :to => 'cancelled', :from => 'authorized'
+      transition :to => 'canceled', :from => 'authorized'
     end
   end
 
