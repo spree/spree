@@ -11,11 +11,13 @@
         <h4 style="margin-bottom:0px;"><%= variant.name %></h4>
         <%= variant.options_text %>
       </td>
-      <td><%= units.size %></td>
+      <td><%= units.select(&:shipped?).size %></td>
       <td><%= units.select(&:returned?).size %></td>
       <td class="return_quantity">
         <% if @return_authorization.received? %>
           <%= @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0 %>
+        <% elsif units.select(&:shipped?).empty? %>
+          0
         <% else %>
           <%= text_field_tag "return_quantity[#{variant.id}]",
               @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0,
