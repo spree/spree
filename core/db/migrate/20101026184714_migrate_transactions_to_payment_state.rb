@@ -65,7 +65,12 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
   end
 
   def self.migrate_authorized_only_transactions
-    authorized_only = Transaction.find_by_sql("select * from transactions group by payment_id having count(payment_id) = 1 and txn_type = #{AUTHORIZED}")
+    if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
+      group_by_clause = "group by transactions." + Transaction.column_names.join(", transactions.")
+    else
+      group_by_clause = "group by payment_id"
+    end
+    authorized_only = Transaction.find_by_sql("select * from transactions #{group_by_clause} having count(payment_id) = 1 and txn_type = #{AUTHORIZED}")
     authorized_only.each do |tx|
       update_payment(tx, PAYMENT_PENDING)
     end
