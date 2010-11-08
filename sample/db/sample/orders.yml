@@ -15,4 +15,6 @@ order_<%= i %>:
   completed_at: <%=order_date.to_s(:db)%>
   total: <%= item_total + charges_total %>
   adjustment_total: <%= charges_total %>
+  ship_address: ship_address_<%= i %>
+  bill_address: bill_address_<%= i %>
 <% end %>
