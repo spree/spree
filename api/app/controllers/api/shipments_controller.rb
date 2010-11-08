@@ -29,7 +29,7 @@ class Api::ShipmentsController < Api::BaseController
     end
 
     def eager_load_associations
-      [:shipping_method, {:shipping_charge => :order}, :address, {:inventory_units => [:variant]}]
+      [:shipping_method, :address, {:inventory_units => [:variant]}]
     end
 
 end
