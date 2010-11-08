@@ -92,8 +92,8 @@ Rails.application.routes.draw do
       end
       resources :taxons do
         member do
-          post :select
-          post :remove
+          get :select
+          delete :remove
         end
         collection do
           post :available

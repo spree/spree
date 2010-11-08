@@ -38,13 +38,13 @@ class Admin::TaxonsController < Admin::BaseController
     @product.taxons.delete(@taxon)
     @product.save
     @taxons = @product.taxons
-    render :layout => false
+    render_js_for_destroy
   end
 
   def select
     @product = Product.find_by_param!(params[:product_id])
-    taxon = Taxon.find(params[:id])
-    @product.taxons << taxon
+    @taxon = Taxon.find(params[:id])
+    @product.taxons << @taxon
     @product.save
     @taxons = @product.taxons
     render :layout => false
