@@ -45,3 +45,4 @@ tags
 *.swp
 rerun.txt
 test_app
+.rvmrc
