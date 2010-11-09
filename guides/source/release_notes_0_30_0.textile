@@ -36,6 +36,33 @@ Adjustments have also been dramatically simplified.  Instead of having the conce
 
 NOTE. Mandatory adjustments make it easy to show $0 for tax or shipping when those cases apply.  The thinking is we don't want customers to wonder what the shipping cost because its not present - better to show a $0 value explicitly.
 
+h3. New Promotion Functionality
+
+Promotion functionality in Spree has been greatly improved.  There is a new +spree_promo+ gem which is included by default when you install Spree.
+
+h4. Creating a Promotion
+
+A new promotion requires a +name+ and +code+ attribute.  The +code+ attribute can be used by customers when checking out to "activate" a particular promotion.
+
+NOTE. This is standard "coupon code" functionality but you're not required to have customers enter codes in order to utilize promotions.
+
+h4. Promotion Rules
+
+Once a new promotion is created you can create one or more rules for the promotion.  You can require that all rules for the promotion be satisfied or just one of the rules.
+
+Each of the rules is based on a Ruby class that extends +PromotionRule+.  There are four built in rule types for Spree but others can be added via extension or directly through your Spree application code.
+
+* **Item Total:** Limit to orders with an item total above a specified amount
+* **Product(s):** Limit to orders containing one or all of the specified products
+* **User:** Limit to orders made by specific users
+* **First Order:** Limit to the first order by a user
+
+h3. No More "Vendor Mode"
+
+Spree is deployed as a Rubygem now so the previous system of different "boot modes" has been simplified.  Spree never needs to be deployed inside of your application, even if you're using edge or a custom fork.  Thanks to Bundler you can reference any version of Spree source directly via +Gemfile+ and either a physical directory location or a git repository location.
+
+INFO. See the "Source Guide":source_code.html for a complete understanding of all the changes to the organization of the source code.
+
 h3. Upgrading
 
 h4. Before You Upgrade
@@ -50,3 +77,40 @@ It is always recommended that you backup your database before upgrading.  You sh
 
 WARNING. The Spree 0.30.0 upgrade will delete any in progress orders which should generally considered to be a safe thing to do since these are typically just abandoned orders.  There are also non trivial changes to payments and other tables.  Hang on to your database backup until you're sure the upgrade has gone smoothly.
 
+h4. Create a New Rails Application
+
+It is suggested that you create a brand new Rails 3.x application and then make the necessary changes to that application.  We'll briefly walk you through the steps to do this.
+
+WARNING. There have been major changs to how Rails applications (and consequenly Spree) are configured and initialized.  You will have an easier time if you start with a new Rails application and migrate your stuff over to it rather than trying to make changes to an existing Spree application so that its Rails 3 compliant.
+
+h5. Copy Your Legacy Files
+
+Spree no longer requires that you have a "site" extension.  This means that you should copy all of the files in +vendor/extensions/site+ into the +app+ directory of your new Rails application.  This includes the contents of the +public+ directory.
+
+h5. Add Spree to the +Gemfile+
+
+So now you have a new Rails 3.x application and you've moved over your custom files.  Its time to add the Spree gem into the mix.  Edit your +Gemfile+ and add the following entry:
+
+<ruby>
+gem 'spree', '0.30.0'
+</ruby>
+
+Then install the Spree gem using the familiar Bundler approach:
+
+<shell>
+$ bundle install
+</shell>
+
+h4. Upgrade Migrations and Assets
+
+The gems that comprise Spree contain various public assets (images, stylesheets, etc.) as well as database migrations that are needed in order to run Spree.  There is a Rake tasks designed to copy over the necessary files.
+
+<shell>
+$ rake spree:install
+</shell>
+
+Once the migrations are copied over you can migrate using the familiar Rake task for this.
+
+<shell>
+$ rake db:migrate
+</shell>
