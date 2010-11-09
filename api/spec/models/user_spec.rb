@@ -11,6 +11,12 @@ describe User do
     end
   end
 
+  context "#anonymous?" do
+    it "should return false" do
+      user.anonymous?.should be_false
+    end
+  end
+
   context "#clear_api_key!" do
     it "should remove the existing api_key" do
       user.api_key = "FOOFAH"

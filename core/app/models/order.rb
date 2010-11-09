@@ -415,7 +415,7 @@ class Order < ActiveRecord::Base
   # end
 
   def create_user
-    self.email = user.email if self.user and user.email !~ /example.com/
+    self.email = user.email if self.user and !user.anonymous?
     self.user ||= User.anonymous!
   end
 

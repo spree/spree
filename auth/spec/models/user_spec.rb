@@ -11,6 +11,12 @@ describe User do
       user.persistence_token.should_not be_nil
     end
 
+    context "#anonymous?" do
+      it "should return false" do
+        user.anonymous?.should be_false
+      end
+    end
+
     before do
       User.delete_all
       Role.delete_all
@@ -21,11 +27,18 @@ describe User do
     end
 
   end
+
   context "anonymous!" do
     let(:user) { User.anonymous! }
 
     it "should create a new user" do
       user.new_record?.should be_false
+    end
+
+    context "#anonymous?" do
+      it "should return true" do
+        user.anonymous?.should be_true
+      end
     end
   end
 end
