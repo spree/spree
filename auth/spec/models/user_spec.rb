@@ -27,5 +27,9 @@ describe User do
     it "should create a new user" do
       user.new_record?.should be_false
     end
+
+    it "should create a user with an example.net email" do
+      user.email.should =~ /example.net/
+    end
   end
 end

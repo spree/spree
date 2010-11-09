@@ -26,6 +26,19 @@ describe Order do
         order.save
         order.email.should == user.email
       end
+
+      it "should accept the sample admin email address" do
+        user.stub :email => "spree@example.com"
+        order.save
+        order.email.should == user.email
+      end
+
+      it "should reject the automatic email for anonymous users" do
+        user.stub :email => "123456789@example.net"
+        order.save
+        order.email.should be_blank
+      end
+
     end
 
     it "should destroy any line_items with zero quantity"

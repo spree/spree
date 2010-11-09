@@ -233,12 +233,6 @@ class Order < ActiveRecord::Base
     line_items.detect{|line_item| line_item.variant_id == variant.id}
   end
 
-  # def mark_shipped
-  #   inventory_units.each do |inventory_unit|
-  #     inventory_unit.ship!
-  #   end
-  # end
-
   def ship_total
     adjustments.shipping.map(&:amount).sum
   end
@@ -354,40 +348,9 @@ class Order < ActiveRecord::Base
   end
 
 
-
-
   private
-  # def complete_order
-  #   self.adjustments.each(&:update_amount)
-  #   update_attribute(:completed_at, Time.now)
-  #
-  #   begin
-  #     @out_of_stock_items = InventoryUnit.sell_units(self)
-  #     update_totals unless @out_of_stock_items.empty?
-  #     shipment.inventory_units = inventory_units
-  #     save!
-  #   rescue Exception => e
-  #     logger.error "Problem saving authorized order: #{e.message}"
-  #     logger.error self.to_yaml
-  #   end
-  # end
-  #
-  # def restock_inventory
-  #   inventory_units.each do |inventory_unit|
-  #     inventory_unit.restock! if inventory_unit.can_restock?
-  #   end
-  #
-  #   inventory_units.reload
-  # end
-  #
-  # def update_line_items
-  #   to_wipe = self.line_items.select {|li| 0 == li.quantity || li.quantity.nil? }
-  #   LineItem.destroy(to_wipe)
-  #   self.line_items -= to_wipe      # important: remove defunct items, avoid a reload
-  # end
-
   def create_user
-    self.email = user.email if self.user and user.email !~ /example.com/
+    self.email = user.email if self.user and user.email !~ /example.net/
     self.user ||= User.anonymous!
   end
 

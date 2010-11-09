@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
   # when adding to the "cart" (which is really an order) and before the customer has a chance to provide an email or to register.
   def self.anonymous!
     token = User.generate_token(:persistence_token)
-    User.create(:email => "#{token}@example.com", :password => token, :password_confirmation => token)
+    User.create(:email => "#{token}@example.net", :password => token, :password_confirmation => token)
   end
 
   def self.admin_created?
