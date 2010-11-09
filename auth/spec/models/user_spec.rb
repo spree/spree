@@ -10,12 +10,17 @@ describe User do
       User.delete_all
       Role.delete_all
     end
+
     it "should have an admin role if no admin users exist yet" do
       user.save!
       user.has_role?('admin').should be_true
     end
 
+    it "should not be anonymous" do
+      user.should_not be_anonymous
+    end
   end
+
   context "anonymous!" do
     let(:user) { User.anonymous! }
 
@@ -24,7 +29,11 @@ describe User do
     end
 
     it "should create a user with an example.net email" do
-      user.email.should =~ /example.net/
+      user.email.should =~ /@example.net$/
+    end
+
+    it "should be anonymous" do
+      user.should be_anonymous
     end
   end
 end

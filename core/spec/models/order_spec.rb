@@ -24,7 +24,7 @@ describe Order do
     end
 
     context "when associated with a registered user" do
-      let(:user) { mock_model(User, :email => "user@registered.com") }
+      let(:user) { mock_model(User, :email => "user@registered.com", :anonymous? => false) }
       before { order.user = user }
 
       it "should not remove the user" do
@@ -44,7 +44,7 @@ describe Order do
       end
 
       it "should reject the automatic email for anonymous users" do
-        user.stub :email => "123456789@example.net"
+        user.stub :anonymous? => true
         order.save
         order.email.should be_blank
       end

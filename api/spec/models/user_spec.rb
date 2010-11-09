@@ -11,6 +11,12 @@ describe User do
     end
   end
 
+  context "#anonymous?" do
+    it "should not be anonymous" do
+      user.should_not be_anonymous
+    end
+  end
+
   context "#clear_api_key!" do
     it "should remove the existing api_key" do
       user.authentication_token = "FOOFAH"

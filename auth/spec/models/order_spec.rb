@@ -10,7 +10,7 @@ describe Order do
     end
   end
   context "#associate_user!" do
-    let(:user) { mock_model User, :email => 'spree@example.com' }
+    let(:user) { mock_model User, :email => 'spree@example.com', :anonymous? => false }
     before { order.stub(:save! => true) }
 
     it "should associate the order with the specified user" do

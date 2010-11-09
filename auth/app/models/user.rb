@@ -33,6 +33,10 @@ class User < ActiveRecord::Base
     Role.where(:name => "admin").includes(:users).count > 0
   end
 
+  def anonymous?
+    email =~ /@example.net$/
+  end
+
   def deliver_password_reset_instructions!
     reset_perishable_token!
     UserMailer.password_reset_instructions(self).deliver
