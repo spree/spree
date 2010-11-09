@@ -68,7 +68,7 @@ class CheckoutController < Spree::BaseController
   end
 
   def before_delivery
-    @order.shipping_method ||= (@order.rate_hash.first && @order.rate_hash.first[:shipping_method])
+    @order.shipping_method_id ||= (@order.rate_hash.first && @order.rate_hash.first[:shipping_method].id)
   end
 
   def before_payment
