@@ -32,6 +32,7 @@ task :test_app do
       append_file 'Gemfile' do
 <<-gems
         gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
+        gem 'spree_auth', :path => \'#{File.join(File.dirname(__FILE__), "..", "auth")}\'
         gem 'spree_api', :path => \'#{File.dirname(__FILE__)}\'
 gems
       end
@@ -40,6 +41,7 @@ gems
     def install_gems
       inside "test_app" do
         run 'rake spree_core:install'
+        run 'rake spree_auth:install'
         run 'rake spree_api:install'
       end
     end

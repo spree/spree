@@ -26,10 +26,10 @@ Devise.setup do |config|
   # config.params_authenticatable = true
 
   # Tell if authentication through HTTP Basic Auth is enabled. True by default.
-  # config.http_authenticatable = true
+  #config.http_authenticatable = false
 
   # Set this to true to use Basic Auth for AJAX requests.  True by default.
-  # config.http_authenticatable_on_xhr = true
+  #config.http_authenticatable_on_xhr = false
 
   # The realm used in Http Basic Authentication
   config.http_authentication_realm = "Spree Application"
@@ -51,10 +51,10 @@ Devise.setup do |config|
   # ==> Configuration for :confirmable
   # The time you want to give your user to confirm his account. During this time
   # he will be able to access your application without confirming. Default is nil.
-  # When confirm_within is zero, the user won't be able to sign in without confirming. 
-  # You can use this to let your user access some features of your application 
-  # without confirming the account, but blocking it after a certain period 
-  # (ie 2 days). 
+  # When confirm_within is zero, the user won't be able to sign in without confirming.
+  # You can use this to let your user access some features of your application
+  # without confirming the account, but blocking it after a certain period
+  # (ie 2 days).
   # config.confirm_within = 2.days
 
   # ==> Configuration for :rememberable
@@ -101,7 +101,7 @@ Devise.setup do |config|
 
   # ==> Configuration for :token_authenticatable
   # Defines name of the authentication token params key
-  # config.token_authentication_key = :auth_token
+  config.token_authentication_key = :auth_token
 
   # ==> Scopes configuration
   # Turn scoped views on. Before rendering "sessions/new", it will first check for
@@ -113,7 +113,7 @@ Devise.setup do |config|
   # devise role declared in your routes.
   # config.default_scope = :user
 
-  # Configure sign_out behavior. 
+  # Configure sign_out behavior.
   # By default sign_out is scoped (i.e. /users/sign_out affects only :user scope).
   # In case of sign_out_all_scopes set to true any logout action will sign out all active scopes.
   # config.sign_out_all_scopes = false
@@ -124,7 +124,7 @@ Devise.setup do |config|
   # access, but formats like :xml or :json, should return 401.
   # If you have any extra navigational formats, like :iphone or :mobile, you
   # should add them to the navigational formats lists. Default is [:html]
-  # config.navigational_formats = [:html, :iphone]
+  config.navigational_formats = [:html, :json, :xml]
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not (yet) supported by Devise,

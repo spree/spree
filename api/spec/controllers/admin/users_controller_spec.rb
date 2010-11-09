@@ -3,7 +3,11 @@ require 'spec_helper'
 describe Admin::UsersController do
 
   let(:user) { mock_model User }
-  before { User.stub :find => user }
+
+  before do
+    controller.stub :current_user => mock_model(User, :has_role? => true)
+    User.stub :find => user
+  end
 
   context "#generate_api_key" do
     it "should generate a 40 char key" do

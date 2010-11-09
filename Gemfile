@@ -11,7 +11,7 @@ gemspec
 
 group :test do
   gem 'rspec-rails', '~> 2.1.0'
-  gem 'fabrication'
+  gem 'factory_girl_rails'
 end
 
 group :cucumber do

@@ -20,8 +20,8 @@ db/*.sql
 db/*.sqlite3*
 db/schema.rb
 doc/**/*
-Gemfile.lock
 lib/products_index_profiler.rb
+Gemfile.lock
 log/*.log
 pkg
 public/assets
@@ -46,3 +46,4 @@ tags
 *.swp
 rerun.txt
 test_app
+.rvmrc

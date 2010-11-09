@@ -37,6 +37,7 @@ class UserSessionsController < Devise::SessionsController
           render :action => :new
         }
         format.js { render :json => false }
+        format.json {render :text => 'access_denied', :status => 401}
       end
     end
     redirect_back_or_default(products_path) unless performed?

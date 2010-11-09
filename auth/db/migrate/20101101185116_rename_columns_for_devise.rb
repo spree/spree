@@ -13,6 +13,8 @@ class RenameColumnsForDevise < ActiveRecord::Migration
     add_column :users, :authentication_token, :string
     add_column :users, :unlock_token, :string
     add_column :users, :locked_at, :datetime
+    remove_column :users, :api_key
+    remove_column :users, :openid_identifier
   end
 
   def self.down
@@ -30,5 +32,7 @@ class RenameColumnsForDevise < ActiveRecord::Migration
     rename_column :users, :remember_created_at, :remember_token_expires_at
     rename_column :users, :password_salt, :salt
     rename_column :users, :encrypted_password, :crypted_password
+    add_column :users, :unlock_token, :string
+    add_column :users, :openid_identifier, :string
   end
 end

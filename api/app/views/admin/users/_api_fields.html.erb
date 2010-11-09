@@ -1,7 +1,7 @@
 <h2><%= t('api.access') %></h2>
 
-<% if @user.api_key.present? %>
-  <p><strong><%= t('api.key') %></strong> <%= @user.api_key %></p>
+<% if @user.authentication_token.present? %>
+  <p><strong><%= t('api.key') %></strong> <%= @user.authentication_token %></p>
   <%= form_tag clear_api_key_admin_user_path(@user), :method => :put do %>
     <%= button t("api.clear_key") %>
   <% end %>
