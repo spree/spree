@@ -16,7 +16,8 @@ class Admin::BaseController < Spree::BaseController
   # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
   def check_json_authenticity
     return unless request.format.js? or request.format.json?
-    unless (form_authenticity_token == params[request_forgery_protection_token].gsub(' ', '+'))
+    auth_token = params[request_forgery_protection_token]
+    unless (auth_token and form_authenticity_token == auth_token.gsub(' ', '+'))
       raise(ActionController::InvalidAuthenticityToken)
     end
   end
