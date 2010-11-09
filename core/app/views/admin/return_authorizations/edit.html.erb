@@ -21,7 +21,7 @@
   <%= render :partial => "form", :locals => {:f => f} %>
 
   <p class="form-buttons">
-    <%= button t('update') %>
+    <%= button t('update'), nil, "submit", {:disabled => @return_authorization.cancelled?} %>
     <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_return_authorizations_url(@order) %>
   </p>
 <% end %>
