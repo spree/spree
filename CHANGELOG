@@ -1,3 +1,5 @@
+NOTE: The CHANGELOG is being deprecated.  There are too many changes between versions to catalog here.  We'll be using release notes for the highlights and Github compare views and LH milestones to show a more detailed view.  The later two reports are automated and will simplify the release process.
+
 == 0.11.0
 
 * # - 728  ProductsController::change_image method is not in use
@@ -41,7 +43,7 @@
 * # - 1358 Move translations into new extension
 * # - 1361 Wrong translation used to confirm password
 * # - 1365 Allow specifying where payment methods are displayed
-* # - 1374 Shipment API calls are not eagerly loading 
+* # - 1374 Shipment API calls are not eagerly loading
 * # - 1376 Searching for user during admin order can be slow with large datasets
 * # - 1377 Delete shipment does not unassign inventory units
 * # - 1378 Allow adjustments to be added to new admin orders
@@ -55,7 +57,7 @@
 * # - 1405 Improved staging environment
 * # - 1406 Improve product search for admin orders
 * # - 1409 Inventory units are not created / destroyed on admin order edit
-* # - 1410 Dates change when searching for orders by date ranges 
+* # - 1410 Dates change when searching for orders by date ranges
 * # - 1412 Document code in app/helpers/admin/base_helper.rb
 * # - 1413 Upgrade to Rails 2.3.8
 * # - 1415 Remove RubyGems deprecation warning workaround
@@ -64,7 +66,7 @@
 * # - 1425 Promote new Rails2.3.6 way for Flash alert and notice
 * # - 1430 Add tags, *.swp and rerun.txt to Gitignore
 * # - 1432 Error when emptying the cart
-* # - 1434 Escape issues with Rails 2.3.8 
+* # - 1434 Escape issues with Rails 2.3.8
 * # - 1435 Remove deprecation warnings caused by rake tasks
 * # - 1436 ruby 1.9.1 i18n wrong argument issue
 * # - 1438 Cucumber tests can fail with RoR 2.3.8
@@ -86,7 +88,7 @@
 * # - 1251 Skip confirmation step if payment profiles are not available
 * # - 1253 Table variants doesn't exist when bootstrapping with extensions installed that modify the Variant model
 * # - 1255 Products groups edit error
-* # - 1257 Coupons do not recalculate credit after redeemed 
+* # - 1257 Coupons do not recalculate credit after redeemed
 * # - 1261 Type Error when Checkout
 * # - 1263 Submitting a coupon during the checkout confirmation fails
 * # - 1269 Orders Overview page breaks when there are no orders in the last 7 days
@@ -97,199 +99,199 @@
 * # - 1209 Ruby Gems Warning (reverted this fix - RubyGems 1.3.6 is now required again)
 * # - 1245 payment_gateway extension fails to load in production when spree is gemified
 * # -  759 Error with creating admin user during bootstrap: unknown attribute: password_confirmation (Fixed in production mode)
- 
+
 == 0.10.0
 
-* # - 16	Add Robots.txt file
-* # - 188	Allow admin to create new shipments
-* # - 247	Restrict shipping methods based on order contents
-* # - 301	Limit billing and shipping address to the same list of countries.
-* # - 316	Relation between option_types and product_option_types can break
-* # - 320	Remove all traces of Prototype 
-* # - 361	Drop tlsmail dependency
-* # - 373	Rake gems command fails if you have an earlier version of haml then what is required
-* # - 503	Problem adding multiple option types to a product
-* # - 517	_products.html.erb hardcodes an image size.
-* # - 576	Support test:unit in extensions
-* # - 586	Modify SEO Product URL's in favor of single path to product
-* # - 595	Move extension load order out of environment.rb
-* # - 598	Ruby 1.9 Support
-* # - 602	sku search on admin/products shows one link per matching variant
-* # - 607	Add extension that will give your store accurate titles in the core.
-* # - 608	Migrations for the site extension should always be applied last
-* # - 624	link_to_delete, ajax request missing datatype
-* # - 637	Translation of helpers and confirmation messages
-* # - 638	Property and Prototype specs fails when spree is running in language other than en-US
-* # - 651	Use I18n to display order statuses in com bobox.
-* # - 652	Calls will_paginate helper with wrong attributes.
-* # - 667	jQuery.validate plugin should support internationalization.
-* # - 675	Remove calendar_date_select
-* # - 680	Administration for payment gateways is not over SSL
-* # - 695	admin product editing needs to report validation failures
-* # - 696	Add "clone" function to product admin interface
-* # - 704	Names of additional fields of variant must displayed in current locale.
-* # - 706	Paypal password field is visible
-* # - 711	account_url don't work.
-* # - 712	Improve performance of work with inventory units.
-* # - 735	reject_unknown_object fails for products
-* # - 746	move inline javascripts to it's own file
-* # - 765	Charge information should not change for completed order
-* # - 768	Change filename of ApplicationController (application.rb)
-* # - 769	Move common controller logic into Spree::BaseController
-* # - 771	Move contents of application.js 
-* # - 772	Rebase database migrations
-* # - 775	Update payment_gateway extension to use jQuery and I18n.
-* # - 777	SearchLogic and thinking_sphinx
-* # - 780	Upgrade state machine plugin
-* # - 781	OrderMailer views are no longer overrideable
-* # - 785	title helper_method not available for extension controllers
-* # - 787	Rename application layout
-* # - 798	html cleanup
-* # - 799	Update french localization
-* # - 800	"Unknown action" when changing local after a login error message displayed
-* # - 801	Little bug in report_criteria partial.
-* # - 806	Document i18n rake tasks
-* # - 808	rake db:sample to load fixtures and copy over assets from extensions
-* # - 809	User login is forced to be same as email
-* # - 810	dynamic product groups
-* # - 811	Refactor Payment Gateways
-* # - 812	Remove Github gem dependencies
-* # - 814	FlatPercent calculator doesn't work for shipment method.
-* # - 815	Calls of admin_country_states_path oriented to U.S.
-* # - 818	Migrate taxons to nested set for major performance boost
-* # - 819	improve product scopes
-* # - 820	Product search
-* # - 821	Don't hit db on every config call
-* # - 828	Billing Integration configuration
-* # - 830	OpenID Support
-* # - 832	Creditcard.expiry_date is hardcoded to current date
-* # - 834	Preference values get truncated over 255 characters
-* # - 835	cleanup and separate thumbnail related javascripts
-* # - 836	Coupons usage_limit is not counting correctly
-* # - 838	Fix taxons fixtures for in sample data
-* # - 839	404 while assigning product taxons
-* # - 841	New applicable? method for adjustments
-* # - 843	shipping charge descriptions not updated
-* # - 848	Rails Metal doesn't work from extensions
-* # - 849	Product search does not search master variant
-* # - 851	Guest account email on registration
-* # - 852	Missing  strings  localizations
-* # - 853	Issue with Shipping Address On Multiple Checkouts From Single User
-* # - 858	Integration tests failing because of Metal
-* # - 860	Checkout can prematurely process creditcard
-* # - 862	Errors when adding item to order are never displayed
-* # - 863	Improve performance of displaying of products.
-* # - 864	Ensure global admin activity indicator is visible on long pages
-* # - 868	Cannot register new account during checkout
-* # - 869	Little bug in redirect after login via OpenID
-* # - 870	Variant#check_price trigger failed in case Product.destroy_all
-* # - 889	Allow extensions to override core seed and sample data
-* # - 894	Random test failure with short Faker user_name
-* # - 897	Error in admin Shipping_rates_controller
-* # - 908	make add_extension_admin_tab more UF
-* # - 911	2 javascript caches with same name bug
-* # - 920	Australian translation - en_AU
-* # - 923	Security issue: Customer addresses and telephone numbers are insecure
-* # - 925	Allow admin to edit order and adjustments
-* # - 931	Inventory units should not backordered if backorders disallowed
-* # - 932	"Mark as shipped" causes incorrect order total
-* # - 938	Invalid HTML in app/views/admin/products/index.html.erb
-* # - 939	Charge and Credit amount saved before checkout is complete
-* # - 940	Order.email not set
-* # - 950	Exclude stylesheet requests from admin user check
-* # - 953	Add FSM for shipments along with associated state events
-* # - 956	rails default english locale not being picked up
-* # - 958	Zone#country_list is empty for state-based zones
-* # - 964	Theme Support
-* # - 965	Multi-Step Checkout
-* # - 966	Do not create shipments at checkout
-* # - 967	Incorrect for-attribute in labels for address fields.
-* # - 968	List of states does not updated when user change selected country
-* # - 969	Update Ruby 1.9.x support
-* # - 970	Provide friendly error message if no shipping methods are configured
-* # - 973	Creditcard model should not store mask information 
-* # - 976	Provide an option to prevent loading sample data from the Spree core
-* # - 977	User isn't set in the new Order
-* # - 978	Update Russian translation (for 1.0)
-* # - 983	Support creating new orders via admin ui
-* # - 994	Order views should not assume address information
-* # - 997	ProductGroup#products generates invalid SQL for mysql and postgresql
-* # - 1000	Validation errors in LineItem should support I18n.
-* # - 1001	Remove config.extensions from environment.rb
-* # - 1002	Typo in views/admin/prototypes/new.html.erb
-* # - 1004	Verify that params[:page] and params[:per_page] are an integer
-* # - 1005	Several new/edit admin page have no way back to index view.
-* # - 1007	Admin screen (edge spree) shows exception instead of listing products
-* # - 1009	hook to add additional scripts to admin pages footer
-* # - 1011	Add I18n support to password resetting
-* # - 1015	bill_address can be nil
-* # - 1017	more patches breaks on heroku
-* # - 1027	CheckoutsController#register action needs to be protected by SSL
-* # - 1028	Convenient name method for order
-* # - 1032	REST API for managing orders and shipments
-* # - 1033	Don't check deleted_at attribute directly, use deleted? instead
-* # - 1038	Delete invalid, unused template.
-* # - 1042	Some unit tests inherit from Test::Unit::TestCase not ActiveSupport::TestCase
-* # - 1044	Speed up ProductGroupTest
-* # - 1046	It should be possible to remove only one item from the cart
-* # - 1048	Cart: row for the "your cart is empty" message should be rendered iff there is not items in the cart
-* # - 1049	Email string should be split on comma prior to uniq
-* # - 1050	Support Authorize.net CIM
-* # - 1056	Provide consistent validation instructions
-* # - 1057	Enhanced Google Analytics Configuration
-* # - 1058	Sales Report
-* # - 1067	Support for refunds and voids (including profile based ones)
-* # - 1068	Change required to validate as XHTML 1.1
-* # - 1073	Default tax category isn't assigned to new products
-* # - 1075	Graceful error handling for ActiveMerchant::ConnectionError
-* # - 1080	Improve Product Group Performance
-* # - 1084	XSS security vulnerability in LocaleController
-* # - 1085	Translation for product_has_no_description is incorrect
-* # - 1086	Extend API to return products / variant information
-* # - 1087	Doesn't work sorting products by price in admin panel.
-* # - 1091	User text input for all admin date selectors
-* # - 1092	Staging env caused problems with sessions.
-* # - 1095	Replace Papercliip plugin with gem dependency 
-* # - 1102	Error with inventory_units for db:bootstrap
-* # - 1106	Ensure both products and taxons are only available via one url
-* # - 1118	Update to ActiveMerchant 1.5.0
-* # - 1123	Shipping/Billing addresses always the same during checkout
-* # - 1125	Fix <br> clear attribute for shared admin partials
-* # - 1126	Fix missing <tr> for admin coupon partial
-* # - 1128	Fix tax_rates partial to be XHTML valid
-* # - 1131	Vietnamese Translation
-* # - 1132	Fix alt tooltip for few translation
-* # - 1135	Error on creditcards/index while creating a new order 
-* # - 1136	Support multiple payment methods
-* # - 1138	admin/option_types/_form.html.erb partial rendered wrongly under Ruby19
-* # - 1139	Czech localization
-* # - 1143	The extension functional test generate template uses the wrong base class.
-* # - 1144	wrong hook in admin/products
-* # - 1145	Adjustments not included in admin/orders controller
-* # - 1150	Update to ActiveMerchant 1.5.1 to fix Billing Response bug
-* # - 1151	Address duplication is back
-* # - 1152	FIx deprecated param for number_with_precision
-* # - 1154	System does not send first_name and last_name to authorize.net so CC transactions fail.
-* # - 1162	rake db:load_file, db:load_dir unnecessarily establishes connection (?)
-* # - 1166	City and phone not translated in checkout edit address view
-* # - 1168	Need to recreate reduced BillingIntegration class
-* # - 1171	Local change suddenly when browsing into admin overview
-* # - 1172	Payments admin views should use partials for each payment_method
-* # - 1173	CSS problem with js-validation of address
-* # - 1182	Beanstream Secure Payment profile support
-* # - 1183	rake spree:i18n:sync failed with Ruby 1.9 due to invalid byte sequence in UTF8
-* # - 1185	HTML title of Admin doesn't use translation
-* # - 1198	Failures in tests for payment_gateway extension.
-* # - 1204	Products aren't filtered by low level taxons
-* # - 
+* # - 16  Add Robots.txt file
+* # - 188  Allow admin to create new shipments
+* # - 247  Restrict shipping methods based on order contents
+* # - 301  Limit billing and shipping address to the same list of countries.
+* # - 316  Relation between option_types and product_option_types can break
+* # - 320  Remove all traces of Prototype
+* # - 361  Drop tlsmail dependency
+* # - 373  Rake gems command fails if you have an earlier version of haml then what is required
+* # - 503  Problem adding multiple option types to a product
+* # - 517  _products.html.erb hardcodes an image size.
+* # - 576  Support test:unit in extensions
+* # - 586  Modify SEO Product URL's in favor of single path to product
+* # - 595  Move extension load order out of environment.rb
+* # - 598  Ruby 1.9 Support
+* # - 602  sku search on admin/products shows one link per matching variant
+* # - 607  Add extension that will give your store accurate titles in the core.
+* # - 608  Migrations for the site extension should always be applied last
+* # - 624  link_to_delete, ajax request missing datatype
+* # - 637  Translation of helpers and confirmation messages
+* # - 638  Property and Prototype specs fails when spree is running in language other than en-US
+* # - 651  Use I18n to display order statuses in com bobox.
+* # - 652  Calls will_paginate helper with wrong attributes.
+* # - 667  jQuery.validate plugin should support internationalization.
+* # - 675  Remove calendar_date_select
+* # - 680  Administration for payment gateways is not over SSL
+* # - 695  admin product editing needs to report validation failures
+* # - 696  Add "clone" function to product admin interface
+* # - 704  Names of additional fields of variant must displayed in current locale.
+* # - 706  Paypal password field is visible
+* # - 711  account_url don't work.
+* # - 712  Improve performance of work with inventory units.
+* # - 735  reject_unknown_object fails for products
+* # - 746  move inline javascripts to it's own file
+* # - 765  Charge information should not change for completed order
+* # - 768  Change filename of ApplicationController (application.rb)
+* # - 769  Move common controller logic into Spree::BaseController
+* # - 771  Move contents of application.js
+* # - 772  Rebase database migrations
+* # - 775  Update payment_gateway extension to use jQuery and I18n.
+* # - 777  SearchLogic and thinking_sphinx
+* # - 780  Upgrade state machine plugin
+* # - 781  OrderMailer views are no longer overrideable
+* # - 785  title helper_method not available for extension controllers
+* # - 787  Rename application layout
+* # - 798  html cleanup
+* # - 799  Update french localization
+* # - 800  "Unknown action" when changing local after a login error message displayed
+* # - 801  Little bug in report_criteria partial.
+* # - 806  Document i18n rake tasks
+* # - 808  rake db:sample to load fixtures and copy over assets from extensions
+* # - 809  User login is forced to be same as email
+* # - 810  dynamic product groups
+* # - 811  Refactor Payment Gateways
+* # - 812  Remove Github gem dependencies
+* # - 814  FlatPercent calculator doesn't work for shipment method.
+* # - 815  Calls of admin_country_states_path oriented to U.S.
+* # - 818  Migrate taxons to nested set for major performance boost
+* # - 819  improve product scopes
+* # - 820  Product search
+* # - 821  Don't hit db on every config call
+* # - 828  Billing Integration configuration
+* # - 830  OpenID Support
+* # - 832  Creditcard.expiry_date is hardcoded to current date
+* # - 834  Preference values get truncated over 255 characters
+* # - 835  cleanup and separate thumbnail related javascripts
+* # - 836  Coupons usage_limit is not counting correctly
+* # - 838  Fix taxons fixtures for in sample data
+* # - 839  404 while assigning product taxons
+* # - 841  New applicable? method for adjustments
+* # - 843  shipping charge descriptions not updated
+* # - 848  Rails Metal doesn't work from extensions
+* # - 849  Product search does not search master variant
+* # - 851  Guest account email on registration
+* # - 852  Missing  strings  localizations
+* # - 853  Issue with Shipping Address On Multiple Checkouts From Single User
+* # - 858  Integration tests failing because of Metal
+* # - 860  Checkout can prematurely process creditcard
+* # - 862  Errors when adding item to order are never displayed
+* # - 863  Improve performance of displaying of products.
+* # - 864  Ensure global admin activity indicator is visible on long pages
+* # - 868  Cannot register new account during checkout
+* # - 869  Little bug in redirect after login via OpenID
+* # - 870  Variant#check_price trigger failed in case Product.destroy_all
+* # - 889  Allow extensions to override core seed and sample data
+* # - 894  Random test failure with short Faker user_name
+* # - 897  Error in admin Shipping_rates_controller
+* # - 908  make add_extension_admin_tab more UF
+* # - 911  2 javascript caches with same name bug
+* # - 920  Australian translation - en_AU
+* # - 923  Security issue: Customer addresses and telephone numbers are insecure
+* # - 925  Allow admin to edit order and adjustments
+* # - 931  Inventory units should not backordered if backorders disallowed
+* # - 932  "Mark as shipped" causes incorrect order total
+* # - 938  Invalid HTML in app/views/admin/products/index.html.erb
+* # - 939  Charge and Credit amount saved before checkout is complete
+* # - 940  Order.email not set
+* # - 950  Exclude stylesheet requests from admin user check
+* # - 953  Add FSM for shipments along with associated state events
+* # - 956  rails default english locale not being picked up
+* # - 958  Zone#country_list is empty for state-based zones
+* # - 964  Theme Support
+* # - 965  Multi-Step Checkout
+* # - 966  Do not create shipments at checkout
+* # - 967  Incorrect for-attribute in labels for address fields.
+* # - 968  List of states does not updated when user change selected country
+* # - 969  Update Ruby 1.9.x support
+* # - 970  Provide friendly error message if no shipping methods are configured
+* # - 973  Creditcard model should not store mask information
+* # - 976  Provide an option to prevent loading sample data from the Spree core
+* # - 977  User isn't set in the new Order
+* # - 978  Update Russian translation (for 1.0)
+* # - 983  Support creating new orders via admin ui
+* # - 994  Order views should not assume address information
+* # - 997  ProductGroup#products generates invalid SQL for mysql and postgresql
+* # - 1000  Validation errors in LineItem should support I18n.
+* # - 1001  Remove config.extensions from environment.rb
+* # - 1002  Typo in views/admin/prototypes/new.html.erb
+* # - 1004  Verify that params[:page] and params[:per_page] are an integer
+* # - 1005  Several new/edit admin page have no way back to index view.
+* # - 1007  Admin screen (edge spree) shows exception instead of listing products
+* # - 1009  hook to add additional scripts to admin pages footer
+* # - 1011  Add I18n support to password resetting
+* # - 1015  bill_address can be nil
+* # - 1017  more patches breaks on heroku
+* # - 1027  CheckoutsController#register action needs to be protected by SSL
+* # - 1028  Convenient name method for order
+* # - 1032  REST API for managing orders and shipments
+* # - 1033  Don't check deleted_at attribute directly, use deleted? instead
+* # - 1038  Delete invalid, unused template.
+* # - 1042  Some unit tests inherit from Test::Unit::TestCase not ActiveSupport::TestCase
+* # - 1044  Speed up ProductGroupTest
+* # - 1046  It should be possible to remove only one item from the cart
+* # - 1048  Cart: row for the "your cart is empty" message should be rendered iff there is not items in the cart
+* # - 1049  Email string should be split on comma prior to uniq
+* # - 1050  Support Authorize.net CIM
+* # - 1056  Provide consistent validation instructions
+* # - 1057  Enhanced Google Analytics Configuration
+* # - 1058  Sales Report
+* # - 1067  Support for refunds and voids (including profile based ones)
+* # - 1068  Change required to validate as XHTML 1.1
+* # - 1073  Default tax category isn't assigned to new products
+* # - 1075  Graceful error handling for ActiveMerchant::ConnectionError
+* # - 1080  Improve Product Group Performance
+* # - 1084  XSS security vulnerability in LocaleController
+* # - 1085  Translation for product_has_no_description is incorrect
+* # - 1086  Extend API to return products / variant information
+* # - 1087  Doesn't work sorting products by price in admin panel.
+* # - 1091  User text input for all admin date selectors
+* # - 1092  Staging env caused problems with sessions.
+* # - 1095  Replace Papercliip plugin with gem dependency
+* # - 1102  Error with inventory_units for db:bootstrap
+* # - 1106  Ensure both products and taxons are only available via one url
+* # - 1118  Update to ActiveMerchant 1.5.0
+* # - 1123  Shipping/Billing addresses always the same during checkout
+* # - 1125  Fix <br> clear attribute for shared admin partials
+* # - 1126  Fix missing <tr> for admin coupon partial
+* # - 1128  Fix tax_rates partial to be XHTML valid
+* # - 1131  Vietnamese Translation
+* # - 1132  Fix alt tooltip for few translation
+* # - 1135  Error on creditcards/index while creating a new order
+* # - 1136  Support multiple payment methods
+* # - 1138  admin/option_types/_form.html.erb partial rendered wrongly under Ruby19
+* # - 1139  Czech localization
+* # - 1143  The extension functional test generate template uses the wrong base class.
+* # - 1144  wrong hook in admin/products
+* # - 1145  Adjustments not included in admin/orders controller
+* # - 1150  Update to ActiveMerchant 1.5.1 to fix Billing Response bug
+* # - 1151  Address duplication is back
+* # - 1152  FIx deprecated param for number_with_precision
+* # - 1154  System does not send first_name and last_name to authorize.net so CC transactions fail.
+* # - 1162  rake db:load_file, db:load_dir unnecessarily establishes connection (?)
+* # - 1166  City and phone not translated in checkout edit address view
+* # - 1168  Need to recreate reduced BillingIntegration class
+* # - 1171  Local change suddenly when browsing into admin overview
+* # - 1172  Payments admin views should use partials for each payment_method
+* # - 1173  CSS problem with js-validation of address
+* # - 1182  Beanstream Secure Payment profile support
+* # - 1183  rake spree:i18n:sync failed with Ruby 1.9 due to invalid byte sequence in UTF8
+* # - 1185  HTML title of Admin doesn't use translation
+* # - 1198  Failures in tests for payment_gateway extension.
+* # - 1204  Products aren't filtered by low level taxons
+* # -
 == 0.9.4
 
 * # - 961 Fixed an issue with RDoc (which occured when installing the 0.9.3 gem)
 
 == 0.9.3
 
-* # - 947 Stylesheets broken when running under a sub uri 
-* # - 948 Updated to Rails 2.3.5 
+* # - 947 Stylesheets broken when running under a sub uri
+* # - 948 Updated to Rails 2.3.5
 
 == 0.9.2
 
@@ -301,96 +303,96 @@
 
 == 0.9.0
 
-* # - 137	Products without variants can't have a weight.
-* # - 143	Load initializers from extensions
-* # - 217	Remove Paperclip messages from log
-* # - 285	Problem with spree command in older versions of Ruby Gems. 
-* # - 477	Refactor checkout into its own model, view and controller
-* # - 480	Error when browsing to an invalid taxon
-* # - 488	Can't add new product with cyrrilic symbols in Name
-* # - 496	Record checkout completion timestamp
-* # - 498	Additional Translation Strings
-* # - 499	Refactor order totaling to use a system of charges
-* # - 502	Image upload not working....
-* # - 504	Handling requests for products/taxons not in the db
-* # - 508	Spree admin does not render well in IE
-* # - 518	SKU disappears when variants are added.
-* # - 519	Upgrade to newer version of compass
-* # - 521	Cannot checkout using IE6
-* # - 525	Latest master checkout resulted in migrations failing
-* # - 526	Tests failing with Russian and French locales
-* # - 531	Spree should not require exact haml-edge version
-* # - 532	Hebrew translation
-* # - 533	Thai localization
-* # - 536	Possible issue with i18n:sync
-* # - 543	Migration failure on newer versions of Postgres
-* # - 544	Improve efficient for product display
-* # - 545	Refactor order totaling to use a system of credits
-* # - 546	Allow configuration for automatic capture
-* # - 549	Spree is overwritting :per_page parameter
-* # - 557	Need to avoid silent failures in the checkout process
-* # - 558	Remove admin user check from products controller
-* # - 560	Allow admin view to display a customized order display
-* # - 561	Upgrade the vendored version of Paperclip?
-* # - 562	Removed favicon.ico file?
-* # - 564	Losses of confirmation emails for registered users
-* # - 565	Need access to image width and height
-* # - 567	Credit card type guessing in checkout has been disconnected
-* # - 569	Reduce application layout duplication
-* # - 572	Repeated saves of CC objects leaves XXXX-XXXX-XXXX- in display_number field
-* # - 577	Add Dutch translation files
-* # - 578	Support coupons and discounts
-* # - 579	Allow calculator configuration (shipping, coupons, etc.) via admin interface
-* # - 581	Password reset mails should come from the "generic" address
-* # - 582	Allow login bar to be called via https
-* # - 585	Support for variant images
-* # - 587	Upgrading to the new version of searchlogic
-* # - 589	Update locale translations
-* # - 590	Fixed confusing error message in UsersController
-* # - 593	InventoryUnit does not associate with an order when sold
-* # - 600	An alternative to spree:upgrade?
-* # - 601	Finnish localization
-* # - 603	Don't show restricted administrator tabs
-* # - 604	Several not translated strings
-* # - 605	update totals after removing line items
-* # - 606	Avoid clobbering formbuilder in product forms
-* # - 613	Rails 2.3.4 Compatibility
-* # - 615	Add Mexican Spanish localization files
-* # - 616	Protect cart for mass_assignement
-* # - 621	Provide type aware preference helper
-* # - 622	Sample users are not added to the 'user' role
-* # - 626	rake spree:upgrade doesn't delete initializers/searchlogic.rb
-* # - 627	Add some named scopes for common filtering operations
-* # - 629	Incomplete usage help text for script/generate extension_migration
-* # - 630	zone_members.yml contains unknown zone ids
-* # - 635	Mail templates have hard-coded $
-* # - 636	Bug when canceling/resuming orders with language other than en-US
-* # - 639	Jquery checkout bug
-* # - 645	state changesin order don't produce SteteEvents
-* # - 646	address model spec failing on missing state test
-* # - 649	Order summary partial don't supports I18n.
-* # - 650	Improvement to route upgrade process
-* # - 654	en_GB_rails is broken - fails to load up some translations
-* # - 655	Quantity field does not update in orders/edit
-* # - 660	addresses in checkout should default to the ones the customer last used
-* # - 661	Checkout address forms don't show state_name for state-less countries
-* # - 663	Show selected Variant image in cart
-* # - 668	Add support for faceted search / filtering
-* # - 674	Testing of orders is slow (and will fail around 1 time in 259)
-* # - 681	Improvements for zone handling
-* # - 682	Improve seeding code
-* # - 691	SMTP error during checkout prevents order from being properly completed
-* # - 693	Error on deploy edge version
-* # - 697	Rails Metal is not loaded properly
-* # - 698	LineItem validation needs more care with checking of stock levels
-* # - 709	update_addresses not defined in checkout.js
-* # - 718	Don't work sorting orders by email.
-* # - 720	Improve messages for require_{no_}user
-* # - 722	Unknown object case doesn't handle case where id parameter is empty
-* # - 723	Modify percentage calculator to use percentages
-* # - 726	product.variants contains deleted variants
-* # - 733	reject_unknown_object fails for collections
-* # - 736	Column deleted_at can be ambiguous in some cases.
+* # - 137  Products without variants can't have a weight.
+* # - 143  Load initializers from extensions
+* # - 217  Remove Paperclip messages from log
+* # - 285  Problem with spree command in older versions of Ruby Gems.
+* # - 477  Refactor checkout into its own model, view and controller
+* # - 480  Error when browsing to an invalid taxon
+* # - 488  Can't add new product with cyrrilic symbols in Name
+* # - 496  Record checkout completion timestamp
+* # - 498  Additional Translation Strings
+* # - 499  Refactor order totaling to use a system of charges
+* # - 502  Image upload not working....
+* # - 504  Handling requests for products/taxons not in the db
+* # - 508  Spree admin does not render well in IE
+* # - 518  SKU disappears when variants are added.
+* # - 519  Upgrade to newer version of compass
+* # - 521  Cannot checkout using IE6
+* # - 525  Latest master checkout resulted in migrations failing
+* # - 526  Tests failing with Russian and French locales
+* # - 531  Spree should not require exact haml-edge version
+* # - 532  Hebrew translation
+* # - 533  Thai localization
+* # - 536  Possible issue with i18n:sync
+* # - 543  Migration failure on newer versions of Postgres
+* # - 544  Improve efficient for product display
+* # - 545  Refactor order totaling to use a system of credits
+* # - 546  Allow configuration for automatic capture
+* # - 549  Spree is overwritting :per_page parameter
+* # - 557  Need to avoid silent failures in the checkout process
+* # - 558  Remove admin user check from products controller
+* # - 560  Allow admin view to display a customized order display
+* # - 561  Upgrade the vendored version of Paperclip?
+* # - 562  Removed favicon.ico file?
+* # - 564  Losses of confirmation emails for registered users
+* # - 565  Need access to image width and height
+* # - 567  Credit card type guessing in checkout has been disconnected
+* # - 569  Reduce application layout duplication
+* # - 572  Repeated saves of CC objects leaves XXXX-XXXX-XXXX- in display_number field
+* # - 577  Add Dutch translation files
+* # - 578  Support coupons and discounts
+* # - 579  Allow calculator configuration (shipping, coupons, etc.) via admin interface
+* # - 581  Password reset mails should come from the "generic" address
+* # - 582  Allow login bar to be called via https
+* # - 585  Support for variant images
+* # - 587  Upgrading to the new version of searchlogic
+* # - 589  Update locale translations
+* # - 590  Fixed confusing error message in UsersController
+* # - 593  InventoryUnit does not associate with an order when sold
+* # - 600  An alternative to spree:upgrade?
+* # - 601  Finnish localization
+* # - 603  Don't show restricted administrator tabs
+* # - 604  Several not translated strings
+* # - 605  update totals after removing line items
+* # - 606  Avoid clobbering formbuilder in product forms
+* # - 613  Rails 2.3.4 Compatibility
+* # - 615  Add Mexican Spanish localization files
+* # - 616  Protect cart for mass_assignement
+* # - 621  Provide type aware preference helper
+* # - 622  Sample users are not added to the 'user' role
+* # - 626  rake spree:upgrade doesn't delete initializers/searchlogic.rb
+* # - 627  Add some named scopes for common filtering operations
+* # - 629  Incomplete usage help text for script/generate extension_migration
+* # - 630  zone_members.yml contains unknown zone ids
+* # - 635  Mail templates have hard-coded $
+* # - 636  Bug when canceling/resuming orders with language other than en-US
+* # - 639  Jquery checkout bug
+* # - 645  state changesin order don't produce SteteEvents
+* # - 646  address model spec failing on missing state test
+* # - 649  Order summary partial don't supports I18n.
+* # - 650  Improvement to route upgrade process
+* # - 654  en_GB_rails is broken - fails to load up some translations
+* # - 655  Quantity field does not update in orders/edit
+* # - 660  addresses in checkout should default to the ones the customer last used
+* # - 661  Checkout address forms don't show state_name for state-less countries
+* # - 663  Show selected Variant image in cart
+* # - 668  Add support for faceted search / filtering
+* # - 674  Testing of orders is slow (and will fail around 1 time in 259)
+* # - 681  Improvements for zone handling
+* # - 682  Improve seeding code
+* # - 691  SMTP error during checkout prevents order from being properly completed
+* # - 693  Error on deploy edge version
+* # - 697  Rails Metal is not loaded properly
+* # - 698  LineItem validation needs more care with checking of stock levels
+* # - 709  update_addresses not defined in checkout.js
+* # - 718  Don't work sorting orders by email.
+* # - 720  Improve messages for require_{no_}user
+* # - 722  Unknown object case doesn't handle case where id parameter is empty
+* # - 723  Modify percentage calculator to use percentages
+* # - 726  product.variants contains deleted variants
+* # - 733  reject_unknown_object fails for collections
+* # - 736  Column deleted_at can be ambiguous in some cases.
 
 == 0.8.5
 
@@ -418,37 +420,37 @@ Same as 0.8.4 (problem with release in 0.8.4)
 
 == 0.8.0
 
-* # 273 -	Improve usefulness of prototypes
-* # 292 -	Allow the ability to import roles based permission yaml files from extensions
-* # 299 -	Translation to dutch (belgium)
-* # 304 -	Password reset functionality
-* # 313 -	Line items association extension causes issues with AJAX version of cart
-* # 318 -	Rails 2.3.2 Support
-* # 321 -	Broken spec for admin/variants/edit, and form doesn't show option settings
-* # 322 -	Move searchlogic and all unreleased gems into vendor/gems
-* # 328 -	Bug when adding taxonomies
-* # 329 -	Move shipping out of extension and into main core
-* # 331 -	New Spree apps should be created with a default site extension
-* # 333 -	Switch to authlogic gem to handle authentication
-* # 334 -	Meta data keywords and description fields for products
-* # 337 -	Add user login field which is not restricted to be the user email address
-* # 338 -	Guest Checkout
-* # 339 -	Empty cart should not actually destroy the entire order
-* # 340 -	Token access to restrict viewing of incomplete orders
-* # 341 -	Add email address to order model
-* # 345 -	Refactor address model and relationships
-* # 346 -	Remove defunct viewable_id field from products table
-* # 347 -	Dump active_presenter in favor of nested_attributes
-* # 348 -	Upgrade task should automatically update permissions
-* # 349 -	Upgrade task should update routes.rb 
-* # 352 -	Make checkout process more extensible
-* # 357 -	multiple shipments being created for 1 item in checkout
-* # 362 -	Rake doesn't use UTC time
-* # 365 -	Ajax failing on product pages
-* # 366 -	Echoe gem dependency is not installed
-* # 367 -	pagination is missing when you browse products through the taxonomy
-* # 369 -	Upgrade task should automatically update boot.rb
-* # 386 -	Currency problem in order confirmation page
+* # 273 -  Improve usefulness of prototypes
+* # 292 -  Allow the ability to import roles based permission yaml files from extensions
+* # 299 -  Translation to dutch (belgium)
+* # 304 -  Password reset functionality
+* # 313 -  Line items association extension causes issues with AJAX version of cart
+* # 318 -  Rails 2.3.2 Support
+* # 321 -  Broken spec for admin/variants/edit, and form doesn't show option settings
+* # 322 -  Move searchlogic and all unreleased gems into vendor/gems
+* # 328 -  Bug when adding taxonomies
+* # 329 -  Move shipping out of extension and into main core
+* # 331 -  New Spree apps should be created with a default site extension
+* # 333 -  Switch to authlogic gem to handle authentication
+* # 334 -  Meta data keywords and description fields for products
+* # 337 -  Add user login field which is not restricted to be the user email address
+* # 338 -  Guest Checkout
+* # 339 -  Empty cart should not actually destroy the entire order
+* # 340 -  Token access to restrict viewing of incomplete orders
+* # 341 -  Add email address to order model
+* # 345 -  Refactor address model and relationships
+* # 346 -  Remove defunct viewable_id field from products table
+* # 347 -  Dump active_presenter in favor of nested_attributes
+* # 348 -  Upgrade task should automatically update permissions
+* # 349 -  Upgrade task should update routes.rb
+* # 352 -  Make checkout process more extensible
+* # 357 -  multiple shipments being created for 1 item in checkout
+* # 362 -  Rake doesn't use UTC time
+* # 365 -  Ajax failing on product pages
+* # 366 -  Echoe gem dependency is not installed
+* # 367 -  pagination is missing when you browse products through the taxonomy
+* # 369 -  Upgrade task should automatically update boot.rb
+* # 386 -  Currency problem in order confirmation page
 
 == 0.7.1
 
@@ -465,123 +467,123 @@ Same as 0.8.4 (problem with release in 0.8.4)
 
 == 0.7.0
 
-* #	166	- Order numbers should also use permalink
-* #	220	- Security holes in a few controllers
-* #	234	- Sales tax should recalculate after a change in shipping address
-* #	239	- Rake task for upgrade an existing Spree deployment
-* #	242	- State events show the UTC version of the timestamp
-* #	246	- Rake tasks failing if highline is not installed on the system 
-* #	247	- Restrict shipping methods based on order contents
-* #	249	- Backorders not updated with new quantity
-* #	251	- Missing message
-* #	253	- Norwegian Translation
-* #	255	- Admin has problems with "Available On"
-* #	260	- Remove the automatic pay event from the order model
-* #	261	- Do not allow creditcard capture without a response code
-* #	263	- Support for Protx Gateway
-* #	264	- Change credit card month and year to drop down
-* #	265	- Google Analytics Order Tracking
-* #	266	- Allow quantities when adding a variant to an order
-* #	268	- Cannot cancel an incomplete order
-* #	269	- Adjusting inventory on a 1 variant product does not update backorder status properly
-* #	270	- Additional database indexes
-* #	276	- French Translation
-* #	277	- New users should be assigned the 'user' role by default
-* #	278	- Allow backordering to be set at the variant level instead of all-or-nothing
-* #	279	- No variant is pre-selected
-* #	280	- Even deleted variants are available
-* #	284	- Russian Translation
-* #	288	- Credit card information should be filtered in logs
+* #  166  - Order numbers should also use permalink
+* #  220  - Security holes in a few controllers
+* #  234  - Sales tax should recalculate after a change in shipping address
+* #  239  - Rake task for upgrade an existing Spree deployment
+* #  242  - State events show the UTC version of the timestamp
+* #  246  - Rake tasks failing if highline is not installed on the system
+* #  247  - Restrict shipping methods based on order contents
+* #  249  - Backorders not updated with new quantity
+* #  251  - Missing message
+* #  253  - Norwegian Translation
+* #  255  - Admin has problems with "Available On"
+* #  260  - Remove the automatic pay event from the order model
+* #  261  - Do not allow creditcard capture without a response code
+* #  263  - Support for Protx Gateway
+* #  264  - Change credit card month and year to drop down
+* #  265  - Google Analytics Order Tracking
+* #  266  - Allow quantities when adding a variant to an order
+* #  268  - Cannot cancel an incomplete order
+* #  269  - Adjusting inventory on a 1 variant product does not update backorder status properly
+* #  270  - Additional database indexes
+* #  276  - French Translation
+* #  277  - New users should be assigned the 'user' role by default
+* #  278  - Allow backordering to be set at the variant level instead of all-or-nothing
+* #  279  - No variant is pre-selected
+* #  280  - Even deleted variants are available
+* #  284  - Russian Translation
+* #  288  - Credit card information should be filtered in logs
 
 == 0.6.0
 
-* #	129 - Public extension assets don't respect order when mirrored.
-* #	131 - Core specs keeps being overriden by extension specs.
-* #	132 - Add support for use routes.rb files inside extensions instead of using class_eval.
-* #	133 - Make extension gems be installed by the same gem tasks that installs the system gems.
-* #	136 - SEO Friendly URL's for Taxonomy
-* #	142 - Spree don't bootstrap from inside skeleton root dir.
-* #	145 - Remove legacy FLAT_SHIPPING_RATE variable
-* #	146 - All actions in the admin order list view should be confirmed
-* #	147 - Params[:id] in OrdersController used for both product id and order id
-* #	149 - Bootstrap task should load sample data from SPREE_ROOT instead of RAILS_ROOT
-* #	150 - Allow users to configure SSL settings for all modes.
-* #	151 - Switch from attachment_fu to paperclip.
-* #	152 - Allow extensions to add tabs to products admin UI
-* #	153 - Allow adding fields to either products or variants
-* #	156 - New taxonomy is created with a nil permalink
-* #	158 - CamelCased migration name results in incorrect migration file name
-* #	159 - Make the number of products that are displayed on the admin interface configurable.
-* #	160 - Renaming a product causes exception
-* #	161 - Borders not appearing correctly on cart view (Safari Only)
-* #	162 - Paranoid deletion of products.
-* #	163 - Allow user to configure default tax category for products
-* #	164 - Validation error messages for tax category and shipping category.
-* #	165 - Child taxon permalinks can get out of date when parent updates
-* #	167 - Improper zone matching for tax calculations if shipping zones are also configured
-* #	168 - Product named_scopes should use table names
-* #	169 - Old taxons route needs to be repositioned
-* #	171 - Order status filter does not work with certain state names.
-* #	172 - Allow user to configure the logo in the admin user interface
-* #	173 - Allow shipping of backordered items.
-* #	174 - Allow orders to be searched by name
-* #	175 - Show default "No Image Available" placeholder when a product doesn't have any images.
-* #	176 - Order search results are not preserved when paging
-* #	177 - Searching on products and associated models can be slow
-* #	178 - Standardize security model
-* #	179 - Unauthorized users are redirected to login page.
-* #	180 - Allow usesr to view their order history
-* #	181 - My account should not show incomplete orders
-* #	184 - add variant
-* #	185 - When executing rake specs from inside an extension only its specs should be executed
-* #	186 - Add paging to admin/users
-* #	187 - Allow admin to assign user roles
-* #	189 - Text Bug
-* #	190 - Add "Resume" event for undoing canceled orders, etc.
-* #	191 - Country list on address form is firing ajax queries too frequently.
-* #	192 - shared/form_address partial hard codes the address_country_id field id
-* #	193 - Allow admin to search existing users
-* #	194 - Allow orders per page to be configurable
-* #	197 - Disable bootstrap task in production
-* #	203 - Create a rake task for keeping translation files in sync with en-US.yml
-* #	210 - Error when attemtping to create new taxonomy
-* #	216 - New rake task for creating new translations
-* #	221 - Rake tasks fail if activemerchant gem is not up to date
-* #	222 - New demo mode for use in the online demo
-* #	224 - BCC email is not sent if only one the bcc fields is configured
-* #	229 - generate_secret is deprecated
+* #  129 - Public extension assets don't respect order when mirrored.
+* #  131 - Core specs keeps being overriden by extension specs.
+* #  132 - Add support for use routes.rb files inside extensions instead of using class_eval.
+* #  133 - Make extension gems be installed by the same gem tasks that installs the system gems.
+* #  136 - SEO Friendly URL's for Taxonomy
+* #  142 - Spree don't bootstrap from inside skeleton root dir.
+* #  145 - Remove legacy FLAT_SHIPPING_RATE variable
+* #  146 - All actions in the admin order list view should be confirmed
+* #  147 - Params[:id] in OrdersController used for both product id and order id
+* #  149 - Bootstrap task should load sample data from SPREE_ROOT instead of RAILS_ROOT
+* #  150 - Allow users to configure SSL settings for all modes.
+* #  151 - Switch from attachment_fu to paperclip.
+* #  152 - Allow extensions to add tabs to products admin UI
+* #  153 - Allow adding fields to either products or variants
+* #  156 - New taxonomy is created with a nil permalink
+* #  158 - CamelCased migration name results in incorrect migration file name
+* #  159 - Make the number of products that are displayed on the admin interface configurable.
+* #  160 - Renaming a product causes exception
+* #  161 - Borders not appearing correctly on cart view (Safari Only)
+* #  162 - Paranoid deletion of products.
+* #  163 - Allow user to configure default tax category for products
+* #  164 - Validation error messages for tax category and shipping category.
+* #  165 - Child taxon permalinks can get out of date when parent updates
+* #  167 - Improper zone matching for tax calculations if shipping zones are also configured
+* #  168 - Product named_scopes should use table names
+* #  169 - Old taxons route needs to be repositioned
+* #  171 - Order status filter does not work with certain state names.
+* #  172 - Allow user to configure the logo in the admin user interface
+* #  173 - Allow shipping of backordered items.
+* #  174 - Allow orders to be searched by name
+* #  175 - Show default "No Image Available" placeholder when a product doesn't have any images.
+* #  176 - Order search results are not preserved when paging
+* #  177 - Searching on products and associated models can be slow
+* #  178 - Standardize security model
+* #  179 - Unauthorized users are redirected to login page.
+* #  180 - Allow usesr to view their order history
+* #  181 - My account should not show incomplete orders
+* #  184 - add variant
+* #  185 - When executing rake specs from inside an extension only its specs should be executed
+* #  186 - Add paging to admin/users
+* #  187 - Allow admin to assign user roles
+* #  189 - Text Bug
+* #  190 - Add "Resume" event for undoing canceled orders, etc.
+* #  191 - Country list on address form is firing ajax queries too frequently.
+* #  192 - shared/form_address partial hard codes the address_country_id field id
+* #  193 - Allow admin to search existing users
+* #  194 - Allow orders per page to be configurable
+* #  197 - Disable bootstrap task in production
+* #  203 - Create a rake task for keeping translation files in sync with en-US.yml
+* #  210 - Error when attemtping to create new taxonomy
+* #  216 - New rake task for creating new translations
+* #  221 - Rake tasks fail if activemerchant gem is not up to date
+* #  222 - New demo mode for use in the online demo
+* #  224 - BCC email is not sent if only one the bcc fields is configured
+* #  229 - generate_secret is deprecated
 
 == 0.5.0
 
-* #	55	-	Variants need shipping weights to do shipping calculations.
-* #	66	-	Add a migration generator for extensions
-* #	83	-	Internal Server Error when adding product property to product 
-* #	90	-	Support for sample data in extensions
-* #	91	-	Shipping address should be limited to the countries that are configured by a shipping zone
-* #	92	-	Configuration screen for inventory settings.
-* #	95	-	Bogus gateway should decline card instead of raising an exception
-* #	96	-	Creating first Taxon fails with blank database
-* #	97	-	Exception when returning to cart from shipping method selection screen
-* #	98	-	Exception occurs when changing country dropdown for Ship Address
-* #	99	-	Provide built-in mechanism for dealing with near static content
-* #	100	-	Add support for require gems inside extensions and an easy way to install them.
-* #	101	-	Add configuration setting to make bogus gateway in development mode optional
-* #	102	-	Credit card information is not being stored.
-* #	103	-	Rails 2.1.2 Support
-* #	105	-	Error when viewing order with non US state in either address.
-* #	106	-	Adding a new variant causes NoMethodError
-* #	107	-	SKU not saving for products (empty variant)
-* #	108	-	Correct after_transition for paid state in Order model
-* #	109	-	Add purchase method to Spree::PaymentGateway
-* #	110	-	Empty address cannot be validated
-* #	112	-	Check for user before emailing order confirmations
-* #	113	-	Property model references bogus value table.
-* #	114	-	Remove unsupported deactivate method from extensions
-* #	116	-	Updating option types causes all option values to disappear
-* #	118	-	Default authenticaiton screen should be login
-* #	119	-	Include login fields on user creation screen
-* #	120	-	Orders search does not return any results.
-* #	122	-	Credit card Number text field enforces 17 character restriction
+* #  55  -  Variants need shipping weights to do shipping calculations.
+* #  66  -  Add a migration generator for extensions
+* #  83  -  Internal Server Error when adding product property to product
+* #  90  -  Support for sample data in extensions
+* #  91  -  Shipping address should be limited to the countries that are configured by a shipping zone
+* #  92  -  Configuration screen for inventory settings.
+* #  95  -  Bogus gateway should decline card instead of raising an exception
+* #  96  -  Creating first Taxon fails with blank database
+* #  97  -  Exception when returning to cart from shipping method selection screen
+* #  98  -  Exception occurs when changing country dropdown for Ship Address
+* #  99  -  Provide built-in mechanism for dealing with near static content
+* #  100  -  Add support for require gems inside extensions and an easy way to install them.
+* #  101  -  Add configuration setting to make bogus gateway in development mode optional
+* #  102  -  Credit card information is not being stored.
+* #  103  -  Rails 2.1.2 Support
+* #  105  -  Error when viewing order with non US state in either address.
+* #  106  -  Adding a new variant causes NoMethodError
+* #  107  -  SKU not saving for products (empty variant)
+* #  108  -  Correct after_transition for paid state in Order model
+* #  109  -  Add purchase method to Spree::PaymentGateway
+* #  110  -  Empty address cannot be validated
+* #  112  -  Check for user before emailing order confirmations
+* #  113  -  Property model references bogus value table.
+* #  114  -  Remove unsupported deactivate method from extensions
+* #  116  -  Updating option types causes all option values to disappear
+* #  118  -  Default authenticaiton screen should be login
+* #  119  -  Include login fields on user creation screen
+* #  120  -  Orders search does not return any results.
+* #  122  -  Credit card Number text field enforces 17 character restriction
 * # 124 - Move the pay action out of the FSM for order.
 * # 125 - Sales Tax calculation causes exception
 * # 126 - Incomplete orders are appearing in admin orders views.
@@ -609,7 +611,7 @@ Same as 0.8.4 (problem with release in 0.8.4)
 * #63 - New spree applications should use a random secret key for sessions
 * #64 - Extension support of "public" assets
 * #69 - New spree project is missing script/plugin
-* #79 - Frozen gems inside of the Spree source are not copied into new applications 
+* #79 - Frozen gems inside of the Spree source are not copied into new applications
 * #80 - Named routes don't work when defined inside its own extension using define_routes.
 * #84 - Generating Thumbnails for products: wrong aspect ratio
 * #82 - Unable to start server when both rails and spree are frozen
@@ -622,11 +624,11 @@ Same as 0.8.4 (problem with release in 0.8.4)
 
 == 0.0.9 2008-04-23
 
-* Changed source code layout.  Spree now runs in stand alone, gem and application modes. 
+* Changed source code layout.  Spree now runs in stand alone, gem and application modes.
 * Removed dependency on Engines plugin.
 * Removed free tagging (will be made obsolete by categorization features in upcoming release)
 * #20 - Product images in arbitrary order.
- 
+
 == 0.0.8 2008-03-27
 
 * Fixed a few new bugs introduced by the variant refactoring
@@ -635,7 +637,7 @@ Same as 0.8.4 (problem with release in 0.8.4)
 == 0.0.7 2008-03-26
 
 * Fixed an error with improperly named helper in one of the mailers (this was preventing checkout)
-* Removed several trivial references to old project name 
+* Removed several trivial references to old project name
 
 == 0.0.6 2008-03-26
 
