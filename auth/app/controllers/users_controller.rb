@@ -1,5 +1,7 @@
 class UsersController < Spree::BaseController
   resource_controller
+  
+  before_filter :authorize_user, :only => [:edit, :show]
 
   ssl_required :new, :create, :edit, :update, :show
 
@@ -48,6 +50,10 @@ class UsersController < Spree::BaseController
     session_params = params[:user]
     session_params[:login] = session_params[:email]
     UserSession.create session_params
+  end
+  
+  def authorize_user
+    authorize!(:show, @user)
   end
 
 end
