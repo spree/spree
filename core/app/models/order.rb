@@ -145,6 +145,11 @@ class Order < ActiveRecord::Base
       :total => total
     })
 
+    #ensure checkout payment always matches order total
+    if payment and payment.checkout? and payment.amount != total
+      payment.update_attributes_without_callbacks(:amount => total)
+    end
+
     update_hooks.each { |hook| self.send hook }
   end
 

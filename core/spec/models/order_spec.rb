@@ -274,7 +274,7 @@ describe Order do
     end
 
     context "when payments are insufficient" do
-      let(:payments) { mock "payments", :completed => [] }
+      let(:payments) { mock "payments", :completed => [], :first => mock_model(Payment, :checkout? => false) }
       before { order.stub :total => 100, :payment_total => 50, :payments => payments }
 
       context "when last payment did not fail" do
@@ -353,6 +353,15 @@ describe Order do
       end
     end
 
+    context "when there is a single checkout payment" do
+      before { order.stub(:payment => mock_model(Payment, :checkout? => true, :amount => 11), :total => 22) }
+
+      it "should update the payment amount to order total" do
+        order.payment.should_receive(:update_attributes_without_callbacks).with(:amount => order.total)
+        order.update!
+      end
+    end
+
     it "should set the correct shipment_state (when there are no shipments)" do
       order.update!
       order.shipment_state.should == nil
@@ -403,8 +412,9 @@ describe Order do
       order.item_total.should == 150
     end
     it "should set payments_total to the sum of completed payment amounts" do
-      payments = [ mock_model(Payment, :amount => 100), mock_model(Payment, :amount => -10) ]
-      order.stub_chain(:payments, :completed => payments)
+      payments = [ mock_model(Payment, :amount => 100, :checkout? => false), mock_model(Payment, :amount => -10, :checkout? => false) ]
+      payments.stub(:completed => payments)
+      order.stub(:payments => payments)
       order.update!
       order.payment_total.should == 90
     end
