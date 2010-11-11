@@ -48,11 +48,11 @@ class InventoryUnit < ActiveRecord::Base
   #
   def self.increase(order, variant, quantity)
     # calculate number of sold vs. backordered units
-    if variant.count_on_hand == 0
+    if variant.on_hand == 0
       back_order = quantity
       sold = 0
-    elsif variant.count_on_hand < quantity
-      back_order = quantity - (variant.count_on_hand < 0 ? 0 : variant.count_on_hand)
+    elsif variant.on_hand.present? and variant.on_hand < quantity
+      back_order = quantity - (variant.on_hand < 0 ? 0 : variant.on_hand)
       sold = quantity - back_order
     else
       back_order = 0

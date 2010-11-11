@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe InventoryUnit do
-  let(:variant) { mock_model(Variant, :count_on_hand => 95) }
+  let(:variant) { mock_model(Variant, :on_hand => 95) }
   let(:line_item) { mock_model(LineItem, :variant => variant, :quantity => 5) }
   let(:order) { mock_model(Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true) }
 
@@ -51,6 +51,15 @@ describe InventoryUnit do
         InventoryUnit.increase(order, variant, 5)
       end
 
+      context "and :create_inventory_units is true" do
+        before { Spree::Config.set :create_inventory_units => true }
+        let(:variant) { stub_model(Variant, :count_on_hand => 95) }
+
+        it "should create units as sold regardless of count_on_hand value " do
+          InventoryUnit.should_receive(:create_units).with(order, variant, 5, 0)
+          InventoryUnit.increase(order, variant, 5)
+        end
+      end
     end
 
     context "when :create_inventory_units is true" do
@@ -67,7 +76,7 @@ describe InventoryUnit do
       end
 
       context "and partial units are in stock" do
-        before { variant.stub(:count_on_hand).and_return(2) }
+        before { variant.stub(:on_hand).and_return(2) }
 
         it "should create units as sold and backordered" do
           InventoryUnit.should_receive(:create_units).with(order, variant, 2, 3)
@@ -76,7 +85,7 @@ describe InventoryUnit do
       end
 
       context "and zero units are in stock" do
-        before { variant.stub(:count_on_hand).and_return(0) }
+        before { variant.stub(:on_hand).and_return(0) }
 
         it "should create units as backordered" do
           InventoryUnit.should_receive(:create_units).with(order, variant, 0, 5)
@@ -85,7 +94,7 @@ describe InventoryUnit do
       end
 
       context "and less than zero units are in stock" do
-        before { variant.stub(:count_on_hand).and_return(-9) }
+        before { variant.stub(:on_hand).and_return(-9) }
 
         it "should create units as backordered" do
           InventoryUnit.should_receive(:create_units).with(order, variant, 0, 5)
