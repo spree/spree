@@ -4,7 +4,7 @@ require 'rake/testtask'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
-require 'lib/spree/i18n_utils'
+require './lib/spree/i18n_utils'
 include Spree::I18nUtils
 
 spec = eval(File.read('spree_core.gemspec'))
