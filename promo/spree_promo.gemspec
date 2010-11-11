@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.author      = 'David North'
   s.email       = "david@railsdog.com"
   s.homepage    = 'http://spreecommerce.com'
-  s.rubyforge_project = 'spree_promotions'
+  s.rubyforge_project = 'spree_promo'
 
   s.files        = Dir['CHANGELOG', 'README', 'MIT-LICENSE', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'public/**/*']
   s.require_path = 'lib'
