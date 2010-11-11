@@ -18,12 +18,10 @@ module Spree
           mail_server_settings[:password] = mail_method.preferred_smtp_password
         end
 
+        mail_server_settings[:enable_starttls_auto] = (mail_method.preferred_secure_connection_type == 'TLS')
+
         ActionMailer::Base.smtp_settings = mail_server_settings
         ActionMailer::Base.perform_deliveries = true
-
-        if mail_method.preferred_secure_connection_type == 'TLS'
-          mail_server_settings[:enable_starttls_auto] = true
-        end
       else
         #logger.warn "NOTICE: Mail not enabled"
         ActionMailer::Base.perform_deliveries = false
