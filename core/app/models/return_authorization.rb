@@ -2,6 +2,7 @@ class ReturnAuthorization < ActiveRecord::Base
   belongs_to :order
   has_many :inventory_units
   before_create :generate_number
+  before_save :force_positive_amount
 
   validates :order, :presence => true
   validates :amount, :numericality => true
@@ -64,11 +65,15 @@ class ReturnAuthorization < ActiveRecord::Base
   def process_return
     inventory_units.each &:return!
 
-    credit = Adjustment.create(:source => self, :order_id => self.order.id, :amount => (self.amount > 0 ? self.amount * -1 : self.amount), :label => I18n.t("rma_credit"))
+    credit = Adjustment.create(:source => self, :order_id => self.order.id, :amount => self.amount.abs * -1, :label => I18n.t("rma_credit"))
     self.order.update!
   end
 
   def allow_receive?
     !inventory_units.empty?
+  end
+
+  def force_positive_amount
+    self.amount = self.amount.abs
   end
 end
