@@ -4,7 +4,7 @@
 </tr>
 <% if @product.has_variants? %>
   <tr>
-    <td><%= Variant.human_name %>:</td>
+    <td><%= Variant.model_name.human %>:</td>
     <td><%= f.select :viewable_id, @variants %></td>
   </tr>
 <% else %>
