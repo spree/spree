@@ -10,7 +10,7 @@
     <td><%=ot.name %></td>
     <td><%=ot.presentation %></td>
     <td class="actions"><%= link_to icon('add') + ' ' + t("select"),
-                           url_for (:controller => "admin/option_types",
+                            url_for(:controller => "admin/option_types",
                                     :id => ot,
                                     :product_id => @product.permalink,
                                     :action => "select",
