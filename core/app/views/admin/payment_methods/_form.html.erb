@@ -40,7 +40,7 @@
   <%= f.label(:type, t("provider")) %>
   <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => "gtwy-type"}) %>
 
-  <% unless @object.new_record? %>
+  <% if @object.persisted? %>
     <%= preference_fields(@object, f) %>
 
     <% if @object.respond_to?(:preferences) %>

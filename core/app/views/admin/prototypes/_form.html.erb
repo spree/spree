@@ -8,7 +8,7 @@
 
 <ul class='checkbox-list' id='properties'>
 	<% Property.sorted.each do |property| %>
-  <% selected = if @prototype.new_record?
+  <% selected = unless @prototype.persisted?
     (params[:property] and params[:property][:id] and params[:property][:id].include?(property.id.to_s))
   else
     @prototype.properties.include?(property)
@@ -28,7 +28,7 @@
 
 <ul class='checkbox-list' id='properties'>
 	<% OptionType.all.each do |option_type| %>
-  <% selected = if @prototype.new_record?
+  <% selected = unless @prototype.persisted?
     (params[:option_type] and params[:option_type][:id] and params[:option_type][:id].include?(option_type.id.to_s))
   else
     @prototype.option_types.include?(option_type)

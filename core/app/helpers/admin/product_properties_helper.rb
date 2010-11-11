@@ -4,7 +4,7 @@ module Admin::ProductPropertiesHelper
   # special case where we need text_field_with_autocomplete and we have to recreate attribute_fu's naming 
   # scheme manually.
   def property_fu_name(product_property, number)
-    if product_property.new_record?
+    unless product_property.persisted?
       "product[product_property_attributes][new][#{number}][property_name]"
     else
       "product[product_property_attributes][#{product_property.id}][property_name]"   
@@ -12,7 +12,7 @@ module Admin::ProductPropertiesHelper
   end
 
   def property_fu_value(product_property, number)
-    if product_property.new_record?
+    unless product_property.persisted?
       "product[product_property_attributes][new][#{number}][value]"
     else
       "product[product_property_attributes][#{product_property.id}][value]"   

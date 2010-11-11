@@ -150,7 +150,7 @@ class ProductGroup < ActiveRecord::Base
 
   # generates ProductGroup url
   def to_url
-    if (new_record? || name.blank?)
+    if (!persisted? || name.blank?)
       result = ""
       result+= self.product_scopes.map{|ps|
         [ps.name, ps.arguments.join(",")]

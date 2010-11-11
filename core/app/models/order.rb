@@ -426,7 +426,7 @@ class Order < ActiveRecord::Base
 
   # Determine if email is required (we don't want validation errors before we hit the checkout)
   def require_email
-    return true unless new_record? or state == 'cart'
+    return true if persisted? or state == 'cart'
   end
 
   def after_cancel

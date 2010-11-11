@@ -230,7 +230,7 @@ class Product < ActiveRecord::Base
   # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
   # when saving so we force a save using a hook.
   def save_master
-    master.save if master && (master.changed? || master.new_record?)
+    master.save if master && (master.changed? || !master.persisted?)
   end
 
   def update_memberships

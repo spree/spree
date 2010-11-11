@@ -5,7 +5,7 @@ describe CheckoutController do
   let(:user) { mock_model User } #, :email => "foo@example.com" }
 
   before do
-    order.stub :checkout_allowed? => true, :user => user, :new_record? => false
+    order.stub :checkout_allowed? => true, :user => user, :persisted? => true
     controller.stub :current_order => order
   end
 

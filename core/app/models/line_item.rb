@@ -63,7 +63,7 @@ class LineItem < ActiveRecord::Base
     def update_inventory
       return true unless self.order.completed?
 
-      if self.new_record?
+      if !self.persisted?
         InventoryUnit.increase(self.order, self.variant, self.quantity)
       elsif old_quantity = self.changed_attributes["quantity"]
         if old_quantity < self.quantity

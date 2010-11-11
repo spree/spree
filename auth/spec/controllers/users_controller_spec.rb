@@ -8,7 +8,7 @@ describe UsersController do
 
     it "should create a new user" do
       post :create, {:user => {:email => "foobar@example.com", :password => "foobar123", :password_confirmation => "foobar123"} }
-      assigns[:user].new_record?.should be_false
+      assigns[:user].persisted?.should be_true
     end
 
     it "should automatically authenticate the new user" do

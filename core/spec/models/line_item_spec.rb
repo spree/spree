@@ -5,7 +5,7 @@ describe LineItem do
   let(:line_item) { line_item = LineItem.new(:quantity => 5) }
   let(:order) { mock_model(Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true, :update! => true) }
 
-  before { line_item.stub(:order => order, :variant => variant, :new_record? => false) }
+  before { line_item.stub(:order => order, :variant => variant, :persisted? => true) }
 
   context "#save" do
     it "should update inventory and totals" do
@@ -18,7 +18,7 @@ describe LineItem do
     context "when order#completed? is true" do
 
       context "and line_item is a new record" do
-        before { line_item.stub(:new_record? => true) }
+        before { line_item.stub(:persisted? => false) }
 
         it "should increase inventory" do
           InventoryUnit.stub(:increase)

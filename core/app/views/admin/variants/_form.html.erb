@@ -4,7 +4,7 @@
     <% @product.options.each do |option| %>
       <p>
         <%= label :new_variant, option.option_type.presentation %><br />
-        <% if @variant.new_record? %>
+        <% unless @variant.persisted? %>
           <%= select(:new_variant, option.option_type.presentation,
             option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
             {})

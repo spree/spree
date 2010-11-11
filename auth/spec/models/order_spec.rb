@@ -34,7 +34,7 @@ describe Order do
 
   context "with bogus email" do
     it "should not be valid" do
-      order.stub(:new_record? => false)
+      order.stub(:persisted? => true)
       order.email = "foo"
       order.state = 'address'
       order.should_not be_valid

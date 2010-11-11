@@ -79,7 +79,7 @@ module Admin::BaseHelper
 
   def remove_nested(fields)
     out = ''
-    out << fields.hidden_field(:_destroy) unless fields.object.new_record?
+    out << fields.hidden_field(:_destroy) if fields.object.persisted?
     out << (link_to icon("delete"), "#", :class => "remove")
     out.html_safe
   end

@@ -25,7 +25,7 @@ describe User do
     let(:user) { User.anonymous! }
 
     it "should create a new user" do
-      user.new_record?.should be_false
+      user.persisted?.should be_true
     end
 
     it "should create a user with an example.net email" do

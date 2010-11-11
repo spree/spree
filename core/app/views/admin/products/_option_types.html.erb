@@ -28,7 +28,7 @@
 		<% end %>
 	</tbody>
 </table>
-<% unless @product.new_record? %>
+<% if @product.persisted? %>
   <span id="select-link">
 	  <%= link_to_remote icon('delete') + ' ' + t("select_option_type"), {
 	                     :url => {:controller => 'option_types', :action => 'select', :id=> @product},
