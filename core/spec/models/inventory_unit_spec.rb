@@ -51,15 +51,6 @@ describe InventoryUnit do
         InventoryUnit.increase(order, variant, 5)
       end
 
-      context "and :create_inventory_units is true" do
-        before { Spree::Config.set :create_inventory_units => true }
-        let(:variant) { stub_model(Variant, :count_on_hand => 95) }
-
-        it "should create units as sold regardless of count_on_hand value " do
-          InventoryUnit.should_receive(:create_units).with(order, variant, 5, 0)
-          InventoryUnit.increase(order, variant, 5)
-        end
-      end
     end
 
     context "when :create_inventory_units is true" do
@@ -68,40 +59,10 @@ describe InventoryUnit do
         variant.stub(:decrement!)
       end
 
-      context "and all units are in stock" do
-        it "should create units as sold" do
-          InventoryUnit.should_receive(:create_units).with(order, variant, 5, 0)
-          InventoryUnit.increase(order, variant, 5)
-        end
+      it "should create units" do
+        InventoryUnit.should_receive(:create_units)
+        InventoryUnit.increase(order, variant, 5)
       end
-
-      context "and partial units are in stock" do
-        before { variant.stub(:on_hand).and_return(2) }
-
-        it "should create units as sold and backordered" do
-          InventoryUnit.should_receive(:create_units).with(order, variant, 2, 3)
-          InventoryUnit.increase(order, variant, 5)
-        end
-      end
-
-      context "and zero units are in stock" do
-        before { variant.stub(:on_hand).and_return(0) }
-
-        it "should create units as backordered" do
-          InventoryUnit.should_receive(:create_units).with(order, variant, 0, 5)
-          InventoryUnit.increase(order, variant, 5)
-        end
-      end
-
-      context "and less than zero units are in stock" do
-        before { variant.stub(:on_hand).and_return(-9) }
-
-        it "should create units as backordered" do
-          InventoryUnit.should_receive(:create_units).with(order, variant, 0, 5)
-          InventoryUnit.increase(order, variant, 5)
-        end
-      end
-
 
     end
 
@@ -175,6 +136,52 @@ describe InventoryUnit do
 
   end
 
+  context "#determine_backorder" do
+    context "when :track_inventory_levels is true" do
+      before { Spree::Config.set :create_inventory_units => true }
+
+      context "and all units are in stock" do
+        it "should return zero back orders" do
+          InventoryUnit.determine_backorder(order, variant, 5).should == 0
+        end
+      end
+
+      context "and partial units are in stock" do
+        before { variant.stub(:on_hand).and_return(2) }
+
+        it "should return correct back order amount" do
+          InventoryUnit.determine_backorder(order, variant, 5).should == 3
+        end
+      end
+
+      context "and zero units are in stock" do
+        before { variant.stub(:on_hand).and_return(0) }
+
+        it "should return correct back order amount" do
+          InventoryUnit.determine_backorder(order, variant, 5).should == 5
+        end
+      end
+
+      context "and less than zero units are in stock" do
+        before { variant.stub(:on_hand).and_return(-9) }
+
+        it "should return entire amount as back order" do
+          InventoryUnit.determine_backorder(order, variant, 5).should == 5
+        end
+      end
+    end
+
+    context "when :track_inventory_levels is false" do
+      before { Spree::Config.set :track_inventory_levels => false }
+
+      it "should return zero back orders" do
+        variant.stub(:on_hand).and_return(nil)
+        InventoryUnit.determine_backorder(order, variant, 5).should == 0
+      end
+    end
+
+  end
+
   context "#create_units" do
     let(:shipment) { mock_model(Shipment) }
     before { order.stub_chain(:shipments, :detect => shipment) }
@@ -188,25 +195,18 @@ describe InventoryUnit do
         InventoryUnit.create_units(order, variant, 2, 3)
       end
 
-      it "should return hash of backorders items" do
-        order.inventory_units.should_receive(:create).exactly(5).times
-        InventoryUnit.create_units(order, variant, 2, 3).should == [{:variant => variant, :count => 3}]
-      end
-
     end
 
     context "when :allow_backorders is false" do
       before { Spree::Config.set :allow_backorders => false }
 
-      it "should create sold units and not backordered units" do
-        order.inventory_units.should_receive(:create).with(:variant => variant, :state => "sold", :shipment => shipment).exactly(2).times
-        order.inventory_units.should_not_receive(:create).with(:variant => variant, :state => "backordered", :shipment => shipment)
-        InventoryUnit.create_units(order, variant, 2, 3)
+      it "should raise an exception when back_order units are requested" do
+        lambda {InventoryUnit.create_units(order, variant, 2, 3) }.should raise_error
       end
 
-      it "should return hash of backorders items" do
-        order.inventory_units.should_receive(:create).exactly(2).times
-        InventoryUnit.create_units(order, variant, 2, 3).should == [{:variant => variant, :count => 3}]
+      it "should create sold items" do
+        order.inventory_units.should_receive(:create).with(:variant => variant, :state => "sold", :shipment => shipment).exactly(2).times
+        InventoryUnit.create_units(order, variant, 2, 0)
       end
 
     end
