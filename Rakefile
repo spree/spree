@@ -1,5 +1,6 @@
 require 'rake'
 require 'rake/gempackagetask'
+require 'rake/testtask'
 require 'thor/group'
 
 PROJECTS = %w(core api auth dash sample)  #TODO - spree_promotions
@@ -57,11 +58,20 @@ task :sandbox do
 
   SandboxGenerator.start
 end
-# desc "Release all components to gemcutter."
-# task :release_projects => :package do
-#   errors = []
-#   PROJECTS.each do |project|
-#     system(%(cd #{project} && #{$0} release)) || errors << project
-#   end
-#   fail("Errors in #{errors.join(', ')}") unless errors.empty?
-# end
+
+desc "Runs specs on all"
+task :spec do
+  result = 0
+  all = PROJECTS + ['promo']
+  all.each do |directory|
+    if File.directory?(File.join(directory, 'spec'))
+      chdir directory do
+        if ENV['CLEAR'] || !File.directory?('spec/test_app')
+          system 'rake test_app'
+        end
+        system 'rake spec'
+      end
+    end
+  end
+  raise "Specs failed" if result != 0
+end
