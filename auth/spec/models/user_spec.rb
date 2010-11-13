@@ -39,6 +39,9 @@ describe User do
       it "should return true" do
         user.anonymous?.should be_true
       end
+
+    it "should create a user with an example.net email" do
+      user.email.should =~ /example.net/
     end
   end
 end

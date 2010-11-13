@@ -5,7 +5,7 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 
 group :test do
-  gem 'rspec-rails', '2.0.0.beta.19'
+  gem 'rspec-rails', '~> 2.0.0'
   gem 'fabrication'
 end
 

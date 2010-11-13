@@ -145,6 +145,11 @@ class Order < ActiveRecord::Base
       :total => total
     })
 
+    #ensure checkout payment always matches order total
+    if payment and payment.checkout? and payment.amount != total
+      payment.update_attributes_without_callbacks(:amount => total)
+    end
+
     update_hooks.each { |hook| self.send hook }
   end
 
@@ -177,7 +182,7 @@ class Order < ActiveRecord::Base
 
 
   def allow_cancel?
-    return false unless completed?
+    return false unless completed? and state != 'canceled'
     %w{ready backorder pending}.include? shipment_state
   end
 
@@ -232,12 +237,6 @@ class Order < ActiveRecord::Base
   def contains?(variant)
     line_items.detect{|line_item| line_item.variant_id == variant.id}
   end
-
-  # def mark_shipped
-  #   inventory_units.each do |inventory_unit|
-  #     inventory_unit.ship!
-  #   end
-  # end
 
   def ship_total
     adjustments.shipping.map(&:amount).sum
@@ -315,18 +314,13 @@ class Order < ActiveRecord::Base
   end
 
   def rate_hash
-    begin
-      @rate_hash ||= available_shipping_methods(:front_end).collect do |ship_method|
-        { :id => ship_method.id,
-          :shipping_method => ship_method,
-          :name => ship_method.name,
-          :cost => ship_method.calculator.compute(self)
-        }
-      end.sort_by{|r| r[:cost]}
-    rescue Spree::ShippingError => ship_error
-      flash[:error] = ship_error.to_s
-      []
-    end
+    @rate_hash ||= available_shipping_methods(:front_end).collect do |ship_method|
+      { :id => ship_method.id,
+        :shipping_method => ship_method,
+        :name => ship_method.name,
+        :cost => ship_method.calculator.compute(self)
+      }
+    end.sort_by{|r| r[:cost]}
   end
 
   def payment
@@ -354,38 +348,7 @@ class Order < ActiveRecord::Base
   end
 
 
-
-
   private
-  # def complete_order
-  #   self.adjustments.each(&:update_amount)
-  #   update_attribute(:completed_at, Time.now)
-  #
-  #   begin
-  #     @out_of_stock_items = InventoryUnit.sell_units(self)
-  #     update_totals unless @out_of_stock_items.empty?
-  #     shipment.inventory_units = inventory_units
-  #     save!
-  #   rescue Exception => e
-  #     logger.error "Problem saving authorized order: #{e.message}"
-  #     logger.error self.to_yaml
-  #   end
-  # end
-  #
-  # def restock_inventory
-  #   inventory_units.each do |inventory_unit|
-  #     inventory_unit.restock! if inventory_unit.can_restock?
-  #   end
-  #
-  #   inventory_units.reload
-  # end
-  #
-  # def update_line_items
-  #   to_wipe = self.line_items.select {|li| 0 == li.quantity || li.quantity.nil? }
-  #   LineItem.destroy(to_wipe)
-  #   self.line_items -= to_wipe      # important: remove defunct items, avoid a reload
-  # end
-
   def create_user
     self.email = user.email if self.user and !user.anonymous?
     self.user ||= User.anonymous!

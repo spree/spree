@@ -7,7 +7,13 @@ module ResourceController
       # Calls the before block for the action, if one is present.
       #
       def before(action)
-        authorize! action, object || model
+        resource = case action
+        when :index, :new, :create
+          model
+        else object
+        end
+
+        authorize! action, resource
         invoke_callbacks *self.class.send(action).before
       end
     end

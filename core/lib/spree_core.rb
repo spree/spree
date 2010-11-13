@@ -65,7 +65,7 @@ end
 
 module Spree
   def self.version
-    "0.30.0.beta2"
+    "0.40.99"
   end
 end
 

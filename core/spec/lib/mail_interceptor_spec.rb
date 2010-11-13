@@ -2,7 +2,7 @@ require "spec_helper"
 
 # We'll use the OrderMailer as a quick and easy way to test.  IF it works here - it works for all email (in theory.)
 describe OrderMailer do
-  let(:mail_method) { mock("mail_method", :preferred_mails_from => nil, :preferred_intercept_email => nil) }
+  let(:mail_method) { mock("mail_method", :preferred_mails_from => nil, :preferred_intercept_email => nil, :preferred_mail_bcc => nil) }
   let(:order) { Order.new(:email => "customer@example.com") }
   let(:message) { OrderMailer.confirm_email(order) }
   #let(:email) { mock "email" }
@@ -29,7 +29,12 @@ describe OrderMailer do
       @email.from.should == ["override@foobar.com"]
     end
 
-    it "should add the bcc email when provided"
+    it "should add the bcc email when provided" do
+      mail_method.stub :preferred_mail_bcc => "bcc-foo@foobar.com"
+      message.deliver
+      @email = ActionMailer::Base.deliveries.first
+      @email.bcc.should == ["bcc-foo@foobar.com"]
+    end
 
     context "when intercept_email is provided" do
       before {  }

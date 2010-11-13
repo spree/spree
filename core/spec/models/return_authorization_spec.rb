@@ -90,4 +90,19 @@ describe ReturnAuthorization do
     end
   end
 
+  context "force_positive_amount" do
+    it "should ensure the amount is always positive" do
+      return_authorization.amount = -10
+      return_authorization.send :force_positive_amount
+      return_authorization.amount.should == 10
+    end
+  end
+
+  context "after_save" do
+    it "should run correct callbacks" do
+      return_authorization.should_receive(:force_positive_amount)
+      return_authorization.run_callbacks(:save, :after)
+    end
+  end
+
 end

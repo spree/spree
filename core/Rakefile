@@ -4,9 +4,6 @@ require 'rake/testtask'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
-require 'lib/spree/i18n_utils'
-include Spree::I18nUtils
-
 spec = eval(File.read('spree_core.gemspec'))
 
 Rake::GemPackageTask.new(spec) do |p|
@@ -60,20 +57,3 @@ namespace :test_app do
     system("cd spec/test_app && rake db:drop db:migrate RAILS_ENV=test && rake db:drop db:migrate RAILS_ENV=cucumber")
   end
 end
-
-
-
-namespace :spree do
-  namespace :i18n do
-
-    desc "Create a new translation file based on en"
-    task :sort  do
-      (dummy_comments, words) = read_file(File.dirname(__FILE__) + "/config/locales/en.yml", "en")
-      words
-      write_file "./config/locales/en.yml", "en", '---', words, false
-    end
-
-  end
-end
-
-

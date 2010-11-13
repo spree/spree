@@ -6,7 +6,7 @@
   <tr>
     <th><%= t("thumbnail") %></th>
     <% if @product.has_variants? %>
-      <th><%= Variant.human_name %></th>
+      <th><%= Variant.model_name.human %></th>
     <% end %>
     <th><%= t("alt_text") %></th>
     <th><%= t("action") %></th>

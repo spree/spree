@@ -1,5 +1,5 @@
 <% render 'admin/shared/product_sub_menu' %>
-<h2><%= ProductGroup.human_name %></h2>
+<h2><%= ProductGroup.model_name.human %></h2>
 <p>
   <%= ProductGroup.human_attribute_name(:name) %>: <%= @product_group.name %>
 </p>
