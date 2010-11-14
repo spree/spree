@@ -123,25 +123,18 @@ describe Order do
 
 
     context "when current state is delivery" do
-      let(:shipping_method) { mock_model(ShippingMethod).as_null_object }
-      let(:units) { [mock_model(InventoryUnit)] }
-
       before do
-        Shipment.stub(:create).and_return(mock_model(Shipment).as_null_object)
         order.state = "delivery"
-        order.stub :shipping_method => shipping_method
-        order.stub :inventory_units => units
+        order.shipping_method = mock_model(ShippingMethod).as_null_object
       end
+
       context "when transitioning to payment state" do
-        before do
-        end
         it "should create a shipment" do
-          Shipment.should_receive(:create).with(:shipping_method => order.shipping_method, :order => order, :address => order.ship_address)
           order.next!
+          order.shipments.size.should == 1
         end
       end
     end
-
 
   end
 
@@ -303,42 +296,42 @@ describe Order do
     end
 
     context "when there are shipments" do
+      let(:shipments) { [mock_model(Shipment, :update! => nil), mock_model(Shipment, :update! => nil)] }
       before do
-        order.stub_chain :shipments, :count => 2
-        order.shipments.stub_chain(:shipped, :count => 0)
-        order.shipments.stub_chain(:ready, :count => 0)
-        order.shipments.stub_chain(:pending, :count => 0)
-        order.shipments.stub :each => nil
+        shipments.stub :shipped => []
+        shipments.stub :ready => []
+        shipments.stub :pending => []
+        order.stub :shipments => shipments
       end
 
       it "should set the correct shipment_state (when all shipments are shipped)" do
-        order.shipments.stub_chain(:shipped, :count => 2)
+        shipments.stub :shipped => [mock_model(Shipment), mock_model(Shipment)]
         order.update!
         order.shipment_state.should == "shipped"
       end
 
       it "should set the correct shipment_state (when some units are backordered)" do
-        order.shipments.stub_chain(:shipped, :count => 1)
+        shipments.stub :shipped => [mock_model(Shipment)]
         order.stub(:backordered?).and_return true
         order.update!
         order.shipment_state.should == "backorder"
       end
 
       it "should set the shipment_state to partial (when some of the shipments have shipped)" do
-        order.shipments.stub_chain(:shipped, :count => 1)
-        order.shipments.stub_chain(:ready, :count => 1)
+        shipments.stub :shipped => [mock_model(Shipment)]
+        shipments.stub :ready => [mock_model(Shipment)]
         order.update!
         order.shipment_state.should == "partial"
       end
 
       it "should set the correct shipment_state (when some of the shipments are ready)" do
-        order.shipments.stub_chain(:ready, :count => 2)
+        shipments.stub :ready => [mock_model(Shipment), mock_model(Shipment)]
         order.update!
         order.shipment_state.should == "ready"
       end
 
       it "should set the shipment_state to pending (when all shipments are pending)" do
-        order.shipments.stub_chain(:pending, :count => 2)
+        shipments.stub :pending => [mock_model(Shipment), mock_model(Shipment)]
         order.update!
         order.shipment_state.should == "pending"
       end

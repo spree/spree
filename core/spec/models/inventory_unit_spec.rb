@@ -184,7 +184,7 @@ describe InventoryUnit do
 
   context "#create_units" do
     let(:shipment) { mock_model(Shipment) }
-    before { order.stub_chain(:shipments, :detect => shipment) }
+    before { order.shipments.stub :detect => shipment }
 
     context "when :allow_backorders is true" do
       before { Spree::Config.set :allow_backorders => true }
