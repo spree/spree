@@ -10,18 +10,13 @@
 <%= hook :admin_order_show_addresses do %>
   <% if @order.bill_address %>
     <div class='adr'>
-      <h4>
-        <%= link_to t("bill_address"), (@current_action=="edit" ? edit_admin_checkout_url(@order.number) : admin_orders_checkout_url(@order.number)) %>
-      </h4>
+      <h4><%= t("bill_address") %></h4>
       <%= render :partial => 'admin/shared/address', :locals => {:address => @order.bill_address} %>
     </div>
   <% end %>
   <% if @order.ship_address %>
     <div class='adr'>
-      <h4>
-        <%= link_to t("ship_address"), (@current_action=="edit" ? edit_admin_checkout_url(@order.number) : admin_orders_checkout_url(@order.number)) %>
-        <%= t("ship_address") if @order.shipments.empty? %>
-      </h4>
+      <h4><%= t("ship_address") %></h4>
       <%= render :partial => 'admin/shared/address', :locals => {:address => @order.ship_address} %>
     </div>
     <% end %>
