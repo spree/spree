@@ -8,12 +8,12 @@
   </thead>
   <tbody>
     <% @states.each do |state| %>
-      <tr>
+      <tr id="<%= dom_id state %>">
         <td><%=state.name %></td>
         <td><%=state.abbr %></td>
         <td class="actions">
           <%=link_to_with_icon 'edit', t("edit"), edit_admin_country_state_url(@country, state) %> &nbsp;
-          <%=link_to_with_icon 'delete', t("delete"), object_url(state), :method => :delete %>
+          <%=link_to_delete state %>
         </td>
       </tr>
     <% end %>
