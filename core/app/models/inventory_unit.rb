@@ -34,42 +34,27 @@ class InventoryUnit < ActiveRecord::Base
   def self.assign_opening_inventory(order)
     return [] unless order.completed?
 
-    out_of_stock_items = []
-
     #increase inventory to meet initial requirements
     order.line_items.each do |line_item|
-      out_of_stock_items.concat increase(order, line_item.variant, line_item.quantity)
+      increase(order, line_item.variant, line_item.quantity)
     end
-
-    out_of_stock_items
   end
 
   # manages both variant.count_on_hand and inventory unit creation
   #
   def self.increase(order, variant, quantity)
-    # calculate number of sold vs. backordered units
-    if variant.on_hand == 0
-      back_order = quantity
-      sold = 0
-    elsif variant.on_hand.present? and variant.on_hand < quantity
-      back_order = quantity - (variant.on_hand < 0 ? 0 : variant.on_hand)
-      sold = quantity - back_order
-    else
-      back_order = 0
-      sold = quantity
-    end
+    back_order = determine_backorder(order, variant, quantity)
+    sold = quantity - back_order
 
     #set on_hand if configured
     if Spree::Config[:track_inventory_levels]
       variant.decrement!(:count_on_hand, quantity)
     end
 
-    #create units if configured, returning any backorderd variants with count
-    out_of_stock_items = []
+    #create units if configured
     if Spree::Config[:create_inventory_units]
-      out_of_stock_items = create_units(order, variant, sold, back_order)
+      create_units(order, variant, sold, back_order)
     end
-    out_of_stock_items
   end
 
   def self.decrease(order, variant, quantity)
@@ -94,6 +79,16 @@ class InventoryUnit < ActiveRecord::Base
     Spree::Config[:allow_backorder_shipping] || self.sold?
   end
 
+  def self.determine_backorder(order, variant, quantity)
+    if variant.on_hand == 0
+      quantity
+    elsif variant.on_hand.present? and variant.on_hand < quantity
+      quantity - (variant.on_hand < 0 ? 0 : variant.on_hand)
+    else
+      0
+    end
+  end
+
   def self.destroy_units(order, variant, quantity)
     variant_units = order.inventory_units.group_by(&:variant_id)[variant.id].sort_by(&:state)
 
@@ -104,17 +99,14 @@ class InventoryUnit < ActiveRecord::Base
   end
 
   def self.create_units(order, variant, sold, back_order)
+    if back_order > 0 && !Spree::Config[:allow_backorders]
+      raise "Cannot request back orders when backordering is disabled"
+    end
+
     shipment = order.shipments.detect {|shipment| !shipment.shipped? }
 
-    sold.times do
-      order.inventory_units.create(:variant => variant, :state => "sold", :shipment => shipment)
-    end
-
-    if Spree::Config[:allow_backorders]
-      back_order.times { order.inventory_units.create(:variant => variant, :state => "backordered", :shipment => shipment) }
-    end
-
-    back_order == 0 ? [] : [{:variant => variant, :count => back_order}]
+    sold.times { order.inventory_units.create(:variant => variant, :state => "sold", :shipment => shipment) }
+    back_order.times { order.inventory_units.create(:variant => variant, :state => "backordered", :shipment => shipment) }
   end
 
   def update_order

@@ -10,7 +10,7 @@ gem "rdoc",  "2.2"
 gemspec
 
 group :test do
-  gem 'rspec-rails', '~> 2.0.0'
+  gem 'rspec-rails', '~> 2.1.0'
   gem 'fabrication'
 end
 
