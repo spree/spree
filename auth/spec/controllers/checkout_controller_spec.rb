@@ -7,6 +7,7 @@ describe CheckoutController do
   before do
     order.stub :checkout_allowed? => true, :user => user, :new_record? => false
     controller.stub :current_order => order
+    controller.stub :current_user => nil
   end
 
 

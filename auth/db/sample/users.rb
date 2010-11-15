@@ -21,7 +21,7 @@ end
 
 def create_admin_user
   if ENV['AUTO_ACCEPT']
-    password =  "spree"
+    password =  "spree123"
     email =  "spree@example.com"
   else
     require 'highline/import'

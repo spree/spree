@@ -8,9 +8,9 @@ class StateEvent < ActiveRecord::Base
   end
 
   def assign_user
-    if UserSession.activated? && current_user_session = UserSession.find
-      self.user_id ||= current_user_session.user.id
-    end
+    # if Session.activated? && current_user_session = Session.find
+    #   self.user_id ||= current_user_session.user.id
+    # end
     true   # don't stop the filters
   end
 end

@@ -10,5 +10,5 @@ Then /^I should be logged out$/ do
 end
 
 Then /^I should be logged in$/ do
-  page.should have_css("a[href='#{logout_path}']")
+  page.should have_css("a[href='#{destroy_user_session_path}']")
 end
