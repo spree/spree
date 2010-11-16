@@ -26,7 +26,7 @@ Spree currently supports RESTful access to the following resources:
 
 h3. An Example
 
-The request +GET /api/orders/R664048424+ will produce something like the following:
+The request +GET /api/orders/R664048424.json+ will produce something like the following:
 <plain>
 {
   "order": {
@@ -153,13 +153,10 @@ h3. Making an API Call
 
 h4. Authentication
 
-You will need an API key to authenticate. These keys can be generated on the user edit screen within the admin interface.
-Your requests should include this key in the +X-SpreeAPIKey+ header.
+You will need an authentication_token to authenticate. These keys can be generated on the user edit screen within the admin interface. When using the authentication token, you will not need your password. Spree now uses "HTTP Basic Authentication":http://www.ietf.org/rfc/rfc2617.txt, and most implementations assume that you'll want to have a password, if you are required or prompted for one just pass a dummy like "X".
 
 <shell>
-curl -H "Content-Type:application/json" 
--H "Accept:application/json" 
--H "X-SpreeAPIKey: YOUR_KEY" http://example.com/api/orders  
+curl -u bb51d44e:x http://example.com/api/orders.json  
 </shell>
 
 The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.  
@@ -171,9 +168,21 @@ h4. HTTP Methods
 Your requests must use the correct HTTP method.
 
 * GET for listing and viewing individual resources
+<shell>
+curl -u bb51d44e:x http://example.com/api/orders/R123123.json  
+</shell>
 * POST for creating resources
+<shell>
+curl -u bb51d44e:x -H 'Content-Type: application/json' \
+-d {"shipment":{"shipping_...},...} \
+http://localhost:3000/api/orders/R123123/shipments.json
+</shell>
 * PUT for updating existing resources
-* DELETE for deleting resources
+<shell>
+curl -u bb51d44e:x -X PUT -H 'Content-Type: application/json' \
+-d {"shipment":{"shipping_...},...} \
+http://localhost:3000/api/orders/R123123/shipments.json
+</shell>
 
 h4. Supported Formats
 
@@ -212,7 +221,7 @@ h5. List Orders
 
 *Request:* 
 
-<shell>GET /api/orders</shell>
+<shell>GET /api/orders.json</shell>
 
 *Response:*
 
@@ -229,7 +238,7 @@ h5. View Order
 *Request:* 
 
 <shell>
-GET /api/orders/{order_id}
+GET /api/orders/{order_id}.json
 </shell>
 
 *Response:*
@@ -247,7 +256,7 @@ h5. Line Items for an Order
 *Request:*
 
 <shell>
-GET /api/orders/{order_id}/line_items
+GET /api/orders/{order_id}/line_items.json
 </shell>
 
 *Response:*
@@ -265,7 +274,7 @@ h5. Create a Line Item on an Order
 *Request:* 
 
 <shell>
-POST /api/orders/{order_id}/line_items
+POST /api/orders/{order_id}/line_items.json
 ...
 </shell>
 
@@ -273,7 +282,7 @@ POST /api/orders/{order_id}/line_items
 
 <shell>
 HTTP Status: 201 Created
-Location: http://example.com/api/orders/{order_id}/line_items/{new_line_item_id}
+Location: http://example.com/api/orders/{order_id}/line_items/{new_line_item_id}.json
 </shell>
 
 h5. Update a Line Item 
@@ -281,7 +290,7 @@ h5. Update a Line Item
 *Request:* 
 
 <shell>
-PUT /api/orders/{order_id}/line_items/{line_item_id}
+PUT /api/orders/{order_id}/line_items/{line_item_id}.json
 ...
 </shell>
 
@@ -296,7 +305,7 @@ h5. Shipments for an Order
 *Request:* 
 
 <shell>
-GET /api/orders/{order_id}/shipments
+GET /api/orders/{order_id}/shipments.json
 </shell>
 
 *Response:*
@@ -314,7 +323,7 @@ h5. Create a Shipment for an Order
 *Request:* 
 
 <shell>
-POST /api/orders/{order_id}/shipments
+POST /api/orders/{order_id}/shipments.json
 ...
 </shell>
 
@@ -322,7 +331,7 @@ POST /api/orders/{order_id}/shipments
 
 <shell>
 HTTP Status: 201 Created
-Location: http://example.com/api/orders/{order_id}/shipments/{new_shipment_id}  
+Location: http://example.com/api/orders/{order_id}/shipments/{new_shipment_id}.json  
 </shell>
 
 h5. Fire State Event 
@@ -330,7 +339,7 @@ h5. Fire State Event
 *Request:* 
 
 <shell>
-PUT /api/orders/{order_id}/event?e={event_name}
+PUT /api/orders/{order_id}/event?e={event_name}.json
 </shell>
 
 *Response (success):*
@@ -352,7 +361,7 @@ h5. List Shipments
 *Request:* 
 
 <shell>
-GET /api/shipments
+GET /api/shipments.json
 </shell>
 
 *Response:*
@@ -370,7 +379,7 @@ h5. View Shipment
 *Request:* 
 
 <shell>
-GET /api/shipments/{shipment_id}
+GET /api/shipments/{shipment_id}.json
 </shell>
 
 *Response:*
@@ -386,7 +395,7 @@ h5. Update Shipment
 *Request:* 
 
 <shell>
-PUT /api/shipments/{shipment_id}
+PUT /api/shipments/{shipment_id}.json
 ...
 </shell>
 
@@ -401,7 +410,7 @@ h5. Fire State Event
 *Request:* 
 
 <shell>
-PUT /api/shipments/{shipment_id}/event?e={event_name}
+PUT /api/shipments/{shipment_id}/event?e={event_name}.json
 </shell>
 
 *Response (Success):*
@@ -425,9 +434,9 @@ Inventory units can be accessed by association to order or shipment. They can al
 *Request:* 
 
 <shell>
-GET /inventory_units
-GET /orders/{order_id}/inventory_units
-GET /shipments/{shipment_id}/inventory_units
+GET /inventory_units.json
+GET /orders/{order_id}/inventory_units.json
+GET /shipments/{shipment_id}/inventory_units.json
 </shell>
 
 *Response:*
@@ -445,7 +454,7 @@ h5. View Inventory Unit
 *Request:* 
 
 <shell>
-GET /inventory_units/{inventory_unit_id}
+GET /inventory_units/{inventory_unit_id}.json
 </shell>
 
 *Response:*
@@ -461,7 +470,7 @@ h5. Update an Inventory Unit
 *Request:* 
 
 <shell>
-PUT /inventory_units/{inventory_unit_id}
+PUT /inventory_units/{inventory_unit_id}.json
 ...
 </shell>
 
@@ -476,7 +485,7 @@ h5. Fire State Event
 *Request:* 
 
 <shell>
-PUT /inventory_units/{inventory_unit_id}/event/?e={event_name}
+PUT /inventory_units/{inventory_unit_id}/event/?e={event_name}.json
 ...
 </shell>
 
