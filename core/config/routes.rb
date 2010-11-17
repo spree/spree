@@ -188,6 +188,6 @@ Rails.application.routes.draw do
 
   # a catchall route for "static" content (except paths with explicit extensions: .html, .ico, etc)
   #if Spree::Config.instance && Spree::Config.get(:use_content_controller)
-    match '/*path' => 'content#show', :constraints => { :fullpath => /^\/([^.]+)$/ }
+    match '/*path' => 'content#show'
   #end
 end
