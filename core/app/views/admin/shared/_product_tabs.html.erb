@@ -8,22 +8,22 @@
   <ul class="sidebar product-menu">
     <%= hook :admin_product_tabs, {:current => current} do %>
 
-      <li<%= raw(' class="active"') if current == "Product Details" %>>
+      <li<%== ' class="active"' if current == "Product Details" %>>
         <%= link_to t("product_details"), edit_admin_product_url(@product) %>
       </li>
-      <li<%= raw(' class="active"') if current == "Images" %>>
+      <li<%== ' class="active"' if current == "Images" %>>
         <%= link_to t("images"), admin_product_images_url(@product) %>
       </li>
-      <li<%= raw(' class="active"') if current == "Variants" %>>
+      <li<%== ' class="active"' if current == "Variants" %>>
         <%= link_to t("variants"),  admin_product_variants_url(@product)  %>
       </li>
-      <li<%= raw(' class="active"') if current == "Option Types" %>>
+      <li<%== ' class="active"' if current == "Option Types" %>>
         <%= link_to t("option_types"), selected_admin_product_option_types_url(@product) %>
       </li>
-      <li<%= raw(' class="active"') if current == "Product Properties" %>>
+      <li<%== ' class="active"' if current == "Product Properties" %>>
         <%= link_to t("product_properties"), admin_product_product_properties_url(@product) %>
       </li>
-      <li<%= raw(' class="active"') if current == "Taxons" %>>
+      <li<%== ' class="active"' if current == "Taxons" %>>
         <%= link_to t("taxons"), selected_admin_product_taxons_url(@product) %>
       </li>
 
