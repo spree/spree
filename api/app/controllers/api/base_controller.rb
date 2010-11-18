@@ -33,7 +33,7 @@ class Api::BaseController < Spree::BaseController
     end
 
     define_method :collection do
-      @collection ||= search.do_search.all(:limit => 100)
+      @collection ||= search.do_search.limit(100)
     end
   end
 

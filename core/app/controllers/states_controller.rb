@@ -8,7 +8,7 @@ class StatesController < Spree::BaseController
     # we return ALL known information, since billing country isn't restricted
     #   by shipping country
     @state_info = Hash.new {|h, k| h[k] = []}
-    State.find(:all, :order => "name ASC").each{|state|
+    State.order("name ASC").each{|state|
       @state_info[state.country_id.to_s].push [state.id, state.name]
     }
   end

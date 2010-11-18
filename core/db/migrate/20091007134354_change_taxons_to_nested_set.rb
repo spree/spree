@@ -18,14 +18,14 @@ class ChangeTaxonsToNestedSet < ActiveRecord::Migration
         # set left
         node[left_column_name] = indices[scope.call(node)] += 1
         # find
-        find(:all, :conditions => ["#{quoted_parent_column_name} = ?", node], :order => "position ASC").each{|n| set_left_and_rights.call(n) }
+        where("#{quoted_parent_column_name} = ?", node).order("position ASC").each{ |n| set_left_and_rights.call(n) }
         # set right
         node[right_column_name] = indices[scope.call(node)] += 1
         node.save!
       end
 
       # Find root node(s)
-      find(:all, :conditions => "#{quoted_parent_column_name} IS NULL", :order => "position ASC").each do |root_node|
+      where("#{quoted_parent_column_name} IS NULL").order("position ASC").each do |root_node|
         # setup index for this scope
         indices[scope.call(root_node)] ||= 0
         set_left_and_rights.call(root_node)

@@ -180,7 +180,7 @@ module Spree
           end
 
           # Find all of the stored preferences
-          stored_preferences = self.stored_preferences.find(:all, :conditions => conditions)
+          stored_preferences = self.stored_preferences.where(conditions)
 
           # Hashify attribute -> value or group -> attribute -> value
           stored_preferences.inject(self.class.default_preferences.dup) do |all_preferences, preference|
