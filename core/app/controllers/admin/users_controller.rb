@@ -40,14 +40,13 @@ class Admin::UsersController < Admin::BaseController
 
       #scope = scope.conditions "lower(email) = ?", @filter.email.downcase unless @filter.email.blank?
     else
-      @collection = User.find(:all, :include => [
-                                  {:bill_address => [:state, :country]},
-                                  {:ship_address => [:state, :country]}],
-                          :conditions => ["users.email like :search
-                                            OR addresses.firstname like :search
-                                            OR addresses.lastname like :search
-                                            OR ship_addresses_users.firstname like :search
-                                            OR ship_addresses_users.lastname like :search", {:search => "#{params[:q].strip}%"}], :limit => (params[:limit] || 100))
+      @collection = User.includes(:bill_address => [:state, :country],
+                                  :ship_address => [:state, :country]).where("users.email like :search
+                                                                               OR addresses.firstname like :search
+                                                                               OR addresses.lastname like :search
+                                                                               OR ship_addresses_users.firstname like :search
+                                                                               OR ship_addresses_users.lastname like :search",
+                                                                               {:search => "#{params[:q].strip}%"}).limit(params[:limit] || 100)
     end
   end
 

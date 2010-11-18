@@ -72,7 +72,7 @@ module SpreeBase
     end
     
     def get_taxonomies
-      @taxonomies ||= Taxonomy.find(:all, :include => {:root => :children})
+      @taxonomies ||= Taxonomy.includes(:root => :children)
       @taxonomies.reject { |t| t.root.nil? }
     end
     

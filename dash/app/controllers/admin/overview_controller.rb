@@ -126,7 +126,7 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def last_five_orders
-    orders = Order.find(:all, :order => "completed_at DESC", :limit => 5, :include => :line_items, :conditions => "completed_at is not null")
+    orders = Order.includes(:line_items).where("completed_at IS NOT NULL").order("completed_at DESC").limit(5)
     orders.map do |o|
       qty = o.line_items.inject(0) {|sum,li| sum + li.quantity}
 
@@ -148,6 +148,6 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def out_of_stock_products
-    Product.find(:all, :conditions => {:count_on_hand => 0}, :limit => 5)
+    Product.where(:count_on_hand => 0).limit(5)
   end
 end
