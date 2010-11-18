@@ -13,8 +13,6 @@ class Property < ActiveRecord::Base
     if prototype.class == Prototype
       id = prototype.id
     end
-
-    find(:all, :conditions => [ 'prototype_id = ?', id ],
-         :joins => 'left join properties_prototypes on property_id = properties.id')
+    joins('left join properties_prototypes on property_id = properties.id').where('prototype_id = ?', id)
   end
 end

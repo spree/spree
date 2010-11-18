@@ -70,12 +70,12 @@ class Admin::OverviewController < Admin::BaseController
   def orders_by_day(params)
 
     if params[:value] == "Count"
-      orders = Order.find(:all, :select => 'created_at', :conditions => conditions(params))
+      orders = Order.select(:created_at).where(conditions(params))
       orders = orders.group_by { |o| o.created_at.to_date }
       fill_empty_entries(orders, params)
       orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].size ]}
     else
-      orders = Order.find(:all, :select => 'total, created_at', :conditions => conditions(params))
+      orders = Order.select([:created_at, :total]).where(conditions(params))
       orders = orders.group_by { |o| o.created_at.to_date }
       fill_empty_entries(orders, params)
       orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].inject(0){|s,o| s += o.total} ]}
