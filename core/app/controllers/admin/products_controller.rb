@@ -73,8 +73,8 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   def load_data
-    @tax_categories = TaxCategory.find(:all, :order=>"name")
-    @shipping_categories = ShippingCategory.find(:all, :order=>"name")
+    @tax_categories = TaxCategory.order(:name)
+    @shipping_categories = ShippingCategory.order(:name)
   end
 
   def collection
