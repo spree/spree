@@ -21,8 +21,7 @@ class UsersController < Spree::BaseController
   end
 
   update.wants.html { redirect_to account_url }
-
-  update.flash I18n.t("account_updated")
+  update.flash { I18n.t("account_updated") }
 
   private
   def object
