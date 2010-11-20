@@ -12,8 +12,8 @@ describe User do
   end
 
   context "#anonymous?" do
-    it "should return false" do
-      user.anonymous?.should be_false
+    it "should not be anonymous" do
+      user.should_not be_anonymous
     end
   end
 
