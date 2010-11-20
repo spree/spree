@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   end
 
   def anonymous?
-    email =~ /@example.com$/
+    email =~ /@example.net$/
   end
 
   def deliver_password_reset_instructions!
