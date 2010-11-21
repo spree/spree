@@ -2,255 +2,305 @@
 states_043: 
   name: Michigan
   country_id: "214"
-  id: "931624400"
+  id: "43"
   abbr: MI
 states_032: 
   name: South Dakota
   country_id: "214"
-  id: "615306087"
+  id: "32"
   abbr: SD
 states_021: 
   name: Washington
   country_id: "214"
-  id: "414569975"
+  id: "21"
   abbr: WA
 states_010: 
   name: Wisconsin
   country_id: "214"
-  id: "103680699"
+  id: "10"
   abbr: WI
 states_044: 
   name: Arizona
   country_id: "214"
-  id: "948208802"
+  id: "44"
   abbr: AZ
 states_033: 
   name: Illinois
   country_id: "214"
-  id: "625629523"
+  id: "33"
   abbr: IL
 states_022: 
   name: New Hampshire
   country_id: "214"
-  id: "426832442"
+  id: "22"
   abbr: NH
 states_011: 
   name: North Carolina
   country_id: "214"
-  id: "177087202"
+  id: "11"
   abbr: NC
 states_045: 
   name: Kansas
   country_id: "214"
-  id: "969722173"
+  id: "45"
   abbr: KS
 states_034: 
   name: Missouri
   country_id: "214"
-  id: "653576146"
+  id: "34"
   abbr: MO
 states_023: 
   name: Arkansas
   country_id: "214"
-  id: "471470972"
+  id: "23"
   abbr: AR
 states_012: 
   name: Nevada
   country_id: "214"
-  id: "179539703"
+  id: "12"
   abbr: NV
 states_001: 
   name: District of Columbia
   country_id: "214"
-  id: "6764998"
+  id: "1"
   abbr: DC
 states_046: 
   name: Idaho
   country_id: "214"
-  id: "982433740"
+  id: "46"
   abbr: ID
 states_035: 
   name: Nebraska
   country_id: "214"
-  id: "673350891"
+  id: "35"
   abbr: NE
 states_024: 
   name: Pennsylvania
   country_id: "214"
-  id: "471711976"
+  id: "24"
   abbr: PA
 states_013: 
   name: Hawaii
   country_id: "214"
-  id: "199950338"
+  id: "13"
   abbr: HI
 states_002: 
   name: Utah
   country_id: "214"
-  id: "17199670"
+  id: "2"
   abbr: UT
 states_047: 
   name: Vermont
   country_id: "214"
-  id: "989115415"
+  id: "47"
   abbr: VT
 states_036: 
   name: Delaware
   country_id: "214"
-  id: "721598219"
+  id: "36"
   abbr: DE
 states_025: 
   name: Rhode Island
   country_id: "214"
-  id: "474001862"
+  id: "25"
   abbr: RI
 states_014: 
   name: Oklahoma
   country_id: "214"
-  id: "248548169"
+  id: "14"
   abbr: OK
 states_003: 
   name: Louisiana
   country_id: "214"
-  id: "37199952"
+  id: "3"
   abbr: LA
 states_048: 
   name: Montana
   country_id: "214"
-  id: "999156632"
+  id: "48"
   abbr: MT
 states_037: 
   name: Tennessee
   country_id: "214"
-  id: "726305632"
+  id: "37"
   abbr: TN
 states_026: 
   name: Maryland
   country_id: "214"
-  id: "480368357"
+  id: "26"
   abbr: MD
 states_015: 
   name: Florida
   country_id: "214"
-  id: "267271847"
+  id: "15"
   abbr: FL
 states_004: 
   name: Virginia
   country_id: "214"
-  id: "41111624"
+  id: "4"
   abbr: VA
 states_049: 
   name: Minnesota
   country_id: "214"
-  id: "1032288924"
+  id: "49"
   abbr: MN
 states_038: 
   name: New Jersey
   country_id: "214"
-  id: "750950030"
+  id: "38"
   abbr: NJ
 states_027: 
   name: Ohio
   country_id: "214"
-  id: "485193526"
+  id: "27"
   abbr: OH
 states_016: 
   name: California
   country_id: "214"
-  id: "276110813"
+  id: "16"
   abbr: CA
 states_005: 
   name: North Dakota
   country_id: "214"
-  id: "51943165"
+  id: "5"
   abbr: ND
 states_050: 
   name: Maine
   country_id: "214"
-  id: "1055056709"
+  id: "50"
   abbr: ME
 states_039: 
   name: Indiana
   country_id: "214"
-  id: "769938586"
+  id: "39"
   abbr: IN
 states_028: 
   name: Texas
   country_id: "214"
-  id: "525212995"
+  id: "28"
   abbr: TX
 states_017: 
   name: Oregon
   country_id: "214"
-  id: "298914262"
+  id: "17"
   abbr: OR
 states_006: 
   name: Wyoming
   country_id: "214"
-  id: "66390489"
+  id: "6"
   abbr: WY
 states_051: 
   name: Alabama
   country_id: "214"
-  id: "1061493585"
+  id: "51"
   abbr: AL
 states_040: 
   name: Iowa
   country_id: "214"
-  id: "825306985"
+  id: "40"
   abbr: IA
 states_029: 
   name: Mississippi
   country_id: "214"
-  id: "532363768"
+  id: "29"
   abbr: MS
 states_018: 
   name: Kentucky
   country_id: "214"
-  id: "308473843"
+  id: "18"
   abbr: KY
 states_007: 
   name: New Mexico
   country_id: "214"
-  id: "69729944"
+  id: "7"
   abbr: NM
 states_041: 
   name: Georgia
   country_id: "214"
-  id: "876916760"
+  id: "41"
   abbr: GA
 states_030: 
   name: Colorado
   country_id: "214"
-  id: "536031023"
+  id: "30"
   abbr: CO
 states_019: 
   name: Massachusetts
   country_id: "214"
-  id: "385551075"
+  id: "19"
   abbr: MA
 states_008: 
   name: Connecticut
   country_id: "214"
-  id: "69870734"
+  id: "8"
   abbr: CT
 states_042: 
   name: New York
   country_id: "214"
-  id: "889445952"
+  id: "42"
   abbr: NY
 states_031: 
   name: South Carolina
   country_id: "214"
-  id: "597434151"
+  id: "31"
   abbr: SC
 states_020: 
   name: Alaska
   country_id: "214"
-  id: "403740659"
+  id: "20"
   abbr: AK
 states_009: 
   name: West Virginia
   country_id: "214"
-  id: "91367981"
+  id: "9"
   abbr: WV
+states_052:
+  name: Ontario
+  country_id: "35"
+  id: "52"
+  abbr: "ON"
+states_053:
+  name: Quebec
+  country_id: "35"
+  id: "53"
+  abbr: QC
+states_054:
+  name: Nova Scotia
+  country_id: "35"
+  id: "54"
+  abbr: NS
+states_055:
+  name: New Brunswick
+  country_id: "35"
+  id: "55"
+  abbr: NB
+states_056:
+  name: Manitoba
+  country_id: "35"
+  id: "56"
+  abbr: MB
+states_057:
+  name: British Columbia
+  country_id: "35"
+  id: "57"
+  abbr: BC
+states_058:
+  name: Prince Edward Island
+  country_id: "35"
+  id: "58"
+  abbr: PE
+states_059:
+  name: Saskatchewan
+  country_id: "35"
+  id: "59"
+  abbr: SK
+states_060:
+  name: Alberta
+  country_id: "35"
+  id: "60"
+  abbr: AB
+states_061:
+  name: Newfoundland and Labrador
+  country_id: "35"
+  id: "61"
+  abbr: NL

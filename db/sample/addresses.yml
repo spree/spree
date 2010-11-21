@@ -8,7 +8,7 @@ ship_address_<%= i %>:
   address1: <%= Faker::Address.street_address %>
   address2: <%= Faker::Address.secondary_address %>
   city: <%= Faker::Address.city %>
-  state_id: 889445952
+  state_id: 42
   zipcode: 16804
   country_id: 214
   phone: <%= Faker::PhoneNumber.phone_number %>
@@ -20,7 +20,7 @@ bill_address_<%= i %>:
   address1: <%= Faker::Address.street_address %>
   address2: <%= Faker::Address.secondary_address %>
   city: <%= Faker::Address.city %>
-  state_id: 889445952
+  state_id: 42
   zipcode: 16804
   country_id: 214
   phone: <%= Faker::PhoneNumber.phone_number %>
