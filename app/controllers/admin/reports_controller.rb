@@ -25,6 +25,7 @@ class Admin::ReportsController < Admin::BaseController
 
     @search = Order.searchlogic(params[:search])
     @search.checkout_complete = true
+    @search.state_does_not_equal('canceled')           
     #set order by to default or form result
     @search.order ||= "descend_by_created_at"
 
@@ -32,7 +33,7 @@ class Admin::ReportsController < Admin::BaseController
 
     @item_total = @search.sum(:item_total)
     @charge_total = @search.sum(:adjustment_total)
-    @credit_total = @search.sum(:credit_total)
+    @credit_total = @search.all.inject(0) {|sum,order| sum + order.credit_total}
     @sales_total = @search.sum(:total)
   end
 
