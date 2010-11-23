@@ -65,7 +65,7 @@
         </p>
         <p>
           <label><%= t("show_deleted") %></label><br />
-          <%= f.check_box :deleted_at_not_null, {}, "1", "" %>
+          <%= f.check_box :deleted_at_not_null, {:checked => (params[:search] and !params[:search][:deleted_at_not_null].blank?)}, "1", "" %>
         </p>
       <% end %>
 

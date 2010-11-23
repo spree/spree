@@ -79,26 +79,26 @@ class Admin::ProductsController < Admin::BaseController
 
   def collection
     return @collection if @collection.present?
-    base_scope = end_of_association_chain
+    scopes = ['group_by_products_id']
 
     unless request.xhr?
       # Note: the SL scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
       # QUERY - better as named scope or as SL scope?
       if params[:search].nil? || params[:search][:deleted_at_not_null].blank?
-        base_scope = base_scope.not_deleted
+        scopes << 'not_deleted'
       end
 
-      @search = base_scope.group_by_products_id.searchlogic(params[:search])
+      @search = end_of_association_chain.searchlogic(params[:search] ? params[:search].except(:deleted_at_not_null) : nil)
       @search.order ||= "ascend_by_name"
 
-      @collection = @search.do_search.paginate(:include   => {:variants => [:images, :option_values]},
+      @collection = @search.do_search.instance_eval(scopes.join(".")).paginate(:include   => {:variants => [:images, :option_values]},
                                      :per_page  => Spree::Config[:admin_products_per_page],
                                      :page      => params[:page])
     else
       includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
-      @collection = base_scope.where(["name LIKE ?", "%#{params[:q]}%"]).includes(includes).limit(params[:limit] || 10)
-      @collection.concat base_scope.where(["variants.sku LIKE ?", "%#{params[:q]}%"]).includes(:variants_including_master).limit(params[:limit] || 10)
+      @collection = end_of_association_chain.where(["name LIKE ?", "%#{params[:q]}%"]).includes(includes).limit(params[:limit] || 10)
+      @collection.concat end_of_association_chain.where(["variants.sku LIKE ?", "%#{params[:q]}%"]).includes(:variants_including_master).limit(params[:limit] || 10)
 
       @collection.uniq
     end
