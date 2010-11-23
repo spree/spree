@@ -6,4 +6,4 @@
     <%= t("or") %> <%= link_to t("create_a_new_account"), signup_path %> | <%= link_to t("forgot_password"), new_user_password_path %>
   <% end %>
 </div>
-
+<%= hook :login_extras %>

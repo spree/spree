@@ -16,8 +16,8 @@
 
     <% end %>
     <%= t("or") %> <%= link_to t("login_as_existing"), login_path %>
-
   <% end %>
 
 </div>
 
+<%= hook :login_extras %>
