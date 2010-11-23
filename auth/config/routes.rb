@@ -4,6 +4,7 @@ Rails.application.routes.draw do
              :controllers => { :sessions => 'user_sessions',
                                :registrations => 'user_registrations',
                                :passwords => "user_password_resets"},
+             :skip => [:unlocks, :omniauth_callbacks],
              :path_names => { :sign_out => 'logout'}
 
   devise_scope :user do
