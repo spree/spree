@@ -1,3 +1,5 @@
+.bundle
 output
 .DS_Store
 roadmap.txt
+Gemfile.lock
