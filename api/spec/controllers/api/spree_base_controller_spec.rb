@@ -20,11 +20,11 @@ describe Api::OrdersController do
   shared_examples_for "access denied" do
     it "should not allow index" do
       get :index, :format => :json
-      response.code.should == "418"
+      response.code.should == "401"
     end
     it "should not allow read" do
       get :show, {:id => 1}, :format => :json
-      response.code.should == "418"
+      response.code.should == "401"
     end
     # it "should not allow update"
   end

@@ -38,7 +38,7 @@ class Api::BaseController < Spree::BaseController
   end
 
   def access_denied
-    render :text => 'access_denied', :status => 418
+    render :text => 'access_denied', :status => 401
   end
 
   # Generic action to handle firing of state events on an object
@@ -95,7 +95,7 @@ class Api::BaseController < Spree::BaseController
 
   private
   def check_http_authorization
-    render :text => "Access Denied\n", :status => 418 unless request.headers['HTTP_AUTHORIZATION'].present?
+    render :text => "Access Denied\n", :status => 401 unless request.headers['HTTP_AUTHORIZATION'].present?
   end
 
 end
