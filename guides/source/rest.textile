@@ -11,22 +11,28 @@ endprologue.
 
 h3. Overview
 
-The REST API is designed to give developers a convenient way to access data contained within Spree.  With a standard read/write interface to store data, it is now very simple to write third party applications (ex. iPhone) that can talk to Spree.  It is also possible to build sophisticated "middleware":http://en.wikipedia.org/wiki/Middleware applications that can serve as a bridge between Spree and a warehouse or inventory system.   
+The REST API is designed to give developers a convenient way to access data contained within Spree.  With a standard read/write interface to store data, it is now very simple to write third party applications (ex. iPhone) that can talk to Spree.  It is also possible to build sophisticated "middleware":http://en.wikipedia.org/wiki/Middleware applications that can serve as a bridge between Spree and a warehouse or inventory system.
 
 h3. Available Resources
 
-INFO. The API currently only supports a limited number of resources.  The current list reflects the needs of paying clients who funded the development of the API.  The list will be expanded soon to cover additional resources.  Adding more resources is simply a matter of making the time for testing and investigating possible security implications. 
+INFO. The API currently only supports a limited number of resources.  The current list reflects the needs of paying clients who funded the development of the API.  The list will be expanded soon to cover additional resources.  Adding more resources is simply a matter of making the time for testing and investigating possible security implications.
 
 Spree currently supports RESTful access to the following resources:
 
-* +Order+
-* +LineItem+  
-* +Shipment+
-* +InventoryUnit+
+* +Orders+
+* +LineItems+
+* +Shipments+
+* +InventoryUnits+
+* +Products+
+* +Countries+
+* +States+
 
-h3. An Example
+h3. JSON Data
 
-The request +GET /api/orders/R664048424.json+ will produce something like the following:
+Developers communicate with the Spree API using the "JSON":http://www.json.org/ data format.  Requests for data are communicated in the standard manner using the HTTP protocol.
+
+For example, the request +GET /api/orders/R664048424.json+ will produce output similar to the following:
+
 <plain>
 {
   "order": {
@@ -153,13 +159,13 @@ h3. Making an API Call
 
 h4. Authentication
 
-You will need an authentication_token to authenticate. These keys can be generated on the user edit screen within the admin interface. When using the authentication token, you will not need your password. Spree now uses "HTTP Basic Authentication":http://www.ietf.org/rfc/rfc2617.txt, and most implementations assume that you'll want to have a password, if you are required or prompted for one just pass a dummy like "X".
+You will need an authentication token to access the API. These keys can be generated on the user edit screen within the admin interface. When using the authentication token, you will not need your password. Spree now uses "HTTP Basic Authentication":http://www.ietf.org/rfc/rfc2617.txt, and most implementations assume that you'll want to have a password, if you are required or prompted for one just pass a dummy like "X".
 
 <shell>
-curl -u bb51d44e:x http://example.com/api/orders.json  
+curl -u bb51d44e:x http://example.com/api/orders.json
 </shell>
 
-The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.  
+The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.
 
 NOTE. The admin role is fairly "powerful" by default.  Consider creating a new role and assign a more limited set of permissions.  This way you can create a user and corresponding token that has more narrow permissions (ex. read only access to orders.)
 
@@ -168,25 +174,36 @@ h4. HTTP Methods
 Your requests must use the correct HTTP method.
 
 * GET for listing and viewing individual resources
+
 <shell>
-curl -u bb51d44e:x http://example.com/api/orders/R123123.json  
+curl -u V8WPYgRdSZN1mSQG17sK:x \
+http://example.com/api/orders.json
 </shell>
+
+<shell>
+curl -u V8WPYgRdSZN1mSQG17sK:x \
+http://example.com/api/orders/R123123.json
+</shell>
+
 * POST for creating resources
+
 <shell>
-curl -u bb51d44e:x -H 'Content-Type: application/json' \
+curl -X POST -u V8WPYgRdSZN1mSQG17sK:x \
 -d {"shipment":{"shipping_...},...} \
 http://localhost:3000/api/orders/R123123/shipments.json
 </shell>
+
 * PUT for updating existing resources
+
 <shell>
-curl -u bb51d44e:x -X PUT -H 'Content-Type: application/json' \
+curl -X PUT -u V8WPYgRdSZN1mSQG17sK:x \
 -d {"shipment":{"shipping_...},...} \
 http://localhost:3000/api/orders/R123123/shipments.json
 </shell>
 
-h4. Supported Formats
+h4. Other Supported Formats
 
-Currently the API supports only the "JSON":http://www.json.org/ format.  
+Currently the API supports only the "JSON":http://www.json.org/ format.
 
 INFO. Supporting the XML format should not be difficult since Rails supports it out of the box.  Volunteers who are willing to provide a patch (and tests) for XML support are encouraged to do so.
 
@@ -195,7 +212,8 @@ h4. Searching
 All list actions support filtering using Search Logic parameters. For example, to view all shipments that are ready to ship and that were created since the date 2010-01-01:
 
 <shell>
-/api/shipments?search[state]=ready_to_ship&search[created_at_greater_than]=2010-01-01
+GET api/shipments.json?search[state]=ready_to_ship\
+&search[created_at_greater_than]=2010-01-01
 </shell>
 
 NOTE: Use +--globoff+ when passing SL params through Curl to avoid syntax issues.
@@ -217,9 +235,9 @@ h3. API Reference
 
 h4. Orders
 
-h5. List Orders 
+h5. List Orders
 
-*Request:* 
+*Request:*
 
 <shell>GET /api/orders.json</shell>
 
@@ -235,7 +253,7 @@ h5. List Orders
 
 h5. View Order
 
-*Request:* 
+*Request:*
 
 <shell>
 GET /api/orders/{order_id}.json
@@ -271,7 +289,7 @@ GET /api/orders/{order_id}/line_items.json
 
 h5. Create a Line Item on an Order
 
-*Request:* 
+*Request:*
 
 <shell>
 POST /api/orders/{order_id}/line_items.json
@@ -285,9 +303,9 @@ HTTP Status: 201 Created
 Location: http://example.com/api/orders/{order_id}/line_items/{new_line_item_id}.json
 </shell>
 
-h5. Update a Line Item 
+h5. Update a Line Item
 
-*Request:* 
+*Request:*
 
 <shell>
 PUT /api/orders/{order_id}/line_items/{line_item_id}.json
@@ -300,9 +318,9 @@ PUT /api/orders/{order_id}/line_items/{line_item_id}.json
 HTTP Status: 200 OK
 </shell>
 
-h5. Shipments for an Order 
+h5. Shipments for an Order
 
-*Request:* 
+*Request:*
 
 <shell>
 GET /api/orders/{order_id}/shipments.json
@@ -315,12 +333,12 @@ GET /api/orders/{order_id}/shipments.json
   { shipment: { ... } },
   { shipment: { ... } },
   ...
-]  
+]
 </shell>
 
 h5. Create a Shipment for an Order
 
-*Request:* 
+*Request:*
 
 <shell>
 POST /api/orders/{order_id}/shipments.json
@@ -331,12 +349,12 @@ POST /api/orders/{order_id}/shipments.json
 
 <shell>
 HTTP Status: 201 Created
-Location: http://example.com/api/orders/{order_id}/shipments/{new_shipment_id}.json  
+Location: http://example.com/api/orders/{order_id}/shipments/{new_shipment_id}.json
 </shell>
 
-h5. Fire State Event 
+h5. Fire State Event
 
-*Request:* 
+*Request:*
 
 <shell>
 PUT /api/orders/{order_id}/event?e={event_name}.json
@@ -354,11 +372,11 @@ HTTP Status: 200 OK
 HTTP Status: 422
 </shell>
 
-h4. Shipments 
+h4. Shipments
 
 h5. List Shipments
 
-*Request:* 
+*Request:*
 
 <shell>
 GET /api/shipments.json
@@ -376,7 +394,7 @@ GET /api/shipments.json
 
 h5. View Shipment
 
-*Request:* 
+*Request:*
 
 <shell>
 GET /api/shipments/{shipment_id}.json
@@ -387,12 +405,12 @@ GET /api/shipments/{shipment_id}.json
 <shell>
 {
   shipment: { ... }
-}  
+}
 </shell>
 
 h5. Update Shipment
 
-*Request:* 
+*Request:*
 
 <shell>
 PUT /api/shipments/{shipment_id}.json
@@ -405,9 +423,9 @@ PUT /api/shipments/{shipment_id}.json
 HTTP Status: 200 OK
 </shell>
 
-h5. Fire State Event 
+h5. Fire State Event
 
-*Request:* 
+*Request:*
 
 <shell>
 PUT /api/shipments/{shipment_id}/event?e={event_name}.json
@@ -431,7 +449,7 @@ h5. List Inventory Units
 
 Inventory units can be accessed by association to order or shipment. They can also be accessed independently.
 
-*Request:* 
+*Request:*
 
 <shell>
 GET /inventory_units.json
@@ -451,7 +469,7 @@ GET /shipments/{shipment_id}/inventory_units.json
 
 h5. View Inventory Unit
 
-*Request:* 
+*Request:*
 
 <shell>
 GET /inventory_units/{inventory_unit_id}.json
@@ -462,12 +480,12 @@ GET /inventory_units/{inventory_unit_id}.json
 <shell>
 {
   inventory_unit: { ... }
-}  
+}
 </shell>
 
 h5. Update an Inventory Unit
 
-*Request:* 
+*Request:*
 
 <shell>
 PUT /inventory_units/{inventory_unit_id}.json
@@ -480,9 +498,9 @@ PUT /inventory_units/{inventory_unit_id}.json
 HTTP Status: 200 OK
 </shell>
 
-h5. Fire State Event 
+h5. Fire State Event
 
-*Request:* 
+*Request:*
 
 <shell>
 PUT /inventory_units/{inventory_unit_id}/event/?e={event_name}.json
@@ -504,4 +522,34 @@ HTTP Status: 422
 
 h3. Tools and Suggestions
 
-[TODO]
+h4. Curl
+
+Users on a Unix-based system may want to use the well known "curl":http://curl.haxx.se/ library.  This is a great way to test out your API calls on the command line.  Here are some additional hints for using curl to test your API.
+
+h5. Use +Accept+ Headers
+
+Instead of using the +.json+ suffix for your URL's you can use +-H "Accept:application/json"+ instead.  For example:
+
+<shell>
+curl -u V8WPYgRdSZN1mSQG17sK:x \
+http://example.com/api/orders \
+-H "Accept:application/json"
+</shell>
+
+h5. Use +--globoff+ to Solve Syntax Issues
+
+<shell>
+curl -u V8WPYgRdSZN1mSQG17sK:x --globoff \
+http://example.com/api/orders.json
+</shell>
+
+h5. Use +-i+ Option to Inspect Headers
+
+You may find yourself wanting to know the exact header returned as a result of your call.  In this situation use the +-i+ directive.
+
+<shell>
+curl -u V8WPYgRdSZN1mSQG17sK:x -i \
+http://example.com/api/orders.json
+</shell>
+
+NOTE. Use +-I+ option instead if you're only interested in returning the header information.
