@@ -15,30 +15,13 @@ class Address < ActiveRecord::Base
   validates_presence_of :zipcode
   validates_presence_of :country
   validates_presence_of :phone
-  validate :state_name_validate, :if => Proc.new { |address| address.state.blank? && Spree::Config[:address_requires_state] }
+  validate :state_in_country
 
-  before_save :clear_invalid_state
+  before_validation :ensure_valid_single_state
+  before_save :ensure_valid_single_state
 
   def checkouts
     (billing_checkouts + shipping_checkouts).uniq
-  end
-
-  # disconnected since there's no code to display error messages yet OR matching client-side validation
-  def phone_validate
-    return if phone.blank?
-    n_digits = phone.scan(/[0-9]/).size
-    valid_chars = (phone =~ /^[-+()\/\s\d]+$/)
-    if !(n_digits > 5 && valid_chars)
-      errors.add(:phone, :invalid)
-    end
-  end
-
-  def state_name_validate
-    country = country_id ? Country.find(country_id) : nil
-    return if country.blank? || country.states.empty?
-    if state_name.blank? || country.states.name_or_abbr_equals(state_name).empty?
-      errors.add(:state, :invalid)
-    end
   end
 
   def self.default
@@ -95,9 +78,43 @@ class Address < ActiveRecord::Base
   end
 
   private
+    # disconnected since there's no code to display error messages yet OR matching client-side validation
+    def phone_validate
+      return if phone.blank?
+      n_digits = phone.scan(/[0-9]/).size
+      valid_chars = (phone =~ /^[-+()\/\s\d]+$/)
+      if !(n_digits > 5 && valid_chars)
+        errors.add(:phone, :invalid)
+      end
+    end
 
-  def clear_invalid_state #reset state to nil if it's not from selected country
-    return unless self.state
-    self.state = nil unless self.state.country_id == self.country_id
-  end
+    def state_in_country
+      country.reload if changes.include?("country_id")
+
+      if state.present? and state.country_id != country_id
+        errors.add(:state, :invalid)
+      elsif state_name.present? and country.states.present?
+        errors.add(:state, :invalid)
+      end
+    end
+
+    def ensure_valid_single_state
+      self.state_name = nil if self.changes.include?("state_id") && self.state_id.present? #clear state_name if state_id is being set
+
+      if self.changes.include?("state_name") && self.state_name.present?
+        #check is state_name free text matchs an actual state associated with the country
+        country = (country_id ? Country.find(country_id) : nil)
+
+        if country and state = country.states.find(:first, :conditions => ["lower(states.name) = ? or lower(states.abbr) = ?", self.state_name.downcase, self.state_name.downcase])
+          self.state      = state #set state to actual associated state
+          self.state_name = nil #clear state_name as it's been matched successfully
+        else
+          self.state      = nil #ensure state_id to nil as state_name is being set
+        end
+      end
+
+      #fall back to force single state.
+      self.state_name = nil if self.state_name.present? && self.state_id.present?
+
+    end
 end
