@@ -13,6 +13,8 @@ class Calculator::FlatPercentItemTotal < Calculator
   def compute(object)
     return unless object.present? and object.line_items.present?
     item_total = object.line_items.map(&:amount).sum
-    item_total * self.preferred_flat_percent / 100.0
+    value = item_total * self.preferred_flat_percent / 100.0
+    # Round to 2 digits decimal point
+    (value * 10**2).round.to_f / 10**2
   end
 end
