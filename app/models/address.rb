@@ -34,7 +34,7 @@ class Address < ActiveRecord::Base
   end
 
   def full_name
-    self.firstname + " " + self.lastname
+    "#{self.firstname} #{self.lastname}".strip
   end
 
   def state_text
