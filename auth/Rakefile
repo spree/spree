@@ -38,14 +38,12 @@ task :test_app do
 <<-gems
         gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
         gem 'spree_auth', :path => \'#{File.dirname(__FILE__)}\'
-        gem 'devise', :git => 'git://github.com/plataformatec/devise.git'
 gems
       end
     end
 
     def install_gems
       inside "test_app" do
-        run 'bundle install'
         run 'rake spree_core:install'
         run 'rake spree_auth:install'
       end

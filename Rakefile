@@ -32,7 +32,6 @@ task :sandbox do
         append_file "Gemfile" do
 <<-gems
           gem 'spree', :path => '../' \n
-          gem 'devise', :git => 'git://github.com/plataformatec/devise.git'\n
 gems
         end
       end
@@ -40,7 +39,6 @@ gems
 
     def install_generators
       inside "sandbox" do
-        run 'bundle install'
         run 'rails g spree:site -f'
         run 'rake spree:install'
         run 'rake spree_sample:install'
