@@ -188,17 +188,19 @@ http://example.com/api/orders/R123123.json
 * POST for creating resources
 
 <shell>
-curl -X POST -u V8WPYgRdSZN1mSQG17sK:x \
--d {"shipment":{"shipping_...},...} \
-http://localhost:3000/api/orders/R123123/shipments.json
+curl -X POST -u DBBgEG6ko38ChCSA6ZJM:x \
+-d '{"product":{"name":"foo","description":"foo","price":"12"}}' \
+http://localhost:3000/api/products.json \
+-H "Content-Type:application/json"
 </shell>
 
 * PUT for updating existing resources
 
 <shell>
 curl -X PUT -u V8WPYgRdSZN1mSQG17sK:x \
--d {"shipment":{"shipping_...},...} \
-http://localhost:3000/api/orders/R123123/shipments.json
+-d '{"shipment":{"shipping_...},...}' \
+http://localhost:3000/api/orders/R123123/shipments.json \
+-H "Content-Type:application/json"
 </shell>
 
 h4. Other Supported Formats
@@ -225,15 +227,18 @@ h4. Creating and Updating Resources
 Parameters should be supplied in the request body as a JSON encoded hash of attributes.
 
 Successfully creating a resource will result in a +201 Created+ response code while updating will result in +200 OK+.
-If creating or updating a resource fails the result will be a +422 Unprocessable Entity+ response and a list of errors.  For example:
-
-<shell>
-{"errors": ["First Name can't be blank","Last Name can't be blank"]}
-</shell>
+If creating or updating a resource fails the result will be a +500  Server Error+ response.  You can then consult the Rails logs to see more details on why the request resulted in a failure.
 
 h3. API Reference
 
 h4. Orders
+
+Orders support the following operations
+
+* Index
+* Show
+
+NOTE. The following examples demonstrate the API using +Order#id+.  You can also perform the same operations using +Order#number+.
 
 h5. List Orders
 
@@ -357,7 +362,7 @@ h5. Fire State Event
 *Request:*
 
 <shell>
-PUT /api/orders/{order_id}/event?e={event_name}.json
+PUT /api/orders/{order_id}/event.json?e={event_name}
 </shell>
 
 *Response (success):*
@@ -428,7 +433,7 @@ h5. Fire State Event
 *Request:*
 
 <shell>
-PUT /api/shipments/{shipment_id}/event?e={event_name}.json
+PUT /api/shipments/{shipment_id}/event.json?e={event_name}
 </shell>
 
 *Response (Success):*
@@ -503,7 +508,7 @@ h5. Fire State Event
 *Request:*
 
 <shell>
-PUT /inventory_units/{inventory_unit_id}/event/?e={event_name}.json
+PUT /inventory_units/{inventory_unit_id}/event.json?e={event_name}
 ...
 </shell>
 
@@ -553,3 +558,23 @@ http://example.com/api/orders.json
 </shell>
 
 NOTE. Use +-I+ option instead if you're only interested in returning the header information.
+
+h5. Use +Content-Type+ Headers when Submitting JSON
+
+When using +POST+/+PUT+ to create/update a resource, you should also specify that you are passing JSON with a +Content-Type+ header.  This ensures that Rails interprets the params correctly.
+
+<shell>
+-H "Content-Type:application/json"
+</shell>
+
+h5. Use the +-d+ Option to Pass Params
+
+Make sure you are passing parameters properly with curl.  For instance, the URL of http://localhost:3000/api/orders/1035625630/event.json?e=cancel can be expressed as follows:
+
+<shell>
+curl -X PUT -u DBBgEG6ko38ChCSA6ZJM:x \
+http://localhost:3000/api/orders/1035625630/event.json \
+-d 'e=cancel'
+</shell>
+
+NOTE. The above approach may solve unexplained "HTTP/1.1 411 Length Required" errors when using the REST API with curl and webrick.
