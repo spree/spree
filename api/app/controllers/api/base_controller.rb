@@ -15,7 +15,7 @@ class Api::BaseController < Spree::BaseController
     end
 
     create do
-      wants.json { redirect_to object_url, :status => 201 }
+      wants.json { render :text => "Resource created\n", :status => 201 }
       failure.wants.json { render :text => "Failure\n", :status => 500 }
     end
 
