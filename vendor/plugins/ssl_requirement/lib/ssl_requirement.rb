@@ -50,6 +50,10 @@ module SslRequirement
       Rails.env.development?
     end
 
+    def stg_mode?
+      Rails.env.staging?
+    end
+
     def test_mode?
       Rails.env.test? || Rails.env.cucumber?
     end
@@ -57,7 +61,8 @@ module SslRequirement
     # don't require ssl in development or test mode
     def ssl_supported?
       ((dvp_mode? || test_mode?) && Spree::Config[:allow_ssl_in_development_and_test]) ||
-      (!dvp_mode? && !test_mode? && Spree::Config[:allow_ssl_in_production]) ? true : false
+      (stg_mode? && Spree::Config[:allow_ssl_in_staging])
+      ((!dvp_mode? && !test_mode? && !stg_mode?) && Spree::Config[:allow_ssl_in_production]) ? true : false
     end
 
     def ensure_proper_protocol

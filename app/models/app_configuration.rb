@@ -35,6 +35,7 @@ class AppConfiguration < Configuration
   preference :stylesheets, :string, :default => 'screen' # Comma separate multiple stylesheets, e.g. 'screen,mystyle'
   preference :admin_interface_logo, :string, :default => "spree/spree.jpg"
   preference :allow_ssl_in_production, :boolean, :default => true
+  preference :allow_ssl_in_staging, :boolean, :default => true
   preference :allow_ssl_in_development_and_test, :boolean, :default => false
   preference :allow_guest_checkout, :boolean, :default => true
   preference :allow_anonymous_checkout, :boolean, :default => false

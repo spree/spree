@@ -4,22 +4,27 @@
 
 <table>
   <tr>
-    <th scope="row"><%= t("site_name") %>:</th> 
+    <th scope="row"><%= t("site_name") %>:</th>
     <td><%=  Spree::Config[:site_name] %></td>
   </tr>
   <tr>
-    <th scope="row"><%= t("site_url") %>:</th> 
+    <th scope="row"><%= t("site_url") %>:</th>
     <td><%=  Spree::Config[:site_url] %></td>
   </tr>
   <tr>
 	<td colspan="2">
-	  <%= (Spree::Config[:allow_ssl_in_production] ? t("ssl_will_be_used_in_production_mode") : t("ssl_will_not_be_used_in_production_mode")) %> 
+	  <%= (Spree::Config[:allow_ssl_in_production] ? t("ssl_will_be_used_in_production_mode") : t("ssl_will_not_be_used_in_production_mode")) %>
+	</td>
+  </tr>
+  <tr>
+	<td colspan="2">
+	  <%= (Spree::Config[:allow_ssl_in_staging] ? t("ssl_will_be_used_in_staging_mode") : t("ssl_will_not_be_used_in_staging_mode")) %>
 	</td>
   </tr>
   <tr>
 	<td colspan="2">
 	  <%= (Spree::Config[:allow_ssl_in_development_and_test] ? t("ssl_will_be_used_in_development_and_test_modes") : t("ssl_will_not_be_used_in_development_and_test_modes")) %>
-	</td>	
+	</td>
   </tr>
 </table>
 
