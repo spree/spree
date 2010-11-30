@@ -1,0 +1,34 @@
+h2. Spree 0.40.0 Release Notes
+
+endprologue.
+
+h3. Summary
+
+h3. Replacing Authlogic with Devise
+
+h3. Changes to the REST API
+
+Spree 0.40.x introduces several minor but important changes to the REST API.  If you are currently relying on the API you should be aware of a few important changes.  Please also consult the detailed "REST Guide":/rest.html for more details.
+
+h4. New Authentication Mechanism
+
+The most significant change to the REST API is related to authentication.  The recent adoption of "Devise":http://github.com/plataformatec/devise for authentication in general has resulted in new opportunities to improve authentication for the API specifically.
+
+Prior to Spree 0.40.x the old method of authentication was to pass an authentication token in the header.  This involved using the specially designated +X-SpreeAPIKey+ header and passing a corresponding token value.  The new approach is to use standard +HTTP_AUTHORIZATION+ which is already nicely implemented by Devise.
+
+If you were using curl you could achieve this authentication as follows:
+
+<shell>
+curl -u V8WPYgRdSZN1mSQG17sK:x /
+http://example.com/api/orders.json
+</shell>
+
+Note that we are using the token as the "user name" and passing "x" as a password here.  There is nothing special about "x", its just a placeholder since many HTTP Basic Authentication implementations require a password to be submitted.  In our case the token is sufficient so we use a placeholder for the password.
+
+h4. Support for +.json+ Suffix
+
+It is now recommended that you consider using a +.json+ suffic in your URL when communicating via the REST API.  This is technically not a new feature - it was always possible in older versions of the REST API.  We've updated the documentation to suggest this simpler apporach (which avoids the necessity of passing +Accept:application/json+ in the header.)
+
+<shell>
+curl -u V8WPYgRdSZN1mSQG17sK:x http://example.com/api/orders.json
+</shell>
