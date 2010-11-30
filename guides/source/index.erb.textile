@@ -65,8 +65,8 @@ h3. Basic Configuration
   <% end %>
 </dl>
 <dl>
-  <% guide('Calculators', 'calculators.html') do %>
-    This guide covers the role that calculators play in various Spree operations.
+  <% guide('Adjustments', 'adjustments.html') do %>
+    This guide covers the role that adjustments play in taxation, shipping and promotions.
   <% end %>
 </dl>
 <dl>

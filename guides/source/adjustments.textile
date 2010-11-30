@@ -1,0 +1,156 @@
+h2. Adjustments
+
+This guide covers the use of adjustments in Spree. After reading it, you should be familiar with:
+
+* The important role calculators play in the creation of charges and credits.
+* The basic role adjustments play in Spree
+* How to create your own custom calculators and adjustments
+
+endprologue.
+
+h3. Overview
+
+Adjustments play a crucial role in Spree.  They are the means by which an order total changes to reflect any type of change that is necessary after calculating the +item_total+.  They are the building blocks for creating shipping and tax-related charges as well as for applying discounts for promotions and coupons.
+
+Adjustments can be either positive or negative.  Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits."  These are just terms of convenience since there is only one +Adjustment+ model in Spree which handles this by allowing either positive or negative values.
+
+INFO. Prior to Spree 0.30.x there were separate +Credit+ and +Charge+ models.  This distinction has been abandoned since it made things unnecessarily complicated.
+
+h3. Totals
+
+Spree has several important total values that are recorded at the +Order+ level.  The following table represents a list of attributes which are available to the Spree application and stored in the database for reporting purposes.
+
+|_<.Name|_.Description|
+|+item_total+|The sum total of all line items (+price+ * +quantity+ for all line items) |
+|+adjustment_total+|The sum total of all adjustments (which can be positive or negative.)  Examples include shipping charges and coupon credits.|
+|+total+|This represents the final total of the order (+item_total+ &#43; +adjustment_total+).|
+|+payment_total+|The sum total of all valid payments (including possible negative payments due to credit card refunds.)  This total automatically excludes payments in the +processing+, +pending+ and +failed+ states.|
+
+There are also a few interesting "calculated totals."  These totals are not stored in the database (and thus not easily searchable) but they can be displayed on a per record basis through the Ruby methods provided by +Order+.
+
+|_<.Name|_.Description|
+|+ship_total+|The sum total of all adjustments where the adjustment label = 'shipping'|
+|+tax_total+|The sum total of all adjustments where the adjustment label = 'tax'|
+
+h3. Types of Adjustments
+
+Spree supports several types of adjustments - in fact, it supports an open-ended number of adjustment types to handle pretty much any type of situation.  From a programming standpoint these are all represented by a single +Adjustment+ class with a +label+ attribute used to identify what type of adjustment it is.
+
+The following Ruby console output helps to illustrate this fact.
+
+<shell>
+>> Adjustment.last
+=> #<Adjustment id: 1073088110, order_id: 52160, amount:
+#<BigDecimal:2b38e1c62dd0,'0.0',9(18)>, label: "Shipping",
+created_at: "2010-11-30 20:22:35", updated_at: "2010-11-30
+20:22:35", source_id: 43065, source_type: "Shipment",
+mandatory: true, locked: nil, originator_id: 445378512,
+originator_type: "ShippingMethod">
+</shell>
+
+This may seem somewhat simplistic at first but our experience has shown that most scenarios can be handled with adequate labels and a few other tricks (including providing some handy "scopes":http://api.rubyonrails.org/classes/ActiveRecord/NamedScope/ClassMethods.html#method-i-scope at the model level.)
+
+h4. Taxation
+
+Tax adjustments are any adjustments with a label of "Tax."  This is just a naming convention but its a standard enough case that we have a built in scope for them in Spree.  You can use the following console command to list an order's tax adjustments:
+
+<shell>
+>> Order.last.adjustments.tax
+=> [ ... ]
+</shell>
+
+INFO. Tax related charges are considered "frozen":adjustments.html#frozen-adjustments by default.
+
+h4. Shipping
+
+Shipping adjustments are any adjustments with a label of "Shipping."  This is just a naming convention but its a standard enough case that we have a built in scope for them in Spree.  You can use the following console command to list an order's shipping adjustments:
+
+<shell>
+>> Order.last.adjustments.shipping
+=> [ ... ]
+</shell>
+
+INFO. Shipping related charges are considered "frozen":adjustments.html#frozen-adjustments by default.
+
+
+h4. Coupons and Promotions
+
+h3. Calculating Adjustments
+
+h4. Calculators
+
+h4. Frozen Adjustments
+
+
+
+h3. Introduction
+
+Calculators are the mechanism by which Spree handles any type of custom calculation.  Some typical uses of a calculator would be to determine shipping and tax charges.  They can also be used to provide custom coupon and discount logic.
+
+h3. Interface
+
+All calculators need to implement the following method
+
+<shell>
+  def compute(something=nil)
+    ...
+  end
+</shell>
+
+The calculator is passed an optional "target" on which to base their calculation.  This method is expected to return a single numeric value when the calculation is complete.  A value of +nil+ should be returned in the event that a charge is not applicable.
+
+h3. Configuration
+
+Since calculators are an instances of +ActiveRecord::Base+ they can be configured with preferences. Each instance of +ShippingMethod+ is now stored in the database along with the configured values for its preferences. This allows the same calculator (ex. +Calculator::FlatRate+) to be used with multiple +ShippingMethods+, and yet each can be configured with different values (ex. different amounts per calculator.)
+
+Calculators are configured using Spree's flexible "preference system":preferences.html.  Default values for the preferences are configured through the class definition.  For example, the flat rate calculator class definition specifies an amount with a default value of 0.
+
+<shell>
+  class Calculator::FlatRate < Calculator
+    preference :amount, :decimal, :default => 0
+    ...
+  end
+</shell>
+
+Spree now contains a standard mechanism by which calculator preferences can be edited.  The screenshot below shows how the amounts for the flat rate calculator are editable directly in the admin interface.
+
+!images/calculators/shipping_config.png(Changing Shipping Config)!
+
+h3. Registering a Custom Calculator
+
+Calculators are stored in a special +calculator+ directory located within +app/models+.  There are several calculators included that meet many of the standard store owner needs.  Developers are encouraged to write their own "extensions":extensions.html to supply additional functionality or to consider using a "third party extension":http://ext.spreecommerce.com written by members of the Spree community.
+
+Calculators need to be "registered" with Spree in order to be made available in the admin interface for various configuration options.  The recommended approach for doing this is via an extension.  Custom calculators will typically be written as extensions so you need to add some registration logic to the extension containing the calculator.  This will allow the calculator to do a one time registration during the standard extension activation process.
+
+The +CalculatorExtenion+ that is included in the Spree core is a good example of how you can achieve this in your own custom extensions.
+
+<shell>
+  def activate
+    [
+      Calculator::FlatPercent,
+      Calculator::FlatRate,
+      Calculator::FlexiRate,
+      Calculator::PerItem,
+      Calculator::SalesTax,
+      Calculator::Vat,
+    ].each(&:register)
+  end
+</shell>
+
+This calls the +register+ method on the calculators that we intend to register.  Spree provides a mechanism for extension authors to specify the operations for which the calculator is intended.  For example, a flat rate calculator might be useful for all operations but another calculator may be appropriate only for coupons and not shipping or taxes.
+
+Models that are declared with +has_calculator+ maintains their own set of registered calculators.  Currently this includes +Coupons+, +ShippingMethods+, +ShippingRates+ and +TaxRates+.  The following example shows how to configure a calculator to make it available for use with +Coupons+.
+
+<shell>
+def self.register
+  super
+  Coupon.register_calculator(self)
+end
+</shell>
+
+INFO. Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the desgin behind calculators.
+
+Once your calculators have been registered correctly by your extensions, then they will become available as options in the appropriate admin screens.
+
+!images/calculators/choosing_calculator.png(Choosing a calculator)!
+
