@@ -72,15 +72,100 @@ Shipping adjustments are any adjustments with a label of "Shipping."  This is ju
 
 INFO. Shipping related charges are considered "frozen":adjustments.html#frozen-adjustments by default.
 
-
 h4. Coupons and Promotions
+
+[TODO - provide a brief summary and link to new promotions documentation here once that is complete]
 
 h3. Calculating Adjustments
 
+Adjustments are typically calculated according to a specified set of rules (although it is possible to create adjustments with a fixed, arbitrary amount.)  The following sections will detail the use of +Calculators+ as well as the rules for when calculations are performed.
+
 h4. Calculators
 
-h4. Frozen Adjustments
+Spree makes extensive use of the +Calculator+ model and there are several subclasses provided to deal with various types of calculations (flat rate, percentage discount, sales tax, VAT, etc.)  All calculators extend the +Calculator+ class and must provide the following methods
 
+<shell>
+def self.description
+  # Human readable description of the calculator
+end
+
+def self.register
+  # Class method for registering the calculator with Spree
+end
+
+def compute(object=nil)
+  # Returns the value after performing the required calculation
+end
+</shell>
+
+h5. Registration
+
+The core calculators for Spree are stored in the +app/models/calculator+ directory.  There are several calculators included that meet many of the standard store owner needs.  Developers are encouraged to write their own "extensions":extensions.html to supply additional functionality or to consider using a "third party extension":http://spreecommerce.com/extensions written by members of the Spree community.
+
+Calculators need to be "registered" with Spree in order to be made available in the admin interface for various configuration options.  The recommended approach for doing this is via an extension.  Custom calculators will typically be written as extensions so you need to add some registration logic to the extension containing the calculator.  This will allow the calculator to do a one time registration during the standard extension activation process.
+
+Spree itself contains a good example of how this can be achieved.  For instance, in the +spree_core+ gem there is logic to register calculators.  The following code can be found in the +activate+ method defined in +spree_core/lib/spree_core.rb+:
+
+<shell>
+#register all calculators
+[
+  Calculator::FlatPercentItemTotal,
+  Calculator::FlatRate,
+  Calculator::FlexiRate,
+  Calculator::PerItem,
+  Calculator::SalesTax,
+  Calculator::Vat,
+  Calculator::PriceBucket
+].each{|c_model|
+  begin
+    c_model.register if c_model.table_exists?
+  rescue Exception => e
+    $stderr.puts "Error registering calculator #{c_model}"
+  end
+}
+</shell>
+
+This calls the +register+ method on the calculators that we intend to register.  Extension authors should be sure to register any new calculators within the +self.activate+ method defined in +lib/your_extension_name.rb+.  If you do not intend to distribute your calculator as an extension you can simply register it inside a Rails initializer or the +self.activate+ method of the default SpreeSite engine.
+
+INFO. Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the design decisions surrounding calculators.
+
+h5. +Spree::CalculatedAdjustments+ Module
+
+Spree includes a helpful +Spree::CalculatedAdjustments+ module that can be used to introduce calculator-like functionality into a Rails model.  Classes that require this type of functionality simply need to declare +calculated_adjustments+ in their class definition.
+
+<shell>
+class ShippingMethod < ActiveRecord::Base
+  ...
+  calculated_adjustments
+  ...
+end
+</shell>
+
+
+
+
+Spree provides a mechanism for extension authors to specify the operations for which the calculator is intended.  For example, a flat rate calculator might be useful for all operations but another calculator may be appropriate only for coupons and not shipping or taxes.
+
+Models that are declared with +has_calculator+ maintains their own set of registered calculators.  Currently this includes +Coupons+, +ShippingMethods+, +ShippingRates+ and +TaxRates+.  The following example shows how to configure a calculator to make it available for use with +Coupons+.
+
+<shell>
+def self.register
+  super
+  Coupon.register_calculator(self)
+end
+</shell>
+
+
+
+Once your calculators have been registered correctly by your extensions, then they will become available as options in the appropriate admin screens.
+
+!images/calculators/choosing_calculator.png(Choosing a calculator)!
+
+h5. Configuration
+
+h5. Computation
+
+h4. Frozen Adjustments
 
 
 h3. Introduction
@@ -118,39 +203,5 @@ Spree now contains a standard mechanism by which calculator preferences can be e
 
 h3. Registering a Custom Calculator
 
-Calculators are stored in a special +calculator+ directory located within +app/models+.  There are several calculators included that meet many of the standard store owner needs.  Developers are encouraged to write their own "extensions":extensions.html to supply additional functionality or to consider using a "third party extension":http://ext.spreecommerce.com written by members of the Spree community.
 
-Calculators need to be "registered" with Spree in order to be made available in the admin interface for various configuration options.  The recommended approach for doing this is via an extension.  Custom calculators will typically be written as extensions so you need to add some registration logic to the extension containing the calculator.  This will allow the calculator to do a one time registration during the standard extension activation process.
-
-The +CalculatorExtenion+ that is included in the Spree core is a good example of how you can achieve this in your own custom extensions.
-
-<shell>
-  def activate
-    [
-      Calculator::FlatPercent,
-      Calculator::FlatRate,
-      Calculator::FlexiRate,
-      Calculator::PerItem,
-      Calculator::SalesTax,
-      Calculator::Vat,
-    ].each(&:register)
-  end
-</shell>
-
-This calls the +register+ method on the calculators that we intend to register.  Spree provides a mechanism for extension authors to specify the operations for which the calculator is intended.  For example, a flat rate calculator might be useful for all operations but another calculator may be appropriate only for coupons and not shipping or taxes.
-
-Models that are declared with +has_calculator+ maintains their own set of registered calculators.  Currently this includes +Coupons+, +ShippingMethods+, +ShippingRates+ and +TaxRates+.  The following example shows how to configure a calculator to make it available for use with +Coupons+.
-
-<shell>
-def self.register
-  super
-  Coupon.register_calculator(self)
-end
-</shell>
-
-INFO. Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the desgin behind calculators.
-
-Once your calculators have been registered correctly by your extensions, then they will become available as options in the appropriate admin screens.
-
-!images/calculators/choosing_calculator.png(Choosing a calculator)!
 
