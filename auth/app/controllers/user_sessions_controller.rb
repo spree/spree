@@ -17,9 +17,8 @@ class UserSessionsController < Devise::SessionsController
 
   def create
     resource = warden.authenticate!(:scope => resource_name, :recall => "UserSessions#new")
-    set_flash_message :notice, :signed_in
-    if user_signed_in?
 
+    if user_signed_in?
       respond_to do |format|
         format.html {
           flash[:notice] = t("logged_in_succesfully") unless session[:return_to]
@@ -30,17 +29,7 @@ class UserSessionsController < Devise::SessionsController
           render :json => {:ship_address => user.ship_address, :bill_address => user.bill_address}.to_json
         }
       end
-    else
-      respond_to do |format|
-        format.html {
-          flash.now[:error] = t("login_failed")
-          render :action => :new
-        }
-        format.js { render :json => false }
-        format.json {render :text => 'access_denied', :status => 401}
-      end
     end
-    redirect_back_or_default(products_path) unless performed?
   end
 
   def destroy
