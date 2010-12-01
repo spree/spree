@@ -12,6 +12,12 @@ class Gateway::AuthorizeNetCim < Gateway
     self.class
   end
 
+  def options
+    # add :test key in the options hash, as that is what the ActiveMerchant::Billing::AuthorizeNetGateway expects
+    self.class.default_preferences[:test] = true if self.prefers? :test_mode
+    super
+  end
+
   def authorize(amount, creditcard, gateway_options)
     create_transaction(amount, creditcard, :auth_only)
   end
