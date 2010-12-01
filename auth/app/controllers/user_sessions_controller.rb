@@ -16,7 +16,7 @@ class UserSessionsController < Devise::SessionsController
   end
 
   def create
-    resource = warden.authenticate!(:scope => resource_name, :recall => "new")
+    resource = warden.authenticate!(:scope => resource_name, :recall => "UserSessions#new")
     set_flash_message :notice, :signed_in
     if user_signed_in?
 
