@@ -1,15 +1,15 @@
 Given /^I am signed up as "(.+)\/(.+)"$/ do |email, password|
-  @user = User.make!(
+  @user = User.new(
     :email                 => email,
     :password              => password,
-    :password_confirmation => password)
+    :password_confirmation => password).save!
 end
 
 When /^I sign in as "(.*)\/(.*)"$/ do |email, password|
   When %{I go to the sign in page"}
   And %{I fill in "Email" with "#{email}"}
   And %{I fill in "Password" with "#{password}"}
-  And %{I press "Sign in"}
+  And %{I press "Log In"}
 end
 
 Given /^no user exists with an email of "(.*)"$/ do |email|
