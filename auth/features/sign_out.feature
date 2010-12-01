@@ -8,5 +8,4 @@ Feature: Sign out
     When I go to the sign in page
     And I sign in as "email@person.com/password"
     And I follow "Logout"
-    Then I should see "Signed out successfully"
-    And I should be logged out
+    Then I should be logged out

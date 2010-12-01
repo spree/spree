@@ -1,3 +1,7 @@
+<% if flash[:alert] %>
+  <div class="flash errors"><%= flash[:alert] %></div>
+<% end %>
+
 <% @body_id = 'login' %>
 <div id="existing-customer">
   <h2><%= t("login_as_existing") %></h2>

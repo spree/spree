@@ -5,7 +5,7 @@ Feature: Sign up
 
   Scenario: User signs up with invalid data
      When I go to the sign up page
-     And I fill in "Email" with "invalidemail"
+     And I fill in "Email" with "invalid email"
      And I fill in "Password" with "password"
      And I fill in "Password Confirmation" with ""
      And I press "Create"
