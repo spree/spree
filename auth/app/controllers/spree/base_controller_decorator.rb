@@ -14,11 +14,6 @@ Spree::BaseController.class_eval do
     session[:guest_token] ||= params[:token]
   end
 
-  #def current_user
-  #  return @current_user if defined?(@current_user)
-  #  @current_user = current_user_session && current_user_session.user
-  #end
-
   # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
   # Override this method in your controllers if you want to have special behavior in case the user is not authorized
   # to access the requested action.  For example, a popup window might simply close itself.
@@ -37,9 +32,7 @@ Spree::BaseController.class_eval do
         request_http_basic_authentication 'Web Password'
       end
       format.json do
-        # NOTE: We really want to return 301 error code but this causes issues with Devise and Warden.  Just return the phony 418
-        # since we're not going to waste our time sorting this out.  Honestly, who really gives a fuck?  Unauthorized says it all.
-        render :text => "Not Authorized \n", :status => 418
+        render :text => "Not Authorized \n", :status => 401
       end
     end
   end
