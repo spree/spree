@@ -134,7 +134,7 @@ class Creditcard < ActiveRecord::Base
   end
 
   def credit(payment)
-    amount = payment.credit_allowed >= payment.order.outstanding_balance.abs ? payment.order.outstanding_balance : payment.credit_allowed
+    amount = payment.credit_allowed >= payment.order.outstanding_balance.abs ? payment.order.outstanding_balance.abs : payment.credit_allowed.abs
 
     if payment_gateway.payment_profiles_supported?
       response = payment_gateway.credit((amount * 100).round, self, payment.response_code, minimal_gateway_options(payment))
