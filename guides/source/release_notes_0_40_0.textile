@@ -6,6 +6,25 @@ h3. Summary
 
 h3. Replacing Authlogic with Devise
 
+Spree has replaced the authlogic gem in favor of "Devise":http://github.com/plataformatec/devise for all authentication methods. In part an effort to both simplify customization strategies, due to devise's modular nature, and allow for much simpler creation of extensions needing different authentication schemas and scopes. We have made every effort to maintain the backward compatibility required to upgrade an existing site as painlessly as we could. This includes naming conventions, deprecation notices, and named routes have all remained intact where applicable.
+
+The database changes, described below, are made to offer as much flexibility as Devise itself offers and enabling you to implement, adjust the behavior, or remove features fairly effortlessly. Please see the "security":security.html document for more information on customizing the authentication schemes.
+
+h4. Upgrading current Spree sites
+
+The biggest changes to the Spree authentication process is consolidation of most all the user management functions into the spree_auth gem itself. An effort to minimize the impact these changes have made as much as possible, naming conventions have be maintained where we could. Resulting in only one controller being moved and renamed. Routing and the named route conventions having been maintained as well.
+
+NOTE. core/password_resets_controller.rb is now in auth/user_password_resets_controller.rb
+
+Once you have upgraded the spree gems upgrading your existing install is quite literally just two commands. The first to install the migrations file required to make the necessary database changes for devise. The other to run that migration.
+
+<shell>
+rake spree_auth:install:migrations
+rake db:migrate
+</shell>
+
+We have already set up devise to handle the existing encryption scheme that authlogic used so there is no need to make any changes and the current users will work "out of the box".
+
 h3. Changes to the REST API
 
 Spree 0.40.x introduces several minor but important changes to the REST API.  If you are currently relying on the API you should be aware of a few important changes.  Please also consult the detailed "REST Guide":/rest.html for more details.
@@ -27,7 +46,7 @@ Note that we are using the token as the "user name" and passing "x" as a passwor
 
 h4. Support for +.json+ Suffix
 
-It is now recommended that you consider using a +.json+ suffic in your URL when communicating via the REST API.  This is technically not a new feature - it was always possible in older versions of the REST API.  We've updated the documentation to suggest this simpler apporach (which avoids the necessity of passing +Accept:application/json+ in the header.)
+It is now recommended that you consider using a +.json+ suffix in your URL when communicating via the REST API.  This is technically not a new feature - it was always possible in older versions of the REST API.  We've updated the documentation to suggest this simpler approach (which avoids the necessity of passing +Accept:application/json+ in the header.)
 
 <shell>
 curl -u V8WPYgRdSZN1mSQG17sK:x http://example.com/api/orders.json
