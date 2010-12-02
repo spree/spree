@@ -21,3 +21,9 @@ Fabricator(:payment_method) do
   environment 'test'
   description 'Payment Method'
 end
+
+Fabricator(:adjustment) do
+  label I18n.t(:tax)
+  amount 5
+  mandatory true
+end

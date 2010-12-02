@@ -5,7 +5,7 @@ class Calculator::FreeShipping < ::Calculator
   end
 
   def self.register
-    super                                
+    super
     Promotion.register_calculator(self)
   end
 

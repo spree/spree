@@ -6,13 +6,12 @@ class Promotion < ActiveRecord::Base
   has_many :promotion_rules
   accepts_nested_attributes_for :promotion_rules
   alias_method :rules, :promotion_rules
-  
+
   validates :name, :code, :presence => true
 
   MATCH_POLICIES = %w(all any)
 
   scope :automatic, where("code IS NULL OR code = ''")
-
 
   def eligible?(order)
     !expired? && rules_are_eligible?(order)
@@ -21,7 +20,11 @@ class Promotion < ActiveRecord::Base
   def expired?
     starts_at && Time.now < starts_at ||
     expires_at && Time.now > expires_at ||
-    usage_limit && promotion_credits.with_order.count >= usage_limit
+    usage_limit && credits_count >= usage_limit
+  end
+
+  def credits_count
+    credits.with_order.count
   end
 
   def rules_are_eligible?(order)
