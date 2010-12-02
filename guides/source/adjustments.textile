@@ -98,7 +98,7 @@ def compute(object=nil)
 end
 </shell>
 
-h5. Registration
+h4. Registration
 
 The core calculators for Spree are stored in the +app/models/calculator+ directory.  There are several calculators included that meet many of the standard store owner needs.  Developers are encouraged to write their own "extensions":extensions.html to supply additional functionality or to consider using a "third party extension":http://spreecommerce.com/extensions written by members of the Spree community.
 
@@ -129,7 +129,7 @@ This calls the +register+ method on the calculators that we intend to register. 
 
 INFO. Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the design decisions surrounding calculators.
 
-h5. +Spree::CalculatedAdjustments+ Module
+h4. +Spree::CalculatedAdjustments+ Module
 
 Spree includes a helpful +Spree::CalculatedAdjustments+ module that can be used to introduce calculator-like functionality into a Rails model.  Classes that require this type of functionality simply need to declare +calculated_adjustments+ in their class definition.
 
@@ -141,48 +141,128 @@ class ShippingMethod < ActiveRecord::Base
 end
 </shell>
 
+h5. Class Methods
 
+When a Spree class uses this helper method it automatically adds the following class functionality:
 
+* The ability to associate a calculator with an instance of that class (through a +has_one :calculator+ association)
+* Validation rules and the ability to accept configuration params through Rails +accepts_nested_attributes_for+
+* The ability to register +Calculators+ with the class itself (this is different from registering with Spree at large)
 
-Spree provides a mechanism for extension authors to specify the operations for which the calculator is intended.  For example, a flat rate calculator might be useful for all operations but another calculator may be appropriate only for coupons and not shipping or taxes.
-
-Models that are declared with +has_calculator+ maintains their own set of registered calculators.  Currently this includes +Coupons+, +ShippingMethods+, +ShippingRates+ and +TaxRates+.  The following example shows how to configure a calculator to make it available for use with +Coupons+.
+Lets look at how this works with a specific example taken from the Spree source code itself.  Specifically we'll be looking at +ShippingMethod+.
 
 <shell>
-def self.register
-  super
-  Coupon.register_calculator(self)
+class ShippingMethod < ActiveRecord::Base
+  ...
+  calculated_adjustments
+  ...
 end
 </shell>
 
+Here we see that +ShippingMethod+ declares that its going to be involved in calculations by declaring +calculated_adjustments+ in the class definition.  What does that give us exactly?
 
+Lets start by firing up the Ruby console and creating a new instance of +ShippingMethod+.
 
-Once your calculators have been registered correctly by your extensions, then they will become available as options in the appropriate admin screens.
+<shell>
+>> s = ShippingMethod.new
+=> #<ShippingMethod id: nil, zone_id: nil, name: nil, created_at: nil, updated_at: nil, display_on: nil>
+</shell>
+
+Now we can verify that this instance of +ShippingMethod+ in fact has a +Calculator+ association (although its currently nil because we haven't assigned anything to it.)
+
+<shell>
+>> s.calculator
+=> nil
+</shell>
+
+NOTE.  If you are creating new Rails models you should never declare +has_one :calculator+ in order to take advantage of calculators.  Just use +calculated_adjustments+ instead since you get this association and several other goodies for free.  You'll also be doing things the standard Spree way which will make it easier to maintain over the long run.
+
+We can also register classes that extend +Calculator+ with a class that declares +calculated_adjustments+.  Lets look at +Calculator::FlatRate+ to see what this means.
+
+<shell>
+class Calculator::FlatRate < Calculator
+  ...
+
+  def self.register
+    super
+    ShippingMethod.register_calculator(self)
+  end
+
+  ...
+end
+</shell>
+
+Like any +Calculator+ there is a +self.register+ method.  If you look inside the implementation of that method, however, you see that we call +super+ and which calls the implementation that is automatically provided when you extend +Calculator+.  This registers the calculator with Spree but the following line registers the calculator with +ShippingMethod+ as well.
+
+You may wonder to yourself "why is that important?"  The answer is that you can perform operations such as the following:
+
+<shell>
+>> ShippingMethod.calculators
+=> { ... }
+>> ShippingMethod.calculators.size
+=> 5
+</shell>
+
+By registering your calculators in this way, then they will become available as options in the appropriate admin screens.
 
 !images/calculators/choosing_calculator.png(Choosing a calculator)!
 
-h5. Configuration
 
-h5. Computation
+h5. Instance Methods
 
-h4. Frozen Adjustments
+Use of the +calculated_adjustments+ helper also provides additional methods to instances of the class declaring it.  Specifically they gain the following instance methods:
 
+|_<.Method Name|_.Description|
+|+create_adjustment+|Responsible for creating a new adjustment for the specified 'target'|
+|+update_adjustment+|Updates the amount of the adjustment using the instance's +Calculator+|
+|+calculator_type+|Utility method to help with admin screens that need to set the +Calculator+ for a particular instance of the class.|
 
-h3. Introduction
-
-Calculators are the mechanism by which Spree handles any type of custom calculation.  Some typical uses of a calculator would be to determine shipping and tax charges.  They can also be used to provide custom coupon and discount logic.
-
-h3. Interface
-
-All calculators need to implement the following method
+The +create_adjustment+ is the process by which all adjustments should be created.  Lets take a look at how this mechanism works inside the +Order+ class.
 
 <shell>
-  def compute(something=nil)
-    ...
+def create_tax_charge!
+  return unless rate = TaxRate.match(bill_address) or adjustments.tax.present?
+  if old_charge = adjustments.tax.first
+    old_charge.destroy unless old_charge.originator == rate
+    return
   end
+  rate.create_adjustment(I18n.t(:tax), self, self, true)
+end
 </shell>
 
-The calculator is passed an optional "target" on which to base their calculation.  This method is expected to return a single numeric value when the calculation is complete.  A value of +nil+ should be returned in the event that a charge is not applicable.
+Here we see that an instance of +TaxRate+ is being used to create the adjustment for the order.  +TaxRate+ declares +calculated_adjustments+ in its class definition which makes this all possible.
+
+INFO. You do not need to understand this process to make use of adjustments in Spree.  The detailed information provided here for those who wish to understand the inner workings of Spree a little better.  If you are interested in creating a new Spree extension that will create or affect adjustments in some way, this understanding is crucial.
+
+h4. Computation
+
+Computation for adjustments comes down to a very straightforward +compute+ method that is provided by an instance of +Calculator+.  In some cases the calculation can be quite straight forward.  Take a look at +Calculator::FlatRate+ to see such a simple case.
+
+<shell>
+def compute(object=nil)
+  self.preferred_amount
+end
+</shell>
+
+This calculator basically just returns the same amount every time its called (note the amount is configurable of course.)  Other calculators (such as +Calculator::SalesTax+) are a bit more interesting.
+
+<shell>
+def compute(order)
+  rate = self.calculable
+  line_items = order.line_items.select { |i| i.product.tax_category == rate.tax_category }
+  line_items.inject(0) {|sum, line_item|
+    sum += line_item.total * rate.amount
+  }
+end
+</shell>
+
+INFO. Calculators should never return a value of +nil+ in their +compute+ method.  Return 0 in these situations instead.
+
+h4. Locked Adjustments
+
+Spree also has the notion of so-called "locked" adjustments.  The concept behind this is there are certain types of adjustments which should never be changed once calculated.  There are also situations where it is appropriate for an adjustment that was once subject to recalculation to be recalculated.
+
+WARNING. Locked adjustments are currently considered experimental.  We're currently exploring the ability to configure Spree to honor certain locking strategies.  For instance, locking a promotion calculation in place so that its not lost if the order is updated after the promotion expires.  There are also some interesting options to allow admins with the appropriate permissions to have the ability to lock/unlock adjustments when appropriate.
 
 h3. Configuration
 
@@ -201,7 +281,6 @@ Spree now contains a standard mechanism by which calculator preferences can be e
 
 !images/calculators/shipping_config.png(Changing Shipping Config)!
 
-h3. Registering a Custom Calculator
 
 
 
