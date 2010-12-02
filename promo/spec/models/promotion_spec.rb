@@ -6,14 +6,13 @@ describe Promotion do
   context "creating discounts" do
     before do
       @order = Fabricate(:order)
-      @promotion = Fabricate(:promotion)
-      @promotion.calculator = Calculator::FreeShipping.new
+      subject.calculator = Calculator::FreeShipping.new
     end
 
     it "should not create a discount when order is not eligible" do
-      @promotion.stub(:eligible? => false)
+      subject.stub(:eligible? => false)
 
-      @promotion.create_discount(@order)
+      subject.create_discount(@order)
       @order.promotion_credits.should have(0).item
     end
 
@@ -26,10 +25,10 @@ describe Promotion do
       @order.update_totals
       rule = Promotion::Rules::FirstOrder.new
       rule.stub(:eligible? => true)
-      @promotion.rules << rule
+      subject.rules << rule
 
       @order.total.to_f.should == 55
-      @promotion.create_discount(@order)
+      subject.create_discount(@order)
       @order.total.to_f.should == 50
     end
   end
