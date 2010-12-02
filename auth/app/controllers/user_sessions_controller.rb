@@ -16,7 +16,7 @@ class UserSessionsController < Devise::SessionsController
   end
 
   def create
-    resource = warden.authenticate!(:scope => resource_name, :recall => "UserSessions#new")
+    authenticate_user!
 
     if user_signed_in?
       respond_to do |format|
