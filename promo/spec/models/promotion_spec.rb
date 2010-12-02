@@ -108,20 +108,15 @@ describe Promotion do
       before { subject.match_policy = 'all' }
 
       it "should have eligible rules if all rules are eligible" do
-        rule = PromotionRule.new
-        rule.stub(:eligible? => true)
+        rule = mock_model(PromotionRule, :eligible? => true)
         subject.promotion_rules = [rule, rule.clone]
 
         subject.rules_are_eligible?(@order).should be_true
       end
 
       it "should not have eligible rules if any of the rules is not eligible" do
-        rule = PromotionRule.new
-        rule.stub(:eligible? => true)
-        rule1 = PromotionRule.new
-        rule1.stub(:eligible? => false)
-        rules = [rule, rule1]
-        subject.promotion_rules = rules
+        subject.promotion_rules = [mock_model(PromotionRule, :eligible? => true),
+                                   mock_model(PromotionRule, :eligible? => false)]
 
         subject.rules_are_eligible?(@order).should be_false
       end
@@ -131,6 +126,7 @@ describe Promotion do
       before { subject.match_policy = 'any' }
 
       it "should have eligible rules if any of the rules is eligible" do
+        
         rule = PromotionRule.new
         rule.stub(:eligible? => true)
         rule1 = PromotionRule.new
