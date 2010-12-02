@@ -48,7 +48,7 @@ class Admin::ShipmentsController < Admin::BaseController
     @shipping_methods = ShippingMethod.all_available(@order, :back_end)
 
     @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')
-    @countries = available_countries
+    @countries = Country.all
   end
 
   def edit_before # copy into instance variable before editing
