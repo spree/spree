@@ -347,6 +347,9 @@ class Order < ActiveRecord::Base
     bill_address.try(:lastname)
   end
 
+  def products
+    line_items.map{|li| li.variant.product}
+  end
 
   private
   def create_user
