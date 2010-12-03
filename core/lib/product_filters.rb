@@ -45,7 +45,7 @@ module ProductFilters
   Product.scope :price_range_any,
     lambda {|opts| 
       conds = opts.map {|o| ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
-      Product.scoped(:joins => :master).conditions_any(conds).scope :find
+      Product.scoped(:joins => :master).conditions_any(conds)
     }
 
   def ProductFilters.price_filter
@@ -79,17 +79,16 @@ module ProductFilters
     Product.scope :brand_any,
       lambda {|opts| 
         conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?} 
-        Product.with_property(@@brand_property, "p_brand").conditions_any(conds).scope(:find)
+        Product.with_property("brand").conditions_any(conds)
       } 
 
     def ProductFilters.brand_filter
       brands = ProductProperty.find_all_by_property_id(@@brand_property).map(&:value).uniq
-      conds  = Hash[*brands.map {|b| [b, "p_brand.value = '#{b}'"]}.flatten]
-      conds["No brand"] = "p_brand.value is NULL"
-      { :name   => "All Brands",
+      conds  = Hash[*brands.map {|b| [b, "product_properties.value = '#{b}'"]}.flatten]
+      { :name   => "Brands",
         :scope  => :brand_any,
         :conds  => conds,
-        :labels => (brands.sort + ["No brand"]).map {|k| [k,k]}
+        :labels => (brands.sort).map {|k| [k,k]}
       }
     end
   end
@@ -115,7 +114,7 @@ module ProductFilters
   #   the product properties model. 
 
   if Property.table_exists? && @@brand_property 
-    Product.scope :selective_brand_any, lambda {|opts| Product.brand_any(opts).scope(:find) }
+    Product.scope :selective_brand_any, lambda {|opts| Product.brand_any(opts) }
 
     def ProductFilters.selective_brand_filter(taxon = nil)
       if taxon.nil? 

@@ -44,6 +44,21 @@ module Scopes::Product
     :with_ids => :product_picker_field
   }
 
+  # Ryan Bates - http://railscasts.com/episodes/112
+  # general merging of conditions, names following the searchlogic pattern
+  ::Product.scope :conditions, lambda { |*args| {:conditions => args}}
+  # conditions_all is a more descriptively named enhancement of the above
+  ::Product.scope :conditions_all, lambda { |*args| {:conditions => [args].flatten}}  
+  
+  # forming the disjunction of a list of conditions (as strings)
+  ::Product.scope :conditions_any, lambda { |*args|
+    args = [args].flatten
+    raise "non-strings in conditions_any" unless args.all? {|s| s.is_a? String}
+    {:conditions => args.map {|c| "(#{c})"}.join(" OR ")}
+  }
+
+
+
   #RAILS3 TODO - scopes are duplicated here and in model/product.rb - can we DRY it up?
   # default product scope only lists available and non-deleted products
   # ::Product.scope :not_deleted, lambda { where("products.deleted_at is null") }
