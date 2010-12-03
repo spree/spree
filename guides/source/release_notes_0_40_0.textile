@@ -8,7 +8,7 @@ h3. Replacing Authlogic with Devise
 
 Spree has replaced the authlogic gem in favor of "Devise":http://github.com/plataformatec/devise for all authentication methods. In part an effort to both simplify customization strategies, due to devise's modular nature, and allow for much simpler creation of extensions needing different authentication schemas and scopes. We have made every effort to maintain the backward compatibility required to upgrade an existing site as painlessly as we could. This includes naming conventions, deprecation notices, and named routes have all remained intact where applicable.
 
-The database changes, described below, are made to offer as much flexibility as Devise itself offers and enabling you to implement, adjust the behavior, or remove features fairly effortlessly. Please see the "security":security.html document for more information on customizing the authentication schemes.
+The database changes, described below, are made to offer as much flexibility as Devise itself offers and enabling you to implement, adjust the behavior, or remove features fairly effortlessly for those familiar with Devise.
 
 h4. Upgrading current Spree sites
 

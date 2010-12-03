@@ -2,6 +2,33 @@ h2. Security
 
 endprologue.
 
+h3. General
+
+Good application design, intelligent programming, and good infrastructure can not be enforced enough to create a secure ecommerce store from with Spree. We have done all we can to provide you with the tools to create a secure and profitable web presence but it is up to you to take these tools and put them in good practice. We highly recommend reading and understanding the security document guide "here":http://guides.rubyonrails.org/security.html and keepup with the "Ruby on Rails Security Project":http://www.rorsecurity.info/.
+
+Spree has associations for every transaction made through the store front, even "guest" checkouts. Users whom decide to create accounts with your store will be required to provide and email address, which will become the login for your custom and require al least a six(6) character password. Now we can't make them create good passwords but the longer that password is the slightly better it becomes, some is better than none here.
+
+h4. Devise Default Configuration in Spree
+
+Spree does not store any information outside of the required data for handling customer contact and shipping, items such as credit card numbers are only need through the transaction and payment gateways and are not stored in the local application database. Please reference the payment gateway of your choice to see their policies and procedures relating to customer data. We have configure Devise to handle only what is needed to authenticate with a Spree site. The following is explanations of the default configurations.
+
+1. Passwords are stored in the database encrypted with the salt. User authentication is done through the database query.
+2. User registration is enabled and the users login is available immediately, there is no validation emails.
+3. There is a remember me and password recovery tool built in and enabled through Devise.
+4. http_auth_basic is enable to accommodate the API query interface. (See below for security notes relating to the API)
+
+Anything else the Devise can do can be enabled manually and will be covered in a forth coming document. See below for some very simple examples for encryption changes.
+
+h4. Devise Authentication and Encryption
+
+Out of the box Spree is configured to reproduce the authlogic choice of encryption schemes. While this is a good encryption scheme it's not the best out there. "Devise":http://github.com/plataformatec/devise, the choice for Spree, supports a lot of different schemas outside of authlogic's. One of the best being "bcrypt":http://en.wikipedia.org/wiki/Bcrypt, to enable this you will need to open the spree_auth gem and edit the app/model/user.rb.
+
+h4. REST API users and authentications
+
+The REST API behaves slightly differently that a standard user. Firstly an admin has to create the access key before any user can query the REST API, this includes generating the key for the admin him/herself. Obviously it is up to you to communicate that key. This is a 20 character key that is passed through the HTTP_AUTHENTICATION header (See the "documentation":rest.html for how to authenticate with the REST API). As an added measure this authentication has to occur on every request made through the REST API as no session or cookies are created or stored for the REST API.
+
+h3. CanCan and Roles
+
 h3. Credit Cards
 
 h4. Transmit Exactly Once
