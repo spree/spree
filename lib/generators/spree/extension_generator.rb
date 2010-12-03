@@ -16,7 +16,7 @@ module Spree
         template "LICENSE", "#{file_name}/LICENSE"
         template "Rakefile.tt", "#{file_name}/Rakefile"
         template "README.md", "#{file_name}/README.md"
-        template ".gitignore", "#{file_name}/.gitignore"
+        template "gitignore.tt", "#{file_name}/.gitignore"
         template "extension.gemspec.tt", "#{file_name}/#{file_name}.gemspec"
       end
 
