@@ -19,7 +19,7 @@ class Taxon < ActiveRecord::Base
   include ::ProductFilters  # for detailed defs of filters
   def applicable_filters
     fs  = []
-    fs << ProductFilters.taxons_below(self)
+    # fs << ProductFilters.taxons_below(self)
     ## unless it's a root taxon? left open for demo purposes
     fs += [
       ProductFilters.price_filter,
