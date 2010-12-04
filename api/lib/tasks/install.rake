@@ -11,7 +11,6 @@ namespace :spree_api do
     task :migrations do
       source = File.join(File.dirname(__FILE__), '..', '..', 'db')
       destination = File.join(Rails.root, 'db')
-      puts "INFO: Mirroring assets from #{source} to #{destination}"
       Spree::FileUtilz.mirror_files(source, destination)
     end
 
