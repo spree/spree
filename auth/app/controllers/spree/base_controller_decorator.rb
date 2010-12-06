@@ -1,5 +1,6 @@
 Spree::BaseController.class_eval do
   before_filter :check_guest
+  before_filter :set_current_user
 
   include Spree::AuthUser
 
@@ -44,6 +45,10 @@ Spree::BaseController.class_eval do
     unless disallowed_urls.include?(request.fullpath)
       session[:return_to] = request.fullpath
     end
+  end
+
+  def set_current_user
+    User.current = current_user
   end
 
 end
