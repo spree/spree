@@ -29,24 +29,24 @@ begin
     s.add_dependency 'highline', '= 1.5.1'
     s.add_dependency 'authlogic', '2.1.3'
     s.add_dependency 'authlogic-oid', "1.0.4"
-    s.add_dependency 'activemerchant', '= 1.5.1'
+    s.add_dependency 'activemerchant', '= 1.7.0'
     s.add_dependency 'activerecord-tableless', '= 0.1.0'
     s.add_dependency 'less', "1.2.20"
     s.add_dependency 'stringex', "1.0.3"
     s.add_dependency 'chronic', '0.2.3'
     s.add_dependency 'whenever', "0.3.7"
     s.add_dependency 'searchlogic', "2.3.5"
-    s.add_dependency 'will_paginate', "2.3.14"     
+    s.add_dependency 'will_paginate', "2.3.14"
     s.add_dependency 'state_machine', "0.9.2"
     s.add_dependency 'faker', "0.3.1"
-    s.add_dependency 'paperclip', "= 2.3.1.1"    
+    s.add_dependency 'paperclip', "= 2.3.1.1"
     s.add_dependency 'ruby-openid', '>= 2.0.4'
-    
+
     s.has_rdoc = true
     rdoc_excludes = Dir["**"].reject { |f| !File.directory? f }
     rdoc_excludes.each do |e|
       s.rdoc_options << '--exclude' << e
-    end     
+    end
     files = FileList['**/*']
     files.exclude '**/._*'
     files.exclude '**/*.rej'
