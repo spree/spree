@@ -7,6 +7,12 @@ describe Order do
 
   before { Gateway.stub :current => gateway }
 
+  it "should return ordered products" do
+    line_items = [mock_model(LineItem, :variant => 'product1'), mock_model(LineItem, :variant => 'product2')]
+    order.stub(:line_items => line_items)
+    order.products.should == ['product1', 'product2']
+  end
+
   context "#save" do
     it "should create guest user (when no user assigned)" do
       order.save
