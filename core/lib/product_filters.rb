@@ -96,7 +96,7 @@ module ProductFilters
   # Example: a parametrized filter
   #   The filter above may show brands which aren't applicable to the current taxon,
   #   so this one only shows the brands that are relevant to a particular taxon and 
-  #   its descendents.
+  #   its descendants.
   #
   #   We don't have to give a new scope since the conditions here are a subset of the 
   #   more general filter, so decoding will still work - as long as the filters on a 
@@ -123,7 +123,7 @@ module ProductFilters
       all_brands = ProductProperty.find_all_by_property_id(@@brand_property).map(&:value).uniq
       scope = ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
                               scoped(:joins      => {:product => :taxons}, 
-                                     :conditions => ["taxons.id in (?)", [taxon] + taxon.descendents])
+                                     :conditions => ["taxons.id in (?)", [taxon] + taxon.descendants])
       brands = scope.map {|p| p.value}
 
       { :name   => "Applicable Brands",
@@ -158,12 +158,12 @@ module ProductFilters
 
   # Filtering by the list of all taxons
   #
-  # Similar idea as above, but we don't want the descendents' products, hence
+  # Similar idea as above, but we don't want the descendants' products, hence
   # it uses one of the auto-generated scopes from SearchLogic.
   #
   # idea: expand the format to allow nesting of labels?
   def ProductFilters.all_taxons
-    taxons = Taxonomy.all.map {|t| [t.root] + t.root.descendents }.flatten
+    taxons = Taxonomy.all.map {|t| [t.root] + t.root.descendants }.flatten
     { :name   => "All taxons",
       :scope  => :taxons_id_equals_any,
       :labels => taxons.sort_by(&:name).map {|t| [t.name, t.id]},
