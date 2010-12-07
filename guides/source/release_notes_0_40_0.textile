@@ -4,24 +4,34 @@ endprologue.
 
 h3. Summary
 
+h3. Database Migrations
+
+There are several new database changes in the 0.40.0 release.  You will need to update your database migrations as follows:
+
+<shell>
+$ rake spree:install:migrations
+$ rake db:migrate
+</shell>
+
+WARNING. Always be sure to perform a complete database backup before performing any operations.  It is also suggested that you examine the new migrations closely before running them so you are aware of what changes are being made to your database.
+
+h3. Production Assets
+
 h3. Replacing Authlogic with Devise
 
-Spree has replaced the authlogic gem in favor of "Devise":http://github.com/plataformatec/devise for all authentication methods. In part an effort to both simplify customization strategies, due to devise's modular nature, and allow for much simpler creation of extensions needing different authentication schemas and scopes. We have made every effort to maintain the backward compatibility required to upgrade an existing site as painlessly as we could. This includes naming conventions, deprecation notices, and named routes have all remained intact where applicable.
+Spree has replaced the authlogic gem in favor of "Devise":http://github.com/plataformatec/devise for all authentication methods. In part an effort to both simplify customization strategies, due to devise's modular nature, and allow for much simpler creation of extensions needing different authentication schemas and scopes. We have made every effort to maintain the backward compatibility required to upgrade an existing site.  This means that naming conventions, and routing have all remained intact where possible as well as the use of deprecation notices.
 
 The database changes, described below, are made to offer as much flexibility as Devise itself offers and enabling you to implement, adjust the behavior, or remove features fairly effortlessly for those familiar with Devise.
 
-h4. Upgrading current Spree sites
+h4. Miscellaneous Clean Up
 
-The biggest changes to the Spree authentication process is consolidation of most all the user management functions into the spree_auth gem itself. An effort to minimize the impact these changes have made as much as possible, naming conventions have be maintained where we could. Resulting in only one controller being moved and renamed. Routing and the named route conventions having been maintained as well.
+Some of the biggest changes to the Spree authentication process is consolidation of most all the user management functions into the +spree_auth+ gem.  Prior versions of Spree still had small bits of code floating around in +spree_core+ etc.  So some files have simply been moved to where they should have been all along.
 
-NOTE. core/password_resets_controller.rb is now in auth/user_password_resets_controller.rb
+h4. Upgrading Existing Sites
 
-Once you have upgraded the spree gems upgrading your existing install is quite literally just two commands. The first to install the migrations file required to make the necessary database changes for devise. The other to run that migration.
+We have tried to minimize changes and when possible, naming conventions have be maintained.  The result is that only one controller has been moved and renamed. Routing and the named route conventions having been maintained as well.
 
-<shell>
-rake spree_auth:install:migrations
-rake db:migrate
-</shell>
+NOTE. The file +core/password_resets_controller.rb+ has been renamed and moved to +auth/user_password_resets_controller.rb+
 
 We have already set up devise to handle the existing encryption scheme that authlogic used so there is no need to make any changes and the current users will work "out of the box".
 
