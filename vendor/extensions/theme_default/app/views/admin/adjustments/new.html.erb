@@ -4,6 +4,9 @@
 
 <%=error_messages_for :adjustment %>
 <% form_for @adjustment, :url => collection_url do |f| %>
+  <%= hidden_field :adjustment, :adjustment_source_id, :value => @order.id %>
+  <%= hidden_field :adjustment, :adjustment_source_type, :value => @order.class %>
+
   <%= render :partial => "form", :locals => {:f => f} %>
 
   <p class="form-buttons">

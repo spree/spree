@@ -1,6 +1,3 @@
-<%= hidden_field :adjustment, :adjustment_source_id, :value => @order.id %>
-<%= hidden_field :adjustment, :adjustment_source_type, :value => @order.class %>
-
 <% f.field_container :amount do %>
   <%= f.label :amount, t("amount")%> <span class="required">*</span><br />
   <%= text_field :adjustment, :amount, {:style => "width:80px;"} %>
