@@ -4,32 +4,28 @@ describe Promotion do
   let(:promotion) { Promotion.new }
 
   context "creating discounts" do
+    let(:order) { Order.new }
+
     before do
-      @order = Fabricate(:order)
       promotion.calculator = Calculator::FreeShipping.new
     end
 
     it "should not create a discount when order is not eligible" do
       promotion.stub(:eligible? => false)
+      order.stub(:promotion_credit_exists? => nil)
 
-      promotion.create_discount(@order)
-      @order.promotion_credits.should have(0).item
+      promotion.create_discount(order)
+      order.promotion_credits.should have(0).item
     end
 
     it "should be able to create a discount on order" do
-      @order.stub(:line_items => [mock_model(LineItem, :amount => 50)],
-                  :ship_total => 5)
+      order.stub(:ship_total => 5, :item_total => 50)
+      promotion.stub(:code => "PROMO", :eligible? => true)
 
-      Fabricate(:adjustment, :amount => 5, :label => I18n.t(:shipping), :order => @order)
+      attrs = {:amount => -5, :label => "#{I18n.t(:coupon)} (PROMO)", :source => promotion }
+      order.promotion_credits.should_receive(:create).with(attrs)
 
-      @order.update_totals
-      rule = Promotion::Rules::FirstOrder.new
-      rule.stub(:eligible? => true)
-      promotion.rules << rule
-
-      @order.total.to_f.should == 55
-      promotion.create_discount(@order)
-      @order.total.to_f.should == 50
+      promotion.create_discount(order)
     end
   end
 

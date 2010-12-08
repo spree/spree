@@ -28,6 +28,10 @@ module SpreePromo
         attr_accessor :coupon_code
         before_save :process_coupon_code, :if => "@coupon_code"
 
+        def promotion_credit_exists?(credit)
+          promotion_credits.reload.detect { |c| c.source_id == credit.id }
+        end
+
         def process_coupon_code
           coupon = Promotion.find(:first, :conditions => ["UPPER(code) = ?", @coupon_code.upcase])
           if coupon
