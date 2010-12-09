@@ -8,7 +8,7 @@
     :product_search_basic_json => admin_products_url(:format => 'json', :json_format => 'basic', :limit => 10),
     :user_search_basic_json    => admin_users_url(:format => 'json', :json_format => 'basic', :limit => 10)
   }.to_json) %>;
-  
+
   strings = <%= raw(
     [:no_results, :type_to_search, :searching].
     inject({}){|memo, item| {item => t(item) }}.to_json )
@@ -16,7 +16,7 @@
 <% end %>
 
 <%= stylesheet_link_tag 'admin/admin-reset', 'admin/grids', 'admin/admin-typography', 'admin/admin-forms', 'admin/admin-tables', 'admin/admin', 'admin/autocomplete', 'admin/token-input', :cache => 'admin-all' %>
-<%= javascript_include_tag 'jquery-1.4.2.min.js', 'rails', 'jquery-ui', 'jrails', 'jquery.suggest', 'jrails.autocomplete', 'jquery.tokeninput.js', :cache => 'jquery-admin-plugins' %>
+<%= javascript_include_tag 'jquery-1.4.2.min.js', 'rails', 'jquery-ui', 'jquery.suggest', 'jquery.tokeninput.js', :cache => 'jquery-admin-plugins' %>
 <%= javascript_include_tag('jquery.template') unless controller.controller_name == "overview" %>
 <%= javascript_include_tag 'admin', 'nested-attribute', 'zone', 'calculator', 'gateway' %>
 <%= javascript_tag "$ = jQuery;" %>
@@ -26,7 +26,7 @@
 
 <%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.css' %>
 <%= stylesheet_link_tag '/javascripts/jquery.alerts/jquery.alerts.spree.css' %>
-<%#= stylesheet_link_tag 'jquery.autocomplete.css' 
+<%#= stylesheet_link_tag 'jquery.autocomplete.css'
 %>
 
 <%= javascript_tag "jQuery.alerts.dialogClass = 'spree';" %>
