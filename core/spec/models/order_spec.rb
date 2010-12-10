@@ -7,10 +7,14 @@ describe Order do
 
   before { Gateway.stub :current => gateway }
 
-  it "should return ordered products" do
-    line_items = [mock_model(LineItem, :variant => 'product1'), mock_model(LineItem, :variant => 'product2')]
-    order.stub(:line_items => line_items)
-    order.products.should == ['product1', 'product2']
+  context "#products" do
+    it "should return ordered products" do
+      variant1 = mock_model(Variant, :product => "product1")
+      variant2 = mock_model(Variant, :product => "product2")
+      line_items = [mock_model(LineItem, :variant => variant1), mock_model(LineItem, :variant => variant2)]
+      order.stub(:line_items => line_items)
+      order.products.should == ['product1', 'product2']
+    end
   end
 
   context "#save" do
