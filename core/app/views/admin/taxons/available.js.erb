@@ -7,23 +7,23 @@
 </script>
 <h4><%= t('available_taxons') %></h4>
 <table class="index">
-	<thead>
-		<tr>
-			<th><%= t("name") %></th>
-			<th><%= t("path") %></th>
-			<th><%= t("action") %></th>
-		</tr>
-	</thead>
-	<tbody>
+  <thead>
+    <tr>
+      <th><%= t("name") %></th>
+      <th><%= t("path") %></th>
+      <th><%= t("action") %></th>
+    </tr>
+  </thead>
+  <tbody>
     <% @available_taxons.each do |taxon| %>
       <tr id="<%= dom_id(taxon, :sel) %>">
         <td><%= taxon.name %></td>
         <td><%= taxon_path taxon %></td>
-		    <td class="actions">
+        <td class="actions">
           <%= link_to icon('add') + ' ' + t("select"),
                             select_admin_product_taxon_path(@product, taxon),
                            :remote => true, :class => 'iconlink' %>
-		    </td>        
+        </td>        
       </tr>
     <% end %>
     <% if @available_taxons.empty? %>
