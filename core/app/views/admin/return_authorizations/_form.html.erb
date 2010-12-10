@@ -67,7 +67,9 @@
 
     jQuery(document).ready(function(){
       $.each($("td.return_quantity input"), function(i, inpt){
-        $(inpt).delayedObserver(0.5, calculate_rma_price)
+        $(inpt).delayedObserver(function() {
+          calculate_rma_price();
+        }, 0.5);
       });
 
       calculate_rma_price();
