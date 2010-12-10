@@ -1,204 +1,190 @@
 var base_url = "/admin/taxonomies/" + taxonomy_id + "/taxons/";
 var child_url = "/admin/taxonomies/" + taxonomy_id + "/get_children.json"
-var creating = false;
-var delete_confirmed = false;
+var is_cut = false;
 var last_rollback = null;
 
 var handle_ajax_error = function(XMLHttpRequest, textStatus, errorThrown){
-  jQuery.tree.rollback(last_rollback);
-
+  jQuery.jstree.rollback(last_rollback);
   jQuery("#ajax_error").show().html("<strong>" + server_error + "</strong><br/>" + taxonomy_tree_error);
 };
 
-var handle_move = function(li, target, droppped, tree, rb) {
-  last_rollback = rb;
-  var position = jQuery(li).prevAll().length;
-
-  var parent = -1;
-
-  if(droppped=='inside'){
-    parent = target;
-  }else if(droppped=='after'){
-    parent = jQuery(target).parents()[1];
-  }else if(droppped=='before'){
-    parent = jQuery(target).parents()[1];
-  }
+//var handle_move = function(li, target, droppped, tree, rb) {
+var handle_move = function(e, data) {
+  last_rollback = data.rlbk;
+  var position = data.rslt.cp;
+  var node = data.rslt.o;
+  var new_parent = data.rslt.np;
 
   jQuery.ajax({
     type: "POST",
-    url: base_url + li.id + ".json",
-    data: ({_method: "put", "taxon[parent_id]": parent.id, "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
+    url: base_url + node.attr("id") + ".json",
+    data: ({_method: "put", "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error
   });
 
   return true
 };
 
-var handle_dblclick = function(li, tree) {
-  tree.rename();
-};
-
-var handle_create = function(parent, sib, created, tree, rb){
-  last_rollback = rb;
-  creating=true;
-};
-
-var handle_created = function(id,result) {
-  jQuery.tree.reference('taxonomy_tree').selected.attr('id', id);
-}
-
-var handle_rename = function(li, tree, rb) {
-  var name = jQuery(li).children(":first").text();
-  name = jQuery.trim(name);
-
-  if (creating){
-    //actually creating new
-    var position = jQuery(li).prevAll().length;
-    var parent = jQuery(li).parents()[1];
-
-    jQuery.ajax({
-      type: "POST",
-      url: base_url,
-      data: ({"taxon[name]": name, "taxon[parent_id]": parent.id, "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
-      error: handle_ajax_error,
-      success: handle_created
-    });
-
-    creating = false;
-  }else{
-    //just renaming
-    last_rollback = rb;
-
-    jQuery.ajax({
-      type: "POST",
-      url: base_url + li.id + ".json",
-      data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
-      error: handle_ajax_error
-    });
-  }
-};
-
-var handle_before_delete = function(li){
-  if (!delete_confirmed){
-    jConfirm('Are you sure you want to delete this taxon?', 'Confirm Taxon Deletion', function(r) {
-      if(r){
-        delete_confirmed = true;
-        jQuery.tree.reference('taxonomy_tree').remove(li);
-      }
-    });
-  }
-
-  return delete_confirmed;
-};
-
-var handle_delete = function(li, tree, rb){
-  last_rollback = rb;
+var handle_create = function(e, data) {
+  last_rollback = data.rlbk;
+  var node = data.rslt.obj;
+  var name = data.rslt.name;
+  var position = data.rslt.position;
+  var new_parent = data.rslt.parent;
 
   jQuery.ajax({
     type: "POST",
-    url: base_url + li.id,
-    data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
-    error: handle_ajax_error
+    url: base_url,
+    data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
+    error: handle_ajax_error,
+    success: function(id,result) {
+      node.attr('id', id);
+    }
   });
 
-  delete_confirmed = false;
+};
+
+var handle_rename = function(e, data) {
+  last_rollback = data.rlbk;
+  var node = data.rslt.obj;
+  var name = data.rslt.new_name;
+
+  jQuery.ajax({
+    type: "POST",
+    url: base_url + node.attr("id") + ".json",
+    data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
+    error: handle_ajax_error
+  });
+ };
+
+var handle_delete = function(e, data){
+  last_rollback = data.rlbk;
+  var node = data.rslt.obj;
+
+  jConfirm('Are you sure you want to delete this taxon?', 'Confirm Taxon Deletion', function(r) {
+    if(r){
+      jQuery.ajax({
+        type: "POST",
+        url: base_url + node.attr("id"),
+        data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
+        error: handle_ajax_error
+      });
+    }else{
+      jQuery.jstree.rollback(last_rollback);
+      last_rollback = null;
+    }
+  });
+
 };
 
 jQuery(document).ready(function(){
-  conf = {
-    data : {
-      type : "json",
-      async : true,
-      opts : {
-        method : "GET",
-        url : child_url
-      }
-    },
-    ui : {
-      theme_name : "apple"
-    },
-    lang : {
-        new_node    : new_taxon,
-        loading     : loading + "..."
-      },
-    plugins : {
-      contextmenu : {
-        items : {
-          // get rid of the remove item
-          remove :{
-            visible : function (NODE, TREE_OBJ) { if(jQuery(NODE[0]).attr('rel')=="root") return false; return TREE_OBJ.check("renameable", NODE); },
-          },
-          rename :{
-            visible : function (NODE, TREE_OBJ) { if(jQuery(NODE[0]).attr('rel')=="root") return false; return TREE_OBJ.check("renameable", NODE); },
-          },
-          cut :{
-              id      : "cut",
-              label   : "Cut",
-              visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return true; },
-              action  : function (NODE, TREE_OBJ) { TREE_OBJ.cut(NODE); jQuery(NODE).hide(); },
-              separator_before : true
-          },
-          paste :{
-              id      : "paste",
-              label   : "Paste",
-              visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return true; },
-              action  : function (NODE, TREE_OBJ) { TREE_OBJ.open_branch(NODE); TREE_OBJ.paste(NODE, "inside"); jQuery(NODE).find("li").show(); }
-          },
-          edit :{
-              id      : "edit",
-              label   : "Edit",
-              visible : function (NODE, TREE_OBJ) { if(NODE.length != 1 || NODE[0].id == 'root') return false; return TREE_OBJ.check("renameable", NODE); },
-              action  : function (NODE, TREE_OBJ) { jQuery.each(NODE, function () { window.location = base_url + this.id + "/edit/"; }); }
-          }
-
-        }
-      }
-    },
-    rules : {
-      // only nodes of type root can be top level nodes
-      valid_children : [ "root" ]
-    },
-    types : {
-      // all node types inherit the "default" node type
-      "taxon" : {},
-      "root" : {
-        deletable : false,
-        renameable : false,
-        draggable : false,
-        valid_children : [ "taxon" ]
-      }
-    },
-    callback : {
-      onmove: handle_move,
-      ondblclk: handle_dblclick,
-      onrename: handle_rename,
-      oncreate: handle_create,
-      beforedelete: handle_before_delete,
-      ondelete: handle_delete,
-      beforedata: function (n, t) {
-        if(n == false) t.settings.data.opts.static = initial;
-        else t.settings.data.opts.static = false;
-
-        return { parent_id : $(n).attr("id") || 0 };
-        }
-
-    }
-  }
-
-
-  conf = {
+  var conf = {
     json_data : {
-      ajax : {
-        url : "/static/v.1.0rc2/_docs/_json_data.json",
-        data : function (n) {
-          return { id : n.attr ? n.attr("id") : 0 };
+      "data" : initial,
+      "ajax" : {
+        "url" : child_url,
+        "data" : function (n) {
+          return { parent_id : n.attr ? n.attr("id") : 0 };
         }
       }
     },
-    plugins : [ "themes", "json_data" ]
+    "themes" : {
+      "theme" : "apple",
+      "url" : "/javascripts/jsTree/themes/apple/style.css"
+    },
+    "strings" : {
+      "new_node" : new_taxon,
+      "loading" : loading + "..."
+    },
+		"crrm" : {
+			"move" : {
+				"check_move" : function (m) {
+          var position = m.cp;
+          var node = m.o;
+          var new_parent = m.np;
+
+          if(!new_parent) return false; //no parent
+
+          if(node.attr("rel")=="root") return false; //can't drag root
+
+          if(new_parent.attr("id")=="taxonomy_tree" && position==0) return false; // can't drop before root
+
+          return true;
+
+				}
+			}
+		},
+    "contextmenu" : {
+       "items" : function(obj) {
+          var id_of_node = obj.attr("id");
+          var type_of_node = obj.attr("rel");
+          var menu = {};
+          if(type_of_node == "root") {
+            menu = {
+              "create" : {
+                "label"            : "Create",
+                "action"           : function (obj) { this.create(obj); }
+              },
+               "paste" : {
+                 "separator_before" : true,
+                 "label"            : "Paste",
+                 "action"           : function (obj) { is_cut = false; this.paste(obj); },
+                 "_disabled"        : is_cut == false
+              },
+              "edit" : {
+                "separator_before" : true,
+                "label"            : "Edit",
+                "action"           : function (obj) { window.location = base_url + obj.attr("id") + "/edit/"; }
+              }
+            }
+          } else {
+            menu =  {
+              "create" : {
+                "label"            : "Create",
+                "action"           : function (obj) { this.create(obj); }
+              },
+              "rename" : {
+                "label"            : "Rename",
+                "action"           : function (obj) { this.rename(obj); }
+              },
+              "remove" : {
+                "label"            : "Remove",
+                "action"           : function (obj) { this.remove(obj); }
+              },
+              "cut" : {
+                "separator_before" : true,
+                "label"            : "Cut",
+                "action"           : function (obj) { is_cut = true; this.cut(obj); }
+              },
+              "paste" : {
+                "label"            : "Paste",
+                "action"           : function (obj) { is_cut = false; this.paste(obj); },
+                "_disabled"        : is_cut == false
+              },
+              "edit" : {
+                "separator_before" : true,
+                "label"            : "Edit",
+                "action"           : function (obj) { window.location = base_url + obj.attr("id") + "/edit/"; }
+              }
+                  }
+          }
+          return menu;
+      }
+    },
+
+    "plugins" : [ "themes", "json_data", "dnd", "crrm", "contextmenu"]
   }
 
-  jQuery("#taxonomy_tree").jstree(conf);
+  jQuery("#taxonomy_tree").jstree(conf)
+    .bind("move_node.jstree", handle_move)
+    .bind("remove.jstree", handle_delete)
+    .bind("create.jstree", handle_create)
+    .bind("rename.jstree", handle_rename);
+
+  jQuery("#taxonomy_tree").delegate("a", "dblclick", function (e) {
+   jQuery("#taxonomy_tree").jstree("rename", this)
+  });
+
 
   jQuery(document).keypress(function(e){
     //surpress form submit on enter/return
@@ -207,3 +193,5 @@ jQuery(document).ready(function(){
     }
   });
 });
+
+
