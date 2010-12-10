@@ -185,7 +185,20 @@ jQuery(document).ready(function(){
     }
   }
 
-  jQuery("#taxonomy_tree").tree(conf);
+
+  conf = {
+    json_data : {
+      ajax : {
+        url : "/static/v.1.0rc2/_docs/_json_data.json",
+        data : function (n) {
+          return { id : n.attr ? n.attr("id") : 0 };
+        }
+      }
+    },
+    plugins : [ "themes", "json_data" ]
+  }
+
+  jQuery("#taxonomy_tree").jstree(conf);
 
   jQuery(document).keypress(function(e){
     //surpress form submit on enter/return

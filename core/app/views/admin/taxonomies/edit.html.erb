@@ -9,7 +9,7 @@
 <%= form_for(:taxon, :url => admin_taxonomy_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
 	  <div>
-	    <label><%= t("tree")%></label><br />	
+	    <label><%= t("tree")%></label><br />
       <div id="taxonomy_tree" class="tree"></div>
   	</div>
   	<p id="progress" style="display:none;">
@@ -26,24 +26,24 @@
 <% content_for :head do %>
   <script type="text/javascript">
     var initial = [
-	   	{ attributes : 
-	   	  { "id" : "<%= @taxonomy.root.id %>" }, 
-			data : "<%= @taxonomy.root.name %>",
-			state : "open",
-			children : [
+	   	{ "attr" :
+	   	  { "id" : "<%= @taxonomy.root.id %>", "rel" : "root" },
+			"data" : "<%= @taxonomy.root.name %>",
+			"state" : "open",
+			"children" : [
 				<% @taxonomy.root.children.each_with_index do |taxon,i| %>
 					{
-						attributes :
-						{ id : "<%= taxon.id %>"},
-						data : "<%= taxon.name %>"
+						"attr" :
+						{ "id" : "<%= taxon.id %>"},
+						"data" : "<%= taxon.name %>"
 						<% unless taxon.children.empty? %>
-							,state : "closed"
+							,"state" : "closed"
 						<% end %>
 					}<%= "," if i < (@taxonomy.root.children.size - 1) %>
 				<% end %>
 			]
       	}
     ];
-    
+
   </script>
 <% end %>

@@ -1,34 +1,60 @@
-/* BACKGROUND */
-.tree-apple .ltr, .tree-apple .rtl { background:url("bg.jpg") left top repeat; min-width:100%; _width:100%; margin-left:0; margin-right:0; display:table; }
-.tree-apple .ltr > li.leaf, .tree-apple .rtl > li.leaf { background-image:none; }
+/*
+ * jsTree apple theme 1.0
+ * Supported features: dots/no-dots, icons/no-icons, focused, loading
+ * Supported plugins: ui (hovered, clicked), checkbox, contextmenu, search
+ */
 
-/* LOCKED */
-.tree-apple .locked li a { color:gray; }
-/* DOTS */
-.tree-apple ul { background-position:6px 1px; background-repeat:repeat-y; background-image:url(data:image/gif;base64,R0lGODlhAgACAIAAAB4dGf///yH5BAEAAAEALAAAAAACAAIAAAICRF4AOw==); _background-image:url("dot_for_ie.gif"); *background-image:url("dot_for_ie.gif"); }
-.tree-apple li { background-position:-64px -16px; background-repeat:no-repeat; background-image:url("icons.png"); }
-/* NO DOTS */
-.tree-apple .no_dots, .tree-apple .no_dots ul { background:transparent; }
-.tree-apple .no_dots li.leaf { background-image:none; background-color:transparent; }
-/* OPEN or CLOSED */
-.tree-apple li.open { background:url("icons.png") -32px -48px no-repeat; }
-.tree-apple li.closed, #jstree-dragged.tree-apple li li.open { background:url("icons.png") -48px -32px no-repeat; }
-#jstree-marker { background-image:url("icons.png"); }
-/* DEFAULT, HOVER, CLICKED, LOADING STATES */
-.tree-apple li a, .tree-apple li span { border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; }
-.tree-apple li a:hover, .tree-apple li a.hover, .tree-apple li span { background: #e7f4f9; border:1px solid #d8f0fa; padding:0px 3px 0px 3px; }
-.tree-apple li a.clicked, .tree-apple li a.clicked:hover, .tree-apple li span.clicked { background: #beebff; border:1px solid #99defd; padding:0px 3px 0px 3px; }
-/* ICONS */
-.tree-apple ins { background-image:url("icons.png"); background-position:0 0; background-repeat:no-repeat; }
-.tree-apple ul li a.loading ins { background-image:url("throbber.gif") !important; background-position:0 0 !important; } /* UL is added to make selector stronger */
-.tree-apple li a ins.forbidden { background-position:-16px -16px; }
-.tree-apple .locked li a ins { background-position:0 -48px; }
-.tree-apple li span ins { background-position:-16px 0; }
-#jstree-dragged.tree-apple ins { background:url("icons.png") -16px -32px no-repeat; }
-#jstree-dragged.tree-apple ins.forbidden { background:url("icons.png") -16px -16px no-repeat; }
+.jstree-apple > ul { background:url("bg.jpg") left top repeat; }
+.jstree-apple li, 
+.jstree-apple ins { background-image:url("d.png"); background-repeat:no-repeat; background-color:transparent; }
+.jstree-apple li { background-position:-90px 0; background-repeat:repeat-y;  }
+.jstree-apple li.jstree-last { background:transparent; }
+.jstree-apple .jstree-open > ins { background-position:-72px 0; }
+.jstree-apple .jstree-closed > ins { background-position:-54px 0; }
+.jstree-apple .jstree-leaf > ins { background-position:-36px 0; }
 
-/* CONTEXT MENU */
-.tree-apple-context a ins { background-image:url("icons.png"); background-repeat:no-repeat; background-position:-64px -64px; }
-.tree-apple-context a ins.create { background-position:0 -16px; }
-.tree-apple-context a ins.rename { background-position:-16px 0px; }
-.tree-apple-context a ins.remove { background-position:0 -32px; }
+.jstree-apple a { border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-shadow:1px 1px 1px white; }
+.jstree-apple .jstree-hovered { background:#e7f4f9; border:1px solid #d8f0fa; padding:0 3px 0 1px; text-shadow:1px 1px 1px silver; }
+.jstree-apple .jstree-clicked { background:#beebff; border:1px solid #99defd; padding:0 3px 0 1px; }
+.jstree-apple a .jstree-icon { background-position:-56px -20px; }
+.jstree-apple a.jstree-loading .jstree-icon { background:url("throbber.gif") center center no-repeat !important; }
+
+.jstree-apple.jstree-focused { background:white; }
+
+.jstree-apple .jstree-no-dots li, 
+.jstree-apple .jstree-no-dots .jstree-leaf > ins { background:transparent; }
+.jstree-apple .jstree-no-dots .jstree-open > ins { background-position:-18px 0; }
+.jstree-apple .jstree-no-dots .jstree-closed > ins { background-position:0 0; }
+
+.jstree-apple .jstree-no-icons a .jstree-icon { display:none; }
+
+.jstree-apple .jstree-search { font-style:italic; }
+
+.jstree-apple .jstree-no-icons .jstree-checkbox { display:inline-block; }
+.jstree-apple .jstree-no-checkboxes .jstree-checkbox { display:none !important; }
+.jstree-apple .jstree-checked > a > .jstree-checkbox { background-position:-38px -19px; }
+.jstree-apple .jstree-unchecked > a > .jstree-checkbox { background-position:-2px -19px; }
+.jstree-apple .jstree-undetermined > a > .jstree-checkbox { background-position:-20px -19px; }
+.jstree-apple .jstree-checked > a > .checkbox:hover { background-position:-38px -37px; }
+.jstree-apple .jstree-unchecked > a > .jstree-checkbox:hover { background-position:-2px -37px; }
+.jstree-apple .jstree-undetermined > a > .jstree-checkbox:hover { background-position:-20px -37px; }
+
+#vakata-dragged.jstree-apple ins { background:transparent !important; }
+#vakata-dragged.jstree-apple .jstree-ok { background:url("d.png") -2px -53px no-repeat !important; }
+#vakata-dragged.jstree-apple .jstree-invalid { background:url("d.png") -18px -53px no-repeat !important; }
+#jstree-marker.jstree-apple { background:url("d.png") -41px -57px no-repeat !important; }
+
+.jstree-apple a.jstree-search { color:aqua; }
+
+#vakata-contextmenu.jstree-apple-context, 
+#vakata-contextmenu.jstree-apple-context li ul { background:#f0f0f0; border:1px solid #979797; -moz-box-shadow: 1px 1px 2px #999; -webkit-box-shadow: 1px 1px 2px #999; box-shadow: 1px 1px 2px #999; }
+#vakata-contextmenu.jstree-apple-context li { }
+#vakata-contextmenu.jstree-apple-context a { color:black; }
+#vakata-contextmenu.jstree-apple-context a:hover, 
+#vakata-contextmenu.jstree-apple-context .vakata-hover > a { padding:0 5px; background:#e8eff7; border:1px solid #aecff7; color:black; -moz-border-radius:2px; -webkit-border-radius:2px; border-radius:2px; }
+#vakata-contextmenu.jstree-apple-context li.jstree-contextmenu-disabled a, 
+#vakata-contextmenu.jstree-apple-context li.jstree-contextmenu-disabled a:hover { color:silver; background:transparent; border:0; padding:1px 4px; }
+#vakata-contextmenu.jstree-apple-context li.vakata-separator { background:white; border-top:1px solid #e0e0e0; margin:0; }
+#vakata-contextmenu.jstree-apple-context li ul { margin-left:-4px; }
+
+/* TODO: IE6 support - the `>` selectors */
