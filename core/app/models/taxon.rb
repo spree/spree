@@ -16,14 +16,16 @@ class Taxon < ActiveRecord::Base
 
   # indicate which filters should be used for a taxon
   # this method should be customized to your own site
+  # if you want filtering in your site, override this method
+  # and take a look at core/lib/product_filters.rb module
   include ::ProductFilters  # for detailed defs of filters
   def applicable_filters
     fs  = []
     # fs << ProductFilters.taxons_below(self)
     ## unless it's a root taxon? left open for demo purposes
     fs += [
-      ProductFilters.price_filter,
-      ProductFilters.brand_filter,
+      #ProductFilters.price_filter,
+      #ProductFilters.brand_filter,
       #ProductFilters.selective_brand_filter(self) 
       ]
   end
