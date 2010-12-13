@@ -28,8 +28,13 @@ class Admin::ShipmentsController < Admin::BaseController
   destroy.success.wants.js { render_js_for_destroy }
 
   def fire
-    @shipment.send("#{params[:e]}!")
-    self.notice = t('shipment_updated')
+    event = params[:e]
+    if @shipment.send("can_#{event}?")
+      @shipment.send("#{event}!")
+      self.notice = t('shipment_updated')
+    else
+      flash[:error] = t('cannot_perform_requested_transition')
+    end
     redirect_to :back
   end
 

@@ -40,10 +40,15 @@ class Admin::PaymentsController < Admin::BaseController
     # TODO - possible security check here
     load_object
     return unless event = params[:e] and @payment.source
-    Payment.transaction do
-      @payment.source.send("#{event}", @payment)
+
+    if @payment.source.send("can_#{event}?", @payment)
+      Payment.transaction do
+        @payment.source.send("#{event}", @payment)
+      end
+      self.notice = t('payment_updated')
+    else
+      flash[:error] = t('cannot_perform_requested_transition')
     end
-    self.notice = t('payment_updated')
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
   ensure
