@@ -2,7 +2,7 @@
 
 <p><%= t(:instructions_to_reset_password) %></p>
 
-<%= form_tag user_password_path do %>
+<%= form_for User.new, :as => :user, :url => user_password_path do |f| %>
   <p>
     <label><%= t(:email) %>:</label><br />
     <%= f.email_field :email %>

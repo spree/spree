@@ -12,6 +12,11 @@ When /^I sign in as "(.*)\/(.*)"$/ do |email, password|
   And %{I press "Log In"}
 end
 
+Given /^a user exists with an email of "(.*)"$/ do |email|
+  user = User.anonymous!
+  user.update_attribute("email", email)
+end
+
 Given /^no user exists with an email of "(.*)"$/ do |email|
   User.find_by_email(email).should be_nil
 end
