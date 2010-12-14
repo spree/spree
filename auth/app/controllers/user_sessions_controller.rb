@@ -33,7 +33,7 @@ class UserSessionsController < Devise::SessionsController
   end
 
   def destroy
-    session.clear
+    user_session.clear
     super
   end
 
