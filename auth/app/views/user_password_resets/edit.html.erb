@@ -1,13 +1,15 @@
+<%= render "shared/error_messages", :target => @user %>
 <h1><%= t(:change_my_password) %></h1>
- 
+
 <%= form_for @user, :url => user_password_path, :html => {:method => :put} do |f| %>
-  <%= render "shared/error_messages", :target => @user %>
-  <%= f.label :password %><br />
-  <%= f.password_field :password %><br />
-  <br />
-  <%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %><br />
-  <br />
+  <p>
+    <%= f.label :password %><br />
+    <%= f.password_field :password %><br />
+  </p>
+  <p>
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation %><br />
+  </p>
   <%= f.hidden_field :reset_password_token %>
   <%= f.submit t("update_password") %>
 <% end %>
