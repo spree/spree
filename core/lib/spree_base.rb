@@ -62,8 +62,8 @@ module SpreeBase
     private
     
     def redirect_back_or_default(default)
-      redirect_to(session[:return_to] || default)
-      session[:return_to] = nil
+      redirect_to(session["user_return_to"] || default)
+      session["user_return_to"] = nil
     end
     
     def instantiate_controller_and_action_names

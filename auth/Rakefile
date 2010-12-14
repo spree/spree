@@ -44,8 +44,8 @@ gems
 
     def install_gems
       inside "test_app" do
-        run 'rake spree_core:install'
         run 'rake spree_auth:install'
+        run 'rake spree_core:install'
       end
     end
 

@@ -6,12 +6,11 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 group :test do
   gem 'rspec-rails', '~> 2.1.0'
   gem 'factory_girl_rails'
-  gem 'fabrication'
 end
 
 group :cucumber do
   gem 'cucumber-rails', '~> 0.3.2'
   gem 'database_cleaner', '~> 0.5.2'
-  gem 'capybara', '~> 0.3.9', :require => false
+  gem 'jbd-webrat'
 end
 

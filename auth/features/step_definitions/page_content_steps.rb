@@ -1,15 +1,15 @@
 Then /^I should see "([^\"]*)" translation$/ do |key|
-  page.should have_content(I18n.t(key))
+  response.should contain(I18n.t(key))
 end
 
 Then /^I should be signed in$/ do
-  page.should have_content("Logout")
+  response.should contain("Logout")
 end
 
 Then /^I should be signed out$/ do
-  page.should have_content("Log In")
+  response.should contain("Log In")
 end
 
 Then /^I should see error messages$/ do
-  page.should have_css("#errorExplanation")
+  response.should contain("errors prohibited this record from being saved")
 end

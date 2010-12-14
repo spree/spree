@@ -1,7 +1,7 @@
 class LocaleController < Spree::BaseController
   def set
     if request.referer && request.referer.starts_with?("http://" + request.host)
-      session[:return_to] = request.referer
+      session["user_return_to"] = request.referer
     end
     if params[:locale] && I18n.available_locales.include?(params[:locale].to_sym)
       session[:locale] = I18n.locale = params[:locale].to_sym

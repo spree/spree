@@ -3,23 +3,31 @@ Feature: Sign in
   A User
   Should be able to sign in
 
+  Background:
+    Given I am signed up as "email@person.com/secret"
+    And I go to the sign in page
+
   Scenario: User signs in successfully
-    Given I am signed up as "email@person.com/password"
-    When I go to the sign in page
-    And I sign in as "email@person.com/password"
+    Given I sign in as "email@person.com/secret"
     Then I should see "Logged in successfully"
+    Then I should be on the products page
     And I should be signed in
 
   Scenario: User is not signed up
-    Given no user exists with an email of "email@person.com"
-    When I go to the sign in page
-    And I sign in as "email@person.com/password"
+    Given I sign in as "email@person.com/wrong_password"
     Then I should see "Invalid email or password"
     And I should be signed out
 
   Scenario: User enters wrong password
-    Given I am signed up as "email@person.com/password"
-    When I go to the sign in page
-    And I sign in as "email@person.com/wrongpassword"
-    Then I should see "Invalid email or password"
+    Given I sign in as "email@person.com/wrongpassword"
+    Then I should be on the new user session page
+    And I should see "Invalid email or password"
     And I should be signed out
+
+  Scenario: User requests a restricted page with the correct password
+    Given I have an admin account of "admin@person.com/password"
+    When I go to the admin page
+    And I should be on the login page
+    Then I sign in as "admin@person.com/password"
+    And I should see "Logged in successfully"
+    And I should be on the admin page
