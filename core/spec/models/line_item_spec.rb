@@ -87,5 +87,28 @@ describe LineItem do
       end
 
     end
+
+
+    context "with inventory units" do
+      let(:inventory_unit) { mock_model(LineItem, :variant_id => variant.id, :shipped? => false) }
+      before do
+        order.stub(:inventory_units => [inventory_unit])
+        line_item.stub(:order => order, :variant_id => variant.id)
+      end
+
+      it "should allow destroy when no units have shipped" do
+        line_item.should_receive(:remove_inventory)
+        line_item.destroy.should be_true
+      end
+
+      it "should not allow destroy when units have shipped" do
+        inventory_unit.stub(:shipped? => true)
+        line_item.should_not_receive(:remove_inventory)
+        line_item.destroy.should be_false
+      end
+
+    end
+
+
   end
 end

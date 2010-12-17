@@ -6,7 +6,6 @@ class LineItem < ActiveRecord::Base
   has_one :product, :through => :variant
 
   before_validation :copy_price
-  #before_destroy :ensure_not_shipped
 
   validates :variant, :presence => true
   validates :quantity, :numericality => { :only_integer => true, :message => I18n.t("validation.must_be_int") }
@@ -16,7 +15,7 @@ class LineItem < ActiveRecord::Base
   attr_accessible :quantity
 
   before_save :update_inventory
-  before_destroy :remove_inventory
+  before_destroy :ensure_not_shipped, :remove_inventory
 
   after_save :update_order
   after_destroy :update_order
@@ -86,11 +85,11 @@ class LineItem < ActiveRecord::Base
       order.update!
     end
 
-  # def ensure_not_shipped
-  #   if shipped_count = order.shipped_units.nil? ? nil : order.shipped_units[variant]
-  #     errors.add_to_base I18n.t("cannot_destory_line_item_as_inventory_units_have_shipped")
-  #     return false
-  #   end
-  # end
+    def ensure_not_shipped
+      if order.try(:inventory_units).to_a.any?{|unit| unit.variant_id == variant_id && unit.shipped?}
+        errors.add :base, I18n.t("cannot_destory_line_item_as_inventory_units_have_shipped")
+        return false
+     end
+  end
 end
 
