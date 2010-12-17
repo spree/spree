@@ -43,7 +43,7 @@ class Order < ActiveRecord::Base
 
   attr_accessor :out_of_stock_items
 
-  class_inheritable_accessor :update_hooks
+  class_attribute :update_hooks
   self.update_hooks = Set.new
 
   # Use this method in other gems that wish to register their own custom logic that should be called after Order#updat

@@ -102,7 +102,7 @@ module Railslove
 end
 
 class ActiveRecord::Base
-  class_inheritable_accessor :permalink_options
+  class_attribute :permalink_options
   self.permalink_options = {:param => :id}
 
   #default finders these are overwritten if you use make_permalink in your model

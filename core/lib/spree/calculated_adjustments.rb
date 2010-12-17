@@ -5,7 +5,7 @@ module Spree::CalculatedAdjustments
       accepts_nested_attributes_for :calculator
       validates :calculator, :presence => true if options[:require]
 
-      class_inheritable_accessor :calculators
+      class_attribute :calculators
       self.calculators = Set.new
       # @available_calculators = []
       def register_calculator(calculator)
