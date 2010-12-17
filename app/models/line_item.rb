@@ -54,7 +54,7 @@ class LineItem < ActiveRecord::Base
 
   private
   def ensure_not_shipped
-    if shipped_count = order.shipped_units.nil? ? nil : order.shipped_units[variant]
+    if shipped_count = order.try(:shipped_units).nil? ? nil : order.shipped_units[variant]
       errors.add_to_base I18n.t("cannot_destory_line_item_as_inventory_units_have_shipped")
       return false
     end
