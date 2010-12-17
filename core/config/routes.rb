@@ -181,6 +181,8 @@ Rails.application.routes.draw do
     resources :mail_methods
   end
 
+  match '/admin' => 'admin/orders#index', :as => :admin
+
   match '/content/cvv' => 'content#cvv'
 
   #RAILS3 TODO - we should disable this by default
