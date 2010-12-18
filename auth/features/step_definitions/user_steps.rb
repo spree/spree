@@ -32,5 +32,5 @@ end
 
 
 Then /^I should be logged out$/ do
-  response.should contain("Log In")
+  page.should have_content("Log In")
 end

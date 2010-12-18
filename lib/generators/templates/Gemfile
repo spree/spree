@@ -9,8 +9,8 @@ group :test do
 end
 
 group :cucumber do
-  gem 'cucumber-rails', '~> 0.3.2'
+  gem 'cucumber-rails'
   gem 'database_cleaner', '~> 0.5.2'
-  gem 'jbd-webrat'
+  gem 'nokogiri'
+  gem 'capybara'
 end
-

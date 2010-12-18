@@ -11,15 +11,13 @@ gemspec
 
 group :test do
   gem 'rspec-rails', '~> 2.1.0'
-  gem 'nokogiri'
   gem 'factory_girl_rails'
 end
 
 group :cucumber do
-  gem 'cucumber-rails', '~> 0.3.2'
-  gem 'nokogiri'
-  gem 'jbd-webrat'
+  gem 'cucumber-rails'
+  gem 'capybara'
   gem 'launchy'
+  gem 'nokogiri'
   gem 'database_cleaner', '~> 0.5.2'
-  gem "selenium-client", ">= 1.2.18"
 end
