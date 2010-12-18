@@ -2,13 +2,7 @@ require 'spec_helper'
 
 describe Order do
   let(:order) { Order.new }
-  context "#token" do
-    it "should be the same as the user's token" do
-      user = mock_model(User, :token => "foo")
-      order.user = user
-      order.token.should == user.token
-    end
-  end
+
   context "#associate_user!" do
     let(:user) { mock_model User, :email => 'spree@example.com', :anonymous? => false }
     before { order.stub(:save! => true) }
@@ -40,4 +34,12 @@ describe Order do
       order.should_not be_valid
     end
   end
+
+  context "#create" do
+    it "should create a token permission" do
+      order.save
+      order.token.should_not be_nil
+    end
+  end
+
 end

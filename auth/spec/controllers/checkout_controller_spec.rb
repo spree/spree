@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe CheckoutController do
   let(:order) { Order.new }
-  let(:user) { mock_model User } #, :email => "foo@example.com" }
+  let(:user) { mock_model User }
+  let(:token) { "some_token" }
 
   before do
     order.stub :checkout_allowed? => true, :user => user, :new_record? => false
@@ -65,8 +66,8 @@ describe CheckoutController do
     end
 
     it "should check if the user is authorized for :edit" do
-      controller.should_receive(:authorize!).with(:edit, order)
-      get :edit, { :state => "confirm" }
+      controller.should_receive(:authorize!).with(:edit, order, token)
+      get :edit, { :state => "confirm" }, { :access_token => token }
     end
 
   end
@@ -75,8 +76,8 @@ describe CheckoutController do
   context "#update" do
 
     it "should check if the user is authorized for :edit" do
-      controller.should_receive(:authorize!).with(:edit, order)
-      post :update, {:state => "confirm"}
+      controller.should_receive(:authorize!).with(:edit, order, token)
+      post :update, { :state => "confirm" }, { :access_token => token }
     end
 
     context "when save successful" do
@@ -138,8 +139,8 @@ describe CheckoutController do
     end
 
     it "should check if the user is authorized for :edit" do
-      controller.should_receive(:authorize!).with(:edit, order)
-      get :registration
+      controller.should_receive(:authorize!).with(:edit, order, token)
+      get :registration, {}, { :access_token => token }
     end
 
   end
@@ -170,8 +171,8 @@ describe CheckoutController do
 
     it "should check if the user is authorized for :edit" do
       order.stub :update_attributes => true
-      controller.should_receive(:authorize!).with(:edit, order)
-      put :update_registration, { :order => {:email => "jobs@railsdog.com"} }
+      controller.should_receive(:authorize!).with(:edit, order, token)
+      put :update_registration, { :order => {:email => "jobs@railsdog.com"} }, { :access_token => token }
     end
 
   end

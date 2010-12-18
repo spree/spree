@@ -6,14 +6,15 @@ OrdersController.class_eval do
 
   def store_guest
     return if current_user
-    session[:guest_token] ||= @order.user.persistence_token
+    session[:access_token] ||= @order.token
   end
 
   def check_authorization
-    session[:guest_token] ||= params[:token]
+    session[:access_token] ||= params[:token]
     order = current_order || Order.find_by_number(params[:id])
+
     if order
-      authorize! :edit, order
+      authorize! :edit, order, session[:access_token]
     else
       authorize! :create, Order
     end

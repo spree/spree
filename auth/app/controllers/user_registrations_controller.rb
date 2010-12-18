@@ -1,8 +1,7 @@
 class UserRegistrationsController < Devise::RegistrationsController
   include SpreeBase
-  include Spree::AuthUser
   helper :users, 'spree/base'
-  
+
   before_filter :check_permissions, :only => [:edit, :update]
   skip_before_filter :require_no_authentication
 
@@ -15,7 +14,7 @@ class UserRegistrationsController < Devise::RegistrationsController
   def create
     @user = build_resource(params[:user])
     logger.debug(@user)
-    if resource.save      
+    if resource.save
       set_flash_message(:notice, :signed_up)
       sign_in_and_redirect(:user, @user)
     else
@@ -47,11 +46,11 @@ class UserRegistrationsController < Devise::RegistrationsController
   def cancel
     super
   end
-  
+
   protected
-  
+
   def check_permissions
     authorize!(:create, resource)
   end
-  
+
 end

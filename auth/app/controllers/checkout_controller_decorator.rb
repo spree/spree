@@ -21,7 +21,7 @@ CheckoutController.class_eval do
 
   private
   def check_authorization
-    authorize!(:edit, current_order)
+    authorize!(:edit, current_order, session[:access_token])
   end
 
   # Introduces a registration step whenever the +registration_step+ preference is true.

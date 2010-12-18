@@ -38,11 +38,11 @@ class Ability
       end
       can :create, User
       #############################
-      can :read, Order do |order|
-        order.user == user
+      can :read, Order do |order, token|
+        order.user == user || order.token && token == order.token
       end
-      can :update, Order do |order|
-        order.user == user
+      can :update, Order do |order, token|
+        order.user == user || order.token && token == order.token
       end
       can :create, Order
       #############################

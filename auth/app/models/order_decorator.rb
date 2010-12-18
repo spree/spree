@@ -1,5 +1,5 @@
 Order.class_eval do
-  delegate :token, :to => :user
+  token_resource
 
   # Associates the specified user with the order and destroys any previous association with guest user if
   # necessary.

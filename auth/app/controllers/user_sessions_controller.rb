@@ -3,7 +3,6 @@ class UserSessionsController < Devise::SessionsController
   helper :users, 'spree/base'
 
   include Spree::CurrentOrder
-  include Spree::AuthUser
 
   after_filter :associate_user, :only => :create
 

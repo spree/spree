@@ -1,7 +1,4 @@
 Spree::BaseController.class_eval do
-  before_filter :check_guest
-
-  include Spree::AuthUser
 
   # graceful error handling for cancan authorization exceptions
   rescue_from CanCan::AccessDenied do |exception|
@@ -9,10 +6,6 @@ Spree::BaseController.class_eval do
   end
 
   private
-  # authorize the user as a guest if the have a valid token
-  def check_guest
-    session[:guest_token] ||= params[:token]
-  end
 
   # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
   # Override this method in your controllers if you want to have special behavior in case the user is not authorized

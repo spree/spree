@@ -20,6 +20,9 @@ describe Ability do
 
   let(:user) { User.new }
   let(:ability) { Ability.new(user) }
+  let(:token) { nil }
+
+  TOKEN = "token123"
 
   after(:each) { Ability.abilities = Set.new }
   context "register_ability" do
@@ -35,13 +38,16 @@ describe Ability do
 
   shared_examples_for "access granted" do
     it "should allow read" do
-      ability.should be_able_to(:read, resource)
+      ability.should be_able_to(:read, resource, token) if token
+      ability.should be_able_to(:read, resource) unless token
     end
     it "should allow create" do
-      ability.should be_able_to(:create, resource)
+      ability.should be_able_to(:create, resource, token) if token
+      ability.should be_able_to(:create, resource) unless token
     end
     it "should allow update" do
-      ability.should be_able_to(:update, resource)
+      ability.should be_able_to(:update, resource, token) if token
+      ability.should be_able_to(:update, resource) unless token
     end
   end
 
@@ -141,6 +147,7 @@ describe Ability do
 
   context "for Order" do
     let(:resource) { Order.new }
+
     context "requested by same user" do
       before(:each) { resource.user = user }
       it_should_behave_like "access granted"
@@ -148,6 +155,17 @@ describe Ability do
     end
     context "requested by other user" do
       before(:each) { resource.user = User.new }
+      it_should_behave_like "create only"
+    end
+    context "requested with proper token" do
+      let(:token) { "TOKEN123" }
+      before(:each) { resource.stub :token => "TOKEN123" }
+      it_should_behave_like "access granted"
+      it_should_behave_like "no index allowed"
+    end
+    context "requested with inproper token" do
+      let(:token) { "FAIL" }
+      before(:each) { resource.stub :token => "TOKEN123" }
       it_should_behave_like "create only"
     end
   end
