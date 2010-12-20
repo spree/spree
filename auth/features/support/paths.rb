@@ -18,6 +18,8 @@ module NavigationHelpers
       new_user_password_path
     when /the admin home page/
       admin_path
+    when /my account page/
+      '/account'
 
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
