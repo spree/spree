@@ -14,8 +14,6 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :persistence_token
 
-  alias_attribute :token, :persistence_token
-
   # has_role? simply needs to return true or false whether a user has a role or not.
   def has_role?(role_in_question)
     roles.any? { |role| role.name == role_in_question.to_s }
