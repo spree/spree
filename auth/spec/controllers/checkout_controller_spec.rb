@@ -96,7 +96,7 @@ describe CheckoutController do
 
         context "with a guest user" do
           before do
-            user.stub :token => "ABC"
+            order.stub :token => "ABC"
             user.stub :has_role? => true
             controller.stub :current_user => nil
           end
