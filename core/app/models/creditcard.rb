@@ -28,11 +28,11 @@ class Creditcard < ActiveRecord::Base
   end
 
   def first_name?
-    !self.first_name.blank?
+    self.first_name.present?
   end
 
   def last_name?
-    !self.last_name.blank?
+    self.last_name.present?
   end
 
   def name
