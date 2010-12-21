@@ -6,9 +6,7 @@ module SpreeBase
 
     # can be used in views as well as controllers.
     # e.g. <% title = 'This is a custom title for this view' %>
-    def title=(title)
-      @title = title
-    end
+    attr_writer :title
 
     def title
       title_string = @title.blank? ? accurate_title : @title
