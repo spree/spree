@@ -282,8 +282,9 @@ class Order < ActiveRecord::Base
   end
 
   def name
-    address = bill_address || ship_address
-    "#{address.firstname} #{address.lastname}" if address
+    if (address = bill_address || ship_address)
+      "#{address.firstname} #{address.lastname}"
+    end
   end
 
   def creditcards
