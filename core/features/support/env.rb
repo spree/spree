@@ -6,23 +6,21 @@
 
 ENV["RAILS_ENV"] ||= "cucumber"
 
+require File.expand_path("../../../spec/test_app/config/environment", __FILE__)
+
 require 'bundler'
 Bundler.setup(:cucumber)
 
-require File.expand_path("../../../spec/test_app/config/environment", __FILE__)
-
 Rails.env = "test"
 require 'cucumber/formatter/unicode' # Remove this line if you don't want Cucumber Unicode support
-require 'cucumber/rails/rspec'
 Rails.env = "cucumber"
 require 'cucumber/rails/world'
-require 'cucumber/rails/active_record'
 require 'cucumber/web/tableish'
+require 'cucumber/rails/rspec'
 
 require 'capybara/rails'
 require 'capybara/cucumber'
 require 'capybara/session'
-require 'cucumber/rails/capybara_javascript_emulation' # Lets you click links with onclick javascript handlers without using @culerity or @javascript
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
 # order to ease the transition to Capybara we set the default here. If you'd
 # prefer to use XPath just remove this line and adjust any selectors in your
@@ -56,10 +54,10 @@ Cucumber::Rails::World.use_transactional_fixtures = true
 # How to clean your database when transactions are turned off. See
 # http://github.com/bmabey/database_cleaner for more info.
 require 'database_cleaner'
-DatabaseCleaner.strategy = :truncation
+require 'database_cleaner/cucumber'
 
-Before do
-  DatabaseCleaner.clean
-end
+# clean database before tests run
+DatabaseCleaner.strategy = :truncation
+DatabaseCleaner.clean
 
 Capybara.save_and_open_page_path = File.join(Rails.root, "tmp")

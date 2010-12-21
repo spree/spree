@@ -89,7 +89,7 @@ module SpreeBase
 
     def set_user_language
       locale = session[:locale] || Spree::Config[:default_locale]
-      locale = I18n.default_locale unless I18n.available_locales.include?(locale.to_sym)
+      locale = I18n.default_locale unless locale && I18n.available_locales.include?(locale.to_sym)
       I18n.locale = locale.to_sym
     end
   end

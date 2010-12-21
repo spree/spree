@@ -1,0 +1,5 @@
+<%
+std_opts = "--format pretty --strict --tags ~@wip --tags ~@incomplete"
+%>
+default: <%= std_opts %>
+wip: --tags @wip:3 --wip features

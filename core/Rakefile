@@ -54,6 +54,9 @@ gem 'spree_core', :path => \'#{File.dirname(__FILE__)}\'
     def install_spree_core
       inside "test_app" do
         run 'rake spree_core:install'
+        run 'rake spree_auth:install'
+        run 'rake spree_dash:install'
+        run 'rake spree_promo:install'
       end
     end
 

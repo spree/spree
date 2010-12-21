@@ -20,4 +20,5 @@ group :cucumber do
   gem 'launchy'
   gem 'nokogiri'
   gem 'database_cleaner', '~> 0.5.2'
+  gem 'fabrication'
 end
