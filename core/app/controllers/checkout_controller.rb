@@ -16,7 +16,7 @@ class CheckoutController < Spree::BaseController
         redirect_to checkout_state_path(@order.state) and return
       end
 
-      if @order.state == "complete" or @order.completed?
+      if @order.state == "complete" || @order.completed?
         flash[:notice] = I18n.t(:order_processed_successfully)
         flash[:commerce_tracking] = "nothing special"
         redirect_to completion_route
