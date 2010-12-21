@@ -27,6 +27,7 @@ module SpreeBase
       Spree::Config[:site_name]
     end
 
+    # this is a hook for subclasses to provide title
     def accurate_title
       nil
     end
