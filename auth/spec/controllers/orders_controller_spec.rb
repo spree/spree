@@ -62,6 +62,13 @@ describe OrdersController do
             post :populate
             session[:access_token].should == ORDER_TOKEN
           end
+
+          it "should repalce any previous access tokens" do
+            session[:access_token] = "OLD_TOKEN"
+            post :populate
+            session[:access_token].should == ORDER_TOKEN
+          end
+
         end
 
       end
