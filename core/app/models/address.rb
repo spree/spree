@@ -77,6 +77,6 @@ class Address < ActiveRecord::Base
   end
 
   def empty?
-    attributes.except("id", "created_at", "updated_at", "order_id", "country_id").all? {|k,v| v.nil?}
+    attributes.except("id", "created_at", "updated_at", "order_id", "country_id").all? {|_,v| v.nil?}
   end
 end
