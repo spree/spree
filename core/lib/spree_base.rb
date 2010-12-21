@@ -28,7 +28,7 @@ module SpreeBase
     end
 
     def accurate_title
-      return nil
+      nil
     end
 
     # def reject_unknown_object
