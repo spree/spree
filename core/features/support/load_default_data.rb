@@ -1,3 +1,5 @@
+DatabaseCleaner.clean
+
 # load default data for tests
 require 'active_record/fixtures'
 fixtures_dir = File.expand_path('../../../db/default', __FILE__)

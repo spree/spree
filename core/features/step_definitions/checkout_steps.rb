@@ -2,9 +2,9 @@ When /^(?:|I )fill (billing|shipping) address with correct data$/ do |address_ty
   str_addr = address_type[0...4] + "_address"
   address = if @me
     @me.send(str_addr) 
-else
-Fabricate(:address)
-end
+  else
+    Fabricate(:address)
+  end
   When %{I select "United States" from "Country" within "fieldset##{address_type}"}
   ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
     When %{I fill in "order_#{str_addr}_attributes_#{field}" with "#{address.send(field)}"}
@@ -31,10 +31,13 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
 end
 
 When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method$/ do |shiping_method, payment_method|
-  When %{I choose "#{shiping_method}"}
+  # TODO: remove next line after fixing capybara's find by label feature
+  shipping_method = "order_shipping_method_id_#{ShippingMethod.find_by_name(shipping_method).id}"
+  When %{I choose "#{shipping_method}"}
   And %{press "Save and Continue"}
   Then %{I should see "Payment Information" within "legend"}
 
+  payment_method = "order_payments_attributes__payment_method_id_#{PaymentMethod.find_by_name(payment_method).id}"
   When %{I choose "#{payment_method}"}
   And %{press "Save and Continue"}
   Then %{I should see "Confirm" within "legend"}
