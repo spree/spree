@@ -28,15 +28,15 @@ class Creditcard < ActiveRecord::Base
   end
 
   def first_name?
-    self.first_name.present?
+    first_name.present?
   end
 
   def last_name?
-    self.last_name.present?
+    last_name.present?
   end
 
   def name
-    "#{self.first_name} #{self.last_name}"
+    "#{first_name} #{last_name}"
   end
 
   def verification_value?
