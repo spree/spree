@@ -32,8 +32,11 @@ Capybara.default_selector = :css
 require 'database_cleaner'
 require 'database_cleaner/cucumber'
 
+# clean database before tests run
 DatabaseCleaner.strategy = :truncation
 DatabaseCleaner.clean
 
+# use transactions for faster tests
 DatabaseCleaner.strategy = :transaction
+
 Capybara.save_and_open_page_path = File.join(Rails.root, "tmp")
