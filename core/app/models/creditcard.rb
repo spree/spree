@@ -72,7 +72,7 @@ class Creditcard < ActiveRecord::Base
       payment.fail
       gateway_error(response)
     end
-  rescue ActiveMerchant::ConnectionError => e
+  rescue ActiveMerchant::ConnectionError
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
@@ -89,7 +89,7 @@ class Creditcard < ActiveRecord::Base
       payment.fail
       gateway_error(response) unless response.success?
     end
-  rescue ActiveMerchant::ConnectionError => e
+  rescue ActiveMerchant::ConnectionError
     gateway_error t(:unable_to_connect_to_gateway)
   end
 
@@ -113,7 +113,7 @@ class Creditcard < ActiveRecord::Base
       payment.fail
       gateway_error(response)
     end
-  rescue ActiveMerchant::ConnectionError => e
+  rescue ActiveMerchant::ConnectionError
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
@@ -127,7 +127,7 @@ class Creditcard < ActiveRecord::Base
     else
       gateway_error(response)
     end
-  rescue ActiveMerchant::ConnectionError => e
+  rescue ActiveMerchant::ConnectionError
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
@@ -152,7 +152,7 @@ class Creditcard < ActiveRecord::Base
     else
       gateway_error(response)
     end
-  rescue ActiveMerchant::ConnectionError => e
+  rescue ActiveMerchant::ConnectionError
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
