@@ -40,7 +40,7 @@ class Creditcard < ActiveRecord::Base
   end
 
   def verification_value?
-    !verification_value.blank?
+    verification_value.present?
   end
 
   # Show the card number, with all but last 4 numbers replace with "X". (XXXX-XXXX-XXXX-4338)
