@@ -158,9 +158,6 @@ class Creditcard < ActiveRecord::Base
     gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
-
-
-
   def actions
     %w{capture void credit}
   end
