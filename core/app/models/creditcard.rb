@@ -10,12 +10,10 @@ class Creditcard < ActiveRecord::Base
   validates :verification_value, :presence => true, :unless => :has_payment_profile?, :on => :create
 
   def process!(payment)
-    begin
-      if Spree::Config[:auto_capture]
-        purchase(payment.amount.to_f, payment)
-      else
-        authorize(payment.amount.to_f, payment)
-      end
+    if Spree::Config[:auto_capture]
+      purchase(payment.amount.to_f, payment)
+    else
+      authorize(payment.amount.to_f, payment)
     end
   end
 
