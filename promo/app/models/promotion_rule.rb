@@ -2,9 +2,9 @@
 class PromotionRule < ActiveRecord::Base
 
   belongs_to :promotion
-  
+
   scope :of_type, lambda {|t| {:conditions => {:type => t}}}
-  
+
   def eligible?(order)
     raise 'eligible? should be implemented in a sub-class of Promotion::PromotionRule'
   end
@@ -18,9 +18,9 @@ class PromotionRule < ActiveRecord::Base
   def self.rule_classes
     @@rule_classes.to_a
   end
-  
+
   def self.rule_class_names
     PromotionRule.rule_classes.map(&:name)
   end
-  
+
 end

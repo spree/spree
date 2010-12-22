@@ -75,7 +75,7 @@ module Admin::NavigationHelper
     options[:class] = (options[:class].to_s + " icon_link").strip
     link_to(icon(icon_name) + ' ' + text, url, options)
   end
-  
+
   def icon(icon_name)
     icon_name ? image_tag("/images/admin/icons/#{icon_name}.png") : ''
   end
@@ -85,8 +85,8 @@ module Admin::NavigationHelper
   end
 
   def button_link_to(text, url, html_options = {})
-    if (html_options[:method] && 
-        html_options[:method].to_s.downcase != 'get' && 
+    if (html_options[:method] &&
+        html_options[:method].to_s.downcase != 'get' &&
         !html_options[:remote])
       form_tag(url, :method => html_options[:method]) do
         button(text, html_options[:icon])

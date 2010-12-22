@@ -3,12 +3,12 @@ class Calculator::SalesTax < Calculator
   def self.description
     I18n.t("sales_tax")
   end
-    
+
   def self.register
     super
     TaxRate.register_calculator(self)
   end
-  
+
   def self.calculate_tax(order, rates)
     ActiveSupport::Deprecation.warn("please use Calculator::SalesTax#compute instead", caller)
 
@@ -16,7 +16,7 @@ class Calculator::SalesTax < Calculator
     # note: there is a bug with associations in rails 2.1 model caching so we're using this hack
     # (see http://rails.lighthouseapp.com/projects/8994/tickets/785-caching-models-fails-in-development)
     cache_hack = rates.first.respond_to?(:tax_category_id)
-            
+
     taxable_totals = {}
     order.line_items.each do |line_item|
       next unless tax_category = line_item.variant.product.tax_category

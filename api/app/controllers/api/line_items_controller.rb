@@ -8,7 +8,7 @@ class Api::LineItemsController < Api::BaseController
     def collection_serialization_options
       { :include => [:variant], :methods => [:description] }
     end
-    
+
     def object_serialization_options
       collection_serialization_options
     end

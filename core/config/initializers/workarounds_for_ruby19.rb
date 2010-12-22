@@ -5,7 +5,7 @@ if RUBY_VERSION.to_f >= 1.9
     def mb_chars
       self.force_encoding(Encoding::UTF_8)
     end
-    
+
     alias_method(:orig_concat, :concat)
     def concat(value)
       orig_concat value.force_encoding(Encoding::UTF_8)
@@ -49,7 +49,7 @@ if RUBY_VERSION.to_f >= 1.9
       def encode(value, encoding = "utf-8")
         String === value ? value.force_encoding(encoding) : value
       end
-      
+
       def each_utf8(&block)
         each_orig do |row|
           yield row.map {|col| encode(col) }
@@ -57,7 +57,7 @@ if RUBY_VERSION.to_f >= 1.9
       end
       alias each_orig each
       alias each each_utf8
-     
+
       def each_hash_utf8(&block)
         each_hash_orig do |row|
           row.each {|k, v| row[k] = encode(v) }
@@ -68,5 +68,5 @@ if RUBY_VERSION.to_f >= 1.9
       alias each_hash each_hash_utf8
     end
   end
-  
+
 end

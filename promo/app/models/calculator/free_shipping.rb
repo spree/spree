@@ -19,6 +19,6 @@ class Calculator::FreeShipping < ::Calculator
 
     order.ship_total
   end
-  
+
 end
 

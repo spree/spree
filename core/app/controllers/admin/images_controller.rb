@@ -1,7 +1,7 @@
 class Admin::ImagesController < Admin::BaseController
   resource_controller
   before_filter :load_data
-  
+
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => false}
   end
@@ -13,22 +13,22 @@ class Admin::ImagesController < Admin::BaseController
   update.response do |wants|
     wants.html {redirect_to admin_product_images_url(@product)}
   end
-  
+
   create.before :set_viewable
   update.before :set_viewable
   destroy.before :destroy_before
-  
-  destroy.response do |wants| 
+
+  destroy.response do |wants|
     wants.html do
       render :text => ""
     end
   end
- 
+
   private
 
   def load_data
     @product = Product.find_by_permalink(params[:product_id])
-    @variants = @product.variants.collect do |variant| 
+    @variants = @product.variants.collect do |variant|
       [variant.options_text, variant.id ]
     end
     @variants.insert(0, [I18n.t("all"), "All"])
@@ -46,8 +46,8 @@ class Admin::ImagesController < Admin::BaseController
       object.viewable = @product
     end
   end
-  
-  def destroy_before 
+
+  def destroy_before
     @viewable = object.viewable
   end
 

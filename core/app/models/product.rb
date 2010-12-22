@@ -53,7 +53,7 @@ class Product < ActiveRecord::Base
 
   validates :name, :price, :permalink, :presence => true
 
-  accepts_nested_attributes_for :product_properties, :allow_destroy => true, :reject_if => lambda { |pp| pp[:property_name].blank? } 
+  accepts_nested_attributes_for :product_properties, :allow_destroy => true, :reject_if => lambda { |pp| pp[:property_name].blank? }
 
   make_permalink
 

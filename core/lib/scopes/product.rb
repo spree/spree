@@ -48,8 +48,8 @@ module Scopes::Product
   # general merging of conditions, names following the searchlogic pattern
   ::Product.scope :conditions, lambda { |*args| {:conditions => args}}
   # conditions_all is a more descriptively named enhancement of the above
-  ::Product.scope :conditions_all, lambda { |*args| {:conditions => [args].flatten}}  
-  
+  ::Product.scope :conditions_all, lambda { |*args| {:conditions => [args].flatten}}
+
   # forming the disjunction of a list of conditions (as strings)
   ::Product.scope :conditions_any, lambda { |*args|
     args = [args].flatten
@@ -176,11 +176,11 @@ module Scopes::Product
   Product.scope :in_name, lambda{|words|
     Product.like_any([:name], prepare_words(words))
   }
-  
+
   Product.scope :in_name_or_keywords, lambda{|words|
     Product.like_any([:name, :meta_keywords], prepare_words(words))
   }
-  
+
   Product.scope :in_name_or_description, lambda{|words|
     Product.like_any([:name, :description, :meta_description, :meta_keywords], prepare_words(words))
   }

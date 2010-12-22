@@ -23,7 +23,7 @@ class PromotionCredit < ::Adjustment
     amount = order.item_total if amount > order.item_total
     -1 * amount
   end
-  
+
   def total
     map(&:amount).sum
   end

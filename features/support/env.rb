@@ -34,13 +34,13 @@ Spork.prefork do
   Dir.glob(SPREE_ROOT + '/test/fixtures/*.{yml,csv,rb}').each do |file|
     Fixtures.create_fixtures('test/fixtures', File.basename(file, '.*'))
   end
-  
+
   Zone.class_eval do
     def self.global
       find_by_name("GlobalZone") || Factory(:global_zone)
     end
   end
-  
+
   Product.class_eval do
     def taxon=(taxon_name)
       taxonomy = Taxonomy.find_or_create_by_name("Category")
@@ -50,7 +50,7 @@ Spork.prefork do
   end
 
   ShippingMethod.create(:name => "UPS Ground", :zone => Zone.global, :calculator => Calculator::FlatRate.new)
-  
+
   coupon = Coupon.create(:code => "SPREE", :description => "$5 off any order", :combine => false, :calculator => Calculator::FlatRate.new)
   coupon.calculator.update_attribute(:preferred_amount, 5)
 

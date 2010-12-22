@@ -7,19 +7,19 @@ class Admin::PaymentMethodsController < Admin::BaseController
   update.wants.html { redirect_to edit_object_url }
   create.wants.html { redirect_to edit_object_url }
 
-  private       
+  private
   def build_object
 		if params[:payment_method] && params[:payment_method][:type]
-			@object ||= params[:payment_method][:type].constantize.send parent? ? :build : :new, object_params 
+			@object ||= params[:payment_method][:type].constantize.send parent? ? :build : :new, object_params
 		else
-			@object ||= end_of_association_chain.send parent? ? :build : :new, object_params 
+			@object ||= end_of_association_chain.send parent? ? :build : :new, object_params
 		end
   end
-  
-  def load_data   
+
+  def load_data
     @providers = Gateway.providers
   end
-  
+
   def update_before
 		if params[:payment_method] && params[:payment_method][:type] && @object['type'].to_s != params[:payment_method][:type]
 			@object.update_attribute(:type, params[:payment_method][:type])

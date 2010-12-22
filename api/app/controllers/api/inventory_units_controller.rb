@@ -8,5 +8,5 @@ class Api::InventoryUnitsController < Api::BaseController
     def eager_load_associations
       [:variant]
     end
-      
+
 end

@@ -26,11 +26,11 @@ class Gateway::Beanstream < Gateway
       end
     end
   end
-  
+
   def capture(transaction, creditcard, gateway_options)
     beanstream_gateway.capture((transaction.amount*100).round, transaction.response_code, gateway_options)
   end
-  
+
   def void(transaction_response, creditcard, gateway_options)
     beanstream_gateway.void(transaction_response, gateway_options)
   end
@@ -41,13 +41,13 @@ class Gateway::Beanstream < Gateway
   end
 
   private
-  
+
   def beanstream_gateway
     ActiveMerchant::Billing::Base.gateway_mode = preferred_server.to_sym
     gateway_options = options
     ActiveMerchant::Billing::BeanstreamGateway.new(gateway_options)
   end
-  
+
   def verify_creditcard_name!(creditcard)
     bill_address = creditcard.payments.first.order.bill_address
     creditcard.first_name = bill_address.firstname unless creditcard.first_name?

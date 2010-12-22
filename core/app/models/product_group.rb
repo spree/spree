@@ -36,7 +36,7 @@ class ProductGroup < ActiveRecord::Base
   has_and_belongs_to_many :cached_products, :class_name => "Product"
   # name
   has_many :product_scopes
-  accepts_nested_attributes_for :product_scopes 
+  accepts_nested_attributes_for :product_scopes
 
   # Testing utility: creates new *ProductGroup* from search permalink url.
   # Follows conventions for accessing PGs from URLs, as decoded in routes
@@ -58,7 +58,7 @@ class ProductGroup < ActiveRecord::Base
     end
     taxon = taxons && taxons.split("/").last
     pg.add_scope("in_taxon", taxon) if taxon
-    
+
     pg
   end
 
@@ -85,7 +85,7 @@ class ProductGroup < ActiveRecord::Base
     search_hash.each_pair do |scope_name, scope_attribute|
       add_scope(scope_name, scope_attribute)
     end
-    
+
     self
   end
 
@@ -127,9 +127,9 @@ class ProductGroup < ActiveRecord::Base
     elsif !use_order
       cached_group
     else
-      product_scopes.select {|s| 
+      product_scopes.select {|s|
         s.is_ordering?
-      }.inject(cached_group) {|res,order| 
+      }.inject(cached_group) {|res,order|
         order.apply_on(res)
       }
     end
@@ -156,7 +156,7 @@ class ProductGroup < ActiveRecord::Base
         [ps.name, ps.arguments.join(",")]
       }.flatten.join('/')
       result+= self.order_scope if self.order_scope
-    
+
       result
     else
       name.to_url
@@ -166,7 +166,7 @@ class ProductGroup < ActiveRecord::Base
   def set_permalink
     self.permalink = self.name.to_url
   end
-  
+
   def update_memberships
     # wipe everything directly to avoid expensive in-rails sorting
     ActiveRecord::Base.connection.execute "DELETE FROM product_groups_products WHERE product_group_id = #{self.id}"
@@ -184,7 +184,7 @@ class ProductGroup < ActiveRecord::Base
   def to_s
     "<ProductGroup" + (id && "[#{id}]").to_s + ":'#{to_url}'>"
   end
-  
+
   def order_scope
     if scope = product_scopes.detect {|s| s.is_ordering?}
       scope.name
@@ -195,7 +195,7 @@ class ProductGroup < ActiveRecord::Base
       scope.update_attribute(:name, scope_name)
     else
       self.product_scopes.build(:name => scope_name, :arguments => [])
-    end    
+    end
   end
 
   # Build a new product group with a scope to filter by specified products

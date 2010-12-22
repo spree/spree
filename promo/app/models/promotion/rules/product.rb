@@ -1,6 +1,6 @@
 # A rule to limit a promotion based on products in the order.
 # Can require all or any of the products to be present.
-# Valid products either come from assigned product group or are assingned directly to the rule. 
+# Valid products either come from assigned product group or are assingned directly to the rule.
 class Promotion::Rules::Product < PromotionRule
 
   belongs_to :product_group
@@ -13,7 +13,7 @@ class Promotion::Rules::Product < PromotionRule
   def eligible_products
     product_group ? product_group.products : products
   end
-  
+
   def eligible?(order)
     return true if eligible_products.empty?
     if preferred_match_policy == 'all'
@@ -22,19 +22,19 @@ class Promotion::Rules::Product < PromotionRule
       order.products.any? {|p| eligible_products.include?(p) }
     end
   end
-  
+
 
   def products_source=(source)
     if source.to_s == 'manual'
       self.product_group_id = nil
     end
   end
-  
+
   def product_ids_string
     product_ids.join(',')
   end
   def product_ids_string=(s)
     self.product_ids = s.to_s.split(',').map(&:strip)
   end
-    
+
 end

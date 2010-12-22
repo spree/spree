@@ -32,7 +32,7 @@ class ProductScope < ActiveRecord::Base
       self.arguments ||= ['']*args.length
     end
   }
-  
+
   # checks validity of the named scope (if its safe and can be applied on Product)
   def check_validity_of_scope
     errors.add(:name, "is not a valid scope name") unless Product.condition?(self.name)

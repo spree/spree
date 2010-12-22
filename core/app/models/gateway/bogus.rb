@@ -15,7 +15,7 @@ class Gateway::Bogus < Gateway
   def preferences
     {}
   end
-  
+
   def create_profile(payment)
     # simulate the storage of credit card profile using remote service
     success = VALID_CCS.include? payment.source.number
@@ -24,7 +24,7 @@ class Gateway::Bogus < Gateway
 
   def authorize(money, creditcard, options = {})
     profile_id = creditcard.gateway_customer_profile_id
-    if VALID_CCS.include? creditcard.number or (profile_id and profile_id.starts_with? "BGS-") 
+    if VALID_CCS.include? creditcard.number or (profile_id and profile_id.starts_with? "BGS-")
       ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345', :avs_result => {:code => 'A'})
     else
       ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", {:message => 'Bogus Gateway: Forced failure'}, :test => true)
@@ -61,11 +61,11 @@ class Gateway::Bogus < Gateway
     # Test mode is not really relevant with bogus gateway (no such thing as live server)
     true
   end
-  
-  def payment_profiles_supported?  
+
+  def payment_profiles_supported?
     true
   end
-  
+
   private
   def generate_profile_id(success)
     record = true
@@ -75,6 +75,6 @@ class Gateway::Bogus < Gateway
       record = Creditcard.find(:first, :conditions => ["gateway_customer_profile_id = ?", random])
     end
     random
-  end  
+  end
 
 end

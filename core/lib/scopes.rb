@@ -41,7 +41,7 @@ module Scopes
       scopes.each_pair do |scope_name, targs|
         hashed_args = {}
         targs.each{|v| hashed_args[v.to_s] = v.to_s.humanize}
-        
+
         result['scopes'][scope_name.to_s] = {
           'name' => scope_name.to_s.humanize,
           'description' => "",
@@ -66,4 +66,4 @@ end
 #   def to_sql
 #     construct_finder_sql({})
 #   end
-# end     
+# end

@@ -5,5 +5,5 @@ describe ContentController do
   it "should understand routes" do
     assert_routing("/content/cvv", {:controller => "content", :action => "cvv", })
   end
-  
+
 end

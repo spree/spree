@@ -28,7 +28,7 @@ class Admin::ReportsController < Admin::BaseController
     end
 
     params[:search][:order] ||= "descend_by_created_at"
-    
+
     @search = Order.searchlogic(params[:search])
     @orders = @search.do_search
 

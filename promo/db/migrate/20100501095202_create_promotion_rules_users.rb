@@ -5,7 +5,7 @@ class CreatePromotionRulesUsers < ActiveRecord::Migration
     end
     remove_column :promotion_rules_users, :id
     add_index :promotion_rules_users, :user_id
-    add_index :promotion_rules_users, :promotion_rule_id    
+    add_index :promotion_rules_users, :promotion_rule_id
   end
 
   def self.down

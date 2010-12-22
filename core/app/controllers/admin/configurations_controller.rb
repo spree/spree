@@ -1,6 +1,6 @@
 class Admin::ConfigurationsController < Admin::BaseController
   before_filter :initialize_extension_links, :only => :index
-  
+
   class << self
     def add_link(text, path, description)
       unless @@extension_links.any?{|link| link[:link_text] == text}

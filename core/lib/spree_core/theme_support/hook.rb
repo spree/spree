@@ -36,7 +36,7 @@ module Spree
         def render_hook(hook_name, content, context, locals = {})
           modifiers_for_hook(hook_name).inject(content) { |result, modifier| modifier.apply_to(result, context, locals) }
         end
-        
+
         # All the HookModifier instances that are associated with this hook_name in extension load order and order they were defined
         def modifiers_for_hook(hook_name)
           @@hook_modifiers[hook_name] ||= listeners.map {|l| l.modifiers_for_hook(hook_name)}.flatten

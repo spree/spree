@@ -34,5 +34,5 @@ module Scopes::Dynamic
     scopes
   end
 
-  
+
 end

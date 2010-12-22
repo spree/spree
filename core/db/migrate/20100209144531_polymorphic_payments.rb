@@ -20,7 +20,7 @@ class PolymorphicPayments < ActiveRecord::Migration
 
     change_table :creditcards do |t|
       t.remove :checkout_id
-    end 
+    end
   end
 
   def self.down

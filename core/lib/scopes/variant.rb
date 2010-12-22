@@ -4,7 +4,7 @@ module Scopes::Variant
       order('COALESCE((SELECT COUNT(*) FROM  line_items GROUP BY line_items.variant_id HAVING line_items.variant_id = variants.id), 0) DESC')
   }
 
-  # for selecting variants with an option value 
+  # for selecting variants with an option value
   # no option type given since the value implies an option type
   # this scope can be chained repeatedly, since the join name is unique
   Variant.scope :has_option, lambda {|opt|
@@ -13,5 +13,5 @@ module Scopes::Variant
       :conditions => ["#{tbl}.option_value_id = (?)", opt]
     }
   }
-  
+
 end

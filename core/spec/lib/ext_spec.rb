@@ -4,7 +4,7 @@ describe 'Core extensions' do
 
   describe 'ActiveRecord::Base' do
 
-    let(:order) { Order.create } 
+    let(:order) { Order.create }
 
     context "update_attribute_without_callbacks" do
 
@@ -12,7 +12,7 @@ describe 'Core extensions' do
         order.update_attribute_without_callbacks 'state', 'new_state'
         order.state.should == 'new_state'
       end
-      
+
       it "updates the attribute in the database" do
         order.update_attribute_without_callbacks 'state', 'new_state'
         order.reload

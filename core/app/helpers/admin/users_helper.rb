@@ -1,5 +1,5 @@
-module Admin::UsersHelper        
+module Admin::UsersHelper
   def list_roles(user)
-    user.roles.collect {|role| role.name}.join ", "    
+    user.roles.collect {|role| role.name}.join ", "
   end
 end
