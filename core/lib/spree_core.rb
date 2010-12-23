@@ -72,9 +72,8 @@ end
 
 require 'spree_core/railtie'
 
-ActiveRecord::Base.class_eval { include Spree::CalculatedAdjustments }
-
 ActiveRecord::Base.class_eval do
+  include Spree::CalculatedAdjustments
   include CollectiveIdea::Acts::NestedSet
 end
 
