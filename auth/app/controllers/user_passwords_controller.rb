@@ -1,4 +1,4 @@
-class UserPasswordResetsController < Devise::PasswordsController
+class UserPasswordsController < Devise::PasswordsController
   include SpreeBase
   helper :users, 'spree/base'
 

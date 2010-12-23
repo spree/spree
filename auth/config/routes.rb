@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
-  devise_for :users,
+  devise_for :user,
              :controllers => { :sessions => 'user_sessions',
                                :registrations => 'user_registrations',
-                               :passwords => "user_password_resets"},
+                               :passwords => "user_passwords" },
              :skip => [:unlocks, :omniauth_callbacks],
              :path_names => { :sign_out => 'logout'}
   resources :users, :only => [:edit, :update]
