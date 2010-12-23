@@ -534,4 +534,26 @@ describe Order do
     end
   end
 
+  context "rate_hash" do
+    let(:shipping_method_1) { mock_model ShippingMethod, :name => 'Air Shipping', :id => 1, :calculator => mock('calculator') }
+    let(:shipping_method_2) { mock_model ShippingMethod, :name => 'Ground Shipping', :id => 2, :calculator => mock('calculator') }
+
+    before do
+      shipping_method_1.calculator.stub(:compute).and_return(10.0)
+      shipping_method_2.calculator.stub(:compute).and_return(0.0)
+      order.stub(:available_shipping_methods => [ shipping_method_1, shipping_method_2 ])
+    end
+
+    it "should return shipping methods sorted by cost" do
+      order.rate_hash.should == [{:shipping_method => shipping_method_2, :cost => 0.0, :name => "Ground Shipping", :id => 2},
+                                  {:shipping_method => shipping_method_1, :cost => 10.0, :name => "Air Shipping", :id => 1}]
+    end
+
+    it "should not return shipping methods with nil cost" do
+      shipping_method_1.calculator.stub(:compute).and_return(nil)
+      order.rate_hash.should == [{:shipping_method => shipping_method_2, :cost => 0.0, :name => "Ground Shipping", :id => 2}]
+    end
+
+  end
+
 end
