@@ -20,8 +20,16 @@ class UsersController < Spree::BaseController
     flash.now[:notice] = I18n.t(:please_create_user) unless User.admin_created?
   end
 
-  update.wants.html { redirect_to account_url }
-  update.flash { I18n.t("account_updated") }
+  update.success.wants.html do
+    if params[:user][:password].present?
+      # this logic needed b/c devise wants to log us out after password changes
+      user = User.reset_password_by_token(params[:user])
+      sign_in(@user, :event => :authentication)
+      #sign_in_and_redirect()
+    end
+    flash.notice = I18n.t("account_updated")
+    redirect_to account_url
+  end
 
   private
   def object
