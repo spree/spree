@@ -67,11 +67,11 @@ else
   end
   can :create, User
   #############################
-  can :read, Order do |order|
-    order.user == user
+  can :read, Order do |order, token|
+    order.user == user || order.token && token == order.token
   end
-  can :update, Order do |order|
-    order.user == user
+  can :update, Order do |order, token|
+    order.user == user || order.token && token == order.token
   end
   can :create, Order
   #############################
@@ -108,7 +108,11 @@ def before(action)
   else object
   end
 
-  authorize! action, resource
+  if resource.respond_to? :token
+    authorize! action, resource, session[:access_token]
+  else
+    authorize! action, resource
+  end
   invoke_callbacks *self.class.send(action).before
 end
 </ruby>
@@ -139,6 +143,85 @@ The trick to adding custom authorization rules is to add an +AbilityDecorator+ t
 
   Ability.register_ability(AbilityDecorator)
 </ruby>
+
+h4. Tokenized Permissions
+
+There are situations where it may be desirable to restrict access to a particular resource without requiring a user to authenticate in order to have that access.  Spree allows so-called "guest checkouts" where users just supply an email address and they're not required to create an account.  In these cases you still want to restrict access to that order so only the original customer can see it.  The solution is to use a "tokenized" URL.
+
+<shell>
+http://example.com/orders/token/aidik313dsfs49d
+</shell>
+
+Spree provides a +TokenizedPermission+ model used to grant access to various resources through a secure token.  This model works in conjunction with the +Spree::TokenResource+ module which can be used to add tokenized access functionality to any Spree resource.
+
+<ruby>
+module Spree::TokenResource
+
+  module ClassMethods
+    def token_resource
+      has_one :tokenized_permission, :as => :permissable
+      delegate :token, :to => :tokenized_permission, :allow_nil => true
+      after_create :create_token
+    end
+  end
+
+  module InstanceMethods
+    def create_token
+      create_tokenized_permission(:token => ActiveSupport::SecureRandom::hex(8))
+      token
+    end
+  end
+
+  def self.included(receiver)
+    receiver.extend ClassMethods
+    receiver.send :include, InstanceMethods
+  end
+
+end
+</ruby>
+
+The +Order+ model is one such model in Spree where this interface is already in use.  The following code snippet shows how to add this functionality through the use of the +token_resource+ declaration:
+
+<ruby>
+Order.class_eval do
+  token_resource
+end
+</ruby>
+
+If we examine the default CanCan permissions for +Order+ we can see how tokens can be used to grant access in cases where the user is not authenticated.
+
+<ruby>
+can :read, Order do |order, token|
+  order.user == user || order.token && token == order.token
+end
+can :update, Order do |order, token|
+  order.user == user || order.token && token == order.token
+end
+can :create, Order
+</ruby>
+
+This configuration states that in order to read or update an order, you must be either authenticated as the correct user, or supply the correct authorizing token.
+
+The final step is to ensure that the token is passed to CanCan when the authorization is performed.  Most controllers will do this automatically if they declare +resource_controller+.
+
+<ruby>
+authorize! action, resource, session[:access_token]
+</ruby>
+
+NOTE. Since +OrdersController+ does not implement +resource_controller+ this is done explicitly in the controller
+
+Of course this also assume that the token has been stored in the session.  Generally this can be achieved with a route that maps the token to the correct parameter
+
+<shell>
+match '/orders/:id/token/:token' => 'orders#show', :via => :get, \
+:as => :token_order
+</shell>
+
+This is followed by a call to store the token in the session for possible future access.
+
+<shell>
+session[:access_token] ||= params[:token]
+</shell>
 
 h3. Credit Card Data
 
