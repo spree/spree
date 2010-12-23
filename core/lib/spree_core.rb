@@ -64,11 +64,7 @@ silence_warnings do
   require 'spree_core/authorize_net_cim_hack'
 end
 
-module Spree
-  def self.version
-    "0.50.99"
-  end
-end
+require 'spree_core/version'
 
 require 'spree_core/railtie'
 
