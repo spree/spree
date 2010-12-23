@@ -36,6 +36,27 @@
   <% end %>
 </table>
 
+<script type="text/javascript" charset="utf-8">
+	jQuery('table.index').ready(function(){ 
+		jQuery('table.index tbody').sortable(
+			{
+				handle: '.handle',
+				update: function(event, ui) { 
+					jQuery.each(jQuery('table.index tbody tr'),function(i,obj){
+						var variant_id= jQuery(obj).attr('id').replace('variant_','');
+						if(/^\d+$/.test(variant_id))
+						{							
+							jQuery.ajax({
+								type: 'PUT',
+								url: "<%= admin_product_path(@product) %>/variants/" + variant_id,
+								data: { 'variant[manual_order]' : i }
+							});
+						}
+					});
+				}
+			}); 
+	});
+</script>
 <% if @product.options.empty? %>
   <p>
     <%= t("to_add_variants_you_must_first_define") %>  <%= link_to t("option_types"), selected_admin_product_option_types_url(@product) %>
