@@ -91,5 +91,3 @@ module DelegateBelongsTo
   end
 
 end
-
-ActiveRecord::Base.send :include, DelegateBelongsTo
