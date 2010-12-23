@@ -16,6 +16,7 @@
 # Todo - add has_one support. fairly straightforward addition
 ##
 module DelegateBelongsTo
+  extend ActiveSupport::Concern
 
   module ClassMethods
 
@@ -83,11 +84,6 @@ module DelegateBelongsTo
       send("#{association}=", self.class.reflect_on_association(association).klass.new) if send(association).nil?
       send(association)
     end
-  end
-
-  def self.included(receiver)
-    receiver.extend ClassMethods
-    receiver.send :include, InstanceMethods
   end
 
 end
