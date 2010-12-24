@@ -55,7 +55,7 @@ module SslRequirement
   extend ActiveSupport::Concern
 
   included do
-    controller.before_filter(:ensure_proper_protocol)
+    before_filter(:ensure_proper_protocol)
   end
 
   module ClassMethods

@@ -42,7 +42,7 @@ require 'active_merchant'
 require 'spree_core/ext/active_record'
 
 require 'spree_core/delegate_belongs_to'
-ActiveRecord::Base.send include DelegateBelongsTo
+ActiveRecord::Base.send :include, DelegateBelongsTo
 
 require 'spree_core/theme_support'
 require 'spree_core/enumerable_constants'
