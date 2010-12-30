@@ -2,8 +2,6 @@ class AppConfiguration < Configuration
 
   preference :site_name, :string, :default => 'Spree Demo Site'
   preference :site_url, :string, :default => 'demo.spreecommerce.com'
-  preference :store_cc, :boolean, :default => false
-  preference :store_cvv, :boolean, :default => false
   preference :default_locale, :string, :default => 'en'
   preference :allow_locale_switching, :boolean, :default => true
   preference :default_country_id, :integer, :default => 214
@@ -23,7 +21,6 @@ class AppConfiguration < Configuration
   preference :allow_ssl_in_production, :boolean, :default => true
   preference :allow_ssl_in_development_and_test, :boolean, :default => false
   preference :allow_guest_checkout, :boolean, :default => true
-  preference :allow_anonymous_checkout, :boolean, :default => false
   preference :alternative_billing_phone,  :boolean, :default => false # Request extra phone for bill addr
   preference :alternative_shipping_phone, :boolean, :default => false # Request extra phone for ship addr
   preference :shipping_instructions,      :boolean, :default => false # Request instructions/info for shipping
