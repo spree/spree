@@ -11,7 +11,11 @@ class SeoAssist
     if !taxon_id.blank? && !taxon_id.is_a?(Hash) && taxon = Taxon.find(taxon_id)
       params.delete('taxon')
       query = build_query(params)
-      permalink = taxon.permalink[0...-1] #ensures no trailing / for taxon urls
+
+      #ensures no trailing / for taxon urls
+      #TODO ensure that permalink is never stored with a trailing slash
+      permalink = taxon.permalink[0...-1]
+
       new_location = "/t/#{permalink}"
       new_location += '?' + query unless query.blank?
       return [301, { 'Location'=> new_location }, []]
