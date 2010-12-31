@@ -8,10 +8,10 @@ class SeoAssist
     request = Rack::Request.new(env)
     params = request.params
     taxon_id = params['taxon']
-    if !taxon_id.blank? && !taxon_id.is_a?(Hash) && @taxon = Taxon.find(taxon_id)
+    if !taxon_id.blank? && !taxon_id.is_a?(Hash) && taxon = Taxon.find(taxon_id)
       params.delete('taxon')
       query = build_query(params)
-      permalink = @taxon.permalink[0...-1] #ensures no trailing / for taxon urls
+      permalink = taxon.permalink[0...-1] #ensures no trailing / for taxon urls
       return [301, { 'Location'=> "/t/#{permalink}?#{query}" }, []]
     elsif env["PATH_INFO"] =~ /^\/(t|products)(\/\S+)?\/$/
       #ensures no trailing / for taxon and product urls
