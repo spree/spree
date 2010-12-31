@@ -12,7 +12,9 @@ class SeoAssist
       params.delete('taxon')
       query = build_query(params)
       permalink = taxon.permalink[0...-1] #ensures no trailing / for taxon urls
-      return [301, { 'Location'=> "/t/#{permalink}?#{query}" }, []]
+      new_location = "/t/#{permalink}"
+      new_location += '?' + query unless query.blank?
+      return [301, { 'Location'=> new_location }, []]
     elsif env["PATH_INFO"] =~ /^\/(t|products)(\/\S+)?\/$/
       #ensures no trailing / for taxon and product urls
       query = build_query(params)
