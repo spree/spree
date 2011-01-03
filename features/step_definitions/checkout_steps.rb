@@ -30,7 +30,7 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
   When %{I press "Add To Cart"}
 end
 
-When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method$/ do |shiping_method, payment_method|
+When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method$/ do |shipping_method, payment_method|
   # TODO: remove next line after fixing capybara's find by label feature
   shipping_method = "order_shipping_method_id_#{ShippingMethod.find_by_name(shipping_method).id}"
   When %{I choose "#{shipping_method}"}
