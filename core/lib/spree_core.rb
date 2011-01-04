@@ -40,7 +40,10 @@ require 'searchlogic'
 require 'active_merchant'
 
 require 'spree_core/ext/active_record'
+
 require 'spree_core/delegate_belongs_to'
+ActiveRecord::Base.send :include, DelegateBelongsTo
+
 require 'spree_core/theme_support'
 require 'spree_core/enumerable_constants'
 require 'spree_core/find_by_param'
@@ -56,7 +59,7 @@ require 'spree/config'
 require 'spree/mail_settings'
 require 'spree/mail_interceptor'
 require 'redirect_legacy_product_url'
-require 'seo_assist'
+require 'middleware/seo_assist'
 
 require 'spree_base' # added 11-3 JBD
 
@@ -64,73 +67,12 @@ silence_warnings do
   require 'spree_core/authorize_net_cim_hack'
 end
 
-module Spree
-  def self.version
-    "0.50.99"
-  end
-end
+require 'spree_core/version'
 
-module SpreeCore
-  class Engine < Rails::Engine
-
-    config.autoload_paths += %W(#{config.root}/lib)
-    # TODO - register state monitor observer?
-
-    def self.activate
-
-      Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
-        Spree::ThemeSupport::Hook.add_listener(hook_class)
-      end
-
-      #register all payment methods (unless we're in middle of rake task since migrations cannot be run for this first time without this check)
-      if File.basename( $0 ) != "rake"
-        [
-          Gateway::Bogus,
-          Gateway::AuthorizeNet,
-          Gateway::AuthorizeNetCim,
-          Gateway::Eway,
-          Gateway::Linkpoint,
-          Gateway::PayPal,
-          Gateway::SagePay,
-          Gateway::Beanstream,
-          PaymentMethod::Check
-        ].each{|gw|
-          begin
-            gw.register
-          rescue Exception => e
-            $stderr.puts "Error registering gateway #{gw}: #{e}"
-          end
-        }
-
-        #register all calculators
-        [
-          Calculator::FlatPercentItemTotal,
-          Calculator::FlatRate,
-          Calculator::FlexiRate,
-          Calculator::PerItem,
-          Calculator::SalesTax,
-          Calculator::Vat,
-          Calculator::PriceBucket
-        ].each{|c_model|
-          begin
-            c_model.register if c_model.table_exists?
-          rescue Exception => e
-            $stderr.puts "Error registering calculator #{c_model}"
-          end
-        }
-
-      end
-
-    end
-
-    config.to_prepare &method(:activate).to_proc
-
-  end
-end
-
-ActiveRecord::Base.class_eval { include Spree::CalculatedAdjustments }
+require 'spree_core/railtie'
 
 ActiveRecord::Base.class_eval do
+  include Spree::CalculatedAdjustments
   include CollectiveIdea::Acts::NestedSet
 end
 

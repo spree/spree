@@ -52,9 +52,10 @@
 
 # Modified version of the ssl_requirement plugin by DHH
 module SslRequirement
-  def self.included(controller)
-    controller.extend(ClassMethods)
-    controller.before_filter(:ensure_proper_protocol)
+  extend ActiveSupport::Concern
+
+  included do
+    before_filter(:ensure_proper_protocol)
   end
 
   module ClassMethods
