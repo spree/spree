@@ -1,0 +1,6 @@
+<%
+std_opts = "--format pretty --strict --tags ~@wip --tags ~@incomplete"
+default = "--require features/support/env.rb"
+%>
+default: <%= std_opts %> <%= default %>
+wip: --tags @wip:3 --wip features <%= default %>

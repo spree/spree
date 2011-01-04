@@ -40,6 +40,7 @@ task :test_app do
         <<-gems
 gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
 gem 'spree_promo', :path => \'#{File.dirname(__FILE__)}\'
+gem 'spree_auth', :path => \'#{File.join(File.dirname(__FILE__), "..", "auth")}\'
         gems
       end
     end
@@ -48,6 +49,7 @@ gem 'spree_promo', :path => \'#{File.dirname(__FILE__)}\'
       inside "test_app" do
         run 'rake spree_core:install'
         run 'rake spree_promo:install'
+        run 'rake spree_auth:install'
       end
     end
 
