@@ -9,5 +9,4 @@ class Promotion::Rules::ItemTotal < PromotionRule
   def eligible?(order)
     order.item_total.send(preferred_operator == 'gte' ? :>= : :>, preferred_amount)
   end
-
 end

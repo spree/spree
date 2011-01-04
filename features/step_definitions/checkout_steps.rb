@@ -30,7 +30,7 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
   When %{I press "Add To Cart"}
 end
 
-When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method$/ do |shipping_method, payment_method|
+When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and set coupon code to "(.*?)")?$/ do |shipping_method, payment_method, coupon_code|
   # TODO: remove next line after fixing capybara's find by label feature
   shipping_method = "order_shipping_method_id_#{ShippingMethod.find_by_name(shipping_method).id}"
   When %{I choose "#{shipping_method}"}
@@ -39,6 +39,9 @@ When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method$/ do |s
 
   payment_method = "order_payments_attributes__payment_method_id_#{PaymentMethod.find_by_name(payment_method).id}"
   When %{I choose "#{payment_method}"}
+  if coupon_code
+    When %{I fill in "Coupon code" with "#{coupon_code}"}
+  end
   And %{press "Save and Continue"}
   Then %{I should see "Confirm" within "legend"}
 

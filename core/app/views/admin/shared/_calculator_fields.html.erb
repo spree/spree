@@ -2,7 +2,7 @@
   <legend><%= t('calculator') %></legend>
   <div id="preference-settings">
     <p>
-      <%= f.label(:calc_type, t("calculator")) %>
+      <%= f.label(:calc_type, t("calculator"), :for => "calc-type") %>
       <%= f.collection_select(:calculator_type, @calculators, :to_s, :description, {}, {:id => "calc-type"}) %>
     </p>
     <% if !@object.new_record? %>

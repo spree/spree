@@ -3,11 +3,18 @@ class Promotion < ActiveRecord::Base
   calculated_adjustments
   alias credits promotion_credits
 
-  has_many :promotion_rules
+  has_many :promotion_rules, :autosave => true
   accepts_nested_attributes_for :promotion_rules
   alias_method :rules, :promotion_rules
 
   validates :name, :code, :presence => true
+
+  # TODO: Remove that after fix for https://rails.lighthouseapp.com/projects/8994/tickets/4329-has_many-through-association-does-not-link-models-on-association-save
+  # is provided
+  def save(*)
+    super
+    promotion_rules.each { |p| p.save }
+  end
 
   MATCH_POLICIES = %w(all any)
 
@@ -41,12 +48,14 @@ class Promotion < ActiveRecord::Base
     if eligible?(order) and amount = calculator.compute(order)
       amount = order.item_total if amount > order.item_total
       order.promotion_credits.reload.clear unless combine? and order.promotion_credits.all? { |credit| credit.source.combine? }
-      order.promotion_credits.create({
+      order.update!
+      PromotionCredit.create!({
           :label => "#{I18n.t(:coupon)} (#{code})",
           :source => self,
-          :amount => -amount.abs
+          :amount => -amount.abs,
+          :order => order
         })
-      order.update!
+      order.reload
     end
   end
 
