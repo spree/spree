@@ -22,6 +22,7 @@ db/*.sqlite3*
 db/schema.rb
 doc/**/*
 lib/products_index_profiler.rb
+*/Gemfile
 Gemfile.lock
 log/*.log
 pkg
