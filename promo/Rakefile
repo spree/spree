@@ -3,6 +3,17 @@ require 'rake/testtask'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
+gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
+if File.exists?(gemfile)
+  require 'bundler'
+  ENV['BUNDLE_GEMFILE'] = gemfile
+  Bundler.setup
+
+  require 'rspec'
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new
+end
+
 spec = eval(File.read('spree_promo.gemspec'))
 
 Rake::GemPackageTask.new(spec) do |p|
@@ -18,10 +29,6 @@ end
 
 desc "Default Task"
 task :default => [ :spec ]
-
-require 'rspec'
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new
 
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
