@@ -1,5 +1,21 @@
 require 'rake'
 require 'rake/testtask'
+
+gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
+if File.exists?(gemfile)
+  require 'bundler'
+  ENV['BUNDLE_GEMFILE'] = gemfile
+  Bundler.setup
+
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new
+
+  require 'cucumber/rake/task'
+  Cucumber::Rake::Task.new do |t|
+    t.cucumber_opts = %w{--format pretty}
+  end
+end
+
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
@@ -14,14 +30,6 @@ task :release => :package do
   require 'rake/gemcutter'
   Rake::Gemcutter::Tasks.new(spec).define
   Rake::Task['gem:push'].invoke
-end
-
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new
-
-require 'cucumber/rake/task'
-Cucumber::Rake::Task.new do |t|
-  t.cucumber_opts = %w{--format pretty}
 end
 
 desc "Regenerates a rails 3 app for testing"
