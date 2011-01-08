@@ -2,11 +2,21 @@ require 'rake'
 require 'rake/gempackagetask'
 require 'thor/group'
 
-PROJECTS = %w(core api auth dash sample)  #TODO - spree_promotions
-
 spec = eval(File.read('spree.gemspec'))
 Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
+end
+
+desc "run spec test for all gems"
+task :spec do
+  w(api auth core dash promo).each do |gem_name|
+    cmd = "cd #{gem_name} && #{$0} test_app"
+    puts cmd
+    system cmd
+    cmd = "cd #{gem_name} && #{$0} spec"
+    puts cmd
+    system cmd
+  end
 end
 
 desc "Release all gems to gemcutter. Package rails, package & push components, then push spree"
@@ -59,11 +69,3 @@ gems
 
   SandboxGenerator.start
 end
-# desc "Release all components to gemcutter."
-# task :release_projects => :package do
-#   errors = []
-#   PROJECTS.each do |project|
-#     system(%(cd #{project} && #{$0} release)) || errors << project
-#   end
-#   fail("Errors in #{errors.join(', ')}") unless errors.empty?
-# end
