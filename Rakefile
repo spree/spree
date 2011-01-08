@@ -9,7 +9,10 @@ end
 
 desc "run spec test for all gems"
 task :spec do
-  w(api auth core dash promo).each do |gem_name|
+  %w(api auth core dash promo).each do |gem_name|
+    cmd = "rm #{gem_name}/Gemfile"
+    puts cmd
+    system cmd
     cmd = "cd #{gem_name} && #{$0} test_app"
     puts cmd
     system cmd
