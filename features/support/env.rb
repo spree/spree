@@ -49,4 +49,8 @@ files.each do |path|
   load(path) if path !~ /env.rb$/
 end
 
+# use the factory girl step definitions
+require 'factory_girl'
+require 'factory_girl/step_definitions'
+
 DatabaseCleaner.strategy = :transaction
