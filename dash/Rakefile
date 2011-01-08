@@ -37,6 +37,15 @@ task :test_app do
   require '../lib/generators/spree/test_app_generator'
   class DashTestAppGenerator < Spree::Generators::TestAppGenerator
 
+    def tweak_gemfile
+      append_file 'Gemfile' do
+        <<-gems
+gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
+gem 'spree_dash', :path => \'#{File.dirname(__FILE__)}\'
+        gems
+      end
+    end
+
     def install_spree_dash
       inside "test_app" do
         run 'rake spree_core:install'
@@ -48,13 +57,6 @@ task :test_app do
       run_migrations
     end
 
-    protected
-    def full_path_for_local_gems
-      <<-gems
-gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
-gem 'spree_dash', :path => \'#{File.dirname(__FILE__)}\'
-      gems
-    end
   end
   DashTestAppGenerator.start
 end
