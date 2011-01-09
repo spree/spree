@@ -27,8 +27,8 @@ class SeoAssist
 
   def build_response(params, location)
     query = build_query(params)
-    new_location = location + '?' + query unless query.blank?
-    [301, { 'Location'=> new_location }, []]
+    location += '?' + query unless query.blank?
+    [301, { 'Location'=> location }, []]
   end
 
   def build_query(params)
