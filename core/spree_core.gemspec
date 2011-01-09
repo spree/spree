@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency('faker', '>= 0.3.1')
   s.add_dependency('paperclip', '>= 2.3.1.1')
   s.add_dependency('rd_resource_controller')
-  s.add_dependency('rd_searchlogic', '>= 3.0.0')
+  s.add_dependency('rd_searchlogic', '>= 3.0.1')
   s.add_dependency('activemerchant', '>= 1.7.1')
   s.add_dependency('will_paginate', '>= 3.0.pre2')
   s.add_dependency('rails', '= 3.0.3')
