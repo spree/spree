@@ -3,7 +3,7 @@ require 'rake'
 require 'rake/testtask'
 
 gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
-if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.to_s)
+if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.first.to_s)
   require 'bundler'
   ENV['BUNDLE_GEMFILE'] = gemfile
   Bundler.setup
