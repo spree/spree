@@ -1,6 +1,23 @@
 require 'rubygems'
 require 'rake'
 require 'rake/testtask'
+
+gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
+if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.to_s)
+  require 'bundler'
+  ENV['BUNDLE_GEMFILE'] = gemfile
+  Bundler.setup
+
+  require 'rspec'
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new
+
+  require 'cucumber/rake/task'
+  Cucumber::Rake::Task.new do |t|
+    t.cucumber_opts = %w{--format pretty}
+  end
+end
+
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
@@ -20,25 +37,17 @@ end
 desc "Default Task"
 task :default => [ :spec ]
 
-require 'rspec'
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new
-
-require 'cucumber/rake/task'
-Cucumber::Rake::Task.new do |t|
-  t.cucumber_opts = %w{--format pretty}
-end
-
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
   require '../lib/generators/spree/test_app_generator'
   class AuthTestAppGenerator < Spree::Generators::TestAppGenerator
+
     def tweak_gemfile
       append_file 'Gemfile' do
-<<-gems
-        gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
-        gem 'spree_auth', :path => \'#{File.dirname(__FILE__)}\'
-gems
+        <<-gems
+gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
+gem 'spree_auth', :path => \'#{File.dirname(__FILE__)}\'
+        gems
       end
     end
 
@@ -52,6 +61,7 @@ gems
     def migrate_db
       run_migrations
     end
+
   end
   AuthTestAppGenerator.start
 end

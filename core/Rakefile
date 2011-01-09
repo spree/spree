@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'rake'
+
+
 require 'rake/testtask'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
@@ -20,21 +22,32 @@ end
 desc "Default Task"
 task :default => [ :spec ]
 
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new
+gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
+if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.to_s)
+  require 'bundler'
+  ENV['BUNDLE_GEMFILE'] = gemfile
+  Bundler.setup
 
-require 'cucumber/rake/task'
-Cucumber::Rake::Task.new do |t|
-  t.cucumber_opts = %w{--format pretty}
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new
+
+  require 'cucumber/rake/task'
+  Cucumber::Rake::Task.new do |t|
+    t.cucumber_opts = %w{--format pretty}
+  end
 end
+
 
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
   require '../lib/generators/spree/test_app_generator'
   class CoreTestAppGenerator < Spree::Generators::TestAppGenerator
+
     def tweak_gemfile
       append_file 'Gemfile' do
-        "gem 'spree_core', :path => '#{File.dirname(__FILE__)}'"
+        <<-gems
+gem 'spree_core', :path => \'#{File.dirname(__FILE__)}\'
+        gems
       end
     end
 
@@ -47,6 +60,7 @@ task :test_app do
     def migrate_db
       run_migrations
     end
+
   end
   CoreTestAppGenerator.start
 end
