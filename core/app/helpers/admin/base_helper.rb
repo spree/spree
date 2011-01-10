@@ -20,7 +20,7 @@ module Admin::BaseHelper
   end
 
   def spree_date_picker(object, method, options = {}, html_options = {})
-    options.merge!(:format => "y-m-d")
+    options[:format] ||= "y-m-d"
     unobtrusive_date_text_picker(object, method, options, html_options)
   end
 
