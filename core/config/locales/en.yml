@@ -333,6 +333,7 @@ en:
   debit: Debit
   default: Default
   delete: Delete
+  delivery: Delivery
   depth: Depth
   description: Description
   destroy: Destroy
@@ -392,6 +393,7 @@ en:
   flat_rate_per_order: "Flat Rate (per order)"
   flexible_rate: "Flexible Rate"
   forgot_password: "Forgot Password?"
+  from_state: From State
   front_end: Front End
   full_name: "Full Name"
   gateway: Gateway
@@ -929,6 +931,7 @@ en:
   this_year: "This Year"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "To add variants, you must first define"
+  to_state: "To State"
   top_grossing_products: "Top Grossing Products"
   total: Total
   tracking: Tracking
