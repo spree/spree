@@ -15,6 +15,7 @@ class Admin::VariantsController < Admin::BaseController
 
   # redirect to index (instead of r_c default of show view)
   update.response do |wants|
+    wants.js { render :text => 'success' }
     wants.html {redirect_to collection_url}
   end
 
