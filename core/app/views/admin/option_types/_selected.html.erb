@@ -19,8 +19,7 @@
 </table>
 
 <div id="option-types"></div>
-<% if @product.variants.empty? %>
-  <span id="new_opt_link">
-    <%= link_to icon('add') + ' ' + t("add_option_type"), available_admin_product_option_types_url(@product), :remote => :true, :class => 'iconlink' %>
-  </span>
-<% end %>
+
+<span id="new_opt_link">
+  <%= link_to icon('add') + ' ' + t("add_option_type"), available_admin_product_option_types_url(@product), :remote => :true, :class => 'iconlink' %>
+</span>
