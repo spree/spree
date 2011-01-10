@@ -35,16 +35,6 @@ task :test_app do
   require '../lib/generators/spree/test_app_generator'
   class AuthTestAppGenerator < Spree::Generators::TestAppGenerator
 
-    def tweak_gemfile
-      append_file 'Gemfile' do
-        <<-gems
-gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
-gem 'spree_promo', :path => \'#{File.dirname(__FILE__)}\'
-gem 'spree_auth', :path => \'#{File.join(File.dirname(__FILE__), "..", "auth")}\'
-        gems
-      end
-    end
-
     def install_gems
       inside "test_app" do
         run 'rake spree_core:install'
@@ -57,7 +47,14 @@ gem 'spree_auth', :path => \'#{File.join(File.dirname(__FILE__), "..", "auth")}\
       run_migrations
     end
 
+    protected
+    def full_path_for_local_gems
+      <<-gems
+gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
+gem 'spree_promo', :path => \'#{File.dirname(__FILE__)}\'
+gem 'spree_auth', :path => \'#{File.join(File.dirname(__FILE__), "..", "auth")}\'
+      gems
+    end
   end
   AuthTestAppGenerator.start
 end
-

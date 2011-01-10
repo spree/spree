@@ -19,6 +19,11 @@ module Spree
         end
       end
 
+      def create_rspec_gemfile
+        # newer versions of rspec require a Gemfil in the local gem dirs so create one there as well as in spec/test_app
+        template "Gemfile"
+      end
+
       def create_root
         self.destination_root = File.expand_path("spec/#{test_app}", destination_root)
       end
@@ -74,6 +79,22 @@ constantz
       def create_databases_yml
         remove_file "config/database.yml"
         template "config/database.yml"
+      end
+
+      def tweak_gemfile
+        append_file '../../Gemfile' do
+          full_path_for_local_gems
+        end
+
+        append_file 'Gemfile' do
+          full_path_for_local_gems
+        end
+      end
+
+      protected
+      def full_path_for_local_gems
+        # Gemfile needs to be full local path to the source (ex. /Users/schof/repos/spree/auth)
+        # By default we do nothing but each gem should override this method with the appropriate content
       end
 
       private
