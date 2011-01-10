@@ -20,9 +20,13 @@ You need to do a quick one-time creation of a test application and then you can 
 
     rake test_app
 
-Then run the tests
+Then run the rspec tests
 
     rake spec
+
+Then run the cucumber tests
+
+    bundle exec cucumber
 
 Misc
 ----
