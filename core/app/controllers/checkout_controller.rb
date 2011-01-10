@@ -5,6 +5,7 @@ class CheckoutController < Spree::BaseController
   ssl_required
 
   before_filter :load_order
+  rescue_from Spree::GatewayError, :with => :rescue_from_spree_gateway_error
 
   # Updates the order and advances to the next state (when possible.)
   def update
@@ -82,6 +83,11 @@ class CheckoutController < Spree::BaseController
 
   def default_country
     Country.find Spree::Config[:default_country_id]
+  end
+
+  def rescue_from_spree_gateway_error
+    flash[:error] = t('spree_gateway_error_flash_for_checkout')
+    render :edit
   end
 
 end

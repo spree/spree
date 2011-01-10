@@ -123,5 +123,22 @@ describe CheckoutController do
       end
     end
 
+    context "Spree::GatewayError" do
+
+      before do
+        order.stub(:update_attributes).and_raise(Spree::GatewayError)
+        post :update, {:state => "whatever"}
+      end
+
+      it "should render the edit template" do
+        response.should render_template :edit
+      end
+
+      it "should set appropriate flash message" do
+        flash[:error].should == I18n.t('spree_gateway_error_flash_for_checkout')
+      end
+
+    end
+
   end
 end
