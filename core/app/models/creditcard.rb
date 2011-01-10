@@ -165,13 +165,9 @@ class Creditcard < ActiveRecord::Base
     payment.state == "pending"
   end
 
-  # Indicates whether its possible to void the payment.  Most gateways require that the payment has not been
-  # settled yet when performing a void (which generally happens within 12-24 hours of the transaction.)  For
-  # this reason, the default behavior of Spree is to only allow void operations within the first 12 hours of
-  # the payment creation time.
+  # Indicates whether its possible to void the payment.
   def can_void?(payment)
-    return false unless (Time.now - 12.hours) < payment.created_at
-    %w{completed pending}.include? payment.state
+    payment.state == "void" ? false : true
   end
 
   # Indicates whether its possible to credit the payment.  Most gateways require that the payment be settled
