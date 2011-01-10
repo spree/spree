@@ -93,4 +93,8 @@ Scenario: Visitor can work with cart
   And I should see "$15" within "#subtotal"
 </ruby>
 
-INFO. The cucumber features have been temporarily disabled in Spree due to the Rails 3.0 update.  We're looking for volunteers to help us update our features and get us back on track with Cucumber.  If you're interested, please send an email to the spree-user mailing list.
+Execute the command given below to run cucumber tests.
+
+<shell>
+  $ bundle exec cucumber
+</shell>
