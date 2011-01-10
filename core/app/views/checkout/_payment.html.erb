@@ -21,8 +21,11 @@
     </ul>
     <br style='clear:both;' />
     <p>
-      <%= form.label :coupon_code %><br />
-      <%= form.text_field :coupon_code, :size => 19 %>
+      <%= hook :coupon_code_label do %>
+      <% end %>
+      <br />
+      <%= hook :coupon_code_text_field do %>
+      <% end %>
     </p>
   <% end %>
 </fieldset>
