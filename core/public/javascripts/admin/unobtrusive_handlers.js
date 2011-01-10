@@ -12,4 +12,31 @@ $(document).ready(function(){
     return false;
   });
 
+
+  jQuery('table.sortable').ready(function(){ 
+    jQuery('table.sortable tbody').sortable(
+      {
+        handle: '.handle',
+        update: function(event, ui) {
+          $("#progress").show();
+          positions = {};
+          type = '';
+          jQuery.each(jQuery('table.sortable tbody tr'), function(position, obj){
+            reg = /(\w+_?)+_(\d+)/;
+            parts = reg.exec(jQuery(obj).attr('id'));
+            if (parts) { 
+              positions['positions['+parts[2]+']'] = position;
+              type = parts[1];
+            }
+          });
+          jQuery.ajax({
+            type: 'PUT',
+            url: type+'s/update_positions',
+            data: positions,
+            success: function(data){ $("#progress").hide(); }
+          });
+        }
+      });
+  });
+
 });

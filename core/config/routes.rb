@@ -79,7 +79,11 @@ Rails.application.routes.draw do
       member do
         get :clone
       end
-      resources :variants
+      resources :variants do
+        collection do
+          put :update_positions
+        end
+      end
       resources :option_types do
         member do
           get :select

@@ -35,6 +35,13 @@ class Admin::VariantsController < Admin::BaseController
       format.js  { render_js_for_destroy }
     end
   end
+  
+  def update_positions
+    params[:positions].each do |id, index|
+      Variant.update_all(['position=?', index], ['id=?', id])
+    end
+    render :text => 'Ok'
+  end
 
   private
   def create_before

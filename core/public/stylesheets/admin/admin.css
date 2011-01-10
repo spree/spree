@@ -577,3 +577,9 @@ table#product_scopes tr td table tr td {
 }
 
 
+span.handle{
+  background-image: url(../../images/reorder.jpg);
+  display: inline-block;
+  width:14px;
+  height:15px;
+}
