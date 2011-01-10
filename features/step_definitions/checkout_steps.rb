@@ -1,7 +1,7 @@
 When /^(?:|I )fill (billing|shipping) address with correct data$/ do |address_type|
   str_addr = address_type[0...4] + "_address"
   address = if @me
-    @me.send(str_addr) 
+    @me.send(str_addr)
   else
     Fabricate(:address)
   end

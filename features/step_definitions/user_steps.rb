@@ -37,5 +37,5 @@ Then /^(\d+) users should exist$/ do |c|
 end
 
 Then /^I should have (\d+) order$/ do |c|
-  @user.orders.count.should == c.to_i
+  User.find_by_email('email@person.com').orders.count.should == c.to_i
 end

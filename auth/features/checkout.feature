@@ -3,7 +3,7 @@ Feature: Checkout
   As a user
   I should be able make checkout
 
-  #@selenium
+  @selenium
   Scenario: Visitor make checkout as guest, without registration
     When I add a product with name: "RoR Mug" to cart
     Then I should see "Shopping Cart" within "h1"
@@ -22,7 +22,7 @@ Feature: Checkout
     When I choose "UPS Ground" as shipping method and "Check" as payment method
     Then I should see "Your order has been processed successfully"
 
-  #@selenium
+  @selenium
   Scenario: Uncompleted guest order should be associated with user after log in
     Given I am signed up as "email@person.com/password"
     And I am logged out
