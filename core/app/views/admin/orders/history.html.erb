@@ -5,12 +5,17 @@
 <table class="index">
   <tr>
     <th><%= t("event") %></th>
+    <th><%= t("from_state") %></th>
+    <th><%= t("to_state") %></th>
     <th><%= t("user") %></th>
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
   </tr>
   <% @order.state_events.sort.each do |event| %>
+    <% state_machine_event = Order.state_machine.events[event.name.to_sym] %>
     <tr>
       <td><%=t("#{event.name}") %></td>
+      <td><%=t("#{event.previous_state}") %></td>
+      <td><%=t("#{event.next_state}") %></td>
       <td><%=event.user.email if event.user %></td>
       <td><%=event.created_at.to_s(:date_time24) %></td>
     </tr>
