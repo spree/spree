@@ -49,3 +49,4 @@ tags
 rerun.txt
 test_app
 .rvmrc
+**/coverage

@@ -8,3 +8,8 @@ Create the test site
 Run the tests
 
     rake spec
+
+Run the coverage. After the rake task open coverage/index.html
+
+    rake rcov
+
