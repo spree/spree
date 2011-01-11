@@ -249,12 +249,8 @@ class Order < ActiveRecord::Base
   # Creates a new tax charge if applicable.  Uses the highest possible matching rate and destroys any previous
   # tax charges if they were created by rates that no longer apply.
   def create_tax_charge!
-    return unless rate = TaxRate.match(bill_address) or adjustments.tax.present?
-    if old_charge = adjustments.tax.first
-      old_charge.destroy unless old_charge.originator == rate
-      return
-    end
-    rate.create_adjustment(I18n.t(:tax), self, self, true)
+    adjustments.tax.each {|e| e.destroy }
+    TaxRate.match(ship_address).each {|r| r.create_adjustment(I18n.t(:tax), self, self, true) }
   end
 
   # Creates a new shipment (adjustment is created by shipment model)

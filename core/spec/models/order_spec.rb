@@ -97,7 +97,7 @@ describe Order do
 
       before do
         order.state = "address"
-        TaxRate.stub :match => rate
+        TaxRate.stub :match => [rate]
       end
 
       it "should create a tax charge when transitioning to delivery state" do
@@ -109,20 +109,14 @@ describe Order do
         let(:old_charge) { mock_model Adjustment }
         before { order.stub_chain :adjustments, :tax => [old_charge] }
 
-        it "should not create a second tax charge (for the same rate)" do
-          old_charge.stub :originator => rate
-          rate.should_not_receive :create_adjustment
-          order.next!
-        end
-
         it "should remove an existing tax charge (for the old rate)" do
-          old_charge.stub :originator => mock_model(TaxRate)
+          rate.should_receive(:create_adjustment).with(I18n.t(:tax), order, order, true)
           old_charge.should_receive :destroy
           order.next
         end
 
         it "should remove an existing tax charge if there is no longer a relevant tax rate" do
-          TaxRate.stub :match => nil
+          TaxRate.stub :match => []
           old_charge.stub :originator => mock_model(TaxRate)
           old_charge.should_receive :destroy
           order.next
