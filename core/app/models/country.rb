@@ -5,6 +5,7 @@ class Country < ActiveRecord::Base
   has_one     :zone,        :through => :zone_member
 
   scope :order_by_name, :order => :name
+
   validates :name, :iso_name, :presence => true
 
   def <=>(other)
