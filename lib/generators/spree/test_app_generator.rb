@@ -101,8 +101,11 @@ constantz
 
       def run_migrations
         inside "" do
-          run "rake db:migrate db:seed RAILS_ENV=test"
-          run "rake db:migrate db:seed RAILS_ENV=cucumber"
+          puts "running migrations db:seed for test and cucumber environment. might take a while ..."
+          silence_stream(STDOUT) {
+            run "rake db:migrate db:seed RAILS_ENV=test"
+            run "rake db:migrate db:seed RAILS_ENV=cucumber"
+          }
         end
       end
 
@@ -113,6 +116,16 @@ constantz
       def remove_directory_if_exists(path)
         run "rm -r #{path}" if File.directory?(path)
       end
+
+      def silence_stream(stream)
+        old_stream = stream.dup
+        stream.reopen(RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ ? 'NUL:' : '/dev/null')
+        stream.sync = true
+        yield
+      ensure
+        stream.reopen(old_stream)
+      end
+
     end
   end
 end
