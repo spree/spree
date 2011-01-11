@@ -7,7 +7,7 @@ class Address < ActiveRecord::Base
   validates :firstname, :lastname, :address1, :city, :zipcode, :country, :phone, :presence => true
   validates :state, :presence => true, :if => Proc.new { |address| address.state_name.blank? && Spree::Config[:address_requires_state] }
   validates :state_name, :presence => true, :if => Proc.new { |address| address.state.blank? && Spree::Config[:address_requires_state] }
-  validate :state_name_validate, :if => Proc.new { |address| address.state.blank? && Spree::Config[:address_requires_state] }
+  validate :state_name_validate, :if => Proc.new { |address| !address.state_name.blank? }
 
   # disconnected since there's no code to display error messages yet OR matching client-side validation
   def phone_validate
