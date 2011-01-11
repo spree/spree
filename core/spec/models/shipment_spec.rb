@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Shipment do
   let(:order) { mock_model Order, :backordered? => false }

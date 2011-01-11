@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Variant do
   let(:variant) { Variant.new(:count_on_hand => 95) }
