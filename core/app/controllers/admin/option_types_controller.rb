@@ -20,6 +20,17 @@ class Admin::OptionTypesController < Admin::BaseController
     redirect_to selected_admin_product_option_types_url(@product)
   end
 
+  def update_positions
+    params[:positions].each do |id, index|
+      OptionType.update_all(['position=?', index], ['id=?', id])
+    end
+    
+    respond_to do |format|
+      format.html { redirect_to admin_product_variants_url(params[:product_id]) }
+      format.js  { render :text => 'Ok' }
+    end
+  end
+
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => !request.xhr?}
   end

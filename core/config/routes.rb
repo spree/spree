@@ -81,7 +81,7 @@ Rails.application.routes.draw do
       end
       resources :variants do
         collection do
-          put :update_positions
+          post :update_positions
         end
       end
       resources :option_types do
@@ -105,7 +105,12 @@ Rails.application.routes.draw do
         end
       end
     end
-    resources :option_types
+    resources :option_types do
+      collection do
+        post :update_positions
+      end
+    end
+    
     resources :properties do
       collection do
         get :filtered

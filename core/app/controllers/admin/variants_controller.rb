@@ -40,7 +40,11 @@ class Admin::VariantsController < Admin::BaseController
     params[:positions].each do |id, index|
       Variant.update_all(['position=?', index], ['id=?', id])
     end
-    render :text => 'Ok'
+    
+    respond_to do |format|
+      format.html { redirect_to admin_product_variants_url(params[:product_id]) }
+      format.js  { render :text => 'Ok' }
+    end
   end
 
   private

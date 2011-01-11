@@ -13,7 +13,7 @@
 
 <div id="new_option_type"></div>
 
-<table class="index">
+<table class="index sortable">
   <tr>
     <th><%= t("name") %></th>
     <th><%= t("presentation") %></th>
@@ -21,7 +21,7 @@
   </tr>
   <% @option_types.each do |option_type| %>
     <tr id="<%= dom_id option_type %>">
-      <td><%= option_type.name %></td>
+      <td><span class="handle"></span> <%= option_type.name %></td>
       <td><%= option_type.presentation %></td>
       <td class="actions">
         <%= link_to_edit(option_type) %>

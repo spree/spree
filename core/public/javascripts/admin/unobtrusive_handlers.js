@@ -30,7 +30,8 @@ $(document).ready(function(){
             }
           });
           jQuery.ajax({
-            type: 'PUT',
+            type: 'POST',
+            dataType: 'script',
             url: type+'s/update_positions',
             data: positions,
             success: function(data){ $("#progress").hide(); }
