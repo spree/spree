@@ -21,7 +21,7 @@ module Spree
 
       def create_rspec_gemfile
         # newer versions of rspec require a Gemfil in the local gem dirs so create one there as well as in spec/test_app
-        template "Gemfile"
+        template "Gemfile", :force => true
       end
 
       def create_root
