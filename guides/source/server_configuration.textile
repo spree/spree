@@ -106,8 +106,6 @@ Mail delivery in Spree is disabled by default. Enabling it is simple procedure t
 
 !images/server_configuration/change_mail_server_settings.png(Changing Mail Server Setting)!
 
-[TODO: Update image with new screenshot]
-
 To properly enable email delivery, you need to provide valid SMTP information. This includes the following:
 
 # SMTP Domain
