@@ -23,7 +23,7 @@ desc "Default Task"
 task :default => [ :spec ]
 
 gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
-if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.first.to_s)
+if File.exists?(gemfile) && %w(rcov spec cucumber).include?(ARGV.first.to_s)
   require 'bundler'
   ENV['BUNDLE_GEMFILE'] = gemfile
   Bundler.setup
@@ -35,6 +35,14 @@ if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.first.to_s)
   Cucumber::Rake::Task.new do |t|
     t.cucumber_opts = %w{--format pretty}
   end
+
+  desc "Run specs with RCov"
+  RSpec::Core::RakeTask.new(:rcov) do |t|
+    t.rcov = true
+    t.rcov_opts = %w{ --exclude gems\/,spec\/,features\/}
+    t.verbose = true
+  end
+
 end
 
 
