@@ -15,7 +15,7 @@ module Spree
       def generate_app
         remove_directory_if_exists("spec/#{test_app}")
         inside "spec" do
-          run "rails new #{test_app} -GJT --skip-gemfile"
+          run "rails new #{test_app} -GJTq --skip-gemfile"
         end
       end
 
