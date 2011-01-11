@@ -54,7 +54,7 @@ module Spree::Search
         @cached_product_group = ProductGroup.find_by_permalink(params[:product_group_name])
         @product_group = ProductGroup.new
       elsif params[:product_group_query]
-        @product_group = ProductGroup.new.from_route(params[:product_group_query].to_a)
+        @product_group = ProductGroup.new.from_route([params[:product_group_query]].flatten)
       else
         @product_group = ProductGroup.new
       end
