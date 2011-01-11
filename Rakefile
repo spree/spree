@@ -7,6 +7,8 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
+task :default => [ :spec ]
+
 desc "run spec test for all gems"
 task :spec do
   %w(api auth core dash promo).each do |gem_name|
