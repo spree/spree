@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 
 describe InventoryUnit do
   let(:variant) { mock_model(Variant, :on_hand => 95) }

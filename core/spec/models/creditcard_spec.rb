@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Creditcard do
   let(:valid_creditcard_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }

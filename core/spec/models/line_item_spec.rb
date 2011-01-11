@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 
 describe LineItem do
   let(:variant) { mock_model(Variant, :count_on_hand => 95, :price => 9.99) }

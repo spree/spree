@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ReturnAuthorization do
   let(:inventory_unit) { InventoryUnit.create(:variant => mock_model(Variant)) }
