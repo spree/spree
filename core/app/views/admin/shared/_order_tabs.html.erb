@@ -14,7 +14,7 @@
   <br class="clear" />
 
   <ul class="sidebar">
-    <%= hook :admin_order_tabs do %>
+    <%= hook :admin_order_tabs, {:current => current} do %>
       <% unless @order.completed? %>
         <li<%== ' class="active"' if current == "Order Details" %>>
           <%= link_to t("order_details"), edit_admin_order_url(@order) %>
