@@ -24,6 +24,5 @@ Feature: Order's total
     And check "order_use_billing"
     And press "Save and Continue"
     When I choose "UPS Ground" as shipping method and "Check" as payment method and set coupon code to "ORDER_30"
-    Then I should have 1 order
-    And the existing order should have total at "35"
+    Then the existing order should have total at "35"
 

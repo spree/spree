@@ -1,3 +1,5 @@
+require 'factory_girl'
+
 Factory.define :user do |u|
   u.sequence(:email) { |i| 'email_%d@email.com' % i }
   u.password              { 'password' }
