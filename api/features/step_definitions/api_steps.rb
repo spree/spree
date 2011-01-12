@@ -22,6 +22,14 @@ end
 
 Given /^I am a valid API user$/ do
   @user = Fabricate(:user)
+  unless admin_role = Role.find_by_name('admin')
+    admin_role = Role.create(:name => 'admin')
+  end
+
+  unless @user.roles(&:name).include?('admin')
+    @user.roles << admin_role
+  end
+
   authorize @user.authentication_token, "X"
 end
 
