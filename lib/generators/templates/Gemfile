@@ -7,6 +7,12 @@ group :test do
   gem 'factory_girl_rails'
   gem 'fabrication'
   gem 'rcov'
+  gem 'shoulda'
+  if RUBY_VERSION < "1.9"
+    gem "ruby-debug"
+  else
+    gem "ruby-debug19"
+  end
 end
 
 group :cucumber do
@@ -16,4 +22,10 @@ group :cucumber do
   gem 'capybara'
   gem 'fabrication'
   gem 'factory_girl_rails'
+
+  if RUBY_VERSION < "1.9"
+    gem "ruby-debug"
+  else
+    gem "ruby-debug19"
+  end
 end
