@@ -36,10 +36,8 @@ DatabaseCleaner.clean
 Capybara.save_and_open_page_path = File.join(Rails.root, "tmp")
 
 # load the rest of files for support and step definitions
-directories = [File.join(FEATURES_PATH, '../../features/support'),
-               File.join(FEATURES_PATH, 'support'),
-               File.join(FEATURES_PATH, 'step_definitions'),
-               File.join(FEATURES_PATH, '../../features/step_definitions')]
+directories = [ File.join(FEATURES_PATH, '../../features/support'),
+               File.join(FEATURES_PATH, '../../features/step_definitions') ]
 
 files = directories.map do |dir|
   Dir["#{dir}/**/*"]
