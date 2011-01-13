@@ -2,6 +2,7 @@ class TaxCategory < ActiveRecord::Base
   validates :name, :presence => true, :uniqueness => true
 
   has_many :tax_rates
+
   before_save :set_default_category
 
   def set_default_category

@@ -1,3 +1,9 @@
+Factory.define :tax_category do |f|
+  f.name 'Clothing'
+  f.description 'Clothing tax category'
+  f.is_default false
+end
+
 Factory.define :country do |f|
   f.iso_name 'INDIA'
   f.name 'INDIA'
