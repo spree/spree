@@ -21,7 +21,9 @@ module Spree
 
       def create_rspec_gemfile
         # newer versions of rspec require a Gemfil in the local gem dirs so create one there as well as in spec/test_app
-        template "Gemfile", :force => true
+        silence_stream(STDOUT) {
+          template "Gemfile", :force => true
+        }
       end
 
       def create_root
@@ -29,19 +31,24 @@ module Spree
       end
 
       def remove_unneeded_files
-        remove_file "doc"
-        remove_file "lib/tasks"
-        remove_file "public/images/rails.png"
-        remove_file "public/index.html"
-        remove_file "README"
-        remove_file "vendor"
+        silence_stream(STDOUT) {
+          remove_file "doc"
+          remove_file "lib/tasks"
+          remove_file "public/images/rails.png"
+          remove_file "public/index.html"
+          remove_file "README"
+          remove_file "vendor"
+        }
       end
 
       def replace_gemfile
-        template "Gemfile"
+        silence_stream(STDOUT) {
+          template "Gemfile"
+        }
       end
 
       def setup_environments
+        silence_stream(STDOUT) {
         template "config/environments/cucumber.rb"
         append_file "config/environments/test.rb" do
 <<-constantz
@@ -74,21 +81,26 @@ CHECKOUT = 'checkout'
 PAYMENT_STATES = [CHECKOUT, PROCESSING, FAILED, COMPLETED, VOID, PENDING]
 constantz
         end
+        }
       end
 
       def create_databases_yml
-        remove_file "config/database.yml"
-        template "config/database.yml"
+        silence_stream(STDOUT) {
+          remove_file "config/database.yml"
+          template "config/database.yml"
+        }
       end
 
       def tweak_gemfile
-        append_file '../../Gemfile' do
-          full_path_for_local_gems
-        end
+        silence_stream(STDOUT) {
+          append_file '../../Gemfile' do
+            full_path_for_local_gems
+          end
 
-        append_file 'Gemfile' do
-          full_path_for_local_gems
-        end
+          append_file 'Gemfile' do
+            full_path_for_local_gems
+          end
+        }
       end
 
       protected
