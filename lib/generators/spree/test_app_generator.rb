@@ -20,9 +20,10 @@ module Spree
       end
 
       def create_rspec_gemfile
-        # newer versions of rspec require a Gemfil in the local gem dirs so create one there as well as in spec/test_app
+        # newer versions of rspec require a Gemfile in the local gem dirs so create one there as well as in spec/test_app
         silence_stream(STDOUT) {
           template "Gemfile", :force => true
+          remove_file "Gemfile.lock"
         }
       end
 
