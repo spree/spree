@@ -1,6 +1,16 @@
-<h1><%= t("editing_tax_rate") %></h1>
-<%= render "shared/error_messages", :target => @tax_rate %>
-<%= form_for(@tax_rate, :url => object_url, :html => { :method => :put }) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
-  <%= render :partial => "admin/shared/edit_resource_links" %>
+<%= render :partial => 'admin/shared/configuration_menu' %>
+
+<%= hook :admin_tax_rate_edit_form_header do %>
+  <h1><%= t("editing_tax_rate") %></h1>
+  <%= render "shared/error_messages", :target => @tax_rate %>
+<% end %>
+
+<%= hook :admin_tax_rate_edit_form do %>
+  <%= form_for(@tax_rate, :url => object_url, :html => { :method => :put }) do |f| %>
+    <%= render :partial => "form", :locals => { :f => f } %>
+    
+    <%= hook :admin_tax_rate_edit_form_buttons do %>
+      <%= render :partial => "admin/shared/edit_resource_links" %>
+    <% end %>
+  <% end %>
 <% end %>
