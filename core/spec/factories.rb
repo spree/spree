@@ -4,6 +4,10 @@ Factory.define :tax_category do |f|
   f.is_default false
 end
 
+Factory.define :shipping_category do |f|
+  f.name 'UPS Ground'
+end
+
 Factory.define :country do |f|
   f.iso_name 'INDIA'
   f.name 'INDIA'
