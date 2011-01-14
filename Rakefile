@@ -20,7 +20,7 @@ end
 
 desc "run cucumber test for all gems"
 task :cucumber do
-  %w(api auth core dash promo).each do |gem_name|
+  %w(api auth core promo).each do |gem_name|
     cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
     cmd = "cd #{gem_name} && rake test_app"; puts cmd; system cmd
     cmd = "cd #{gem_name} && bundle exec cucumber"; puts cmd; system cmd
