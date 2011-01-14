@@ -51,4 +51,7 @@ end
 require 'factory_girl'
 require 'factory_girl/step_definitions'
 
+require File.expand_path("../../../core/spec/factories", __FILE__)
+
+
 DatabaseCleaner.strategy = :transaction
