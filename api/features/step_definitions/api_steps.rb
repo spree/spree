@@ -1,27 +1,7 @@
 World(Rack::Test::Methods)
 
-#There are issues with how testing loads the Fabricators
-#  This seems to init them without the Rails stack or before the Rails stack
-Fabricator(:user) do
-  email { Fabricate.sequence(:user_email) { |n| "user#{n}@example.org" } }
-  login { |u| u.email }
-  authentication_token { Fabricate.sequence(:user_authentication_token) { |n| "#{n}#{n}#{n}xxx#{n}#{n}#{n}xxx"}}
-  password "secret"
-  password_confirmation { |u| u.password }
-  #after_create { |user| user.roles << Fabricate(:role) }
-end
-
-Fabricator(:role) do
-  name "admin"
-end
-
-Fabricator(:order) do
-  number { Fabricate.sequence(:order_number) { |n| "R#{n}" } }
-  email { Fabricate.sequence(:order_email) { |n| "user#{n}@example.com" } }
-end
-
 Given /^I am a valid API user$/ do
-  @user = Fabricate(:user)
+  @user = Factory(:user)
   unless admin_role = Role.find_by_name('admin')
     admin_role = Role.create(:name => 'admin')
   end

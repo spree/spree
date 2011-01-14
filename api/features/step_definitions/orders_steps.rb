@@ -1,5 +1,5 @@
 Given /^I have (\d+) orders$/ do |o|
-  user = Fabricate(:user)
+  user = Factory(:user)
   Order.delete_all
   Order.create(:email => user.email,:number => 100)
   Order.create(:email => user.email,:number => 101)
