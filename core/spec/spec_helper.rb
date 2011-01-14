@@ -11,7 +11,9 @@ require 'factories'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 # #require factories
-Dir["#{File.dirname(__FILE__)}/factories/**/*.rb"].each {|f| require f}
+Dir["#{File.dirname(__FILE__)}/factories/**/*.rb"].each do |f|
+  require File.expand_path(f)
+end
 
 RSpec.configure do |config|
   # == Mock Framework
