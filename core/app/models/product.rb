@@ -109,7 +109,7 @@ class Product < ActiveRecord::Base
   # ----------------------------------------------------------------------------------------------------------
 
   def to_param
-    return permalink unless permalink.blank?
+    return permalink if permalink.present?
     name.to_url
   end
 
