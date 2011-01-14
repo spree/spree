@@ -10,6 +10,9 @@ require 'factories'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
+# #require factories
+Dir["#{File.dirname(__FILE__)}/factories/**/*.rb"].each {|f| require f}
+
 RSpec.configure do |config|
   # == Mock Framework
   #
@@ -27,6 +30,12 @@ RSpec.configure do |config|
   # examples within a transaction, comment the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
+end
+
+Zone.class_eval do
+  def self.global
+    find_by_name("GlobalZone") || Factory(:global_zone)
+  end
 end
 
 @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
