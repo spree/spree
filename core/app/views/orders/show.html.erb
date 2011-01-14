@@ -5,7 +5,7 @@
   	<br/><br/>
   	<h3><%= t('thank_you_for_your_order') %></h3>         
   <% else %>
-  	| <%= link_to t('my_account'), user_path(current_user) if current_user%>
+  	| <%= link_to t('my_account'), account_path if current_user%>
   <% end %>
   <br/><br/>
 
