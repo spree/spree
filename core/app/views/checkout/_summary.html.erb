@@ -1,21 +1,27 @@
 <h3><%= t(:order_summary) %></h3>
 <table>
   <tbody>
-    <tr>
-      <td><strong><%= t('item_total') %>:</strong></td>
-      <td><strong><%= number_to_currency order.item_total %></strong></td>
-    </tr>
+    <%= hook :checkout_summary_item_total do %>
+      <tr>
+        <td><strong><%= t('item_total') %>:</strong></td>
+        <td><strong><%= number_to_currency order.item_total %></strong></td>
+      </tr>
+    <% end %>
     <tbody id="summary-order-charges">
-      <% order.adjustments.each do |adjustment| %>
-        <tr>
-          <td><%= adjustment.label %>: </td>
-          <td><%= number_to_currency adjustment.amount %></td>
-        </tr>
+      <%= hook :checkout_summary_adjustments do %>
+        <% order.adjustments.each do |adjustment| %>
+          <tr>
+            <td><%= adjustment.label %>: </td>
+            <td><%= number_to_currency adjustment.amount %></td>
+          </tr>
+        <% end %>
       <% end %>
     </tbody>
-    <tr>
-      <td><strong><%= t('order_total') %>:</strong></td>
-      <td><strong><span id='summary-order-total'><%= number_to_currency @order.total %></span></strong></td>
-    </tr>
+    <%= hook :checkout_summary_order_total do %>
+      <tr>
+        <td><strong><%= t('order_total') %>:</strong></td>
+        <td><strong><span id='summary-order-total'><%= number_to_currency @order.total %></span></strong></td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
