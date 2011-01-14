@@ -12,6 +12,11 @@ if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.first.to_s)
   require 'rspec'
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new
+
+  require 'cucumber/rake/task'
+  Cucumber::Rake::Task.new do |t|
+    t.cucumber_opts = %w{--format pretty}
+  end
 end
 
 spec = eval(File.read('spree_promo.gemspec'))
