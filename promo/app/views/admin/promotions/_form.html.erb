@@ -34,11 +34,11 @@
 
   <p id="starts_at_field">
     <%= f.label :starts_at %>
-    <%= date_select :promotion, :starts_at, :prompt => true, :use_month_numbers => true %>
+    <%= f.spree_date_picker :starts_at, :prompt => true, :use_month_numbers => true %>
   </p>
   <p id="expires_at_field">
     <%= f.label :expires_at %>
-    <%= date_select :promotion, :expires_at, :prompt => true, :use_month_numbers => true %>
+    <%= f.spree_date_picker :expires_at, :prompt => true, :use_month_numbers => true %>
   </p>
 </fieldset>
 
