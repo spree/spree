@@ -21,6 +21,7 @@ module SpreeCore
           Gateway::PayPal,
           Gateway::SagePay,
           Gateway::Beanstream,
+          Gateway::Braintree,
           PaymentMethod::Check
         ].each{|gw|
           begin
