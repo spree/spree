@@ -1,8 +1,17 @@
-<h1><%= t("new_tax_rate") %></h1>
+<%= render :partial => 'admin/shared/configuration_menu' %>
 
-<%= render 'shared/error_messages', :target => @tax_rate %>
+<%= hook :admin_tax_rate_new_form_header do %>
+  <h1><%= t("new_tax_rate") %></h1>
 
-<%= form_for(:tax_rate, :url => collection_url) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
-  <%= render :partial => "admin/shared/new_resource_links" %>
+  <%= render 'shared/error_messages', :target => @tax_rate %>
+<% end %>
+
+<%= hook :admin_tax_rate_new_form do %>
+  <%= form_for(:tax_rate, :url => collection_url) do |f| %>
+    <%= render :partial => "form", :locals => { :f => f } %>
+  
+    <%= hook :admin_tax_rate_new_form_buttons do %>
+      <%= render :partial => "admin/shared/new_resource_links" %>
+    <% end %>
+  <% end %>
 <% end %>
