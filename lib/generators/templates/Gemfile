@@ -8,6 +8,7 @@ group :test do
   gem 'fabrication'
   gem 'rcov'
   gem 'shoulda'
+  gem 'faker'
   if RUBY_VERSION < "1.9"
     gem "ruby-debug"
   else
@@ -22,6 +23,7 @@ group :cucumber do
   gem 'capybara'
   gem 'fabrication'
   gem 'factory_girl_rails'
+  gem 'faker'
 
   if RUBY_VERSION < "1.9"
     gem "ruby-debug"
