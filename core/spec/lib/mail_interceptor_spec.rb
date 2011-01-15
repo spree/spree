@@ -1,4 +1,4 @@
-require "spec_helper"
+require File.dirname(__FILE__) + '/../spec_helper'
 
 # We'll use the OrderMailer as a quick and easy way to test.  IF it works here - it works for all email (in theory.)
 describe OrderMailer do

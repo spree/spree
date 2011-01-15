@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Gateway::AuthorizeNet do
   let (:gateway) { Gateway::AuthorizeNet.new }

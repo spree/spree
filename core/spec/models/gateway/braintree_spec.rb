@@ -1,17 +1,17 @@
- $:.unshift File.dirname(__FILE__) + '/../../'
- require 'spec_helper'
+ #$:.unshift File.dirname(__FILE__) + '/../../'
+require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Gateway::Braintree do
-  
+
   before(:each) do
     Gateway.update_all(:active => false)
     @gateway = Gateway::Braintree.create!(:name => "Braintree Gateway", :environment => "test", :active => true)
-    
+
     @gateway.set_preference(:merchant_id, "zbn5yzq9t7wmwx42" )
     @gateway.set_preference(:public_key, "ym9djwqpkxbv3xzt")
     @gateway.set_preference(:private_key, "4ghghkyp2yy6yqc8")
     @gateway.save!
-    
+
     with_payment_profiles_off do
       @country = Factory(:country, :name => "United States", :iso_name => "UNITED STATES", :iso3 => "USA", :iso => "US", :numcode => 840)
       @address = Factory(:address,
@@ -30,26 +30,26 @@ describe Gateway::Braintree do
       @creditcard = Factory(:creditcard, :verification_value => '123', :number => '5105105105105100', :month => 9, :year => Time.now.year + 1, :first_name => 'John', :last_name => 'Doe')
       @payment = Factory(:payment, :source => @creditcard, :order => @order, :amount => @order.total)
     end
-    
+
   end
-  
+
   it "should be braintree gateway" do
     @gateway.provider_class.should == ::ActiveMerchant::Billing::BraintreeGateway
   end
-  
+
   describe "authorize" do
     it "should return a success response with an authorization code" do
-      result = @gateway.authorize(500, @creditcard,      {:server=>"test", 
-                                                        :test =>true, 
-                                                        :merchant_id=>"zbn5yzq9t7wmwx42", 
-                                                        :public_key=> "ym9djwqpkxbv3xzt", 
+      result = @gateway.authorize(500, @creditcard,      {:server=>"test",
+                                                        :test =>true,
+                                                        :merchant_id=>"zbn5yzq9t7wmwx42",
+                                                        :public_key=> "ym9djwqpkxbv3xzt",
                                                         :private_key=> "4ghghkyp2yy6yqc8"})
 
       result.success?.should be_true
       result.authorization.should match(/\A\w{6}\z/)
       Braintree::Transaction::Status::Authorized.should == Braintree::Transaction.find(result.authorization).status
    end
-   
+
    it 'should work through the spree payment interface' do
       Spree::Config.set :auto_capture => false
       @payment.log_entries.size.should == 0
@@ -64,11 +64,11 @@ describe Gateway::Braintree do
       transaction.customer_details.first_name.should == 'John'
       transaction.customer_details.last_name.should == 'Doe'
    end
-    
+
   end
-  
+
   describe "capture" do
-    
+
     it " should capture a previous authorization" do
       @payment.process!
       assert_equal 1, @payment.log_entries.size
@@ -80,7 +80,7 @@ describe Gateway::Braintree do
       transaction = ::Braintree::Transaction.find(@payment.response_code)
       transaction.status.should == Braintree::Transaction::Status::SubmittedForSettlement
     end
-    
+
     it "raise an error if capture fails using spree interface" do
       Spree::Config.set :auto_capture => false
       @payment.log_entries.size.should == 0
@@ -96,7 +96,7 @@ describe Gateway::Braintree do
       # end.should raise_error(Spree::GatewayError, "Cannot submit for settlement unless status is authorized. (91507)")
     end
   end
-  
+
   describe 'purchase' do
     it 'should return a success response with an authorization code' do
       result =  @gateway.purchase(500, @creditcard)
@@ -104,22 +104,22 @@ describe Gateway::Braintree do
       result.authorization.should match(/\A\w{6}\z/)
       Braintree::Transaction::Status::SubmittedForSettlement.should == Braintree::Transaction.find(result.authorization).status
     end
-    
+
     it 'should work through the spree payment interface with payment profiles' do
       purchase_using_spree_interface
       transaction = ::Braintree::Transaction.find(@payment.response_code)
       transaction.credit_card_details.token.should match(/\A\w{4}\z/)
     end
-    
+
     it 'should work through the spree payment interface without payment profiles' do
         with_payment_profiles_off do
           purchase_using_spree_interface
           transaction = ::Braintree::Transaction.find(@payment.response_code)
           transaction.credit_card_details.token.should be_nil
-        end      
+        end
     end
   end
-    
+
   describe "credit" do
     it "should work through the spree interface" do
       @payment.amount += 100.00
@@ -127,7 +127,7 @@ describe Gateway::Braintree do
       credit_using_spree_interface
     end
   end
-  
+
   describe "void" do
     it "should work through the spree creditcard / payment interface" do
       assert_equal 0, @payment.log_entries.size
@@ -156,7 +156,7 @@ describe Gateway::Braintree do
     transaction.customer_details.first_name.should == "John"
     transaction.customer_details.last_name.should == "Doe"
   end
-  
+
   def purchase_using_spree_interface
     Spree::Config.set :auto_capture => true
     @payment.send(:create_payment_profile)
@@ -172,7 +172,7 @@ describe Gateway::Braintree do
     transaction.customer_details.first_name.should == 'John'
     transaction.customer_details.last_name.should == 'Doe'
   end
-  
+
   def with_payment_profiles_off(&block)
     Gateway::Braintree.class_eval do
       def payment_profiles_supported?
@@ -187,5 +187,5 @@ describe Gateway::Braintree do
       end
     end
   end
-  
+
 end

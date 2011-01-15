@@ -12,7 +12,8 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 # #require factories
 Dir["#{File.dirname(__FILE__)}/factories/**/*.rb"].each do |f|
-  require File.expand_path(f)
+  fp =  File.expand_path(f)
+  require fp
 end
 
 RSpec.configure do |config|

@@ -1,4 +1,4 @@
-require "spec_helper"
+require File.dirname(__FILE__) + '/../spec_helper'
 
 # Its pretty difficult to test this module in isolation b/c it needs to work in conjunction with an actual class that
 # extends ActiveRecord::Base and has a corresponding table in the database.  So we'll just test it using Order and
