@@ -30,7 +30,7 @@ class Admin::OverviewController < Admin::BaseController
       when "7_days" then {:from => (Time.new().to_date - 1.week).to_s(:db)}
       when "14_days" then {:from => (Time.new().to_date - 2.week).to_s(:db)}
       when "this_month" then {:from => Date.new(Time.now.year, Time.now.month, 1).to_s(:db), :to => Date.new(Time.now.year, Time.now.month, -1).to_s(:db)}
-      when "last_month" then {:from => Date.new(Time.now.year, Time.now.month - 1, 1).to_s(:db), :to => Date.new(Time.now.year, Time.now.month - 1, -1).to_s(:db)}
+      when "last_month" then {:from => (Date.new(Time.now.year, Time.now.month, 1) - 1.month).to_s(:db), :to => (Date.new(Time.now.year, Time.now.month, -1) - 1.month).to_s(:db)}
       when "this_year" then {:from => Date.new(Time.now.year, 1, 1).to_s(:db)}
       when "last_year" then {:from => Date.new(Time.now.year - 1, 1, 1).to_s(:db), :to => Date.new(Time.now.year - 1, 12, -1).to_s(:db)}
     end
