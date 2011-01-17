@@ -9,7 +9,10 @@ Feature: Password reset
     Then I should see "your password will be emailed to you"
 
   Scenario: User supplies an email for the password reset
-    Given a user exists with an email of "foobar@example.com"
+    Given the following user exists:
+      | email              | password | password_confirmation |
+      | foobar@example.com | secret   | secret                |
+    #Given a user exists with an email of "foobar@example.com"
     When I go to the forgot password page
     And I fill in "user_email" with "foobar@example.com"
     And I press "Reset my password"
