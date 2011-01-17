@@ -170,11 +170,9 @@ class Creditcard < ActiveRecord::Base
     payment.state == "void" ? false : true
   end
 
-  # Indicates whether its possible to credit the payment.  Most gateways require that the payment be settled
-  # first which generally happens within 12-24 hours of the transaction.  For this reason, the default
-  # behavior of Spree is to disallow credit operations until the payment is at least 12 hours old.
+  # Indicates whether its possible to credit the payment.  Note that most gateways require that the
+  # payment be settled first which generally happens within 12-24 hours of the transaction.
   def can_credit?(payment)
-    return false unless (Time.now - 12.hours) > payment.created_at
     return false unless payment.state == "completed"
     return false unless payment.order.payment_state == "credit_owed"
     payment.credit_allowed > 0

@@ -329,15 +329,7 @@ describe Creditcard do
   end
 
   context "when transaction is less than 12 hours old" do
-    let(:payment) { mock_model(Payment, :state => 'completed', :created_at => Time.now - 1.hour) }
-
-    context "#can_credit?" do
-      PAYMENT_STATES.each do |state|
-        it "should be false if payment state is #{state}" do
-          creditcard.can_credit?(payment).should be_false
-        end
-      end
-    end
+    let(:payment) { mock_model(Payment, :state => 'completed') }
 
     context "#can_void?" do
       (PAYMENT_STATES - [VOID]).each do |state|
