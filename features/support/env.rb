@@ -29,6 +29,24 @@ Capybara.default_selector = :css
 require 'database_cleaner'
 require 'database_cleaner/cucumber'
 
+Zone.class_eval do
+  def self.global
+    find_by_name("GlobalZone") || Factory(:global_zone)
+  end
+end
+
+# use the factory girl step definitions
+require 'factory_girl'
+
+require File.expand_path("../../../core/spec/factories", __FILE__)
+require File.expand_path("../../../core/spec/factories/shipping_method_factory", __FILE__)
+require File.expand_path("../../../core/spec/factories/zone_factory", __FILE__)
+require File.expand_path("../../../core/spec/factories/product_factory", __FILE__)
+require File.expand_path("../../../core/spec/factories/tax_category_factory", __FILE__)
+require File.expand_path("../../../core/spec/factories/shipping_category_factory", __FILE__)
+
+
+
 # clean database before tests run
 DatabaseCleaner.strategy = :truncation
 DatabaseCleaner.clean
@@ -44,14 +62,12 @@ files = directories.map do |dir|
 end.flatten.uniq
 
 files.each do |path|
-  load(path) if path !~ /env.rb$/
+  if path !~ /env.rb$/
+    fp = File.expand_path(path)
+    load(fp)
+  end
 end
-
-# use the factory girl step definitions
-require 'factory_girl'
-require 'factory_girl/step_definitions'
-
-require File.expand_path("../../../core/spec/factories", __FILE__)
 
 
 DatabaseCleaner.strategy = :transaction
+require 'factory_girl/step_definitions'
