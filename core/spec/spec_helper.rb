@@ -8,7 +8,6 @@ require 'rspec/rails'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
-# #require factories
 Dir["#{File.dirname(__FILE__)}/factories/**/*.rb"].each do |f|
   fp =  File.expand_path(f)
   require fp
