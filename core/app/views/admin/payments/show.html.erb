@@ -7,4 +7,4 @@
   <%= object.amount %>
 </p>
 
-<%= render "admin/payments/source_views/#{@payment.payment_method.method_type}", :payment => object %>
+<%= render "admin/payments/source_views/#{@payment.payment_method.method_type}", :payment => object.source.is_a?(Payment) ? object.source : object %>
