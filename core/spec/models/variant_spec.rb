@@ -3,6 +3,13 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Variant do
   let(:variant) { Variant.new(:count_on_hand => 95) }
 
+  context "factory_girl" do
+    let(:variant) { Factory(:variant) }
+    it 'should be a saved record' do
+      variant.new_record?.should be_false
+    end
+  end
+
   context "on_hand=" do
     before { variant.stub(:inventory_units => mock('inventory-units')) }
 
