@@ -161,6 +161,23 @@ gem 'spree', '0.30.0.beta1'
 
 h4. Installing the Dependencies
 
+WARNING. The dependencies should be specified in a specific order. Always specify +spree+, followed by +spree-extensions+ at the very end of +Gemfile+. For example, a tabula rasa Spree dependency list would be specified in this order: +mysql2+, +spree+, +spree-paypal-express+. See below for an example Gemfile with the correct order.
+
+<shell>
+source 'http://rubygems.org'
+
+# Generic gem dependencies first
+gem 'mysql2'
+gem 'newrelic_rpm'
+
+# Followed by spree itself first, all spree-specific extensions second
+gem 'spree', '0.40.0'
+gem 'spree_active_shipping', :git => 'https://github.com/spree/spree_active_shipping.git'
+gem 'spree_product_assembly', :git => 'git://github.com/spree/spree-product-assembly.git'
+gem 'spree_static_content', :git => 'git://github.com/spree/spree-static-content.git'
+# EOF
+</shell>
+
 Now its time to install any new gem dependencies we have created.  For instance, if you do not already have the appropriate Spree gem or database driver, bundler will install it for you.
 
 <shell>
