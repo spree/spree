@@ -22,6 +22,7 @@ group :cucumber do
   gem 'capybara'
   gem 'factory_girl_rails'
   gem 'faker'
+  gem 'launchy'
 
   if RUBY_VERSION < "1.9"
     gem "ruby-debug"
