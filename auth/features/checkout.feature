@@ -3,8 +3,9 @@ Feature: Checkout
   As a user
   I should be able make checkout
 
-  @selenium
+  @selenium @wip @stop
   Scenario: Visitor make checkout as guest, without registration
+    Given a shipping method exists
     When I add a product with name: "RoR Mug" to cart
     Then I should see "Shopping Cart" within "h1"
     When I follow "Checkout"

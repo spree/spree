@@ -1,8 +1,8 @@
 Factory.define :country do |f|
-  f.iso_name 'INDIA'
-  f.name 'INDIA'
-  f.iso3 'IND'
-  f.numcode 356
+  f.iso_name 'UNITED STATES'
+  f.name 'UNITED STATES'
+  f.iso3 'USA'
+  f.numcode 840
 end
 
 Factory.define :state do |f|

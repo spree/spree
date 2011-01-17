@@ -44,8 +44,8 @@ require File.expand_path("../../../core/spec/factories/zone_factory", __FILE__)
 require File.expand_path("../../../core/spec/factories/product_factory", __FILE__)
 require File.expand_path("../../../core/spec/factories/tax_category_factory", __FILE__)
 require File.expand_path("../../../core/spec/factories/shipping_category_factory", __FILE__)
-
-
+require File.expand_path("../../../core/spec/factories/calculator_factory", __FILE__)
+require File.expand_path("../../../core/spec/factories/payment_method_factory", __FILE__)
 
 # clean database before tests run
 DatabaseCleaner.strategy = :truncation
