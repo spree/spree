@@ -17,6 +17,12 @@ describe Product do
   end
 
   context "factory_girl" do
-    specify { Factory(:product).new_record?.should be_false }
+    let(:product) { Factory(:product) }
+    it 'should have a saved product record' do
+      product.new_record?.should be_false
+    end
+    it 'should have a master variant' do
+      product.master.should be_true
+    end
   end
 end
