@@ -21,8 +21,20 @@ describe Product do
     it 'should have a saved product record' do
       product.new_record?.should be_false
     end
+    it 'should have zero properties record' do
+      product.product_properties.size.should == 0
+    end
     it 'should have a master variant' do
       product.master.should be_true
     end
   end
+
+  context '#add_properties_and_option_types_from_prototype' do
+    let!(:prototype) { Factory(:prototype) }
+    let(:product) { Factory(:product, :prototype_id => prototype.id) }
+    it 'should have one property' do
+      product.product_properties.size.should == 1
+    end
+  end
+
 end
