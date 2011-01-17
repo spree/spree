@@ -6,6 +6,7 @@ Feature: Checkout
   @selenium @wip @stop
   Scenario: Visitor make checkout as guest, without registration
     Given a shipping method exists
+    Given a payment method exists
     When I add a product with name: "RoR Mug" to cart
     Then I should see "Shopping Cart" within "h1"
     When I follow "Checkout"
@@ -25,6 +26,7 @@ Feature: Checkout
 
   @selenium
   Scenario: Uncompleted guest order should be associated with user after log in
+    Given a payment method exists
     Given I am signed up as "email@person.com/password"
     And I am logged out
 

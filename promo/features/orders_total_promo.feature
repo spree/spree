@@ -3,6 +3,7 @@ Feature: Order's total
   @selenium
   Scenario: Add promotion with order's total
     Given I have an admin account of "admin@person.com/password"
+    Given a payment method exists
     When I go to the sign in page
     And I sign in as "admin@person.com/password"
     And I go to admin promotions page
@@ -24,5 +25,5 @@ Feature: Order's total
     And check "order_use_billing"
     And press "Save and Continue"
     When I choose "UPS Ground" as shipping method and "Check" as payment method and set coupon code to "ORDER_30"
-    Then the existing order should have total at "35"
+    Then the existing order should have total at "47"
 

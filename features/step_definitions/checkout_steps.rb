@@ -40,7 +40,7 @@ When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and 
   And %{press "Save and Continue"}
   Then %{I should see "Payment Information" within "legend"}
 
-  payment_method = "order_payments_attributes__payment_method_id_#{PaymentMethod.find_by_name(payment_method).id}"
+  payment_method = "order_payments_attributes__payment_method_id_#{PaymentMethod.find(:last, :conditions => {:name => payment_method}).id}"
   When %{I choose "#{payment_method}"}
   if coupon_code
     When %{I fill in "Coupon code" with "#{coupon_code}"}
