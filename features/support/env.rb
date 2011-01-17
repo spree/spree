@@ -38,7 +38,6 @@ end
 # use the factory girl step definitions
 require 'factory_girl'
 
-require File.expand_path("../../../core/spec/factories", __FILE__)
 require File.expand_path("../../../core/spec/factories/shipping_method_factory", __FILE__)
 require File.expand_path("../../../core/spec/factories/zone_factory", __FILE__)
 require File.expand_path("../../../core/spec/factories/product_factory", __FILE__)
