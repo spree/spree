@@ -37,4 +37,30 @@ describe Product do
     end
   end
 
+  context '#has_stock?' do
+    let(:product) { Factory(:product) }
+    context 'nothing in stock' do
+      before do
+        Spree::Config.set :track_inventory_levels => true
+        product.master.update_attribute(:on_hand, 0)
+      end
+      specify { product.has_stock?.should be_false }
+    end
+    context 'master variant has items in stock' do
+      before do
+        product.master.on_hand = 100
+      end
+      specify { product.has_stock?.should be_true }
+    end
+    context 'variant has items in stock' do
+      before do
+        Spree::Config.set :track_inventory_levels => true
+        product.master.update_attribute(:on_hand, 0)
+        Factory(:variant, :product => product, :on_hand => 100, :is_master => false, :deleted_at => nil)
+        product.reload
+      end
+      specify { product.has_stock?.should be_true }
+    end
+  end
+
 end
