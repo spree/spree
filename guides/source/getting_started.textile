@@ -212,6 +212,12 @@ h5. Configuring Other Databases
 
 The existing "rails documentation":http://guides.rubyonrails.org provides detailed information on setting up all of the major databases.  Please consult this documentation as Spree does not have any special requirements beyond what a standard Rails application requires.
 
+INFO. When using a database such as PostgreSQL, you will need to create your database before you run any rails generators. Once you've configured your database.yml file, run the following command:
+
+<shell>
+rake db:create
+</shell>
+
 h4. Installing the Migrations and Other Assets
 
 Spree is actually what is known as a Rails Engine.  As of Rails 3.0 Rails Engines do not automatically copy their migrations or public assets into your Rails application.  Once you've added the Spree gem to the +Gemfile+ you can accomplish this by running the following command:
