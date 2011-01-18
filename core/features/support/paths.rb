@@ -10,6 +10,8 @@ module NavigationHelpers
 
     when /the home\s?page/
       '/'
+    when /the admin home page/
+      admin_path
     when /the sign in page/
       new_user_session_path
     when /the sign up page/
