@@ -24,5 +24,6 @@ end
 RedCloth.send(:include, Spree::TextileExtensions)
 
 if $0 == __FILE__
+  system("mkdir -p #{ENV['OUTPUT_DIR'] || File.join(pwd, "output")}")
   Spree::Generator.new(ENV['OUTPUT_DIR']).generate
 end
