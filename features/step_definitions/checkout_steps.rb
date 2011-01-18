@@ -7,10 +7,13 @@ When /^(?:|I )fill (billing|shipping) address with correct data$/ do |address_ty
                       :state_name => 'New York',
                       :country => Country.find(Spree::Config[:default_country_id]) )
   end
+
   When %{I select "United States" from "Country" within "fieldset##{address_type}"}
+
   ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
     When %{I fill in "order_#{str_addr}_attributes_#{field}" with "#{address.send(field)}"}
   end
+
   When %{I select "#{address.state_name}" from "order_#{str_addr}_attributes_state_id"}
 end
 
@@ -20,11 +23,14 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
     (name, value) = field.split(/:\s*/, 2)
     fields[name] = value.delete('"')
   end
+
   price = fields.delete('price')
+
   if Product.master_price_equals(price).count(:conditions => fields) == 0
     Factory(:product, fields.merge('price' => price,  :sku => 'ABC',
                                                       :available_on => (Time.now - 100.days)))
   end
+
   When %{I go to the products page}
   Then %{I should see "#{fields['name']}" within "ul.product-listing"}
   When %{I follow "#{fields['name']}"}
@@ -41,13 +47,15 @@ When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and 
   Then %{I should see "Payment Information" within "legend"}
 
   payment_method = "order_payments_attributes__payment_method_id_#{PaymentMethod.find(:last, :conditions => {:name => payment_method}).id}"
+
   When %{I choose "#{payment_method}"}
+
   if coupon_code
     When %{I fill in "Coupon code" with "#{coupon_code}"}
   end
+
   And %{press "Save and Continue"}
   Then %{I should see "Confirm" within "legend"}
-
   When %{I press "Place Order"}
 end
 

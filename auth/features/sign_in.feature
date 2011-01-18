@@ -11,18 +11,18 @@ Feature: Sign in
     Given I sign in as "email@person.com/secret"
     Then I should see "Logged in successfully"
     Then I should be on the products page
-    And I should be signed in
+    And I should be logged in
 
   Scenario: User is not signed up
     Given I sign in as "email@person.com/wrong_password"
     Then I should see "Invalid email or password"
-    And I should be signed out
+    And I should be logged out
 
   Scenario: User enters wrong password
     Given I sign in as "email@person.com/wrongpassword"
     Then I should be on the new user session page
     And I should see "Invalid email or password"
-    And I should be signed out
+    And I should be logged out
 
   Scenario: User requests a restricted page with the correct password
     Given I have an admin account of "admin@person.com/password"
