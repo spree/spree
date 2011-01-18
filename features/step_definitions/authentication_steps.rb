@@ -7,6 +7,7 @@ end
 
 Then /^I should be logged in$/ do
   page.should_not have_content("Log In")
+  page.should have_content("Logout")
 end
 
 Then /^I should be logged out$/ do
@@ -18,11 +19,7 @@ Given /^I am signed up as "(.+)\/(.+)"$/ do |email, password|
 end
 
 Given /^I have an admin account of "(.+)\/(.+)"$/ do |email, password|
-  puts '#'*100
-  Factory(:admin_user,  :email => email
-                        #:password => password,
-                        #:password_confirmation => password
-         )
+  Factory(:admin_user,  :email => email, :password => password, :password_confirmation => password)
 end
 
 When /^I sign in as "(.*)\/(.*)"$/ do |email, password|
