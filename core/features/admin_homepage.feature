@@ -2,11 +2,7 @@ Feature: Admin home page
   In order to do administrative work
   I should be able to login as an admin
 
-
   Scenario: Visiting admin home page
-    Given I have an admin account of "admin@person.com/password"
-    And I go to the sign in page
-    When I sign in as "admin@person.com/password"
     And I go to the admin home page
     Then I should see "Administration"
     Then page should have following links:
