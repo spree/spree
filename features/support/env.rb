@@ -66,4 +66,5 @@ end
 
 
 DatabaseCleaner.strategy = :transaction
+#Factory.factories.values.each { |factory| puts factory.human_name.pluralize }
 require 'factory_girl/step_definitions'
