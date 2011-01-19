@@ -88,17 +88,26 @@ class Admin::ProductsController < Admin::BaseController
         scopes << 'not_deleted'
       end
 
-      @search = end_of_association_chain.searchlogic(params[:search] ? params[:search].except(:deleted_at_not_null) : nil)
+      params[:search] = {} if params[:search].nil?
+      params[:search][:order] ||= "ascend_by_name"
+      tmp = params[:search].except(:deleted_at_not_null)
+      @search = end_of_association_chain.searchlogic(tmp)
       @search.order ||= "ascend_by_name"
 
-      @collection = @search.do_search.instance_eval(scopes.join(".")).paginate(:include   => {:variants => [:images, :option_values]},
-                                     :per_page  => Spree::Config[:admin_products_per_page],
-                                     :page      => params[:page])
+      pagination_options = {:include   => {:variants => [:images, :option_values]},
+                            :per_page  => Spree::Config[:admin_products_per_page],
+                            :page      => params[:page]}
+
+      @collection = @search.do_search.instance_eval(scopes.join(".")).paginate(pagination_options)
     else
       includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
-      @collection = end_of_association_chain.where(["name LIKE ?", "%#{params[:q]}%"]).includes(includes).limit(params[:limit] || 10)
-      @collection.concat end_of_association_chain.where(["variants.sku LIKE ?", "%#{params[:q]}%"]).includes(:variants_including_master).limit(params[:limit] || 10)
+      @collection = end_of_association_chain.where(["name LIKE ?", "%#{params[:q]}%"])
+      @collection = @collection.includes(includes).limit(params[:limit] || 10)
+
+      tmp = end_of_association_chain.where(["variants.sku LIKE ?", "%#{params[:q]}%"])
+      tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
+      @collection.concat(tmp)
 
       @collection.uniq
     end
