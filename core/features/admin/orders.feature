@@ -8,9 +8,7 @@ Feature: Admin home page
     Then I should see listing orders tabular attributes with completed_at descending
     When I follow "Order Date"
     Then I should see listing orders tabular attributes with completed_at ascending
-    When I follow "Order"
+    When I follow "Order" within "#listing_orders"
     Then I should see listing orders tabular attributes with order number ascending
-    When I follow "Order"
+    When I follow "Order" within "#listing_orders"
     Then I should see listing orders tabular attributes with order number descending
-
-
