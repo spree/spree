@@ -15,7 +15,7 @@
 
 <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 
-<table class="index">
+<table class="index" id='listing_properties'>
   <thead>
     <tr>
       <th><%= t("name") %></th>
@@ -32,7 +32,7 @@
           <%= link_to_edit(property) %>
           &nbsp;
           <%= link_to_delete(property) %>
-        </td>        
+        </td>
       </tr>
     <% end %>
   </tbody>
