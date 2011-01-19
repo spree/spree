@@ -4,6 +4,7 @@ require 'cancan'
 
 require 'spree/auth/config'
 require 'spree/token_resource'
+require 'hooks'
 
 module SpreeAuth
   class Engine < Rails::Engine
