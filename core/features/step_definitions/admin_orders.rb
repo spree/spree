@@ -3,6 +3,17 @@ Given /^2 custom orders$/ do
   Factory(:order, :completed_at => 1.year.ago)
 end
 
+Then /^I should see listing products tabular attributes with name ascending$/ do
+  output = tableish('table#listing_products tr', 'td,th')
+  data = output[0]
+  data[0].should == 'SKU'
+  data[1].should match(/Name/)
+  data[2].should == "Master Price"
+
+  data = output[1]
+  data[0].should == Product.limit(1).order('name desc').to_a.first.sku
+end
+
 Then /^I should see listing orders tabular attributes with completed_at descending$/ do
   output = tableish('table#listing_orders tr', 'td,th')
   data = output[0]
