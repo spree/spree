@@ -2,7 +2,7 @@
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Images"} %>
 
-<table class="index">
+<table class="index sortable">
   <tr>
     <th><%= t("thumbnail") %></th>
     <% if @product.has_variants? %>
@@ -14,7 +14,7 @@
 
   <% @product.images.each do |image| %>
     <tr id="<%= dom_id(image) %>">
-      <td><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
+      <td><span class="handle"></span><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
       <% if @product.has_variants? %>
         <td><%= t('all') %></td>
       <% end %>
@@ -30,7 +30,7 @@
   <% @product.variants.each do |variant| %>
     <% variant.images.each do |image| %>
       <tr id="<%= dom_id(image) %>">
-        <td><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
+        <td><span class="handle"></span><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
         <% if @product.has_variants? %>
           <td><%= variant.options_text %></td>
         <% end %>
