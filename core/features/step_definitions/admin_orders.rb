@@ -3,6 +3,16 @@ Given /^2 custom orders$/ do
   Factory(:order, :completed_at => 1.year.ago)
 end
 
+Then /^I should see listing option types tabular attributes$/ do
+  output = tableish('table#listing_option_types tr', 'td,th')
+  data = output[0]
+  data[0].should == 'Name'
+  data[1].should == "Presentation"
+
+  data = output[1]
+  data[0].should == OptionType.limit(1).order('position asc').to_a.first.name
+end
+
 Then /^I should see listing products tabular attributes with name ascending$/ do
   output = tableish('table#listing_products tr', 'td,th')
   data = output[0]
