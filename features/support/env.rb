@@ -54,7 +54,7 @@ directories = [ File.join(FEATURES_PATH, '../../features/support'),
                File.join(FEATURES_PATH, '../../features/step_definitions') ]
 
 files = directories.map do |dir|
-  Dir["#{dir}/**/*"]
+  Dir["#{dir}/**/*.rb"]
 end.flatten.uniq
 
 files.each do |path|
