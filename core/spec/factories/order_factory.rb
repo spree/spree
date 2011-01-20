@@ -6,5 +6,5 @@ Factory.define(:order) do |record|
 end
 
 Factory.define :order_with_totals, :parent => :order do |f|
-  f.line_items { [Factory(:line_item)] }
+  f.after_create { |order| Factory(:line_item, :order => order) }
 end
