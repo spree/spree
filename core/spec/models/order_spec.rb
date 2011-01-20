@@ -13,6 +13,15 @@ describe Order do
         Factory(:order_with_totals)
       end.should change(Order, :count).by(1)
     end
+    context 'line_item' do
+      let(:order) { Factory(:order_with_totals) }
+      it "should have a line_item attached to it" do
+        order.line_items.size.should == 1
+      end
+      it "should be attached to last line_item created " do
+        order.line_items.first.id.should == LineItem.last.id
+      end
+    end
   end
 
   context "#products" do
