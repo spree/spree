@@ -96,25 +96,21 @@ Each gem contains its own series of tests, and for each directory, you need to d
 creation of a test application and then you can use it to run the tests.  For example, to run the
 tests for the core project.
 
-    rails new testapp -m spec/test_template.rb -T -J
-    cd testapp
-    rails g spree_core:install
-    rake db:migrate db:seed db:test:prepare
+    $ cd core
+    $ rake test_app
+    $ rake spec
+    $ rake cucumber
 
-Then run the tests
+If you want to run all the tests across all the gems then
 
-    rspec spec
-
-Note that each project has its own generator for "installing."  This basically sets up the test
-app with what it needs to run (primarily migrations.)  So for the spree_auth gem, for example,
-you would use the following
-
-    rails g spree_auth:install
-
+    $ cd spree
+    $ rake spec     #=> 'this will run spec tests for all the gems'
+    $ rake cucumber #=> 'this will run cucumber tests for all the gems'
+    $ rake          #=> 'this will run both spec and cucumber tests for all the gems'
 
 Contributing
 ------------
 
-Spree is an open source project.  We encourage contributions.  Please see the [contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html) before contributing. 
+Spree is an open source project.  We encourage contributions.  Please see the [contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html) before contributing.
 
 The Github team has also been kind enough to write up some great [documentation](http://help.github.com/pull-requests/) on working with pull requests. Contributions should be performed on [topic branches](http://progit.org/book/ch3-4.html) in your personal forks - just issue your pull requests from there. We're also asking that you continue to log important issues for non-trivial patches in our [lighthouse repository](http://railsdog.lighthouseapp.com/projects/31096-spree). You can just link the pull request in the ticket (and link the ticket in the pull request.)
