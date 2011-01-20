@@ -7,7 +7,7 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
-task :default => [ :spec ]
+task :default => [:spec, :cucumber ]
 
 desc "run spec test for all gems"
 task :spec do
