@@ -57,7 +57,7 @@
         <%= f.label :country_id, t(:country)+':' %>
       </td>
       <td colspan="3">
-        <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, Country.all, :id, :name, {}, {:style => 'width:150px;'} %></span>
+        <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, {:style => 'width:150px;'} %></span>
       </td>
     </tr>
     <tr class="<%= name == t('shipping_address') ? "shipping-row" : "billing-row" %>">
