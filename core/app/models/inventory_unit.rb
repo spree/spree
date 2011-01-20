@@ -22,12 +22,6 @@ class InventoryUnit < ActiveRecord::Base
     after_transition :to => 'returned', :do => :restock_variant
   end
 
-  # method deprecated in favour of adjust_units (which creates & destroys units as needed).
-  def self.sell_units(order)
-    warn "[DEPRECATION] `InventoryUnits#sell_units` is deprecated.  Please use `InventoryUnits#assign_opening_inventory` instead. (called from #{caller[0]})"
-    self.adjust_units(order)
-  end
-
   # Assigns inventory to a newly completed order.
   # Should only be called once during the life-cycle of an order, on transition to completed.
   #
