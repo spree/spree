@@ -7,7 +7,7 @@
 
 <fieldset id="rule_fields">
   <legend>Rules</legend>
-    
+
   <%= form_for(@promotion, :url => object_url, :html => { :method => :put }) do |f| %>
     <p>
       <% for policy in Promotion::MATCH_POLICIES %>
@@ -26,7 +26,8 @@
     </p>
   <% end %>
 
-  <%= form_tag(admin_promotion_promotion_rules_path(@promotion), 'data-remote' => true, :id => 'new_product_rule_form') do |f| %>
+  <%= form_tag(admin_promotion_promotion_rules_path(@promotion), 'data-remote' => true,
+                                                                 :id => 'new_product_rule_form') do  %>
     <% options = options_for_select( PromotionRule.rule_class_names.map {|name| [ t("promotion_rule_types.#{name.demodulize.underscore}.name"), name] } ) %>
     <p>
       <label for="promotion_rule_type"><%= t('add_rule_of_type') %></label>
@@ -34,7 +35,7 @@
       <input type="submit" value="<%= t('add') %>" />
     </p>
   <% end %>
-  
+
 </fieldset>
 
 
