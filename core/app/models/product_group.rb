@@ -27,7 +27,7 @@
 # or generated automatically by Searchlogic
 #
 class ProductGroup < ActiveRecord::Base
-  validates :name, :presence => true
+  validates :name, :presence => true # TODO ensure that this field is defined as not_null
   validates_associated :product_scopes
 
   before_save :set_permalink
