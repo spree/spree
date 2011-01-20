@@ -34,6 +34,8 @@ class Admin::ProductGroupsController < Admin::BaseController
     end
 
     def collection
+      params[:search] ||= {}
+      params[:search][:order] ||= "descend_by_name"
       @search = ProductGroup.searchlogic(params[:search])
 
       @collection = @search.do_search.paginate(
