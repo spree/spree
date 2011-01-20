@@ -4,10 +4,10 @@ require 'rake/packagetask'
 require 'rake/gempackagetask'
 
 desc "Default Task"
-task :default => [:test_app, :spec, :cucumber ]
+task :default => [:spec, :cucumber ]
 
 gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
-if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.first.to_s)
+if File.exists?(gemfile) && (%w(spec cucumber).include?(ARGV.first.to_s) || ARGV.size == 0)
   require 'bundler'
   ENV['BUNDLE_GEMFILE'] = gemfile
   Bundler.setup
@@ -20,7 +20,6 @@ if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.first.to_s)
     t.cucumber_opts = %w{--format progress}
   end
 end
-
 
 spec = eval(File.read('spree_api.gemspec'))
 

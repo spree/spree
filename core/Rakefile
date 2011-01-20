@@ -17,10 +17,10 @@ task :release => :package do
 end
 
 desc "Default Task"
-task :default => [:test_app, :spec, :cucumber ]
+task :default => [:spec, :cucumber ]
 
 gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
-if File.exists?(gemfile) && %w(rcov spec cucumber).include?(ARGV.first.to_s)
+if File.exists?(gemfile) && (%w(spec cucumber).include?(ARGV.first.to_s) || ARGV.size == 0)
   require 'bundler'
   ENV['BUNDLE_GEMFILE'] = gemfile
   Bundler.setup
