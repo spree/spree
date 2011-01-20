@@ -29,15 +29,6 @@ Capybara.default_selector = :css
 require 'database_cleaner'
 require 'database_cleaner/cucumber'
 
-Zone.class_eval do
-  def self.global
-    find_by_name("GlobalZone") || Factory(:global_zone)
-  end
-end
-
-# use the factory girl step definitions
-require 'factory_girl'
-
 require File.expand_path("../../../core/spec/factories", __FILE__)
 
 # clean database before tests run
@@ -60,7 +51,6 @@ files.each do |path|
     load(fp)
   end
 end
-
 
 DatabaseCleaner.strategy = :transaction
 #Factory.factories.values.each { |factory| puts factory.human_name.pluralize }
