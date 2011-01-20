@@ -15,7 +15,7 @@
 <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 <div id="new_prototype"></div>
 
-<table class="index">
+<table class="index" id='listing_prototypes'>
   <thead>
     <tr>
       <th><%= t("name") %></th>
@@ -30,7 +30,7 @@
           <%= link_to_edit(prototype) %>
           &nbsp;
           <%= link_to_delete(prototype) %>
-        </td>        
+        </td>
       </tr>
     <% end %>
   </tbody>
