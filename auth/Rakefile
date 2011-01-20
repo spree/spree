@@ -4,6 +4,9 @@ require 'rake/testtask'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
+desc "Default Task"
+task :default => [:test_app, :spec, :cucumber ]
+
 gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
 if File.exists?(gemfile) && %w(spec cucumber).include?(ARGV.first.to_s)
   require 'bundler'
