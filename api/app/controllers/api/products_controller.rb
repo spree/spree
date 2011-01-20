@@ -5,7 +5,8 @@ class Api::ProductsController < Api::BaseController
 
   private
     define_method :collection do
-      @collection = retrieve_products
+      @searcher = Spree::Config.searcher_class.new(params)
+      @collection = @searcher.retrieve_products
     end
 
     def object_serialization_options
