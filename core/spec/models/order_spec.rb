@@ -7,6 +7,14 @@ describe Order do
 
   before { Gateway.stub :current => gateway }
 
+  context "factory" do
+    it "should change the Orders count by 1 after factory has been executed" do
+      lambda do
+        Factory(:order_with_totals)
+      end.should change(Order, :count).by(1)
+    end
+  end
+
   context "#products" do
     it "should return ordered products" do
       variant1 = mock_model(Variant, :product => "product1")
