@@ -38,10 +38,7 @@ end
 # use the factory girl step definitions
 require 'factory_girl'
 
-Dir["#{File.dirname(__FILE__)}/../../core/spec/factories/**"].each do |f|
-  fp =  File.expand_path(f)
-  require fp
-end
+require File.expand_path("../../../core/spec/factories", __FILE__)
 
 # clean database before tests run
 DatabaseCleaner.strategy = :truncation
