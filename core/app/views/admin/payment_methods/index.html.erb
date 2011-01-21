@@ -11,8 +11,8 @@
 
 <h1><%= t("payment_methods") %></h1>
 
-<table class="index">
-  <thead>
+<table class="index" id='listing_payment_methods'>
+  <tr>
     <%= hook :admin_payment_methods_index_headers do %>
       <th><%= t("name") %></th>
       <th><%= t("provider") %></th>
@@ -23,7 +23,7 @@
     <th>
       <%= hook :admin_payment_methods_index_header_actions %>
     </th>
-  </thead>
+  </tr>
   <tbody>
     <% @payment_methods.each do |method|%>
       <tr id="<%= dom_id method %>">
