@@ -12,6 +12,7 @@ gemspec
 group :test do
   gem 'rspec-rails', '= 2.4.1'
   gem 'factory_girl_rails'
+  gem 'factory_girl', '= 1.3.3'
   gem 'rcov'
   gem 'shoulda'
   if RUBY_VERSION < "1.9"
@@ -27,6 +28,7 @@ group :cucumber do
   gem 'nokogiri'
   gem 'capybara'
   gem 'factory_girl_rails'
+  gem 'factory_girl', '= 1.3.3'
 
   if RUBY_VERSION < "1.9"
     gem "ruby-debug"
