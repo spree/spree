@@ -92,6 +92,13 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 Running Tests
 -------------
 
+If you want to run all the tests across all the gems then
+
+    $ cd spree
+    $ rake spec     #=> 'this will run spec tests for all the gems'
+    $ rake cucumber #=> 'this will run cucumber tests for all the gems'
+    $ rake          #=> 'this will run both spec and cucumber tests for all the gems'
+
 Each gem contains its own series of tests, and for each directory, you need to do a quick one-time
 creation of a test application and then you can use it to run the tests.  For example, to run the
 tests for the core project.
@@ -102,12 +109,12 @@ tests for the core project.
     $ rake cucumber
     $ rake          #=> 'this will run both spec and cucumber tests for the gem'
 
-If you want to run all the tests across all the gems then
+    # If you want to run specs for only a single spec file
+    $ bundle exec rspec spec/models/state_spec.rb
 
-    $ cd spree
-    $ rake spec     #=> 'this will run spec tests for all the gems'
-    $ rake cucumber #=> 'this will run cucumber tests for all the gems'
-    $ rake          #=> 'this will run both spec and cucumber tests for all the gems'
+    # If you want to run a particular line of spec
+    $ bundle exec rspec spec/models/state_spec.rb:7
+
 
 Contributing
 ------------
