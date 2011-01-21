@@ -594,6 +594,7 @@ en:
   path: Path
   pay: pay
   payment: Payment
+  payment_actions: "Actions"
   payment_gateway: "Payment Gateway"
   payment_information: "Payment Information"
   payment_method: Payment Method
@@ -602,10 +603,13 @@ en:
   payment_processing_failed: "Payment could not be processed, please check the details you entered"
   payment_state: Payment State
   payment_states:
-    balance_due: balance due
-    credit_owed: credit owed
+    completed: completed
+    checkout: checkout
     failed: failed
     paid: paid
+    pending: pending
+    processing: processing
+    void: void
   payment_updated: Payment Updated
   payments: Payments
   pending_payments: Pending Payments
