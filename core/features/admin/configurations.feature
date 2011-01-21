@@ -26,23 +26,25 @@ Feature: Admin visiting configurations
 
     When I follow "Configuration"
     When I follow "States"
-    Then show me the page
     Then I should see listing states tabular attributes
 
     When I follow "Configuration"
     When I follow "States"
-    Then show me the page
     Then I should see listing states tabular attributes
 
     When I follow "Configuration"
     Given 2 payment methods exist
     When I follow "Payment Methods"
-    Then show me the page
     Then I should see listing payment methods tabular attributes
 
     When I follow "Configuration"
     Given 2 taxonomies exist
     When I follow "Taxonomies"
-    Then show me the page
     Then I should see listing taxonomies tabular attributes
+
+    When I follow "Configuration"
+    Given 2 shipping methods exist
+    When I follow "Shipping Methods"
+    Then I should see listing shipping methods tabular attributes
+
 
