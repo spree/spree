@@ -11,7 +11,7 @@
 
 
 <h1><%= t("zones") %></h1>
-<table class="index">
+<table class="index" id='listing_zones'>
   <thead>
     <tr>
       <th><%= order @search, :by => :name,        :as => t("name") %></th>
@@ -25,7 +25,7 @@
         <td><%=zone.name %></td>
         <td><%=zone.description %></td>
         <td class="actions">
-          <%=link_to_edit zone %> &nbsp; 
+          <%=link_to_edit zone %> &nbsp;
           <%=link_to_delete zone %>
         </td>
       </tr>

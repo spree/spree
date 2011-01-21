@@ -18,3 +18,10 @@ Feature: Admin visiting configurations
     When I follow "Tax Categories"
     Then I should see "Listing Tax Categories"
     Then I should see listing tax categories tabular attributes
+
+    When I follow "Configuration"
+    Given 2 zones exist
+    When I follow "Zones"
+    Then show me the page
+    Then I should see listing zones tabular attributes
+

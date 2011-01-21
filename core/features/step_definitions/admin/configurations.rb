@@ -1,3 +1,14 @@
+Then /^I should see listing zones tabular attributes$/ do
+  output = tableish('table#listing_zones tr', 'td,th')
+  data = output[0]
+  data[0].should match(/Name/)
+  data[1].should == "Description"
+
+  data = output[1]
+  data[0].should == Zone.limit(1).order('name asc').to_a.first.name
+  data[1].should == Zone.limit(1).order('name asc').to_a.first.description
+end
+
 Then /^I should see listing tax categories tabular attributes$/ do
   output = tableish('table#listing_tax_categories tr', 'td,th')
   data = output[0]
