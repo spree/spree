@@ -100,6 +100,7 @@ tests for the core project.
     $ rake test_app
     $ rake spec
     $ rake cucumber
+    $ rake          #=> 'this will run both spec and cucumber tests for the gem'
 
 If you want to run all the tests across all the gems then
 
