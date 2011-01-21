@@ -47,4 +47,11 @@ Feature: Admin visiting configurations
     When I follow "Shipping Methods"
     Then I should see listing shipping methods tabular attributes
 
+    When I follow "Configuration"
+    When I follow "Inventory Settings"
+    Then I should see "Inventory Settings"
+    Then I should see "Products with a zero inventory will be displayed"
+
+
+
 
