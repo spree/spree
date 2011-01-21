@@ -1,3 +1,12 @@
+Then /^I should see listing taxonomies tabular attributes$/ do
+  output = tableish('table#listing_taxonomies tr', 'td,th')
+  data = output[0]
+  data[0].should == 'Name'
+
+  data = output[1]
+  #data[0].should == Taxonomy.limit(1).order('name asc').to_a.first.name
+end
+
 Then /^I should see listing payment methods tabular attributes$/ do
   output = tableish('table#listing_payment_methods tr', 'td,th')
   data = output[0]

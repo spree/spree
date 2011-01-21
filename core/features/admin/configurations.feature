@@ -40,5 +40,9 @@ Feature: Admin visiting configurations
     Then show me the page
     Then I should see listing payment methods tabular attributes
 
-
+    When I follow "Configuration"
+    Given 2 taxonomies exist
+    When I follow "Taxonomies"
+    Then show me the page
+    Then I should see listing taxonomies tabular attributes
 
