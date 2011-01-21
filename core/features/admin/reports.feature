@@ -1,7 +1,7 @@
 Feature: Admin visiting reports
 
   Scenario: Visiting admin reports page
-    And I go to the admin home page
+    Given I go to the admin home page
     When I follow "Reports"
     When I follow "Sales Total"
     Then I should see "Sales Totals"
