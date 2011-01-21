@@ -1,3 +1,15 @@
+Then /^I should see listing shipping methods tabular attributes$/ do
+  output = tableish('table#listing_shipping_methods tr', 'td,th')
+  data = output[0]
+  data[0].should == 'Name'
+  data[1].should == 'Zone'
+  data[2].should == 'Calculator'
+  data[3].should == 'Display'
+
+  data = output[1]
+  #data[0].should == Taxonomy.limit(1).order('name asc').to_a.first.name
+end
+
 Then /^I should see listing taxonomies tabular attributes$/ do
   output = tableish('table#listing_taxonomies tr', 'td,th')
   data = output[0]
