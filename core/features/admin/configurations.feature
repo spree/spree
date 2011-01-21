@@ -22,6 +22,10 @@ Feature: Admin visiting configurations
     When I follow "Configuration"
     Given 2 zones exist
     When I follow "Zones"
-    Then show me the page
     Then I should see listing zones tabular attributes
+
+    When I follow "Configuration"
+    When I follow "States"
+    Then show me the page
+    Then I should see listing states tabular attributes
 
