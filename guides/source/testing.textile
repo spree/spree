@@ -11,11 +11,10 @@ endprologue.
 
 h3. Overview
 
-The Spree project currently uses "RSpec":http://rspec.info for all of its tests.  Each of the gems that makes up Spree has a test suite that can be run to verify the code base.
+The Spree project currently uses "RSpec":http://rspec.info and "Cucumber":http://cukes.info/ for all of its tests.  Each of the gems that makes up Spree has a test suite that can be run to verify the code base.
 
 The Spree test code is an evolving story.  We started out with RSpec, then switched to Shoulda and now we're back to RSpec.  RSpec has evolved considerably since we first tried it.  When looking to improve the test coverage of Spree we took another look at RSpec and it was the clear winner in terms of strength of community and documentation.
 
-INFO. You may notice some leftover Shoulda tests in the source code.  These are being kept in place for reference as we continue to migrate the tests to RSpec.  Do not expect them to run or to be in any way useful.
 
 h3. Running the Tests
 
@@ -39,6 +38,25 @@ Once your test application has been built, you can then run the specs in the sta
 
 <shell>
   $ rake spec
+</shell>
+
+Or you can also do
+
+<shell>
+  $ bundle exec rspec spec
+</shell>
+
+
+If you wish to run spec for a single file then you can do so like this:
+
+<shell>
+  $ bundle exec rspec spec/models/state_spec.rb
+</shell>
+
+If you wish to test a particular line number of the spec file then you can do so like this:
+
+<shell>
+  $ bundle exec rspec spec/models/state_spec.rb:7
 </shell>
 
 h3. Testing Your Extensions
@@ -93,8 +111,20 @@ Scenario: Visitor can work with cart
   And I should see "$15" within "#subtotal"
 </ruby>
 
-Execute the command given below to run cucumber tests.
+Some of the gems have cucumber tests. Once your test application has been built, you can then run the cucumber test in the standard cucumber manner:
 
 <shell>
   $ bundle exec cucumber
+</shell>
+
+If you want to execute cucumber tests for a single feature file then you can do so like this:
+
+<shell>
+  $ bundle exec cucumber features/admin/orders.feature --require features
+</shell>
+
+If you wish to execute only a particular scenario from a feature file then you should pass line number like this:
+
+<shell>
+  $ bundle exec cucumber features/admin/orders.feature:3 --require features
 </shell>
