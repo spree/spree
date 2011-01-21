@@ -1,3 +1,17 @@
+Then /^I should see listing payment methods tabular attributes$/ do
+  output = tableish('table#listing_payment_methods tr', 'td,th')
+  data = output[0]
+  data[0].should == 'Name'
+  data[1].should == "Provider"
+  data[2].should == "Environment"
+  data[3].should == "Display"
+  data[4].should == "Active"
+
+  data = output[1]
+  #data[0].should == PaymentMethod.limit(1).order('name asc').to_a.first.name
+  #data[1].should == PaymentMethod.limit(1).order('name asc').to_a.first.provider
+end
+
 Then /^I should see listing states tabular attributes$/ do
   output = tableish('table#listing_states tr', 'td,th')
   data = output[0]
