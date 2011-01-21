@@ -52,6 +52,11 @@ Feature: Admin visiting configurations
     Then I should see "Inventory Settings"
     Then I should see "Products with a zero inventory will be displayed"
 
+    When I follow "Configuration"
+    When I follow "Analytics Tracker"
+    Then I should see "Analytics Trackers"
+
+
 
 
 
