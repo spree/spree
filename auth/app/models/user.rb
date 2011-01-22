@@ -14,6 +14,8 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :persistence_token
 
+  scope :admin, lambda { includes(:roles).where("roles.name" => "admin") }
+
   # has_role? simply needs to return true or false whether a user has a role or not.
   def has_role?(role_in_question)
     roles.any? { |role| role.name == role_in_question.to_s }
@@ -28,7 +30,7 @@ class User < ActiveRecord::Base
   end
 
   def self.admin_created?
-    Role.where(:name => "admin").includes(:users).count > 0
+    User.admin.count > 0
   end
 
   def anonymous?

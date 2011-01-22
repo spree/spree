@@ -8,6 +8,8 @@ require 'rspec/rails'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
+require File.expand_path("../../../core/spec/factories", __FILE__)
+
 RSpec.configure do |config|
   # == Mock Framework
   #
