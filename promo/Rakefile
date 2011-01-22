@@ -6,22 +6,6 @@ require 'rake/gempackagetask'
 desc "Default Task"
 task :default => [:spec, :cucumber ]
 
-gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
-if File.exists?(gemfile) && (%w(spec cucumber).include?(ARGV.first.to_s) || ARGV.size == 0)
-  require 'bundler'
-  ENV['BUNDLE_GEMFILE'] = gemfile
-  Bundler.setup
-
-  require 'rspec'
-  require 'rspec/core/rake_task'
-  RSpec::Core::RakeTask.new
-
-  require 'cucumber/rake/task'
-  Cucumber::Rake::Task.new do |t|
-    t.cucumber_opts = %w{--format progress}
-  end
-end
-
 spec = eval(File.read('spree_promo.gemspec'))
 
 Rake::GemPackageTask.new(spec) do |p|
@@ -66,3 +50,6 @@ gem 'spree_auth', :path => \'#{File.join(File.dirname(__FILE__), "..", "auth")}\
   end
   AuthTestAppGenerator.start
 end
+
+ENV['SPREE_GEM_PATH'] = __FILE__
+require File.expand_path("../../core/lib/tasks/common", __FILE__)
