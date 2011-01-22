@@ -112,7 +112,7 @@ module Spree
           view.content_tag(:li, l)
         end
 
-        children_ul = view.content_tag(:ul, children)
+        children_ul = children.any? ? view.content_tag(:ul, children.join) : ""
 
         index << view.content_tag(:li, link + children_ul)
       end
