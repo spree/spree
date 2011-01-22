@@ -603,8 +603,10 @@ en:
   payment_processing_failed: "Payment could not be processed, please check the details you entered"
   payment_state: Payment State
   payment_states:
+    balance_due: balance due
     completed: completed
     checkout: checkout
+    credit_owed: credit owed
     failed: failed
     paid: paid
     pending: pending
