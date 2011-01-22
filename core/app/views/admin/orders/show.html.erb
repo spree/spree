@@ -1,6 +1,6 @@
 <div class='toolbar order-links'>
   <%= hook :admin_order_show_buttons do %>
-    <%= button_link_to t("cancel"), fire_admin_order_url(@order.number, {:e => "cancel"}), :icon => 'delete', :confirm => 'are you sure?' if @order.can_cancel? %>
+    <%= button_link_to t("cancel"), fire_admin_order_url(@order.number, {:e => "cancel"}), :icon => 'delete', :confirm => t('are_you_sure') if @order.can_cancel? %>
     <%= button_link_to t("edit"), edit_admin_order_url(@order.number), :icon => 'edit' %>
   <% end %>
 </div>
