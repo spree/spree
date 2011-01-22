@@ -13,7 +13,7 @@ To build the entire set of guides simply run the following command
   $ rake guides
 </code></pre>
             
-You will also need to install the RedCloth gem (4.2.3 or greater) if you do not done so.  Output will be generated in the `output` directory.
+You will also need to install the RedCloth gem (4.2.3 or greater) if you do not have it.  Output will be generated in the `output` directory.
 
 To build just one file, say checkout.textile , you can run the spree_guides.rb with an extra argument like below. 
 
