@@ -14,4 +14,7 @@ class User < ActiveRecord::Base
     User.create
   end
 
+  attr_accessor :password
+  attr_accessor :password_confirmation
+
 end
