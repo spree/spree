@@ -142,7 +142,7 @@ module Spree
       body.gsub!(%r{<(yaml|shell|ruby|erb|html|sql|plain)>(.*?)</\1>}m) do |m|
         es = ERB::Util.h($2)
         css_class = ['erb', 'shell'].include?($1) ? 'html' : $1
-        code_blocks << %{<div class="code_container"><code class="#{css_class}">#{es}</code></div>}
+        code_blocks << %{<div class="code_container"><code class="#{css_class}">#{es.gsub("\n","<br>")}</code></div>}
         "\ndirty_workaround_for_notextile_#{code_blocks.size - 1}\n"
       end
       
