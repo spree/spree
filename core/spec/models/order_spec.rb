@@ -484,7 +484,7 @@ describe Order do
 
   context "#can_cancel?" do
 
-    [PENDING, BACKORDER, READY].each do |shipment_state|
+    %w(pending backorder ready).each do |shipment_state|
       it "should be true if shipment_state is #{shipment_state}" do
         order.stub :completed? => true
         order.shipment_state = shipment_state
@@ -492,7 +492,7 @@ describe Order do
       end
     end
 
-    (SHIPMENT_STATES - [PENDING, BACKORDER, READY]).each do |shipment_state|
+    (SHIPMENT_STATES - %w(pending backorder ready)).each do |shipment_state|
       it "should be false if shipment_state is #{shipment_state}" do
         order.stub :completed? => true
         order.shipment_state = shipment_state

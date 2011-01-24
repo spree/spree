@@ -56,38 +56,7 @@ module Spree
 
       def setup_environments
         silence_stream(STDOUT) {
-        template "config/environments/cucumber.rb"
-        append_file "config/environments/test.rb" do
-<<-constantz
-CART = "cart"
-ADDRESS = "address"
-DELIVERY = "delivery"
-PAYMENT = "payment"
-CONFIRM = "confirm"
-COMPLETE = "complete"
-CANCELED = "canceled"
-RETURNED = "returned"
-RETURN_AUTHORIZED = "awaiting_return"
-
-ORDER_STATES = [CART, ADDRESS, DELIVERY, PAYMENT, CONFIRM, COMPLETE, CANCELED, RETURNED, RETURN_AUTHORIZED]
-
-READY = "ready"
-SHIPPED = "shipped"
-PARTIAL = "partial"
-PENDING = "pending"
-BACKORDER = "backorder"
-
-SHIPMENT_STATES = [READY, SHIPPED, PARTIAL, PENDING, BACKORDER]
-
-PROCESSING = 'processing'
-FAILED = 'failed'
-COMPLETED = 'completed'
-VOID = 'void'
-CHECKOUT = 'checkout'
-
-PAYMENT_STATES = [CHECKOUT, PROCESSING, FAILED, COMPLETED, VOID, PENDING]
-constantz
-        end
+          template "config/environments/cucumber.rb"
         }
       end
 
