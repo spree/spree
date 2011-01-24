@@ -3,12 +3,12 @@
   <label><%= radio_button_tag "#{param_prefix}[products_source]", :group, promotion_rule.product_group.present? %> <%= t "product_rule.product_source.group" %></label>
 </p>
 <p class="field products_rule_product_group">
-  <label><%= t('product_group') %><br />
+  <label><%= t("product_group") %><br />
     <%= select_tag "#{param_prefix}[product_group_id]", '<option></option>' + options_from_collection_for_select(ProductGroup.all, :id, :name, promotion_rule.product_group_id) %></label>
 </p>
 <p class="field products_rule_products">
   <label>
-    <%= t('product_rule.choose_products') %><br />
+    <%= t("product_rule.choose_products") %><br />
     <%= product_picker_field "#{param_prefix}[product_ids_string]", promotion_rule.product_ids_string %>
 </p>
 <p>

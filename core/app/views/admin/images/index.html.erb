@@ -16,7 +16,7 @@
     <tr id="<%= dom_id(image) %>">
       <td><span class="handle"></span><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
       <% if @product.has_variants? %>
-        <td><%= t('all') %></td>
+        <td><%= t("all") %></td>
       <% end %>
       <td><%= image.alt %></td>
       <td class="actions">

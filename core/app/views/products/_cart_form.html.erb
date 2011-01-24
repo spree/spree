@@ -13,7 +13,7 @@
 
   <% if @product.has_variants? %>
     <div id="product-variants">
-      <h2><%= t('variants') %></h2>
+      <h2><%= t("variants") %></h2>
       <ul>
         <%  has_checked = false
         @product.variants.active.each_with_index do |v,index|
@@ -40,10 +40,10 @@
       1, :class => "title", :size => 3 %>
     &nbsp;
     <button type='submit' class='large primary'>
-      <%= image_tag('/images/add-to-cart.png') + t('add_to_cart') %>
+      <%= image_tag('/images/add-to-cart.png') + t("add_to_cart") %>
     </button>
   <% else %>
-    <%= content_tag('strong', t('out_of_stock')) %>
+    <%= content_tag('strong', t("out_of_stock")) %>
   <% end %>
 
 <% end %>

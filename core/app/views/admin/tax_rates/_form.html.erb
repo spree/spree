@@ -1,14 +1,14 @@
 <table>
   <tr>
-    <td><%= t("zone")%>:</td>
+    <td><%= t("zone") %>:</td>
     <td><%= f.collection_select(:zone_id, @available_zones, :id, :name) %></td>
   </tr>
   <tr>
-    <td><%= t("tax_category")%>:</td>
+    <td><%= t("tax_category") %>:</td>
     <td><%= f.collection_select(:tax_category_id, @available_categories,:id, :name) %></td>
   </tr>
   <tr>
-    <td><%= t("rate")%>:</td>
+    <td><%= t("rate") %>:</td>
     <td><%= f.text_field :amount %></td>
   </tr>  
 </table>

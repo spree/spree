@@ -2,7 +2,7 @@
   <%= javascript_include_tag  'checkout', '/states' %>
 <% end %>
 <div id="checkout">
-  <h1><%= t("checkout")%></h1>
+  <h1><%= t("checkout") %></h1>
   <%= checkout_progress %>
   <br clear="left" />
   <%= render "shared/error_messages", :target => @order %>

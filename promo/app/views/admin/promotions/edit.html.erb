@@ -18,7 +18,7 @@
       <% if @promotion.rules.any? %>
         <%= render :partial => 'promotion_rule', :collection => @promotion.rules %>
       <% else %>
-        <!-- <p><%= t('no_rules_added') %></p> -->
+        <!-- <p><%= t("no_rules_added") %></p> -->
       <% end %>
     </div>
     <p class="form-buttons">
@@ -30,9 +30,9 @@
                                                                  :id => 'new_product_rule_form') do  %>
     <% options = options_for_select( PromotionRule.rule_class_names.map {|name| [ t("promotion_rule_types.#{name.demodulize.underscore}.name"), name] } ) %>
     <p>
-      <label for="promotion_rule_type"><%= t('add_rule_of_type') %></label>
+      <label for="promotion_rule_type"><%= t("add_rule_of_type") %></label>
       <%= select_tag("promotion_rule[type]", options) %>
-      <input type="submit" value="<%= t('add') %>" />
+      <input type="submit" value="<%= t("add") %>" />
     </p>
   <% end %>
 

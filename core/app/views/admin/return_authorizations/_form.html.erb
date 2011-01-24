@@ -29,7 +29,7 @@
 </table>
 
 <%= f.field_container :amount do %>
-  <%= f.label :amount, t("amount")%> <span class="required">*</span><br />
+  <%= f.label :amount, t("amount") %> <span class="required">*</span><br />
   <% if @return_authorization.received? %>
     <%= number_to_currency(@return_authorization.amount) %>
   <% else %>
@@ -39,7 +39,7 @@
 <% end %>
 
 <%= f.field_container :reason do %>
-  <%= f.label :reason, t("reason")%>
+  <%= f.label :reason, t("reason") %>
   <%= f.text_area :reason, {:style=> "height:100px;", :class => 'fullwidth'} %>
   <%= f.error_message_on :reason %>
 <% end %>

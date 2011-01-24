@@ -1,5 +1,5 @@
 <fieldset id="calculator_fields">
-  <legend><%= t('calculator') %></legend>
+  <legend><%= t("calculator") %></legend>
   <div id="preference-settings">
     <p>
       <%= f.label(:calc_type, t("calculator"), :for => "calc-type") %>
@@ -12,7 +12,7 @@
         <% end %>
       </div>
       <% if @object.calculator.respond_to?(:preferences) %>
-        <div id="calculator-settings-warning"><%= t('calculator_settings_warning')%></div>
+        <div id="calculator-settings-warning"><%= t("calculator_settings_warning") %></div>
       <% end %>
     <% end %>
   </div>

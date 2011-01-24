@@ -1,13 +1,13 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Adjustments"} %>
 
-<h2><%= t("new_adjustment")%></h2>
+<h2><%= t("new_adjustment") %></h2>
 
 <%= render "shared/error_messages", :target => @adjustment %>
 <%= form_for @adjustment, :url => collection_url do |f| %>
   <%= render :partial => "form", :locals => {:f => f} %>
 
   <p class="form-buttons">
-    <%= button t('continue') %>
+    <%= button t("continue") %>
     <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_adjustments_url(@order) %>
   </p>
 <% end %>

@@ -1,13 +1,13 @@
-<h1><%= t('forgot_password') %></h1>
+<h1><%= t("forgot_password") %></h1>
 
-<p><%= t('instructions_to_reset_password') %></p>
+<p><%= t("instructions_to_reset_password") %></p>
 
 <%= form_for User.new, :as => :user, :url => user_password_path do |f| %>
   <p>
-    <label><%= t('email') %>:</label><br />
+    <label><%= t("email") %>:</label><br />
     <%= f.email_field :email %>
   </p>
   <p>
-    <%= f.submit t('reset_password') %>
+    <%= f.submit t("reset_password") %>
   </p>
 <% end %>

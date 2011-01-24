@@ -1,6 +1,6 @@
 <% @body_id = 'cart' %>
 
-<h1><%= t("shopping_cart")%></h1>
+<h1><%= t("shopping_cart") %></h1>
 
 <% if @order.line_items.empty? %>
 
@@ -33,7 +33,7 @@
 
   <%= form_tag empty_cart_path, :method => :put do %>
     <p id="clear_cart_link">
-      <input type="submit" value="<%= t('empty_cart') %>" class="button" />
+      <input type="submit" value="<%= t("empty_cart") %>" class="button" />
     </p>
   <% end %>
 

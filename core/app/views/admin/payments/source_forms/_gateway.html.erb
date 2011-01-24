@@ -4,7 +4,7 @@
     <% for card in @previous_cards %>
       <label><%= radio_button_tag :card, card.id, card == @previous_cards.first %> <%= card.display_number %><br /></label>
     <% end %>
-    <label><%= radio_button_tag :card, 'new', @previous_cards.none? %> <%= t('use_new_cc') %></label>
+    <label><%= radio_button_tag :card, 'new', @previous_cards.none? %> <%= t("use_new_cc") %></label>
   </p>
   
   <div id="card_form">
@@ -18,8 +18,8 @@
       <span class="req">*</span>
       &nbsp;
       <span id="card_type" style="display:none;">
-        ( <span id="looks_like" ><%= t('card_type_is') %> <span id="type"></span></span>
-          <span id="unrecognized"><%= t('unrecognized_card_type') %></span>
+        ( <span id="looks_like" ><%= t("card_type_is") %> <span id="type"></span></span>
+          <span id="unrecognized"><%= t("unrecognized_card_type") %></span>
         )
       </span>
     </div>

@@ -27,9 +27,9 @@ class Admin::ShipmentsController < Admin::BaseController
 
   def fire
     if @shipment.send("#{params[:e]}")
-      flash.notice = t('shipment_updated')
+      flash.notice = t("shipment_updated")
     else
-      flash[:error] = t('cannot_perform_operation')
+      flash[:error] = t("cannot_perform_operation")
     end
     redirect_to :back
   end

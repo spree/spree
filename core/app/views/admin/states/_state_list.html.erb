@@ -1,8 +1,8 @@
 <table class="index" id='listing_states'>
   <thead>
     <tr>
-      <th><%= t('name') %></th>
-      <th><%= t('abbreviation') %></th>
+      <th><%= t("name") %></th>
+      <th><%= t("abbreviation") %></th>
       <th></th>
     </tr>
   </thead>
@@ -18,11 +18,11 @@
       </tr>
     <% end %>
     <% if @states.empty? %>
-      <tr><td colspan="3"><%= t('none') %></td></tr>
+      <tr><td colspan="3"><%= t("none") %></td></tr>
     <% end %>
   </tbody>
 </table>
 <div id="new_state"></div>
 <p>
-  <%= button_link_to t('new_state'), new_admin_country_state_url(@country), {:remote => true, :icon => 'add'} %>
+  <%= button_link_to t("new_state"), new_admin_country_state_url(@country), {:remote => true, :icon => 'add'} %>
 </p>

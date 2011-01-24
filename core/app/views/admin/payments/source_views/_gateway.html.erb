@@ -1,9 +1,9 @@
 <fieldset>
-  <legend><%= t('creditcard') %></legend>
+  <legend><%= t("creditcard") %></legend>
 
   <table class="index">
     <tr>
-      <th colspan="6"><%= t('card_details') %></th>
+      <th colspan="6"><%= t("card_details") %></th>
     </tr>
     <tr>
       <td><label><%= t("card_number") %>:</label></td>
@@ -24,7 +24,7 @@
       <td>
         <%= payment.source.issue_number %>
       </td>
-      <td><label><%= t('start_date') %>:</label></td>
+      <td><label><%= t("start_date") %>:</label></td>
       <td colspan="3">
         <%= payment.source.start_month %>/<%= payment.source.start_year %>
       </td>

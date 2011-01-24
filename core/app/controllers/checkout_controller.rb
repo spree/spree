@@ -86,7 +86,7 @@ class CheckoutController < Spree::BaseController
   end
 
   def rescue_from_spree_gateway_error
-    flash[:error] = t('spree_gateway_error_flash_for_checkout')
+    flash[:error] = t("spree_gateway_error_flash_for_checkout")
     render :edit
   end
 

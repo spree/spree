@@ -34,7 +34,7 @@
       <% end %>
       <td class="actions">
         <%= hook :admin_shipments_index_row_actions, locals do %>
-          <%= link_to_with_icon 'edit', t('edit'), edit_admin_order_shipment_url(@order, shipment) %>
+          <%= link_to_with_icon 'edit', t("edit"), edit_admin_order_shipment_url(@order, shipment) %>
           <%= link_to_delete shipment, :url => admin_order_shipment_url(@order, shipment) %>
         <% end %>
       </td>
@@ -42,4 +42,4 @@
   <% end %>
 </table>
 
-<%= button_link_to t('continue'), admin_orders_url %>
+<%= button_link_to t("continue"), admin_orders_url %>

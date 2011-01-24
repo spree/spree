@@ -3,7 +3,7 @@
 <h1><%= t("states") %></h1>
 
 <p>
-  <label for="country"><%= t('country') %></label>
+  <label for="country"><%= t("country") %></label>
   <select id="country" class='observe_field' data-base-url="<%=admin_states_path(:format => :js)%>?country_id=" data-update="#state-list">
   <%= options_from_collection_for_select(@countries, :id, :name, @country.id) %>
   </select>

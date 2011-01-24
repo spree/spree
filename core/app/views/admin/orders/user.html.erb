@@ -4,7 +4,7 @@
 <% if @order.cart? %>
   <div id="add-line-item">
     <fieldset>
-      <legend><%= t('customer_search') %></legend>
+      <legend><%= t("customer_search") %></legend>
       <%= label_tag :customer_search, t("name") %>
       <%= text_field_tag :customer_search,  nil, :class => 'fullwidth title'  %>
     </fieldset>

@@ -4,7 +4,7 @@
 
 <%= form_for(:property, :url => collection_url) do |f| %>
 <fieldset>
-  <legend><%= t("new_property")%></legend>
+  <legend><%= t("new_property") %></legend>
   <%= render :partial => "form", :locals => { :f => f } %>
   <%= render :partial => 'admin/shared/new_resource_links' %>
 </fieldset>

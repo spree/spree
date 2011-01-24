@@ -1,7 +1,7 @@
-<h2><%= t('api.access') %></h2>
+<h2><%= t("api.access") %></h2>
 
 <% if @user.authentication_token.present? %>
-  <p><strong><%= t('api.key') %></strong> <%= @user.authentication_token %></p>
+  <p><strong><%= t("api.key") %></strong> <%= @user.authentication_token %></p>
   <%= form_tag clear_api_key_admin_user_path(@user), :method => :put do %>
     <%= button t("api.clear_key") %>
   <% end %>
@@ -9,7 +9,7 @@
     <%= button t("api.regenerate_key") %>
   <% end %>
 <% else %>
-  <p><%= t('api.no_key') %></p>
+  <p><%= t("api.no_key") %></p>
   <%= form_tag generate_api_key_admin_user_path(@user), :method => :put do %>
     <%= button t("api.generate_key") %>
   <% end %>

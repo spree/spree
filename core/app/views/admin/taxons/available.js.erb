@@ -5,7 +5,7 @@
     else row.style.display = '';
   }
 </script>
-<h4><%= t('available_taxons') %></h4>
+<h4><%= t("available_taxons") %></h4>
 <table class="index">
   <thead>
     <tr>
@@ -27,7 +27,7 @@
       </tr>
     <% end %>
     <% if @available_taxons.empty? %>
-     <tr><td colspan="3"><%= t('no_match_found') %>.</td></tr>
+     <tr><td colspan="3"><%= t("no_match_found") %>.</td></tr>
     <% end %>
   </tbody>
 </table>

@@ -1,6 +1,6 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
 
-<h2><%= t('new') %> <%= t("activerecord.models.#{@object.class.to_s.underscore}.one") %></h2>
+<h2><%= t("new") %> <%= t("activerecord.models.#{@object.class.to_s.underscore}.one") %></h2>
 
 <%= render "shared/error_messages", :target => @payment %>
 
@@ -9,7 +9,7 @@
   <%= render "form", :f => f %>
 
   <p class="form-buttons">
-    <%= button @order.cart? ? t('continue') : t('update') %>
+    <%= button @order.cart? ? t("continue") : t("update") %>
   </p>
 
 <% end %>

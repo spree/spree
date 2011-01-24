@@ -3,22 +3,22 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li>
-      <%= button_link_to t('new_payment_method'), new_object_url, :icon => 'add'  %>
+      <%= button_link_to t("new_payment_method"), new_object_url, :icon => 'add'  %>
     </li>
   </ul>
   <br class='clear' />
 </div>
 
-<h1><%= t('payment_methods') %></h1>
+<h1><%= t("payment_methods") %></h1>
 
 <table class="index" id='listing_payment_methods'>
   <tr>
     <%= hook :admin_payment_methods_index_headers do %>
-      <th><%= t('name') %></th>
-      <th><%= t('provider') %></th>
-      <th><%= t('environment') %></th>
-      <th><%= t('display') %></th>
-      <th><%= t('active') %></th>
+      <th><%= t("name") %></th>
+      <th><%= t("provider") %></th>
+      <th><%= t("environment") %></th>
+      <th><%= t("display") %></th>
+      <th><%= t("active") %></th>
     <% end %>
     <th>
       <%= hook :admin_payment_methods_index_header_actions %>
@@ -32,8 +32,8 @@
           <td width="120px"><%= method.name %></td>
           <td width="140px"><%= method.type %></td>
           <td width="100px"><%= method.environment.to_s.titleize %></td>
-          <td width="60px"><%= method.display_on.blank? ? t('both') : t(method.display_on) %></td>
-          <td width="60px"><%= method.active ? t('yes') : t('no') %></td>
+          <td width="60px"><%= method.display_on.blank? ? t("both") : t(method.display_on) %></td>
+          <td width="60px"><%= method.active ? t("yes") : t("no") %></td>
         <% end %>
         <td width="140px">
           <%= hook :admin_payment_methods_index_row_actions, locals do %>
