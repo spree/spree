@@ -18,7 +18,7 @@ namespace :spree_core do
     task :assets do
       source = File.join(File.dirname(__FILE__), '..', '..', 'public')
       destination = File.join(Rails.root, 'public')
-      puts "INFO: Mirroring assets from #{source} to #{destination}"
+      #puts "INFO: Mirroring assets from #{source} to #{destination}"
       Spree::FileUtilz.mirror_files(source, destination)
     end
 
