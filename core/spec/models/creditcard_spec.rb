@@ -276,7 +276,7 @@ describe Creditcard do
       creditcard.can_capture?(payment).should be_true
     end
 
-    (PAYMENT_STATES - [PENDING]).each do |state|
+    (PAYMENT_STATES - ['pending']).each do |state|
       it "should be false if payment state is #{state}" do
         payment = mock_model(Payment, :state => state, :created_at => Time.now)
         creditcard.can_capture?(payment).should be_false
@@ -303,7 +303,7 @@ describe Creditcard do
         creditcard.can_credit?(payment).should be_false
       end
 
-      (PAYMENT_STATES - [COMPLETED]).each do |state|
+      (PAYMENT_STATES - ['completed']).each do |state|
         it "should be false if payment state is #{state}" do
           payment.stub :state => state
           creditcard.can_credit?(payment).should be_false
@@ -313,7 +313,7 @@ describe Creditcard do
     end
 
     context "#can_void?" do
-      (PAYMENT_STATES - [VOID]).each do |state|
+      (PAYMENT_STATES - ['void']).each do |state|
         it "should be true if payment state is #{state}" do
           payment.stub :state => state
           payment.stub :void? => false
@@ -322,7 +322,7 @@ describe Creditcard do
       end
 
       it "should be valse if payment state is void" do
-        payment.stub :state => VOID
+        payment.stub :state => 'void'
         creditcard.can_void?(payment).should be_false
       end
     end
@@ -332,7 +332,7 @@ describe Creditcard do
     let(:payment) { mock_model(Payment, :state => 'completed') }
 
     context "#can_void?" do
-      (PAYMENT_STATES - [VOID]).each do |state|
+      (PAYMENT_STATES - ['void']).each do |state|
         it "should be true if payment state is #{state}" do
           payment.stub :state => state
           creditcard.can_void?(payment).should be_true
@@ -340,7 +340,7 @@ describe Creditcard do
       end
 
       it "should be false if payment state is void" do
-        payment.stub :state => VOID
+        payment.stub :state => 'void'
         creditcard.can_void?(payment).should be_false
       end
 

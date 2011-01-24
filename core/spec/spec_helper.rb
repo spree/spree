@@ -30,3 +30,8 @@ RSpec.configure do |config|
 end
 
 @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+
+
+PAYMENT_STATES = Payment.state_machine.states.keys
+SHIPMENT_STATES = Shipment.state_machine.states.keys
+ORDER_STATES = Order.state_machine.states.keys
