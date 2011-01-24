@@ -5,5 +5,5 @@
                               @taxons.map {|t| [t.name, t.id]}, 
                             @taxon ? @taxon.id : params[:taxon]) %>
   <%= text_field_tag :keywords, params[:keywords] %>
-  <%= submit_tag t(:search), :name => nil %>
+  <%= submit_tag t('search'), :name => nil %>
 <% end %>

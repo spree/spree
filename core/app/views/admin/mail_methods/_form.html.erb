@@ -6,7 +6,7 @@
       <legend><%= t('general') %></legend>
 
       <p>
-        <label><%=t("environment")%></label>
+        <label><%= t("environment")%></label>
         <br/>
         <%= f.collection_select(:environment,
                                 Configuration.configurations.keys.sort,

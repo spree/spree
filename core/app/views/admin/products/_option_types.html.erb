@@ -1,10 +1,10 @@
-<h2><%= t("selected_option_types") %></h2>
+<h2><%= t('selected_option_types') %></h2>
 <table class="option-types">
 	<thead>
 		<tr>
-			<th><%= t("name") %></th>
-			<th><%= t("display") %></th>
-			<th><%= t("action") %></th>
+			<th><%= t('name') %></th>
+			<th><%= t('display') %></th>
+			<th><%= t('action') %></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -13,7 +13,7 @@
 				<td><%=so.option_type.name%></td>
 				<td><%=so.option_type.presentation%></td>
 				<td>
-				  <%= link_to_remote t("remove"),
+				  <%= link_to_remote t('remove'),
 				                     :url => {:action => 'remove_option_type', :id=> @product, :product_option_type_id => so},
 				                     :before => "jQuery('#select-link').hide(); jQuery('#busy_indicator').show()", 
 				                     :complete => "jQuery('#busy_indicator').hide()",
@@ -23,7 +23,7 @@
 		<% end %>
 		<% if @product.selected_options.empty? %>
 			<tr>
-				<td colspan="3"><%= t(:none) %></td>
+				<td colspan="3"><%= t('none') %></td>
 			</tr>
 		<% end %>
 	</tbody>

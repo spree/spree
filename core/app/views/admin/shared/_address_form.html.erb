@@ -14,37 +14,37 @@
   <tbody id="<%= name == t('shipping_address') ? "shipping" : "billing" %>" style="display:<%= (use_billing && (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address))) ? "none" : "" %>">
     <tr class="<%= name == t('shipping_address') ? "shipping-row" : "billing-row" %>">
       <td class="lbl-col">
-        <%= f.label :firstname, t(:first_name)+':' %>
+        <%= f.label :firstname, t('first_name')+':' %>
       </td>
       <td class="val-col" colspan="3"><%= f.text_field :firstname %></td>
       <td class="lbl-col">
-        <%= f.label :lastname, t(:last_name)+':' %>
+        <%= f.label :lastname, t('last_name')+':' %>
       </td>
       <td class="val-col" colspan="3"><%= f.text_field :lastname %></td>
     </tr>
     <tr class="<%= name == t('shipping_address') ? "shipping-row" : "billing-row" %>">
       <td class="lbl-col">
-        <%= f.label :address1, t(:street_address)+':' %>
+        <%= f.label :address1, t('street_address')+':' %>
       </td>
       <td colspan="3"><%= f.text_field :address1, :class => "fullwidth" %></td>
       <td class="lbl-col">
-        <%= f.label :address2, t(:street_address_2)+':' %>
+        <%= f.label :address2, t('street_address_2')+':' %>
       </td>
       <td colspan="3"><%= f.text_field :address2, :class => "fullwidth" %></td>
     </tr>
     <tr class="<%= name == t('shipping_address') ? "shipping-row" : "billing-row" %>">
       <td class="lbl-col">
-        <%= f.label :city, t(:city)+':' %>
+        <%= f.label :city, t('city')+':' %>
       </td>
       <td colspan="3"><%= f.text_field :city %></td>
       <td class="lbl-col">
-        <%= f.label :zipcode, t(:zip)+':' %>
+        <%= f.label :zipcode, t('zip')+':' %>
       </td>
       <td colspan="3"><%= f.text_field :zipcode, :style => "width:100px;" %></td>
     </tr>
     <tr class="<%= name == t('shipping_address') ? "shipping-row" : "billing-row" %>">
       <td class="lbl-col">
-        <%= f.label :state_id, t(:state)+':' %>
+        <%= f.label :state_id, t('state')+':' %>
       </td>
       <td colspan="3">
         <span id="<%= name==t('shipping_address') ? "s" : "b" %>state">
@@ -54,7 +54,7 @@
         </span>
       </td>
       <td class="lbl-col">
-        <%= f.label :country_id, t(:country)+':' %>
+        <%= f.label :country_id, t('country')+':' %>
       </td>
       <td colspan="3">
         <span id="<%= name==t('shipping_address') ? "s" : "b" %>country"><%= f.collection_select :country_id, Country.all, :id, :name, {}, {:style => 'width:150px;'} %></span>
@@ -62,7 +62,7 @@
     </tr>
     <tr class="<%= name == t('shipping_address') ? "shipping-row" : "billing-row" %>">
       <td class="lbl-col">
-        <%= f.label :phone, t(:phone)+':' %>
+        <%= f.label :phone, t('phone')+':' %>
       </td>
       <td colspan="7"><%= f.text_field :phone %></td>
     </tr>

@@ -17,7 +17,7 @@
       <th><%= t("combine") %></th>
       <th><%= t("usage_limit") %></th>
       <th><%= t("expiration") %></th>
-      <th><%= t("calculator") %></th>     
+      <th><%= t("calculator") %></th>
       <th width="150"><%= t("action") %></th>
     </tr>
   </thead>
@@ -26,13 +26,13 @@
       <tr id="<%= dom_id promotion %>">
         <td><%= promotion.code %></td>
         <td><%= promotion.description %></td>
-        <td><%= promotion.combine ? t(:yes) : t(:no) %></td>
+        <td><%= promotion.combine ? t('yes') : t('no') %></td>
         <td><%= promotion.usage_limit %></td>
         <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
         <td><%= promotion.calculator.description if promotion.calculator %></td>
         <td>
-        	<%= link_to_edit promotion %> &nbsp;
-        	<%= link_to_delete promotion %>
+            <%= link_to_edit promotion %> &nbsp;
+            <%= link_to_delete promotion %>
         </td>
       </tr>
     <% end %>

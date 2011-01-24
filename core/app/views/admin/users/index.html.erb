@@ -1,14 +1,14 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li>
-      <p><%= button_link_to t("new_user"), new_object_url, :icon => 'add' %></p>
+      <p><%= button_link_to t('new_user'), new_object_url, :icon => 'add' %></p>
     </li>
   </ul>
   <br class='clear' />
 </div>
 
 
-<h1><%= t("listing_users") %></h1>
+<h1><%= t('listing_users') %></h1>
 
 
 <table class="index" id='listing_users'>
@@ -45,7 +45,7 @@
 
 <% content_for :sidebar do %>
   <div class="box">
-    <h3><%= t(:search) %></h3>
+    <h3><%= t('search') %></h3>
     <%= form_for @search do |f| %>
       <%- locals = {:f => f} %>
       <%= hook :admin_users_index_search, locals do %>

@@ -13,7 +13,7 @@
 
   <%= hook :search_results do %>
     <% if @products.empty? %>
-      <%= t(:no_products_found) %>
+      <%= t('no_products_found') %>
     <% else %>
       <%= render "shared/products", :products => @products, :taxon => @taxon %>
     <% end %>

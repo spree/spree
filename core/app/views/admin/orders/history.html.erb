@@ -10,7 +10,7 @@
   </tr>
   <% @order.state_events.sort.each do |event| %>
     <tr>
-      <td><%=t("#{event.name}") %></td>
+      <td><%= t("#{event.name}") %></td>
       <td><%=event.user.email if event.user %></td>
       <td><%=event.created_at.to_s(:date_time24) %></td>
     </tr>

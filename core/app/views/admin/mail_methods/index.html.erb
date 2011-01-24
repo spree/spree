@@ -27,7 +27,7 @@
         <%- locals = {:method => method} %>
         <%= hook :admin_mail_methods_index_rows, locals do %>
           <td width="100px"><%= method.environment.to_s.titleize %></td>
-          <td width="60px"><%= method.active ? t(:yes) : t(:no) %></td>
+          <td width="60px"><%= method.active ? t('yes') : t('no') %></td>
         <% end %>
         <td width="140px">
           <%= hook :admin_mail_methods_index_row_actions, locals do %>
