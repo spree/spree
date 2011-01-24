@@ -1,4 +1,4 @@
-<%= hook :admin_inside_taxon_form do %>
+<%= hook :admin_inside_taxon_form, {:f => f} do %>
   <%= f.field_container :name do %>
     <%= f.label :name, t("name") %> <span class="required">*</span><br />
     <%= error_message_on :taxon, :name, :class => 'fullwidth title'  %>
