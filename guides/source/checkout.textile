@@ -12,13 +12,13 @@ endprologue.
 
 h3. Overview
 
-The Spree checkout process has been designed for maximum flexibility.  Its been redesigned several times now, each iteration has benefited from the feedback of real world deployment experience.  It is relatively simple to customize the checkout process to suit your needs.  Secure transmission of customer information is possible via SSL and credit card information is not stored in the database by default.
+The Spree checkout process has been designed for maximum flexibility.  Its been redesigned several times now, each iteration has benefited from the feedback of real world deployment experience.  It is relatively simple to customize the checkout process to suit your needs.  Secure transmission of customer information is possible via SSL and credit card information is never stored in the database.
 
 h3. Default Checkout Steps
 
 The Spree checkout process consists of the following steps (With the exception of the Registration step, each of these steps corresponds to a state of the +Order+ object):
 
-* Registration (Optinal - can be changed through configuration setting)
+* Registration (Optional - can be changed through configuration setting)
 * Address Information
 * Delivery Options (Shipping Method)
 * Payment
@@ -30,7 +30,7 @@ h4. Registration
 
 Prior to beginning the checkout process, the customer will be prompted to create a new account or to login to their existing account. By default, there is also a "guest checkout" option which allows users to specify only their email address if they do not wish to create an account.
 
-Technically, the registration step is not an actual state in the +Order+ state machine.  The spree_auth gem, adds the +check_registration+ before filter to the all actions of the checkout controller +CheckoutController+ (except for obvious reasons the registration and update_registration actions) provides functionality to redirect to a registration page unless one of the following is true:
+Technically, the registration step is not an actual state in the +Order+ state machine.  The spree_auth gem, adds the +check_registration+ before filter to the all actions of +CheckoutController+ (except for obvious reasons the +registration+ and +update_registration+ actions), which redirects to a registration page unless one of the following is true:
 * +registration_step+ preference is not true
 * user is already logged in
 * the current order has an email address associated with it
@@ -72,7 +72,7 @@ This step is where the customer provides payment infomation.  This step is inten
 
 WARNING. Spree discards the credit card number after this step is processed.  If you do not have a gateway with payment profiles enabled then your card information will be lost before its time to authorize the card (which is done after the "Confirmation" step.)
 
-INFO. Spree stores only the last four digits of the credit card number along with the expiration information.  The full credit card number and verification code are never stored in the database.  There is an extension for storing this data using PGP encryption,however, this violates PCI standards and is strongly discouraged in production
+INFO. Spree stores only the last four digits of the credit card number along with the expiration information.  The full credit card number and verification code are never stored in the database.
 
 INFO. The advantage of using a credit card profile is that you can ask for confirmation in a separate step without sacrificing security
 
@@ -103,24 +103,30 @@ The '/checkout' route maps to the +edit+ action of the +CheckoutController+ and 
 
 h4. CheckoutController
 
-The +CheckoutController+ drives the state of an +Order+ object during checkout. Since there is no "checkout" model, the +CheckoutController+ is not a typical RESTful controller. spree_core and spree_auth expose a few actions for the +CheckoutController+. The +edit+ action renders the checkout/edit.html.erb template. The +update+ action serves several purposes:
+The +CheckoutController+ drives the state of an +Order+ object during checkout. Since there is no "checkout" model, the +CheckoutController+ is not a typical RESTful controller. The spree_core and spree_auth gems expose a few different actions for the +CheckoutController+.
 
-* update the +current_order+ with the paramaters passed in from the current step.
-* transition the order state machine using the +next+ event after successfully updating the order.
-* execute callbacks based on the new state after successfully transitioning.
-* redirect to the next checkout step if the +current_order.state+ is anything other than +complete+, else redirect to the +order_path+ for +current_order+
+The +edit+ action renders the checkout/edit.html.erb template. The +update+ action performs the following:
 
-h5. filters
+* Updates the +current_order+ with the paramaters passed in from the current step.
+* Transitions the order state machine using the +next+ event after successfully updating the order.
+* Executes callbacks based on the new state after successfully transitioning.
+* Redirects to the next checkout step if the +current_order.state+ is anything other than +complete+, else redirect to the +order_path+ for +current_order+
 
-+spree_core+ and +spree_auth+ define several before_filter's for the +CheckoutController+:
+INFO. For security reasons, the +CheckoutController+ will not update the +Order+ once the checkout process is complete.  It is therefore impossible for an order to be tampered with (ex. changing the quantity) after checkout.
 
-* load_order (spree_core): The main purpose of this filter is to assign the @order instance variable and set the @order.state to the params[:state]. This filter also runs the "before" callbacks for @order's state.
-* check_authorization (spree_auth): verifies the +current_user+ has access to the +current_order+
-* check_registration (spree_auth): checks the registration status of +current_user+ and redirects to the registration step if necessary.
+h5. Filters
+
+The +spree_core+ and +spree_auth+ gems define several +before_filters+ for the +CheckoutController+:
+
+|_<.Name|_.Gem|_.Description|
+|+load_order+|+spree_core+| Assigns the +@order+ instance variable and set the +@order.state+ to the +params[:state]+ value. This filter also runs the "before" callbacks for +@order.state+.|
+|+check_authorization+|+spree_auth+|Verifies that the +current_user+ has access to the +current_order+.|
+|+check_registration+|+spree_auth+|Checks the registration status of +current_user+ and redirects to the registration step if necessary.|
 
 h4. The Order Model and State Machine
 
  The +Order+ state machine is the foundation of the checkout process.  Spree makes use of the "state_machine":http://github.com/pluginaweek/state_machine gem in the +Order+ model as well as in several other places (such as +Shipment+ and +InventoryUnit+.)
+
 An +Order+ object has an initial state of 'cart'.  From there any number of events transition the +Order+ to different states.  Spree does not have a separate model or database table for the shopping cart.  We reached this decision when taking a REST approach to modeling our resources.  What the user considers a "shopping cart" is actually an in-progress +Order+.  An order is considered in-progress, or incomplete when its completed_at attribute is null.  Incomplete orders can be easily filtered during reporting and its also simple enough to write a quick script to periodically purge incomplete orders from the system.  The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
 
 The default state machine for the +Order+ model is defined in +order.rb+ of spree_core as follows:
@@ -160,7 +166,7 @@ INFO. For more information on the state machine gem please see the "README":http
 
 h4. Checkout Partials
 
-spree_core contains several partials located within +app/views/checkout/+.  Each checkout step automatically renders the +edit.html.erb+ template. The edit template renders a partial with a name based on the state with the current step.  For example, in the delivery step the +_delivery.html.erb+ partial is rendered.
+The +spree_core+ gem contains several partials located within +app/views/checkout/+.  Each checkout step automatically renders the +edit.html.erb+ template. The edit template renders a partial with a name based on the state with the current step.  For example, in the delivery step the +_delivery.html.erb+ partial is rendered.
 
 h4. Javascript and CSS
 
@@ -176,7 +182,7 @@ h4. Customizing an Existing Step
 
 Spree allows you to customize the individual steps of the checkout process.  There are a few distinct scenarios that we'll cover here.
 
-* Adding before or after a particular step.
+* Adding logic either before or after a particular step.
 * Customizing the view for a particular step.
 
 h5. Adding Logic Before or After a Particular Step
@@ -248,7 +254,6 @@ module SpreeCustomExtension
     def self.activate
       Order.class_eval do
 
-        # customize the checkout state machine
         Order.state_machines[:state] = StateMachine::Machine.new(Order, :initial => 'cart') do
 
           after_transition :to => 'complete', :do => :complete_order
@@ -304,7 +309,6 @@ The default checkout process in Spree assumes a gateway that allows for some for
 Spree provides a wrapper around the standard active merchant API in order to provide a common abstraction for dealing with payment profiles.  All +Gateway+ classes now have a +payment_profiles_supported?+ method which indicates whether or not payment profiles are supported.  If you are adding Spree support to a +Gateway+ you should also implement the +create_profile+ method.  The following is an example of the implementation of +create_profile+ used in the +AuthorizeNetCim+ class:
 
 <ruby>
-# Create a new CIM customer profile ready to accept a payment
 def create_profile(creditcard, gateway_options)
   if creditcard.gateway_customer_profile_id.nil?
     profile_hash = create_customer_profile(creditcard, gateway_options)
@@ -328,21 +332,3 @@ It is possible to configure Spree to work with third party payment services such
 [TODO - detailed instructions on overriding the hook]
 
 INFO. Spree does not automatically support Google Checkout or Paypal Express.  You will need to install the relevant third party extension if you wish to use these services.
-
-h3. Data Security Issues
-
-We end with a summary of how Spree protects sensitive data. Modifications in
-your projects should aim to meet the same standards. You should also be aware
-of relevant card processing recommendations or requirements, e.g.
-"PCI":https://www.pcisecuritystandards.org/.
-
-* The checkout steps are processed via SSL, so sensitive data is never
-  transmitted in clear text.
-* By default, sensitive credit card details are NOT stored in the database.
-  Spree uses Rails hooks to blank out such sensitive data before containing
-  records are saved. (However: this can be changed with the preference
-  settings +Spree::Config[:store_cc]+ and +Spree::Config[:store_cvv]+ -
-  but this is not recommended).
-* Most gateways use Active Merchant, and this itself uses appropriate
-  techniques for secure transmission, e.g. submitting authorization
-  requests only via SSL.
