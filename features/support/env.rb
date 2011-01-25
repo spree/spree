@@ -29,7 +29,7 @@ Capybara.default_selector = :css
 require 'database_cleaner'
 require 'database_cleaner/cucumber'
 
-require File.expand_path("../../../core/spec/factories", __FILE__)
+require "spree_core/testing_support/factories"
 
 # clean database before tests run
 DatabaseCleaner.strategy = :truncation
