@@ -117,6 +117,7 @@ h5. filters
 * load_order (spree_core): The main purpose of this filter is to assign the @order instance variable and set the @order.state to the params[:state]. This filter also runs the "before" callbacks for @order's state.
 * check_authorization (spree_auth): verifies the +current_user+ has access to the +current_order+
 * check_registration (spree_auth): checks the registration status of +current_user+ and redirects to the registration step if necessary.
+
 h4. The Order Model and State Machine
 
  The +Order+ state machine is the foundation of the checkout process.  Spree makes use of the "state_machine":http://github.com/pluginaweek/state_machine gem in the +Order+ model as well as in several other places (such as +Shipment+ and +InventoryUnit+.)
