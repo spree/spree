@@ -99,8 +99,8 @@ h3. Digging Deeper
   <% end %>
 </dl>
 <dl>
-  <% guide('Customizing the Checkout Process', 'checkout.html') do %>
-    This guide will show you how to customize the steps in your checkout process.
+  <% guide('Spree Checkout Process', 'checkout.html') do %>
+    This guide covers the Spree checkout process and shows you how to customize the steps in your checkout process.
   <% end %>
 </dl>
 <dl>
