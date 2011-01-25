@@ -12,10 +12,11 @@ module Spree::Search
       @products_scope = @product_group.apply_on(base_scope)
 
       curr_page = manage_pagination && keywords ? 1 : page
-      @products = @products_scope.all.paginate({
+      @products = @products_scope.limit(per_page).offset(per_page*(page-1)).paginate({
           :include  => [:images, :master],
           :per_page => per_page,
-          :page     => curr_page
+          :page     => curr_page,
+          :total_entries => @products_scope.count
         })
 
       return @products
