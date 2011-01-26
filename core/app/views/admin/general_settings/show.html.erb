@@ -4,25 +4,25 @@
 
 <table>
   <tr>
-    <th scope="row"><%= t("site_name") %>:</th> 
+    <th scope="row"><%= t("site_name") %>:</th>
     <td><%=  Spree::Config[:site_name] %></td>
   </tr>
   <tr>
-    <th scope="row"><%= t("site_url") %>:</th> 
+    <th scope="row"><%= t("site_url") %>:</th>
     <td><%=  Spree::Config[:site_url] %></td>
   </tr>
   <tr>
 	<td colspan="2">
-	  <%= (Spree::Config[:allow_ssl_in_production] ? t("ssl_will_be_used_in_production_mode") : t("ssl_will_not_be_used_in_production_mode")) %> 
+	  <%= (Spree::Config[:allow_ssl_in_production] ? t("ssl_will_be_used_in_production_mode") : t("ssl_will_not_be_used_in_production_mode")) %>
 	</td>
   </tr>
   <tr>
 	<td colspan="2">
 	  <%= (Spree::Config[:allow_ssl_in_development_and_test] ? t("ssl_will_be_used_in_development_and_test_modes") : t("ssl_will_not_be_used_in_development_and_test_modes")) %>
-	</td>	
+	</td>
   </tr>
 </table>
 
-<p><%= link_to_with_icon 'edit', t("edit"), edit_admin_general_settings_path %></p>
+<p><%= link_to_with_icon 'edit', t("edit"), edit_admin_general_settings_path, :id => 'admin_general_settings_link' %></p>
 
 

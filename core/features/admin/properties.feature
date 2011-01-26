@@ -18,3 +18,4 @@ Feature: Admin visiting properties
     When I fill in "property_presentation" with "color"
     When I press "Create"
     Then I should see "Successfully created!"
+    #Then TODO edit destroy

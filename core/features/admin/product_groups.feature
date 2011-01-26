@@ -17,3 +17,4 @@ Feature: Admin visiting product groups
     When I fill in "product_group_name" with "male shirts"
     When I press "Create"
     Then I should see "Successfully created!"
+    #Then TODO edit destroy
