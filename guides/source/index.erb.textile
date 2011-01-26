@@ -4,7 +4,7 @@ h2. Spree guides
 These guides are designed to make you immediately productive with Spree, and to help you understand how all of the pieces fit together. They are written by the authors of Spree as well as members of the Spree community.
 
 * "Current Release version":http://spreecommerce.com/documentation/ - based on the last stable release of Spree
-* "Edge version":http://edgeguides.spreecommerce.com - for unreleased code in current Spree "master branch":http://github.com/railsdog/spree/tree/master
+* "Edge version":http://edgeguides.spreecommerce.com - for unreleased code in current Spree "master branch":http://github.com/spree/spree/tree/master
 * "Legacy 0.30.x version":http://spreecommerce.com/legacy/0-30-x/ - for the legacy 0.30.x version of Spree
 * "Legacy 0.11.x version":http://spreecommerce.com/legacy/0-11-x/ - for the legacy 0.11.x version of Spree
 
@@ -112,11 +112,6 @@ h3. Digging Deeper
 <dl>
   <% guide('Internationalization/Localization', 'i18n.html') do %>
     This guide covers issues related to using Spree in different countries and locales.
-  <% end %>
-</dl>
-<dl>
-  <% guide('Boot Modes', 'boot_modes.html') do %>
-    Information on the different modes in which you can run Spree.
   <% end %>
 </dl>
 <dl>

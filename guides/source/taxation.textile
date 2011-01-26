@@ -68,7 +68,7 @@ h3. Future Development
 
 h4. EU VAT Numbers
 
-Ideally customers should be able to provide a valid EUVAT number and be excluded from taxation if their business is located in the EU outside the country of the shop. This feature is still pending, see the "Spree Wiki":http://wiki.github.com/railsdog/spree/vat-rules for more.
+Ideally customers should be able to provide a valid EUVAT number and be excluded from taxation if their business is located in the EU outside the country of the shop. This feature is still pending, see the "Spree Wiki":http://wiki.github.com/spree/spree/vat-rules for more.
 
 h4. Improved EU Zone.
 

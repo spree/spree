@@ -158,7 +158,7 @@ rename your custom partials if you have any.
 
 h4. Additional Details
 
-For more detailed information on the nature of these changes, please see the "relevant commit":http://github.com/railsdog/spree/commit/ce1aad7bc25c15a794f8f5689efcdbf8c3311b7b in Github.
+For more detailed information on the nature of these changes, please see the "relevant commit":http://github.com/spree/spree/commit/ce1aad7bc25c15a794f8f5689efcdbf8c3311b7b in Github.
 
 h3. Variant Images
 

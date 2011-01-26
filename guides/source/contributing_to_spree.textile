@@ -16,7 +16,7 @@ WARNING. We have an official contribution policy.  Please not just send us Githu
 
 h3. Contributing to the Core
 
-The core is the basic foundation of the Spree project.  It is maintained in Github under the "railsdog/spree":http://github.com/railsdog/spree/tree/master project.  There is a "core team":http://spreecommerce.com/core_team of developers who are responsible for maintaining the quality of the source code.  Your changes will ultimately need to be merged into the official project by a core member.  Thanks to "Github":http://github.com, however, you do not have to wait for a core member to get started with your fix.
+The core is the basic foundation of the Spree project.  It is maintained in Github under the "railsdog/spree":http://github.com/spree/spree/tree/master project.  There is a "core team":http://spreecommerce.com/core_team of developers who are responsible for maintaining the quality of the source code.  Your changes will ultimately need to be merged into the official project by a core member.  Thanks to "Github":http://github.com, however, you do not have to wait for a core member to get started with your fix.
 
 h4. One Time Steps
 
@@ -27,7 +27,7 @@ h5. Create a Remote Reference in Git to Railsdog
 You will need to create a fork of the Spree project in Github.  This is a pretty self explanatory process.  After you have done this and cloned your repository you will need to add a reference to the official repository (railsdog).
 
 <shell>
-git remote add railsdog git://github.com/railsdog/spree.git  
+git remote add railsdog git://github.com/spree/spree.git  
 </shell>  
 
 WARNING. Its important that you add this reference.  Its a one time step that will allow you to easily create branches based on the most recent version of the official code.    
