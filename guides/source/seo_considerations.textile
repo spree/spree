@@ -55,11 +55,11 @@ In addition to integration of Google Analytics, several other tools can be imple
 h3. Spree SEO Extensions
 
 The following list shows extensions that can improve search engine performance. Refer to the github README for developer notes.
-* <a href="http://github.com/stephp/spree-google-base/tree/master">Google Base Integration</a>
-* <a href="http://github.com/stephp/spree-sitemaps/tree/master">Spree Sitemap Generation</a>
+* <a href="http://github.com/stephskardal/spree-google-base/tree/master">Google Base Integration</a>
+* <a href="http://github.com/stephskardal/spree-sitemaps/tree/master">Spree Sitemap Generation</a>
 * <a href="http://github.com/PeterBerkenbosch/spree-static-content/tree/master">Static Content Management</a>
 * <a href="http://github.com/paulcc/spree-reviews/tree/master">Product Reviews</a>
-* <a href="http://github.com/stephp/spree-product-reviews-ratings/tree/master">Product Reviews and Ratings</a>
+* <a href="http://github.com/stephskardal/spree-product-reviews-ratings/tree/master">Product Reviews and Ratings</a>
 
 h3. External Search Engine Optimization Efforts
 

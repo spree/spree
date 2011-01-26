@@ -28,7 +28,7 @@ You can easily browse the repository through Git Hub's excellent "visual interfa
 
 h4. Git on Windows
 
-There are some well developed Git clients for Windows now. If you are on a Windows box you might want to check out the "msygit":http://code.google.com/p/msysgit/ project. There is also a "screencast":http://gitcasts.com/posts/git-on-windows available.
+There are some well developed Git clients for Windows now. If you are on a Windows box you might want to check out the "msygit":http://code.google.com/p/msysgit/ project.
 
 h4. SVN
 

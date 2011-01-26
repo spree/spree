@@ -60,7 +60,7 @@ The list of countries that appear in the country select box can also be configur
 
 h4. Delivery Options
 
-During this step, the user may choose a delivery method. Spree assumes the list of shipping methods to be dependent on the shipping address.  This is one of the reasons why it is difficult to support single page checkout for customers who have disabled javascript.  Spree allows you to configure any number of custom "shipping methods":shipping.html.  Each shipping method must be configured with a "zone":zones.html.  The available shipping methods shown during this step will reflect those whose zone overlaps with the specified shipping address.  The shipping methods will also list the associated shipping charge based on the logic provided by their "calculators":calculators.html.
+During this step, the user may choose a delivery method. Spree assumes the list of shipping methods to be dependent on the shipping address.  This is one of the reasons why it is difficult to support single page checkout for customers who have disabled javascript.  Spree allows you to configure any number of custom "shipping methods":shipping.html.  Each shipping method must be configured with a "zone":zones.html.  The available shipping methods shown during this step will reflect those whose zone overlaps with the specified shipping address.  The shipping methods will also list the associated shipping charge based on the logic provided by their "calculators":adjustments.html#calculators.
 
 INFO. at least one shipping method and corresponding zone must be configured in order to show shipping methods during checkout.
 

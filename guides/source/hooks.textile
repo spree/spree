@@ -1,6 +1,6 @@
 h2. Hooks
 
-The following is a list of all hooks included in Spree's default templates. These allow your own content to be inserted into the templates without having to override them. For instructions on using hooks, refer to the "theming guide":theming.html#hooks
+The following is a list of all hooks included in Spree's default templates. These allow your own content to be inserted into the templates without having to override them. For instructions on using hooks, refer to the "customization guide":customization.html#hooks
 
 endprologue.
 

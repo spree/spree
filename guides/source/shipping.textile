@@ -1,7 +1,7 @@
 h2. Shipping
 
-This section explains how Spree represents shipping options and how it calculates 
-expected costs, and shows how you can configure the system with your own shipping 
+This section explains how Spree represents shipping options and how it calculates
+expected costs, and shows how you can configure the system with your own shipping
 methods.
 After reading it you should know:
 * the design used in Spree
@@ -14,7 +14,7 @@ endprologue.
 h3. Overview
 
 Spree uses a very flexible and effective system to calculate shipping, accomodating
-the full range of shippment pricing: from simple flat rate to complex product-type and 
+the full range of shippment pricing: from simple flat rate to complex product-type and
 weight dependent calculations.
 
 Explaining each piece separately and how they fit together can be a cumbersome task.
@@ -82,8 +82,8 @@ To achieve this setup you need the following Calculators mapping
 |*Regular*|-|Per Item($2)|-|
 |*Heavy*|Per Item($50)|Flexi Rate($20,$15)|-|
 
-p. (*) The default calcultor is the one defined on the Shipping Method 
-configuration (Configuration->Shipping Methods) and it's used when no 
+p. (*) The default calcultor is the one defined on the Shipping Method
+configuration (Configuration->Shipping Methods) and it's used when no
 mapping exists for a specific Shipping Category &#8596; Shipping Method pair.
 
 
@@ -104,7 +104,7 @@ understand a few key concepts:
 
 h4. Shipping Methods
 
-Shipping methods are the actual service used to send the product.  
+Shipping methods are the actual service used to send the product.
 For example:
 * UPS Ground
 * UPS One Day
@@ -151,33 +151,33 @@ Spree ships with 4 default calculators:
 
 bq. Flexible rate: Flat rate for the first product + Flat rate for each additional product.
 
-You can define your own calculator if you have more complex needs. In that case, check out the "Calculators Guide":calculators.html
+You can define your own calculator if you have more complex needs. In that case, check out the section on "Calculators ":adjustments.html#calculators
 
 h3. UI
 
 h4. What the Customer Sees
 
-In the standard system, there is no mention of shipping until the 
+In the standard system, there is no mention of shipping until the
 checkout phase.
 
 After entering a shipping address, the system displays
 the available shipping options and their costs for the whole order.
 
-Only the shipping options whose zones include the _shipping_ address 
-are presented. 
+Only the shipping options whose zones include the _shipping_ address
+are presented.
 
-The Customer must choose one before proceeding to the next stage. At 
+The Customer must choose one before proceeding to the next stage. At
 confirmation, the shipping cost has been added to the order total.
 
 NOTE. You can enable collection of extra _shipping instructions_ by setting the option +Spree::Config.set(:shipping_instructions => true)+. This is turned off by default. See "Shipping Instructions":#shipping-instructions below.
 
 h4. What the Orders Administrator Sees
 
-A shipment object is created at checkout time for the order. Initially it 
+A shipment object is created at checkout time for the order. Initially it
 records just the shipping method and the order it applies to. The administrator
-can update the record with actual shipping cost and a tracking code, and 
+can update the record with actual shipping cost and a tracking code, and
 may also (once only) confirm the dispatch. This confirmation causes a
-shipping date to be set as the time of confirmation. 
+shipping date to be set as the time of confirmation.
 
 
 h3. Advanced Shipping Methods
@@ -191,34 +191,34 @@ h4. Extensions
 
 There are a few Spree extensions which provides additional shipping methods, including
 special support for the fees for common carriers, or support for bulk orders.
-See the "Spree Extension Registry":http://ext.spreecommerce.com for the latest 
+See the "Spree Extension Registry":http://ext.spreecommerce.com for the latest
 information.
 
 h4. Writing your own
 
-For more detailed information, check out the "Calculators Guide":calculators.html
+For more detailed information, check out the section on "Calculators":adjustments.html#calculators
 
 Your calculator should accept an Array of LineItems and return a cost.
-It can look at any reachable data, but typically uses the address, the order and the 
+It can look at any reachable data, but typically uses the address, the order and the
 information from variants which are contained in the line_items.
 
 h3. Product Configuration
 
-Users can assign products to specific ShippingCategories or include extra information in 
+Users can assign products to specific ShippingCategories or include extra information in
 variants to enable the calculator to determine results.
 
 Each product has an (optional) +ShippingCategory+: this adds product-specific information
 to the calculations beyond the standard information from the shipment (which is
-destination address, variants and quantities, and possibly some weight and dimension 
+destination address, variants and quantities, and possibly some weight and dimension
 information if given for a variant). +ShippingCategory+ is basically a wrapper for
-a string. One use is to code up specific rates, eg "Fixed $20" or "Fixed $40", from 
+a string. One use is to code up specific rates, eg "Fixed $20" or "Fixed $40", from
 which a calculator could extract imposed prices (and not go through its other
 calculations).
 
 h4. Variant configuration
 
 Variants can be specified with weight and dimension information. Some shipping method
-calculators will use this information if it is present. 
+calculators will use this information if it is present.
 
 h3. Shipping Instructions
 
@@ -243,9 +243,9 @@ h4. Default Calculators
 The active_shipping extension comes with several pre-configured calculators out of the box. For example here are the ones provided for the USPS carrier:
 
 <shell>
-  #in vendor/extensions/active_shipping/active_shipping_extension.rb 
+  #in vendor/extensions/active_shipping/active_shipping_extension.rb
   def activate
-    [ 
+    [
     #... calculators for Fedex and UPS not shown ...
         Calculator::Usps::MediaMail,
         Calculator::Usps::ExpressMail,
@@ -292,12 +292,12 @@ NOTE. Note that unlike calculators that you write yourself, these calculators do
 There is one gotcha to bear in mind. The string returned by the description method must <em>exactly</em> match the name of the USPS delivery service. To determine the exact spelling of the delivery service you'll need to examine what gets returned from the API:
 
 <shell>
-  #vendor/extensions/active_shipping/app/models/calculator/active_shipping.rb  
+  #vendor/extensions/active_shipping/app/models/calculator/active_shipping.rb
   class Calculator::ActiveShipping < Calculator
     def compute(line_items)
-     #....  
+     #....
      rates = retrieve_rates(origin, destination, packages(order))
-     # the key of this hash is the name you need to match 
+     # the key of this hash is the name you need to match
      # raise rates.inspect
 
      return nil unless rates
@@ -306,7 +306,7 @@ There is one gotcha to bear in mind. The string returned by the description meth
      # divide by 100 since active_shipping rates are expressed as cents
 
      return rate/100.0
-    end  
+    end
 
     def retrieve_rates(origin, destination, packages)
      #....
@@ -322,25 +322,25 @@ There is one gotcha to bear in mind. The string returned by the description meth
 As you can see in the code above, the active_shipping gem returns an array of services with their corresponding prices, which the #retrieve_rates method converts into a hash. Below is what would get returned for an order with an international destination:
 
 <shell>
-  {"USPS Priority Mail International Flat Rate Envelope"=>1345, 
-  "USPS First-Class Mail International Large Envelope"=>376, 
-  "USPS USPS GXG Envelopes"=>4295, 
-  "USPS Express Mail International Flat Rate Envelope"=>2895, 
-  "USPS First-Class Mail International Package"=>396, 
-  "USPS Priority Mail International Medium Flat Rate Box"=>4345, 
-  "USPS Priority Mail International"=>2800, 
-  "USPS Priority Mail International Large Flat Rate Box"=>5595, 
-  "USPS Global Express Guaranteed Non-Document Non-Rectangular"=>4295, 
-  "USPS Global Express Guaranteed Non-Document Rectangular"=>4295, 
-  "USPS Global Express Guaranteed (GXG)"=>4295, 
-  "USPS Express Mail International"=>2895, 
+  {"USPS Priority Mail International Flat Rate Envelope"=>1345,
+  "USPS First-Class Mail International Large Envelope"=>376,
+  "USPS USPS GXG Envelopes"=>4295,
+  "USPS Express Mail International Flat Rate Envelope"=>2895,
+  "USPS First-Class Mail International Package"=>396,
+  "USPS Priority Mail International Medium Flat Rate Box"=>4345,
+  "USPS Priority Mail International"=>2800,
+  "USPS Priority Mail International Large Flat Rate Box"=>5595,
+  "USPS Global Express Guaranteed Non-Document Non-Rectangular"=>4295,
+  "USPS Global Express Guaranteed Non-Document Rectangular"=>4295,
+  "USPS Global Express Guaranteed (GXG)"=>4295,
+  "USPS Express Mail International"=>2895,
   "USPS Priority Mail International Small Flat Rate Box"=>1345}
 </shell>
 
 From all the viable shipping services in this hash, the #compute method selects the one that matches the description of the calculator. At this point an optional flat handling fee (set via preferences) can be added:
 
 <shell>
-  rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0) 
+  rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
 </shell>
 
 Finally, don’t forget to register the calculator you added. In extensions, this is accomplished in the activate method:
@@ -358,7 +358,7 @@ Ordinarily it is the zone of the shipping address that determines which shipping
 <shell>
   class Checkout < ActiveRecord::Base
     #...
-    def shipping_methods 
+    def shipping_methods
       return [] unless ship_address
       ShippingMethod.all_available(order)
     end
