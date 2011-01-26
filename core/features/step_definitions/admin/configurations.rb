@@ -1,3 +1,11 @@
+# Ideally this step should not be needed but without a default configuration file
+# cuke is running into some weird database transaction issue where the record
+# is created but the self.stored_preferences.build({}).owner is returning nil
+# This step fixes it
+Given /^default configuration file exists$/ do
+  AppConfiguration.find_or_create_by_name("Default configuration")
+end
+
 Then /^I should see listing shipping methods tabular attributes$/ do
   output = tableish('table#listing_shipping_methods tr', 'td,th')
   data = output[0]
