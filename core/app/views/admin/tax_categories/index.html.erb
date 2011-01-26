@@ -3,7 +3,9 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li>
-      <p><%= button_link_to t("new_tax_category"), new_object_url, :icon => 'add' %></p>
+      <p><%= button_link_to t("new_tax_category"), new_object_url,  :icon => 'add',
+                                                                    :id => 'admin_new_tax_categories_link' %>
+    </p>
     </li>
   </ul>
   <br class='clear' />

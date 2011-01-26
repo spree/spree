@@ -5,5 +5,5 @@
 <h4><%= t("products_with_zero_inventory_display", :not => show_not(Spree::Config[:show_zero_stock_products])) %> </h4>
 <h4><%= t("backordering_is_allowed", :not => show_not(Spree::Config[:allow_backorders])) %></h4>
 
-<%= link_to_with_icon 'edit', t("edit"), edit_admin_inventory_settings_path %>
+<%= link_to_with_icon 'edit', t("edit"), edit_admin_inventory_settings_path, :id => 'admin_inventory_settings_link' %>
 

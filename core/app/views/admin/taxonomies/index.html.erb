@@ -3,13 +3,13 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li>
-      <%= button_link_to t("new_taxonomy"), new_admin_taxonomy_url, :icon => 'add' %></p>
+      <%= button_link_to t("new_taxonomy"), new_admin_taxonomy_url, :icon => 'add', :id => 'admin_new_taxonomy_link' %></p>
     </li>
   </ul>
   <br class='clear' />
 </div>
 
-<h1><%= t("taxonomies") %></h1>	
+<h1><%= t("taxonomies") %></h1>
 
 <div id='list-taxonomies'>
 	<%= render :partial => 'list' %>
