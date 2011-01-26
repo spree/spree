@@ -17,3 +17,4 @@ Feature: Admin visiting prototypes
     When I fill in "prototype_name" with "male shirts"
     When I press "Create"
     Then I should see "Successfully created!"
+    #Then TODO edit destroy

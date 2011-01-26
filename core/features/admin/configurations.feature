@@ -57,6 +57,10 @@ Feature: Admin visiting configurations
     Then I should see "Analytics Trackers"
 
 
-
-
-
+  Scenario: admin updating general settings
+    Given I go to the admin home page
+    When I follow "Configuration"
+    When I follow "General Settings"
+    When I follow "admin_general_settings_link"
+    Then I should see "Edit General Settings"
+    #Then TODO I presss "Update"
