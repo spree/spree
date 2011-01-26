@@ -5,3 +5,4 @@ Feature: Admin visiting users
     When I follow "Users"
     Then I should see "Listing Users"
     Then I should see listing users tabular attributes
+    #When TODO I follow "admin_new_user_link"
