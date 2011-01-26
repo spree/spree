@@ -15,13 +15,13 @@ class Admin::PromotionRulesController < Admin::BaseController
 
     def build_object
       return @object if @object.present?
-  		if params[:promotion_rule] && params[:promotion_rule][:type]
-  			@object = params[:promotion_rule][:type].constantize.new(object_params)
-  			@object.promotion = parent_object
-  		else
-  			@object = end_of_association_chain.build(object_params)
-  		end
-  		@object
+      if params[:promotion_rule] && params[:promotion_rule][:type]
+        @object = params[:promotion_rule][:type].constantize.new(object_params)
+        @object.promotion = parent_object
+      else
+        @object = end_of_association_chain.build(object_params)
+      end
+      @object
     end
 
 end

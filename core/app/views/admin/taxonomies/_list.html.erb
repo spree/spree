@@ -5,8 +5,8 @@
   </tr>
 <% for taxonomy in @taxonomies %>
   <tr id="<%= dom_id taxonomy %>">
-	  <td>
-	    <%= taxonomy.name %>
+    <td>
+      <%= taxonomy.name %>
     </td>
     <td class="actions">
       <%= link_to_edit taxonomy.id %> &nbsp; <%= link_to_delete taxonomy %>
@@ -14,4 +14,3 @@
   </tr>
 <% end %>
 </table>
-

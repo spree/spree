@@ -5,5 +5,5 @@ class Gateway::SagePay < Gateway
 
   def provider_class
     ActiveMerchant::Billing::SagePayGateway
-  end	
+  end
 end

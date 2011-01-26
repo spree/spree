@@ -25,14 +25,14 @@ var fdLocale = {
         /* Only stipulate the dayAbbr should the first letter of the fullDay not suffice
         */
         dayAbbr:[
-		'ב',
-		'ג',
-		'ד',
-		'ה',
-		'ו',
-		'ש',
-		'א'
-		],
+    'ב',
+    'ג',
+    'ד',
+    'ה',
+    'ו',
+    'ש',
+    'א'
+    ],
 
 
         /* Only stipulate the firstDayOfWeek should the first day not be Monday

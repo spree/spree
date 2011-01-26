@@ -1,6 +1,6 @@
 class Gateway::Linkpoint < Gateway
-	preference :login, :string
-	preference :pem, :text
+  preference :login, :string
+  preference :pem, :text
 
   def provider_class
     ActiveMerchant::Billing::LinkpointGateway

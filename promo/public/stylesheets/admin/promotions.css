@@ -14,20 +14,17 @@
   top: 10px;
 }
 
-
 .products_rule_products_source_field label {
   display: inline;
 }
 
-
-
 .edit_promotion #general_fields, .edit_promotion #expiry_fields {
-	float: left;
-	width: 46%;
+  float: left;
+  width: 46%;
 }
 
 .edit_promotion #general_fields {
-	margin-right: 10px;
+  margin-right: 10px;
 }
 
 .edit_promotion #expiry_fields {
@@ -35,20 +32,23 @@
 }
 
 .edit_promotion #starts_at_field, .edit_promotion #expires_at_field {
-	width: 200px;
-	float: left;
-	clear: none;
+  width: 200px;
+  float: left;
+  clear: none;
 }
+
 .edit_promotion #starts_at_field label, .edit_promotion #expires_at_field label{
-	display: block;
+  display: block;
 }
+
 #rule_fields {
-	position: relative;
+  position: relative;
 }
+
 #new_product_rule_form {
-	position: absolute;
-	text-align:right;
-	width: 300px;
-	right: 30px;
-	bottom: 20px;
+  position: absolute;
+  text-align:right;
+  width: 300px;
+  right: 30px;
+  bottom: 20px;
 }

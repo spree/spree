@@ -25,14 +25,14 @@
   <p>
     <%= link_to_add_fields icon('add') + ' ' + t("add_product_properties"), "tbody#product_properties", f, :product_properties %>
     &nbsp;&nbsp;
-  	<span id="new_ptype_link">
-  	  <%= link_to t("select_from_prototype"), available_admin_prototypes_url, 
-  	              :remote => true, 'data-update' => "prototypes" %>
-  	</span>
-	</p>
-	<div id="prototypes"></div>
-	<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
-	<br/>
+    <span id="new_ptype_link">
+      <%= link_to t("select_from_prototype"), available_admin_prototypes_url, 
+                 :remote => true, 'data-update' => "prototypes" %>
+    </span>
+  </p>
+    <div id="prototypes"></div>
+    <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+    <br/>
   <%= render :partial => 'admin/shared/edit_resource_links' %>
 <% end %>
 

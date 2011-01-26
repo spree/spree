@@ -16,8 +16,8 @@
   <ul id="variant-thumbnails" class="thumbnails">
     <% @variants.each do |v|
         checked = !has_checked && (v.available?)
-   		  has_checked = true if checked
-        
+        has_checked = true if checked
+
         if checked 
           v.images.each do |i| %>  
             <li><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>

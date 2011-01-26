@@ -96,9 +96,9 @@ jQuery(document).ready(function(){
       "new_node" : new_taxon,
       "loading" : loading + "..."
     },
-		"crrm" : {
-			"move" : {
-				"check_move" : function (m) {
+    "crrm" : {
+      "move" : {
+        "check_move" : function (m) {
           var position = m.cp;
           var node = m.o;
           var new_parent = m.np;
@@ -111,9 +111,9 @@ jQuery(document).ready(function(){
 
           return true;
 
-				}
-			}
-		},
+        }
+      }
+    },
     "contextmenu" : {
        "items" : function(obj) {
           var id_of_node = obj.attr("id");

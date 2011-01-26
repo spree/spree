@@ -31,8 +31,8 @@
         <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
         <td><%= promotion.calculator.description if promotion.calculator %></td>
         <td>
-        	<%= link_to_edit promotion %> &nbsp;
-        	<%= link_to_delete promotion %>
+          <%= link_to_edit promotion %> &nbsp;
+          <%= link_to_delete promotion %>
         </td>
       </tr>
     <% end %>

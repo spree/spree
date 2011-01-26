@@ -4,9 +4,9 @@
 
 <%= form_for(:taxon, :url => collection_url) do |f| %>
 
-	<%= render :partial => "form", :locals => { :f => f } %>
+  <%= render :partial => "form", :locals => { :f => f } %>
 
-	<p class="form-buttons">
-	  <%= button t("create") %>
+  <p class="form-buttons">
+    <%= button t("create") %>
   </p>
 <% end %>
