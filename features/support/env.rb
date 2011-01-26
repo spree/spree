@@ -39,7 +39,7 @@ Capybara.save_and_open_page_path = File.join(Rails.root, "tmp")
 
 # load the rest of files for support and step definitions
 directories = [ File.join(FEATURES_PATH, '../../features/support'),
-               File.join(FEATURES_PATH, '../../features/step_definitions') ]
+                File.join(FEATURES_PATH, '../../features/step_definitions') ]
 
 files = directories.map do |dir|
   Dir["#{dir}/**/*.rb"]
@@ -55,15 +55,19 @@ end
 
 DatabaseCleaner.strategy = :transaction
 
-#Factory.factories.values.each do |factory|
-  #puts factory.human_name.pluralize
-  #if factory.build_class.respond_to?(:columns)
-    #factory.build_class.columns.each do |column|
-      #human_column_name = column.name.downcase.gsub('_', ' ')
-      #puts "an? #{factory.human_name} exists with an? #{human_column_name} of "
-    #end
-  #end
-#end
+# call this method to see how factory_girl defines all the step definitions
+# it helps in debugging when factory_girl step definition does not work
+def factory_definitions_debugger
+  Factory.factories.values.each do |factory|
+    puts factory.human_name.pluralize
+    if factory.build_class.respond_to?(:columns)
+      factory.build_class.columns.each do |column|
+        human_column_name = column.name.downcase.gsub('_', ' ')
+        puts "an? #{factory.human_name} exists with an? #{human_column_name} of "
+      end
+    end
+  end
+end
 
 
 
