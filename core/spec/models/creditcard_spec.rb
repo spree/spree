@@ -1,6 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Creditcard do
+
+  context 'validation' do
+    it { should have_valid_factory(:creditcard) }
+  end
+
   let(:valid_creditcard_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }
   let(:order) { mock_model(Order, :update! => nil, :payments => []) }
 
