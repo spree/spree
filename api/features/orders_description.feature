@@ -10,7 +10,7 @@ Feature: Orders api description
 
   Scenario: Retrieve a list of my orders
     Given I have 5 orders
-    When I send a GET request to "http://example.org/api/orders"
+    When I send a GET request to "/api/orders"
     Then the response status should be "200 OK"
     And the response should be an array with 5 "order" elements
 
