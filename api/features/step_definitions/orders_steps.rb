@@ -17,11 +17,9 @@ Then /^the response status should be "([^"]*)"$/ do |status|
   last_response.status.should == status.to_i
 end
 
-Then /^the response should be an array with (\d+) "([^"]*)" elements$/ do |num, name|
+Then /^the response should be an array with (\d+) orders/ do |num|
   page = JSON.parse(last_response.body)
-  #puts page.inspect
   page.map { |d| d[name] }.length.should == num.to_i
-
   page.first.keys.sort.should == ["order"]
 
   keys = ["adjustment_total", "bill_address_id", "completed_at", "created_at", "credit_total", "email",
@@ -29,5 +27,13 @@ Then /^the response should be an array with (\d+) "([^"]*)" elements$/ do |num, 
     "shipping_method_id", "special_instructions", "state", "total", "updated_at", "user_id"]
 
   page.first['order'].keys.sort.should == keys
+end
 
+Then /^the response should be an array with (\d+) countries$/ do |num|
+  page = JSON.parse(last_response.body)
+  page.map { |d| d[name] }.length.should == num.to_i
+  page.first.keys.sort.should == ["country"]
+
+  keys = ["id", "iso", "iso3", "iso_name", "name", "numcode"]
+  page.first['country'].keys.sort.should == keys
 end
