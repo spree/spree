@@ -21,4 +21,13 @@ Then /^the response should be an array with (\d+) "([^"]*)" elements$/ do |num, 
   page = JSON.parse(last_response.body)
   #puts page.inspect
   page.map { |d| d[name] }.length.should == num.to_i
+
+  page.first.keys.sort.should == ["order"]
+
+  keys = ["adjustment_total", "bill_address_id", "completed_at", "created_at", "credit_total", "email",
+    "id", "item_total", "number", "payment_state", "payment_total", "ship_address_id", "shipment_state",
+    "shipping_method_id", "special_instructions", "state", "total", "updated_at", "user_id"]
+
+  page.first['order'].keys.sort.should == keys
+
 end
