@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe InventoryUnit do
+
   context 'validation' do
     it { should have_valid_factory(:inventory_unit) }
   end

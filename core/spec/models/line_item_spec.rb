@@ -1,6 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe LineItem do
+
+  context 'validation' do
+    it { should have_valid_factory(:line_item) }
+  end
+
   let(:variant) { mock_model(Variant, :count_on_hand => 95, :price => 9.99) }
   let(:line_item) { line_item = LineItem.new(:quantity => 5) }
   let(:order) { mock_model(Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true, :update! => true) }
