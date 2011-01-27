@@ -1,6 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe TaxRate do
+
+  context 'validation' do
+    it { should have_valid_factory(:tax_rate) }
+  end
+
   context "match" do
     let(:rate1) { TaxRate.new }
     let(:rate2) { TaxRate.new }
