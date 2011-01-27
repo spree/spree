@@ -2,6 +2,10 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Payment do
 
+  context 'validation' do
+    it { should have_valid_factory(:payment) }
+  end
+
   let(:order) { mock_model(Order, :update! => nil, :payments => []) }
   before(:each) do
     @payment = Payment.new(:order => order)
