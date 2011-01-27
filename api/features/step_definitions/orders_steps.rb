@@ -10,7 +10,12 @@ Given /^I have (\d+) orders$/ do |o|
 end
 
 When /^I send a GET request to "([^"]*)"$/ do |path|
-  get path
+  url = if path == 'first country'
+    "/api/countries/#{Country.first.id}"
+  else
+    path
+  end
+  get url
 end
 
 Then /^the response status should be "([^"]*)"$/ do |status|
@@ -27,6 +32,15 @@ Then /^the response should be an array with (\d+) orders/ do |num|
     "shipping_method_id", "special_instructions", "state", "total", "updated_at", "user_id"]
 
   page.first['order'].keys.sort.should == keys
+end
+
+Then /^the response should have country information$/ do
+  page = JSON.parse(last_response.body)
+  page['country']['name'].should == 'Afghanistan'
+  page['country']['iso_name'].should == 'AFGHANISTAN'
+  page['country']['iso3'].should == 'AFG'
+  page['country']['iso'].should == 'AF'
+  page['country']['numcode'].should == 4
 end
 
 Then /^the response should be an array with (\d+) countries$/ do |num|

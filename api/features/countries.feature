@@ -10,3 +10,7 @@ Feature: Countries api
     Then the response status should be "200 OK"
     And the response should be an array with 100 countries
 
+  Scenario: Retrieve a country
+    When I send a GET request to "first country"
+    Then the response status should be "200 OK"
+    Then the response should have country information
