@@ -4,12 +4,7 @@ describe ProductGroup do
 
   context "shoulda validations" do
     it { should validate_presence_of(:name) }
+    it { should have_valid_factory(:product_group) }
   end
 
-  context "factory_girl" do
-    let(:product_group) { Factory(:product_group) }
-    it 'should have a saved record' do
-      product_group.new_record?.should be_false
-    end
-  end
 end
