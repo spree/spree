@@ -1,6 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Shipment do
+
+  context 'validations' do
+    it { should have_valid_factory(:shipment) }
+  end
+
   let(:order) { mock_model Order, :backordered? => false }
   let(:shipping_method) { mock_model ShippingMethod, :calculator => mock('calculator') }
   let(:shipment) { Shipment.new :order => order, :state => 'pending', :shipping_method => shipping_method }
