@@ -4,6 +4,11 @@ class Gateway::Test < Gateway
 end
 
 describe PaymentMethod do
+
+  context 'validation' do
+    it { should have_valid_factory(:payment_method) }
+  end
+
   describe "self#register" do
     it "should increase all#size by 1" do
       expect {
