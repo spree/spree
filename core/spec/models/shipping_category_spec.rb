@@ -1,11 +1,10 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ShippingCategory do
-  context "shoulda validations" do
+
+  context "validations" do
     it { should validate_presence_of(:name) }
+    it { should have_valid_factory(:shipping_category) }
   end
 
-  context "factory_girl" do
-    specify { Factory(:shipping_category).new_record?.should be_false }
-  end
 end

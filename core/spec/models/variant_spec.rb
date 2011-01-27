@@ -3,11 +3,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Variant do
   let(:variant) { Variant.new(:count_on_hand => 95) }
 
-  context "factory_girl" do
-    let(:variant) { Factory(:variant) }
-    it 'should be a saved record' do
-      variant.new_record?.should be_false
-    end
+  context "validations" do
+    it { should have_valid_factory(:variant) }
   end
 
   context "on_hand=" do

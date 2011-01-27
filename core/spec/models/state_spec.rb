@@ -7,11 +7,7 @@ describe State do
     it {should have_one(:zone) }
     it {should validate_presence_of(:name) }
     it {should validate_presence_of(:country) }
+    it { should have_valid_factory(:state) }
   end
 
-  context "factory_girl" do
-    it 'should create a valid record' do
-      Factory(:state).new_record?.should be_false
-    end
-  end
 end

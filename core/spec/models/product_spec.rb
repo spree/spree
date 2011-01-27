@@ -14,6 +14,7 @@ describe Product do
     it { should have_and_belong_to_many(:taxons) }
     it { should validate_presence_of(:price) }
     it { should validate_presence_of(:permalink) }
+    it { should have_valid_factory(:product) }
   end
 
   context "factory_girl" do

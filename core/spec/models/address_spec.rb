@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Address do
-  context "shoulda validations" do
+  context "validations" do
     it { should belong_to(:country) }
     it { should belong_to(:state) }
     it { should have_many(:shipments) }
@@ -12,10 +12,7 @@ describe Address do
     it { should validate_presence_of(:zipcode) }
     it { should validate_presence_of(:country) }
     it { should validate_presence_of(:phone) }
-  end
-
-  context "factory_girl" do
-    specify { Factory(:address).new_record?.should be_false }
+    it { should have_valid_factory(:address) }
   end
 
   context "validation" do

@@ -34,3 +34,9 @@ end
 PAYMENT_STATES = Payment.state_machine.states.keys unless defined? PAYMENT_STATES
 SHIPMENT_STATES = Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
 ORDER_STATES = Order.state_machine.states.keys unless defined? ORDER_STATES
+
+RSpec::Matchers.define :have_valid_factory do |factory_name|
+  match do |model|
+    Factory(factory_name).new_record?.should be_false
+  end
+end

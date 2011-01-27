@@ -4,6 +4,7 @@ describe TaxCategory do
   context "shoulda validations" do
     it { should have_many(:tax_rates) }
     it { should validate_presence_of(:name) }
+    it { should have_valid_factory(:tax_category) }
 
     context 'uniquness validation' do
       before do
@@ -11,10 +12,6 @@ describe TaxCategory do
       end
       it { should validate_uniqueness_of(:name) }
     end
-  end
-
-  context "factory_girl" do
-    specify { Factory(:tax_category).new_record?.should be_false }
   end
 
   context 'before_save' do

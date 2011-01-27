@@ -7,11 +7,7 @@ describe Country do
     it {should have_one(:zone) }
     it {should validate_presence_of(:name) }
     it {should validate_presence_of(:iso_name) }
+    it { should have_valid_factory(:country) }
   end
 
-  context "factory_girl" do
-    it 'should create a valid record' do
-      Factory(:country).new_record?.should be_false
-    end
-  end
 end
