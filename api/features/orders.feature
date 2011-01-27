@@ -12,5 +12,5 @@ Feature: Orders api description
     Given I have 5 orders
     When I send a GET request to "/api/orders"
     Then the response status should be "200 OK"
-    And the response should be an array with 5 "order" elements
+    And the response should be an array with 5 orders
 
