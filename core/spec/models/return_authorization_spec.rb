@@ -1,6 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ReturnAuthorization do
+
+  context 'validation' do
+    it { should have_valid_factory(:return_authorization) }
+  end
+
   let(:inventory_unit) { InventoryUnit.create(:variant => mock_model(Variant)) }
   let(:order) { mock_model(Order, :inventory_units => [inventory_unit], :awaiting_return? => false) }
   let(:return_authorization) { ReturnAuthorization.new(:order => order) }
