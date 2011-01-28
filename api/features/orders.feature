@@ -1,8 +1,5 @@
 @api
 Feature: Orders api description
-  In order to get details on order that have been placed
-  As a developer
-  I want to see order details placed from my storefront
 
   Background:
     Given I am a valid API user
@@ -14,3 +11,8 @@ Feature: Orders api description
     Then the response status should be "200 OK"
     And the response should be an array with 5 orders
 
+  Scenario: Retrieve an order
+    Given I have 2 orders
+    When I send a GET request to "first order"
+    Then the response status should be "200 OK"
+    Then the response should have order information
