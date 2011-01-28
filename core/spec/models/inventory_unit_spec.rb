@@ -3,8 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe InventoryUnit do
 
   context 'validation' do
-    pending
-    #it { should have_valid_factory(:inventory_unit) }
+    it { should have_valid_factory(:inventory_unit) }
   end
 
   let(:variant) { mock_model(Variant, :on_hand => 95) }

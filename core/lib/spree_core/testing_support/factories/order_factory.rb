@@ -10,5 +10,7 @@ Factory.define :order_with_totals, :parent => :order do |f|
 end
 
 Factory.define :order_with_inventory_unit_shipped, :parent => :order do |f|
-  f.after_create { |order| Factory(:inventory_unit, :order => order, :state => 'shipped') }
+  f.after_create do |order|
+    Factory(:inventory_unit, :order => order, :state => 'shipped')
+  end
 end

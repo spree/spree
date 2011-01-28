@@ -1,7 +1,9 @@
-Factory.define(:user) do |f|
-  f.email { Faker::Internet.email }
-  f.password "spree123"
-  f.password_confirmation "spree123"
+unless Factory.factories.keys.include?(:user)
+  Factory.define(:user) do |f|
+    f.email { Faker::Internet.email }
+    f.password "spree123"
+    f.password_confirmation "spree123"
+  end
 end
 
 Factory.define(:admin_user, :parent => :user) do |u|

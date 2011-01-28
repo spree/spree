@@ -13,3 +13,6 @@ Factory.define :user do |f|
   f.password "secret"
   f.password_confirmation "secret"
 end
+
+require "spree_core/testing_support/factories"
+require 'factory_girl/step_definitions'
