@@ -224,7 +224,7 @@ class Order < ActiveRecord::Base
     record = true
     while record
       random = "R#{Array.new(9){rand(9)}.join}"
-      record = Order.find(:first, :conditions => ["number = ?", random])
+      record = self.class.find(:first, :conditions => ["number = ?", random])
     end
     self.number = random
   end
