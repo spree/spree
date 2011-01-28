@@ -4,6 +4,7 @@ require 'spec_helper.rb'
 # So we'll test against Api::OrdersController instead as a reprentative controller
 describe Api::OrdersController do
   let(:user) { mock_model(User, :has_role? => true) }
+  before { controller.stub :current_user => user }
 
   shared_examples_for "access granted" do
     it "should allow index" do

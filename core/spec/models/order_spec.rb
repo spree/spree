@@ -5,7 +5,10 @@ describe Order do
   let(:order) { Order.new }
   let(:gateway) { Gateway::Bogus.new(:name => "Credit Card", :active => true) }
 
-  before { Gateway.stub :current => gateway }
+  before do
+    Gateway.stub :current => gateway
+    User.stub(:current => mock_model(User, :id => 123))
+  end
 
   context "factory" do
     it "should change the Orders count by 1 after factory has been executed" do
@@ -204,6 +207,11 @@ describe Order do
       adjustment = mock_model(Adjustment)
       order.stub_chain :adjustments, :optional => [adjustment]
       adjustment.should_receive(:update_attribute).with("locked", true)
+      order.finalize!
+    end
+
+    it "should log state event" do
+      order.state_events.should_receive(:create)
       order.finalize!
     end
   end

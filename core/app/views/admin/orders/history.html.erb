@@ -11,11 +11,10 @@
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
   </tr>
   <% @order.state_events.sort.each do |event| %>
-    <% state_machine_event = Order.state_machine.events[event.name.to_sym] %>
     <tr>
-      <td><%=t("#{event.name}") %></td>
-      <td><%=t("#{event.previous_state}") %></td>
-      <td><%=t("#{event.next_state}") %></td>
+      <td><%=t("#{event.name}") if event.name.present? %></td>
+      <td><%=t("#{event.name}_state#{'s' unless event.name == 'order'}.#{event.previous_state}") %></td>
+      <td><%=t("#{event.name}_state#{'s' unless event.name == 'order'}.#{event.next_state}") %></td>
       <td><%=event.user.email if event.user %></td>
       <td><%=event.created_at.to_s(:date_time24) %></td>
     </tr>

@@ -300,6 +300,13 @@ class Order < ActiveRecord::Base
     # lock any optional adjustments (coupon promotions, etc.)
     adjustments.optional.each { |adjustment| adjustment.update_attribute("locked", true) }
     OrderMailer.confirm_email(self).deliver
+
+    self.state_events.create({
+      :previous_state => "cart",
+      :next_state     => "complete",
+      :name           => "order" ,
+      :user_id        => User.current.try(:id) || self.user_id
+    })
   end
 
 
@@ -380,6 +387,16 @@ class Order < ActiveRecord::Base
       "partial"
     end
     self.shipment_state = "backorder" if backordered?
+
+    if old_shipment_state = self.changed_attributes["shipment_state"]
+      self.state_events.create({
+        :previous_state => old_shipment_state,
+        :next_state     => self.shipment_state,
+        :name           => "shipment" ,
+        :user_id        => User.current.id || self.user_id
+      })
+    end
+
   end
 
   # Updates the +payment_state+ attribute according to the following logic:
@@ -398,6 +415,15 @@ class Order < ActiveRecord::Base
       self.payment_state = "credit_owed"
     else
       self.payment_state = "paid"
+    end
+
+    if old_payment_state = self.changed_attributes["payment_state"]
+      self.state_events.create({
+        :previous_state => old_payment_state,
+        :next_state     => self.payment_state,
+        :name           => "payment" ,
+        :user_id        =>  User.current.id || self.user_id
+      })
     end
   end
 
