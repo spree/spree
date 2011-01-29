@@ -12,8 +12,9 @@ class Promotion < ActiveRecord::Base
   # TODO: Remove that after fix for https://rails.lighthouseapp.com/projects/8994/tickets/4329-has_many-through-association-does-not-link-models-on-association-save
   # is provided
   def save(*)
-    super
-    promotion_rules.each { |p| p.save }
+    if super
+      promotion_rules.each { |p| p.save }
+    end
   end
 
   MATCH_POLICIES = %w(all any)

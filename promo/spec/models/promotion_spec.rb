@@ -3,6 +3,18 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Promotion do
   let(:promotion) { Promotion.new }
 
+  describe "#save" do
+    let(:promotion_valid) { Promotion.new :name => "A promotion", :code => "XXXX" }
+
+    context "when is invalid" do
+      it { promotion.save.should be_false }
+    end
+
+    context "when is valid" do
+      it { promotion_valid.save.should be_true }
+    end
+  end
+
   context "creating discounts" do
     let(:order) { Order.new }
 
