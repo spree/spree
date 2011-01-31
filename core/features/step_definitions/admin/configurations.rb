@@ -52,14 +52,20 @@ Then /^I should see listing states tabular attributes$/ do
   data[1].should == State.limit(1).order('name asc').to_a.first.abbr
 end
 
+Given /^existing zone records are deleted$/ do
+  Zone.delete_all
+end
+
 Then /^I should see listing zones tabular attributes with (.*)$/ do |order|
   output = tableish('table#listing_zones tr', 'td,th')
   data = output[0]
   data[0].should match(/Name/)
-  data[1].should == "Description"
+  data[1].should match(/Description/)
 
   data = output[1]
   data[0].should == Zone.limit(1).order(order).to_a.first.name
+  data[0].should == 'eastern' if order == 'name asc'
+  data[0].should == 'western' if order == 'description asc'
   data[1].should == Zone.limit(1).order(order).to_a.first.description
 end
 
