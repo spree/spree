@@ -1,10 +1,16 @@
 Feature: Admin > configurations > zones
 
   Scenario: Visiting admin configurations zones
+    Given I go to the admin home page
     When I follow "Configuration"
-    Given 2 zones exist
+    Given the following zones exist:
+      | name    | description       |
+      | easten  | zone is eastern   |
+      | western | cool san franciso |
     When I follow "Zones"
-    Then I should see listing zones tabular attributes
+    Then I should see listing zones tabular attributes with name asc
+    When I follow "Description"
+    Then I should see listing zones tabular attributes with description asc
 
   Scenario: admin updating zones
     Given I go to the admin home page
