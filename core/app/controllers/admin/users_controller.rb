@@ -33,9 +33,6 @@ class Admin::UsersController < Admin::BaseController
     unless request.xhr?
       @search = User.searchlogic(params[:search])
 
-      #set order by to default or form result
-      @search.order ||= "ascend_by_email"
-
       @collection = @search.do_search.paginate(:per_page => Spree::Config[:admin_products_per_page], :page => params[:page])
 
       #scope = scope.conditions "lower(email) = ?", @filter.email.downcase unless @filter.email.blank?
