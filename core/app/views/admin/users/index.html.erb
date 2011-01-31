@@ -15,7 +15,7 @@
   <thead>
   <tr>
     <%= hook :admin_users_index_headers do %>
-      <th><%= order @search, :by => :email, :as => t("user") %></th>
+      <th><%= order @search, {:by => :email, :as => t("user")},{:title => 'users_email_title'} %></th>
       <th>
         <%= hook :admin_users_index_header_actions %>
       </th>
