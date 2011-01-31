@@ -8,7 +8,7 @@ if RUBY_VERSION.to_f >= 1.9
 
     alias_method(:orig_concat, :concat)
     def concat(value)
-      orig_concat value.force_encoding(Encoding::UTF_8)
+      orig_concat value.frozen? ? value : value.force_encoding(Encoding::UTF_8)
     end
   end
 
