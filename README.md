@@ -73,7 +73,7 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
 1. Clone the git repo
 
-        git clone git://github.com/railsdog/spree.git spree
+        git clone git://github.com/spree/spree.git spree
         cd spree
 
 2. Install the gem dependencies
