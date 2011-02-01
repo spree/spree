@@ -6,8 +6,30 @@ Then /^I should see listing products tabular attributes with name ascending$/ do
   data[2].should == "Master Price"
 
   data = output[1]
-  data[0].should == Product.limit(1).order('name desc').to_a.first.sku
+  data[1].should == 'apache baseball cap'
 end
+
+Then /^I should see listing products tabular attributes with name descending$/ do
+  output = tableish('table#listing_products tr', 'td,th')
+  data = output[1]
+  data[1].should == 'zomg shirt'
+end
+
+Then /^I should see listing products tabular attributes with custom result 1$/ do
+  output = tableish('table#listing_products tr', 'td,th')
+  output.size.should == 3
+  data = output[1]
+  data[1].should == 'apache baseball cap'
+end
+
+Then /^I should see listing products tabular attributes with custom result 2$/ do
+  output = tableish('table#listing_products tr', 'td,th')
+  output.size.should == 2
+  data = output[1]
+  data[1].should == 'apache baseball cap'
+end
+
+
 
 Given /^a product exists with a sku of "a100"$/ do
   Factory(:product, :sku => 'a100')
