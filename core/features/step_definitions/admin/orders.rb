@@ -30,3 +30,10 @@ Then /^I should see listing orders tabular attributes with order number descendi
   data = output[1]
   data[1].should == Order.limit(1).order('number desc').to_a.first.number
 end
+
+Then /^I should see listing orders tabular attributes with search result 1$/ do
+  output = tableish('table#listing_orders tr', 'td,th')
+  data = output[1]
+  data[1].should == 'R100'
+
+end
