@@ -12,6 +12,17 @@ Feature: Admin visiting orders
     When I follow "Order" within "#listing_orders"
     Then I should see listing orders tabular attributes with order number ascending
 
+  Scenario: Search orders
+    Given the following orders exist:
+      |completed at         | number |
+      |2011-02-01 12:36:15  | R100   |
+      |2010-02-01 17:36:42  | R200   |
+    And I go to the admin home page
+    When I fill in "search_completed_at_greater_than" with "2011/01/01"
+    And I press "Search"
+    Then I should see listing orders tabular attributes with search result 1
+
+
   Scenario: creating new order
     Given the following orders exist:
       |completed at         |

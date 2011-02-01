@@ -220,6 +220,7 @@ class Order < ActiveRecord::Base
     current_item
   end
 
+  # TODORAJ refactor this method and implement validation using validates_* utilities
   def generate_order_number
     record = true
     while record
