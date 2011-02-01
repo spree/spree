@@ -8,18 +8,20 @@ class SeoAssist
     request = Rack::Request.new(env)
     params = request.params
     taxon_id = params['taxon']
+
+    #redirect requests using taxon id's to their permalinks
     if !taxon_id.blank? && !taxon_id.is_a?(Hash) && taxon = Taxon.find(taxon_id)
       params.delete('taxon')
 
-      #ensures no trailing / for taxon urls
-      permalink = taxon.permalink
-      permalink = permalink[0...-1] if permalink[-1..-1] == '/'
-      return build_response(params, "/t/#{permalink}" )
+      return build_response(params, "/t/#{taxon.permalink}" )
 
-    elsif env["PATH_INFO"] =~ /^\/(t|products)(\/\S+)?\/$/
-      #ensures no trailing / for taxon and product urls
+    elsif env["PATH_INFO"] =~ /^\/t(\/\S+)[^\/]$/ #ensures trailing / for taxon  urls
+      return build_response(params, "#{env["PATH_INFO"]}/")
+
+    elsif env["PATH_INFO"] =~ /^\/products(\/\S+)?\/$/ #ensures NO trailing / for product urls
       return build_response(params, env["PATH_INFO"][0...-1])
     end
+
     @app.call(env)
   end
 
