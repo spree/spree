@@ -33,7 +33,39 @@ end
 
 Then /^I should see listing orders tabular attributes with search result 1$/ do
   output = tableish('table#listing_orders tr', 'td,th')
+  puts output.inspect
   data = output[1]
   data[1].should == 'R100'
+  output.size.should == 2
+end
 
+Then /^I should see listing orders tabular attributes with search result 2$/ do
+  output = tableish('table#listing_orders tr', 'td,th')
+  data = output[1]
+  data[1].should == 'R100'
+  output.size.should == 2
+end
+
+Given /^the custom address exists for the given orders$/ do
+  orders = Order.order('id asc').all
+  raise 'there should be only three ordres' unless Order.count == 3
+
+  o = orders[0]
+  address = Factory(:address, :firstname => 'john')
+  o.bill_address = address
+  o.ship_address = address
+  o.save
+
+  o = orders[1]
+  address = Factory(:address, :firstname => 'john')
+  address = Factory(:address, :firstname => 'mary')
+  o.bill_address = address
+  o.ship_address = address
+  o.save
+
+  o = orders[2]
+  address = Factory(:address, :firstname => 'angelina')
+  o.bill_address = address
+  o.ship_address = address
+  o.save
 end
