@@ -14,11 +14,9 @@ class SeoAssist
       params.delete('taxon')
 
       return build_response(params, "/t/#{taxon.permalink}" )
+    elsif env["PATH_INFO"] =~ /^\/(t|products)(\/\S+)?\/$/
+      #ensures no trailing / for taxon and product urls
 
-    elsif env["PATH_INFO"] =~ /^\/t(\/\S+)[^\/]$/ #ensures trailing / for taxon  urls
-      return build_response(params, "#{env["PATH_INFO"]}/")
-
-    elsif env["PATH_INFO"] =~ /^\/products(\/\S+)?\/$/ #ensures NO trailing / for product urls
       return build_response(params, env["PATH_INFO"][0...-1])
     end
 

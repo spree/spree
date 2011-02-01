@@ -1,5 +1,5 @@
 class ProductsController < Spree::BaseController
-  HTTP_REFERER_REGEXP = /^https?:\/\/[^\/]+\/t\/([a-z0-9\-\/]+\/)$/
+  HTTP_REFERER_REGEXP = /^https?:\/\/[^\/]+\/t\/([a-z0-9\-\/]+)$/
 
   #prepend_before_filter :reject_unknown_object, :only => [:show]
   before_filter :load_data, :only => :show
