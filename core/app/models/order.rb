@@ -228,6 +228,7 @@ class Order < ActiveRecord::Base
       record = self.class.find(:first, :conditions => ["number = ?", random])
     end
     self.number = random if self.number.blank?
+    self.number
   end
 
   # convenience method since many stores will not allow user to create multiple shipments

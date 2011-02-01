@@ -11,4 +11,6 @@ Factory.define :product do |f|
   f.price 19.99
   f.cost_price 17.00
   f.sku "ABC"
+  f.available_on { 1.year.ago }
+  f.deleted_at nil
 end
