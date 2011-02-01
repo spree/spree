@@ -6,7 +6,7 @@ class Property < ActiveRecord::Base
 
   validates :name, :presentation, :presence => true
 
-  scope :sorted, order(:name)
+  scope :sorted, lambda { order(:name) }
 
   def self.find_all_by_prototype(prototype)
     id = prototype
