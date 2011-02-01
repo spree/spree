@@ -12,8 +12,8 @@ class SeoAssist
       params.delete('taxon')
 
       #ensures no trailing / for taxon urls
-      #TODO ensure that permalink is never stored with a trailing slash
-      permalink = taxon.permalink[0...-1]
+      permalink = taxon.permalink
+      permalink = permalink[0...-1] if permalink[-1..-1] == '/'
       return build_response(params, "/t/#{permalink}" )
 
     elsif env["PATH_INFO"] =~ /^\/(t|products)(\/\S+)?\/$/
