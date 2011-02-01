@@ -226,7 +226,7 @@ class Order < ActiveRecord::Base
       random = "R#{Array.new(9){rand(9)}.join}"
       record = self.class.find(:first, :conditions => ["number = ?", random])
     end
-    self.number = random
+    self.number = random if self.number.blank?
   end
 
   # convenience method since many stores will not allow user to create multiple shipments
