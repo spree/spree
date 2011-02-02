@@ -71,10 +71,14 @@ class Admin::OrdersController < Admin::BaseController
 
     if params[:search].present?
       if params[:search].delete(:completed_at_not_null) == "1"
-        params[:search][:completed_at_not_null] = "1"
+        raise 'boom'
+        params[:search][:completed_at_is_not_null] = true
+      else
+        raise 'boom'
+        params[:search][:completed_at_is_not_null] = false
       end
     else
-      params[:search][:completed_at_not_null] = "1"
+      params[:search][:completed_at_is_not_null] = true
     end
 
     if !params[:search][:completed_at_greater_than].blank?
@@ -85,13 +89,18 @@ class Admin::OrdersController < Admin::BaseController
       params[:search][:completed_at_less_than] = Time.zone.parse(params[:search][:completed_at_less_than]).end_of_day rescue ""
     end
 
-    params[:search][:order] ||= "descend_by_completed_at"
-    @search = Order.searchlogic(params[:search])
+    if order = params[:search].delete(:order)
+      params[:search][:meta_sort] = order
+    else
+      params[:search][:meta_sort] = 'completed_at.desc'
+    end
+
+    @search = Order.search(params[:search])
 
     # QUERY - get per_page from form ever???  maybe push into model
     # @search.per_page ||= Spree::Config[:orders_per_page]
 
-    @collection = @search.do_search.paginate(:include  => [:user, :shipments, :payments],
+    @collection = @search.paginate(:include  => [:user, :shipments, :payments],
                                    :per_page => Spree::Config[:orders_per_page],
                                    :page     => params[:page])
   end

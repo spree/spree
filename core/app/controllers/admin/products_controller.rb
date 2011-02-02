@@ -91,7 +91,7 @@ class Admin::ProductsController < Admin::BaseController
       params[:search] = {} if params[:search].nil?
       params[:search][:order] ||= "ascend_by_name"
       tmp = params[:search].except(:deleted_at_not_null)
-      @search = end_of_association_chain.searchlogic(tmp)
+      @search = end_of_association_chain.search(tmp)
       @search.order ||= "ascend_by_name"
 
       pagination_options = {:include   => {:variants => [:images, :option_values]},

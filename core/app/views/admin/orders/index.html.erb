@@ -10,13 +10,13 @@
   <thead>
     <tr>
       <%= hook :admin_orders_index_headers do %>
-        <th><%= order @search, :by => :completed_at,     :as => t("order_date") %></th>
-        <th><%= order @search, :by => :number,           :as => t("order_number") %></th>
-        <th><%= order @search, :by => :state,            :as => t("status") %></th>
-        <th><%= order @search, :by => :payment_state,    :as => t("payment_state") %></th>
-        <th><%= order @search, :by => :shipment_state,   :as => t("shipment_state") %></th>
-        <th><%= order @search, :by => :email,            :as => t("customer") %></th>
-        <th><%= order @search, :by => :total,            :as => t("total") %></th>
+        <th><%= sort_link @search, :completed_at,   t("order_date") %></th>
+        <th><%= sort_link @search, :number,         t("order_number") %></th>
+        <th><%= sort_link @search, :state,          t("status") %></th>
+        <th><%= sort_link @search, :payment_state,  t("payment_state") %></th>
+        <th><%= sort_link @search, :shipment_state, t("shipment_state") %></th>
+        <th><%= sort_link @search, :email,          t("customer") %></th>
+        <th><%= sort_link @search, :total,          t("total") %></th>
       <% end %>
       <th>
         <%= hook :admin_orders_index_header_actions %>
@@ -79,14 +79,14 @@
       </p>
       <p>
       <label><%= t 'first_name_begins_with' %></label><br />
-          <%= f.text_field :bill_address_firstname_begins_with, :size=>25 %>
+          <%= f.text_field :bill_address_firstname_starts_with, :size=>25 %>
       </p>
       <p>
         <label><%= t 'last_name_begins_with' %></label><br />
-        <%= f.text_field :bill_address_lastname_begins_with, :size=>25 %>
+        <%= f.text_field :bill_address_lastname_starts_with, :size=>25 %>
       </p>
       <p>
-        <%= f.check_box :completed_at_not_null, {:style => "vertical-align:middle;"} %>
+        <%= f.check_box :completed_at_is_not_null, {:style => "vertical-align:middle;"} %>
         <label>
           <%= t("show_only_complete_orders") %>
         </label>
