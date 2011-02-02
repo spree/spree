@@ -65,14 +65,16 @@ class Product < ActiveRecord::Base
   #RAILS3 TODO -  scopes are duplicated here and in scopres/product.rb - can we DRY it up?
   # default product scope only lists available and non-deleted products
   scope :not_deleted,     where("products.deleted_at is NULL")
+  search_methods :not_deleted
+
   scope :available,       lambda { |*on| where("products.available_on <= ?", on.first || Time.zone.now ) }
+  search_methods :available
 
   #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
   scope :active,          not_deleted.available
 
   scope :on_hand,         where("products.count_on_hand > 0")
-
-
+  search_methods :on_hand
 
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
     if ActiveRecord::Base.connection.tables.include?("products")
@@ -81,6 +83,7 @@ class Product < ActiveRecord::Base
   else
     scope :group_by_products_id, { :group => "products.id" }
   end
+  search_methods :group_by_products_id
 
 
   # ----------------------------------------------------------------------------------------------------------
