@@ -36,8 +36,8 @@ require 'will_paginate'
 require 'awesome_nested_set'
 require 'acts_as_list'
 require 'resource_controller'
-require 'searchlogic'
 require 'active_merchant'
+require "meta_search"
 
 require 'spree_core/ext/active_record'
 
