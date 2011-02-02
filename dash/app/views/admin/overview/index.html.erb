@@ -47,25 +47,25 @@
           <table id="order_totals">
             <tr>
               <td style="width:23%;">
-                <p><%= t(:number.currency.format.unit) %></p>
+                <p><%= t('number.currency.format.unit') %></p>
                 <label id="orders_total"><%= number_with_delimiter @orders_total.to_i %></label>
                 <span><%= t(:order) %> <%= t(:total) %></span>
               </td>
               <td class="spacer">|</td>
               <td style="width:23%;">
-                <p><%= t(:number.currency.format.unit) %></p>
+                <p><%= t('number.currency.format.unit') %></p>
                 <label id="orders_line_total"><%= number_with_delimiter @orders_line_total.to_i %></label>
                 <span><%= t(:item) %> <%= t(:total) %></span>
               </td>
               <td class="spacer">|</td>
               <td style="width:23%;">
-                <p><%= t(:number.currency.format.unit) %></p>
+                <p><%= t('number.currency.format.unit') %></p>
                 <label id="orders_adjustment_total"><%= number_with_delimiter @orders_adjustment_total.to_i %></label>
                 <span><%= t(:adjustments) %></span>
               </td>
               <td class="spacer">|</td>
               <td style="width:22%">
-                <p><%= t(:number.currency.format.unit) %></p>
+                <p><%= t('number.currency.format.unit') %></p>
                 <label id="orders_adjustment_total"><%= number_with_delimiter @orders_credit_total.to_i %></label>
                 <span><%= t(:credits) %></span>
               </td>
@@ -104,7 +104,7 @@
             <% end %>
           </table>
 
-          <h2><%= t(:5_biggest_spenders) %></h2>
+          <h2><%= t('5_biggest_spenders') %></h2>
           <table>
             <thead>
               <tr>
