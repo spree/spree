@@ -74,7 +74,6 @@ class Admin::OrdersController < Admin::BaseController
         raise 'boom'
         params[:search][:completed_at_is_not_null] = true
       else
-        raise 'boom'
         params[:search][:completed_at_is_not_null] = false
       end
     else

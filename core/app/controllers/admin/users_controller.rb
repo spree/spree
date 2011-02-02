@@ -31,14 +31,13 @@ class Admin::UsersController < Admin::BaseController
   def collection
     return @collection if @collection.present?
     unless request.xhr?
-      @search = User.searchlogic(params[:search])
+      @search = User.search(params[:search])
 
-      @collection = @search.do_search.paginate(:per_page => Spree::Config[:admin_products_per_page], :page => params[:page])
+      @collection = @search.paginate(:per_page => Spree::Config[:admin_products_per_page], :page => params[:page])
 
       #scope = scope.conditions "lower(email) = ?", @filter.email.downcase unless @filter.email.blank?
     else
-      @collection = User.includes(:bill_address => [:state, :country],
-                                  :ship_address => [:state, :country]).where("users.email like :search
+      @collection = User.includes(:bill_address => [:state, :country], :ship_address => [:state, :country]).where("users.email like :search
                                                                                OR addresses.firstname like :search
                                                                                OR addresses.lastname like :search
                                                                                OR ship_addresses_users.firstname like :search
