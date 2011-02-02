@@ -27,7 +27,7 @@ class UsersController < Spree::BaseController
       sign_in(@user, :event => :authentication)
       #sign_in_and_redirect()
     end
-    flash.notice = I18n.t("account_updated")
+    flash.notice = I18n.t(:account_updated)
     redirect_to account_url
   end
 
