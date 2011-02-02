@@ -89,16 +89,18 @@ class Admin::ProductsController < Admin::BaseController
       end
 
       params[:search] = {} if params[:search].nil?
-      params[:search][:order] ||= "ascend_by_name"
+      params[:search][:meta_sort] ||= "name.asc"
       tmp = params[:search].except(:deleted_at_not_null)
       @search = end_of_association_chain.search(tmp)
+
+      #raise 'boom' following line should not be allowed
       @search.order ||= "ascend_by_name"
 
       pagination_options = {:include   => {:variants => [:images, :option_values]},
                             :per_page  => Spree::Config[:admin_products_per_page],
                             :page      => params[:page]}
 
-      @collection = @search.do_search.instance_eval(scopes.join(".")).paginate(pagination_options)
+      @collection = @search.instance_eval(scopes.join(".")).paginate(pagination_options)
     else
       includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 

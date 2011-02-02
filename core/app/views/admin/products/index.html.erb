@@ -17,8 +17,8 @@
   <tr>
     <%= hook :admin_products_index_headers do %>
       <th><%= t("sku") %></th>
-      <th><%= order @search, {:by => :name, :as => t("name")}, {:title => 'admin_products_listing_name_title'} %></th>
-      <th><%= order @search, :by => :master_price, :as => t("master_price") %></th>
+      <th><%= sort_link @search,:name, t("name"), {}, {:title => 'admin_products_listing_name_title'} %></th>
+      <th><%= sort_link @search,:master_price, t("master_price") %></th>
     <% end %>
     <th>
       <%= hook :admin_products_index_header_actions %>
