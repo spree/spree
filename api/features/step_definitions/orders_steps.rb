@@ -77,7 +77,7 @@ Then /^the response should have shipment information$/ do
 end
 
 
-Then /^the response should be an array with (\d+) products/ do |num|
+Then /^the response should be an array with (\d+) products?/ do |num|
   page = JSON.parse(last_response.body)
   page.map { |d| d[name] }.length.should == num.to_i
   page.first.keys.sort.should == ["product"]
@@ -90,6 +90,13 @@ Then /^the response should have product information$/ do
   page = JSON.parse(last_response.body)
   page['product']['permalink'].should  be_true
   page['product']['name'].should  be_true
+  page['product']['count_on_hand'].should  be_true
+end
+
+Then /^the response should have product information for shirt$/ do
+  page = JSON.parse(last_response.body).first
+  page['product']['permalink'].should  be_true
+  page['product']['name'].should  == 'zomg shirt'
   page['product']['count_on_hand'].should  be_true
 end
 
