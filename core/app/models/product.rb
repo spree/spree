@@ -66,13 +66,18 @@ class Product < ActiveRecord::Base
   # default product scope only lists available and non-deleted products
   scope :not_deleted,     where("products.deleted_at is NULL")
   scope :available,       lambda { |*on| where("products.available_on <= ?", on.first || Time.zone.now ) }
-  scope :active,          not_deleted.available #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
+
+  #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
+  scope :active,          not_deleted.available
+
   scope :on_hand,         where("products.count_on_hand > 0")
 
 
 
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-    scope :group_by_products_id, { :group => "products." + Product.column_names.join(", products.") } if ActiveRecord::Base.connection.tables.include?("products")
+    if ActiveRecord::Base.connection.tables.include?("products")
+      scope :group_by_products_id, { :group => "products." + Product.column_names.join(", products.") }
+    end
   else
     scope :group_by_products_id, { :group => "products.id" }
   end
