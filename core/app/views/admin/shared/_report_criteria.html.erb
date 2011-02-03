@@ -1,4 +1,5 @@
-<%= form_for @search do |s| %>
+<% @search = Report.search %>
+<%= form_for [:admin,@search] do |s| %>
     <label><%= t("date_range") %></label><br />
     <div class="yui-g date-range-filter">
       <div class="yui-u sub-field first">
