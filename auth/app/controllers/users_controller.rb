@@ -1,50 +1,54 @@
 class UsersController < Spree::BaseController
-  resource_controller
+  prepend_before_filter :load_object, :only => [:show, :edit, :update]
+  prepend_before_filter :authorize_actions, :only => :new
 
-  ssl_required :new, :create, :edit, :update, :show
-
-  actions :all, :except => [:index, :destroy]
-
-  show.before do
+  def show
     @orders = @user.orders.complete
   end
 
-  create.after do
-    associate_user
-  end
+  def create
+    @user = User.new(params[:user])
+    if @user.save
 
-  create.flash nil
-  create.wants.html { redirect_back_or_default(root_url) }
+      if current_order
+        current_order.associate_user!(@user)
+        session[:guest_token] = nil
+      end
 
-  new_action.before do
-    flash.now[:notice] = I18n.t(:please_create_user) unless User.admin_created?
-  end
-
-  update.success.wants.html do
-    if params[:user][:password].present?
-      # this logic needed b/c devise wants to log us out after password changes
-      user = User.reset_password_by_token(params[:user])
-      sign_in(@user, :event => :authentication)
-      #sign_in_and_redirect()
+      redirect_back_or_default(root_url)
+    else
+      render 'new'
     end
-    flash.notice = I18n.t("account_updated")
-    redirect_to account_url
+
+  end
+
+  def update
+    if @user.update_attributes(params[:user])
+      if params[:user][:password].present?
+        # this logic needed b/c devise wants to log us out after password changes
+        user = User.reset_password_by_token(params[:user])
+        sign_in(@user, :event => :authentication)
+      end
+      flash.notice = I18n.t("account_updated")
+      redirect_to account_url
+    else
+      render 'edit'
+    end
+
   end
 
   private
-  def object
-    @object ||= current_user
-  end
+    def load_object
+      @user ||= current_user
+      authorize! params[:action].to_sym, @user
+    end
 
-  def accurate_title
-    I18n.t(:account)
-  end
+    def authorize_actions
+      authorize! params[:action].to_sym, User
+    end
 
-  def associate_user
-    return unless current_order and @user.valid?
-    current_order.associate_user!(@user)
-    session[:guest_token] = nil
-  end
+    def accurate_title
+      I18n.t(:account)
+    end
 
 end
-
