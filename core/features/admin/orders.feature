@@ -31,7 +31,7 @@ Feature: Admin visiting orders
     Given the custom address exists for the given orders
     And I go to the admin home page
     When I fill in "search_completed_at_greater_than" with "2011/01/01"
-    When I fill in "search_bill_address_firstname_begins_with" with "joh"
+    When I fill in "search_bill_address_firstname_starts_with" with "joh"
     And I press "Search"
     Then I should see listing orders tabular attributes with search result 2
 
