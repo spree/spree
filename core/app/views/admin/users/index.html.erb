@@ -46,7 +46,8 @@
 <% content_for :sidebar do %>
   <div class="box">
     <h3><%= t(:search) %></h3>
-    <%= form_for @search do |f| %>
+    <% @search = User.search %>
+    <%= form_for [:admin, @search] do |f| %>
       <%- locals = {:f => f} %>
       <%= hook :admin_users_index_search, locals do %>
         <p>

@@ -14,4 +14,6 @@ Feature: Admin visiting reports
     When I fill in "search_created_at_greater_than" with "2011/01/01"
     When I fill in "search_created_at_less_than" with "2011/12/31"
     When I press "Search"
+    Then show me the page
+
     Then I should see "$300.00"
