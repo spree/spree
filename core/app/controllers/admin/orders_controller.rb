@@ -88,7 +88,7 @@ class Admin::OrdersController < Admin::BaseController
       params[:search][:completed_at_less_than] = Time.zone.parse(params[:search][:completed_at_less_than]).end_of_day rescue ""
     end
 
-    if order = params[:search].delete(:order)
+    if order = params[:search].delete(:meta_sort)
       params[:search][:meta_sort] = order
     else
       params[:search][:meta_sort] = 'completed_at.desc'
