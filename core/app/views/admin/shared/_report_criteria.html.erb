@@ -1,5 +1,4 @@
-<% @search = Report.search %>
-<%= form_for [:admin,@search] do |s| %>
+<%= form_for @search, :url => sales_total_admin_reports_path  do |s| %>
     <label><%= t("date_range") %></label><br />
     <div class="yui-g date-range-filter">
       <div class="yui-u sub-field first">
