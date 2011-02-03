@@ -57,7 +57,7 @@ class Ability
     #include any abilities registered by extensions, etc.
     Ability.abilities.each do |clazz|
       ability = clazz.send(:new, user)
-      @can_definitions = can_definitions + ability.send(:can_definitions)
+      @rules = rules + ability.send(:rules)
     end
 
   end
