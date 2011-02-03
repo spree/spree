@@ -50,7 +50,7 @@ class Admin::ShipmentsController < Admin::BaseController
     @selected_country_id ||= Spree::Config[:default_country_id]
     @shipping_methods = ShippingMethod.all_available(@order, :back_end)
 
-    @states = State.find_all_by_country_id(@selected_country_id, :order => 'name')
+    @states = State.order('name').where(:country_id => @selected_country_id)
     @countries = Country.all
   end
 
