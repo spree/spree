@@ -1,3 +1,8 @@
+Given /^count_on_hand is 10 for all products$/ do
+  Product.update_all("count_on_hand=10")
+end
+
+
 Then /^I should see listing products tabular attributes with name ascending$/ do
   output = tableish('table#listing_products tr', 'td,th')
   data = output[0]

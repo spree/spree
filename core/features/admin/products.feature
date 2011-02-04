@@ -2,9 +2,10 @@ Feature: Admin visiting products
 
   Scenario: Visiting admin products page
     Given the following products exist:
-      | name                |
-      | apache baseball cap |
-      | zomg shirt          |
+      | name                |  available_on        |
+      | apache baseball cap |  2011-01-06 18:21:13 |
+      | zomg shirt          |  2011-01-06 18:21:13 |
+    Given count_on_hand is 10 for all products
     And I go to the admin home page
     When I follow "Products"
     Then I should see listing products tabular attributes with name ascending
@@ -13,10 +14,12 @@ Feature: Admin visiting products
 
   Scenario: Visiting admin products page search
     Given the following products exist:
-      | name                 | sku  |
-      | apache baseball cap  | A100 |
-      | apache baseball cap2 | B100 |
-      | zomg shirt           | Z100 |
+      | name                 | sku  | available_on        |
+      | apache baseball cap  | A100 | 2011-01-01 01:01:01 |
+      | apache baseball cap2 | B100 | 2011-01-01 01:01:01 |
+      | zomg shirt           | Z100 | 2011-01-01 01:01:01 |
+    Given count_on_hand is 10 for all products
+    And I go to the admin home page
     And I go to the admin home page
     When I follow "Products"
     When I fill in "search_name_contains" with "ap"

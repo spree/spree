@@ -48,7 +48,7 @@
 
 <% content_for :sidebar do %>
 
-  <%= form_for @search do |f| %>
+  <%= form_for [:admin, @search] do |f| %>
     <div class="box">
       <h3><%= t(:search) %></h3>
 
