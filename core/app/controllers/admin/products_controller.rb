@@ -93,17 +93,11 @@ class Admin::ProductsController < Admin::BaseController
       tmp = params[:search].except(:deleted_at_not_null)
       @search = end_of_association_chain.search(tmp)
 
-      #raise 'boom' following line should not be allowed
-      @search.order ||= "ascend_by_name"
-
       pagination_options = {:include   => {:variants => [:images, :option_values]},
                             :per_page  => Spree::Config[:admin_products_per_page],
                             :page      => params[:page]}
 
-      #raise boom . ticket http://metautonomous.lighthouseapp.com/projects/53012-metasearch/tickets/40-meta_search-not-playing-well-with-named_scope
-      #@collection = @search.instance_eval(scopes.join(".")).paginate(pagination_options)
-      #@collection = @search.not_deleted.available.on_hand.group_by_products_id.paginate(pagination_options)
-      @collection = @search.paginate(pagination_options)
+      @collection = @search.relation.not_deleted.available.on_hand.group_by_products_id.paginate(pagination_options)
     else
       includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
