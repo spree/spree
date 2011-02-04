@@ -102,7 +102,7 @@ class ProductGroup < ActiveRecord::Base
     # from first nested_scope so we have to apply ordering FIRST.
     # see #2253 on rails LH
     base_product_scope = scopish
-    if use_order && !self.order_scope.blank? && Product.condition?(self.order_scope)
+    if use_order && !self.order_scope.blank? && Product.respond_to?(self.order_scope.intern)
       base_product_scope = base_product_scope.send(self.order_scope)
     end
 
