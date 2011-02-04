@@ -23,7 +23,9 @@ class ProductScope < ActiveRecord::Base
 
   # Applies product scope on Product model or another named scope
   def apply_on(another_scope)
-    another_scope.send(self.name, *self.arguments)
+    array = *self.arguments
+    relation2 = Product.search({self.name.intern => array}).relation
+    another_scope.merge(relation2)
   end
 
   before_validation(:on => :create) {
