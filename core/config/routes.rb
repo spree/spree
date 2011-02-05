@@ -8,10 +8,6 @@ Rails.application.routes.draw do
 
   resources :tax_categories
 
-  resources :countries, :only => :index do
-    resources :states
-  end
-
   resources :states, :only => :index
 
   # non-restful checkout stuff
