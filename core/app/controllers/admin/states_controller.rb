@@ -21,10 +21,10 @@ class Admin::StatesController < Admin::BaseController
   private
 
     def collection
-      @collection ||= end_of_association_chain.order_by_name
+      @collection ||= end_of_association_chain.order('name')
     end
 
     def load_data
-      @countries = Country.order_by_name
+      @countries = Country.order('name')
     end
 end
