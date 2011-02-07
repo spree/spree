@@ -54,7 +54,6 @@ class Admin::UsersController < Admin::BaseController
     return unless params[:user]
     @user.roles.delete_all
     params[:user][:role] ||= {}
-    params[:user][:role][:user] = 1     # all new accounts have user role
     Role.all.each { |role|
       @user.roles << role unless params[:user][:role][role.name].blank?
     }
