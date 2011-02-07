@@ -6,7 +6,7 @@ Feature: Line items api
     And I send and accept json
 
   Scenario: Retrieve a list of line items
-    Given 2 line items exist
+    Given 2 custom line items exist
     When I send a GET request to "custom line items"
     Then the response status should be "200 OK"
     And the response should be an array with 2 line items
