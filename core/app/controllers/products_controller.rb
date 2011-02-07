@@ -15,10 +15,8 @@ class ProductsController < Spree::BaseController
 
   def load_data
     @product = Product.where(:permalink => params[:id]).first
-    @variants = Variant.active.find_all_by_product_id(@product.id,
-                :include => [:option_values, :images])
-    @product_properties = ProductProperty.find_all_by_product_id(@product.id,
-                          :include => [:property])
+    @variants = Variant.active.where(:product_id => @product.id).includes([:option_values, :images])
+    @product_properties = ProductProperty.where(:product_id => @product.id).includes(:property)
     @selected_variant = @variants.detect { |v| v.available? }
 
     referer = request.env['HTTP_REFERER']
