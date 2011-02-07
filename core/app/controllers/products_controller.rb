@@ -4,15 +4,17 @@ class ProductsController < Spree::BaseController
   #prepend_before_filter :reject_unknown_object, :only => [:show]
   before_filter :load_data, :only => :show
 
-  resource_controller
   helper :taxons
-  actions :show, :index
+
+  def index
+    @searcher = Spree::Config.searcher_class.new(params)
+    @products = @searcher.retrieve_products
+  end
 
   private
 
   def load_data
-    load_object
-
+    @product = Product.where(:permalink => params[:id]).first
     @variants = Variant.active.find_all_by_product_id(@product.id,
                 :include => [:option_values, :images])
     @product_properties = ProductProperty.find_all_by_product_id(@product.id,
@@ -24,11 +26,6 @@ class ProductsController < Spree::BaseController
     if referer  && referer.match(HTTP_REFERER_REGEXP)
       @taxon = Taxon.find_by_permalink($1)
     end
-  end
-
-  def collection
-    @searcher = Spree::Config.searcher_class.new(params)
-    @products = @searcher.retrieve_products
   end
 
   def accurate_title

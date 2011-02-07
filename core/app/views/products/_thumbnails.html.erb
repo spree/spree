@@ -10,21 +10,21 @@
 <% if @product.has_variants?
   has_checked = false %>
   <h4 id="variant-images">
-    <%= t('images_for') %>:
+    <%= t(:images_for) %>:
     <span><%= @selected_variant.options_text %></span>
   </h4>
   <ul id="variant-thumbnails" class="thumbnails">
     <% @variants.each do |v|
         checked = !has_checked && (v.available?)
-   		  has_checked = true if checked
-        
-        if checked 
-          v.images.each do |i| %>  
+        has_checked = true if checked
+
+        if checked
+          v.images.each do |i| %>
             <li><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>
           <% end %>
         <% end %>
-      <% end %>
-    </ul>
+    <% end %>
+  </ul>
 <% end %>
 
 <% content_for :head do %>

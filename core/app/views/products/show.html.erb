@@ -14,7 +14,7 @@
 
 <div id="product-description">
   <%= hook :product_description do %>
-    <%= product_description(@product) rescue t("product_has_no_description") %>
+    <%= product_description(@product) rescue t(:product_has_no_description) %>
   <% end %>
   <%= hook :product_properties do %>
     <%= render 'properties' %>

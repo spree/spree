@@ -4,7 +4,7 @@
   <% if product_price(@product) %>
     <%= hook :product_price do %>
       <p class="prices">
-        <%= t("price") %>
+        <%= t(:price) %>
         <br />
         <span class="price selling"><%= product_price(@product) %></span>
       </p>
@@ -13,9 +13,9 @@
 
   <% if @product.has_variants? %>
     <div id="product-variants">
-      <h2><%= t('variants') %></h2>
+      <h2><%= t(:variants) %></h2>
       <ul>
-        <%  has_checked = false
+        <% has_checked = false
         @product.variants.active.each_with_index do |v,index|
           next if v.option_values.empty? || (!v.in_stock && !Spree::Config[:show_zero_stock_products])
           checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
@@ -39,11 +39,11 @@
     <%= text_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
       1, :class => "title", :size => 3 %>
     &nbsp;
-    <button type='submit' class='large primary'>
-      <%= image_tag('/images/add-to-cart.png') + t('add_to_cart') %>
+    <button type="submit" class="large primary">
+      <%= image_tag('/images/add-to-cart.png') + t(:add_to_cart) %>
     </button>
   <% else %>
-    <%= content_tag('strong', t('out_of_stock')) %>
+    <%= content_tag('strong', t(:out_of_stock)) %>
   <% end %>
 
 <% end %>
