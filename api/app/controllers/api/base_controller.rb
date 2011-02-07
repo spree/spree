@@ -33,7 +33,7 @@ class Api::BaseController < Spree::BaseController
     end
 
     define_method :collection do
-      @collection ||= search.do_search.limit(100)
+      @collection ||= search.relation.limit(100)
     end
   end
 
@@ -72,8 +72,9 @@ class Api::BaseController < Spree::BaseController
 
     def search
       return @search unless @search.nil?
-      @search = end_of_association_chain.searchlogic(params[:search])
-      @search.order ||= "descend_by_created_at"
+      params[:search] = {} if params[:search].blank?
+      params[:search][:meta_sort] = 'created_at.desc' if params[:search][:meta_sort].blank?
+      @search = end_of_association_chain.search(params[:search])
       @search
     end
 
