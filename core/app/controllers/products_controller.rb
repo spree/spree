@@ -6,6 +6,9 @@ class ProductsController < Spree::BaseController
 
   helper :taxons
 
+  def show
+  end
+
   def index
     @searcher = Spree::Config.searcher_class.new(params)
     @products = @searcher.retrieve_products
