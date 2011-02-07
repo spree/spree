@@ -128,3 +128,23 @@ If you wish to execute only a particular scenario from a feature file then you s
 <shell>
   $ bundle exec cucumber features/admin/orders.feature:3 --require features
 </shell>
+
+h4. Factory girl
+
+spree-core gem has a good number of factories which can be used for testing. If you are writing an extension or just testing spree you can make use of these factories.
+
+<shell>
+  $ require 'spree_core/testing_support/factories'
+</shell>
+
+Above command might result in following message.
+
+<ruby>
+LoadError: no such file to load -- factory_girl
+</ruby>
+
+If you encounter above message then just add <tt>factory_girl</tt> to your <tt>Gemfile</tt>.
+
+<ruby>
+gem 'factory_girl'
+</ruby>
