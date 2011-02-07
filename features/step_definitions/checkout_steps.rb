@@ -26,7 +26,7 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
 
   price = fields.delete('price')
 
-  if Product.master_price_equals(price).count(:conditions => fields) == 0
+  if Product.search.master_price_equals(price).count(:conditions => fields) == 0
     Factory(:product, fields.merge('price' => price,  :sku => 'ABC',
                                                       :available_on => (Time.now - 100.days)))
   end
