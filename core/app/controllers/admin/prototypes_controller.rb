@@ -5,7 +5,7 @@ class Admin::PrototypesController < Admin::BaseController
   helper 'admin/product_properties'
 
   def available
-    @prototypes = Prototype.order('name asc').all
+    @prototypes = Prototype.order('name asc')
     respond_to do |wants|
       wants.html { render :layout => !request.xhr? }
     end
