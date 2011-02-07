@@ -4,7 +4,7 @@ class Api::ProductsController < Api::BaseController
 
   private
     define_method :collection do
-      @searcher = Spree::Config.searcher_class.new(params)
+      @searcher = Spree::Search::Base.new(params)
       @collection = @searcher.retrieve_products
     end
 

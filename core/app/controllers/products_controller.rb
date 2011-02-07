@@ -27,7 +27,7 @@ class ProductsController < Spree::BaseController
   end
 
   def collection
-    @searcher = Spree::Config.searcher_class.new(params)
+    @searcher = Spree::Search::Base.new(params)
     @products = @searcher.retrieve_products
   end
 

@@ -19,13 +19,6 @@ module Spree
         @configuration
       end
 
-      def searcher_class
-        @searcher_class ||= Spree::Search::Base
-      end
-
-      def searcher_class=(sclass)
-        @searcher_class = sclass
-      end
     end
   end
 end
