@@ -9,6 +9,11 @@ Given /^I have (\d+) orders$/ do |o|
   @orders = Order.all
 end
 
+Given /^2 custom line items exist$/ do
+  line_item1 = Factory(:line_item)
+  Factory(:line_item, :order => line_item1.order)
+end
+
 When /^I send a GET request to "([^"]*)"$/ do |path|
   url = if path == 'first country'
     "/api/countries/#{Country.first.id}"
