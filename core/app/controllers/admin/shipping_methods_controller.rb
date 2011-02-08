@@ -15,7 +15,6 @@ class Admin::ShippingMethodsController < Admin::BaseController
 
   def load_data
     @available_zones = Zone.order(:name)
-    @calculators = ShippingMethod.calculators
-    @calculators.sort_by(&:name)
+    @calculators = ShippingMethod.calculators.sort_by(&:description)
   end
 end
