@@ -1,13 +1,13 @@
 module Spree
   module CurrentOrder
 
-    # This should be overridden by an auth-related extension which would then have the opporutnity to associate the new order with the
-    # current user before saving.
+    # This should be overridden by an auth-related extension which would then have the
+    # opportunity to associate the new order with the # current user before saving.
     def before_save_new_order
     end
 
-    # This should be overridden by an auth-related extension which would then have the opporutnity to store tokens, etc. in the session
-    # after saving.
+    # This should be overridden by an auth-related extension which would then have the
+    # opporutnity to store tokens, etc. in the session # after saving.
     def after_save_new_order
     end
 
