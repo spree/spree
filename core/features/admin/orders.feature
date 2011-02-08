@@ -46,4 +46,4 @@ Feature: Admin visiting orders
     Given a product exists with a sku of "a100"
     When I follow "admin_new_order"
     Then I should see "Add Product" within "#add-line-item"
-    #Then TODO select a product and follow the whole chain
+    #Then FIXME TODO select a product and follow the whole chain

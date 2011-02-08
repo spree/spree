@@ -71,7 +71,7 @@ class Admin::OrdersController < Admin::BaseController
 
     if params[:search].present?
       if params[:search].delete(:completed_at_not_null) == "1"
-        raise 'boom'
+        #FIXME
         params[:search][:completed_at_is_not_null] = true
       else
         params[:search][:completed_at_is_not_null] = false
