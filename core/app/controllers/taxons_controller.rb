@@ -4,6 +4,9 @@ class TaxonsController < Spree::BaseController
 
   helper :products
 
+  def show
+  end
+
   private
   def load_data
     @taxon ||= Taxon.where(:permalink => params[:id]).first
