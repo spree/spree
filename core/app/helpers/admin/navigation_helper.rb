@@ -47,7 +47,7 @@ module Admin::NavigationHelper
     link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource))
   end
 
-  def link_to_delete(resource, options = {})
+  def link_to_delete(resource, options = {}, html_options={})
     options.assert_valid_keys(:url, :caption, :title, :dataType, :success, :name)
 
     options.reverse_merge! :url => object_url(resource) unless options.key? :url
@@ -68,7 +68,7 @@ module Admin::NavigationHelper
           success: #{options[:success]}
         });
       }
-    });"
+    });", html_options
   end
 
   def link_to_with_icon(icon_name, text, url, options = {})
