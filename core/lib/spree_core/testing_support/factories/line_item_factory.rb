@@ -1,6 +1,6 @@
 Factory.define(:line_item) do |record|
-  record.quantity { 2 + rand(10) }
-  record.price { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
+  record.quantity 1
+  record.price { BigDecimal.new("10.00") }
 
   # associations:
   record.association(:order, :factory => :order)
