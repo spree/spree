@@ -39,8 +39,8 @@ module Admin::NavigationHelper
     link_to_with_icon('add', t("new"), edit_object_url(resource))
   end
 
-  def link_to_edit(resource)
-    link_to_with_icon('edit', t("edit"), edit_object_url(resource))
+  def link_to_edit(resource, options={})
+    link_to_with_icon('edit', t("edit"), edit_object_url(resource), options)
   end
 
   def link_to_clone(resource)
