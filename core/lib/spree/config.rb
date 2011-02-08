@@ -19,6 +19,7 @@ module Spree
         @configuration
       end
 
+      # searcher_class allows spree extension writers to provide their own Search class
       def searcher_class
         @searcher_class ||= Spree::Search::Base
       end
@@ -26,6 +27,7 @@ module Spree
       def searcher_class=(sclass)
         @searcher_class = sclass
       end
+
     end
   end
 end
