@@ -12,6 +12,7 @@ Feature: Admin visiting orders
     When I follow "Order" within "#listing_orders"
     Then I should see listing orders tabular attributes with order number ascending
 
+    @javascript
   Scenario: edit order
     Given all orders are deleted
     Given all line items are deleted
@@ -24,6 +25,10 @@ Feature: Admin visiting orders
     When I follow the first admin_edit_order link
     Then show me the page
     Then I should see "Total: $10.00"
+    When I confirm a js popup on the next step
+    Then click on css "#line-items tr td:eq(5) a"
+    #Then I should see "Total: 0.00" => FIXME not able to click on jConfirm box
+
 
 
 
