@@ -12,6 +12,21 @@ Feature: Admin visiting orders
     When I follow "Order" within "#listing_orders"
     Then I should see listing orders tabular attributes with order number ascending
 
+  Scenario: edit order
+    Given all orders are deleted
+    Given all line items are deleted
+    Given the following orders exist:
+      |completed at         |
+      |2011-02-01 12:36:15  |
+      |2010-02-01 17:36:42  |
+    Given custom line items associated with products
+    When I go to the admin home page
+    When I follow the first admin_edit_order link
+    Then show me the page
+    Then I should see "Total: $10.00"
+
+
+
   Scenario: Search orders with only completed at input
     Given the following orders exist:
       |completed at         | number |

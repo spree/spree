@@ -1,3 +1,22 @@
+Given /^custom line items associated with products$/ do
+  Order.all.each do |order|
+    Factory(:line_item, :order => order)
+  end
+end
+
+Given /^all orders are deleted$/ do
+  Order.delete_all
+end
+Given /^all line items are deleted$/ do
+  LineItem.delete_all
+end
+
+When /^I follow the first admin_edit_order link$/ do
+  order = Order.order('completed_at desc').first
+  title = "admin_edit_order_#{order.id}"
+  click_link(title)
+end
+
 Then /^I should see listing orders tabular attributes with completed_at descending$/ do
   output = tableish('table#listing_orders tr', 'td,th')
   data = output[0]
