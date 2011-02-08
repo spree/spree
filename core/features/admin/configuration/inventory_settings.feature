@@ -10,6 +10,6 @@ Feature: Admin > configurations > inventory_settings
     When I follow "admin_inventory_settings_link"
     When I uncheck "preferences_show_zero_stock_products"
     When I uncheck "preferences_allow_backorders"
-    #When TODO fixme I press "Update"
+    #When I press "Update" #=> FIXME
 
 

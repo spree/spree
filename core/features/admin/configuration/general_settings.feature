@@ -11,4 +11,4 @@ Feature: Admin > configurations > general_settings
     Then I should see "demo.spreecommerce.com"
     When I follow "admin_general_settings_link"
     Then I should see "Edit General Settings"
-    #Then I press "Update" TODO
+    #Then I press "Update" #=> FIXME

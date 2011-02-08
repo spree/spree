@@ -18,4 +18,4 @@ Feature: Admin visiting option types
     When I fill in "option_type_presentation" with "colors"
     When I press "Create"
     Then I should see "Successfully created!"
-    #Then TODO Edit Destroy
+    #Then Edit Destroy #=> FIXME
