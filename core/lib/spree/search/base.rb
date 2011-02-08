@@ -17,8 +17,6 @@ module Spree::Search
           :per_page => per_page,
           :page     => curr_page
         })
-
-      return @products
     end
 
     def method_missing(name)
