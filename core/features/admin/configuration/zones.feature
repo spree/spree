@@ -3,7 +3,7 @@ Feature: Admin > configurations > zones
   Scenario: Visiting admin configurations zones
     Given I go to the admin home page
     When I follow "Configuration"
-    Given existing zone records are deleted
+    Given all zones are deleted
     Given the following zones exist:
       | name    | description       |
       | eastern  | zone is eastern   |

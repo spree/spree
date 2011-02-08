@@ -21,18 +21,9 @@ Given /^custom line items associated with products$/ do
   end
 end
 
-Given /^all orders are deleted$/ do
-  Order.delete_all
-end
-
-Given /^all line items are deleted$/ do
-  LineItem.delete_all
-end
-
 Given /^all (.*) are deleted$/ do |name|
-  name.singularize.classify.constantize.delete_all
+  name.singularize.gsub(' ','_').camelize.classify.constantize.delete_all
 end
-
 
 When /^I follow the first admin_edit_order link$/ do
   order = Order.order('completed_at desc').first

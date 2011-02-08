@@ -23,7 +23,6 @@ Feature: Admin visiting orders
     Given custom line items associated with products
     When I go to the admin home page
     When I follow the first admin_edit_order link
-    Then show me the page
     Then I should see "Total: $10.00"
     When I confirm a js popup on the next step
     Then click on css "#line-items tr td:eq(5) a"
