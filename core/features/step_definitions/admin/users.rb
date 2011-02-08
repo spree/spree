@@ -1,3 +1,8 @@
+When /^I follow custom admin edit user link$/ do
+  user = User.find_by_email('a@example.com')
+  page.click_link("admin_edit_user_#{user.id}")
+end
+
 Then /^I should see listing users tabular attributes with order (.*)$/ do |order|
   output = tableish('table#listing_users tr', 'td,th')
   data = output[0]
