@@ -5,9 +5,7 @@ class Address < ActiveRecord::Base
   has_many :shipments
 
   validates :firstname, :lastname, :address1, :city, :zipcode, :country, :phone, :presence => true
-  validates :state, :presence => true, :if => Proc.new { |address| address.state_name.blank? && Spree::Config[:address_requires_state] }
-  validates :state_name, :presence => true, :if => Proc.new { |address| address.state.blank? && Spree::Config[:address_requires_state] }
-  validate :state_name_validate, :if => Proc.new { |address| !address.state_name.blank? }
+  validate :state_validate
 
   # disconnected since there's no code to display error messages yet OR matching client-side validation
   def phone_validate
@@ -19,12 +17,47 @@ class Address < ActiveRecord::Base
     end
   end
 
-  def state_name_validate
-    country = country_id ? Country.find(country_id) : nil
-    return if country.blank? || country.states.empty?
-    if state_name.blank? || country.states.where(["name = ? OR abbr = ?", state_name, state_name]).empty?
-      errors.add(:state, :invalid)
+  def state_validate
+    #skip state validation without country (also required)
+    #or when disabled by perfernce
+    return if self.country_id.blank? || !Spree::Config[:address_requires_state]
+
+    #ensure associated state belongs to country
+    if self.state_id.present?
+      if self.state.country_id == self.country_id
+
+          self.state_name = nil #not required as we have a valid state and country combo
+      else
+        if self.state_name.present?
+
+          self.state_id = nil
+        else
+          errors.add(:state, :invalid)
+        end
+      end
     end
+
+    #ensure state_name belongs to country without states, or that it matches a predefined state name/abbr
+    if self.state_name.present?
+      country = Country.where(:id => self.country_id).try(:first)
+
+      if country.states.present?
+        states = country.states.where(["name = ? OR abbr = ?",self.state_name, self.state_name])
+
+        if states.size == 1
+          self.state = states.first
+          self.state_name = nil
+        else
+          errors.add(:state, :invalid)
+        end
+      end
+    end
+
+    #ensure at least one state field is populated
+    if self.state_id.blank? && self.state_name.blank?
+      errors.add(:state, :blank)
+    end
+
   end
 
   def self.default

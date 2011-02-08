@@ -4,11 +4,17 @@ Factory.define :address do |f|
   f.address1 '10 Lovely Street'
   f.address2 'Northwest'
   f.city   "Herndon"
-  f.state  { |state| state.association(:state) }
   f.zipcode '20170'
-  f.country { |country| country.association(:country) }
   f.phone '123-456-7890'
-  f.state_name "maryland"
   f.alternative_phone "123-456-7899"
+
+  f.state  { |address| address.association(:state) }
+  f.country do |address|
+    if address.state
+      address.state.country
+    else
+      address.association(:country)
+    end
+  end
 end
 

@@ -14,6 +14,7 @@ describe Gateway::Braintree do
 
     with_payment_profiles_off do
       @country = Factory(:country, :name => "United States", :iso_name => "UNITED STATES", :iso3 => "USA", :iso => "US", :numcode => 840)
+      @state   = Factory(:state, :name => "Maryland", :abbr => "MD", :country => @country)
       @address = Factory(:address,
         :firstname => 'John',
         :lastname => 'Doe',
@@ -22,7 +23,7 @@ describe Gateway::Braintree do
         :city =>  'Washington DC',
         :zipcode => '20123',
         :phone => '(555)555-5555',
-        :state_name => 'MD',
+        :state => @state,
         :country => @country
       )
       @order = Factory(:order_with_totals, :bill_address => @address, :ship_address => @address)

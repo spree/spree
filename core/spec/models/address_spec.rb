@@ -15,20 +15,74 @@ describe Address do
     it { should have_valid_factory(:address) }
   end
 
+  context "factory" do
+    let(:address) { Factory :address }
+    specify { address.state.country.should == address.country }
+  end
+
   context "validation" do
+    let(:state) { Factory(:state, :name => 'virginia', :abbr => 'va') }
+    before { Spree::Config.set :address_requires_state => true }
+
     context "state_name is entered but country does not have any states" do
       let(:address) { Factory(:address, :state => nil, :state_name => 'alabama')}
       specify { address.new_record?.should be_false }
     end
 
-    context "state_name is entered but country does not have that state" do
-      let(:state) { Factory(:state, :name => 'virginia') }
+    context "state_name is entered but country does not contain that state" do
       let(:address) { Factory.build(:address, :state => nil, :state_name => 'alabama', :country => state.country)}
-      before do
-        address.save
-      end
+      before { address.save }
       specify { address.errors.full_messages.first.should == 'State is invalid' }
     end
+
+    context "full state name is in state_name and country does contain that state" do
+      let(:address) { Factory(:address, :state => nil, :state_name => 'virginia', :country => state.country)}
+      specify do
+        address.should be_valid
+        address.state_id.should_not be_nil
+        address.state_name.should be_nil
+      end
+    end
+
+    context "state abbr is in state_name and country does contain that state" do
+      let(:address) { Factory(:address, :state => nil, :state_name => 'va', :country => state.country)}
+      specify do
+        address.should be_valid
+        address.state_id.should_not be_nil
+        address.state_name.should be_nil
+      end
+    end
+
+    context "state is entered but country does not contain that state" do
+      let(:address) { Factory.build(:address, :state => state, :country => Factory(:country))}
+      before { address.save }
+
+      specify { address.errors.full_messages.first.should == 'State is invalid' }
+    end
+
+    context "both state and state_name are entered but country does not contain the state" do
+      let(:address) { Factory(:address, :state => state, :state_name => 'maryland', :country => Factory(:country))}
+      specify do
+        address.should be_valid
+        address.state_id.should be_nil
+      end
+    end
+
+    context "both state and state_name are entered and country does contain the state" do
+      let(:address) { Factory(:address, :state => state, :state_name => 'maryland', :country => state.country)}
+      specify do
+        address.should be_valid
+        address.state_name.should be_nil
+      end
+    end
+
+    context "address_requires_state preference is false" do
+      before { Spree::Config.set :address_requires_state => false }
+
+      let(:address) { Factory(:address, :state => nil, :state_name => nil) }
+      specify { address.should be_valid }
+    end
+
   end
 
   context '#full_name' do
