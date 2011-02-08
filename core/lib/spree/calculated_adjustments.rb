@@ -50,7 +50,10 @@ module Spree::CalculatedAdjustments
     # By default the adjustment will not be considered mandatory
     def create_adjustment(label, target, calculable, mandatory=false)
       amount = self.calculator.compute(calculable)
-      target.adjustments.create(:amount => amount, :source => calculable, :originator => self, :label => label, :mandatory => mandatory)
+      target.adjustments.create(:amount => amount,  :source => calculable,
+                                                    :originator => self,
+                                                    :label => label,
+                                                    :mandatory => mandatory)
     end
 
     # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+
