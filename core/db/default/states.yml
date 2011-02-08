@@ -254,3 +254,445 @@ states_009:
   country_id: "214"
   id: "91367981"
   abbr: WV
+
+#Italian provinces
+province_ag:
+  name: Agrigento
+  country_id: "98"
+  abbr: AG
+province_al:
+  name: Alessandria
+  country_id: "98"
+  abbr: AL
+province_an:
+  name: Ancona
+  country_id: "98"
+  abbr: AN
+province_ao:
+  name: Aosta
+  country_id: "98"
+  abbr: AO
+province_ar:
+  name: Arezzo
+  country_id: "98"
+  abbr: AR
+province_ap:
+  name: Ascoli Piceno
+  country_id: "98"
+  abbr: AP
+province_at:
+  name: Asti
+  country_id: "98"
+  abbr: AT
+province_av:
+  name: Avellino
+  country_id: "98"
+  abbr: AV
+province_ba:
+  name: Bari
+  country_id: "98"
+  abbr: BA
+province_bt:
+  name: Barletta-Andria-Trani
+  country_id: "98"
+  abbr: BT
+province_bl:
+  name: Belluno
+  country_id: "98"
+  abbr: BL
+province_bn:
+  name: Benevento
+  country_id: "98"
+  abbr: BN
+province_bg:
+  name: Bergamo
+  country_id: "98"
+  abbr: BG
+province_bi:
+  name: Biella
+  country_id: "98"
+  abbr: BI
+province_bo:
+  name: Bologna
+  country_id: "98"
+  abbr: BO
+province_bz:
+  name: Bolzano
+  country_id: "98"
+  abbr: BZ
+province_bs:
+  name: Brescia
+  country_id: "98"
+  abbr: BS
+province_bs:
+  name: Brescia
+  country_id: "98"
+  abbr: BS
+province_br:
+  name: Brindisi
+  country_id: "98"
+  abbr: BR
+province_ca:
+  name: Cagliari
+  country_id: "98"
+  abbr: CA
+province_cl:
+  name: Caltanissetta
+  country_id: "98"
+  abbr: CL
+province_cb:
+  name: Campobasso
+  country_id: "98"
+  abbr: CB
+province_ci:
+  name: Carbonia-Iglesias
+  country_id: "98"
+  abbr: CI
+province_ce:
+  name: Caserta
+  country_id: "98"
+  abbr: CE
+province_ct:
+  name: Catania
+  country_id: "98"
+  abbr: CT
+province_cz:
+  name: Catanzaro
+  country_id: "98"
+  abbr: CZ
+province_ch:
+  name: Chieti
+  country_id: "98"
+  abbr: CH
+province_co:
+  name: Como
+  country_id: "98"
+  abbr: CO
+province_cs:
+  name: Cosenza
+  country_id: "98"
+  abbr: CS
+province_cr:
+  name: Cremona
+  country_id: "98"
+  abbr: CR
+province_cn:
+  name: Cuneo
+  country_id: "98"
+  abbr: CN
+province_en:
+  name: Enna
+  country_id: "98"
+  abbr: EN
+province_fm:
+  name: Fermo
+  country_id: "98"
+  abbr: FM
+province_fe:
+  name: Ferrara
+  country_id: "98"
+  abbr: FE
+province_fi:
+  name: Firenze
+  country_id: "98"
+  abbr: FI
+province_fg:
+  name: Foggia
+  country_id: "98"
+  abbr: FG
+province_fc:
+  name: Forlì-Cesena
+  country_id: "98"
+  abbr: FC
+province_fr:
+  name: Frosinone
+  country_id: "98"
+  abbr: FR
+province_ge:
+  name: Genova
+  country_id: "98"
+  abbr: GE
+province_go:
+  name: Gorizia
+  country_id: "98"
+  abbr: GO
+province_gr:
+  name: Grosseto
+  country_id: "98"
+  abbr: GR
+province_im:
+  name: Imperia
+  country_id: "98"
+  abbr: IM
+province_is:
+  name: Isernia
+  country_id: "98"
+  abbr: IS
+province_sp:
+  name: La Spezia
+  country_id: "98"
+  abbr: SP
+province_aq:
+  name: L'Aquila
+  country_id: "98"
+  abbr: AQ
+province_lt:
+  name: Latina
+  country_id: "98"
+  abbr: LT
+province_le:
+  name: Lecce
+  country_id: "98"
+  abbr: LE
+province_lc:
+  name: Lecco
+  country_id: "98"
+  abbr: LC
+province_li:
+  name: Livorno
+  country_id: "98"
+  abbr: LI
+province_lo:
+  name: Lodi
+  country_id: "98"
+  abbr: LO
+province_lu:
+  name: Lucca
+  country_id: "98"
+  abbr: LU
+province_mn:
+  name: Mantova
+  country_id: "98"
+  abbr: MN
+province_ms:
+  name: Massa-Carrara
+  country_id: "98"
+  abbr: MS
+province_mt:
+  name: Matera
+  country_id: "98"
+  abbr: MT
+province_me:
+  name: Messina
+  country_id: "98"
+  abbr: ME
+province_mo:
+  name: Modena
+  country_id: "98"
+  abbr: MO
+province_mb:
+  name: Monza e della Brianza
+  country_id: "98"
+  abbr: MB
+province_na:
+  name: Napoli
+  country_id: "98"
+  abbr: NA
+province_no:
+  name: Novara
+  country_id: "98"
+  abbr: NO
+province_nu:
+  name: Nuoro
+  country_id: "98"
+  abbr: NU
+province_ot:
+  name: Olbia-Tempio
+  country_id: "98"
+  abbr: OT
+province_or:
+  name: Oristano
+  country_id: "98"
+  abbr: OR
+province_pd:
+  name: Padova
+  country_id: "98"
+  abbr: PD
+province_pa:
+  name: Palermo
+  country_id: "98"
+  abbr: PA
+province_pr:
+  name: Parma
+  country_id: "98"
+  abbr: PR
+province_pv:
+  name: Pavia
+  country_id: "98"
+  abbr: PV
+province_pg:
+  name: Perugia
+  country_id: "98"
+  abbr: PG
+province_pu:
+  name: Pesaro e Urbino
+  country_id: "98"
+  abbr: PU
+province_pe:
+  name: Pescara
+  country_id: "98"
+  abbr: PE
+province_pc:
+  name: Piacenza
+  country_id: "98"
+  abbr: PC
+province_pi:
+  name: Pisa
+  country_id: "98"
+  abbr: PI
+province_pc:
+  name: Piacenza
+  country_id: "98"
+  abbr: PC
+province_pi:
+  name: Pisa
+  country_id: "98"
+  abbr: PI
+province_pt:
+  name: Pistoia
+  country_id: "98"
+  abbr: PT
+province_pn:
+  name: Pordenone
+  country_id: "98"
+  abbr: PN
+province_pz:
+  name: Potenza
+  country_id: "98"
+  abbr: PZ
+province_po:
+  name: Prato
+  country_id: "98"
+  abbr: PO
+province_rg:
+  name: Ragusa
+  country_id: "98"
+  abbr: RG
+province_ra:
+  name: Ravenna
+  country_id: "98"
+  abbr: RA
+province_rc:
+  name: Reggio Calabria
+  country_id: "98"
+  abbr: RC
+province_re:
+  name: Reggio Emilia
+  country_id: "98"
+  abbr: RE
+province_ri:
+  name: Rieti
+  country_id: "98"
+  abbr: RI
+province_rn:
+  name: Rimini
+  country_id: "98"
+  abbr: RN
+province_rm:
+  name: Roma
+  country_id: "98"
+  abbr: RM
+province_ro:
+  name: Rovigo
+  country_id: "98"
+  abbr: RO
+province_sa:
+  name: Salerno
+  country_id: "98"
+  abbr: SA
+province_vs:
+  name: Medio Campidano
+  country_id: "98"
+  abbr: VS
+province_ss:
+  name: Sassari
+  country_id: "98"
+  abbr: SS
+province_sv:
+  name: Savona
+  country_id: "98"
+  abbr: SV
+province_si:
+  name: Siena
+  country_id: "98"
+  abbr: SI
+province_sr:
+  name: Siracusa
+  country_id: "98"
+  abbr: SR
+province_so:
+  name: Sondrio
+  country_id: "98"
+  abbr: SO
+province_ta:
+  name: Taranto
+  country_id: "98"
+  abbr: TA
+province_te:
+  name: Teramo
+  country_id: "98"
+  abbr: TE
+province_tr:
+  name: Terni
+  country_id: "98"
+  abbr: TR
+province_to:
+  name: Torino
+  country_id: "98"
+  abbr: TO
+province_og:
+  name: Ogliastra
+  country_id: "98"
+  abbr: OG
+province_tp:
+  name: Trapani
+  country_id: "98"
+  abbr: TP
+province_tn:
+  name: Trento
+  country_id: "98"
+  abbr: TN
+province_tv:
+  name: Treviso
+  country_id: "98"
+  abbr: TV
+province_ts:
+  name: Trieste
+  country_id: "98"
+  abbr: TS
+province_ud:
+  name: Udine
+  country_id: "98"
+  abbr: UD
+province_va:
+  name: Varese
+  country_id: "98"
+  abbr: VA
+province_ve:
+  name: Venezia
+  country_id: "98"
+  abbr: VE
+province_vb:
+  name: Verbano-Cusio-Ossola
+  country_id: "98"
+  abbr: VB
+province_vc:
+  name: Vercelli
+  country_id: "98"
+  abbr: VC
+province_vr:
+  name: Verona
+  country_id: "98"
+  abbr: VR
+province_vv:
+  name: Vibo Valentia
+  country_id: "98"
+  abbr: VV
+province_vi:
+  name: Vicenza
+  country_id: "98"
+  abbr: VI
+province_vt:
+  name: Viterbo
+  country_id: "98"
+  abbr: VT
