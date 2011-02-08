@@ -10,8 +10,8 @@ module Spree::Search
     def retrieve_products
       base_scope = get_base_scope
       @products_scope = @product_group.apply_on(base_scope)
-
       curr_page = manage_pagination && keywords ? 1 : page
+
       @products = @products_scope.paginate({
           :include  => [:images, :master],
           :per_page => per_page,
