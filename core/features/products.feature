@@ -1,6 +1,5 @@
 Feature: Visiting products
 
-  @wip @stop
   Scenario: Visiting products page
     Given the following products exist:
       | name                |
