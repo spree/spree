@@ -97,8 +97,8 @@ class Admin::ProductsController < Admin::BaseController
     else
       includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
-      @collection = end_of_association_chain.where(["name LIKE ?", "%#{params[:q]}%"]).includes(includes).limit(params[:limit] || 10)
-      @collection.concat end_of_association_chain.where(["variants.sku LIKE ?", "%#{params[:q]}%"]).includes(:variants_including_master).limit(params[:limit] || 10)
+      @collection = end_of_association_chain.where(["name LIKE ?", "%#{params[:q]}%"]).includes(includes).limit(params[:limit].to_i || 10)
+      @collection.concat end_of_association_chain.where(["variants.sku LIKE ?", "%#{params[:q]}%"]).includes(:variants_including_master).limit(params[:limit].to_i || 10)
 
       @collection.uniq
     end
