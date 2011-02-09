@@ -208,7 +208,8 @@ SQL
     }
   }
 
-  # Produce an array of keywords for use in scopes. Always return array with at least an empty string to avoid SQL errors
+  # Produce an array of keywords for use in scopes.
+  # Always return array with at least an empty string to avoid SQL errors
   def self.prepare_words(words)
     a = words.split(/[,\s]/).map(&:strip)
     a.any? ? a : ['']
