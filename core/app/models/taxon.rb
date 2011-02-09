@@ -13,9 +13,11 @@ class Taxon < ActiveRecord::Base
                 :path => ":rails_root/public/assets/taxons/:id/:style/:basename.:extension",
                 :default_url => "/images/default_taxon.png"
 
+
+  include ::ProductFilters  # for detailed defs of filters
+
   # indicate which filters should be used for a taxon
   # this method should be customized to your own site
-  include ::ProductFilters  # for detailed defs of filters
   def applicable_filters
     fs = []
     # fs << ProductFilters.taxons_below(self)

@@ -33,7 +33,9 @@
 
 # See specific filters below for concrete examples.
 
-
+# This module is included by Taxon. In development mode that inclusion does not
+# happen until Taxon class is loaded. Ensure that Taxon class is loaded before
+# you try something like Product.price_range_any
 module ProductFilters
 
   # Example: filtering by price
@@ -41,6 +43,9 @@ module ProductFilters
   #   'price' is in the base scope's context (ie, "select foo from products where ...") so
   #     we can access the field right away
   #   The filter identifies which scope to use, then sets the conditions for each price range
+  #
+  # If user checks off three different price ranges then the argument passed to
+  # below scope would be something like ["$10 - $15", "$15 - $18", "$18 - $20"]
   #
   Product.scope :price_range_any,
     lambda {|opts|
@@ -170,4 +175,5 @@ module ProductFilters
       :conds  => nil	# not needed
     }
   end
+
 end
