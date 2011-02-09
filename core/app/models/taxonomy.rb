@@ -8,10 +8,8 @@ class Taxonomy < ActiveRecord::Base
     if self.root
       self.root.update_attribute(:name, self.name)
     else
-      self.root = Taxon.create!({
-          :taxonomy_id => self.id,
-          :name => self.name
-        })
+      self.root = Taxon.create!({ :taxonomy_id => self.id, :name => self.name })
     end
   end
+
 end
