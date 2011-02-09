@@ -3,9 +3,8 @@ When /^(?:|I )fill (billing|shipping) address with correct data$/ do |address_ty
   address = if @me
     @me.send(str_addr)
   else
-    Factory(:address, :state => nil,
-                      :state_name => 'New York',
-                      :country => Country.find(Spree::Config[:default_country_id]) )
+    state = State.first
+    Factory(:address, :state => state)
   end
 
   When %{I select "United States" from "Country" within "fieldset##{address_type}"}
@@ -14,7 +13,7 @@ When /^(?:|I )fill (billing|shipping) address with correct data$/ do |address_ty
     When %{I fill in "order_#{str_addr}_attributes_#{field}" with "#{address.send(field)}"}
   end
 
-  When %{I select "#{address.state_name}" from "order_#{str_addr}_attributes_state_id"}
+  When %{I select "#{address.state.name}" from "order_#{str_addr}_attributes_state_id"}
 end
 
 When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
