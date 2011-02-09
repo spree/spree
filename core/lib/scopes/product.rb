@@ -47,6 +47,7 @@ module Scopes::Product
   # Ryan Bates - http://railscasts.com/episodes/112
   # general merging of conditions, names following the searchlogic pattern
   ::Product.scope :conditions, lambda { |*args| {:conditions => args}}
+
   # conditions_all is a more descriptively named enhancement of the above
   ::Product.scope :conditions_all, lambda { |*args| {:conditions => [args].flatten}}
 
@@ -57,17 +58,6 @@ module Scopes::Product
     {:conditions => args.map {|c| "(#{c})"}.join(" OR ")}
   }
 
-
-
-  #RAILS3 TODO - scopes are duplicated here and in model/product.rb - can we DRY it up?
-  # default product scope only lists available and non-deleted products
-  # ::Product.scope :not_deleted, lambda { where("products.deleted_at is null") }
-  # ::Product.scope :available,   lambda { |*args|
-  #    where("products.available_on <= ?", args.first || Time.zone.now)
-  # }
-  # ::Product.scope :active,      lambda { |*args|
-  #   Product.not_deleted.available(args.first).scope(:find)
-  # }
 
   ::Product.scope :price_between, lambda {|low,high|
     { :joins => :master, :conditions => ["variants.price BETWEEN ? AND ?", low, high] }
