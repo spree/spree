@@ -1,3 +1,4 @@
+# This module is extended by ProductScope
 module Scopes::Dynamic
   module_function
 
