@@ -24,7 +24,11 @@ class ProductScope < ActiveRecord::Base
   # Applies product scope on Product model or another named scope
   def apply_on(another_scope)
     array = *self.arguments
-    relation2 = Product.search({self.name.intern => array}).relation
+    if Product.respond_to?(self.name.intern)
+      relation2 = Product.send(self.name.intern, array)
+    else
+      relation2 = Product.search({self.name.intern => array}).relation
+    end
     another_scope.merge(relation2)
   end
 
