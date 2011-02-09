@@ -106,11 +106,10 @@ class ProductGroup < ActiveRecord::Base
       base_product_scope = base_product_scope.send(self.order_scope)
     end
 
-    return self.product_scopes.reject {|s|
-             s.is_ordering?
-           }.inject(base_product_scope){|result, scope|
-             scope.apply_on(result)
-           }
+    return self.product_scopes.reject {|s| s.is_ordering? }.inject(base_product_scope) do |result, scope|
+      scope.apply_on(result)
+    end
+
   end
 
   # returns chain of named scopes generated from order scope and product scopes.
@@ -190,6 +189,7 @@ class ProductGroup < ActiveRecord::Base
       scope.name
     end
   end
+
   def order_scope=(scope_name)
     if scope = product_scopes.detect {|s| s.is_ordering?}
       scope.update_attribute(:name, scope_name)
