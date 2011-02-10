@@ -26,5 +26,19 @@ Feature: Visiting products
   Scenario: visit brand Apache
     And I go to the home page
     When I follow "Apache"
-    Then show me the page
     Then verify products listing for Apache brand
+
+  Scenario: visit category Clothing
+    And I go to the home page
+    When I follow "Clothing"
+    Then verify products listing for Clothing category
+
+  Scenario: visit category Mugs
+    And I go to the home page
+    When I follow "Mugs"
+    Then verify products listing for Mugs category
+
+  Scenario: visit category Bags
+    And I go to the home page
+    When I follow "Bags"
+    Then verify products listing for Bags category
