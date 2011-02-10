@@ -1,4 +1,4 @@
-<%= form_tag '', :method => :get do  %>
+<%= form_tag '', :method => :get, :id => 'sidebar_products_search' do  %>
   <% params[:search] ||= {} %>
   <input type="hidden" name="per_page" value="<%= params[:per_page] %>"/>
 
@@ -12,9 +12,9 @@
         <% labels.each do |nm,val| %>
           <% label = "#{filter[:name]}_#{nm}".gsub(/\s+/,'_') %>
           <li class="nowrap">
-            <input type="checkbox" 
-                   id="<%= label %>" 
-                   name="search[<%= filter[:scope].to_s %>][]" 
+            <input type="checkbox"
+                   id="<%= label %>"
+                   name="search[<%= filter[:scope].to_s %>][]"
                    value="<%= val %>"
                    <%= params[:search][filter[:scope]] && params[:search][filter[:scope]].include?(val.to_s) ? "checked" : "" %> />
             <label class="nowrap" for="<%= label %>"> <%= nm %> </label>
