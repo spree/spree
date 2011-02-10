@@ -27,7 +27,7 @@ Creating and installing extensions is simple. All extensions live in +vendor/ext
 in your project directory. There's a generator for creating a new extension, and a mechanism
 for installing existing extensions from the internet, or you can copy extensions manually.
 
-NOTE. A very good way to learn about these ideas is to experiment with real code! The "Spree Demo":http://github.com/railsdog/spree-demo is a good place to start (wait for updates)
+NOTE. A very good way to learn about these ideas is to experiment with real code! The "Spree Demo":http://github.com/spree/spree-demo is a good place to start (wait for updates)
 
 
 h3. What is an extension?
@@ -127,7 +127,7 @@ Every Spree application will probably need one so we have provided a convenient 
 You can rename this extension to whatever you wish or even remove it - 
 just remember to adjust the load order if needed.
 
-NOTE. See the "Spree Demo":http://github.com/railsdog/spree-demo/tree for a good example of using several extensions and integrating them in the site extension.
+NOTE. See the "Spree Demo":http://github.com/spree/spree-demo/tree for a good example of using several extensions and integrating them in the site extension.
 
 
 h3. Installing an Existing Extension
