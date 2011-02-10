@@ -46,8 +46,21 @@ Feature: Visiting products
   Scenario: select under 10
     When I go to the home page
     When I follow "Ruby on Rails"
-    Then show me the page
-
     When I check "Price_Range_Under_$10"
     When I press "Search" within "#sidebar_products_search"
     Then I should see "No products found"
+
+  Scenario: select between 15 and 18
+    When I go to the home page
+    When I follow "Ruby on Rails"
+    When I check "Price_Range_$15_-_$18"
+    When I press "Search" within "#sidebar_products_search"
+    Then verify products listing for price range search 15-18
+
+  Scenario: select 18 and above
+    When I go to the home page
+    When I follow "Ruby on Rails"
+    When I check "Price_Range_$18_-_$20"
+    When I check "Price_Range_$20_or_over"
+    When I press "Search" within "#sidebar_products_search"
+    Then verify products listing for price range search 18 and above

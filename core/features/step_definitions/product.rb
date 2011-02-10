@@ -109,3 +109,22 @@ Then /^verify products listing for Mugs category$/ do
   tmp.delete("")
   tmp.sort!.should == ["Ruby on Rails Mug $13.99", "Ruby on Rails Stein $16.99"]
 end
+
+Then /^verify products listing for price range search 15-18$/ do
+  page.all('ul.product-listing li').size.should == 3
+  tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+  tmp.delete("")
+  tmp.sort!.should == ["Ruby on Rails Ringer T-shirt $17.99", "Ruby on Rails Stein $16.99", "Ruby on Rails Tote $15.99"]
+end
+
+Then /^verify products listing for price range search 18 and above$/ do
+  page.all('ul.product-listing li').size.should == 3
+  tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+  tmp.delete("")
+  tmp.sort!.should == ["Ruby on Rails Bag $22.99",
+                       "Ruby on Rails Baseball Jersey $19.99",
+                       "Ruby on Rails Jr. Spaghetti $19.99"]
+end
+
+
+
