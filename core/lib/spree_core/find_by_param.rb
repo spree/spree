@@ -83,17 +83,20 @@ module Railslove
           return unless self.class.column_names.include?(permalink_options[:field].to_s)
           return if !changed?
 
+          # clear permalink before #to_param uses the old one
+          write_attribute(permalink_options[:field], nil)
           base_value = to_param
           permalink_value = base_value
-          query = self.class.send("where", "#{permalink_options[:field]} = ?", permalink_value)
+
           counter = 0
-          unless query.limit(1).empty?
+          loop do
+            query = self.class.where(permalink_options[:field] => permalink_value)
+            break if query.limit(1).empty?
+
             permalink_value = "#{base_value}-#{counter += 1}"
-            query = self.class.send("where", "#{permalink_options[:field]} = ?", permalink_value)
           end
           write_attribute(permalink_options[:field], permalink_value)
           true
-
         end
       end
 
