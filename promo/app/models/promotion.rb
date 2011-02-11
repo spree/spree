@@ -56,7 +56,6 @@ class Promotion < ActiveRecord::Base
           :amount => -amount.abs,
           :order => order
         })
-      order.reload
     end
   end
 
