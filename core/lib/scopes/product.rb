@@ -40,6 +40,18 @@ module Scopes::Product
     :descend_by_popularity,
   ]
 
+  ORDERING.each do |name|
+    r = name.to_s.match(/(.*)_by_(.*)/)
+
+    if r[1] == 'ascend'
+      Product.send(:scope, name.to_s, Product.send(:relation).order("#{r[2]} asc") )
+    else
+      Product.send(:scope, name.to_s, Product.send(:relation).order("#{r[2]} desc") )
+    end
+  end
+
+
+
   ATTRIBUTE_HELPER_METHODS = {
     :with_ids => :product_picker_field
   }
