@@ -332,41 +332,6 @@ p img {
   margin-right: 5px;
   vertical-align: middle;
 }
-.no_margin_or_padding {
-  margin: 0;
-  padding: 0;
-}
-.leftie {
-  float: left;
-  width: 49%;
-}
-.rightie {
-  float: right;
-  width: 49%;
-}
-.clearfix {
-  overflow: hidden;
-  display: inline-block;
-}
-.clearfix { display: block; }
-.nowrap { white-space: nowrap; }
-.no-bullets { list-style: none; }
-.inline-list {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.inline-list li {
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.colborder {
-  padding-right: 24px;
-  margin-right: 25px;
-  border-right: 1px solid #eeeeee;
-}
 .navigation-list {
   list-style: none;
   margin: 0 0 1.5em -15px;
@@ -497,41 +462,6 @@ ul#nav-bar li.cart-indicator a.full { background-image: url(../images/cart-full_
   background-color: #2e6ab1;
   color: #ffffff;
 }
-.no_margin_or_padding {
-  margin: 0;
-  padding: 0;
-}
-.leftie {
-  float: left;
-  width: 49%;
-}
-.rightie {
-  float: right;
-  width: 49%;
-}
-.clearfix {
-  overflow: hidden;
-  display: inline-block;
-}
-.clearfix { display: block; }
-.nowrap { white-space: nowrap; }
-.no-bullets { list-style: none; }
-.inline-list {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.inline-list li {
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.colborder {
-  padding-right: 24px;
-  margin-right: 25px;
-  border-right: 1px solid #eeeeee;
-}
 .flash {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -587,41 +517,6 @@ ul#nav-bar li.cart-indicator a.full { background-image: url(../images/cart-full_
   margin: 0px;
 }
 .fieldWithErrors { clear: none; }
-.no_margin_or_padding {
-  margin: 0;
-  padding: 0;
-}
-.leftie {
-  float: left;
-  width: 49%;
-}
-.rightie {
-  float: right;
-  width: 49%;
-}
-.clearfix {
-  overflow: hidden;
-  display: inline-block;
-}
-.clearfix { display: block; }
-.nowrap { white-space: nowrap; }
-.no-bullets { list-style: none; }
-.inline-list {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.inline-list li {
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.colborder {
-  padding-right: 24px;
-  margin-right: 25px;
-  border-right: 1px solid #eeeeee;
-}
 button, a.button, input.button {
   -moz-border-radius: 0.3em;
   -webkit-border-radius: 0.3em;
@@ -702,41 +597,6 @@ p button img { margin: 0 5px 0 0; }
   font-weight: normal;
   color: #666666;
 }
-.no_margin_or_padding {
-  margin: 0;
-  padding: 0;
-}
-.leftie {
-  float: left;
-  width: 49%;
-}
-.rightie {
-  float: right;
-  width: 49%;
-}
-.clearfix {
-  overflow: hidden;
-  display: inline-block;
-}
-.clearfix { display: block; }
-.nowrap { white-space: nowrap; }
-.no-bullets { list-style: none; }
-.inline-list {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.inline-list li {
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.colborder {
-  padding-right: 24px;
-  margin-right: 25px;
-  border-right: 1px solid #eeeeee;
-}
 .product-listing {
   list-style: none;
   margin: 2em 0px 0px 0px;
@@ -800,41 +660,6 @@ ul.thumbnails li img {
 }
 ul.thumbnails li:hover { border-color: #cccccc; }
 ul.thumbnails li.selected { border-color: #999999; }
-.no_margin_or_padding {
-  margin: 0;
-  padding: 0;
-}
-.leftie {
-  float: left;
-  width: 49%;
-}
-.rightie {
-  float: right;
-  width: 49%;
-}
-.clearfix {
-  overflow: hidden;
-  display: inline-block;
-}
-.clearfix { display: block; }
-.nowrap { white-space: nowrap; }
-.no-bullets { list-style: none; }
-.inline-list {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.inline-list li {
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.colborder {
-  padding-right: 24px;
-  margin-right: 25px;
-  border-right: 1px solid #eeeeee;
-}
 #product-variants { margin-bottom: 1em; }
 #product-variants ul {
   list-style: none;
@@ -907,41 +732,6 @@ dl.table-display dd {
 }
 dl.table-display dt { width: 100px; }
 dl.table-display dd { width: 180px; }
-.no_margin_or_padding {
-  margin: 0;
-  padding: 0;
-}
-.leftie {
-  float: left;
-  width: 49%;
-}
-.rightie {
-  float: right;
-  width: 49%;
-}
-.clearfix {
-  overflow: hidden;
-  display: inline-block;
-}
-.clearfix { display: block; }
-.nowrap { white-space: nowrap; }
-.no-bullets { list-style: none; }
-.inline-list {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.inline-list li {
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.colborder {
-  padding-right: 24px;
-  margin-right: 25px;
-  border-right: 1px solid #eeeeee;
-}
 div#subtotal {
   float: right;
   width: 49%;
@@ -959,41 +749,6 @@ table#cart tr td {
 }
 table#cart tr#none td { border-bottom: none; }
 table#cart h4 { margin-bottom: 0em; }
-.no_margin_or_padding {
-  margin: 0;
-  padding: 0;
-}
-.leftie {
-  float: left;
-  width: 49%;
-}
-.rightie {
-  float: right;
-  width: 49%;
-}
-.clearfix {
-  overflow: hidden;
-  display: inline-block;
-}
-.clearfix { display: block; }
-.nowrap { white-space: nowrap; }
-.no-bullets { list-style: none; }
-.inline-list {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.inline-list li {
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.colborder {
-  padding-right: 24px;
-  margin-right: 25px;
-  border-right: 1px solid #eeeeee;
-}
 #signup #new-customer {
   display: inline;
   float: left;
@@ -1025,41 +780,6 @@ input.openid_url {
   padding-left: 18px;
   border: 1px solid #bbbbbb;
   font-size: 1.5em;
-}
-.no_margin_or_padding {
-  margin: 0;
-  padding: 0;
-}
-.leftie {
-  float: left;
-  width: 49%;
-}
-.rightie {
-  float: right;
-  width: 49%;
-}
-.clearfix {
-  overflow: hidden;
-  display: inline-block;
-}
-.clearfix { display: block; }
-.nowrap { white-space: nowrap; }
-.no-bullets { list-style: none; }
-.inline-list {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.inline-list li {
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-.colborder {
-  padding-right: 24px;
-  margin-right: 25px;
-  border-right: 1px solid #eeeeee;
 }
 ol.progress-steps {
   list-style: none;
