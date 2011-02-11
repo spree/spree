@@ -29,6 +29,9 @@ class ProductScope < ActiveRecord::Base
     else
       relation2 = Product.search({self.name.intern => array}).relation
     end
+    unless another_scope.class == ActiveRecord::Relation
+      another_scope = another_scope.send(:relation)
+    end
     another_scope.merge(relation2)
   end
 
