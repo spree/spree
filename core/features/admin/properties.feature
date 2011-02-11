@@ -18,4 +18,10 @@ Feature: Admin visiting properties
     When I fill in "property_presentation" with "color"
     When I press "Create"
     Then I should see "Successfully created!"
-    #Then edit destroy #=> FIXME
+    When I follow "Properties"
+    When I click on first link with class "admin_edit_property"
+    When I fill in "property_name" with "model 99"
+    When I press "Update"
+    Then I should see "Successfully updated!"
+    Then I should see "model 99"
+
