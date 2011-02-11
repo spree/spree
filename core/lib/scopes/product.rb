@@ -63,6 +63,10 @@ module Scopes::Product
     { :joins => :master, :conditions => ["variants.price BETWEEN ? AND ?", low, high] }
   }
 
+  ::Product.scope :master_price_lte, lambda { |price|
+    { :joins => :master, :conditions => ["variants.price <= ?", price] }
+  }
+
   # This scope selects products in taxon AND all its descendants
   # If you need products only within one taxon use
   #

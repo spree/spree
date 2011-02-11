@@ -30,6 +30,15 @@ describe Product do
     end
   end
 
+  context "scopes" do
+    context ".master_price_lte" do
+      it 'produces correct sql' do
+        sql = %Q{SELECT "products".* FROM "products" INNER JOIN "variants" ON "variants"."product_id" = "products"."id" AND variants.is_master = 't' AND variants.deleted_at IS NULL WHERE (variants.price <= 10)}
+        Product.master_price_lte(10).to_sql.should == sql
+      end
+    end
+  end
+
   context '#add_properties_and_option_types_from_prototype' do
     let!(:prototype) { Factory(:prototype) }
     let(:product) { Factory(:product, :prototype_id => prototype.id) }
