@@ -69,7 +69,7 @@ module Scopes::Product
   }
 
 
-  ::Product.scope :price_between, lambda {|low,high|
+  ::Product.scope :price_between, lambda { |low, high|
     { :joins => :master, :conditions => ["variants.price BETWEEN ? AND ?", low, high] }
   }
 
