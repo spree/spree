@@ -37,10 +37,18 @@ describe Product do
         Product.master_price_lte(10).to_sql.should == sql
       end
     end
+
     context ".master_price_gte" do
       it 'produces correct sql' do
         sql = %Q{SELECT "products".* FROM "products" INNER JOIN "variants" ON "variants"."product_id" = "products"."id" AND variants.is_master = 't' AND variants.deleted_at IS NULL WHERE (variants.price >= 10)}
         Product.master_price_gte(10).to_sql.should == sql
+      end
+    end
+
+    context ".price_between" do
+      it 'produces correct sql' do
+        sql = %Q{SELECT "products".* FROM "products" INNER JOIN "variants" ON "variants"."product_id" = "products"."id" AND variants.is_master = 't' AND variants.deleted_at IS NULL WHERE (variants.price BETWEEN 10 AND 20)}
+        Product.price_between(10, 20).to_sql.should == sql
       end
     end
 
