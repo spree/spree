@@ -43,13 +43,11 @@ module Scopes::Product
   ORDERING.each do |name|
     r = name.to_s.match(/(.*)_by_(.*)/)
 
-    if r[1] == 'ascend'
-      Product.send(:scope, name.to_s, Product.send(:relation).order("#{r[2]} asc") )
-    else
-      Product.send(:scope, name.to_s, Product.send(:relation).order("#{r[2]} desc") )
-    end
-  end
+    order_text = "#{r[2]} "
+    order_text << r[1] == 'ascend' ?  "asc" : "desc"
 
+    Product.send(:scope, name.to_s, Product.send(:relation).order(order_text) )
+  end
 
 
   ATTRIBUTE_HELPER_METHODS = {
