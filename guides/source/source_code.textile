@@ -12,7 +12,7 @@ h3. Git
 
 The Spree source code is currently maintained in a "Git":http://git.or.cz/ repository. Git is a distributed version control system (DVCS) and it allows us to do things never before possible with SVN. If you're skeptical of Git just remember how skeptical you were of SVN when you were using CVS. The differences are subtle but important and they are best understood by hands on use.
 
-The authoritative git repository is hosted by "GitHub":http://github.com/ and is located in the  "railsdog":http://github.com/spree/spree/tree/master repository. You can clone the git repository using the following command:
+The authoritative git repository is hosted by "GitHub":http://github.com/ and is located in the  "spree":http://github.com/spree/spree/tree/master repository. You can clone the git repository using the following command:
 
 <shell>
 $ git clone git://github.com/spree/spree.git
@@ -37,7 +37,7 @@ There are no immediate plans to support SVN clients. Since most of the Rails com
 h4. Monitoring Changes in the Source
 
 If you would like to keep up to date on changes to the source you can subscribe to the github
-"RSS feed":http://github.com/feeds/railsdog/commits/spree/master and you will be notified of all the commits.
+"RSS feed":http://github.com/feeds/spree/commits/spree/master and you will be notified of all the commits.
 
 h3. Bundler
 
