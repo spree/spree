@@ -4,7 +4,7 @@ This guide covers products and variants and discusses how they are managed in th
 
 After reading it you should know:
 * what products and variants are and how they work together
-* how to add new products and variants via the adminisration interface
+* how to add new products and variants via the administration interface
 * how to configure and use options to distinguish variants
 * how to programatically create and manage products and variants
 
@@ -116,7 +116,7 @@ NOTE: Properties are displayed after the description on the product's fly-page.
 
 TIP: Prototypes can be set up to include sets of these properties when a product is first created.
 
-Once you have defined a Property, you can then associate that Property with a given Product. you can specify which keys you want to associate and then give corresponding values via the "Product Properties" menu in the sidebar. If you selected a prototype when creating the product, certain keys may already be set up. Otherwise, type in the (internal) name of an existing property and a value.
+Once you have defined a Property, you can then associate that Property with a given Product. You can specify which keys you want to associate and then give corresponding values via the "Product Properties" menu in the sidebar. If you selected a prototype when creating the product, certain keys may already be set up. Otherwise, type in the (internal) name of an existing property and a value.
 
 NOTE: The Option Type must already exist - it is not automatically created.
 
@@ -254,4 +254,3 @@ NOTE. The "migration section":migration.html of the guides gives an overview on 
 This discusses how the variant option representation works and how she used it to build an
 extension for enhanced product option selection.
 The blog post appeared in the "Endpoint blog":http://blog.endpoint.com/.
-
