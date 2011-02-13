@@ -107,7 +107,7 @@ Spree comes with a handy generator for creating a new Spree application.  If you
 
 This creates a directory named +foofah+ with all of the necessary files.  It will also automatically modify your +Gemfile+ so that its including the newly created engine/gem.
 
-INFO. For information on testing your extension, please see the "Testing Guide":http://localhost:3000/testing.html#testing-your-extensions.
+INFO. For information on testing your extension, please see the "Testing Guide":testing.html#testing-your-extensions.
 
 h4. Sharing Your Extension
 
