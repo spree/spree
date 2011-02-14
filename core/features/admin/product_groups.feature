@@ -25,6 +25,65 @@ Feature: Admin visiting product groups
     Then I should see "Successfully updated!"
     Then I should see "most popular rails items 99"
 
+  @javascript
+  Scenario: applying scope product name have following
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "Product name have following" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "Product name have following" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product name or meta keywords have following
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "Product name or meta keywords have following" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "Product name or meta keywords have following " within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product name or description have following
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "Product name or description have following" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "Product name or description have following " within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product with ids
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "Products with IDs" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "Products with IDs" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product with option and value
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "With option and value" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "With option and value" within "table#product_scopes"
+
+
+
+
+
   @javascript @stop @wip
   Scenario: Visiting admin product groups page to edit it
     Given a product group exists
