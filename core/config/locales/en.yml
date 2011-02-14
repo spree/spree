@@ -556,6 +556,11 @@ en:
   order_date: "Order Date"
   order_details: "Order Details"
   order_email_resent: "Order Email Resent"
+  order_mailer:
+    confirm_email:
+      subject:  "Order Confirmation"
+    cancel_email:
+      subject: "Cancellation of Order"
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
@@ -834,6 +839,9 @@ en:
   ship_address: "Ship Address"
   shipment: Shipment
   shipment_details: Shipment Details
+  shipment_mailer:
+    shipped_email:
+      subject: "Shipment Notification"
   shipment_number: "Shipment #"
   shipment_state: Shipment State
   shipment_states:
