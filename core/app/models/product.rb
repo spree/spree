@@ -82,6 +82,7 @@ class Product < ActiveRecord::Base
   end
   search_methods :group_by_products_id
 
+  scope :id_equals, lambda { |input_id| where("products.id = ?", input_id) }
 
   # ----------------------------------------------------------------------------------------------------------
   #
