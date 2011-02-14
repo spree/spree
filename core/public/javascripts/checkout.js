@@ -4,7 +4,7 @@
     $('#checkout_form_address').validate();
 
     var get_states = function(region){
-      var country        = $('span#' + region + 'country :only-child').val();
+      var country        = $('span#' + region + 'country :first-child').val();
       return state_mapper[country];
     }
     
