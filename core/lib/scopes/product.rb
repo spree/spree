@@ -41,6 +41,7 @@ module Scopes::Product
   ]
 
   ORDERING.each do |name|
+    next if %w(asecend_by_master_price descend_by_master_price).include?(name.to_s)
     r = name.to_s.match(/(.*)_by_(.*)/)
 
     order_text = "products.#{r[2]} "
@@ -49,6 +50,11 @@ module Scopes::Product
     Product.send(:scope, name.to_s, Product.send(:relation).order(order_text) )
   end
 
+  ::Product.scope :ascend_by_master_price, lambda {
+    Product.joins(:variants_with_only_master).order('variants.price asc') }
+
+  ::Product.scope :descend_by_master_price, lambda {
+    Product.joins(:variants_with_only_master).order('variants.price desc') }
 
   ATTRIBUTE_HELPER_METHODS = {
     :with_ids => :product_picker_field

@@ -52,6 +52,12 @@ class Product < ActiveRecord::Base
     :conditions => ["variants.deleted_at IS NULL"],
     :dependent => :destroy
 
+  has_many :variants_with_only_master,
+    :class_name => 'Variant',
+    :conditions => ["variants.deleted_at IS NULL AND variants.is_master = ?", true],
+    :dependent => :destroy
+
+
   validates :name, :price, :permalink, :presence => true
 
   accepts_nested_attributes_for :product_properties, :allow_destroy => true, :reject_if => lambda { |pp| pp[:property_name].blank? }
