@@ -43,8 +43,8 @@ module Scopes::Product
   ORDERING.each do |name|
     r = name.to_s.match(/(.*)_by_(.*)/)
 
-    order_text = "#{r[2]} "
-    order_text << r[1] == 'ascend' ?  "asc" : "desc"
+    order_text = "products.#{r[2]} "
+    order_text << ((r[1] == 'ascend') ?  "asc" : "desc")
 
     Product.send(:scope, name.to_s, Product.send(:relation).order(order_text) )
   end
