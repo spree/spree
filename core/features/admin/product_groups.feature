@@ -21,5 +21,6 @@ Feature: Admin visiting product groups
     When I click on first link with class "admin_edit_product_group"
     When I fill in "product_group_name" with "most popular rails items 99"
     When I press "Update"
+    When I follow "Product Groups"
     Then I should see "Successfully updated!"
     Then I should see "most popular rails items 99"
