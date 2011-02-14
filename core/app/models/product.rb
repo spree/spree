@@ -84,6 +84,8 @@ class Product < ActiveRecord::Base
 
   scope :id_equals, lambda { |input_id| where("products.id = ?", input_id) }
 
+  scope :taxons_name_eq, lambda { |name| joins(:taxons).where("taxons.name = ?", name) }
+
   # ----------------------------------------------------------------------------------------------------------
   #
   # The following methods are deprecated and will be removed in a future version of Spree
