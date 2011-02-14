@@ -47,7 +47,13 @@ class ProductScope < ActiveRecord::Base
     errors.add(:name, "is not a valid scope name") unless Product.respond_to?(self.name.intern)
     apply_on(Product).limit(0) != nil
   rescue Exception => e
-    puts e.backtrace unless Rails.env.production?
+    unless Rails.env.production?
+
+      puts "name: #{self.name}"
+      puts "arguments: #{self.arguments.inspect}"
+      puts e.message
+      puts e.backtrace
+    end
     errors.add(:arguments, "are incorrect")
   end
 
