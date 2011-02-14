@@ -26,7 +26,7 @@ group :cucumber do
   gem 'cucumber-rails'
   gem 'database_cleaner', '~> 0.5.2'
   gem 'nokogiri'
-  gem 'capybara'
+  gem 'capybara', '= 0.4.1.2'
   gem 'factory_girl_rails'
   gem 'factory_girl', '= 1.3.3'
 
