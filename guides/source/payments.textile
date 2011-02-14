@@ -159,7 +159,7 @@ If your payment method requires preferences, add them to your class and they wil
 <shell>
   class PaymentMethod::MyMethod
     preference :login, :string
-  	preference :password, :string	
+    preference :password, :string
   end
 </shell>
 

@@ -77,7 +77,7 @@ SSL behavior in Spree is determined by two different preferences.
 |+allow_ssl_in_production+|true|
 |+allow_ssl_in_development_and_test+|false|
 
-For more information on preferences in general you may wish to read the "Preference Guide":/preferences.html.
+For more information on preferences in general you may wish to read the "Preference Guide":preferences.html.
 
 h5. Changing the Default Settings
 
@@ -138,7 +138,7 @@ Please consult your web server documentation for more details on enabling produc
 
 h4. Passenger Timeout
 
-If you are running on "Passenger":http://www.modrails.com then you may be noticing that the first request to your Spree application is very slow if the application has been idle for some time (or you have just restarted.)  Consider changing the "PassengerPoolIdleTime":http://www.modrails.com/documentation/Users%20guide.html#PassengerPoolIdleTime as described in the Passenger documentation.
+If you are running on "Passenger":http://www.modrails.com then you may be noticing that the first request to your Spree application is very slow if the application has been idle for some time (or you have just restarted.)  Consider changing the "PassengerPoolIdleTime":http://www.modrails.com/documentation/Users%20guide%20Apache.html#PassengerPoolIdleTime as described in the Passenger documentation.
 
 h4. Caching
 

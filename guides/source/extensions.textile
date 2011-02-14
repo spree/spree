@@ -107,7 +107,7 @@ Spree comes with a handy generator for creating a new Spree application.  If you
 
 This creates a directory named +foofah+ with all of the necessary files.  It will also automatically modify your +Gemfile+ so that its including the newly created engine/gem.
 
-INFO. For information on testing your extension, please see the "Testing Guide":http://localhost:3000/testing.html#testing-your-extensions.
+INFO. For information on testing your extension, please see the "Testing Guide":testing.html#testing-your-extensions.
 
 h4. Sharing Your Extension
 
@@ -140,7 +140,7 @@ h4. Getting Started
 
 Let’s start by building a simple extension. Suppose we want the ability to mark certain products as part of a promotion. We’d like to add an admin interface for marking certain items as being part of the promotion. We’d also like to highlight these products in our store view. This is a great example of how an extension can be used to build on the solid Spree foundation. We’ll be adding our own custom models, views, controllers, routes and locales via the new extension.
 
-We're going to assume you already have a functioning Spree application.  If you have not yet achieved this you should read the "Getting Started Guide":/getting_started.html first.
+We're going to assume you already have a functioning Spree application.  If you have not yet achieved this you should read the "Getting Started Guide":getting_started.html first.
 
 So let's start by generating the new extension
 
@@ -305,7 +305,7 @@ The best way to add minor details to an existing view (such as adding an admin t
   end
 </ruby>
 
-Please see the "Customization Guide":/customization.html for a more extensive discussion about hooks.
+Please see the "Customization Guide":customization.html for a more extensive discussion about hooks.
 
 INFO. You'll need to add a translation for the promotions tab before it will render properly.  Please see the next section for details.
 

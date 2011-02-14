@@ -48,6 +48,7 @@ h5. Available hooks
 
 Hooks are pre-defined in most templates within Spree and are available to let you add content after product lists, within sidebars and other useful places. There is a full list of "available hooks":hooks.html.
 
+
 h5. Where to define hooks
 
 Hook definitions can be located anywhere, but most sites and extensions use the following convention:
@@ -109,8 +110,6 @@ h5. Sample hook definition file:
     end
   end
 </ruby>
-
-
 
 
 h4. Template Replacements
