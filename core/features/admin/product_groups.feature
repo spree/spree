@@ -80,6 +80,60 @@ Feature: Admin visiting product groups
     When I press "Add"
     Then async I should see "With option and value" within "table#product_scopes"
 
+  @javascript
+  Scenario: applying scope product with property
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "With property" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "With property" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product with property value
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "With property value" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "With property value" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product with value
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "With value" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "With value" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product with option
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "With value" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "With value" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product with value
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "With value" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "With value" within "table#product_scopes"
 
 
 
