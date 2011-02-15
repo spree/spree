@@ -27,7 +27,9 @@
         <td><%= link_to pg_search_path(:product_group_name => pg.permalink), pg_search_path(:product_group_name => pg.permalink) %></td>
         <td><%== pg.product_scopes.map(&:to_sentence).join("<br />") %></td>
         <td><%= pg.products.count %></td>
-        <td><%= link_to_edit pg %> &nbsp; <%= link_to_delete pg %></td>
+        <td>
+          <%= link_to_edit pg, :class => 'admin_edit_product_group' %> &nbsp; <%= link_to_delete pg %>
+        </td>
       </tr>
     <% end %>
   </tbody>

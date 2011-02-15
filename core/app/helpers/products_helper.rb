@@ -22,28 +22,9 @@ module ProductsHelper
     options.delete(:format_as_currency) ? format_price(amount, options) : amount
   end
 
-  def format_price(price, options={})
-    options.assert_valid_keys(:show_vat_text)
-    options.reverse_merge! :show_vat_text => Spree::Config[:show_price_inc_vat]
-    formatted_price = number_to_currency(price)
-    if options[:show_vat_text]
-      I18n.t(:price_with_vat_included, :price => formatted_price)
-    else
-      formatted_price
-    end
-  end
-
   # converts line breaks in product description into <p> tags (for html display purposes)
   def product_description(product)
     raw(product.description.gsub(/^(.*)$/, '<p>\1</p>'))
-  end
-
-  # generates nested url to product based on supplied taxon
-  def seo_url(taxon, product = nil)
-    return '/t/' + taxon.permalink if product.nil?
-    warn "DEPRECATION: the /t/taxon-permalink/p/product-permalink urls are "+
-      "not used anymore. Use product_url instead. (called from #{caller[0]})"
-    return product_url(product)
   end
 
 end

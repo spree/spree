@@ -40,6 +40,22 @@ module Scopes::Product
     :descend_by_popularity,
   ]
 
+  ORDERING.each do |name|
+    next if %w(asecend_by_master_price descend_by_master_price).include?(name.to_s)
+    r = name.to_s.match(/(.*)_by_(.*)/)
+
+    order_text = "products.#{r[2]} "
+    order_text << ((r[1] == 'ascend') ?  "asc" : "desc")
+
+    Product.send(:scope, name.to_s, Product.send(:relation).order(order_text) )
+  end
+
+  ::Product.scope :ascend_by_master_price, lambda {
+    Product.joins(:variants_with_only_master).order('variants.price asc') }
+
+  ::Product.scope :descend_by_master_price, lambda {
+    Product.joins(:variants_with_only_master).order('variants.price desc') }
+
   ATTRIBUTE_HELPER_METHODS = {
     :with_ids => :product_picker_field
   }
@@ -59,9 +75,18 @@ module Scopes::Product
   }
 
 
-  ::Product.scope :price_between, lambda {|low,high|
+  ::Product.scope :price_between, lambda { |low, high|
     { :joins => :master, :conditions => ["variants.price BETWEEN ? AND ?", low, high] }
   }
+
+  ::Product.scope :master_price_lte, lambda { |price|
+    { :joins => :master, :conditions => ["variants.price <= ?", price] }
+  }
+
+  ::Product.scope :master_price_gte, lambda { |price|
+    { :joins => :master, :conditions => ["variants.price >= ?", price] }
+  }
+
 
   # This scope selects products in taxon AND all its descendants
   # If you need products only within one taxon use

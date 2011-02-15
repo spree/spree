@@ -17,4 +17,9 @@ Feature: Admin visiting prototypes
     When I fill in "prototype_name" with "male shirts"
     When I press "Create"
     Then I should see "Successfully created!"
-    #Then edit destroy #=> FIXME
+    When I follow "Prototypes"
+    When I click on first link with class "admin_edit_prototype"
+    When I fill in "prototype_name" with "Shirt 99"
+    When I press "Update"
+    Then I should see "Successfully updated!"
+    Then I should see "Shirt 99"

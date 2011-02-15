@@ -87,5 +87,32 @@ module Spree::BaseHelper
     return Country.all unless zone = Zone.find_by_name(Spree::Config[:checkout_zone])
     zone.country_list
   end
+  
+  def format_price(price, options={})
+    options.assert_valid_keys(:show_vat_text)
+    options.reverse_merge! :show_vat_text => Spree::Config[:show_price_inc_vat]
+    formatted_price = number_to_currency(price)
+    if options[:show_vat_text]
+      I18n.t(:price_with_vat_included, :price => formatted_price)
+    else
+      formatted_price
+    end
+  end
+  
+  # generates nested url to product based on supplied taxon
+  def seo_url(taxon, product = nil)
+    return '/t/' + taxon.permalink if product.nil?
+    warn "DEPRECATION: the /t/taxon-permalink/p/product-permalink urls are "+
+      "not used anymore. Use product_url instead. (called from #{caller[0]})"
+    return product_url(product)
+  end
+  
+  def current_orders_product_count
+    if current_order.blank? || current_order.item_count < 1
+      return 0
+    else
+      return current_order.item_count
+    end
+  end
 
 end

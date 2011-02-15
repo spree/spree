@@ -25,9 +25,12 @@ class ProductScope < ActiveRecord::Base
   def apply_on(another_scope)
     array = *self.arguments
     if Product.respond_to?(self.name.intern)
-      relation2 = Product.send(self.name.intern, array)
+      relation2 = Product.send(self.name.intern, *array)
     else
       relation2 = Product.search({self.name.intern => array}).relation
+    end
+    unless another_scope.class == ActiveRecord::Relation
+      another_scope = another_scope.send(:relation)
     end
     another_scope.merge(relation2)
   end
@@ -41,9 +44,16 @@ class ProductScope < ActiveRecord::Base
 
   # checks validity of the named scope (if its safe and can be applied on Product)
   def check_validity_of_scope
-    errors.add(:name, "is not a valid scope name") unless Product.condition?(self.name)
+    errors.add(:name, "is not a valid scope name") unless Product.respond_to?(self.name.intern)
     apply_on(Product).limit(0) != nil
-  rescue Exception
+  rescue Exception => e
+    unless Rails.env.production?
+
+      puts "name: #{self.name}"
+      puts "arguments: #{self.arguments.inspect}"
+      puts e.message
+      puts e.backtrace
+    end
     errors.add(:arguments, "are incorrect")
   end
 
