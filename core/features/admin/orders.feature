@@ -24,12 +24,22 @@ Feature: Admin visiting orders
     When I go to the admin home page
     When I follow the first admin_edit_order link
     Then I should see "Total: $10.00"
-    When I confirm a js popup on the next step
-    Then click on css "#line-items tr td:eq(5) a"
-    #Then I should see "Total: 0.00" => FIXME not able to click on jConfirm box
-
-
-
+    When I fill in "order_line_items_attributes_0_quantity" with "2"
+    Then async I should see "Total: $20.00"
+    When I press "Continue"
+    When I fill in "order_ship_address_attributes_firstname" with "John 99"
+    When I fill in "order_ship_address_attributes_lastname" with "Doe"
+    When I fill in "order_ship_address_attributes_address1" with "100 first lane"
+    When I fill in "order_ship_address_attributes_address2" with "#101"
+    When I fill in "order_ship_address_attributes_city" with "Bethesda"
+    When I fill in "order_ship_address_attributes_zipcode" with "20170"
+    When I select "Maryland" from "order_ship_address_attributes_state_id"
+    When I fill in "order_ship_address_attributes_phone" with "123-456-7890"
+    When I press "Continue"
+    When I go to the admin home page
+    When I follow the first admin_edit_order link
+    When I follow "Customer Details"
+    Then the "order_ship_address_attributes_firstname" field should contain "John 99"
 
   Scenario: Search orders with only completed at input
     Given the following orders exist:
