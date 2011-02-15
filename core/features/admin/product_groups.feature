@@ -124,6 +124,60 @@ Feature: Admin visiting product groups
     When I press "Add"
     Then async I should see "With option" within "table#product_scopes"
 
+  @javascript
+  Scenario: applying scope product price between
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "Price between" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "Price between" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product master price lesser or equal to
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "Master price lesser or equal to" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "Master price lesser or equal to" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope product master price greater or equal to
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "Master price greater or equal to" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "Master price greater or equal to" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope In taxons and all their descendants
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "In taxons and all their descendants" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "In taxons and all their descendants" within "table#product_scopes"
+
+  @javascript
+  Scenario: applying scope In Taxon(without descendants)
+    Given I go to the admin home page
+    Given a product group exists
+    When I follow "Products"
+    When I follow "Product Groups"
+    When I click on first link with class "admin_edit_product_group"
+    When I select "In Taxon(without descendants)" from "product_scope_name"
+    When I press "Add"
+    Then async I should see "In Taxon(without descendants)" within "table#product_scopes"
 
 
 
