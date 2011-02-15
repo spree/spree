@@ -24,7 +24,7 @@
 # without retriving all records.
 #
 # ProductGroup operates on named scopes defined for product in Scopes::Product,
-# or generated automatically by Searchlogic
+# or generated automatically by meta_search
 #
 class ProductGroup < ActiveRecord::Base
   validates :name, :presence => true # TODO ensure that this field is defined as not_null

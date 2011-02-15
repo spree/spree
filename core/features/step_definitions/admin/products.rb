@@ -2,6 +2,10 @@ Given /^count_on_hand is 10 for all products$/ do
   Product.update_all("count_on_hand=10")
 end
 
+When /^I click on first link with class "(.*)"$/ do |class_name|
+  page.first('.'+class_name).click
+end
+
 
 Then /^I should see listing products tabular attributes with name ascending$/ do
   output = tableish('table#listing_products tr', 'td,th')
