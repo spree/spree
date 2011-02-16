@@ -3,14 +3,15 @@
 #
 # +mandatory+
 #
-# The charge is required and will not be removed from the order, even if the amount is zero.  This is
-# useful for representing things such as shipping and tax charges where you may want to make it explicitly
+# If this flag is set to true then it means the the charge is required and will not be removed from the
+# order, even if the amount is zero.  In other words a record will be created even if the amount is zero.
+# This is  useful for representing things such as shipping and tax charges where you may want to make it explicitly
 # clear that no charge was made for such things.
 #
-# +frozen+
+# +locked+
 #
 # The charge is never to be udpated.  Typically you would want to freeze certain adjustments after checkout.
-# One use case for this is if you want to freeze a shipping adjustment so that its value does not change
+# One use case for this is if you want to lock a shipping adjustment so that its value does not change
 # in the future when making other trivial edits to the order (like an email change).
 class Adjustment < ActiveRecord::Base
   belongs_to :order
@@ -24,9 +25,8 @@ class Adjustment < ActiveRecord::Base
   scope :shipping, lambda { where(:label => I18n.t(:shipping)) }
   scope :optional, where(:mandatory => false)
 
-  # update the order totals, etc.
-  after_save {order.update!}
-  after_destroy {order.update!}
+  after_save { order.update! }
+  after_destroy { order.update! }
 
   # Checks if adjustment is applicable for the order. Should return _true_ if adjustment should be preserved and
   # _false_ if removed. Default behaviour is to preserve adjustment if amount is present and non 0.  Exceptions
