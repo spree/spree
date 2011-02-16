@@ -78,10 +78,11 @@ class Order < ActiveRecord::Base
       transition :from => 'cart', :to => 'address'
       transition :from => 'address', :to => 'delivery'
       transition :from => 'delivery', :to => 'payment'
-      transition :from => 'payment', :to => 'confirm'
       transition :from => 'confirm', :to => 'complete'
+      # note: some payment methods will not support a confirm step
+      transition :from => 'payment', :to => 'confirm', :if => Proc.new { Gateway.current and Gateway.current.payment_profiles_supported? }
+      transition :from => 'payment', :to => 'complete'
     end
-    #TODO - add conditional confirmation step (only when gateway supports it, etc.)
 
     event :cancel do
       transition :to => 'canceled', :if => :allow_cancel?
