@@ -120,7 +120,7 @@ class Creditcard < ActiveRecord::Base
   end
 
   def void(payment)
-    response = payment_gateway.void(payment.response_code, self, minimal_gateway_options(payment))
+    response = payment_gateway.void(payment.response_code, minimal_gateway_options(payment))
     record_log payment, response
 
     if response.success?
