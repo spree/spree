@@ -3,8 +3,6 @@ When /^I follow "New Adjustment" custom$/ do
 end
 
 When /^I click first link from selector "(.*)"$/ do |selector|
-  page
-  require 'ruby-debug'; debugger
   page.first(selector).click
 end
 

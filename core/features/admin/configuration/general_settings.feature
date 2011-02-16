@@ -10,7 +10,6 @@ Feature: Admin > configurations > general_settings
     Then I should see "Spree Demo Site"
     Then I should see "demo.spreecommerce.com"
 
-    @wip @stop
   Scenario: edit general settings (admin)
     Given preference settings exist
     Given I go to the admin home page

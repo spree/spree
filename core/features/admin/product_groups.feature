@@ -179,10 +179,7 @@ Feature: Admin visiting product groups
     When I press "Add"
     Then async I should see "In Taxon(without descendants)" within "table#product_scopes"
 
-
-
-
-  @javascript @stop @wip
+  @javascript
   Scenario: Visiting admin product groups page to edit it
     Given a product group exists
     Given the following products exist:
