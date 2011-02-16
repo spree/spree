@@ -396,7 +396,7 @@ class Order < ActiveRecord::Base
         :previous_state => old_shipment_state,
         :next_state     => self.shipment_state,
         :name           => "shipment" ,
-        :user_id        => User.current.id || self.user_id
+        :user_id        => (User.current && User.current.id) || self.user_id
       })
     end
 
@@ -425,7 +425,7 @@ class Order < ActiveRecord::Base
         :previous_state => old_payment_state,
         :next_state     => self.payment_state,
         :name           => "payment" ,
-        :user_id        =>  User.current.id || self.user_id
+        :user_id        =>  (User.current && User.current.id) || self.user_id
       })
     end
   end
