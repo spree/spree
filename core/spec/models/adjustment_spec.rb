@@ -6,6 +6,17 @@ describe Adjustment do
     it { should have_valid_factory(:adjustment) }
   end
 
+  context "factory_girl" do
+    before do
+      Order.delete_all
+      @order = Factory(:order)
+      @adjustment = Factory(:adjustment, :order => @order)
+    end
+    it 'should refer to the order that was passed to the factory' do
+      @adjustment.order.id.should == @order.id
+    end
+  end
+
   let(:order) { mock_model(Order, :update! => nil) }
   let(:adjustment) { Adjustment.new }
   it "should accept a negative amount"
