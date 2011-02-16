@@ -59,6 +59,15 @@ If you wish to test a particular line number of the spec file then you can do so
   $ bundle exec rspec spec/models/state_spec.rb:7
 </shell>
 
+h4. Using factories
+
+spree uses "factory_girl":https://github.com/thoughtbot/factory_girl to create valid records for testing purpose. All the factories are also packaged in the gem. So ff you are writing an extension or if you just want to play with spree models then you can use these factories as illustrated below.
+
+<shell>
+  $ rails console
+  $ require 'spree_core/testing_support/factories'
+</shell>
+
 h3. Testing Your Extensions
 
 The generator used by Spree to create new extensions will do all of the work to get your extension ready for testing.  There are some cases, however, where you may wish to maintain an extension in its own repository as a standalone gem (so you can redistribute and share the code.)  In these cases there is a little more work to be done before you can start testing.  We'll cover both scenarios here.
