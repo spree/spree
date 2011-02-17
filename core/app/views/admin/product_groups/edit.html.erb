@@ -26,19 +26,19 @@
   <% end %>
 
 
-  <%= form_tag(admin_product_group_product_scopes_path(@product_group), 'data-remote' => true, :id => 'new_product_group_form') do |f| %>
-    <% 
-    options = 
+  <%= form_tag(admin_product_group_product_scopes_path(@product_group), 'data-remote' => true, :id => 'new_product_group_form') do %>
+    <%
+    options =
     grouped_options_for_select(
-    Scopes::Product::SCOPES.map do |group_name, scopes|  
-      [ 
-        t(:name, :scope => [:product_scopes, :groups, group_name]), 
+    Scopes::Product::SCOPES.map do |group_name, scopes|
+      [
+        t(:name, :scope => [:product_scopes, :groups, group_name]),
         scopes.keys.map do |scope_name|
           [ t(:name, :scope => [:product_scopes, :scopes, scope_name]), scope_name]
         end
       ]
     end
-    ) 
+    )
     %>
     <p>
       <label for="product_scope_name"><%= t('add_scope') %></label>

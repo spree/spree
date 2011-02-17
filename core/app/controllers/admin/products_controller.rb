@@ -91,7 +91,7 @@ class Admin::ProductsController < Admin::BaseController
       params[:search] = {} if params[:search].nil?
       params[:search][:meta_sort] ||= "name.asc"
       tmp = params[:search].except(:deleted_at_not_null)
-      @search = end_of_association_chain.search(tmp)
+      @search = end_of_association_chain.metasearch(tmp)
 
       pagination_options = {:include   => {:variants => [:images, :option_values]},
                             :per_page  => Spree::Config[:admin_products_per_page],

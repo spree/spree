@@ -94,7 +94,7 @@ class Admin::OrdersController < Admin::BaseController
       params[:search][:meta_sort] = 'completed_at.desc'
     end
 
-    @search = Order.search(params[:search])
+    @search = Order.metasearch(params[:search])
 
     # QUERY - get per_page from form ever???  maybe push into model
     # @search.per_page ||= Spree::Config[:orders_per_page]

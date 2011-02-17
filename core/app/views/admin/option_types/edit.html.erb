@@ -18,7 +18,7 @@
       <tr id="none">
         <td colspan="3"><%= @option_type.option_values.empty? ? t("none") : "" %></td>
       </tr>
-      <% f.fields_for :option_values do |option_value_form| %>
+      <%= f.fields_for :option_values do |option_value_form| %>
         <%= render "option_value_fields", :f => option_value_form %>
       <% end %>
     </tbody>

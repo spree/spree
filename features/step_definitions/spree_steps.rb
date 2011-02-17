@@ -13,9 +13,3 @@ end
 Then /^I should see "([^\"]*)" translation$/ do |key|
   page.should have_content(I18n.t(key))
 end
-
-Then /^I debug$/ do
-  require 'ruby-debug'; debugger
-  breakpoint
-  0
-end

@@ -1,6 +1,7 @@
 Feature: Admin > configurations > shipping_methods
 
   Scenario: Admin > configurations > shipping_methods
+    Given I go to the admin home page
     When I follow "Configuration"
     Given 2 shipping methods exist
     When I follow "Shipping Methods"
