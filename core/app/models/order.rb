@@ -26,6 +26,7 @@ class Order < ActiveRecord::Base
   before_create :generate_order_number
 
   validates_presence_of :email, :if => :require_email
+  validate :has_available_shipment
 
   #delegate :ip_address, :to => :checkout
   def ip_address
@@ -457,6 +458,13 @@ class Order < ActiveRecord::Base
   # Determine if email is required (we don't want validation errors before we hit the checkout)
   def require_email
     return true unless new_record? or state == 'cart'
+  end
+
+  def has_available_shipment
+    return unless :address == state_name.to_sym
+    return unless ship_address && ship_address.valid?
+    errors.add :base, :no_shipping_methods_available \
+      if available_shipping_methods.empty?
   end
 
   def after_cancel
