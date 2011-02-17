@@ -39,11 +39,10 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
 end
 
 When /^I choose "(.*?)" as shipping method$/ do |shipping_method|
-  # TODO: remove next line after fixing capybara's find by label feature
   shipping_method = "order_shipping_method_id_#{ShippingMethod.find_by_name(shipping_method).id}"
   When %{I choose "#{shipping_method}"}
   And %{press "Save and Continue"}
-  Then %{I should see "Payment Information" within "legend"}
+  Then %{I should see "Payment Information"}
 end
 
 When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and set coupon code to "(.*?)")?$/ do |shipping_method, payment_method, coupon_code|
@@ -58,8 +57,6 @@ When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and 
   end
 
   And %{press "Save and Continue"}
-  Then %{I should see "Confirm" within "legend"}
-  When %{I press "Place Order"}
 end
 
 Then /^cart should be empty$/ do

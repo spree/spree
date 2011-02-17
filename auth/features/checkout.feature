@@ -26,7 +26,7 @@ Feature: Checkout
 
   @selenium
   Scenario: Uncompleted guest order should be associated with user after log in
-    Given a payment method exists
+    Given a bogus payment method exists
     Given I am signed up as "email@person.com/password"
     And I am logged out
 
@@ -47,7 +47,10 @@ Feature: Checkout
     And check "order_use_billing"
     And press "Save and Continue"
     Then I should see "Shipping Method"
-    When I choose "UPS Ground" as shipping method and "Check" as payment method
+    When I choose "UPS Ground" as shipping method
+
+    When I enter valid credit card details
+    And press "Place Order"
     Then I should see "Your order has been processed successfully"
     And I should have 1 order
 
