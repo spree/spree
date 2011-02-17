@@ -10,7 +10,7 @@ gem "rdoc",  "2.2"
 gemspec
 
 group :test do
-  gem 'rspec-rails', '= 2.4.1'
+  gem 'rspec-rails', '= 2.5.0'
   gem 'factory_girl_rails'
   gem 'factory_girl', '= 1.3.3'
   gem 'rcov'
