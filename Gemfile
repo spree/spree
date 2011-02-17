@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem "spree", :path => File.dirname(__FILE__)
 
-# gem 'mysql'
+# gem 'mysql2'
 gem 'sqlite3-ruby'
 gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 gem "rdoc",  "2.2"
