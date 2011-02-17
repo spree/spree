@@ -169,7 +169,7 @@ describe Creditcard do
       @payment.state = 'pending'
     end
     it "should call payment_gateway.void with the payment's response_code" do
-      @creditcard.payment_gateway.should_receive(:void).with('123', @creditcard, {})
+      @creditcard.payment_gateway.should_receive(:void).with('123', {})
       @creditcard.void(@payment)
     end
     it "should log the response" do
