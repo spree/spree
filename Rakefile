@@ -52,6 +52,12 @@ task :sandbox do
         append_file "Gemfile" do
 <<-gems
           gem 'spree', :path => '../' \n
+          if RUBY_VERSION < "1.9"
+            gem "ruby-debug"
+          else
+            gem "ruby-debug19"
+          end
+
 gems
         end
       end
