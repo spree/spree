@@ -7,6 +7,13 @@ Feature: Visiting products
       | Categories  |
     Given the custom taxons and custom products exist
 
+  Scenario: show page
+    When I go to the home page
+    When I click first link from selector "ul.product-listing a"
+    Then I should see "$17.99"
+    When I click first link from selector "form button.primary"
+    Then I should see "Shopping Cart"
+
   Scenario: visit products page
     When I go to the home page
     When I fill in "keywords" with "shirt"

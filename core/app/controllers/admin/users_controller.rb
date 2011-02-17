@@ -1,6 +1,9 @@
 class Admin::UsersController < Admin::BaseController
   resource_controller
-  before_filter :check_json_authenticity, :only => :index
+
+  #FIXME why is this needed?
+  #before_filter :check_json_authenticity, :only => :index
+
   before_filter :load_roles, :only => [:edit, :new, :update, :create]
 
   create.after :save_user_roles
@@ -22,27 +25,26 @@ class Admin::UsersController < Admin::BaseController
     when 'basic'
       collection.map {|u| {'id' => u.id, 'name' => u.email}}.to_json
     else
-      collection.to_json(:include =>
-        {:bill_address => {:include => [:state, :country]},
-        :ship_address => {:include => [:state, :country]}})
+      collection.to_json( :only => [:email],
+                          :include => { :bill_address => {:include => [:state, :country]},
+                                        :ship_address => {:include => [:state, :country]}})
     end
   end
 
   def collection
     return @collection if @collection.present?
-    unless request.xhr?
-      @search = User.search(params[:search])
-
-      @collection = @search.paginate(:per_page => Spree::Config[:admin_products_per_page], :page => params[:page])
-
-      #scope = scope.conditions "lower(email) = ?", @filter.email.downcase unless @filter.email.blank?
+    if request.xhr?
+      raise 'boom write test for this case if it is a valid case FIXME'
+      @collection = User.includes(:bill_address => [:state, :country], :ship_address => [:state, :country])
+      @collection = @collection.where("users.email like :search
+                                  OR addresses.firstname like :search
+                                  OR addresses.lastname like :search
+                                  OR ship_addresses_users.firstname like :search
+                                  OR ship_addresses_users.lastname like :search",{:search => "#{params[:q].strip}%"})
+      @collection = @collection.limit(params[:limit] || 100)
     else
-      @collection = User.includes(:bill_address => [:state, :country], :ship_address => [:state, :country]).where("users.email like :search
-                                                                               OR addresses.firstname like :search
-                                                                               OR addresses.lastname like :search
-                                                                               OR ship_addresses_users.firstname like :search
-                                                                               OR ship_addresses_users.lastname like :search",
-                                                                               {:search => "#{params[:q].strip}%"}).limit(params[:limit] || 100)
+      @search = User.search(params[:search])
+      @collection = @search.paginate(:per_page => Spree::Config[:admin_products_per_page], :page => params[:page])
     end
   end
 

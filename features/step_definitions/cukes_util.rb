@@ -1,3 +1,21 @@
+Given /^all (.*) are deleted$/ do |name|
+  name.singularize.gsub(' ','_').camelize.classify.constantize.delete_all
+end
+
+Then /^click on css "(.*)"$/ do |selector|
+  page.first(:css, selector).click
+end
+
+Then /^I debug$/ do
+  require 'ruby-debug'; debugger
+  breakpoint
+  0
+end
+
+When /^I click first link from selector "(.*)"$/ do |selector|
+  page.first(selector).click
+end
+
 def page_has_links(table)
   table.hashes.each do |h|
     selector = h[:within][1..-1]

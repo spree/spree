@@ -83,3 +83,17 @@ Then /^I should see listing tax categories tabular attributes$/ do
   data = output[1]
   data[0].should == TaxCategory.limit(1).order('name asc').to_a.first.name
 end
+
+Then /^verify tabular data for tracker index$/ do
+  output = tableish('table.index tr', 'td,th')
+  data = output[0]
+  data[0].should == 'Analytics ID'
+  data[1].should == 'Environment'
+  data[2].should == 'Active'
+  data[3].should == 'Action'
+
+  data = output[1]
+  data[0].should == 'A100'
+  data[1].should == 'Cucumber'
+  data[2].should == 'Yes'
+end
