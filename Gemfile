@@ -4,7 +4,11 @@ gem "spree", :path => File.dirname(__FILE__)
 
 # gem 'mysql'
 gem 'sqlite3-ruby'
-gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
+if RUBY_VERSION.to_f < 1.9
+  gem 'ruby-debug'
+else
+  gem 'ruby-debug19'
+end
 gem "rdoc",  "2.2"
 
 gemspec
@@ -15,10 +19,10 @@ group :test do
   gem 'factory_girl', '= 1.3.3'
   gem 'rcov'
   gem 'shoulda'
-  if RUBY_VERSION < "1.9"
-    gem "ruby-debug"
+  if RUBY_VERSION.to_f < 1.9
+    gem 'ruby-debug'
   else
-    gem "ruby-debug19"
+    gem 'ruby-debug19'
   end
 end
 
@@ -30,9 +34,9 @@ group :cucumber do
   gem 'factory_girl_rails'
   gem 'factory_girl', '= 1.3.3'
 
-  if RUBY_VERSION < "1.9"
-    gem "ruby-debug"
+  if RUBY_VERSION.to_f < 1.9
+    gem 'ruby-debug'
   else
-    gem "ruby-debug19"
+    gem 'ruby-debug19'
   end
 end
