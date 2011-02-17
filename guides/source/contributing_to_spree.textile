@@ -16,7 +16,7 @@ WARNING. We have an official contribution policy.  Please not just send us Githu
 
 h3. Contributing to the Core
 
-The core is the basic foundation of the Spree project.  It is maintained in Github under the "railsdog/spree":http://github.com/spree/spree/tree/master project.  There is a "core team":http://spreecommerce.com/core_team of developers who are responsible for maintaining the quality of the source code.  Your changes will ultimately need to be merged into the official project by a core member.  Thanks to "Github":http://github.com, however, you do not have to wait for a core member to get started with your fix.
+The core is the basic foundation of the Spree project.  It is maintained in Github under the "spree/spree":http://github.com/spree/spree/tree/master project.  There is a "core team":http://spreecommerce.com/core_team of developers who are responsible for maintaining the quality of the source code.  Your changes will ultimately need to be merged into the official project by a core member.  Thanks to "Github":http://github.com, however, you do not have to wait for a core member to get started with your fix.
 
 h4. One Time Steps
 
