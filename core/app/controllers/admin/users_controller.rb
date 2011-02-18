@@ -52,8 +52,10 @@ class Admin::UsersController < Admin::BaseController
     @roles = Role.all
   end
 
+  #FIXME write tests with user_role in auth
   def save_user_roles
     return unless params[:user]
+    return unless @user.respond_to?(:roles)
     @user.roles.delete_all
     params[:user][:role] ||= {}
     Role.all.each { |role|

@@ -1,4 +1,4 @@
-<h1><%= t("user_account") %></h1>        
+<h1><%= t("user_account") %></h1>
 
 <table>
   <tr>
@@ -6,7 +6,7 @@
     <td>
       <%= @user.email %>
     </td>
-  </tr>  
+  </tr>
   <tr>
     <th><%= t("roles") %></th>
     <td>
@@ -16,6 +16,6 @@
 </table>
 
 <p>
-  <%= link_to_edit @user %> <%= t('or') %>
+  <%= link_to_edit @user, :class => 'edit_user' %> <%= t('or') %>
   <%= link_to t('back'), collection_url %>
 </p>

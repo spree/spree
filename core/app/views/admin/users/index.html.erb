@@ -27,7 +27,7 @@
       <tr id="<%= dom_id user %>">
         <%- locals = {:user => user} %>
         <%= hook :admin_users_index_rows, locals do %>
-          <td width="350px"><%=link_to user.email, object_url(user) %></td>
+          <td width="350px" class='user_email'><%=link_to user.email, object_url(user) %></td>
         <% end %>
         <td>
           <%= hook :admin_users_index_row_actions, locals do %>
