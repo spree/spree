@@ -26,6 +26,7 @@ Feature: Checkout
 
   @selenium
   Scenario: Uncompleted guest order should be associated with user after log in
+    Given a shipping method exists
     Given a bogus payment method exists
     Given I am signed up as "email@person.com/password"
     And I am logged out
