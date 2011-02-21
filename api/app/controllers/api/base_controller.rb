@@ -74,7 +74,7 @@ class Api::BaseController < Spree::BaseController
       return @search unless @search.nil?
       params[:search] = {} if params[:search].blank?
       params[:search][:meta_sort] = 'created_at.desc' if params[:search][:meta_sort].blank?
-      @search = end_of_association_chain.search(params[:search])
+      @search = end_of_association_chain.metasearch(params[:search])
       @search
     end
 

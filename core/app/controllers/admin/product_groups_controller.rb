@@ -36,7 +36,7 @@ class Admin::ProductGroupsController < Admin::BaseController
     def collection
       params[:search] ||= {}
       params[:search][:meta_sort] ||= "name.desc"
-      @search = ProductGroup.search(params[:search])
+      @search = ProductGroup.metasearch(params[:search])
       @collection = @search.paginate( :per_page => Spree::Config[:per_page],
                                       :page     => params[:page])
     end

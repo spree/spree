@@ -43,7 +43,7 @@ class Admin::UsersController < Admin::BaseController
                                   OR ship_addresses_users.lastname like :search",{:search => "#{params[:q].strip}%"})
       @collection = @collection.limit(params[:limit] || 100)
     else
-      @search = User.search(params[:search])
+      @search = User.metasearch(params[:search])
       @collection = @search.paginate(:per_page => Spree::Config[:admin_products_per_page], :page => params[:page])
     end
   end

@@ -31,7 +31,7 @@ class Admin::ReportsController < Admin::BaseController
 
     params[:search][:meta_sort] ||= "created_at.desc"
 
-    @search = Order.search(params[:search])
+    @search = Order.metasearch(params[:search])
     @orders = @search
     @item_total = @search.sum(:item_total)
     @adjustment_total = @search.sum(:adjustment_total)
