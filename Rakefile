@@ -9,6 +9,15 @@ end
 
 task :default => [:spec, :cucumber ]
 
+desc "clean the whole repository by removing all the generated files"
+task :clean do
+  cmd = "rm -rf sandbox"; puts cmd; system cmd
+  %w(api auth core dash promo).each do |gem_name|
+    cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
+    cmd = "cd #{gem_name}/spec &&  rm -rf test_app"; puts cmd; system cmd
+  end
+end
+
 desc "run spec test for all gems"
 task :spec do
   %w(api auth core dash promo).each do |gem_name|
