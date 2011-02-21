@@ -2,6 +2,7 @@ class UserRegistrationsController < Devise::RegistrationsController
   include SpreeBase
   helper :users, 'spree/base'
 
+  after_filter :associate_user, :only => :create
   before_filter :check_permissions, :only => [:edit, :update]
   skip_before_filter :require_no_authentication
 
@@ -51,6 +52,12 @@ class UserRegistrationsController < Devise::RegistrationsController
 
   def check_permissions
     authorize!(:create, resource)
+  end
+
+  def associate_user
+    return unless current_user and current_order
+    current_order.associate_user!(current_user)
+    session[:guest_token] = nil
   end
 
 end
