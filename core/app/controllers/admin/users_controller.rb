@@ -1,7 +1,7 @@
 class Admin::UsersController < Admin::BaseController
   resource_controller
 
-  #FIXME why is this needed?
+  # http://spreecommerce.com/blog/2010/11/02/json-hijacking-vulnerability/
   before_filter :check_json_authenticity, :only => :index
 
   before_filter :load_roles, :only => [:edit, :new, :update, :create]
