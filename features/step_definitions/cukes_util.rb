@@ -18,10 +18,13 @@ end
 
 def page_has_links(table)
   table.hashes.each do |h|
-    selector = h[:within][1..-1]
+    #selector = h[:within][1..-1]
     #b = page.all(:xpath, "//div[@id='admin-menu']//a")
     #puts b.each {|r| puts r.native }
-    page.should have_xpath( "//div[@id='#{selector}']//a[@href='#{h[:url]}']", :text => h[:text] )
+    #page.should have_xpath( "//div[@id='#{selector}']//a[@href='#{h[:url]}']", :text => h[:text] )
+    within(h[:within]) do
+      page.find_link(h[:text])[:href].should == h[:url]
+    end
   end
 end
 
