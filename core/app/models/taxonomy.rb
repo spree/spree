@@ -1,8 +1,13 @@
 class Taxonomy < ActiveRecord::Base
+
+  validates :name, :presence => true
+
   has_many :taxons, :dependent => :destroy
   has_one :root, :class_name => 'Taxon', :conditions => "parent_id is null"
 
   after_save :set_name
+
+  private
 
   def set_name
     if self.root

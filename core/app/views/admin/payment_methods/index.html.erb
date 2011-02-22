@@ -3,7 +3,7 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li>
-      <%= button_link_to t("new_payment_method"), new_object_url, :icon => 'add',
+      <%= button_link_to t("new_payment_method"), new_admin_payment_method_path, :icon => 'add',
                                                                   :id => 'admin_new_payment_methods_link'  %>
     </li>
   </ul>
@@ -26,7 +26,10 @@
     </th>
   </tr>
   <tbody>
-    <% @payment_methods.each do |method|%>
+    <% @payment_methods.each do |method|
+         @edit_url = edit_admin_payment_method_path(method)
+         @delete_url = admin_payment_method_path(method)
+  %>
       <tr id="<%= dom_id method %>">
         <%- locals = {:method => method} %>
         <%= hook :admin_payment_methods_index_rows, locals do %>
@@ -38,7 +41,8 @@
         <% end %>
         <td width="140px">
           <%= hook :admin_payment_methods_index_row_actions, locals do %>
-            <%= link_to_edit method %> &nbsp;
+            <%= link_to_edit method, :class => 'edit' %>
+            &nbsp;
             <%= link_to_delete method %>
           <% end %>
         </td>

@@ -1,4 +1,9 @@
 <p class="form-buttons">
   <%= button t("actions.create") %>
-  <%= t("or") %> <%= link_to t("actions.cancel"), collection_url %>
+  <% if @new_collection_url %>
+    <%= t("or") %> <%= link_to t("actions.cancel"), @new_collection_url %>
+  <% else %>
+    <%= t("or") %> <%= link_to t("actions.cancel"), collection_url %>
+  <% end %>
+
 </p>

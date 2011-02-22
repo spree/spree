@@ -3,7 +3,8 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li>
-      <%= button_link_to t("new_mail_method"), new_object_url, :icon => 'add', :id => 'admin_new_mail_method_link'  %>
+      <%= button_link_to t("new_mail_method"), new_admin_mail_method_path,  :icon => 'add',
+                                                                      :id => 'admin_new_mail_method_link'  %>
     </li>
   </ul>
   <br class='clear' />
@@ -11,7 +12,7 @@
 
 <h1><%= t("mail_methods") %></h1>
 
-<table class="index">
+<table class="index" id='mail_methods_listing'>
   <thead>
     <%= hook :admin_mail_methods_index_headers do %>
       <th><%= t("environment") %></th>
@@ -22,7 +23,10 @@
     </th>
   </thead>
   <tbody>
-    <% @mail_methods.each do |method|%>
+    <% @mail_methods.each do |method|
+         @edit_url = edit_admin_mail_method_path(method)
+         @delete_url = admin_mail_method_path(method)
+    %>
       <tr id="<%= dom_id method %>">
         <%- locals = {:method => method} %>
         <%= hook :admin_mail_methods_index_rows, locals do %>
@@ -31,7 +35,7 @@
         <% end %>
         <td width="140px">
           <%= hook :admin_mail_methods_index_row_actions, locals do %>
-            <%= link_to_edit method %> &nbsp;
+            <%= link_to_edit method, :class => 'edit' %> &nbsp;
             <%= link_to_delete method %>
           <% end %>
         </td>

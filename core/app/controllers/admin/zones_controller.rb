@@ -1,3 +1,5 @@
+# FIXME
+# currently zones edit page is having javascript error. Will revisit this controller later
 class Admin::ZonesController < Admin::BaseController
   resource_controller
 
