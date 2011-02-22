@@ -11,7 +11,7 @@
 
 <h1><%= t("mail_methods") %></h1>
 
-<table class="index">
+<table class="index" id='mail_methods_listing'>
   <thead>
     <%= hook :admin_mail_methods_index_headers do %>
       <th><%= t("environment") %></th>
@@ -31,7 +31,7 @@
         <% end %>
         <td width="140px">
           <%= hook :admin_mail_methods_index_row_actions, locals do %>
-            <%= link_to_edit method %> &nbsp;
+            <%= link_to_edit method, :class => 'edit' %> &nbsp;
             <%= link_to_delete method %>
           <% end %>
         </td>

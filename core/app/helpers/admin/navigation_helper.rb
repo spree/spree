@@ -43,8 +43,8 @@ module Admin::NavigationHelper
     link_to_with_icon('edit', t("edit"), edit_object_url(resource), options)
   end
 
-  def link_to_clone(resource)
-    link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource))
+  def link_to_clone(resource, options={})
+    link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource), options)
   end
 
   def link_to_delete(resource, options = {}, html_options={})
@@ -57,18 +57,35 @@ module Admin::NavigationHelper
     options.reverse_merge! :success => "function(r){ jQuery('##{dom_id resource}').fadeOut('hide'); }"
     options.reverse_merge! :name => icon("delete") + ' ' + t("delete")
 
-    #link_to_with_icon('delete', t("delete"), object_url(resource), :confirm => t('are_you_sure'), :method => :delete )
+    link_to_function_delete(options, html_options)
+    #link_to_function_delete_native(options, html_options)
+  end
+
+  # this function does not use jConfirm
+  def link_to_function_delete_native(options, html_options)
+    fn = %Q{
+      var answer = confirm("are you sure?");
+      if (!!answer) { #{link_to_function_delete_ajax(options)} };
+    }
+    link_to_function options[:name], fn, html_options
+  end
+
+  def link_to_function_delete(options, html_options)
     link_to_function options[:name], "jConfirm('#{options[:caption]}', '#{options[:title]}', function(r) {
-      if(r){
-        jQuery.ajax({
-          type: 'POST',
-          url: '#{options[:url]}',
-          data: ({_method: 'delete', authenticity_token: AUTH_TOKEN}),
-          dataType:'#{options[:dataType]}',
-          success: #{options[:success]}
-        });
-      }
+      if(r){ #{link_to_function_delete_ajax(options)} }
     });", html_options
+  end
+
+  def link_to_function_delete_ajax(options)
+    %Q{
+      jQuery.ajax({
+        type: 'POST',
+        url: '#{options[:url]}',
+        data: ({_method: 'delete', authenticity_token: AUTH_TOKEN}),
+        dataType:'#{options[:dataType]}',
+        success: #{options[:success]}
+      });
+    }
   end
 
   def link_to_with_icon(icon_name, text, url, options = {})

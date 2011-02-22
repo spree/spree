@@ -31,7 +31,7 @@
         <% end %>
         <td>
           <%= hook :admin_users_index_row_actions, locals do %>
-            <%= link_to_edit user, :title => "admin_edit_#{dom_id(user)}" %> &nbsp;
+            <%= link_to_edit user, :class => "edit" %> &nbsp;
             <%= link_to_delete user %>
           <% end %>
         </td>

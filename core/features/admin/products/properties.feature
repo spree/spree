@@ -1,6 +1,6 @@
 Feature: Admin visiting properties
 
-  Scenario: Visiting admin properties page
+  Scenario: admin visiting properties list page
     Given 2 properties exist
     And I go to the admin home page
     When I follow "Products"
@@ -8,7 +8,7 @@ Feature: Admin visiting properties
     Then I should see listing properties tabular attributes
 
   @javascript
-  Scenario: Visiting admin properties page to create new record
+  Scenario: admin creating a new property
     When I go to the admin home page
     When I follow "Products"
     When I follow "Properties"
@@ -18,10 +18,24 @@ Feature: Admin visiting properties
     When I fill in "property_presentation" with "color"
     When I press "Create"
     Then I should see "Successfully created!"
+
+  Scenario: admin editing a property
+    Given a property exists
+    When I go to the admin home page
+    When I follow "Products"
     When I follow "Properties"
-    When I click on first link with class "admin_edit_property"
+    When I click first link from selector "table#listing_properties a.edit"
     When I fill in "property_name" with "model 99"
     When I press "Update"
     Then I should see "Successfully updated!"
     Then I should see "model 99"
 
+  Scenario: admin editing a property with validation error
+    Given a property exists
+    When I go to the admin home page
+    When I follow "Products"
+    When I follow "Properties"
+    When I click first link from selector "table#listing_properties a.edit"
+    When I fill in "property_name" with ""
+    When I press "Update"
+    Then I should see "Name can't be blank"

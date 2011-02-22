@@ -1,6 +1,6 @@
 Feature: Admin visiting products
 
-  Scenario: Visiting admin products page
+  Scenario: admin visiting products listing
     Given the following products exist:
       | name                |  available_on        |
       | apache baseball cap |  2011-01-06 18:21:13 |
@@ -12,7 +12,7 @@ Feature: Admin visiting products
     When I follow "admin_products_listing_name_title"
     Then I should see listing products tabular attributes with name descending
 
-  Scenario: Visiting admin products page search
+  Scenario: admin using search on products listing
     Given the following products exist:
       | name                 | sku  | available_on        |
       | apache baseball cap  | A100 | 2011-01-01 01:01:01 |
@@ -29,7 +29,7 @@ Feature: Admin visiting products
     Then I should see listing products tabular attributes with custom result 2
 
   @javascript
-  Scenario: admin products create
+  Scenario: admin creating a new product
     Given I go to the admin home page
     When I follow "Products"
     When I follow "admin_new_product"
@@ -43,10 +43,18 @@ Feature: Admin visiting products
     When I fill in "product_on_hand" with "100"
     When I press "Update"
     Then I should see "Successfully updated!"
-    When I follow "Products"
 
   @javascript
-  Scenario: admin products edit
+  Scenario: admin creating a new product with validation error
+    Given I go to the admin home page
+    When I follow "Products"
+    When I follow "admin_new_product"
+    Then async I should see "SKU" within "#new_product"
+    When I press "Create"
+    Then I should see "Name can't be blank"
+    Then I should see "Price can't be blank"
+
+  Scenario: admin editing a product
     Given the following products exist:
       | name                 | sku  | available_on        |
       | apache baseball cap  | A100 | 2011-01-01 01:01:01 |
@@ -55,7 +63,46 @@ Feature: Admin visiting products
     Given count_on_hand is 10 for all products
     When I go to the admin home page
     When I follow "Products"
-    When I click on first link with class "admin_edit_product"
+    When I click first link from selector "table#listing_products a.edit"
     When I fill in "product_name" with "apache baseball cap 99"
     When I press "Update"
     Then I should see "Successfully updated!"
+
+  Scenario: admin cloning a product
+    Given the following products exist:
+      | name                 | sku  | available_on        |
+      | apache baseball cap  | A100 | 2011-01-01 01:01:01 |
+      | apache baseball cap2 | B100 | 2011-01-01 01:01:01 |
+      | zomg shirt           | Z100 | 2011-01-01 01:01:01 |
+    Given count_on_hand is 10 for all products
+    When I go to the admin home page
+    When I follow "Products"
+    When I click first link from selector "table#listing_products a.clone"
+    Then I should see "Product has been cloned"
+
+  Scenario: admin uploading and then editing an image for a product
+    Given the following products exist:
+      | name                 | sku  | available_on        |
+      | apache baseball cap  | A100 | 2011-01-01 01:01:01 |
+      | apache baseball cap2 | B100 | 2011-01-01 01:01:01 |
+      | zomg shirt           | Z100 | 2011-01-01 01:01:01 |
+    Given count_on_hand is 10 for all products
+    When I go to the admin home page
+    When I follow "Products"
+    When I click first link from selector "table#listing_products a.edit"
+    When I follow "Images"
+    When I follow "new_image_link"
+    When I attach file "ror_ringer.jpeg" to "image_attachment"
+    When I press "Update"
+    Then I should see "Successfully created!"
+    When I click first link from selector "table.index a.edit"
+    When I fill in "image_alt" with "ruby on rails t-shirt"
+    When I press "Update"
+    Then show me the page
+    Then I should see "Successfully updated!"
+    Then I should see "ruby on rails t-shirt"
+
+
+
+
+

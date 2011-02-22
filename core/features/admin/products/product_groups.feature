@@ -170,8 +170,8 @@ Feature: Admin visiting product groups
 
   @javascript
   Scenario: applying scope In Taxon(without descendants)
-    Given I go to the admin home page
     Given a product group exists
+    Given I go to the admin home page
     When I follow "Products"
     When I follow "Product Groups"
     When I click on first link with class "admin_edit_product_group"

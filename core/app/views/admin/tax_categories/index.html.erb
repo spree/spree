@@ -23,13 +23,16 @@
     </tr>
   </thead>
   <tbody>
-    <% @tax_categories.each do |tax_category|%>
+    <% @tax_categories.each do |tax_category|
+         @edit_url = edit_admin_tax_category_path(tax_category)
+         @delete_url = admin_tax_category_path(tax_category)
+    %>
       <tr id="<%= dom_id tax_category %>">
         <td><%= tax_category.name %></td>
         <td><%= tax_category.description %></td>
         <td><%= tax_category.is_default.to_s.titleize %></td>
         <td class="actions">
-          <%=link_to_edit tax_category %> &nbsp;
+          <%=link_to_edit tax_category, :class => 'edit' %> &nbsp;
           <%=link_to_delete tax_category %>
       </tr>
     <% end %>
