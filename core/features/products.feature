@@ -71,3 +71,8 @@ Feature: Visiting products
     When I check "Price_Range_$20_or_over"
     When I press "Search" within "#sidebar_products_search"
     Then verify products listing for price range search 18 and above
+
+  @allow_rescue
+  Scenario: invalid taxon permalink
+    When I go to an invalid taxon page
+    Then I should get a "404 Not Found" response
