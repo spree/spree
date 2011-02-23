@@ -1,8 +1,6 @@
-
-
 Feature: Admin visiting users
 
-  Scenario: Visiting admin users page
+  Scenario: users index page with sorting
     Given I go to the admin home page
     Given existing user records are deleted
     Given the following users exist:
@@ -15,9 +13,8 @@ Feature: Admin visiting users
     Then I should see listing users tabular attributes with order email asc
     When I follow "users_email_title"
     Then I should see listing users tabular attributes with order email desc
-    #Then I follow "a@example.com" #=> FIXME undefined method `roles' for #<User:0x102d87ce8> (ActionView::Template::Error)
 
-  Scenario: admin users page search
+  Scenario: search
     Given I go to the admin home page
     Given existing user records are deleted
     Given the following users exist:
@@ -29,7 +26,7 @@ Feature: Admin visiting users
     And I press "Search"
     Then I should see listing users tabular attributes for search result case
 
-  Scenario: admin users edit functionality
+  Scenario: users show page
     Given I go to the admin home page
     Given existing user records are deleted
     Given the following users exist:
@@ -37,5 +34,84 @@ Feature: Admin visiting users
      | a@example.com  |
      | b@example.com  |
     When I follow "Users"
-    #When I follow custom admin edit user link #=> FIXME undefined method `has_role?' for #<User:0x10317a440> (ActionView::Template::Error)
+    When I click first link from selector "table#listing_users td.user_email a"
+    Then I should see "User Account"
+    Then I should see "a@example.com"
+    Then I click first link from selector "a.edit_user"
+    Then I should see "Editing User"
 
+  Scenario: generate api key
+    Given I go to the admin home page
+    Given existing user records are deleted
+    Given the following users exist:
+     | email          |
+     | a@example.com  |
+     | b@example.com  |
+    When I follow "Users"
+    When I click first link from selector "table#listing_users td.user_email a"
+    Then I should see "User Account"
+    Then I should see "a@example.com"
+    Then I click first link from selector "a.edit_user"
+    Then I should see "Editing User"
+    # Move following code to API FIXME
+    #Then I should see "No key defined"
+    #Then I press "Generate API Key"
+    #Then I should see "API key generated"
+    #Then I press "Clear API Key"
+    #Then I should see "API key generated"
+    #Then I press "Regenerate API Key"
+    #Then I should see "API key generated"
+
+  Scenario: edit user email
+    Given I go to the admin home page
+    Given existing user records are deleted
+    Given the following users exist:
+     | email          |
+     | a@example.com  |
+     | b@example.com  |
+    When I follow "Users"
+    When I click first link from selector "table#listing_users td.user_email a"
+    Then I should see "User Account"
+    Then I should see "a@example.com"
+    Then I click first link from selector "a.edit_user"
+    Then I should see "Editing User"
+    When I fill in "user_email" with "a@example.com99"
+    When I press "Update"
+    Then I should see "Successfully updated!"
+    Then I should see "a@example.com99"
+
+  # FIXME move this code where email validation happens
+  #Scenario: edit user email with validation error
+    #Given I go to the admin home page
+    #Given existing user records are deleted
+    #Given the following users exist:
+     #| email          |
+     #| a@example.com  |
+     #| b@example.com  |
+    #When I follow "Users"
+    #When I click first link from selector "table#listing_users td.user_email a"
+    #Then I should see "User Account"
+    #Then I should see "a@example.com"
+    #Then I click first link from selector "a.edit_user"
+    #Then I should see "Editing User"
+    #When I fill in "user_email" with "a"
+    #When I press "Update"
+    #Then I should see "Email is invalid"
+
+  Scenario: edit user password
+    Given I go to the admin home page
+    Given existing user records are deleted
+    Given the following users exist:
+     | email          |
+     | a@example.com  |
+     | b@example.com  |
+    When I follow "Users"
+    When I click first link from selector "table#listing_users td.user_email a"
+    Then I should see "User Account"
+    Then I should see "a@example.com"
+    Then I click first link from selector "a.edit_user"
+    Then I should see "Editing User"
+    When I fill in "user_password" with "welcome"
+    When I fill in "user_password_confirmation" with "welcome"
+    When I press "Update"
+    Then I should see "Successfully updated!"

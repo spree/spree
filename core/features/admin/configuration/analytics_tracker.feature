@@ -1,12 +1,15 @@
-Feature: Admin > configurations > analytics_tracker
+Feature: analytics tracker
 
-  Scenario: Admin > configurations > analytics_tracker
+  Scenario: index
+    Given 2 trackers exist
     Given I go to the admin home page
     When I follow "Configuration"
     When I follow "Analytics Tracker"
     Then I should see "Analytics Trackers"
+    Then verify tabular data for tracker index
 
-  Scenario: admin updating analytics tracker
+
+  Scenario: create
     Given I go to the admin home page
     When I follow "Configuration"
     When I follow "Analytics Trackers"

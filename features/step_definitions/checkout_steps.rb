@@ -38,12 +38,15 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
   When %{I press "Add To Cart"}
 end
 
-When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and set coupon code to "(.*?)")?$/ do |shipping_method, payment_method, coupon_code|
-  # TODO: remove next line after fixing capybara's find by label feature
+When /^I choose "(.*?)" as shipping method$/ do |shipping_method|
   shipping_method = "order_shipping_method_id_#{ShippingMethod.find_by_name(shipping_method).id}"
   When %{I choose "#{shipping_method}"}
   And %{press "Save and Continue"}
-  Then %{I should see "Payment Information" within "legend"}
+  Then %{I should see "Payment Information"}
+end
+
+When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and set coupon code to "(.*?)")?$/ do |shipping_method, payment_method, coupon_code|
+  When %{I choose "#{shipping_method}" as shipping method}
 
   payment_method = "order_payments_attributes__payment_method_id_#{PaymentMethod.find(:last, :conditions => {:name => payment_method}).id}"
 
@@ -54,10 +57,14 @@ When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and 
   end
 
   And %{press "Save and Continue"}
-  Then %{I should see "Confirm" within "legend"}
-  When %{I press "Place Order"}
 end
 
 Then /^cart should be empty$/ do
   Then %{I should not see "Cart: ("}
+end
+
+When /^(?:|I )enter valid credit card details$/ do
+  And %{I fill in "card_number" with "4111111111111111"}
+  And %{I fill in "card_code" with "123"}
+  And %{press "Save and Continue"}
 end

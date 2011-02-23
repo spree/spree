@@ -19,6 +19,8 @@
   <% end %>
 <% end %>
 
+
+<% if @user.respond_to?(:roles) %>
 <%= hook :admin_user_form_roles, locals do %>
   <p>
     <label><%= t("roles") %></label><br />
@@ -30,7 +32,4 @@
     <% end %>
   </p>
 <% end %>
-
-
-
-
+<% end %>

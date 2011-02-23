@@ -4,7 +4,7 @@
     $('#checkout_form_address').validate();
 
     var get_states = function(region){
-      var country        = $('span#' + region + 'country :only-child').val();
+      var country        = $('p#' + region + 'country' + ' span#' + region + 'country :only-child').val();
       return state_mapper[country];
     }
     
@@ -43,8 +43,8 @@
       if(this.checked){ $('#payment_method_'+this.value).show(); }
     }).triggerHandler('click');
 
-    $('span#bcountry select').change(function() { update_state('b'); });
-    $('span#scountry select').change(function() { update_state('s'); });
+    $('p#bcountry span#bcountry select').change(function() { update_state('b'); });
+    $('p#scountry span#scountry select').change(function() { update_state('s'); });
     update_state('b');
     update_state('s');
 

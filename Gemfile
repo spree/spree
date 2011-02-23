@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem "spree", :path => File.dirname(__FILE__)
 
-# gem 'mysql'
+# gem 'mysql2'
 gem 'sqlite3-ruby'
 gem 'ruby-debug' if RUBY_VERSION.to_f < 1.9
 gem "rdoc",  "2.2"
@@ -10,7 +10,7 @@ gem "rdoc",  "2.2"
 gemspec
 
 group :test do
-  gem 'rspec-rails', '= 2.4.1'
+  gem 'rspec-rails', '= 2.5.0'
   gem 'factory_girl_rails'
   gem 'factory_girl', '= 1.3.3'
   gem 'rcov'

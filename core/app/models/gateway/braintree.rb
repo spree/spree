@@ -60,7 +60,7 @@ class Gateway::Braintree < Gateway
     authorize(money, creditcard, options.merge(:submit_for_settlement => true))
   end
 
-  def void(response_code, ignored_creditcard, ignored_options)
+  def void(response_code, ignored_options)
     provider.void(response_code)
   end
 

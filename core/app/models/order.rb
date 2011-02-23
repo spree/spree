@@ -26,6 +26,7 @@ class Order < ActiveRecord::Base
   before_create :generate_order_number
 
   validates_presence_of :email, :if => :require_email
+  validate :has_available_shipment
 
   #delegate :ip_address, :to => :checkout
   def ip_address
@@ -78,10 +79,11 @@ class Order < ActiveRecord::Base
       transition :from => 'cart', :to => 'address'
       transition :from => 'address', :to => 'delivery'
       transition :from => 'delivery', :to => 'payment'
-      transition :from => 'payment', :to => 'confirm'
       transition :from => 'confirm', :to => 'complete'
+      # note: some payment methods will not support a confirm step
+      transition :from => 'payment', :to => 'confirm', :if => Proc.new { Gateway.current and Gateway.current.payment_profiles_supported? }
+      transition :from => 'payment', :to => 'complete'
     end
-    #TODO - add conditional confirmation step (only when gateway supports it, etc.)
 
     event :cancel do
       transition :to => 'canceled', :if => :allow_cancel?
@@ -307,7 +309,7 @@ class Order < ActiveRecord::Base
       :previous_state => "cart",
       :next_state     => "complete",
       :name           => "order" ,
-      :user_id        => User.current.try(:id) || self.user_id
+      :user_id        => (User.respond_to?(:current) && User.current.try(:id)) || self.user_id
     })
   end
 
@@ -395,7 +397,7 @@ class Order < ActiveRecord::Base
         :previous_state => old_shipment_state,
         :next_state     => self.shipment_state,
         :name           => "shipment" ,
-        :user_id        => User.current.id || self.user_id
+        :user_id        => (User.current && User.current.id) || self.user_id
       })
     end
 
@@ -424,7 +426,7 @@ class Order < ActiveRecord::Base
         :previous_state => old_payment_state,
         :next_state     => self.payment_state,
         :name           => "payment" ,
-        :user_id        =>  User.current.id || self.user_id
+        :user_id        =>  (User.current && User.current.id) || self.user_id
       })
     end
   end
@@ -456,6 +458,13 @@ class Order < ActiveRecord::Base
   # Determine if email is required (we don't want validation errors before we hit the checkout)
   def require_email
     return true unless new_record? or state == 'cart'
+  end
+
+  def has_available_shipment
+    return unless :address == state_name.to_sym
+    return unless ship_address && ship_address.valid?
+    errors.add :base, :no_shipping_methods_available \
+      if available_shipping_methods.empty?
   end
 
   def after_cancel

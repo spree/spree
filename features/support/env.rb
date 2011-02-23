@@ -69,7 +69,6 @@ def factory_definitions_debugger
   end
 end
 
-
-
+#factory_definitions_debugger
 
 require 'factory_girl/step_definitions'

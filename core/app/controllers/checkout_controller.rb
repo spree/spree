@@ -64,8 +64,8 @@ class CheckoutController < Spree::BaseController
   end
 
   def before_address
-    @order.bill_address ||= Address.new(:country => default_country)
-    @order.ship_address ||= Address.new(:country => default_country)
+    @order.bill_address ||= Address.new(:country_id => default_country_id)
+    @order.ship_address ||= Address.new(:country_id => default_country_id)
   end
 
   def before_delivery
@@ -81,8 +81,8 @@ class CheckoutController < Spree::BaseController
     session[:order_id] = nil
   end
 
-  def default_country
-    Country.find Spree::Config[:default_country_id]
+  def default_country_id
+    Spree::Config[:default_country_id]
   end
 
   def rescue_from_spree_gateway_error

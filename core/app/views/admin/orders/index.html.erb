@@ -52,7 +52,7 @@
 <div class="box">
   <h3><%= t(:search) %></h3>
 
-  <% @order = Order.search %>
+  <% @order = Order.metasearch %>
   <%= form_for [:admin,@order] do |f| %>
     <%- locals = {:f => f} %>
     <%= hook :admin_orders_index_search, locals do %>

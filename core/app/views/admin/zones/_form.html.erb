@@ -1,29 +1,29 @@
-<% zone_form.field_container :name do %>
+<%= zone_form.field_container :name do %>
   <%= zone_form.label :name, t("name") %><br />
   <%=zone_form.text_field :name %>
 <% end %>
 
-<% zone_form.field_container :description do %>
+<%= zone_form.field_container :description do %>
   <%= zone_form.label :description, t("description") %><br />
   <%=zone_form.text_field :description %>
 <% end %>
 
 <p>
-  <label><%= t("type") %></label><br />  
+  <label><%= t("type") %></label><br />
   <label class="sub">
     <%= zone_form.radio_button("kind", "country", {:id => "country_based"}) %>
     <%= t("country_based") %>
-  </label> &nbsp; 
+  </label> &nbsp;
   <label class="sub">
     <%= zone_form.radio_button("kind", "state", {:id => "state_based"}) %>
     <%= t("state_based") %>
-  </label> &nbsp; 
-  <label class="sub">                                         
+  </label> &nbsp;
+  <label class="sub">
     <%= zone_form.radio_button("kind", "zone", {:id => "zone_based"}) %>
     <%= t("zone_based") %>
   </label>
 </p>
 
-<%= render "member_type", :type => "country", :zone_form => zone_form %> 
-<%= render "member_type", :type => "state", :zone_form => zone_form %>        
+<%= render "member_type", :type => "country", :zone_form => zone_form %>
+<%= render "member_type", :type => "state", :zone_form => zone_form %>
 <%= render "member_type", :type => "zone", :zone_form => zone_form %>

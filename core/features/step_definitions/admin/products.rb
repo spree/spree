@@ -6,7 +6,6 @@ When /^I click on first link with class "(.*)"$/ do |class_name|
   page.first('.'+class_name).click
 end
 
-
 Then /^I should see listing products tabular attributes with name ascending$/ do
   output = tableish('table#listing_products tr', 'td,th')
   data = output[0]
@@ -37,8 +36,6 @@ Then /^I should see listing products tabular attributes with custom result 2$/ d
   data = output[1]
   data[1].should == 'apache baseball cap'
 end
-
-
 
 Given /^a product exists with a sku of "a100"$/ do
   Factory(:product, :sku => 'a100')

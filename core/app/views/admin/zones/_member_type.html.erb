@@ -4,12 +4,12 @@
   <fieldset id="">
     <legend><%= t(type) %></legend>
     <ul id="ul-nested-<%= type %>" class="member-list">
-      <% zone_form.fields_for :zone_members do |member_form| %>
+      <%= zone_form.fields_for :zone_members do |member_form| %>
         <%= render "#{type}_member", :f => member_form %>
       <% end %>
     </ul>
-  </fieldset>  
+  </fieldset>
   <p>
     <%= button_link_to t("add_#{type}"), "##{type}_member", {:icon => 'add', :id => "nested-#{type}"} %>
-  </p>      
+  </p>
 </div>

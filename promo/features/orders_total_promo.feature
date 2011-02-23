@@ -4,6 +4,7 @@ Feature: Order's total
   Scenario: Add promotion with order's total
     Given I have an admin account of "admin@person.com/password"
     Given a payment method exists
+    Given a shipping method exists
     When I go to the sign in page
     And I sign in as "admin@person.com/password"
     And I go to admin promotions page

@@ -1,6 +1,7 @@
 Feature: Admin > configurations > taxonomies
 
   Scenario: Admin > configurations > taxonomies
+    Given I go to the admin home page
     When I follow "Configuration"
     Given 2 taxonomies exist
     When I follow "Taxonomies"
