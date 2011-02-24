@@ -8,10 +8,6 @@ class Admin::BaseController < Spree::BaseController
   before_filter :parse_date_params
 
   protected
-  def render_js_for_destroy
-    render :partial => "/admin/shared/destroy"
-    flash.notice = nil
-  end
 
   # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
   def check_json_authenticity
