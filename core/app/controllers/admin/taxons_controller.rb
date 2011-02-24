@@ -113,13 +113,6 @@ class Admin::TaxonsController < Admin::BaseController
     end
   end
 
-  def reposition_taxons(taxons)
-    taxons.each_with_index do |taxon, i|
-      taxon.position = i
-      taxon.save!
-    end
-  end
-
   def load_permalink_part
     @permalink_part = object.permalink.split("/").last
   end
