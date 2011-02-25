@@ -4,7 +4,7 @@ class TaxRate < ActiveRecord::Base
 
   validates :amount, :presence => true, :numericality => true
 
-  calculated_adjustments
+  calculated_adjustments :default => Calculator::SalesTax
   scope :by_zone, lambda { |zone| where("zone_id = ?", zone)}
 
   # Searches all possible TaxRates and returns the Zone which represents the most appropriate match (if any.)

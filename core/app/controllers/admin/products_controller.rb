@@ -1,28 +1,13 @@
-class Admin::ProductsController < Admin::BaseController
-  resource_controller
+class Admin::ProductsController < Admin::ResourceController
   before_filter :check_json_authenticity, :only => :index
   before_filter :load_data, :except => :index
-
-  index.response do |wants|
-    wants.html { render :action => :index }
-    wants.json { render :json => json_data }
-  end
-
-  new_action.response do |wants|
-    wants.html {render :action => :new, :layout => !request.xhr?}
-  end
-
   update.before :update_before
 
-  create.response do |wants|
-    # go to edit form after creating as new product
-    wants.html {redirect_to edit_admin_product_url(@product) }
-  end
-
-  update.response do |wants|
-    # override the default redirect behavior of r_c
-    # need to reload Product in case name / permalink has changed
-    wants.html {redirect_to edit_admin_product_url(@product) }
+  def index
+    respond_to do |format|
+      format.html
+      format.json { render :json => json_data }
+    end
   end
 
   # override the destory method to set deleted_at value
@@ -49,7 +34,6 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   def clone
-    load_object
     @new = @product.duplicate
 
     if @new.save
@@ -60,7 +44,13 @@ class Admin::ProductsController < Admin::BaseController
 
     redirect_to edit_admin_product_url(@new)
   end
-
+  
+  protected
+  
+  def location_after_save
+    edit_admin_product_url(@product)
+  end
+  
   # Allow different formats of json data to suit different ajax calls
   def json_data
     json_format = params[:json_format] or 'default'
@@ -88,7 +78,7 @@ class Admin::ProductsController < Admin::BaseController
       end
 
       params[:search][:meta_sort] ||= "name.asc"
-      @search = end_of_association_chain.metasearch(params[:search])
+      @search = super.metasearch(params[:search])
 
       pagination_options = {:include   => {:variants => [:images, :option_values]},
                             :per_page  => Spree::Config[:admin_products_per_page],
@@ -98,10 +88,10 @@ class Admin::ProductsController < Admin::BaseController
     else
       includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
-      @collection = end_of_association_chain.where(["name LIKE ?", "%#{params[:q]}%"])
+      @collection = super.where(["name LIKE ?", "%#{params[:q]}%"])
       @collection = @collection.includes(includes).limit(params[:limit] || 10)
 
-      tmp = end_of_association_chain.where(["variants.sku LIKE ?", "%#{params[:q]}%"])
+      tmp = super.where(["variants.sku LIKE ?", "%#{params[:q]}%"])
       tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
       @collection.concat(tmp)
 

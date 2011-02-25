@@ -2,7 +2,7 @@
 
 <h1><%= t("editing_payment_method") %></h1>
 <%= render "shared/error_messages", :target => @payment_method %>
-<%= form_for(@payment_method, :url => object_url, :html => { :method => :put }) do |f| %>
+<%= form_for(@payment_method, :url => admin_payment_method_path(@payment_method), :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <p>
     <%=submit_tag t("update")%>

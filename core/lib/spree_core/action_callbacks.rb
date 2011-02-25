@@ -16,4 +16,39 @@ module Spree
       @after_methods << method
     end
   end
+    
+
+  class ControllerResource < ::CanCan::ControllerResource
+    def initialize(controller, *args)
+      super
+      @options[:find_by] = :permalink if resource_base.new.respond_to?(:permalink)
+    end
+    
+    protected
+    
+    def collection_instance=(instance)
+      @controller.instance_variable_set("@collection", instance)
+      @controller.instance_variable_set("@#{instance_name.to_s.pluralize}", instance)
+    end
+    
+    def resource_instance=(instance)
+      @controller.instance_variable_set("@object", instance)
+      @controller.instance_variable_set("@#{instance_name}", instance)
+    end
+    
+    def load_collection
+      if @controller.respond_to? :collection
+        @controller.send :collection
+      else
+        resource_base.accessible_by(current_ability)
+      end
+    end
+  end
+  
+end
+
+CanCan::ControllerAdditions::ClassMethods.module_eval do
+  def cancan_resource_class
+    ::Spree::ControllerResource
+  end
 end

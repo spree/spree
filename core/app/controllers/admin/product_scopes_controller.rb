@@ -1,27 +1,33 @@
 class Admin::ProductScopesController < Admin::BaseController
   helper 'admin/product_groups'
-
-  resource_controller
-
-  belongs_to :product_group
-
-  actions :create, :destroy
   
-  destroy.after :update_memberships
-
-  create.response do |wants|
-    wants.html { redirect_to edit_admin_product_group_path(parent_object) }
-    wants.js { render :action => 'create', :layout => false}
-  end
-  destroy.response do |wants|
-    wants.html { redirect_to edit_admin_product_group_path(parent_object) }
-    wants.js { render :action => 'destroy', :layout => false}
+  def create
+    @product_group = ProductGroup.find_by_permalink(params[:product_group_id])
+    @product_scope = @product_group.product_scopes.build(params[:product_scope])
+    if @product_scope.save
+      flash[:notice] = I18n.t(:successfully_created, :scope => :product_scope)
+      respond_to do |format|
+        format.html { redirect_to edit_admin_product_group_path(@product_group) }
+        format.js   { render :layout => false }
+      end
+    else
+      render :new
+    end
   end
   
-  private
+  def destroy
+    @product_scope = ProductScope.find(params[:id])
+    if @product_scope.destroy
+      @product_group = @product_scope.product_group
+      @product_group.update_memberships
+      flash[:notice] = I18n.t(:successfully_removed, :scope => :product_scope)
+      respond_to do |format|
+        format.html { redirect_to edit_admin_product_group_path(@product_group) }
+        format.js   { render :layout => false }
+      end
+    else
+      redirect_to edit_admin_product_group_path(@product_scope.product_group)
+    end
+  end  
   
-  def update_memberships
-    object.product_group.update_memberships
-  end
-
 end
