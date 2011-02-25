@@ -183,6 +183,10 @@ class ProductGroup < ActiveRecord::Base
   def to_s
     "<ProductGroup" + (id && "[#{id}]").to_s + ":'#{to_url}'>"
   end
+  
+  def to_param
+    self.permalink
+  end
 
   def order_scope
     if scope = product_scopes.detect {|s| s.is_ordering?}

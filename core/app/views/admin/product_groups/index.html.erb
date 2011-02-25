@@ -23,7 +23,7 @@
   <tbody>
     <% @product_groups.each do |pg| %>
       <tr id="<%= dom_id pg %>">
-        <td><%= link_to pg.name, object_path(pg) %></td>
+        <td><%= link_to pg.name, [:admin, pg] %></td>
         <td><%= link_to pg_search_path(:product_group_name => pg.permalink), pg_search_path(:product_group_name => pg.permalink) %></td>
         <td><%== pg.product_scopes.map(&:to_sentence).join("<br />") %></td>
         <td><%= pg.products.count %></td>

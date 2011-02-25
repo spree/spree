@@ -1,3 +1,3 @@
-jQuery('#<%= dom_id object %>').fadeOut();
-jQuery('#<%= dom_id object %>').remove();
+jQuery('#<%= dom_id @product_scope %>').fadeOut();
+jQuery('#<%= dom_id @product_scope %>').remove();
 jQuery('#preview_container').html('<%= escape_javascript( render('admin/product_groups/preview') ) %>');
