@@ -1,4 +1,5 @@
 require 'spree_core/action_callbacks'
+require 'spree_core/controller_resource'
 class Admin::ResourceController < Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   load_and_authorize_resource
