@@ -22,7 +22,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @collection.each do |zone| %>
+    <% @zones.each do |zone| %>
       <tr id="<%= dom_id zone %>">
         <td><%=zone.name %></td>
         <td><%=zone.description %></td>
@@ -32,11 +32,10 @@
         </td>
       </tr>
     <% end %>
-    <% if @collection.empty? %>
+    <% if @zones.empty? %>
       <tr><td colspan="2"><%= t(:none) %></td></tr>
     <% end %>
   </tbody>
 </table>
-
 <%= will_paginate(:previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
 

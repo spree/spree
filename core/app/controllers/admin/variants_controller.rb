@@ -1,22 +1,5 @@
-class Admin::VariantsController < Admin::BaseController
-  resource_controller
-  belongs_to :product
-
-  new_action.response do |wants|
-    wants.html {render :action => :new, :layout => !request.xhr?}
-  end
-
+class Admin::VariantsController < Admin::ResourceProductController
   create.before :create_before
-
-  # redirect to index (instead of r_c default of show view)
-  create.response do |wants|
-    wants.html {redirect_to collection_url}
-  end
-
-  # redirect to index (instead of r_c default of show view)
-  update.response do |wants|
-    wants.html {redirect_to collection_url}
-  end
 
   # override the destory method to set deleted_at value
   # instead of actually deleting the product.
@@ -47,7 +30,7 @@ class Admin::VariantsController < Admin::BaseController
     end
   end
 
-  private
+  protected
   def create_before
     option_values = params[:new_variant]
     option_values.each_value {|id| @object.option_values << OptionValue.find(id)}
@@ -55,12 +38,13 @@ class Admin::VariantsController < Admin::BaseController
   end
 
   def collection
-    @deleted =  (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
+    @deleted = (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
 
     if @deleted.blank?
-      @collection ||= end_of_association_chain
+      @collection ||= super
     else
-      @collection ||= Variant.where(:product_id => @product.id).deleted
+      @collection ||= Variant.where(:product_id => product.id).deleted
     end
+    @collection
   end
 end
