@@ -1,6 +1,7 @@
 class Admin::VariantsController < Admin::ResourceController
   belongs_to :product, :find_by => :permalink
   create.before :create_before
+  new_action.before :new_before
 
   def index
     respond_with(collection) do |format|
@@ -45,6 +46,12 @@ class Admin::VariantsController < Admin::ResourceController
     @object.save
   end
 
+
+  def new_before
+    @object.attributes = @object.product.master.attributes.except('id', 'created_at', 'deleted_at',
+                                                                  'sku', 'is_master', 'count_on_hand')
+  end
+
   def collection
     @deleted = (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
 
@@ -63,3 +70,4 @@ class Admin::VariantsController < Admin::ResourceController
   end
 
 end
+
