@@ -18,7 +18,9 @@ class Admin::ResourceController < Admin::BaseController
     invoke_callbacks(:update, :before)
     if @object.update_attributes(params[object_name])
       invoke_callbacks(:update, :after)
-      flash[:notice] = I18n.t(:successfully_updated, :scope => object_name)
+      resource_desc = I18n.t(object_name)
+      resource_desc += " \"#{@object.name}\"" if @object.respond_to?(:name)
+      flash[:notice] = I18n.t(:successfully_updated, :resource => resource_desc)
       respond_to do |format|
         format.html { redirect_to location_after_save }
         format.js   { render :layout => false }      
@@ -32,7 +34,9 @@ class Admin::ResourceController < Admin::BaseController
     invoke_callbacks(:create, :before)
     if @object.save
       invoke_callbacks(:create, :after)
-      flash[:notice] = I18n.t(:successfully_created, :scope => object_name)
+      resource_desc = I18n.t(object_name)
+      resource_desc += " \"#{@object.name}\"" if @object.respond_to?(:name)
+      flash[:notice] = I18n.t(:successfully_created, :resource => resource_desc)
       respond_to do |format|
         format.html { redirect_to location_after_save }
         format.js   { render :layout => false }      
@@ -46,7 +50,9 @@ class Admin::ResourceController < Admin::BaseController
     invoke_callbacks(:destroy, :before)
     if @object.destroy
       invoke_callbacks(:destroy, :after)
-      flash[:notice] = I18n.t(:successfully_removed, :scope => object_name)
+      resource_desc = I18n.t(object_name)
+      resource_desc += " \"#{@object.name}\"" if @object.respond_to?(:name)
+      flash[:notice] = I18n.t(:successfully_removed, :resource => resource_desc)
       respond_to do |format|
         format.html { redirect_to collection_url }
         format.js   { render_js_for_destroy }

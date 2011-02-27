@@ -920,6 +920,9 @@ en:
   street_address_2: "Street Address (cont'd)"
   subtotal: Subtotal
   subtract: Subtract
+  successfully_created: "%{resource} has been successfully created!"
+  successfully_removed: "%{resource} has been successfully removed!"
+  successfully_updated: "%{resource} has been successfully updated!"
   system: System
   tax: Tax
   tax_categories: "Tax Categories"
