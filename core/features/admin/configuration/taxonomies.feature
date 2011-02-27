@@ -15,7 +15,7 @@ Feature: Admin > configurations > taxonomies
     Then I should see "New Taxonomy"
     When I fill in "taxonomy_name" with "sports"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
 
   Scenario: admin creating new taxonomy with validation error
     Given I go to the admin home page
@@ -37,6 +37,6 @@ Feature: Admin > configurations > taxonomies
     Then I should see "Edit taxonomy"
     When I fill in "taxonomy_name" with "sports 99"
     When I press "Update"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"
     Then I should see "sports 99"
 

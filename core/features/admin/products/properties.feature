@@ -17,7 +17,7 @@ Feature: Admin visiting properties
     When I fill in "property_name" with "color of band"
     When I fill in "property_presentation" with "color"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
 
   Scenario: admin editing a property
     Given a property exists
@@ -27,7 +27,7 @@ Feature: Admin visiting properties
     When I click first link from selector "table#listing_properties a.edit"
     When I fill in "property_name" with "model 99"
     When I press "Update"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"
     Then I should see "model 99"
 
   Scenario: admin editing a property with validation error

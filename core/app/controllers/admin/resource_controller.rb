@@ -74,25 +74,25 @@ class Admin::ResourceController < Admin::BaseController
   
   def self.create
     @@callbacks ||= {}
-    @@callbacks[:create] ||= Spree::ActionCallbacks.new
+    @@callbacks["#{controller_name}/create"] ||= Spree::ActionCallbacks.new
   end
   
   def self.update
     @@callbacks ||= {}
-    @@callbacks[:update] ||= Spree::ActionCallbacks.new
+    @@callbacks["#{controller_name}/update"] ||= Spree::ActionCallbacks.new
   end
   
   def self.destroy
     @@callbacks ||= {}
-    @@callbacks[:destroy] ||= Spree::ActionCallbacks.new
+    @@callbacks["#{controller_name}/destroy"] ||= Spree::ActionCallbacks.new
   end
 
   def invoke_callbacks(action, callback_type)
     @@callbacks ||= {}
-    @@callbacks[action] ||= Spree::ActionCallbacks.new
+    return if @@callbacks["#{controller_name}/#{action}"].nil?
     case callback_type.to_sym
-      when :before then @@callbacks[action].before_methods.each {|method| send method }
-      when :after  then @@callbacks[action].after_methods.each  {|method| send method }
+      when :before then @@callbacks["#{controller_name}/#{action}"].before_methods.each {|method| send method }
+      when :after  then @@callbacks["#{controller_name}/#{action}"].after_methods.each  {|method| send method }
     end
   end
 
