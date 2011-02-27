@@ -58,10 +58,10 @@ Feature: Admin visiting products
     When I fill in "product_price" with "100"
     When I fill in "product_available_on" with "2011/01/24"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
     When I fill in "product_on_hand" with "100"
     When I press "Update"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"
 
   @javascript
   Scenario: admin creating a new product with validation error
@@ -99,11 +99,11 @@ Feature: Admin visiting products
     When I follow "new_image_link"
     When I attach file "ror_ringer.jpeg" to "image_attachment"
     When I press "Update"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
     When I click first link from selector "table.index a.edit"
     When I fill in "image_alt" with "ruby on rails t-shirt"
     When I press "Update"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"
     Then I should see "ruby on rails t-shirt"
 
     @javascript

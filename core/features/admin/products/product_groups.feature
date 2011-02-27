@@ -16,13 +16,13 @@ Feature: Admin visiting product groups
     Then async I should see "Product Group" within "#content"
     When I fill in "product_group_name" with "male shirts"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
     When I follow "Product Groups"
     When I click on first link with class "admin_edit_product_group"
     When I fill in "product_group_name" with "most popular rails items 99"
     When I press "Update"
     Then async
-    And  I should see "Successfully updated!"
+    And  I should see "successfully updated!"
     When I follow "Product Groups"
     Then I should see "most popular rails items 99"
     
@@ -197,25 +197,25 @@ Feature: Admin visiting product groups
     When I press "Update"
     Then async
     Then I should see product groups products listing with ascend by product name
-    And  I should see "Successfully updated!"
+    And  I should see "successfully updated!"
 
     When I select "Descend by product name" from "product_group_order_scope"
     When I press "Update"
     Then async
     Then I should see product groups products listing with descend by product name
-    And  I should see "Successfully updated!"
+    And  I should see "successfully updated!"
 
     When I select "Ascend by actualization date" from "product_group_order_scope"
     When I press "Update"
     Then async
     Then I should see product groups products listing with ascend by product name
-    And  I should see "Successfully updated!"
+    And  I should see "successfully updated!"
 
     When I select "Descend by actualization date" from "product_group_order_scope"
     When I press "Update"
     Then async
     Then I should see product groups products listing with descend by product name
-    And  I should see "Successfully updated!"
+    And  I should see "successfully updated!"
 
     Given the price of apache cap is 10
     Given the price of rails t-shirt cap is 30 in product group context
@@ -224,13 +224,13 @@ Feature: Admin visiting product groups
     When I press "Update"
     Then async
     Then I should see product groups products listing with ascend by product name
-    And  I should see "Successfully updated!"
+    And  I should see "successfully updated!"
 
     When I select "Descend by product master price" from "product_group_order_scope"
     When I press "Update"
     Then async
     Then I should see product groups products listing with descend by product name
-    And  I should see "Successfully updated!"
+    And  I should see "successfully updated!"
 
     Given apache cap has 1 line item
     Given ruby on rails t-shirt has 2 line items
@@ -239,6 +239,6 @@ Feature: Admin visiting product groups
     When I press "Update"
     Then async
     Then I should see product groups products listing with descend by product name
-    And  I should see "Successfully updated!"
+    And  I should see "successfully updated!"
 
 

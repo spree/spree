@@ -38,6 +38,7 @@ task :test_app do
     def full_path_for_local_gems
       <<-gems
 gem 'spree_core', :path => \'#{File.dirname(__FILE__)}\'
+gem 'cancan'
       gems
     end
   end

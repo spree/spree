@@ -22,4 +22,4 @@ Feature: Admin > configurations > zones
     When I fill in "zone_name" with "asian"
     When I fill in "zone_description" with "asian zone"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"

@@ -16,7 +16,7 @@ Feature: Admin > configurations > payment_methods
     When I fill in "payment_method_name" with "check90"
     When I fill in "payment_method_description" with "check90 desc"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
 
   Scenario: admin editing payment method
     Given 2 payment methods exist
@@ -26,7 +26,7 @@ Feature: Admin > configurations > payment_methods
     When I click first link from selector "table#listing_payment_methods a.edit"
     When I fill in "payment_method_name" with "Payment 99"
     When I press "Update"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"
     Then the "payment_method_name" field should contain "Payment 99"
 
   Scenario: admin editing payment method with validation error

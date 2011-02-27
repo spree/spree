@@ -42,7 +42,7 @@ Feature: Admin managing adjustments
     When I fill in "adjustment_amount" with "10"
     When I fill in "adjustment_label" with "rebate"
     When I press "Continue"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
 
   Scenario: admin editing an adjustment
     Given the following orders exist:
@@ -56,7 +56,7 @@ Feature: Admin managing adjustments
     When I fill in "adjustment_amount" with "99"
     When I fill in "adjustment_label" with "rebate 99"
     When I press "Continue"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"
     Then I should see "rebate 99"
     Then I should see "$99.00"
 
