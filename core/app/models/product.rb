@@ -202,7 +202,7 @@ class Product < ActiveRecord::Base
     else
     end
     # allow site to do some customization
-    p.send(:duplicate_extra) if p.respond_to?(:duplicate_extra)
+    p.send(:duplicate_extra, self) if p.respond_to?(:duplicate_extra)
     p.save!
     p
   end
