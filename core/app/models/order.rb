@@ -34,8 +34,8 @@ class Order < ActiveRecord::Base
   end
 
   scope :by_number, lambda {|number| where("orders.number = ?", number)}
-  scope :between, lambda {|*dates| where("orders.created_at between :start and :stop").where(:start, dates.first.to_date).where(:stop, dates.last.to_date)}
-  scope :by_customer, lambda {|customer| where("uses.email =?", customer).includes(:user)}
+  scope :between, lambda {|*dates| where("orders.created_at between ? and ?", dates.first.to_date, dates.last.to_date)}
+  scope :by_customer, lambda {|customer| joins(:user).where("users.email =?", customer)}
   scope :by_state, lambda {|state| where("state = ?", state)}
   scope :complete, where("orders.completed_at IS NOT NULL")
   scope :incomplete, where("orders.completed_at IS NULL")
