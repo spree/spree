@@ -2,6 +2,8 @@ class Admin::VariantsController < Admin::BaseController
   resource_controller
   belongs_to :product
 
+  new_action.before :before_new
+
   new_action.response do |wants|
     wants.html {render :action => :new, :layout => !request.xhr?}
   end
@@ -48,6 +50,11 @@ class Admin::VariantsController < Admin::BaseController
   end
 
   private
+  def before_new
+    @object.attributes = @object.product.master.attributes.except(
+          'id', 'created_at', 'deleted_at', 'sku', 'is_master', 'count_on_hand')
+  end
+
   def create_before
     option_values = params[:new_variant]
     option_values.each_value {|id| @object.option_values << OptionValue.find(id)}
