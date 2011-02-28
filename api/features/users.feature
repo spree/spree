@@ -8,7 +8,6 @@ Feature: admin managing api key
     And I should see "Logged in successfully"
     And I should be on the admin page
     When I follow "Users"
-    Then show me the page
     When I click first link from selector "table#listing_users a.edit"
     Then I should see "Editing User"
     When I press "Clear API key"

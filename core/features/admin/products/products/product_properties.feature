@@ -1,6 +1,7 @@
-Feature: Admin visiting prototypes
+Feature: Admin editing products
 
-  Scenario: Visiting admin prototypes page
+    @javascript
+  Scenario: admin managing product properties
     Given the following properties exist:
       | Name                | Presentation |
       | model               | Model        |
@@ -19,29 +20,17 @@ Feature: Admin visiting prototypes
     Given "Shirt" prototype has properties "brand, gender, manufacturer, model, shirt_fabric, shirt_fit, shirt_sleeve_length, shirt_type"
     Given "Mug" prototype has properties "mug_size, mug_type"
     Given "Bag" prototype has properties "bag_type, bag_material"
-    And I go to the admin home page
-    When I follow "Products"
-    When I follow "Prototypes"
-    Then verify data from "table.index" with following tabular values:
-      | Name  | Action |
-      | Shirt | ignore |
-      | Mug   | ignore |
-      | Bag   | ignore |
-
-
-  @javascript
-  Scenario: Visiting admin prototypes page to create new record
+    Given custom taxons exist
+    Given the following products exist:
+      | name                 | sku  | available_on        |
+      | apache baseball cap  | A100 | 2011-01-01 01:01:01 |
+      | apache baseball cap2 | B100 | 2011-01-01 01:01:01 |
+      | zomg shirt           | Z100 | 2011-01-01 01:01:01 |
+    Given count_on_hand is 10 for all products
     When I go to the admin home page
     When I follow "Products"
-    When I follow "Prototypes"
-    When I follow "new_prototype_link"
-    Then async I should see "New Prototype" within "#new_prototype"
-    When I fill in "prototype_name" with "male shirts"
-    When I press "Create"
-    Then I should see "Successfully created!"
-    When I follow "Prototypes"
-    When I click on first link with class "admin_edit_prototype"
-    When I fill in "prototype_name" with "Shirt 99"
-    When I press "Update"
-    Then I should see "Successfully updated!"
-    Then I should see "Shirt 99"
+    When I click first link from selector "table#listing_products a.edit"
+    When I follow "Product Properties"
+    Then verify empty data from "table.index" with following tabular values:
+      | Property  | Value | Action |
+

@@ -5,6 +5,9 @@ Feature: Admin > configurations > mail_methods
     Given I go to the admin home page
     When I follow "Configuration"
     When I follow "Mail Methods"
+    #Then verify data from "table.index" with following tabular values:
+      #| Environment | Active |        |
+      #| Cucumber    | Yes    | ignore |
     Then I should see tabular data for mail methods index
 
   Scenario: create new mail_method
