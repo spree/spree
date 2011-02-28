@@ -1,7 +1,6 @@
 Feature: Admin editing products
 
-    @javascript
-  Scenario: admin managing product properties
+  Background:
     Given the following properties exist:
       | Name                | Presentation |
       | model               | Model        |
@@ -31,6 +30,28 @@ Feature: Admin editing products
     When I follow "Products"
     When I click first link from selector "table#listing_products a.edit"
     When I follow "Product Properties"
-    Then verify empty data from "table.index" with following tabular values:
-      | Property  | Value | Action |
 
+    @javascript
+  Scenario: admin managing product properties
+    Then verify empty table for selector "table.index"
+    When I click first link from selector "p.add_product_properties a"
+    Then I wait for 2 seconds
+    When I custom fill in "table tr:last td.property_name input" with "shirt_type"
+    When I custom fill in "table tr:last td.value input" with "black_shirt"
+    When I press "Update"
+    When I follow "Product Properties"
+    Then I custom should see value "shirt_type" for selector "table tr:last td.property_name input"
+    Then I custom should see value "black_shirt" for selector "table tr:last td.value input"
+    When I click first link from selector "table tr:last td.actions a"
+    Then I wait for 2 seconds
+    When I press "Update"
+    When I follow "Product Properties"
+    Then verify empty table for selector "table.index"
+
+    @javascript
+  Scenario: admin managing product properties using prototypes
+    Then verify empty table for selector "table.index"
+    When I click first link from selector "#new_ptype_link a"
+    Then I wait for 2 seconds
+    When I click first link from selector "#prototypes table.index a"
+    #Then FIXME

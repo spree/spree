@@ -31,9 +31,8 @@ Then /^verify data from "(.*)" with following tabular values:$/ do |selector, ex
   end
 end
 
-Then /^verify empty data from "(.*)" with following tabular values:$/ do |selector, expected_table|
-  real_table = tableish("#{selector} tr", "td,th")
-  real_table.size.should == 1
+Then /^verify empty table for selector "(.*)"$/ do |selector|
+  tableish("#{selector} tr", "td,th").size.should == 1
 end
 
 

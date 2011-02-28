@@ -37,15 +37,30 @@
 </table>
 
 <% if @product.options.empty? %>
-  <p>
-    <%= t("to_add_variants_you_must_first_define") %>  <%= link_to t("option_types"), selected_admin_product_option_types_url(@product) %>
+
+  <p class='first_add_option_types'>
+    <%= t("to_add_variants_you_must_first_define") %>
+    <%= link_to t("option_types"), selected_admin_product_option_types_url(@product) %>
   </p>
+
 <% else %>
+
   <div id="new_variant"></div>
+
   <br/>
+
   <p id="new_var_link">
-      <%= link_to icon('add') + ' ' + t("new_variant"), new_admin_product_variant_url(@product), :remote => :true, 'data-update' => 'new_variant', :class => 'iconlink' %>
-    &nbsp;|&nbsp;<%= link_to @deleted.blank? ? t("show_deleted") : t("show_active"), admin_product_variants_url(@product, :deleted =>  @deleted.blank? ? "on" : "off") %>
+
+    <%= link_to icon('add') + ' ' + t("new_variant"), new_admin_product_variant_url(@product),
+                                                      :remote => :true,
+                                                      'data-update' => 'new_variant',
+                                                      :class => 'iconlink new' %>
+
+    &nbsp;|&nbsp;
+
+    <%= link_to @deleted.blank? ? t("show_deleted") : t("show_active"),
+                            admin_product_variants_url(@product, :deleted =>  @deleted.blank? ? "on" : "off") %>
   </p>
+
   <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 <% end %>
