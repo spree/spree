@@ -1,4 +1,5 @@
 en:
+  save_those_details_for_my_next_order: Save those details for my next order
   errors:
     messages:
       not_found: "not found"

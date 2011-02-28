@@ -1,0 +1,9 @@
+<% if @order.user_id %>
+  <% @order.save_addresses_for_next_order = true if @order.save_addresses_for_next_order.nil? %>
+  <%= fields_for @order do |f| %>
+    <div class="form-buttons">
+      <%= f.check_box :save_addresses_for_next_order %>
+      <%= f.label :save_addresses_for_next_order, t('save_those_details_for_my_next_order') %>
+    </div>
+  <% end %>
+<% end %>
