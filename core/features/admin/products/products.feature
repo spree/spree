@@ -102,7 +102,24 @@ Feature: Admin visiting products
     Then I should see "Successfully updated!"
     Then I should see "ruby on rails t-shirt"
 
-
-
-
+    @javascript
+  Scenario: admin managing taxons
+    Given custom taxons exist
+    Given the following products exist:
+      | name                 | sku  | available_on        |
+      | apache baseball cap  | A100 | 2011-01-01 01:01:01 |
+      | apache baseball cap2 | B100 | 2011-01-01 01:01:01 |
+      | zomg shirt           | Z100 | 2011-01-01 01:01:01 |
+    Given count_on_hand is 10 for all products
+    When I go to the admin home page
+    When I follow "Products"
+    When I click first link from selector "table#listing_products a.edit"
+    When I follow "Taxons"
+    Then show me the page
+    When I fill in "searchtext" with "a"
+    Then async
+    Then I wait for 4 seconds
+    Then verify admin taxons listing
+    When I click first link from selector "#search_hits a"
+    Then async
 
