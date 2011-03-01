@@ -1,3 +1,14 @@
+Then /^I should see row (.*) and column (.*) to have value "(.*)" with selector "(.*)"$/ do |row,col,value,selector|
+  output = tableish("#{selector} tr", "td,th")
+  row = output.at(row.to_i)
+  data = row.at(col.to_i)
+  data.should == value
+end
+
+Then /^I wait for (.*) seconds?$/ do |seconds|
+  sleep seconds.to_i
+end
+
 Given /^existing (.*) records are deleted$/ do |type|
   if type == 'zone'
     Zone.delete_all
@@ -16,6 +27,10 @@ When /^I click first link from selector "(.*)" and click OK$/ do |selector|
   page.evaluate_script("window.alert = function(msg) { return true; }")
   page.evaluate_script("window.confirm = function(msg) { return true; }")
   page.first(selector).click
+end
+
+When /^I click on first link with class "(.*)"$/ do |class_name|
+  page.first('.'+class_name).click
 end
 
 When /^I confirm a js popup on the next step$/ do
