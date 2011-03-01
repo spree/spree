@@ -195,18 +195,7 @@ form p.field select {
 }
 form p.field.radios { line-height: 150%; }
 label { font-weight: bold; }
-div#checkout #checkout_form_address #billing label.error {
-  color: red;
-  float: left;
-  text-align: left;
-  display: inline-block;
-  top: 0px;
-  font-size: 11px;
-  border: none;
-  padding: 0px;
-  width: auto;
-}
-div#checkout #checkout_form_address #shipping label.error {
+form.address_form fieldset p.field label.error {
   color: red;
   float: left;
   text-align: left;
@@ -837,35 +826,24 @@ div#checkout form {
 }
 div#checkout #checkout_form_address { background-image: url("../images/steps/2.png"); }
 div#checkout #checkout_form_delivery { background-image: url("../images/steps/3.png"); }
-div#checkout #checkout_form_address #billing label {
+form.address_form fieldset p.field label {
   width: 190px;
   float: left;
   padding-right: 10px;
   text-align: right;
 }
-div#checkout #checkout_form_address #shipping label {
-  width: 190px;
-  float: left;
-  padding-right: 10px;
-  text-align: right;
-}
-div#checkout #checkout_form_address #billing input { width: 304px; }
-div#checkout #checkout_form_address #shipping input { width: 304px; }
-div#checkout #checkout_form_address #billing select { width: 304px; }
-div#checkout #checkout_form_address #shipping select { width: 304px; }
-div#checkout #checkout_form_address #billing p.checkbox { padding-left: 200px; }
-div#checkout #checkout_form_address #shipping p.checkbox { padding-left: 200px; }
-div#checkout #checkout_form_address .form-buttons { padding-left: 200px; }
-div#checkout #checkout_form_address #billing p.checkbox label {
+
+form.address_form fieldset p.field input,
+form.address_form fieldset p.field select
+{ width: 304px; }
+form.address_form fieldset p.checkbox,
+form.address_form .form-buttons
+{ padding-left: 200px; }
+form.address_form fieldset p.field.checkbox label {
   width: auto !important;
   float: none !important;
 }
-div#checkout #checkout_form_address #shipping p.checkbox label {
-  width: auto !important;
-  float: none !important;
-}
-div#checkout #checkout_form_address #billing p.checkbox input { width: auto !important; }
-div#checkout #checkout_form_address #shipping p.checkbox input { width: auto !important; }
+form.address_form fieldset p.field.checkbox input { width: auto !important; }
 div#checkout #checkout_form_payment { background-image: url("../images/steps/5.png"); }
 div#checkout #checkout_form_payment select { width: 75px; }
 div#checkout #checkout_form_payment #payment {
