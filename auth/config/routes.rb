@@ -23,6 +23,8 @@ Rails.application.routes.draw do
       get :nav_bar
     end
   end
-  resource :account, :controller => "users"
+  resource :account, :controller => "users" do
+    get :address
+  end
 
 end

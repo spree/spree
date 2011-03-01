@@ -8,13 +8,30 @@ class User < ActiveRecord::Base
   belongs_to :ship_address, :foreign_key => "ship_address_id", :class_name => "Address"
   belongs_to :bill_address, :foreign_key => "bill_address_id", :class_name => "Address"
 
+  accepts_nested_attributes_for :bill_address
+  accepts_nested_attributes_for :ship_address
+
   before_save :check_admin
   before_validation :set_login
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :persistence_token
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :persistence_token, :use_billing, :bill_address_attributes, :ship_address_attributes
 
   scope :admin, lambda { includes(:roles).where("roles.name" => "admin") }
+
+  before_validation :clone_billing_address, :if => "@use_billing"
+  attr_accessor :use_billing
+
+  def clone_billing_address
+    if bill_address and self.ship_address.nil?
+      self.ship_address = bill_address.clone
+    else
+      self.ship_address.attributes = bill_address.attributes.except("id", "updated_at", "created_at")
+    end
+    true
+  end
+
+
 
   # has_role? simply needs to return true or false whether a user has a role or not.
   def has_role?(role_in_question)

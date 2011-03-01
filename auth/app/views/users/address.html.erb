@@ -1,0 +1,57 @@
+<% content_for :head do %>
+  <%= javascript_include_tag '/states' %>
+<% end %>
+<%= render "shared/error_messages", :target => @user %>
+<%= form_for @user, :html => {:id => 'user_form_address', :class => 'address_form'} do |form| %>
+  <%= hook :user_addresses do %>
+    <style>
+    div.inner input[type=text], div.inner select { width: 80%; }
+    .hidden { display: none; }
+    </style>
+    <%= hook :user_billing_address do %>
+      <fieldset id='billing'>
+        <%= form.fields_for :bill_address do |bill_form| %>
+          <legend><%= t("billing_address")%></legend>
+          <div class="inner">
+            <%= render 'shared/address_fields',
+                  :f => bill_form, :id_prefix => 'b' %>
+            <% if Spree::Config[:alternative_billing_phone] %>
+              <p id="baltphone">
+                <%= f.label :alternative_phone, t(:alternative_phone) %>
+                <%= f.text_field :alternative_phone %>
+              </p>
+            <% end %>
+          </div>
+        <% end %>
+      </fieldset>
+    <% end %>
+    <%= hook :user_shipping_address do %>
+      <fieldset id='shipping'>
+        <%= form.fields_for :ship_address do |ship_form| %>
+          <legend><%= t("shipping_address")%></legend>
+          <p class="field checkbox">
+            <label for="user_use_billing" id="use_billing">
+              <%= check_box_tag 'user[use_billing]', '1', (!@user.bill_address.empty? && @user.bill_address.eql?(@user.ship_address)), :class => 'use_billing_address' %>
+              <%= t("use_billing_address") %>
+            </label>
+          </p>
+          <div class="inner">
+            <%= render 'shared/address_fields',
+                  :f => ship_form, :id_prefix => 's' %>
+            <% if Spree::Config[:alternative_shipping_phone] %>
+              <p id="saltphone">
+                <%= ship_form.label :alternative_phone, t(:alternative_phone) %>
+                <%= ship_form.text_field :alternative_phone %>
+              </p>
+            <% end %>
+          </div>
+        <% end %>
+      </fieldset>
+    <% end %>
+
+    <hr class="space" />
+    <div class="form-buttons">
+      <%= form.submit t("update") %>
+    </div>
+  <% end %>
+<% end %>

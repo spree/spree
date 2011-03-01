@@ -1,5 +1,7 @@
 en:
   save_those_details_for_my_next_order: Save those details for my next order
+  change_email_or_password: Change email or password
+  edit_default_billing_and_shipping_addresses: Edit default billing and shipping addresses
   errors:
     messages:
       not_found: "not found"

@@ -32,9 +32,21 @@ class UsersController < Spree::BaseController
       flash.notice = I18n.t("account_updated")
       redirect_to account_url
     else
-      render 'edit'
+      if params[:user][:bill_address_attributes].present?
+        render 'address'
+      else
+        render 'edit'
+      end
     end
 
+  end
+
+  def address
+    @user ||= current_user
+    authorize! :update, @user
+
+    @user.bill_address ||= Address.new :country_id => Spree::Config[:default_country_id]
+    @user.ship_address ||= Address.new :country_id => Spree::Config[:default_country_id]
   end
 
   private
