@@ -97,7 +97,7 @@ class Admin::ProductsController < Admin::BaseController
                             :per_page  => Spree::Config[:admin_products_per_page],
                             :page      => params[:page]}
 
-      @collection = @search.relation.not_deleted.available.on_hand.group_by_products_id.paginate(pagination_options)
+      @collection = @search.relation.not_deleted.group_by_products_id.paginate(pagination_options)
     else
       includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
