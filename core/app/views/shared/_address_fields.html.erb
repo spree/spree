@@ -1,0 +1,61 @@
+<p id="<%= id_prefix %>fname" class="field">
+  <%= f.label :firstname, t(:first_name) %>
+  <%= f.text_field :firstname, :class => 'required' %><span class="req">*</span>
+</p>
+<p id="<%= id_prefix %>lname" class="field">
+  <%= f.label :lastname, t(:last_name) %>
+  <%= f.text_field :lastname, :class => 'required' %><span class="req">*</span>
+</p>
+<p id="<%= id_prefix %>address" class="field">
+  <%= f.label :address1, t(:street_address) %>
+  <%= f.text_field :address1, :class => 'required' %><span class="req">*</span>
+</p>
+<p id="<%= id_prefix %>address2" class="field">
+  <%= f.label :address2, t(:street_address_2) %>
+  <%= f.text_field :address2 %>
+</p>
+<p id="<%= id_prefix %>city" class="field">
+  <%= f.label :city, t(:city) %>
+  <%= f.text_field :city, :class => 'required' %><span class="req">*</span>
+</p>
+<% if Spree::Config[:address_requires_state] %>
+  <p class="field">
+    <span id="<%= id_prefix %>state">
+      <% have_states = !f.object.country.states.empty? %>
+      <%= f.label :state, t(:state) %>
+      <noscript>
+        <%= f.text_field :state_name, :class => 'required' %>
+      </noscript>
+      <% state_elements = [
+          f.collection_select(:state_id, f.object.country.states,
+                            :id, :name,
+                            {:include_blank => true},
+                            {:class => have_states ? "required" : "hidden",
+                            :disabled => !have_states}) +
+          f.text_field(:state_name,
+                            :class => !have_states ? "required" : "hidden",
+                            :disabled => have_states)
+          ].join.gsub('"', "'").gsub("\n", "")
+      %>
+      <script type="text/javascript" language="javascript" charset="utf-8">
+      // <![CDATA[
+      document.write("<%= raw state_elements %>");
+      // ]]>
+      </script>
+    </span>
+    <span class="req">*</span>
+  </p>
+<% end %>
+<p id="<%= id_prefix %>zip" class="field">
+  <%= f.label :zipcode, t(:zip) %>
+  <%= f.text_field :zipcode, :class => 'required' %><span class="req">*</span>
+</p>
+<p id="<%= id_prefix %>country" class="field">
+  <%= f.label :country_id, t(:country) %>
+  <span id="<%= id_prefix %>country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required'} %></span>
+  <span class="req">*</span>
+</p>
+<p id="<%= id_prefix %>phone" class="field">
+  <%= f.label :phone, t(:phone) %>
+  <%= f.text_field :phone, :class => 'required' %><span class="req">*</span>
+</p>
