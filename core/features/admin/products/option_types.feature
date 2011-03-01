@@ -1,6 +1,6 @@
 Feature: Admin visiting option types
 
-  Scenario: Visiting admin option types page
+  Scenario: admin visiting option types list
     Given 2 option types exist
     And I go to the admin home page
     When I follow "Products"
@@ -8,7 +8,7 @@ Feature: Admin visiting option types
     Then I should see listing option types tabular attributes
 
   @javascript
-  Scenario: Visiting admin option types page to create new records
+  Scenario: admin creating a new option type
     When I go to the admin home page
     When I follow "Products"
     When I follow "Option Types"
@@ -19,7 +19,7 @@ Feature: Admin visiting option types
     When I press "Create"
     Then I should see "Successfully created!"
 
-  Scenario: edit option type
+  Scenario: admin editing an option type
     Given 2 option types exist
     And I go to the admin home page
     When I follow "Products"

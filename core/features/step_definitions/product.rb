@@ -127,4 +127,8 @@ Then /^verify products listing for price range search 18 and above$/ do
 end
 
 
+Then /^I should get a "(\d+) ([^"]+)" response$/ do |http_status, message|
+  #response.status.should == "#{http_status} #{message}"    # webrat
+  page.driver.status_code.should == http_status.to_i        # capybara
+end
 

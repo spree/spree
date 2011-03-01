@@ -31,3 +31,4 @@ Feature: Sign in
     Then I sign in as "admin@person.com/password"
     And I should see "Logged in successfully"
     And I should be on the admin page
+

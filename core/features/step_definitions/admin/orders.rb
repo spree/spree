@@ -6,12 +6,6 @@ Given /^preference settings exist$/ do
   Preference.create(:name => 'site_name', :owner => @configuration, :value => "Spree Demo Site")
 end
 
-When /^I confirm a js popup on the next step$/ do
-  page.evaluate_script("window.alert = function(msg) { return true; }")
-  page.evaluate_script("window.confirm = function(msg) { return true; }")
-end
-
-
 Given /^custom line items associated with products$/ do
   Order.all.each do |order|
     Factory(:line_item, :order => order)

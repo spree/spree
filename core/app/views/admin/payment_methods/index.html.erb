@@ -38,7 +38,8 @@
         <% end %>
         <td width="140px">
           <%= hook :admin_payment_methods_index_row_actions, locals do %>
-            <%= link_to_edit method %> &nbsp;
+            <%= link_to_edit method, :class => 'edit' %>
+            &nbsp;
             <%= link_to_delete method %>
           <% end %>
         </td>
