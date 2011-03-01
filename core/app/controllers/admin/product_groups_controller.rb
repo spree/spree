@@ -8,7 +8,11 @@ class Admin::ProductGroupsController < Admin::ResourceController
   end
 
   protected
-   
+
+    def find_resource
+      ProductGroup.find_by_permalink(params[:id])
+    end
+     
     def location_after_save
       edit_admin_product_group_path(@product_group)
     end

@@ -1,5 +1,5 @@
 class Admin::PaymentMethodsController < Admin::ResourceController
-  skip_load_resource :only => [:create]
+  skip_before_filter :load_resource, :only => [:create]
   before_filter :load_data
 
   def create
