@@ -61,6 +61,7 @@ class Creditcard < ActiveRecord::Base
 
   def authorize(amount, payment)
     # ActiveMerchant is configured to use cents so we need to multiply order total by 100
+    payment_gateway = payment.payment_method
     response = payment_gateway.authorize((amount * 100).round, self, gateway_options(payment))
     record_log payment, response
 
@@ -78,6 +79,7 @@ class Creditcard < ActiveRecord::Base
 
   def purchase(amount, payment)
     #combined Authorize and Capture that gets processed by the ActiveMerchant gateway as one single transaction.
+    payment_gateway = payment.payment_method
     response = payment_gateway.purchase((amount * 100).round, self, gateway_options(payment))
     record_log payment, response
 
@@ -95,6 +97,7 @@ class Creditcard < ActiveRecord::Base
 
   def capture(payment)
     return unless payment.pending?
+    payment_gateway = payment.payment_method
     if payment_gateway.payment_profiles_supported?
       # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
       # so supply the authorization itself as well as the creditcard, rather than just the authorization code
@@ -118,6 +121,7 @@ class Creditcard < ActiveRecord::Base
   end
 
   def void(payment)
+    payment_gateway = payment.payment_method
     response = payment_gateway.void(payment.response_code, minimal_gateway_options(payment))
     record_log payment, response
 
@@ -132,6 +136,7 @@ class Creditcard < ActiveRecord::Base
   end
 
   def credit(payment)
+    payment_gateway = payment.payment_method
     amount = payment.credit_allowed >= payment.order.outstanding_balance.abs ? payment.order.outstanding_balance.abs : payment.credit_allowed.abs
 
     if payment_gateway.payment_profiles_supported?
@@ -226,10 +231,6 @@ class Creditcard < ActiveRecord::Base
   def spree_cc_type
     return "visa" if ENV['RAILS_ENV'] == "development"
     self.class.type?(number)
-  end
-
-  def payment_gateway
-    @payment_gateway ||= Gateway.current
   end
 
 end
