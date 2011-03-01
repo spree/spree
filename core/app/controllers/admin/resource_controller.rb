@@ -1,8 +1,7 @@
 require 'spree_core/action_callbacks'
-require 'spree_core/controller_resource'
 class Admin::ResourceController < Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
-  load_and_authorize_resource
+  before_filter :load_resource
 
   respond_to :html
   
@@ -63,9 +62,47 @@ class Admin::ResourceController < Admin::BaseController
   end
  
   protected
+
+  def model_class
+    controller_name.classify.constantize
+  end
+  
+  def object_name
+    controller_name.singularize
+  end
+  
+  def load_resource
+    if member_action?
+      @object ||= load_resource_instance
+      instance_variable_set("@#{object_name}", @object)
+    else
+      @collection ||= collection
+      instance_variable_set("@#{controller_name}", @collection)
+    end
+  end
+  
+  def load_resource_instance
+    if new_actions.include?(params[:action].to_sym)
+      build_resource
+  elsif params[:id]
+      find_resource
+    end
+  end
+
+  def find_resource
+    model_class.find(params[:id])
+  end
+  
+  def build_resource
+    model_class.new(params[object_name])
+  end
   
   def collection
-    model_class.accessible_by(current_ability)
+    if model_class.respond_to?(:accessible_by) && !current_ability.has_block?(params[:action], model_class)
+      model_class.accessible_by(current_ability)
+    else
+      model_class.scoped
+    end
   end
   
   def location_after_save
@@ -100,14 +137,6 @@ class Admin::ResourceController < Admin::BaseController
     render :partial => "/admin/shared/destroy"
     flash.notice = nil
   end
-  
-  def model_class
-    controller_name.classify.constantize
-  end
-  
-  def object_name
-    controller_name.singularize
-  end
 
   # URL helpers
 
@@ -132,5 +161,17 @@ class Admin::ResourceController < Admin::BaseController
   
   def collection_url(options = {})
     polymorphic_url([:admin, model_class], options)
+  end
+  
+  def collection_actions
+    [:index]
+  end
+
+  def member_action?
+    !collection_actions.include? params[:action].to_sym
+  end
+
+  def new_actions
+    [:new, :create]
   end
 end

@@ -47,6 +47,10 @@ class Admin::ProductsController < Admin::ResourceController
   
   protected
   
+  def find_resource
+    Product.find_by_permalink(params[:id])
+  end
+  
   def location_after_save
     edit_admin_product_url(@product)
   end
