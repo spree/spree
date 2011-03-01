@@ -18,6 +18,5 @@ Feature: Admin editing products
     When I click first link from selector "table.index a.edit"
     When I fill in "image_alt" with "ruby on rails t-shirt"
     When I press "Update"
-    Then show me the page
     Then I should see "Successfully updated!"
     Then I should see "ruby on rails t-shirt"

@@ -1,3 +1,42 @@
+#
+# Usage :
+#
+#  Then verify data from "table.index" with following tabular values:
+#    | Name  | Action |
+#    | Shirt | ignore |
+#    | Mug   | ignore |
+#    | Bag   | ignore |
+#
+Then /^verify data from "(.*)" with following tabular values:$/ do |selector, expected_table|
+  expected_tableh = expected_table.hashes
+
+  real_table = tableish("#{selector} tr", "td,th")
+
+  expected_tableh.first.keys.sort.should == real_table.first.sort
+
+  expected_table = []
+  expected_table << real_table.first
+  expected_tableh.each do |h|
+    t = []
+    real_table.first.each { |key| t << h.fetch(key) }
+    expected_table << t
+  end
+
+  expected_table.each_with_index do |row, index_i|
+    row.each_with_index do |element,index_j|
+      unless element == 'ignore'
+        element.should == real_table.at(index_i).at(index_j)
+      end
+    end
+  end
+end
+
+Then /^verify empty data from "(.*)" with following tabular values:$/ do |selector, expected_table|
+  real_table = tableish("#{selector} tr", "td,th")
+  real_table.size.should == 1
+end
+
+
 Then /^I should see row (.*) and column (.*) to have value "(.*)" with selector "(.*)"$/ do |row,col,value,selector|
   output = tableish("#{selector} tr", "td,th")
   row = output.at(row.to_i)
