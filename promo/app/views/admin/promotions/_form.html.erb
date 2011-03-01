@@ -1,6 +1,6 @@
 <%= render "shared/error_messages", :target => @promotion %>
 <fieldset id="general_fields">
-  <legend>General</legend>
+  <legend><%= t(:general) %></legend>
   <%= f.field_container :name do %>
     <%= f.label :name %><br />
     <%= f.text_field :name %>
@@ -19,14 +19,14 @@
   <%= f.field_container :combine do %>
     <label>
       <%= f.check_box :combine %> 
-      May be combined with other promotions
+      <%= t(:may_be_combined_with_other_promotions) %>
     </label>
   <% end %>
 
 </fieldset>
 
 <fieldset id="expiry_fields">
-  <legend>Expiry</legend>
+  <legend><%= t(:expiry) %></legend>
   <p>
     <%= f.label :usage_limit %><br />
     <%= f.text_field :usage_limit %>

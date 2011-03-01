@@ -1,7 +1,7 @@
 <% if target && target.errors.any? %>
   <div id="errorExplanation" class="errorExplanation">
-    <h2><%= pluralize(target.errors.count, "error") %> prohibited this record from being saved:</h2>
-    <p>There were problems with the following fields:</p>
+    <h2><%= t(:errors_prohibited_this_record_from_being_saved, :count => target.errors.count) %>:</h2>
+    <p><%= t(:there_were_problems_with_the_following_fields) %>:</p>
      <ul>
      <% target.errors.full_messages.each do |msg| %>
        <li><%= msg %></li>

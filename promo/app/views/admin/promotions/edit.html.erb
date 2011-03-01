@@ -6,7 +6,7 @@
 <% end %>
 
 <fieldset id="rule_fields">
-  <legend>Rules</legend>
+  <legend><%= t(:rules) %></legend>
 
   <%= form_for(@promotion, :url => object_url, :html => { :method => :put }) do |f| %>
     <p>

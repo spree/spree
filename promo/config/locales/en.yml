@@ -4,7 +4,9 @@ en:
   coupon: Coupon
   coupon_code: Coupon code
   editing_promotion: Editing Promotion
+  expiry: Expiry
   free_shipping: Free Shipping
+  may_be_combined_with_other_promotions: May be combined with other promotions
   new_promotion: New Promotion
   no_rules_added: No rules added
   promotions: Promotions
@@ -34,6 +36,7 @@ en:
     product_source:
       group: From product group
       manual: Manually choose
+  rules: Rules
   user_rule:
     choose_users: Choose users
   item_total_rule:
