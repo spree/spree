@@ -2,7 +2,6 @@ source 'http://rubygems.org'
 
 gem "spree", :path => File.dirname(__FILE__)
 
-# gem 'mysql2'
 gem 'sqlite3-ruby'
 gem "rdoc",  "2.2"
 
