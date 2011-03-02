@@ -17,5 +17,23 @@ describe ProductScope do
     end
 
   end
+  
+  describe "#products" do
+    context "with an existing Product scope" do
+      it "sends an eponymous message to Product" do
+        Product.should_receive(:master_price_lte).with('100')
+        subject.name = 'master_price_lte'
+        subject.arguments = ['100']
+        subject.products
+      end
+    end
+    
+    context "with a non-existent Product scope" do
+      it "should return nil" do
+        subject.name = 'dlghdskjhgsjkg'
+        subject.products.should be_nil
+      end
+    end
+  end
 
 end
