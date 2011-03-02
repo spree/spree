@@ -75,7 +75,7 @@ class ProductGroup < ActiveRecord::Base
   def from_route(attrs)
     self.order_scope = attrs.pop if attrs.length % 2 == 1
     attrs.each_slice(2) do |scope|
-      next unless Product.condition?(scope.first)
+      next unless Product.respond_to?(scope.first)
       add_scope(scope.first, scope.last.split(","))
     end
     self
