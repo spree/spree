@@ -16,6 +16,9 @@ jQuery(function($){
   }
 
   var update_state = function(region) {
+    if (typeof state_mapper === 'undefined') {
+      return;
+    }
     var states = get_states(region);
 
     var state_select = $('span#' + region + 'state select');
