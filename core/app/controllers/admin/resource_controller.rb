@@ -25,6 +25,7 @@ class Admin::ResourceController < Admin::BaseController
         format.js   { render :layout => false }      
       end
     else
+      invoke_callbacks(:update, :fails)
       render :edit
     end
   end
@@ -41,6 +42,7 @@ class Admin::ResourceController < Admin::BaseController
         format.js   { render :layout => false }      
       end
     else
+      invoke_callbacks(:create, :fails)
       render :new
     end
   end
@@ -57,6 +59,7 @@ class Admin::ResourceController < Admin::BaseController
         format.js   { render_js_for_destroy }
       end
     else
+      invoke_callbacks(:destroy, :fails)
       redirect_to collection_url
     end
   end
@@ -130,6 +133,7 @@ class Admin::ResourceController < Admin::BaseController
     case callback_type.to_sym
       when :before then @@callbacks["#{controller_name}/#{action}"].before_methods.each {|method| send method }
       when :after  then @@callbacks["#{controller_name}/#{action}"].after_methods.each  {|method| send method }
+      when :fails  then @@callbacks["#{controller_name}/#{action}"].fails_methods.each  {|method| send method }
     end
   end
 
