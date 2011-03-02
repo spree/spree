@@ -401,6 +401,7 @@ en:
   full_name: "Full Name"
   gateway: Gateway
   gateway_configuration: "Gateway configuration"
+  gateway_config_unavailable: "Gateway unavailable for environment"
   gateway_error: "Gateway Error"
   gateway_setting_description: "Select a payment gateway and configure its settings."
   gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"

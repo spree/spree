@@ -24,7 +24,8 @@ describe Creditcard do
       :purchase => @success_response,
       :capture => @success_response,
       :void => @success_response,
-      :credit => @success_response
+      :credit => @success_response,
+      :environment => 'test'
     )
 
     @payment.stub :payment_method => @payment_gateway
@@ -55,6 +56,13 @@ describe Creditcard do
     it "should log the response" do
       @payment.log_entries.should_receive(:create).with(:details => anything)
       @creditcard.authorize(100, @payment)
+    end
+
+    context "when gateway does not match the environment" do
+      it "should raise an exception" do
+        @payment_gateway.stub :environment => "foo"
+        lambda {@creditcard.authorize(100, @payment)}.should raise_error(Spree::GatewayError)
+      end
     end
 
     context "if sucesssfull" do
@@ -88,6 +96,12 @@ describe Creditcard do
     it "should log the response" do
       @payment.log_entries.should_receive(:create).with(:details => anything)
       @creditcard.purchase(100, @payment)
+    end
+    context "when gateway does not match the environment" do
+      it "should raise an exception" do
+        @payment_gateway.stub :environment => "foo"
+        lambda {@creditcard.purchase(100, @payment)}.should raise_error(Spree::GatewayError)
+      end
     end
     context "if sucessfull" do
       before do
@@ -130,6 +144,12 @@ describe Creditcard do
       it "should log the response" do
         @payment.log_entries.should_receive(:create).with(:details => anything)
         @creditcard.capture(@payment)
+      end
+      context "when gateway does not match the environment" do
+        it "should raise an exception" do
+          @payment_gateway.stub :environment => "foo"
+          lambda {@creditcard.capture(@payment)}.should raise_error(Spree::GatewayError)
+        end
       end
       context "if sucessfull" do
         it "should make payment complete" do
@@ -175,6 +195,12 @@ describe Creditcard do
     it "should log the response" do
       @payment.log_entries.should_receive(:create).with(:details => anything)
       @creditcard.void(@payment)
+    end
+    context "when gateway does not match the environment" do
+      it "should raise an exception" do
+        @payment_gateway.stub :environment => "foo"
+        lambda {@creditcard.void(@payment)}.should raise_error(Spree::GatewayError)
+      end
     end
     context "if sucessfull" do
       it "should update the response_code with the authorization from the gateway" do
@@ -237,6 +263,13 @@ describe Creditcard do
     it "should log the response" do
       @payment.log_entries.should_receive(:create).with(:details => anything)
       @creditcard.credit(@payment)
+    end
+
+    context "when gateway does not match the environment" do
+      it "should raise an exception" do
+        @payment_gateway.stub :environment => "foo"
+        lambda {@creditcard.credit(@payment)}.should raise_error(Spree::GatewayError)
+      end
     end
 
     context "when response is sucesssful" do
