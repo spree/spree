@@ -11,6 +11,7 @@ class Admin::PaymentMethodsController < Admin::ResourceController
       flash[:notice] = I18n.t(:successfully_created, :resource => I18n.t(:payment_method))
       respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
     else
+      invoke_callbacks(:create, :fails)
       render :new
     end
   end
@@ -26,6 +27,7 @@ class Admin::PaymentMethodsController < Admin::ResourceController
       flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
       respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
     else
+      invoke_callbacks(:update, :fails)
       render :edit
     end
   end
