@@ -16,8 +16,8 @@ class ProductScope < ActiveRecord::Base
 
   # Get all products with this scope
   def products
-    if Product.condition?(self.name)
-      Product.send(self.name, *self.arguments)
+    if Product.respond_to?(name)
+      Product.send(name, *arguments)
     end
   end
 
