@@ -41,10 +41,6 @@ When /^I attach file "(.*)" to "(.*)"$/ do |file_name, field|
   When %Q{I attach the file "#{absolute_path}" to "#{field}"}
 end
 
-Then /^I wait for (.*) seconds?$/ do |seconds|
-  sleep seconds.to_i
-end
-
 Then /^verify admin taxons listing$/ do
   output = tableish('#search_hits table.index tr', 'td,th')
   output.size.should == 4
