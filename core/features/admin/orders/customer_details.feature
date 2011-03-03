@@ -1,4 +1,4 @@
-Feature: Admin visiting orders
+Feature: Admin managing customer details
 
     @javascript
   Scenario: edit order
@@ -10,11 +10,8 @@ Feature: Admin visiting orders
       |2010-02-01 17:36:42  |
     Given custom line items associated with products
     When I go to the admin home page
-    When I follow the first admin_edit_order link
-    Then I should see "Total: $10.00"
-    When I fill in "order_line_items_attributes_0_quantity" with "2"
-    Then async I should see "Total: $20.00"
-    When I press "Continue"
+    When I click first link from selector "table td.actions a"
+    When I follow "Customer Details"
     When I fill in "order_ship_address_attributes_firstname" with "John 99"
     When I fill in "order_ship_address_attributes_lastname" with "Doe"
     When I fill in "order_ship_address_attributes_address1" with "100 first lane"

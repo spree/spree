@@ -40,7 +40,7 @@
         <td><%= order.email %></td>
         <td><%= number_to_currency order.total %></td>
       <% end %>
-      <td>
+      <td class='actions'>
         <%= hook :admin_orders_index_row_actions, locals do %>
           <%= link_to_edit order, :title => "admin_edit_#{dom_id(order)}" %>
         <% end %>
