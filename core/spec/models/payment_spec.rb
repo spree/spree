@@ -7,6 +7,9 @@ describe Payment do
   end
 
   let(:order) { mock_model(Order, :update! => nil, :payments => []) }
+  let(:gateway) { Gateway::Bogus.new(:environment => 'test', :active => true) }
+  let(:card) { Factory(:creditcard) }
+
   before(:each) do
     @payment = Payment.new(:order => order)
     @payment.source = mock_model(Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil)
@@ -93,6 +96,24 @@ describe Payment do
       payment = Payment.create(:amount => 100, :order => order)
       order.should_receive(:update!)
       payment.save
+    end
+
+    context "when profiles are supported" do
+      before { gateway.stub :payment_profiles_supported? => true }
+
+      it "should create a payment profile" do
+        gateway.should_receive :create_profile
+        payment = Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
+      end
+    end
+
+    context "when profiles are not supported" do
+      before { gateway.stub :payment_profiles_supported? => false }
+
+      it "should not create a payment profile" do
+        gateway.should_not_receive :create_profile
+        payment = Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
+      end
     end
   end
 

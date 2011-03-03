@@ -29,7 +29,7 @@ describe Gateway::Braintree do
       @order = Factory(:order_with_totals, :bill_address => @address, :ship_address => @address)
       @order.update!
       @creditcard = Factory(:creditcard, :verification_value => '123', :number => '5105105105105100', :month => 9, :year => Time.now.year + 1, :first_name => 'John', :last_name => 'Doe')
-      @payment = Factory(:payment, :source => @creditcard, :order => @order, :amount => @order.total)
+      @payment = Factory(:payment, :source => @creditcard, :order => @order, :payment_method => @gateway, :amount => @order.total)
     end
 
   end
@@ -114,7 +114,7 @@ describe Gateway::Braintree do
 
     it 'should work through the spree payment interface without payment profiles' do
         with_payment_profiles_off do
-          purchase_using_spree_interface
+          purchase_using_spree_interface(false)
           transaction = ::Braintree::Transaction.find(@payment.response_code)
           transaction.credit_card_details.token.should be_nil
         end
@@ -158,9 +158,9 @@ describe Gateway::Braintree do
     transaction.customer_details.last_name.should == "Doe"
   end
 
-  def purchase_using_spree_interface
+  def purchase_using_spree_interface(profile=true)
     Spree::Config.set :auto_capture => true
-    @payment.send(:create_payment_profile)
+    @payment.send(:create_payment_profile) if profile
     @payment.log_entries.size == 0
     @payment.process! # as done in PaymentsController#create
     @payment.log_entries.size == 1

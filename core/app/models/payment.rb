@@ -6,25 +6,18 @@ class Payment < ActiveRecord::Base
   has_many :offsets, :class_name => 'Payment', :foreign_key => 'source_id', :conditions => "source_type = 'Payment' AND amount < 0 AND state = 'completed'"
   has_many :log_entries, :as => :source
 
-  after_save :create_payment_profile, :if => :payment_profiles_supported?
+  after_save :create_payment_profile, :if => :profiles_supported?
 
   # update the order totals, etc.
   after_save :update_order
 
-  #after_save :check_payments
-  #after_destroy :check_payments
-
   accepts_nested_attributes_for :source
-
-  #validate :amount_is_valid_for_outstanding_balance_or_credit
-  #validates :payment_method, :presence => true, :if => Proc.new { |payable| payable.is_a? Checkout }
 
   scope :from_creditcard, where(:source_type => 'Creditcard')
   scope :with_state, lambda {|s| where(:state => s)}
   scope :completed, with_state('completed')
   scope :pending, with_state('pending')
   scope :failed, with_state('failed')
-
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
   state_machine :initial => 'checkout' do
@@ -93,26 +86,6 @@ class Payment < ActiveRecord::Base
 
   private
 
-    # def check_payments
-    #   return unless order and order.complete?
-    #   #sorting by created_at.to_f to ensure millisecond percsision, plus ID - just in case
-    #   events = order.state_events.sort_by { |e| [e.created_at.to_f, e.id] }.reverse
-    #   # TODO: think the below implementation will need replacing
-    #   # if order.returnable_units.nil? && order.return_authorizations.size >0
-    #   #   order.return!
-    #   # elsif events.present? and %w(over_paid under_paid).include?(events.first.name)
-    #   #   events.each do |event|
-    #   #     if %w(shipped paid new).include?(event.previous_state)
-    #   #       order.pay!
-    #   #       order.update_attribute("state", event.previous_state) if %w(shipped returned).include?(event.previous_state)
-    #   #       return
-    #   #     end
-    #   #   end
-    #   # elsif order.payment_total >= order.total
-    #   #   order.pay!
-    #   # end
-    # end
-
     def amount_is_valid_for_outstanding_balance_or_credit
       return unless order
       if amount != order.outstanding_balance
@@ -120,13 +93,13 @@ class Payment < ActiveRecord::Base
       end
     end
 
-    def payment_profiles_supported?
-      source && source.respond_to?(:payment_gateway) && source.payment_gateway && source.payment_gateway.payment_profiles_supported?
+    def profiles_supported?
+      payment_method.respond_to?(:payment_profiles_supported?) && payment_method.payment_profiles_supported?
     end
 
     def create_payment_profile
-      return unless payment_profiles_supported? and source.number and !source.has_payment_profile?
-      source.payment_gateway.create_profile(self)
+      return unless source.is_a?(Creditcard) && source.number && !source.has_payment_profile?
+      payment_method.create_profile(self)
     rescue ActiveMerchant::ConnectionError => e
       gateway_error I18n.t(:unable_to_connect_to_gateway)
     end
