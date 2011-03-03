@@ -102,7 +102,7 @@ Feature: Admin visiting products
     When I follow "Taxons"
     When I fill in "searchtext" with "a"
     Then async
-    Then I wait for 4 seconds
+    Then I wait for 2 seconds
     Then verify admin taxons listing
     When I click first link from selector "#search_hits a"
     Then async

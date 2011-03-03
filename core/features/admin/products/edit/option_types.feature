@@ -22,10 +22,10 @@ Feature: Admin editing product's option types
     Then I should see row 1 and column 0 to have value "None" with selector "table.index"
     When I click first link from selector "#new_opt_link a"
     Then async
-    Then I wait for 4 seconds
+    Then I wait for 2 seconds
     When I click first link from selector "#option-types table a"
     Then async
-    Then I wait for 4 seconds
+    Then I wait for 2 seconds
     Then I should see row 1 and column 0 to have value "shirt colors" with selector "table.index"
     Then I should see row 1 and column 1 to have value "colors" with selector "table.index"
 

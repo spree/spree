@@ -17,10 +17,10 @@ Feature: Admin editing products
     Then I should see row 1 and column 0 to have value "None." with selector "#selected-taxons table.index"
     When I fill in "searchtext" with "a"
     Then async
-    Then I wait for 4 seconds
+    Then I wait for 2 seconds
     Then verify admin taxons listing
     When I click first link from selector "#search_hits a.iconlink"
-    Then I wait for 4 seconds
+    Then I wait for 2 seconds
     When I follow "Taxons"
     Then I should see 2 tabular records with selector "#selected-taxons table.index"
     Then I should see row 1 and column 0 to have value "Brand" with selector "#selected-taxons table.index"
