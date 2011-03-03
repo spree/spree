@@ -7,4 +7,4 @@ Feature: Admin managing payments
     Given custom payment associated with order R100
     And I go to the admin home page
     When I click first link from selector "table td.actions a"
-    When I follow "Payments"
+    #When I follow "Payments"
