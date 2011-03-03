@@ -36,21 +36,4 @@ end
 Given /^a product exists with a sku of "a100"$/ do
   Factory(:product, :sku => 'a100')
 end
-When /^I attach file "(.*)" to "(.*)"$/ do |file_name, field|
-  absolute_path = File.expand_path(Rails.root.join('..', '..', 'features', 'step_definitions', file_name))
-  When %Q{I attach the file "#{absolute_path}" to "#{field}"}
-end
 
-Then /^verify admin taxons listing$/ do
-  output = tableish('#search_hits table.index tr', 'td,th')
-  output.size.should == 4
-  output[0].should == %w(Name Path Action)
-  output[1].should == ['Brand','','Select']
-  output[2].should == ['Brands','','Select']
-  output[3].should == %w(Apache Brands Select)
-end
-
-Given /^custom taxons exist$/ do
-  taxon = Factory(:taxon, :name => 'Brands')
-  taxon2 = Factory(:taxon, :taxonomy => taxon.taxonomy, :parent_id => taxon.id, :name => 'Apache')
-end
