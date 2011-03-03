@@ -20,7 +20,6 @@ Feature: Admin editing product's option types
     When I click first link from selector "table#listing_products a.edit"
     When I follow "Option Types" within "#sidebar"
     Then I should see row 1 and column 0 to have value "None" with selector "table.index"
-    Then show me the page
     When I click first link from selector "#new_opt_link a"
     Then async
     Then I wait for 4 seconds
