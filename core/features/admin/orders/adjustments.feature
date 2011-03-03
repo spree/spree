@@ -1,4 +1,4 @@
-Feature: Admin visiting orders
+Feature: Admin managing adjustments
 
   Scenario: admin visiting adjustments list
     Given the following orders exist:

@@ -1,4 +1,4 @@
-Feature: Admin visiting orders
+Feature: Admin managing customer details
 
     @javascript
   Scenario: edit order

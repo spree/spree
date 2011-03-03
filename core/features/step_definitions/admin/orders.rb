@@ -1,3 +1,9 @@
+Given /^product is associated with order$/ do
+  order = Order.last
+  product = Factory(:product, :name => 'spree t-shirt')
+  order.add_variant(product.master, 10)
+end
+
 Given /^preference settings exist$/ do
   @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
   Preference.create(:name => 'allow_ssl_in_production', :owner => @configuration, :value => '1')

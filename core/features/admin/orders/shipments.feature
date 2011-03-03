@@ -1,4 +1,4 @@
-Feature: Admin visiting orders
+Feature: Admin managing shipments
 
   @wip @stop
   Scenario: shipments list
