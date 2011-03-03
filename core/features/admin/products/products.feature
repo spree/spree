@@ -66,7 +66,6 @@ Feature: Admin visiting products
     When I click first link from selector "table#listing_products a.clone"
     Then I should see "Product has been cloned"
 
-<<<<<<< HEAD
   Scenario: admin uploading and then editing an image for a product
     Given the following products exist:
       | name                 | sku  | available_on        |
@@ -109,6 +108,3 @@ Feature: Admin visiting products
     Then verify admin taxons listing
     When I click first link from selector "#search_hits a"
     Then async
-=======
-
->>>>>>> break large feature into smaller ones
