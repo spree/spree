@@ -1,5 +1,6 @@
 Feature: Admin managing order details
 
+    @javascript
   Scenario: edit order page with product information
     Given the following orders exist:
       |completed at         | number |
@@ -10,7 +11,8 @@ Feature: Admin managing order details
     When I click first link from selector "table td.actions a"
     Then I should see "spree t-shirt"
     Then I should see "$199.90"
-
+    When I fill in "order_line_items_attributes_0_quantity" with "1"
+    Then async I should see "Total: $19.99"
 
 
   Scenario: new order page comes up
