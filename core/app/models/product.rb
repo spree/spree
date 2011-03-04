@@ -75,7 +75,7 @@ class Product < ActiveRecord::Base
   scope :available,       lambda { |*on| where("products.available_on <= ?", on.first || Time.zone.now ) }
 
   #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
-  scope :active,          not_deleted.available
+  scope :active,          lambda{ not_deleted.available }
 
   scope :on_hand,         where("products.count_on_hand > 0")
 
