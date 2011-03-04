@@ -1,7 +1,11 @@
 module CheckoutHelper
 
   def checkout_progress
-    states = %w(address delivery payment confirm complete)
+    if Gateway.current and Gateway.current.payment_profiles_supported?
+      states = %w(address delivery payment confirm complete)
+    else
+      states = %w(address delivery payment complete)
+    end
     items = states.map do |state|
       text = t("order_state.#{state}").titleize
 
