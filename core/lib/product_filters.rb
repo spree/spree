@@ -48,7 +48,7 @@ module ProductFilters
   # below scope would be something like ["$10 - $15", "$15 - $18", "$18 - $20"]
   #
   Product.scope :price_range_any,
-    lambda {|opts|
+    lambda {|*opts|
       conds = opts.map {|o| ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
       Product.scoped(:joins => :master).conditions_any(conds)
     }
@@ -82,7 +82,7 @@ module ProductFilters
 
   if Property.table_exists? && @@brand_property = Property.find_by_name("brand")
     Product.scope :brand_any,
-      lambda {|opts|
+      lambda {|*opts|
         conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
         Product.with_property("brand").conditions_any(conds)
       }
