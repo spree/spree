@@ -41,7 +41,7 @@ module Spree::BaseHelper
     list
   end
 
-  [:mini, :small, :product, :large].each do |style|
+  Image.attachment_definitions[:attachment][:styles].each do |style, v|
     define_method "#{style}_image" do |product, *options|
       options = options.first || {}
       if product.images.empty?
