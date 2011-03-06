@@ -64,7 +64,7 @@ module SpreePromo
           #promotion_credits.reload.clear
           eligible_automatic_promotions.each do |coupon|
             # can't use coupon.create_discount as it re-saves the order causing an infinite loop
-            if amount = coupon.calculator.compute(line_items)
+            if amount == coupon.calculator.compute(line_items)
               amount = item_total if amount > item_total
               promotion_credits.reload.clear unless coupon.combine? and promotion_credits.all? { |credit| credit.adjustment_source.combine? }
               promotion_credits.create!({
