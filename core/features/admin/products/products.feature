@@ -2,16 +2,35 @@ Feature: Admin visiting products
 
   Scenario: admin visiting products listing
     Given the following products exist:
-      | name                |  available_on        |
-      | apache baseball cap |  2011-01-06 18:21:13 |
-      | zomg shirt          |  2011-01-06 18:21:13 |
-    Given count_on_hand is 10 for all products
+      | name                |  available_on        |  count_on_hand  |
+      | apache baseball cap |  2011-01-06 18:21:13 |  0              |
+      | zomg shirt          |  2125-01-06 18:21:13 |  5              |
     And I go to the admin home page
     When I follow "Products"
     Then I should see listing products tabular attributes with name ascending
     When I follow "admin_products_listing_name_title"
     Then I should see listing products tabular attributes with name descending
-
+  
+  @selenium
+  Scenario: admin using search on products listing (show deleted)
+    Given the following products exist:
+      | name                |  available_on        |  deleted_at          |
+      | apache baseball cap |  2011-01-06 18:21:13 |  2011-01-06 18:21:13 |
+      | zomg shirt          |  2111-01-06 18:21:13 |  nil                 |
+    Given count_on_hand is 10 for all products  
+    And I go to the admin home page
+    When I follow "Products"
+    Then I should see "zomg shirt"
+    And  I should not see "apache baseball cap"
+    When I check "Show Deleted"
+    And press "Search"
+    Then I should see "zomg shirt"
+    And  I should see "apache baseball cap"
+    When I uncheck "Show Deleted"
+    And press "Search"
+    Then I should see "zomg shirt"
+    And  I should not see "apache baseball cap"
+    
   Scenario: admin using search on products listing
     Given the following products exist:
       | name                 | sku  | available_on        |
