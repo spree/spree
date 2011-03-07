@@ -9,9 +9,25 @@ Feature: Admin managing payments
     And I go to the admin home page
     When I click first link from selector "table td.actions a"
     When I follow "Payments"
-    Then show me the page
+    Then I should see "Payment: balance due" within "#payment_status"
     Then verify data from "table.index" with following tabular values:
-      | Date/Time | Amount | Payment Method | Payment State | Actions |
-      | ignore    | $199.90  | Credit Card    | checkout      | ignore  |
+      | Date/Time | Amount  | Payment Method | Payment State | Actions |
+      | ignore    | $199.90 | Credit Card    | pending       | ignore  |
     When I press "Void"
-    Then I should see "Cannot perform requested operation"
+    Then I should see "Payment: balance due" within "#payment_status"
+    Then I should see "Payment Updated"
+    Then verify data from "table.index" with following tabular values:
+      | Date/Time | Amount  | Payment Method | Payment State | Actions |
+      | ignore    | $199.90 | Credit Card    | void          | ignore  |
+    When I click first link from selector "#new_payment_section a"
+    Then I should see "New Payment"
+    When I press "Continue"
+    When I press "Capture"
+    Then I should see "Payment: paid" within "#payment_status"
+    Then I should not see "#new_payment_section"
+    When I follow "History"
+    Then I should see "History"
+    Then verify data from "table.index" with following tabular values:
+      | Event   | From State  | To State | User   | Date/Time |
+      | Payment | balance due | paid     | ignore | ignore    |
+

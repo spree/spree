@@ -430,7 +430,7 @@ class Order < ActiveRecord::Base
         :previous_state => old_payment_state,
         :next_state     => self.payment_state,
         :name           => "payment" ,
-        :user_id        =>  (User.current && User.current.id) || self.user_id
+        :user_id        =>  (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
       })
     end
   end
