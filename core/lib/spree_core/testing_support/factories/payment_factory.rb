@@ -1,12 +1,12 @@
 Factory.define :payment do |f|
   f.amount 45.75
-  f.payment_method { Gateway.current }
+  f.payment_method { Factory(:bogus_payment_method) }
   f.source { Factory.build(:creditcard) }
   f.order { Factory(:order) }
 
   # limit the payment amount to order's remaining balance, to avoid over-pay exceptions
-  f.after_create do |pmt| 
-      pmt.update_attribute(:amount, [pmt.amount, pmt.order.outstanding_balance].min) 
+  f.after_create do |pmt|
+      pmt.update_attribute(:amount, [pmt.amount, pmt.order.outstanding_balance].min)
   end
 end
 
