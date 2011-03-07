@@ -79,25 +79,22 @@ class Admin::ProductsController < Admin::BaseController
 
   def collection
     return @collection if @collection.present?
-    scopes = ['group_by_products_id']
 
     unless request.xhr?
-      # Note: the SL scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
-      # QUERY - better as named scope or as SL scope?
-      if params[:search].nil? || params[:search][:deleted_at_not_null].blank?
-        scopes << 'not_deleted'
+      params[:search] ||= {}
+      # Note: the MetaSearch scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
+      if params[:search][:deleted_at_is_null].nil?
+        params[:search][:deleted_at_is_null] = "1"
       end
 
-      params[:search] = {} if params[:search].nil?
       params[:search][:meta_sort] ||= "name.asc"
-      tmp = params[:search].except(:deleted_at_not_null)
-      @search = end_of_association_chain.metasearch(tmp)
+      @search = end_of_association_chain.metasearch(params[:search])
 
       pagination_options = {:include   => {:variants => [:images, :option_values]},
                             :per_page  => Spree::Config[:admin_products_per_page],
                             :page      => params[:page]}
 
-      @collection = @search.relation.not_deleted.available.on_hand.group_by_products_id.paginate(pagination_options)
+      @collection = @search.relation.group_by_products_id.paginate(pagination_options)
     else
       includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
