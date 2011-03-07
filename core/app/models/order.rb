@@ -77,12 +77,15 @@ class Order < ActiveRecord::Base
   state_machine :initial => 'cart', :use_transactions => false do
 
     event :next do
-      transition :from => 'cart', :to => 'address'
-      transition :from => 'address', :to => 'delivery'
+      transition :from => 'cart',     :to => 'address'
+      transition :from => 'address',  :to => 'delivery'
       transition :from => 'delivery', :to => 'payment'
-      transition :from => 'confirm', :to => 'complete'
+      transition :from => 'confirm',  :to => 'complete'
+
       # note: some payment methods will not support a confirm step
-      transition :from => 'payment', :to => 'confirm', :if => Proc.new { Gateway.current and Gateway.current.payment_profiles_supported? }
+      transition :from => 'payment',  :to => 'confirm',
+                                      :if => Proc.new { Gateway.current and Gateway.current.payment_profiles_supported? }
+
       transition :from => 'payment', :to => 'complete'
     end
 
