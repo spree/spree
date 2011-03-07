@@ -12,3 +12,5 @@ Feature: Admin managing payments
     Then verify data from "table.index" with following tabular values:
       | Date/Time | Amount | Payment Method | Payment State | Actions |
       | ignore    | $0.00  | Credit Card    | checkout      | ignore  |
+    When I press "Void"
+    Then I should see "Cannot perform requested operation"
