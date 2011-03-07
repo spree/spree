@@ -35,7 +35,6 @@ Feature: Admin managing shipments
     Then show me the page
     Given custom inventory units associated with order R100
     When I press "Create"
-    Then I should see ""
     Then show me the page
 
 
