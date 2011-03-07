@@ -11,11 +11,13 @@
     <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"})  %>
     <%= error_message_on :shipping_method, :zone_id %>
   <% end %>
+
   <%= f.field_container :display_on do %>
     <%= f.label :display_on, t("display") %><br />
     <%= select(:shipping_method, :display_on, ShippingMethod::DISPLAY.collect {|display| [t(display), display == :both ? nil : display.to_s]})  %>
     <%= error_message_on :shipping_method, :display_on %>
   <% end %>
+
 <% end %>
 
 <%= hook :admin_shipping_method_form_calculator_fields, locals do %>
