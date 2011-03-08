@@ -1,4 +1,5 @@
 Spree::BaseController.class_eval do
+  helper_method :current_ability
 
   before_filter :set_current_user
 
