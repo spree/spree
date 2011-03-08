@@ -10,7 +10,7 @@ Feature: Admin managing order details
     When I follow "Orders"
     When I click first link from selector "table td.actions a"
     Then I should see "spree t-shirt"
-    Then I should see "$199.90"
+    Then I should see "$39.98"
     When I fill in "order_line_items_attributes_0_quantity" with "1"
     Then async I should see "Total: $19.99"
 
