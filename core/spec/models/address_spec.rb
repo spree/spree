@@ -22,12 +22,13 @@ describe Address do
 
 
   context 'country usa already exists' do
-    before do
-      @country = Factory(:country, :iso_name => 'UNITED STATES', :iso => 'US', :name => 'United States', :numcode => 840)
-      @address = Factory(:address)
-    end
+    let!(:country) { Factory(:country,  :iso_name => 'UNITED STATES',
+                                        :iso => 'US',
+                                        :name => 'United States',
+                                        :numcode => 840) }
+    let(:address) { Factory(:address) }
     it 'should have country belonging to usa' do
-      @address.country == @country
+      address.country == country
     end
   end
 
