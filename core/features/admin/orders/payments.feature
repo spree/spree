@@ -32,6 +32,7 @@ Feature: Admin managing payments
       | Event   | From State  | To State | User   | Date/Time |
       | Payment | balance due | paid     | ignore | ignore    |
     When I follow "Shipments"
+    Given a shipping method exists
     Given custom next on order
     Given custom order has a ship address
     When I click first link from selector "#new_shipment_section a"

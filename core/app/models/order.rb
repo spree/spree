@@ -469,8 +469,7 @@ class Order < ActiveRecord::Base
   def has_available_shipment
     return unless :address == state_name.to_sym
     return unless ship_address && ship_address.valid?
-    errors.add :base, :no_shipping_methods_available \
-      if available_shipping_methods.empty?
+    errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
   end
 
   def after_cancel

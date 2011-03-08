@@ -6,7 +6,7 @@ end
 Given /^custom order has a ship address$/ do
   order = Order.find_by_number('R100')
   order.ship_address = Factory(:address)
-  order.save
+  order.save!
 end
 
 Given /^product is associated with order$/ do
