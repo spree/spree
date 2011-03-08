@@ -26,7 +26,15 @@ module Spree::Search
     protected
     def get_base_scope
       base_scope = @cached_product_group ? @cached_product_group.products.active : Product.active
-      base_scope = base_scope.in_taxon(taxon) unless taxon.blank?
+      if taxon.present?
+        # select products from taxon and it's children during search
+        if keywords.present?
+          base_scope = base_scope.in_taxon(taxon)
+        # select products only from the current taxon otherwise
+        else
+          base_scope = base_scope.taxons_name_eq taxon.name
+        end
+      end
       base_scope = get_products_conditions_for(base_scope, keywords) unless keywords.blank?
 
       base_scope = base_scope.on_hand unless Spree::Config[:show_zero_stock_products]

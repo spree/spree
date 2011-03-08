@@ -7,11 +7,15 @@
   <% end %>
 <% end %>
 
-<% if @taxon.children.empty? || !params[:keywords].blank? %>
+<% force_products = @taxon.children.empty? || params[:keywords].present? %>
+
+<% if @products.present? || force_products %>
   <%= hook :taxon_products do %>
     <%= render :partial => "shared/products", :locals => {:products => @products, :taxon => @taxon } %>
   <% end %>
-<% else %>
+<% end %>
+
+<% unless force_products %>
   <%= hook :taxon_children do %>
     <%= render :partial => "taxon", :collection => @taxon.children %>
   <% end %>
