@@ -30,4 +30,10 @@ Feature: Admin managing payments
     Then verify data from "table.index" with following tabular values:
       | Event   | From State  | To State | User   | Date/Time |
       | Payment | balance due | paid     | ignore | ignore    |
+    When I follow "Shipments"
+    Given custom next on order
+    When I click first link from selector "#new_shipment_section a"
+    Then show me the page
+    Then I debug
+
 

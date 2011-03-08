@@ -1,3 +1,14 @@
+Given /^custom next on order$/ do
+  order = Order.find_by_number('R100')
+  order.next!
+end
+
+Given /^custom order has a ship address$/ do
+  order = Order.find_by_number('R100')
+  order.ship_address = Factory(:address)
+  order.save
+end
+
 Given /^product is associated with order$/ do
   order = Order.last
   product = Factory(:product, :name => 'spree t-shirt')
