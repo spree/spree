@@ -54,7 +54,6 @@
         <%= shipment_form.label :shipping_method_id, t('shipping_method') + ":" %>
       </td>
       <td>
-        <%= @shipping_methods.inspect %>
         <%= shipment_form.select :shipping_method_id,
                                         @shipping_methods.map {|sm| ["#{sm.name} - #{sm.zone.name}", sm.id] } %>
       </td>
