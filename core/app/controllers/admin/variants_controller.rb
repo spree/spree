@@ -58,9 +58,9 @@ class Admin::VariantsController < Admin::BaseController
     @deleted =  (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
 
     if @deleted.blank?
-      @collection ||= end_of_association_chain.active.all
+      @collection ||= end_of_association_chain
     else
-      @collection ||= end_of_association_chain.deleted.all
+      @collection ||= Variant.where(:product_id => @product.id).deleted
     end
   end
 end
