@@ -18,7 +18,9 @@
       <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
     <% end %>
     <th>
-      <%= hook :admin_shipments_index_header_actions %>
+      <%= hook :admin_shipments_index_header_actions do %>
+        <%= t("action") %>
+      <% end %>
     </th>
   </tr>
   <% @shipments.each do |shipment| %>

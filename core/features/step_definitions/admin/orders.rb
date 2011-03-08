@@ -17,7 +17,10 @@ end
 Given /^product is associated with order$/ do
   order = Order.last
   product = Factory(:product, :name => 'spree t-shirt')
-  order.add_variant(product.master, 10)
+  order.add_variant(product.master, 2)
+  order.inventory_units.each do | iu |
+    iu.update_attribute_without_callbacks('state', 'sold')
+  end
 end
 
 Given /^preference settings exist$/ do
