@@ -30,6 +30,7 @@ module Spree::Search
       base_scope = get_products_conditions_for(base_scope, keywords) unless keywords.blank?
 
       base_scope = base_scope.on_hand unless Spree::Config[:show_zero_stock_products]
+      base_scope = base_scope.group_by_products_id if @product_group.product_scopes.size > 1
       base_scope
     end
 
