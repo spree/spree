@@ -1,3 +1,9 @@
+Given /^a custom shipping method exists$/ do
+  ShippingMethod.delete_all
+  require 'ruby-debug'; debugger
+  Factory(:shipping_method, :zone => Zone.find_by_name('North America'))
+end
+
 Given /^custom next on order$/ do
   order = Order.find_by_number('R100')
   order.next!
