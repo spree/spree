@@ -37,6 +37,5 @@ Feature: Admin managing payments
     Given custom order has a ship address
     When I click first link from selector "#new_shipment_section a"
     Then show me the page
-    Then I should see "xx"
 
 
