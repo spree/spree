@@ -1,6 +1,5 @@
 Feature: Admin managing shipments
 
-  @wip @stop @javascript
   Scenario: create new shipment
     Given all orders are deleted
     Given all line items are deleted

@@ -1,5 +1,6 @@
 Feature: Admin managing payments
 
+  @wip @stop
   Scenario: payments list
     Given the following orders exist:
       |completed at         | number |
@@ -32,8 +33,9 @@ Feature: Admin managing payments
       | Payment | balance due | paid     | ignore | ignore    |
     When I follow "Shipments"
     Given custom next on order
+    Given custom order has a ship address
     When I click first link from selector "#new_shipment_section a"
     Then show me the page
-    Then I debug
+    Then I should see "xx"
 
 
