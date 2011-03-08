@@ -1,6 +1,5 @@
 Given /^a custom shipping method exists$/ do
   ShippingMethod.delete_all
-  require 'ruby-debug'; debugger
   Factory(:shipping_method, :zone => Zone.find_by_name('North America'))
 end
 

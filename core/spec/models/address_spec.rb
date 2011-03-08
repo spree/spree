@@ -16,8 +16,19 @@ describe Address do
   end
 
   context "factory" do
-    let(:address) { Factory :address }
+    let(:address) { Factory(:address) }
     specify { address.state.country.should == address.country }
+  end
+
+
+  context 'country usa already exists' do
+    before do
+      @country = Factory(:country, :iso_name => 'UNITED STATES', :iso => 'US', :name => 'United States', :numcode => 840)
+      @address = Factory(:address)
+    end
+    it 'should have country belonging to usa' do
+      @address.country == @country
+    end
   end
 
   context "validation" do
