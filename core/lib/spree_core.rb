@@ -33,7 +33,7 @@ require 'paperclip'
 require 'stringex'
 require 'will_paginate'
 #require 'less' #TODO RAILS3: consider making this optional
-require 'awesome_nested_set'
+require 'nested_set'
 require 'acts_as_list'
 require 'resource_controller'
 require 'active_merchant'
@@ -77,7 +77,7 @@ ActiveRecord::Base.class_eval do
 end
 
 if defined?(ActionView)
-  require 'awesome_nested_set/helper'
+  require 'nested_set/helper'
   ActionView::Base.class_eval do
     include CollectiveIdea::Acts::NestedSet::Helper
   end
