@@ -101,7 +101,7 @@ module Spree::BaseHelper
   
   # generates nested url to product based on supplied taxon
   def seo_url(taxon, product = nil)
-    return nested_taxons_path(taxon.permalink) if product.nil?
+    return nested_taxons_path(taxon.permalink) if not taxon.nil? and product.nil?
     return product_url(product)
   end
   
