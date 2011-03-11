@@ -158,7 +158,7 @@ To activate your decorators you need to include the follow code in your *lib/spr
   end
 </ruby>
 
-h3. Product images
+h3. Product Images
 
 Spree uses Thoughtbot's "paperclip":https://github.com/thoughtbot/paperclip gem to manage images for products. All the normal paperclip options are available on the Image class. If you want to modify the default spree product and thumbnail image sizes, simply create an image_decorator.rb file in your app model directory, and override the attachment sizes:
 
