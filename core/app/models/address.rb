@@ -61,7 +61,7 @@ class Address < ActiveRecord::Base
   end
 
   def self.default
-    new :country => Country.find(Spree::Config[:default_country_id])
+    new :country_id => Spree::Config[:default_country_id]
   end
 
   # can modify an address if it's not been used in an order (but checkouts controller has finer control)
