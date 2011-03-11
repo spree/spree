@@ -18,6 +18,11 @@
   </tr>
   <tr>
 	<td colspan="2">
+	  <%= (Spree::Config[:allow_ssl_in_staging] ? t("ssl_will_be_used_in_staging_mode") : t("ssl_will_not_be_used_in_staging_mode")) %>
+	</td>
+  </tr>
+  <tr>
+	<td colspan="2">
 	  <%= (Spree::Config[:allow_ssl_in_development_and_test] ? t("ssl_will_be_used_in_development_and_test_modes") : t("ssl_will_not_be_used_in_development_and_test_modes")) %>
 	</td>
   </tr>
