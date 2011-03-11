@@ -23,6 +23,7 @@ class AppConfiguration < Configuration
   preference :stylesheets, :string, :default => 'reset,screen' # Comma separate multiple stylesheets, e.g. 'screen,mystyle'
   preference :admin_interface_logo, :string, :default => "admin/bg/spree_50.png"
   preference :allow_ssl_in_production, :boolean, :default => true
+  preference :allow_ssl_in_staging, :boolean, :default => true
   preference :allow_ssl_in_development_and_test, :boolean, :default => false
   preference :allow_guest_checkout, :boolean, :default => true
   preference :alternative_billing_phone,  :boolean, :default => false # Request extra phone for bill addr
