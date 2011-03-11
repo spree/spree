@@ -2,6 +2,8 @@
 <title><%= "Spree #{t('administration')}: " %>
 <%= t(controller.controller_name, :default => controller.controller_name.titleize) %></title>
 
+<%= define_js_root_path %>
+
 <%= javascript_tag do %>
   ajax_urls = <%= raw({
     :product_search_json       => admin_products_url(:format => 'json'),

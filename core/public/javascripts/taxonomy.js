@@ -1,5 +1,5 @@
-var base_url = "/admin/taxonomies/" + taxonomy_id + "/taxons/";
-var child_url = "/admin/taxonomies/" + taxonomy_id + "/get_children.json"
+var base_url = root_path + "/admin/taxonomies/" + taxonomy_id + "/taxons/";
+var child_url = root_path + "/admin/taxonomies/" + taxonomy_id + "/get_children.json"
 var is_cut = false;
 var last_rollback = null;
 
@@ -90,7 +90,7 @@ jQuery(document).ready(function(){
     },
     "themes" : {
       "theme" : "apple",
-      "url" : "/javascripts/jsTree/themes/apple/style.css"
+      "url" : root_path + "/javascripts/jsTree/themes/apple/style.css"
     },
     "strings" : {
       "new_node" : new_taxon,

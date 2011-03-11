@@ -112,5 +112,9 @@ module Spree::BaseHelper
       return current_order.item_count
     end
   end
+  
+  def define_js_root_path
+    return javascript_tag "var root_path = '#{root_path}';"
+  end
 
 end
