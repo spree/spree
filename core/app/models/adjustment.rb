@@ -41,7 +41,7 @@ class Adjustment < ActiveRecord::Base
   # to use this method in an after_save hook for other models without causing an infinite recursion problem.  If there
   # is no +originator+ then this method will have no effect.
   def update!
-    return if locked? || originator.nil?
+    return if self.frozen || originator.nil?
     originator.update_adjustment(self, source)
   end
 end
