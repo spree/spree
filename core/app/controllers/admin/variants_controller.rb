@@ -1,4 +1,5 @@
-class Admin::VariantsController < Admin::ResourceProductController
+class Admin::VariantsController < Admin::ResourceController
+  belongs_to :product, :find_by => :permalink
   create.before :create_before
 
   # override the destory method to set deleted_at value
@@ -43,7 +44,7 @@ class Admin::VariantsController < Admin::ResourceProductController
     if @deleted.blank?
       @collection ||= super
     else
-      @collection ||= Variant.where(:product_id => product.id).deleted
+      @collection ||= Variant.where(:product_id => parent.id).deleted
     end
     @collection
   end

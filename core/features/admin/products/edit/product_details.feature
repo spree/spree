@@ -12,5 +12,5 @@ Feature: Admin editing products
     When I click first link from selector "table#listing_products a.edit"
     When I fill in "product_name" with "apache baseball cap 99"
     When I press "Update"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"
 
