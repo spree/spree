@@ -38,6 +38,17 @@ class Admin::OptionTypesController < Admin::ResourceController
     set_available_option_types
   end
 
+  protected
+    
+    def location_after_save
+      if @option_type.created_at == @option_type.updated_at
+        edit_admin_option_type_url(@option_type)
+      else
+        admin_option_types_url
+      end
+    end
+
+
   private
     def load_product
       @product = Product.find_by_param!(params[:product_id])

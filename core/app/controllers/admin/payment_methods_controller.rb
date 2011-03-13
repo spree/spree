@@ -18,11 +18,13 @@ class Admin::PaymentMethodsController < Admin::ResourceController
 
   def update
     invoke_callbacks(:update, :before)
-    if @payment_method['type'].to_s != params[:payment_method][:type]
-      @payment_method.update_attribute(:type, params[:payment_method][:type])
+    payment_method_type = params[:payment_method].delete(:type)
+    if @payment_method['type'].to_s != payment_method_type
+      @payment_method.update_attribute(:type, payment_method_type)
       @payment_method = PaymentMethod.find(params[:id])
     end
-    if @payment_method.update_attributes params[@payment_method.class.name.underscore.gsub("/", "_")]
+    payment_method_params = params[@payment_method.class.name.underscore.gsub("/", "_")] || {}
+    if @payment_method.update_attributes(params[:payment_method].merge(payment_method_params)) 
       invoke_callbacks(:update, :after)
       flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
       respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
