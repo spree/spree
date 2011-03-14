@@ -40,7 +40,7 @@ class Taxon < ActiveRecord::Base
 
   def active_products
     scope = self.products.active
-    scope = base_scope.on_hand unless Spree::Config[:show_zero_stock_products]
+    scope = scope.on_hand unless Spree::Config[:show_zero_stock_products]
     scope
   end
 
