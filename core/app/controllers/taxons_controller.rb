@@ -9,6 +9,7 @@ class TaxonsController < Spree::BaseController
   private
   def load_data
     @taxon ||= object
+    render_404 and return if @taxon.nil?
     params[:taxon] = @taxon.id
     @searcher = Spree::Config.searcher_class.new(params)
     @products = @searcher.retrieve_products
