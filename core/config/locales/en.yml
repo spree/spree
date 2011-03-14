@@ -68,6 +68,7 @@ en:
         quantity: Quantity
       order:
         checkout_complete: "Checkout Complete"
+        completed_at: "Completed At"
         ip_address: "IP Address"
         item_total: "Item Total"
         number: Number

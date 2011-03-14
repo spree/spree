@@ -88,7 +88,7 @@ module ProductFilters
       }
 
     def ProductFilters.brand_filter
-      brands = ProductProperty.find_all_by_property_id(@@brand_property).map(&:value).uniq
+      brands = ProductProperty.find_all_by_property_id(@@brand_property).map(&:value).compact.uniq
       conds  = Hash[*brands.map {|b| [b, "product_properties.value = '#{b}'"]}.flatten]
       { :name   => "Brands",
         :scope  => :brand_any,
