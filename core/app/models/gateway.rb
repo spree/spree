@@ -10,6 +10,10 @@ class Gateway < PaymentMethod
     Creditcard
   end
 
+  def requires_source?
+    true
+  end
+
   # instantiates the selected gateway and configures with the options stored in the database
   def self.current
     super
