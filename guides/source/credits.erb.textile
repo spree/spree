@@ -6,11 +6,6 @@ h2. Credits
 
 p. We'd like to thank the following people for their documentation contributions to this project (in alphabetical order).
 
-<%=
-authors = %x[git log --pretty=format:"* %an" | sort -f | uniq]
-authors.each do |author|
-  author
-end
-%>
+<%= %x[git log --pretty=format:"* %an" | sort -f | uniq] %>
 
 <% end %>
