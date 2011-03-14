@@ -1,5 +1,6 @@
 class RenameColumnsForDevise < ActiveRecord::Migration
   def self.up
+    return if column_exists?(:users, :password_salt)
     rename_column :users, :crypted_password, :encrypted_password
     rename_column :users, :salt, :password_salt
     rename_column :users, :remember_token_expires_at, :remember_created_at
