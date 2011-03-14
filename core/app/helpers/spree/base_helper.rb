@@ -114,7 +114,7 @@ module Spree::BaseHelper
   end
   
   def define_js_root_path
-    return javascript_tag "var root_path = '#{root_path}';"
+    return javascript_tag "var root_path = '#{controller.config.relative_url_root}';"
   end
 
 end

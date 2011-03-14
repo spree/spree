@@ -8,7 +8,7 @@
   <table class="basic-table">
     <tr>
       <td><%= t("thumbnail") %>:</td>
-      <td><%= link_to(image_tag(@image.attachment.url(:mini)), root_path + @image.attachment.url(:product)) %></td>
+      <td><%= link_to(image_tag(@image.attachment.url(:mini)), image_path(@image.attachment.url(:product))) %></td>
     </tr>
     <%= render :partial => "form", :locals => { :f => f } %>
   </table>
