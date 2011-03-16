@@ -47,6 +47,7 @@ Feature: Admin managing payments
       | ignore     | UPS Ground      | $10.00 | ignore   | Pending | ignore    | ignore |
       | ignore     | UPS Ground      | $10.00 | ignore   | Pending | ignore    | ignore |
 
+    @javascript
   Scenario: payments list with history
     Given the following orders exist:
       |completed at         | number | state    |
@@ -62,6 +63,8 @@ Feature: Admin managing payments
     When I follow "Shipments"
     Given a custom shipping method exists
     Given custom order has a ship address
+    When I click first link from selector "#new_shipment_section a"
+    When I check first element with class "inventory_unit"
     When I press "Create"
     Then I should see "Successfully created!"
     When I follow "Shipments"
@@ -71,8 +74,11 @@ Feature: Admin managing payments
     Then I should see "Successfully created!"
     When I follow "Shipments"
     When I follow "History"
-    Then I should see "History"
-    Then show me the page
-    Then I should see "xx"
+    Then verify data from "table.index" with following tabular values:
+      | Event    | From State  | To State    | User   | Date/Time |
+      | Payment  | paid        | balance due | ignore | ignore    |
+      | Shipment | pending     | backorder   | ignore | ignore    |
+      | Payment  | balance due | paid        | ignore | ignore    |
+      | Payment  | paid        | balance due | ignore | ignore    |
 
 

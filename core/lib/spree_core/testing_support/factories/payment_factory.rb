@@ -8,7 +8,7 @@ Factory.define :payment do |f|
 
   # limit the payment amount to order's remaining balance, to avoid over-pay exceptions
   f.after_create do |pmt|
-      pmt.update_attribute(:amount, [pmt.amount, pmt.order.outstanding_balance].min)
+      #pmt.update_attribute(:amount, [pmt.amount, pmt.order.outstanding_balance].min)
   end
 end
 

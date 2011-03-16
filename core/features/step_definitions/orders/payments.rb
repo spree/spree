@@ -3,7 +3,6 @@ Given /^custom payment associated with order R100$/ do
   Factory(:payment, :order => order, :amount => order.outstanding_balance)
 end
 
-
 Given /^a completed order$/ do
   address = Factory(:address)
 
@@ -27,5 +26,6 @@ Given /^a completed order$/ do
                                   :variant_id => product.master.id,
                                   :quantity => 2,
                                   :price => 10)
- end
+
+end
 
