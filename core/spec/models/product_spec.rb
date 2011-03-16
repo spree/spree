@@ -30,6 +30,22 @@ describe Product do
     end
   end
 
+  context "validations" do
+    context "find_by_param" do
+      before do
+        @product1 = Factory(:product, :name => 'foo')
+        @product2 = Factory(:product, :name => 'foo')
+        @product3 = Factory(:product, :name => 'foo')
+      end
+      it "should have valid permalink" do
+        @product1.permalink.should == 'foo'
+        @product2.permalink.should == 'foo-1'
+        @product3.permalink.should == 'foo-2'
+      end
+
+    end
+  end
+
   context "scopes" do
     context ".master_price_lte" do
       it 'produces correct sql' do
