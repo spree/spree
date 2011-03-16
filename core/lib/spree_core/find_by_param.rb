@@ -85,12 +85,14 @@ module Railslove
 
           base_value = to_param
           permalink_value = base_value
-          query = self.class.send("where", "#{permalink_options[:field]} = ?", permalink_value)
           counter = 0
-          unless query.limit(1).empty?
-            permalink_value = "#{base_value}-#{counter += 1}"
+
+          begin
+            permalink_value = base_value + ((counter == 0) ? "" : "-#{counter}")
             query = self.class.send("where", "#{permalink_options[:field]} = ?", permalink_value)
-          end
+            counter += 1
+          end while query.limit(1).present?
+
           write_attribute(permalink_options[:field], permalink_value)
           true
 
