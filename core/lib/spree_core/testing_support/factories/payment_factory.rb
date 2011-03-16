@@ -4,6 +4,7 @@ Factory.define :payment do |f|
   f.source { Factory.build(:creditcard) }
   f.order { Factory(:order) }
   f.state 'pending'
+  f.response_code '12345'
 
   # limit the payment amount to order's remaining balance, to avoid over-pay exceptions
   f.after_create do |pmt|
