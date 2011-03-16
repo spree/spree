@@ -1,6 +1,6 @@
 Feature: Admin managing payments
 
-  @wip @stop @javascript
+  @javascript
   Scenario: payments list
     Given the following orders exist:
       |completed at         | number | state    |
@@ -46,17 +46,33 @@ Feature: Admin managing payments
       | Shipment # | Shipping Method | Cost   | Tracking | Status  | Date/Time | Action |
       | ignore     | UPS Ground      | $10.00 | ignore   | Pending | ignore    | ignore |
       | ignore     | UPS Ground      | $10.00 | ignore   | Pending | ignore    | ignore |
+
+  Scenario: payments list with history
+    Given the following orders exist:
+      |completed at         | number | state    |
+      |2011-02-01 12:36:15  | R100   | complete |
+    Given a completed order
+    And I go to the admin home page
+    When I click first link from selector "table td.actions a"
+    When I follow "Payments"
+    Then I should see "Payment: balance due" within "#payment_status"
+    When I press "Capture"
+    Then I should see "Payment: paid" within "#payment_status"
+    Then I should not see "#new_payment_section"
+    When I follow "Shipments"
+    Given a custom shipping method exists
+    Given custom order has a ship address
+    When I press "Create"
+    Then I should see "Successfully created!"
+    When I follow "Shipments"
+    When I click first link from selector "#new_shipment_section a"
+    When I check first element with class "inventory_unit"
+    When I press "Create"
+    Then I should see "Successfully created!"
+    When I follow "Shipments"
     When I follow "History"
     Then I should see "History"
-    Then verify data from "table.index" with following tabular values:
-      | Event    | From State  | To State | User   | Date/Time |
-      | Shipment | backorder   | shippedshippedpartialpartialreadyreadypendingpendingbackorderbackorder     | ignore | ignore    |
-      | Shipment | backorder   | shippedshippedpartialpartialreadyreadypendingpendingbackorderbackorder     | ignore | ignore    |
-      | Payment  | balance due | paid     | ignore | ignore    |
-      | Payment  | paid        | balance due     | ignore | ignore    |
-
-
-
-
+    Then show me the page
+    Then I should see "xx"
 
 
