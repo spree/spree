@@ -3,15 +3,15 @@
 <%= t(controller.controller_name, :default => controller.controller_name.titleize) %></title>
 
 <%= javascript_tag do %>
-  ajax_urls = <%= raw({
+  ajax_urls = <%== {
     :product_search_json       => admin_products_url(:format => 'json'),
     :product_search_basic_json => admin_products_url(:format => 'json', :json_format => 'basic', :limit => 10),
     :user_search_basic_json    => admin_users_url(:format => 'json', :json_format => 'basic', :limit => 10)
-  }.to_json) %>;
+  }.to_json %>;
 
-  strings = <%= raw(
+  strings = <%==
     [:no_results, :type_to_search, :searching].
-    inject({}){|memo, item| {item => t(item) }}.to_json )
+    inject({}){|memo, item| {item => t(item) }}.to_json
   %>
 <% end %>
 
@@ -30,5 +30,5 @@
 %>
 
 <%= javascript_tag "jQuery.alerts.dialogClass = 'spree';" %>
-<%= raw unobtrusive_datepicker_includes %>
+<%== unobtrusive_datepicker_includes %>
 <%= yield :head %>
