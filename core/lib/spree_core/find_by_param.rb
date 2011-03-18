@@ -43,6 +43,8 @@ module Railslove
         def make_permalink(options={})
           options[:field] ||= "permalink"
 
+          self.send(:validates_uniqueness_of, options[:field])
+
           if self.column_names.include?(options[:field].to_s)
             options[:param] = options[:field]
             before_validation(:on => :create){ save_permalink }
