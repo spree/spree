@@ -33,7 +33,7 @@ class Admin::UsersController < Admin::BaseController
   def collection
     return @collection if @collection.present?
     unless request.xhr?
-      @search = User.metasearch(params[:search])
+      @search = User.registered.metasearch(params[:search])
       @collection = @search.paginate(:per_page => Spree::Config[:admin_products_per_page], :page => params[:page])
 
       #scope = scope.conditions "lower(email) = ?", @filter.email.downcase unless @filter.email.blank?
