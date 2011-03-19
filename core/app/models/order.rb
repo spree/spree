@@ -264,7 +264,7 @@ class Order < ActiveRecord::Base
 
   # Creates a new shipment (adjustment is created by shipment model)
   def create_shipment!
-    shipping_method.reload
+    shipping_method(true)
     if shipment.present?
       shipment.update_attributes(:shipping_method => shipping_method)
     else
