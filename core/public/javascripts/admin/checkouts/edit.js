@@ -63,8 +63,10 @@ jQuery(document).ready(function(){
       $('#order_bill_address_attributes_city').val(addr['city']);
       $('#order_bill_address_attributes_zipcode').val(addr['zipcode']);
       $('#order_bill_address_attributes_state_id').val(addr['state_id']);
+      $('#order_bill_address_attributes_state_name').val(addr['state_name']);
       $('#order_bill_address_attributes_country_id').val(addr['country_id']);
       $('#order_bill_address_attributes_phone').val(addr['phone']);
+      update_state('b');
     }
 
     var addr = data['ship_address'];
@@ -76,8 +78,10 @@ jQuery(document).ready(function(){
       $('#order_ship_address_attributes_city').val(addr['city']);
       $('#order_ship_address_attributes_zipcode').val(addr['zipcode']);
       $('#order_ship_address_attributes_state_id').val(addr['state_id']);
+      $('#order_ship_address_attributes_state_name').val(addr['state_name']);
       $('#order_ship_address_attributes_country_id').val(addr['country_id']);
       $('#order_ship_address_attributes_phone').val(addr['phone']);
+      update_state('s');
     }
   });
 
