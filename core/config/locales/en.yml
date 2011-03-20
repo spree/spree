@@ -25,9 +25,9 @@ en:
         address2: "Address (contd.)"
         city: City
         country: "Country"
-        first_name: "First Name"
+        firstname: "First Name"
         first_name_begins_with: "First Name Begins With"
-        last_name: "Last Name"
+        lastname: "Last Name"
         last_name_begins_with: "Last Name Begins With"
         phone: Phone
         state: "State"
