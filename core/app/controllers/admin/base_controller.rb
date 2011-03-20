@@ -5,8 +5,6 @@ class Admin::BaseController < Spree::BaseController
   helper 'admin/navigation'
   layout 'admin'
 
-  before_filter :parse_date_params
-
   protected
   def render_js_for_destroy
     render :partial => "/admin/shared/destroy"
@@ -26,28 +24,4 @@ class Admin::BaseController < Spree::BaseController
   #   return access_denied unless object.editable_by?(current_user)
   #   true
   # end
-
-  private
-  def parse_date_params
-    params.each do |k, v|
-      parse_date_params_for(v) if v.is_a?(Hash)
-    end
-  end
-
-  def parse_date_params_for(hash)
-    dates = []
-    hash.each do |k, v|
-      parse_date_params_for(v) if v.is_a?(Hash)
-      if k =~ /\(\di\)$/
-        param_name = k[/^\w+/]
-        dates << param_name
-      end
-    end
-    if (dates.size > 0)
-      dates.uniq.each do |date|
-        hash[date] = [hash.delete("#{date}(1i)"), hash.delete("#{date}(2i)"), hash.delete("#{date}(3i)")].join('-')
-      end
-    end
-  end
 end
-
