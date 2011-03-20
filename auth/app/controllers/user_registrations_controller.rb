@@ -14,7 +14,7 @@ class UserRegistrationsController < Devise::RegistrationsController
   # POST /resource/sign_up
   def create
     @user = build_resource(params[:user])
-    logger.debug(@user)
+    @user.roles << Role.find_or_create_by_name(:user)
     if resource.save
       set_flash_message(:notice, :signed_up)
       sign_in_and_redirect(:user, @user)
