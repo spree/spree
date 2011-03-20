@@ -22,6 +22,6 @@ Feature: Admin managing customer details
     When I fill in "order_ship_address_attributes_phone" with "123-456-7890"
     When I press "Continue"
     When I go to the admin home page
-    When I follow the first admin_edit_order link
+    When I click first link from selector "table td.actions a"
     When I follow "Customer Details"
     Then the "order_ship_address_attributes_firstname" field should contain "John 99"

@@ -47,14 +47,14 @@ Feature: Admin managing payments
       | ignore     | UPS Ground      | $10.00 | ignore   | Pending | ignore    | ignore |
       | ignore     | UPS Ground      | $10.00 | ignore   | Pending | ignore    | ignore |
 
-    @javascript
+  @javascript
   Scenario: payments list with history
     Given the following orders exist:
       |completed at         | number | state    |
-      |2011-02-01 12:36:15  | R100   | complete |
+      |2011-02-01 12:36:14  | R100   | complete |
     Given a completed order
     And I go to the admin home page
-    When I click first link from selector "table td.actions a"
+    When I follow the first admin_edit_order link
     When I follow "Payments"
     Then I should see "Payment: balance due" within "#payment_status"
     When I press "Capture"
