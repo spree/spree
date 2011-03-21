@@ -68,7 +68,7 @@ Rails.application.routes.draw do
     end
     resources :states
     resources :tax_categories
-    resources :configurations
+    resources :configurations, :only => :index
     resources :products do
       resources :product_properties
       resources :images do
