@@ -24,7 +24,7 @@ class Admin::TaxonsController < Admin::BaseController
     if params[:q].blank?
       @available_taxons = []
     else
-      @available_taxons = Taxon.where('lower(name) LIKE ?', "%#{params[:q].downcase}%")
+      @available_taxons = Taxon.where('lower(name) LIKE ?', "%#{params[:q].mb_chars.downcase}%")
     end
     @available_taxons.delete_if { |taxon| @product.taxons.include?(taxon) }
     respond_to do |format|

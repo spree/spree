@@ -5,7 +5,7 @@ class Admin::PropertiesController < Admin::BaseController
   belongs_to :product
 
   def filtered
-    @properties = Property.where('lower(name) LIKE ?', "%#{params[:q].downcase}%").order(:name)
+    @properties = Property.where('lower(name) LIKE ?', "%#{params[:q].mb_chars.downcase}%").order(:name)
     render :template => "admin/properties/filtered.html.erb", :layout => false
   end
 
