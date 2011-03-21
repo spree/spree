@@ -20,13 +20,7 @@
       <% end %>
     </ul>
     <br style='clear:both;' />
-    <p>
-      <%= hook :coupon_code_label do %>
-      <% end %>
-      <br />
-      <%= hook :coupon_code_text_field do %>
-      <% end %>
-    </p>
+    <%= hook :coupon_code_field, {:form => form} %>
   <% end %>
 </fieldset>
 
