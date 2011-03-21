@@ -418,7 +418,7 @@ en:
   google_analytics_create: "Create New Google Analytics Account"
   google_analytics_id: "Analytics ID"
   google_analytics_new: "New Google Analytics Account"
-  google_analytics_setting_description: "Manage Google Analytics ID"
+  google_analytics_setting_description: "Manage Google Analytics ID."
   guest_checkout: Guest Checkout
   guest_user_account: Checkout as a Guest
   has_no_shipped_units: has no shipped units
@@ -442,7 +442,7 @@ en:
   invalid_search: "Invalid search criteria."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"
-  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
+  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display."
   inventory_settings: "Inventory Settings"
   is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
@@ -616,7 +616,7 @@ en:
   payment_information: "Payment Information"
   payment_method: Payment Method
   payment_methods: Payment Methods
-  payment_methods_setting_description: Configure methods customers can use to pay
+  payment_methods_setting_description: Configure methods customers can use to pay.
   payment_processing_failed: "Payment could not be processed, please check the details you entered"
   payment_state: Payment State
   payment_states:
@@ -864,14 +864,14 @@ en:
   shipping: Shipping
   shipping_address: "Shipping Address"
   shipping_categories: "Shipping Categories"
-  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method."
   shipping_category: Shipping Category
   shipping_cost: Cost
   shipping_error: "Shipping Error"
   shipping_instructions: "Shipping Instructions"
   shipping_method: "Shipping Method"
   shipping_methods: "Shipping Methods"
-  shipping_methods_description: "Manage shipping methods"
+  shipping_methods_description: "Manage shipping methods."
   shipping_total: "Shipping Total"
   shop_by_taxonomy: "Shop by %{taxonomy}"
   shopping_cart: "Shopping Cart"
@@ -937,7 +937,7 @@ en:
   taxon: Taxon
   taxon_edit: Edit Taxon
   taxonomies: Taxonomies
-  taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomies_setting_description: "Create and manage taxonomies."
   taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
