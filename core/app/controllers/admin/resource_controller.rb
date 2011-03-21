@@ -56,7 +56,7 @@ class Admin::ResourceController < Admin::BaseController
       flash[:notice] = I18n.t(:successfully_removed, :resource => resource_desc)
       respond_to do |format|
         format.html { redirect_to collection_url }
-        format.js   { render_js_for_destroy }
+        format.js   { render :partial => "/admin/shared/destroy" }
       end
     else
       invoke_callbacks(:destroy, :fails)
@@ -170,11 +170,6 @@ class Admin::ResourceController < Admin::BaseController
       when :after  then callbacks[action].after_methods.each  {|method| send method }
       when :fails  then callbacks[action].fails_methods.each  {|method| send method }
     end
-  end
-
-  def render_js_for_destroy
-    render :partial => "/admin/shared/destroy"
-    flash.notice = nil
   end
 
   # URL helpers

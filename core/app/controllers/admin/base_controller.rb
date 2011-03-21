@@ -6,7 +6,10 @@ class Admin::BaseController < Spree::BaseController
   layout 'admin'
 
   protected
-
+  def render_js_for_destroy
+    render :partial => "/admin/shared/destroy"
+  end
+  
   # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
   def check_json_authenticity
     return unless request.format.js? or request.format.json?
