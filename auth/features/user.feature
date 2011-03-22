@@ -25,3 +25,9 @@ Feature: admin changing email address
     Then I should see "Successfully updated!"
     When I click first link from selector "#content a.edit_user"
     Then the "user_role_user" checkbox should be checked
+
+  Scenario: listing users when anonymous users are present
+    Given an anonymous user has been created
+    When I follow "Users"
+    Then should not see "@example.net"
+
