@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me, :persistence_token
 
   scope :admin, lambda { includes(:roles).where("roles.name" => "admin") }
-  scope :registered, where('users.email NOT LIKE "%@example.net"')
+  scope :registered, where("users.email NOT LIKE ?", "%@example.net")
 
   # has_role? simply needs to return true or false whether a user has a role or not.
   def has_role?(role_in_question)
