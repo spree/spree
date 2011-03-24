@@ -62,7 +62,7 @@ class Admin::OrdersController < Admin::BaseController
   private
 
   def object
-    @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
+    @object ||= Order.includes(:adjustments).where(:number => params[:id]).first if params[:id]
     return @object || current_order
   end
 

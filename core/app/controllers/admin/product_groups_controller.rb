@@ -10,7 +10,7 @@ class Admin::ProductGroupsController < Admin::ResourceController
   protected
 
     def find_resource
-      ProductGroup.find_by_permalink(params[:id])
+      ProductGroup.where(:permalink => params[:id]).first
     end
      
     def location_after_save

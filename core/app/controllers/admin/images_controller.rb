@@ -22,7 +22,7 @@ class Admin::ImagesController < Admin::ResourceController
   end
 
   def load_data
-    @product = Product.find_by_permalink(params[:product_id])
+    @product = Product.where(:permalink => params[:product_id]).first
     @variants = @product.variants.collect do |variant|
       [variant.options_text, variant.id ]
     end

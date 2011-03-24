@@ -163,7 +163,7 @@ class Product < ActiveRecord::Base
   end
 
   def add_properties_and_option_types_from_prototype
-    if prototype_id && prototype = Prototype.find_by_id(prototype_id)
+    if prototype_id && prototype = Prototype.where(:id => prototype_id).first
       prototype.properties.each do |property|
         product_properties.create(:property => property)
       end

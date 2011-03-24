@@ -163,7 +163,7 @@ module Scopes::Product
   Product.scope :with_option_value, lambda {|option, value|
     option_type_id = case option
     when String
-      option_type = OptionType.find_by_name(option) || option.to_i
+      option_type = OptionType.where(:name => option).first || option.to_i
     when OptionType
       option.id
     else

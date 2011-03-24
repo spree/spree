@@ -81,7 +81,7 @@ class Admin::PaymentsController < Admin::BaseController
     @object = model.new(object_params)
     @object.order = parent_object
     if @object.payment_method.is_a?(Gateway) and @object.payment_method.payment_profiles_supported? and params[:card].present? and params[:card] != 'new'
-      @object.source = Creditcard.find_by_id(params[:card])
+      @object.source = Creditcard.where(:id => params[:card]).first
     end
     @object
   end

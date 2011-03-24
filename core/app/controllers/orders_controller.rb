@@ -3,7 +3,7 @@ class OrdersController < Spree::BaseController
   helper :products
 
   def show
-    @order = Order.find_by_number(params[:id])
+    @order = Order.where(:number => params[:id]).first
   end
 
   def update

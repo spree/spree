@@ -80,7 +80,7 @@ module ProductFilters
   #   being blank: note that this relies on with_property doing a left outer join
   #   rather than an inner join.
 
-  if Property.table_exists? && @@brand_property = Property.find_by_name("brand")
+  if Property.table_exists? && @@brand_property = Property.where(:name => 'brand').first
     Product.scope :brand_any,
       lambda {|*opts|
         conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}

@@ -5,7 +5,7 @@ OrdersController.class_eval do
 
   def check_authorization
     session[:access_token] ||= params[:token]
-    order = current_order || Order.find_by_number(params[:id])
+    order = current_order || Order.where(:number => params[:id]).first
 
     if order
       authorize! :edit, order, session[:access_token]

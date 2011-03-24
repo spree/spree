@@ -2,7 +2,7 @@ class Admin::ProductScopesController < Admin::BaseController
   helper 'admin/product_groups'
   
   def create
-    @product_group = ProductGroup.find_by_permalink(params[:product_group_id])
+    @product_group = ProductGroup.where(:permalink => params[:product_group_id]).first
     @product_scope = @product_group.product_scopes.build(params[:product_scope])
     if @product_scope.save
       respond_to do |format|

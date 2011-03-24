@@ -13,7 +13,7 @@ class Admin::ProductsController < Admin::ResourceController
   # override the destory method to set deleted_at value
   # instead of actually deleting the product.
   def destroy
-    @product = Product.find_by_permalink(params[:id])
+    @product = Product.where(:permalink => params[:id]).first
     @product.deleted_at = Time.now()
 
     @product.variants.each do |v|
@@ -48,7 +48,7 @@ class Admin::ProductsController < Admin::ResourceController
   protected
   
   def find_resource
-    Product.find_by_permalink(params[:id])
+    Product.where(:permalink => params[:id]).first
   end
   
   def location_after_save

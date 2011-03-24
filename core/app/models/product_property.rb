@@ -10,6 +10,6 @@ class ProductProperty < ActiveRecord::Base
   end
 
   def property_name=(name)
-    self.property = Property.find_by_name(name) unless name.blank?
+    self.property = Property.where(:name => name).first unless name.blank?
   end
 end

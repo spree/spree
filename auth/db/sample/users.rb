@@ -39,7 +39,7 @@ def create_admin_user
 
   load 'user.rb'
 
-  if User.find_by_email(email)
+  if User.where(:email => email).first
     say "\nWARNING: There is already a user with the email: #{email}, so no account changes were made.  If you wish to create an additional admin user, please run rake db:admin:create again with a different email.\n\n"
   else
     admin = User.create(attributes)
