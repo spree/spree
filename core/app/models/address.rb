@@ -39,7 +39,7 @@ class Address < ActiveRecord::Base
 
     #ensure state_name belongs to country without states, or that it matches a predefined state name/abbr
     if self.state_name.present?
-      country = Country.where(:id => self.country_id).try(:first)
+      country = Country.where(:id => self.country_id).first
 
       if country.states.present?
         states = country.states.where(["name = ? OR abbr = ?",self.state_name, self.state_name])
