@@ -5,7 +5,7 @@ These guides are designed to make you immediately productive with Spree, and to 
 
 * "Current Release version":http://spreecommerce.com/documentation/ - based on the last stable release of Spree
 * "Edge version":http://edgeguides.spreecommerce.com - for unreleased code in current Spree "master branch":http://github.com/spree/spree/tree/master
-* "Legacy 0.30.x version":http://spreecommerce.com/legacy/0-30-x/ - for the legacy 0.30.x version of Spree
+* "Legacy 0.40.x version":http://spreecommerce.com/legacy/0-40-x/ - for the legacy 0.40.x version of Spree
 * "Legacy 0.11.x version":http://spreecommerce.com/legacy/0-11-x/ - for the legacy 0.11.x version of Spree
 
 <% end %>
