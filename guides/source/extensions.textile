@@ -134,70 +134,90 @@ s.required_ruby_version = '>= 1.8.7'
 
 h4. Versionfile
 
-Spree is moving at a rapid pace. Code is constantly changes and new releases are being pushed out. Amid all these changes sometimes it becomes difficult to keep track of which version of Spree is compatible with which version of spree extension. To solve this problem spree extension authors are encouraged to have a file called "Versionfile".
+Spree is moving at a rapid pace with the code constantly evolving as new releases are being pushed out.  These changes sometimes make it difficult to keep track of which version of Spree is compatible with which version of an extension. To solve this problem extension authors are encouraged to add a +Versionfile+ to their extension.
 
-h5. What is Versionfile
+h5. Versionfile Basics
 
-Just like Gemfile Versionfile is a plain text file which keeps information about which version of spree extension is compatible with which version of Spree. Given below is a sample Versionfile.
++Versionfile+ is a plain text file which keeps information about which version of Spree an extension is compatible with.  It was inspired by the +Gemfile+ used by bundler.  Lets take a look at a sample +Versionfile+.
 
-<shell>
+<ruby>
 "0.50.x" => { :branch => "master" }
 "0.40.x" => { :tag => "v1.0.0", :version => "1.0.0" }
-</shell>
+</ruby>
 
-Above Versionfile is saying that if you are using Spree version "0.50.x" then use "master" branch. If you are using Spree version "0.40.x" then you should use tag "v1.0.0".
+The above +Versionfile+ is saying that if you are using Spree version "0.50.x" then use "master" branch. If you are using Spree version "0.40.x" then you should use tag "v1.0.0".
+
+You should note that we are dealing with two different concepts of "version" here.  One is the version of Spree supported and the other is the version of the extension.
+
+INFO. All Spree extensions should have a version.  This version number has nothing to do with what version of Spree is supported.  It is listed purely as a convenient way to refer to an extension.  For example "I'm having a problem with spree_active_shipping 1.0.1"
 
 h5. Syntax
 
-A Versionfile can have any number of lines. It is recommended that you put the latest spree releases at the top. The very first thing a line should should is the Spree version it is supporting. Next within curly braces how to get extension supporting the specified Spree version is mentioned.
+A +Versionfile+ can have any number of lines. It is recommended that you put the latest Spree releases at the top. The very first thing a line should should is the Spree version it is supporting. Next within curly braces how to get extension supporting the specified Spree version is mentioned.
 
+There are four different ways of specifying an extension's compatibilty information.
 
-There are four differt ways of specifying how to get extension code.
+NOTE. All four variations for identifying extension compatibility can be mapped to more than one Spree version.  In other words, its entirely possible that the same version of an extension can be compatible with multiple versions of Spree.
 
-<shell>
+*Gem Version*
+
+<ruby>
 "0.30.x" => { :version => "1.2" }
-</shell>
+</ruby>
 
 Above case is saying that if you are using Spree version "0.30.x" then use extension as a gem and the version of gem you should be using is "1.2".
 
-<shell>
+Gem versions are considered "stable."  They will show up in the extension registry as such.
+
+*Git Branch*
+
+<ruby>
 "0.30.x" => { :branch => "0-30-stable" }
-</shell>
+</ruby>
 
 Above case is telling that if you are using Spree version "0.30.x" then use branch named "0-30-stable". Notice that when you suggesting to use "branch" then "version" should not be specified.
 
-<shell>
+Versions identified by Git branch are considered "unstable" or "edge."  They will be identified as such in the extension registry.
+
+*Git Tag*
+
+<ruby>
 "0.30.x" => { :tag => "v0.30", :version => '1.1' }
-</shell>
+</ruby>
 
 Above case is suggesting that if you are using Spree version "0.30.x" then use tag named "v0.30". The version information indicates that the author of the extension is calling that release as version "1.1".
 
-<shell>
+Versions identified by tags are considered "stable."  They will show up in the extension registry as such.  This is also a nice alternative to having to release an extension as an actual gem.
+
+*Git SHA*
+
+<ruby>
 "0.30.x" => { :ref => "4aedfg", :version => '1.2' }
-</shell>
+</ruby>
 
 Above case is suggesting that if you are using Spree version "0.30.x" then use ref named "4aedfg" . The version information indicates that the author of the extension is calling that release as version "1.2"
 
-<shell>
+Versions identified by a Git SHA are considered "stable."  They will show up in the extension registry as such.  This is also a nice alternative to having to release an extension as an actual gem.
+
+<ruby>
 #"0.30.x" => { :ref => "4aedfg", :version => '1.2' }
-</shell>
+</ruby>
 
 Above case is indicating how you can comment out a line. A line beginning with hash "#" is treated as comment.
 
-h5. How do I use Versionfile
+h5. Using the Versionfile
 
-Versionfile is not directly consumed by the users. There is a crawler which crawls Versionfile of all the registered extensions once every day. So any changes you make to Versionfile should be captured within 24 hours.
++Versionfile+ has no impact on the actual ability of an extension to work with Spree.  It is simply a declaration by the extension author that a certain version of the extension is known to work with a particular version(s) of Spree.  Its also possible that an extension version might be compatible with versions of Spree not listed.  If you discover this to be the case please send a pull request to the extension author so they can update their +Versionfile+.
 
-After Versionfile info has been captured if you visit Spree extension information page then under "Stable releaseses" and "Dev releases" you will see a link called "Show". Clicking that link will show the users the exact line they need to copy of their Gemfile. For example "Click here":http://spreecommerce.com/extensions/110-email-to-friend to see an example in action.
+There is a crawler which crawls the +Versionfile+ of all the registered extensions once every day. So any changes you make to your extension's +Versionfile+ should be captured within 24 hours.
 
-h5. I updated Versionfile but the information is not being captured
+INFO. You must actually register your extension in the "Extension Registry":http://spreecommerce.com/extensions before it can be discovered by the crawler.
 
-While parsing the lines gathered from Versionfile if a line is invalid then that line is skipped. So make sure that entries in Versionfile is invalid. Soon we would be releasing a tool that would verify the Versionfile and would instantly provide a feedback if something is not right.
+After the +Versionfile+ info has been processed you will see it listed in the "Extension Registry":http://spreecommerce.com/extensions.  Depending on the syntax you used to specify the version you will see it listed under "Stable Release" or "Dev Release".  In both cases there will also be a link labeled "Show". Clicking that link will show you the exact information you need to paste into your +Gemfile+ in order to use the extension.
 
+h5. Troubleshooting
 
-
-
-
+While parsing the lines gathered from +Versionfile+ if a line is invalid then that line is skipped. So make sure that entries in +Versionfile+ are valid. Soon we would be releasing a tool that can verify the +Versionfile+ and provide instant feedback if something is not right.
 
 h3. Extension Tutorial
 
