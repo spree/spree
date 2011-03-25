@@ -114,7 +114,7 @@ describe Shipment do
       end
 
       it "should validate with inventory" do
-        shipment.inventory_units = [mock_model(InventoryUnit)]
+        shipment.inventory_units = [Factory(:inventory_unit)]
         shipment.valid?.should be_true
       end
 

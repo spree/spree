@@ -50,7 +50,7 @@ describe OrderMailer do
         mail_method.stub :preferred_intercept_email => "intercept@foobar.com"
         message.deliver
         @email = ActionMailer::Base.deliveries.first
-        @email.subject.starts_with?("[customer@example.com]").should be_true
+        @email.subject.match(/customer@example\.com/).should be_true
       end
     end
 
