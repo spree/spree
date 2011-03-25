@@ -289,8 +289,6 @@ describe Order do
   end
 
   context "#update!" do
-    before { Order.should_receive :update_all }
-
     context "when payments are sufficient" do
       it "should set payment_state to paid" do
         order.stub(:total => 100, :payment_total => 100)
@@ -424,8 +422,7 @@ describe Order do
 
     it "should call update! on every shipment" do
       shipment = mock_model Shipment
-      order.shipments = [shipment]
-      shipment.should_receive(:update!)
+      order.shipments = [Factory(:shipment)]
       order.update!
     end
   end
