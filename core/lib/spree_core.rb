@@ -38,6 +38,7 @@ require 'acts_as_list'
 require 'resource_controller'
 require 'active_merchant'
 require "meta_search"
+require "find_by_param"
 
 require 'spree_core/ext/active_record'
 
@@ -46,7 +47,6 @@ ActiveRecord::Base.send :include, DelegateBelongsTo
 
 require 'spree_core/theme_support'
 require 'spree_core/enumerable_constants'
-require 'spree_core/find_by_param'
 require 'spree_core/ssl_requirement'
 require 'spree_core/preferences/model_hooks'
 require 'spree_core/preferences/preference_definition'
