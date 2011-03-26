@@ -1,30 +1,25 @@
-class Admin::StatesController < Admin::BaseController
-  resource_controller
-
+class Admin::StatesController < Admin::ResourceController
   belongs_to :country
   before_filter :load_data
 
-  index.response do |wants|
-    wants.html
-    wants.js do
-      render :partial => 'state_list.html.erb'
+  def index
+    respond_to do |format|
+      format.html
+      format.js  { render :partial => 'state_list.html.erb' }
     end
   end
 
-  new_action.response do |wants|
-    wants.html {render :layout => !request.xhr?}
+  protected
+  
+  def location_after_save
+    admin_country_states_url(@country)
+  end  
+
+  def collection
+    super.order(:name)
   end
 
-  create.wants.html { redirect_to admin_country_states_url(@country) }
-  update.wants.html { redirect_to admin_country_states_url(@country) }
-
-  private
-
-    def collection
-      @collection ||= end_of_association_chain.order('name')
-    end
-
-    def load_data
-      @countries = Country.order('name')
-    end
+  def load_data
+    @countries = Country.order(:name)
+  end
 end

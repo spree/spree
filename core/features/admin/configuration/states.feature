@@ -1,4 +1,4 @@
-Feature: Admin > configurations > tax_categories
+Feature: Admin > configurations > states
 
   Scenario: admin visiting states listing
     Given I go to the admin home page
@@ -17,7 +17,7 @@ Feature: Admin > configurations > tax_categories
     When I fill in "state_name" with "Calgary"
     When I fill in "Abbreviation" with "CL"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
     Then I should see "Calgary"
     When I click first link from selector "table#listing_states td.actions a.edit"
     Then I should see "Editing State"
