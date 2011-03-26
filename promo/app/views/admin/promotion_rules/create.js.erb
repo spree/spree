@@ -1,6 +1,6 @@
-jQuery('#rules').append('<%= escape_javascript( render(:partial => 'admin/promotions/promotion_rule', :object => object) ) %>');
-jQuery('#<%= dom_id object %>').hide();
-jQuery('#<%= dom_id object %>').fadeIn();
+jQuery('#rules').append('<%= escape_javascript( render(:partial => 'admin/promotions/promotion_rule', :object => @promotion_rule) ) %>');
+jQuery('#<%= dom_id @promotion_rule %>').hide();
+jQuery('#<%= dom_id @promotion_rule %>').fadeIn();
 initProductRuleSourceField();
-jQuery('#<%= dom_id object %> .tokeninput.products').productPicker();
-jQuery('#<%= dom_id object %> .tokeninput.users').userPicker();
+jQuery('#<%= dom_id @promotion_rule %> .tokeninput.products').productPicker();
+jQuery('#<%= dom_id @promotion_rule %> .tokeninput.users').userPicker();
