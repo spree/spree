@@ -22,7 +22,6 @@ Feature: admin changing email address
   Scenario: admin editing roles
     When I check "user_role_user"
     When I press "Update"
-    Then show me the page
     Then I should see "User has been successfully updated!"
     When I click first link from selector "#content a.edit"
     Then the "user_role_user" checkbox should be checked
