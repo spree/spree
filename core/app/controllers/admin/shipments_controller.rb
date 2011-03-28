@@ -1,29 +1,69 @@
 class Admin::ShipmentsController < Admin::BaseController
-  before_filter :load_data, :except => [:country_changed, :index]
+  before_filter :load_order
+  before_filter :load_shipment, :only => [:destroy, :edit, :update]
+  before_filter :load_shipping_methods, :except => [:country_changed, :index]
 
-  resource_controller
-  belongs_to :order
+  def index
+    @shipments = @order.shipments
+    respond_to { |format| format.html }
+  end
 
-  update.wants.html do
-    if @order.completed?
-      redirect_to edit_object_url
-    else
-      redirect_to admin_order_adjustments_url(@order)
+  def new
+    build_shipment
+    @shipment.address ||= @order.ship_address
+    @shipment.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
+    @shipment.shipping_method = @order.shipping_method
+    respond_to { |format| format.html }
+  end
+
+  def create
+    build_shipment
+    assign_inventory_units
+    respond_to do |format|
+      format.html do
+        if @shipment.save
+          flash[:notice] = I18n.t(:successfully_created, :resource => 'shipment')
+          redirect_to edit_admin_order_shipment_path(@order, @shipment)
+        else
+          render :action => 'new'
+        end
+      end
     end
   end
 
-  create do
-    wants.html { redirect_to edit_object_url }
+
+  def edit
+    @shipment.special_instructions = @order.special_instructions
+    respond_to do |format|
+      format.html { render :action => 'edit' }
+    end
   end
 
-  edit.before :edit_before
+  def update
+    assign_inventory_units
+    respond_to do |format|
+      format.html do
+        if @shipment.update_attributes params[:shipment]
+          update_after
+          flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t('shipment'))
+          if @order.completed?
+            redirect_to edit_admin_order_shipment_path(@order, @shipment)
+          else
+            redirect_to admin_order_adjustments_url(@order)
+          end
+        else
+          render :action => 'edit'
+        end
+      end
+    end
+  end
 
-  update.before :assign_inventory_units
-  update.after :update_after
-
-  create.before :assign_inventory_units
-
-  destroy.success.wants.js { render_js_for_destroy }
+  def destroy
+    @shipment.destroy
+    respond_to do |format|
+      format.js { render_js_for_destroy }
+    end
+  end
 
   def fire
     if @shipment.send("#{params[:e]}")
@@ -35,22 +75,9 @@ class Admin::ShipmentsController < Admin::BaseController
   end
 
   private
-  def build_object
-    @object ||= end_of_association_chain.send parent? ? :build : :new
-    @object.address ||= @order.ship_address
-    @object.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
-    @object.shipping_method ||= @order.shipping_method
-    @object.attributes = object_params
-    @object
-  end
 
-  def load_data
-    load_object
+  def load_shipping_methods
     @shipping_methods = ShippingMethod.all_available(@order, :back_end)
-  end
-
-  def edit_before # copy into instance variable before editing
-    @shipment.special_instructions = @order.special_instructions
   end
 
   def update_after # copy back to order if instructions are enabled
@@ -62,6 +89,22 @@ class Admin::ShipmentsController < Admin::BaseController
   def assign_inventory_units
     return unless params.has_key? :inventory_units
     @shipment.inventory_unit_ids = params[:inventory_units].keys
+  end
+
+  def load_order
+    @order = Order.find_by_number(params[:order_id])
+  end
+
+  def load_shipment
+    @shipment = Shipment.find_by_number(params[:id])
+  end
+
+  def build_shipment
+    @shipment = @order.shipments.build
+    @shipment.address ||= @order.ship_address
+    @shipment.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
+    @shipment.shipping_method ||= @order.shipping_method
+    @shipment.attributes = params[:shipment]
   end
 
 end

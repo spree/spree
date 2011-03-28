@@ -1,37 +1,49 @@
 class Admin::OrdersController < Admin::BaseController
   require 'spree/gateway_error'
-  resource_controller
   before_filter :initialize_txn_partials
   before_filter :initialize_order_events
-  before_filter :load_object, :only => [:fire, :resend, :history, :user]
+  before_filter :load_order, :only => [:fire, :resend, :history, :user]
   before_filter :ensure_line_items, :only => [:update]
 
-  update do
-    flash nil
-    wants.html do
-      if !@order.line_items.empty?
-        unless @order.complete?
+  def index
+    load_orders
+  end
 
-          if params[:order].key?(:email)
-            @order.shipping_method = @order.available_shipping_methods(:front_end).first
-            @order.create_shipment!
-            redirect_to edit_admin_order_shipment_path(@order, @order.shipment)
+  def new
+    @order = Order.create
+  end
+
+  def edit
+    load_order
+  end
+
+  def update
+    respond_to do |format|
+      format.html do
+        if @order.update_attributes params[:order]
+          if !@order.line_items.empty?
+            unless @order.complete?
+              if params[:order].key?(:email)
+                shipping_method = @order.available_shipping_methods(:front_end).first
+                @order.shipping_method = shipping_method
+                @order.create_shipment!
+                redirect_to edit_admin_order_shipment_path(@order, @order.shipment)
+              else
+                redirect_to user_admin_order_path(@order)
+              end
+            else
+              redirect_to admin_order_path(@order)
+            end
           else
-            redirect_to user_admin_order_path(@order)
+            render :action => :new
           end
-
         else
-          redirect_to admin_order_path(@order)
+          render :action => 'edit'
         end
-      else
-        render :action => :new
       end
     end
   end
 
-  def new
-    @order = @object = Order.create
-  end
 
   def fire
     # TODO - possible security check here but right now any admin can before any transition (and the state machine
@@ -61,23 +73,23 @@ class Admin::OrdersController < Admin::BaseController
 
   private
 
-  def object
-    @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
-    return @object || current_order
+  def load_order
+    @order ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
+    return @order || current_order
   end
 
-  def collection
+  def load_orders
     params[:search] ||= {}
     params[:search][:completed_at_is_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
     @show_only_completed = params[:search][:completed_at_is_not_null].present?
     params[:search][:meta_sort] ||= @show_only_completed ? 'completed_at.desc' : 'created_at.desc'
-    
+
     @search = Order.metasearch(params[:search])
-    
+
     if !params[:search][:created_at_greater_than].blank?
       params[:search][:created_at_greater_than] = Time.zone.parse(params[:search][:created_at_greater_than]).beginning_of_day rescue ""
     end
-   
+
     if !params[:search][:created_at_less_than].blank?
       params[:search][:created_at_less_than] = Time.zone.parse(params[:search][:created_at_less_than]).end_of_day rescue ""
     end
@@ -86,8 +98,8 @@ class Admin::OrdersController < Admin::BaseController
       params[:search][:completed_at_greater_than] = params[:search].delete(:created_at_greater_than)
       params[:search][:completed_at_less_than] = params[:search].delete(:created_at_less_than)
     end
-    
-    @collection = Order.metasearch(params[:search]).paginate(
+
+    @orders = Order.metasearch(params[:search]).paginate(
                                    :include  => [:user, :shipments, :payments],
                                    :per_page => Spree::Config[:orders_per_page],
                                    :page     => params[:page])
@@ -104,7 +116,7 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def ensure_line_items
-    load_object
+    load_order
     if @order.line_items.empty?
       @order.errors.add(:line_items, t('errors.messages.blank'))
       render :edit

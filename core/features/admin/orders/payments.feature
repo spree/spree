@@ -32,7 +32,7 @@ Feature: Admin managing payments
     When I click first link from selector "#new_shipment_section a"
     When I check first element with class "inventory_unit"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
     When I follow "Shipments"
     Then verify data from "table.index" with following tabular values:
       | Shipment # | Shipping Method | Cost   | Tracking | Status  | Date/Time | Action |
@@ -40,7 +40,7 @@ Feature: Admin managing payments
     When I click first link from selector "#new_shipment_section a"
     When I check first element with class "inventory_unit"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
     When I follow "Shipments"
     Then verify data from "table.index" with following tabular values:
       | Shipment # | Shipping Method | Cost   | Tracking | Status  | Date/Time | Action |
@@ -66,12 +66,12 @@ Feature: Admin managing payments
     When I click first link from selector "#new_shipment_section a"
     When I check first element with class "inventory_unit"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
     When I follow "Shipments"
     When I click first link from selector "#new_shipment_section a"
     When I check first element with class "inventory_unit"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
     When I follow "Shipments"
     When I follow "History"
     Then verify data from "table.index" with following tabular values:

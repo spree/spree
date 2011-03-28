@@ -1,20 +1,38 @@
 class Admin::TaxonsController < Admin::BaseController
   include Railslove::Plugins::FindByParam::SingletonMethods
-  resource_controller
-  before_filter :load_object, :only => [:selected, :available, :remove]
+  before_filter :load_product, :only => [:selected, :available, :remove, :destroy, :update]
   before_filter :load_permalink_part, :only => :edit
-  belongs_to :product, :taxonomy
 
-  create.wants.html {render :text => @taxon.id}
-  update.wants.html {redirect_to edit_admin_taxonomy_url(@taxonomy)}
-  update.wants.json {render :json => @taxon.to_json()}
+  def create
+    @taxon = @product.taxons.create params[:taxon]
+    create_before
+    if @taxon.save
+      respond_to do |format|
+        format.html { render :text => @taxon.id }
+      end
+    else
+      respond_to do |format|
+        format.html { render :action => 'new' }
+      end
+    end
+  end
 
-  destroy.wants.html {render :text => ""}
-  destroy.success.wants.js { render_js_for_destroy }
+  def update
+    update_before
+    update_after
+    respond_to do |format|
+      format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
+      format.json {render :json => @taxon.to_json }
+    end
+  end
 
-  create.before :create_before
-  update.before :update_before
-  update.after :update_after
+  def destroy
+    @taxon.destroy
+    respond_to do |format|
+      format.html { render :text => '' }
+      format.js { render_js_for_destroy }
+    end
+  end
 
   def selected
     @taxons = @product.taxons
@@ -116,4 +134,12 @@ class Admin::TaxonsController < Admin::BaseController
   def load_permalink_part
     @permalink_part = object.permalink.split("/").last
   end
+
+  def load_product
+    @product = Product.find_by_permalink! params[:product_id]
+    if params[:id]
+      @taxon = @product.taxons.find_by_id params[:id]
+    end
+  end
+
 end

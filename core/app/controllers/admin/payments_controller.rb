@@ -1,12 +1,23 @@
 class Admin::PaymentsController < Admin::BaseController
+  before_filter :load_order, :only => [:create, :new, :index, :fire, :new]
+  before_filter :load_payment, :except => [:create, :new, :index]
   before_filter :load_data
   before_filter :load_amount, :except => :country_changed
-  resource_controller
-  belongs_to :order
+
+  def index
+    @payments = @order.payments
+  end
+
+  def new
+    @payment = Payment.new
+  end
 
   def create
-    build_object
-    load_object
+    @payment = Payment.new object_params
+    @payment.order = @order
+    if @payment.payment_method.is_a?(Gateway) && @payment.payment_method.payment_profiles_supported? && params[:card].present? and params[:card] != 'new'
+      @payment.source = Creditcard.find_by_id(params[:card])
+    end
 
     begin
       unless @payment.save
@@ -16,8 +27,8 @@ class Admin::PaymentsController < Admin::BaseController
 
       if @order.completed?
         @payment.process!
-        set_flash :create
-        redirect_to collection_path
+        flash[:notice] = I18n.t(:successfully_created, :resource => 'payment')
+        redirect_to admin_order_payments_path(@order)
       else
         #This is the first payment (admin created order)
         until @order.completed?
@@ -29,13 +40,12 @@ class Admin::PaymentsController < Admin::BaseController
 
     rescue Spree::GatewayError => e
       flash[:error] = "#{e.message}"
-      redirect_to new_object_path
+      redirect_to new_admin_payment_path(@order)
     end
   end
 
   def fire
     # TODO: consider finer-grained control for this type of action (right now anyone in admin role can perform)
-    load_object
     return unless event = params[:e] and @payment.payment_source
     if @payment.payment_source.send("#{event}", @payment)
       flash.notice = t('payment_updated')
@@ -45,15 +55,10 @@ class Admin::PaymentsController < Admin::BaseController
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
   ensure
-    redirect_to collection_path
+    redirect_to admin_order_payments_path(@order)
   end
 
   private
-
-  def object
-    @object ||= Payment.find(param) unless param.nil?
-    @object
-  end
 
   def object_params
     if params[:payment] and params[:payment_source] and source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
@@ -63,10 +68,9 @@ class Admin::PaymentsController < Admin::BaseController
   end
 
   def load_data
-    load_object
     @payment_methods = PaymentMethod.available(:back_end)
-    if object and object.payment_method
-      @payment_method = object.payment_method
+    if @payment and @payment.payment_method
+      @payment_method = @payment.payment_method
     else
       @payment_method = @payment_methods.first
     end
@@ -77,13 +81,12 @@ class Admin::PaymentsController < Admin::BaseController
     @amount = params[:amount] || @order.total
   end
 
-  def build_object
-    @object = model.new(object_params)
-    @object.order = parent_object
-    if @object.payment_method.is_a?(Gateway) and @object.payment_method.payment_profiles_supported? and params[:card].present? and params[:card] != 'new'
-      @object.source = Creditcard.find_by_id(params[:card])
-    end
-    @object
+  def load_order
+    @order = Order.find_by_number! params[:order_id]
+  end
+
+  def load_payment
+    @payment = Payment.find params[:id]
   end
 
 end
