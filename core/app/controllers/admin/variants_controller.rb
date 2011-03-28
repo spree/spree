@@ -33,7 +33,7 @@ class Admin::VariantsController < Admin::ResourceController
 
   protected
   def create_before
-    option_values = params[:new_variant]
+    option_values = params[:variant] || params[:new_variant]
     option_values.each_value {|id| @object.option_values << OptionValue.find(id)}
     @object.save
   end
