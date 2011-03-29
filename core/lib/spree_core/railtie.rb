@@ -4,6 +4,8 @@ module SpreeCore
     config.autoload_paths += %W(#{config.root}/lib)
     # TODO - register state monitor observer?
 
+
+    # TODO: Is there a better way to make sure something within 'self.activate' only runs once in development?
     def self.activate
 
       Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
@@ -53,6 +55,15 @@ module SpreeCore
     end
 
     config.to_prepare &method(:activate).to_proc
+
+    config.after_initialize do
+      ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
+        event_name, start_time, end_time, id, payload = args
+        Activator.active.event_name_starts_with(event_name).each do |activator|
+          activator.activate(payload)
+        end
+      end
+    end
 
   end
 end

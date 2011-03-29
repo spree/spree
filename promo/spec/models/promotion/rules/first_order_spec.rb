@@ -17,7 +17,7 @@ describe Promotion::Rules::FirstOrder do
     rule.should be_eligible(order)
   end
 
-  it "should be not eligible if user have at least one completet order" do
+  it "should be not eligible if user have at least one complete order" do
     user = mock_model(User)
     user.stub_chain(:orders, :complete, :count => 1)
     order.stub(:user => user)

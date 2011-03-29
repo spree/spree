@@ -2,6 +2,10 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe OrdersController do
 
+  before do
+    controller.stub :current_user => nil
+  end
+
   context "extension testing" do
     context "update" do
 

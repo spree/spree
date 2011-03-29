@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe CheckoutController do
   let(:order) { mock_model(Order, :checkout_allowed? => true, :completed? => false, :update_attributes => true, :payment? => false).as_null_object }
-  before { controller.stub :current_order => order }
+  before { controller.stub :current_order => order, :current_user => nil }
 
   it "should understand checkout routes" do
     assert_routing("/checkout/delivery", {:controller => "checkout", :action => "edit", :state => "delivery"})

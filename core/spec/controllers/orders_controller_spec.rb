@@ -2,9 +2,10 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe OrdersController do
 
-  let(:order) { mock_model(Order, :number => "R123", :reload => nil, :save! => true) }
+  let(:order) { mock_model(Order, :number => "R123", :reload => nil, :save! => true, :coupon_code= => nil, :coupon_code => nil) }
   before do
-    Order.stub(:find).with(1).and_return(order) 
+    Order.stub(:find).with(1).and_return(order)
+    controller.stub :current_user => nil
     #ensure no respond_overrides are in effect
     Spree::BaseController.spree_responders[:OrdersController].clear
   end

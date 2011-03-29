@@ -386,6 +386,17 @@ en:
     one: "1 error prohibited this record from being saved"
     other: "%{count} errors prohibited this record from being saved"
   event: Event
+  events:
+    spree:
+      cart:
+        add: 'Add to cart'
+      checkout:
+        coupon_code_added: "Coupon code added"
+      order:
+        contents_changed: "Order contents changed"
+      user:
+        signup: 'User signup'
+      page_view: "Static page viewed"
   existing_customer: "Existing Customer"
   expiration: "Expiration"
   expiration_month: "Expiration Month"

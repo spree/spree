@@ -282,11 +282,6 @@ class Order < ActiveRecord::Base
    self.outstanding_balance != 0
   end
 
-  def destroy_inapplicable_adjustments
-    destroyed = adjustments.reject(&:applicable?).map(&:destroy)
-    adjustments.reload if destroyed.any?
-  end
-
   def name
     if (address = bill_address || ship_address)
       "#{address.firstname} #{address.lastname}"
@@ -447,17 +442,15 @@ class Order < ActiveRecord::Base
     # update_adjustments
     self.payment_total = payments.completed.map(&:amount).sum
     self.item_total = line_items.map(&:amount).sum
-    self.adjustment_total = adjustments.map(&:amount).sum
+    self.adjustment_total = adjustments.eligible.map(&:amount).sum
     self.total = item_total + adjustment_total
   end
 
   # Updates each of the Order adjustments.  This is intended to be called from an Observer so that the Order can
-  # respond to external changes to LineItem, Shipment, other Adjustments, etc.  Adjustments that are no longer
-  # applicable will be removed from the association and destroyed.
+  # respond to external changes to LineItem, Shipment, other Adjustments, etc.
+  # Adjustments will check if they are still eligible. Ineligible adjustments are preserved but not counted
+  # towards adjustment_total.
   def update_adjustments
-    # separate into adjustments to keep and adjustements to toss
-    obsolete_adjustments = adjustments.select{|adjustment| !adjustment.applicable?}
-    obsolete_adjustments.each(&:destroy)
     self.adjustments.reload.each(&:update!)
   end
 

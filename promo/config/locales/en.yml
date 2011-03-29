@@ -9,22 +9,34 @@ en:
         usage_limit: "Usage limit"
         starts_at: "Starts at"
         expires_at: "Expires at"
+  add_action_of_type: Add action of type
   add_rule_of_type: Add rule of type
+  advertise: Advertise
   coupon: Coupon
   coupon_code: Coupon code
   editing_promotion: Editing Promotion
   expiry: Expiry
   free_shipping: Free Shipping
-  may_be_combined_with_other_promotions: May be combined with other promotions
   new_promotion: New Promotion
   no_rules_added: No rules added
   promotion: Promotion
+  promotion_actions: Actions
   promotions: Promotions
   promotion_form:
     match_policies:
       all: Match any of these rules
       any: Match all of these rules
   promotions_description: Manage offers and coupons with promotions
+  promotion_action_types:
+    create_adjustment:
+      name: Create adjustment
+      description: Creates a promotion credit adjustment on the order
+    create_line_items:
+      name: Create line items
+      description: Adds the products associated with the promotion to the cart
+    give_store_credit:
+      name: Give store credit
+      description: Gives the user store credit of the ammount specified
   promotion_rule_types:
     user:
       name: User
@@ -37,7 +49,10 @@ en:
       description: Order total meets these criteria
     first_order:
       name: First order
-      description: Must be the customer's first order
+      description: "Must be the customer's first order"
+    landing_page:
+      name: Landing Page
+      description: Customer must have visited the specified page
   product_rule:
     choose_products: Choose products
     label: "Order must contain %{select} of these products"
@@ -53,3 +68,5 @@ en:
     operators:
       gt: greater than
       gte: greater than or equal to
+  landing_page_rule:
+    path: Path

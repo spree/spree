@@ -2,7 +2,7 @@ class Promotion::Rules::User < PromotionRule
   belongs_to :user
   has_and_belongs_to_many :users, :class_name => '::User', :join_table => 'promotion_rules_users', :foreign_key => 'promotion_rule_id'
 
-  def eligible?(order)
+  def eligible?(order, options = {})
     users.none? or users.include?(order.user)
   end
 

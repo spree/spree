@@ -17,6 +17,9 @@ module NavigationHelpers
     when /the sign up page/
       new_user_registration_path
 
+    when /"\/cvv"/
+      '/cvv'
+
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #

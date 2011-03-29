@@ -111,7 +111,7 @@ Rails.application.routes.draw do
         post :update_positions
       end
     end
-    
+
     resources :properties do
       collection do
         get :filtered

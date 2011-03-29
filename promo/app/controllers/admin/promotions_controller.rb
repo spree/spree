@@ -10,12 +10,12 @@ class Admin::PromotionsController < Admin::ResourceController
     end
     @promotion
   end
-  
+
   def location_after_save
     edit_admin_promotion_url(@promotion)
   end
 
   def load_data
-    @calculators = Promotion.calculators
+    @calculators = Promotion::Actions::CreateAdjustment.calculators
   end
 end

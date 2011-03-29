@@ -1,4 +1,4 @@
-.promotion-rule {
+.promotion-rule, .promotion-action {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   padding: 8px 40px 8px 10px;
@@ -7,7 +7,7 @@
   margin-bottom: 4px;
   position: relative;
 }
-.promotion-rule .delete {
+.promotion-rule .delete, .promotion-action .delete {
   display: block;
   position: absolute;
   right: 10px;
@@ -22,12 +22,12 @@
 
 
 .edit_promotion #general_fields, .edit_promotion #expiry_fields {
-	float: left;
-	width: 46%;
+  float: left;
+  width: 46%;
 }
 
 .edit_promotion #general_fields {
-	margin-right: 10px;
+  margin-right: 10px;
 }
 
 .edit_promotion #expiry_fields {
@@ -35,20 +35,21 @@
 }
 
 .edit_promotion #starts_at_field, .edit_promotion #expires_at_field {
-	width: 200px;
-	float: left;
-	clear: none;
+  width: 200px;
+  float: left;
+  clear: none;
 }
 .edit_promotion #starts_at_field label, .edit_promotion #expires_at_field label{
-	display: block;
+  display: block;
 }
-#rule_fields {
-	position: relative;
+#rule_fields, #action_fields {
+  position: relative;
 }
-#new_product_rule_form {
-	position: absolute;
-	text-align:right;
-	width: 300px;
-	right: 30px;
-	bottom: 20px;
+#new_product_rule_form, #new_promotion_action_form {
+  position: absolute;
+  text-align:right;
+  width: 300px;
+  right: 30px;
+  bottom: 20px;
 }
+

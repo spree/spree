@@ -9,7 +9,7 @@ class ContentController < Spree::BaseController
 
   def show
     respond_with do |format|
-      format.html { render :template => params[:path] }
+      format.html { render :action => params[:path] }
     end
   end
 
