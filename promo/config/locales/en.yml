@@ -9,6 +9,7 @@ en:
   may_be_combined_with_other_promotions: May be combined with other promotions
   new_promotion: New Promotion
   no_rules_added: No rules added
+  promotion: Promotion
   promotions: Promotions
   promotion_form:
     match_policies:
@@ -30,7 +31,7 @@ en:
       description: Must be the customer's first order
   product_rule:
     choose_products: Choose products
-    label: "Order must contain {{select}} of these products"
+    label: "Order must contain %{select} of these products"
     match_any: at least one
     match_all: all
     product_source:

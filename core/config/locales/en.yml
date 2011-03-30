@@ -69,6 +69,7 @@ en:
       order:
         checkout_complete: "Checkout Complete"
         completed_at: "Completed At"
+        coupon_code: "Coupon Code"
         ip_address: "IP Address"
         item_total: "Item Total"
         number: Number
