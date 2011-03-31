@@ -660,6 +660,8 @@ ul.thumbnails li img {
 }
 ul.thumbnails li:hover { border-color: #cccccc; }
 ul.thumbnails li.selected { border-color: #999999; }
+ul.thumbnails li.vtmb { display: none }
+
 #product-variants { margin-bottom: 1em; }
 #product-variants ul {
   list-style: none;
