@@ -26,7 +26,7 @@ module SpreePromo
 
         attr_accessible :coupon_code
         attr_accessor :coupon_code
-        before_save :process_coupon_code, :if => "@coupon_code"
+        before_save :process_coupon_code, :if => "@coupon_code.present?"
 
         def promotion_credit_exists?(credit)
           promotion_credits.reload.detect { |c| c.source_id == credit.id }
@@ -61,19 +61,36 @@ module SpreePromo
 
 
         def process_automatic_promotions
-          #promotion_credits.reload.clear
-          eligible_automatic_promotions.each do |coupon|
-            # can't use coupon.create_discount as it re-saves the order causing an infinite loop
-            if amount = coupon.calculator.compute(line_items)
-              amount = item_total if amount > item_total
-              promotion_credits.reload.clear unless coupon.combine? and promotion_credits.all? { |credit| credit.adjustment_source.combine? }
-              promotion_credits.create!({
-                  :source => coupon,
-                  :amount => -amount.abs,
-                  :label => coupon.description
-                })
+          # recalculate amount
+          self.promotion_credits.each do |credit|
+            if credit.source.eligible?(self)
+              amount = -credit.source.calculator.compute(self).abs
+              if credit.amount != amount
+                # avoid infinite callbacks
+                PromotionCredit.update_all("amount = #{amount}", { :id => credit.id })
+              end
+            else
+              credit.destroy
             end
-          end.compact
+          end
+          
+          current_promotions = self.promotion_credits.map(&:source)
+          # return if current promotions can not be combined
+          return if current_promotions.any? { |promotion| !promotion.combine? }
+          
+          new_promotions = eligible_automatic_promotions - current_promotions
+          new_promotions.each do |promotion|
+            next if current_promotions.present? && !promotion.combine?
+            amount = promotion.calculator.compute(self).abs
+            amount = item_total if amount > item_total
+            if amount > 0
+              self.promotion_credits.create(
+                  :source => promotion,
+                  :amount => -amount,
+                  :label  => promotion.name
+                )
+            end
+          end
         end
 
         def eligible_automatic_promotions
