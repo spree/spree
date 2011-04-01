@@ -7,7 +7,7 @@ class Promotion < ActiveRecord::Base
   accepts_nested_attributes_for :promotion_rules
   alias_method :rules, :promotion_rules
 
-  validates :name, :code, :presence => true
+  validates :name, :presence => true
 
   # TODO: Remove that after fix for https://rails.lighthouseapp.com/projects/8994/tickets/4329-has_many-through-association-does-not-link-models-on-association-save
   # is provided
