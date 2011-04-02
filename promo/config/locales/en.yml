@@ -1,5 +1,14 @@
 ---
 en:
+  activerecord:
+    attributes:
+      promotion:
+        name: "Name"
+        description: "Description"
+        code: "Code"
+        usage_limit: "Usage limit"
+        starts_at: "Starts at"
+        expires_at: "Expires at"
   add_rule_of_type: Add rule of type
   coupon: Coupon
   coupon_code: Coupon code
