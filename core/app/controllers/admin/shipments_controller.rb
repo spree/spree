@@ -1,11 +1,13 @@
 class Admin::ShipmentsController < Admin::BaseController
   before_filter :load_order
-  before_filter :load_shipment, :only => [:destroy, :edit, :update]
+  before_filter :load_shipment, :only => [:destroy, :edit, :update, :fire]
   before_filter :load_shipping_methods, :except => [:country_changed, :index]
+
+  respond_to :html
 
   def index
     @shipments = @order.shipments
-    respond_to { |format| format.html }
+    respond_with(@shipments)
   end
 
   def new
@@ -13,48 +15,42 @@ class Admin::ShipmentsController < Admin::BaseController
     @shipment.address ||= @order.ship_address
     @shipment.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
     @shipment.shipping_method = @order.shipping_method
-    respond_to { |format| format.html }
+    respond_with(@shipment)
   end
 
   def create
     build_shipment
     assign_inventory_units
-    respond_to do |format|
-      format.html do
-        if @shipment.save
-          flash[:notice] = I18n.t(:successfully_created, :resource => 'shipment')
-          redirect_to edit_admin_order_shipment_path(@order, @shipment)
-        else
-          render :action => 'new'
-        end
+    if @shipment.save
+      flash[:notice] = I18n.t(:successfully_created, :resource => 'shipment')
+      respond_with(@object) do |format|
+        format.html { redirect_to edit_admin_order_shipment_path(@order, @shipment) }
       end
+    else
+      render :action => 'new'
     end
   end
 
-
   def edit
     @shipment.special_instructions = @order.special_instructions
-    respond_to do |format|
-      format.html { render :action => 'edit' }
-    end
+    respond_with(@shipment)
   end
 
   def update
     assign_inventory_units
-    respond_to do |format|
-      format.html do
-        if @shipment.update_attributes params[:shipment]
-          update_after
-          flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t('shipment'))
-          if @order.completed?
-            redirect_to edit_admin_order_shipment_path(@order, @shipment)
-          else
-            redirect_to admin_order_adjustments_url(@order)
-          end
-        else
-          render :action => 'edit'
-        end
+    if @shipment.update_attributes params[:shipment]
+      # copy back to order if instructions are enabled
+      @order.special_instructions = object_params[:special_instructions] if Spree::Config[:shipping_instructions]
+      @order.shipping_method = @order.shipment.shipping_method
+      @order.save
+      
+      flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t('shipment'))
+      return_path = @order.completed? ? edit_admin_order_shipment_path(@order, @shipment) : admin_order_adjustments_path(@order)
+      respond_with(@object) do |format|
+        format.html { redirect_to return_path }
       end
+    else
+      render :action => 'edit'
     end
   end
 
@@ -78,12 +74,6 @@ class Admin::ShipmentsController < Admin::BaseController
 
   def load_shipping_methods
     @shipping_methods = ShippingMethod.all_available(@order, :back_end)
-  end
-
-  def update_after # copy back to order if instructions are enabled
-    @order.special_instructions = object_params[:special_instructions] if Spree::Config[:shipping_instructions]
-    @order.shipping_method = @order.shipment.shipping_method
-    @order.save
   end
 
   def assign_inventory_units

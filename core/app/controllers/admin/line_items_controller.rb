@@ -1,12 +1,9 @@
 class Admin::LineItemsController < Admin::BaseController
 
-  before_filter :load_order, :except => [:create]
+  before_filter :load_order
   before_filter :load_line_item, :only => [:destroy, :update]
 
   def create
-    @taxon = Taxon.find(params[:taxon][:parent_id])
-    @taxonomy = Taxonomy.find params[:taxonomy_id]
-
     variant = Variant.find(params[:line_item][:variant_id])
     @order.add_variant(variant, params[:line_item][:quantity].to_i)
 

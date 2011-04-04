@@ -1,20 +1,18 @@
 class Admin::PaymentsController < Admin::BaseController
-  before_filter :load_order, :only => [:create, :new, :index, :fire, :new]
+  before_filter :load_order, :only => [:create, :new, :index, :fire]
   before_filter :load_payment, :except => [:create, :new, :index]
   before_filter :load_data
-  before_filter :load_amount, :except => :country_changed
 
   def index
     @payments = @order.payments
   end
 
   def new
-    @payment = Payment.new
+    @payment = @order.payments.build
   end
 
   def create
-    @payment = Payment.new object_params
-    @payment.order = @order
+    @payment = @order.payments.build(object_params)
     if @payment.payment_method.is_a?(Gateway) && @payment.payment_method.payment_profiles_supported? && params[:card].present? and params[:card] != 'new'
       @payment.source = Creditcard.find_by_id(params[:card])
     end
@@ -68,6 +66,7 @@ class Admin::PaymentsController < Admin::BaseController
   end
 
   def load_data
+    @amount = params[:amount] || load_order.total
     @payment_methods = PaymentMethod.available(:back_end)
     if @payment and @payment.payment_method
       @payment_method = @payment.payment_method
@@ -77,16 +76,12 @@ class Admin::PaymentsController < Admin::BaseController
     @previous_cards = @order.creditcards.with_payment_profile
   end
 
-  def load_amount
-    @amount = params[:amount] || @order.total
-  end
-
   def load_order
-    @order = Order.find_by_number! params[:order_id]
+    @order ||= Order.find_by_number! params[:order_id]
   end
 
   def load_payment
-    @payment = Payment.find params[:id]
+    @payment ||= Payment.find params[:id]
   end
 
 end

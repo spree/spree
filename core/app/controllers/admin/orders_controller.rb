@@ -3,10 +3,36 @@ class Admin::OrdersController < Admin::BaseController
   before_filter :initialize_txn_partials
   before_filter :initialize_order_events
   before_filter :load_order, :only => [:fire, :resend, :history, :user]
-  before_filter :ensure_line_items, :only => [:update]
 
   def index
-    load_orders
+    params[:search] ||= {}
+    params[:search][:completed_at_is_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
+    @show_only_completed = params[:search][:completed_at_is_not_null].present?
+    params[:search][:meta_sort] ||= @show_only_completed ? 'completed_at.desc' : 'created_at.desc'
+
+    @search = Order.metasearch(params[:search])
+
+    if !params[:search][:created_at_greater_than].blank?
+      params[:search][:created_at_greater_than] = Time.zone.parse(params[:search][:created_at_greater_than]).beginning_of_day rescue ""
+    end
+
+    if !params[:search][:created_at_less_than].blank?
+      params[:search][:created_at_less_than] = Time.zone.parse(params[:search][:created_at_less_than]).end_of_day rescue ""
+    end
+
+    if @show_only_completed
+      params[:search][:completed_at_greater_than] = params[:search].delete(:created_at_greater_than)
+      params[:search][:completed_at_less_than] = params[:search].delete(:created_at_less_than)
+    end
+
+    @orders = Order.metasearch(params[:search]).paginate(
+                                   :include  => [:user, :shipments, :payments],
+                                   :per_page => Spree::Config[:orders_per_page],
+                                   :page     => params[:page])
+  end
+
+  def show
+    load_order
   end
 
   def new
@@ -18,27 +44,38 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def update
-    respond_to do |format|
-      format.html do
-        if @order.update_attributes params[:order]
-          if !@order.line_items.empty?
-            unless @order.complete?
-              if params[:order].key?(:email)
-                shipping_method = @order.available_shipping_methods(:front_end).first
-                @order.shipping_method = shipping_method
-                @order.create_shipment!
-                redirect_to edit_admin_order_shipment_path(@order, @order.shipment)
-              else
-                redirect_to user_admin_order_path(@order)
-              end
-            else
-              redirect_to admin_order_path(@order)
-            end
+    return_path = nil
+    load_order
+    if @order.update_attributes(params[:order]) && @order.line_items.present?
+      unless @order.complete?
+      
+        if params[:order].key?(:email)
+          shipping_method = @order.available_shipping_methods(:front_end).first
+          if shipping_method
+            @order.shipping_method = shipping_method
+            @order.create_shipment!
+            return_path = edit_admin_order_shipment_path(@order, @order.shipment)
           else
-            render :action => :new
+            flash[:error] = t('errors.messages.no_shipping_methods_available')
+            return_path = user_admin_order_path(@order)
           end
         else
-          render :action => 'edit'
+          return_path = user_admin_order_path(@order)
+        end
+        
+      else
+        return_path = admin_order_path(@order)
+      end
+    else
+      @order.errors.add(:line_items, t('errors.messages.blank'))
+    end
+    
+    respond_to do |format|
+      format.html do
+        if return_path
+          redirect_to return_path
+        else
+          render :action => :edit
         end
       end
     end
@@ -75,34 +112,7 @@ class Admin::OrdersController < Admin::BaseController
 
   def load_order
     @order ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
-    return @order || current_order
-  end
-
-  def load_orders
-    params[:search] ||= {}
-    params[:search][:completed_at_is_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
-    @show_only_completed = params[:search][:completed_at_is_not_null].present?
-    params[:search][:meta_sort] ||= @show_only_completed ? 'completed_at.desc' : 'created_at.desc'
-
-    @search = Order.metasearch(params[:search])
-
-    if !params[:search][:created_at_greater_than].blank?
-      params[:search][:created_at_greater_than] = Time.zone.parse(params[:search][:created_at_greater_than]).beginning_of_day rescue ""
-    end
-
-    if !params[:search][:created_at_less_than].blank?
-      params[:search][:created_at_less_than] = Time.zone.parse(params[:search][:created_at_less_than]).end_of_day rescue ""
-    end
-
-    if @show_only_completed
-      params[:search][:completed_at_greater_than] = params[:search].delete(:created_at_greater_than)
-      params[:search][:completed_at_less_than] = params[:search].delete(:created_at_less_than)
-    end
-
-    @orders = Order.metasearch(params[:search]).paginate(
-                                   :include  => [:user, :shipments, :payments],
-                                   :per_page => Spree::Config[:orders_per_page],
-                                   :page     => params[:page])
+    @order
   end
 
   # Allows extensions to add new forms of payment to provide their own display of transactions
@@ -113,14 +123,6 @@ class Admin::OrdersController < Admin::BaseController
   # Used for extensions which need to provide their own custom event links on the order details view.
   def initialize_order_events
     @order_events = %w{cancel resume}
-  end
-
-  def ensure_line_items
-    load_order
-    if @order.line_items.empty?
-      @order.errors.add(:line_items, t('errors.messages.blank'))
-      render :edit
-    end
   end
 
 end

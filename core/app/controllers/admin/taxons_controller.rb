@@ -1,78 +1,26 @@
 class Admin::TaxonsController < Admin::BaseController
   include Railslove::Plugins::FindByParam::SingletonMethods
-  before_filter :load_product, :only => [:selected, :available, :remove, :destroy, :update]
-  before_filter :load_permalink_part, :only => :edit
 
   def create
-    @taxon = @product.taxons.create params[:taxon]
-    create_before
+    @taxonomy = Taxonomy.find(params[:taxonomy_id])
+    @taxon = @taxonomy.taxons.build(params[:taxon])
     if @taxon.save
-      respond_to do |format|
-        format.html { render :text => @taxon.id }
-      end
+      render :text => @taxon
     else
-      respond_to do |format|
-        format.html { render :action => 'new' }
-      end
+      flash[:error] = I18n.t('errors.messages.could_not_create_taxon')
+      redirect_to @taxonomy ? edit_admin_taxonomy_url(@taxonomy) : admin_taxonomies_url
     end
+  end
+
+  def edit
+    @taxonomy = Taxonomy.find(params[:taxonomy_id])
+    @taxon = @taxonomy.taxons.find(params[:id])
+    @permalink_part = @taxon.permalink.split("/").last
   end
 
   def update
-    update_before
-    update_after
-    respond_to do |format|
-      format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
-      format.json {render :json => @taxon.to_json }
-    end
-  end
-
-  def destroy
-    @taxon.destroy
-    respond_to do |format|
-      format.html { render :text => '' }
-      format.js { render_js_for_destroy }
-    end
-  end
-
-  def selected
-    @taxons = @product.taxons
-  end
-
-  def available
-    if params[:q].blank?
-      @available_taxons = []
-    else
-      @available_taxons = Taxon.where('lower(name) LIKE ?', "%#{params[:q].mb_chars.downcase}%")
-    end
-    @available_taxons.delete_if { |taxon| @product.taxons.include?(taxon) }
-    respond_to do |format|
-      format.js {render :layout => false}
-    end
-
-  end
-
-  def remove
-    @product.taxons.delete(@taxon)
-    @product.save
-    @taxons = @product.taxons
-    render_js_for_destroy
-  end
-
-  def select
-    @product = Product.find_by_param!(params[:product_id])
-    @taxon = Taxon.find(params[:id])
-    @product.taxons << @taxon
-    @product.save
-    @taxons = @product.taxons
-    render :layout => false
-  end
-
-  private
-  def create_before
-    @taxon.taxonomy_id = params[:taxonomy_id]
-  end
-
-  def update_before
+    @taxonomy = Taxonomy.find(params[:taxonomy_id])
+    @taxon = @taxonomy.taxons.find(params[:id])
     parent_id = params[:taxon][:parent_id]
     new_position = params[:taxon][:position]
 
@@ -102,7 +50,7 @@ class Admin::TaxonsController < Admin::BaseController
       end
       # Reset legacy position, if any extensions still rely on it
       new_parent.children.reload.each{|t| t.update_attribute(:position, t.position)}
-
+      
       if parent_id
         @taxon.reload
         @taxon.set_permalink
@@ -118,9 +66,11 @@ class Admin::TaxonsController < Admin::BaseController
     end
     #check if we need to rename child taxons if parent name or permalink changes
     @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
-  end
 
-  def update_after
+    if @taxon.update_attributes(params[:taxon])
+      flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:taxon) + " \"#{@taxon.name}\"")
+    end
+
     #rename child taxons
     if @update_children
       @taxon.descendants.each do |taxon|
@@ -129,17 +79,62 @@ class Admin::TaxonsController < Admin::BaseController
         taxon.save!
       end
     end
+    
+    respond_to do |format|
+      format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
+      format.json {render :json => @taxon.to_json }
+    end
   end
 
-  def load_permalink_part
-    @permalink_part = object.permalink.split("/").last
+  def destroy
+    @taxon = Taxon.find(params[:id])
+    @taxon.destroy
+    respond_to do |format|
+      format.html { render :text => '' }
+      format.js { render_js_for_destroy }
+    end
   end
+
+  def selected
+    @product = load_product
+    @taxons = @product.taxons
+  end
+
+  def available
+    @product = load_product
+    if params[:q].blank?
+      @available_taxons = []
+    else
+      @available_taxons = Taxon.where('lower(name) LIKE ?', "%#{params[:q].mb_chars.downcase}%")
+    end
+    @available_taxons.delete_if { |taxon| @product.taxons.include?(taxon) }
+    respond_to do |format|
+      format.js {render :layout => false}
+    end
+  end
+
+  def remove
+    @product = load_product
+    @taxon = Taxon.find(params[:id])
+    @product.taxons.delete(@taxon)
+    @product.save
+    @taxons = @product.taxons
+    render_js_for_destroy
+  end
+
+  def select
+    @product = load_product
+    @taxon = Taxon.find(params[:id])
+    @product.taxons << @taxon
+    @product.save
+    @taxons = @product.taxons
+    render :layout => false
+  end
+
+  private
 
   def load_product
-    @product = Product.find_by_permalink! params[:product_id]
-    if params[:id]
-      @taxon = @product.taxons.find_by_id params[:id]
-    end
+    Product.find_by_permalink! params[:product_id]
   end
 
 end

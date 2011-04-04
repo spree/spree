@@ -1,4 +1,3 @@
-<%= render 'shared/error_messages', :target => @order %>
 <% if @line_item.try(:errors).present? %>
   <%= render 'shared/error_messages', :target => @line_item %>
 <% end %>
