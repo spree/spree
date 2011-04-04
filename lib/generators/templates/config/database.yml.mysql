@@ -1,0 +1,29 @@
+development:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: test_app_development
+  pool: 5
+  username: root
+  password: welcome
+  socket: /tmp/mysql.sock
+
+test:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: test_app_test
+  pool: 5
+  username: root
+  password: welcome
+  socket: /tmp/mysql.sock
+
+cucumber:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: test_app_cucumber
+  pool: 5
+  username: root
+  password: welcome
+  socket: /tmp/mysql.sock

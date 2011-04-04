@@ -42,6 +42,11 @@ gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\
 gem 'spree_dash', :path => \'#{File.dirname(__FILE__)}\'
       gems
     end
+
+    private
+    def database_name
+      ENV['db'] || "sqlite3"
+    end
   end
   DashTestAppGenerator.start
 end

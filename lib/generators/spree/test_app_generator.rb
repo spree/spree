@@ -17,18 +17,17 @@ module Spree
       end
 
       def generate_app
-        silence_stream(STDOUT) {
           remove_directory_if_exists("spec/#{test_app}")
           inside "spec" do
-            run "rails new #{test_app} -GJTq --skip-gemfile"
+            run "rails new #{test_app} --database=#{database_name} -GJTq --skip-gemfile"
           end
-        }
       end
 
       def create_rspec_gemfile
         # newer versions of rspec require a Gemfile in the local gem dirs so create one there as well as in spec/test_app
         silence_stream(STDOUT) {
-          template "Gemfile", :force => true
+          template "Gemfile.#{database_name}", :force => true
+          mv "Gemfile.#{database_name}", "Gemfile", :verbose => false
           remove_file "Gemfile.lock"
         }
       end
@@ -50,7 +49,8 @@ module Spree
 
       def replace_gemfile
         silence_stream(STDOUT) {
-          template "Gemfile"
+          template "Gemfile.#{database_name}"
+          mv "spec/test_app/Gemfile.#{database_name}", "spec/test_app/Gemfile", :verbose => false
         }
       end
 
@@ -63,7 +63,8 @@ module Spree
       def create_databases_yml
         silence_stream(STDOUT) {
           remove_file "config/database.yml"
-          template "config/database.yml"
+          template "config/database.yml.#{database_name}"
+          mv "spec/test_app/config/database.yml.#{database_name}", "spec/test_app/config/database.yml", :verbose => false
         }
       end
 
@@ -88,16 +89,20 @@ module Spree
       private
 
       def run_migrations
-        inside "" do
-          silence_stream(STDOUT) {
-            run "rake db:migrate db:seed RAILS_ENV=test"
-            run "rake db:migrate db:seed RAILS_ENV=cucumber"
-          }
-        end
+        silence_stream(STDOUT) {
+          inside "" do
+              run "rake db:drop db:create db:migrate db:seed RAILS_ENV=test"
+              run "rake db:drop db:create db:migrate db:seed RAILS_ENV=cucumber"
+          end
+        }
       end
 
       def test_app
         options[:app_name]
+      end
+
+      def database_name
+        # By default nothing is done here but each gem should override this method with the appropriate content
       end
 
       def remove_directory_if_exists(path)
