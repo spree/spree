@@ -26,7 +26,7 @@ class ProductScope < ActiveRecord::Base
     array = *self.arguments
     if Product.respond_to?(self.name.intern)
       relation2 = if (array.blank? || array.size < 2)
-                      Product.send(self.name.intern, array.first)
+                      Product.send(self.name.intern, array.try(:first))
                   else
                       Product.send(self.name.intern, *array)
                   end
