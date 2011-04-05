@@ -1,5 +1,5 @@
 class Admin::ReturnAuthorizationsController < Admin::ResourceController
-  belongs_to :order
+  belongs_to :order, :find_by => :number
 
   update.after :associate_inventory_units
   create.after :associate_inventory_units
