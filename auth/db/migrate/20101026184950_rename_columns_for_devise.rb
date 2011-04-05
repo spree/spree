@@ -14,7 +14,7 @@ class RenameColumnsForDevise < ActiveRecord::Migration
     add_column :users, :authentication_token, :string
     add_column :users, :unlock_token, :string
     add_column :users, :locked_at, :datetime
-    remove_column :users, :api_key
+    remove_column :users, :api_key rescue Exception
     remove_column :users, :openid_identifier
   end
 

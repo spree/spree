@@ -50,7 +50,7 @@ gem 'spree_auth', :path => \'#{File.join(File.dirname(__FILE__), "..", "auth")}\
 
     private
     def database_name
-      ENV['db'] || "sqlite3"
+      ENV['DB_NAME'] || "sqlite3"
     end
   end
   AuthTestAppGenerator.start
