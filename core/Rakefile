@@ -43,7 +43,7 @@ gem 'spree_core', :path => \'#{File.dirname(__FILE__)}\'
 
     private
     def database_name
-      ENV['db'] || "sqlite3"
+      ENV['DB_NAME'] || "sqlite3"
     end
   end
   CoreTestAppGenerator.start
