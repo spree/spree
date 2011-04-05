@@ -45,7 +45,7 @@ gem 'spree_dash', :path => \'#{File.dirname(__FILE__)}\'
 
     private
     def database_name
-      ENV['db'] || "sqlite3"
+      ENV['DB_NAME'] || "sqlite3"
     end
   end
   DashTestAppGenerator.start

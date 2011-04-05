@@ -18,6 +18,7 @@ module Spree
 
       def generate_app
           remove_directory_if_exists("spec/#{test_app}")
+          run "bundle install"
           inside "spec" do
             run "rails new #{test_app} --database=#{database_name} -GJTq --skip-gemfile"
           end
