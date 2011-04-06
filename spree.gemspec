@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
 
   #s.bindir             = 'bin'
   #s.executables        = ['spree']
-  #s.default_executable = 'spree'
 
   s.add_dependency('spree_core',  version)
   s.add_dependency('spree_auth', version)
