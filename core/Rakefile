@@ -40,11 +40,6 @@ task :test_app do
 gem 'spree_core', :path => \'#{File.dirname(__FILE__)}\'
       gems
     end
-
-    private
-    def database_name
-      ENV['DB_NAME'] || "sqlite3"
-    end
   end
   CoreTestAppGenerator.start
 end
