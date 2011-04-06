@@ -25,8 +25,8 @@ Feature: Admin visiting product groups
     And  I should see "successfully updated!"
     When I follow "Product Groups"
     Then I should see "most popular rails items 99"
-    
-    
+
+
 
   @javascript
   Scenario: applying scope product name have following
@@ -182,13 +182,13 @@ Feature: Admin visiting product groups
     When I press "Add"
     Then async I should see "In Taxon(without descendants)" within "table#product_scopes"
 
-  @javascript
+  @javascript @wip @stop
   Scenario: Visiting admin product groups page to edit it
     Given a product group exists
     Given the following products exist:
-      | name                  |
-      | apache cap            |
-      | ruby on rails t-shirt |
+      | name                  | updated_at          |
+      | apache cap            | 2011-04-06 17:25:00 |
+      | ruby on rails t-shirt | 2011-05-06 17:25:00 |
     And I go to the admin home page
     When I follow "Products"
     When I follow "Product Groups"
