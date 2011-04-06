@@ -81,7 +81,8 @@ class Payment < ActiveRecord::Base
   end
 
   def payment_source
-    source.is_a?(Payment) ? source.source : source
+    res = source.is_a?(Payment) ? source.source : source
+    res || payment_method
   end
 
   private
