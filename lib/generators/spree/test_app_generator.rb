@@ -18,7 +18,6 @@ module Spree
 
       def generate_app
           remove_directory_if_exists("spec/#{test_app}")
-          run "bundle install"
           inside "spec" do
             run "rails new #{test_app} --database=#{database_name} -GJTq --skip-gemfile"
           end
@@ -27,8 +26,7 @@ module Spree
       def create_rspec_gemfile
         # newer versions of rspec require a Gemfile in the local gem dirs so create one there as well as in spec/test_app
         silence_stream(STDOUT) {
-          template "Gemfile.#{database_name}", :force => true
-          mv "Gemfile.#{database_name}", "Gemfile", :verbose => false
+          template "Gemfile", :force => true
           remove_file "Gemfile.lock"
         }
       end
@@ -50,8 +48,7 @@ module Spree
 
       def replace_gemfile
         silence_stream(STDOUT) {
-          template "Gemfile.#{database_name}"
-          mv "spec/test_app/Gemfile.#{database_name}", "spec/test_app/Gemfile", :verbose => false
+          template "Gemfile"
         }
       end
 
@@ -81,6 +78,23 @@ module Spree
         }
       end
 
+      def append_db_adapter_gem
+        silence_stream(STDOUT) {
+          case database_name
+          when "mysql"
+            gem "mysql2"
+            append_file '../../Gemfile' do
+              "gem 'mysql2'"
+            end
+          else
+            gem "sqlite3-ruby"
+            append_file '../../Gemfile' do
+              "gem 'sqlite3-ruby'"
+            end
+          end
+        }
+      end
+
       protected
       def full_path_for_local_gems
         # Gemfile needs to be full local path to the source (ex. /Users/schof/repos/spree/auth)
@@ -103,7 +117,7 @@ module Spree
       end
 
       def database_name
-        # By default nothing is done here but each gem should override this method with the appropriate content
+        ENV['DB_NAME'] || "sqlite3"
       end
 
       def remove_directory_if_exists(path)
