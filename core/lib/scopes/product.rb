@@ -50,11 +50,9 @@ module Scopes::Product
     Product.send(:scope, name.to_s, Product.send(:relation).order(order_text) )
   end
 
-  ::Product.scope :ascend_by_master_price, lambda {
-    Product.joins(:variants_with_only_master).order('variants.price asc') }
+  ::Product.scope :ascend_by_master_price, Product.joins(:variants_with_only_master).order('variants.price asc')
 
-  ::Product.scope :descend_by_master_price, lambda {
-    Product.joins(:variants_with_only_master).order('variants.price desc') }
+  ::Product.scope :descend_by_master_price, Product.joins(:variants_with_only_master).order('variants.price desc')
 
   ATTRIBUTE_HELPER_METHODS = {
     :with_ids => :product_picker_field
