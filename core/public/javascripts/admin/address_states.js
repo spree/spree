@@ -14,12 +14,12 @@ var update_state = function(region) {
                 .html(id_nm[1]);
       state_select.append(opt);
     });
-    state_select.enable().show();;
-    state_input.hide().disable();
+    state_select.removeAttr('disabled').show();;
+    state_input.hide().attr('disabled', 'disabled');
 
   } else {
-    state_input.enable().show();
-    state_select.hide().disable();
+    state_input.removeAttr('disabled').show();
+    state_select.hide().attr('disabled', 'disabled');
   }
 
 };
