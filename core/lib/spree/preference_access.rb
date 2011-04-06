@@ -6,7 +6,7 @@ module Spree::PreferenceAccess
         key = key.to_s if key.is_a?(Symbol)
         return nil unless config = self.instance
         # preferences will be cached under the name of the class including this module (ex. Spree::Config)
-        prefs = Rails.cache.fetch("configuration_#{config.id}".to_sym) { config.preferences }
+        prefs = Rails.cache.fetch("configuration_#{config.class.name}".to_sym) { config.preferences }
         return prefs if key.nil?
         prefs[key]
       end
@@ -18,7 +18,7 @@ module Spree::PreferenceAccess
           config.set_preference(key, value)
         end
         config.save
-        Rails.cache.delete("configuration_#{config.id}".to_sym)
+        Rails.cache.delete("configuration_#{config.class.name}".to_sym)
       end
 
       alias_method :[], :get
