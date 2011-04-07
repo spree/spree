@@ -33,22 +33,28 @@ describe Address do
   end
 
   context "validation" do
-    let(:state) { Factory(:state, :name => 'virginia', :abbr => 'va') }
+    let(:state) { Factory(:state, :name => 'maryland', :abbr => 'md') }
     before { Spree::Config.set :address_requires_state => true }
 
-    context "state_name is entered but country does not have any states" do
+    context "state_name is not nil and country does not have any states" do
       let(:address) { Factory(:address, :state => nil, :state_name => 'alabama')}
       specify { address.new_record?.should be_false }
     end
 
-    context "state_name is entered but country does not contain that state" do
-      let(:address) { Factory.build(:address, :state => nil, :state_name => 'alabama', :country => state.country)}
+    context "state_name is nil" do
+      let(:address) { Factory.build(:address, :state => nil, :state_name => nil, :country => state.country)}
       before { address.save }
-      specify { address.errors.full_messages.first.should == 'State is invalid' }
+      specify { address.errors.full_messages.first.should == "State can't be blank" }
     end
 
     context "full state name is in state_name and country does contain that state" do
-      let(:address) { Factory(:address, :state => nil, :state_name => 'virginia', :country => state.country)}
+      let(:address) { Factory(:address, :state => nil, :state_name => 'maryland', :country => state.country)}
+      before do
+        State.delete_all
+        Country.delete_all
+        @state = Factory(:state)
+        @address = Factory(:address, :state => nil, :state_name => @state.name, :country => @state.country)
+      end
       specify do
         address.should be_valid
         address.state_id.should_not be_nil
@@ -57,11 +63,16 @@ describe Address do
     end
 
     context "state abbr is in state_name and country does contain that state" do
-      let(:address) { Factory(:address, :state => nil, :state_name => 'va', :country => state.country)}
+        before do
+          State.delete_all
+          Country.delete_all
+          @state = Factory(:state)
+          @address = Factory(:address, :state => nil, :state_name => @state.abbr, :country => @state.country)
+        end
       specify do
-        address.should be_valid
-        address.state_id.should_not be_nil
-        address.state_name.should be_nil
+        @address.should be_valid
+        @address.state_id.should_not be_nil
+        @address.state_name.should be_nil
       end
     end
 
