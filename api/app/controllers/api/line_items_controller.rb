@@ -1,10 +1,16 @@
 class Api::LineItemsController < Api::BaseController
-  resource_controller_for_api
-  actions :index, :show, :update, :create
-  belongs_to :order
 
   private
-
+    def parent
+      if params[:order_id]
+        @parent ||= Order.find_by_param(params[:order_id])
+      end
+    end
+  
+    def parent_data
+      params[:order_id]
+    end
+    
     def collection_serialization_options
       { :include => [:variant], :methods => [:description] }
     end

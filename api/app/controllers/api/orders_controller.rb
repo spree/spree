@@ -1,8 +1,11 @@
 class Api::OrdersController < Api::BaseController
-  resource_controller_for_api
-  actions :index, :show
+  before_filter :access_denied, :except => [:index, :show]
 
   private
+
+    def find_resource
+      Order.find_by_param(params[:id])
+    end
 
     def object_serialization_options
       { :include => {

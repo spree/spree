@@ -1,5 +1,8 @@
 class Api::StatesController < Api::BaseController
-  resource_controller_for_api
-  actions :index, :show
-  belongs_to :country
+  before_filter :access_denied, :except => [:index, :show]
+
+  private
+  def parent
+    @parent ||= Country.find(params[:country_id])
+  end
 end
