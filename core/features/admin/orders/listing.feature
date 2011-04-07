@@ -11,9 +11,9 @@ Feature: Admin visiting orders listing
 
   Scenario: orders listing with sorting
     Given the following orders exist:
-      |created at           |
-      |2011-02-01 12:36:15  |
-      |2010-02-01 17:36:42  |
+      |created at           | number |
+      |2011-02-01 12:36:15  | R100   |
+      |2010-02-01 17:36:42  | R200   |
     And I go to the admin home page
     Then I should see listing orders tabular attributes with created_at descending
     When I follow "Order Date"
