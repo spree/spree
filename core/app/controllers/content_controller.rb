@@ -1,6 +1,6 @@
 class ContentController < Spree::BaseController
 
-  before_filter :static_asset
+  before_filter :render_404, :if => :static_asset
 
   rescue_from ActionView::MissingTemplate, :with => :render_404
   caches_page :show, :index, :if => Proc.new { Spree::Config[:cache_static_content] }
@@ -17,11 +17,6 @@ class ContentController < Spree::BaseController
   # Determines if the requested resource has a path similar to that of a static asset.  In this case do not go through the
   # overhead of trying to render a template or whatever.
   def static_asset
-    if params[:path] =~ /(\.|\\)/
-      render_404
-      false
-    else
-      true
-    end
+    params[:path] =~ /^\/([^.]+)$/
   end
 end
