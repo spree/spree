@@ -8,23 +8,6 @@
   <% end %>
 <% end %>
 
-
-<% if params[:keywords] %>
-
-  <%= hook :search_results do %>
-    <% if @products.empty? %>
-      <%= t(:no_products_found) %>
-    <% else %>
-      <%= render "shared/products", :products => @products, :taxon => @taxon %>
-    <% end %>
-  <% end %>
-
-<% else %>
-
-  <%= hook :homepage_products do %>
-    <%= render "shared/products", :products => @products, :taxon => @taxon %>
-  <% end %>
-
-
+<%= hook params.key?(:keywords) ? :search_result : :homepage_products do %>
+  <%= render "shared/products", :products => @products, :taxon => @taxon %>
 <% end %>
-
