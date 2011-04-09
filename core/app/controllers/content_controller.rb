@@ -6,7 +6,7 @@ class ContentController < Spree::BaseController
   caches_page :show, :index, :if => Proc.new { Spree::Config[:cache_static_content] }
 
   def show
-    render params[:path]
+    render :template => params[:path]
   end
 
   def cvv
