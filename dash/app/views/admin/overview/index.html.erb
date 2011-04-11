@@ -151,9 +151,9 @@
     <% if @show_dashboard %>
        <script type="text/javascript">
         var orders_by_day_points = [[<%== @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
-        var best_selling_variants_points = [<%== @best_selling_variants.map { |v| "[\"#{v[0]}\",#{v[1]}]" }.join(",") %>];
-        var top_grossing_variants_points = [<%== @top_grossing_variants.map { |v| "[\"#{v[0]}\",#{v[1]}]" }.join(",") %>];
-        var best_selling_taxons_points = [<%== @best_selling_taxons.map { |t| "[\"#{t[0]}\",#{t[1]}]" }.join(",") %>];
+        var best_selling_variants_points = [<%== @best_selling_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
+        var top_grossing_variants_points = [<%== @top_grossing_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
+        var best_selling_taxons_points = [<%== @best_selling_taxons.map { |t| "[\"#{h(t[0])}\",#{t[1]}]" }.join(",") %>];
 
         var orders = "<%= t(:orders) %>";
         var by_day = "<%= t(:by_day) %>";
