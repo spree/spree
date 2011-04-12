@@ -20,6 +20,8 @@ end
 
 desc "run all tests for ci"
 task :ci do
+  cmd = "bundle install"; puts cmd; system cmd;
+
   %w(sqlite3 mysql).each do |database_name|
     %w(api auth core promo).each do |gem_name|
       puts "########################### #{gem_name}|#{database_name} (features) ###########################"
