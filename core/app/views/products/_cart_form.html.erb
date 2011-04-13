@@ -1,52 +1,52 @@
 <%= form_for :order, :url => populate_orders_url do |f| %>
-<%= hook :inside_product_cart_form do %>
+  <div data-hook="inside_product_cart_form">
 
-  <% if product_price(@product) %>
-    <%= hook :product_price do %>
-      <p class="prices">
-        <%= t("price") %>
-        <br />
-        <span class="price selling"><%= product_price(@product) %></span>
-      </p>
+    <% if product_price(@product) %>
+      <div data-hook="product_price">
+        <p class="prices">
+          <%= t("price") %>
+          <br />
+          <span class="price selling"><%= product_price(@product) %></span>
+        </p>
+      </div>
     <% end %>
-  <% end %>
 
-  <% if @product.has_variants? %>
-    <div id="product-variants">
-      <h2><%= t('variants') %></h2>
-      <ul>
-        <%  has_checked = false
-        @product.variants.active.each_with_index do |v,index|
-          next if v.option_values.empty? || (!v.in_stock && !Spree::Config[:show_zero_stock_products])
-          checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
-          has_checked = true if checked %>
-          <li>
-            <label>
-              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders] %>
-              <span class="variant-description">
-                <%= variant_options v %>
-              </span>
-              <% if variant_price_diff v %>
-                <span class="price diff"><%= variant_price_diff v %></span>
-              <% end %>
-            </label>
-          </li>
-        <% end%>
-      </ul>
-    </div>
-  <% end%>
-  <% if @product.has_stock? || Spree::Config[:allow_backorders] %>
-    <%= text_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
-      1, :class => "title", :size => 3 %>
-    &nbsp;
-    <button type='submit' class='large primary'>
-      <%= image_tag('/images/add-to-cart.png') + t('add_to_cart') %>
-    </button>
-  <% else %>
-    <%= content_tag('strong', t('out_of_stock')) %>
-  <% end %>
+    <% if @product.has_variants? %>
+      <div id="product-variants">
+        <h2><%= t('variants') %></h2>
+        <ul>
+          <%  has_checked = false
+          @product.variants.active.each_with_index do |v,index|
+            next if v.option_values.empty? || (!v.in_stock && !Spree::Config[:show_zero_stock_products])
+            checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
+            has_checked = true if checked %>
+            <li>
+              <label>
+                <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders] %>
+                <span class="variant-description">
+                  <%= variant_options v %>
+                </span>
+                <% if variant_price_diff v %>
+                  <span class="price diff"><%= variant_price_diff v %></span>
+                <% end %>
+              </label>
+            </li>
+          <% end%>
+        </ul>
+      </div>
+    <% end%>
+    <% if @product.has_stock? || Spree::Config[:allow_backorders] %>
+      <%= text_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
+        1, :class => "title", :size => 3 %>
+      &nbsp;
+      <button type='submit' class='large primary'>
+        <%= image_tag('/images/add-to-cart.png') + t('add_to_cart') %>
+      </button>
+    <% else %>
+      <%= content_tag('strong', t('out_of_stock')) %>
+    <% end %>
 
-<% end %>
+  </div>
 <% end %>
 
 <% content_for :head do %>

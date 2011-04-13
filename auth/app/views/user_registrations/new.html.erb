@@ -5,19 +5,20 @@
 <div id="new-customer">
   <h2><%= t("new_customer") %></h2>
 
-  <%= hook :signup do %>
+  <div data-hook="signup">
 
     <%= form_for(:user, :url => registration_path(@user)) do |f| %>
 
-      <%= hook :signup_inside_form do %>
+      <div data-hook="signup_inside_form"%>
         <%= render 'shared/user_form', :f => f %>
         <p><%= submit_tag t("create"), :class => 'button primary' %></p>
-      <% end %>
+      </div>
 
     <% end %>
     <%= t("or") %> <%= link_to t("login_as_existing"), login_path %>
-  <% end %>
+
+  </div>
 
 </div>
 
-<%= hook :login_extras %>
+<div data-hook="login_extras"></div>

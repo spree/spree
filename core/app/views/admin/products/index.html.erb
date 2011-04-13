@@ -14,32 +14,23 @@
 <div id="new_product"></div>
 
 <table class="index" id='listing_products'>
-  <tr>
-    <%= hook :admin_products_index_headers do %>
-      <th><%= t("sku") %></th>
-      <th><%= sort_link @search,:name, t("name"), {}, {:title => 'admin_products_listing_name_title'} %></th>
-      <th><%= sort_link @search,:master_price, t("master_price") %></th>
-    <% end %>
-    <th>
-      <%= hook :admin_products_index_header_actions %>
-    </th>
+  <tr data-hook="admin_products_index_headers">
+    <th><%= t("sku") %></th>
+    <th><%= sort_link @search,:name, t("name"), {}, {:title => 'admin_products_listing_name_title'} %></th>
+    <th><%= sort_link @search,:master_price, t("master_price") %></th>
+    <th data-hook="admin_products_index_header_actions"></th>
   </tr>
 <% @collection.each do |product| %>
-  <tr <%= 'style="color:red;"' if product.deleted? %> id="<%= dom_id product %>">
-    <%- locals = {:product => product} %>
-    <%= hook :admin_products_index_rows, locals do %>
-      <td><%= product.sku %></td>
-      <td><%= product.name %></td>
-      <td><%= product.price %></td>
-    <% end %>
-    <td class="actions">
-      <%= hook :admin_products_index_row_actions, locals do %>
-        <%= link_to_edit product, :class => 'edit' unless product.deleted?  %>
-        &nbsp;
-        <%= link_to_clone product, :class => 'clone' %>
-        &nbsp;
-        <%= link_to_delete product unless product.deleted?  %>
-      <% end %>
+  <tr <%= 'style="color:red;"' if product.deleted? %> id="<%= dom_id product %>" data-hook="admin_products_index_rows">
+    <td><%= product.sku %></td>
+    <td><%= product.name %></td>
+    <td><%= product.price %></td>
+    <td class="actions" data-hook="admin_products_index_row_actions">
+      <%= link_to_edit product, :class => 'edit' unless product.deleted?  %>
+      &nbsp;
+      <%= link_to_clone product, :class => 'clone' %>
+      &nbsp;
+      <%= link_to_delete product unless product.deleted?  %>
     </td>
   </tr>
 <% end %>
@@ -47,13 +38,13 @@
 <%= will_paginate(:previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
 
 <% content_for :sidebar do %>
-  <%= hook :admin_products_sidebar do %>
+  <div data-hook="admin_products_sidebar">
     <%= form_for [:admin, @search] do |f| %>
       <div class="box">
         <h3><%= t(:search) %></h3>
 
         <%- locals = {:f => f} %>
-        <%= hook :admin_products_index_search, locals do %>
+        <div data-hook="admin_products_index_search">
           <p>
             <%= f.label :name_contains, t("name") %><br />
             <%= f.text_field :name_contains, :size => 15 %>
@@ -66,15 +57,15 @@
             <%= f.label :deleted_at_is_null, t("show_deleted") %><br />
             <%= f.check_box :deleted_at_is_null, {:checked => params[:search][:deleted_at_is_null].blank?}, "", "1" %>
           </p>
-        <% end %>
+        </div>
 
-        <%= hook :admin_products_index_search_buttons, locals do %>
+        <div data-hook="admin_products_index_search_buttons">
           <p class="form-buttons">
             <%= button t("search") %>
           </p>
-        <% end %>
+        </div>
       </div>
     <% end %>
-  <% end %>
+  </div>
 <% end %>
 

@@ -15,12 +15,13 @@
       <label class="sub">
         <%= radio_button(:tracker, :active, true ) %>
         <%= t("yes") %>
-      </label> &nbsp; 
+      </label> &nbsp;
       <label class="sub">
         <%= radio_button(:tracker, :active, false ) %>
         <%= t("no") %>
       </label>
     </td>
   </tr>
-  <%= hook :additional_tracker_fields %>
+  <tbody data-hook="additional_tracker_fields">
+  </tbody>
 </table>

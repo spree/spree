@@ -3,8 +3,7 @@
   <h3><%= t("configurations") %></h3>
   <br class="clear" />
 
-  <ul class="sidebar">
-    <%= hook :admin_configurations_sidebar_menu do %>
+  <ul class="sidebar" data-hook="admin_configurations_sidebar_menu">
     <li<%== ' class="active"' if controller.controller_name == 'general_settings' %>><%= link_to t("general_settings"), admin_general_settings_path %></li>
     <li<%== ' class="active"' if controller.controller_name == 'mail_methods' %>><%= link_to t("mail_methods"), admin_mail_methods_path %></li>
     <li<%== ' class="active"' if controller.controller_name == 'tax_categories' %>><%= link_to t("tax_categories"), admin_tax_categories_path %></li>
@@ -15,7 +14,6 @@
     <li<%== ' class="active"' if controller.controller_name == 'shipping_methods' %>><%= link_to t("shipping_methods"), admin_shipping_methods_path %></li>
     <li<%== ' class="active"' if controller.controller_name == 'inventory_settings' %>><%= link_to t("inventory_settings"), admin_inventory_settings_path %></li>
     <li<%== ' class="active"' if controller.controller_name == 'trackers' %>><%= link_to t("analytics_trackers"), admin_trackers_path %></li>
-    <% end %>
     <li<%== ' class="active"' if controller.controller_name == 'configurations' %>><%= link_to t("complete_list"), admin_configurations_path %></li>
   </ul>
 

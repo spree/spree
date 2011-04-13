@@ -1,31 +1,25 @@
 <% @body_id = 'product-details' %>
 <h1><%= @product.name %></h1>
 
-<div id="product-images">
-  <%= hook :product_images do %>
+<div id="product-images" data-hook="product_images">
   <div id="main-image">
     <%= render 'image' %>
   </div>
   <div id="thumbnails">
     <%= render 'thumbnails', :product => @product %>
   </div>
-  <% end %>
 </div>
 
-<div id="product-description">
-  <%= hook :product_description do %>
-    <%= product_description(@product) rescue t("product_has_no_description") %>
-  <% end %>
-  <%= hook :product_properties do %>
+<div id="product-description" data-hook="product_description">
+  <%= product_description(@product) rescue t("product_has_no_description") %>
+  <div data-hook="product_properties">
     <%= render 'properties' %>
-  <% end %>
+  </div>
 </div>
 
-<%= hook :cart_form do %>
-  <div id="cart-form">
-    <%= render 'cart_form' %>
-  </div>
-<% end %>
+<div id="cart-form" data-hook="cart_form">
+  <%= render 'cart_form' %>
+</div>
 
 <%= render 'taxons' %>
 

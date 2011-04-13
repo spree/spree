@@ -1,14 +1,12 @@
 <%= render "shared/error_messages", :target => @order %>
 <table id="cart-detail">
   <thead>
-    <tr>
-      <%= hook :cart_items_headers do %>
-        <th colspan="2"><%= t("item") %></th>
-        <th><%= t("price") %></th>
-        <th><%= t("qty") %></th>
-        <th><%= t("total") %></th>
-        <th></th>
-      <% end %>
+    <tr data-hook="cart_items_headers">
+      <th colspan="2"><%= t("item") %></th>
+      <th><%= t("price") %></th>
+      <th><%= t("qty") %></th>
+      <th><%= t("total") %></th>
+      <th></th>
     </tr>
   </thead>
   <tbody id="line_items">

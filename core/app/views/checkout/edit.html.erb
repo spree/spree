@@ -6,11 +6,9 @@
   <%= checkout_progress %>
   <br clear="left" />
   <%= render "shared/error_messages", :target => @order %>
-  <%= hook :checkout_summary_box do %>
-    <div id="checkout-summary">
-      <%= render 'summary', :order => @order %>
-    </div>
-  <% end %>
+  <div id="checkout-summary" data-hook="checkout_summary_box">
+    <%= render 'summary', :order => @order %>
+  </div>
   <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}" } do |form| %>
     <%= render @order.state, :form => form %>
     <input id="post-final" type="submit" style="display:none"/>

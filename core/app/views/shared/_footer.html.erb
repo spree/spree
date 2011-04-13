@@ -1,13 +1,9 @@
 <div id="footer">
-  <div class="left">
-    <%= hook :footer_left do %>
+  <div class="left" data-hook="footer_left">
     <p>
       <%= t("powered_by") %> <a href="http://spreecommerce.com/">Spree</a>
     </p>
-    <% end %>
   </div>
-  <div class="right">
-    <%= hook :footer_right %>
-  </div>
-</div>   
+  <div class="right" data-hook="footer_right"></div>
+</div>
 <%= render 'shared/google_analytics' %>

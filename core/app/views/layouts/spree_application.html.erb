@@ -1,52 +1,40 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<%= hook :inside_head do %>
-  <%= render :partial => 'shared/head'%>
-<% end %>
-</head>
-<%
-if @body_class.nil?
-  if content_for?(:sidebar)
-    @body_class = 'two-col'
-  else
-    @body_class = 'one-col'
-  end
-end
- %>
-<body class="<%= @body_class %>" id="<%= @body_id %>">
-  <div id="header" class="container_bg">
-    <div class="container">
-    <div id="login-bar">
-      <ul id="nav-bar">
-        <%= render 'shared/nav_bar' %>
-      </ul>
+  <head data-hook="inside_head">
+    <%= render :partial => 'shared/head'%>
+    <% @body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col' %>
+  </head>
+  <body class="<%= @body_class %>" id="<%= @body_id %>">
+    <div id="header" class="container_bg">
+      <div class="container">
+        <div id="login-bar">
+          <ul id="nav-bar">
+            <%= render 'shared/nav_bar' %>
+          </ul>
+        </div>
+        <%= logo %>
+      </div>
     </div>
-  <%= logo %>
-  </div>
-  </div>
 
-  <div id="wrapper" class="container">
-    <% if content_for?(:sidebar) %>
-    <div id="sidebar">
-      <%= hook :sidebar do %>
-        <%= yield :sidebar %>
+    <div id="wrapper" class="container">
+      <% if content_for?(:sidebar) %>
+        <div id="sidebar" data-hook data-layer="1">
+          <%= yield :sidebar %>
+        </div>
       <% end %>
+
+      <div id="content">
+        <%= breadcrumbs(@taxon) if @taxon %>
+        <% if flash.notice %>
+        <div class="flash notice"><%= flash.notice %></div>
+        <% end %>
+        <% if flash[:error] %>
+        <div class="flash errors"><%= flash[:error] %></div>
+        <% end %>
+        <%= yield %>
+      </div>
+      <%= render :partial => 'shared/footer'%>
     </div>
-    <% end %>
 
-    <div id="content">
-      <%= breadcrumbs(@taxon) if @taxon %>
-      <% if flash.notice %>
-      <div class="flash notice"><%= flash.notice %></div>
-      <% end %>
-      <% if flash[:error] %>
-      <div class="flash errors"><%= flash[:error] %></div>
-      <% end %>
-      <%= yield %>
-    </div>
-    <%= render :partial => 'shared/footer'%>
-  </div>
-
-</body>
+  </body>
 </html>

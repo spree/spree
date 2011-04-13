@@ -1,10 +1,10 @@
 <h1><%= t("overview") %></h1>
 
-<%= hook :admin_dashboard do %>
+<div data-hook="admin_dashboard">
   <% if @show_dashboard %>
     <div class="dashboard">
       <div class="dashboard_left">
-      <%= hook :admin_dashboard_left do %>
+      <div data-hook="admin_dashboard_left">
         <div class="dashboard_small_wrapper">
           <h2><%= t('best_selling_products') %></h2>
           <div id="best_selling_products" style="width:50%;height:170px;float:left"></div>
@@ -38,8 +38,8 @@
 
         </div>
       </div>
-    <% end %>
-    <%= hook :admin_dashboard_center do %>
+    </div>
+    <div data-hook="admin_dashboard_center">
       <div class="dashboard_main">
         <div class="dashboard_main_wrapper">
           <h2 id="order_by_day_title"><%= t('orders') %> <%= t('count') %> <%= t('by_day') %> (<%= t('last_7_days') %>)</h2>
@@ -83,8 +83,8 @@
           </div>
         </div>
       </div>
-    <% end %>
-    <%= hook :admin_dashboard_right do %>
+    </div>
+    <div data-hook="admin_dashboard_right">
       <div class="dashboard_right">
           <h2><%= t('last_5_orders') %></h2>
           <table>
@@ -137,17 +137,17 @@
           </table>
         </div>
       </div>
-    <% end %>
+    </div>
     <p style="clear:both;">&nbsp;</p>
   <% else %>
-    <%= hook :admin_dashboard_welcome do %>
+    <div data-hook="admin_dashboard_welcome">
       <%== t('overview_welcome') %>
-    <% end %>
+    </div>
   <% end %>
-<% end %>
+</div>
 
 <% content_for :head do %>
-  <%= hook :admin_dashboard_javascript do %>
+  <div data-hook="admin_dashboard_javascript">
     <% if @show_dashboard %>
        <script type="text/javascript">
         var orders_by_day_points = [[<%== @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
@@ -166,9 +166,9 @@
         'jqPlot/plugins/jqplot.pieRenderer.min.js', 'dashboard.js' %>
     <!--[if IE]><%= javascript_include_tag 'jqPlot/excanvas.min.js' %><![endif]-->
     <% end %>
-  <% end %>
+  </div>
 
-  <%= hook :admin_dashboard_stylesheet do %>
+  <div data-hook="admin_dashboard_stylesheet">
      <%= stylesheet_link_tag 'admin/dashboard.css' %>
-  <% end %>
+  </div>
 <% end %>

@@ -7,33 +7,22 @@
   <br class='clear' />
 </div>
 
-
 <h1><%= t("listing_users") %></h1>
-
 
 <table class="index" id='listing_users'>
   <thead>
-  <tr>
-    <%= hook :admin_users_index_headers do %>
+    <tr data-hook="admin_users_index_headers">
       <th><%= sort_link @search,:email,t("user"),{}, {:title => 'users_email_title'} %></th>
-      <th>
-        <%= hook :admin_users_index_header_actions %>
-      </th>
-    <% end %>
-  </tr>
+      <th data-hook="admin_users_index_header_actions"></th>
+    </tr>
   </thead>
   <tbody>
     <% @users.each do |user|%>
-      <tr id="<%= dom_id user %>">
-        <%- locals = {:user => user} %>
-        <%= hook :admin_users_index_rows, locals do %>
-          <td width="350px" class='user_email'><%=link_to user.email, object_url(user) %></td>
-        <% end %>
-        <td>
-          <%= hook :admin_users_index_row_actions, locals do %>
-            <%= link_to_edit user, :class => "edit" %> &nbsp;
-            <%= link_to_delete user %>
-          <% end %>
+      <tr id="<%= dom_id user %>" data-hook="admin_users_index_rows">
+        <td width="350px" class='user_email'><%=link_to user.email, object_url(user) %></td>
+        <td data-hook="admin_users_index_row_actions">
+          <%= link_to_edit user, :class => "edit" %> &nbsp;
+          <%= link_to_delete user %>
         </td>
       </tr>
     <% end %>
@@ -44,20 +33,17 @@
 
 
 <% content_for :sidebar do %>
-  <div class="box">
+  <div class="box" data-hook="admin_users_index_search">
     <h3><%= t(:search) %></h3>
     <% @search = User.search %>
     <%= form_for [:admin, @search] do |f| %>
-      <%- locals = {:f => f} %>
-      <%= hook :admin_users_index_search, locals do %>
-        <p>
-          <%= t("email") %><br />
-          <%= f.text_field :email_contains, :size=>18 %>
-        </p>
-      <% end %>
-      <%= hook :admin_users_index_search_buttons, locals do %>
+      <p>
+        <%= t("email") %><br />
+        <%= f.text_field :email_contains, :size=>18 %>
+      </p>
+      <div data-hook="admin_users_index_search_buttons">
         <p><%= button t("search") %></p>
-      <% end %>
+      </div>
     <% end %>
   </div>
 <% end %>

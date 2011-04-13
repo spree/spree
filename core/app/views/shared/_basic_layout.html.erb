@@ -21,10 +21,8 @@ end
 
   <div id="wrapper" class="container">
     <% if content_for?(:sidebar) %>
-    <div id="sidebar">
-      <%= hook :sidebar do %>
-        <%= yield :sidebar %>
-      <% end %>
+    <div id="sidebar" data-hook="sidebar">
+      <%= yield :sidebar %>
     </div>
     <% end %>
 

@@ -1,6 +1,6 @@
 <fieldset id="payment">
   <legend><%= t("payment_information") %></legend>
-  <%= hook :checkout_payment_step, {:form => form} do %>
+  <div data-hook="checkout_payment_step">
     <% @order.available_payment_methods.each do |method| %>
     <p>
       <label>
@@ -12,7 +12,7 @@
 
     <ul id="payment-methods">
       <% @order.available_payment_methods.each do |method| %>
-        <li id="payment_method_<%= method.id %>"<%= ' class="last"' if method == @order.available_payment_methods.last %>>
+        <li id="payment_method_<%= method.id %>" class="<%= 'last' if method == @order.available_payment_methods.last %>">
           <fieldset>
             <%= render "checkout/payment/#{method.method_type}", :payment_method => method %>
           </fieldset>
@@ -20,8 +20,8 @@
       <% end %>
     </ul>
     <br style='clear:both;' />
-    <%= hook :coupon_code_field, {:form => form} %>
-  <% end %>
+    <div data-hook="coupon_code_field"></div>
+  </div>
 </fieldset>
 
 <hr class="space" />

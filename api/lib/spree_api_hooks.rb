@@ -1,3 +1,5 @@
-class ApiHooks < Spree::ThemeSupport::HookListener
-  insert_after :admin_user_edit_form, :partial => "admin/users/api_fields"
-end
+Deface::Override.new(:virtual_path => "admin/users/edit",
+                     :name => "api_admin_user_edit_form",
+                     :insert_after => "[data-hook='admin_user_edit_form'], #admin_user_edit_form[data-hook]",
+                     :partial => "admin/users/api_fields",
+                     :disabled => false)

@@ -1,14 +1,14 @@
-<%= hook :admin_user_edit_form_header do %>
+<div data-hook="admin_user_edit_form_header">
   <%= render 'shared/error_messages', :target => @user %>
   <h1><%= t("editing_user") %></h1>
-<% end %>
+</div>
 
-<%= hook :admin_user_edit_form do %>
+<div data-hook="admin_user_edit_form">
   <%= form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
 
-    <%= hook :admin_user_edit_form_buttons do %>
+    <div data-hook="admin_user_edit_form_button">
       <%= render :partial => "admin/shared/edit_resource_links" %>
-    <% end %>
+    </div>
   <% end %>
-<% end %>
+</div>

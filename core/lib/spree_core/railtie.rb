@@ -6,10 +6,6 @@ module SpreeCore
 
     def self.activate
 
-      Spree::ThemeSupport::HookListener.subclasses.each do |hook_class|
-        Spree::ThemeSupport::Hook.add_listener(hook_class)
-      end
-
       #register all payment methods (unless we're in middle of rake task since migrations cannot be run for this first time without this check)
       if File.basename( $0 ) != "rake"
         [
