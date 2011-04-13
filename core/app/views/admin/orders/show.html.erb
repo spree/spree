@@ -1,13 +1,11 @@
-<div class='toolbar order-links'>
-  <%= hook :admin_order_show_buttons do %>
-    <%= button_link_to t("cancel"), fire_admin_order_url(@order.number, {:e => "cancel"}), :icon => 'delete', :confirm => t('are_you_sure') if @order.can_cancel? %>
-    <%= button_link_to t("edit"), edit_admin_order_url(@order.number), :icon => 'edit' %>
-  <% end %>
+<div class='toolbar order-links' data-hook="admin_order_show_buttons">
+  <%= button_link_to t("cancel"), fire_admin_order_url(@order.number, {:e => "cancel"}), :icon => 'delete', :confirm => t('are_you_sure') if @order.can_cancel? %>
+  <%= button_link_to t("edit"), edit_admin_order_url(@order.number), :icon => 'edit' %>
 </div>
 
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
 
-<%= hook :admin_order_show_addresses do %>
+<div data-hook="admin_order_show_addresses">
   <% if @order.bill_address %>
     <div class='adr'>
       <h4><%= t("bill_address") %></h4>
@@ -21,8 +19,8 @@
     </div>
     <% end %>
   <hr />
-<% end %>
+</div>
 
-<%= hook :admin_order_show_details do %>
+<div data-hook="admin_order_show_details">
   <%= render :partial => 'admin/shared/order_details', :locals => {:order => @order} %>
-<% end %>
+</div>

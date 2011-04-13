@@ -13,35 +13,26 @@
 <h1><%= t("payment_methods") %></h1>
 
 <table class="index" id='listing_payment_methods'>
-  <tr>
-    <%= hook :admin_payment_methods_index_headers do %>
-      <th><%= t("name") %></th>
-      <th><%= t("provider") %></th>
-      <th><%= t("environment") %></th>
-      <th><%= t("display") %></th>
-      <th><%= t("active") %></th>
-    <% end %>
-    <th>
-      <%= hook :admin_payment_methods_index_header_actions %>
-    </th>
+  <tr data-hook="admin_payment_methods_index_headers">
+    <th><%= t("name") %></th>
+    <th><%= t("provider") %></th>
+    <th><%= t("environment") %></th>
+    <th><%= t("display") %></th>
+    <th><%= t("active") %></th>
+    <th data-hook="admin_payment_methods_index_header_actions"></th>
   </tr>
   <tbody>
     <% @payment_methods.each do |method|%>
-      <tr id="<%= dom_id method %>">
-        <%- locals = {:method => method} %>
-        <%= hook :admin_payment_methods_index_rows, locals do %>
-          <td width="120px"><%= method.name %></td>
-          <td width="140px"><%= method.type %></td>
-          <td width="100px"><%= method.environment.to_s.titleize %></td>
-          <td width="60px"><%= method.display_on.blank? ? t('both') : t(method.display_on) %></td>
-          <td width="60px"><%= method.active ? t(:yes) : t(:no) %></td>
-        <% end %>
-        <td width="140px">
-          <%= hook :admin_payment_methods_index_row_actions, locals do %>
-            <%= link_to_edit method, :class => 'edit' %>
-            &nbsp;
-            <%= link_to_delete method %>
-          <% end %>
+      <tr id="<%= dom_id method %>" data-hook="admin_payment_methods_index_rows">
+        <td width="120px"><%= method.name %></td>
+        <td width="140px"><%= method.type %></td>
+        <td width="100px"><%= method.environment.to_s.titleize %></td>
+        <td width="60px"><%= method.display_on.blank? ? t('both') : t(method.display_on) %></td>
+        <td width="60px"><%= method.active ? t(:yes) : t(:no) %></td>
+        <td width="140px" data-hook="admin_payment_methods_index_row_actions">
+          <%= link_to_edit method, :class => 'edit' %>
+          &nbsp;
+          <%= link_to_delete method %>
         </td>
       </tr>
     <% end %>

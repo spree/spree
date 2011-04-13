@@ -1,30 +1,28 @@
 <% content_for :sidebar do %>
-  <%= hook :homepage_sidebar_navigation do %>
+  <div data-hook="homepage_sidebar_navigation">
     <% if "products" == @current_controller && @taxon %>
       <%= render "shared/filters" %>
     <% else %>
       <%= render "shared/taxonomies" %>
     <% end %>
-  <% end %>
+  </div>
 <% end %>
 
 
 <% if params[:keywords] %>
 
-  <%= hook :search_results do %>
+  <div data-hook="search_results">
     <% if @products.empty? %>
       <%= t(:no_products_found) %>
     <% else %>
       <%= render "shared/products", :products => @products, :taxon => @taxon %>
     <% end %>
-  <% end %>
+  </div>
 
 <% else %>
 
-  <%= hook :homepage_products do %>
+  <div data-hook="homepage_products">
     <%= render "shared/products", :products => @products, :taxon => @taxon %>
-  <% end %>
-
+  </div>
 
 <% end %>
-

@@ -1,20 +1,10 @@
 module HookHelper
 
-  # Allow hooks to be used in views like this:
-  #
-  #   <%= hook :some_hook %>
-  #
-  #   <%= hook :some_hook do %>
-  #     <p>Some HTML</p>
-  #   <% end %>
-  #
+  # This method is deprecated, left in place
+  # to prevent views from breaking
   def hook(hook_name, locals = {}, &block)
+    warn "[DEPRECATION] `hook` is deprecated"
     content = block_given? ? capture(&block) : ''
-    Spree::ThemeSupport::Hook.render_hook(hook_name, content, self, locals)
+    content
   end
-
-  def locals_hash(names, binding)
-    names.inject({}) {|memo, key| memo[key.to_sym] = eval(key, binding); memo}
-  end
-
 end

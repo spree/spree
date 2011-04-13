@@ -7,31 +7,29 @@
 <% elsif params.key?(:keywords) %>
   <h3><%= t(:search_results, :keywords => h(params[:keywords])) %></h3>
 <% end %>
- 
+
 <% if products.any? %>
 <ul class="product-listing">
   <% products.each do |product| %>
     <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
-      <li id="product_<%= product.id %>">
-        <%= hook :products_list_item, {:product => product} do %>
-          <%= link_to small_image(product), product %>
-          <%= link_to raw(product.name + " <span class='price selling'>#{product_price(product)}</span>"), product, :class => 'info' %>
-        <% end %>
+      <li id="product_<%= product.id %>" data-hook="products_list_item">
+        <%= link_to small_image(product), product %>
+        <%= link_to  product, :class => 'info' do %><%= product.name %> <span class='price selling'><%= product_price(product) %></span><% end %>
       </li>
     <% end %>
   <% end %>
 </ul>
 <% end %>
- 
+
 <hr class="space" />
- 
+
 <% if paginated_products.respond_to?(:total_pages)
       params.delete(:search)
       params.delete(:taxon)
-      
+
 %><%= will_paginate(paginated_products,
                     :previous_label => "&#171; #{t('previous')}",
                     :next_label => "#{t('next')} &#187;") %>
 <% end %>
- 
+
 <hr class="space" />

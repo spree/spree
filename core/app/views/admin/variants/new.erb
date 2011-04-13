@@ -1,11 +1,8 @@
 <%= render "shared/error_messages", :target => @variant %>
 
 <%= form_for(@variant, :url => collection_url) do |f| %>
-<fieldset>
-  <%= hook :admin_variant_new_form, {:f => f} do %>
-   <%= render :partial => "form", :locals => { :f => f } %>
-  <% end %>
-
-  <%= render :partial => 'admin/shared/new_resource_links' %>
-</fieldset>  
+  <fieldset data-hook="admin_variant_new_form">
+    <%= render :partial => "form", :locals => { :f => f } %>
+    <%= render :partial => 'admin/shared/new_resource_links' %>
+  </fieldset>
 <% end %>

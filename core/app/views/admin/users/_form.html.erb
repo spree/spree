@@ -1,5 +1,4 @@
-<%- locals = {:f => f} %>
-<%= hook :admin_user_form_fields, locals do %>
+<div data-hook="admin_user_form_fields">
   <%= f.field_container :email do %>
     <%= f.label :email, t("email") %><br />
     <%= f.text_field :email  %>
@@ -17,19 +16,19 @@
     <%= f.password_field :password_confirmation  %>
     <%= f.error_message_on :password_confirmation %>
   <% end %>
-<% end %>
+</div>
 
 
 <% if @user.respond_to?(:roles) %>
-<%= hook :admin_user_form_roles, locals do %>
-  <p>
-    <label><%= t("roles") %></label><br />
-    <% for role in @roles %>
-      <label class="sub">
-        <%= check_box_tag "user[role][#{role.name}]", 1, @user.has_role?(role.name) %>
-        <%= role.name %>
-      </label> &nbsp;
-    <% end %>
-  </p>
-<% end %>
+  <div data-hook="admin_user_form_roles">
+    <p>
+      <label><%= t("roles") %></label><br />
+      <% for role in @roles %>
+        <label class="sub">
+          <%= check_box_tag "user[role][#{role.name}]", 1, @user.has_role?(role.name) %>
+          <%= role.name %>
+        </label> &nbsp;
+      <% end %>
+    </p>
+  </div>
 <% end %>

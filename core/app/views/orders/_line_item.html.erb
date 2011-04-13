@@ -1,41 +1,26 @@
 <tr class="<%= cycle('', 'alt') %>">
-  <td>
-    <%- locals = {:item_form => item_form, :variant => variant, :line_item => line_item} %>
-    <%= hook :cart_item_image, locals do %>
-      <% if variant.images.length == 0 %>
-        <%= small_image(variant.product) %>
-      <% else %>
-        <%=  image_tag variant.images.first.attachment.url(:small)   %>
-      <% end %>
+  <td data-hook="cart_item_image">
+    <% if variant.images.length == 0 %>
+      <%= small_image(variant.product) %>
+    <% else %>
+      <%= image_tag variant.images.first.attachment.url(:small)   %>
     <% end %>
   </td>
-  <td>
-    <%= hook :cart_item_description, locals do %>
-      <h4><%= link_to variant.product.name,  product_path(variant.product) %></h4>
-      <%= variant_options variant %>
-      <%= truncate(variant.product.description, :length => 100, :omission => "...") %>
-    <% end %>
+  <td data-hook="cart_item_description">
+    <h4><%= link_to variant.product.name, product_path(variant.product) %></h4>
+    <%= variant_options variant %>
+    <%= truncate(variant.product.description, :length => 100, :omission => "...") %>
   </td>
-  <td>
-    <%= hook :cart_item_price, locals do %>
-      <%=  product_price(line_item) %>
-    <% end %>
+  <td data-hook="cart_item_price">
+    <%= product_price(line_item) %>
   </td>
-  <td>
-    <%= hook :cart_item_quantity, locals do %>
-      <%= item_form.text_field :quantity, :size => 3, :class => "line_item_quantity" %>
-    <% end %>
+  <td data-hook="cart_item_quantity">
+    <%= item_form.text_field :quantity, :size => 3, :class => "line_item_quantity" %>
   </td>
-
-  <td>
-    <%= hook :cart_item_total, locals do %>
-      <%= format_price(product_price(line_item, :format_as_currency => false) * line_item.quantity) unless line_item.quantity.nil? %>
-    <% end %>
+  <td data-hook="cart_item_total">
+    <%= format_price(product_price(line_item, :format_as_currency => false) * line_item.quantity) unless line_item.quantity.nil? %>
   </td>
-  <td>
-    <%= hook :cart_item_delete, locals do %>
-      <%= link_to(image_tag('/images/admin/icons/delete.png'), '#', :class => 'delete') %>
-    <% end %>
+  <td data-hook="cart_item_delete">
+    <%= link_to(image_tag('/images/admin/icons/delete.png'), '#', :class => 'delete') %>
   </td>
-
 </tr>

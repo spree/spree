@@ -1,32 +1,30 @@
 <div class='toolbar'>
-  <ul class='actions'>
-    <%= hook :admin_shipment_edit_buttons do %>
-      <li>
-        <% if @shipment.can_ship? %>
-          <%= button_link_to(t('ship'), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :confirm => t("are_you_sure")) %>
-        <% end %>
-      </li>
-    <% end %>
+  <ul class='actions' data-hook="admin_shipment_edit_buttons">
+    <li>
+      <% if @shipment.can_ship? %>
+        <%= button_link_to(t('ship'), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :confirm => t("are_you_sure")) %>
+      <% end %>
+    </li>
   </ul>
   <br class='clear' />
 </div>
 
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
 
-<%= hook :admin_shipment_edit_header do %>
+<div data-hook="admin_shipment_edit_header">
   <h2><%= t('shipment') %> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)</h2>
   <% if @shipment.cost %>
     <h3><%= t('charges') %> <%= number_to_currency @shipment.cost %></h3>
   <% end %>
 
   <%= render "shared/error_messages", :target => @shipment %>
-<% end %>
+</div>
 
-<%= hook :admin_shipment_edit_form do %>
+<div data-hook="admin_shipment_edit_form">
   <%= form_for(@shipment, :url => admin_order_shipment_path(@order, @shipment), :html => { :method => :put }) do |shipment_form| %>
       <%= render :partial => "form", :locals => { :shipment_form => shipment_form } %>
 
-      <%= hook :admin_shipment_edit_form_buttons do %>
+      <div data-hook="admin_shipment_edit_form_buttons">
         <p class="form-buttons">
           <% if self.respond_to?(:current_user) && @shipment.editable_by?(current_user) %>
             <%= button @order.cart? ? t('continue') : t('update') %>
@@ -35,6 +33,6 @@
             <%= link_to raw("&laquo; #{t("back")}"), edit_admin_order_shipment_path(@order) %>
           <% end %>
         </p>
-      <% end %>
+      </div>
   <% end %>
-<% end %>
+</div>

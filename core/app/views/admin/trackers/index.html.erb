@@ -13,24 +13,19 @@
 
 <table class="index">
   <thead>
-    <tr>
-    <%= hook :admin_trackers_index_headers do %>
+    <tr data-hook="admin_trackers_index_headers">
       <th><%= t(:google_analytics_id) %></th>
       <th><%= t("environment") %></th>
       <th><%= t("active") %></th>
-    <% end %>
       <th><%= t("action") %></th>
     </tr>
   </thead>
   <tbody>
     <% @trackers.each do |tracker|%>
-      <tr id="<%= dom_id tracker %>">
-        <%- locals = {:tracker => tracker} %>
-        <%= hook :admin_trackers_index_rows, locals do %>
-          <td><%= tracker.analytics_id %></td>
-          <td><%= tracker.environment.to_s.titleize %></td>
-          <td><%= tracker.active ? t(:yes) : t(:no) %></td>
-        <% end %>
+      <tr id="<%= dom_id tracker %>" data-hook="admin_trackers_index_rows">
+        <td><%= tracker.analytics_id %></td>
+        <td><%= tracker.environment.to_s.titleize %></td>
+        <td><%= tracker.active ? t(:yes) : t(:no) %></td>
         <td>
         	<%= link_to_edit tracker %> &nbsp;
         	<%= link_to_delete tracker %>

@@ -4,19 +4,19 @@
 
 <% if @order.line_items.empty? %>
 
-  <%= hook :empty_cart do %>
+  <div data-hook="empty_cart">
     <p><%= t("your_cart_is_empty.") %></p>
     <p><%=link_to t("continue_shopping"), products_path, :class => 'button continue' %></p>
-  <% end %>
+  </div>
 
 <% else %>
-  <%= hook :outside_cart_form do %>
+  <div data-hook="outside_cart_form">
     <%= form_for(@order, :url => update_cart_path, :html=>{:id=>'updatecart'}) do |order_form| %>
-      <%= hook :inside_cart_form do %>
+      <div data-hook="inside_cart_form">
 
-        <%= hook :cart_items do %>
+        <div data-hook="cart_items">
           <%= render :partial => 'form', :locals => {:order_form => order_form} %>
-        <% end %>
+        </div>
 
         <div id="subtotal">
           <h3><%= "#{t("subtotal")}: #{order_price(@order)}" %></h3>
@@ -28,9 +28,9 @@
 
         <p><%=link_to t("continue_shopping"), products_path, :class => 'button continue' %></p>
 
-      <% end %>
+      </div>
     <% end %>
-  <% end %>
+  </div>
 
   <%= form_tag empty_cart_path, :method => :put do %>
     <p id="clear_cart_link">
@@ -39,4 +39,3 @@
   <% end %>
 
 <% end %>
-

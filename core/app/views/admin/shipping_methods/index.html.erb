@@ -14,33 +14,24 @@
 
 <table class="index" id='listing_shipping_methods'>
   <thead>
-    <tr>
-    <%= hook :admin_shipping_methods_index_headers do %>
+    <tr data-hook="admin_shipping_methods_index_headers">
       <th><%= t("name") %></th>
       <th><%= t("zone") %></th>
       <th><%= t("calculator") %></th>
       <th><%= t("display") %></th>
-    <% end %>
-      <th>
-        <%= hook :admin_shipping_methods_index_header_actions %>
-      </th>
+      <th data-hook="admin_shipping_methods_index_header_actions"></th>
     </tr>
   </thead>
   <tbody>
     <% @shipping_methods.each do |shipping_method|%>
-      <tr id="<%= dom_id shipping_method %>">
-        <%- locals = {:shipping_method => shipping_method} %>
-        <%= hook :admin_shipping_methods_index_rows, locals do %>
-          <td><%= shipping_method.name %></td>
-          <td><%= shipping_method.zone.name %></td>
-          <td><%= shipping_method.calculator.description %></td>
-          <td><%= shipping_method.display_on.blank? ? t('both') : t(shipping_method.display_on) %></td>
-        <% end %>
-        <td width="140px">
-          <%= hook :admin_shipping_methods_index_row_actions, locals do %>
-            <%= link_to_edit shipping_method %> &nbsp;
-            <%= link_to_delete shipping_method %>
-          <% end %>
+      <tr id="<%= dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows">
+        <td><%= shipping_method.name %></td>
+        <td><%= shipping_method.zone.name %></td>
+        <td><%= shipping_method.calculator.description %></td>
+        <td><%= shipping_method.display_on.blank? ? t('both') : t(shipping_method.display_on) %></td>
+        <td width="140px" data-hook="admin_shipping_methods_index_row_actions">
+          <%= link_to_edit shipping_method %> &nbsp;
+          <%= link_to_delete shipping_method %>
         </td>
       </tr>
     <% end %>
