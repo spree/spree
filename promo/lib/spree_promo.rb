@@ -22,7 +22,7 @@ module SpreePromo
 
       Order.class_eval do
 
-        has_many :promotion_credits, :conditions => "source_type='Promotion'"
+        has_many :promotion_credits, :conditions => "source_type='Promotion'", :dependent => :destroy
 
         attr_accessible :coupon_code
         attr_accessor :coupon_code
@@ -64,7 +64,7 @@ module SpreePromo
           # recalculate amount
           self.promotion_credits.each do |credit|
             if credit.source.eligible?(self)
-              amount = -credit.source.calculator.compute(self).abs
+              amount = -credit.source.calculator.compute(self).abs rescue nil
               if credit.amount != amount
                 # avoid infinite callbacks
                 PromotionCredit.update_all("amount = #{amount}", { :id => credit.id })
@@ -81,7 +81,7 @@ module SpreePromo
           new_promotions = eligible_automatic_promotions - current_promotions
           new_promotions.each do |promotion|
             next if current_promotions.present? && !promotion.combine?
-            amount = promotion.calculator.compute(self).abs
+            amount = promotion.calculator.compute(self).abs rescue nil
             amount = item_total if amount > item_total
             if amount > 0
               self.promotion_credits.create(
