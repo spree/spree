@@ -22,7 +22,7 @@ module SpreePromo
 
       Order.class_eval do
 
-        has_many :promotion_credits, :conditions => "source_type='Promotion'"
+        has_many :promotion_credits, :conditions => "source_type='Promotion'", :dependent => :destroy
 
         attr_accessible :coupon_code
         attr_accessor :coupon_code
