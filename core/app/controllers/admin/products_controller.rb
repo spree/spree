@@ -92,10 +92,10 @@ class Admin::ProductsController < Admin::ResourceController
     else
       includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
 
-      @collection = super.where(["name LIKE ?", "%#{params[:q]}%"])
+      @collection = super.where(["name #{LIKE} ?", "%#{params[:q]}%"])
       @collection = @collection.includes(includes).limit(params[:limit] || 10)
 
-      tmp = super.where(["variants.sku LIKE ?", "%#{params[:q]}%"])
+      tmp = super.where(["variants.sku #{LIKE} ?", "%#{params[:q]}%"])
       tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
       @collection.concat(tmp)
 

@@ -25,3 +25,5 @@ end
 String.class_eval do
   include SpreeCore::Ext::String
 end
+
+LIKE = ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' ? 'ILIKE' : 'LIKE'

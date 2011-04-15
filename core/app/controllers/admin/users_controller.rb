@@ -22,11 +22,11 @@ class Admin::UsersController < Admin::ResourceController
       @collection = @search.paginate(:per_page => Spree::Config[:admin_products_per_page], :page => params[:page])
     else
       @collection = User.includes(:bill_address => [:state, :country], :ship_address => [:state, :country]).
-                        where("users.email like :search
-                               OR addresses.firstname like :search
-                               OR addresses.lastname like :search
-                               OR ship_addresses_users.firstname like :search
-                               OR ship_addresses_users.lastname like :search",
+                        where("users.email #{LIKE} :search
+                               OR addresses.firstname #{LIKE} :search
+                               OR addresses.lastname #{LIKE} :search
+                               OR ship_addresses_users.firstname #{LIKE} :search
+                               OR ship_addresses_users.lastname #{LIKE} :search",
                                {:search => "#{params[:q].strip}%"}).
                         limit(params[:limit] || 100)
     end
