@@ -18,6 +18,6 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency('spree_core',  version)
-  s.add_dependency('devise', '= 1.2.rc2')
+  s.add_dependency('devise', '= 1.3.1')
   s.add_dependency('cancan', '= 1.5.1')
 end
