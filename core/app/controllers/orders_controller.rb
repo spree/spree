@@ -50,7 +50,6 @@ class OrdersController < Spree::BaseController
 
   def empty
     if @order = current_order
-      @order.promotion_credits.destroy_all
       @order.line_items.destroy_all
     end
     redirect_to cart_path
