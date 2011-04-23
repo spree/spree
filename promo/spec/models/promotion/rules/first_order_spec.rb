@@ -11,7 +11,7 @@ describe Promotion::Rules::FirstOrder do
   it "should be eligible if user does not have any other completed orders yet" do
     user = mock_model(User)
     # TODO: refactor, probably it would be good to change that to method in user model, like completed_orders
-    user.stub_chain(:orders, :checkout_complete, :count => 0)
+    user.stub_chain(:orders, :complete, :count => 0)
     order.stub(:user => user)
 
     rule.should be_eligible(order)
@@ -19,7 +19,7 @@ describe Promotion::Rules::FirstOrder do
 
   it "should be not eligible if user have at least one completet order" do
     user = mock_model(User)
-    user.stub_chain(:orders, :checkout_complete, :count => 1)
+    user.stub_chain(:orders, :complete, :count => 1)
     order.stub(:user => user)
 
     rule.should_not be_eligible(order)
