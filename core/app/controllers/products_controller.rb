@@ -11,11 +11,9 @@ class ProductsController < Spree::BaseController
   def show
     @product = Product.find_by_permalink!(params[:id])
     return unless @product
-    
-    @variants = Variant.active.find_all_by_product_id(@product.id,
-                :include => [:option_values, :images])
-    @product_properties = ProductProperty.find_all_by_product_id(@product.id,
-                          :include => [:property])
+
+    @variants = Variant.active.includes([:option_values, :images]).where(:product_id => @product.id)
+    @product_properties = ProductProperty.includes(:property).where(:product_id => @product.id)
     @selected_variant = @variants.detect { |v| v.available? }
 
     referer = request.env['HTTP_REFERER']
