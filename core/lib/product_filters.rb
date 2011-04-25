@@ -88,7 +88,7 @@ module ProductFilters
       }
 
     def ProductFilters.brand_filter
-      brands = ProductProperty.find_all_by_property_id(@@brand_property).map(&:value).compact.uniq
+      brands = ProductProperty.where(:property_id => @@brand_property).map(&:value).compact.uniq
       conds  = Hash[*brands.map {|b| [b, "product_properties.value = '#{b}'"]}.flatten]
       { :name   => "Brands",
         :scope  => :brand_any,
@@ -125,7 +125,7 @@ module ProductFilters
       if taxon.nil?
         taxon = Taxonomy.first.root
       end
-      all_brands = ProductProperty.find_all_by_property_id(@@brand_property).map(&:value).uniq
+      all_brands = ProductProperty.where(:property_id => @@brand_property).map(&:value).uniq
       scope = ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
                               scoped(:joins      => {:product => :taxons},
                                      :conditions => ["taxons.id in (?)", [taxon] + taxon.descendants])
