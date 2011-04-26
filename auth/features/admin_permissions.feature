@@ -1,3 +1,4 @@
+@custom_permissions
 Feature: Admin Permissions
 
   Background: Admin is restricted from accessing orders
