@@ -124,7 +124,7 @@ This creates a new Rails application using all of the default options (including
 For example, to create your application using Mysql you use the following command instead:
 
 <shell>
-rails new mystore -d=mysql
+rails new mystore -d mysql
 </shell>
 
 Here is a complete list of database options
