@@ -9,6 +9,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   font-family: inherit;
   vertical-align: baseline;
 }
+header, footer, nav, article, section, aside { display: block; }
 *:focus { outline: 0; }
 body {
   line-height: 1em;
