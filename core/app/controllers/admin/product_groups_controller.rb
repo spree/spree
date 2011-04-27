@@ -21,8 +21,7 @@ class Admin::ProductGroupsController < Admin::ResourceController
       params[:search] ||= {}
       params[:search][:meta_sort] ||= "name.asc"
       @search = super.metasearch(params[:search])
-      @collection = @search.paginate( :per_page => Spree::Config[:per_page],
-                                      :page     => params[:page])
+      @collection = @search.relation.page(params[:page]).per(Spree::Config[:per_page])
     end
     
   private

@@ -31,7 +31,7 @@ require "rails/all"
 require 'state_machine'
 require 'paperclip'
 require 'stringex'
-require 'will_paginate'
+require 'kaminari'
 #require 'less' #TODO RAILS3: consider making this optional
 require 'nested_set'
 require 'acts_as_list'

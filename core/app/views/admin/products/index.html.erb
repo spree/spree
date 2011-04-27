@@ -44,7 +44,7 @@
   </tr>
 <% end %>
 </table>
-<%= will_paginate(:previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
+<%= paginate @products %>
 
 <% content_for :sidebar do %>
   <%= hook :admin_products_sidebar do %>

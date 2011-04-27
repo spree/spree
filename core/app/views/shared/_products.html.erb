@@ -7,7 +7,7 @@
 <% elsif params.key?(:keywords) %>
   <h3><%= t(:search_results, :keywords => h(params[:keywords])) %></h3>
 <% end %>
- 
+
 <% if products.any? %>
 <ul class="product-listing">
   <% products.each do |product| %>
@@ -22,16 +22,13 @@
   <% end %>
 </ul>
 <% end %>
- 
+
 <hr class="space" />
- 
-<% if paginated_products.respond_to?(:total_pages)
+
+<% if paginated_products.respond_to?(:num_pages)
       params.delete(:search)
       params.delete(:taxon)
-      
-%><%= will_paginate(paginated_products,
-                    :previous_label => "&#171; #{t('previous')}",
-                    :next_label => "#{t('next')} &#187;") %>
+%><%= paginate paginated_products %>
 <% end %>
- 
+
 <hr class="space" />
