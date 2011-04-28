@@ -55,12 +55,12 @@ class Admin::ResourceController < Admin::BaseController
       resource_desc += " \"#{@object.name}\"" if @object.respond_to?(:name)
       flash[:notice] = I18n.t(:successfully_removed, :resource => resource_desc)
       respond_to do |format|
-        format.html { redirect_to collection_url }
+        format.html { redirect_to collection_path }
         format.js   { render :partial => "/admin/shared/destroy" }
       end
     else
       invoke_callbacks(:destroy, :fails)
-      redirect_to collection_url
+      redirect_to collection_path
     end
   end
  
@@ -159,7 +159,7 @@ class Admin::ResourceController < Admin::BaseController
   end
   
   def location_after_save
-    collection_url
+    collection_path
   end
 
   def invoke_callbacks(action, callback_type)
@@ -176,34 +176,34 @@ class Admin::ResourceController < Admin::BaseController
 
   def new_object_url(options = {})
     if parent_data.present?
-      new_polymorphic_url([:admin, parent, model_class], options)
+      new_polymorphic_path([:admin, parent, model_class], options)
     else
-      new_polymorphic_url([:admin, model_class], options)
+      new_polymorphic_path([:admin, model_class], options)
     end
   end
   
   def edit_object_url(object, options = {})
     if parent_data.present?
-      send "edit_admin_#{parent_data[:model_name]}_#{object_name}_url", parent, object, options
+      send "edit_admin_#{parent_data[:model_name]}_#{object_name}_path", parent, object, options
     else
-      send "edit_admin_#{object_name}_url", object, options
+      send "edit_admin_#{object_name}_path", object, options
     end
   end
   
   def object_url(object = nil, options = {})
     target = object ? object : @object
     if parent_data.present?
-      send "admin_#{parent_data[:model_name]}_#{object_name}_url", parent, target, options
+      send "admin_#{parent_data[:model_name]}_#{object_name}_path", parent, target, options
     else
-      send "admin_#{object_name}_url", target, options
+      send "admin_#{object_name}_path", target, options
     end
   end
   
   def collection_url(options = {})
     if parent_data.present?
-      polymorphic_url([:admin, parent, model_class], options)
+      polymorphic_path([:admin, parent, model_class], options)
     else
-      polymorphic_url([:admin, model_class], options)
+      polymorphic_path([:admin, model_class], options)
     end
   end
   
