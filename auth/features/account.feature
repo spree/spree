@@ -28,10 +28,16 @@ Feature: Account
     And I follow "My Account"
     Then I should see "email@person.com"
 
-
-
-
-
-
-
-
+  Scenario: existing user account editing
+    Given the following user exists:
+      | email            | password | password_confirmation |
+      | email@person.com | secret   | secret                |
+    And I go to the sign in page
+    When I sign in as "email@person.com/secret"
+    And I follow "My Account"
+    And I follow "Edit"
+    And I fill in "Password" with "foobar"
+    And I fill in "Password Confirmation" with "foobar"
+    And I press "Update"
+    Then I should see "email@person.com"
+    And I should see "Account updated!"
