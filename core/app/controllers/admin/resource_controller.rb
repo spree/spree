@@ -55,12 +55,12 @@ class Admin::ResourceController < Admin::BaseController
       resource_desc += " \"#{@object.name}\"" if @object.respond_to?(:name)
       flash[:notice] = I18n.t(:successfully_removed, :resource => resource_desc)
       respond_to do |format|
-        format.html { redirect_to collection_path }
+        format.html { redirect_to collection_url }
         format.js   { render :partial => "/admin/shared/destroy" }
       end
     else
       invoke_callbacks(:destroy, :fails)
-      redirect_to collection_path
+      redirect_to collection_url
     end
   end
  
@@ -159,7 +159,7 @@ class Admin::ResourceController < Admin::BaseController
   end
   
   def location_after_save
-    collection_path
+    collection_url
   end
 
   def invoke_callbacks(action, callback_type)

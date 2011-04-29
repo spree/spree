@@ -1,4 +1,4 @@
 <div class="taxon">
-  <h2><%= link_to taxon.name, seo_path(taxon), :class => 'breadcrumbs' %></h2>
+  <h2><%= link_to taxon.name, seo_url(taxon), :class => 'breadcrumbs' %></h2>
   <%= render :partial => "shared/products", :locals => {:products => taxon_preview(taxon), :taxon => taxon} %>
 </div>
