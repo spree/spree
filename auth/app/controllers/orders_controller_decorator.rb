@@ -18,12 +18,12 @@ OrdersController.class_eval do
   def discard_unauthorized_variants
     params[:products].each do |product_id,variant_id|
       product = Variant.find(variant_id).product
-      params[:products].delete(product_id) if cannot? :read, product
+      params[:products].delete(product_id) if cannot? :show, product
     end if params[:products]
 
     params[:variants].each do |variant_id, quantity|
       product = Variant.find(variant_id).product
-      params[:variants].delete(variant_id) if cannot? :read, product
+      params[:variants].delete(variant_id) if cannot? :show, product
     end if params[:variants]
   end
 
