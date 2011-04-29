@@ -27,11 +27,3 @@ Feature: Account
     When I sign in as "email@person.com/secret"
     And I follow "My Account"
     Then I should see "email@person.com"
-
-
-
-
-
-
-
-
