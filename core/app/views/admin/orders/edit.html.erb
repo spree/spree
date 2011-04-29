@@ -5,7 +5,7 @@
       <%= event_links %>
     </div>
     <div class='toolbar'>
-      <%= button_link_to(t("resend"), resend_admin_order_url(@order), :method => :post, :icon => 'send-email') if @order.user %>
+      <%= button_link_to(t("resend"), resend_admin_order_path(@order), :method => :post, :icon => 'send-email') if @order.user %>
     </div>
   <% end %>
 </div>

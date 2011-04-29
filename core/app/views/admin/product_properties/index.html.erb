@@ -4,7 +4,7 @@
 
 <%= render "shared/error_messages", :target => @product %>
 
-<%= form_for(@product, :url => admin_product_url(@product), :html => { :method => :put }) do |f| %>
+<%= form_for(@product, :url => admin_product_path(@product), :html => { :method => :put }) do |f| %>
   <table class="index">
     <thead>
       <tr>
@@ -31,7 +31,7 @@
     &nbsp;&nbsp;
 
   	<span id="new_ptype_link">
-  	  <%= link_to t("select_from_prototype"), available_admin_prototypes_url,
+  	  <%= link_to t("select_from_prototype"), available_admin_prototypes_path,
   	              :remote => true, 'data-update' => "prototypes" %>
   	</span>
 	</p>

@@ -23,9 +23,9 @@
       <% end %>
       <td><%= image.alt %></td>
       <td class="actions">
-        <%= link_to_with_icon('edit', t("edit"), edit_admin_product_image_url(@product, image), :class => 'edit') %>
+        <%= link_to_with_icon('edit', t("edit"), edit_admin_product_image_path(@product, image), :class => 'edit') %>
         &nbsp;
-        <%= link_to_delete image, {:url => admin_product_image_url(@product, image) }%>
+        <%= link_to_delete image, {:url => admin_product_image_path(@product, image) }%>
       </td>
     </tr>
   <% end %>
@@ -39,9 +39,9 @@
         <% end %>
         <td><%= image.alt %></td>
         <td class="actions">
-          <%= link_to_with_icon('edit', t("edit"), edit_admin_product_image_url(@product, image)) %>
+          <%= link_to_with_icon('edit', t("edit"), edit_admin_product_image_path(@product, image)) %>
           &nbsp;
-          <%= link_to_delete image, {:url => admin_product_image_url(@product, image) }%>
+          <%= link_to_delete image, {:url => admin_product_image_path(@product, image) }%>
         </td>
       </tr>
     <% end %>
@@ -51,7 +51,7 @@
 <div id="images"></div>
 <br/>
 <p>
-    <%= link_to icon('add') + ' ' + t("new_image"), new_admin_product_image_url(@product), :id => "new_image_link" %>
+    <%= link_to icon('add') + ' ' + t("new_image"), new_admin_product_image_path(@product), :id => "new_image_link" %>
 </p>
 
 <% content_for :head do %>

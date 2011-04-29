@@ -12,7 +12,7 @@ class Admin::StatesController < Admin::ResourceController
   protected
   
   def location_after_save
-    admin_country_states_url(@country)
+    admin_country_states_path(@country)
   end  
 
   def collection

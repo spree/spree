@@ -8,7 +8,7 @@ class Admin::TaxonsController < Admin::BaseController
       render :text => @taxon
     else
       flash[:error] = I18n.t('errors.messages.could_not_create_taxon')
-      redirect_to @taxonomy ? edit_admin_taxonomy_url(@taxonomy) : admin_taxonomies_url
+      redirect_to @taxonomy ? edit_admin_taxonomy_path(@taxonomy) : admin_taxonomies_path
     end
   end
 
@@ -81,7 +81,7 @@ class Admin::TaxonsController < Admin::BaseController
     end
     
     respond_to do |format|
-      format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
+      format.html {redirect_to edit_admin_taxonomy_path(@taxonomy) }
       format.json {render :json => @taxon.to_json }
     end
   end

@@ -1,7 +1,7 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li id='new_shipment_section'>
-      <%= button_link_to t("new_shipment"), new_admin_order_shipment_url(@order), :icon => 'add'  %>
+      <%= button_link_to t("new_shipment"), new_admin_order_shipment_path(@order), :icon => 'add'  %>
     </li>
   </ul>
   <br class='clear' />
@@ -36,12 +36,12 @@
       <% end %>
       <td class="actions">
         <%= hook :admin_shipments_index_row_actions, locals do %>
-          <%= link_to_with_icon 'edit', t('edit'), edit_admin_order_shipment_url(@order, shipment) %>
-          <%= link_to_delete shipment, :url => admin_order_shipment_url(@order, shipment) %>
+          <%= link_to_with_icon 'edit', t('edit'), edit_admin_order_shipment_path(@order, shipment) %>
+          <%= link_to_delete shipment, :url => admin_order_shipment_path(@order, shipment) %>
         <% end %>
       </td>
     </tr>
   <% end %>
 </table>
 
-<%= button_link_to t('continue'), admin_orders_url %>
+<%= button_link_to t('continue'), admin_orders_path %>

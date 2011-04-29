@@ -14,7 +14,7 @@ class Admin::OptionTypesController < Admin::ResourceController
     @product.option_types.delete(@option_type)
     @product.save
     flash.notice = I18n.t("notice_messages.option_type_removed")
-    redirect_to selected_admin_product_option_types_url(@product)
+    redirect_to selected_admin_product_option_types_path(@product)
   end
 
   def update_positions
@@ -23,7 +23,7 @@ class Admin::OptionTypesController < Admin::ResourceController
     end
     
     respond_to do |format|
-      format.html { redirect_to admin_product_variants_url(params[:product_id]) }
+      format.html { redirect_to admin_product_variants_path(params[:product_id]) }
       format.js  { render :text => 'Ok' }
     end
   end
@@ -42,9 +42,9 @@ class Admin::OptionTypesController < Admin::ResourceController
     
     def location_after_save
       if @option_type.created_at == @option_type.updated_at
-        edit_admin_option_type_url(@option_type)
+        edit_admin_option_type_path(@option_type)
       else
-        admin_option_types_url
+        admin_option_types_path
       end
     end
 

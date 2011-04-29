@@ -1,4 +1,4 @@
-<%= form_for :order, :url => populate_orders_url do |f| %>
+<%= form_for :order, :url => populate_orders_path do |f| %>
 <%= hook :inside_product_cart_form do %>
 
   <% if product_price(@product) %>

@@ -15,7 +15,7 @@ class Admin::VariantsController < Admin::ResourceController
     end
 
     respond_to do |format|
-      format.html { redirect_to admin_product_variants_url(params[:product_id]) }
+      format.html { redirect_to admin_product_variants_path(params[:product_id]) }
       format.js  { render_js_for_destroy }
     end
   end
@@ -26,7 +26,7 @@ class Admin::VariantsController < Admin::ResourceController
     end
     
     respond_to do |format|
-      format.html { redirect_to admin_product_variants_url(params[:product_id]) }
+      format.html { redirect_to admin_product_variants_path(params[:product_id]) }
       format.js  { render :text => 'Ok' }
     end
   end

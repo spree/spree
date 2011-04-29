@@ -2,7 +2,7 @@
   <ul class='actions'>
 <% if @order.outstanding_balance? %>
     <li id='new_payment_section'>
-      <%= button_link_to t("new_payment"), new_admin_order_payment_url(@order), :icon => 'add' %>
+      <%= button_link_to t("new_payment"), new_admin_order_payment_path(@order), :icon => 'add' %>
     </li>
 <% end %>
   </ul>
@@ -19,4 +19,4 @@
 <%= render 'list', :payments => @payments %>
 
 
-<%= button_link_to t('continue'), admin_orders_url %>
+<%= button_link_to t('continue'), admin_orders_path %>

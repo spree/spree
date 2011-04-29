@@ -15,7 +15,7 @@ class UsersController < Spree::BaseController
         session[:guest_token] = nil
       end
 
-      redirect_back_or_default(root_url)
+      redirect_back_or_default(root_path)
     else
       render 'new'
     end
@@ -30,7 +30,7 @@ class UsersController < Spree::BaseController
         sign_in(@user, :event => :authentication)
       end
       flash.notice = I18n.t("account_updated")
-      redirect_to account_url
+      redirect_to account_path
     else
       render 'edit'
     end

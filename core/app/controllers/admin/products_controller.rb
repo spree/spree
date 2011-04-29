@@ -42,7 +42,7 @@ class Admin::ProductsController < Admin::ResourceController
       flash.notice = I18n.t("notice_messages.product_not_cloned")
     end
 
-    redirect_to edit_admin_product_url(@new)
+    redirect_to edit_admin_product_path(@new)
   end
   
   protected
@@ -52,7 +52,7 @@ class Admin::ProductsController < Admin::ResourceController
   end
   
   def location_after_save
-    edit_admin_product_url(@product)
+    edit_admin_product_path(@product)
   end
   
   # Allow different formats of json data to suit different ajax calls

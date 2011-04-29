@@ -146,9 +146,9 @@ class Api::BaseController < Spree::BaseController
     def object_url(object = nil, options = {})
       target = object ? object : @object
       if parent.present?
-        send "admin_#{parent[:model_name]}_#{object_name}_url", parent, target, options
+        send "admin_#{parent[:model_name]}_#{object_name}_path", parent, target, options
       else
-        send "admin_#{object_name}_url", target, options
+        send "admin_#{object_name}_path", target, options
       end
     end
     

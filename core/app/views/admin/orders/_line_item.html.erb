@@ -8,7 +8,7 @@
   <% end %>
   <td>
     <%= hook :admin_order_form_line_item_actions, locals do %>
-      <%= link_to_delete f.object, {:url => admin_order_line_item_url(@order.number, f.object),
+      <%= link_to_delete f.object, {:url => admin_order_line_item_path(@order.number, f.object),
                                     :dataType => "html" ,
                                     :success => "function(r){ jQuery('#order-form-wrapper').html(r);}"},
                                     :title => "admin_delete_#{dom_id(@order)}" %>

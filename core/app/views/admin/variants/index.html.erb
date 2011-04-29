@@ -40,7 +40,7 @@
 
   <p class='first_add_option_types'>
     <%= t("to_add_variants_you_must_first_define") %>
-    <%= link_to t("option_types"), selected_admin_product_option_types_url(@product) %>
+    <%= link_to t("option_types"), selected_admin_product_option_types_path(@product) %>
   </p>
 
 <% else %>
@@ -51,7 +51,7 @@
 
   <p id="new_var_link">
 
-    <%= link_to icon('add') + ' ' + t("new_variant"), new_admin_product_variant_url(@product),
+    <%= link_to icon('add') + ' ' + t("new_variant"), new_admin_product_variant_path(@product),
                                                       :remote => :true,
                                                       'data-update' => 'new_variant',
                                                       :class => 'iconlink new' %>
@@ -59,7 +59,7 @@
     &nbsp;|&nbsp;
 
     <%= link_to @deleted.blank? ? t("show_deleted") : t("show_active"),
-                            admin_product_variants_url(@product, :deleted =>  @deleted.blank? ? "on" : "off") %>
+                            admin_product_variants_path(@product, :deleted =>  @deleted.blank? ? "on" : "off") %>
   </p>
 
   <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>

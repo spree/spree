@@ -2,7 +2,7 @@
   <%= render 'shared/error_messages', :target => @line_item %>
 <% end %>
 
-<%= form_for(@order, :url => admin_order_url(@order), :html => { :method => :put}) do |f| %>
+<%= form_for(@order, :url => admin_order_path(@order), :html => { :method => :put}) do |f| %>
   <%= f.hidden_field :number %>
   <table class="index">
     <tbody id='line-items'>
@@ -53,7 +53,7 @@
   <%= hook :admin_order_form_buttons do %>
     <p class="form-buttons">
       <%= button @order.complete? ? t('update') : t('continue') %>
-      <%= t("or") %> <%= link_to t("actions.cancel"), admin_orders_url %>
+      <%= t("or") %> <%= link_to t("actions.cancel"), admin_orders_path %>
     </p>
   <% end %>
 

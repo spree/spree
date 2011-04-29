@@ -33,7 +33,7 @@ class Admin::PaymentsController < Admin::BaseController
           @order.next!
         end
         flash.notice = t('new_order_completed')
-        redirect_to admin_order_url(@order)
+        redirect_to admin_order_path(@order)
       end
 
     rescue Spree::GatewayError => e

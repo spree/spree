@@ -48,7 +48,7 @@ module Admin::NavigationHelper
   end
 
   def link_to_clone(resource, options={})
-    link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource), options)
+    link_to_with_icon('exclamation', t("clone"), clone_admin_product_path(resource), options)
   end
 
   def link_to_delete(resource, options = {}, html_options={})

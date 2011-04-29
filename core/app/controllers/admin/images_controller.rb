@@ -18,7 +18,7 @@ class Admin::ImagesController < Admin::ResourceController
   private
   
   def location_after_save
-    admin_product_images_url(@product)
+    admin_product_images_path(@product)
   end
 
   def load_data

@@ -10,7 +10,7 @@
       <tr id="row_<%= prototype.id %>">
         <td><%= prototype.name %></td>
 		    <td class="actions">
-		      <%= link_to icon('add') + ' ' + t("select"), select_admin_prototype_url(prototype), 
+		      <%= link_to icon('add') + ' ' + t("select"), select_admin_prototype_path(prototype), 
 		                  :class => 'ajax iconlink select_properties_from_prototype' %>
 				</td>
       </tr>

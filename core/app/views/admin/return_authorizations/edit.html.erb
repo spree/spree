@@ -2,10 +2,10 @@
   <ul class='actions'>
     <li>
       <% if @return_authorization.can_receive? %>
-        <%= button_link_to(t('receive'), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'receive'), :method => :put, :confirm => t("are_you_sure")) %>
+        <%= button_link_to(t('receive'), fire_admin_order_return_authorization_path(@order, @return_authorization, :e => 'receive'), :method => :put, :confirm => t("are_you_sure")) %>
       <% end %>
       <% if @return_authorization.can_cancel? %>
-        <%= button_link_to(t('cancel'), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'cancel'), :method => :put, :confirm => t("are_you_sure")) %>
+        <%= button_link_to(t('cancel'), fire_admin_order_return_authorization_path(@order, @return_authorization, :e => 'cancel'), :method => :put, :confirm => t("are_you_sure")) %>
       <% end %>
     </li>
   </ul>
@@ -22,6 +22,6 @@
 
   <p class="form-buttons">
     <%= button t('update') %>
-    <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_return_authorizations_url(@order) %>
+    <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_return_authorizations_path(@order) %>
   </p>
 <% end %>

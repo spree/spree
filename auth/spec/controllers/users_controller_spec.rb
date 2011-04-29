@@ -39,14 +39,14 @@ describe UsersController do
       it "should perform update" do
         put :update, {:user => {:email => "mynew@email-address.com" } }
         assigns[:user].email.should == "mynew@email-address.com"
-        response.should redirect_to(account_url)
+        response.should redirect_to(account_path)
       end
     end
 
     context "when attempting to update other account" do
       it "should not allow update" do
         put :update, {:user => {:email => "mynew@email-address.com" } }
-        response.should redirect_to(login_url)
+        response.should redirect_to(login_path)
         flash[:error].should == I18n.t(:authorization_failure)
       end
     end

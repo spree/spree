@@ -12,7 +12,7 @@
         <td><%= taxon.name %></td>
         <td><%= taxon_path taxon %></td>
   	    <td class="actions">	                         
-		      <%= link_to_delete taxon, :url => remove_admin_product_taxon_url(@product, taxon), :name => icon("delete") + ' ' + t("remove") %>
+		      <%= link_to_delete taxon, :url => remove_admin_product_taxon_path(@product, taxon), :name => icon("delete") + ' ' + t("remove") %>
   	    </td>        
       </tr>
     <% end %>

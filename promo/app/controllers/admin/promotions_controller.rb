@@ -12,7 +12,7 @@ class Admin::PromotionsController < Admin::ResourceController
   end
   
   def location_after_save
-    edit_admin_promotion_url(@promotion)
+    edit_admin_promotion_path(@promotion)
   end
 
   def load_data

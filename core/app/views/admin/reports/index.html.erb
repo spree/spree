@@ -10,7 +10,7 @@
   <tbody>     
     <% @reports.each do |key, value| %>
     <tr>
-      <td><%= link_to t(value[:name].downcase.gsub(" ","_")), send("#{key}_admin_reports_url".to_sym) %></td>
+      <td><%= link_to t(value[:name].downcase.gsub(" ","_")), send("#{key}_admin_reports_path".to_sym) %></td>
       <td><%= t(value[:description].downcase.gsub(" ","_")) %></td>
     </tr>
     <% end %>
