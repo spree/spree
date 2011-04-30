@@ -163,17 +163,30 @@ h4. Installing the Dependencies
 WARNING. The dependencies should be specified in a specific order. Always specify +spree+, followed by +spree-extensions+ at the very end of +Gemfile+. For example, a tabula rasa Spree dependency list would be specified in this order: +mysql2+, +spree+, +spree-paypal-express+. See below for an example Gemfile with the correct order.
 
 <shell>
+# EXAMPLE Gemfile for a spree application, your Gemfile will be different
 source 'http://rubygems.org'
 
 # Generic gem dependencies first
-gem 'mysql2'
-gem 'newrelic_rpm'
+gem 'rails', '3.0.5'
+gem 'aws-s3', :require => 'aws/s3'
+gem 'dynamic_form'
+gem 'heroku'
+gem 'memcache-client'
 
 # Followed by spree itself first, all spree-specific extensions second
-gem 'spree', '0.40.0'
-gem 'spree_active_shipping', :git => 'https://github.com/spree/spree_active_shipping.git'
+gem 'spree', '~> 0.50.0'
+gem 'spree_static_content'
+gem 'spree_editor', :git => "git://github.com/romul/spree_editor.git"
 gem 'spree_product_assembly', :git => 'git://github.com/spree/spree-product-assembly.git'
-gem 'spree_static_content', :git => 'git://github.com/spree/spree-static-content.git'
+
+# Dev/Test gems
+group :development, :test do
+  gem 'sqlite3'
+  gem 'webrat'
+  gem 'cucumber-rails'
+  gem 'rspec-rails'
+end
+
 # EOF
 </shell>
 
