@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency('paperclip', '= 2.3.8')
   s.add_dependency('rd_resource_controller')
   s.add_dependency('meta_search', '= 1.0.5')
-  s.add_dependency('activemerchant', '= 1.12.0')
+  s.add_dependency('activemerchant', '= 1.14.0')
   s.add_dependency('will_paginate', '= 3.0.pre2')
   s.add_dependency('rails', '= 3.0.7')
   s.add_dependency('jquery-rails', '= 0.2.6')
