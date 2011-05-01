@@ -29,7 +29,7 @@ module SpreeBase
 
     # this is a hook for subclasses to provide title
     def accurate_title
-      nil
+      Spree::Config[:default_seo_title]
     end
 
     # def reject_unknown_object
