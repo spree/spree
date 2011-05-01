@@ -13,6 +13,6 @@ class TaxonsController < Spree::BaseController
   private
 
   def accurate_title
-    @taxon ? @taxon.name : nil
+    @taxon ? @taxon.name : super
   end
 end

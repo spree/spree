@@ -1,6 +1,7 @@
 class AppConfiguration < Configuration
 
   preference :site_name, :string, :default => 'Spree Demo Site'
+  preference :default_seo_title, :string, :default => ''
   preference :site_url, :string, :default => 'demo.spreecommerce.com'
   preference :default_locale, :string, :default => 'en'
   preference :allow_locale_switching, :boolean, :default => true

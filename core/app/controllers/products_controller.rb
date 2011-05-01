@@ -28,6 +28,6 @@ class ProductsController < Spree::BaseController
   private
 
   def accurate_title
-    @product ? @product.name : nil
+    @product ? @product.name : super
   end
 end
