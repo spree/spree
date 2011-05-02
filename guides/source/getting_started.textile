@@ -162,7 +162,7 @@ h4. Installing the Dependencies
 
 WARNING. The dependencies should be specified in a specific order. Always specify +spree+, followed by +spree-extensions+ at the very end of +Gemfile+. For example, a tabula rasa Spree dependency list would be specified in this order: +mysql2+, +spree+, +spree-paypal-express+. See below for an example Gemfile with the correct order.
 
-<shell>
+<shell><pre>
 # EXAMPLE Gemfile for a spree application, your Gemfile will be different
 source 'http://rubygems.org'
 
@@ -188,7 +188,7 @@ group :development, :test do
 end
 
 # EOF
-</shell>
+</pre></shell>
 
 Now its time to install any new gem dependencies we have created.  For instance, if you do not already have the appropriate Spree gem or database driver, bundler will install it for you.
 
