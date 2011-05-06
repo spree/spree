@@ -219,6 +219,51 @@ h5. Troubleshooting
 
 While parsing the lines gathered from +Versionfile+ if a line is invalid then that line is skipped. So make sure that entries in +Versionfile+ are valid. Soon we would be releasing a tool that can verify the +Versionfile+ and provide instant feedback if something is not right.
 
+h4. Testing Against a Release Candidate
+
+The Spree core team will often announce a so-called "release candidate":http://en.wikipedia.org/wiki/Software_release_life_cycle#Release_candidate shortly before an official release.  This is to allow Spree developers to test their sites and extensions against the upcoming release code.
+
+In order to test your extension against the release candidate you will need to first update your gemspec file.  Lets look at how we would update the "spree_social":http://github.com/spree/spree_social gem to use the new 0.60.0.RC1 version of Spree.  We'll need to modify +spree_social.gemspec+ as follows:
+
+<ruby>
+Gem::Specification.new do |s|
+  ...
+  s.add_dependency('spree_core', '>= 0.60.0.RC1')
+  s.add_dependency('spree_auth', '>= 0.60.0.RC1')
+  ...
+end
+</ruby>
+
+You'll also want to update your +Gemfile+ that belongs to the Spree application using the extension.
+
+<ruby>
+  gem 'spree', '0.60.0.RC1'
+</ruby>
+
+Next, you'll need to update the dependencies locally using bundler and commit the resulting +Gemfile.lock+ to your source code respository.
+
+<shell>
+$ bundle update spree_social
+</shell>
+
+Now its time to fire up Spree and make sure everything is working properly.  Assuming everything looks good you'll also want to update the +Versionfile+ associated with your extension so that people can use the new and improved version.
+
+In our example we're adding support for a new 0.60.0RC1 release candidate which is equivalent to 0.60.x in the extension directory.
+
+<ruby>
+"0.60.x" => { :tag => "v1.2", :version => "1.2" }
+"0.50.x" => { :tag => "v1.0.2", :version => "1.0.2" }
+</ruby>
+
+If we're not 100% sure the extension will support the release candidate (or if its a work in progress) we could reference the "edge" branch (ie. master) in the +Versionfile+ instead.
+
+<ruby>
+"0.60.x" => { :branch => "master" }
+"0.50.x" => { :tag => "v1.0.2", :version => "1.0.2" }
+</ruby>
+
+INFO. Using a branch in the +Versionfile+ designates the gem as a "development release" which is possibly unstable and subject to change.  Once things are stable you can point ot a specific Git SHA or tag so that people can rely on the extension not changing in a production release.
+
 h3. Extension Tutorial
 
 This tutorial assumes a basic familiarity with Spree extensions.  For more detailed information on how extensions, please see the previous sections. The tutorial will, however, walk you through a complete example touching on all of the major aspects of an extension so if you like to learn through "step by step" instructions you may want to start here.
