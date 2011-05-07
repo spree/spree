@@ -56,6 +56,6 @@ class OrdersController < Spree::BaseController
   end
 
   def accurate_title
-    I18n.t(:shopping_cart)
+    @order && @order.completed? ? "#{Order.human_name} #{@order.number}" : I18n.t(:shopping_cart)
   end
 end

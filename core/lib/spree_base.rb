@@ -106,6 +106,7 @@ module SpreeBase
 
     receiver.send :helper_method, 'title'
     receiver.send :helper_method, 'title='
+    receiver.send :helper_method, 'accurate_title'
     receiver.send :helper_method, 'get_taxonomies'
     receiver.send :helper_method, 'current_gateway'
     receiver.send :helper_method, 'current_order'
