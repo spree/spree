@@ -101,6 +101,7 @@ Rails.application.routes.draw do
         end
         collection do
           post :available
+          post :batch_select
           get  :selected
         end
       end

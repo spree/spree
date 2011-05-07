@@ -130,6 +130,14 @@ class Admin::TaxonsController < Admin::BaseController
     @taxons = @product.taxons
     render :layout => false
   end
+  
+  def batch_select
+    @product = load_product
+    @taxons = params[:taxon_ids].map{|id| Taxon.find(id)}.compact
+    @product.taxons = @taxons
+    @product.save
+    redirect_to selected_admin_product_taxons_url(@product)
+  end
 
   private
 

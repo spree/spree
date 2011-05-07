@@ -1,42 +1,61 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Taxons"} %>
-<div id="selected-taxons">
-  <%= render :partial => "taxon_table", :locals => {:taxons => @taxons} %>
-</div>
 
+<% if Spree::Config[:select_taxons_from_tree] %>
+  <%= form_tag batch_select_admin_product_taxons_path(@product) do %>
+    <div id="taxons-tree">
+      <ul>
+      <% Taxon.roots.each do |root| %>
+        <li>
+          <%= label_tag root.name %>
+          <%= taxons_checkbox_tree(root, @product) %>
+        </li>
+      <% end %>
+      </ul>
+    </div>
+    <p class="form-buttons">
+      <%= button t("update") %>
+    </p>
+  <% end %>
+<% else %>
 
-<%= form_tag('#') do %>
-  <label><%= t('search') %>:</label>
-  <input id="searchtext" size="25">
-<% end %>
+  <div id="selected-taxons">
+    <%= render :partial => "taxon_table", :locals => {:taxons => @taxons} %>
+  </div>
 
-<%= javascript_tag do %>
-  function search_for_taxons(){
-    jQuery.ajax({
-     data: {q: jQuery("#searchtext").val() }, 
-     success: function(request){
-       jQuery('#search_hits').html(request);
-     },
-     type: 'post',
-     url: '<%= available_admin_product_taxons_url(@product) %>'
-    });
-  }
+  <%= form_tag('#') do %>
+    <label><%= t('search') %>:</label>
+    <input id="searchtext" size="25">
+  <% end %>
 
-  jQuery("#searchtext").keypress(function (e) {
-    if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-      search_for_taxons();
-
-      return false;
-    } else {
-       return true;
+  <%= javascript_tag do %>
+    function search_for_taxons(){
+      jQuery.ajax({
+       data: {q: jQuery("#searchtext").val() }, 
+       success: function(request){
+         jQuery('#search_hits').html(request);
+       },
+       type: 'post',
+       url: '<%= available_admin_product_taxons_url(@product) %>'
+      });
     }
-  });
 
-  jQuery("#searchtext").delayedObserver(function() {
-    search_for_taxons();
-  }, 0.75);
+    jQuery("#searchtext").keypress(function (e) {
+      if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+        search_for_taxons();
+
+        return false;
+      } else {
+         return true;
+      }
+    });
+
+    jQuery("#searchtext").delayedObserver(function() {
+      search_for_taxons();
+    }, 0.75);
+  <% end %>
+  <br/>
+  <div id="search_hits"></div>
 <% end %>
-<br/>
-<div id="search_hits"></div>
 

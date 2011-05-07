@@ -34,6 +34,7 @@ class AppConfiguration < Configuration
   preference :cache_static_content, :boolean, :default => true
   preference :use_content_controller, :boolean, :default => true
   preference :allow_checkout_on_gateway_error, :boolean, :default => false
+  preference :select_taxons_from_tree, :boolean, :default => false # provide opportunity to select taxons from tree instead of search with autocomplete
 
   validates :name, :presence => true, :uniqueness => true
 
