@@ -55,7 +55,8 @@ module Spree::BaseHelper
   end
 
   def meta_data_tags
-    return unless self.respond_to?(:object) && object
+    object = instance_variable_get('@'+controller_name.singularize)
+    return unless object
     "".tap do |tags|
       if object.respond_to?(:meta_keywords) and object.meta_keywords.present?
         tags << tag('meta', :name => 'keywords', :content => object.meta_keywords) + "\n"
