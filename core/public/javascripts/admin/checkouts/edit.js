@@ -83,7 +83,7 @@ jQuery(document).ready(function(){
 
 
   $('input#order_use_billing').click(function() {
-    show_billing(!$(this).is(':checked'));
+    show_billing(!this.checked);
   });
 
   $('#guest_checkout_true').change(function() {
