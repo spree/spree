@@ -1,7 +1,7 @@
 class Admin::TaxonsController < Admin::BaseController
   include Railslove::Plugins::FindByParam::SingletonMethods
   resource_controller
-  before_filter :load_object, :only => [:selected, :available, :remove]
+  before_filter :load_object, :only => [:selected, :available]
   before_filter :load_permalink_part, :only => :edit
   belongs_to :product, :taxonomy
 
@@ -34,6 +34,8 @@ class Admin::TaxonsController < Admin::BaseController
   end
 
   def remove
+    @product = Product.find_by_param!(params[:product_id])
+    @taxon = Taxon.find(params[:id])
     @product.taxons.delete(@taxon)
     @product.save
     @taxons = @product.taxons
