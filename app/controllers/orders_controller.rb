@@ -32,11 +32,10 @@ class OrdersController < Spree::BaseController
 
   #override r_c default b/c we don't want to actually destroy, we just want to clear line items
   def destroy
-    self.notice = I18n.t(:basket_successfully_cleared)
     @order.line_items.clear
     @order.update_totals!
     after :destroy
-    set_flash :destroy
+    self.notice = I18n.t(:basket_successfully_cleared)
     response_for :destroy
   end
 

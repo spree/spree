@@ -254,6 +254,7 @@ en:
   back_to_store: "Go Back To Store"
   backordered: Backordered
   backordering_is_allowed: "Backordering %{not} allowed"
+  basket_successfully_cleared: Your cart has been emptied.
   balance_due: "Balance Due"
   best_selling_products: "Best Selling Products"
   best_selling_taxons: "Best Selling Taxons"
