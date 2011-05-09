@@ -2,7 +2,7 @@ class Admin::ReportsController < Admin::BaseController
   before_filter :load_data
 
   AVAILABLE_REPORTS = {
-    :sales_total => {:name => "Sales Total", :description => "Sales Total For All Orders"}
+    :sales_total => {:name => I18n.t(:sales_total), :description => I18n.t(:sales_total_description)}
   }
 
   def index
