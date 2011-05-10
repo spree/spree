@@ -1,6 +1,8 @@
 class OrdersController < Spree::BaseController
+  respond_to :html
 
   helper :products
+
 
   def show
     @order = Order.find_by_number(params[:id])
@@ -10,9 +12,9 @@ class OrdersController < Spree::BaseController
     @order = current_order
     if @order.update_attributes(params[:order])
       @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
-      redirect_to cart_path
+      respond_with(@order) { |format| format.html { redirect_to cart_path } }
     else
-      render :edit
+      respond_with(@order) 
     end
   end
 
@@ -45,14 +47,15 @@ class OrdersController < Spree::BaseController
       @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
     end if params[:variants]
 
-    redirect_to cart_path
+    respond_with(@order) { |format| format.html { redirect_to cart_path } }
   end
 
   def empty
     if @order = current_order
       @order.line_items.destroy_all
     end
-    redirect_to cart_path
+    
+    respond_with(@order) { |format| format.html { redirect_to cart_path } }
   end
 
   def accurate_title

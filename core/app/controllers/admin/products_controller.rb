@@ -4,7 +4,7 @@ class Admin::ProductsController < Admin::ResourceController
   update.before :update_before
 
   def index
-    respond_to do |format|
+    respond_with(@collection) do |format|
       format.html
       format.json { render :json => json_data }
     end
@@ -27,7 +27,7 @@ class Admin::ProductsController < Admin::ResourceController
       flash.notice = I18n.t("notice_messages.product_not_deleted")
     end
 
-    respond_to do |format|
+    respond_with(@product) do |format|
       format.html { redirect_to collection_url }
       format.js  { render_js_for_destroy }
     end
@@ -42,19 +42,19 @@ class Admin::ProductsController < Admin::ResourceController
       flash.notice = I18n.t("notice_messages.product_not_cloned")
     end
 
-    redirect_to edit_admin_product_url(@new)
+    respond_with(@new) { |format| format.html { redirect_to edit_admin_product_url(@new) } }
   end
-  
+
   protected
-  
+
   def find_resource
     Product.find_by_permalink(params[:id])
   end
-  
+
   def location_after_save
     edit_admin_product_url(@product)
   end
-  
+
   # Allow different formats of json data to suit different ajax calls
   def json_data
     json_format = params[:json_format] or 'default'

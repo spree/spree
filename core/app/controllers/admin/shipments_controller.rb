@@ -23,11 +23,11 @@ class Admin::ShipmentsController < Admin::BaseController
     assign_inventory_units
     if @shipment.save
       flash[:notice] = I18n.t(:successfully_created, :resource => 'shipment')
-      respond_with(@object) do |format|
+      respond_with(@shipment) do |format|
         format.html { redirect_to edit_admin_order_shipment_path(@order, @shipment) }
       end
     else
-      render :action => 'new'
+      respond_with(@shipment) { |format| format.html { render :action => 'new' } }
     end
   end
 
@@ -43,22 +43,20 @@ class Admin::ShipmentsController < Admin::BaseController
       @order.special_instructions = object_params[:special_instructions] if Spree::Config[:shipping_instructions]
       @order.shipping_method = @order.shipment.shipping_method
       @order.save
-      
+
       flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t('shipment'))
       return_path = @order.completed? ? edit_admin_order_shipment_path(@order, @shipment) : admin_order_adjustments_path(@order)
       respond_with(@object) do |format|
         format.html { redirect_to return_path }
       end
     else
-      render :action => 'edit'
+      respond_with(@shipment) { |format| format.html { render :action => 'edit' } }
     end
   end
 
   def destroy
     @shipment.destroy
-    respond_to do |format|
-      format.js { render_js_for_destroy }
-    end
+    respond_with(@shipment) { |format| format.js { render_js_for_destroy } }
   end
 
   def fire
@@ -67,7 +65,8 @@ class Admin::ShipmentsController < Admin::BaseController
     else
       flash[:error] = t('cannot_perform_operation')
     end
-    redirect_to :back
+
+    respond_with(@shipment) { |format| format.html { redirect_to :back } }
   end
 
   private

@@ -5,14 +5,16 @@ class Admin::PrototypesController < Admin::ResourceController
 
   def available
     @prototypes = Prototype.order('name asc')
-    respond_to do |wants|
-      wants.html { render :layout => !request.xhr? }
+    respond_with(@prototypes) do |format|
+      format.html { render :layout => !request.xhr? }
     end
   end
 
   def select
     @prototype ||= Prototype.find(params[:id])
     @prototype_properties = @prototype.properties
+
+    respond_with(@prototypes)
   end
 
   private

@@ -1,10 +1,11 @@
 class Admin::ZonesController < Admin::ResourceController
   before_filter :load_data, :except => [:index]
-  
+
   def new
     @zone.zone_members.build
+    respond_with(@zone)
   end
-  
+
   protected
 
   def collection

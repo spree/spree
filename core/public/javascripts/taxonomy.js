@@ -17,7 +17,8 @@ var handle_move = function(e, data) {
 
   jQuery.ajax({
     type: "POST",
-    url: base_url + node.attr("id") + ".json",
+    dataType: "json",
+    url: base_url + node.attr("id"),
     data: ({_method: "put", "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error
   });
@@ -34,11 +35,12 @@ var handle_create = function(e, data) {
 
   jQuery.ajax({
     type: "POST",
+    dataType: "json",
     url: base_url,
     data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error,
-    success: function(id,result) {
-      node.attr('id', id);
+    success: function(data,result) {
+      node.attr('id', data.taxon.id);
     }
   });
 
@@ -51,7 +53,8 @@ var handle_rename = function(e, data) {
 
   jQuery.ajax({
     type: "POST",
-    url: base_url + node.attr("id") + ".json",
+    dataType: "json",
+    url: base_url + node.attr("id"),
     data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error
   });
@@ -65,6 +68,7 @@ var handle_delete = function(e, data){
     if(r){
       jQuery.ajax({
         type: "POST",
+        dataType: "json",
         url: base_url + node.attr("id"),
         data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
         error: handle_ajax_error
