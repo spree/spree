@@ -1,7 +1,7 @@
 $j(function() { 
-  if ($j('#country_based').attr('checked')) {
+  if ($j('#country_based').is(':checked')) {
     show_country();
-  } else if ($j('#state_based').attr('checked')) {
+  } else if ($j('#state_based').is(':checked')) {
     show_state();
   } else {        
     show_zone();
