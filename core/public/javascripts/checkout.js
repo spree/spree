@@ -49,7 +49,7 @@
     update_state('s');
 
     $('input#order_use_billing').click(function() {
-      if($(this).is(':checked')) {
+      if(this.checked) {
         $('#shipping .inner input, #shipping .inner select, #shipping .inner label, #shipping .inner .req').hide();
         $('#shipping .inner input, #shipping .inner select').attr('disabled', 'disabled');
       } else {
