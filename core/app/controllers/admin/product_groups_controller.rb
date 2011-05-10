@@ -4,7 +4,7 @@ class Admin::ProductGroupsController < Admin::ResourceController
   def preview
     @product_group = ProductGroup.new(params[:product_group])
     @product_group.name = "for_preview"
-    render :partial => 'preview', :layout => false
+    respond_with(@product_group) { |format| format.html { render :partial => 'preview', :layout => false } }
   end
 
   protected

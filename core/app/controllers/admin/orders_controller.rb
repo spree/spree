@@ -4,6 +4,8 @@ class Admin::OrdersController < Admin::BaseController
   before_filter :initialize_order_events
   before_filter :load_order, :only => [:fire, :resend, :history, :user]
 
+  respond_to :html
+
   def index
     params[:search] ||= {}
     params[:search][:completed_at_is_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
@@ -29,18 +31,23 @@ class Admin::OrdersController < Admin::BaseController
                                    :include  => [:user, :shipments, :payments],
                                    :per_page => Spree::Config[:orders_per_page],
                                    :page     => params[:page])
+
+    respond_with(@orders)
   end
 
   def show
     load_order
+    respond_with(@order)
   end
 
   def new
     @order = Order.create
+    respond_with(@order)
   end
 
   def edit
     load_order
+    respond_with(@order)
   end
 
   def update
@@ -70,7 +77,7 @@ class Admin::OrdersController < Admin::BaseController
       @order.errors.add(:line_items, t('errors.messages.blank'))
     end
     
-    respond_to do |format|
+    respond_with(@order) do |format|
       format.html do
         if return_path
           redirect_to return_path
@@ -94,13 +101,14 @@ class Admin::OrdersController < Admin::BaseController
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
   ensure
-    redirect_to :back
+    respond_with(@order) { |format| format.html { redirect_to :back } }
   end
 
   def resend
     OrderMailer.confirm_email(@order, true).deliver
     flash.notice = t('order_email_resent')
-    redirect_to :back
+
+    respond_with(@order) { |format| format.html { redirect_to :back } }
   end
 
   def user

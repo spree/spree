@@ -3,9 +3,13 @@ class ProductsController < Spree::BaseController
   rescue_from ActiveRecord::RecordNotFound, :with => :render_404
   helper :taxons
 
+  respond_to :html
+
   def index
     @searcher = Spree::Config.searcher_class.new(params)
     @products = @searcher.retrieve_products
+
+    respond_with(@products)
   end
 
   def show
@@ -21,6 +25,8 @@ class ProductsController < Spree::BaseController
     if referer && referer.match(HTTP_REFERER_REGEXP)
       @taxon = Taxon.find_by_permalink($1)
     end
+
+    respond_with(@product)
   end
 
   private

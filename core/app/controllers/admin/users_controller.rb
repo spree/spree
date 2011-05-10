@@ -7,14 +7,14 @@ class Admin::UsersController < Admin::ResourceController
   update.before :save_user_roles
 
   def index
-    respond_to do |format|
+    respond_with(@collection) do |format|
       format.html
       format.json { render :json => json_data }
     end
   end
 
   protected
-  
+
   def collection
     return @collection if @collection.present?
     unless request.xhr?
@@ -30,8 +30,8 @@ class Admin::UsersController < Admin::ResourceController
                                {:search => "#{params[:q].strip}%"}).
                         limit(params[:limit] || 100)
     end
-  end  
-  
+  end
+
   def save_user_roles
     return unless params[:user]
     return unless @user.respond_to?(:roles) # since roles are technically added by the auth module
@@ -42,7 +42,7 @@ class Admin::UsersController < Admin::ResourceController
     }
     params[:user].delete(:role)
   end
-  
+
   private
 
   # Allow different formats of json data to suit different ajax calls

@@ -5,11 +5,17 @@ class ContentController < Spree::BaseController
   rescue_from ActionView::MissingTemplate, :with => :render_404
   caches_page :show, :index, :if => Proc.new { Spree::Config[:cache_static_content] }
 
+  respond_to :html
+
   def show
-    render :template => params[:path]
+    respond_with do |format|
+      format.html { render :template => params[:path] }
+    end
   end
 
   def cvv
-    render "cvv", :layout => false
+    respond_with do |format|
+      format.html {  render "cvv", :layout => false }
+    end
   end
 end

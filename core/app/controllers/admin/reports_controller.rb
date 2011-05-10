@@ -1,5 +1,6 @@
 class Admin::ReportsController < Admin::BaseController
   before_filter :load_data
+  respond_to :html
 
   AVAILABLE_REPORTS = {
     :sales_total => {:name => I18n.t(:sales_total), :description => I18n.t(:sales_total_description)}
@@ -7,6 +8,7 @@ class Admin::ReportsController < Admin::BaseController
 
   def index
     @reports = AVAILABLE_REPORTS
+    respond_with(@reports)
   end
 
   def sales_total
@@ -36,6 +38,8 @@ class Admin::ReportsController < Admin::BaseController
     @item_total = @search.sum(:item_total)
     @adjustment_total = @search.sum(:adjustment_total)
     @sales_total = @search.sum(:total)
+
+    respond_with
   end
 
   private

@@ -41,12 +41,18 @@ require "meta_search"
 require "find_by_param"
 
 require 'spree_core/ext/active_record'
+require 'spree_core/ext/hash'
 
 require 'spree_core/delegate_belongs_to'
 ActiveRecord::Base.send :include, DelegateBelongsTo
 
 require 'spree_core/theme_support'
 require 'spree_core/enumerable_constants'
+
+require 'spree_core/spree_custom_responder'
+require 'spree_core/spree_respond_with'
+
+
 require 'spree_core/ssl_requirement'
 require 'spree_core/preferences/model_hooks'
 require 'spree_core/preferences/preference_definition'

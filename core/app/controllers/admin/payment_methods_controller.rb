@@ -12,7 +12,7 @@ class Admin::PaymentMethodsController < Admin::ResourceController
       respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
     else
       invoke_callbacks(:create, :fails)
-      render :new
+      respond_with(@payment_method)
     end
   end
 
@@ -24,13 +24,13 @@ class Admin::PaymentMethodsController < Admin::ResourceController
       @payment_method = PaymentMethod.find(params[:id])
     end
     payment_method_params = params[@payment_method.class.name.underscore.gsub("/", "_")] || {}
-    if @payment_method.update_attributes(params[:payment_method].merge(payment_method_params)) 
+    if @payment_method.update_attributes(params[:payment_method].merge(payment_method_params))
       invoke_callbacks(:update, :after)
       flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
       respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
     else
       invoke_callbacks(:update, :fails)
-      render :edit
+      respond_with(@payment_method)
     end
   end
 

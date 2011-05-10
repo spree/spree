@@ -1,14 +1,29 @@
 class Admin::TaxonsController < Admin::BaseController
   include Railslove::Plugins::FindByParam::SingletonMethods
 
+  respond_to :html, :json, :js
+
   def create
     @taxonomy = Taxonomy.find(params[:taxonomy_id])
     @taxon = @taxonomy.taxons.build(params[:taxon])
     if @taxon.save
-      render :text => @taxon
+      respond_with(@taxon) do |format|
+        format.json {render :json => @taxon.to_json }
+      end
     else
       flash[:error] = I18n.t('errors.messages.could_not_create_taxon')
-      redirect_to @taxonomy ? edit_admin_taxonomy_url(@taxonomy) : admin_taxonomies_url
+      respond_with(@taxon) do |format|
+        format.html { redirect_to @taxonomy ? edit_admin_taxonomy_url(@taxonomy) : admin_taxonomies_url }
+      end
+    end
+  end
+
+  def update
+    update_before
+    update_after
+    respond_with(@taxon) do |format|
+      format.html { redirect_to edit_admin_taxonomy_url(@taxonomy) }
+      format.json { render :json => @taxon.to_json }
     end
   end
 
@@ -16,6 +31,8 @@ class Admin::TaxonsController < Admin::BaseController
     @taxonomy = Taxonomy.find(params[:taxonomy_id])
     @taxon = @taxonomy.taxons.find(params[:id])
     @permalink_part = @taxon.permalink.split("/").last
+
+    respond_with(:admin, @taxon) 
   end
 
   def update
@@ -80,7 +97,7 @@ class Admin::TaxonsController < Admin::BaseController
       end
     end
     
-    respond_to do |format|
+    respond_with(@taxon) do |format|
       format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
       format.json {render :json => @taxon.to_json }
     end
@@ -89,28 +106,22 @@ class Admin::TaxonsController < Admin::BaseController
   def destroy
     @taxon = Taxon.find(params[:id])
     @taxon.destroy
-    respond_to do |format|
-      format.html { render :text => '' }
-      format.js { render_js_for_destroy }
-    end
+    respond_with(@taxon) { |format| format.json { render :json => '' } }
   end
 
   def selected
     @product = load_product
     @taxons = @product.taxons
+
+    respond_with(:admin, @taxons)
   end
 
   def available
     @product = load_product
-    if params[:q].blank?
-      @available_taxons = []
-    else
-      @available_taxons = Taxon.where('lower(name) LIKE ?', "%#{params[:q].mb_chars.downcase}%")
-    end
-    @available_taxons.delete_if { |taxon| @product.taxons.include?(taxon) }
-    respond_to do |format|
-      format.js {render :layout => false}
-    end
+    @taxons = params[:q].blank? ? [] : Taxon.where('lower(name) LIKE ?', "%#{params[:q].mb_chars.downcase}%")
+    @taxons.delete_if { |taxon| @product.taxons.include?(taxon) }
+
+    respond_with(:admin, @taxons)
   end
 
   def remove
@@ -119,7 +130,8 @@ class Admin::TaxonsController < Admin::BaseController
     @product.taxons.delete(@taxon)
     @product.save
     @taxons = @product.taxons
-    render_js_for_destroy
+
+    respond_with(@taxon) { |format| format.js { render_js_for_destroy } }
   end
 
   def select
@@ -128,9 +140,10 @@ class Admin::TaxonsController < Admin::BaseController
     @product.taxons << @taxon
     @product.save
     @taxons = @product.taxons
-    render :layout => false
+
+    respond_with(:admin, @taxons)
   end
-  
+
   def batch_select
     @product = load_product
     @taxons = params[:taxon_ids].map{|id| Taxon.find(id)}.compact

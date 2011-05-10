@@ -15,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @available_taxons.each do |taxon| %>
+    <% @taxons.each do |taxon| %>
       <tr id="<%= dom_id(taxon, :sel) %>">
         <td><%= taxon.name %></td>
         <td><%= taxon_path taxon %></td>
@@ -26,7 +26,7 @@
         </td>        
       </tr>
     <% end %>
-    <% if @available_taxons.empty? %>
+    <% if @taxons.empty? %>
      <tr><td colspan="3"><%= t('no_match_found') %>.</td></tr>
     <% end %>
   </tbody>
