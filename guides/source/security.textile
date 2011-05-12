@@ -96,34 +96,9 @@ h4. Enforcing the Rules
 
 CanCan is only effective in enforcing authorization rules if its asked.  In other words, if the source code does not check permissions there is no way to deny access based on those permissions.  This is generally handled by adding the appropriate code to your Rails controllers.
 
-h5. Resource Controller
-
-Since most controllers in Spree are based on "resource controller":https://github.com/jamesgolick/resource_controller, Spree is able to use a short cut that means you do not have to explicitly check resource access in most cases.  The +spree_auth+ gem introduces the following code in +resource_controller_decorator.rb+:
-
-<ruby>
-def before(action)
-  resource = case action
-  when :index, :new, :create
-    model
-  else object
-  end
-
-  if resource.respond_to? :token
-    authorize! action, resource, session[:access_token]
-  else
-    authorize! action, resource
-  end
-  invoke_callbacks *self.class.send(action).before
-end
-</ruby>
-
-This overrides the default behavior of +resource_controller+ and enforces an authorization check against CanCan before proceeding.
-
-INFO. All Rails controllers that include +resource_controller+ are automatically protected.  By default, only the admin role will be able to access them.  You will need to add your own custom CanCan rules to grant access.
-
 h4. Custom Authorization Rules
 
-We have modified the original CanCan concept to make it easier for extension developers and end users to add their own custom authorization rules.  For instance, if you have an "artwork extension" that allows users to attach custom artwork to an order, you will need to add rules so that they have permissions to do so.  Recall that the use of +resource_controller+ will automatically deny access for all operations to non admin users until you explicitly allow it.
+We have modified the original CanCan concept to make it easier for extension developers and end users to add their own custom authorization rules.  For instance, if you have an "artwork extension" that allows users to attach custom artwork to an order, you will need to add rules so that they have permissions to do so.
 
 The trick to adding custom authorization rules is to add an +AbilityDecorator+ to your extension and then to register these abilities.  The following code is an example of how to restrict access so that only the owner of the artwork can update it or to view it.
 
@@ -202,13 +177,11 @@ can :create, Order
 
 This configuration states that in order to read or update an order, you must be either authenticated as the correct user, or supply the correct authorizing token.
 
-The final step is to ensure that the token is passed to CanCan when the authorization is performed.  Most controllers will do this automatically if they declare +resource_controller+.
+The final step is to ensure that the token is passed to CanCan when the authorization is performed.
 
 <ruby>
 authorize! action, resource, session[:access_token]
 </ruby>
-
-NOTE. Since +OrdersController+ does not implement +resource_controller+ this is done explicitly in the controller
 
 Of course this also assume that the token has been stored in the session.  Generally this can be achieved with a route that maps the token to the correct parameter
 

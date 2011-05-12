@@ -359,12 +359,14 @@ Now lets create a new controller file so that we can administer these promoted i
 
 <ruby>
   # flag_promotions/app/controllers/admin/promoted_items_controller.rb
-  class Admin::PromotedItemsController < Admin::BaseController
-    resource_controller
+  class Admin::PromotedItemsController < Admin::ResourceController
+
   end
 </ruby>
 
-You may notice the +resource_controller+ declaration.  This is a gem that allows for simplified implementation of REST methods.  See the gem's "Github project page":http://github.com/jamesgolick/resource_controller for more details.
+You may notice the base class is now using Admin::ResourceController, this is a major change for Spree 0.60.x and later. Previous versions used a gem called resource_controller to provide an implementation of a controllers CRUD methods, but this gem is no longer being actively maintained and also provides unnecessary features that Spree was not using. 
+
+So now the Admin::ResourceController is an interal Spree class that provides a similiar (but much simplied) implementation of these CRUD actions. We strongly recommend that only basic Admin controllers use this base class, and any front-end or custom / advanced methods be manually defined within the controllers implementation itself.
 
 Lets also add a corresponding admin view for this new resource.
 

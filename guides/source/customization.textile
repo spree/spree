@@ -5,6 +5,7 @@ This guide explains the customization and extension techniques you can use to ad
 * The type of customizations supported 
 * Changing views using both hooks and template replacements
 * Adding and changing business logic
+* Customizing controller action responses
 * Configuring product image sizes
 
 For more detailed information and a step-by-step tutorial on creating extensions for Spree be sure to checkout the "Extensions":extensions.html guide.
@@ -148,7 +149,7 @@ Standard practice for including such changes in your site or extension is to cre
   end
 </ruby>
 
-NOTE. The exact same format can be used to redefine and existing method.
+NOTE. The exact same format can be used to redefine an existing method.
 
 To activate your decorators you need to include the follow code in your *lib/spree_site.rb* or *lib/extension_name.rb* file.
 
@@ -157,6 +158,47 @@ To activate your decorators you need to include the follow code in your *lib/spr
     Rails.configuration.cache_classes ? require(c) : load(c)
   end
 </ruby>
+
+h3. Overriding Controller Action Responses
+
+With the release of 0.60.0 Spree now supports a new way of overriding or changing the output of an existing controller's action without needing to completly override the method (while also easily avoiding double render exceptions).
+
+h4. respond_override method
+
+The *respond_override* method is used to customize the repsonse from any action, and is built on top of Rails 3's *respond_with* method (that all Spree controllers are now using). It accepts a hash of options using the following syntax:
+
+<ruby>
+  respond_override :action_name => { :format => 
+      { :result => lambda { ... response ... } } }
+</ruby>
+
+* *:action_name* - Can be any existing action within a controller (i.e. :update, :create, :new), provided that action is using respond_with to define it's response.
+* *:format* - The format of the request, (i.e. :html, :json, :js, etc). All Spree controllers have a class level *respond_to* method call that defines which formats the controller's actions will respond to.
+* *:result* - Two possible results are available on any given response, :success or :failure. :success being the default for most actions, however actions that change or create models will have a :failure response if validation fails for the model being updated.
+* *lambda* - The lambda passed contains the actual code to create the desired custom response (i.e. render or redirect_to). A lamdba must be passed to ensure the code is evaluated at the correct time.
+
+h4. Example Usage
+
+If you wanted to render a custom partial for the index action of ProductsController, you could include the following in your *app/models/products_controller_decorator.rb* file.
+
+<ruby>
+  ProductsController.class_eval do
+    respond_override :index => { :html => { :success => lambda { render :partial => "shared/some_file" } } }
+  end
+</ruby>
+
+Or if you wanted to redirect on the failure to create in Admin::ProductsController, you would use:
+
+<ruby>
+  Admin::ProductsController.class_eval do
+    respond_override :create => { :html => { :failure => lambda { redirect_to some_url } } }
+  end
+</ruby>
+
+h4. Caveats
+
+* If an action does not use *respond_with* to define it's response the *respond_override* will not work.
+* Some actions contain several *repond_with* calls so any *respond_override* defined on it will be executed for any of the *respond_with* instances, so it's important to check the model state / logic within the lambda passed to prevent overriding all possible responses with the same override.
 
 h3. Product Images
 
