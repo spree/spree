@@ -1,4 +1,6 @@
 require 'set'
+require 'yaml'
+YAML::ENGINE.yamler= 'syck'
 
 module Spree
   class Generator
