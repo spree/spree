@@ -4,3 +4,4 @@ output
 roadmap.txt
 Gemfile.lock
 *.swp
+.rvmrc
