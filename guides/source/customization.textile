@@ -159,6 +159,21 @@ NOTE. To activate your decorators you need to include the follow code in your *l
 
 NOTE. The exact same format can be used to redefine an existing method.
 
+h4. Accessing Product Data
+
+If you extend the Products controller with a new method, you may very well want to access product data in that method.  You can do so by using the :load_data before_filter.
+
+<ruby>
+  ProductsController.class_eval do
+    before_filter :load_data, :only => :some_action
+	
+    def some_action
+      ...
+    end
+  end
+</ruby>
+
+NOTE: :load_data will use params[:id] to lookup the product by its permalink.
 
 h3. Overriding Controller Action Responses
 
