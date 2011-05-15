@@ -1,0 +1,15 @@
+h2. Spree Configuration Options
+
+This section lists all of the configuration options for the current version of Spree.
+
+TODO
+
+endprologue.
+
+h3. Shipping
+
+h4. Spree::Config[:shipping_instructions]
+
+The option Spree::Config[:shipping_instructions] controls collection of additional shipping instructions. This is turned off by default. If an order has any shipping instructions attached, they will be shown in an order’s shipment admin page and can also be edited at that stage. Observe that instructions are currently attached to the order and not to actual shipments.
+
+
