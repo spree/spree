@@ -73,8 +73,9 @@ DHL charges:
 
 US Postal Service always charge based on the package weight.
 
-To achieve this setup you need the following Calculators mapping
-(Configuration->Shipping Rates):
+-To achieve this setup you need the following Calculators mapping
+(Configuration->Shipping Rates):-
+WARNING. Configuration -> Shipping Rates is no longer found in the current version of Spree.
 
 |~S.Category~ \ ^S.Method^|*DHL*|*FedEx*|*USPS*|
 |_Default (*)_|Per Item($5)|-|Weight Bucket|
