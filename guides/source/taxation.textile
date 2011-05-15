@@ -43,6 +43,10 @@ h4. Sales Tax Example
     * Create a new Tax Rate (zone is 'NY_TAX', category 'Taxable Goods', rate 0.085, type 'Sales Tax')
     * Create a new Tax Rate (zone is 'OH_TAX', category 'Taxable Goods', rate 0.04, type 'Sales Tax')
 
+NOTE: Currently, sales tax is calculated **after** the shipping is calculated.  Therefore, shipping costs are not included in the sales tax calculation.  
+
+WARNING. In some states, delivery charges are subject to state sales tax.
+
 h3. Value Added Tax (VAT)
 
 VAT is normally levied on all sales with European Union member states. On business-to-consumer stores/sites prices are normally displayed inclusive of VAT, while on business-to-business sites prices are commonly displayed excluding VAT.
