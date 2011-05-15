@@ -128,7 +128,13 @@ All of Spree's business logic (models, controllers, etc) can easily be extended 
 
 Standard practice for including such changes in your site or extension is to create a file within the relevant *app/models* or *app/controllers* directory with the original class name with **_decorator** appended.
 
-NOTE. To activate your decorators you need to include the follow code in your *lib/spree_site.rb* or *lib/extension_name.rb* file.
+NOTE. To activate your decorators you need to include the follow code in your *lib/spree_site.rb* or *lib/extension_name.rb* file:
+
+<ruby>
+  Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+    Rails.configuration.cache_classes ? require(c) : load(c)
+  end
+</ruby>
 
 **Adding a custom method to the Product model:** app/models/product_decorator.rb
 
@@ -153,12 +159,6 @@ NOTE. To activate your decorators you need to include the follow code in your *l
 
 NOTE. The exact same format can be used to redefine an existing method.
 
-
-<ruby>
-  Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
-    Rails.configuration.cache_classes ? require(c) : load(c)
-  end
-</ruby>
 
 h3. Overriding Controller Action Responses
 
