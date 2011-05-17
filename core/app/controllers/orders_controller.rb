@@ -1,11 +1,12 @@
 class OrdersController < Spree::BaseController
-  respond_to :html
-
+  rescue_from ActiveRecord::RecordNotFound, :with => :render_404
   helper :products
 
+  respond_to :html
 
   def show
-    @order = Order.find_by_number(params[:id])
+    @order = Order.find_by_number!(params[:id])
+    respond_with(@order)
   end
 
   def update
