@@ -1,13 +1,10 @@
 class Admin::GeneralSettingsController < Admin::BaseController
 
   def update
-    Spree::Config.set(params[:preferences])
-
-    respond_to do |format|
-      format.html {
-        redirect_to admin_general_settings_path
-      }
-    end
+    @config = Spree::Config.instance
+    @config.update_attributes(params[@config.class.name.underscore])
+    Rails.cache.delete("configuration_#{@config.class.name}".to_sym)
+    redirect_to admin_general_settings_path
   end
 
 end

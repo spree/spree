@@ -3,19 +3,13 @@
 <h1><%= t("general_settings") %></h1>
 
 <table>
-  <tr>
-    <th scope="row"><%= t("site_name") %>:</th>
-    <td><%=  Spree::Config[:site_name] %></td>
-  </tr>
-  <tr>
-    <th scope="row"><%= t("default_seo_title") %>:</th>
-    <td><%=  Spree::Config[:default_seo_title] %></td>
-  </tr>
-  <tr>
-    <th scope="row"><%= t("site_url") %>:</th>
-    <td><%=  Spree::Config[:site_url] %></td>
-  </tr>
-  <tr>
+  <% ['site_name', 'default_seo_title', 'default_meta_keywords', 'default_meta_description', 
+      'site_url'].each do |key| %>
+    <tr>
+      <th scope="row"><%= t(key) %>:</th>
+      <td><%= Spree::Config[key] %></td>
+    </tr>
+  <% end %>
 	<td colspan="2">
 	  <%= (Spree::Config[:allow_ssl_in_production] ? t("ssl_will_be_used_in_production_mode") : t("ssl_will_not_be_used_in_production_mode")) %>
 	</td>

@@ -33,6 +33,16 @@ input.title   { padding:5px; }
 input.title   { font-size:1.5em; }
 textarea      { height: 250px; padding:5px; }
 
+
+fieldset#preferences input.input_string, fieldset#preferences textarea {
+  border: 1px solid #BBB;
+  padding: 5px;
+  font-size: 1.5em;
+  width: 98%;
+}
+
+fieldset#preferences textarea { height: 100px; }
+
 .required { color:#f00; font-weight:bold; font-size:1.2em;}
 .fullwidth { width:98% }
 

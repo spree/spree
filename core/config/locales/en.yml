@@ -231,8 +231,8 @@ en:
   all: "All"
   all_departments: All departments
   allow_backorders: "Allow Backorders"
-  allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
-  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode
+  allow_ssl_in_development_and_test: Allow SSL to be used when in development and test modes
+  allow_ssl_in_production: Allow SSL to be used in production mode
   allowed_ssl_in_production_mode: "SSL will %{not} be used in production"
   already_registered: Already Registered?
   alt_text: Alternative Text
@@ -334,6 +334,9 @@ en:
   date_range: "Date Range"
   debit: Debit
   default: Default
+  default_meta_description: Default Meta Description
+  default_meta_keywords: Default Meta Keywords
+  default_seo_title: Default Seo Title
   delete: Delete
   delivery: Delivery
   depth: Depth
