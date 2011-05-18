@@ -56,15 +56,15 @@ module Spree::BaseHelper
 
   def meta_data_tags
     object = instance_variable_get('@'+controller_name.singularize)
-    return unless object
-    "".tap do |tags|
-      if object.respond_to?(:meta_keywords) and object.meta_keywords.present?
-        tags << tag('meta', :name => 'keywords', :content => object.meta_keywords) + "\n"
-      end
-      if object.respond_to?(:meta_description) and object.meta_description.present?
-        tags << tag('meta', :name => 'description', :content => object.meta_description) + "\n"
-      end
-    end
+    tags = []
+    
+    meta_keywords = object.try(:meta_keywords).present? ? object.meta_keywords : Spree::Config[:default_meta_keywords]
+    tags << tag('meta', :name => 'keywords', :content => meta_keywords)
+
+    meta_description = object.try(:meta_description).present? ? object.meta_description : Spree::Config[:default_meta_description]
+    tags << tag('meta', :name => 'description', :content => meta_description)
+
+    tags.join("\n")
   end
 
   def stylesheet_tags(paths=stylesheet_paths)
