@@ -82,9 +82,9 @@ module Spree
         silence_stream(STDOUT) {
           case database_name
           when "mysql"
-            gem "mysql2"
+            gem "mysql2", "0.2.7"
             append_file '../../Gemfile' do
-              "gem 'mysql2'"
+              "gem 'mysql2', '0.2.7'"
             end
           else
             gem "sqlite3-ruby"
