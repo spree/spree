@@ -4,7 +4,7 @@
 
 <%= render 'shared/error_messages', :target => @property %>
 
-<%= form_for(:property, :url => object_url, :html => { :method => :put }) do |f| %>
+<%= form_for(@property, :url => object_url, :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <%= render :partial => 'admin/shared/edit_resource_links' %>
 <% end %>
