@@ -42,7 +42,7 @@
 <% end %>
 
 <%= javascript_tag do %>
-  var properties = "<%=@properties%>".split(' ');
+  var properties = [<%= @properties.map{|id| "'#{id}'"}.join(', ') %>];
 
   $("#product_properties input.autocomplete").live("keydown", function(){
     already_auto_completed = $(this).is('ac_input');

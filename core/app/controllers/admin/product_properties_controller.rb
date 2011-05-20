@@ -5,6 +5,6 @@ class Admin::ProductPropertiesController < Admin::ResourceController
   private
 
   def find_properties
-    @properties = Property.all.map(&:name).join(" ")
+    @properties = Property.all.map(&:name)
   end
 end
