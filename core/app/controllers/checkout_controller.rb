@@ -14,7 +14,7 @@ class CheckoutController < Spree::BaseController
     if @order.update_attributes(object_params)
 
       fire_event('spree.checkout.update')
-      if @order.coupon_code.present?
+      if @order.respond_to?(:coupon_code) && @order.coupon_code.present?
         fire_event('spree.checkout.coupon_code_added', :coupon_code => @order.coupon_code)
       end
 
