@@ -66,8 +66,7 @@ module SpreePromo
         end
       end
 
-
-      if File.basename( $0 ) != "rake"
+      if Activator.table_exists?
         # register promotion rules and actions
         [Promotion::Rules::ItemTotal,
          Promotion::Rules::Product,
