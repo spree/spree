@@ -4,8 +4,7 @@
 
 <%= form_for(Spree::Config.instance, :url => admin_general_settings_path) do |form| %>
   <fieldset id="preferences">
-  <% ['site_name', 'default_seo_title', 'default_meta_keywords', 'default_meta_description', 
-      'site_url', 'allow_ssl_in_production', 'allow_ssl_in_development_and_test'].each do |key| 
+  <% @preferences.each do |key| 
       type = AppConfiguration.preference_definitions[key].instance_eval{@type}.to_sym
       field = "preferred_#{key}" %>
      <%= form.field_container field do %>
