@@ -1,26 +1,26 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1><%= t("general_settings") %></h1>
+<h1><%= t(:general_settings) %></h1>
 
 <table>
-  <% ['site_name', 'default_seo_title', 'default_meta_keywords', 'default_meta_description', 
-      'site_url'].each do |key| %>
+  <% @preferences.each do |key| %>
     <tr>
       <th scope="row"><%= t(key) %>:</th>
       <td><%= Spree::Config[key] %></td>
     </tr>
   <% end %>
-	<td colspan="2">
-	  <%= (Spree::Config[:allow_ssl_in_production] ? t("ssl_will_be_used_in_production_mode") : t("ssl_will_not_be_used_in_production_mode")) %>
-	</td>
+  <tr>
+    <td colspan="2">
+      <%= (Spree::Config[:allow_ssl_in_production] ? t(:ssl_will_be_used_in_production_mode) : t(:ssl_will_not_be_used_in_production_mode)) %>
+    </td>
   </tr>
   <tr>
-	<td colspan="2">
-	  <%= (Spree::Config[:allow_ssl_in_development_and_test] ? t("ssl_will_be_used_in_development_and_test_modes") : t("ssl_will_not_be_used_in_development_and_test_modes")) %>
-	</td>
+    <td colspan="2">
+      <%= (Spree::Config[:allow_ssl_in_development_and_test] ? t(:ssl_will_be_used_in_development_and_test_modes) : t(:ssl_will_not_be_used_in_development_and_test_modes)) %>
+    </td>
   </tr>
 </table>
 
-<p><%= link_to_with_icon 'edit', t("edit"), edit_admin_general_settings_path, :id => 'admin_general_settings_link' %></p>
+<p><%= link_to_with_icon 'edit', t(:edit), edit_admin_general_settings_path, :id => 'admin_general_settings_link' %></p>
 
 
