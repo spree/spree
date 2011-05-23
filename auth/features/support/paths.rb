@@ -20,8 +20,14 @@ module NavigationHelpers
       admin_path
     when /my account page/
       '/account'
+    when /the admin orders page/
+      admin_orders_path
+    when /the edit admin order page for (.*)/
+      edit_admin_order_path($1)
+    when /the show admin order page for (.*)/
+      admin_order_path($1)
 
-    # Add more mappings here.
+      # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #
     #   when /^(.*)'s profile page$/i

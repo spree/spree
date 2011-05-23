@@ -6,7 +6,8 @@ class Promotion::Rules::ItemTotal < PromotionRule
 
   OPERATORS = ['gt', 'gte']
 
-  def eligible?(order)
-    order.item_total.send(preferred_operator == 'gte' ? :>= : :>, preferred_amount)
+  def eligible?(order, options = {})
+    item_total = order.line_items.map(&:amount).sum
+    item_total.send(preferred_operator == 'gte' ? :>= : :>, preferred_amount)
   end
 end

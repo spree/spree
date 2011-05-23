@@ -33,6 +33,16 @@ input.title   { padding:5px; }
 input.title   { font-size:1.5em; }
 textarea      { height: 250px; padding:5px; }
 
+
+fieldset#preferences input.input_string, fieldset#preferences textarea {
+  border: 1px solid #BBB;
+  padding: 5px;
+  font-size: 1.5em;
+  width: 98%;
+}
+
+fieldset#preferences textarea { height: 100px; }
+
 .required { color:#f00; font-weight:bold; font-size:1.2em;}
 .fullwidth { width:98% }
 
@@ -105,7 +115,7 @@ form div.right.w30 {
 
 
 .member-list {
-  list-style:none;margin:0;
+  list-style:none;margin:0;margin-bottom:1em;
 }
 
 
@@ -135,11 +145,6 @@ form div.right.w30 {
     display: block; }
     .field label span.label {
       display: block; }
-      
-      
-
-
-
 
 fieldset {
   margin-bottom: 1em;

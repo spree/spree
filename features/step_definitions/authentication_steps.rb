@@ -29,3 +29,18 @@ When /^I sign in as "(.*)\/(.*)"$/ do |email, password|
   And %{I press "Log In"}
 end
 
+if defined? CanCan::Ability
+  class AbilityDecorator
+    include CanCan::Ability
+
+    def initialize(user)
+      cannot :manage, Order
+    end
+  end
+end
+
+Given /^I do not have permission to access orders$/ do
+  Ability.register_ability(AbilityDecorator)
+end
+
+

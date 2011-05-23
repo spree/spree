@@ -2,6 +2,7 @@ class UserRegistrationsController < Devise::RegistrationsController
   include SpreeBase
   helper :users, 'spree/base'
 
+  ssl_required
   after_filter :associate_user, :only => :create
   before_filter :check_permissions, :only => [:edit, :update]
   skip_before_filter :require_no_authentication
@@ -17,6 +18,8 @@ class UserRegistrationsController < Devise::RegistrationsController
     logger.debug(@user)
     if resource.save
       set_flash_message(:notice, :signed_up)
+      ActiveSupport::Notifications.instrument('spree.user.signup', default_notification_payload.merge(:user => @user))
+      fire_event('spree.user.signup', :user => @user)
       sign_in_and_redirect(:user, @user)
     else
       clean_up_passwords(resource)

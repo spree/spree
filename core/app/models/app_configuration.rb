@@ -1,6 +1,9 @@
 class AppConfiguration < Configuration
 
   preference :site_name, :string, :default => 'Spree Demo Site'
+  preference :default_seo_title, :string, :default => ''
+  preference :default_meta_description, :string, :default => 'Spree demo site'
+  preference :default_meta_keywords, :string, :default => 'spree, demo'
   preference :site_url, :string, :default => 'demo.spreecommerce.com'
   preference :default_locale, :string, :default => 'en'
   preference :allow_locale_switching, :boolean, :default => true
@@ -12,6 +15,7 @@ class AppConfiguration < Configuration
   preference :show_descendents, :boolean, :default => true
   preference :show_zero_stock_products, :boolean, :default => true
   preference :orders_per_page, :integer, :default => 15
+  preference :show_only_complete_orders_by_default, :boolean, :default => false
   preference :admin_products_per_page, :integer, :default => 10
   preference :admin_pgroup_preview_size, :integer, :default => 10
   preference :products_per_page, :integer, :default => 10
@@ -32,6 +36,7 @@ class AppConfiguration < Configuration
   preference :cache_static_content, :boolean, :default => true
   preference :use_content_controller, :boolean, :default => true
   preference :allow_checkout_on_gateway_error, :boolean, :default => false
+  preference :select_taxons_from_tree, :boolean, :default => false # provide opportunity to select taxons from tree instead of search with autocomplete
 
   validates :name, :presence => true, :uniqueness => true
 

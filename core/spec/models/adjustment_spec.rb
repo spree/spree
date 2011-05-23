@@ -21,21 +21,9 @@ describe Adjustment do
   let(:adjustment) { Adjustment.new }
   it "should accept a negative amount"
 
-  context "when amount is 0" do
-    before { adjustment.amount = 0 }
-    it "should be applicable if mandatory?" do
-      adjustment.mandatory = true
-      adjustment.applicable?.should be_true
-    end
-    it "should not be applicable unless mandatory?" do
-      adjustment.mandatory = false
-      adjustment.applicable?.should be_false
-    end
-  end
-
   context "#update!" do
     context "when originator present" do
-      let(:originator) { mock "originator" }
+      let(:originator) { mock("originator", :update_adjustment => nil) }
       before do
         originator.stub :update_amount => true
         adjustment.stub :originator => originator
@@ -43,6 +31,10 @@ describe Adjustment do
       it "should do nothing when locked" do
         adjustment.locked = true
         originator.should_not_receive(:update_adjustment)
+        adjustment.update!
+      end
+      it "should set the eligibility" do
+        adjustment.should_receive(:set_eligibility)
         adjustment.update!
       end
       it "should ask the originator to update_adjustment" do
@@ -57,6 +49,42 @@ describe Adjustment do
     end
   end
 
+  context "#eligible? after #set_eligibility" do
+    context "when amount is 0" do
+      before { adjustment.amount = 0 }
+      it "should be eligible if mandatory?" do
+        adjustment.mandatory = true
+        adjustment.set_eligibility
+        adjustment.should be_eligible
+      end
+      it "should not be eligible unless mandatory?" do
+        adjustment.mandatory = false
+        adjustment.set_eligibility
+        adjustment.should_not be_eligible
+      end
+    end
+    context "when amount is greater than 0" do
+      before { adjustment.amount = 25.00 }
+      it "should be eligible if mandatory?" do
+        adjustment.mandatory = true
+        adjustment.set_eligibility
+        adjustment.should be_eligible
+      end
+      it "should be eligible if not mandatory and eligible for the originator" do
+        adjustment.mandatory = false
+        adjustment.stub(:eligible_for_originator? => true)
+        adjustment.set_eligibility
+        adjustment.should be_eligible
+      end
+      it "should not be eligible if not mandatory not eligible for the originator" do
+        adjustment.mandatory = false
+        adjustment.stub(:eligible_for_originator? => false)
+        adjustment.set_eligibility
+        adjustment.should_not be_eligible
+      end
+    end
+  end
+
   context "#save" do
     it "should call order#update!" do
       adjustment = Adjustment.new(:order => order, :amount => 10, :label => "Foo")
@@ -64,4 +92,29 @@ describe Adjustment do
       adjustment.save
     end
   end
+
+
+  context "#eligible_for_originator?" do
+    context "with no originator" do
+      specify { adjustment.should be_eligible_for_originator }
+    end
+    context "with originator that doesn't have 'eligible?'" do
+      before { adjustment.originator = mock_model('TaxRate') }
+      specify { adjustment.should be_eligible_for_originator }
+    end
+    context "with originator that has 'eligible?'" do
+      let(:originator) { TaxRate.new }
+      before { adjustment.originator = originator }
+      context "and originator is eligible for order" do
+        before { originator.stub(:eligible? => true) }
+        specify { adjustment.should be_eligible_for_originator }
+      end
+      context "and originator is not eligible for order" do
+        before { originator.stub(:eligible? => false) }
+        specify { adjustment.should_not be_eligible_for_originator }
+      end
+    end
+  end
+
+
 end

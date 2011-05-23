@@ -33,9 +33,11 @@ describe Api::OrdersController do
   context "when correct HTTP_AUTHORIZATION" do
     before do
       request.env['HTTP_AUTHORIZATION'] = "legit:x"
-      controller.stub :current_user => user
     end
-    it_should_behave_like "access granted"
+    it "should allow index" do
+      get :index, :format => :json
+      response.code.should == "200"
+    end
   end
 
   context "when authenticated as admin" do
@@ -44,7 +46,6 @@ describe Api::OrdersController do
   context "when no HTTP_AUTHORIZATION" do
     it_should_behave_like "access denied"
     context "when authenticated as admin" do
-      before { controller.stub :current_user => user }
       it_should_behave_like "access denied"
     end
   end

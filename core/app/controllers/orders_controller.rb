@@ -1,18 +1,22 @@
 class OrdersController < Spree::BaseController
-
+  rescue_from ActiveRecord::RecordNotFound, :with => :render_404
   helper :products
 
+  respond_to :html
+
   def show
-    @order = Order.find_by_number(params[:id])
+    @order = Order.find_by_number!(params[:id])
+    respond_with(@order)
   end
 
   def update
     @order = current_order
     if @order.update_attributes(params[:order])
       @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
-      redirect_to cart_path
+      fire_event('spree.order.contents_changed')
+      respond_with(@order) { |format| format.html { redirect_to cart_path } }
     else
-      render :edit
+      respond_with(@order)
     end
   end
 
@@ -45,17 +49,20 @@ class OrdersController < Spree::BaseController
       @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
     end if params[:variants]
 
-    redirect_to cart_path
+    fire_event('spree.cart.add')
+    fire_event('spree.order.contents_changed')
+    respond_with(@order) { |format| format.html { redirect_to cart_path } }
   end
 
   def empty
     if @order = current_order
       @order.line_items.destroy_all
     end
-    redirect_to cart_path
+
+    respond_with(@order) { |format| format.html { redirect_to cart_path } }
   end
 
   def accurate_title
-    I18n.t(:shopping_cart)
+    @order && @order.completed? ? "#{Order.human_name} #{@order.number}" : I18n.t(:shopping_cart)
   end
 end

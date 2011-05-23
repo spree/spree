@@ -22,6 +22,12 @@ Feature: admin changing email address
   Scenario: admin editing roles
     When I check "user_role_user"
     When I press "Update"
-    Then I should see "Successfully updated!"
-    When I click first link from selector "#content a.edit_user"
+    Then I should see "User has been successfully updated!"
+    When I click first link from selector "#content a.edit"
     Then the "user_role_user" checkbox should be checked
+
+  Scenario: listing users when anonymous users are present
+    Given an anonymous user has been created
+    When I follow "Users"
+    Then should not see "@example.net"
+

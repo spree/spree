@@ -55,7 +55,7 @@ Feature: Admin visiting users
     Then I should see "Editing User"
     When I fill in "user_email" with "a@example.com99"
     When I press "Update"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"
     Then I should see "a@example.com99"
 
   Scenario: edit user password
@@ -74,4 +74,4 @@ Feature: Admin visiting users
     When I fill in "user_password" with "welcome"
     When I fill in "user_password_confirmation" with "welcome"
     When I press "Update"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"

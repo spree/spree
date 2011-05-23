@@ -29,7 +29,7 @@ module SpreeBase
 
     # this is a hook for subclasses to provide title
     def accurate_title
-      nil
+      Spree::Config[:default_seo_title]
     end
 
     # def reject_unknown_object
@@ -56,6 +56,18 @@ module SpreeBase
         type.html { render :status => :not_found, :file    => "#{Rails.root}/public/404.html", :layout => nil}
         type.all  { render :status => :not_found, :nothing => true }
       end
+    end
+
+    # Convenience method for firing instrumentation events with the default payload hash
+    def fire_event(name, extra_payload = {})
+      ActiveSupport::Notifications.instrument(name, default_notification_payload.merge(extra_payload))
+    end
+
+    # Creates the hash that is sent as the payload for all notifications. Specific notifications will
+    # add additional keys as appropriate. Override this method if you need additional data when
+    # responding to a notification
+    def default_notification_payload
+      {:user => (respond_to?(:current_user) && current_user), :order => current_order}
     end
 
     private
@@ -106,6 +118,7 @@ module SpreeBase
 
     receiver.send :helper_method, 'title'
     receiver.send :helper_method, 'title='
+    receiver.send :helper_method, 'accurate_title'
     receiver.send :helper_method, 'get_taxonomies'
     receiver.send :helper_method, 'current_gateway'
     receiver.send :helper_method, 'current_order'

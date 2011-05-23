@@ -18,6 +18,27 @@ task :clean do
   end
 end
 
+desc "run all tests for ci"
+task :ci do
+  cmd = "bundle update"; puts cmd; system cmd;
+
+  %w(sqlite3 mysql).each do |database_name|
+    %w(api auth core promo).each do |gem_name|
+      puts "########################### #{gem_name}|#{database_name} (features) ###########################"
+      cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
+      sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
+      sh "cd #{gem_name} && bundle exec cucumber -p ci"
+    end
+
+    %w(api auth core dash promo).each do |gem_name|
+      puts "########################### #{gem_name}|#{database_name} (spec) ###########################"
+      cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
+      sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
+      sh "cd #{gem_name} && #{$0} spec"
+    end
+  end
+end
+
 desc "run spec test for all gems"
 task :spec do
   %w(api auth core dash promo).each do |gem_name|
@@ -38,11 +59,47 @@ task :cucumber do
   end
 end
 
-desc "Release all gems to gemcutter. Package rails, package & push components, then push spree"
-task :release => :release_projects do
-  require 'rake/gemcutter'
-  Rake::Gemcutter::Tasks.new(spec).define
-  Rake::Task['gem:push'].invoke
+namespace :gem do
+  desc "run rake gem for all gems"
+  task :build do
+    %w(core auth api dash promo sample).each do |gem_name|
+      puts "########################### #{gem_name} #########################"
+      cmd = "rm -rf #{gem_name}/pkg"; puts cmd; system cmd
+      cmd = "cd #{gem_name} && rake gem"; puts cmd; system cmd
+    end
+    cmd = "rm -rf pkg"; puts cmd; system cmd
+    cmd = "rake gem"; puts cmd; system cmd
+  end
+end
+
+namespace :gem do
+  desc "run gem install for all gems"
+  task :install do
+    version = File.read(File.expand_path("../SPREE_VERSION", __FILE__)).strip
+
+    %w(core auth api dash promo sample).each do |gem_name|
+      puts "########################### #{gem_name} #########################"
+      cmd = "rm #{gem_name}/pkg"; puts cmd; system cmd
+      cmd = "cd #{gem_name} && rake gem"; puts cmd; system cmd
+      cmd = "cd #{gem_name}/pkg && gem install spree_#{gem_name}-#{version}.gem"; puts cmd; system cmd
+    end
+    cmd = "rm -rf pkg"; puts cmd; system cmd
+    cmd = "rake gem"; puts cmd; system cmd
+    cmd = "gem install pkg/spree-#{version}.gem"; puts cmd; system cmd
+  end
+end
+
+namespace :gem do
+  desc "Release all gems to gemcutter. Package spree components, then push spree"
+  task :release do
+    version = File.read(File.expand_path("../SPREE_VERSION", __FILE__)).strip
+
+    %w(core auth api dash promo sample).each do |gem_name|
+      puts "########################### #{gem_name} #########################"
+      cmd = "cd #{gem_name}/pkg && gem push spree_#{gem_name}-#{version}.gem"; puts cmd; system cmd
+    end
+    cmd = "gem push pkg/spree-#{version}.gem"; puts cmd; system cmd
+  end
 end
 
 desc "Creates a sandbox application for testing your Spree code"

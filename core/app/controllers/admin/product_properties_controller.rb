@@ -1,10 +1,6 @@
-class Admin::ProductPropertiesController < Admin::BaseController
-  resource_controller
+class Admin::ProductPropertiesController < Admin::ResourceController
+  belongs_to :product, :find_by => :permalink
   before_filter :find_properties
-
-  # note: we're using attribute_fu to manage the product_properties so the products controller will be
-  # doing most of the work
-  belongs_to :product
 
   private
 

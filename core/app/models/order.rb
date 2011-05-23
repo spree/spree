@@ -1,6 +1,7 @@
 class Order < ActiveRecord::Base
 
-  attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes, :ship_address, :line_items_attributes,
+  attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
+                  :ship_address, :line_items_attributes,
                   :shipping_method_id, :email, :use_billing, :special_instructions
 
   belongs_to :user
@@ -76,12 +77,15 @@ class Order < ActiveRecord::Base
   state_machine :initial => 'cart', :use_transactions => false do
 
     event :next do
-      transition :from => 'cart', :to => 'address'
-      transition :from => 'address', :to => 'delivery'
+      transition :from => 'cart',     :to => 'address'
+      transition :from => 'address',  :to => 'delivery'
       transition :from => 'delivery', :to => 'payment'
-      transition :from => 'confirm', :to => 'complete'
+      transition :from => 'confirm',  :to => 'complete'
+
       # note: some payment methods will not support a confirm step
-      transition :from => 'payment', :to => 'confirm', :if => Proc.new { Gateway.current and Gateway.current.payment_profiles_supported? }
+      transition :from => 'payment',  :to => 'confirm',
+                                      :if => Proc.new { Gateway.current && Gateway.current.payment_profiles_supported? }
+
       transition :from => 'payment', :to => 'complete'
     end
 
@@ -263,7 +267,9 @@ class Order < ActiveRecord::Base
     if shipment.present?
       shipment.update_attributes(:shipping_method => shipping_method)
     else
-      self.shipments << Shipment.create(:order => self, :shipping_method => shipping_method, :address => self.ship_address)
+      self.shipments << Shipment.create(:order => self,
+                                        :shipping_method => shipping_method,
+                                        :address => self.ship_address)
     end
 
   end
@@ -274,11 +280,6 @@ class Order < ActiveRecord::Base
 
   def outstanding_balance?
    self.outstanding_balance != 0
-  end
-
-  def destroy_inapplicable_adjustments
-    destroyed = adjustments.reject(&:applicable?).map(&:destroy)
-    adjustments.reload if destroyed.any?
   end
 
   def name
@@ -397,7 +398,7 @@ class Order < ActiveRecord::Base
         :previous_state => old_shipment_state,
         :next_state     => self.shipment_state,
         :name           => "shipment" ,
-        :user_id        => (User.current && User.current.id) || self.user_id
+        :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
       })
     end
 
@@ -426,7 +427,7 @@ class Order < ActiveRecord::Base
         :previous_state => old_payment_state,
         :next_state     => self.payment_state,
         :name           => "payment" ,
-        :user_id        =>  (User.current && User.current.id) || self.user_id
+        :user_id        =>  (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
       })
     end
   end
@@ -441,17 +442,15 @@ class Order < ActiveRecord::Base
     # update_adjustments
     self.payment_total = payments.completed.map(&:amount).sum
     self.item_total = line_items.map(&:amount).sum
-    self.adjustment_total = adjustments.map(&:amount).sum
+    self.adjustment_total = adjustments.eligible.map(&:amount).sum
     self.total = item_total + adjustment_total
   end
 
   # Updates each of the Order adjustments.  This is intended to be called from an Observer so that the Order can
-  # respond to external changes to LineItem, Shipment, other Adjustments, etc.  Adjustments that are no longer
-  # applicable will be removed from the association and destroyed.
+  # respond to external changes to LineItem, Shipment, other Adjustments, etc.
+  # Adjustments will check if they are still eligible. Ineligible adjustments are preserved but not counted
+  # towards adjustment_total.
   def update_adjustments
-    # separate into adjustments to keep and adjustements to toss
-    obsolete_adjustments = adjustments.select{|adjustment| !adjustment.applicable?}
-    obsolete_adjustments.each(&:destroy)
     self.adjustments.reload.each(&:update!)
   end
 
@@ -463,8 +462,7 @@ class Order < ActiveRecord::Base
   def has_available_shipment
     return unless :address == state_name.to_sym
     return unless ship_address && ship_address.valid?
-    errors.add :base, :no_shipping_methods_available \
-      if available_shipping_methods.empty?
+    errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
   end
 
   def after_cancel

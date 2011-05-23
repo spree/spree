@@ -96,7 +96,7 @@ class Creditcard < ActiveRecord::Base
       gateway_error(response) unless response.success?
     end
   rescue ActiveMerchant::ConnectionError
-    gateway_error t(:unable_to_connect_to_gateway)
+    gateway_error I18n.t(:unable_to_connect_to_gateway)
   end
 
   def capture(payment)

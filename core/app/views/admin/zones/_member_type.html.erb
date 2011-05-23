@@ -8,8 +8,8 @@
         <%= render "#{type}_member", :f => member_form %>
       <% end %>
     </ul>
+    <p>
+      <%= button_link_to t("add_#{type}"), "##{type}_member", {:icon => 'add', :id => "nested-#{type}"} %>
+    </p>
   </fieldset>
-  <p>
-    <%= button_link_to t("add_#{type}"), "##{type}_member", {:icon => 'add', :id => "nested-#{type}"} %>
-  </p>
 </div>

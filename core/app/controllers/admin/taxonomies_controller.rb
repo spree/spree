@@ -1,17 +1,19 @@
-class Admin::TaxonomiesController < Admin::BaseController
-  resource_controller
-
-  create.wants.html {redirect_to edit_admin_taxonomy_url(@taxonomy)}
-  update.wants.html {redirect_to collection_url}
-
-  edit.response do |wants|
-    wants.html
-    wants.js do
-      render :partial => 'edit.html.erb'
-    end
-  end
+class Admin::TaxonomiesController < Admin::ResourceController
+  respond_to :json, :only => [:get_children]
 
   def get_children
     @taxons = Taxon.find(params[:parent_id]).children
+
+    respond_with(@taxons)
+  end
+
+  private
+
+  def location_after_save
+    if @taxonomy.created_at == @taxonomy.updated_at
+      edit_admin_taxonomy_url(@taxonomy)
+    else
+      admin_taxonomies_url
+    end
   end
 end

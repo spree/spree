@@ -6,3 +6,7 @@ Then /^(\d+) users should exist$/ do |c|
   User.count.should == c.to_i
 end
 
+Given /^an anonymous user has been created$/ do
+  User.anonymous!
+end
+

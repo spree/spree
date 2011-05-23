@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'sqlite3'
+gem 'rake', '~> 0.8.7'
 
 group :test do
   gem 'rspec-rails', '= 2.5.0'
@@ -18,7 +18,7 @@ end
 
 group :cucumber do
   gem 'cucumber-rails'
-  gem 'database_cleaner', '~> 0.5.2'
+  gem 'database_cleaner', '= 0.6.7'
   gem 'nokogiri'
   gem 'capybara', '= 0.4.1.2'
   gem 'factory_girl', '= 1.3.3'

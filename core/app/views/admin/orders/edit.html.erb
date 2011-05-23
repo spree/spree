@@ -12,11 +12,11 @@
 
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
 
-<%= render :partial => "add_product" %>
-
 <%= hook :admin_order_edit_header do %>
   <%= render "shared/error_messages", :target => @order %>
 <% end %>
+
+<%= render :partial => "add_product" %>
 
 <%= hook :admin_order_edit_form do %>
   <div id="order-form-wrapper">

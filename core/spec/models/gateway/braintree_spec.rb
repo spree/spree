@@ -109,7 +109,7 @@ describe Gateway::Braintree do
     it 'should work through the spree payment interface with payment profiles' do
       purchase_using_spree_interface
       transaction = ::Braintree::Transaction.find(@payment.response_code)
-      transaction.credit_card_details.token.should match(/\A\w{4}\z/)
+      transaction.credit_card_details.token.should_not be_nil
     end
 
     it 'should work through the spree payment interface without payment profiles' do

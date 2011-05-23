@@ -1,5 +1,6 @@
 class RenameColumnsForDevise < ActiveRecord::Migration
   def self.up
+    return if column_exists?(:users, :password_salt)
     rename_column :users, :crypted_password, :encrypted_password
     rename_column :users, :salt, :password_salt
     rename_column :users, :remember_token_expires_at, :remember_created_at
@@ -13,7 +14,7 @@ class RenameColumnsForDevise < ActiveRecord::Migration
     add_column :users, :authentication_token, :string
     add_column :users, :unlock_token, :string
     add_column :users, :locked_at, :datetime
-    remove_column :users, :api_key
+    remove_column :users, :api_key rescue Exception
     remove_column :users, :openid_identifier
   end
 

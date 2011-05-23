@@ -2,32 +2,18 @@
 
 <h1><%= t('edit_general_settings') %></h1>
 
-<%= form_tag(admin_general_settings_path, :method => :put) do %>
-
-  <p>
-	<label><%= t("site_name") %></label>
-	<%= text_field_tag('preferences[site_name]', Spree::Config[:site_name]) %>
-  </p>
-  <p>
-	<label><%= t('site_url') %></label>
-	<%= text_field_tag('preferences[site_url]', Spree::Config[:site_url])%>
-  </p>
-  <p>
-    <label>
-	  <input name="preferences[allow_ssl_in_production]" type="hidden" value="0" />
-      <%= check_box_tag('preferences[allow_ssl_in_production]', "1", Spree::Config[:allow_ssl_in_production]) %>
-      <%= t('allow_ssl_to_be_used_when_in_production_mode') %>
-    </label>
-  </p>
-
-  <p>
-    <label>
-	  <input name="preferences[allow_ssl_in_development_and_test]" type="hidden" value="0" />
-      <%= check_box_tag('preferences[allow_ssl_in_development_and_test]', "1", Spree::Config[:allow_ssl_in_development_and_test]) %>
-      <%= t('allow_ssl_to_be_used_when_in_developement_and_test_modes') %>
-    </label>
-  </p>
-
+<%= form_for(Spree::Config.instance, :url => admin_general_settings_path) do |form| %>
+  <fieldset id="preferences">
+  <% @preferences.each do |key| 
+      type = AppConfiguration.preference_definitions[key].instance_eval{@type}.to_sym
+      field = "preferred_#{key}" %>
+     <%= form.field_container field do %>
+       <%= form.label(field, t(key)+": ") + tag(:br) if type != :boolean %>
+       <%= preference_field(form, field, :type => type) %>
+       <%= form.label(field, t(key)) if type == :boolean %>
+     <% end %>
+  <% end %>
+  </fieldset>
   <p class="form-buttons">
     <%= button t('update') %>
     <%= t("or") %> <%= link_to t("cancel"), admin_general_settings_url %>

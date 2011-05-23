@@ -1,18 +1,21 @@
-class Admin::PromotionsController < Admin::BaseController
-  resource_controller
+class Admin::PromotionsController < Admin::ResourceController
   before_filter :load_data
 
-  update.wants.html { redirect_to edit_object_url }
-  create.wants.html { redirect_to edit_object_url }
-  destroy.success.wants.js { render_js_for_destroy }
+  protected
 
-  private
-  def build_object
-    @object ||= end_of_association_chain.send parent? ? :build : :new, object_params
-    @object.calculator = params[:promotion][:calculator_type].constantize.new if params[:promotion]
+  def build_resource
+    @promotion = Promotion.new(params[:promotion])
+    if params[:promotion] && params[:promotion][:calculator_type]
+      @promotion.calculator = params[:promotion][:calculator_type].constantize.new
+    end
+    @promotion
+  end
+
+  def location_after_save
+    edit_admin_promotion_url(@promotion)
   end
 
   def load_data
-    @calculators = Promotion.calculators
+    @calculators = Promotion::Actions::CreateAdjustment.calculators
   end
 end

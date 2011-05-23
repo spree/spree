@@ -75,7 +75,7 @@ class Product < ActiveRecord::Base
   scope :available,       lambda { |*on| where("products.available_on <= ?", on.first || Time.zone.now ) }
 
   #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
-  scope :active,          not_deleted.available
+  scope :active,          lambda{ not_deleted.available }
 
   scope :on_hand,         where("products.count_on_hand > 0")
 
@@ -217,8 +217,7 @@ class Product < ActiveRecord::Base
   end
 
   def self.like_any(fields, values)
-    like = ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' ? 'ILIKE' : 'LIKE'
-    where_str = fields.map{|field| Array.new(values.size, "products.#{field} #{like} ?").join(' OR ') }.join(' OR ')
+    where_str = fields.map{|field| Array.new(values.size, "products.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
     self.where([where_str, values.map{|value| "%#{value}%"} * fields.size].flatten)
   end
 

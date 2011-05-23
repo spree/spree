@@ -1,37 +1,37 @@
 class ProductsController < Spree::BaseController
   HTTP_REFERER_REGEXP = /^https?:\/\/[^\/]+\/t\/([a-z0-9\-\/]+)$/
-
-  #prepend_before_filter :reject_unknown_object, :only => [:show]
-  before_filter :load_data, :only => :show
-
-  resource_controller
+  rescue_from ActiveRecord::RecordNotFound, :with => :render_404
   helper :taxons
-  actions :show, :index
 
-  private
+  respond_to :html
 
-  def load_data
-    load_object
+  def index
+    @searcher = Spree::Config.searcher_class.new(params)
+    @products = @searcher.retrieve_products
 
-    @variants = Variant.active.find_all_by_product_id(@product.id,
-                :include => [:option_values, :images])
-    @product_properties = ProductProperty.find_all_by_product_id(@product.id,
-                          :include => [:property])
+    respond_with(@products)
+  end
+
+  def show
+    @product = Product.find_by_permalink!(params[:id])
+    return unless @product
+
+    @variants = Variant.active.includes([:option_values, :images]).where(:product_id => @product.id)
+    @product_properties = ProductProperty.includes(:property).where(:product_id => @product.id)
     @selected_variant = @variants.detect { |v| v.available? }
 
     referer = request.env['HTTP_REFERER']
 
-    if referer  && referer.match(HTTP_REFERER_REGEXP)
+    if referer && referer.match(HTTP_REFERER_REGEXP)
       @taxon = Taxon.find_by_permalink($1)
     end
+
+    respond_with(@product)
   end
 
-  def collection
-    @searcher = Spree::Config.searcher_class.new(params)
-    @products = @searcher.retrieve_products
-  end
+  private
 
   def accurate_title
-    @product ? @product.name : nil
+    @product ? @product.name : super
   end
 end

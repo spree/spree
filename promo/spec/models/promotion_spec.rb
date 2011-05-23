@@ -2,11 +2,13 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Promotion do
   let(:promotion) { Promotion.new }
+  # let(:promotion) { Factory(:promotion) }
 
   describe "#save" do
     let(:promotion_valid) { Promotion.new :name => "A promotion", :code => "XXXX" }
 
     context "when is invalid" do
+      before { promotion.name = nil }
       it { promotion.save.should be_false }
     end
 
@@ -15,32 +17,32 @@ describe Promotion do
     end
   end
 
-  context "creating discounts" do
-    let(:order) { Order.new }
-
+  describe "#activate" do
     before do
-      promotion.calculator = Calculator::FreeShipping.new
+      @action1 = mock_model(PromotionAction, :perform => true)
+      @action2 = mock_model(PromotionAction, :perform => true)
+      promotion.promotion_actions = [@action1, @action2]
     end
 
-    it "should not create a discount when order is not eligible" do
-      promotion.stub(:eligible? => false)
-      order.stub(:promotion_credit_exists? => nil)
-
-      promotion.create_discount(order)
-      order.promotion_credits.should have(0).item
+    context "when eligible?" do
+      before do
+        promotion.stub(:eligible? => true)
+      end
+      it "should perform all actions" do
+        @action1.should_receive(:perform)
+        @action2.should_receive(:perform)
+        promotion.activate(:order => nil, :user => nil)
+      end
     end
-
-    it "should be able to create a discount on order" do
-      order.stub(:promotion_credit_exists? => nil)
-      order.stub(:ship_total => 5, :item_total => 50, :reload => nil)
-      promotion.stub(:code => "PROMO", :eligible? => true)
-      promotion.calculator.stub(:compute => 1000000)
-
-
-      attrs = {:amount => -50, :label => "#{I18n.t(:coupon)} (PROMO)", :source => promotion, :order => order }
-      PromotionCredit.should_receive(:create!).with(attrs)
-
-      promotion.create_discount(order)
+    context "when not eligible?" do
+      before do
+        promotion.stub(:eligible? => false)
+      end
+      it "should not perform any actions" do
+        @action1.should_not_receive(:perform)
+        @action2.should_not_receive(:perform)
+        promotion.activate(:order => nil, :user => nil)
+      end
     end
   end
 
@@ -50,7 +52,7 @@ describe Promotion do
     end
 
     it "should be expired if usage limit is exceeded" do
-      promotion.usage_limit = 2
+      promotion.preferred_usage_limit = 2
       promotion.stub(:credits_count => 2)
       promotion.should be_expired
 
@@ -91,8 +93,11 @@ describe Promotion do
     end
   end
 
-  context "eligible?" do
-    before { @order = Order.new }
+  context "#eligible?" do
+    let(:promotion) { Factory(:promotion) }
+    before {
+      @order = Factory(:order)
+    }
 
     context "when it is expired" do
       before { promotion.stub(:expired? => true) }
@@ -105,6 +110,31 @@ describe Promotion do
 
       specify { promotion.should be_eligible(@order) }
     end
+
+    context "when activated by coupon code event and a code is set" do
+      before {
+        promotion.event_name = 'spree.checkout.coupon_code_added'
+        promotion.preferred_code = 'ABC'
+      }
+      it "is false when payload doesn't include the matching code" do
+        promotion.should_not be_eligible(@order, {})
+      end
+      it "is true when payload includes the matching code" do
+        promotion.should be_eligible(@order, {:coupon_code => 'ABC'})
+      end
+    end
+
+    context "when a coupon code has already resulted in an adustment on the order" do
+      before {
+        promotion.preferred_code = 'ABC'
+        promotion.event_name = 'spree.checkout.coupon_code_added'
+        action = Promotion::Actions::CreateAdjustment.create!(:promotion => promotion)
+        action.calculator = Calculator::FlatRate.create!(:calculable => action)
+        action.perform(:order => @order)
+      }
+      specify { promotion.should be_eligible(@order) }
+    end
+
   end
 
   context "rules" do
@@ -118,16 +148,14 @@ describe Promotion do
       before { promotion.match_policy = 'all' }
 
       it "should have eligible rules if all rules are eligible" do
-        rule = mock_model(PromotionRule, :eligible? => true)
-        promotion.promotion_rules = [rule, rule.clone]
-
+        promotion.promotion_rules = [mock_model(PromotionRule, :eligible? => true),
+                                     mock_model(PromotionRule, :eligible? => true)]
         promotion.rules_are_eligible?(@order).should be_true
       end
 
       it "should not have eligible rules if any of the rules is not eligible" do
         promotion.promotion_rules = [mock_model(PromotionRule, :eligible? => true),
                                      mock_model(PromotionRule, :eligible? => false)]
-
         promotion.rules_are_eligible?(@order).should be_false
       end
     end
@@ -138,9 +166,10 @@ describe Promotion do
       it "should have eligible rules if any of the rules is eligible" do
         promotion.promotion_rules = [mock_model(PromotionRule, :eligible? => true),
                                      mock_model(PromotionRule, :eligible? => false)]
-
         promotion.rules_are_eligible?(@order).should be_true
       end
     end
+
   end
+
 end

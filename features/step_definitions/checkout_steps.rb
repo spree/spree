@@ -53,7 +53,7 @@ When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and 
   When %{I choose "#{payment_method}"}
 
   if coupon_code
-    When %{I fill in "Coupon code" with "#{coupon_code}"}
+    When %{I fill in "order_coupon_code" with "#{coupon_code}"}
   end
 
   And %{press "Save and Continue"}

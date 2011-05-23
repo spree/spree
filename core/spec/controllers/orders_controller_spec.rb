@@ -2,8 +2,13 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe OrdersController do
 
-  let(:order) { mock_model(Order, :number => "R123", :reload => nil, :save! => true) }
-  before { Order.stub(:find).with(1).and_return(order) }
+  let(:order) { mock_model(Order, :number => "R123", :reload => nil, :save! => true, :coupon_code= => nil, :coupon_code => nil) }
+  before do
+    Order.stub(:find).with(1).and_return(order)
+    controller.stub :current_user => nil
+    #ensure no respond_overrides are in effect
+    Spree::BaseController.spree_responders[:OrdersController].clear
+  end
 
   context "#populate" do
     before { Order.stub(:new).and_return(order) }
@@ -50,6 +55,7 @@ describe OrdersController do
     end
     it "should render the edit view (on failure)" do
       order.stub(:update_attributes).and_return false
+      order.stub(:errors).and_return({:number => "has some error"})
       put :update, {}, {:order_id => 1}
       response.should render_template :edit
     end

@@ -1,7 +1,7 @@
 <div class='toolbar'>
   <ul class='actions'>
-    <li>
-      <%= button_link_to t("new_shipment"), new_object_url, :icon => 'add'  %>
+    <li id='new_shipment_section'>
+      <%= button_link_to t("new_shipment"), new_admin_order_shipment_url(@order), :icon => 'add'  %>
     </li>
   </ul>
   <br class='clear' />
@@ -18,7 +18,9 @@
       <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
     <% end %>
     <th>
-      <%= hook :admin_shipments_index_header_actions %>
+      <%= hook :admin_shipments_index_header_actions do %>
+        <%= t("action") %>
+      <% end %>
     </th>
   </tr>
   <% @shipments.each do |shipment| %>

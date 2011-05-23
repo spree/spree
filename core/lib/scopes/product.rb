@@ -50,11 +50,9 @@ module Scopes::Product
     Product.send(:scope, name.to_s, Product.send(:relation).order(order_text) )
   end
 
-  ::Product.scope :ascend_by_master_price, lambda {
-    Product.joins(:variants_with_only_master).order('variants.price asc') }
+  ::Product.scope :ascend_by_master_price, Product.joins(:variants_with_only_master).order('variants.price asc')
 
-  ::Product.scope :descend_by_master_price, lambda {
-    Product.joins(:variants_with_only_master).order('variants.price desc') }
+  ::Product.scope :descend_by_master_price, Product.joins(:variants_with_only_master).order('variants.price desc')
 
   ATTRIBUTE_HELPER_METHODS = {
     :with_ids => :product_picker_field
@@ -211,9 +209,9 @@ module Scopes::Product
   # there is alternative faster and more elegant solution, it has small drawback though,
   # it doesn stack with other scopes :/
   #
-  Product.scope :descend_by_popularity, lambda{
-    # :joins => "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
-    # :order => 'COALESCE(cnt, 0) DESC'
+  # :joins => "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
+  # :order => 'COALESCE(cnt, 0) DESC'
+  Product.scope :descend_by_popularity,
     {
       :joins => :master,
       :order => <<SQL
@@ -231,7 +229,6 @@ module Scopes::Product
          ), 0) DESC
 SQL
     }
-  }
 
   # Produce an array of keywords for use in scopes.
   # Always return array with at least an empty string to avoid SQL errors

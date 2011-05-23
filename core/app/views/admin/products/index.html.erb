@@ -47,34 +47,34 @@
 <%= will_paginate(:previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
 
 <% content_for :sidebar do %>
+  <%= hook :admin_products_sidebar do %>
+    <%= form_for [:admin, @search] do |f| %>
+      <div class="box">
+        <h3><%= t(:search) %></h3>
 
-  <%= form_for [:admin, @search] do |f| %>
-    <div class="box">
-      <h3><%= t(:search) %></h3>
+        <%- locals = {:f => f} %>
+        <%= hook :admin_products_index_search, locals do %>
+          <p>
+            <%= f.label :name_contains, t("name") %><br />
+            <%= f.text_field :name_contains, :size => 15 %>
+          </p>
+          <p>
+            <%= f.label :variants_including_master_sku_contains, t("sku") %><br />
+            <%= f.text_field :variants_including_master_sku_contains, :size => 15 %>
+          </p>
+          <p>
+            <%= f.label :deleted_at_is_null, t("show_deleted") %><br />
+            <%= f.check_box :deleted_at_is_null, {:checked => params[:search][:deleted_at_is_null].blank?}, "", "1" %>
+          </p>
+        <% end %>
 
-      <%- locals = {:f => f} %>
-      <%= hook :admin_products_index_search, locals do %>
-        <p>
-          <%= f.label :name_contains, t("name") %><br />
-          <%= f.text_field :name_contains, :size => 15 %>
-        </p>
-        <p>
-          <%= f.label :variants_including_master_sku_contains, t("sku") %><br />
-          <%= f.text_field :variants_including_master_sku_contains, :size => 15 %>
-        </p>
-        <p>
-          <%= f.label :deleted_at_is_null, t("show_deleted") %><br />
-          <%= f.check_box :deleted_at_is_null, {:checked => params[:search][:deleted_at_is_null].blank?}, "", "1" %>
-        </p>
-      <% end %>
-
-      <%= hook :admin_products_index_search_buttons, locals do %>
-        <p class="form-buttons">
-          <%= button t("search") %>
-        </p>
-      <% end %>
-    </div>
+        <%= hook :admin_products_index_search_buttons, locals do %>
+          <p class="form-buttons">
+            <%= button t("search") %>
+          </p>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
-
 <% end %>
 

@@ -1,37 +1,93 @@
 class Admin::OrdersController < Admin::BaseController
   require 'spree/gateway_error'
-  resource_controller
   before_filter :initialize_txn_partials
   before_filter :initialize_order_events
-  before_filter :load_object, :only => [:fire, :resend, :history, :user]
-  before_filter :ensure_line_items, :only => [:update]
+  before_filter :load_order, :only => [:fire, :resend, :history, :user]
 
-  update do
-    flash nil
-    wants.html do
-      if !@order.line_items.empty?
-        unless @order.complete?
+  respond_to :html
 
-          if params[:order].key?(:email)
-            @order.shipping_method = @order.available_shipping_methods(:front_end).first
+  def index
+    params[:search] ||= {}
+    params[:search][:completed_at_is_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
+    @show_only_completed = params[:search][:completed_at_is_not_null].present?
+    params[:search][:meta_sort] ||= @show_only_completed ? 'completed_at.desc' : 'created_at.desc'
+
+    @search = Order.metasearch(params[:search])
+
+    if !params[:search][:created_at_greater_than].blank?
+      params[:search][:created_at_greater_than] = Time.zone.parse(params[:search][:created_at_greater_than]).beginning_of_day rescue ""
+    end
+
+    if !params[:search][:created_at_less_than].blank?
+      params[:search][:created_at_less_than] = Time.zone.parse(params[:search][:created_at_less_than]).end_of_day rescue ""
+    end
+
+    if @show_only_completed
+      params[:search][:completed_at_greater_than] = params[:search].delete(:created_at_greater_than)
+      params[:search][:completed_at_less_than] = params[:search].delete(:created_at_less_than)
+    end
+
+    @orders = Order.metasearch(params[:search]).paginate(
+                                   :include  => [:user, :shipments, :payments],
+                                   :per_page => Spree::Config[:orders_per_page],
+                                   :page     => params[:page])
+
+    respond_with(@orders)
+  end
+
+  def show
+    load_order
+    respond_with(@order)
+  end
+
+  def new
+    @order = Order.create
+    respond_with(@order)
+  end
+
+  def edit
+    load_order
+    respond_with(@order)
+  end
+
+  def update
+    return_path = nil
+    load_order
+    if @order.update_attributes(params[:order]) && @order.line_items.present?
+      unless @order.complete?
+      
+        if params[:order].key?(:email)
+          shipping_method = @order.available_shipping_methods(:front_end).first
+          if shipping_method
+            @order.shipping_method = shipping_method
             @order.create_shipment!
-            redirect_to edit_admin_order_shipment_path(@order, @order.shipment)
+            return_path = edit_admin_order_shipment_path(@order, @order.shipment)
           else
-            redirect_to user_admin_order_path(@order)
+            flash[:error] = t('errors.messages.no_shipping_methods_available')
+            return_path = user_admin_order_path(@order)
           end
-
         else
-          redirect_to admin_order_path(@order)
+          return_path = user_admin_order_path(@order)
         end
+        
       else
-        render :action => :new
+        return_path = admin_order_path(@order)
+      end
+    else
+      @order.errors.add(:line_items, t('errors.messages.blank'))
+    end
+    
+    respond_with(@order) do |format|
+      format.html do
+        if return_path
+          redirect_to return_path
+        else
+          render :action => :edit
+        end
       end
     end
   end
 
-  def new
-    @order = @object = Order.create
-  end
 
   def fire
     # TODO - possible security check here but right now any admin can before any transition (and the state machine
@@ -45,13 +101,14 @@ class Admin::OrdersController < Admin::BaseController
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
   ensure
-    redirect_to :back
+    respond_with(@order) { |format| format.html { redirect_to :back } }
   end
 
   def resend
     OrderMailer.confirm_email(@order, true).deliver
     flash.notice = t('order_email_resent')
-    redirect_to :back
+
+    respond_with(@order) { |format| format.html { redirect_to :back } }
   end
 
   def user
@@ -61,47 +118,9 @@ class Admin::OrdersController < Admin::BaseController
 
   private
 
-  def object
-    @object ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
-    return @object || current_order
-  end
-
-  def collection
-    params[:search] ||= {}
-
-    if params[:search].present?
-      if params[:search].delete(:completed_at_not_null) == "1"
-        #FIXME
-        params[:search][:completed_at_is_not_null] = true
-      else
-        params[:search][:completed_at_is_not_null] = false
-      end
-    else
-      params[:search][:completed_at_is_not_null] = true
-    end
-
-    if !params[:search][:completed_at_greater_than].blank?
-      params[:search][:completed_at_greater_than] = Time.zone.parse(params[:search][:completed_at_greater_than]).beginning_of_day rescue ""
-    end
-
-    if !params[:search][:completed_at_less_than].blank?
-      params[:search][:completed_at_less_than] = Time.zone.parse(params[:search][:completed_at_less_than]).end_of_day rescue ""
-    end
-
-    if order = params[:search].delete(:meta_sort)
-      params[:search][:meta_sort] = order
-    else
-      params[:search][:meta_sort] = 'completed_at.desc'
-    end
-
-    @search = Order.metasearch(params[:search])
-
-    # QUERY - get per_page from form ever???  maybe push into model
-    # @search.per_page ||= Spree::Config[:orders_per_page]
-
-    @collection = @search.paginate(:include  => [:user, :shipments, :payments],
-                                   :per_page => Spree::Config[:orders_per_page],
-                                   :page     => params[:page])
+  def load_order
+    @order ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
+    @order
   end
 
   # Allows extensions to add new forms of payment to provide their own display of transactions
@@ -112,14 +131,6 @@ class Admin::OrdersController < Admin::BaseController
   # Used for extensions which need to provide their own custom event links on the order details view.
   def initialize_order_events
     @order_events = %w{cancel resume}
-  end
-
-  def ensure_line_items
-    load_object
-    if @order.line_items.empty?
-      @order.errors.add(:line_items, t('errors.messages.blank'))
-      render :edit
-    end
   end
 
 end

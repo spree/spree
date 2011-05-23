@@ -14,7 +14,7 @@ class Promotion::Rules::Product < PromotionRule
     product_group ? product_group.products : products
   end
 
-  def eligible?(order)
+  def eligible?(order, options = {})
     return true if eligible_products.empty?
     if preferred_match_policy == 'all'
       eligible_products.all? {|p| order.products.include?(p) }

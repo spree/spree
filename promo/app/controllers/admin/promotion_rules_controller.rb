@@ -1,27 +1,26 @@
 class Admin::PromotionRulesController < Admin::BaseController
-  resource_controller
-  belongs_to :promotion
-
-  create.response do |wants|
-    wants.html { redirect_to edit_admin_promotion_path(parent_object) }
-    wants.js { render :action => 'create', :layout => false}
-  end
-  destroy.response do |wants|
-    wants.html { redirect_to edit_admin_promotion_path(parent_object) }
-    wants.js { render :action => 'destroy', :layout => false}
-  end
-
-  private
-
-    def build_object
-      return @object if @object.present?
-  		if params[:promotion_rule] && params[:promotion_rule][:type]
-  			@object = params[:promotion_rule][:type].constantize.new(object_params)
-  			@object.promotion = parent_object
-  		else
-  			@object = end_of_association_chain.build(object_params)
-  		end
-  		@object
+  def create
+    @promotion = Promotion.find(params[:promotion_id])
+    @promotion_rule = params[:promotion_rule][:type].constantize.new(params[:promotion_rule])
+    @promotion_rule.promotion = @promotion
+    if @promotion_rule.save
+      flash[:notice] = I18n.t(:successfully_created, :resource => I18n.t(:promotion_rule))
     end
-
+    respond_to do |format|
+      format.html { redirect_to edit_admin_promotion_path(@promotion)}
+      format.js   { render :layout => false }
+    end
+  end
+  
+  def destroy
+    @promotion = Promotion.find(params[:promotion_id])
+    @promotion_rule = @promotion.promotion_rules.find(params[:id])
+    if @promotion_rule.destroy
+      flash[:notice] = I18n.t(:successfully_removed, :resource => I18n.t(:promotion_rule))
+    end
+    respond_to do |format|
+      format.html { redirect_to edit_admin_promotion_path(@promotion)}
+      format.js   { render :layout => false }
+    end  
+  end
 end

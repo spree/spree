@@ -1,10 +1,11 @@
 module Admin::BaseHelper
 
   def field_container(model, method, options = {}, &block)
-    unless error_message_on(model, method).blank?
-      css_class = 'withError'
+    css_classes = options[:class].to_a
+    if error_message_on(model, method).present?
+      css_classes << 'withError'
     end
-    content_tag('p', capture(&block), :class => css_class)
+    content_tag('p', capture(&block), :class => css_classes.join(' '), :id => "#{model}_#{method}_field")
   end
 
   def error_message_on(object, method, options = {})

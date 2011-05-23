@@ -17,7 +17,7 @@ Feature: Admin > configurations > tax_categories
     When I fill in "tax_category_name" with "sports goods"
     When I fill in "tax_category_description" with "sports goods desc"
     When I press "Create"
-    Then I should see "Successfully created!"
+    Then I should see "successfully created!"
 
   Scenario: admin creating new tax category with validation error
     Given I go to the admin home page
@@ -36,5 +36,5 @@ Feature: Admin > configurations > tax_categories
     When I click first link from selector "table#listing_tax_categories a.edit"
     When I fill in "tax_category_description" with "desc 99"
     When I press "Update"
-    Then I should see "Successfully updated!"
+    Then I should see "successfully updated!"
     Then I should see "desc 99"

@@ -1,4 +1,4 @@
-Then /^I should see listing orders tabular attributes with completed_at descending$/ do
+Then /^I should see listing orders tabular attributes with created_at descending$/ do
   output = tableish('table#listing_orders tr', 'td,th')
   data = output[0]
   data[0].should match(/Order Date/)
@@ -10,13 +10,13 @@ Then /^I should see listing orders tabular attributes with completed_at descendi
   data[6].should == "Total"
 
   data = output[1]
-  data[0].should == Order.limit(1).order('completed_at desc').to_a.first.completed_at.strftime('%Y-%m-%d')
+  data[0].should == Order.limit(1).order('created_at desc').to_a.first.created_at.strftime('%Y-%m-%d')
 end
 
-Then /^I should see listing orders tabular attributes with completed_at ascending$/ do
+Then /^I should see listing orders tabular attributes with created_at ascending$/ do
   output = tableish('table#listing_orders tr', 'td,th')
   data = output[1]
-  data[0].should == Order.limit(1).order('completed_at asc').to_a.first.completed_at.strftime('%Y-%m-%d')
+  data[0].should == Order.limit(1).order('created_at asc').to_a.first.created_at.strftime('%Y-%m-%d')
 end
 
 Then /^I should see listing orders tabular attributes with order number ascending$/ do

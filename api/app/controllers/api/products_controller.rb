@@ -1,10 +1,9 @@
 class Api::ProductsController < Api::BaseController
-  resource_controller_for_api
-  actions :index, :show, :create, :update
   include Spree::Search
 
   private
-    define_method :collection do
+    def collection
+      params[:per_page] ||= 100
       @searcher = Spree::Config.searcher_class.new(params)
       @collection = @searcher.retrieve_products
     end

@@ -6,11 +6,15 @@ class ShippingMethod < ActiveRecord::Base
   calculated_adjustments
 
   def available?(order, display_on=nil)
-    (self.display_on == display_on.to_s || self.display_on.blank?) && calculator.available?(order)
+    display_check = (self.display_on == display_on.to_s || self.display_on.blank?)
+    calculator_check = calculator.available?(order)
+    display_check && calculator_check
   end
 
   def available_to_order?(order, display_on=nil)
-    available?(order,display_on) && zone && zone.include?(order.ship_address)
+    availability_check = available?(order,display_on)
+    zone_check = zone && zone.include?(order.ship_address)
+    availability_check && zone_check
   end
 
   def self.all_available(order, display_on=nil)

@@ -16,7 +16,7 @@
   <ul id="variant-thumbnails" class="thumbnails">
     <% @variants.each do |v|
         checked = !has_checked && (v.available?)
-   		  has_checked = true if checked
+        has_checked = true if checked
         
         if checked 
           v.images.each do |i| %>  
@@ -33,7 +33,7 @@
     <% @variants.each do |v| %>
       images[<%= v.id.to_s %>] = new Array();
       <% v.images.each_with_index do |image, i| %>
-        images[<%= v.id.to_s %>][<%= i %>] = <%= raw link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)).to_json %>;
+        images[<%= v.id.to_s %>][<%= i %>] = <%== link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)).to_json %>;
       <% end %>
     <% end %>
   </script>

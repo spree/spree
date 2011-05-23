@@ -1,31 +1,42 @@
-class Admin::PaymentMethodsController < Admin::BaseController
-  resource_controller
+class Admin::PaymentMethodsController < Admin::ResourceController
+  skip_before_filter :load_resource, :only => [:create]
   before_filter :load_data
 
-  update.before :update_before
+  def create
+    @payment_method = params[:payment_method][:type].constantize.new(params[:payment_method])
+    @object = @payment_method
+    invoke_callbacks(:create, :before)
+    if @payment_method.save
+      invoke_callbacks(:create, :after)
+      flash[:notice] = I18n.t(:successfully_created, :resource => I18n.t(:payment_method))
+      respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
+    else
+      invoke_callbacks(:create, :fails)
+      respond_with(@payment_method)
+    end
+  end
 
-  update.wants.html { redirect_to edit_object_url }
-  create.wants.html { redirect_to edit_object_url }
+  def update
+    invoke_callbacks(:update, :before)
+    payment_method_type = params[:payment_method].delete(:type)
+    if @payment_method['type'].to_s != payment_method_type
+      @payment_method.update_attribute(:type, payment_method_type)
+      @payment_method = PaymentMethod.find(params[:id])
+    end
+    payment_method_params = params[@payment_method.class.name.underscore.gsub("/", "_")] || {}
+    if @payment_method.update_attributes(params[:payment_method].merge(payment_method_params))
+      invoke_callbacks(:update, :after)
+      flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
+      respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
+    else
+      invoke_callbacks(:update, :fails)
+      respond_with(@payment_method)
+    end
+  end
 
   private
-  def build_object
-		if params[:payment_method] && params[:payment_method][:type]
-			@object ||= params[:payment_method][:type].constantize.send parent? ? :build : :new, object_params
-		else
-			@object ||= end_of_association_chain.send parent? ? :build : :new, object_params
-		end
-  end
 
   def load_data
-    @providers = Gateway.providers
-  end
-
-  def update_before
-		if params[:payment_method] && params[:payment_method][:type] && @object['type'].to_s != params[:payment_method][:type]
-			@object.update_attribute(:type, params[:payment_method][:type])
-			
-			load_object			
-		end
- 		@object.update_attributes params[@object.class.name.underscore.gsub("/", "_")]
+    @providers = Gateway.providers.sort{|p1, p2| p1.name <=> p2.name }
   end
 end

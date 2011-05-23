@@ -43,6 +43,10 @@ module Admin::NavigationHelper
     link_to_with_icon('edit', t("edit"), edit_object_url(resource), options)
   end
 
+  def link_to_edit_url(url, options={})
+    link_to_with_icon('edit', t("edit"), url, options)
+  end
+
   def link_to_clone(resource, options={})
     link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource), options)
   end

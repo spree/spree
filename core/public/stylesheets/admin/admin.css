@@ -447,7 +447,7 @@ span.current_page {
   color: #FFF;
 }
 
-div#calculator-settings-warning {
+div#calculator-settings-warning, .warning {
  color: #f00;
 }
 #progress{

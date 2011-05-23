@@ -25,9 +25,9 @@ en:
         address2: "Address (contd.)"
         city: City
         country: "Country"
-        first_name: "First Name"
+        firstname: "First Name"
         first_name_begins_with: "First Name Begins With"
-        last_name: "Last Name"
+        lastname: "Last Name"
         last_name_begins_with: "Last Name Begins With"
         phone: Phone
         state: "State"
@@ -68,6 +68,8 @@ en:
         quantity: Quantity
       order:
         checkout_complete: "Checkout Complete"
+        completed_at: "Completed At"
+        coupon_code: "Coupon Code"
         ip_address: "IP Address"
         item_total: "Item Total"
         number: Number
@@ -229,8 +231,8 @@ en:
   all: "All"
   all_departments: All departments
   allow_backorders: "Allow Backorders"
-  allow_ssl_to_be_used_when_in_developement_and_test_modes: Allow SSL to be used when in development and test modes
-  allow_ssl_to_be_used_when_in_production_mode: Allow SSL to be used in production mode
+  allow_ssl_in_development_and_test: Allow SSL to be used when in development and test modes
+  allow_ssl_in_production: Allow SSL to be used in production mode
   allowed_ssl_in_production_mode: "SSL will %{not} be used in production"
   already_registered: Already Registered?
   alt_text: Alternative Text
@@ -332,6 +334,9 @@ en:
   date_range: "Date Range"
   debit: Debit
   default: Default
+  default_meta_description: Default Meta Description
+  default_meta_keywords: Default Meta Keywords
+  default_seo_title: Default Seo Title
   delete: Delete
   delivery: Delivery
   depth: Depth
@@ -375,11 +380,23 @@ en:
   error: error
   errors:
     messages:
+      could_not_create_taxon: "Could not create taxon"
       no_shipping_methods_available: "No shipping methods available for selected location, please change your address and try again."
   errors_prohibited_this_record_from_being_saved:
     one: "1 error prohibited this record from being saved"
     other: "%{count} errors prohibited this record from being saved"
   event: Event
+  events:
+    spree:
+      cart:
+        add: 'Add to cart'
+      checkout:
+        coupon_code_added: "Coupon code added"
+      order:
+        contents_changed: "Order contents changed"
+      user:
+        signup: 'User signup'
+      page_view: "Static page viewed"
   existing_customer: "Existing Customer"
   expiration: "Expiration"
   expiration_month: "Expiration Month"
@@ -417,7 +434,7 @@ en:
   google_analytics_create: "Create New Google Analytics Account"
   google_analytics_id: "Analytics ID"
   google_analytics_new: "New Google Analytics Account"
-  google_analytics_setting_description: "Manage Google Analytics ID"
+  google_analytics_setting_description: "Manage Google Analytics ID."
   guest_checkout: Guest Checkout
   guest_user_account: Checkout as a Guest
   has_no_shipped_units: has no shipped units
@@ -441,7 +458,7 @@ en:
   invalid_search: "Invalid search criteria."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"
-  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display"
+  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display."
   inventory_settings: "Inventory Settings"
   is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
@@ -584,7 +601,7 @@ en:
     confirm: confirm
     delivery: delivery
     payment: payment
-    resumed : resumed
+    resumed: resumed
     returned: returned
   order_summary: Order Summary
   order_sure_want_to: "Are you sure you want to %{event} this order?"
@@ -615,7 +632,7 @@ en:
   payment_information: "Payment Information"
   payment_method: Payment Method
   payment_methods: Payment Methods
-  payment_methods_setting_description: Configure methods customers can use to pay
+  payment_methods_setting_description: Configure methods customers can use to pay.
   payment_processing_failed: "Payment could not be processed, please check the details you entered"
   payment_state: Payment State
   payment_states:
@@ -819,9 +836,7 @@ en:
   roles: Roles
   sales_tax: "Sales Tax"
   sales_total: "Sales Total"
-  sales_total_for_all_orders: "Sales total for all orders"
-  sales_totals: "Sales Totals"
-  sales_totals_description: "Sales Total For All Orders"
+  sales_total_description: "Sales Total For All Orders"
   save_and_continue: Save and Continue
   save_preferences: Save Preferences
   scope: Scope
@@ -863,14 +878,14 @@ en:
   shipping: Shipping
   shipping_address: "Shipping Address"
   shipping_categories: "Shipping Categories"
-  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method"
+  shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method."
   shipping_category: Shipping Category
   shipping_cost: Cost
   shipping_error: "Shipping Error"
   shipping_instructions: "Shipping Instructions"
   shipping_method: "Shipping Method"
   shipping_methods: "Shipping Methods"
-  shipping_methods_description: "Manage shipping methods"
+  shipping_methods_description: "Manage shipping methods."
   shipping_total: "Shipping Total"
   shop_by_taxonomy: "Shop by %{taxonomy}"
   shopping_cart: "Shopping Cart"
@@ -919,6 +934,9 @@ en:
   street_address_2: "Street Address (cont'd)"
   subtotal: Subtotal
   subtract: Subtract
+  successfully_created: "%{resource} has been successfully created!"
+  successfully_removed: "%{resource} has been successfully removed!"
+  successfully_updated: "%{resource} has been successfully updated!"
   system: System
   tax: Tax
   tax_categories: "Tax Categories"
@@ -933,7 +951,7 @@ en:
   taxon: Taxon
   taxon_edit: Edit Taxon
   taxonomies: Taxonomies
-  taxonomies_setting_description: "Create and manage taxonomies"
+  taxonomies_setting_description: "Create and manage taxonomies."
   taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."

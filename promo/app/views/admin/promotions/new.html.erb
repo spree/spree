@@ -1,5 +1,4 @@
 <h1><%= t("new_promotion") %></h1>
-<%= render "shared/error_messages", :target => @promotion %>
 
 <%= form_for(:promotion, :url => collection_url) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>

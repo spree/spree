@@ -17,12 +17,10 @@ module Spree
       end
 
       def generate_app
-        silence_stream(STDOUT) {
           remove_directory_if_exists("spec/#{test_app}")
           inside "spec" do
-            run "rails new #{test_app} -GJTq --skip-gemfile"
+            run "rails new #{test_app} --database=#{database_name} -GJTq --skip-gemfile"
           end
-        }
       end
 
       def create_rspec_gemfile
@@ -63,7 +61,8 @@ module Spree
       def create_databases_yml
         silence_stream(STDOUT) {
           remove_file "config/database.yml"
-          template "config/database.yml"
+          template "config/database.yml.#{database_name}"
+          mv "spec/test_app/config/database.yml.#{database_name}", "spec/test_app/config/database.yml", :verbose => false
         }
       end
 
@@ -79,6 +78,23 @@ module Spree
         }
       end
 
+      def append_db_adapter_gem
+        silence_stream(STDOUT) {
+          case database_name
+          when "mysql"
+            gem "mysql2", "0.2.7"
+            append_file '../../Gemfile' do
+              "gem 'mysql2', '0.2.7'"
+            end
+          else
+            gem "sqlite3-ruby"
+            append_file '../../Gemfile' do
+              "gem 'sqlite3-ruby'"
+            end
+          end
+        }
+      end
+
       protected
       def full_path_for_local_gems
         # Gemfile needs to be full local path to the source (ex. /Users/schof/repos/spree/auth)
@@ -88,16 +104,20 @@ module Spree
       private
 
       def run_migrations
-        inside "" do
-          silence_stream(STDOUT) {
-            run "rake db:migrate db:seed RAILS_ENV=test"
-            run "rake db:migrate db:seed RAILS_ENV=cucumber"
-          }
-        end
+        silence_stream(STDOUT) {
+          inside "" do
+              run "rake db:drop db:create db:migrate db:seed RAILS_ENV=test"
+              run "rake db:drop db:create db:migrate db:seed RAILS_ENV=cucumber"
+          end
+        }
       end
 
       def test_app
         options[:app_name]
+      end
+
+      def database_name
+        ENV['DB_NAME'] || "sqlite3"
       end
 
       def remove_directory_if_exists(path)

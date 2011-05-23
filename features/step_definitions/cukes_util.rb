@@ -71,6 +71,10 @@ When /^I click on first link with class "(.*)"$/ do |class_name|
   page.first('.'+class_name).click
 end
 
+When /^I check first element with class "(.*)"$/ do |class_name|
+  page.first('.'+class_name).set(true)
+end
+
 When /^I confirm a js popup on the next step$/ do
   page.evaluate_script("window.alert = function(msg) { return true; }")
   page.evaluate_script("window.confirm = function(msg) { return true; }")

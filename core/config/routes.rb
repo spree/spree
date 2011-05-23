@@ -68,7 +68,7 @@ Rails.application.routes.draw do
     end
     resources :states
     resources :tax_categories
-    resources :configurations
+    resources :configurations, :only => :index
     resources :products do
       resources :product_properties
       resources :images do
@@ -101,6 +101,7 @@ Rails.application.routes.draw do
         end
         collection do
           post :available
+          post :batch_select
           get  :selected
         end
       end
@@ -110,7 +111,7 @@ Rails.application.routes.draw do
         post :update_positions
       end
     end
-    
+
     resources :properties do
       collection do
         get :filtered

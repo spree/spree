@@ -3,6 +3,8 @@ Factory.define(:order) do |record|
   record.association(:user, :factory => :user)
   record.association(:bill_address, :factory => :address)
   record.completed_at nil
+  record.bill_address_id nil
+  record.ship_address_id nil
 end
 
 Factory.define :order_with_totals, :parent => :order do |f|

@@ -48,7 +48,7 @@ module ProductFilters
   # below scope would be something like ["$10 - $15", "$15 - $18", "$18 - $20"]
   #
   Product.scope :price_range_any,
-    lambda {|opts|
+    lambda {|*opts|
       conds = opts.map {|o| ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
       Product.scoped(:joins => :master).conditions_any(conds)
     }
@@ -82,13 +82,13 @@ module ProductFilters
 
   if Property.table_exists? && @@brand_property = Property.find_by_name("brand")
     Product.scope :brand_any,
-      lambda {|opts|
+      lambda {|*opts|
         conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
         Product.with_property("brand").conditions_any(conds)
       }
 
     def ProductFilters.brand_filter
-      brands = ProductProperty.find_all_by_property_id(@@brand_property).map(&:value).uniq
+      brands = ProductProperty.where(:property_id => @@brand_property).map(&:value).compact.uniq
       conds  = Hash[*brands.map {|b| [b, "product_properties.value = '#{b}'"]}.flatten]
       { :name   => "Brands",
         :scope  => :brand_any,
@@ -125,7 +125,7 @@ module ProductFilters
       if taxon.nil?
         taxon = Taxonomy.first.root
       end
-      all_brands = ProductProperty.find_all_by_property_id(@@brand_property).map(&:value).uniq
+      all_brands = ProductProperty.where(:property_id => @@brand_property).map(&:value).uniq
       scope = ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
                               scoped(:joins      => {:product => :taxons},
                                      :conditions => ["taxons.id in (?)", [taxon] + taxon.descendants])
