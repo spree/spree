@@ -11,8 +11,9 @@ Feature: Products api description
     Then the response status should be "200 OK"
     And the response should be an array with 2 products
 
+  @wip
   Scenario: Retrieve a list of products after searching
-    Given the following products exist:
+    Given the following product exist:
       | name                |
       | apache baseball cap |
       | zomg shirt          |
