@@ -61,6 +61,8 @@ h4. Installing an Extension
 
 Since extensions are created as engines in Rails, using them is as simple as working with standard plugin gems.  A standard Rails application running Spree will have a +Gemfile+.  This is a special file which is used by "bundler":http://gembundler.com to manage the gem dependencies for your application.
 
+WARNING. The dependencies should be specified in a specific order. Always specify +spree+, followed by the various spree extensions at the very end of +Gemfile+.
+
 WARNING. Prior to Spree 0.30.0 extensions were not managed as gems.  They were typically installed from the command line using +script/extension install+.  They were then added to the git repository of the application itself and deployed on the server.  This is no longer supported.  You must convert your old extension into a gem in order to use it in Spree.
 
 h5. Modifying Your +Gemfile+
@@ -364,7 +366,7 @@ Now lets create a new controller file so that we can administer these promoted i
   end
 </ruby>
 
-You may notice the base class is now using Admin::ResourceController, this is a major change for Spree 0.60.x and later. Previous versions used a gem called resource_controller to provide an implementation of a controllers CRUD methods, but this gem is no longer being actively maintained and also provides unnecessary features that Spree was not using. 
+You may notice the base class is now using Admin::ResourceController, this is a major change for Spree 0.60.x and later. Previous versions used a gem called resource_controller to provide an implementation of a controllers CRUD methods, but this gem is no longer being actively maintained and also provides unnecessary features that Spree was not using.
 
 So now the Admin::ResourceController is an interal Spree class that provides a similiar (but much simplied) implementation of these CRUD actions. We strongly recommend that only basic Admin controllers use this base class, and any front-end or custom / advanced methods be manually defined within the controllers implementation itself.
 
