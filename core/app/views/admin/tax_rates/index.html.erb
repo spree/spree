@@ -1,3 +1,5 @@
+<%= render :partial => 'admin/shared/configuration_menu' %>
+
 <div class='toolbar'>
   <ul class='actions'>
     <li>
@@ -6,27 +8,40 @@
   </ul>
   <br class='clear' />
 </div>
+
 <h1><%=t("tax_rates") %></h1>
+
 <table class="index">
   <thead>
     <tr>
+    <%= hook :admin_tax_rates_index_headers do %>
       <th><%=t("zone")%></th>
       <th><%=t("category")%></th>
       <th><%=t("amount")%></th>
       <th><%=t("calculator")%></th>
-      <th><%=t("action")%></th>
+    <% end %>
+      <th>
+        <%= hook :admin_tax_rates_index_header_actions do %>
+          <%=t("action")%>
+        <% end %>
+      </th>
     </tr>
   </thead>
   <tbody>
     <% @tax_rates.each do |tax_rate|%>
     <tr id="<%= dom_id tax_rate %>">
-      <td><%=tax_rate.zone.name %></td>
-      <td><%=tax_rate.tax_category.name %></td>
-      <td><%=tax_rate.amount %></td>
-      <td><%=tax_rate.calculator.to_s %></td>
+      <%- locals = {:tax_rate => tax_rate} %>
+      <%= hook :admin_tax_rates_index_rows, locals do %>
+        <td><%=tax_rate.zone.name %></td>
+        <td><%=tax_rate.tax_category.name %></td>
+        <td><%=tax_rate.amount %></td>
+        <td><%=tax_rate.calculator.to_s %></td>
+      <% end %>
       <td>
-      	<%= link_to_edit tax_rate %> &nbsp;
-      	<%= link_to_delete tax_rate %>
+        <%= hook :admin_tax_rates_index_row_actions, locals do %>
+      	  <%= link_to_edit tax_rate %> &nbsp;
+        	<%= link_to_delete tax_rate %>
+        <% end %>
       </td>
     </tr>
     <% end %>

@@ -1,4 +1,6 @@
+<%- locals = {:f => f} %>
 <table>
+<%= hook :admin_tax_rate_form_fields, locals do %>
   <tr>
     <td><%=t("zone")%>:</td>
     <td><%= f.collection_select(:zone_id, @available_zones, :id, :name) %></td>
@@ -10,7 +12,10 @@
   <tr>
     <td><%=t("rate")%>:</td>
     <td><%= f.text_field :amount %></td>
-  </tr>  
+  </tr>
+<% end %>
 </table>
 
-<%= render "admin/shared/calculator_fields", :f => f %>
+<%= hook :admin_tax_rate_form_calculator_fields, locals do %>
+  <%= render "admin/shared/calculator_fields", :f => f %>
+<% end %>
