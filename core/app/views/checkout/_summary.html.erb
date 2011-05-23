@@ -6,7 +6,7 @@
       <td><strong><%= number_to_currency order.item_total %></strong></td>
     </tr>
     <tbody id="summary-order-charges">
-      <% order.adjustments.each do |adjustment| %>
+      <% order.adjustments.eligible.each do |adjustment| %>
         <tr>
           <td><%= adjustment.label %>: </td>
           <td><%= number_to_currency adjustment.amount %></td>
