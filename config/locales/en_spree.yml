@@ -428,6 +428,7 @@ en:
   included_in_this_shipment: Included in this Shipment
   instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"
+  invalid_coupon_code: Invalid coupon code.
   invalid_search: "Invalid search criteria."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"

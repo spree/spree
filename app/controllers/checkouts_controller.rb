@@ -53,6 +53,13 @@ class CheckoutsController < Spree::BaseController
       flash.now[:error] = t("unable_to_authorize_credit_card") + ": #{ge.message}"
     end
 
+    if params[:checkout] and params[:checkout][:coupon_code]     # 1258 - Set error flash if coupon code was provided but invalid
+        given_coupon = Coupon.find_by_code( params[:checkout][:coupon_code].upcase )
+        unless given_coupon and @checkout.order.coupon_credits.collect(&:adjustment_source).include? given_coupon
+            flash.now[:error] = t("invalid_coupon_code")
+        end
+    end 
+
     render 'edit'
   end
 
