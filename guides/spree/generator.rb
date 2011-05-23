@@ -1,6 +1,5 @@
 require 'set'
 require 'yaml'
-YAML::ENGINE.yamler= 'syck'
 
 module Spree
   class Generator
@@ -10,7 +9,7 @@ module Spree
       @guides_dir = File.join(File.dirname(__FILE__), '..')
 
       @output = output || File.join(@guides_dir, "output")
-      
+
       @only = ENV["ONLY"]
       @only = ARGV.join(",")if ARGV.length > 0
 
@@ -58,9 +57,9 @@ module Spree
         else
           body = File.read(File.join(view_path, guide))
           body = set_header_section(body, @view)
-          body = set_index(body, @view)  
+          body = set_index(body, @view)
 
-          result = view.render(:layout => 'layout', :text => textile(body))    
+          result = view.render(:layout => 'layout', :text => textile(body))
           f.write(result + analytics)
           warn_about_broken_links(result)
         end
@@ -77,11 +76,11 @@ module Spree
 
       view.content_for(:page_title) { page_title }
       view.content_for(:header_section) { header }
-                     
+
       new_body
-    end  
-    
-    def analytics 
+    end
+
+    def analytics
       <<-GOOGLE
       <script type="text/javascript">
       	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -91,7 +90,7 @@ module Spree
       	var pageTracker = _gat._getTracker("#{ENV['ANALYTICS_ID']}");
       	pageTracker._initData();
       	pageTracker._trackPageview();
-      </script>      
+      </script>
       GOOGLE
     end
 
@@ -147,9 +146,9 @@ module Spree
         code_blocks << %{<div class="code_container"><code class="#{css_class}">#{es.gsub("\n","<br>")}</code></div>}
         "\ndirty_workaround_for_notextile_#{code_blocks.size - 1}\n"
       end
-      
+
       body = yield body
-      
+
       body.gsub(%r{<p>dirty_workaround_for_notextile_(\d+)</p>}) do |_|
         code_blocks[$1.to_i]
       end
@@ -160,7 +159,7 @@ module Spree
       anchors  = Set.new(html.scan(/<h\d\s+id="([^"]+)/).flatten)
       # Also, footnotes are rendered as paragraphs this way.
       anchors += Set.new(html.scan(/<p\s+class="footnote"\s+id="([^"]+)/).flatten)
-      
+
       # Check fragment identifiers.
       html.scan(/<a\s+href="#([^"]+)/).flatten.each do |fragment_identifier|
         next if fragment_identifier == 'mainCol' # in layout, jumps to some DIV
