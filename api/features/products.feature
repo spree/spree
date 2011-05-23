@@ -12,7 +12,7 @@ Feature: Products api description
     And the response should be an array with 2 products
 
   Scenario: Retrieve a list of products after searching
-    Given the following products exist:
+    Given the following product exist:
       | name                |
       | apache baseball cap |
       | zomg shirt          |

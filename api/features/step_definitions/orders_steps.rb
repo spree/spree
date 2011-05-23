@@ -48,8 +48,8 @@ Then /^the response status should be "([^"]*)"$/ do |status|
 end
 
 Then /^the response should be an array with (\d+) states/ do |num|
-  page = JSON.parse(last_response.body)
-  page.map { |d| d[name] }.length.should == num.to_i
+  page = JSON.load(last_response.body)
+  page.map { |d| d['name'] }.length.should == num.to_i
   page.first.keys.sort.should == ["state"]
 
   keys = ["abbr", "country_id", "id", "name"]
@@ -57,14 +57,14 @@ Then /^the response should be an array with (\d+) states/ do |num|
 end
 
 Then /^the response should have state information$/ do
-  page = JSON.parse(last_response.body)
+  page = JSON.load(last_response.body)
   page['state']['abbr'].should  be_true
   page['state']['name'].should  be_true
 end
 
 Then /^the response should be an array with (\d+) shipments/ do |num|
-  page = JSON.parse(last_response.body)
-  page.map { |d| d[name] }.length.should == num.to_i
+  page = JSON.load(last_response.body)
+  page.map { |d| d['name'] }.length.should == num.to_i
   page.first.keys.sort.should == ["shipment"]
 
   keys = ["address", "cost", "created_at", "id", "inventory_units", "number", "order_id", "shipped_at", "shipping_method", "state", "tracking", "updated_at"]
@@ -72,7 +72,7 @@ Then /^the response should be an array with (\d+) shipments/ do |num|
 end
 
 Then /^the response should have shipment information$/ do
-  page = JSON.parse(last_response.body)
+  page = JSON.load(last_response.body)
   page['shipment']['address'].should  be_true
   page['shipment']['cost'].should  be_true
   page['shipment']['number'].should  be_true
@@ -83,8 +83,9 @@ end
 
 
 Then /^the response should be an array with (\d+) products?/ do |num|
-  page = JSON.parse(last_response.body)
-  page.map { |d| d[name] }.length.should == num.to_i
+  page = JSON.load(last_response.body)
+
+  page.map { |d| d['name'] }.length.should == num.to_i
   page.first.keys.sort.should == ["product"]
 
   keys = ["available_on", "count_on_hand", "created_at", "deleted_at", "description", "id", "meta_description", "meta_keywords", "name", "permalink", "shipping_category_id", "tax_category_id", "updated_at"]
@@ -92,22 +93,22 @@ Then /^the response should be an array with (\d+) products?/ do |num|
 end
 
 Then /^the response should have product information$/ do
-  page = JSON.parse(last_response.body)
+  page = JSON.load(last_response.body)
   page['product']['permalink'].should  be_true
   page['product']['name'].should  be_true
   page['product']['count_on_hand'].should  be_true
 end
 
 Then /^the response should have product information for shirt$/ do
-  page = JSON.parse(last_response.body).first
+  page = JSON.load(last_response.body).first
   page['product']['permalink'].should  be_true
   page['product']['name'].should  == 'zomg shirt'
   page['product']['count_on_hand'].should  be_true
 end
 
 Then /^the response should be an array with (\d+) orders/ do |num|
-  page = JSON.parse(last_response.body)
-  page.map { |d| d[name] }.length.should == num.to_i
+  page = JSON.load(last_response.body)
+  page.map { |d| d['name'] }.length.should == num.to_i
   page.first.keys.sort.should == ["order"]
 
   keys = ["adjustment_total", "bill_address_id", "completed_at", "created_at", "credit_total", "email",
@@ -118,7 +119,7 @@ Then /^the response should be an array with (\d+) orders/ do |num|
 end
 
 Then /^the response should have order information$/ do
-  page = JSON.parse(last_response.body)
+  page = JSON.load(last_response.body)
   page['order']['number'].should  be_true
   page['order']['state'].should  be_true
   page['order']['email'].should  be_true
@@ -126,7 +127,7 @@ Then /^the response should have order information$/ do
 end
 
 Then /^the response should have country information$/ do
-  page = JSON.parse(last_response.body)
+  page = JSON.load(last_response.body)
   page['country']['name'].should == 'Afghanistan'
   page['country']['iso_name'].should == 'AFGHANISTAN'
   page['country']['iso3'].should == 'AFG'
@@ -135,8 +136,8 @@ Then /^the response should have country information$/ do
 end
 
 Then /^the response should be an array with (\d+) countries$/ do |num|
-  page = JSON.parse(last_response.body)
-  page.map { |d| d[name] }.length.should == num.to_i
+  page = JSON.load(last_response.body)
+  page.map { |d| d['name'] }.length.should == num.to_i
   page.first.keys.sort.should == ["country"]
 
   keys = ["id", "iso", "iso3", "iso_name", "name", "numcode"]
@@ -144,8 +145,8 @@ Then /^the response should be an array with (\d+) countries$/ do |num|
 end
 
 Then /^the response should be an array with (\d+) inventory units$/ do |num|
-  page = JSON.parse(last_response.body)
-  page.map { |d| d[name] }.length.should == num.to_i
+  page = JSON.load(last_response.body)
+  page.map { |d| d['name'] }.length.should == num.to_i
   page.first.keys.sort.should == ["inventory_unit"]
 
   keys = ["created_at", "id", "lock_version", "order_id", "return_authorization_id", "shipment_id", "state", "updated_at", "variant_id"]
@@ -153,14 +154,14 @@ Then /^the response should be an array with (\d+) inventory units$/ do |num|
 end
 
 Then /^the response should have inventory unit information$/ do
-  page = JSON.parse(last_response.body)
+  page = JSON.load(last_response.body)
   page['inventory_unit']['lock_version'].should be_true
   page['inventory_unit']['state'].should be_true
 end
 
 Then /^the response should be an array with (\d+) line items$/ do |num|
-  page = JSON.parse(last_response.body)
-  page.map { |d| d[name] }.length.should == num.to_i
+  page = JSON.load(last_response.body)
+  page.map { |d| d['name'] }.length.should == num.to_i
   page.first.keys.sort.should == ["line_item"]
 
   keys =  ["created_at", "description", "id", "order_id", "price", "quantity", "updated_at", "variant", "variant_id"]
@@ -168,7 +169,7 @@ Then /^the response should be an array with (\d+) line items$/ do |num|
 end
 
 Then /^the response should have line item information$/ do
-  page = JSON.parse(last_response.body)
+  page = JSON.load(last_response.body)
   page['line_item']['description'].should match(/Size: S/)
   page['line_item']['price'].should  be_true
   page['line_item']['quantity'].should be_true
