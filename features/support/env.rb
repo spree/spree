@@ -59,11 +59,11 @@ DatabaseCleaner.strategy = :transaction
 # it helps in debugging when factory_girl step definition does not work
 def factory_definitions_debugger
   Factory.factories.values.each do |factory|
-    puts factory.human_name.pluralize
+    puts factory..model_name.human.pluralize
     if factory.build_class.respond_to?(:columns)
       factory.build_class.columns.each do |column|
         human_column_name = column.name.downcase.gsub('_', ' ')
-        puts "an? #{factory.human_name} exists with an? #{human_column_name} of "
+        puts "an? #{factory.model_name.human} exists with an? #{human_column_name} of "
       end
     end
   end
