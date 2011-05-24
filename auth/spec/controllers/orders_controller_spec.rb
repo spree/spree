@@ -116,15 +116,13 @@ describe OrdersController do
   end
 
   context "when no authenticated user" do
-    let(:order) { mock_model(Order, :user => user).as_null_object }
+    let(:order) { Factory(:order, :number => "R123") }
 
     context "#show" do
-      before { Order.stub :find_by_number => order }
-
       context "when token parameter present" do
         it "should store as guest_token in session" do
-          get :show, {:id => "R123", :token => "ABC"}
-          session[:access_token].should == "ABC"
+          get :show, {:id => "R123", :token => order.token }
+          session[:access_token].should == order.token
         end
       end
 
@@ -134,9 +132,9 @@ describe OrdersController do
           session[:access_token].should be_nil
         end
 
-        it "should redirect to login_path" do
+        it "should respond with 404" do
           get :show, {:id => "R123"}
-          response.should redirect_to login_path
+          response.code.should == "404"
         end
       end
     end
