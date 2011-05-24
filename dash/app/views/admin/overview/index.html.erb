@@ -147,28 +147,24 @@
 </div>
 
 <% content_for :head do %>
-  <div data-hook="admin_dashboard_javascript">
-    <% if @show_dashboard %>
-       <script type="text/javascript">
-        var orders_by_day_points = [[<%== @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
-        var best_selling_variants_points = [<%== @best_selling_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
-        var top_grossing_variants_points = [<%== @top_grossing_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
-        var best_selling_taxons_points = [<%== @best_selling_taxons.map { |t| "[\"#{h(t[0])}\",#{t[1]}]" }.join(",") %>];
+  <% if @show_dashboard %>
+     <script type="text/javascript">
+      var orders_by_day_points = [[<%== @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
+      var best_selling_variants_points = [<%== @best_selling_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
+      var top_grossing_variants_points = [<%== @top_grossing_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
+      var best_selling_taxons_points = [<%== @best_selling_taxons.map { |t| "[\"#{h(t[0])}\",#{t[1]}]" }.join(",") %>];
 
-        var orders = "<%= t(:orders) %>";
-        var by_day = "<%= t(:by_day) %>";
+      var orders = "<%= t(:orders) %>";
+      var by_day = "<%= t(:by_day) %>";
 
-        var pie_colors = [<%== @pie_colors.map{|c| "'#{c}'"}.join(",") %>];
-       </script>
+      var pie_colors = [<%== @pie_colors.map{|c| "'#{c}'"}.join(",") %>];
+     </script>
 
-      <%= javascript_include_tag 'jqPlot/jquery.jqplot.min.js', 'jqPlot/plugins/jqplot.dateAxisRenderer.min.js', 'jqPlot/plugins/jqplot.highlighter.min.js',
-        'jqPlot/plugins/jqplot.canvasAxisTickRenderer.min.js', 'jqPlot/plugins/jqplot.canvasTextRenderer.min.js', 'jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js',
-        'jqPlot/plugins/jqplot.pieRenderer.min.js', 'dashboard.js' %>
-    <!--[if IE]><%= javascript_include_tag 'jqPlot/excanvas.min.js' %><![endif]-->
-    <% end %>
-  </div>
+    <%= javascript_include_tag '/jqPlot/jquery.jqplot.min.js', '/jqPlot/plugins/jqplot.dateAxisRenderer.min.js', '/jqPlot/plugins/jqplot.highlighter.min.js',
+      '/jqPlot/plugins/jqplot.canvasAxisTickRenderer.min.js', '/jqPlot/plugins/jqplot.canvasTextRenderer.min.js', '/jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js',
+      '/jqPlot/plugins/jqplot.pieRenderer.min.js', '/admin/javascripts/dashboard.js' %>
+  <!--[if IE]><%= javascript_include_tag '/jqPlot/excanvas.min.js' %><![endif]-->
+  <% end %>
 
-  <div data-hook="admin_dashboard_stylesheet">
-     <%= stylesheet_link_tag 'admin/dashboard.css' %>
-  </div>
+  <%= stylesheet_link_tag '/admin/stylesheets/dashboard.css' %>
 <% end %>

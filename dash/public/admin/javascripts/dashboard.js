@@ -34,8 +34,8 @@ jQuery(document).ready(function(){
 
 		jQuery("#order_by_day_title").text(orders + " " + jQuery("#orders_by_day_value :selected").val() + " " + by_day + " (" + jQuery("#orders_by_day_reports :selected").text() + ")");
 
-		$('#orders_by_day').empty();
-		$.jqplot('orders_by_day', new_points, orders_by_day_settings);
+		jQuery('#orders_by_day').empty();
+		jQuery.jqplot('orders_by_day', new_points, orders_by_day_settings);
 
 	}
 	
@@ -57,7 +57,7 @@ jQuery(document).ready(function(){
 	  axes:{
 			yaxis:{
 				label:'Order (Count)',
-				labelRenderer: $.jqplot.CanvasAxisLabelRenderer,						
+				labelRenderer: jQuery.jqplot.CanvasAxisLabelRenderer,						
 				autoscale:true, 
 				tickOptions:{
 					formatString:'%d',
@@ -67,8 +67,8 @@ jQuery(document).ready(function(){
 				min: 0
 			},	
 			xaxis:{	 
-				renderer:$.jqplot.DateAxisRenderer,
-				rendererOptions:{tickRenderer:$.jqplot.CanvasAxisTickRenderer},
+				renderer:jQuery.jqplot.DateAxisRenderer,
+				rendererOptions:{tickRenderer:jQuery.jqplot.CanvasAxisTickRenderer},
 				tickOptions:{
 					formatString:'%b %#d, %y',
 					angle: -30,
@@ -109,30 +109,30 @@ jQuery(document).ready(function(){
 
 	});
 
-	best_selling_variants = $.jqplot('best_selling_products', [best_selling_variants_points], {
+	best_selling_variants = jQuery.jqplot('best_selling_products', [best_selling_variants_points], {
 		grid: {background:'#fff',borderWidth: 0, borderColor: '#fff', shadow: false},
 		seriesDefaults:{
-		  renderer:$.jqplot.PieRenderer, 
+		  renderer:jQuery.jqplot.PieRenderer, 
 		  rendererOptions:{padding:6,sliceMargin:0}
 		},
 		seriesColors: pie_colors
 	});
 
 
-	top_grossing_variants = $.jqplot('top_grossing_products', [top_grossing_variants_points], {
+	top_grossing_variants = jQuery.jqplot('top_grossing_products', [top_grossing_variants_points], {
 		grid: {background:'#fff',borderWidth: 0, borderColor: '#fff', shadow: false},
 		seriesDefaults:{
-		  renderer:$.jqplot.PieRenderer, 
+		  renderer:jQuery.jqplot.PieRenderer, 
 		  rendererOptions:{padding:6,sliceMargin:0}
 		},
 
 		seriesColors: pie_colors
 	});
 
-	tbest_selling_taxons = $.jqplot('best_selling_taxons', [best_selling_taxons_points], {
+	tbest_selling_taxons = jQuery.jqplot('best_selling_taxons', [best_selling_taxons_points], {
 		grid: {background:'#fff',borderWidth: 0, borderColor: '#fff', shadow: false},
 		seriesDefaults:{
-		  renderer:$.jqplot.PieRenderer, 
+		  renderer:jQuery.jqplot.PieRenderer, 
 		  rendererOptions:{padding:6,sliceMargin:0}
 		},
 

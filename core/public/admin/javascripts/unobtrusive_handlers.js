@@ -1,12 +1,12 @@
-$(document).ready(function(){
+jQuery(document).ready(function(){
 
-  $(".select_properties_from_prototype").live("click", function(){
-    $("#busy_indicator").show();
-    var clicked_link = $(this);
+  jQuery(".select_properties_from_prototype").live("click", function(){
+    jQuery("#busy_indicator").show();
+    var clicked_link = jQuery(this);
     jQuery.ajax({ dataType: 'script', url: clicked_link.attr("href"), type: 'get',
         success: function(data){
           clicked_link.parent("td").parent("tr").hide(); 
-          $("#busy_indicator").hide();
+          jQuery("#busy_indicator").hide();
         }
     });
     return false;
@@ -18,7 +18,7 @@ $(document).ready(function(){
       {
         handle: '.handle',
         update: function(event, ui) {
-          $("#progress").show();
+          jQuery("#progress").show();
           positions = {};
           type = '';
           jQuery.each(jQuery('table.sortable tbody tr'), function(position, obj){
@@ -34,7 +34,7 @@ $(document).ready(function(){
             dataType: 'script',
             url: type+'s/update_positions',
             data: positions,
-            success: function(data){ $("#progress").hide(); }
+            success: function(data){ jQuery("#progress").hide(); }
           });
         }
       });

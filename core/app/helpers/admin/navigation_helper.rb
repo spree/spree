@@ -98,7 +98,7 @@ module Admin::NavigationHelper
   end
 
   def icon(icon_name)
-    icon_name ? image_tag("/images/admin/icons/#{icon_name}.png") : ''
+    icon_name ? image_tag("/admin/images/icons/#{icon_name}.png") : ''
   end
 
   def button(text, icon_name = nil, button_type = 'submit', options={})

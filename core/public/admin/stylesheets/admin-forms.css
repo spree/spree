@@ -96,17 +96,17 @@ form div.right.w30 {
   border-left:none;border-right:none;
 }
 .flash.error {
-  background: #FDE4E4 url(../../images/admin/icons/exclamation.png) 10px center no-repeat;
+  background: #FDE4E4 url(../images/icons/exclamation.png) 10px center no-repeat;
   color:#c00; border-color:#c00;
 }
 .flash.notice {
-  background: #E7F8D7 url(../../images/admin/icons/tick.png) 10px center no-repeat;
+  background: #E7F8D7 url(../images/icons/tick.png) 10px center no-repeat;
   color:#59A151; border-color: #59A151;
 }
 
 .withError {
   background-color:#FDE4E4;
-  background-image:url(../../images/admin/bg/red-stripes.png);
+  background-image:url(../images/bg/red-stripes.png);
 }
 .formError {
   color:#c00; font-weight:bold;
@@ -132,7 +132,7 @@ form div.right.w30 {
   position: relative; }
   .field .formError {
     color: #fff;
-    background: #f15700 url(../../images/admin/icons/fugue/exclamation_small.png) center left no-repeat;
+    background: #f15700 url(../images/icons/exclamation.png) center left no-repeat;
     padding: 3px 7px;
     display: inline-block;
     margin-bottom: 1em;

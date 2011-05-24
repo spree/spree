@@ -66,7 +66,7 @@ body {
       #content a:visited {
         color: #3C7DFB; }
     #content.with-sidebar {
-      background: #fff url(../../images/admin/bg/content-back.png) right top repeat-y;
+      background: #fff url(../images/bg/content-back.png) right top repeat-y;
       padding-right: 340px;
       position: relative; }
       #sidebar {
@@ -118,7 +118,7 @@ body {
               #sidebar ul.sidebar li a:hover { background-color:#ddd }
               #sidebar ul.sidebar li.active a {
                 font-weight: bold;
-                background: url(../../images/admin/bg/menu-current.png) left center no-repeat;
+                background: url(../images/bg/menu-current.png) left center no-repeat;
                 color: #363 !important;
                 margin-left: -20px;
                 padding-left: 30px; }
@@ -196,7 +196,7 @@ body {
   #IE7 #admin-menu {
     height: 39px; }
   #admin-menu {
-    background: #154e8c url(../../images/admin/bg/admin_tab_back.png) top left repeat-x;
+    background: #154e8c url(../images/bg/admin_tab_back.png) top left repeat-x;
     border-top: 1px solid #4B83E2;
     border-right: 1px solid #34599B;
     border-bottom: 1px solid #41A6F0;
@@ -206,7 +206,7 @@ body {
       #admin-menu ul li:first-child {
         border-left: 1px solid #34599B; }
       #admin-menu ul li.selected {
-        background: #0095da url(../../images/admin/bg/admin_tab_selected_back.png) top left repeat-x;
+        background: #0095da url(../images/bg/admin_tab_selected_back.png) top left repeat-x;
         border-left: 1px solid #41A6F0;
         border-top: 1px solid #41A6F0;
         border-right: 1px solid #4986BF;
@@ -252,7 +252,7 @@ body {
     .search-form label {
       display: block; }
   a.button {
-    background: transparent url(../../images/admin/buttons/right_01.png) no-repeat scroll top right;
+    background: transparent url(../images/buttons/right_01.png) no-repeat scroll top right;
     display: block;
     float: left;
     margin-right: 6px;
@@ -262,7 +262,7 @@ body {
     font-weight: bold;
     outline: none; }
     a.button span {
-      background: transparent url(../../images/admin/buttons/left_01.png) no-repeat;
+      background: transparent url(../images/buttons/left_01.png) no-repeat;
       display: block;
       line-height: 22px;
       padding: 7px 0 5px 14px;
@@ -274,24 +274,24 @@ body {
       font-weight: normal; }
     a.button.small {
       font-size: 1em;
-      background: transparent url(../../images/admin/buttons/right_01_small.png) no-repeat scroll top right;
+      background: transparent url(../images/buttons/right_01_small.png) no-repeat scroll top right;
       padding-right: 20px; }
       a.button.small span {
-        background: transparent url(../../images/admin/buttons/left_01_small.png) no-repeat;
+        background: transparent url(../images/buttons/left_01_small.png) no-repeat;
         padding: 5px 0 3px 20px;
         line-height: 21px; }
     a.button.green {
-      background: transparent url(../../images/admin/buttons/green/right_01.png) no-repeat scroll top right;
+      background: transparent url(../images/buttons/green/right_01.png) no-repeat scroll top right;
       color: #151 !important; }
       a.button.green span {
-        background: transparent url(../../images/admin/buttons/green/left_01.png) no-repeat; }
+        background: transparent url(../images/buttons/green/left_01.png) no-repeat; }
   button {
     border: 0;
     cursor: pointer;
     font-weight: bold;
     padding: 0 20px 0 0;
     text-align: center;
-    background: url(../../images/admin/buttons/right_01.png) center right no-repeat;
+    background: url(../images/buttons/right_01.png) center right no-repeat;
     font-size: 1.3em;
     outline: none; }
     button span {
@@ -301,7 +301,7 @@ body {
       padding: 0 0 0 20px;
       height: 35px;
       line-height: 35px;
-      background: url(../../images/admin/buttons/left_01.png) center left no-repeat;
+      background: url(../images/buttons/left_01.png) center left no-repeat;
       text-shadow: #efefef 1px 1px 0px; }
       button span img {
         vertical-align: middle;
@@ -327,7 +327,7 @@ body {
     .errorExplanation h2 {
       font-size: 1.75em;
       padding-left: 40px;
-      background: url(../../images/admin/icons/orb/32x32/3.png) center left no-repeat; }
+      background: url(../images/icons/orb/32x32/3.png) center left no-repeat; }
   ul.checkbox-list {
     list-style: none; }
     ul.checkbox-list li {
@@ -402,7 +402,7 @@ body {
       ul.taxonomy-actions li.disabled {
         opacity: .5; }
   h3.warning {
-    background-image: url(../../images/admin/icons/fugue/exclamation.png);
+    background-image: url(../images/icons/fugue/exclamation.png);
     background-position: 10px 15px;
     background-repeat: no-repeat;
     padding-left: 35px; }
@@ -452,7 +452,7 @@ div#calculator-settings-warning, .warning {
 }
 #progress{
   display:none;
-  background:#154E8C url(../../images/admin/bg/admin_tab_back.png) repeat-x scroll left top;
+  background:#154E8C url(../images/bg/admin_tab_back.png) repeat-x scroll left top;
   color:#fff;
   font-size:170%;
   height:25px;
@@ -578,8 +578,9 @@ table#product_scopes tr td table tr td {
 
 
 span.handle{
-  background-image: url(../../images/reorder.jpg);
+  background-image: url(../images/icons/switch.png);
   display: inline-block;
+  cursor: move;
   width:14px;
   height:15px;
 }

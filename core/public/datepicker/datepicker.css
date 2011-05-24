@@ -52,7 +52,7 @@ a.date-picker-control:focus
         border:0 none;
         padding:0;
         margin:0 0 0 4px;
-        background:transparent url(/images/datepicker/cal.gif) no-repeat 50% 50%;
+        background:transparent url(images/cal.gif) no-repeat 50% 50%;
         min-width:16px;
         line-height:1;
         cursor:pointer;
@@ -142,7 +142,7 @@ div.datePicker table
         margin:0;
         padding:0;
         border:1px solid #ccc;
-        background:#fff url(/images/datepicker/gradient-e5e5e5-ffffff.gif) repeat-x 0 -20px;
+        background:#fff url(images/gradient-e5e5e5-ffffff.gif) repeat-x 0 -20px;
         text-align:center;
         width:100%;
         border-spacing:2px;
@@ -159,7 +159,7 @@ div.datePicker table td
         /* Opera requires a line-height bigger than 1em in order to redraw properly */
         line-height:1.2em;
         cursor:pointer;
-        background:#fff url(/images/datepicker/gradient-e5e5e5-ffffff.gif) repeat-x 0 -40px;
+        background:#fff url(images/gradient-e5e5e5-ffffff.gif) repeat-x 0 -40px;
         width:3em;
         height:3em !important;
         height:2.8em;
@@ -177,7 +177,7 @@ div.datePicker table th
         }
 div.datePicker table td.date-picker-unused
         {
-        background:#fff url(/images/datepicker/backstripes.gif);
+        background:#fff url(images/backstripes.gif);
         border-color:#dcdcdc;
         padding:0;
         cursor:default !important;
@@ -201,7 +201,7 @@ div.datePicker table th.date-picker-day-header span
 /* The "todays date" style */
 div.datePicker table td.date-picker-today
         {
-        background:#fff url(/images/datepicker/bullet2.gif) no-repeat 0 0;
+        background:#fff url(images/bullet2.gif) no-repeat 0 0;
         color:rgb(100,100,100) !important;
         }
 /* The "selected date" style */
@@ -233,7 +233,7 @@ div.datePicker table td.day-disabled
 /* The "active cursor" style */
 div.datePicker table tbody td.date-picker-hover
         {
-        background:#fff url(/images/datepicker/bg_header.jpg) no-repeat 0 0;
+        background:#fff url(images/bg_header.jpg) no-repeat 0 0;
         cursor:pointer;
         border-color:rgb(100,130,170);
         color:rgb(100,130,170);

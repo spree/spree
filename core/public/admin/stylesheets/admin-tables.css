@@ -1,5 +1,5 @@
 table.index th {
-  background: #cdcdcd url(../../images/admin/bg/grid_header_back.png) top left repeat-x;
+  background: #cdcdcd url(../images/bg/grid_header_back.png) top left repeat-x;
   padding: 7px 10px;
   border-left: 1px solid #ddd;
   border-top: 1px solid #ddd;
@@ -23,7 +23,7 @@ table.index th {
 table.index tr.alt td {
   background-color: #efefef; }
 table.index.green th {
-  background: #cfefa7 url(/images/grid_header_back_green.png) top left repeat-x;
+  background: #cfefa7 url(../images/grid_header_back_green.png) top left repeat-x;
   border-left: 1px solid #E4FDB4;
   border-top: 1px solid #E4FDB4;
   border-right: 1px solid #B7CB90;

@@ -37,7 +37,7 @@
 }
 
 #order_totals{
-  background:#154E8C url(../../images/admin/bg/admin_tab_back.png) repeat-x scroll left top;
+  background:#154E8C url(../images/bg/admin_tab_back.png) repeat-x scroll left top;
   -moz-border-radius-bottomleft:10px;
   -moz-border-radius-bottomright:10px;
   -moz-border-radius-topleft:10px;

@@ -2,7 +2,7 @@
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head data-hook="admin_inside_head">
-  <%= render :partial => "shared/admin_head" %>
+  <%= render :partial => "admin/shared/head" %>
 </head>
 <body class='yui-skin-sam admin'>
 <!--[if IE 7]>
@@ -64,7 +64,7 @@
 <![endif]-->
 
 <div data-hook="admin_footer_scripts">
-  <%= javascript_include_tag 'admin/unobtrusive_handlers' %>
+  <%= javascript_include_tag '/admin/javascripts/unobtrusive_handlers.js' %>
 </div>
 </body>
 </html>
