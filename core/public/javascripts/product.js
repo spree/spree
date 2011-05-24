@@ -28,21 +28,22 @@ jQuery(document).ready(function() {
     jQuery("#variant-thumbnails").empty();
     jQuery("#variant-images span").html(text);
  
-    if (images[vid].length > 0) {
+    var link;
+    if (images[vid] && images[vid].length > 0) {
       $.each(images[vid], function(i, link) {
         jQuery("#variant-thumbnails").append('<li>' + link + '</li>');
       });
  
       jQuery("#variant-images").show();
+      link = jQuery("#variant-thumbnails a:first");
     } else {
       jQuery("#variant-images").hide();
+      link = jQuery("#product-thumbnails a:first");
     }
  
-    add_image_handlers();
- 
-    var link = jQuery("#variant-thumbnails a")[0];
- 
     jQuery("#main-image img").attr({src: jQuery(link).attr('href')});
+    add_image_handlers();
+    
     jQuery('ul.thumbnails li').removeClass('selected');
     jQuery(link).parent('li').addClass('selected');
   });

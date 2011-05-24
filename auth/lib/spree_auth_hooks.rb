@@ -6,6 +6,6 @@ Deface::Override.new(:virtual_path => "layouts/admin",
 
 Deface::Override.new(:virtual_path => "shared/_nav_bar",
                      :name => "auth_shared_login_bar",
-                     :insert_after => "[data-hook='shared_login_bar'], #shared_login_bar[data-hook]",
+                     :insert_after => "li#search-bar",
                      :partial => "shared/login_bar",
                      :disabled => false)

@@ -68,6 +68,11 @@ module Spree::BaseHelper
     end.join("\n")
   end
 
+  def body_class
+    @body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col'
+    @body_class
+  end
+
   def stylesheet_tags(paths=stylesheet_paths)
     paths.blank? ? '' : stylesheet_link_tag(paths, :cache => true)
   end
@@ -83,6 +88,44 @@ module Spree::BaseHelper
 
   def logo(image_path=Spree::Config[:logo])
     link_to image_tag(image_path), root_path
+  end
+  
+  def flash_messages
+    [:notice, :error].map do |msg_type|
+      if flash[msg_type]
+        content_tag :div, flash[msg_type], :class => "flash #{msg_type}"
+      else
+        ''
+      end
+    end.join("\n").html_safe
+  end
+  
+  def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
+    return "" if current_page?("/") || taxon.nil?
+    separator = raw(separator)
+    crumbs = [content_tag(:li, link_to(t(:home) , root_path) + separator)]
+    if taxon
+      crumbs << content_tag(:li, link_to(t('products') , products_path) + separator)
+      crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator) } unless taxon.ancestors.empty?
+      crumbs << content_tag(:li, content_tag(:span, taxon.name))
+    else
+      crumbs << content_tag(:li, content_tag(:span, t('products')))
+    end
+    crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join))
+    content_tag(:div, crumb_list + tag(:br, {:class => 'clear'}, false, true), :id => 'breadcrumbs')
+  end
+
+  def taxons_tree(root_taxon, current_taxon, max_level = 1)
+    return '' if max_level < 1 || root_taxon.children.empty?
+    content_tag :ul, :class => 'taxons-list' do
+      root_taxon.children.map do |taxon|
+        css_class = (current_taxon && current_taxon.self_and_ancestors.include?(taxon)) ? 'current' : nil
+        content_tag :li, :class => css_class do
+         link_to(taxon.name, seo_url(taxon)) + 
+         taxons_tree(taxon, current_taxon, max_level - 1) 
+        end
+      end.join("\n").html_safe
+	  end
   end
 
   def available_countries

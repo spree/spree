@@ -4,20 +4,20 @@
     $('#checkout_form_address').validate();
 
     var get_states = function(region){
-      var country        = $('p#' + region + 'country' + ' span#' + region + 'country :only-child').val();
+      country = $('p#' + region + 'country' + ' span#' + region + 'country :only-child').val();
       return state_mapper[country];
     }
     
     var update_state = function(region) {
-      var states         = get_states(region);
+      states = get_states(region);
 
-      var state_select = $('span#' + region + 'state select');
-      var state_input = $('span#' + region + 'state input');
+      state_select = $('p#' + region + 'state select');
+      state_input = $('p#' + region + 'state input');
 
       if(states) {
-        var selected = state_select.val();
+        selected = state_select.val();
         state_select.html('');
-        var states_with_blank = [["",""]].concat(states);
+        states_with_blank = [["",""]].concat(states);
         $.each(states_with_blank, function(pos,id_nm) {
           var opt = $(document.createElement('option'))
                     .attr('value', id_nm[0])
@@ -43,19 +43,18 @@
       if(this.checked){ $('#payment_method_'+this.value).show(); }
     }).triggerHandler('click');
 
-    $('p#bcountry span#bcountry select').change(function() { update_state('b'); });
-    $('p#scountry span#scountry select').change(function() { update_state('s'); });
+    $('p#bcountry select').change(function() { update_state('b'); });
+    $('p#scountry select').change(function() { update_state('s'); });
     update_state('b');
     update_state('s');
 
     $('input#order_use_billing').click(function() {
       if($(this).is(':checked')) {
-        $('#shipping .inner input, #shipping .inner select, #shipping .inner label, #shipping .inner .req').hide();
+        $('#shipping .inner').hide();
         $('#shipping .inner input, #shipping .inner select').attr('disabled', 'disabled');
       } else {
-        $('#shipping .inner input, #shipping .inner select, #shipping .inner label, #shipping .inner .req').show();
+        $('#shipping .inner').show();
         $('#shipping .inner input, #shipping .inner select').removeAttr('disabled', 'disabled');
-
         //only want to enable relevant field
         if(get_states('s')){
           $('span#sstate input').hide().attr('disabled', 'disabled');

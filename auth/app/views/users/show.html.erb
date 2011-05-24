@@ -1,17 +1,11 @@
 <h1><%= t("my_account") %></h1>
 
 <div data-hook="account_summary">
-
-  <table>
-    <tr>
-      <td><%= t("email") %>:</td>
-      <td>
-        <%= @user.email %>
-      </td>
-    </tr>
-  </table>
+  <dl id="user-info">
+    <dt><%= t("email") %></dt>
+    <dd><%= @user.email %></dd>
+  </dl>
   <p><%= link_to t('edit'), edit_account_path %></p>
-
 </div>
 
 <div data-hook="account_my_orders">

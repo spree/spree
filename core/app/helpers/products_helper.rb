@@ -27,4 +27,8 @@ module ProductsHelper
     raw(product.description.gsub(/^(.*)$/, '<p>\1</p>'))
   end
 
+  def variant_images_hash(product)
+    product.variant_images.inject({}){|h, img| (h[img.viewable_id] ||= []) << img; h }
+  end
+
 end

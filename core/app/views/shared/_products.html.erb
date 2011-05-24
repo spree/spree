@@ -9,12 +9,13 @@
 <% end %>
 
 <% if products.any? %>
-<ul class="product-listing">
+<ul id="products" class="product-listing">
   <% products.each do |product| %>
     <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
       <li id="product_<%= product.id %>" data-hook="products_list_item">
+        <%= link_to product.name, product, :class => 'info' %>
         <%= link_to small_image(product), product %>
-        <%= link_to  product, :class => 'info' do %><%= product.name %> <span class='price selling'><%= product_price(product) %></span><% end %>
+        <span class="price selling"><%= product_price(product) %></span>
       </li>
     <% end %>
   <% end %>

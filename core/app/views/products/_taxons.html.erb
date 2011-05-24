@@ -5,7 +5,7 @@
     <div data-hook="product_taxons">
       <ul id='similar_items_by_taxon'>
       <% @product.taxons.each do |taxon| %>
-        <li><%= link_to taxon.name, "/t/#{taxon.permalink}" %></li>
+        <li><%= link_to taxon.name, seo_url(taxon) %></li>
       <% end %>
       </ul>
     </div>

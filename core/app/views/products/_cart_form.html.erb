@@ -1,13 +1,12 @@
 <%= form_for :order, :url => populate_orders_url do |f| %>
   <div data-hook="inside_product_cart_form">
 
-    <% if product_price(@product) %>
+    <% if @product.price %>
       <div data-hook="product_price">
-        <p class="prices">
-          <%= t("price") %>
-          <br />
-          <span class="price selling"><%= product_price(@product) %></span>
-        </p>
+        <dl id="product-price">
+          <dt><%= t("price") %></dt>
+          <dd><span class="price selling"><%= product_price(@product) %></span></dd>
+        </dl>
       </div>
     <% end %>
 
@@ -21,8 +20,8 @@
             checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
             has_checked = true if checked %>
             <li>
-              <label>
-                <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders] %>
+              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders] %>
+              <label for="<%= ['products', @product.id, v.id].join('_') %>">
                 <span class="variant-description">
                   <%= variant_options v %>
                 </span>
@@ -39,8 +38,8 @@
       <%= text_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
         1, :class => "title", :size => 3 %>
       &nbsp;
-      <button type='submit' class='large primary'>
-        <%= image_tag('/images/add-to-cart.png') + t('add_to_cart') %>
+      <button type="submit" class="large primary" id="add-to-cart-button">
+        <%= image_tag('icons/add-to-cart.png') + t('add_to_cart') %>
       </button>
     <% else %>
       <%= content_tag('strong', t('out_of_stock')) %>

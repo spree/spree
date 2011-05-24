@@ -58,6 +58,11 @@ class Product < ActiveRecord::Base
     :dependent => :destroy
 
 
+  def variant_images
+    Image.find_by_sql("SELECT assets.* FROM assets LEFT JOIN variants ON (variants.id == assets.viewable_id) WHERE (variants.product_id = #{self.id})")
+  end
+
+
   validates :name, :price, :permalink, :presence => true
 
   accepts_nested_attributes_for :product_properties, :allow_destroy => true, :reject_if => lambda { |pp| pp[:property_name].blank? }

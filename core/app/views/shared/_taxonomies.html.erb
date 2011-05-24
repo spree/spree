@@ -1,17 +1,6 @@
 <div id="taxonomies" class="sidebar-item">
   <% get_taxonomies.each do |taxonomy| %>
-    <ul class="navigation-list">
-      <li<%== ' class="current"' if @taxon && @taxon == taxonomy.root %>>
-        <%= link_to t("shop_by_taxonomy", :taxonomy => taxonomy.name.singularize), seo_url(taxonomy.root),
-                                          :class => 'root' %>
-      </li>
-
-      <% taxonomy.root.children.each do |taxon| %>
-        <li<%== ' class="current"' if @taxon and ([@taxon] + @taxon.ancestors).include?(taxon) %>>
-          <%= link_to taxon.name, seo_url(taxon) %>
-        </li>
-	    <% end %>
-
-	  </ul>
+    <h3 class='taxonomy-root'><%= t("shop_by_taxonomy", :taxonomy => taxonomy.name.singularize) %></h3>
+    <%= taxons_tree(taxonomy.root, @taxon, Spree::Config[:max_level_in_taxons_menu] || 1) %>
   <% end %>
 </div>
