@@ -35,10 +35,10 @@
 
 
     <% if flash[:error] %>
-    <div class="flash error"><%= flash[:error] %></div>
+    <div class="flash error"><%== flash[:error] %></div>
     <% end %>
     <% if self.notice %>
-    <div class="flash notice"><%= self.notice %></div>
+    <div class="flash notice"><%== self.notice %></div>
     <% end %>
 
 
