@@ -158,5 +158,12 @@ module Admin::NavigationHelper
     </tr>
     ).html_safe
   end
+  
+  def configurations_sidebar_menu_item(link_text, url, options = {})
+    options.merge!(:class => url.include?(controller.controller_name) ? 'active' : nil)
+    content_tag(:li, options) do
+      link_to(link_text, url)
+    end
+  end
 
 end
