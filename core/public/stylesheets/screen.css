@@ -509,6 +509,7 @@ ul#nav-bar li.cart-indicator a.full { background-image: url(../images/cart-full_
   background: #f4b4b4 url(../images/shadow_top.png) 0px -50px repeat-x;
   color: #000000;
   border: 1px solid #000000;
+  float: left;
 }
 .errorExplanation p { margin: 0px; }
 .errorExplanation ul { margin-bottom: 0px; }
