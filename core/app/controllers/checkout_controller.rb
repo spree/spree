@@ -16,7 +16,8 @@ class CheckoutController < Spree::BaseController
         state_callback(:after)
       else
         flash[:error] = I18n.t(:payment_processing_failed)
-        respond_with(@order, :location => checkout_state_path(@order.state)) and return
+        respond_with(@order, :location => checkout_state_path(@order.state))
+        return
       end
 
       if @order.state == "complete" || @order.completed?

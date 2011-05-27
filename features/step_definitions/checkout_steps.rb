@@ -68,3 +68,9 @@ When /^(?:|I )enter valid credit card details$/ do
   And %{I fill in "card_code" with "123"}
   And %{press "Save and Continue"}
 end
+
+When /^(?:|I )enter invalid credit card details$/ do
+  And %{I fill in "card_number" with "1234567890"}
+  And %{I fill in "card_code" with "000"}
+  And %{press "Save and Continue"}
+end
