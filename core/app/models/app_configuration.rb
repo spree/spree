@@ -33,6 +33,7 @@ class AppConfiguration < Configuration
   preference :cache_static_content, :boolean, :default => true
   preference :use_content_controller, :boolean, :default => true
   preference :allow_checkout_on_gateway_error, :boolean, :default => false
+  preference :signout_after_password_change, :boolean, :default => true
 
   validates :name, :presence => true, :uniqueness => true
 
