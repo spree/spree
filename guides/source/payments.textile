@@ -14,7 +14,7 @@ endprologue.
 
 h3. Overview
 
-Spree has a highly flexible payments model which allows multiple multiple payment methods to be available during checkout. The logic for processing payments is decoupled from the checkout making it easy to define custom payment methods with their own processing logic. Additional payments may be created in the admin interface if  You can define your own payment methods to be available to customers during checkout and for different methods to be available based on the current Rails environment.
+Spree has a highly flexible payments model which allows multiple payment methods to be available during checkout. The logic for processing payments is decoupled from the checkout making it easy to define custom payment methods with their own processing logic. Additional payments may be created in the admin interface if  You can define your own payment methods to be available to customers during checkout and for different methods to be available based on the current Rails environment.
 
 Payment methods typically represent a payment gateway which will process card payments but may also include non-gateway methods of payment such as +Check+ which is provided in Spree by default.
 
