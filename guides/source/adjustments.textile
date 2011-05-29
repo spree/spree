@@ -14,7 +14,7 @@ Adjustments play a crucial role in Spree.  They are the means by which an order 
 
 Adjustments can be either positive or negative.  Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits."  These are just terms of convenience since there is only one +Adjustment+ model in Spree which handles this by allowing either positive or negative values.
 
-INFO. Prior to Spree 0.30.x there were separate +Credit+ and +Charge+ models.  This distinction has been abandoned since it made things unnecessarily complicated.
+INFO: Prior to Spree 0.30.x there were separate +Credit+ and +Charge+ models.  This distinction has been abandoned since it made things unnecessarily complicated.
 
 h3. Totals
 
@@ -59,7 +59,7 @@ Tax adjustments are any adjustments with a label of "Tax."  This is just a namin
 => [ ... ]
 </shell>
 
-INFO. Tax related charges are considered "frozen":adjustments.html#frozen-adjustments by default.
+INFO: Tax related charges are considered "frozen":adjustments.html#frozen-adjustments by default.
 
 h4. Shipping
 
@@ -70,7 +70,7 @@ Shipping adjustments are any adjustments with a label of "Shipping."  This is ju
 => [ ... ]
 </shell>
 
-INFO. Shipping related charges are considered "frozen":adjustments.html#frozen-adjustments by default.
+INFO: Shipping related charges are considered "frozen":adjustments.html#frozen-adjustments by default.
 
 h4. Coupons and Promotions
 
@@ -84,7 +84,7 @@ h4. Calculators
 
 Spree makes extensive use of the +Calculator+ model and there are several subclasses provided to deal with various types of calculations (flat rate, percentage discount, sales tax, VAT, etc.)  All calculators extend the +Calculator+ class and must provide the following methods
 
-<shell>
+<ruby>
 def self.description
   # Human readable description of the calculator
 end
@@ -96,7 +96,7 @@ end
 def compute(object=nil)
   # Returns the value after performing the required calculation
 end
-</shell>
+</ruby>
 
 h4. Registration
 
@@ -127,7 +127,7 @@ Spree itself contains a good example of how this can be achieved.  For instance,
 
 This calls the +register+ method on the calculators that we intend to register.  Extension authors should be sure to register any new calculators within the +self.activate+ method defined in +lib/your_extension_name.rb+.  If you do not intend to distribute your calculator as an extension you can simply register it inside a Rails initializer or the +self.activate+ method of the default SpreeSite engine.
 
-INFO. Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the design decisions surrounding calculators.
+INFO: Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the design decisions surrounding calculators.
 
 h4. +Spree::CalculatedAdjustments+ Module
 
@@ -175,7 +175,7 @@ Now we can verify that this instance of +ShippingMethod+ in fact has a +Calculat
 => nil
 </shell>
 
-NOTE.  If you are creating new Rails models you should never declare +has_one :calculator+ in order to take advantage of calculators.  Just use +calculated_adjustments+ instead since you get this association and several other goodies for free.  You'll also be doing things the standard Spree way which will make it easier to maintain over the long run.
+NOTE:  If you are creating new Rails models you should never declare +has_one :calculator+ in order to take advantage of calculators.  Just use +calculated_adjustments+ instead since you get this association and several other goodies for free.  You'll also be doing things the standard Spree way which will make it easier to maintain over the long run.
 
 We can also register classes that extend +Calculator+ with a class that declares +calculated_adjustments+.  Lets look at +Calculator::FlatRate+ to see what this means.
 
@@ -232,7 +232,7 @@ end
 
 Here we see that an instance of +TaxRate+ is being used to create the adjustment for the order.  +TaxRate+ declares +calculated_adjustments+ in its class definition which makes this all possible.
 
-INFO. You do not need to understand this process to make use of adjustments in Spree.  The detailed information provided here for those who wish to understand the inner workings of Spree a little better.  If you are interested in creating a new Spree extension that will create or affect adjustments in some way, this understanding is crucial.
+INFO: You do not need to understand this process to make use of adjustments in Spree.  The detailed information provided here for those who wish to understand the inner workings of Spree a little better.  If you are interested in creating a new Spree extension that will create or affect adjustments in some way, this understanding is crucial.
 
 h4. Computation
 
@@ -256,13 +256,13 @@ def compute(order)
 end
 </shell>
 
-INFO. Calculators should never return a value of +nil+ in their +compute+ method.  Return 0 in these situations instead.
+INFO: Calculators should never return a value of +nil+ in their +compute+ method.  Return 0 in these situations instead.
 
 h4. Locked Adjustments
 
 Spree also has the notion of so-called "locked" adjustments.  The concept behind this is there are certain types of adjustments which should never be changed once calculated.  There are also situations where it is appropriate for an adjustment that was once subject to recalculation to be recalculated.
 
-WARNING. Locked adjustments are currently considered experimental.  We're currently exploring the ability to configure Spree to honor certain locking strategies.  For instance, locking a promotion calculation in place so that its not lost if the order is updated after the promotion expires.  There are also some interesting options to allow admins with the appropriate permissions to have the ability to lock/unlock adjustments when appropriate.
+WARNING: Locked adjustments are currently considered experimental.  We're currently exploring the ability to configure Spree to honor certain locking strategies.  For instance, locking a promotion calculation in place so that its not lost if the order is updated after the promotion expires.  There are also some interesting options to allow admins with the appropriate permissions to have the ability to lock/unlock adjustments when appropriate.
 
 h3. Configuration
 

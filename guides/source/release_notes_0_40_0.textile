@@ -6,7 +6,7 @@ h3. Summary
 
 Spree 0.40.0 represents another step forward towards the eventual 1.0.0 release.  This version focuses heavily on authentication and authorization.  Most sites running 0.30.x will be able to upgrade with very little difficulty.  We're still working on identifying all of the Spree extensions that run 0.40.x but its a fairly safe bet that any extension running 0.30.x will work with this release.
 
-INFO. We're always looking for more help with the Spree documentation.  If you'd like to offer assistance please contact us on the spree-user mailing list and we can give you commit access to the "spree-guides":http://github.com/spree/spree-guides documentation project.
+INFO: We're always looking for more help with the Spree documentation.  If you'd like to offer assistance please contact us on the spree-user mailing list and we can give you commit access to the "spree-guides":http://github.com/spree/spree-guides documentation project.
 
 h3. Database Migrations
 
@@ -17,7 +17,7 @@ $ rake spree:install:migrations
 $ rake db:migrate
 </shell>
 
-WARNING. Always be sure to perform a complete database backup before performing any operations.  It is also suggested that you examine the new migrations closely before running them so you are aware of what changes are being made to your database.
+WARNING: Always be sure to perform a complete database backup before performing any operations.  It is also suggested that you examine the new migrations closely before running them so you are aware of what changes are being made to your database.
 
 h3. Replacing Authlogic with Devise
 
@@ -33,7 +33,7 @@ h4. Upgrading Existing Sites
 
 We have tried to minimize changes and when possible, naming conventions have be maintained.  The result is that only one controller has been moved and renamed. Routing and the named route conventions having been maintained as well.
 
-NOTE. The file +core/password_resets_controller.rb+ has been renamed and moved to +auth/user_password_resets_controller.rb+
+NOTE: The file +core/password_resets_controller.rb+ has been renamed and moved to +auth/user_password_resets_controller.rb+
 
 We have already set up devise to handle the existing encryption scheme that authlogic used so there is no need to make any changes and the current users will work "out of the box".
 
@@ -102,6 +102,6 @@ The final step is to ensure that the token is passed to CanCan when the authoriz
 authorize! action, resource, session[:access_token]
 </ruby>
 
-NOTE. Since +OrdersController+ does not implement +resource_controller+ this is done explicitly in the controller
+NOTE: Since +OrdersController+ does not implement +resource_controller+ this is done explicitly in the controller
 
 For more information on tokenized permissions please read the detailed "security guide":security.html#tokenized-permissions.

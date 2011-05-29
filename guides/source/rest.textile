@@ -15,7 +15,7 @@ The REST API is designed to give developers a convenient way to access data cont
 
 h3. Available Resources
 
-INFO. The API currently only supports a limited number of resources.  The current list reflects the needs of paying clients who funded the development of the API.  The list will be expanded soon to cover additional resources.  Adding more resources is simply a matter of making the time for testing and investigating possible security implications.
+INFO: The API currently only supports a limited number of resources.  The current list reflects the needs of paying clients who funded the development of the API.  The list will be expanded soon to cover additional resources.  Adding more resources is simply a matter of making the time for testing and investigating possible security implications.
 
 Spree currently supports RESTful access to the following resources:
 
@@ -167,7 +167,7 @@ curl -u bb51d44e:x http://example.com/api/orders.json
 
 The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.
 
-NOTE. The admin role is fairly "powerful" by default.  Consider creating a new role and assign a more limited set of permissions.  This way you can create a user and corresponding token that has more narrow permissions (ex. read only access to orders.)
+NOTE: The admin role is fairly "powerful" by default.  Consider creating a new role and assign a more limited set of permissions.  This way you can create a user and corresponding token that has more narrow permissions (ex. read only access to orders.)
 
 h4. HTTP Methods
 
@@ -207,7 +207,7 @@ h4. Other Supported Formats
 
 Currently the API supports only the "JSON":http://www.json.org/ format.
 
-INFO. Supporting the XML format should not be difficult since Rails supports it out of the box.  Volunteers who are willing to provide a patch (and tests) for XML support are encouraged to do so.
+INFO: Supporting the XML format should not be difficult since Rails supports it out of the box.  Volunteers who are willing to provide a patch (and tests) for XML support are encouraged to do so.
 
 h4. Searching
 
@@ -238,7 +238,7 @@ Orders support the following operations
 * Index
 * Show
 
-NOTE. The following examples demonstrate the API using +Order#id+.  You can also perform the same operations using +Order#number+.
+NOTE: The following examples demonstrate the API using +Order#id+.  You can also perform the same operations using +Order#number+.
 
 h5. List Orders
 
@@ -557,7 +557,7 @@ curl -u V8WPYgRdSZN1mSQG17sK:x -i \
 http://example.com/api/orders.json
 </shell>
 
-NOTE. Use +-I+ option instead if you're only interested in returning the header information.
+NOTE: Use +-I+ option instead if you're only interested in returning the header information.
 
 h5. Use +Content-Type+ Headers when Submitting JSON
 
@@ -577,4 +577,6 @@ http://localhost:3000/api/orders/1035625630/event.json \
 -d 'e=cancel'
 </shell>
 
-NOTE. The above approach may solve unexplained "HTTP/1.1 411 Length Required" errors when using the REST API with curl and webrick.
+NOTE: The above approach may solve unexplained "HTTP/1.1 411 Length Required" errors when using the REST API with curl and webrick.
+
+<!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->

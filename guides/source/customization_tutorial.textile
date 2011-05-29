@@ -20,7 +20,7 @@ The new project will already have a site extension created by default, located i
 +vendor/extensions/site+. It should contain a few skeleton files already. We will create 
 a new theme to hold the changed views templatew
 
-NOTE. When any files in an extension's +public/*+ directories are modified, such as CSS or JS files, a server restart is required to copy these files over to the main app +public/+ directory. Kill and rerun +script/server+, or if using Apache + Passenger, use +touch tmp/restart.txt+, etc. 
+NOTE: When any files in an extension's +public/*+ directories are modified, such as CSS or JS files, a server restart is required to copy these files over to the main app +public/+ directory. Kill and rerun +script/server+, or if using Apache + Passenger, use +touch tmp/restart.txt+, etc. 
 
 
 h3. Creating a Theme Extension
@@ -206,7 +206,7 @@ Apply the following patch to +SITE_EXTENSION_DIR/app/views/shared/_head.html.erb
 
 h4. Create the Javascript
 
-WARNING. Spree endorses the use of jQuery rather than the Rails convention of Prototype. Using Prototype will most likely cause jQuery conflicts.
+WARNING: Spree endorses the use of jQuery rather than the Rails convention of Prototype. Using Prototype will most likely cause jQuery conflicts.
 
 Create a new directory to house the javascript in the SITE_EXTENSION/public/javascripts/ directory.
 

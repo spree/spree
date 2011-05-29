@@ -32,7 +32,7 @@ We have configure Devise to handle only what is needed to authenticate with a Sp
 * There is a remember me and password recovery tool built in and enabled through Devise.
 * +http_auth_basic+ is enable to accommodate the API query interface. (See below for security notes relating to the API)
 
-INFO. These configurations represent a reasonable starting point for a typical e-commerce site.  Devise can be configured extensively to allow for a different feature set but that is currently beyond the scope of this document.  Developers are encouraged to visit the Devise wiki for more details.
+INFO: These configurations represent a reasonable starting point for a typical e-commerce site.  Devise can be configured extensively to allow for a different feature set but that is currently beyond the scope of this document.  Developers are encouraged to visit the Devise wiki for more details.
 
 h4. Encryption Algorithm
 
@@ -40,7 +40,7 @@ By default, Spree supports the same encryption scheme as the one used by the "Au
 
 If you have a brand new site (and password migration is not a concern) you may want to consider the more powerful "bcrypt":http://bcrypt.sourceforge.net/ algorithm.
 
-INFO. Currently this requires modifying the +spree_auth+ gem directly.  We're working with the Devise team to come up with a more convenient solution for handling this and other customizations to Devise.
+INFO: Currently this requires modifying the +spree_auth+ gem directly.  We're working with the Devise team to come up with a more convenient solution for handling this and other customizations to Devise.
 
 h4. REST API
 
@@ -206,13 +206,13 @@ h4. Transmit Exactly Once
 
 Spree uses extreme caution in its handling of credit cards.  In production mode, credit card data is transmitted to Spree via SSL.  The data is immediately relayed to your chosen payment gateway and then discarded.  The credit card data is never stored in the database (not even temporarily) and it exists in memory on the server for only a fraction of a second before it is discarded.
 
-INFO. Spree does store the last four digits of the credit card and the expiration month and date.  You could easily customize Spree further if you wanted and opt out of storing even that little bit of information.
+INFO: Spree does store the last four digits of the credit card and the expiration month and date.  You could easily customize Spree further if you wanted and opt out of storing even that little bit of information.
 
 h4. Payment Profiles
 
 Spree also supports the use of "payment profiles."  This means that you can "store" a customers credit card information in your database securely.  More precisely you store a "token" that allows you to use the credit card again.  The credit card gateway is actually the place where the credit card is stored.  Spree ends up storing a token that can be used to authorize new charges on that same card without having to store sensitive credit card details.
 
-NOTE. Spree has out of the box support for "Authorize.net CIM":http://www.authorize.net/solutions/merchantsolutions/merchantservices/cim/ payment profiles.
+NOTE: Spree has out of the box support for "Authorize.net CIM":http://www.authorize.net/solutions/merchantsolutions/merchantservices/cim/ payment profiles.
 
 h4. Other Options
 

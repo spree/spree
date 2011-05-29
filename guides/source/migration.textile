@@ -10,7 +10,7 @@ know:
 
 endprologue.
 
-WARNING. This documentation on this topic is out of date and we're working to update it. In the meantime if you see things in here that are confusing its possible that they no longer apply, etc.
+WARNING: This documentation on this topic is out of date and we're working to update it. In the meantime if you see things in here that are confusing its possible that they no longer apply, etc.
 
 h3. Overview
 
@@ -46,7 +46,7 @@ moving between hosting platforms. Another is when cloning some project:
 collaborators can just import a database dump prepared by someone else,
 and save the time of the code import.
 
-NOTE. Spree has database consistency checker Rake tasks - try +rake db:consistency+ or +rake db:consistency:products+. These do basic checks on information structure. They aren't a full check, but do help to pick up serious problems.
+NOTE: Spree has database consistency checker Rake tasks - try +rake db:consistency+ or +rake db:consistency:products+. These do basic checks on information structure. They aren't a full check, but do help to pick up serious problems.
 
 
 h4. Rails Fixtures
@@ -139,7 +139,7 @@ Your ruby script can use one of the XLS or CSV format reading libraries
 to read an external file, or if the data set is not too big, you could embed
 the CSV text in the script itself, eg. using the +__END__+ convention.
 
-NOTE. If the order of loading is important, choose names for the files so that alphabetical order gives the correct load order...
+NOTE: If the order of loading is important, choose names for the files so that alphabetical order gives the correct load order...
 
 
 h4. Important system-wide settings
@@ -184,7 +184,7 @@ p = Product.create :name => "some product", :price => 10.0, :description => "som
 Observe that the +permalink+ and timestamps are added automatically.
 You may want to set the 'meta' fields for SEO purposes.
 
-NOTE. It's important to set the +available_on+ field. Without this being a date in the past, the product won't be listed in the standard displays.
+NOTE: It's important to set the +available_on+ field. Without this being a date in the past, the product won't be listed in the standard displays.
 
 <ruby>
 p.available_on = Time.now
@@ -299,7 +299,7 @@ for brands and product ranges, like 'Guitars' with child 'Acoustic'.
 You could use various property or option values to drive the creation of
 such taxonomies.
 
-NOTE. We intend to provide automatic support for this in the near future, via "product groups":scopes_and_groups.html.
+NOTE: We intend to provide automatic support for this in the near future, via "product groups":scopes_and_groups.html.
 
 
 h4. Product Properties
@@ -342,7 +342,7 @@ color, quality rating, etc) for your product, and then create variants which
 (usually) have a single option value for each of the product's option types
 (e.g. 'small' and 'red' etc).
 
-NOTE. Spree's core generally assumes that each variant has exactly one option value for each of the product's option types, but the current code is tolerant of missing values. Certain extensions may be more strict, e.g. ones for providing advanced variant selection.
+NOTE: Spree's core generally assumes that each variant has exactly one option value for each of the product's option types, but the current code is tolerant of missing values. Certain extensions may be more strict, e.g. ones for providing advanced variant selection.
 
 
 h5. Creating variants
@@ -356,7 +356,7 @@ too). You can also set the +weight+, +width+, +height+, and +depth+ too.
 v = Variant.create :product => p, :sku => "some_sku_code", :price => NNNN
 </ruby>
 
-NOTE. The price is only copied at creation, so any subsequent changes to a product's price will need to be copied to all of its variants.
+NOTE: The price is only copied at creation, so any subsequent changes to a product's price will need to be copied to all of its variants.
 
 Next, you may also want to register some stock for this variant.
 The exact steps depend on how you have configured Spree's
@@ -471,8 +471,6 @@ S3":http://github.com/thoughtbot/paperclip/blob/master/lib/paperclip/storage.rb
 
 h3. Theme migration
 
-NOTE. To be written.
+NOTE: To be written.
 
-
-
-
+<!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->

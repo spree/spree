@@ -246,7 +246,7 @@ The "Spree wiki":http://wiki.github.com/spree/spree
 contains a collection of scripts you can download and adapt, plus other useful utilities. Look at
 the "Tricks and Tips section":http://wiki.github.com/spree/spree/developers-tricks-and-tips.
 
-NOTE. The "migration section":migration.html of the guides gives an overview on how to import data programmatically into Spree.
+NOTE: The "migration section":migration.html of the guides gives an overview on how to import data programmatically into Spree.
 
 
 "Steph Powell":http://github.com/stephskardal has produced a useful blog post on

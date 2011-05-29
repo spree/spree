@@ -45,7 +45,7 @@ h4. Sales Tax Example
 
 NOTE: Currently, sales tax is calculated **after** the shipping is calculated.  Therefore, shipping costs are not included in the sales tax calculation.  
 
-WARNING. In some states, delivery charges are subject to state sales tax.
+WARNING: In some states, delivery charges are subject to state sales tax.
 
 h3. Value Added Tax (VAT)
 

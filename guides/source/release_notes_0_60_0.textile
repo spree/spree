@@ -8,13 +8,13 @@ The 0.60.0 release contains a significant change to all controllers within Spree
 
 While the removal of resource_controller is not most glamous or exciting change, it's another significant stepping stone to our 1.0 release.
 
-INFO. We're always looking for more help with the Spree documentation.  If you'd like to offer assistance please contact us on the spree-user mailing list and we can give you commit access to the "spree-guides":http://github.com/spree/spree-guides documentation project.
+INFO: We're always looking for more help with the Spree documentation.  If you'd like to offer assistance please contact us on the spree-user mailing list and we can give you commit access to the "spree-guides":http://github.com/spree/spree-guides documentation project.
 
 h3. Database Migrations
 
 There are no database migrations to worry about in this release (assuming you are already running Spree 0.50.x).
 
-WARNING. Always be sure to perform a complete database backup before performing any operations.
+WARNING: Always be sure to perform a complete database backup before performing any operations.
 
 h3. Removal of resource_controller
 
@@ -53,14 +53,14 @@ h5. URL Helpers
 * +object_url+
 * +collection_url+
 
-WARNING. Use of these generic helpers is discouraged in favor of the default Rails helper urls.
+WARNING: Use of these generic helpers is discouraged in favor of the default Rails helper urls.
 
 h5. Instance Variables
 
 * +@object+
 * +@collection+
 
-WARNING. Use of these variables is strongly discouraged.  Use the actual Rails standard variable names instead.
+WARNING: Use of these variables is strongly discouraged.  Use the actual Rails standard variable names instead.
 
 h4. Unsupported Functionality
 
@@ -73,7 +73,7 @@ h5. Custom Responses
 
 These have been replaced with a new method called +respond_override+
 
-INFO. See the "Customization":customization.html guide for more details on +respond_override+
+INFO: See the "Customization":customization.html guide for more details on +respond_override+
 
 h5. Deprecated Methods
 
@@ -88,7 +88,7 @@ The following method for custom flash messages has been removed entirely (with n
 
 Admin::ResourceController's use is encouraged in extensions and/or site customizations that require basic CRUD admin controllers. It should not be used on front-end or complex admin controllers, as you can see from the current source even certain core admin controllers do not use it (for example Admin::OrdersController).
 
-NOTE. While the use of resource_controller has been completely removed from all of Spree's core controllers, the dependency on resource_controller gem will remain for a while to allow extension authors to update their projects.
+NOTE: While the use of resource_controller has been completely removed from all of Spree's core controllers, the dependency on resource_controller gem will remain for a while to allow extension authors to update their projects.
 
 h3. Miscellaneous Changes
 

@@ -53,11 +53,11 @@ Each gateway comes with the following configuration options:
 
 Spree gives you the flexibility to specify the exact combination of gateways and settings that you would like.  You can have your development environment point to a "bogus gateway":#bogus-gateway or perhaps the test gateway environment for that particular gateway provider.  Most gateway providers also allow you do to test transactions against the live production server.  You can change the +server+ option to +live+ in order to achieve this set up.
 
-INFO. You do not need to configure the URL for your gateway.  The URL for your gateway provider is already known and the appropriate URL will be used based on the +server+ setting in your configuration.
+INFO: You do not need to configure the URL for your gateway.  The URL for your gateway provider is already known and the appropriate URL will be used based on the +server+ setting in your configuration.
 
 Most gateway providers require additional information to be provided during configuration.  The information typically includes an account identifier and API key.  Once you have chosen the gateway and the basic configuration values (environment, etc.) then you will also need to provide these gateway specific values.
 
-INFO. After you change the gateway (or assign one for the first time) you will need to save the configuration and click the link to edit it.  Only after a successful save will you see the configuration settings specific to the new gateway.
+INFO: After you change the gateway (or assign one for the first time) you will need to save the configuration and click the link to edit it.  Only after a successful save will you see the configuration settings specific to the new gateway.
 
 Gateway configurations can also be temporarily deactivated.  This would allow you to configure a production gateway with all of the live settings and then disable it until you're ready to launch.  Only one gateway can be active per environment.   
 
@@ -89,7 +89,7 @@ Spree relies on the "Active Merchant":http://www.activemerchant.org/ plugin to p
 
 Active Merchant currently supports around 40 payment gateways.  Most of them have not yet been officially implemented in Spree but this is just because the core team generally uses only a few of the popular choices and there's not yet been a need to support more.  It should be trivial to support an existing Active Merchant gateway if your gateway is not yet included.  The following sections will discuss in detail how to implement a gateway.  
 
-INFO. If you implement a new gateway, we're interested in including it in the core.  You should read the "contribution guidelines":contributing_to_spree.html for more details on how to contribute code to Spree.
+INFO: If you implement a new gateway, we're interested in including it in the core.  You should read the "contribution guidelines":contributing_to_spree.html for more details on how to contribute code to Spree.
 
 h4. The Gateway Model
 
@@ -118,13 +118,13 @@ h4. Specifying Configuration Options
 
 Gateway implementations will most likely need to specify configuration options.  Spree provides a standard method for the "configuration of preferences":preferences.html.  
 
-INFO. It is important that you use the exact spelling of the Active Merchant gateway option value that you are trying to configure.
+INFO: It is important that you use the exact spelling of the Active Merchant gateway option value that you are trying to configure.
 
 If you examine the source code for the Active Merchant gateway that you are trying to configure, you will likely notice some specific options documented in the Active Merchant source code.  It is these options that you need to expose to the Spree system for configuration in the admin screen.
 
 Lets take the Authorize.net implementation as an example.  The Active Merchant implementation reveals that there are two important configuration options: +login+ and +password+.
 
-NOTE. You can ignore the +test+ option.  This is a standard preference for all gateways that is already provided for you by the base +Gateway+ class.
+NOTE: You can ignore the +test+ option.  This is a standard preference for all gateways that is already provided for you by the base +Gateway+ class.
 
 In this case, you would expose these options as preferences in your +gateway/authorize_net.rb+ file:
 
@@ -191,7 +191,7 @@ h5. Additional Functionality Beyond Active Merchant
 
 Another benefit of the architecture is that it makes it possible for Spree to provide additional common functionality that was not envisioned by Active Merchant.  Specifically, it is possible to provide an abstraction for storing credit card profiles to be used with recurring payments.  There's a good reason for Active Merchant to not care about this functionality.  Its designed for people who just want to drop a single gateway provider into their application.  Most programmers don't need three different gateways at once.  Spree is a specialized use case.  Its providing multiple gateways for you to choose from and so its desirable to have a standard method for operations such as this.
 
-INFO. Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
+INFO: Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
 
 
 

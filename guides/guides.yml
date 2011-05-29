@@ -1,0 +1,110 @@
+title: spree_guides
+description: Spree Commerce Documentation
+
+authors:
+  Core Team:
+    - name: Sean Schofield
+      nick: schof
+      image: credits/schof.jpg
+      description: Sean Schofield is the creator of Spree Commerce and member of the Spree core team.
+    - name: Brian Quinn
+      nick: BDQ
+      description: Brian Quinn is a long time contributor of Spree and member of the Spree core team.
+  Community Team:
+    - name: Steph Skardal
+      nick: skardal
+      description: Hello
+    - name: Neeraj Singh
+      description: Hello
+    - name: John Dilts
+      description: Hello
+  Additional Contributors:
+    - name: Brian Quinn
+      nick: BDQ
+      description: Brian Quinn is a long time contributor of Spree and member of the Spree core team.
+index:
+  Start Here:
+    - title: Getting Started with Spree
+      url: getting_started
+      text: Everything you need to know to install Spree and create your first application.
+    - title: Working with the Source Code
+      url: source_code
+      text: An Introduction to Working with the Source Code
+    - title: Server Configuration
+      url: server_configuration
+      text: Steps to get your Spree application up and running in a production environment.
+  Basic Configuration:
+    - title: Products and Variants
+      url: products_and_variants
+      text: This guide covers the basic representation of products and their possible variants.
+    - title: Inventory
+      url: inventory
+      text: Information on the powerful inventory management system used by Spree
+    - title: Taxonomy/Categorization
+      url: taxonomy
+      text: This guide covers various methods for categorizing your products.
+    - title: Payments
+      url: payments
+      text: "This guides explains how Spree's payment system works and how to implement your own payment methods."
+    - title: Payment Gateways
+      url: payment_gateways
+      text: This guide covers how to setup a payment gateway using ActiveMerchant or another gateway solution of your choice
+    - title: Zones
+      url: zones
+      text: This guide covers how to configure a zone for shipping, taxation or other custom purpose.
+    - title: Adjustments
+      url: adjustments
+      text: This guide covers the role that adjustments in taxation, shipping and promotions.
+    - title: Taxation
+      url: taxation
+      text: Information on how to configure the tax calculations for your site (including Sales Tax and VAT.)
+    - title: Shopping
+      url: shipping
+      text: Information on how to configure shipping options as well as building your own shipping calculator.
+    - title: Coupons and Discounts
+      url: coupons_and_discounts
+      text: Information on how to configure your own coupons/discounts/gift certificates.
+  Best Practices:
+    - title: Developer Tips
+      url: developer_tips
+      text: This guides contains a miscellany of useful advice from Spree developers, including how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
+    - title: SEO Considerations
+      url: seo_considerations
+      text: Information on how to leverage the existing SEO features of Spree as well as on general SEO best practices.
+  Digging Deeper:
+    - title: Customization
+      url: customization
+      text: This guide introduces the key ideas for customizing Spree to your site design.
+    - title: Using Extensions
+      url: extensions
+      text: This guide covers the technical details of the extension system.
+    - title: Spree Checkout Process
+      url: checkout
+      text: This guides covers the Spree checkout process and shows you how to customize the steps.
+    - title: Migrating Data to Spree
+      url: migration
+      text: Some tips on how to transfer large amounts of data into Spree.
+    - title: Internationalization/Localization
+      url: i18n
+      text: This guide covers issues related to using Spree in different countries and locales.
+    - title: Testing Spree Applications
+      url: testing
+      text: This guide covers how to test the Spree source code as well as how to write new tests.
+    - title: Securing Spree Applications
+      url: security
+      text: Information on how to secure your Spree application (including roles and permission settings.)
+    - title: Preferences
+      url: preferences
+      text: Information on how to administer the the various preferences in Spree
+    - title: REST API
+      url: rest
+      text: Details on interacting with Spree using the RESTful API.
+    - title: Product Groups and Scopes
+      url: scopes_and_groups
+      text: Information on how to define groups of products by various criteria.
+    - title: Seaching and Faceting
+      url: searching
+      text: Information on how to support powerful search and filtering operations.
+    - title: Contributing to Spree
+      url: contributing_to_spree
+      text: Do you enjoy Spree and want to "give something back?" This guide contains information on how to contribute to the Spree project.

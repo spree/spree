@@ -1,0 +1,16 @@
+<% guides.each do |name, list| %>
+  <h3><%= name %></h3>
+
+  <dl>
+    <% list.each do |guide| %>
+      <dt><%= guide_link(guide) %></dt>
+      <dd>
+        <% if guide["construction"] %>
+          <img src="images/construction.png" />
+        <% end %>
+        <p><%= guide["text"] %></p>
+      </dd>
+    <% end %>
+  </dl>
+<% end %>
+

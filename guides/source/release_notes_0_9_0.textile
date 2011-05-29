@@ -1,6 +1,6 @@
 h2. Spree 0.9.0 Release Notes
 
-WARNING. Some of the information here has been made redundant by later changes.
+WARNING: Some of the information here has been made redundant by later changes.
 
 endprologue.
 
@@ -40,7 +40,7 @@ h3. Polymorphic Calculators
 
 There has been significant refactoring to the implementation of calculators.  Calculators are now polymorphic and belong to +calculable+.  This will have a non trivial impact on your existing store configuration.  After upgrading to Spree 0.9.0 you are likely going to have to make several manual adjustments to the existing tax and shipping configurations.  Ultimately we feel this is outweighed by the superior design of the new calculator system which will allow for a more modular design.
 
-WARNING. Many of the existing calculator extensions are not yet updated to support Spree 0.9.0.  Please check the "extension registry":http://ext.spreecommerce.com/ to see which versions are supported.  Our goal is to back port most of the useful calculators out there shortly after the release.
+WARNING: Many of the existing calculator extensions are not yet updated to support Spree 0.9.0.  Please check the "extension registry":http://ext.spreecommerce.com/ to see which versions are supported.  Our goal is to back port most of the useful calculators out there shortly after the release.
 
 All calculators need to implement the following method
 
@@ -97,7 +97,7 @@ def self.register
 end
 </shell>
 
-INFO. Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the desgin behind calculators.
+INFO: Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the desgin behind calculators.
 
 Once your calculators have been registered correctly by your extensions, then they will become available as options in the appropriate admin screens.
 
@@ -107,7 +107,7 @@ h3. Simplified Tax Configuration
 
 There are also minor changes to how taxes are configured.  You no longer need to specify sales tax or VAT but you do need to choose a calculator type.  Tax rates are configured as preferences for the calculator itself.
 
-WARNING. Your tax rates will be lost when you run the migrations.  You will have to recreate them manually in the admin interface.
+WARNING: Your tax rates will be lost when you run the migrations.  You will have to recreate them manually in the admin interface.
 
 h3. Unified Adjustment Model
 
@@ -119,7 +119,7 @@ Orders have one or more adjustments associated with them and each adjustment als
 
 Consider a coupon that takes $5 off all orders over $20.  If the order exceeds the required amount during checkout the coupon will create the proper adjustment.  If the customer then decides to edit their cart (before completing checkout) then you will want to make sure that the coupon still qualifies.  If the order total drops below the required amount the source of the adjustment (in this case the coupon) will have the ability to remove the adjustment based on its own internal logic.
 
-WARNING. There are significant changes to the database to support the new adjustment system.  The migrations should update your legacy data and create the necessary tax and shipping adjustments for existing orders but you should backup your database before running.
+WARNING: There are significant changes to the database to support the new adjustment system.  The migrations should update your legacy data and create the necessary tax and shipping adjustments for existing orders but you should backup your database before running.
 
 h3. Coupons and Discounts
 
@@ -137,7 +137,7 @@ Coupon eligibility is completely customizable on a per coupon basis.  Eligibilit
 
 Any other restriction on eligibility is intended to be provided by custom calculators.  The +compute+ method has access to the complete order (including shipping and other related information) and can simply return +nil+ if the coupon is not to be applied in a specific situation
 
-INFO. The next version of Spree will also provide built in filtering for coupons based on product properties and taxon information.  This will provide a standard way to restrict coupons to certain types of products.  As a workaround, you can accomplish this by hard coding restrictions in your calculator.
+INFO: The next version of Spree will also provide built in filtering for coupons based on product properties and taxon information.  This will provide a standard way to restrict coupons to certain types of products.  As a workaround, you can accomplish this by hard coding restrictions in your calculator.
 
 h4. Discount Calculation
 

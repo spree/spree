@@ -75,7 +75,7 @@ US Postal Service always charge based on the package weight.
 
 -To achieve this setup you need the following Calculators mapping
 (Configuration->Shipping Rates):-
-WARNING. Configuration -> Shipping Rates is no longer found in the current version of Spree.
+WARNING: Configuration -> Shipping Rates is no longer found in the current version of Spree.
 
 |~S.Category~ \ ^S.Method^|*DHL*|*FedEx*|*USPS*|
 |_Default (*)_|Per Item($5)|-|Weight Bucket|
@@ -170,7 +170,7 @@ are presented.
 The Customer must choose one before proceeding to the next stage. At
 confirmation, the shipping cost has been added to the order total.
 
-NOTE. You can enable collection of extra _shipping instructions_ by setting the option +Spree::Config.set(:shipping_instructions => true)+. This is turned off by default. See "Shipping Instructions":#shipping-instructions below.
+NOTE: You can enable collection of extra _shipping instructions_ by setting the option +Spree::Config.set(:shipping_instructions => true)+. This is turned off by default. See "Shipping Instructions":#shipping-instructions below.
 
 h4. What the Orders Administrator Sees
 
@@ -233,7 +233,7 @@ h3. The Active Shipping Extension
 
 The popular active_shipping extension harnesses the active_shipping gem to interface with carrier APIs such as USPS, Fedex and UPS, ultimately providing Spree-compatible calculators for the different delivery services of those carriers.
 
-NOTE. To install the spree-active-shipping extension run this command at the root of your project: +$ script/extension install http://github.com/railsdog/spree-active-shipping.git+
+NOTE: To install the spree-active-shipping extension run this command at the root of your project: +$ script/extension install http://github.com/railsdog/spree-active-shipping.git+
 
 As an example of how to use the active_shipping extension we'll demonstrate how to configure it to work with the USPS API. The other carriers follow a very similar pattern.
 
@@ -288,7 +288,7 @@ First create a calculator class that inherits from Calculator::Usps::Base and im
   end
 </shell>
 
-NOTE. Note that unlike calculators that you write yourself, these calculators do not have to implement a #compute instance method that returns a shipping amount. The superclasses take care of that requirement.
+NOTE: Note that unlike calculators that you write yourself, these calculators do not have to implement a #compute instance method that returns a shipping amount. The superclasses take care of that requirement.
 
 There is one gotcha to bear in mind. The string returned by the description method must <em>exactly</em> match the name of the USPS delivery service. To determine the exact spelling of the delivery service you'll need to examine what gets returned from the API:
 

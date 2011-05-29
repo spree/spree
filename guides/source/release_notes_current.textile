@@ -17,7 +17,7 @@ followed by the Rails project which keeps their localizations in "rails-i18n":ht
 
 The project is actually a Spree extension.  This extension contains translations only.  The rest of code needed to support the i18n features is part of the Spree core.
 
-WARNING. You will need to install the "spree_i18n":http://github.com/spree/spree_i18n extension if you want to use any of the community supplied translations of Spree.
+WARNING: You will need to install the "spree_i18n":http://github.com/spree/spree_i18n extension if you want to use any of the community supplied translations of Spree.
 
 See the "i18n":i18n.html guide for further details.
 

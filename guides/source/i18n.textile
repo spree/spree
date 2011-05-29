@@ -20,7 +20,7 @@ followed by the Rails project which keeps their localizations in "rails-i18n":ht
 
 The project is actually a Spree extension.  This extension contains translations only.  The rest of code needed to support the i18n features is part of the Spree core.
 
-WARNING. You will need to install the "spree_i18n":https://github.com/spree/spree_i18n gem if you want to use any of the community supplied translations of Spree.
+WARNING: You will need to install the "spree_i18n":https://github.com/spree/spree_i18n gem if you want to use any of the community supplied translations of Spree.
 
 h4. Translation Files
 
@@ -50,7 +50,7 @@ h5. Localization Files
 
 Spree maintains its localization information in a YAML file using a naming convention similar to that of the Rails project.  Each of the localization filenames contains a prefix representing the language code of the locale. For example, the Russian translation is contained in +config/ru-RU.yml+.
 
-INFO. Spree has over 25 locale files and counting.  See the "Github Repository":https://github.com/spree/spree_i18n/tree/master/config/locales for a complete list.
+INFO: Spree has over 25 locale files and counting.  See the "Github Repository":https://github.com/spree/spree_i18n/tree/master/config/locales for a complete list.
 
 h5. Required Files
 
@@ -58,7 +58,7 @@ Each locale that you wish to support will require both a Rails and Spree transla
 
 So for example, if you wanted to provide a Russian translation, you would install the spree_i18n extension and then copy the +ru-Ru.yml+ file from "rails-i18n":https://github.com/svenfuchs/rails-i18n into  +#{Rails.root}/ config/locales+.
 
-NOTE. If you do not need all of the localizations for your project you can skip installation of the spree_i18n gem and just copy the needed Spree translations to +#{Rails.root}/ config/locales+.
+NOTE: If you do not need all of the localizations for your project you can skip installation of the spree_i18n gem and just copy the needed Spree translations to +#{Rails.root}/ config/locales+.
 
 
 h4. Translating Views
@@ -145,18 +145,18 @@ en-GB:
 
 To ensure that currency stays consistent when a user changes their locale the same currency details should be provided for each of the supported locales.
 
-INFO. By default Spree stores prices in only a single currency.
+INFO: By default Spree stores prices in only a single currency.
 
 The single currency limitation means that if you do not change the default Rails currency settings for your locales the prices will be incorrect.  For instance, $1 in +:en+ locale will become £1 in +en-GB+.  In this case it makes sense to pick a single currency and then to override the Rails defaults for the other locales so that the prices are in a consistent currency.
 
-INFO. Multiple currency support and other pricing related improvements are being considered for future versions of Spree.
+INFO: Multiple currency support and other pricing related improvements are being considered for future versions of Spree.
 
 
 h3. Creating and Modifying Locales
 
 The +spree_i18n+ gem contains several helpful Rake tasks for helping you create new localizations as well as maintaining existing ones.
 
-WARNING. These instructions pertain to the use of the +spree_18n+ gem.  They assume that you are working with your locale files within the context of the +spree_i18n+ "source code":https://github.com/spree/spree_i18n/.  It is certainly possible to work with locale files directly within your Rails application but the Rake tasks would need to be adjusted slightly if you intended to use them.
+WARNING: These instructions pertain to the use of the +spree_18n+ gem.  They assume that you are working with your locale files within the context of the +spree_i18n+ "source code":https://github.com/spree/spree_i18n/.  It is certainly possible to work with locale files directly within your Rails application but the Rake tasks would need to be adjusted slightly if you intended to use them.
 
 h4. Refreshing the Default Locale
 
@@ -178,7 +178,7 @@ $ rake spree_i18n:stats
 
 This will list all of the available locales and give you the percentage of completion for each.
 
-NOTE. Some of the older translation files may overstate their completion percentage.  Until recently it wasn't possible to have default locales and so we used English translation values (with no comments) instead.  In these cases the English values are counted as "translated".
+NOTE: Some of the older translation files may overstate their completion percentage.  Until recently it wasn't possible to have default locales and so we used English translation values (with no comments) instead.  In these cases the English values are counted as "translated".
 
 h4. Syncing the Locales
 
@@ -188,7 +188,7 @@ As new translation strings are added to Spree you will want to resync the locale
 $ rake spree_i18n:sync
 </shell>
 
-NOTE. Remember to run +rake spree_i18n:update_default+ first if you haven't done so already.
+NOTE: Remember to run +rake spree_i18n:update_default+ first if you haven't done so already.
 
 h4. Adding a New Locale
 
@@ -221,7 +221,7 @@ es-PE:
     update: #Update
 </shell>
 
-WARNING. Remember that you will also need the corresponding Rails locale information in your applications +Rails.root+ directory.  So in order to get your locale to work with both Spree and Rials you will also need the correct locale file from +rails_i18n+.
+WARNING: Remember that you will also need the corresponding Rails locale information in your applications +Rails.root+ directory.  So in order to get your locale to work with both Spree and Rials you will also need the correct locale file from +rails_i18n+.
 
 h4. Default Values
 
@@ -244,7 +244,7 @@ Spree extensions can contain their own +config/locales* directory where develope
 
 We strongly urge all extension developers to ensure all customer facing text is rendered via the +t()+ helper method even if they only include a single default language locale file (as other users can simply include the required yaml file and translations in their site extension).
 
-INFO. Since Spree extensions are equivalent to Rails Engines they can provide localization information automatically (just like a standalone Rails application.)
+INFO: Since Spree extensions are equivalent to Rails Engines they can provide localization information automatically (just like a standalone Rails application.)
 
 h3. Disabling Internationalization
 

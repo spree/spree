@@ -30,7 +30,7 @@ You can easily build such an application by using the Rake task designed for thi
 
 This will build the appropriate test application inside of your +spec+ directory.  It will also add the gem under test to your +Gemfile+ along with the +spree_core+ gem as well (since all of the gems depend on this.)
 
-NOTE. This rake task will regenerate the application (after deleting the existing one) each time you run it.  It will also run the migrations for you automatically so that your test database is ready to go.
+NOTE: This rake task will regenerate the application (after deleting the existing one) each time you run it.  It will also run the migrations for you automatically so that your test database is ready to go.
 
 h4. Running the Specs
 
@@ -103,7 +103,7 @@ The title of this section is a bit misleading.  There's not actually any way to 
 
 [TODO: Instructions on rake task]
 
-NOTE. There's no need to check in test_app hosting your extension for testing purposes.  Make sure you ignore +spec/test_app+ in your +.gitignore+ file.
+NOTE: There's no need to check in test_app hosting your extension for testing purposes.  Make sure you ignore +spec/test_app+ in your +.gitignore+ file.
 
 [TODO: More information on Rake task once its fully developed.]
 

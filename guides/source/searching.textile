@@ -152,7 +152,7 @@ appropriate sort order and injects taxon constraints, if relevant. In particular
 a particular taxon is expanded to include all of the taxon's descendents. The final step is to
 set up the pagination.
 
-NOTE. Some of the query parameters are derived from the information registered in the +prepare()+ call.
+NOTE: Some of the query parameters are derived from the information registered in the +prepare()+ call.
 
 
 h5. Indexing and reindexing
@@ -192,9 +192,9 @@ functionality into Spree. By default it generates facets for the following:
 The extension also includes a basic partial for displaying and requesting facet results, which you can
 include or replace in your own site theme.
 
-WARNING. The price range code does not work at the moment.
+WARNING: The price range code does not work at the moment.
 
-NOTE. The description text of the price bands will need modification if used in non-US locales. The text is held in +Spree::Config[:product_price_ranges]+.
+NOTE: The description text of the price bands will need modification if used in non-US locales. The text is held in +Spree::Config[:product_price_ranges]+.
 
 
 h5. Declaration of facets

@@ -52,7 +52,7 @@ Lets examine the steps for building a new zone more closely.
 # Repeat this process for the remaining members (ex. Iceland, Denmark and Sweden)
 # Click the "Create" button to save the new zone.
 
-INFO. If you are adding state/province members they must already exist before trying to add them to the zone (Spree comes with only a limited number of states in its database.)
+INFO: If you are adding state/province members they must already exist before trying to add them to the zone (Spree comes with only a limited number of states in its database.)
 
 h3. Updating an Existing Zone 
 
@@ -61,7 +61,7 @@ Updating a zone is very similar to creating one. There are few minor differences
 * It is possible to change an existing zone's type (you will need to add new members of course.)
 * Any zone member that is removed from the list will be deleted once you click "Update."
 
-INFO. If you are editing an existing zone and change its type (say from "Country" to "State"), you will see empty select boxes since the existing members to do not map to the new set of choices.  Just set the desired state values and then remove any unused entries using the "delete icon."  Any "blank" values (resulting from a new zone type) will be discarded if you attempt to save them.
+INFO: If you are editing an existing zone and change its type (say from "Country" to "State"), you will see empty select boxes since the existing members to do not map to the new set of choices.  Just set the desired state values and then remove any unused entries using the "delete icon."  Any "blank" values (resulting from a new zone type) will be discarded if you attempt to save them.
 
 h3. Zone Types
 

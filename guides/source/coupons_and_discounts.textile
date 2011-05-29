@@ -35,7 +35,7 @@ h3. Discount Calculation
 
 The +create_discount+ method in +Coupon+ is responsible for the actual calculation of the credit to be applied for the coupon.  By default, Spree will not allow the credit amount to exceed the item total.    The credit adjustment associated with a coupon is subject to recalculation based on changes in the order.  This is no different then any other adjustment to the order total (such as shipping or tax charges.)
 
-INFO. Please be sure to read the section on "calculators":adjustments.html#calculators for a more complete understanding of this crucial concept.
+INFO: Please be sure to read the section on "calculators":adjustments.html#calculators for a more complete understanding of this crucial concept.
 
 h3. Gift Certificates
 

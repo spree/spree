@@ -12,7 +12,7 @@ h3. Who Can Contribute?
 
 Spree is an open source project and as such contributions are always welcome.  Our community is one which encourages involvement from all developers regardless of their ability level.  We ask that you be patient with the other members of the community and maintain a respectful attitude towards other people's work.  Open source is a great way to learn a new technology so don't be afraid to jump right in, even if you are new to Ruby/Rails.
 
-WARNING. We have an official contribution policy.  Please not just send us Github pull requests - they will be ignored.  We will happily accept your contribution but please read this document carefully before contributing.  
+WARNING: We have an official contribution policy.  Please not just send us Github pull requests - they will be ignored.  We will happily accept your contribution but please read this document carefully before contributing.  
 
 h3. Contributing to the Core
 
@@ -30,7 +30,7 @@ You will need to create a fork of the Spree project in Github.  This is a pretty
 git remote add railsdog git://github.com/spree/spree.git  
 </shell>  
 
-WARNING. Its important that you add this reference.  Its a one time step that will allow you to easily create branches based on the most recent version of the official code.    
+WARNING: Its important that you add this reference.  Its a one time step that will allow you to easily create branches based on the most recent version of the official code.    
 
 h4. For Each Contribution
 
@@ -38,7 +38,7 @@ h5. Create a Ticket in Lighthouse
 
 The Spree development team is using "Light House":http://railsdog.lighthouseapp.com/projects/31096-spree/overview for tracking all issue and feature requests. Use it to browse the existing tickets or to submit a new issue.  All changes to the core should flow through this system. Please file an issue before you commit your code so that you can then reference the issue number in your commit.  We get a high volume of contributions, so taking a second to create the LH issue helps us to keep track of your bug reports and fixes so that they do not get lost in the shuffle.
 
-WARNING. Do not submit pull requests in Github.  Do not send bug reports to the spree-user list.  In both cases you will be politely asked to file an issue in Lighthouse.  We need to deal with these matters in the most efficient way possible - we're not trying to be difficult.
+WARNING: Do not submit pull requests in Github.  Do not send bug reports to the spree-user list.  In both cases you will be politely asked to file an issue in Lighthouse.  We need to deal with these matters in the most efficient way possible - we're not trying to be difficult.
 
 h5. Create a Clean Branch for Each Issue
 
@@ -97,7 +97,7 @@ git push origin 525-add-thai-localization
 
 If you have set up the GitHub service hook as described earlier, the changes will automatically be reflected in the Lighthouse ticket once you push.
 
-WARNING. In previous versions of this guide we encouraged you to create a "service hook" for your fork in Github.  Unfortunately we are expereincing technical problems processing these commit messages.  We're working on a new solution that will automatically detect your fixes in Github when using the proper notation in your commits.
+WARNING: In previous versions of this guide we encouraged you to create a "service hook" for your fork in Github.  Unfortunately we are expereincing technical problems processing these commit messages.  We're working on a new solution that will automatically detect your fixes in Github when using the proper notation in your commits.
 
 h5. Merge to Your Local Master and Push
 
@@ -131,13 +131,13 @@ Improvements to the documentation is encouraged.  The primary source of document
   $ rake guides
 </shell>
 
-INFO. You will also need to install the RedCloth gem (4.1.1 or greater) if you do not done so.
+INFO: You will also need to install the RedCloth gem (4.1.1 or greater) if you do not done so.
 
 You do not need to fork the spree-guides project in order to contribute.  Just send an email to "spree-user":http://groups.google.com/group/spree-user (be sure to include your github username) and say that you would like to contribute.  We'll add you to the list so you can commit directly to the guides project.  
 
-INFO. If you're uncomfortable using Git, etc. you can report a mistake in the Spree guides using Github's built in "issue tracker":http://github.com/spree/spree-guides/issues.  Please do **not** report issues with the documentation in the Lighthouse ticket system which is reserved for reporting bugs in the code.
+INFO: If you're uncomfortable using Git, etc. you can report a mistake in the Spree guides using Github's built in "issue tracker":http://github.com/spree/spree-guides/issues.  Please do **not** report issues with the documentation in the Lighthouse ticket system which is reserved for reporting bugs in the code.
 
-WARNING. Please be considerate when making changes to the spree-guides.  If you wish to make major changes to how the documentation is organized then you should use a GitHub fork and ask people to review your proposed changes instead.
+WARNING: Please be considerate when making changes to the spree-guides.  If you wish to make major changes to how the documentation is organized then you should use a GitHub fork and ask people to review your proposed changes instead.
 
 h3. Contributing to Extensions
 

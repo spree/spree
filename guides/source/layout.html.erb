@@ -4,17 +4,19 @@
 
 <title><%= yield(:page_title) || 'Spree guides' %></title>
 
-<link rel="stylesheet" type="text/css" href="files/stylesheets/style.css" />
-<link rel="stylesheet" type="text/css" href="files/stylesheets/syntax.css" />
-<link rel="stylesheet" type="text/css" href="files/stylesheets/print.css" media="print" />
+<link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+<link rel="stylesheet" type="text/css" href="stylesheets/overrides.style.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/overrides.print.css" media="print" />
 
-<script type="text/javascript" src="files/javascripts/guides.js"></script>
-<script type="text/javascript" src="files/javascripts/code_highlighter.js"></script>
-<script type="text/javascript" src="files/javascripts/highlighters.js"></script>
+
+<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shThemeRailsGuides.css" />
+
 
 </head>
 <body class="guide">
-  <% if EDGE %>
+  <% if @edge %>
     <div>
       <img src="images/edge_badge.png" alt="edge-badge" id="edge-badge">
     </div>
@@ -32,52 +34,17 @@
   </div>
   <div id="header">
     <div class="wrapper clearfix">
-      <h1><a href="overview.html" title="Guides">Guides</a></h1>
+      <h1><a href="overview.html" title="Return to home page"><%= Guides.meta["title"] %></a></h1>
       <p class="hide"><a href="#mainCol">Skip navigation</a>.</p>
       <ul class="nav">
         <li><a href="overview.html">Home</a></li>
-        <li class="index"><a href="overview.html" onclick="guideMenu(); return false;" id="guidesMenu">Guides Index</a>
+        <li class="index"><a href="index.html" onclick="guideMenu(); return false;" id="guidesMenu">Guides Index <span id="guidesArrow">&#9656;</span></a>
           <div id="guides" class="clearfix" style="display: none;">
             <hr />
-            <dl class="L">
-              <dt>Start Here</dt>
-              <dd><a href="getting_started.html">Getting Started with Spree</a></dd>
-              <dd><a href="source_code.html">Working with the Source Code</a></dd>
-              <dd><a href="server_configuration.html">Server Configuration</a></dd>
-              <dt>Basic Configuration</dt>
-              <dd><a href="products_and_variants.html">Products and Variants</a></dd>
-              <dd><a href="inventory.html">Inventory</a></dd>
-              <dd><a href="taxonomy.html">Taxonomy/Categories</a></dd>
-              <dd><a href="payments.html">Payments</a></dd>
-              <dd><a href="payment_gateways.html">Payment Gateways</a></dd>
-              <dd><a href="zones.html">Zones</a></dd>
-              <dd><a href="adjustments.html">Adjustments</a></dd>
-              <dd><a href="taxation.html">Taxation</a></dd>
-              <dd><a href="shipping.html">Shipping</a></dd>
-              <dd><a href="coupons_and_discounts.html">Coupons and Discounts</a></dd>
-              <dt>Best Practices</dt>
-              <dd><a href="developer_tips.html">Developer Tips</a></dd>
-              <dd><a href="seo_considerations.html">SEO Considerations</a></dd>
-            </dl>
-            <dl class="R">
-              <dt>Digging Deeper</dt>
-              <dd><a href="customization.html">Customization</a></dd>
-              <dd><a href="extensions.html">Extensions</a></dd>
-              <dd><a href="checkout.html">Customizing the Checkout</a></dd>
-              <dd><a href="migration.html">Migrating data to Spree</a></dd>
-              <dd><a href="testing.html">Testing</a></dd>
-              <dd><a href="security.html">Spree Security and Authentication</a></dd>
-              <dd><a href="preferences.html">The Preference System</a></dd>
-              <dd><a href="i18n.html">Internationalization/Localization</a></dd>
-              <dd><a href="rest.html">REST API</a></dd>
-              <dd><a href="scopes_and_groups.html">Product Groups and Scopes</a></dd>
-              <dd><a href="searching.html">Searching and Facets</a></dd>
-              <dd><a href="contributing_to_spree.html">Contributing to Spree</a></dd>
-              <dd><a href="release_notes.html">Release notes</a></dd>
-            </dl>
+            <%= clickable_index %>
           </div>
         </li>
-        <li><a href="contributing_to_spree.html#contributingtothe-documentation">Contribute</a></li>
+        <li><a href="contributing_to_spree.html">Contribute</a></li>
         <li><a href="credits.html">Credits</a></li>
       </ul>
     </div>
@@ -106,5 +73,17 @@
     </div>
 
   </div>
+
+  <script type="text/javascript" src="javascripts/guides.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shCore.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushRuby.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushJScript.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushCss.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushXml.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushSql.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushPlain.js"></script>
+  <script type="text/javascript">
+    SyntaxHighlighter.all()
+  </script>
 </body>
 </html>

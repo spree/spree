@@ -6,7 +6,7 @@ h3. Summary
 
 Spree 0.30.0 is the first official release to support Rails 3.x.  It has been several months in the making but we're finally here.  Unfortunately we haven't had the time to write up detailed release notes and the documentation is still a work in progress.  We'll try to mention the highlights here and we'll continue to update the documentation in the coming weeks.
 
-INFO. We're always looking for more help with the Spree documentation.  If you'd like to offer assistance please contact us on the spree-user mailing list and we can give you commit access to the "spree-guides":http://github.com/spree/spree-guides documentation project.
+INFO: We're always looking for more help with the Spree documentation.  If you'd like to offer assistance please contact us on the spree-user mailing list and we can give you commit access to the "spree-guides":http://github.com/spree/spree-guides documentation project.
 
 h3. Rails Engines
 
@@ -22,7 +22,7 @@ Extensions are now installed as Rubygems.  They are also no longer deployed to +
 
 As of the time of this release there are only a limited number of extensions that are currently compatible with Spree 0.30.x.  It is suggested that you check the "Extension Registry":http://spreecommerce.com/extensions for more information on which extensions are 0.30.x compatible.  Check back often because the Spree core team will be working on updating the more critical ones immediately after the release.
 
-NOTE. Its relatively easy to convert an existing extension into a gem.  Its suggested you find a 0.30.x compatible extension and study the source code for a better idea on how to do this.
+NOTE: Its relatively easy to convert an existing extension into a gem.  Its suggested you find a 0.30.x compatible extension and study the source code for a better idea on how to do this.
 
 h3. Improvements to Payments
 
@@ -34,7 +34,7 @@ h3. Simplification of Adjustments
 
 Adjustments have also been dramatically simplified.  Instead of having the concept of +Charge+ and +Credit+ we just have the single +Adjustment+.  What used to be called a +Credit+ is now just a negative adjustment.  Adjustments also now have a +mandatory+ attribute.  When this attribute is +true+ the adjustment is always shown when displaying the order total, even if the value is zero.  All non-mandatory adjustments are removed from the order if their value is ever equal to zero.
 
-NOTE. Mandatory adjustments make it easy to show $0 for tax or shipping when those cases apply.  The thinking is we don't want customers to wonder what the shipping cost because its not present - better to show a $0 value explicitly.
+NOTE: Mandatory adjustments make it easy to show $0 for tax or shipping when those cases apply.  The thinking is we don't want customers to wonder what the shipping cost because its not present - better to show a $0 value explicitly.
 
 h3. New Promotion Functionality
 
@@ -44,7 +44,7 @@ h4. Creating a Promotion
 
 A new promotion requires a +name+ and +code+ attribute.  The +code+ attribute can be used by customers when checking out to "activate" a particular promotion.
 
-NOTE. This is standard "coupon code" functionality but you're not required to have customers enter codes in order to utilize promotions.
+NOTE: This is standard "coupon code" functionality but you're not required to have customers enter codes in order to utilize promotions.
 
 h4. Promotion Rules
 
@@ -61,7 +61,7 @@ h3. No More "Vendor Mode"
 
 Spree is deployed as a Rubygem now so the previous system of different "boot modes" has been simplified.  Spree never needs to be deployed inside of your application, even if you're using edge or a custom fork.  Thanks to Bundler you can reference any version of Spree source directly via +Gemfile+ and either a physical directory location or a git repository location.
 
-INFO. See the "Source Guide":source_code.html for a complete understanding of all the changes to the organization of the source code.
+INFO: See the "Source Guide":source_code.html for a complete understanding of all the changes to the organization of the source code.
 
 h3. Upgrading
 
@@ -75,13 +75,13 @@ h5. Backup Your Database
 
 It is always recommended that you backup your database before upgrading.  You should also test the upgrade process locally and/or on a staging server before attempting on your live production system.
 
-WARNING. The Spree 0.30.0 upgrade will delete any in progress orders which should generally considered to be a safe thing to do since these are typically just abandoned orders.  There are also non trivial changes to payments and other tables.  Hang on to your database backup until you're sure the upgrade has gone smoothly.
+WARNING: The Spree 0.30.0 upgrade will delete any in progress orders which should generally considered to be a safe thing to do since these are typically just abandoned orders.  There are also non trivial changes to payments and other tables.  Hang on to your database backup until you're sure the upgrade has gone smoothly.
 
 h4. Create a New Rails Application
 
 It is suggested that you create a brand new Rails 3.x application and then make the necessary changes to that application.  We'll briefly walk you through the steps to do this.
 
-WARNING. There have been major changs to how Rails applications (and consequenly Spree) are configured and initialized.  You will have an easier time if you start with a new Rails application and migrate your stuff over to it rather than trying to make changes to an existing Spree application so that its Rails 3 compliant.
+WARNING: There have been major changs to how Rails applications (and consequenly Spree) are configured and initialized.  You will have an easier time if you start with a new Rails application and migrate your stuff over to it rather than trying to make changes to an existing Spree application so that its Rails 3 compliant.
 
 h5. Copy Your Legacy Files
 

@@ -52,9 +52,9 @@ This step allows the customer to add both their billing and shipping information
 
 The address fields include a select box for choosing state/province.  The list of states will be populated via javascript and will contain all of the states listed in the database for the currently selected country.  If there are no states configured for a particular country, or if the user has javascript disabled, the select box will be replaced by a text field instead.
 
-INFO. The default "seed" data for Spree only includes the U.S. states.  Its easy enough to add states or provinces for other countries but beyond the scope of the project to maintain such a list.  Feel free to add your own seed data for the states you require (and to share your seed scripts with others via "Gist":http://gist.github.com.)
+INFO: The default "seed" data for Spree only includes the U.S. states.  Its easy enough to add states or provinces for other countries but beyond the scope of the project to maintain such a list.  Feel free to add your own seed data for the states you require (and to share your seed scripts with others via "Gist":http://gist.github.com.)
 
-NOTE. The state field can be disabled entirely by using the +address_requires_state+ preference.  You can also allow for an "alternate phone" field by using the +alternative_billing_phone+ and +alternative_shipping+ fields.
+NOTE: The state field can be disabled entirely by using the +address_requires_state+ preference.  You can also allow for an "alternate phone" field by using the +alternative_billing_phone+ and +alternative_shipping+ fields.
 
 The list of countries that appear in the country select box can also be configured.  Spree will list all countries by default but you can configure exactly which countries you would like to appear.  The list can be limited to a specific set of countries by configuring the new +:checkout_zone+ preference and setting its value to the name of a "zone":/zones.html containing the countries you wish to use.  Spree assumes that the list of billing and shipping countries will be the same.  You can always change this logic via an extension if this does not suit your needs.
 
@@ -62,23 +62,23 @@ h4. Delivery Options
 
 During this step, the user may choose a delivery method. Spree assumes the list of shipping methods to be dependent on the shipping address.  This is one of the reasons why it is difficult to support single page checkout for customers who have disabled javascript.  Spree allows you to configure any number of custom "shipping methods":shipping.html.  Each shipping method must be configured with a "zone":zones.html.  The available shipping methods shown during this step will reflect those whose zone overlaps with the specified shipping address.  The shipping methods will also list the associated shipping charge based on the logic provided by their "calculators":adjustments.html#calculators.
 
-INFO. at least one shipping method and corresponding zone must be configured in order to show shipping methods during checkout.
+INFO: At least one shipping method and corresponding zone must be configured in order to show shipping methods during checkout.
 
-NOTE. The delivery step is an excellent place to add information on gift options (wrapping paper, etc.)  See the "gift-options":http://github.com/calas/spree-gift-options extension for one possible implementation of this.
+NOTE: The delivery step is an excellent place to add information on gift options (wrapping paper, etc.)  See the "gift-options":http://github.com/calas/spree-gift-options extension for one possible implementation of this.
 
 h4. Payment
 
 This step is where the customer provides payment infomation.  This step is intentionally placed last in order to minimize security issues with credit card information.  Credit card information is never stored in the database so it would be impossible to have a subsequent step and still be able to submit the information to the "payment gateway":payment_gateways.html.  Spree submits the information to the gateway before saving the model so that the sensitive information can be discarded before saving the checkout information.
 
-WARNING. Spree discards the credit card number after this step is processed.  If you do not have a gateway with payment profiles enabled then your card information will be lost before its time to authorize the card (which is done after the "Confirmation" step.)
+WARNING: Spree discards the credit card number after this step is processed.  If you do not have a gateway with payment profiles enabled then your card information will be lost before its time to authorize the card (which is done after the "Confirmation" step.)
 
-INFO. Spree stores only the last four digits of the credit card number along with the expiration information.  The full credit card number and verification code are never stored in the database.
+INFO: Spree stores only the last four digits of the credit card number along with the expiration information.  The full credit card number and verification code are never stored in the database.
 
-INFO. The advantage of using a credit card profile is that you can ask for confirmation in a separate step without sacrificing security
+INFO: The advantage of using a credit card profile is that you can ask for confirmation in a separate step without sacrificing security
 
-NOTE. Several gateways such as ActiveMerchant and Beanstream provide a secure method for storing a credit card "profile" in your database.  This approach typically involves the use of a "token" which can be used for subsequent purchases but only with your merchant account.  If you are using a secure payment profile it would then be possible to show a final "confirmation" step after payment information is entered.
+NOTE: Several gateways such as ActiveMerchant and Beanstream provide a secure method for storing a credit card "profile" in your database.  This approach typically involves the use of a "token" which can be used for subsequent purchases but only with your merchant account.  If you are using a secure payment profile it would then be possible to show a final "confirmation" step after payment information is entered.
 
-NOTE. If you do not want to use a gateway with payment profiles then you will need to customize the checkout process so that your final step submits the credit card information.  You can then perform an authorization before the +Order+ is saved.  This is perfectly secure because the credit card information is not ever saved.  Its transmitted to the gateway and then discarded like normal.
+NOTE: If you do not want to use a gateway with payment profiles then you will need to customize the checkout process so that your final step submits the credit card information.  You can then perform an authorization before the +Order+ is saved.  This is perfectly secure because the credit card information is not ever saved.  Its transmitted to the gateway and then discarded like normal.
 
 
 h4. Confirmation
@@ -112,7 +112,7 @@ The +edit+ action renders the checkout/edit.html.erb template. The +update+ acti
 * Executes callbacks based on the new state after successfully transitioning.
 * Redirects to the next checkout step if the +current_order.state+ is anything other than +complete+, else redirect to the +order_path+ for +current_order+
 
-INFO. For security reasons, the +CheckoutController+ will not update the +Order+ once the checkout process is complete.  It is therefore impossible for an order to be tampered with (ex. changing the quantity) after checkout.
+INFO: For security reasons, the +CheckoutController+ will not update the +Order+ once the checkout process is complete.  It is therefore impossible for an order to be tampered with (ex. changing the quantity) after checkout.
 
 h5. Filters
 
@@ -160,9 +160,9 @@ state_machine :initial => 'cart', :use_transactions => false do
 end
 </ruby>
 
-NOTE. There are a few other events and transitions omitted for clarity.  For example the 'cancel' event transitions the state to the 'canceled' state.
+NOTE: There are a few other events and transitions omitted for clarity.  For example the 'cancel' event transitions the state to the 'canceled' state.
 
-INFO. For more information on the state machine gem please see the "README":http://github.com/pluginaweek/state_machine
+INFO: For more information on the state machine gem please see the "README":http://github.com/pluginaweek/state_machine
 
 h4. Checkout Partials
 
@@ -203,7 +203,7 @@ Each of the default checkout steps has its own partial defined in the spree_core
 
 [TODO - Add link to hook theming writeup once complete]
 
-INFO. See also the brief discussion in "checkout partials":#checkout-partials for additional information.
+INFO: See also the brief discussion in "checkout partials":#checkout-partials for additional information.
 
 h4. Adding or Removing Steps
 
@@ -242,7 +242,7 @@ module SpreeCustomExtension
 end
 </ruby>
 
-INFO. This completely overwrites the default +Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
+INFO: This completely overwrites the default +Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
 
 h5. Registering new checkout steps
 
@@ -280,9 +280,9 @@ module SpreeCustomExtension
 end
 </ruby>
 
-INFO. You also need a custom +_calling_plan.html.erb+ partial and a migration to create any custom db fields required for the new step.
+INFO: You also need a custom +_calling_plan.html.erb+ partial and a migration to create any custom db fields required for the new step.
 
-INFO. This completely overwrites the default +Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
+INFO: This completely overwrites the default +Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
 
 h4. The Checkout "Breadcrumb"
 
@@ -296,7 +296,7 @@ en-US:
     calling_plan: Calling Plan
 </ruby>
 
-INFO. The default use of the breadcrumb is entirely optional.  It does not need to correspond to checkout states, nor does every state need to be represented.  Feel free to customize this behavior to meet your exact requirements.
+INFO: The default use of the breadcrumb is entirely optional.  It does not need to correspond to checkout states, nor does every state need to be represented.  Feel free to customize this behavior to meet your exact requirements.
 
 h3. Coupons
 
@@ -317,13 +317,13 @@ def create_profile(creditcard, gateway_options)
 end
 </ruby>
 
-WARNING. Most gateways do not yet support payment profiles but the default checkout process of Spree assumes that you have selected a gateway that supports this feature.  This allows users to enter credit card information during the checkout without having to store it in the database.  Spree has never stored credit card information in the database but prior to the use of profiles, the only safe way to handle this was to post the credit card information in the final step.  It should be possible to customize the checkout so that the credit card information is entered on the final step and then you can authorize the card before Spree automatically discards the sensitive data before saving.
+WARNING: Most gateways do not yet support payment profiles but the default checkout process of Spree assumes that you have selected a gateway that supports this feature.  This allows users to enter credit card information during the checkout without having to store it in the database.  Spree has never stored credit card information in the database but prior to the use of profiles, the only safe way to handle this was to post the credit card information in the final step.  It should be possible to customize the checkout so that the credit card information is entered on the final step and then you can authorize the card before Spree automatically discards the sensitive data before saving.
 
 <html>
 <input name="checkout[coupon_code]"/>
 </html>
 
-INFO. If you need information on how to configure coupons please the detailed section on "coupons and discounts":coupons_and_discounts.html.
+INFO: If you need information on how to configure coupons please the detailed section on "coupons and discounts":coupons_and_discounts.html.
 
 h3. Google Checkout and Paypal Express
 
@@ -331,4 +331,6 @@ It is possible to configure Spree to work with third party payment services such
 
 [TODO - detailed instructions on overriding the hook]
 
-INFO. Spree does not automatically support Google Checkout or Paypal Express.  You will need to install the relevant third party extension if you wish to use these services.
+INFO: Spree does not automatically support Google Checkout or Paypal Express.  You will need to install the relevant third party extension if you wish to use these services.
+
+<!-- hidden comment -->

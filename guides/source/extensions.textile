@@ -17,7 +17,7 @@ h4. Overview
 
 Extensions are the primary mechanism for customizing a Spree site.  They provide a convenient mechanism for Spree developers to share reusable code with one another.  Even if you do not plan on sharing your extensions with the community they can still be a useful way to reuse code within your organization.  Extensions are also a convenient mechanism for organizing and isolating discrete chunks of functionality.
 
-WARNING. If you are using a version of Spree prior to version 0.30.x then you should be aware that there have been significant changes to the extension system.  These changes represent a major improvement over the way things used to be done.  For instance, you no longer are required to put your application logic and themes within a "site" extension.
+WARNING: If you are using a version of Spree prior to version 0.30.x then you should be aware that there have been significant changes to the extension system.  These changes represent a major improvement over the way things used to be done.  For instance, you no longer are required to put your application logic and themes within a "site" extension.
 
 h4. Technical Background
 
@@ -38,7 +38,7 @@ In Rails, an Engine behaves almost identically to a full Rails application.  It 
 
 Engines therefore become the natural mechanism for providing the same types of modularity for Spree.  In fact a Spree extension is really no more than a Rails engine.  The one common aspect of most Spree extensions, however, is that they all have a dependency on the +spree_core+ gem.  This means they build on certain basic Spree functionality not present in a regular Rails application.
 
-INFO. The +spree_core+ gem is itself a Rails engine and so the entire Spree "stack" is essentially a Rails application built on engines.
+INFO: The +spree_core+ gem is itself a Rails engine and so the entire Spree "stack" is essentially a Rails application built on engines.
 
 h4. The "Core" Extensions
 
@@ -61,9 +61,9 @@ h4. Installing an Extension
 
 Since extensions are created as engines in Rails, using them is as simple as working with standard plugin gems.  A standard Rails application running Spree will have a +Gemfile+.  This is a special file which is used by "bundler":http://gembundler.com to manage the gem dependencies for your application.
 
-WARNING. The dependencies should be specified in a specific order. Always specify +spree+, followed by the various spree extensions at the very end of +Gemfile+.
+WARNING: The dependencies should be specified in a specific order. Always specify +spree+, followed by the various spree extensions at the very end of +Gemfile+.
 
-WARNING. Prior to Spree 0.30.0 extensions were not managed as gems.  They were typically installed from the command line using +script/extension install+.  They were then added to the git repository of the application itself and deployed on the server.  This is no longer supported.  You must convert your old extension into a gem in order to use it in Spree.
+WARNING: Prior to Spree 0.30.0 extensions were not managed as gems.  They were typically installed from the command line using +script/extension install+.  They were then added to the git repository of the application itself and deployed on the server.  This is no longer supported.  You must convert your old extension into a gem in order to use it in Spree.
 
 h5. Modifying Your +Gemfile+
 
@@ -85,7 +85,7 @@ Finally, you could work with the extension directly from your local filesytem
   gem 'spree_related_products', '3.0.2', :path => '../spree_related_products'
 </ruby>
 
-NOTE. Using the +path+ directive is an excellent option when actively developing an extension.
+NOTE: Using the +path+ directive is an excellent option when actively developing an extension.
 
 h5. Installing the Gem
 
@@ -109,7 +109,7 @@ Spree comes with a handy generator for creating a new Spree application.  If you
 
 This creates a directory named +foofah+ with all of the necessary files.  It will also automatically modify your +Gemfile+ so that its including the newly created engine/gem.
 
-INFO. For information on testing your extension, please see the "Testing Guide":testing.html#testing-your-extensions.
+INFO: For information on testing your extension, please see the "Testing Guide":testing.html#testing-your-extensions.
 
 h4. Sharing Your Extension
 
@@ -117,7 +117,7 @@ h5. Publishing Your Source
 
 The first order of business is to get your extension on "Github":http://github.com where everybody can see it.  Most importantly, you will want to allow others to have access to the source code.  Github provides a convenient (and free) place to store your source code along with the ability to track issues and accept code patches.
 
-INFO. It is convention to use the +spree-+ naming convention for your Github repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the Github project would be named +spree-foofah+ and the gem would be +spree_fofoah+.
+INFO: It is convention to use the +spree-+ naming convention for your Github repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the Github project would be named +spree-foofah+ and the gem would be +spree_fofoah+.
 
 h5. Publishing Your Gem
 
@@ -151,7 +151,7 @@ The above +Versionfile+ is saying that if you are using Spree version "0.50.x" t
 
 You should note that we are dealing with two different concepts of "version" here.  One is the version of Spree supported and the other is the version of the extension.
 
-INFO. All Spree extensions should have a version.  This version number has nothing to do with what version of Spree is supported.  It is listed purely as a convenient way to refer to an extension.  For example "I'm having a problem with spree_active_shipping 1.0.1"
+INFO: All Spree extensions should have a version.  This version number has nothing to do with what version of Spree is supported.  It is listed purely as a convenient way to refer to an extension.  For example "I'm having a problem with spree_active_shipping 1.0.1"
 
 h5. Syntax
 
@@ -159,7 +159,7 @@ A +Versionfile+ can have any number of lines. It is recommended that you put the
 
 There are four different ways of specifying an extension's compatibilty information.
 
-NOTE. All four variations for identifying extension compatibility can be mapped to more than one Spree version.  In other words, its entirely possible that the same version of an extension can be compatible with multiple versions of Spree.
+NOTE: All four variations for identifying extension compatibility can be mapped to more than one Spree version.  In other words, its entirely possible that the same version of an extension can be compatible with multiple versions of Spree.
 
 *Gem Version*
 
@@ -213,7 +213,7 @@ h5. Using the Versionfile
 
 There is a crawler which crawls the +Versionfile+ of all the registered extensions once every day. So any changes you make to your extension's +Versionfile+ should be captured within 24 hours.
 
-INFO. You must actually register your extension in the "Extension Registry":http://spreecommerce.com/extensions before it can be discovered by the crawler.
+INFO: You must actually register your extension in the "Extension Registry":http://spreecommerce.com/extensions before it can be discovered by the crawler.
 
 After the +Versionfile+ info has been processed you will see it listed in the "Extension Registry":http://spreecommerce.com/extensions.  Depending on the syntax you used to specify the version you will see it listed under "Stable Release" or "Dev Release".  In both cases there will also be a link labeled "Show". Clicking that link will show you the exact information you need to paste into your +Gemfile+ in order to use the extension.
 
@@ -264,7 +264,7 @@ If we're not 100% sure the extension will support the release candidate (or if i
 "0.50.x" => { :tag => "v1.0.2", :version => "1.0.2" }
 </ruby>
 
-INFO. Using a branch in the +Versionfile+ designates the gem as a "development release" which is possibly unstable and subject to change.  Once things are stable you can point ot a specific Git SHA or tag so that people can rely on the extension not changing in a production release.
+INFO: Using a branch in the +Versionfile+ designates the gem as a "development release" which is possibly unstable and subject to change.  Once things are stable you can point ot a specific Git SHA or tag so that people can rely on the extension not changing in a production release.
 
 h3. Extension Tutorial
 
@@ -312,7 +312,7 @@ h4. Creating a Model
 
 Lets create a new +PromotedItem+ model for our extension.  Unfortunately Rails does not yet provide an easy mechanism for generating models, etc. within the context of your extension.  So for now you are left to create the necessary files manually or to use the standard Rails generator and copy the files into your extension.
 
-NOTE. Rails 3.1 will contain better mechanisms for extending the Rails generators so you won't have to resort to manual file creation or other hacks once Spree supports this future release.
+NOTE: Rails 3.1 will contain better mechanisms for extending the Rails generators so you won't have to resort to manual file creation or other hacks once Spree supports this future release.
 
 The +PromotedItem+ model will represent products that are "flagged" for promotion on the front page along with a schedule of when the promotion begins and ends.
 
@@ -351,9 +351,9 @@ Extension migrations need to be copied from the engine into the main Rails appli
   $ rake flag_promotions:install
 </shell>
 
-NOTE. This also copies over public assets in your engines +public+ directory.  If you just want the migrations you can run +rake flag_promotions:install:migrations+ or if you just want the assets you can run +rake flag_promotions:install:assets+.
+NOTE: This also copies over public assets in your engines +public+ directory.  If you just want the migrations you can run +rake flag_promotions:install:migrations+ or if you just want the assets you can run +rake flag_promotions:install:assets+.
 
-INFO. The +install.rake+ file is automatically created for you by the Spree extension generator.  It will only be necessary until Rails 3.1 is released - at which point this task will be provided "automagically."
+INFO: The +install.rake+ file is automatically created for you by the Spree extension generator.  It will only be necessary until Rails 3.1 is released - at which point this task will be provided "automagically."
 
 h4. Creating a Controller and View
 
@@ -443,7 +443,7 @@ The best way to add minor details to an existing view (such as adding an admin t
 
 Please see the "Customization Guide":customization.html for a more extensive discussion about hooks.
 
-INFO. You'll need to add a translation for the promotions tab before it will render properly.  Please see the next section for details.
+INFO: You'll need to add a translation for the promotions tab before it will render properly.  Please see the next section for details.
 
 h4. Internationalization (I18n)
 

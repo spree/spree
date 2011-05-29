@@ -28,7 +28,7 @@ Rails has a +config.serve_static_assets+ setting that allows you to override its
   config.serve_static_assets = true
 </ruby>
 
-INFO. There is a good reason why this is disabled by default in Rails which is that Rails is not a general purpose web server.  Servers such as Apache and Nginx are optimized for rapidly serving up static content.  You should consider the advice of the Rails core team and let your webserver do what it does best (as described in the next section.)
+INFO: There is a good reason why this is disabled by default in Rails which is that Rails is not a general purpose web server.  Servers such as Apache and Nginx are optimized for rapidly serving up static content.  You should consider the advice of the Rails core team and let your webserver do what it does best (as described in the next section.)
 
 h5. Configure the Web Server to Use the +public+ Directory
 
@@ -38,7 +38,7 @@ The recommended approach for handling static assets is to allow your web server 
   config.serve_static_assets = false
 </ruby>
 
-INFO. This is the default setting of Rails so its also fine if this setting is missing or commented out.
+INFO: This is the default setting of Rails so its also fine if this setting is missing or commented out.
 
 The following is an example of how to configure Apache so that its document root is pointing to the +public+ folder.
 
@@ -67,7 +67,7 @@ The default behavior for Spree depends on the Rails environment are as follows:
 |Staging|True|
 |Production|True|
 
-NOTE. The "staging" environment is not one of the default environments created by Rails.  Many developers, however, add this environment which is designed to mimic the production environment behavior as much as possible.  You can still, however, make minor changes such as disabling email or sending email to a test account instead of the designated recipient.
+NOTE: The "staging" environment is not one of the default environments created by Rails.  Many developers, however, add this environment which is designed to mimic the production environment behavior as much as possible.  You can still, however, make minor changes such as disabling email or sending email to a test account instead of the designated recipient.
 
 h5. SSL Preferences
 
@@ -118,11 +118,11 @@ To properly enable email delivery, you need to provide valid SMTP information. T
 
 Note that mail settings are configured on a per-environment basis.  This will allow you to configure the settings differently for staging or production mode.  For example, you might want to intercept all outgoing email in the staging environment and re-route it to test@yourstore.com.  This would prevent someone from accidentally sending an email to a real world customer when testing operations such as canceling an order or marking it shipped.
 
-NOTE. Its generally considered a bad idea to send email on the same "thread" as a web request.  Many web applications (including e-commerce ones) manage to get by doing this but high volume stores should consider using standard Rails techniques such as "Delayed Job":http://github.com/tobi/delayed_job for handling email delivery as a separate process.
+NOTE: Its generally considered a bad idea to send email on the same "thread" as a web request.  Many web applications (including e-commerce ones) manage to get by doing this but high volume stores should consider using standard Rails techniques such as "Delayed Job":http://github.com/tobi/delayed_job for handling email delivery as a separate process.
 
-INFO. The Spree core team is actively working on a solution for improved email processing - perhaps involving an optional extension for Delayed Job support.
+INFO: The Spree core team is actively working on a solution for improved email processing - perhaps involving an optional extension for Delayed Job support.
 
-WARNING. Spree overrides the default configuration of email by Rails and will ignore whatever settings you may have in your Rails application.  This is to allow easier configuration of email by non-programmers through an admin interface.  Spree also uses this mechanism to provide a few additional settings that are not supplied by Rails.
+WARNING: Spree overrides the default configuration of email by Rails and will ignore whatever settings you may have in your Rails application.  This is to allow easier configuration of email by non-programmers through an admin interface.  Spree also uses this mechanism to provide a few additional settings that are not supplied by Rails.
 
 h3. Performance Tips
 
@@ -146,7 +146,7 @@ Most stores spend a lot of time serving up the same pages over and over again.  
 
 A detailed description of Rails caching is beyond the scope of this guide.
 
-INFO. The Spree core team is actively considering some form of basic caching support to make it easier to leverage the Rails caching options.
+INFO: The Spree core team is actively considering some form of basic caching support to make it easier to leverage the Rails caching options.
 
 h3. Specific Hosting Providers
 

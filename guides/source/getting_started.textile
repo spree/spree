@@ -100,14 +100,14 @@ h4. Installing Image Magick
 
 Spree also uses the Image Magick library for manipulating images.  Using this library allows for automatic resizing of product images and the creation of product image thumbnails.  Image Magick is not a Rubygem and it can be a bit tricky to install.  There are, however, several excellent sources of information on the Web for how to install it.  A basic Google search should help you if you get stuck.
 
-NOTE. If you would like to skip the ImageMagick installation you can get by without it as long as you do not try to add any product images to your store.  You will also have to skip the creation of the sample products (and related images.) This means you cannot run +rake db:bootstrap+ or +rake db:sample+ since those rake tasks require the library.
+NOTE: If you would like to skip the ImageMagick installation you can get by without it as long as you do not try to add any product images to your store.  You will also have to skip the creation of the sample products (and related images.) This means you cannot run +rake db:bootstrap+ or +rake db:sample+ since those rake tasks require the library.
 
 
 h3. Creating a New Spree Project
 
 The distribution of Spree as a Rubygem allows it to be used in a new Rails project or added to an existing Rails project.  This guide will assume you are creating a brand new store and will walk you through the process starting with the creation of a new Rails application.
 
-INFO. In versions prior to Spree 0.30.0 you could not simply add Spree to an existing Rails application.  You needed to use a special +spree+ command to setup your project.  This command customized/hacked some of the standard Rails initializers but this approach is no longer necessary due to improvements to Rails that were designed to support frameworks such as Spree.
+INFO: In versions prior to Spree 0.30.0 you could not simply add Spree to an existing Rails application.  You needed to use a special +spree+ command to setup your project.  This command customized/hacked some of the standard Rails initializers but this approach is no longer necessary due to improvements to Rails that were designed to support frameworks such as Spree.
 
 [TODO: Possible note and link to source section detailing the Rails Engines aspect]
 
@@ -158,7 +158,7 @@ This will used the latest stable release of Spree.  If you want to require a spe
 gem 'spree', '0.30.0.beta1'
 </shell>
 
-INFO. You can also edit the +Gemfile+ to allow for the installation of various extensions.  The "Extension Guide":extensions.html#installingan-extension covers installation of extension in detail.
+INFO: You can also edit the +Gemfile+ to allow for the installation of various extensions.  The "Extension Guide":extensions.html#installingan-extension covers installation of extension in detail.
 
 h4. Gem Installation
 
@@ -176,7 +176,7 @@ Just about every Rails application will interact with a database. The database t
 * The +test+ environment is used to run automated tests
 * The +production+ environment is used when you deploy your application for the world to use.
 
-NOTE. You may also want to consider creating a +staging+ environment for your application.  See the Rails documentation for help in creating additional environments.
+NOTE: You may also want to consider creating a +staging+ environment for your application.  See the Rails documentation for help in creating additional environments.
 
 h5. Configuring a SQLite Database
 
@@ -184,19 +184,19 @@ Rails comes with built-in support for "SQLite":http://www.sqlite.org, which is a
 
 Here's the section of the default configuration file with connection information for the development environment:
 
-<yaml>
+<shell>
 development:
 adapter: sqlite3
 database: db/development.sqlite3
 pool: 5
 timeout: 5000
-</yaml>
+</shell>
 
 h5. Configuring Other Databases
 
 The existing "rails documentation":http://guides.rubyonrails.org provides detailed information on setting up all of the major databases.  Please consult this documentation as Spree does not have any special requirements beyond what a standard Rails application requires.
 
-INFO. When using a database such as PostgreSQL, you will need to create your database before you run any rails generators. Once you've configured your database.yml file, run the following command:
+INFO: When using a database such as PostgreSQL, you will need to create your database before you run any rails generators. Once you've configured your database.yml file, run the following command:
 
 <shell>
 rake db:create
@@ -211,7 +211,7 @@ rails g spree:site
 rake spree:install
 </shell>
 
-INFO. If you have an existing Rails application with customizations (as opposed to just the starter app that we've shown here) you will want to make a note of any files that this task changes.  Its possible that it may alter your javascript or stylesheet files in undesirable ways.  You should check the differences via +git diff+ or some other process and manually merge the needed changes if necessary.
+INFO: If you have an existing Rails application with customizations (as opposed to just the starter app that we've shown here) you will want to make a note of any files that this task changes.  Its possible that it may alter your javascript or stylesheet files in undesirable ways.  You should check the differences via +git diff+ or some other process and manually merge the needed changes if necessary.
 
 Spree also comes with sample data (products, orders, etc.)  If you'd like to install the migrations and assets associated with the sample data then you can run this additional rake task.
 
@@ -227,7 +227,7 @@ Now that you have your database configured, it's time to have Spree populate it 
 $ rake db:bootstrap
 </shell>
 
-WARNING. This will effectively drop the existing database and recreate it from scratch with the option of creating sample product data.  It is disabled for production databases for safety reasons.  For a production database you should use +rake db:migrate+ to create the tables and +rake db:admin:create+ to create the admin user.
+WARNING: This will effectively drop the existing database and recreate it from scratch with the option of creating sample product data.  It is disabled for production databases for safety reasons.  For a production database you should use +rake db:migrate+ to create the tables and +rake db:admin:create+ to create the admin user.
 
 You can also migrate the database in the more "traditional" rails manner using more familiar rake tasks.  The following series of commands is equivalent to running the bootstrap task described above:
 
@@ -238,7 +238,7 @@ rake db:sample
 rake db:admin:create
 </shell>
 
-NOTE. If you skip the sample and admin create tasks there will be no admin user.  In this situation the first user you create in Spree will be given the admin role automatically.
+NOTE: If you skip the sample and admin create tasks there will be no admin user.  In this situation the first user you create in Spree will be given the admin role automatically.
 
 h3. Hello, Spree!
 
@@ -260,7 +260,7 @@ This will fire up an instance of the Webrick web server by default (Spree can al
 
 !images/spree_welcome.png(Spree welcome screenshot)!
 
-To stop the web server, hit Ctrl+C in the terminal window where it's running. In development mode, Spree does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
+To stop the web server, hit Ctrl-C in the terminal window where it's running. In development mode, Spree does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
 
 h4. Logging into the Backend
 

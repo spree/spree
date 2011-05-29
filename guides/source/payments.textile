@@ -57,9 +57,9 @@ h4. +Source+
 
 In order to process a creditcard payment Spree also needs to know information about the specific creditcard.  This is the primary purpose of +Source+ (to provide a link to the +Creditcard+ used to generate the payment.)
 
-NOTE. Think of the +PaymentMethod+ as the form of payment (credit card, check, etc.) and the +Source+ as the thing responsible for generating the payment (the actual credit card for instance.)
+NOTE: Think of the +PaymentMethod+ as the form of payment (credit card, check, etc.) and the +Source+ as the thing responsible for generating the payment (the actual credit card for instance.)
 
-INFO. Don't forget the "Payment Gateways Guide":payment_gateways.html for more information on +Gateways+.
+INFO: Don't forget the "Payment Gateways Guide":payment_gateways.html for more information on +Gateways+.
 
 h4. +LogEntry+
 
@@ -69,7 +69,7 @@ h3. Payment Processing
 
 Spree will process all payments once the checkout is complete by calling +Payment#process!+ on all of the order payments (generally only one will be present.)  If the +Payment+ has a +Source+ then this is the opportunity to perform additional logic associated with payment processing.  So in the case of a creditcard payment, this is when an authorization or purchase should be performed using the relevant gateway.
 
-INFO. +Payments+ are put in the 'processing' state when the user submits the order.  Once in this state the payment cannot be processed again.  This prevents double authorization for credit cards and other potential problems.
+INFO: +Payments+ are put in the 'processing' state when the user submits the order.  Once in this state the payment cannot be processed again.  This prevents double authorization for credit cards and other potential problems.
 
 Lets look more closely at the lgoic that results from a call to +process!+ with a credit card payment:
 
@@ -91,7 +91,7 @@ h4. List of Payments
 
 To view and manage the payments for an order, click the 'Payments' link in the sidebar sub-menu when viewing the order.
 
-INFO. Keep in mind that only payments in the "completed" state will actually be used to offset the order balance.
+INFO: Keep in mind that only payments in the "completed" state will actually be used to offset the order balance.
 
 h4. +Order#payment_state+
 
@@ -107,7 +107,7 @@ The following possible +payment_state+ values exist:
 
 In practice, you're unlikely to see a completed order with a +payment_state+ of "failed" except for cases where you deliberately configure Spree to allow users to proceed despite a failed credit card authorization.  In progress orders, however, may routinely fall into this case because it is not uncommon for users to enter the wrong credit card information.
 
-NOTE. You may want to keep tabs on the number of orders with a +payment_state+ of "failed."  A sudden increase in the number of such orders could indicate a problem with your credit card gateway and most likely indicates a serious problem affecting customer satisfaction.
+NOTE: You may want to keep tabs on the number of orders with a +payment_state+ of "failed."  A sudden increase in the number of such orders could indicate a problem with your credit card gateway and most likely indicates a serious problem affecting customer satisfaction.
 
 h4. Payment Actions
 
@@ -129,7 +129,7 @@ This bit of code can be interpreted as follows
   * You cannot credit a payment unless there is an over-payment on the order (which will happen if the order is canceled or if you make some type of adjustment to the order that reduces the total.)
   * You cannot credit a payment if you've already issued one or more credits against that payment that completely offset the original payment.
 
-WARNING. Certain actions on credit card payments may result in an error due to a timing issue with the settlement.  Once the funds have been deposited in the merchant account its generally not possible to void such a payment.  Conversely, it is also generally not possible to issue a credit against a payment before it has settled.  Settlment typically occurs 12-24 hours after the initial transaction.
+WARNING: Certain actions on credit card payments may result in an error due to a timing issue with the settlement.  Once the funds have been deposited in the merchant account its generally not possible to void such a payment.  Conversely, it is also generally not possible to issue a credit against a payment before it has settled.  Settlment typically occurs 12-24 hours after the initial transaction.
 
 h4. Creating a New Payment
 
@@ -160,9 +160,9 @@ h4. Supporting a New Gateway
 
 Spree comes with built-in support for many popular payment gateways.  Most of the gateway support is actually provided by the third party "active_merchant":https://github.com/shopify/active_merchant gem.  In most cases Spree just needs to provide a thin wrapper around what's already supported in active_merchant.  This wrapper allows developers to provide their own functionality on top of the active_merchant implementation as well as to apply "monkey patches" to fix bugs in active_merchant without forking the active_merchant gem while you wait for the next gem release, etc.
 
-INFO. You can read more about supporting additional gateways in the "Payment Gateways Guide":payment_gateways.html#addinga-new-gateway
+INFO: You can read more about supporting additional gateways in the "Payment Gateways Guide":payment_gateways.html#addinga-new-gateway
 
-NOTE. It would be easy to add support for dozens of new gateways in Spree but we are only adding official support for the ones we have tested ourselves (or a trusted member of the community has tested.)  If your gateway is not "officially" supported this should not deter you from adding it yourself and contributing it back to the community as a patch to Spree.
+NOTE: It would be easy to add support for dozens of new gateways in Spree but we are only adding official support for the ones we have tested ourselves (or a trusted member of the community has tested.)  If your gateway is not "officially" supported this should not deter you from adding it yourself and contributing it back to the community as a patch to Spree.
 
 h4. Other Payment Methods
 
@@ -170,7 +170,7 @@ h5. Gateways Not Supported By active_merchant
 
 Its possible that you may wish to support credit card payment via a gateway that is not supported by active_merchant.  If you're implementing a previously unsupported gateway then you should extend +PaymentMethod+ directly.
 
-NOTE. There is no need to extend either +Gateway+ or +BillingIntegration+ class if you're not planning on delegating to an active_merchant implementation.
+NOTE: There is no need to extend either +Gateway+ or +BillingIntegration+ class if you're not planning on delegating to an active_merchant implementation.
 
 h5. Payments Unrelated to Credit Cards
 
@@ -241,7 +241,7 @@ You can also add new preferences to your payment as shown below:
   end
 </shell>
 
-INFO. For more information on preferences you should consult the "Preferences Guide":preferences.html
+INFO: For more information on preferences you should consult the "Preferences Guide":preferences.html
 
 h4. Views
 
@@ -252,7 +252,7 @@ You must create a partial template that provides the interface users will see du
 You have the option of providing information you want to show to the customer about the method they have selected.
 If your payment method requires a "source":payments.html#source, then the partial should include the necessary form fields to produce a params hash with the key 'payment_source'.  When the payment is created, this hash will be used to build the source record for the payment.
 
-NOTE. The partial may also be blank as in the case of the +Check+ payment method.
+NOTE: The partial may also be blank as in the case of the +Check+ payment method.
 
 h5. Admin Related
 
@@ -261,7 +261,7 @@ If you create a new +PaymentMethod+ you must also create two distinct partials:
 * A partial to be used on the "show" action for a payment
 * A form to be used when editing and creating new payments
 
-NOTE. The form partial should include form fields that match those used in the checkout partial described above.
+NOTE: The form partial should include form fields that match those used in the checkout partial described above.
 
 In the example of a payment method with the class +MyMethod+ you would create the following views:
 

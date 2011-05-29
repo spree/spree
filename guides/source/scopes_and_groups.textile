@@ -171,7 +171,7 @@ in +en-US+:
   that can be connected using "and", sentence is evaluated using _String#%_ method and can be formatted using
   printf escape sequences. 
 
-WARNING. It's very important that the number of expected arguments for the 'sentence' string does not exceed the number available for the relevant scope, else +printf+ will raise an exception.
+WARNING: It's very important that the number of expected arguments for the 'sentence' string does not exceed the number available for the relevant scope, else +printf+ will raise an exception.
 
 The same rules apply for ordering scopes, except that they don't take any arguments so do not need a 
 'sentence' field. 
