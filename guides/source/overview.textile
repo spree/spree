@@ -83,8 +83,8 @@ h3. Basic Configuration
   <% end %>
 </dl>
 <dl>
-  <% guide('Coupons and Discounts', 'coupons_and_discounts.html') do %>
-    Information on how to configure your own coupons/discounts/gift certificates.
+  <% guide('Promotions', 'promotions.html') do %>
+    Using and extending the promotion system to provide discount coupons and other offers to customers
   <% end %>
 </dl>
 

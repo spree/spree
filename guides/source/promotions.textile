@@ -1,0 +1,80 @@
+h2. Promotions
+
+This guide explains Spree's promotions system for coupons and discounts. After reading it, you should be familiar with:
+
+* How promotions are activated
+* How promotion eligibility is evaluated
+* How Promotion Actions allow the outcome of a promotion to be configured
+* How promotion adjustments are used to create discounts
+
+
+endprologue.
+
+
+
+h3. Overview
+
+Promotions, previously known as Coupons, are used to give discounts or other types of rewards to customers.
+
+
+
+h3. Activation
+
+h4. Events
+
+Previously, promotions were only activated by a user entering a coupon code during checkout. Now a promotion may be activated by a number of different events.
+
+The following events are available currently:
+
+* *spree.cart.add* (an item is added to the cart)
+* **spree.checkout.coupon_code_added** (a coupon code is entered either from the cart screen or a checkout screen)
+* **spree.order.contents_changed** (when contents or quantities in the order changed)
+* **spree.user.signup** (after sucessfull user registration)
+
+These events are created using "ActiveSupport::Notifications":http://api.rubyonrails.org/classes/ActiveSupport/Notifications.html **instrument** method.
+Spree listens for any events with a name starting with **'spree.'**. Any user defined event name may be used to trigger a promotion as long as they have that prefix. The *Promotion* model is a subclass of *Activator* which is the base for any model which should respond to ActiveSupport::Notifications events. When a 'spree.' event is fired, Spree will find all Activator records that have the matching *event_name* attribute and call *activate* on them passing a hash which includes the current user and order.
+
+h4. Activation by coupon code
+
+To configure a promotion that requires a coupon code to be entered, the event **spree.checkout.coupon_code_added** must be selected. This will reveal the coupon code field which is mandatory for this event.
+
+
+
+h3. Eligibility
+
+Promotions are only activated if they are considered eligible. Eligibility is a combination of general settings that control expiry of promotions and Promotion Rules that control eligibility based on the current order and user.
+
+h4. General settings for promotion expiry
+
+All promotions have the following settings:
+
+* **Start Date** - Promotions can be configured to be invalid before a specific date
+* **Expiration Date** - Promotions can be configured so that they are not usable passed a certain date
+* **Usage Limit** - Promotions may be configured to expire after the specified number of uses. Leave blank for unlimited uses.
+
+h4. Promotion rules
+
+To control eligibility based on the current order and user, as many rules as required may be added to the promotion. The following types are available:
+
+* **Item Total** The order's item total must exeed or be at least equal to the specified amount
+* **Products** The order must include the chosen products, or products from the chosen product group
+* **User** The promotion is only available to the specified users
+* **First Order** This must be the current user's first order
+* **Landing Page** The user must have visited a static page with the specified path
+
+You can specify that either all or any of rules must be satisfied for the promotion to be eligible.
+
+h3. Promotion Actions
+
+To configure the outcome of a promotion, Promotion Actions are added in the same manner as rules. This means a promotion could result in mulitple actions being performed such as a discount adjustment created on the order, an email being delivered or a predefined set of items being added to the cart. Currently the only action available is 'Create adjustment' but it is easy to add new action types by defining a subclass of *PromotionAction* which implements the *perform* method. Call *register* on your subclass to make it available to choose in the admin interface. See Promotion::Actions::CreateAdjustment for an example.
+
+h3. Promotion adjustments
+
+The typical outcome of a promotion is to provide a discount on the order with a negative value adjustment. This is achieved by adding an action to your promotion of the type 'Create Adjustment'.
+
+A calculator is selected when configuring the 'Create Adjustment' action and this is responsible for computing the amount of the adjustment. Spree will not allow the credit amount to exceed item total + shipping, and the amount will always be negative.  The credit adjustment associated with the promotion is subject to recalculation based on changes in the order.
+
+INFO: Please be sure to read the section on "calculators":adjustments.html#calculators for a more complete understanding of this crucial concept.
+
+Spree will only allow an order to have one promotion adjustment active at a time. Each time the order is updated, e.g. when adding to the card or updating quantities, the eligibility of all the promotion created adjustments is re-checked and only the most valuable promotion adjustment that is still eligible will be counted. Any other adjustments are preserved but have their *eligible* attribute set to false so they are not displayed or counted in any totals. This allows a previously de-activated adjustment to become active again if it becomes eligible or its value changes.
+

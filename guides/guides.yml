@@ -61,9 +61,9 @@ index:
     - title: Shopping
       url: shipping
       text: Information on how to configure shipping options as well as building your own shipping calculator.
-    - title: Coupons and Discounts
-      url: coupons_and_discounts
-      text: Information on how to configure your own coupons/discounts/gift certificates.
+    - title: Promotions
+      url: promotions
+      text: Using and extending the promotion system to provide discount coupons and other offers to customers
   Best Practices:
     - title: Developer Tips
       url: developer_tips
