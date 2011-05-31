@@ -1,0 +1,282 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>spree_guides: Working with the Source Code</title>
+
+<link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+<link rel="stylesheet" type="text/css" href="stylesheets/overrides.style.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/overrides.print.css" media="print" />
+
+
+<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shThemeRailsGuides.css" />
+
+
+</head>
+<body class="guide">
+  <div id="topNav">
+    <div class="wrapper">
+      <strong>More at <a href="http://spreecommerce.com">spreecommerce.com:</a> </strong>
+      <a href="http://spreecommerce.com/tour">Features</a> |
+      <a href="http://spreecommerce.com/resources">Resources</a> |
+      <a href="http://spreecommerce.com/blog">Blog</a> |
+      <a href="http://spreecommerce.com/demo">Demo</a> |
+      <a href="http://spreecommerce.com/community">Community</a> |
+      <a href="http://spreecommerce.com/download">Download</a>
+    </div>
+  </div>
+  <div id="header">
+    <div class="wrapper clearfix">
+      <h1><a href="overview.html" title="Return to home page">spree_guides</a></h1>
+      <p class="hide"><a href="#mainCol">Skip navigation</a>.</p>
+      <ul class="nav">
+        <li><a href="overview.html">Home</a></li>
+        <li class="index"><a href="index.html" onclick="guideMenu(); return false;" id="guidesMenu">Guides Index <span id="guidesArrow">&#9656;</span></a>
+          <div id="guides" class="clearfix" style="display: none;">
+            <hr />
+            <dl class="L">
+    <dt>Start Here</dt>
+      <dd><a href="getting_started.html">Getting Started with Spree</a></dd>
+      <dd><a href="source_code.html">Working with the Source Code</a></dd>
+      <dd><a href="server_configuration.html">Server Configuration</a></dd>
+    <dt>Best Practices</dt>
+      <dd><a href="developer_tips.html">Developer Tips</a></dd>
+      <dd><a href="seo_considerations.html">SEO Considerations</a></dd>
+    <dt>Basic Configuration</dt>
+      <dd><a href="products_and_variants.html">Products and Variants</a></dd>
+      <dd><a href="inventory.html">Inventory</a></dd>
+      <dd><a href="taxonomy.html">Taxonomy/Categorization</a></dd>
+      <dd><a href="payments.html">Payments</a></dd>
+      <dd><a href="payment_gateways.html">Payment Gateways</a></dd>
+      <dd><a href="zones.html">Zones</a></dd>
+      <dd><a href="adjustments.html">Adjustments</a></dd>
+      <dd><a href="taxation.html">Taxation</a></dd>
+      <dd><a href="shipping.html">Shopping</a></dd>
+      <dd><a href="promotions.html">Promotions</a></dd>
+</dl>
+<dl class="R">
+    <dt>Digging Deeper</dt>
+      <dd><a href="customization.html">Customization</a></dd>
+      <dd><a href="extensions.html">Using Extensions</a></dd>
+      <dd><a href="checkout.html">Spree Checkout Process</a></dd>
+      <dd><a href="migration.html">Migrating Data to Spree</a></dd>
+      <dd><a href="i18n.html">Internationalization/Localization</a></dd>
+      <dd><a href="testing.html">Testing Spree Applications</a></dd>
+      <dd><a href="security.html">Securing Spree Applications</a></dd>
+      <dd><a href="preferences.html">Preferences</a></dd>
+      <dd><a href="rest.html">REST API</a></dd>
+      <dd><a href="scopes_and_groups.html">Product Groups and Scopes</a></dd>
+      <dd><a href="searching.html">Seaching and Faceting</a></dd>
+      <dd><a href="contributing_to_spree.html">Contributing to Spree</a></dd>
+</dl>
+
+
+          </div>
+        </li>
+        <li><a href="contributing_to_spree.html">Contribute</a></li>
+        <li><a href="credits.html">Credits</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="feature">
+    <div class="wrapper">
+      <h2>Working with the Source Code</h2>
+<p>This guide covers obtaining and running the source code.  This is primarily for developers who are interested in contributing code to the Spree project or fixing the source code themselves.  It is not necessary to have a copy of the source code to run Spree.  This guide covers the following topics:</p>
+<ul>
+	<li>How Spree uses Git and Github to manage source code</li>
+	<li>The various gems that comprise the Spree source code</li>
+	<li>Building the gem from the source</li>
+</ul>
+
+
+            <div id="subCol">
+        <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
+        <ol class="chapters">
+          <li><a href="#git"><p>Git</p>
+</a><ul><li><a href="#browsing-the-repository-and-or-downloading-the-source-code"><p>Browsing the Repository and/or Downloading the Source Code</p>
+</a></li> <li><a href="#git-on-windows"><p>Git on Windows</p>
+</a></li> <li><a href="#svn"><p><span class="caps">SVN</span></p>
+</a></li> <li><a href="#monitoring-changes-in-the-source"><p>Monitoring Changes in the Source</p>
+</a></li></ul></li><li><a href="#bundler"><p>Bundler</p>
+</a></li><li><a href="#layout-and-structure"><p>Layout and Structure</p>
+</a><ul><li><a href="#collection-of-gems"><p>Collection of Gems</p>
+</a></li> <li><a href="#use-of-rails-engines"><p>Use of Rails Engines</p>
+</a></li></ul></li><li><a href="#building-a-sandbox-application"><p>Building a Sandbox Application</p>
+</a></li><li><a href="#building-the-gem-from-the-source"><p>Building the Gem from the Source</p>
+</a></li><li><a href="#tips-for-working-with-the-source"><p>Tips for Working with the Source</p>
+</a><ul><li><a href="#using-the-edge-code"><p>Using the &#8220;Edge&#8221; Code</p>
+</a></li> <li><a href="#developing-on-the-edge"><p>Developing on the &#8220;Edge&#8221;</p>
+</a></li></ul></li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+        <h3 id="git">1 Git</h3>
+<p>The Spree source code is currently maintained in a <a href="http://git.or.cz/">Git</a> repository. Git is a distributed version control system (<span class="caps">DVCS</span>) and it allows us to do things never before possible with <span class="caps">SVN</span>. If you&#8217;re skeptical of Git just remember how skeptical you were of <span class="caps">SVN</span> when you were using <span class="caps">CVS</span>. The differences are subtle but important and they are best understood by hands on use.</p>
+<p>The authoritative git repository is hosted by <a href="http://github.com/">GitHub</a> and is located in the  <a href="http://github.com/spree/spree/tree/master">spree</a> repository. You can clone the git repository using the following command:</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+$ git clone git://github.com/spree/spree.git
+</pre></div>
+<div class="info"><p>If you are planning on contributing to Spree you should create a fork through Git Hub and push fixes to clearly labelled branches (see the <a href="contributing_to_spree.html">Contributors Guide</a> for details.)</p></div>
+
+<div class="note"><p>If the official GitHub repo is down you can try our mirror at <a href="http://repo.or.cz">repo.or.cz</a></p></div>
+<h4 id="browsing-the-repository-and-or-downloading-the-source-code">1.1 Browsing the Repository and/or Downloading the Source Code</h4>
+<p>You can easily browse the repository through Git Hub&#8217;s excellent <a href="http://github.com/spree/spree/tree/master">visual interface</a>. Git Hub also contains a link to download a tarball copy of the latest source code as well as links to <a href="http://github.com/spree/spree/downloads">previous versions</a>.</p>
+<h4 id="git-on-windows">1.2 Git on Windows</h4>
+<p>There are some well developed Git clients for Windows now. If you are on a Windows box you might want to check out the <a href="http://code.google.com/p/msysgit/">msygit</a> project.</p>
+<h4 id="svn">1.3 <span class="caps">SVN</span></h4>
+<p>There are no immediate plans to support <span class="caps">SVN</span> clients. Since most of the Rails community is using git <span class="caps">SVN</span> support is not really a priority.</p>
+<h4 id="monitoring-changes-in-the-source">1.4 Monitoring Changes in the Source</h4>
+<p>If you would like to keep up to date on changes to the source you can subscribe to the github <a href="http://github.com/feeds/spree/commits/spree/master"><span class="caps">RSS</span> feed</a> and you will be notified of all the commits.</p>
+<h3 id="bundler">2 Bundler</h3>
+<p>Spree uses the very excellent <a href="http://gembundler.com/">bundler</a> gem to manage its dependencies.  We are assuming you have basic familiarity with bundler.  A detailed explanation of bundler is beyond the scope of this guide.</p>
+<p>You can install the gem dependencies using bundler as follows:</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  $ bundle install
+</pre></div><p>The standard <tt>Gemfile.lock</tt> is also included in the source so you can be sure that you&#8217;re using the exact same versions of the gem dependencies used by the core team.</p>
+<h3 id="layout-and-structure">3 Layout and Structure</h3>
+<h4 id="collection-of-gems">3.1 Collection of Gems</h4>
+<p>The Spree gem itself is very minimal and consists mostly as a collection of gems.  These gems are maintained together in a single Github repository and new versions of the gems are shipped with each new Spree release.  The official documentation (which you are reading now) covers functionality provided by each of these gems.|</p>
+<p>Within the Spree source, each of the gems is organized into subdirectories as follows:</p>
+<table>
+	<tr>
+		<th style="text-align:left;">Gem</th>
+		<th>Directory</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>spree_api</td>
+		<td>api</td>
+		<td>Provides <span class="caps">REST</span> <span class="caps">API</span> access</td>
+	</tr>
+	<tr>
+		<td>spree_auth</td>
+		<td>auth</td>
+		<td>Provides authentication and authorization (via authlogic and cancan gems)</td>
+	</tr>
+	<tr>
+		<td>spree-core</td>
+		<td>core</td>
+		<td>Core functionality &#8211; all other gems depend on this gem</td>
+	</tr>
+	<tr>
+		<td>spree_dash</td>
+		<td>dash</td>
+		<td>Simple overview dashboard</td>
+	</tr>
+	<tr>
+		<td>spree_promo</td>
+		<td>promo</td>
+		<td>Coupons and promotions</td>
+	</tr>
+	<tr>
+		<td>spree_sample</td>
+		<td>sample</td>
+		<td>Sample data and images</td>
+	</tr>
+</table>
+<h4 id="use-of-rails-engines">3.2 Use of Rails Engines</h4>
+<p>Each of the gems in Spree makes use of Rails Engines.  This functionality was introduced in Rails 3.0 and allows Engines to behave in a manner similar to fully-functional applications.  Relying on this mechanism provides several advantages:</p>
+<h5 id="an-intuitive-mechanism-for-customization">3.2.1 An Intuitive Mechanism for Customization</h5>
+<p>Default Spree functionality is provided via the Rails engine gems.  Engines can provides several aspects traditionally associated with a Rails application including (but not limited to):</p>
+<ul>
+	<li>Models, views and controllers</li>
+	<li>Routes</li>
+	<li>Helpers</li>
+	<li>Rake tasks</li>
+	<li>Generators</li>
+	<li>Locales</li>
+</ul>
+<p>All of these elements can be overridden in the main Rails application.  Therefore, it is relatively simple to add Spree to your Rails application and then customize it further by supplying your own elements in that same application. A full discussion of Rails Engines is not appropriate here.  Please consult the Rails Guides for more information.</p>
+<h5 id="simple-distribution-and-installation-as-gems">3.2.2 Simple Distribution and Installation as Gems</h5>
+<p>Using a Spree gem is as simple as adding it to your <tt>Gemfile</tt> (ie. very simple)</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  gem 'spree-core', '0.30.0'
+</pre></div><p>Distribution of Spree (and its extensions) is also consistent with Rails standards and modularity (see next.)</p>
+<h5 id="consistency-with-a-rails-standard">3.2.3 Consistency With a Rails Standard</h5>
+<p>Prior to version 0.30.0, Spree used a complex custom mechanism for implementing &#8220;engine-like&#8221; functionality.  While it was difficult to strip this functionality out of Spree the benefits are well worth it.  Spree will now receive all of the massive testing and attention to detail that comes for free when using the Rails core.</p>
+<h5 id="modularity">3.2.4 Modularity</h5>
+<p>There are differing opinions on what belongs in the &#8220;core.&#8221;  People are often expressing their opinion that Spree is either &#8220;getting too fat&#8221; or &#8220;lacks basic features.&#8221;  By relying on these engines (and distributing them as gems), developers are free to use only the parts of Spree that they find useful.  For instance, this would allow you to omit promotions functionality or to replace the authentication mechanism.</p>
+<div class="warning"><p>The engine architecture is a work in progress.  Some of the modularity described above is theoretical and yet to be tested in a real world application.  Expect minor difficulties if you decide to use a subset of the Spree gems (although we would gladly work with you to resolve them.)</p></div>
+<h3 id="building-a-sandbox-application">4 Building a Sandbox Application</h3>
+<p>When working with the Spree source you may find yourself wanting to see how the code performs in the context of an actual application.  This is due to the fact that Spree is intended to be distributed as a gem and is not designed to be run as a standalone application.  Spree includes a helpful rake task for setting up such a test application.</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  $ rake sandbox
+</pre></div><p>This will create a barebones rails application configured with the Spree gem.  It runs the migrations for you and sets up the sample data.  The resulting <tt>sandbox</tt> folder is already ignored by <tt>.gitignore</tt> and it is deleted and rebuilt from scratch each time the rake task runs.</p>
+<h3 id="building-the-gem-from-the-source">5 Building the Gem from the Source</h3>
+<p>The Spree gem can easily be built from the source.</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  $ rake gem
+</pre></div><p>Currently there is no shortcut for building all of the Spree gems from source with a single command (contributions welcome).  Therefore, you will need to build them individually.  For example:</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  $ cd core
+  $ rake gem
+</pre></div><h3 id="tips-for-working-with-the-source">6 Tips for Working with the Source</h3>
+<h4 id="using-the-edge-code">6.1 Using the &#8220;Edge&#8221; Code</h4>
+<p>If you are interested in simply using the latest edge code (as opposed to contributing to it) then the simplest thing to do is add a <tt>:git</tt> directive to your <tt>Gemfile</tt> and point it at the master branch.</p>
+<div class="code_container">
+<pre class="brush: ruby; gutter: false; toolbar: false">
+
+  gem 'spree', :git =&gt; 'git://github.com/spree/spree.git'
+</pre></div><p>This will effectively use the latest code from the Git repository at the time you run <tt>bundle install</tt>.  This version of the code will be &#8220;frozen&#8221; in your <tt>Gemfile.lock</tt> and will ensure that anyone else using your project code is using the exact same version of the Spree code as you are.  You will need to update the bundle if you want to update to code that is newer since the last time you updated.</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  $ bundle update
+</pre></div>
+<div class="note"><p>Heroku now supports &#8220;git-based&#8221; gems.  This means you can work with the latest version of Spree without having to build a gem or use git submodules (which were not supported.)</p></div>
+<h4 id="developing-on-the-edge">6.2 Developing on the &#8220;Edge&#8221;</h4>
+<p>If you plan on using the edge code but also contributing back to Spree, then you may be interested in the following approach.  Create your Rails app that will be using the Spree gem in a directory that has the same parent as a locally cloned version of the Spree source.  Then simply use the following in your Gemfile.</p>
+<div class="code_container">
+<pre class="brush: ruby; gutter: false; toolbar: false">
+
+  gem 'spree', :path =&gt; '../spree'
+</pre></div>
+<div class="note"><p>See the excellent <a href="http://gembundler.com">bundler documentation</a> for more details.</p></div>
+<p><!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. --></p>
+
+      </div>
+    </div>
+  </div>
+
+  <hr class="hide" />
+  <div id="footer">
+    <div class="wrapper">
+      <p>This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0</a> License</a></p>
+    </div>
+
+  </div>
+
+  <script type="text/javascript" src="javascripts/guides.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shCore.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushRuby.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushJScript.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushCss.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushXml.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushSql.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushPlain.js"></script>
+  <script type="text/javascript">
+    SyntaxHighlighter.all()
+  </script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>spree_guides: Spree guides</title>
+
+<link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+<link rel="stylesheet" type="text/css" href="stylesheets/overrides.style.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/overrides.print.css" media="print" />
+
+
+<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shThemeRailsGuides.css" />
+
+
+</head>
+<body class="guide">
+  <div id="topNav">
+    <div class="wrapper">
+      <strong>More at <a href="http://spreecommerce.com">spreecommerce.com:</a> </strong>
+      <a href="http://spreecommerce.com/tour">Features</a> |
+      <a href="http://spreecommerce.com/resources">Resources</a> |
+      <a href="http://spreecommerce.com/blog">Blog</a> |
+      <a href="http://spreecommerce.com/demo">Demo</a> |
+      <a href="http://spreecommerce.com/community">Community</a> |
+      <a href="http://spreecommerce.com/download">Download</a>
+    </div>
+  </div>
+  <div id="header">
+    <div class="wrapper clearfix">
+      <h1><a href="overview.html" title="Return to home page">spree_guides</a></h1>
+      <p class="hide"><a href="#mainCol">Skip navigation</a>.</p>
+      <ul class="nav">
+        <li><a href="overview.html">Home</a></li>
+        <li class="index"><a href="index.html" onclick="guideMenu(); return false;" id="guidesMenu">Guides Index <span id="guidesArrow">&#9656;</span></a>
+          <div id="guides" class="clearfix" style="display: none;">
+            <hr />
+            <dl class="L">
+    <dt>Start Here</dt>
+      <dd><a href="getting_started.html">Getting Started with Spree</a></dd>
+      <dd><a href="source_code.html">Working with the Source Code</a></dd>
+      <dd><a href="server_configuration.html">Server Configuration</a></dd>
+    <dt>Best Practices</dt>
+      <dd><a href="developer_tips.html">Developer Tips</a></dd>
+      <dd><a href="seo_considerations.html">SEO Considerations</a></dd>
+    <dt>Basic Configuration</dt>
+      <dd><a href="products_and_variants.html">Products and Variants</a></dd>
+      <dd><a href="inventory.html">Inventory</a></dd>
+      <dd><a href="taxonomy.html">Taxonomy/Categorization</a></dd>
+      <dd><a href="payments.html">Payments</a></dd>
+      <dd><a href="payment_gateways.html">Payment Gateways</a></dd>
+      <dd><a href="zones.html">Zones</a></dd>
+      <dd><a href="adjustments.html">Adjustments</a></dd>
+      <dd><a href="taxation.html">Taxation</a></dd>
+      <dd><a href="shipping.html">Shopping</a></dd>
+      <dd><a href="promotions.html">Promotions</a></dd>
+</dl>
+<dl class="R">
+    <dt>Digging Deeper</dt>
+      <dd><a href="customization.html">Customization</a></dd>
+      <dd><a href="extensions.html">Using Extensions</a></dd>
+      <dd><a href="checkout.html">Spree Checkout Process</a></dd>
+      <dd><a href="migration.html">Migrating Data to Spree</a></dd>
+      <dd><a href="i18n.html">Internationalization/Localization</a></dd>
+      <dd><a href="testing.html">Testing Spree Applications</a></dd>
+      <dd><a href="security.html">Securing Spree Applications</a></dd>
+      <dd><a href="preferences.html">Preferences</a></dd>
+      <dd><a href="rest.html">REST API</a></dd>
+      <dd><a href="scopes_and_groups.html">Product Groups and Scopes</a></dd>
+      <dd><a href="searching.html">Seaching and Faceting</a></dd>
+      <dd><a href="contributing_to_spree.html">Contributing to Spree</a></dd>
+</dl>
+
+
+          </div>
+        </li>
+        <li><a href="contributing_to_spree.html">Contribute</a></li>
+        <li><a href="credits.html">Credits</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="feature">
+    <div class="wrapper">
+      <p>&lt;% content_for :header_section do %&gt; h2. Spree guides</p>
+<p>These guides are designed to make you immediately productive with Spree, and to help you understand how all of the pieces fit together. They are written by the authors of Spree as well as members of the Spree community.</p>
+<ul>
+	<li><a href="http://spreecommerce.com/documentation/">Current Release version</a> &#8211; based on the last stable release of Spree</li>
+	<li><a href="http://edgeguides.spreecommerce.com">Edge version</a> &#8211; for unreleased code in current Spree <a href="http://github.com/spree/spree/tree/master">master branch</a></li>
+	<li><a href="http://spreecommerce.com/legacy/0-50-x/">Legacy 0.50.x version</a> &#8211; for the legacy 0.50.x version of Spree</li>
+	<li><a href="http://spreecommerce.com/legacy/0-40-x/">Legacy 0.40.x version</a> &#8211; for the legacy 0.40.x version of Spree</li>
+	<li><a href="http://spreecommerce.com/legacy/0-11-x/">Legacy 0.11.x version</a> &#8211; for the legacy 0.11.x version of Spree</li>
+</ul>
+
+
+            <div id="subCol">
+        <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
+        <ol class="chapters">
+          <li><a href="#start-here"><p>Start Here</p>
+</a></li><li><a href="#basic-configuration"><p>Basic Configuration</p>
+</a></li><li><a href="#digging-deeper"><p>Digging Deeper</p>
+</a></li><li><a href="#best-practices"><p>Best Practices</p>
+</a></li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+        <p>&lt;% end %&gt;</p>
+<p>&lt;% content_for :index_section do %&gt;</p>
+<h3 id="start-here">1 Start Here</h3>
+<dl>
+&lt;% guide(&#8216;Getting Started with Spree&#8217;, &#8216;getting_started.html&#8217;) do %&gt;
+Everything you need to know to install Spree and create your first application.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Working With the Source Code&#8217;, &#8216;source_code.html&#8217;) do %&gt;
+An introduction to working with the source code..
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Server Configuration&#8217;, &#8216;server_configuration.html&#8217;) do %&gt;
+Steps to get your Spree application up and running in a production environment.
+&lt;% end %&gt;
+</dl>
+<h3 id="basic-configuration">2 Basic Configuration</h3>
+<dl>
+&lt;% guide(&#8216;Products and Variants&#8217;, &#8216;products_and_variants.html&#8217;) do %&gt;
+This guide covers the basic representation of products and their possible variants.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Inventory&#8217;, &#8216;inventory.html&#8217;) do %&gt;
+Information on the powerful inventory management system used by Spree.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Taxonomy/Categories&#8217;, &#8216;taxonomy.html&#8217;) do %&gt;
+This guide covers various methods for categorizing your products.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Payments&#8217;, &#8216;payments.html&#8217;) do %&gt;
+This guide explains how Spree&#8217;s payment system works and how to implement your own payment methods.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Payment Gateways&#8217;, &#8216;payment_gateways.html&#8217;) do %&gt;
+This guide covers how to setup a payment gateway using ActiveMerchant or another gateway solution of your choice.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Zones&#8217;, &#8216;zones.html&#8217;) do %&gt;
+This guide covers how to configure a zone for shipping, taxation or other custom purposes.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Adjustments&#8217;, &#8216;adjustments.html&#8217;) do %&gt;
+This guide covers the role that adjustments play in taxation, shipping and promotions.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Taxation&#8217;, &#8216;taxation.html&#8217;) do %&gt;
+Information on how to configure the tax calculations for your site (including Sales Tax and <span class="caps">VAT</span>.)
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Shipping&#8217;, &#8216;shipping.html&#8217;) do %&gt;
+Information on how to configure shiping options as well as building your own shipping calculator.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Promotions&#8217;, &#8216;promotions.html&#8217;) do %&gt;
+Using and extending the promotion system to provide discount coupons and other offers to customers
+&lt;% end %&gt;
+</dl>
+<h3 id="digging-deeper">3 Digging Deeper</h3>
+<dl>
+&lt;% guide(&#8216;Customization&#8217;, &#8216;customization.html&#8217;) do %&gt;
+This guide introduces the key ideas for customizing Spree to your site design.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Using Extensions&#8217;, &#8216;extensions.html&#8217;) do %&gt;
+This guide covers the technical details of the extension system.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Spree Checkout Process&#8217;, &#8216;checkout.html&#8217;) do %&gt;
+This guide covers the Spree checkout process and shows you how to customize the steps in your checkout process.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Migrating Data to Spree&#8217;, &#8216;migration.html&#8217;) do %&gt;
+Some tips on how to transfer large amounts of data into Spree.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Internationalization/Localization&#8217;, &#8216;i18n.html&#8217;) do %&gt;
+This guide covers issues related to using Spree in different countries and locales.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Testing Spree Applications&#8217;, &#8216;testing.html&#8217;) do %&gt;
+This guide covers how to test the Spree source code as well as how to write new tests.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Securing Spree Applications&#8217;, &#8216;security.html&#8217;) do %&gt;
+Information on how to secure your Spree application (including roles and permissions settings.)
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Preferences&#8217;, &#8216;preferences.html&#8217;) do %&gt;
+Information on how to administer the various preferences in Spree.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;<span class="caps">REST</span> <span class="caps">API</span>&#8217;, &#8216;rest.html&#8217;) do %&gt;
+Details on interacting with Spree using the RESTful <span class="caps">API</span>.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Product Groups and Scopes&#8217;, &#8216;scopes_and_groups.html&#8217;) do %&gt;
+Information on how to define groups of products by various criteria.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Searching and Faceting&#8217;, &#8216;searching.html&#8217;) do %&gt;
+Information on how to support powerful search and filtering operations.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Contributing to Spree&#8217;, &#8216;contributing_to_spree.html&#8217;) do %&gt;
+Do you enjoy Spree and want to &#8220;give something back?&#8221;  This guide contains information on how to contribute to the Spree project.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;Release notes&#8217;, &#8216;release_notes.html&#8217;) do %&gt;
+Overview documentation for the recent releases
+&lt;% end %&gt;
+</dl>
+<h3 id="best-practices">4 Best Practices</h3>
+<dl>
+&lt;% guide(&#8216;Developer Tips&#8217;, &#8216;developer_tips.html&#8217;) do %&gt;
+This guide contains a miscellany of useful advice from Spree developers, including how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
+&lt;% end %&gt;
+</dl>
+<dl>
+&lt;% guide(&#8216;<span class="caps">SEO</span> Considerations&#8217;, &#8216;seo_considerations.html&#8217;) do %&gt;
+Information on how to leverage the existing <span class="caps">SEO</span> features of Spree as well as on general <span class="caps">SEO</span> best practices.
+&lt;% end %&gt;
+</dl>
+<p>&lt;% end %&gt;</p>
+
+      </div>
+    </div>
+  </div>
+
+  <hr class="hide" />
+  <div id="footer">
+    <div class="wrapper">
+      <p>This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0</a> License</a></p>
+    </div>
+
+  </div>
+
+  <script type="text/javascript" src="javascripts/guides.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shCore.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushRuby.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushJScript.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushCss.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushXml.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushSql.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushPlain.js"></script>
+  <script type="text/javascript">
+    SyntaxHighlighter.all()
+  </script>
+</body>
+</html>

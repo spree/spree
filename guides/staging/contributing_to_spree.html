@@ -1,0 +1,292 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>spree_guides: Contributing to Spree</title>
+
+<link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+<link rel="stylesheet" type="text/css" href="stylesheets/overrides.style.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/overrides.print.css" media="print" />
+
+
+<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shThemeRailsGuides.css" />
+
+
+</head>
+<body class="guide">
+  <div id="topNav">
+    <div class="wrapper">
+      <strong>More at <a href="http://spreecommerce.com">spreecommerce.com:</a> </strong>
+      <a href="http://spreecommerce.com/tour">Features</a> |
+      <a href="http://spreecommerce.com/resources">Resources</a> |
+      <a href="http://spreecommerce.com/blog">Blog</a> |
+      <a href="http://spreecommerce.com/demo">Demo</a> |
+      <a href="http://spreecommerce.com/community">Community</a> |
+      <a href="http://spreecommerce.com/download">Download</a>
+    </div>
+  </div>
+  <div id="header">
+    <div class="wrapper clearfix">
+      <h1><a href="overview.html" title="Return to home page">spree_guides</a></h1>
+      <p class="hide"><a href="#mainCol">Skip navigation</a>.</p>
+      <ul class="nav">
+        <li><a href="overview.html">Home</a></li>
+        <li class="index"><a href="index.html" onclick="guideMenu(); return false;" id="guidesMenu">Guides Index <span id="guidesArrow">&#9656;</span></a>
+          <div id="guides" class="clearfix" style="display: none;">
+            <hr />
+            <dl class="L">
+    <dt>Start Here</dt>
+      <dd><a href="getting_started.html">Getting Started with Spree</a></dd>
+      <dd><a href="source_code.html">Working with the Source Code</a></dd>
+      <dd><a href="server_configuration.html">Server Configuration</a></dd>
+    <dt>Best Practices</dt>
+      <dd><a href="developer_tips.html">Developer Tips</a></dd>
+      <dd><a href="seo_considerations.html">SEO Considerations</a></dd>
+    <dt>Basic Configuration</dt>
+      <dd><a href="products_and_variants.html">Products and Variants</a></dd>
+      <dd><a href="inventory.html">Inventory</a></dd>
+      <dd><a href="taxonomy.html">Taxonomy/Categorization</a></dd>
+      <dd><a href="payments.html">Payments</a></dd>
+      <dd><a href="payment_gateways.html">Payment Gateways</a></dd>
+      <dd><a href="zones.html">Zones</a></dd>
+      <dd><a href="adjustments.html">Adjustments</a></dd>
+      <dd><a href="taxation.html">Taxation</a></dd>
+      <dd><a href="shipping.html">Shopping</a></dd>
+      <dd><a href="promotions.html">Promotions</a></dd>
+</dl>
+<dl class="R">
+    <dt>Digging Deeper</dt>
+      <dd><a href="customization.html">Customization</a></dd>
+      <dd><a href="extensions.html">Using Extensions</a></dd>
+      <dd><a href="checkout.html">Spree Checkout Process</a></dd>
+      <dd><a href="migration.html">Migrating Data to Spree</a></dd>
+      <dd><a href="i18n.html">Internationalization/Localization</a></dd>
+      <dd><a href="testing.html">Testing Spree Applications</a></dd>
+      <dd><a href="security.html">Securing Spree Applications</a></dd>
+      <dd><a href="preferences.html">Preferences</a></dd>
+      <dd><a href="rest.html">REST API</a></dd>
+      <dd><a href="scopes_and_groups.html">Product Groups and Scopes</a></dd>
+      <dd><a href="searching.html">Seaching and Faceting</a></dd>
+      <dd><a href="contributing_to_spree.html">Contributing to Spree</a></dd>
+</dl>
+
+
+          </div>
+        </li>
+        <li><a href="contributing_to_spree.html">Contribute</a></li>
+        <li><a href="credits.html">Credits</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="feature">
+    <div class="wrapper">
+      <h2>Contributing to Spree</h2>
+<p>Spree is an open source project.  Anyone can use the code, but more importantly, anyone can contribute.  This is a group effort and we value your input.  Please consider making a contribution to help improve the Spree project.  This guide covers:</p>
+<ul>
+	<li>How to file a ticket when you discover a bug</li>
+	<li>How to contribute fixes and improvements to the core</li>
+	<li>Information on how to improve the documentation</li>
+</ul>
+
+
+            <div id="subCol">
+        <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
+        <ol class="chapters">
+          <li><a href="#who-can-contribute"><p>Who can Contribute?</p>
+</a></li><li><a href="#before-you-contribute"><p>Before you Contribute</p>
+</a><ul><li><a href="#mailing-list"><p>Mailing List</p>
+</a></li> <li><a href="#irc"><p><span class="caps">IRC</span></p>
+</a></li> <li><a href="#notification-via-ticket"><p>Notification via Ticket</p>
+</a></li></ul></li><li><a href="#filing-an-issue"><p>Filing an Issue</p>
+</a><ul><li><a href="#when-to-file-an-issue"><p>When to File an Issue</p>
+</a></li> <li><a href="#providing-a-patch"><p>Providing a Patch</p>
+</a></li> <li><a href="#feature-requests"><p>Feature Requests</p>
+</a></li> <li><a href="#how-we-prioritize-issues"><p>How We Prioritize Issues</p>
+</a></li></ul></li><li><a href="#creating-a-pull-request"><p>Creating a Pull Request</p>
+</a><ul><li><a href="#topic-branches"><p>Topic Branches</p>
+</a></li> <li><a href="#rebasing-your-branch"><p>Rebasing your Branch</p>
+</a></li></ul></li><li><a href="#contributing-to-the-guides"><p>Contributing to the Guides</p>
+</a></li><li><a href="#extensions"><p>Extensions</p>
+</a></li><li><a href="#contributing-to-the-core"><p>Contributing to the Core</p>
+</a><ul><li><a href="#one-time-steps"><p>One Time Steps</p>
+</a></li> <li><a href="#for-each-contribution"><p>For Each Contribution</p>
+</a></li></ul></li><li><a href="#contributing-to-the-documentation"><p>Contributing to the Documentation</p>
+</a></li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+        <h3 id="who-can-contribute">1 Who can Contribute?</h3>
+<p>Spree is an open source project and as such contributions are always welcome.  Our community is one which encourages involvement from all developers regardless of their ability level.  We ask that you be patient with the other members of the community and maintain a respectful attitude towards other people&#8217;s work.  Open source is a great way to learn a new technology so don&#8217;t be afraid to jump right in, even if you are new to Ruby/Rails.</p>
+<h3 id="before-you-contribute">2 Before you Contribute</h3>
+<p>Open source projects tend to be a collaborative effort.  Since many people are relying upon Spree for their real world applications, changes to the code can have major implications.  Before you write a bug fix or code a new feature, you should find out if anybody is interested in your proposed change.  You may find that the thing you&#8217;re trying to &#8220;fix&#8221; is actually desired behavior.  You might also discover that someone else is working on it.  Either way you can save yourself valuable time by announcing your intentions before starting work.</p>
+<h4 id="mailing-list">2.1 Mailing List</h4>
+<p>One of the best places for communication is the <a href="http://groups.google.com/group/spree-user">spree-user mailing list</a>.  You can search this list of previous discussions and get a sense for whether you&#8217;re trying to address something new.</p>
+<h4 id="irc">2.2 <span class="caps">IRC</span></h4>
+<p>There is a #spree chat room on <span class="caps">IRC</span>.  Sometimes the core contributors hang out there and you can get some feedback on your idea.</p>
+<div class="warning"><p>The #spree chat room is not monitored as carefully as the mailing list.  Sometimes you&#8217;ll get lucky and someone will answer your question but we can&#8217;t provide real time responses to everyone with a question/problem/idea.  The mailing list is a much better way to communicate (and it gives everyone the chance to provide a thoughtful response.)</p></div>
+<h4 id="notification-via-ticket">2.3 Notification via Ticket</h4>
+<p>You can also search existing bug reports/issues and file a new one if you do not find an issue relevant to your proposed change.  See <a href="#filing-an-issue">Filing an Issue</a> for more details.</p>
+<div class="note"><p>The important thing is that you communicate your intention in advance of doing a lot of work.  Simple bug fixes and non-controversial changes do not require this approach but you can save some time by suggesting an improvement and having it rejected before you write a bunch of the code.</p></div>
+<h3 id="filing-an-issue">3 Filing an Issue</h3>
+<p>If you would like to file a bug report, please create an issue in our <a href="https://github.com/spree/spree/issues">Github Issues Tracker</a>.  You should do a basic search of the issues database before creating a new issue to ensure that you are not creating a duplicate issue.</p>
+<div class="info"><p>Please do not assign labels or create new labels to your issue.  We will assign the appropriate labels to ensure your ticket is handled in the appropriate manner.</p></div>
+<h4 id="when-to-file-an-issue">3.1 When to File an Issue</h4>
+<p>You should file an issue if you have found (or suspect) a bug in the &#8220;core&#8221; functionality of Spree.  If you have found a bug in one of the extensions, please file an issue with the appropriate project in Github.  If you&#8217;re not sure if the behavior you&#8217;re experiencing is intentional just ask on the mailing list and someone will encourage you to file a ticket if your issue sounds like a bug (as opposed to a feature.)</p>
+<h4 id="providing-a-patch">3.2 Providing a Patch</h4>
+<p>If you are filing and issue and supplying a patch at the same time, please file a <a href="#creating-a-pull-request">Pull Request</a> instead.  The pull request will also create an issue at the same time but its superior to just creating an issue because the code and issue can be linked.</p>
+<p>If the ticket already exists, however, and you want to supply a patch after the fact, you can simply reference the issue number in your commit message. For example, if your commit fixed issue #123 you could use the following commit message:</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+Fixed a problem with Facebook authentication.
+
+[Fixes #123]
+</pre></div><p>Github will automatically detect this commit message when you push it and link the issue.  Please see the detailed <a href="http://github.com/blog/831-issues-2-0-the-next-generation">Github Issues</a> blog post for more details.</p>
+<h4 id="feature-requests">3.3 Feature Requests</h4>
+<p>We&#8217;re interested in hearing your ideas for new features but creating feature requests in the Issue Tracker is not the proper way to ask for a feature.  A feature request is any idea you have to improve the software experience that is not strictly related to a bug or error of omission.</p>
+<div class="info"><p>Feature requests that are accompanied by source code are always welcome.  In this case you should read the next section on <a href="creating-a-pull-request">Creating a Pull Request</a>.</p></div>
+
+<div class="warning"><p>Feature requests without accompanying code will be closed.  We simply cannot respond efficiently to feature requests through our Issue Tracker.  If you want to suggest a feature, please use the <a href=":http://groups.google.com/group/spree-user">mailing list</a> or the <a href="http://spree.uservoice.com/">user voice</a> forum.</p></div>
+<h4 id="how-we-prioritize-issues">3.4 How We Prioritize Issues</h4>
+<p>Spree is a very large project with lots of activity.  We try our best to respond to all of the questions and issues our users have.  We use the following criteria to prioritize issues:</p>
+<ul>
+	<li>Does this bug effect the latest stable release?</li>
+	<li>Is there a patch associated with the issue?</li>
+	<li>Is ther a test included in the patch?</li>
+	<li>Has someone else verified the bug?</li>
+	<li>Are there details on how to reproduce the problem?</li>
+</ul>
+<p>We give highest priority to issues where the answer is &#8220;yes&#8221; to all of these questions.  Next highest priority is for issues that answer &#8220;yes&#8221; to most of these questions, particularly the first few criteria.</p>
+<div class="note"><p>You need to include a brief description of the problem and simple steps needed to reproduce it.  If you fail to supply this minimum level of information your issue will likely be ignored.</p></div>
+<h3 id="creating-a-pull-request">4 Creating a Pull Request</h3>
+<h4 id="topic-branches">4.1 Topic Branches</h4>
+<h4 id="rebasing-your-branch">4.2 Rebasing your Branch</h4>
+<h3 id="contributing-to-the-guides">5 Contributing to the Guides</h3>
+<h3 id="extensions">6 Extensions</h3>
+<p>Creating your own extension or making improvements to existing extensions is strongly encouraged.  Please see the <a href="extensions.html">Extension Guide</a> for more details on how to contribute through extensions.</p>
+<h3 id="contributing-to-the-core">7 Contributing to the Core</h3>
+<p>The core is the basic foundation of the Spree project.  It is maintained in Github under the <a href="http://github.com/spree/spree/tree/master">spree/spree</a> project.  There is a <a href="http://spreecommerce.com/core_team">core team</a> of developers who are responsible for maintaining the quality of the source code.  Your changes will ultimately need to be merged into the official project by a core member.  Thanks to <a href="http://github.com">Github</a>, however, you do not have to wait for a core member to get started with your fix.</p>
+<h4 id="one-time-steps">7.1 One Time Steps</h4>
+<p>Please perform the following one time steps for your fork in Github.</p>
+<h5 id="create-a-remote-reference-in-git-to-railsdog">7.1.1 Create a Remote Reference in Git to Railsdog</h5>
+<p>You will need to create a fork of the Spree project in Github.  This is a pretty self explanatory process.  After you have done this and cloned your repository you will need to add a reference to the official repository (railsdog).</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+git remote add railsdog git://github.com/spree/spree.git
+</pre></div>
+<div class="warning"><p>Its important that you add this reference.  Its a one time step that will allow you to easily create branches based on the most recent version of the official code.</p></div>
+<h4 id="for-each-contribution">7.2 For Each Contribution</h4>
+<h5 id="create-a-ticket-in-lighthouse">7.2.1 Create a Ticket in Lighthouse</h5>
+<p>The Spree development team is using <a href="http://railsdog.lighthouseapp.com/projects/31096-spree/overview">Light House</a> for tracking all issue and feature requests. Use it to browse the existing tickets or to submit a new issue.  All changes to the core should flow through this system. Please file an issue before you commit your code so that you can then reference the issue number in your commit.  We get a high volume of contributions, so taking a second to create the LH issue helps us to keep track of your bug reports and fixes so that they do not get lost in the shuffle.</p>
+<div class="warning"><p>Do not submit pull requests in Github.  Do not send bug reports to the spree-user list.  In both cases you will be politely asked to file an issue in Lighthouse.  We need to deal with these matters in the most efficient way possible &#8211; we&#8217;re not trying to be difficult.</p></div>
+<h5 id="create-a-clean-branch-for-each-issue">7.2.2 Create a Clean Branch for Each Issue</h5>
+<p>Git branches are &#8220;cheap.&#8221;  Creating branches in Git is incredibly easy and its an ideal way to isolate a specific set of changes.  You may be fixing several things at one time but by keeping your changes isolated it will help us to find and apply only the changes we&#8217;re interested in.  You should create a clean branch based on the latest <tt>railsdog/master</tt> when doing this.  It is important you follow these steps exactly, it will prevent you from accidentally including unrelated changes from your local copy into the branch.</p>
+<p>For example, if we were submitting a patch to issue #525 which provided thai localization we would create the branch as follows:</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+git fetch railsdog
+git checkout -b 525-add-thai-localization --track railsdog/master
+</pre></div><p>The <tt>fetch</tt> command will grab all of the latest commits on railsdog.  Don&#8217;t worry, it doesn&#8217;t merge them into your current branch or anything.  This is just making sure that you have a complete copy of the railsdog source.  The commits will be stored behind the scenes, your local code will remain as it was.</p>
+<p>The <tt>track</tt> part of the command will tell git that this branch should track with the remote version of railsdog master.  This is another way of saying that the branch should be based on a clean copy of the latest source code.</p>
+<h5 id="add-the-issue-number-to-your-commits">7.2.3 Add the Issue Number to Your Commits</h5>
+<p>When you&#8217;re ready to commit be sure to add the issue number in your commit message.  It is suggested that you just use <tt>git commit</tt> without the <tt>-m</tt> option.  This will allow you to view the commit message in your editor and add some line spacing for readability.  Here&#8217;s an example of a commit message.</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+Provided a Thai localization.
+
+[#525]
+</pre></div><p>Please be sure to include the issue number inside of brackets.  This will make sure that Lighthouse will be notified of the changeset when you push to Github.  It will also automatically change the ticket state to &#8220;patched&#8221; which will help us to prioritize issues where users have supplied a fix.  Note also the blank line between the comment and the issue number.  This helps with readability.</p>
+<p>WARN. Lighthouse will not be notified of the fix automatically due to some technical problems with the hook.  Please continue to use this notation since the style will be compatible with the eventual new solution to this problem.</p>
+<h5 id="rebase-if-necessary">7.2.4 Rebase if Necessary</h5>
+<p>If you&#8217;ve been working on your fix for more than a few hours there is a good chance that you will need to rebase.  Git&#8217;s rebase command is one of those scary sounding things that really isn&#8217;t all that bad <a href="http://www.gitready.com/intermediate/2009/01/31/intro-to-rebase.html">once you understand it</a>.</p>
+<p>So you can check to see if there have been any chances to railsdog since you created your branch.</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  git fetch railsdog
+</pre></div><p>If nothing comes back, then <tt>railsdog/master</tt> is unchanged and there&#8217;s nothing to do.  If you see a bunch of commits coming down, however, then its time to rebase.  Run the following command from your &#8220;issue branch&#8221; which you should still be on.</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  git rebase railsdog/master
+</pre></div><p>If you&#8217;re lucky the command will run without incident.  If there are conflicts, you can resolve them manually (better you then us) and continue the rebase operation (+git rebase &#8212;continue).</p>
+<h5 id="push-to-a-remote-branch-in-github">7.2.5 Push to a Remote Branch in Github</h5>
+<p>Now all you have to do is push your changes to a remote branch in Git Hub.</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+git push origin 525-add-thai-localization
+</pre></div><p>If you have set up the GitHub service hook as described earlier, the changes will automatically be reflected in the Lighthouse ticket once you push.</p>
+<div class="warning"><p>In previous versions of this guide we encouraged you to create a &#8220;service hook&#8221; for your fork in Github.  Unfortunately we are expereincing technical problems processing these commit messages.  We&#8217;re working on a new solution that will automatically detect your fixes in Github when using the proper notation in your commits.</p></div>
+<h5 id="merge-to-your-local-master-and-push">7.2.6 Merge to Your Local Master and Push</h5>
+<p>The final step is to make sure these changes are merged back into your own master branch.  This way they are available to you alongside your other changes that may or may not be slated to be merged into the core.</p>
+<p>So continuing with our previous example you should then do:</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  git checkout master
+  git merge 525-add-thai-localization
+  git push origin master
+</pre></div><h5 id="summary-of-contribution-steps">7.2.7 Summary of Contribution Steps</h5>
+<ol>
+	<li>Create a ticket in Lighthouse</li>
+	<li>Create a branch for each ticket</li>
+	<li>Note the ticket # in your commit</li>
+	<li>Rebase against the latest railsdog/master</li>
+	<li>Push the commit to your remote branch</li>
+	<li>Merge the commit to your master and push to Github</li>
+</ol>
+<h3 id="contributing-to-the-documentation">8 Contributing to the Documentation</h3>
+<p>Improvements to the documentation is encouraged.  The primary source of documentation are the guides (<em><span class="caps">HINT</span>: You are reading one now.</em>)  The documentation is in its own GitHub project called <a href="http://github.com/spree/spree-guides/tree/master">spree-guides</a>.  To build the documentation normally simply clone and install.</p>
+<div class="code_container">
+<pre class="brush: plain; gutter: false; toolbar: false">
+
+  $ git clone git://github.com/spree/spree-guides.git
+  $ cd spree-guides
+  $ bundle install
+  $ rake guides
+</pre></div>
+<div class="info"><p>You will also need to install the RedCloth gem (4.1.1 or greater) if you do not done so.</p></div>
+<p>You do not need to fork the spree-guides project in order to contribute.  Just send an email to <a href="http://groups.google.com/group/spree-user">spree-user</a> (be sure to include your github username) and say that you would like to contribute.  We&#8217;ll add you to the list so you can commit directly to the guides project.</p>
+<div class="info"><p>If you&#8217;re uncomfortable using Git, etc. you can report a mistake in the Spree guides using Github&#8217;s built in <a href="http://github.com/spree/spree-guides/issues">issue tracker</a>.  Please do <b>not</b> report issues with the documentation in the Lighthouse ticket system which is reserved for reporting bugs in the code.</p></div>
+
+<div class="warning"><p>Please be considerate when making changes to the spree-guides.  If you wish to make major changes to how the documentation is organized then you should use a GitHub fork and ask people to review your proposed changes instead.</p></div>
+<p><!-- hack comment so guides gem can end with INFO:, NOTE:, WARNING:, etc. --></p>
+
+      </div>
+    </div>
+  </div>
+
+  <hr class="hide" />
+  <div id="footer">
+    <div class="wrapper">
+      <p>This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0</a> License</a></p>
+    </div>
+
+  </div>
+
+  <script type="text/javascript" src="javascripts/guides.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shCore.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushRuby.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushJScript.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushCss.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushXml.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushSql.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushPlain.js"></script>
+  <script type="text/javascript">
+    SyntaxHighlighter.all()
+  </script>
+</body>
+</html>
