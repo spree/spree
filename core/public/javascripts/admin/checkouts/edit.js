@@ -56,6 +56,9 @@ jQuery(document).ready(function(){
 
     var addr = data['bill_address'];
     if(addr!=undefined){
+      $('#order_bill_address_attributes_country_id').val(addr['country_id']);
+      update_state('b');
+
       $('#order_bill_address_attributes_firstname').val(addr['firstname']);
       $('#order_bill_address_attributes_lastname').val(addr['lastname']);
       $('#order_bill_address_attributes_address1').val(addr['address1']);
@@ -64,13 +67,14 @@ jQuery(document).ready(function(){
       $('#order_bill_address_attributes_zipcode').val(addr['zipcode']);
       $('#order_bill_address_attributes_state_id').val(addr['state_id']);
       $('#order_bill_address_attributes_state_name').val(addr['state_name']);
-      $('#order_bill_address_attributes_country_id').val(addr['country_id']);
       $('#order_bill_address_attributes_phone').val(addr['phone']);
-      update_state('b');
     }
 
     var addr = data['ship_address'];
     if(addr!=undefined){
+      $('#order_ship_address_attributes_country_id').val(addr['country_id']);
+      update_state('s');
+
       $('#order_ship_address_attributes_firstname').val(addr['firstname']);
       $('#order_ship_address_attributes_lastname').val(addr['lastname']);
       $('#order_ship_address_attributes_address1').val(addr['address1']);
@@ -79,9 +83,7 @@ jQuery(document).ready(function(){
       $('#order_ship_address_attributes_zipcode').val(addr['zipcode']);
       $('#order_ship_address_attributes_state_id').val(addr['state_id']);
       $('#order_ship_address_attributes_state_name').val(addr['state_name']);
-      $('#order_ship_address_attributes_country_id').val(addr['country_id']);
       $('#order_ship_address_attributes_phone').val(addr['phone']);
-      update_state('s');
     }
   });
 
