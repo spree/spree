@@ -3,6 +3,14 @@ Given /^a custom shipping method exists$/ do
   Factory(:shipping_method, :zone => Zone.find_by_name('North America'))
 end
 
+Given /^a free shipping method exists$/ do
+  Given("a shipping method exists")
+  calc = ShippingMethod.first.calculator
+  calc.set_preference(:amount, 0.0)
+  calc.save
+end
+
+
 Given /^custom next on order$/ do
   order = Order.find_by_number('R100')
   order.next!

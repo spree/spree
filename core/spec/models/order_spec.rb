@@ -156,11 +156,13 @@ describe Order do
       before do
         order.state = "delivery"
         order.shipping_method = mock_model(ShippingMethod).as_null_object
+        order.stub :total => 10.0
       end
 
       context "when transitioning to payment state" do
         it "should create a shipment" do
           order.next!
+          order.state.should == 'payment'
           order.shipments.size.should == 1
         end
       end

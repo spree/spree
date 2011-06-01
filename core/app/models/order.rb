@@ -68,6 +68,11 @@ class Order < ActiveRecord::Base
     line_items.count > 0
   end
 
+  # Is this a free order in which case the payment step should be skipped
+  def payment_required?
+    total.to_f > 0.0
+  end
+
   # Indicates the number of items in the order
   def item_count
     line_items.map(&:quantity).sum
@@ -79,7 +84,8 @@ class Order < ActiveRecord::Base
     event :next do
       transition :from => 'cart',     :to => 'address'
       transition :from => 'address',  :to => 'delivery'
-      transition :from => 'delivery', :to => 'payment'
+      transition :from => 'delivery', :to => 'payment', :if => :payment_required?
+      transition :from => 'delivery', :to => 'complete'
       transition :from => 'confirm',  :to => 'complete'
 
       # note: some payment methods will not support a confirm step

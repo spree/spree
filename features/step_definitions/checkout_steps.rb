@@ -42,7 +42,6 @@ When /^I choose "(.*?)" as shipping method$/ do |shipping_method|
   shipping_method = "order_shipping_method_id_#{ShippingMethod.find_by_name(shipping_method).id}"
   When %{I choose "#{shipping_method}"}
   And %{press "Save and Continue"}
-  Then %{I should see "Payment Information"}
 end
 
 When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and set coupon code to "(.*?)")?$/ do |shipping_method, payment_method, coupon_code|
