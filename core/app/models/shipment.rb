@@ -4,11 +4,10 @@ class Shipment < ActiveRecord::Base
   belongs_to :shipping_method
   belongs_to :address
   has_many :state_events, :as => :stateful
-  has_many :inventory_units
+  has_many :inventory_units, :dependent => :nullify
   has_one :adjustment, :as => :source
 
   before_create :generate_shipment_number
-  after_destroy :release_inventory_units
   after_save :ensure_correct_adjustment, :update_order
 
   attr_accessor :special_instructions
@@ -111,10 +110,6 @@ class Shipment < ActiveRecord::Base
     unless shipping_method.nil?
       errors.add :shipping_method, I18n.t("is_not_available_to_shipment_address") unless shipping_method.zone.include?(address)
     end
-  end
-
-  def release_inventory_units
-    inventory_units.each {|unit| unit.update_attribute(:shipment_id, nil)}
   end
 
   # Determines the appropriate +state+ according to the following logic:
