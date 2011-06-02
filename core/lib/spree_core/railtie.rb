@@ -61,5 +61,8 @@ module SpreeCore
       end
     end
 
+    # filter sensitive information during logging
+    config.filter_parameters += [:password, :password_confirmation, :number]
+
   end
 end
