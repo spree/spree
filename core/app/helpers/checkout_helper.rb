@@ -32,4 +32,31 @@ module CheckoutHelper
     content_tag('ol', raw(items.join("\n")), :class => 'progress-steps', :id => "checkout-step-#{@order.state}")
   end
 
+  module FormBuilder
+    
+    def address_country_select(available_countries, options = {}, html_options = {})
+      options[:selected] = Spree::Config[:default_country_id]
+      html_options[:class] = 'required'
+      collection_select :country_id, available_countries, :id, :name, options, html_options
+    end
+    
+    def address_state_select(order_part, options = {}, html_options = {})
+      have_states = !order_part.country.states.empty?
+
+      state_elements =
+        collection_select(:state_id, order_part.country.states,
+                  :id, :name,
+                  {:include_blank => true},
+                  {:class => have_states ? "required" : "hidden", :disabled => !have_states}) +
+        text_field(:state_name,
+                  :class => !have_states ? "required" : "hidden",
+                  :disabled => have_states)
+      
+      @template.javascript_tag('document.write("' + state_elements.gsub('"', "'").gsub("\n", "") + '");') +
+      @template.content_tag(:noscript, text_field(:state_name), :class => 'required')
+    end
+    
+  end
 end
+
+ActionView::Helpers::FormBuilder.send(:include, CheckoutHelper::FormBuilder)
