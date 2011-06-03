@@ -34,23 +34,25 @@ module CheckoutHelper
 
   module FormBuilder
     
-    def address_country_select(available_countries, options = {}, html_options = {})
-      options[:selected] = Spree::Config[:default_country_id]
-      html_options[:class] = 'required'
+    def address_country_select(available_countries, options = {:selected => Spree::Config[:default_country_id]}, html_options = {:class => 'required'})
       collection_select :country_id, available_countries, :id, :name, options, html_options
     end
     
-    def address_state_select(order_part, options = {}, html_options = {})
-      have_states = !order_part.country.states.empty?
+    def address_state_select(states, options = {:include_blank => true}, html_options = {:class => 'required'})
+      have_states = !states.empty?
+      
+      select_html_options = html_options
+      text_field_html_options = html_options
+      
+      select_html_options[:class] = 'hidden' if !have_states
+      select_html_options[:disabled] = !have_states
+      
+      text_field_html_options[:class] = 'hidden' if have_states
+      text_field_html_options[:disabled] = have_states
 
       state_elements =
-        collection_select(:state_id, order_part.country.states,
-                  :id, :name,
-                  {:include_blank => true},
-                  {:class => have_states ? "required" : "hidden", :disabled => !have_states}) +
-        text_field(:state_name,
-                  :class => !have_states ? "required" : "hidden",
-                  :disabled => have_states)
+        collection_select(:state_id, states, :id, :name, options, select_html_options) +
+        text_field(:state_name, text_field_html_options)
       
       @template.javascript_tag('document.write("' + state_elements.gsub('"', "'").gsub("\n", "") + '");') +
       @template.content_tag(:noscript, text_field(:state_name), :class => 'required')

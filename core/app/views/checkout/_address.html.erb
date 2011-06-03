@@ -31,7 +31,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
         <p class="field">
           <span id="bstate">
             <%= bill_form.label :state, t(:state) %>
-            <%= bill_form.address_state_select @order.bill_address %>
+            <%= bill_form.address_state_select @order.bill_address.country.states %>
           </span>
           <span class="req">*</span>
         </p>
@@ -91,7 +91,7 @@ div.inner input[type=text], div.inner select { width: 80%; }
         <p class="field">
           <span id="sstate">
             <%= ship_form.label :state, t(:state) %>
-            <%= ship_form.address_state_select @order.ship_address %>
+            <%= ship_form.address_state_select @order.ship_address.country.states %>
           </span>
           <span class="req">*</span>
         </p>
