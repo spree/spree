@@ -33,7 +33,7 @@ en:
       description: Creates a promotion credit adjustment on the order
     create_line_items:
       name: Create line items
-      description: Adds the products associated with the promotion to the cart
+      description: Populates the cart with the specified variants and quantities
     give_store_credit:
       name: Give store credit
       description: Gives the user store credit of the ammount specified

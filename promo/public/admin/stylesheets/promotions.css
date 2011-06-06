@@ -1,4 +1,4 @@
-.promotion-rule, .promotion-action {
+.promotion_rule, .promotion_action {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   padding: 8px 40px 8px 10px;
@@ -7,7 +7,7 @@
   margin-bottom: 4px;
   position: relative;
 }
-.promotion-rule .delete, .promotion-action .delete {
+.promotion_rule .delete, .promotion_action .delete {
   display: block;
   position: absolute;
   right: 10px;

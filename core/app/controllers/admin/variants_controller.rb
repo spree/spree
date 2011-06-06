@@ -2,6 +2,13 @@ class Admin::VariantsController < Admin::ResourceController
   belongs_to :product, :find_by => :permalink
   create.before :create_before
 
+  def index
+    respond_with(collection) do |format|
+      format.html
+      format.json { render :json => json_data }
+    end
+  end
+
   # override the destory method to set deleted_at value
   # instead of actually deleting the product.
   def destroy
@@ -48,4 +55,11 @@ class Admin::VariantsController < Admin::ResourceController
     end
     @collection
   end
+
+  def json_data
+    ( parent.variants.presence || [parent.master] ).map do |v|
+      { :label => v.options_text.presence || v.name, :id => v.id }
+    end
+  end
+
 end
