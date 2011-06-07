@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency('acts_as_list', '= 0.1.2')
-  s.add_dependency('nested_set', '= 1.6.4')
+  s.add_dependency('nested_set', '= 1.6.6')
   s.add_dependency('rd_unobtrusive_date_picker', '= 0.1.0')
   s.add_dependency('rd_find_by_param', '= 0.1.1')
 
