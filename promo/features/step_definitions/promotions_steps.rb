@@ -19,7 +19,7 @@ end
 
 When /^I update the quantity on the first cart item to "([^"]*)"$/ do |quantity|
   When(%(I fill in "order[line_items_attributes][0][quantity]" with "#{quantity}"))
-  And('I follow "Update"')
+  And('I press "Update"')
 end
 
 

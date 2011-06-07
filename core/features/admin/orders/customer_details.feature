@@ -41,5 +41,4 @@ Feature: Admin managing customer details
     When I click first link from selector "table td.actions a"
     When I follow "Customer Details"
     When I press "Continue"
-    Then show me the page
-    Then I should see "Ship address firstname can't be blank"
+    Then I should see "Shipping address first name can't be blank"
