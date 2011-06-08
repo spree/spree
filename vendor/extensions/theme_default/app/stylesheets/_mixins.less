@@ -52,13 +52,14 @@
 @col_margin: 10px;
 @col_width: 30px;
 
-.column-last (@span: 1) {
+.column-last (@span: 1, @border: 0) {
   display: inline;
   float: left;
-  width: @col_width * @span + (@col_margin * (@span - 1));
+  margin-right: 0;
+  width: @col_width * @span + (@col_margin * (@span - 1)) - @border * 2;
 }
-.column (@span: 1) {
-  .column-last(@span);
+.column (@span: 1, @border: 0) {
+  .column-last(@span, @border);
   margin-right: @col_margin;
 }
 
