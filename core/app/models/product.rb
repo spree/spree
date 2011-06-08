@@ -59,7 +59,7 @@ class Product < ActiveRecord::Base
 
 
   def variant_images
-    Image.find_by_sql("SELECT assets.* FROM assets LEFT JOIN variants ON (variants.id == assets.viewable_id) WHERE (variants.product_id = #{self.id})")
+    Image.find_by_sql("SELECT assets.* FROM assets LEFT JOIN variants ON (variants.id = assets.viewable_id) WHERE (variants.product_id = #{self.id})")
   end
 
 
