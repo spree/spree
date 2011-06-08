@@ -2,7 +2,7 @@
 
 <%= render "shared/error_messages", :target => @product %>
 
-<%= form_for(:product,  :url => collection_url, :html => { :multipart => true }) do |f| %>
+<%= form_for([:admin, @product], :html => { :multipart => true }) do |f| %>
 <fieldset>
 
   <%= f.field_container :name do %>

@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 <h1><%= t("editing_option_type") %></h1>
 <%= render 'shared/error_messages', :target => @option_type %>
-<%= form_for(@option_type, :url => object_url, :html => { :method => :put }) do |f| %>
+<%= form_for([:admin, @option_type]) do |f| %>
 <fieldset>
   <legend><%= t("editing_option_type") %></legend>
   <%= render :partial => "form", :locals => { :f => f } %>

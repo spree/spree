@@ -3,7 +3,7 @@
 <h2><%= t("new_return_authorization")%></h2>
 
 <%= render "shared/error_messages", :target => @return_authorization %>
-<%= form_for @return_authorization, :url => collection_url do |f| %>
+<%= form_for([:admin, @order, @return_authorization]) do |f| %>
   <%= render :partial => "form", :locals => {:f => f} %>
 
   <p class="form-buttons">

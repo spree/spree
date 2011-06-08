@@ -4,7 +4,7 @@
 
 <%= render 'shared/error_messages', :target => @tax_category %>
 
-<%= form_for(:tax_category, :url => collection_url) do |f| %>
+<%= form_for([:admin, @tax_category]) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <%= render :partial => "admin/shared/new_resource_links" %>
 <% end %>

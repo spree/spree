@@ -2,7 +2,7 @@
 
 <%= render 'shared/error_messages', :target => @property %>
 
-<%= form_for(:property, :url => collection_url) do |f| %>
+<%= form_for([:admin, @property]) do |f| %>
 <fieldset>
   <legend><%= t("new_property")%></legend>
   <%= render :partial => "form", :locals => { :f => f } %>

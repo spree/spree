@@ -2,7 +2,7 @@
 
 <%= render 'shared/error_messages', :target => @shipping_category %>
 
-<%= form_for(:shipping_category, :url => collection_url) do |f| %>
+<%= form_for([:admin, @shipping_category]) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <%= render :partial => "admin/shared/new_resource_links" %>
 <% end %>

@@ -4,7 +4,7 @@
 
 <%= render "shared/error_messages", :target => @zone %>
 
-<%= form_for(@zone, :url => object_url, :html => { :method => :put }) do |zone_form| %>
+<%= form_for([:admin, @zone]) do |zone_form| %>
   <%= render :partial => "form", :locals => { :zone_form => zone_form } %>
   <%= render :partial => "admin/shared/edit_resource_links" %>
 <% end %>

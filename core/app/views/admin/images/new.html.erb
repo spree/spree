@@ -1,5 +1,5 @@
 <h4><%= t("new_image") %></h4>
-<%= form_for(:image, :url => { :controller => 'images', :action => 'create' }, :html => { :multipart => true }) do |form| %>
+<%= form_for([:admin, @product, @image], :html => { :multipart => true }) do |form| %>
   <table class="basic-table">
     <%= render :partial => "form", :locals => { :f => form } %>
   </table>

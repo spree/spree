@@ -6,7 +6,7 @@
 
 <p id="ajax_error" class="errorExplanation" style="display:none;"></p>
 
-<%= form_for(:taxon, :url => admin_taxonomy_url, :html => { :method => :put }) do |f| %>
+<%= form_for([:admin, @taxonomy]) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
 	  <div>
 	    <label><%= t("tree")%></label><br />

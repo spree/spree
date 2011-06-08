@@ -4,7 +4,7 @@
 </div>
 
 <div data-hook="admin_user_edit_form">
-  <%= form_for(:user, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= form_for([:admin, @user]) do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
 
     <div data-hook="admin_user_edit_form_button">

@@ -4,7 +4,7 @@
 
 <fieldset id="product_group_forms_container">
 
-  <%= form_for(@product_group, :url => object_url, :html => { :id => 'product-group-form', :method => :put, 'data-remote' => true }) do |f| %>
+  <%= form_for([:admin, @product_group], :html => { :id => 'product-group-form', :method => :put, 'data-remote' => true }) do |f| %>
 
       <%= f.field_container :name do %>
         <%= f.label :name, t("name") %><br />

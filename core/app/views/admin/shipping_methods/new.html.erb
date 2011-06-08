@@ -7,7 +7,7 @@
 </div>
 
 <div data-hook="admin_shipping_method_new_form">
-  <%= form_for(:shipping_method, :url => collection_url) do |f| %>
+  <%= form_for([:admin, @shipping_method]) do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
 
     <div data-hook="admin_shipping_method_new_form_buttons">

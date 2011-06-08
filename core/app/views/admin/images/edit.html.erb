@@ -4,7 +4,7 @@
 
 <%= render "shared/error_messages", :target => @image %>
 
-<%= form_for(:image, :url => admin_product_image_url(@product), :html => { :method => :put, :multipart => true }) do |f| %>
+<%= form_for([:admin, @product, @image], :html => { :multipart => true }) do |f| %>
   <table class="basic-table">
     <tr>
       <td><%= t("thumbnail") %>:</td>

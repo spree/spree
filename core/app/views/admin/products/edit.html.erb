@@ -2,7 +2,7 @@
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Product Details"} %>
 
-<%= form_for(@product, :url => object_url, :html => { :method => :put, :multipart => true }) do |f| %>
+<%= form_for([:admin, @product], :html => { :method => :put, :multipart => true }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
   <%= render :partial => 'admin/shared/edit_resource_links' %>
 <% end %>

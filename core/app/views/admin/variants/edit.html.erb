@@ -4,7 +4,7 @@
 
 <%= render "shared/error_messages", :target => @variant %>
 
-<%= form_for(@variant, :url => object_url, :html => { :method => :put }) do |f| %>
+<%= form_for([:admin, @product, @variant]) do |f| %>
   <div data-hook="admin_variant_edit_form">
     <%= render :partial => "form", :locals => { :f => f } %>
   </div>

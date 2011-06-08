@@ -3,7 +3,7 @@
 <h1><%= t("new_tracker") %></h1>
 <%= render 'shared/error_messages', :target => @tracker %>
 
-<%= form_for(:tracker, :url => collection_url) do |f| %>
+<%= form_for([:admin, @tracker]) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
   <%= render :partial => "admin/shared/new_resource_links" %>
 <% end %>

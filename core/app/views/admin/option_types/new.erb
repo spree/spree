@@ -2,7 +2,7 @@
 
 <%= render 'shared/error_messages', :target => @option_type%>
 
-<%= form_for(:option_type, :url => collection_url) do |f| %>
+<%= form_for([:admin, @option_type]) do |f| %>
   <fieldset>
     <legend><%= t("new_option_type") %></legend>
     <%= render :partial => "form", :locals => { :f => f } %>
