@@ -1,5 +1,5 @@
 module Spree
   def self.version
-    "0.60.99"
+    "0.70.99"
   end
 end
