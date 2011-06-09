@@ -6,6 +6,13 @@ class Admin::BaseController < Spree::BaseController
   layout 'admin'
 
   protected
+  
+  def flash_message_for(object, event_sym)
+    resource_desc  = object.class.model_name.human
+    resource_desc += " \"#{object.name}\"" if object.respond_to?(:name)
+    I18n.t(event_sym, :resource => resource_desc)  
+  end
+  
   def render_js_for_destroy
     render :partial => "/admin/shared/destroy"
   end
