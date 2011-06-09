@@ -12,9 +12,9 @@ $j(function() {
 })   
                                                         
 var show_country = function() {
-  $j('#state_members :input').each(function() { $(this).attr('disabled', 'disabled') })
+  $j('#state_members :input').each(function() { $(this).attr('disabled', 'disabled'); })
   $j('#state_members').hide();
-  $j('#zone_members :input').each(function() { $(this).attr('disabled', 'disabled') })
+  $j('#zone_members :input').each(function() { $(this).attr('disabled', 'disabled'); })
   $j('#zone_members').hide();
   $j('#country_members :input').each(function() { $(this).removeAttr('disabled'); })
   $j('#country_members').show();
