@@ -85,7 +85,7 @@ class Admin::TaxonsController < Admin::BaseController
     @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
     if @taxon.update_attributes(params[:taxon])
-      flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:taxon) + " \"#{@taxon.name}\"")
+      flash[:notice] = flash_message_for(@taxon, :successfully_updated)
     end
 
     #rename child taxons
