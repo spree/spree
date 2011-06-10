@@ -9,7 +9,7 @@ gem 'rake', '~> 0.8.7'
 gemspec
 
 group :test do
-  gem 'rspec-rails', '= 2.5.0'
+  gem 'rspec-rails', '= 2.6.1'
   gem 'factory_girl_rails'
   gem 'factory_girl', '= 1.3.3'
   gem 'rcov'
