@@ -84,8 +84,7 @@ end
 
 Then /^the response should be an array with (\d+) products?/ do |num|
   page = JSON.load(last_response.body)
-  puts page
-  
+
   page.map { |d| d['name'] }.length.should == num.to_i
   page.first.keys.sort.should == ["product"]
 
