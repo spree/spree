@@ -74,7 +74,7 @@ module Admin::BaseHelper
   end
 
   def generate_template(form_builder, method, options = {})
-    escape_javascript generate_html(form_builder, method, options)
+    raw escape_javascript generate_html(form_builder, method, options)
   end
 
   def remove_nested(fields)
@@ -178,7 +178,7 @@ module Admin::BaseHelper
     fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
       render(association.to_s.singularize + "_fields", :f => builder)
     end
-    link_to_function(name, raw("add_fields(\"#{append_to_selector}\", \"#{association}\", \"#{escape_javascript(fields)}\")"), :class => 'add_fields')
+    link_to_function(name, raw("add_fields(\"#{append_to_selector}\", \"#{association}\", \"#{raw escape_javascript(fields)}\")"), :class => 'add_fields')
   end
 
   # renders hidden field and link to remove record using nested_attributes

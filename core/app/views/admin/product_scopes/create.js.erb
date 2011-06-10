@@ -1,3 +1,3 @@
-jQuery('#product_scopes').append('<%= escape_javascript( render('admin/product_groups/product_scope', :product_scope => @product_scope) ) %>');
+jQuery('#product_scopes').append('<%= raw escape_javascript( render('admin/product_groups/product_scope', :product_scope => @product_scope) ) %>');
 jQuery('#<%= dom_id @product_scope %>').hide();
 jQuery('#<%= dom_id @product_scope %>').fadeIn();
