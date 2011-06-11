@@ -1,2 +1,2 @@
-$("#option-types").html("<%= escape_javascript(render('available')) %>");
+$("#option-types").html("<%= raw escape_javascript(render('available')) %>");
 $("#new_opt_link").hide();
