@@ -46,8 +46,8 @@ task :test_app do
 
     def install_gems
       inside "test_app" do
-        run 'rake spree_core:install'
-        run 'rake <%= file_name %>:install'
+        run 'bundle exec rake spree_core:install'
+        run 'bundle exec rake <%= file_name %>:install'
       end
     end
 
@@ -70,6 +70,6 @@ end
 namespace :test_app do
   desc 'Rebuild test and cucumber databases'
   task :rebuild_dbs do
-    system("cd spec/test_app && rake db:drop db:migrate RAILS_ENV=test && rake db:drop db:migrate RAILS_ENV=cucumber")
+    system("cd spec/test_app && bundle exec rake db:drop db:migrate RAILS_ENV=test && rake db:drop db:migrate RAILS_ENV=cucumber")
   end
 end
