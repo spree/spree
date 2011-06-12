@@ -26,8 +26,8 @@ task :test_app do
 
     def install_spree_dash
       inside "test_app" do
-        run 'rake spree_core:install'
-        run 'rake spree_dash:install'
+        run 'bundle exec rake spree_core:install'
+        run 'bundle exec rake spree_dash:install'
       end
     end
 

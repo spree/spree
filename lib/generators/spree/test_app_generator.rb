@@ -19,7 +19,7 @@ module Spree
       def generate_app
           remove_directory_if_exists("spec/#{test_app}")
           inside "spec" do
-            run "rails new #{test_app} --database=#{database_name} -GJTq --skip-gemfile"
+            run "bundle exec rails new #{test_app} --database=#{database_name} -GJTq --skip-gemfile"
           end
       end
 
@@ -106,8 +106,8 @@ module Spree
       def run_migrations
         silence_stream(STDOUT) {
           inside "" do
-              run "rake db:drop db:create db:migrate db:seed RAILS_ENV=test"
-              run "rake db:drop db:create db:migrate db:seed RAILS_ENV=cucumber"
+              run "bundle exec rake db:drop db:create db:migrate db:seed RAILS_ENV=test"
+              run "bundle exec rake db:drop db:create db:migrate db:seed RAILS_ENV=cucumber"
           end
         }
       end

@@ -44,8 +44,8 @@ task :spec do
   %w(api auth core dash promo).each do |gem_name|
     puts "########################### #{gem_name} #########################"
     cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && #{$0} test_app"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && #{$0} spec"; puts cmd; system cmd
+    cmd = "cd #{gem_name} && bundle exec #{$0} test_app"; puts cmd; system cmd
+    cmd = "cd #{gem_name} && bundle exec #{$0} spec"; puts cmd; system cmd
   end
 end
 
@@ -54,7 +54,7 @@ task :cucumber do
   %w(api auth core promo).each do |gem_name|
     puts "########################### #{gem_name} #########################"
     cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && rake test_app"; puts cmd; system cmd
+    cmd = "cd #{gem_name} && bundle exec rake test_app"; puts cmd; system cmd
     cmd = "cd #{gem_name} && bundle exec cucumber -p ci"; puts cmd; system cmd
   end
 end
@@ -65,10 +65,10 @@ namespace :gem do
     %w(core auth api dash promo sample).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       cmd = "rm -rf #{gem_name}/pkg"; puts cmd; system cmd
-      cmd = "cd #{gem_name} && rake gem"; puts cmd; system cmd
+      cmd = "cd #{gem_name} && bundle exec rake gem"; puts cmd; system cmd
     end
     cmd = "rm -rf pkg"; puts cmd; system cmd
-    cmd = "rake gem"; puts cmd; system cmd
+    cmd = "bundle exec rake gem"; puts cmd; system cmd
   end
 end
 
@@ -80,11 +80,11 @@ namespace :gem do
     %w(core auth api dash promo sample).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       cmd = "rm #{gem_name}/pkg"; puts cmd; system cmd
-      cmd = "cd #{gem_name} && rake gem"; puts cmd; system cmd
+      cmd = "cd #{gem_name} && bundle exec rake gem"; puts cmd; system cmd
       cmd = "cd #{gem_name}/pkg && gem install spree_#{gem_name}-#{version}.gem"; puts cmd; system cmd
     end
     cmd = "rm -rf pkg"; puts cmd; system cmd
-    cmd = "rake gem"; puts cmd; system cmd
+    cmd = "bundle exec rake gem"; puts cmd; system cmd
     cmd = "gem install pkg/spree-#{version}.gem"; puts cmd; system cmd
   end
 end
@@ -110,7 +110,7 @@ task :sandbox do
 
     def generate_app
       remove_directory_if_exists("sandbox")
-      run "rails new sandbox -GJT"
+      run "bundle exec rails new sandbox -GJT"
     end
 
     def append_gemfile
@@ -132,14 +132,14 @@ gems
     def install_generators
       inside "sandbox" do
         run 'rails g spree:site -f'
-        run 'rake spree:install'
-        run 'rake spree_sample:install'
+        run 'bundle exec rake spree:install'
+        run 'bundle exec rake spree_sample:install'
       end
     end
 
     def run_bootstrap
       inside "sandbox" do
-        run 'rake db:bootstrap AUTO_ACCEPT=true'
+        run 'bundle exec rake db:bootstrap AUTO_ACCEPT=true'
       end
     end
 
