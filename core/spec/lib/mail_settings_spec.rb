@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec_helper'
 
 describe Spree::MailSettings do
   let(:mail_method) { MailMethod.new(:environment => "test") }

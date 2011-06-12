@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec_helper'
 
 describe ProductScope do
 
@@ -17,7 +17,7 @@ describe ProductScope do
     end
 
   end
-  
+
   describe "#products" do
     context "with an existing Product scope" do
       it "sends an eponymous message to Product" do
@@ -27,7 +27,7 @@ describe ProductScope do
         subject.products
       end
     end
-    
+
     context "with a non-existent Product scope" do
       it "should return nil" do
         subject.name = 'dlghdskjhgsjkg'

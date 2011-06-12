@@ -1,5 +1,4 @@
- #$:.unshift File.dirname(__FILE__) + '/../../'
-require File.dirname(__FILE__) + '/../../spec_helper'
+require 'spec_helper'
 
 describe Gateway::Braintree do
 

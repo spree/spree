@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require 'spec_helper'
 
 describe Admin::MailMethodsController do
   let(:order) { mock_model(Order, :complete? => true).as_null_object }
