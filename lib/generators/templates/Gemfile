@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rake', '~> 0.8.7'
+gem 'linecache', '0.43'
 
 group :test do
   gem 'rspec-rails', '= 2.6.1'
