@@ -1,0 +1,17 @@
+development:
+  adapter: sqlite3
+  database: db/cucumber.sqlite3
+  pool: 5
+  timeout: 5000
+
+test:
+  adapter: sqlite3
+  database: db/test.sqlite3
+  pool: 5
+  timeout: 5000
+
+cucumber:
+  adapter: sqlite3
+  database: db/cucumber.sqlite3
+  pool: 5
+  timeout: 5000
