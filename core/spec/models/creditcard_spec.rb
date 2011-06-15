@@ -79,7 +79,7 @@ describe Creditcard do
     context "if unsucessfull" do
       it "should make payment failed" do
         @payment_gateway.stub(:authorize).and_return(@fail_response)
-        @payment.should_receive(:fail)
+        @payment.should_receive(:failure)
         @payment.should_not_receive(:pend)
         lambda{
           @creditcard.authorize(100, @payment)
@@ -120,7 +120,7 @@ describe Creditcard do
     context "if unsucessfull" do
       it "should make payment failed" do
         @payment_gateway.stub(:purchase).and_return(@fail_response)
-        @payment.should_receive(:fail)
+        @payment.should_receive(:failure)
         @payment.should_not_receive(:pend)
         lambda{
           @creditcard.purchase(100, @payment)
@@ -164,7 +164,7 @@ describe Creditcard do
       context "if unsucessfull" do
         it "should not make payment complete" do
           @payment_gateway.stub(:capture).and_return(@fail_response)
-          @payment.should_receive(:fail)
+          @payment.should_receive(:failure)
           @payment.should_not_receive(:complete)
           lambda{
             @creditcard.capture(@payment)

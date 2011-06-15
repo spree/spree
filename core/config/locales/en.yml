@@ -18,7 +18,7 @@ en:
     new: New
     update: Update
   active: "Active"
-  activerecord:
+  activemodel:
     attributes:
       address:
         address1: Address

@@ -104,50 +104,9 @@ end
 
 desc "Creates a sandbox application for testing your Spree code"
 task :sandbox do
+  require 'rails/generators'
+  require 'core/lib/generators/spree_core/site/site_generator'
+  require 'core/lib/generators/spree_core/sandbox/sandbox_generator'
 
-  class SandboxGenerator < Thor::Group
-    include Thor::Actions
-
-    def generate_app
-      remove_directory_if_exists("sandbox")
-      run "bundle exec rails new sandbox -GJT"
-    end
-
-    def append_gemfile
-      inside "sandbox" do
-        append_file "Gemfile" do
-<<-gems
-          gem 'spree', :path => '../' \n
-          if RUBY_VERSION < "1.9"
-            gem "ruby-debug"
-          else
-            gem "ruby-debug19"
-          end
-
-gems
-        end
-      end
-    end
-
-    def install_generators
-      inside "sandbox" do
-        run 'rails g spree:site -f'
-        run 'bundle exec rake spree:install'
-        run 'bundle exec rake spree_sample:install'
-      end
-    end
-
-    def run_bootstrap
-      inside "sandbox" do
-        run 'bundle exec rake db:bootstrap AUTO_ACCEPT=true'
-      end
-    end
-
-    private
-    def remove_directory_if_exists(path)
-      run "rm -r #{path}" if File.directory?(path)
-    end
-  end
-
-  SandboxGenerator.start
+  SpreeCore::Generators::SandboxGenerator.start
 end

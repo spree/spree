@@ -15,14 +15,12 @@
   %>
 <% end %>
 
-<%= stylesheet_link_tag ['admin-reset', 'grids', 'admin-typography', 'admin-forms', 'admin-tables', 'admin', 'autocomplete', 'token-input'].map{|css_name| '/admin/stylesheets/' + css_name}, :cache => 'admin/admin-all' %>
-<%= stylesheet_link_tag '/jquery.alerts/jquery.alerts.css', '/jquery.alerts/jquery.alerts.spree.css', '/datepicker/datepicker.css' %>
-<%= javascript_include_tag 'jquery-1.4.2.min.js', 'rails', '/admin/javascripts/jquery-ui', '/admin/javascripts/jquery.suggest.js', '/admin/javascripts/jquery.tokeninput.js', '/admin/javascripts/jquery.delayedobserver.js', '/jquery.alerts/jquery.alerts.js', '/admin/javascripts/jquery.autocomplete.min.js', :cache => 'admin/jquery-with-plugins' %>
+<%= stylesheet_link_tag "admin/all" %>
+<%= javascript_include_tag "admin/all" %>
 <%= javascript_include_tag('/admin/javascripts/jquery.template.js') unless controller.controller_name == "overview" %>
 <%= javascript_tag do %>
   jQuery.alerts.dialogClass = 'spree';
   <%== "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
 <% end %>
-<%= javascript_include_tag '/admin/javascripts/admin', '/admin/javascripts/nested-attribute', '/admin/javascripts/zone', '/admin/javascripts/calculator', '/admin/javascripts/gateway', '/datepicker/datepicker.js', "/datepicker/lang/#{I18n.locale.to_s[0..1]}.js" %>
 
 <%= yield :head %>

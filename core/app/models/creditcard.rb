@@ -72,7 +72,7 @@ class Creditcard < ActiveRecord::Base
       payment.avs_response = response.avs_result['code']
       payment.pend
     else
-      payment.fail
+      payment.failure
       gateway_error(response)
     end
   rescue ActiveMerchant::ConnectionError
@@ -92,7 +92,7 @@ class Creditcard < ActiveRecord::Base
       payment.avs_response = response.avs_result['code']
       payment.complete
     else
-      payment.fail
+      payment.failure
       gateway_error(response) unless response.success?
     end
   rescue ActiveMerchant::ConnectionError
@@ -119,7 +119,7 @@ class Creditcard < ActiveRecord::Base
       payment.response_code = response.authorization
       payment.complete
     else
-      payment.fail
+      payment.failure
       gateway_error(response)
     end
   rescue ActiveMerchant::ConnectionError

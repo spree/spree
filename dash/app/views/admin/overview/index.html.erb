@@ -160,11 +160,6 @@
       var pie_colors = [<%== @pie_colors.map{|c| "'#{c}'"}.join(",") %>];
      </script>
 
-    <%= javascript_include_tag '/jqPlot/jquery.jqplot.min.js', '/jqPlot/plugins/jqplot.dateAxisRenderer.min.js', '/jqPlot/plugins/jqplot.highlighter.min.js',
-      '/jqPlot/plugins/jqplot.canvasAxisTickRenderer.min.js', '/jqPlot/plugins/jqplot.canvasTextRenderer.min.js', '/jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js',
-      '/jqPlot/plugins/jqplot.pieRenderer.min.js', '/admin/javascripts/dashboard.js' %>
-  <!--[if IE]><%= javascript_include_tag '/jqPlot/excanvas.min.js' %><![endif]-->
+  <!--[if IE]><%= javascript_include_tag 'jqPlot/excanvas.min.js' %><![endif]-->
   <% end %>
-
-  <%= stylesheet_link_tag '/admin/stylesheets/dashboard.css' %>
 <% end %>
