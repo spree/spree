@@ -85,6 +85,8 @@ Lets look more closely at the lgoic that results from a call to +process!+ with 
 
 Depending on whether or not Spree is configured to "auto capture" the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway.)
 
+NOTE: The default setting for for Spree::Config[:auto_capture] is false.
+
 h3. Managing Payments
 
 h4. List of Payments
