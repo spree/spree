@@ -2,6 +2,8 @@ h2. Spree Configuration Options
 
 This section lists all of the configuration options for the current version of Spree.
 
+NOTE: Spree default configuration options can be viewed in *spree/core/app/models/app_configuration.rb*
+
 TODO
 
 endprologue.
