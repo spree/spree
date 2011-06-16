@@ -80,12 +80,12 @@ module SpreeCore
       end
 
       def run_migrations
-        # silence_stream(STDOUT) {
+        silence_stream(STDOUT) {
           inside application_path do
             run 'bundle exec rake db:drop db:create db:migrate db:seed RAILS_ENV=test'
             run 'bundle exec rake db:drop db:create db:migrate db:seed RAILS_ENV=cucumber'
           end
-        # }
+        }
       end
 
       private
