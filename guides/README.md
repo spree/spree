@@ -8,7 +8,7 @@ Please stick to the established format and feel free to ask questions on [spree-
 To build the entire set of guides simply run the following command
 
 <pre><code>
-  $ git clone git://github.com/spreee/spree-guides.git
+  $ git clone git://github.com/spree/spree-guides.git
   $ cd spree-guides
   $ bundle install
   $ guides build
