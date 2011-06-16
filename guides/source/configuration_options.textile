@@ -6,10 +6,15 @@ TODO
 
 endprologue.
 
-h3. Shipping
+h3. Shipping Options
 
 h4. Spree::Config[:shipping_instructions]
 
 The option Spree::Config[:shipping_instructions] controls collection of additional shipping instructions. This is turned off by default. If an order has any shipping instructions attached, they will be shown in an order’s shipment admin page and can also be edited at that stage. Observe that instructions are currently attached to the order and not to actual shipments.
 
+h3. Payment Options
+
+h4. Spree::Config[:auto_capture]
+
+Depending on whether or not Spree is configured to “auto capture” the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway.)  Auto capture is disabled by default.
 
