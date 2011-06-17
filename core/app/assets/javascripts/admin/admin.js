@@ -83,7 +83,7 @@ image_html = function(item){
   return "<img src='/assets/products/" + item['images'][0]["id"] + "/mini/" + item['images'][0]['attachment_file_name'] + "'/>";
 }
 
-format_autocomplete = function(data){
+format_product_autocomplete = function(data){
   var html = "";
 
   var product = data['product'];
@@ -125,7 +125,7 @@ format_autocomplete = function(data){
 }
 
 
-prep_autocomplete_data = function(data){
+prep_product_autocomplete_data = function(data){
   return $.map(eval(data), function(row) {
 
     var product = row['product'];
@@ -157,9 +157,9 @@ prep_autocomplete_data = function(data){
 
 jQuery.fn.product_autocomplete = function(){
   $(this).autocomplete("/admin/products.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content"), {
-      parse: prep_autocomplete_data,
+      parse: prep_product_autocomplete_data,
       formatItem: function(item) {
-        return format_autocomplete(item);
+        return format_product_autocomplete(item);
       }
     }).result(function(event, data, formatted) {
       if (data){

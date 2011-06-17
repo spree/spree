@@ -7,7 +7,7 @@
 <%- if additions_for_gemfile.keys.any? { |name| %w{spree spree_core}.include? name.to_s } -%>
  *= require admin/spree_core
 <%- end -%>
-<%- if additions_for_gemfile.keys.any? { |name| %w{spree spree_dash}.include? name.to_s } -%>
- *= require admin/spree_dash
+<%- if additions_for_gemfile.keys.any? { |name| %w{spree spree_promo}.include? name.to_s } -%>
+ *= require admin/spree_promo
 <%- end -%>
 */

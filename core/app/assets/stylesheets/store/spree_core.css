@@ -1,6 +1,5 @@
 /*
  * This is a manifest file that includes stylesheets for spree_core
- *= require_self
  *= require ./reset
  *= require ./screen 
 */

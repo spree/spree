@@ -17,7 +17,7 @@ jQuery(document).ready(function(){
     return html;
   }
 
-  format_autocomplete = function(data){
+  format_user_autocomplete = function(data){
     var html = "<h4>" + data['email'] +"</h4>";
     html += "<span><strong>Billing:</strong> ";
     html += add_address(data['bill_address']);
@@ -30,7 +30,7 @@ jQuery(document).ready(function(){
     return html
   }
 
-  prep_autocomplete_data = function(data){
+  prep_user_autocomplete_data = function(data){
     return $.map(eval(data), function(row) {
       return {
           data: row['user'],
@@ -43,9 +43,9 @@ jQuery(document).ready(function(){
   $("#customer_search").autocomplete("/admin/users.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content"), {
     minChars: 5,
     delay: 1500,
-    parse: prep_autocomplete_data,
+    parse: prep_user_autocomplete_data,
     formatItem: function(item) {
-      return format_autocomplete(item);
+      return format_user_autocomplete(item);
     }
   }).result(function(event, data, formatted) {
     $('#user_id').val(data['id']);
