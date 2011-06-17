@@ -67,6 +67,18 @@ module SpreeCore
         }
       end
 
+      def configure_application
+        silence_stream(STDOUT) {
+          super
+        }
+      end
+
+      def create_databases_yml
+        silence_stream(STDOUT) {
+          super
+        }
+      end
+
       def setup_environments
         silence_stream(STDOUT) {
           template "config/environments/cucumber.rb"

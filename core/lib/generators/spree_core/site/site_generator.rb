@@ -77,9 +77,19 @@ module SpreeCore
         template "app/assets/stylesheets/admin/all.css"
       end
 
-      def config_middleware
-        application 'config.middleware.use "SeoAssist"'
-        application 'config.middleware.use "RedirectLegacyProductUrl"'
+      def configure_application
+        application <<-APP
+  config.middleware.use "SeoAssist"
+    config.middleware.use "RedirectLegacyProductUrl"
+
+    config.to_prepare do
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+    end
+        APP
+
+        append_file "config/environment.rb", "\nActiveRecord::Base.include_root_in_json = true\n"
       end
 
       def create_databases_yml
