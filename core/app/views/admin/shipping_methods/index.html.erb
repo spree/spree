@@ -26,7 +26,7 @@
     <% @shipping_methods.each do |shipping_method|%>
       <tr id="<%= dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows">
         <td><%= shipping_method.name %></td>
-        <td><%= shipping_method.zone.name %></td>
+        <td><%= shipping_method.zone.name if shipping_method.zone %></td>
         <td><%= shipping_method.calculator.description %></td>
         <td><%= shipping_method.display_on.blank? ? t('both') : t(shipping_method.display_on) %></td>
         <td width="140px" data-hook="admin_shipping_methods_index_row_actions">
