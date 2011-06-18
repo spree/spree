@@ -1,7 +1,7 @@
 class Zone < ActiveRecord::Base
   has_many :zone_members
   has_many :tax_rates, :dependent => :destroy
-  has_many :shipping_methods
+  has_many :shipping_methods, :dependent=>:destroy
 
   validates :name, :presence => true, :uniqueness => true
   after_save :remove_defunct_members
