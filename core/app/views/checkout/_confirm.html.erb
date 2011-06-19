@@ -1,6 +1,6 @@
 <fieldset id="order_details">
   <div class="clear"></div>
-  <legend><%= t("confirm") %></legend>
+  <legend><%= t(@order.state, :scope => :order_state).titleize %></legend>
   <%= render :partial => 'shared/order_details', :locals => {:order => @order} %>
 </fieldset>
 
