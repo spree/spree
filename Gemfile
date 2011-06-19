@@ -3,7 +3,6 @@ source 'http://rubygems.org'
 gem "spree", :path => File.dirname(__FILE__)
 
 gem 'sqlite3-ruby'
-gem "rdoc",  "2.2"
 
 gemspec
 
