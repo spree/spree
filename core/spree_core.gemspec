@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency('rd_find_by_param', '= 0.1.1')
 
   s.add_dependency('highline', '= 1.5.1')
-  #s.add_dependency('less', '>= 1.2.20')
   s.add_dependency('stringex', '= 1.0.3')
   s.add_dependency('state_machine', '= 0.9.4')
   s.add_dependency('faker', '= 0.9.5')
@@ -32,6 +31,6 @@ Gem::Specification.new do |s|
   s.add_dependency('meta_search', '= 1.0.5')
   s.add_dependency('activemerchant', '= 1.15.0')
   s.add_dependency('will_paginate', '= 3.0.pre2')
-  s.add_dependency('rails', '= 3.0.7')
+  s.add_dependency('rails', '= 3.0.9')
   s.add_dependency('deface', '= 0.5.0')
 end
