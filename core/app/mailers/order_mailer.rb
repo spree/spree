@@ -8,7 +8,14 @@ class OrderMailer < ActionMailer::Base
     mail(:to => order.email,
          :subject => subject)
   end
-
+  
+  def new_order_email(order)
+    @order = order
+    subject = "#{Spree::Config[:site_name]} #{t('subject', :scope =>'order_mailer.new_order_email', :default => 'You received a new order')} ##{order.number}"
+    mail(:to => Spree::Config[:new_order_email],
+         :subject => subject)
+  end
+  
   def cancel_email(order, resend=false)
     @order = order
     subject = (resend ? "[RESEND] " : "")
