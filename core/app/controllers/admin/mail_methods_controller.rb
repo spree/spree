@@ -8,6 +8,9 @@ class Admin::MailMethodsController < Admin::ResourceController
     else
       flash[:error] = t("admin.mail_methods.testmail.delivery_error", :default => 'Testmail delivery error')
     end
+  rescue Exception => e
+    flash[:error] = t("admin.mail_methods.testmail.error", :default => 'Testmail error: %{e}') % {:e => e}
+  ensure
     respond_with(@mail_method) { |format| format.html { redirect_to :back } }
   end
   
