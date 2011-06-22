@@ -36,6 +36,10 @@ describe Gateway::Braintree do
   it "should be braintree gateway" do
     @gateway.provider_class.should == ::ActiveMerchant::Billing::BraintreeGateway
   end
+  
+  it "should be the Blue Braintree" do
+    @gateway.provider.class.should == ::ActiveMerchant::Billing::BraintreeBlueGateway
+  end
 
   describe "authorize" do
     it "should return a success response with an authorization code" do
@@ -45,8 +49,12 @@ describe Gateway::Braintree do
                                                         :public_key=> "ym9djwqpkxbv3xzt",
                                                         :private_key=> "4ghghkyp2yy6yqc8"})
 
+      
+      
       result.success?.should be_true
       result.authorization.should match(/\A\w{6}\z/)
+      
+      
       Braintree::Transaction::Status::Authorized.should == Braintree::Transaction.find(result.authorization).status
    end
 
