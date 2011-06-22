@@ -38,9 +38,9 @@ class User < ActiveRecord::Base
     email =~ /@example.net$/
   end
 
-  def deliver_password_reset_instructions!
+  def send_reset_password_instructions
     reset_perishable_token!
-    UserMailer.password_reset_instructions(self).deliver
+    UserMailer.reset_password_instructions(self).deliver
   end
 
   protected
