@@ -126,5 +126,3 @@ Contributing
 ------------
 
 Spree is an open source project.  We encourage contributions.  Please see the [contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html) before contributing.
-
-The Github team has also been kind enough to write up some great [documentation](http://help.github.com/pull-requests/) on working with pull requests. Contributions should be performed on [topic branches](http://progit.org/book/ch3-4.html) in your personal forks - just issue your pull requests from there. We're also asking that you continue to log important issues for non-trivial patches in our [lighthouse repository](http://railsdog.lighthouseapp.com/projects/31096-spree). You can just link the pull request in the ticket (and link the ticket in the pull request.)
