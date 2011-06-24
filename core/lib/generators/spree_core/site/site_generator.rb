@@ -1,8 +1,23 @@
 module SpreeCore
   module Generators
     class SiteGenerator < Rails::Generators::Base
+      argument :after_bundle_only, :type => :string, :default => "false"
+
       def self.source_paths
         [File.expand_path('../templates', __FILE__)]
+      end
+
+      def bunlder_check
+        if defined? Bundler
+          #probably being called via bundle exec, can't call bunlde install this way
+          
+          puts %Q{
+          ERROR: Bundler is already loaded.
+
+          If you are running this command via `bundle exec` please re-run the command directly.
+          }
+          exit
+        end
       end
 
       def generate_app

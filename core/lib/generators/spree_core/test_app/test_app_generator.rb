@@ -36,29 +36,59 @@ module SpreeCore
 
       def replace_gemfile
         silence_stream(STDOUT) {
+          template "Gemfile", "../../Gemfile", :force => true
+          remove_file "../../Gemfile.lock"
+
           super
         }
       end
 
       def tweak_gemfile
         silence_stream(STDOUT) {
+
+          additions_for_gemfile.each do |name, path|
+            append_file '../../Gemfile' do
+                "gem '#{name.to_s}', :path => '#{path}'\n"
+              end
+          end
+ 
           super
         }
       end
 
       def append_db_adapter_gem
         silence_stream(STDOUT) {
+          case database_name
+            when "mysql"
+              append_file '../../Gemfile' do
+                "gem 'mysql2', '0.2.7'"
+              end
+            else
+              append_file '../../Gemfile' do
+                "gem 'sqlite3-ruby'"
+              end
+            end
+
           super
         }
       end
 
+
       def bundle_install
         silence_stream(STDOUT) {
+          run 'bundle install'
+
           super
         }
       end
 
       def include_seed_data
+      end
+
+      def additional_tweaks
+        silence_stream(STDOUT) {
+          super
+        }
       end
 
       def setup_assets

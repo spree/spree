@@ -18,6 +18,7 @@ task :clean do
   end
 end
 
+
 desc "run all tests for ci"
 task :ci do
   cmd = "bundle update"; puts cmd; system cmd;
@@ -44,8 +45,8 @@ task :spec do
   %w(api auth core dash promo).each do |gem_name|
     puts "########################### #{gem_name} #########################"
     cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && bundle exec #{$0} test_app"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && bundle exec #{$0} spec"; puts cmd; system cmd
+    cmd = "cd #{gem_name} && #{$0} test_app"; puts cmd; system cmd
+    cmd = "cd #{gem_name} && #{$0} spec"; puts cmd; system cmd
   end
 end
 
@@ -54,7 +55,7 @@ task :cucumber do
   %w(api auth core promo).each do |gem_name|
     puts "########################### #{gem_name} #########################"
     cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && bundle exec rake test_app"; puts cmd; system cmd
+    cmd = "cd #{gem_name} && #{$0} test_app"; puts cmd; system cmd
     cmd = "cd #{gem_name} && bundle exec cucumber -p ci"; puts cmd; system cmd
   end
 end
