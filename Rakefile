@@ -106,8 +106,8 @@ end
 desc "Creates a sandbox application for testing your Spree code"
 task :sandbox do
   require 'rails/generators'
-  require 'core/lib/generators/spree_core/site/site_generator'
-  require 'core/lib/generators/spree_core/sandbox/sandbox_generator'
+  require File.expand_path('../core/lib/generators/spree_core/site/site_generator', __FILE__)
+  require File.expand_path('../core/lib/generators/spree_core/sandbox/sandbox_generator', __FILE__)
 
   SpreeCore::Generators::SandboxGenerator.start
 end
