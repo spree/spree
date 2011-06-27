@@ -1,50 +1,49 @@
 var add_image_handlers = function() {
   $("#main-image").data('selectedThumb', $('#main-image img').attr('src'));
   $('ul.thumbnails li').eq(0).addClass('selected');
-  $('ul.thumbnails li a').click(function() {
-    $("#main-image").data('selectedThumb', $(this).attr('href'));
-    $('ul.thumbnails li').removeClass('selected');
-    $(this).parent('li').addClass('selected');
+
+  $('ul.thumbnails').delegate('a', 'click', function(event) {
+    $("#main-image").data('selectedThumb', $(event.currentTarget).attr('href'));
+    $("#main-image").data('selectedThumbId', $(event.currentTarget).parent().attr('id'));
+    $(this).mouseout(function() {
+      $('ul.thumbnails li').removeClass('selected');
+      $(event.currentTarget).parent('li').addClass('selected');
+    });
     return false;
-  }).hover(
-          function() {
-            $('#main-image img').attr('src', $(this).attr('href').replace('mini', 'product'));
-          },
-          function() {
-            $('#main-image img').attr('src', $("#main-image").data('selectedThumb'));
-          }
-          );
+  });
+  $('ul.thumbnails').delegate('li', 'mouseenter', function(event) {
+    $('#main-image img').attr('src', $(event.currentTarget).find('a').attr('href'));
+  });
+  $('ul.thumbnails').delegate('li', 'mouseleave', function(event) {
+    $('#main-image img').attr('src', $("#main-image").data('selectedThumb'));
+  });
 };
- 
+
+var show_variant_images = function(variant_id) {
+  $('li.vtmb').hide();
+  $('li.vtmb-' + variant_id).show();
+  var currentThumb = $('#' + $("#main-image").data('selectedThumbId'));
+  // if currently selected thumb does not belong to current variant, nor to common images,
+  // hide it and select the first available thumb instead.
+  if(!currentThumb.hasClass('vtmb-' + variant_id) && !currentThumb.hasClass('tmb-all')) {
+    var thumb = $($('ul.thumbnails li:visible').eq(0));
+    var newImg = thumb.find('a').attr('href');
+    $('ul.thumbnails li').removeClass('selected');
+    thumb.addClass('selected');
+    $('#main-image img').attr('src', newImg);
+    $("#main-image").data('selectedThumb', newImg);
+    $("#main-image").data('selectedThumbId', thumb.attr('id'));
+  }
+}
+
 jQuery(document).ready(function() {
   add_image_handlers();
-});
- 
-jQuery(document).ready(function() {
-  jQuery('#product-variants input[type=radio]').click(function (event) {
-    var vid = this.value;
-    var text = $(this).siblings(".variant-description").html();
- 
-    jQuery("#variant-thumbnails").empty();
-    jQuery("#variant-images span").html(text);
- 
-    var link;
-    if (images[vid] && images[vid].length > 0) {
-      $.each(images[vid], function(i, link) {
-        jQuery("#variant-thumbnails").append('<li>' + link + '</li>');
-      });
- 
-      jQuery("#variant-images").show();
-      link = jQuery("#variant-thumbnails a:first");
-    } else {
-      jQuery("#variant-images").hide();
-      link = jQuery("#product-thumbnails a:first");
-    }
- 
-    jQuery("#main-image img").attr({src: jQuery(link).attr('href')});
-    add_image_handlers();
-    
-    jQuery('ul.thumbnails li').removeClass('selected');
-    jQuery(link).parent('li').addClass('selected');
+  if($('#product-variants input[type=radio]').length > 0) {
+    show_variant_images($('#product-variants input[type=radio]').eq(0).attr('value'));
+  }
+
+  $('#product-variants input[type=radio]').click(function (event) {
+    show_variant_images(this.value);
   });
 });
+
