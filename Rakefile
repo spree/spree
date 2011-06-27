@@ -7,7 +7,36 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
-task :default => [:spec, :cucumber ]
+def run_all_tests(database_name)
+  %w(api auth core promo).each do |gem_name|
+    puts "########################### #{gem_name}|#{database_name} (features) ###########################"
+    cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
+    sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
+    sh "cd #{gem_name} && bundle exec cucumber -p ci"
+  end
+
+  %w(api auth core dash promo).each do |gem_name|
+    puts "########################### #{gem_name}|#{database_name} (spec) ###########################"
+    cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
+    sh "cd #{gem_name} && #{$0} spec"
+  end
+end
+
+task :default => :all_tests
+
+desc "Run all tests for sqlite3 only"
+task :all_tests do
+  run_all_tests("sqlite3")
+end
+
+desc "Run all tests for all supported databases"
+task :ci do
+  cmd = "bundle update"; puts cmd; system cmd;
+
+  %w(sqlite3 mysql).each do |database_name|
+    run_all_tests(database_name)
+  end
+end
 
 desc "clean the whole repository by removing all the generated files"
 task :clean do
@@ -15,48 +44,6 @@ task :clean do
   %w(api auth core dash promo).each do |gem_name|
     cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
     cmd = "cd #{gem_name}/spec &&  rm -rf test_app"; puts cmd; system cmd
-  end
-end
-
-
-desc "run all tests for ci"
-task :ci do
-  cmd = "bundle update"; puts cmd; system cmd;
-
-  %w(sqlite3 mysql).each do |database_name|
-    %w(api auth core promo).each do |gem_name|
-      puts "########################### #{gem_name}|#{database_name} (features) ###########################"
-      cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-      sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
-      sh "cd #{gem_name} && bundle exec cucumber -p ci"
-    end
-
-    %w(api auth core dash promo).each do |gem_name|
-      puts "########################### #{gem_name}|#{database_name} (spec) ###########################"
-      cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-      sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
-      sh "cd #{gem_name} && #{$0} spec"
-    end
-  end
-end
-
-desc "run spec test for all gems"
-task :spec do
-  %w(api auth core dash promo).each do |gem_name|
-    puts "########################### #{gem_name} #########################"
-    cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && #{$0} test_app"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && #{$0} spec"; puts cmd; system cmd
-  end
-end
-
-desc "run cucumber test for all gems"
-task :cucumber do
-  %w(api auth core promo).each do |gem_name|
-    puts "########################### #{gem_name} #########################"
-    cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && #{$0} test_app"; puts cmd; system cmd
-    cmd = "cd #{gem_name} && bundle exec cucumber -p ci"; puts cmd; system cmd
   end
 end
 
