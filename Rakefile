@@ -1,9 +1,9 @@
 require 'rake'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
 require 'thor/group'
 
 spec = eval(File.read('spree.gemspec'))
-Rake::GemPackageTask.new(spec) do |pkg|
+Gem::PackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 

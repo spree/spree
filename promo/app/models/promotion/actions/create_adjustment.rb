@@ -12,7 +12,7 @@ class Promotion::Actions::CreateAdjustment < PromotionAction
     return if order.promotion_credit_exists?(promotion)
     if amount = calculator.compute(order)
       amount = order.item_total if amount > order.item_total
-      order.adjustments.promotion.reload.clear and order.adjustments.promotion.all? { |credit| credit.originator.promotion.combine? }
+      order.adjustments.promotion.reload.clear
       order.update!
       create_adjustment("#{I18n.t(:promotion)} (#{promotion.name})", order, order)
     end
