@@ -22,9 +22,9 @@ end
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
   require 'rails/generators'
-  require '../core/lib/generators/spree_core/site/site_generator'
-  require '../core/lib/generators/spree_core/sandbox/sandbox_generator'
-  require '../core/lib/generators/spree_core/test_app/test_app_generator'
+  require File.expand_path('../../core/lib/generators/spree_core/site/site_generator', __FILE__)
+  require File.expand_path('../../core/lib/generators/spree_core/sandbox/sandbox_generator', __FILE__)
+  require File.expand_path('../../core/lib/generators/spree_core/test_app/test_app_generator', __FILE__)
 
   SpreeCore::Generators::TestAppGenerator.class_eval do
     protected
