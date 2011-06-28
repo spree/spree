@@ -9,6 +9,19 @@ module SpreeCore
         paths.flatten
       end
 
+      def bundler_check
+        if defined? Bundler
+          #probably being called via bundle exec, can't call bunlde install this way
+          
+          puts %Q{
+          ERROR: Bundler is already loaded.
+
+          If you are running this command via `bundle exec` please re-run the command directly.
+          }
+          exit
+        end
+      end
+
       def generate_app
         remove_directory_if_exists(application_path)
         run "rails new #{application_path} --database=#{database_name} -GJTq --skip-gemfile"
@@ -23,10 +36,6 @@ module SpreeCore
       end
 
       def tweak_gemfile
-        # append_file '../../Gemfile' do
-        #     full_path_for_local_gems
-        #   end
-
         additions_for_gemfile.each do |name, path|
           gem name.to_s, :path => path
         end
@@ -36,14 +45,8 @@ module SpreeCore
         case database_name
           when "mysql"
             gem "mysql2", "0.2.7"
-            # append_file '../../Gemfile' do
-            #   "gem 'mysql2', '0.2.7'"
-            # end
           else
             gem "sqlite3-ruby"
-            # append_file '../../Gemfile' do
-            #   "gem 'sqlite3-ruby'"
-            # end
           end
       end
 

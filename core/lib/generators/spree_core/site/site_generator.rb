@@ -7,17 +7,8 @@ module SpreeCore
         [File.expand_path('../templates', __FILE__)]
       end
 
-      def bunlder_check
-        if defined? Bundler
-          #probably being called via bundle exec, can't call bunlde install this way
-          
-          puts %Q{
-          ERROR: Bundler is already loaded.
-
-          If you are running this command via `bundle exec` please re-run the command directly.
-          }
-          exit
-        end
+      def bundler_check
+        #only should get called from rails executable so don't check
       end
 
       def generate_app
