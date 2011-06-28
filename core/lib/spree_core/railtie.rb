@@ -1,5 +1,6 @@
 module SpreeCore
   class Engine < Rails::Engine
+    engine_name 'spree_core'
 
     config.autoload_paths += %W(#{config.root}/lib)
     # TODO - register state monitor observer?
@@ -7,6 +8,7 @@ module SpreeCore
 
     # TODO: Is there a better way to make sure something within 'self.activate' only runs once in development?
     def self.activate
+
 
       #register all payment methods (unless we're in middle of rake task since migrations cannot be run for this first time without this check)
       if File.basename( $0 ) != "rake"
@@ -65,6 +67,8 @@ module SpreeCore
     initializer "spree.params.filter" do |app|
       app.config.filter_parameters += [:password, :password_confirmation, :number]
     end
+
+
 
   end
 end

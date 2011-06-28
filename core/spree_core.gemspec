@@ -24,13 +24,12 @@ Gem::Specification.new do |s|
 
   s.add_dependency('highline', '= 1.5.1')
   s.add_dependency('stringex', '= 1.0.3')
-  s.add_dependency('state_machine', '= 0.9.4')
+  s.add_dependency('state_machine', '= 1.0.1')
   s.add_dependency('faker', '= 0.9.5')
   s.add_dependency('paperclip', '= 2.3.11')
   s.add_dependency('rd_resource_controller')
-  s.add_dependency('meta_search', '= 1.0.5')
+  s.add_dependency('meta_search', '= 1.1.0.pre')
   s.add_dependency('activemerchant', '= 1.15.0')
-  s.add_dependency('will_paginate', '= 3.0.pre2')
-  s.add_dependency('rails', '= 3.0.9')
-  s.add_dependency('deface', '= 0.5.0')
+  s.add_dependency('kaminari', '>= 0.12.2')
+  s.add_dependency('deface', '= 0.5.4')
 end

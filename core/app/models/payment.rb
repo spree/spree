@@ -26,7 +26,7 @@ class Payment < ActiveRecord::Base
       transition :from => ['checkout', 'pending', 'completed'], :to => 'processing'
     end
     # When processing during checkout fails
-    event :fail do
+    event :failure do
       transition :from => 'processing', :to => 'failed'
     end
     # With card payments this represents authorizing the payment
@@ -62,7 +62,7 @@ class Payment < ActiveRecord::Base
   end
 
   # With nested attributes, Rails calls build_[association_name] for the nested model which won't work for a polymorphic association
-  def build_source(params)
+  def build_source(params, opts)
     if payment_method and payment_method.payment_source_class
       self.source = payment_method.payment_source_class.new(params)
     end

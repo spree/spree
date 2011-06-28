@@ -21,30 +21,22 @@ end
 
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
-  require '../lib/generators/spree/test_app_generator'
-  class DashTestAppGenerator < Spree::Generators::TestAppGenerator
+  require 'rails/generators'
+  require '../core/lib/generators/spree_core/site/site_generator'
+  require '../core/lib/generators/spree_core/sandbox/sandbox_generator'
+  require '../core/lib/generators/spree_core/test_app/test_app_generator'
 
-    def install_spree_dash
-      inside "test_app" do
-        run 'bundle exec rake spree_core:install'
-        run 'bundle exec rake spree_dash:install'
-      end
-    end
-
-    def migrate_db
-      run_migrations
-    end
-
+  SpreeCore::Generators::TestAppGenerator.class_eval do
     protected
-    def full_path_for_local_gems
-      <<-gems
-gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
-gem 'spree_dash', :path => \'#{File.dirname(__FILE__)}\'
-      gems
+    def additions_for_gemfile
+      { :spree_core => File.join(File.dirname(__FILE__), "..", "core"),
+        :spree_dash => File.dirname(__FILE__) } 
     end
   end
-  DashTestAppGenerator.start
+
+  SpreeCore::Generators::TestAppGenerator.start
 end
+
 
 ENV['SPREE_GEM_PATH'] = __FILE__
 require File.expand_path("../../core/lib/tasks/common", __FILE__)

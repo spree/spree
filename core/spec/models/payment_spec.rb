@@ -12,7 +12,7 @@ describe Payment do
 
   before(:each) do
     @payment = Payment.new(:order => order)
-    @payment.source = mock_model(Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil)
+    @payment.source = mock_model(Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil, :changed_for_autosave? => false)
     @payment.stub!(:valid?).and_return(true)
     @payment.stub!(:check_payments).and_return(nil)
 
