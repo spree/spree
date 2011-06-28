@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
 
   # Generate a friendly string randomically to be used as token.
   def self.friendly_token
-    ActiveSupport::SecureRandom.base64(15).tr('+/=', '-_ ').strip.delete("\n")
+    SecureRandom.base64(15).tr('+/=', '-_ ').strip.delete("\n")
   end
 
   # Generate a token by looping and ensuring does not already exist.
