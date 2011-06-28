@@ -38,7 +38,9 @@ class AppConfiguration < Configuration
   preference :allow_checkout_on_gateway_error, :boolean, :default => false
   preference :select_taxons_from_tree, :boolean, :default => false # provide opportunity to select taxons from tree instead of search with autocomplete
   preference :max_level_in_taxons_menu, :integer, :default => 1 # maximum nesting level in taxons menu
-
+  preference :new_order_email, :string, :default => '' # Email Address where new order emails are delivered to
+  preference :always_use_confirmation_step, :boolean, :default => false
+  
   validates :name, :presence => true, :uniqueness => true
 
 end
