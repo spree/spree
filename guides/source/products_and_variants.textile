@@ -249,8 +249,8 @@ the "Tricks and Tips section":http://wiki.github.com/spree/spree/developers-tric
 NOTE: The "migration section":migration.html of the guides gives an overview on how to import data programmatically into Spree.
 
 
-"Steph Powell":http://github.com/stephskardal has produced a useful blog post on
+"Steph Skardal":http://github.com/stephskardal has produced a useful blog post on
 "product optioning":http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-comments.html.
 This discusses how the variant option representation works and how she used it to build an
 extension for enhanced product option selection.
-The blog post appeared in the "Endpoint blog":http://blog.endpoint.com/.
+The blog post appeared in the "End Point Blog":http://blog.endpoint.com/.
