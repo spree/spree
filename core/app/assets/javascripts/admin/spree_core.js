@@ -1,0 +1,10 @@
+//= require jquery-1.4.2.min
+//= require rails
+//= require jquery-ui
+//= require jquery.suggest
+//= require jquery.tokeninput
+//= require jquery.delayedobserver
+//= require jquery.alerts/jquery.alerts
+//= require jquery.autocomplete.min
+//= require datepicker/datepicker
+//= require_tree .

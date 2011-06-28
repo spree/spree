@@ -96,10 +96,10 @@ module Spree
         #   user.save!  # => true
         def preference(name, *args)
           unless included_modules.include?(InstanceMethods)
-            class_inheritable_hash :preference_definitions
+            class_attribute :preference_definitions
             self.preference_definitions = {}
 
-            class_inheritable_hash :default_preferences
+            class_attribute :default_preferences
             self.default_preferences = {}
 
             has_many  :stored_preferences, :as => :owner, :class_name => 'Preference'

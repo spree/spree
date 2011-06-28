@@ -21,27 +21,19 @@ task :default => [:spec, :cucumber ]
 
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
-  require '../lib/generators/spree/test_app_generator'
-  class CoreTestAppGenerator < Spree::Generators::TestAppGenerator
+  require 'rails/generators'
+  require 'lib/generators/spree_core/site/site_generator'
+  require 'lib/generators/spree_core/sandbox/sandbox_generator'
+  require 'lib/generators/spree_core/test_app/test_app_generator'
 
-    def install_spree_core
-      inside "test_app" do
-        run 'bundle exec rake spree_core:install'
-      end
-    end
-
-    def migrate_db
-      run_migrations
-    end
-
+  SpreeCore::Generators::TestAppGenerator.class_eval do
     protected
-    def full_path_for_local_gems
-      <<-gems
-gem 'spree_core', :path => \'#{File.dirname(__FILE__)}\'
-      gems
+    def additions_for_gemfile
+      { :spree_core => File.dirname(__FILE__) } 
     end
   end
-  CoreTestAppGenerator.start
+
+  SpreeCore::Generators::TestAppGenerator.start
 end
 
 ENV['SPREE_GEM_PATH'] = __FILE__
