@@ -1,5 +1,5 @@
-//= require jquery-1.4.2.min
-//= require rails
+//= require jquery
+//= require jquery_ujs
 //= require jquery-ui
 //= require jquery.suggest
 //= require jquery.tokeninput
