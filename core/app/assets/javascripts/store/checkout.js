@@ -8,7 +8,7 @@
         country = $('p#' + region + 'country' + ' span#' + region + 'country :only-child').val();
         return state_mapper[country];
       }
-      
+
       var update_state = function(region) {
         states = get_states(region);
 
@@ -38,12 +38,6 @@
 
       };
 
-      // Show fields for the selected payment method
-      $("input[type='radio'][name='order[payments_attributes][][payment_method_id]']").click(function(){
-        $('#payment-methods li').hide();
-        if(this.checked){ $('#payment_method_'+this.value).show(); }
-      }).triggerHandler('click');
-
       $('p#bcountry select').change(function() { update_state('b'); });
       $('p#scountry select').change(function() { update_state('s'); });
       update_state('b');
@@ -70,7 +64,14 @@
         $(this).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass('disabled');
       });
 
+    }
 
+    if($('#checkout_form_payment').is('*')){
+      // Show fields for the selected payment method
+      $("input[type='radio'][name='order[payments_attributes][][payment_method_id]']").click(function(){
+        $('#payment-methods li').hide();
+        if(this.checked){ $('#payment_method_'+this.value).show(); }
+      }).triggerHandler('click');
     }
   });
 })(jQuery);
