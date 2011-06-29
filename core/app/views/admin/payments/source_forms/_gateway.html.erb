@@ -1,18 +1,18 @@
 <fieldset>
   
-  <p class="field">
+  <p class="field" data-hook="previous_cards">
     <% for card in @previous_cards %>
       <label><%= radio_button_tag :card, card.id, card == @previous_cards.first %> <%= card.display_number %><br /></label>
     <% end %>
     <label><%= radio_button_tag :card, 'new', @previous_cards.none? %> <%= t(:use_new_cc) %></label>
   </p>
   
-  <div id="card_form">
+  <div id="card_form" data-hook>
 
     <%= image_tag "creditcards/creditcard.gif", :id => 'creditcard-image' %>
     <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
-    <div>
+    <div data-hook="card_number">
       <label for=""><%= t("card_number") %></label><br />
       <%= text_field_tag "#{param_prefix}[number]", '', :class => 'required', :size => 19, :maxlength => 19 %>
       <span class="req">*</span>
@@ -23,13 +23,13 @@
         )
       </span>
     </div>
-    <div>
+    <div data-hook="card_expiration">
       <label for=""><%= t("expiration") %></label><br />
       <%= select_month(Date.today, :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true, :class => 'required') %>
       <%= select_year(Date.today, :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required') %>
       <span class="req">*</span>
     </div>
-    <div>           
+    <div data-hook="card_code">
       <label for=""><%= t("card_code") %></label><br />
       <%= text_field_tag "#{param_prefix}[verification_value]", '', :class => 'required', :size => 5 %>
       <span class="req">*</span>

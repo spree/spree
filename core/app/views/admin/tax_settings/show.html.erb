@@ -2,13 +2,13 @@
 
 <h1><%= t("tax_settings") %></h1>
 
-<table id='listing_tax_settings'>
+<table id='listing_tax_settings' data-hook>
   <tr>
     <th scope="row"><%= t("show_price_inc_vat") %>:</th>
     <td><%=  Spree::Config[:show_price_inc_vat] %></td>
   </tr>
 </table>
 
-<p><%= link_to_with_icon 'edit', t("edit"), edit_admin_tax_settings_path %></p>
-
-
+<p data-hook="buttons">
+  <%= link_to_with_icon 'edit', t("edit"), edit_admin_tax_settings_path %>
+</p>

@@ -1,15 +1,15 @@
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li>
       <p><%= button_link_to t("new_user"), new_object_url, :icon => 'add', :id => 'admin_new_user_link' %></p>
     </li>
   </ul>
-  <br class='clear' />
+  <br class="clear">
 </div>
 
 <h1><%= t("listing_users") %></h1>
 
-<table class="index" id='listing_users'>
+<table class="index" id="listing_users" data-hook>
   <thead>
     <tr data-hook="admin_users_index_headers">
       <th><%= sort_link @search,:email,t("user"),{}, {:title => 'users_email_title'} %></th>

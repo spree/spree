@@ -3,35 +3,35 @@
   <head data-hook="inside_head">
     <%= render 'shared/head'%>
   </head>
-  <body class="<%= body_class %>" id="<%= @body_id || 'default' %>">
-    <div id="header">
-      <ul id="nav-bar">
+  <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
+    <div id="header" data-hook>
+      <ul id="nav-bar" data-hook>
         <%= render 'shared/nav_bar' %>
       </ul>
-      <div id="logo">
+      <div id="logo" data-hook>
         <%= logo %>
       </div>
     </div>
 
-    <div id="wrapper">
+    <div id="wrapper" data-hook>
       <% if content_for?(:sidebar) %>
-        <div id="sidebar" data-hook data-layer="1">
+        <div id="sidebar" data-hook>
           <%= yield :sidebar %>
         </div>
       <% end %>
 
-      <div id="content">
+      <div id="content" data-hook>
         <%= breadcrumbs(@taxon) %>
         <%= flash_messages %>
         <%= yield %>
       </div>
     </div>
     
-    <div id="footer">
-      <div id="footer-left" data-hook="footer_left">
+    <div id="footer" data-hook>
+      <div id="footer-left" data-hook>
         <p><%= t("powered_by") %> <a href="http://spreecommerce.com/">Spree</a></p>
       </div>
-      <div id="footer-right" data-hook="footer_right"></div>
+      <div id="footer-right" data-hook></div>
     </div>
     <%= render 'shared/google_analytics' %>
   </body>

@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <%= javascript_include_tag '/states' %>
 <% end %>
-<div id="checkout">
+<div id="checkout" data-hook>
   <h1><%= t("checkout")%></h1>
   <%= checkout_progress %>
   <br clear="left" />

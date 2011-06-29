@@ -1,5 +1,5 @@
 <table class="index">
-  <tr>
+  <tr data-hook="payments_header">
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
     <th><%= t("amount") %></th>
     <th><%= t("payment_method") %></th>
@@ -7,7 +7,7 @@
     <th><%= t("payment_actions") %></th>
   </tr>
   <% payments.each do |payment| %>
-    <tr>
+    <tr data-hook="payments_row">
       <td><%= payment.created_at.to_s(:date_time24) %></td>
       <td><%= number_to_currency(payment.amount) %></td>
       <td><%= link_to payment_method_name(payment), admin_order_payment_path(@order, payment) %></td>

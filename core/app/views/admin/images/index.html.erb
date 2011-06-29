@@ -2,8 +2,8 @@
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Images"} %>
 
-<table class="index sortable">
-  <tr>
+<table class="index sortable" data-hook="images_table">
+  <tr data-hook="images_header">
     <th><%= t("thumbnail") %></th>
     <% if @product.has_variants? %>
       <th><%= Variant.model_name.human %></th>
@@ -13,7 +13,7 @@
   </tr>
 
   <% @product.images.each do |image| %>
-    <tr id="<%= dom_id(image) %>">
+    <tr id="<%= dom_id(image) %>" data-hook="images_row">
       <td>
         <span class="handle"></span>
         <%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %>
@@ -32,7 +32,7 @@
 
   <% @product.variants.each do |variant| %>
     <% variant.images.each do |image| %>
-      <tr id="<%= dom_id(image) %>">
+      <tr id="<%= dom_id(image) %>" data-hook="images_row">
         <td><span class="handle"></span><%= link_to(image_tag(image.attachment.url(:mini)), image.attachment.url(:product)) %></td>
         <% if @product.has_variants? %>
           <td><%= variant.options_text %></td>
@@ -48,9 +48,9 @@
   <% end %>
 </table>
 
-<div id="images"></div>
+<div id="images" data-hook></div>
 <br/>
-<p>
+<p data-hook="links">
     <%= link_to icon('add') + ' ' + t("new_image"), new_admin_product_image_url(@product), :id => "new_image_link" %>
 </p>
 

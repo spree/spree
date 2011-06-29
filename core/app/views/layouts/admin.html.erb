@@ -8,9 +8,9 @@
 <!--[if IE 7]>
 <div id='IE7'>
 <![endif]-->
-<div id='wrapper'>
+<div id='wrapper' data-hook>
 
-  <div id="header">
+  <div id="header" data-hook>
 
     <div data-hook="admin_login_navigation_bar"></div>
 
@@ -19,19 +19,19 @@
     <div id="progress"><%= image_tag '/assets/admin/progress.gif' %> <%= t('loading') %>...</div>
   </div>
 
-  <div id="admin-menu">
+  <div id="admin-menu" data-hook>
     <ul data-hook="admin_tabs">
       <%= render 'admin/shared/tabs' %>
     </ul>
     <br class="clear" />
   </div>
 
-  <div id="sub-menu">
+  <div id="sub-menu" data-hook>
     <%= yield :sub_menu %>
     <br class="clear" />
   </div>
 
-  <div class="<%= 'with-sidebar ' if content_for?(:sidebar) %> clear tile_bg" id="content">
+  <div class="<%= 'with-sidebar ' if content_for?(:sidebar) %> clear tile_bg" id="content" data-hook>
 
 
     <% if flash[:error] %>
@@ -46,14 +46,14 @@
 
     <% if content_for?(:sidebar) %>
       <br class='clear' />
-      <div id="sidebar">
+      <div id="sidebar" data-hook>
           <%= yield :sidebar %>
       </div>
     <% end %>
 
   </div>
 
-  <div id="footer">
+  <div id="footer" data-hook>
     <p><%= t("icons_by") %> <a href='http://pinvoke.com'>pInvoke</a></p>
   </div>
 

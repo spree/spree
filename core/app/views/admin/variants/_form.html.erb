@@ -1,8 +1,8 @@
 <div class="yui-gb">
-  <div class="yui-u first">
+  <div class="yui-u first" data-hook="variants">
 
     <% @product.options.each do |option| %>
-      <p>
+      <p data-hook="presentation">
         <%= label :new_variant, option.option_type.presentation %><br />
         <% if @variant.new_record? %>
           <%= select(:new_variant, option.option_type.presentation,
@@ -16,17 +16,17 @@
       </p>
     <% end %>
 
-    <p><%= f.label :sku, t("sku") %><br />
+    <p data-hook="sku"><%= f.label :sku, t("sku") %><br />
     <%= f.text_field :sku %></p>
 
-    <p><%= f.label :price, t("price") %>:<br />
+    <p data-hook="price"><%= f.label :price, t("price") %>:<br />
     <%= f.text_field :price, :value => number_with_precision(@variant.price, :precision => 2) %></p>
 
-    <p><%= f.label :cost_price, t("cost_price") %>:<br />
+    <p data-hook="cost_price"><%= f.label :cost_price, t("cost_price") %>:<br />
     <%= f.text_field :cost_price, :value => number_with_precision(@variant.cost_price, :precision => 2) %></p>
 
     <% if Spree::Config[:track_inventory_levels] %>
-      <p><%= f.label :on_hand, t("on_hand") %>: <br />
+      <p data-hook="on_hand"><%= f.label :on_hand, t("on_hand") %>: <br />
       <%= f.text_field :on_hand %></p>
     <% end %>
   </div>

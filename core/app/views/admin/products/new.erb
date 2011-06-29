@@ -3,7 +3,7 @@
 <%= render "shared/error_messages", :target => @product %>
 
 <%= form_for([:admin, @product], :html => { :multipart => true }) do |f| %>
-<fieldset>
+<fieldset data-hook="new_product">
 
   <%= f.field_container :name do %>
     <%= f.label :name, t("name") %> <span class="required">*</span><br />
@@ -11,7 +11,7 @@
     <%= f.error_message_on :name %>
   <% end %>
 
-  <div class="yui-gb">
+  <div class="yui-gb"  data-hook="new_product_attrs">
     <div class="yui-u first">
 
       <% unless @product.has_variants? %>

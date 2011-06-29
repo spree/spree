@@ -7,7 +7,7 @@
   <%= render :partial => "form", :locals => { :f => f } %>
   <h3><%= t("option_values") %></h3>
   <table class="index">
-    <thead>
+    <thead data-hook="option_header">
       <tr>
         <th><%= t("name") %></th>
         <th><%= t("display") %></th>
@@ -15,7 +15,7 @@
       </tr>
     </thead>
     <tbody id="option_values">
-      <tr id="none">
+      <tr id="none" data-hook="option_none">
         <td colspan="3"><%= @option_type.option_values.empty? ? t("none") : "" %></td>
       </tr>
       <%= f.fields_for :option_values do |option_value_form| %>
@@ -23,7 +23,7 @@
       <% end %>
     </tbody>
   </table>
-  <span id='new_add_option_value'>
+  <span id="new_add_option_value" data-hook>
     <%= link_to_add_fields t("add_option_value"), "tbody#option_values", f, :option_values %>
   </span>
 

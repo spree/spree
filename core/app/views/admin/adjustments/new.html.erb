@@ -7,7 +7,7 @@
 <%= form_for @adjustment, :url => admin_order_adjustments_path do |f| %>
   <%= render :partial => "form", :locals => {:f => f} %>
 
-  <p class="form-buttons">
+  <p class="form-buttons" data-hook="buttons">
     <%= button t('continue') %>
     <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_adjustments_url(@order) %>
   </p>

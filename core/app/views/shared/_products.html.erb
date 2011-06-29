@@ -9,7 +9,7 @@
 <% end %>
 
 <% if products.any? %>
-<ul id="products" class="product-listing">
+<ul id="products" class="product-listing" data-hook>
   <% products.each do |product| %>
     <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
       <li id="product_<%= product.id %>" data-hook="products_list_item">

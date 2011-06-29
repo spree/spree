@@ -1,6 +1,6 @@
 <%= render 'admin/shared/product_sub_menu' %>
 <%= form_for([:admin, @product_group], :html => { :id => 'product-group-form', :multipart => true }) do |f| %>
-  <fieldset>
+  <fieldset data-hook="name">
     <legend><%= t(:product_group) %></legend>
     <%= f.field_container :name do %>
       <%= f.label :name, t("name") %>

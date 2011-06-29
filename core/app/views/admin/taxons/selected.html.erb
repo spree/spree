@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Taxons"} %>
-<div id="selected-taxons">
+<div id="selected-taxons" data-hook>
   <%= render :partial => "taxon_table", :locals => {:taxons => @taxons} %>
 </div>
 
@@ -39,5 +39,5 @@
   }, 0.75);
 <% end %>
 <br/>
-<div id="search_hits"></div>
+<div id="search_hits" data-hook></div>
 

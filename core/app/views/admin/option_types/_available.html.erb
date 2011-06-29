@@ -1,12 +1,12 @@
 <h4><%= t("add_option_types") %></h4>
 <table class="index">
-  <tr>
+  <tr data-hook="option_type_header">
     <th><%= t("name") %></th>
     <th><%= t("presentation") %></th>
     <th></th>
   </tr>
   <% @available_option_types.each do |ot| %>
-  <tr>
+  <tr data-hook="option_type_row">
     <td><%=ot.name %></td>
     <td><%=ot.presentation %></td>
     <td class="actions"><%= link_to icon('add') + ' ' + t("select"),
@@ -20,7 +20,7 @@
   </tr>
   <% end %>
   <% if @available_option_types.empty? %>
-  <tr>
+  <tr data-hook="option_type_empty">
     <td colspan="3"><%= t('none_available') %></td>
   </tr>
   <% end %>

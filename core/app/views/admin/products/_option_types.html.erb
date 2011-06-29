@@ -1,7 +1,7 @@
 <h2><%= t("selected_option_types") %></h2>
-<table class="option-types">
+<table class="option-types" data-hook="option_types">
 	<thead>
-		<tr>
+		<tr data-hook="option_types_header">
 			<th><%= t("name") %></th>
 			<th><%= t("display") %></th>
 			<th><%= t("action") %></th>
@@ -9,7 +9,7 @@
 	</thead>
 	<tbody>
 		<% @product.selected_options.each do |so| %>
-			<tr>
+			<tr data-hook="option_types_row">
 				<td><%=so.option_type.name%></td>
 				<td><%=so.option_type.presentation%></td>
 				<td>
@@ -29,7 +29,7 @@
 	</tbody>
 </table>
 <% unless @product.new_record? %>
-  <span id="select-link">
+  <span id="select-link" data-hook>
 	  <%= link_to_remote icon('delete') + ' ' + t("select_option_type"), {
 	                     :url => {:controller => 'option_types', :action => 'select', :id=> @product},
 	                     :update => 'new-option-type'}, :class => 'iconlink' %>
@@ -37,4 +37,4 @@
 	<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 <% end %>
 <br/>
-<div id="new-option-type"></div>
+<div id="new-option-type" data-hook></div>

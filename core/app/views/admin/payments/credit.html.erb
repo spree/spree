@@ -2,7 +2,7 @@
 
 <%= form_tag do %>
   <h3><%= t('refund') %></h3>
-  <fieldset>
+  <fieldset data-hook="credit">
     <p>
       <label for="amount"><%= t("amount") %></label>
       <%= text_field_tag :amount, @payment.amount %>

@@ -1,10 +1,7 @@
 <div class="yui-g">
-
-  <div class="yui-u first">
-
+  <div class="yui-u first" data-hook="general">
     <fieldset>
       <legend><%= t('general') %></legend>
-
       <p>
         <label><%=t("environment")%></label>
         <br/>
@@ -52,7 +49,7 @@
 
   </div>
 
-  <div class="yui-u">
+  <div class="yui-u" data-hook="smtp">
 
     <fieldset>
       <legend><%= t('smtp') %></legend>

@@ -1,15 +1,15 @@
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li>
       <%= button_link_to t("new_tax_rate"), new_object_url, :icon => 'add'  %>
     </li>
   </ul>
-  <br class='clear' />
+  <br class="clear">
 </div>
 <h1><%=t("tax_rates") %></h1>
 <table class="index">
   <thead>
-    <tr>
+    <tr data-hook="rate_header">
       <th><%=t("zone")%></th>
       <th><%=t("category")%></th>
       <th><%=t("amount")%></th>
@@ -19,7 +19,7 @@
   </thead>
   <tbody>
     <% @tax_rates.each do |tax_rate|%>
-    <tr id="<%= dom_id tax_rate %>">
+    <tr id="<%= dom_id tax_rate %>" data-hook="rate_row">
       <td><%=tax_rate.zone.name %></td>
       <td><%=tax_rate.tax_category.name %></td>
       <td><%=tax_rate.amount %></td>

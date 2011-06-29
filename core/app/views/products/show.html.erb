@@ -2,10 +2,10 @@
 <h1><%= accurate_title %></h1>
 
 <div id="product-images" data-hook="product_images">
-  <div id="main-image">
+  <div id="main-image" data-hook>
     <%= render 'image' %>
   </div>
-  <div id="thumbnails">
+  <div id="thumbnails" data-hook>
     <%= render 'thumbnails', :product => @product %>
   </div>
 </div>
