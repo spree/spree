@@ -5,5 +5,5 @@
 
 <%= form_for([:admin, @mail_method]) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <p class="form-buttons"><%= button t("update") %></p>
+  <p class="form-buttons" data-hook="buttons"><%= button t("update") %></p>
 <% end %>

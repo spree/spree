@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li id="new_product_link">
       <%= button_link_to t("new_product"), new_object_url, {:remote => true, :icon => 'add', :id => 'admin_new_product'} %>
     </li>
@@ -11,7 +11,7 @@
 
 <h1><%= "#{t("actions.listing")} #{t("products")}" %></h1>
 
-<div id="new_product"></div>
+<div id="new_product" data-hook></div>
 
 <table class="index" id='listing_products'>
   <tr data-hook="admin_products_index_headers">
@@ -35,7 +35,7 @@
   </tr>
 <% end %>
 </table>
-<%= will_paginate(:previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
+<%= paginate @products %>
 
 <% content_for :sidebar do %>
   <div data-hook="admin_products_sidebar">

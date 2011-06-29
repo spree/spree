@@ -3,23 +3,23 @@
 <h2><%= ProductGroup.human_attribute_name(:products) %> (<%= count %>)</h2>
 
 <% if count == 0 %>
-  <p><%= t('no_match_found') %></p>
+  <p data-hook="preview_empty"><%= t('no_match_found') %></p>
 <% else %>
 
   <% if count > Spree::Config[:admin_pgroup_preview_size] %>
-    <p><%= t('showing_first_n', :n => Spree::Config[:admin_pgroup_preview_size]) %></p>
+    <p data-hook="preview_showing"><%= t('showing_first_n', :n => Spree::Config[:admin_pgroup_preview_size]) %></p>
   <% end %>
 
-  <table class="index">
+  <table class="index" data-hook="preview">
     <thead>
-    <tr>
-      <th><%= Product.human_attribute_name(:name) %></th>
-      <th><%= t(:action) %></th>
-    </tr>
+      <tr data-hook="preview_header">
+        <th><%= Product.human_attribute_name(:name) %></th>
+        <th><%= t(:action) %></th>
+      </tr>
     </thead>
     <tbody>
     <% preview.each do |product| %>
-      <tr>
+      <tr data-hook="preview_row">
         <td>
           <%= link_to product.name, product_url(product) %>
         </td>

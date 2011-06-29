@@ -1,7 +1,7 @@
-<fieldset id='billing'>
+<fieldset id='billing' data-hook>
   <%= form.fields_for :bill_address do |bill_form| %>
     <legend><%= t("billing_address")%></legend>
-    <div class="inner">
+    <div class="inner" data-hook="billing_inner">
       <% [:firstname, :lastname, :address1, :address2, :city].each do |field_name| %>
         <%= address_field(bill_form, field_name) %>
       <% end %>
@@ -24,14 +24,14 @@
     </div>
   <% end %>
 </fieldset>
-<fieldset id='shipping'>
+<fieldset id='shipping' data-hook>
   <%= form.fields_for :ship_address do |ship_form| %>
     <legend><%= t("shipping_address")%></legend>
-    <p class="field checkbox">
+    <p class="field checkbox" data-hook="use_billing">
       <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address)) %> 
       <label for="order_use_billing" id="use_billing"><%= t("use_billing_address") %></label>
     </p>
-    <div class="inner">
+    <div class="inner" data-hook="shipping_inner">
       <% [:firstname, :lastname, :address1, :address2, :city].each do |field_name| %>
         <%= address_field(ship_form, field_name, 's') %>
       <% end %>
@@ -56,6 +56,6 @@
 </fieldset>
 
 <hr class="space" />
-<div class="form-buttons">
+<div class="form-buttons" data-hook="buttons">
   <input type="submit" class="continue button primary" value="<%=t("save_and_continue") %>" />
 </div>

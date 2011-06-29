@@ -2,7 +2,7 @@
 
 <h2><%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %></h2>
 
-<p>
+<p data-hook="amount">
   <label><%= t("amount") %>:</label>
   <%= @payment.amount %>
 </p>

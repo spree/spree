@@ -1,13 +1,13 @@
 <table class="index">
 	<thead>
-		<tr>
+		<tr data-hook="avilable_header">
 			<th><%= t("name") %></th>
 			<th></th>
 		</tr>
 	</thead>
 	<tbody>
     <% @prototypes.each do |prototype| %>
-      <tr id="row_<%= prototype.id %>">
+      <tr id="row_<%= prototype.id %>" data-hook="available_row">
         <td><%= prototype.name %></td>
 		    <td class="actions">
 		      <%= link_to icon('add') + ' ' + t("select"), select_admin_prototype_url(prototype), 
@@ -16,7 +16,7 @@
       </tr>
     <% end %>
     <% if @prototypes.empty? %>
-     <tr><td colspan="2"><% t("none") %>.</td></tr>
+     <tr data-hook="available_none"><td colspan="2"><% t("none") %>.</td></tr>
     <% end %>
   </tbody>
 </table>

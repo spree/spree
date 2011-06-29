@@ -1,6 +1,6 @@
 <% if @order.inventory_units.any? &:shipped? %>
-  <div class='toolbar'>
-    <ul class='actions'>
+  <div class="toolbar" data-hook="toolbar">
+    <ul class="actions">
       <li>
         <%= button_link_to t("new_return_authorization"), new_admin_order_return_authorization_url(@order), :icon => 'add' %>
       </li>
@@ -12,7 +12,7 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Return Authorizations"} %>
 
 <table class="index">
-  <tr>
+  <tr data-hook="rma_header">
     <th><%= t("rma_number") %></th>
     <th><%= t("status") %></th>
     <th><%= t("amount") %></th>
@@ -20,7 +20,7 @@
     <th></th>
   </tr>
   <% @return_authorizations.each do |return_authorization| %>
-    <tr id="<%= dom_id(return_authorization) %>">
+    <tr id="<%= dom_id(return_authorization) %>" data-hook="rma_row">
       <td><%= return_authorization.number %></td>
       <td><%= t(return_authorization.state.downcase) %></td>
       <td><%= number_to_currency(return_authorization.amount) %></td>
@@ -36,7 +36,7 @@
     </tr>
   <% end %>
   <% unless @order.inventory_units.any? &:shipped? %>
-    <tr>
+    <tr data-hook="rma_cannont_create">
       <td colspan="5"><%= t("cannot_create_returns") %></td>
     </tr>
   <% end %>

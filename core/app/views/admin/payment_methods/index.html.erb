@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li>
       <%= button_link_to t("new_payment_method"), new_object_url, :icon => 'add',
                                                                   :id => 'admin_new_payment_methods_link'  %>

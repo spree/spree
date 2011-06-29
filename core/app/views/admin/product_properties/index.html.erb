@@ -7,13 +7,13 @@
 <%= form_for(@product, :url => admin_product_url(@product), :html => { :method => :put }) do |f| %>
   <table class="index">
     <thead>
-      <tr>
+      <tr data-hook="product_properties_header">
         <th><%= t("property") %></th>
         <th><%= t("value") %></th>
         <th><%= t("action") %></th>
       </tr>
     </thead>
-    <tbody id="product_properties">
+    <tbody id="product_properties" data-hook>
       <%= f.fields_for :product_properties do |pp_form| %>
         <%= render 'product_property_fields', :f => pp_form %>
       <% end %>
@@ -22,7 +22,7 @@
 
   <input type="hidden" name="clear_product_properties" value="true">
 
-  <p class='add_product_properties'>
+  <p class="add_product_properties" data-hook="add_product_properties">
     <%= link_to_add_fields  icon('add') + ' ' + t("add_product_properties"),
                             "tbody#product_properties",
                             f,
@@ -35,7 +35,7 @@
   	              :remote => true, 'data-update' => "prototypes" %>
   	</span>
 	</p>
-	<div id="prototypes"></div>
+	<div id="prototypes" data-hook></div>
 	<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 	<br/>
   <%= render :partial => 'admin/shared/edit_resource_links' %>

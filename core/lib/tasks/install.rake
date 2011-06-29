@@ -1,25 +1,17 @@
 namespace :spree_core do
-  desc "Copies all migrations and assets (NOTE: This will be obsolete with Rails 3.1)"
+  task_warning = "[WARNING] This task has been removed, please run Rails default task: rake railties:install:migrations"
   task :install do
-    Rake::Task['spree_core:install:migrations'].invoke
-    Rake::Task['spree_core:install:assets'].invoke
+    puts task_warning
   end
 
   namespace :install do
 
-    desc "Copies all migrations (NOTE: This will be obsolete with Rails 3.1)"
     task :migrations do
-      source = File.join(File.dirname(__FILE__), '..', '..', 'db')
-      destination = File.join(Rails.root, 'db')
-      Spree::FileUtilz.mirror_files(source, destination)
+      puts task_warning
     end
 
-    desc "Copies all assets (NOTE: This will be obsolete with Rails 3.1)"
     task :assets do
-      source = File.join(File.dirname(__FILE__), '..', '..', 'public')
-      destination = File.join(Rails.root, 'public')
-      #puts "INFO: Mirroring assets from #{source} to #{destination}"
-      Spree::FileUtilz.mirror_files(source, destination)
+      puts "[WARNING] This task is no longer required, and has been replaced with standard Rails 3.1 asset pipeline" 
     end
 
   end

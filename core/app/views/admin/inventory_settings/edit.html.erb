@@ -4,7 +4,7 @@
 
 <%= form_tag(admin_inventory_settings_path, :method => :put) do %>
 
-  <p>
+  <p data-hook="show_zero_stock">
     <label>
 	  <input name="preferences[show_zero_stock_products]" type="hidden" value="0" />
       <%= check_box_tag('preferences[show_zero_stock_products]', "1", Spree::Config[:show_zero_stock_products]) %>
@@ -12,7 +12,7 @@
     </label>
   </p>
   
-  <p>
+  <p data-hook="allow_backorders">
     <label>
 	  <input name="preferences[allow_backorders]" type="hidden" value="0" />
       <%= check_box_tag('preferences[allow_backorders]', "1", Spree::Config[:allow_backorders]) %>
@@ -20,7 +20,7 @@
     </label>
   </p>
 
-  <p class="form-buttons">
+  <p class="form-buttons" data-hook="buttons">
     <%= button t('update') %>
   </p>
 

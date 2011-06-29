@@ -1,11 +1,11 @@
 
 <h3><%= t("customer_details") %></h3>
-<table class="index">
+<table class="index" data-hook="customer_guest">
   <thead>
     <th colspan="8"><%= t('account') %></th>
   </thead>
   <tbody>
-    <tr>
+    <tr data-hook="customer_fields">
       <td class="lbl-col"><%= f.label :email, t(:email)+':' %></td>
       <td class="val-col" colspan="3"><%= f.text_field :email, :class => "fullwidth" %></td>
       <td class="lbl-col"><label><%= t('guest_checkout') %>:</label></td>
@@ -37,6 +37,6 @@
   <%= render :partial => "admin/shared/address_form", :locals => {:f => sa_form, :name => t('shipping_address'), :use_billing => true} %>
 <% end %>
 
-<p class="form-buttons">
+<p class="form-buttons" data-hook="buttons">
   <%= button @order.cart? ? t('continue') : t('update') %>
 </p>

@@ -3,7 +3,7 @@
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Variants"} %>
 
 <table class="index sortable">
-  <tr>
+  <tr data-hook="variants_header">
     <th><%= t("options") %></th>
     <th><%= t("price") %></th>
     <th><%= t("sku") %></th>
@@ -16,7 +16,7 @@
   <% @variants.each do |variant| %>
     <!-- you can skip variant with no options: that's just the default variant that all products have -->
     <% next if variant.option_values.empty? %>
-    <tr id="<%= dom_id(variant) %>" <%= 'style="color:red;"' if variant.deleted? %>>
+    <tr id="<%= dom_id(variant) %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
       <td><span class="handle"></span> <%= variant_options variant %></td>
       <td><%= variant.price %></td>
       <td><%= variant.sku %></td>
@@ -38,18 +38,18 @@
 
 <% if @product.options.empty? %>
 
-  <p class='first_add_option_types'>
+  <p class='first_add_option_types' data-hook="first_add_option_types">
     <%= t("to_add_variants_you_must_first_define") %>
     <%= link_to t("option_types"), selected_admin_product_option_types_url(@product) %>
   </p>
 
 <% else %>
 
-  <div id="new_variant"></div>
+  <div id="new_variant" data-hook></div>
 
   <br/>
 
-  <p id="new_var_link">
+  <p id="new_var_link" data-hook>
 
     <%= link_to icon('add') + ' ' + t("new_variant"), new_admin_product_variant_url(@product),
                                                       :remote => :true,

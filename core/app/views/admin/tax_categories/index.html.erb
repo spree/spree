@@ -1,21 +1,21 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li>
       <p><%= button_link_to t("new_tax_category"), new_object_url,  :icon => 'add',
                                                                     :id => 'admin_new_tax_categories_link' %>
     </p>
     </li>
   </ul>
-  <br class='clear' />
+  <br class="clear">
 </div>
 
 
 <h1><%=t("listing_tax_categories")%></h1>
-<table class="index" id='listing_tax_categories'>
+<table class="index" id='listing_tax_categories' data-hook>
   <thead>
-    <tr>
+    <tr data-hook="tax_header">
       <th><%= t("name") %></th>
       <th><%= t("description") %></th>
       <th><%= t("default") %></th>
@@ -27,7 +27,7 @@
          @edit_url = edit_admin_tax_category_path(tax_category)
          @delete_url = admin_tax_category_path(tax_category)
     %>
-      <tr id="<%= dom_id tax_category %>">
+      <tr id="<%= dom_id tax_category %>" data-hook="tax_row">
         <td><%= tax_category.name %></td>
         <td><%= tax_category.description %></td>
         <td><%= tax_category.is_default.to_s.titleize %></td>
@@ -37,7 +37,7 @@
       </tr>
     <% end %>
     <% if @tax_categories.empty? %>
-      <tr><td colspan="3"><%= t(:none) %></td></tr>
+      <tr data-hook="tax_none"><td colspan="3"><%= t(:none) %></td></tr>
     <% end %>
   </tbody>
 </table>

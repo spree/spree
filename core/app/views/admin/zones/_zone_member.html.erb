@@ -1,5 +1,5 @@
-<li>                                       
+<li data-hook="zone_member">
   <%= f.hidden_field :zoneable_type, :value => "Zone" %>
   <%= f.collection_select(:zoneable_id, @zones, :id, :name, :include_blank => true) %>
-  <%= remove_nested f %>    
+  <%= remove_nested f %>
 </li>

@@ -5,7 +5,7 @@
 <%= form_for([:admin, @taxonomy, @taxon], :html => { :method => :put, :multipart => true}) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
 
-  <p class="form-buttons">
+  <p class="form-buttons" data-hook="buttons">
     <%= button t("update") %> <%= t("or") %> <%= link_to t("cancel"), edit_admin_taxonomy_url(@taxonomy) %>
   </p>
 <% end %>

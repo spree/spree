@@ -1,13 +1,13 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li>
       <%= button_link_to t("new_shipping_method"), new_object_url,  :icon => 'add',
                                                                     :id => 'admin_new_shipping_method_link' %>
     </li>
   </ul>
-  <br class='clear' />
+  <br class="clear">
 </div>
 
 <h1><%= t("shipping_methods") %></h1>
