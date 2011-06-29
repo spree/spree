@@ -15,6 +15,8 @@ class PromotionChangesToSubclassOfActivator < ActiveRecord::Migration
       t.datetime "created_at"
       t.datetime "updated_at"
       t.datetime "starts_at"
+      t.string   "match_policy", :default => "all"
     end
+    rename_column :promotion_rules, :activator_id, :promotion_id
   end
 end
