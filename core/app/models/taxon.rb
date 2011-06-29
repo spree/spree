@@ -11,7 +11,7 @@ class Taxon < ActiveRecord::Base
                 :default_style => :mini,
                 :url => "/assets/taxons/:id/:style/:basename.:extension",
                 :path => ":rails_root/public/assets/taxons/:id/:style/:basename.:extension",
-                :default_url => "/images/default_taxon.png"
+                :default_url => "/assets/default_taxon.png"
 
 
   include ::ProductFilters  # for detailed defs of filters

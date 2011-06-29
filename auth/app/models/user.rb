@@ -38,9 +38,9 @@ class User < ActiveRecord::Base
     email =~ /@example.net$/
   end
 
-  def deliver_password_reset_instructions!
+  def send_reset_password_instructions
     reset_perishable_token!
-    UserMailer.password_reset_instructions(self).deliver
+    UserMailer.reset_password_instructions(self).deliver
   end
 
   protected
@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
 
   # Generate a friendly string randomically to be used as token.
   def self.friendly_token
-    ActiveSupport::SecureRandom.base64(15).tr('+/=', '-_ ').strip.delete("\n")
+    SecureRandom.base64(15).tr('+/=', '-_ ').strip.delete("\n")
   end
 
   # Generate a token by looping and ensuring does not already exist.
