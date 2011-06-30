@@ -3,8 +3,7 @@ require 'rake/testtask'
 require 'rake/packagetask'
 require 'rubygems/package_task'
 
-desc "Default Task"
-task :default => [:spec, :cucumber ]
+task :default => [:spec, :cucumber]
 
 spec = eval(File.read('spree_dash.gemspec'))
 

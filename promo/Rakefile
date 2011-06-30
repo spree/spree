@@ -3,8 +3,7 @@ require 'rake/testtask'
 require 'rake/packagetask'
 require 'rubygems/package_task'
 
-desc "Default Task"
-task :default => [:spec, :cucumber ]
+task :default => [:spec, :cucumber]
 
 spec = eval(File.read('spree_promo.gemspec'))
 
@@ -18,9 +17,6 @@ task :release => :package do
   Rake::Gemcutter::Tasks.new(spec).define
   Rake::Task['gem:push'].invoke
 end
-
-desc "Default Task"
-task :default => [ :spec ]
 
 desc "Regenerates a rails 3 app for testing"
 task :test_app do

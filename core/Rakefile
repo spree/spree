@@ -16,8 +16,7 @@ task :release => :package do
   Rake::Task['gem:push'].invoke
 end
 
-desc "Default Task"
-task :default => [:spec, :cucumber ]
+task :default => [:spec, :cucumber]
 
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
