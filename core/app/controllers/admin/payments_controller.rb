@@ -54,6 +54,11 @@ class Admin::PaymentsController < Admin::BaseController
     return unless event = params[:e] and @payment.payment_source
     if @payment.payment_source.send("#{event}", @payment)
       flash.notice = t('payment_updated')
+      if event == 'capture'
+        OrderMailer.capture_email(@order).deliver
+      elsif event == 'void'
+        OrderMailer.void_email(@order).deliver
+      end
     else
       flash[:error] = t('cannot_perform_operation')
     end
