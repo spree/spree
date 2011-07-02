@@ -24,7 +24,7 @@ module SpreeCore
 
       def generate_app
         remove_directory_if_exists(application_path)
-        run "rails new #{application_path} --database=#{database_name} -GJTq --skip-gemfile"
+        run "rails new #{application_path} --database=#{database_name} -GJTq --skip-gemfile --old-style-hash"
       end 
 
       def set_destination
