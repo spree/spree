@@ -1,0 +1,12 @@
+<%#-
+  
+  @products ||= Product.paginate({
+    :include   => {:variants => [:images, :option_values]},
+    :per_page  => 1,
+    :page      => params[:product]}
+  )
+  
+ -%>
+<%#= will_paginate(@products) %>
+
+<%# TODO: Find a good way to implement next and prev links %>
