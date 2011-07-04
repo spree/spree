@@ -48,6 +48,7 @@ class UserSessionsController < Devise::SessionsController
   def associate_user
     return unless current_user and current_order
     current_order.associate_user!(current_user)
+    current_order.update_totals
     session[:guest_token] = nil
   end
 
