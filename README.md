@@ -35,9 +35,9 @@ Then use the install generator to do the basic setup (add Spree to Gemfile, etc.
 
     rails g spree:site
 
-Now its time to install all of the necessary migrations, assets, etc.
+Now its time to install all of the necessary migrations.
 
-    rake spree:install
+    rake railties:install:migrations
 
 If you'd like to also install sample data and images you can follow up the above command with:
 
