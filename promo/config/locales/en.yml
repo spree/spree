@@ -36,7 +36,7 @@ en:
       description: Populates the cart with the specified variants and quantities
     give_store_credit:
       name: Give store credit
-      description: Gives the user store credit of the ammount specified
+      description: Gives the user store credit of the amount specified
   promotion_rule_types:
     user:
       name: User
