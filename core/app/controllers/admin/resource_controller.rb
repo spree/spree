@@ -1,7 +1,7 @@
 require 'spree_core/action_callbacks'
 class Admin::ResourceController < Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
-  before_filter :load_resource
+  prepend_before_filter :load_resource
 
   respond_to :html
   respond_to :js, :except => [:show, :index]
