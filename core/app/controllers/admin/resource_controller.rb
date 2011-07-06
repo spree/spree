@@ -7,6 +7,7 @@ class Admin::ResourceController < Admin::BaseController
   respond_to :js, :except => [:show, :index]
 
   def new
+    invoke_callbacks(:new_action, :before)
     respond_with(@object) do |format|
       format.html { render :layout => !request.xhr? }
       format.js { render :layout => false }
@@ -78,6 +79,11 @@ class Admin::ResourceController < Admin::BaseController
       @parent_data[:model_name] = model_name
       @parent_data[:model_class] = model_name.to_s.classify.constantize
       @parent_data[:find_by] = options[:find_by] || :id
+    end
+
+    def new_action
+      @callbacks ||= {}
+      @callbacks[:new_action] ||= Spree::ActionCallbacks.new
     end
 
     def create
