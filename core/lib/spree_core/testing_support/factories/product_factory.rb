@@ -14,3 +14,9 @@ Factory.define :product do |f|
   f.available_on { 1.year.ago }
   f.deleted_at nil
 end
+
+Factory.define :product_with_option_types, :parent => :product do |f|
+  f.after_create do |product|
+    Factory(:product_option_type, :product => product)
+  end
+end
