@@ -3,9 +3,9 @@
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Product Details"} %>
 <%= render "shared/error_messages", :target => @product %>
 
+<%= render :partial => 'products_navi' %>
+
 <%= form_for([:admin, @product], :html => { :method => :put, :multipart => true }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
   <%= render :partial => 'admin/shared/edit_resource_links' %>
 <% end %>
-
-

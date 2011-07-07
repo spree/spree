@@ -3,9 +3,11 @@ module CheckoutHelper
   def checkout_states
     if Gateway.current and Gateway.current.payment_profiles_supported?
       %w(address delivery payment confirm complete)
+    elsif Spree::Config[:always_use_confirmation_step]
+      %w(address delivery payment confirm complete)
     else
       %w(address delivery payment complete)
-    end  
+    end
   end
 
   def checkout_progress
@@ -16,7 +18,7 @@ module CheckoutHelper
       css_classes = []
       current_index = states.index(@order.state)
       state_index = states.index(state)
-
+      
       if state_index < current_index
         css_classes << 'completed'
         text = link_to text, checkout_state_path(state)

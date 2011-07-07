@@ -16,9 +16,9 @@
   %>
 <% end %>
 
-<%= stylesheet_link_tag ['admin-reset', 'grids', 'admin-typography', 'admin-forms', 'admin-tables', 'admin', 'autocomplete', 'token-input'].map{|css_name| '/admin/stylesheets/' + css_name}, :cache => 'admin/admin-all' %>
+<%= stylesheet_link_tag ['admin-reset', 'grids', 'admin-typography', 'admin-forms', 'admin-tables', 'admin', 'autocomplete', 'token-input'].map{|css_name| '/admin/stylesheets/' + css_name}, :cache => '/admin/stylesheets/all' %>
 <%= stylesheet_link_tag '/jquery.alerts/jquery.alerts.css', '/jquery.alerts/jquery.alerts.spree.css', '/datepicker/datepicker.css' %>
-<%= javascript_include_tag 'jquery-1.4.2.min.js', 'underscore-min.js', 'rails', '/admin/javascripts/jquery-ui', '/admin/javascripts/jquery.suggest.js', '/admin/javascripts/jquery.tokeninput.js', '/admin/javascripts/jquery.delayedobserver.js', '/jquery.alerts/jquery.alerts.js', '/admin/javascripts/jquery.autocomplete.min.js', :cache => 'admin/jquery-with-plugins' %>
+<%= javascript_include_tag 'jquery-1.4.2.min.js', 'underscore-min.js', 'rails', '/admin/javascripts/jquery-ui', '/admin/javascripts/jquery.suggest.js', '/admin/javascripts/jquery.tokeninput.js', '/admin/javascripts/jquery.delayedobserver.js', '/jquery.alerts/jquery.alerts.js', '/admin/javascripts/jquery.autocomplete.min.js', :cache => 'admin/javascripts/jquery-with-plugins' %>
 <%= javascript_include_tag('/admin/javascripts/jquery.template.js') unless controller.controller_name == "overview" %>
 <%= javascript_tag do %>
   jQuery.alerts.dialogClass = 'spree';

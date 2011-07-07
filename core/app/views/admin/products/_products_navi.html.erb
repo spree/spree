@@ -1,0 +1,8 @@
+<%- prev_label = ('&laquo; ' + t('previous Product')).html_safe -%>
+<%- next_label = (t('next Product') + ' &raquo;').html_safe -%>
+<% content_for :sub_menu do %>
+<ul id="prev_next_products_navi">
+  <li><%= link_to_if(@product.previous?, prev_label, edit_admin_product_path(@product.previous)) { content_tag('span', prev_label, :class => 'disabled') } %></li>
+  <li><%= link_to_if(@product.next?, next_label, edit_admin_product_path(@product.next)) { content_tag('span', next_label, :class => 'disabled') } %></li>
+</ul>
+<% end %>

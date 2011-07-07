@@ -312,6 +312,7 @@ class Order < ActiveRecord::Base
     # lock any optional adjustments (coupon promotions, etc.)
     adjustments.optional.each { |adjustment| adjustment.update_attribute("locked", true) }
     OrderMailer.confirm_email(self).deliver
+    OrderMailer.new_order_email(self).deliver unless Spree::Config[:new_order_email].blank?
 
     self.state_events.create({
       :previous_state => "cart",
