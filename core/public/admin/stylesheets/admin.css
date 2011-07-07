@@ -311,6 +311,10 @@ body {
     button.tick {
       background: none;
       width: 24px; }
+    button.small {
+      font-size: 1em;
+      padding: 0 10px 0 10px;
+    }
   input.title,
   textarea {
     margin: 0; }

@@ -1,0 +1,52 @@
+<table class="index">
+  <tr>
+    <th>Product</th>
+    <th>Variant</th>
+    <th>Quantity</th>
+    <th>&nbsp;</th>
+  </tr>
+  <% for item in promotion_action.promotion_action_line_items %>
+    <tr>
+      <td>
+        <%= item.variant.product.name %>
+      </td>
+      <td>
+        <%= item.variant.options_text.presence || t("master") %>
+      </td>
+      <td>
+        <%= item.quantity %>
+      </td>
+      <td>
+        <img src='/admin/images/icons/cross.png' />
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+
+
+<%= action_form.hidden_field :line_items_string %>
+
+
+<div class="add-line-item">
+  <fieldset>
+    <legend><%= t('add_product') %></legend>
+    <div style="float:left;width:50%;margin-right:5%;">
+      <%= label_tag :add_product_name, t("name_or_sku") %>
+      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth' %>
+    </div>
+    <div style="float:left;width:10%;margin-right:5%;">
+      <%= label_tag :add_line_item_variant_id, t("variant") %><br />
+      <select name="add_line_item_variant_id" class="fullwidth"></select>
+    </div>
+    <div style="float:left;width:10%;margin-right:5%;">
+      <%= label_tag :add_quantity, t("qty") %>
+      <%= text_field_tag :add_quantity, 1 %>
+    </div>
+    <div style="float:left;width:j0%">
+      &nbsp;<br />
+      <button class="add small"> <%= t("add") %></button>
+    </div>
+
+  </fieldset>
+</div>

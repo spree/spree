@@ -1,11 +1,17 @@
 class Activator < ActiveRecord::Base
 
-  EVENT_NAMES = [
+  cattr_accessor :event_names
+
+  self.event_names = [
     'spree.cart.add',
     'spree.checkout.coupon_code_added',
     'spree.order.contents_changed',
     'spree.user.signup'
   ]
+
+  def self.register_event_name(name)
+    self.event_names << name
+  end
 
   scope :event_name_starts_with, lambda{|name| where('event_name like ?', "#{name}%") }
   scope :active, where('( starts_at IS NULL OR starts_at < ? ) AND ( expires_at IS NULL OR expires_at > ?)', Time.now, Time.now)
