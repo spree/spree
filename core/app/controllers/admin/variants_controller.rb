@@ -1,6 +1,14 @@
 class Admin::VariantsController < Admin::ResourceController
   belongs_to :product, :find_by => :permalink
   create.before :create_before
+  new_action.before :new_before
+
+  def index
+    respond_with(collection) do |format|
+      format.html
+      format.json { render :json => json_data }
+    end
+  end
 
   # override the destory method to set deleted_at value
   # instead of actually deleting the product.
@@ -38,6 +46,12 @@ class Admin::VariantsController < Admin::ResourceController
     @object.save
   end
 
+
+  def new_before
+    @object.attributes = @object.product.master.attributes.except('id', 'created_at', 'deleted_at',
+                                                                  'sku', 'is_master', 'count_on_hand')
+  end
+
   def collection
     @deleted = (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
 
@@ -48,4 +62,12 @@ class Admin::VariantsController < Admin::ResourceController
     end
     @collection
   end
+
+  def json_data
+    ( parent.variants.presence || [parent.master] ).map do |v|
+      { :label => v.options_text.presence || v.name, :id => v.id }
+    end
+  end
+
 end
+

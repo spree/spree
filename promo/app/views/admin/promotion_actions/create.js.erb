@@ -1,5 +1,5 @@
 jQuery('#actions_container').html('<%= escape_javascript( render(:partial => 'admin/promotions/actions') ) %>');
-initProductActionCalculatorFields();
+initProductActions();
 
 jQuery('#<%= dom_id @promotion_action %>').hide();
 jQuery('#<%= dom_id @promotion_action %>').fadeIn();

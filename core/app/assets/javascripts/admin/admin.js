@@ -130,7 +130,7 @@ prep_product_autocomplete_data = function(data){
 
     var product = row['product'];
 
-    if(product['variants'].length>0 && expand_variants){
+    if(product['variants'].length>0 && ['expand_variants']){
       //variants
       return $.map(product['variants'], function(variant){
 

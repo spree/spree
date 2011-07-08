@@ -26,6 +26,10 @@
         <td width="140px" data-hook="admin_mail_methods_index_row_actions">
           <%= link_to_edit method, :class => 'edit' %> &nbsp;
           <%= link_to_delete method %>
+          <%= link_to testmail_admin_mail_method_path(method), :method => :post, :class => 'send_mail' do %>
+            <%= image_tag('/admin/images/icons/send-email.png') %>
+            <%= t('admin.mail_methods.send_testmail') %>
+          <% end %>
         </td>
       </tr>
     <% end %>

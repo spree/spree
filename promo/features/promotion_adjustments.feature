@@ -5,6 +5,23 @@ Feature: Promotions which add adjustments to orders
     Given a payment method exists
     Given a shipping method exists
 
+  @selenium_with_chrome @wip
+  Scenario: Managing promotion action for creating line items
+    Given a product with name: "RoR Mug", price: "40" exists
+    When I log in as an admin user and go to the new promotion form
+    And I fill in "Name" with "Order's total > $30"
+    And I fill in "Usage Limit" with "100"
+    And I press "Create"
+    Then I should see "Editing Promotion"
+    And I select "Create line items" from "Add action of type"
+    And I press "Add" within "#action_fields"
+    And I fill in "Name or SKU" with "RoR Mug"
+    # For this to work we need to simulate pressing tab to select the autocomplete item
+    And I fill in "Qty" with "2"
+    # Allow the variant select to populate
+    And I wait for 5 seconds
+    And I press "Add" within ".add-line-item"
+
   @selenium
   Scenario: A coupon promotion with flat rate discount
     When I log in as an admin user and go to the new promotion form

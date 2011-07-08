@@ -16,6 +16,21 @@ When /^(?:|I )fill (billing|shipping) address with correct data$/ do |address_ty
   When %{I select "#{address.state.name}" from "order_#{str_addr}_attributes_state_id"}
 end
 
+Given /^a product with (.*?)? exists$/ do |captured_fields|
+  fields = {'name' => "RoR Mug", 'count_on_hand' => '10', 'price' => "14.99"}
+  captured_fields.split(/,\s+/).each do |field|
+    (name, value) = field.split(/:\s*/, 2)
+    fields[name] = value.delete('"')
+  end
+
+  price = fields.delete('price')
+
+  if Product.search.master_price_equals(price).count(:conditions => fields) == 0
+    Factory(:product, fields.merge('price' => price,  :sku => 'ABC',
+                                                      :available_on => (Time.now - 100.days)))
+  end
+end
+
 When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
   fields = {'name' => "RoR Mug", 'count_on_hand' => '10', 'price' => "14.99"}
   captured_fields.split(/,\s+/).each do |field|

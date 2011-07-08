@@ -26,7 +26,7 @@
         <td>
           <% if inventory_unit.shipment == @shipment %>
             <%= t('included_in_this_shipment') %>
-          <% elsif !inventory_unit.shipment_id.nil? %>
+          <% elsif !inventory_unit.shipment.nil? %>
             <%= t('included_in_other_shipment') %> - <%= link_to inventory_unit.shipment.number, edit_admin_order_shipment_url(inventory_unit.order, inventory_unit.shipment) %>
           <% end %>
         </td>

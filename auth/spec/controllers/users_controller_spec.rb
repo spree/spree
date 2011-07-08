@@ -2,10 +2,11 @@ require 'spec_helper'
 
 describe UsersController do
 
+  let(:admin_user) { Factory(:user) }
   let(:user) { Factory(:user) }
+
   before do
-    user.roles.destroy_all #ensure not admin
-    controller.stub :current_user => nil
+    sign_in user
   end
 
   context "#create" do
@@ -14,12 +15,6 @@ describe UsersController do
       post :create, {:user => {:email => "foobar@example.com", :password => "foobar123", :password_confirmation => "foobar123"} }
       assigns[:user].new_record?.should be_false
     end
-
-    # This is built into Devise see sign_in_and_redirect() helper
-    #it "should automatically authenticate the new user" do
-    #  post :create, {:user => {:email => "foobar@example.com", :password => "foobar123", :password_confirmation => "foobar123"} }
-    #  session[:user_credentials_id].should_not be_nil
-    #end
 
     context "when an order exists in the session" do
       let(:order) { mock_model Order }
@@ -34,7 +29,6 @@ describe UsersController do
 
   context "#update" do
     context "when updating own account" do
-      before { controller.stub :current_user => user }
 
       it "should perform update" do
         put :update, {:user => {:email => "mynew@email-address.com" } }
@@ -45,9 +39,8 @@ describe UsersController do
 
     context "when attempting to update other account" do
       it "should not allow update" do
-        put :update, {:user => {:email => "mynew@email-address.com" } }
+        put :update, {:user => Factory(:user)}, {:user => {:email => "mynew@email-address.com" } }
         response.should redirect_to(login_url)
-        flash[:error].should == I18n.t(:authorization_failure)
       end
     end
   end

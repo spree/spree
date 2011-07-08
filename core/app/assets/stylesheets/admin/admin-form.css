@@ -1,12 +1,12 @@
-/* -------------------------------------------------------------- 
-   
+/* --------------------------------------------------------------
+
    forms.css
    * Sets up some default styling for forms
    * Gives you classes to enhance your forms
-   
+
    Usage:
    * For text fields, use class .title or .text
-   
+
 -------------------------------------------------------------- */
 
 label       { font-weight: bold; }
@@ -28,7 +28,7 @@ textarea:focus, select:focus {
   border:1px solid #666;
 }
 
-input.text, 
+input.text,
 input.title   { padding:5px; }
 input.title   { font-size:1.5em; }
 textarea      { height: 250px; padding:5px; }
@@ -150,8 +150,9 @@ fieldset {
   margin-bottom: 1em;
   padding: 1em;
   border: solid 1px #ccc;
+  background-color: #fff;
   -moz-border-radius: 10px;
-  -webkit-border-radius: 10px; 
+  -webkit-border-radius: 10px;
   }
   fieldset h1 {
     font-size: 1.75em; }
