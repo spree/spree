@@ -3,7 +3,9 @@ source 'http://rubygems.org'
 gem "spree", :path => File.dirname(__FILE__)
 
 gem 'sqlite3-ruby'
-gem 'rake', '~> 0.8.7'
+
+# temporarily needed until next capybara release
+gem 'selenium-webdriver', '0.2.1'
 
 gemspec
 
