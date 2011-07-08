@@ -7,6 +7,10 @@ Feature: Sign in
     Given I am signed up as "email@person.com/secret"
     And I go to the sign in page
 
+  Scenario: User is asked to sign in
+    When I go to the admin page
+    Then I should not see "Authorization Failure"
+
   Scenario: User signs in successfully
     Given I sign in as "email@person.com/secret"
     Then I should see "Logged in successfully"
