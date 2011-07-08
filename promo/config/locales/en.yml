@@ -53,6 +53,9 @@ en:
     landing_page:
       name: Landing Page
       description: Customer must have visited the specified page
+    user_logged_in:
+      name: User Logged In
+      description: Available only to logged in users
   product_rule:
     choose_products: Choose products
     label: "Order must contain %{select} of these products"
