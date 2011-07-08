@@ -97,6 +97,9 @@ class Product < ActiveRecord::Base
 
   scope :taxons_name_eq, lambda { |name| joins(:taxons).where("taxons.name = ?", name) }
 
+  scope :previous, lambda { |att| {:conditions => ["name < ?", att]} }
+  scope :next, lambda { |att| {:conditions => ["name > ?", att]} }
+
   # ----------------------------------------------------------------------------------------------------------
   #
   # The following methods are deprecated and will be removed in a future version of Spree
@@ -224,6 +227,22 @@ class Product < ActiveRecord::Base
   def self.like_any(fields, values)
     where_str = fields.map{|field| Array.new(values.size, "products.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
     self.where([where_str, values.map{|value| "%#{value}%"} * fields.size].flatten)
+  end
+
+  def previous(odr = 'name asc')
+    self.class.where(['name < ?', self.name]).order(odr).last
+  end
+
+  def previous?
+    !self.previous.blank?
+  end
+
+  def next(odr = 'name asc')
+    self.class.where(['name > ?', self.name]).order(odr).first
+  end
+
+  def next?
+    !self.next.blank?
   end
 
   private
