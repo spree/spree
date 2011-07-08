@@ -94,6 +94,7 @@ module SpreePromo
          Promotion::Rules::User,
          Promotion::Rules::FirstOrder,
          Promotion::Rules::LandingPage,
+         Promotion::Rules::UserLoggedIn,
          Promotion::Actions::CreateAdjustment,
          Promotion::Actions::CreateLineItems
         ].each &:register
