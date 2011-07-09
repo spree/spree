@@ -64,7 +64,7 @@ class Promotion < Activator
   end
 
   def coupon_is_eligible?(order, code = nil)
-    return true if order.promotion_credit_exists?(self)
+    return true if order && order.promotion_credit_exists?(self)
     return true if event_name != 'spree.checkout.coupon_code_added'
     code.to_s.strip.downcase == preferred_code.to_s.strip.downcase
   end
