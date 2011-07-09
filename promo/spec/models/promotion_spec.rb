@@ -24,6 +24,12 @@ describe Promotion do
       promotion.promotion_actions = [@action1, @action2]
     end
 
+    context "when checking coupon_is_eligible?" do
+      it "should accommodate promotions that are not attached to orders" do
+        lambda {promotion.activate(:order => nil, :user => nil)}.should_not raise_error
+      end
+    end
+
     context "when eligible?" do
       before do
         promotion.stub(:eligible? => true)
