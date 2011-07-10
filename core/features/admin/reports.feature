@@ -11,6 +11,9 @@ Feature: Admin visiting reports
 
   Scenario: search
     Given the custom orders exist for reports feature
+    Given I go to the admin home page
+    When I follow "Reports"
+    When I follow "Sales Total"
     When I fill in "search_created_at_greater_than" with "2011/01/01"
     When I fill in "search_created_at_less_than" with "2011/12/31"
     When I press "Search"
