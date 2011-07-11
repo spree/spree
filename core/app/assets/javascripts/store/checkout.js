@@ -24,16 +24,16 @@
                       .attr('value', id_nm[0])
                       .html(id_nm[1]);
             if(selected==id_nm[0]){
-              opt.attr('selected', 'selected');
+              opt.prop("selected", true);
             }
             state_select.append(opt);
           });
-          state_select.removeAttr('disabled').show();
-          state_input.hide().attr('disabled', 'disabled');
+          state_select.prop("disabled", false).show();
+          state_input.hide().prop("disabled", true);
 
         } else {
-          state_input.removeAttr('disabled').show();
-          state_select.hide().attr('disabled', 'disabled');
+          state_input.prop("disabled", false).show();
+          state_select.hide().prop("disabled", true);
         }
 
       };
@@ -46,15 +46,15 @@
       $('input#order_use_billing').click(function() {
         if($(this).is(':checked')) {
           $('#shipping .inner').hide();
-          $('#shipping .inner input, #shipping .inner select').attr('disabled', 'disabled');
+          $('#shipping .inner input, #shipping .inner select').prop("disabled", true);
         } else {
           $('#shipping .inner').show();
-          $('#shipping .inner input, #shipping .inner select').removeAttr('disabled', 'disabled');
+          $('#shipping .inner input, #shipping .inner select').prop("disabled", false);
           //only want to enable relevant field
           if(get_states('s')){
-            $('span#sstate input').hide().attr('disabled', 'disabled');
+            $('span#sstate input').hide().prop("disabled", true);
           }else{
-            $('span#sstate select').hide().attr('disabled', 'disabled');
+            $('span#sstate select').hide().prop("disabled", true);
           }
 
         }
