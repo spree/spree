@@ -12,6 +12,8 @@ ul.token-input-list {
     margin: 0;
     padding: 0;
     background-color: #fff;
+    list-style-type: none;
+    clear: left;
 }
 
 ul.token-input-list li {
@@ -23,6 +25,7 @@ ul.token-input-list li input {
     width: 350px;
     padding: 3px 8px;
     background-color: white;
+    -webkit-appearance: caret;
 }
 
 li.token-input-token {
@@ -31,6 +34,7 @@ li.token-input-token {
     height: 1%;
     margin: 3px;
     padding: 3px 5px;
+    background-color: #d0efa0;
     color: #000;
     font-weight: bold;
     cursor: default;
@@ -103,7 +107,7 @@ div.token-input-dropdown ul li em {
     font-style: normal;
 }
 
-li.token-input-token, div.token-input-dropdown ul li.token-input-selected-dropdown-item {
-    background-color: #BBDAFD;
+div.token-input-dropdown ul li.token-input-selected-dropdown-item {
+    background-color: #d0efa0;
 }
 

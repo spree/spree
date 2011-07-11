@@ -27,8 +27,8 @@
         <td><%= tracker.environment.to_s.titleize %></td>
         <td><%= tracker.active ? t(:yes) : t(:no) %></td>
         <td>
-        	<%= link_to_edit tracker %> &nbsp;
-        	<%= link_to_delete tracker %>
+          <%= link_to_edit tracker %> &nbsp;
+          <%= link_to_delete tracker %>
         </td>
       </tr>
     <% end %>

@@ -6,7 +6,7 @@
 
   <p data-hook="show_zero_stock">
     <label>
-	  <input name="preferences[show_zero_stock_products]" type="hidden" value="0" />
+      <input name="preferences[show_zero_stock_products]" type="hidden" value="0" />
       <%= check_box_tag('preferences[show_zero_stock_products]', "1", Spree::Config[:show_zero_stock_products]) %>
       <%= t('show_out_of_stock_products') %>
     </label>
@@ -14,7 +14,7 @@
   
   <p data-hook="allow_backorders">
     <label>
-	  <input name="preferences[allow_backorders]" type="hidden" value="0" />
+      <input name="preferences[allow_backorders]" type="hidden" value="0" />
       <%= check_box_tag('preferences[allow_backorders]', "1", Spree::Config[:allow_backorders]) %>
       <%= t('allow_backorders') %>
     </label>

@@ -172,7 +172,7 @@ module ProductFilters
     { :name   => "All taxons",
       :scope  => :taxons_id_equals_any,
       :labels => taxons.sort_by(&:name).map {|t| [t.name, t.id]},
-      :conds  => nil	# not needed
+      :conds  => nil # not needed
     }
   end
 

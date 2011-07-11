@@ -64,16 +64,16 @@ div.split {
 }
 form div.left
 {
-	display:inline;
-	float:left;
-	width:48%;
+  display:inline;
+  float:left;
+  width:48%;
 }
 
 form div.right
 {
-	display:inline;
-	float:right;
-	width:48%;
+  display:inline;
+  float:right;
+  width:48%;
 }
 form p {
   clear:both;

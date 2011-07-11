@@ -89,7 +89,7 @@ module Spree::BaseHelper
   def logo(image_path=Spree::Config[:logo])
     link_to image_tag(image_path), root_path
   end
-  
+
   def flash_messages
     [:notice, :error].map do |msg_type|
       if flash[msg_type]
@@ -99,7 +99,7 @@ module Spree::BaseHelper
       end
     end.join("\n").html_safe
   end
-  
+
   def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
     return "" if current_page?("/") || taxon.nil?
     separator = raw(separator)
@@ -125,14 +125,14 @@ module Spree::BaseHelper
          taxons_tree(taxon, current_taxon, max_level - 1) 
         end
       end.join("\n").html_safe
-	  end
+    end
   end
 
   def available_countries
     return Country.all unless zone = Zone.find_by_name(Spree::Config[:checkout_zone])
     zone.country_list
   end
-  
+
   def format_price(price, options={})
     options.assert_valid_keys(:show_vat_text)
     options.reverse_merge! :show_vat_text => Spree::Config[:show_price_inc_vat]
@@ -143,7 +143,7 @@ module Spree::BaseHelper
       formatted_price
     end
   end
-  
+
   # generates nested url to product based on supplied taxon
   def seo_url(taxon, product = nil)
     return '/t/' + taxon.permalink if product.nil?
@@ -151,7 +151,7 @@ module Spree::BaseHelper
       "not used anymore. Use product_url instead. (called from #{caller[0]})"
     return product_url(product)
   end
-  
+
   def current_orders_product_count
     if current_order.blank? || current_order.item_count < 1
       return 0

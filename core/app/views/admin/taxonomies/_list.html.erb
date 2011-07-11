@@ -5,8 +5,8 @@
   </tr>
 <% for taxonomy in @taxonomies %>
   <tr id="<%= dom_id taxonomy %>" data-hook="taxonomies_row">
-	  <td>
-	    <%= taxonomy.name %>
+    <td>
+      <%= taxonomy.name %>
     </td>
     <td class="actions">
       <%= link_to_edit taxonomy.id, :class => 'edit' %>

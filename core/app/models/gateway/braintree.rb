@@ -1,7 +1,7 @@
 class Gateway::Braintree < Gateway
-	preference :merchant_id, :string
-	preference :public_key, :string
-	preference :private_key, :string
+  preference :merchant_id, :string
+  preference :public_key, :string
+  preference :private_key, :string
 
   def provider_class
     ActiveMerchant::Billing::BraintreeGateway
