@@ -42,9 +42,10 @@
 #vakata-dragged.jstree-apple ins { background:transparent !important; }
 #vakata-dragged.jstree-apple .jstree-ok { background:url("d.png") -2px -53px no-repeat !important; }
 #vakata-dragged.jstree-apple .jstree-invalid { background:url("d.png") -18px -53px no-repeat !important; }
-#jstree-marker.jstree-apple { background:url("d.png") -41px -57px no-repeat !important; }
+#jstree-marker.jstree-apple { background:url("d.png") -41px -57px no-repeat !important; text-indent:-100px; }
 
 .jstree-apple a.jstree-search { color:aqua; }
+.jstree-apple .jstree-locked a { color:silver; cursor:default; }
 
 #vakata-contextmenu.jstree-apple-context, 
 #vakata-contextmenu.jstree-apple-context li ul { background:#f0f0f0; border:1px solid #979797; -moz-box-shadow: 1px 1px 2px #999; -webkit-box-shadow: 1px 1px 2px #999; box-shadow: 1px 1px 2px #999; }
