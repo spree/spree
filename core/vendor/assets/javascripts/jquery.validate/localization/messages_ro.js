@@ -1,7 +1,6 @@
 /*
  * Translated default messages for the jQuery validation plugin.
- * Language: RO
- * Author: Elzo Valugi - http://www.valugi.ro
+ * Locale: RO
  */
 jQuery.extend(jQuery.validator.messages, {
   required: "Acest câmp este obligatoriu.",
