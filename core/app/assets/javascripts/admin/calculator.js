@@ -5,11 +5,11 @@ $j(function() {
     if ($j('#calc-type').attr('value') == original_calc_type) {
       $j('div.calculator-settings').show();
       $j('div#calculator-settings-warning').hide();
-      $j('.calculator-settings input').removeAttr('disabled');
+      $j('.calculator-settings input').prop("disabled", false);
     } else {
       $j('div.calculator-settings').hide();
       $j('div#calculator-settings-warning').show();
-      $j('.calculator-settings input').attr('disabled', 'disabled');
+      $j('.calculator-settings input').prop("disabled", true);
     }
   });
 })

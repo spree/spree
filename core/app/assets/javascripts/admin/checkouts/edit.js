@@ -49,9 +49,9 @@ jQuery(document).ready(function(){
     }
   }).result(function(event, data, formatted) {
     $('#user_id').val(data['id']);
-    $('#guest_checkout_true').removeAttr("checked");
-    $('#guest_checkout_false').attr("checked", "checked");
-    $('#guest_checkout_false').removeAttr("disabled");
+    $('#guest_checkout_true').prop("checked", false);
+    $('#guest_checkout_false').prop("checked", true);
+    $('#guest_checkout_false').prop("disabled", false);
     $('#order_email').val(data['email']);
 
     var addr = data['bill_address'];
@@ -90,7 +90,7 @@ jQuery(document).ready(function(){
     $('#customer_search').val("");
     $('#user_id').val("");
     $('#checkout_email').val("");
-    $('#guest_checkout_false').attr("disabled", "true");
+    $('#guest_checkout_false').prop("disabled", true);
 
     $('#order_bill_address_attributes_firstname').val("");
     $('#order_bill_address_attributes_lastname').val("");
@@ -116,12 +116,12 @@ jQuery(document).ready(function(){
   var show_billing = function(show) {
     if(show) {
       $('#shipping').show();
-      $('#shipping input').removeAttr('disabled', 'disabled');
-      $('#shipping select').removeAttr('disabled', 'disabled');
+      $('#shipping input').prop("disabled", false);
+      $('#shipping select').prop("disabled", false);
     } else {
       $('#shipping').hide();
-      $('#shipping input').attr('disabled', 'disabled');
-      $('#shipping select').attr('disabled', 'disabled');
+      $('#shipping input').prop("disabled", true);
+      $('#shipping select').prop("disabled", true);
     }
   }
 
