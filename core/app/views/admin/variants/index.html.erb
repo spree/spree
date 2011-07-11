@@ -51,10 +51,7 @@
 
   <p id="new_var_link" data-hook>
 
-    <%= link_to icon('add') + ' ' + t("new_variant"), new_admin_product_variant_url(@product),
-                                                      :remote => :true,
-                                                      'data-update' => 'new_variant',
-                                                      :class => 'iconlink new' %>
+    <%= link_to icon('add') + ' ' + t("new_variant"), new_admin_product_variant_url(@product), 'data-ujs' => :true, 'data-update' => 'new_variant', :class => 'iconlink new' %>
 
     &nbsp;|&nbsp;
 

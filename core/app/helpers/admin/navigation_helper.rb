@@ -108,12 +108,12 @@ module Admin::NavigationHelper
   def button_link_to(text, url, html_options = {})
     if (html_options[:method] &&
         html_options[:method].to_s.downcase != 'get' &&
-        !html_options[:remote])
+        !html_options['data-ujs'])
       form_tag(url, :method => html_options[:method]) do
         button(text, html_options[:icon])
       end
     else
-      if html_options['data-update'].nil? && html_options[:remote]
+      if html_options['data-update'].nil? && html_options['data-ujs']
         object_name, action = url.split('/')[-2..-1]
         html_options['data-update'] = [action, object_name.singularize].join('_')
       end

@@ -13,7 +13,7 @@ Feature: Admin > configurations > states
     When I follow "States"
     When I select "Canada" from "country"
     Then async
-    When I follow "new_state"
+    When I follow "new_state_link"
     When I fill in "state_name" with "Calgary"
     When I fill in "Abbreviation" with "CL"
     When I press "Create"
@@ -34,7 +34,7 @@ Feature: Admin > configurations > states
     When I follow "States"
     When I select "Canada" from "country"
     Then async
-    When I follow "new_state"
+    When I follow "new_state_link"
     When I fill in "state_name" with ""
     When I fill in "Abbreviation" with ""
     When I press "Create"

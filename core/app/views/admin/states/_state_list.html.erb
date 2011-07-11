@@ -28,7 +28,5 @@
 </table>
 <div id="new_state" data-hook></div>
 <p data-hook="buttons">
-  <%= button_link_to t("new_state"), new_admin_country_state_url(@country), {:remote => true,
-                                                                             :icon => 'add',
-                                                                              :id => 'new_state'} %>
+  <%= button_link_to t(:new_state), new_admin_country_state_url(@country), {'data-ujs' => true, :icon => 'add', :id => 'new_state_link'} %>
 </p>

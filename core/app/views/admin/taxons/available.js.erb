@@ -1,10 +1,10 @@
-<script type="text/javascript">
+<%= javascript_tag do %>
   function displayRow(){
     var row = document.getElementById("captionRow");
     if (row.style.display == '') row.style.display = 'none';
     else row.style.display = '';
   }
-</script>
+<% end %>
 <h4><%= t('available_taxons') %></h4>
 <table class="index">
   <thead>
@@ -20,10 +20,10 @@
         <td><%= taxon.name %></td>
         <td><%= taxon_path taxon %></td>
         <td class="actions">
-          <%= link_to icon('add') + ' ' + t("select"),
-                            select_admin_product_taxon_path(@product, taxon),
+          <%= link_to icon('add') + ' ' + t(:select),
+                           select_admin_product_taxon_path(@product, taxon),
                            :remote => true, :class => 'iconlink' %>
-        </td>        
+        </td>
       </tr>
     <% end %>
     <% if @taxons.empty? %>

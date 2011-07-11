@@ -34,20 +34,20 @@ jQuery.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
 }
 
 var request = function(options) {
-  jQuery.ajax(jQuery.extend({ dataType: 'script', url: options.url, type: 'get' }, options));
+  $.ajax($.extend({ url : options.url, type : 'get' }, options));
   return false;
 };
 
 // remote links handler
-jQuery('a[data-remote=true]').live('click', function() {
-  if(confirm_msg = jQuery(this).attr("data-confirm")){
+$('a[data-ujs=true]').live('click', function() {
+  if(confirm_msg = $(this).attr("data-confirm")){
     if (!confirm(confirm_msg)) return false;
   }
-  if(method = jQuery(this).attr("data-method")){
+  if(method = $(this).attr("data-method")){
     return request({ url: this.href, type: 'POST', data: {'_method': method} });
   } else {
-    update_target = jQuery(this).attr("data-update");
-    link_container = jQuery(this).parent();
+    update_target = $(this).attr("data-update");
+    link_container = $(this).parent();
     if (update_target) {
       if ($("#"+update_target).length == 0) {
         if ($("#"+update_target.replace('_', '-')).length > 0) {
@@ -58,21 +58,26 @@ jQuery('a[data-remote=true]').live('click', function() {
         }
       }
     }
-    jQuery.ajax({ dataType: 'script', url: this.href, type: 'get',
-        success: function(data){
-          if (update_target) {
-            $("#"+update_target).html(data);
-            link_container.hide();
-          }
+
+    $.ajax({
+      url: this.href,
+      dataType: 'html',
+      type: 'GET',
+      success: function(data) {
+        if (update_target) {
+          $("#"+update_target).html(data);
+          link_container.hide();
         }
+      }
     });
+
     return false;
   }
 });
 
 // remote forms handler
-jQuery('form[data-remote=true]').live('submit', function() {
-  return request({ url : this.action, type : this.method, data : jQuery(this).serialize() });
+$('form[data-remote=true]').live('submit', function() {
+  return request({ url : this.action, type : this.method, data : $(this).serialize() });
 });
 
 
@@ -212,16 +217,19 @@ jQuery('a.remove_fields').live('click', function() {
   return false;
 });
 
-jQuery(".observe_field").live('change', function() {
+// admin states changes handler
+$(".observe_field").live('change', function() {
   target = $(this).attr("data-update");
   ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
   $(target).hide();
   $(ajax_indicator).show();
-  $.get($(this).attr("data-base-url")+encodeURIComponent($(this).val()),
-    function(data) {
+  $.ajax({
+    url: $(this).attr("data-base-url")+encodeURIComponent($(this).val()),
+    dataType: 'html',
+    success: function(data) {
       $(target).html(data);
       $(ajax_indicator).hide();
       $(target).show();
     }
-  );
+  });
 });
