@@ -3,7 +3,6 @@ source 'http://rubygems.org'
 gem 'rake', '~> 0.9.2'
 #only required until 3.1 is released
 gem "rails", :git => "git://github.com/rails/rails.git", :branch => "3-1-stable"
-gem "require_relative"
 
 # Asset template engines
 gem 'json'
