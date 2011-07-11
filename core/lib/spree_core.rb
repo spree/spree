@@ -26,7 +26,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #--
-require "rails/all"
+require 'rails/all'
 
 require 'state_machine'
 require 'paperclip'
@@ -37,8 +37,9 @@ require 'nested_set'
 require 'acts_as_list'
 require 'resource_controller'
 require 'active_merchant'
-require "meta_search"
-require "find_by_param"
+require 'meta_search'
+require 'find_by_param'
+require 'jquery-rails'
 
 require 'spree_core/ext/active_record'
 require 'spree_core/ext/hash'

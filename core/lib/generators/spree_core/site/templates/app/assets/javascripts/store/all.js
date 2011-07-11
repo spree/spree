@@ -5,9 +5,9 @@
 // the compiled file.
 //
 //= require_tree .
-//= require jquery-1.4.2.min
+//= require jquery
+//= require jquery_ujs
 //= require jquery.validate/jquery.validate.min
-//= require rails
 <%- if additions_for_gemfile.keys.any? { |name| %w{spree spree_core}.include? name.to_s } -%>
 //= require store/spree_core
 <%- end -%>
