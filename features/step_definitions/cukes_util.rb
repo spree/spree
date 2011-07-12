@@ -121,3 +121,17 @@ end
 Then /^page should have following links?:$/ do |table|
   page_has_links(table)
 end
+
+# Usage:
+#
+# When I send a POST request to "/api/stores.json" with the following:
+#   | store[name]    | Example Store  |
+#   | store[code]    | EXMPL         |
+#   | store[domains] | example.com   |
+When /^I send a POST request to "([^\"]*)" with the following:$/ do |path, table|
+  post_params =''
+  table.raw.each do |(param, value)|
+    post_params += "#{param}=#{value}&"
+  end
+  post "#{path}?#{URI.escape(post_params)}"
+end
