@@ -135,3 +135,7 @@ When /^I send a POST request to "([^\"]*)" with the following:$/ do |path, table
   end
   post "#{path}?#{URI.escape(post_params)}"
 end
+
+Then /^I should get a response with status (\d+)$/ do |code|
+  page.driver.status_code.should == code.to_i
+end
