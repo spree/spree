@@ -9,9 +9,9 @@ end
 Factory.define :user do |f|
   f.email { Faker::Internet.email }
   f.login { |u| u.email }
-  f.authentication_token { Factory.next(:user_authentication_token) }
   f.password "secret"
   f.password_confirmation "secret"
+  f.authentication_token { Factory.next(:user_authentication_token) } if User.attribute_method? :authentication_token
 end
 
 Factory.define(:admin_user, :parent => :user) do |u|
