@@ -33,19 +33,6 @@ jQuery.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
   });
 }
 
-var request = function(options) {
-  jQuery.ajax(jQuery.extend({ dataType: 'script', url: options.url, type: 'get' }, options));
-  return false;
-};
-
-// remote forms handler
-jQuery('form[data-remote=true]').live('submit', function() {
-  return request({ url : this.action, type : this.method, data : jQuery(this).serialize() });
-});
-
-
-
-
 // Product autocompletion
 image_html = function(item){
   return "<img src='/assets/products/" + item['images'][0]["id"] + "/mini/" + item['images'][0]['attachment_file_name'] + "'/>";
