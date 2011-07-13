@@ -19,7 +19,7 @@
     </p>
   <% end %>
 
-  <%= form_tag(admin_promotion_promotion_rules_path(@promotion), 'data-remote' => true,
+  <%= form_tag(admin_promotion_promotion_rules_path(@promotion), :remote => true,
                                                                  :id => 'new_product_rule_form') do  %>
     <% options = options_for_select( PromotionRule.registered_class_names.map {|name| [ t("promotion_rule_types.#{name.demodulize.underscore}.name"), name] } ) %>
     <p>
