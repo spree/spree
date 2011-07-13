@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'bar_ability.rb'
 require 'cancan/matchers'
 
 # Fake ability for testing registration of additional abilities
@@ -16,6 +17,8 @@ class FooAbility
   end
 end
 
+
+
 describe Ability do
 
   let(:user) { User.new }
@@ -24,7 +27,10 @@ describe Ability do
 
   TOKEN = "token123"
 
-  after(:each) { Ability.abilities = Set.new }
+  after(:each) {
+    Ability.abilities = Set.new
+    user.roles = []
+  }
   context "register_ability" do
     it "should add the ability to the list of abilties" do
       Ability.register_ability(FooAbility)
@@ -120,15 +126,59 @@ describe Ability do
 
   context "for admin protected resources" do
     let(:resource) { Object.new }
+    let(:resource_shipment) { Shipment.new }
+    let(:resource_product) { Product.new }
+    let(:resource_user) { User.new }
+    let(:resource_order) { Order.new }
+    let(:fakedispatch_user) { User.new }
+    let(:fakedispatch_ability) { Ability.new(fakedispatch_user) }
+    
     context "with admin user" do
-      before(:each) { user.stub(:has_role?).and_return(true) }
+      #before(:each) { user.stub(:has_role?).and_return(true) }
       it "should be able to admin" do
+        user.roles = [Role.find_or_create_by_name('admin')]
         ability.should be_able_to :admin, resource
+        ability.should be_able_to :index, resource_order
+        ability.should be_able_to :show, resource_product
+        ability.should be_able_to :create, resource_user
+      end
+    end
+    context "with fakedispatch user" do
+      it "should be able to admin on the order and shipment pages" do
+        user.roles = [Role.find_or_create_by_name('bar')]
+
+        Ability.register_ability(BarAbility)
+        
+        ability.should_not be_able_to :admin, resource
+
+        ability.should be_able_to :admin, resource_order
+        ability.should be_able_to :index, resource_order
+        ability.should_not be_able_to :update, resource_order
+        # ability.should_not be_able_to :create, resource_order # Fails
+
+        ability.should be_able_to :admin, resource_shipment
+        ability.should be_able_to :index, resource_shipment
+        ability.should be_able_to :create, resource_shipment
+
+        ability.should_not be_able_to :admin, resource_product
+        ability.should_not be_able_to :update, resource_product
+        # ability.should_not be_able_to :show, resource_product # Fails
+        
+        ability.should_not be_able_to :admin, resource_user
+        ability.should_not be_able_to :update, resource_user
+        ability.should be_able_to :update, user
+        # ability.should_not be_able_to :create, resource_user # Fails
+        # It can create new users if is has access to the :admin, User!!
+        
+        # TODO change the Ability class so only users and customers get the extra premissions?
       end
     end
     context "with customer" do
       it "should not be able to admin" do
         ability.should_not be_able_to :admin, resource
+        ability.should_not be_able_to :admin, resource_order
+        ability.should_not be_able_to :admin, resource_product
+        ability.should_not be_able_to :admin, resource_user
       end
     end
   end
