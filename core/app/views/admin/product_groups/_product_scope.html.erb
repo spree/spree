@@ -19,6 +19,6 @@
     <% end %>
   </td>
   <td class="actions" data-hook="actions">
-    <%= link_to_with_icon 'cross', '', admin_product_group_product_scope_path(@product_group, product_scope), 'data-remote' => true, 'data-method' => 'delete' %>
+    <%= link_to_with_icon 'cross', '', admin_product_group_product_scope_path(@product_group, product_scope), :remote => true, :method => 'delete' %>
   </td>
 </tr>

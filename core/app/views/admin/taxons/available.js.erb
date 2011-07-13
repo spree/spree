@@ -23,7 +23,7 @@
           <%= link_to icon('add') + ' ' + t("select"),
                             select_admin_product_taxon_path(@product, taxon),
                            :remote => true, :class => 'iconlink' %>
-        </td>        
+        </td>
       </tr>
     <% end %>
     <% if @taxons.empty? %>

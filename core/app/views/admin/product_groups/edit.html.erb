@@ -21,12 +21,11 @@
         <%= render :partial => 'product_scope', :collection => @product_group.product_scopes.reject {|s| s.is_ordering? } %>
       </table>
 
-    <%=  button t("update") %>
+    <%= button t("update") %>
 
   <% end %>
 
-
-  <%= form_tag(admin_product_group_product_scopes_path(@product_group), 'data-remote' => true, :id => 'new_product_group_form') do %>
+  <%= form_tag(admin_product_group_product_scopes_path(@product_group), :remote => true, :id => 'new_product_group_form') do %>
     <%
     options =
     grouped_options_for_select(
@@ -47,9 +46,7 @@
     </p>
   <% end %>
 
-
 </fieldset>
-
 
 <fieldset id="preview_container" data-hook>
   <%= render 'preview' %>

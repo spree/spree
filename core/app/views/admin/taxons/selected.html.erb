@@ -15,12 +15,12 @@
   function search_for_taxons(){
     jQuery.ajax({
      data: {q: jQuery("#searchtext").val() }, 
-     dataType: 'script',
+     dataType: 'html',
      success: function(request){
        jQuery('#search_hits').html(request);
      },
      type: 'post',
-     url: '<%= available_admin_product_taxons_url(@product) %>'
+     url: '<%= available_admin_product_taxons_url(@product, :format => 'js') %>'
     });
   }
 
