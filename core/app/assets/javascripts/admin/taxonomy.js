@@ -99,7 +99,7 @@ if(taxonomy_id!=undefined){
       },
       "themes" : {
         "theme" : "apple",
-        "url" : "/javascripts/jsTree/themes/apple/style.css"
+        "url" : "/assets/jquery.jstree/themes/apple/style.css"
       },
       "strings" : {
         "new_node" : new_taxon,

@@ -49,26 +49,27 @@ var initProductActions = function(){
   //
   ( function(){
     // Autocomplete product and populate variant select
-    $(".promotion_action.create_line_items input[name='add_product_name']").autocomplete("/admin/products.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content"), {
-      parse: prep_autocomplete_data,
-      formatItem: function(item) {
-        return format_autocomplete(item);
-      }
-    }).result(function(event, data, formatted) {
-      if(data){
-        // $('#add_product_id').val(data.product.id);
-        var url = "/admin/products/" + data.product.permalink + "/variants.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content");
-        var $variant_select = $("select[name='add_line_item_variant_id']");
-        $variant_select.html('');
-        $.getJSON(url, {}, function(variants_data){
-          $.each(variants_data, function(){
-            $variant_select.append($("<option />").val(this.id).text(this.label));
+    if($('.promotion_action.create_line_items ').is('*')){
+      $(".promotion_action.create_line_items input[name='add_product_name']").autocomplete("/admin/products.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content"), {
+        parse: prep_autocomplete_data,
+        formatItem: function(item) {
+          return format_autocomplete(item);
+        }
+      }).result(function(event, data, formatted) {
+        if(data){
+          // $('#add_product_id').val(data.product.id);
+          var url = "/admin/products/" + data.product.permalink + "/variants.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content");
+          var $variant_select = $("select[name='add_line_item_variant_id']");
+          $variant_select.html('');
+          $.getJSON(url, {}, function(variants_data){
+            $.each(variants_data, function(){
+              $variant_select.append($("<option />").val(this.id).text(this.label));
+            });
           });
-        });
+        }
       }
+      );
     }
-    );
-
 
     var hideOrShowItemTables = function(){
       $('.promotion_action table').each(function(){
