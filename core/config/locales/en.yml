@@ -591,6 +591,10 @@ en:
       subject:  "Order Confirmation"
     cancel_email:
       subject: "Cancellation of Order"
+    capture_email:
+      subject: "Transaction Processing Complete"
+    void_email:
+      subject: "Transaction Voided"
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
