@@ -4,9 +4,6 @@ gem "spree", :path => File.dirname(__FILE__)
 
 gem 'sqlite3-ruby'
 
-# temporarily needed until next capybara release
-gem 'selenium-webdriver', '0.2.1'
-
 gemspec
 
 group :test do
@@ -28,6 +25,7 @@ group :cucumber do
   gem 'capybara', '= 1.0.0'
   gem 'faker'
   gem 'launchy'
+  gem 'selenium-webdriver', '~>0.2.2' # temporarily needed until next capybara release
 
   if RUBY_VERSION < "1.9"
     gem "ruby-debug"

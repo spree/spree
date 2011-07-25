@@ -195,8 +195,8 @@ GEM
     ruby-debug-base (0.10.4)
       linecache (>= 0.3)
     rubyzip (0.9.4)
-    selenium-webdriver (0.2.1)
-      childprocess (>= 0.1.7)
+    selenium-webdriver (0.2.2)
+      childprocess (>= 0.1.9)
       ffi (>= 1.0.7)
       json_pure
       rubyzip
@@ -231,7 +231,7 @@ DEPENDENCIES
   rcov
   rspec-rails (= 2.6.1)
   ruby-debug
-  selenium-webdriver (= 0.2.1)
+  selenium-webdriver (~> 0.2.2)
   shoulda
   spree!
   sqlite3-ruby
