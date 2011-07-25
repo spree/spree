@@ -32,5 +32,5 @@ Gem::Specification.new do |s|
   s.add_dependency('activemerchant', '= 1.15.0')
   s.add_dependency('will_paginate', '= 3.0.pre2')
   s.add_dependency('rails', '= 3.0.9')
-  s.add_dependency('deface', '= 0.5.0')
+  s.add_dependency('deface', '= 0.6.0')
 end

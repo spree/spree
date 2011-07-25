@@ -25,7 +25,6 @@ end
 group :cucumber do
   gem 'cucumber-rails'
   gem 'database_cleaner', '= 0.6.7'
-  gem 'nokogiri', '1.4.4'
   gem 'capybara', '= 1.0.0'
   gem 'faker'
   gem 'launchy'
