@@ -31,6 +31,6 @@ Gem::Specification.new do |s|
   s.add_dependency('rd_resource_controller')
   s.add_dependency('meta_search', '= 1.1.0.pre')
   s.add_dependency('activemerchant', '= 1.15.0')
-  s.add_dependency('kaminari', '>= 0.12.2')
+  s.add_dependency('kaminari', '>= 0.12.4')
   s.add_dependency('deface', '>= 0.6.1')
 end
