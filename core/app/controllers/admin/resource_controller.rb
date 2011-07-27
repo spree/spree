@@ -145,7 +145,7 @@ class Admin::ResourceController < Admin::BaseController
     if parent_data.present?
       parent.send(controller_name).find(params[:id])
     else
-      model_class.find(params[:id])
+      model_class.find(params[:id].to_i)
     end
   end
 
