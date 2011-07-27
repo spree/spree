@@ -65,7 +65,7 @@ module SpreeCore
               end
             else
               append_file '../../Gemfile' do
-                "gem 'sqlite3-ruby'"
+                "gem 'sqlite3'"
               end
             end
 

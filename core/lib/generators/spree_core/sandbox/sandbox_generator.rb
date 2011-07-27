@@ -46,7 +46,7 @@ module SpreeCore
           when "mysql"
             gem "mysql2", "0.2.7"
           else
-            gem "sqlite3-ruby"
+            gem "sqlite3"
           end
       end
 
