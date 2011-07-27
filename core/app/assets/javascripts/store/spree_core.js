@@ -1,1 +1,2 @@
-//= require_tree .
+//= require store/checkout
+//= require store/product

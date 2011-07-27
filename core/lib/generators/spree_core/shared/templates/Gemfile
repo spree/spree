@@ -1,14 +1,16 @@
 source 'http://rubygems.org'
 
-gem 'rake', '~> 0.9.2'
-#only required until 3.1 is released
-gem "rails", :git => "git://github.com/rails/rails.git", :branch => "3-1-stable"
+gem 'rails', '3.1.0.rc5'
 
-# Asset template engines
 gem 'json'
-gem 'sass'
-gem 'coffee-script'
-gem 'uglifier'
+
+# Gems used only for assets and not required
+# in production environments by default.
+group :assets do
+  gem 'sass-rails', "~> 3.1.0.rc"
+  gem 'coffee-rails', "~> 3.1.0.rc"
+  gem 'uglifier'
+end
 
 group :test do
   gem 'rspec-rails', '= 2.6.1'
