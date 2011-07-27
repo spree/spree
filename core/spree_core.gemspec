@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency('rd_find_by_param', '= 0.1.1')
 
   s.add_dependency('jquery-rails', '>= 1.0.12')
-  s.add_dependency('highline', '= 1.5.1')
+  s.add_dependency('highline', '= 1.6.2')
   s.add_dependency('stringex', '= 1.0.3')
   s.add_dependency('state_machine', '= 1.0.1')
   s.add_dependency('faker', '= 0.9.5')
