@@ -109,7 +109,7 @@ class Admin::OverviewController < Admin::BaseController
 
   def top_grossing_variants
     quantity = LineItem.includes(:orders).where("orders.state = 'complete'").sum(:quantity, :group => :variant_id, :limit => 5)
-    prices = LineItem.sum(:price, :group => :variant_id, :limit => 5)
+    prices = LineItem.includes(:orders).where("orders.state = 'complete'").sum(:price, :group => :variant_id, :limit => 5)
     variants = quantity.map do |v|
       variant = Variant.find(v[0])
       [variant.name, v[1] * prices[v[0]]]
