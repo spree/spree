@@ -87,9 +87,9 @@ module Spree
               "gem 'mysql2', '0.2.7'"
             end
           else
-            gem "sqlite3-ruby"
+            gem "sqlite3"
             append_file '../../Gemfile' do
-              "gem 'sqlite3-ruby'"
+              "gem 'sqlite3'"
             end
           end
         }
