@@ -71,13 +71,26 @@ index:
     - title: SEO Considerations
       url: seo_considerations
       text: Information on how to leverage the existing SEO features of Spree as well as on general SEO best practices.
-  Digging Deeper:
-    - title: Customization
+  Customization:
+    - title: Customization Overview 
       url: customization
-      text: This guide introduces the key ideas for customizing Spree to your site design.
-    - title: Using Extensions
+      text: The guide introduces the various options available when customizing a Spree site.
+    - title: View Customization
+      url: view_customization
+      text: Covers how to change and extend the standard views the make up a Spree application.
+    - title: Asset Customization
+      url: asset_customization
+      text: Explains Spree's use of the Rails asset pipeline, and how to customized the javascripts, stylesheets and images provided by Spree.
+    - title: Logic Customization
+      url: logic_customization
+      text: Highlights the options available when replacing / extending the internal code of Spree.
+    - title: Extensions & Themes
       url: extensions
       text: This guide covers the technical details of the extension system.
+    - title: Creating Extensions
+      url: creating_extensions
+      text: This guide covers how to create an extension.
+  Digging Deeper:
     - title: Spree Checkout Process
       url: checkout
       text: This guides covers the Spree checkout process and shows you how to customize the steps.

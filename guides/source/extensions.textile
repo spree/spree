@@ -1,17 +1,24 @@
-h2. Extensions
+h2. Extensions & Themes
 
-This guide covers the technical details of extensions and is oriented towards developers. See the "customization guide":customization.html for a more basic treatment on how to customize Spree.
+This guide provides an overview of extensions and themes in Spree and how they are implemented using standard Rails techniques. You should refer to the "customization guide":customization.html for a more specific technical details on customizing Spree.
 
 After this guide you should understand:
 
 * The important role extensions play in Spree
+* The differences between extensions and themes
 * How to install a third party extension
-* How to write your own custom extensions
-* How to share your extensions with others
-
+* How to install a third party theme
 endprologue.
 
 h3. The Basics
+
+Spree uses two terms: **extensions** and **themes** when referring to discrete packages of code (ruby, stlyesheets, javascripts, etc), but the technical differences between the two are neglible:
+
+* **Extensions** refer to discrete packages of code that provide new functionality to a Spree application, while extensions may affect the appearance of a Spree application they generally only provide additional interfaces to enable users to interact with the new functionality provided.
+
+* **Themes** are discrete packages of code that **only** affect the apperance of a Spree application (and generally only the front-end store). Themes do not generally include any logic customizations.
+
+Both Extensions and Themes are created as standard Rails 3.0 (or later) Engines, and the terms extension, theme and engine essenitally mean the same thing from a Rails prespective within Spree.
 
 h4. Overview
 
@@ -21,7 +28,7 @@ WARNING: If you are using a version of Spree prior to version 0.30.x then you sh
 
 h4. Technical Background
 
-Spree Extensions are based on Rails Engines.  Rails Engines have been around since Rails 2.3 but Rails 3.0 was the first version of Rails that really embraced the concept of engines being advocated by projects such as Spree and "Radiant":http://radiantcms.org.  If you are familiar with the concept of a "Rails Plugin":http://guides.rubyonrails.org/plugins.html then you should have no problem working with extensions.
+Spree Extensions and Themes are based on Rails Engines.  Rails Engines have been around since Rails 2.3 but Rails 3.0 was the first version of Rails that really embraced the concept of engines being advocated by projects such as Spree and "Radiant":http://radiantcms.org.  If you are familiar with the concept of a "Rails Plugin":http://guides.rubyonrails.org/plugins.html then you should have no problem working with extensions.
 
 The Rails Engine support allows developers to ship code as stand-alone "Rubygems":http://rubygems.org that can be added to any Rails application.  These gems can in turn be installed, managed and deployed using the very excellent "bundler":http://gembundler.com tool.  A full discussion of gems and bundler is beyond the scope of this document.
 
@@ -55,13 +62,13 @@ Please see the "Source Code Guide":source_code.html for a more in-depth discussi
 
 h3. Using Extensions
 
-Now that we've discussed some of the rationale behind extensions, its time to get started using them.  Later in this guide we'll also have a tutorial that will walk you through a detailed example of creating and publishing your own extension.
+Now that we've discussed some of the rationale behind extensions, its time to get started using them.  You may also want to refer to the "Creating Extensions":creating_extensions.html guide for a tutorial that will walk you through a detailed example of creating and publishing your own extension.
 
-h4. Installing an Extension
+h4. Installing an Extension or Theme
 
-Since extensions are created as engines in Rails, using them is as simple as working with standard plugin gems.  A standard Rails application running Spree will have a +Gemfile+.  This is a special file which is used by "bundler":http://gembundler.com to manage the gem dependencies for your application.
+Since extensions/themes are created as engines in Rails, using them is as simple as working with standard plugin gems.  A standard Rails application running Spree will have a +Gemfile+.  This is a special file which is used by "bundler":http://gembundler.com to manage the gem dependencies for your application.
 
-WARNING: The dependencies should be specified in a specific order. Always specify +spree+, followed by the various spree extensions at the very end of +Gemfile+.
+WARNING: The dependencies should be specified in a specific order. Always specify +spree+, followed by the various spree extensions and then the required theme(s) at the very end of +Gemfile+.
 
 WARNING: Prior to Spree 0.30.0 extensions were not managed as gems.  They were typically installed from the command line using +script/extension install+.  They were then added to the git repository of the application itself and deployed on the server.  This is no longer supported.  You must convert your old extension into a gem in order to use it in Spree.
 
@@ -79,13 +86,21 @@ Alternatively, you can also use the edge version of a gem stored in a Git reposi
   gem 'spree_related_products', '3.0.2', :git => 'git://github.com/spree/spree-simple-blog.git'
 </ruby>
 
-Finally, you could work with the extension directly from your local filesytem
+Finally, you could work with the extension / theme directly from your local file system.
 
 <ruby>
   gem 'spree_related_products', '3.0.2', :path => '../spree_related_products'
 </ruby>
 
-NOTE: Using the +path+ directive is an excellent option when actively developing an extension.
+NOTE: Using the +path+ directive is an excellent option when actively developing an extension or theme.
+
+h5. Selecting the correct extension / theme version
+
+As Spree releases new versions the underlying code can change and this necessitates extensions and themes to be updated to account for the changes in Spree. To help match the correct version of an extension / theme with the Spree version you should refer to the <tt>Versionfile</tt>, normally located in the root of the engines git repository.
+
+The "Spree Extension Registry":http://spreecommerce.com/extensions also presents the contents of an engine's Versionfile, and suggests the correct line to add your Gemfile when you click on the "Install" link beside the relevant Spree version number.
+
+NOTE: Not all extensions / themes include a Versionfile so this option may not be present for all extensions included in the Extension Registry.
 
 h5. Installing the Gem
 
@@ -98,373 +113,3 @@ After you've added the extension to your +Gemfile+ (using one of the techniques 
 h4. Third-party Extensions
 
 Most extensions are so-called "third party" extensions.  They are written by a party other than the developer working on a particular Spree site and they are intended to be shared with other developers.  Many (but not all) extensions are listed in the "Spree Extension Registry":http://spreecommerce.com/extensions.  This is an excellent source of information on which extensions are available and which versions of Spree they are known (or suspected) to be compatible with.
-
-h4. Creating an Extension
-
-Spree comes with a handy generator for creating a new Spree application.  If you are creating the extension within the context of a Rails application with the Spree gem enabled then this is a breeze.  If you wanted to create a new extension called "foofah" you would create as follows:
-
-<shell>
-  $ rails g spree:extension foofah
-</shell>
-
-This creates a directory named +foofah+ with all of the necessary files.  It will also automatically modify your +Gemfile+ so that its including the newly created engine/gem.
-
-INFO: For information on testing your extension, please see the "Testing Guide":testing.html#testing-your-extensions.
-
-h4. Sharing Your Extension
-
-h5. Publishing Your Source
-
-The first order of business is to get your extension on "Github":http://github.com where everybody can see it.  Most importantly, you will want to allow others to have access to the source code.  Github provides a convenient (and free) place to store your source code along with the ability to track issues and accept code patches.
-
-INFO: It is convention to use the +spree-+ naming convention for your Github repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the Github project would be named +spree-foofah+ and the gem would be +spree_fofoah+.
-
-h5. Publishing Your Gem
-
-If your extension is ready to be released into the wild you can publish it as a gem on "RubyGems.org":http://rubygems.org.  Assuming you used the extension generator to build your extension, its already a gem and ready to be published.  You'll just want to edit a few details before you proceed.
-
-s.name        = 'foofah'
-s.version     = '1.0.0'
-s.summary     = 'Add gem summary here'
-#s.description = 'Add (optional) gem description here'
-s.required_ruby_version = '>= 1.8.7'
-
-# s.author            = 'David Heinemeier Hansson'
-# s.email             = 'david@loudthinking.com'
-# s.homepage          = 'http://www.rubyonrails.org'
-# s.rubyforge_project = 'actionmailer'
-
-h4. Versionfile
-
-Spree is moving at a rapid pace with the code constantly evolving as new releases are being pushed out.  These changes sometimes make it difficult to keep track of which version of Spree is compatible with which version of an extension. To solve this problem extension authors are encouraged to add a +Versionfile+ to their extension.
-
-h5. Versionfile Basics
-
-+Versionfile+ is a plain text file which keeps information about which version of Spree an extension is compatible with.  It was inspired by the +Gemfile+ used by bundler.  Lets take a look at a sample +Versionfile+.
-
-<ruby>
-"0.50.x" => { :branch => "master" }
-"0.40.x" => { :tag => "v1.0.0", :version => "1.0.0" }
-</ruby>
-
-The above +Versionfile+ is saying that if you are using Spree version "0.50.x" then use "master" branch. If you are using Spree version "0.40.x" then you should use tag "v1.0.0".
-
-You should note that we are dealing with two different concepts of "version" here.  One is the version of Spree supported and the other is the version of the extension.
-
-INFO: All Spree extensions should have a version.  This version number has nothing to do with what version of Spree is supported.  It is listed purely as a convenient way to refer to an extension.  For example "I'm having a problem with spree_active_shipping 1.0.1"
-
-h5. Syntax
-
-A +Versionfile+ can have any number of lines. It is recommended that you put the latest Spree releases at the top. The very first thing a line should should is the Spree version it is supporting. Next within curly braces how to get extension supporting the specified Spree version is mentioned.
-
-There are four different ways of specifying an extension's compatibilty information.
-
-NOTE: All four variations for identifying extension compatibility can be mapped to more than one Spree version.  In other words, its entirely possible that the same version of an extension can be compatible with multiple versions of Spree.
-
-*Gem Version*
-
-<ruby>
-"0.30.x" => { :version => "1.2" }
-</ruby>
-
-Above case is saying that if you are using Spree version "0.30.x" then use extension as a gem and the version of gem you should be using is "1.2".
-
-Gem versions are considered "stable."  They will show up in the extension registry as such.
-
-*Git Branch*
-
-<ruby>
-"0.30.x" => { :branch => "0-30-stable" }
-</ruby>
-
-Above case is telling that if you are using Spree version "0.30.x" then use branch named "0-30-stable". Notice that when you suggesting to use "branch" then "version" should not be specified.
-
-Versions identified by Git branch are considered "unstable" or "edge."  They will be identified as such in the extension registry.
-
-*Git Tag*
-
-<ruby>
-"0.30.x" => { :tag => "v0.30", :version => '1.1' }
-</ruby>
-
-Above case is suggesting that if you are using Spree version "0.30.x" then use tag named "v0.30". The version information indicates that the author of the extension is calling that release as version "1.1".
-
-Versions identified by tags are considered "stable."  They will show up in the extension registry as such.  This is also a nice alternative to having to release an extension as an actual gem.
-
-*Git SHA*
-
-<ruby>
-"0.30.x" => { :ref => "4aedfg", :version => '1.2' }
-</ruby>
-
-Above case is suggesting that if you are using Spree version "0.30.x" then use ref named "4aedfg" . The version information indicates that the author of the extension is calling that release as version "1.2"
-
-Versions identified by a Git SHA are considered "stable."  They will show up in the extension registry as such.  This is also a nice alternative to having to release an extension as an actual gem.
-
-<ruby>
-#"0.30.x" => { :ref => "4aedfg", :version => '1.2' }
-</ruby>
-
-Above case is indicating how you can comment out a line. A line beginning with hash "#" is treated as comment.
-
-h5. Using the Versionfile
-
-+Versionfile+ has no impact on the actual ability of an extension to work with Spree.  It is simply a declaration by the extension author that a certain version of the extension is known to work with a particular version(s) of Spree.  Its also possible that an extension version might be compatible with versions of Spree not listed.  If you discover this to be the case please send a pull request to the extension author so they can update their +Versionfile+.
-
-There is a crawler which crawls the +Versionfile+ of all the registered extensions once every day. So any changes you make to your extension's +Versionfile+ should be captured within 24 hours.
-
-INFO: You must actually register your extension in the "Extension Registry":http://spreecommerce.com/extensions before it can be discovered by the crawler.
-
-After the +Versionfile+ info has been processed you will see it listed in the "Extension Registry":http://spreecommerce.com/extensions.  Depending on the syntax you used to specify the version you will see it listed under "Stable Release" or "Dev Release".  In both cases there will also be a link labeled "Show". Clicking that link will show you the exact information you need to paste into your +Gemfile+ in order to use the extension.
-
-h5. Troubleshooting
-
-While parsing the lines gathered from +Versionfile+ if a line is invalid then that line is skipped. So make sure that entries in +Versionfile+ are valid. Soon we would be releasing a tool that can verify the +Versionfile+ and provide instant feedback if something is not right.
-
-h4. Testing Against a Release Candidate
-
-The Spree core team will often announce a so-called "release candidate":http://en.wikipedia.org/wiki/Software_release_life_cycle#Release_candidate shortly before an official release.  This is to allow Spree developers to test their sites and extensions against the upcoming release code.
-
-In order to test your extension against the release candidate you will need to first update your gemspec file.  Lets look at how we would update the "spree_social":http://github.com/spree/spree_social gem to use the new 0.60.0.RC1 version of Spree.  We'll need to modify +spree_social.gemspec+ as follows:
-
-<ruby>
-Gem::Specification.new do |s|
-  ...
-  s.add_dependency('spree_core', '>= 0.60.0.RC1')
-  s.add_dependency('spree_auth', '>= 0.60.0.RC1')
-  ...
-end
-</ruby>
-
-You'll also want to update your +Gemfile+ that belongs to the Spree application using the extension.
-
-<ruby>
-  gem 'spree', '0.60.0.RC1'
-</ruby>
-
-Next, you'll need to update the dependencies locally using bundler and commit the resulting +Gemfile.lock+ to your source code respository.
-
-<shell>
-$ bundle update spree_social
-</shell>
-
-Now its time to fire up Spree and make sure everything is working properly.  Assuming everything looks good you'll also want to update the +Versionfile+ associated with your extension so that people can use the new and improved version.
-
-In our example we're adding support for a new 0.60.0RC1 release candidate which is equivalent to 0.60.x in the extension directory.
-
-<ruby>
-"0.60.x" => { :tag => "v1.2", :version => "1.2" }
-"0.50.x" => { :tag => "v1.0.2", :version => "1.0.2" }
-</ruby>
-
-If we're not 100% sure the extension will support the release candidate (or if its a work in progress) we could reference the "edge" branch (ie. master) in the +Versionfile+ instead.
-
-<ruby>
-"0.60.x" => { :branch => "master" }
-"0.50.x" => { :tag => "v1.0.2", :version => "1.0.2" }
-</ruby>
-
-INFO: Using a branch in the +Versionfile+ designates the gem as a "development release" which is possibly unstable and subject to change.  Once things are stable you can point ot a specific Git SHA or tag so that people can rely on the extension not changing in a production release.
-
-h3. Extension Tutorial
-
-This tutorial assumes a basic familiarity with Spree extensions.  For more detailed information on how extensions, please see the previous sections. The tutorial will, however, walk you through a complete example touching on all of the major aspects of an extension so if you like to learn through "step by step" instructions you may want to start here.
-
-h4. Getting Started
-
-Let’s start by building a simple extension. Suppose we want the ability to mark certain products as part of a promotion. We’d like to add an admin interface for marking certain items as being part of the promotion. We’d also like to highlight these products in our store view. This is a great example of how an extension can be used to build on the solid Spree foundation. We’ll be adding our own custom models, views, controllers, routes and locales via the new extension.
-
-We're going to assume you already have a functioning Spree application.  If you have not yet achieved this you should read the "Getting Started Guide":getting_started.html first.
-
-So let's start by generating the new extension
-
-<shell>
-  $ rails g spree:extension FlagPromotions
-</shell>
-
-This creates a +flag_promotions+ directory with several additional files and directories as the following generator output shows:
-
-<ruby>
-   create  flag_promotions
-   create  flag_promotions/db
-   create  flag_promotions/public
-   create  flag_promotions/LICENSE
-   create  flag_promotions/Rakefile
-   create  flag_promotions/README.md
-   create  flag_promotions/.gitignore
-   create  flag_promotions/flag_promotions.gemspec
-   create  flag_promotions/lib/tasks/install.rake
-   create  flag_promotions/app
-   create  flag_promotions/app/controllers
-   create  flag_promotions/app/helpers
-   create  flag_promotions/app/models
-   create  flag_promotions/app/views
-   create  flag_promotions/spec
-    exist  flag_promotions/lib
-   create  flag_promotions/lib/flag_promotions_hooks.rb
-   create  flag_promotions/lib/tasks/flag_promotions.rake
-   create  flag_promotions/lib/flag_promotions.rb
-   create  flag_promotions/spec/spec_helper.rb
-  gemfile  flag_promotions
-</ruby>
-
-h4. Creating a Model
-
-Lets create a new +PromotedItem+ model for our extension.  Unfortunately Rails does not yet provide an easy mechanism for generating models, etc. within the context of your extension.  So for now you are left to create the necessary files manually or to use the standard Rails generator and copy the files into your extension.
-
-NOTE: Rails 3.1 will contain better mechanisms for extending the Rails generators so you won't have to resort to manual file creation or other hacks once Spree supports this future release.
-
-The +PromotedItem+ model will represent products that are "flagged" for promotion on the front page along with a schedule of when the promotion begins and ends.
-
-<ruby>
-  # flag_promotions/app/models/promoted_item.rb
-
-  class PromotedItem < ActiveRecord::Base
-
-  end
-</ruby>
-
-And of course we'll need a corresponding migration.  Until there is an extension migration generator you can use the Rails generator and copy the migration into your extension as a workaround.
-
-<ruby>
-  # flag_promotions/db/migrate/20101024002242_create_promoted_items.rb
-
-  class CreatePromotedItems < ActiveRecord::Migration
-    def self.up
-      create_table :promoted_items do |t|
-        t.string :description
-        t.references :product
-        t.date :start
-        t.date :stop
-      end
-    end
-
-    def self.down
-      drop_table :promoted_items
-    end
-  end
-</ruby>
-
-Extension migrations need to be copied from the engine into the main Rails application.  You can do this with a convenient rake task.
-
-<shell>
-  $ rake flag_promotions:install
-</shell>
-
-NOTE: This also copies over public assets in your engines +public+ directory.  If you just want the migrations you can run +rake flag_promotions:install:migrations+ or if you just want the assets you can run +rake flag_promotions:install:assets+.
-
-INFO: The +install.rake+ file is automatically created for you by the Spree extension generator.  It will only be necessary until Rails 3.1 is released - at which point this task will be provided "automagically."
-
-h4. Creating a Controller and View
-
-Now lets create a new controller file so that we can administer these promoted items.
-
-<ruby>
-  # flag_promotions/app/controllers/admin/promoted_items_controller.rb
-  class Admin::PromotedItemsController < Admin::ResourceController
-
-  end
-</ruby>
-
-You may notice the base class is now using Admin::ResourceController, this is a major change for Spree 0.60.x and later. Previous versions used a gem called resource_controller to provide an implementation of a controllers CRUD methods, but this gem is no longer being actively maintained and also provides unnecessary features that Spree was not using.
-
-So now the Admin::ResourceController is an interal Spree class that provides a similiar (but much simplied) implementation of these CRUD actions. We strongly recommend that only basic Admin controllers use this base class, and any front-end or custom / advanced methods be manually defined within the controllers implementation itself.
-
-Lets also add a corresponding admin view for this new resource.
-
-<shell>
-  $ cd flag_promotions
-  $ mkdir -p app/views/admin
-  $ vi promoted_items_controller.html.erb
-</shell>
-
-_TODO: Provide some actual view code.  We'll skip it for now since its pretty trivial._
-
-h4. Configure Routes
-
-Your new resource will not be accessible in your Spree application until you map some routing information for it.  So we'll update the +config/routes.rb+ file as follows
-
-<ruby>
-  Rails.application.routes.draw do
-    namespace :admin do
-      resources :promoted_items
-    end
-  end
-</ruby>
-
-We should now be in a position to verify the correct configuration of the extension.  Start your Spree application and then navigate to "http://localhost:3000/admin/promoted_items":http://localhost:3000/admin/promoted_items and verify that the view you created is displayed.
-
-h4. Customizing an Existing Spree View
-
-h5. Overriding a View
-
-We've already discussed how to create a new view for your extension.  Extensions can also override an existing view that is provided by Spree.
-
-This extension doesn't really require overrides of an existing view but lets just replace one for the sake of showing how its done.  We want to replace the +products/index.html.erb+ view provided by Spree so that there's no sidebar.  So let's go ahead and create a new index view for the home page.
-
-<ruby>
-  <!-- flag_promotions/app/views/products/index.html.erb -->
-  <% if params[:keywords] %>
-    <%= hook :search_results do %>
-      <% if @products.empty? %>
-        <%= t(:no_products_found) %>
-      <% else %>
-        <%= render "shared/products", :products => @products, :taxon => @taxon %>
-      <% end %>
-    <% end %>
-  <% else %>
-    <%= hook :homepage_products do %>
-      <%= render "shared/products", :products => @products, :taxon => @taxon %>
-    <% end %>
-  <% end %>
-</ruby>
-
-This is just a "copy and paste" of the original index file from +spree_core+ except we've chopped out the stuff related to the sidebar.
-
-h5. Limitations of Overriding
-
-We're going to want to make it easy for admins to use our fancy new extension.  In order to make it easy for users to find the page for configuring promotions for the front page we'll add a "Promoted Items" tab to the admin menu.  Of course one way to do this would be to override the entire admin layout that's included with Spree but this approach has two drawbacks.
-
-The first problem is that this is a bit of overkill when we just want to add one little tab.  What if Spree makes a bunch of changes to the layout in a future version?  Its going to be awfully difficult to keep up with these changes and will mean that we need to continuously update the entire layout in our extension since we decided to override it in its entirety.
-
-The second problem is that we need to keep in mind that our extension may need to interact with other extensions.  What would happen if a second extension tried this same approach as well?  Only one copy of the layout can be used so Rails will pick the "winner" based on whichever extension/engine was required first.  There is another approach, however, which will allow multiple extensions to add to the admin tab without trampling on one another.
-
-h5. Customizing a View Using Hooks
-
-The best way to add minor details to an existing view (such as adding an admin tab) is to use the "hook" mechanism provided by Spree.  Lets take a look at how to add a "Promoted Items" tab to the admin panel using hooks.
-
-<ruby>
-  class FlagPromotionsHooks < Spree::ThemeSupport::HookListener
-    insert_after :admin_tabs do
-      %(<%= tab(:promoted_items) %>)
-    end
-  end
-</ruby>
-
-Please see the "Customization Guide":customization.html for a more extensive discussion about hooks.
-
-INFO: You'll need to add a translation for the promotions tab before it will render properly.  Please see the next section for details.
-
-h4. Internationalization (I18n)
-
-Spree extensions can also provide their own locales/translations.  If you're adding additional view text and you wish to support multiple locales, or if you are interested in sharing your extension with others, its a good idea to enable your extension with the i18n features of Spree.
-
-In order to properly display the "Promoted Items" tab we'll need to provide an English localization in the +config/locales/en.yml+ file.
-
-<ruby>
-  ---
-  en:
-    promoted_items: Promoted Items
-</ruby>
-
-h4. Overriding an Existing Spree Model
-
-[TODO]
-
-h4. Distributing Your Source
-
-[TODO]
-
-h4. Publishing Your Extension as a Gem
-
-[TODO]

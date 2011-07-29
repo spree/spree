@@ -1,0 +1,160 @@
+h2. Asset Customization
+
+This guide covers how Spree manages it's static assets and how you can extend and customize them including:
+
+* Understanding Spree's use of the Rails asset pipeline
+* Managing application specific assets
+* Managing extension specific assets
+* Overriding Spree's core assets
+
+Be sure to read the other customization methods available in the "Customization Overview":customization.html page.
+
+endprologue.
+
+h3. Spree's Asset Pipeline
+
+With the release of 3.1, Rails now supports powerful asset management features and Spree fully leverages these features to futher extend and simplify it's customization potential. Using asset customization techniques outlined below you be able to adapt all the Javascript, Stylesheets and Images contained in Spree to easily provide a fully custom experience.
+
+All Spree generated (or upgraded) applications include an assets directory (as is standard for all Rails 3.1 apps). We've taken this one step further by subdividing each top level asset directory (images, javascripts, stylesheets) into store and admin directories, this is designed to keep assets from the front end (store) and back end (admin) from conflicting with each other.
+
+A typical assets directory for a Spree application will look like:
+
+<pre>app
+|-- assets
+    |-- images
+    |   |-- store
+    |   |-- admin
+    |-- javascripts
+    |   |-- store
+    |   |   |-- all.js
+    |   |-- admin
+    |       |-- all.js
+    |-- stylesheets
+    |   |-- store
+    |   |   |-- all.css
+    |   |-- admin
+    |       |-- all.css</pre>
+
+Spree also generates four top level manifests (all.css & all.js, see above) that require all the core extension's and site specific stylesheets / javascripts.
+
+
+h4. How core extensions (engines) manage assets
+
+All core engines have been updated to provide four (or less) asset manifests that are responsible for bundling up all the javascripts and stylesheets required for that engine.
+
+For example, spree_core provides the following manifests:
+
+<pre>app
+|-- assets
+    |-- javascripts
+    |   |-- store
+    |   |   |-- spree_core.js
+    |   |-- admin
+    |       |-- spree_core.js
+    |-- stylesheets
+    |   |-- store
+    |   |   |-- spree_core.css
+    |   |-- admin
+    |       |-- spree_core.css</pre>
+
+These core engine specific manifests are included by default by the relevant all.css or all.js in the host Spree application. For example, app/assets/javascripts/admin/all.js includes:
+
+<css>//= require admin/spree_core
+//= require admin/spree_promo
+//= require admin/spree_dash
+//= require_tree .</css>
+
+External javascript libraries, stylesheets and images have also be relocated into vendor/assets (again Rails 3.1 standard approach), and all core extensions no longer have public directories.
+
+
+
+h3. Managing your application's assets
+
+All your application's assets should be stored in the appropriate app/assets or vendor/assets sub-directory. All javascript and stylesheet files in app/assets sub-directories will be automatically included by the relevant all.(js|css) manifests.
+
+Javascript & stylesheet files in vendor/assets sub-directories should be manually required in the appropriate all.(js|css) manifests.
+
+INFO: Images will be served in development mode, or compiled into the public directory automatically in production mode.
+
+NOTE: When upgrading from previous versions of Spree it's important that you relocate all assets from the public directory into the relevant app/assets directory.
+
+h3. Managing your extension's assets
+
+We're suggesting that all third party extensions should adopt the same approach as spree-core and provide the same four (or less depending on what the extension requires) manifest files, using the same directory structure as outlined above.
+
+Third party extension manifest files will not be automatically included in the relevant all.(js|css) files so it's important to document the manual inclusion in your extensions installation instructions or provide a Rails generator to do so.
+
+For an example of an extension using a generator to install assets and migrations take a look at the recently added "install_generator":https://github.com/spree/spree_wishlist/blob/rails3-1/lib/generators/spree_wishlist/install/install_generator.rb on the rails3-1 branch of spree_wishlist.
+
+
+h3. Overriding Spree's core assets
+
+Overriding or replacing any of Spree's internal assets is even easier than before, it's recommended to attempt to replace as little as possible in a given javascript or stylesheet file to help ease future upgrade work required.
+
+h4. Overriding styles
+
+Say for example you want to replace the following, css snippet:
+
+<css>
+/* app/assets/stylesheets/store/screen.css */
+
+div#footer {
+  clear: both;
+}
+</css>
+
+You can now just create a new stylesheet inside <tt>your_app/app/assets/stylesheets/store/</tt> and include the following CSS:
+
+<css>
+/* app/assets/stylesheets/store/foo.css */
+
+div#footer {
+  clear: none;
+  border: 1px solid red;
+}
+</css>
+
+The <tt>store/all.css</tt> manifest will automatically include <tt>foo.css</tt> and it will actually include both definitions with the one from <tt>foo.css</tt> being included last, hence it will be the rule applied.
+
+h4. Overriding javascript
+
+A similar approach can be used for javascript functions, for example if you wanted to override the <tt>show_variant_images</tt> method:
+
+<javascript>
+  // app/assets/javascripts/store/product.js 
+
+  var show_variant_images = function(variant_id) {
+    $('li.vtmb').hide();
+    $('li.vtmb-' + variant_id).show();
+    var currentThumb = $('#' + $("#main-image").data('selectedThumbId'));
+    // if currently selected thumb does not belong to current variant, nor to common images,
+    // hide it and select the first available thumb instead.
+    if(!currentThumb.hasClass('vtmb-' + variant_id) && !currentThumb.hasClass('tmb-all')) {
+      var thumb = $($('ul.thumbnails li:visible').eq(0));
+      var newImg = thumb.find('a').attr('href');
+      $('ul.thumbnails li').removeClass('selected');
+      thumb.addClass('selected');
+      $('#main-image img').attr('src', newImg);
+      $("#main-image").data('selectedThumb', newImg);
+      $("#main-image").data('selectedThumbId', thumb.attr('id'));
+    }
+  }
+</javascript>
+
+Again, just create a new javascript file inside <tt>your_app/app/assets/stylesheets/store</tt> and include the new method definition:
+
+<javascript>
+  // app/assets/javascripts/store/foo.js 
+
+  var show_variant_images = function(variant_id) {
+    alert('hello world');
+  }
+</javascript>
+
+The resulting <tt>store/all.js</tt> would include both methods, with the later being one executed on request.
+
+h4. Overriding images
+
+Finally images can be replaced by substituting the required file into the same path within your application or extension as the file you would like to replace.
+
+For example, to replace the Spree logo you would copy you logo to: <tt>your_app/app/assets/images/admin/bg/spree_50.png</tt>.
