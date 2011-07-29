@@ -297,7 +297,7 @@ describe Order do
 
     context "when payments are sufficient" do
       it "should set payment_state to paid" do
-        order.stub(:total => 100, :payment_total => 100)
+        order.stub(:total => 100.01, :payment_total => 100.012343)
         order.update!
         order.payment_state.should == "paid"
       end
