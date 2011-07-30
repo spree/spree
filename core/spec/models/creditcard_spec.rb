@@ -422,5 +422,33 @@ describe Creditcard do
     end
   end
 
+  context "#spree_cc_type" do
+    before do
+      @creditcard.attributes = valid_creditcard_attributes
+      @creditcard.save
+      @creditcard = Creditcard.find(@creditcard.id)
+    end
+    
+    context "in development mode" do
+      before do
+        Rails.env = "development"
+      end
+      
+      it "should return visa" do
+        @creditcard.spree_cc_type.should == "visa"
+      end
+    end
+    context "in production mode" do
+      before do
+        Rails.env = "production"
+      end
+      
+      it "should return the actual cc_type for a valid number" do
+        @creditcard.number = "378282246310005"
+        @creditcard.save
+        @creditcard.spree_cc_type.should == "american_express"
+      end
+    end
+  end
 end
 
