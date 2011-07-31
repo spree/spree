@@ -31,8 +31,7 @@ class Admin::OptionTypesController < Admin::ResourceController
   # AJAX method for selecting an existing option type and associating with the current product
   def select
     @product = Product.find_by_param!(params[:product_id])
-    product_option_type = ProductOptionType.new(:product => @product, :option_type => OptionType.find(params[:id]))
-    product_option_type.save
+    @product.option_types << OptionType.find(params[:id])
     @product.reload
     @option_types = @product.option_types
     set_available_option_types
