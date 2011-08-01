@@ -425,19 +425,19 @@ describe Creditcard do
   context "#spree_cc_type" do
     before do
       @creditcard.attributes = valid_creditcard_attributes
-      @creditcard.save
-      @creditcard = Creditcard.find(@creditcard.id)
     end
-    
+
     context "in development mode" do
       before do
         Rails.env = "development"
       end
       
       it "should return visa" do
+        @creditcard.save
         @creditcard.spree_cc_type.should == "visa"
       end
     end
+
     context "in production mode" do
       before do
         Rails.env = "production"
@@ -448,6 +448,27 @@ describe Creditcard do
         @creditcard.save
         @creditcard.spree_cc_type.should == "american_express"
       end
+    end
+  end
+  
+  context "#set_card_type" do
+    before :each do
+      Rails.env = "production"
+      @creditcard.attributes = valid_creditcard_attributes
+    end
+    
+    it "stores the creditcard type after validation" do
+      @creditcard.number = "6011000990139424"
+      @creditcard.save
+      @creditcard.spree_cc_type.should == "discover"
+    end
+    
+    it "does not overwrite the creditcard type when loaded and saved" do
+      @creditcard.number = "5105105105105100"
+      @creditcard.save
+      @creditcard.number = "XXXXXXXXXXXX5100"
+      @creditcard.save
+      @creditcard.spree_cc_type.should == "master"
     end
   end
 end
