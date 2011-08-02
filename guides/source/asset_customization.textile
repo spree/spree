@@ -15,7 +15,7 @@ h3. Spree's Asset Pipeline
 
 With the release of 3.1, Rails now supports powerful asset management features and Spree fully leverages these features to futher extend and simplify it's customization potential. Using asset customization techniques outlined below you be able to adapt all the Javascript, Stylesheets and Images contained in Spree to easily provide a fully custom experience.
 
-All Spree generated (or upgraded) applications include an assets directory (as is standard for all Rails 3.1 apps). We've taken this one step further by subdividing each top level asset directory (images, javascripts, stylesheets) into store and admin directories, this is designed to keep assets from the front end (store) and back end (admin) from conflicting with each other.
+All Spree generated (or upgraded) applications include an <tt>app/assets</tt> directory (as is standard for all Rails 3.1 apps). We've taken this one step further by subdividing each top level asset directory (images, javascripts, stylesheets) into store and admin directories, this is designed to keep assets from the front end (store) and back end (admin) from conflicting with each other.
 
 A typical assets directory for a Spree application will look like:
 
@@ -91,7 +91,7 @@ h3. Overriding Spree's core assets
 
 Overriding or replacing any of Spree's internal assets is even easier than before, it's recommended to attempt to replace as little as possible in a given javascript or stylesheet file to help ease future upgrade work required.
 
-h4. Overriding styles
+h4. Overriding individual css styles
 
 Say for example you want to replace the following, css snippet:
 
@@ -116,7 +116,15 @@ div#footer {
 
 The <tt>store/all.css</tt> manifest will automatically include <tt>foo.css</tt> and it will actually include both definitions with the one from <tt>foo.css</tt> being included last, hence it will be the rule applied.
 
-h4. Overriding javascript
+h4. Overriding entire css files
+
+To replace an entire stylesheet as provided by Spree you simply need to create a file with the same name and save it to the corresponding path within your application's <tt>app/assets/stylesheets</tt> directory.
+
+For example to replace <tt>store/all.css</tt> you would save the replacement to <tt>your_app/app/assets/stylesheets/store/all.css</tt>.
+
+NOTE: This same method can be used to override stylesheets provided by third-party extensions.
+
+h4. Overriding individual javascript functions
 
 A similar approach can be used for javascript functions, for example if you wanted to override the <tt>show_variant_images</tt> method:
 
@@ -152,6 +160,15 @@ Again, just create a new javascript file inside <tt>your_app/app/assets/styleshe
 </javascript>
 
 The resulting <tt>store/all.js</tt> would include both methods, with the later being one executed on request.
+
+h4. Overriding entire javascript files
+
+To replace an entire javascript file as provided by Spree you simply need to create a file with the same name and save it to the corresponding path within your application's <tt>app/assets/javascripts</tt> directory.
+
+For example to replace <tt>store/all.js</tt> you would save the replacement to <tt>your_app/app/assets/javascripts/store/all.js</tt>.
+
+NOTE: This same method can be used to override javascript files provided by third-party extensions.
+
 
 h4. Overriding images
 

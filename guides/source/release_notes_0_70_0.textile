@@ -1,0 +1,186 @@
+h2. Spree 0.70.0 Release Notes
+
+endprologue.
+
+h3. Summary
+
+This 0.70.0 release is the first Spree release to support Rails 3.1 and contains several exciting new features including a complete overhaul of the theming system and major improvements to the Promotions system.
+
+INFO: We're always looking for more help with the Spree documentation.  If you'd like to offer assistance please contact us on the spree-user mailing list and we can give you commit access to the "spree-guides":http://github.com/spree/spree-guides documentation project.
+
+h3. Theming Improvments
+
+Theming support in this release has change significantly and all the new features are covered in detail in the following guides:
+
+* "Customization Overview":customization.html - provides a high level introduction to all the customization and theming options now provided by Spree.
+* "View Customization":view_customization.html - introduces and explains how to use Deface to customize Spree's views.
+* "Asset Customization":asset_customization.html - explains how Spree uses Rails' new asset pipeline, and how you can use it to customize the stylesheets, javascripts and images provided by Spree.
+
+INFO: While the upgrade instructions that follow briefly cover the new asset pipeline features we suggest you review the guides above as part of our upgrade preparation.
+
+h3. Promotions
+
+Promotions have been refactored to include new <tt>activator</tt> support, which can now fire or activate a promotion for a variety of different user actions. 
+
+...
+
+
+h3. Upgrade Insturctions
+
+h4. Before you begin
+
+To prevent problems later please ensure that you've copied all the migrations from your current version of Spree and all the extensions that you are running. While this is normal practice when setting up Spree and extensions any missing migrations will cause issues later in the upgrade process.
+
+You can check that all Spree migrations are copied by running:
+
+<ruby>
+  rake spree:install:migrations
+</ruby>
+
+Each extension will provide it's own rake task (or generator) for copying migrations so please refer to the extensions READme for instructions.
+
+WARNING: It's vital that you confirm this first before starting the upgrade process as Rails 3.1 has altered how engine migrations are handled and incorrectly copying migrations later could result in data loss.
+
+
+h4. Changes required for Rails 3.1
+
+Most of the changes required to upgrade a Spree application to 0.70.0 is same for any Rails 3.0.x application upgrading to 3.1.
+
+h5. Gemfile changes
+
+You'll need to make several additions and changes to your Gemfile:
+
+* Update spree to 0.70.0
+* Update rails to 3.1.0
+* Update mysql2 to 0.3.6 - if your using it.
+* Ensure the assets group is present:
+
+<ruby>
+  group :assets do
+    gem 'sass-rails', "~> 3.1.0.rc"
+    gem 'coffee-rails', "~> 3.1.0.rc"
+    gem 'uglifier'
+  end 
+</ruby>
+
+h5. Update config/boot.rb
+
+Rails 3.1 simplifies the <tt>config/boot.rb</tt> file significantly, so update yours to match:
+
+<ruby>
+  require 'rubygems'
+
+  # Set up gems listed in the Gemfile.
+  ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
+
+  require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
+</ruby>
+
+h5. Enable the asset pipeline
+
+Add the following line to <tt>config/application.rb</tt>, this will enable the Asset Pipeline feature (required by 0.70.0):
+
+<ruby>
+  config.assets.enabled = true
+</ruby>
+
+h5. Remove deprecated configuration
+
+Remove the following line from <tt>config/environments/development.rb</tt>.
+
+<ruby>
+  config.action_view.debug_rjs = true
+</ruby>
+
+
+h5. Retire lib/spree_site.rb
+
+spree_site.rb file is no longer required so it's important to migrate any existing code out of this file and into the correct location.
+
+* Model, controller or helper evals should be relocated to a suitable _decorator.rb file.
+* Configuration settings should be moved to initializers.
+
+NOTE: The decorator initialization block will be automatically included in config/application.rb for you.
+
+h5. Remove spree_site from config/applicaiton.rb
+
+Also ensure the following line is **not** present in config/application.rb:
+
+<ruby>
+  require 'spree_site'
+</ruby>
+
+h4. Update gems & generate Spree files
+
+Once you've completed all the Rails 3.1 steps above, you can now update your dependencies and start generating the new asset pipeline placeholders.
+
+h5. Install dependencies
+
+Install all the required gems, and lock your dependencies by running:
+
+<ruby>
+  bundle install
+</ruby>
+
+NOTE: It might be beneficial to do a complete `bundle update`, but it's not generally required.
+
+h5. Generate & copy required files
+
+Running the <tt>spree:site</tt> generator will create the skeleton structure for the asset pipeline, and also copy missing migrations.
+
+<ruby>
+  rails g spree:site</ruby>
+
+
+After running the generator above, it's best to check to make sure you do not have multiple copies of the following line, in <tt>config/application.rb</tt>:
+
+<ruby>
+  config.middleware.use "RedirectLegacyProductUrl"
+  config.middleware.use "SeoAssist"
+</ruby>
+
+
+h5. Update your database
+
+If you encounter any issues with this step please ensure you've completed the "Before you begin":release_notes_0_70_0.html#before-you-begin section above.
+
+WARNING: Make sure you've taken a backup of the database before attempting this step.
+
+<ruby>
+  rake db:migrate
+</ruby>
+
+
+h4. Migrating your assets
+
+Cleaning up your <tt>/public</tt> directory is one major advantage of using Rails 3.1. The main task required here is to separate your application specific assets (javascript, stylesheets and images) from all of Spree's (and all those belonging to all the extensions installed) which have been mingled together in your public directory.
+
+
+h5. Asset Organization
+
+Assets should be placed inside your application in one of three locations: <tt>app/assets</tt>, <tt>lib/assets</tt> or <tt>vendor/assets</tt>.
+
+<tt>app/assets</tt> is for assets that are owned by the application, such as custom images, JavaScript files or stylesheets.
+
+<tt>lib/assets</tt> is for your own libraries’ code that doesn’t really fit into the scope of the application or those libraries which are shared across applications.
+
+<tt>vendor/assets</tt> is for assets that are owned by outside entities, such as code for JavaScript plugins.
+
+NOTE: If you are using a library like Jammit solely for concatenating and minify your javascript and stylesheet files then we suggest you remove it from your application as part of the Rails 3.1 upgrade.
+
+For a full explanation of how Spree uses Rails' asset pipeline and how to update your site to use these new features please refer to the "Asset Customization":asset_customization.html guide.
+
+h4. Including old style theming hooks
+
+With the introduction of Deface the old style theming hooks have been deprecated, while the old hooks will still continue to function after the upgrade (see below) as they are automatically upgraded to Deface overrides, we strongly suggest you remove then as soon as possible.
+
+To include your previously defined old style theming hooks in <tt>lib/site_hooks.rb</tt> add the following to the bottom of <tt>config/application.rb</tt>
+
+<ruby>
+  require 'lib/site_hooks'
+</ruby>
+
+NOTE: The development log will include suggested replacement Deface overrides anytime Rails encounters a old style hook call. These suggestions are a best effort replacement, but might need some tweaks as some elements have been moved while removing the old hook calls from Spree's view files.
+
+
+.
