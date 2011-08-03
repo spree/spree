@@ -16,7 +16,26 @@ Theming support in this release has change significantly and all the new feature
 * "View Customization":view_customization.html - introduces and explains how to use Deface to customize Spree's views.
 * "Asset Customization":asset_customization.html - explains how Spree uses Rails' new asset pipeline, and how you can use it to customize the stylesheets, javascripts and images provided by Spree.
 
-INFO: While the upgrade instructions that follow briefly cover the new asset pipeline features we suggest you review the guides above as part of our upgrade preparation.
+INFO: While the upgrade instructions that follow briefly cover the new asset pipeline features we suggest you review the guides above as part of your upgrade preparation.
+
+h4. Themes as engines
+
+In previous versions (0.11.x and earlier) Spree encouraged the approach of bundling themes in their own extensions, with the advent of the asset pipeline in Rails 3.1 and the upcoming Theme Editor we're bringing back this approach as a suitable model for distributing and sharing themes. 
+
+While the distinction between themes and extensions is covered in the "Extensions & Themes":extensions.html guide they are both just Rails engines and can be treated as such.
+
+We've created two front-end themes to help show this new approach in action:
+
+* "Spree Blue":https://github.com/railsdog/spree_blue_theme - Recreates the orginal "blue" theme of 0.60.x as a stand alone theme.
+
+* "Rails Dog Radio":https://github.com/railsdog/railsdog_radio_theme - This recreates some of the aspects of the Rails Dog Radio demo application for a default Spree application.
+
+Both themes can be installed by just adding a reference to the git repository to your Gemfile, ie:
+
+<ruby>
+  gem 'spree_blue_theme', :git => 'git://github.com/railsdog/spree_blue_theme.git'
+</ruby>
+
 
 h3. Promotions
 
@@ -95,14 +114,14 @@ Remove the following line from <tt>config/environments/development.rb</tt>.
 
 h5. Retire lib/spree_site.rb
 
-spree_site.rb file is no longer required so it's important to migrate any existing code out of this file and into the correct location.
+The spree_site.rb file is no longer required so it's important to migrate any existing code out of this file and into the correct location.
 
 * Model, controller or helper evals should be relocated to a suitable _decorator.rb file.
 * Configuration settings should be moved to initializers.
 
 NOTE: The decorator initialization block will be automatically included in config/application.rb for you.
 
-h5. Remove spree_site from config/applicaiton.rb
+h5. Remove spree_site from config/application.rb
 
 Also ensure the following line is **not** present in config/application.rb:
 
@@ -166,7 +185,7 @@ Assets should be placed inside your application in one of three locations: <tt>a
 
 <tt>vendor/assets</tt> is for assets that are owned by outside entities, such as code for JavaScript plugins.
 
-NOTE: If you are using a library like Jammit solely for concatenating and minify your javascript and stylesheet files then we suggest you remove it from your application as part of the Rails 3.1 upgrade.
+NOTE: If you are using a library like Jammit solely for concatenating and minifying your javascript and stylesheet files then we suggest you remove it from your application as part of the Rails 3.1 upgrade.
 
 For a full explanation of how Spree uses Rails' asset pipeline and how to update your site to use these new features please refer to the "Asset Customization":asset_customization.html guide.
 
@@ -174,7 +193,7 @@ h4. Including old style theming hooks
 
 With the introduction of Deface the old style theming hooks have been deprecated, while the old hooks will still continue to function after the upgrade (see below) as they are automatically upgraded to Deface overrides, we strongly suggest you remove then as soon as possible.
 
-To include your previously defined old style theming hooks in <tt>lib/site_hooks.rb</tt> add the following to the bottom of <tt>config/application.rb</tt>
+To include your previously defined old style theming hooks from <tt>lib/site_hooks.rb</tt> add the following to the bottom of <tt>config/application.rb</tt>
 
 <ruby>
   require 'lib/site_hooks'

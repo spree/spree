@@ -127,7 +127,7 @@ You can also use a combination of both styles of selectors in a single override 
 
 h4. Targeting ruby blocks
 
-Deface evaluates all the selectors passed against the original erb view contents (and importantly not against the finished / generated HTML). In order for Deface to make ruby blocks contained in view parseable they are converted into a pseudo markup as follows:
+Deface evaluates all the selectors passed against the original erb view contents (and importantly not against the finished / generated HTML). In order for Deface to make ruby blocks contained in a view parseable they are converted into a pseudo markup as follows:
 
 Given the following Erb file:
 

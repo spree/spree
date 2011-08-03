@@ -1,6 +1,6 @@
 h2. Asset Customization
 
-This guide covers how Spree manages it's static assets and how you can extend and customize them including:
+This guide covers how Spree manages it's javascript, stylesheet and image assets and how you can extend and customize them including:
 
 * Understanding Spree's use of the Rails asset pipeline
 * Managing application specific assets
@@ -13,7 +13,7 @@ endprologue.
 
 h3. Spree's Asset Pipeline
 
-With the release of 3.1, Rails now supports powerful asset management features and Spree fully leverages these features to futher extend and simplify it's customization potential. Using asset customization techniques outlined below you be able to adapt all the Javascript, Stylesheets and Images contained in Spree to easily provide a fully custom experience.
+With the release of 3.1 Rails now supports powerful asset management features and Spree fully leverages these features to futher extend and simplify it's customization potential. Using asset customization techniques outlined below you be able to adapt all the javascript, stylesheets and images contained in Spree to easily provide a fully custom experience.
 
 All Spree generated (or upgraded) applications include an <tt>app/assets</tt> directory (as is standard for all Rails 3.1 apps). We've taken this one step further by subdividing each top level asset directory (images, javascripts, stylesheets) into store and admin directories, this is designed to keep assets from the front end (store) and back end (admin) from conflicting with each other.
 
@@ -57,7 +57,7 @@ For example, spree_core provides the following manifests:
     |   |-- admin
     |       |-- spree_core.css</pre>
 
-These core engine specific manifests are included by default by the relevant all.css or all.js in the host Spree application. For example, app/assets/javascripts/admin/all.js includes:
+These core (engine specific) manifests are included by default by the relevant all.css or all.js in the host Spree application. For example, <tt>app/assets/javascripts/admin/all.js</tt> includes:
 
 <css>//= require admin/spree_core
 //= require admin/spree_promo
@@ -70,13 +70,13 @@ External javascript libraries, stylesheets and images have also be relocated int
 
 h3. Managing your application's assets
 
-All your application's assets should be stored in the appropriate app/assets or vendor/assets sub-directory. All javascript and stylesheet files in app/assets sub-directories will be automatically included by the relevant all.(js|css) manifests.
+All of your application's assets should be stored in the appropriate <tt>app/assets</tt>, <tt>lib/assets</tt> or <tt>vendor/assets</tt> sub-directory. All javascript and stylesheet files in <tt>app/assets</tt> sub-directories will be automatically included by the relevant all.(js|css) manifests.
 
-Javascript & stylesheet files in vendor/assets sub-directories should be manually required in the appropriate all.(js|css) manifests.
+Javascript & stylesheet files in <tt>lib/assets</tt> or <tt>vendor/assets</tt> sub-directories should be manually required in the appropriate all.(js|css) manifests.
 
 INFO: Images will be served in development mode, or compiled into the public directory automatically in production mode.
 
-NOTE: When upgrading from previous versions of Spree it's important that you relocate all assets from the public directory into the relevant app/assets directory.
+NOTE: When upgrading from previous versions of Spree it's important that you relocate all assets from the public directory into the relevant <tt>app/assets</tt> directory.
 
 h3. Managing your extension's assets
 
@@ -90,6 +90,8 @@ For an example of an extension using a generator to install assets and migration
 h3. Overriding Spree's core assets
 
 Overriding or replacing any of Spree's internal assets is even easier than before, it's recommended to attempt to replace as little as possible in a given javascript or stylesheet file to help ease future upgrade work required.
+
+The methods listed below will work for both applications, extensions and themes with one noticeable difference: Extension & theme asset files will not be automatically included (see above for instructions on how to include asset files from your extensions / themes).
 
 h4. Overriding individual css styles
 
@@ -118,7 +120,7 @@ The <tt>store/all.css</tt> manifest will automatically include <tt>foo.css</tt> 
 
 h4. Overriding entire css files
 
-To replace an entire stylesheet as provided by Spree you simply need to create a file with the same name and save it to the corresponding path within your application's <tt>app/assets/stylesheets</tt> directory.
+To replace an entire stylesheet as provided by Spree you simply need to create a file with the same name and save it to the corresponding path within your application's or extension's <tt>app/assets/stylesheets</tt> directory.
 
 For example to replace <tt>store/all.css</tt> you would save the replacement to <tt>your_app/app/assets/stylesheets/store/all.css</tt>.
 
@@ -163,7 +165,7 @@ The resulting <tt>store/all.js</tt> would include both methods, with the later b
 
 h4. Overriding entire javascript files
 
-To replace an entire javascript file as provided by Spree you simply need to create a file with the same name and save it to the corresponding path within your application's <tt>app/assets/javascripts</tt> directory.
+To replace an entire javascript file as provided by Spree you simply need to create a file with the same name and save it to the corresponding path within your application's or extension's <tt>app/assets/javascripts</tt> directory.
 
 For example to replace <tt>store/all.js</tt> you would save the replacement to <tt>your_app/app/assets/javascripts/store/all.js</tt>.
 
@@ -174,4 +176,4 @@ h4. Overriding images
 
 Finally images can be replaced by substituting the required file into the same path within your application or extension as the file you would like to replace.
 
-For example, to replace the Spree logo you would copy you logo to: <tt>your_app/app/assets/images/admin/bg/spree_50.png</tt>.
+For example, to replace the Spree logo you would simply copy your logo to: <tt>your_app/app/assets/images/admin/bg/spree_50.png</tt>.

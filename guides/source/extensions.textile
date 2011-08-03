@@ -12,13 +12,13 @@ endprologue.
 
 h3. The Basics
 
-Spree uses two terms: **extensions** and **themes** when referring to discrete packages of code (ruby, stlyesheets, javascripts, etc), but the technical differences between the two are neglible:
+Spree uses two terms: **extensions** and **themes** when referring to discrete packages of code (ruby, stylesheets, javascripts, etc), but the technical differences between the two are neglible:
 
 * **Extensions** refer to discrete packages of code that provide new functionality to a Spree application, while extensions may affect the appearance of a Spree application they generally only provide additional interfaces to enable users to interact with the new functionality provided.
 
-* **Themes** are discrete packages of code that **only** affect the apperance of a Spree application (and generally only the front-end store). Themes do not generally include any logic customizations.
+* **Themes** are discrete packages of code that **only** affect the appearance of a Spree application (and generally only the front-end store). Themes do not generally include any logic customizations.
 
-Both Extensions and Themes are created as standard Rails 3.0 (or later) Engines, and the terms extension, theme and engine essenitally mean the same thing from a Rails prespective within Spree.
+Both Extensions and Themes are created as standard Rails 3.0 (or later) Engines, and the terms extension, theme and engine essentially mean the same thing from a Rails perspective within Spree.
 
 h4. Overview
 
@@ -53,7 +53,7 @@ Spree is actually composed of several so-called "core" extensions.  They are ref
 
 * spree_api
 * spree_auth
-* spree-core
+* spree_core
 * spree_dash
 * spree_promo
 * spree_sample
@@ -83,7 +83,7 @@ For a gem that is already published on "Rubygems.org":http://rubygems.org you ca
 Alternatively, you can also use the edge version of a gem stored in a Git repository.
 
 <ruby>
-  gem 'spree_related_products', '3.0.2', :git => 'git://github.com/spree/spree-simple-blog.git'
+  gem 'spree_related_products', '3.0.2', :git => 'git://github.com/spree/spree_related_products.git'
 </ruby>
 
 Finally, you could work with the extension / theme directly from your local file system.
