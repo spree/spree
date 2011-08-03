@@ -80,7 +80,7 @@ class Order < ActiveRecord::Base
   end
 
   # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-  state_machine :initial => 'cart', :use_transactions => false do
+  state_machine :initial => :cart, :use_transactions => false do
 
     event :next do
       transition :from => 'cart',     :to => 'address'

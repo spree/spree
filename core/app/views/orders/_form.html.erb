@@ -1,5 +1,5 @@
 <%= render "shared/error_messages", :target => @order %>
-<table id="cart-detail">
+<table id="cart-detail" data-hook>
   <thead>
     <tr data-hook="cart_items_headers">
       <th colspan="2"><%= t("item") %></th>
@@ -9,7 +9,7 @@
       <th></th>
     </tr>
   </thead>
-  <tbody id="line_items">
+  <tbody id="line_items" data-hook>
     <%= order_form.fields_for :line_items do |item_form| %>
       <%= render 'line_item', :variant => item_form.object.variant, :line_item => item_form.object, :item_form => item_form %>
     <% end %>

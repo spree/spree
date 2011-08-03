@@ -9,7 +9,7 @@
 <% end %>
 
 <% if products.any? %>
-<ul id="products" class="product-listing">
+<ul id="products" class="product-listing" data-hook>
   <% products.each do |product| %>
     <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
       <li id="product_<%= product.id %>" data-hook="products_list_item">
@@ -24,13 +24,8 @@
 
 <hr class="space" />
 
-<% if paginated_products.respond_to?(:total_pages)
+<% if paginated_products.respond_to?(:num_pages)
       params.delete(:search)
       params.delete(:taxon)
-
-%><%= will_paginate(paginated_products,
-                    :previous_label => "&#171; #{t('previous')}",
-                    :next_label => "#{t('next')} &#187;") %>
-<% end %>
-
+%><%= paginate paginated_products %><% end %>
 <hr class="space" />

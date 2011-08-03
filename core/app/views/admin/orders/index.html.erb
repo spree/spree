@@ -6,7 +6,7 @@
 
 <h1><%= t("listing_orders") %></h1>
 
-<table class="index" id='listing_orders'>
+<table class="index" id='listing_orders' data-hook>
   <thead>
     <tr data-hook="admin_orders_index_headers">
       <% if @show_only_completed %>
@@ -40,7 +40,7 @@
   <% end %>
   </tbody>
 </table>
-<%= will_paginate(@orders, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
+<%= paginate @orders %>
 
 
 <% content_for :sidebar do %>

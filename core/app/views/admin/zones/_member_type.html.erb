@@ -1,6 +1,6 @@
 <%= javascript_tag "var #{type}_member='#{generate_template(zone_form, :zone_members, {:partial => type + "_member"})}'" %>
 
-<div id="<%= type %>_members">
+<div id="<%= type %>_members" data-hook="member">
   <fieldset id="">
     <legend><%= t(type) %></legend>
     <ul id="ul-nested-<%= type %>" class="member-list">
@@ -8,7 +8,7 @@
         <%= render "#{type}_member", :f => member_form %>
       <% end %>
     </ul>
-    <p>
+    <p data-hook="buttons">
       <%= button_link_to t("add_#{type}"), "##{type}_member", {:icon => 'add', :id => "nested-#{type}"} %>
     </p>
   </fieldset>

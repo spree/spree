@@ -1,5 +1,5 @@
 <% if target && target.errors.any? %>
-  <div id="errorExplanation" class="errorExplanation">
+  <div id="errorExplanation" class="errorExplanation" data-hook>
     <h2><%= t(:errors_prohibited_this_record_from_being_saved, :count => target.errors.count) %>:</h2>
     <p><%= t(:there_were_problems_with_the_following_fields) %>:</p>
      <ul>

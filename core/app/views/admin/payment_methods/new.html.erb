@@ -5,7 +5,7 @@
 
 <%= form_for(@payment_method, :url => collection_url) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <p>
+  <p data-hook="buttons">
     <%= submit_tag t("create") %>
   </p>
 <% end %>

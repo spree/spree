@@ -1,0 +1,13 @@
+/*
+ * This is a manifest file that'll automatically include all the stylesheets available in this directory
+ * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
+ * the top of the compiled file, but it's generally better to create a new file per style scope.
+<%- if additions_for_gemfile.keys.any? { |name| %w{spree spree_core}.include? name.to_s } -%>
+ *= require admin/spree_core
+<%- end -%>
+<%- if additions_for_gemfile.keys.any? { |name| %w{spree spree_promo}.include? name.to_s } -%>
+ *= require admin/spree_promo
+<%- end -%>
+ *= require_self
+ *= require_tree .
+*/

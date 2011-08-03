@@ -8,7 +8,7 @@ namespace :db do
     ext = File.extname file
     if ext == ".csv" or ext == ".yml"
       puts "loading fixture " + file
-      Fixtures.create_fixtures(File.dirname(file) , File.basename(file, '.*') )
+      Spree::Fixtures.create_fixtures(File.dirname(file) , File.basename(file, '.*') )
     else
       if File.exists? file
         puts "loading ruby    " + file
@@ -20,9 +20,11 @@ namespace :db do
   desc "Loads fixtures from the the dir you specify using rake db:load_dir[loadfrom]"
   task :load_dir , [:dir] => :environment do |t , args|
     dir = args.dir
+    dir = File.join(Rails.root, "db", dir) unless dir.first == "/"
+
     fixtures = ActiveSupport::OrderedHash.new
     ruby_files = ActiveSupport::OrderedHash.new
-    Dir.glob(File.join(Rails.root, "db", dir , '*.{yml,csv,rb}')).each do |fixture_file|
+    Dir.glob(File.join(dir , '*.{yml,csv,rb}')).each do |fixture_file|
       ext = File.extname fixture_file
       if ext == ".rb"
         ruby_files[File.basename(fixture_file, '.*')]  = fixture_file
@@ -78,11 +80,17 @@ namespace :db do
       Rake::Task["db:migrate"].invoke
     end
 
+    ActiveRecord::Base.send(:subclasses).each do |model|
+      model.reset_column_information
+    end
+
     load_defaults  = Country.count == 0
     unless load_defaults    # ask if there are already Countries => default data hass been loaded
       load_defaults = agree('Countries present, load sample data anyways? [y/n]: ')
     end
-    Rake::Task["db:seed"].invoke if load_defaults
+    if load_defaults 
+      Rake::Task["db:seed"].invoke
+    end
 
     if Rails.env.production? and Product.count > 0
       load_sample = agree("WARNING: In Production and products exist in database, load sample data anyways? [y/n]:" )
@@ -90,16 +98,14 @@ namespace :db do
       load_sample = true if ENV['AUTO_ACCEPT']
       load_sample = agree('Load Sample Data? [y/n]: ') unless load_sample
     end
-    Rake::Task["db:sample"].invoke if load_sample
+
+    if load_sample
+      #prevent errors for missing attributes (since rails 3.1 upgrade)
+
+      Rake::Task["spree_sample:load"].invoke 
+    end
 
     puts "Bootstrap Complete.\n\n"
-  end
-
-  desc "Loads sample data into the store"
-  task :sample do   # an invoke will not execute the task after defaults has already executed it
-    Rake::Task['db:load_dir'].reenable
-    Rake::Task["db:load_dir"].invoke( "sample" )
-    puts "Sample data has been loaded"
   end
 
 end

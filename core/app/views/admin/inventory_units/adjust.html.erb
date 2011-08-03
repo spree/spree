@@ -6,7 +6,7 @@
 <h1><%= t("inventory_adjustment") %></h1>
 
 <table class="basic-table">
-  <thead>
+  <thead data-hook="inventory_header">
     <tr>
       <th><%= t("sku") %></th>
       <th><%= t("product") %></th>
@@ -16,7 +16,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
+    <tr data-hook="inventory_row">
       <td><%= @variant.sku %></td>
       <td><%= @variant.product.name %></td>
       <td><%= variant_options @variant %></td>

@@ -1,13 +1,13 @@
 <h1><%= t("user_account") %></h1>
 
 <table>
-  <tr>
+  <tr data-hook="email">
     <th><%= t("email") %></th>
     <td>
       <%= @user.email %>
     </td>
   </tr>
-  <tr>
+  <tr data-hook="roles">
     <th><%= t("roles") %></th>
     <td>
       <%= list_roles(@user) %>
