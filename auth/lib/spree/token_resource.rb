@@ -10,7 +10,7 @@ module Spree::TokenResource
 
   module InstanceMethods
     def create_token
-      create_tokenized_permission(:token => ActiveSupport::SecureRandom::hex(8))
+      create_tokenized_permission(:token => ::SecureRandom::hex(8))
       token
     end
   end

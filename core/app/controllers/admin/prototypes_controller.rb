@@ -7,6 +7,7 @@ class Admin::PrototypesController < Admin::ResourceController
     @prototypes = Prototype.order('name asc')
     respond_with(@prototypes) do |format|
       format.html { render :layout => !request.xhr? }
+      format.js
     end
   end
 

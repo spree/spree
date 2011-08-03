@@ -8,16 +8,16 @@
 </p>
 
 <h2><%= ProductGroup.human_attribute_name(:product_scopes) %>(<%= @product_group.product_scopes.count %>)</h2>
-<table class="product-scopes">
+<table class="product-scopes" data-hook="product_scopes">
   <thead>
-    <tr>
+    <tr data-hook="product_scopes_header">
       <th><%= ProductScope.human_attribute_name(:description) %></th>
       <th><%= ProductScope.human_attribute_name(:arguments) %></th>
     </tr>
   </thead>
   <tbody>
     <% @product_group.product_scopes.each do |product_scope| %>
-      <tr <%= !product_scope.valid? ? "class='invalid'":'' %>>
+      <tr <%= !product_scope.valid? ? "class='invalid'":'' %> data-hook="product_scopes_row">
         <td>
           <%= product_scope.to_sentence %>
         </td>

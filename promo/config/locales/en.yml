@@ -1,6 +1,6 @@
 ---
 en:
-  activerecord:
+  activemodel:
     attributes:
       promotion:
         name: "Name"

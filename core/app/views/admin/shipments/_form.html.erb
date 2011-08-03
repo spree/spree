@@ -1,6 +1,6 @@
 <% unless @shipment.order.cart? %>
   <table class="index" style="width:100%;" data-hook="admin_shipment_form_inventory_units">
-    <tr>
+    <tr data-hook="shipments_header">
       <th width="130px"><%= t('include_in_shipment') %></th>
       <th><%= t('sku') %></th>
       <th><%= t('item_description') %></th>
@@ -9,7 +9,7 @@
     </tr>
 
     <% @shipment.order.inventory_units.each do |inventory_unit| %>
-      <tr>
+      <tr data-hook="shipments_row">
         <td style="text-align:center;">
           <%= check_box_tag "inventory_units[#{inventory_unit.id}]",
                             :true,

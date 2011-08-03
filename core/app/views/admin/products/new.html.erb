@@ -1,0 +1,53 @@
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+
+<%= render "shared/error_messages", :target => @product %>
+
+<%= form_for([:admin, @product], :html => { :multipart => true }) do |f| %>
+<fieldset data-hook="new_product">
+
+  <%= f.field_container :name do %>
+    <%= f.label :name, t("name") %> <span class="required">*</span><br />
+    <%= f.text_field :name, :class => 'fullwidth title'  %>
+    <%= f.error_message_on :name %>
+  <% end %>
+
+  <div class="yui-gb"  data-hook="new_product_attrs">
+    <div class="yui-u first">
+
+      <% unless @product.has_variants? %>
+      <%= f.field_container :sku do %>
+        <%= f.label :sku, t("sku") %><br />
+        <%= f.text_field :sku, :size => 16 %>
+        <%= f.error_message_on :sku %>
+      <% end %>
+      <% end %>
+
+      <p>
+        <%= f.label :prototype_id, t("prototype") %><br />
+        <%= f.collection_select :prototype_id, Prototype.all, :id, :name, :include_blank => true %>
+      </p>
+
+    </div>
+    <div class="yui-u">
+
+      <%= f.field_container :price do %>
+        <%= f.label :price, t("master_price")%> <span class="required">*</span><br />
+        <%= f.text_field :price  %>
+        <%= f.error_message_on :price%>
+      <% end %>
+
+      <p>
+        <%= f.label :available_on, t("available_on") %><br />
+        <%= f.error_message_on :available_on %>
+        <%= f.spree_date_picker :available_on, :style=>"width:150px" %>
+      </p>
+
+
+    </div>
+  </div>
+
+  <%= render :partial => 'admin/shared/new_resource_links' %>
+
+</fieldset>
+<% end %>
+<%= javascript_tag "datePickerController.create();" %>

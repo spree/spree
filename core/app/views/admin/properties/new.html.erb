@@ -1,0 +1,11 @@
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+
+<%= render 'shared/error_messages', :target => @property %>
+
+<%= form_for([:admin, @property]) do |f| %>
+<fieldset data-hook="new_property">
+  <legend><%= t("new_property")%></legend>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <%= render :partial => 'admin/shared/new_resource_links' %>
+</fieldset>
+<% end %>

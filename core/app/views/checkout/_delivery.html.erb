@@ -1,6 +1,6 @@
-<fieldset id='shipping_method'>
+<fieldset id='shipping_method' data-hook>
   <legend><%= t("shipping_method") %></legend>
-  <div class="inner">
+  <div class="inner" data-hook="shipping_method_inner">
     <div id="methods">
       <p class="field radios">
         <% @order.rate_hash.each do |shipping_method| %>
@@ -12,7 +12,7 @@
       </p>
     </div>
     <% if Spree::Config[:shipping_instructions] && @order.rate_hash.present? %>
-      <p id="minstrs">
+      <p id="minstrs" data-hook>
         <%= form.label :special_instructions, t("shipping_instructions") %><br />
         <%= form.text_area :special_instructions, :cols => 40, :rows => 7 %>
       </p>
@@ -20,6 +20,6 @@
   </div>
 </fieldset>
 
-<div class="form-buttons">
+<div class="form-buttons" data-hook="buttons">
   <input type="submit" class="continue button primary" value="<%=t("save_and_continue") %>"/>
 </div>

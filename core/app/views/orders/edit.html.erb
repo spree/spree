@@ -18,9 +18,9 @@
           <%= render :partial => 'form', :locals => {:order_form => order_form} %>
         </div>
 
-        <div id="subtotal">
+        <div id="subtotal" data-hook>
           <h3><%= "#{t("subtotal")}: #{order_price(@order)}" %></h3>
-          <div class="links">
+          <div class="links" data-hook="cart_buttons">
             <button type="submit" class="large primary" id="update-button">
               <%= image_tag('icons/update.png') + t('update') %>
             </button>
@@ -31,9 +31,9 @@
       </div>
     <% end %>
   </div>
-  <div id="empty-cart">
+  <div id="empty-cart" data-hook>
   <%= form_tag empty_cart_path, :method => :put do %>
-    <p id="clear_cart_link">
+    <p id="clear_cart_link" data-hook>
       <input type="submit" value="<%= t('empty_cart') %>" class="button" />
       <%= t(:or) %>
       <%=link_to t("continue_shopping"), products_path, :class => 'continue' %>

@@ -1,11 +1,11 @@
-<tr id="<%= dom_id product_scope %>">
-  <td>
+<tr id="<%= dom_id product_scope %>" data-hook="product_scope">
+  <td data-hook="description">
     <label><%= t(:name, :scope => [:product_scopes, :scopes, product_scope.name]) %></label>
     <% if description = t(:description, :scope => [:product_scopes, :scopes, product_scope.name], :default => "") and description.present? %>
       <br /><%= description %>
     <% end %>
   </td>
-  <td>
+  <td data-hook="arguments">
     <% if arguments = Scopes::Product.arguments_for_scope_name(product_scope.name.strip) %>
       <table><tr>
       <% arguments.each_with_index do |argument, i| %>
@@ -18,7 +18,7 @@
       </tr></table>
     <% end %>
   </td>
-  <td class="actions">
-    <%= link_to_with_icon 'cross', '', admin_product_group_product_scope_path(@product_group, product_scope), 'data-remote' => true, 'data-method' => 'delete' %>
+  <td class="actions" data-hook="actions">
+    <%= link_to_with_icon 'cross', '', admin_product_group_product_scope_path(@product_group, product_scope), :remote => true, :method => 'delete' %>
   </td>
 </tr>

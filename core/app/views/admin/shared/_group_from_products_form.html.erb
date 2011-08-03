@@ -2,7 +2,7 @@
   <% form_tag admin_product_groups_path do %>
     <%= hidden_field_tag "product_group[product_scopes_attributes][][name]", 'with_ids' %>
     <%= hidden_field_tag "product_group[product_scopes_attributes][][arguments][]", products.map(&:id).join(',') %>
-    <fieldset>
+    <fieldset data-hook="create_group">
       <legend><%= t('create_product_group_from_products') %></legend>
       <label><%= t('name') %></label>
       <%= text_field_tag "product_group[name]",  'New group' %>

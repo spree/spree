@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li id="new_property_link">
       <%= button_link_to t("new_property"), new_admin_property_url, {:remote => true, :icon => 'add', 'data-update' => 'new_property', :id => 'new_property_link'} %>
     </li>
@@ -15,9 +15,9 @@
 
 <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
 
-<table class="index" id='listing_properties'>
+<table class="index" id='listing_properties' data-hook>
   <thead>
-    <tr>
+    <tr data-hook="listing_properties_header">
       <th><%= t("name") %></th>
       <th><%= t("presentation") %></th>
       <th></th>
@@ -25,7 +25,7 @@
   </thead>
   <tbody>
     <% @properties.each do |property| %>
-      <tr id="<%= dom_id property %>">
+      <tr id="<%= dom_id property %>" data-hook="listing_properties_row">
         <td><%= property.name %></td>
         <td><%= property.presentation %></td>
         <td class="actions">

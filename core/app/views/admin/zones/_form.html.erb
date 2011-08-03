@@ -8,7 +8,7 @@
   <%=zone_form.text_field :description %>
 <% end %>
 
-<p>
+<p data-hook="type">
   <label><%= t("type") %></label><br />
   <label class="sub">
     <%= zone_form.radio_button("kind", "country", {:id => "country_based"}) %>

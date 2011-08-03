@@ -1,10 +1,10 @@
-<table class="index" id='listing_taxonomies'>
-  <tr>
+<table class="index" id='listing_taxonomies' data-hook>
+  <tr data-hook="taxonomies_header">
     <th><%= t("name") %></th>
     <th></th>
   </tr>
 <% for taxonomy in @taxonomies %>
-  <tr id="<%= dom_id taxonomy %>">
+  <tr id="<%= dom_id taxonomy %>" data-hook="taxonomies_row">
 	  <td>
 	    <%= taxonomy.name %>
     </td>

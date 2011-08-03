@@ -4,7 +4,7 @@
 <%= render "shared/error_messages", :target => @payment_method %>
 <%= form_for(@payment_method, :url => admin_payment_method_path(@payment_method), :html => { :method => :put }) do |f| %>
   <%= render :partial => "form", :locals => { :f => f } %>
-  <p>
+  <p data-hook="buttons">
     <%=submit_tag t("update")%>
   </p>
 <% end %>

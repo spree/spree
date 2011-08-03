@@ -4,8 +4,7 @@ require 'rake/testtask'
 require 'rake/packagetask'
 require 'rubygems/package_task'
 
-desc "Default Task"
-task :default => [:spec, :cucumber ]
+task :default => [:spec, :cucumber]
 
 spec = eval(File.read('spree_auth.gemspec'))
 
@@ -20,34 +19,22 @@ task :release => :package do
   Rake::Task['gem:push'].invoke
 end
 
-desc "Default Task"
-task :default => [ :spec ]
-
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
-  require '../lib/generators/spree/test_app_generator'
-  class AuthTestAppGenerator < Spree::Generators::TestAppGenerator
+  require 'rails/generators'
+  require File.expand_path('../../core/lib/generators/spree_core/site/site_generator', __FILE__)
+  require File.expand_path('../../core/lib/generators/spree_core/sandbox/sandbox_generator', __FILE__)
+  require File.expand_path('../../core/lib/generators/spree_core/test_app/test_app_generator', __FILE__)
 
-    def install_gems
-      inside "test_app" do
-        run 'bundle exec rake spree_auth:install'
-        run 'bundle exec rake spree_core:install'
-      end
-    end
-
-    def migrate_db
-      run_migrations
-    end
-
+  SpreeCore::Generators::TestAppGenerator.class_eval do
     protected
-    def full_path_for_local_gems
-      <<-gems
-gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "..", "core")}\'
-gem 'spree_auth', :path => \'#{File.dirname(__FILE__)}\'
-      gems
+    def additions_for_gemfile
+      { :spree_core => File.join(File.dirname(__FILE__), "..", "core"),
+        :spree_auth => File.dirname(__FILE__) } 
     end
   end
-  AuthTestAppGenerator.start
+
+  SpreeCore::Generators::TestAppGenerator.start
 end
 
 ENV['SPREE_GEM_PATH'] = __FILE__

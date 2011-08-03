@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Taxons"} %>
-<div id="selected-taxons">
+<div id="selected-taxons" data-hook>
   <%= render :partial => "taxon_table", :locals => {:taxons => @taxons} %>
 </div>
 
@@ -15,12 +15,12 @@
   function search_for_taxons(){
     jQuery.ajax({
      data: {q: jQuery("#searchtext").val() }, 
-     dataType: 'script',
+     dataType: 'html',
      success: function(request){
        jQuery('#search_hits').html(request);
      },
      type: 'post',
-     url: '<%= available_admin_product_taxons_url(@product) %>'
+     url: '<%= available_admin_product_taxons_url(@product, :format => 'js') %>'
     });
   }
 
@@ -39,5 +39,5 @@
   }, 0.75);
 <% end %>
 <br/>
-<div id="search_hits"></div>
+<div id="search_hits" data-hook></div>
 

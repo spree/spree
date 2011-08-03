@@ -1,5 +1,5 @@
 notice_div = $('.flash.notice');
-<% notice = flash.delete(:notice)
+<% notice = flash.discard(:notice)
 if notice %>
   if (notice_div.length > 0) {
     notice_div.html("<%= notice %>");

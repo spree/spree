@@ -31,26 +31,18 @@ Update your bundle
 
     bundle install
 
-Then use the install generator to do the basic setup (add Spree to Gemfile, etc.)
+Then use the install generator to do the basic setup
 
     rails g spree:site
 
-Now its time to install all of the necessary migrations, assets, etc.
-
-    rake spree:install
-
-If you'd like to also install sample data and images you can follow up the above command with:
-
-    rake spree_sample:install
-
-Now you just need to run the new migrations
+Now you just need to run the new migrations, and setup some basic data
 
     rake db:migrate
     rake db:seed
 
 If you also want some sample products, orders, etc. to play with you can run the appropriate rake task.
 
-    rake db:sample
+    rake spree_sample:load 
 
 
 Browse Store

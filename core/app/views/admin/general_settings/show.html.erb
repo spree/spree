@@ -2,7 +2,7 @@
 
 <h1><%= t("general_settings") %></h1>
 
-<table>
+<table data-hook="preferences">
   <% @preferences.each do |key| %>
     <tr>
       <th scope="row"><%= t(key) %>:</th>

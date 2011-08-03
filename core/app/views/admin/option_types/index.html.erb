@@ -1,26 +1,26 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li id="new_ot_link">
       <%= button_link_to t("new_option_type"), new_admin_option_type_url, {:remote => true, :icon => 'add', :id => 'new_option_type_link'} %>
     </li>
   </ul>
-  <br class='clear' />
+  <br class="clear">
 </div>
 
 <h1><%= t("option_types") %></h1>
 
 <div id="new_option_type"></div>
 
-<table class="index sortable" id='listing_option_types'>
-  <tr>
+<table class="index sortable" id='listing_option_types' data-hook>
+  <tr data-hook="option_header">
     <th><%= t("name") %></th>
     <th><%= t("presentation") %></th>
     <th></th>
   </tr>
   <% @option_types.each do |option_type| %>
-    <tr id="<%= dom_id option_type %>">
+    <tr id="<%= dom_id option_type %>" data-hook="option_row">
       <td><span class="handle"></span> <%= option_type.name %></td>
       <td class='presentation'><%= option_type.presentation %></td>
       <td class="actions">

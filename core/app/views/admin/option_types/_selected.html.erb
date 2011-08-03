@@ -1,11 +1,11 @@
 <table class="index">
-  <tr>
+  <tr data-hook="selected_head">
     <th><%= t("name") %></th>
     <th><%= t("presentation") %></th>
     <th>&nbsp;</th>
   </tr>
   <% @option_types.each do |option_type| %>
-    <tr>
+    <tr data-hook="selected_row">
       <td><%= option_type.name %></td>
       <td><%= option_type.presentation %></td>
       <td class="actions">
@@ -14,13 +14,13 @@
     </tr>
   <% end %>
   <% if @option_types.empty? %>
-   <tr><td colspan="3"><%= t(:none) %></td></tr>
+   <tr data-hook="selected_none"><td colspan="3"><%= t(:none) %></td></tr>
   <% end %>
 </table>
 
-<div id="option-types"></div>
+<div id="option-types" data-hook></div>
 <% if @product.variants.empty? %>
-  <span id="new_opt_link">
+  <span id="new_opt_link" data-hook="links">
     <%= link_to icon('add') + ' ' + t("add_option_type"), available_admin_product_option_types_url(@product), :remote => :true, :class => 'iconlink' %>
   </span>
 <% end %>

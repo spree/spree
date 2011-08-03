@@ -1,5 +1,5 @@
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li>
       <% if @return_authorization.can_receive? %>
         <%= button_link_to(t('receive'), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'receive'), :method => :put, :confirm => t("are_you_sure")) %>
@@ -20,7 +20,7 @@
 <%= form_for([:admin, @order, @return_authorization]) do |f| %>
   <%= render :partial => "form", :locals => {:f => f} %>
 
-  <p class="form-buttons">
+  <p class="form-buttons" data-hook="buttons">
     <%= button t('update') %>
     <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_return_authorizations_url(@order) %>
   </p>

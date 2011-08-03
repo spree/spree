@@ -2,7 +2,7 @@
 
 <h1><%= t('editing_product_group') %></h1>
 
-<fieldset id="product_group_forms_container">
+<fieldset id="product_group_forms_container" data-hook>
 
   <%= form_for([:admin, @product_group], :html => { :id => 'product-group-form', :method => :put, 'data-remote' => true }) do |f| %>
 
@@ -17,16 +17,15 @@
         <%= f.select(:order_scope, Scopes::Product::ORDERING.collect{|p| [ t(:name, :scope =>[:product_scopes, :scopes, p]), p.to_s ] }) %>
       <% end %>
 
-      <table id="product_scopes">
+      <table id="product_scopes" data-hook>
         <%= render :partial => 'product_scope', :collection => @product_group.product_scopes.reject {|s| s.is_ordering? } %>
       </table>
 
-    <%=  button t("update") %>
+    <%= button t("update") %>
 
   <% end %>
 
-
-  <%= form_tag(admin_product_group_product_scopes_path(@product_group), 'data-remote' => true, :id => 'new_product_group_form') do %>
+  <%= form_tag(admin_product_group_product_scopes_path(@product_group), :remote => true, :id => 'new_product_group_form') do %>
     <%
     options =
     grouped_options_for_select(
@@ -47,10 +46,8 @@
     </p>
   <% end %>
 
-
 </fieldset>
 
-
-<fieldset id="preview_container">
+<fieldset id="preview_container" data-hook>
   <%= render 'preview' %>
 </fieldset>

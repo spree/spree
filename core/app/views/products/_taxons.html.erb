@@ -1,9 +1,9 @@
 <% if !@product.taxons.blank? %>
-  <div id="taxon-crumbs">
+  <div id="taxon-crumbs" data-hook>
     <h3><%= t('look_for_similar_items') %></h3>
 
     <div data-hook="product_taxons">
-      <ul id='similar_items_by_taxon'>
+      <ul id="similar_items_by_taxon" data-hook>
       <% @product.taxons.each do |taxon| %>
         <li><%= link_to taxon.name, seo_url(taxon) %></li>
       <% end %>

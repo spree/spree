@@ -3,7 +3,7 @@
 <h2><%= t("history")%></h2>
 
 <table class="index">
-  <tr>
+  <tr data-hook="history_header">
     <th><%= t("event") %></th>
     <th><%= t("from_state") %></th>
     <th><%= t("to_state") %></th>
@@ -11,7 +11,7 @@
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
   </tr>
   <% @order.state_events.sort.each do |event| %>
-    <tr>
+    <tr data-hook="history_row">
       <td><%=t("#{event.name}") if event.name.present? %></td>
       <td><%=t("#{event.name}_state#{'s' unless event.name == 'order'}.#{event.previous_state}") %></td>
       <td><%=t("#{event.name}_state#{'s' unless event.name == 'order'}.#{event.next_state}") %></td>
@@ -20,7 +20,7 @@
     </tr>
   <% end %>
   <% if @order.state_events.empty? %>
-    <tr>
+    <tr data-hook="history_none">
       <td colspan="5"><%= t("none_available") %></td>
     </tr>
   <% end %>

@@ -1,6 +1,6 @@
 <% render 'admin/shared/product_sub_menu' %>
-<div class='toolbar'>
-  <ul class='actions'>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
     <li>
       <%= button_link_to t("new_product_group"), new_object_url, :icon => 'add', :id => 'new_product_group_link' %>
     </li>
@@ -10,9 +10,9 @@
 
 <h1><%= t("listing_product_groups") %></h1>
 
-<table class="index" id='listing_product_groups'>
+<table class="index" id='listing_product_groups' data-hook>
   <thead>
-    <tr>
+    <tr data-hook="product_group_header">
       <th><%= ProductGroup.human_attribute_name("name") %></th>
       <th><%= ProductGroup.human_attribute_name("url") %></th>
       <th><%= ProductGroup.human_attribute_name("product_scopes")  %></th>
@@ -22,7 +22,7 @@
   </thead>
   <tbody>
     <% @product_groups.each do |pg| %>
-      <tr id="<%= dom_id pg %>">
+      <tr id="<%= dom_id pg %>" data-hook="product_group_row">
         <td><%= link_to pg.name, [:admin, pg] %></td>
         <td><%= link_to pg_search_path(:product_group_name => pg.permalink), pg_search_path(:product_group_name => pg.permalink) %></td>
         <td><%== pg.product_scopes.map(&:to_sentence).join("<br />") %></td>
@@ -34,4 +34,4 @@
     <% end %>
   </tbody>
 </table>
-<%= will_paginate(:previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
+<%= paginate @product_groups %>

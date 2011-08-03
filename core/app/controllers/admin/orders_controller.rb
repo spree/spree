@@ -27,11 +27,7 @@ class Admin::OrdersController < Admin::BaseController
       params[:search][:completed_at_less_than] = params[:search].delete(:created_at_less_than)
     end
 
-    @orders = Order.metasearch(params[:search]).paginate(
-                                   :include  => [:user, :shipments, :payments],
-                                   :per_page => Spree::Config[:orders_per_page],
-                                   :page     => params[:page])
-
+    @orders = Order.metasearch(params[:search]).includes([:user, :shipments, :payments]).page(params[:page]).per(Spree::Config[:orders_per_page])
     respond_with(@orders)
   end
 
