@@ -26,6 +26,12 @@ You can also specify that you want to rebuild just a few of the guides
 $ guides build --only=checkout adjustments
 ```
 
+To build edge guides including GA trakcking
+
+```
+$ bundle exec guides build --clean --edge --ga
+```
+
 Finally, you can also preview the guides while you work
 
 ```

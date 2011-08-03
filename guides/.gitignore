@@ -6,3 +6,4 @@ roadmap.txt
 Gemfile.lock
 *.swp
 .rvmrc
+bin

@@ -26,7 +26,7 @@ While the distinction between themes and extensions is covered in the "Extension
 
 We've created two front-end themes to help show this new approach in action:
 
-* "Spree Blue":https://github.com/railsdog/spree_blue_theme - Recreates the orginal "blue" theme of 0.60.x as a stand alone theme.
+* "Spree Blue":https://github.com/railsdog/spree_blue_theme - Recreates the original "blue" theme of 0.60.x as a stand alone theme.
 
 * "Rails Dog Radio":https://github.com/railsdog/railsdog_radio_theme - This recreates some of the aspects of the Rails Dog Radio demo application for a default Spree application.
 
@@ -39,7 +39,7 @@ Both themes can be installed by just adding a reference to the git repository to
 
 h3. Promotions
 
-Promotions have been extened well beyond their coupon roots to include new <tt>activator</tt> support, which can now fire or activate a promotion for a variety of different user triggered events, including:
+Promotions have been extended well beyond their coupon roots to include new <tt>activator</tt> support, which can now fire or activate a promotion for a variety of different user triggered events, including:
 
 * Adding items to a cart
 * Visiting specific pages
@@ -50,7 +50,9 @@ Promotions also includes a new <tt>Actions</tt> feature which can perform an act
 
 For more details on these new promotions feature please refer to the "Promotions":promotions.html guide.
 
-h3. Upgrade Insturctions
+h3. Upgrade Instructions
+
+These instructions are mainly concerned with upgrading Spree applications, extension developers should jump straight to the "Asset Customization"asset_customization.html and "View Customization":view_customization.html guides for details on the changes that are required for extensions to fulling support 0.70.0.
 
 h4. Before you begin
 
