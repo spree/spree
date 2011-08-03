@@ -39,10 +39,16 @@ Both themes can be installed by just adding a reference to the git repository to
 
 h3. Promotions
 
-Promotions have been refactored to include new <tt>activator</tt> support, which can now fire or activate a promotion for a variety of different user actions. 
+Promotions have been extened well beyond their coupon roots to include new <tt>activator</tt> support, which can now fire or activate a promotion for a variety of different user triggered events, including:
 
-...
+* Adding items to a cart
+* Visiting specific pages
+* Adjusting cart contents
+* Using a coupon code
 
+Promotions also includes a new <tt>Actions</tt> feature which can perform an action as a result of a promotion being actived, these actions currently include creating an adjustment or adding additional items to a cart.
+
+For more details on these new promotions feature please refer to the "Promotions":promotions.html guide.
 
 h3. Upgrade Insturctions
 

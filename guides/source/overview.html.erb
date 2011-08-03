@@ -1,24 +1,25 @@
-    <h2>Spree Guides</h2>
-    <p>
-      These guides are designed to make you immediately productive with Spree, and to help you understand how all of the pieces fit together. They are written by the authors of Spree as well as members of the Spree community.
-    </p>
-    <ul>
-      <li>
-        <%= link_to "Current Release version", "http://spreecommerce.com/documentation/" %> - based on the last stable release of Spree
-      </li>
-      <li>
-        <%= link_to "Edge version", "http://edgeguides.spreecommerce.com" %> - for unreleased code in current Spree <%= link_to "master branch", "http://github.com/spree/spree/tree/master" %>
-      </li>
-      <li>
-        <%= link_to "Legacy 0.50.x version", "http://spreecommerce.com/legacy/0-50-x/" %> - for the legacy 0.50.x version of Spree
-      </li>
-      <li>
-        <%= link_to "Legacy 0.40.x version", "http://spreecommerce.com/legacy/0-40-x/" %> - for the legacy 0.40.x version of Spree
-      </li>
-      <li>
-        <%= link_to "Legacy 0.11.x version", "http://spreecommerce.com/legacy/0-11-x/" %> - for the legacy 0.11.x version of Spree
-      </li>
-    </ul>
+<% content_for :header_section do %>
+  <h2>Spree Guides</h2>
+  <p>
+    These guides are designed to make you immediately productive with Spree, and to help you understand how all of the pieces fit together. They are written by the authors of Spree as well as members of the Spree community.
+  </p>
+  <ul>
+    <li>
+      <%= link_to "Current Release version", "http://spreecommerce.com/documentation/" %> - based on the last stable release of Spree
+    </li>
+    <li>
+      <%= link_to "Edge version", "http://edgeguides.spreecommerce.com" %> - for unreleased code in current Spree <%= link_to "master branch", "http://github.com/spree/spree/tree/master" %>
+    </li>
+    <li>
+      <%= link_to "Legacy 0.50.x version", "http://spreecommerce.com/legacy/0-50-x/" %> - for the legacy 0.50.x version of Spree
+    </li>
+    <li>
+      <%= link_to "Legacy 0.40.x version", "http://spreecommerce.com/legacy/0-40-x/" %> - for the legacy 0.40.x version of Spree
+    </li>
+    <li>
+      <%= link_to "Legacy 0.11.x version", "http://spreecommerce.com/legacy/0-11-x/" %> - for the legacy 0.11.x version of Spree
+    </li>
+  </ul>
+<% end %>
 
-<br/>
 <%= render "full_index", :guides => all_guides %>

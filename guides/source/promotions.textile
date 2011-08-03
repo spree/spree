@@ -26,10 +26,10 @@ Previously, promotions were only activated by a user entering a coupon code duri
 
 The following events are available currently:
 
-* *spree.cart.add* (an item is added to the cart)
-* **spree.checkout.coupon_code_added** (a coupon code is entered either from the cart screen or a checkout screen)
-* **spree.order.contents_changed** (when contents or quantities in the order changed)
-* **spree.user.signup** (after sucessfull user registration)
+* *spree.cart.add* - an item is added to the cart
+* **spree.checkout.coupon_code_added**  -a coupon code is entered either from the cart screen or a checkout screen
+* **spree.order.contents_changed** - when contents or quantities in the order changed
+* **spree.user.signup** - after sucessfull user registration
 
 These events are created using "ActiveSupport::Notifications":http://api.rubyonrails.org/classes/ActiveSupport/Notifications.html **instrument** method.
 Spree listens for any events with a name starting with **'spree.'**. Any user defined event name may be used to trigger a promotion as long as they have that prefix. The *Promotion* model is a subclass of *Activator* which is the base for any model which should respond to ActiveSupport::Notifications events. When a 'spree.' event is fired, Spree will find all Activator records that have the matching *event_name* attribute and call *activate* on them passing a hash which includes the current user and order.
@@ -56,17 +56,25 @@ h4. Promotion rules
 
 To control eligibility based on the current order and user, as many rules as required may be added to the promotion. The following types are available:
 
-* **Item Total** The order's item total must exeed or be at least equal to the specified amount
-* **Products** The order must include the chosen products, or products from the chosen product group
-* **User** The promotion is only available to the specified users
-* **First Order** This must be the current user's first order
-* **Landing Page** The user must have visited a static page with the specified path
+* **Item Total** - the order's item total must exeed or be at least equal to the specified amount
+* **Products**  - order must include the chosen products, or products from the chosen product group
+* **User** - promotion is only available to the specified users
+* **First Order** - this must be the current user's first order
+* **Landing Page** - the user must have visited a static page with the specified path
+* **User Logged In** - the user must be logged in
 
 You can specify that either all or any of rules must be satisfied for the promotion to be eligible.
 
 h3. Promotion Actions
 
-To configure the outcome of a promotion, Promotion Actions are added in the same manner as rules. This means a promotion could result in mulitple actions being performed such as a discount adjustment created on the order, an email being delivered or a predefined set of items being added to the cart. Currently the only action available is 'Create adjustment' but it is easy to add new action types by defining a subclass of *PromotionAction* which implements the *perform* method. Call *register* on your subclass to make it available to choose in the admin interface. See Promotion::Actions::CreateAdjustment for an example.
+To configure the outcome of a promotion, Promotion Actions are added in the same manner as rules. This means a promotion could result in mulitple actions being performed such as a discount adjustment created on the order, an email being delivered or a predefined set of items being added to the cart. 
+
+The available actions currently include:
+
+* **Create adjustment** - creates an adjustment against the order using a calculator (including flat rate per order / item, free shipping, etc).
+* **Create line items** - will add specific products / variants to the order.
+
+It is easy to add new action types by defining a subclass of *PromotionAction* which implements the *perform* method. Call *register* on your subclass to make it available to choose in the admin interface. See Promotion::Actions::CreateAdjustment for an example.
 
 h3. Promotion adjustments
 
