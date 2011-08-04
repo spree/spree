@@ -64,7 +64,7 @@ You can check that all Spree migrations are copied by running:
   rake spree:install:migrations
 </ruby>
 
-Each extension will provide it's own rake task (or generator) for copying migrations so please refer to the extensions READme for instructions.
+Each extension will provide it's own rake task (or generator) for copying migrations so please refer to the extensions README for instructions.
 
 WARNING: It's vital that you confirm this first before starting the upgrade process as Rails 3.1 has altered how engine migrations are handled and incorrectly copying migrations later could result in data loss.
 
