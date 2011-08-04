@@ -8,7 +8,7 @@ describe Admin::UsersController do
     let(:mock_user) { mock_model User }
     before do
       controller.stub :current_user => user
-      User.stub(:find).with(9).and_return(mock_user)
+      User.stub(:find).with('9').and_return(mock_user)
       User.stub(:new).and_return(mock_user)
     end
     after(:each) { user.roles = [] }
@@ -27,7 +27,7 @@ describe Admin::UsersController do
     it "should deny access to users with an bar role" do
       user.roles = [Role.find_or_create_by_name('bar')]
       Ability.register_ability(BarAbility)
-      post :update, {:id => 9}
+      post :update, {:id => '9'}
       response.should render_template "shared/unauthorized"
     end
     it "should deny access to users without an admin role" do
