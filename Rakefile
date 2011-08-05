@@ -18,6 +18,8 @@ def run_all_tests(database_name)
   %w(api auth core dash promo).each do |gem_name|
     puts "########################### #{gem_name}|#{database_name} (spec) ###########################"
     cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
+    # Temporary hack to make sure dash gets a test app as well
+    sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'" if gem_name == 'dash'
     sh "cd #{gem_name} && #{$0} spec"
   end
 end
