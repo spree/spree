@@ -1,10 +1,11 @@
-Factory.define(:order) do |record|
+Factory.define(:order) do |f|
   # associations:
-  record.association(:user, :factory => :user)
-  record.association(:bill_address, :factory => :address)
-  record.completed_at nil
-  record.bill_address_id nil
-  record.ship_address_id nil
+  f.association(:user, :factory => :user)
+  f.association(:bill_address, :factory => :address)
+  f.completed_at nil
+  f.bill_address_id nil
+  f.ship_address_id nil
+  f.email 'foo@example.com'
 end
 
 Factory.define :order_with_totals, :parent => :order do |f|
