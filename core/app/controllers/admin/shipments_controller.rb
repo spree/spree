@@ -40,7 +40,7 @@ class Admin::ShipmentsController < Admin::BaseController
     assign_inventory_units
     if @shipment.update_attributes params[:shipment]
       # copy back to order if instructions are enabled
-      @order.special_instructions = object_params[:special_instructions] if Spree::Config[:shipping_instructions]
+      @order.special_instructions = params[:shipment][:special_instructions] if Spree::Config[:shipping_instructions]
       @order.shipping_method = @order.shipment.shipping_method
       @order.save
 
