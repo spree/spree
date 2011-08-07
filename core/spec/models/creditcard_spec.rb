@@ -7,12 +7,12 @@ describe Creditcard do
   end
 
   let(:valid_creditcard_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }
-  let(:order) { Factory(:order) }
 
   before(:each) do
 
+    @order = Factory(:order)
     @creditcard = Creditcard.new
-    @payment = Payment.create(:amount => 100, :order => order)
+    @payment = Payment.create(:amount => 100, :order => @order)
 
     @success_response = mock('gateway_response', :success? => true, :authorization => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
@@ -48,6 +48,8 @@ describe Creditcard do
       @payment_gateway.should_receive(:authorize).with(10000, @creditcard, anything)
       @creditcard.authorize(100, @payment)
     end
+
+
 
     it "should log the response" do
       @payment.log_entries.should_receive(:create).with(:details => anything)
@@ -137,6 +139,24 @@ describe Creditcard do
         @payment_gateway.should_receive(:capture).with(@payment, @creditcard, anything)
         @creditcard.capture(@payment)
       end
+      it "should not pass subtotal" do
+        @order.stub :item_total => 90
+        @payment_gateway.should_not_receive(:capture).with(@payment, @creditcard,
+                                                           hash_including(:subtotal => 9000))
+        @creditcard.capture(@payment)
+      end
+      it "should not pass shipping" do
+        @order.stub :ship_total => 5
+        @payment_gateway.should_not_receive(:capture).with(@payment, @creditcard,
+                                                           hash_including(:shipping => 500))
+        @creditcard.capture(@payment)
+      end
+      it "should not pass tax" do
+        @order.stub :tax_total => 5
+        @payment_gateway.should_not_receive(:capture).with(@payment, @creditcard,
+                                                           hash_including(:tax=> 500))
+        @creditcard.capture(@payment)
+      end
       it "should log the response" do
         @payment.log_entries.should_receive(:create).with(:details => anything)
         @creditcard.capture(@payment)
@@ -188,6 +208,21 @@ describe Creditcard do
       @payment_gateway.should_receive(:void).with('123', anything)
       @creditcard.void(@payment)
     end
+    it "should not pass subtotal" do
+      @order.stub :item_total => 90
+      @payment_gateway.should_not_receive(:void).with('123', hash_including(:subtotal => 9000))
+      @creditcard.void(@payment)
+    end
+    it "should not pass shipping" do
+      @order.stub :ship_total => 5
+      @payment_gateway.should_not_receive(:void).with('123', hash_including(:shipping => 500))
+      @creditcard.void(@payment)
+    end
+    it "should not pass tax" do
+      @order.stub :tax_total => 5
+      @payment_gateway.should_not_receive(:void).with('123', hash_including(:tax=> 500))
+      @creditcard.void(@payment)
+    end
     it "should log the response" do
       @payment.log_entries.should_receive(:create).with(:details => anything)
       @creditcard.void(@payment)
@@ -224,7 +259,6 @@ describe Creditcard do
     before do
       @payment.state = 'complete'
       @payment.response_code = '123'
-      @order = Factory(:order)
       @payment.stub(:order).and_return(@order)
     end
 
@@ -235,7 +269,24 @@ describe Creditcard do
         @payment_gateway.should_receive(:credit).with(1000, @creditcard, '123', anything)
         @creditcard.credit(@payment)
       end
-
+      it "should not pass subtotal" do
+        @order.stub :item_total => 90
+        @payment_gateway.should_not_receive(:credit).with(1000, @creditcard, '123',
+                                                          hash_including(:subtotal => 9000))
+        @creditcard.credit(@payment)
+      end
+      it "should not pass shipping" do
+        @order.stub :ship_total => 5
+        @payment_gateway.should_not_receive(:credit).with(1000, @creditcard, '123',
+                                                          hash_including(:shipping => 500))
+        @creditcard.credit(@payment)
+      end
+      it "should not pass tax" do
+        @order.stub :tax_total => 5
+        @payment_gateway.should_not_receive(:credit).with(1000, @creditcard, '123',
+                                                          hash_including(:tax => 500))
+        @creditcard.credit(@payment)
+      end
     end
 
     context "when outstanding_balance is equal to payment amount" do

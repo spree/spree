@@ -148,7 +148,6 @@ class Creditcard < ActiveRecord::Base
     check_environment(payment_gateway)
 
     amount = payment.credit_allowed >= payment.order.outstanding_balance.abs ? payment.order.outstanding_balance.abs : payment.credit_allowed.abs
-
     if payment_gateway.payment_profiles_supported?
       response = payment_gateway.credit((amount * 100).round, self, payment.response_code, minimal_gateway_options(payment))
     else
@@ -228,14 +227,17 @@ class Creditcard < ActiveRecord::Base
   # Generates a minimal set of gateway options.  There appears to be some issues with passing in
   # a billing address when authorizing/voiding a previously captured transaction.  So omits these
   # options in this case since they aren't necessary.
-  def minimal_gateway_options(payment)
-    {:email    => payment.order.email,
-     :customer => payment.order.email,
-     :ip       => payment.order.ip_address,
-     :order_id => payment.order.number,
-     :shipping => payment.order.ship_total * 100,
-     :tax      => payment.order.tax_total * 100,
-     :subtotal => payment.order.item_total * 100}
+  def minimal_gateway_options(payment, totals=true)
+    options = {:email    => payment.order.email,
+               :customer => payment.order.email,
+               :ip       => payment.order.ip_address,
+               :order_id => payment.order.number}
+    if totals
+      options.merge({ :shipping => payment.order.ship_total * 100,
+                      :tax      => payment.order.tax_total * 100,
+                      :subtotal => payment.order.item_total * 100 })
+    end
+    options
   end
 
   def spree_cc_type
