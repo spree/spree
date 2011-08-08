@@ -7,11 +7,11 @@ class Taxon < ActiveRecord::Base
 
   validates :name, :presence => true
   has_attached_file :icon,
-                :styles => { :mini => '32x32>', :normal => '128x128>' },
-                :default_style => :mini,
-                :url => "/assets/taxons/:id/:style/:basename.:extension",
-                :path => ":rails_root/public/assets/taxons/:id/:style/:basename.:extension",
-                :default_url => "/assets/default_taxon.png"
+                Spree::Paperclip::Config.merge(
+                  :styles => { :mini => '32x32>', :normal => '128x128>' },
+                  :default_style => :mini,
+                  :default_url => "/images/default_taxon.png"
+                )
 
 
   include ::ProductFilters  # for detailed defs of filters
