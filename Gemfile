@@ -4,7 +4,7 @@ gem 'rails', '3.1.0.rc5'
 gem 'arel', '2.1.4'
 
 gem 'json'
-
+gem 'sqlite3'
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -33,10 +33,15 @@ group :cucumber do
 
 end
 
+group :ci do
+  gem 'mysql2', '~> 0.3.6'
+end
+
 if RUBY_VERSION < "1.9"
   gem "ruby-debug"
 else
   gem "ruby-debug19"
 end
 
+gem "spree", :path => File.dirname(__FILE__)
 #root

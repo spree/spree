@@ -1,6 +1,6 @@
 ENV["RAILS_ENV"] ||= "cucumber"
 
-require File.expand_path("../spec/test_app/config/environment", FEATURES_PATH)
+require File.expand_path("../spec/dummy/config/environment", FEATURES_PATH)
 
 # sometimes tests fail randomly because cache is not refreshed, fixed that
 Spree::Config.set(:foo => "bar")

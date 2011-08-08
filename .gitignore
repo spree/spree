@@ -30,10 +30,11 @@ public/assets
 public/attachments
 public/blank_iframe.html
 public/ckeditora
-sandbox
+sandbox/*
 spree_dev
 spree_test
 testapp
+**/spec/dummy
 tmp
 vendor/rails
 vendor/extensions/google_base

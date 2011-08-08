@@ -25,7 +25,7 @@ Then /^verify data from "(.*)" with following tabular values:$/ do |selector, ex
   expected_table.each_with_index do |row, index_i|
     row.each_with_index do |element,index_j|
       unless element == 'ignore'
-        element.should == real_table.at(index_i).at(index_j)
+        real_table.at(index_i).at(index_j).should == element
       end
     end
   end

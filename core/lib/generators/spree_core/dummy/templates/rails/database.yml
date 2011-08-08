@@ -1,0 +1,30 @@
+login: &login
+<% if database == 'mysql' %>
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  pool: 5
+  username: root
+  password:
+  #socket: /tmp/mysql.sock
+<% else %>
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+<% end %>
+
+development:
+  <<: *login
+  database: dummy_dev
+
+test:
+  <<: *login
+  database: dummy_test
+
+cucumber:
+  <<: *login
+  database: dummy_test
+
+production:
+  <<: *login
+  database: dummy_prod

@@ -8,19 +8,15 @@ Gem::PackageTask.new(spec) do |pkg|
 end
 
 def run_all_tests(database_name)
-  %w(api auth core promo).each do |gem_name|
-    puts "########################### #{gem_name}|#{database_name} (features) ###########################"
-    cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
-    sh "cd #{gem_name} && bundle exec cucumber -p ci"
-  end
-
   %w(api auth core dash promo).each do |gem_name|
     puts "########################### #{gem_name}|#{database_name} (spec) ###########################"
-    cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    # Temporary hack to make sure dash gets a test app as well
-    sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'" if gem_name == 'dash'
+    sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
     sh "cd #{gem_name} && #{$0} spec"
+  end
+
+  %w(api auth core promo).each do |gem_name|
+    puts "########################### #{gem_name}|#{database_name} (features) ###########################"
+    sh "cd #{gem_name} && bundle exec cucumber -p ci"
   end
 end
 
@@ -92,11 +88,12 @@ namespace :gem do
   end
 end
 
-desc "Creates a sandbox application for testing your Spree code"
+desc "Creates a sandbox application for simulating the Spree code in a deployed Rails app"
 task :sandbox do
-  require 'rails/generators'
-  require File.expand_path('../core/lib/generators/spree_core/site/site_generator', __FILE__)
-  require File.expand_path('../core/lib/generators/spree_core/sandbox/sandbox_generator', __FILE__)
+  require 'spree_core'
 
-  SpreeCore::Generators::SandboxGenerator.start
+  SpreeCore::Generators::SandboxGenerator.start ["--lib_name=spree", "--database=#{ENV['DB_NAME']}"]
+  SpreeCore::Generators::SiteGenerator.start
+
+  cmd = "bundle exec rake db:bootstrap AUTO_ACCEPT=true"; puts cmd; system cmd
 end

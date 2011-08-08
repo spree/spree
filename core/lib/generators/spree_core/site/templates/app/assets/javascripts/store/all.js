@@ -4,10 +4,5 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
-//= require jquery
-//= require jquery_ujs
-//= require jquery.validate/jquery.validate.min
-<%- if additions_for_gemfile.keys.any? { |name| %w{spree spree_core}.include? name.to_s } -%>
-//= require store/spree_core
-<%- end -%>
+//= require store/<%= lib_name %>
 //= require_tree .

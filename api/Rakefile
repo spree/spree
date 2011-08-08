@@ -2,6 +2,12 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/packagetask'
 require 'rubygems/package_task'
+require 'rspec/core/rake_task'
+require 'cucumber/rake/task'
+require 'spree_core/testing_support/common_rake'
+
+RSpec::Core::RakeTask.new
+Cucumber::Rake::Task.new
 
 task :default => [:spec, :cucumber ]
 
@@ -18,24 +24,8 @@ task :release => :package do
   Rake::Task['gem:push'].invoke
 end
 
-desc "Regenerates a rails 3 app for testing"
+desc "Generates a dummy app for testing"
 task :test_app do
-  require 'rails/generators'
-  require File.expand_path('../../core/lib/generators/spree_core/site/site_generator', __FILE__)
-  require File.expand_path('../../core/lib/generators/spree_core/sandbox/sandbox_generator', __FILE__)
-  require File.expand_path('../../core/lib/generators/spree_core/test_app/test_app_generator', __FILE__)
-
-  SpreeCore::Generators::TestAppGenerator.class_eval do
-    protected
-    def additions_for_gemfile
-      { :spree_core => File.join(File.dirname(__FILE__), "..", "core"),
-        :spree_auth => File.join(File.dirname(__FILE__), "..", "auth"),
-        :spree_api  => File.dirname(__FILE__) } 
-    end
-  end
-
-  SpreeCore::Generators::TestAppGenerator.start
+  ENV['LIB_NAME'] = 'spree_api'
+  Rake::Task['common:test_app'].invoke
 end
-
-ENV['SPREE_GEM_PATH'] = __FILE__
-require File.expand_path("../../core/lib/tasks/common", __FILE__)

@@ -5,6 +5,7 @@
 // the compiled file.
 //
 //= require_tree .
+//= require admin/spree_core
 //= require jqPlot/jquery.jqplot.min
 //= require jqPlot/plugins/jqplot.dateAxisRenderer.min
 //= require jqPlot/plugins/jqplot.highlighter.min

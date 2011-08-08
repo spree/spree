@@ -23,5 +23,5 @@ Feature: analytics tracker
     Then I should see "successfully created!"
     Then verify data from "table.index" with following tabular values:
       | Analytics ID | Environment | Active | Action |
-      | A100         | Development | Yes    | ignore |
+      | A100         | Production  | Yes    | ignore |
 

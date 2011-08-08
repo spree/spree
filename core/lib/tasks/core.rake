@@ -70,6 +70,7 @@ namespace :db do
     if %w[demo development test].include? Rails.env
       if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
         ENV['SKIP_NAG'] = 'yes'
+        Rake::Task["db:create"].invoke
         Rake::Task["db:remigrate"].invoke
       else
         say "Task cancelled, exiting."
@@ -88,7 +89,7 @@ namespace :db do
     unless load_defaults    # ask if there are already Countries => default data hass been loaded
       load_defaults = agree('Countries present, load sample data anyways? [y/n]: ')
     end
-    if load_defaults 
+    if load_defaults
       Rake::Task["db:seed"].invoke
     end
 
@@ -102,7 +103,7 @@ namespace :db do
     if load_sample
       #prevent errors for missing attributes (since rails 3.1 upgrade)
 
-      Rake::Task["spree_sample:load"].invoke 
+      Rake::Task["spree_sample:load"].invoke
     end
 
     puts "Bootstrap Complete.\n\n"
