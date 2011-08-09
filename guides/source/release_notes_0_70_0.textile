@@ -26,14 +26,14 @@ While the distinction between themes and extensions is covered in the "Extension
 
 We've created two front-end themes to help show this new approach in action:
 
-* "Spree Blue":https://github.com/railsdog/spree_blue_theme - Recreates the original "blue" theme of 0.60.x as a stand alone theme.
+* "Spree Blue":https://github.com/spree/spree_blue_theme - Recreates the original "blue" theme of 0.60.x as a stand alone theme.
 
-* "Rails Dog Radio":https://github.com/railsdog/railsdog_radio_theme - This recreates some of the aspects of the Rails Dog Radio demo application for a default Spree application.
+* "Rails Dog Radio":https://github.com/spree/spree_rdr_theme - This recreates some of the aspects of the Rails Dog Radio demo application for a default Spree application.
 
 Both themes can be installed by just adding a reference to the git repository to your Gemfile, ie:
 
 <ruby>
-  gem 'spree_blue_theme', :git => 'git://github.com/railsdog/spree_blue_theme.git'
+  gem 'spree_blue_theme', :git => 'git://github.com/spree/spree_blue_theme.git'
 </ruby>
 
 
