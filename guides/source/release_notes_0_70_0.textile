@@ -126,7 +126,7 @@ The spree_site.rb file is no longer required so it's important to migrate any ex
 
 * Model, controller or helper evals should be relocated to a suitable _decorator.rb file.
 * Configuration settings should be moved to initializers.
-* If you activating custom Abilities or Calculators, you should remove then for now. You can re-add them to config/application.rb after you've ran the spree:site generator below. They will need to be inside the <tt>config.to_prepare</tt> block. 
+* If you are activating custom Abilities or Calculators, you should remove then for now. You can re-add them to config/application.rb after you've ran the spree:site generator below. They will need to be inside the <tt>config.to_prepare</tt> block. 
 
 NOTE: The decorator initialization block will be automatically included in config/application.rb for you, when you run the spree:site generator below.
 
