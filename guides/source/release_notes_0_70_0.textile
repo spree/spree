@@ -181,7 +181,6 @@ h4. Migrating your assets
 
 Cleaning up your <tt>/public</tt> directory is one major advantage of using Rails 3.1. The main task required here is to separate your application specific assets (javascript, stylesheets and images) from all of Spree's (and all those belonging to all the extensions installed) which have been mingled together in your public directory.
 
-
 h5. Asset Organization
 
 Assets should be placed inside your application in one of three locations: <tt>app/assets</tt>, <tt>lib/assets</tt> or <tt>vendor/assets</tt>.
@@ -195,6 +194,15 @@ Assets should be placed inside your application in one of three locations: <tt>a
 NOTE: If you are using a library like Jammit solely for concatenating and minifying your javascript and stylesheet files then we suggest you remove it from your application as part of the Rails 3.1 upgrade.
 
 For a full explanation of how Spree uses Rails' asset pipeline and how to update your site to use these new features please refer to the "Asset Customization":asset_customization.html guide.
+
+
+h5. Cleaning up /public
+
+Once you've relocated all <b>your</b> applications assets, the only remaining directories and files in <tt>/public</tt> should be images that you've uploaded for your Products (or taxonomies). If you are using the default Spree configuration these will be in <tt>/public/assets</tt>.
+
+WARNING: Leaving any javascript, stylesheet or image files in the public directory will override those provided by Spree or it's extensions. So it's vital that you delete all remaining files from the <tt>/public</tt> directory, <b>EXCEPT YOUR PRODUCT IMAGES!</b>.
+
+NOTE: If you are using S3 (or another cloud storage system) for your Product images then your <tt>/public</tt> directory should be completly empty.
 
 h4. Including old style theming hooks
 
