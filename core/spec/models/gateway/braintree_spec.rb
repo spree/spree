@@ -33,32 +33,32 @@ describe Gateway::Braintree do
 
   end
 
-  it "should be braintree gateway" do
+  pending "should be braintree gateway" do
     @gateway.provider_class.should == ::ActiveMerchant::Billing::BraintreeGateway
   end
-  
-  it "should be the Blue Braintree" do
+
+  pending "should be the Blue Braintree" do
     @gateway.provider.class.should == ::ActiveMerchant::Billing::BraintreeBlueGateway
   end
 
   describe "authorize" do
-    it "should return a success response with an authorization code" do
+    pending "should return a success response with an authorization code" do
       result = @gateway.authorize(500, @creditcard,      {:server=>"test",
                                                         :test =>true,
                                                         :merchant_id=>"zbn5yzq9t7wmwx42",
                                                         :public_key=> "ym9djwqpkxbv3xzt",
                                                         :private_key=> "4ghghkyp2yy6yqc8"})
 
-      
-      
+
+
       result.success?.should be_true
       result.authorization.should match(/\A\w{6}\z/)
-      
-      
+
+
       Braintree::Transaction::Status::Authorized.should == Braintree::Transaction.find(result.authorization).status
    end
 
-   it 'should work through the spree payment interface' do
+   pending 'should work through the spree payment interface' do
       Spree::Config.set :auto_capture => false
       @payment.log_entries.size.should == 0
       @payment.process!
@@ -77,7 +77,7 @@ describe Gateway::Braintree do
 
   describe "capture" do
 
-    it " should capture a previous authorization" do
+    pending " should capture a previous authorization" do
       @payment.process!
       assert_equal 1, @payment.log_entries.size
       assert_match /\A\w{6}\z/, @payment.response_code
@@ -89,7 +89,7 @@ describe Gateway::Braintree do
       transaction.status.should == Braintree::Transaction::Status::SubmittedForSettlement
     end
 
-    it "raise an error if capture fails using spree interface" do
+    pending "raise an error if capture fails using spree interface" do
       Spree::Config.set :auto_capture => false
       @payment.log_entries.size.should == 0
       @payment.process!
@@ -106,20 +106,20 @@ describe Gateway::Braintree do
   end
 
   describe 'purchase' do
-    it 'should return a success response with an authorization code' do
+    pending 'should return a success response with an authorization code' do
       result =  @gateway.purchase(500, @creditcard)
       result.success?.should be_true
       result.authorization.should match(/\A\w{6}\z/)
       Braintree::Transaction::Status::SubmittedForSettlement.should == Braintree::Transaction.find(result.authorization).status
     end
 
-    it 'should work through the spree payment interface with payment profiles' do
+    pending 'should work through the spree payment interface with payment profiles' do
       purchase_using_spree_interface
       transaction = ::Braintree::Transaction.find(@payment.response_code)
       transaction.credit_card_details.token.should_not be_nil
     end
 
-    it 'should work through the spree payment interface without payment profiles' do
+    pending 'should work through the spree payment interface without payment profiles' do
         with_payment_profiles_off do
           purchase_using_spree_interface(false)
           transaction = ::Braintree::Transaction.find(@payment.response_code)
@@ -129,7 +129,7 @@ describe Gateway::Braintree do
   end
 
   describe "credit" do
-    it "should work through the spree interface" do
+    pending "should work through the spree interface" do
       @payment.amount += 100.00
       purchase_using_spree_interface
       credit_using_spree_interface
@@ -137,7 +137,7 @@ describe Gateway::Braintree do
   end
 
   describe "void" do
-    it "should work through the spree creditcard / payment interface" do
+    pending "should work through the spree creditcard / payment interface" do
       assert_equal 0, @payment.log_entries.size
       @payment.process!
       assert_equal 1, @payment.log_entries.size
