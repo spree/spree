@@ -173,6 +173,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  arel (= 2.1.4)
   capybara (= 1.0.0)
   coffee-rails (~> 3.1.0.rc)
   cucumber-rails (= 1.0.0)
