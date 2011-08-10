@@ -1,10 +1,10 @@
 # make sure the product images directory exists
-FileUtils.mkdir_p "#{Rails.root}/public/assets/products/"
+FileUtils.mkdir_p "#{Rails.root}/public/spree/products/"
 
 Asset.all.each do |asset|
   filename = asset.attachment_file_name
   puts "-- Processing image: #{filename}\r"
-  path = File.join(File.dirname(__FILE__), "assets/#{filename}")
+  path = File.join(File.dirname(__FILE__), "spree/#{filename}")
 
   if FileTest.exists? path
     asset.attachment = File.open(path)
