@@ -36,6 +36,7 @@ PATH
     spree_dash (0.70.99)
       spree_core (= 0.70.99)
     spree_promo (0.70.99)
+      spree_auth (= 0.70.99)
       spree_core (= 0.70.99)
     spree_sample (0.70.99)
       spree_core (= 0.70.99)
