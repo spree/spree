@@ -34,14 +34,14 @@ GEM
     arel (2.1.4)
     bcrypt-ruby (2.1.4)
     builder (3.0.0)
-    capybara (1.0.0)
+    capybara (1.0.1)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
-      selenium-webdriver (~> 0.2.0)
+      selenium-webdriver (2.4.0)
       xpath (~> 0.1.4)
-    childprocess (0.2.0)
+    childprocess (0.2.1)
       ffi (~> 1.0.6)
     coffee-rails (3.1.0.rc.5)
       actionpack (~> 3.1.0.rc1)
@@ -148,7 +148,7 @@ GEM
       sass (>= 3.1.4)
       sprockets (>= 2.0.0.beta.9)
     selenium-webdriver (0.2.2)
-      childprocess (>= 0.1.9)
+      childprocess (>= 0.2.1)
       ffi (>= 1.0.7)
       json_pure
       rubyzip
@@ -174,7 +174,7 @@ PLATFORMS
 
 DEPENDENCIES
   arel (= 2.1.4)
-  capybara (= 1.0.0)
+  capybara (= 1.0.1)
   coffee-rails (~> 3.1.0.rc)
   cucumber-rails (= 1.0.0)
   database_cleaner (= 0.6.7)
