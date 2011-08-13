@@ -109,7 +109,7 @@ h3. Building a Sandbox Application
 When working with the Spree source you may find yourself wanting to see how the code performs in the context of an actual application.  This is due to the fact that Spree is intended to be distributed as a gem and is not designed to be run as a standalone application.  Spree includes a helpful rake task for setting up such a test application.
 
 <shell>
-  $ rake sandbox
+  $ bundle exec rake sandbox
 </shell>
 
 This will create a barebones rails application configured with the Spree gem.  It runs the migrations for you and sets up the sample data.  The resulting +sandbox+ folder is already ignored by +.gitignore+ and it is deleted and rebuilt from scratch each time the rake task runs.
@@ -119,14 +119,14 @@ h3. Building the Gem from the Source
 The Spree gem can easily be built from the source.
 
 <shell>
-  $ rake gem
+  $ bundle exec rake gem
 </shell>
 
 Currently there is no shortcut for building all of the Spree gems from source with a single command (contributions welcome).  Therefore, you will need to build them individually.  For example:
 
 <shell>
   $ cd core
-  $ rake gem
+  $ bundle exec rake gem
 </shell>
 
 h3. Tips for Working with the Source
