@@ -1,1 +1,1 @@
-require 'spree_core/theme_support/hook_listener'
+require File.expand_path("../theme_support/hook_listener", __FILE__)

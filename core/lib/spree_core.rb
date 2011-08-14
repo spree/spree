@@ -41,45 +41,42 @@ require 'meta_search'
 require 'find_by_param'
 require 'jquery-rails'
 
-require 'spree_core/ext/active_record'
-require 'spree_core/ext/hash'
-
-require 'spree_core/delegate_belongs_to'
+require File.expand_path("../spree_core/ext/active_record", __FILE__)
+require File.expand_path("../spree_core/ext/hash", __FILE__)
+require File.expand_path("../spree_core/delegate_belongs_to", __FILE__)
 ActiveRecord::Base.send :include, DelegateBelongsTo
 
-require 'spree_core/theme_support'
-require 'spree_core/enumerable_constants'
+require File.expand_path("../spree_core/theme_support", __FILE__)
+require File.expand_path("../spree_core/enumerable_constants", __FILE__)
+require File.expand_path("../spree_core/spree_custom_responder", __FILE__)
+require File.expand_path("../spree_core/spree_respond_with", __FILE__)
 
-require 'spree_core/spree_custom_responder'
-require 'spree_core/spree_respond_with'
+require File.expand_path("../spree_core/ssl_requirement", __FILE__)
+require File.expand_path("../spree_core/preferences/model_hooks", __FILE__)
+require File.expand_path("../spree_core/preferences/preference_definition", __FILE__)
+require File.expand_path("../store_helpers", __FILE__)
+require File.expand_path("../spree/file_utilz", __FILE__)
+require File.expand_path("../spree/calculated_adjustments", __FILE__)
+require File.expand_path("../spree/current_order", __FILE__)
+require File.expand_path("../spree/preference_access", __FILE__)
+require File.expand_path("../spree/config", __FILE__)
+require File.expand_path("../spree/mail_settings", __FILE__)
+require File.expand_path("../spree/mail_interceptor", __FILE__)
+require File.expand_path("../redirect_legacy_product_url", __FILE__)
+require File.expand_path("../middleware/seo_assist", __FILE__)
 
-
-require 'spree_core/ssl_requirement'
-require 'spree_core/preferences/model_hooks'
-require 'spree_core/preferences/preference_definition'
-require 'store_helpers'
-require 'spree/file_utilz'
-require 'spree/calculated_adjustments'
-require 'spree/current_order'
-require 'spree/preference_access'
-require 'spree/config'
-require 'spree/mail_settings'
-require 'spree/mail_interceptor'
-require 'redirect_legacy_product_url'
-require 'middleware/seo_assist'
-
-require 'spree_base' # added 11-3 JBD
+require File.expand_path("../spree_base", __FILE__) # added 11-3 JBD
 
 silence_warnings do
-  require 'spree_core/authorize_net_cim_hack'
+  require File.expand_path("../spree_core/authorize_net_cim_hack", __FILE__)
 end
 
-require 'spree_core/version'
+require File.expand_path("../spree_core/version", __FILE__)
 
-require 'spree_core/railtie'
-require 'generators/spree_core/site/site_generator'
-require 'generators/spree_core/dummy/dummy_generator'
-require 'generators/spree_core/sandbox/sandbox_generator'
+require File.expand_path("../spree_core/railtie", __FILE__)
+require File.expand_path("../generators/spree_core/site/site_generator", __FILE__)
+require File.expand_path("../generators/spree_core/dummy/dummy_generator", __FILE__)
+require File.expand_path("../generators/spree_core/sandbox/sandbox_generator", __FILE__)
 
 ActiveRecord::Base.class_eval do
   include Spree::CalculatedAdjustments

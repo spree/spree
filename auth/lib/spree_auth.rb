@@ -1,10 +1,10 @@
-require 'spree_core'
+require File.expand_path("../../../core/lib/spree_core", __FILE__)
 require 'devise'
 require 'cancan'
 
-require 'spree/auth/config'
-require 'spree/token_resource'
-require 'spree_auth_hooks'
+require File.expand_path("../spree/auth/config", __FILE__)
+require File.expand_path("../spree/token_resource", __FILE__)
+require File.expand_path("../spree_auth_hooks", __FILE__)
 
 module SpreeAuth
   class Engine < Rails::Engine

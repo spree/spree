@@ -90,7 +90,7 @@ end
 
 desc "Creates a sandbox application for simulating the Spree code in a deployed Rails app"
 task :sandbox do
-  require 'spree_core'
+  require File.expand_path("../core/lib/spree_core", __FILE__)
 
   SpreeCore::Generators::SandboxGenerator.start ["--lib_name=spree", "--database=#{ENV['DB_NAME']}"]
   SpreeCore::Generators::SiteGenerator.start
