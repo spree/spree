@@ -50,4 +50,6 @@ def create_admin_user
   end
 end
 
-create_admin_user if User.where("roles.name" => 'admin').includes(:roles).empty?
+if Rails.env.development?
+  create_admin_user if User.where("roles.name" => 'admin').includes(:roles).empty?
+end
