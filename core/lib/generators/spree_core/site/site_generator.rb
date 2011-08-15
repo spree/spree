@@ -70,6 +70,14 @@ end
         append_file "config/environment.rb", "\nActiveRecord::Base.include_root_in_json = true\n"
       end
 
+      def include_seed_data
+        append_file "db/seeds.rb", <<-SEEDS
+\n
+SpreeCore::Engine.load_seed if defined?(SpreeCore)
+SpreeAuth::Engine.load_seed if defined?(SpreeAuth)
+        SEEDS
+      end
+
       def install_migrations
         silence_warnings { run 'bundle exec rake railties:install:migrations' }
       end
