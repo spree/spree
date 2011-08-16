@@ -29,20 +29,20 @@ Start by adding the gem to your existing Rails 3.x application's Gemfile
 
 Update your bundle
 
-    bundle install
+    $ bundle install
 
 Then use the install generator to do the basic setup
 
-    rails g spree:site
+    $ rails g spree:site
 
 Now you just need to run the new migrations, and setup some basic data
 
-    rake db:migrate
-    rake db:seed
+    $ bundle exec rake db:migrate
+    $ bundle exec rake db:seed
 
 If you also want some sample products, orders, etc. to play with you can run the appropriate rake task.
 
-    rake spree_sample:load 
+    $ bundle exec rake spree_sample:load
 
 
 Browse Store
@@ -74,7 +74,7 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
 3. Create a sandbox rails application for testing purposes (and automatically perform all necessary database setup)
 
-        rake sandbox
+        bundle exec rake sandbox
 
 6. Start the server
 
@@ -87,31 +87,36 @@ Running Tests
 If you want to run all the tests across all the gems then
 
     $ cd spree
-    $ rake spec     #=> 'this will run spec tests for all the gems'
-    $ rake cucumber #=> 'this will run cucumber tests for all the gems'
-    $ rake          #=> 'this will run both spec and cucumber tests for all the gems'
+    $ bundle exec rake          #=> 'this will run both spec and cucumber tests for all the gems'
 
 Each gem contains its own series of tests, and for each directory, you need to do a quick one-time
 creation of a test application and then you can use it to run the tests.  For example, to run the
 tests for the core project.
 
     $ cd core
-    $ rake test_app
-    $ rake spec
-    $ rake cucumber
-    $ rake          #=> 'this will run both spec and cucumber tests for the gem'
+    $ bundle exec rake test_app
 
-    # If you want to run specs for only a single spec file
+Now you can run just the specs, just the features or everything together
+
+    $ bundle exec rake spec
+    $ bundle exec rake cucumber
+    $ bundle exec rake          #=> 'this will run both spec and cucumber tests for the gem'
+
+If you want to run specs for only a single spec file
+
     $ bundle exec rspec spec/models/state_spec.rb
 
-    # If you want to run a particular line of spec
+If you want to run a particular line of spec
+
     $ bundle exec rspec spec/models/state_spec.rb:7
 
-    # If you want to run a single cucumber feature
-    # bundle exec cucumber features/admin/orders.feature --require features
+If you want to run a single cucumber feature
 
-    # If you want to run a particular scenario then include the line number
-    # bundle exec cucumber features/admin/orders.feature:3 --require features
+    $ bundle exec cucumber features/admin/orders.feature --require features
+
+If you want to run a particular scenario then include the line number
+
+    $ bundle exec cucumber features/admin/orders.feature:3 --require features
 
 
 Contributing
