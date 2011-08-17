@@ -4,7 +4,6 @@
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *= require jquery.alerts/jquery.alerts
  *= require jquery.alerts/jquery.alerts.spree
- *= require datepicker/datepicker
  *= require ./admin-reset
  *= require ./admin-tables
  *= require ./admin-form
@@ -14,4 +13,5 @@
  *= require ./edit_checkouts.css
  *= require ./grids.css
  *= require ./token-input.css
+ *= require jquery-ui.datepicker
 */

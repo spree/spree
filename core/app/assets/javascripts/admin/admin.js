@@ -7,27 +7,24 @@ Hopefully, this will evolve into a propper class.
 var spree;
 if (!spree) spree = {};
 
-$ = jQuery;
-$j = jQuery;
-
-jQuery(document).ajaxStart(function(){
-  jQuery("#progress").slideDown();
+$(document).ajaxStart(function(){
+  $("#progress").slideDown();
 });
 
-jQuery(document).ajaxStop(function(){
-  jQuery("#progress").slideUp();
+$(document).ajaxStop(function(){
+  $("#progress").slideUp();
 });
 
-jQuery.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
+$.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
 // Apply to individual radio button that makes another element visible when checked
-jQuery.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
+$.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
   if(!this.get(0)){ return  }
   showValue = this.get(0).value;
   radioGroup = $("input[name='" + this.get(0).name + "']");
   radioGroup.each(function(){
-    jQuery(this).click(function(){
-      jQuery(dependentElementSelector).visible(this.checked && this.value == showValue)
+    $(this).click(function(){
+      $(dependentElementSelector).visible(this.checked && this.value == showValue)
     });
     if(this.checked){ this.click() }
   });
@@ -75,10 +72,8 @@ format_product_autocomplete = function(data){
     html += "<span><strong>On Hand: </strong>" + variant['count_on_hand'] + "</span></div>";
   }
 
-
   return html
 }
-
 
 prep_product_autocomplete_data = function(data){
   return $.map(eval(data), function(row) {
@@ -110,7 +105,7 @@ prep_product_autocomplete_data = function(data){
   });
 }
 
-jQuery.fn.product_autocomplete = function(){
+$.fn.product_autocomplete = function(){
   $(this).autocomplete("/admin/products.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content"), {
       parse: prep_product_autocomplete_data,
       formatItem: function(item) {
@@ -129,10 +124,8 @@ jQuery.fn.product_autocomplete = function(){
     });
 }
 
-
-
-jQuery.fn.objectPicker = function(url){
-  jQuery(this).tokenInput(url + "&authenticity_token=" + AUTH_TOKEN, {
+$.fn.objectPicker = function(url){
+  $(this).tokenInput(url + "&authenticity_token=" + AUTH_TOKEN, {
     searchDelay          : 600,
     hintText             : strings.type_to_search,
     noResultsText        : strings.no_results,
@@ -141,27 +134,21 @@ jQuery.fn.objectPicker = function(url){
   });
 };
 
-jQuery.fn.productPicker = function(){
-  jQuery(this).objectPicker(ajax_urls.product_search_basic_json);
+$.fn.productPicker = function(){
+  $(this).objectPicker(ajax_urls.product_search_basic_json);
 }
-jQuery.fn.userPicker = function(){
-  jQuery(this).objectPicker(ajax_urls.user_search_basic_json);
+$.fn.userPicker = function(){
+  $(this).objectPicker(ajax_urls.user_search_basic_json);
 }
 
-jQuery(document).ready(function() {
-
-  jQuery('.tokeninput.products').productPicker();
-  jQuery('.tokeninput.users').userPicker();
-
-});
-
-function add_fields(target, association, content) {
+// Possible defunct
+add_fields = function(target, association, content) {
   var new_id = new Date().getTime();
   var regexp = new RegExp("new_" + association, "g");
   $(target).append(content.replace(regexp, new_id));
 }
 
-jQuery('a.remove_fields').live('click', function() {
+$('a.remove_fields').live('click', function() {
   $(this).prev("input[type=hidden]").val("1");
   $(this).closest(".fields").hide();
   return false;
@@ -172,13 +159,67 @@ $(".observe_field").live('change', function() {
   ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
   $(target).hide();
   $(ajax_indicator).show();
-  jQuery.ajax({ dataType: 'html',
-                url: $(this).attr("data-base-url")+encodeURIComponent($(this).val()),
-                type: 'get',
-                success: function(data){
-                  $(target).html(data);
-                  $(ajax_indicator).hide();
-                  $(target).show();
-                }
+  $.ajax({ dataType: 'html',
+           url: $(this).attr("data-base-url")+encodeURIComponent($(this).val()),
+           type: 'get',
+           success: function(data){
+             $(target).html(data);
+             $(ajax_indicator).hide();
+             $(target).show();
+           }
   });
+});
+
+$(document).ready(function(){
+
+  $('.tokeninput.products').productPicker();
+  $('.tokeninput.users').userPicker();
+
+  $('.datepicker').datepicker({
+       dateFormat: 'yy/mm/dd',
+       showOn: "button",
+       buttonImage: "/assets/datepicker/cal.gif",
+       buttonImageOnly: true
+  });
+
+  $(".select_properties_from_prototype").live("click", function(){
+    $("#busy_indicator").show();
+    var clicked_link = $(this);
+    $.ajax({ dataType: 'script', url: clicked_link.attr("href"), type: 'get',
+        success: function(data){
+          clicked_link.parent("td").parent("tr").hide();
+          $("#busy_indicator").hide();
+        }
+    });
+    return false;
+  });
+
+
+  $('table.sortable').ready(function(){
+    $('table.sortable tbody').sortable(
+      {
+        handle: '.handle',
+        update: function(event, ui) {
+          $("#progress").show();
+          positions = {};
+          type = '';
+          $.each($('table.sortable tbody tr'), function(position, obj){
+            reg = /(\w+_?)+_(\d+)/;
+            parts = reg.exec($(obj).attr('id'));
+            if (parts) { 
+              positions['positions['+parts[2]+']'] = position;
+              type = parts[1];
+            }
+          });
+          $.ajax({
+            type: 'POST',
+            dataType: 'script',
+            url: type+'s/update_positions',
+            data: positions,
+            success: function(data){ $("#progress").hide(); }
+          });
+        }
+      });
+  });
+
 });

@@ -1,44 +1,44 @@
-$j(function() { 
-  if ($j('#country_based').is(':checked')) {
+$(function() {
+  if ($('#country_based').is(':checked')) {
     show_country();
-  } else if ($j('#state_based').is(':checked')) {
+  } else if ($('#state_based').is(':checked')) {
     show_state();
-  } else {        
+  } else {
     show_zone();
   }
-  $j('#country_based').click(function() { show_country();} );
-  $j('#state_based').click(function() { show_state();} );
-  $j('#zone_based').click(function() { show_zone();} ); 
-})   
-                                                        
+  $('#country_based').click(function() { show_country();} );
+  $('#state_based').click(function() { show_state();} );
+  $('#zone_based').click(function() { show_zone();} );
+})
+
 var show_country = function() {
-  $j('#state_members :input').each(function() { $(this).prop("disabled", true); })
-  $j('#state_members').hide();
-  $j('#zone_members :input').each(function() { $(this).prop("disabled", true); })
-  $j('#zone_members').hide();
-  $j('#country_members :input').each(function() { $(this).prop("disabled", false); })
-  $j('#country_members').show();
+  $('#state_members :input').each(function() { $(this).prop("disabled", true); })
+  $('#state_members').hide();
+  $('#zone_members :input').each(function() { $(this).prop("disabled", true); })
+  $('#zone_members').hide();
+  $('#country_members :input').each(function() { $(this).prop("disabled", false); })
+  $('#country_members').show();
 };
 
 var show_state = function() {
-  $j('#country_members :input').each(function() { $(this).prop("disabled", true);
+  $('#country_members :input').each(function() { $(this).prop("disabled", true);
  })
-  $j('#country_members').hide();
-  $j('#zone_members :input').each(function() { $(this).prop("disabled", true);
+  $('#country_members').hide();
+  $('#zone_members :input').each(function() { $(this).prop("disabled", true);
  })
-  $j('#zone_members').hide();
-  $j('#state_members :input').each(function() { $(this).prop("disabled", false); })
-  $j('#state_members').show();
+  $('#zone_members').hide();
+  $('#state_members :input').each(function() { $(this).prop("disabled", false); })
+  $('#state_members').show();
 };
 
 var show_zone = function() {
-  $j('#state_members :input').each(function() { $(this).prop("disabled", true);
+  $('#state_members :input').each(function() { $(this).prop("disabled", true);
  })
-  $j('#state_members').hide();
-  $j('#country_members :input').each(function() { $(this).prop("disabled", true);
+  $('#state_members').hide();
+  $('#country_members :input').each(function() { $(this).prop("disabled", true);
  })
-  $j('#country_members').hide();
-  $j('#zone_members :input').each(function() { $(this).prop("disabled", false); })
-  $j('#zone_members').show();
+  $('#country_members').hide();
+  $('#zone_members :input').each(function() { $(this).prop("disabled", false); })
+  $('#zone_members').show();
 };
 

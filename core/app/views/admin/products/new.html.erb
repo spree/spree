@@ -39,7 +39,7 @@
       <p>
         <%= f.label :available_on, t("available_on") %><br />
         <%= f.error_message_on :available_on %>
-        <%= f.spree_date_picker :available_on, :style=>"width:150px" %>
+        <%= f.text_field :available_on, :class => 'datepicker', :style => "width:150px" %>
       </p>
 
 

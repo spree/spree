@@ -125,7 +125,7 @@ module Spree::BaseHelper
          taxons_tree(taxon, current_taxon, max_level - 1) 
         end
       end.join("\n").html_safe
-	  end
+    end
   end
 
   def available_countries

@@ -8,8 +8,8 @@ var is_cut = false;
 var last_rollback = null;
 
 var handle_ajax_error = function(XMLHttpRequest, textStatus, errorThrown){
-  jQuery.jstree.rollback(last_rollback);
-  jQuery("#ajax_error").show().html("<strong>" + server_error + "</strong><br/>" + taxonomy_tree_error);
+  $.jstree.rollback(last_rollback);
+  $("#ajax_error").show().html("<strong>" + server_error + "</strong><br/>" + taxonomy_tree_error);
 };
 
 //var handle_move = function(li, target, droppped, tree, rb) {
@@ -19,7 +19,7 @@ var handle_move = function(e, data) {
   var node = data.rslt.o;
   var new_parent = data.rslt.np;
 
-  jQuery.ajax({
+  $.ajax({
     type: "POST",
     dataType: "json",
     url: base_url + node.attr("id"),
@@ -37,7 +37,7 @@ var handle_create = function(e, data) {
   var position = data.rslt.position;
   var new_parent = data.rslt.parent;
 
-  jQuery.ajax({
+  $.ajax({
     type: "POST",
     dataType: "json",
     url: base_url,
@@ -55,7 +55,7 @@ var handle_rename = function(e, data) {
   var node = data.rslt.obj;
   var name = data.rslt.new_name;
 
-  jQuery.ajax({
+  $.ajax({
     type: "POST",
     dataType: "json",
     url: base_url + node.attr("id"),
@@ -70,7 +70,7 @@ var handle_delete = function(e, data){
 
   jConfirm('Are you sure you want to delete this taxon?', 'Confirm Taxon Deletion', function(r) {
     if(r){
-      jQuery.ajax({
+      $.ajax({
         type: "POST",
         dataType: "json",
         url: base_url + node.attr("id"),
@@ -78,7 +78,7 @@ var handle_delete = function(e, data){
         error: handle_ajax_error
       });
     }else{
-      jQuery.jstree.rollback(last_rollback);
+      $.jstree.rollback(last_rollback);
       last_rollback = null;
     }
   });
@@ -86,7 +86,7 @@ var handle_delete = function(e, data){
 };
 
 if(taxonomy_id!=undefined){
-  jQuery(document).ready(function(){
+  $(document).ready(function(){
     var conf = {
       json_data : {
         "data" : initial,
@@ -184,18 +184,18 @@ if(taxonomy_id!=undefined){
       "plugins" : [ "themes", "json_data", "dnd", "crrm", "contextmenu"]
     }
 
-    jQuery("#taxonomy_tree").jstree(conf)
+    $("#taxonomy_tree").jstree(conf)
       .bind("move_node.jstree", handle_move)
       .bind("remove.jstree", handle_delete)
       .bind("create.jstree", handle_create)
       .bind("rename.jstree", handle_rename);
 
-    jQuery("#taxonomy_tree").delegate("a", "dblclick", function (e) {
-     jQuery("#taxonomy_tree").jstree("rename", this)
+    $("#taxonomy_tree").delegate("a", "dblclick", function (e) {
+     $("#taxonomy_tree").jstree("rename", this)
     });
 
 
-    jQuery(document).keypress(function(e){
+    $(document).keypress(function(e){
       //surpress form submit on enter/return
       if (e.keyCode == 13){
           e.preventDefault();

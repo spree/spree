@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency('acts_as_list', '= 0.1.4')
   s.add_dependency('nested_set', '= 1.6.7')
-  s.add_dependency('rd_unobtrusive_date_picker', '= 0.1.0')
   s.add_dependency('rd_find_by_param', '= 0.1.1')
 
   s.add_dependency('jquery-rails', '>= 1.0.12')

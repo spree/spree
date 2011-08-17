@@ -1,4 +1,4 @@
-jQuery(document).ready(function(){
+$(document).ready(function(){
   add_address = function(addr){
     var html = "";
     if(addr!=undefined){

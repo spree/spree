@@ -36,7 +36,7 @@ var show_variant_images = function(variant_id) {
   }
 }
 
-jQuery(document).ready(function() {
+$(document).ready(function() {
   add_image_handlers();
   if($('#product-variants input[type=radio]').length > 0) {
     show_variant_images($('#product-variants input[type=radio]').eq(0).attr('value'));
