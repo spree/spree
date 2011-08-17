@@ -27,7 +27,7 @@ PATH
       deface (>= 0.6.1)
       faker (= 0.9.5)
       highline (= 1.5.1)
-      jquery-rails (>= 1.0.12)
+      jquery-rails (>= 1.0.13)
       kaminari (>= 0.12.4)
       meta_search (= 1.1.0.pre)
       nested_set (= 1.6.7)
