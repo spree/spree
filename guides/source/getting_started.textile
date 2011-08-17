@@ -208,7 +208,6 @@ Spree is actually what is known as a Rails Engine.  As of Rails 3.0 Rails Engine
 
 <shell>
 rails g spree:site
-rake spree:install
 </shell>
 
 INFO: If you have an existing Rails application with customizations (as opposed to just the starter app that we've shown here) you will want to make a note of any files that this task changes.  Its possible that it may alter your javascript or stylesheet files in undesirable ways.  You should check the differences via +git diff+ or some other process and manually merge the needed changes if necessary.
@@ -216,7 +215,7 @@ INFO: If you have an existing Rails application with customizations (as opposed 
 Spree also comes with sample data (products, orders, etc.)  If you'd like to install the migrations and assets associated with the sample data then you can run this additional rake task.
 
 <shell>
-rake spree_sample:install
+rake spree_sample:load
 </shell>
 
 h4. Populating the Database
@@ -234,7 +233,7 @@ You can also migrate the database in the more "traditional" rails manner using m
 <shell>
 rake db:migrate
 rake db:seed
-rake db:sample
+rake spree_sample:load
 rake db:admin:create
 </shell>
 
