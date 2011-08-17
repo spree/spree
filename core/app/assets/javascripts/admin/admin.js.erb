@@ -170,17 +170,21 @@ $(".observe_field").live('change', function() {
   });
 });
 
+handle_date_picker_fields = function(){
+  $('.datepicker').datepicker({
+    dateFormat: 'yy/mm/dd',
+    showOn: "button",
+    buttonImage: "<%= asset_path 'datepicker/cal.gif' %>",
+    buttonImageOnly: true
+  });
+}
+
 $(document).ready(function(){
 
   $('.tokeninput.products').productPicker();
   $('.tokeninput.users').userPicker();
 
-  $('.datepicker').datepicker({
-       dateFormat: 'yy/mm/dd',
-       showOn: "button",
-       buttonImage: "/assets/datepicker/cal.gif",
-       buttonImageOnly: true
-  });
+  handle_date_picker_fields();
 
   $(".select_properties_from_prototype").live("click", function(){
     $("#busy_indicator").show();

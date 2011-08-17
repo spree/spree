@@ -35,7 +35,6 @@ PATH
       rails (= 3.1.0.rc6)
       rd_find_by_param (= 0.1.1)
       rd_resource_controller
-      rd_unobtrusive_date_picker (= 0.1.0)
       state_machine (= 1.0.1)
       stringex (= 1.0.3)
     spree_dash (0.70.99)
@@ -207,7 +206,6 @@ GEM
       activerecord (~> 3.0)
       activesupport (~> 3.0)
     rd_resource_controller (1.0.1)
-    rd_unobtrusive_date_picker (0.1.0)
     rdoc (3.9.2)
     rspec (2.6.0)
       rspec-core (~> 2.6.0)

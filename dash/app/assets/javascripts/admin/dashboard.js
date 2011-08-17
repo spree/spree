@@ -1,4 +1,9 @@
-jQuery(document).ready(function(){  
+var orders_by_day_points = null;
+var best_selling_variants_points = null;
+var top_grossing_variants_points = null;
+var best_selling_taxons_points = null;
+
+  jQuery(document).ready(function(){  
 	function number_with_delimiter(number, delimiter, separator) {
 	  try {
 	    var delimiter = delimiter || ",";
@@ -47,45 +52,47 @@ jQuery(document).ready(function(){
 		jQuery('#orders_adjustment_total').text(number_with_delimiter(values[0].orders_adjustment_total));
 		jQuery('#orders_adjustment_total').text(number_with_delimiter(values[0].orders_adjustment_total));
 	}
-
-	var orders_by_day_settings = {
-		title: {
-			textColor: '#476D9B',
-			fontSize: '12pt',
-		}, 
-		grid: {background:'#fff', gridLineColor:'#fff',borderColor: '#476D9B'},
-	  axes:{
-			yaxis:{
-				label:'Order (Count)',
-				labelRenderer: jQuery.jqplot.CanvasAxisLabelRenderer,						
-				autoscale:true, 
-				tickOptions:{
-					formatString:'%d',
-					fontSize: '10pt',
-					textColor: '#476D9B'
-				},
-				min: 0
-			},	
-			xaxis:{	 
-				renderer:jQuery.jqplot.DateAxisRenderer,
-				rendererOptions:{tickRenderer:jQuery.jqplot.CanvasAxisTickRenderer},
-				tickOptions:{
-					formatString:'%b %#d, %y',
-					angle: -30,
-					fontSize: '10pt',
-					textColor: '#476D9B'
-				},
-				min: orders_by_day_points[0][0][0].replace(/-/g, "/"), 
-				max: orders_by_day_points[0][orders_by_day_points[0].length -1][0].replace(/-/g, "/")//,
-				//tickInterval: '1 day'
-			}
-		},
-		series:[{lineWidth:3, color: '#0095DA', fillAndStroke: true, fill: true, fillColor: '#E6F7FF'}],
-		highlighter: {
-			formatString: "Date: %s <br/>Value: %s ",
-			sizeAdjust: 7.5
-		}
-	};
+  
+  if(orders_by_day_points!=null){
+    var orders_by_day_settings = {
+      title: {
+        textColor: '#476D9B',
+        fontSize: '12pt',
+      }, 
+      grid: {background:'#fff', gridLineColor:'#fff',borderColor: '#476D9B'},
+      axes:{
+        yaxis:{
+          label:'Order (Count)',
+          labelRenderer: jQuery.jqplot.CanvasAxisLabelRenderer,						
+          autoscale:true, 
+          tickOptions:{
+            formatString:'%d',
+            fontSize: '10pt',
+            textColor: '#476D9B'
+          },
+          min: 0
+        },	
+        xaxis:{	 
+          renderer:jQuery.jqplot.DateAxisRenderer,
+          rendererOptions:{tickRenderer:jQuery.jqplot.CanvasAxisTickRenderer},
+          tickOptions:{
+            formatString:'%b %#d, %y',
+            angle: -30,
+            fontSize: '10pt',
+            textColor: '#476D9B'
+          },
+          min: orders_by_day_points[0][0][0].replace(/-/g, "/"), 
+          max: orders_by_day_points[0][orders_by_day_points[0].length -1][0].replace(/-/g, "/")//,
+          //tickInterval: '1 day'
+        }
+      },
+      series:[{lineWidth:3, color: '#0095DA', fillAndStroke: true, fill: true, fillColor: '#E6F7FF'}],
+      highlighter: {
+        formatString: "Date: %s <br/>Value: %s ",
+        sizeAdjust: 7.5
+      }
+    };
+  }
 
 	jQuery.jqplot('orders_by_day', orders_by_day_points, orders_by_day_settings);
 
