@@ -18,7 +18,7 @@ group :test do
   gem 'factory_girl_rails', '= 1.0.1'
   gem 'rcov'
   gem 'faker'
-  gem 'shoulda'
+  gem 'shoulda', '>= 3.0.0.beta'
 end
 
 group :cucumber do
