@@ -81,6 +81,21 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
         cd sandbox
         rails server
 
+Performance
+-----------
+
+You may noticed that your Spree store runs slowly in development mode.  This is a side-effect of how Rails works in development mode which is to continuous reload your Ruby objects on each request.  The introduction of the asset pipeline in Rails 3.1 made default performance in development mode significantly worse.  There are, however, a few tricks to speeding up performance.
+
+You can recompile your assets as follows:
+
+        $ bundle exec rake assets:precompile RAILS_ENV=development
+
+If you want to remove precompiled assets (recommended before you commit to git and push your changes) use the following rake task:
+
+        $ bundle exec rake assets:clean
+
+
+
 Running Tests
 -------------
 
