@@ -63,11 +63,6 @@ class Address < ActiveRecord::Base
   def self.default
     new :country_id => Spree::Config[:default_country_id]
   end
-  
-  def self.required_fields
-    validator = Address.validators.find{|v| v.kind_of?(ActiveModel::Validations::PresenceValidator)}
-    validator ? validator.attributes : []
-  end
 
   # can modify an address if it's not been used in an order (but checkouts controller has finer control)
   # def editable?
