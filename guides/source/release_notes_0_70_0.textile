@@ -43,9 +43,15 @@ One of the more interesting new features included in Rails 3.1 is the asset pipe
 This can be especially noticeable in development mode when using a single process application server like Webrick. This release of Spree includes a small tweak to the standard pre-compiling rake task that allows pre-compiling of assets for development mode.
 
 
-h4. Pre-compiling Assets
+h4. Pre-compiling in production
 
-Rail's already supports pre-compiling of assets which is intended to offload the overhead of generating and serving assets from the application server in production environments. To pre-compile assets for production  you would normally execute the following rake task on the production server.
+Rails supports pre-compiling of assets which is intended to offload the overhead of generating and serving assets from the application server in production environments. 
+
+Pre-compiling is not required for the asset pipeline to function correctly in production, if you choose to not pre-compile Rails will generate each asset only once and serve each subsequent request using Rack::Cache.
+
+Rack::Cache is generally sufficient for lower traffic sites, but pre-compiling will provide some additional speed increases by allowing the web server to serve all assets, including gzipped versions of javascript and css files. 
+
+To pre-compile assets for production  you would normally execute the following rake task (on the production server).
 
 <ruby>
   $ bundle exec rake assets:precompile
@@ -54,6 +60,8 @@ Rail's already supports pre-compiling of assets which is intended to offload the
 This would write all the assets to the <tt>public/assets</tt> directory while including an MD5 fingerprint in the filename for added caching benefits. 
 
 NOTE: In production all references to assets from views using image_tag, asset_path, javascript_include_tag, etc. will automatically include this fingerprint in the file name so the correct version will be served.
+
+h4. Pre-compiling for development
 
 Spree alters the behaviour of the precompile rake task so when you execute it passing the RAILS_ENV environmental variable, as follows:
 
