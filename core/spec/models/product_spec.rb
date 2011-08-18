@@ -85,6 +85,15 @@ describe Product do
       end
     end
 
+    context ".group_by_products_id.count" do
+      let(:product) { Factory(:product) }
+      it 'produces a properly formed ordered-hash key' do
+        expected_key = Product.column_names.map{|col_name| product.send(col_name)}
+        count_key = Product.group_by_products_id.count.keys.first
+        [expected_key, count_key].each{|val| val.map!{|e| e.is_a?(Time) ? e.strftime("%Y-%m-%d %H:%M:%S") : e}}
+        count_key.should == expected_key
+      end
+    end
 
   end
 
