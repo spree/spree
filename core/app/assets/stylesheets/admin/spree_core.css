@@ -9,7 +9,6 @@
  *= require ./admin-form
  *= require ./admin-typography.css
  *= require ./admin
- *= require ./autocomplete.css
  *= require ./edit_checkouts.css
  *= require ./grids.css
  *= require ./token-input.css

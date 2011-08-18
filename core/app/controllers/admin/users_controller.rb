@@ -21,7 +21,9 @@ class Admin::UsersController < Admin::ResourceController
       @search = User.registered.metasearch(params[:search])
       @collection = @search.relation.page(params[:page]).per(Spree::Config[:admin_products_per_page])
     else
-      @collection = User.includes(:bill_address => [:state, :country], :ship_address => [:state, :country]).
+      #disabling proper nested include here due to rails 3.1 bug
+      #@collection = User.includes(:bill_address => [:state, :country], :ship_address => [:state, :country]).
+      @collection = User.includes(:bill_address, :ship_address).
                         where("users.email #{LIKE} :search
                                OR addresses.firstname #{LIKE} :search
                                OR addresses.lastname #{LIKE} :search

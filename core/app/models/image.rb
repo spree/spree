@@ -10,6 +10,11 @@ class Image < Asset
   # we need to look at the write-queue for images which have not been saved yet
   after_post_process :find_dimensions
 
+  #used by admin products autocomplete
+  def mini_url
+    attachment.url(:mini, false)
+  end
+
   def find_dimensions
     temporary = attachment.queued_for_write[:original]
     filename = temporary.path unless temporary.nil?

@@ -32,7 +32,7 @@ $.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
 
 // Product autocompletion
 image_html = function(item){
-  return "<img src='/assets/products/" + item['images'][0]["id"] + "/mini/" + item['images'][0]['attachment_file_name'] + "'/>";
+  return "<img src='" + item['images'][0]["mini_url"] + "'/>";
 }
 
 format_product_autocomplete = function(data){
