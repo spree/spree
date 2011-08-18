@@ -7,13 +7,7 @@ $(document).ready(function(){
     update_target = $(this).attr("data-update");
     $.ajax({ dataType: 'script', url: this.href, type: "POST",
         data: {"line_item[variant_id]": $('#add_variant_id').val(),
-              "line_item[quantity]": $('#add_quantity').val()},
-        success: function(data){
-          $("#"+update_target).html(data);
-          $('#add_product_name').val('');
-          $('#add_variant_id').val('');
-          $('#add_quantity').val(1)
-        }
+              "line_item[quantity]": $('#add_quantity').val()}
     });
     return false;
   });

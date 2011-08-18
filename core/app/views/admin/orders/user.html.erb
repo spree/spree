@@ -17,8 +17,3 @@
   <%= f.hidden_field :number %>
   <%= render :partial => "user_form", :locals => {:f => f} %>
 <% end %>
-
-<% content_for :head do %>
-  <%= javascript_include_tag '/admin/javascripts/checkouts/edit.js' %>
-
-<% end %>

@@ -3,7 +3,7 @@ class Admin::LineItemsController < Admin::BaseController
   before_filter :load_order
   before_filter :load_line_item, :only => [:destroy, :update]
 
-  respond_to :html
+  respond_to :html, :js
 
   def create
     variant = Variant.find(params[:line_item][:variant_id])
