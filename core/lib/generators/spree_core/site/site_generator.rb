@@ -47,12 +47,6 @@ Disallow: /users
         template "app/assets/javascripts/admin/all.js"
         template "app/assets/stylesheets/store/all.css"
         template "app/assets/stylesheets/admin/all.css"
-        if @lib_name == 'spree'
-          template "app/assets/javascripts/store/spree.js"
-          template "app/assets/javascripts/admin/spree.js"
-          template "app/assets/stylesheets/store/spree.css"
-          template "app/assets/stylesheets/admin/spree.css"
-        end
       end
 
       def configure_application
