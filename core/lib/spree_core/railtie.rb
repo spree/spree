@@ -68,6 +68,10 @@ module SpreeCore
       app.config.filter_parameters += [:password, :password_confirmation, :number]
     end
 
+    # sets the manifests / assets to be precompiled
+    initializer "spree.assets.precompile" do |app|
+      app.config.assets.precompile = ['store/all.*', 'admin/all.*', 'admin/spree_dash.*', 'admin/orders/edit_form.js', '*.png', '*.jpg', '*.jpeg', '*.gif']
+    end
 
 
   end
