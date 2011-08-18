@@ -86,7 +86,7 @@ class Product < ActiveRecord::Base
 
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
     if ActiveRecord::Base.connection.tables.include?("products")
-      scope :group_by_products_id, { :group => "products." + Product.column_names.join(", products.") }
+      scope :group_by_products_id, { :group => Product.column_names.map{|col_name| "products.#{col_name}"} }
     end
   else
     scope :group_by_products_id, { :group => "products.id" }
