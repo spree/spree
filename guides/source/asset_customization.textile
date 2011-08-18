@@ -40,7 +40,7 @@ Spree also generates four top level manifests (all.css & all.js, see above) that
 
 h4. How core extensions (engines) manage assets
 
-All core engines have been updated to provide four (or less) asset manifests that are responsible for bundling up all the javascripts and stylesheets required for that engine.
+All core engines have been updated to provide four asset manifests that are responsible for bundling up all the javascripts and stylesheets required for that engine.
 
 For example, spree_core provides the following manifests:
 
@@ -60,8 +60,10 @@ For example, spree_core provides the following manifests:
 These core (engine specific) manifests are included by default by the relevant all.css or all.js in the host Spree application. For example, <tt>app/assets/javascripts/admin/all.js</tt> includes:
 
 <css>//= require admin/spree_core
-//= require admin/spree_promo
+//= require admin/spree_auth
+//= require admin/spree_api
 //= require admin/spree_dash
+//= require admin/spree_promo
 //= require_tree .</css>
 
 External javascript libraries, stylesheets and images have also be relocated into vendor/assets (again Rails 3.1 standard approach), and all core extensions no longer have public directories.
