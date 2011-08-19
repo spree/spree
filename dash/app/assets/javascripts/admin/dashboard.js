@@ -1,8 +1,3 @@
-var orders_by_day_points = null;
-var best_selling_variants_points = null;
-var top_grossing_variants_points = null;
-var best_selling_taxons_points = null;
-
 function number_with_delimiter(number, delimiter, separator) {
   try {
     var delimiter = delimiter || ",";
@@ -54,7 +49,7 @@ function handle_orders_total(r){
 
 jQuery(document).ready(function(){  
 
-  if(orders_by_day_points!=null){
+  if(typeof(orders_by_day_points)=="object"){
     var orders_by_day_settings = {
       title: {
         textColor: '#476D9B',
