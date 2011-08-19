@@ -13,15 +13,16 @@
         <% if @order.completed? %>
           <%= @order.user.nil? ? "Yes" : "No" %>
         <% else %>
+          <% guest = @order.user.nil? || @order.user.anonymous? %>
           <label class="sub">
-            <%= radio_button_tag :guest_checkout, true, @order.user.nil? %>
+            <%= radio_button_tag :guest_checkout, true, guest %>
             <%= t("yes") %>
           </label> &nbsp;
           <label class="sub">
-            <%= radio_button_tag :guest_checkout, false, !@order.user.nil?, :disabled => @order.cart? %>
+            <%= radio_button_tag :guest_checkout, false, !guest, :disabled => @order.cart? %>
             <%= t("no") %>
           </label>
-          <%= hidden_field_tag :user_id, @order.user_id %>
+          <%= text_field_tag :user_id, @order.user_id %>
         <% end %>
       </td>
     </tr>

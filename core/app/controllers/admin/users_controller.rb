@@ -54,9 +54,11 @@ class Admin::UsersController < Admin::ResourceController
     when 'basic'
       collection.map {|u| {'id' => u.id, 'name' => u.email}}.to_json
     else
-      collection.to_json(:include =>
-        {:bill_address => {:include => [:state, :country]},
-        :ship_address => {:include => [:state, :country]}})
+      address_fields = [:firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name, :state_id, :country_id]
+      includes = {:only => address_fields , :include => {:state => {:only => :name}, :country => {:only => :name}}}
+
+      collection.to_json(:only => [:id, :email], :include => 
+        {:bill_address => includes, :ship_address => includes})
     end
   end
 
