@@ -99,7 +99,7 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def best_selling_variants
-    li = LineItem.sum(:quantity, :group => :variant_id, :limit => 5)
+    li = LineItem.includes(:order).where("orders.state = 'complete'").sum(:quantity, :group => :variant_id, :limit => 5)
     variants = li.map do |v|
       variant = Variant.find(v[0])
       [variant.name, v[1] ]
@@ -108,8 +108,8 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def top_grossing_variants
-    quantity = LineItem.sum(:quantity, :group => :variant_id, :limit => 5)
-    prices = LineItem.sum(:price, :group => :variant_id, :limit => 5)
+    quantity = LineItem.includes(:order).where("orders.state = 'complete'").sum(:quantity, :group => :variant_id, :limit => 5)
+    prices = LineItem.includes(:order).where("orders.state = 'complete'").sum(:price, :group => :variant_id, :limit => 5)
     variants = quantity.map do |v|
       variant = Variant.find(v[0])
       [variant.name, v[1] * prices[v[0]]]
