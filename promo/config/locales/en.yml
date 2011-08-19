@@ -73,3 +73,5 @@ en:
       gte: greater than or equal to
   landing_page_rule:
     path: Path
+  promotion_action: Promotion Action
+  promotion_rule: Promotion Rule
