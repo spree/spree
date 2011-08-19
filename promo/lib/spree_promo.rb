@@ -4,7 +4,6 @@ require 'spree_promo_hooks'
 
 module SpreePromo
   class Engine < Rails::Engine
-    engine_name 'spree_promo'
 
     def self.activate
 
