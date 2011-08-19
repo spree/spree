@@ -1,4 +1,4 @@
-require 'spree_core'
+require File.expand_path("../../../core/lib/spree_core", __FILE__)
 
 module SpreeDash
   class Engine < Rails::Engine

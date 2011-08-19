@@ -1,6 +1,6 @@
-require 'spree_core'
-require 'spree_auth'
-require 'spree_api_hooks'
+require File.expand_path("../../../core/lib/spree_core", __FILE__)
+require File.expand_path("../../../auth/lib/spree_auth", __FILE__)
+require File.expand_path("../spree_api_hooks", __FILE__)
 
 module SpreeApi
   class Engine < Rails::Engine
