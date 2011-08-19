@@ -8,7 +8,6 @@ require 'spree_auth_hooks'
 
 module SpreeAuth
   class Engine < Rails::Engine
-    engine_name 'spree_auth'
 
     def self.activate
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
