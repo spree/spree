@@ -56,6 +56,11 @@ class Admin::OrdersController < Admin::BaseController
           shipping_method = @order.available_shipping_methods(:front_end).first
           if shipping_method
             @order.shipping_method = shipping_method
+            if params[:guest_checkout] == 'false' && params[:user_id].present?
+              @order.user_id = params[:user_id]
+              @order.user true
+            end
+            @order.save
             @order.create_shipment!
             return_path = edit_admin_order_shipment_path(@order, @order.shipment)
           else
