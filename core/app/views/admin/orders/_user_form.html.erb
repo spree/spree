@@ -41,3 +41,7 @@
 <p class="form-buttons" data-hook="buttons">
   <%= button @order.cart? ? t('continue') : t('update') %>
 </p>
+
+<% content_for :head do %>
+  <%= javascript_include_tag '/states.js', 'admin/address_states.js' %>
+<% end %>

@@ -70,7 +70,6 @@
 </table>
 
 <% content_for :head do %>
-  <%= javascript_include_tag 'store/states.js', 'admin/address_states.js' %>
   <script type="text/javascript">
     $(document).ready(function(){
       $('span#<%= name==t('shipping_address') ? "s" : "b" %>country select').change(function() { update_state('<%= name==t('shipping_address') ? "s" : "b" %>'); });
