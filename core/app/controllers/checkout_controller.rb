@@ -61,9 +61,23 @@ class CheckoutController < Spree::BaseController
   def load_order
     @order = current_order
     redirect_to cart_path and return unless @order and @order.checkout_allowed?
+    raise_insufficient_quantity and return unless inventory_available?
     redirect_to cart_path and return if @order.completed?
     @order.state = params[:state] if params[:state]
     state_callback(:before)
+  end
+
+  def inventory_available?
+    if Spree::Config[:allow_backorder_shipping] == false && Spree::Config[:track_inventory_levels] == true && Spree::Config[:create_inventory_units] == true
+      @order.line_items.each do |line_item|
+        return false unless line_item.variant.on_hand > 0
+      end
+    end
+  end
+
+  def raise_insufficient_quantity
+    flash[:error] = t('spree_inventory_error_flash_for_insufficient_quantity')
+    redirect_to cart_path
   end
 
   def state_callback(before_or_after = :before)
