@@ -4,13 +4,13 @@
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *= require jquery.alerts/jquery.alerts
  *= require jquery.alerts/jquery.alerts.spree
- *= require ./admin-reset
- *= require ./admin-tables
- *= require ./admin-form
- *= require ./admin-typography.css
- *= require ./admin
- *= require ./edit_checkouts.css
- *= require ./grids.css
- *= require ./token-input.css
+ *= require admin/admin-reset
+ *= require admin/admin-tables
+ *= require admin/admin-form
+ *= require admin/admin-typography.css
+ *= require admin/admin
+ *= require admin/edit_checkouts.css
+ *= require admin/grids.css
+ *= require admin/token-input.css
  *= require jquery-ui.datepicker
 */
