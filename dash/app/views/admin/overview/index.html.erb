@@ -159,8 +159,6 @@
 
       var pie_colors = [<%== @pie_colors.map{|c| "'#{c}'"}.join(",") %>];
     </script>
-    <%= javascript_include_tag 'admin/spree_dash' %>
-    <%= stylesheet_link_tag 'admin/spree_dash' %>
     <!--[if IE]><%= javascript_include_tag 'jqPlot/excanvas.min.js' %><![endif]-->
   <% end %>
 <% end %>
