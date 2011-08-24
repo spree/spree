@@ -4,7 +4,6 @@ require 'cancan'
 
 require 'spree/auth/config'
 require 'spree/token_resource'
-require 'spree_auth_hooks'
 
 module SpreeAuth
   class Engine < Rails::Engine
@@ -15,14 +14,9 @@ module SpreeAuth
         Rails.env.production? ? require(c) : load(c)
       end
 
-      # monkey patch until new version of devise comes out
-      # https://github.com/plataformatec/devise/commit/ec5bfe9119d0e1e633629793b0de1f58f89622dc
-      # Devise::IndifferentHash.class_eval do
-      #   def [](key)
-      #     super(convert_key(key))
-      #   end
-      #   def to_hash; Hash.new.update(self) end
-      # end
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/overrides/*.rb")) do |c|
+        Rails.application.config.cache_classes ? require(c) : load(c)
+      end
     end
 
     config.to_prepare &method(:activate).to_proc

@@ -3,3 +3,4 @@ Deface::Override.new(:virtual_path => "admin/users/edit",
                      :insert_after => "[data-hook='admin_user_edit_form'], #admin_user_edit_form[data-hook]",
                      :partial => "admin/users/api_fields",
                      :disabled => false)
+

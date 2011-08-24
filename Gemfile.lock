@@ -1,9 +1,3 @@
-GIT
-  remote: git://github.com/spree/spree_blue_theme.git
-  revision: b3f060dbf9c9268179d0e7b046d7aefb434ee4d1
-  specs:
-    spree_blue_theme (0.1.0)
-
 PATH
   remote: .
   specs:
@@ -285,6 +279,5 @@ DEPENDENCIES
   sass-rails (~> 3.1.0.rc)
   shoulda (>= 3.0.0.beta)
   spree!
-  spree_blue_theme!
   sqlite3
   uglifier

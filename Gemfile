@@ -43,4 +43,3 @@ else
 end
 
 gem "spree", :path => File.dirname(__FILE__)
-gem 'spree_blue_theme', :git => 'git://github.com/spree/spree_blue_theme.git'
