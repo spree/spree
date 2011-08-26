@@ -11,12 +11,14 @@ Order.class_eval do
     line_items.map {|li| li.variant.product}
   end
 
-  def update_adjustments_with_promotion_limiting
-    update_adjustments_without_promotion_limiting
-    return if adjustments.promotion.eligible.none?
-    most_valuable_adjustment = adjustments.promotion.eligible.max{|a,b| a.amount.abs <=> b.amount.abs}
-    ( adjustments.promotion.eligible - [most_valuable_adjustment] ).each{|adjustment| adjustment.update_attribute_without_callbacks(:eligible, false)}
+  unless self.instance_methods.include?("update_adjustments_with_promotion_limiting")
+    def update_adjustments_with_promotion_limiting
+      update_adjustments_without_promotion_limiting
+      return if adjustments.promotion.eligible.none?
+      most_valuable_adjustment = adjustments.promotion.eligible.max{|a,b| a.amount.abs <=> b.amount.abs}
+      ( adjustments.promotion.eligible - [most_valuable_adjustment] ).each{|adjustment| adjustment.update_attribute_without_callbacks(:eligible, false)}
+    end
+    alias_method_chain :update_adjustments, :promotion_limiting
   end
-  alias_method_chain :update_adjustments, :promotion_limiting
 
 end

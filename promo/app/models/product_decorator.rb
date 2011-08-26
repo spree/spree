@@ -1,4 +1,3 @@
-# put class_eval and other logic that depends on classes outside of the engine inside this block
 Product.class_eval do
   has_and_belongs_to_many :promotion_rules
 
