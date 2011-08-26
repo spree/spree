@@ -1,5 +1,5 @@
 <%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Customer Details"} %>
-<%= csrf_meta_tag %>
+<%= csrf_meta_tags %>
 
 <% if @order.cart? %>
   <div id="add-line-item" data-hook>
