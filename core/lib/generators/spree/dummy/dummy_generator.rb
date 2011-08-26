@@ -1,6 +1,6 @@
 require "rails/generators/rails/app/app_generator"
 
-module SpreeCore
+module Spree
   class DummyGenerator  < Rails::Generators::Base
     desc "Creates blank Rails application, installs Spree and all sample data"
 
@@ -93,7 +93,12 @@ module SpreeCore
     end
 
     def gemfile_path
-      '../../../../../Gemfile'
+      version_file = File.expand_path("../../Versionfile", Dir.pwd)
+      if File.exist?(version_file)
+        '../../../../Gemfile'
+      else
+        '../../../../../Gemfile'
+      end
     end
 
   end

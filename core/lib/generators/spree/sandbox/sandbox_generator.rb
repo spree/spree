@@ -1,7 +1,7 @@
 require "rails/generators/rails/app/app_generator"
 
-module SpreeCore
-  class SandboxGenerator < SpreeCore::DummyGenerator
+module Spree
+  class SandboxGenerator < Spree::DummyGenerator
     desc "Creates blank Rails application, installs Spree and all sample data"
 
     class_option :database, :default => ''

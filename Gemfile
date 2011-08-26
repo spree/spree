@@ -42,4 +42,4 @@ else
   gem "ruby-debug19"
 end
 
-gem "spree", :path => File.dirname(__FILE__)
+gemspec

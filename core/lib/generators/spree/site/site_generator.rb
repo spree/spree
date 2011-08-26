@@ -1,6 +1,6 @@
 require 'rails/generators'
 
-module SpreeCore
+module Spree
   class SiteGenerator < Rails::Generators::Base
     argument :after_bundle_only, :type => :string, :default => "false"
 
