@@ -107,10 +107,10 @@ class Creditcard < ActiveRecord::Base
     if payment_gateway.payment_profiles_supported?
       # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
       # so supply the authorization itself as well as the creditcard, rather than just the authorization code
-      response = payment_gateway.capture(payment, self, minimal_gateway_options(payment))
+      response = payment_gateway.capture(payment, self, minimal_gateway_options(payment, false))
     else
       # Standard ActiveMerchant capture usage
-      response = payment_gateway.capture((payment.amount * 100).round, payment.response_code, minimal_gateway_options(payment))
+      response = payment_gateway.capture((payment.amount * 100).round, payment.response_code, minimal_gateway_options(payment, false))
     end
 
     record_log payment, response
@@ -130,7 +130,7 @@ class Creditcard < ActiveRecord::Base
     payment_gateway = payment.payment_method
     check_environment(payment_gateway)
 
-    response = payment_gateway.void(payment.response_code, minimal_gateway_options(payment))
+    response = payment_gateway.void(payment.response_code, minimal_gateway_options(payment, false))
     record_log payment, response
 
     if response.success?
@@ -149,9 +149,9 @@ class Creditcard < ActiveRecord::Base
 
     amount = payment.credit_allowed >= payment.order.outstanding_balance.abs ? payment.order.outstanding_balance.abs : payment.credit_allowed.abs
     if payment_gateway.payment_profiles_supported?
-      response = payment_gateway.credit((amount * 100).round, self, payment.response_code, minimal_gateway_options(payment))
+      response = payment_gateway.credit((amount * 100).round, self, payment.response_code, minimal_gateway_options(payment, false))
     else
-      response = payment_gateway.credit((amount * 100).round, payment.response_code, minimal_gateway_options(payment))
+      response = payment_gateway.credit((amount * 100).round, payment.response_code, minimal_gateway_options(payment, false))
     end
 
     record_log payment, response
@@ -228,14 +228,15 @@ class Creditcard < ActiveRecord::Base
   # a billing address when authorizing/voiding a previously captured transaction.  So omits these
   # options in this case since they aren't necessary.
   def minimal_gateway_options(payment, totals=true)
+
     options = {:email    => payment.order.email,
                :customer => payment.order.email,
                :ip       => payment.order.ip_address,
                :order_id => payment.order.number}
     if totals
-      options.merge({ :shipping => payment.order.ship_total * 100,
-                      :tax      => payment.order.tax_total * 100,
-                      :subtotal => payment.order.item_total * 100 })
+      options.merge!({ :shipping => payment.order.ship_total * 100,
+                       :tax      => payment.order.tax_total * 100,
+                       :subtotal => payment.order.item_total * 100 })
     end
     options
   end
