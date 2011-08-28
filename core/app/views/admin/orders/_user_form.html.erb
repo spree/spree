@@ -1,26 +1,26 @@
 
-<h3><%= t("customer_details") %></h3>
+<h3><%= t(:customer_details) %></h3>
 <table class="index" data-hook="customer_guest">
   <thead>
-    <th colspan="8"><%= t('account') %></th>
+    <th colspan="8"><%= t(:account) %></th>
   </thead>
   <tbody>
     <tr data-hook="customer_fields">
       <td class="lbl-col"><%= f.label :email, t(:email)+':' %></td>
-      <td class="val-col" colspan="3"><%= f.text_field :email, :class => "fullwidth" %></td>
-      <td class="lbl-col"><label><%= t('guest_checkout') %>:</label></td>
+      <td class="val-col" colspan="3"><%= f.text_field :email, :class => 'fullwidth' %></td>
+      <td class="lbl-col"><label><%= t(:guest_checkout) %>:</label></td>
       <td class="val-col" colspan="3">
         <% if @order.completed? %>
-          <%= @order.user.nil? ? "Yes" : "No" %>
+          <%= @order.user.nil? ? t(:yes) : t(:no) %>
         <% else %>
           <% guest = @order.user.nil? || @order.user.anonymous? %>
           <label class="sub">
             <%= radio_button_tag :guest_checkout, true, guest %>
-            <%= t("yes") %>
+            <%= t(:yes) %>
           </label> &nbsp;
           <label class="sub">
             <%= radio_button_tag :guest_checkout, false, !guest, :disabled => @order.cart? %>
-            <%= t("no") %>
+            <%= t(:no) %>
           </label>
           <%= text_field_tag :user_id, @order.user_id %>
         <% end %>
@@ -31,15 +31,15 @@
 
 <h3><%= Address.model_name.human(:count => 2) %></h3>
 <%= f.fields_for :bill_address do |ba_form|  %>
-  <%= render :partial => "admin/shared/address_form", :locals => {:f => ba_form, :name => t('billing_address'), :use_billing => false} %>
+  <%= render :partial => 'admin/shared/address_form', :locals => {:f => ba_form, :name => t(:billing_address), :use_billing => false} %>
 <% end %>
 
 <%= f.fields_for :ship_address do |sa_form|  %>
-  <%= render :partial => "admin/shared/address_form", :locals => {:f => sa_form, :name => t('shipping_address'), :use_billing => true} %>
+  <%= render :partial => 'admin/shared/address_form', :locals => {:f => sa_form, :name => t(:shipping_address), :use_billing => true} %>
 <% end %>
 
 <p class="form-buttons" data-hook="buttons">
-  <%= button @order.cart? ? t('continue') : t('update') %>
+  <%= button @order.cart? ? t(:continue) : t(:update) %>
 </p>
 
 <% content_for :head do %>

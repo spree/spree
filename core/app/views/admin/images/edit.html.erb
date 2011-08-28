@@ -1,19 +1,19 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Images"} %>
+<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => I18n.t(:images)} %>
 
-<%= render "shared/error_messages", :target => @image %>
+<%= render 'shared/error_messages', :target => @image %>
 
 <%= form_for([:admin, @product, @image], :html => { :multipart => true }) do |f| %>
   <table class="basic-table" data-hook="edit_image">
     <tr data-hook="thumbnail">
-      <td><%= t("thumbnail") %>:</td>
+      <td><%= t(:thumbnail) %>:</td>
       <td><%= link_to(image_tag(@image.attachment.url(:mini)), @image.attachment.url(:product)) %></td>
     </tr>
-    <%= render :partial => "form", :locals => { :f => f } %>
+    <%= render :partial => 'form', :locals => { :f => f } %>
   </table>
   <p class="form-buttons" data-hook="buttons">
-    <%= button t("update") %>
-    <%= t('or') %> <%= link_to t("cancel"), admin_product_images_url(@product), :id => "cancel_link" %>
+    <%= button t(:update) %>
+    <%= t(:or) %> <%= link_to t(:cancel), admin_product_images_url(@product), :id => 'cancel_link' %>
   </p>
 <% end %>

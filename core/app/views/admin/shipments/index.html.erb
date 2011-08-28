@@ -6,7 +6,7 @@
   </ul>
   <br class='clear' />
 </div>
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Shipments"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => I18n.t(:shipments)} %>
 <table class="index">
   <tr data-hook="admin_shipments_index_headers">
     <th><%= t("shipment_number") %></th>

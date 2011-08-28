@@ -387,7 +387,7 @@ en:
   enable_login_via_openid: "Use OpenID instead"
   enable_mail_delivery: Enable Mail Delivery
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
-  enter_atleast_five_letters: Enter at least five letters of customer name
+  enter_at_least_five_letters: Enter at least five letters of customer name
   enter_password_to_confirm: "(we need your current password to confirm your changes)"
   environment: "Environment"
   error: error

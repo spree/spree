@@ -1,14 +1,14 @@
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Creditcards"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => I18n.t(:creditcards)} %>
 
 <%= form_tag do %>
-  <h3><%= t('refund') %></h3>
+  <h3><%= t(:refund) %></h3>
   <fieldset data-hook="credit">
     <p>
-      <label for="amount"><%= t("amount") %></label>
+      <label for="amount"><%= t(:amount) %></label>
       <%= text_field_tag :amount, @payment.amount %>
     </p>
     <p class="form-buttons">
-      <%= button t("make_refund") %>
-    </p>    
+      <%= button t(:make_refund) %>
+    </p>
   </fieldset>
 <% end %>

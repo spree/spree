@@ -1,6 +1,6 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Product Properties"} %>
+<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => I18n.t(:product_properties)} %>
 
 <%= render "shared/error_messages", :target => @product %>
 
@@ -8,35 +8,35 @@
   <table class="index">
     <thead>
       <tr data-hook="product_properties_header">
-        <th><%= t("property") %></th>
-        <th><%= t("value") %></th>
-        <th><%= t("action") %></th>
+        <th><%= t(:property) %></th>
+        <th><%= t(:value) %></th>
+        <th><%= t(:action) %></th>
       </tr>
     </thead>
     <tbody id="product_properties" data-hook>
       <%= f.fields_for :product_properties do |pp_form| %>
-        <%= render 'product_property_fields', :f => pp_form %>
+        <%= render 'product_property_fields', :locals => {:f => pp_form} %>
       <% end %>
     </tbody>
   </table>
 
-  <input type="hidden" name="clear_product_properties" value="true">
+  <input type="hidden" name="clear_product_properties" value="true" />
 
   <p class="add_product_properties" data-hook="add_product_properties">
-    <%= link_to_add_fields  icon('add') + ' ' + t("add_product_properties"),
-                            "tbody#product_properties",
+    <%= link_to_add_fields  icon('add') + ' ' + t(:add_product_properties),
+                            'tbody#product_properties',
                             f,
                             :product_properties %>
 
     &nbsp;&nbsp;
 
     <span id="new_ptype_link">
-      <%= link_to t("select_from_prototype"), available_admin_prototypes_url,
-                  :remote => true, 'data-update' => "prototypes" %>
+      <%= link_to t(:select_from_prototype), available_admin_prototypes_url,
+                  :remote => true, 'data-update' => 'prototypes' %>
     </span>
   </p>
   <div id="prototypes" data-hook></div>
-    <%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+    <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none', :id => 'busy_indicator' %>
     <br/>
   <%= render :partial => 'admin/shared/edit_resource_links' %>
 <% end %>
