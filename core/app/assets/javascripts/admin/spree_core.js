@@ -2,7 +2,6 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require jquery.cookie
-//= require jquery.suggest
 //= require jquery.tokeninput
 //= require jquery.delayedobserver
 //= require jquery.jstree/jquery.jstree
