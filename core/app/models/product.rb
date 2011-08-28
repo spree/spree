@@ -188,7 +188,7 @@ class Product < ActiveRecord::Base
 
     p.product_properties = self.product_properties.map {|q| r = q.dup; r.created_at = r.updated_at = nil; r}
 
-    image_dup = lambda {|i| j = i.dup; j.attachment = i.attachment.dup; j}
+    image_dup = lambda {|i| j = i.dup; j.attachment = i.attachment.clone; j}
     p.images = self.images.map {|i| image_dup.call i}
 
     variant = self.master.dup
