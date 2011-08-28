@@ -53,17 +53,3 @@
 <p data-hook="links">
     <%= link_to icon('add') + ' ' + t("new_image"), new_admin_product_image_url(@product), :id => "new_image_link" %>
 </p>
-
-<% content_for :head do %>
-  <script type="text/javascript">
-    jQuery(document).ready(function(){
-
-      jQuery('#new_image_link').click(function (event) {
-        event.preventDefault();
-        jQuery(this).hide();
-        jQuery.ajax({type: 'GET', url: this.href, data: ({authenticity_token: AUTH_TOKEN}), success: function(r){ jQuery('#images').html(r);} });
-      });
-
-    });
-  </script>
-<% end %>
