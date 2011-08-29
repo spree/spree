@@ -27,5 +27,12 @@ describe Admin::ProductsController do
       get :index, {:authenticity_token => "123456", :format => :json}
       response.should be_success
     end
+
+    it "should allow JSON request when token has URL(+,&,=) characters" do
+      controller.should_receive(:protect_against_forgery?).at_least(:once).and_return(true)
+      controller.stub :form_authenticity_token => "1+2=3&4'5/6?"
+      get :index, {:authenticity_token => "1+2%3D3%264%275/6%3F", :format => :json}
+      response.should be_success
+    end
   end
 end
