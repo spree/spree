@@ -106,7 +106,7 @@ prep_product_autocomplete_data = function(data){
 }
 
 $.fn.product_autocomplete = function(){
-  $(this).autocomplete("/admin/products.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content"), {
+  $(this).autocomplete("/admin/products.json?authenticity_token=" + escape($('meta[name=csrf-token]').attr("content")), {
       parse: prep_product_autocomplete_data,
       formatItem: function(item) {
         return format_product_autocomplete(item);
@@ -125,7 +125,7 @@ $.fn.product_autocomplete = function(){
 }
 
 $.fn.objectPicker = function(url){
-  $(this).tokenInput(url + "&authenticity_token=" + AUTH_TOKEN, {
+  $(this).tokenInput(url + "&authenticity_token=" + escape(AUTH_TOKEN), {
     searchDelay          : 600,
     hintText             : strings.type_to_search,
     noResultsText        : strings.no_results,

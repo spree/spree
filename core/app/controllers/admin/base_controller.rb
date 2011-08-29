@@ -22,7 +22,7 @@ class Admin::BaseController < Spree::BaseController
     return unless request.format.js? or request.format.json?
     return unless protect_against_forgery?
     auth_token = params[request_forgery_protection_token]
-    unless (auth_token and form_authenticity_token == auth_token.gsub(' ', '+'))
+    unless (auth_token and form_authenticity_token == URI.unescape(auth_token))
       raise(ActionController::InvalidAuthenticityToken)
     end
   end
