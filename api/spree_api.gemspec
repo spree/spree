@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_api'
   s.version     = version
   s.summary     = 'Provides RESTful access for Spree.'
-  s.description = 'Required dependancy for Spree'
+  s.description = 'Required dependency for Spree'
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'David North'

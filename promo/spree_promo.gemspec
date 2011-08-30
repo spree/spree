@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_promo'
   s.version     = version
   s.summary     = 'Promotion functionality for use with Spree.'
-  s.description = 'Required dependancy for Spree'
+  s.description = 'Required dependency for Spree'
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'David North'
@@ -18,5 +18,4 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency('spree_core',  version)
-  s.add_dependency('spree_auth',  version)
 end

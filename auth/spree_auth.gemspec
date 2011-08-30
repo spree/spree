@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_auth'
   s.version     = version
   s.summary     = 'Provides authentication and authorization services for use with Spree.'
-  s.description = 'Required dependancy for Spree'
+  s.description = 'Required dependency for Spree'
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'Sean Schofield'
