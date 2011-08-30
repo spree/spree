@@ -41,6 +41,13 @@ describe Api::OrdersController do
   end
 
   context "when authenticated as admin" do
+    # /api/admin/settings
+    # Spree::Config.get
+    # get all settings
+    it "should allow get index for admin" do
+    end
+    it "should restrict access for nonadmin users" do
+    end
   end
 
   context "when no HTTP_AUTHORIZATION" do

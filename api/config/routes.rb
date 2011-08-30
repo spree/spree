@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
+    match '/settings' => "settings#index"
     resources :shipments, :except => [:new,:edit] do
       put :event, :on => :member
       resources :inventory_units, :except => [:new,:edit] do
