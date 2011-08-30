@@ -2,9 +2,6 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.1.0.rc8'
 
-# Resolved issue with bcrypt-ruby dependency
-gem 'devise', :git => 'git://github.com/plataformatec/devise.git'
-
 gem 'json'
 gem 'sqlite3'
 # Gems used only for assets and not required
