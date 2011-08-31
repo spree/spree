@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_dash'
   s.version     = version
   s.summary     = 'Overview dashboard for use with Spree.'
-  s.description = 'Required dependancy for Spree'
+  s.description = 'Required dependency for Spree'
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'Brian Quinn'
