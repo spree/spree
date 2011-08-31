@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_core'
   s.version     = version
   s.summary     = 'Core e-commerce functionality for the Spree project.'
-  s.description = 'Required dependancy for Spree'
+  s.description = 'Required dependency for Spree'
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'Sean Schofield'
@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency('rd_resource_controller')
   s.add_dependency('meta_search', '= 1.1.0.pre')
   s.add_dependency('activemerchant', '= 1.17.0')
-  s.add_dependency('rails', '= 3.1.0.rc6')
+  s.add_dependency('rails', '= 3.1.0')
   s.add_dependency('kaminari', '>= 0.12.4')
   s.add_dependency('deface', '>= 0.6.1')
 end
