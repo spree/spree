@@ -1,3 +1,5 @@
-Factory.define(:taxonomy) do |record|
-  record.name "Brand"
+FactoryGirl.define do
+  factory :taxonomy do
+    name 'Brand'
+  end
 end

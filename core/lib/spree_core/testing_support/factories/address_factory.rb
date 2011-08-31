@@ -1,20 +1,21 @@
-Factory.define :address do |f|
-  f.firstname 'John'
-  f.lastname 'Doe'
-  f.address1 '10 Lovely Street'
-  f.address2 'Northwest'
-  f.city   "Herndon"
-  f.zipcode '20170'
-  f.phone '123-456-7890'
-  f.alternative_phone "123-456-7899"
+FactoryGirl.define do
+  factory :address do
+    firstname 'John'
+    lastname 'Doe'
+    address1 '10 Lovely Street'
+    address2 'Northwest'
+    city   'Herndon'
+    zipcode '20170'
+    phone '123-456-7890'
+    alternative_phone '123-456-7899'
 
-  f.state  { |address| address.association(:state) }
-  f.country do |address|
-    if address.state
-      address.state.country
-    else
-      address.association(:country)
+    state { association :state }
+    country do
+      if state
+        state.country
+      else
+        association :country
+      end
     end
   end
 end
-

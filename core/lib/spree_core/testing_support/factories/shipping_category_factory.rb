@@ -1,5 +1,7 @@
-Factory.sequence(:shipping_category_sequence) {|n| "ShippingCategory ##{n}"}
+FactoryGirl.define do
+  sequence(:shipping_category_sequence) {|n| "ShippingCategory ##{n}"}
 
-Factory.define(:shipping_category) do |record|
-  record.name { Factory.next(:shipping_category_sequence) } 
+  factory :shipping_category do
+    name { Factory.next(:shipping_category_sequence) }
+  end
 end

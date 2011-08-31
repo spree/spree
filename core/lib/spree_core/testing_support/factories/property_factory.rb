@@ -1,4 +1,6 @@
-Factory.define :property do |f|
-  f.name 'baseball_cap_color'
-  f.presentation 'cap color'
+FactoryGirl.define do
+  factory :property do
+    name 'baseball_cap_color'
+    presentation 'cap color'
+  end
 end

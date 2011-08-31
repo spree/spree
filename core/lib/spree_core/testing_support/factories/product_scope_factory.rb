@@ -1,6 +1,7 @@
-Factory.define :product_scope do |f|
-  f.product_group { Factory(:product_group) }
-  f.name "on_hand"
-  f.arguments "some arguments"
+FactoryGirl.define do
+  factory :product_scope do
+    product_group { Factory(:product_group) }
+    name 'on_hand'
+    arguments 'some arguments'
+  end
 end
-
