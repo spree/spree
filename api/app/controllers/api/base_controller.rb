@@ -13,7 +13,6 @@ class Api::BaseController < Spree::BaseController
   end
 
   def show
-    puts @object
     respond_with(@object) do |format|
       format.json { render :json => @object.to_json(object_serialization_options) }
     end
@@ -82,7 +81,6 @@ class Api::BaseController < Spree::BaseController
     def load_resource
       if member_action?
         @object ||= load_resource_instance
-        puts "load_resource #{@object}"
         instance_variable_set("@#{object_name}", @object)
       else
         @collection ||= collection
@@ -91,12 +89,9 @@ class Api::BaseController < Spree::BaseController
     end
 
     def load_resource_instance
-      puts "load_resource_instance"
       if new_actions.include?(params[:action].to_sym)
-        puts 'first'
         build_resource
       elsif params[:id]
-        puts 'second'
         find_resource
       end
     end
