@@ -1,4 +1,6 @@
-Factory.define :mail_method do |f|
-  f.environment { Rails.env }
-  f.active true
+FactoryGirl.define do
+  factory :mail_method do
+    environment { Rails.env }
+    active true
+  end
 end

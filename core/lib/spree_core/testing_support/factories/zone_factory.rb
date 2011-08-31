@@ -1,18 +1,18 @@
-Factory.sequence(:zone_sequence) {|n| "Zone ##{n}"}
+FactoryGirl.define do
+  factory :global_zone, :class => Zone do
+    name 'GlobalZone'
+    description { Faker::Lorem.sentence }
+    zone_members do |proxy|
+      zone = proxy.instance_eval{@instance}
+      Country.all.map{|c| ZoneMember.create({:zoneable => c, :zone => zone})}
+    end
+  end
 
-Factory.define(:global_zone, :class => Zone) do |record|
-  record.name "GlobalZone"
-  record.description { Faker::Lorem.sentence }
-  record.zone_members {|proxy|
-    zone = proxy.instance_eval{@instance}
-    Country.find(:all).map{|c| ZoneMember.create({:zoneable => c, :zone => zone})}
-  }
-end
-
-Factory.define(:zone) do |f|
-  f.name { Faker::Lorem.words }
-  f.description { Faker::Lorem.sentence }
-  f.zone_members do |member|
-    [ZoneMember.create(:zoneable => Factory(:country) )]
+  factory :zone do
+    name { Faker::Lorem.words }
+    description { Faker::Lorem.sentence }
+    zone_members do
+      [ZoneMember.create(:zoneable => Factory(:country) )]
+    end
   end
 end

@@ -1,10 +1,12 @@
-Factory.define :option_value do |f|
-  f.name "Size"
-  f.presentation "S"
-  f.association :option_type
-end
+FactoryGirl.define do
+  factory :option_value do
+    name 'Size'
+    presentation 'S'
+    association :option_type
+  end
 
-Factory.define :option_type do |f|
-  f.name "foo-size"
-  f.presentation "Size"
+  factory :option_type do
+    name 'foo-size'
+    presentation 'Size'
+  end
 end

@@ -1,5 +1,7 @@
-Factory.define(:taxon) do |record|
-  record.name "Ruby on Rails"
-  record.taxonomy { Factory(:taxonomy) }
-  record.parent_id nil
+FactoryGirl.define do
+  factory :taxon do
+    name 'Ruby on Rails'
+    taxonomy { Factory(:taxonomy) }
+    parent_id nil
+  end
 end
