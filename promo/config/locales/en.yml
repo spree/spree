@@ -24,8 +24,8 @@ en:
   promotions: Promotions
   promotion_form:
     match_policies:
-      all: Match any of these rules
-      any: Match all of these rules
+      all: Match all of these rules
+      any: Match any of these rules
   promotions_description: Manage offers and coupons with promotions
   promotion_action_types:
     create_adjustment:
