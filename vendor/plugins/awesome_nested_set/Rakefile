@@ -5,7 +5,7 @@ rescue LoadError
   exit 1
 end
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc/task'
 require 'rcov/rcovtask'
 require "load_multi_rails_rake_tasks" 
 

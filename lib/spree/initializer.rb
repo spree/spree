@@ -42,7 +42,7 @@ module Spree
       end
 
       # Provide the load paths for the Spree installation
-      def default_load_paths
+      def default_autoload_paths
         paths = ["#{SPREE_ROOT}/test/mocks/#{environment}"]
 
         # Add the app's controller directory
@@ -158,6 +158,7 @@ module Spree
       extension_loader.add_controller_paths
       super
     end
+    
 
     def initialize_metal
       Rails::Rack::Metal.metal_paths += ["#{SPREE_ROOT}/app/metal"]

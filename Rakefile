@@ -2,7 +2,7 @@ require(File.join(File.dirname(__FILE__), 'config', 'boot'))
 
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc/task'
 
 require 'tasks/rails'
 
@@ -23,8 +23,9 @@ begin
     s.executables = ['spree']
     s.rubyforge_project = 'spree'
     s.version = Spree::Version
-    s.add_dependency 'rake', '>= 0.7.1'
-    s.add_dependency 'rails', '= 2.3.8'
+    s.add_dependency 'rake', '>= 0.9.2'
+    s.add_dependency 'rdoc', '>= 3.9.4'
+    s.add_dependency 'rails', '= 2.3.12'
     s.add_dependency 'rack', '>= 1.1.0'
     s.add_dependency 'highline', '= 1.5.1'
     s.add_dependency 'authlogic', '2.1.3'
