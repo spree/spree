@@ -20,7 +20,7 @@ Rails::Initializer.run do |config|
   # config.plugins = %W( exception_notification ssl_requirement )
 
   # Add additional load paths for your own custom dirs
-  config.load_paths += %W( #{RAILS_ROOT}/../lib )
+  config.autoload_paths += %W( #{RAILS_ROOT}/../lib )
 
   # Force all environments to use the same logger level 
   # (by default production uses :info, the others :debug)
