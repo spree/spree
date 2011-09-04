@@ -13,27 +13,17 @@
   right: 10px;
   top: 10px;
 }
-
-
 .products_rule_products_source_field label {
   display: inline;
 }
-
-
-
 .edit_promotion #general_fields, .edit_promotion #expiry_fields {
   float: left;
   width: 46%;
 }
-
 .edit_promotion #general_fields {
   margin-right: 10px;
 }
-
-.edit_promotion #expiry_fields {
-
-}
-
+.edit_promotion #expiry_fields {}
 .edit_promotion #starts_at_field, .edit_promotion #expires_at_field {
   width: 200px;
   float: left;
@@ -52,4 +42,3 @@
   right: 30px;
   bottom: 20px;
 }
-
