@@ -4,7 +4,7 @@ module Spree::Checkout
     block_accessor :edit_hook, :update_hook
     
     def dup
-      returning self.class.new do |duplicate|
+      self.class.new.tap do |duplicate|
         duplicate.instance_variable_set(:@collector, wants.dup)
         duplicate.instance_variable_set(:@before, before.dup)             unless before.nil?
         duplicate.instance_variable_set(:@after, after.dup)               unless after.nil?
