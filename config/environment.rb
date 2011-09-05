@@ -36,7 +36,7 @@ Spree::Initializer.run do |config|
   config.gem 'chronic', :version => '0.2.3'
   config.gem 'whenever', :lib => false, :version => '0.3.7'
   config.gem 'searchlogic', :version => '2.3.5'
-  config.gem 'will_paginate', :lib => 'will_paginate', :version => '2.3.14'
+  config.gem 'will_paginate', :lib => 'will_paginate', :version => '2.3.16'
   config.gem 'state_machine', :lib => 'state_machine', :version => '0.9.2'
   config.gem "faker", :version => '0.3.1'
   config.gem 'paperclip', :version => '>=2.3.1.1'
