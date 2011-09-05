@@ -1,31 +1,27 @@
 require "rails/generators/rails/app/app_generator"
 
 module SpreeCore
-  module Generators
-    class SandboxGenerator < SpreeCore::Generators::DummyGenerator
-      desc "Creates blank Rails application, installs Spree and all sample data"
+  class SandboxGenerator < SpreeCore::DummyGenerator
+    desc "Creates blank Rails application, installs Spree and all sample data"
 
-      class_option :database, :default => ''
+    class_option :database, :default => ''
 
-      # skip cucumber environment for sandbox
-      def cucumber_environment
-      end
+    # skip cucumber environment for sandbox
+    def cucumber_environment
+    end
 
-      protected
-      def dummy_path
-        'sandbox'
-      end
+    protected
+    def dummy_path
+      'sandbox'
+    end
 
-      def gemfile_path
-        '../../../Gemfile'
-      end
+    def gemfile_path
+      '../../../Gemfile'
+    end
 
-      def module_name
-        'Sandbox'
-      end
-
+    def module_name
+      'Sandbox'
     end
 
   end
 end
-

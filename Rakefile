@@ -92,8 +92,8 @@ desc "Creates a sandbox application for simulating the Spree code in a deployed 
 task :sandbox do
   require 'spree_core'
 
-  SpreeCore::Generators::SandboxGenerator.start ["--lib_name=spree", "--database=#{ENV['DB_NAME']}"]
-  SpreeCore::Generators::SiteGenerator.start
+  SpreeCore::SandboxGenerator.start ["--lib_name=spree", "--database=#{ENV['DB_NAME']}"]
+  SpreeCore::SiteGenerator.start
 
   cmd = "bundle exec rake db:bootstrap AUTO_ACCEPT=true"; puts cmd; system cmd
 end
