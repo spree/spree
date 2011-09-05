@@ -129,7 +129,7 @@ module Spree
 
 
     def initialize_framework_views
-      view_paths = returning [] do |arr|
+      view_paths = [].tap do |arr|
         # Add the singular view path if it's not in the list
         arr << configuration.view_path if !configuration.view_paths.include?(configuration.view_path)
         # Add the default view paths

@@ -15,7 +15,7 @@ module ResourceController
     delegate :flash, :flash_now, :after, :response, :wants, :to => :success
     
     def dup
-      returning self.class.new do |duplicate|
+      self.class.new.tap do |duplicate|
         duplicate.instance_variable_set(:@success, success.dup)
         duplicate.instance_variable_set(:@fails,   fails.dup)
         duplicate.instance_variable_set(:@before,  before.dup) unless before.nil?

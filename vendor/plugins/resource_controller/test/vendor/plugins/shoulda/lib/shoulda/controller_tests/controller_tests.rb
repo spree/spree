@@ -446,7 +446,7 @@ module ThoughtBot # :nodoc:
         end
 
         def get_existing_record(res) # :nodoc:
-          returning(instance_variable_get("@#{res.object}")) do |record|
+            (instance_variable_get("@#{res.object}")).tap do |record|
             assert(record, "This test requires you to set @#{res.object} in your setup block")    
           end
         end

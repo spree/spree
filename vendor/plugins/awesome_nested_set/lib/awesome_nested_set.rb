@@ -60,9 +60,9 @@ module CollectiveIdea #:nodoc:
             extend Columns
             extend ClassMethods
             
-            belongs_to :parent, :class_name => self.base_class.class_name,
+            belongs_to :parent, :class_name => self.base_class.model_name,
               :foreign_key => parent_column_name
-            has_many :children, :class_name => self.base_class.class_name,
+            has_many :children, :class_name => self.base_class.model_name,
               :foreign_key => parent_column_name, :order => quoted_left_column_name
 
             attr_accessor :skip_before_destroy
@@ -149,7 +149,7 @@ module CollectiveIdea #:nodoc:
         def each_root_valid?(roots_to_validate)
           left = right = 0
           roots_to_validate.all? do |root|
-            returning(root.left > left && root.right > right) do
+            (root.left > left && root.right > right).tap do
               left = root.left
               right = root.right
             end
