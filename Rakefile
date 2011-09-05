@@ -37,7 +37,7 @@ begin
     s.add_dependency 'chronic', '0.2.3'
     s.add_dependency 'whenever', "0.3.7"
     s.add_dependency 'searchlogic', "2.3.5"
-    s.add_dependency 'will_paginate', "2.3.14"
+    s.add_dependency 'will_paginate', "2.3.16"
     s.add_dependency 'state_machine', "0.9.2"
     s.add_dependency 'faker', "0.3.1"
     s.add_dependency 'paperclip', "= 2.3.1.1"
