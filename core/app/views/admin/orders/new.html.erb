@@ -1,16 +1,16 @@
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => I18n.t(:order_details)} %>
 <%= csrf_meta_tags %>
 
 <div data-hook="admin_order_new_header">
-  <h2><%= t("new_order")%></h2>
+  <h2><%= t(:new_order)%></h2>
   <%= render 'shared/error_messages', :target => @order %>
 </div>
 
-<%= render :partial => "add_product" %>
+<%= render :partial => 'add_product' %>
 
 <div data-hook="admin_order_new_form">
   <div id="order-form-wrapper">
-    <%= render :partial => "form" %>
+    <%= render :partial => 'form' %>
   </div>
 </div>
 

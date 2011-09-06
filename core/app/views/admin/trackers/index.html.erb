@@ -3,21 +3,21 @@
 <div class="toolbar" data-hook="toolbar">
   <ul class="actions">
     <li>
-      <%= button_link_to t("new_tracker"), new_object_url, :icon => 'add', :id => 'admin_new_tracker_link'  %>
+      <%= button_link_to t(:new_tracker), new_object_url, :icon => 'add', :id => 'admin_new_tracker_link'  %>
     </li>
   </ul>
   <br class="clear">
 </div>
 
-<h1><%= t("analytics_trackers") %></h1>
+<h1><%= t(:analytics_trackers) %></h1>
 
 <table class="index">
   <thead>
     <tr data-hook="admin_trackers_index_headers">
       <th><%= t(:google_analytics_id) %></th>
-      <th><%= t("environment") %></th>
-      <th><%= t("active") %></th>
-      <th><%= t("action") %></th>
+      <th><%= t(:environment) %></th>
+      <th><%= t(:active) %></th>
+      <th><%= t(:action) %></th>
     </tr>
   </thead>
   <tbody>
@@ -27,8 +27,8 @@
         <td><%= tracker.environment.to_s.titleize %></td>
         <td><%= tracker.active ? t(:yes) : t(:no) %></td>
         <td>
-        	<%= link_to_edit tracker %> &nbsp;
-        	<%= link_to_delete tracker %>
+          <%= link_to_edit tracker %> &nbsp;
+          <%= link_to_delete tracker %>
         </td>
       </tr>
     <% end %>

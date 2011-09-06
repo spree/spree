@@ -2,20 +2,20 @@
   <div class="toolbar" data-hook="toolbar">
     <ul class="actions">
       <li>
-        <%= button_link_to t("new_return_authorization"), new_admin_order_return_authorization_url(@order), :icon => 'add' %>
+        <%= button_link_to t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'add' %>
       </li>
     </ul>
-    <br class='clear' />
+    <br class="clear" />
   </div>
 <% end %>
 
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Return Authorizations"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => I18n.t(:return_authorizations)} %>
 
 <table class="index">
   <tr data-hook="rma_header">
-    <th><%= t("rma_number") %></th>
-    <th><%= t("status") %></th>
-    <th><%= t("amount") %></th>
+    <th><%= t(:rma_number) %></th>
+    <th><%= t(:status) %></th>
+    <th><%= t(:amount) %></th>
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
     <th></th>
   </tr>
@@ -37,9 +37,9 @@
   <% end %>
   <% unless @order.inventory_units.any? &:shipped? %>
     <tr data-hook="rma_cannont_create">
-      <td colspan="5"><%= t("cannot_create_returns") %></td>
+      <td colspan="5"><%= t(:cannot_create_returns) %></td>
     </tr>
   <% end %>
 </table>
 
-<%= button_link_to t('continue'), admin_orders_url %>
+<%= button_link_to t(:continue), admin_orders_url %>

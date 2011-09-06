@@ -1,13 +1,13 @@
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Adjustments"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => I18n.t(:adjustments)} %>
 
-<h2><%= t("adjustment")%></h2>
+<h2><%= t(:adjustment)%></h2>
 
-<%= render "shared/error_messages", :target => @adjustment %>
+<%= render 'shared/error_messages', :target => @adjustment %>
 <%= form_for(@adjustment, :url => admin_order_adjustment_path(@order, @adjustment), :html => { :method => :put}) do |f| %>
-  <%= render :partial => "form", :locals => {:f => f} %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
 
   <p class="form-buttons" data-hook="buttons">
-    <%= button t('continue') %>
-    <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_adjustments_url(@order) %>
+    <%= button t(:continue) %>
+    <%= t(:or) %> <%= link_to t('actions.cancel'), admin_order_adjustments_url(@order) %>
   </p>
 <% end %>

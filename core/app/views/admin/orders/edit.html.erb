@@ -1,20 +1,20 @@
 <%= csrf_meta_tags %>
-<div class='order-links' data-hook="admin_order_edit_buttons">
-  <div class='toolbar'>
+<div class="order-links" data-hook="admin_order_edit_buttons">
+  <div class="toolbar">
     <%= event_links %>
   </div>
-  <div class='toolbar'>
-    <%= button_link_to(t("resend"), resend_admin_order_url(@order), :method => :post, :icon => 'send-email') if @order.user %>
+  <div class="toolbar">
+    <%= button_link_to(t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'send-email') if @order.user %>
   </div>
 </div>
 
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Order Details"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => I18n.t(:order_details)} %>
 
 <div data-hook="admin_order_edit_header">
-  <%= render "shared/error_messages", :target => @order %>
+  <%= render 'shared/error_messages', :target => @order %>
 </div>
 
-<%= render :partial => "add_product" %>
+<%= render :partial => 'add_product' %>
 
 <div data-hook="admin_order_edit_form">
   <div id="order-form-wrapper">

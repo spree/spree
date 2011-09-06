@@ -3,19 +3,19 @@
 <%= render "shared/error_messages", :target => @user %>
 
 <div id="new-customer">
-  <h2><%= t("new_customer") %></h2>
+  <h2><%= t(:new_customer) %></h2>
 
   <div data-hook="signup">
 
     <%= form_for(:user, :url => registration_path(@user)) do |f| %>
 
       <div data-hook="signup_inside_form"%>
-        <%= render 'shared/user_form', :f => f %>
+        <%= render 'shared/user_form', :locals => {:f => f} %>
         <p><%= submit_tag t("create"), :class => 'button primary' %></p>
       </div>
 
     <% end %>
-    <%= t("or") %> <%= link_to t("login_as_existing"), login_path %>
+    <%= t(:or) %> <%= link_to t(:login_as_existing), login_path %>
 
   </div>
 

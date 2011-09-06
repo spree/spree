@@ -1,13 +1,13 @@
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "History"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => I18n.t(:history)} %>
 
-<h2><%= t("history")%></h2>
+<h2><%= t(:history)%></h2>
 
 <table class="index">
   <tr data-hook="history_header">
-    <th><%= t("event") %></th>
-    <th><%= t("from_state") %></th>
-    <th><%= t("to_state") %></th>
-    <th><%= t("user") %></th>
+    <th><%= t(:event) %></th>
+    <th><%= t(:from_state) %></th>
+    <th><%= t(:to_state) %></th>
+    <th><%= t(:user) %></th>
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
   </tr>
   <% @order.state_events.sort.each do |event| %>
@@ -21,9 +21,9 @@
   <% end %>
   <% if @order.state_events.empty? %>
     <tr data-hook="history_none">
-      <td colspan="5"><%= t("none_available") %></td>
+      <td colspan="5"><%= t(:none_available) %></td>
     </tr>
   <% end %>
 </table>
 
-<%= button_link_to t('continue'), admin_orders_url %>
+<%= button_link_to t(:continue), admin_orders_url %>

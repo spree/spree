@@ -1,7 +1,7 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Product Details"} %>
-<%= render "shared/error_messages", :target => @product %>
+<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => I18n.t(:product_details)} %>
+<%= render 'shared/error_messages', :target => @product %>
 
 <%= form_for([:admin, @product], :html => { :method => :put, :multipart => true }) do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
