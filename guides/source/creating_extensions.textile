@@ -11,27 +11,101 @@ After this guide you should understand:
 
 endprologue.
 
-h3. Getting Started
+h3. Extension Basics
 
-Spree comes with a handy generator for creating a new Spree application.  If you are creating the extension within the context of a Rails application with the Spree gem enabled then this is a breeze.  If you wanted to create a new extension called "foofah" you would create as follows:
+There are a few basic steps to know when it comes to creating your own extension.  We'll walk you through how to create, maintain and test your extensions in the next few sections.
+
+h4. Integrated vs. Standalone
+
+Extensions can be createe in their own standalone directory (like the ones shared on Github) or they can be created within your Rails application.  We refer to the extensions that sit in an existing Rails application as "integrated" extensions.
+
+Integrated extensions are usesful during the active development phase of your store.  Instead of switching projects all of the time you can just make little tweaks to your extension inside of your store repo.  Generally you would only do this if you intended to one day share the extension with someone else (or reuse it elsewhere in a private project.)
+
+INFO: The distinction between standlone and integrated extensions is not very important.  The instructions for this guide can be assumed to apply to both cases (unless stated otherwise.)
+
+NOTE: You may want to consider the integrated approach if the extension is potentially useful on another project but you don't want to make the extension publicly available for others to use.
+
+h4. Creating
+
+You can create a new extension using the +spree+ command.  This requires that you have a gem version of Spree installed that is version 0.70.0 or greater.  Once you've navigated the directory in which you wish to create the extension, you can create a new extension by typing the following in your console:
 
 <shell>
-  $ rails g spree:extension foofah
+$ spree extension foofah
 </shell>
 
-This creates a directory named +foofah+ with all of the necessary files.  It will also automatically modify your +Gemfile+ so that its including the newly created engine/gem.
+This approach relies on an executable script inside the installed gem.  You can always build and install the edge gem using the source if you want to work with the latest and greatest version of the extension generator.
 
-INFO: For information on testing your extension, please see the "Testing Guide":testing.html#testing-your-extensions.
+NOTE: See the "Source Code":http://localhost:9292/source_code.html#building-the-gem-from-the-source guide which explains how to build the gem from the source.
 
-h4. Sharing Your Extension
+You probably also need to create a test application which is necessary for using the Rails generators or running the tests.
 
-h5. Publishing Your Source
+<shell>
+$ cd foofah
+$ bundle exec rake test_app
+</shell>
+
+NOTE: The test app is not necessary when you have an integrated extension.  The Rails app that you are integrated with will suffice.
+
+h4. Resources
+
+Once you've created your extension you can now create resources in the typical Rails way.  For example, to create a new resource SomeBar you would use the standard Rails generator.
+
+<shell>
+$ rails g resource some_bar
+</shell>
+
+This will create a typical Rails resource with output similar (not identical) to the following:
+
+<shell>
+invoke  active_record
+create    db/migrate/20110907191441_create_some_bars.rb
+create    app/models/some_bar.rb
+invoke    rspec
+create      spec/models/some_bar_spec.rb
+invoke  controller
+create    app/controllers/some_bars_controller.rb
+invoke    erb
+create      app/views/some_bars
+invoke    rspec
+create      spec/controllers/some_bars_controller_spec.rb
+invoke    helper
+create      app/helpers/some_bars_helper.rb
+invoke      rspec
+create        spec/helpers/some_bars_helper_spec.rb
+invoke    assets
+invoke      js
+create        app/assets/javascripts/some_bars.js
+invoke      css
+create        app/assets/stylesheets/some_bars.css
+ route  resources :some_bars
+</shell>
+
+If you're working on an integrated extension then you should make sure your +Gemfile+ includes the following before attempting to generate a new resource.
+
+<shell>
+gem 'rspec-rails'
+</shell>
+
+h4. Testing
+
+You can test your extensions in the manner you're accustomed to with a standard rails application
+
+<shell>
+$ rake test_app
+$ bundle exec rspec spec
+</shell>
+
+NOTE: The +rake test_app+ step is not necessary for integrated extensions.
+
+h3. Sharing Your Extension
+
+h4. Publishing Your Source
 
 The first order of business is to get your extension on "Github":http://github.com where everybody can see it.  Most importantly, you will want to allow others to have access to the source code.  Github provides a convenient (and free) place to store your source code along with the ability to track issues and accept code patches.
 
 INFO: It is convention to use the +spree-+ naming convention for your Github repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the Github project would be named +spree-foofah+ and the gem would be +spree_fofoah+.
 
-h5. Publishing Your Gem
+h4. Publishing Your Gem
 
 If your extension is ready to be released into the wild you can publish it as a gem on "RubyGems.org":http://rubygems.org.  Assuming you used the extension generator to build your extension, its already a gem and ready to be published.  You'll just want to edit a few details before you proceed.
 
@@ -46,11 +120,11 @@ s.required_ruby_version = '>= 1.8.7'
 # s.homepage          = 'http://www.rubyonrails.org'
 # s.rubyforge_project = 'actionmailer'
 
-h4. Versionfile
+h3. Versionfile
 
 Spree is moving at a rapid pace with the code constantly evolving as new releases are being pushed out.  These changes sometimes make it difficult to keep track of which version of Spree is compatible with which version of an extension. To solve this problem extension authors are encouraged to add a +Versionfile+ to their extension.
 
-h5. Versionfile Basics
+h4. Versionfile Basics
 
 +Versionfile+ is a plain text file which keeps information about which version of Spree an extension is compatible with.  It was inspired by the +Gemfile+ used by bundler.  Lets take a look at a sample +Versionfile+.
 
@@ -65,7 +139,7 @@ You should note that we are dealing with two different concepts of "version" her
 
 INFO: All Spree extensions should have a version.  This version number has nothing to do with what version of Spree is supported.  It is listed purely as a convenient way to refer to an extension.  For example "I'm having a problem with spree_active_shipping 1.0.1"
 
-h5. Syntax
+h4. Syntax
 
 A +Versionfile+ can have any number of lines. It is recommended that you put the latest Spree releases at the top. The very first thing a line should should is the Spree version it is supporting. Next within curly braces how to get extension supporting the specified Spree version is mentioned.
 
@@ -119,7 +193,7 @@ Versions identified by a Git SHA are considered "stable."  They will show up in 
 
 Above case is indicating how you can comment out a line. A line beginning with hash "#" is treated as comment.
 
-h5. Using the Versionfile
+h4. Using the Versionfile
 
 +Versionfile+ has no impact on the actual ability of an extension to work with Spree.  It is simply a declaration by the extension author that a certain version of the extension is known to work with a particular version(s) of Spree.  Its also possible that an extension version might be compatible with versions of Spree not listed.  If you discover this to be the case please send a pull request to the extension author so they can update their +Versionfile+.
 
@@ -129,11 +203,11 @@ INFO: You must actually register your extension in the "Extension Registry":http
 
 After the +Versionfile+ info has been processed you will see it listed in the "Extension Registry":http://spreecommerce.com/extensions.  Depending on the syntax you used to specify the version you will see it listed under "Stable Release" or "Dev Release".  In both cases there will also be a link labeled "Show". Clicking that link will show you the exact information you need to paste into your +Gemfile+ in order to use the extension.
 
-h5. Troubleshooting
+h4. Troubleshooting
 
 While parsing the lines gathered from +Versionfile+ if a line is invalid then that line is skipped. So make sure that entries in +Versionfile+ are valid. Soon we would be releasing a tool that can verify the +Versionfile+ and provide instant feedback if something is not right.
 
-h4. Testing Against a Release Candidate
+h3. Testing Against a Release Candidate
 
 The Spree core team will often announce a so-called "release candidate":http://en.wikipedia.org/wiki/Software_release_life_cycle#Release_candidate shortly before an official release.  This is to allow Spree developers to test their sites and extensions against the upcoming release code.
 
@@ -191,120 +265,135 @@ We're going to assume you already have a functioning Spree application.  If you 
 So let's start by generating the new extension
 
 <shell>
-  $ rails g spree:extension FlagPromotions
+  $ spree extension FlagPromotions
 </shell>
 
-This creates a +flag_promotions+ directory with several additional files and directories as the following generator output shows:
+This creates a +spree_flag_promotions+ directory with several additional files and directories as the following generator output shows:
 
-<ruby>
-   create  flag_promotions
-   create  flag_promotions/db
-   create  flag_promotions/public
-   create  flag_promotions/LICENSE
-   create  flag_promotions/Rakefile
-   create  flag_promotions/README.md
-   create  flag_promotions/.gitignore
-   create  flag_promotions/flag_promotions.gemspec
-   create  flag_promotions/lib/tasks/install.rake
-   create  flag_promotions/app
-   create  flag_promotions/app/controllers
-   create  flag_promotions/app/helpers
-   create  flag_promotions/app/models
-   create  flag_promotions/app/views
-   create  flag_promotions/spec
-    exist  flag_promotions/lib
-   create  flag_promotions/lib/flag_promotions_hooks.rb
-   create  flag_promotions/lib/tasks/flag_promotions.rake
-   create  flag_promotions/lib/flag_promotions.rb
-   create  flag_promotions/spec/spec_helper.rb
-  gemfile  flag_promotions
-</ruby>
+<shell>
+  create  spree_flag_promotions
+  create  spree_flag_promotions/app
+  create  spree_flag_promotions/app/assets/javascripts/admin/spree_flag_promotions.js
+  create  spree_flag_promotions/app/assets/javascripts/store/spree_flag_promotions.js
+  create  spree_flag_promotions/app/assets/stylesheets/admin/spree_flag_promotions.css
+  create  spree_flag_promotions/app/assets/stylesheets/store/spree_flag_promotions.css
+  create  spree_flag_promotions/app/controllers
+  create  spree_flag_promotions/app/helpers
+  create  spree_flag_promotions/app/models
+  create  spree_flag_promotions/app/views
+  create  spree_flag_promotions/config
+  create  spree_flag_promotions/db
+  create  spree_flag_promotions/lib
+  create  spree_flag_promotions/lib/spree_flag_promotions.rb
+  create  spree_flag_promotions/lib/spree_flag_promotions/engine.rb
+  create  spree_flag_promotions/lib/spree_flag_promotions/hooks.rb
+  create  spree_flag_promotions/script
+  create  spree_flag_promotions/script/rails
+  create  spree_flag_promotions/spec
+  create  spree_flag_promotions/LICENSE
+  create  spree_flag_promotions/Rakefile
+  create  spree_flag_promotions/README
+  create  spree_flag_promotions/.gitignore
+  create  spree_flag_promotions/spree_flag_promotions.gemspec
+  create  spree_flag_promotions/Versionfile
+  create  spree_flag_promotions/config/routes.rb
+  create  spree_flag_promotions/Gemfile
+  create  spree_flag_promotions/spec/spec_helper.rb
+  create  spree_flag_promotions/.rspec
+</shell>
 
-h4. Creating a Model
+h4. Creating a Resource
 
-Lets create a new +PromotedItem+ model for our extension.  Unfortunately Rails does not yet provide an easy mechanism for generating models, etc. within the context of your extension.  So for now you are left to create the necessary files manually or to use the standard Rails generator and copy the files into your extension.
+Lets create a new +PromotedItem+ resource for our extension.  Since Spree let us take advantage of normal Rails generators we can do this pretty easily.
 
-NOTE: Rails 3.1 will contain better mechanisms for extending the Rails generators so you won't have to resort to manual file creation or other hacks once Spree supports this future release.
+First we'll make sure we have a test app created.
+
+<shell>
+$ cd spree_flag_promotions
+$ bundle exec rake test_app
+</shell>
+
+INFO: The test app is needed as a context for the Rails generators and your extension tests to run in.  It is not needed if you are creating a so-called integrated extension.
+
+Now we're ready to create the resource
+
+<shell>
+$ rails g resource promoted_item
+</shell>
+
+This should generate output similar to the following:
+
+<shell>
+  invoke  active_record
+  create    db/migrate/20110907202658_create_promoted_items.rb
+  create    app/models/promoted_item.rb
+  invoke    rspec
+  create      spec/models/promoted_item_spec.rb
+  invoke  controller
+  create    app/controllers/promoted_items_controller.rb
+  invoke    erb
+  create      app/views/promoted_items
+  invoke    rspec
+  create      spec/controllers/promoted_items_controller_spec.rb
+  invoke    helper
+  create      app/helpers/promoted_items_helper.rb
+  invoke      rspec
+  create        spec/helpers/promoted_items_helper_spec.rb
+  invoke    assets
+  invoke      js
+  create        app/assets/javascripts/promoted_items.js
+  invoke      css
+  create        app/assets/stylesheets/promoted_items.css
+   route  resources :promoted_items
+</shell>
+
+
+h4. Verifying the Results
 
 The +PromotedItem+ model will represent products that are "flagged" for promotion on the front page along with a schedule of when the promotion begins and ends.
 
 <ruby>
-  # flag_promotions/app/models/promoted_item.rb
+# app/models/promoted_item.rb
+class PromotedItem < ActiveRecord::Base
 
-  class PromotedItem < ActiveRecord::Base
-
-  end
+end
 </ruby>
 
-And of course we'll need a corresponding migration.  Until there is an extension migration generator you can use the Rails generator and copy the migration into your extension as a workaround.
+And of course there's also the corresponding migration.
 
 <ruby>
-  # flag_promotions/db/migrate/20101024002242_create_promoted_items.rb
+# db/migrate/20110907202658_create_promoted_items.rb
+class CreatePromotedItems < ActiveRecord::Migration
+  def change
+    create_table :promoted_items do |t|
 
-  class CreatePromotedItems < ActiveRecord::Migration
-    def self.up
-      create_table :promoted_items do |t|
-        t.string :description
-        t.references :product
-        t.date :start
-        t.date :stop
-      end
-    end
-
-    def self.down
-      drop_table :promoted_items
+      t.timestamps
     end
   end
+end
 </ruby>
 
-Extension migrations need to be copied from the engine into the main Rails application.  You can do this with a convenient rake task.
+INFO: The exact timestamp used in the filename will differ on your system depending on when you generate it.
 
-<shell>
-  $ rake flag_promotions:install
-</shell>
-
-NOTE: This also copies over public assets in your engines +public+ directory.  If you just want the migrations you can run +rake flag_promotions:install:migrations+ or if you just want the assets you can run +rake flag_promotions:install:assets+.
-
-INFO: The +install.rake+ file is automatically created for you by the Spree extension generator.  It will only be necessary until Rails 3.1 is released - at which point this task will be provided "automagically."
-
-h4. Creating a Controller and View
-
-Now lets create a new controller file so that we can administer these promoted items.
+There's also a new controller file so that we can manage these promoted items.
 
 <ruby>
-  # flag_promotions/app/controllers/admin/promoted_items_controller.rb
-  class Admin::PromotedItemsController < Admin::ResourceController
-
-  end
+#app/controllers/promoted_items_controller.rb
+class PromotedItemsController < ApplicationController
+end
 </ruby>
 
-You may notice the base class is now using Admin::ResourceController, this is a major change for Spree 0.60.x and later. Previous versions used a gem called resource_controller to provide an implementation of a controllers CRUD methods, but this gem is no longer being actively maintained and also provides unnecessary features that Spree was not using.
+NOTE: You may want to add this controller to the +Admin+ namespace as well as extend +Admin::ResourceController+.  This step is omitted in order to keep the tutorial as simple as possible.
 
-So now the Admin::ResourceController is an interal Spree class that provides a similiar (but much simplied) implementation of these CRUD actions. We strongly recommend that only basic Admin controllers use this base class, and any front-end or custom / advanced methods be manually defined within the controllers implementation itself.
-
-Lets also add a corresponding admin view for this new resource.
-
-<shell>
-  $ cd flag_promotions
-  $ mkdir -p app/views/admin
-  $ vi promoted_items_controller.html.erb
-</shell>
-
-_TODO: Provide some actual view code.  We'll skip it for now since its pretty trivial._
-
-h4. Configure Routes
-
-Your new resource will not be accessible in your Spree application until you map some routing information for it.  So we'll update the +config/routes.rb+ file as follows
+Finally, the routes have also been configured for us
 
 <ruby>
-  Rails.application.routes.draw do
-    namespace :admin do
-      resources :promoted_items
-    end
-  end
+#config/routes.rb
+Rails.application.routes.draw do
+  resources :promoted_items
+  # Add your extension routes here
+end
 </ruby>
-
-We should now be in a position to verify the correct configuration of the extension.  Start your Spree application and then navigate to "http://localhost:3000/admin/promoted_items":http://localhost:3000/admin/promoted_items and verify that the view you created is displayed.
 
 h4. Customizing an Existing Spree View
 
@@ -326,4 +415,37 @@ h4. Overriding an Existing Spree Class
 
 Please refer to the "Logic Customization":logic_customization.html page.
 
+h4. Adding the Extension to Your Application
 
+Lets now add the extension to our application.  We'll create a simple Spree application for this purpose just to illustrate how its done.
+
+We'll start by creating a new Rails app
+
+<shell>
+$ rails new my-store
+</shell>
+
+Then edit the Gemfile and add dependencies for Spree and the spree_flag_promotions extension
+
+<ruby>
+#Gemfile
+
+gem 'spree'
+gem 'spree_flag_promotions', :path => '../spree_flag_promotions'
+
+</ruby>
+
+NOTE: This is a relative path to the 'spree_flag_promotions' directory.  You could also refer to a git location or any other convention that is acceptable to bundler.  See the "bundler site":http://gembundler.com for more details on bundler.
+
+<shell>
+$ bundle install
+</shell>
+
+Now that the extension is setup its time to install (and then run) the migrations.
+
+<shell>
+$ rake railties:install:migrations
+$ rake db:migrate
+</shell>
+
+That's it!  Your store should be ready to go with your new custom extension.

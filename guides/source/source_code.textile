@@ -119,10 +119,17 @@ h3. Building the Gem from the Source
 The Spree gem can easily be built from the source.
 
 <shell>
+  $ bundle exec rake clean
   $ bundle exec rake gem
 </shell>
 
-Currently there is no shortcut for building all of the Spree gems from source with a single command (contributions welcome).  Therefore, you will need to build them individually.  For example:
+Most likely you will want to build and install of the related gems.  Fortunately there is a simple rake task for that.
+
+<shell>
+$bundle exec rake gem:install
+</shell>
+
+You can also build just one specific gem
 
 <shell>
   $ cd core
@@ -157,4 +164,11 @@ If you plan on using the edge code but also contributing back to Spree, then you
 
 NOTE: See the excellent "bundler documentation":http://gembundler.com for more details.
 
+h4. Creating Extensions
+
+Spree provides a convenient generator for helping you to get started with extensions.  Please see the "Creating Extensions":/creating_extensions.html guide for more details.
+
+<shell>
+$ spree extension foo
+</shell>
 <!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->
