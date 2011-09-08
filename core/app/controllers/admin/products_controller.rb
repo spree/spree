@@ -1,6 +1,7 @@
 class Admin::ProductsController < Admin::ResourceController
   before_filter :check_json_authenticity, :only => :index
   before_filter :load_data, :except => :index
+  before_filter :vat_fix , :only => :update
   update.before :update_before
 
   def index
@@ -100,6 +101,18 @@ class Admin::ProductsController < Admin::ResourceController
       @collection.uniq
     end
 
+  end
+
+  # as all prices in the eu always include vat, admins need to input prices that include the vat
+  # this reveses the vat according to category or default and stores the no-tax amount in the price field
+  def vat_fix
+    return unless params[:price_includes_vat]   # the option only exists if show_price_inc_vat_vat is set
+    taxid = params[:product][:tax_category_id]
+    rate = TaxRate.find( taxid ) if taxid and not taxid.empty?
+    amount = rate ? rate.amount : TaxRate.default       # may be 0 depending on setup
+    price = params[:product][:price].to_f
+    price = price / (1 + rate.amount)                      # revese the tax
+    params[:product][:price] = price
   end
 
   def update_before

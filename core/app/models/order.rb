@@ -274,8 +274,8 @@ class Order < ActiveRecord::Base
           rate.zone.country_list.collect{|c| c.id}.include?(Spree::Config[:default_country_id]) }
     end
     matching_rates.each do |rate|
-      rate.create_adjustment( rate.tax_category.description , self, self, true)
-    end                       # using description to "name" differnt taxes. Maybe done with i18n later
+      rate.create_adjustment( "#{I18n.t(:vat)} #{rate.amount*100}%" , self, self, true)
+    end
   end
 
   # Creates a new shipment (adjustment is created by shipment model)

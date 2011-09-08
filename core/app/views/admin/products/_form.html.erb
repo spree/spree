@@ -20,11 +20,20 @@
   </div>
   <div class="yui-u" data-hook="admin_product_form_right">
       <%= f.field_container :price do %>
-        <%= f.label :price, t("master_price")%> <span class="required">*</span><br />
+        <%= f.label :price, t("master_price")%> <span class="required">*</span>
+          <%if Spree::Config[:show_price_inc_vat] %>
+            <%= product_price(@product) %>
+          <%end%>
+        <br />
         <%= f.text_field :price, :value => number_with_precision(@product.price, :precision => 2)  %>
         <%= f.error_message_on :price %>
       <% end %>
 
+      <%if Spree::Config[:show_price_inc_vat] %>
+      <%= label_tag :price_includes_vat ,   I18n.t(:price_with_vat_included, :price => I18n.t(:price)) %>
+      <%= check_box_tag :price_includes_vat, "1", :checked => true %>
+      <%end%>
+      
       <%= f.field_container :cost_price do %>
       <%= f.label :cost_price, t("cost_price")%><br />
       <%= f.text_field :cost_price, :value => number_with_precision(@product.cost_price, :precision => 2) %>
