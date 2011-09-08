@@ -25,7 +25,7 @@ PATH
       kaminari (>= 0.12.4)
       meta_search (= 1.1.1)
       nested_set (= 1.6.8)
-      paperclip (= 2.4.0)
+      paperclip (= 2.4.1)
       rails (= 3.1.0)
       rd_find_by_param (= 0.1.1)
       rd_resource_controller
@@ -166,7 +166,7 @@ GEM
       railties (>= 3.0.0)
     nokogiri (1.5.0)
     orm_adapter (0.0.5)
-    paperclip (2.4.0)
+    paperclip (2.4.1)
       activerecord (>= 2.3.0)
       activesupport (>= 2.3.2)
       cocaine (>= 0.0.2)
