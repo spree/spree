@@ -72,40 +72,54 @@ h3. Testing Your Extensions
 
 The generator used by Spree to create new extensions will do all of the work to get your extension ready for testing.  There are some cases, however, where you may wish to maintain an extension in its own repository as a standalone gem (so you can redistribute and share the code.)  In these cases there is a little more work to be done before you can start testing.  We'll cover both scenarios here.
 
-h4. Testing Within Your Rails Application.
+h4. Testing Integrated Extensions
 
-When you first start out coding a new extension, its a good idea to work with it right alongside the Spree project that you plan to use it in.  Even if you're eventually planning to break it out into a gem and share the source code its much easier to develop with it side by side with your application.
+When you first start out coding a new extension, you may want to work with it right alongside the Spree project that you plan to use it in.  Even if you're eventually planning to break it out into a gem and share the source code its sometimes easier to develop with it side by side with your application.
 
-If you've read the "Extensions Guide":/extensions.html you know by now how easy it is to create a Spree extension within the context of a Rails/Spree application:
-
-<shell>
-  $ rails g spree:extension foofah
-</shell>
-
-This generator automatically creates a +spec+ directory along with a +spec_helper.rb+ file.  If you're not a fan of RSpec you can feel free to switch to a test framework of your choosing.
-
-You'll then want to prepare your test database if you have not already done so.
+If you've read the "Creating Extensions Guide":/creating_extensions.html you know by now how easy it is to create a Spree extension within the context of a Rails/Spree application:
 
 <shell>
-  $ rake db:prepare
+  $ spree extension foofah
 </shell>
 
-Then its time to write some specs/tests for your extension.  We're not going to cover how to write tests here - there's already plenty of resources that cover this topic in depth.  Once your tests are written you simply use the standard rake task to verify them.
+This generator automatically creates a +spec+ directory along with a +spec_helper.rb+ file.  If you're not a fan of RSpec you can feel free to switch to a test framework of your choosing.  You'll also need to add the rspec-rails gem to your Gemfile if its not already present.
+
+<ruby>
+  #Gemfile
+  gem 'rspec-rails'
+</ruby>
+
+Then its time to write some specs/tests for your extension.  We're not going to cover how to write tests here - there's already plenty of resources that cover this topic in depth.  Once your tests are written you simply use the standard rspec command to verify them.
 
 <shell>
-  $ cd foofah
-  $ rake spec
+  $ bundle exec rspec spec
 </shell>
 
-h4. Testing When Isolated From Your Rails Application
+h4. Testing Standalone Extensions
 
-The title of this section is a bit misleading.  There's not actually any way to test an extension outside the context of a Rails application.  This does not mean, however, that you need to create a Rails application and carry that around in your source code repository.  Instead, you can write a Rake task to create a new test application for yourself on demand.
+Most extensions that you'll be working with (including all of the ones in the extension registry) are so-called isolated extensions.  They exist in their own Github repositories independent of any specific Rails application.  Fortunately we have devised a way to test these extensions as well.
 
-[TODO: Instructions on rake task]
+Lets start by creating a new extension - although the procedure is basically the same for an extension that you've cloned from Github.
 
-NOTE: There's no need to check in test_app hosting your extension for testing purposes.  Make sure you ignore +spec/test_app+ in your +.gitignore+ file.
+<shell>
+  $ spree extension foofah
+</shell>
 
-[TODO: More information on Rake task once its fully developed.]
+There's an extra step needed in the isolated case before we can run our tests.  We need to create a "dummy" rails application to serve as a context for the specs.
+
+Perform the following one-time step
+
+<shell>
+  $ rake test_app
+</shell>
+
+WARNING: The resulting dummy Rails application should never be committed to your source code respository.  You can always regenerate them with the rake task.
+
+Once the test app has been created, your specs can run in the manner you're used to with a full-fledged Rails application.
+
+<shell>
+  $ bundle exec rspec spec
+</shell>
 
 h3. Cucumber
 
