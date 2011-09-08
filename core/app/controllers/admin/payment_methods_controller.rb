@@ -8,7 +8,7 @@ class Admin::PaymentMethodsController < Admin::ResourceController
     invoke_callbacks(:create, :before)
     if @payment_method.save
       invoke_callbacks(:create, :after)
-      flash[:notice] = I18n.t(:successfully_created, :resource => I18n.t(:payment_method))
+      flash.notice = I18n.t(:successfully_created, :resource => I18n.t(:payment_method))
       respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
     else
       invoke_callbacks(:create, :fails)
@@ -26,7 +26,7 @@ class Admin::PaymentMethodsController < Admin::ResourceController
     payment_method_params = params[@payment_method.class.name.underscore.gsub("/", "_")] || {}
     if @payment_method.update_attributes(params[:payment_method].merge(payment_method_params))
       invoke_callbacks(:update, :after)
-      flash[:notice] = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
+      flash.notice = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
       respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
     else
       invoke_callbacks(:update, :fails)

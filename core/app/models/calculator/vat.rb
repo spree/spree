@@ -1,7 +1,7 @@
 class Calculator::Vat < Calculator
 
   def self.description
-    I18n.t("vat")
+    I18n.t(:vat)
   end
 
   def self.register

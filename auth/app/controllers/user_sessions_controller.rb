@@ -20,7 +20,7 @@ class UserSessionsController < Devise::SessionsController
     if user_signed_in?
       respond_to do |format|
         format.html {
-          flash[:notice] = I18n.t("logged_in_succesfully")
+          flash.notice = I18n.t(:logged_in_succesfully)
           redirect_back_or_default(products_path)
         }
         format.js {
@@ -29,7 +29,7 @@ class UserSessionsController < Devise::SessionsController
         }
       end
     else
-      flash[:error] = I18n.t("devise.failure.invalid")
+      flash[:error] = I18n.t('devise.failure.invalid')
       render :new
     end
   end

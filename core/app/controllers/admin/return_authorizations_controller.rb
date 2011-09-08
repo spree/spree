@@ -6,7 +6,7 @@ class Admin::ReturnAuthorizationsController < Admin::ResourceController
 
   def fire
     @return_authorization.send("#{params[:e]}!")
-    flash.notice = t('return_authorization_updated')
+    flash.notice = I18n.t(:return_authorization_updated)
     respond_with(@return_authorization) { |format| format.html { redirect_to :back } }
   end
 

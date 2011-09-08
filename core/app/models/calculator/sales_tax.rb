@@ -1,7 +1,7 @@
 class Calculator::SalesTax < Calculator
 
   def self.description
-    I18n.t("sales_tax")
+    I18n.t(:sales_tax)
   end
 
   def self.register

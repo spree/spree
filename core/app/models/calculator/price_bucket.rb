@@ -4,7 +4,7 @@ class Calculator::PriceBucket < Calculator
   preference :discount_amount, :decimal, :default => 0
 
   def self.description
-    I18n.t("price_bucket")
+    I18n.t(:price_bucket)
   end
 
   def self.register

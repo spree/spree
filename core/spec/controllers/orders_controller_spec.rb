@@ -53,7 +53,7 @@ describe OrdersController do
     }
     it "should not result in a flash notice" do
       put :update, {}, {:order_id => 1}
-      flash[:notice].should be_nil
+      flash.notice.should be_nil
     end
     it "should render the edit view (on failure)" do
       order.stub(:update_attributes).and_return false
