@@ -12,4 +12,10 @@ class TaxCategory < ActiveRecord::Base
       tax_category.update_attribute(:is_default, false)
     end
   end
+
+  def effective_amount(address=nil)
+    address ||= Address.new(:country_id => Spree::Config[:default_country_id])
+
+    self.tax_rates.detect{|rate| rate.zone.include? address }.try(:amount) 
+  end
 end

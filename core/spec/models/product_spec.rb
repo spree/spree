@@ -133,4 +133,19 @@ describe Product do
     end
   end
 
+  context '#effective_tax_rate' do
+    let(:product) { Factory(:product) }
+
+    it 'should check tax category for applicable rates' do
+      TaxCategory.any_instance.should_receive(:effective_amount)
+      product.effective_tax_rate
+    end
+
+    it 'should return default tax rate when no tax category is defined' do
+      product.update_attribute(:tax_category, nil)
+      product.effective_tax_rate.should == TaxRate.default
+    end
+
+  end
+
 end

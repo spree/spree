@@ -41,9 +41,9 @@ class Zone < ActiveRecord::Base
       when "Zone"
         zone_member.zoneable.include?(address)
       when "Country"
-        zone_member.zoneable == address.country
+        zone_member.zoneable_id == address.country_id
       when "State"
-        zone_member.zoneable == address.state
+        zone_member.zoneable_id == address.state_id
       else
         false
       end

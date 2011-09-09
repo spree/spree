@@ -10,7 +10,7 @@ Factory.define(:global_zone, :class => Zone) do |record|
 end
 
 Factory.define(:zone) do |f|
-  f.name { Faker::Lorem.words }
+  f.name { Faker::Lorem.words.join(' ') }
   f.description { Faker::Lorem.sentence }
   f.zone_members do |member|
     [ZoneMember.create(:zoneable => Factory(:country) )]

@@ -23,12 +23,29 @@ describe TaxRate do
       rate2.stub_chain :zone, :include? => true
       TaxRate.match(address).should == [rate2]
     end
-    it "should use the rate with the highest amount in the event of multiple matches" do
+    it "should returnn all matches in the event of multiple matches" do
       rate1.stub_chain :zone, :include? => true
       rate2.stub_chain :zone, :include? => true
       rate1.stub :amount => 10
       rate2.stub :amount => 5
       TaxRate.match(address).should == [rate1, rate2]
     end
+  end
+
+  context "default" do
+    let(:category) { Factory :tax_category, :tax_rates => [] }
+    let(:rate) { Factory :tax_rate, :amount => 0.1, :tax_category => category}
+
+    it "should return zero with no default category" do
+      TaxCategory.any_instance.should_not_receive(:effective_amount)
+      TaxRate.default.should == 0
+    end
+
+    it "should return rate when default category is set" do
+      category.update_attribute(:is_default, true) 
+      TaxCategory.any_instance.should_receive(:effective_amount)
+      TaxRate.default
+    end
+
   end
 end

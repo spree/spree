@@ -13,14 +13,14 @@ class TaxRate < ActiveRecord::Base
   def self.match(address)
     TaxRate.all.select { |rate| rate.zone.include? address }
   end
-  
+
   # For Vat the default rate is the rate that is configured for the default category
   # It is needed for every price calculation (as all customer facing prices include vat )
   # The function returns the actual amount, which may be 0 in case of wrong setup, but is never nil
   def self.default
     category = TaxCategory.includes(:tax_rates).where(:is_default => true).first
-    return 0 unless category 
-    rate = category.tax_rates.first
-    rate ? rate.amount : 0     
+    return 0 unless category
+
+    category.effective_amount || 0
   end
 end
