@@ -98,4 +98,5 @@ task :sandbox do
   Spree::SiteGenerator.start
 
   cmd = "bundle exec rake db:bootstrap AUTO_ACCEPT=true"; puts cmd; system cmd
+  cmd = "bundle exec rake assets:precompile RAILS_ENV=development"; puts cmd; system cmd
 end
