@@ -50,14 +50,14 @@ Disallow: /users
 
     def configure_application
       application <<-APP
-config.middleware.use "SeoAssist"
-config.middleware.use "RedirectLegacyProductUrl"
+  config.middleware.use "SeoAssist"
+    config.middleware.use "RedirectLegacyProductUrl"
 
-config.to_prepare do
-  Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
-    Rails.configuration.cache_classes ? require(c) : load(c)
-  end
-end
+    config.to_prepare do
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+    end
       APP
 
       append_file "config/environment.rb", "\nActiveRecord::Base.include_root_in_json = true\n"
