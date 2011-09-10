@@ -76,7 +76,7 @@ describe Creditcard do
         @creditcard.authorize(100, @payment)
       end
     end
-    context "if unsucessfull" do
+    context "if unsuccessful" do
       it "should make payment failed" do
         @payment_gateway.stub(:authorize).and_return(@fail_response)
         @payment.should_receive(:fail)
@@ -103,7 +103,7 @@ describe Creditcard do
         lambda {@creditcard.purchase(100, @payment)}.should raise_error(Spree::GatewayError)
       end
     end
-    context "if sucessfull" do
+    context "if successful" do
       before do
         @payment_gateway.stub(:purchase).and_return(@success_response)
       end
@@ -117,7 +117,7 @@ describe Creditcard do
         @creditcard.purchase(100, @payment)
       end
     end
-    context "if unsucessfull" do
+    context "if unsuccessful" do
       it "should make payment failed" do
         @payment_gateway.stub(:purchase).and_return(@fail_response)
         @payment.should_receive(:fail)
@@ -151,7 +151,7 @@ describe Creditcard do
           lambda {@creditcard.capture(@payment)}.should raise_error(Spree::GatewayError)
         end
       end
-      context "if sucessfull" do
+      context "if successful" do
         it "should make payment complete" do
           @payment.should_receive(:complete)
           @creditcard.capture(@payment)
@@ -161,7 +161,7 @@ describe Creditcard do
           @payment.response_code.should == '123'
         end
       end
-      context "if unsucessfull" do
+      context "if unsuccessful" do
         it "should not make payment complete" do
           @payment_gateway.stub(:capture).and_return(@fail_response)
           @payment.should_receive(:fail)
@@ -202,7 +202,7 @@ describe Creditcard do
         lambda {@creditcard.void(@payment)}.should raise_error(Spree::GatewayError)
       end
     end
-    context "if sucessfull" do
+    context "if successful" do
       it "should update the response_code with the authorization from the gateway" do
         @payment.response_code = 'abc'
         @creditcard.void(@payment)
@@ -213,7 +213,7 @@ describe Creditcard do
         @creditcard.void(@payment)
       end
     end
-    context "if unsucesfull" do
+    context "if unsuccessful" do
       it "should not void the payment" do
         @payment_gateway.stub(:void).and_return(@fail_response)
         @payment.should_not_receive(:void)
@@ -295,7 +295,7 @@ describe Creditcard do
         end
       end
     end
-    context "when response is unsucessfull" do
+    context "when response is unsuccessful" do
       it "should not create a payment" do
         @payment_gateway.stub(:credit).and_return(@fail_response)
         Payment.should_not_receive(:create)
@@ -436,6 +436,10 @@ describe Creditcard do
         @creditcard.save
         @creditcard.spree_cc_type.should == "visa"
       end
+      
+      after do 
+        Rails.env = "test"
+      end
     end
 
     context "in production mode" do
@@ -447,6 +451,10 @@ describe Creditcard do
         @creditcard.number = "378282246310005"
         @creditcard.save
         @creditcard.spree_cc_type.should == "american_express"
+      end
+      
+      after do
+        Rails.env = "test"
       end
     end
   end
@@ -469,6 +477,10 @@ describe Creditcard do
       @creditcard.number = "XXXXXXXXXXXX5100"
       @creditcard.save
       @creditcard.spree_cc_type.should == "master"
+    end
+    
+    after do
+      Rails.env = "test"
     end
   end
 end
