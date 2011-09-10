@@ -14,8 +14,8 @@ end
 
 group :test do
   gem 'rspec-rails', '= 2.6.1'
-  gem 'factory_girl', '= 1.3.3'
-  gem 'factory_girl_rails', '= 1.0.1'
+  gem 'factory_girl', '= 2.1.0'
+  gem 'factory_girl_rails', '= 1.2.0'
   gem 'rcov'
   gem 'faker'
   gem 'shoulda', '>= 3.0.0.beta'
@@ -26,8 +26,8 @@ group :cucumber do
   gem 'database_cleaner', '= 0.6.7'
   gem 'nokogiri'
   gem 'capybara', '1.0.1'
-  gem 'factory_girl', '= 1.3.3'
-  gem 'factory_girl_rails', '= 1.0.1'
+  gem 'factory_girl', '= 2.1.0'
+  gem 'factory_girl_rails', '= 1.2.0'
   gem 'faker'
   gem 'launchy'
 end
