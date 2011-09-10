@@ -48,12 +48,12 @@
     <h3><%= t(:search) %></h3>
     <%= form_for [:admin, @search] do |f| %>
       <label><%= t("date_range") %></label><br />
-      <div class="yui-g date-range-filter">
-        <div class="yui-u sub-field first">
-          <%= f.text_field :created_at_greater_than, :class => 'datepicker' %><br />
+      <div class="date-range-filter">
+        <div class="left sub-field">
+          <%= f.text_field :created_at_less_thand_at_greater_than, :class => 'datepicker' %><br />
           <label class="sub"><%= t("start") %></label>
         </div>
-        <div class="yui-u sub-field">
+        <div class="right sub-field">
           <%= f.text_field :created_at_less_than, :class => 'datepicker' %><br />
           <label><%= t("stop") %></label>
         </div>

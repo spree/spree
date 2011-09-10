@@ -1,5 +1,5 @@
-<div class="yui-gb">
-  <div class="yui-u first" data-hook="variants">
+<div class="clearfix">
+  <div class="left" data-hook="variants">
 
     <% @product.options.each do |option| %>
       <p data-hook="presentation">
@@ -30,7 +30,7 @@
       <%= f.text_field :on_hand %></p>
     <% end %>
   </div>
-  <div class="yui-u">
+  <div class="right">
 
     <% Variant.additional_fields.select{|af| af[:only].nil? || af[:only].include?(:variant) }.each do |field| %>
       <%= render :partial => "admin/shared/additional_field", :locals => {:field => field, :f => f} %>

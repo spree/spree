@@ -11,8 +11,8 @@
     <%= f.error_message_on :name %>
   <% end %>
 
-  <div class="yui-gb"  data-hook="new_product_attrs">
-    <div class="yui-u first">
+  <div class="clearfix"  data-hook="new_product_attrs">
+    <div class="left">
 
       <% unless @product.has_variants? %>
       <%= f.field_container :sku do %>
@@ -28,7 +28,7 @@
       </p>
 
     </div>
-    <div class="yui-u">
+    <div class="right">
 
       <%= f.field_container :price do %>
         <%= f.label :price, t("master_price")%> <span class="required">*</span><br />
