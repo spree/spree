@@ -1,3 +1,5 @@
-Factory.define :promotion, :class => Promotion, :parent => :activator do |f|
-  f.name 'Promo'
+FactoryGirl.define do
+  factory :promotion, :class => Promotion, :parent => :activator do
+    name 'Promo'
+  end
 end

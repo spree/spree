@@ -1,7 +1,9 @@
-Factory.define :country do |f|
-  f.iso_name 'UNITED STATES'
-  f.name 'UNITED STATES'
-  f.iso 'US'
-  f.iso3 'USA'
-  f.numcode 840
+FactoryGirl.define do
+  factory :country do
+    iso_name 'UNITED STATES'
+    name 'UNITED STATES'
+    iso 'US'
+    iso3 'USA'
+    numcode 840
+  end
 end

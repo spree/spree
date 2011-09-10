@@ -1,4 +1,6 @@
-Factory.define :prototype do |f|
-  f.name "Baseball Cap"
-  f.properties { [ Factory(:property) ]}
+FactoryGirl.define do
+  factory :prototype do
+    name 'Baseball Cap'
+    properties { [Factory(:property)] }
+  end
 end
