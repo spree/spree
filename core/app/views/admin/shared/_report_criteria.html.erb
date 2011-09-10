@@ -1,11 +1,11 @@
 <%= form_for @search, :url => sales_total_admin_reports_path  do |s| %>
     <label><%= t("date_range") %></label><br />
-    <div class="yui-g date-range-filter">
-      <div class="yui-u sub-field first">
+    <div class="date-range-filter">
+      <div class="left sub-field">
         <%= s.text_field :created_at_greater_than, :class => 'datepicker' %><br />
         <label class="sub"><%= t("start") %></label>
       </div>
-      <div class="yui-u sub-field">
+      <div class="right sub-field">
         <%= s.text_field :created_at_less_than, :class => 'datepicker' %><br />
         <label><%= t("stop") %></label>
       </div>
