@@ -1,4 +1,6 @@
-Factory.define :product_property do |f|
-  f.product { Factory(:product) }
-  f.property { Factory(:property) }
+FactoryGirl.define do
+  factory :product_property do
+    product { Factory(:product) }
+    property { Factory(:property) }
+  end
 end

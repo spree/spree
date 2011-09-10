@@ -1,7 +1,9 @@
-Factory.define(:inventory_unit) do |record|
-  record.variant { Factory(:variant) }
-  record.order { Factory(:order) }
-  record.state "sold"
-  record.shipment { Factory(:shipment, :state => 'pending') }
-  #record.return_authorization { Factory(:return_authorization) }
+FactoryGirl.define do
+  factory :inventory_unit do
+    variant { Factory(:variant) }
+    order { Factory(:order) }
+    state 'sold'
+    shipment { Factory(:shipment, :state => 'pending') }
+    #return_authorization { Factory(:return_authorization) }
+  end
 end
