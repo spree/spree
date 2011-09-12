@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_promo'
   s.version     = version
   s.summary     = 'Promotion functionality for use with Spree.'
-  s.description = 'Required dependancy for Spree'
+  s.description = 'Required dependency for Spree'
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'David North'
@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://spreecommerce.com'
   s.rubyforge_project = 'spree_promo'
 
-  s.files        = Dir['CHANGELOG', 'README', 'MIT-LICENSE', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'public/**/*']
+  s.files        = Dir['README', 'LICENSE', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*']
   s.require_path = 'lib'
   s.requirements << 'none'
 

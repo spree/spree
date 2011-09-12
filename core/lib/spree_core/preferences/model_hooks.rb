@@ -108,7 +108,11 @@ module Spree
 
             include Spree::Preferences::ModelHooks::InstanceMethods
           end
-
+          
+          # Reset definitions so that other subclass definitions aren't inherited
+          self.preference_definitions = self.preference_definitions.dup
+          self.default_preferences = self.default_preferences.dup
+          
           # Create the definition
           name = name.to_s
           definition = PreferenceDefinition.new(name, *args)

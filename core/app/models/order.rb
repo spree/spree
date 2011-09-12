@@ -25,6 +25,7 @@ class Order < ActiveRecord::Base
 
   before_create :create_user
   before_create :generate_order_number
+  after_create :create_tax_charge!
 
   # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
   validates :email, :presence => true, :format => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i, :if => :require_email
@@ -263,9 +264,18 @@ class Order < ActiveRecord::Base
 
   # Creates a new tax charge if applicable.  Uses the highest possible matching rate and destroys any previous
   # tax charges if they were created by rates that no longer apply.
+  # for the vat case adjutments according to default country are created
   def create_tax_charge!
     adjustments.tax.each {|e| e.destroy }
-    TaxRate.match(ship_address).each {|r| r.create_adjustment(I18n.t(:tax), self, self, true) }
+    matching_rates = TaxRate.match(ship_address)
+    if matching_rates.empty? and Spree::Config[:show_price_inc_vat]
+    # somebody may be able to make the search shorter here , some unremember bug caused this
+      matching_rates = TaxRate.all.select{|rate| # get all rates that apply to default country
+          rate.zone.country_list.collect{|c| c.id}.include?(Spree::Config[:default_country_id]) }
+    end
+    matching_rates.each do |rate|
+      rate.create_adjustment( "#{I18n.t(:vat)} #{rate.amount*100}%" , self, self, true)
+    end
   end
 
   # Creates a new shipment (adjustment is created by shipment model)

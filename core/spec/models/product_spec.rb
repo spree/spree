@@ -85,6 +85,17 @@ describe Product do
       end
     end
 
+    context ".group_by_products_id.count" do
+      let(:product) { Factory(:product) }
+      it 'produces a properly formed ordered-hash key' do
+        expected_key = (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL') ?
+          Product.column_names.map{|col_name| product.send(col_name)} :
+          product.id
+        count_key = Product.group_by_products_id.count.keys.first
+        [expected_key, count_key].each{|val| val.map!{|e| e.is_a?(Time) ? e.strftime("%Y-%m-%d %H:%M:%S") : e} if val.respond_to?(:map!)}
+        count_key.should == expected_key
+      end
+    end
 
   end
 
@@ -120,6 +131,21 @@ describe Product do
       end
       specify { product.has_stock?.should be_true }
     end
+  end
+
+  context '#effective_tax_rate' do
+    let(:product) { Factory(:product) }
+
+    it 'should check tax category for applicable rates' do
+      TaxCategory.any_instance.should_receive(:effective_amount)
+      product.effective_tax_rate
+    end
+
+    it 'should return default tax rate when no tax category is defined' do
+      product.update_attribute(:tax_category, nil)
+      product.effective_tax_rate.should == TaxRate.default
+    end
+
   end
 
 end

@@ -87,7 +87,7 @@ class Product < ActiveRecord::Base
 
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
     if ActiveRecord::Base.connection.tables.include?("products")
-      scope :group_by_products_id, { :group => "products." + Product.column_names.join(", products.") }
+      scope :group_by_products_id, { :group => Product.column_names.map{|col_name| "products.#{col_name}"} }
     end
   else
     scope :group_by_products_id, { :group => "products.id" }
@@ -180,25 +180,25 @@ class Product < ActiveRecord::Base
   # for adding products which are closely related to existing ones
   # define "duplicate_extra" for site-specific actions, eg for additional fields
   def duplicate
-    p = self.clone
+    p = self.dup
     p.name = 'COPY OF ' + self.name
     p.deleted_at = nil
     p.created_at = p.updated_at = nil
     p.taxons = self.taxons
 
-    p.product_properties = self.product_properties.map {|q| r = q.clone; r.created_at = r.updated_at = nil; r}
+    p.product_properties = self.product_properties.map {|q| r = q.dup; r.created_at = r.updated_at = nil; r}
 
-    image_clone = lambda {|i| j = i.clone; j.attachment = i.attachment.clone; j}
-    p.images = self.images.map {|i| image_clone.call i}
+    image_dup = lambda {|i| j = i.dup; j.attachment = i.attachment.clone; j}
+    p.images = self.images.map {|i| image_dup.call i}
 
-    variant = self.master.clone
+    variant = self.master.dup
     variant.sku = 'COPY OF ' + self.master.sku
     variant.deleted_at = nil
-    variant.images = self.master.images.map {|i| image_clone.call i}
+    variant.images = self.master.images.map {|i| image_dup.call i}
     p.master = variant
 
     if self.has_variants?
-      # don't clone the actual variants, just the characterising types
+      # don't dup the actual variants, just the characterising types
       p.option_types = self.option_types
     else
     end
@@ -220,6 +220,14 @@ class Product < ActiveRecord::Base
   def categorise_variants_from_option(opt_type)
     return {} unless option_types.include?(opt_type)
     variants.active.group_by {|v| v.option_values.detect {|o| o.option_type == opt_type} }
+  end
+
+  def effective_tax_rate
+    if self.tax_category
+      tax_category.effective_amount
+    else
+      TaxRate.default
+    end
   end
 
   def self.like_any(fields, values)

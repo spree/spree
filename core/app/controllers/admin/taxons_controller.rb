@@ -18,15 +18,6 @@ class Admin::TaxonsController < Admin::BaseController
     end
   end
 
-  def update
-    update_before
-    update_after
-    respond_with(@taxon) do |format|
-      format.html { redirect_to edit_admin_taxonomy_url(@taxonomy) }
-      format.json { render :json => @taxon.to_json }
-    end
-  end
-
   def edit
     @taxonomy = Taxonomy.find(params[:taxonomy_id])
     @taxon = @taxonomy.taxons.find(params[:id])

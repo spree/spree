@@ -17,6 +17,25 @@ describe Promotion do
     end
   end
 
+  describe "#delete" do
+    it "deletes actions" do
+      p = Promotion.create(:name => "delete me")
+      p.actions << Promotion::Actions::CreateAdjustment.new
+      p.destroy
+
+      PromotionAction.count.should == 0 
+    end
+
+    it "deletes rules" do
+      p = Promotion.create(:name => "delete me")
+      p.rules << Promotion::Rules::FirstOrder.new
+      p.destroy
+
+      PromotionRule.count.should == 0 
+    end
+
+  end
+
   describe "#activate" do
     before do
       @action1 = mock_model(PromotionAction, :perform => true)

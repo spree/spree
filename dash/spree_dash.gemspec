@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_dash'
   s.version     = version
   s.summary     = 'Overview dashboard for use with Spree.'
-  s.description = 'Required dependancy for Spree'
+  s.description = 'Required dependency for Spree'
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'Brian Quinn'
@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://spreecommerce.com'
   s.rubyforge_project = 'spree_dash'
 
-  s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'public/**/*']
+  s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
   s.require_path = 'lib'
   s.requirements << 'none'
 

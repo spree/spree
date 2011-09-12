@@ -9,6 +9,7 @@
 .idea
 .loadpath
 .project
+bin/*
 public/dispatch.cgi
 public/dispatch.fcgi
 public/dispatch.rb

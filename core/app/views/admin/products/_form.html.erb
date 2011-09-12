@@ -1,5 +1,5 @@
-<div class="yui-gc">
-  <div class="yui-u first" data-hook="admin_product_form_left">
+<div class="clearfix">
+  <div class="left" data-hook="admin_product_form_left">
     <%= f.field_container :name do %>
       <%= f.label :name, t("name") %> <span class="required">*</span><br />
       <%= f.text_field :name, :class => 'fullwidth title'  %>
@@ -18,16 +18,24 @@
       <%= f.error_message_on :description %>
     <% end %>
   </div>
-  <div class="yui-u" data-hook="admin_product_form_right">
+  <div class="right" data-hook="admin_product_form_right">
       <%= f.field_container :price do %>
-        <%= f.label :price, t("master_price")%> <span class="required">*</span><br />
+        <%= f.label :price, t("master_price")%> <span class="required">*</span><br>
         <%= f.text_field :price, :value => number_with_precision(@product.price, :precision => 2)  %>
         <%= f.error_message_on :price %>
       <% end %>
 
+      <%if Spree::Config[:show_price_inc_vat] %>
+        <%= label_tag :price_includes_vat , I18n.t(:price_with_vat_included, :price => I18n.t(:price)) %><br>
+        <%= text_field_tag :price_including_vat, product_price(@product, :show_vat_text => false), :size => 30 %>
+        <script type="text/javascript">
+          var effective_tax_rate = <%= @product.effective_tax_rate %>;
+        </script>
+      <%end%>
+
       <%= f.field_container :cost_price do %>
-      <%= f.label :cost_price, t("cost_price")%><br />
-      <%= f.text_field :cost_price, :value => number_with_precision(@product.cost_price, :precision => 2) %>
+        <%= f.label :cost_price, t("cost_price")%><br />
+        <%= f.text_field :cost_price, :value => number_with_precision(@product.cost_price, :precision => 2) %>
       <%= f.error_message_on :cost_price %>
     <% end %>
 

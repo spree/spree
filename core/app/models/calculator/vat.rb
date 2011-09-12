@@ -9,55 +9,39 @@ class Calculator::Vat < Calculator
     TaxRate.register_calculator(self)
   end
 
-  # list the vat rates for the default country
-  def self.default_rates
-    origin = Country.find(Spree::Config[:default_country_id])
-    calcs = Calculator::Vat.includes(:calculable => :zone).select {
-      |vat| vat.calculable.zone.country_list.include?(origin)
-    }
-    calcs.collect { |calc| calc.calculable }
-  end
-
-  def self.calculate_tax(order, rates=default_rates)
-    return 0 if rates.empty?
-    # note: there is a bug with associations in rails 2.1 model caching so we're using this hack
-    # (see http://rails.lighthouseapp.com/projects/8994/tickets/785-caching-models-fails-in-development)
-    cache_hack = rates.first.respond_to?(:tax_category_id)
-
-    taxable_totals = {}
-    order.line_items.each do |line_item|
-      next unless tax_category = line_item.variant.product.tax_category
-      next unless rate = rates.find { | vat_rate | vat_rate.tax_category_id == tax_category.id } if cache_hack
-      next unless rate = rates.find { | vat_rate | vat_rate.tax_category == tax_category } unless cache_hack
-      taxable_totals[tax_category] ||= 0
-      taxable_totals[tax_category] += line_item.price * rate.amount * line_item.quantity
-    end
-
-    return 0 if taxable_totals.empty?
-    tax = 0
-    taxable_totals.values.each do |total|
-      tax += total
-    end
-    tax
-  end
-
-  # TODO: Refactor this method after integrating #54 to use default address
   def self.calculate_tax_on(product_or_variant)
-    vat_rates = default_rates
+    product = product_or_variant.try(:product) || product_or_variant
 
-    return 0 if vat_rates.nil?
-    return 0 unless tax_category = product_or_variant.is_a?(Product) ? product_or_variant.tax_category : product_or_variant.product.tax_category
-    return 0 unless rate = vat_rates.find { | vat_rate | vat_rate.tax_category_id == tax_category.id }
-
-    (product_or_variant.is_a?(Product) ? product_or_variant.price : product_or_variant.price) * rate.amount
+    (product_or_variant.price * product.effective_tax_rate).round(2, BigDecimal::ROUND_HALF_UP)
   end
 
-  # computes vat for line_items associated with order, and tax rate
+  # computes vat for line_items associated with order, and tax rate and 
+  # now coupon discounts are taken into account in tax calcs
+  # and tax is added to shipment if :shipment_inc_vat is set
+  # coupons and shipment are applied if this object is the rate for the default category
+  #           (also items with no category get this rate applied)
   def compute(order)
     rate = self.calculable
-    line_items = order.line_items.select { |i| i.product.tax_category == rate.tax_category }
-    line_items.inject(0) {|sum, line_item|
-      sum += (line_item.price * rate.amount * line_item.quantity)
-    }
+    tax = 0
+
+    if rate.tax_category.is_default 
+      order.adjustments.each do | adjust |
+        next if adjust.originator_type == "TaxRate"
+        next if adjust.originator_type == "ShippingMethod" and not Spree::Config[:shipment_inc_vat]
+
+        tax += (adjust.amount * rate.amount).round(2, BigDecimal::ROUND_HALF_UP)
+      end
+    end
+
+    order.line_items.each do  | line_item|
+      if line_item.product.tax_category  #only apply this calculator to products assigned this rates category
+        next unless line_item.product.tax_category == rate.tax_category
+      else
+        next unless rate.tax_category.is_default # and apply to products with no category, if this is the default rate
+      end
+      tax += (line_item.price * rate.amount).round(2, BigDecimal::ROUND_HALF_UP) * line_item.quantity
+    end
+
+    tax
   end
 end

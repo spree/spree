@@ -39,9 +39,11 @@ end
 desc "clean the whole repository by removing all the generated files"
 task :clean do
   cmd = "rm -rf sandbox"; puts cmd; system cmd
+  cmd = "rm -rf pkg"; puts cmd; system cmd
   %w(api auth core dash promo).each do |gem_name|
     cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    cmd = "cd #{gem_name}/spec &&  rm -rf test_app"; puts cmd; system cmd
+    cmd = "rm -rf #{gem_name}/pkg"; puts cmd; system cmd
+    cmd = "cd #{gem_name}/spec &&  rm -rf dummy"; puts cmd; system cmd
   end
 end
 
@@ -92,8 +94,9 @@ desc "Creates a sandbox application for simulating the Spree code in a deployed 
 task :sandbox do
   require 'spree_core'
 
-  SpreeCore::Generators::SandboxGenerator.start ["--lib_name=spree", "--database=#{ENV['DB_NAME']}"]
-  SpreeCore::Generators::SiteGenerator.start
+  Spree::SandboxGenerator.start ["--lib_name=spree", "--database=#{ENV['DB_NAME']}"]
+  Spree::SiteGenerator.start
 
   cmd = "bundle exec rake db:bootstrap AUTO_ACCEPT=true"; puts cmd; system cmd
+  cmd = "bundle exec rake assets:precompile RAILS_ENV=development"; puts cmd; system cmd
 end

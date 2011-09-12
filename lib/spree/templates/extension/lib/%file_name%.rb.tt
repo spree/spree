@@ -1,0 +1,2 @@
+require 'spree_core'
+require '<%=file_name%>/engine'
