@@ -1386,7 +1386,6 @@ fieldset.official p {
   letter-spacing: 0.02em; }
 code {
     border: medium none;
-    display: block;
     margin: 0 0 10px;
     font-size: 13px; }
 
@@ -1407,7 +1406,7 @@ code {
   width: 36px;
   height: 36px; }
 .code .tab {
-  background: url("/images/tab-code.png") no-repeat scroll left top #f8f9fa; }
+  background: url("../images/tab-code.png") no-repeat scroll left top #f8f9fa; }
 .note .tab {
   background: url("/images/tab-notes.png") no-repeat scroll left top #FFF9D8; }
 .info .tab {

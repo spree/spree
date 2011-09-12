@@ -2,11 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title><%= @title %></title>
+    <title><%= yield(:page_title) || 'Spree guides' %></title>
     <link rel="stylesheet" type="text/css" href="stylesheets/reset.css" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/screen.css" />
     <link rel='stylesheet' type='text/css' href='stylesheets/overrides.style.css' />
     <script type='text/javascript' src='http://use.typekit.com/yem0gjc.js'></script>
     <script type='text/javascript'>try{Typekit.load();}catch(e){}</script>
@@ -126,5 +123,17 @@
         </div>
       </div>
     </div>
+
+    <script type="text/javascript" src="javascripts/guides.js"></script>
+    <script type="text/javascript" src="javascripts/syntaxhighlighter/shCore.js"></script>
+    <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushRuby.js"></script>
+    <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushJScript.js"></script>
+    <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushCss.js"></script>
+    <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushXml.js"></script>
+    <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushSql.js"></script>
+    <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushPlain.js"></script>
+    <script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script>
   </body>
 </html>
