@@ -1,106 +1,130 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title><%= @title %></title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/screen.css" />
+    <link rel='stylesheet' type='text/css' href='stylesheets/overrides.style.css' />
+    <script type='text/javascript' src='http://use.typekit.com/yem0gjc.js'></script>
+    <script type='text/javascript'>try{Typekit.load();}catch(e){}</script>
 
-<title><%= yield(:page_title) || 'Spree guides' %></title>
-
-<link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
-<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-<link rel="stylesheet" type="text/css" href="stylesheets/overrides.style.css" />
-<link rel="stylesheet" type="text/css" href="stylesheets/overrides.print.css" media="print" />
-
-
-<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
-<link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shThemeRailsGuides.css" />
-
-
-</head>
-<body class="guide">
-  <% if @edge %>
-    <div>
-      <img src="images/edge_badge.png" alt="edge-badge" id="edge-badge">
-    </div>
-  <% end %>
-  <div id="topNav">
-    <div class="wrapper">
-      <strong>More at <a href="http://spreecommerce.com">spreecommerce.com:</a> </strong>
-      <a href="http://spreecommerce.com/tour">Features</a> |
-      <a href="http://spreecommerce.com/resources">Resources</a> |
-      <a href="http://spreecommerce.com/blog">Blog</a> |
-      <a href="http://spreecommerce.com/demo">Demo</a> |
-      <a href="http://spreecommerce.com/community">Community</a> |
-      <a href="http://spreecommerce.com/download">Download</a>
-    </div>
-  </div>
-  <div id="header">
-    <div class="wrapper clearfix">
-      <h1><a href="overview.html" title="Return to home page"><%= Guides.meta["title"] %></a></h1>
-      <p class="hide"><a href="#mainCol">Skip navigation</a>.</p>
-      <ul class="nav">
-        <li><a href="overview.html">Home</a></li>
-        <li class="index"><a href="index.html" onclick="guideMenu(); return false;" id="guidesMenu">Guides Index <span id="guidesArrow">&#9656;</span></a>
-          <div id="guides" class="clearfix" style="display: none;">
-            <hr />
-            <%= clickable_index %>
+    <link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shThemeRailsGuides.css" />
+  </head>
+    <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class='tool'>
+      <div class='tool-inner'>
+        <div class='inner'>
+          <div class='logo'>
+            <a href='/'><img src='images/logo.png' /></a>
           </div>
-        </li>
-        <li><a href="contributing_to_spree.html">Contribute</a></li>
-        <li><a href="credits.html">Credits</a></li>
-      </ul>
+          <div class='tool-nav'>
+            <ul>
+              <li><a href='/products'>Products</a></li>
+              <li><a href='/tour'>Tour</a></li>
+              <li><a href='/resources'>Resources</a></li>
+              <li class='sub'><a href='/community'>Community</a></li>
+              <li class='sub'><a href='/blog'>Blog</a></li>
+              <li class='sub'><a href='/contact'>Contact</a></li>
+              <li class='sub'><a href='/user/login'>Login</a></li>
+            </ul>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
     </div>
-  </div>
+    <div class='clear'></div>
 
-  <div id="feature">
-    <div class="wrapper">
-      <%= yield :header_section %>
-
-      <%= yield :index_section %>
+  <div class='splash'>
+    <div class='splash-inner secondary'>
+      <div class='inner'>
+        <h1>Guides</h1>
+      </div>
     </div>
-  </div>
-
-  <div id="container">
-    <div class="wrapper">
-      <div id="mainCol">
-        <%= yield %>
+  </div>  
+  <div class='clear'></div>
+  <div class='docs'>
+    <div class='middle-inner'>
+      <div class='inner'>
+        <div class='main'>
+          <div class='main-inner'>
+            <%= yield :header_section %>
+            <%= yield %>
+          </div>
+        </div>
+        <div class="sidebar">
+          <div class="sidebar-inner">
+            <div class="spot">
+              <div class="spot-inner">
+                <%= yield :index_section %>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <hr class="hide" />
-  <div id="footer">
-    <div class="wrapper">
-      <p>This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0</a> License</a></p>
+    <div class='clear'></div>
+    <div class='footer'>
+      <div class='footer-inner'>
+        <div class='inner'>
+          <div class='one-third'>
+            <ul>
+              <h4>Community</h4>
+              <li><a class="external" href='https://github.com/spree/spree'>Source Code</a></li>
+              <li><a href='/guides'>Documentation</a></li>
+              <li><a class="external" href='https://github.com/spree/spree/issues'>Issues</a></li>
+              <li><a class="external" href='http://groups.google.com/group/spree-user?pli=1'>Mailing List</a></li>
+              <li><a class="external" href='https://github.com/spree/spree/wiki'>Wiki</a></li>
+            </ul>
+          </div>
+          <div class='one-third'>
+            <ul>
+              <h4>Resources</h4>
+              <li><a href='/showcase'>Showcase</a></li>
+              <li><a href='/resources-support'>Buzz</a></li>
+              <li><a href='/resources-license'>License</a></li>
+              <li><a href='/resources-support'>Support</a></li>
+              <li><a href='/resources-demo'>Demo</a></li>
+            </ul>
+          </div>
+          <div class='one-third'>
+            <ul>
+              <h4>Products</h4>
+              <li><a href='/products-hosting'>Hosting</a></li>
+              <li><a href='/products-merchant'>Merchant</a></li>
+              <li><a href='/products-gateway'>Payments</a></li>
+            </ul>
+          </div>
+          <div class='one-half'>
+            <h4>About Spree Commerce</h4>
+            <p>Something here about the company, board, ? conse cte tur adipisicing elit, sed do eiusmod te mpor incididunt ut labore et dolore ma gna aliqua. Ut enim ad minim veniam.</p>
+          </div>
+          <div class='one-half'>
+            <h4>Take it for a test drive</h4>
+            <p>Lorem ipsum dolor sit amet, conse.</p>
+            <a class="button-link" href='#'>View a live demo</a>
+          </div>
+        </div>
+        <div class='clear'></div>
+      </div>
     </div>
-
-  </div>
-
-  <script type="text/javascript" src="javascripts/guides.js"></script>
-  <script type="text/javascript" src="javascripts/syntaxhighlighter/shCore.js"></script>
-  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushRuby.js"></script>
-  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushJScript.js"></script>
-  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushCss.js"></script>
-  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushXml.js"></script>
-  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushSql.js"></script>
-  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushPlain.js"></script>
-  <script type="text/javascript">
-    SyntaxHighlighter.all()
-  </script>
-
-  <% if @ga %>
-    <script type="text/javascript">
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-3914566-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
-    </script>
-  <% end %>
-
-</body>
+    <div class='clear'></div>
+    <div class='footnote'>
+      <div class='footnote-inner'>
+        <div class='inner'>
+          <div class='logosmall'></div>
+          <p>This project is maintained by a core team of developers and is freely available for commercial use under the terms of the New BSD License.</p>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
