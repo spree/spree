@@ -93,6 +93,8 @@ class Api::BaseController < Spree::BaseController
         build_resource
       elsif params[:id]
         find_resource
+      elsif controller_name == 'settings'
+        model_class.new
       end
     end
 
