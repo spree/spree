@@ -4,11 +4,6 @@ class Calculator::FreeShipping < ::Calculator
     I18n.t("free_shipping")
   end
 
-  def self.register
-    super
-    Promotion.register_calculator(self)
-  end
-
   def compute(object)
     if object.is_a?(Array)
       return if object.empty?

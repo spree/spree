@@ -2,14 +2,8 @@ class PaymentMethod < ActiveRecord::Base
   DISPLAY =  [:both, :front_end, :back_end]
   default_scope where(:deleted_at => nil)
 
-  @provider = nil
-  @@providers = Set.new
-  def self.register
-    @@providers.add(self)
-  end
-
   def self.providers
-    @@providers.to_a
+    Rails.application.config.spree.payment_methods
   end
 
   def provider_class

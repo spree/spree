@@ -15,21 +15,19 @@ class Calculator < ActiveRecord::Base
 
   ###################################################################
 
-  @@calculators = Set.new
-  # Registers calculator to be used with selected kinds of operations
   def self.register(*klasses)
-    @@calculators.add(self)
-    klasses.each do |klass|
-      klass = klass.constantize if klass.is_a?(String)
-      klass.register_calculator(self)
-    end
-    self
+    # @@calculators.add(self)
+    # klasses.each do |klass|
+    #   klass = klass.constantize if klass.is_a?(String)
+    #   klass.register_calculator(self)
+    # end
+    # self
   end
 
   # Returns all calculators applicable for kind of work
   # If passed nil, will return only general calculators
   def self.calculators
-    @@calculators.to_a
+    Rails.application.config.spree.calculators.all
   end
 
   def to_s

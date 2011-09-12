@@ -3,53 +3,8 @@ module SpreeCore
     engine_name 'spree_core'
 
     config.autoload_paths += %W(#{config.root}/lib)
-    # TODO - register state monitor observer?
 
-
-    # TODO: Is there a better way to make sure something within 'self.activate' only runs once in development?
     def self.activate
-
-
-      #register all payment methods (unless we're in middle of rake task since migrations cannot be run for this first time without this check)
-      if File.basename( $0 ) != "rake"
-        [
-          Gateway::Bogus,
-          Gateway::AuthorizeNet,
-          Gateway::AuthorizeNetCim,
-          Gateway::Eway,
-          Gateway::Linkpoint,
-          Gateway::PayPal,
-          Gateway::SagePay,
-          Gateway::Beanstream,
-          Gateway::Braintree,
-          PaymentMethod::Check
-        ].each{|gw|
-          begin
-            gw.register
-          rescue Exception => e
-            $stderr.puts "Error registering gateway #{gw}: #{e}"
-          end
-        }
-
-        #register all calculators
-        [
-          Calculator::FlatPercentItemTotal,
-          Calculator::FlatRate,
-          Calculator::FlexiRate,
-          Calculator::PerItem,
-          Calculator::SalesTax,
-          Calculator::Vat,
-          Calculator::PriceBucket
-        ].each{|c_model|
-          begin
-            c_model.register if c_model.table_exists?
-          rescue Exception => e
-            $stderr.puts "Error registering calculator #{c_model}"
-          end
-        }
-
-      end
-
     end
 
     config.to_prepare &method(:activate).to_proc
@@ -61,6 +16,37 @@ module SpreeCore
           activator.activate(payload)
         end
       end
+    end
+
+    initializer "spree.environment" do |app|
+      app.config.spree = Spree::Environment.new
+    end
+
+    initializer "spree.register.calculators" do |app|
+      app.config.spree.calculators.shipping_methods = [
+          Calculator::FlatPercentItemTotal,
+          Calculator::FlatRate,
+          Calculator::FlexiRate,
+          Calculator::PerItem,
+          Calculator::PriceBucket]
+
+       app.config.spree.calculators.tax_rates = [
+          Calculator::SalesTax,
+          Calculator::Vat]
+    end
+
+    initializer "spree.register.payment_methods" do |app|
+      app.config.spree.payment_methods = [
+          Gateway::Bogus,
+          Gateway::AuthorizeNet,
+          Gateway::AuthorizeNetCim,
+          Gateway::Eway,
+          Gateway::Linkpoint,
+          Gateway::PayPal,
+          Gateway::SagePay,
+          Gateway::Beanstream,
+          Gateway::Braintree,
+          PaymentMethod::Check ]
     end
 
     # filter sensitive information during logging

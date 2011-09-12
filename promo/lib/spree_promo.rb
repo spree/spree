@@ -19,38 +19,40 @@ module SpreePromo
           {:user => current_user, :order => current_order, :visited_paths => session[:visited_paths]}
         end
       end
-
-      if Activator.table_exists?
-        # register promotion rules and actions
-        [Promotion::Rules::ItemTotal,
-         Promotion::Rules::Product,
-         Promotion::Rules::User,
-         Promotion::Rules::FirstOrder,
-         Promotion::Rules::LandingPage,
-         Promotion::Rules::UserLoggedIn,
-         Promotion::Actions::CreateAdjustment,
-         Promotion::Actions::CreateLineItems
-        ].each &:register
-
-        # register default promotion calculators
-        [
-          Calculator::FlatPercentItemTotal,
-          Calculator::FlatRate,
-          Calculator::FlexiRate,
-          Calculator::PerItem,
-          Calculator::FreeShipping
-        ].each{|c_model|
-          begin
-            Promotion::Actions::CreateAdjustment.register_calculator(c_model) if c_model.table_exists?
-          rescue Exception => e
-            $stderr.puts "Error registering promotion calculator #{c_model}"
-          end
-        }
-      end
-
     end
 
     config.autoload_paths += %W(#{config.root}/lib)
     config.to_prepare &method(:activate).to_proc
+
+    initializer "spree.promo.environment", :after => "spree.environment" do |app|
+      app.config.spree.add_class('promotions')
+      app.config.spree.promotions = Spree::Promo::Environment.new
+    end
+
+    initializer "spree.promo.register.promotion.calculators" do |app|
+      app.config.spree.calculators.add_class('promotion_actions_create_adjustments')
+      app.config.spree.calculators.promotion_actions_create_adjustments = [
+        Calculator::FlatPercentItemTotal,
+        Calculator::FlatRate,
+        Calculator::FlexiRate,
+        Calculator::PerItem,
+        Calculator::FreeShipping
+      ]
+    end
+
+    initializer "spree.promo.register.promotions.rules" do |app|
+      app.config.spree.promotions.rules = [Promotion::Rules::ItemTotal,
+         Promotion::Rules::Product,
+         Promotion::Rules::User,
+         Promotion::Rules::FirstOrder,
+         Promotion::Rules::LandingPage,
+         Promotion::Rules::UserLoggedIn]
+    end
+
+    initializer "spree.promo.register.promotions.actions" do |app|
+      app.config.spree.promotions.actions = [Promotion::Actions::CreateAdjustment,
+        Promotion::Actions::CreateLineItems]
+    end
+
   end
 end

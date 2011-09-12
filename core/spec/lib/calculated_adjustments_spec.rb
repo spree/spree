@@ -10,11 +10,6 @@ describe Spree::CalculatedAdjustments do
   it "should add has_one :calculator relationship" do
     assert ShippingMethod.reflect_on_all_associations(:has_one).map(&:name).include?(:calculator)
   end
-  it "should be able to register calculators" do
-    expect {
-      TaxRate.register_calculator(calculator)
-    }.to change { TaxRate.calculators.count }.by 1
-  end
 
   let(:tax_rate) { TaxRate.new(:calculator => calculator) }
 

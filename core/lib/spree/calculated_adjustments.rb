@@ -5,15 +5,9 @@ module Spree::CalculatedAdjustments
       accepts_nested_attributes_for :calculator
       validates :calculator, :presence => true if options[:require]
 
-      class_attribute :calculators
-      self.calculators = Set.new
-      # @available_calculators = []
-      def register_calculator(calculator)
-        self.calculators.add(calculator)
+      def self.calculators
+        Rails.application.config.spree.calculators.send(self.to_s.tableize.gsub("/", "_"))
       end
-      # def calculators
-      #   @available_calculators
-      # end
 
       if options[:default]
         default_calculator_class = options[:default]
@@ -29,6 +23,11 @@ module Spree::CalculatedAdjustments
         define_method(:default_calculator) do
           nil
         end
+      end
+
+      #Remove in 0.80.0
+      def self.register(*args)
+        ActiveSupport::Deprecation.warn("Calculator registration has changed, add your calculator to the relevant Rails.application.config.spree.calculators collection.", caller)
       end
 
       include InstanceMethods
@@ -72,3 +71,4 @@ module Spree::CalculatedAdjustments
     receiver.extend Spree::CalculatedAdjustments::ClassMethods
   end
 end
+

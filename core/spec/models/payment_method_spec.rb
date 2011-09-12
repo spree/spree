@@ -9,14 +9,6 @@ describe PaymentMethod do
     it { should have_valid_factory(:payment_method) }
   end
 
-  describe "self#register" do
-    it "should increase all#size by 1" do
-      expect {
-        Gateway::Test.register
-      }.to change{PaymentMethod.providers.size}.by(1)
-    end
-  end
-
   describe "#available" do
     before(:all) do
       [nil, 'both', 'front_end', 'back_end'].each do |display_on|

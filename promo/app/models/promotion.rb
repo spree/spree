@@ -31,7 +31,11 @@ class Promotion < Activator
   validates :name, :presence => true
   validates :preferred_code, :presence => true, :if => lambda{|r| r.event_name == 'spree.ceckout.coupon_code_added' }
 
-  scope :advertised, includes(:stored_preferences).where(:preferences => {:name => 'advertise', :value => '1'})
+  class << self
+    def advertised
+      includes(:stored_preferences).where(:preferences => {:name => 'advertise', :value => '1'})
+    end
+  end
 
   # TODO: Remove that after fix for https://rails.lighthouseapp.com/projects/8994/tickets/4329-has_many-through-association-does-not-link-models-on-association-save
   # is provided
