@@ -23,6 +23,7 @@ module Spree
       empty_directory "#{file_name}/app/helpers"
       empty_directory "#{file_name}/app/models"
       empty_directory "#{file_name}/app/views"
+      empty_directory "#{file_name}/app/overrides"
       empty_directory "#{file_name}/config"
       empty_directory "#{file_name}/db"
 
