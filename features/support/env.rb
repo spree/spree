@@ -3,7 +3,9 @@ ENV["RAILS_ENV"] ||= "cucumber"
 require File.expand_path("../spec/dummy/config/environment", FEATURES_PATH)
 
 # sometimes tests fail randomly because cache is not refreshed, fixed that
-Spree::Config.set(:foo => "bar")
+#Spree::Config.set(:foo => "bar")
+@configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+Rails.cache.delete("configuration_#{@configuration.class.name}".to_sym)
 
 require 'bundler'
 Bundler.setup(:cucumber)

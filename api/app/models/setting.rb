@@ -7,7 +7,7 @@ class Setting
   def update_attributes(hash)
     if hash
       hash.each do |k,v|
-        Spree::Config.set({k => v})
+        Spree::Config.set(k => v)
       end
       return true
     else

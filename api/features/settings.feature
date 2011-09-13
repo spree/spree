@@ -19,7 +19,7 @@ Feature: Settings for admin
     Then the response status should be "200"
     When I send a GET request to "/api/settings"
     Then the response status should be "200 OK"
-    Then response "select_taxons_from_tree" should be "t"
+    Then response "select_taxons_from_tree" should be "true"
     And response "orders_per_page" should be "100"
 
   Scenario: get all settings for valid api user
