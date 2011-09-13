@@ -539,6 +539,11 @@ img.github-logo {
   width: 124px;
   margin: 0 0px 8px 35px;
   opacity: 0.9; }
+#chapter-listing p {
+  margin: 0;
+  font-size: inherit;
+  color: inherit;
+}
 
 
 /* ======= Product and Tour areas ======= */
@@ -783,14 +788,14 @@ code {
   padding: 34px 0px 0px 20px; }
 
 
-.check {
+.check, #header-section ul {
   margin: 10px 0 20px 0; }
-.check li {
-  background: url("/images/accept.png") no-repeat scroll left 1px transparent;
+.check li, #header-section li {
+  background: url("../images/accept.png") no-repeat scroll left 1px transparent;
   list-style: none outside none;
   padding: 5px 0 5px 32px; }
-.check.guide li {
-  background: url("/images/check.png") no-repeat scroll left 8px transparent;
+.check.guide li, #header-section li {
+  background: url("../images/check.png") no-repeat scroll left 8px transparent;
   padding-left: 30px;
   line-height: 20px; }
 
@@ -1408,11 +1413,11 @@ code {
 .code .tab {
   background: url("../images/tab-code.png") no-repeat scroll left top #f8f9fa; }
 .note .tab {
-  background: url("/images/tab-notes.png") no-repeat scroll left top #FFF9D8; }
+  background: url("../images/tab-notes.png") no-repeat scroll left top #FFF9D8; }
 .info .tab {
-  background: url("/images/tab-pin.png") no-repeat scroll left top #E5CFEC; }
+  background: url("../images/tab-pin.png") no-repeat scroll left top #E5CFEC; }
 .warning .tab {
-  background: url("/images/tab-warning.png") no-repeat scroll left top #F9D9D8; }
+  background: url("../images/tab-warning.png") no-repeat scroll left top #F9D9D8; }
 .code .bg {
   background: #f8f9fa;
   -webkit-box-shadow: inset 1px 1px 12px 2px #dee0e1;

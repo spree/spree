@@ -155,7 +155,7 @@ A similar approach can be used for javascript functions, for example if you want
 
 Again, just create a new javascript file inside <tt>your_app/app/assets/stylesheets/store</tt> and include the new method definition:
 
-<javascript>
+<javascript filename="app/assets/javascripts/store/foo.js">
   // app/assets/javascripts/store/foo.js 
 
   var show_variant_images = function(variant_id) {

@@ -52,14 +52,14 @@
       <div class='inner'>
         <div class='main'>
           <div class='main-inner'>
-            <%= yield :header_section %>
+            <div id='header-section'><%= yield :header_section %></div>
             <%= yield %>
           </div>
         </div>
         <div class="sidebar">
           <div class="sidebar-inner">
             <div class="spot">
-              <div class="spot-inner">
+              <div class="spot-inner" id="chapter-listing">
                 <%= yield :index_section %>
               </div>
             </div>
