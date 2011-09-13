@@ -1,3 +1,2 @@
 require 'spree_core'
-require '<%=file_name%>/engine'
-require '<%=file_name%>/hooks'
+require '<%= file_name %>/engine'
