@@ -1,7 +1,7 @@
 class Setting
   attr :setting
   def initialize
-    @data = Spree::Config.get
+    @setting = Spree::Config.get
   end
 
   def update_attributes(hash)
@@ -13,5 +13,9 @@ class Setting
     else
       return false
     end
+  end
+
+  def to_xml(options)
+    self.setting.to_xml(:root => 'setting')
   end
 end

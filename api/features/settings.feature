@@ -22,6 +22,15 @@ Feature: Settings for admin
     Then response "select_taxons_from_tree" should be "true"
     And response "orders_per_page" should be "100"
 
+  Scenario: set settings xml
+    Given I send and accept xml
+    When I send a GET request to "/api/settings.xml"
+    Then the response status should be "200 OK"
+    When I send xml and PUT request to "/api/settings/update.xml"
+    Then the response status should be "200 OK"
+    When I send a GET request to "/api/settings.xml"
+    Then response xml "orders-per-page" should be "777"
+
   Scenario: get all settings for valid api user
     Given I am a valid API user but not admin
     When I send a GET request to "/api/settings"

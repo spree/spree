@@ -4,17 +4,19 @@ class Api::BaseController < Spree::BaseController
   skip_before_filter :verify_authenticity_token, :if => lambda { admin_token_passed_in_headers }
   authorize_resource
 
-  respond_to :json
+  respond_to :json, :xml
 
   def index
     respond_with(@collection) do |format|
       format.json { render :json => @collection.to_json(collection_serialization_options) }
+      format.xml { render :xml => @collection.to_xml(collection_serialization_options) }
     end
   end
 
   def show
     respond_with(@object) do |format|
       format.json { render :json => @object.to_json(object_serialization_options) }
+      format.xml { render :xml => @object.to_xml(object_serialization_options) }
     end
   end
 

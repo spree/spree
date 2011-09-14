@@ -38,15 +38,9 @@ describe Api::OrdersController do
       get :index, :format => :json
       response.code.should == "200"
     end
-  end
-
-  context "when authenticated as admin" do
-    # /api/admin/settings
-    # Spree::Config.get
-    # get all settings
-    it "should allow get index for admin" do
-    end
-    it "should restrict access for nonadmin users" do
+    it "should allow index by xml" do
+      get :index, :format => :xml
+      response.should be_success
     end
   end
 
