@@ -1,3 +1,4 @@
+# encoding: UTF-8
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = '<%= file_name %>'
