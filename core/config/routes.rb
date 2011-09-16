@@ -204,7 +204,7 @@ Rails.application.routes.draw do
   #match '/:controller(/:action(/:id(.:format)))'
 
   # a catchall route for "static" content (except paths with explicit extensions: .html, .ico, etc)
-  #if Spree::Config.instance && Spree::Config.get(:use_content_controller)
+  if Spree::Config.instance && Spree::Config.get(:use_content_controller)
     match '/*path' => 'content#show'
-  #end
+  end
 end
