@@ -83,8 +83,7 @@ module SpreeBase
     end
 
     def get_taxonomies
-      @taxonomies ||= Taxonomy.includes(:root => :children)
-      @taxonomies.reject { |t| t.root.nil? }
+      @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
     end
 
     def current_gateway
