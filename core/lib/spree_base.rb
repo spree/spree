@@ -83,7 +83,7 @@ module SpreeBase
     end
 
     def get_taxonomies
-      @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
+      @taxonomies ||= Taxonomy.joins(:root)
     end
 
     def current_gateway
