@@ -2,6 +2,7 @@ class Creditcard < ActiveRecord::Base
   has_many :payments, :as => :source
 
   before_save :set_last_digits
+  after_validation :set_card_type
 
   attr_accessor :number, :verification_value
 
@@ -22,7 +23,20 @@ class Creditcard < ActiveRecord::Base
     verification_value.to_s.gsub!(/\s/,'') unless number.nil?
     self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
   end
-
+  
+  # cheap hack to get to the type? method from deep within ActiveMerchant without stomping on
+  # potentially existing methods in CreditCard
+  class CardDetector
+    class << self
+      include ActiveMerchant::Billing::CreditCardMethods::ClassMethods
+    end
+  end
+  
+  # sets self.cc_type while we still have the card number
+  def set_card_type
+    self.cc_type ||= CardDetector.type?(self.number)
+  end
+  
   def name?
     first_name? && last_name?
   end
@@ -239,8 +253,8 @@ class Creditcard < ActiveRecord::Base
   end
 
   def spree_cc_type
-    return "visa" if ENV['RAILS_ENV'] == "development"
-    self.class.type?(number)
+    return "visa" if ::Rails.env == "development"
+    self.cc_type
   end
 
   # Saftey check to make sure we're not accidentally performing operations on a live gateway.
