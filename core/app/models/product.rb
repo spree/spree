@@ -44,18 +44,17 @@ class Product < ActiveRecord::Base
   after_save :save_master
 
   has_many :variants,
-    :conditions => ["variants.is_master = ? AND variants.deleted_at IS NULL", false],
-    :order => 'variants.position ASC'
-
+    :conditions => ["#{Variant.table_name}.is_master = ? AND #{Variant.table_name}.deleted_at IS NULL", false],
+    :order => "#{Variant.table_name}.position ASC"
 
   has_many :variants_including_master,
     :class_name => 'Variant',
-    :conditions => ["variants.deleted_at IS NULL"],
+    :conditions => ["#{Variant.table_name}.deleted_at IS NULL"],
     :dependent => :destroy
 
   has_many :variants_with_only_master,
     :class_name => 'Variant',
-    :conditions => ["variants.deleted_at IS NULL AND variants.is_master = ?", true],
+    :conditions => ["#{Variant.table_name}.deleted_at IS NULL AND #{Variant.table_name}.is_master = ?", true],
     :dependent => :destroy
 
 
@@ -74,29 +73,42 @@ class Product < ActiveRecord::Base
 
   include ::Scopes::Product
 
-  #RAILS3 TODO -  scopes are duplicated here and in scopres/product.rb - can we DRY it up?
+  #RAILS3 TODO -  scopes are duplicated here and in scopes/product.rb - can we DRY it up?
   # default product scope only lists available and non-deleted products
-  scope :not_deleted,     where("products.deleted_at is NULL")
+  class << self
+    def not_deleted
+      where(Product.arel_table[:deleted_at].eq(nil))
+    end
 
-  scope :available,       lambda { |*on| where("products.available_on <= ?", on.first || Time.zone.now ) }
+    def available(available_on = nil)
+      where(Product.arel_table[:available_on].lteq(available_on || Time.zone.now ))
+    end
 
-  #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
-  scope :active,          lambda{ not_deleted.available }
+    #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
+    def active
+      not_deleted.available
+    end
 
-  scope :on_hand,         where("products.count_on_hand > 0")
+    def on_hand
+      where(Product.arel_table[:count_on_hand].gteq(0))
+    end
 
+    def id_equals(input_id)
+      where(Product.arel_table[:id].eq(input_id))
+    end
+
+    def taxons_name_eq(name)
+      joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+    end
+  end
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-    if ActiveRecord::Base.connection.tables.include?("products")
-      scope :group_by_products_id, { :group => Product.column_names.map{|col_name| "products.#{col_name}"} }
+    if Product.table_exists?
+      scope :group_by_products_id, { :group => Product.column_names.map{|col_name| "#{Product.table_name}.#{col_name}"} }
     end
   else
-    scope :group_by_products_id, { :group => "products.id" }
+    scope :group_by_products_id, { :group => "#{Product.table_name}.id" }
   end
   search_methods :group_by_products_id
-
-  scope :id_equals, lambda { |input_id| where("products.id = ?", input_id) }
-
-  scope :taxons_name_eq, lambda { |name| joins(:taxons).where("taxons.name = ?", name) }
 
   # ----------------------------------------------------------------------------------------------------------
   #
@@ -135,7 +147,7 @@ class Product < ActiveRecord::Base
 
   # returns true if the product has any variants (the master variant is not a member of the variants array)
   def has_variants?
-    !variants.empty?
+    variants.any?
   end
 
   # returns the number of inventory units "on_hand" for this product
@@ -151,7 +163,7 @@ class Product < ActiveRecord::Base
 
   # Returns true if there are inventory units (any variant) with "on_hand" state for this product
   def has_stock?
-    master.in_stock? || !!variants.detect{|v| v.in_stock?}
+    master.in_stock? || variants.any?(&:in_stock?)
   end
 
   def tax_category
@@ -236,7 +248,7 @@ class Product < ActiveRecord::Base
   end
 
   private
-  
+
   def sanitize_permalink
     self.permalink = self.permalink.to_url
   end
