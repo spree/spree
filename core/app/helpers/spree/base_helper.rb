@@ -36,7 +36,17 @@ module Spree::BaseHelper
   # human readable list of variant options
   def variant_options(v, allow_back_orders = Spree::Config[:allow_backorders], include_style = true)
     list = v.options_text
-    list = include_style ? content_tag(:span, "(#{t(:out_of_stock)}) #{list}", :class => "out-of-stock") : "#{t(:out_of_stock)} #{list}" unless (allow_back_orders || v.in_stock?)
+
+    # We shouldn't show out of stock if the product is infact in stock
+    # or when we're not allowing backorders.
+    unless (allow_back_orders || v.in_stock?)
+      list = if include_style
+        content_tag(:span, "(#{t(:out_of_stock)}) #{list}", :class => "out-of-stock")
+      else
+        "#{t(:out_of_stock)} #{list}"
+      end
+    end
+
     list
   end
 
