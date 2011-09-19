@@ -82,6 +82,8 @@ module SpreeBase
       @current_controller = controller_name
     end
 
+    # get_taxonomies will return a chainable ActiveRecord::Relation
+    # which can be used to filter this collection further without additional SQL queries.
     def get_taxonomies
       @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
     end
