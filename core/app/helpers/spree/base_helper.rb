@@ -50,15 +50,17 @@ module Spree::BaseHelper
     list
   end
 
+  # Define helper methods for all image attachment styles.
+  # For example :mini generates the helper method 'mini_image'.
   Image.attachment_definitions[:attachment][:styles].each do |style, v|
     define_method "#{style}_image" do |product, *options|
       options = options.first || {}
-      if product.images.empty?
-        image_tag "noimage/#{style}.png", options
+      if (image = product.images.first).present?
+        image_tag image.attachment.url(style), {
+          :alt => image.alt.present? ? image.alt : product.name
+        }.merge(options)
       else
-        image = product.images.first
-        options.reverse_merge! :alt => image.alt.blank? ? product.name : image.alt
-        image_tag image.attachment.url(style), options
+        image_tag "noimage/#{style}.png", options
       end
     end
   end
