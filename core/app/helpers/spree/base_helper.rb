@@ -56,7 +56,8 @@ module Spree::BaseHelper
   Image.attachment_definitions[:attachment][:styles].each do |style, v|
     define_method "#{style}_image" do |product, *options|
       options = options.first || {}
-      if (image = product.images.first).present?
+      if product.images.any?
+        image = product.images.first
         image_tag image.attachment.url(style), {
           :alt => image.alt.present? ? image.alt : product.name
         }.merge(options)
