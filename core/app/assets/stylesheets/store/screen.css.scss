@@ -1,29 +1,27 @@
 body {
   padding: 0 1em;
 }
-
 /* Header */
 
 div#header {
   margin-bottom: 1em;
+    ul {
+        &.nav-bar {
+          line-height: 50px;
+          float: right;
+          clear: both;
+          font-size: 1.2em;
+          list-style: none;
+          margin: 0;
+            li {
+              padding: 0 0 0 1em;
+              display: table-cell;
+              vertical-align: middle;
+              height: 82px;
+            }
+        }
+    }
 }
-
-div#header ul#nav-bar {
-  line-height: 50px;
-  float: right;
-  clear: both;
-  font-size: 1.2em;
-  list-style: none;
-  margin: 0;
-}
-
-div#header ul#nav-bar li {
-  padding: 0 0 0 1em;
-  display: table-cell;
-  vertical-align: middle;
-  height: 82px;
-}
-
 
 /* Sidebar */
 
@@ -51,19 +49,17 @@ div#footer {
 ul#products {
   list-style: none;
   margin: 0 auto;
-}
-
-ul#products li {
-  float: left;
-  text-align: center;
-  width: 200px;
-  height: 150px;
-  padding: 0 10px 20px 10px;
-}
-
-ul#products li img {
-  display: block;
-  margin: auto;
+    li {
+      float: left;
+      text-align: center;
+      width: 200px;
+      height: 150px;
+      padding: 0 10px 20px 10px;
+        img {
+          display: block;
+          margin: auto;
+        }
+    }
 }
 
 button, a.button, input.button {
