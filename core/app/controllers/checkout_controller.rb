@@ -27,7 +27,7 @@ class CheckoutController < Spree::BaseController
       end
 
       if @order.state == "complete" || @order.completed?
-        flash[:notice] = I18n.t(:order_processed_successfully)
+        flash.notice = I18n.t(:order_processed_successfully)
         flash[:commerce_tracking] = "nothing special"
         respond_with(@order, :location => completion_route)
       else
@@ -90,7 +90,7 @@ class CheckoutController < Spree::BaseController
   end
 
   def rescue_from_spree_gateway_error
-    flash[:error] = t('spree_gateway_error_flash_for_checkout')
+    flash[:error] = I18n.t(:spree_gateway_error_flash_for_checkout)
     render :edit
   end
 

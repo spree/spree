@@ -48,14 +48,14 @@ class Api::BaseController < Spree::BaseController
     valid_events_for_object = @object ? @object.state_transitions.map(&:event) : []
 
     if params[:e].blank?
-      errors = t('api.errors.missing_event')
+      errors = I18n.t('api.errors.missing_event')
     elsif valid_events_for_object.include?(params[:e].to_sym)
       @object.send("#{params[:e]}!")
       errors = nil
     elsif valid_events.include?(params[:e].to_sym)
-      errors = t('api.errors.invalid_event_for_object', :events => valid_events_for_object.join(','))
+      errors = I18n.t('api.errors.invalid_event_for_object', :events => valid_events_for_object.join(','))
     else
-      errors = t('api.errors.invalid_event', :events => valid_events.join(','))
+      errors = I18n.t('api.errors.invalid_event', :events => valid_events.join(','))
     end
 
     respond_to do |wants|

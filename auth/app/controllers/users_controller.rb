@@ -29,7 +29,7 @@ class UsersController < Spree::BaseController
         user = User.reset_password_by_token(params[:user])
         sign_in(@user, :event => :authentication, :bypass => !Spree::Auth::Config[:signout_after_password_change])
       end
-      flash.notice = I18n.t("account_updated")
+      flash.notice = I18n.t(:account_updated)
       redirect_to account_url
     else
       render 'edit'

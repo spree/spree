@@ -4,7 +4,7 @@ class Calculator::FlexiRate < Calculator
   preference :max_items,       :decimal, :default => 0
 
   def self.description
-    I18n.t("flexible_rate")
+    I18n.t(:flexible_rate)
   end
 
   def self.available?(object)

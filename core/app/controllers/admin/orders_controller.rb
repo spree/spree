@@ -64,7 +64,7 @@ class Admin::OrdersController < Admin::BaseController
             @order.create_shipment!
             return_path = edit_admin_order_shipment_path(@order, @order.shipment)
           else
-            flash[:error] = t('errors.messages.no_shipping_methods_available')
+            flash[:error] = I18n.t('errors.messages.no_shipping_methods_available')
             return_path = user_admin_order_path(@order)
           end
         else
@@ -75,7 +75,7 @@ class Admin::OrdersController < Admin::BaseController
         return_path = admin_order_path(@order)
       end
     else
-      @order.errors.add(:line_items, t('errors.messages.blank'))
+      @order.errors.add(:line_items, I18n.t('errors.messages.blank'))
     end
 
     respond_with(@order) do |format|
@@ -95,9 +95,9 @@ class Admin::OrdersController < Admin::BaseController
     # itself will make sure transitions are not applied in the wrong state)
     event = params[:e]
     if @order.send("#{event}")
-      flash.notice = t('order_updated')
+      flash.notice = I18n.t(:order_updated)
     else
-      flash[:error] = t('cannot_perform_operation')
+      flash[:error] = I18n.t(:cannot_perform_operation)
     end
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"
@@ -107,7 +107,7 @@ class Admin::OrdersController < Admin::BaseController
 
   def resend
     OrderMailer.confirm_email(@order, true).deliver
-    flash.notice = t('order_email_resent')
+    flash.notice = I18n.t(:order_email_resent)
 
     respond_with(@order) { |format| format.html { redirect_to :back } }
   end

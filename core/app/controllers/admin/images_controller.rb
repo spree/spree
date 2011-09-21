@@ -26,7 +26,7 @@ class Admin::ImagesController < Admin::ResourceController
     @variants = @product.variants.collect do |variant|
       [variant.options_text, variant.id ]
     end
-    @variants.insert(0, [I18n.t("all"), "All"])
+    @variants.insert(0, [I18n.t(:all), "All"])
   end
 
   def set_viewable

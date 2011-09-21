@@ -30,7 +30,7 @@ class Admin::PaymentsController < Admin::BaseController
 
       if @order.completed?
         @payment.process!
-        flash[:notice] = flash_message_for(@payment, :successfully_created)
+        flash.notice = flash_message_for(@payment, :successfully_created)
 
         respond_with(@payment) { |format| format.html { redirect_to admin_order_payments_path(@order) } }
       else
@@ -38,7 +38,7 @@ class Admin::PaymentsController < Admin::BaseController
         until @order.completed?
           @order.next!
         end
-        flash.notice = t('new_order_completed')
+        flash.notice = I18n.t(:new_order_completed)
         respond_with(@payment) { |format| format.html { redirect_to admin_order_url(@order) } }
       end
 
@@ -53,9 +53,9 @@ class Admin::PaymentsController < Admin::BaseController
     # TODO: consider finer-grained control for this type of action (right now anyone in admin role can perform)
     return unless event = params[:e] and @payment.payment_source
     if @payment.payment_source.send("#{event}", @payment)
-      flash.notice = t('payment_updated')
+      flash.notice = I18n.t(:payment_updated)
     else
-      flash[:error] = t('cannot_perform_operation')
+      flash[:error] = I18n.t(:cannot_perform_operation)
     end
   rescue Spree::GatewayError => ge
     flash[:error] = "#{ge.message}"

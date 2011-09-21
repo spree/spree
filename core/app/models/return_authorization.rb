@@ -48,7 +48,7 @@ class ReturnAuthorization < ActiveRecord::Base
 
   private
   def must_have_shipped_units
-    errors.add(:order, I18n.t("has_no_shipped_units")) if order.nil? || !order.inventory_units.any?(&:shipped?)
+    errors.add(:order, I18n.t(:has_no_shipped_units)) if order.nil? || !order.inventory_units.any?(&:shipped?)
   end
 
   def generate_number
@@ -65,7 +65,7 @@ class ReturnAuthorization < ActiveRecord::Base
   def process_return
     inventory_units.each &:return!
 
-    credit = Adjustment.create(:source => self, :order_id => self.order.id, :amount => self.amount.abs * -1, :label => I18n.t("rma_credit"))
+    credit = Adjustment.create(:source => self, :order_id => self.order.id, :amount => self.amount.abs * -1, :label => I18n.t(:rma_credit))
     self.order.update!
   end
 

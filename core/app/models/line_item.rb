@@ -8,7 +8,7 @@ class LineItem < ActiveRecord::Base
   before_validation :copy_price
 
   validates :variant, :presence => true
-  validates :quantity, :numericality => { :only_integer => true, :message => I18n.t("validation.must_be_int") }
+  validates :quantity, :numericality => { :only_integer => true, :message => I18n.t('validation.must_be_int') }
   validates :price, :numericality => true
   # validate :meta_validation_of_quantities
 
@@ -26,18 +26,18 @@ class LineItem < ActiveRecord::Base
 
   # def meta_validation_of_quantities
   #   unless quantity && quantity >= 0
-  #     errors.add(:quantity, I18n.t("validation.must_be_non_negative"))
+  #     errors.add(:quantity, I18n.t('validation.must_be_non_negative'))
   #   end
   #   # avoid reload of order.inventory_units by using direct lookup
   #   unless !Spree::Config[:track_inventory_levels]                        ||
   #          Spree::Config[:allow_backorders]                               ||
   #          order   && InventoryUnit.order_id_equals(order).first.present? ||
   #          variant && quantity <= variant.on_hand
-  #     errors.add(:quantity, I18n.t("validation.is_too_large") + " (#{self.variant.name})")
+  #     errors.add(:quantity, I18n.t('validation.is_too_large') + " (#{self.variant.name})")
   #   end
   #
   #   if shipped_count = order.shipped_units.nil? ? nil : order.shipped_units[variant]
-  #     errors.add(:quantity, I18n.t("validation.cannot_be_less_than_shipped_units") ) if quantity < shipped_count
+  #     errors.add(:quantity, I18n.t('validation.cannot_be_less_than_shipped_units') ) if quantity < shipped_count
   #   end
   # end
 
@@ -87,7 +87,7 @@ class LineItem < ActiveRecord::Base
 
     def ensure_not_shipped
       if order.try(:inventory_units).to_a.any?{|unit| unit.variant_id == variant_id && unit.shipped?}
-        errors.add :base, I18n.t("cannot_destory_line_item_as_inventory_units_have_shipped")
+        errors.add :base, I18n.t('cannot_destory_line_item_as_inventory_units_have_shipped')
         return false
      end
   end
