@@ -4,9 +4,9 @@
  * Supported plugins: ui (hovered, clicked), checkbox, contextmenu, search
  */
 
-.jstree-apple > ul { background:url("bg.jpg") left top repeat; }
+.jstree-apple > ul { background:image-url("jquery.jstree/themes/apple/bg.jpg") left top repeat; }
 .jstree-apple li, 
-.jstree-apple ins { background-image:url("d.png"); background-repeat:no-repeat; background-color:transparent; }
+.jstree-apple ins { background-image:image-url("jquery.jstree/themes/apple/d.png"); background-repeat:no-repeat; background-color:transparent; }
 .jstree-apple li { background-position:-90px 0; background-repeat:repeat-y;  }
 .jstree-apple li.jstree-last { background:transparent; }
 .jstree-apple .jstree-open > ins { background-position:-72px 0; }
@@ -17,7 +17,7 @@
 .jstree-apple .jstree-hovered { background:#e7f4f9; border:1px solid #d8f0fa; padding:0 3px 0 1px; text-shadow:1px 1px 1px silver; }
 .jstree-apple .jstree-clicked { background:#beebff; border:1px solid #99defd; padding:0 3px 0 1px; }
 .jstree-apple a .jstree-icon { background-position:-56px -20px; }
-.jstree-apple a.jstree-loading .jstree-icon { background:url("throbber.gif") center center no-repeat !important; }
+.jstree-apple a.jstree-loading .jstree-icon { background:image-url("jquery.jstree/themes/apple/throbber.gif") center center no-repeat !important; }
 
 .jstree-apple.jstree-focused { background:white; }
 
@@ -40,9 +40,9 @@
 .jstree-apple .jstree-undetermined > a > .jstree-checkbox:hover { background-position:-20px -37px; }
 
 #vakata-dragged.jstree-apple ins { background:transparent !important; }
-#vakata-dragged.jstree-apple .jstree-ok { background:url("d.png") -2px -53px no-repeat !important; }
-#vakata-dragged.jstree-apple .jstree-invalid { background:url("d.png") -18px -53px no-repeat !important; }
-#jstree-marker.jstree-apple { background:url("d.png") -41px -57px no-repeat !important; text-indent:-100px; }
+#vakata-dragged.jstree-apple .jstree-ok { background:image-url("jquery.jstree/themes/apple/d.png") -2px -53px no-repeat !important; }
+#vakata-dragged.jstree-apple .jstree-invalid { background:image-url("jquery.jstree/themes/apple/d.png") -18px -53px no-repeat !important; }
+#jstree-marker.jstree-apple { background:image-url("jquery.jstree/themes/apple/d.png") -41px -57px no-repeat !important; text-indent:-100px; }
 
 .jstree-apple a.jstree-search { color:aqua; }
 .jstree-apple .jstree-locked a { color:silver; cursor:default; }
