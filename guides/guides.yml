@@ -115,7 +115,7 @@ index:
     - title: Product Groups and Scopes
       url: scopes_and_groups
       text: Information on how to define groups of products by various criteria.
-    - title: Seaching and Faceting
+    - title: Searching and Faceting
       url: searching
       text: Information on how to support powerful search and filtering operations.
     - title: Contributing to Spree
