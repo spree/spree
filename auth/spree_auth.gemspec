@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency('spree_core',  version)
-  s.add_dependency('devise', '= 1.4.6')
-  s.add_dependency('cancan', '= 1.6.5')
+  s.add_dependency 'spree_core', version
+  s.add_dependency 'devise', '= 1.4.6'
+  s.add_dependency 'cancan', '= 1.6.5'
 end
