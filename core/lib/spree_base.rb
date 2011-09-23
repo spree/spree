@@ -9,15 +9,15 @@ module SpreeBase
     attr_writer :title
 
     def title
-      title_string = @title.blank? ? accurate_title : @title
-      if title_string.blank?
-        default_title
-      else
+      title_string = @title.present? ? @title : accurate_title
+      if title_string.present?
         if Spree::Config[:always_put_site_name_in_title]
           [default_title, title_string].join(' - ')
         else
           title_string
         end
+      else
+        default_title
       end
     end
 
@@ -82,8 +82,10 @@ module SpreeBase
       @current_controller = controller_name
     end
 
+    # get_taxonomies will return a chainable ActiveRecord::Relation
+    # which can be used to filter this collection further without additional SQL queries.
     def get_taxonomies
-      @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
+      @taxonomies ||= Taxonomy.joins(:root)
     end
 
     def current_gateway
