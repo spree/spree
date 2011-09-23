@@ -22,12 +22,6 @@ class InventoryUnit < ActiveRecord::Base
     after_transition :to => 'returned', :do => :restock_variant
   end
 
-  # method deprecated in favour of adjust_units (which creates & destroys units as needed).
-  def self.sell_units(order)
-    warn "[DEPRECATION] `InventoryUnits#sell_units` is deprecated.  Please use `InventoryUnits#assign_opening_inventory` instead. (called from #{caller[0]})"
-    self.adjust_units(order)
-  end
-
   # Assigns inventory to a newly completed order.
   # Should only be called once during the life-cycle of an order, on transition to completed.
   #
@@ -88,7 +82,10 @@ class InventoryUnit < ActiveRecord::Base
   end
 
   def self.destroy_units(order, variant, quantity)
-    variant_units = order.inventory_units.group_by(&:variant_id)[variant.id].sort_by(&:state)
+    variant_units = order.inventory_units.group_by(&:variant_id)
+    return unless variant_units.include? variant.id
+
+    variant_units = variant_units[variant.id].sort_by(&:state)
 
     quantity.times do
       inventory_unit = variant_units.shift
@@ -97,9 +94,8 @@ class InventoryUnit < ActiveRecord::Base
   end
 
   def self.create_units(order, variant, sold, back_order)
-    if back_order > 0 && !Spree::Config[:allow_backorders]
-      raise "Cannot request back orders when backordering is disabled"
-    end
+    return if back_order > 0 && !Spree::Config[:allow_backorders]
+
 
     shipment = order.shipments.detect {|shipment| !shipment.shipped? }
 

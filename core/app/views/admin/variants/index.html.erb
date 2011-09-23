@@ -17,7 +17,7 @@
     <!-- you can skip variant with no options: that's just the default variant that all products have -->
     <% next if variant.option_values.empty? %>
     <tr id="<%= dom_id(variant) %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
-      <td><span class="handle"></span> <%= variant_options variant %></td>
+      <td><span class="handle"></span> <%= variant.options_text %></td>
       <td><%= variant.price %></td>
       <td><%= variant.sku %></td>
       <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>

@@ -9,7 +9,9 @@ $.each($('td.qty input'), function(i, inpt){
       type: "POST",
       url: "/admin/orders/" + $('input#order_number').val() + "/line_items/" + $(id).val(),
       data: ({_method: "put", "line_item[quantity]": $(this).val()}),
-      success: function(html){ $('#order-form-wrapper').html(html)}
+      complete: function(resp){ 
+        $('#order-form-wrapper').html(resp.responseText);
+      }
     });
 
   }, 0,5);

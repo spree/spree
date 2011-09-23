@@ -93,9 +93,8 @@ describe LineItem do
 
     end
 
-
     context "with inventory units" do
-      let(:inventory_unit) { mock_model(LineItem, :variant_id => variant.id, :shipped? => false) }
+      let(:inventory_unit) { mock_model(InventoryUnit, :variant_id => variant.id, :shipped? => false) }
       before do
         order.stub(:inventory_units => [inventory_unit])
         line_item.stub(:order => order, :variant_id => variant.id)
@@ -114,6 +113,48 @@ describe LineItem do
 
     end
 
+  end
+
+  context "(in)sufficient_stock?" do
+
+    context "when backordering is disabled" do 
+      before { Spree::Config.set :allow_backorders => false }
+
+      it "should report insufficient stock when variant is out of stock" do
+        line_item.stub_chain :variant, :on_hand => 0
+        line_item.insufficient_stock?.should be_true
+        line_item.sufficient_stock?.should be_false
+      end
+
+      it "should report insufficient stock when variant has less on_hand that line_item quantity" do
+        line_item.stub_chain :variant, :on_hand => 3
+        line_item.insufficient_stock?.should be_true
+        line_item.sufficient_stock?.should be_false
+      end
+
+      it "should report sufficient stock when variant has enough on_hand" do
+        line_item.stub_chain :variant, :on_hand => 300
+        line_item.insufficient_stock?.should be_false
+        line_item.sufficient_stock?.should be_true
+      end
+    end
+
+    context "when backordering is enabled" do
+      before { Spree::Config.set :allow_backorders => true }
+
+      it "should report sufficient stock regardless of on_hand value" do
+        [-99,0,99].each do |i|
+          line_item.stub_chain :variant, :on_hand => i
+          line_item.insufficient_stock?.should be_false
+          line_item.sufficient_stock?.should be_true
+        end
+      end
+
+    end
+
 
   end
+
+
+
 end

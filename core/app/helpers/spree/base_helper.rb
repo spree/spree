@@ -35,6 +35,7 @@ module Spree::BaseHelper
 
   # human readable list of variant options
   def variant_options(v, allow_back_orders = Spree::Config[:allow_backorders], include_style = true)
+    ActiveSupport::Deprecation.warn("variant_options method is deprecated, and will be removed in 0.80.0", caller)
     list = v.options_text
 
     # We shouldn't show out of stock if the product is infact in stock
