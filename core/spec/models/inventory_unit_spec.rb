@@ -205,10 +205,6 @@ describe InventoryUnit do
     context "when :allow_backorders is false" do
       before { Spree::Config.set :allow_backorders => false }
 
-      it "should raise an exception when back_order units are requested" do
-        lambda {InventoryUnit.create_units(order, variant, 2, 3) }.should raise_error
-      end
-
       it "should create sold items" do
         order.inventory_units.should_receive(:create).with(:variant => variant, :state => "sold", :shipment => shipment).exactly(2).times
         InventoryUnit.create_units(order, variant, 2, 0)

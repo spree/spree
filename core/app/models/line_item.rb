@@ -10,6 +10,8 @@ class LineItem < ActiveRecord::Base
   validates :variant, :presence => true
   validates :quantity, :numericality => { :only_integer => true, :message => I18n.t("validation.must_be_int") }
   validates :price, :numericality => true
+  validate :stock_availability
+  
   # validate :meta_validation_of_quantities
 
   attr_accessible :quantity
@@ -58,6 +60,14 @@ class LineItem < ActiveRecord::Base
     self.quantity = 0 if self.quantity.nil? || self.quantity < 0
   end
 
+  def sufficient_stock?
+    Spree::Config[:allow_backorders] ? true : (self.variant.on_hand >= self.quantity)
+  end
+
+  def insufficient_stock?
+    !sufficient_stock?
+  end
+
   private
     def update_inventory
       return true unless self.order.completed?
@@ -89,7 +99,12 @@ class LineItem < ActiveRecord::Base
       if order.try(:inventory_units).to_a.any?{|unit| unit.variant_id == variant_id && unit.shipped?}
         errors.add :base, I18n.t("cannot_destory_line_item_as_inventory_units_have_shipped")
         return false
-     end
-  end
+      end
+    end
+
+    def stock_availability
+      return if sufficient_stock?
+      errors.add(:quantiy, "can't be greater than avaiable stock.")
+    end
 end
 

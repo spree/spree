@@ -106,7 +106,7 @@ prep_product_autocomplete_data = function(data){
 }
 
 $.fn.product_autocomplete = function(){
-  $(this).autocomplete("/admin/products.json?authenticity_token=" + escape($('meta[name=csrf-token]').attr("content")), {
+  $(this).autocomplete("/admin/products.json?authenticity_token=" + encodeURIComponent($('meta[name=csrf-token]').attr("content")), {
       parse: prep_product_autocomplete_data,
       formatItem: function(item) {
         return format_product_autocomplete(item);

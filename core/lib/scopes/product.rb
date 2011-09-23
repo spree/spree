@@ -50,9 +50,9 @@ module Scopes::Product
     Product.send(:scope, name.to_s, Product.send(:relation).order(order_text) )
   end
 
-  ::Product.scope :ascend_by_master_price, Product.joins(:variants_with_only_master).order('variants.price asc')
+  ::Product.scope :ascend_by_master_price, Product.joins(:variants_with_only_master).order("#{Variant.table_name}.price asc")
 
-  ::Product.scope :descend_by_master_price, Product.joins(:variants_with_only_master).order('variants.price desc')
+  ::Product.scope :descend_by_master_price, Product.joins(:variants_with_only_master).order("#{Variant.table_name}.price desc")
 
   ATTRIBUTE_HELPER_METHODS = {
     :with_ids => :product_picker_field
@@ -74,15 +74,15 @@ module Scopes::Product
 
 
   ::Product.scope :price_between, lambda { |low, high|
-    { :joins => :master, :conditions => ["variants.price BETWEEN ? AND ?", low, high] }
+    { :joins => :master, :conditions => ["#{Variant.table_name}.price BETWEEN ? AND ?", low, high] }
   }
 
   ::Product.scope :master_price_lte, lambda { |price|
-    { :joins => :master, :conditions => ["variants.price <= ?", price] }
+    { :joins => :master, :conditions => ["#{Variant.table_name}.price <= ?", price] }
   }
 
   ::Product.scope :master_price_gte, lambda { |price|
-    { :joins => :master, :conditions => ["variants.price >= ?", price] }
+    { :joins => :master, :conditions => ["#{Variant.table_name}.price >= ?", price] }
   }
 
 
@@ -92,7 +92,7 @@ module Scopes::Product
   #   Product.taxons_id_eq(x)
   #
   ::Product.scope :in_taxon, lambda {|taxon|
-    { :joins => :taxons, :conditions => ["taxons.id IN (?) ", taxon.self_and_descendants.map(&:id)]}
+    { :joins => :taxons, :conditions => ["#{Taxon.table_name}.id IN (?) ", taxon.self_and_descendants.map(&:id)]}
   }
 
   # This scope selects products in all taxons AND all its descendants

@@ -1,7 +1,7 @@
 Feature: Checkout
   In order to buy stuff
   As a user
-  I should be able make checkout
+  I should be able to checkout
 
   @selenium @wip @stop
   Scenario: Visitor make checkout as guest, without registration

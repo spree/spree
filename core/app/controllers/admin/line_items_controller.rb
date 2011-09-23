@@ -14,7 +14,9 @@ class Admin::LineItemsController < Admin::BaseController
         format.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false }
       end
     else
-      #TODO Handle failure gracefully, patches welcome.
+      respond_with(@line_item) do |format| 
+        format.js { render :action => 'create', :locals => {:order => @order.reload}, :layout => false }
+      end
     end
   end
 

@@ -573,4 +573,15 @@ describe Order do
 
   end
 
+  context "insufficient_stock_lines" do
+    let(:line_item) { mock_model LineItem, :insufficient_stock? => true } 
+
+    before { order.stub(:line_items => [line_item]) }
+
+    it "should return line_item that has insufficent stock on hand" do
+      order.insufficient_stock_lines.size.should == 1
+      order.insufficient_stock_lines.include?(line_item).should be_true
+    end
+
+  end
 end
