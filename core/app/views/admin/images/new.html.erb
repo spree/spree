@@ -9,4 +9,10 @@
   </p>
 <% end %>
 
-<%= javascript_include_tag 'admin/images/new.js' %>
+<%= javascript_tag do %>
+  $('#cancel_link').click(function (event) {
+    event.preventDefault();
+    $('#new_image_link').show();
+    $('#images').html('');
+  });
+<% end %>
