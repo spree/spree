@@ -2,13 +2,13 @@
 <% if product.images.size > 1 %>
   <ul id="product-thumbnails" class="thumbnails" data-hook>
     <% product.images.each do |i| %>
-      <li class="tmb-all" id="tmb-<%= i.id.to_s %>"><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>
+      <li class="tmb-all" id="tmb-<%= i.id.to_s %>"><%= link_to image_tag(i.attachment.url(:mini), i.attachment.url(:product)) %></li>
     <% end %>
     <% if @product.has_variants?
       @variants.each do |v|
         if v.available?
           v.images.each do |i| %>
-            <li class="vtmb-<%= v.id.to_s %> vtmb" id="tmb-<%= i.id.to_s %>"><%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %></li>
+            <li class="vtmb-<%= v.id.to_s %> vtmb" id="tmb-<%= i.id.to_s %>"><%= link_to image_tag(i.attachment.url(:mini), i.attachment.url(:product)) %></li>
           <%
           end
         end

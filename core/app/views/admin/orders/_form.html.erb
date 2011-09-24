@@ -49,8 +49,8 @@
 
 <% end %>
 
-<script type="text/javascript">
+<%= javascript_tag do -%>
   <%= render 'admin/shared/update_order_state.js' %>
-</script>
+<% end -%>
 
 <%= javascript_include_tag 'admin/orders/edit_form' %>

@@ -148,7 +148,7 @@
 
 <% content_for :head do %>
   <% if @show_dashboard %>
-    <script type="text/javascript">
+    <%= javascript_tag do -%>
       var orders_by_day_points = [[<%== @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
       var best_selling_variants_points = [<%== @best_selling_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
       var top_grossing_variants_points = [<%== @top_grossing_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
@@ -158,7 +158,7 @@
       var by_day = "<%= t(:by_day) %>";
 
       var pie_colors = [<%== @pie_colors.map{|c| "'#{c}'"}.join(",") %>];
-    </script>
+    <% end -%>
     <!--[if IE]><%= javascript_include_tag 'jqPlot/excanvas.min.js' %><![endif]-->
   <% end %>
 <% end %>
