@@ -1,0 +1,10 @@
+before_script:
+  - "ruby --version"
+  - "sh -e /etc/init.d/xvfb start"
+script: "DISPLAY=:99.0 bundle exec rake"
+notifications:
+  email: false
+  irc: "irc.freenode.org#spree"
+branches:
+  only:
+    - master

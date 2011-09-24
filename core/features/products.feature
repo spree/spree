@@ -6,6 +6,7 @@ Feature: Visiting products
       | Brand       |
       | Categories  |
     Given the custom taxons and custom products exist
+    Given backordering is enabled
 
   Scenario: show page
     When I go to the home page

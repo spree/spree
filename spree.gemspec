@@ -1,3 +1,4 @@
+# encoding: UTF-8
 version = File.read(File.expand_path("../SPREE_VERSION",__FILE__)).strip
 
 Gem::Specification.new do |s|
@@ -20,10 +21,10 @@ Gem::Specification.new do |s|
   s.homepage          = 'http://spreecommerce.com'
   s.rubyforge_project = 'spree'
 
-  s.add_dependency('spree_core',  version)
-  s.add_dependency('spree_auth', version)
-  s.add_dependency('spree_api', version)
-  s.add_dependency('spree_dash', version)
-  s.add_dependency('spree_sample', version)
-  s.add_dependency('spree_promo', version)
+  s.add_dependency 'spree_core', version
+  s.add_dependency 'spree_auth', version
+  s.add_dependency 'spree_api', version
+  s.add_dependency 'spree_dash', version
+  s.add_dependency 'spree_sample', version
+  s.add_dependency 'spree_promo', version
 end

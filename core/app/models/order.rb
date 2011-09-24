@@ -45,8 +45,6 @@ class Order < ActiveRecord::Base
 
   make_permalink :field => :number
 
-  attr_accessor :out_of_stock_items
-
   class_attribute :update_hooks
   self.update_hooks = Set.new
 
@@ -318,7 +316,7 @@ class Order < ActiveRecord::Base
   # Called after transition to complete state when payments will have been processed
   def finalize!
     update_attribute(:completed_at, Time.now)
-    self.out_of_stock_items = InventoryUnit.assign_opening_inventory(self)
+    InventoryUnit.assign_opening_inventory(self)
     # lock any optional adjustments (coupon promotions, etc.)
     adjustments.optional.each { |adjustment| adjustment.update_attribute("locked", true) }
     OrderMailer.confirm_email(self).deliver
@@ -376,6 +374,10 @@ class Order < ActiveRecord::Base
 
   def products
     line_items.map{|li| li.variant.product}
+  end
+
+  def insufficient_stock_lines
+    line_items.select &:insufficient_stock?
   end
 
   private

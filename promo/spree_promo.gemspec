@@ -1,3 +1,4 @@
+# encoding: UTF-8
 version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
 
 Gem::Specification.new do |s|
@@ -17,6 +18,6 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency('spree_core',  version)
-  s.add_dependency('spree_auth',  version)
+  s.add_dependency 'spree_core', version
+  s.add_dependency 'spree_auth', version
 end

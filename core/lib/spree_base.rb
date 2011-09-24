@@ -9,15 +9,15 @@ module SpreeBase
     attr_writer :title
 
     def title
-      title_string = @title.blank? ? accurate_title : @title
-      if title_string.blank?
-        default_title
-      else
+      title_string = @title.present? ? @title : accurate_title
+      if title_string.present?
         if Spree::Config[:always_put_site_name_in_title]
           [default_title, title_string].join(' - ')
         else
           title_string
         end
+      else
+        default_title
       end
     end
 
@@ -83,8 +83,7 @@ module SpreeBase
     end
 
     def get_taxonomies
-      @taxonomies ||= Taxonomy.includes(:root => :children)
-      @taxonomies.reject { |t| t.root.nil? }
+      @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
     end
 
     def current_gateway

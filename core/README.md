@@ -1,15 +1,21 @@
+Core
+====
+
+Core e-commerce functionality for the Spree project
+
+
 Testing
-=======
+-------
 
 Create the test site
 
-    rake test_app
+    bundle exec rake test_app
 
 Run the tests
 
-    rake spec
+    bundle exec rake spec
 
 Run the coverage. After the rake task open coverage/index.html
 
-    rake rcov
+    bundle exec rake rcov
 
