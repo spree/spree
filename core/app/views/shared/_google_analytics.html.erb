@@ -1,19 +1,19 @@
 <% if tracker = Tracker.current %>
 
-  <script type="text/javascript">
+  <%= javascript_tag do -%>
     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
     document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  </script>
+  <% end -%>
 
-  <script type="text/javascript">
+  <%= javascript_tag do -%>
     var pageTracker = _gat._getTracker("<%= tracker.analytics_id %>");
     pageTracker._initData();
     pageTracker._trackPageview();
-  </script>
+  <% end -%>
 
   <% if flash[:commerce_tracking] %>
 
-    <script type="text/javascript">
+    <%= javascript_tag do -%>
       // report e-commerce transaction information when applicable
       pageTracker._addTrans(
       "<%= @order.number %>",    //Order Number
@@ -30,7 +30,7 @@
           "" /*Product Category*/, "<%= line_item.price %>", "<%= line_item.quantity %>");
       <% end %>
       pageTracker._trackTrans();
-    </script>
+    <% end -%>
 
   <% end %>
 

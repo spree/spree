@@ -2,7 +2,7 @@
 <table data-hook="order_summary">
   <tbody>
     <tr data-hook="item_total">
-      <td><strong><%= t('item_total') %>:</strong></td>
+      <td><strong><%= t(:item_total) %>:</strong></td>
       <td><strong><%= number_to_currency order.item_total %></strong></td>
     </tr>
     <tbody id="summary-order-charges" data-hook>
@@ -15,7 +15,7 @@
       <% end %>
     </tbody>
     <tr data-hook="order_total">
-      <td><strong><%= t('order_total') %>:</strong></td>
+      <td><strong><%= t(:order_total) %>:</strong></td>
       <td><strong><span id='summary-order-total'><%= number_to_currency @order.total %></span></strong></td>
     </tr>
   </tbody>

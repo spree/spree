@@ -46,7 +46,7 @@
 
 
 <% content_for :head do %>
-  <script type="text/javascript">
+  <%= javascript_tag do -%>
     var variant_prices = new Array();
     <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
       variant_prices[<%= variant.id.to_s %>] = <%= variant.price %>;
@@ -65,7 +65,7 @@
       }
     }
 
-    jQuery(document).ready(function(){
+    $(document).ready(function(){
       $.each($("td.return_quantity input"), function(i, inpt){
         $(inpt).delayedObserver(function() {
           calculate_rma_price();
@@ -74,5 +74,5 @@
 
       calculate_rma_price();
     });
-  </script>
+  <% end -%>
 <% end %>

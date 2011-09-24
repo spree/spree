@@ -1,9 +1,9 @@
 <% content_for :sidebar do %>
   <div data-hook="homepage_sidebar_navigation">
     <% if "products" == @current_controller && @taxon %>
-      <%= render "shared/filters" %>
+      <%= render 'shared/filters' %>
     <% else %>
-      <%= render "shared/taxonomies" %>
+      <%= render 'shared/taxonomies' %>
     <% end %>
   </div>
 <% end %>
@@ -15,13 +15,13 @@
     <% if @products.empty? %>
       <%= t(:no_products_found) %>
     <% else %>
-      <%= render "shared/products", :products => @products, :taxon => @taxon %>
+      <%= render 'shared/products', :products => @products, :taxon => @taxon %>
     <% end %>
   </div>
 
 <% else %>
 
   <div data-hook="homepage_products">
-    <%= render "shared/products", :products => @products, :taxon => @taxon %>
+    <%= render 'shared/products', :products => @products, :taxon => @taxon %>
   </div>
 <% end %>

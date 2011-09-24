@@ -34,16 +34,16 @@
              bill_form.collection_select(:state_id, @order.bill_address.country.states,
                                 :id, :name,
                                 {:include_blank => true},
-                                {:class => have_states ? "required" : "hidden",
+                                {:class => have_states ? 'required' : 'hidden',
                                 :disabled => !have_states}) +
              bill_form.text_field(:state_name,
-                                :class => !have_states ? "required" : "hidden",
+                                :class => !have_states ? 'required' : 'hidden',
                                 :disabled => have_states)
              ].join.gsub('"', "'").gsub("\n", "")
           %>
           <%= javascript_tag do -%>
             document.write("<%== state_elements %>");
-          <% end %>
+          <% end -%>
         </p>
       <% end %>
 
@@ -76,7 +76,7 @@
     <legend><%= t(:shipping_address)%></legend>
     <p class="field checkbox" data-hook="use_billing">
       <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address)) %> 
-      <label for="order_use_billing" id="use_billing"><%= t("use_billing_address") %></label>
+      <label for="order_use_billing" id="use_billing"><%= t(:use_billing_address) %></label>
     </p>
     <div class="inner" data-hook="shipping_inner">
       <p class="field" id="sfirstname">
@@ -111,10 +111,10 @@
              ship_form.collection_select(:state_id, @order.ship_address.country.states,
                                 :id, :name,
                                 {:include_blank => true},
-                                {:class => have_states ? "required" : "hidden",
+                                {:class => have_states ? 'required' : 'hidden',
                                 :disabled => !have_states}) +
              ship_form.text_field(:state_name,
-                                :class => !have_states ? "required" : "hidden",
+                                :class => !have_states ? 'required' : 'hidden',
                                 :disabled => have_states)
              ].join.gsub('"', "'").gsub("\n", "")
           %>

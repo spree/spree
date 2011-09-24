@@ -16,7 +16,7 @@
   </div>
 
   <div id="product-description" data-hook="product_description">
-    <%= product_description(@product) rescue t("product_has_no_description") %>
+    <%= product_description(@product) rescue t(:product_has_no_description) %>
     <div data-hook="product_properties">
       <%= render 'properties' %>
     </div>
