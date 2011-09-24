@@ -21,9 +21,9 @@
         <div id="subtotal" data-hook>
           <h3><%= "#{t("subtotal")}: #{order_price(@order)}" %></h3>
           <div class="links" data-hook="cart_buttons">
-            <button type="submit" class="large primary" id="update-button">
-              <%= image_tag('icons/update.png') + t('update') %>
-            </button>
+            <%= button_tag :class => 'large primary', :id => 'update-button' do %>
+              <%= image_tag('icons/update.png') + t(:update) %>
+            <% end %>
             <%= link_to image_tag('icons/checkout.png') + t("checkout"), checkout_path, :class => 'button checkout primary', :id => 'checkout-link' %>
           </div>
         </div>
@@ -34,7 +34,7 @@
   <div id="empty-cart" data-hook>
   <%= form_tag empty_cart_path, :method => :put do %>
     <p id="clear_cart_link" data-hook>
-      <input type="submit" value="<%= t('empty_cart') %>" class="button" />
+      <%= submit_tag t(:empty_cart), :class => 'button' %>
       <%= t(:or) %>
       <%=link_to t("continue_shopping"), products_path, :class => 'continue' %>
     </p>

@@ -13,6 +13,6 @@
   <% end %>
   <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}" } do |form| %>
     <%= render @order.state, :form => form %>
-    <input id="post-final" type="submit" style="display:none"/>
+    <%= submit_tag nil, :id => 'post-final', :style => 'display:none' %>
   <% end %>
 </div>

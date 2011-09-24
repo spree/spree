@@ -42,7 +42,7 @@
     <p>
       <label for="product_scope_name"><%= t('add_scope') %></label>
       <%= select_tag("product_scope[name]", options) %>
-      <input type="submit" value="<%= t('add') %>" />
+      <%= submit_tag t(:add) %>
     </p>
   <% end %>
 
