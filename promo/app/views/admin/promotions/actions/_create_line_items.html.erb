@@ -1,17 +1,13 @@
 <table class="index">
   <tr>
     <th><%= t(:product) %></th>
-    <th><%= t(:variant) %></th>
     <th><%= t(:qty) %></th>
     <th>&nbsp;</th>
   </tr>
   <% promotion_action.promotion_action_line_items.each do |item| %>
     <tr>
       <td>
-        <%= item.variant.product.name %>
-      </td>
-      <td>
-        <%= item.variant.options_text.presence || t(:master) %>
+        <%= item.variant.product.name %> <%= item.variant.options_text %>
       </td>
       <td>
         <%= item.quantity %>
@@ -23,10 +19,7 @@
   <% end %>
 </table>
 
-
-
 <%= action_form.hidden_field :line_items_string %>
-
 
 <div class="add-line-item">
   <fieldset>
@@ -34,10 +27,7 @@
     <div style="float:left; width:50%; margin-right:5%;">
       <%= label_tag :add_product_name, t(:name_or_sku) %>
       <%= text_field_tag :add_product_name, nil, :class => 'fullwidth' %>
-    </div>
-    <div style="float:left; width:10%; margin-right:5%;">
-      <%= label_tag :add_line_item_variant_id, t(:variant) %><br />
-      <select name="add_line_item_variant_id" class="fullwidth"></select>
+      <%= hidden_field_tag :add_line_item_variant_id %>
     </div>
     <div style="float:left; width:10%; margin-right:5%;">
       <%= label_tag :add_quantity, t(:qty) %>
