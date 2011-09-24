@@ -25,7 +25,7 @@
     <p>
       <label for="promotion_rule_type"><%= t('add_rule_of_type') %></label>
       <%= select_tag("promotion_rule[type]", options) %>
-      <input type="submit" value="<%= t('add') %>" />
+      <%= submit_tag t(:add) %>
     </p>
   <% end %>
 

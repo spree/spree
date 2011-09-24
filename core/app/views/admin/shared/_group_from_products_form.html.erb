@@ -6,7 +6,7 @@
       <legend><%= t('create_product_group_from_products') %></legend>
       <label><%= t('name') %></label>
       <%= text_field_tag "product_group[name]",  'New group' %>
-      <input type="submit" value="<%= t('create') %>">
+      <%= submit_tag t(:create) %>
     </fieldset>
   <% end %>
 <% end %>
