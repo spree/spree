@@ -1,5 +1,5 @@
 <tr data-hook="file">
-  <td><%= t("filename") %>:</td>
+  <td><%= t(:filename) %>:</td>
   <td><%= f.file_field :attachment %></td>
 </tr>
 <% if @product.has_variants? %>
@@ -11,6 +11,6 @@
   <%= hidden_field_tag :product_id, @product.id %>
 <% end %>
 <tr data-hook="alt_text">
-  <td><%= t("alt_text") %>:</td>
+  <td><%= t(:alt_text) %>:</td>
   <td><%= f.text_area :alt %></td>
 </tr>

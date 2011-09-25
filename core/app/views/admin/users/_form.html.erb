@@ -1,12 +1,12 @@
 <div data-hook="admin_user_form_fields">
   <%= f.field_container :email do %>
-    <%= f.label :email, t("email") %><br />
-    <%= f.text_field :email  %>
-    <%= error_message_on :user, :email%>
+    <%= f.label :email, t(:email) %><br />
+    <%= f.text_field :email %>
+    <%= error_message_on :user, :email %>
   <% end %>
 
   <%= f.field_container :password do %>
-    <%= f.label :password, t("password") %><br />
+    <%= f.label :password, t(:password) %><br />
     <%= f.password_field :password  %>
     <%= f.error_message_on :password %>
   <% end %>
@@ -22,8 +22,8 @@
 <% if @user.respond_to?(:roles) %>
   <div data-hook="admin_user_form_roles">
     <p>
-      <label><%= t("roles") %></label><br />
-      <% for role in @roles %>
+      <%= label_tag nil, t(:roles) %><br />
+      <% @roles.each do |role| %>
         <label class="sub">
           <%= check_box_tag "user[role][#{role.name}]", 1, @user.has_role?(role.name) %>
           <%= role.name %>

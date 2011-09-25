@@ -146,7 +146,7 @@ module Spree::BaseHelper
   def format_price(price, options={})
     options.assert_valid_keys(:show_vat_text)
     options.reverse_merge! :show_vat_text => Spree::Config[:show_price_inc_vat]
-    formatted_price = number_to_currency(price)
+    formatted_price = number_to_currency price
     if options[:show_vat_text]
       I18n.t(:price_with_vat_included, :price => formatted_price)
     else

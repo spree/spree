@@ -1,6 +1,6 @@
 <tr id="<%= dom_id product_scope %>" data-hook="product_scope">
   <td data-hook="description">
-    <label><%= t(:name, :scope => [:product_scopes, :scopes, product_scope.name]) %></label>
+    <%= label_tag nil, t(:name, :scope => [:product_scopes, :scopes, product_scope.name]) %>
     <% if description = t(:description, :scope => [:product_scopes, :scopes, product_scope.name], :default => "") and description.present? %>
       <br /><%= description %>
     <% end %>
@@ -10,8 +10,8 @@
       <table><tr>
       <% arguments.each_with_index do |argument, i| %>
         <td>
-          <label><%= t(argument, :scope => [:product_scopes, :scopes, product_scope.name, :args]) %></label><br />
-          <%= hidden_field_tag "product_group[product_scopes_attributes][][id]", product_scope.id %>
+          <%= label_tag nil, t(argument, :scope => [:product_scopes, :scopes, product_scope.name, :args]) %><br />
+          <%= hidden_field_tag 'product_group[product_scopes_attributes][][id]', product_scope.id %>
           <%= product_scope_field product_scope, i %>
         </td>
       <% end %>

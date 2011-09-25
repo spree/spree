@@ -1,8 +1,8 @@
 <table class="index" data-hook="adjustments">
   <tr data-hook="adjustmment_head">
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-    <th><%= t("description") %></th>
-    <th><%= t("amount") %></th>
+    <th><%= t(:description) %></th>
+    <th><%= t(:amount) %></th>
     <th></th>
   </tr>
   <% @order.adjustments.each do |adjustment|
@@ -12,7 +12,7 @@
     <tr id="<%= dom_id(adjustment) %>" data-hook="adjustment_row">
       <td><%= adjustment.created_at.to_s(:date_time24) %></td>
       <td><%= adjustment.label %></td>
-      <td><%= number_to_currency(adjustment.amount) %></td>
+      <td><%= number_to_currency adjustment.amount %></td>
       <td class='actions'>
         <%= link_to_edit adjustment, :class => 'edit' %>
         &nbsp;
