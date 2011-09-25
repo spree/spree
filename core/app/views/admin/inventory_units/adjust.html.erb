@@ -1,18 +1,18 @@
 <%= render 'shared/error_messages', :target => @level %>
 
 <%= form_tag do %>
-<br/><br/>			
+<br /><br />			
 
-<h1><%= t("inventory_adjustment") %></h1>
+<h1><%= t(:inventory_adjustment) %></h1>
 
 <table class="basic-table">
   <thead data-hook="inventory_header">
     <tr>
-      <th><%= t("sku") %></th>
-      <th><%= t("product") %></th>
-      <th><%= t("options") %></th>
-      <th><%= t("current") %></th>
-      <th><%= t("adjustment") %></th>
+      <th><%= t(:sku) %></th>
+      <th><%= t(:product) %></th>
+      <th><%= t(:options) %></th>
+      <th><%= t(:current) %></th>
+      <th><%= t(:adjustment) %></th>
     </tr>
   </thead>
   <tbody>
@@ -22,12 +22,12 @@
       <td><%= variant_options @variant %></td>
       <td><%= on_hand(@variant) %></td>
       <td>
-        <%= text_field :level, :adjustment, :class => "quantity"  %>
+        <%= text_field :level, :adjustment, :class => 'quantity'  %>
       </td>
     </tr>
   </tbody>
 </table>
-<%= submit_tag t('update') %>
-<%= t("or") %>
-<%= link_to t('cancel'), :controller => 'overview', :action => :index %>
+<%= submit_tag t(:update) %>
+<%= t(:or) %>
+<%= link_to t(:cancel), :controller => 'overview', :action => :index %>
 <% end %>

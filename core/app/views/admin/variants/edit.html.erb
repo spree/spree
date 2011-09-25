@@ -2,11 +2,11 @@
 
 <%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Variants"} %>
 
-<%= render "shared/error_messages", :target => @variant %>
+<%= render 'shared/error_messages', :target => @variant %>
 
-<%= form_for([:admin, @product, @variant]) do |f| %>
+<%= form_for [:admin, @product, @variant] do |f| %>
   <div data-hook="admin_variant_edit_form">
-    <%= render :partial => "form", :locals => { :f => f } %>
+    <%= render :partial => 'form', :locals => { :f => f } %>
   </div>
 
   <%= render :partial => 'admin/shared/edit_resource_links' %>

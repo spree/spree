@@ -1,6 +1,6 @@
 var handle_ajax_error = function(XMLHttpRequest, textStatus, errorThrown){
   $.jstree.rollback(last_rollback);
-  $("#ajax_error").show().html("<strong>" + server_error + "</strong><br/>" + taxonomy_tree_error);
+  $("#ajax_error").show().html("<strong>" + server_error + "</strong><br />" + taxonomy_tree_error);
 };
 
 //var handle_move = function(li, target, droppped, tree, rb) {

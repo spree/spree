@@ -2,21 +2,21 @@
 <div class="toolbar" data-hook="toolbar">
   <ul class="actions">
     <li>
-      <%= button_link_to t("new_product_group"), new_object_url, :icon => 'add', :id => 'new_product_group_link' %>
+      <%= button_link_to t(:new_product_group), new_object_url, :icon => 'add', :id => 'new_product_group_link' %>
     </li>
   </ul>
-  <br class='clear' />
+  <br class="clear" />
 </div>
 
-<h1><%= t("listing_product_groups") %></h1>
+<h1><%= t(:listing_product_groups) %></h1>
 
 <table class="index" id='listing_product_groups' data-hook>
   <thead>
     <tr data-hook="product_group_header">
-      <th><%= ProductGroup.human_attribute_name("name") %></th>
-      <th><%= ProductGroup.human_attribute_name("url") %></th>
-      <th><%= ProductGroup.human_attribute_name("product_scopes")  %></th>
-      <th><%= ProductGroup.human_attribute_name("product_count")  %></th>
+      <th><%= ProductGroup.human_attribute_name(:name) %></th>
+      <th><%= ProductGroup.human_attribute_name(:url) %></th>
+      <th><%= ProductGroup.human_attribute_name(:product_scopes) %></th>
+      <th><%= ProductGroup.human_attribute_name(:product_count) %></th>
       <th><%= t(:action) %></th>
     </tr>
   </thead>
@@ -25,7 +25,7 @@
       <tr id="<%= dom_id pg %>" data-hook="product_group_row">
         <td><%= link_to pg.name, [:admin, pg] %></td>
         <td><%= link_to pg_search_path(:product_group_name => pg.permalink), pg_search_path(:product_group_name => pg.permalink) %></td>
-        <td><%== pg.product_scopes.map(&:to_sentence).join("<br />") %></td>
+        <td><%== pg.product_scopes.map(&:to_sentence).join('<br />') %></td>
         <td><%= pg.products.count %></td>
         <td>
           <%= link_to_edit pg, :class => 'admin_edit_product_group' %> &nbsp; <%= link_to_delete pg %>

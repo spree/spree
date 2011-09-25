@@ -1,4 +1,4 @@
-<h2>Properties</h2>
+<h2><%= t(:properties) %></h2>
 <% f.fields_for :product_properties do |properties_form| %>
     <p data-hook="value">
       <%= properties_form.label :value, properties_form.object.property.presentation %><br />

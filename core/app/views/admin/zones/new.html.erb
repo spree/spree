@@ -1,10 +1,10 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1><%= t("new_zone") %></h1>
+<h1><%= t(:new_zone) %></h1>
 
-<%= render "shared/error_messages", :target => @zone %>
+<%= render 'shared/error_messages', :target => @zone %>
 
-<%= form_for([:admin, @zone]) do |zone_form| %>
-  <%= render "form", :zone_form => zone_form %>
-  <%= render :partial => "admin/shared/new_resource_links" %>
+<%= form_for [:admin, @zone] do |zone_form| %>
+  <%= render 'form', :zone_form => zone_form %>
+  <%= render :partial => 'admin/shared/new_resource_links' %>
 <% end %>

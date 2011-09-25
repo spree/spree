@@ -1,9 +1,9 @@
 <table class="index">
   <tr data-hook="rma_header">
-    <th><%= t("product") %></th>
-    <th><%= t("quantity_shipped") %></th>
-    <th><%= t("quantity_returned") %></th>
-    <th><%= t("return_quantity") %></th>
+    <th><%= t(:product) %></th>
+    <th><%= t(:quantity_shipped) %></th>
+    <th><%= t(:quantity_returned) %></th>
+    <th><%= t(:return_quantity) %></th>
   </tr>
   <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
     <tr id="<%= dom_id(variant) %>" data-hook="rma_row">
@@ -20,8 +20,7 @@
           0
         <% else %>
           <%= text_field_tag "return_quantity[#{variant.id}]",
-              @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0,
-              {:style => "width:30px;"} %>
+              @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0, {:style => 'width:30px;'} %>
         <% end %>
       </td>
     </tr>
@@ -29,18 +28,18 @@
 </table>
 
 <%= f.field_container :amount do %>
-  <%= f.label :amount, t("amount")%> <span class="required">*</span><br />
+  <%= f.label :amount, t(:amount) %> <span class="required">*</span><br />
   <% if @return_authorization.received? %>
-    <%= number_to_currency(@return_authorization.amount) %>
+    <%= number_to_currency @return_authorization.amount %>
   <% else %>
-    <%= f.text_field :amount, {:style => "width:80px;"} %> <%= t("rma_value") %>: <span id="rma_value"></span>
+    <%= f.text_field :amount, {:style => 'width:80px;'} %> <%= t(:rma_value) %>: <span id="rma_value"></span>
     <%= f.error_message_on :amount %>
   <% end %>
 <% end %>
 
 <%= f.field_container :reason do %>
-  <%= f.label :reason, t("reason")%>
-  <%= f.text_area :reason, {:style=> "height:100px;", :class => 'fullwidth'} %>
+  <%= f.label :reason, t(:reason) %>
+  <%= f.text_area :reason, {:style => 'height:100px;', :class => 'fullwidth'} %>
   <%= f.error_message_on :reason %>
 <% end %>
 

@@ -1,10 +1,10 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1><%= t("editing_payment_method") %></h1>
-<%= render "shared/error_messages", :target => @payment_method %>
-<%= form_for(@payment_method, :url => admin_payment_method_path(@payment_method), :html => { :method => :put }) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
+<h1><%= t(:editing_payment_method) %></h1>
+<%= render 'shared/error_messages', :target => @payment_method %>
+<%= form_for @payment_method, :url => admin_payment_method_path(@payment_method), :html => { :method => :put } do |f| %>
+  <%= render :partial => 'form', :locals => { :f => f } %>
   <p data-hook="buttons">
-    <%=submit_tag t("update")%>
+    <%= submit_tag t(:update) %>
   </p>
 <% end %>

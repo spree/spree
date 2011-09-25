@@ -1,14 +1,14 @@
-<h1><%= t("user_account") %></h1>
+<h1><%= t(:user_account) %></h1>
 
 <table>
   <tr data-hook="email">
-    <th><%= t("email") %></th>
+    <th><%= t(:email) %></th>
     <td>
       <%= @user.email %>
     </td>
   </tr>
   <tr data-hook="roles">
-    <th><%= t("roles") %></th>
+    <th><%= t(:roles) %></th>
     <td>
       <%= list_roles(@user) %>
     </td>
@@ -16,6 +16,6 @@
 </table>
 
 <p>
-  <%= link_to_edit @user, :class => 'edit_user' %> <%= t('or') %>
-  <%= link_to t('back'), collection_url %>
+  <%= link_to_edit @user, :class => 'edit_user' %> <%= t(:or) %>
+  <%= link_to t(:back), collection_url %>
 </p>

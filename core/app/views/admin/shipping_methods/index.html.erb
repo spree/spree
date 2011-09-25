@@ -3,22 +3,21 @@
 <div class="toolbar" data-hook="toolbar">
   <ul class="actions">
     <li>
-      <%= button_link_to t("new_shipping_method"), new_object_url,  :icon => 'add',
-                                                                    :id => 'admin_new_shipping_method_link' %>
+      <%= button_link_to t(:new_shipping_method), new_object_url,  :icon => 'add', :id => 'admin_new_shipping_method_link' %>
     </li>
   </ul>
-  <br class="clear">
+  <br class="clear" />
 </div>
 
-<h1><%= t("shipping_methods") %></h1>
+<h1><%= t(:shipping_methods) %></h1>
 
 <table class="index" id='listing_shipping_methods'>
   <thead>
     <tr data-hook="admin_shipping_methods_index_headers">
-      <th><%= t("name") %></th>
-      <th><%= t("zone") %></th>
-      <th><%= t("calculator") %></th>
-      <th><%= t("display") %></th>
+      <th><%= t(:name) %></th>
+      <th><%= t(:zone) %></th>
+      <th><%= t(:calculator) %></th>
+      <th><%= t(:display) %></th>
       <th data-hook="admin_shipping_methods_index_header_actions"></th>
     </tr>
   </thead>
@@ -28,8 +27,8 @@
         <td><%= shipping_method.name %></td>
         <td><%= shipping_method.zone.name if shipping_method.zone %></td>
         <td><%= shipping_method.calculator.description %></td>
-        <td><%= shipping_method.display_on.blank? ? t('both') : t(shipping_method.display_on) %></td>
-        <td width="140px" data-hook="admin_shipping_methods_index_row_actions">
+        <td><%= shipping_method.display_on.blank? ? t(:both) : t(shipping_method.display_on) %></td>
+        <td style="width:140px;" data-hook="admin_shipping_methods_index_row_actions">
           <%= link_to_edit shipping_method %> &nbsp;
           <%= link_to_delete shipping_method %>
         </td>

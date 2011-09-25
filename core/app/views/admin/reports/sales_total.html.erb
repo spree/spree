@@ -1,18 +1,18 @@
-<h1><%= t("sales_totals") %> </h1>
+<h1><%= t(:sales_totals) %> </h1>
 
 <table class="admin-report" data-hook="sales_total">
   <tbody>
     <tr>
-      <th scope="row"><%= t("item_total") %>:</th>
-      <td align="right"><%=number_to_currency @item_total%></td>
+      <th scope="row"><%= t(:item_total) %>:</th>
+      <td align="right"><%= number_to_currency @item_total %></td>
     </tr>
     <tr>
-      <th scope="row"><%= t("adjustment_total") %>:</th>
-      <td align="right"><%=number_to_currency @adjustment_total%></td>
+      <th scope="row"><%= t(:adjustment_total) %>:</th>
+      <td align="right"><%= number_to_currency @adjustment_total %></td>
     </tr>
     <tr>
-      <th scope="row"><%= t("sales_total") %>:</th>
-      <td align="right"><%=number_to_currency @sales_total%></td>
+      <th scope="row"><%= t(:sales_total) %>:</th>
+      <td align="right"><%= number_to_currency @sales_total %></td>
     </tr>
   </tbody>
 </table>
