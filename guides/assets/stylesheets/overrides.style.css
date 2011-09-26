@@ -1486,3 +1486,4 @@ tt {
 ul.nav {
   float: right;
 }
+.main-inner ul li { list-style:none; background: url(../images/grey_bullet.gif) no-repeat left 0.5em; padding-left: 1em; margin-left: 0; }
