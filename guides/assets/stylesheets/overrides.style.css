@@ -41,6 +41,9 @@ dl                { margin: 0 0 1.5em 0; }
 dl dt             { font-weight: bold; }
 dd                { margin-left: 1.5em; }
 table             { font-family: facitweb-1,facitweb-2; color: #4D4F50; border: 1px solid #dee1e3; background: white; margin-bottom: 1.4em; width: 100%; border-collapse: collapse; font-size: 0.8em; }
+table th, table td { padding: 0.25em 1em; border: 1px solid #CCC; border-collapse: collapse; }
+table th { border-bottom: 2px solid #CCC; background: #EEE; font-weight: bold; padding: 0.5em 1em; }
+
 thead th          { background: #e5f2fc; border-bottom: 1px solid #dee1e3; border-top: 1px solid #b7cfe1; border-left: 1px solid #b7cfe1; border-right: 1px solid #b7cfe1; color: #2d466e; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; padding: 9px 12px 8px; }
 tfoot th          { border-top: 1px solid #dee1e3; }
 tfoot td          { border-top: 1px solid #dee1e3; }
