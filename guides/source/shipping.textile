@@ -243,8 +243,7 @@ h4. Default Calculators
 
 The active_shipping extension comes with several pre-configured calculators out of the box. For example here are the ones provided for the USPS carrier:
 
-<shell>
-  #in vendor/extensions/active_shipping/active_shipping_extension.rb
+<ruby filename='vendor/extensions/active_shipping/active_shipping_extension.rb'>
   def activate
     [
     #... calculators for Fedex and UPS not shown ...
@@ -256,7 +255,7 @@ The active_shipping extension comes with several pre-configured calculators out 
         Calculator::Usps::PriorityMailLargeFlatRateBox
       ].each(&:register)
   end
-</shell>
+</ruby>
 
 Each USPS delivery service you want to make available at checkout has to be associated with a corresponding shipping method. Which shipping methods are made available at checkout is ultimately determined by the zone of the customer's shipping address. The USPS' basic shipping categories are domestic and international, so we'll set up zones to mimic this distinction. We need to set up two zones then, a domestic one, consisting of the USA and its territories and another international one, consisting of all other countries.
 
@@ -279,21 +278,19 @@ Additional delivery services, that is not pre-configured as a calculator in the 
 
 First create a calculator class that inherits from Calculator::Usps::Base and implements a description class method:
 
-<shell>
-  #in vendor/extensions/site/app/models/calculator/usps/first_class_mail_international_parcels.rb
+<ruby filename='app/models/calculator/usps/first_class_mail_international_parcels.rb'>
   class Calculator::Usps::FirstClassMailInternationalParcels < Calculator::Usps::Base
     def self.description
       "USPS First-Class Mail International Package"
     end
   end
-</shell>
+</ruby>
 
 NOTE: Note that unlike calculators that you write yourself, these calculators do not have to implement a #compute instance method that returns a shipping amount. The superclasses take care of that requirement.
 
 There is one gotcha to bear in mind. The string returned by the description method must <em>exactly</em> match the name of the USPS delivery service. To determine the exact spelling of the delivery service you'll need to examine what gets returned from the API:
 
-<shell>
-  #vendor/extensions/active_shipping/app/models/calculator/active_shipping.rb
+<ruby filename='active_shipping/app/models/calculator/active_shipping.rb'>
   class Calculator::ActiveShipping < Calculator
     def compute(line_items)
      #....
@@ -318,7 +315,7 @@ There is one gotcha to bear in mind. The string returned by the description meth
      #....
     end
   end
-</shell>
+</ruby>
 
 As you can see in the code above, the active_shipping gem returns an array of services with their corresponding prices, which the #retrieve_rates method converts into a hash. Below is what would get returned for an order with an international destination:
 
@@ -356,7 +353,7 @@ h4. Filtering Shipping Methods On Criteria Other Than the Zone
 
 Ordinarily it is the zone of the shipping address that determines which shipping methods are displayed to a customer at checkout. Here is how the availability of a shipping method is determined:
 
-<shell>
+<ruby>
   class Checkout < ActiveRecord::Base
     #...
     def shipping_methods
@@ -380,7 +377,7 @@ Ordinarily it is the zone of the shipping address that determines which shipping
       all.select { |method| method.available_to_order?(order)}
     end
   end
-</shell>
+</ruby>
 
 Unless overridden, the calculator’s #available? method returns true by default. It is therefore the zone of the destination address that filters out the shipping methods. However, in some circumstances it may be necessary to filter out additional shipping methods.
 
@@ -388,8 +385,7 @@ Consider the case of the USPS First Class domestic shipping service, which is no
 
 To ensure that First Class shipping is not available for orders that weigh more than 13oz, the calculator's #available method must be overridden as follows:
 
-<shell>
-  #in vendor/extensions/site/app/models/calculator/usps/first_class_mail_parcels.rb
+<ruby filename='app/models/calculator/usps/first_class_mail_parcels.rb'>
   class Calculator::Usps::FirstClassMailParcels < Calculator::Usps::Base
     def self.description
       "USPS First-Class Mail Parcel"
@@ -404,4 +400,4 @@ To ensure that First Class shipping is not available for orders that weigh more 
       weight > 13 ? false : true
     end
   end
-</shell>
+</ruby>
