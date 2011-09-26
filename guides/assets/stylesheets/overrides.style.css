@@ -1479,3 +1479,7 @@ tt {
   padding: 4px 12px 4px 10px;
   margin-bottom: 9px;
   font-size: 13px; }
+
+ul.nav {
+  float: right;
+}
