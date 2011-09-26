@@ -1,3 +1,3 @@
 source :gemcutter
 
-gem 'guides', :git => 'git@github.com:LBRapid/guides.git'
+gem 'guides', :git => 'git@github.com:schof/guides.git'

@@ -1400,8 +1400,8 @@ code {
 .code, .note, .info, .warning {
   margin: 0 0 12px;
   padding-top: 6px; }
-.bg {
-  padding: 20px 35px 10px 40px;
+.bg, .bg-file {
+  padding: 20px 35px 10px 30px;
   margin: 0 0 0 17px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
@@ -1421,7 +1421,7 @@ code {
   background: url("../images/tab-pin.png") no-repeat scroll left top #E5CFEC; }
 .warning .tab {
   background: url("../images/tab-warning.png") no-repeat scroll left top #F9D9D8; }
-.code .bg {
+.code .bg, .bg-file {
   background: #f8f9fa;
   -webkit-box-shadow: inset 1px 1px 12px 2px #dee0e1;
   -moz-box-shadow: inset 1px 1px 12px 2px #dee0e1;
@@ -1476,14 +1476,24 @@ tt {
 .path {
   display: inline-block;
   font-family: "lucida console", monospace;
-  background: #ddecf7;
-  color: #3175a6;
+  background: #CBE1AF;
+  color: #666;
   border-left: 1px solid #9bc3df;
-  padding: 4px 12px 4px 10px;
-  margin-bottom: 9px;
+  padding: 4px 8px 4px 8px;
+  margin: 4px 4px 0 36px;
+  /*margin-bottom: 9px;*/
   font-size: 13px; }
 
 ul.nav {
   float: right;
 }
+
+div.bg-file {
+  margin-top: 20px;
+}
+
 .main-inner ul li { list-style:none; background: url(../images/grey_bullet.gif) no-repeat left 0.5em; padding-left: 1em; margin-left: 0; }
+
+.syntaxhighlighter {
+  font-size: 0.80em !important;
+}
