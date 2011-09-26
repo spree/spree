@@ -58,7 +58,7 @@ index:
     - title: Taxation
       url: taxation
       text: Information on how to configure the tax calculations for your site (including Sales Tax and VAT.)
-    - title: Shopping
+    - title: Shipping
       url: shipping
       text: Information on how to configure shipping options as well as building your own shipping calculator.
     - title: Promotions
@@ -72,7 +72,7 @@ index:
       url: seo_considerations
       text: Information on how to leverage the existing SEO features of Spree as well as on general SEO best practices.
   Customization:
-    - title: Customization Overview 
+    - title: Customization Overview
       url: customization
       text: The guide introduces the various options available when customizing a Spree site.
     - title: View Customization
