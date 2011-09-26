@@ -22,7 +22,7 @@ a.pdf,a.cvs,a.doc { background-position: scroll right 6px; background-repeat: no
 a.pdf             { background-image: url("/images/pdf.png"); }
 a.cvs             { background-image: url("/images/excel.png"); }
 a.doc             { background-image: url("/images/word.png"); }
-a.external        { background: url("/images/off-site-link.png") no-repeat scroll right center transparent; padding: 0 14px 0 0;}
+a.external        { background: url("../images/off-site-link.png") no-repeat scroll right center transparent; padding: 0 14px 0 0;}
 a img,
 .logo a           { border-bottom: none !important; }
 blockquote        { margin: 1.5em; color: #666666; font-style: italic; }
