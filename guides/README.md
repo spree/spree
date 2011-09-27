@@ -41,3 +41,22 @@ $ guides preview
 You do not need to fork the spree-guides project in order to contribute.  Just send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your github username) and say that you would like to contribute.  We'll add you to the list so you can commit directly to the guides project.
 
 Please be considerate when making changes to the spree-guides.  If you wish to make major changes to how the documentation is organized then you should use a GitHub fork and ask people to review your proposed changes instead.
+
+
+Deploying
+=========
+
+To deploy the normal guides:
+
+```
+$ cap deploy
+
+```
+
+To deploy edge guides:
+
+```
+$ cap deploy -S edge=true
+
+```
+
