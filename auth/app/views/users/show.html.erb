@@ -1,26 +1,26 @@
-<h1><%= t("my_account") %></h1>
+<h1><%= t(:my_account) %></h1>
 
 <div data-hook="account_summary">
   <dl id="user-info">
-    <dt><%= t("email") %></dt>
+    <dt><%= t(:email) %></dt>
     <dd><%= @user.email %></dd>
   </dl>
-  <p><%= link_to t('edit'), edit_account_path %></p>
+  <p><%= link_to t(:edit), edit_account_path %></p>
 </div>
 
 <div data-hook="account_my_orders">
 
-  <h2><%= t("my_orders") %></h2>
+  <h2><%= t(:my_orders) %></h2>
   <% if @orders.present? %>
-    <table class="order-summary" width="545">
+    <table class="order-summary" style="width:545px;">
       <thead>
         <tr>
-          <th><%= t("order_number") %></th>
-          <th><%= t("order_date") %></th>
-          <th><%= t("status") %></th>
-          <th><%= t("payment_state") %></th>
-          <th><%= t("shipment_state") %></th>
-          <th><%= t("total") %></th>
+          <th><%= t(:order_number) %></th>
+          <th><%= t(:order_date) %></th>
+          <th><%= t(:status) %></th>
+          <th><%= t(:payment_state) %></th>
+          <th><%= t(:shipment_state) %></th>
+          <th><%= t(:total) %></th>
         </tr>
       </thead>
       <tbody>
