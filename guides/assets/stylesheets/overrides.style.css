@@ -1497,3 +1497,48 @@ div.bg-file {
 .syntaxhighlighter {
   font-size: 0.80em !important;
 }
+
+#guidesMenu {
+  float: right;
+  margin-right: 12px;
+}
+
+#guides {
+  top: 16px;
+  right: 36px;
+  width: 520px;
+  background-color: #fff;
+  color: #3e434c;
+  font-size: 0.75em;
+}
+
+#guides .L {
+  width: 240px;
+  float: left;
+}
+#guides .R {
+  width: 240px;
+  margin-left: 40px;
+  float: right;
+}
+
+#guides hr {
+  background-color: #d2cece;
+}
+
+#guides dl {
+  /*font-size: 140%;*/
+  display: inline;
+}
+
+#guides dl dt {
+  color: #3e434c;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+}
+
+#guides dl dd {
+  text-indent: -10px;
+  margin-left: 18px;
+}
+

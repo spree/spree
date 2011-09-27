@@ -64,13 +64,6 @@ index:
     - title: Promotions
       url: promotions
       text: Using and extending the promotion system to provide discount coupons and other offers to customers
-  Best Practices:
-    - title: Developer Tips
-      url: developer_tips
-      text: This guides contains a miscellany of useful advice from Spree developers, including how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
-    - title: SEO Considerations
-      url: seo_considerations
-      text: Information on how to leverage the existing SEO features of Spree as well as on general SEO best practices.
   Customization:
     - title: Customization Overview
       url: customization
@@ -121,3 +114,11 @@ index:
     - title: Contributing to Spree
       url: contributing_to_spree
       text: Do you enjoy Spree and want to "give something back?" This guide contains information on how to contribute to the Spree project.
+  Best Practices:
+    - title: Developer Tips
+      url: developer_tips
+      text: This guides contains a miscellany of useful advice from Spree developers, including how to design your Spree project so as to minimize problems should you decide to upgrade to a newer version.
+    - title: SEO Considerations
+      url: seo_considerations
+      text: Information on how to leverage the existing SEO features of Spree as well as on general SEO best practices.
+
