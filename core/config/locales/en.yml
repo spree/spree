@@ -1026,6 +1026,7 @@ en:
     must_be_int: "must be an integer"
     must_be_non_negative: "must be a non-negative value"
   value: Value
+  variant: Variant
   variants: Variants
   vat: "VAT"
   version: Version

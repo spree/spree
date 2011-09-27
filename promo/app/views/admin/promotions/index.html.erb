@@ -1,27 +1,27 @@
 <div class='toolbar'>
   <ul class='actions'>
     <li>
-      <%= button_link_to t("new_promotion"), new_object_url, :icon => 'add'  %>
+      <%= button_link_to t(:new_promotion), new_object_url, :icon => 'add'  %>
     </li>
   </ul>
-  <br class='clear' />
+  <br class="clear" />
 </div>
 
-<h1><%= t("promotions") %></h1>
+<h1><%= t(:promotions) %></h1>
 
 <table class="index">
   <thead>
     <tr>
-      <th><%= t("name") %></th>
-      <th><%= t("code") %></th>
-      <th><%= t("description") %></th>
-      <th><%= t("usage_limit") %></th>
-      <th><%= t("expiration") %></th>
-      <th width="150"><%= t("action") %></th>
+      <th><%= t(:name) %></th>
+      <th><%= t(:code) %></th>
+      <th><%= t(:description) %></th>
+      <th><%= t(:usage_limit) %></th>
+      <th><%= t(:expiration) %></th>
+      <th style="width:150px;"><%= t(:action) %></th>
     </tr>
   </thead>
   <tbody>
-    <% for promotion in @promotions %>
+    <% @promotions.each do |promotion| %>
       <tr id="<%= dom_id promotion %>">
         <td><%= promotion.name %></td>
         <td><%= promotion.code %></td>
