@@ -1,4 +1,4 @@
-<h1><%= t("overview") %></h1>
+<h1><%= t(:overview) %></h1>
 
 <div data-hook="admin_dashboard">
   <% if @show_dashboard %>
@@ -6,8 +6,8 @@
       <div class="dashboard_left">
       <div data-hook="admin_dashboard_left">
         <div class="dashboard_small_wrapper">
-          <h2><%= t('best_selling_products') %></h2>
-          <div id="best_selling_products" style="width:50%;height:170px;float:left"></div>
+          <h2><%= t(:best_selling_products) %></h2>
+          <div id="best_selling_products" style="width:50%; height:170px; float:left;"></div>
           <div id="pie_legend">
             <% @best_selling_variants.each_with_index do |v,i| %>
               <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
@@ -16,8 +16,8 @@
             <% end %>
           </div>
 
-          <h2><%= t('top_grossing_products') %></h2>
-          <div id="top_grossing_products" style="width:50%;height:170px;float:left"></div>
+          <h2><%= t(:top_grossing_products) %></h2>
+          <div id="top_grossing_products" style="width:50%; height:170px; float:left;"></div>
           <div id="pie_legend">
             <% @top_grossing_variants.each_with_index do |v,i| %>
               <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
@@ -26,8 +26,8 @@
             <% end %>
           </div>
 
-          <h2><%= t('best_selling_taxons') %></h2>
-          <div id="best_selling_taxons" style="width:50%;height:170px;float:left"></div>
+          <h2><%= t(:best_selling_taxons) %></h2>
+          <div id="best_selling_taxons" style="width:50%; height:170px; float:left;"></div>
           <div id="pie_legend">
             <% @best_selling_taxons.each_with_index do |t,i| %>
               <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
