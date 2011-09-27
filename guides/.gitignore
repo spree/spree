@@ -3,7 +3,6 @@ output
 staging
 .DS_Store
 roadmap.txt
-Gemfile.lock
 *.swp
 .rvmrc
 bin
