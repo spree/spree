@@ -1,20 +1,20 @@
-<%= form_for(:user, :url => user_session_path) do |f| %>
-  <div id='password-credentials'>
+<%= form_for :user, :url => user_session_path do |f| %>
+  <div id="password-credentials">
     <p>
-      <%= f.label(:email, t("email")) %><br />
-      <%= f.text_field('email', :class => 'title') %>
+      <%= f.label :email, t(:email) %><br />
+      <%= f.text_field :email, :class => 'title' %>
     </p>
     <p>
-      <%= f.label :password, t("password") %><br />
-      <%= f.password_field 'password', :class => 'title' %>
+      <%= f.label :password, t(:password) %><br />
+      <%= f.password_field :password, :class => 'title' %>
     </p>
   </div>
   <p>
     <label>
       <%= f.check_box :remember_me %>
-      <%= f.label :remember_me, t('remember_me') %>
+      <%= f.label :remember_me, t(:remember_me) %>
     </label>
   </p>
 
-  <p><%= submit_tag t("log_in"), :class => 'button primary'%></p>
+  <p><%= f.submit t(:log_in), :class => 'button primary'%></p>
 <% end %>

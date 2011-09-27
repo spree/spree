@@ -4,10 +4,10 @@
 
 <%= form_for User.new, :as => :user, :url => user_password_path do |f| %>
   <p>
-    <label><%= t(:email) %>:</label><br />
+    <%= f.label :email, t(:email) %>:<br />
     <%= f.email_field :email %>
   </p>
   <p>
-    <%= f.submit t("reset_password") %>
+    <%= f.submit t(:reset_password) %>
   </p>
 <% end %>
