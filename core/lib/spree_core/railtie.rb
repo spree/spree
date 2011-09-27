@@ -70,7 +70,7 @@ module SpreeCore
 
     # sets the manifests / assets to be precompiled
     initializer "spree.assets.precompile" do |app|
-      app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/spree_dash.*', 'admin/orders/edit_form.js', 'jqPlot/excanvas.min.js']
+      app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/spree_dash.*', 'admin/orders/edit_form.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js']
       app.config.assets.debug = false
     end
 
