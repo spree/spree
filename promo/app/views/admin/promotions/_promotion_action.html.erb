@@ -6,7 +6,7 @@
   <% type_name = promotion_action.class.name.demodulize.underscore %>
   <% param_prefix = "promotion[promotion_actions_attributes][#{promotion_action.id}]" %>
   <%#= hidden_field_tag "#{param_prefix}[id]", promotion_action.id %>
-  <p><%= t "promotion_action_types.#{type_name}.description" %></p>
+  <p><%= t("promotion_action_types.#{type_name}.description") %></p>
 
   <%= render "admin/promotions/actions/#{type_name}", :action_form => action_form, :promotion_action => promotion_action, :param_prefix => param_prefix %>
 </div>

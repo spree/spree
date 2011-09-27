@@ -1,9 +1,9 @@
 <fieldset id="rule_fields">
   <legend><%= t(:rules) %></legend>
 
-  <%= form_for(@promotion, :url => object_url, :html => { :method => :put }) do |f| %>
+  <%= form_for @promotion, :url => object_url, :html => { :method => :put } do |f| %>
     <p>
-      <% for policy in Promotion::MATCH_POLICIES %>
+      <% Promotion::MATCH_POLICIES.each do |policy| %>
         <label><%= f.radio_button :preferred_match_policy, policy %> <%= t "promotion_form.match_policies.#{policy}" %></label> &nbsp;
       <% end %>
     </p>
@@ -11,20 +11,20 @@
       <% if @promotion.rules.any? %>
         <%= render :partial => 'promotion_rule', :collection => @promotion.rules, :locals => {} %>
       <% else %>
-        <!-- <p><%= t('no_rules_added') %></p> -->
+        <!-- <p><%= t(:no_rules_added) %></p> -->
       <% end %>
     </div>
     <p class="form-buttons">
-      <%= button t("update") %>
+      <%= button t(:update) %>
     </p>
   <% end %>
 
-  <%= form_tag(admin_promotion_promotion_rules_path(@promotion), :remote => true,
-                                                                 :id => 'new_product_rule_form') do  %>
+  <%= form_tag admin_promotion_promotion_rules_path(@promotion), :remote => true,
+                                                                 :id => 'new_product_rule_form' do  %>
     <% options = options_for_select( PromotionRule.registered_class_names.map {|name| [ t("promotion_rule_types.#{name.demodulize.underscore}.name"), name] } ) %>
     <p>
-      <label for="promotion_rule_type"><%= t('add_rule_of_type') %></label>
-      <%= select_tag("promotion_rule[type]", options) %>
+      <%= label_tag :promotion_rule_type, t(:add_rule_of_type) %>
+      <%= select_tag('promotion_rule[type]', options) %>
       <%= submit_tag t(:add) %>
     </p>
   <% end %>

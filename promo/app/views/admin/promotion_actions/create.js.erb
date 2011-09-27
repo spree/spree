@@ -1,7 +1,7 @@
-jQuery('#actions_container').html('<%= escape_javascript( render(:partial => 'admin/promotions/actions') ) %>');
+$('#actions_container').html('<%= escape_javascript( render(:partial => 'admin/promotions/actions') ) %>');
 initProductActions();
 
-jQuery('#<%= dom_id @promotion_action %>').hide();
-jQuery('#<%= dom_id @promotion_action %>').fadeIn();
-jQuery('#<%= dom_id @promotion_action %> .tokeninput.products').productPicker();
+$('#<%= dom_id @promotion_action %>').hide();
+$('#<%= dom_id @promotion_action %>').fadeIn();
+$('#<%= dom_id @promotion_action %> .tokeninput.products').productPicker();
 
