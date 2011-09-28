@@ -27,9 +27,9 @@ set :ssh_options, { :forward_agent => true }
 namespace :deploy do
   desc "Builds static html for guides"
   task :build_guides do
-    cmd = "cd #{release_path} && bundle exec guides build --clean"
+    cmd = "cd #{release_path} && bundle exec guides build --clean --ga"
     if exists?(:edge)
-      cmd << " --edge --ga"
+      cmd << " --edge"
     end
     run cmd
   end
