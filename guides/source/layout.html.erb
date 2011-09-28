@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
     <link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shThemeRailsGuides.css" />
     <link rel='stylesheet' type='text/css' href='stylesheets/overrides.style.css' />
+    <link rel='stylesheet' type='text/css' href='stylesheets/guides.css' />
   </head>
     <!--[if IE]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -43,13 +44,12 @@
     <div class='splash-inner secondary'>
       <div class='inner'>
         <h1>Spree Guides</h1>
-        <a href="index.html" onclick="guideMenu(); return false;" id="guidesMenu" class="button green">
+        <a href="#" id="guidesMenu" class="button green">
           Guides Index
           <span id="guidesArrow">&#9656;</span>
         </a>
         <br/>
         <div id="guides" class="clearfix" style="display: none;">
-          <hr />
           <%= clickable_index %>
         </div>
       </div>
