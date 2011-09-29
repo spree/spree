@@ -10,7 +10,10 @@ describe LineItem do
   let(:line_item) { line_item = LineItem.new(:quantity => 5) }
   let(:order) { mock_model(Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true, :update! => true) }
 
-  before { line_item.stub(:order => order, :variant => variant, :new_record? => false) }
+  before do
+    line_item.stub(:order => order, :variant => variant, :new_record? => false) 
+    Spree::Config.set :allow_backorders => true
+  end
 
   context "#save" do
     it "should update inventory and totals" do
@@ -152,9 +155,6 @@ describe LineItem do
 
     end
 
-
   end
-
-
 
 end
