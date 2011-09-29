@@ -8,7 +8,12 @@
   </td>
   <td data-hook="cart_item_description">
     <h4><%= link_to variant.product.name, product_path(variant.product) %></h4>
-    <%= variant_options variant %>
+    <%= variant.options_text %>
+    <% if @order.insufficient_stock_lines.include? line_item %>
+      <span class="out-of-stock">
+        <%= variant.in_stock? ? t(:insufficient_stock, :on_hand => variant.on_hand) : t(:out_of_stock) %><br>
+      </span>
+    <% end %>
     <%= truncate(variant.product.description, :length => 100, :omission => "...") %>
   </td>
   <td data-hook="cart_item_price">
@@ -21,6 +26,6 @@
     <%= format_price(product_price(line_item.variant, :format_as_currency => false) * line_item.quantity) unless line_item.quantity.nil? %>
   </td>
   <td data-hook="cart_item_delete">
-    <%= link_to(image_tag('icons/delete.png'), '#', :class => 'delete') %>
+    <%= link_to(image_tag('icons/delete.png'), '#', :class => 'delete', :id => "delete_#{dom_id(line_item)}" ) %>
   </td>
 </tr>

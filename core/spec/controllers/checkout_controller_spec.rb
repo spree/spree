@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe CheckoutController do
-  let(:order) { mock_model(Order, :checkout_allowed? => true, :completed? => false, :update_attributes => true, :payment? => false).as_null_object }
+  let(:order) { mock_model(Order, :checkout_allowed? => true, :completed? => false, :update_attributes => true, :payment? => false, :insufficient_stock_lines => []).as_null_object }
   before { controller.stub :current_order => order, :current_user => nil }
 
   it "should understand checkout routes" do
@@ -141,4 +141,34 @@ describe CheckoutController do
     end
 
   end
+
+  context "When last inventory item has been purchased and no backorders" do
+    let(:product) { mock_model(Product, :name => "Amazing Object") }
+    let(:variant) { mock_model(Variant, :on_hand => 0) }
+    let(:line_item) { mock_model(LineItem, :variant => variant, :quantity => 1, :product => product) }
+    let(:order) { Factory.new(:order) }
+
+    before do
+      order.stub(:line_items => [line_item])
+      Spree::Config.set :track_inventory_levels => true
+      Spree::Config.set :allow_backorders => false
+    end
+
+    context "back orders == false" do
+      before do
+        post :update, {:state => "payment"}
+      end
+
+      it "should render edit template" do
+        response.should redirect_to cart_path
+      end
+
+      it "should set flash message for no inventory" do
+        flash[:error].should == I18n.t('spree_inventory_error_flash_for_insufficient_quantity' , :names => "'#{product.name}'" )
+      end
+
+    end
+
+  end
+
 end

@@ -1,0 +1,4 @@
+tax_rate_north_america:
+  zone_id: 2 
+  amount: 0.05
+  tax_category: tax_cat_clothing

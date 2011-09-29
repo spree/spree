@@ -1,3 +1,4 @@
+# encoding: UTF-8
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = '<%= file_name %>'
@@ -16,7 +17,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency('spree_core', '>= <%= Spree.version %>')
+  s.add_dependency 'spree_core', '>= <%= Spree.version %>'
   s.add_development_dependency 'rspec-rails'
 end
 

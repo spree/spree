@@ -17,7 +17,7 @@ When /^(?:|I )fill (billing|shipping) address with correct data$/ do |address_ty
 end
 
 Given /^a product with (.*?)? exists$/ do |captured_fields|
-  fields = {'name' => "RoR Mug", 'count_on_hand' => '10', 'price' => "14.99"}
+  fields = {'name' => "RoR Mug", 'price' => "14.99"}
   captured_fields.split(/,\s+/).each do |field|
     (name, value) = field.split(/:\s*/, 2)
     fields[name] = value.delete('"')
@@ -26,13 +26,16 @@ Given /^a product with (.*?)? exists$/ do |captured_fields|
   price = fields.delete('price')
 
   if Product.search.master_price_equals(price).count(:conditions => fields) == 0
-    Factory(:product, fields.merge('price' => price,  :sku => 'ABC',
+    product = Factory(:product, fields.merge('price' => price,  :sku => 'ABC',
                                                       :available_on => (Time.now - 100.days)))
+
+    product.on_hand = 10
+    product.save
   end
 end
 
 When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
-  fields = {'name' => "RoR Mug", 'count_on_hand' => '10', 'price' => "14.99"}
+  fields = {'name' => "RoR Mug", 'price' => "14.99"}
   captured_fields.split(/,\s+/).each do |field|
     (name, value) = field.split(/:\s*/, 2)
     fields[name] = value.delete('"')
@@ -41,8 +44,11 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
   price = fields.delete('price')
 
   if Product.search.master_price_equals(price).count(:conditions => fields) == 0
-    Factory(:product, fields.merge('price' => price,  :sku => 'ABC',
+    product = Factory(:product, fields.merge('price' => price,  :sku => 'ABC',
                                                       :available_on => (Time.now - 100.days)))
+
+    product.on_hand = 10
+    product.save
   end
 
   When %{I go to the products page}
@@ -53,11 +59,30 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
   When %{I press "Add To Cart"}
 end
 
+
 When /^I choose "(.*?)" as shipping method$/ do |shipping_method|
   shipping_method = "order_shipping_method_id_#{ShippingMethod.find_by_name(shipping_method).id}"
   When %{I choose "#{shipping_method}"}
   And %{press "Save and Continue"}
 end
+
+Then /^product with (.*?)? goes out of stock$/ do |captured_fields|
+  fields = {'name' => "RoR Mug"}
+  captured_fields.split(/,\s+/).each do |field|
+    (name, value) = field.split(/:\s*/, 2)
+    fields[name] = value.delete('"')
+  end
+
+  product = Product.where(:name => fields['name']).first
+  product.on_hand = 0
+  product.save
+end
+
+Given /^backordering is ([^"]*)$/ do |state|
+  @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+  Spree::Config.set :allow_backorders => (state == "disabled" ? false : true)
+end
+
 
 When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and set coupon code to "(.*?)")?$/ do |shipping_method, payment_method, coupon_code|
   When %{I choose "#{shipping_method}" as shipping method}
