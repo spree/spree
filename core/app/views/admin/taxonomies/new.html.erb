@@ -1,12 +1,12 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1><%= t("new_taxonomy") %></h1>
+<h1><%= t(:new_taxonomy) %></h1>
 
-<%= form_for([:admin, @taxonomy]) do |f| %>
+<%= form_for [:admin, @taxonomy] do |f| %>
 
-	<%= render :partial => "form", :locals => { :f => f } %>
+  <%= render :partial => 'form', :locals => { :f => f } %>
 
-	<p class="form-buttons" data-hook="buttons">
-	  <%= button t("create") %>
+  <p class="form-buttons" data-hook="buttons">
+    <%= button t(:create) %>
   </p>
 <% end %>

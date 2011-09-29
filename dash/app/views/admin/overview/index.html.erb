@@ -1,4 +1,4 @@
-<h1><%= t("overview") %></h1>
+<h1><%= t(:overview) %></h1>
 
 <div data-hook="admin_dashboard">
   <% if @show_dashboard %>
@@ -6,8 +6,8 @@
       <div class="dashboard_left">
       <div data-hook="admin_dashboard_left">
         <div class="dashboard_small_wrapper">
-          <h2><%= t('best_selling_products') %></h2>
-          <div id="best_selling_products" style="width:50%;height:170px;float:left"></div>
+          <h2><%= t(:best_selling_products) %></h2>
+          <div id="best_selling_products" style="width:50%; height:170px; float:left;"></div>
           <div id="pie_legend">
             <% @best_selling_variants.each_with_index do |v,i| %>
               <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
@@ -16,8 +16,8 @@
             <% end %>
           </div>
 
-          <h2><%= t('top_grossing_products') %></h2>
-          <div id="top_grossing_products" style="width:50%;height:170px;float:left"></div>
+          <h2><%= t(:top_grossing_products) %></h2>
+          <div id="top_grossing_products" style="width:50%; height:170px; float:left;"></div>
           <div id="pie_legend">
             <% @top_grossing_variants.each_with_index do |v,i| %>
               <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
@@ -26,8 +26,8 @@
             <% end %>
           </div>
 
-          <h2><%= t('best_selling_taxons') %></h2>
-          <div id="best_selling_taxons" style="width:50%;height:170px;float:left"></div>
+          <h2><%= t(:best_selling_taxons) %></h2>
+          <div id="best_selling_taxons" style="width:50%; height:170px; float:left;"></div>
           <div id="pie_legend">
             <% @best_selling_taxons.each_with_index do |t,i| %>
               <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
@@ -148,7 +148,7 @@
 
 <% content_for :head do %>
   <% if @show_dashboard %>
-    <script type="text/javascript">
+    <%= javascript_tag do -%>
       var orders_by_day_points = [[<%== @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
       var best_selling_variants_points = [<%== @best_selling_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
       var top_grossing_variants_points = [<%== @top_grossing_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
@@ -158,7 +158,7 @@
       var by_day = "<%= t(:by_day) %>";
 
       var pie_colors = [<%== @pie_colors.map{|c| "'#{c}'"}.join(",") %>];
-    </script>
+    <% end -%>
     <!--[if IE]><%= javascript_include_tag 'jqPlot/excanvas.min.js' %><![endif]-->
   <% end %>
 <% end %>

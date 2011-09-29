@@ -1,15 +1,15 @@
 <% promotions = @product.possible_promotions %>
 <% if promotions.any? %>
 <div id="promotions">
-  <h3><%= t 'promotions' %></h3>
+  <h3><%= t(:promotions) %></h3>
 
-  <% for promotion in promotions %>
+  <% promotions.each do |promotion| %>
   <div>
     <h4><%= promotion.name %></h4>
     <p><%= promotion.description %></p>
     <% if promotion.products.any? %>
     <ul>
-      <% for product in promotion.products %>
+      <% promotion.products.each do |product| %>
         <li><%= link_to product.name, product_path(product) %></li>
       <% end %>
     </ul>

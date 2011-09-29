@@ -1,19 +1,19 @@
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Customer Details"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => 'Customer Details'} %>
 <%= csrf_meta_tags %>
 
 <% if @order.cart? %>
   <div id="add-line-item" data-hook>
     <fieldset>
-      <legend><%= t('customer_search') %></legend>
-      <%= label_tag :customer_search, t("enter_atleast_five_letters") %>
+      <legend><%= t(:customer_search) %></legend>
+      <%= label_tag :customer_search, t(:enter_at_least_five_letters) %>
       <%= text_field_tag :customer_search,  nil, :class => 'fullwidth title'  %>
     </fieldset>
   </div>
 <% end %>
 
-<%= render "shared/error_messages", :target => @order %>
+<%= render 'shared/error_messages', :target => @order %>
 
-<%= form_for(@order, :url => admin_order_url(@order), :html => { :method => :put}) do |f| %>
+<%= form_for @order, :url => admin_order_url(@order), :html => { :method => :put} do |f| %>
   <%= f.hidden_field :number %>
-  <%= render :partial => "user_form", :locals => {:f => f} %>
+  <%= render :partial => 'user_form', :locals => {:f => f} %>
 <% end %>

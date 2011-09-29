@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head data-hook="inside_head">
-    <%= render 'shared/head'%>
+    <%= render 'shared/head' %>
   </head>
   <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
     <div id="header" data-hook>
@@ -26,10 +26,10 @@
         <%= yield %>
       </div>
     </div>
-    
+
     <div id="footer" data-hook>
       <div id="footer-left" data-hook>
-        <p><%= t("powered_by") %> <a href="http://spreecommerce.com/">Spree</a></p>
+        <p><%= t(:powered_by) %> <%= link_to 'Spree', 'http://spreecommerce.com/' %></p>
       </div>
       <div id="footer-right" data-hook></div>
     </div>

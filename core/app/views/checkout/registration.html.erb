@@ -1,19 +1,19 @@
-<%= render "shared/error_messages", :target => @user %>
-<h2><%= t("registration")%></h2>
+<%= render 'shared/error_messages', :target => @user %>
+<h2><%= t(:registration) %></h2>
 <div id="registration" data-hook>
   <div id="account">
     <!-- TODO: add partial with registration form -->
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout" data-hook>
-      <%= render "shared/error_messages", :target => @order %>
+      <%= render 'shared/error_messages', :target => @order %>
       <h2><%= t(:guest_user_account) %></h2>
-      <%= form_for @order, :url => update_checkout_registration_path, :html => { :method => :put, :id => "checkout_form_registration"} do |f| %>
+      <%= form_for @order, :url => update_checkout_registration_path, :html => { :method => :put, :id => 'checkout_form_registration'} do |f| %>
         <p>
-          <%= f.label :email, t("email") %><br />
+          <%= f.label :email, t(:email) %><br />
           <%= f.text_field :email, :class => 'title'  %>
         </p>
-        <p><%= submit_tag t("continue"), :class => 'button primary' %></p>
+        <p><%= submit_tag t(:continue), :class => 'button primary' %></p>
       <% end %>
     </div>
   <% end %>

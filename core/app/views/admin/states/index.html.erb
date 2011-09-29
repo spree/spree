@@ -1,16 +1,16 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1><%= t("states") %></h1>
+<h1><%= t(:states) %></h1>
 
 <p data-hook="country">
-  <label for="country"><%= t('country') %></label>
+  <%= label_tag :country, t(:country) %>
   <select id="country" class='observe_field' data-base-url="<%=admin_states_path(:format => :js)%>?country_id=" data-update="#state-list">
   <%= options_from_collection_for_select(@countries, :id, :name, @country.id) %>
   </select>
 </p>
 
-<%= image_tag "spinner.gif", :plugin => "spree", :style => "display:none", :id => 'busy_indicator' %>
+<%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
 
 <div id="state-list" data-hook>
-  <%=render :partial => 'state_list'%>
+  <%= render :partial => 'state_list'%>
 </div>

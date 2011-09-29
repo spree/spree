@@ -1,18 +1,18 @@
 <div data-hook="admin_shipping_method_form_fields">
   <%= f.field_container :name do %>
-    <%= f.label :name, t("name") %><br />
+    <%= f.label :name, t(:name) %><br />
     <%= f.text_field :name  %>
     <%= error_message_on :shipping_method, :name %>
   <% end %>
 
   <%= f.field_container :zone_id do %>
-    <%= f.label :zone_id, t("zone") %><br />
-    <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"})  %>
+    <%= f.label :zone_id, t(:zone) %><br />
+    <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {'style' => 'width:200px;'})  %>
     <%= error_message_on :shipping_method, :zone_id %>
   <% end %>
 
   <%= f.field_container :display_on do %>
-    <%= f.label :display_on, t("display") %><br />
+    <%= f.label :display_on, t(:display) %><br />
     <%= select(:shipping_method, :display_on, ShippingMethod::DISPLAY.collect {|display| [t(display), display == :both ? nil : display.to_s]})  %>
     <%= error_message_on :shipping_method, :display_on %>
   <% end %>
@@ -20,6 +20,6 @@
 </div>
 
 <div data-hook="admin_shipping_method_form_calculator_fields">
-  <%= render "admin/shared/calculator_fields", :f => f %>
+  <%= render 'admin/shared/calculator_fields', :f => f %>
 </div>
 

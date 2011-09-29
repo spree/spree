@@ -84,7 +84,7 @@ jQuery(document).ready(function(){
       },
       series:[{lineWidth:3, color: '#0095DA', fillAndStroke: true, fill: true, fillColor: '#E6F7FF'}],
       highlighter: {
-        formatString: "Date: %s <br/>Value: %s ",
+        formatString: "Date: %s <br />Value: %s ",
         sizeAdjust: 7.5
       }
     };

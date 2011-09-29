@@ -3,22 +3,21 @@
 <div class="toolbar" data-hook="toolbar">
   <ul class="actions">
     <li>
-      <p><%= button_link_to t("new_tax_category"), new_object_url,  :icon => 'add',
-                                                                    :id => 'admin_new_tax_categories_link' %>
+      <p><%= button_link_to t(:new_tax_category), new_object_url, :icon => 'add', :id => 'admin_new_tax_categories_link' %>
     </p>
     </li>
   </ul>
-  <br class="clear">
+  <br class="clear" />
 </div>
 
 
-<h1><%=t("listing_tax_categories")%></h1>
+<h1><%= t(:listing_tax_categories) %></h1>
 <table class="index" id='listing_tax_categories' data-hook>
   <thead>
     <tr data-hook="tax_header">
-      <th><%= t("name") %></th>
-      <th><%= t("description") %></th>
-      <th><%= t("default") %></th>
+      <th><%= t(:name) %></th>
+      <th><%= t(:description) %></th>
+      <th><%= t(:default) %></th>
       <th></th>
     </tr>
   </thead>
@@ -32,8 +31,8 @@
         <td><%= tax_category.description %></td>
         <td><%= tax_category.is_default.to_s.titleize %></td>
         <td class="actions">
-          <%=link_to_edit tax_category, :class => 'edit' %> &nbsp;
-          <%=link_to_delete tax_category %>
+          <%= link_to_edit tax_category, :class => 'edit' %> &nbsp;
+          <%= link_to_delete tax_category %>
       </tr>
     <% end %>
     <% if @tax_categories.empty? %>

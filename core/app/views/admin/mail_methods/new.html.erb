@@ -1,9 +1,9 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<h1><%= t("new_mail_method") %></h1>
+<h1><%= t(:new_mail_method) %></h1>
 <%= render 'shared/error_messages', :target => @mail_method %>
 
-<%= form_for([:admin, @mail_method]) do |f| %>
-  <%= render :partial => "form", :locals => { :f => f } %>
-  <p class="form-buttons" data-hook="buttons"><%= button t("create") %></p>
+<%= form_for [:admin, @mail_method] do |f| %>
+  <%= render :partial => 'form', :locals => { :f => f } %>
+  <p class="form-buttons" data-hook="buttons"><%= button t(:create) %></p>
 <% end %>

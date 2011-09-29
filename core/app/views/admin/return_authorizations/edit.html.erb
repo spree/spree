@@ -2,26 +2,26 @@
   <ul class="actions">
     <li>
       <% if @return_authorization.can_receive? %>
-        <%= button_link_to(t('receive'), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'receive'), :method => :put, :confirm => t("are_you_sure")) %>
+        <%= button_link_to t(:receive), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'receive'), :method => :put, :confirm => t(:are_you_sure) %>
       <% end %>
       <% if @return_authorization.can_cancel? %>
-        <%= button_link_to(t('cancel'), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'cancel'), :method => :put, :confirm => t("are_you_sure")) %>
+        <%= button_link_to t(:cancel), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'cancel'), :method => :put, :confirm => t(:are_you_sure) %>
       <% end %>
     </li>
   </ul>
-  <br class='clear' />
+  <br class="clear" />
 </div>
 
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Return Authorizations"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => 'Return Authorizations'} %>
 
-<h2><%= t("return_authorization")%> <%= @return_authorization.number %> (<%= t(@return_authorization.state.downcase) %>)</h2>
+<h2><%= t(:return_authorization) %> <%= @return_authorization.number %> (<%= t(@return_authorization.state.downcase) %>)</h2>
 
-<%= render "shared/error_messages", :target => @return_authorization %>
-<%= form_for([:admin, @order, @return_authorization]) do |f| %>
-  <%= render :partial => "form", :locals => {:f => f} %>
+<%= render 'shared/error_messages', :target => @return_authorization %>
+<%= form_for [:admin, @order, @return_authorization] do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
 
   <p class="form-buttons" data-hook="buttons">
-    <%= button t('update') %>
-    <%= t("or") %> <%= link_to t("actions.cancel"), admin_order_return_authorizations_url(@order) %>
+    <%= button t(:update) %>
+    <%= t(:or) %> <%= link_to t('actions.cancel'), admin_order_return_authorizations_url(@order) %>
   </p>
 <% end %>

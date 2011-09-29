@@ -1,49 +1,48 @@
 <%= render :partial => 'admin/shared/configuration_menu' %>
 
-<%= render :partial => "js_head" %>
+<%= render :partial => 'js_head' %>
 
-<h1><%= t("taxonomy_edit")%></h1>
+<h1><%= t(:taxonomy_edit) %></h1>
 
 <p id="ajax_error" class="errorExplanation" style="display:none;"></p>
 
-<%= form_for([:admin, @taxonomy]) do |f| %>
+<%= form_for [:admin, @taxonomy] do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
-	  <div>
-	    <label><%= t("tree")%></label><br />
+    <div>
+      <%= label_tag nil, t(:tree) %><br />
       <div id="taxonomy_tree" class="tree"></div>
-  	</div>
-  	<p id="progress" style="display:none;">
-      <img src="/assets/spinner.gif?1234540747" alt="Spinner" style="vertical-align:bottom;"/> <%= t('updating') %>..
+    </div>
+    <p id="progress" style="display:none;">
+      <%= image_tag 'spinner.gif', :title => 'Spinner', :style => "vertical-align:bottom;" %> <%= t(:updating) %>..
     </p>
-    <p><br/><small><%= t("taxonomy_tree_instruction")%></small></p>
+    <p><br /><small><%= t(:taxonomy_tree_instruction) %></small></p>
 
-	<p class="form-buttons">
-	  <%= button t("update") %> <%= t("or") %> <%= link_to t("cancel"), admin_taxonomies_path %>
-  </p>
+    <p class="form-buttons">
+      <%= button t(:update) %> <%= t(:or) %> <%= link_to t(:cancel), admin_taxonomies_path %>
+    </p>
 <% end %>
 
 
 <% content_for :head do %>
-  <script type="text/javascript">
+  <%= javascript_tag do -%>
     var initial = [
-	   	{ "attr" :
-	   	  { "id" : "<%= @taxonomy.root.id %>", "rel" : "root" },
-			"data" : "<%= @taxonomy.root.name %>",
-			"state" : "open",
-			"children" : [
-				<% @taxonomy.root.children.each_with_index do |taxon,i| %>
-					{
-						"attr" :
-						{ "id" : "<%= taxon.id %>"},
-						"data" : "<%= taxon.name %>"
-						<% unless taxon.children.empty? %>
-							,"state" : "closed"
-						<% end %>
-					}<%= "," if i < (@taxonomy.root.children.size - 1) %>
-				<% end %>
-			]
-      	}
+      { "attr" :
+      { "id" : "<%= @taxonomy.root.id %>", "rel" : "root" },
+      "data" : "<%= @taxonomy.root.name %>",
+      "state" : "open",
+      "children" : [
+        <% @taxonomy.root.children.each_with_index do |taxon,i| %>
+          {
+            "attr" :
+            { "id" : "<%= taxon.id %>"},
+            "data" : "<%= taxon.name %>"
+            <% unless taxon.children.empty? %>
+              ,"state" : "closed"
+            <% end %>
+          }<%= ',' if i < (@taxonomy.root.children.size - 1) %>
+        <% end %>
+      ]
+        }
     ];
-
-  </script>
+  <% end -%>
 <% end %>

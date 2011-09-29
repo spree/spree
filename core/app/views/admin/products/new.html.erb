@@ -1,29 +1,29 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 
-<%= render "shared/error_messages", :target => @product %>
+<%= render 'shared/error_messages', :target => @product %>
 
-<%= form_for([:admin, @product], :html => { :multipart => true }) do |f| %>
+<%= form_for [:admin, @product], :html => { :multipart => true } do |f| %>
 <fieldset data-hook="new_product">
 
   <%= f.field_container :name do %>
-    <%= f.label :name, t("name") %> <span class="required">*</span><br />
+    <%= f.label :name, t(:name) %> <span class="required">*</span><br />
     <%= f.text_field :name, :class => 'fullwidth title'  %>
     <%= f.error_message_on :name %>
   <% end %>
 
-  <div class="clearfix"  data-hook="new_product_attrs">
+  <div class="clearfix" data-hook="new_product_attrs">
     <div class="left">
 
       <% unless @product.has_variants? %>
-      <%= f.field_container :sku do %>
-        <%= f.label :sku, t("sku") %><br />
-        <%= f.text_field :sku, :size => 16 %>
-        <%= f.error_message_on :sku %>
-      <% end %>
+        <%= f.field_container :sku do %>
+          <%= f.label :sku, t(:sku) %><br />
+          <%= f.text_field :sku, :size => 16 %>
+          <%= f.error_message_on :sku %>
+        <% end %>
       <% end %>
 
       <p>
-        <%= f.label :prototype_id, t("prototype") %><br />
+        <%= f.label :prototype_id, t(:prototype) %><br />
         <%= f.collection_select :prototype_id, Prototype.all, :id, :name, :include_blank => true %>
       </p>
 
@@ -31,13 +31,13 @@
     <div class="right">
 
       <%= f.field_container :price do %>
-        <%= f.label :price, t("master_price")%> <span class="required">*</span><br />
-        <%= f.text_field :price  %>
-        <%= f.error_message_on :price%>
+        <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
+        <%= f.text_field :price %>
+        <%= f.error_message_on :price %>
       <% end %>
 
       <p>
-        <%= f.label :available_on, t("available_on") %><br />
+        <%= f.label :available_on, t(:available_on) %><br />
         <%= f.error_message_on :available_on %>
         <%= f.text_field :available_on, :class => 'datepicker', :style => "width:150px" %>
       </p>

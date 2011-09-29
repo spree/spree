@@ -1,4 +1,4 @@
-<%= render "shared/error_messages", :target => @promotion %>
+<%= render 'shared/error_messages', :target => @promotion %>
 <fieldset id="general_fields">
   <legend><%= t(:general) %></legend>
   <%= f.field_container :name do %>
@@ -18,12 +18,12 @@
 
   <%= f.field_container :description do %>
     <%= f.label :description %><br />
-    <%= f.text_area :description, :style => "height:50px" %>
+    <%= f.text_area :description, :style => "height:50px;" %>
   <% end %>
 
   <%= f.field_container :preferred_advertise do %>
     <%= f.check_box :preferred_advertise %>
-    <%= f.label :preferred_advertise, t('advertise') %>
+    <%= f.label :preferred_advertise, t(:advertise) %>
   <% end %>
 
 </fieldset>

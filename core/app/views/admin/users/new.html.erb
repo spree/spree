@@ -1,14 +1,14 @@
 <div data-hook="admin_user_new_form_header">
   <%= render 'shared/error_messages', :target => @user %>
-  <h1><%= t("new_user") %></h1>
+  <h1><%= t(:new_user) %></h1>
 </div>
 
 <div data-hook="admin_user_new_form">
-  <%= form_for([:admin, @user]) do |f| %>
-    <%= render :partial => "form", :locals => { :f => f } %>
+  <%= form_for [:admin, @user] do |f| %>
+    <%= render :partial => 'form', :locals => { :f => f } %>
 
     <div data-hook="admin_user_new_form_buttons">
-      <%= render :partial => "admin/shared/new_resource_links" %>
+      <%= render :partial => 'admin/shared/new_resource_links' %>
     </div>
   <% end %>
 </div>

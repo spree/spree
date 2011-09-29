@@ -3,12 +3,12 @@ en:
   activemodel:
     attributes:
       promotion:
-        name: "Name"
-        description: "Description"
-        code: "Code"
-        usage_limit: "Usage limit"
-        starts_at: "Starts at"
-        expires_at: "Expires at"
+        name: Name
+        description: Description
+        code: Code
+        usage_limit: Usage limit
+        starts_at: Starts at
+        expires_at: Expires at
   add_action_of_type: Add action of type
   add_rule_of_type: Add rule of type
   advertise: Advertise

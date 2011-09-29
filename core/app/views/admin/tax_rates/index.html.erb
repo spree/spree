@@ -1,20 +1,20 @@
 <div class="toolbar" data-hook="toolbar">
   <ul class="actions">
     <li>
-      <%= button_link_to t("new_tax_rate"), new_object_url, :icon => 'add'  %>
+      <%= button_link_to t(:new_tax_rate), new_object_url, :icon => 'add' %>
     </li>
   </ul>
-  <br class="clear">
+  <br class="clear" />
 </div>
-<h1><%=t("tax_rates") %></h1>
+<h1><%= t(:tax_rates) %></h1>
 <table class="index">
   <thead>
     <tr data-hook="rate_header">
-      <th><%=t("zone")%></th>
-      <th><%=t("category")%></th>
-      <th><%=t("amount")%></th>
-      <th><%=t("calculator")%></th>
-      <th><%=t("action")%></th>
+      <th><%= t(:zone) %></th>
+      <th><%= t(:category) %></th>
+      <th><%= t(:amount) %></th>
+      <th><%= t(:calculator) %></th>
+      <th><%= t(:action) %></th>
     </tr>
   </thead>
   <tbody>
@@ -25,8 +25,8 @@
       <td><%=tax_rate.amount %></td>
       <td><%=tax_rate.calculator.to_s %></td>
       <td>
-      	<%= link_to_edit tax_rate %> &nbsp;
-      	<%= link_to_delete tax_rate %>
+        <%= link_to_edit tax_rate %> &nbsp;
+        <%= link_to_delete tax_rate %>
       </td>
     </tr>
     <% end %>

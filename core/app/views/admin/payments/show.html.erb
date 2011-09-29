@@ -1,9 +1,9 @@
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => 'Payments'} %>
 
 <h2><%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %></h2>
 
 <p data-hook="amount">
-  <label><%= t("amount") %>:</label>
+  <%= label_tag nil, t(:amount) %>
   <%= @payment.amount %>
 </p>
 

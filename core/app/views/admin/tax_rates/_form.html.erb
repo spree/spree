@@ -1,16 +1,16 @@
 <table data-hook="tax_rates">
   <tr data-hook="zone">
-    <td><%=t("zone")%>:</td>
+    <td><%= t(:zone) %>:</td>
     <td><%= f.collection_select(:zone_id, @available_zones, :id, :name) %></td>
   </tr>
   <tr data-hook="category">
-    <td><%=t("tax_category")%>:</td>
+    <td><%= t(:tax_category) %>:</td>
     <td><%= f.collection_select(:tax_category_id, @available_categories,:id, :name) %></td>
   </tr>
   <tr="rate">
-    <td><%=t("rate")%>:</td>
+    <td><%= t(:rate) %>:</td>
     <td><%= f.text_field :amount %></td>
-  </tr>  
+  </tr>
 </table>
 
-<%= render "admin/shared/calculator_fields", :f => f %>
+<%= render 'admin/shared/calculator_fields', :f => f %>

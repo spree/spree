@@ -1,12 +1,12 @@
 <table class="index" id='listing_taxonomies' data-hook>
   <tr data-hook="taxonomies_header">
-    <th><%= t("name") %></th>
+    <th><%= t(:name) %></th>
     <th></th>
   </tr>
-<% for taxonomy in @taxonomies %>
+<% @taxonomies.each do |taxonomy| %>
   <tr id="<%= dom_id taxonomy %>" data-hook="taxonomies_row">
-	  <td>
-	    <%= taxonomy.name %>
+    <td>
+      <%= taxonomy.name %>
     </td>
     <td class="actions">
       <%= link_to_edit taxonomy.id, :class => 'edit' %>

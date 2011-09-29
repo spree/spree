@@ -3,18 +3,18 @@
 <div class="toolbar" data-hook="toolbar">
   <ul class="actions">
     <li>
-      <%= button_link_to t("new_mail_method"), new_object_url, :icon => "add", :id => "admin_new_mail_method_link" %>
+      <%= button_link_to t(:new_mail_method), new_object_url, :icon => 'add', :id => 'admin_new_mail_method_link' %>
     </li>
   </ul>
   <br class="clear" />
 </div>
 
-<h1><%= t("mail_methods") %></h1>
+<h1><%= t(:mail_methods) %></h1>
 
-<table class="index" id='mail_methods_listing'>
+<table class="index" id="mail_methods_listing">
   <thead data-hook="admin_mail_methods_index_headers">
-    <th><%= t("environment") %></th>
-    <th><%= t("active") %></th>
+    <th><%= t(:environment) %></th>
+    <th><%= t(:active) %></th>
     <th data-hook="admin_mail_methods_index_header_actions">
     </th>
   </thead>
@@ -27,7 +27,7 @@
           <%= link_to_edit method, :class => 'edit' %> &nbsp;
           <%= link_to_delete method %>
           <%= link_to testmail_admin_mail_method_path(method), :method => :post, :class => 'send_mail' do %>
-            <%= image_tag('/admin/images/icons/send-email.png') %>
+            <%= image_tag('admin/icons/send-email.png') %>
             <%= t('admin.mail_methods.send_testmail') %>
           <% end %>
         </td>
