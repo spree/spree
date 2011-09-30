@@ -119,8 +119,9 @@ describe Order do
        end
     end
     context "when current state is address" do
-      let(:rate) { mock_model TaxRate, :amount => 10 }
-      let(:rate_1) { mock_model TaxRate, :amount => 15 }
+      let(:sales_tax) { mock_model Calculator::SalesTax, :description => "Sales Tax" }
+      let(:rate) { mock_model TaxRate, :amount => 10, :calculator => sales_tax }
+      let(:rate_1) { mock_model TaxRate, :amount => 15, :calculator => sales_tax } 
 
       before do
         order.state = "address"
@@ -583,5 +584,46 @@ describe Order do
       order.insufficient_stock_lines.include?(line_item).should be_true
     end
 
+  end
+
+  context "create_tax_charge!" do
+    let(:sales_tax) { mock_model Calculator::SalesTax, :compute => 3, :[]= => nil, :description => "Money for the man" }
+    let(:rate) { TaxRate.create(:amount => 0.05) }
+    let(:rate_1) { TaxRate.create(:amount => 0.15) } 
+
+    it "should destory all existing tax adjustments" do
+      adjustment = mock_model(Adjustment, :amount => 5, :calculator => :sales_tax) 
+      adjustment.should_receive :destroy
+
+      order.stub_chain :adjustments, :tax => [adjustment]
+      order.create_tax_charge!
+    end
+
+    it "should create adjustments with correct labels for matched rates" do
+      [rate, rate_1].each {|r| r.stub :calculator => sales_tax }
+      TaxRate.stub :match => [rate, rate_1]
+
+      order.create_tax_charge!
+      order.adjustments.tax.size.should == 2
+ 
+      ["Money for the man 5.0%", "Money for the man 15.0%"].each do |label|
+        order.adjustments.tax.map(&:label).include?(label).should be_true
+      end
+    end
+
+    context "when :show_price_inc_vat is true" do
+      before { Spree::Config.set :show_price_inc_vat => true }
+
+      it "should use default countries rate when none match address" do
+        TaxRate.stub :match => []
+        rate.stub_chain :zone, :country_list => [mock_model Country, :id => Spree::Config[:default_country_id]]
+        rate_1.stub_chain :zone, :country_list => []
+        TaxRate.stub :all => [rate, rate_1]
+
+        rate.should_receive(:create_adjustment).at_least(:once)
+        rate_1.should_not_receive(:create_adjustment)
+        order.create_tax_charge!
+      end
+    end
   end
 end
