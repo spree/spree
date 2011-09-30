@@ -7,12 +7,6 @@ class Calculator::PriceBucket < Calculator
     I18n.t("price_bucket")
   end
 
-  def self.register
-    super
-    #Promotion.register_calculator(self)
-    ShippingMethod.register_calculator(self)
-  end
-
   # as object we always get line items, as calculable we have Coupon, ShippingMethod
   def compute(object)
     if object.is_a?(Array)

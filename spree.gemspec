@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.bindir       = 'lib/spree/bin'
   s.executables  = %w(spree)
   s.required_ruby_version     = '>= 1.8.7'
-  s.required_rubygems_version = ">= 1.8.10"
+  s.required_rubygems_version = ">= 1.3.6"
 
   s.author            = 'Sean Schofield'
   s.email             = 'sean@railsdog.com'

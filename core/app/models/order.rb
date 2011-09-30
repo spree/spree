@@ -272,7 +272,7 @@ class Order < ActiveRecord::Base
           rate.zone.country_list.collect{|c| c.id}.include?(Spree::Config[:default_country_id]) }
     end
     matching_rates.each do |rate|
-      rate.create_adjustment( "#{I18n.t(:vat)} #{rate.amount*100}%" , self, self, true)
+      rate.create_adjustment( "#{rate.calculator.description} #{rate.amount*100}%" , self, self, true)
     end
   end
 

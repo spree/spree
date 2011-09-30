@@ -16,6 +16,6 @@ class Admin::PromotionsController < Admin::ResourceController
   end
 
   def load_data
-    @calculators = Promotion::Actions::CreateAdjustment.calculators
+    @calculators = Rails.application.config.spree.calculators.promotion_actions_create_adjustments
   end
 end

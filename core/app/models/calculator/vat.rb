@@ -4,11 +4,6 @@ class Calculator::Vat < Calculator
     I18n.t("vat")
   end
 
-  def self.register
-    super
-    TaxRate.register_calculator(self)
-  end
-
   def self.calculate_tax_on(product_or_variant)
     product = product_or_variant.try(:product) || product_or_variant
 

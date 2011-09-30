@@ -11,11 +11,6 @@ class Calculator::FlexiRate < Calculator
     true
   end
 
-  def self.register
-    super
-    ShippingMethod.register_calculator(self)
-  end
-
   def compute(object)
     sum = 0
     max = self.preferred_max_items
