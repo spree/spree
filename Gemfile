@@ -32,9 +32,9 @@ group :cucumber do
   gem 'launchy'
 end
 
-group :ci do
-  gem 'mysql2', '~> 0.3.6'
-end
+#group :ci do
+#  gem 'mysql2', '~> 0.3.6'
+#end
 
 if RUBY_VERSION < "1.9"
   gem "ruby-debug"
