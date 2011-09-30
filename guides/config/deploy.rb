@@ -33,6 +33,16 @@ namespace :deploy do
     end
     run cmd
   end
+
+  desc "Symlink shared configs and folders on each release."
+  task :symlink_shared do
+    if exists?(:edge)
+      run "ln -nfs #{shared_path}/config/robots.txt #{release_path}/output/robots.txt"
+    else
+      #no symlinks for normal guides?
+    end
+  end
 end
 
 after 'deploy:update_code', 'deploy:build_guides'
+after 'deploy:build_guides', 'deploy:symlink_shared'
