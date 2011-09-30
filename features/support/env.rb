@@ -71,3 +71,12 @@ end
 #factory_definitions_debugger
 
 require 'factory_girl/step_definitions'
+
+if ENV['HEADLESS'] == 'true'
+  require 'headless'
+  headless = Headless.new
+  headless.start
+  at_exit do
+    headless.destroy
+  end
+end
