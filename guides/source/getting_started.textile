@@ -214,8 +214,12 @@ INFO: If you have an existing Rails application with customizations (as opposed 
 
 Spree also comes with sample data (products, orders, etc.)  If you'd like to install the migrations and assets associated with the sample data then you can run this additional rake task.
 
+<ruby filename='Gemfile'>
+gem 'spree_sample'
+</ruby>
+
 <shell>
-rake spree_sample:load
+$ bundle exec rake spree_sample:load
 </shell>
 
 h4. Populating the Database
