@@ -102,7 +102,7 @@ class Payment < ActiveRecord::Base
       return unless source.is_a?(Creditcard) && source.number && !source.has_payment_profile?
       payment_method.create_profile(self)
     rescue ActiveMerchant::ConnectionError => e
-      gateway_error I18n.t(:unable_to_connect_to_gateway)
+      gateway_error e
     end
 
     def update_order
