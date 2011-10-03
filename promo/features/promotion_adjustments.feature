@@ -35,6 +35,7 @@ Feature: Promotions which add adjustments to orders
     When I select "Item total" from "Add rule of type"
     And I press "Add" within "#rule_fields"
     And I fill in "Order total meets these criteria" with "30"
+    And I fill in "Item total must be" with "30"
     And I press "Update" within "#rule_fields"
 
     And I select "Create adjustment" from "Add action of type"
@@ -56,7 +57,7 @@ Feature: Promotions which add adjustments to orders
   Scenario: A single use coupon promotion with flat rate discount
     When I log in as an admin user and go to the new promotion form
     And I fill in "Name" with "Order's total > $30"
-    And I fill in "Usage Limit" with "1"
+    And I fill in "Usage Limit" with "20"
     And I select "Coupon code added" from "Event"
     And I fill in "Code" with "SINGLE_USE"
     And I press "Create"
