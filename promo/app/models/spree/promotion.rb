@@ -77,9 +77,9 @@ class Spree::Promotion < Spree::Activator
   def usage_limit_exceeded?(order = nil)
     preferred_usage_limit.present? && preferred_usage_limit > 0 && adjusted_credits_count(order) >= preferred_usage_limit
   end
-  
+
   def adjusted_credits_count(order)
-    return credits_count if order.nil?    
+    return credits_count if order.nil?
     credits_count - (order.promotion_credit_exists?(self) ? 1 : 0)
   end
 
