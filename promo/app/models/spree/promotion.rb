@@ -51,7 +51,7 @@ class Spree::Promotion < Spree::Activator
   end
 
   def eligible?(order, options = {})
-    !expired? && rules_are_eligible?(order, options) && coupon_is_eligible?(order, options[:coupon_code])
+    !expired? && !usage_limit_exceeded?(order) && rules_are_eligible?(order, options) && coupon_is_eligible?(order, options[:coupon_code])  
   end
 
   def rules_are_eligible?(order, options = {})
@@ -74,16 +74,17 @@ class Spree::Promotion < Spree::Activator
     @products ||= rules.of_type('Promotion::Rules::Product').map(&:products).flatten.uniq
   end
 
-  def expired?
-    super || usage_limit_exceeded?
+  def usage_limit_exceeded?(order = nil)
+    preferred_usage_limit.present? && preferred_usage_limit > 0 && adjusted_credits_count(order) >= preferred_usage_limit
   end
-
-  def usage_limit_exceeded?
-    preferred_usage_limit.present? && preferred_usage_limit > 0 && credits_count >= preferred_usage_limit
+  
+  def adjusted_credits_count(order)
+    return credits_count if order.nil?    
+    credits_count - (order.promotion_credit_exists?(self) ? 1 : 0)
   end
 
   def credits
-    Spree::Adjustment.where(:originator_id => actions.map(&:id))
+    Spree::Adjustment.promotion.where(:originator_id => actions.map(&:id))
   end
 
   def credits_count
