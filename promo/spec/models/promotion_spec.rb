@@ -70,19 +70,25 @@ describe Promotion do
       end
     end
   end
+  
+  context "#usage_limit_exceeded" do
+     it "should not have its usage limit exceeded" do
+       promotion.should_not be_usage_limit_exceeded
+     end
+     
+     it "should have its usage limit exceeded" do
+       promotion.preferred_usage_limit = 2
+       promotion.stub(:credits_count => 2)
+       promotion.usage_limit_exceeded?.should == true
+  
+       promotion.stub(:credits_count => 3)
+       promotion.usage_limit_exceeded?.should == true
+     end
+   end                         
 
   context "#expired" do
     it "should not be exipired" do
       promotion.should_not be_expired
-    end
-
-    it "should be expired if usage limit is exceeded" do
-      promotion.preferred_usage_limit = 2
-      promotion.stub(:credits_count => 2)
-      promotion.should be_expired
-
-      promotion.stub(:credits_count => 3)
-      promotion.should be_expired
     end
 
     it "should be expired if it hasn't started yet" do
