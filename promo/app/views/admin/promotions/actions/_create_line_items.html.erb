@@ -11,9 +11,6 @@
         <%= item.variant.product.name %>
       </td>
       <td>
-        <%= item.variant.options_text.presence || t("master") %>
-      </td>
-      <td>
         <%= item.quantity %>
       </td>
       <td>
@@ -34,10 +31,7 @@
     <div style="float:left;width:50%;margin-right:5%;">
       <%= label_tag :add_product_name, t("name_or_sku") %>
       <%= text_field_tag :add_product_name, nil, :class => 'fullwidth' %>
-    </div>
-    <div style="float:left;width:10%;margin-right:5%;">
-      <%= label_tag :add_line_item_variant_id, t("variant") %><br />
-      <select name="add_line_item_variant_id" class="fullwidth"></select>
+      <%= hidden_field_tag :add_line_item_variant_id %>
     </div>
     <div style="float:left;width:10%;margin-right:5%;">
       <%= label_tag :add_quantity, t("qty") %>
