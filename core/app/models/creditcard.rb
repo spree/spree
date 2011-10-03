@@ -89,8 +89,8 @@ class Creditcard < ActiveRecord::Base
       payment.failure
       gateway_error(response)
     end
-  rescue ActiveMerchant::ConnectionError
-    gateway_error I18n.t(:unable_to_connect_to_gateway)
+  rescue ActiveMerchant::ConnectionError => e
+    gateway_error e
   end
 
   def purchase(amount, payment)
@@ -109,8 +109,8 @@ class Creditcard < ActiveRecord::Base
       payment.failure
       gateway_error(response) unless response.success?
     end
-  rescue ActiveMerchant::ConnectionError
-    gateway_error I18n.t(:unable_to_connect_to_gateway)
+  rescue ActiveMerchant::ConnectionError => e
+    gateway_error e
   end
 
   def capture(payment)
@@ -136,8 +136,8 @@ class Creditcard < ActiveRecord::Base
       payment.failure
       gateway_error(response)
     end
-  rescue ActiveMerchant::ConnectionError
-    gateway_error I18n.t(:unable_to_connect_to_gateway)
+  rescue ActiveMerchant::ConnectionError => e
+    gateway_error e
   end
 
   def void(payment)
@@ -153,8 +153,8 @@ class Creditcard < ActiveRecord::Base
     else
       gateway_error(response)
     end
-  rescue ActiveMerchant::ConnectionError
-    gateway_error I18n.t(:unable_to_connect_to_gateway)
+  rescue ActiveMerchant::ConnectionError => e
+    gateway_error e
   end
 
   def credit(payment)
@@ -180,8 +180,8 @@ class Creditcard < ActiveRecord::Base
     else
       gateway_error(response)
     end
-  rescue ActiveMerchant::ConnectionError
-    gateway_error I18n.t(:unable_to_connect_to_gateway)
+  rescue ActiveMerchant::ConnectionError => e
+    gateway_error e
   end
 
   def actions
@@ -217,6 +217,8 @@ class Creditcard < ActiveRecord::Base
   def gateway_error(error)
     if error.is_a? ActiveMerchant::Billing::Response
       text = error.params['message'] || error.params['response_reason_text'] || error.message
+    elsif error.is_a? ActiveMerchant::ConnectionError
+      text = I18n.t(:unable_to_connect_to_gateway)  
     else
       text = error.to_s
     end
