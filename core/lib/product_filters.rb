@@ -2,6 +2,14 @@
 #   the exact code probably won't be useful, though you're welcome to modify and reuse
 #   the current contents are mainly for testing and documentation
 
+# To override this file...
+#   1) Make a copy of it in your sites local /lib folder
+#   2) Add it to the config load path, or require it in an initializer, e.g...
+#      
+#      # config/initializers/spree.rb
+#      require 'product_filters'
+#
+
 # set up some basic filters for use with products
 #
 # Each filter has two parts
