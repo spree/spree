@@ -1,4 +1,4 @@
-require_relative '../../spec_helper'
+require 'spec_helper'
 
 describe Calculator::FlexiRate do
   let(:calculator) { Calculator::FlexiRate.new }
@@ -10,25 +10,23 @@ describe Calculator::FlexiRate do
     end
 
     it "should compute amount correctly when first_item has a value" do
-      calculator.stub :preferred_first_item => 1.99
-      calculator.compute(order).round(2).should == 1.99
+      calculator.stub :preferred_first_item => 1.0
+      calculator.compute(order).round(2).should == 1.0
     end
 
     it "should compute amount correctly when additional_items has a value" do
-      calculator.stub :preferred_additional_item => 0.99
-      expected = ( order.line_items.sum(&:quantity) - 1) * calculator.preferred_additional_item
-      calculator.compute(order).round(2).should == expected.round(2)
+      calculator.stub :preferred_additional_item => 1.0
+      calculator.compute(order).round(2).should == 9.0
     end
 
     it "should compute amount correctly when additional_items and first_item have values" do
-      calculator.stub :preferred_first_item => 1.99, :preferred_additional_item => 0.99
-      expected = (( order.line_items.sum(&:quantity) - 1) * calculator.preferred_additional_item) + calculator.preferred_first_item
-      calculator.compute(order).round(2).should == expected.round(2)
+      calculator.stub :preferred_first_item => 5.0, :preferred_additional_item => 1.0
+      calculator.compute(order).round(2).should == 14.0
     end
 
     it "should compute amount correctly when additional_items and first_item have values AND max items has value" do
-      calculator.stub :preferred_first_item => 1.99, :preferred_additional_item => 0.99, :preferred_max_items => 3
-      calculator.compute(order).round(2).should == 13.90
+      calculator.stub :preferred_first_item => 5.0, :preferred_additional_item => 1.0, :preferred_max_items => 3
+      calculator.compute(order).round(2).should == 26.0
     end
   end
 end
