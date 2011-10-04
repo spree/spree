@@ -21,10 +21,9 @@ bogus_prod:
   environment: production
   active: true
   type: Gateway::Bogus
-bogus_prod:
+bogus_staging:
   name: Credit Card
   description: Bogus payment gateway for staging.
   environment: staging
   active: true
   type: Gateway::Bogus
-  
