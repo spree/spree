@@ -35,7 +35,7 @@ $ spree extension foofah
 
 This approach relies on an executable script inside the installed gem.  You can always build and install the edge gem using the source if you want to work with the latest and greatest version of the extension generator.
 
-NOTE: See the "Source Code":http://localhost:9292/source_code.html#building-the-gem-from-the-source guide which explains how to build the gem from the source.
+NOTE: See the "Source Code":source_code.html#building-the-gem-from-the-source guide which explains how to build the gem from the source.
 
 You probably also need to create a test application which is necessary for using the Rails generators or running the tests.
 

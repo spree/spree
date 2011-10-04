@@ -5,7 +5,7 @@ require "bundler/capistrano"
 set :application, (exists?(:edge) ? "edge-guides" : "guides")
 set :user, 'spree'
 set :group, 'www-data'
-set :domain, 'spree.spreeworks.com'
+set :domain, 'www.spreecommerce.com'
 
 set :rvm_ruby_string, 'ruby-1.9.2-p290'
 
