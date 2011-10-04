@@ -58,7 +58,6 @@ $(document).ready(function(){
       },
       select: function(event, ui) {
         $('#customer_search').val(ui.item.label);
-
         _.each(['bill', 'ship'], function(addr_name){
           var addr = ui.item.data[addr_name + '_address'];
           if(addr!=undefined){
