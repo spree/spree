@@ -11,6 +11,14 @@ module Spree
       [File.expand_path('../templates', __FILE__)]
     end
 
+    def config_spree_yml
+      create_file "config/spree.yml" do
+        settings = { 'version' => Spree.version }
+
+        settings.to_yaml
+      end
+    end
+
     def remove_unneeded_files
       remove_file "public/index.html"
     end
