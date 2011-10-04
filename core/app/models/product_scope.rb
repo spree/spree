@@ -31,7 +31,7 @@ class ProductScope < ActiveRecord::Base
                       Product.send(self.name.intern, *array)
                   end
     else
-      relation2 = Product.search({self.name.intern => array}).relation
+      relation2 = Product.metasearch({self.name.intern => array}).relation
     end
     unless another_scope.class == ActiveRecord::Relation
       another_scope = another_scope.send(:relation)
