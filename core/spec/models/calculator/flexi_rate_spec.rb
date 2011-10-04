@@ -30,7 +30,5 @@ describe Calculator::FlexiRate do
       calculator.stub :preferred_first_item => 1.99, :preferred_additional_item => 0.99, :preferred_max_items => 3
       calculator.compute(order).round(2).should == 13.90
     end
-    
-    
   end
 end
