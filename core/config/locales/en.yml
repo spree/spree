@@ -515,7 +515,7 @@ en:
   my_account: "My Account"
   my_orders: "My Orders"
   name: Name
-  name_or_sku: "Name or SKU"
+  name_or_sku: "Name or SKU (enter at least first 4 characters of product name)"
   new: New
   new_adjustment: "New Adjustment"
   new_billing_integration: New Billing Integration

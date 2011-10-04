@@ -48,26 +48,6 @@ var initProductActions = function(){
   // CreateLineItems Promotion Action
   //
   ( function(){
-    // Autocomplete product and populate variant select
-    if($('.promotion_action.create_line_items ').is('*')){
-      $(".promotion_action.create_line_items input[name='add_product_name']").autocomplete("/admin/products.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content"), {
-        parse: prep_product_autocomplete_data,
-        formatItem: function(item) {
-          return format_product_autocomplete(item);
-        }
-      }).result(function(event, data, formatted) {
-        if(data){
-          if(data['variant']==undefined){
-            // product
-            $('#add_line_item_variant_id').val(data['product']['master']['id']);
-          }else{
-            // variant
-            $('#add_line_item_variant_id').val(data['variant']['id']);
-          }
-        }
-      });
-    }
-
     var hideOrShowItemTables = function(){
       $('.promotion_action table').each(function(){
         if($(this).find('td').length == 0){
@@ -96,10 +76,10 @@ var initProductActions = function(){
     };
     setupRemoveLineItems();
     // Add line item to list
-    $(".promotion_action.create_line_items button.add").live('click',function(){
+    $(".promotion_action.create_line_items button.add").live('click',function(e){
       var $container = $(this).parents('.promotion_action');
       var product_name = $container.find("input[name='add_product_name']").val();
-      var variant_id = $container.find("input[name='add_line_item_variant_id']").val();
+      var variant_id = $container.find("input[name='add_variant_id']").val();
       var quantity = $container.find("input[name='add_quantity']").val();
       if(variant_id){
         // Add to the table
