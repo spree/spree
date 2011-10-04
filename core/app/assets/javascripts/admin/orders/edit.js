@@ -1,6 +1,7 @@
 $(document).ready(function(){
 
-  $("#add_product_name").product_autocomplete();
+  if ($("#add_product_name").length > 0)
+    $("#add_product_name").product_autocomplete();
 
   $("#add_line_item_to_order").live("click", function(){
     if($('#add_variant_id').val() == ''){ return false; }
@@ -10,6 +11,10 @@ $(document).ready(function(){
               "line_item[quantity]": $('#add_quantity').val()}
     });
     return false;
+  });
+
+  $("#add_product_name").live("click", function() {
+    $("#add_product_name").product_autocomplete();
   });
 
 });
