@@ -142,11 +142,11 @@ describe CheckoutController do
 
   end
 
-  context "When last inventory item has been purchased and no backorders" do
+  context "When last inventory item has been purchased" do
     let(:product) { mock_model(Product, :name => "Amazing Object") }
     let(:variant) { mock_model(Variant, :on_hand => 0) }
-    let(:line_item) { mock_model(LineItem, :variant => variant, :quantity => 1, :product => product) }
-    let(:order) { Factory.new(:order) }
+    let(:line_item) { mock_model LineItem, :insufficient_stock? => true }
+    let(:order) { Factory(:order) }
 
     before do
       order.stub(:line_items => [line_item])
@@ -154,7 +154,7 @@ describe CheckoutController do
       Spree::Config.set :allow_backorders => false
     end
 
-    context "back orders == false" do
+    context "and back orders == false" do
       before do
         post :update, {:state => "payment"}
       end
