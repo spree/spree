@@ -1,3 +1,5 @@
-Factory.define :product_group do |f|
-  f.name 'sports'
+FactoryGirl.define do
+  factory :product_group do
+    name 'sports'
+  end
 end

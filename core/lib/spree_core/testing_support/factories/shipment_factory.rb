@@ -1,9 +1,11 @@
-Factory.define :shipment do |f|
-  f.order { Factory(:order) }
-  f.shipping_method { Factory(:shipping_method) }
-  f.tracking 'U10000'
-  f.number "100"
-  f.cost 100.00
-  f.address { Factory(:address) }
-  f.state "pending"
+FactoryGirl.define do
+  factory :shipment do
+    order { Factory(:order) }
+    shipping_method { Factory(:shipping_method) }
+    tracking 'U10000'
+    number '100'
+    cost 100.00
+    address { Factory(:address) }
+    state 'pending'
+  end
 end
