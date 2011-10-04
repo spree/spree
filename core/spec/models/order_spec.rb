@@ -616,7 +616,7 @@ describe Order do
 
       it "should use default countries rate when none match address" do
         TaxRate.stub :match => []
-        rate.stub_chain :zone, :country_list => [mock_model Country, :id => Spree::Config[:default_country_id]]
+        rate.stub_chain :zone, :country_list => [mock_model(Country, :id => Spree::Config[:default_country_id])]
         rate_1.stub_chain :zone, :country_list => []
         TaxRate.stub :all => [rate, rate_1]
 
