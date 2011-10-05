@@ -74,10 +74,7 @@ describe Spree::OrdersController do
       order.stub(:line_items).and_return([])
       order.line_items.should_receive(:destroy_all)
       put :empty
-    end
-    pending "should redirect back to cart" do
       response.should redirect_to(cart_path)
-      put :empty
     end
   end
 
