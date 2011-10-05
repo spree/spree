@@ -56,7 +56,7 @@ Feature: Promotions which add adjustments to orders
   Scenario: A single use coupon promotion with flat rate discount
     When I log in as an admin user and go to the new promotion form
     And I fill in "Name" with "Order's total > $30"
-    And I fill in "Usage Limit" with "20"
+    And I fill in "Usage Limit" with "1"
     And I select "Coupon code added" from "Event"
     And I fill in "Code" with "SINGLE_USE"
     And I press "Create"
