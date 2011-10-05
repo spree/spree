@@ -3,6 +3,13 @@ require 'spec_helper'
 describe User do
   before(:all) { Role.create :name => "admin" }
 
+  it "should generate the reset password token" do
+    user = Factory.build(:user)
+    UserMailer.should_receive(:reset_password_instructions).with(user).and_return(double(:deliver => true))
+    user.send_reset_password_instructions
+    user.reset_password_token.should_not be_nil
+  end
+
   context "#create" do
     let(:user) { Factory.build(:user) }
 
