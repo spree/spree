@@ -1,13 +1,17 @@
-class Admin::TaxSettingsController < Admin::BaseController
+module Spree
+  module Admin
+    class TaxSettingsController < BaseController
 
-  def update
-    Spree::Config.set(params[:preferences])
+      def update
+        Spree::Config.set(params[:preferences])
 
-    respond_to do |format|
-      format.html {
-        redirect_to admin_tax_settings_path
-      }
+        respond_to do |format|
+          format.html {
+            redirect_to admin_tax_settings_path
+          }
+        end
+      end
+
     end
   end
-
 end

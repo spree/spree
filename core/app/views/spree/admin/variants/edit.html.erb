@@ -1,6 +1,6 @@
-<%= render :partial => 'admin/shared/product_sub_menu' %>
+<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
-<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Variants"} %>
+<%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => "Variants"} %>
 
 <%= render 'shared/error_messages', :target => @variant %>
 
@@ -9,5 +9,5 @@
     <%= render :partial => 'form', :locals => { :f => f } %>
   </div>
 
-  <%= render :partial => 'admin/shared/edit_resource_links' %>
+  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
 <% end %>

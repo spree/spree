@@ -1,4 +1,4 @@
-<%= render :partial => 'admin/shared/configuration_menu' %>
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <h1><%= t(:editing_tax_category) %></h1>
 
@@ -6,5 +6,5 @@
 
 <%= form_for [:admin, @tax_category] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'admin/shared/edit_resource_links' %>
+  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
 <% end %>

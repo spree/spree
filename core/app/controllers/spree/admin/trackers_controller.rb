@@ -1,2 +1,6 @@
-class Admin::TrackersController < Admin::ResourceController
+module Spree
+  module Admin
+    class TrackersController < ResourceController
+    end
+  end
 end

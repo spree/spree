@@ -9,7 +9,7 @@
   <br class="clear" />
 </div>
 
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => 'Shipments'} %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => {:current => 'Shipments'} %>
 
 <div data-hook="admin_shipment_edit_header">
   <h2><%= t(:shipment) %> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)</h2>

@@ -1,4 +1,4 @@
-<%= render :partial => 'admin/shared/product_sub_menu' %>
+<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 <h1><%= t(:editing_option_type) %></h1>
 <%= render 'shared/error_messages', :target => @option_type %>
 <%= form_for [:admin, @option_type] do |f| %>
@@ -27,6 +27,6 @@
     <%= link_to_add_fields t(:add_option_value), "tbody#option_values", f, :option_values %>
   </span>
 
-  <%= render :partial => 'admin/shared/edit_resource_links' %>
+  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
 </fieldset>
 <% end %>

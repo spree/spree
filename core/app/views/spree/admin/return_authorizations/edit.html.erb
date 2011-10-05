@@ -12,7 +12,7 @@
   <br class="clear" />
 </div>
 
-<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => 'Return Authorizations'} %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => {:current => 'Return Authorizations'} %>
 
 <h2><%= t(:return_authorization) %> <%= @return_authorization.number %> (<%= t(@return_authorization.state.downcase) %>)</h2>
 
