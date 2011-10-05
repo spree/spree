@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Admin::OrdersController do
+describe Spree::Admin::OrdersController do
 
   let(:order) { mock_model(Order, :complete? => true, :total => 100) }
 

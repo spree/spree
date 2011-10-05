@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Admin::UsersController do
+describe Spree::Admin::ProductsController do
   context "#index" do
     it "should not allow JSON request without a valid token" do
       controller.should_receive(:protect_against_forgery?).at_least(:once).and_return(true)
@@ -34,6 +34,5 @@ describe Admin::UsersController do
       get :index, {:authenticity_token => "1+2%3D3%264%275/6%3F", :format => :json}
       response.should be_success
     end
-
   end
 end
