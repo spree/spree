@@ -16,4 +16,13 @@ if Spree::MailMethod.table_exists?
   Mail.register_interceptor(Spree::MailInterceptor)
 end
 
+# Add extra support goodies (similar to rails active support)
+#class Array #:nodoc:
+#  include Spree::Support::CoreExtensions::Array
+#end
+
+String.class_eval do
+  include Spree::Core::Ext::String
+end
+
 LIKE = ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' ? 'ILIKE' : 'LIKE'

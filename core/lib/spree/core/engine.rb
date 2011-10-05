@@ -26,29 +26,29 @@ module Spree
 
       initializer "spree.register.calculators" do |app|
         app.config.spree.calculators.shipping_methods = [
-            Calculator::FlatPercentItemTotal,
-            Calculator::FlatRate,
-            Calculator::FlexiRate,
-            Calculator::PerItem,
-            Calculator::PriceBucket]
+            Spree::Calculator::FlatPercentItemTotal,
+            Spree::Calculator::FlatRate,
+            Spree::Calculator::FlexiRate,
+            Spree::Calculator::PerItem,
+            Spree::Calculator::PriceBucket]
 
          app.config.spree.calculators.tax_rates = [
-            Calculator::SalesTax,
-            Calculator::Vat]
+            Spree::Calculator::SalesTax,
+            Spree::Calculator::Vat]
       end
 
       initializer "spree.register.payment_methods" do |app|
         app.config.spree.payment_methods = [
-            Gateway::Bogus,
-            Gateway::AuthorizeNet,
-            Gateway::AuthorizeNetCim,
-            Gateway::Eway,
-            Gateway::Linkpoint,
-            Gateway::PayPal,
-            Gateway::SagePay,
-            Gateway::Beanstream,
-            Gateway::Braintree,
-            PaymentMethod::Check ]
+            Spree::Gateway::Bogus,
+            Spree::Gateway::AuthorizeNet,
+            Spree::Gateway::AuthorizeNetCim,
+            Spree::Gateway::Eway,
+            Spree::Gateway::Linkpoint,
+            Spree::Gateway::PayPal,
+            Spree::Gateway::SagePay,
+            Spree::Gateway::Beanstream,
+            Spree::Gateway::Braintree,
+            Spree::PaymentMethod::Check ]
       end
 
       # filter sensitive information during logging
@@ -61,11 +61,6 @@ module Spree
         app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/spree_dash.*', 'admin/orders/edit_form.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js']
       end
 
-      initializer "spree.asset.pipeline" do |app|
-        app.config.assets.debug = false
-      end
-
-      # turn off asset debugging since that kills performance in development mode
       initializer "spree.asset.pipeline" do |app|
         app.config.assets.debug = false
       end
