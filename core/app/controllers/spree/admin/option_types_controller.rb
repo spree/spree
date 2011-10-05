@@ -21,7 +21,7 @@ module Spree
 
       def update_positions
         params[:positions].each do |id, index|
-          OptionType.where(:id => id).update_all(:position => index)
+          OptionType.update_all(['position=?', index], ['id=?', id])
         end
     
         respond_to do |format|

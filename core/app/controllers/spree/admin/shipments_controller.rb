@@ -63,9 +63,9 @@ module Spree
 
       def fire
         if @shipment.send("#{params[:e]}")
-          flash.notice = t(:shipment_updated)
+          flash.notice = t('shipment_updated')
         else
-          flash[:error] = t(:cannot_perform_operation)
+          flash[:error] = t('cannot_perform_operation')
         end
 
         respond_with(@shipment) { |format| format.html { redirect_to :back } }
@@ -73,30 +73,30 @@ module Spree
 
       private
 
-        def load_shipping_methods
-          @shipping_methods = ShippingMethod.all_available(@order, :back_end)
-        end
+      def load_shipping_methods
+        @shipping_methods = ShippingMethod.all_available(@order, :back_end)
+      end
 
-        def assign_inventory_units
-          return unless params.has_key? :inventory_units
-          @shipment.inventory_unit_ids = params[:inventory_units].keys
-        end
+      def assign_inventory_units
+        return unless params.has_key? :inventory_units
+        @shipment.inventory_unit_ids = params[:inventory_units].keys
+      end
 
-        def load_order
-          @order = Order.find_by_number(params[:order_id])
-        end
+      def load_order
+        @order = Order.find_by_number(params[:order_id])
+      end
 
-        def load_shipment
-          @shipment = Shipment.find_by_number(params[:id])
-        end
+      def load_shipment
+        @shipment = Shipment.find_by_number(params[:id])
+      end
 
-        def build_shipment
-          @shipment = @order.shipments.build
-          @shipment.address ||= @order.ship_address
-          @shipment.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
-          @shipment.shipping_method ||= @order.shipping_method
-          @shipment.attributes = params[:shipment]
-        end
+      def build_shipment
+        @shipment = @order.shipments.build
+        @shipment.address ||= @order.ship_address
+        @shipment.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
+        @shipment.shipping_method ||= @order.shipping_method
+        @shipment.attributes = params[:shipment]
+      end
     end
   end
 end

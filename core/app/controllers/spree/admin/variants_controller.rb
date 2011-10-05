@@ -32,7 +32,7 @@ module Spree
 
       def update_positions
         params[:positions].each do |id, index|
-          Variant.where(:id => id).update_all(:position => index)
+          Variant.update_all(['position=?', index], ['id=?', id])
         end
 
         respond_with(@variant) do |format|
