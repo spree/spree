@@ -40,18 +40,17 @@ require 'meta_search'
 require 'find_by_param'
 require 'jquery-rails'
 
-require 'spree_core/ext/active_record'
-require 'spree_core/ext/hash'
+require 'spree/core/ext/active_record'
+require 'spree/core/ext/hash'
 
-require 'spree_core/delegate_belongs_to'
-ActiveRecord::Base.send :include, DelegateBelongsTo
+require 'spree/core/delegate_belongs_to'
 
-require 'spree_core/theme_support'
-require 'spree_core/spree_custom_responder'
-require 'spree_core/spree_respond_with'
-require 'spree_core/ssl_requirement'
-require 'spree_core/preferences/model_hooks'
-require 'spree_core/preferences/preference_definition'
+require 'spree/core/theme_support'
+require 'spree/core/spree_custom_responder'
+require 'spree/core/spree_respond_with'
+require 'spree/core/ssl_requirement'
+require 'spree/core/preferences/model_hooks'
+require 'spree/core/preferences/preference_definition'
 require 'store_helpers'
 require 'spree/file_utilz'
 require 'spree/calculated_adjustments'
@@ -66,12 +65,12 @@ require 'middleware/seo_assist'
 require 'spree_base' # added 11-3 JBD
 
 silence_warnings do
-  require 'spree_core/authorize_net_cim_hack'
+  require 'spree/core/authorize_net_cim_hack'
 end
 
-require 'spree_core/version'
+require 'spree/core/version'
 
-require 'spree_core/railtie'
+require 'spree/core/engine'
 require 'generators/spree/site/site_generator'
 require 'generators/spree/dummy/dummy_generator'
 require 'generators/spree/sandbox/sandbox_generator'
@@ -90,4 +89,8 @@ end
 
 ActiveSupport.on_load(:action_view) do
   include StoreHelpers
+end
+
+module SpreeCore
+  
 end

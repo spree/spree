@@ -1,4 +1,4 @@
-module SpreeCore::Ext::String
+module Spree::Core::Ext::String
   def is_integer?
     begin
       Integer(self.to_s)
