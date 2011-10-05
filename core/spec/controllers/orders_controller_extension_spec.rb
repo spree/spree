@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe OrdersController do
+describe Spree::OrdersController do
 
   before do
     controller.stub :current_user => nil
@@ -12,7 +12,7 @@ describe OrdersController do
       context "render" do
         before do
           @order = Factory(:order)
-          OrdersController.instance_eval do
+          Spree::OrdersController.instance_eval do
             respond_override({:update => {:html => {:success => lambda { render(:text => 'success!!!') }}}})
             respond_override({:update => {:html => {:failure => lambda { render(:text => 'failure!!!') }}}})
           end
@@ -29,7 +29,7 @@ describe OrdersController do
       context "redirect" do
         before do
           @order = Factory(:order)
-          OrdersController.instance_eval do
+          Spree::OrdersController.instance_eval do
             respond_override({:update => {:html => {:success => lambda { redirect_to(Order.first) }}}})
             respond_override({:update => {:html => {:failure => lambda { render(:text => 'failure!!!') }}}})
           end
@@ -46,7 +46,7 @@ describe OrdersController do
         before do
           @order = Factory(:order)
           Order.update_all("state='address'")
-          OrdersController.instance_eval do
+          Spree::OrdersController.instance_eval do
             respond_override({:update => {:html => {:success => lambda { render(:text => 'success!!!') }}}})
             respond_override({:update => {:html => {:failure => lambda { render(:text => 'failure!!!') }}}})
           end

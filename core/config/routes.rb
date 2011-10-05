@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+Spree::Core::Engine.routes.draw do
 
   root :to => 'home#index'
 
