@@ -56,7 +56,7 @@ Feature: Promotions which add adjustments to orders
   Scenario: A single use coupon promotion with flat rate discount
     When I log in as an admin user and go to the new promotion form
     And I fill in "Name" with "Order's total > $30"
-    And I fill in "Usage Limit" with "20"
+    And I fill in "Usage Limit" with "1"
     And I select "Coupon code added" from "Event"
     And I fill in "Code" with "SINGLE_USE"
     And I press "Create"
@@ -81,6 +81,17 @@ Feature: Promotions which add adjustments to orders
     And press "Save and Continue"
     When I choose "UPS Ground" as shipping method and "Check" as payment method and set coupon code to "SINGLE_USE"
     Then the existing order should have total at "47"    
+    
+    When I follow "Logout"                          
+    And I log in as "john@test.com/secret"
+  
+    And I add a product with name: "RoR Mug", price: "40" to cart
+    And I follow "Checkout"
+    When I fill billing address with correct data
+    And check "order_use_billing"
+    And press "Save and Continue"
+    When I choose "UPS Ground" as shipping method and "Check" as payment method and set coupon code to "SINGLE_USE"
+    Then the resulting order should have a total of "52"
 
 
   @selenium
