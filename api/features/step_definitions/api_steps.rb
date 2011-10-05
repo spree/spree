@@ -17,3 +17,8 @@ Given /^I send and accept json$/ do
   header "Content-Type","application/json"
   header "Accept","application/json"
 end
+
+Given /^I send and accept xml$/ do
+  header "Content-Type","application/xml"
+  header "Accept","application/xml"
+end

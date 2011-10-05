@@ -38,9 +38,10 @@ describe Api::OrdersController do
       get :index, :format => :json
       response.code.should == "200"
     end
-  end
-
-  context "when authenticated as admin" do
+    it "should allow index by xml" do
+      get :index, :format => :xml
+      response.should be_success
+    end
   end
 
   context "when no HTTP_AUTHORIZATION" do

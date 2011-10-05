@@ -6,11 +6,11 @@ class Api::LineItemsController < Api::BaseController
         @parent ||= Order.find_by_param(params[:order_id])
       end
     end
-  
+
     def parent_data
       params[:order_id]
     end
-    
+
     def collection_serialization_options
       { :include => [:variant], :methods => [:description] }
     end

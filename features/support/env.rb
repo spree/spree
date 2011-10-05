@@ -3,7 +3,10 @@ ENV["RAILS_ENV"] ||= "cucumber"
 require File.expand_path("../spec/dummy/config/environment", FEATURES_PATH)
 
 # sometimes tests fail randomly because cache is not refreshed, fixed that
-Spree::Config
+#Spree::Config.set(:foo => "bar")
+@configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+Rails.cache.delete("configuration_#{@configuration.class.name}".to_sym)
+#Spree::Config
 require 'bundler'
 Bundler.setup(:cucumber)
 
@@ -71,3 +74,12 @@ end
 #factory_definitions_debugger
 
 require 'factory_girl/step_definitions'
+
+if ENV['HEADLESS'] == 'true'
+  require 'headless'
+  headless = Headless.new
+  headless.start
+  at_exit do
+    headless.destroy
+  end
+end
