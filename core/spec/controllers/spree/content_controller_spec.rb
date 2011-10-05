@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ContentController do
+describe Spree::ContentController do
 
   it "should understand routes" do
     pending("assert_routing tests are now broken, is this relevant any more?")
