@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Admin::MailMethodsController do
+describe Spree::Admin::MailMethodsController do
   let(:order) { mock_model(Order, :complete? => true).as_null_object }
   let(:mail_method) { mock_model(MailMethod).as_null_object }
 
