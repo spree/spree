@@ -1,2 +1,7 @@
-class Admin::ConfigurationsController < Admin::BaseController
+module Spree
+  module Admin
+    class ConfigurationsController < BaseController
+
+    end
+  end
 end

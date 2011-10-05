@@ -1,2 +1,6 @@
-class Admin::InventoryUnitsController < Admin::BaseController
+module Spree
+  module Admin
+    class InventoryUnitsController < BaseController
+    end
+  end
 end

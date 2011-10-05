@@ -9,7 +9,7 @@
   <br class="clear" />
 </div>
 
-<%= render 'admin/shared/order_tabs', :current => 'Payments' %>
+<%= render 'spree/admin/shared/order_tabs', :current => 'Payments' %>
 
 <% if @order.outstanding_balance? %>
   <p><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %> <strong><%= number_to_currency @order.outstanding_balance %></strong></p>

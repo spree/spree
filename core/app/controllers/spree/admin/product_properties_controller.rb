@@ -1,10 +1,14 @@
-class Admin::ProductPropertiesController < Admin::ResourceController
-  belongs_to :product, :find_by => :permalink
-  before_filter :find_properties
+module Spree
+  module Admin
+    class ProductPropertiesController < ResourceController
+      belongs_to :product, :find_by => :permalink
+      before_filter :find_properties
 
-  private
+      private
 
-  def find_properties
-    @properties = Property.all.map(&:name)
+      def find_properties
+        @properties = Property.all.map(&:name)
+      end
+    end
   end
 end

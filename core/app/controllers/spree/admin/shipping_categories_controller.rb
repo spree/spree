@@ -1,2 +1,6 @@
-class Admin::ShippingCategoriesController < Admin::ResourceController
+module Spree
+  module Admin
+    class ShippingCategoriesController < ResourceController
+    end
+  end
 end
