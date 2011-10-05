@@ -42,6 +42,8 @@ class Order < ActiveRecord::Base
   scope :by_state, lambda {|state| where("state = ?", state)}
   scope :complete, where("orders.completed_at IS NOT NULL")
   scope :incomplete, where("orders.completed_at IS NULL")
+  scope :by_variant, lambda {|variant| joins(:line_items).where("line_items.variant_id = ?", variant.id)}
+  scope :by_variants, lambda {|variants| joins(:line_items).where("line_items.variant_id in (?)", variants.map(&:id))}
 
   make_permalink :field => :number
 
