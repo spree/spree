@@ -84,7 +84,7 @@ Disallow: /users
     def include_seed_data
       append_file "db/seeds.rb", <<-SEEDS
 \n
-SpreeCore::Engine.load_seed if defined?(SpreeCore)
+Spree::Core::Engine.load_seed if defined?(Spree::Core)
 SpreeAuth::Engine.load_seed if defined?(SpreeAuth)
       SEEDS
     end
