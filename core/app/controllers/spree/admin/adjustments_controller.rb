@@ -1,4 +1,4 @@
-class Admin::AdjustmentsController < Admin::ResourceController
+class Spree::Admin::AdjustmentsController < Spree::Admin::ResourceController
   belongs_to :order, :find_by => :number
   destroy.after :reload_order
 
