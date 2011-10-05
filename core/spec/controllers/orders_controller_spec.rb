@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe OrdersController do
+describe Spree::OrdersController do
 
   let(:order) { mock_model(Order, :number => "R123", :reload => nil, :save! => true, :coupon_code= => nil, :coupon_code => nil) }
   before do
