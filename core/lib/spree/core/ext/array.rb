@@ -1,5 +1,5 @@
 # RAILS3 TODO (likely not needed - it was commented out before rails3 branch)
-# module SpreeCore::Ext::Array
+# module Spree::Core::Ext::Array
 #   def to_hash_keys(&block)
 #     Hash[*self.collect { |v|
 #       [v, block.call(v)]
