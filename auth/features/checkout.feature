@@ -194,3 +194,25 @@ Feature: Checkout
     When I choose "UPS Ground" as shipping method
     Then I should see "Your order has been processed successfully"
 
+  @selenium
+  Scenario: Completing a checkout with invalid address input initially
+    Given a shipping method exists
+    Given a bogus payment method exists
+    When I add a product with name: "RoR Mug" to cart
+    Then I should see "Shopping Cart" within "h1"
+    When I follow "Checkout"
+    Then I should see "Registration"
+
+    When I fill in "Email" with "spree@test.com" within "#guest_checkout"
+    And press "Continue"
+    Then I should see "Billing Address"
+    Then I should see "Shipping Address"
+
+    When I fill in "First Name" with "Test"
+    And press "Save and Continue"
+    Then I should see "This field is required"
+
+    When I fill billing address with correct data
+    And check "order_use_billing"
+    And press "Save and Continue"
+    Then I should see "Shipping Method"
