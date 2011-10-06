@@ -210,13 +210,15 @@ Spree is actually what is known as a Rails Engine.  As of Rails 3.0 Rails Engine
 rails g spree:site
 </shell>
 
+The task will also prompt you to migrate the databases, setup some basic data, and load sample products, orders, etc. If you choose to ignore these prompts they can be run manually as described in the *Populating the Database* section of this guide. To automatically accept all prompts, you can pass -A to +rails g spree:site+:
+
+<shell>
+rails g spree:site -A
+</shell>
+
 INFO: If you have an existing Rails application with customizations (as opposed to just the starter app that we've shown here) you will want to make a note of any files that this task changes.  Its possible that it may alter your javascript or stylesheet files in undesirable ways.  You should check the differences via +git diff+ or some other process and manually merge the needed changes if necessary.
 
 Spree also comes with sample data (products, orders, etc.)  If you'd like to install the migrations and assets associated with the sample data then you can run this additional rake task.
-
-<ruby filename='Gemfile'>
-gem 'spree_sample'
-</ruby>
 
 <shell>
 $ bundle exec rake spree_sample:load
