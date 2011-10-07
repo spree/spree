@@ -79,11 +79,11 @@ class Spree::Product < ActiveRecord::Base
   # default product scope only lists available and non-deleted products
   class << self
     def not_deleted
-      where(Product.arel_table[:deleted_at].eq(nil))
+      where(arel_table[:deleted_at].eq(nil))
     end
 
     def available(available_on = nil)
-      where(Product.arel_table[:available_on].lteq(available_on || Time.zone.now ))
+      where(arel_table[:available_on].lteq(available_on || Time.zone.now ))
     end
 
     #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
@@ -92,11 +92,11 @@ class Spree::Product < ActiveRecord::Base
     end
 
     def on_hand
-      where(Product.arel_table[:count_on_hand].gteq(0))
+      where(arel_table[:count_on_hand].gteq(0))
     end
 
     def id_equals(input_id)
-      where(Product.arel_table[:id].eq(input_id))
+      where(arel_table[:id].eq(input_id))
     end
 
     def taxons_name_eq(name)
@@ -104,11 +104,11 @@ class Spree::Product < ActiveRecord::Base
     end
   end
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-    if Product.table_exists?
-      scope :group_by_products_id, { :group => Product.column_names.map{|col_name| "#{Product.table_name}.#{col_name}"} }
+    if table_exists?
+      scope :group_by_products_id, { :group => column_names.map{|col_name| "#{table_name}.#{col_name}"} }
     end
   else
-    scope :group_by_products_id, { :group => "#{Product.table_name}.id" }
+    scope :group_by_products_id, { :group => "#{self.table_name}.id" }
   end
   search_methods :group_by_products_id
 
