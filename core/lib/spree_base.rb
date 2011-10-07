@@ -1,3 +1,5 @@
+# TODO: This should be namespaced under the Spree module
+# And given a name better than "SpreeBase"
 module SpreeBase
   module InstanceMethods
     def access_forbidden
