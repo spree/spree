@@ -14,7 +14,7 @@ class Spree::Taxon < ActiveRecord::Base
                 :default_url => "/assets/default_taxon.png"
 
 
-  include ::ProductFilters  # for detailed defs of filters
+  include ::Spree::ProductFilters  # for detailed defs of filters
 
   # indicate which filters should be used for a taxon
   # this method should be customized to your own site
@@ -23,8 +23,8 @@ class Spree::Taxon < ActiveRecord::Base
     # fs << ProductFilters.taxons_below(self)
     ## unless it's a root taxon? left open for demo purposes
 
-    fs << ProductFilters.price_filter if ProductFilters.respond_to?(:price_filter)
-    fs << ProductFilters.brand_filter if ProductFilters.respond_to?(:brand_filter)
+    fs << Spree::ProductFilters.price_filter if Spree::ProductFilters.respond_to?(:price_filter)
+    fs << Spree::ProductFilters.brand_filter if Spree::ProductFilters.respond_to?(:brand_filter)
     fs
   end
 
