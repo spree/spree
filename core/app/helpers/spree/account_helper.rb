@@ -1,2 +1,4 @@
-module AccountHelper
+module Spree
+  module AccountHelper
+  end
 end
