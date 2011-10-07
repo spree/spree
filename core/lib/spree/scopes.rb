@@ -27,43 +27,38 @@
 #             arg1: Description of argument
 #             arg2: Description of second Argument
 #
-module Scopes
-  module_function
+module Spree
+  module Scopes
+    module_function
 
-  def generate_translation(all_scopes)
-    result = {"groups" => {}, "scopes" => {}}
-    all_scopes.dup.each_pair do |group_name, scopes|
-      result["groups"][group_name.to_s] = {
-        'name' => group_name.to_s.humanize,
-        'description' => "Scopes for selecting products based on #{group_name.to_s}",
-      }
-
-      scopes.each_pair do |scope_name, targs|
-        hashed_args = {}
-        targs.each{|v| hashed_args[v.to_s] = v.to_s.humanize}
-
-        result['scopes'][scope_name.to_s] = {
-          'name' => scope_name.to_s.humanize,
-          'description' => "",
-          'args' => hashed_args.dup
+    def generate_translation(all_scopes)
+      result = {"groups" => {}, "scopes" => {}}
+      all_scopes.dup.each_pair do |group_name, scopes|
+        result["groups"][group_name.to_s] = {
+          'name' => group_name.to_s.humanize,
+          'description' => "Scopes for selecting products based on #{group_name.to_s}",
         }
+
+        scopes.each_pair do |scope_name, targs|
+          hashed_args = {}
+          targs.each{|v| hashed_args[v.to_s] = v.to_s.humanize}
+
+          result['scopes'][scope_name.to_s] = {
+            'name' => scope_name.to_s.humanize,
+            'description' => "",
+            'args' => hashed_args.dup
+          }
+        end
       end
+
+      result
     end
 
-    result
-  end
-
-  def generate_translations
-    require 'ya2yaml'
-    {
-      'product_scopes' => generate_translation(::Scopes::Product::SCOPES)
-    }.ya2yaml
+    def generate_translations
+      require 'ya2yaml'
+      {
+        'product_scopes' => generate_translation(::Scopes::Product::SCOPES)
+      }.ya2yaml
+    end
   end
 end
-
-# Rails 3 TODO
-# ActiveRecord::NamedScope::Scope.class_eval do
-#   def to_sql
-#     construct_finder_sql({})
-#   end
-# end
