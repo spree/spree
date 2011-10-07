@@ -5,6 +5,9 @@ class ChangeTaxonsToNestedSet < ActiveRecord::Migration
 
     Spree::Taxon.reset_column_information # So the new root ids get saved
 
+    # Temporarily set the table back to taxons
+    Spree::Taxon.table_name = "taxons"
+
     Spree::Taxon.class_eval do
       # adapted from awesome nested set to use "position" information
       indices = {}
@@ -31,6 +34,9 @@ class ChangeTaxonsToNestedSet < ActiveRecord::Migration
         set_left_and_rights.call(root_node)
       end
     end
+
+    # Set it back after the migration
+    Spree::Taxon.table_name = "spree_taxons"
   end
 
   def self.down
