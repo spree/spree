@@ -5,7 +5,7 @@ module Spree
 
       helper 'spree/search'
       helper 'spree/admin/navigation'
-      layout 'spree/admin'
+      layout '/spree/layouts/admin'
 
       protected
       def check_alerts
