@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :state do
+  factory :state, :class => Spree::State do
     name 'ALABAMA'
     abbr 'AL'
     country do |country|

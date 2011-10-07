@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :inventory_unit do
+  factory :inventory_unit, :class => Spree::InventoryUnit do
     variant { Factory(:variant) }
     order { Factory(:order) }
     state 'sold'

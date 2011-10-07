@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :taxonomy do
+  factory :taxonomy, :class => Spree::Taxonomy do
     name 'Brand'
   end
 end
