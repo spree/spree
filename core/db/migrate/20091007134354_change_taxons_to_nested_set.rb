@@ -3,9 +3,9 @@ class ChangeTaxonsToNestedSet < ActiveRecord::Migration
     add_column :taxons, :lft, :integer
     add_column :taxons, :rgt, :integer
 
-    Taxon.reset_column_information # So the new root ids get saved
+    Spree::Taxon.reset_column_information # So the new root ids get saved
 
-    Taxon.class_eval do
+    Spree::Taxon.class_eval do
       # adapted from awesome nested set to use "position" information
       indices = {}
 
