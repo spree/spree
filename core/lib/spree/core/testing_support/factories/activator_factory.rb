@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :activator do
+  factory :activator, :class => Spree::Activator do
     name 'Activator name'
     event_name 'spree.order.contents_changed'
     starts_at 2.weeks.ago

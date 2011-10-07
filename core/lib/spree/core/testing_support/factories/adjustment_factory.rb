@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :adjustment do
+  factory :adjustment, :class => Spree::Adjustment do
     order { Factory(:order) }
     amount "100.0"
     label 'Shipping'

@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :payment do
+  factory :payment, :class => Spree::Payment do
     amount 45.75
     payment_method { Factory(:bogus_payment_method) }
     source { Factory.build(:creditcard) }

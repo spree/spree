@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :global_zone, :class => Zone do
+  factory :global_zone, :class => Spree::Zone do
     name 'GlobalZone'
     description { Faker::Lorem.sentence }
     zone_members do |proxy|
@@ -8,7 +8,7 @@ FactoryGirl.define do
     end
   end
 
-  factory :zone do
+  factory :zone, :class => Spree::Zone do
     name { Faker::Lorem.words }
     description { Faker::Lorem.sentence }
     #zone_members do |member|

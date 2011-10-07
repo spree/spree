@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :shipment do
+  factory :shipment, :class => Spree::Shipment do
     order { Factory(:order) }
     shipping_method { Factory(:shipping_method) }
     tracking 'U10000'

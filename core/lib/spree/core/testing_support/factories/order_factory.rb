@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :order do
+  factory :order, :class => Spree::Order do
     # associations:
     association(:user, :factory => :user)
     association(:bill_address, :factory => :address)

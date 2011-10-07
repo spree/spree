@@ -1,5 +1,5 @@
 # allows creditcard info to be saved to the datbase which is needed for factories to work properly
-class TestCard < Creditcard
+class TestCard < Spree::Creditcard
   def remove_readonly_attributes(attributes) attributes; end
 end
 FactoryGirl.define do

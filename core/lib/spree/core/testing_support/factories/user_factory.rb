@@ -3,7 +3,7 @@ FactoryGirl.define do
     "xxxx#{Time.now.to_i}#{rand(1000)}#{n}xxxxxxxxxxxxx"
   end
 
-  factory :user do
+  factory :user, :class => Spree::User do
     email { Faker::Internet.email }
     login { email }
     password 'secret'

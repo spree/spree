@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :variant do
+  factory :variant, :class => Spree::Variant do
     price 19.99
     cost_price 17.00
     sku    { Faker::Lorem.sentence }
