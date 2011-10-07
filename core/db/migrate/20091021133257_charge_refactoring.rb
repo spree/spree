@@ -9,27 +9,33 @@ class ChargeRefactoring < ActiveRecord::Migration
   end
 
   def self.up
+    # Temporarily set table name for legacy support
+    Spree::Adjustment.table_name = "adjustments"
+
     add_column :orders, :completed_at, :timestamp
     Order.reset_column_information
     Order.all.each {|o| o.update_attribute(:completed_at, o.checkout && o.checkout.read_attribute(:completed_at)) }
     remove_column :checkouts, :completed_at
 
     change_column :adjustments, :amount, :decimal, :null => true, :default => nil, :precision => 8, :scale => 2
-    Adjustment.update_all "type = secondary_type"
-    Adjustment.update_all "type = 'CouponCredit'", "type = 'Credit'"
+    Spree::Adjustment.update_all "type = secondary_type"
+    Spree::Adjustment.update_all "type = 'CouponCredit'", "type = 'Credit'"
     remove_column :adjustments, :secondary_type
+
+    # Reset table name
+    Spree::Adjustment.table_name = "spree_adjustments"
   end
 
   def self.down
     add_column :checkouts, :completed_at, :timestamp
-    Checkout.reset_column_information
-    Checkout.all.each{|c| c.update_attribute(:completed_at, c.order && c.order.completed_at)}
+    Spree::Checkout.reset_column_information
+    Spree::Checkout.all.each{|c| c.update_attribute(:completed_at, c.order && c.order.completed_at)}
     remove_column :orders, :completed_at
 
     add_column :adjustments, :secondary_type, :string
-    Adjustment.update_all "secondary_type = type"
-    Adjustment.update_all "type = 'Charge'", "type like '%Charge'"
-    Adjustment.update_all "type = 'Credit'", "type like '%Credit'"
+    Spree::Adjustment.update_all "secondary_type = type"
+    Spree::Adjustment.update_all "type = 'Charge'", "type like '%Charge'"
+    Spree::Adjustment.update_all "type = 'Credit'", "type like '%Credit'"
     change_column :adjustments, :amount, :decimal, :null => false, :default => 0, :precision => 8, :scale => 2
   end
 end
