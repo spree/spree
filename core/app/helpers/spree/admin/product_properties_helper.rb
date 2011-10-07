@@ -1,6 +1,7 @@
 module Spree
   module Admin
     module ProductPropertiesHelper
+
       # Generates the appropriate field name for attribute_fu.  Normally attribute_fu handles this but we've got a
       # special case where we need text_field_with_autocomplete and we have to recreate attribute_fu's naming
       # scheme manually.
