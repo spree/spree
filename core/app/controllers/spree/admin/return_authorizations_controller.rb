@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ReturnAuthorizationsController < ResourceController
-      belongs_to :order, :find_by => :number
+      belongs_to 'spree/order', :find_by => :number
 
       update.after :associate_inventory_units
       create.after :associate_inventory_units
