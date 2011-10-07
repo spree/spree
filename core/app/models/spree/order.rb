@@ -319,7 +319,7 @@ class Spree::Order < ActiveRecord::Base
     InventoryUnit.assign_opening_inventory(self)
     # lock any optional adjustments (coupon promotions, etc.)
     adjustments.optional.each { |adjustment| adjustment.update_attribute("locked", true) }
-    OrderMailer.confirm_email(self).deliver
+    Spree::OrderMailer.confirm_email(self).deliver
 
     self.state_events.create({
       :previous_state => "cart",
@@ -491,7 +491,7 @@ class Spree::Order < ActiveRecord::Base
   def after_cancel
     # TODO: make_shipments_pending
     # TODO: restock_inventory
-    OrderMailer.cancel_email(self).deliver
+    Spree::OrderMailer.cancel_email(self).deliver
   end
 
 end
