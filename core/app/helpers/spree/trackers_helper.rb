@@ -1,2 +1,4 @@
-module TrackersHelper
+module Spree
+  module TrackersHelper
+  end
 end
