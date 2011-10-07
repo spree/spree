@@ -453,6 +453,7 @@ class Spree::Order < ActiveRecord::Base
       (n*100).round / 100.0
     end
 
+<<<<<<< HEAD
     # Updates the following Order total values:
     #
     # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)
@@ -466,6 +467,33 @@ class Spree::Order < ActiveRecord::Base
       self.adjustment_total = adjustments.eligible.map(&:amount).sum
       self.total = item_total + adjustment_total
     end
+=======
+  def round_money(n)
+    (n*100).round / 100.0
+  end
+
+  # Updates the following Order total values:
+  #
+  # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)
+  # +item_total+         The total value of all LineItems
+  # +adjustment_total+   The total value of all adjustments (promotions, credits, etc.)
+  # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
+  def update_totals
+    # update_adjustments
+    self.payment_total = payments.completed.map(&:amount).sum
+    self.item_total = line_items.map(&:amount).sum
+    self.adjustment_total = adjustments.eligible.map(&:amount).sum
+    self.total = item_total + adjustment_total
+  end
+
+  # Updates each of the Order adjustments.  This is intended to be called from an Observer so that the Order can
+  # respond to external changes to LineItem, Shipment, other Adjustments, etc.
+  # Adjustments will check if they are still eligible. Ineligible adjustments are preserved but not counted
+  # towards adjustment_total.
+  def update_adjustments
+    self.adjustments.reload.each(&:update!)
+  end
+>>>>>>> Namespace top-level core models
 
     # Updates each of the Order adjustments.  This is intended to be called from an Observer so that the Order can
     # respond to external changes to LineItem, Shipment, other Adjustments, etc.
