@@ -1,7 +1,7 @@
 module Spree
   class OrdersController < BaseController
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
-    helper :products
+    helper 'spree/products'
 
     respond_to :html
 
