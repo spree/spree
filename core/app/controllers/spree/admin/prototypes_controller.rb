@@ -3,7 +3,7 @@ module Spree
     class PrototypesController < ResourceController
       after_filter :set_habtm_associations, :only => [:create, :update]
 
-      helper 'admin/product_properties'
+      helper 'spree/admin/product_properties'
 
       def available
         @prototypes = Prototype.order('name asc')
