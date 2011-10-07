@@ -12,7 +12,7 @@ class Spree::ProductScope < ActiveRecord::Base
 
   validate :check_validity_of_scope
 
-  extend ::Scopes::Dynamic
+  extend ::Spree::Scopes::Dynamic
 
   # Get all products with this scope
   def products
