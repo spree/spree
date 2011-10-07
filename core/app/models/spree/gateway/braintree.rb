@@ -1,4 +1,4 @@
-class Gateway::Braintree < Gateway
+class Spree::Gateway::Braintree < Spree::Gateway
 	preference :merchant_id, :string
 	preference :public_key, :string
 	preference :private_key, :string

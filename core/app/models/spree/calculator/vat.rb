@@ -1,4 +1,4 @@
-class Calculator::Vat < Calculator
+class Spree::Calculator::Vat < Spree::Calculator
 
   def self.description
     I18n.t("vat")

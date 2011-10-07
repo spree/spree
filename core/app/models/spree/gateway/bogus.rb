@@ -1,4 +1,4 @@
-class Gateway::Bogus < Gateway
+class Spree::Gateway::Bogus < Spree::Gateway
   TEST_VISA = "4111111111111111"
   TEST_MC = "5500000000000004"
   TEST_AMEX = "340000000000009"

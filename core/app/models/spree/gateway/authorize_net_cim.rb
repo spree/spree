@@ -1,4 +1,4 @@
-class Gateway::AuthorizeNetCim < Gateway
+class Spree::Gateway::AuthorizeNetCim < Spree::Gateway
   preference :login, :string
   preference :password, :string
   preference :test_mode, :boolean, :default => false

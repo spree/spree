@@ -1,4 +1,4 @@
-class Calculator::PriceBucket < Calculator
+class Spree::Calculator::PriceBucket < Spree::Calculator
   preference :minimal_amount, :decimal, :default => 0
   preference :normal_amount, :decimal, :default => 0
   preference :discount_amount, :decimal, :default => 0

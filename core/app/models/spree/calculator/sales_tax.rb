@@ -1,4 +1,4 @@
-class Calculator::SalesTax < Calculator
+class Spree::Calculator::SalesTax < Spree::Calculator
 
   def self.description
     I18n.t("sales_tax")

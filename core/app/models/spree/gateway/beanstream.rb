@@ -1,4 +1,4 @@
-class Gateway::Beanstream < Gateway
+class Spree::Gateway::Beanstream < Spree::Gateway
   preference :login, :string
   preference :user, :string
   preference :password, :string

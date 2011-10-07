@@ -1,4 +1,4 @@
-class Gateway::Linkpoint < Gateway
+class Spree::Gateway::Linkpoint < Spree::Gateway
 	preference :login, :string
 	preference :pem, :text
 

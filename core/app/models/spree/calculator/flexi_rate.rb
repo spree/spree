@@ -1,4 +1,4 @@
-class Calculator::FlexiRate < Calculator
+class Spree::Calculator::FlexiRate < Spree::Calculator
   preference :first_item,      :decimal, :default => 0
   preference :additional_item, :decimal, :default => 0
   preference :max_items,       :decimal, :default => 0
@@ -23,7 +23,7 @@ class Calculator::FlexiRate < Calculator
         sum += self.preferred_additional_item
       end
     end
-    
+
     sum
   end
 end
