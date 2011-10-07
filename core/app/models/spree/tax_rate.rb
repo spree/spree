@@ -4,7 +4,7 @@ class Spree::TaxRate < ActiveRecord::Base
 
   validates :amount, :presence => true, :numericality => true
 
-  calculated_adjustments :default => Calculator::SalesTax
+  calculated_adjustments :default => Spree::Calculator::SalesTax
   scope :by_zone, lambda { |zone| where("zone_id = ?", zone)}
 
   # Searches all possible TaxRates and returns the Zone which represents the most appropriate match (if any.)
@@ -18,7 +18,7 @@ class Spree::TaxRate < ActiveRecord::Base
   # It is needed for every price calculation (as all customer facing prices include vat )
   # The function returns the actual amount, which may be 0 in case of wrong setup, but is never nil
   def self.default
-    category = TaxCategory.includes(:tax_rates).where(:is_default => true).first
+    category = Spree::TaxCategory.includes(:tax_rates).where(:is_default => true).first
     return 0 unless category
 
     category.effective_amount || 0
