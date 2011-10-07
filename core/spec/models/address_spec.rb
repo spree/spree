@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Address do
+describe Spree::Address do
   context "validations" do
     it { should belong_to(:country) }
     it { should belong_to(:state) }
