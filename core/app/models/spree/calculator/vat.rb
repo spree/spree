@@ -1,4 +1,4 @@
-class Calculator::Vat < Calculator
+class Spree::Calculator::Vat < Spree::Calculator
 
   def self.description
     I18n.t("vat")
@@ -10,7 +10,7 @@ class Calculator::Vat < Calculator
     (product_or_variant.price * product.effective_tax_rate).round(2, BigDecimal::ROUND_HALF_UP)
   end
 
-  # computes vat for line_items associated with order, and tax rate and 
+  # computes vat for line_items associated with order, and tax rate and
   # now coupon discounts are taken into account in tax calcs
   # and tax is added to shipment if :shipment_inc_vat is set
   # coupons and shipment are applied if this object is the rate for the default category
@@ -19,7 +19,7 @@ class Calculator::Vat < Calculator
     rate = self.calculable
     tax = 0
 
-    if rate.tax_category.is_default 
+    if rate.tax_category.is_default
       order.adjustments.each do | adjust |
         next if adjust.originator_type == "TaxRate"
         next if adjust.originator_type == "ShippingMethod" and not Spree::Config[:shipment_inc_vat]

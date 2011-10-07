@@ -1,4 +1,4 @@
-class Gateway::PayPal < Gateway
+class Spree::Gateway::PayPal < Spree::Gateway
 	preference :login, :string
 	preference :password, :string
 	preference :signature, :string
@@ -6,6 +6,6 @@ class Gateway::PayPal < Gateway
 
   def provider_class
 		ActiveMerchant::Billing::PaypalGateway
-  end	
+  end
 
 end

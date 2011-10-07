@@ -1,4 +1,4 @@
-class Gateway::AuthorizeNet < Gateway
+class Spree::Gateway::AuthorizeNet < Spree::Gateway
 	preference :login, :string
 	preference :password, :string
 

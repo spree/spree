@@ -1,4 +1,4 @@
-class Calculator::FlatPercentItemTotal < Calculator
+class Spree::Calculator::FlatPercentItemTotal < Spree::Calculator
   preference :flat_percent, :decimal, :default => 0
 
   def self.description

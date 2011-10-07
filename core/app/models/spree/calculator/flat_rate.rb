@@ -1,4 +1,4 @@
-class Calculator::FlatRate < Calculator
+class Spree::Calculator::FlatRate < Spree::Calculator
   preference :amount, :decimal, :default => 0
 
   def self.description
