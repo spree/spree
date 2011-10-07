@@ -54,7 +54,7 @@ module Spree
 
       ::Spree::Product.scope :ascend_by_master_price, Spree::Product.joins(:variants_with_only_master).order("#{Spree::Variant.table_name}.price asc")
 
-      ::Spree::Product.scope :descend_by_master_price, Product.joins(:variants_with_only_master).order("#{Spree::Variant.table_name}.price desc")
+      ::Spree::Product.scope :descend_by_master_price, Spree::Product.joins(:variants_with_only_master).order("#{Spree::Variant.table_name}.price desc")
 
       ATTRIBUTE_HELPER_METHODS = {
         :with_ids => :product_picker_field
