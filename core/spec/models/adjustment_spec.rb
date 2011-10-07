@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Adjustment do
+describe Spree::Adjustment do
 
   context 'validations' do
     it { should have_valid_factory(:adjustment) }
@@ -8,7 +8,7 @@ describe Adjustment do
 
   context "factory_girl" do
     before do
-      Order.delete_all
+      Spree::Order.delete_all
       @order = Factory(:order)
       @adjustment = Factory(:adjustment, :order => @order)
     end
@@ -17,8 +17,8 @@ describe Adjustment do
     end
   end
 
-  let(:order) { mock_model(Order, :update! => nil) }
-  let(:adjustment) { Adjustment.new }
+  let(:order) { mock_model(Spree::Order, :update! => nil) }
+  let(:adjustment) { Spree::Adjustment.new }
   it "should accept a negative amount"
 
   context "#update!" do
@@ -87,7 +87,7 @@ describe Adjustment do
 
   context "#save" do
     it "should call order#update!" do
-      adjustment = Adjustment.new(:order => order, :amount => 10, :label => "Foo")
+      adjustment = Spree::Adjustment.new(:order => order, :amount => 10, :label => "Foo")
       order.should_receive(:update!)
       adjustment.save
     end
