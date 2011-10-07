@@ -133,7 +133,7 @@ class Spree::Shipment < ActiveRecord::Base
 
   def after_ship
     inventory_units.each &:ship!
-    ShipmentMailer.shipped_email(self).deliver
+    Spree::ShipmentMailer.shipped_email(self).deliver
   end
 
   def ensure_correct_adjustment
