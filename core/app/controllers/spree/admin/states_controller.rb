@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class StatesController < ResourceController
-      belongs_to :country
+      belongs_to 'spree/country'
       before_filter :load_data
 
       def index
