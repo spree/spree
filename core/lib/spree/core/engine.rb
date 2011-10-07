@@ -64,6 +64,11 @@ module Spree
       initializer "spree.asset.pipeline" do |app|
         app.config.assets.debug = false
       end
+
+      # turn off asset debugging since that kills performance in development mode
+      initializer "spree.asset.pipeline" do |app|
+        app.config.assets.debug = false
+      end
     end
   end
 end
