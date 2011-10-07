@@ -1,4 +1,8 @@
 class RemoveTrailingSlashesInTaxonPermalinks < ActiveRecord::Migration
+  class Taxon < ActiveRecord::Base
+
+  end
+
   def self.up
     Taxon.find_each(:conditions => {}) do |t|
       if t.permalink && t.permalink[-1..-1] == '/'
