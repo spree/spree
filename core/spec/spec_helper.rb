@@ -29,11 +29,11 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 end
 
-@configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+@configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
 
-PAYMENT_STATES = Payment.state_machine.states.keys unless defined? PAYMENT_STATES
-SHIPMENT_STATES = Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
-ORDER_STATES = Order.state_machine.states.keys unless defined? ORDER_STATES
+PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
+SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
+ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
 
 # Usage:
 #
