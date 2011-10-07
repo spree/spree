@@ -43,18 +43,20 @@ class Spree::Product < ActiveRecord::Base
   after_save :set_master_on_hand_to_zero_when_product_has_variants
   after_save :save_master
 
+  variants_table_name = Spree::Variant.table_name
+
   has_many :variants,
-    :conditions => ["#{Variant.table_name}.is_master = ? AND #{Variant.table_name}.deleted_at IS NULL", false],
-    :order => "#{Variant.table_name}.position ASC"
+    :conditions => ["#{variants_table_name}.is_master = ? AND #{variants_table_name}.deleted_at IS NULL", false],
+    :order => "#{variants_table_name}.position ASC"
 
   has_many :variants_including_master,
-    :class_name => 'Variant',
-    :conditions => ["#{Variant.table_name}.deleted_at IS NULL"],
+    :class_name => 'Spree::Variant',
+    :conditions => ["#{variants_table_name}.deleted_at IS NULL"],
     :dependent => :destroy
 
   has_many :variants_with_only_master,
-    :class_name => 'Variant',
-    :conditions => ["#{Variant.table_name}.deleted_at IS NULL AND #{Variant.table_name}.is_master = ?", true],
+    :class_name => 'Spree::Variant',
+    :conditions => ["#{variants_table_name}.deleted_at IS NULL AND #{variants_table_name}.is_master = ?", true],
     :dependent => :destroy
 
 
