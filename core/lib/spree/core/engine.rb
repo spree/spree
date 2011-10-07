@@ -61,6 +61,11 @@ module Spree
         app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/spree_dash.*', 'admin/orders/edit_form.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js']
         app.config.assets.debug = false
       end
+
+      # turn off asset debugging since that kills performance in development mode
+      initializer "spree.asset.pipeline" do |app|
+        app.config.assets.debug = false
+      end
     end
   end
 end
