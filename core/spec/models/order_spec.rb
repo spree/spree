@@ -207,13 +207,13 @@ describe Order do
 
     it "should send an order confirmation email" do
       mail_message = mock "Mail::Message"
-      OrderMailer.should_receive(:confirm_email).with(order).and_return mail_message
+      Spree:OrderMailer.should_receive(:confirm_email).with(order).and_return mail_message
       mail_message.should_receive :deliver
       order.finalize!
     end
 
     it "should freeze optional adjustments" do
-      OrderMailer.stub_chain :confirm_email, :deliver
+      Spree::OrderMailer.stub_chain :confirm_email, :deliver
       adjustment = mock_model(Adjustment)
       order.stub_chain :adjustments, :optional => [adjustment]
       adjustment.should_receive(:update_attribute).with("locked", true)
@@ -516,7 +516,7 @@ describe Order do
     end
     it "should send a cancel email" do
       mail_message = mock "Mail::Message"
-      OrderMailer.should_receive(:cancel_email).with(order).and_return mail_message
+      Spree::OrderMailer.should_receive(:cancel_email).with(order).and_return mail_message
       mail_message.should_receive :deliver
       order.cancel!
     end

@@ -4,7 +4,7 @@ require 'spec_helper'
 describe Spree::OrderMailer do
   let(:mail_method) { mock("mail_method", :preferred_mails_from => nil, :preferred_intercept_email => nil, :preferred_mail_bcc => nil) }
   let(:order) { Order.new(:email => "customer@example.com") }
-  let(:message) { OrderMailer.confirm_email(order) }
+  let(:message) { Spree::OrderMailer.confirm_email(order) }
   #let(:email) { mock "email" }
 
   context "#deliver" do
