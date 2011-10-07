@@ -4,7 +4,9 @@ class ShipmentIdForInventoryUnits < ActiveRecord::Migration
     add_index(:inventory_units, :shipment_id)
 
     # migrate legacy shipments
-    Shipment.all.each do |shipment|
+    Spree::Shipment.table_name = "shipments"
+
+    Spree::Shipment.all.each do |shipment|
       unless shipment.order
         puts "Warning: shipment has invalid order - #{shipment.id}"
         next
@@ -13,6 +15,8 @@ class ShipmentIdForInventoryUnits < ActiveRecord::Migration
         unit.update_attribute("shipment_id", shipment.id)
       end
     end
+
+    Spree::Shipment.table_name = "spree_shipments"
   end
 
   def self.down
