@@ -65,13 +65,13 @@
       <p>
         <%= f.label :preferred_secure_connection_type, t(:secure_connection_type) %><br />
         <%= f.collection_select(:preferred_secure_connection_type,
-                                MailMethod::SECURE_CONNECTION_TYPES,
+                                Spree::MailMethod::SECURE_CONNECTION_TYPES,
                                 :to_s, :to_s,
                                 {}, {'style' => 'width:200px'}) %>
       <p>
         <%= f.label :preferred_mail_auth_type, t(:smtp_authentication_type) %><br />
         <%= f.collection_select(:preferred_mail_auth_type,
-                                MailMethod::MAIL_AUTH,
+                                Spree::MailMethod::MAIL_AUTH,
                                 :to_s, :to_s,
                                 {}, {'style' => 'width:200px'}) %>
       </p>

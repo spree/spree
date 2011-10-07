@@ -12,7 +12,7 @@ ActiveRecord::Base.class_eval do
   include Spree::Preferences::ModelHooks
 end
 
-if MailMethod.table_exists?
+if Spree::MailMethod.table_exists?
   Spree::MailSettings.init
   Mail.register_interceptor(Spree::MailInterceptor)
 end
