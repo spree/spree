@@ -1,4 +1,4 @@
-Zone.class_eval do
+Spree::Zone.class_eval do
   def self.global
     find_by_name("GlobalZone") || Factory(:global_zone)
   end
