@@ -280,6 +280,6 @@ class Spree::Product < ActiveRecord::Base
   end
 
   def update_memberships
-    self.product_groups = ProductGroup.all.select{|pg| pg.include?(self)}
+    self.product_groups = Spree::ProductGroup.all.select{|pg| pg.include?(self)}
   end
 end
