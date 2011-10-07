@@ -1,6 +1,6 @@
 module Spree
   class HomeController < BaseController
-    helper :products
+    helper 'spree/products'
     respond_to :html
   
     def index
