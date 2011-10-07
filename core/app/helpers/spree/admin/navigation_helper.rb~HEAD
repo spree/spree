@@ -17,7 +17,7 @@ module Spree
         destination_url = send("#{options[:route]}_path")
 
         ## if more than one form, it'll capitalize all words
-        label_with_first_letters_capitalized = t(options[:label], :default => options[:label]).titleize
+        label_with_first_letters_capitalized = t(options[:label], :default => options[:label]).gsub(/\b\w/){|c| c.upcase}
 
         link = link_to(label_with_first_letters_capitalized, destination_url)
 
@@ -36,9 +36,6 @@ module Spree
         content_tag('li', link, :class => css_classes.join(' '))
       end
 
-      def link_to_clone(resource, options={})
-        link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource), options)
-      end
 
       def link_to_new(resource)
         link_to_with_icon('add', t("new"), edit_object_url(resource))
