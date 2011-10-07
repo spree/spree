@@ -1,5 +1,6 @@
 class NamespaceTopLevelModels < ActiveRecord::Migration
   def up
+<<<<<<< HEAD
     rename_table :activators,              :spree_activators
     rename_table :addresses,               :spree_addresses
     rename_table :adjustments,             :spree_adjustments
@@ -99,5 +100,92 @@ class NamespaceTopLevelModels < ActiveRecord::Migration
     rename_table :spree_variants,                :variants
     rename_table :spree_zones,                   :zones
     rename_table :spree_zone_members,            :zone_members
+=======
+    rename_table :activators,            :spree_activators
+    rename_table :addresses,             :spree_addresses
+    rename_table :adjustments,           :spree_adjustments
+    rename_table :configurations,        :spree_configurations
+    rename_table :assets,                :spree_assets
+    rename_table :calculators,           :spree_calculators
+    rename_table :countries,             :spree_countries
+    rename_table :creditcards,           :spree_creditcards
+    rename_table :inventory_units,       :spree_inventory_units
+    rename_table :line_items,            :spree_line_items
+    rename_table :log_entries,           :spree_log_entries
+    rename_table :mail_methods,          :spree_mail_methods
+    rename_table :option_types,          :spree_option_types
+    rename_table :option_values,         :spree_option_values
+    rename_table :orders,                :spree_orders
+    rename_table :payments,              :spree_payments
+    rename_table :payment_methods,       :spree_payment_methods
+    rename_table :preferences,           :spree_preferences
+    rename_table :products,              :spree_products
+    rename_table :product_groups,        :spree_product_groups
+    rename_table :product_option_types,  :spree_product_option_types
+    rename_table :product_properties,    :spree_product_properties
+    rename_table :product_scopes,        :spree_product_scopes
+    rename_table :properties,            :spree_properties
+    rename_table :prototypes,            :spree_prototypes
+    rename_table :return_authorizations, :spree_return_authorizations
+    rename_table :roles,                 :spree_roles
+    rename_table :shipments,             :spree_shipments
+    rename_table :shipping_categories,   :spree_shipping_categories
+    rename_table :shipping_methods,      :spree_shipping_methods
+    rename_table :states,                :spree_states
+    rename_table :state_events,          :spree_state_events
+    rename_table :tax_categories,        :spree_tax_categories
+    rename_table :tax_rates,             :spree_tax_rates
+    rename_table :taxons,                :spree_taxons
+    rename_table :taxonomies,            :spree_taxonomies
+    rename_table :trackers,              :spree_trackers
+    rename_table :users,                 :spree_users
+    rename_table :variants,              :spree_variants
+    rename_table :zones,                 :spree_zones
+    rename_table :zone_members,          :spree_zone_members
+  end
+
+  def down
+    rename_table :spree_activators,            :activators
+    rename_table :spree_addresses,             :addresses
+    rename_table :spree_adjustments,           :adjustments
+    rename_table :spree_configurations,        :configurations
+    rename_table :spree_assets,                :assets
+    rename_table :spree_calculators,           :calculators
+    rename_table :spree_countries,             :countries
+    rename_table :spree_creditcards,           :creditcards
+    rename_table :spree_inventory_units,       :inventory_units
+    rename_table :spree_line_items,            :line_items
+    rename_table :spree_log_entries,           :log_entries
+    rename_table :spree_mail_methods,          :mail_methods
+    rename_table :spree_option_types,          :option_types
+    rename_table :spree_option_values,         :option_values
+    rename_table :spree_orders,                :orders
+    rename_table :spree_payments,              :payments
+    rename_table :spree_payment_methods,       :payment_methods
+    rename_table :spree_preferences,           :preferences
+    rename_table :spree_products,              :products
+    rename_table :spree_product_groups,        :product_groups
+    rename_table :spree_product_option_types,  :product_option_types
+    rename_table :spree_product_properties,    :product_properties
+    rename_table :spree_product_scopes,        :product_scopes
+    rename_table :spree_properties,            :properties
+    rename_table :spree_prototypes,            :prototypes
+    rename_table :spree_return_authorizations, :return_authorizations
+    rename_table :spree_roles,                 :roles
+    rename_table :spree_shipments,             :shipments
+    rename_table :spree_shipping_categories,   :shipping_categories
+    rename_table :spree_shipping_methods,      :shipping_methods
+    rename_table :spree_states,                :states
+    rename_table :spree_state_events,          :state_events
+    rename_table :spree_tax_categories,        :tax_categories
+    rename_table :spree_tax_rates,             :tax_rates
+    rename_table :spree_taxons,                :taxons
+    rename_table :spree_taxonomies,            :taxonomies
+    rename_table :spree_trackers,              :trackers
+    rename_table :spree_users,                 :users
+    rename_table :spree_variants,              :variants
+    rename_table :spree_zones,                 :zones
+    rename_table :spree_zone_members,          :zone_members
+>>>>>>> Namespace top-level core models
   end
 end
