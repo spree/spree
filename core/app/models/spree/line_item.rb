@@ -1,9 +1,9 @@
 class Spree::LineItem < ActiveRecord::Base
   before_validation :adjust_quantity
-  belongs_to :order, :class_name => 'Spree::Order'
-  belongs_to :variant, :class_name => 'Spree::Variant'
+  belongs_to :order
+  belongs_to :variant
 
-  has_one :product, :through => :variant, :class_name => 'Spree::Product'
+  has_one :product, :through => :variant
 
   before_validation :copy_price
 
@@ -85,12 +85,12 @@ class Spree::LineItem < ActiveRecord::Base
     end
 
     # Validation
-    
+
     def stock_availability
       return if sufficient_stock?
       errors.add(:quantity, "can't be greater than available stock.")
     end
-   
+
     def quantity_no_less_than_shipped
       already_shipped = order.shipments.reduce(0) { |acc,s| acc + s.inventory_units.count { |i| i.variant == variant } }
       unless quantity >= already_shipped
@@ -98,3 +98,4 @@ class Spree::LineItem < ActiveRecord::Base
       end
     end
 end
+
