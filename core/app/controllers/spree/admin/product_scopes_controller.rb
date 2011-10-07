@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ProductScopesController < BaseController
-      helper 'admin/product_groups'
+      helper 'spree/admin/product_groups'
 
       respond_to :html, :js
 
