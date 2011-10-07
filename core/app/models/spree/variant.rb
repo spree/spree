@@ -1,4 +1,4 @@
-class Variant < ActiveRecord::Base
+class Spree::Variant < ActiveRecord::Base
   belongs_to :product
   delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords
 
