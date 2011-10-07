@@ -1,4 +1,8 @@
 class PolymorphicPayments < ActiveRecord::Migration
+  # Legacy table support
+  class Checkout < ActiveRecord::Base
+
+  end
   def self.up
     remove_column :payments, :type
     remove_column :payments, :creditcard_id
@@ -11,10 +15,9 @@ class PolymorphicPayments < ActiveRecord::Migration
     execute "UPDATE payments SET payable_type = 'Order'"
 
     Spree::Creditcard.table_name = "creditcards"
-    Spree::Checkout.table_name = "checkouts"
 
     Spree::Creditcard.all.each do |creditcard|
-      if checkout = Spree::Checkout.find_by_id(creditcard.checkout_id) and checkout.order
+      if checkout = Checkout.find_by_id(creditcard.checkout_id) and checkout.order
         if payment = checkout.order.payments.first
           execute "UPDATE payments SET source_type = 'Creditcard', source_id = #{creditcard.id} WHERE id = #{payment.id}"
         end
@@ -26,7 +29,6 @@ class PolymorphicPayments < ActiveRecord::Migration
     end
 
     Spree::Creditcard.table_name = "spree_creditcards"
-    Spree::Checkout.table_name = "spree_checkouts"
   end
 
   def self.down
