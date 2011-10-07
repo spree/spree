@@ -4,7 +4,7 @@ module Spree
       after_filter :initialize_mail_settings
 
       def testmail
-        @mail_method = MailMethod.find(params[:id])
+        @mail_method = Spree::MailMethod.find(params[:id])
         if TestMailer.test_email(@mail_method, current_user).deliver
           flash[:notice] = t("admin.mail_methods.testmail.delivery_success")
         else

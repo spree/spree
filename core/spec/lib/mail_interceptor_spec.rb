@@ -10,7 +10,7 @@ describe Spree::OrderMailer do
   context "#deliver" do
     before do
       ActionMailer::Base.delivery_method = :test
-      MailMethod.stub :current => mail_method
+      Spree::MailMethod.stub :current => mail_method
     end
     after { ActionMailer::Base.deliveries.clear }
 

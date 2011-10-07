@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe Spree::MailSettings do
-  let(:mail_method) { MailMethod.new(:environment => "test") }
+  let(:mail_method) { Spree::MailMethod.new(:environment => "test") }
 
   context "init" do
-    before { MailMethod.stub :current => mail_method }
+    before { Spree::MailMethod.stub :current => mail_method }
 
     context "perform_delivery preference" do
       it "should override the application defaults" do
