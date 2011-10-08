@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe Spree::Admin::OrdersController do
 
-  let(:order) { mock_model(Order, :complete? => true, :total => 100) }
+  let(:order) { mock_model(Spree::Order, :complete? => true, :total => 100) }
 
   before do
     controller.stub :current_user => nil
-    Order.stub :find_by_number => order
+    Spree::Order.stub :find_by_number => order
     request.env["HTTP_REFERER"] = "http://localhost:3000"
   end
 
@@ -23,4 +23,3 @@ describe Spree::Admin::OrdersController do
   end
 
 end
-

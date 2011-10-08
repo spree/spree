@@ -99,7 +99,7 @@ describe Spree::Adjustment do
       specify { adjustment.should be_eligible_for_originator }
     end
     context "with originator that doesn't have 'eligible?'" do
-      before { adjustment.originator = mock_model('TaxRate') }
+      before { adjustment.originator = mock_model(Spree::TaxRate) }
       specify { adjustment.should be_eligible_for_originator }
     end
     context "with originator that has 'eligible?'" do

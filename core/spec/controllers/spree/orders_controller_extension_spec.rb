@@ -30,7 +30,7 @@ describe Spree::OrdersController do
         before do
           @order = Factory(:order)
           Spree::OrdersController.instance_eval do
-            respond_override({:update => {:html => {:success => lambda { redirect_to(Order.first) }}}})
+            respond_override({:update => {:html => {:success => lambda { redirect_to(Spree::Order.first) }}}})
             respond_override({:update => {:html => {:failure => lambda { render(:text => 'failure!!!') }}}})
           end
         end
@@ -45,7 +45,7 @@ describe Spree::OrdersController do
       context "validation error" do
         before do
           @order = Factory(:order)
-          Order.update_all("state='address'")
+          Spree::Order.update_all("state='address'")
           Spree::OrdersController.instance_eval do
             respond_override({:update => {:html => {:success => lambda { render(:text => 'success!!!') }}}})
             respond_override({:update => {:html => {:failure => lambda { render(:text => 'failure!!!') }}}})
