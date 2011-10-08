@@ -228,7 +228,7 @@ describe Spree::Order do
 
   context "#process_payments!" do
     it "should process the payments" do
-      order.stub!(:payments).and_return([mock(Payment)])
+      order.stub!(:payments).and_return([mock(Spree::Payment)])
       order.payment.should_receive(:process!)
       order.process_payments!
     end
@@ -283,13 +283,13 @@ describe Spree::Order do
     it "should indicate whether any units in the order are backordered" do
       order.stub_chain(:inventory_units, :backorder).and_return []
       order.backordered?.should be_false
-      order.stub_chain(:inventory_units, :backorder).and_return [mock_model(InventoryUnit)]
+      order.stub_chain(:inventory_units, :backorder).and_return [mock_model(Spree::InventoryUnit)]
       order.backordered?.should be_true
     end
 
     it "should always be false when inventory tracking is disabled" do
       Spree::Config.set :track_inventory_levels => false
-      order.stub_chain(:inventory_units, :backorder).and_return [mock_model(InventoryUnit)]
+      order.stub_chain(:inventory_units, :backorder).and_return [mock_model(Spree::InventoryUnit)]
       order.backordered?.should be_false
     end
   end
@@ -306,7 +306,7 @@ describe Spree::Order do
     end
 
     context "when payments are insufficient" do
-      let(:payments) { mock "payments", :completed => [], :first => mock_model(Payment, :checkout? => false) }
+      let(:payments) { mock "payments", :completed => [], :first => mock_model(Spree::Payment, :checkout? => false) }
       before { order.stub :total => 100, :payment_total => 50, :payments => payments }
 
       context "when last payment did not fail" do
@@ -335,7 +335,7 @@ describe Spree::Order do
     end
 
     context "when there are shipments" do
-      let(:shipments) { [mock_model(Shipment, :update! => nil), mock_model(Shipment, :update! => nil)] }
+      let(:shipments) { [mock_model(Spree::Shipment, :update! => nil), mock_model(Spree::Shipment, :update! => nil)] }
       before do
         shipments.stub :shipped => []
         shipments.stub :ready => []
@@ -344,41 +344,41 @@ describe Spree::Order do
       end
 
       it "should set the correct shipment_state (when all shipments are shipped)" do
-        shipments.stub :shipped => [mock_model(Shipment), mock_model(Shipment)]
+        shipments.stub :shipped => [mock_model(Spree::Shipment), mock_model(Spree::Shipment)]
         order.update!
         order.shipment_state.should == "shipped"
       end
 
       it "should set the correct shipment_state (when some units are backordered)" do
-        shipments.stub :shipped => [mock_model(Shipment)]
+        shipments.stub :shipped => [mock_model(Spree::Shipment)]
         order.stub(:backordered?).and_return true
         order.update!
         order.shipment_state.should == "backorder"
       end
 
       it "should set the shipment_state to partial (when some of the shipments have shipped)" do
-        shipments.stub :shipped => [mock_model(Shipment)]
-        shipments.stub :ready => [mock_model(Shipment)]
+        shipments.stub :shipped => [mock_model(Spree::Shipment)]
+        shipments.stub :ready => [mock_model(Spree::Shipment)]
         order.update!
         order.shipment_state.should == "partial"
       end
 
       it "should set the correct shipment_state (when some of the shipments are ready)" do
-        shipments.stub :ready => [mock_model(Shipment), mock_model(Shipment)]
+        shipments.stub :ready => [mock_model(Spree::Shipment), mock_model(Spree::Shipment)]
         order.update!
         order.shipment_state.should == "ready"
       end
 
       it "should set the shipment_state to pending (when all shipments are pending)" do
-        shipments.stub :pending => [mock_model(Shipment), mock_model(Shipment)]
+        shipments.stub :pending => [mock_model(Spree::Shipment), mock_model(Spree::Shipment)]
         order.update!
         order.shipment_state.should == "pending"
       end
     end
 
     context "when there are update hooks" do
-      before { Order.register_update_hook :foo }
-      after { Order.update_hooks.clear }
+      before { Spree::Order.register_update_hook :foo }
+      after { Spree::Order.update_hooks.clear }
       it "should call each of the update hooks" do
         order.should_receive :foo
         order.update!
@@ -386,7 +386,7 @@ describe Spree::Order do
     end
 
     context "when there is a single checkout payment" do
-      before { order.stub(:payment => mock_model(Payment, :checkout? => true, :amount => 11), :total => 22) }
+      before { order.stub(:payment => mock_model(Spree::Payment, :checkout? => true, :amount => 11), :total => 22) }
 
       it "should update the payment amount to order total" do
         order.payment.should_receive(:update_attributes_without_callbacks).with(:amount => order.total)
@@ -404,7 +404,7 @@ describe Spree::Order do
       order.update!
     end
 
-    it "should call adjustemnt#update on every adjustment}" do
+    it "should call adjustment#update on every adjustment}" do
       # adjustment = mock_model(Adjustment, :amount => 5, :applicable? => true, :update! => true)
       adjustment = Factory(:adjustment, :order => order, :amount => 5)
       # TODO: Restore this example. Stubbing adjustments doesn't work, need a proper collection
@@ -426,13 +426,13 @@ describe Spree::Order do
 
   context "#update_totals" do
     it "should set item_total to the sum of line_item amounts" do
-      line_items = [ mock_model(LineItem, :amount => 100), mock_model(LineItem, :amount => 50) ]
+      line_items = [ mock_model(Spree::LineItem, :amount => 100), mock_model(Spree::LineItem, :amount => 50) ]
       order.stub(:line_items => line_items)
       order.update!
       order.item_total.should == 150
     end
     it "should set payments_total to the sum of completed payment amounts" do
-      payments = [ mock_model(Payment, :amount => 100, :checkout? => false), mock_model(Payment, :amount => -10, :checkout? => false) ]
+      payments = [ mock_model(Spree::Payment, :amount => 100, :checkout? => false), mock_model(Spree::Payment, :amount => -10, :checkout? => false) ]
       payments.stub(:completed => payments)
       order.stub(:payments => payments)
       order.update!
@@ -453,7 +453,7 @@ describe Spree::Order do
         order.adjustment_total.to_i.should == 15
       end
       it "should set the total to the sum of item and adjustment totals" do
-        line_items = [ mock_model(LineItem, :amount => 100), mock_model(LineItem, :amount => 50) ]
+        line_items = [ mock_model(Spree::LineItem, :amount => 100), mock_model(Spree::LineItem, :amount => 50) ]
         order.stub(:line_items => line_items)
         order.update!
         order.total.to_i.should == 165
@@ -475,7 +475,7 @@ describe Spree::Order do
 
   context "item_count" do
     it "should return the correct number of items" do
-      line_items = [ mock_model(LineItem, :quantity => 2), mock_model(LineItem, :quantity => 1) ]
+      line_items = [ mock_model(Spree::LineItem, :quantity => 2), mock_model(Spree::LineItem, :quantity => 1) ]
       order.stub :line_items => line_items
       order.item_count.should == 3
     end
@@ -575,7 +575,7 @@ describe Spree::Order do
   end
 
   context "insufficient_stock_lines" do
-    let(:line_item) { mock_model LineItem, :insufficient_stock? => true } 
+    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true } 
 
     before { order.stub(:line_items => [line_item]) }
 
