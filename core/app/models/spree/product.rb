@@ -18,18 +18,18 @@
 # Sum of on_hand each variant's inventory level determine "on_hand" level for the product.
 #
 class Spree::Product < ActiveRecord::Base
-  has_many :product_option_types, :dependent => :destroy
-  has_many :option_types, :through => :product_option_types
-  has_many :product_properties, :dependent => :destroy
-  has_many :properties, :through => :product_properties
-  has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
-  has_and_belongs_to_many :product_groups
-  belongs_to :tax_category
-  has_and_belongs_to_many :taxons
-  belongs_to :shipping_category
+  has_many :product_option_types, :dependent => :destroy, :class_name => "Spree::ProductOptionType"
+  has_many :option_types, :through => :product_option_types, :class_name => "Spree::OptionType"
+  has_many :product_properties, :dependent => :destroy, :class_name => "Spree::ProductProperty"
+  has_many :properties, :through => :product_properties, :class_name => "Spree::Property"
+  has_many :images, :as => :viewable, :order => :position, :dependent => :destroy, :class_name => "Spree::Image"
+  has_and_belongs_to_many :product_groups, :class_name => "Spree::ProductGroup", :table_name => "spree_product_groups_products"
+  belongs_to :tax_category, :class_name => "Spree::TaxCategory"
+  has_and_belongs_to_many :taxons, :class_name => "Spree::Taxon"
+  belongs_to :shipping_category, :class_name => "Spree::ShippingCategory"
 
   has_one :master,
-    :class_name => 'Variant',
+    :class_name => 'Spree::Variant',
     :conditions => ["spree_variants.is_master = ? AND spree_variants.deleted_at IS NULL", true]
 
   delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
@@ -46,6 +46,7 @@ class Spree::Product < ActiveRecord::Base
   variants_table_name = Spree::Variant.table_name
 
   has_many :variants,
+    :class_name => 'Spree::Variant',
     :conditions => ["#{variants_table_name}.is_master = ? AND #{variants_table_name}.deleted_at IS NULL", false],
     :order => "#{variants_table_name}.position ASC"
 
@@ -61,7 +62,7 @@ class Spree::Product < ActiveRecord::Base
 
 
   def variant_images
-    Image.find_by_sql("SELECT assets.* FROM assets LEFT JOIN spree_variants ON (spree_variants.id = assets.viewable_id) WHERE (spree_variants.product_id = #{self.id})")
+    Image.find_by_sql("SELECT spree_assets.* FROM spree_assets LEFT JOIN spree_variants ON (spree_variants.id = spree_assets.viewable_id) WHERE (spree_variants.product_id = #{self.id})")
   end
 
 
