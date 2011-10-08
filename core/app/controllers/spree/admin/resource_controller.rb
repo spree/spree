@@ -105,7 +105,7 @@ module Spree
       end
 
       def model_class
-        controller_name.classify.constantize
+        "Spree::#{controller_name.classify}".constantize
       end
 
       def object_name

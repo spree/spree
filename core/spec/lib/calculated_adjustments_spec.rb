@@ -5,16 +5,16 @@ require 'spec_helper'
 # ShippingMethod instead since those classes are including the module.
 describe Spree::CalculatedAdjustments do
 
-  let(:calculator) { mock_model(Calculator, :compute => 10, :[]= => nil) }
+  let(:calculator) { mock_model(Spree::Calculator, :compute => 10, :[]= => nil) }
 
   it "should add has_one :calculator relationship" do
-    assert ShippingMethod.reflect_on_all_associations(:has_one).map(&:name).include?(:calculator)
+    assert Spree::ShippingMethod.reflect_on_all_associations(:has_one).map(&:name).include?(:calculator)
   end
 
-  let(:tax_rate) { TaxRate.new(:calculator => calculator) }
+  let(:tax_rate) { Spree::TaxRate.new(:calculator => calculator) }
 
   context "#create_adjustment and its resulting adjustment" do
-    let(:order) { Order.create }
+    let(:order) { Spree::Order.create }
     let(:target) { order }
 
     it "should be associated with the target" do

@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Spree::OrdersController do
 
-  let(:order) { mock_model(Order, :number => "R123", :reload => nil, :save! => true, :coupon_code= => nil, :coupon_code => nil) }
+  let(:order) { mock_model(Spree::Order, :number => "R123", :reload => nil, :save! => true, :coupon_code= => nil, :coupon_code => nil) }
   before do
-    Order.stub(:find).with(1).and_return(order)
+    Spree::Order.stub(:find).with(1).and_return(order)
     controller.stub :current_user => nil
     #ensure no respond_overrides are in effect
     if Spree::BaseController.spree_responders[:OrdersController].present?
@@ -13,18 +13,18 @@ describe Spree::OrdersController do
   end
 
   context "#populate" do
-    before { Order.stub(:new).and_return(order) }
+    before { Spree::Order.stub(:new).and_return(order) }
 
     it "should create a new order when none specified" do
-      Order.should_receive(:new).and_return order
+      Spree::Order.should_receive(:new).and_return order
       post :populate, {}, {}
       session[:order_id].should == order.id
     end
 
     context "with Variant" do
       before do
-        @variant = mock_model(Variant)
-        Variant.should_receive(:find).and_return @variant
+        @variant = mock_model(Spree::Variant)
+        Spree::Variant.should_receive(:find).and_return @variant
       end
 
       it "should handle single variant/quantity pair" do
@@ -49,7 +49,7 @@ describe Spree::OrdersController do
       order.stub(:update_attributes).and_return true
       order.stub(:line_items).and_return([])
       order.stub(:line_items=).with([])
-      Order.stub(:find_by_id).and_return(order)
+      Spree::Order.stub(:find_by_id).and_return(order)
     }
     it "should not result in a flash notice" do
       put :update, {}, {:order_id => 1}
