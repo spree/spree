@@ -325,7 +325,7 @@ class Spree::Order < ActiveRecord::Base
       :previous_state => "cart",
       :next_state     => "complete",
       :name           => "order" ,
-      :user_id        => (User.respond_to?(:current) && User.current.try(:id)) || self.user_id
+      :user_id        => (Spree::User.respond_to?(:current) && Spree::User.current.try(:id)) || self.user_id
     })
   end
 
