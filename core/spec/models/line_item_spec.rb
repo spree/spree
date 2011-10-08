@@ -184,14 +184,6 @@ describe Spree::LineItem do
     it "should not allow quantity to be adjusted lower than already shipped units" do
       line_item.quantity = 4
       line_item.save.should be_false
-      line_item.errors.size.should == 1
     end
-
-
-    it "should allow quantity to be adjusted higher than already shipped units" do
-      line_item.quantity = 6
-      line_item.save.should be_true
-    end
-
   end
 end
