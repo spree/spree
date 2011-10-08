@@ -66,7 +66,8 @@ h4. Pre-compiling for development
 Spree alters the behaviour of the precompile rake task so when you execute it passing the RAILS_ENV environmental variable, as follows:
 
 <ruby>
-  $ bundle exec rake assets:precompile RAILS_ASSETS_NONDIGEST==true
+  $ bundle exec rake assets:precompile RAILS_ENV=development
+    RAILS_ASSETS_NONDIGEST=true
 </ruby>
 
 It will still output the assets to <tt>public/assets</tt> but it will not include the MD5 fingerprint in the filename, hence the files will be served in development directly by the web server (and not processed by Rails).
