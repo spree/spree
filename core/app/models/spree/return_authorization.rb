@@ -65,7 +65,7 @@ class Spree::ReturnAuthorization < ActiveRecord::Base
   def process_return
     inventory_units.each &:return!
 
-    credit = Adjustment.create(:source => self, :order_id => self.order.id, :amount => self.amount.abs * -1, :label => I18n.t("rma_credit"))
+    credit = Spree::Adjustment.create(:source => self, :order_id => self.order.id, :amount => self.amount.abs * -1, :label => I18n.t("rma_credit"))
     self.order.update!
   end
 
