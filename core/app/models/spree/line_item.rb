@@ -8,7 +8,7 @@ class Spree::LineItem < ActiveRecord::Base
   before_validation :copy_price
 
   validates :variant, :presence => true
-  validates :quantity, :numericality => { :only_integer => true, :message => I18n.t('validation.must_be_int') }
+  validates :quantity, :numericality => { :only_integer => true, :message => I18n.t("validation.must_be_int") }
   validates :price, :numericality => true
   validate :stock_availability
   validate :quantity_no_less_than_shipped
@@ -55,20 +55,21 @@ class Spree::LineItem < ActiveRecord::Base
       return true unless self.order.completed?
 
       if self.new_record?
-        Spree::InventoryUnit.increase(self.order, self.variant, self.quantity)
-      elsif old_quantity = self.changed_attributes['quantity']
+        InventoryUnit.increase(self.order, self.variant, self.quantity)
+      elsif old_quantity = self.changed_attributes["quantity"]
         if old_quantity < self.quantity
-          Spree::InventoryUnit.increase(self.order, self.variant, (self.quantity - old_quantity))
+          InventoryUnit.increase(self.order, self.variant, (self.quantity - old_quantity))
         elsif old_quantity > self.quantity
-          Spree::InventoryUnit.decrease(self.order, self.variant, (old_quantity - self.quantity))
+          InventoryUnit.decrease(self.order, self.variant, (old_quantity - self.quantity))
         end
       end
+
     end
 
     def remove_inventory
       return true unless self.order.completed?
 
-      Spree::InventoryUnit.decrease(self.order, self.variant, self.quantity)
+      InventoryUnit.decrease(self.order, self.variant, self.quantity)
     end
 
     def update_order
@@ -86,13 +87,13 @@ class Spree::LineItem < ActiveRecord::Base
     # Validation
     def stock_availability
       return if sufficient_stock?
-      errors.add(:quantity, I18n.t('validation.cannot_be_greater_than_available_stock'))
+      errors.add(:quantity, "can't be greater than available stock.")
     end
-
+   
     def quantity_no_less_than_shipped
       already_shipped = order.shipments.reduce(0) { |acc,s| acc + s.inventory_units.count { |i| i.variant == variant } }
       unless quantity >= already_shipped
-        errors.add(:quantity, I18n.t('validation.cannot_be_less_than_shipped_units'))
+        errors.add(:quantity, I18n.t("validation.cannot_be_less_than_shipped_units"))
       end
     end
 end
