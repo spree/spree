@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Zone do
+describe Spree::Zone do
 
   let(:zone) { Factory :zone }
 
