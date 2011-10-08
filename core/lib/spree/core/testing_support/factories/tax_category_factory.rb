@@ -3,6 +3,6 @@ FactoryGirl.define do
     name { "TaxCategory - #{rand(999999)}" }
     description { Faker::Lorem.sentence }
 
-    tax_rates { [Spree::TaxRate.new(:amount => 0.05, :calculator => Spree::Calculator::Vat.new, :zone => Zone.global)] }
+    tax_rates { [Spree::TaxRate.new(:amount => 0.05, :calculator => Spree::Calculator::Vat.new, :zone => Spree::Zone.global)] }
   end
 end
