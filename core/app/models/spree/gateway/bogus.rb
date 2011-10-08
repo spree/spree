@@ -72,7 +72,7 @@ class Spree::Gateway::Bogus < Spree::Gateway
     prefix = success ? "BGS" : "FAIL"
     while record
       random = "#{prefix}-#{Array.new(6){rand(6)}.join}"
-      record = Creditcard.find(:first, :conditions => ["gateway_customer_profile_id = ?", random])
+      record = Spree::Creditcard.find(:first, :conditions => ["gateway_customer_profile_id = ?", random])
     end
     random
   end
