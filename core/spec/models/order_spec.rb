@@ -134,7 +134,7 @@ describe Spree::Order do
       end
 
       context "when a tax charge already exists" do
-        let(:old_charge) { mock_model Adjustment }
+        let(:old_charge) { mock_model Spree::Adjustment }
         before { order.stub_chain :adjustments, :tax => [old_charge] }
 
         it "should remove an existing tax charge (for the old rate)" do
@@ -214,7 +214,7 @@ describe Spree::Order do
 
     it "should freeze optional adjustments" do
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
-      adjustment = mock_model(Adjustment)
+      adjustment = mock_model(Spree::Adjustment)
       order.stub_chain :adjustments, :optional => [adjustment]
       adjustment.should_receive(:update_attribute).with("locked", true)
       order.finalize!
@@ -525,8 +525,8 @@ describe Spree::Order do
   end
 
   context "with adjustments" do
-    let(:adjustment1) { mock_model(Adjustment, :amount => 5) }
-    let(:adjustment2) { mock_model(Adjustment, :amount => 10) }
+    let(:adjustment1) { mock_model(Spree::Adjustment, :amount => 5) }
+    let(:adjustment2) { mock_model(Spree::Adjustment, :amount => 10) }
 
     context "#ship_total" do
       it "should return the correct amount" do
@@ -592,7 +592,7 @@ describe Spree::Order do
     let(:rate_1) { Spree::TaxRate.create(:amount => 0.15) } 
 
     it "should destory all existing tax adjustments" do
-      adjustment = mock_model(Adjustment, :amount => 5, :calculator => :sales_tax) 
+      adjustment = mock_model(Spree::Adjustment, :amount => 5, :calculator => :sales_tax) 
       adjustment.should_receive :destroy
 
       order.stub_chain :adjustments, :tax => [adjustment]

@@ -11,7 +11,7 @@ class Spree::TaxRate < ActiveRecord::Base
   # To be considered for a match, the Zone must include the supplied address.  If multiple matches are
   # found, the Zone with the highest rate will be returned.  This method will return +nil+ if no match is found.
   def self.match(address)
-    TaxRate.all.select { |rate| rate.zone.include? address }
+    all.select { |rate| rate.zone.include? address }
   end
 
   # For Vat the default rate is the rate that is configured for the default category
