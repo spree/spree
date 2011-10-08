@@ -41,7 +41,7 @@ class Spree::ProductScope < ActiveRecord::Base
 
   before_validation(:on => :create) {
     # Add default empty arguments so scope validates and errors aren't caused when previewing it
-     if name && args = Scopes::Spree::Product.arguments_for_scope_name(name)
+     if name && args = Spree::Scopes::Product.arguments_for_scope_name(name)
       self.arguments ||= ['']*args.length
     end
   }
