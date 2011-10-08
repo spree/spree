@@ -12,7 +12,7 @@ class Spree::User < ActiveRecord::Base
 
   # Creates an anonymous user
   def self.anonymous!
-    User.create
+    create
   end
 
   attr_accessor :password

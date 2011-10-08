@@ -282,9 +282,9 @@ class Spree::Order < ActiveRecord::Base
     if shipment.present?
       shipment.update_attributes(:shipping_method => shipping_method)
     else
-      self.shipments << Shipment.create(:order => self,
-                                        :shipping_method => shipping_method,
-                                        :address => self.ship_address)
+      self.shipments << Spree::Shipment.create(:order => self,
+                                               :shipping_method => shipping_method,
+                                               :address => self.ship_address)
     end
 
   end
@@ -305,7 +305,7 @@ class Spree::Order < ActiveRecord::Base
 
   def creditcards
     creditcard_ids = payments.from_creditcard.map(&:source_id).uniq
-    Creditcard.scoped(:conditions => {:id => creditcard_ids})
+    Spree::Creditcard.scoped(:conditions => {:id => creditcard_ids})
   end
 
   def process_payments!
@@ -316,7 +316,7 @@ class Spree::Order < ActiveRecord::Base
   # Called after transition to complete state when payments will have been processed
   def finalize!
     update_attribute(:completed_at, Time.now)
-    InventoryUnit.assign_opening_inventory(self)
+    Spree::InventoryUnit.assign_opening_inventory(self)
     # lock any optional adjustments (coupon promotions, etc.)
     adjustments.optional.each { |adjustment| adjustment.update_attribute("locked", true) }
     Spree::OrderMailer.confirm_email(self).deliver
@@ -383,7 +383,7 @@ class Spree::Order < ActiveRecord::Base
   private
   def create_user
     self.email = user.email if self.user and not user.anonymous?
-    self.user ||= User.anonymous!
+    self.user ||= Spree::User.anonymous!
   end
 
   # Updates the +shipment_state+ attribute according to the following logic:
