@@ -3,7 +3,7 @@ class Spree::Taxonomy < ActiveRecord::Base
   validates :name, :presence => true
 
   has_many :taxons, :dependent => :destroy
-  has_one :root, :class_name => 'Taxon', :conditions => {:parent_id => nil}
+  has_one :root, :class_name => 'Spree::Taxon', :conditions => {:parent_id => nil}
 
   after_save :set_name
 
@@ -13,7 +13,7 @@ class Spree::Taxonomy < ActiveRecord::Base
     if self.root
       self.root.update_attribute(:name, self.name)
     else
-      self.root = Taxon.create!({ :taxonomy_id => self.id, :name => self.name })
+      self.root = Spree::Taxon.create!({ :taxonomy_id => self.id, :name => self.name })
     end
   end
 
