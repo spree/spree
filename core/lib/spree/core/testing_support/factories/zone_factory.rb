@@ -4,7 +4,7 @@ FactoryGirl.define do
     description { Faker::Lorem.sentence }
     zone_members do |proxy|
       zone = proxy.instance_eval{@instance}
-      Country.find(:all).map{|c| ZoneMember.create({:zoneable => c, :zone => zone})}
+      Spree::Country.find(:all).map{|c| Spree::ZoneMember.create({:zoneable => c, :zone => zone})}
     end
   end
 
@@ -14,6 +14,6 @@ FactoryGirl.define do
     #zone_members do |member|
     #  [ZoneMember.create(:zoneable => Factory(:country) )]
     #end
-    zone_members { [ZoneMember.create(:zoneable => Factory(:country) )] }
+    zone_members { [Spree::ZoneMember.create(:zoneable => Factory(:country) )] }
   end
 end
