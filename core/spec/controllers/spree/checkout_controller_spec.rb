@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::CheckoutController do
-  let(:order) { mock_model(Order, :checkout_allowed? => true, :completed? => false, :update_attributes => true, :payment? => false, :insufficient_stock_lines => []).as_null_object }
+  let(:order) { mock_model(Spree::Order, :checkout_allowed? => true, :completed? => false, :update_attributes => true, :payment? => false, :insufficient_stock_lines => []).as_null_object }
   before { controller.stub :current_order => order, :current_user => nil }
 
   it "should understand checkout routes" do
