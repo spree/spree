@@ -67,21 +67,21 @@ describe Spree::Product do
     context ".master_price_lte" do
       it 'produces correct sql' do
         sql = %Q{SELECT "products".* FROM "products" INNER JOIN "variants" ON "variants"."product_id" = "products"."id" AND variants.is_master = 't' AND variants.deleted_at IS NULL WHERE (variants.price <= 10)}
-        Product.master_price_lte(10).to_sql.gsub('`', '"').sub(/1\b/, "'t'").should == sql.gsub('`', '"').sub(/1\b/, "'t'")
+        Spree::Product.master_price_lte(10).to_sql.gsub('`', '"').sub(/1\b/, "'t'").should == sql.gsub('`', '"').sub(/1\b/, "'t'")
       end
     end
 
     context ".master_price_gte" do
       it 'produces correct sql' do
         sql = %Q{SELECT "products".* FROM "products" INNER JOIN "variants" ON "variants"."product_id" = "products"."id" AND variants.is_master = 't' AND variants.deleted_at IS NULL WHERE (variants.price >= 10)}
-        Product.master_price_gte(10).to_sql.gsub('`', '"').sub(/1\b/, "'t'").should == sql.gsub('"', '"').sub(/1\b/, "'t'")
+        Spree::Product.master_price_gte(10).to_sql.gsub('`', '"').sub(/1\b/, "'t'").should == sql.gsub('"', '"').sub(/1\b/, "'t'")
       end
     end
 
     context ".price_between" do
       it 'produces correct sql' do
         sql = %Q{SELECT "products".* FROM "products" INNER JOIN "variants" ON "variants"."product_id" = "products"."id" AND variants.is_master = 't' AND variants.deleted_at IS NULL WHERE (variants.price BETWEEN 10 AND 20)}
-        Product.price_between(10, 20).to_sql.gsub('`', '"').sub(/1\b/, "'t'").should == sql.gsub('`', '"').sub(/1\b/, "'t'")
+        Spree::Product.price_between(10, 20).to_sql.gsub('`', '"').sub(/1\b/, "'t'").should == sql.gsub('`', '"').sub(/1\b/, "'t'")
       end
     end
 
@@ -89,9 +89,9 @@ describe Spree::Product do
       let(:product) { Factory(:product) }
       it 'produces a properly formed ordered-hash key' do
         expected_key = (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL') ?
-          Product.column_names.map{|col_name| product.send(col_name)} :
+          Spree::Product.column_names.map{|col_name| product.send(col_name)} :
           product.id
-        count_key = Product.group_by_products_id.count.keys.first
+        count_key = Spree::Product.group_by_products_id.count.keys.first
         [expected_key, count_key].each{|val| val.map!{|e| e.is_a?(Time) ? e.strftime("%Y-%m-%d %H:%M:%S") : e} if val.respond_to?(:map!)}
         count_key.should == expected_key
       end
