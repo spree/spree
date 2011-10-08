@@ -353,7 +353,7 @@ class Spree::Order < ActiveRecord::Base
   end
 
   def available_payment_methods
-    @available_payment_methods ||= PaymentMethod.available(:front_end)
+    @available_payment_methods ||= Spree::PaymentMethod.available(:front_end)
   end
 
   def payment_method
