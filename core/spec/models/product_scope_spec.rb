@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ProductScope do
+describe Spree::ProductScope do
 
   context "validations" do
     #it { should have_valid_factory(:product_scope) }
@@ -10,7 +10,7 @@ describe ProductScope do
   context "#check_validity_of_scope" do
     before do
       @pg = Factory(:product_group)
-      @ps = ProductScope.create(:name => 'in_name', :arguments => ['Rails'], :product_group_id => @pg.id)
+      @ps = Spree::ProductScope.create(:name => 'in_name', :arguments => ['Rails'], :product_group_id => @pg.id)
     end
     it 'should be valid' do
       @pg.valid?.should be_true
@@ -21,7 +21,7 @@ describe ProductScope do
   describe "#products" do
     context "with an existing Product scope" do
       it "sends an eponymous message to Product" do
-        Product.should_receive(:master_price_lte).with('100')
+        Spree::Product.should_receive(:master_price_lte).with('100')
         subject.name = 'master_price_lte'
         subject.arguments = ['100']
         subject.products
