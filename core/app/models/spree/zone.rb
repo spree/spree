@@ -1,6 +1,6 @@
 class Spree::Zone < ActiveRecord::Base
   has_many :zone_members, :class_name => "Spree::ZoneMember", :dependent => :destroy
-  has_many :tax_rates, :class_name => "Spree:TaxRate", :dependent => :destroy
+  has_many :tax_rates, :class_name => "Spree::TaxRate", :dependent => :destroy
   has_many :shipping_methods, :class_name => "Spree::ShippingMethod", :dependent => :nullify
 
   validates :name, :presence => true, :uniqueness => true
