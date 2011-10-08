@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ShippingMethod do
+describe Spree::ShippingMethod do
   context 'factory' do
     let(:shipping_method){ Factory :shipping_method }
 
