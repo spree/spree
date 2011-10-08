@@ -100,7 +100,7 @@ class Spree::Product < ActiveRecord::Base
     end
 
     def taxons_name_eq(name)
-      joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+      joins(:taxons).where(Spree::Taxon.arel_table[:name].eq(name))
     end
   end
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
@@ -170,9 +170,9 @@ class Spree::Product < ActiveRecord::Base
 
   def tax_category
     if self[:tax_category_id].nil?
-      TaxCategory.first(:conditions => {:is_default => true})
+      Spree::TaxCategory.first(:conditions => {:is_default => true})
     else
-      TaxCategory.find(self[:tax_category_id])
+      Spree::TaxCategory.find(self[:tax_category_id])
     end
   end
 
@@ -240,7 +240,7 @@ class Spree::Product < ActiveRecord::Base
     if self.tax_category
       tax_category.effective_amount
     else
-      TaxRate.default
+      Spree::TaxRate.default
     end
   end
 
