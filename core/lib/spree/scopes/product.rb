@@ -76,15 +76,15 @@ module Spree
 
 
       ::Spree::Product.scope :price_between, lambda { |low, high|
-        { :joins => :master, :conditions => ["#{Variant.table_name}.price BETWEEN ? AND ?", low, high] }
+        { :joins => :master, :conditions => ["#{Spree::Variant.table_name}.price BETWEEN ? AND ?", low, high] }
       }
 
       ::Spree::Product.scope :master_price_lte, lambda { |price|
-        { :joins => :master, :conditions => ["#{Variant.table_name}.price <= ?", price] }
+        { :joins => :master, :conditions => ["#{Spree::Variant.table_name}.price <= ?", price] }
       }
 
       ::Spree::Product.scope :master_price_gte, lambda { |price|
-        { :joins => :master, :conditions => ["#{Variant.table_name}.price >= ?", price] }
+        { :joins => :master, :conditions => ["#{Spree::Variant.table_name}.price >= ?", price] }
       }
 
 
@@ -94,7 +94,7 @@ module Spree
       #   Product.taxons_id_eq(x)
       #
       ::Spree::Product.scope :in_taxon, lambda {|taxon|
-        { :joins => :taxons, :conditions => ["#{Taxon.table_name}.id IN (?) ", taxon.self_and_descendants.map(&:id)]}
+        { :joins => :taxons, :conditions => ["#{Spree::Taxon.table_name}.id IN (?) ", taxon.self_and_descendants.map(&:id)]}
       }
 
       # This scope selects products in all taxons AND all its descendants
