@@ -1,7 +1,7 @@
-# *ProductScope* is model for storing named scopes with their arguments,
-# to be used with ProductGroups.
+# *Spree::ProductScope* is model for storing named scopes with their arguments,
+# to be used with Spree::ProductGroups.
 #
-# Each product Scope can be applied to Product (or product scope) with #apply_on method
+# Each product Scope can be applied to Spree::Product (or product scope) with #apply_on method
 # which returns new combined named scope
 #
 class Spree::ProductScope < ActiveRecord::Base
@@ -16,22 +16,22 @@ class Spree::ProductScope < ActiveRecord::Base
 
   # Get all products with this scope
   def products
-    if Product.respond_to?(name)
-      Product.send(name, *arguments)
+    if Spree::Product.respond_to?(name)
+      Spree::Product.send(name, *arguments)
     end
   end
 
-  # Applies product scope on Product model or another named scope
+  # Applies product scope on Spree::Product model or another named scope
   def apply_on(another_scope)
     array = *self.arguments
-    if Product.respond_to?(self.name.intern)
+    if Spree::Product.respond_to?(self.name.intern)
       relation2 = if (array.blank? || array.size < 2)
-                      Product.send(self.name.intern, array.try(:first))
+                      Spree::Product.send(self.name.intern, array.try(:first))
                   else
-                      Product.send(self.name.intern, *array)
+                      Spree::Product.send(self.name.intern, *array)
                   end
     else
-      relation2 = Product.metasearch({self.name.intern => array}).relation
+      relation2 = Spree::Product.metasearch({self.name.intern => array}).relation
     end
     unless another_scope.class == ActiveRecord::Relation
       another_scope = another_scope.send(:relation)
@@ -41,15 +41,15 @@ class Spree::ProductScope < ActiveRecord::Base
 
   before_validation(:on => :create) {
     # Add default empty arguments so scope validates and errors aren't caused when previewing it
-     if name && args = Scopes::Product.arguments_for_scope_name(name)
+     if name && args = Scopes::Spree::Product.arguments_for_scope_name(name)
       self.arguments ||= ['']*args.length
     end
   }
 
-  # checks validity of the named scope (if its safe and can be applied on Product)
+  # checks validity of the named scope (if its safe and can be applied on Spree::Product)
   def check_validity_of_scope
-    errors.add(:name, "is not a valid scope name") unless Product.respond_to?(self.name.intern)
-    apply_on(Product).limit(0) != nil
+    errors.add(:name, "is not a valid scope name") unless Spree::Product.respond_to?(self.name.intern)
+    apply_on(Spree::Product).limit(0) != nil
   rescue Exception => e
     unless Rails.env.production?
 
