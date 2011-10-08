@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe User do
+describe Spree::User do
 
   context "validation" do
     it { should have_valid_factory(:user) }
