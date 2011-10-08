@@ -30,7 +30,7 @@ class Spree::Product < ActiveRecord::Base
 
   has_one :master,
     :class_name => 'Variant',
-    :conditions => ["variants.is_master = ? AND variants.deleted_at IS NULL", true]
+    :conditions => ["spree_variants.is_master = ? AND spree_variants.deleted_at IS NULL", true]
 
   delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
   delegate_belongs_to :master, :cost_price if Spree::Variant.table_exists? && Spree::Variant.column_names.include?("cost_price")
@@ -61,7 +61,7 @@ class Spree::Product < ActiveRecord::Base
 
 
   def variant_images
-    Image.find_by_sql("SELECT assets.* FROM assets LEFT JOIN variants ON (variants.id = assets.viewable_id) WHERE (variants.product_id = #{self.id})")
+    Image.find_by_sql("SELECT assets.* FROM assets LEFT JOIN spree_variants ON (spree_variants.id = assets.viewable_id) WHERE (spree_variants.product_id = #{self.id})")
   end
 
 
