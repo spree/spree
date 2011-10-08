@@ -265,10 +265,10 @@ class Spree::Order < ActiveRecord::Base
   # for the vat case adjutments according to default country are created
   def create_tax_charge!
     adjustments.tax.each {|e| e.destroy }
-    matching_rates = TaxRate.match(ship_address)
+    matching_rates = Spree::TaxRate.match(ship_address)
     if matching_rates.empty? and Spree::Config[:show_price_inc_vat]
     # somebody may be able to make the search shorter here , some unremember bug caused this
-      matching_rates = TaxRate.all.select{|rate| # get all rates that apply to default country
+      matching_rates = Spree::TaxRate.all.select{|rate| # get all rates that apply to default country
           rate.zone.country_list.collect{|c| c.id}.include?(Spree::Config[:default_country_id]) }
     end
     matching_rates.each do |rate|
@@ -446,7 +446,7 @@ class Spree::Order < ActiveRecord::Base
         :previous_state => old_payment_state,
         :next_state     => self.payment_state,
         :name           => "payment",
-        :user_id        =>  (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
+        :user_id        =>  (Spree::User.respond_to?(:current) && Spree::User.current && Spree::User.current.id) || self.user_id
       })
     end
   end
