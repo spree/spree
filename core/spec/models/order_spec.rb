@@ -119,13 +119,13 @@ describe Spree::Order do
        end
     end
     context "when current state is address" do
-      let(:sales_tax) { mock_model Calculator::SalesTax, :description => "Sales Tax" }
-      let(:rate) { mock_model TaxRate, :amount => 10, :calculator => sales_tax }
-      let(:rate_1) { mock_model TaxRate, :amount => 15, :calculator => sales_tax } 
+      let(:sales_tax) { mock_model Spree::Calculator::SalesTax, :description => "Sales Tax" }
+      let(:rate) { mock_model Spree::TaxRate, :amount => 10, :calculator => sales_tax }
+      let(:rate_1) { mock_model Spree::TaxRate, :amount => 15, :calculator => sales_tax } 
 
       before do
         order.state = "address"
-        TaxRate.stub :match => [rate, rate_1]
+        Spree::TaxRate.stub :match => [rate, rate_1]
       end
 
       it "should create a tax charge when transitioning to delivery state" do
@@ -144,8 +144,8 @@ describe Spree::Order do
         end
 
         it "should remove an existing tax charge if there is no longer a relevant tax rate" do
-          TaxRate.stub :match => []
-          old_charge.stub :originator => mock_model(TaxRate)
+          Spree::TaxRate.stub :match => []
+          old_charge.stub :originator => mock_model(Spree::TaxRate)
           old_charge.should_receive :destroy
           order.next
         end
@@ -157,7 +157,7 @@ describe Spree::Order do
     context "when current state is delivery" do
       before do
         order.state = "delivery"
-        order.shipping_method = mock_model(ShippingMethod).as_null_object
+        order.shipping_method = mock_model(Spree::ShippingMethod).as_null_object
         order.stub :total => 10.0
       end
 
@@ -553,8 +553,8 @@ describe Spree::Order do
   end
 
   context "rate_hash" do
-    let(:shipping_method_1) { mock_model ShippingMethod, :name => 'Air Shipping', :id => 1, :calculator => mock('calculator') }
-    let(:shipping_method_2) { mock_model ShippingMethod, :name => 'Ground Shipping', :id => 2, :calculator => mock('calculator') }
+    let(:shipping_method_1) { mock_model Spree::ShippingMethod, :name => 'Air Shipping', :id => 1, :calculator => mock('calculator') }
+    let(:shipping_method_2) { mock_model Spree::ShippingMethod, :name => 'Ground Shipping', :id => 2, :calculator => mock('calculator') }
 
     before do
       shipping_method_1.calculator.stub(:compute).and_return(10.0)
@@ -587,9 +587,9 @@ describe Spree::Order do
   end
 
   context "create_tax_charge!" do
-    let(:sales_tax) { mock_model Calculator::SalesTax, :compute => 3, :[]= => nil, :description => "Money for the man" }
-    let(:rate) { TaxRate.create(:amount => 0.05) }
-    let(:rate_1) { TaxRate.create(:amount => 0.15) } 
+    let(:sales_tax) { mock_model Spree::Calculator::SalesTax, :compute => 3, :[]= => nil, :description => "Money for the man" }
+    let(:rate) { Spree::TaxRate.create(:amount => 0.05) }
+    let(:rate_1) { Spree::TaxRate.create(:amount => 0.15) } 
 
     it "should destory all existing tax adjustments" do
       adjustment = mock_model(Adjustment, :amount => 5, :calculator => :sales_tax) 
@@ -601,7 +601,7 @@ describe Spree::Order do
 
     it "should create adjustments with correct labels for matched rates" do
       [rate, rate_1].each {|r| r.stub :calculator => sales_tax }
-      TaxRate.stub :match => [rate, rate_1]
+      Spree::TaxRate.stub :match => [rate, rate_1]
 
       order.create_tax_charge!
       order.adjustments.tax.size.should == 2
@@ -615,10 +615,10 @@ describe Spree::Order do
       before { Spree::Config.set :show_price_inc_vat => true }
 
       it "should use default countries rate when none match address" do
-        TaxRate.stub :match => []
-        rate.stub_chain :zone, :country_list => [mock_model(Country, :id => Spree::Config[:default_country_id])]
+        Spree::TaxRate.stub :match => []
+        rate.stub_chain :zone, :country_list => [mock_model(Spree::Country, :id => Spree::Config[:default_country_id])]
         rate_1.stub_chain :zone, :country_list => []
-        TaxRate.stub :all => [rate, rate_1]
+        Spree::TaxRate.stub :all => [rate, rate_1]
 
         rate.should_receive(:create_adjustment).at_least(:once)
         rate_1.should_not_receive(:create_adjustment)
