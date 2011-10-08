@@ -55,12 +55,12 @@ class Spree::LineItem < ActiveRecord::Base
       return true unless self.order.completed?
 
       if self.new_record?
-        InventoryUnit.increase(self.order, self.variant, self.quantity)
+        Spree::InventoryUnit.increase(self.order, self.variant, self.quantity)
       elsif old_quantity = self.changed_attributes["quantity"]
         if old_quantity < self.quantity
-          InventoryUnit.increase(self.order, self.variant, (self.quantity - old_quantity))
+          Spree::InventoryUnit.increase(self.order, self.variant, (self.quantity - old_quantity))
         elsif old_quantity > self.quantity
-          InventoryUnit.decrease(self.order, self.variant, (old_quantity - self.quantity))
+          Spree::InventoryUnit.decrease(self.order, self.variant, (old_quantity - self.quantity))
         end
       end
 
@@ -69,7 +69,7 @@ class Spree::LineItem < ActiveRecord::Base
     def remove_inventory
       return true unless self.order.completed?
 
-      InventoryUnit.decrease(self.order, self.variant, self.quantity)
+      Spree::InventoryUnit.decrease(self.order, self.variant, self.quantity)
     end
 
     def update_order
