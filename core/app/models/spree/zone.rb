@@ -51,7 +51,7 @@ class Spree::Zone < ActiveRecord::Base
   end
 
   def self.match(address)
-    Zone.all.select {|zone| zone.include?(address)}
+    all.select {|zone| zone.include?(address)}
   end
 
   # convenience method for returning the countries contained within a zone (different then the countries method which only
