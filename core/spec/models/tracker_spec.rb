@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Tracker do
+describe Spree::Tracker do
 
   context "validations" do
     it { should have_valid_factory(:tracker) }
