@@ -1,18 +1,18 @@
 require 'spec_helper'
 
-describe Payment do
+describe Spree::Payment do
 
   context 'validation' do
     it { should have_valid_factory(:payment) }
   end
 
-  let(:order) { mock_model(Order, :update! => nil, :payments => []) }
-  let(:gateway) { Gateway::Bogus.new(:environment => 'test', :active => true) }
+  let(:order) { mock_model(Spree::Order, :update! => nil, :payments => []) }
+  let(:gateway) { Spree::Gateway::Bogus.new(:environment => 'test', :active => true) }
   let(:card) { Factory(:creditcard) }
 
   before(:each) do
-    @payment = Payment.new(:order => order)
-    @payment.source = mock_model(Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil, :changed_for_autosave? => false)
+    @payment = Spree::Payment.new(:order => order)
+    @payment.source = mock_model(Spree::Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil, :changed_for_autosave? => false)
     @payment.stub!(:valid?).and_return(true)
     @payment.stub!(:check_payments).and_return(nil)
 
@@ -93,7 +93,7 @@ describe Payment do
 
   context "#save" do
     it "should call order#update!" do
-      payment = Payment.create(:amount => 100, :order => order)
+      payment = Spree::Payment.create(:amount => 100, :order => order)
       order.should_receive(:update!)
       payment.save
     end
@@ -103,7 +103,7 @@ describe Payment do
 
       it "should create a payment profile" do
         gateway.should_receive :create_profile
-        payment = Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
+        payment = Spree::Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
       end
     end
 
@@ -112,7 +112,7 @@ describe Payment do
 
       it "should not create a payment profile" do
         gateway.should_not_receive :create_profile
-        payment = Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
+        payment = Spree::Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
       end
     end
   end
