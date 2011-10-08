@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Variant do
-  let(:variant) { Variant.new(:count_on_hand => 95) }
+describe Spree::Variant do
+  let(:variant) { Spree::Variant.new(:count_on_hand => 95) }
 
   context "validations" do
     it { should have_valid_factory(:variant) }
@@ -15,7 +15,7 @@ describe Variant do
 
       context "and count is increased" do
         before { variant.inventory_units.stub(:with_state).and_return([]) }
-        let(:inventory_unit) { mock_model(InventoryUnit, :state => "backordered") }
+        let(:inventory_unit) { mock_model(Spree::InventoryUnit, :state => "backordered") }
 
         it "should change count_on_hand to given value" do
           variant.on_hand = 100
