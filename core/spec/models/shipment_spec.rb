@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-describe Shipment do
+describe Spree::Shipment do
 
   context 'validations' do
     it { should have_valid_factory(:shipment) }
   end
 
-  let(:order) { mock_model Order, :backordered? => false }
-  let(:shipping_method) { mock_model ShippingMethod, :calculator => mock('calculator') }
-  let(:shipment) { Shipment.new :order => order, :state => 'pending', :shipping_method => shipping_method }
+  let(:order) { mock_model Spree::Order, :backordered? => false }
+  let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
+  let(:shipment) { Spree::Shipment.new :order => order, :state => 'pending', :shipping_method => shipping_method }
 
-  let(:charge) { mock_model Adjustment, :amount => 10, :source => shipment }
+  let(:charge) { mock_model Spree::Adjustment, :amount => 10, :source => shipment }
 
   context "#cost" do
     it "should return the amount of any shipping charges that it originated" do
@@ -35,7 +35,7 @@ describe Shipment do
 
     shared_examples_for "pending if backordered" do
       it "should have a state of pending if backordered" do
-        shipment.stub(:inventory_units => [mock_model(InventoryUnit, :backordered? => true)] )
+        shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)] )
         shipment.should_receive(:update_attribute_without_callbacks).with("state", "pending")
         shipment.update!(order)
       end
