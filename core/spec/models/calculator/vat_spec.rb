@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Calculator::Vat do
+describe Spree::Calculator::Vat do
   let(:tax_category) { Factory(:tax_category, :tax_rates => []) }
   let(:vat_rate) { Factory(:tax_rate, :amount => 0.15, :tax_category_id => tax_category.id) }
-  let(:calculator) { Calculator::Vat.new(:calculable => vat_rate) }
+  let(:calculator) { Spree::Calculator::Vat.new(:calculable => vat_rate) }
 
   context ".compute" do
-    let(:order) { mock_model Order, :line_items => [Factory(:line_item, :price => 20.0), Factory(:line_item, :price => 40.0)], :adjustments => [] }
+    let(:order) { mock_model Spree::Order, :line_items => [Factory(:line_item, :price => 20.0), Factory(:line_item, :price => 40.0)], :adjustments => [] }
 
     context "when rate does not belong to the default tax category" do
       before { vat_rate.tax_category.stub(:is_default => false) }
@@ -97,7 +97,7 @@ describe Calculator::Vat do
     it "should calculate correctly" do
       variant.product.stub :effective_tax_rate => BigDecimal.new("0.2")
 
-      Calculator::Vat.calculate_tax_on(variant).to_f.should == 4.0
+      Spree::Calculator::Vat.calculate_tax_on(variant).to_f.should == 4.0
     end
   end
 
@@ -107,7 +107,7 @@ describe Calculator::Vat do
     it "should calculate correctly" do
       product.stub :effective_tax_rate => BigDecimal.new("0.2")
 
-      Calculator::Vat.calculate_tax_on(product).to_f.should == 2.0
+      Spree::Calculator::Vat.calculate_tax_on(product).to_f.should == 2.0
     end
   end
 end
