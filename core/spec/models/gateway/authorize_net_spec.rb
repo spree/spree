@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Gateway::AuthorizeNet do
-  let (:gateway) { Gateway::AuthorizeNet.new }
+describe Spree::Gateway::AuthorizeNet do
+  let (:gateway) { Spree::Gateway::AuthorizeNet.new }
 
   describe "options" do
     it "should include :test => true in  when :test_mode is true" do
