@@ -11,13 +11,13 @@ describe Spree::Creditcard do
   before(:each) do
 
     @order = Factory(:order)
-    @creditcard = Creditcard.new
-    @payment = Payment.create(:amount => 100, :order => @order)
+    @creditcard = Spree::Creditcard.new
+    @payment = Spree::Payment.create(:amount => 100, :order => @order)
 
     @success_response = mock('gateway_response', :success? => true, :authorization => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
 
-    @payment_gateway = mock_model(PaymentMethod,
+    @payment_gateway = mock_model(Spree::PaymentMethod,
       :payment_profiles_supported? => true,
       :authorize => @success_response,
       :purchase => @success_response,
