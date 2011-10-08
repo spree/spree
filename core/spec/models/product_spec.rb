@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Product do
+describe Spree::Product do
 
   context "shoulda validations" do
     it { should belong_to(:tax_category) }
@@ -137,13 +137,13 @@ describe Product do
     let(:product) { Factory(:product) }
 
     it 'should check tax category for applicable rates' do
-      TaxCategory.any_instance.should_receive(:effective_amount)
+      Spree::TaxCategory.any_instance.should_receive(:effective_amount)
       product.effective_tax_rate
     end
 
     it 'should return default tax rate when no tax category is defined' do
       product.update_attribute(:tax_category, nil)
-      product.effective_tax_rate.should == TaxRate.default
+      product.effective_tax_rate.should == Spree::TaxRate.default
     end
 
   end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ProductProperty do
+describe Spree::ProductProperty do
 
   context "validations" do
     it { should have_valid_factory(:product_property) }
