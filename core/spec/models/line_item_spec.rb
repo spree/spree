@@ -177,6 +177,5 @@ describe Spree::LineItem do
       line_item.quantity = 6
       line_item.save.should be_true
     end
-
   end
 end
