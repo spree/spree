@@ -334,7 +334,7 @@ class Spree::Order < ActiveRecord::Base
 
   def available_shipping_methods(display_on = nil)
     return [] unless ship_address
-    ShippingMethod.all_available(self, display_on)
+    Spree::ShippingMethod.all_available(self, display_on)
   end
 
   def rate_hash
