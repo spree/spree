@@ -15,13 +15,13 @@ describe Spree::CheckoutController do
     it "should redirect to the cart path unless checkout_allowed?" do
       order.stub :checkout_allowed? => false
       get :edit, { :state => "delivery" }
-      response.should redirect_to cart_path
+      response.should redirect_to(cart_path)
     end
 
     it "should redirect to the cart path if current_order is nil" do
       controller.stub!(:current_order).and_return(nil)
       get :edit, { :state => "delivery" }
-      response.should redirect_to cart_path
+      response.should redirect_to(cart_path)
     end
 
     it "should change to the requested state" do
@@ -144,9 +144,9 @@ describe Spree::CheckoutController do
   end
 
   context "When last inventory item has been purchased" do
-    let(:product) { mock_model(Product, :name => "Amazing Object") }
-    let(:variant) { mock_model(Variant, :on_hand => 0) }
-    let(:line_item) { mock_model LineItem, :insufficient_stock? => true }
+    let(:product) { mock_model(Spree::Product, :name => "Amazing Object") }
+    let(:variant) { mock_model(Spree::Variant, :on_hand => 0) }
+    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
     let(:order) { Factory(:order) }
 
     before do
