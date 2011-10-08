@@ -89,7 +89,7 @@ describe Spree::Shipment do
     after { Spree::Config.set :track_inventory_levels => true }
 
     it "should not use the line items from order when track_inventory_levels is false" do
-      line_items = [mock_model(LineItem)]
+      line_items = [mock_model(Spree::LineItem)]
       order.stub :complete? => true
       order.stub :line_items => line_items
       shipment.line_items.should == line_items

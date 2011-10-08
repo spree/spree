@@ -171,12 +171,12 @@ class Spree::Creditcard < ActiveRecord::Base
     record_log payment, response
 
     if response.success?
-      Payment.create(:order => payment.order,
-                    :source => payment,
-                    :payment_method => payment.payment_method,
-                    :amount => amount.abs * -1,
-                    :response_code => response.authorization,
-                    :state => 'completed')
+      Spree::Payment.create(:order => payment.order,
+                            :source => payment,
+                            :payment_method => payment.payment_method,
+                            :amount => amount.abs * -1,
+                            :response_code => response.authorization,
+                            :state => 'completed')
     else
       gateway_error(response)
     end

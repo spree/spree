@@ -33,7 +33,7 @@ class Spree::Taxon < ActiveRecord::Base
     if parent_id.nil?
       self.permalink = name.to_url if self.permalink.blank?
     else
-      parent_taxon = Taxon.find(parent_id)
+      parent_taxon = Spree::Taxon.find(parent_id)
       self.permalink = [parent_taxon.permalink, (self.permalink.blank? ? name.to_url : self.permalink.split("/").last)].join('/')
     end
   end

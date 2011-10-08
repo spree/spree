@@ -57,7 +57,7 @@ class Spree::ReturnAuthorization < ActiveRecord::Base
     record = true
     while record
       random = "RMA#{Array.new(9){rand(9)}.join}"
-      record = ReturnAuthorization.find(:first, :conditions => ["number = ?", random])
+      record = Spree::ReturnAuthorization.find(:first, :conditions => ["number = ?", random])
     end
     self.number = random
   end
