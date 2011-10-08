@@ -181,19 +181,19 @@ describe Spree::Order do
 
   context "#create" do
     it "should assign an order number" do
-      order = Order.create
+      order = Spree::Order.create
       order.number.should_not be_nil
     end
   end
 
   context "#finalize!" do
-    let(:order) { Order.create }
+    let(:order) { Spree::Order.create }
     it "should set completed_at" do
       order.should_receive :completed_at=
       order.finalize!
     end
     it "should sell inventory units" do
-      InventoryUnit.should_receive(:assign_opening_inventory).with(order)
+      Spree::InventoryUnit.should_receive(:assign_opening_inventory).with(order)
       order.finalize!
     end
     it "should change the shipment state to ready if order is paid"
@@ -201,7 +201,7 @@ describe Spree::Order do
     after { Spree::Config.set :track_inventory_levels => true }
     it "should not sell inventory units if track_inventory_levels is false" do
       Spree::Config.set :track_inventory_levels => false
-      InventoryUnit.should_not_receive(:sell_units)
+      Spree::InventoryUnit.should_not_receive(:sell_units)
       order.finalize!
     end
 
