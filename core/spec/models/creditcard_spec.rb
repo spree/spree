@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Creditcard do
+describe Spree::Creditcard do
 
   context 'validation' do
     it { should have_valid_factory(:creditcard) }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Country do
+describe Spree::Country do
   context "shoulda validations" do
     it {should have_many(:states) }
     it {should have_one(:zone_member) }
