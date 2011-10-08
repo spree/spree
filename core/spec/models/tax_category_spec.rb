@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe TaxCategory do
+describe Spree::TaxCategory do
   context "shoulda validations" do
     it { should have_many(:tax_rates) }
     it { should validate_presence_of(:name) }
@@ -41,12 +41,12 @@ describe TaxCategory do
 
     it "should return nil when address supplied is not included in zone" do
       rate.zone.stub(:include? => false)
-      category.effective_amount(Address.new).should be_nil
+      category.effective_amount(Spree::Address.new).should be_nil
     end
 
     it "should return amount when address supplied is included in zone" do
       rate.zone.stub(:include? => true)
-      category.effective_amount(Address.new).should == rate.amount
+      category.effective_amount(Spree::Address.new).should == rate.amount
     end
 
   end
