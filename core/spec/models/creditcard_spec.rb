@@ -321,7 +321,7 @@ describe Spree::Creditcard do
 
     context "when response is sucesssful" do
       it "should create an offsetting payment" do
-        Payment.should_receive(:create)
+        Spree::Payment.should_receive(:create)
         @creditcard.credit(@payment)
       end
       context "resulting payment" do
@@ -346,7 +346,7 @@ describe Spree::Creditcard do
     context "when response is unsucessfull" do
       it "should not create a payment" do
         @payment_gateway.stub(:credit).and_return(@fail_response)
-        Payment.should_not_receive(:create)
+        Spree::Payment.should_not_receive(:create)
         lambda {
           @creditcard.credit(@payment)
         }.should raise_error(Spree::GatewayError)
@@ -354,24 +354,28 @@ describe Spree::Creditcard do
     end
   end
 
-  let(:creditcard) { Creditcard.new }
+  let(:creditcard) { Spree::Creditcard.new }
 
   context "#can_capture?" do
     it "should be true if payment state is pending" do
-      payment = mock_model(Payment, :state => 'pending', :created_at => Time.now)
+      payment = mock_model(Spree::Payment, :state => 'pending', :created_at => Time.now)
       creditcard.can_capture?(payment).should be_true
     end
 
     (PAYMENT_STATES - ['pending']).each do |state|
       it "should be false if payment state is #{state}" do
-        payment = mock_model(Payment, :state => state, :created_at => Time.now)
+        payment = mock_model(Spree::Payment, :state => state, :created_at => Time.now)
         creditcard.can_capture?(payment).should be_false
       end
     end
   end
 
   context "when transaction is more than 12 hours old" do
-    let(:payment) { mock_model(Payment, :state => "completed", :created_at => Time.now - 14.hours, :amount => 99.00, :credit_allowed => 100.00, :order => mock_model(Order, :payment_state => 'credit_owed')) }
+    let(:payment) { mock_model(Spree::Payment, :state => "completed",
+                                               :created_at => Time.now - 14.hours,
+                                               :amount => 99.00,
+                                               :credit_allowed => 100.00,
+                                               :order => mock_model(Spree::Order, :payment_state => 'credit_owed')) }
 
     context "#can_credit?" do
 
@@ -415,7 +419,7 @@ describe Spree::Creditcard do
   end
 
   context "when transaction is less than 12 hours old" do
-    let(:payment) { mock_model(Payment, :state => 'completed') }
+    let(:payment) { mock_model(Spree::Payment, :state => 'completed') }
 
     context "#can_void?" do
       (PAYMENT_STATES - ['void']).each do |state|
@@ -449,7 +453,7 @@ describe Spree::Creditcard do
     it "should only validate on create" do
       @creditcard.attributes = valid_creditcard_attributes
       @creditcard.save
-      @creditcard = Creditcard.find(@creditcard.id)
+      @creditcard = Spree::Creditcard.find(@creditcard.id)
       @creditcard.should be_valid
     end
   end
@@ -458,7 +462,7 @@ describe Spree::Creditcard do
     before do
       @creditcard.attributes = valid_creditcard_attributes
       @creditcard.save
-      @creditcard = Creditcard.find(@creditcard.id)
+      @creditcard = Spree::Creditcard.find(@creditcard.id)
     end
 
     it "should not actually store the number" do
