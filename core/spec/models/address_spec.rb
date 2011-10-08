@@ -50,8 +50,8 @@ describe Spree::Address do
     context "full state name is in state_name and country does contain that state" do
       let(:address) { Factory(:address, :state => nil, :state_name => 'maryland', :country => state.country)}
       before do
-        State.delete_all
-        Country.delete_all
+        Spree::State.delete_all
+        Spree::Country.delete_all
         @state = Factory(:state)
         @address = Factory(:address, :state => nil, :state_name => @state.name, :country => @state.country)
       end
@@ -64,8 +64,8 @@ describe Spree::Address do
 
     context "state abbr is in state_name and country does contain that state" do
         before do
-          State.delete_all
-          Country.delete_all
+          Spree::State.delete_all
+          Spree::Country.delete_all
           @state = Factory(:state)
           @address = Factory(:address, :state => nil, :state_name => @state.abbr, :country => @state.country)
         end
