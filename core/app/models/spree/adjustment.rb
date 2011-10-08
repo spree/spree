@@ -21,14 +21,14 @@
 #  becomes ineligible so it might be reinstated.
 #
 class Spree::Adjustment < ActiveRecord::Base
-  belongs_to :order
+  belongs_to :order, :class_name => "Spree::Order"
   belongs_to :source, :polymorphic => true
   belongs_to :originator, :polymorphic => true
 
   validates :label, :presence => true
   validates :amount, :numericality => true
 
-  scope :tax, lambda { where(:originator_type => "TaxRate") }
+  scope :tax, lambda { where(:originator_type => "Spree::TaxRate") }
   scope :shipping, lambda { where(:label => I18n.t(:shipping)) }
   scope :optional, where(:mandatory => false)
   scope :eligible, where(:eligible => true)
