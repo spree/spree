@@ -16,7 +16,13 @@ role :app, domain
 role :db,  domain, :primary => true
 
 set :repository,  "git://github.com/spree/spree-guides.git"
-set :branch,      "master"
+
+if exists?(:edge)
+  set :branch, "master"
+else
+  set :branch, "0-70-stable"
+end
+
 set :deploy_to,   "/data/#{application}"
 set :deploy_via,  :remote_cache
 set :use_sudo,    false
