@@ -33,9 +33,9 @@ class Spree::ProductGroup < ActiveRecord::Base
   before_save :set_permalink
   after_save :update_memberships
 
-  has_and_belongs_to_many :cached_products, :class_name => "Product"
+  has_and_belongs_to_many :cached_products, :class_name => "Spree::Product"
   # name
-  has_many :product_scopes
+  has_many :product_scopes, :class_name => "Spree::ProductScope"
   accepts_nested_attributes_for :product_scopes
 
   # Testing utility: creates new *ProductGroup* from search permalink url.
@@ -50,7 +50,7 @@ class Spree::ProductGroup < ActiveRecord::Base
     else                        return(nil)
     end
 
-    if pg_name && opg = ProductGroup.find_by_permalink(pg_name)
+    if pg_name && opg = Spree::ProductGroup.find_by_permalink(pg_name)
       pg = new.from_product_group(opg)
     elsif attrs
       attrs = url.split("/")
@@ -75,7 +75,7 @@ class Spree::ProductGroup < ActiveRecord::Base
   def from_route(attrs)
     self.order_scope = attrs.pop if attrs.length % 2 == 1
     attrs.each_slice(2) do |scope|
-      next unless Product.respond_to?(scope.first)
+      next unless Spree::Product.respond_to?(scope.first)
       add_scope(scope.first, scope.last.split(","))
     end
     self
@@ -91,7 +91,7 @@ class Spree::ProductGroup < ActiveRecord::Base
 
   def add_scope(scope_name, arguments=[])
     if scope_name.to_s !~ /eval|send|system|[^a-z0-9_!?]/
-      self.product_scopes << ProductScope.new({
+      self.product_scopes << Spree::ProductScope.new({
           :name => scope_name.to_s,
           :arguments => [*arguments]
         })
@@ -106,7 +106,7 @@ class Spree::ProductGroup < ActiveRecord::Base
     # from first nested_scope so we have to apply ordering FIRST.
     # see #2253 on rails LH
     base_product_scope = scopish
-    if use_order && !self.order_scope.blank? && Product.respond_to?(self.order_scope.intern)
+    if use_order && !self.order_scope.blank? && Spree::Product.respond_to?(self.order_scope.intern)
       base_product_scope = base_product_scope.send(self.order_scope)
     end
 
@@ -118,13 +118,13 @@ class Spree::ProductGroup < ActiveRecord::Base
 
   # returns chain of named scopes generated from order scope and product scopes.
   def dynamic_products(use_order = true)
-    apply_on(Product.group_by_products_id, use_order)
+    apply_on(Spree::Product.group_by_products_id, use_order)
   end
 
   # Does the final ordering if requested
   # TODO: move the order stuff out of the above - is superfluous now
   def products(use_order = true)
-    cached_group = Product.in_cached_group(self)
+    cached_group = Spree::Product.in_cached_group(self)
     if cached_group.limit(1).blank?
       dynamic_products(use_order)
     elsif !use_order
@@ -139,7 +139,7 @@ class Spree::ProductGroup < ActiveRecord::Base
   end
 
   def include?(product)
-    res = apply_on(Product.id_equals(product.id), false)
+    res = apply_on(Spree::Product.id_equals(product.id), false)
     res.count > 0
   end
 
@@ -172,20 +172,20 @@ class Spree::ProductGroup < ActiveRecord::Base
 
   def update_memberships
     # wipe everything directly to avoid expensive in-rails sorting
-    ActiveRecord::Base.connection.execute "DELETE FROM product_groups_products WHERE product_group_id = #{self.id}"
+    ActiveRecord::Base.connection.execute "DELETE FROM spree_product_groups_products WHERE product_group_id = #{self.id}"
 
     # and generate the new group entirely in SQL
-    ActiveRecord::Base.connection.execute "INSERT INTO product_groups_products #{dynamic_products(false).scoped(:select => "products.id, #{self.id}").to_sql}"
+    ActiveRecord::Base.connection.execute "INSERT INTO spree_product_groups_products #{dynamic_products(false).scoped(:select => "spree_products.id, #{self.id}").to_sql}"
   end
 
   def generate_preview(size = Spree::Config[:admin_pgroup_preview_size])
-    count = self.class.count_by_sql ["SELECT COUNT(*) FROM product_groups_products WHERE product_groups_products.product_group_id = ?", self]
+    count = self.class.count_by_sql ["SELECT COUNT(*) FROM spree_product_groups_products WHERE spree_product_groups_products.product_group_id = ?", self]
 
     return count, products.limit(size)
   end
 
   def to_s
-    "<ProductGroup" + (id && "[#{id}]").to_s + ":'#{to_url}'>"
+    "<Spree::ProductGroup" + (id && "[#{id}]").to_s + ":'#{to_url}'>"
   end
 
   def to_param
