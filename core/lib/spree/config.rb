@@ -14,7 +14,7 @@ module Spree
     class << self
       def instance
         return @configuration if @configuration
-        return nil unless ActiveRecord::Base.connection.tables.include?('configurations')
+        return nil unless ActiveRecord::Base.connection.tables.include?('spree_configurations')
         @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
         @configuration
       end
