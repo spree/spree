@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe ReturnAuthorization do
+describe Spree::ReturnAuthorization do
 
   context 'validation' do
     it  { should have_valid_factory(:return_authorization) }
   end
 
-  let(:inventory_unit) { InventoryUnit.create(:variant => mock_model(Variant)) }
-  let(:order) { mock_model(Order, :inventory_units => [inventory_unit], :awaiting_return? => false) }
-  let(:return_authorization) { ReturnAuthorization.new(:order => order) }
+  let(:inventory_unit) { Spree::InventoryUnit.create(:variant => mock_model(Spree::Variant)) }
+  let(:order) { mock_model(Spree::Order, :inventory_units => [inventory_unit], :awaiting_return? => false) }
+  let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order) }
 
   before { inventory_unit.stub(:shipped?).and_return(true) }
 
@@ -41,7 +41,7 @@ describe ReturnAuthorization do
     end
 
     context "on rma that already has inventory_units" do
-      let(:inventory_unit_2)  { InventoryUnit.create(:variant => inventory_unit.variant) }
+      let(:inventory_unit_2)  { Spree::InventoryUnit.create(:variant => inventory_unit.variant) }
       before { order.stub(:inventory_units => [inventory_unit, inventory_unit_2], :awaiting_return? => true) }
 
       it "should associate inventory unit" do
@@ -75,7 +75,7 @@ describe ReturnAuthorization do
     before  do
       inventory_unit.stub(:state => "shipped", :return! => true)
       return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
-      Adjustment.stub(:create)
+      Spree::Adjustment.stub(:create)
       order.stub(:update!)
     end
 
@@ -85,7 +85,7 @@ describe ReturnAuthorization do
     end
 
     it "should add credit for specified amount" do
-      Adjustment.should_receive(:create).with(:source => return_authorization, :order_id => order.id, :amount => -20, :label => I18n.t("rma_credit"))
+      Spree::Adjustment.should_receive(:create).with(:source => return_authorization, :order_id => order.id, :amount => -20, :label => I18n.t("rma_credit"))
       return_authorization.receive!
     end
 
