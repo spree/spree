@@ -1,24 +1,24 @@
 require 'spec_helper'
 
-describe Order do
+describe Spree::Order do
 
   context 'validation' do
     it { should have_valid_factory(:order) }
   end
 
   let(:order) { Factory(:order) }
-  let(:gateway) { Gateway::Bogus.new(:name => "Credit Card", :active => true) }
+  let(:gateway) { Spree::Gateway::Bogus.new(:name => "Credit Card", :active => true) }
 
   before do
-    Gateway.stub :current => gateway
-    User.stub(:current => mock_model(User, :id => 123))
+    Spree::Gateway.stub :current => gateway
+    Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
   end
 
   context "factory" do
     it "should change the Orders count by 1 after factory has been executed" do
       lambda do
         Factory(:order_with_totals)
-      end.should change(Order, :count).by(1)
+      end.should change(Spree::Order, :count).by(1)
     end
     context 'line_item' do
       let(:order) { Factory(:order_with_totals) }
@@ -26,16 +26,16 @@ describe Order do
         order.line_items.size.should == 1
       end
       it "should be attached to last line_item created " do
-        order.line_items.first.id.should == LineItem.last.id
+        order.line_items.first.id.should == Spree::LineItem.last.id
       end
     end
   end
 
   context "#products" do
     it "should return ordered products" do
-      variant1 = mock_model(Variant, :product => "product1")
-      variant2 = mock_model(Variant, :product => "product2")
-      line_items = [mock_model(LineItem, :variant => variant1), mock_model(LineItem, :variant => variant2)]
+      variant1 = mock_model(Spree::Variant, :product => "product1")
+      variant2 = mock_model(Spree::Variant, :product => "product2")
+      line_items = [mock_model(Spree::LineItem, :variant => variant1), mock_model(Spree::LineItem, :variant => variant2)]
       order.stub(:line_items => line_items)
       order.products.should == ['product1', 'product2']
     end
@@ -48,7 +48,7 @@ describe Order do
     end
 
     context "when associated with a registered user" do
-      let(:order) { Order.new }
+      let(:order) { Spree::Order.new }
       let(:user) { Factory(:user, :email => "user@registered.com") }
       before {
         order.user = user
