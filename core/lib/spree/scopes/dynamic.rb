@@ -1,6 +1,6 @@
-# This module is extended by ProductScope
 module Spree
   module Scopes
+    # This module is extended by ProductScope
     module Dynamic
       module_function
 
@@ -23,13 +23,11 @@ module Spree
             scopes << ProductScope.new({:name => "price_between",
                                         :arguments => [ all_prices[l*(x+1)+1], all_prices[l*(x+2)] ] })
           end
-
           scopes << ProductScope.new({:name => "master_price_gte", :arguments => [all_prices[l*(ranges-1)+1]] })
         end
 
         scopes
       end
-
     end
   end
 end
