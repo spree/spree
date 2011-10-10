@@ -183,6 +183,5 @@ module Spree
         :conds  => nil	# not needed
       }
     end
-
   end
 end
