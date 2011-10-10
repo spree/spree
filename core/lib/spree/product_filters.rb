@@ -1,50 +1,50 @@
-# THIS FILE SHOULD BE OVER-RIDDEN IN YOUR SITE EXTENSION!
-#   the exact code probably won't be useful, though you're welcome to modify and reuse
-#   the current contents are mainly for testing and documentation
-
-# To override this file...
-#   1) Make a copy of it in your sites local /lib folder
-#   2) Add it to the config load path, or require it in an initializer, e.g...
-#      
-#      # config/initializers/spree.rb
-#      require 'product_filters'
-#
-
-# set up some basic filters for use with products
-#
-# Each filter has two parts
-#  * a parametrized named scope which expects a list of labels
-#  * an object which describes/defines the filter
-#
-# The filter description has three components
-#  * a name, for displaying on pages
-#  * a named scope which will 'execute' the filter
-#  * a mapping of presentation labels to the relevant condition (in the context of the named scope)
-#  * an optional list of labels and values (for use with object selection - see taxons examples below)
-#
-# The named scopes here have a suffix '_any', following SearchLogic's convention for a
-# scope which returns results which match any of the inputs. This is purely a convention,
-# but might be a useful reminder.
-#
-# When creating a form, the name of the checkbox group for a filter F should be
-# the name of F's scope with [] appended, eg "price_range_any[]", and for
-# each label you should have a checkbox with the label as its value. On submission,
-# Rails will send the action a hash containing (among other things) an array named
-# after the scope whose values are the active labels.
-#
-# SearchLogic will then convert this array to a call to the named scope with the array
-# contents, and the named scope will build a query with the disjunction of the conditions
-# relating to the labels, all relative to the scope's context.
-#
-# The details of how/when filters are used is a detail for specific models (eg products
-# or taxons), eg see the taxon model/controller.
-
-# See specific filters below for concrete examples.
-
-# This module is included by Taxon. In development mode that inclusion does not
-# happen until Taxon class is loaded. Ensure that Taxon class is loaded before
-# you try something like Product.price_range_any
 module Spree
+  # THIS FILE SHOULD BE OVER-RIDDEN IN YOUR SITE EXTENSION!
+  #   the exact code probably won't be useful, though you're welcome to modify and reuse
+  #   the current contents are mainly for testing and documentation
+
+  # To override this file...
+  #   1) Make a copy of it in your sites local /lib folder
+  #   2) Add it to the config load path, or require it in an initializer, e.g...
+  #      
+  #      # config/initializers/spree.rb
+  #      require 'product_filters'
+  #
+
+  # set up some basic filters for use with products
+  #
+  # Each filter has two parts
+  #  * a parametrized named scope which expects a list of labels
+  #  * an object which describes/defines the filter
+  #
+  # The filter description has three components
+  #  * a name, for displaying on pages
+  #  * a named scope which will 'execute' the filter
+  #  * a mapping of presentation labels to the relevant condition (in the context of the named scope)
+  #  * an optional list of labels and values (for use with object selection - see taxons examples below)
+  #
+  # The named scopes here have a suffix '_any', following SearchLogic's convention for a
+  # scope which returns results which match any of the inputs. This is purely a convention,
+  # but might be a useful reminder.
+  #
+  # When creating a form, the name of the checkbox group for a filter F should be
+  # the name of F's scope with [] appended, eg "price_range_any[]", and for
+  # each label you should have a checkbox with the label as its value. On submission,
+  # Rails will send the action a hash containing (among other things) an array named
+  # after the scope whose values are the active labels.
+  #
+  # SearchLogic will then convert this array to a call to the named scope with the array
+  # contents, and the named scope will build a query with the disjunction of the conditions
+  # relating to the labels, all relative to the scope's context.
+  #
+  # The details of how/when filters are used is a detail for specific models (eg products
+  # or taxons), eg see the taxon model/controller.
+
+  # See specific filters below for concrete examples.
+
+  # This module is included by Taxon. In development mode that inclusion does not
+  # happen until Taxon class is loaded. Ensure that Taxon class is loaded before
+  # you try something like Product.price_range_any
   module ProductFilters
 
     # Example: filtering by price
@@ -147,7 +147,6 @@ module Spree
         }
       end
     end
-
 
     # Provide filtering on the immediate children of a taxon
     #
