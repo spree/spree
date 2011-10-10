@@ -1,4 +1,4 @@
-User.class_eval do
+Spree::User.class_eval do
 
   def clear_api_key!
     self.update_attribute(:authentication_token, "")

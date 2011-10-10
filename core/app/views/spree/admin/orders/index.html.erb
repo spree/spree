@@ -60,7 +60,7 @@
       </div>
 
       <p><%= label_tag nil, t(:status) %><br />
-      <%= f.select :state_equals, Order.state_machines[:state].states.collect {|s| [t("order_state.#{s.name}"), s.value]}, {:include_blank => true} %></p>
+      <%= f.select :state_equals, Spree::Order.state_machines[:state].states.collect {|s| [t("order_state.#{s.name}"), s.value]}, {:include_blank => true} %></p>
 
       <p>
         <%= label_tag nil, t(:order_number) %><br />
