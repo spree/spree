@@ -1,4 +1,4 @@
-Admin::UsersController.class_eval do
+Spree::Admin::UsersController.class_eval do
 
   before_filter :load_roles, :only => [:edit, :new, :update, :create, :generate_api_key, :clear_api_key]
 
