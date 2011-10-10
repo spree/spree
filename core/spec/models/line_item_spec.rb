@@ -6,9 +6,9 @@ describe LineItem do
     it { should have_valid_factory(:line_item) }
   end
 
-  let(:variant) { mock_model(Variant, :count_on_hand => 95, :price => 9.99) }
+  let(:variant)   { mock_model(Variant, :count_on_hand => 95, :price => 9.99) }
   let(:line_item) { line_item = LineItem.new(:quantity => 5) }
-  let(:order) { mock_model(Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true, :update! => true) }
+  let(:order)     { mock_model(Order, :line_items => [line_item], :inventory_units => [], :shipments => [], :completed? => true, :update! => true, :canceled? => false) }
 
   before do
     line_item.stub(:order => order, :variant => variant, :new_record? => false) 
@@ -157,4 +157,18 @@ describe LineItem do
 
   end
 
+  context "after shipment made" do
+    before do
+      shipping_method = mock_model ShippingMethod, :calculator => mock('calculator')
+      shipment = Shipment.new :order => order, :state => 'shipped', :shipping_method => shipping_method
+      inventory_units = 5.times.map { InventoryUnit.new :variant => line_item.variant }
+      order.stub(:shipments => [shipment])
+      shipment.stub(:inventory_units => inventory_units)
+    end
+
+    it "should not allow quantity to be adjusted lower than already shipped units" do
+      line_item.quantity = 4
+      line_item.save.should be_false
+    end
+  end
 end
