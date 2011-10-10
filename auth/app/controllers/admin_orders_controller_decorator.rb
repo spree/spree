@@ -1,4 +1,4 @@
-Admin::OrdersController.class_eval do
+Spree::Admin::OrdersController.class_eval do
   before_filter :check_authorization
 
   private
