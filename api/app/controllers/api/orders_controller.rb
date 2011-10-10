@@ -4,7 +4,7 @@ class Api::OrdersController < Api::BaseController
   private
 
     def find_resource
-      Order.find_by_param(params[:id])
+      Spree::Order.find_by_param(params[:id])
     end
 
     def object_serialization_options
