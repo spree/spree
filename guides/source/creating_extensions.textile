@@ -109,7 +109,7 @@ h4. Publishing Your Source
 
 The first order of business is to get your extension on "Github":http://github.com where everybody can see it.  Most importantly, you will want to allow others to have access to the source code.  Github provides a convenient (and free) place to store your source code along with the ability to track issues and accept code patches.
 
-INFO: It is convention to use the +spree-+ naming convention for your Github repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the Github project would be named +spree-foofah+ and the gem would be +spree_fofoah+.
+INFO: It is convention to use the +spree-+ naming convention for your Github repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the Github project would be named +spree-foofah+ and the gem would be +spree_foofah+.
 
 h4. Publishing Your Gem
 
