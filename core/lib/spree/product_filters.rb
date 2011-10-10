@@ -148,7 +148,6 @@ module Spree
       end
     end
 
-
     # Provide filtering on the immediate children of a taxon
     #
     # This doesn't fit the pattern of the examples above, so there's a few changes.
