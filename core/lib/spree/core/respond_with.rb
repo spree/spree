@@ -18,47 +18,40 @@ module ActionController
   end
 end
 
-module Spree
-  module Core
-    module RespondWith
-      extend ActiveSupport::Concern
 
-      included do
-        cattr_accessor :spree_responders
-        self.spree_responders = {}
-      end
+module SpreeRespondWith
+  extend ActiveSupport::Concern
 
-      module ClassMethods
-        def clear_overrides!
-          self.spree_responders = {}
+  included do
+    cattr_accessor :spree_responders
+    self.spree_responders = {}
+  end
+
+  module ClassMethods
+    def respond_override(options={})
+
+      unless options.blank?
+        action_name = options.keys.first
+        action_value = options.values.first
+
+        if action_name.blank? || action_value.blank?
+          raise ArgumentError, "invalid values supplied #{options.inspect}"
         end
 
-        def respond_override(options={})
+        format_name = action_value.keys.first
+        format_value = action_value.values.first
 
-          unless options.blank?
-            action_name = options.keys.first
-            action_value = options.values.first
-
-            if action_name.blank? || action_value.blank?
-              raise ArgumentError, "invalid values supplied #{options.inspect}"
-            end
-
-            format_name = action_value.keys.first
-            format_value = action_value.values.first
-
-            if format_name.blank? || format_value.blank?
-              raise ArgumentError, "invalid values supplied #{options.inspect}"
-            end
-
-            if format_value.is_a?(Proc)
-              options = {action_name.to_sym => {format_name.to_sym => {:success => format_value}}}
-            end
-
-            self.spree_responders.rmerge!(self.name.intern => options)
-          end
+        if format_name.blank? || format_value.blank?
+          raise ArgumentError, "invalid values supplied #{options.inspect}"
         end
-      end
 
+        if format_value.is_a?(Proc)
+          options = {action_name.to_sym => {format_name.to_sym => {:success => format_value}}}
+        end
+
+        self.spree_responders.rmerge!(self.name.intern => options)
+      end
     end
   end
+
 end
