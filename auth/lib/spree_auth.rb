@@ -1,4 +1,4 @@
-require 'spree_core'
+require 'spree/core'
 require 'devise'
 require 'cancan'
 
