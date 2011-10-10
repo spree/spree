@@ -43,7 +43,7 @@ This approach relies on an executable script inside the installed gem.  You can 
 
 NOTE: See the "Source Code":source_code.html#building-the-gem-from-the-source guide which explains how to build the gem from the source.
 
-You probably also need to create a test application which is necessary for using the Rails generators or running the tests.
+You probably also need to create a test application (inside the extension) which is necessary for using the Rails generators or running the tests.
 
 <shell>
 $ cd foofah
