@@ -51,6 +51,7 @@ require 'spree/core/spree_respond_with'
 require 'spree/core/ssl_requirement'
 require 'spree/core/preferences/model_hooks'
 require 'spree/core/preferences/preference_definition'
+require 'spree/core/controller_helpers'
 require 'spree/store_helpers'
 require 'spree/file_utilz'
 require 'spree/calculated_adjustments'
@@ -61,8 +62,6 @@ require 'spree/mail_settings'
 require 'spree/mail_interceptor'
 require 'spree/redirect_legacy_product_url'
 require 'spree/middleware/seo_assist'
-
-require 'spree_base' # added 11-3 JBD
 
 silence_warnings do
   require 'spree/core/authorize_net_cim_hack'
