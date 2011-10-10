@@ -60,7 +60,8 @@ require 'spree/preference_access'
 require 'spree/config'
 require 'spree/mail_settings'
 require 'spree/mail_interceptor'
-require 'spree/redirect_legacy_product_url'
+
+require 'spree/middleware/redirect_legacy_product_url'
 require 'spree/middleware/seo_assist'
 
 silence_warnings do
