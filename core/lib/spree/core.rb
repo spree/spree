@@ -89,7 +89,3 @@ end
 ActiveSupport.on_load(:action_view) do
   include Spree::StoreHelpers
 end
-
-module SpreeCore
-  
-end
