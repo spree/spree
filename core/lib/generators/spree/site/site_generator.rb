@@ -58,8 +58,8 @@ Disallow: /users
 
     def configure_application
       application <<-APP
-    config.middleware.use "Spree::SeoAssist"
-    config.middleware.use "Spree::RedirectLegacyProductUrl"
+    config.middleware.use "Spree::Middleware::SeoAssist"
+    config.middleware.use "Spree::Middleware::RedirectLegacyProductUrl"
 
     config.to_prepare do
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
