@@ -14,7 +14,7 @@ module Spree
 
     before_save :touch_product
 
-    include ::Spree::Scopes::Variant
+    include Spree::Scopes::Variant
 
     # default variant scope only lists non-deleted variants
     scope :active, where(:deleted_at => nil)
