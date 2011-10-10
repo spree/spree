@@ -33,6 +33,12 @@ You can create a new extension using the +spree+ command.  This requires that yo
 $ spree extension foofah
 </shell>
 
+If you're inside of a Rails application that uses Spree, you may have to prefix this command with +bundle exec+ so that the correct version of Spree is used:
+
+<shell>
+$ bundle exec spree extension foofah
+</shell>
+
 This approach relies on an executable script inside the installed gem.  You can always build and install the edge gem using the source if you want to work with the latest and greatest version of the extension generator.
 
 NOTE: See the "Source Code":source_code.html#building-the-gem-from-the-source guide which explains how to build the gem from the source.
