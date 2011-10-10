@@ -1,11 +1,7 @@
 module Spree
   class OrdersController < BaseController
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
-<<<<<<< HEAD
     helper 'spree/products'
-=======
-    helper :products
->>>>>>> namespace2
 
     respond_to :html
 
@@ -19,15 +15,9 @@ module Spree
       if @order.update_attributes(params[:order])
         @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
         fire_event('spree.order.contents_changed')
-<<<<<<< HEAD
         redirect_to cart_path
       else
         render :edit
-=======
-        respond_with(@order) { |format| format.html { redirect_to cart_path } }
-      else
-        respond_with(@order)
->>>>>>> namespace2
       end
     end
 
