@@ -107,7 +107,7 @@ module Spree
       end
     end
 
-    # Example: a parametrized filter
+    # Example: a parameterized filter
     #   The filter above may show brands which aren't applicable to the current taxon,
     #   so this one only shows the brands that are relevant to a particular taxon and
     #   its descendants.
@@ -126,7 +126,6 @@ module Spree
     #
     #   The brand-finding code can be simplified if a few more named scopes were added to
     #   the product properties model.
-
     if Spree::Property.table_exists? && @@brand_property
       Spree::Product.scope :selective_brand_any, lambda {|opts| Spree::Product.brand_any(opts) }
 
