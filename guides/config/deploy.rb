@@ -45,7 +45,7 @@ namespace :deploy do
     if exists?(:edge)
       run "ln -nfs #{shared_path}/config/robots.txt #{release_path}/output/robots.txt"
     else
-      #no symlinks for normal guides?
+      run "ln -nfs #{shared_path}/legacy #{release_path}/output/legacy"
     end
   end
 end
