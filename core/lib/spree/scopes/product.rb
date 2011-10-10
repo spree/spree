@@ -74,7 +74,6 @@ module Spree
         {:conditions => args.map {|c| "(#{c})"}.join(" OR ")}
       }
 
-
       ::Spree::Product.scope :price_between, lambda { |low, high|
         { :joins => :master, :conditions => ["#{Spree::Variant.table_name}.price BETWEEN ? AND ?", low, high] }
       }
@@ -241,7 +240,7 @@ module Spree
       end
 
       def self.arguments_for_scope_name(name)
-        if group = SCOPES.detect{|k,v| v[name.to_sym]}
+        if group = Scopes::Product::SCOPES.detect{|k,v| v[name.to_sym]}
           group[1][name.to_sym]
         end
       end

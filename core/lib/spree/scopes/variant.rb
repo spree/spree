@@ -1,7 +1,6 @@
 module Spree
   module Scopes
     module Variant
-
       #FIXME WARNING tested only under sqlite and postgresql
       Spree::Variant.scope :descend_by_popularity, lambda{
           order('COALESCE((SELECT COUNT(*) FROM  line_items GROUP BY line_items.variant_id HAVING line_items.variant_id = variants.id), 0) DESC')

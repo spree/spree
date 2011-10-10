@@ -4,10 +4,10 @@ class Spree::Calculator::Vat < Spree::Calculator
     I18n.t("vat")
   end
 
-  def self.calculate_tax_on(product_or_variant)
-    product = product_or_variant.try(:product) || product_or_variant
-
-    (product_or_variant.price * product.effective_tax_rate).round(2, BigDecimal::ROUND_HALF_UP)
+  def self.calculate_tax_on(taxable)
+    # taxable may be product or variant
+    taxable = taxable.product if taxable.respond_to?(:product)
+    (taxable.price * taxable.effective_tax_rate).round(2, BigDecimal::ROUND_HALF_UP)
   end
 
   # computes vat for line_items associated with order, and tax rate and

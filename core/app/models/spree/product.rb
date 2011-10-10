@@ -74,7 +74,7 @@ class Spree::Product < ActiveRecord::Base
 
   alias :options :product_option_types
 
-  include ::Spree::Scopes::Product
+  include Spree::Scopes::Product
 
   #RAILS3 TODO -  scopes are duplicated here and in scopes/product.rb - can we DRY it up?
   # default product scope only lists available and non-deleted products

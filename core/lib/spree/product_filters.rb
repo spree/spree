@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # THIS FILE SHOULD BE OVER-RIDDEN IN YOUR SITE EXTENSION!
 #   the exact code probably won't be useful, though you're welcome to modify and reuse
 #   the current contents are mainly for testing and documentation
@@ -45,6 +46,55 @@
 # happen until Taxon class is loaded. Ensure that Taxon class is loaded before
 # you try something like Product.price_range_any
 module Spree
+=======
+module Spree
+  # THIS FILE SHOULD BE OVER-RIDDEN IN YOUR SITE EXTENSION!
+  #   the exact code probably won't be useful, though you're welcome to modify and reuse
+  #   the current contents are mainly for testing and documentation
+
+  # To override this file...
+  #   1) Make a copy of it in your sites local /lib folder
+  #   2) Add it to the config load path, or require it in an initializer, e.g...
+  #      
+  #      # config/initializers/spree.rb
+  #      require 'product_filters'
+  #
+
+  # set up some basic filters for use with products
+  #
+  # Each filter has two parts
+  #  * a parametrized named scope which expects a list of labels
+  #  * an object which describes/defines the filter
+  #
+  # The filter description has three components
+  #  * a name, for displaying on pages
+  #  * a named scope which will 'execute' the filter
+  #  * a mapping of presentation labels to the relevant condition (in the context of the named scope)
+  #  * an optional list of labels and values (for use with object selection - see taxons examples below)
+  #
+  # The named scopes here have a suffix '_any', following SearchLogic's convention for a
+  # scope which returns results which match any of the inputs. This is purely a convention,
+  # but might be a useful reminder.
+  #
+  # When creating a form, the name of the checkbox group for a filter F should be
+  # the name of F's scope with [] appended, eg "price_range_any[]", and for
+  # each label you should have a checkbox with the label as its value. On submission,
+  # Rails will send the action a hash containing (among other things) an array named
+  # after the scope whose values are the active labels.
+  #
+  # SearchLogic will then convert this array to a call to the named scope with the array
+  # contents, and the named scope will build a query with the disjunction of the conditions
+  # relating to the labels, all relative to the scope's context.
+  #
+  # The details of how/when filters are used is a detail for specific models (eg products
+  # or taxons), eg see the taxon model/controller.
+
+  # See specific filters below for concrete examples.
+
+  # This module is included by Taxon. In development mode that inclusion does not
+  # happen until Taxon class is loaded. Ensure that Taxon class is loaded before
+  # you try something like Product.price_range_any
+>>>>>>> namespace2
   module ProductFilters
 
     # Example: filtering by price
@@ -56,10 +106,17 @@ module Spree
     # If user checks off three different price ranges then the argument passed to
     # below scope would be something like ["$10 - $15", "$15 - $18", "$18 - $20"]
     #
+<<<<<<< HEAD
     Spree::Product.scope :price_range_any,
       lambda {|*opts|
         conds = opts.map {|o| Spree::ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
         Spree::Product.scoped(:joins => :master).conditions_any(conds)
+=======
+    Product.scope :price_range_any,
+      lambda {|*opts|
+        conds = opts.map {|o| ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
+        Product.scoped(:joins => :master).conditions_any(conds)
+>>>>>>> namespace2
       }
 
     def ProductFilters.price_filter
@@ -89,15 +146,24 @@ module Spree
     #   being blank: note that this relies on with_property doing a left outer join
     #   rather than an inner join.
 
+<<<<<<< HEAD
     if Spree::Property.table_exists? && @@brand_property = Spree::Property.find_by_name("brand")
       Spree::Product.scope :brand_any,
+=======
+    if Property.table_exists? && @@brand_property = Property.find_by_name("brand")
+      Product.scope :brand_any,
+>>>>>>> namespace2
         lambda {|*opts|
           conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
           Product.with_property("brand").conditions_any(conds)
         }
 
       def ProductFilters.brand_filter
+<<<<<<< HEAD
         brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).compact.uniq
+=======
+        brands = ProductProperty.where(:property_id => @@brand_property).map(&:value).compact.uniq
+>>>>>>> namespace2
         conds  = Hash[*brands.map {|b| [b, "product_properties.value = '#{b}'"]}.flatten]
         { :name   => "Brands",
           :scope  => :brand_any,
@@ -127,6 +193,7 @@ module Spree
     #   The brand-finding code can be simplified if a few more named scopes were added to
     #   the product properties model.
 
+<<<<<<< HEAD
     if Spree::Property.table_exists? && @@brand_property
       Spree::Product.scope :selective_brand_any, lambda {|opts| Spree::Product.brand_any(opts) }
 
@@ -136,6 +203,17 @@ module Spree
         end
         all_brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).uniq
         scope = Spree::ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
+=======
+    if Property.table_exists? && @@brand_property
+      Product.scope :selective_brand_any, lambda {|opts| Product.brand_any(opts) }
+
+      def ProductFilters.selective_brand_filter(taxon = nil)
+        if taxon.nil?
+          taxon = Taxonomy.first.root
+        end
+        all_brands = ProductProperty.where(:property_id => @@brand_property).map(&:value).uniq
+        scope = ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
+>>>>>>> namespace2
                                 scoped(:joins      => {:product => :taxons},
                                        :conditions => ["taxons.id in (?)", [taxon] + taxon.descendants])
         brands = scope.map {|p| p.value}
@@ -162,7 +240,11 @@ module Spree
     # This scope selects products in any of the active taxons or their children.
     #
     def ProductFilters.taxons_below(taxon)
+<<<<<<< HEAD
       return Spree::ProductFilters.all_taxons if taxon.nil?
+=======
+      return ProductFilters.all_taxons if taxon.nil?
+>>>>>>> namespace2
       { :name   => "Taxons under " + taxon.name,
         :scope  => :taxons_id_in_tree_any,
         :labels => taxon.children.sort_by(&:position).map {|t| [t.name, t.id]},
@@ -177,7 +259,11 @@ module Spree
     #
     # idea: expand the format to allow nesting of labels?
     def ProductFilters.all_taxons
+<<<<<<< HEAD
       taxons = Spree::Taxonomy.all.map {|t| [t.root] + t.root.descendants }.flatten
+=======
+      taxons = Taxonomy.all.map {|t| [t.root] + t.root.descendants }.flatten
+>>>>>>> namespace2
       { :name   => "All taxons",
         :scope  => :taxons_id_equals_any,
         :labels => taxons.sort_by(&:name).map {|t| [t.name, t.id]},
@@ -186,4 +272,8 @@ module Spree
     end
 
   end
+<<<<<<< HEAD
 end
+=======
+end
+>>>>>>> namespace2

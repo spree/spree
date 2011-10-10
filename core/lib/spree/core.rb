@@ -51,7 +51,8 @@ require 'spree/core/spree_respond_with'
 require 'spree/core/ssl_requirement'
 require 'spree/core/preferences/model_hooks'
 require 'spree/core/preferences/preference_definition'
-require 'store_helpers'
+require 'spree/core/controller_helpers'
+require 'spree/store_helpers'
 require 'spree/file_utilz'
 require 'spree/calculated_adjustments'
 require 'spree/current_order'
@@ -59,10 +60,9 @@ require 'spree/preference_access'
 require 'spree/config'
 require 'spree/mail_settings'
 require 'spree/mail_interceptor'
-require 'redirect_legacy_product_url'
-require 'middleware/seo_assist'
 
-require 'spree_base' # added 11-3 JBD
+require 'spree/middleware/redirect_legacy_product_url'
+require 'spree/middleware/seo_assist'
 
 silence_warnings do
   require 'spree/core/authorize_net_cim_hack'
@@ -88,7 +88,7 @@ if defined?(ActionView)
 end
 
 ActiveSupport.on_load(:action_view) do
-  include StoreHelpers
+  include Spree::StoreHelpers
 end
 
 module SpreeCore

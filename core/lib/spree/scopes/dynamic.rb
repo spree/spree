@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 # This module is extended by ProductScope
 module Spree
   module Scopes
+=======
+module Spree
+  module Scopes
+# This module is extended by ProductScope
+>>>>>>> namespace2
     module Dynamic
       module_function
 
@@ -29,7 +35,10 @@ module Spree
 
         scopes
       end
+<<<<<<< HEAD
 
+=======
+>>>>>>> namespace2
     end
   end
 end
