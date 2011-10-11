@@ -625,5 +625,24 @@ describe Order do
         order.create_tax_charge!
       end
     end
+    
+    context "scope :by_variant and :by_variants" do
+      it "should return the Orders associated with a given variant" do
+        variant1 = mock_model(Variant, :product => "product1", :id => 1)
+        variant2 = mock_model(Variant, :product => "product2", :id => 2)
+        line_items = [mock_model(LineItem, :variant => variant1), mock_model(LineItem, :variant => variant2)]
+        order.stub(:line_items => line_items)
+        Order.by_variant(variant1).count.should == 1
+      end
+      it "should return the Orders associated with a given array of variants" do
+        variant1 = mock_model(Variant, :product => "product1", :id => 1, :sku => "ABC 123")
+        variant2 = mock_model(Variant, :product => "product2", :id => 2, :sku => "ABC 1234")
+        variants = [variant1,variant2]
+        line_items = [mock_model(LineItem, :variant => variant1), mock_model(LineItem, :variant => variant2)]
+        order.stub(:line_items => line_items)
+        Order.by_variants(variants).count.should == 2
+      end
+    end
+    
   end
 end
