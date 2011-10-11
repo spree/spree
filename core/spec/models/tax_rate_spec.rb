@@ -3,7 +3,19 @@ require 'spec_helper'
 describe TaxRate do
 
   context 'validation' do
+    let(:zone) { Zone.new }
+
     it { should have_valid_factory(:tax_rate) }
+
+    it "should validate presence of amount" do
+      rate = TaxRate.new :zone => zone, :amount => nil
+      rate.save.should be_false
+    end
+
+    it "should validate presence of zone" do
+      rate = TaxRate.new :zone => nil, :amount => 1
+      rate.save.should be_false
+    end
   end
 
   context "match" do
