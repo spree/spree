@@ -2,11 +2,7 @@ module Spree
   class ProductsController < BaseController
     HTTP_REFERER_REGEXP = /^https?:\/\/[^\/]+\/t\/([a-z0-9\-\/]+)$/
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
-<<<<<<< HEAD
     helper 'spree/taxons'
-=======
-    helper :taxons
->>>>>>> namespace2
 
     respond_to :html
 
