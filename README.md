@@ -49,7 +49,7 @@ Peformance
 
 Rails 3.1 introduced a concept known as the asset pipeline.  Unfortunately it results in poor performance when running your site in development mode (production mode is unaffected.)  You may want to run the following command when testing locally in development mode
 
-    $ bundle exec rake assets:precompile RAILS_ENV=development RAILS_ASSETS_NONDIGEST=true
+    $ bundle exec rake assets:precompile:nondigest
 
 Using the precompile rake task in development will prevent any changes to asset files from being automatically included in when you reload the page. You must re-run the precompile task for changes to become available.
 
