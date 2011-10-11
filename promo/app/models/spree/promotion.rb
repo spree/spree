@@ -1,4 +1,4 @@
-class Promotion < Activator
+class Spree::Promotion < Spree::Activator
 
 
   MATCH_POLICIES = %w(all any)
@@ -12,7 +12,7 @@ class Promotion < Activator
     alias_method field, "preferred_#{field}"
     alias_method "#{field}=", "preferred_#{field}="
   end
-  
+
   has_many :promotion_rules, :foreign_key => 'activator_id', :autosave => true, :dependent => :destroy
   alias_method :rules, :promotion_rules
   accepts_nested_attributes_for :promotion_rules
