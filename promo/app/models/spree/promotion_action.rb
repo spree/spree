@@ -1,6 +1,6 @@
 # Base class for all types of promotion action.
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
-class PromotionAction < ActiveRecord::Base
+class Spree::PromotionAction < ActiveRecord::Base
   belongs_to :promotion, :foreign_key => 'activator_id'
 
   scope :of_type, lambda {|t| {:conditions => {:type => t}}}
