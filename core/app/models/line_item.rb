@@ -88,7 +88,7 @@ class LineItem < ActiveRecord::Base
 
     def stock_availability
       return if sufficient_stock?
-      errors.add(:quantity, "can't be greater than available stock.")
+      errors.add(:quantity, I18n.t("validation.cannot_be_greater_than_available_stock"))
     end
 
     def quantity_no_less_than_shipped

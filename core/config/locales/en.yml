@@ -958,6 +958,7 @@ en:
   tax_categories: "Tax Categories"
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: "Tax Category"
+  tax_category_error: "You should configure exactly one default category with your countries default tax rate"
   tax_rates: "Tax Rates"
   tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Tax Settings"
@@ -1025,6 +1026,8 @@ en:
     is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
     must_be_int: "must be an integer"
     must_be_non_negative: "must be a non-negative value"
+    cannot_be_greater_than_available_stock: "can't be greater than available stock."
+    does_not_match_outstanding_balance: "does not match outstanding balance"
   value: Value
   variant: Variant
   variants: Variants
