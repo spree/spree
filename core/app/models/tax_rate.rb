@@ -3,6 +3,7 @@ class TaxRate < ActiveRecord::Base
   belongs_to :tax_category
 
   validates :amount, :presence => true, :numericality => true
+  validates :zone,   :presence => true
 
   calculated_adjustments :default => Calculator::SalesTax
   scope :by_zone, lambda { |zone| where("zone_id = ?", zone)}
