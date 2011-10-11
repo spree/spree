@@ -17,7 +17,7 @@ module Spree
         destination_url = send("#{options[:route]}_path")
 
         ## if more than one form, it'll capitalize all words
-        label_with_first_letters_capitalized = t(options[:label], :default => options[:label]).gsub(/\b\w/){$&.upcase}
+        label_with_first_letters_capitalized = t(options[:label], :default => options[:label]).gsub(/\b\w/){|c| c.upcase}
 
         link = link_to(label_with_first_letters_capitalized, destination_url)
 
@@ -160,14 +160,13 @@ module Spree
         </tr>
         ).html_safe
       end
-  
+
       def configurations_sidebar_menu_item(link_text, url, options = {})
         options.merge!(:class => url.include?(controller.controller_name) ? 'active' : nil)
         content_tag(:li, options) do
           link_to(link_text, url)
         end
       end
-
     end
   end
 end
