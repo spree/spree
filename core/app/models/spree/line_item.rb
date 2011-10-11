@@ -85,12 +85,12 @@ class Spree::LineItem < ActiveRecord::Base
     end
 
     # Validation
-    
+
     def stock_availability
       return if sufficient_stock?
       errors.add(:quantity, "can't be greater than available stock.")
     end
-   
+
     def quantity_no_less_than_shipped
       already_shipped = order.shipments.reduce(0) { |acc,s| acc + s.inventory_units.count { |i| i.variant == variant } }
       unless quantity >= already_shipped
