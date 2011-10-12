@@ -32,5 +32,4 @@ class Spree::Api::ShipmentsController < Spree::Api::BaseController
     def eager_load_associations
       [:shipping_method, :address, { :inventory_units => [:variant] }]
     end
-
 end

@@ -170,5 +170,4 @@ class Spree::Api::BaseController < Spree::BaseController
         render :text => "Access Denied\n", :status => 401
       end
     end
-
 end

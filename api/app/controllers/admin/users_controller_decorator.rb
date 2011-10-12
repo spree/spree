@@ -1,5 +1,4 @@
 Spree::Admin::UsersController.class_eval do
-
   before_filter :load_roles, :only => [:edit, :new, :update, :create, :generate_api_key, :clear_api_key]
 
   def generate_api_key
@@ -15,5 +14,4 @@ Spree::Admin::UsersController.class_eval do
     end
     redirect_to edit_admin_user_path(@user)
   end
-
 end
