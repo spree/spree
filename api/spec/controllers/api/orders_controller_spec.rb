@@ -1,7 +1,5 @@
-require 'spec_helper.rb'
+require 'spec_helper'
 
-# Its difficult to test the Api::BaseController in the abstract since rspec insists on having legit routes, etc.
-# So we'll test against Api::OrdersController instead as a reprentative controller
 describe Api::OrdersController do
   context "authenticated" do
     # Admins are capable of doing everything with the API
