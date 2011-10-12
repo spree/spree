@@ -1,7 +1,7 @@
-class Admin::PromotionActionsController < Admin::BaseController
+class Spree::Admin::PromotionActionsController < Spree::Admin::BaseController
   def create
-    @calculators = Promotion::Actions::CreateAdjustment.calculators
-    @promotion = Promotion.find(params[:promotion_id])
+    @calculators = Spree::Promotion::Actions::CreateAdjustment.calculators
+    @promotion = Spree::Promotion.find(params[:promotion_id])
     @promotion_action = params[:promotion_action][:type].constantize.new(params[:promotion_action])
     @promotion_action.promotion = @promotion
     if @promotion_action.save
@@ -14,7 +14,7 @@ class Admin::PromotionActionsController < Admin::BaseController
   end
 
   def destroy
-    @promotion = Promotion.find(params[:promotion_id])
+    @promotion = Spree::Promotion.find(params[:promotion_id])
     @promotion_action = @promotion.promotion_actions.find(params[:id])
     if @promotion_action.destroy
       flash[:notice] = I18n.t(:successfully_removed, :resource => I18n.t(:promotion_action))
