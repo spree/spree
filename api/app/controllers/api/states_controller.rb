@@ -3,6 +3,6 @@ class Api::StatesController < Api::BaseController
 
   private
   def parent
-    @parent ||= Country.find(params[:country_id])
+    @parent ||= Spree::Country.find(params[:country_id])
   end
 end
