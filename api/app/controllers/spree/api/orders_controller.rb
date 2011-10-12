@@ -1,4 +1,4 @@
-class Api::OrdersController < Api::BaseController
+class Spree::Api::OrdersController < Spree::Api::BaseController
   before_filter :access_denied, :except => [:index, :show]
 
   private
