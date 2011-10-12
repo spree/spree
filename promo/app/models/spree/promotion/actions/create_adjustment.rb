@@ -1,4 +1,4 @@
-class Promotion::Actions::CreateAdjustment < PromotionAction
+class Spree::Promotion::Actions::CreateAdjustment < Spree::PromotionAction
 
   calculated_adjustments
 

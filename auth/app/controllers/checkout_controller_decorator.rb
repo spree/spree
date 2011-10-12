@@ -1,4 +1,4 @@
-CheckoutController.class_eval do
+Spree::CheckoutController.class_eval do
   before_filter :check_authorization
   before_filter :check_registration, :except => [:registration, :update_registration]
 

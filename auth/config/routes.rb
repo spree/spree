@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   devise_for :user,
+             :class_name => "Spree::User",
              :controllers => { :sessions => 'user_sessions',
                                :registrations => 'user_registrations',
                                :passwords => "user_passwords" },

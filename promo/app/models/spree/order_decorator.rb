@@ -1,4 +1,4 @@
-Order.class_eval do
+Spree::Order.class_eval do
 
   attr_accessible :coupon_code
   attr_accessor :coupon_code

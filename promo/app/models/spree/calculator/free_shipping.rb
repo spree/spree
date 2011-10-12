@@ -1,4 +1,4 @@
-class Calculator::FreeShipping < ::Calculator
+class Spree::Calculator::FreeShipping < ::Spree::Calculator
 
   def self.description
     I18n.t("free_shipping")

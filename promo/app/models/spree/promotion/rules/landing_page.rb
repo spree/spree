@@ -1,5 +1,5 @@
 # A rule to limit a promotion to a specific user.
-class Promotion::Rules::LandingPage < PromotionRule
+class Spree::Promotion::Rules::LandingPage < Spree::PromotionRule
 
   preference :path, :string
 

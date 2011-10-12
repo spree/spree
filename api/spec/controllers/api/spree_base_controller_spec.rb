@@ -3,7 +3,7 @@ require 'spec_helper.rb'
 # Its difficult to test the Api::BaseController in the abstract since rspec insists on having legit routes, etc.
 # So we'll test against Api::OrdersController instead as a reprentative controller
 describe Api::OrdersController do
-  let(:user) { mock_model(User, :has_role? => true) }
+  let(:user) { mock_model(Spree::User, :has_role? => true) }
   before { controller.stub :current_user => user }
 
   shared_examples_for "access granted" do

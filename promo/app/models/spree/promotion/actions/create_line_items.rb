@@ -1,4 +1,4 @@
-class Promotion::Actions::CreateLineItems < PromotionAction
+class Spree::Promotion::Actions::CreateLineItems < Spree::PromotionAction
 
   has_many :promotion_action_line_items, :foreign_key => 'promotion_action_id'
 

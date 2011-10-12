@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe User do
+describe Spree::User do
 
-  let(:user) { User.new }
+  let(:user) { Spree::User.new }
 
   context "#generate_api_key!" do
     it "should set authentication_token to a 20 char SHA" do

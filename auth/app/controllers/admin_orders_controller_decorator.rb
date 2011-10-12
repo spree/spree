@@ -1,4 +1,4 @@
-Admin::OrdersController.class_eval do
+Spree::Admin::OrdersController.class_eval do
   before_filter :check_authorization
 
   private
@@ -7,7 +7,7 @@ Admin::OrdersController.class_eval do
     load_order
     session[:access_token] ||= params[:token]
 
-    resource = @order || Order
+    resource = @order || Spree::Order
     action = params[:action].to_sym
 
     authorize! action, resource, session[:access_token]
