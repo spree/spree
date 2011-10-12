@@ -17,5 +17,4 @@ class Spree::Api::LineItemsController < Spree::Api::BaseController
     def object_serialization_options
       collection_serialization_options
     end
-
 end

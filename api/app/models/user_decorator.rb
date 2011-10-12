@@ -16,5 +16,4 @@ Spree::User.class_eval do
     def secure_digest(*args)
       Digest::SHA1.hexdigest(args.flatten.join('--'))
     end
-
 end

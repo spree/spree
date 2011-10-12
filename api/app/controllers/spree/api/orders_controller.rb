@@ -15,5 +15,4 @@ class Spree::Api::OrdersController < Spree::Api::BaseController
           }
       }
     end
-
 end

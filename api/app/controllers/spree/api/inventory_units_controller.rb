@@ -15,5 +15,4 @@ class Spree::Api::InventoryUnitsController < Spree::Api::BaseController
     def eager_load_associations
       [:variant]
     end
-
 end
