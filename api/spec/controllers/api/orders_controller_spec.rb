@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::OrdersController do
+describe Spree::Api::OrdersController do
   context "authenticated" do
     # Admins are capable of doing everything with the API
     context "admin" do
