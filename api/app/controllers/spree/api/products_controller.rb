@@ -1,4 +1,4 @@
-class Api::ProductsController < Api::BaseController
+class Spree::Api::ProductsController < Spree::Api::BaseController
   include Spree::Search
 
   private
