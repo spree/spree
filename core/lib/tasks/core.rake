@@ -1,5 +1,5 @@
 require 'active_record'
-require 'custom_fixtures'
+require 'spree/custom_fixtures'
 
 namespace :db do
   desc "Loads a specified fixture using rake db:load_file[filename.rb]"
