@@ -1,4 +1,4 @@
-class Api::ShipmentsController < Api::BaseController
+class Spree::Api::ShipmentsController < Spree::Api::BaseController
   private
     def parent
       if params[:order_id]
