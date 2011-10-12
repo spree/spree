@@ -2,8 +2,8 @@ World(Rack::Test::Methods)
 
 Given /^I am a valid API user$/ do
   @user = Factory(:user)
-  unless admin_role = Role.find_by_name('admin')
-    admin_role = Role.create(:name => 'admin')
+  unless admin_role = Spree::Role.find_by_name('admin')
+    admin_role = Spree::Role.create(:name => 'admin')
   end
 
   unless @user.roles(&:name).include?('admin')
