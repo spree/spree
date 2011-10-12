@@ -29,6 +29,10 @@ module Spree
       end
 
       module ClassMethods
+        def clear_overrides!
+          self.spree_responders = {}
+        end
+
         def respond_override(options={})
 
           unless options.blank?
