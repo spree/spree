@@ -3,7 +3,7 @@ class Api::BaseController < Spree::BaseController
   before_filter :load_resource
   skip_before_filter :verify_authenticity_token, :if => lambda { admin_token_passed_in_headers }
   authorize_resource
-  
+
   respond_to :json
 
   def index
@@ -73,11 +73,11 @@ class Api::BaseController < Spree::BaseController
     def model_class
       controller_name.classify.constantize
     end
-    
+
     def object_name
       controller_name.singularize
     end
-    
+
     def load_resource
       if member_action?
         @object ||= load_resource_instance
@@ -87,7 +87,7 @@ class Api::BaseController < Spree::BaseController
         instance_variable_set("@#{controller_name}", @collection)
       end
     end
-    
+
     def load_resource_instance
       if new_actions.include?(params[:action].to_sym)
         build_resource
@@ -95,7 +95,7 @@ class Api::BaseController < Spree::BaseController
         find_resource
       end
     end
-    
+
     def parent
       nil
     end
@@ -107,7 +107,7 @@ class Api::BaseController < Spree::BaseController
         model_class.includes(eager_load_associations).find(params[:id])
       end
     end
-    
+
     def build_resource
       if parent.present?
         parent.send(controller_name).build(params[object_name])
@@ -115,14 +115,14 @@ class Api::BaseController < Spree::BaseController
         model_class.new(params[object_name])
       end
     end
-    
+
     def collection
-      return @search unless @search.nil?      
+      return @search unless @search.nil?
       params[:search] = {} if params[:search].blank?
       params[:search][:meta_sort] = 'created_at.desc' if params[:search][:meta_sort].blank?
-      
+
       scope = parent.present? ? parent.send(controller_name) : model_class.scoped
-     
+
       @search = scope.metasearch(params[:search]).relation.limit(100)
       @search
     end
@@ -151,7 +151,7 @@ class Api::BaseController < Spree::BaseController
         send "admin_#{object_name}_url", target, options
       end
     end
-    
+
     def collection_actions
       [:index]
     end
@@ -165,10 +165,10 @@ class Api::BaseController < Spree::BaseController
     end
 
   private
-  def check_http_authorization
-    if request.headers['HTTP_AUTHORIZATION'].blank?
-      render :text => "Access Denied\n", :status => 401
+    def check_http_authorization
+      if request.headers['HTTP_AUTHORIZATION'].blank?
+        render :text => "Access Denied\n", :status => 401
+      end
     end
-  end
 
 end

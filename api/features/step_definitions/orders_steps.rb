@@ -1,12 +1,12 @@
 Given /^I have (\d+) orders$/ do |o|
   user = Factory(:user)
-  Order.delete_all
-  Order.create(:email => user.email,:number => 100)
-  Order.create(:email => user.email,:number => 101)
-  Order.create(:email => user.email,:number => 102)
-  Order.create(:email => user.email,:number => 103)
-  Order.create(:email => user.email,:number => 104)
-  @orders = Order.all
+  Spree::Order.delete_all
+  Spree::Order.create(:email => user.email,:number => 100)
+  Spree::Order.create(:email => user.email,:number => 101)
+  Spree::Order.create(:email => user.email,:number => 102)
+  Spree::Order.create(:email => user.email,:number => 103)
+  Spree::Order.create(:email => user.email,:number => 104)
+  @orders = Spree::Order.all
 end
 
 Given /^2 custom line items exist$/ do
@@ -16,26 +16,26 @@ end
 
 When /^I send a GET request to "([^"]*)"$/ do |path|
   url = if path == 'first country'
-    "/api/countries/#{Country.first.id}"
+    "/api/countries/#{Spree::Country.first.id}"
   elsif path == 'first inventory unit'
-    "/api/inventory_units/#{InventoryUnit.first.id}"
+    "/api/inventory_units/#{Spree::InventoryUnit.first.id}"
   elsif path == 'first shipment'
-    "/api/shipments/#{Shipment.first.id}"
+    "/api/shipments/#{Spree::Shipment.first.id}"
   elsif path == 'first order'
-    "/api/orders/#{Order.first.id}"
+    "/api/orders/#{Spree::Order.first.id}"
   elsif path == 'first product'
-    "/api/products/#{Product.first.id}"
+    "/api/products/#{Spree::Product.first.id}"
   elsif path == 'custom line items'
-    line_item = LineItem.last
+    line_item = Spree::LineItem.last
     "/api/orders/#{line_item.order.id}/line_items"
   elsif path == 'custom states list'
-    state = State.last
+    state = Spree::State.last
     "/api/countries/#{state.country.id}/states"
   elsif path == 'first state'
-    state = State.first
+    state = Spree::State.first
     "/api/countries/#{state.country.id}/states/#{state.id}"
   elsif path == 'first line item'
-    line_item = LineItem.first
+    line_item = Spree::LineItem.first
     "/api/orders/#{line_item.order.id}/line_items/#{line_item.id}"
   else
     path
