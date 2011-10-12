@@ -41,9 +41,6 @@ describe Api::OrdersController do
         end
       end
 
-      context "when authenticated as admin" do
-      end
-
       context "when no HTTP_AUTHORIZATION" do
         it_should_behave_like "access denied"
         context "when authenticated as admin" do
@@ -51,7 +48,7 @@ describe Api::OrdersController do
         end
       end
     end
-    
+
     context "user" do
       it "should have tests for user permissions"
     end
