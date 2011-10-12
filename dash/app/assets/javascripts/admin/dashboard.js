@@ -21,20 +21,20 @@ function number_with_delimiter(number, delimiter, separator) {
   }
 }
 
-function handle_orders_by_day(r){
+function handle_orders_by_day(settings, r){
   var new_points = eval(r);
 
   if(new_points[0].length>0){
-    orders_by_day_settings.axes.xaxis.min = new_points[0][0][0].replace(/-/g, "/");
-    orders_by_day_settings.axes.xaxis.max = new_points[0][new_points[0].length -1][0].replace(/-/g, "/");
+    settings.axes.xaxis.min = new_points[0][0][0].replace(/-/g, "/");
+    settings.axes.xaxis.max = new_points[0][new_points[0].length -1][0].replace(/-/g, "/");
   }
 
-  orders_by_day_settings.axes.yaxis.label = jQuery("#orders_by_day_value :selected").val();
+  settings.axes.yaxis.label = jQuery("#orders_by_day_value :selected").val();
 
   jQuery("#order_by_day_title").text(orders + " " + jQuery("#orders_by_day_value :selected").val() + " " + by_day + " (" + jQuery("#orders_by_day_reports :selected").text() + ")");
 
   jQuery('#orders_by_day').empty();
-  jQuery.jqplot('orders_by_day', new_points, orders_by_day_settings);
+  jQuery.jqplot('orders_by_day', new_points, settings);
 
 }
 
@@ -59,7 +59,7 @@ jQuery(document).ready(function(){
       axes:{
         yaxis:{
           label:'Order (Count)',
-          labelRenderer: jQuery.jqplot.CanvasAxisLabelRenderer,						
+          labelRenderer: jQuery.jqplot.CanvasAxisLabelRenderer,
           autoscale:true, 
           tickOptions:{
             formatString:'%d',
@@ -89,7 +89,6 @@ jQuery(document).ready(function(){
       }
     };
 
-
     jQuery.jqplot('orders_by_day', orders_by_day_points, orders_by_day_settings);
 
     jQuery("div#orders_by_day_options select").change(function(){
@@ -100,7 +99,7 @@ jQuery(document).ready(function(){
            type: 'GET',
            url: 'admin/overview/get_report_data',
            data: ({report: 'orders_by_day', name: report, value: value, authenticity_token: AUTH_TOKEN}),
-           success: handle_orders_by_day
+           success: function(r) { handle_orders_by_day(orders_by_day_settings, r) }
       });
 
       jQuery.ajax({
