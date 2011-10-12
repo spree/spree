@@ -71,7 +71,7 @@ class Api::BaseController < Spree::BaseController
 
   protected
     def model_class
-      Spree.const_get(controller_name.classify.to_sym)
+      "Spree::#{controller_name.classify}".constantize
     end
 
     def object_name
