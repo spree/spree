@@ -1,5 +1,6 @@
 class Spree::Api::OrdersController < Spree::Api::BaseController
   before_filter :access_denied, :except => [:index, :show]
+  authorize_resource :class => Spree::Order
 
   private
     def find_resource
