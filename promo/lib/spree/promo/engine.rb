@@ -5,10 +5,10 @@ module Spree
       engine_name 'spree_promo'
 
       def self.activate
-        Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
+        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
           Rails.application.config.cache_classes ? require(c) : load(c)
         end
-        Dir.glob(File.join(File.dirname(__FILE__), '../../app/overrides/*.rb')) do |c|
+        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/overrides/*.rb')) do |c|
           Rails.application.config.cache_classes ? require(c) : load(c)
         end
 
@@ -41,12 +41,12 @@ module Spree
 
       initializer 'spree.promo.register.promotions.rules' do |app|
         app.config.spree.promotions.rules = [
-           Spree::Promotion::Rules::ItemTotal,
-           Spree::Promotion::Rules::Product,
-           Spree::Promotion::Rules::User,
-           Spree::Promotion::Rules::FirstOrder,
-           Spree::Promotion::Rules::LandingPage,
-           Spree::Promotion::Rules::UserLoggedIn]
+          Spree::Promotion::Rules::ItemTotal,
+          Spree::Promotion::Rules::Product,
+          Spree::Promotion::Rules::User,
+          Spree::Promotion::Rules::FirstOrder,
+          Spree::Promotion::Rules::LandingPage,
+          Spree::Promotion::Rules::UserLoggedIn]
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
