@@ -40,7 +40,7 @@ if defined? CanCan::Ability
 end
 
 Given /^I do not have permission to access orders$/ do
-  Ability.register_ability(AbilityDecorator)
+  Spree::Ability.register_ability(AbilityDecorator)
 end
 
 

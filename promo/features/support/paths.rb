@@ -9,13 +9,13 @@ module NavigationHelpers
     case page_name
 
     when "admin promotions page"
-      admin_promotions_path
+      spree_admin_promotions_path
     when /the home\s?page/
       '/'
     when /the sign in page/
-      new_user_session_path
+      new_spree_user_session_path
     when /the sign up page/
-      new_user_registration_path
+      new_spree_user_registration_path
 
     when /"\/cvv"/
       '/cvv'

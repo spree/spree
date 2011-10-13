@@ -28,7 +28,7 @@ Capybara.default_selector = :css
 require 'database_cleaner'
 require 'database_cleaner/cucumber'
 
-require 'spree_core/testing_support/factories'
+require 'spree/core/testing_support/factories'
 
 # clean database before tests run
 DatabaseCleaner.strategy = :truncation
@@ -41,7 +41,7 @@ directories = [ File.join(FEATURES_PATH, '../../features/support'),
                 File.join(FEATURES_PATH, '../../features/step_definitions') ]
 
 files = directories.map do |dir|
-  Dir['#{dir}/**/*.rb']
+  Dir["#{dir}/**/*.rb"]
 end.flatten.uniq
 
 files.each do |path|
