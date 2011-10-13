@@ -1,4 +1,6 @@
 require 'spree/core'
 
-module SpreeCore
+module Spree
+  module Core
+  end
 end
