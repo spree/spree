@@ -13,5 +13,4 @@ class Spree::Promotion::Rules::User < Spree::PromotionRule
   def user_ids_string=(s)
     self.user_ids = s.to_s.split(',').map(&:strip)
   end
-
 end

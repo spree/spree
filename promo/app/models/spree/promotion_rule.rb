@@ -7,5 +7,4 @@ class Spree::PromotionRule < ActiveRecord::Base
   def eligible?(order, options = {})
     raise 'eligible? should be implemented in a sub-class of Promotion::PromotionRule'
   end
-
 end

@@ -12,6 +12,5 @@ class Spree::PromotionAction < ActiveRecord::Base
   def perform(options = {})
     raise 'perform should be implemented in a sub-class of PromotionAction'
   end
-
 end
 

@@ -3,7 +3,7 @@ class CreatePromotionActions < ActiveRecord::Migration
     create_table :promotion_actions do |t|
       t.integer :activator_id
       t.integer :position
-      t.string :type
+      t.string  :type
     end
   end
 

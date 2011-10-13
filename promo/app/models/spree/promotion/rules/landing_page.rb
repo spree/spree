@@ -1,6 +1,5 @@
 # A rule to limit a promotion to a specific user.
 class Spree::Promotion::Rules::LandingPage < Spree::PromotionRule
-
   preference :path, :string
 
   def eligible?(order, options = {})
@@ -12,6 +11,4 @@ class Spree::Promotion::Rules::LandingPage < Spree::PromotionRule
       true
     end
   end
-
 end
-
