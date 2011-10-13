@@ -6,15 +6,15 @@ When /^I log in as an admin user and go to the new promotion form$/ do
 end
 
 Then /^the existing order should have total at "([^"]*)"$/ do |total|
-  Order.first.total.to_f.should == total.to_f
+  Spree::Order.first.total.to_f.should == total.to_f
 end
 
 Then /^the existing order should not have any promotion credits$/ do
-  Order.first.adjustments.promotion.count.should == 0
+  Spree::Order.first.adjustments.promotion.count.should == 0
 end
 
 Then /^the existing order should have (\d+) promotion credits?$/ do |count|
-  Order.first.adjustments.promotion.count.should == count.to_i
+  Spree::Order.first.adjustments.promotion.count.should == count.to_i
 end
 
 When /^I update the quantity on the first cart item to "([^"]*)"$/ do |quantity|
