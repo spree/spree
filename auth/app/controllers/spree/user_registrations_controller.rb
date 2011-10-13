@@ -1,4 +1,4 @@
-class UserRegistrationsController < Devise::RegistrationsController
+class Spree::UserRegistrationsController < Devise::RegistrationsController
   include SpreeBase
   helper :users, 'spree/base'
 
@@ -51,15 +51,13 @@ class UserRegistrationsController < Devise::RegistrationsController
   end
 
   protected
+    def check_permissions
+      authorize!(:create, resource)
+    end
 
-  def check_permissions
-    authorize!(:create, resource)
-  end
-
-  def associate_user
-    return unless current_user and current_order
-    current_order.associate_user!(current_user)
-    session[:guest_token] = nil
-  end
-
+    def associate_user
+      return unless current_user and current_order
+      current_order.associate_user!(current_user)
+      session[:guest_token] = nil
+    end
 end

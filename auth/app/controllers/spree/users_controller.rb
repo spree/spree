@@ -1,4 +1,4 @@
-class UsersController < Spree::BaseController
+class Spree::UsersController < Spree::BaseController
   prepend_before_filter :load_object, :only => [:show, :edit, :update]
   prepend_before_filter :authorize_actions, :only => :new
 
@@ -17,9 +17,8 @@ class UsersController < Spree::BaseController
 
       redirect_back_or_default(root_url)
     else
-      render 'new'
+      render :new
     end
-
   end
 
   def update
@@ -29,12 +28,10 @@ class UsersController < Spree::BaseController
         user = User.reset_password_by_token(params[:user])
         sign_in(@user, :event => :authentication, :bypass => !Spree::Auth::Config[:signout_after_password_change])
       end
-      flash.notice = I18n.t("account_updated")
-      redirect_to account_url
+      redirect_to account_url, :notice => t(:account_updated)
     else
-      render 'edit'
+      render :edit
     end
-
   end
 
   private
@@ -50,5 +47,4 @@ class UsersController < Spree::BaseController
     def accurate_title
       I18n.t(:account)
     end
-
 end
