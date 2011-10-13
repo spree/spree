@@ -26,7 +26,7 @@ class Spree::Promotion < Spree::Activator
   end
 
   validates :name, :presence => true
-  validates :preferred_code, :presence => true, :if => lambda{|r| r.event_name == 'spree.ceckout.coupon_code_added' }
+  validates :preferred_code, :presence => true, :if => lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
 
   class << self
     def advertised
@@ -83,7 +83,7 @@ class Spree::Promotion < Spree::Activator
   end
 
   def credits
-    Adjustment.where(:originator_id => actions.map(&:id))
+    Spree::Adjustment.where(:originator_id => actions.map(&:id))
   end
 
   def credits_count
