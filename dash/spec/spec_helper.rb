@@ -27,4 +27,4 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 end
 
-@configuration ||= AppConfiguration.find_or_create_by_name('Default configuration')
+@configuration ||= Spree::AppConfiguration.find_or_create_by_name('Default configuration')

@@ -1,6 +1,6 @@
 # this clas was inspired (heavily) from the mephisto admin architecture
 
-class Spree::Admin::OverviewController < Admin::BaseController
+class Spree::Admin::OverviewController < Spree::Admin::BaseController
   before_filter :check_json_authenticity, :only => :get_report_data
   #todo, add rss feed of information that is happening
 
