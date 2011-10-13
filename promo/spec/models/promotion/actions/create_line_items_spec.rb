@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Promotion::Actions::CreateLineItems do
+describe Spree::Promotion::Actions::CreateLineItems do
   let(:order) { Factory(:order) }
   let(:promotion) { Spree::Promotion.new }
-  let(:action) { Promotion::Actions::CreateLineItems.create }
+  let(:action) { Spree::Promotion::Actions::CreateLineItems.create }
 
   context "#perform" do
     before do

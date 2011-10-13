@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Promotion::Rules::ItemTotal do
-  let(:rule) { Promotion::Rules::ItemTotal.new }
-  let(:order) { mock_model(Order, :user => nil) }
+describe Spree::Promotion::Rules::ItemTotal do
+  let(:rule) { Spree::Promotion::Rules::ItemTotal.new }
+  let(:order) { mock_model(Spree::Order, :user => nil) }
   # let(:order) { mock_model Order, :line_items => [mock_model(LineItem, :amount => 10), mock_model(LineItem, :amount => 20)] }
 
   before { rule.preferred_amount = 50 }

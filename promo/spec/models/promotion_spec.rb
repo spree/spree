@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Promotion do
+describe Spree::Promotion do
   let(:promotion) { Spree::Promotion.new }
   # let(:promotion) { Factory(:promotion) }
 
@@ -23,23 +23,23 @@ describe Promotion do
       p.actions << Spree::Promotion::Actions::CreateAdjustment.new
       p.destroy
 
-      PromotionAction.count.should == 0 
+      Spree::PromotionAction.count.should == 0
     end
 
     it "deletes rules" do
-      p = Promotion.create(:name => "delete me")
-      p.rules << Promotion::Rules::FirstOrder.new
+      p = Spree::Promotion.create(:name => "delete me")
+      p.rules << Spree::Promotion::Rules::FirstOrder.new
       p.destroy
 
-      PromotionRule.count.should == 0 
+      Spree::PromotionRule.count.should == 0
     end
 
   end
 
   describe "#activate" do
     before do
-      @action1 = mock_model(PromotionAction, :perform => true)
-      @action2 = mock_model(PromotionAction, :perform => true)
+      @action1 = mock_model(Spree::PromotionAction, :perform => true)
+      @action2 = mock_model(Spree::PromotionAction, :perform => true)
       promotion.promotion_actions = [@action1, @action2]
     end
 
@@ -153,8 +153,8 @@ describe Promotion do
       before {
         promotion.preferred_code = 'ABC'
         promotion.event_name = 'spree.checkout.coupon_code_added'
-        action = Promotion::Actions::CreateAdjustment.create!(:promotion => promotion)
-        action.calculator = Calculator::FlatRate.create!(:calculable => action)
+        action = Spree::Promotion::Actions::CreateAdjustment.create!(:promotion => promotion)
+        action.calculator = Spree::Calculator::FlatRate.create!(:calculable => action)
         action.perform(:order => @order)
       }
       specify { promotion.should be_eligible(@order) }
@@ -163,7 +163,7 @@ describe Promotion do
   end
 
   context "rules" do
-    before { @order = Order.new }
+    before { @order = Spree::Order.new }
 
     it "should have eligible rules if there are no rules" do
       promotion.rules_are_eligible?(@order).should be_true
@@ -173,14 +173,14 @@ describe Promotion do
       before { promotion.match_policy = 'all' }
 
       it "should have eligible rules if all rules are eligible" do
-        promotion.promotion_rules = [mock_model(PromotionRule, :eligible? => true),
-                                     mock_model(PromotionRule, :eligible? => true)]
+        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true),
+                                     mock_model(Spree::PromotionRule, :eligible? => true)]
         promotion.rules_are_eligible?(@order).should be_true
       end
 
       it "should not have eligible rules if any of the rules is not eligible" do
-        promotion.promotion_rules = [mock_model(PromotionRule, :eligible? => true),
-                                     mock_model(PromotionRule, :eligible? => false)]
+        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true),
+                                     mock_model(Spree::PromotionRule, :eligible? => false)]
         promotion.rules_are_eligible?(@order).should be_false
       end
     end
@@ -189,8 +189,8 @@ describe Promotion do
       before { promotion.match_policy = 'any' }
 
       it "should have eligible rules if any of the rules is eligible" do
-        promotion.promotion_rules = [mock_model(PromotionRule, :eligible? => true),
-                                     mock_model(PromotionRule, :eligible? => false)]
+        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true),
+                                     mock_model(Spree::PromotionRule, :eligible? => false)]
         promotion.rules_are_eligible?(@order).should be_true
       end
     end
