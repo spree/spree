@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Promotion::Rules::LandingPage do
+describe Spree::Promotion::Rules::LandingPage do
   let(:rule) {
-    rule = Promotion::Rules::LandingPage.new
+    rule = Spree::Promotion::Rules::LandingPage.new
     rule.preferred_path = '/deal'
     rule
   }
-  let(:order) { mock_model(Order, :user => nil) }
+  let(:order) { mock_model(Spree::Order, :user => nil) }
 
   context "#eligible?(order)" do
 

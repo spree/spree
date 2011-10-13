@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Promotion::Rules::FirstOrder do
-  let(:rule) { Promotion::Rules::FirstOrder.new }
-  let(:order) { mock_model(Order, :user => nil) }
+describe Spree::Promotion::Rules::FirstOrder do
+  let(:rule) { Spree::Promotion::Rules::FirstOrder.new }
+  let(:order) { mock_model(Spree::Order, :user => nil) }
 
   it "should not be eligible without a user" do
     rule.should_not be_eligible(order)

@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe Promotion::Actions::CreateAdjustment do
+describe Spree::Promotion::Actions::CreateAdjustment do
   let(:order) { Factory(:order) }
   let(:promotion) { Factory(:promotion) }
-  let(:action) { Promotion::Actions::CreateAdjustment.new }
+  let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
 
   # From promotion spec:
   context "#perform" do
 
     before do
-      action.calculator = Calculator::FreeShipping.new
+      action.calculator = Spree::Calculator::FreeShipping.new
       promotion.promotion_actions = [action]
       action.stub(:promotion => promotion)
     end

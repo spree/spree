@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Order do
+describe Spree::Order do
 
   let(:order) { Factory(:order) }
 

@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Promotion::Rules::User do
-  let(:rule) { Promotion::Rules::User.new }
+describe Spree::Promotion::Rules::User do
+  let(:rule) { Spree::Promotion::Rules::User.new }
 
   context "#eligible?(order)" do
-    let(:order) { Order.new }
+    let(:order) { Spree::Order.new }
 
     it "should be eligible if users are not provided" do
       users = mock("users", :none? => true)
@@ -14,8 +14,8 @@ describe Promotion::Rules::User do
     end
 
     it "should be eligible if users include user placing the order" do
-      user = mock_model(User)
-      users = [user, mock_model(User)]
+      user = mock_model(Spree::User)
+      users = [user, mock_model(Spree::User)]
       users.stub(:none? => false)
       rule.stub(:users => users)
       order.stub(:user => user)
@@ -24,8 +24,8 @@ describe Promotion::Rules::User do
     end
 
     it "should not be eligible if user placing the order is not listed" do
-      order.stub(:user => mock_model(User))
-      users = [mock_model(User), mock_model(User)]
+      order.stub(:user => mock_model(Spree::User))
+      users = [mock_model(Spree::User), mock_model(Spree::User)]
       users.stub(:none? => false)
       rule.stub(:users => users)
 
