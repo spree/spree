@@ -1,15 +1,15 @@
-ENV["RAILS_ENV"] ||= "cucumber"
+ENV['RAILS_ENV'] ||= 'cucumber'
 
-require File.expand_path("../spec/dummy/config/environment", FEATURES_PATH)
+require File.expand_path('../spec/dummy/config/environment', FEATURES_PATH)
 
 # sometimes tests fail randomly because cache is not refreshed, fixed that
 Spree::Config
 require 'bundler'
 Bundler.setup(:cucumber)
 
-Rails.env = "test"
+Rails.env = 'test'
 require 'cucumber/formatter/unicode' # Remove this line if you don't want Cucumber Unicode support
-Rails.env = "cucumber"
+Rails.env = 'cucumber'
 require 'cucumber/rails/world'
 require 'cucumber/web/tableish'
 require 'cucumber/rails/rspec'
@@ -28,20 +28,20 @@ Capybara.default_selector = :css
 require 'database_cleaner'
 require 'database_cleaner/cucumber'
 
-require "spree_core/testing_support/factories"
+require 'spree_core/testing_support/factories'
 
 # clean database before tests run
 DatabaseCleaner.strategy = :truncation
 DatabaseCleaner.clean
 
-Capybara.save_and_open_page_path = File.join(Rails.root, "tmp")
+Capybara.save_and_open_page_path = File.join(Rails.root, 'tmp')
 
 # load the rest of files for support and step definitions
 directories = [ File.join(FEATURES_PATH, '../../features/support'),
                 File.join(FEATURES_PATH, '../../features/step_definitions') ]
 
 files = directories.map do |dir|
-  Dir["#{dir}/**/*.rb"]
+  Dir['#{dir}/**/*.rb']
 end.flatten.uniq
 
 files.each do |path|
