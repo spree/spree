@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Spree::Promotion do
   let(:promotion) { Spree::Promotion.new }
-  # let(:promotion) { Factory(:promotion) }
 
   describe "#save" do
     let(:promotion_valid) { Spree::Promotion.new :name => "A promotion", :code => "XXXX" }
