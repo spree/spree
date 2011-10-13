@@ -40,6 +40,11 @@ require 'meta_search'
 require 'find_by_param'
 require 'jquery-rails'
 
+module Spree
+  module Core
+  end
+end
+
 require 'spree/core/ext/active_record'
 require 'spree/core/ext/hash'
 
