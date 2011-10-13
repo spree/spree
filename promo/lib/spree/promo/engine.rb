@@ -38,17 +38,18 @@ module SpreePromo
     end
 
     initializer 'spree.promo.register.promotions.rules' do |app|
-      app.config.spree.promotions.rules = [Promotion::Rules::ItemTotal,
-         Promotion::Rules::Product,
-         Promotion::Rules::User,
-         Promotion::Rules::FirstOrder,
-         Promotion::Rules::LandingPage,
-         Promotion::Rules::UserLoggedIn]
+      app.config.spree.promotions.rules = [
+         Spree::Promotion::Rules::ItemTotal,
+         Spree::Promotion::Rules::Product,
+         Spree::Promotion::Rules::User,
+         Spree::Promotion::Rules::FirstOrder,
+         Spree::Promotion::Rules::LandingPage,
+         Spree::Promotion::Rules::UserLoggedIn]
     end
 
     initializer 'spree.promo.register.promotions.actions' do |app|
-      app.config.spree.promotions.actions = [Promotion::Actions::CreateAdjustment,
-        Promotion::Actions::CreateLineItems]
+      app.config.spree.promotions.actions = [Spree::Promotion::Actions::CreateAdjustment,
+        Spree::Promotion::Actions::CreateLineItems]
     end
   end
 end
