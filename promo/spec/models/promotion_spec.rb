@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Promotion do
-  let(:promotion) { Promotion.new }
+  let(:promotion) { Spree::Promotion.new }
   # let(:promotion) { Factory(:promotion) }
 
   describe "#save" do
-    let(:promotion_valid) { Promotion.new :name => "A promotion", :code => "XXXX" }
+    let(:promotion_valid) { Spree::Promotion.new :name => "A promotion", :code => "XXXX" }
 
     context "when is invalid" do
       before { promotion.name = nil }
@@ -19,8 +19,8 @@ describe Promotion do
 
   describe "#delete" do
     it "deletes actions" do
-      p = Promotion.create(:name => "delete me")
-      p.actions << Promotion::Actions::CreateAdjustment.new
+      p = Spree::Promotion.create(:name => "delete me")
+      p.actions << Spree::Promotion::Actions::CreateAdjustment.new
       p.destroy
 
       PromotionAction.count.should == 0 

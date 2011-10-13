@@ -1,5 +1,4 @@
 Spree::OrdersController.class_eval do
-
   def update
     @order = current_order
     if @order.update_attributes(params[:order])
@@ -15,5 +14,4 @@ Spree::OrdersController.class_eval do
       respond_with(@order)
     end
   end
-
 end

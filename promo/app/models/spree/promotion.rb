@@ -1,6 +1,4 @@
 class Spree::Promotion < Spree::Activator
-
-
   MATCH_POLICIES = %w(all any)
 
   preference :usage_limit, :integer
@@ -27,7 +25,6 @@ class Spree::Promotion < Spree::Activator
     (rules + actions).each &:save
   end
 
-
   validates :name, :presence => true
   validates :preferred_code, :presence => true, :if => lambda{|r| r.event_name == 'spree.ceckout.coupon_code_added' }
 
@@ -44,7 +41,6 @@ class Spree::Promotion < Spree::Activator
       promotion_rules.each { |p| p.save }
     end
   end
-
 
   def activate(payload)
     if eligible?(payload[:order], payload)
@@ -75,7 +71,7 @@ class Spree::Promotion < Spree::Activator
 
   # Products assigned to all product rules
   def products
-    @products ||= rules.of_type("Promotion::Rules::Product").map(&:products).flatten.uniq
+    @products ||= rules.of_type('Promotion::Rules::Product').map(&:products).flatten.uniq
   end
 
   def usage_limit_exceeded?(order = nil)
@@ -94,5 +90,4 @@ class Spree::Promotion < Spree::Activator
   def credits_count
     credits.count
   end
-
 end

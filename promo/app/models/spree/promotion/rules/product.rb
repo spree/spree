@@ -2,7 +2,6 @@
 # Can require all or any of the products to be present.
 # Valid products either come from assigned product group or are assingned directly to the rule.
 class Spree::Promotion::Rules::Product < Spree::PromotionRule
-
   belongs_to :product_group
   has_and_belongs_to_many :products, :class_name => '::Spree::Product', :join_table => 'products_promotion_rules', :foreign_key => 'promotion_rule_id'
 
@@ -23,7 +22,6 @@ class Spree::Promotion::Rules::Product < Spree::PromotionRule
     end
   end
 
-
   def products_source=(source)
     if source.to_s == 'manual'
       self.product_group_id = nil
@@ -33,8 +31,8 @@ class Spree::Promotion::Rules::Product < Spree::PromotionRule
   def product_ids_string
     product_ids.join(',')
   end
+
   def product_ids_string=(s)
     self.product_ids = s.to_s.split(',').map(&:strip)
   end
-
 end

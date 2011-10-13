@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Promotion::Actions::CreateLineItems do
   let(:order) { Factory(:order) }
-  let(:promotion) { Promotion.new }
+  let(:promotion) { Spree::Promotion.new }
   let(:action) { Promotion::Actions::CreateLineItems.create }
 
   context "#perform" do

@@ -1,10 +1,11 @@
 class Spree::Promotion::Actions::CreateAdjustment < Spree::PromotionAction
-
   calculated_adjustments
+
+  delegate :eligible?, :to => :promotion
 
   before_create do |a|
     c = a.build_calculator
-    c.type = Promotion::Actions::CreateAdjustment.calculators.first.to_s
+    c.type = Spree::Promotion::Actions::CreateAdjustment.calculators.first.to_s
   end
 
   def perform(options = {})
@@ -22,7 +23,4 @@ class Spree::Promotion::Actions::CreateAdjustment < Spree::PromotionAction
   def compute_amount(calculable)
     [(calculable.item_total + calculable.ship_total), super.to_f.abs].min * -1
   end
-
-  delegate :eligible?, :to => :promotion
-
 end
