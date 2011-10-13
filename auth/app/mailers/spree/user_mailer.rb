@@ -1,5 +1,4 @@
-class UserMailer < ActionMailer::Base
-
+class Spree::UserMailer < ActionMailer::Base
   def reset_password_instructions(user)
     default_url_options[:host] = Spree::Config[:site_url]
 
@@ -8,6 +7,4 @@ class UserMailer < ActionMailer::Base
     mail(:to => user.email,
          :subject => Spree::Config[:site_name] + ' ' + I18n.t(:password_reset_instructions))
   end
-
 end
-

@@ -2,14 +2,13 @@ Spree::Admin::OrdersController.class_eval do
   before_filter :check_authorization
 
   private
+    def check_authorization
+      load_order
+      session[:access_token] ||= params[:token]
 
-  def check_authorization
-    load_order
-    session[:access_token] ||= params[:token]
+      resource = @order || Spree::Order
+      action = params[:action].to_sym
 
-    resource = @order || Spree::Order
-    action = params[:action].to_sym
-
-    authorize! action, resource, session[:access_token]
-  end
+      authorize! action, resource, session[:access_token]
+    end
 end

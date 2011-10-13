@@ -1,4 +1,4 @@
-class UserSessionsController < Devise::SessionsController
+class Spree::UserSessionsController < Devise::SessionsController
   include SpreeBase
   helper :users, 'spree/base'
 
@@ -20,7 +20,7 @@ class UserSessionsController < Devise::SessionsController
     if user_signed_in?
       respond_to do |format|
         format.html {
-          flash[:notice] = I18n.t("logged_in_succesfully")
+          flash[:notice] = t(:logged_in_succesfully)
           redirect_back_or_default(products_path)
         }
         format.js {
@@ -29,7 +29,7 @@ class UserSessionsController < Devise::SessionsController
         }
       end
     else
-      flash[:error] = I18n.t("devise.failure.invalid")
+      flash[:error] = t('devise.failure.invalid')
       render :new
     end
   end
@@ -40,19 +40,17 @@ class UserSessionsController < Devise::SessionsController
   end
 
   def nav_bar
-    render :partial => "shared/nav_bar"
+    render :partial => 'shared/nav_bar'
   end
 
   private
+    def associate_user
+      return unless current_user and current_order
+      current_order.associate_user!(current_user)
+      session[:guest_token] = nil
+    end
 
-  def associate_user
-    return unless current_user and current_order
-    current_order.associate_user!(current_user)
-    session[:guest_token] = nil
-  end
-
-  def accurate_title
-    I18n.t(:log_in)
-  end
-
+    def accurate_title
+      I18n.t(:log_in)
+    end
 end

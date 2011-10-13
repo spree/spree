@@ -1,5 +1,4 @@
 Spree::BaseController.class_eval do
-
   before_filter :set_current_user
 
   # graceful error handling for cancan authorization exceptions
@@ -8,7 +7,6 @@ Spree::BaseController.class_eval do
   end
 
   private
-
     # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
     # Override this method in your controllers if you want to have special behavior in case the user is not authorized
     # to access the requested action.  For example, a popup window might simply close itself.
@@ -37,12 +35,11 @@ Spree::BaseController.class_eval do
       disallowed_urls = [signup_url, login_url, destroy_user_session_path]
       disallowed_urls.map!{|url| url[/\/\w+$/]}
       unless disallowed_urls.include?(request.fullpath)
-        session["user_return_to"] = request.fullpath
+        session['user_return_to'] = request.fullpath
       end
     end
 
     def set_current_user
       Spree::User.current = current_user
     end
-
 end
