@@ -1,3 +1,3 @@
-require 'spree/core'
+require 'spree_core'
 require 'spree_auth'
-require 'spree_api/engine'
+require 'spree/api/engine'
