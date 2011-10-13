@@ -210,7 +210,7 @@ class Spree::Order < ActiveRecord::Base
       current_item.quantity += quantity
       current_item.save
     else
-      current_item = LineItem.new(:quantity => quantity)
+      current_item = Spree::LineItem.new(:quantity => quantity)
       current_item.variant = variant
       current_item.price   = variant.price
       self.line_items << current_item
@@ -218,7 +218,7 @@ class Spree::Order < ActiveRecord::Base
 
     # populate line_items attributes for additional_fields entries
     # that have populate => [:line_item]
-    Variant.additional_fields.select{|f| !f[:populate].nil? && f[:populate].include?(:line_item) }.each do |field|
+    Spree::Variant.additional_fields.select{|f| !f[:populate].nil? && f[:populate].include?(:line_item) }.each do |field|
       value = ""
 
       if field[:only].nil? || field[:only].include?(:variant)
