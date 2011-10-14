@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'bar_ability.rb'
+require 'bar_ability'
 require 'cancan/matchers'
 
 # Fake ability for testing registration of additional abilities

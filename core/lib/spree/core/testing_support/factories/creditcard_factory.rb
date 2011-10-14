@@ -2,6 +2,7 @@
 class TestCard < Spree::Creditcard
   def remove_readonly_attributes(attributes) attributes; end
 end
+
 FactoryGirl.define do
   factory :creditcard, :class => TestCard do
     verification_value 123
