@@ -32,6 +32,9 @@ class AppConfiguration < Configuration
   preference :cache_static_content, :boolean, :default => true
   preference :use_content_controller, :boolean, :default => true
   preference :allow_checkout_on_gateway_error, :boolean, :default => false
+  preference :check_for_spree_alerts, :boolean, :default => true
+  preference :dismissed_spree_alerts, :string, :default => ''
+  preference :last_check_for_spree_alerts, :string, :default => nil
 
   validates :name, :presence => true, :uniqueness => true
 

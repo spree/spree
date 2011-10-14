@@ -1,11 +1,42 @@
 class Admin::BaseController < Spree::BaseController
   ssl_required
 
+  before_filter :check_alerts if Rails.env.production?
+
   helper :search
   helper 'admin/navigation'
   layout 'admin'
 
   protected
+  def check_alerts
+    return unless current_user and should_check_alerts?
+
+    unless session.has_key? :alerts
+      begin
+        session[:alerts] = Spree::Alert.current(request.host)
+        filter_dismissed_alerts
+        Spree::Config.set :last_check_for_spree_alerts => DateTime.now.to_s
+      rescue
+        session[:alerts] = nil
+      end
+    end
+  end
+
+  def should_check_alerts?
+    return false if not Spree::Config[:check_for_spree_alerts]
+
+    last_check = Spree::Config[:last_check_for_spree_alerts]
+    return true if last_check.blank?
+
+    DateTime.parse(last_check) < 12.hours.ago
+  end
+
+  def filter_dismissed_alerts
+    return unless session[:alerts]
+    dismissed = (Spree::Config[:dismissed_spree_alerts] || '').split(',')
+    session[:alerts].reject! { |a| dismissed.include? a.id.to_s }
+  end
+
   def render_js_for_destroy
     render :partial => "/admin/shared/destroy"
     flash.notice = nil
