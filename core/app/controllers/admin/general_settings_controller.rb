@@ -18,4 +18,13 @@ class Admin::GeneralSettingsController < Admin::BaseController
     redirect_to admin_general_settings_path
   end
 
+  def dismiss_alert
+    if request.xhr? and params[:alert_id]
+      dismissed = Spree::Config[:dismissed_spree_alerts] || ''
+      Spree::Config.set :dismissed_spree_alerts => dismissed.split(',').push(params[:alert_id]).join(',')
+      filter_dismissed_alerts
+      render :nothing => true
+    end
+  end
+
 end
