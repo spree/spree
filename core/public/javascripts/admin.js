@@ -224,3 +224,9 @@ jQuery(".observe_field").live('change', function() {
     }
   );
 });
+
+jQuery(document).ready(function() {
+  $('div.alert a.dismiss').click(function() {
+    $(this).parent().fadeOut();
+  });
+});
