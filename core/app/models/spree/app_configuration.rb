@@ -39,6 +39,9 @@ class Spree::AppConfiguration < Spree::Configuration
   preference :allow_checkout_on_gateway_error, :boolean, :default => false
   preference :select_taxons_from_tree, :boolean, :default => false # provide opportunity to select taxons from tree instead of search with autocomplete
   preference :max_level_in_taxons_menu, :integer, :default => 1 # maximum nesting level in taxons menu
+  preference :check_for_spree_alerts, :boolean, :default => true
+  preference :dismissed_spree_alerts, :string, :default => ''
+  preference :last_check_for_spree_alerts, :string, :default => nil
 
   validates :name, :presence => true, :uniqueness => true
 

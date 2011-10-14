@@ -159,7 +159,11 @@ Spree::Core::Engine.routes.draw do
       end
     end
 
-    resource :general_settings
+    resource :general_settings do
+      collection do
+        post :dismiss_alert
+      end
+    end
 
     resources :taxonomies do
       member do

@@ -40,6 +40,8 @@
       <div class="flash notice"><%= notice %></div>
     <% end %>
 
+    <%= render :partial => 'admin/shared/alert', :collection => session[:alerts] %>
+
     <%= yield %>
 
     <% if content_for?(:sidebar) %>
