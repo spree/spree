@@ -31,6 +31,14 @@
     </label>
   </p>
 
+  <p>
+    <label>
+      <input name="preferences[check_for_spree_alerts]" type="hidden" value="0" />
+      <%= check_box_tag('preferences[check_for_spree_alerts]', "1", Spree::Config[:check_for_spree_alerts]) %>
+      <%= t('spree_alert_checking') %>
+    </label>
+ </p>
+
   <p class="form-buttons">
     <%= button t('update') %>
     <%= t("or") %> <%= link_to t("cancel"), admin_general_settings_url %>

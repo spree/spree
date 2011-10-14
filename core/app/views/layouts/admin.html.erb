@@ -45,6 +45,7 @@
     <div class="flash notice"><%= self.notice %></div>
     <% end %>
 
+    <%= render :partial => 'admin/shared/alert', :collection => session[:alerts] %>
 
     <%= yield %>
 
