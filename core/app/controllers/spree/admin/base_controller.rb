@@ -3,9 +3,11 @@ module Spree
     class BaseController < Spree::BaseController
       ssl_required
 
+      before_filter :check_alerts if Rails.env.production?
+
       helper 'spree/search'
       helper 'spree/admin/navigation'
-      layout '/spree/layouts/admin'
+      layout 'spree/admin'
 
       protected
       def check_alerts
@@ -36,17 +38,21 @@ module Spree
         dismissed = (Spree::Config[:dismissed_spree_alerts] || '').split(',')
         session[:alerts].reject! { |a| dismissed.include? a.id.to_s }
       end
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> Check for security alerts and other
       def flash_message_for(object, event_sym)
         resource_desc  = object.class.model_name.human
         resource_desc += " \"#{object.name}\"" if object.respond_to?(:name)
         I18n.t(event_sym, :resource => resource_desc)  
       end
-  
+
       def render_js_for_destroy
-        render :partial => "spree/admin/shared/destroy"
+        render :partial => "/admin/shared/destroy"
       end
-  
+
       # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
       def check_json_authenticity
         return unless request.format.js? or request.format.json?

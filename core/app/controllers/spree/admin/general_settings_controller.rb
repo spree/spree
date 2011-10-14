@@ -1,12 +1,11 @@
 module Spree
   module Admin
     class GeneralSettingsController < BaseController
-
       def show
         @preferences = ['site_name', 'default_seo_title', 'default_meta_keywords',
                         'default_meta_description', 'site_url']
       end
-  
+
       def edit
         @preferences = ['site_name', 'default_seo_title', 'default_meta_keywords',
                         'default_meta_description', 'site_url', 'allow_ssl_in_production',
