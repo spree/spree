@@ -4,10 +4,10 @@ FactoryGirl.define do
     lastname 'Doe'
     address1 '10 Lovely Street'
     address2 'Northwest'
-    city   "Herndon"
+    city   'Herndon'
     zipcode '20170'
     phone '123-456-7890'
-    alternative_phone "123-456-7899"
+    alternative_phone '123-456-7899'
 
     state  { |address| address.association(:state) }
     country do |address|
