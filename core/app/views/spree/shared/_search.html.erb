@@ -1,4 +1,4 @@
-<% @taxons = @taxon && @taxon.parent ? @taxon.parent.children : Taxon.roots  %> 
+<% @taxons = @taxon && @taxon.parent ? @taxon.parent.children : Spree::Taxon.roots  %>
 <%= form_tag products_url, :method => :get do %>
   <%= select_tag :taxon, 
         options_for_select([[t(:all_departments), '']] + 
