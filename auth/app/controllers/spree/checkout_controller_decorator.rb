@@ -36,6 +36,6 @@ Spree::CheckoutController.class_eval do
     # are redirected to the tokenized order url unless authenticated as a registered user.
     def completion_route
       return order_path(@order) if current_user
-      token_order_path(@order, @order.token)
+      spree_auth.token_order_path(@order, @order.token)
     end
 end
