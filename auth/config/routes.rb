@@ -1,10 +1,9 @@
 Spree::Auth::Engine.routes.draw do
   devise_for :user,
-             :module => 'spree',
              :class_name => 'Spree::User',
-             :controllers => { :sessions => 'user_sessions',
-                               :registrations => 'user_registrations',
-                               :passwords => 'user_passwords' },
+             :controllers => { :sessions => 'spree/user_sessions',
+                               :registrations => 'spree/user_registrations',
+                               :passwords => 'spree/user_passwords' },
              :skip => [:unlocks, :omniauth_callbacks],
              :path_names => { :sign_out => 'logout' }
   resources :users, :only => [:edit, :update]
