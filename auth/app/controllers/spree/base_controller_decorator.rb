@@ -7,6 +7,10 @@ Spree::BaseController.class_eval do
   end
 
   private
+    # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
+    def current_ability
+      @current_ability ||= Spree::Ability.new(current_user)
+    end
     # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
     # Override this method in your controllers if you want to have special behavior in case the user is not authorized
     # to access the requested action.  For example, a popup window might simply close itself.

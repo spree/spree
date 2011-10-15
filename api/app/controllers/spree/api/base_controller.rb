@@ -69,9 +69,6 @@ class Spree::Api::BaseController < Spree::BaseController
   end
 
   protected
-    def current_ability
-      @current_ability ||= Spree::Ability.new(current_user)
-    end
 
     def model_class
       "Spree::#{controller_name.classify}".constantize
