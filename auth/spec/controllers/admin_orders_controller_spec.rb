@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'bar_ability.rb'
+require 'bar_ability'
 require 'cancan'
 
 describe Spree::Admin::OrdersController do
