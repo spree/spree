@@ -79,7 +79,7 @@ Then /^product with (.*?)? goes out of stock$/ do |captured_fields|
 end
 
 Given /^backordering is ([^"]*)$/ do |state|
-  @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+  @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
   Spree::Config.set :allow_backorders => (state == "disabled" ? false : true)
 end
 

@@ -5,7 +5,7 @@
 <%= form_for Spree::Config.instance, :url => admin_general_settings_path do |form| %>
   <fieldset id="preferences" data-hook>
   <% @preferences.each do |key| 
-      type = AppConfiguration.preference_definitions[key].instance_eval{@type}.to_sym
+      type = Spree::AppConfiguration.preference_definitions[key].instance_eval{@type}.to_sym
       field = "preferred_#{key}" %>
      <%= form.field_container field do %>
        <%= form.label(field, t(key) + ': ') + tag(:br) if type != :boolean %>

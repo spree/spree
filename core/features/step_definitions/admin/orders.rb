@@ -24,7 +24,7 @@ Given /^product is associated with order$/ do
 end
 
 Given /^preference settings exist$/ do
-  @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+  @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
   Preference.create(:name => 'allow_ssl_in_production', :owner => @configuration, :value => '1')
   Preference.create(:name => 'site_url', :owner => @configuration, :value => "demo.spreecommerce.com")
   Preference.create(:name => 'allow_ssl_in_development_and_test', :owner => @configuration, :value => "0")

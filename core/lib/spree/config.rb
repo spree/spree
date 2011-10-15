@@ -1,10 +1,10 @@
 module Spree
-  # Singleton class to access the configuration object (AppConfiguration.first by default) and its preferences.
+  # Singleton class to access the configuration object (Spree::AppConfiguration.first by default) and its preferences.
   #
   # Usage:
   #   Spree::Config[:foo]                  # Returns the +foo+ preference
   #   Spree::Config[]                      # Returns a Hash with all the application preferences
-  #   Spree::Config.instance               # Returns the configuration object (AppConfiguration.first)
+  #   Spree::Config.instance               # Returns the configuration object (Spree::AppConfiguration.first)
   #   Spree::Config.set(preferences_hash)  # Set the application preferences as especified in +preference_hash+
   #   Spree::Config.searcher/searcher=     # get/set the default product search implementation
   class Config
@@ -15,7 +15,7 @@ module Spree
       def instance
         return @configuration if @configuration
         return nil unless ActiveRecord::Base.connection.tables.include?('spree_configurations')
-        @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+        @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
         @configuration
       end
 

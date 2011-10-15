@@ -3,7 +3,7 @@
 # is created but the self.stored_preferences.build({}).owner is returning nil
 # This step fixes it
 Given /^default configuration file exists$/ do
-  AppConfiguration.find_or_create_by_name("Default configuration")
+  Spree::AppConfiguration.find_or_create_by_name("Default configuration")
 end
 
 Then /^I should see listing shipping methods tabular attributes$/ do
