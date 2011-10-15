@@ -9,7 +9,7 @@ Spree::OrdersController.class_eval do
       if order
         authorize! :edit, order, session[:access_token]
       else
-        authorize! :create, Order
+        authorize! :create, Spree::Order
       end
     end
 end

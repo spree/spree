@@ -41,7 +41,7 @@ class Spree::UsersController < Spree::BaseController
     end
 
     def authorize_actions
-      authorize! params[:action].to_sym, User
+      authorize! params[:action].to_sym, Spree::User
     end
 
     def accurate_title
