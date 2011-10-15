@@ -40,7 +40,7 @@ class Spree::UserSessionsController < Devise::SessionsController
   end
 
   def nav_bar
-    render :partial => 'shared/nav_bar'
+    render :partial => 'spree/shared/nav_bar'
   end
 
   private
