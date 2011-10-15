@@ -1,6 +1,4 @@
-module Spree
-  module Admin
-    class UsersController < ResourceController
+class Spree::Admin::UsersController < Spree::Admin::ResourceController
       # http://spreecommerce.com/blog/2010/11/02/json-hijacking-vulnerability/
       before_filter :check_json_authenticity, :only => :index
       before_filter :load_roles, :only => [:edit, :new, :update, :create]
@@ -69,5 +67,3 @@ module Spree
       end
 
     end
-  end
-end
