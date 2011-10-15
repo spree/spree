@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+Spree::Auth::Engine.routes.draw do
   devise_for :user,
              :module => 'spree',
              :class_name => 'Spree::User',
