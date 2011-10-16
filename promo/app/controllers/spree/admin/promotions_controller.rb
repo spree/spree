@@ -11,7 +11,7 @@ class Spree::Admin::PromotionsController < Spree::Admin::ResourceController
     end
 
     def location_after_save
-      edit_admin_promotion_url(@promotion)
+      spree_promo.edit_admin_promotion_url(@promotion)
     end
 
     def load_data
