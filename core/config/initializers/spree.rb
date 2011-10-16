@@ -2,7 +2,6 @@ require 'mail'
 
 # Spree Configuration
 SESSION_KEY = '_spree_session_id'
-#require 'spree/support/core_ext/array/conversions'
 
 # TODO - Add the lib/plugins stuff maybe?
 
@@ -15,15 +14,6 @@ end
 if Spree::MailMethod.table_exists?
   Spree::MailSettings.init
   Mail.register_interceptor(Spree::MailInterceptor)
-end
-
-# Add extra support goodies (similar to rails active support)
-#class Array #:nodoc:
-#  include Spree::Support::CoreExtensions::Array
-#end
-
-String.class_eval do
-  include Spree::Core::Ext::String
 end
 
 LIKE = ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' ? 'ILIKE' : 'LIKE'
