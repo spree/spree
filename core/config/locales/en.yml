@@ -571,6 +571,7 @@ en:
     variant_deleted: "Variant has been deleted"
     variant_not_deleted: "Variant could not be deleted"
   on_hand: "On Hand"
+  one_default_category_with_default_tax_rate: "You should configure exactly one default category with your countries default tax rate"
   operation: Operation
   option_type: "Option Type"
   option_types: "Option Types"
