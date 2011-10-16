@@ -1,7 +1,6 @@
 class Spree::Calculator::FreeShipping < ::Spree::Calculator
-
   def self.description
-    I18n.t("free_shipping")
+    I18n.t(:free_shipping)
   end
 
   def compute(object)
@@ -14,6 +13,5 @@ class Spree::Calculator::FreeShipping < ::Spree::Calculator
 
     order.ship_total
   end
-
 end
 
