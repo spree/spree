@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+Spree::Promo::Engine.routes.draw do
   namespace :spree do
     namespace :admin do
       resources :promotions do
