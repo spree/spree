@@ -69,7 +69,6 @@ class Spree::Api::BaseController < Spree::BaseController
   end
 
   protected
-
     def model_class
       "Spree::#{controller_name.classify}".constantize
     end
