@@ -1,6 +1,6 @@
 class RenameCouponsToPromotions < ActiveRecord::Migration
   def self.up
-    execute "DROP TABLE IF EXISTS promotions"
+    drop_table :promotions if self.table_exists?(:promotions)
     rename_table :coupons, :promotions
   end
 
