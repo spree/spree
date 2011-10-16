@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+Spree::Api::Engine.routes.draw do
   namespace :admin do
     resources :users do
       member do
