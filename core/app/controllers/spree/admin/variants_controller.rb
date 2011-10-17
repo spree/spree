@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class VariantsController < Admin::ResourceController
+    class VariantsController < ResourceController
       belongs_to 'spree/product', :find_by => :permalink
       create.before :create_before
       new_action.before :new_before
