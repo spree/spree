@@ -96,4 +96,3 @@ class Spree::LineItem < ActiveRecord::Base
       end
     end
 end
-
