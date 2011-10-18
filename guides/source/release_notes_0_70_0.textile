@@ -63,12 +63,9 @@ NOTE: In production all references to assets from views using image_tag, asset_p
 
 h4. Pre-compiling for development
 
-Spree alters the behaviour of the precompile rake task so when you execute it passing the RAILS_ENV environmental variable, as follows:
+Spree alters the behaviour of the precompile rake task as follows:
 
-<ruby>
-  $ bundle exec rake assets:precompile RAILS_ENV=development
-    RAILS_ASSETS_NONDIGEST=true
-</ruby>
+<shell> $ bundle exec rake assets:precompile:nondigest</shell>
 
 It will still output the assets to <tt>public/assets</tt> but it will not include the MD5 fingerprint in the filename, hence the files will be served in development directly by the web server (and not processed by Rails).
 
@@ -76,7 +73,7 @@ WARNING: Using the precompile rake task in development will prevent any changes 
 
 Rail's also provides the following rake task that will delete the entire <tt>public/assets</tt> directory, this can be helpful to clear out development assets before committing.
 
-<ruby> $ rake assets:clean</ruby>
+<shell> $ bundle exec rake assets:clean</shell>
 
 It might also be worthwhile to include the <tt>public/assets</tt> directory in your <tt>.gitignore</tt> file.
 
@@ -106,7 +103,7 @@ You can generate new extensions inside an existing rails application or as a sta
 One of the most important advances in this new generator is that you can now easily run specs for extensions in their own standalone repository.  You just need to create a test application (one time only) as a context before running your specs.
 
 <shell>
-  $ rake test_app
+  $ bundle exec rake test_app
   $ bundle exec rspec spec
 </shell>
 
@@ -125,9 +122,7 @@ To prevent problems later please ensure that you've copied all the migrations fr
 
 You can check that all Spree migrations are copied by running:
 
-<ruby>
-  rake spree:install:migrations
-</ruby>
+<shell> $ rake spree:install:migrations</shell>
 
 Each extension will provide it's own rake task (or generator) for copying migrations so please refer to the extensions README for instructions.
 
@@ -143,14 +138,14 @@ h5. Gemfile changes
 You'll need to make several additions and changes to your Gemfile:
 
 * Update spree to 0.70.0
-* Update rails to 3.1.0
+* Update rails to 3.1.1
 * Update mysql2 to 0.3.6 - if your using it.
 * Ensure the assets group is present:
 
 <ruby>
   group :assets do
-    gem 'sass-rails', "~> 3.1.0.rc"
-    gem 'coffee-rails', "~> 3.1.0.rc"
+    gem 'sass-rails', "~> 3.1.1"
+    gem 'coffee-rails', "~> 3.1.1"
     gem 'uglifier'
   end
 </ruby>
@@ -211,16 +206,13 @@ h5. Install dependencies
 
 Install all the required gems, and lock your dependencies by running:
 
-<ruby>
-  bundle update
-</ruby>
+<shell> $ bundle update</shell>
 
 h5. Generate & copy required files
 
 Running the <tt>spree:site</tt> generator will create the skeleton structure for the asset pipeline, and also copy missing migrations.
 
-<ruby>
-  rails g spree:site</ruby>
+<shell> $ rails g spree:site</shell>
 
 
 After running the generator above, it's best to check to make sure you do not have multiple copies of the following line, in <tt>config/application.rb</tt>:
@@ -237,9 +229,7 @@ If you encounter any issues with this step please ensure you've completed the "B
 
 WARNING: Make sure you've taken a backup of the database before attempting this step.
 
-<ruby>
-  rake db:migrate
-</ruby>
+<shell> $ bundle exec rake db:migrate</shell>
 
 
 h4. Migrating your assets
