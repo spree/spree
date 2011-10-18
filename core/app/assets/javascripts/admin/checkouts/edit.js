@@ -58,25 +58,28 @@ $(document).ready(function(){
       },
       select: function(event, ui) {
         $('#customer_search').val(ui.item.label);
-        var addr = ui.item.data['ship_address'];
-        if(addr!=undefined){
-          $('#order_ship_address_attributes_firstname').val(addr['firstname']);
-          $('#order_ship_address_attributes_lastname').val(addr['lastname']);
-          $('#order_ship_address_attributes_address1').val(addr['address1']);
-          $('#order_ship_address_attributes_address2').val(addr['address2']);
-          $('#order_ship_address_attributes_city').val(addr['city']);
-          $('#order_ship_address_attributes_zipcode').val(addr['zipcode']);
-          $('#order_ship_address_attributes_state_id').val(addr['state_id']);
-          $('#order_ship_address_attributes_country_id').val(addr['country_id']);
-          $('#order_ship_address_attributes_phone').val(addr['phone']);
-        }
 
+        _.each(['bill', 'ship'], function(addr_name){
+          var addr = ui.item.data[addr_name + '_address'];
+          if(addr!=undefined){
+            $('#order_' + addr_name + '_address_attributes_firstname').val(addr['firstname']);
+            $('#order_' + addr_name + '_address_attributes_lastname').val(addr['lastname']);
+            $('#order_' + addr_name + '_address_attributes_address1').val(addr['address1']);
+            $('#order_' + addr_name + '_address_attributes_address2').val(addr['address2']);
+            $('#order_' + addr_name + '_address_attributes_city').val(addr['city']);
+            $('#order_' + addr_name + '_address_attributes_zipcode').val(addr['zipcode']);
+            $('#order_' + addr_name + '_address_attributes_state_id').val(addr['state_id']);
+            $('#order_' + addr_name + '_address_attributes_country_id').val(addr['country_id']);
+            $('#order_' + addr_name + '_address_attributes_phone').val(addr['phone']);
+          }
+        });
+
+        $('#order_email').val(ui.item.data['email']);
         $('#user_id').val(ui.item.data['id']);
-        $('#user_id').hide();
         $('#guest_checkout_true').prop("checked", false);
         $('#guest_checkout_false').prop("checked", true);
-        $('#guest_checkout_true').prop("disabled", true);
-        return false;
+        $('#guest_checkout_true').prop("disabled", false);
+        return true;
       }
     }).data("autocomplete")._renderItem = function(ul, item) {
       $(ul).addClass('ac_results');
