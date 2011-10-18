@@ -89,10 +89,6 @@ def self.description
   # Human readable description of the calculator
 end
 
-def self.register
-  # Class method for registering the calculator with Spree
-end
-
 def compute(object=nil)
   # Returns the value after performing the required calculation
 end
@@ -104,42 +100,40 @@ The core calculators for Spree are stored in the +app/models/calculator+ directo
 
 Calculators need to be "registered" with Spree in order to be made available in the admin interface for various configuration options.  The recommended approach for doing this is via an extension.  Custom calculators will typically be written as extensions so you need to add some registration logic to the extension containing the calculator.  This will allow the calculator to do a one time registration during the standard extension activation process.
 
-Spree itself contains a good example of how this can be achieved.  For instance, in the +spree_core+ gem there is logic to register calculators.  The following code can be found in the +activate+ method defined in +spree_core/lib/spree_core.rb+:
+Spree itself contains a good example of how this can be achieved.  For instance, in the +spree_core+ gem there is logic to register calculators.  The following code can be found in the Rails +spree.register.calculators+ initializer defined in +spree/core/lib/spree_core/railtie.rb+:
 
-<shell>
-#register all calculators
-[
-  Calculator::FlatPercentItemTotal,
-  Calculator::FlatRate,
-  Calculator::FlexiRate,
-  Calculator::PerItem,
-  Calculator::SalesTax,
-  Calculator::Vat,
-  Calculator::PriceBucket
-].each{|c_model|
-  begin
-    c_model.register if c_model.table_exists?
-  rescue Exception => e
-    $stderr.puts "Error registering calculator #{c_model}"
-  end
-}
-</shell>
+<ruby>
+initializer "spree.register.calculators" do |app|
+  app.config.spree.calculators.shipping_methods = [
+      Calculator::FlatPercentItemTotal,
+      Calculator::FlatRate,
+      Calculator::FlexiRate,
+      Calculator::PerItem,
+      Calculator::PriceBucket]
 
-This calls the +register+ method on the calculators that we intend to register.  Extension authors should be sure to register any new calculators within the +self.activate+ method defined in +lib/your_extension_name.rb+.  If you do not intend to distribute your calculator as an extension you can simply register it inside a Rails initializer or the +self.activate+ method of the default SpreeSite engine.
+   app.config.spree.calculators.tax_rates = [
+      Calculator::SalesTax,
+      Calculator::Vat]
+end
+</ruby>
+
+This registers calculators to the +Rails.application.config.spree.calculators+ array.  Extension authors should be sure to register any new calculators within the +Rails.application.config.spree.calculators+ array defined in +lib/extension_name/engine.rb+.  If you do not intend to distribute your calculator as an extension you can simply register it inside a Rails initializer +spree.register.calculators+ or the +Rails.application.config.spree.calculators+ method of the default SpreeSite engine.
 
 INFO: Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the design decisions surrounding calculators.
+
+NOTE: The +register+ method is removed. Calculators are now registered by appending to +Rails.application.config.spree.calculators+.
 
 h4. +Spree::CalculatedAdjustments+ Module
 
 Spree includes a helpful +Spree::CalculatedAdjustments+ module that can be used to introduce calculator-like functionality into a Rails model.  Classes that require this type of functionality simply need to declare +calculated_adjustments+ in their class definition.
 
-<shell>
+<ruby>
 class ShippingMethod < ActiveRecord::Base
   ...
   calculated_adjustments
   ...
 end
-</shell>
+</ruby>
 
 h5. Class Methods
 
@@ -151,13 +145,13 @@ When a Spree class uses this helper method it automatically adds the following c
 
 Lets look at how this works with a specific example taken from the Spree source code itself.  Specifically we'll be looking at +ShippingMethod+.
 
-<shell>
+<ruby>
 class ShippingMethod < ActiveRecord::Base
   ...
   calculated_adjustments
   ...
 end
-</shell>
+</ruby>
 
 Here we see that +ShippingMethod+ declares that its going to be involved in calculations by declaring +calculated_adjustments+ in the class definition.  What does that give us exactly?
 
@@ -179,7 +173,7 @@ NOTE:  If you are creating new Rails models you should never declare +has_one :c
 
 We can also register classes that extend +Calculator+ with a class that declares +calculated_adjustments+.  Lets look at +Calculator::FlatRate+ to see what this means.
 
-<shell>
+<ruby>
 class Calculator::FlatRate < Calculator
   ...
 
@@ -190,7 +184,7 @@ class Calculator::FlatRate < Calculator
 
   ...
 end
-</shell>
+</ruby>
 
 Like any +Calculator+ there is a +self.register+ method.  If you look inside the implementation of that method, however, you see that we call +super+ and which calls the implementation that is automatically provided when you extend +Calculator+.  This registers the calculator with Spree but the following line registers the calculator with +ShippingMethod+ as well.
 
@@ -219,7 +213,7 @@ Use of the +calculated_adjustments+ helper also provides additional methods to i
 
 The +create_adjustment+ is the process by which all adjustments should be created.  Lets take a look at how this mechanism works inside the +Order+ class.
 
-<shell>
+<ruby>
 def create_tax_charge!
   return unless rate = TaxRate.match(bill_address) or adjustments.tax.present?
   if old_charge = adjustments.tax.first
@@ -228,7 +222,7 @@ def create_tax_charge!
   end
   rate.create_adjustment(I18n.t(:tax), self, self, true)
 end
-</shell>
+</ruby>
 
 Here we see that an instance of +TaxRate+ is being used to create the adjustment for the order.  +TaxRate+ declares +calculated_adjustments+ in its class definition which makes this all possible.
 
@@ -238,15 +232,15 @@ h4. Computation
 
 Computation for adjustments comes down to a very straightforward +compute+ method that is provided by an instance of +Calculator+.  In some cases the calculation can be quite straight forward.  Take a look at +Calculator::FlatRate+ to see such a simple case.
 
-<shell>
+<ruby>
 def compute(object=nil)
   self.preferred_amount
 end
-</shell>
+</ruby>
 
 This calculator basically just returns the same amount every time its called (note the amount is configurable of course.)  Other calculators (such as +Calculator::SalesTax+) are a bit more interesting.
 
-<shell>
+<ruby>
 def compute(order)
   rate = self.calculable
   line_items = order.line_items.select { |i| i.product.tax_category == rate.tax_category }
@@ -254,7 +248,7 @@ def compute(order)
     sum += line_item.total * rate.amount
   }
 end
-</shell>
+</ruby>
 
 INFO: Calculators should never return a value of +nil+ in their +compute+ method.  Return 0 in these situations instead.
 
@@ -270,12 +264,12 @@ Since calculators are an instances of +ActiveRecord::Base+ they can be configure
 
 Calculators are configured using Spree's flexible "preference system":preferences.html.  Default values for the preferences are configured through the class definition.  For example, the flat rate calculator class definition specifies an amount with a default value of 0.
 
-<shell>
+<ruby>
   class Calculator::FlatRate < Calculator
     preference :amount, :decimal, :default => 0
     ...
   end
-</shell>
+</ruby>
 
 Spree now contains a standard mechanism by which calculator preferences can be edited.  The screenshot below shows how the amounts for the flat rate calculator are editable directly in the admin interface.
 
