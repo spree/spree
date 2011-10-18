@@ -22,7 +22,7 @@
             <%= radio_button_tag :guest_checkout, false, !guest, :disabled => @order.cart? %>
             <%= t(:no) %>
           </label>
-          <%= text_field_tag :user_id, @order.user_id %>
+          <%= hidden_field_tag :user_id, @order.user_id %>
         <% end %>
       </td>
     </tr>
