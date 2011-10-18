@@ -271,5 +271,10 @@ To include your previously defined old style theming hooks from <tt>lib/site_hoo
 
 NOTE: The development log will include suggested replacement Deface overrides anytime Rails encounters a old style hook call. These suggestions are a best effort replacement, but might need some tweaks as some elements have been moved while removing the old hook calls from Spree's view files.
 
-For more information about using Deface overrides please refer to the "View Customization":view_customization.html guide.
+For more information about using Deface overrides, please refer to the "View Customization":view_customization.html guide.
 
+h3. New way to register Calculators
+
+Calculators no longer can be registered with +register+ method. The register method is refactored to take advantage of default Rails application configuration +Rails.application.config.spree.calculators+.
+
+For more information about this new change, please refer to the "Ajustments":"adjustments.html#registration" guide.
