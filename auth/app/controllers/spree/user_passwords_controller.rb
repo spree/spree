@@ -1,5 +1,5 @@
 class Spree::UserPasswordsController < Devise::PasswordsController
-  include SpreeBase
+  include Spree::Core::ControllerHelpers
   helper 'spree/users', 'spree/base'
 
   def new
