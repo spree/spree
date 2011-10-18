@@ -76,7 +76,6 @@ $(document).ready(function(){
 
         $('#order_email').val(ui.item.data['email']);
         $('#user_id').val(ui.item.data['id']);
-        $('#user_id').hide();
         $('#guest_checkout_true').prop("checked", false);
         $('#guest_checkout_false').prop("checked", true);
         $('#guest_checkout_true').prop("disabled", false);
