@@ -1,5 +1,5 @@
 Given /^the order is finalized$/ do
-  order = Order.last
+  order = Spree::Order.last
   order.finalize!
 end
 

@@ -1,5 +1,5 @@
 Given /^count_on_hand is 10 for all products$/ do
-  Product.update_all("count_on_hand=10")
+  Spree::Product.update_all('count_on_hand=10')
 end
 
 Then /^I should see listing products tabular attributes with name ascending$/ do
@@ -7,7 +7,7 @@ Then /^I should see listing products tabular attributes with name ascending$/ do
   data = output[0]
   data[0].should == 'SKU'
   data[1].should match(/Name/)
-  data[2].should == "Master Price"
+  data[2].should == 'Master Price'
 
   data = output[1]
   data[1].should == 'apache baseball cap'
@@ -33,7 +33,7 @@ Then /^I should see listing products tabular attributes with custom result 2$/ d
   data[1].should == 'apache baseball cap'
 end
 
-Given /^a product exists with a sku of "a100"$/ do
+Given /^a product exists with a sku of 'a100'$/ do
   Factory(:product, :sku => 'a100')
 end
 
