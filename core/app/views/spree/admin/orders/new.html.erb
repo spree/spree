@@ -3,7 +3,7 @@
 
 <div data-hook="admin_order_new_header">
   <h2><%= t(:new_order)%></h2>
-  <%= render 'shared/error_messages', :target => @order %>
+  <%= render 'spree/shared/error_messages', :target => @order %>
 </div>
 
 <%= render :partial => 'add_product' %>

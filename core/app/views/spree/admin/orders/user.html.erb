@@ -11,7 +11,7 @@
   </div>
 <% end %>
 
-<%= render 'shared/error_messages', :target => @order %>
+<%= render 'spree/shared/error_messages', :target => @order %>
 
 <%= form_for @order, :url => admin_order_url(@order), :html => { :method => :put} do |f| %>
   <%= f.hidden_field :number %>

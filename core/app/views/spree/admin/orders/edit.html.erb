@@ -11,7 +11,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => {:current => 'Order Details'} %>
 
 <div data-hook="admin_order_edit_header">
-  <%= render 'shared/error_messages', :target => @order %>
+  <%= render 'spree/shared/error_messages', :target => @order %>
 </div>
 
 <%= render :partial => 'add_product' %>

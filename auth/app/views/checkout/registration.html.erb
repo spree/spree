@@ -1,4 +1,4 @@
-<%= render 'shared/error_messages', :target => @user %>
+<%= render 'spree/shared/error_messages', :target => @user %>
 <h2><%= t(:registration)%></h2>
 <div id="registration">
   <div id="account">
@@ -6,7 +6,7 @@
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout">
-      <%= render 'shared/error_messages', :target => @order %>
+      <%= render 'spree/shared/error_messages', :target => @order %>
       <h2><%= t(:guest_user_account) %></h2>
       <%= form_for @order, :url => update_checkout_registration_path, :html => { :method => :put, :id => 'checkout_form_registration'} do |f| %>
         <p>

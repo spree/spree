@@ -13,6 +13,6 @@ class Spree::Property < ActiveRecord::Base
     if prototype.class == Prototype
       id = prototype.id
     end
-    joins('left join properties_prototypes on property_id = properties.id').where('prototype_id = ?', id)
+    joins("LEFT JOIN properties_prototypes ON property_id = #{self.table_name}.id").where('prototype_id = ?', id)
   end
 end
