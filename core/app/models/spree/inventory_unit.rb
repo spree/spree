@@ -1,8 +1,8 @@
 class Spree::InventoryUnit < ActiveRecord::Base
-  belongs_to :variant
-  belongs_to :order
-  belongs_to :shipment
-  belongs_to :return_authorization
+  belongs_to :variant, :class_name => 'Spree::Variant'
+  belongs_to :order, :class_name => 'Spree::Order'
+  belongs_to :shipment, :class_name => 'Spree::Shipment'
+  belongs_to :return_authorization, :class_name => 'Spree::ReturnAuthorization'
 
   scope :backorder, where(:state => 'backordered')
 
@@ -67,49 +67,47 @@ class Spree::InventoryUnit < ActiveRecord::Base
   end
 
   private
-  def allow_ship?
-    Spree::Config[:allow_backorder_shipping] || self.sold?
-  end
-
-  def self.determine_backorder(order, variant, quantity)
-    if variant.on_hand == 0
-      quantity
-    elsif variant.on_hand.present? and variant.on_hand < quantity
-      quantity - (variant.on_hand < 0 ? 0 : variant.on_hand)
-    else
-      0
+    def allow_ship?
+      Spree::Config[:allow_backorder_shipping] || self.sold?
     end
-  end
 
-  def self.destroy_units(order, variant, quantity)
-    variant_units = order.inventory_units.group_by(&:variant_id)
-    return unless variant_units.include? variant.id
-
-    variant_units = variant_units[variant.id].sort_by(&:state)
-
-    quantity.times do
-      inventory_unit = variant_units.shift
-      inventory_unit.destroy
+    def self.determine_backorder(order, variant, quantity)
+      if variant.on_hand == 0
+        quantity
+      elsif variant.on_hand.present? and variant.on_hand < quantity
+        quantity - (variant.on_hand < 0 ? 0 : variant.on_hand)
+      else
+        0
+      end
     end
-  end
 
-  def self.create_units(order, variant, sold, back_order)
-    return if back_order > 0 && !Spree::Config[:allow_backorders]
+    def self.destroy_units(order, variant, quantity)
+      variant_units = order.inventory_units.group_by(&:variant_id)
+      return unless variant_units.include? variant.id
 
+      variant_units = variant_units[variant.id].sort_by(&:state)
 
-    shipment = order.shipments.detect {|shipment| !shipment.shipped? }
+      quantity.times do
+        inventory_unit = variant_units.shift
+        inventory_unit.destroy
+      end
+    end
 
-    sold.times { order.inventory_units.create(:variant => variant, :state => "sold", :shipment => shipment) }
-    back_order.times { order.inventory_units.create(:variant => variant, :state => "backordered", :shipment => shipment) }
-  end
+    def self.create_units(order, variant, sold, back_order)
+      return if back_order > 0 && !Spree::Config[:allow_backorders]
 
-  def update_order
-    self.order.update!
-  end
+      shipment = order.shipments.detect { |shipment| !shipment.shipped? }
 
-  def restock_variant
-    self.variant.on_hand = (self.variant.on_hand + 1)
-    self.variant.save
-  end
+      sold.times { order.inventory_units.create(:variant => variant, :state => "sold", :shipment => shipment) }
+      back_order.times { order.inventory_units.create(:variant => variant, :state => 'backordered', :shipment => shipment) }
+    end
 
+    def update_order
+      self.order.update!
+    end
+
+    def restock_variant
+      self.variant.on_hand = (self.variant.on_hand + 1)
+      self.variant.save
+    end
 end

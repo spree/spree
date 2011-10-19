@@ -1,13 +1,11 @@
-module Spree
-  class Calculator::PerItem < Calculator
-    preference :amount, :decimal, :default => 0
+class Spree::Calculator::PerItem < Spree::Calculator
+  preference :amount, :decimal, :default => 0
 
-    def self.description
-      I18n.t("flat_rate_per_item")
-    end
+  def self.description
+    I18n.t("flat_rate_per_item")
+  end
 
-    def compute(object=nil)
-      self.preferred_amount * object.line_items.length
-    end
+  def compute(object=nil)
+    self.preferred_amount * object.line_items.length
   end
 end

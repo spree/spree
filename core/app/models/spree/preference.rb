@@ -45,7 +45,6 @@ class Spree::Preference < ActiveRecord::Base
   alias_method_chain :group, :optional_lookup
 end
 
-
 # Most of this code is taken from the preferences plugin available
 # at http://github.com/pluginaweek/preferences/tree/master
 

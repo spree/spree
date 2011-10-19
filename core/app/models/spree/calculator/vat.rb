@@ -1,7 +1,6 @@
 class Spree::Calculator::Vat < Spree::Calculator
-
   def self.description
-    I18n.t("vat")
+    I18n.t(:vat)
   end
 
   def self.calculate_tax_on(taxable)
@@ -21,8 +20,8 @@ class Spree::Calculator::Vat < Spree::Calculator
 
     if rate.tax_category.is_default
       order.adjustments.each do | adjust |
-        next if adjust.originator_type == "TaxRate"
-        next if adjust.originator_type == "ShippingMethod" and not Spree::Config[:shipment_inc_vat]
+        next if adjust.originator_type == 'TaxRate'
+        next if adjust.originator_type == 'ShippingMethod' and not Spree::Config[:shipment_inc_vat]
 
         tax += (adjust.amount * rate.amount).round(2, BigDecimal::ROUND_HALF_UP)
       end

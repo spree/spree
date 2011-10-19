@@ -7,26 +7,26 @@ class Spree::PaymentMethod < ActiveRecord::Base
   end
 
   def provider_class
-    raise "You must implement provider_class method for this gateway."
+    raise 'You must implement provider_class method for this gateway.'
   end
 
   # The class that will process payments for this payment type, used for @payment.source
   # e.g. Creditcard in the case of a the Gateway payment type
   # nil means the payment method doesn't require a source e.g. check
   def payment_source_class
-    raise "You must implement payment_source_class method for this gateway."
+    raise 'You must implement payment_source_class method for this gateway.'
   end
 
   def self.available(display_on='both')
-    all.select { |p| p.active && (p.display_on == display_on.to_s || p.display_on.blank?) &&  (p.environment == Rails.env || p.environment.blank?) }
+    all.select { |p| p.active && (p.display_on == display_on.to_s || p.display_on.blank?) && (p.environment == Rails.env || p.environment.blank?) }
   end
 
   def self.active?
-    self.count(:conditions => {:type => self.to_s, :environment => Rails.env, :active => true}) > 0
+    self.count(:conditions => { :type => self.to_s, :environment => Rails.env, :active => true }) > 0
   end
 
   def self.current
-    find(:first, :conditions => {:active => true, :environment => Rails.env})
+    find(:first, :conditions => { :active => true, :environment => Rails.env })
   end
 
   def method_type
@@ -44,5 +44,4 @@ class Spree::PaymentMethod < ActiveRecord::Base
   def payment_profiles_supported?
     false
   end
-
 end

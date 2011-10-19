@@ -1,18 +1,17 @@
 class Spree::Taxon < ActiveRecord::Base
   acts_as_nested_set :dependent => :destroy
 
-  belongs_to :taxonomy
-  has_and_belongs_to_many :products
+  belongs_to :taxonomy, :class_name => 'Spree::Taxonomy'
+  has_and_belongs_to_many :products, :class_name => 'Spree::Product'
   before_create :set_permalink
 
   validates :name, :presence => true
   has_attached_file :icon,
-                :styles => { :mini => '32x32>', :normal => '128x128>' },
-                :default_style => :mini,
-                :url => "/spree/taxons/:id/:style/:basename.:extension",
-                :path => ":rails_root/public/spree/taxons/:id/:style/:basename.:extension",
-                :default_url => "/assets/default_taxon.png"
-
+    :styles => { :mini => '32x32>', :normal => '128x128>' },
+    :default_style => :mini,
+    :url => '/spree/taxons/:id/:style/:basename.:extension',
+    :path => ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
+    :default_url => '/assets/default_taxon.png'
 
   include ::Spree::ProductFilters  # for detailed defs of filters
 
@@ -34,7 +33,7 @@ class Spree::Taxon < ActiveRecord::Base
       self.permalink = name.to_url if self.permalink.blank?
     else
       parent_taxon = Spree::Taxon.find(parent_id)
-      self.permalink = [parent_taxon.permalink, (self.permalink.blank? ? name.to_url : self.permalink.split("/").last)].join('/')
+      self.permalink = [parent_taxon.permalink, (self.permalink.blank? ? name.to_url : self.permalink.split('/').last)].join('/')
     end
   end
 
@@ -45,8 +44,8 @@ class Spree::Taxon < ActiveRecord::Base
   end
 
   private
-  # obsolete, kept for backwards compat
-  def escape(str)
-    str.blank? ? "" : str.to_url
-  end
+    # obsolete, kept for backwards compat
+    def escape(str)
+      str.blank? ? '' : str.to_url
+    end
 end

@@ -33,9 +33,9 @@ class Spree::ProductGroup < ActiveRecord::Base
   before_save :set_permalink
   after_save :update_memberships
 
-  has_and_belongs_to_many :cached_products, :class_name => "Spree::Product"
+  has_and_belongs_to_many :cached_products, :class_name => 'Spree::Product'
   # name
-  has_many :product_scopes, :class_name => "Spree::ProductScope"
+  has_many :product_scopes, :class_name => 'Spree::ProductScope'
   accepts_nested_attributes_for :product_scopes
 
   # Testing utility: creates new *ProductGroup* from search permalink url.
@@ -53,11 +53,11 @@ class Spree::ProductGroup < ActiveRecord::Base
     if pg_name && opg = Spree::ProductGroup.find_by_permalink(pg_name)
       pg = new.from_product_group(opg)
     elsif attrs
-      attrs = url.split("/")
+      attrs = url.split('/')
       pg = new.from_route(attrs)
     end
-    taxon = taxons && taxons.split("/").last
-    pg.add_scope("in_taxon", taxon) if taxon
+    taxon = taxons && taxons.split('/').last
+    pg.add_scope('in_taxon', taxon) if taxon
 
     pg
   end
@@ -76,7 +76,7 @@ class Spree::ProductGroup < ActiveRecord::Base
     self.order_scope = attrs.pop if attrs.length % 2 == 1
     attrs.each_slice(2) do |scope|
       next unless Spree::Product.respond_to?(scope.first)
-      add_scope(scope.first, scope.last.split(","))
+      add_scope(scope.first, scope.last.split(','))
     end
     self
   end
@@ -154,11 +154,11 @@ class Spree::ProductGroup < ActiveRecord::Base
   # generates ProductGroup url
   def to_url
     if (new_record? || name.blank?)
-      result = ""
-      result+= self.product_scopes.map{|ps|
-        [ps.name, ps.arguments.join(",")]
+      result = ''
+      result += self.product_scopes.map{|ps|
+        [ps.name, ps.arguments.join(',')]
       }.flatten.join('/')
-      result+= self.order_scope if self.order_scope
+      result += self.order_scope if self.order_scope
 
       result
     else
@@ -212,5 +212,4 @@ class Spree::ProductGroup < ActiveRecord::Base
     pg.product_scopes.build(:name => 'with_ids', :arguments => [products.map(&:id).join(',')])
     pg
   end
-
 end

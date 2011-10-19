@@ -7,7 +7,7 @@
 class Spree::ProductScope < ActiveRecord::Base
   # name
   # arguments
-  belongs_to :product_group
+  belongs_to :product_group, :class_name => 'Spree::ProductGroup'
   serialize :arguments
 
   validate :check_validity_of_scope
@@ -48,7 +48,7 @@ class Spree::ProductScope < ActiveRecord::Base
 
   # checks validity of the named scope (if its safe and can be applied on Spree::Product)
   def check_validity_of_scope
-    errors.add(:name, "is not a valid scope name") unless Spree::Product.respond_to?(self.name.intern)
+    errors.add(:name, 'is not a valid scope name') unless Spree::Product.respond_to?(self.name.intern)
     apply_on(Spree::Product).limit(0) != nil
   rescue Exception => e
     unless Rails.env.production?
@@ -58,7 +58,7 @@ class Spree::ProductScope < ActiveRecord::Base
       puts e.message
       puts e.backtrace
     end
-    errors.add(:arguments, "are incorrect")
+    errors.add(:arguments, 'are incorrect')
   end
 
   # test ordering scope by looking for name pattern or missed arguments
@@ -67,7 +67,7 @@ class Spree::ProductScope < ActiveRecord::Base
   end
 
   def to_sentence
-    result = I18n.t(:sentence, :scope => [:product_scopes, :scopes, self.name], :default => "")
+    result = I18n.t(:sentence, :scope => [:product_scopes, :scopes, self.name], :default => '')
     result = I18n.t(:name, :scope => [:product_scopes, :scopes, self.name]) if result.blank?
     result % [*self.arguments]
   end

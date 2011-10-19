@@ -1,7 +1,7 @@
 class Spree::Gateway < Spree::PaymentMethod
-	delegate_belongs_to :provider, :authorize, :purchase, :capture, :void, :credit
+  delegate_belongs_to :provider, :authorize, :purchase, :capture, :void, :credit
 
-	validates :name, :type, :presence => true
+  validates :name, :type, :presence => true
 
   preference :server, :string, :default => 'test'
   preference :test_mode, :boolean, :default => true
@@ -13,7 +13,7 @@ class Spree::Gateway < Spree::PaymentMethod
   # instantiates the selected gateway and configures with the options stored in the database
   def self.current
     super
-	end
+  end
 
   def provider
     gateway_options = options
@@ -22,28 +22,27 @@ class Spree::Gateway < Spree::PaymentMethod
     @provider ||= provider_class.new(gateway_options)
   end
 
-	def options
+  def options
     options_hash = {}
     self.preferences.each do |key,value|
       options_hash[key.to_sym] = value
     end
     options_hash
-	end
+  end
 
-	def method_missing(method, *args)
-	 	if @provider.nil? || !@provider.respond_to?(method)
-			super
-		else
+  def method_missing(method, *args)
+    if @provider.nil? || !@provider.respond_to?(method)
+      super
+    else
       provider.send(method)
-		end
-	end
+    end
+  end
 
-	def payment_profiles_supported?
-	  false
+  def payment_profiles_supported?
+    false
   end
 
   def method_type
-    "gateway"
+    'gateway'
   end
-
 end

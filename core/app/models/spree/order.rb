@@ -3,18 +3,18 @@ class Spree::Order < ActiveRecord::Base
                   :ship_address, :line_items_attributes,
                   :shipping_method_id, :email, :use_billing, :special_instructions
 
-  belongs_to :user
+  belongs_to :user, :class_name => 'Spree::User'
   belongs_to :bill_address, :foreign_key => 'bill_address_id', :class_name => 'Spree::Address'
   belongs_to :ship_address, :foreign_key => 'ship_address_id', :class_name => 'Spree::Address'
-  belongs_to :shipping_method
+  belongs_to :shipping_method, :class_name => 'Spree::ShippingMethod'
 
-  has_many :state_events, :as => :stateful
+  has_many :state_events, :as => :stateful, :class_name => 'Spree::StateEvent'
   has_many :line_items, :dependent => :destroy
   has_many :inventory_units
-  has_many :payments, :dependent => :destroy
-  has_many :shipments, :dependent => :destroy
-  has_many :return_authorizations, :dependent => :destroy
-  has_many :adjustments, :dependent => :destroy
+  has_many :payments, :dependent => :destroy, :class_name => 'Spree::Payment'
+  has_many :shipments, :dependent => :destroy, :class_name => 'Spree::Shipment'
+  has_many :return_authorizations, :dependent => :destroy, :class_name => 'Spree::ReturnAuthorization'
+  has_many :adjustments, :dependent => :destroy, :class_name => 'Spree::Adjustment'
 
   users_table_name = Spree::User.table_name
 
@@ -123,7 +123,7 @@ class Spree::Order < ActiveRecord::Base
 
     after_transition :to => 'complete', :do => :finalize!
     after_transition :to => 'delivery', :do => :create_tax_charge!
-    after_transition :to => 'payment', :do => :create_shipment!
+    after_transition :to => 'payment',  :do => :create_shipment!
     after_transition :to => 'canceled', :do => :after_cancel
 
   end
@@ -272,7 +272,7 @@ class Spree::Order < ActiveRecord::Base
       end
     end
     matching_rates.each do |rate|
-      rate.create_adjustment("#{rate.calculator.description} #{rate.amount*100}%", self, self, true)
+      rate.create_adjustment("#{rate.calculator.description} #{rate.amount * 100}%", self, self, true)
     end
   end
 
@@ -344,7 +344,7 @@ class Spree::Order < ActiveRecord::Base
         :name => ship_method.name,
         :cost => cost
       }
-    end.compact.sort_by{ |r| r[:cost] }
+    end.compact.sort_by { |r| r[:cost] }
   end
 
   def payment
@@ -372,7 +372,7 @@ class Spree::Order < ActiveRecord::Base
   end
 
   def products
-    line_items.map{|li| li.variant.product}
+    line_items.map { |li| li.variant.product }
   end
 
   def insufficient_stock_lines
@@ -419,7 +419,6 @@ class Spree::Order < ActiveRecord::Base
           :user_id        => (Spree::User.respond_to?(:current) && Spree::User.current && Spree::User.current.id) || self.user_id
         })
       end
-
     end
 
     # Updates the +payment_state+ attribute according to the following logic:

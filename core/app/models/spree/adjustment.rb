@@ -63,5 +63,4 @@ class Spree::Adjustment < ActiveRecord::Base
       originator.update_adjustment(self, source)
     end
   end
-
 end

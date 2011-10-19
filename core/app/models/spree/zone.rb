@@ -1,7 +1,7 @@
 class Spree::Zone < ActiveRecord::Base
-  has_many :zone_members, :class_name => "Spree::ZoneMember", :dependent => :destroy
-  has_many :tax_rates, :class_name => "Spree::TaxRate", :dependent => :destroy
-  has_many :shipping_methods, :class_name => "Spree::ShippingMethod", :dependent => :nullify
+  has_many :zone_members, :dependent => :destroy, :class_name => 'Spree::ZoneMember'
+  has_many :tax_rates, :dependent => :destroy, :class_name => 'Spree::TaxRate'
+  has_many :shipping_methods, :dependent => :nullify, :class_name => 'Spree::ShippingMethod'
 
   validates :name, :presence => true, :uniqueness => true
   after_save :remove_defunct_members
@@ -15,10 +15,10 @@ class Spree::Zone < ActiveRecord::Base
   def kind
     member = self.members.last
     case member && member.zoneable_type
-    when "State"  then "state"
-    when "Zone"   then "zone"
+    when 'State' then 'state'
+    when 'Zone'  then 'zone'
     else
-      "country"
+      'country'
     end
   end
 
@@ -28,7 +28,7 @@ class Spree::Zone < ActiveRecord::Base
 
   # alias to the new include? method
   def in_zone?(address)
-    $stderr.puts "Warning: calling deprecated method :in_zone? use :include? instead."
+    $stderr.puts 'Warning: calling deprecated method :in_zone? use :include? instead.'
     include?(address)
   end
 
@@ -38,11 +38,11 @@ class Spree::Zone < ActiveRecord::Base
     # NOTE: This is complicated by the fact that include? for HMP is broken in Rails 2.1 (so we use awkward index method)
     members.any? do |zone_member|
       case zone_member.zoneable_type
-      when "Zone"
+      when 'Zone'
         zone_member.zoneable.include?(address)
-      when "Country"
+      when 'Country'
         zone_member.zoneable_id == address.country_id
-      when "State"
+      when 'State'
         zone_member.zoneable_id == address.state_id
       else
         false
@@ -51,7 +51,7 @@ class Spree::Zone < ActiveRecord::Base
   end
 
   def self.match(address)
-    all.select {|zone| zone.include?(address)}
+    all.select { |zone| zone.include?(address) }
   end
 
   # convenience method for returning the countries contained within a zone (different then the countries method which only
@@ -59,11 +59,11 @@ class Spree::Zone < ActiveRecord::Base
   def country_list
     members.map {|zone_member|
       case zone_member.zoneable_type
-      when "Zone"
+      when 'Zone'
         zone_member.zoneable.country_list
-      when "Country"
+      when 'Country'
         zone_member.zoneable
-      when "State"
+      when 'State'
         zone_member.zoneable.country
       else
         nil
@@ -76,9 +76,9 @@ class Spree::Zone < ActiveRecord::Base
   end
 
   private
-  def remove_defunct_members
-    zone_members.each do |zone_member|
-      zone_member.destroy if zone_member.zoneable_id.nil?
+    def remove_defunct_members
+      zone_members.each do |zone_member|
+        zone_member.destroy if zone_member.zoneable_id.nil?
+      end
     end
-  end
 end

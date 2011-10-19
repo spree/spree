@@ -21,22 +21,22 @@ class Spree::Product < ActiveRecord::Base
   variants_table_name = Spree::Variant.table_name
   assets_table_name = Spree::Asset.table_name
 
-  has_many :product_option_types, :dependent => :destroy, :class_name => "Spree::ProductOptionType"
-  has_many :option_types, :through => :product_option_types, :class_name => "Spree::OptionType"
-  has_many :product_properties, :dependent => :destroy, :class_name => "Spree::ProductProperty"
-  has_many :properties, :through => :product_properties, :class_name => "Spree::Property"
-  has_many :images, :as => :viewable, :order => :position, :dependent => :destroy, :class_name => "Spree::Image"
-  has_and_belongs_to_many :product_groups, :class_name => "Spree::ProductGroup", :join_table => "spree_product_groups_products"
-  belongs_to :tax_category, :class_name => "Spree::TaxCategory"
-  has_and_belongs_to_many :taxons, :class_name => "Spree::Taxon"
-  belongs_to :shipping_category, :class_name => "Spree::ShippingCategory"
+  has_many :product_option_types, :dependent => :destroy, :class_name => 'Spree::ProductOptionType'
+  has_many :option_types, :through => :product_option_types, :class_name => 'Spree::OptionType'
+  has_many :product_properties, :dependent => :destroy, :class_name => 'Spree::ProductProperty'
+  has_many :properties, :through => :product_properties, :class_name => 'Spree::Property'
+  has_many :images, :as => :viewable, :order => :position, :dependent => :destroy, :class_name => 'Spree::Image'
+  has_and_belongs_to_many :product_groups, :class_name => 'Spree::ProductGroup', :join_table => "spree_product_groups_products"
+  belongs_to :tax_category, :class_name => 'Spree::TaxCategory'
+  has_and_belongs_to_many :taxons, :class_name => 'Spree::Taxon'
+  belongs_to :shipping_category, :class_name => 'Spree::ShippingCategory'
 
   has_one :master,
     :class_name => 'Spree::Variant',
     :conditions => ["#{variants_table_name}.is_master = ? AND #{variants_table_name}.deleted_at IS NULL", true]
 
   delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
-  delegate_belongs_to :master, :cost_price if Spree::Variant.table_exists? && Spree::Variant.column_names.include?("cost_price")
+  delegate_belongs_to :master, :cost_price if Spree::Variant.table_exists? && Spree::Variant.column_names.include?('cost_price')
 
   after_create :set_master_variant_defaults
   after_create :add_properties_and_option_types_from_prototype
@@ -60,7 +60,6 @@ class Spree::Product < ActiveRecord::Base
     :class_name => 'Spree::Variant',
     :conditions => ["#{variants_table_name}.deleted_at IS NULL AND #{variants_table_name}.is_master = ?", true],
     :dependent => :destroy
-
 
   def variant_images
     Image.find_by_sql("SELECT #{assets_table_name}.* FROM #{assets_table_name} LEFT JOIN #{variants_table_name} ON (#{variants_table_name}.id = #{assets_table_name}.viewable_id) WHERE (#{variants_table_name}.product_id = #{self.id})")
@@ -155,7 +154,7 @@ class Spree::Product < ActiveRecord::Base
 
   # returns the number of inventory units "on_hand" for this product
   def on_hand
-    has_variants? ? variants.inject(0){|sum, v| sum + v.on_hand} : master.on_hand
+    has_variants? ? variants.inject(0) { |sum, v| sum + v.on_hand } : master.on_hand
   end
 
   # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
@@ -171,7 +170,7 @@ class Spree::Product < ActiveRecord::Base
 
   def tax_category
     if self[:tax_category_id].nil?
-      Spree::TaxCategory.first(:conditions => { :is_default => true })
+      Spree::TaxCategory.where(:is_default => true).first
     else
       Spree::TaxCategory.find(self[:tax_category_id])
     end
@@ -257,7 +256,7 @@ class Spree::Product < ActiveRecord::Base
 
     def recalculate_count_on_hand
       product_count_on_hand = has_variants? ?
-        variants.inject(0) {|acc, v| acc + v.count_on_hand} :
+        variants.inject(0) { |acc, v| acc + v.count_on_hand } :
         (master ? master.count_on_hand : 0)
       self.count_on_hand = product_count_on_hand
     end

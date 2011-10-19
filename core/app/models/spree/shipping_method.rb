@@ -1,7 +1,7 @@
 class Spree::ShippingMethod < ActiveRecord::Base
   DISPLAY =  [:both, :front_end, :back_end]
-  belongs_to :zone
-  has_many :shipments
+  belongs_to :zone, :class_name => 'Spree::Zone'
+  has_many :shipments, :class_name => 'Spree:Shipment'
   validates :name, :calculator, :zone, :presence => true
 
   calculated_adjustments
@@ -19,7 +19,6 @@ class Spree::ShippingMethod < ActiveRecord::Base
   end
 
   def self.all_available(order, display_on=nil)
-    all.select { |method| method.available_to_order?(order,display_on)}
+    all.select { |method| method.available_to_order?(order,display_on) }
   end
-
 end

@@ -22,5 +22,4 @@ class Spree::Activator < ActiveRecord::Base
     starts_at && Time.now < starts_at ||
     expires_at && Time.now > expires_at
   end
-
 end

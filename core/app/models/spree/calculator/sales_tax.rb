@@ -1,11 +1,10 @@
 class Spree::Calculator::SalesTax < Spree::Calculator
-
   def self.description
-    I18n.t("sales_tax")
+    I18n.t(:sales_tax)
   end
 
   def self.calculate_tax(order, rates)
-    ActiveSupport::Deprecation.warn("please use Calculator::SalesTax#compute instead", caller)
+    ActiveSupport::Deprecation.warn('please use Calculator::SalesTax#compute instead', caller)
 
     return 0 if rates.empty?
     # note: there is a bug with associations in rails 2.1 model caching so we're using this hack
@@ -15,8 +14,8 @@ class Spree::Calculator::SalesTax < Spree::Calculator
     taxable_totals = {}
     order.line_items.each do |line_item|
       next unless tax_category = line_item.variant.product.tax_category
-      next unless rate = rates.find { | sales_rate | sales_rate.tax_category_id == tax_category.id } if cache_hack
-      next unless rate = rates.find { | sales_rate | sales_rate.tax_category == tax_category } unless cache_hack
+      next unless rate = rates.find { |sales_rate| sales_rate.tax_category_id == tax_category.id } if cache_hack
+      next unless rate = rates.find { |sales_rate| sales_rate.tax_category == tax_category } unless cache_hack
 
       taxable_totals[tax_category] ||= 0
       taxable_totals[tax_category] += line_item.total
@@ -26,7 +25,7 @@ class Spree::Calculator::SalesTax < Spree::Calculator
     tax = 0
     rates.each do |rate|
       tax_category = rate.tax_category unless cache_hack
-      tax_category = TaxCategory.find(rate.tax_category_id) if cache_hack
+      tax_category = Spree::TaxCategory.find(rate.tax_category_id) if cache_hack
       next unless taxable_total = taxable_totals[tax_category]
       tax += taxable_total * rate.amount
     end
@@ -36,7 +35,7 @@ class Spree::Calculator::SalesTax < Spree::Calculator
   def compute(order)
     rate = self.calculable
     line_items = order.line_items.select { |i| i.product.tax_category == rate.tax_category }
-    line_items.inject(0) {|sum, line_item|
+    line_items.inject(0) { |sum, line_item|
       sum += line_item.total * rate.amount
     }
   end
