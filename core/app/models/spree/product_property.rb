@@ -1,6 +1,6 @@
 class Spree::ProductProperty < ActiveRecord::Base
-  belongs_to :product
-  belongs_to :property
+  belongs_to :product, :class_name => 'Spree::Product'
+  belongs_to :property, :class_name => 'Spree::Property'
 
   validates :property, :presence => true
 

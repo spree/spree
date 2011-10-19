@@ -1,11 +1,11 @@
 require 'ostruct'
 class Spree::Shipment < ActiveRecord::Base
-  belongs_to :order, :class_name => "Spree::Order"
-  belongs_to :shipping_method, :class_name => "Spree::ShippingMethod"
-  belongs_to :address, :class_name => "Spree::Address"
-  has_many :state_events, :as => :stateful, :class_name => "Spree::StateEvents"
-  has_many :inventory_units, :dependent => :nullify, :class_name => "Spree::InventoryUnit"
-  has_one :adjustment, :as => :source, :class_name => "Spree::Adjustment"
+  belongs_to :order, :class_name => 'Spree::Order'
+  belongs_to :shipping_method, :class_name => 'Spree::ShippingMethod'
+  belongs_to :address, :class_name => 'Spree::Address'
+  has_many :state_events, :as => :stateful, :class_name => 'Spree::StateEvents'
+  has_many :inventory_units, :dependent => :nullify, :class_name => 'Spree::InventoryUnit'
+  has_one :adjustment, :as => :source, :class_name => 'Spree::Adjustment'
 
   before_create :generate_shipment_number
   after_save :ensure_correct_adjustment, :update_order
@@ -30,7 +30,7 @@ class Spree::Shipment < ActiveRecord::Base
   end
 
   def shipped=(value)
-    return unless value == "1" && shipped_at.nil?
+    return unless value == '1' && shipped_at.nil?
     self.shipped_at = Time.now
   end
 
@@ -65,7 +65,6 @@ class Spree::Shipment < ActiveRecord::Base
     end
   end
 
-
   def line_items
     if order.complete? and Spree::Config[:track_inventory_levels]
       order.line_items.select {|li| inventory_units.map(&:variant_id).include?(li.variant_id)}
@@ -80,73 +79,72 @@ class Spree::Shipment < ActiveRecord::Base
   def update!(order)
     old_state = self.state
     new_state = determine_state(order)
-    update_attribute_without_callbacks "state", determine_state(order)
+    update_attribute_without_callbacks 'state', determine_state(order)
     after_ship if new_state == 'shipped' and old_state != 'shipped'
   end
 
   private
-
-  def generate_shipment_number
-    return self.number unless self.number.blank?
-    record = true
-    while record
-      random = "H" + Array.new(11){rand(9)}.join
-      record = Spree::Shipment.find(:first, :conditions => ["number = ?", random])
+    def generate_shipment_number
+      return self.number unless self.number.blank?
+      record = true
+      while record
+        random = "H#{Array.new(11){rand(9)}.join}"
+        record = self.class.where(:number => random).first
+      end
+      self.number = random
     end
-    self.number = random
-  end
 
-  def description_for_shipping_charge
-    "#{I18n.t(:shipping)} (#{shipping_method.name})"
-  end
-
-  # def transition_order
-  #   update_attribute(:shipped_at, Time.now)
-  #   # transition order to shipped if all shipments have been shipped
-  #   order.ship! if order.shipments.all?(&:shipped?)
-  # end
-
-  def validate_shipping_method
-    unless shipping_method.nil?
-      errors.add :shipping_method, I18n.t("is_not_available_to_shipment_address") unless shipping_method.zone.include?(address)
+    def description_for_shipping_charge
+      "#{I18n.t(:shipping)} (#{shipping_method.name})"
     end
-  end
 
-  # Determines the appropriate +state+ according to the following logic:
-  #
-  # pending    unless +order.payment_state+ is +paid+
-  # shipped    if already shipped (ie. does not change the state)
-  # ready      all other cases
-  def determine_state(order)
-    return "pending" if self.inventory_units.any? {|unit| unit.backordered?}
-    return "shipped" if state == "shipped"
-    order.payment_state == "balance_due" ? "pending" : "ready"
-  end
+    # def transition_order
+    #   update_attribute(:shipped_at, Time.now)
+    #   # transition order to shipped if all shipments have been shipped
+    #   order.ship! if order.shipments.all?(&:shipped?)
+    # end
 
-  # Determines whether or not inventory units should be associated with the shipment.  This is always +false+ when
-  # +Spree::Config[:track_inventory_levels]+ is set to +false.+  Otherwise its +true+ whenever the order is completed
-  # (and not canceled.)
-  def require_inventory
-    return false unless Spree::Config[:track_inventory_levels]
-    order.completed? && !order.canceled?
-  end
-
-  def after_ship
-    inventory_units.each &:ship!
-    Spree::ShipmentMailer.shipped_email(self).deliver
-  end
-
-  def ensure_correct_adjustment
-    if adjustment
-      adjustment.originator = shipping_method
-      adjustment.save
-    else
-      shipping_method.create_adjustment(I18n.t(:shipping), order, self, true)
-      reload #ensure adjustment is present on later saves
+    def validate_shipping_method
+      unless shipping_method.nil?
+        errors.add :shipping_method, I18n.t(:is_not_available_to_shipment_address) unless shipping_method.zone.include?(address)
+      end
     end
-  end
 
-  def update_order
-    order.update!
-  end
+    # Determines the appropriate +state+ according to the following logic:
+    #
+    # pending    unless +order.payment_state+ is +paid+
+    # shipped    if already shipped (ie. does not change the state)
+    # ready      all other cases
+    def determine_state(order)
+      return 'pending' if self.inventory_units.any? {|unit| unit.backordered?}
+      return 'shipped' if state == 'shipped'
+      order.payment_state == 'balance_due' ? 'pending' : 'ready'
+    end
+
+    # Determines whether or not inventory units should be associated with the shipment.  This is always +false+ when
+    # +Spree::Config[:track_inventory_levels]+ is set to +false.+  Otherwise its +true+ whenever the order is completed
+    # (and not canceled.)
+    def require_inventory
+      return false unless Spree::Config[:track_inventory_levels]
+      order.completed? && !order.canceled?
+    end
+
+    def after_ship
+      inventory_units.each &:ship!
+      Spree::ShipmentMailer.shipped_email(self).deliver
+    end
+
+    def ensure_correct_adjustment
+      if adjustment
+        adjustment.originator = shipping_method
+        adjustment.save
+      else
+        shipping_method.create_adjustment(I18n.t(:shipping), order, self, true)
+        reload #ensure adjustment is present on later saves
+      end
+    end
+
+    def update_order
+      order.update!
+    end
 end

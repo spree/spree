@@ -11,8 +11,8 @@ class Spree::MailMethod < ActiveRecord::Base
   preference :smtp_username, :string
   preference :smtp_password, :string
   preference :secure_connection_type, :string, :default => SECURE_CONNECTION_TYPES[0]
-  preference :mails_from, :string, :default => "no-reply@example.com"
-  preference :mail_bcc, :string, :default => "spree@example.com"
+  preference :mails_from, :string, :default => 'no-reply@example.com'
+  preference :mail_bcc, :string, :default => 'spree@example.com'
   preference :intercept_email, :string, :default => nil
 
   validates :environment, :presence => true

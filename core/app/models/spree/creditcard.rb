@@ -1,5 +1,5 @@
 class Spree::Creditcard < ActiveRecord::Base
-  has_many :payments, :as => :source
+  has_many :payments, :as => :source, :class_name => 'Spree::Payment'
 
   before_save :set_last_digits
   after_validation :set_card_type
@@ -71,7 +71,7 @@ class Spree::Creditcard < ActiveRecord::Base
     cc_type
   end
 
-  scope :with_payment_profile, where("gateway_customer_profile_id IS NOT NULL")
+  scope :with_payment_profile, where('gateway_customer_profile_id IS NOT NULL')
 
   def authorize(amount, payment)
     # ActiveMerchant is configured to use cents so we need to multiply order total by 100
@@ -190,19 +190,19 @@ class Spree::Creditcard < ActiveRecord::Base
 
   # Indicates whether its possible to capture the payment
   def can_capture?(payment)
-    payment.state == "pending"
+    payment.state == 'pending'
   end
 
   # Indicates whether its possible to void the payment.
   def can_void?(payment)
-    payment.state == "void" ? false : true
+    payment.state == 'void' ? false : true
   end
 
   # Indicates whether its possible to credit the payment.  Note that most gateways require that the
   # payment be settled first which generally happens within 12-24 hours of the transaction.
   def can_credit?(payment)
-    return false unless payment.state == "completed"
-    return false unless payment.order.payment_state == "credit_owed"
+    return false unless payment.state == 'completed'
+    return false unless payment.order.payment_state == 'credit_owed'
     payment.credit_allowed > 0
   end
 
@@ -222,22 +222,22 @@ class Spree::Creditcard < ActiveRecord::Base
     else
       text = error.to_s
     end
-    logger.error(I18n.t('gateway_error'))
+    logger.error(I18n.t(:gateway_error))
     logger.error("  #{error.to_yaml}")
     raise Spree::GatewayError.new(text)
   end
 
   def gateway_options(payment)
-    options = {:billing_address  => generate_address_hash(payment.order.bill_address),
-               :shipping_address => generate_address_hash(payment.order.ship_address)}
+    options = { :billing_address  => generate_address_hash(payment.order.bill_address),
+               :shipping_address => generate_address_hash(payment.order.ship_address) }
     options.merge minimal_gateway_options(payment)
   end
 
   # Generates an ActiveMerchant compatible address hash from one of Spree's address objects
   def generate_address_hash(address)
     return {} if address.nil?
-    {:name => address.full_name, :address1 => address.address1, :address2 => address.address2, :city => address.city,
-     :state => address.state_text, :zip => address.zipcode, :country => address.country.iso, :phone => address.phone}
+    { :name => address.full_name, :address1 => address.address1, :address2 => address.address2, :city => address.city,
+     :state => address.state_text, :zip => address.zipcode, :country => address.country.iso, :phone => address.phone }
   end
 
   # Generates a minimal set of gateway options.  There appears to be some issues with passing in
@@ -245,10 +245,10 @@ class Spree::Creditcard < ActiveRecord::Base
   # options in this case since they aren't necessary.
   def minimal_gateway_options(payment, totals=true)
 
-    options = {:email    => payment.order.email,
-               :customer => payment.order.email,
-               :ip       => payment.order.ip_address,
-               :order_id => payment.order.number}
+    options = { :email    => payment.order.email,
+                :customer => payment.order.email,
+                :ip       => payment.order.ip_address,
+                :order_id => payment.order.number }
     if totals
       options.merge!({ :shipping => payment.order.ship_total * 100,
                        :tax      => payment.order.tax_total * 100,
@@ -258,7 +258,7 @@ class Spree::Creditcard < ActiveRecord::Base
   end
 
   def spree_cc_type
-    return "visa" if ENV['RAILS_ENV'] == "development"
+    return 'visa' if Rails.env == 'development'
     self.cc_type
   end
 

@@ -1,5 +1,4 @@
 class Spree::BillingIntegration < Spree::PaymentMethod
-
   validates :name, :presence => true
 
   preference :server, :string, :default => 'test'

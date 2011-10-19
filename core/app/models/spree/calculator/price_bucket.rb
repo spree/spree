@@ -4,7 +4,7 @@ class Spree::Calculator::PriceBucket < Spree::Calculator
   preference :discount_amount, :decimal, :default => 0
 
   def self.description
-    I18n.t("price_bucket")
+    I18n.t(:price_bucket)
   end
 
   # as object we always get line items, as calculable we have Coupon, ShippingMethod

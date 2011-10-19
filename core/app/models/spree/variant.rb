@@ -3,10 +3,10 @@ module Spree
     belongs_to :product
     delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords
 
-    has_many :inventory_units
-    has_many :line_items
-    has_and_belongs_to_many :option_values
-    has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
+    has_many :inventory_units, :class_name => 'Spree::InventoryUnit'
+    has_many :line_items, :class_name => 'Spree::LineItem'
+    has_and_belongs_to_many :option_values, :class_name => 'Spree::OptionValue'
+    has_many :images, :as => :viewable, :order => :position, :dependent => :destroy, :class_name => 'Spree::Image'
 
     validate :check_price
     validates :price, :presence => true
@@ -15,15 +15,16 @@ module Spree
     before_save :touch_product
 
     include ::Spree::Scopes::Variant
+
     # default variant scope only lists non-deleted variants
     scope :active, where(:deleted_at => nil)
     scope :deleted, where('deleted_at IS NOT NULL')
 
     # default extra fields for shipping purposes
-    @fields = [ {:name => 'Weight', :only => [:variant], :format => "%.2f"},
-                {:name => 'Height', :only => [:variant], :format => "%.2f"},
-                {:name => 'Width',  :only => [:variant], :format => "%.2f"},
-                {:name => 'Depth',  :only => [:variant], :format => "%.2f"} ]
+    @fields = [{ :name => 'Weight', :only => [:variant], :format => '%.2f' },
+               { :name => 'Height', :only => [:variant], :format => '%.2f' },
+               { :name => 'Width',  :only => [:variant], :format => '%.2f' },
+               { :name => 'Depth',  :only => [:variant], :format => '%.2f' }]
 
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand

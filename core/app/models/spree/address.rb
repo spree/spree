@@ -1,15 +1,11 @@
 class Spree::Address < ActiveRecord::Base
-  belongs_to :country, :class_name => "Spree::Country"
-  belongs_to :state, :class_name => "Spree::State"
+  belongs_to :country, :class_name => 'Spree::Country'
+  belongs_to :state, :class_name => 'Spree::State'
 
-  has_many :shipments, :class_name => "Spree::Shipment"
+  has_many :shipments, :class_name => 'Spree::Shipment'
 
   validates :firstname, :lastname, :address1, :city, :zipcode, :country, :phone, :presence => true
   validate :state_validate
-
-  def self.table_name_prefix
-    "spree_"
-  end
 
   # disconnected since there's no code to display error messages yet OR matching client-side validation
   def phone_validate
@@ -46,7 +42,7 @@ class Spree::Address < ActiveRecord::Base
       country = Spree::Country.where(:id => self.country_id).try(:first)
 
       if country.states.present?
-        states = country.states.where(["name = ? OR abbr = ?",self.state_name, self.state_name])
+        states = country.states.where(['name = ? OR abbr = ?', self.state_name, self.state_name])
 
         if states.size == 1
           self.state = states.first
@@ -74,7 +70,7 @@ class Spree::Address < ActiveRecord::Base
   # end
 
   def full_name
-    self.firstname + " " + self.lastname
+    self.firstname + ' ' + self.lastname
   end
 
   def state_text
@@ -87,13 +83,14 @@ class Spree::Address < ActiveRecord::Base
   end
 
   def zones
-    Zone.match(self)
+    Spree::Zone.match(self)
   end
 
   def same_as?(other)
     return false if other.nil?
-    attributes.except("id", "updated_at", "created_at") ==  other.attributes.except("id", "updated_at", "created_at")
+    attributes.except('id', 'updated_at', 'created_at') ==  other.attributes.except('id', 'updated_at', 'created_at')
   end
+
   alias same_as same_as?
 
   def to_s
@@ -101,19 +98,19 @@ class Spree::Address < ActiveRecord::Base
   end
 
   def clone
-    Address.new(self.attributes.except("id", "updated_at", "created_at"))
+    new(self.attributes.except('id', 'updated_at', 'created_at'))
   end
 
   def ==(other_address)
     self_attrs = self.attributes
     other_attrs = other_address.respond_to?(:attributes) ? other_address.attributes : {}
 
-    [self_attrs, other_attrs].each { |attrs| attrs.except!("id", "created_at", "updated_at", "order_id") }
+    [self_attrs, other_attrs].each { |attrs| attrs.except!('id', 'created_at', 'updated_at', 'order_id') }
 
     self_attrs == other_attrs
   end
 
   def empty?
-    attributes.except("id", "created_at", "updated_at", "order_id", "country_id").all? {|_,v| v.nil?}
+    attributes.except('id', 'created_at', 'updated_at', 'order_id', 'country_id').all? { |_, v| v.nil? }
   end
 end
