@@ -16,8 +16,8 @@ module Spree
 
     include ::Spree::Scopes::Variant
     # default variant scope only lists non-deleted variants
-    scope :active, where("variants.deleted_at is null")
-    scope :deleted, where("not variants.deleted_at is null")
+    scope :active, where("#{self.table_name}.deleted_at is null")
+    scope :deleted, where("not #{self.table_name}.deleted_at is null")
 
     # default extra fields for shipping purposes
     @fields = [ {:name => 'Weight', :only => [:variant], :format => "%.2f"},

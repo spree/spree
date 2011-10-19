@@ -1,12 +1,12 @@
 Given /^the custom taxons and custom products exist$/ do
 
-  taxonomy = Taxonomy.find_by_name('Categories')
+  taxonomy = Spree::Taxonomy.find_by_name('Categories')
   root = taxonomy.root
   clothing_taxon = taxonomy.taxons.create(:name => 'Clothing', :parent_id => root.id)
   bags_taxon = taxonomy.taxons.create(:name => 'Bags', :parent_id => root.id)
   mugs_taxon = taxonomy.taxons.create(:name => 'Mugs', :parent_id => root.id)
 
-  taxonomy = Taxonomy.find_by_name('Brand')
+  taxonomy = Spree::Taxonomy.find_by_name('Brand')
   root = taxonomy.root
   taxon = taxonomy.taxons.create(:name => "Ruby on Rails", :parent_id => root.id)
 
@@ -62,12 +62,12 @@ Then /^verify products listing for Ruby on Rails brand$/ do
   tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
   tmp.delete("")
   array = ["Ruby on Rails Bag",
-   "Ruby on Rails Baseball Jersey",
-   "Ruby on Rails Jr. Spaghetti",
-   "Ruby on Rails Mug",
-   "Ruby on Rails Ringer T-shirt",
-   "Ruby on Rails Stein",
-   "Ruby on Rails Tote"]
+           "Ruby on Rails Baseball Jersey",
+           "Ruby on Rails Jr. Spaghetti",
+           "Ruby on Rails Mug",
+           "Ruby on Rails Ringer T-shirt",
+           "Ruby on Rails Stein",
+           "Ruby on Rails Tote"]
   tmp.sort!.should == array
 end
 
@@ -90,10 +90,10 @@ Then /^verify products listing for Clothing category$/ do
   tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
   tmp.delete("")
   tmp.sort!.should == ["Apache Baseball Jersey",
- "Ruby Baseball Jersey",
- "Ruby on Rails Baseball Jersey",
- "Ruby on Rails Jr. Spaghetti",
- "Ruby on Rails Ringer T-shirt"]
+                       "Ruby Baseball Jersey",
+                       "Ruby on Rails Baseball Jersey",
+                       "Ruby on Rails Jr. Spaghetti",
+                       "Ruby on Rails Ringer T-shirt"]
 end
 
 Then /^verify products listing for Bags category$/ do
@@ -126,9 +126,7 @@ Then /^verify products listing for price range search 18 and above$/ do
                        "Ruby on Rails Jr. Spaghetti"]
 end
 
-
 Then /^I should get a "(\d+) ([^"]+)" response$/ do |http_status, message|
   #response.status.should == "#{http_status} #{message}"    # webrat
   page.driver.status_code.should == http_status.to_i        # capybara
 end
-

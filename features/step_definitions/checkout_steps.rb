@@ -25,7 +25,7 @@ Given /^a product with (.*?)? exists$/ do |captured_fields|
 
   price = fields.delete('price')
 
-  if Product.search.master_price_equals(price).count(:conditions => fields) == 0
+  if Spree::Product.search.master_price_equals(price).count(:conditions => fields) == 0
     product = Factory(:product, fields.merge('price' => price,  :sku => 'ABC',
                                                       :available_on => (Time.now - 100.days)))
 
@@ -43,7 +43,7 @@ When /^(?:|I )add a product with (.*?)? to cart$/ do |captured_fields|
 
   price = fields.delete('price')
 
-  if Product.search.master_price_equals(price).count(:conditions => fields) == 0
+  if Spree::Product.search.master_price_equals(price).count(:conditions => fields) == 0
     product = Factory(:product, fields.merge('price' => price,  :sku => 'ABC',
                                                       :available_on => (Time.now - 100.days)))
 
@@ -61,7 +61,7 @@ end
 
 
 When /^I choose "(.*?)" as shipping method$/ do |shipping_method|
-  shipping_method = "order_shipping_method_id_#{ShippingMethod.find_by_name(shipping_method).id}"
+  shipping_method = "order_shipping_method_id_#{Spree::ShippingMethod.find_by_name(shipping_method).id}"
   When %{I choose "#{shipping_method}"}
   And %{press "Save and Continue"}
 end
@@ -73,7 +73,7 @@ Then /^product with (.*?)? goes out of stock$/ do |captured_fields|
     fields[name] = value.delete('"')
   end
 
-  product = Product.where(:name => fields['name']).first
+  product = Spree::Product.where(:name => fields['name']).first
   product.on_hand = 0
   product.save
 end
@@ -87,7 +87,7 @@ end
 When /^I choose "(.*?)" as shipping method and "(.*?)" as payment method(?: and set coupon code to "(.*?)")?$/ do |shipping_method, payment_method, coupon_code|
   When %{I choose "#{shipping_method}" as shipping method}
 
-  payment_method = "order_payments_attributes__payment_method_id_#{PaymentMethod.find(:last, :conditions => {:name => payment_method}).id}"
+  payment_method = "order_payments_attributes__payment_method_id_#{Spree::PaymentMethod.find(:last, :conditions => {:name => payment_method}).id}"
 
   When %{I choose "#{payment_method}"}
 
