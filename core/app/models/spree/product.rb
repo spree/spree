@@ -18,6 +18,9 @@
 # Sum of on_hand each variant's inventory level determine "on_hand" level for the product.
 #
 class Spree::Product < ActiveRecord::Base
+  variants_table_name = Spree::Variant.table_name
+  assets_table_name = Spree::Asset.table_name
+
   has_many :product_option_types, :dependent => :destroy, :class_name => "Spree::ProductOptionType"
   has_many :option_types, :through => :product_option_types, :class_name => "Spree::OptionType"
   has_many :product_properties, :dependent => :destroy, :class_name => "Spree::ProductProperty"
@@ -30,7 +33,7 @@ class Spree::Product < ActiveRecord::Base
 
   has_one :master,
     :class_name => 'Spree::Variant',
-    :conditions => ["spree_variants.is_master = ? AND spree_variants.deleted_at IS NULL", true]
+    :conditions => ["#{variants_table_name}.is_master = ? AND #{variants_table_name}.deleted_at IS NULL", true]
 
   delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
   delegate_belongs_to :master, :cost_price if Spree::Variant.table_exists? && Spree::Variant.column_names.include?("cost_price")
@@ -42,8 +45,6 @@ class Spree::Product < ActiveRecord::Base
   after_save :update_memberships if Spree::ProductGroup.table_exists?
   after_save :set_master_on_hand_to_zero_when_product_has_variants
   after_save :save_master
-
-  variants_table_name = Spree::Variant.table_name
 
   has_many :variants,
     :class_name => 'Spree::Variant',
@@ -62,9 +63,8 @@ class Spree::Product < ActiveRecord::Base
 
 
   def variant_images
-    Image.find_by_sql("SELECT spree_assets.* FROM spree_assets LEFT JOIN spree_variants ON (spree_variants.id = spree_assets.viewable_id) WHERE (spree_variants.product_id = #{self.id})")
+    Image.find_by_sql("SELECT #{assets_table_name}.* FROM #{assets_table_name} LEFT JOIN #{variants_table_name} ON (#{variants_table_name}.id = #{assets_table_name}.viewable_id) WHERE (#{variants_table_name}.product_id = #{self.id})")
   end
-
 
   validates :name, :price, :permalink, :presence => true
 
@@ -160,7 +160,7 @@ class Spree::Product < ActiveRecord::Base
 
   # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
   def on_hand=(new_level)
-    raise "cannot set on_hand of product with variants" if has_variants? && Spree::Config[:track_inventory_levels]
+    raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
     master.on_hand = new_level
   end
 
@@ -171,7 +171,7 @@ class Spree::Product < ActiveRecord::Base
 
   def tax_category
     if self[:tax_category_id].nil?
-      Spree::TaxCategory.first(:conditions => {:is_default => true})
+      Spree::TaxCategory.first(:conditions => { :is_default => true })
     else
       Spree::TaxCategory.find(self[:tax_category_id])
     end
@@ -234,7 +234,7 @@ class Spree::Product < ActiveRecord::Base
   # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
   def categorise_variants_from_option(opt_type)
     return {} unless option_types.include?(opt_type)
-    variants.active.group_by {|v| v.option_values.detect {|o| o.option_type == opt_type} }
+    variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type} }
   end
 
   def effective_tax_rate
@@ -246,41 +246,40 @@ class Spree::Product < ActiveRecord::Base
   end
 
   def self.like_any(fields, values)
-    where_str = fields.map{|field| Array.new(values.size, "products.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
+    where_str = fields.map{ |field| Array.new(values.size, "#{self.table_name}.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
     self.where([where_str, values.map{|value| "%#{value}%"} * fields.size].flatten)
   end
 
   private
+    def sanitize_permalink
+      self.permalink = self.permalink.to_url
+    end
 
-  def sanitize_permalink
-    self.permalink = self.permalink.to_url
-  end
-
-  def recalculate_count_on_hand
-    product_count_on_hand = has_variants? ?
+    def recalculate_count_on_hand
+      product_count_on_hand = has_variants? ?
         variants.inject(0) {|acc, v| acc + v.count_on_hand} :
         (master ? master.count_on_hand : 0)
-    self.count_on_hand = product_count_on_hand
-  end
+      self.count_on_hand = product_count_on_hand
+    end
 
-  # the master on_hand is meaningless once a product has variants as the inventory
-  # units are now "contained" within the product variants
-  def set_master_on_hand_to_zero_when_product_has_variants
-    master.on_hand = 0 if has_variants? && Spree::Config[:track_inventory_levels]
-  end
+    # the master on_hand is meaningless once a product has variants as the inventory
+    # units are now "contained" within the product variants
+    def set_master_on_hand_to_zero_when_product_has_variants
+      master.on_hand = 0 if has_variants? && Spree::Config[:track_inventory_levels]
+    end
 
-  # ensures the master variant is flagged as such
-  def set_master_variant_defaults
-    master.is_master = true
-  end
+    # ensures the master variant is flagged as such
+    def set_master_variant_defaults
+      master.is_master = true
+    end
 
-  # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
-  # when saving so we force a save using a hook.
-  def save_master
-    master.save if master && (master.changed? || master.new_record?)
-  end
+    # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
+    # when saving so we force a save using a hook.
+    def save_master
+      master.save if master && (master.changed? || master.new_record?)
+    end
 
-  def update_memberships
-    self.product_groups = Spree::ProductGroup.all.select{|pg| pg.include?(self)}
-  end
+    def update_memberships
+      self.product_groups = Spree::ProductGroup.all.select{|pg| pg.include?(self)}
+    end
 end
