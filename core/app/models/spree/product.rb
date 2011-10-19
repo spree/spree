@@ -170,7 +170,7 @@ class Spree::Product < ActiveRecord::Base
 
   def tax_category
     if self[:tax_category_id].nil?
-      Spree::TaxCategory.first(:conditions => { :is_default => true })
+      Spree::TaxCategory.where(:is_default => true).first
     else
       Spree::TaxCategory.find(self[:tax_category_id])
     end
