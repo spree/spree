@@ -2,13 +2,13 @@ Then /^I should see listing product groups tabular attributes$/ do
   output = tableish('table#listing_product_groups tr', 'td,th')
   data = output[0]
   data[0].should == 'Name'
-  data[1].should == "URL"
-  data[2].should == "Product scopes"
-  data[3].should == "Product count"
-  data[4].should == "Action"
+  data[1].should == 'URL'
+  data[2].should == 'Product scopes'
+  data[3].should == 'Product count'
+  data[4].should == 'Action'
 
   data = output[1]
-  data[0].should == ProductGroup.limit(1).order('name desc').to_a.first.name
+  data[0].should == Spree::ProductGroup.limit(1).order('name DESC').to_a.first.name
 end
 
 Then /^I should see product groups products listing with (.*) by product name$/ do |direction|
@@ -34,28 +34,27 @@ Then /^I should see product groups products listing with (.*) by product name$/ 
 end
 
 Given /^the price of apache cap is 10$/ do
-  product = Product.find_by_name('apache cap')
+  product = Spree::Product.find_by_name('apache cap')
   master = product.master
   master.price = 10.00
   master.save
 end
 
 Given /^the price of rails t-shirt cap is 30 in product group context$/ do
-  product = Product.find_by_name('ruby on rails t-shirt')
+  product = Spree::Product.find_by_name('ruby on rails t-shirt')
   master = product.master
   master.price = 30.00
   master.save
 end
 
-
 Given /^apache cap has 1 line item$/ do
-  product = Product.find_by_name('apache cap')
+  product = Spree::Product.find_by_name('apache cap')
   master = product.master
   Factory(:line_item, :variant => master)
 end
 
 Given /^ruby on rails t-shirt has 2 line items$/ do
-  product = Product.find_by_name('ruby on rails t-shirt')
+  product = Spree::Product.find_by_name('ruby on rails t-shirt')
   master = product.master
   Factory(:line_item, :variant => master)
   Factory(:line_item, :variant => master)

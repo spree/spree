@@ -4,5 +4,5 @@ Then /^I should see tabular data for taxonomies list$/ do
   data[0].should == 'Name'
 
   data = output[1]
-  data[0].should == Taxonomy.limit(1).order('name asc').to_a.first.name
+  data[0].should == Spree::Taxonomy.limit(1).order('name ASC').to_a.first.name
 end

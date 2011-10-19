@@ -1,12 +1,12 @@
 Given /^custom payment associated with order R100$/ do
-  order = Order.find_by_number('R100')
+  order = Spree::Order.find_by_number('R100')
   Factory(:payment, :order => order, :amount => order.outstanding_balance)
 end
 
 Given /^a completed order$/ do
   address = Factory(:address)
 
-  order = Order.find_by_number('R100')
+  order = Spree::Order.find_by_number('R100')
   order.update_attributes(:bill_address_id => address.id, :ship_address_id => address.id)
 
   payment = Factory(:payment, :order_id => order.id, :amount => 30.00)
