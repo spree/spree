@@ -1,6 +1,6 @@
 <h1><%= t(:new_shipping_category) %></h1>
 
-<%= render 'shared/error_messages', :target => @shipping_category %>
+<%= render 'spree/shared/error_messages', :target => @shipping_category %>
 
 <%= form_for [:admin, @shipping_category] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

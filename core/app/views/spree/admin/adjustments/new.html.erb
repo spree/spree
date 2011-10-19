@@ -2,7 +2,7 @@
 
 <h2><%= t(:new_adjustment) %></h2>
 
-<%= render 'shared/error_messages', :target => @adjustment %>
+<%= render 'spree/shared/error_messages', :target => @adjustment %>
 
 <%= form_for @adjustment, :url => admin_order_adjustments_path do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>

@@ -2,7 +2,7 @@
 
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Product Properties'} %>
 
-<%= render 'shared/error_messages', :target => @product %>
+<%= render 'spree/shared/error_messages', :target => @product %>
 
 <%= form_for @product, :url => admin_product_url(@product), :html => { :method => :put } do |f| %>
   <table class="index">

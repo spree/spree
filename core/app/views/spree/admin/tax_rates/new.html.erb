@@ -1,6 +1,6 @@
 <h1><%= t(:new_tax_rate) %></h1>
 
-<%= render 'shared/error_messages', :target => @tax_rate %>
+<%= render 'spree/shared/error_messages', :target => @tax_rate %>
 
 <%= form_for [:admin, @tax_rate] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

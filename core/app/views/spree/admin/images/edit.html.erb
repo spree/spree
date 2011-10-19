@@ -2,7 +2,7 @@
 
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Images'} %>
 
-<%= render 'shared/error_messages', :target => @image %>
+<%= render 'spree/shared/error_messages', :target => @image %>
 
 <%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
   <table class="basic-table" data-hook="edit_image">

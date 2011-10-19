@@ -2,7 +2,7 @@
 
 <h2><%= t(:new) %> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %></h2>
 
-<%= render 'shared/error_messages', :target => @payment %>
+<%= render 'spree/shared/error_messages', :target => @payment %>
 
 <%= form_for @payment, :url => admin_order_payments_path(@order) do |f| %>
 
