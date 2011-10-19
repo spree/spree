@@ -7,6 +7,7 @@ describe Spree::LineItem do
   end
 
   let(:variant) { mock_model(Spree::Variant, :count_on_hand => 95, :price => 9.99) }
+<<<<<<< HEAD
   let(:line_item) { Spree::LineItem.new(:quantity => 5) }
   let(:order) do
     shipments = mock(:shipments, :reduce => 0)
@@ -16,6 +17,10 @@ describe Spree::LineItem do
                              :completed? => true,
                              :update! => true)
   end
+=======
+  let(:line_item) { line_item = Spree::LineItem.new(:quantity => 5) }
+  let(:order) { mock_model(Spree::Order, :line_items => [line_item], :inventory_units => [], :shipments => mock(:shipments), :completed? => true, :update! => true) }
+>>>>>>> [core] cucumber WIP
 
   before do
     line_item.stub(:order => order, :variant => variant, :new_record? => false)
@@ -171,7 +176,11 @@ describe Spree::LineItem do
       line_item.errors.size.should == 1
     end
 
+<<<<<<< HEAD
     it "should allow quantity to be adjusted higher than already shipped units" do
+=======
+    it 'should allow quantity to be adjusted higher than already shipped units' do
+>>>>>>> [core] cucumber WIP
       line_item.quantity = 6
       line_item.save.should be_true
     end
