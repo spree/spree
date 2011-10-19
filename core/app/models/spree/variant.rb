@@ -10,14 +10,14 @@ module Spree
 
     validate :check_price
     validates :price, :presence => true
-    validates :cost_price, :numericality => true, :allow_nil => true if self.table_exists? && self.column_names.include?("cost_price")
+    validates :cost_price, :numericality => true, :allow_nil => true if self.table_exists? && self.column_names.include?('cost_price')
 
     before_save :touch_product
 
     include ::Spree::Scopes::Variant
     # default variant scope only lists non-deleted variants
-    scope :active, where("#{self.table_name}.deleted_at is null")
-    scope :deleted, where("not #{self.table_name}.deleted_at is null")
+    scope :active, where(:deleted_at => nil)
+    scope :deleted, where('deleted_at IS NOT NULL')
 
     # default extra fields for shipping purposes
     @fields = [ {:name => 'Weight', :only => [:variant], :format => "%.2f"},
@@ -38,7 +38,7 @@ module Spree
         # increase Inventory when
         if new_level > on_hand
           # fill backordered orders before creating new units
-          inventory_units.with_state("backordered").slice(0, new_level).each do |iu|
+          inventory_units.with_state('backordered').slice(0, new_level).each do |iu|
             iu.fill_backorder
             new_level -= 1
           end
@@ -46,13 +46,13 @@ module Spree
 
         self.count_on_hand = new_level
       else
-        raise "Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false"
+        raise 'Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false'
       end
     end
 
     # returns number of units currently on backorder for this variant.
     def on_backorder
-      inventory_units.with_state("backordered").size
+      inventory_units.with_state('backordered').size
     end
 
     # returns true if at least one inventory unit of this variant is "on_hand"
@@ -75,7 +75,7 @@ module Spree
     end
 
     def options_text
-      self.option_values.sort{|ov1, ov2| ov1.option_type.position <=> ov2.option_type.position}.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence({:words_connector => ", ", :two_words_connector => ", "})
+      self.option_values.sort{ |ov1, ov2| ov1.option_type.position <=> ov2.option_type.position }.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence({ :words_connector => ", ", :two_words_connector => ", " })
     end
 
     def gross_profit
@@ -90,17 +90,16 @@ module Spree
     end
 
     private
-
-    # Ensures a new variant takes the product master price when price is not supplied
-    def check_price
-      if self.price.nil?
-        raise "Must supply price for variant or master.price for product." if self == product.master
-        self.price = product.master.price
+      # Ensures a new variant takes the product master price when price is not supplied
+      def check_price
+        if self.price.nil?
+          raise 'Must supply price for variant or master.price for product.' if self == product.master
+          self.price = product.master.price
+        end
       end
-    end
 
-    def touch_product
-      product.touch unless is_master?
-    end
+      def touch_product
+        product.touch unless is_master?
+      end
   end
 end
