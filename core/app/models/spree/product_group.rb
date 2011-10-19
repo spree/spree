@@ -33,9 +33,10 @@ class Spree::ProductGroup < ActiveRecord::Base
   before_save :set_permalink
   after_save :update_memberships
 
-  has_and_belongs_to_many :cached_products, :join_table => 'spree_product_groups_products'
+  has_and_belongs_to_many :cached_products, :class_name => 'Spree::Product',
+                                            :join_table => 'spree_product_groups_products'
   # name
-  has_many :product_scopes
+  has_many :product_scopes, :class_name => 'Spree::ProductScope'
   accepts_nested_attributes_for :product_scopes
 
   # Testing utility: creates new *ProductGroup* from search permalink url.

@@ -1,6 +1,6 @@
 class Spree::TaxRate < ActiveRecord::Base
-  belongs_to :zone
-  belongs_to :tax_category
+  belongs_to :zone, :class_name => 'Spree::Zone'
+  belongs_to :tax_category, :class_name => 'Spree::TaxCategory'
 
   validates :amount, :presence => true, :numericality => true
 

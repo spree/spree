@@ -7,7 +7,7 @@
 class Spree::ProductScope < ActiveRecord::Base
   # name
   # arguments
-  belongs_to :product_group
+  belongs_to :product_group, :class_name => 'Spree::ProductGroup'
   serialize :arguments
 
   validate :check_validity_of_scope

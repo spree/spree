@@ -1,7 +1,7 @@
 class Spree::TaxCategory < ActiveRecord::Base
   validates :name, :presence => true, :uniqueness => true
 
-  has_many :tax_rates
+  has_many :tax_rates, :class_name => 'Spree::TaxRate'
 
   before_save :set_default_category
 

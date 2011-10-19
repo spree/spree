@@ -26,7 +26,7 @@ class Spree::PaymentMethod < ActiveRecord::Base
   end
 
   def self.current
-    where(:active => true, :environment => Rails.env).first
+    first(:conditions => { :active => true, :environment => Rails.env })
   end
 
   def method_type

@@ -1,15 +1,11 @@
 class Spree::Address < ActiveRecord::Base
-  belongs_to :country
-  belongs_to :state
+  belongs_to :country, :class_name => 'Spree::Country'
+  belongs_to :state, :class_name => 'Spree::State'
 
-  has_many :shipments
+  has_many :shipments, :class_name => 'Spree::Shipment'
 
   validates :firstname, :lastname, :address1, :city, :zipcode, :country, :phone, :presence => true
   validate :state_validate
-
-  def self.table_name_prefix
-    "spree_"
-  end
 
   # disconnected since there's no code to display error messages yet OR matching client-side validation
   def phone_validate
