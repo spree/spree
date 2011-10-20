@@ -7,7 +7,7 @@
 <h3><%= t(:properties) %></h3>
 
 <ul class='checkbox-list' id='properties' data-hook>
-<% Property.sorted.each do |property| %>
+<% Spree::Property.sorted.each do |property| %>
   <% selected = if @prototype.new_record?
     (params[:property] and params[:property][:id] and params[:property][:id].include?(property.id.to_s))
   else

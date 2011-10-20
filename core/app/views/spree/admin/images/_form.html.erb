@@ -4,7 +4,7 @@
 </tr>
 <% if @product.has_variants? %>
   <tr data-hook="variant">
-    <td><%= Variant.model_name.human %>:</td>
+    <td><%= Spree::Variant.model_name.human %>:</td>
     <td><%= f.select :viewable_id, @variants %></td>
   </tr>
 <% else %>

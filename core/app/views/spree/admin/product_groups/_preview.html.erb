@@ -1,6 +1,6 @@
 <% count, preview = @product_group.generate_preview(Spree::Config[:admin_pgroup_preview_size]) %>
 
-<h2><%= ProductGroup.human_attribute_name(:products) %> (<%= count %>)</h2>
+<h2><%= Spree::ProductGroup.human_attribute_name(:products) %> (<%= count %>)</h2>
 
 <% if count == 0 %>
   <p data-hook="preview_empty"><%= t(:no_match_found) %></p>
@@ -31,4 +31,3 @@
     </tbody>
   </table>
 <% end %>
-
