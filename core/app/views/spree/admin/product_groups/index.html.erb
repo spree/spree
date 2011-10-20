@@ -13,10 +13,10 @@
 <table class="index" id='listing_product_groups' data-hook>
   <thead>
     <tr data-hook="product_group_header">
-      <th><%= ProductGroup.human_attribute_name(:name) %></th>
-      <th><%= ProductGroup.human_attribute_name(:url) %></th>
-      <th><%= ProductGroup.human_attribute_name(:product_scopes) %></th>
-      <th><%= ProductGroup.human_attribute_name(:product_count) %></th>
+      <th><%= Spree::ProductGroup.human_attribute_name(:name) %></th>
+      <th><%= Spree::ProductGroup.human_attribute_name(:url) %></th>
+      <th><%= Spree::ProductGroup.human_attribute_name(:product_scopes) %></th>
+      <th><%= Spree::ProductGroup.human_attribute_name(:product_count) %></th>
       <th><%= t(:action) %></th>
     </tr>
   </thead>

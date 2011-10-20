@@ -10,13 +10,13 @@
   <tr data-hook="environment">
     <td><%= label_tag nil, t(:environment) %></td>
     <td>
-      <%= collection_select(:payment_method, :environment, Configuration.configurations.keys, :to_s, :titleize, {}, {:id => 'gtwy-env'}) %>
+      <%= collection_select(:payment_method, :environment, Spree::Configuration.configurations.keys, :to_s, :titleize, {}, {:id => 'gtwy-env'}) %>
     </td>
   </tr>
   <tr data-hook="display">
     <td><%= label_tag nil, t(:display) %></td>
     <td>
-      <%= select(:payment_method, :display_on, PaymentMethod::DISPLAY.collect {|display| [t(display), display == :both ? nil : display.to_s]}) %>
+      <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }) %>
     </td>
   </tr>
   <tr data-hook="active">

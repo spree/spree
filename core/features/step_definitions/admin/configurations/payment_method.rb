@@ -9,5 +9,5 @@ Then /^I should see listing payment methods tabular attributes$/ do
 
   data = output[1]
   data[0].should == 'Check'
-  data[1].should == 'PaymentMethod::Check'
+  data[1].should == 'Spree::PaymentMethod::Check'
 end
