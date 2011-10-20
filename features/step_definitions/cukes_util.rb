@@ -49,9 +49,9 @@ end
 
 Given /^existing (.*) records are deleted$/ do |type|
   if type == 'zone'
-    Zone.delete_all
+    Spree::Zone.delete_all
   elsif type == 'user'
-    User.delete_all
+    Spree::User.delete_all
   end
 end
 
