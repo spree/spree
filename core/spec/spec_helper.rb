@@ -8,6 +8,7 @@ require 'rspec/rails'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
+require 'database_cleaner'
 require 'spree/core/testing_support/factories'
 
 RSpec.configure do |config|
@@ -26,12 +27,54 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  #config.use_transactional_fixtures = true
 
   config.include SpreeCore::Engine.routes.url_helpers,
     :example_group => {
       :file_path => /\bspec\/requests\//
     }
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+end
+
+shared_context "custom products" do
+  before(:all) do
+    @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+    Spree::Config.set :allow_backorders => true
+
+    taxonomy = Factory(:taxonomy, :name => 'Categories')
+    root = taxonomy.root
+    clothing_taxon = Factory(:taxon, :name => 'Clothing', :parent_id => root.id)
+    bags_taxon = Factory(:taxon, :name => 'Bags', :parent_id => root.id)
+    mugs_taxon = Factory(:taxon, :name => 'Mugs', :parent_id => root.id)
+
+    taxonomy = Factory(:taxonomy, :name => 'Brands')
+    root = taxonomy.root
+    apache_taxon = Factory(:taxon, :name => 'Apache', :parent_id => root.id)
+    rails_taxon = Factory(:taxon, :name => 'Ruby on Rails', :parent_id => root.id)
+    ruby_taxon = Factory(:taxon, :name => 'Ruby', :parent_id => root.id)
+
+    Factory(:custom_product, :name => 'Ruby on Rails Ringer T-Shirt', :price => '17.99', :taxons => [rails_taxon, clothing_taxon])
+    Factory(:custom_product, :name => 'Ruby on Rails Mug', :price => '13.99', :taxons => [rails_taxon, mugs_taxon])
+    Factory(:custom_product, :name => 'Ruby on Rails Tote', :price => '15.99', :taxons => [rails_taxon, bags_taxon])
+    Factory(:custom_product, :name => 'Ruby on Rails Bag', :price => '22.99', :taxons => [rails_taxon, bags_taxon])
+    Factory(:custom_product, :name => 'Ruby on Rails Baseball Jersey', :price => '19.99', :taxons => [rails_taxon, clothing_taxon])
+    Factory(:custom_product, :name => 'Ruby on Rails Stein', :price => '16.99', :taxons => [rails_taxon, mugs_taxon])
+    Factory(:custom_product, :name => 'Ruby on Rails Jr. Spaghetti', :price => '19.99', :taxons => [rails_taxon, clothing_taxon])
+    Factory(:custom_product, :name => 'Ruby Baseball Jersey', :price => '19.99', :taxons => [ruby_taxon, clothing_taxon])
+    Factory(:custom_product, :name => 'Apache Baseball Jersey', :price => '19.99', :taxons => [apache_taxon, clothing_taxon])
+  end
 end
 
 @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
