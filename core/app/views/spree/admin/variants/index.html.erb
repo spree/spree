@@ -7,7 +7,7 @@
     <th><%= t(:options) %></th>
     <th><%= t(:price) %></th>
     <th><%= t(:sku) %></th>
-    <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
+    <% Spree::Variant.additional_fields.select { |f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
       <th><%= t('activerecord.attributes.variant.' + field[:name].downcase, :default => field[:name].titleize) %></th>
     <% end %>
     <th><%= t(:on_hand) %></th>
@@ -20,7 +20,7 @@
       <td><span class="handle"></span> <%= variant.options_text %></td>
       <td><%= variant.price %></td>
       <td><%= variant.sku %></td>
-      <% Variant.additional_fields.select{|f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
+      <% Spree::Variant.additional_fields.select { |f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
         <td><%= variant[field[:name].gsub(" ", "_").downcase] %></td>
       <% end %>
       <td><%= variant.on_hand %></td>

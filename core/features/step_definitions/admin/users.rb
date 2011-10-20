@@ -4,7 +4,7 @@ Then /^I should see listing users tabular attributes with order (.*)$/ do |order
   data[0].should match(/User/)
 
   data = output[1]
-  data[0].should == User.limit(1).order(order).to_a.first.email
+  data[0].should == Spree::User.limit(1).order(order).to_a.first.email
 end
 
 Then /^I should see listing users tabular attributes for search result case$/ do

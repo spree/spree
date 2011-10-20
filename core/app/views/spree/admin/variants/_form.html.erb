@@ -32,7 +32,7 @@
   </div>
   <div class="right">
 
-    <% Variant.additional_fields.select{|af| af[:only].nil? || af[:only].include?(:variant) }.each do |field| %>
+    <% Spree::Variant.additional_fields.select{|af| af[:only].nil? || af[:only].include?(:variant) }.each do |field| %>
       <%= render :partial => 'spree/admin/shared/additional_field', :locals => {:field => field, :f => f} %>
     <% end %>
 

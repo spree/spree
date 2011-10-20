@@ -1,18 +1,18 @@
 <% render 'spree/admin/shared/product_sub_menu' %>
-<h2><%= ProductGroup.model_name.human %></h2>
+<h2><%= Spree::ProductGroup.model_name.human %></h2>
 <p>
-  <%= ProductGroup.human_attribute_name(:name) %>: <%= @product_group.name %>
+  <%= Spree::ProductGroup.human_attribute_name(:name) %>: <%= @product_group.name %>
 </p>
 <p>
-  <%= ProductGroup.human_attribute_name(:url) %>: <%= link_to @product_group.permalink, "/pg/#{@product_group.permalink}" %>
+  <%= Spree::ProductGroup.human_attribute_name(:url) %>: <%= link_to @product_group.permalink, "/pg/#{@product_group.permalink}" %>
 </p>
 
-<h2><%= ProductGroup.human_attribute_name(:product_scopes) %>(<%= @product_group.product_scopes.count %>)</h2>
+<h2><%= Spree::ProductGroup.human_attribute_name(:product_scopes) %>(<%= @product_group.product_scopes.count %>)</h2>
 <table class="product-scopes" data-hook="product_scopes">
   <thead>
     <tr data-hook="product_scopes_header">
-      <th><%= ProductScope.human_attribute_name(:description) %></th>
-      <th><%= ProductScope.human_attribute_name(:arguments) %></th>
+      <th><%= Spree::ProductScope.human_attribute_name(:description) %></th>
+      <th><%= Spree::ProductScope.human_attribute_name(:arguments) %></th>
     </tr>
   </thead>
   <tbody>

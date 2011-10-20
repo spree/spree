@@ -6,7 +6,7 @@
   <tr data-hook="images_header">
     <th><%= t(:thumbnail) %></th>
     <% if @product.has_variants? %>
-      <th><%= Variant.model_name.human %></th>
+      <th><%= Spree::Variant.model_name.human %></th>
     <% end %>
     <th><%= t(:alt_text) %></th>
     <th><%= t(:action) %></th>
