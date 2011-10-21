@@ -13,4 +13,3 @@ class AddAddressesCheckoutsIndexes < ActiveRecord::Migration
     remove_index :addresses, :firstname
   end
 end
-

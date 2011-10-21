@@ -1,14 +1,13 @@
-class PopulateLegacyShipmentState < ActiveRecord::Migration
-  # Hack to allow for legacy migrations
-  class Shipment < ActiveRecord::Base
-  end
+# Hack to allow for legacy migrations
+class Shipment < ActiveRecord::Base; end;
 
+class PopulateLegacyShipmentState < ActiveRecord::Migration
   def self.up
     Shipment.all.each do |shipment|
       if shipment.shipped_at
-        shipment.state = "shipped"
+        shipment.state = 'shipped'
       else
-        shipment.state = "pending"
+        shipment.state = 'pending'
       end
       shipment.save
     end

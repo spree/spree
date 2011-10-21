@@ -5,7 +5,8 @@ class CreateProductsProductGroups < ActiveRecord::Migration
       t.references :product_group
     end
   end
-#product_group_memberships
+
+  #product_group_memberships
   def self.down
     drop_table :product_groups_products
   end

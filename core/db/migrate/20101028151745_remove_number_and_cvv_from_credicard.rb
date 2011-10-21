@@ -5,5 +5,7 @@ class RemoveNumberAndCvvFromCredicard < ActiveRecord::Migration
   end
 
   def self.down
+    add_column :creditcards, :verification_value, :text
+    add_column :creditcards, :number, :text
   end
 end

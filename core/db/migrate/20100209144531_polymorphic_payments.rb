@@ -1,20 +1,18 @@
-class PolymorphicPayments < ActiveRecord::Migration
-  # Legacy table support
-  class Checkout < ActiveRecord::Base
+# Legacy table support
+class Checkout < ActiveRecord::Base; end;
 
-  end
+class PolymorphicPayments < ActiveRecord::Migration
   def self.up
     remove_column :payments, :type
     remove_column :payments, :creditcard_id
     rename_column :payments, :order_id, :payable_id
     change_table :payments do |t|
-      t.string :payable_type
-      t.string :payment_method
+      t.string :payable_type, :payment_method
       t.references :source, :polymorphic => true
     end
     execute "UPDATE payments SET payable_type = 'Order'"
 
-    Spree::Creditcard.table_name = "creditcards"
+    Spree::Creditcard.table_name = 'creditcards'
 
     Spree::Creditcard.all.each do |creditcard|
       if checkout = Checkout.find_by_id(creditcard.checkout_id) and checkout.order
@@ -24,14 +22,21 @@ class PolymorphicPayments < ActiveRecord::Migration
       end
     end
 
-    change_table :creditcards do |t|
-      t.remove :checkout_id
-    end
+    Spree::Creditcard.table_name = 'spree_creditcards'
 
-    Spree::Creditcard.table_name = "spree_creditcards"
+    remove_column :creditcards, :checkout_id
   end
 
   def self.down
-    # no going back!
+    add_column :creditcards, :checkout_id, :integer
+    change_table :payments do |t|
+      t.remove :payable_type
+      t.remove :payment_method
+      t.remove :source_id
+      t.remove :source_type
+    end
+    rename_column :payments, :payable_id, :order_id
+    add_column :payments, :creditcard_id, :integer
+    add_column :payments, :type, :string
   end
 end

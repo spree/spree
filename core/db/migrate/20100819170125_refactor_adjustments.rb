@@ -14,6 +14,16 @@ class RefactorAdjustments < ActiveRecord::Migration
   end
 
   def self.down
-    # no going back
+    change_table :adjustments do |t|
+      t.integer :position
+      t.rename :label, :description
+      t.string :type
+      t.remove :originator_type
+      t.remove :originator_id
+      t.rename :source_type, :adjustment_source_type
+      t.rename :source_id, :adjustment_source_id
+      t.remove :frozen
+      t.remove :mandatory
+    end
   end
 end

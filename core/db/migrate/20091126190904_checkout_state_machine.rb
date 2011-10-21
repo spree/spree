@@ -1,13 +1,9 @@
 class CheckoutStateMachine < ActiveRecord::Migration
   def self.up
-    change_table :checkouts do |t|
-      t.string :state
-    end
+    add_column :checkouts, :state, :string
   end
 
   def self.down
-    change_table :checkouts do |t|
-      t.remove :state
-    end
+    remove_column :checkouts, :state
   end
 end

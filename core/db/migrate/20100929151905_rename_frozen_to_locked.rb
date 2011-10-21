@@ -4,5 +4,6 @@ class RenameFrozenToLocked < ActiveRecord::Migration
   end
 
   def self.down
+    rename_column :adjustments, :locked, :frozen
   end
 end

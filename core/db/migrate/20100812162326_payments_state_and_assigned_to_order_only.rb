@@ -7,5 +7,8 @@ class PaymentsStateAndAssignedToOrderOnly < ActiveRecord::Migration
   end
 
   def self.down
+    remove_column :payments, :state
+    add_column :payments, :payable_type, :string
+    rename_column :payments, :order_id, :payable_id
   end
 end

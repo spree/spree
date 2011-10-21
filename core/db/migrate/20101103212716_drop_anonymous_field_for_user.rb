@@ -4,5 +4,6 @@ class DropAnonymousFieldForUser < ActiveRecord::Migration
   end
 
   def self.down
+    add_column :users, :anonymous, :boolean
   end
 end

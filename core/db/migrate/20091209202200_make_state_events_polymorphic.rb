@@ -1,9 +1,7 @@
+# Legacy model support
+class StateEvent < ActiveRecord::Base; end;
+
 class MakeStateEventsPolymorphic < ActiveRecord::Migration
-  # Legacy model support
-  class StateEvent < ActiveRecord::Base
-
-  end
-
   def self.up
     rename_column :state_events, :order_id, :stateful_id
     add_column :state_events, :stateful_type, :string
