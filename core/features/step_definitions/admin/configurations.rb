@@ -36,10 +36,10 @@ Then /^I should see listing zones tabular attributes with (.*)$/ do |order|
   data[1].should match(/Description/)
 
   data = output[1]
-  data[0].should == Zone.limit(1).order(order).to_a.first.name
+  data[0].should == Spree::Zone.limit(1).order(order).to_a.first.name
   data[0].should == 'eastern' if order == 'name ASC'
   data[0].should == 'western' if order == 'description ASC'
-  data[1].should == Zone.limit(1).order(order).to_a.first.description
+  data[1].should == Spree::Zone.limit(1).order(order).to_a.first.description
 end
 
 
