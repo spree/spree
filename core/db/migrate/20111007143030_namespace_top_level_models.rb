@@ -7,7 +7,6 @@ class NamespaceTopLevelModels < ActiveRecord::Migration
     rename_table :assets,                  :spree_assets
     rename_table :calculators,             :spree_calculators
     rename_table :countries,               :spree_countries
-    rename_table :coupons,                 :spree_coupons
     rename_table :creditcards,             :spree_creditcards
     rename_table :gateways,                :spree_gateways
     rename_table :inventory_units,         :spree_inventory_units
@@ -58,7 +57,6 @@ class NamespaceTopLevelModels < ActiveRecord::Migration
     rename_table :spree_configurations,          :configurations
     rename_table :spree_assets,                  :assets
     rename_table :spree_calculators,             :calculators
-    rename_table :spree_coupons,                 :coupons
     rename_table :spree_countries,               :countries
     rename_table :spree_gateways,                :gateways
     rename_table :spree_creditcards,             :creditcards
