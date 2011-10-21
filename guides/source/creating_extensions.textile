@@ -17,7 +17,7 @@ There are a few basic steps to know when it comes to creating your own extension
 
 h4. Integrated vs. Standalone
 
-Extensions can be createe in their own standalone directory (like the ones shared on Github) or they can be created within your Rails application.  We refer to the extensions that sit in an existing Rails application as "integrated" extensions.
+Extensions can be created in their own standalone directory (like the ones shared on Github) or they can be created within your Rails application.  We refer to the extensions that sit in an existing Rails application as "integrated" extensions.
 
 Integrated extensions are usesful during the active development phase of your store.  Instead of switching projects all of the time you can just make little tweaks to your extension inside of your store repo.  Generally you would only do this if you intended to one day share the extension with someone else (or reuse it elsewhere in a private project.)
 
