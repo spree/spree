@@ -1,10 +1,6 @@
 require 'spec_helper'
 
-<<<<<<< HEAD
 describe Spree::Promotion do
-=======
-describe Promotion do
->>>>>>> spree_promo namespace WIP
   let(:promotion) { Spree::Promotion.new }
   # let(:promotion) { Factory(:promotion) }
 
