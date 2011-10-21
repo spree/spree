@@ -65,7 +65,7 @@ end
 
 module Spree
   def self.version
-    "0.30.1"
+    "0.30.2"
   end
 end
 
