@@ -1,0 +1,6 @@
+notifications:
+  email: false
+  irc: "irc.freenode.org#spree"
+branches:
+  only:
+    - master
