@@ -1,15 +1,13 @@
 class ProductGroupsAndScopes < ActiveRecord::Migration
   def self.up
-    create_table(:product_groups) do |t|
-      t.column :name,       :string
-      t.column :permalink,  :string
-      t.column :order,      :string
+    create_table :product_groups do |t|
+      t.string :name, :permalink, :order
     end
 
-    create_table(:product_scopes) do |t|
-      t.column :product_group_id, :integer
-      t.column :name,             :string
-      t.column :arguments,        :text
+    create_table :product_scopes do |t|
+      t.string   :name
+      t.text     :arguments
+      t.references :product_group
     end
 
     add_index :product_groups, :name

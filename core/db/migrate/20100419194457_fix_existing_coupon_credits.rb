@@ -5,5 +5,7 @@ class FixExistingCouponCredits < ActiveRecord::Migration
   end
 
   def self.down
+    execute("UPDATE adjustments SET adjustment_source_type='Coupon' WHERE adjustment_source_type='Promotion'")
+    execute("UPDATE adjustments SET type='CouponCredit' WHERE type='PromotionCredit'")
   end
 end

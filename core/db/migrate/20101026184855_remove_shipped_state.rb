@@ -1,7 +1,6 @@
-class RemoveShippedState < ActiveRecord::Migration
-  class Order < ActiveRecord::Base
+class Order < ActiveRecord::Base; end;
 
-  end
+class RemoveShippedState < ActiveRecord::Migration
   def self.up
     Order.where(:state => 'shipped').each do |order|
       order.update_attribute_without_callbacks("state", "complete")

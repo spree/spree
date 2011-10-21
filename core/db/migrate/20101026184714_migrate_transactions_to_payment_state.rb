@@ -12,6 +12,9 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
   PAYMENT_COMPLETE = 'completed'
   PAYMENT_VOID = 'void'
   PAYMENT_PENDING = 'pending'
+  
+  # Temporarily set the table back to payments
+  Spree::Payment.table_name = 'payments'
 
   def self.up
     migrate_authorized_only_transactions
@@ -19,32 +22,34 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     migrate_completed_transactions
     migrate_purchased_transactions
     migrate_credited_transactions
+
+    Spree::Payment.table_name = 'spree_payments'
   end
 
   def self.migrate_credited_transactions
-    credited = Transaction.find_by_sql("select * from transactions where txn_type = #{CREDITED}")
+    credited = Transaction.find_by_sql("SELECT * FROM transactions WHERE txn_type = #{CREDITED}")
     credited.each do |tx|
-      payment = Payment.find(tx)
+      payment = Spree::Payment.find(tx)
       order = payment.order
       order.create_payment(
-        :amount=>tx.amount,
-        :source_id=>payment.source_id, :source_type=>'Creditcard',
-        :payment_method_id=>payment.payment_method_id, :state=>PAYMENT_COMPLETE,
-        :avs_response=>tx.avs_response, :response_code=>tx.response_code
+        :amount => tx.amount,
+        :source_id => payment.source_id, :source_type => 'Creditcard',
+        :payment_method_id => payment.payment_method_id, :state => PAYMENT_COMPLETE,
+        :avs_response => tx.avs_response, :response_code => tx.response_code
       )
     end
-    credited.each{|rec| rec.destroy }
+    credited.each { |rec| rec.destroy }
   end
 
   def self.migrate_voided_transactions
-    voided = Transaction.find_by_sql("select * from transactions where txn_type=#{VOIDED}")
+    voided = Transaction.find_by_sql("SELECT * FROM transactions WHERE txn_type = #{VOIDED}")
     voided.each do |tx|
       update_payment(tx, PAYMENT_VOID)
     end
     unless voided.empty?
       all_but_credited = [AUTHORIZED, COMPLETED, PURCHASED, VOIDED]
-      voided_and_subsequent_transactions = Transaction.find_by_sql("select * from transactions where payment_id in (#{voided.map(&:payment_id).join(',')}) and txn_type in (#{all_but_credited.join(',')})")
-      voided_and_subsequent_transactions.each{|rec| rec.destroy }
+      voided_and_subsequent_transactions = Transaction.find_by_sql("SELECT * FROM transactions WHERE payment_id IN (#{voided.map(&:payment_id).join(',')}) AND txn_type IN (#{all_but_credited.join(',')})")
+      voided_and_subsequent_transactions.each { |rec| rec.destroy }
     end
   end
 
@@ -57,28 +62,28 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
   end
 
   def self.migrate_transactions(type)
-    txs = Transaction.find_by_sql("select * from transactions where txn_type = #{type}")
+    txs = Transaction.find_by_sql("SELECT * FROM transactions WHERE txn_type = #{type}")
     txs.each do |tx|
       update_payment(tx, PAYMENT_COMPLETE)
     end
-    txs.each{|rec| rec.destroy }
+    txs.each { |rec| rec.destroy }
   end
 
   def self.migrate_authorized_only_transactions
     if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-      group_by_clause = "group by transactions." + Transaction.column_names.join(", transactions.")
+      group_by_clause = 'GROUP BY transactions.' + Transaction.column_names.join(', transactions.')
     else
-      group_by_clause = "group by payment_id"
+      group_by_clause = 'GROUP BY payment_id'
     end
-    authorized_only = Transaction.find_by_sql("select * from transactions #{group_by_clause} having count(payment_id) = 1 and txn_type = #{AUTHORIZED}")
+    authorized_only = Transaction.find_by_sql("SELECT * FROM transactions #{group_by_clause} HAVING COUNT(payment_id) = 1 AND txn_type = #{AUTHORIZED}")
     authorized_only.each do |tx|
       update_payment(tx, PAYMENT_PENDING)
     end
-    authorized_only.each {|rec| rec.destroy }
+    authorized_only.each { |rec| rec.destroy }
   end
 
   def self.update_payment(tx, state)
-    payment = Payment.find(tx.payment_id)
+    payment = Spree::Payment.find(tx.payment_id)
     payment.update_attributes_without_callbacks({
       :state => state,
       :source_type => 'Creditcard',
@@ -91,4 +96,3 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
   def self.down
   end
 end
-

@@ -1,13 +1,11 @@
+class Checkout < ActiveRecord::Base; end;
+
+# Hack to prevent issues with legacy migrations
+class Order < ActiveRecord::Base
+  has_one :checkout
+end
+
 class ChargeRefactoring < ActiveRecord::Migration
-
-  class Checkout < ActiveRecord::Base
-  end
-
-  # Hack to prevent issues with legacy migrations
-  class Order < ActiveRecord::Base
-    has_one :checkout
-  end
-
   def self.up
     # Temporarily set table name for legacy support
     Spree::Adjustment.table_name = "adjustments"

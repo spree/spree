@@ -1,10 +1,9 @@
-class DeleteInProgressOrders < ActiveRecord::Migration
-  # legacy table support
-  class Order < ActiveRecord::Base
+# legacy table support
+class Order < ActiveRecord::Base; end;
 
-  end
+class DeleteInProgressOrders < ActiveRecord::Migration
   def self.up
-    Order.delete_all(:state=>'in_progress')
+    Order.delete_all(:state => 'in_progress')
     delete_orphans('adjustments')
     delete_orphans('checkouts')
     delete_orphans('shipments')
@@ -14,7 +13,7 @@ class DeleteInProgressOrders < ActiveRecord::Migration
   end
 
   def self.delete_orphans(table_name)
-    execute("delete from #{table_name} where order_id not in (select id from orders)")
+    execute("DELETE FROM #{table_name} WHERE order_id NOT IN (SELECT id FROM orders)")
   end
 
   def self.down

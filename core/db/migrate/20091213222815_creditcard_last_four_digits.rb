@@ -1,9 +1,7 @@
+# Hack to allow for legacy migrations
+class Creditcard < ActiveRecord::Base; end;
+
 class CreditcardLastFourDigits < ActiveRecord::Migration
-
-  # Hack to allow for legacy migrations
-  class Creditcard < ActiveRecord::Base
-  end
-
   def self.up
     rename_column :creditcards, :display_number, :last_digits
 

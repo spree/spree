@@ -1,11 +1,9 @@
 class DropOrderToken < ActiveRecord::Migration
   def self.up
-    change_table :orders do |t|
-      t.remove :token
-    end
+    remove_column :orders, :token
   end
 
   def self.down
-    # no going back
+    add_column :orders, :token, :string
   end
 end
