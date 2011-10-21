@@ -85,7 +85,7 @@ namespace :db do
       model.reset_column_information
     end
 
-    load_defaults  = Country.count == 0
+    load_defaults  = Spree::Country.count == 0
     unless load_defaults    # ask if there are already Countries => default data hass been loaded
       load_defaults = agree('Countries present, load sample data anyways? [y/n]: ')
     end
@@ -93,7 +93,7 @@ namespace :db do
       Rake::Task["db:seed"].invoke
     end
 
-    if Rails.env.production? and Product.count > 0
+    if Rails.env.production? and Spree::Product.count > 0
       load_sample = agree("WARNING: In Production and products exist in database, load sample data anyways? [y/n]:" )
     else
       load_sample = true if ENV['AUTO_ACCEPT']
