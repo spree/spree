@@ -28,7 +28,7 @@ class Spree::Product < ActiveRecord::Base
   has_many :images, :as => :viewable, :order => :position, :dependent => :destroy, :class_name => 'Spree::Image'
   has_and_belongs_to_many :product_groups, :class_name => 'Spree::ProductGroup', :join_table => "spree_product_groups_products"
   belongs_to :tax_category, :class_name => 'Spree::TaxCategory'
-  has_and_belongs_to_many :taxons, :class_name => 'Spree::Taxon'
+  has_and_belongs_to_many :taxons, :class_name => 'Spree::Taxon', :join_table => "spree_products_taxons"
   belongs_to :shipping_category, :class_name => 'Spree::ShippingCategory'
 
   has_one :master,
