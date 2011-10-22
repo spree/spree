@@ -60,7 +60,7 @@ module Spree
         @order.line_items.destroy_all
       end
 
-      redirect_to cart_path
+      redirect_to spree_core.cart_path
     end
 
     def accurate_title
