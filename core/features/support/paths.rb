@@ -16,13 +16,13 @@ module NavigationHelpers
   def path_to(page_name)
     case page_name
     when /the home\s?page/
-      root_path
+      spree_core.root_path
     when /the admin home page/
-      admin_path
+      spree_core.admin_path
     when /the sign in page/
-      new_user_session_path
+      spree_core.new_user_session_path
     when /the sign up page/
-      new_user_registration_path
+      spree_core.new_user_registration_path
     when /an invalid taxon page/
       "/t/totally_bogus_taxon"
 
