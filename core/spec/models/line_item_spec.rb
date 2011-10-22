@@ -9,9 +9,10 @@ describe Spree::LineItem do
   let(:variant) { mock_model(Spree::Variant, :count_on_hand => 95, :price => 9.99) }
   let(:line_item) { Spree::LineItem.new(:quantity => 5) }
   let(:order) do
+    shipments = mock(:shipments, :reduce => 0)
     mock_model(Spree::Order, :line_items => [line_item],
                              :inventory_units => [],
-                             :shipments => mock(:shipments),
+                             :shipments => shipments,
                              :completed? => true,
                              :update! => true)
   end
