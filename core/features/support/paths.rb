@@ -1,4 +1,12 @@
 module NavigationHelpers
+  class RoutesProxy
+    include Rails.application.routes.url_helpers
+  end
+
+  def spree_core
+    ActionDispatch::Routing::RoutesProxy.new(Spree::Core::Engine.routes, RoutesProxy.new)
+  end
+
   # Maps a name to a path. Used by the
   #
   #   When /^I go to (.+)$/ do |page_name|
@@ -7,17 +15,16 @@ module NavigationHelpers
   #
   def path_to(page_name)
     case page_name
-
     when /the home\s?page/
-      '/'
+      root_path
     when /the admin home page/
-      '/admin'
+      admin_path
     when /the sign in page/
       new_user_session_path
     when /the sign up page/
       new_user_registration_path
     when /an invalid taxon page/
-        "/t/totally_bogus_taxon"
+      "/t/totally_bogus_taxon"
 
 
     # Add more mappings here.
