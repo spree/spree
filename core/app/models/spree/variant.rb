@@ -5,7 +5,7 @@ module Spree
 
     has_many :inventory_units, :class_name => 'Spree::InventoryUnit'
     has_many :line_items, :class_name => 'Spree::LineItem'
-    has_and_belongs_to_many :option_values, :class_name => 'Spree::OptionValue', :join_table => "spree_option_values_variants"
+    has_and_belongs_to_many :option_values, :class_name => 'Spree::OptionValue', :join_table => 'spree_option_values_variants'
     has_many :images, :as => :viewable, :order => :position, :dependent => :destroy, :class_name => 'Spree::Image'
 
     validate :check_price
