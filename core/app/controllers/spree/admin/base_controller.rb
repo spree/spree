@@ -1,10 +1,6 @@
 module Spree
   module Admin
-    class BaseController < Spree::BaseController
-      ssl_required
-
-      before_filter :check_alerts if Rails.env.production?
-
+    class BaseController < Spre::BaseController
       helper 'spree/search'
       helper 'spree/admin/navigation'
       layout '/spree/layouts/admin'
@@ -33,6 +29,26 @@ module Spree
         DateTime.parse(last_check) < 12.hours.ago
       end
 
+      def flash_message_for(object, event_sym)
+        resource_desc  = object.class.model_name.human
+        resource_desc += " \"#{object.name}\"" if object.respond_to?(:name)
+        I18n.t(event_sym, :resource => resource_desc)  
+      end
+
+      def render_js_for_destroy
+        render :partial => "/admin/shared/destroy"
+      end
+
+      # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
+      def check_json_authenticity
+        return unless request.format.js? or request.format.json?
+        return unless protect_against_forgery?
+        auth_token = params[request_forgery_protection_token]
+        unless (auth_token and form_authenticity_token == URI.unescape(auth_token))
+          raise(ActionController::InvalidAuthenticityToken)
+        end
+      end
+
       def filter_dismissed_alerts
         return unless session[:alerts]
         dismissed = (Spree::Config[:dismissed_spree_alerts] || '').split(',')
@@ -44,11 +60,11 @@ module Spree
         resource_desc += " \"#{object.name}\"" if object.respond_to?(:name)
         I18n.t(event_sym, :resource => resource_desc)  
       end
-      
+
       def render_js_for_destroy
         render :partial => "/admin/shared/destroy"
       end
-      
+
       # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
       def check_json_authenticity
         return unless request.format.js? or request.format.json?
