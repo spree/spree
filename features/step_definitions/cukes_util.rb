@@ -81,7 +81,8 @@ When /^I confirm a js popup on the next step$/ do
 end
 
 Given /^all (.*) are deleted$/ do |name|
-  name.singularize.gsub(' ','_').camelize.classify.constantize.delete_all
+  klass = name.singularize.gsub(' ','_').camelize.classify
+  ('Spree::' + klass).constantize.delete_all
 end
 
 Then /^click on css "(.*)"$/ do |selector|
