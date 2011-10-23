@@ -1,6 +1,7 @@
 module Spree
   module Auth
     class Engine < Rails::Engine
+      isolate_namespace Spree
       engine_name 'spree_auth'
 
       def self.activate
