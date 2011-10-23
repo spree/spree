@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency('rd_resource_controller')
   s.add_dependency('rd_searchlogic', '>= 3.0.0.rc3')
   s.add_dependency('activemerchant', '>= 1.7.1')
-  s.add_dependency('will_paginate', '>= 3.0.pre')
+  s.add_dependency('will_paginate', '= 3.0.pre')
   s.add_dependency('rails', '~> 3.0.4')
   s.add_dependency('jquery-rails', '>= 0.2.2')
 end

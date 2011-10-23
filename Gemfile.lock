@@ -28,7 +28,7 @@ PATH
       rd_unobtrusive_date_picker (>= 0.1.0)
       state_machine (>= 0.9.4)
       stringex (>= 1.0.3)
-      will_paginate (>= 3.0.pre)
+      will_paginate (= 3.0.pre)
     spree_dash (0.30.2)
       spree_core (= 0.30.2)
     spree_promo (0.30.2)
@@ -195,7 +195,7 @@ GEM
       polyglot (>= 0.3.1)
     trollop (1.16.2)
     tzinfo (0.3.30)
-    will_paginate (3.0.2)
+    will_paginate (3.0.pre)
 
 PLATFORMS
   ruby
