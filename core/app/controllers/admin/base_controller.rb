@@ -3,9 +3,9 @@ class Admin::BaseController < Spree::BaseController
 
   before_filter :check_alerts if Rails.env.production?
 
-  helper :search
-  helper 'admin/navigation'
-  layout 'admin'
+  helper 'spree/search'
+  helper 'spree/admin/navigation'
+  layout 'spree/admin'
 
   protected
   def check_alerts
