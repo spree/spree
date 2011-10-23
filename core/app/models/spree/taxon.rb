@@ -2,7 +2,7 @@ class Spree::Taxon < ActiveRecord::Base
   acts_as_nested_set :dependent => :destroy
 
   belongs_to :taxonomy, :class_name => 'Spree::Taxonomy'
-  has_and_belongs_to_many :products, :class_name => 'Spree::Product'
+  has_and_belongs_to_many :products, :class_name => 'Spree::Product', :join_table => 'spree_products_taxons'
   before_create :set_permalink
 
   validates :name, :presence => true
