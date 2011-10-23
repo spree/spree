@@ -1,6 +1,4 @@
-namespace_migration_version = 20111023201514
-
-#  NOTE: It is safe to remove this initializer once the database has been migrated above the version noted above.
+#  NOTE: It is safe to remove this initializer once the database has been migrated above the namespace_top_level_models migration.
 #
 #  This is a hack needed when running under PostgreSQL.  It's needed because certain ActiveRecord::Base
 #  calls (table_exists?, etc) will trigger a query such as this:
@@ -19,11 +17,9 @@ namespace_migration_version = 20111023201514
 #  by the time you call Spree::Product.table_name = 'products', it's too late.  Setting the table names explicitly
 #  below was the only way I could get the migrations to run properly.
 #
-current_version = ActiveRecord::Base.connection.tables.include?("schema_migrations") ?
-  ActiveRecord::Base.connection.execute("select version from schema_migrations order by version desc limit 1")[0]['version'].to_i
-  : 0
+tables = ActiveRecord::Base.connection.tables
 
-if current_version < namespace_migration_version
+if !tables.include?("schema_migrations") or !tables.include?("spree_products")
   Spree::Variant.class_eval do
     set_table_name 'variants'
   end
@@ -46,6 +42,14 @@ if current_version < namespace_migration_version
 
   Spree::Order.class_eval do
     set_table_name 'orders'
+  end
+
+  Spree::Adjustment.class_eval do
+    set_table_name 'adjustments'
+  end
+
+  Spree::Creditcard.class_eval do
+    set_table_name 'creditcards'
   end
 else
   puts "NOTE: Initializer #{__FILE__} is no longer needed and can be removed"
