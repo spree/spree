@@ -1,12 +1,8 @@
 Given /^I have (\d+) orders$/ do |o|
   user = Factory(:user)
-  Spree::Order.delete_all
-  Spree::Order.create(:email => user.email,:number => 100)
-  Spree::Order.create(:email => user.email,:number => 101)
-  Spree::Order.create(:email => user.email,:number => 102)
-  Spree::Order.create(:email => user.email,:number => 103)
-  Spree::Order.create(:email => user.email,:number => 104)
-  @orders = Spree::Order.all
+  Order.delete_all
+  (1..o.to_i).each{|n|  Order.create(:email => user.email,:number => 99 + n)}
+  @orders = Order.all
 end
 
 Given /^2 custom line items exist$/ do
