@@ -27,7 +27,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
   # instead of true.
-  #config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
   config.include SpreeCore::Engine.routes.url_helpers,
     :example_group => {
@@ -35,8 +35,7 @@ RSpec.configure do |config|
     }
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :truncation
   end
 
   config.before(:each) do
