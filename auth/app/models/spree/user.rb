@@ -13,8 +13,11 @@ class Spree::User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :persistence_token
 
-  scope :admin, lambda { includes(:roles).where('spree_roles.name' => 'admin') }
-  scope :registered, where('spree_users.email NOT LIKE ?', '%@example.net')
+  users_table_name = Spree::User.table_name
+  roles_table_name = Spree::Role.table_name
+
+  scope :admin, lambda { includes(:roles).where("#{roles_table_name}.name" => "admin") }
+  scope :registered, where("#{users_table_name}.email NOT LIKE ?", "%@example.net")
 
   # has_role? simply needs to return true or false whether a user has a role or not.
   def has_role?(role_in_question)
