@@ -15,16 +15,16 @@ login: &login
 
 development:
   <<: *login
-  database: dummy_dev
+  database: db/dummy_dev
 
 test:
   <<: *login
-  database: dummy_test
+  database: db/dummy_test
 
 cucumber:
   <<: *login
-  database: dummy_test
+  database: db/dummy_test
 
 production:
   <<: *login
-  database: dummy_prod
+  database: db/dummy_prod
