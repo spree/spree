@@ -1,0 +1,11 @@
+<div class="alert <%= alert.severity.downcase %>">
+  <%= alert.message %> <%= link_to alert.url_name, alert.url if alert.url %>
+  <%= link_to_remote 'X',{ :url => { :controller=>"admin/general_settings",
+                                     :action=>"dismiss_alert",
+                                     :alert_id => alert.id,
+                                     :method => :post } },
+                           :class  => "dismiss" %>
+</div>
+
+
+

@@ -93,7 +93,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :orders do |order|
       order.resources :payments, :member => {:fire => :put, :finalize => :put}
     end
-    admin.resource :general_settings
+    admin.resource :general_settings, :collection => {:dismiss_alert => :post}
+
     admin.resources :taxonomies, :member => { :get_children => :get } do |taxonomy|
       taxonomy.resources :taxons
     end

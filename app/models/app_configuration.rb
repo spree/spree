@@ -49,6 +49,9 @@ class AppConfiguration < Configuration
   preference :checkout_zone, :string, :default => nil # replace with the name of a zone if you would like to limit the countries
   preference :always_put_site_name_in_title, :boolean, :default => true
   preference :cache_static_content, :boolean, :default => true
+  preference :check_for_spree_alerts, :boolean, :default => true
+  preference :last_check_for_spree_alerts, :string
+  preference :dismissed_spree_alerts, :string
 
   validates_presence_of :name
   validates_uniqueness_of :name

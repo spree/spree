@@ -42,7 +42,6 @@
 
   <div class="<%= 'with-sidebar ' unless @content_for_sidebar.blank? %> clear tile_bg" id="content">
 
-
     <% if flash[:error] %>
     <div class="flash error"><%= flash[:error] %></div>
     <% end %>
@@ -50,6 +49,7 @@
     <div class="flash notice"><%= self.notice %></div>
     <% end %>
 
+    <%= render :partial => 'admin/shared/alert', :collection => session[:alerts] %>
 
     <%= yield %>
 
