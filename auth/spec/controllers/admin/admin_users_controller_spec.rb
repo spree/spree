@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'bar_ability.rb'
+require 'bar_ability'
 require 'cancan'
 
 describe Spree::Admin::UsersController do
@@ -32,7 +32,7 @@ describe Spree::Admin::UsersController do
     it 'should deny access to users with an bar role' do
       user.roles = [Spree::Role.find_or_create_by_name('bar')]
       Spree::Ability.register_ability(BarAbility)
-      post :update, {:id => '9'}
+      post :update, { :id => '9' }
       response.should render_template 'shared/unauthorized'
     end
 
