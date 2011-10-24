@@ -1,7 +1,7 @@
 Given /^I have (\d+) orders$/ do |o|
   user = Factory(:user)
   Order.delete_all
-(1..o.to_i).each{|n|  Order.create(:email => user.email,:number => 99 + n)}
+  (1..o.to_i).each{|n|  Order.create(:email => user.email,:number => 99 + n)}
   @orders = Order.all
 end
 
