@@ -73,7 +73,7 @@ Disallow: /users
 
       #loads application's deface view overrides
       Dir.glob(File.join(File.dirname(__FILE__), "../app/overrides/*.rb")) do |c|
-        Rails.application.config.cache_classes ? require(c) : load(c)
+        Rails.configuration.cache_classes ? require(c) : load(c)
       end
     end
       APP
