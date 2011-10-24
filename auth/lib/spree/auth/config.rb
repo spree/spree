@@ -13,7 +13,7 @@ module Spree
 
       class << self
         def instance
-          return nil unless ActiveRecord::Base.connection.tables.include?('configurations')
+          return nil unless ActiveRecord::Base.connection.tables.include?('spree_configurations')
           Spree::AuthConfiguration.find_or_create_by_name('Default spree_auth configuration')
         end
       end
