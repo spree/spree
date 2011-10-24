@@ -3,11 +3,16 @@ Spree::Admin::BaseController.class_eval do
 
   def authorize_admin
     begin
-      model = controller_name.classify.constantize
+      model = model_class
     rescue
       model = Object
     end
     authorize! :admin, model
     authorize! params[:action].to_sym, model
   end
+
+  protected
+    def model_class
+      "Spree::#{controller_name.classify}".constantize
+    end
 end
