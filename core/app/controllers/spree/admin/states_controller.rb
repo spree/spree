@@ -23,6 +23,7 @@ module Spree
 
       def load_data
         @countries = Country.order(:name)
+        @country = Country.find_by_id(Spree::Config[:default_country_id])
       end
     end
   end
