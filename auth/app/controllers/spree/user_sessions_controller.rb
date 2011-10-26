@@ -1,6 +1,6 @@
 class Spree::UserSessionsController < Devise::SessionsController
   include SpreeBase
-  helper :users, 'spree/base'
+  helper 'spree/users', 'spree/base'
 
   include Spree::CurrentOrder
 

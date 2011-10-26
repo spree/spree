@@ -1,6 +1,6 @@
 class Spree::UserPasswordsController < Devise::PasswordsController
   include SpreeBase
-  helper :users, 'spree/base'
+  helper 'spree/users', 'spree/base'
 
   def new
     super

@@ -1,5 +1,4 @@
 class Spree::User < ActiveRecord::Base
-
   devise :database_authenticatable, :token_authenticatable, :registerable, :recoverable,
          :rememberable, :trackable, :validatable, :encryptable, :encryptor => 'authlogic_sha512'
 
@@ -40,7 +39,7 @@ class Spree::User < ActiveRecord::Base
 
   def send_reset_password_instructions
     generate_reset_password_token!
-    UserMailer.reset_password_instructions(self).deliver
+    Spree::UserMailer.reset_password_instructions(self).deliver
   end
 
   protected
@@ -49,7 +48,6 @@ class Spree::User < ActiveRecord::Base
     end
 
   private
-
     def check_admin
       return if self.class.admin_created?
       admin_role = Spree::Role.find_or_create_by_name 'admin'
@@ -81,5 +79,4 @@ class Spree::User < ActiveRecord::Base
     def self.current=(user)
       Thread.current[:user] = user
     end
-
 end

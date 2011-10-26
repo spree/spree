@@ -2,7 +2,7 @@
 # using the special +register_ability+ method which allows extensions to add their own abilities.
 #
 # See http://github.com/ryanb/cancan for more details on cancan.
-class Ability
+class Spree::Ability
   include CanCan::Ability
 
   class_attribute :abilities
