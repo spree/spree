@@ -41,7 +41,7 @@ module Spree
         return unless @user.respond_to?(:roles) # since roles are technically added by the auth module
         @user.roles.delete_all
         params[:user][:role] ||= {}
-        Role.all.each { |role|
+        Spree::Role.all.each { |role|
           @user.roles << role unless params[:user][:role][role.name].blank?
         }
         params[:user].delete(:role)
@@ -65,7 +65,7 @@ module Spree
       end
 
       def load_roles
-        @roles = Role.all
+        @roles = Spree::Role.all
       end
 
     end

@@ -25,40 +25,39 @@ class Spree::Ability
     alias_action :new_action, :to => :create
     alias_action :show, :to => :read
 
-    user ||= User.new
+    user ||= Spree::User.new
     if user.has_role? 'admin'
       can :manage, :all
     else
       #############################
-      can :read, User do |resource|
+      can :read, Spree::User do |resource|
         resource == user
       end
-      can :update, User do |resource|
+      can :update, Spree::User do |resource|
         resource == user
       end
-      can :create, User
+      can :create, Spree::User
       #############################
-      can :read, Order do |order, token|
+      can :read, Spree::Order do |order, token|
         order.user == user || order.token && token == order.token
       end
-      can :update, Order do |order, token|
+      can :update, Spree::Order do |order, token|
         order.user == user || order.token && token == order.token
       end
-      can :create, Order
+      can :create, Spree::Order
       #############################
-      can :read, Product
-      can :index, Product
+      can :read, Spree::Product
+      can :index, Spree::Product
       #############################
-      can :read, Taxon
-      can :index, Taxon
+      can :read, Spree::Taxon
+      can :index, Spree::Taxon
       #############################
     end
 
     #include any abilities registered by extensions, etc.
-    Ability.abilities.each do |clazz|
+    Spree::Ability.abilities.each do |clazz|
       ability = clazz.send(:new, user)
       @rules = rules + ability.send(:rules)
     end
-
   end
 end

@@ -1,5 +1,5 @@
 # # HACK - need to add all sample users to the 'user' role (can't do this in sample fixtures because user role is seed data)
-# user_role = Role.find_by_name "user"
+# user_role = Spree::Role.find_by_name "user"
 # if user_role
 #   User.all.each { |u| u.roles << user_role unless u.has_role?("user") }
 # end
@@ -51,7 +51,7 @@
 #   else
 #     admin = User.create(attributes)
 #     # create an admin role and and assign the admin user to that role
-#     role = Role.find_or_create_by_name "admin"
+#     role = Spree::Role.find_or_create_by_name "admin"
 #     admin.roles << role
 #     admin.save
 #   end

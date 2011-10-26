@@ -1,5 +1,4 @@
 module Spree::TokenResource
-
   module ClassMethods
     def token_resource
       has_one :tokenized_permission, :as => :permissable
@@ -19,5 +18,4 @@ module Spree::TokenResource
     receiver.extend ClassMethods
     receiver.send :include, InstanceMethods
   end
-
 end
