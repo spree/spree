@@ -3,7 +3,7 @@ require 'spree_auth'
 
 module Spree
   module Api
-    
+
   end
 end
 
