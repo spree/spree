@@ -1,20 +1,20 @@
 flat_rate_ground:
   name: amount
   owner: ups_ground
-  owner_type: Calculator
+  owner_type: Spree::Calculator
   value: 5
 flat_rate_two_day:
   name: amount
   owner: ups_two_day
-  owner_type: Calculator
+  owner_type: Spree::Calculator
   value: 10
 flat_rate_one_day:
   name: amount
   owner: ups_one_day
-  owner_type: Calculator
+  owner_type: Spree::Calculator
   value: 15
 flat_rate_five_dollars:
   name: amount
   owner: flat_rate_coupon_calculator
-  owner_type: Calculator
+  owner_type: Spree::Calculator
   value: 5

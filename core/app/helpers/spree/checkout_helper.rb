@@ -2,7 +2,7 @@ module Spree
   module CheckoutHelper
 
     def checkout_states
-      if Gateway.current and Gateway.current.payment_profiles_supported?
+      if @order.payment and @order.payment.payment_method.payment_profiles_supported?
         %w(address delivery payment confirm complete)
       else
         %w(address delivery payment complete)

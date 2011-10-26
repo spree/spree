@@ -14,7 +14,7 @@
       <% @order.available_payment_methods.each do |method| %>
         <li id="payment_method_<%= method.id %>" class="<%= 'last' if method == @order.available_payment_methods.last %>" data-hook>
           <fieldset>
-            <%= render "checkout/payment/#{method.method_type}", :payment_method => method %>
+            <%= render "spree/checkout/payment/#{method.method_type}", :payment_method => method %>
           </fieldset>
         </li>
       <% end %>
