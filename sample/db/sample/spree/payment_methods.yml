@@ -3,27 +3,27 @@ bogus_dev:
   description: Bogus payment gateway for development.
   environment: development
   active: true
-  type: Gateway::Bogus
+  type: Spree::Gateway::Bogus
 check_method:
   name: Check
   description: Pay by check.
   active: true
-  type: PaymentMethod::Check
+  type: Spree::PaymentMethod::Check
 bogus_test:
   name: Credit Card
   description: Bogus payment gateway for test.
   environment: test
   active: true
-  type: Gateway::Bogus
+  type: Spree::Gateway::Bogus
 bogus_prod:
   name: Credit Card
   description: Bogus payment gateway for production.
   environment: production
   active: true
-  type: Gateway::Bogus
+  type: Spree::Gateway::Bogus
 bogus_staging:
   name: Credit Card
   description: Bogus payment gateway for staging.
   environment: staging
   active: true
-  type: Gateway::Bogus
+  type: Spree::Gateway::Bogus
