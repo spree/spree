@@ -1,6 +1,6 @@
 class Spree::UserRegistrationsController < Devise::RegistrationsController
   include SpreeBase
-  helper :users, 'spree/base'
+  helper 'spree/users', 'spree/base'
 
   ssl_required
   after_filter :associate_user, :only => :create

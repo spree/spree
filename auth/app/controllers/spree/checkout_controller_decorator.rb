@@ -2,7 +2,7 @@ Spree::CheckoutController.class_eval do
   before_filter :check_authorization
   before_filter :check_registration, :except => [:registration, :update_registration]
 
-  helper :users
+  helper 'spree/users'
 
   def registration
     @user = Spree::User.new
@@ -14,7 +14,7 @@ Spree::CheckoutController.class_eval do
     if current_order.update_attributes(params[:order])
       redirect_to checkout_path
     else
-      @user = User.new
+      @user = Spree::User.new
       render 'registration'
     end
   end

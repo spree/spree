@@ -1,9 +1,10 @@
 # Fake ability for testing administration
 class BarAbility
   include CanCan::Ability
+
   def initialize(user)
-    user ||= User.new
-    if user.has_role? "bar"
+    user ||= Spree::User.new
+    if user.has_role? 'bar'
       # allow dispatch to :index and :show orders on the admin
       can :index, Order
       can :show, Order

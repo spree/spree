@@ -1,51 +1,53 @@
 require 'spec_helper'
 
-describe User do
-  before(:all) { Role.create :name => "admin" }
+describe Spree::User do
+  before(:all) { Spree::Role.create :name => 'admin' }
 
-  it "should generate the reset password token" do
+  it 'should generate the reset password token' do
     user = Factory.build(:user)
-    UserMailer.should_receive(:reset_password_instructions).with(user).and_return(double(:deliver => true))
+    Spree::UserMailer.should_receive(:reset_password_instructions).with(user).and_return(double(:deliver => true))
     user.send_reset_password_instructions
     user.reset_password_token.should_not be_nil
   end
 
-  context "#create" do
+  context '#create' do
     let(:user) { Factory.build(:user) }
 
-    it "should not be anonymous" do
+    it 'should not be anonymous' do
       user.should_not be_anonymous
     end
   end
 
-  context "anonymous!" do
-    let(:user) { User.anonymous! }
+  context 'anonymous!' do
+    let(:user) { Spree::User.anonymous! }
 
-    it "should create a new user" do
+    it 'should create a new user' do
       user.new_record?.should be_false
     end
 
-    it "should create a user with an example.net email" do
+    it 'should create a user with an example.net email' do
       user.email.should =~ /@example.net$/
     end
 
-    it "should be anonymous" do
+    it 'should be anonymous' do
       user.should be_anonymous
     end
   end
 
-  context "#save" do
+  context '#save' do
     let(:user) { Factory.build(:user) }
 
-    context "when there are no admin users" do
-      it "should assign the user an admin role" do
+    context 'when there are no admin users' do
+      it 'should assign the user an admin role' do
         user.save
-        user.has_role?("admin").should be_true
+        user.has_role?('admin').should be_true
       end
     end
-    context "when there are existing admin users" do
+
+    context 'when there are existing admin users' do
       before { Factory(:admin_user) }
-      it "should not assign the user an admin role" do
+
+      it 'should not assign the user an admin role' do
         user.save
         user.has_role?('anonymous?').should be_false
       end
