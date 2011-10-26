@@ -30,7 +30,7 @@ class Spree::Promotion < Spree::Activator
 
   class << self
     def advertised
-      includes(:stored_preferences).where(:preferences => {:name => 'advertise', :value => '1'})
+      includes(:stored_preferences).where(:spree_preferences => {:name => 'advertise', :value => '1'})
     end
   end
 

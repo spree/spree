@@ -1,6 +1,0 @@
-<% if current_user %>
-  <li><%= link_to t(:my_account), account_path %></li>
-  <li><%= link_to t(:logout), destroy_user_session_path %></li>
-<% else %>
-  <li><%= link_to t(:log_in), login_path %></li>
-<% end %>

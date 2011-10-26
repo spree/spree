@@ -1,5 +1,5 @@
-Deface::Override.new(:virtual_path => "products/show",
+Deface::Override.new(:virtual_path => "spree/products/show",
                      :name => "promo_product_properties",
                      :insert_after => "[data-hook='product_properties'], #product_properties[data-hook]",
-                     :partial => "products/promotions",
+                     :partial => "spree/products/promotions",
                      :disabled => false)

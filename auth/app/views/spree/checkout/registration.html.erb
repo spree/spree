@@ -2,13 +2,13 @@
 <h2><%= t(:registration)%></h2>
 <div id="registration">
   <div id="account">
-    <%= render :file => 'user_sessions/new' %>
+    <%= render :file => 'spree/user_sessions/new' %>
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout">
       <%= render 'spree/shared/error_messages', :target => @order %>
       <h2><%= t(:guest_user_account) %></h2>
-      <%= form_for @order, :url => update_checkout_registration_path, :html => { :method => :put, :id => 'checkout_form_registration'} do |f| %>
+      <%= form_for @order, :url => spree_auth.update_checkout_registration_path, :html => { :method => :put, :id => 'checkout_form_registration'} do |f| %>
         <p>
           <%= f.label :email, t(:email) %><br />
           <%= f.text_field :email, :class => 'title'  %>

@@ -6,7 +6,7 @@
 <div id="existing-customer">
   <h2><%= t(:login_as_existing) %></h2>
   <div data-hook="login">
-    <%= render :partial => 'shared/login' %>
+    <%= render :partial => 'spree/shared/login' %>
     <%= t(:or) %> <%= link_to t(:create_a_new_account), spree_auth.signup_path %> | <%= link_to t(:forgot_password), spree_auth.new_user_password_path %>
   </div>
 </div>
