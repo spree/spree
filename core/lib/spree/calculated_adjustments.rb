@@ -7,7 +7,7 @@ module Spree
         validates :calculator, :presence => true if options[:require]
 
         def self.calculators
-          Rails.application.config.spree.calculators.send(self.to_s.tableize.gsub("/", "_"))
+          Rails.application.config.spree.calculators.send(self.to_s.demodulize.tableize)
         end
 
         if options[:default]
