@@ -1,4 +1,5 @@
 require 'spree/core/action_callbacks'
+
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   prepend_before_filter :load_resource
@@ -106,6 +107,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     "Spree::#{controller_name.classify}".constantize
   end
 
+  def model_name
+    parent_data[:model_name].gsub('spree/', '')
+  end
+
   def object_name
     controller_name.singularize
   end
@@ -134,8 +139,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def parent
     if parent_data.present?
-      @parent ||= parent_data[:model_class].where(parent_data[:find_by] => params["#{parent_data[:model_name]}_id"]).first
-      instance_variable_set("@#{parent_data[:model_name]}", @parent)
+      @parent ||= parent_data[:model_class].where(parent_data[:find_by] => params["#{model_name}_id"]).first
+      instance_variable_set("@#{model_name}", @parent)
     else
       nil
     end
@@ -159,7 +164,6 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def collection
     return parent.send(controller_name) if parent_data.present?
-
     if model_class.respond_to?(:accessible_by) && !current_ability.has_block?(params[:action], model_class)
       model_class.accessible_by(current_ability)
     else
@@ -193,7 +197,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def edit_object_url(object, options = {})
     if parent_data.present?
-      send "edit_admin_#{parent_data[:model_name]}_#{object_name}_url", parent, object, options
+      send "edit_admin_#{model_name}_#{object_name}_url", parent, object, options
     else
       send "edit_admin_#{object_name}_url", object, options
     end
@@ -202,7 +206,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def object_url(object = nil, options = {})
     target = object ? object : @object
     if parent_data.present?
-      send "admin_#{parent_data[:model_name]}_#{object_name}_url", parent, target, options
+      send "admin_#{model_name}_#{object_name}_url", parent, target, options
     else
       send "admin_#{object_name}_url", target, options
     end
