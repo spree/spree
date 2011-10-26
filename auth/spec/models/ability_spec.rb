@@ -8,9 +8,9 @@ class FooAbility
 
   def initialize(user)
     # allow anyone to perform index on Order
-    can :index, Order
+    can :index, Spree::Order
     # allow anyone to update an Order with id of 1
-    can :update, Order do |order|
+    can :update, Spree::Order do |order|
       order.id == 1
     end
   end
