@@ -7,13 +7,13 @@
 
   <div data-hook="signup">
 
-    <%= form_for :user, :url => registration_path(@user) do |f| %>
+    <%= form_for :user, :url => spree_auth.user_registration_path(@user) do |f| %>
       <div data-hook="signup_inside_form"%>
-        <%= render 'shared/user_form', :f => f %>
+        <%= render 'spree/shared/user_form', :f => f %>
         <p><%= f.submit t(:create), :class => 'button primary' %></p>
       </div>
     <% end %>
-    <%= t(:or) %> <%= link_to t(:login_as_existing), login_path %>
+    <%= t(:or) %> <%= link_to t(:login_as_existing), spree_auth.login_path %>
 
   </div>
 

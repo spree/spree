@@ -1,0 +1,6 @@
+<% if current_user %>
+  <li><%= link_to t(:my_account), spree_auth.account_path %></li>
+  <li><%= link_to t(:logout), spree_auth.destroy_user_session_path %></li>
+<% else %>
+  <li><%= link_to t(:log_in), spree_auth.login_path %></li>
+<% end %>
