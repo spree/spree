@@ -13,13 +13,11 @@
 
   <%= f.field_container :display_on do %>
     <%= f.label :display_on, t(:display) %><br />
-    <%= select(:shipping_method, :display_on, ShippingMethod::DISPLAY.collect {|display| [t(display), display == :both ? nil : display.to_s]})  %>
+    <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }) %>
     <%= error_message_on :shipping_method, :display_on %>
   <% end %>
-
 </div>
 
 <div data-hook="admin_shipping_method_form_calculator_fields">
   <%= render 'spree/admin/shared/calculator_fields', :f => f %>
 </div>
-
