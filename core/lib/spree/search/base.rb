@@ -36,7 +36,7 @@ module Spree::Search
       end
 
       def prepare(params)
-        @properties[:taxon] = params[:taxon].blank? ? nil : Taxon.find(params[:taxon])
+        @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
         @properties[:keywords] = params[:keywords]
 
         per_page = params[:per_page].to_i
