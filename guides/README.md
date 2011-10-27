@@ -11,19 +11,19 @@ To build the entire set of guides simply run the following command
   $ git clone git://github.com/spree/spree-guides.git
   $ cd spree-guides
   $ bundle install
-  $ guides build
+  $ bundle exec guides build
 </code></pre>
 
 You can force a rebuild of all of the guides using
 
 ```
-$ guides build --clean
+$ bundle exec guides build --clean
 ```
 
 You can also specify that you want to rebuild just a few of the guides
 
 ```
-$ guides build --only=checkout adjustments
+$ bundle exec guides build --only=checkout adjustments
 ```
 
 To build edge guides including GA trakcking
@@ -35,7 +35,7 @@ $ bundle exec guides build --clean --edge --ga
 Finally, you can also preview the guides while you work
 
 ```
-$ guides preview
+$ bundle exec guides preview
 ```
 
 You do not need to fork the spree-guides project in order to contribute.  Just send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your github username) and say that you would like to contribute.  We'll add you to the list so you can commit directly to the guides project.
