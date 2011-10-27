@@ -30,8 +30,8 @@ module Spree
       end
 
       initializer 'spree.promo.register.promotion.calculators' do |app|
-        app.config.spree.calculators.add_class('spree_promotion_actions_create_adjustments')
-        app.config.spree.calculators.spree_promotion_actions_create_adjustments = [
+        app.config.spree.calculators.add_class('promotion_actions_create_adjustments')
+        app.config.spree.calculators.promotion_actions_create_adjustments = [
           Spree::Calculator::FlatPercentItemTotal,
           Spree::Calculator::FlatRate,
           Spree::Calculator::FlexiRate,
