@@ -248,6 +248,6 @@ The Spree admin interface has several different screens where various settings c
 
 Many of the configuration settings are not editable from an admin screen.  This was basically put on hold during the refactoring of the admin interface.  Now that things have stabilized we'll be adding the missing settings in the near future.  However, all of the settings can be changed through Ruby code (e.g. in initializers).
 
-INFO: Admin interface settings may be lost if the database is rebuilt. See the "advice above":#persisting-modificationsto-preferences about preservation of settings. However, you may want to make an exception for sensitive data, i.e. to enter gateway passwords directly and not store them in the code repository.
+INFO: Admin interface settings may be lost if the database is rebuilt. See the "advice above":#persisting-modifications-to-preferences about preservation of settings. However, you may want to make an exception for sensitive data, i.e. to enter gateway passwords directly and not store them in the code repository.
 
 <!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->
