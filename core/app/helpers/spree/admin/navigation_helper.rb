@@ -14,7 +14,7 @@ module Spree
         end
         options[:route] ||=  "admin_#{args.first}"
 
-        destination_url = send("#{options[:route]}_path")
+        destination_url = options[:url] || send("#{options[:route]}_path")
 
         ## if more than one form, it'll capitalize all words
         label_with_first_letters_capitalized = t(options[:label], :default => options[:label]).titleize
