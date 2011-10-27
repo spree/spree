@@ -1,4 +1,5 @@
 module NavigationHelpers
+  include Spree::Auth::Engine.routes.url_helpers
   # Maps a name to a path. Used by the
   #
   #   When /^I go to (.+)$/ do |page_name|
@@ -9,13 +10,13 @@ module NavigationHelpers
     case page_name
 
     when "admin promotions page"
-      spree_admin_promotions_path
+      admin_promotions_path
     when /the home\s?page/
       '/'
     when /the sign in page/
-      new_spree_user_session_path
+      new_user_session_path
     when /the sign up page/
-      new_spree_user_registration_path
+      new_user_registration_path
 
     when /"\/cvv"/
       '/cvv'

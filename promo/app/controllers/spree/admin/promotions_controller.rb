@@ -1,20 +1,26 @@
-class Spree::Admin::PromotionsController < Spree::Admin::ResourceController
-  before_filter :load_data
+module Spree
+  module Admin
+    class PromotionsController < ResourceController
+      include Spree::Promo::Engine.routes.url_helpers
 
-  protected
-    def build_resource
-      @promotion = Spree::Promotion.new(params[:promotion])
-      if params[:promotion] && params[:promotion][:calculator_type]
-        @promotion.calculator = params[:promotion][:calculator_type].constantize.new
-      end
-      @promotion
-    end
+      before_filter :load_data
 
-    def location_after_save
-      spree_promo.edit_admin_promotion_url(@promotion)
-    end
+      protected
+        def build_resource
+          @promotion = Promotion.new(params[:promotion])
+          if params[:promotion] && params[:promotion][:calculator_type]
+            @promotion.calculator = params[:promotion][:calculator_type].constantize.new
+          end
+          @promotion
+        end
 
-    def load_data
-      @calculators = Rails.application.config.spree.calculators.promotion_actions_create_adjustments
+        def location_after_save
+          spree_promo.edit_admin_promotion_url(@promotion)
+        end
+
+        def load_data
+          @calculators = Rails.application.config.spree.calculators.promotion_actions_create_adjustments
+        end
     end
+  end
 end
