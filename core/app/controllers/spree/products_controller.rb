@@ -24,6 +24,8 @@ module Spree
 
       if referer && referer.match(HTTP_REFERER_REGEXP)
         @taxon = Taxon.find_by_permalink($1)
+      elsif params[:taxon].present?
+        @taxon = Taxon.find(params[:taxon])
       end
 
       respond_with(@product)
