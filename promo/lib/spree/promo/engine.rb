@@ -8,9 +8,6 @@ module Spree
         Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
-        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/overrides/*.rb')) do |c|
-          Rails.configuration.cache_classes ? require(c) : load(c)
-        end
 
         # Include list of visited paths in notification payload hash
         Spree::Core::ControllerHelpers::InstanceMethods.class_eval do
