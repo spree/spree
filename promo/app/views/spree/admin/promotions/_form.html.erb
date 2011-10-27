@@ -8,7 +8,7 @@
 
   <%= f.field_container :event_name do %>
     <%= f.label :event_name, t(:event) %><br />
-    <%= f.select :event_name, Activator.event_names.map{|name| [t("events.#{name}"), name] } %>
+    <%= f.select :event_name, Spree::Activator.event_names.map{|name| [t("events.#{name}"), name] } %>
   <% end %>
 
   <%= f.field_container :preferred_code do %>
