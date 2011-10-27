@@ -44,13 +44,13 @@ describe Spree::Admin::OrdersController do
       user.roles = [Spree::Role.find_or_create_by_name('bar')]
       Spree::Ability.register_ability(BarAbility)
       post :update, { :id => 'R123' }
-      response.should render_template 'shared/unauthorized'
+      response.should render_template 'spree/shared/unauthorized'
     end
 
     it 'should deny access to users without an admin role' do
       user.stub :has_role? => false
       post :index
-      response.should render_template 'shared/unauthorized'
+      response.should render_template 'spree/shared/unauthorized'
     end
   end
 end
