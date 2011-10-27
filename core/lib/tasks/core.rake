@@ -14,7 +14,7 @@ For .rb       use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       Spree::Fixtures.create_fixtures(args.dir, file.to_s.sub(file.extname, ""))
     else
       if file.exist?
-        puts "loading ruby    " + file
+        puts "loading ruby #{file}"
         require file
       end
     end
@@ -30,7 +30,7 @@ For .rb       use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     Dir.glob(File.join(dir , '**/*.{yml,csv,rb}')).each do |fixture_file|
       ext = File.extname fixture_file
       if ext == ".rb"
-        ruby_files[File.basename(fixture_file, '.*')]  = fixture_file
+        ruby_files[File.basename(fixture_file, '.*')] = fixture_file
       else
         fixtures[fixture_file.sub(dir, "")[1..-1]] = fixture_file
       end
