@@ -80,7 +80,7 @@ Disallow: /users
       append_file "db/seeds.rb", <<-SEEDS
 \n
 Spree::Core::Engine.load_seed if defined?(Spree::Core)
-SpreeAuth::Engine.load_seed if defined?(SpreeAuth)
+Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
       SEEDS
     end
 
