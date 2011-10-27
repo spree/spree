@@ -37,7 +37,7 @@ def create_admin_user
     :login => email
   }
 
-  load 'user.rb'
+  load 'spree/user.rb'
 
   if Spree::User.find_by_email(email)
     say "\nWARNING: There is already a user with the email: #{email}, so no account changes were made.  If you wish to create an additional admin user, please run rake db:admin:create again with a different email.\n\n"
@@ -51,5 +51,5 @@ def create_admin_user
 end
 
 if Rails.env.development?
-  create_admin_user if Spree::User.where('spree_roles.name' => 'admin').includes(:roles).empty?
+  create_admin_user if Spree::User.where("#{Spree::Role.table_name}.name" => "admin").includes(:roles).empty?
 end
