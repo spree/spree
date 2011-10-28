@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe "States" do
+  before(:each) do
+    fixtures_dir = File.expand_path('../../../../core/db/default', __FILE__)
+    ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'roles', 'states'])
+  end
+
   context "GET" do
     context "with an authorized api user" do
       context "retrieving a list of states" do
