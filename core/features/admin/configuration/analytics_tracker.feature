@@ -19,6 +19,7 @@ Feature: analytics tracker
     When I should see "Analytics Trackers"
     When I follow "admin_new_tracker_link"
     When I fill in "tracker_analytics_id" with "A100"
+    When I select "Production" from "tracker-env"
     When I press "Create"
     Then I should see "successfully created!"
     Then verify data from "table.index" with following tabular values:
