@@ -2,8 +2,8 @@
 
 <h1><%= t(:editing_user) %></h1>
 
-<%= form_for @user, :html => { :method => :put } do |f| %>
-  <%= render 'shared/user_form', :f => f %>
+<%= form_for @user, :url => spree_auth.user_path(@user), :html => { :method => :put } do |f| %>
+  <%= render 'spree/shared/user_form', :f => f %>
   <p>
     <%= f.submit t(:update) %>
   </p>
