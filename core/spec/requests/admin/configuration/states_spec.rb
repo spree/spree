@@ -7,16 +7,49 @@ describe "States" do
   end
 
   context "admin visiting states listing" do
-    it "should correctly display the states" do
-      pending
+    before(:each) do
+      fixtures_dir = File.expand_path('../../../../../../core/db/default', __FILE__)
+      ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'states'])
       Factory(:zone)
-      country = Factory(:country)
-      Factory(:state, :country => country)
-      Factory(:state, :name => "Maryland", :abbr => "MD", :country => country)
-      params[:country_id] = country.id
+    end
+
+    it "should correctly display the states" do
       click_link "States"
-      save_and_open_page
-      find('table#listing_states tbody tr:nth-child(1) td:nth-child(1)').text.should == State.limit(1).order('name asc').to_a.first.anem
+      find('table#listing_states tbody tr:nth-child(1) td:nth-child(1)').text.should == State.limit(1).order('name asc').to_a.first.name.downcase.capitalize
+    end
+  end
+
+  context "creating and editing states" do
+    before(:each) do
+      fixtures_dir = File.expand_path('../../../../../../core/db/default', __FILE__)
+      ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries'])
+    end
+
+    it "should allow an admin to edit existing states", :js => true do
+      click_link "States"
+      select "Canada", :from => "country"
+      click_link "new_state_link"
+      fill_in "state_name", :with => "Calgary"
+      fill_in "Abbreviation", :with => "CL"
+      click_button "Create"
+      page.should have_content("successfully created!")
+      page.should have_content("Calgary")
+
+      within('table#listing_states tbody tr:nth-child(1)') { click_link "Edit" }
+      page.should have_content("Editing State")
+      click_link "States"
+      select "Canada", :from => "country"
+      page.should have_content("Calgary")
+    end
+
+    it "should show validation errors", :js => true do
+      click_link "States"
+      select "Canada", :from => "country"
+      click_link "new_state_link"
+      fill_in "state_name", :with => ""
+      fill_in "Abbreviation", :with => ""
+      click_button "Create"
+      page.should have_content("Name can't be blank")
     end
   end
 end
