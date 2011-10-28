@@ -11,6 +11,9 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 require 'database_cleaner'
 require 'spree/core/testing_support/factories'
 
+# load default data for tests
+require 'active_record/fixtures'
+
 RSpec.configure do |config|
   # == Mock Framework
   #
