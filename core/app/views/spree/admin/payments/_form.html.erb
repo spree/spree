@@ -10,6 +10,6 @@
     <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
   </label>
 
-  <%= render "admin/payments/source_forms/#{method.method_type}", :payment_method => method %>
+  <%= render "spree/admin/payments/source_forms/#{method.method_type}", :payment_method => method %>
 
 <% end %>

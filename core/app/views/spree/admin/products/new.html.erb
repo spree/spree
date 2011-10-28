@@ -24,7 +24,7 @@
 
       <p>
         <%= f.label :prototype_id, t(:prototype) %><br />
-        <%= f.collection_select :prototype_id, Prototype.all, :id, :name, :include_blank => true %>
+        <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, :include_blank => true %>
       </p>
 
     </div>

@@ -12,7 +12,7 @@ Given /^I log in as "(.+)\/(.+)"$/ do |email, password|
 end
 
 Then /^the resulting order should have a total of "([^"]*)"$/ do |total|
-  Order.last.total.to_f.should == total.to_f
+  Spree::Order.last.total.to_f.should == total.to_f
 end
 
 Then /^the existing order should have total at "([^"]*)"$/ do |total|

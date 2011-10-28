@@ -6,7 +6,7 @@ Feature: Admin managing adjustments
       |2011-02-01 12:36:15  | R100   |
     Given an adjustment exists for order R100
     And I go to the admin home page
-    When I follow the first admin_edit_order link
+    When I follow the first admin_edit_spree_order link
     When I follow "Adjustments"
     Then I should see row 0 and column 0 to have value "Date/Time" with selector "table.index"
     Then I should see row 0 and column 1 to have value "Description" with selector "table.index"
@@ -21,9 +21,9 @@ Feature: Admin managing adjustments
       |2011-02-01 12:36:15  | R100   |
     Given an adjustment exists for order R100
     And I go to the admin home page
-    When I follow the first admin_edit_order link
+    When I follow the first admin_edit_spree_order link
     When I follow "Adjustments"
-    When I follow "New Adjustment" custom
+    When I follow "New Adjustment" 
     When I fill in "adjustment_amount" with ""
     When I fill in "adjustment_label" with ""
     When I press "Continue"
@@ -36,9 +36,9 @@ Feature: Admin managing adjustments
       |2011-02-01 12:36:15  | R100   |
     Given an adjustment exists for order R100
     And I go to the admin home page
-    When I follow the first admin_edit_order link
+    When I follow the first admin_edit_spree_order link
     When I follow "Adjustments"
-    When I follow "New Adjustment" custom
+    When I follow "New Adjustment" 
     When I fill in "adjustment_amount" with "10"
     When I fill in "adjustment_label" with "rebate"
     When I press "Continue"
@@ -50,7 +50,7 @@ Feature: Admin managing adjustments
       |2011-02-01 12:36:15  | R100   |
     Given an adjustment exists for order R100
     And I go to the admin home page
-    When I follow the first admin_edit_order link
+    When I follow the first admin_edit_spree_order link
     When I follow "Adjustments"
     When I click first link from selector "table.index td.actions a.edit"
     When I fill in "adjustment_amount" with "99"
@@ -66,7 +66,7 @@ Feature: Admin managing adjustments
       |2011-02-01 12:36:15  | R100   |
     Given an adjustment exists for order R100
     And I go to the admin home page
-    When I follow the first admin_edit_order link
+    When I follow the first admin_edit_spree_order link
     When I follow "Adjustments"
     When I click first link from selector "table.index td.actions a.edit"
     When I fill in "adjustment_amount" with ""

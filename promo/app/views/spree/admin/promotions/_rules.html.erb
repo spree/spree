@@ -3,7 +3,7 @@
 
   <%= form_for @promotion, :url => object_url, :html => { :method => :put } do |f| %>
     <p>
-      <% Promotion::MATCH_POLICIES.each do |policy| %>
+      <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
         <label><%= f.radio_button :preferred_match_policy, policy %> <%= t "promotion_form.match_policies.#{policy}" %></label> &nbsp;
       <% end %>
     </p>

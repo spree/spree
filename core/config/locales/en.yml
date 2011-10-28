@@ -19,7 +19,7 @@ en:
   active: "Active"
   activerecord:
     attributes:
-      address:
+      spree/address:
         address1: Address
         address2: "Address (contd.)"
         city: City
@@ -31,24 +31,24 @@ en:
         phone: Phone
         state: "State"
         zipcode: "Zip Code"
-      country: 
+      spree/country: 
         iso: ISO
         iso3: ISO3
         iso_name: "ISO Name"
         name: Name
         numcode: "ISO Code"
-      creditcard:
+      spreee/creditcard:
         cc_type: Type
         month: Month
         number: Number
         verification_value: "Verification Value"
         year: Year
-      inventory_unit:
+      spree/inventory_unit:
         state: State
-      line_item:
+      spree/line_item:
         price: Price
         quantity: Quantity
-      order:
+      spree/order:
         bill_address:
           address1: "Billing address street"
           city: "Billing address city"
@@ -74,12 +74,12 @@ en:
         special_instructions: "Special Instructions"
         state: State
         total: Total
-      option_type:
+      spree/option_type:
         name: Name
         presentation: Presentation
-      payment_method:
+      spree/payment_method:
         name: Name
-      product:
+      spree/product:
         available_on: "Available On"
         cost_price: "Cost Price"
         description: Description
@@ -88,43 +88,43 @@ en:
         on_hand: "On Hand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
-      product_group:
+      spree/product_group:
         name: Name
         product_count: "Product count"
         product_scopes: "Product scopes"
         products: "Products"
         url: URL
-      product_scope:
+      spree/product_scope:
         arguments: "Arguments"
         description: "Description"
-      property:
+      spree/property:
         name: Name
         presentation: Presentation
-      prototype:
+      spree/prototype:
         name: Name
-      return_authorization:
+      spree/return_authorization:
         amount: Amount
-      role:
+      spree/role:
         name: Name
-      state:
+      spree/state:
         abbr: Abbreviation
         name: Name
-      tax_category:
+      spree/tax_category:
         description: Description
         name: Name
-      tax_rate:
+      spree/tax_rate:
         amount: Rate
-      taxon:
+      spree/taxon:
         name: Name
         permalink: Permalink
         position: Position
-      taxonomy:
+      spree/taxonomy:
         name: Name
-      user:
+      spree/user:
         email: Email
         password: "Password"
         password_confirmation: "Password Confirmation"
-      variant:
+      spree/variant:
         cost_price: "Cost Price"
         depth: Depth
         height: Height
@@ -132,86 +132,86 @@ en:
         sku: SKU
         weight: Weight
         width: Width
-      zone:
+      spree/zone:
         description: Description
         name: Name
     models:
-      address:
+      spree/address:
         one: Address
         other: Addresses
-      cheque_payment:
+      spree/cheque_payment:
         one: Cheque Payment
         other: Cheque Payments
-      country:
+      spree/country:
         one: Country
         other: Countries
-      creditcard:
+      spree/creditcard:
         one: "Credit Card"
         other: "Credit Cards"
-      creditcard_payment:
+      spree/creditcard_payment:
         one: "Credit Card Payment"
         other: "Credit Card Payments"
-      creditcard_txn:
+      spree/creditcard_txn:
         one: "Credit Card Transaction"
         other: "Credit Card Transactions"
-      inventory_unit:
+      spree/inventory_unit:
         one: "Inventory Unit"
         other: "Inventory Units"
-      line_item:
+      spree/line_item:
         one: "Line Item"
         other: "Line Items"
-      order:
+      spree/order:
         one: Order
         other: Orders
-      payment:
+      spree/payment:
         one: Payment
         other: Payments
-      product:
+      spree/product:
         one: Product
         other: Products
-      product_group:
+      spree/product_group:
         one: "Product group"
         other: "Product groups"
-      property:
+      spree/property:
         one: Property
         other: Properties
-      prototype:
+      spree/prototype:
         one: Prototype
         other: Prototypes
-      return_authorization:
+      spree/return_authorization:
         one: Return Authorization
         other: Return Authorizations
-      role:
+      spree/role:
         one: Roles
         other: Roles
-      shipment:
+      spree/shipment:
         one: Shipment
         other: Shipments
-      shipping_category:
+      spree/shipping_category:
         one: "Shipping Category"
         other: "Shipping Categories"
-      state:
+      spree/state:
         one: State
         other: States
-      tax_category:
+      spree/tax_category:
         one: "Tax Category"
         other: "Tax Categories"
-      tax_rate:
+      spree/tax_rate:
         one: "Tax Rate"
         other: "Tax Rates"
-      taxon:
+      spree/taxon:
         one: Taxon
         other: Taxons
-      taxonomy:
+      spree/taxonomy:
         one: Taxonomy
         other: Taxonomies
-      user:
+      spree/user:
         one: User
         other: Users
-      variant:
+      spree/variant:
         one: Variant
         other: Variants
-      zone:
+      spree/zone:
         one: Zone
         other: Zones
   add: Add

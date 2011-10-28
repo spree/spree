@@ -1,12 +1,16 @@
 # coding: UTF-8
 require 'spec_helper'
+require 'spree/url_helpers'
+include Spree::UrlHelpers
 
-describe Admin::NavigationHelper do
-  describe "#tab" do
-    context "creating an admin tab" do
-      it "should capitalize the first letter of each word in the tab's label" do
-        admin_tab = tab(:orders)
-        admin_tab.should include("Orders")
+module Spree
+  describe Admin::NavigationHelper do
+    describe "#tab" do
+      context "creating an admin tab" do
+        it "should capitalize the first letter of each word in the tab's label" do
+          admin_tab = tab(:orders)
+          admin_tab.should include("Orders")
+        end
       end
 
       it "should accept options with label and capitalize each word of it" do

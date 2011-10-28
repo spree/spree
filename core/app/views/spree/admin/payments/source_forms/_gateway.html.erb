@@ -1,14 +1,11 @@
 <fieldset>
-  
   <p class="field" data-hook="previous_cards">
     <% @previous_cards.each do |card| %>
       <label><%= radio_button_tag :card, card.id, card == @previous_cards.first %> <%= card.display_number %><br /></label>
     <% end %>
     <label><%= radio_button_tag :card, 'new', @previous_cards.none? %> <%= t(:use_new_cc) %></label>
   </p>
-  
   <div id="card_form" data-hook>
-
     <%= image_tag 'creditcards/creditcard.gif', :id => 'creditcard-image' %>
     <% param_prefix = "payment_source[#{payment_method.id}]" %>
 

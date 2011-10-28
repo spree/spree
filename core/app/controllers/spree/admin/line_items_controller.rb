@@ -13,7 +13,7 @@ module Spree
 
         if @order.save
           respond_with(@line_item) do |format| 
-            format.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false }
+            format.html { render :partial => "spree/admin/orders/form", :locals => {:order => @order.reload}, :layout => false }
           end
         else
           respond_with(@line_item) do |format| 
@@ -25,11 +25,11 @@ module Spree
       def destroy
         if @line_item.destroy
           respond_with(@line_item) do |format| 
-            format.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false }
+            format.html { render :partial => "spree/admin/orders/form", :locals => {:order => @order.reload}, :layout => false }
           end
         else
           respond_with(@line_item) do |format| 
-            format.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false }
+            format.html { render :partial => "spree/admin/orders/form", :locals => {:order => @order.reload}, :layout => false }
           end
         end
       end
@@ -43,11 +43,11 @@ module Spree
       def update
         if @line_item.update_attributes(params[:line_item])
           respond_with(@line_item) do |format| 
-            format.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false}
+            format.html { render :partial => "spree/admin/orders/form", :locals => {:order => @order.reload}, :layout => false}
           end
         else
           respond_with(@line_item) do |format| 
-            format.html { render :partial => "admin/orders/form", :locals => {:order => @order.reload}, :layout => false}
+            format.html { render :partial => "spree/admin/orders/form", :locals => {:order => @order.reload}, :layout => false}
           end
         end
       end

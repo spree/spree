@@ -54,7 +54,7 @@ Feature: Admin managing payments
       |2011-02-01 12:36:14  | R100   | complete |
     Given a completed order
     And I go to the admin home page
-    When I follow the first admin_edit_order link
+    When I follow the first admin_edit_spree_order link
     When I follow "Payments"
     Then I should see "Payment: balance due" within "#payment_status"
     When I press "Capture"

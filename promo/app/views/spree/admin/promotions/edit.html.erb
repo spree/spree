@@ -2,7 +2,7 @@
 
 <%= form_for @promotion, :url => object_url, :html => { :method => :put } do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render 'admin/shared/edit_resource_links' %>
+  <%= render 'spree/admin/shared/edit_resource_links' %>
 <% end %>
 
 <%= render 'rules' %>
