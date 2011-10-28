@@ -39,7 +39,7 @@ Spree::BaseController.class_eval do
       disallowed_urls = [spree_auth.signup_url, spree_auth.login_url, spree_auth.destroy_user_session_path]
       disallowed_urls.map!{ |url| url[/\/\w+$/] }
       unless disallowed_urls.include?(request.fullpath)
-        session['user_return_to'] = request.fullpath
+        session['user_return_to'] = request.fullpath.gsub('//', '/')
       end
     end
 
