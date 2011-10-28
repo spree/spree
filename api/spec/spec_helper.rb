@@ -54,6 +54,17 @@ RSpec.configure do |config|
 end
 
 def api_login(user)
-  #post_via_redirect user_session_path, 'user[email]' => user.email, 'user[password]' => user.password
   authorize user.authentication_token, "X"
+end
+
+shared_examples_for "status ok" do
+  it "should return status 200" do
+    last_response.status.should == 200
+  end
+end
+
+shared_examples_for "unauthorized" do
+  it "should return status 401" do
+    last_response.status.should == 401
+  end
 end
