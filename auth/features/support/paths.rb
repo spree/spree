@@ -1,3 +1,4 @@
+require 'spree/url_helpers'
 module NavigationHelpers
   include Spree::UrlHelpers
   # Maps a name to a path. Used by the
