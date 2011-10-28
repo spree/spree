@@ -66,7 +66,6 @@ Feature: Promotions which add adjustments to orders
     When I select "Item total" from "Add rule of type"
     And I press "Add" within "#rule_fields"
     And I fill in "Order total meets these criteria" with "30"
-    And I fill in "Item total must be" with "30"
     And I press "Update" within "#rule_fields"
 
     And I select "Create adjustment" from "Add action of type"

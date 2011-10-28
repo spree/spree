@@ -5,18 +5,14 @@ When /^I log in as an admin user and go to the new promotion form$/ do
   When('I follow "New Promotion"')
 end
 
-Given /^I log in as "(.+)\/(.+)"$/ do |email, password|    
+Given /^I log in as "(.+)\/(.+)"$/ do |email, password|
   Given("I am signed up as \"#{email}/#{password}\"")
   When('I go to the sign in page')
   And("I sign in as \"#{email}/#{password}\"")
 end
 
 Then /^the resulting order should have a total of "([^"]*)"$/ do |total|
-<<<<<<< HEAD
   Spree::Order.last.total.to_f.should == total.to_f
-=======
-  Order.last.total.to_f.should == total.to_f
->>>>>>> test single use coupon more thoroughly
 end
 
 Then /^the existing order should have total at "([^"]*)"$/ do |total|

@@ -1,7 +1,7 @@
 require 'spree/url_helpers'
 
 module NavigationHelpers
-  include Spree::Auth::Engine.routes.url_helpers
+  include Spree::UrlHelpers
   # Maps a name to a path. Used by the
   #
   #   When /^I go to (.+)$/ do |page_name|
