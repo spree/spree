@@ -1,13 +1,9 @@
 require 'spec_helper'
 
 describe "Users" do
-  before(:all) do
-    User.delete_all
+  before(:each) do
     Factory(:user, :email => "a@example.com")
     Factory(:user, :email => "b@example.com")
-  end
-
-  before(:each) do
     visit admin_path
     click_link "Users"
   end
