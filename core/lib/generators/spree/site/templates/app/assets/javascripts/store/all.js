@@ -11,6 +11,6 @@
 //= require store/spree_dash
 //= require store/spree_promo
 <% else %>
-//= require store/<%= lib_name %>
+//= require store/<%= lib_name.gsub("/", "_") %>
 <% end %>
 //= require_tree .

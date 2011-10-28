@@ -1,4 +1,4 @@
-$('#preview_container').html('<%= escape_javascript( render('admin/product_groups/preview') ) %>');
+$('#preview_container').html('<%= escape_javascript( render('spree/admin/product_groups/preview') ) %>');
 <% notice = flash[:notice] %>
 <% flash.delete(:notice) %>
 flash_notice = jQuery('.flash.notice');

@@ -6,7 +6,7 @@ module Spree
       def filtered
         @properties = Property.where('lower(name) LIKE ?', "%#{params[:q].mb_chars.downcase}%").order(:name)
         respond_with(@properties) do |format| 
-          format.html { render :template => "admin/properties/filtered.html.erb", :layout => false } 
+          format.html { render :template => "spree/admin/properties/filtered.html.erb", :layout => false } 
         end
       end
     end

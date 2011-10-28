@@ -7,7 +7,7 @@ module Spree
       private
 
       def find_properties
-        @properties = Property.all.map(&:name)
+        @properties = Spree::Property.all.map(&:name)
       end
     end
   end

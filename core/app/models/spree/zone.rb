@@ -38,11 +38,11 @@ class Spree::Zone < ActiveRecord::Base
     # NOTE: This is complicated by the fact that include? for HMP is broken in Rails 2.1 (so we use awkward index method)
     members.any? do |zone_member|
       case zone_member.zoneable_type
-      when 'Zone'
+      when 'Spree::Zone'
         zone_member.zoneable.include?(address)
-      when 'Country'
+      when 'Spree::Country'
         zone_member.zoneable_id == address.country_id
-      when 'State'
+      when 'Spree::State'
         zone_member.zoneable_id == address.state_id
       else
         false

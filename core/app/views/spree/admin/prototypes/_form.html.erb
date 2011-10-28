@@ -27,7 +27,7 @@
 <h3><%= t(:option_types) %></h3>
 
 <ul class="checkbox-list" id="option_types" data-hook>
-<% OptionType.all.each do |option_type| %>
+<% Spree::OptionType.all.each do |option_type| %>
   <% selected = if @prototype.new_record?
     (params[:option_type] and params[:option_type][:id] and params[:option_type][:id].include?(option_type.id.to_s))
   else

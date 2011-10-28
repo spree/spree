@@ -13,7 +13,7 @@ class Spree::Payment < ActiveRecord::Base
 
   accepts_nested_attributes_for :source
 
-  scope :from_creditcard, where(:source_type => 'Creditcard')
+  scope :from_creditcard, where(:source_type => 'Spree::Creditcard')
   scope :with_state, lambda { |s| where(:state => s) }
   scope :completed, with_state('completed')
   scope :pending, with_state('pending')
@@ -80,7 +80,7 @@ class Spree::Payment < ActiveRecord::Base
   end
 
   def payment_source
-    res = source.is_a?(Payment) ? source.source : source
+    res = source.is_a?(Spree::Payment) ? source.source : source
     res || payment_method
   end
 

@@ -1,4 +1,4 @@
-$('#rules').append('<%= escape_javascript( render(:partial => 'admin/promotions/promotion_rule', :object => @promotion_rule) ) %>');
+$('#rules').append('<%= escape_javascript( render(:partial => 'spree/admin/promotions/promotion_rule', :object => @promotion_rule) ) %>');
 $('#<%= dom_id @promotion_rule %>').hide();
 $('#<%= dom_id @promotion_rule %>').fadeIn();
 initProductRuleSourceField();

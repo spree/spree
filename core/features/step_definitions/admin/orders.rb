@@ -37,9 +37,9 @@ Given /^custom line items associated with products$/ do
   end
 end
 
-When /^I follow the first admin_edit_order link$/ do
+When /^I follow the first admin_edit_spree_order link$/ do
   order = Spree::Order.order('completed_at DESC').first
-  title = "admin_edit_order_#{order.id}"
+  title = "admin_edit_spree_order_#{order.id}"
   click_link(title)
 end
 

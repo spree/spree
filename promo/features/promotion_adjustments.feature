@@ -65,7 +65,6 @@ Feature: Promotions which add adjustments to orders
     When I select "Item total" from "Add rule of type"
     And I press "Add" within "#rule_fields"
     And I fill in "Order total meets these criteria" with "30"
-    And I fill in "Item total must be" with "30"
     And I press "Update" within "#rule_fields"
 
     And I select "Create adjustment" from "Add action of type"
@@ -81,11 +80,11 @@ Feature: Promotions which add adjustments to orders
     And check "order_use_billing"
     And press "Save and Continue"
     When I choose "UPS Ground" as shipping method and "Check" as payment method and set coupon code to "SINGLE_USE"
-    Then the existing order should have total at "47"    
-    
-    When I follow "Logout"                          
+    Then the existing order should have total at "47"
+
+    When I follow "Logout"
     And I log in as "john@test.com/secret"
-  
+
     And I add a product with name: "RoR Mug", price: "40" to cart
     And I follow "Checkout"
     When I fill billing address with correct data

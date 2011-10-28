@@ -33,7 +33,7 @@ Then /^I should see listing products tabular attributes with custom result 2$/ d
   data[1].should == 'apache baseball cap'
 end
 
-Given /^a product exists with a sku of 'a100'$/ do
-  Factory(:product, :sku => 'a100')
+Given /^a product exists with a sku of "([^"]*)"$/ do |sku|
+  Factory(:product, :sku => sku)
 end
 

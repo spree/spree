@@ -1,4 +1,5 @@
 module NavigationHelpers
+  include Spree::UrlHelpers
   # Maps a name to a path. Used by the
   #
   #   When /^I go to (.+)$/ do |page_name|
@@ -11,21 +12,21 @@ module NavigationHelpers
     when /the home\s?page/
       '/'
     when /the sign in page/
-      new_spree_user_session_path
+      spree_auth.new_user_session_path
     when /the sign up page/
-      new_spree_user_registration_path
+      spree_auth.new_user_registration_path
     when /the forgot password page/
-      new_spree_user_password_path
+      spree_auth.new_user_password_path
     when /the admin home page/
-      spree_admin_path
+      spree_core.admin_path
     when /my account page/
       '/account'
     when /the admin orders page/
-      spree_admin_orders_path
+      spree_core.spree_admin_orders_path
     when /the edit admin order page for (.*)/
-      spree_edit_admin_order_path($1)
+      spree_core.edit_admin_order_path($1)
     when /the show admin order page for (.*)/
-      spree_admin_order_path($1)
+      spree_core.admin_order_path($1)
 
       # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
@@ -37,7 +38,7 @@ module NavigationHelpers
       begin
         page_name =~ /the (.*) page/
         path_components = $1.split(/\s+/)
-        self.send(path_components.push('path').join('_').to_sym)
+        spree_core.send(path_components.push('path').join('_').to_sym)
       rescue Object => e
         raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
           "Now, go and add a mapping in #{__FILE__}"

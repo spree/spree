@@ -1,7 +1,6 @@
 module Spree
   module Admin
     module NavigationHelper
-
       # Make an admin tab that coveres one or more resources supplied by symbols
       # Option hash may follow. Valid options are
       #   * :label to override link text, otherwise based on the first resource name (translated)
