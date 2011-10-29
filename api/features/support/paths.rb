@@ -12,6 +12,8 @@ module NavigationHelpers
 
     when /the home\s?page/
       '/'
+    when /the login page/
+      spree_auth.login_path
     when /the sign in page/
       spree_auth.new_user_session_path
 
