@@ -1,9 +1,9 @@
 class Spree::LineItem < ActiveRecord::Base
   before_validation :adjust_quantity
-  belongs_to :order, :class_name => 'Spree::Order'
-  belongs_to :variant, :class_name => 'Spree::Variant'
+  belongs_to :order
+  belongs_to :variant
 
-  has_one :product, :through => :variant, :class_name => 'Spree::Product'
+  has_one :product, :through => :variant
 
   before_validation :copy_price
 

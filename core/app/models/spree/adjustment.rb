@@ -21,7 +21,7 @@
 #  becomes ineligible so it might be reinstated.
 #
 class Spree::Adjustment < ActiveRecord::Base
-  belongs_to :order, :class_name => "Spree::Order"
+  belongs_to :order
   belongs_to :source, :polymorphic => true
   belongs_to :originator, :polymorphic => true
 

@@ -1,7 +1,7 @@
 class Spree::ShippingMethod < ActiveRecord::Base
   DISPLAY =  [:both, :front_end, :back_end]
-  belongs_to :zone, :class_name => 'Spree::Zone'
-  has_many :shipments, :class_name => 'Spree:Shipment'
+  belongs_to :zone
+  has_many :shipments
   validates :name, :calculator, :zone, :presence => true
 
   calculated_adjustments
