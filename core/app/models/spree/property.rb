@@ -1,8 +1,8 @@
 class Spree::Property < ActiveRecord::Base
-  has_and_belongs_to_many :prototypes, :class_name => "Spree::Prototype", :join_table => "spree_properties_prototypes"
+  has_and_belongs_to_many :prototypes, :join_table => "spree_properties_prototypes"
 
-  has_many :product_properties, :dependent => :destroy, :class_name => 'Spree::ProductProperty'
-  has_many :products, :through => :product_properties, :class_name => 'Spree::Product'
+  has_many :product_properties, :dependent => :destroy
+  has_many :products, :through => :product_properties
 
   validates :name, :presentation, :presence => true
 

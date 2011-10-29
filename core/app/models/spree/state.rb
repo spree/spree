@@ -1,8 +1,8 @@
 class Spree::State < ActiveRecord::Base
-  belongs_to :country, :class_name => 'Spree::Country'
+  belongs_to :country
 
-  has_one :zone_member, :as => :zoneable, :class_name => 'Spree::ZoneMember'
-  has_one :zone, :through => :zone_member, :class_name => 'Spree::Zone'
+  has_one :zone_member, :as => :zoneable
+  has_one :zone, :through => :zone_member
 
   validates :country, :name, :presence => true
 
