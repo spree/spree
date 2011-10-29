@@ -24,5 +24,5 @@ Spree::Auth::Engine.routes.draw do
     end
   end
 
-  resource :account, :controller => 'spree/users'
+  resource :account, :controller => 'users'
 end

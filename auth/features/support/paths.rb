@@ -23,7 +23,7 @@ module NavigationHelpers
     when /the admin home page/
       spree_core.admin_path
     when /my account page/
-      '/account'
+      spree_auth.account_path
     when /the admin orders page/
       spree_core.admin_orders_path
     when /the edit admin order page for (.*)/
