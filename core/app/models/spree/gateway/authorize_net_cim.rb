@@ -63,9 +63,7 @@ class Spree::Gateway::AuthorizeNetCim < Spree::Gateway
     end
   end
 
-
   private
-
     # Create a transaction on a creditcard
     # Set up a CIM profile for the card if one doesn't exist
     # Valid transaction_types are :auth_only, :capture_only and :auth_capture
@@ -73,7 +71,7 @@ class Spree::Gateway::AuthorizeNetCim < Spree::Gateway
       #create_profile(creditcard, creditcard.gateway_options)
       creditcard.save
       if amount
-        amount = "%.2f" % (amount/100.0) # This gateway requires formated decimal, not cents
+        amount = "%.2f" % (amount / 100.0) # This gateway requires formated decimal, not cents
       end
       transaction_options = {
         :type => transaction_type,
@@ -93,8 +91,8 @@ class Spree::Gateway::AuthorizeNetCim < Spree::Gateway
       options = options_for_create_customer_profile(payment)
       response = cim_gateway.create_customer_profile(options)
       if response.success?
-        { :customer_profile_id => response.params["customer_profile_id"],
-          :customer_payment_profile_id => response.params["customer_payment_profile_id_list"].values.first }
+        { :customer_profile_id => response.params['customer_profile_id'],
+          :customer_payment_profile_id => response.params['customer_payment_profile_id_list'].values.first }
       else
         payment.gateway_error(response) if payment.respond_to? :gateway_error
         payment.source.gateway_error(response)
@@ -128,5 +126,4 @@ class Spree::Gateway::AuthorizeNetCim < Spree::Gateway
       gateway_options = options
       ActiveMerchant::Billing::AuthorizeNetCimGateway.new(gateway_options)
     end
-
 end

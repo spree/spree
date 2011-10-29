@@ -24,37 +24,37 @@ class Spree::Gateway::Bogus < Spree::Gateway
 
   def authorize(money, creditcard, options = {})
     profile_id = creditcard.gateway_customer_profile_id
-    if VALID_CCS.include? creditcard.number or (profile_id and profile_id.starts_with? "BGS-")
-      ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345', :avs_result => {:code => 'A'})
+    if VALID_CCS.include? creditcard.number or (profile_id and profile_id.starts_with? 'BGS-')
+      ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345', :avs_result => { :code => 'A' })
     else
-      ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", {:message => 'Bogus Gateway: Forced failure'}, :test => true)
+      ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', { :message => 'Bogus Gateway: Forced failure' }, :test => true)
     end
   end
 
   def purchase(money, creditcard, options = {})
     profile_id = creditcard.gateway_customer_profile_id
-    if VALID_CCS.include? creditcard.number  or (profile_id and profile_id.starts_with? "BGS-")
-      ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345', :avs_result => {:code => 'A'})
+    if VALID_CCS.include? creditcard.number  or (profile_id and profile_id.starts_with? 'BGS-')
+      ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345', :avs_result => { :code => 'A' })
     else
-      ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", :message => 'Bogus Gateway: Forced failure', :test => true)
+      ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', :message => 'Bogus Gateway: Forced failure', :test => true)
     end
   end
 
   def credit(money, creditcard, response_code, options = {})
-    ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
+    ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345')
   end
 
   def capture(authorization, creditcard, gateway_options)
-    if authorization.response_code == "12345"
-      ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '67890')
+    if authorization.response_code == '12345'
+      ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '67890')
     else
-      ActiveMerchant::Billing::Response.new(false, "Bogus Gateway: Forced failure", :error => 'Bogus Gateway: Forced failure', :test => true)
+      ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', :error => 'Bogus Gateway: Forced failure', :test => true)
     end
 
   end
 
   def void(response_code, creditcard, options = {})
-    ActiveMerchant::Billing::Response.new(true, "Bogus Gateway: Forced success", {}, :test => true, :authorization => '12345')
+    ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345')
   end
 
   def test?
@@ -67,14 +67,13 @@ class Spree::Gateway::Bogus < Spree::Gateway
   end
 
   private
-  def generate_profile_id(success)
-    record = true
-    prefix = success ? "BGS" : "FAIL"
-    while record
-      random = "#{prefix}-#{Array.new(6){rand(6)}.join}"
-      record = Spree::Creditcard.find(:first, :conditions => ["gateway_customer_profile_id = ?", random])
+    def generate_profile_id(success)
+      record = true
+      prefix = success ? 'BGS' : 'FAIL'
+      while record
+        random = "#{prefix}-#{Array.new(6){rand(6)}.join}"
+        record = Spree::Creditcard.where(:gateway_customer_profile_id => random).first
+      end
+      random
     end
-    random
-  end
-
 end

@@ -1,7 +1,7 @@
 class Spree::Gateway::Braintree < Spree::Gateway
-	preference :merchant_id, :string
-	preference :public_key, :string
-	preference :private_key, :string
+  preference :merchant_id, :string
+  preference :public_key, :string
+  preference :private_key, :string
 
   def provider_class
     ActiveMerchant::Billing::BraintreeGateway
@@ -22,7 +22,7 @@ class Spree::Gateway::Braintree < Spree::Gateway
     if payment.source.gateway_customer_profile_id.nil?
       response = provider.store(payment.source)
       if response.success?
-        payment.source.update_attributes!(:gateway_customer_profile_id => response.params["customer_vault_id"])
+        payment.source.update_attributes!(:gateway_customer_profile_id => response.params['customer_vault_id'])
       else
         payment.source.gateway_error response.message
       end
@@ -65,24 +65,22 @@ class Spree::Gateway::Braintree < Spree::Gateway
   end
 
   protected
-
-  def adjust_country_name(options)
-    [:billing_address, :shipping_address].each do |address|
-      if options[address] && options[address][:country] == "US"
-        options[address][:country] = "United States of America"
+    def adjust_country_name(options)
+      [:billing_address, :shipping_address].each do |address|
+        if options[address] && options[address][:country] == 'US'
+          options[address][:country] = 'United States of America'
+        end
       end
     end
-  end
 
-  def adjust_billing_address(creditcard, options)
-    if creditcard.gateway_customer_profile_id
-      options.delete(:billing_address)
+    def adjust_billing_address(creditcard, options)
+      if creditcard.gateway_customer_profile_id
+        options.delete(:billing_address)
+      end
     end
-  end
 
-  def adjust_options_for_braintree(creditcard, options)
-    adjust_country_name(options)
-    adjust_billing_address(creditcard, options)
-  end
+    def adjust_options_for_braintree(creditcard, options)
+      adjust_country_name(options)
+      adjust_billing_address(creditcard, options)
+    end
 end
-
