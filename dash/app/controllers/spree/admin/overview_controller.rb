@@ -98,7 +98,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     end
 
     def best_selling_variants
-      li = Spree::LineItem.includes(:order).where("spree_orders.state = 'complete'").sum(:quantity, :group => :variant_id, :limit => 5)
+      li = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").sum(:quantity, :group => :variant_id, :limit => 5)
       variants = li.map do |v|
         variant = Spree::Variant.find(v[0])
         [variant.name, v[1] ]
@@ -107,8 +107,8 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     end
 
     def top_grossing_variants
-      quantity = Spree::LineItem.includes(:order).where('spree_orders.state = "complete"').sum(:quantity, :group => :variant_id, :limit => 5)
-      prices = Spree::LineItem.includes(:order).where('spree_orders.state = "complete"').sum(:price, :group => :variant_id, :limit => 5)
+      quantity = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").sum(:quantity, :group => :variant_id, :limit => 5)
+      prices = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").sum(:price, :group => :variant_id, :limit => 5)
       variants = quantity.map do |v|
         variant = Spree::Variant.find(v[0])
         [variant.name, v[1] * prices[v[0]]]
@@ -119,9 +119,9 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
 
     def best_selling_taxons
       taxonomy = Spree::Taxonomy.last
-      taxons = Spree::Taxon.connection.select_rows("SELECT t.name, COUNT(li.quantity) FROM spree_line_items li INNER JOIN spree_variants v ON
-             li.variant_id = v.id INNER JOIN spree_products p ON v.product_id = p.id INNER JOIN spree_products_taxons pt ON p.id = pt.product_id
-             INNER JOIN spree_taxons t ON pt.taxon_id = t.id WHERE t.taxonomy_id = #{taxonomy.id} GROUP BY t.name ORDER BY COUNT(li.quantity) DESC LIMIT 5;")
+      taxons = Spree::Taxon.connection.select_rows("SELECT t.name, COUNT(li.quantity) FROM #{Spree::LineItem.table_name} li INNER JOIN #{Spree::Variant.table_name} v ON
+             li.variant_id = v.id INNER JOIN #{Spree::Product.table_name} p ON v.product_id = p.id INNER JOIN spree_products_taxons pt ON p.id = pt.product_id
+             INNER JOIN #{Spree::Taxon.table_name} t ON pt.taxon_id = t.id WHERE t.taxonomy_id = #{taxonomy.id} GROUP BY t.name ORDER BY COUNT(li.quantity) DESC LIMIT 5;")
     end
 
     def last_five_orders
