@@ -16,7 +16,7 @@ module Spree
         destination_url = options[:url] || spree_core.send("#{options[:route]}_path")
 
         # if more than one form, it'll capitalize all words
-        label_with_first_letters_capitalized = t(options[:label], :default => options[:label]).gsub(/\b\w/){|c| c.upcase}
+        label_with_first_letters_capitalized = t(options[:label], :default => options[:label]).titleize
 
         link = link_to(label_with_first_letters_capitalized, destination_url)
 
