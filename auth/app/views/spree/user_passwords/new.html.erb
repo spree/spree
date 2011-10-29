@@ -2,7 +2,7 @@
 
 <p><%= t(:instructions_to_reset_password) %></p>
 
-<%= form_for Spree::User.new, :as => :user, :url => user_password_path do |f| %>
+<%= form_for Spree::User.new, :as => :user, :url => spree_auth.user_password_path do |f| %>
   <p>
     <%= f.label :email, t(:email) %>:<br />
     <%= f.email_field :email %>

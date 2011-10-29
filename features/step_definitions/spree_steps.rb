@@ -3,7 +3,7 @@ When /^(?:|I )return to (.+)$/ do |page_name|
 end
 
 Then /^I should have (\d+) order$/ do |c|
-  User.find_by_email('email@person.com').orders.count.should == c.to_i
+  Spree::User.find_by_email('email@person.com').orders.count.should == c.to_i
 end
 
 Then /^I should see error messages$/ do

@@ -34,7 +34,7 @@ if defined? CanCan::Ability
     include CanCan::Ability
 
     def initialize(user)
-      cannot :manage, Order
+      cannot :manage, Spree::Order
     end
   end
 end

@@ -24,7 +24,7 @@ Feature: Sign in
 
   Scenario: User enters wrong password
     Given I sign in as "email@person.com/wrongpassword"
-    Then I should be on the new user session page
+    Then I should be on the sign in page
     And I should see "Invalid email or password"
     And I should be logged out
 
