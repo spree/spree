@@ -12,6 +12,8 @@ module NavigationHelpers
 
     when /the home\s?page/
       '/'
+    when /the login page/
+      spree_auth.login_path
     when /the sign in page/
       spree_auth.new_user_session_path
     when /the sign up page/
@@ -23,7 +25,7 @@ module NavigationHelpers
     when /my account page/
       '/account'
     when /the admin orders page/
-      spree_core.spree_admin_orders_path
+      spree_core.admin_orders_path
     when /the edit admin order page for (.*)/
       spree_core.edit_admin_order_path($1)
     when /the show admin order page for (.*)/
