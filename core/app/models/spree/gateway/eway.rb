@@ -8,6 +8,5 @@ module Spree
     def provider_class
       ActiveMerchant::Billing::EwayGateway
     end
-
   end
 end
