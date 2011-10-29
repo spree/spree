@@ -2,8 +2,8 @@ class Spree::User < ActiveRecord::Base
   devise :database_authenticatable, :token_authenticatable, :registerable, :recoverable,
          :rememberable, :trackable, :validatable, :encryptable, :encryptor => 'authlogic_sha512'
 
-  has_many :orders, :class_name => 'Spree:Order'
-  has_and_belongs_to_many :roles, :class_name => 'Spree::Role', :join_table => 'spree_roles_users'
+  has_many :orders
+  has_and_belongs_to_many :roles, :join_table => 'spree_roles_users'
   belongs_to :ship_address, :foreign_key => 'ship_address_id', :class_name => 'Spree::Address'
   belongs_to :bill_address, :foreign_key => 'bill_address_id', :class_name => 'Spree::Address'
 
