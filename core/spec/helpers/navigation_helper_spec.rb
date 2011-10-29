@@ -22,6 +22,16 @@ module Spree
         admin_tab = tab(:orders, :label => "přehled") # overview
         admin_tab.should include("Přehled")
       end
+
+      it "should accept options with label and capitalize each word of it" do
+        admin_tab = tab(:orders, :label => "delivered orders")
+        admin_tab.should include("Delivered Orders")
+      end
+
+      it "should capitalize words with unicode characters" do
+        admin_tab = tab(:orders, :label => "přehled") # overview
+        admin_tab.should include("Přehled")
+      end
     end
   end
 end
