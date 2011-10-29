@@ -3,18 +3,18 @@ class Spree::Order < ActiveRecord::Base
                   :ship_address, :line_items_attributes,
                   :shipping_method_id, :email, :use_billing, :special_instructions
 
-  belongs_to :user, :class_name => 'Spree::User'
+  belongs_to :user
   belongs_to :bill_address, :foreign_key => 'bill_address_id', :class_name => 'Spree::Address'
   belongs_to :ship_address, :foreign_key => 'ship_address_id', :class_name => 'Spree::Address'
-  belongs_to :shipping_method, :class_name => 'Spree::ShippingMethod'
+  belongs_to :shipping_method
 
-  has_many :state_events, :as => :stateful, :class_name => 'Spree::StateEvent'
-  has_many :line_items, :dependent => :destroy, :class_name => 'Spree::LineItem'
-  has_many :inventory_units, :class_name => 'Spree::InventoryUnit'
-  has_many :payments, :dependent => :destroy, :class_name => 'Spree::Payment'
-  has_many :shipments, :dependent => :destroy, :class_name => 'Spree::Shipment'
-  has_many :return_authorizations, :dependent => :destroy, :class_name => 'Spree::ReturnAuthorization'
-  has_many :adjustments, :dependent => :destroy, :class_name => 'Spree::Adjustment'
+  has_many :state_events, :as => :stateful
+  has_many :line_items, :dependent => :destroy
+  has_many :inventory_units
+  has_many :payments, :dependent => :destroy
+  has_many :shipments, :dependent => :destroy
+  has_many :return_authorizations, :dependent => :destroy
+  has_many :adjustments, :dependent => :destroy
 
   users_table_name = Spree::User.table_name
 
