@@ -1,5 +1,4 @@
 class Spree::Taxonomy < ActiveRecord::Base
-
   validates :name, :presence => true
 
   has_many :taxons, :dependent => :destroy
