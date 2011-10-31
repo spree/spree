@@ -1,6 +1,5 @@
 module Spree
   module CheckoutHelper
-
     def checkout_states
       if @order.payment and @order.payment.payment_method.payment_profiles_supported?
         %w(address delivery payment confirm complete)
@@ -32,6 +31,5 @@ module Spree
       end
       content_tag('ol', raw(items.join("\n")), :class => 'progress-steps', :id => "checkout-step-#{@order.state}")
     end
-
   end
 end

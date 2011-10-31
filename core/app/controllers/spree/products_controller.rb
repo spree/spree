@@ -30,9 +30,8 @@ module Spree
     end
 
     private
-
-    def accurate_title
-      @product ? @product.name : super
-    end
+      def accurate_title
+        @product ? @product.name : super
+      end
   end
 end

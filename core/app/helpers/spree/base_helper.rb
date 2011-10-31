@@ -1,11 +1,10 @@
 module Spree
   module BaseHelper
-
-    def link_to_cart(text = t('cart'))
+    def link_to_cart(text = t(:cart))
       return "" if current_page?(cart_path)
       css_class = nil
       if current_order.nil? or current_order.line_items.empty?
-        text = "#{text}: (#{t('empty')})"
+        text = "#{text}: (#{t(:empty)})"
         css_class = 'empty'
       else
         text = "#{text}: (#{current_order.item_count}) #{order_price(current_order)}"
@@ -36,14 +35,14 @@ module Spree
 
     # human readable list of variant options
     def variant_options(v, allow_back_orders = Spree::Config[:allow_backorders], include_style = true)
-      ActiveSupport::Deprecation.warn("variant_options method is deprecated, and will be removed in 0.80.0", caller)
+      ActiveSupport::Deprecation.warn('variant_options method is deprecated, and will be removed in 0.80.0', caller)
       list = v.options_text
 
       # We shouldn't show out of stock if the product is infact in stock
       # or when we're not allowing backorders.
       unless (allow_back_orders || v.in_stock?)
         list = if include_style
-          content_tag(:span, "(#{t(:out_of_stock)}) #{list}", :class => "out-of-stock")
+          content_tag(:span, "(#{t(:out_of_stock)}) #{list}", :class => 'out-of-stock')
         else
           "#{t(:out_of_stock)} #{list}"
         end
@@ -52,7 +51,7 @@ module Spree
       list
     end
 
-    Image.attachment_definitions[:attachment][:styles].each do |style, v|
+    Spree::Image.attachment_definitions[:attachment][:styles].each do |style, v|
       define_method "#{style}_image" do |product, *options|
         options = options.first || {}
         if product.images.empty?
@@ -116,11 +115,11 @@ module Spree
       separator = raw(separator)
       crumbs = [content_tag(:li, link_to(t(:home) , root_path) + separator)]
       if taxon
-        crumbs << content_tag(:li, link_to(t('products') , products_path) + separator)
+        crumbs << content_tag(:li, link_to(t(:products) , products_path) + separator)
         crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator) } unless taxon.ancestors.empty?
         crumbs << content_tag(:li, content_tag(:span, taxon.name))
       else
-        crumbs << content_tag(:li, content_tag(:span, t('products')))
+        crumbs << content_tag(:li, content_tag(:span, t(:products)))
       end
       crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join))
       content_tag(:div, crumb_list + tag(:br, {:class => 'clear'}, false, true), :id => 'breadcrumbs')
@@ -170,6 +169,5 @@ module Spree
         return current_order.item_count
       end
     end
-
   end
 end
