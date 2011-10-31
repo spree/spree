@@ -19,7 +19,6 @@ module Spree
         end
         links.join('&nbsp;').html_safe
       end
-
     end
   end
 end

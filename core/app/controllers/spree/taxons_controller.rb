@@ -16,15 +16,8 @@ module Spree
     end
 
     private
-<<<<<<< HEAD
       def accurate_title
         @taxon ? @taxon.name : super
       end
-=======
-
-    def accurate_title
-      @taxon ? @taxon.name : super
-    end
->>>>>>> Core + Promo specs and cukes passing
   end
 end
