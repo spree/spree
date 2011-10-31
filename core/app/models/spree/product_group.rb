@@ -110,7 +110,7 @@ class Spree::ProductGroup < ActiveRecord::Base
       base_product_scope = base_product_scope.send(self.order_scope)
     end
 
-    return self.product_scopes.reject {|s| s.is_ordering? }.inject(base_product_scope) do |result, scope|
+    return self.product_scopes.reject { |s| s.is_ordering? }.inject(base_product_scope) do |result, scope|
       scope.apply_on(result)
     end
 
@@ -130,9 +130,9 @@ class Spree::ProductGroup < ActiveRecord::Base
     elsif !use_order
       cached_group
     else
-      product_scopes.select {|s|
+      product_scopes.select { |s|
         s.is_ordering?
-      }.inject(cached_group) {|res,order|
+      }.inject(cached_group) { |res,order|
         order.apply_on(res)
       }
     end
@@ -155,7 +155,7 @@ class Spree::ProductGroup < ActiveRecord::Base
   def to_url
     if (new_record? || name.blank?)
       result = ''
-      result += self.product_scopes.map{|ps|
+      result += self.product_scopes.map { |ps|
         [ps.name, ps.arguments.join(',')]
       }.flatten.join('/')
       result += self.order_scope if self.order_scope

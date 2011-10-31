@@ -1,5 +1,5 @@
 class Spree::Tracker < ActiveRecord::Base
   def self.current
-    find(:first, :conditions => { :active => true, :environment => Rails.env })
+    where(:active => true, :environment => Rails.env).first
   end
 end

@@ -216,7 +216,7 @@ class Spree::Order < ActiveRecord::Base
 
     # populate line_items attributes for additional_fields entries
     # that have populate => [:line_item]
-    Spree::Variant.additional_fields.select{ |f| !f[:populate].nil? && f[:populate].include?(:line_item) }.each do |field|
+    Spree::Variant.additional_fields.select { |f| !f[:populate].nil? && f[:populate].include?(:line_item) }.each do |field|
       value = ''
 
       if field[:only].nil? || field[:only].include?(:variant)
@@ -247,7 +247,7 @@ class Spree::Order < ActiveRecord::Base
   end
 
   def contains?(variant)
-    line_items.detect{ |line_item| line_item.variant_id == variant.id }
+    line_items.detect { |line_item| line_item.variant_id == variant.id }
   end
 
   def ship_total

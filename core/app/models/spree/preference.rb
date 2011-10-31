@@ -47,4 +47,3 @@ end
 
 # Most of this code is taken from the preferences plugin available
 # at http://github.com/pluginaweek/preferences/tree/master
-
