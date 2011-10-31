@@ -10,7 +10,3 @@ class Spree::Alert < ActiveResource::Base
                             :rails_version => Rails.version })
   end
 end
-<<<<<<< HEAD
-=======
-
->>>>>>> Check for security alerts and other
