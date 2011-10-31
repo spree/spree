@@ -1,4 +1,5 @@
 require 'ostruct'
+
 class Spree::Shipment < ActiveRecord::Base
   belongs_to :order
   belongs_to :shipping_method
@@ -67,7 +68,7 @@ class Spree::Shipment < ActiveRecord::Base
 
   def line_items
     if order.complete? and Spree::Config[:track_inventory_levels]
-      order.line_items.select {|li| inventory_units.map(&:variant_id).include?(li.variant_id)}
+      order.line_items.select { |li| inventory_units.map(&:variant_id).include?(li.variant_id) }
     else
       order.line_items
     end
@@ -116,7 +117,7 @@ class Spree::Shipment < ActiveRecord::Base
     # shipped    if already shipped (ie. does not change the state)
     # ready      all other cases
     def determine_state(order)
-      return 'pending' if self.inventory_units.any? {|unit| unit.backordered?}
+      return 'pending' if self.inventory_units.any? { |unit| unit.backordered? }
       return 'shipped' if state == 'shipped'
       order.payment_state == 'balance_due' ? 'pending' : 'ready'
     end

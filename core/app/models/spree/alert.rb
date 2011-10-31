@@ -10,4 +10,3 @@ class Spree::Alert < ActiveResource::Base
                             :rails_version => Rails.version })
   end
 end
-

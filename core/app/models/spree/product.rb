@@ -62,7 +62,7 @@ class Spree::Product < ActiveRecord::Base
     :dependent => :destroy
 
   def variant_images
-    Image.find_by_sql("SELECT #{assets_table_name}.* FROM #{assets_table_name} LEFT JOIN #{variants_table_name} ON (#{variants_table_name}.id = #{assets_table_name}.viewable_id) WHERE (#{variants_table_name}.product_id = #{self.id})")
+    Spree::Image.find_by_sql("SELECT #{assets_table_name}.* FROM #{assets_table_name} LEFT JOIN #{variants_table_name} ON (#{variants_table_name}.id = #{assets_table_name}.viewable_id) WHERE (#{variants_table_name}.product_id = #{self.id})")
   end
 
   validates :name, :price, :permalink, :presence => true
@@ -105,7 +105,7 @@ class Spree::Product < ActiveRecord::Base
   end
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
     if table_exists?
-      scope :group_by_products_id, { :group => column_names.map{|col_name| "#{table_name}.#{col_name}"} }
+      scope :group_by_products_id, { :group => column_names.map { |col_name| "#{table_name}.#{col_name}"} }
     end
   else
     scope :group_by_products_id, { :group => "#{self.table_name}.id" }
@@ -200,15 +200,15 @@ class Spree::Product < ActiveRecord::Base
     p.created_at = p.updated_at = nil
     p.taxons = self.taxons
 
-    p.product_properties = self.product_properties.map {|q| r = q.dup; r.created_at = r.updated_at = nil; r}
+    p.product_properties = self.product_properties.map { |q| r = q.dup; r.created_at = r.updated_at = nil; r }
 
-    image_dup = lambda {|i| j = i.dup; j.attachment = i.attachment.clone; j}
-    p.images = self.images.map {|i| image_dup.call i}
+    image_dup = lambda { |i| j = i.dup; j.attachment = i.attachment.clone; j }
+    p.images = self.images.map { |i| image_dup.call i }
 
     variant = self.master.dup
     variant.sku = 'COPY OF ' + self.master.sku
     variant.deleted_at = nil
-    variant.images = self.master.images.map {|i| image_dup.call i}
+    variant.images = self.master.images.map { |i| image_dup.call i }
     p.master = variant
 
     if self.has_variants?
@@ -245,8 +245,8 @@ class Spree::Product < ActiveRecord::Base
   end
 
   def self.like_any(fields, values)
-    where_str = fields.map{ |field| Array.new(values.size, "#{self.table_name}.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
-    self.where([where_str, values.map{|value| "%#{value}%"} * fields.size].flatten)
+    where_str = fields.map { |field| Array.new(values.size, "#{self.table_name}.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
+    self.where([where_str, values.map { |value| "%#{value}%" } * fields.size].flatten)
   end
 
   private
@@ -279,6 +279,6 @@ class Spree::Product < ActiveRecord::Base
     end
 
     def update_memberships
-      self.product_groups = Spree::ProductGroup.all.select{|pg| pg.include?(self)}
+      self.product_groups = Spree::ProductGroup.all.select { |pg| pg.include?(self) }
     end
 end

@@ -5,7 +5,7 @@ class Spree::Calculator < ActiveRecord::Base
   #
   # It should return amount computed based on #calculable and/or optional parameter
   def compute(something=nil)
-    raise(NotImplementedError, "please use concrete calculator")
+    raise(NotImplementedError, 'please use concrete calculator')
   end
 
   # overwrite to provide description for your calculators
