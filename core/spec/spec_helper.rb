@@ -51,7 +51,7 @@ RSpec.configure do |config|
 end
 
 shared_context "custom products" do
-  before(:all) do
+  before(:each) do
     @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
     Spree::Config.set :allow_backorders => true
 

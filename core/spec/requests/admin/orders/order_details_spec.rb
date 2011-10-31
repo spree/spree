@@ -3,6 +3,7 @@ require 'spec_helper'
 describe "Order Details" do
   context "edit order page" do
     it "should allow me to edit order details", :js => true do
+      @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
       Spree::Config.set :allow_backorders => true
       order = Factory(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
       product = Factory(:product, :name => 'spree t-shirt', :on_hand => 5)

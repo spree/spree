@@ -9,6 +9,9 @@ describe "Checkout" do
         @product = Factory(:product, :name => "RoR Mug")
         @product.on_hand = 1
         @product.save
+        fixtures_dir = File.expand_path('../../../../core/db/default', __FILE__)
+        ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'states'])
+        Factory(:zone)
       end
 
       it "should warn the user about out of stock items" do

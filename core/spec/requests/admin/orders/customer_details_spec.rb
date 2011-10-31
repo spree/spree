@@ -9,6 +9,7 @@ describe "Customer Details" do
     end
 
     it "should be able to update customer details for an existing order" do
+      pending
 #      Order.all.each do |order|
 #        product = Factory(:product, :name => 'spree t-shirt')
 #        order.add_variant(product.master, 2)
