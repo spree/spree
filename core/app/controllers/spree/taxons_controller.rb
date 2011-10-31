@@ -16,9 +16,8 @@ module Spree
     end
 
     private
-
-    def accurate_title
-      @taxon ? @taxon.name : super
-    end
+      def accurate_title
+        @taxon ? @taxon.name : super
+      end
   end
 end

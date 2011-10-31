@@ -4,7 +4,7 @@ module Spree
       def option_type_select(so)
         select(:new_variant,
                so.option_type.presentation,
-               so.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] })
+               so.option_type.option_values.collect { |ov| [ ov.presentation, ov.id ] })
       end
 
       def pv_tag_id(product_value)

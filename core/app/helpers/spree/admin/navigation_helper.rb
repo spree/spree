@@ -36,34 +36,34 @@ module Spree
       end
 
       def link_to_clone(resource, options={})
-        link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource), options)
+        link_to_with_icon('exclamation', t(:clone), clone_admin_product_url(resource), options)
       end
 
       def link_to_new(resource)
-        link_to_with_icon('add', t("new"), edit_object_url(resource))
+        link_to_with_icon('add', t(:new), edit_object_url(resource))
       end
 
       def link_to_edit(resource, options={})
-        link_to_with_icon('edit', t("edit"), edit_object_url(resource), options)
+        link_to_with_icon('edit', t(:edit), edit_object_url(resource), options)
       end
 
       def link_to_edit_url(url, options={})
-        link_to_with_icon('edit', t("edit"), url, options)
+        link_to_with_icon('edit', t(:edit), url, options)
       end
 
       def link_to_clone(resource, options={})
-        link_to_with_icon('exclamation', t("clone"), clone_admin_product_url(resource), options)
+        link_to_with_icon('exclamation', t(:clone), clone_admin_product_url(resource), options)
       end
 
       def link_to_delete(resource, options = {}, html_options={})
         options.assert_valid_keys(:url, :caption, :title, :dataType, :success, :name)
 
         options.reverse_merge! :url => object_url(resource) unless options.key? :url
-        options.reverse_merge! :caption => t('are_you_sure')
-        options.reverse_merge! :title => t('confirm_delete')
+        options.reverse_merge! :caption => t(:are_you_sure)
+        options.reverse_merge! :title => t(:confirm_delete)
         options.reverse_merge! :dataType => 'script'
-        options.reverse_merge! :success => "function(r){ jQuery('##{dom_id resource}').fadeOut('hide'); }"
-        options.reverse_merge! :name => icon("delete") + ' ' + t("delete")
+        options.reverse_merge! :success => "function(r){ $('##{dom_id resource}').fadeOut('hide'); }"
+        options.reverse_merge! :name => icon('delete') + ' ' + t(:delete)
 
         link_to_function_delete(options, html_options)
         #link_to_function_delete_native(options, html_options)
@@ -72,7 +72,7 @@ module Spree
       # this function does not use jConfirm
       def link_to_function_delete_native(options, html_options)
         fn = %Q{
-          var answer = confirm("are you sure?");
+          var answer = confirm("#{t(:are_you_sure)}");
           if (!!answer) { #{link_to_function_delete_ajax(options)} };
         }
         link_to_function options[:name], fn, html_options
@@ -86,7 +86,7 @@ module Spree
 
       def link_to_function_delete_ajax(options)
         %Q{
-          jQuery.ajax({
+          $.ajax({
             type: 'POST',
             url: '#{options[:url]}',
             data: ({_method: 'delete', authenticity_token: AUTH_TOKEN}),
@@ -97,7 +97,7 @@ module Spree
       end
 
       def link_to_with_icon(icon_name, text, url, options = {})
-        options[:class] = (options[:class].to_s + " icon_link").strip
+        options[:class] = (options[:class].to_s + ' icon_link').strip
         link_to(icon(icon_name) + ' ' + text, url, options)
       end
 
@@ -152,7 +152,7 @@ module Spree
       end
 
       def html_options_for_button_link(html_options)
-        options = {:class => 'button'}.update(html_options)
+        options = { :class => 'button' }.update(html_options)
       end
 
       def configurations_menu_item(link_text, url, description = '')

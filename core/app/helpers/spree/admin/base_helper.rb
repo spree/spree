@@ -1,7 +1,6 @@
 module Spree
   module Admin
     module BaseHelper
-
       def field_container(model, method, options = {}, &block)
         css_classes = options[:class].to_a
         if error_message_on(model, method).present?
@@ -15,7 +14,7 @@ module Spree
         obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")
 
         if obj && obj.errors[method].present?
-          errors = obj.errors[method].map{|err| h(err)}.join('<br />').html_safe
+          errors = obj.errors[method].map { |err| h(err) }.join('<br />').html_safe
           content_tag(:span, errors, :class => 'formError')
         else
           ''
@@ -78,7 +77,7 @@ module Spree
       def remove_nested(fields)
         out = ''
         out << fields.hidden_field(:_destroy) unless fields.object.new_record?
-        out << (link_to icon("delete"), "#", :class => "remove")
+        out << (link_to icon('delete'), "#", :class => 'remove')
         out.html_safe
       end
 
@@ -93,7 +92,7 @@ module Spree
             }
           )
         when :boolean
-          form.check_box(field, {:readonly => options[:readonly],
+          form.check_box(field, { :readonly => options[:readonly],
               :disabled => options[:disabled]})
         when :string
           form.text_field(field, {
@@ -135,7 +134,7 @@ module Spree
           definition = object.class.preference_definitions[key]
           type = definition.instance_eval{@type}.to_sym
 
-          form.label("preferred_#{key}", t(key)+": ") +
+          form.label("preferred_#{key}", t(key) + ": ") +
             preference_field(form, "preferred_#{key}", :type => type)
         }.join("<br />").html_safe
       end
@@ -185,10 +184,9 @@ module Spree
       end
 
       private
-      def attribute_name_for(field_name)
-        field_name.gsub(' ', '_').downcase
-      end
-
+        def attribute_name_for(field_name)
+          field_name.gsub(' ', '_').downcase
+        end
     end
   end
 end

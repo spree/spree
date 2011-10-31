@@ -7,9 +7,9 @@ module Spree
       diff = product_price(variant, :format_as_currency => false) - product_price(variant.product, :format_as_currency => false)
       return nil if diff == 0
       if diff > 0
-        "(#{t("add")}: #{format_price diff.abs})"
+        "(#{t(:add)}: #{format_price diff.abs})"
       else
-        "(#{t("subtract")}: #{format_price diff.abs})"
+        "(#{t(:subtract)}: #{format_price diff.abs})"
       end
     end
 
@@ -29,8 +29,7 @@ module Spree
     end
 
     def variant_images_hash(product)
-      product.variant_images.inject({}){|h, img| (h[img.viewable_id] ||= []) << img; h }
+      product.variant_images.inject({}) { |h, img| (h[img.viewable_id] ||= []) << img; h }
     end
-
   end
 end
