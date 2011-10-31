@@ -23,6 +23,8 @@ require 'capybara/session'
 # steps to use the XPath syntax.
 Capybara.default_selector = :css
 
+Capybara.server_boot_timeout = 50
+
 # How to clean your database when transactions are turned off. See
 # http://github.com/bmabey/database_cleaner for more info.
 require 'database_cleaner'
