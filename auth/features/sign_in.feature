@@ -12,7 +12,8 @@ Feature: Sign in
     Then I should not see "Authorization Failure"
 
   Scenario: User signs in successfully
-    Given I sign in as "email@person.com/secret"
+    Given I go to the home page
+    And I sign in as "email@person.com/secret"
     Then I should see "Logged in successfully"
     Then I should be on the products page
     And I should be logged in
