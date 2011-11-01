@@ -18,6 +18,9 @@
 # Sum of on_hand each variant's inventory level determine "on_hand" level for the product.
 #
 class Spree::Product < ActiveRecord::Base
+  variants_table_name = Spree::Variant.table_name
+  assets_table_name = Spree::Asset.table_name
+
   has_many :product_option_types, :dependent => :destroy
   has_many :option_types, :through => :product_option_types
   has_many :product_properties, :dependent => :destroy
@@ -30,7 +33,7 @@ class Spree::Product < ActiveRecord::Base
 
   has_one :master,
     :class_name => 'Spree::Variant',
-    :conditions => ["#{Spree::Variant.quoted_table_name}.is_master = ? AND #{Spree::Variant.quoted_table_name}.deleted_at IS NULL", true]
+    :conditions => ["#{variants_table_name}.is_master = ? AND #{variants_table_name}.deleted_at IS NULL", true]
 
   delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
   delegate_belongs_to :master, :cost_price if Spree::Variant.table_exists? && Spree::Variant.column_names.include?('cost_price')
@@ -45,17 +48,17 @@ class Spree::Product < ActiveRecord::Base
 
   has_many :variants,
     :class_name => 'Spree::Variant',
-    :conditions => ["#{::Spree::Variant.quoted_table_name}.is_master = ? AND #{::Spree::Variant.quoted_table_name}.deleted_at IS NULL", false],
-    :order => "#{::Spree::Variant.quoted_table_name}.position ASC"
+    :conditions => ["#{variants_table_name}.is_master = ? AND #{variants_table_name}.deleted_at IS NULL", false],
+    :order => "#{variants_table_name}.position ASC"
 
   has_many :variants_including_master,
     :class_name => 'Spree::Variant',
-    :conditions => ["#{::Spree::Variant.quoted_table_name}.deleted_at IS NULL"],
+    :conditions => ["#{variants_table_name}.deleted_at IS NULL"],
     :dependent => :destroy
 
   has_many :variants_with_only_master,
     :class_name => 'Spree::Variant',
-    :conditions => ["#{::Spree::Variant.quoted_table_name}.deleted_at IS NULL AND #{::Spree::Variant.quoted_table_name}.is_master = ?", true],
+    :conditions => ["#{variants_table_name}.deleted_at IS NULL AND #{variants_table_name}.is_master = ?", true],
     :dependent => :destroy
 
   def variant_images
