@@ -105,7 +105,7 @@ class Spree::Product < ActiveRecord::Base
       scope :group_by_products_id, { :group => column_names.map { |col_name| "#{table_name}.#{col_name}"} }
     end
   else
-    scope :group_by_products_id, { :group => "#{self.table_name}.id" }
+    scope :group_by_products_id, { :group => "#{self.quoted_table_name}.id" }
   end
   search_methods :group_by_products_id
 
@@ -242,7 +242,7 @@ class Spree::Product < ActiveRecord::Base
   end
 
   def self.like_any(fields, values)
-    where_str = fields.map { |field| Array.new(values.size, "#{self.table_name}.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
+    where_str = fields.map { |field| Array.new(values.size, "#{self.quoted_table_name}.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
     self.where([where_str, values.map { |value| "%#{value}%" } * fields.size].flatten)
   end
 
