@@ -59,7 +59,7 @@ class Spree::Product < ActiveRecord::Base
     :dependent => :destroy
 
   def variant_images
-    Spree::Image.find_by_sql("SELECT #{Spree::Asset.quoted_table_name}.* FROM #{Spree::Asset.quoted_table_name} LEFT JOIN #{Spree::Variant.quoted_table_name} ON (#{Spree::Variant.quoted_table_name}.id = #{Spree::Asset.quoted_table_name}.viewable_id) WHERE (#{Spree::Variant.table_name}.product_id = #{self.id})")
+    Spree::Image.find_by_sql("SELECT #{Spree::Asset.quoted_table_name}.* FROM #{Spree::Asset.quoted_table_name} LEFT JOIN #{Spree::Variant.quoted_table_name} ON (#{Spree::Variant.quoted_table_name}.id = #{Spree::Asset.quoted_table_name}.viewable_id) WHERE (#{Spree::Variant.quoted_table_name}.product_id = #{self.id})")
   end
 
   validates :name, :price, :permalink, :presence => true
