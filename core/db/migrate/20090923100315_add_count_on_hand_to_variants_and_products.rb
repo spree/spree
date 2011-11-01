@@ -3,13 +3,6 @@ class AddCountOnHandToVariantsAndProducts < ActiveRecord::Migration
     add_column :variants, :count_on_hand, :integer, :default => 0, :null => false
     add_column :products, :count_on_hand, :integer, :default => 0, :null => false
 
-    # Due to our namespacing changes, this migration (from earlier Spree versions) is broken
-    # To fix it, temporarily set table name on each of the models involved
-    # And then...
-    Spree::Variant.table_name = 'variants'
-    Spree::Product.table_name = 'products'
-    Spree::InventoryUnit.table_name = 'inventory_units'
-
     # In some cases needed to reflect changes in table structure
     Spree::Variant.reset_column_information
     Spree::Product.reset_column_information
@@ -29,11 +22,6 @@ class AddCountOnHandToVariantsAndProducts < ActiveRecord::Migration
         p.update_attribute(:count_on_hand, product_count_on_hand)
       end
     end
-
-    # ... Switch things back at the end of the migration
-    Spree::Variant.table_name = 'spree_variants'
-    Spree::Product.table_name = 'spree_products'
-    Spree::InventoryUnit.table_name = 'spree_inventory_units'
   end
 
   def self.down

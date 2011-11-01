@@ -12,9 +12,6 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
   PAYMENT_COMPLETE = 'completed'
   PAYMENT_VOID = 'void'
   PAYMENT_PENDING = 'pending'
-  
-  # Temporarily set the table back to payments
-  Spree::Payment.table_name = 'payments'
 
   def self.up
     migrate_authorized_only_transactions
@@ -22,8 +19,6 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     migrate_completed_transactions
     migrate_purchased_transactions
     migrate_credited_transactions
-
-    Spree::Payment.table_name = 'spree_payments'
   end
 
   def self.migrate_credited_transactions

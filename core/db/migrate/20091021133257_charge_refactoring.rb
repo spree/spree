@@ -7,9 +7,6 @@ end
 
 class ChargeRefactoring < ActiveRecord::Migration
   def self.up
-    # Temporarily set table name for legacy support
-    Spree::Adjustment.table_name = "adjustments"
-
     add_column :orders, :completed_at, :timestamp
     Order.reset_column_information
     Order.all.each {|o| o.update_attribute(:completed_at, o.checkout && o.checkout.read_attribute(:completed_at)) }
@@ -19,9 +16,6 @@ class ChargeRefactoring < ActiveRecord::Migration
     Spree::Adjustment.update_all "type = secondary_type"
     Spree::Adjustment.update_all "type = 'CouponCredit'", "type = 'Credit'"
     remove_column :adjustments, :secondary_type
-
-    # Reset table name
-    Spree::Adjustment.table_name = "spree_adjustments"
   end
 
   def self.down

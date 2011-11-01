@@ -11,14 +11,9 @@ class AddOpenidFieldToUsers < ActiveRecord::Migration
   def self.down
     remove_column :users, :openid_identifier
 
-    # Due to namespacing change, temporarily set the table back to users
-    Spree::User.table_name = 'users'
-
     [:login, :crypted_password, :salt].each do |field|
       Spree::User.where(field => nil).each { |user| user.update_attribute(field, '') if user.send(field).nil? }
       change_column :users, field, :string, :default => '', :null => false
     end
-
-    Spree::User.table_name = 'spree_users'
   end
 end
