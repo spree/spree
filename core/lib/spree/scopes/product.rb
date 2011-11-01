@@ -52,9 +52,9 @@ module Spree
         Spree::Product.send(:scope, name.to_s, Spree::Product.send(:relation).order(order_text))
       end
 
-      ::Spree::Product.scope :ascend_by_master_price, Spree::Product.joins(:variants_with_only_master).order("#{Spree::Variant.table_name}.price ASC")
+      ::Spree::Product.scope :ascend_by_master_price, Spree::Product.joins(:variants_with_only_master).order("#{Spree::Variant.quoted_table_name}.price ASC")
 
-      ::Spree::Product.scope :descend_by_master_price, Spree::Product.joins(:variants_with_only_master).order("#{Spree::Variant.table_name}.price DESC")
+      ::Spree::Product.scope :descend_by_master_price, Spree::Product.joins(:variants_with_only_master).order("#{Spree::Variant.quoted_table_name}.price DESC")
 
       ATTRIBUTE_HELPER_METHODS = {
         :with_ids => :product_picker_field
@@ -76,15 +76,15 @@ module Spree
 
 
       ::Spree::Product.scope :price_between, lambda { |low, high|
-        { :joins => :master, :conditions => ["#{Spree::Variant.table_name}.price BETWEEN ? AND ?", low, high] }
+        { :joins => :master, :conditions => ["#{Spree::Variant.quoted_table_name}.price BETWEEN ? AND ?", low, high] }
       }
 
       ::Spree::Product.scope :master_price_lte, lambda { |price|
-        { :joins => :master, :conditions => ["#{Spree::Variant.table_name}.price <= ?", price] }
+        { :joins => :master, :conditions => ["#{Spree::Variant.quoted_table_name}.price <= ?", price] }
       }
 
       ::Spree::Product.scope :master_price_gte, lambda { |price|
-        { :joins => :master, :conditions => ["#{Spree::Variant.table_name}.price >= ?", price] }
+        { :joins => :master, :conditions => ["#{Spree::Variant.quoted_table_name}.price >= ?", price] }
       }
 
       # This scope selects products in taxon AND all its descendants
@@ -93,7 +93,7 @@ module Spree
       #   Spree::Product.taxons_id_eq(x)
       #
       ::Spree::Product.scope :in_taxon, lambda { |taxon|
-        { :joins => :taxons, :conditions => ["#{Spree::Taxon.table_name}.id IN (?) ", taxon.self_and_descendants.map(&:id)]}
+        { :joins => :taxons, :conditions => ["#{Spree::Taxon.quoted_table_name}.id IN (?) ", taxon.self_and_descendants.map(&:id)]}
       }
 
       # This scope selects products in all taxons AND all its descendants
@@ -108,7 +108,7 @@ module Spree
 
       # for quick access to products in a group, WITHOUT using the association mechanism
       ::Spree::Product.scope :in_cached_group, lambda { |product_group|
-        { :joins => "JOIN spree_product_groups_products ON #{Spree::Product.table_name}.id = spree_product_groups_products.product_id",
+        { :joins => "JOIN spree_product_groups_products ON #{Spree::Product.quoted_table_name}.id = spree_product_groups_products.product_id",
           :conditions => ["spree_product_groups_products.product_group_id = ?", product_group]
         }
       }
@@ -116,9 +116,9 @@ module Spree
       # a scope that finds all products having property specified by name, object or id
       ::Spree::Product.scope :with_property, lambda { |property|
         conditions = case property
-        when String          then ["#{Spree::Property.table_name}.name = ?", property]
-        when Spree::Property then ["#{Spree::Property.table_name}.id = ?", property.id]
-        else                      ["#{Spree::Property.table_name}.id = ?", property.to_i]
+        when String          then ["#{Spree::Property.quoted_table_name}.name = ?", property]
+        when Spree::Property then ["#{Spree::Property.quoted_table_name}.id = ?", property.id]
+        else                      ["#{Spree::Property.quoted_table_name}.id = ?", property.to_i]
         end
 
         {
@@ -130,9 +130,9 @@ module Spree
       # a scope that finds all products having an option_type specified by name, object or id
       ::Spree::Product.scope :with_option, lambda { |option|
         conditions = case option
-        when String            then ["#{Spree::OptionType.table_name}.name = ?", option]
-        when Spree::OptionType then ["#{Spree::OptionType.table_name}.id = ?",   option.id]
-        else                        ["#{Spree::OptionType.table_name}.id = ?",   option.to_i]
+        when String            then ["#{Spree::OptionType.quoted_table_name}.name = ?", option]
+        when Spree::OptionType then ["#{Spree::OptionType.quoted_table_name}.id = ?",   option.id]
+        else                        ["#{Spree::OptionType.quoted_table_name}.id = ?",   option.to_i]
         end
 
         {
@@ -145,11 +145,11 @@ module Spree
       # note that it can test for properties with NULL values, but not for absent values
       ::Spree::Product.scope :with_property_value, lambda { |property, value|
         conditions = case property
-        when String          then ["#{Spree::Property.table_name}.name = ?", property]
-        when Spree::Property then ["#{Spree::Property.table_name}.id = ?", property.id]
-        else                      ["#{Spree::Property.table_name}.id = ?", property.to_i]
+        when String          then ["#{Spree::Property.quoted_table_name}.name = ?", property]
+        when Spree::Property then ["#{Spree::Property.quoted_table_name}.id = ?", property.id]
+        else                      ["#{Spree::Property.quoted_table_name}.id = ?", property.to_i]
         end
-        conditions = ["#{Spree::ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
+        conditions = ["#{Spree::ProductProperty.quoted_table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
 
         {
           :joins => :properties,
@@ -168,7 +168,7 @@ module Spree
           option.to_i
         end
         conditions = [
-          "#{Spree::OptionValue.table_name}.name = ? AND #{Spree::OptionValue.table_name}.option_type_id = ?",
+          "#{Spree::OptionValue.quoted_table_name}.name = ? AND #{Spree::OptionValue.quoted_table_name}.option_type_id = ?",
           value, option_type_id
         ]
 
@@ -181,7 +181,7 @@ module Spree
       # finds product having option value OR product_property
       ::Spree::Product.scope :with, lambda{ |value|
         {
-          :conditions => ["#{Spree::OptionValue.table_name}.name = ? OR #{Spree::ProductProperty.table_name}.value = ?", value, value],
+          :conditions => ["#{Spree::OptionValue.quoted_table_name}.name = ? OR #{Spree::ProductProperty.quoted_table_name}.value = ?", value, value],
           :joins => { :variants => :option_values, :product_properties => [] }
         }
       }
@@ -217,15 +217,15 @@ module Spree
           :order => %Q{
              COALESCE((
                SELECT
-                 COUNT(#{Spree::LineItem.table_name}.id)
+                 COUNT(#{Spree::LineItem.quoted_table_name}.id)
                FROM
-                 #{Spree::LineItem.table_name}
+                 #{Spree::LineItem.quoted_table_name}
                JOIN
-                 #{Spree::Variant.table_name} AS popular_variants
+                 #{Spree::Variant.quoted_table_name} AS popular_variants
                ON
-                 popular_variants.id = #{Spree::LineItem.table_name}.variant_id
+                 popular_variants.id = #{Spree::LineItem.quoted_table_name}.variant_id
                WHERE
-                 popular_variants.product_id = #{Spree::Product.table_name}.id
+                 popular_variants.product_id = #{Spree::Product.quoted_table_name}.id
              ), 0) DESC
           }
         }
@@ -252,7 +252,7 @@ module Spree
           when String
             Spree::Taxon.find_by_name(t) ||
             Spree::Taxon.find(:first, :conditions => [
-              "#{Spree::Taxon.table_name}.permalink LIKE ? OR #{Spree::Taxon.table_name}.permalink = ?", "%/#{t}/", "#{t}/"
+              "#{Spree::Taxon.quoted_table_name}.permalink LIKE ? OR #{Spree::Taxon.quoted_table_name}.permalink = ?", "%/#{t}/", "#{t}/"
             ])
           end
         }.compact.uniq
