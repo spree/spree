@@ -18,9 +18,6 @@
 # Sum of on_hand each variant's inventory level determine "on_hand" level for the product.
 #
 class Spree::Product < ActiveRecord::Base
-  variants_table_name = Spree::Variant.table_name
-  assets_table_name = Spree::Asset.table_name
-
   has_many :product_option_types, :dependent => :destroy
   has_many :option_types, :through => :product_option_types
   has_many :product_properties, :dependent => :destroy
