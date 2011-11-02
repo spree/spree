@@ -41,8 +41,19 @@ RSpec.configure do |config|
 
   config.after(:each) do
     DatabaseCleaner.clean
+    Ability.abilities.delete(AbilityDecorator) if Ability.abilities.include?(AbilityDecorator)
   end
 
   config.include Devise::TestHelpers, :type => :controller
   config.include Rack::Test::Methods, :type => :requests
+end
+
+if defined? CanCan::Ability
+  class AbilityDecorator
+    include CanCan::Ability
+
+    def initialize(user)
+      cannot :manage, Order
+    end
+  end
 end
