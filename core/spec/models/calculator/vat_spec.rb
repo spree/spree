@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Spree::Calculator::Vat do
+  before(:each) do
+    @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+  end
+
   let(:tax_category) { Factory(:tax_category, :tax_rates => []) }
   let(:vat_rate) { Factory(:tax_rate, :amount => 0.15, :tax_category_id => tax_category.id) }
   let(:calculator) { Spree::Calculator::Vat.new(:calculable => vat_rate) }

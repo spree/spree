@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Spree::Order do
+  before(:each) do
+    @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+  end
 
   context 'validation' do
     it { should have_valid_factory(:order) }

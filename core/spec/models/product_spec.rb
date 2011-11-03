@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Spree::Product do
+  before(:each) do
+    @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+  end
 
   context "shoulda validations" do
     it { should belong_to(:tax_category) }

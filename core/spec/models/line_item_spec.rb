@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Spree::LineItem do
+  before(:each) do
+    @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+  end
 
   context 'validation' do
     it { should have_valid_factory(:line_item) }
@@ -120,7 +123,6 @@ describe Spree::LineItem do
   end
 
   context '(in)sufficient_stock?' do
-
     context 'when backordering is disabled' do
       before { Spree::Config.set :allow_backorders => false }
 
