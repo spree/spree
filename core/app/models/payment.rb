@@ -69,7 +69,15 @@ class Payment < ActiveRecord::Base
   end
 
   def process!
-    if !processing? and source and source.respond_to?(:process!)
+    return if processing?
+
+    if !source
+      raise "payment source is missing" if payment_method.requires_source?
+      return
+    end
+
+    raise "bad source type" unless source.kind_of? payment_method.payment_source_class
+    if source.respond_to?(:process!)
       started_processing!
       source.process!(self) # source is responsible for updating the payment state when it's done processing
     end
