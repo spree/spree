@@ -13,6 +13,8 @@ require 'spree/core/testing_support/factories'
 
 # load default data for tests
 require 'active_record/fixtures'
+fixtures_dir = File.expand_path('../../../core/db/default', __FILE__)
+ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'zones', 'zone_members', 'states', 'roles'])
 
 RSpec.configure do |config|
   # == Mock Framework
@@ -38,7 +40,7 @@ RSpec.configure do |config|
     }
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.strategy = :truncation, { :except => ['countries', 'zone_members', 'states', 'roles'] }
   end
 
   config.before(:each) do
