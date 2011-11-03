@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe "Zones" do
   before(:each) do
+    Zone.delete_all
     visit admin_path
     click_link "Configuration"
   end
