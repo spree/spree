@@ -90,7 +90,7 @@ class Payment < ActiveRecord::Base
     def amount_is_valid_for_outstanding_balance_or_credit
       return unless order
       if amount != order.outstanding_balance
-        errors.add(:amount, "does not match outstanding balance (#{order.outstanding_balance})")
+        errors.add(:amount, I18n.t("validation.does_not_match_outstanding_balance")+" (#{order.outstanding_balance})")
       end
     end
 
