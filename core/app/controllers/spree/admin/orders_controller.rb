@@ -97,9 +97,9 @@ module Spree
         # itself will make sure transitions are not applied in the wrong state)
         event = params[:e]
         if @order.send("#{event}")
-          flash.notice = t('order_updated')
+          flash.notice = t(:order_updated)
         else
-          flash[:error] = t('cannot_perform_operation')
+          flash[:error] = t(:cannot_perform_operation)
         end
       rescue Spree::GatewayError => ge
         flash[:error] = "#{ge.message}"
@@ -109,7 +109,7 @@ module Spree
 
       def resend
         OrderMailer.confirm_email(@order, true).deliver
-        flash.notice = t('order_email_resent')
+        flash.notice = t(:order_email_resent)
 
         respond_with(@order) { |format| format.html { redirect_to :back } }
       end
