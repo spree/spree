@@ -170,28 +170,10 @@ describe Spree::LineItem do
       line_item.save.should be_false
       line_item.errors.size.should == 1
     end
-  end
-
-  context "after shipment made" do
-    before do
-      shipping_method = mock_model ShippingMethod, :calculator => mock('calculator')
-      shipment = Shipment.new :order => order, :state => 'shipped', :shipping_method => shipping_method
-      inventory_units = 5.times.map { InventoryUnit.new :variant => line_item.variant }
-      order.stub(:shipments => [shipment])
-      shipment.stub(:inventory_units => inventory_units)
-    end
-
-    it "should not allow quantity to be adjusted lower than already shipped units" do
-      line_item.quantity = 4
-      line_item.save.should be_false
-      line_item.errors.size.should == 1
-    end
-
 
     it "should allow quantity to be adjusted higher than already shipped units" do
       line_item.quantity = 6
       line_item.save.should be_true
     end
-
   end
 end
