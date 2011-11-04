@@ -1,9 +1,9 @@
 class UpdateCalculableTypeForPromotions < ActiveRecord::Migration
   def self.up
-    Spree::Calculator.update_all('calculable_type = "Promotion"', 'calculable_type = "Coupon"')
+    Spree::Calculator.where(:calculable_type => 'Coupon').update_all(:calculable_type => 'Promotion')
   end
 
   def self.down
-    Spree::Calculator.update_all('calculable_type = "Coupon"', 'calculable_type = "Promotion"')
+    Spree::Calculator.where(:calculable_type => 'Promotion').update_all(:calculable_type => 'Coupon')
   end
 end

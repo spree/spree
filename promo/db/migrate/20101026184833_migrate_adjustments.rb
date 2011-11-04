@@ -1,7 +1,7 @@
 class MigrateAdjustments < ActiveRecord::Migration
   def self.up
-    execute('update spree_adjustments set amount = 0.0 where amount is null')
-    Spree::Adjustment.update_all(:mandatory => true, :locked => true)
+    Spree::Adjustment.where(:amount => nil).update_all(:amount => 0.0)
+    Spree::Adjustment.where(:locked => true).update_all(:mandatory => true)
   end
 
   def self.down

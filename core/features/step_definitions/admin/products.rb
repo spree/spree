@@ -1,5 +1,5 @@
 Given /^count_on_hand is 10 for all products$/ do
-  Spree::Product.update_all('count_on_hand=10')
+  Spree::Product.update_all :count_on_hand => 10
 end
 
 Then /^I should see listing products tabular attributes with name ascending$/ do

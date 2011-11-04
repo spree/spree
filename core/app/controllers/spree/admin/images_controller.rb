@@ -9,7 +9,7 @@ module Spree
 
       def update_positions
         params[:positions].each do |id, index|
-          Image.update_all(['position=?', index], ['id=?', id])
+          Image.where(:id => id).update_all(:position => index)
         end
 
         respond_to do |format|

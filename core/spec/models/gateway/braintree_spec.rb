@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Gateway::Braintree do
 
   before(:each) do
-    Spree::Gateway.update_all(:active => false)
+    Spree::Gateway.update_all :active => false
     @gateway = Spree::Gateway::Braintree.create!(:name => "Braintree Gateway", :environment => "test", :active => true)
 
     @gateway.set_preference(:merchant_id, "zbn5yzq9t7wmwx42" )
