@@ -1,0 +1,3 @@
+class Spree::TokenizedPermission < ActiveRecord::Base
+  belongs_to :permissable, :polymorphic => true
+end

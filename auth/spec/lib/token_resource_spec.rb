@@ -5,7 +5,7 @@ require 'spec_helper'
 # since those classes are including the module.
 describe Spree::TokenResource do
   let(:order) { Spree::Order.new }
-  let(:permission) { mock_model(TokenizedPermission) }
+  let(:permission) { mock_model(Spree::TokenizedPermission) }
 
   it 'should add has_one :tokenized_permission relationship' do
     assert Spree::Order.reflect_on_all_associations(:has_one).map(&:name).include?(:tokenized_permission)
