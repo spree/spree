@@ -108,7 +108,7 @@ module Spree
       end
 
       def resend
-        Spree::OrderMailer.confirm_email(@order, true).deliver
+        OrderMailer.confirm_email(@order, true).deliver
         flash.notice = t('order_email_resent')
 
         respond_with(@order) { |format| format.html { redirect_to :back } }
