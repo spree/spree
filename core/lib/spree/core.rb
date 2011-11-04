@@ -63,7 +63,7 @@ require 'spree/preference_access'
 require 'spree/config'
 require 'spree/mail_settings'
 require 'spree/mail_interceptor'
-require 'redirect_legacy_product_url'
+require 'spree/middleware/redirect_legacy_product_url'
 require 'middleware/seo_assist'
 
 require 'spree_base' # added 11-3 JBD
