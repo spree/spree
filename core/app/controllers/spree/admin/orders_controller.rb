@@ -108,11 +108,7 @@ module Spree
       end
 
       def resend
-<<<<<<< HEAD
         Spree::OrderMailer.confirm_email(@order, true).deliver
-=======
-        OrderMailer.confirm_email(@order, true).deliver
->>>>>>> Correctly reference admin/shared partials across the engine + namespace all admin controllers
         flash.notice = t('order_email_resent')
 
         respond_with(@order) { |format| format.html { redirect_to :back } }
