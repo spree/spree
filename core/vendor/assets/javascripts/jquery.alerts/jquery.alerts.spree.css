@@ -22,7 +22,7 @@
   padding-left: 0em;
 }
 
-#popup_container.spree INPUT[type='button'] {
+#popup_container.spree input[type='button'] {
   border: outset 2px #76A5CC;
   color: #fff;
   background: #3778AE;

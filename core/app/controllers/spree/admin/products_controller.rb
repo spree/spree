@@ -24,9 +24,9 @@ module Spree
         end
 
         if @product.save
-          flash.notice = I18n.t("notice_messages.product_deleted")
+          flash.notice = I18n.t('notice_messages.product_deleted')
         else
-          flash.notice = I18n.t("notice_messages.product_not_deleted")
+          flash.notice = I18n.t('notice_messages.product_not_deleted')
         end
 
         respond_with(@product) do |format|
@@ -39,9 +39,9 @@ module Spree
         @new = @product.duplicate
 
         if @new.save
-          flash.notice = I18n.t("notice_messages.product_cloned")
+          flash.notice = I18n.t('notice_messages.product_cloned')
         else
-          flash.notice = I18n.t("notice_messages.product_not_cloned")
+          flash.notice = I18n.t('notice_messages.product_not_cloned')
         end
 
         respond_with(@new) { |format| format.html { redirect_to edit_admin_product_url(@new) } }
