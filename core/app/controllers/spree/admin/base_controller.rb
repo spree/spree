@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class BaseController < Spre::BaseController
+    class BaseController < Spree::BaseController
       helper 'spree/search'
       helper 'spree/admin/navigation'
       layout '/spree/layouts/admin'
