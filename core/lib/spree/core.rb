@@ -66,8 +66,6 @@ require 'spree/mail_interceptor'
 require 'spree/middleware/redirect_legacy_product_url'
 require 'spree/middleware/seo_assist'
 
-require 'spree_base' # added 11-3 JBD
-
 silence_warnings do
   require 'spree/core/authorize_net_cim_hack'
 end
