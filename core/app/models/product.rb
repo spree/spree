@@ -57,14 +57,22 @@ class Product < ActiveRecord::Base
     :conditions => ["#{Variant.table_name}.deleted_at IS NULL AND #{Variant.table_name}.is_master = ?", true],
     :dependent => :destroy
 
-
   def variant_images
     Image.find_by_sql("SELECT assets.* FROM assets LEFT JOIN variants ON (variants.id = assets.viewable_id) WHERE (variants.product_id = #{self.id})")
   end
 
 
   validates :name, :price, :permalink, :presence => true
-
+  
+  validate :price_needs_to_be_numeric
+  
+  def price_needs_to_be_numeric
+    unless self.master.price.nil? or self.master.price_before_type_cast.is_a?(Numeric)
+      errors.add(:price, "needs to be numeric")
+    end
+  end
+  
+  
   accepts_nested_attributes_for :product_properties, :allow_destroy => true, :reject_if => lambda { |pp| pp[:property_name].blank? }
 
   make_permalink
