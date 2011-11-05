@@ -79,7 +79,7 @@ describe Spree::CheckoutController do
 
           it "should populate the flash message" do
             post :update, {:state => "confirm"}
-            flash[:notice].should == I18n.t(:order_processed_successfully)
+            flash.notice.should == I18n.t(:order_processed_successfully)
           end
 
           it "should remove completed order from the session" do

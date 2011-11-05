@@ -20,7 +20,7 @@ class Spree::UserSessionsController < Devise::SessionsController
     if user_signed_in?
       respond_to do |format|
         format.html {
-          flash[:notice] = t(:logged_in_succesfully)
+          flash.notice = t(:logged_in_succesfully)
           redirect_back_or_default(products_path)
         }
         format.js {
