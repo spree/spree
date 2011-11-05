@@ -31,7 +31,7 @@ class Spree::ProductScope < ActiveRecord::Base
                       Spree::Product.send(self.name.intern, *array)
                   end
     else
-      relation2 = Spree::Product.metasearch({self.name.intern => array}).relation
+      relation2 = Spree::Product.metasearch({self.name.intern => array.join("")}).relation
     end
     unless another_scope.class == ActiveRecord::Relation
       another_scope = another_scope.send(:relation)
