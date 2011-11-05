@@ -1,8 +1,8 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
-<%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => "Variants"} %>
+<%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Variants' } %>
 
-<%= render 'spree/shared/error_messages', :target => @variant %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @variant } %>
 
 <%= form_for [:admin, @product, @variant] do |f| %>
   <div data-hook="admin_variant_edit_form">

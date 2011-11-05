@@ -31,11 +31,11 @@
 
 <h3><%= Spree::Address.model_name.human(:count => 2) %></h3>
 <%= f.fields_for :bill_address do |ba_form|  %>
-  <%= render :partial => 'spree/admin/shared/address_form', :locals => {:f => ba_form, :name => t(:billing_address), :use_billing => false} %>
+  <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => ba_form, :name => t(:billing_address), :use_billing => false } %>
 <% end %>
 
 <%= f.fields_for :ship_address do |sa_form|  %>
-  <%= render :partial => 'spree/admin/shared/address_form', :locals => {:f => sa_form, :name => t(:shipping_address), :use_billing => true} %>
+  <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :name => t(:shipping_address), :use_billing => true } %>
 <% end %>
 
 <p class="form-buttons" data-hook="buttons">

@@ -1,5 +1,5 @@
 <h1><%= t(:editing_tax_rate) %></h1>
-<%= render 'spree/shared/error_messages', :target => @tax_rate %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tax_rate } %>
 <%= form_for [:admin, @tax_rate] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <%= render :partial => 'spree/admin/shared/edit_resource_links' %>

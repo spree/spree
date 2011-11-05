@@ -1,6 +1,6 @@
 <% @body_id = 'signup' %>
 
-<%= render 'spree/shared/error_messages', :target => @user %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
 
 <div id="new-customer">
   <h2><%= t(:new_customer) %></h2>
@@ -9,7 +9,7 @@
 
     <%= form_for :user, :url => spree_auth.user_registration_path(@user) do |f| %>
       <div data-hook="signup_inside_form"%>
-        <%= render 'spree/shared/user_form', :f => f %>
+        <%= render :partial => 'spree/shared/user_form', :locals => { :f => f } %>
         <p><%= f.submit t(:create), :class => 'button primary' %></p>
       </div>
     <% end %>

@@ -1,12 +1,12 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => {:current => 'Payments'} %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
 <h2><%= t(:new) %> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %></h2>
 
-<%= render 'spree/shared/error_messages', :target => @payment %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment } %>
 
 <%= form_for @payment, :url => admin_order_payments_path(@order) do |f| %>
 
-  <%= render 'form', :f => f %>
+  <%= render :partial => 'form', :locals => { :f => f } %>
 
   <p class="form-buttons" data-hook="buttons">
     <%= button @order.cart? ? t(:continue) : t(:update) %>

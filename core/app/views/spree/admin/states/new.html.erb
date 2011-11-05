@@ -1,6 +1,6 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<%= render 'spree/shared/error_messages', :target => @state %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @state } %>
 
 <%= form_for [:admin, @country, @state] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

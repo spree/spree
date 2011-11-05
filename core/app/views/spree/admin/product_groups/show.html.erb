@@ -1,4 +1,4 @@
-<% render 'spree/admin/shared/product_sub_menu' %>
+<% render :partial => 'spree/admin/shared/product_sub_menu' %>
 <h2><%= Spree::ProductGroup.model_name.human %></h2>
 <p>
   <%= Spree::ProductGroup.human_attribute_name(:name) %>: <%= @product_group.name %>

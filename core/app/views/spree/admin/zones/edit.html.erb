@@ -2,7 +2,7 @@
 
 <h1><%= t(:editing_zone) %></h1>
 
-<%= render 'spree/shared/error_messages', :target => @zone %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @zone } %>
 
 <%= form_for [:admin, @zone] do |zone_form| %>
   <%= render :partial => 'form', :locals => { :zone_form => zone_form } %>

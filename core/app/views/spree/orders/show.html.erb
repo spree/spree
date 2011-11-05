@@ -4,7 +4,7 @@
   <% if params.has_key? :checkout_complete %>
     <h3><%= t(:thank_you_for_your_order) %></h3>
   <% end %>
-  <%= render :partial => 'spree/shared/order_details', :locals => {:order => @order} %>
+  <%= render :partial => 'spree/shared/order_details', :locals => { :order => @order } %>
   <p data-hook="links">
     <%= link_to t(:back_to_store), spree_core.root_path %>
     <% unless params.has_key? :checkout_complete %>

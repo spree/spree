@@ -3,7 +3,7 @@
 <div data-hook="admin_shipping_method_new_form_header">
   <h1><%= t(:new_shipping_method) %></h1>
 
-  <%= render 'spree/shared/error_messages', :target => @shipping_method %>
+  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipping_method } %>
 </div>
 
 <div data-hook="admin_shipping_method_new_form">

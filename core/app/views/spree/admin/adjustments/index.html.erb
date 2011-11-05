@@ -1,4 +1,4 @@
-<%= render 'spree/admin/shared/new_adjustment_button' %>
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => {:current => 'Adjustments'} %>
-<%= render 'adjustments_table' %>
+<%= render :partial => 'spree/admin/shared/new_adjustment_button' %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Adjustments' } %>
+<%= render :partial => 'adjustments_table' %>
 <%= button_link_to t(:continue), @order.cart? ? new_admin_order_payment_url(@order) : admin_orders_url %>

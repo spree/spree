@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
   <head data-hook="inside_head">
-    <%= render 'spree/shared/head' %>
+    <%= render :partial => 'spree/shared/head' %>
   </head>
   <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
     <div id="header" data-hook>
       <ul id="nav-bar" data-hook>
-        <%= render 'spree/shared/nav_bar' %>
+        <%= render :partial => 'spree/shared/nav_bar' %>
       </ul>
       <div id="logo" data-hook>
         <%= logo %>
@@ -33,6 +33,6 @@
       </div>
       <div id="footer-right" data-hook></div>
     </div>
-    <%= render 'spree/shared/google_analytics' %>
+    <%= render :partial => 'spree/shared/google_analytics' %>
   </body>
 </html>

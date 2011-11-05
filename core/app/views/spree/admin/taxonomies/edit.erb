@@ -7,7 +7,7 @@
 <p id="ajax_error" class="errorExplanation" style="display:none;"></p>
 
 <%= form_for [:admin, @taxonomy] do |f| %>
-  <%= render :partial => 'form', :locals => {:f => f} %>
+  <%= render :partial => 'form', :locals => { :f => f } %>
     <div>
       <%= label_tag nil, t(:tree) %><br />
       <div id="taxonomy_tree" class="tree"></div>

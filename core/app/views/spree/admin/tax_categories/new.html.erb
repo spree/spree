@@ -2,7 +2,7 @@
 
 <h1><%= t(:new_tax_category) %></h1>
 
-<%= render 'spree/shared/error_messages', :target => @tax_category %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tax_category } %>
 
 <%= form_for [:admin, @tax_category] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

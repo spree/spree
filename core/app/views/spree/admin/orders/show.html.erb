@@ -3,24 +3,24 @@
   <%= button_link_to t(:edit), edit_admin_order_url(@order.number), :icon => 'edit' %>
 </div>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => {:current => 'Order Details'} %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Order Details' } %>
 
 <div data-hook="admin_order_show_addresses">
   <% if @order.bill_address %>
     <div class="adr">
       <h4><%= t(:bill_address) %></h4>
-      <%= render :partial => 'spree/admin/shared/address', :locals => {:address => @order.bill_address} %>
+      <%= render :partial => 'spree/admin/shared/address', :locals => { :address => @order.bill_address } %>
     </div>
   <% end %>
   <% if @order.ship_address %>
     <div class='adr'>
       <h4><%= t(:ship_address) %></h4>
-      <%= render :partial => 'spree/admin/shared/address', :locals => {:address => @order.ship_address} %>
+      <%= render :partial => 'spree/admin/shared/address', :locals => { :address => @order.ship_address } %>
     </div>
     <% end %>
   <hr />
 </div>
 
 <div data-hook="admin_order_show_details">
-  <%= render :partial => 'spree/admin/shared/order_details', :locals => {:order => @order} %>
+  <%= render :partial => 'spree/admin/shared/order_details', :locals => { :order => @order } %>
 </div>

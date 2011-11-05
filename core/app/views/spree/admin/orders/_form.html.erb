@@ -1,5 +1,5 @@
 <% if @line_item.try(:errors).present? %>
-  <%= render 'spree/shared/error_messages', :target => @line_item %>
+  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
 <% end %>
 
 <%= form_for @order, :url => admin_order_url(@order), :html => { :method => :put} do |f| %>

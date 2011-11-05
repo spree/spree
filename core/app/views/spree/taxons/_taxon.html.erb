@@ -1,4 +1,4 @@
 <div class="taxon" data-hook="taxon">
   <h2><%= link_to taxon.name, seo_url(taxon), :class => 'breadcrumbs' %></h2>
-  <%= render :partial => 'shared/products', :locals => {:products => taxon_preview(taxon), :taxon => taxon} %>
+  <%= render :partial => 'shared/products', :locals => { :products => taxon_preview(taxon), :taxon => taxon } %>
 </div>

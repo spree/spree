@@ -5,10 +5,10 @@
   <h1><%= t(:checkout) %></h1>
   <%= checkout_progress %>
   <br clear="left" />
-  <%= render 'spree/shared/error_messages', :target => @order %>
+  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
   <% if @order.state != 'confirm' %>
     <div id="checkout-summary" data-hook="checkout_summary_box">
-      <%= render 'summary', :order => @order %>
+      <%= render :partial => 'summary', :locals => { :order => @order } %>
     </div>
   <% end %>
   <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}" } do |form| %>

@@ -1,9 +1,9 @@
 <% content_for :sidebar do %>
   <div data-hook="homepage_sidebar_navigation">
     <% if "products" == @current_controller && @taxon %>
-      <%= render 'spree/shared/filters' %>
+      <%= render :partial => 'spree/shared/filters' %>
     <% else %>
-      <%= render 'spree/shared/taxonomies' %>
+      <%= render :partial => 'spree/shared/taxonomies' %>
     <% end %>
   </div>
 <% end %>
@@ -15,13 +15,13 @@
     <% if @products.empty? %>
       <%= t(:no_products_found) %>
     <% else %>
-      <%= render 'spree/shared/products', :products => @products, :taxon => @taxon %>
+      <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
     <% end %>
   </div>
 
 <% else %>
 
   <div data-hook="homepage_products">
-    <%= render 'spree/shared/products', :products => @products, :taxon => @taxon %>
+    <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
   </div>
 <% end %>

@@ -2,9 +2,9 @@
 
 <h1><%= t(:new_zone) %></h1>
 
-<%= render 'spree/shared/error_messages', :target => @zone %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @zone } %>
 
 <%= form_for [:admin, @zone] do |zone_form| %>
-  <%= render 'form', :zone_form => zone_form %>
+  <%= render :partial => 'form', :locals => { :zone_form => zone_form } %>
   <%= render :partial => 'spree/admin/shared/new_resource_links' %>
 <% end %>

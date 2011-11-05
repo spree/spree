@@ -1,10 +1,9 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
-<%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Taxons'} %>
+<%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Taxons' } %>
 <div id="selected-taxons" data-hook>
-  <%= render :partial => 'taxon_table', :locals => {:taxons => @taxons} %>
+  <%= render :partial => 'taxon_table', :locals => { :taxons => @taxons } %>
 </div>
-
 
 <%= form_tag '#' do %>
   <%= label_tag nil, t(:search) %>:

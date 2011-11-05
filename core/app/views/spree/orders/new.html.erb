@@ -3,7 +3,7 @@
 <h1><%= t(:shopping_cart) %></h1>
 
 <%= form_for @order, :url =>'#', :html => {:method => :put} do |order_form| %>
-  <%= render :partial => 'form', :locals => {:order_form => order_form} %>
+  <%= render :partial => 'form', :locals => { :order_form => order_form } %>
 <% end %>
 
 <p><%= link_to t(:continue_shopping), products_path %></p>

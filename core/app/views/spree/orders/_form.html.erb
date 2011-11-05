@@ -1,4 +1,4 @@
-<%= render 'spree/shared/error_messages', :target => @order %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
 <table id="cart-detail" data-hook>
   <thead>
     <tr data-hook="cart_items_headers">
@@ -11,7 +11,7 @@
   </thead>
   <tbody id="line_items" data-hook>
     <%= order_form.fields_for :line_items do |item_form| %>
-      <%= render 'line_item', :variant => item_form.object.variant, :line_item => item_form.object, :item_form => item_form %>
+      <%= render :partial => 'line_item', :locals => { :variant => item_form.object.variant, :line_item => item_form.object, :item_form => item_form } %>
     <% end %>
   </tbody>
 </table>

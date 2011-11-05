@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <h1><%= t(:editing_payment_method) %></h1>
-<%= render 'spree/shared/error_messages', :target => @payment_method %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment_method } %>
 <%= form_for @payment_method, :url => admin_payment_method_path(@payment_method), :html => { :method => :put } do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <p data-hook="buttons">

@@ -1,8 +1,8 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
-<%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Images'} %>
+<%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Images' } %>
 
-<%= render 'spree/shared/error_messages', :target => @image %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @image } %>
 
 <%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
   <table class="basic-table" data-hook="edit_image">

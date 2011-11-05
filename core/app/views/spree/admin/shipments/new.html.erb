@@ -1,8 +1,8 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => {:current => 'Shipments'} %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
 
 <div data-hook="admin_shipment_new_header">
   <h1><%= t(:new_shipment) %></h1>
-  <%= render 'spree/shared/error_messages', :target => @shipment %>
+  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipment } %>
 </div>
 
 <div data-hook="admin_shipment_new_form">

@@ -8,17 +8,17 @@
   </div>
 </div>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => {:current => 'Order Details'} %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Order Details' } %>
 
 <div data-hook="admin_order_edit_header">
-  <%= render 'spree/shared/error_messages', :target => @order %>
+  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
 </div>
 
 <%= render :partial => 'add_product' %>
 
 <div data-hook="admin_order_edit_form">
   <div id="order-form-wrapper">
-    <%= render :partial => 'form', :locals => {:order => @order} %>
+    <%= render :partial => 'form', :locals => { :order => @order } %>
   </div>
 </div>
 

@@ -1,6 +1,6 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
-<%= render 'spree/shared/error_messages', :target => @option_type %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @option_type } %>
 
 <%= form_for [:admin, @option_type] do |f| %>
   <fieldset>

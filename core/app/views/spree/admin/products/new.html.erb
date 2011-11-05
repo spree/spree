@@ -1,6 +1,6 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
-<%= render 'spree/shared/error_messages', :target => @product %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
 <%= form_for [:admin, @product], :html => { :multipart => true } do |f| %>
 <fieldset data-hook="new_product">

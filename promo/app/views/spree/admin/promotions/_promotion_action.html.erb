@@ -8,5 +8,5 @@
   <%#= hidden_field_tag "#{param_prefix}[id]", promotion_action.id %>
   <p><%= t("promotion_action_types.#{type_name}.description") %></p>
 
-  <%= render "spree/admin/promotions/actions/#{type_name}", :action_form => action_form, :promotion_action => promotion_action, :param_prefix => param_prefix %>
+  <%= render :partial => "spree/admin/promotions/actions/#{type_name}", :locals => { :action_form => action_form, :promotion_action => promotion_action, :param_prefix => param_prefix } %>
 </div>

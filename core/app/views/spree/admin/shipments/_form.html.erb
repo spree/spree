@@ -37,7 +37,7 @@
 
 <div data-hook="admin_shipment_form_address">
   <% shipment_form.fields_for 'address' do |sa_form|  %>
-    <%= render :partial => 'spree/admin/shared/address_form', :locals => {:f => sa_form, :name => t(:shipping_address), :use_billing => false} %>
+    <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :name => t(:shipping_address), :use_billing => false } %>
   <% end %>
 </div>
 

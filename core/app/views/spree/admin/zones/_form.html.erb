@@ -24,6 +24,6 @@
   </label>
 </p>
 
-<%= render 'member_type', :type => 'country', :zone_form => zone_form %>
-<%= render 'member_type', :type => 'state', :zone_form => zone_form %>
-<%= render 'member_type', :type => 'zone', :zone_form => zone_form %>
+<%= render :partial =>'member_type', :locals => { :type => 'country', :zone_form => zone_form }%>
+<%= render :partial =>'member_type', :locals => { :type => 'state', :zone_form => zone_form } %>
+<%= render :partial =>'member_type', :locals => { :type => 'zone', :zone_form => zone_form } %>

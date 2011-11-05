@@ -5,7 +5,7 @@
     <legend><%= t(type) %></legend>
     <ul id="ul-nested-<%= type %>" class="member-list">
       <%= zone_form.fields_for :zone_members do |member_form| %>
-        <%= render "#{type}_member", :f => member_form %>
+        <%= render :partial => "#{type}_member", :locals => { :f => member_form } %>
       <% end %>
     </ul>
     <p data-hook="buttons">

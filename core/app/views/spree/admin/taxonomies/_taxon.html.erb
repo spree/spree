@@ -4,7 +4,7 @@
       <li id="<%= child.id %>" rel="taxon">
         <a style="background-image: url(<%= child.icon.url %>);" href="#"><%= child.name %></a>
         <% if child.children.length > 0 %>
-          <%= render :partial => 'taxon', :locals => {:taxon => child} %>
+          <%= render :partial => 'taxon', :locals => { :taxon => child } %>
         <% end %>
       </li>
     <% end %>

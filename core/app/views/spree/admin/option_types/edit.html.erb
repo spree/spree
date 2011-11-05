@@ -1,6 +1,6 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 <h1><%= t(:editing_option_type) %></h1>
-<%= render 'spree/shared/error_messages', :target => @option_type %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @option_type } %>
 <%= form_for [:admin, @option_type] do |f| %>
 <fieldset>
   <legend><%= t(:editing_option_type) %></legend>
@@ -19,7 +19,7 @@
         <td colspan="3"><%= @option_type.option_values.empty? ? t(:none) : '' %></td>
       </tr>
       <%= f.fields_for :option_values do |option_value_form| %>
-        <%= render 'option_value_fields', :f => option_value_form %>
+        <%= render :partial => 'option_value_fields', :locals => { :f => option_value_form } %>
       <% end %>
     </tbody>
   </table>

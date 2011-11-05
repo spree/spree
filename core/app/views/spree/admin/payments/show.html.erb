@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => {:current => 'Payments'} %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
 <h2><%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %></h2>
 
@@ -7,4 +7,4 @@
   <%= @payment.amount %>
 </p>
 
-<%= render "admin/payments/source_views/#{@payment.payment_method.method_type}", :payment => @payment.source.is_a?(Payment) ? @payment.source : @payment %>
+<%= render :partial => "admin/payments/source_views/#{@payment.payment_method.method_type}", :locals => { :payment => @payment.source.is_a?(Payment) ? @payment.source : @payment } %>

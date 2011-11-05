@@ -2,7 +2,7 @@
 
 <h1><%= t(:editing_state) %></h1>
 
-<%= render 'spree/shared/error_messages', :target => @state %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @state } %>
 
 <%= form_for [:admin, @country, @state] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

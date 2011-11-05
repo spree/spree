@@ -1,8 +1,8 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
-<%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Product Properties'} %>
+<%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Product Properties' } %>
 
-<%= render 'spree/shared/error_messages', :target => @product %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
 <%= form_for @product, :url => admin_product_url(@product), :html => { :method => :put } do |f| %>
   <table class="index">
@@ -15,7 +15,7 @@
     </thead>
     <tbody id="product_properties" data-hook>
       <%= f.fields_for :product_properties do |pp_form| %>
-        <%= render 'product_property_fields', :f => pp_form %>
+        <%= render :partial => 'product_property_fields', :locals => { :f => pp_form } %>
       <% end %>
     </tbody>
   </table>

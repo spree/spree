@@ -2,7 +2,7 @@
 
 <h1><%= t(:editing_property) %></h1>
 
-<%= render 'spree/shared/error_messages', :target => @property %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @property } %>
 
 <%= form_for [:admin, @property] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

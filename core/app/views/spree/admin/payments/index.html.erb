@@ -9,14 +9,14 @@
   <br class="clear" />
 </div>
 
-<%= render 'spree/admin/shared/order_tabs', :current => 'Payments' %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
 <% if @order.outstanding_balance? %>
   <p><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %> <strong><%= number_to_currency @order.outstanding_balance %></strong></p>
 <% end %>
 
 <h2><%= t(:payments) %></h2>
-<%= render 'list', :payments => @payments %>
+<%= render :partial => 'list', :locals => { :payments => @payments } %>
 
 
 <%= button_link_to t(:continue), admin_orders_url %>
