@@ -74,14 +74,6 @@ Feature: Promotions which add adjustments to orders
     And I fill in "Amount" with "5" within ".calculator-fields"
     And I press "Update" within "#actions_container"
 
-    When I add a product with name: "RoR Mug", price: "40" to cart
-    And I follow "Checkout"
-    When I fill billing address with correct data
-    And check "order_use_billing"
-    And press "Save and Continue"
-    When I choose "UPS Ground" as shipping method and "Check" as payment method and set coupon code to "SINGLE_USE"
-    Then the existing order should have total at "47"
-
     When I follow "Logout"
     And I log in as "john@test.com/secret"
 
@@ -91,15 +83,7 @@ Feature: Promotions which add adjustments to orders
     And check "order_use_billing"
     And press "Save and Continue"
     When I choose "UPS Ground" as shipping method and "Check" as payment method and set coupon code to "SINGLE_USE"
-    Then the resulting order should have a total of "52"
-
-    And I add a product with name: "RoR Mug", price: "40" to cart
-    And I follow "Checkout"
-    When I fill billing address with correct data
-    And check "order_use_billing"
-    And press "Save and Continue"
-    When I choose "UPS Ground" as shipping method and "Check" as payment method and set coupon code to "SINGLE_USE"
-    Then the resulting order should have a total of "52"
+    Then the resulting order should have a total of "47"
 
   @selenium
   Scenario: An automatic promotion with flat percent discount
