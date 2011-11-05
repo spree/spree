@@ -5,26 +5,25 @@
 <table data-hook="preferences">
   <% @preferences.each do |key| %>
   <tr>
-      <th scope="row"><%= t(key) %>:</th>
-      <td><%= Spree::Config[key] %></td>
+    <th scope="row"><%= t(key) %>:</th>
+    <td><%= Spree::Config[key] %></td>
   </tr>
   <% end %>
   <tr>
-	<td colspan="2">
+    <td colspan="2">
       <%= Spree::Config[:allow_ssl_in_production] ? t(:ssl_will_be_used_in_production_mode) : t(:ssl_will_not_be_used_in_production_mode) %>
-	</td>
+    </td>
   </tr>
   <tr>
-	<td colspan="2">
-	  <%= Spree::Config[:allow_ssl_in_staging] ? t(:ssl_will_be_used_in_staging_mode) : t(:ssl_will_not_be_used_in_staging_mode) %>
-	</td>
+    <td colspan="2">
+    <%= Spree::Config[:allow_ssl_in_staging] ? t(:ssl_will_be_used_in_staging_mode) : t(:ssl_will_not_be_used_in_staging_mode) %>
+  </td>
   </tr>
   <tr>
-	<td colspan="2">
+    <td colspan="2">
       <%= Spree::Config[:allow_ssl_in_development_and_test] ? t(:ssl_will_be_used_in_development_and_test_modes) : t(:ssl_will_not_be_used_in_development_and_test_modes) %>
-	</td>
+    </td>
   </tr>
 </table>
 
 <p><%= link_to_with_icon 'edit', t(:edit), edit_admin_general_settings_path, :id => 'admin_general_settings_link' %></p>
-
