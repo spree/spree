@@ -6,10 +6,6 @@ describe Spree::OrdersController do
     controller.stub :current_user => nil
   end
 
-  after do
-    Spree::OrdersController.clear_overrides!
-  end
-
   context "extension testing" do
     context "update" do
 
