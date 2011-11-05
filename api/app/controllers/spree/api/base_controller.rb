@@ -2,7 +2,7 @@ class Spree::Api::BaseController < Spree::BaseController
   before_filter :check_http_authorization
   before_filter :load_resource
   skip_before_filter :verify_authenticity_token, :if => lambda { admin_token_passed_in_headers }
-  authorize_resource
+  # authorize_resource
 
   respond_to :json
 
