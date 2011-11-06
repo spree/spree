@@ -1,9 +1,9 @@
 class DropBillingIntegrations < ActiveRecord::Migration
-  def self.up
+  def up
     drop_table :billing_integrations
   end
 
-  def self.down
+  def down
     create_table :billing_integrations do |t|
       t.string :type, :name
       t.text :description

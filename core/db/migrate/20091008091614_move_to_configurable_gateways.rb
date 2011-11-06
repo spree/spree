@@ -1,5 +1,5 @@
 class MoveToConfigurableGateways < ActiveRecord::Migration
-  def self.up
+  def up
     drop_table :gateways
     drop_table :gateway_options
     drop_table :gateway_option_values
@@ -17,7 +17,7 @@ class MoveToConfigurableGateways < ActiveRecord::Migration
     end
   end
 
-  def self.down
+  def down
     drop_table :gateways
 
     create_table :gateway_configurations, :force => true do |t|

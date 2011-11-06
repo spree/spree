@@ -6,7 +6,7 @@ class Order < ActiveRecord::Base
 end
 
 class ChargeRefactoring < ActiveRecord::Migration
-  def self.up
+  def up
     # Temporarily set table name for legacy support
     Spree::Adjustment.table_name = 'adjustments'
 
@@ -24,7 +24,7 @@ class ChargeRefactoring < ActiveRecord::Migration
     Spree::Adjustment.table_name = 'spree_adjustments'
   end
 
-  def self.down
+  def down
     add_column :checkouts, :completed_at, :timestamp
     Spree::Checkout.reset_column_information
     Spree::Checkout.all.each { |c| c.update_attribute(:completed_at, c.order && c.order.completed_at) }

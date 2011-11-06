@@ -1,5 +1,5 @@
 class ChangeTaxonsToNestedSet < ActiveRecord::Migration
-  def self.up
+  def up
     add_column :taxons, :lft, :integer
     add_column :taxons, :rgt, :integer
 
@@ -39,7 +39,7 @@ class ChangeTaxonsToNestedSet < ActiveRecord::Migration
     Spree::Taxon.table_name = 'spree_taxons'
   end
 
-  def self.down
+  def down
     remove_column :taxons, :lft
     remove_column :taxons, :rgt
   end

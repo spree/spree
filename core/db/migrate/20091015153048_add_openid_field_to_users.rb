@@ -1,5 +1,5 @@
 class AddOpenidFieldToUsers < ActiveRecord::Migration
-  def self.up
+  def up
     add_column :users, :openid_identifier, :string
     add_index :users, :openid_identifier
 
@@ -8,7 +8,7 @@ class AddOpenidFieldToUsers < ActiveRecord::Migration
     change_column :users, :salt, :string, :default => nil, :null => true
   end
 
-  def self.down
+  def down
     remove_column :users, :openid_identifier
 
     # Due to namespacing change, temporarily set the table back to users

@@ -1,5 +1,5 @@
 class ShipmentIdForInventoryUnits < ActiveRecord::Migration
-  def self.up
+  def up
     add_column :inventory_units, :shipment_id, :integer
     add_index :inventory_units, :shipment_id
 
@@ -19,7 +19,7 @@ class ShipmentIdForInventoryUnits < ActiveRecord::Migration
     Spree::Shipment.table_name = 'spree_shipments'
   end
 
-  def self.down
+  def down
     remove_column :inventory_units, :shipment_id
   end
 end

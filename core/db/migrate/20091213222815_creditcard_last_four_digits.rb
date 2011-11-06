@@ -2,7 +2,7 @@
 class Creditcard < ActiveRecord::Base; end;
 
 class CreditcardLastFourDigits < ActiveRecord::Migration
-  def self.up
+  def up
     rename_column :creditcards, :display_number, :last_digits
 
     Creditcard.reset_column_information
@@ -11,7 +11,7 @@ class CreditcardLastFourDigits < ActiveRecord::Migration
     end
   end
 
-  def self.down
+  def down
     rename_column :creditcards, :last_digits, :display_number
   end
 end

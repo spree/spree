@@ -2,14 +2,14 @@ class Checkout < ActiveRecord::Base; end;
 class Order < ActiveRecord::Base; end;
 
 class MigrateCheckoutToOrders < ActiveRecord::Migration
-  def self.up
+  def up
     Order.find_each do |order|
       checkout = update_order(order)
       checkout.destroy if checkout
     end
   end
 
-  def self.update_order(order)
+  def update_order(order)
     checkout = Checkout.find_by_order_id(order.id)
     if checkout
       order.update_attributes_without_callbacks({
@@ -21,6 +21,6 @@ class MigrateCheckoutToOrders < ActiveRecord::Migration
     checkout
   end
 
-  def self.down
+  def down
   end
 end

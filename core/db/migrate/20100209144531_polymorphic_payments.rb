@@ -2,7 +2,7 @@
 class Checkout < ActiveRecord::Base; end;
 
 class PolymorphicPayments < ActiveRecord::Migration
-  def self.up
+  def up
     remove_column :payments, :type
     remove_column :payments, :creditcard_id
     rename_column :payments, :order_id, :payable_id
@@ -27,7 +27,7 @@ class PolymorphicPayments < ActiveRecord::Migration
     remove_column :creditcards, :checkout_id
   end
 
-  def self.down
+  def down
     add_column :creditcards, :checkout_id, :integer
     change_table :payments do |t|
       t.remove :payable_type

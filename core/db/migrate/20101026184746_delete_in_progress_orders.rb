@@ -2,7 +2,7 @@
 class Order < ActiveRecord::Base; end;
 
 class DeleteInProgressOrders < ActiveRecord::Migration
-  def self.up
+  def up
     Order.delete_all(:state => 'in_progress')
     delete_orphans('adjustments')
     delete_orphans('checkouts')
@@ -16,6 +16,6 @@ class DeleteInProgressOrders < ActiveRecord::Migration
     execute("DELETE FROM #{table_name} WHERE order_id NOT IN (SELECT id FROM orders)")
   end
 
-  def self.down
+  def down
   end
 end

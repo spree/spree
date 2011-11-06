@@ -1,5 +1,5 @@
 class AssignCreditcardTxnsToPayment < ActiveRecord::Migration
-  def self.up
+  def up
     add_column :creditcard_txns, :payment_id, :integer
 
     # Temporarily set back to creditcards
@@ -16,7 +16,7 @@ class AssignCreditcardTxnsToPayment < ActiveRecord::Migration
     remove_column :creditcard_txns, :creditcard_payment_id
   end
 
-  def self.down
+  def down
     remove_column :creditcard_txns, :payment_id
     add_column    :creditcard_txns, :creditcard_payment_id, :integer
   end

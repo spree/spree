@@ -2,7 +2,7 @@
 class Shipment < ActiveRecord::Base; end;
 
 class PopulateLegacyShipmentState < ActiveRecord::Migration
-  def self.up
+  def up
     Shipment.all.each do |shipment|
       if shipment.shipped_at
         shipment.state = 'shipped'
@@ -13,6 +13,6 @@ class PopulateLegacyShipmentState < ActiveRecord::Migration
     end
   end
 
-  def self.down
+  def down
   end
 end

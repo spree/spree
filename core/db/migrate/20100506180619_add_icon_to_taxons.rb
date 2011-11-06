@@ -1,5 +1,5 @@
 class AddIconToTaxons < ActiveRecord::Migration
-    def self.up
+    def up
       # legacy table support
       Spree::Taxon.table_name = 'taxons'
       # skip this migration if the attribute already exists because of advanced taxon extension
@@ -12,7 +12,7 @@ class AddIconToTaxons < ActiveRecord::Migration
       Spree::Taxon.table_name = 'spree_taxons'
     end
 
-    def self.down
+    def down
       remove_column :taxons, :icon_file_name
       remove_column :taxons, :icon_content_type
       remove_column :taxons, :icon_file_size

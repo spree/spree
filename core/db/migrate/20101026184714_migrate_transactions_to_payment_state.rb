@@ -16,7 +16,7 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
   # Temporarily set the table back to payments
   Spree::Payment.table_name = 'payments'
 
-  def self.up
+  def up
     migrate_authorized_only_transactions
     migrate_voided_transactions
     migrate_completed_transactions
@@ -82,7 +82,7 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     authorized_only.each { |rec| rec.destroy }
   end
 
-  def self.update_payment(tx, state)
+  def update_payment(tx, state)
     payment = Spree::Payment.find(tx.payment_id)
     payment.update_attributes_without_callbacks({
       :state => state,
@@ -93,6 +93,6 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     })
   end
 
-  def self.down
+  def down
   end
 end

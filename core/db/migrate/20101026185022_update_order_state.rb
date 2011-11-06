@@ -1,5 +1,5 @@
 class UpdateOrderState < ActiveRecord::Migration
-  def self.up
+  def up
     Spree::Order.table_name = 'orders'
 
     Spree::Order.all.map(&:update!)
@@ -7,6 +7,6 @@ class UpdateOrderState < ActiveRecord::Migration
     Spree::Order.table_name = 'spree_orders'
   end
 
-  def self.down
+  def down
   end
 end

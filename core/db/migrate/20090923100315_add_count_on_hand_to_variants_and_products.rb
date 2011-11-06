@@ -1,5 +1,5 @@
 class AddCountOnHandToVariantsAndProducts < ActiveRecord::Migration
-  def self.up
+  def up
     add_column :variants, :count_on_hand, :integer, :default => 0, :null => false
     add_column :products, :count_on_hand, :integer, :default => 0, :null => false
 
@@ -36,7 +36,7 @@ class AddCountOnHandToVariantsAndProducts < ActiveRecord::Migration
     Spree::InventoryUnit.table_name = 'spree_inventory_units'
   end
 
-  def self.down
+  def down
    Spree::Variant.all.each do |v|
       v.count_on_hand.times do
         Spree::InventoryUnit.create(:variant => variant, :state => 'on_hand')
