@@ -1,10 +1,6 @@
 class AddAdjustmentsIndex < ActiveRecord::Migration
-  def self.up
+  def change
     add_index :adjustments, :order_id
-  end
-
-  def self.down
-    remove_index :adjustments, :order_id
   end
 end
 

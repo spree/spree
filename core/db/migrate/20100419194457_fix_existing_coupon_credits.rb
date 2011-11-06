@@ -1,11 +1,13 @@
+class Adjustment < ActiveRecord::Base; end;
+
 class FixExistingCouponCredits < ActiveRecord::Migration
   def self.up
-    execute("UPDATE adjustments SET type='PromotionCredit' WHERE type='CouponCredit'")
-    execute("UPDATE adjustments SET adjustment_source_type='Promotion' WHERE adjustment_source_type='Coupon'")
+    Adjustment.where(:type => 'CouponCredit').update_all(:type => 'PromotionCredit')
+    Adjustment.where(:adjustment_source_type => 'Coupon').update_all(:adjustment_source_type => 'Promotion')
   end
 
   def self.down
-    execute("UPDATE adjustments SET adjustment_source_type='Coupon' WHERE adjustment_source_type='Promotion'")
-    execute("UPDATE adjustments SET type='CouponCredit' WHERE type='PromotionCredit'")
+    Adjustment.where(:adjustment_source_type => 'Promotion').update_all(:adjustment_source_type => 'Coupon')
+    Adjustment.where(:type => 'PromotionCredit').update_all(:type => 'CouponCredit')
   end
 end

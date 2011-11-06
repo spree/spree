@@ -28,7 +28,7 @@ class ChangeTaxonsToNestedSet < ActiveRecord::Migration
       end
 
       # Find root node(s)
-      where("#{quoted_parent_column_name} IS NULL").order('position ASC').each do |root_node|
+      where("#{quoted_parent_column_name}" => nil).order('position ASC').each do |root_node|
         # setup index for this scope
         indices[scope.call(root_node)] ||= 0
         set_left_and_rights.call(root_node)

@@ -1,5 +1,5 @@
 class CreateActivators < ActiveRecord::Migration
-  def self.up
+  def change
     create_table :activators, :force => true do |t|
       t.string   :description
       t.datetime :expires_at
@@ -10,9 +10,5 @@ class CreateActivators < ActiveRecord::Migration
       t.string   :event_name
       t.string   :type
     end
-  end
-
-  def self.down
-    drop_table :activators
   end
 end

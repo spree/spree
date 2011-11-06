@@ -1,5 +1,5 @@
 class CreatePaymentMethods < ActiveRecord::Migration
-  def self.up
+  def change
     create_table :payment_methods do |t|
       t.string :type, :name
       t.text :description
@@ -12,9 +12,5 @@ class CreatePaymentMethods < ActiveRecord::Migration
     # we probably also need to do this inside the payment_gateway extension b/c table won't exist yet in fresh bootstrap
     #drop_table :billing_integrations
     #drop_table :gateways
-  end
-
-  def self.down
-    drop_table :payment_methods
   end
 end

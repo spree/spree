@@ -1,5 +1,5 @@
 class CreateReturnAuthorizations < ActiveRecord::Migration
-  def self.up
+  def change
     create_table :return_authorizations do |t|
       t.string :number, :state
       t.decimal :amount, :precision => 8, :scale => 2, :default => 0.0, :null => false
@@ -8,9 +8,5 @@ class CreateReturnAuthorizations < ActiveRecord::Migration
 
       t.timestamps
     end
-  end
-
-  def self.down
-    drop_table :return_authorizations
   end
 end

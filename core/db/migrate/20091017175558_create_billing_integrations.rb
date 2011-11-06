@@ -1,5 +1,5 @@
 class CreateBillingIntegrations < ActiveRecord::Migration
-  def self.up
+  def change
     create_table :billing_integrations do |t|
       t.string :type, :name
       t.text :description
@@ -8,9 +8,5 @@ class CreateBillingIntegrations < ActiveRecord::Migration
 
       t.timestamps
     end
-  end
-
-  def self.down
-    drop_table :billing_integrations
   end
 end

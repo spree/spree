@@ -1,9 +1,5 @@
 class IndexForShipmentsNumber < ActiveRecord::Migration
-  def self.up
+  def change
     add_index :shipments, :number
-  end
-
-  def self.down
-    remove_index :shipments, :number
   end
 end

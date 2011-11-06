@@ -1,9 +1,5 @@
 class AddGuestFlag < ActiveRecord::Migration
-  def self.up
+  def change
     add_column :users, :guest, :boolean
-  end
-
-  def self.down
-    remove_column :users, :guest
   end
 end

@@ -2,7 +2,7 @@ class SpreeZeroNineZero < ActiveRecord::Migration
   # This is a legacy migration consolidating all of the database changes needed as of Spree 0.9.0
   # (See http://railsdog.lighthouseapp.com/projects/31096-spree/tickets/772)
 
-  def self.up
+  def change
     create_table :addresses, :force => true do |t|
       t.string   :firstname, :lastname, :address1, :address2, :city,
                  :zipcode, :phone, :state_name, :alternative_phone
@@ -385,53 +385,5 @@ class SpreeZeroNineZero < ActiveRecord::Migration
 
       t.timestamps
     end
-  end
-
-  def self.down
-    drop_table :addresses
-    drop_table :adjustments
-    drop_table :assets
-    drop_table :calculators
-    drop_table :checkouts
-    drop_table :configurations
-    drop_table :countries
-    drop_table :coupons
-    drop_table :creditcard_txns
-    drop_table :creditcards
-    drop_table :gateway_configurations
-    drop_table :gateway_option_values
-    drop_table :gateway_options
-    drop_table :gateways
-    drop_table :inventory_units
-    drop_table :line_items
-    drop_table :option_types
-    drop_table :option_types_prototypes
-    drop_table :option_values
-    drop_table :option_values_variants
-    drop_table :orders
-    drop_table :payments
-    drop_table :preferences
-    drop_table :product_option_types
-    drop_table :product_properties
-    drop_table :products
-    drop_table :products_taxons
-    drop_table :properties
-    drop_table :properties_prototypes
-    drop_table :prototypes
-    drop_table :roles
-    drop_table :roles_users
-    drop_table :shipments
-    drop_table :shipping_categories
-    drop_table :shipping_methods
-    drop_table :state_events
-    drop_table :states
-    drop_table :tax_categories
-    drop_table :tax_rates
-    drop_table :taxonomies
-    drop_table :taxons
-    drop_table :users
-    drop_table :variants
-    drop_table :zone_members
-    drop_table :zones
   end
 end

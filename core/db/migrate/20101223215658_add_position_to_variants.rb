@@ -1,9 +1,5 @@
 class AddPositionToVariants < ActiveRecord::Migration
-  def self.up
+  def change
     add_column :variants, :position, :integer
-  end
-
-  def self.down
-    remove_column :variants, :position
   end
 end

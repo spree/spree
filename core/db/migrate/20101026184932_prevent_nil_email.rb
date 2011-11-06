@@ -1,7 +1,9 @@
+class Order < ActiveRecord::Base; end;
+
 class PreventNilEmail < ActiveRecord::Migration
   def self.up
-    execute("UPDATE orders SET email = 'guest@example.com' WHERE email IS NULL")
-    execute("UPDATE orders SET email = 'guest@example.com' WHERE email = ''")
+    Order.where(:email => nil).update_all(:email => 'guest@example.com')
+    Order.where(:email => '').update_all(:email => 'guest@example.com')
   end
 
   def self.down

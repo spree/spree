@@ -6,6 +6,7 @@ class DeletedAtForPaymentMethods < ActiveRecord::Migration
   end
 
   def self.down
+    remove_column :payments_methods, :column_name
     change_table :payment_methods do |t|
       t.remove :deleted_at
     end

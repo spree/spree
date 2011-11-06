@@ -8,5 +8,6 @@ class RenamedRmaCancelledState < ActiveRecord::Migration
   end
 
   def self.down
+    raise IrreversibleMigration
   end
 end

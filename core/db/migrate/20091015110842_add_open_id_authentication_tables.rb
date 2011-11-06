@@ -1,5 +1,5 @@
 class AddOpenIdAuthenticationTables < ActiveRecord::Migration
-  def self.up
+  def change
     create_table :open_id_authentication_associations, :force => true do |t|
       t.integer  :issued, :lifetime
       t.string   :handle, :assoc_type
@@ -11,10 +11,5 @@ class AddOpenIdAuthenticationTables < ActiveRecord::Migration
       t.string   :server_url, :null => true
       t.string   :salt,       :null => false
     end
-  end
-
-  def self.down
-    drop_table :open_id_authentication_associations
-    drop_table :open_id_authentication_nonces
   end
 end
