@@ -26,7 +26,7 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     Spree::Payment.table_name = 'spree_payments'
   end
 
-  def self.migrate_credited_transactions
+  def migrate_credited_transactions
     credited = Transaction.find_by_sql("SELECT * FROM transactions WHERE txn_type = #{CREDITED}")
     credited.each do |tx|
       payment = Spree::Payment.find(tx)
@@ -41,7 +41,7 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     credited.each { |rec| rec.destroy }
   end
 
-  def self.migrate_voided_transactions
+  def migrate_voided_transactions
     voided = Transaction.find_by_sql("SELECT * FROM transactions WHERE txn_type = #{VOIDED}")
     voided.each do |tx|
       update_payment(tx, PAYMENT_VOID)
@@ -53,15 +53,15 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     end
   end
 
-  def self.migrate_purchased_transactions
+  def migrate_purchased_transactions
     migrate_transactions(PURCHASED)
   end
 
-  def self.migrate_completed_transactions
+  def migrate_completed_transactions
     migrate_transactions(COMPLETED)
   end
 
-  def self.migrate_transactions(type)
+  def migrate_transactions(type)
     txs = Transaction.find_by_sql("SELECT * FROM transactions WHERE txn_type = #{type}")
     txs.each do |tx|
       update_payment(tx, PAYMENT_COMPLETE)
@@ -69,7 +69,7 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     txs.each { |rec| rec.destroy }
   end
 
-  def self.migrate_authorized_only_transactions
+  def migrate_authorized_only_transactions
     if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
       group_by_clause = 'GROUP BY transactions.' + Transaction.column_names.join(', transactions.')
     else
