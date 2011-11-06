@@ -2,11 +2,10 @@ class Spree::Variant < ActiveRecord::Base
   belongs_to :product
   delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords
 
-  has_many :inventory_units, :class_name => 'Spree::InventoryUnit'
-  has_many :line_items, :class_name => 'Spree::LineItem'
-  has_and_belongs_to_many :option_values, :class_name => 'Spree::OptionValue',
-                                          :join_table => 'spree_option_values_variants'
-  has_many :images, :as => :viewable, :order => :position, :dependent => :destroy, :class_name => 'Spree::Image'
+  has_many :inventory_units
+  has_many :line_items
+  has_and_belongs_to_many :option_values, :join_table => 'spree_option_values_variants'
+  has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
 
   validate :check_price
   validates :price, :presence => true

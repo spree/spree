@@ -1,6 +1,5 @@
 class Spree::Property < ActiveRecord::Base
-  has_and_belongs_to_many :prototypes, :join_table => 'spree_properties_prototypes',
-                                       :class_name => "Spree::Prototype"
+  has_and_belongs_to_many :prototypes, :join_table => 'spree_properties_prototypes'
 
   has_many :product_properties, :dependent => :destroy
   has_many :products, :through => :product_properties
@@ -14,6 +13,6 @@ class Spree::Property < ActiveRecord::Base
     if prototype.class == Prototype
       id = prototype.id
     end
-    joins("LEFT JOIN properties_prototypes ON property_id = #{self.table_name}.id").where('prototype_id = ?', id)
+    joins("LEFT JOIN properties_prototypes ON property_id = #{self.table_name}.id").where(:prototype_id => id)
   end
 end
