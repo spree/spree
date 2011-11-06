@@ -63,8 +63,8 @@ module Spree
       redirect_to spree_core.cart_path
     end
 
-    def accurate_title
-      @order && @order.completed? ? "#{Order.model_name.human} #{@order.number}" : I18n.t(:shopping_cart)
+    def accurate_titles
+      @order && @order.completed? ? "#{Order.model_name.human} #{@order.number}" : t(:shopping_cart)
     end
   end
 end

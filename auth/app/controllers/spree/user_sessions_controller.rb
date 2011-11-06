@@ -51,6 +51,6 @@ class Spree::UserSessionsController < Devise::SessionsController
     end
 
     def accurate_title
-      I18n.t(:log_in)
+      t(:log_in)
     end
 end

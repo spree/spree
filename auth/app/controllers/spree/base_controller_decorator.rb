@@ -18,7 +18,7 @@ Spree::BaseController.class_eval do
       respond_to do |format|
         format.html do
           if current_user
-            flash.now[:error] = I18n.t(:authorization_failure)
+            flash.now[:error] = t(:authorization_failure)
             render 'spree/shared/unauthorized', :layout => '/spree/layouts/spree_application'
           else
             store_location

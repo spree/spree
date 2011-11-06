@@ -32,7 +32,7 @@ module Spree
 
           if @order.completed?
             @payment.process!
-            flash[:notice] = flash_message_for(@payment, :successfully_created)
+            flash.notice = flash_message_for(@payment, :successfully_created)
 
             respond_with(@payment) { |format| format.html { redirect_to admin_order_payments_path(@order) } }
           else
