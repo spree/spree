@@ -1,5 +1,5 @@
 class CreatePromotionRules < ActiveRecord::Migration
-  def self.up
+  def up
     create_table :promotion_rules do |t|
       t.references :promotion, :user, :product_group
       t.string :type
@@ -17,7 +17,7 @@ class CreatePromotionRules < ActiveRecord::Migration
     add_index :products_promotion_rules, :promotion_rule_id
   end
 
-  def self.down
+  def down
     drop_table :promotion_rules
     drop_table :products_promotion_rules
   end

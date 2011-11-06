@@ -1,10 +1,10 @@
 class PromotionChangesToSubclassOfActivator < ActiveRecord::Migration
-  def self.up
+  def up
     drop_table :promotions
     rename_column :promotion_rules, :promotion_id, :activator_id
   end
 
-  def self.down
+  def down
     create_table :promotions, :force => true do |t|
       t.string   :name
       t.string   :code
