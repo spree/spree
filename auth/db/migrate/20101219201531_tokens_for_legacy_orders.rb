@@ -1,5 +1,5 @@
 class TokensForLegacyOrders < ActiveRecord::Migration
-  def self.up
+  def up
     # add token permissions for legacy orders (stop relying on user persistence token)
     Spree::Order.all.each do |order|
       next unless order.user
@@ -7,6 +7,6 @@ class TokensForLegacyOrders < ActiveRecord::Migration
     end
   end
 
-  def self.down
+  def down
   end
 end
