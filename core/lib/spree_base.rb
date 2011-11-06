@@ -67,7 +67,7 @@ module SpreeBase
     # add additional keys as appropriate. Override this method if you need additional data when
     # responding to a notification
     def default_notification_payload
-      {:user => (respond_to?(:current_user) && current_user), :order => current_order}
+      {:user => (respond_to?(:current_user) && current_user), :order => current_order, :params => (respond_to?(:params) && params)}
     end
 
     private
