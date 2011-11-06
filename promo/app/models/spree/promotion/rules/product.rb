@@ -3,7 +3,7 @@
 # Valid products either come from assigned product group or are assingned directly to the rule.
 class Spree::Promotion::Rules::Product < Spree::PromotionRule
   belongs_to :product_group
-  has_and_belongs_to_many :products, :class_name => '::Spree::Product', :join_table => 'products_promotion_rules', :foreign_key => 'promotion_rule_id'
+  has_and_belongs_to_many :products, :class_name => '::Spree::Product', :join_table => 'spree_products_promotion_rules', :foreign_key => 'promotion_rule_id'
 
   MATCH_POLICIES = %w(any all)
   preference :match_policy, :string, :default => MATCH_POLICIES.first
