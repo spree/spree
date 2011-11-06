@@ -11,8 +11,8 @@ order_<%= i %>:
   state: complete
   email: <%= Faker::Internet.email %>
   item_total: <%= item_total %>
-  created_at: <%=order_date.to_s(:db)%>
-  completed_at: <%=order_date.to_s(:db)%>
+  created_at: <%= order_date.to_s(:db) %>
+  completed_at: <%= order_date.to_s(:db) %>
   total: <%= item_total + charges_total %>
   adjustment_total: <%= charges_total %>
   ship_address: ship_address_<%= i %>

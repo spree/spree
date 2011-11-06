@@ -4,7 +4,7 @@
     <%= action_form.label :calculator_type, t(:calculator) %>
     <%= action_form.collection_select :calculator_type, @calculators, :to_s, :description, {}, {:class => 'type-select'} %>
     <% if promotion_action.calculator.respond_to?(:preferences) %>
-      &nbsp; <span class="warning"><%= t(:calculator_settings_warning)%></span>
+      &nbsp; <span class="warning"><%= t(:calculator_settings_warning) %></span>
     <% end %>
   </p>
 
