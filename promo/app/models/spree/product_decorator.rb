@@ -1,5 +1,5 @@
 Spree::Product.class_eval do
-  has_and_belongs_to_many :promotion_rules
+  has_and_belongs_to_many :promotion_rules, :join_table => 'spree_products_promotion_rules'
 
   def possible_promotions
     rules_with_matching_product_groups = product_groups.map(&:promotion_rules).flatten
