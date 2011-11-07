@@ -2,7 +2,7 @@
 <h2><%= t(:registration) %></h2>
 <div id="registration">
   <div id="account">
-    <%= render 'spree/user_sessions/new' %>
+    <%= render :file => 'spree/user_sessions/new' %>
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout">
