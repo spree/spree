@@ -27,6 +27,8 @@ describe "General Settings" do
     end
 
     it "should be able to update the site name" do
+      pending
+
       click_link "admin_general_settings_link"
       page.should have_content("Edit General Settings")
       fill_in "app_configuration[preferred_site_name]", :with => "Spree Demo Site99"
