@@ -1,10 +1,6 @@
 class Image < Asset
   validate :no_attachement_errors
-  has_attached_file :attachment,
-                    :styles => { :mini => '48x48>', :small => '100x100>', :product => '240x240>', :large => '600x600>' },
-                    :default_style => :product,
-                    :url => "/spree/products/:id/:style/:basename.:extension",
-                    :path => ":rails_root/public/spree/products/:id/:style/:basename.:extension"
+  has_attached_file :attachment, SpreeImage.options
 
   # save the w,h of the original image (from which others can be calculated)
   # we need to look at the write-queue for images which have not been saved yet
