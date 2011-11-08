@@ -75,7 +75,7 @@ module Spree::BaseHelper
 
     meta.map do |name, content|
       tag('meta', :name => name, :content => content)
-    end.join("\n")
+    end.join("\n").html_safe
   end
 
   def body_class
