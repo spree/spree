@@ -494,4 +494,10 @@ class Order < ActiveRecord::Base
     OrderMailer.cancel_email(self).deliver
   end
 
+  # total amount of the order, only considering item cost
+  def amount
+    self.line_items.map(&:amount).sum
+  end
+
+
 end
