@@ -56,7 +56,7 @@ module Scopes
   def generate_translations
     require 'ya2yaml'
     {
-      'product_scopes' => generate_translation(Scopes::Product::SCOPES)
+      'product_scopes' => generate_translation(::Scopes::Product::SCOPES)
     }.ya2yaml
   end
 end
