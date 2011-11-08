@@ -90,7 +90,7 @@ class Order < ActiveRecord::Base
 
       # note: some payment methods will not support a confirm step
       transition :from => 'payment',  :to => 'confirm',
-                                      :if => Proc.new { Gateway.current && Gateway.current.payment_profiles_supported? }
+                                      :if => Proc.new { |order| order.payment_method && order.payment_method.payment_profiles_supported? }
 
       transition :from => 'payment', :to => 'complete'
     end
@@ -454,7 +454,7 @@ class Order < ActiveRecord::Base
   def round_money(n)
     (n*100).round / 100.0
   end
-  
+
   # Updates the following Order total values:
   #
   # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)

@@ -25,7 +25,9 @@ class PaymentMethod < ActiveRecord::Base
     self.count(:conditions => {:type => self.to_s, :environment => Rails.env, :active => true}) > 0
   end
 
+  # TODO: Remove this method by version 0.90.x
   def self.current
+    ActiveSupport::Deprecation.warn "Gateway.current is deprecated and will be removed in Spree 0.90.x. Use current_order.payment_method instead."
     PaymentMethod.find(:first, :conditions => {:active => true, :environment => Rails.env})
   end
 

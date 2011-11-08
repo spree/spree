@@ -1,7 +1,7 @@
 module CheckoutHelper
 
   def checkout_states
-    if Gateway.current and Gateway.current.payment_profiles_supported?
+    if current_order.payment_method and current_order.payment_method.payment_profiles_supported?
       %w(address delivery payment confirm complete)
     else
       %w(address delivery payment complete)
