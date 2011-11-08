@@ -239,7 +239,7 @@ SQL
   end
 
   def self.arguments_for_scope_name(name)
-    if group = Scopes::Product::SCOPES.detect{|k,v| v[name.to_sym]}
+    if group = ::Scopes::Product::SCOPES.detect{|k,v| v[name.to_sym]}
       group[1][name.to_sym]
     end
   end
