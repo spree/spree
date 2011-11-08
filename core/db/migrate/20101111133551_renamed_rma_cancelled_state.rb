@@ -1,13 +1,9 @@
-class ReturnAuthorization < ActiveRecord::Base; end;
-
 class RenamedRmaCancelledState < ActiveRecord::Migration
   def up
-    ReturnAuthorization.where(:state => 'cancelled').each do |rma|
-      rma.update_attribute_without_callbacks(:state, 'canceled')
-    end
+    execute "UPDATE return_authorizations SET state = 'canceled' WHERE state = 'cancelled'"
   end
 
   def down
-    raise IrreversibleMigration
+    execute "UPDATE return_authorizations SET state = 'cancelled' WHERE state = 'canceled'"
   end
 end

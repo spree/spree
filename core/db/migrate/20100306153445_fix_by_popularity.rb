@@ -1,12 +1,9 @@
-# Legacy table support
-class ProductScope < ActiveRecord::Base; end;
-
 class FixByPopularity < ActiveRecord::Migration
   def up
-    ProductScope.where(:name => 'by_popularity').update_all(:name => 'descend_by_popularity')
+    execute("UPDATE product_scopes SET name='descend_by_popularity' WHERE name='by_popularity'")
   end
 
   def down
-    ProductScope.where(:name => 'descend_by_popularity').update_all(:name => 'by_popularity')
+    execute("UPDATE product_scopes SET name='by_popularity' WHERE name='descend_by_popularity'")
   end
 end

@@ -1,8 +1,6 @@
-class Order < ActiveRecord::Base; end;
-
 class PreventNilPaymentTotal < ActiveRecord::Migration
   def up
-    Order.where(:payment_total => nil).update_all(:payment_total => 0.0)
+    execute "UPDATE orders SET payment_total = 0.0 WHERE payment_total IS NULL"
   end
 
   def down

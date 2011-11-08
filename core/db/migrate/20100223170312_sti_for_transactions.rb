@@ -4,7 +4,7 @@ class StiForTransactions < ActiveRecord::Migration
     add_column    :transactions, :type, :string
     remove_column :transactions, :creditcard_id
 
-    Transaction.update_all(:type => 'CreditcardTxn') if defined? Transaction
+    execute "UPDATE transactions SET type = 'CreditcardTxn'"
   end
 
   def down

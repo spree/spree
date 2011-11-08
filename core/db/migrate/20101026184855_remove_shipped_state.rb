@@ -1,13 +1,9 @@
-class Order < ActiveRecord::Base; end;
-
 class RemoveShippedState < ActiveRecord::Migration
   def up
-    Order.where(:state => 'shipped').each do |order|
-      order.update_attribute_without_callbacks("state", "complete")
-      order.shipments.each do |shipment|
-        shipment.state = 'shipped'
-        shipment.save
-      end
+    execute "UPDATE orders SET state = 'complete' WHERE state = 'shipped'"
+    shipments = select_all "SELECT shipments.id FROM shipments WHERE order_id IN (SELECT orders.id FROM orders WHERE orders.state = 'shipped')"
+    shipments.each do |shipment|
+      execute "UPDATE shipments SET state='shipped' WHERE id = #{shipment[:id]}"
     end
   end
 

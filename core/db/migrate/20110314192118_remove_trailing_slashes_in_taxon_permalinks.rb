@@ -1,18 +1,18 @@
-class Taxon < ActiveRecord::Base; end;
-
 class RemoveTrailingSlashesInTaxonPermalinks < ActiveRecord::Migration
   def up
-    Taxon.find_each(:conditions => {}) do |t|
-      if t.permalink && t.permalink[-1..-1] == '/'
-        t.update_attribute(:permalink, t.permalink[0...-1])
+    taxons = select_all "SELECT * FROM taxons"
+    taxons.each do |taxon|
+      if taxon['permalink'] && taxon['permalink'][-1..-1] == '/'
+        execute "UPDATE taxons SET permalink = '#{taxon['permalink'][0...-1]}' WHERE id = #{taxon['id']}"
       end
     end
   end
 
   def down
-    Taxon.find_each(:conditions => {}) do |t|
-      if t.permalink && t.permalink[-1..-1] != '/'
-        t.update_attribute(:permalink, t.permalink + '/')
+    taxons = select_all "SELECT * FROM taxons"
+    taxons.each do |taxon|
+      if taxon['permalink'] && taxon['permalink'][-1..-1] != '/'
+        execute "UPDATE taxons SET permalink = '#{taxon['permalink'] + '/'}' WHERE id = #{taxon['id']}"
       end
     end
   end
