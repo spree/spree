@@ -36,8 +36,6 @@ module Spree
         :descend_by_updated_at,
         :ascend_by_name,
         :descend_by_name,
-        :ascend_by_master_price,
-        :descend_by_master_price,
         :descend_by_popularity,
       ]
 
