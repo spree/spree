@@ -923,8 +923,6 @@ en:
   ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
   ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   ssl_will_not_be_used_in_staging_mode: "SSL will not be used in staging mode"
-<<<<<<< HEAD
-=======
   spree_alert_checking: "Check for Spree security and release alerts"
   spree_alert_not_checking: "Not checking for Spree security and release alerts"
   start: Start
@@ -946,7 +944,6 @@ en:
   system: System
   tax: Tax
   tax_categories: "Tax Categories"
->>>>>>> Add a separate configuration for staging SSL config
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: "Tax Category"
   tax_rates: "Tax Rates"
