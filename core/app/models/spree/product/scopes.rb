@@ -56,13 +56,13 @@ module Spree
 
       # Ryan Bates - http://railscasts.com/episodes/112
       # general merging of conditions, names following the searchlogic pattern
-      ::Spree::Product.scope :conditions, lambda { |*args| { :conditions => args } }
+      scope :conditions, lambda { |*args| { :conditions => args } }
 
       # conditions_all is a more descriptively named enhancement of the above
-      ::Spree::Product.scope :conditions_all, lambda { |*args| { :conditions => [args].flatten } }
+      scope :conditions_all, lambda { |*args| { :conditions => [args].flatten } }
 
       # forming the disjunction of a list of conditions (as strings)
-      ::Spree::Product.scope :conditions_any, lambda { |*args|
+      scope :conditions_any, lambda { |*args|
         args = [args].flatten
         raise "non-strings in conditions_any" unless args.all? {|s| s.is_a? String}
         {:conditions => args.map {|c| "(#{c})"}.join(" OR ")}

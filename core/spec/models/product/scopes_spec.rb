@@ -26,4 +26,24 @@ describe "product scopes" do
       Spree::Product.descend_by_name.should == [product_2, product_1]
     end
   end
+
+  context "condition finders" do
+    let!(:product) { Factory(:product, :name => "Alpha") }
+    it ".conditions" do
+      Spree::Product.conditions("name = ?", "Alpha").first.should == product
+    end
+
+    it ".conditions_all" do
+      Spree::Product.conditions("name = ?", "Alpha").first.should == product
+    end
+
+    it ".conditions_any" do
+      product_2 = Factory(:product, :name => "Beta")
+      products = Spree::Product.conditions_any("name = 'Beta'", "name = 'Alpha'")
+      products.should include(product)
+      products.should include(product_2)
+    end
+
+  end
+
 end
