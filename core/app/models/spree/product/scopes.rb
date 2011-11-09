@@ -248,12 +248,6 @@ module Spree
         }.compact.uniq
       end
 
-      # specifically avoid having an order for taxon search (conflicts with main order)
-      def self.prepare_taxon_conditions(taxons)
-        ids = taxons.map{ |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
-        joins(:taxons).where("spree_taxons.id" => ids)
-      end
-
     class << self
       def not_deleted
         where(arel_table[:deleted_at].eq(nil))
@@ -285,6 +279,13 @@ module Spree
       def self.variant_table_name
         Spree::Variant.quoted_table_name
       end
+
+      # specifically avoid having an order for taxon search (conflicts with main order)
+      def self.prepare_taxon_conditions(taxons)
+        ids = taxons.map{ |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
+        joins(:taxons).where("spree_taxons.id" => ids)
+      end
+
     end
 
     if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
