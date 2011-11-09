@@ -64,25 +64,37 @@ describe "product scopes" do
     end
   end
 
-  it ".in_taxon" do
-    taxon_1 = Factory(:taxon)
-    taxon_2 = Factory(:taxon, :parent => taxon_1)
+  context "in taxons" do
+    let!(:taxon_1) { Factory(:taxon) }
+    let!(:taxon_2) { Factory(:taxon, :parent => taxon_1) }
 
-    product = Factory(:product)
-    product.taxons << taxon_1
-    product.save!
+    let!(:product) do
+      product = Factory(:product)
+      product.taxons << taxon_1
+      product
+    end
 
-    product_2 = Factory(:product)
-    product_2.taxons << taxon_2
-    product_2.save!
+    let!(:product_2) do
+      product = Factory(:product)
+      product.taxons << taxon_2
+      product
+    end
 
-    taxon_1_products = Spree::Product.in_taxon(taxon_1.reload)
-    taxon_1_products.should include(product)
-    taxon_1_products.should include(product_2)
+    it ".in_taxon" do
+      taxon_1products = Spree::Product.in_taxon(taxon_1.reload)
+      taxon_1_products.should include(product)
+      taxon_1_products.should include(product_2)
 
-    taxon_2_products = Spree::Product.in_taxon(taxon_2)
-    taxon_2_products.should include(product_2)
-    taxon_2_products.should_not include(product)
+      taxon_2_products = Spree::Product.in_taxon(taxon_2)
+      taxon_2_products.should include(product_2)
+      taxon_2_products.should_not include(product)
+    end
+
+    it ".in_taxons" do
+      taxon_3 = Factory(:taxon)
+      product.taxons << taxon_3
+      Spree::Product.in_taxons(taxon_1, taxon_3).first.should == product
+    end
   end
 
 end

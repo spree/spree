@@ -91,10 +91,10 @@ module Spree
       #
       #   Spree::Product.taxons_id_eq([x,y])
       #
-      ::Spree::Product.scope :in_taxons, lambda { |*taxons|
+      def self.in_taxons(*taxons)
         taxons = get_taxons(taxons)
         taxons.first ? prepare_taxon_conditions(taxons) : {}
-      }
+      end
 
       # for quick access to products in a group, WITHOUT using the association mechanism
       ::Spree::Product.scope :in_cached_group, lambda { |product_group|
@@ -250,8 +250,8 @@ module Spree
 
       # specifically avoid having an order for taxon search (conflicts with main order)
       def self.prepare_taxon_conditions(taxons)
-        ids = taxons.map{|taxon| taxon.self_and_descendants.map(&:id)}.flatten.uniq
-        { :joins => :taxons, :conditions => ["taxons.id IN (?)", ids] }
+        ids = taxons.map{ |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
+        joins(:taxons).where("spree_taxons.id" => ids)
       end
 
     class << self
