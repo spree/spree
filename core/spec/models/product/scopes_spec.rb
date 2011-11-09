@@ -43,6 +43,15 @@ describe "product scopes" do
       products.should include(product)
       products.should include(product_2)
     end
+  end
+
+  context "price" do
+    let!(:product) { Factory(:product, :price => 15) }
+
+    it ".price_between" do
+      Spree::Product.price_between(10, 20).first.should == product
+      Spree::Product.price_between(30, 40).first.should be_nil
+    end
 
   end
 

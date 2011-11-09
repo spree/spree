@@ -68,10 +68,9 @@ module Spree
         {:conditions => args.map {|c| "(#{c})"}.join(" OR ")}
       }
 
-
-      ::Spree::Product.scope :price_between, lambda { |low, high|
-        { :joins => :master, :conditions => ["#{Spree::Variant.quoted_table_name}.price BETWEEN ? AND ?", low, high] }
-      }
+      def self.price_between(low, high)
+        joins(:master).where(Spree::Variant.table_name => { :price => low..high })
+      end
 
       ::Spree::Product.scope :master_price_lte, lambda { |price|
         { :joins => :master, :conditions => ["#{Spree::Variant.quoted_table_name}.price <= ?", price] }
