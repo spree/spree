@@ -13,4 +13,17 @@ describe "product scopes" do
       Spree::Product.descend_by_updated_at.should == [product_2, product_1]
     end
   end
+
+  context "by_name" do
+    let!(:product_1) { Factory(:product, :name => "Alpha") }
+    let!(:product_2) { Factory(:product, :name => "Zeta") }
+
+    it "ascending" do
+      Spree::Product.ascend_by_name.should == [product_1, product_2]
+    end
+
+    it "descending" do
+      Spree::Product.descend_by_name.should == [product_2, product_1]
+    end
+  end
 end
