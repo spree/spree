@@ -23,7 +23,7 @@ class Spree::ProductScope < ActiveRecord::Base
 
   # Applies product scope on Spree::Product model or another named scope
   def apply_on(another_scope)
-    array = *self.arguments
+    array = Array.wrap(self.arguments)
     if Spree::Product.respond_to?(self.name.intern)
       relation2 = if (array.blank? || array.size < 2)
                       Spree::Product.send(self.name.intern, array.try(:first))
