@@ -240,12 +240,6 @@ Returns true if this variant is allowed to be placed on a new order.
 
 h3. Further Reading
 
-It can be tedious to add large numbers of products by hand. It is possible to write
-scripts to do the basic work, and some are starting to circulate.
-The "Spree wiki":http://wiki.github.com/spree/spree
-contains a collection of scripts you can download and adapt, plus other useful utilities. Look at
-the "Tricks and Tips section":http://wiki.github.com/spree/spree/developers-tricks-and-tips.
-
 NOTE: The "migration section":migration.html of the guides gives an overview on how to import data programmatically into Spree.
 
 
