@@ -44,11 +44,9 @@ module Spree
 
       ORDERING.each do |name|
         next if %w(asecend_by_master_price descend_by_master_price).include?(name.to_s)
-        r = name.to_s.match(/(.*)_by_(.*)/)
+        parts = name.to_s.match(/(.*)_by_(.*)/)
 
-        order_text = "spree_products.#{r[2]} "
-        order_text << ((r[1] == 'ascend') ?  "ASC" : "DESC")
-
+        order_text = "spree_products.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"})"
         Spree::Product.send(:scope, name.to_s, Spree::Product.send(:relation).order(order_text))
       end
 
