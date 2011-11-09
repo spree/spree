@@ -53,6 +53,16 @@ describe "product scopes" do
       Spree::Product.price_between(30, 40).first.should be_nil
     end
 
+    it ".master_price_lte" do
+      Spree::Product.master_price_lte(20).first.should == product
+      Spree::Product.master_price_lte(10).first.should be_nil
+    end
+
+    it ".master_price_gte" do
+      Spree::Product.master_price_gte(10).first.should == product
+      Spree::Product.master_price_gte(20).first.should be_nil
+    end
+
   end
 
 end

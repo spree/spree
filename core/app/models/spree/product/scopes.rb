@@ -74,13 +74,13 @@ module Spree
         joins(:master).where(Spree::Variant.table_name => { :price => low..high })
       end
 
-      ::Spree::Product.scope :master_price_lte, lambda { |price|
-        { :joins => :master, :conditions => ["#{Spree::Variant.quoted_table_name}.price <= ?", price] }
-      }
+      def self.master_price_lte(price)
+        joins(:master).where("#{variant_table_name}.price <= ?", price)
+      end
 
-      ::Spree::Product.scope :master_price_gte, lambda { |price|
-        { :joins => :master, :conditions => ["#{Spree::Variant.quoted_table_name}.price >= ?", price] }
-      }
+      def self.master_price_gte(price)
+        joins(:master).where("#{variant_table_name}.price >= ?", price)
+      end
 
       # This scope selects products in taxon AND all its descendants
       # If you need products only within one taxon use
@@ -283,6 +283,12 @@ module Spree
 
       def taxons_name_eq(name)
         joins(:taxons).where(Spree::Taxon.arel_table[:name].eq(name))
+      end
+
+      private
+
+      def self.variant_table_name
+        Spree::Variant.quoted_table_name
       end
     end
 
