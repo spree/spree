@@ -38,12 +38,10 @@ module Spree
         :descend_by_updated_at,
         :ascend_by_name,
         :descend_by_name,
-        :descend_by_popularity,
       ]
 
       ordering.each do |name|
         parts = name.to_s.match(/(.*)_by_(.*)/)
-
         order_text = "spree_products.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
         self.scope(name.to_s, relation.order(order_text))
       end
