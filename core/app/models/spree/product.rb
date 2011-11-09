@@ -72,40 +72,6 @@ class Spree::Product < ActiveRecord::Base
 
   #RAILS3 TODO -  scopes are duplicated here and in scopes/product.rb - can we DRY it up?
   # default product scope only lists available and non-deleted products
-  class << self
-    def not_deleted
-      where(arel_table[:deleted_at].eq(nil))
-    end
-
-    def available(available_on = nil)
-      where(arel_table[:available_on].lteq(available_on || Time.zone.now ))
-    end
-
-    #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
-    def active
-      not_deleted.available
-    end
-
-    def on_hand
-      where(arel_table[:count_on_hand].gteq(0))
-    end
-
-    def id_equals(input_id)
-      where(arel_table[:id].eq(input_id))
-    end
-
-    def taxons_name_eq(name)
-      joins(:taxons).where(Spree::Taxon.arel_table[:name].eq(name))
-    end
-  end
-  if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-    if table_exists?
-      scope :group_by_products_id, { :group => column_names.map { |col_name| "#{table_name}.#{col_name}"} }
-    end
-  else
-    scope :group_by_products_id, { :group => "#{self.quoted_table_name}.id" }
-  end
-  search_methods :group_by_products_id
 
   # ----------------------------------------------------------------------------------------------------------
   #

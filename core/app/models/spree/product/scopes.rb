@@ -31,7 +31,9 @@ module Spree
         },
       }
 
-      ORDERING = [
+      variant_table_name = Spree::Variant.quoted_table_name
+
+      ordering = [
         :ascend_by_updated_at,
         :descend_by_updated_at,
         :ascend_by_name,
@@ -39,17 +41,17 @@ module Spree
         :descend_by_popularity,
       ]
 
-      ORDERING.each do |name|
+      ordering.each do |name|
         next if %w(asecend_by_master_price descend_by_master_price).include?(name.to_s)
         parts = name.to_s.match(/(.*)_by_(.*)/)
 
-        order_text = "spree_products.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"})"
-        Spree::Product.send(:scope, name.to_s, Spree::Product.send(:relation).order(order_text))
+        order_text = "spree_products.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
+        self.scope(name.to_s, relation.order(order_text))
       end
 
-      ::Spree::Product.scope :ascend_by_master_price, Spree::Product.joins(:variants_with_only_master).order("#{Spree::Variant.quoted_table_name}.price ASC")
+      scope :ascend_by_master_price, joins(:variants_with_only_master).order("#{variant_table_name}.price ASC")
 
-      ::Spree::Product.scope :descend_by_master_price, Spree::Product.joins(:variants_with_only_master).order("#{Spree::Variant.quoted_table_name}.price DESC")
+      scope :descend_by_master_price, joins(:variants_with_only_master).order("#{variant_table_name}.price DESC")
 
       ATTRIBUTE_HELPER_METHODS = {
         :with_ids => :product_picker_field
