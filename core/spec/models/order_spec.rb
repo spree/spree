@@ -243,7 +243,7 @@ describe Spree::Order do
     it "should return negative amount when payment_total is greater than total" do
       order.total = 8.20
       order.payment_total = 10.20
-      order.outstanding_balance.should == -2.00
+      order.outstanding_balance.should be_within(0.001).of(-2.00)
     end
 
   end
