@@ -42,7 +42,6 @@ module Spree
       ]
 
       ordering.each do |name|
-        next if %w(asecend_by_master_price descend_by_master_price).include?(name.to_s)
         parts = name.to_s.match(/(.*)_by_(.*)/)
 
         order_text = "spree_products.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
