@@ -20,14 +20,14 @@ FactoryGirl.define do
     after_create { |product| Factory(:product_option_type, :product => product) }
   end
 
-  factory :custom_product, :class => Product do
+  factory :custom_product, :class => Spree::Product do
     name "Custom Product"
     price "17.99"
     description { Faker::Lorem.paragraphs(rand(5)+1).join("\n") }
 
     # associations:
-    tax_category { |r| TaxCategory.find(:first) || r.association(:tax_category) }
-    shipping_category { |r| ShippingCategory.find(:first) || r.association(:shipping_category) }
+    tax_category { |r| Spree::TaxCategory.find(:first) || r.association(:tax_category) }
+    shipping_category { |r| Spree::ShippingCategory.find(:first) || r.association(:shipping_category) }
 
     sku 'ABC'
     available_on 1.year.ago

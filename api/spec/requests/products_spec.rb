@@ -29,7 +29,7 @@ describe "Products" do
           2.times { Factory(:product) }
           @user = Factory(:admin_user)
           api_login(@user)
-          get "/api/products/#{Product.first.id}", :format => :json
+          get "/api/products/#{Spree::Product.first.id}", :format => :json
         end
 
         it_should_behave_like "status ok"

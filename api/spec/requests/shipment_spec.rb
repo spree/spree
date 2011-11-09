@@ -28,7 +28,7 @@ describe "Shipments" do
           2.times { Factory(:shipment) }
           @user = Factory(:admin_user)
           api_login(@user)
-          get "/api/shipments/#{Shipment.first.id}", :format => :json
+          get "/api/shipments/#{Spree::Shipment.first.id}", :format => :json
         end
 
         it_should_behave_like "status ok"

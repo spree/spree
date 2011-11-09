@@ -28,7 +28,7 @@ describe "Inventory Units" do
           2.times { Factory(:inventory_unit) }
           @user = Factory(:admin_user)
           api_login(@user)
-          get "/api/inventory_units/#{InventoryUnit.first.id}", :format => :json
+          get "/api/inventory_units/#{Spree::InventoryUnit.first.id}", :format => :json
         end
 
         it_should_behave_like "status ok"
@@ -44,7 +44,7 @@ describe "Inventory Units" do
     context "with an unauthorized user" do
       before(:each) do
         2.times { Factory(:inventory_unit) }
-        get "/api/inventory_units/#{InventoryUnit.first.id}", :format => :json
+        get "/api/inventory_units/#{Spree::InventoryUnit.first.id}", :format => :json
       end
 
       it_should_behave_like "unauthorized"

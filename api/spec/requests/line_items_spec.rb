@@ -9,7 +9,7 @@ describe "Line Items" do
           Factory(:line_item, :order => line_item1.order)
           @user = Factory(:admin_user)
           api_login(@user)
-          line_item = LineItem.last
+          line_item = Spree::LineItem.last
           get "/api/orders/#{line_item.order.id}/line_items", :format => :json
         end
 
@@ -30,7 +30,7 @@ describe "Line Items" do
           2.times { Factory(:line_item) }
           @user = Factory(:admin_user)
           api_login(@user)
-          line_item = LineItem.first
+          line_item = Spree::LineItem.first
           get "/api/orders/#{line_item.order.id}/line_items/#{line_item.id}", :format => :json
         end
 
@@ -48,7 +48,7 @@ describe "Line Items" do
     context "with an unauthorized user" do
       before(:each) do
         2.times { Factory(:line_item) }
-        line_item = LineItem.last
+        line_item = Spree::LineItem.last
         get "/api/orders/#{line_item.order.id}/line_items", :format => :json
       end
 

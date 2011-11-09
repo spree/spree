@@ -4,8 +4,8 @@ describe "States" do
   context "GET" do
     context "with an authorized api user" do
       before(:each) do
-        fixtures_dir = File.expand_path('../../../../core/db/default', __FILE__)
-        ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'roles'])
+        fixtures_dir = File.expand_path('../../../../core/db/default/spree', __FILE__)
+        ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree_countries', 'spree_roles'])
         @user = Factory(:admin_user)
         api_login(@user)
         get "/api/countries", :format => :json

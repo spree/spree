@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe "States" do
   before(:each) do
-    fixtures_dir = File.expand_path('../../../../core/db/default', __FILE__)
-    ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'roles', 'states'])
+    fixtures_dir = File.expand_path('../../../../core/db/default/spree', __FILE__)
+    ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree_countries', 'spree_roles', 'spree_states'])
   end
 
   context "GET" do
@@ -12,7 +12,7 @@ describe "States" do
         before(:each) do
           @user = Factory(:admin_user)
           api_login(@user)
-          get "/api/countries/#{State.last.country.id}/states", :format => :json
+          get "/api/countries/#{Spree::State.last.country.id}/states", :format => :json
         end
 
         it_should_behave_like "status ok"
@@ -31,7 +31,7 @@ describe "States" do
         before(:each) do
           @user = Factory(:admin_user)
           api_login(@user)
-          state = State.first
+          state = Spree::State.first
           get "/api/countries/#{state.country.id}/states/#{state.id}", :format => :json
         end
 
@@ -47,7 +47,7 @@ describe "States" do
 
     context "with an unauthorized user" do
       before(:each) do
-        get "/api/countries/#{State.last.country.id}/states", :format => :json
+        get "/api/countries/#{Spree::State.last.country.id}/states", :format => :json
       end
 
       it_should_behave_like "unauthorized"

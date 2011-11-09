@@ -4,7 +4,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
-require 'spree_core/testing_support/factories'
+require 'spree/core/testing_support/factories'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
@@ -42,9 +42,9 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.include SpreeApi::Engine.routes.url_helpers,
+  config.include Spree::Core::Engine.routes.url_helpers,
     :example_group => {
-      :file_path => /\bspec\/controllers\//
+      :file_path => /\bspec\/requests\//
     }
 
   config.include Devise::TestHelpers, :type => :controller
