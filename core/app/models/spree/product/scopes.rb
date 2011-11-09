@@ -52,10 +52,6 @@ module Spree
         joins(:variants_with_only_master).order("#{variant_table_name}.price DESC")
       end
 
-      ATTRIBUTE_HELPER_METHODS = {
-        :with_ids => :product_picker_field
-      }
-
       # Ryan Bates - http://railscasts.com/episodes/112
       # general merging of conditions, names following the searchlogic pattern
       scope :conditions, lambda { |*args| { :conditions => args } }
