@@ -13,8 +13,6 @@ class Spree::Variant < ActiveRecord::Base
 
   before_save :touch_product
 
-  include ::Spree::Scopes::Variant
-
   # default variant scope only lists non-deleted variants
   scope :active, where(:deleted_at => nil)
   scope :deleted, where('deleted_at IS NOT NULL')
@@ -102,3 +100,5 @@ class Spree::Variant < ActiveRecord::Base
       product.touch unless is_master?
     end
 end
+
+require 'spree/variant/scopes'
