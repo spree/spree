@@ -62,7 +62,27 @@ describe "product scopes" do
       Spree::Product.master_price_gte(10).first.should == product
       Spree::Product.master_price_gte(20).first.should be_nil
     end
+  end
 
+  it ".in_taxon" do
+    taxon_1 = Factory(:taxon)
+    taxon_2 = Factory(:taxon, :parent => taxon_1)
+
+    product = Factory(:product)
+    product.taxons << taxon_1
+    product.save!
+
+    product_2 = Factory(:product)
+    product_2.taxons << taxon_2
+    product_2.save!
+
+    taxon_1_products = Spree::Product.in_taxon(taxon_1.reload)
+    taxon_1_products.should include(product)
+    taxon_1_products.should include(product_2)
+
+    taxon_2_products = Spree::Product.in_taxon(taxon_2)
+    taxon_2_products.should include(product_2)
+    taxon_2_products.should_not include(product)
   end
 
 end

@@ -82,10 +82,9 @@ module Spree
       # If you need products only within one taxon use
       #
       #   Spree::Product.taxons_id_eq(x)
-      #
-      ::Spree::Product.scope :in_taxon, lambda { |taxon|
-        { :joins => :taxons, :conditions => ["#{Spree::Taxon.quoted_table_name}.id IN (?) ", taxon.self_and_descendants.map(&:id)]}
-      }
+      def self.in_taxon(taxon)
+        joins(:taxons).where(Spree::Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
+      end
 
       # This scope selects products in all taxons AND all its descendants
       # If you need products only within one taxon use
