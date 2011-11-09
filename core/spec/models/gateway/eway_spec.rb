@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Gateway::Eway do
-  let (:gateway) { Gateway::Eway.new }
+describe Spree::Gateway::Eway do
+  let (:gateway) { Spree::Gateway::Eway.new }
 
   describe "options" do
     it "should include :test => true in  when :test_mode is true" do
