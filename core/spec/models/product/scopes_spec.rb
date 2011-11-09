@@ -97,4 +97,32 @@ describe "product scopes" do
     end
   end
 
+  it ".in_cached_group" do
+    pending
+  end
+
+  context ".with_property" do
+    let!(:property) do
+      Factory(:property, :name => "foo")
+    end
+
+    let!(:product) do
+      product = Factory(:product)
+      product.properties << property
+      product
+    end
+
+    it "by string" do
+      Spree::Product.with_property("foo").first.should == product
+    end
+
+    it "by object" do
+      Spree::Product.with_property(property).first.should == product
+    end
+
+    it "by unknown (assumed to be an id-like substance)" do
+      Spree::Product.with_property(property.id).first.should == product
+    end
+  end
+
 end

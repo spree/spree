@@ -104,18 +104,15 @@ module Spree
       }
 
       # a scope that finds all products having property specified by name, object or id
-      ::Spree::Product.scope :with_property, lambda { |property|
+      def self.with_property(property)
         conditions = case property
         when String          then ["#{Spree::Property.quoted_table_name}.name = ?", property]
         when Spree::Property then ["#{Spree::Property.quoted_table_name}.id = ?", property.id]
         else                      ["#{Spree::Property.quoted_table_name}.id = ?", property.to_i]
         end
 
-        {
-          :joins => :properties,
-          :conditions => conditions
-        }
-      }
+        joins(:properties).where(conditions)
+      end
 
       # a scope that finds all products having an option_type specified by name, object or id
       ::Spree::Product.scope :with_option, lambda { |option|
