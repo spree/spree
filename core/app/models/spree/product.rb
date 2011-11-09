@@ -278,4 +278,4 @@ class Spree::Product < ActiveRecord::Base
     end
 end
 
-require 'app/models/product/scopes'
+require 'spree/product/scopes'
