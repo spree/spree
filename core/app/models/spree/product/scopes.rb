@@ -31,8 +31,6 @@ module Spree
         },
       }
 
-      variant_table_name = Spree::Variant.quoted_table_name
-
       ordering = [
         :ascend_by_updated_at,
         :descend_by_updated_at,
@@ -46,9 +44,13 @@ module Spree
         self.scope(name.to_s, relation.order(order_text))
       end
 
-      scope :ascend_by_master_price, joins(:variants_with_only_master).order("#{variant_table_name}.price ASC")
+      def self.ascend_by_master_price
+        joins(:variants_with_only_master).order("#{variant_table_name}.price ASC")
+      end
 
-      scope :descend_by_master_price, joins(:variants_with_only_master).order("#{variant_table_name}.price DESC")
+      def self.descend_by_master_price
+        joins(:variants_with_only_master).order("#{variant_table_name}.price DESC")
+      end
 
       ATTRIBUTE_HELPER_METHODS = {
         :with_ids => :product_picker_field
