@@ -40,7 +40,7 @@ module Spree
 
       ordering.each do |name|
         parts = name.to_s.match(/(.*)_by_(.*)/)
-        order_text = "spree_products.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
+        order_text = "#{Spree::Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
         self.scope(name.to_s, relation.order(order_text))
       end
 
