@@ -81,7 +81,7 @@ describe "product scopes" do
     end
 
     it ".in_taxon" do
-      taxon_1products = Spree::Product.in_taxon(taxon_1.reload)
+      taxon_1_products = Spree::Product.in_taxon(taxon_1.reload)
       taxon_1_products.should include(product)
       taxon_1_products.should include(product_2)
 
