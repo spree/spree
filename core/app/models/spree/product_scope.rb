@@ -26,7 +26,11 @@ class Spree::ProductScope < ActiveRecord::Base
     array = Array.wrap(self.arguments)
     if Spree::Product.respond_to?(self.name.intern)
       relation2 = if (array.blank? || array.size < 2)
+                    if Spree::Product.method(self.name.intern).arity == 0
+                      Spree::Product.send(self.name.intern)
+                    else
                       Spree::Product.send(self.name.intern, array.try(:first))
+                    end
                   else
                       Spree::Product.send(self.name.intern, *array)
                   end
