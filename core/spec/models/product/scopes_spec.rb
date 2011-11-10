@@ -148,16 +148,54 @@ describe "product scopes" do
       product
     end
 
+    let!(:other_product) { Factory(:product) }
+
     it "by string" do
-      Spree::Product.with_option("foo").should include(product)
+      products = Spree::Product.with_option("foo")
+      products.should include(product)
+      products.should_not include(other_product)
     end
 
     it "by OptionType object" do
-      Spree::Product.with_option(option_type).should include(product)
+      products = Spree::Product.with_option(option_type)
+      products.should include(product)
+      products.should_not include(other_product)
     end
 
     it "by unknown (assumed to be an id-like substance)" do
-      Spree::Product.with_option(option_type.id).should include(product)
+      products = Spree::Product.with_option(option_type.id)
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+  end
+
+  context ".with_property_value" do
+    let!(:property) { Factory(:property, :name => "foo") }
+    let!(:product) do
+      product = Factory(:product)
+    end
+    before do
+      Spree::ProductProperty.create!(:product => product, :property => property, :value => "bar")
+    end
+
+    let!(:other_product) { Factory(:product) }
+
+    it "by string" do
+      products = Spree::Product.with_property_value("foo", "bar")
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+
+    it "by Property object" do
+      products = Spree::Product.with_property_value(property, "bar")
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+
+    it "by unknown (assumed to be an id-like substance)" do
+      products = Spree::Product.with_property_value(property.id, "bar")
+      products.should include(product)
+      products.should_not include(other_product)
     end
   end
 end

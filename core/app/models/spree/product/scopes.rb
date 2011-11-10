@@ -97,19 +97,17 @@ module Spree
 
       # a simple test for product with a certain property-value pairing
       # note that it can test for properties with NULL values, but not for absent values
-      ::Spree::Product.scope :with_property_value, lambda { |property, value|
+      def self.with_property_value(property, value)
+        properties = Spree::Property.table_name
         conditions = case property
-        when String          then ["#{Spree::Property.table_name}.name = ?", property]
-        when Spree::Property then ["#{Spree::Property.table_name}.id = ?", property.id]
-        else                      ["#{Spree::Property.table_name}.id = ?", property.to_i]
+        when String          then ["#{properties}.name = ?", property]
+        when Spree::Property then ["#{properties}.id = ?", property.id]
+        else                      ["#{properties}.id = ?", property.to_i]
         end
-        conditions = ["#{Spree::ProductProperty.quoted_table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
+        conditions = ["#{Spree::ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
 
-        {
-          :joins => :properties,
-          :conditions => conditions
-        }
-      }
+        joins(:properties).where(conditions)
+      end
 
       # a scope that finds all products having an option value specified by name, object or id
       ::Spree::Product.scope :with_option_value, lambda {|option, value|
