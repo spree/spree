@@ -183,6 +183,7 @@ module Spree
       end
 
       def self.get_taxons(*ids_or_records_or_names)
+        taxons = Spree::Taxon.table_name
         ids_or_records_or_names.flatten.map { |t|
           case t
           when Integer then Spree::Taxon.find_by_id(t)
@@ -190,10 +191,10 @@ module Spree
           when String
             Spree::Taxon.find_by_name(t) ||
             Spree::Taxon.find(:first, :conditions => [
-              "#{Spree::Taxon.quoted_table_name}.permalink LIKE ? OR #{Spree::Taxon.quoted_table_name}.permalink = ?", "%/#{t}/", "#{t}/"
+              "#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/"
             ])
           end
-        }.compact.uniq
+        }.compact.flatten.uniq
       end
 
     class << self
