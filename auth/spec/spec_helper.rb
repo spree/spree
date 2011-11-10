@@ -12,6 +12,8 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'spree/core/testing_support/factories'
 require 'active_record/fixtures'
+fixtures_dir = File.expand_path('../../../core/db/default', __FILE__)
+ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
 
 RSpec.configure do |config|
   # == Mock Framework
@@ -31,7 +33,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.strategy = :truncation, { :except => ['spree_countries', 'spree_zones', 'spree_zone_members', 'spree_states', 'spree_roles'] }
   end
 
   config.before(:each) do

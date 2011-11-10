@@ -2,9 +2,6 @@ require 'spec_helper'
 
 describe "Users" do
  before(:each) do
-   fixtures_dir = File.expand_path('../../../../core/db/default', __FILE__)
-   ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
-
    user = Factory(:admin_user, :email => "admin@person.com", :password => "password", :password_confirmation => "password")
    visit spree_core.admin_path
    fill_in "user_email", :with => user.email

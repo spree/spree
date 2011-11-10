@@ -2,9 +2,6 @@ require 'spec_helper'
 
 describe "Checkout", :js => true do
   before(:each) do
-    fixtures_dir = File.expand_path('../../../../core/db/default', __FILE__)
-    ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
-
     @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
     PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
     SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
