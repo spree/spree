@@ -1,9 +1,9 @@
 class UpdateCalculableTypeForPromotions < ActiveRecord::Migration
   def up
-    Spree::Calculator.where(:calculable_type => 'Coupon').update_all(:calculable_type => 'Promotion')
+    execute "UPDATE spree_calculators SET calculable_type = 'Promotion' WHERE calculable_type = 'Coupon'"
   end
 
   def down
-    Spree::Calculator.where(:calculable_type => 'Promotion').update_all(:calculable_type => 'Coupon')
+    execute "UPDATE spree_calculators SET calculable_type = 'Coupon' WHERE calculable_type = 'Promotion'"
   end
 end
