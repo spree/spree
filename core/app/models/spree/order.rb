@@ -91,7 +91,7 @@ class Spree::Order < ActiveRecord::Base
 
       # note: some payment methods will not support a confirm step
       transition :from => 'payment',  :to => 'confirm',
-                                      :if => Proc.new { Spree::Gateway.current && Spree::Gateway.current.payment_profiles_supported? }
+                                      :if => Proc.new { |order| order.payment_method && order.payment_method.payment_profiles_supported? }
 
       transition :from => 'payment', :to => 'complete'
     end
