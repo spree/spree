@@ -14,7 +14,7 @@
 
       <%= f.field_container :order_scope do %>
         <%= f.label :order_scope, t(:sort_ordering) %><br />
-        <%= f.select(:order_scope, Spree::Scopes::Product::ORDERING.collect{|p| [ t(:name, :scope =>[:product_scopes, :scopes, p]), p.to_s ] }) %>
+        <%= f.select(:order_scope, Spree::Product.simple_scopes.collect{|p| [ t(:name, :scope =>[:product_scopes, :scopes, p]), p.to_s ] }) %>
       <% end %>
 
       <table id="product_scopes" data-hook>
@@ -29,7 +29,7 @@
     <%
     options =
     grouped_options_for_select(
-    Spree::Scopes::Product::SCOPES.map do |group_name, scopes|
+    Spree::ProductScope.all_scopes.map do |group_name, scopes|
       [
         t(:name, :scope => [:product_scopes, :groups, group_name]),
         scopes.keys.map do |scope_name|

@@ -56,7 +56,7 @@ module Spree
     def generate_translations
       require 'ya2yaml'
       {
-        'product_scopes' => generate_translation(Spree::Scopes::Product::SCOPES)
+        'product_scopes' => generate_translation(Spree::ProductScope.all_scopes)
       }.ya2yaml
     end
   end

@@ -1,16 +1,19 @@
 module Spree
   class Product < ActiveRecord::Base
-      # Ascending / descending simple scopes
+    def self.simple_scopes
       [
         :ascend_by_updated_at,
         :descend_by_updated_at,
         :ascend_by_name,
         :descend_by_name,
-      ].each do |name|
-        parts = name.to_s.match(/(.*)_by_(.*)/)
-        order_text = "#{Spree::Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
-        self.scope(name.to_s, relation.order(order_text))
-      end
+      ]
+    end
+
+    simple_scopes.each do
+      parts = name.to_s.match(/(.*)_by_(.*)/)
+      order_text = "#{Spree::Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
+      self.scope(name.to_s, relation.order(order_text))
+    end
 
       def self.ascend_by_master_price
         joins(:variants_with_only_master).order("#{variant_table_name}.price ASC")
