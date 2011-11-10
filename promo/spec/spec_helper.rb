@@ -4,6 +4,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
+require 'spree/url_helpers'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
@@ -13,7 +14,7 @@ require 'spree/core/testing_support/factories'
 require 'factories'
 require 'active_record/fixtures'
 fixtures_dir = File.expand_path('../../../core/db/default', __FILE__)
-ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'zones', 'zone_members', 'states', 'roles'])
+ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
 
 RSpec.configure do |config|
   config.mock_with :rspec
@@ -23,7 +24,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation, { :except => ['countries', 'zones', 'zone_members', 'states', 'roles'] }
+    DatabaseCleaner.strategy = :truncation, { :except => ['spree_countries', 'spree_zones', 'spree_zone_members', 'spree_states', 'spree_roles'] }
   end
 
   config.before(:each) do
@@ -34,10 +35,6 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.include SpreePromo::Engine.routes.url_helpers,
-    :example_group => {
-      :file_path => /\bspec\/controllers\//
-    }
-
+  config.include Spree::UrlHelpers
   config.include Rack::Test::Methods
 end
