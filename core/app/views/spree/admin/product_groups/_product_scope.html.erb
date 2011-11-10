@@ -6,7 +6,7 @@
     <% end %>
   </td>
   <td data-hook="arguments">
-    <% if arguments = Spree::Scopes::Product.arguments_for_scope_name(product_scope.name.strip) %>
+    <% if arguments = Spree::ProductScope.arguments_for_scope_name(product_scope.name.strip) %>
       <table><tr>
       <% arguments.each_with_index do |argument, i| %>
         <td>
