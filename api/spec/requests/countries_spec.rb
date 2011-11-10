@@ -4,8 +4,7 @@ describe "States" do
   context "GET" do
     context "with an authorized api user" do
       before(:each) do
-        fixtures_dir = File.expand_path('../../../../core/db/default/spree', __FILE__)
-        ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree_countries', 'spree_roles'])
+        Factory(:country)
         @user = Factory(:admin_user)
         api_login(@user)
         get "/api/countries", :format => :json
@@ -15,7 +14,7 @@ describe "States" do
 
       it "should retrieve an array of 100 countries" do
         page = JSON.load(last_response.body)
-        page.map { |d| d['name'] }.length.should == 100.to_i
+        page.map { |d| d['name'] }.length.should == 1.to_i
         page.first.keys.sort.should == ["country"]
 
         keys = ["id", "iso", "iso3", "iso_name", "name", "numcode"]

@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe "States" do
   before(:each) do
-    fixtures_dir = File.expand_path('../../../../core/db/default/spree', __FILE__)
-    ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree_countries', 'spree_roles', 'spree_states'])
+    Factory(:state)
   end
 
   context "GET" do
@@ -19,7 +18,7 @@ describe "States" do
 
         it "should retrieve an array of 51 states" do
           page = JSON.load(last_response.body)
-          page.map { |d| d['name'] }.length.should == 51.to_i
+          page.map { |d| d['name'] }.length.should == 1.to_i
           page.first.keys.sort.should == ["state"]
 
           keys = ["abbr", "country_id", "id", "name"]
