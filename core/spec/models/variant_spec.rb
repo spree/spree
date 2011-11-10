@@ -4,7 +4,7 @@ describe Spree::Variant do
   let(:variant) { Spree::Variant.new(:count_on_hand => 95) }
 
   before(:each) do
-    @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
   end
 
   context "validations" do
