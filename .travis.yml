@@ -3,7 +3,8 @@ before_script:
   - "sh -e /etc/init.d/xvfb start"
 script: "DISPLAY=:99.0 bundle exec rake"
 notifications:
-  email: false
+  email:
+    - ryan@spreecommerce.com
   irc: "irc.freenode.org#spree"
 branches:
   only:
