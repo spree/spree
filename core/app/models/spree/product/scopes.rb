@@ -9,7 +9,7 @@ module Spree
       ]
     end
 
-    simple_scopes.each do
+    simple_scopes.each do |name|
       parts = name.to_s.match(/(.*)_by_(.*)/)
       order_text = "#{Spree::Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
       self.scope(name.to_s, relation.order(order_text))
