@@ -76,10 +76,11 @@ module Spree
 
       # a scope that finds all products having property specified by name, object or id
       def self.with_property(property)
+        properties = Spree::Property.table_name
         conditions = case property
-        when String          then ["#{Spree::Property.quoted_table_name}.name = ?", property]
-        when Spree::Property then ["#{Spree::Property.quoted_table_name}.id = ?", property.id]
-        else                      ["#{Spree::Property.quoted_table_name}.id = ?", property.to_i]
+        when String          then { "#{properties}.name" => property }
+        when Spree::Property then { "#{properties}.id" => property.id }
+        else                      { "#{properties}.id" => property.to_i }
         end
 
         joins(:properties).where(conditions)

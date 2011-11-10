@@ -116,7 +116,7 @@ describe "product scopes" do
       Spree::Product.with_property("foo").first.should == product
     end
 
-    it "by object" do
+    it "by property object" do
       Spree::Product.with_property(property).first.should == product
     end
 
