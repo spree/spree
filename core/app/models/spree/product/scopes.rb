@@ -110,25 +110,17 @@ module Spree
       end
 
       # a scope that finds all products having an option value specified by name, object or id
-      ::Spree::Product.scope :with_option_value, lambda {|option, value|
+      def self.with_option_value(option, value)
+        option_values = Spree::OptionValue.table_name
         option_type_id = case option
-        when String
-          option_type = Spree::OptionType.find_by_name(option) || option.to_i
-        when Spree::OptionType
-          option.id
-        else
-          option.to_i
+          when String then Spree::OptionType.find_by_name(option) || option.to_i
+          when Spree::OptionType then option.id
+          else option.to_i
         end
-        conditions = [
-          "#{Spree::OptionValue.quoted_table_name}.name = ? AND #{Spree::OptionValue.quoted_table_name}.option_type_id = ?",
-          value, option_type_id
-        ]
 
-        {
-          :joins => { :variants => :option_values },
-          :conditions => conditions
-        }
-      }
+        conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
+        joins(:variants_including_master => :option_values).where(conditions)
+      end
 
       # finds product having option value OR product_property
       ::Spree::Product.scope :with, lambda{ |value|

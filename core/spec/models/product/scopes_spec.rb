@@ -169,11 +169,41 @@ describe "product scopes" do
     end
   end
 
-  context ".with_property_value" do
-    let!(:property) { Factory(:property, :name => "foo") }
+  context ".with_option_value" do
+    let!(:option_type) { Factory(:option_type, :name => "foo") }
+    let!(:option_value) { Factory(:option_value, :option_type => option_type, :name => "bar") }
     let!(:product) do
       product = Factory(:product)
+      product.master.option_values << option_value
+      product.master.save
+      product
     end
+
+    let!(:other_product) { Factory(:product) }
+
+    it "by string" do
+      products = Spree::Product.with_option_value("foo", "bar")
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+
+    it "by OptionType" do
+      products = Spree::Product.with_option_value(option_type, "bar")
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+
+    it "by unknown (assumed to be id-like substance)" do
+      products = Spree::Product.with_option_value(option_type.id, "bar")
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+  end
+
+  context ".with_property_value" do
+    let!(:property) { Factory(:property, :name => "foo") }
+    let!(:product) { Factory(:product) }
+
     before do
       Spree::ProductProperty.create!(:product => product, :property => property, :value => "bar")
     end
