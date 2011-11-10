@@ -64,7 +64,7 @@ module Spree
       #
       def self.in_taxons(*taxons)
         taxons = get_taxons(taxons)
-        taxons.first ? prepare_taxon_conditions(taxons) : {}
+        taxons.first ? prepare_taxon_conditions(taxons) : scoped
       end
 
       def self.in_cached_group(product_group)
