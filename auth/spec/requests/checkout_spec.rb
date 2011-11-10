@@ -2,14 +2,17 @@ require 'spec_helper'
 
 describe "Checkout", :js => true do
   before(:each) do
-    @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
-    PAYMENT_STATES = Payment.state_machine.states.keys unless defined? PAYMENT_STATES
-    SHIPMENT_STATES = Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
-    ORDER_STATES = Order.state_machine.states.keys unless defined? ORDER_STATES
-    Factory(:shipping_method, :zone => Zone.find_by_name('North America'))
+    fixtures_dir = File.expand_path('../../../../core/db/default', __FILE__)
+    ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
+
+    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+    PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
+    SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
+    ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
+    Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
     Factory(:payment_method, :environment => 'test')
     Factory(:product, :name => "RoR Mug")
-    visit root_path
+    visit spree_core.root_path
   end
 
   it "should allow a visitor to checkout as guest, without registration" do
@@ -25,7 +28,7 @@ describe "Checkout", :js => true do
     page.should have_content("Shipping Address")
 
     str_addr = "bill_address"
-    address = Factory(:address, :state => State.first)
+    address = Factory(:address, :state => Spree::State.first)
     within('fieldset#billing') { select "United States", :from => "Country" }
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -42,7 +45,7 @@ describe "Checkout", :js => true do
     user = Factory(:user, :email => "email@person.com", :password => "password", :password_confirmation => "password")
     click_link "RoR Mug"
     click_button "Add To Cart"
-    User.count.should == 2
+    Spree::User.count.should == 2
 
     visit login_path
     fill_in "user_email", :with => user.email
@@ -55,7 +58,7 @@ describe "Checkout", :js => true do
 
     click_link "Checkout"
     str_addr = "bill_address"
-    address = Factory(:address, :state => State.first)
+    address = Factory(:address, :state => Spree::State.first)
     within('fieldset#billing') { select "United States", :from => "Country" }
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -66,7 +69,7 @@ describe "Checkout", :js => true do
     click_button "Save and Continue"
     click_button "Save and Continue"
     page.should have_content("Your order has been processed successfully")
-    Order.count.should == 1
+    Spree::Order.count.should == 1
   end
 
   it "should allow a user to register during checkout" do
@@ -83,7 +86,7 @@ describe "Checkout", :js => true do
     page.should have_content("You have signed up successfully.")
 
     str_addr = "bill_address"
-    address = Factory(:address, :state => State.first)
+    address = Factory(:address, :state => Spree::State.first)
     within('fieldset#billing') { select "United States", :from => "Country" }
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -94,7 +97,7 @@ describe "Checkout", :js => true do
     click_button "Save and Continue"
     click_button "Save and Continue"
     page.should have_content("Your order has been processed successfully")
-    Order.count.should == 1
+    Spree::Order.count.should == 1
   end
 
   it "the current payment method does not support profiles" do
@@ -106,7 +109,7 @@ describe "Checkout", :js => true do
     within('#guest_checkout') { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
     str_addr = "bill_address"
-    address = Factory(:address, :state => State.first)
+    address = Factory(:address, :state => Spree::State.first)
     within('fieldset#billing') { select "United States", :from => "Country" }
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -123,7 +126,7 @@ describe "Checkout", :js => true do
   end
 
   it "when no shipping methods have been configured" do
-    ShippingMethod.delete_all
+    Spree::ShippingMethod.delete_all
 
     click_link "RoR Mug"
     click_button "Add To Cart"
@@ -132,7 +135,7 @@ describe "Checkout", :js => true do
     within('#guest_checkout') { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
     str_addr = "bill_address"
-    address = Factory(:address, :state => State.first)
+    address = Factory(:address, :state => Spree::State.first)
     within('fieldset#billing') { select "United States", :from => "Country" }
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -152,7 +155,7 @@ describe "Checkout", :js => true do
     within('#guest_checkout') { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
     str_addr = "bill_address"
-    address = Factory(:address, :state => State.first)
+    address = Factory(:address, :state => Spree::State.first)
     within('fieldset#billing') { select "United States", :from => "Country" }
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -165,11 +168,12 @@ describe "Checkout", :js => true do
     fill_in "card_number", :with => "1234567890"
     fill_in "card_code", :with => "000"
     click_button "Save and Continue"
+    click_button "Place Order"
     page.should have_content("Payment could not be processed")
   end
 
   it "completing checkout for a free order, skipping payment step" do
-    Factory(:free_shipping_method, :zone => Zone.find_by_name('North America'))
+    Factory(:free_shipping_method, :zone => Spree::Zone.find_by_name('North America'))
     Factory(:payment_method, :environment => 'test')
     click_link "RoR Mug"
     click_button "Add To Cart"
@@ -178,7 +182,7 @@ describe "Checkout", :js => true do
     within('#guest_checkout') { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
     str_addr = "bill_address"
-    address = Factory(:address, :state => State.first)
+    address = Factory(:address, :state => Spree::State.first)
     within('fieldset#billing') { select "United States", :from => "Country" }
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -207,7 +211,7 @@ describe "Checkout", :js => true do
     page.should have_content("This field is required")
 
     str_addr = "bill_address"
-    address = Factory(:address, :state => State.first)
+    address = Factory(:address, :state => Spree::State.first)
     within('fieldset#billing') { select "United States", :from => "Country" }
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"

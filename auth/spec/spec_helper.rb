@@ -4,15 +4,14 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../dummy/config/environment', __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
+require 'spree/url_helpers'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
-require 'active_record/fixtures'
 require 'spree/core/testing_support/factories'
-fixtures_dir = File.expand_path('../../../core/db/default', __FILE__)
-ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'zones', 'zone_members', 'states', 'roles'])
+require 'active_record/fixtures'
 
 RSpec.configure do |config|
   # == Mock Framework
@@ -32,7 +31,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation, { :except => ['countries', 'zones', 'zone_members', 'states', 'roles'] }
+    DatabaseCleaner.strategy = :truncation
   end
 
   config.before(:each) do
@@ -41,9 +40,10 @@ RSpec.configure do |config|
 
   config.after(:each) do
     DatabaseCleaner.clean
-    Ability.abilities.delete(AbilityDecorator) if Ability.abilities.include?(AbilityDecorator)
+    Spree::Ability.abilities.delete(AbilityDecorator) if Spree::Ability.abilities.include?(AbilityDecorator)
   end
 
+  config.include Spree::UrlHelpers
   config.include Devise::TestHelpers, :type => :controller
   config.include Rack::Test::Methods, :type => :requests
 end
@@ -53,7 +53,7 @@ if defined? CanCan::Ability
     include CanCan::Ability
 
     def initialize(user)
-      cannot :manage, Order
+      cannot :manage, Spree::Order
     end
   end
 end
