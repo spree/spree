@@ -98,7 +98,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     end
 
     def best_selling_variants
-      li = LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity) DESC").sum(:quantity, :group => :variant_id, :limit => 5)	
+      li = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity) DESC").sum(:quantity, :group => :variant_id, :limit => 5)	
       variants = li.map do |v|
         variant = Spree::Variant.find(v[0])
         [variant.name, v[1] ]
@@ -107,7 +107,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     end
 
     def top_grossing_variants
-      total_sold_prices = LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price) DESC").sum("price * quantity", :group => :variant_id, :limit => 5)	
+      total_sold_prices = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price) DESC").sum("price * quantity", :group => :variant_id, :limit => 5)	
       variants = total_sold_prices.map do |v|
         variant = Spree::Variant.find(v[0])
         [variant.name, v[1]]
