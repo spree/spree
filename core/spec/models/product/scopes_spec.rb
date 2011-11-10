@@ -133,4 +133,27 @@ describe "product scopes" do
     end
   end
 
+  context ".with_option" do
+    let!(:option_type) do
+      Factory(:option_type, :name => "foo")
+    end
+
+    let!(:product) do
+      product = Factory(:product)
+      product.option_types << option_type
+      product
+    end
+
+    it "by string" do
+      Spree::Product.with_option("foo").should include(product)
+    end
+
+    it "by OptionType object" do
+      Spree::Product.with_option(option_type).should include(product)
+    end
+
+    it "by unknown (assumed to be an id-like substance)" do
+      Spree::Product.with_option(option_type.id).should include(product)
+    end
+  end
 end
