@@ -6,10 +6,17 @@ module Spree
         :descend_by_updated_at,
         :ascend_by_name,
         :descend_by_name,
+        # Need to have master price scopes here
+        # This makes them appear in admin/product_groups/edit
+        :ascend_by_master_price,
+        :descend_by_master_price,
+        :descend_by_popularity
       ]
     end
 
     simple_scopes.each do |name|
+      # We should not define price scopes here, as they require something slightly different
+      next if name.to_s.include?("master_price")
       parts = name.to_s.match(/(.*)_by_(.*)/)
       order_text = "#{Spree::Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
       self.scope(name.to_s, relation.order(order_text))
