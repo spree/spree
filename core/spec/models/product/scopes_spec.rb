@@ -98,10 +98,6 @@ describe "product scopes" do
   end
 
   it ".in_cached_group" do
-    pending
-  end
-
-  it ".in_cached_group" do
     product = Factory(:product)
     product_group = Factory(:product_group)
     product_group.products << product
