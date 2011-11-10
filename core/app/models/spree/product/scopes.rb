@@ -99,9 +99,9 @@ module Spree
       # note that it can test for properties with NULL values, but not for absent values
       ::Spree::Product.scope :with_property_value, lambda { |property, value|
         conditions = case property
-        when String          then ["#{Spree::Property.quoted_table_name}.name = ?", property]
-        when Spree::Property then ["#{Spree::Property.quoted_table_name}.id = ?", property.id]
-        else                      ["#{Spree::Property.quoted_table_name}.id = ?", property.to_i]
+        when String          then ["#{Spree::Property.table_name}.name = ?", property]
+        when Spree::Property then ["#{Spree::Property.table_name}.id = ?", property.id]
+        else                      ["#{Spree::Property.table_name}.id = ?", property.to_i]
         end
         conditions = ["#{Spree::ProductProperty.quoted_table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
 

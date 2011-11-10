@@ -120,16 +120,24 @@ describe "product scopes" do
       product
     end
 
+    let!(:other_product) { Factory(:product) }
+
     it "by string" do
-      Spree::Product.with_property("foo").first.should == product
+      products = Spree::Product.with_property("foo")
+      products.should include(product)
+      products.should_not include(other_product)
     end
 
     it "by property object" do
-      Spree::Product.with_property(property).first.should == product
+      products = Spree::Product.with_property(property)
+      products.should include(product)
+      products.should_not include(other_product)
     end
 
     it "by unknown (assumed to be an id-like substance)" do
-      Spree::Product.with_property(property.id).first.should == product
+      products = Spree::Product.with_property(property.id)
+      products.should include(product)
+      products.should_not include(other_product)
     end
   end
 
