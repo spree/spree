@@ -39,13 +39,6 @@ class Spree::ProductScope < ActiveRecord::Base
     another_scope.merge(relation2)
   end
 
-  before_validation(:on => :create) {
-    # Add default empty arguments so scope validates and errors aren't caused when previewing it
-    if name && args = Spree::Scopes::Product.arguments_for_scope_name(name)
-      self.arguments ||= ['']*args.length
-    end
-  }
-
   # checks validity of the named scope (if its safe and can be applied on Spree::Product)
   def check_validity_of_scope
     errors.add(:name, 'is not a valid scope name') unless Spree::Product.respond_to?(self.name.intern)
@@ -76,3 +69,5 @@ class Spree::ProductScope < ActiveRecord::Base
     to_sentence
   end
 end
+
+require 'spree/product_scope/scopes'

@@ -1,44 +1,12 @@
 module Spree
   class Product < ActiveRecord::Base
-      #TODO: change this to array pairs so we preserve order?
-
-      SCOPES = {
-        # Scopes for selecting products based on taxon
-        :taxon => {
-          :taxons_name_eq => [:taxon_name],
-          :in_taxons => [:taxon_names],
-        },
-        # product selection based on name, or search
-        :search => {
-          :in_name => [:words],
-          :in_name_or_keywords => [:words],
-          :in_name_or_description => [:words],
-          :with_ids => [:ids]
-        },
-        # Scopes for selecting products based on option types and properties
-        :values => {
-          :with => [:value],
-          :with_property => [:property],
-          :with_property_value => [:property, :value],
-          :with_option => [:option],
-          :with_option_value => [:option, :value],
-        },
-        # product selection based upon master price
-        :price => {
-          :price_between => [:low, :high],
-          :master_price_lte => [:amount],
-          :master_price_gte => [:amount],
-        },
-      }
-
-      ordering = [
+      # Ascending / descending simple scopes
+      [
         :ascend_by_updated_at,
         :descend_by_updated_at,
         :ascend_by_name,
         :descend_by_name,
-      ]
-
-      ordering.each do |name|
+      ].each do |name|
         parts = name.to_s.match(/(.*)_by_(.*)/)
         order_text = "#{Spree::Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
         self.scope(name.to_s, relation.order(order_text))
@@ -225,12 +193,6 @@ module Spree
         a.any? ? a : ['']
       end
 
-      def self.arguments_for_scope_name(name)
-        if group = Spree::Scopes::Product::SCOPES.detect{|k,v| v[name.to_sym]}
-          group[1][name.to_sym]
-        end
-      end
-
       def self.get_taxons(*ids_or_records_or_names)
         ids_or_records_or_names.flatten.map { |t|
           case t
@@ -273,12 +235,12 @@ module Spree
 
       private
 
-      def self.variant_table_name
+      def variant_table_name
         Spree::Variant.quoted_table_name
       end
 
       # specifically avoid having an order for taxon search (conflicts with main order)
-      def self.prepare_taxon_conditions(taxons)
+      def prepare_taxon_conditions(taxons)
         ids = taxons.map{ |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
         joins(:taxons).where("spree_taxons.id" => ids)
       end
