@@ -121,7 +121,7 @@ describe Spree::Order do
     context "when current state is address" do
       let(:sales_tax) { mock_model Spree::Calculator::SalesTax, :description => "Sales Tax" }
       let(:rate) { mock_model Spree::TaxRate, :amount => 10, :calculator => sales_tax }
-      let(:rate_1) { mock_model Spree::TaxRate, :amount => 15, :calculator => sales_tax } 
+      let(:rate_1) { mock_model Spree::TaxRate, :amount => 15, :calculator => sales_tax }
 
       before do
         order.state = "address"
@@ -462,6 +462,20 @@ describe Spree::Order do
 
   end
 
+  context "#payment_method" do
+    it "should return payment.payment_method if payment is present" do
+      payments = [Factory(:payment)]
+      payments.stub(:completed => payments)
+      order.stub(:payments => payments)
+      order.payment_method.should == order.payments.first.payment_method
+    end
+
+    it "should return the first payment method from available_payment_methods if payment is not present" do
+      Factory(:payment_method, :environment => 'test')
+      order.payment_method.should == order.available_payment_methods.first
+    end
+  end
+
   context "#allow_checkout?" do
     it "should be true if there are line_items in the order" do
       order.stub_chain(:line_items, :count => 1)
@@ -575,7 +589,7 @@ describe Spree::Order do
   end
 
   context "insufficient_stock_lines" do
-    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true } 
+    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
 
     before { order.stub(:line_items => [line_item]) }
 
@@ -589,10 +603,10 @@ describe Spree::Order do
   context "create_tax_charge!" do
     let(:sales_tax) { mock_model Spree::Calculator::SalesTax, :compute => 3, :[]= => nil, :description => "Money for the man" }
     let(:rate) { Spree::TaxRate.create(:amount => 0.05) }
-    let(:rate_1) { Spree::TaxRate.create(:amount => 0.15) } 
+    let(:rate_1) { Spree::TaxRate.create(:amount => 0.15) }
 
     it "should destory all existing tax adjustments" do
-      adjustment = mock_model(Spree::Adjustment, :amount => 5, :calculator => :sales_tax) 
+      adjustment = mock_model(Spree::Adjustment, :amount => 5, :calculator => :sales_tax)
       adjustment.should_receive :destroy
 
       order.stub_chain :adjustments, :tax => [adjustment]
@@ -605,7 +619,7 @@ describe Spree::Order do
 
       order.create_tax_charge!
       order.adjustments.tax.size.should == 2
- 
+
       ["Money for the man 5.0%", "Money for the man 15.0%"].each do |label|
         order.adjustments.tax.map(&:label).include?(label).should be_true
       end
