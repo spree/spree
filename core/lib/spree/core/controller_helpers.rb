@@ -108,6 +108,7 @@ module Spree
         end
 
         def current_gateway
+          ActiveSupport::Deprecation.warn "current_gateway is deprecated and will be removed in Spree 0.90.x"
           @current_gateway ||= Gateway.current
         end
 
