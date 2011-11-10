@@ -67,12 +67,9 @@ module Spree
         taxons.first ? prepare_taxon_conditions(taxons) : {}
       end
 
-      # for quick access to products in a group, WITHOUT using the association mechanism
-      ::Spree::Product.scope :in_cached_group, lambda { |product_group|
-        { :joins => "JOIN spree_product_groups_products ON #{Spree::Product.quoted_table_name}.id = spree_product_groups_products.product_id",
-          :conditions => ["spree_product_groups_products.product_group_id = ?", product_group]
-        }
-      }
+      def self.in_cached_group(product_group)
+        joins(:product_groups).where("spree_product_groups_products.product_group_id" => product_group)
+      end
 
       # a scope that finds all products having property specified by name, object or id
       def self.with_property(property)

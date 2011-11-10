@@ -101,6 +101,14 @@ describe "product scopes" do
     pending
   end
 
+  it ".in_cached_group" do
+    product = Factory(:product)
+    product_group = Factory(:product_group)
+    product_group.products << product
+    Spree::Product.in_cached_group(product_group).should include(product)
+  end
+
+
   context ".with_property" do
     let!(:property) do
       Factory(:property, :name => "foo")
