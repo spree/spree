@@ -83,18 +83,6 @@ module Spree
         joins(:properties).where(conditions)
       end
 
-      # a scope that finds all products having an option_type specified by name, object or id
-      def self.with_option(option)
-        option_types = Spree::OptionType.table_name
-        conditions = case option
-        when String            then { "#{option_types}.name" => option }
-        when Spree::OptionType then { "#{option_types}.id" => option.id }
-        else                        { "#{option_types}.id" => option.to_i }
-        end
-
-        joins(:option_types).where(conditions)
-      end
-
       # a simple test for product with a certain property-value pairing
       # note that it can test for properties with NULL values, but not for absent values
       def self.with_property_value(property, value)
@@ -107,6 +95,18 @@ module Spree
         conditions = ["#{Spree::ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
 
         joins(:properties).where(conditions)
+      end
+
+      # a scope that finds all products having an option_type specified by name, object or id
+      def self.with_option(option)
+        option_types = Spree::OptionType.table_name
+        conditions = case option
+        when String            then { "#{option_types}.name" => option }
+        when Spree::OptionType then { "#{option_types}.id" => option.id }
+        else                        { "#{option_types}.id" => option.to_i }
+        end
+
+        joins(:option_types).where(conditions)
       end
 
       # a scope that finds all products having an option value specified by name, object or id
