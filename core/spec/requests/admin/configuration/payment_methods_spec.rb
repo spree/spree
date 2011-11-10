@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Payment Methods" do
   before(:each) do
-    visit admin_path
+    visit spree_core.admin_path
     click_link "Configuration"
   end
 
@@ -18,9 +18,9 @@ describe "Payment Methods" do
       find('table#listing_payment_methods th:nth-child(5)').text.should == "Active"
 
       find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(1) td:nth-child(1)').text.should == "Check"
-      find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(1) td:nth-child(2)').text.should == "PaymentMethod::Check"
+      find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(1) td:nth-child(2)').text.should == "Spree::PaymentMethod::Check"
       find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(2) td:nth-child(1)').text.should == "Check"
-      find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(2) td:nth-child(2)').text.should == "PaymentMethod::Check"
+      find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(2) td:nth-child(2)').text.should == "Spree::PaymentMethod::Check"
     end
   end
 

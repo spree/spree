@@ -18,18 +18,18 @@ describe "Prototypes" do
       Factory(:property, :name => "shirt_type", :presentation => "Type")
       p = Factory(:prototype, :name => "Shirt")
       %w( brand gender manufacturer model shirt_fabric shirt_fit shirt_sleeve_length shirt_type ).each do |prop|
-        p.properties << Property.find_by_name(prop)
+        p.properties << Spree::Property.find_by_name(prop)
       end
       p = Factory(:prototype, :name => "Mug")
       %w( mug_size mug_type ).each do |prop|
-        p.properties << Property.find_by_name(prop)
+        p.properties << Spree::Property.find_by_name(prop)
       end
       p = Factory(:prototype, :name => "Bag")
       %w( bag_type bag_material ).each do |prop|
-        p.properties << Property.find_by_name(prop)
+        p.properties << Spree::Property.find_by_name(prop)
       end
 
-      visit admin_path
+      visit spree_core.admin_path
       click_link "Products"
       click_link "Prototypes"
 
@@ -41,7 +41,7 @@ describe "Prototypes" do
 
   context "creating a prototype" do
     it "should allow an admin to create a new product prototype", :js => true do
-      visit admin_path
+      visit spree_core.admin_path
       click_link "Products"
       click_link "Prototypes"
       click_link "new_prototype_link"

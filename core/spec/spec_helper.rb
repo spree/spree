@@ -10,11 +10,12 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'database_cleaner'
 require 'spree/core/testing_support/factories'
+require 'spree/url_helpers'
 
 # load default data for tests
 require 'active_record/fixtures'
 fixtures_dir = File.expand_path('../../../core/db/default', __FILE__)
-ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'zones', 'zone_members', 'states', 'roles'])
+ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
 
 RSpec.configure do |config|
   # == Mock Framework
@@ -34,13 +35,8 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
-  config.include SpreeCore::Engine.routes.url_helpers,
-    :example_group => {
-      :file_path => /\bspec\/requests\//
-    }
-
   config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation, { :except => ['countries', 'zone_members', 'states', 'roles'] }
+    DatabaseCleaner.strategy = :truncation, { :except => ['spree_countries', 'spree_zone_members', 'spree_states', 'spree_roles'] }
   end
 
   config.before(:each) do
@@ -50,11 +46,13 @@ RSpec.configure do |config|
   config.after(:each) do
     DatabaseCleaner.clean
   end
+
+  config.include Spree::UrlHelpers
 end
 
 shared_context "custom products" do
   before(:each) do
-    @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
     Spree::Config.set :allow_backorders => true
 
     taxonomy = Factory(:taxonomy, :name => 'Categories')

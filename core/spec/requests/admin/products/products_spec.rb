@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Products" do
   before(:each) do
-    visit admin_path
+    visit spree_core.admin_path
   end
 
   context "listing products" do
@@ -42,7 +42,7 @@ describe "Products" do
       Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
       Factory(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
       Factory(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
-      Product.update_all :count_on_hand => 10
+      Spree::Product.update_all :count_on_hand => 10
 
       click_link "Products"
       fill_in "search_name_contains", :with => "ap"
@@ -100,7 +100,7 @@ describe "Products" do
       Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
       Factory(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
       Factory(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
-      Product.update_all :count_on_hand => 10
+      Spree::Product.update_all :count_on_hand => 10
 
       click_link "Products"
       within('table#listing_products tr:nth-child(2)') { click_link "Edit" }

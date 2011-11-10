@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Product Variants" do
   before(:each) do
-    visit admin_path
+    visit spree_core.admin_path
   end
 
   context "editing variant option types", :js => true do
@@ -10,7 +10,7 @@ describe "Product Variants" do
       Factory(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01")
       Factory(:product, :name => 'apache baseball cap2', :sku => 'B100', :available_on => "2011-01-01 01:01:01")
       Factory(:product, :name => 'zomg shirt', :sku => 'Z100', :available_on => "2011-01-01 01:01:01")
-      Product.update_all :count_on_hand => 10
+      Spree::Product.update_all :count_on_hand => 10
 
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }
@@ -40,9 +40,9 @@ describe "Product Variants" do
       Factory(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01")
       Factory(:product, :name => 'apache baseball cap2', :sku => 'B100', :available_on => "2011-01-01 01:01:01")
       Factory(:product, :name => 'zomg shirt', :sku => 'Z100', :available_on => "2011-01-01 01:01:01")
-      Product.update_all :count_on_hand => 10
+      Spree::Product.update_all :count_on_hand => 10
 
-      visit admin_path
+      visit spree_core.admin_path
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }
       within('#sidebar') { click_link "Option Types" }
@@ -51,7 +51,7 @@ describe "Product Variants" do
       find('table.index tbody tr:nth-child(2) td:nth-child(1)').text.should == "shirt colors"
       find('table.index tbody tr:nth-child(2) td:nth-child(2)').text.should == "colors"
 
-      visit admin_path
+      visit spree_core.admin_path
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }
       within('#sidebar') { click_link "Variants" }

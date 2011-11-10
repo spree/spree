@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Properties" do
   before(:each) do
-    visit admin_path
+    visit spree_core.admin_path
     click_link "Products"
   end
 

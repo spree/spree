@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Order Details" do
   context "edit order page" do
     it "should allow me to edit order details", :js => true do
-      @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+      @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
       Spree::Config.set :allow_backorders => true
       order = Factory(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
       product = Factory(:product, :name => 'spree t-shirt', :on_hand => 5)
@@ -12,7 +12,7 @@ describe "Order Details" do
         iu.update_attribute_without_callbacks('state', 'sold')
       end
 
-      visit admin_path
+      visit spree_core.admin_path
       click_link "Orders"
 
       within('table#listing_orders tbody tr:nth-child(1)') { click_link "R100" }

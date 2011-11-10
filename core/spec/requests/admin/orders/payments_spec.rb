@@ -2,13 +2,13 @@ require 'spec_helper'
 
 describe "Payments" do
   before(:each) do
-    @configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")
+    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
     Spree::Config.set :allow_backorders => true
   end
 
   context "payment methods" do
     before(:each) do
-      Zone.delete_all
+      Spree::Zone.delete_all
       ship_method = Factory(:shipping_method, :zone => Factory(:zone, :name => 'North America'))
       order = Factory(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100", :ship_address => Factory(:address), :shipping_method => ship_method)
       product = Factory(:product, :name => 'spree t-shirt', :on_hand => 5)
@@ -27,7 +27,7 @@ describe "Payments" do
     it "should be able to list, edit, and create payment methods for an order", :js => true do
       pending "need to correctly associate inventory_units with order"
 
-      visit admin_path
+      visit spree_core.admin_path
       click_link "Orders"
       within('table#listing_orders tbody tr:nth-child(1)') { click_link "R100" }
       click_link "Payments"

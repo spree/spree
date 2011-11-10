@@ -2,29 +2,22 @@ require 'spec_helper'
 
 describe "States" do
   before(:each) do
-    visit admin_path
+    visit spree_core.admin_path
     click_link "Configuration"
   end
 
   context "admin visiting states listing" do
     before(:each) do
-      fixtures_dir = File.expand_path('../../../../../../core/db/default', __FILE__)
-      ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries', 'states'])
       Factory(:zone)
     end
 
     it "should correctly display the states" do
       click_link "States"
-      find('table#listing_states tbody tr:nth-child(1) td:nth-child(1)').text.should == State.limit(1).order('name asc').to_a.first.name.downcase.capitalize
+      find('table#listing_states tbody tr:nth-child(1) td:nth-child(1)').text.should == Spree::State.limit(1).order('name asc').to_a.first.name.downcase.capitalize
     end
   end
 
   context "creating and editing states" do
-    before(:each) do
-      fixtures_dir = File.expand_path('../../../../../../core/db/default', __FILE__)
-      ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['countries'])
-    end
-
     it "should allow an admin to edit existing states", :js => true do
       click_link "States"
       select "Canada", :from => "country"

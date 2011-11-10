@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Mail Methods" do
   before(:each) do
-    visit admin_path
+    visit spree_core.admin_path
     click_link "Configuration"
   end
 

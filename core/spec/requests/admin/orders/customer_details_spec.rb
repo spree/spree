@@ -6,13 +6,13 @@ describe "Customer Details" do
       Factory(:shipping_method, :display_on => "front_end")
       Factory(:order, :completed_at => "2011-02-01 12:36:15")
       Factory(:order, :completed_at => "2010-02-01 17:36:42")
-      Order.all.each do |order|
+      Spree::Order.all.each do |order|
         product = Factory(:product, :name => 'spree t-shirt')
         order.add_variant(product.master, 2)
         Factory(:line_item, :order => order, :quantity => 0)
       end
 
-      visit admin_path
+      visit spree_core.admin_path
     end
 
     it "should be able to update customer details for an existing order" do
