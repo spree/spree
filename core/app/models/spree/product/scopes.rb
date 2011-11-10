@@ -132,8 +132,8 @@ module Spree
       # finds product having option value OR product_property
       ::Spree::Product.scope :with, lambda{ |value|
         {
-          :conditions => ["#{Spree::OptionValue.quoted_table_name}.name = ? OR #{Spree::ProductProperty.quoted_table_name}.value = ?", value, value],
-          :joins => { :variants => :option_values, :product_properties => [] }
+          :conditions => ["#{Spree::OptionValue.table_name}.name = ? OR #{Spree::ProductProperty.table_name}.value = ?", value, value],
+          :include => [{ :variants_including_master => :option_values }, :product_properties]
         }
       }
 
