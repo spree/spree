@@ -186,7 +186,7 @@ module Spree
     end
 
     def self.not_deleted
-      where(arel_table[:deleted_at].eq(nil))
+      where(:deleted_at => nil)
     end
 
     def self.available(available_on = nil)

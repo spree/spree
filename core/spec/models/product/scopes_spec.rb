@@ -316,4 +316,15 @@ describe "product scopes" do
     products.first.should == product
     products.last.should == other_product
   end
+
+  it ".not_deleted" do
+    product = Factory(:product)
+    other_product = Factory(:product)
+    other_product.update_attribute(:deleted_at, Time.now)
+
+    products = Spree::Product.not_deleted
+    products.should include(product)
+    other_product.should be_persisted
+    products.should_not include(other_product)
+  end
 end
