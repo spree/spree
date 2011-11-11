@@ -78,7 +78,7 @@ require 'generators/spree/dummy/dummy_generator'
 require 'generators/spree/sandbox/sandbox_generator'
 
 ActiveRecord::Base.class_eval do
-  include Spree::CalculatedAdjustments
+  include Spree::Core::CalculatedAdjustments
   include CollectiveIdea::Acts::NestedSet
 end
 
